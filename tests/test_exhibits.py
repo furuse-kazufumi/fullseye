@@ -28,6 +28,56 @@ from exhibit_glossary import load_glossary, terms_for_exhibit  # noqa: E402
 BASE = "https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/"
 CAPTIONS = ROOT / "docs" / "articles" / "exhibits" / "poc_captions.json"
 
+# 5b6839d9ff の lead_en を単語列にし、4 展示以上で共有された 3-gram。
+# 壊れた生成器の型を具体的な回帰資料として固定し、新しい言い換えが増えても
+# 禁止語を緩めない。
+OLD_SHARED_LEAD_EN_TRIGRAMS = {
+    "a comparison of", "a computed data", "a measured data", "a synthetic data",
+    "and measured shows", "and that shows", "and the contrast", "and the method",
+    "as the truth", "because the measurement", "become unreliable a",
+    "become unreliable for", "become unreliable the", "become unreliable we",
+    "between closed-form and", "between continues and", "between measured and",
+    "built the contrast", "can become unreliable", "closed form and",
+    "compares the contrast", "comparison of how", "comparison of the",
+    "computed data case", "computed data compares", "computed data then",
+    "computed data to", "contrast between closed-form", "contrast between continues",
+    "contrast between measured", "data case for", "data case links",
+    "data compares the", "data then compare", "data to separate", "data to the",
+    "difficult because the", "for how much", "from computed data",
+    "from measured data", "from synthetic data", "from the contrast",
+    "fullseye and series", "images matters when", "in closed form",
+    "in computed data", "in evaluating counting", "in evaluating measuring",
+    "in evaluating where", "in measured data", "in practice is", "in synthetic data",
+    "is difficult because", "matters when the", "measured data case",
+    "measured data compares", "measured data then", "measured data to",
+    "measured shows that", "measurement can become", "practice is difficult",
+    "shows that a", "shows that and", "shows that counting", "shows that how",
+    "shows that scored", "shows that the", "shows that what", "shows that where",
+    "synthetic data case", "synthetic data compares", "synthetic data then",
+    "synthetic data to", "that how much", "that shows that", "that the measurement",
+    "the computed data", "the contrast between", "the figure shows",
+    "the figures show", "the measured data", "the measurement can",
+    "the plots show", "the synthetic data", "the test uses", "to the contrast",
+    "unreliable we place", "when measuring a", "when measuring measuring",
+    "where is the", "while scored by", "while then compare", "with the contrast",
+}
+
+_EN_ABBREVIATIONS = ("e.g.", "i.e.", "et al.", "Fig.", "Eq.", "No.",
+                     "Dr.", "Mr.", "Ms.", "St.")
+
+
+def _en_gate_sentences(text: str) -> list[str]:
+    """小数点と既知の略語を文末と数えずに英語文を分ける。"""
+    masked = re.sub(r"(?<=\d)\.(?=\d)", "<DECIMAL>", text)
+    for index, abbreviation in enumerate(_EN_ABBREVIATIONS):
+        masked = masked.replace(abbreviation, abbreviation.replace(".", "<ABBR%d>" % index))
+    return [part.replace("<DECIMAL>", ".") for part in
+            re.split(r"(?<=[.!?])\s+", masked) if part.strip()]
+
+
+def _english_words(text: str) -> list[str]:
+    return re.findall(r"[A-Za-z]+(?:[-'][A-Za-z]+)*", text.casefold())
+
 
 def _caption_exhibits():
     return json.loads(CAPTIONS.read_text(encoding="utf-8"))["exhibits"]
@@ -80,6 +130,80 @@ def test_lead_sentences_are_not_shared_by_four_exhibits():
                 owners.setdefault(key, set()).add(exhibit["id"])
     repeated = [(lang, sentence, sorted(ids)) for (lang, sentence), ids in owners.items() if len(ids) >= 4]
     assert not repeated, repeated[:20]
+
+
+def test_english_leads_have_complete_sentences_matching_japanese():
+    problems = []
+    for exhibit in _caption_exhibits():
+        sentences = _en_gate_sentences(exhibit["lead_en"])
+        if not 2 <= len(sentences) <= 3:
+            problems.append((exhibit["id"], "English sentence count", len(sentences)))
+        if len(sentences) != len(_sentences(exhibit["lead_ja"], "ja")):
+            problems.append((exhibit["id"], "Japanese/English count", len(sentences)))
+        for sentence in sentences:
+            plain = re.sub(r"<(?:DECIMAL|ABBR\d+)>", ".", sentence).strip()
+            if not re.match(r"[A-Z]", plain):
+                problems.append((exhibit["id"], "lower-case opening", plain))
+            if not plain.endswith("."):
+                problems.append((exhibit["id"], "non-period ending", plain))
+    assert not problems, problems[:30]
+
+
+def test_english_leads_have_no_mid_sentence_title_case_fragments():
+    """旧生成器の ``from A historical`` 型を、必要な固有名だけ許して止める。"""
+    glossary = load_glossary()
+    glossary_names = {
+        word
+        for entry in glossary.values()
+        for field in (entry["en"], *entry["match"])
+        for word in re.findall(r"\b[A-Z][a-z]{2,}\b", field)
+    }
+    explicit_names = {
+        "Airy", "Bayer", "Beer", "Bragg", "Canny", "Cauchy", "Debye",
+        "Appended", "Apollonian", "Art", "Boolean", "Cattaneo", "Chinese", "Dubins",
+        "Enforcement", "Fibonacci", "Fourier",
+        "Fresnel", "Gauss", "Gaussian", "Gibbs", "Hertz", "Hough", "Lambert", "Lorenz",
+        "Hybrid", "Japan", "Mandelbrot", "Martian", "Maxwell", "Metropolitan", "Mie",
+        "Newton", "Nyquist", "Otsu", "Ozaki",
+        "Poisson", "Preston", "Rayleigh", "Reynolds", "Rice", "Rician",
+        "Reeds", "Road", "Rodrigues", "Schlieren", "Sholl", "Snell", "Stokes", "Voronoi",
+        "Whitney", "Wiener",
+    }
+    allowed = glossary_names | explicit_names
+    pattern = re.compile(
+        r"\b(?:a|an|the|as|at|by|for|from|in|into|of|on|onto|over|through|to|under|using|with|without) "
+        r"([A-Z][a-z]{2,})\b")
+    problems = []
+    for exhibit in _caption_exhibits():
+        for sentence in _en_gate_sentences(exhibit["lead_en"]):
+            for match in pattern.finditer(sentence):
+                if match.start() and match.group(1) not in allowed:
+                    problems.append((exhibit["id"], match.group(0)))
+    assert not problems, problems[:30]
+
+
+def test_english_leads_do_not_contain_four_words_from_the_title():
+    problems = []
+    for exhibit in _caption_exhibits():
+        lead_words = _english_words(exhibit["lead_en"])
+        title_words = _english_words(exhibit["title_en"])
+        lead_grams = set(zip(lead_words, lead_words[1:], lead_words[2:], lead_words[3:]))
+        overlap = [gram for gram in zip(title_words, title_words[1:], title_words[2:], title_words[3:])
+                   if gram in lead_grams]
+        if overlap:
+            problems.append((exhibit["id"], " ".join(overlap[0])))
+    assert not problems, problems[:30]
+
+
+def test_english_leads_do_not_reuse_old_generator_trigrams():
+    problems = []
+    for exhibit in _caption_exhibits():
+        words = _english_words(exhibit["lead_en"])
+        found = sorted({" ".join(gram) for gram in zip(words, words[1:], words[2:])}
+                       & OLD_SHARED_LEAD_EN_TRIGRAMS)
+        if found:
+            problems.append((exhibit["id"], found))
+    assert not problems, problems[:30]
 
 
 def test_leads_do_not_open_with_exhibit_boilerplate():

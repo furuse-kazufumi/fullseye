@@ -10,7 +10,7 @@ The other shared feature is that failure arrives as a cliff, not a slope: 15 ver
 
 ## No.2026.003 —— Where a 1-D Barcode Stops Reading — Counting Misreads and Unreadables Separately
 
-When measuring Where a 1-D Barcode Stops Reading, Counting Misreads and Unreadables Separately. A computed data case links home-made, simple, and damaged. The contrast between four and ways shows that counting Misreads and Unreadables Separately.
+At the limit of one-dimensional barcode reading, misreads and no-reads are counted separately. We created measured data with a home-made symbology and related the simple code to success. The distinction between structure and checks shows that misreads and no-reads are counted separately.
 
 [![Where a 1-D Barcode Stops Reading — Counting Misreads and Unreadables Separately](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_barcode_1d/01_misread_split_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_barcode_1d/01_misread_split.png)
 
@@ -40,7 +40,7 @@ Ops used (notes): [`decode_barcode`](https://furuse.work/ops/2d/barcode/decode_b
 
 ## No.2026.093 —— Electrode tortuosity from CT — the rule of thumb only sees porosity
 
-Using Electrode tortuosity from CT in practice is difficult because the rule of thumb only sees porosity. The test uses micro-ct from synthetic data to separate lithium-ion from coating. The contrast between measured and shop-floor shows that the rule of thumb only sees porosity.
+When electrode tortuosity is measured from CT, the empirical rule considers only porosity. With a synthetic lithium-ion cell, we separately checked the electrode coating and synthetic micro-CT. The gap between shop practice and the default reveals how the empirical rule considers only porosity.
 
 [![Electrode tortuosity from CT — the rule of thumb only sees porosity](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_battery_electrode_tortuosity/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_battery_electrode_tortuosity/01_scene.png)
 
@@ -80,7 +80,7 @@ Ops used (notes): [`vol_distance_transform`](https://furuse.work/ops/3d/medial/v
 
 ## No.2026.004 —— Rolling-Bearing Diagnosis — How Deep in Noise Can It Still Be Caught?
 
-For Rolling-Bearing Diagnosis, How Deep in Noise Can It Still Be Caught. We place impulse in computed data, then compare train and synthesised. The contrast between closed-form and defect shows that how Deep in Noise Can It Still Be Caught?.
+Rolling-bearing fault diagnosis is judged by how much noise it can tolerate. We prepared closed-form synthetic data and compared the defect frequency with the impulse train. The distinction between the raw and amplitude trace spectra shows how much noise the diagnosis can tolerate.
 
 [![Rolling-Bearing Diagnosis — How Deep in Noise Can It Still Be Caught?](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bearing_diagnosis/01_envelope_vs_raw_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bearing_diagnosis/01_envelope_vs_raw.png)
 
@@ -106,7 +106,7 @@ Ops used (notes): [`bearing_defect_frequencies`](https://furuse.work/ops/acousti
 
 ## No.2026.094 —— Bump coplanarity versus substrate warpage — subtract too much and the real defect goes with it
 
-In evaluating Bump coplanarity versus substrate warpage, subtract too much and the real defect goes. A measured data case links height, pillars, and planted. The contrast between sigma and pillar-to-pillar shows that subtract too much and the real defect goes with it.
+Separating bump coplanarity from substrate warpage too aggressively also erases genuine defects. We created measured pillar data and examined how individual variation relates to short bumps. Comparing the planted state with the zero point shows that excess subtraction erases genuine defects.
 
 [![Bump coplanarity versus substrate warpage — subtract too much and the real defect goes with it](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bump_coplanarity/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bump_coplanarity/01_scene.png)
 
@@ -144,7 +144,7 @@ Ops used (notes): [`auto_threshold`](https://furuse.work/ops/2d/segmentation/aut
 
 ## No.2026.009 —— Concrete Crack Width Is Thinner Than a Pixel — Counting Width Versus Integrating Width
 
-Using Concrete Crack Width Is Thinner Than a Pixel in practice is difficult because Counting Width. We place cracks in measured data, then compare wide and field. The contrast between measured and thresholding-and-counting shows that counting Width Versus Integrating Width.
+In evaluating concrete cracks narrower than one pixel, the key distinction is counted versus integrated width. We prepared a computed field of view and compared binarization with the brightness deficit. Comparing cases at or below the cutoff with all cases reveals this distinction.
 
 [![Concrete Crack Width Is Thinner Than a Pixel — Counting Width Versus Integrating Width](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_crack_width/02_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_crack_width/02_scene.png)
 
@@ -174,7 +174,7 @@ Ops used (notes): [`distance_transform`](https://furuse.work/ops/2d/region/dista
 
 ## No.2026.017 —— Defects Buried in a Periodic Background — What a Pooled ROC (true-positive versus false-positive curve) Hides
 
-In evaluating Defects Buried in a Periodic Background, What a Pooled ROC Hides. The computed data compares three with classes and tracks weave. The contrast between detector and score shows that what a Pooled ROC Hides.
+For defects embedded in a periodic ground, the question is what an aggregated ROC conceals. Computed data with speckle and unevenness were used to examine how the detector changes. Differences between the score map and per-type results reveal what an aggregated ROC conceals.
 
 [![Defects Buried in a Periodic Background — What a Pooled ROC (true-positive versus false-positive curve) Hides](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fabric_defect/04_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fabric_defect/04_scene.png)
 
@@ -206,7 +206,7 @@ This run produced **4 figures** in total - [see them all](https://github.com/fur
 
 ## No.2026.069 —— Digging Where the Sound Says — A Clean Correlation Still Digs in the Wrong Place
 
-When measuring Digging Where the Sound Says, A Clean Correlation Still Digs in the Wrong Place. A measured data case links locating, leak, and buried. The contrast between main and arrival-time shows that a Clean Correlation Still Digs in the Wrong Place.
+When finding a leak by sound, even a clean correlation misses the spot if the propagation speed is wrong. We built measured data with buried pipes and related leak noise to arrival-time distinction. Comparing position with work shows that clean correlation cannot offset a wrong speed.
 
 [![Digging Where the Sound Says — A Clean Correlation Still Digs in the Wrong Place](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_leak_localization/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_leak_localization/01_scene.png)
 
@@ -244,7 +244,7 @@ Ops used (notes): [`arrow`](https://furuse.work/ops/annotate/pointer/arrow.html)
 
 ## No.2026.071 —— Fusing thermal, vibration and geometry for machine health — three sensors, one fact
 
-A comparison of Fusing thermal, while one fact. The measured data compares states with rotating and tracks built. The contrast between closed-form and bearing shows that three sensors, one fact.
+In maintenance combining heat, vibration, and shape, watching three signals can mean seeing one thing three times. Using measured rotating-machine state data, we examined how defect frequencies change. Comparing the closed form with the steady fin equation shows this redundancy.
 
 [![Fusing thermal, vibration and geometry for machine health — three sensors, one fact](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_machine_condition_fusion/01_scene_machine_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_machine_condition_fusion/01_scene_machine.png)
 
@@ -282,7 +282,7 @@ Ops used (notes): [`angle_between_lines`](https://furuse.work/ops/3d/geometry/an
 
 ## No.2026.024 —— Reading a Binary Matrix Code — Geometry Always Dies First
 
-Using Reading a Binary Matrix Code in practice is difficult because Geometry Always Dies First. A computed data case links qr-style, layout, and random. The contrast between bits and damaged shows that geometry Always Dies First.
+In binary matrix code reading, geometry is always the first thing to fail. We created computed data including QR-style codes and measured the relationship between the layout and the random data bits. Comparing the code with occlusion shows that geometry is always the first thing to fail.
 
 [![Reading a Binary Matrix Code — Geometry Always Dies First](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_matrix_code_reading/01_symbol_and_errors_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_matrix_code_reading/01_symbol_and_errors.png)
 
@@ -312,7 +312,7 @@ Ops used (notes): [`adaptive_gauss_thresh`](https://furuse.work/ops/2d/segmentat
 
 ## No.2026.025 —— Can Display-Inspection Moire (beat fringe between periodic patterns) Be Told From Real Non-Uniformity?
 
-Using Can Display-Inspection Moire Be Told in practice is difficult because the measurement can become. We place interference in computed data, then compare stripes and camera. The contrast between pixel and grid shows that the measurement can become unreliable.
+In evaluating display-inspection moire against genuine non-uniformity, measurement certainty is the challenge. We prepared a pixel grid within calculations and compared the display with the interference. Comparing luminance non-uniformity with the total error shows that measurement certainty is the challenge.
 
 [![Can Display-Inspection Moire (beat fringe between periodic patterns) Be Told From Real Non-Uniformity?](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_moire_screen/04_moire_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_moire_screen/04_moire_scene.png)
 
@@ -344,7 +344,7 @@ Ops used (notes): [`background_flatten`](https://furuse.work/ops/3d/surface_fit/
 
 ## No.2026.102 —— Print Misregistration from the Sheet — A Halftone Is a Lattice, So the Answer Is Not Unique
 
-A comparison of Print Misregistration from the Sheet matters when A Halftone Is a Lattice, So the. The measured data compares measuring with printed and tracks four. The contrast between cmyk and plates shows that a Halftone Is a Lattice, So the Answer Is Not Unique.
+When measuring misregistration from prints, halftone dots form a lattice, so no unique answer exists. Using synthetic offset and label printing, we examined how the conventions change. Comparing the screen angle with the setup reveals how the lattice of dots allows no unique answer.
 
 [![Print Misregistration from the Sheet — A Halftone Is a Lattice, So the Answer Is Not Unique](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_print_registration/04_sweep_wrap_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_print_registration/04_sweep_wrap.png)
 
@@ -382,7 +382,7 @@ Ops used (notes): [`fly_hex_lattice`](https://furuse.work/ops/flyvision/lattice/
 
 ## No.2026.116 —— How Faint a Defect Can Still Be Found — Planting a Known Truth in a Real Background
 
-A comparison of How Faint a Defect Can Still Be Found matters when Planting a Known Truth in a Real. We place usual in synthetic data, then compare estimate and catch. The contrast between measure and limit shows that planting a Known Truth in a Real Background.
+The visibility limit of faint defects is measured by planting ground truth in real photographs. With synthetic lines, we compared the estimate with the usual approach. Comparing white noise with the synthetic image shows how ground truth planted in real photographs gives the limit.
 
 [![How Faint a Defect Can Still Be Found — Planting a Known Truth in a Real Background](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_defect_floor/01_defect_floor_panels_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_defect_floor/01_defect_floor_panels.png)
 
@@ -404,7 +404,7 @@ Ops used (notes): [`annotate_inset`](https://furuse.work/ops/annotate/paper/anno
 
 ## No.2026.109 —— Rotating Real Textures — Rotation Invariance Holds Only Where It Is Not Needed
 
-When measuring Rotating Real Textures, Rotation Invariance Holds Only Where It Is Not Needed. The test uses three from measured data to separate rotated from angles. The contrast between measuring and descriptor shows that rotation Invariance Holds Only Where It Is Not Needed.
+In rotated real-textures, rotation invariance appears only in materials that do not need it. Using measured angles, we checked the descriptor and its self-comparison separately. The gap between benchmark and distance shows this invariance appears only in materials that do not need it.
 
 [![Rotating Real Textures — Rotation Invariance Holds Only Where It Is Not Needed](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_texture_invariance/01_textures_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_texture_invariance/01_textures.png)
 
@@ -434,7 +434,7 @@ Ops used (notes): [`cooc_feature_matrix`](https://furuse.work/ops/2d/texture/coo
 
 ## No.2026.079 —— Sorting mixed waste by material — what a preprocessor can erase is decided by algebra
 
-Short-wave infrared sorting reacts differently to water, dirt, and tilt depending on preprocessing Synthetic fragments of known material receive each disturbance separately and are compared under The plots separate robustness to multiplicative and additive changes.
+In short-wave infrared waste sorting, moisture, dirt and tilt affect each method differently. We degraded known synthetic fragments separately to compare spectral angle, derivative and continuum removal. Different methods resist multiplicative and additive changes, and derivatives erase flat metals.
 
 [![Sorting mixed waste by material — what a preprocessor can erase is decided by algebra](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_recycling_sorting/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_recycling_sorting/01_scene.png)
 
@@ -474,7 +474,7 @@ Ops used (notes): [`overlay_labels`](https://furuse.work/ops/annotate/overlay/ov
 
 ## No.2026.084 —— Power loss from solar-cell EL images — dark is not the same as inactive
 
-In evaluating Power loss from solar-cell EL images, dark is not the same as inactive. A computed data case links crystalline-silicon, rendered, and form. The contrast between electrically and isolated shows that dark is not the same as inactive.
+When estimating power loss from a solar cell's EL image, dark does not mean inactive. We synthesized a crystalline-silicon cell and measured how the closed form relates to isolated regions. Comparing cracks with finger interruptions shows that dark does not mean inactive.
 
 [![Power loss from solar-cell EL images — dark is not the same as inactive](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_solar_el_inspection/01_zero_point_map_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_solar_el_inspection/01_zero_point_map.png)
 
@@ -512,7 +512,7 @@ Ops used (notes): [`aug_vignette`](https://furuse.work/ops/2d/augmentation/aug_v
 
 ## No.2026.085 —— Solder fillet AOI — three ring lights are a 3-level tilt quantiser, and 70 % of the fillet height sits in the dark
 
-Ring lighting on a solder fillet encodes surface slope in colour bands rather than measuring height Known chip, pad, and curved-fillet geometry generates inspection pictures while lighting angle The figures show when hidden height can be extrapolated from the curve and where placement error makes.
+Ring-light color bands on a solder fillet show stepped surface tilt, not height. We synthesized images of known chips, pads, and curve fillets, varying light angle, offset, and roughness. The diagram reveals how far arcs extrapolate hidden height and when offset makes good joints look insufficient.
 
 [![Solder fillet AOI — three ring lights are a 3-level tilt quantiser, and 70 % of the fillet height sits in the dark](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_solder_fillet_aoi/02_scene_grid_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_solder_fillet_aoi/02_scene_grid.png)
 
@@ -552,7 +552,7 @@ Ops used (notes): [`access_channel`](https://furuse.work/ops/2d/color/access_cha
 
 ## No.2026.121 —— Is the Process in Control, and Is It Capable? — Statistical Process Control from Closed-Form Alone
 
-For Is the Process in Control, and Is It Capable?, Statistical Process Control from Closed-Form Alone. The test uses series from measured data to separate dimensions from defect. The contrast between counts and measured shows that statistical Process Control from Closed-Form Alone.
+When checking whether a process is in control and capable, SPC can rely on closed-form expressions alone. Using computed machine-vision data, we checked dimensions and defect counts separately. Comparing the series with learning shows that closed forms alone suffice.
 
 [![Is the Process in Control, and Is It Capable? — Statistical Process Control from Closed-Form Alone](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_spc/01_spc_xbar_chart_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_spc/01_spc_xbar_chart.png)
 
@@ -584,7 +584,7 @@ Ops used (notes): [`spc_capability`](https://furuse.work/ops/spc/capability/spc_
 
 ## No.2026.152 —— Every Sensor Reads Normal, Yet the Machine Is Failing — How Much the MT Method Recovers from Univariate 3σ
 
-In evaluating Every Sensor Reads Normal, while How Much the MT Method Recovers from Univariate 3σ. The synthetic data compares features with machine-condition and tracks healthy. The contrast between records and form shows that how Much the MT Method Recovers from Univariate σ.
+When all sensors look normal but equipment is faulty, the key quantity is the univariate 3σ misses caught by the MT method. Using synthetic maintenance data for healthy equipment, we examined how the unit space changes. Comparing held-out samples with thresholds reveals that quantity.
 
 [![Every Sensor Reads Normal, Yet the Machine Is Failing — How Much the MT Method Recovers from Univariate 3σ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_mt_hidden_fault/01_mt_hidden_cloud_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_mt_hidden_fault/01_mt_hidden_cloud.png)
 
@@ -622,7 +622,7 @@ Ops used (notes): [`spc_mt_distance`](https://furuse.work/ops/spc/mt/spc_mt_dist
 
 ## No.2026.155 —— Where Is the Text, Without a Recogniser — Grading a Stroke-Width Detector on Text We Drew Ourselves
 
-For Where Is the Text, Without a Recogniser, Grading a Stroke-Width Detector on Text We Drew Ourselves. The test uses fullseye from computed data to separate stopped from pre-processing. The contrast between layer and answering shows that grading a Stroke-Width Detector on Text We Drew Ourselves.
+To evaluate text localization without learning, we score a detector based on stroke width against rendered characters as ground truth. Using computed preprocessing data, we checked recognizers and policy separately. Comparing geometry with constant width shows this scoring in action.
 
 [![Where Is the Text, Without a Recogniser — Grading a Stroke-Width Detector on Text We Drew Ourselves](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_text_region_truth/01_text_region_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_text_region_truth/01_text_region_scene.png)
 
@@ -648,7 +648,7 @@ Ops used (notes): [`swt_map`](https://furuse.work/ops/text/stroke/swt_map.html) 
 
 ## No.2026.042 —— How Much Camera Thermal Drift Costs a Dimensional Measurement
 
-A comparison of How Much Camera Thermal Drift Costs matters when the measurement can become unreliable. We place square in measured data, then compare measured and whose. The contrast between focal and length shows that the measurement can become unreliable.
+In evaluating how camera thermal drift affects dimensions, measurement certainty is the central issue. Computed temperature values were used to compare focal length with the mount. The gap between the principal point and the side length shows that certainty is the central issue.
 
 [![How Much Camera Thermal Drift Costs a Dimensional Measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_thermal_drift_metrology/04_error_maps_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_thermal_drift_metrology/04_error_maps.png)
 
@@ -678,7 +678,7 @@ Ops used (notes): [`lockin_thermal_wave`](https://furuse.work/ops/optics/lockin/
 
 ## No.2026.047 —— Veiling Glare Breaks Contrast Measurement — MTF (modulation transfer function) Passes While Black Level Fails
 
-Using Veiling Glare Breaks Contrast Measurement in practice is difficult because MTF Passes While Black. A measured data case links whose, core, and stays. The contrast between sharp and only shows that mTF Passes While Black Level Fails.
+When veiling glare corrupts contrast measurement, an MTF pass and a black-level failure can coexist. Computed edge data measured the relation between the black square and the simultaneous readout. The gap between the fraction and the measurement window shows that both can coexist.
 
 [![Veiling Glare Breaks Contrast Measurement — MTF (modulation transfer function) Passes While Black Level Fails](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_veiling_glare/04_glare_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_veiling_glare/04_glare_scene.png)
 
@@ -710,7 +710,7 @@ Ops used (notes): [`airy_pattern`](https://furuse.work/ops/optics/wave/airy_patt
 
 ## No.2026.224 —— In-Camera Processing Makes Datasheet Numbers Lie Plausibly - Denoising Adds 83 % to the Quantum Efficiency, the Standard's Check Misses It, Noise Correlation Catches It
 
-When measuring In-Camera Processing Makes Datasheet Numbers Lie Plausibly - Denoising Adds 83 % to the. We place sensor in synthetic data, then compare planted and values. The contrast between prnu and pixels shows that the Standard's Check Misses It, Noise Correlation Catches It.
+Noise correlation exposes in-camera preprocessing that makes datasheets plausibly false. Planted simulations compared synthetic sensors with hot pixels. Procedure and digital gain differences show denoising adds 83 % quantum efficiency, which the standard misses and noise correlation exposes.
 
 [![In-Camera Processing Makes Datasheet Numbers Lie Plausibly - Denoising Adds 83 % to the Quantum Efficiency, the Standard's Check Misses It, Noise Correlation Catches It](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_emva1288_in_camera_processing/01_datasheet_lies_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_emva1288_in_camera_processing/01_datasheet_lies.png)
 
@@ -746,7 +746,7 @@ Ops used (notes): [`emva_bspline_regression`](https://furuse.work/ops/optics/sen
 
 ## No.2026.114 —— Naming the Damaged Roller from a Period — You Run Out of Evidence Before You Reach the Cliff
 
-For Naming the Damaged Roller from a Period, You Run Out of Evidence Before You Reach the Cliff. We place roll-to-roll in measured data, then compare production and film. The contrast between battery and electrode shows that you Run Out of Evidence Before You Reach the Cliff.
+When naming a scarred roller by its period, nothing can be said even before the cliff is reached. We prepared film in observations and compared battery electrodes with copper foil. The gap between circumference and transfer shows that nothing can be said before reaching the cliff.
 
 [![Naming the Damaged Roller from a Period — You Run Out of Evidence Before You Reach the Cliff](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_web_roll_periodicity/01_scene_web_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_web_roll_periodicity/01_scene_web.png)
 
@@ -784,7 +784,7 @@ Ops used (notes): [`cepstrum`](https://furuse.work/ops/acoustics/bearing/cepstru
 
 ## No.2026.050 —— Weld Bead From a Laser-Triangulation Profile — The Sin of Writing 0 Where Nothing Was Measured
 
-When measuring Weld Bead From a Laser-Triangulation Profile, The Sin of Writing 0 Where Nothing Was. We place recovered in computed data, then compare position and single. The contrast between line and reinforcement shows that the Sin of Writing Where Nothing Was Measured.
+In measuring a weld-bead from a laser triangulation cross section, the sin is recording unmeasured locations as 0. We prepared a computed bright line and compared its row position with reinforcement height. The gap between undercut and the null model reveals that sin.
 
 [![Weld Bead From a Laser-Triangulation Profile — The Sin of Writing 0 Where Nothing Was Measured](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_weld_bead_profile/01_laser_images_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_weld_bead_profile/01_laser_images.png)
 
@@ -814,7 +814,7 @@ Ops used (notes): [`gen_measure_rectangle2`](https://furuse.work/ops/measure1d/c
 
 ## No.2026.115 —— Light-section scanning of a weld bead — resolution and occlusion share one knob
 
-For Light-section scanning of a weld bead, resolution and occlusion share one knob. A measured data case links fillet-weld, cross-section, and built. The contrast between form and lengths shows that resolution and occlusion share one knob.
+Scanning a weld bead by light sectioning makes resolution and occlusion two sides of one knob. We built computed data with a fillet weld and measured how the section relates to the closed form. Comparing reinforcement and leg length reveals how the two are sides of one knob.
 
 [![Light-section scanning of a weld bead — resolution and occlusion share one knob](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_weld_bead_scan_angle/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_weld_bead_scan_angle/01_scene.png)
 
@@ -852,7 +852,7 @@ Ops used (notes): [`esdf`](https://furuse.work/ops/3d/occupancy/esdf.html) · [`
 
 ## No.2026.122 —— Finding and Fixing Wrong Characters Without Recognising Them — the Threshold Comes from Typeface Spread
 
-Using Finding and Fixing Wrong Characters Without Recognising Them in practice is difficult because the. The synthetic data compares because with intended and tracks string. The contrast between given and input shows that the the method Comes from Typeface Spread.
+To find and fix image typos without recognition, the cutoff comes from typeface differences. We handled strings and inputs on synthetic data and examined how multiclass classification changes. Comparing each cell with its specification shows that typeface differences set the cutoff.
 
 [![Finding and Fixing Wrong Characters Without Recognising Them — the Threshold Comes from Typeface Spread](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_glyph_typo_detection/01_sign_before_after_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_glyph_typo_detection/01_sign_before_after.png)
 
@@ -874,7 +874,7 @@ This run produced **2 figures** in total - [see them all](https://github.com/fur
 
 ## No.2026.130 —— Print Layer Inspection — Closing the Shape → Layer → Path → Image Loop and Catching Planted Defects by the Numbers
 
-For Print Layer Inspection, Closing the Shape → Layer → Path → Image Loop and Catching Planted Defects. The computed data compares three-dimensional-printer with flows and tracks layers. The contrast between images and taken shows that closing the Shape → Layer → Path → Image Loop and Catching Planted Defects by.
+Three-dimensional printer layer inspection closes the shape-layer, path, and image loop in-house and catches seeded defects numerically. On computational data of in-progress prints and layer images, we examined how the new family changes. Comparing what exists with the vocabulary confirms this.
 
 [![Print Layer Inspection — Closing the Shape → Layer → Path → Image Loop and Catching Planted Defects by the Numbers](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_print_layer_inspection/02_layers_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_print_layer_inspection/02_layers.png)
 
@@ -904,7 +904,7 @@ Ops used (notes): [`contours_to_gcode`](https://furuse.work/ops/printpath/slice/
 
 ## No.2026.189 —— A Warehouse That Does Not Jam When Vehicles Run Late — A Correct Plan Alone Still Stops an AGV Fleet
 
-In a warehouse, delays can jam aisles even when the planned routes contain no collisions Computed trials add random delays to vehicles on a grid and compare naive execution with an The figure shows that arrived vehicles cause most jams, while respecting dependencies avoids.
+In a warehouse, transport vehicles running late clog aisles even under a collision-free plan. Random delays on a grid compared naive execution with an action dependency graph. The diagram shows arrivals blocking aisles, and that dependencies prevent collisions and deadlocks.
 
 [![A Warehouse That Does Not Jam When Vehicles Run Late — A Correct Plan Alone Still Stops an AGV Fleet](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_agv_fleet/01_agv_naive_vs_adg.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_agv_fleet/01_agv_naive_vs_adg.gif)
 
@@ -934,7 +934,7 @@ Ops used (notes): [`adg_build`](https://furuse.work/ops/drive/agv/adg_build.html
 
 ## No.2026.223 —— Find Hybrid-Bond Voids by Echo Phase, Not Brightness - Small Voids Hide in the Amplitude Image and Light Up Inverted in the Phase Image
 
-In evaluating Find Hybrid-Bond Voids by Echo Phase, Not Brightness - Small Voids Hide in the Amplitude. For Find Hybrid-Bond Voids by Echo Phase, while then compare silicon and over. The contrast between hybrid and bond shows that not Brightness - Small Voids Hide in the Amplitude Image and Light Up Inverted in the.
+When hybrid bond voids are found by phase-not brightness-small voids hide among good regions in amplitude but reverse and glow in phase. We prepared synthetic die data and compared the bonding interface with diameter. The gap between pitch and pad marks the limit of judgment.
 
 [![Find Hybrid-Bond Voids by Echo Phase, Not Brightness - Small Voids Hide in the Amplitude Image and Light Up Inverted in the Phase Image](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_sam_hybrid_bonding_voids/03_amplitude_vs_phase_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_sam_hybrid_bonding_voids/03_amplitude_vs_phase.png)
 
@@ -978,7 +978,7 @@ Ops used (notes): [`acoustic_interface_coefficients`](https://furuse.work/ops/ac
 
 ## No.2026.226 —— Why a Thin Groove Vanishes in a PL Image — a Longer Diffusion Length Hides Only Shadow Grooves, and Makes Sink Grooves Stand Out
 
-In evaluating Why a Thin Groove Vanishes in a PL Image, while and Makes Sink Grooves Stand Out. The Why a Thin Groove Vanishes in a PL Image test uses photoluminescence from measured data to. The contrast between carriers and have shows that a Longer Diffusion Length Hides Only Shadow Grooves, and Makes Sink.
+In examining why narrow grooves vanish in PL images, longer diffusion lengths hide only shadow grooves, while sink-grooves stand out more. Measured photoluminescence data verified excitation and excess carriers separately. Diffusion versus optics shows the assessment limit.
 
 [![Why a Thin Groove Vanishes in a PL Image — a Longer Diffusion Length Hides Only Shadow Grooves, and Makes Sink Grooves Stand Out](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_si_wafer_pl_defect_visibility/03_pl_real_groove_after_hf_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_si_wafer_pl_defect_visibility/03_pl_real_groove_after_hf.png)
 
@@ -1006,7 +1006,7 @@ Ops used (notes): [`pl_diffusion_psf`](https://furuse.work/ops/generative/pl/pl_
 
 ## No.2026.240 —— Illumination Cone versus Imaging NA — Change Only the Opening of the Light Cone and the Same Dent, Scratch and Satin Patch Vanish or Appear
 
-In evaluating Illumination Cone versus Imaging NA, while Scratch and Satin Patch Vanish or Appear. For Illumination Cone versus Imaging NA, the measured data compares shallow with dents and tracks. The contrast between hairline and finish shows that change Only the Opening of the Light Cone and the Same Dent.
+For illumination cones and observation NA, merely changing the cone's opening makes the same dents, scratches, and unevenness vanish or appear. Computed data on mirror surfaces and metal parts show how hairlines change. Satin finish versus light source shows this same effect.
 
 [![Illumination Cone versus Imaging NA — Change Only the Opening of the Light Cone and the Same Dent, Scratch and Satin Patch Vanish or Appear](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illumination_cone_vs_na/02_works_by_cone_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illumination_cone_vs_na/02_works_by_cone.png)
 
@@ -1044,7 +1044,7 @@ Ops used (notes): [`blast_normals`](https://furuse.work/ops/optics/finish/blast_
 
 ## No.2026.254 —— Matching on the Direction of Brightness Change — NCC Falls at 10 % Occlusion, Code Matching Holds to Over 60 %
 
-For Matching on the Direction of Brightness Change, while Code Matching Holds to Over 60 %. For Matching on the Direction of Brightness Change, we place normalised in measured data, then. The contrast between normalised and cross-correlation shows that nCC Falls at % Occlusion, Code Matching Holds to Over %.
+Matching by change direction rather than brightness contrasts NCC, which fails at 10% occlusion, with sign matching, which lasts longer. Measured template data compared NCC with partial matching. The gap between gloss and one-sided effects marks the judgment limit.
 
 [![Matching on the Direction of Brightness Change — NCC Falls at 10 % Occlusion, Code Matching Holds to Over 60 %](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_code_matching_breakdown/01_breakdown_occlusion_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_code_matching_breakdown/01_breakdown_occlusion.png)
 
@@ -1088,7 +1088,7 @@ Ops used (notes): [`isc_match`](https://furuse.work/ops/codematch/match/isc_matc
 
 ## No.2026.256 —— Flagging What Differs from Aligned Good Samples — a Variation Model with a Declared False-Alarm Rate, and Where Real Images Break It
 
-Using Flagging What Differs from Aligned Good Samples in practice is difficult because a Variation. The Flagging What Differs from Aligned Good Samples test uses inspection from synthetic data to. The contrast between inspection and classic shows that a Variation Model with a Declared False-Alarm Rate, and Where.
+Comparing good samples to detect the unusual involves a variation-model with a declared false-detection rate and its failures on real images. Synthetic inspection data checked the classic method and image count separately. Pixel and defect differences show the rate and its failures.
 
 [![Flagging What Differs from Aligned Good Samples — a Variation Model with a Declared False-Alarm Rate, and Where Real Images Break It](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_good_sample_variation_model/01_band_width_alignment_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_good_sample_variation_model/01_band_width_alignment.png)
 
@@ -1122,7 +1122,7 @@ Ops used (notes): [`anomaly_image_auroc`](https://furuse.work/ops/spc/anomaly_ev
 
 ## No.2026.264 —— Anomaly Detection from Good Samples Only — Classical Patch Features, a Per-Position Distribution Against a Memory Bank on One Yard-Stick, Down to a Recall-Guaranteeing Threshold
 
-For Anomaly Detection from Good Samples Only, while Down to a Recall-Guaranteeing the method. For Anomaly Detection from Good Samples Only, the synthetic data compares most with common and. The contrast between most and common shows that classical Patch Features, while Down to a Recall-Guaranteeing the method.
+Learning from good parts alone without deep features, we compare position-wise distributions and a memory-bank on one scale, up to a cutoff that guarantees recall. Synthetic inspection and research data showed how the features change. The patch-to-defect gap marks the decision limit.
 
 [![Anomaly Detection from Good Samples Only — Classical Patch Features, a Per-Position Distribution Against a Memory Bank on One Yard-Stick, Down to a Recall-Guaranteeing Threshold](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_patch_anomaly/01_anomaly_maps_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_patch_anomaly/01_anomaly_maps.png)
 
@@ -1162,7 +1162,7 @@ Ops used (notes): [`anomaly_image_auroc`](https://furuse.work/ops/spc/anomaly_ev
 
 ## No.2026.258 —— Counting Dense Bubbles — When the Overlap Is Too Deep to Decide, Return an Interval Instead of a Count
 
-Deeply overlapping bubbles cannot always be resolved as one or two objects from a single picture Synthetic circles and real bubble shapes are scored by the prominence of distance-transform peaks The figure shows the interval widening with overlap and avoiding confident miscounts.
+One image cannot tell one bubble from two under deep overlap. From peak prominence of the distance transform on synthetic circles and real bubbles, we returned lower and upper bounds, not a firm count. In the figure, intervals widen with overlap and curb false claims better than a forced count.
 
 [![Counting Dense Bubbles — When the Overlap Is Too Deep to Decide, Return an Interval Instead of a Count](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dense_bubble_count/01_real_bubbles_verdict_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dense_bubble_count/01_real_bubbles_verdict.png)
 
@@ -1204,7 +1204,7 @@ Ops used (notes): [`blob_count_interval`](https://furuse.work/ops/blob/split/blo
 
 ## No.2026.280 —— Fourier Ptychography — 20x-Equivalent Resolution and Phase from a 4x Objective's Wide Field, by Iterative Phase Retrieval
 
-For Fourier Ptychography, while by Iterative Phase Retrieval. A synthetic data case for Fourier Ptychography links keep, low-magnification, and take. The contrast between keep and low-magnification shows that 20x-Equivalent Resolution and Phase from a x Objective's Wide Field, by Iterative Phase Retrieval.
+Fourier ptychography keeps a fourfold objective's wide field while iterative phase retrieval yields twentyfold-equivalent resolution and phase. Low-magnification simulations relate the array to illumination. Angle and frequency space mark the assessment limit.
 
 [![Fourier Ptychography — 20x-Equivalent Resolution and Phase from a 4x Objective's Wide Field, by Iterative Phase Retrieval](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fourier_ptychography/01_usaf_4x_fp_20x_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fourier_ptychography/01_usaf_4x_fp_20x.png)
 
@@ -1242,7 +1242,7 @@ Ops used (notes): [`coherent_image`](https://furuse.work/ops/optics/coherent/coh
 
 ## No.2026.281 —— Sorting Multi-Robot Plans with the Same Starts and Goals by How They Wind — Counting Homotopy Classes with Space-Time Braids and Dynnikov Coordinates, 61 Planner Candidates in 26 Classes
 
-A comparison of Sorting Multi-Robot Plans with the Same Starts and Goals by How They Wind matters when. A computed data case for Sorting Multi-Robot Plans with the Same Starts and Goals by How They Wind. The contrast between stack and moving shows that counting Homotopy Classes with Space-Time Braids and Dynnikov.
+When multi-robot plans between the same start and goal are sorted by winding, sixty-one candidates fall into twenty-six classes. Planar calculations relate vehicles to time. Continuity and projection mark the assessment limit.
 
 [![Sorting Multi-Robot Plans with the Same Starts and Goals by How They Wind — Counting Homotopy Classes with Space-Time Braids and Dynnikov Coordinates, 61 Planner Candidates in 26 Classes](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_braid_homotopy_classes/01_braid_classes_spacetime.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_braid_homotopy_classes/01_braid_classes_spacetime.gif)
 
@@ -1276,7 +1276,7 @@ Ops used (notes): [`braid_class_representatives`](https://furuse.work/ops/drive/
 
 ## No.2026.282 —— The Marechal Approximation Breaks at Different RMS Errors for Different Aberration Shapes
 
-For The Marechal Approximation Breaks at Different root-mean-square Errors, the measurement can become unreliable. For The Marechal Approximation Breaks at Different root-mean-square Errors, we place four in computed data. The contrast between four and noll-normalised shows that the measurement can become unreliable.
+With the Maréchal criterion, equal root-mean-square wavefront error across aberration shapes challenges measurement certainty. We normalized computed Maréchal data to compare defocus with astigmatism. Comparing coma and spherical aberration shows that measurement certainty is a challenge.
 
 [![The Marechal Approximation Breaks at Different RMS Errors for Different Aberration Shapes](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_wavefront_aberration_limits/01_aberration_limits_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_wavefront_aberration_limits/01_aberration_limits.png)
 
@@ -1296,7 +1296,7 @@ Ops used (notes): [`pupil_psf`](https://furuse.work/ops/optics/wave/pupil_psf.ht
 
 ## No.2026.283 —— A Four-Angle Polarization Camera Leaves Seven Mueller (4-by-4 polarization-transfer matrix) Dimensions Unseen
 
-For A Four-Angle Polarization Camera Leaves Seven, the measurement can become unreliable. For A Four-Angle Polarization Camera Leaves Seven, the computed data compares design with matrix and tracks formed. The contrast between design and matrix shows that the measurement can become unreliable.
+Mueller evaluation of a four-orientation polarization camera challenges measurement certainty. With computed data, we treated linear micro-analysers and the design matrix and examined changes in hand-written values. Comparing computation and the generation side confirms this challenge.
 
 [![A Four-Angle Polarization Camera Leaves Seven Mueller (4-by-4 polarization-transfer matrix) Dimensions Unseen](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_mueller_dofp_observability/01_observability_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_mueller_dofp_observability/01_observability.png)
 
@@ -1316,7 +1316,7 @@ Ops used (notes): [`mueller_element`](https://furuse.work/ops/optics/polarizatio
 
 ## No.2026.284 —— Slanted-Edge SFR Misreads MTF50 (spatial frequency at 50% MTF) Through Gamma as Well as Edge Angle
 
-In evaluating Slanted-Edge SFR Misreads the method Through the method as, the measurement can. The Slanted-Edge SFR Misreads the method Through the method as test uses pixel from computed. The contrast between pixel and system shows that the measurement can become unreliable.
+Measurement certainty is a challenge when slanted-edge SFR is evaluated for tone exponent as well as angle. We used computed pixels for angle and tone exponent and checked noise and steps separately. Comparing computation and diffraction shows that measurement certainty is a challenge.
 
 [![Slanted-Edge SFR Misreads MTF50 (spatial frequency at 50% MTF) Through Gamma as Well as Edge Angle](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_slanted_edge_sfr_limits/01_sfr_limits_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_slanted_edge_sfr_limits/01_sfr_limits.png)
 
@@ -1344,7 +1344,7 @@ The recurring finding is that a number without its definition cannot be compared
 
 ## No.2026.120 —— Matching Full 2-D Inspection to Sampled 3-D Inspection — A Grid Overlaps Itself
 
-In evaluating Matching Full two-dimensional Inspection to Sampled three-dimensional Inspection, A Grid. The test uses real from computed data to separate line from stages. The contrast between images and every shows that a Grid Overlaps Itself.
+When full two-dimensional inspection is matched to sampled three-dimensional inspection, the grid overlaps itself. Using a computed assembly line, we checked the two stages and the internals separately. The distinction between the shop floor and the numbers reveals how the grid overlaps itself.
 
 [![Matching Full 2-D Inspection to Sampled 3-D Inspection — A Grid Overlaps Itself](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_aoi_ct_traceability/01_inspection_and_reconstructed_ct_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_aoi_ct_traceability/01_inspection_and_reconstructed_ct.png)
 
@@ -1382,7 +1382,7 @@ Ops used (notes): [`filtered_backprojection`](https://furuse.work/ops/tomography
 
 ## No.2026.091 —— As-built wall deviation — the bounding box measures the room's heading, not its size
 
-For As-built wall deviation, the bounding box measures the room's heading, not its size. A computed data case links indoor, point, and cloud. The contrast between carries and defects shows that the bounding box measures the room's heading, not its size.
+On a finished room's walls, an enclosing cuboid measures orientation, not dimensions. We built computed data with inner dimensions and related the indoor point cloud to the plan. The distinction between out-of-plane and seeded values reveals how the cuboid measures orientation, not dimensions.
 
 [![As-built wall deviation — the bounding box measures the room's heading, not its size](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_asbuilt_wall_deviation/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_asbuilt_wall_deviation/01_scene.png)
 
@@ -1420,7 +1420,7 @@ Ops used (notes): [`aabb`](https://furuse.work/ops/3d/bounds/aabb.html) · [`ang
 
 ## No.2026.092 —— Measuring electrode breathing in microns — sub-pixel is not enough
 
-When measuring Measuring electrode breathing in microns, sub-pixel is not enough. The computed data compares swelling with read and tracks cross-sections. The contrast between tracking and layer shows that sub-pixel is not enough.
+When electrode breathing is measured in µm, not just any sub-pixel method will do. Using computed data on charge, discharge, and timing, we examined how the cross-section images change. The distinction between layer boundaries and the anode shows that not just any sub-pixel method will do.
 
 [![Measuring electrode breathing in microns — sub-pixel is not enough](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_battery_electrode_breathing/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_battery_electrode_breathing/01_scene.png)
 
@@ -1458,7 +1458,7 @@ Ops used (notes): [`auto_threshold`](https://furuse.work/ops/2d/segmentation/aut
 
 ## No.2026.005 —— Measuring Bilateral Asymmetry — The Symmetry Plane Gets Dragged by the Deformation
 
-When measuring Measuring the method Asymmetry, The Symmetry Plane Gets Dragged by the Deformation. The test uses perfectly from synthetic data to separate symmetric from skull. The contrast between bulge and added shows that the Symmetry Plane Gets Dragged by the Deformation.
+When measuring left-right asymmetry, the deformation drags the symmetry plane with it. Using exact synthetic data, we verified left-right symmetry and the synthetic skull separately. Comparing one side with its mirror image reveals how the deformation drags the symmetry plane with it.
 
 [![Measuring Bilateral Asymmetry — The Symmetry Plane Gets Dragged by the Deformation](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bilateral_asymmetry/03_deviation_map_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bilateral_asymmetry/03_deviation_map.png)
 
@@ -1488,7 +1488,7 @@ Ops used (notes): [`chamfer_distance`](https://furuse.work/ops/3d/metrics/chamfe
 
 ## No.2026.013 —— Strain From Speckle Images (DIC)
 
-When measuring Strain From, the measurement can become unreliable. A computed data case links displacement, read, and pair. The contrast between spots and were shows that the measurement can become unreliable.
+When speckle images yield strain, measurement reliability is the key issue. Computed bell-shaped speckles were used to measure how the deformation map relates to the speckle pair. Displacement and window-correlation differences show that measurement reliability is the key issue.
 
 [![Strain From Speckle Images (DIC)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dic_strain/04_strain_map_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dic_strain/04_strain_map.png)
 
@@ -1524,7 +1524,7 @@ Ops used (notes): [`axes_frame`](https://furuse.work/ops/annotate/plot/axes_fram
 
 ## No.2026.097 —— Die tilt and TSV overlay from one CT — tilt fakes rotation too
 
-In evaluating Die tilt and TSV overlay from one CT, tilt fakes rotation too. The measured data compares stacked with dies and tracks carry. The contrast between lattice and planted shows that tilt fakes rotation too.
+When a die's tilt and TSV misalignment are separated in one CT volume, tilt even mimics rotation. Measured data for the upper and lower dies and planted values were used to examine how the volume changes. Differences between top surfaces and openings show that tilt even mimics rotation.
 
 [![Die tilt and TSV overlay from one CT — tilt fakes rotation too](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_die_tilt_tsv_overlay/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_die_tilt_tsv_overlay/01_scene.png)
 
@@ -1558,7 +1558,7 @@ Ops used (notes): [`fit_line3`](https://furuse.work/ops/3d/geometry/fit_line3.ht
 
 ## No.2026.014 —— Dimensional Inspection of a Machined Part — Bias and Scatter as Two Numbers
 
-For Dimensional Inspection of a Machined Part, Bias and Scatter as Two Numbers. We place defined in measured data, then compare signed and distance. The contrast between function and imaged shows that bias and Scatter as Two Numbers.
+In evaluating dimensional inspection of industrial parts, bias and scatter are reported separately. Signed values were prepared within calculations, and the distance function was compared with noise. Differences between caliper and variance-based methods show that bias and scatter are reported separately.
 
 [![Dimensional Inspection of a Machined Part — Bias and Scatter as Two Numbers](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dimensional_inspection/01_slot_bias_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dimensional_inspection/01_slot_bias.png)
 
@@ -1590,7 +1590,7 @@ Ops used (notes): [`add_metrology_object_circle_measure`](https://furuse.work/op
 
 ## No.2026.018 —— Fibre Orientation Distribution — Angles Repeat Every 180 Degrees, and a Naive Mean Is 90 Degrees Off
 
-In evaluating Fibre Orientation Distribution, while and a Naive Mean Is 90 Degrees Off. A computed data case links fibres, drawn, and mises. The contrast between read and structure shows that angles Repeat Every Degrees, and a Naive Mean Is Degrees Off.
+When measuring fibre orientation, angles have a 180-degree period, so naive averages shift. Computed von Mises data were used to measure how that distribution relates to the structure tensor. Comparing the arithmetic mean with the report shows that periodic angles shift under naive averaging.
 
 [![Fibre Orientation Distribution — Angles Repeat Every 180 Degrees, and a Naive Mean Is 90 Degrees Off](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fiber_orientation/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fiber_orientation/01_scene.png)
 
@@ -1628,7 +1628,7 @@ Ops used (notes): [`coherence`](https://furuse.work/ops/acoustics/dual/coherence
 
 ## No.2026.021 —— Gear Tooth Metrology — Eccentricity Is Order 1, Teeth Are Order z
 
-For Gear Tooth Metrology, the method Is Order 1, Teeth Are Order z. We place profile in computed data, then compare read and drawn. The contrast between closed-form and involute shows that the method Is Order , Teeth Are Order z.
+While assessing a gear's tooth profile, off-centering appears at first order and the teeth at order z. We prepared an involute as computed data and compared the closed form with the zero point. Comparing the least-squares circle with the diameter shows that off-centering sits at first order and the teeth at order z.
 
 [![Gear Tooth Metrology — Eccentricity Is Order 1, Teeth Are Order z](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_gear_tooth_metrology/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_gear_tooth_metrology/01_scene.png)
 
@@ -1666,7 +1666,7 @@ Ops used (notes): [`blob_boundaries`](https://furuse.work/ops/blob/extract/blob_
 
 ## No.2026.073 —— Metallographic Grain Size — The Planimetric and Intercept Methods Fall Off Different Cliffs
 
-Grain-size results depend on the estimator when etched boundaries break or uneven contrast overlaps A synthetic microstructure with known grains receives etching variation, noise The plots show the area method failing through interaction.
+When metal grain boundaries break or shading varies, grain size depends on the method. We gave known synthetic grains uneven etching, noise, and gaps and compared two methods. In the figure, interaction abruptly breaks the area method, but the intercept method tolerates deeper gaps.
 
 [![Metallographic Grain Size — The Planimetric and Intercept Methods Fall Off Different Cliffs](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_metal_grain_size/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_metal_grain_size/01_scene.png)
 
@@ -1706,7 +1706,7 @@ Ops used (notes): [`bin_threshold`](https://furuse.work/ops/2d/segmentation/bin_
 
 ## No.2026.100 —— Why the Seafloor Smiles — A Wrong Sound-Speed Profile Breaks Only the Outer Beams
 
-When measuring Why the Seafloor Smiles, A Wrong Sound-Speed Profile Breaks Only the Outer Beams. A measured data case links constant-layer, trace, and omits. The contrast between snell and refraction shows that a Wrong Sound-Speed Profile Breaks Only the Outer Beams.
+In multibeam bathymetry, where the seafloor appears to smile, a mistaken sound speed damages only the outer-beams. We built measured data with a revision case and related constant speed to ray tracing. Comparing refraction with the results below shows that only the outer-beams break.
 
 [![Why the Seafloor Smiles — A Wrong Sound-Speed Profile Breaks Only the Outer Beams](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_multibeam_bathymetry/12_across_track_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_multibeam_bathymetry/12_across_track.png)
 
@@ -1748,7 +1748,7 @@ Ops used (notes): [`beamform_delay_sum`](https://furuse.work/ops/rangedoppler/be
 
 ## No.2026.029 —— Particle Size Distribution From Images — Merging and Edge Cuts Pull Opposite Ways and Cancel
 
-When measuring Particle Size Distribution From Images, Merging and Edge Cuts Pull Opposite Ways and. The synthetic data compares scatter with particles and tracks merges. The contrast between counted and separately shows that merging and Edge Cuts Pull Opposite Ways and Cancel.
+In image-based particle sizing, merges and edge cuts act oppositely and cancel midway. Using synthetic particles and images, we examined how the separate counts change. Comparing area fraction with number basis shows that merges and edge cuts act oppositely and cancel midway.
 
 [![Particle Size Distribution From Images — Merging and Edge Cuts Pull Opposite Ways and Cancel](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_particle_sizing/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_particle_sizing/01_scene.png)
 
@@ -1786,7 +1786,7 @@ Ops used (notes): [`blob_features`](https://furuse.work/ops/blob/measure/blob_fe
 
 ## No.2026.031 —— Stress by Photoelasticity — Unwrapping Fails First at the Isotropic Point
 
-A comparison of Stress by Photoelasticity matters when Unwrapping Fails First at the Isotropic Point. A computed data case links closed-form, field, and diametrally. The contrast between loaded and disc shows that unwrapping Fails First at the Isotropic Point.
+In photoelastic stress measurement, unwrapping-fails first at an isotropic point. With computed data including disc compression, we related the closed-form stress field to the matrix. Comparing methods with polariscope images shows that unwrapping-fails first at an isotropic point.
 
 [![Stress by Photoelasticity — Unwrapping Fails First at the Isotropic Point](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photoelasticity/01_polariscope_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photoelasticity/01_polariscope.png)
 
@@ -1814,7 +1814,7 @@ Ops used (notes): [`axes_frame`](https://furuse.work/ops/annotate/plot/axes_fram
 
 ## No.2026.103 —— Measuring Rail with a Chord — At the Wavelengths Where the Transfer Function Is Zero, Any Amplitude Reads Zero
 
-Using Measuring Rail with a Chord in practice is difficult because At the Wavelengths Where the. The test uses reading from computed data to separate track from irregularity. The contrast between distance and mid-point shows that at the Wavelengths Where the Transfer Function Is Zero, Any Amplitude Reads Zero.
+In chord-based rail measurement, a wavelength with zero transfer reads zero millimetres at any amplitude. Using measured track data, we separately checked the irregularities and the midpoint. Comparing distance with rail grinding confirms the same zero reading.
 
 [![Measuring Rail with a Chord — At the Wavelengths Where the Transfer Function Is Zero, Any Amplitude Reads Zero](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_rail_corrugation/02_transfer_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_rail_corrugation/02_transfer.png)
 
@@ -1852,7 +1852,7 @@ Ops used (notes): [`octave_bands`](https://furuse.work/ops/acoustics/level/octav
 
 ## No.2026.104 —— Counting and Measuring Real Coins — A Correct Answer Is Not a Safe One
 
-In evaluating Counting and Measuring Real Coins, A Correct Answer Is Not a Safe One. The computed data compares photograph with famous and tracks global. The contrast between cannot and work shows that a Correct Answer Is Not a Safe One.
+In counting and measuring photographed coins, a right answer need not have margin. Using measured data, we examined how the failure cases change with the lighting and global cutoff. Comparing the well-known image with its background reveals a right answer need not have margin.
 
 [![Counting and Measuring Real Coins — A Correct Answer Is Not a Safe One](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_coin_metrology/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_coin_metrology/01_scene.png)
 
@@ -1884,7 +1884,7 @@ Ops used (notes): [`blob_count`](https://furuse.work/ops/2d/features/blob_count.
 
 ## No.2026.083 —— Pitch, Flank Angle and Pitch Diameter From a Thread Silhouette — Tilt Shows Up With Opposite Signs on the Two Flanks
 
-Using Pitch, Flank Angle and Pitch Diameter From a Thread Silhouette in practice is difficult because. The measured data compares like with drawn and tracks basic. The contrast between triangle and form shows that tilt Shows Up With Opposite Signs on the Two Flanks.
+When a thread outline yields pitch, pitch diameter and flank angle, tilt reverses sign between left and right flanks. Computed data with the basic triangle and closed form showed how equivalents change. Comparing projection and binarization shows that tilt reverses sign between left and right flanks.
 
 [![Pitch, Flank Angle and Pitch Diameter From a Thread Silhouette — Tilt Shows Up With Opposite Signs on the Two Flanks](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_screw_thread_metrology/07_sampling_frames_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_screw_thread_metrology/07_sampling_frames.png)
 
@@ -1922,7 +1922,7 @@ Ops used (notes): [`fit_line_contours`](https://furuse.work/ops/2d/contour/fit_l
 
 ## No.2026.112 —— Stockpile Inventory — The Answer Is Fixed by the Ground Nobody Measured
 
-Using Stockpile Inventory in practice is difficult because The Answer Is Fixed by the Ground Nobody. The measured data compares three-dimensional with scan and tracks mining. The contrast between aggregates and ports shows that the Answer Is Fixed by the Ground Nobody Measured.
+For stockpile inventory, the ground beneath the pile, which nobody measures, determines the result. Using measured data covering mines and aggregates, we examined how ports change. Comparing three-dimensional data with scans shows that this unmeasured ground determines the result.
 
 [![Stockpile Inventory — The Answer Is Fixed by the Ground Nobody Measured](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_stockpile_volume/05_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_stockpile_volume/05_scene.png)
 
@@ -1964,7 +1964,7 @@ Ops used (notes): [`color_bar`](https://furuse.work/ops/annotate/furniture/color
 
 ## No.2026.038 —— Strain History in a Creep Test — Cumulative or Direct?
 
-A comparison of Strain History in a Creep Test matters when Cumulative or Direct. A computed data case links hour, frames, and accumulating. The contrast between adjacent-frame and displacements shows that cumulative or Direct?.
+For the strain history of a creep test, the choice is cumulative or direct. We created time-resolved computed data and measured how time-lapse frames relate to adjacent frames. The distinction between reference-frame and direct comparison resolves that choice.
 
 [![Strain History in a Creep Test — Cumulative or Direct?](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_strain_history/01_speckle_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_strain_history/01_speckle.png)
 
@@ -1998,7 +1998,7 @@ Ops used (notes): [`axes_frame`](https://furuse.work/ops/annotate/plot/axes_fram
 
 ## No.2026.040 —— How Far Sa / Sq / Sz Survive Sampling and Cutoff
 
-A comparison of How Far Sa / Sq / Sz matters when the measurement can become unreliable. The test uses surface from measured data to separate synthesised from prescribed. The contrast between tilt and waviness shows that the measurement can become unreliable.
+In assessing roughness parameters Sa, Sq, and Sz against sampling and cutoff, measurement certainty is the central issue. Specified synthetic data tested the lay and the parameters separately. The gap between overstatement and plane removal shows that certainty is the issue.
 
 [![How Far Sa / Sq / Sz Survive Sampling and Cutoff](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_surface_roughness/01_surface_components_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_surface_roughness/01_surface_components.png)
 
@@ -2028,7 +2028,7 @@ Ops used (notes): [`profile_params`](https://furuse.work/ops/roughness/measure/p
 
 ## No.2026.196 —— A Vision-Based Tactile Sensor (Elastic Membrane + Camera), Synthesised and Inverted — Hertz Contact and Photometric Stereo in Closed Form as the Gate, Force Read from a Pressed Sphere
 
-A comparison of A Vision-Based Tactile Sensor, while Force Read from a Pressed Sphere. The A Vision-Based Tactile Sensor, Synthesised and Inverted test uses second from synthetic data. The contrast between fullseye and series shows that hertz Contact and Photometric Stereo in Closed Form as the method, Force Read.
+Visuotactile sensor synthesis and inversion read sphere indentation force against closed-form Hertz-contact and photometric stereo. Synthetic physics simulation checked series and system separately. The gap between elastic contact and the half-space shows the limits of the judgment.
 
 [![A Vision-Based Tactile Sensor (Elastic Membrane + Camera), Synthesised and Inverted — Hertz Contact and Photometric Stereo in Closed Form as the Gate, Force Read from a Pressed Sphere](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacsim_elastic_membrane/01_tacsim_membrane_rgb_crop_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacsim_elastic_membrane/01_tacsim_membrane_rgb_crop.png)
 
@@ -2070,7 +2070,7 @@ Ops used (notes): [`combined_modulus`](https://furuse.work/ops/drive/tacsim/comb
 
 ## No.2026.198 —— Reading the Shear Field, Stick/Slip and Tangential Force from a Tactile Sensor's Marker Array — Cattaneo–Mindlin in Closed Form and Finite-Element Nodal Displacements as the Gate
 
-In evaluating Reading the Shear Field, Stick/Slip and Tangential Force from a Tactile Sensor's Marker. For Reading the Shear Field, while then compare exhibit and physics-simulation. The contrast between fullseye and round shows that cattaneo–Mindlin in Closed Form and Finite-Element Nodal Displacements as the method.
+We read shear fields, stick and slip, and tangential-force from visuotactile markers. Synthetic physics simulation compared series and system. The gap between partial slip and the normal shows that Cattaneo–Mindlin closed forms and finite-element-nodal displacements are the criterion.
 
 [![Reading the Shear Field, Stick/Slip and Tangential Force from a Tactile Sensor's Marker Array — Cattaneo–Mindlin in Closed Form and Finite-Element Nodal Displacements as the Gate](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacsim_marker_shear/01_tacslip_marker_frames_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacsim_marker_shear/01_tacslip_marker_frames.png)
 
@@ -2108,7 +2108,7 @@ Ops used (notes): [`blob_features`](https://furuse.work/ops/blob/measure/blob_fe
 
 ## No.2026.199 —— Reading In-Grasp Tilt and Torsion Torque from a Tactile Sensor's Marker Field with a 'Tactile Dipole' — Gauss's Law Becoming an Identity in the Half-Space as the Gate
 
-In evaluating Reading In-Grasp Tilt and Torsion Torque from a Tactile Sensor's Marker Field with a. For Reading In-Grasp Tilt and Torsion Torque from a Tactile Sensor's Marker Field with a 'Tactile. The contrast between physics-simulation and fullseye shows that gauss's Law Becoming an the method in the Half-Space as.
+A tactile dipole reads in-grasp tilt and twist torque from visuotactile markers, judged by Gauss's law as a half-space equivalence. Synthetic physics simulation of the series showed how re-implementation changes. The gap between the method and learning shows the limits of the judgment.
 
 [![Reading In-Grasp Tilt and Torsion Torque from a Tactile Sensor's Marker Field with a 'Tactile Dipole' — Gauss's Law Becoming an Identity in the Half-Space as the Gate](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tactile_dipole_torque/01_tactorque_marker_field_dipole_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tactile_dipole_torque/01_tactorque_marker_field_dipole.png)
 
@@ -2146,7 +2146,7 @@ Ops used (notes): [`boussinesq_kernel`](https://furuse.work/ops/drive/tactorque/
 
 ## No.2026.202 —— Measuring a Powder Heap from Images — Angle of Repose, Volume, Mass, Flowability and Discharge by Rules, with Closed Forms, Published Values and MuJoCo as the Truth
 
-When measuring Measuring a Powder Heap from Images, while Published Values and MuJoCo as the Truth. For Measuring a Powder Heap from Images, while then compare fullseye and series. The contrast between continues and prior shows that angle of Repose, while Published Values and MuJoCo as the Truth.
+Powder heap images give repose angle, volume-mass, flowability and-discharge by rules, with truth from closed-forms, published-values and MuJoCo. Synthetic physics simulation compared series and prior work. The gap between powder weighing and observation shows that rules alone suffice.
 
 [![Measuring a Powder Heap from Images — Angle of Repose, Volume, Mass, Flowability and Discharge by Rules, with Closed Forms, Published Values and MuJoCo as the Truth](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_granular_heap_repose/01_granular_heap_side_view_two_lines_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_granular_heap_repose/01_granular_heap_side_view_two_lines.png)
 
@@ -2192,7 +2192,7 @@ Ops used (notes): [`beverloo_fit`](https://furuse.work/ops/drive/granular/beverl
 
 ## No.2026.205 —— Measuring Food Cutting from Images — Knife Tracking, Slice Thickness, Cut-Surface Roughness and Cutting Force from Wrist Deflection, with Closed Forms and MuJoCo as the Truth
 
-A comparison of Measuring Food Cutting from Images matters when Knife Tracking, Slice Thickness. For Measuring Food Cutting from Images, the synthetic data compares physics-simulation with. The contrast between subject and robotic shows that knife Tracking, while with Closed Forms and MuJoCo as the Truth.
+Food-cutting images give blade tracking, slice thickness, cut roughness and wrist-deflection force, with truth from closed-forms and MuJoCo. Synthetic physics simulation of the series showed how the subject changes. The gap between the robot and food slicing reveals the limit of the check.
 
 [![Measuring Food Cutting from Images — Knife Tracking, Slice Thickness, Cut-Surface Roughness and Cutting Force from Wrist Deflection, with Closed Forms and MuJoCo as the Truth](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_food_cutting_measure/01_cutting_track_force.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_food_cutting_measure/01_cutting_track_force.gif)
 
@@ -2234,7 +2234,7 @@ Ops used (notes): [`cut_depth_from_side`](https://furuse.work/ops/drive/cutting/
 
 ## No.2026.207 —— Gating Large-Deformation Contact of a Soft Dome Fingertip Pressed on a Flat Object with a Scaling Law and an Exact Continuum Solution — As Printed, the Linear Coefficient of Eq. (3) Makes the Force of a Cylinder Negative; 2n/(1+n) Is Derived from the Paper's Own Model
 
-Using Gating Large-Deformation Contact of a Soft Dome Fingertip Pressed on a Flat Object with a Scaling. The Gating Large-Deformation Contact of a Soft Dome Fingertip Pressed on a Flat Object with a. The contrast between next and step shows that as Printed, while 2n/ Is Derived from the Paper's Own Model.
+Large deformation of a soft-dome fingertip against a flat object follows the paper's two-n-over-one-plus-n model. Physics calculations use scaling together with an exact solution from continuum mechanics to check the series and source separately. Fingertip and framework results expose the check's limit.
 
 [![Gating Large-Deformation Contact of a Soft Dome Fingertip Pressed on a Flat Object with a Scaling Law and an Exact Continuum Solution — As Printed, the Linear Coefficient of Eq. (3) Makes the Force of a Cylinder Negative; 2n/(1+n) Is Derived from the Paper's Own Model](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacdome_large_deformation/01_tacdome_press_sweep.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacdome_large_deformation/01_tacdome_press_sweep.gif)
 
@@ -2272,7 +2272,7 @@ Ops used (notes): [`contact_patch_radius`](https://furuse.work/ops/drive/tacdome
 
 ## No.2026.209 —— Measuring Grinding, Polishing and Wiping from Images — Removed Depth, Wiped Band Width and Area Checked by Preston's Law, Closed-Form Contact Pressure and MuJoCo; a Compliant Wrist Keeps the Band Even over a 2 mm Height Error while a Stiff Wrist Lifts Off and Leaves Gaps
 
-For Measuring Grinding, Polishing and Wiping from Images, Removed Depth, Wiped Band Width and Area. For Measuring Grinding, Polishing and Wiping from Images, the measured data compares. The contrast between continues and imitation shows that removed Depth, Wiped Band Width and Area Checked by Preston's Law.
+In image-measured grinding-polishing and wiping, a soft wrist-keeps the band even at 2 mm plate error, but a stiff-wrist lifts and fails. Physics simulation of the series showed how imitation learning changes. The gap between variable compliance and stiffness shows the limit of the check.
 
 [![Measuring Grinding, Polishing and Wiping from Images — Removed Depth, Wiped Band Width and Area Checked by Preston's Law, Closed-Form Contact Pressure and MuJoCo; a Compliant Wrist Keeps the Band Even over a 2 mm Height Error while a Stiff Wrist Lifts Off and Leaves Gaps](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_polish_wipe_measure/02_polish_track_profiles_vs_closed_form_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_polish_wipe_measure/02_polish_track_profiles_vs_closed_form.png)
 
@@ -2310,7 +2310,7 @@ Ops used (notes): [`band_width_profile`](https://furuse.work/ops/drive/polish/ba
 
 ## No.2026.210 —— Measuring Scooping and Pouring of Powder from Images — the Scooped Amount from Side-View Silhouettes, the Pour Rate from PIV (particle image velocimetry) Speed × a Boolean-Model Line Density, within 5 % of MuJoCo's Ball Counts and Line Crossings
 
-A comparison of Measuring Scooping and the method of Powder from Images matters when the Scooped. For Measuring Scooping and the method of Powder from Images, while then compare fullseye and. The contrast between continuing and granular shows that the Scooped Amount from Side-View.
+When powder scooping and decanting are measured from images, MuJoCo sphere and crossing counts agree within 5 %. A physics simulation on synthetic data compared the series with prior work. The distinction between powder weighing and mass reveals the limit of the check.
 
 [![Measuring Scooping and Pouring of Powder from Images — the Scooped Amount from Side-View Silhouettes, the Pour Rate from PIV (particle image velocimetry) Speed × a Boolean-Model Line Density, within 5 % of MuJoCo's Ball Counts and Line Crossings](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_powder_scoop_pour/01_scoop_spoon_side_views_states_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_powder_scoop_pour/01_scoop_spoon_side_views_states.png)
 
@@ -2358,7 +2358,7 @@ Ops used (notes): [`beverloo_rate`](https://furuse.work/ops/drive/granular/bever
 
 ## No.2026.211 —— Measuring Mortar Grinding — D50 of the Size Distribution, Comminution Laws, Spread over Three Independent Runs and AE Band Power, against Published Laser-Diffraction Measurements; a Different D50 Definition Is a One-Bin, 12 % Bias
 
-When measuring Measuring Mortar Grinding, while 12 % Bias. For Measuring Mortar Grinding, while then compare fullseye and series. The contrast between third and powder shows that d of the Size Distribution, while % Bias.
+In mortar grinding, a change in the D-fifty definition creates a one-bin bias of twelve percent. Physics simulations compare the series with the powder study. The third exhibit and its subject expose the check's limit.
 
 [![Measuring Mortar Grinding — D50 of the Size Distribution, Comminution Laws, Spread over Three Independent Runs and AE Band Power, against Published Laser-Diffraction Measurements; a Different D50 Definition Is a One-Bin, 12 % Bias](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_powder_grinding_ae/01_synthetic_particles_labels_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_powder_grinding_ae/01_synthetic_particles_labels.png)
 
@@ -2400,7 +2400,7 @@ Ops used (notes): [`ae_band_power`](https://furuse.work/ops/drive/grind/ae_band_
 
 ## No.2026.215 —— How Long to Grind for a Uniform Dose — Content Uniformity from Particle Size by Closed Form and Monte Carlo, Inverted through Comminution Laws; the Low CV from Photos Was the Same 12 Images at Different Scales
 
-A comparison of How Long to Grind for a Uniform Dose matters when Content Uniformity from Particle Size. A computed data case for How Long to Grind for a Uniform Dose links sequel, measuring, and mortar. The contrast between grinding and take shows that content Uniformity from Particle Size by Closed Form and Monte.
+In finding the grinding time that equalizes each dose, the low CV in photographs proved to be the same images merely rescaled. We prepared measured data including mortar work and examined how grinding relates to compounding. The gap between the derivation and the number-based result marks the decision limit.
 
 [![How Long to Grind for a Uniform Dose — Content Uniformity from Particle Size by Closed Form and Monte Carlo, Inverted through Comminution Laws; the Low CV from Photos Was the Same 12 Images at Different Scales](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dose_uniformity_from_grinding/01_cv_bias_decomposition_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dose_uniformity_from_grinding/01_cv_bias_decomposition.png)
 
@@ -2438,7 +2438,7 @@ Ops used (notes): [`comminution_energy`](https://furuse.work/ops/drive/grind/com
 
 ## No.2026.216 —— Holding and Cutting with a Knife by Fingertip Visuotactile Sensing Alone — Toughness, Blade Contact Position and How Long a Handle Can Be Held, without a Wrist Force Sensor; the Existing Reader's Torsion Over-read (+33 % at Half Slip) Fixed by a Numerical Partial-Slip Solution
 
-In evaluating Holding and Cutting with a Knife by Fingertip Visuotactile Sensing Alone, Toughness. A computed data case for Holding and Cutting with a Knife by Fingertip Visuotactile Sensing Alone. The contrast between images and pegtactile shows that toughness, Blade Contact Position and How Long a Handle Can Be.
+For a knife held and used through fingertip visual touch alone, a numerical solution for partial slip corrects the existing reader's excess torsion. We generated synthetic food data and measured how cutting relates to images. The gap between fingers and contact wrench marks the limit.
 
 [![Holding and Cutting with a Knife by Fingertip Visuotactile Sensing Alone — Toughness, Blade Contact Position and How Long a Handle Can Be Held, without a Wrist Force Sensor; the Existing Reader's Torsion Over-read (+33 % at Half Slip) Fixed by a Numerical Partial-Slip Solution](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_knife_tactile_toughness/04_pad_images_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_knife_tactile_toughness/04_pad_images.png)
 
@@ -2476,7 +2476,7 @@ Ops used (notes): [`combined_modulus`](https://furuse.work/ops/drive/tacsim/comb
 
 ## No.2026.142 —— How Much of That Number Is Your Measuring - Gauge R&R (gauge repeatability and reproducibility) and Measurement Uncertainty
 
-Using How Much of That Number Is Your Measuring - in practice is difficult because the measurement can. A computed data case for How Much of That Number Is Your Measuring - links separate, comes, and parts. The contrast between then and combine shows that the measurement can become unreliable.
+To find how much of a figure comes from the measurement method, the tools are gauge R&R and measurement uncertainty. We computed data, including control charts, and measured how process capability relates to reporting. Comparing the total with the scoring points to those same tools.
 
 [![How Much of That Number Is Your Measuring - Gauge R&R (gauge repeatability and reproducibility) and Measurement Uncertainty](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_measurement_system_analysis/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_measurement_system_analysis/01_scene.png)
 
@@ -2520,7 +2520,7 @@ Ops used (notes): [`axes_frame`](https://furuse.work/ops/annotate/plot/axes_fram
 
 ## No.2026.219 —— The Resolution Formula Does Not Tell You What You Will Find - Probability of Detection per Lighting (MIL-HDBK-1823A)
 
-A comparison of The Resolution Formula Does Not Tell You What You Will Find matters when the. For The Resolution Formula Does Not Tell You What You Will Find, the measured data compares. The contrast between hairline-finished and metal shows that the measurement can become unreliable.
+A resolution equation does not reveal detectable size, so the answer is detection probability by lighting. Using measured data, we examined hairline-finished metal and a physical model to see how the camera changes. Comparing the processing with ourselves reveals that probability.
 
 [![The Resolution Formula Does Not Tell You What You Will Find - Probability of Detection per Lighting (MIL-HDBK-1823A)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pod_lighting/01_sites_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pod_lighting/01_sites.png)
 
@@ -2556,7 +2556,7 @@ Ops used (notes): [`light_source`](https://furuse.work/ops/optics/illumination/l
 
 ## No.2026.220 —— Speckle Sets the Error Floor of a Laser Sheet-of-Light - It Does Not Average Away, and the Estimator Ranking Flips
 
-When measuring Speckle Sets the Error Floor of a Laser Sheet-of-Light - It Does Not Average Away, and. For Speckle Sets the Error Floor of a Laser Sheet-of-Light - It Does Not Average Away, the. The contrast between same and line shows that and the Estimator Ranking Flips.
+When speckle-sets the error-floor of laser sheet-of-light measurement, it survives averaging and reorders the estimators. Using measured data, we examined weld beads and a sequel study to see how the laser line changes. Comparing additive noise with coherent imaging confirms both.
 
 [![Speckle Sets the Error Floor of a Laser Sheet-of-Light - It Does Not Average Away, and the Estimator Ranking Flips](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_laser_line_speckle_floor/01_line_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_laser_line_speckle_floor/01_line.png)
 
@@ -2590,7 +2590,7 @@ Ops used (notes): [`coherent_image`](https://furuse.work/ops/optics/coherent/coh
 
 ## No.2026.222 —— Fringe Projection Misreads Even a White Groove - Separating the Interreflection, Predicting the Error Before Measuring, and Removing It with Micro Phase Shifting
 
-Using Fringe Projection Misreads Even a White Groove, while and Removing It with Micro Phase Shifting. For Fringe Projection Misreads Even a White Groove - Separating the Interreflection, the measured. The contrast between gloss and metal shows that predicting the Error Before Measuring, and Removing It with Micro.
+When fringe projection fails even on white grooves, we split interreflections from direct light, predict error before capture, and cancel it by micro phase shifting. We computed inner corners and pockets to see how the part changes. Comparing reflectance with gloss supports this.
 
 [![Fringe Projection Misreads Even a White Groove - Separating the Interreflection, Predicting the Error Before Measuring, and Removing It with Micro Phase Shifting](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_interreflection_fringe_error/02_direct_global_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_interreflection_fringe_error/02_direct_global.png)
 
@@ -2632,7 +2632,7 @@ Ops used (notes): [`form_factors_2d`](https://furuse.work/ops/optics/light_trans
 
 ## No.2026.150 —— Scoring an Aberration as a Picture: Zernike Polynomials (orthogonal aberration polynomials on a circular pupil) and the Point Spread Function
 
-When measuring Scoring an Aberration as a Picture: Zernike Polynomials, the measurement can become. For Scoring an Aberration as a Picture: Zernike Polynomials, the measured data compares optical with scored and tracks coefficients. The contrast between read and back shows that the measurement can become unreliable.
+An aberration image can be scored directly as an image, using Zernike polynomials and the point image. We handled coefficients and closed forms on computed data and examined how the exact values change. Comparing the agreement with the disk image shows what both contribute.
 
 [![Scoring an Aberration as a Picture: Zernike Polynomials (orthogonal aberration polynomials on a circular pupil) and the Point Spread Function](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zernike_aberrations/01_zernike_pyramid_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zernike_aberrations/01_zernike_pyramid.png)
 
@@ -2680,7 +2680,7 @@ Ops used (notes): [`fit_zernike`](https://furuse.work/ops/3d/curvilinear/fit_zer
 
 ## No.2026.151 —— Every Speedup Is the Same Arithmetic Regrouped: Scoring Attention with Identities
 
-In evaluating Every Speedup Is the Same Arithmetic Regrouped: the measurement can become unreliable. For Every Speedup Is the Same Arithmetic Regrouped:, the measured data compares speed with memory and tracks trick. The contrast between lineage and that shows that the measurement can become unreliable.
+Speedup tricks are all regroupings of the same count, and attention mechanisms are scored by identities. Using measured data, we covered the lineage and speedups and examined how memory saving changes. Comparing approximations with equalities shows how identities score attention.
 
 [![Every Speedup Is the Same Arithmetic Regrouped: Scoring Attention with Identities](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_attention_identities/01_attention_masks_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_attention_identities/01_attention_masks.png)
 
@@ -2718,7 +2718,7 @@ Ops used (notes): [`attention_apply`](https://furuse.work/ops/llmcore/score/atte
 
 ## No.2026.218 —— Angles and Shifts No Single Phase Can Pin Down, Fixed by Bundling Phases of Different Periods — the Chinese Remainder Theorem in Images
 
-When measuring Angles and Shifts No Single Phase Can Pin Down, Fixed by Bundling Phases of Different. For Angles and Shifts No Single Phase Can Pin Down, Fixed by Bundling Phases of Different Periods. The contrast between modulo and period shows that the Chinese Remainder Theorem in Images.
+Phases of different-periods resolve angles and displacements one measurement cannot fix, applying the Chinese-remainder theorem to images. Measured data on parts and discrimination show how wavelength changes. Common divisors versus residues show how the theorem applies to images.
 
 [![Angles and Shifts No Single Phase Can Pin Down, Fixed by Bundling Phases of Different Periods — the Chinese Remainder Theorem in Images](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_residue_crt/02_residue_rotation_sawtooth_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_residue_crt/02_residue_rotation_sawtooth.png)
 
@@ -2752,7 +2752,7 @@ Ops used (notes): [`crt_displacement`](https://furuse.work/ops/residue/image/crt
 
 ## No.2026.232 —— Moiré (beat fringe between periodic patterns) Alignment — Two Invisible 2 µm Gratings Overlaid Turn a 1 nm Shift into a Readable Fringe Phase
 
-Using Moiré Alignment in practice is difficult because Two Invisible 2 µm Gratings Overlaid Turn a nm. For Moiré Alignment, the synthetic data compares lithography with nanoimprint and tracks overlays. The contrast between mask and wafer shows that two Invisible µm Gratings Overlaid Turn a nm Shift into a.
+In moiré alignment, overlaying two invisible gratings with a two-micrometre pitch makes a one-nanometre shift readable from fringe phase. Calculations cover lithography and nanoimprint while the mask changes. Wafer and pitch results mark the decision limit.
 
 [![Moiré (beat fringe between periodic patterns) Alignment — Two Invisible 2 µm Gratings Overlaid Turn a 1 nm Shift into a Readable Fringe Phase](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_moire_alignment/02_one_nm_steps_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_moire_alignment/02_one_nm_steps.png)
 
@@ -2796,7 +2796,7 @@ Ops used (notes): [`arrow`](https://furuse.work/ops/annotate/pointer/arrow.html)
 
 ## No.2026.233 —— Telecentric Lenses for Dimensional Metrology — Move Only the Stop of the Same Lens and the Height-Dependent Magnification Disappears
 
-Using Telecentric Lenses for Dimensional Metrology in practice is difficult because Move Only the Stop. For Telecentric Lenses for Dimensional Metrology, the synthetic data compares lead with chapter. The contrast between paper and images shows that move Only the Stop of the Same Lens and the Height-Dependent.
+In telecentric dimensional measurement, simply moving the stop of one lens removes height-dependent magnification. Synthetic data on the lead chapter and real images show how the paper changes. Raw telecentric images versus measurements show that stop shift removes it.
 
 [![Telecentric Lenses for Dimensional Metrology — Move Only the Stop of the Same Lens and the Height-Dependent Magnification Disappears](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_telecentric_metrology/08_real_alignment_plate_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_telecentric_metrology/08_real_alignment_plate.png)
 
@@ -2838,7 +2838,7 @@ Ops used (notes): [`add_metrology_object_circle_measure`](https://furuse.work/op
 
 ## No.2026.242 —— Optical Drawings Straight from the Calculation — Lens Layouts, Vision-Setup Drawings and ISO 10110 Element Drawings as SVG / DXF, Scored by Reading the Written Files Back
 
-For Optical Drawings Straight from the Calculation, while Scored by Reading the Written Files Back. The Optical Drawings Straight from the Calculation test uses inspection from computed data to. The contrast between inspection and metrology shows that lens Layouts, while Scored by Reading the Written Files Back.
+In computing optical drawings, written files are read back and scored. Measured visual-inspection data verified metrology and lenses separately. The section and apparatus gap shows lens sections, setup and singlet fabrication drawings written as SVG and DXF, then read back and scored.
 
 [![Optical Drawings Straight from the Calculation — Lens Layouts, Vision-Setup Drawings and ISO 10110 Element Drawings as SVG / DXF, Scored by Reading the Written Files Back](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_optics_drawings/06_setup_ring_coaxial_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_optics_drawings/06_setup_ring_coaxial.png)
 
@@ -2876,7 +2876,7 @@ Ops used (notes): [`chief_ray`](https://furuse.work/ops/optics/design/chief_ray.
 
 ## No.2026.244 —— Counting Interreflection in a Machined Pocket to Convergence — The Direct-Light Model Fits with Albedo 1.32, the Converged Model Returns the Truth
 
-In evaluating Counting Interreflection in a Machined Pocket to Convergence, The Direct-Light Model Fits. For Counting Interreflection in a Machined Pocket to Convergence, the measured data compares. The contrast between concave and part shows that the Direct-Light Model Fits with Albedo 132, the Converged Model.
+In machined pockets, a direct-light model fits at reflectance 1.32, while interreflection counted to convergence recovers the true value. Measured data on parts and reflections showed how inspection rendering changes. The gap between absolute value and meaning marks the judgment limit.
 
 [![Counting Interreflection in a Machined Pocket to Convergence — The Direct-Light Model Fits with Albedo 1.32, the Converged Model Returns the Truth](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pocket_interreflection/02_residuals_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pocket_interreflection/02_residuals.png)
 
@@ -2914,7 +2914,7 @@ Ops used (notes): [`camera_rays`](https://furuse.work/ops/optics/scene/camera_ra
 
 ## No.2026.248 —— Non-Coaxial Optics — a Coaxial-Illumination Beamsplitter Paints a False Defect on a Mirror-Like Part, Removed by a Coating or a Wedge; Fold Mirrors Shrink the Machine
 
-When measuring Non-Coaxial Optics, while Fold Mirrors Shrink the Machine. For Non-Coaxial Optics, the measured data compares inspection with rarely and tracks keep. The contrast between inspection and rarely shows that a Coaxial-Illumination Beamsplitter Paints a False Defect on a Mirror-Like Part, Removed by a.
+In non-coaxial optics, a coaxial half mirror puts false defects on specular parts, a coating and tilt remove them, and folding shrinks the instrument. Computed data covered inspection, the optical axis, and how straight lines change. Comparing overhead and mirror views confirms these results.
 
 [![Non-Coaxial Optics — a Coaxial-Illumination Beamsplitter Paints a False Defect on a Mirror-Like Part, Removed by a Coating or a Wedge; Fold Mirrors Shrink the Machine](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_noncoaxial_optics/05_false_defect_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_noncoaxial_optics/05_false_defect.png)
 
@@ -2952,7 +2952,7 @@ Ops used (notes): [`beamsplitter_branches`](https://furuse.work/ops/optics/nonco
 
 ## No.2026.253 —— Calibrating an Imaging Model on a Real Telecentric Image — the Scale Matches the Paper, the Entrance Pupil Is Only 'Farther than 1 m'
 
-When measuring Calibrating an Imaging Model on a Real Telecentric Image, the Scale Matches the Paper. For Calibrating an Imaging Model on a Real Telecentric Image, we place plate in synthetic data. The contrast between plate and tilt shows that the Scale Matches the Paper, the Entrance Pupil Is Only 'Farther than 1.
+Fitting imaging-model coefficients to real telecentric images matches the paper's magnification, but places the entrance pupil only beyond 1 m. Synthetic alignment-plate data compared rings with centerlines. The gap between distortion and distance marks the judgment limit.
 
 [![Calibrating an Imaging Model on a Real Telecentric Image — the Scale Matches the Paper, the Entrance Pupil Is Only 'Farther than 1 m'](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_telecentric/02_real_model_residuals_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_telecentric/02_real_model_residuals.png)
 
@@ -2978,7 +2978,7 @@ Ops used (notes): [`chief_ray_angle`](https://furuse.work/ops/optics/telecentric
 
 ## No.2026.259 —— Deep Scratches Dent the Mean Line — How Much Contamination Robust Gaussian and Spline Filters Survive
 
-For Deep Scratches Dent the Mean Line, How Much Contamination Robust the method and Spline Filters Survive. For Deep Scratches Dent the Mean Line, while then compare waviness and measuring. The contrast between subtracting and waviness shows that how Much Contamination Robust the method and Spline Filters Survive.
+Where deep scratches depress the mean line, we ask what fraction of contamination robust spline and bell-shaped filters can tolerate. Synthetic scratch measurements compared a linear bell-shaped filter with the healthy surface. The distinction between samples and profiles reveals that tolerance.
 
 [![Deep Scratches Dent the Mean Line — How Much Contamination Robust Gaussian and Spline Filters Survive](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_robust_profile_filter/04_scratched_surface_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_robust_profile_filter/04_scratched_surface.png)
 
@@ -3008,7 +3008,7 @@ Ops used (notes): [`robust_gaussian_profile`](https://furuse.work/ops/roughness/
 
 ## No.2026.263 —— Per-Pixel Quadrature Demodulation (Lock-in) — Ring-Illumination Normals, Coded-Light Daylighting and Lock-in Thermography, Scored Against Closed Forms and the Rice Phase Distribution
 
-When measuring Per-Pixel Quadrature Demodulation, Ring-Illumination Normals, Coded-Light Daylighting. For Per-Pixel Quadrature Demodulation, while then compare general and image. The contrast between made and general shows that ring-Illumination Normals, Coded-Light Daylighting and Lock-in Thermography, Scored.
+Pixelwise quadrature demodulation is scored with closed forms and Rice's phase distribution. Measured image sequences compared general use with a time-correlation sensor. The function-variant gap shows multipole-ring normals, coded intermittent daylighting and lock-in-thermography scored this way.
 
 [![Per-Pixel Quadrature Demodulation (Lock-in) — Ring-Illumination Normals, Coded-Light Daylighting and Lock-in Thermography, Scored Against Closed Forms and the Rice Phase Distribution](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lockin_imaging/01_ring_amp_phase_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lockin_imaging/01_ring_amp_phase.png)
 
@@ -3052,7 +3052,7 @@ The thing to watch for is a method that appears to improve while the quantity it
 
 ## No.2026.057 —— Trabecular Thickness, Separation and Bone Volume Fraction — The Plate Model and the Direct Method Disagree on the Same Image
 
-Using Trabecular Thickness, Separation and Bone Volume Fraction in practice is difficult because The. A computed data case links two-dimensional, network, and drawn. The contrast between form and segments shows that the Plate Model and the Direct Method Disagree on the Same Image.
+For trabecular thickness, spacing and bone volume ratio, the direct and plate methods differ on one image. We built computed data with segments and measured how the set relates to the closed form. Comparing the 2-D case with the trabecular network shows the two methods differ on one image.
 
 [![Trabecular Thickness, Separation and Bone Volume Fraction — The Plate Model and the Direct Method Disagree on the Same Image](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bone_trabecular_thickness/01_scene_truth_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bone_trabecular_thickness/01_scene_truth.png)
 
@@ -3090,7 +3090,7 @@ Ops used (notes): [`blob_distance`](https://furuse.work/ops/blob/split/blob_dist
 
 ## No.2026.008 —— Counting Overlapping Cells — Count, Over-Segmentation and Under-Segmentation as Three Numbers
 
-When measuring Counting Overlapping Cells, Count, Over-Segmentation and Under-Segmentation as Three. The test uses tallied from synthetic data to separate separately from densest. The contrast between condition and null shows that count, Over-Segmentation and Under-Segmentation as Three Numbers.
+To count overlapping cells, we measure under-segmentation, over-segmentation and cell count separately. Using synthetic images, we checked the null baseline and the cell tally separately. Comparing misses with total under-segmentation shows the three quantities are measured separately.
 
 [![Counting Overlapping Cells — Count, Over-Segmentation and Under-Segmentation as Three Numbers](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cell_counting/01_scene_dense_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cell_counting/01_scene_dense.png)
 
@@ -3120,7 +3120,7 @@ Ops used (notes): [`circularity`](https://furuse.work/ops/2d/features/circularit
 
 ## No.2026.061 —— Colocalization lies under bleed-through — Pearson and Manders break in different places
 
-In two-colour fluorescence, spectral leakage can make separate vesicles appear co-located Synthetic cells with known overlap receive cross-talk, blur The plots show correlation recovering after unmixing, while the cutoff-based score retains a different.
+In two-color fluorescence, bleed-through makes separated vesicles appear colocalized. We added bleed-through, blur, and photon noise to vesicle-like puncta on a cell body and measured correlation and overlap. Correction restores correlation, but cutoff-based metrics keep a separate bias.
 
 [![Colocalization lies under bleed-through — Pearson and Manders break in different places](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_colocalization_crosstalk/01_scene_channels_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_colocalization_crosstalk/01_scene_channels.png)
 
@@ -3160,7 +3160,7 @@ Ops used (notes): [`gauss_image`](https://furuse.work/ops/2d/smoothing/gauss_ima
 
 ## No.2026.074 —— MRI Bias Field and Tissue Area — Grey and White Matter Fail in Opposite Directions, and the Sum Hides It
 
-When measuring MRI Bias Field and Tissue Area, while and the Sum Hides It. The test uses brain-slice from measured data to separate phantom from elliptical. The contrast between shells and multiplied shows that grey and White Matter Fail in Opposite Directions, and the Sum Hides It.
+With an MRI bias field, gray and white matter areas fail in opposite-directions, and summing hides it. Using measured elliptical shells, we checked the brain-slice phantom and surface-coil model separately. Comparing the multiplicative field with noise reveals these hidden errors.
 
 [![MRI Bias Field and Tissue Area — Grey and White Matter Fail in Opposite Directions, and the Sum Hides It](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_mri_bias_field/02_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_mri_bias_field/02_scene.png)
 
@@ -3200,7 +3200,7 @@ Ops used (notes): [`dc_homomorphic`](https://furuse.work/ops/2d/decomposition/dc
 
 ## No.2026.027 —— Ploidy From Integrated Nuclear Intensity — Area Cannot Separate It
 
-A comparison of Ploidy From Integrated Nuclear the method matters when Area Cannot Separate It. A computed data case links fluorescent, nuclei, and whose. The contrast between content and were shows that area Cannot Separate It.
+When ploidy is derived from the integrated brightness of fluorescent nuclei, area does not separate the classes. We generated computed data with independent spread and measured how misclassification relates to background. Comparing the index with the target shows that area does not separate the classes.
 
 [![Ploidy From Integrated Nuclear Intensity — Area Cannot Separate It](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_nuclei_ploidy/04_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_nuclei_ploidy/04_scene.png)
 
@@ -3230,7 +3230,7 @@ Ops used (notes): [`aperture_photometry`](https://furuse.work/ops/astrostack/pho
 
 ## No.2026.048 —— Extracting a Vessel Network — Spurs, Overestimated Radii Near Branches, and a Fragile Exponent
 
-In evaluating Extracting a Vessel Network, while and a Fragile Exponent. A synthetic data case links tree, obeying, and murray. The contrast between exactly and skeletonised shows that spurs, Overestimated Radii Near Branches, and a Fragile Exponent.
+Vessel branching measurements face spurs, excess diameter near branch points, and a brittle exponent. Synthetic data containing the law measured exactness against the synthetic vessel tree. The gap between skeletonization and branch points reveals those same three issues.
 
 [![Extracting a Vessel Network — Spurs, Overestimated Radii Near Branches, and a Fragile Exponent](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_vessel_network/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_vessel_network/01_scene.png)
 
@@ -3264,7 +3264,7 @@ Ops used (notes): [`blob_features`](https://furuse.work/ops/blob/measure/blob_fe
 
 ## No.2026.052 —— Wound Area Over Time — Calibration Error Enters the Area Squared
 
-Oblique wound photographs can misstate both area and healing rate when camera distance changes A star-shaped wound with closed-form area is photographed over time The plot shows that a stable estimate can still be biased when each session is not calibrated.
+Oblique wound photos misjudge area and healing rate when camera distance shifts. We imaged a star wound of closed-form area daily, added calibration error and distance drift, and fit the healing constant. The plot shows that despite low scatter, skipping calibration each time leaves bias.
 
 [![Wound Area Over Time — Calibration Error Enters the Area Squared](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_wound_area_tracking/02_scenes_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_wound_area_tracking/02_scenes.png)
 
@@ -3302,7 +3302,7 @@ Ops used (notes): [`axes_frame`](https://furuse.work/ops/annotate/plot/axes_fram
 
 ## No.2026.123 —— A Larval Connectome as a Reservoir Reads Digits — and the Wiring Is Not What Does It
 
-A larval connectome used as a fixed recurrent network can classify digits without proving that its The public connectome, degree-preserving rewires, and random networks receive identical inputs and The comparison places their accuracies together, showing that the gain comes from the recurrent.
+Larval wiring as a fixed recurrent network reads handwritten digits, but the biology may not be why. A public connectome, degree-preserving rewiring, and random wiring got the same inputs and readout training. All three nearly tie, so the gain comes from recurrence, not specific wiring.
 
 [![A Larval Connectome as a Reservoir Reads Digits — and the Wiring Is Not What Does It](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_larval_connectome_reservoir/01_adjacency_binned_connectome_vs_shuffle_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_larval_connectome_reservoir/01_adjacency_binned_connectome_vs_shuffle.png)
 
@@ -3328,7 +3328,7 @@ Ops used (notes): [`graph_degree_preserving_shuffle`](https://furuse.work/ops/co
 
 ## No.2026.124 —— Watching a Pulse Travel the Wiring on the 3-D Fly Brain — Connectome vs Degree-Preserving Shuffle
 
-A comparison of Watching a Pulse Travel the Wiring on the three-dimensional Fly Brain matters when. A synthetic data case links previous, exhibit, and ended. The contrast between readout and accuracy shows that connectome vs Degree-Preserving Shuffle.
+As a stimulus wave crosses a 3D fly brain's wiring, the test is connectome versus degree-preserving shuffle. We built synthetic data with the exhibit and measured how accuracy relates to random graphs. Comparing coordinates with neurons shows the connectome against that shuffle.
 
 [![Watching a Pulse Travel the Wiring on the 3-D Fly Brain — Connectome vs Degree-Preserving Shuffle](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_malecns_activity_wave/02_activity_wave_three_views.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_malecns_activity_wave/02_activity_wave_three_views.gif)
 
@@ -3358,7 +3358,7 @@ Ops used (notes): [`graph_activation_latency`](https://furuse.work/ops/conngraph
 
 ## No.2026.125 —— What the Compound Eye Sees, and Where the Brain Answers — Trace an Ommatidium and the Response Travels the Wiring
 
-Using What the Compound Eye Sees, and Where the Brain Answers in practice is difficult because Trace an. The synthetic data compares malecns with annotations and tracks give. The contrast between every and optic-lobe shows that trace an Ommatidium and the Response Travels the Wiring.
+With a compound eye's view beside the brain's response, finger-tracing an ommatidium sends it along the wiring. On synthetic data with annotations and optic-lobe neurons, we examined how hexagonal columns change. Comparing the right eye with the central brain shows this propagation.
 
 [![What the Compound Eye Sees, and Where the Brain Answers — Trace an Ommatidium and the Response Travels the Wiring](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_eye_to_brain/02_image_through_the_eye.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_eye_to_brain/02_image_through_the_eye.gif)
 
@@ -3388,7 +3388,7 @@ Ops used (notes): [`fly_hex_quantize`](https://furuse.work/ops/flyvision/sample/
 
 ## No.2026.126 —— A Second Opinion for EM Connectome Proofreading — Membranes Belong Only on Label Boundaries
 
-For A Second Opinion for EM Connectome Proofreading, Membranes Belong Only on Label Boundaries. We place automatic in measured data, then compare segmentation and serial. The contrast between sections and leaves shows that membranes Belong Only on Label Boundaries.
+In evaluating second opinions on the proofreading of EM connectomes, membranes should exist only at label boundaries. We prepared computed electron-microscopy data and compared serial sections with neurons. Comparing automatic segmentation with merges shows that membranes should exist only at label boundaries.
 
 [![A Second Opinion for EM Connectome Proofreading — Membranes Belong Only on Label Boundaries](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_em_second_opinion/01_second_opinion_slice_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_em_second_opinion/01_second_opinion_slice.png)
 
@@ -3418,7 +3418,7 @@ Ops used (notes): [`holdout_threshold`](https://furuse.work/ops/emproof/evaluate
 
 ## No.2026.129 —— Motor Quantisation — Where the Command Dimension Collapses Between Brain and Muscle (the Fly's Neck and an RL Policy's Joints on One Scale)
 
-Using Motor Quantisation in practice is difficult because Where the Command Dimension Collapses Between. The measured data compares think with individual and tracks muscles. The contrast between when and raise shows that where the Command Dimension Collapses Between Brain and Muscle.
+Motor quantization asks where the dimensionality of commands drops on the way from brain to muscle. Using computational data on muscles and consciousness, we examined how the tens of thousands change. Comparing states with layers shows where the dimensionality of commands drops on the way from brain to muscle.
 
 [![Motor Quantisation — Where the Command Dimension Collapses Between Brain and Muscle (the Fly's Neck and an RL Policy's Joints on One Scale)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_connectome_motor_bottleneck/03_activity_flow.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_connectome_motor_bottleneck/03_activity_flow.gif)
 
@@ -3456,7 +3456,7 @@ Ops used (notes): [`graph_block_shuffle`](https://furuse.work/ops/conngraph/dime
 
 ## No.2026.131 —— The MICrONS Brain Wave — How Much of the Measured Response Does the Wiring Explain in 1 mm^3 of Visual Cortex
 
-When measuring The MICrONS Brain Wave, How Much of the Measured Response Does the Wiring Explain in 1. A synthetic data case links rare, dataset, and that. The contrast between holds and both shows that how Much of the Measured Response Does the Wiring Explain in mm^ of Visual Cortex.
+MICrONS brain waves ask how far wiring explains measured responses in 1 mm-of visual cortex. We built synthetic data with neurons and measured how electron microscopy relates to two-photon imaging. Comparing activity with both shows how far wiring explains those responses.
 
 [![The MICrONS Brain Wave — How Much of the Measured Response Does the Wiring Explain in 1 mm^3 of Visual Cortex](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_microns_brain_wave/01_brain_wave.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_microns_brain_wave/01_brain_wave.gif)
 
@@ -3490,7 +3490,7 @@ Ops used (notes): [`graph_activity_spread`](https://furuse.work/ops/conngraph/ac
 
 ## No.2026.132 —— Branch Territories — Handing Every Voxel Its Nearest Branch, Not Just Its Distance, Makes Per-Branch Volume and Radius Countable
 
-For Branch Territories, while Makes Per-Branch Volume and Radius Countable. The synthetic data compares neuron with serial and tracks sections. The contrast between becomes and graph shows that handing Every Voxel Its Nearest Branch, Not Just Its Distance, Makes Per-Branch Volume and Radius Countable.
+Branch territories assign a volume not just the centreline's location but the nearest branch, making each branch's volume and radius measurable. On synthetic serial sections and neurons, we examined how skeletonization changes. Comparing graphs with morphometry shows both become measurable.
 
 [![Branch Territories — Handing Every Voxel Its Nearest Branch, Not Just Its Distance, Makes Per-Branch Volume and Radius Countable](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_em_branch_territory/02_territory_turning.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_em_branch_territory/02_territory_turning.gif)
 
@@ -3520,7 +3520,7 @@ Ops used (notes): [`identity`](https://furuse.work/ops/2d/misc/identity.html) ·
 
 ## No.2026.153 —— Is the Worm's Wiring Bilaterally Symmetric? — The L/R-Swap Jaccard (set-overlap coefficient), Bracketed by a Closed Form and a Degree-Preserving Null
 
-Using Is the Worm's Wiring Bilaterally Symmetric in practice is difficult because The L/R-Swap Jaccard. We place chemical-synapse in synthetic data, then compare elegans and hermaphrodite. The contrast between edge-set and overlap shows that the L/R-Swap Jaccard, Bracketed by a Closed Form and a Degree-Preserving Null.
+To test left-right symmetry in worm wiring, the L/R swap Jaccard is bracketed by a analytic formula plus a degree-preserving null. We prepared synthetic hermaphrodites and compared chemical-synapse wiring with edge sets. Comparing perfect symmetry with degree sequences shows that bracket.
 
 [![Is the Worm's Wiring Bilaterally Symmetric? — The L/R-Swap Jaccard (set-overlap coefficient), Bracketed by a Closed Form and a Degree-Preserving Null](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_connectome_lr_symmetry/01_lr_jaccard_closed_form_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_connectome_lr_symmetry/01_lr_jaccard_closed_form.png)
 
@@ -3544,7 +3544,7 @@ Ops used (notes): [`graph_degree_summary`](https://furuse.work/ops/graph/degree/
 
 ## No.2026.156 —— How Much of the Wiring Do Two Genetically Identical Worms Share? — Counting the Connections Present in All 8 Worms of a Developmental Series
 
-Using How Much of the Wiring Do Two Genetically Identical Worms Share in practice is difficult because. The synthetic data compares chemical-synapse with elegans and tracks stacked. The contrast between cells and graph shows that counting the Connections Present in All 8 Worms of a Developmental Series.
+To see how far worm wiring matches between individuals, we count connections shared by all eight in a developmental series. On synthetic data covering genetics and equivalence, we examined how chemical-synapse wiring changes. Comparing all eight with their cells shows how that count works.
 
 [![How Much of the Wiring Do Two Genetically Identical Worms Share? — Counting the Connections Present in All 8 Worms of a Developmental Series](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_connectome_across_worms/01_occupancy_matrix_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_connectome_across_worms/01_occupancy_matrix.png)
 
@@ -3582,7 +3582,7 @@ Ops used (notes): [`graph_edge_consensus`](https://furuse.work/ops/graph/populat
 
 ## No.2026.157 —— How Much Does a Hand-Traced Wiring Diagram from 40 Years Ago Overlap Today's Adult Worms? — The Era Difference Next to the Individual Difference
 
-Comparing worm wiring diagrams across decades requires separating re-annotation differences from A historical manual trace and two recent adults are restricted to shared neurons The figure shows individual variation exceeding the era gap and connections shared by all animals.
+Comparing worm wiring across eras means separating reannotation from individual variation. We aligned old manual tracings and two recent adults to shared cells, comparing overlap and synapse counts. Individuals differ more than eras, and connections shared by all three are often thick.
 
 [![How Much Does a Hand-Traced Wiring Diagram from 40 Years Ago Overlap Today's Adult Worms? — The Era Difference Next to the Individual Difference](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_connectome_across_decades/01_jaccard_across_decades_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_connectome_across_decades/01_jaccard_across_decades.png)
 
@@ -3610,7 +3610,7 @@ Ops used (notes): [`graph_edge_consensus`](https://furuse.work/ops/graph/populat
 
 ## No.2026.158 —— How Much Do a Worm's Neurites Grow from Birth to Adulthood? — Measuring Eight Animals' Skeletons with the Tree Ops and Setting the Result Beside the Paper
 
-For How Much Do a Worm's Neurites Grow from Birth to Adulthood, Measuring Eight Animals' Skeletons with. The measured data compares elegans with witvliet and tracks converted. The contrast between trees and measured shows that measuring Eight Animals' Skeletons with the Tree Ops and Setting the Result Beside the Paper.
+To see how much worm neurites lengthen after birth, we measure eight trees with Sholl morphometry and compare published values. Calculations track postnatal structure through adult form. Comparing crossings with the implementation verifies the growth measurement.
 
 [![How Much Do a Worm's Neurites Grow from Birth to Adulthood? — Measuring Eight Animals' Skeletons with the Tree Ops and Setting the Result Beside the Paper](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_worm_neurites_grow/01_neurite_length_growth_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_worm_neurites_grow/01_neurite_length_growth.png)
 
@@ -3632,7 +3632,7 @@ Ops used (notes): [`intersection`](https://furuse.work/ops/2d/nary/intersection.
 
 ## No.2026.159 —— Scoring Neuron Segmentations from Electron Microscopy — Over-Splitting and Over-Merging as Two Separate Numbers
 
-A comparison of Scoring Neuron Segmentations from Electron Microscopy matters when Over-Splitting and. The test uses errors from computed data to separate automatic from connectomics. The contrast between kinds and cuts shows that over-Splitting and Over-Merging as Two Separate Numbers.
+Scoring neuron segmentation from electron microscopy gives oversplitting and overmerging separate numbers. Using a computational connectome, automation and splits were checked separately. Merge and type differences show that the two errors receive separate numbers.
 
 [![Scoring Neuron Segmentations from Electron Microscopy — Over-Splitting and Over-Merging as Two Separate Numbers](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_em_split_merge_score/01_split_vs_merge_by_threshold_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_em_split_merge_score/01_split_vs_merge_by_threshold.png)
 
@@ -3654,7 +3654,7 @@ Ops used (notes): [`blob_label`](https://furuse.work/ops/blob/connect/blob_label
 
 ## No.2026.160 —— Where Segmentation Errors Break the Wiring Diagram — Pixel Scores Overweight Splits and Underweight Merges
 
-In evaluating Where Segmentation Errors Break the Wiring Diagram, Pixel Scores Overweight Splits and. The measured data compares connectome with read and tracks dropping. The contrast between synapse and annotations shows that pixel Scores Overweight Splits and Underweight Merges.
+When tracing which parts of a wiring diagram segmentation errors break, pixel scoring weights splits heavily and merges lightly. Measured connectomes and neurons were used to examine synapse changes. Comparing annotations with the whole confirms this uneven pixel scoring.
 
 [![Where Segmentation Errors Break the Wiring Diagram — Pixel Scores Overweight Splits and Underweight Merges](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_em_wiring_errors/01_proofreading_order_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_em_wiring_errors/01_proofreading_order.png)
 
@@ -3684,7 +3684,7 @@ Ops used (notes): [`seg_synapse_nri`](https://furuse.work/ops/emproof/wiring/seg
 
 ## No.2026.161 —— Do Synapses Grow in Proportion to Neurites? — Shape Growth and Wiring Growth Set Side by Side, Cell by Cell, in Eight Worms
 
-When measuring Do Synapses Grow in Proportion to Neurites, while in Eight Worms. The test uses witvliet from measured data to separate animals from carry. The contrast between both and diagram shows that shape Growth and Wiring Growth Set Side by Side, Cell by Cell, in Eight Worms.
+To test whether synapses scale with neurites, shape and wiring growth are compared cell by cell across eight nematodes. Computational individuals were used, with skeletons and both measures checked separately. Comparing the method with total length reveals that cell-by-cell contrast.
 
 [![Do Synapses Grow in Proportion to Neurites? — Shape Growth and Wiring Growth Set Side by Side, Cell by Cell, in Eight Worms](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_worm_synapses_vs_neurites/01_density_by_stage_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_worm_synapses_vs_neurites/01_density_by_stage.png)
 
@@ -3710,7 +3710,7 @@ Ops used (notes): [`graph_strength_growth`](https://furuse.work/ops/graph/popula
 
 ## No.2026.162 —— Run Length Forgives No Small Merge — ERL and VOI Weigh the Same Error Differently
 
-Using Run Length Forgives No Small Merge in practice is difficult because ERL and VOI Weigh the Same. A synthetic data case links automatic, segmentations, and scored. The contrast between either and ground-truth shows that eRL and VOI Weigh the Same Error Differently.
+Run length does not tolerate small merges, so ERL and VOI weight the same-error differently. Synthetic automatic segmentations were used to measure how scores relate to the contingency table. Comparing ground truth with skeletons reveals how the two metrics weight it differently.
 
 [![Run Length Forgives No Small Merge — ERL and VOI Weigh the Same Error Differently](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_skeleton_run_length_vs_voi/01_merge_size_erl_vs_voi_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_skeleton_run_length_vs_voi/01_merge_size_erl_vs_voi.png)
 
@@ -3732,7 +3732,7 @@ Ops used (notes): [`seg_variation_of_information`](https://furuse.work/ops/empro
 
 ## No.2026.163 —— Slime-Mould Tubes Solve the Maze — Thickening and Thinning Alone Converge to the Shortest Path, Bracketed by a Theorem and Dijkstra
 
-In evaluating Slime-Mould Tubes Solve the Maze, while Bracketed by a Theorem and Dijkstra. The test uses physarum from computed data to separate leaves from nothing. The contrast between more and than shows that thickening and the method Alone Converge to the Shortest Path, Bracketed by a Theorem and Dijkstra.
+For slime mould tubes solving a maze, a theorem and Dijkstra's algorithm confirm that mere widening and narrowing converge on the shortest path. Computed flows were used, with uniqueness and conductivity checked separately. Comparing the indicator function with the proof shows this.
 
 [![Slime-Mould Tubes Solve the Maze — Thickening and Thinning Alone Converge to the Shortest Path, Bracketed by a Theorem and Dijkstra](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_physarum_maze/01_maze_tubes_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_physarum_maze/01_maze_tubes.png)
 
@@ -3762,7 +3762,7 @@ Ops used (notes): [`graph_physarum_path`](https://furuse.work/ops/graph/flow/gra
 
 ## No.2026.165 —— Slime Mould Solves Optimal Transport — Make the Source and Sink Mass Distributions and the Same Tube Dynamics Converge to the Earth Mover's Distance
 
-When slime-mould tubes connect distributed sources and sinks A supply vector drives Kirchhoff pressures on a computed graph while upper and lower cost bounds are The figure certifies optimality when the bounds meet, with surviving tubes forming the transport.
+Slime mould tubes linking supply points and sinks test whether local growth reaches optimal transport. Thickness was updated on a graph and images with mass, computing upper and dual lower bounds. Optimality is proved where the bounds meet, leaving the transport routes.
 
 [![Slime Mould Solves Optimal Transport — Make the Source and Sink Mass Distributions and the Same Tube Dynamics Converge to the Earth Mover's Distance](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_physarum_transport/01_transport_tubes_gif.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_physarum_transport/01_transport_tubes_gif.gif)
 
@@ -3796,7 +3796,7 @@ Ops used (notes): [`graph_physarum_transport`](https://furuse.work/ops/graph/flo
 
 ## No.2026.154 —— Grading Skeleton Measurement on Real Trees — NeuroMorpho SWC as Ground Truth, and What Projection Breaks
 
-Measuring a tree from a projected neuron or vessel creates false branches where limbs overlap along Public three-dimensional neuron trees provide truth, are rotated and projected The figure shows invariant spatial measurements but view-dependent results after projection.
+Line-of-sight overlaps create false branches in projected neuron and vessel trees. Real neuron coordinates and radii were rotated and projected to two dimensions to measure branches and centreline length. Three-dimensional values stay fixed under rotation, while projected values vary with view.
 
 [![Grading Skeleton Measurement on Real Trees — NeuroMorpho SWC as Ground Truth, and What Projection Breaks](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_swc_tree_truth/03_junctions_vs_view_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_swc_tree_truth/03_junctions_vs_view.png)
 
@@ -3822,7 +3822,7 @@ Ops used (notes): [`skeleton`](https://furuse.work/ops/2d/region/skeleton.html) 
 
 ## No.2026.164 —— The Worm Brain's Core Is There from Birth — Counting the Cells That Stay in the Deepest Shell Across 8 Developmental Stages
 
-Using The Worm Brain's Core Is There from Birth in practice is difficult because Counting the Cells. For The Worm Brain's Core Is There from Birth, while then compare wirings and witvliet. The contrast between animals and adult shows that counting the Cells That Stay in the Deepest Shell Across 8 Developmental Stages.
+To show the nematode brain's core exists from birth, we count cells staying in the innermost shell across eight developmental series. We prepared postnatal computed data and compared time with adulthood. Comparing chemical-synapse wiring with its undirected form shows how that count works.
 
 [![The Worm Brain's Core Is There from Birth — Counting the Cells That Stay in the Deepest Shell Across 8 Developmental Stages](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_worm_core_persists/03_core_map_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_worm_core_persists/03_core_map.png)
 
@@ -3852,7 +3852,7 @@ Ops used (notes): [`graph_core_persistence`](https://furuse.work/ops/graph/popul
 
 ## No.2026.260 —— Drawing the Male Fly Brain as 126,104 Cell Bodies — A New Point-Cloud Renderer, Scored Against Four Answers from Outside the Picture
 
-Using Drawing the Male Fly Brain as 126, while Scored Against Four Answers from Outside the Picture. For Drawing the Male Fly Brain as , while then compare annotations and janelia. The contrast between malecns and annotations shows that a New Point-Cloud Renderer, Scored Against Four Answers from Outside the.
+To draw the fly brain as about 126 thousand cell-body points, we add a point-cloud method and score it against four answers outside the image. Synthetic whole-CNS data compare annotations with ascending neurons. Positions and superclasses mark the decision limit.
 
 [![Drawing the Male Fly Brain as 126,104 Cell Bodies — A New Point-Cloud Renderer, Scored Against Four Answers from Outside the Picture](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_flybrain_pointcloud/01_three_views_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_flybrain_pointcloud/01_three_views.png)
 
@@ -3890,7 +3890,7 @@ The other is that the definition of truth decides the conclusion. Counting thin 
 
 ## No.2026.001 —— All-Sky Cloud Cover — Counting Pixels Is Biased by Position
 
-For All-Sky Cloud Cover, Counting Pixels Is Biased by Position. The test uses spherical-cap from computed data to separate clouds from placed. The contrast between equidistant and fisheye shows that counting Pixels Is Biased by Position.
+When assessing cloud fraction from an all-sky camera, pixel counts carry a positional bias. Using computed fisheye data, we checked the spherical cap and pixel-count ratio separately. The distinction between solid-angle weight and zenith angle shows that pixel counts carry a positional bias.
 
 [![All-Sky Cloud Cover — Counting Pixels Is Biased by Position](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_allsky_cloud_cover/03_mask_sweep_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_allsky_cloud_cover/03_mask_sweep.png)
 
@@ -3920,7 +3920,7 @@ Ops used (notes): [`equirect_from_fisheye_pair`](https://furuse.work/ops/optics/
 
 ## No.2026.002 —— How Many Frames for What Photometric Precision?
 
-For How Many Frames for, the measurement can become unreliable. We place star in computed data, then compare field and placed. The contrast between specification and stacked shows that the measurement can become unreliable.
+When choosing a stack depth, the question is the percentage precision of stellar brightness. We prepared calculations that specification and compared the star field with aperture photometry. The distinction between central error and theory shows the percentage precision of stellar brightness.
 
 [![How Many Frames for What Photometric Precision?](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_astro_photometry/01_stack_scaling_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_astro_photometry/01_stack_scaling.png)
 
@@ -3950,7 +3950,7 @@ Ops used (notes): [`aperture_photometry`](https://furuse.work/ops/astrostack/pho
 
 ## No.2026.059 —— Change detection under misregistration — false positives are edge bands, with a cliff
 
-For Change detection under misregistration, false positives are edge bands, with a cliff. We place two-date in synthetic data, then compare land and surface. The contrast between planted and changes shows that false positives are edge bands, with a cliff.
+In change detection with registration error, false positives form bands along edges, with a sharp cliff. With two-date synthetic data, we compared the land surface with new buildings. Comparing clear-cutting with lake expansion shows these edge-following false positives and their cliff.
 
 [![Change detection under misregistration — false positives are edge bands, with a cliff](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_change_detection_misreg/03_map_fp_shift_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_change_detection_misreg/03_map_fp_shift.png)
 
@@ -3990,7 +3990,7 @@ Ops used (notes): [`affine_trans_image`](https://furuse.work/ops/2d/geometry/aff
 
 ## No.2026.096 —— A 3-D Thermal Field from Sparse Sensors — The Grid's Blind Spot Erases a Rack
 
-For A three-dimensional Thermal Field from Sparse Sensors, The Grid's Blind Spot Erases a Rack. We place temperature in measured data, then compare server and room. The contrast between written and formula shows that the Grid's Blind Spot Erases a Rack.
+When a 3D-thermal field is recovered from sparse temperature sensors, grid blind spots erase racks. We prepared a server room in observed data and compared the temperature field with a grid layout. Comparing hot spots with the null baseline shows that grid blind spots erase racks.
 
 [![A 3-D Thermal Field from Sparse Sensors — The Grid's Blind Spot Erases a Rack](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_datacenter_thermal_field/01_scene_truth_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_datacenter_thermal_field/01_scene_truth.png)
 
@@ -4028,7 +4028,7 @@ Ops used (notes): [`interp_scattered`](https://furuse.work/ops/math/interp_poly/
 
 ## No.2026.012 —— Measuring Terrain — Slope, Flow and Insolation Against Closed Forms
 
-Using Measuring Terrain in practice is difficult because Slope, Flow and Insolation Against Closed Forms. A computed data case links curvature, sky-view, and factor. The contrast between checked and plane shows that slope, Flow and Insolation Against Closed Forms.
+Terrain measurement compares gradient, water flow and sun exposure with closed forms. Computed data with a plane were used to measure how a cone relates to a bell-shaped hill. Curvature and sky-view differences show that gradient, water flow and sun exposure are compared with closed forms.
 
 [![Measuring Terrain — Slope, Flow and Insolation Against Closed Forms](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dem_terrain/01_cone_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dem_terrain/01_cone.png)
 
@@ -4062,7 +4062,7 @@ Ops used (notes): [`color_bar`](https://furuse.work/ops/annotate/furniture/color
 
 ## No.2026.066 —— Exoplanet transit from aperture photometry — depth and duration fail separately
 
-Clouds and sub-pixel drift can hide a shallow planetary transit in stellar photometry A synthetic star field receives a limb-darkened transit plus separate transparency, drift, flat-field The plots show that comparison stars recover depth, while duration fails first for weak signals.
+Clouds and subpixel drift hide shallow transits in starlight. Aperture photometry was run on limb-darkened synthetic transits, adding transparency, drift, flat nonuniformity and photon noise separately. In the figure, comparison-star ratios restore depth, but weak signals lose duration first.
 
 [![Exoplanet transit from aperture photometry — depth and duration fail separately](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_exoplanet_transit/01_scene_starfield_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_exoplanet_transit/01_scene_starfield.png)
 
@@ -4100,7 +4100,7 @@ Ops used (notes): [`aperture_photometry`](https://furuse.work/ops/astrostack/pho
 
 ## No.2026.098 —— Coordinates Go Wrong by Tens of Metres While Still Looking Plausible
 
-When measuring Coordinates Go Wrong by Tens of Metres, the measurement can become unreliable. We place gnss in synthetic data, then compare returns and ellipsoidal. The contrast between height and maps shows that the measurement can become unreliable.
+Coordinates can stay believable yet err by several tens of metres through ellipsoidal heights, geodetic datums and planar approximations. We prepared a map as synthetic data and compared it with design drawings and elevations. Comparing the relationships with the geoid field reveals the role of those three factors.
 
 [![Coordinates Go Wrong by Tens of Metres While Still Looking Plausible](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_geodetic_height_frames/01_geoid_frames_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_geodetic_height_frames/01_geoid_frames.png)
 
@@ -4138,7 +4138,7 @@ Ops used (notes): [`datum_tilt_check`](https://furuse.work/ops/drive/granular/da
 
 ## No.2026.068 —— Leaf disease severity — colour axes survive the lighting; the grade is decided by the leaf mask and the edge convention
 
-In evaluating Leaf disease severity, while the grade is decided by the leaf mask and the edge convention. The test uses closed-form from computed data to separate outline from lesions. The contrast between area and over shows that colour axes survive the lighting; the grade is decided by the leaf mask and the edge.
+For leaf lesion area ratios, colour axes beat illumination, but the grade depends on how the leaf is masked and its edge defined. Using a synthetic closed form, we checked the leaf outline and the known area separately. Comparing one-sided lighting with clipped highlights confirms both findings.
 
 [![Leaf disease severity — colour axes survive the lighting; the grade is decided by the leaf mask and the edge convention](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_leaf_disease_area/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_leaf_disease_area/01_scene.png)
 
@@ -4176,7 +4176,7 @@ Ops used (notes): [`access_channel`](https://furuse.work/ops/2d/color/access_cha
 
 ## No.2026.106 —— Planting Known Stars in a Real Deep Field — Contamination Lies About the Measurement and the Confidence in the Same Direction
 
-In evaluating Planting Known Stars in a Real Deep Field, Contamination Lies About the Measurement and. We place flux in measured data, then compare planted and background. The contrast between hubble and certain shows that contamination Lies About the Measurement and the Confidence in the Same Direction.
+When known stars are planted in real deep-sky images, contamination biases measurements and confidence the same way. With real data, we compared background and flux. Comparing bell-shaped stars with their recovery shows that contamination biases measurements and confidence the same way.
 
 [![Planting Known Stars in a Real Deep Field — Contamination Lies About the Measurement and the Confidence in the Same Direction](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_sky_photometry/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_sky_photometry/01_scene.png)
 
@@ -4206,7 +4206,7 @@ Ops used (notes): [`aperture_photometry`](https://furuse.work/ops/astrostack/pho
 
 ## No.2026.080 —— River surface velocity from an oblique video (LSPIV) — velocity error and discharge error are different numbers
 
-A comparison of River surface velocity from an oblique video matters when velocity error and discharge. The computed data compares power-law with profile and tracks foam. The contrast between tracers and advected shows that velocity error and discharge error are different numbers.
+When measuring river-surface velocity from oblique video, velocity and discharge errors count separately. Computed data with a peak and power law showed how the velocity profile changes. Comparing foam tracers with per-frame motion shows that velocity and discharge errors count separately.
 
 [![River surface velocity from an oblique video (LSPIV) — velocity error and discharge error are different numbers](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_river_surface_velocity/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_river_surface_velocity/01_scene.png)
 
@@ -4248,7 +4248,7 @@ Ops used (notes): [`arrow`](https://furuse.work/ops/annotate/pointer/arrow.html)
 
 ## No.2026.035 —— Sea-Ice Concentration — The Answer Depends on How Mixed Pixels Are Counted
 
-For Sea-Ice Concentration, The Answer Depends on How Mixed Pixels Are Counted. We place blurred in computed data, then compare two-band and water. The contrast between image and hard shows that the Answer Depends on How Mixed Pixels Are Counted.
+In evaluating sea-ice concentration, the counting of mixed pixels changes the result. We prepared band images from calculations and compared classification with linear unmixing. The gap between points and perimeter ratio reveals how the counting of mixed pixels changes the result.
 
 [![Sea-Ice Concentration — The Answer Depends on How Mixed Pixels Are Counted](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_sea_ice_concentration/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_sea_ice_concentration/01_scene.png)
 
@@ -4280,7 +4280,7 @@ Ops used (notes): [`blob_features`](https://furuse.work/ops/blob/measure/blob_fe
 
 ## No.2026.110 —— Sweep Width — One Number Measured from Aerial Images Decides Whether the Search Works
 
-In evaluating Sweep Width, One Number Measured from Aerial Images Decides Whether the Search Works. The measured data compares lateral with range and tracks curve. The contrast between imagery and detection shows that one Number Measured from Aerial Images Decides Whether the Search Works.
+For sweep width, a single figure derived from aerial imagery determines whether a search plan succeeds. Measured data on lateral range curves and area showed how image processing changes. Comparing decision-making and place shows that one such figure decides whether a search plan succeeds.
 
 [![Sweep Width — One Number Measured from Aerial Images Decides Whether the Search Works](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_search_sweep_width/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_search_sweep_width/01_scene.png)
 
@@ -4318,7 +4318,7 @@ Ops used (notes): [`gauss_filter`](https://furuse.work/ops/2d/smoothing/gauss_fi
 
 ## No.2026.036 —— Where Is the Edge of a Limb-Darkened Disc? The 50 % Rule Reads the Radius Small
 
-A comparison of Where Is the Edge of a Limb-Darkened Disc matters when The 50 % Rule Reads the Radius. A measured data case links solar, seen, and seeing. The contrast between measured and gradient shows that the % Rule Reads the Radius Small.
+When locating a dark-rimmed body's outline, limb darkening makes the 50 % cutoff underestimate the radius. We computed solar-disc data and measured how seeing relates to the gradient maximum. Comparing the model fit with the darkening coefficient shows this underestimate.
 
 [![Where Is the Edge of a Limb-Darkened Disc? The 50 % Rule Reads the Radius Small](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_solar_limb_darkening/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_solar_limb_darkening/01_scene.png)
 
@@ -4348,7 +4348,7 @@ Ops used (notes): [`edge_points`](https://furuse.work/ops/3d/edges/edge_points.h
 
 ## No.2026.037 —— To What Fraction of a Pixel Can a Star Be Located, and Where Is the Cliff?
 
-Using To What Fraction of a Pixel Can a Star Be Located in practice is difficult because and Where Is. The test uses stars from computed data to separate rendered from celestial. The contrast between coordinates and four shows that and Where Is the Cliff?.
+When evaluating the subpixel precision of stellar positions, the question is where accuracy falls off a cliff. Using computed celestial-coordinate data, we checked methods and information separately. Comparing the theoretical limit with the centroid shows where that cliff lies.
 
 [![To What Fraction of a Pixel Can a Star Be Located, and Where Is the Cliff?](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_star_astrometry/03_starfield_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_star_astrometry/03_starfield.png)
 
@@ -4378,7 +4378,7 @@ Ops used (notes): [`gaussian`](https://furuse.work/ops/2d/smoothing/gaussian.htm
 
 ## No.2026.088 —— Counting tree rings and extracting the width series — ring count and width correlation fail separately
 
-In evaluating Counting tree rings and extracting the width series, ring count and width correlation. We place disc in measured data, then compare synthesised and form. The contrast between off-centre and pith shows that ring count and width correlation fail separately.
+In counting tree rings to obtain a width time series, age error and width correlation are separate quantities. Off-centered observations compared the circumferential direction with decay spots. The gap between grain texture and the disc reveals that these are separate quantities.
 
 [![Counting tree rings and extracting the width series — ring count and width correlation fail separately](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tree_ring_dendro/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tree_ring_dendro/01_scene.png)
 
@@ -4416,7 +4416,7 @@ Ops used (notes): [`derivate_funct_1d`](https://furuse.work/ops/oned/function/de
 
 ## No.2026.046 —— Counting Crop Green — Ground Truth as Per-Pixel Leaf Area Fraction
 
-In evaluating Counting Crop Green, Ground Truth as Per-Pixel Leaf Area Fraction. The test uses cover from computed data to separate four-band from field. The contrast between image and scored shows that ground Truth as Per-Pixel Leaf Area Fraction.
+When counting field greenery, the true cover fraction is held as each pixel's leaf area fraction. Computed bands were used to check the field image and the null model separately. The gap between mid-season and overshoot reveals how the truth is held as each pixel's leaf area fraction.
 
 [![Counting Crop Green — Ground Truth as Per-Pixel Leaf Area Fraction](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_vegetation_cover/01_mixed_pixel_response_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_vegetation_cover/01_mixed_pixel_response.png)
 
@@ -4448,7 +4448,7 @@ Ops used (notes): [`cv_otsu`](https://furuse.work/ops/2d/segmentation/cv_otsu.ht
 
 ## No.2026.049 —— River Stage From an Oblique Photo — Ignoring Perspective Bends the Row-Number Error Into an Arc
 
-An oblique staff-gauge photograph bends the relation between picture row and water level through Synthetic views with known levels detect the waterline and compare a two-mark linear conversion with a The plot shows the linear bias reversing between interpolation and extrapolation.
+Perspective bends direct row to water level conversion in oblique gauge images. Synthetic waterlines of known level compared two-point linear conversion with homography. In the figure, linear error flips across interpolation and extrapolation, and homography leaves only detection error.
 
 [![River Stage From an Oblique Photo — Ignoring Perspective Bends the Row-Number Error Into an Arc](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_level/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_level/01_scene.png)
 
@@ -4478,7 +4478,7 @@ Ops used (notes): [`gen_measure_rectangle2`](https://furuse.work/ops/measure1d/c
 
 ## No.2026.217 —— Predicting Wheel Slip with Uncertainty on Real Martian Terrain and Planning a Path that Avoids the Slip Risk — Bekker / Wong–Reece and CVaR on a HiRISE DTM; outside the Data a Gaussian Process Calls a Stuck Slope 'Slip 0.29'
 
-A Mars-rover route needs slip risk from weak soil as well as geometric slope Soil mechanics and visual odometry estimate slip and uncertainty by incline The map shows the shorter route stalling on steep ground while the risk-aware route detours around it.
+Mars rover planning needs slope geometry and the odds of soil failure and slip. Terramechanics and visual odometry gave per-slope slip and uncertainty, and we compared mean-time and low-risk paths on real terrain. In the figure, the short path stalls on a steep slope and the low-risk path detours.
 
 [![Predicting Wheel Slip with Uncertainty on Real Martian Terrain and Planning a Path that Avoids the Slip Risk — Bekker / Wong–Reece and CVaR on a HiRISE DTM; outside the Data a Gaussian Process Calls a Stuck Slope 'Slip 0.29'](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_rover_slip_risk_path/07_two_soils_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_rover_slip_risk_path/07_two_soils_scene.png)
 
@@ -4520,7 +4520,7 @@ Ops used (notes): [`bekker_wheel_sinkage`](https://furuse.work/ops/drive/roversl
 
 ## No.2026.136 —— There Are Two Kinds of Height, for Real — Putting a Height-Frame Mix-Up Under a Detector with 523 Published Survey Marks
 
-In evaluating There Are Two Kinds of Height, for Real, Putting a Height-Frame Mix-Up Under a Detector. The There Are Two Kinds of Height, for Real test uses companion from synthetic data to separate. The contrast between showed and that shows that putting a Height-Frame Mix-Up Under a Detector with 523 Published.
+This real-data test of two height systems runs a height-confusion detector on published survey results at 523 points. Synthetic ellipsoidal heights were used, and orthometric and our own values were checked separately. Comparing figures and claim shows this detector test at work.
 
 [![There Are Two Kinds of Height, for Real — Putting a Height-Frame Mix-Up Under a Detector with 523 Published Survey Marks](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_geodetic_benchmarks_real/03_misuse_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_geodetic_benchmarks_real/03_misuse.png)
 
@@ -4558,7 +4558,7 @@ Ops used (notes): [`dem_datum_shift_3param`](https://furuse.work/ops/dem/geodesy
 
 ## No.2026.147 —— Scoring Gravitational-Lens Images with Ordinary Industrial Measurement Operators
 
-In evaluating Scoring Gravitational-Lens Images with Ordinary, the measurement can become unreliable. The Scoring Gravitational-Lens Images with Ordinary test uses gravitational from measured data to separate lensing from carries. The contrast between exact and that shows that the measurement can become unreliable.
+Gravitational-lens images are scored with industrial measurement methods. Using direct measurements on computed data, we checked the exact values and the conserved quantities separately. Comparing the tools with ordinary practice reveals how that scoring works.
 
 [![Scoring Gravitational-Lens Images with Ordinary Industrial Measurement Operators](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_gravitational_lens_invariants/01_images_vs_u_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_gravitational_lens_invariants/01_images_vs_u.png)
 
@@ -4600,7 +4600,7 @@ Ops used (notes): [`blob_label`](https://furuse.work/ops/blob/connect/blob_label
 
 ## No.2026.257 —— How Much Weed Is in the Paddy — Separating Weed Pixels by Colour and Texture Alone, and Grading Cover at Declared Edges
 
-When measuring How Much Weed Is in the Paddy, while and Grading Cover at Declared Edges. For How Much Weed Is in the Paddy, the computed data compares rice with paddies and tracks magenta. The contrast between rice and paddies shows that separating Weed Pixels by Colour and Texture Alone, and Grading Cover at.
+We measure paddy weed by classifying pixels using only colour and texture, then grade cover into four levels at declared boundaries. Computed data on annotations and weedy rice showed how plots change. The gap between discriminant and learner reveals this separation and grading.
 
 [![How Much Weed Is in the Paddy — Separating Weed Pixels by Colour and Texture Alone, and Grading Cover at Declared Edges](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_weed_rice_ratio/05_real_examples_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_weed_rice_ratio/05_real_examples.png)
 
@@ -4646,7 +4646,7 @@ The null baseline placed throughout is 'do nothing'. Deblurring with the kernel 
 
 ## No.2026.007 —— How Much Camera Shake Can Be Undone — Make the Kernel, Apply It, Invert It, Compare
 
-Camera-shake restoration is limited by estimating blur direction and length Known linear blur is added to pictures, then noise and angular error are varied while the restoration The plots show a wrong angle becoming worse than no correction and a single kernel failing on.
+Shake correction is limited less by deblurring than by estimating blur direction and length. We added a known linear blur and compared restorations with the original across noise and angle estimates. The diagram reveals wrong angles doing worse than no correction and one kernel failing on rotation.
 
 [![How Much Camera Shake Can Be Undone — Make the Kernel, Apply It, Invert It, Compare](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_camera_shake_deblur/01_noise_ceiling_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_camera_shake_deblur/01_noise_ceiling.png)
 
@@ -4680,7 +4680,7 @@ Ops used (notes): [`axes_frame`](https://furuse.work/ops/annotate/plot/axes_fram
 
 ## No.2026.062 —— Pseudo-colour changes what the reader decides — counting edges that are not there
 
-A comparison of Pseudo-colour changes what the reader decides matters when counting edges that are not. A measured data case links smooth, field, and provably. The contrast between zero and steps shows that counting edges that are not there.
+When pseudocolor alters judgment, we count nonexistent boundaries and predict their positions. We prepared measured data with steps and examined how the zero level relates to false edges. Comparing the transfer function and coefficients shows these boundaries can be counted and located.
 
 [![Pseudo-colour changes what the reader decides — counting edges that are not there](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_colormap_readability/05_scene_maps_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_colormap_readability/05_scene_maps.png)
 
@@ -4720,7 +4720,7 @@ Ops used (notes): [`delta_e_map`](https://furuse.work/ops/imgmetrics/colordiff/d
 
 ## No.2026.118 —— The Fly's Compound Eye Is a Light-Field Sensor — Neural Superposition Pays Only Up to the Knee
 
-For The Fly's Compound Eye Is a Light-Field Sensor, Neural Superposition Pays Only Up to the Knee. The computed data compares plenoptic with synthesis and tracks ommatidial. The contrast between array and measuring shows that neural Superposition Pays Only Up to the Knee.
+In a fly's compound eye as a light-field-sensor, neural superposition adds robustness only before the knee. Using synthetic data, we modeled an ommatidial array and a plenoptic system to examine how gain changes. Comparing small apertures with the exact result confirms this limit.
 
 [![The Fly's Compound Eye Is a Light-Field Sensor — Neural Superposition Pays Only Up to the Knee](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_compound_eye/01_compound_eye_scaling_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_compound_eye/01_compound_eye_scaling.png)
 
@@ -4750,7 +4750,7 @@ Ops used (notes): [`lf_all_in_focus`](https://furuse.work/ops/lightfield/depth/l
 
 ## No.2026.011 —— Removing Haze — Ground Truth From the Scattering Model, Transmission and Airlight Scored Apart
 
-A comparison of Removing Haze matters when Ground Truth From the Scattering Model, Transmission and. The test uses hazy from computed data to separate image from built. The contrast between depth and extinction shows that ground Truth From the Scattering Model, Transmission and Airlight Scored Apart.
+To evaluate dehazing, an atmospheric scattering model gives ground truth, with transmission and airlight-scored separately. Using computed depth, we separately verified the extinction coefficient and the scene. Comparing hazy and dehazed images shows this separate scoring at work.
 
 [![Removing Haze — Ground Truth From the Scattering Model, Transmission and Airlight Scored Apart](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dehazing/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dehazing/01_scene.png)
 
@@ -4784,7 +4784,7 @@ Ops used (notes): [`axes_frame`](https://furuse.work/ops/annotate/plot/axes_fram
 
 ## No.2026.119 —— The Fly's Visual Front End as a Chain of Operators — Turning and Walking Through a Synthetic Sky, What Can and Cannot Be Read
 
-A fly eye can recover self-rotation from wide-field motion A synthetic eye links hexagonal ommatidia, receptive fields, lamina filtering, and motion correlators The figures show when rotation direction is recovered and when receptive fields crossing the horizon.
+A fly's compound eye reads self-rotation across its whole field, but forward motion can mimic it. A synthetic eye of hexagonal ommatidia, receptive fields, lamina and correlators saw both motions. The diagram reveals when direction is readable and when horizon-crossing fields read advance as rotation.
 
 [![The Fly's Visual Front End as a Chain of Operators — Turning and Walking Through a Synthetic Sky, What Can and Cannot Be Read](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fly_vision/01_fly_vision_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fly_vision/01_fly_vision_scene.png)
 
@@ -4822,7 +4822,7 @@ Ops used (notes): [`fly_dsi`](https://furuse.work/ops/flyvision/tuning/fly_dsi.h
 
 ## No.2026.019 —— Focus Stacking — The All-in-Focus Image and the Depth Map Are Different Things
 
-When measuring Focus Stacking, The All-in-Focus Image and the Depth Map Are Different Things. A computed data case links pulled, frames, and blurred. The contrast between closed-form and circle shows that the All-in-Focus Image and the Depth Map Are Different Things.
+In focus stacking, an all-in-focus image and a depth map are distinct results. We built computed data including circles of confusion and measured how the closed form relates to fusion. Comparing textureless regions with the zero point reveals how the two outputs are not interchangeable.
 
 [![Focus Stacking — The All-in-Focus Image and the Depth Map Are Different Things](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_focus_stacking/01_stack_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_focus_stacking/01_stack.png)
 
@@ -4856,7 +4856,7 @@ Ops used (notes): [`axes_frame`](https://furuse.work/ops/annotate/plot/axes_fram
 
 ## No.2026.105 —— Deblurring a Real Photograph — Three Rulers, Three Different Winners
 
-When measuring Deblurring a Real Photograph, Three Rulers, Three Different Winners. The computed data compares here with only and tracks degradation. The contrast between planted and straight shows that three Rulers, Three Different Winners.
+When blur is removed from a real-photograph, three yardsticks produce three winners. Using measured data, we treated the degradation and our own result and examined how the zero point changes. Comparing the competitor with the tuning knob shows that three yardsticks produce three winners.
 
 [![Deblurring a Real Photograph — Three Rulers, Three Different Winners](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_deblur_honesty/01_restore_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_deblur_honesty/01_restore.png)
 
@@ -4888,7 +4888,7 @@ Ops used (notes): [`iv_motion_deblur`](https://furuse.work/ops/2d/restoration/iv
 
 ## No.2026.039 —— Does Super-Resolution Add Information? Downsample With the Truth in Hand, Restore, Count
 
-When measuring Does Super-Resolution Add Information, Downsample With the Truth in Hand, Restore, Count. The test uses observations from computed data to separate made from downsampling. The contrast between single-image and upscaling shows that downsample With the Truth in Hand, Restore, Count.
+To test whether super-resolution adds information, data with known truth are downsampled, restored, and counted. Computed observations tested single-image upscaling and back-projection separately. The gap between resolution and scoring shows how the truth is kept through those steps.
 
 [![Does Super-Resolution Add Information? Downsample With the Truth in Hand, Restore, Count](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_superresolution_limits/03_multiframe_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_superresolution_limits/03_multiframe.png)
 
@@ -4922,7 +4922,7 @@ Ops used (notes): [`axes_frame`](https://furuse.work/ops/annotate/plot/axes_fram
 
 ## No.2026.194 —— Measuring Image-Quality Metrics Against a Public Ground Truth — TID2013's 3,000 Images × 971 Observers and the Authors' Published Values as the Gate
 
-In evaluating Measuring Image-Quality Metrics Against a Public Ground Truth, TID2013's , Images ×. The Measuring Image-Quality Metrics Against a Public Ground Truth test uses image-side from. The contrast between outside and reference shows that tID's , Images × Observers and the Authors' Published.
+Image-quality metrics are judged on public truth using TID2013 MOS and the authors-published values. A home-made synthetic dataset verified our own side and the limits separately. The gap between the image side and the reference shows the limits of the judgment.
 
 [![Measuring Image-Quality Metrics Against a Public Ground Truth — TID2013's 3,000 Images × 971 Observers and the Authors' Published Values as the Gate](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_iqa_tid2013/06_tid2013_pair_ssim_map_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_iqa_tid2013/06_tid2013_pair_ssim_map.png)
 
@@ -4960,7 +4960,7 @@ Ops used (notes): [`luma_limited_u8`](https://furuse.work/ops/imgmetrics/iqa/lum
 
 ## No.2026.197 —— Perceptual Indices FSIM (feature similarity index) / FSIMc (colour extension of FSIM) / GMSD (gradient-similarity deviation) / VIF Matched to Four Digits Against an External Truth — TID2013's Three Author-Value Files and the Published Rank-Correlation Tables
 
-Using Perceptual Indices the method / the method / the method / VIF Matched to Four Digits. A synthetic data case for Perceptual Indices the method / the method / the method / VIF Matched. The contrast between listed and implemented shows that tID2013's Three Author-Value Files and.
+Perceptual metrics for feature similarity, colour feature similarity, gradient deviation, and VIF match outside truth to four digits. Synthetic series data relate missing implementations to published values. Distributed files and primary sources expose the assessment limit.
 
 [![Perceptual Indices FSIM (feature similarity index) / FSIMc (colour extension of FSIM) / GMSD (gradient-similarity deviation) / VIF Matched to Four Digits Against an External Truth — TID2013's Three Author-Value Files and the Published Rank-Correlation Tables](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_iqa_fsim_gmsd_vif/01_iqa_tid2013_mos_vs_fsim_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_iqa_fsim_gmsd_vif/01_iqa_tid2013_mos_vs_fsim.png)
 
@@ -5000,7 +5000,7 @@ Ops used (notes): [`fsim`](https://furuse.work/ops/imgmetrics/perceptual/fsim.ht
 
 ## No.2026.135 —— Holding a Course with a Fly's Optic Lobe Alone — From the Lamina to the Steering, Without Learning
 
-In evaluating Holding a Course with a Fly's Optic Lobe Alone, while Without Learning. A measured data case for Holding a Course with a Fly's Optic Lobe Alone links vehicle, whose, and heading. The contrast between drifts and disturbance shows that from the Lamina to the Steering, Without Learning.
+Course correction using only a fly's-optic lobe runs from lamina to steering without learning. Computed data with disturbances were generated, and the vehicle was measured against the compound eye. Comparing circuit and response shows that path works without learning.
 
 [![Holding a Course with a Fly's Optic Lobe Alone — From the Lamina to the Steering, Without Learning](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fly_optomotor_steering/06_follow.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fly_optomotor_steering/06_follow.gif)
 
@@ -5038,7 +5038,7 @@ Ops used (notes): [`fly_egomotion_from_flow`](https://furuse.work/ops/flyvision/
 
 ## No.2026.148 —— The Exact Distance at Which Detail Vanishes, and the Area of a Changing Shape
 
-A comparison of The Exact Distance at Which Detail Vanishes matters when and the Area of a Changing Shape. A measured data case for The Exact Distance at Which Detail Vanishes links both, picture, and that. The contrast between mixes and high shows that and the Area of a Changing Shape.
+This study concerns the distance at which-detail vanishes on receding and the-area of a shape as it morphs. We created measured high-frequency data and related low frequencies to direct measurement. Comparing the exact values with the decomposition reveals that distance and area.
 
 [![The Exact Distance at Which Detail Vanishes, and the Area of a Changing Shape](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_vanishing_detail_and_morphing_area/04_vanish_at_p_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_vanishing_detail_and_morphing_area/04_vanish_at_p.png)
 
@@ -5080,7 +5080,7 @@ Ops used (notes): [`convex_hull`](https://furuse.work/ops/3d/bounds/convex_hull.
 
 ## No.2026.184 —— The Segmentation Gauntlet — Ten Methods Across Six Worlds With Ground Truth, and Which Measure Is Blind to Which Failure
 
-A comparison of The Segmentation Gauntlet matters when Ten Methods Across Six Worlds With Ground Truth. For The Segmentation Gauntlet, the synthetic data compares adding with measures and tracks come. The contrast between modules and segeval shows that ten Methods Across Six Worlds With Ground Truth, and Which.
+This segmentation benchmark applies methods to six ground-truth worlds and measures which yardstick is blind to each breakdown. We used synthetic data on scoring and new modules to track the contingency table. The gap between regions and coefficients shows the limits of judgment.
 
 [![The Segmentation Gauntlet — Ten Methods Across Six Worlds With Ground Truth, and Which Measure Is Blind to Which Failure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_segmentation_gauntlet/01_worlds_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_segmentation_gauntlet/01_worlds.png)
 
@@ -5144,7 +5144,7 @@ Ops used (notes): [`blob_distance`](https://furuse.work/ops/blob/split/blob_dist
 
 ## No.2026.186 —— Active Contours and Level Sets — Checking With Closed Forms How a Contour Shrinks, Enters a Concavity and Stops at an Edge
 
-For Active Contours and Level Sets, while Enters a Concavity and Stops at an Edge. For Active Contours and Level Sets, the computed data compares segmentation with expansion and. The contrast between module and segcontour shows that checking With Closed Forms How a Contour Shrinks, Enters a Concavity and Stops at.
+Active-contours and level sets check analytically how a contour-shrinks, enters concavities, and stops at edges. Computed data for expanded segmentation and a new module show how gradient vector flow changes. Energy versus evolution reveals that closed-form behavior.
 
 [![Active Contours and Level Sets — Checking With Closed Forms How a Contour Shrinks, Enters a Concavity and Stops at an Edge](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_active_contours/01_inputs_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_active_contours/01_inputs.png)
 
@@ -5192,7 +5192,7 @@ Ops used (notes): [`chan_vese_evolve`](https://furuse.work/ops/segmentation/cont
 
 ## No.2026.187 —— Graph, Hierarchical and Threshold Segmentation — Max Flow = Min Cut, Ultrametrics, and Turning a Knob From Coarse to Fine
 
-A comparison of Graph, while and Turning a Knob From Coarse to Fine. The Graph, Hierarchical and the method Segmentation test uses expansion from computed data to separate batch from module. The contrast between seggraph and gates shows that max Flow = Min Cut, Ultrametrics, and Turning a Knob From Coarse to Fine.
+Evaluating graph, hierarchical, and cutoff segmentation covers max-flow equal to min-cut, ultrametrics, and a knob moving from coarse-to fine. Computed segmentation-expansion data verified the new module and exhaustive search separately. Minimum versus match shows the assessment limit.
 
 [![Graph, Hierarchical and Threshold Segmentation — Max Flow = Min Cut, Ultrametrics, and Turning a Knob From Coarse to Fine](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_graph_hierarchy_segmentation/01_inputs_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_graph_hierarchy_segmentation/01_inputs.png)
 
@@ -5244,7 +5244,7 @@ Ops used (notes): [`alpha_expansion`](https://furuse.work/ops/segmentation/graph
 
 ## No.2026.227 —— A Fly's Eye Closing In on Stripes — Do Zebra Stripes Really Spoil a Compound Eye's Sense of Distance, and Would a Fibonacci Eye Do Better?
 
-In evaluating A Fly's Eye Closing In on Stripes, while and Would a Fibonacci Eye Do Better. For A Fly's Eye Closing In on Stripes, the measured data compares tabanid with flies and tracks. The contrast between slow and down shows that do Zebra Stripes Really Spoil a Compound Eye's Sense of Distance, and Would a.
+For fly eyes approaching stripes, we ask whether zebra stripes truly disrupt compound-eye distance perception and whether Fibonacci arrangements excel. Measured data on tabanids and the foreground show how control changes. Deceleration versus checkerboards answers both questions.
 
 [![A Fly's Eye Closing In on Stripes — Do Zebra Stripes Really Spoil a Compound Eye's Sense of Distance, and Would a Fibonacci Eye Do Better?](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zebra_stripes_fly_eye/02_reversal_ring.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zebra_stripes_fly_eye/02_reversal_ring.gif)
 
@@ -5278,7 +5278,7 @@ Ops used (notes): [`coherence`](https://furuse.work/ops/acoustics/dual/coherence
 
 ## No.2026.252 —— Calibrating Pixel-Shift Offsets and Pixel Aperture from the Images — Where Only Stripes Are Seen, the Shift Is Fixed in One Direction Only
 
-For Calibrating Pixel-Shift Offsets and Pixel Aperture from the Images, Where Only Stripes Are Seen. For Calibrating Pixel-Shift Offsets and Pixel Aperture from the Images, the computed data compares. The contrast between sim-to-real and calibration shows that where Only Stripes Are Seen, the Shift Is Fixed in One.
+When pixel-shift offsets and aperture are fitted from real images, the offset is fixed in only one direction where only stripes appear. Computed data on image sensors and pixels were used to examine how nominal values change. The distinction between aperture ratio and lens marks the limit of the judgment.
 
 [![Calibrating Pixel-Shift Offsets and Pixel Aperture from the Images — Where Only Stripes Are Seen, the Shift Is Fixed in One Direction Only](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_pixel_shift/02_undetermined_map_star_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_pixel_shift/02_undetermined_map_star.png)
 
@@ -5316,7 +5316,7 @@ Ops used (notes): [`pixel_shift_capture`](https://furuse.work/ops/optics/pixelsh
 
 ## No.2026.266 —— Water and Transparent Media — Ocean Waves, Surface Refraction, Colour Under Water and the Caustic of a Bottle, Scored Against Closed Forms, Published Values and Second Implementations
 
-In evaluating Water and Transparent Media, while Published Values and Second Implementations. For Water and Transparent Media, we place moving in computed data, then compare lens and seen. The contrast between moving and lens shows that ocean Waves, while Published Values and Second Implementations.
+For water and clear media, we score sea waves, surface refraction, underwater colour and bottle caustics with closed forms, published data and a second implementation. Computed lens data compared distance with a colour filter. Significant wave height and period differences show this scoring.
 
 [![Water and Transparent Media — Ocean Waves, Surface Refraction, Colour Under Water and the Caustic of a Bottle, Scored Against Closed Forms, Published Values and Second Implementations](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_transparent_media/05_pool_views_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_transparent_media/05_pool_views.png)
 
@@ -5358,7 +5358,7 @@ Ops used (notes): [`beer_lambert_transmittance`](https://furuse.work/ops/optics/
 
 ## No.2026.268 —— How Water Looks in Inspection Images — Pool-Floor Caustics, a Bottle from the Side, a Wet Plate and a Hull Under Water, Scored Against Closed Forms and Second Methods
 
-A comparison of How Water Looks in Inspection Images matters when Pool-Floor Caustics, a Bottle from. The How Water Looks in Inspection Images test uses changes from computed data to separate what. The contrast between changes and what shows that pool-Floor Caustics, a Bottle from the Side, a Wet Plate and a Hull.
+We check how water appears in inspection images, scoring with closed forms and a second method. A computed inspection camera examined video and surface separately. The gap between pattern and liquid shows how pool-floor caustics, side-on bottles, wet plates and underwater hulls score this way.
 
 [![How Water Looks in Inspection Images — Pool-Floor Caustics, a Bottle from the Side, a Wet Plate and a Hull Under Water, Scored Against Closed Forms and Second Methods](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_inspection_images/04_bottles_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_inspection_images/04_bottles.png)
 
@@ -5400,7 +5400,7 @@ Ops used (notes): [`bottle_image`](https://furuse.work/ops/optics/watervision/bo
 
 ## No.2026.269 —— Photographing a 3-D Scene Through the Actual Lens Prescription — Depth of Field, Cat's-Eye Bokeh, Corner Illumination, Colour Fringes and Ghosts, Scored Against Closed Forms, Existing Ops and an Independent Trace
 
-Using Photographing a three-dimensional Scene Through the Actual Lens Prescription in practice is. A computed data case for Photographing a three-dimensional Scene Through the Actual Lens. The contrast between lens-design and screen shows that depth of Field, while Existing Ops and an Independent Trace.
+We photograph a 3-D-scene through a lens as prescribed and score it with closed forms, existing methods and independent ray tracing. Computed lens-design data measured how the screen relates to spot diagrams. The gap between the modulation transfer function and the numbers marks the limit.
 
 [![Photographing a 3-D Scene Through the Actual Lens Prescription — Depth of Field, Cat's-Eye Bokeh, Corner Illumination, Colour Fringes and Ghosts, Scored Against Closed Forms, Existing Ops and an Independent Trace](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photograph_through_prescription/01_chart_good_vs_detuned_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photograph_through_prescription/01_chart_good_vs_detuned.png)
 
@@ -5448,7 +5448,7 @@ The motion-magnification exhibit carries the most candid conclusion in the room:
 
 ## No.2026.055 —— Modal identification from video — frequency survives to the end, damping lies first
 
-When measuring Modal identification from video, frequency survives to the end, damping lies first. We place cantilever in computed data, then compare beam and decaying. The contrast between freely and three shows that frequency survives to the end, damping lies first.
+When natural frequency, damping ratio, and mode shape are identified from video, f holds up to the last, while ζ lies first. We prepared a synthetic cantilever and compared modal free decay with noise. The distinction between lighting and rolling shutter shows that f holds up to the last, while ζ lies first.
 
 [![Modal identification from video — frequency survives to the end, damping lies first](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_beam_modal_video/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_beam_modal_video/01_scene.png)
 
@@ -5492,7 +5492,7 @@ Ops used (notes): [`axes_frame`](https://furuse.work/ops/annotate/plot/axes_fram
 
 ## No.2026.060 —— The Cold-Chain Temperature Record — Where You Taped the Logger Is the Verdict
 
-When measuring The Cold-Chain Temperature Record, Where You Taped the Logger Is the Verdict. We place twelve in measured data, then compare hours and reefer. The contrast between hold and built shows that where You Taped the Logger Is the Verdict.
+In evaluating temperature records from refrigerated transport, logger placement decides pass or fail. We prepared a reefer hold within observations and compared time with volume. Comparing distance with infiltration shows that logger placement decides pass or fail.
 
 [![The Cold-Chain Temperature Record — Where You Taped the Logger Is the Verdict](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cold_chain_excursion/01_scene_slices_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cold_chain_excursion/01_scene_slices.png)
 
@@ -5530,7 +5530,7 @@ Ops used (notes): [`esdf`](https://furuse.work/ops/3d/occupancy/esdf.html) · [`
 
 ## No.2026.095 —— Measuring the Growth, Not the Width — Rephotographing the Same Wall Changes What the Error Is
 
-In evaluating Measuring the Growth, while Rephotographing the Same Wall Changes What the Error Is. A computed data case links rephotographed, twelve, and epochs. The contrast between over and three shows that rephotographing the Same Wall Changes What the Error Is.
+When crack growth rather than width is measured, reimaging one wall changes the character of the error. We created computed data with a growth rate and measured how binarization relates to pixel size. Comparing underestimation with overestimation shows this change in the error.
 
 [![Measuring the Growth, Not the Width — Rephotographing the Same Wall Changes What the Error Is](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_crack_width_timeseries/01_frames_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_crack_width_timeseries/01_frames.png)
 
@@ -5572,7 +5572,7 @@ Ops used (notes): [`axes_frame`](https://furuse.work/ops/annotate/plot/axes_fram
 
 ## No.2026.026 —— Micro-Vibration of a Structure From Video — Does Motion Magnification Help You Measure?
 
-A comparison of Micro-Vibration of a Structure From Video matters when Does Motion Magnification Help. The test uses amplitude from computed data to separate synthesised from test. The contrast between whether and helps shows that does Motion Magnification Help You Measure?.
+When measuring tiny structural vibrations from video, the question is whether motion magnification helps. Using known amplitudes within simulations, we verified magnification and machine precision separately. Comparing the exact result with measurement accuracy shows whether it helps.
 
 [![Micro-Vibration of a Structure From Video — Does Motion Magnification Help You Measure?](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_motion_magnification/01_slit_scan_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_motion_magnification/01_slit_scan.png)
 
@@ -5606,7 +5606,7 @@ Ops used (notes): [`axes_frame`](https://furuse.work/ops/annotate/plot/axes_fram
 
 ## No.2026.030 —— Particle Tracking as a (row, column, time) Volume — Mislinks Come in Two Directions
 
-When measuring Particle Tracking as a Volume, Mislinks Come in Two Directions. We place video in computed data, then compare particles and tracked. The contrast between diffusion and coefficient shows that mislinks Come in Two Directions.
+When particle tracking is measured as a volume, mislinks do not act in only one direction. We prepared a video from calculations and compared the trajectories with the diffusion coefficient. Comparing ambiguous links with missing detections shows that mislinks do not act in only one direction.
 
 [![Particle Tracking as a (row, column, time) Volume — Mislinks Come in Two Directions](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_particle_tracking/05_tracking_links.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_particle_tracking/05_tracking_links.gif)
 
@@ -5640,7 +5640,7 @@ Ops used (notes): [`axes_frame`](https://furuse.work/ops/annotate/plot/axes_fram
 
 ## No.2026.111 —— Did It Settle, or Did We Just Scan It Again — What Changes When You Cut at the Detection Limit
 
-When measuring Did It Settle, while What Changes When You Cut at the Detection Limit. We place road in measured data, then compare surface and settling. The contrast between above and tunnel shows that what Changes When You Cut at the Detection Limit.
+When checking whether ground settled or was merely rescanned, a detection-limit cutoff changes the picture. Using measured data from a tunnel drive, we compared the road surface across epochs. The gap between point cloud and zero point shows that this cutoff changes the picture.
 
 [![Did It Settle, or Did We Just Scan It Again — What Changes When You Cut at the Detection Limit](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_settlement_significance/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_settlement_significance/01_scene.png)
 
@@ -5678,7 +5678,7 @@ This run produced **7 figures** in total - [see them all](https://github.com/fur
 
 ## No.2026.041 —— Template Tracking Drifts Quietly Before It Ever Loses the Target
 
-In evaluating Template Tracking Drifts Quietly Before It, the measurement can become unreliable. We place camera in computed data, then compare moved and similarity. The contrast between transform and exposing shows that the measurement can become unreliable.
+In evaluating template tracking before it loses the target, measurement certainty is the central issue. A computed similarity transform was used to compare the camera with confident errors. The gap between errors and frames shows that measurement certainty is the central issue.
 
 [![Template Tracking Drifts Quietly Before It Ever Loses the Target](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_template_tracking/01_ncc_maps_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_template_tracking/01_ncc_maps.png)
 
@@ -5712,7 +5712,7 @@ Ops used (notes): [`axes_frame`](https://furuse.work/ops/annotate/plot/axes_fram
 
 ## No.2026.044 —— A Growth Time-Lapse as Space-Time Connected Components
 
-When measuring A Growth Time-Lapse as, the measurement can become unreliable. A computed data case links video, colonies, and spreading. The contrast between merging and volume shows that the measurement can become unreliable.
+When extracting space-time connected components from a growth time-lapse, measurement certainty is the central issue. Computed data with merging measured how colonies relate to video. The gap between volume and three dimensions shows that certainty is the central issue.
 
 [![A Growth Time-Lapse as Space-Time Connected Components](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_timelapse_growth/01_frames_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_timelapse_growth/01_frames.png)
 
@@ -5746,7 +5746,7 @@ Ops used (notes): [`axes_frame`](https://furuse.work/ops/annotate/plot/axes_fram
 
 ## No.2026.045 —— Counting in (x, y, t) — Vehicles Passed, Occlusion, and One Constant: L/V
 
-When measuring Counting in, Vehicles Passed, Occlusion, and One Constant: L/V. We place traffic in synthetic data, then compare video and counted. The contrast between frame and virtual shows that vehicles Passed, Occlusion, and One Constant: L/V.
+When counting, what matters is occlusion, the number of passing vehicles, and the single constant L/V. Synthetic video was prepared, and frames were compared with counts. The gap between the virtual loop and the slit image reveals that passing count, occlusion, and the constant L/V matter.
 
 [![Counting in (x, y, t) — Vehicles Passed, Occlusion, and One Constant: L/V](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_traffic_counting/01_per_frame_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_traffic_counting/01_per_frame.png)
 
@@ -5780,7 +5780,7 @@ Ops used (notes): [`axes_frame`](https://furuse.work/ops/annotate/plot/axes_fram
 
 ## No.2026.089 —— Where the Warehouse Dwell Came From — Count Waiting Without Its Kind and Everything Is Just Congestion
 
-In evaluating Where the Warehouse Dwell Came From, Count Waiting Without Its Kind and Everything Is. The test uses floor from synthetic data to separate plan from tracked. The contrast between workers and agvs shows that count Waiting Without Its Kind and Everything Is Just Congestion.
+When tracing warehouse dwell, counting waits without separating types makes everything "congestion". A synthetic distribution center checked the floor plan and trajectories separately. Comparing replenishment and people waits shows that unseparated counts all become "congestion".
 
 [![Where the Warehouse Dwell Came From — Count Waiting Without Its Kind and Everything Is Just Congestion](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_warehouse_flow/09_scene_layout_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_warehouse_flow/09_scene_layout.png)
 
@@ -5818,7 +5818,7 @@ Ops used (notes): [`esdf`](https://furuse.work/ops/3d/occupancy/esdf.html) · [`
 
 ## No.2026.053 —— The Arrival-Time Surface as an Isosurface in (x, y, t)
 
-In evaluating The Arrival-Time Surface as, the measurement can become unreliable. A computed data case links wavefronts, spreading, and point. The contrast between sources and extracted shows that the measurement can become unreliable.
+When arrival times form an isosurface, measurement certainty is the key issue. We built computed data with point sources and measured how the wavefront relates to the volume. Comparing the zero point with the frame count shows that measurement certainty is the key issue.
 
 [![The Arrival-Time Surface as an Isosurface in (x, y, t)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_xyt_event_surface/01_event_output_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_xyt_event_surface/01_event_output.png)
 
@@ -5860,7 +5860,7 @@ Ops used (notes): [`axes_frame`](https://furuse.work/ops/annotate/plot/axes_fram
 
 ## No.2026.127 —— A Clip as a Space-Time Cube — What Passed Where, and When, in One Solid
 
-Using A Clip as a Space-Time Cube in practice is difficult because What Passed Where, while in One Solid. A synthetic data case links video, summagator, and turns. The contrast between into and renders shows that what Passed Where, and When, in One Solid.
+Viewing video as a cube of space and time shows in one solid what-passed where and when. We built synthetic data including the background and measured how objects relate to scenes. Comparing the tools with the new family shows what-passed where and-when in one solid.
 
 [![A Clip as a Space-Time Cube — What Passed Where, and When, in One Solid](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_video_cube/02_cube_orbit.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_video_cube/02_cube_orbit.gif)
 
@@ -5902,7 +5902,7 @@ Ops used (notes): [`intensity`](https://furuse.work/ops/2d/features/intensity.ht
 
 ## No.2026.128 —— Living Tissue in 3D+t Without a Generator — Magnify, Flow, Interpolate, Height, All Against Truth
 
-In evaluating Living Tissue in three-dimensional+t Without a Generator, while All Against Truth. A synthetic data case links video, invents, and plausible. The contrast between motion and family shows that magnify, Flow, Interpolate, Height, All Against Truth.
+Purely classical short three-dimensional videos of living space-time tissue have ground truth for amplification, flow, interpolation, and height fields. We built synthetic videos and checked the new family against known values. Comparing content with reality confirms all four measures.
 
 [![Living Tissue in 3D+t Without a Generator — Magnify, Flow, Interpolate, Height, All Against Truth](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_live4d/01_beating_orbit.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_live4d/01_beating_orbit.gif)
 
@@ -5952,7 +5952,7 @@ Ops used (notes): [`blend`](https://furuse.work/ops/shape2d/morph/blend.html) ·
 
 ## No.2026.206 —— Transcribing a Diabolo Model from the Paper and Checking It, then Reading Axis, Spin and Tension from Synthetic Video — Eq. (1b) as Printed Is Dimensionally Wrong and Gives NaN at the Real Dimensions; Closed Forms, an Exact String and MuJoCo as the Truth
 
-A comparison of Transcribing a Diabolo Model from the Paper and Checking It, then Reading Axis, Spin. For Transcribing a Diabolo Model from the Paper and Checking It, then Reading Axis, Spin and. The contrast between primary and source shows that eq as Printed Is Dimensionally Wrong and Gives NaN at the Real.
+An analytic diabolo-model from the source is checked against closed-forms, an exact-string and MuJoCo. Simulated series footage gave axis, rotation and tension, showing how primary sources change. The gap between robot-learning and analytic models shows the limit of the check.
 
 [![Transcribing a Diabolo Model from the Paper and Checking It, then Reading Axis, Spin and Tension from Synthetic Video — Eq. (1b) as Printed Is Dimensionally Wrong and Gives NaN at the Real Dimensions; Closed Forms, an Exact String and MuJoCo as the Truth](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_diabolo_model_and_vision/01_diabolo_throw_axis_from_image.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_diabolo_model_and_vision/01_diabolo_throw_axis_from_image.gif)
 
@@ -5994,7 +5994,7 @@ Ops used (notes): [`arrow`](https://furuse.work/ops/annotate/pointer/arrow.html)
 
 ## No.2026.213 —— A Swarm That Flows Like a Fluid Senses an Invisible Obstacle from the Disturbance of Its Velocity Field Alone — Reading the Impact Point and the Obstacle Outline by Tracking and PIV (particle image velocimetry) on Overhead Video, from Upstream Before Contact, and Saying Nothing When There Is No Obstacle
 
-For A Swarm That Flows Like a Fluid Senses an Invisible Obstacle from the Disturbance of Its Velocity. A measured data case for A Swarm That Flows Like a Fluid Senses an Invisible Obstacle from the. The contrast between hydrodynamics and particles shows that reading the Impact Point and the Obstacle Outline by.
+With no obstacle present, a fluid-like swarm stays silent. We generated data including robots to test sensing hidden obstacles from velocity disturbances alone, measuring how smoothed-particle hydrodynamics relates to individuals. The gap between slowdown and pressure marks the detection limit.
 
 [![A Swarm That Flows Like a Fluid Senses an Invisible Obstacle from the Disturbance of Its Velocity Field Alone — Reading the Impact Point and the Obstacle Outline by Tracking and PIV (particle image velocimetry) on Overhead Video, from Upstream Before Contact, and Saying Nothing When There Is No Obstacle](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_swarm_obstacle_from_flow/02_swarmflow_speed_change_maps_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_swarm_obstacle_from_flow/02_swarmflow_speed_change_maps.png)
 
@@ -6030,7 +6030,7 @@ Ops used (notes): [`blob_label`](https://furuse.work/ops/blob/connect/blob_label
 
 ## No.2026.170 —— Measuring a Table-Tennis Ball the Way the Pioneers Did — Multi-Camera Tracking, Triangulation, Trajectory Prediction, Bounce and Spin, Scored by Theorems on a Table with Ground Truth
 
-When measuring Measuring a Table-Tennis Ball the Way the Pioneers Did, Multi-Camera Tracking. For Measuring a Table-Tennis Ball the Way the Pioneers Did, while then compare tennis and same. The contrast between visual and stance shows that multi-Camera Tracking, while Scored by Theorems on a Table with Ground Truth.
+Pioneer-style ball measurement grades camera tracking, triangulation, path forecasting, rebound, and rotation by theorem on a ground-truth table. We compared vision with multiple views on synthetic robot table-tennis data. The gap between cameras and drag shows how theorems grade each stage.
 
 [![Measuring a Table-Tennis Ball the Way the Pioneers Did — Multi-Camera Tracking, Triangulation, Trajectory Prediction, Bounce and Spin, Scored by Theorems on a Table with Ground Truth](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ball_bounce/01_rig_view_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ball_bounce/01_rig_view.png)
 
@@ -6076,7 +6076,7 @@ Ops used (notes): [`add_ball`](https://furuse.work/ops/drive/ballworld/add_ball.
 
 ## No.2026.171 —— Kendama the Way the Pioneers Did It — A True-to-Shape Kendama Filmed by Two Cameras, the Ball's Flight Predicted from Images Alone and Caught in the Big, Small and Base Cups
 
-For Kendama the Way the Pioneers Did It, while Small and Base Cups. For Kendama the Way the Pioneers Did It, while then compare have and played. The contrast between thirty and years shows that a True-to-Shape Kendama Filmed by Two Cameras, while Small and Base Cups.
+In this pioneer-style test, two cameras film a realistic kendama, and image-only path prediction guides catches in the large, small, and middle cups. We compared the research with its long lineage on synthetic robot data. The gap between demonstration and reinforcement learning marks the limit.
 
 [![Kendama the Way the Pioneers Did It — A True-to-Shape Kendama Filmed by Two Cameras, the Ball's Flight Predicted from Images Alone and Caught in the Big, Small and Base Cups](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_kendama/01_rig_view_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_kendama/01_rig_view.png)
 
@@ -6122,7 +6122,7 @@ Ops used (notes): [`ball_detect`](https://furuse.work/ops/drive/balltrack/ball_d
 
 ## No.2026.174 —— Filming a Spinning Table-Tennis Ball and Reading Its Spin Two Ways — From the Curve and From the Markings
 
-Using Filming a Spinning Table-Tennis Ball and Reading Its Spin Two Ways in practice is difficult. The Filming a Spinning Table-Tennis Ball and Reading Its Spin Two Ways test uses balls from. The contrast between speed and angle shows that from the Curve and From the Markings.
+We film a curving table-tennis ball and read its rotation from both trajectory and surface pattern. Using topspin within simulations, we checked forward rotation and the near side separately. The gap between backspin and underspin shows that trajectory and pattern both reveal rotation.
 
 [![Filming a Spinning Table-Tennis Ball and Reading Its Spin Two Ways — From the Curve and From the Markings](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_spin/03_top_view_sidespin.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_spin/03_top_view_sidespin.gif)
 
@@ -6156,7 +6156,7 @@ Ops used (notes): [`add_ball`](https://furuse.work/ops/drive/ballworld/add_ball.
 
 ## No.2026.175 —— Filming a Bouncing Table-Tennis Ball with a High-Speed Camera and Reading Restitution and Friction — Checked Against Published Values
 
-When measuring Filming a Bouncing Table-Tennis Ball with a High-Speed Camera and Reading Restitution. For Filming a Bouncing Table-Tennis Ball with a High-Speed Camera and Reading Restitution and. The contrast between decides and much shows that checked Against Published Values.
+Restitution and friction coefficients from high-speed footage of a bouncing table tennis ball are checked-against published values. Synthetic spin data were prepared, and friction was compared with the contact point. Comparing intermediate and exhibited results shows this check.
 
 [![Filming a Bouncing Table-Tennis Ball with a High-Speed Camera and Reading Restitution and Friction — Checked Against Published Values](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_bounce/05_regime_map_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_bounce/05_regime_map.png)
 
@@ -6190,7 +6190,7 @@ Ops used (notes): [`add_ball`](https://furuse.work/ops/drive/ballworld/add_ball.
 
 ## No.2026.177 —— Reading Errors End the Table-Tennis Rally — How Much Noise and Latency Move the Landing Point, in Closed Form Before the Shot
 
-Using Reading Errors End the Table-Tennis Rally in practice is difficult because How Much Noise and. A computed data case for Reading Errors End the Table-Tennis Rally links robot, reads, and ball. The contrast between then and computes shows that how Much Noise and Latency Move the Landing Point, in Closed Form.
+When a misread ends a table tennis rally, a closed form gives the landing shift from noise and delay before the stroke. Computed data with a table tennis robot measured position against the opponent's court. Comparing stroke and calculation shows this closed-form prediction.
 
 [![Reading Errors End the Table-Tennis Rally — How Much Noise and Latency Move the Landing Point, in Closed Form Before the Shot](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_rally_loop/01_landing_cloud.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_rally_loop/01_landing_cloud.gif)
 
@@ -6220,7 +6220,7 @@ Ops used (notes): [`aim_velocity`](https://furuse.work/ops/drive/racket/aim_velo
 
 ## No.2026.145 —— Testing the Periodic Boundary of Temporal Operators with a Seamless Loop
 
-In evaluating Testing the Periodic the method of Temporal Operators, the measurement can become unreliable. The Testing the Periodic the method of Temporal Operators test uses material from computed data to. The contrast between invariant and that shows that the measurement can become unreliable.
+An evaluation on seamless video inspects how temporal methods handle the periodic limit. Using periodicity within calculations, we checked the material and the exact result separately. Comparing the invariant with cyclic-shift equivariance reveals how they treat that limit.
 
 [![Testing the Periodic Boundary of Temporal Operators with a Seamless Loop](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_periodic_video_boundary/05_contamination_map_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_periodic_video_boundary/05_contamination_map.png)
 
@@ -6270,7 +6270,7 @@ A trap in the measuring procedure itself is kept on display: fix one point cloud
 
 ## No.2026.006 —— A Reprojection Error of 0.05 px Guarantees Nothing
 
-When measuring A Reprojection Error of 0.05, the measurement can become unreliable. The test uses grid from computed data to separate points from projected. The contrast between intrinsics and poses shows that the measurement can become unreliable.
+In evaluating a 0.05 px reprojection error, measurement certainty becomes the issue. Using the intrinsic parameters of computed data, we separately verified the poses and the grid points. Comparing the calibration with its components shows that measurement certainty becomes the issue.
 
 [![A Reprojection Error of 0.05 px Guarantees Nothing](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_camera_calibration/03_frame_fill_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_camera_calibration/03_frame_fill.png)
 
@@ -6304,7 +6304,7 @@ Ops used (notes): [`axes_frame`](https://furuse.work/ops/annotate/plot/axes_fram
 
 ## No.2026.028 —— Chain the Neighbours Together and You Cannot Get Back Where You Started
 
-For Chain the Neighbours Together and You Cannot Get, the measurement can become unreliable. The test uses frames from computed data to separate cylindrical from panorama. The contrast between rotation and sequence shows that the measurement can become unreliable.
+In evaluating pairwise chaining of neighbors, a full turn does not return to the start. Using a computed rotation sequence, we separately checked the cylindrical panorama and adjacent pairs. Comparing the excess with the pose reveals a full turn does not return to the start.
 
 [![Chain the Neighbours Together and You Cannot Get Back Where You Started](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_panorama_drift/01_seams_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_panorama_drift/01_seams.png)
 
@@ -6338,7 +6338,7 @@ Ops used (notes): [`axes_frame`](https://furuse.work/ops/annotate/plot/axes_fram
 
 ## No.2026.108 —— Measuring on a Real Stereo Photograph — Three Stumbles Synthesis Never Produces
 
-In evaluating Measuring on a Real Stereo Photograph, Three Stumbles Synthesis Never Produces. A measured data case links exhibit, this, and museum. The contrast between measured and distributor shows that three Stumbles Synthesis Never Produces.
+When measuring with real stereo photographs, three pitfalls appear that never arise in simulation. With measured data including the museum, we related the distributor to its note. Comparing actual values with central disparity reveals three pitfalls that never arise in simulation.
 
 [![Measuring on a Real Stereo Photograph — Three Stumbles Synthesis Never Produces](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stereo_depth/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stereo_depth/01_scene.png)
 
@@ -6372,7 +6372,7 @@ This run produced **5 figures** in total - [see them all](https://github.com/fur
 
 ## No.2026.034 —— The Convergence Basin of Point-Cloud Registration — How Far Off Can the Initial Pose Be?
 
-For The Convergence Basin of Point-Cloud Registration, How Far Off Can the Initial Pose Be. A computed data case links success, rate, and contoured. The contrast between re-sampled and every shows that how Far Off Can the Initial Pose Be?.
+In point-cloud registration's convergence region, the question is how much initial pose error causes failure. We computed data resampled each trial and measured success rate against its contours. The gap between translation and point-to-point shows how much initial pose error causes failure.
 
 [![The Convergence Basin of Point-Cloud Registration — How Far Off Can the Initial Pose Be?](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_registration_basin/01_basin_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_registration_basin/01_basin.png)
 
@@ -6408,7 +6408,7 @@ Ops used (notes): [`axes_frame`](https://furuse.work/ops/annotate/plot/axes_fram
 
 ## No.2026.117 —— Which Quantities Really Survive a Rotation — Auditing Invariance on a Real Coin
 
-For Which Quantities Really Survive a Rotation, Auditing Invariance on a Real Coin. The synthetic data compares shape with features and tracks routinely. The contrast between called and rotation-invariant shows that auditing Invariance on a Real Coin.
+To find which quantities stay unchanged under rotation, a real coin is turned through seventy-two angles and counted. Synthetic data on features and rotation invariance showed how pixels change. Comparing the grid with the claim reveals which quantities remain unchanged.
 
 [![Which Quantities Really Survive a Rotation — Auditing Invariance on a Real Coin](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_rotation_invariance_audit/01_rotation_frames_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_rotation_invariance_audit/01_rotation_frames.png)
 
@@ -6430,7 +6430,7 @@ Ops used (notes): [`annotate_outline`](https://furuse.work/ops/annotate/paper/an
 
 ## No.2026.190 —— One Scene, Two Worlds — Scoring a Photoreal Simulator's Depth Against a Closed-Form Truth, Side by Side with Our Own World
 
-When measuring One Scene, while Side by Side with Our Own World. A measured data case links author, wish, and finished. The contrast between everything and built shows that scoring a Photoreal Simulator's Depth Against a Closed-Form Truth, Side by Side with Our Own World.
+For one scene in two worlds, the photorealistic simulator's depth is scored against closed-form truth beside our own world. Computed data with the author measured how the idea relates to the most realistic setting. Comparing environment with technology shows this side-by-side scoring.
 
 [![One Scene, Two Worlds — Scoring a Photoreal Simulator's Depth Against a Closed-Form Truth, Side by Side with Our Own World](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_carla_bridge/01_carla_two_worlds_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_carla_bridge/01_carla_two_worlds.png)
 
@@ -6460,7 +6460,7 @@ Ops used (notes): [`camera_pose_to_carla`](https://furuse.work/ops/drive/carla/c
 
 ## No.2026.191 —— Assembling One Town — Auto-Joining Driving-School Elements, Driving Through from Entry to Exit, and Scoring Every Stop Line on the Way
 
-In evaluating Assembling One Town, while and Scoring Every Stop Line on the Way. The computed data compares foundation with author and tracks plan. The contrast between capstone and series shows that auto-Joining Driving-School Elements, Driving Through from Entry to Exit, and Scoring Every Stop Line on the Way.
+Assembling a town joins driving school elements automatically, drives from entrance to exit, and scores every stop line en route. Computed data covered the author and idea, examining how the series changes. Comparing the capstone with driving shows this end-to-end scoring.
 
 [![Assembling One Town — Auto-Joining Driving-School Elements, Driving Through from Entry to Exit, and Scoring Every Stop Line on the Way](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_town/01_town_overview_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_town/01_town_overview.png)
 
@@ -6502,7 +6502,7 @@ Ops used (notes): [`course_crank`](https://furuse.work/ops/drive/course/course_c
 
 ## No.2026.192 —— Building a Real Japanese Town in Our Own World and Driving It — Roads from OpenStreetMap, Buildings from PLATEAU, Japanese Furniture and Rules
 
-For Building a Real Japanese Town in Our Own World and Driving It, while Japanese Furniture and Rules. The test uses author from synthetic data to separate wish from possible. The contrast between bundled and maps shows that roads from OpenStreetMap, Buildings from PLATEAU, Japanese Furniture and Rules.
+A real-Japanese town is built in our-own world and driven, with OpenStreetMap roads, PLATEAU buildings, and Japanese street furniture and rules. Synthetic author data were used, with the idea and result checked separately. Comparing the map with external options shows these sources.
 
 [![Building a Real Japanese Town in Our Own World and Driving It — Roads from OpenStreetMap, Buildings from PLATEAU, Japanese Furniture and Rules](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_japan_town/04_japan_town_frames_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_japan_town/04_japan_town_frames.png)
 
@@ -6544,7 +6544,7 @@ Ops used (notes): [`citygml_synthetic`](https://furuse.work/ops/drive/japan/city
 
 ## No.2026.193 —— Driving Our Own Driver Through Someone Else's Scenario and Submitting to Someone Else's Judge — CommonRoad Public Scenarios and TUM's Official Checker
 
-In evaluating Driving Our Own Driver Through Someone Else's Scenario and Submitting to Someone Else's. For Driving Our Own Driver Through Someone Else's Scenario and Submitting to Someone Else's Judge. The contrast between your and traps shows that commonRoad Public Scenarios and TUM's Official Checker.
+An in-house driver runs on public CommonRoad scenarios and is graded by the official TUM checker. Synthetic data treated the user and the remark to show how trap building changes. The gap between clearing traps and their limits shows the limits of the judgment.
 
 [![Driving Our Own Driver Through Someone Else's Scenario and Submitting to Someone Else's Judge — CommonRoad Public Scenarios and TUM's Official Checker](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_commonroad/01_commonroad_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_commonroad/01_commonroad_scene.png)
 
@@ -6582,7 +6582,7 @@ Ops used (notes): [`boundary`](https://furuse.work/ops/2d/region/boundary.html) 
 
 ## No.2026.195 —— Peg-in-Hole with a Compliant Wrist — Whitney's Quasi-Static Geometry as the Gate, a Wrist Camera to Centre the Peg, MuJoCo Contacts to Check It
 
-For Peg-in-Hole with a Compliant Wrist, while MuJoCo Contacts to Check It. For Peg-in-Hole with a Compliant Wrist, the synthetic data compares exhibit with. The contrast between series and things shows that whitney's Quasi-Static Geometry as the method, a Wrist Camera to Centre the Peg, MuJoCo Contacts to Check It.
+Soft-wrist peg insertion uses Whitney's-quasi-static geometry as its criterion, wrist-camera guidance and MuJoCo contact checks. Synthetic physics simulation of the series showed how the theorem changes. The gap between original paper and paid material shows the limits of the judgment.
 
 [![Peg-in-Hole with a Compliant Wrist — Whitney's Quasi-Static Geometry as the Gate, a Wrist Camera to Centre the Peg, MuJoCo Contacts to Check It](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pegsim_insertion/03_pegsim_wrist_overlay_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pegsim_insertion/03_pegsim_wrist_overlay.png)
 
@@ -6620,7 +6620,7 @@ Ops used (notes): [`camera_world_to_cv`](https://furuse.work/ops/drive/pegsim/ca
 
 ## No.2026.200 —— Tracking, Predicting and Returning an Air-Hockey Puck with a Five-Bar Linkage — No Learning, Closed Forms and an External Simulator as the Gates
 
-Using Tracking, while Closed Forms and an External Simulator as the Gates. For Tracking, while then compare exhibit and physics-simulation. The contrast between fullseye and series shows that no Learning, Closed Forms and an External Simulator as the Gates.
+A five-link arm tracks, predicts and returns an air-hockey puck using no learning, with closed-forms and an outside simulator as the criterion. Synthetic physics simulation compared series and subject. The gap between low-cost and air-hockey robots shows that this criterion applies.
 
 [![Tracking, Predicting and Returning an Air-Hockey Puck with a Five-Bar Linkage — No Learning, Closed Forms and an External Simulator as the Gates](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_air_hockey_intercept/01_airhockey_frame_detect_predict_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_air_hockey_intercept/01_airhockey_frame_detect_predict.png)
 
@@ -6658,7 +6658,7 @@ Ops used (notes): [`crosshair`](https://furuse.work/ops/annotate/pointer/crossha
 
 ## No.2026.201 —— Detecting and Recovering Peg-Insertion Failures with a Rule Table — Whitney's Contact States Instead of a VLM, MuJoCo as the Truth
 
-For Detecting and Recovering Peg-Insertion Failures with a Rule Table, while MuJoCo as the Truth. A synthetic data case for Detecting and Recovering Peg-Insertion Failures with a Rule Table links. The contrast between physics-simulation and fullseye shows that whitney's Contact States Instead of a VLM, MuJoCo as.
+A rule table detects peg-insertion failures and drives recovery, with Whitney contact states replacing a VLM and MuJoCo as truth. Synthetic physics simulation measured how the series relates to its capstone. The gap between prior work and the wrist shows the limits of the judgment.
 
 [![Detecting and Recovering Peg-Insertion Failures with a Rule Table — Whitney's Contact States Instead of a VLM, MuJoCo as the Truth](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_failure_recovery/01_pegfail_where_it_breaks_offset_flip_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_failure_recovery/01_pegfail_where_it_breaks_offset_flip.png)
 
@@ -6696,7 +6696,7 @@ Ops used (notes): [`chamfer_capture`](https://furuse.work/ops/drive/pegsim/chamf
 
 ## No.2026.203 —— Calibrating a Vision-Based Tactile Sensor's Illumination on Real Calibration Spheres, with a Gradient LUT as the Second Implementation — the Ball Radius and Hand-Marked Circles as the Truth
 
-Using Calibrating a Vision-Based Tactile Sensor's Illumination on Real Calibration Spheres, with a. For Calibrating a Vision-Based Tactile Sensor's Illumination on Real Calibration Spheres, with a. The contrast between continues and tacsim shows that the Ball Radius and Hand-Marked Circles as the Truth.
+Visuotactile lighting is calibrated on a real sphere for a second, gradient-LUT implementation, with its radius and a hand-marked circle as truth. Synthetic physics simulation compared series and color lighting. Comparing ours with the inversion shows that truth is that radius and circle.
 
 [![Calibrating a Vision-Based Tactile Sensor's Illumination on Real Calibration Spheres, with a Gradient LUT as the Second Implementation — the Ball Radius and Hand-Marked Circles as the Truth](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacscalib_sphere_lut/01_tacscalib_synthetic_error_maps_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacscalib_sphere_lut/01_tacscalib_synthetic_error_maps.png)
 
@@ -6738,7 +6738,7 @@ Ops used (notes): [`calib_pack_load`](https://furuse.work/ops/drive/tacscalib/ca
 
 ## No.2026.204 —— Reading Peg-in-Hole Insertion through Two Fingertip Membranes — Contact Wrench, Whitney's Contact States, Wall Friction and Wrist Stiffness from Shear Images; at the Wedging Boundary the Wrench Alone Is Blind
 
-Using Reading Peg-in-Hole Insertion through Two Fingertip Membranes in practice is difficult because. For Reading Peg-in-Hole Insertion through Two Fingertip Membranes, the measured data compares. The contrast between series and three shows that contact Wrench, while at the Wedging the method the Wrench Alone Is Blind.
+When peg insertion is read through two-finger membranes, the wedging limit cannot be seen from the wrench alone. Synthetic physics simulation of the series showed how visuotactile sensing changes. The distinction between the capstone and the fingertips reveals the limit of the check.
 
 [![Reading Peg-in-Hole Insertion through Two Fingertip Membranes — Contact Wrench, Whitney's Contact States, Wall Friction and Wrist Stiffness from Shear Images; at the Wedging Boundary the Wrench Alone Is Blind](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_insertion_tactile/12_pegtactile_wrist_stiffness_from_images_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_insertion_tactile/12_pegtactile_wrist_stiffness_from_images.png)
 
@@ -6784,7 +6784,7 @@ Ops used (notes): [`arrow`](https://furuse.work/ops/annotate/pointer/arrow.html)
 
 ## No.2026.208 —— Cutting a Peg's Rotation Search to 1/n with Its Symmetry — Inserting Square, Hexagonal and Keyed Pegs Checked by Group Identities, Closed Forms and MuJoCo; Friction Shrinks the Hexagon's Chamfer Window from 20.9° to 6.8°
 
-Using Cutting a Peg's Rotation Search to 1/n with Its Symmetry in practice is difficult because. The Cutting a Peg's Rotation Search to /n with Its Symmetry test uses physics-simulation from. The contrast between continues and subject shows that inserting Square, Hexagonal and Keyed Pegs Checked by Group.
+Peg symmetry narrows rotational search to one over n, while friction shrinks the hexagonal chamfer window from twenty point nine to six point eight degrees. Physics simulations check the series and subject separately. Learning and research results expose the limit.
 
 [![Cutting a Peg's Rotation Search to 1/n with Its Symmetry — Inserting Square, Hexagonal and Keyed Pegs Checked by Group Identities, Closed Forms and MuJoCo; Friction Shrinks the Hexagon's Chamfer Window from 20.9° to 6.8°](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_symmetry_search/01_pegsym_rotating_shapes_read_mod_2pi_over_n.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_symmetry_search/01_pegsym_rotating_shapes_read_mod_2pi_over_n.gif)
 
@@ -6826,7 +6826,7 @@ Ops used (notes): [`pegsym_scene_mjcf`](https://furuse.work/ops/drive/pegsym/peg
 
 ## No.2026.212 —— Registration That Does Not Move by a Single Bit When the Points Are Shuffled — FP64 Reductions by the Ozaki Scheme, with the Error Falling in Steps under a Guaranteed Bound; Slow on the CPU, and GPU Speed Is Left to cuBLAS Emulation
 
-Using Registration That Does Not Move by a Single Bit When the Points Are Shuffled in practice is. The Registration That Does Not Move by a Single Bit When the Points Are Shuffled test uses same. The contrast between order and kabsch shows that fP64 Reductions by the Ozaki Scheme, with the Error Falling in Steps.
+A registration that stays bit-identical under point shuffling leaves GPU speed to cuBLAS emulation. A dataset of two hundred thousand points checks the point cloud and rotation separately. The ordinary case and matrix product expose the check's limit.
 
 [![Registration That Does Not Move by a Single Bit When the Points Are Shuffled — FP64 Reductions by the Ozaki Scheme, with the Error Falling in Steps under a Guaranteed Bound; Slow on the CPU, and GPU Speed Is Left to cuBLAS Emulation](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_reproducible_icp/01_error_staircase_ozaki1_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_reproducible_icp/01_error_staircase_ozaki1.png)
 
@@ -6864,7 +6864,7 @@ Ops used (notes): [`cross_covariance_reproducible`](https://furuse.work/ops/driv
 
 ## No.2026.133 —— Where Is the Public Camera Looking — The Orientation of a Fixed Camera Whose Only Published Fact Is Its Position, from the Picture Itself
 
-In evaluating Where Is the Public Camera Looking, while from the Picture Itself. For Where Is the Public Camera Looking, while then compare road and weather. The contrast between tourism and publish shows that the Orientation of a Fixed Camera Whose Only Published Fact Is Its Position, from the Picture Itself.
+To learn where a public camera points, a fixed camera with only a published position is oriented from its image. Synthetic public-camera data were prepared to compare road and weather cameras. Comparing tourism with the direction of change shows the image alone sets the orientation.
 
 [![Where Is the Public Camera Looking — The Orientation of a Fixed Camera Whose Only Published Fact Is Its Position, from the Picture Itself](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_public_camera_heading/02_yaw_sweep.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_public_camera_heading/02_yaw_sweep.gif)
 
@@ -6898,7 +6898,7 @@ Ops used (notes): [`camera_orientation_from_skyline`](https://furuse.work/ops/ge
 
 ## No.2026.134 —— Where Is the Public Camera Looking, for Real — Hunting the Sun in 807 Road Cameras, Fixing the Heading from One Sunset and Checking It Against the Road
 
-In evaluating Where Is the Public Camera Looking, for Real, Hunting the Sun in 807 Road Cameras, Fixing. A synthetic data case for Where Is the Public Camera Looking, while and saturated. The contrast between disc and probing shows that hunting the Sun in Road Cameras, Fixing the Heading from One Sunset and.
+On real images, 807 road cameras are searched for the sun, one sunset sets orientation, and the road checks it. Synthetic saturated data were generated to measure the solar disc against real images. The gap between Finland and the weather cameras shows the limits of the judgment.
 
 [![Where Is the Public Camera Looking, for Real — Hunting the Sun in 807 Road Cameras, Fixing the Heading from One Sunset and Checking It Against the Road](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_public_camera_heading_real/02_sunset_follow.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_public_camera_heading_real/02_sunset_follow.gif)
 
@@ -6936,7 +6936,7 @@ Ops used (notes): [`bloom`](https://furuse.work/ops/gfx2d/post/bloom.html) · [`
 
 ## No.2026.247 —— Calibrating a Thin-Film Model to Real Images — and Giving No Number to What the Data Do Not Determine
 
-A comparison of Calibrating a Thin-Film Model to Real Images matters when and Giving No Number to What. For Calibrating a Thin-Film Model to Real Images, the synthetic data compares coefficients with. The contrast between coefficients and forward shows that and Giving No Number to What the Data Do Not Determine.
+When a thin-film model is fitted to errors in real images, coefficients the data leave undetermined receive no value. Synthetic data served to examine sensitivity analysis under calibration and planning. Comparing reuse with the transfer matrix shows that such coefficients receive no value.
 
 [![Calibrating a Thin-Film Model to Real Images — and Giving No Number to What the Data Do Not Determine](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_thin_film/08_real_determined_vs_combinations_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_thin_film/08_real_determined_vs_combinations.png)
 
@@ -6982,7 +6982,7 @@ The shared warning is to convert to linear radiance before calling anything. Pas
 
 ## No.2026.032 —— Peeling Layers With Many Wavelengths — Underdrawing, Ground, Glaze and Fading, Truth in Hand
 
-Using Peeling Layers With Many Wavelengths in practice is difficult because Underdrawing, Ground, Glaze. The computed data compares spectral with cube and tracks stacked. The contrast between then and unmixed shows that underdrawing, Ground, Glaze and Fading, Truth in Hand.
+Multiwavelength separation isolates underdrawing-ground, glaze, and fading with known ground truth. Using a synthetic spectral cube and visible range, we examined how the bands change. Comparing near-infrared with the detector shows that all four are separated with known ground truth.
 
 [![Peeling Layers With Many Wavelengths — Underdrawing, Ground, Glaze and Fading, Truth in Hand](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pigment_unmixing/01_per_field_auc_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pigment_unmixing/01_per_field_auc.png)
 
@@ -7012,7 +7012,7 @@ Ops used (notes): [`delta_e_map`](https://furuse.work/ops/imgmetrics/colordiff/d
 
 ## No.2026.107 —— Separating a Real Immunostain by Colour — The Watchdog Was Blind to Exactly the Error It Should Catch
 
-For Separating a Real Immunostain by Colour, The Watchdog Was Blind to Exactly the Error It Should Catch. A synthetic data case links deconvolution, separates, and perfectly. The contrast between recompose and unit shows that the Watchdog Was Blind to Exactly the Error It Should Catch.
+In color separation of real immunostains, the monitor was blind only to the errors it should catch. With synthetic immunostain data, we related color separation to perfection. Comparing concentration with pixels reveals how the monitor was blind only to the errors it should catch.
 
 [![Separating a Real Immunostain by Colour — The Watchdog Was Blind to Exactly the Error It Should Catch](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stain_unmix/01_separation_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stain_unmix/01_separation.png)
 
@@ -7042,7 +7042,7 @@ This run produced **4 figures** in total - [see them all](https://github.com/fur
 
 ## No.2026.051 —— Colour Constancy (White Balance) — No Method Works, Only Conditions Do
 
-White-balance estimators change rank when the illuminant, reference patches, or exposure changes Linear colour pictures are synthesised from known reflectances and illuminants The plots show error rising sharply when the white reference is removed or saturated.
+The best white balance method shifts with light and exposure. We scored estimators like white patch by recovery angle on linear color images synthesized from known spectra. Errors surge when the white target is removed or saturated, and true-illuminant correction still leaves color error.
 
 [![Colour Constancy (White Balance) — No Method Works, Only Conditions Do](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_white_balance/01_casts_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_white_balance/01_casts.png)
 
@@ -7072,7 +7072,7 @@ Ops used (notes): [`delta_e_map`](https://furuse.work/ops/imgmetrics/colordiff/d
 
 ## No.2026.229 —— A Material Optical-Property Library — 86 Glasses, Crystals, Semiconductors, Metals, Liquids and Plastics in One Table, Scored on Catalogue Values and a Second Implementation
 
-When measuring A Material Optical-Property Library, 86 Glasses, Crystals, Semiconductors, Metals. For A Material Optical-Property Library, while then compare observing and optics. The contrast between lenses and windows shows that Glasses, while Scored on Catalogue Values and a Second Implementation.
+The optical materials library is scored on published catalog values and-a second implementation. Computed observation data compared optical systems and lenses. Objects versus wafers show 86 glasses-crystals, semiconductors-metals, liquids, and-plastics in one-table scored likewise.
 
 [![A Material Optical-Property Library — 86 Glasses, Crystals, Semiconductors, Metals, Liquids and Plastics in One Table, Scored on Catalogue Values and a Second Implementation](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_material_optical_library/01_abbe_diagram_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_material_optical_library/01_abbe_diagram.png)
 
@@ -7114,7 +7114,7 @@ Ops used (notes): [`abbe_number`](https://furuse.work/ops/optics/matprop/abbe_nu
 
 ## No.2026.230 —— Near-Infrared Inspection Through a Silicon Wafer — Choosing the LED Wavelength from the Source × Wafer × Sensor Integral
 
-For Near-Infrared Inspection Through a Silicon Wafer, Choosing the LED Wavelength from the Source ×. For Near-Infrared Inspection Through a Silicon Wafer, the measured data compares back with side. The contrast between light and transparent shows that choosing the LED Wavelength from the Source × Wafer × Sensor.
+Near-infrared transmission inspection through Si wafers picks the LED wavelength by integrating source, wafer, and sensor over wavelength. Computed data on dies and back sides show how near-infrared changes. Material versus absorption edge shows how that integral picks the wavelength.
 
 [![Near-Infrared Inspection Through a Silicon Wafer — Choosing the LED Wavelength from the Source × Wafer × Sensor Integral](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_nir_silicon_transmission/01_wavelength_contradiction_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_nir_silicon_transmission/01_wavelength_contradiction.png)
 
@@ -7152,7 +7152,7 @@ Ops used (notes): [`bandpass_spectrum`](https://furuse.work/ops/optics/spectral/
 
 ## No.2026.231 —— Optical Fibres and Light Guides — From the Material Table's Fused Silica to Modes, Dispersion, Mode Field and Illumination Efficiency
 
-A comparison of Optical Fibres and Light Guides matters when From the Material Table's Fused Silica to. A computed data case for Optical Fibres and Light Guides links inspection, travels, and fibre. The contrast between bundles and interferometric shows that from the Material Table's Fused Silica to Modes.
+Optical fibers and light guides span fused silica in the material table through modes, dispersion, mode diameter, and lighting efficiency. Computed data including inspection measured how fibers relate to interference. Spectroscopy versus optical material shows that full span.
 
 [![Optical Fibres and Light Guides — From the Material Table's Fused Silica to Modes, Dispersion, Mode Field and Illumination Efficiency](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fiber_light_guide/03_lp_b_v_diagram_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fiber_light_guide/03_lp_b_v_diagram.png)
 
@@ -7190,7 +7190,7 @@ Ops used (notes): [`energy_to_photons`](https://furuse.work/ops/optics/spectral/
 
 ## No.2026.249 —— Reading a Lens Design File (.zmx), Analysing It, Fixing It and Writing It Back — Scored Against Two Other Readers and a Round Trip
 
-When measuring Reading a Lens Design File, while Scored Against Two Other Readers and a Round Trip. The Reading a Lens Design File, Analysing It, Fixing It and Writing It Back test uses plain-text. The contrast between commercial and sequential shows that scored Against Two Other Readers and a Round Trip.
+Reading, analyzing, correcting, and rewriting an optical design file is scored on two separate implementations and a prescription round trip. Commercial computed data verified sequential ray tracing and design software separately. Saved files versus text show how that scoring works.
 
 [![Reading a Lens Design File (.zmx), Analysing It, Fixing It and Writing It Back — Scored Against Two Other Readers and a Round Trip](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_file_roundtrip/02_spot_diagram_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_file_roundtrip/02_spot_diagram.png)
 
@@ -7230,7 +7230,7 @@ Ops used (notes): [`drawing_raster`](https://furuse.work/ops/optics/drawing/draw
 
 ## No.2026.261 —— A Zoom Lens as Differences of One Prescription — Scored Against the Two-Thin-Lens Closed Form and a Round Trip Through the Design File's Multi-Configuration Table
 
-When measuring A Zoom Lens as Differences of One Prescription, Scored Against the Two-Thin-Lens Closed. For A Zoom Lens as Differences of One Prescription, while then compare configurations and that. The contrast between differ and only shows that scored Against the Two-Thin-Lens Closed Form and a Round Trip.
+Storing a zoom-lens as differences within one prescription is scored on a closed form for two thin lenses and a round-trip to the design-file's multi-configuration table. Measured data prepared at wide angle compared standard and telephoto. Spacing versus curvature shows that scoring.
 
 [![A Zoom Lens as Differences of One Prescription — Scored Against the Two-Thin-Lens Closed Form and a Round Trip Through the Design File's Multi-Configuration Table](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zoom_configurations/01_zoom_configurations_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zoom_configurations/01_zoom_configurations.png)
 
@@ -7250,7 +7250,7 @@ Ops used (notes): [`encircled_energy`](https://furuse.work/ops/optics/imaging/en
 
 ## No.2026.262 —— Glass Substitution and Multi-Start Search — Scored Against the Thin-Achromat Closed Form and the Third-Order Best-Form Bending
 
-A comparison of the method Substitution and Multi-Start Search matters when Scored Against the Thin-Achromat. For the method Substitution and Multi-Start Search, the computed data compares model with swapped and. The contrast between local and optimiser shows that scored Against the Thin-Achromat Closed Form and the.
+Optical material substitution and global search are scored on a two-element achromat analytic formula plus third-order solutions for single-lens bending. Model and catalogue glasses show how local optimisation changes. Starting points versus run counts reveal the scoring basis.
 
 [![Glass Substitution and Multi-Start Search — Scored Against the Thin-Achromat Closed Form and the Third-Order Best-Form Bending](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_global_search/01_lens_global_search_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_global_search/01_lens_global_search.png)
 
@@ -7268,7 +7268,7 @@ Ops used (notes): [`glass`](https://furuse.work/ops/optics/design/glass.html) ·
 
 ## No.2026.265 —— Designing a Triplet from a Table of Requirements — A Merit Function with Edge-Thickness, Centre-Thickness and Air-Gap Bounds, Scored Against Closed Forms and an Independent Implementation
 
-For Designing a Triplet from a Table of Requirements, A Merit Function with Edge-Thickness. A measured data case for Designing a Triplet from a Table of Requirements links designer, edge. The contrast between least and here shows that a Merit Function with Edge-Thickness, Centre-Thickness and Air-Gap Bounds, Scored.
+Triplet design from a requirements table scores a merit function bounding edge and center thickness and air spacing against-closed forms and-an independent implementation. Measured designer data related lower bounds to the wavefront. Targets versus one-sided bounds show that scoring.
 
 [![Designing a Triplet from a Table of Requirements — A Merit Function with Edge-Thickness, Centre-Thickness and Air-Gap Bounds, Scored Against Closed Forms and an Independent Implementation](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_merit_operands/01_lens_merit_operands_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_merit_operands/01_lens_merit_operands.png)
 
@@ -7290,7 +7290,7 @@ Ops used (notes): [`lens_system`](https://furuse.work/ops/optics/design/lens_sys
 
 ## No.2026.267 —— Keeping a Design's Relations as Solves — A Double-Gauss Type Whose Focus and F-Number Follow the Stop, Afocal Telescopes, a Curved Image Surface and Odd Aspheres
 
-In evaluating Keeping a Design's Relations as Solves, while a Curved Image Surface and Odd Aspheres. The Keeping a Design's Relations as Solves test uses bundle from computed data to separate list. The contrast between keep and plane shows that a Double-Gauss Type Whose Focus and F-Number Follow the Stop, Afocal.
+Evaluating design relations held as solves covers odd-order aspheres. Computed numbers verified paraxial and concentric conditions separately. Rules versus radii show a double Gauss whose-focus and F-number track the stop, an afocal telescope, a curved image, and odd-order aspheres.
 
 [![Keeping a Design's Relations as Solves — A Double-Gauss Type Whose Focus and F-Number Follow the Stop, Afocal Telescopes, a Curved Image Surface and Odd Aspheres](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_solves_afocal/01_lens_solves_afocal_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_solves_afocal/01_lens_solves_afocal.png)
 
@@ -7312,7 +7312,7 @@ Ops used (notes): [`afocal_system`](https://furuse.work/ops/optics/lenssolve/afo
 
 ## No.2026.239 —— Sorting Look-Alike Foreign Matter with Hyperspectral NIR — Two Real Datasets (Plastic Flakes, Foreign Objects on Pork Belly) and a Material-Table Simulation of the Failure Modes
 
-Using Sorting Look-Alike Foreign Matter with Hyperspectral NIR in practice is difficult because Two. A measured data case for Sorting Look-Alike Foreign Matter with Hyperspectral NIR links public. The contrast between public and both shows that two Real Datasets and a Material-Table Simulation of the Failure Modes.
+Hyperspectral sorting of identical-looking foreign matter counts failures on two real images and a material-table synthesis. Synthetic data with public sources measured the fetch script and cache relationship. The gap between classification and ground truth marks the judgment limit.
 
 [![Sorting Look-Alike Foreign Matter with Hyperspectral NIR — Two Real Datasets (Plastic Flakes, Foreign Objects on Pork Belly) and a Material-Table Simulation of the Failure Modes](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_hyperspectral_foreign_matter/01_real_polymer_flakes_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_hyperspectral_foreign_matter/01_real_polymer_flakes.png)
 
@@ -7356,7 +7356,7 @@ Ops used (notes): [`carbon_black_absorption`](https://furuse.work/ops/optics/mat
 
 ## No.2026.270 —— Verifying Public .zmx Prescriptions Independently and Scoring Them as Inspection Lenses
 
-Using Verifying Publiczmx Prescriptions Independently and Scoring in practice is difficult because the. For Verifying Public.zmx Prescriptions Independently and Scoring, the computed data compares four. The contrast between four and calculated shows that the measurement can become unreliable.
+Public .zmx prescriptions are checked by independent calculation and scored as inspection lenses. Computed data covered the reader and ray tracer, showing how the calculation changes. The gap between real rays and spots shows how they score as inspection lenses.
 
 [![Verifying Public .zmx Prescriptions Independently and Scoring Them as Inspection Lenses](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zmx_public_verify/01_independent_verification_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zmx_public_verify/01_independent_verification.png)
 
@@ -7404,7 +7404,7 @@ The document exhibit puts a number on a hole: two functions with the same name a
 
 ## No.2026.015 —— Straightening a Hand-Held Document Photo — Keystone Correction and Shadow Removal Against Ground Truth
 
-A comparison of Straightening a Hand-Held Document Photo matters when Keystone Correction and Shadow. The computed data compares imaged with homography and tracks lighting. The contrast between rectified and scored shows that keystone Correction and Shadow Removal Against Ground Truth.
+Straightening handheld document shots means measuring shadow removal and perspective correction against true values. Computed homography and lighting data were used to examine how the grid changes. Pixel-error and scoring differences show that both corrections are measured against true values.
 
 [![Straightening a Hand-Held Document Photo — Keystone Correction and Shadow Removal Against Ground Truth](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_document_scan/01_rectify_zero_points_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_document_scan/01_rectify_zero_points.png)
 
@@ -7434,7 +7434,7 @@ Ops used (notes): [`corner_response`](https://furuse.work/ops/2d/edges/corner_re
 
 ## No.2026.020 —— Forgery Detection as an ROC (true-positive versus false-positive curve) — Not the One Image Found, but Detection at a Fixed False-Positive Rate
 
-Using Forgery Detection as an ROC in practice is difficult because Not the One Image Found, but. We place forgeries in computed data, then compare made and pasting. The contrast between jpeg and patch shows that not the One Image Found, but Detection at a Fixed False-Positive Rate.
+In ROC evaluation of forgery detection, what matters is the detection rate at fixed false positives, not one caught image. We prepared material as computed data and compared background with saving. Comparing tampered images with pixels shows that this rate is what counts.
 
 [![Forgery Detection as an ROC (true-positive versus false-positive curve) — Not the One Image Found, but Detection at a Fixed False-Positive Rate](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_forensics_roc/01_score_maps_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_forensics_roc/01_score_maps.png)
 
@@ -7466,7 +7466,7 @@ Ops used (notes): [`copy_move_regions`](https://furuse.work/ops/imgforensics/cop
 
 ## No.2026.067 —— Craquelure networks — of three indicators, only junction degree breaks under imaging conditions
 
-In evaluating Craquelure networks, while only junction degree breaks under imaging conditions. We place voronoi in measured data, then compare crack and drawn. The contrast between form and ground-truth shows that of three indicators, only junction degree breaks under imaging conditions.
+In craquelure network evaluation, imaging conditions break only branching degree among three metrics. We prepared a Voronoi network as computed data and compared the closed form with drying. Comparing aging with color blotches shows that imaging conditions break branching degree alone.
 
 [![Craquelure networks — of three indicators, only junction degree breaks under imaging conditions](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fresco_craquelure/07_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fresco_craquelure/07_scene.png)
 
@@ -7504,7 +7504,7 @@ Ops used (notes): [`blob_features`](https://furuse.work/ops/blob/measure/blob_fe
 
 ## No.2026.077 —— Camera Fingerprints (PRNU): Which Camera Took This? — The Fingerprint Grows With Frame Count and Dies at the Save Button
 
-When measuring Camera Fingerprints: Which Camera Took This?, The Fingerprint Grows With Frame Count and. The test uses virtual from computed data to separate cameras from carry. The contrast between fixed and sensitivity shows that the Fingerprint Grows With Frame Count and Dies at the Save Button.
+When a camera fingerprint identifies the device, more frames strengthen it and saving erases it. Using computed virtual cameras, we separately checked the fixed pattern and sensitivity. Comparing planted patterns with residuals shows that more frames strengthen it and saving erases it.
 
 [![Camera Fingerprints (PRNU): Which Camera Took This? — The Fingerprint Grows With Frame Count and Dies at the Save Button](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_prnu_camera_fingerprint/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_prnu_camera_fingerprint/01_scene.png)
 
@@ -7544,7 +7544,7 @@ Ops used (notes): [`aug_jpeg_blocks`](https://furuse.work/ops/2d/augmentation/au
 
 ## No.2026.276 —— Physical Consistency of Footage — Ballistic or Thrusted, and Was the Clock Stretched?
 
-Using Physical Consistency of Footage in practice is difficult because Ballistic or Thrusted, and Was. The Physical Consistency of Footage test uses filmed from synthetic data to separate monocular from camera. The contrast between filmed and monocular shows that ballistic or Thrusted, and Was the Clock Stretched?.
+Evaluating physical consistency in footage asks whether a car climbing a wall and jumping is ballistic or thrust-driven, and whether time was stretched. Monocular synthetic data checked pixels and dimensions separately. Comparing scale and the planar track answers both questions.
 
 [![Physical Consistency of Footage — Ballistic or Thrusted, and Was the Clock Stretched?](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_video_physics_consistency/04_delta_aic_thrusted_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_video_physics_consistency/04_delta_aic_thrusted.png)
 
@@ -7586,7 +7586,7 @@ These runs hang in the **autonomous-driving series**, not in the metrology museu
 
 ## No.2026.166 —— How a Car Turns Shortest — Dubins and Reeds–Shepp in Closed Form, and Hybrid A* Parallel Parking on an Occupancy Grid
 
-Using How a Car Turns Shortest in practice is difficult because Dubins and Reeds–Shepp in Closed Form. The test uses theorems from computed data to separate path from front-steered. The contrast between pose and forward shows that dubins and Reeds–Shepp in Closed Form, and Hybrid A* Parallel Parking on an Occupancy.
+To find how a car-turns shortest, Hybrid A* performs parallel parking over an occupancy grid. Computed front wheels were used, with pose and theorems checked separately. Comparing forward motion with shortest paths reveals the Dubins and Reeds-Shepp closed forms alongside that parking.
 
 [![How a Car Turns Shortest — Dubins and Reeds–Shepp in Closed Form, and Hybrid A* Parallel Parking on an Occupancy Grid](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_car_parking/01_dubins_six_words_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_car_parking/01_dubins_six_words.png)
 
@@ -7620,7 +7620,7 @@ Ops used (notes): [`arrow`](https://furuse.work/ops/annotate/pointer/arrow.html)
 
 ## No.2026.167 —— The Driving School Opens — Cars and Signals on a Regulation Loop Course, Seen by LiDAR (laser ranging) and Camera, Scored by Theorems and Identities
 
-For The Driving School Opens, while Scored by Theorems and Identities. We place self-driving in computed data, then compare demos and move. The contrast between nobody and measures shows that cars and Signals on a Regulation Loop Course, Seen by LiDAR and Camera, Scored by Theorems and Identities.
+A driving-school scene opens with cars and traffic signals on a standard circuit, seen by LiDAR and cameras and graded by theorems. Computed autonomous-driving demos were compared with their ground-truth world. Traffic regulations and Appended Table three verify the layout.
 
 [![The Driving School Opens — Cars and Signals on a Regulation Loop Course, Seen by LiDAR (laser ranging) and Camera, Scored by Theorems and Identities](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/01_course_plan_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/01_course_plan.png)
 
@@ -7660,7 +7660,7 @@ Ops used (notes): [`add_sign`](https://furuse.work/ops/drive/roadjp/add_sign.htm
 
 ## No.2026.168 —— Time to Collision and Safe Distance — Optical-Flow τ and the RSS Closed Forms, Scored by the Driving-School World's Truth
 
-When measuring Time to Collision and Safe Distance, while Scored by the Driving-School World's Truth. The test uses coming from computed data to separate many from seconds. The contrast between until and impact shows that optical-Flow τ and the RSS Closed Forms, Scored by the Driving-School World's Truth.
+For time to-collision and safe distance, τ optical flow and RSS closed forms are scored against driving school ground truth. A computed oncoming vehicle was used, with seconds and response time checked separately. Comparing speed changes with the upper bound shows this scoring.
 
 [![Time to Collision and Safe Distance — Optical-Flow τ and the RSS Closed Forms, Scored by the Driving-School World's Truth](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ttc_rss/01_scene_plan_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ttc_rss/01_scene_plan.png)
 
@@ -7698,7 +7698,7 @@ Ops used (notes): [`arrow`](https://furuse.work/ops/annotate/pointer/arrow.html)
 
 ## No.2026.169 —— Widening the World — Closed-Form Terrain, World-Space Materials and Procedural Trees and Pedestrians Win the Focus of Expansion Back from Flow
 
-Using Widening the World in practice is difficult because Closed-Form Terrain, World-Space Materials. We place previous in computed data, then compare exhibit and ended. The contrast between outside and course shows that closed-Form Terrain, World-Space Materials and Procedural Trees and Pedestrians Win the Focus.
+A wider world uses analytic terrain, world-coordinate materials, and procedural-trees and pedestrians to recover the expansion focus from flow. Synthetic rounds were prepared, and the driving school was compared with the course. Comparing road surface with patterns shows this recovery.
 
 [![Widening the World — Closed-Form Terrain, World-Space Materials and Procedural Trees and Pedestrians Win the Focus of Expansion Back from Flow](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_world_terrain/01_scene_terrain_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_world_terrain/01_scene_terrain.png)
 
@@ -7736,7 +7736,7 @@ Ops used (notes): [`add_mesh_object`](https://furuse.work/ops/drive/terrain/add_
 
 ## No.2026.172 —— Giving the Car Inertia and Slopes — Stopping Just Before the Line with Reaction and Braking Distance, and a Hill Start Without Rolling Back
 
-A comparison of Giving the Car Inertia and Slopes matters when Stopping Just Before the Line with. We place school in measured data, then compare moved and list. The contrast between poses and every shows that stopping Just Before the Line with Reaction and Braking Distance, and a Hill Start Without Rolling Back.
+With inertia and slopes added, a car stops before the line using reaction plus braking distance, and halts on a hill and pulls away without rolling back. A computed driving school was prepared, and pose and time were compared. Comparing the exhibit with the motion shows both behaviours.
 
 [![Giving the Car Inertia and Slopes — Stopping Just Before the Line with Reaction and Braking Distance, and a Hill Start Without Rolling Back](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_longitudinal/01_drive_with_time.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_longitudinal/01_drive_with_time.gif)
 
@@ -7770,7 +7770,7 @@ Ops used (notes): [`ball_detect`](https://furuse.work/ops/drive/balltrack/ball_d
 
 ## No.2026.173 —— Sun and Weather — When the Morning Sun Hides the Signal, How Fast You May Drive in Fog, Wet Roads and Headlamps at Night
 
-A comparison of Sun and Weather matters when When the Morning Sun Hides the Signal, How Fast You May. We place autonomous in measured data, then compare cars and sunlight. The contrast between this and exhibit shows that when the Morning Sun Hides the Signal, while Wet Roads and Headlamps at Night.
+Sun and weather tests cover signals lost in morning backlight, stoppable speeds in fog-wet roads, and night headlamps. Autonomous driving was prepared on computed data, and sunlight and weather were compared. Comparing the exhibit with the driving school shows these conditions.
 
 [![Sun and Weather — When the Morning Sun Hides the Signal, How Fast You May Drive in Fog, Wet Roads and Headlamps at Night](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_weather/04_fog_views_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_weather/04_fog_views.png)
 
@@ -7808,7 +7808,7 @@ Ops used (notes): [`ball_detect`](https://furuse.work/ops/drive/balltrack/ball_d
 
 ## No.2026.176 —— An Endless Map — Tiles Made Around the Car, Far Tiles Dropped, 50 km Without a Break
 
-For An Endless Map, Tiles Made Around the Car, Far Tiles Dropped, 50 km Without a Break. We place author in computed data, then compare idea and kept. The contrast between generated and forward shows that tiles Made Around the Car, Far Tiles Dropped, km Without a Break.
+The endless map adds tiles around the car, discards distant ones, and runs fifty kilometres without interruption. Calculations compare the author's proposal with the map. Comparing four-direction and endless layouts confirms that the tiling sustains the run.
 
 [![An Endless Map — Tiles Made Around the Car, Far Tiles Dropped, 50 km Without a Break](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_endless_map/01_minimap_stream.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_endless_map/01_minimap_stream.gif)
 
@@ -7834,7 +7834,7 @@ Ops used (notes): [`pose_normalize`](https://furuse.work/ops/drive/inf/pose_norm
 
 ## No.2026.179 —— Moving Traffic and Blind Spots — a Child Behind a Parked Car, Meeting Oncoming Traffic, a Bus Stop, Bad Drivers
 
-For Moving Traffic and Blind Spots, while Bad Drivers. The measured data compares author with ideas and tracks still. The contrast between aren and nearly shows that a Child Behind a Parked Car, Meeting Oncoming Traffic, a Bus Stop, Bad Drivers.
+Moving-traffic and blind spots include a child-behind a parked car, oncoming vehicles, bus stops, poor driving, and people waiting at crosswalks. Computed data covered the author and idea, showing how pedestrians change. Comparing disturbance elements with bicycles reveals these hazards.
 
 [![Moving Traffic and Blind Spots — a Child Behind a Parked Car, Meeting Oncoming Traffic, a Bus Stop, Bad Drivers](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_traffic/01_dashcam_occlusion.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_traffic/01_dashcam_occlusion.gif)
 
@@ -7872,7 +7872,7 @@ Ops used (notes): [`add_mesh_object`](https://furuse.work/ops/drive/terrain/add_
 
 ## No.2026.180 —— Decision Scenes — Mirrors, Predicting Amber from the Pedestrian Light, Giving Way to an Ambulance, Waiting for a Bus
 
-When measuring Decision Scenes, while Waiting for a Bus. The computed data compares author with ideas and tracks signals. The contrast between need and check shows that mirrors, Predicting Amber from the Pedestrian Light, Giving Way to an Ambulance, Waiting for a Bus.
+Decisions include checking the left rear in the mirror, predicting-amber from the pedestrian-light, yielding to an ambulance, and waiting for-a bus to depart. Computed data covered the author and idea, examining how need changes. Comparing checks with a stopped bus shows these decisions.
 
 [![Decision Scenes — Mirrors, Predicting Amber from the Pedestrian Light, Giving Way to an Ambulance, Waiting for a Bus](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_decisions/01_decisions_mirrors_ambulance.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_decisions/01_decisions_mirrors_ambulance.gif)
 
@@ -7910,7 +7910,7 @@ Ops used (notes): [`add_mesh_object`](https://furuse.work/ops/drive/terrain/add_
 
 ## No.2026.181 —— Lateral Motion — Slowing Before a Bend, Staying in the Lane, Keeping Left to Turn Left, Off-Tracking
 
-In evaluating Lateral Motion, while Off-Tracking. A measured data case links author, policies, and work. The contrast between combinations and parts shows that slowing Before a Bend, Staying in the Lane, Keeping Left to Turn Left, Off-Tracking.
+Lateral motion means slowing before bends, keeping in lane, moving left to turn-left, and avoiding inner-wheel side collisions. Computed data with the author measured how policies relate to parts. Comparing rule-based and restricted approaches shows these behaviours.
 
 [![Lateral Motion — Slowing Before a Bend, Staying in the Lane, Keeping Left to Turn Left, Off-Tracking](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_lateral/04_offtracking_geometry_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_lateral/04_offtracking_geometry.png)
 
@@ -7952,7 +7952,7 @@ Ops used (notes): [`ackermann_steer_angles`](https://furuse.work/ops/drive/later
 
 ## No.2026.188 —— Humanoids on the Crosswalk — Keep the Car's Physics Exact, Draw the Walkers Cheaply
 
-When measuring Humanoids on the Crosswalk, Keep the Car's Physics Exact, Draw the Walkers Cheaply. A computed data case links author, ideas, and several. The contrast between kinds and driving shows that keep the Car's Physics Exact, Draw the Walkers Cheaply.
+For humanoids at a crosswalk, vehicle physics stay accurate while walkers are drawn cheaply. Computed data including the author were created to measure how the idea relates to the number of kinds. Comparing the approximation with collision judgment shows this accurate yet cheap split.
 
 [![Humanoids on the Crosswalk — Keep the Car's Physics Exact, Draw the Walkers Cheaply](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_humanoids/01_humanoid_decimation_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_humanoids/01_humanoid_decimation.png)
 
@@ -7982,7 +7982,7 @@ Ops used (notes): [`add_mesh_object`](https://furuse.work/ops/drive/terrain/add_
 
 ## No.2026.182 —— Level Crossings and Right of Way — Stop and Look, Never Enter During the Alarm or Into a Blocked Exit, Yield to the Wider Road
 
-Using Level Crossings and Right of Way in practice is difficult because Stop and Look, Never Enter. For Level Crossings and Right of Way, while then compare part and rules-of-the-road. The contrast between ledger and scenes shows that stop and Look, while Yield to the Wider Road.
+Crossings and intersections require stopping short to look both ways, staying out during an alarm or when the far side is blocked, and yielding to wider roads. We prepared rulebook data and compared the ledger with pending items. The gap between rule-based methods and parts marks the limit.
 
 [![Level Crossings and Right of Way — Stop and Look, Never Enter During the Alarm or Into a Blocked Exit, Yield to the Wider Road](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_crossing/01_crossing_dashcam.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_crossing/01_crossing_dashcam.gif)
 
@@ -8028,7 +8028,7 @@ Ops used (notes): [`add_mesh_object`](https://furuse.work/ops/drive/terrain/add_
 
 ## No.2026.183 —— Overtaking and What You Cannot See — Wait for Sight Distance, Return Once in the Mirror, Do Not Obstruct the Ring, and Why Curve Mirrors Make Cars Look Far
 
-When measuring Overtaking and What You Cannot See, while and Why Curve Mirrors Make Cars Look Far. For Overtaking and What You Cannot See, while then compare part and rules-of-the-road. The contrast between ledger and what-you-cannot-see shows that wait for Sight Distance, Return Once in the Mirror, Do Not Obstruct.
+Drivers wait for clear sight, return after the mirror shows the car, yield to roundabout traffic, and allow for curve mirrors exaggerating distance. We prepared overtaking and blind-spot rule data, comparing the ledger with pending items. The gap between rule-based methods and parts marks the limit.
 
 [![Overtaking and What You Cannot See — Wait for Sight Distance, Return Once in the Mirror, Do Not Obstruct the Ring, and Why Curve Mirrors Make Cars Look Far](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_pass/01_overtake_dashcam.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_pass/01_overtake_dashcam.gif)
 
@@ -8074,7 +8074,7 @@ These runs hang in the **mathematical-picture series**, not in the metrology mus
 
 ## No.2026.137 —— A Photograph as One Line, Drawn by Rotating Circles — Tone, Stipple, Tour, Fourier Series, G-code
 
-Using A Photograph as One Line, while G-code. A measured data case for A Photograph as One Line, Drawn by Rotating Circles links hokusai, great, and wave. The contrast between open and access shows that tone, Stipple, Tour, Fourier Series, G-code.
+A photograph becomes one line for a rotating pendulum through tone, stippling, a tour, a Fourier series, and G-code. Measured Hokusai data related The Great Wave off Kanagawa to the Metropolitan Museum of Art. The gap between chain and stylisation shows the limits of the judgment.
 
 [![A Photograph as One Line, Drawn by Rotating Circles — Tone, Stipple, Tour, Fourier Series, G-code](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_one_stroke_epicycles/07_epicycles.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_one_stroke_epicycles/07_epicycles.gif)
 
@@ -8112,7 +8112,7 @@ Ops used (notes): [`contour_epicycle_chain`](https://furuse.work/ops/shape2d/des
 
 ## No.2026.138 —— Seeing the Complex Plane as an Area — When the Picture Proves the Theorem
 
-When measuring Seeing the Complex Plane as an Area, When the Picture Proves the Theorem. For Seeing the Complex Plane as an Area, the computed data compares analysis with makes and tracks beautiful. The contrast between pictures and ones shows that when the Picture Proves the Theorem.
+When the complex plane is viewed as a surface, the picture helps prove the theorem. Computed complex-analysis and domain-colouring data were used to examine how Newton's method changes. Comparing the basins of attraction with the Mandelbrot set shows this proving role.
 
 [![Seeing the Complex Plane as an Area — When the Picture Proves the Theorem](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_complex_plane_fields/05_mandelbrot_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_complex_plane_fields/05_mandelbrot.png)
 
@@ -8150,7 +8150,7 @@ Ops used (notes): [`boundary`](https://furuse.work/ops/2d/region/boundary.html) 
 
 ## No.2026.139 —— Theorems as Gates — Apollonian Gaskets, Ford Circles, Geodesic Domes, Phyllotaxis, IFS, Space-Filling Curves
 
-When measuring Theorems as Gates, while Space-Filling Curves. A computed data case for Theorems as Gates links mathematically, beautiful, and figures. The contrast between never and checked shows that apollonian Gaskets, Ford Circles, Geodesic Domes, Phyllotaxis, IFS, Space-Filling Curves.
+Theorem-judged figures cover Apollonian packings, Ford-circles, geodesic-domes, phyllotaxis, IFS, and space-filling curves. We computed mathematical cases and measured how implementation relates to error. Comparing spirals with independent cases highlights these subjects.
 
 [![Theorems as Gates — Apollonian Gaskets, Ford Circles, Geodesic Domes, Phyllotaxis, IFS, Space-Filling Curves](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_theorems_as_pictures/01_apollonian_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_theorems_as_pictures/01_apollonian.png)
 
@@ -8188,7 +8188,7 @@ Ops used (notes): [`circle_packing_apollonian`](https://furuse.work/ops/math/con
 
 ## No.2026.140 —— One Beat — A Two-Slit Fringe and a Print Moire (beat fringe between periodic patterns) Are the Same Mathematics
 
-When measuring One Beat, A Two-Slit Fringe and a Print Moire Are the Same Mathematics. A measured data case for One Beat links periodic, patterns, and superposed. The contrast between halftone and screens shows that a Two-Slit Fringe and a Print Moire Are the Same Mathematics.
+Seen as a single beat, interference fringes and printed moire share the same mathematics. We prepared measured data, including double slits, and related halftone dots to periodic patterns. Comparing textbooks with periodic structures shows that both phenomena share that mathematics.
 
 [![One Beat — A Two-Slit Fringe and a Print Moire (beat fringe between periodic patterns) Are the Same Mathematics](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_beats_fringes_and_screens/01_membrane_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_beats_fringes_and_screens/01_membrane.png)
 
@@ -8228,7 +8228,7 @@ Ops used (notes): [`engrave_lines`](https://furuse.work/ops/printpath/npr/engrav
 
 ## No.2026.141 —— What a Picture Cannot Check — Scoring Dynamical Systems and Minimal Surfaces by Identity and Definition
 
-For What a Picture Cannot Check, Scoring Dynamical Systems and Minimal Surfaces by the method and. For What a Picture Cannot Check, we place lorenz in measured data, then compare plot and looks. The contrast between like and same shows that scoring Dynamical Systems and Minimal Surfaces by the method and Definition.
+In evaluating what images cannot verify, dynamical-systems and minimal surfaces are scored by definitions and identities. We prepared Lorenz measurement data and compared attractors with integrators. Comparing mean curvature with a total absence of effect confirms that scoring.
 
 [![What a Picture Cannot Check — Scoring Dynamical Systems and Minimal Surfaces by Identity and Definition](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_what_a_picture_cannot_check/02_lorenz_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_what_a_picture_cannot_check/02_lorenz.png)
 
@@ -8266,7 +8266,7 @@ Ops used (notes): [`curve3d_tube_mesh`](https://furuse.work/ops/3d/surface/curve
 
 ## No.2026.143 —— Scoring Endlessly Generated Pictures with Identities, Not with the Eye
 
-Using Scoring Endlessly Generated Pictures with Identities in practice is difficult because Not with. For Scoring Endlessly Generated Pictures with Identities, we place what in measured data, then compare picture and cannot. The contrast between confirm and form shows that not with the Eye.
+In evaluating pictures that draw themselves without end, scoring relies on identities. We prepared closed forms as measured data for these pictures and compared integer conserved quantities with the source material. Comparing generators with rules shows that scoring relies on identities.
 
 [![Scoring Endlessly Generated Pictures with Identities, Not with the Eye](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/07_apollonian_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/07_apollonian.png)
 
@@ -8308,7 +8308,7 @@ Ops used (notes): [`illusion_muller_lyer`](https://furuse.work/ops/generative/il
 
 ## No.2026.144 —— Auditing the Instrument with Illusions - Where a Caliper Fails, and Why
 
-Using Auditing the Instrument with Illusions - Where a Caliper Fails in practice is difficult because. For Auditing the Instrument with Illusions - Where a Caliper Fails, we place optical in measured data, then compare illusion and picture. The contrast between whose and answer shows that and Why.
+When illusions give a measuring instrument a health check, the question is where a caliper misses and why. We prepared scoring on computed data and compared the sub-pixel tool with its runs. Comparing the café wall pattern with its mortar lines shows where and why the caliper misses.
 
 [![Auditing the Instrument with Illusions - Where a Caliper Fails, and Why](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/01_caliper_on_cafe_wall_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/01_caliper_on_cafe_wall.png)
 
@@ -8354,7 +8354,7 @@ The pitfalls specific to 3-D also get counted separately here. A nearest-neighbo
 
 ## No.2026.054 —— Battery cell degradation by CT — the swelling shows outside, the cause stays inside
 
-Using Battery cell degradation by CT in practice is difficult because the swelling shows outside, the. We place prismatic in computed data, then compare lithium-ion and stacked. The contrast between electrodes and aluminium shows that the swelling shows outside, the cause stays inside.
+In CT of internal cell degradation, swelling appears outside, but its cause lies within. We compared the electrode stack and aluminum can of a computed prismatic lithium-ion cell. The gap between forward projection and beam hardening shows that swelling appears outside, but its cause lies within.
 
 [![Battery cell degradation by CT — the swelling shows outside, the cause stays inside](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_battery_ct_degradation/02_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_battery_ct_degradation/02_scene.png)
 
@@ -8394,7 +8394,7 @@ Ops used (notes): [`beam_hardening_apply`](https://furuse.work/ops/tomography/ar
 
 ## No.2026.056 —— Fusing two sensors into a bird's-eye grid — a calibration that passes in pixels turns into metres at range
 
-When measuring Fusing two sensors into a bird's-eye grid, a calibration that passes in pixels turns. The test uses analytic from computed data to separate street from scene. The contrast between fused and left-mirror shows that a calibration that passes in pixels turns into metres at range.
+In multi-sensor bird's-eye fusion, a calibration acceptable in images becomes a length error far away. Using computed analytic data, we checked the street and left mirror separately. The right mirror and depth camera show that such a calibration becomes a length error far away.
 
 [![Fusing two sensors into a bird's-eye grid — a calibration that passes in pixels turns into metres at range](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bev_sensor_fusion/01_scene_bev_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bev_sensor_fusion/01_scene_bev.png)
 
@@ -8434,7 +8434,7 @@ Ops used (notes): [`box_sdf`](https://furuse.work/ops/3d/sdf_csg/box_sdf.html) �
 
 ## No.2026.058 —— CAD-to-scan deviation inspection — the fit absorbs the defect and invents a dent
 
-In evaluating CAD-to-scan deviation inspection, the fit absorbs the defect and invents a dent. The test uses analytic from computed data to separate machined from part. The contrast between carries and local shows that the fit absorbs the defect and invents a dent.
+In CAD-to-point-cloud comparison, alignment erases defects as it fits and creates dents where none exist. Using an analytic synthetic shape, we checked the machined part and local features separately. Comparing wear with the normal direction shows the same erasure of defects and false dents.
 
 [![CAD-to-scan deviation inspection — the fit absorbs the defect and invents a dent](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cad_scan_deviation/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cad_scan_deviation/01_scene.png)
 
@@ -8476,7 +8476,7 @@ Ops used (notes): [`box_sdf`](https://furuse.work/ops/3d/sdf_csg/box_sdf.html) �
 
 ## No.2026.063 —— Crop leaf area from above — folded by projection before it is ever hidden
 
-For Crop leaf area from above, folded by projection before it is ever hidden. A measured data case links maize, canopy, and built. The contrast between analytic and surfaces shows that folded by projection before it is ever hidden.
+When crop leaf area is measured from above, projection collapses it before occlusion can hide it. We created measured data with analytic surfaces and measured how a maize canopy relates to the nadir view. Comparing exact values with canopy cover shows projection acting before occlusion.
 
 [![Crop leaf area from above — folded by projection before it is ever hidden](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_crop_phenotyping/08_scene_nadir_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_crop_phenotyping/08_scene_nadir.png)
 
@@ -8516,7 +8516,7 @@ Ops used (notes): [`boundary_vertices`](https://furuse.work/ops/3d/mesh_process/
 
 ## No.2026.064 —— Collapsing joint voids into one number — what the number drops is the shape that matters
 
-A comparison of Collapsing joint voids into one number matters when what the number drops is the shape. The synthetic data compares die-attach with bond and tracks line. The contrast between carries and five shows that what the number drops is the shape that matters.
+When voids in a bond layer are reduced to one number, the shape features governing lifetime vanish accordingly. Using synthetic data, we modeled a die-attach layer and its volume fraction to examine how exact values change. Comparing position with proximity reveals this loss of shape.
 
 [![Collapsing joint voids into one number — what the number drops is the shape that matters](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ct_void_morphology/01_scene_sections_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ct_void_morphology/01_scene_sections.png)
 
@@ -8560,7 +8560,7 @@ Ops used (notes): [`boundary_vertices`](https://furuse.work/ops/3d/mesh_process/
 
 ## No.2026.065 —— Manufacturability from geometry alone — faces that sit on the threshold flip when you smooth them
 
-In evaluating Manufacturability from geometry alone, faces that sit on the the method flip when you. The test uses part from synthetic data to separate design from values. The contrast between voxelised and then shows that faces that sit on the the method flip when you smooth them.
+In shape-based fabricability checks, surfaces at a cutoff flip verdicts by the amount rounded. Synthetic design values were used to check the part and voxelization separately. Wall-thickness and support-area differences show that such surfaces flip verdicts by the amount rounded.
 
 [![Manufacturability from geometry alone — faces that sit on the threshold flip when you smooth them](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dfm_thickness_overhang/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dfm_thickness_overhang/01_scene.png)
 
@@ -8598,7 +8598,7 @@ Ops used (notes): [`box_sdf`](https://furuse.work/ops/3d/sdf_csg/box_sdf.html) �
 
 ## No.2026.070 —— Earthwork on a slope — align first and the scar gets shallower
 
-In evaluating Earthwork on a slope, align first and the scar gets shallower. We place carries in synthetic data, then compare excavation and deposit. The contrast between volume and epochs shows that align first and the scar gets shallower.
+In estimating slope earthwork volumes, aligning before subtracting makes the collapse shallower. We prepared a gradient within simulations and compared the synthetic terrain with known volumes. Comparing excavation with deposition shows that subtracting after alignment makes the collapse shallower.
 
 [![Earthwork on a slope — align first and the scar gets shallower](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lidar_terrain_change/09_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lidar_terrain_change/09_scene.png)
 
@@ -8640,7 +8640,7 @@ Ops used (notes): [`chamfer_distance`](https://furuse.work/ops/3d/metrics/chamfe
 
 ## No.2026.099 —— Weighing an Animal from Silhouettes — The Error You Can Buy Down, and the One You Cannot
 
-When measuring Weighing an Animal from Silhouettes, The Error You Can Buy Down, and the One You Cannot. A measured data case links estimate, volume, and multi-view. The contrast between convert and weight shows that the Error You Can Buy Down, and the One You Cannot.
+In silhouette weighing, some error falls with more cameras, while other error never vanishes. We built measured data with multi-view silhouettes and related the crossing to the animal. Comparing volume with its weight conversion shows that cameras remove only part of the error.
 
 [![Weighing an Animal from Silhouettes — The Error You Can Buy Down, and the One You Cannot](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_livestock_body_volume/10_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_livestock_body_volume/10_scene.png)
 
@@ -8682,7 +8682,7 @@ Ops used (notes): [`carve`](https://furuse.work/ops/3d/space_carving/carve.html)
 
 ## No.2026.072 —— Repair the mesh, then measure — the defect count clears, the quantity does not
 
-In evaluating Repair the mesh, then measure, the defect count clears, the quantity does not. We place triangle in computed data, then compare built and boolean. The contrast between union and sphere shows that the defect count clears, the quantity does not.
+When a broken mesh is repaired before measurement, defects vanish, but the lost quantity does not return. We prepared a torus within observations and compared a prism with the boolean union. Comparing the triangle mesh with flipped faces shows that defects vanish while quantity stays lost.
 
 [![Repair the mesh, then measure — the defect count clears, the quantity does not](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_mesh_quality_repair/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_mesh_quality_repair/01_scene.png)
 
@@ -8724,7 +8724,7 @@ Ops used (notes): [`decimate_qem`](https://furuse.work/ops/3d/mesh_process/decim
 
 ## No.2026.101 —— Pallet load utilization — one number gives voids and overhang the same value
 
-Using Pallet load utilization in practice is difficult because one number gives voids and overhang the. The test uses loads from computed data to separate opposite from defects. The contrast between hides and cavity shows that one number gives voids and overhang the same value.
+In assessing pallet load utilization, a single figure reports gaps and overhang as equal. Using the contents of the calculations, we checked the opposite defects and the cavity separately. Comparing the top of the load with the height limit reveals a single figure reports gaps and overhang as equal.
 
 [![Pallet load utilization — one number gives voids and overhang the same value](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pallet_load_utilization/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pallet_load_utilization/01_scene.png)
 
@@ -8762,7 +8762,7 @@ Ops used (notes): [`aabb`](https://furuse.work/ops/3d/bounds/aabb.html) · [`con
 
 ## No.2026.075 —— Pipe Wall Loss on the Unwrapped Map — The Axis You Choose Eats the Invert Corrosion
 
-For Pipe Wall Loss on the Unwrapped Map, The Axis You Choose Eats the the method Corrosion. The test uses carries from synthetic data to separate full-circumference from band. The contrast between weld and bead shows that the Axis You Choose Eats the the method Corrosion.
+On an unwrapped map of pipe wall loss, fitting the axis erases that much bottom corrosion. Using synthetic pitting, we separately checked full-circumference loss and bottom corrosion. Comparing the weld bead and ovality shows that fitting the axis erases that much bottom corrosion.
 
 [![Pipe Wall Loss on the Unwrapped Map — The Axis You Choose Eats the Invert Corrosion](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pipe_wall_loss/01_scene_pipe_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pipe_wall_loss/01_scene_pipe.png)
 
@@ -8800,7 +8800,7 @@ Ops used (notes): [`blob_label`](https://furuse.work/ops/blob/connect/blob_label
 
 ## No.2026.076 —— Warpage lives in the layer history — averaging the area throws the placement away
 
-In evaluating Warpage lives in the layer history, averaging the area throws the placement away. The synthetic data compares seven with parts and tracks sliced. The contrast between into and layers shows that averaging the area throws the placement away.
+When warpage in an additive build is governed by the layer history, an averaged area discards placement. Synthetic data were used to treat constant shrinkage and examine how the planted setup changes. Comparing the synthetic shapes with their cross-sectional areas shows that an averaged area discards placement.
 
 [![Warpage lives in the layer history — averaging the area throws the placement away](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_print_warpage_risk/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_print_warpage_risk/01_scene.png)
 
@@ -8838,7 +8838,7 @@ Ops used (notes): [`blob_features`](https://furuse.work/ops/blob/measure/blob_fe
 
 ## No.2026.081 —— Human-machine clearance — swap the body for a point, and the hazard vanishes with it
 
-For Human-machine clearance, swap the body for a point, and the hazard vanishes with it. We place ten-capsule in computed data, then compare articulated and moving. The contrast between synthesised and that shows that swap the body for a point, and the hazard vanishes with it.
+In human-machine safety distance evaluation, danger vanishes as a representative point replaces the body. Using articulated synthetic data, we compared centreline and body. Comparing the moving arm with the surface shows that danger vanishes as a representative point replaces the body.
 
 [![Human-machine clearance — swap the body for a point, and the hazard vanishes with it](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_safety_clearance/02_frames_clearance_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_safety_clearance/02_frames_clearance.png)
 
@@ -8876,7 +8876,7 @@ Ops used (notes): [`annotate3d_label`](https://furuse.work/ops/3d/annotate3d/ann
 
 ## No.2026.082 —— As-built deviation of a room — the compromise pose is handed to the innocent element
 
-For As-built deviation of a room, the compromise pose is handed to the innocent element. A synthetic data case links carries, construction, and errors. The contrast between leaning and walls shows that the compromise pose is handed to the innocent element.
+When design mismatch is measured from a room, the alignment's compromise angle goes to undamaged members. Using a synthetic building, we measured how slope relates to dimensional deviation. Comparing openings with known quantities reveals how the alignment's compromise angle goes to undamaged members.
 
 [![As-built deviation of a room — the compromise pose is handed to the innocent element](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_scan_to_bim_asbuilt/01_scene_plan_section_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_scan_to_bim_asbuilt/01_scene_plan_section.png)
 
@@ -8914,7 +8914,7 @@ Ops used (notes): [`box_sdf`](https://furuse.work/ops/3d/sdf_csg/box_sdf.html) �
 
 ## No.2026.086 —— Re-surveying a structure year by year — when the vantage moves, decay appears to advance
 
-When measuring Re-surveying a structure year by year, when the vantage moves, decay appears to advance. We place bridge in computed data, then compare girder and carries. The contrast between deflection and section shows that when the vantage moves, decay appears to advance.
+In yearly repeat surveys of a structure, shifted measurement positions make deterioration seem to progress. A computed bridge girder compared section loss with bearing settlement. Differences between epochs and planted values show that shifted positions mimic deterioration.
 
 [![Re-surveying a structure year by year — when the vantage moves, decay appears to advance](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_structure_4d_deterioration/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_structure_4d_deterioration/01_scene.png)
 
@@ -8956,7 +8956,7 @@ Ops used (notes): [`axes_frame`](https://furuse.work/ops/annotate/plot/axes_fram
 
 ## No.2026.087 —— Restoring what is missing by symmetry — the plane you assume is the lie you get
 
-In evaluating Restoring what is missing by symmetry, the plane you assume is the lie you get. The computed data compares bilaterally with symmetric and tracks mask. The contrast between synthesised and that shows that the plane you assume is the lie you get.
+In symmetry restoration, the reconstruction lies by as much as the assumed plane is displaced. Synthetic data with left-right symmetry and a mask showed how the complete shape changes. The gap between the symmetry plane and the single side shows that this error tracks the displacement.
 
 [![Restoring what is missing by symmetry — the plane you assume is the lie you get](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symmetry_restoration/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symmetry_restoration/01_scene.png)
 
@@ -8994,7 +8994,7 @@ Ops used (notes): [`detect_reflection_symmetry`](https://furuse.work/ops/3d/symm
 
 ## No.2026.146 —— Endless Zooms and Turning Solids: Making the Return Itself the Ground Truth
 
-For Endless Zooms and Turning Solids: Making the Return, the measurement can become unreliable. The Endless Zooms and Turning Solids: Making the Return test uses motion from measured data to separate that from never. The contrast between ends and still shows that the measurement can become unreliable.
+An evaluation of an endless zoom and an endlessly turning solid takes return to the start as truth. Using scores from observations, we checked the equalities and the infinite zoom separately. Comparing the self-similarity ratio with pixelwise differences confirms that truth.
 
 [![Endless Zooms and Turning Solids: Making the Return Itself the Ground Truth](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_endless_zoom_and_turning_solids/01_zoom_steps_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_endless_zoom_and_turning_solids/01_zoom_steps.png)
 
@@ -9040,7 +9040,7 @@ Ops used (notes): [`fractal_dimension`](https://furuse.work/ops/2d/features/frac
 
 ## No.2026.149 —— Scoring Four-Dimensional Claims with Ordinary Three-Dimensional Operators
 
-A comparison of Scoring Four-Dimensional Claims with matters when the measurement can become unreliable. For Scoring Four-Dimensional Claims with, we place topology in measured data, then compare algebra and four. The contrast between dimensions and scored shows that the measurement can become unreliable.
+Four-dimensional claims are evaluated by scoring them with plain three-dimensional methods. We prepared the topology of measured data for those claims and compared algebraic and industrial approaches. Comparing exact values with point clouds shows that plain three-dimensional methods can do the scoring.
 
 [![Scoring Four-Dimensional Claims with Ordinary Three-Dimensional Operators](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_four_dimensions_by_three_d_tools/02_nested_tori_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_four_dimensions_by_three_d_tools/02_nested_tori.png)
 
@@ -9090,7 +9090,7 @@ Ops used (notes): [`curve3d_tube_mesh`](https://furuse.work/ops/3d/surface/curve
 
 ## No.2026.277 —— The Venue Buildings and Asteroid Itokawa on One Ruler — Turning PLATEAU CityGML LOD2 into a Triangle Mesh
 
-For The Venue Buildings and Asteroid Itokawa on One Ruler, Turning PLATEAU CityGML LOD2 into a Triangle. The The Venue Buildings and Asteroid Itokawa on One Ruler test uses author from synthetic data to. The contrast between author and idea shows that turning PLATEAU CityGML LOD into a Triangle Mesh.
+Comparing venue buildings with asteroid-Itokawa on one scale means placing PLATEAU CityGML LOD2 data side by side as triangle meshes. The author's synthetic data were used to check the idea and Itokawa separately. The gap between tangible size and Yokohama marks the assessment's limit.
 
 [![The Venue Buildings and Asteroid Itokawa on One Ruler — Turning PLATEAU CityGML LOD2 into a Triangle Mesh](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plateau_venue_lod2/01_venue_itokawa_top_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plateau_venue_lod2/01_venue_itokawa_top.png)
 
@@ -9112,7 +9112,7 @@ Ops used (notes): [`plateau_lod2_mesh`](https://furuse.work/ops/drive/japan/plat
 
 ## No.2026.279 —— How One Star Image Reveals Satellite Attitude
 
-In evaluating How One Star Image, the measurement can become unreliable. A synthetic data case for How One Star Image links seeded, catalogue, and point. The contrast between seeded and catalogue shows that the measurement can become unreliable.
+When one star photograph gives a satellite's attitude, measurement certainty is the challenge. Synthetic data with fixed conditions measured how the synthetic catalogue relates to the point spread. Comparing the function and photon noise shows that certainty is the challenge.
 
 [![How One Star Image Reveals Satellite Attitude](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_star_tracker/01_star_tracker_camera_image_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_star_tracker/01_star_tracker_camera_image.png)
 
@@ -9148,7 +9148,7 @@ Every exhibit is gated by a closed form, public measurement or independent imple
 
 ## No.2026.010 —— Where CT Reconstruction Starts to Break as Projections Are Removed
 
-Using Where CT Reconstruction Starts to Break in practice is difficult because the measurement can. The test uses shepp-logan from computed data to separate re-imaged from down. The contrast between placed and beside shows that the measurement can become unreliable.
+When CT reconstruction is evaluated with fewer projections, measurement reliability becomes the central issue. Using a computed blank image, we separately verified unfiltered back-projection and the null baseline. Comparing the sinogram with row sums shows this reliability issue.
 
 [![Where CT Reconstruction Starts to Break as Projections Are Removed](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ct_fidelity/01_recon_sweep_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ct_fidelity/01_recon_sweep.png)
 
@@ -9176,7 +9176,7 @@ Ops used (notes): [`backproject_sinogram`](https://furuse.work/ops/tomography/re
 
 ## No.2026.016 —— Ranging by Counting Photons — How Many for How Many Millimetres?
 
-For Ranging by Counting Photons, How Many for How Many Millimetres. We place range in computed data, then compare read and arrival-time. The contrast between histogram and built shows that how Many for How Many Millimetres?.
+When distance is measured by counting photons, the question is how many yield how many millimetres. Computed round-trip times were used to compare a bell-shaped with bin integration. Differences between samples and the arrival-time histogram reveal how many photons yield how many millimetres.
 
 [![Ranging by Counting Photons — How Many for How Many Millimetres?](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dtof_ranging/01_light_front.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dtof_ranging/01_light_front.gif)
 
@@ -9214,7 +9214,7 @@ Ops used (notes): [`dtof_cube_depth`](https://furuse.work/ops/photon/dtof/dtof_c
 
 ## No.2026.022 —— How Accurately a White-Light Interferometer Measures a Nanometre Step
 
-When measuring How Accurately a White-Light Interferometer Measures, the measurement can become. The measured data compares synthesised with the method-scanning and tracks stack. The contrast between steps and measured shows that the measurement can become unreliable.
+Measurement certainty is the challenge when a white-light interferometer reads nanometre steps. We treated scan stacks and noise with synthetic data and examined how the within-limit range changes. Comparing the standard deviation with the zero point confirms that measurement certainty is the challenge.
 
 [![How Accurately a White-Light Interferometer Measures a Nanometre Step](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_interferometry_step/01_surface_interferograms_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_interferometry_step/01_surface_interferograms.png)
 
@@ -9260,7 +9260,7 @@ Ops used (notes): [`axes_frame`](https://furuse.work/ops/annotate/plot/axes_fram
 
 ## No.2026.023 —— Depth From a Light Field — A Light Field of Known Depth, Confronted With Its Nulls
 
-In evaluating Depth From a Light Field, A Light Field of Known Depth, Confronted With Its Nulls. The test uses rendered from computed data to separate analytic from inverse. The contrast between mapping and focus-measure shows that a Light Field of Known Depth, Confronted With Its Nulls.
+Light-field depth estimation is tested by setting a row of nulls against a light-field of known depth. Using analytic computed data, we verified the inverse mapping and true slope map separately. Comparing focus measure with two-view block matching shows this test against nulls.
 
 [![Depth From a Light Field — A Light Field of Known Depth, Confronted With Its Nulls](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lightfield_depth/01_scene_and_depth_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lightfield_depth/01_scene_and_depth.png)
 
@@ -9304,7 +9304,7 @@ Ops used (notes): [`color_bar`](https://furuse.work/ops/annotate/furniture/color
 
 ## No.2026.033 —— Stripping Specular Reflection With Polarisation — Truth From the Fresnel Equations
 
-For Stripping Specular Reflection With Polarisation, Truth From the Fresnel Equations. We place diffuse in computed data, then compare components and synthesised. The contrast between terms and degree shows that truth From the Fresnel Equations.
+Polarized specular separation results are checked against Fresnel ground truth. With synthetic diffuse data, we compared the components with the degree of polarization. Comparing scores across incidence angles shows how results are checked against Fresnel ground truth.
 
 [![Stripping Specular Reflection With Polarisation — Truth From the Fresnel Equations](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_polarization_specular/01_raw_polarizer_mosaic_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_polarization_specular/01_raw_polarizer_mosaic.png)
 
@@ -9342,7 +9342,7 @@ Ops used (notes): [`fresnel_reflectance`](https://furuse.work/ops/3d/optics/fres
 
 ## No.2026.078 —— Drone Thermography of a PV Plant — You Think You Are Measuring Temperature Difference, but You Are Measuring Wind and Viewing Angle
 
-For Drone Thermography of a PV Plant, while but You Are Measuring Wind and Viewing Angle. The test uses megawatt from computed data to separate array from synthesised. The contrast between closed-form and steady-state shows that you Think You Are Measuring Temperature the method, but You Are Measuring Wind and.
+Solar plant drone thermography seems to measure temperature differences but measures wind and angle. With a synthetic steady heat balance, we separately checked the analytic formula plus a megawatt plant. Comparing the array with faults reveals how the survey really measures wind and angle.
 
 [![Drone Thermography of a PV Plant — You Think You Are Measuring Temperature Difference, but You Are Measuring Wind and Viewing Angle](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pv_thermal_survey/06_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pv_thermal_survey/06_scene.png)
 
@@ -9380,7 +9380,7 @@ Ops used (notes): [`beer_lambert_transmittance`](https://furuse.work/ops/optics/
 
 ## No.2026.113 —— A Thermal Image Is Not a Temperature Image — Emissivity, Reflection, and an Uncertainty That Does Not Add
 
-A thermal-camera signal is not a temperature until emissivity, reflected surroundings Known-temperature objects generate radiance and detector counts, followed by quantisation, noise The figures show low-emissivity metal looking falsely cold and the noise penalty after correction.
+Thermal pixels give temperature only after correcting emissivity, reflection, and transmission. A forward model synthesized radiance from known temperatures, adding quantization, noise, and calibration error. The diagram reveals low-emissivity metals reading cold and correction adding noise.
 
 [![A Thermal Image Is Not a Temperature Image — Emissivity, Reflection, and an Uncertainty That Does Not Add](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_thermal_radiometry/15_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_thermal_radiometry/15_scene.png)
 
@@ -9418,7 +9418,7 @@ Ops used (notes): [`beer_lambert_transmittance`](https://furuse.work/ops/optics/
 
 ## No.2026.043 —— Depth of a Subsurface Defect by Pulsed Thermography
 
-Using Depth of a Subsurface Defect in practice is difficult because the measurement can become unreliable. We place temperature in computed data, then compare flash and generated. The contrast between exact and heat-conduction shows that the measurement can become unreliable.
+In evaluating internal defects with pulsed thermography, measurement certainty is the central issue. Computed post-flash data compared surface temperature with 1D heat conduction. The gap between the exact solution and delamination shows that certainty is the central issue.
 
 [![Depth of a Subsurface Defect by Pulsed Thermography](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_thermography_ndt/02_depth_map_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_thermography_ndt/02_depth_map.png)
 
@@ -9456,7 +9456,7 @@ Ops used (notes): [`color_bar`](https://furuse.work/ops/annotate/furniture/color
 
 ## No.2026.178 —— Measuring a Camera Without Buying One — Recovering Quantum Efficiency, Gain and Dark Noise from a Planted Sensor with the EMVA 1288 (image-sensor characterization standard) Procedure
 
-Quantum efficiency and dark noise should be measured by a standard acquisition procedure rather than A synthetic sensor has known photon response, dark current, and pixel nonuniformity The plots show recovery accuracy and the limit where quantisation prevents estimation.
+Quantum efficiency and dark noise come from standard imaging, not just datasheets. A synthetic sensor with known response, dark current, and nonuniformity was estimated from bright and dark pairs. The diagram reveals recovery accuracy and where signal below quantization defeats estimation.
 
 [![Measuring a Camera Without Buying One — Recovering Quantum Efficiency, Gain and Dark Noise from a Planted Sensor with the EMVA 1288 (image-sensor characterization standard) Procedure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_emva1288_sensor/01_raw_dark_flat_saturation_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_emva1288_sensor/01_raw_dark_flat_saturation.png)
 
@@ -9500,7 +9500,7 @@ Ops used (notes): [`emva_dark_current`](https://furuse.work/ops/optics/sensorcha
 
 ## No.2026.090 —— Porosity in Weld Radiographs — Closing With the Share of Images Misgraded by One Class
 
-When measuring Porosity in Weld Radiographs, Closing With the Share of Images Misgraded by One Class. We place drawn in measured data, then compare form and beer. The contrast between lambert and plate shows that closing With the Share of Images Misgraded by One Class.
+Grading pores on weld X-ray images is pinned down by the fraction placed one grade off. We prepared measured data with plate thickness and compared the curve with the reinforcement. Comparing spherical pores with the closed form shows how that fraction pins down the evaluation.
 
 [![Porosity in Weld Radiographs — Closing With the Share of Images Misgraded by One Class](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_weld_radiograph_porosity/01_scene_radiograph_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_weld_radiograph_porosity/01_scene_radiograph.png)
 
@@ -9540,7 +9540,7 @@ Ops used (notes): [`blob_features`](https://furuse.work/ops/blob/measure/blob_fe
 
 ## No.2026.214 —— Peeling Phases One at a Time off a 2-D Powder X-ray Diffraction Image — Calibration, Azimuthal Integration, NNLS and the Unknown Phase in the Residual; References from the NIST SRM 640g Certificate and COD CIFs, with the Shared-Model Leak Measured by Deliberate Mismatch
 
-A comparison of Peeling Phases One at a Time off a two-dimensional Powder X-ray Diffraction Image. A measured data case for Peeling Phases One at a Time off a two-dimensional Powder X-ray. The contrast between detector and records shows that calibration, Azimuthal Integration, NNLS and the Unknown Phase in the.
+When stripping phases sequentially from 2D powder X-ray images, we apply deliberate mismatch to measure the model shared by synthesis and analysis. Using synthetic mixture data, we related the detector to Debye rings. The gap between powder and concentric-ring diffraction marks the limit.
 
 [![Peeling Phases One at a Time off a 2-D Powder X-ray Diffraction Image — Calibration, Azimuthal Integration, NNLS and the Unknown Phase in the Residual; References from the NIST SRM 640g Certificate and COD CIFs, with the Shared-Model Leak Measured by Deliberate Mismatch](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pxrd_phase_peel/01_phase_peel.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pxrd_phase_peel/01_phase_peel.gif)
 
@@ -9580,7 +9580,7 @@ Ops used (notes): [`axes_frame`](https://furuse.work/ops/annotate/plot/axes_fram
 
 ## No.2026.221 —— Measuring Black-Gloss and Glass from Polarisation - No Shading, but the Polarisation Remembers the Slope
 
-For Measuring Black-Gloss and the method from Polarisation, while but the Polarisation Remembers. A measured data case for Measuring Black-Gloss and the method from Polarisation, while and dome. The contrast between lens and measured shows that but the Polarisation Remembers the Slope.
+Measuring glossy black and optical material shapes by polarization works because it retains surface tilt even without shading. We generated synthetic data, including glossy black resin, and measured how domes relate to lenses. Comparing azimuth with on-chip polarizers confirms that retained tilt.
 
 [![Measuring Black-Gloss and Glass from Polarisation - No Shading, but the Polarisation Remembers the Slope](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_shape_from_polarization/05_normals_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_shape_from_polarization/05_normals.png)
 
@@ -9622,7 +9622,7 @@ Ops used (notes): [`aolp_to_azimuth`](https://furuse.work/ops/optics/shape_from_
 
 ## No.2026.185 —— From Melt-Pool Thermography to X-ray CT in Metal Additive Manufacturing — Raw Signal Is Not Temperature, Time Axis and Pixel Pitch, and Powder That Clings Only to Down-Facing Surfaces
 
-In evaluating From Melt-Pool Thermography to X-ray CT in Metal Additive Manufacturing, Raw Signal Is. A synthetic data case for From Melt-Pool Thermography to X-ray CT in Metal Additive Manufacturing. The contrast between single and track shows that raw Signal Is Not Temperature, Time Axis and Pixel Pitch, and.
+Linking metal additive manufacturing thermal images to X-ray CT means raw-signal is not temperature, plus time axes, pixel pitch, and downward-face powder. Synthetic data with revisions measured how a single track relates to the build. Experiment versus part shows the assessment limit.
 
 [![From Melt-Pool Thermography to X-ray CT in Metal Additive Manufacturing — Raw Signal Is Not Temperature, Time Axis and Pixel Pitch, and Powder That Clings Only to Down-Facing Surfaces](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_am_thermal_to_ct/01_melt_pool_frames.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_am_thermal_to_ct/01_melt_pool_frames.gif)
 
@@ -9664,7 +9664,7 @@ Ops used (notes): [`blob_features`](https://furuse.work/ops/blob/measure/blob_fe
 
 ## No.2026.225 —— How Much the Bright SEM Edge Inflates a Dimension — the Shape Matches but the Area Grows
 
-For How Much the Bright SEM Edge Inflates a Dimension, the Shape Matches but the Area Grows. The How Much the Bright SEM Edge Inflates a Dimension test uses revision from synthetic data to separate subtracting from beam. The contrast between point and spread shows that the Shape Matches but the Area Grows.
+Checking how far an SEM bright edge thickens a dimension reveals a matching shape with expanded area. Synthetic data under revision verified the beam and point spread separately. Functions versus cases reveal how the shape matches while the area expands.
 
 [![How Much the Bright SEM Edge Inflates a Dimension — the Shape Matches but the Area Grows](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_sem_wafer_defect_edge_bias/01_sem_se_bse_bias_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_sem_wafer_defect_edge_bias/01_sem_se_bse_bias.png)
 
@@ -9700,7 +9700,7 @@ Ops used (notes): [`blob_features`](https://furuse.work/ops/blob/measure/blob_fe
 
 ## No.2026.228 —— A Pseudo-Simulation of a Gravitational-Wave Detector — Cavity Optics, the Quantum-Noise Budget and the Matched Filter in Closed Form, Scored on the Real GW150914 Data
 
-A comparison of A Pseudo-Simulation of a Gravitational-Wave Detector matters when Cavity Optics, the. For A Pseudo-Simulation of a Gravitational-Wave Detector, the measured data compares much with. The contrast between interferometer and reading shows that cavity Optics, while Scored on the Real GW150914 Data.
+A gravitational-wave telescope pseudo-simulation links cavity equations, quantum noise budgets, and matched filters analytically, scored on real GW150914 data. Computed data on interferometer and mechanism show how reproduction changes. Published values versus arm cavity show the limit.
 
 [![A Pseudo-Simulation of a Gravitational-Wave Detector — Cavity Optics, the Quantum-Noise Budget and the Matched Filter in Closed Form, Scored on the Real GW150914 Data](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_gw_detector_pseudo_simulation/05_gw150914_whitened_vs_prl_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_gw_detector_pseudo_simulation/05_gw150914_whitened_vs_prl.png)
 
@@ -9742,7 +9742,7 @@ Ops used (notes): [`bandpass`](https://furuse.work/ops/oned/signal/bandpass.html
 
 ## No.2026.234 —— Finding Micrometre Dents a Photograph Cannot Show, in the Mirror Image of a Fringe Screen — Phase-Measuring Deflectometry
 
-Using Finding Micrometre Dents a Photograph Cannot Show, in the Mirror Image of a Fringe Screen in. The Finding Micrometre Dents a Photograph Cannot Show, in the Mirror Image of a Fringe Screen test. The contrast between glossy and surface shows that phase-Measuring Deflectometry.
+Phase-measuring deflectometry finds micrometer dents invisible in photographs through mirrored fringes shown on a screen. Measured glossy-surface data verified painted panels and cover optical material separately. Illumination versus phase-shifted fringes points to phase-measuring deflectometry.
 
 [![Finding Micrometre Dents a Photograph Cannot Show, in the Mirror Image of a Fringe Screen — Phase-Measuring Deflectometry](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_phase_measuring_deflectometry/03_photo_vs_pmd_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_phase_measuring_deflectometry/03_photo_vs_pmd.png)
 
@@ -9784,7 +9784,7 @@ Ops used (notes): [`absolute_phase`](https://furuse.work/ops/3d/structured_light
 
 ## No.2026.235 —— TDI (time-delay integration) Line Scan and Line-Scan Lenses — Stages Reveal the Defects, a Sync Error Smears Them, and a C-Mount Lens Loses the Ends of a Long Sensor
 
-Using TDI Line Scan and Line-Scan Lenses in practice is difficult because Stages Reveal the Defects, a. The TDI Line Scan and Line-Scan Lenses test uses moving from measured data to separate material. The contrast between moving and material shows that stages Reveal the Defects, a Sync Error Smears Them, and a.
+In evaluating TDI line scans and lenses, stage count reveals defects, sync errors cause smearing, and C mounts clip long sensor edges. Computed film data verified steel sheet and wafers separately. The gap between line sensors and time-delay integration marks the judgment limit.
 
 [![TDI (time-delay integration) Line Scan and Line-Scan Lenses — Stages Reveal the Defects, a Sync Error Smears Them, and a C-Mount Lens Loses the Ends of a Long Sensor](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tdi_linescan/01_tdi_stages_defects_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tdi_linescan/01_tdi_stages_defects.png)
 
@@ -9824,7 +9824,7 @@ Ops used (notes): [`emva_pair_statistics`](https://furuse.work/ops/optics/sensor
 
 ## No.2026.236 —— Pixel-Shift Imaging — Shift the Sensor One Pixel and False Colour Vanishes, Half a Pixel and Aliasing Vanishes; the MTF (modulation transfer function) Does Not Rise
 
-In evaluating Pixel-Shift Imaging, while the MTF Does Not Rise. The Pixel-Shift Imaging test uses lead from synthetic data to separate chapter from runs. The contrast between lead and chapter shows that shift the Sensor One Pixel and False Colour Vanishes, Half a Pixel and Aliasing Vanishes; the MTF Does Not Rise.
+In pixel-shift evaluation, moving the sensor-one pixel removes false color and half a pixel removes aliasing, but MTF does not rise. Synthetic sensor data verified the piezo actuator and pixels separately. The gap between pixel shift and visual inspection marks the judgment limit.
 
 [![Pixel-Shift Imaging — Shift the Sensor One Pixel and False Colour Vanishes, Half a Pixel and Aliasing Vanishes; the MTF (modulation transfer function) Does Not Rise](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pixel_shift/14_real_chart_zoom_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pixel_shift/14_real_chart_zoom.png)
 
@@ -9868,7 +9868,7 @@ Ops used (notes): [`airy_pattern`](https://furuse.work/ops/optics/wave/airy_patt
 
 ## No.2026.243 —— Indirect Time of Flight, Multi-Frequency — Higher Frequencies Measure Finer, but Wrapping, Multipath, Flying Pixels and Harmonics Break It
 
-Using Indirect Time of Flight, while Flying Pixels and Harmonics Break It. For Indirect Time of Flight, Multi-Frequency, the measured data compares continuous-wave with. The contrast between continuous-wave and modulated shows that higher Frequencies Measure Finer, while Flying Pixels and Harmonics Break It.
+In multi-frequency indirect ToF, higher frequencies measure more finely, but wrapping, multipath, edge mixing, and harmonics break unwrapping. Measured data on modulation and correlation showed how phase changes. The gap between raw signal and distance marks the judgment limit.
 
 [![Indirect Time of Flight, Multi-Frequency — Higher Frequencies Measure Finer, but Wrapping, Multipath, Flying Pixels and Harmonics Break It](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_itof_multifreq/01_warehouse_unwrap_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_itof_multifreq/01_warehouse_unwrap.png)
 
@@ -9910,7 +9910,7 @@ Ops used (notes): [`annotate_figure_grid`](https://furuse.work/ops/annotate/pape
 
 ## No.2026.241 —— Industrial OCT (optical coherence tomography) — Layer Thickness and Hidden Defects of Paints, Coatings and Multilayer Films, Seen in Depth by the FFT of One Spectral Interferogram
 
-Coatings and adhesive stacks need layer thickness and internal voids measured without cutting the part Public automotive-paint spectra and synthetic multilayers are converted from interferograms into depth The figures show transparent interfaces as peaks and the method refusing layers thinner than its.
+Paint and adhesive layers need nondestructive thickness and internal void measurement. Public car-paint spectra and synthetic multilayers gave depth, boundaries, and thickness from interference spectra. The diagram reveals transparent boundaries as peaks and layers below resolution refused.
 
 [![Industrial OCT (optical coherence tomography) — Layer Thickness and Hidden Defects of Paints, Coatings and Multilayer Films, Seen in Depth by the FFT of One Spectral Interferogram](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_industrial_oct/01_real_paint_bscans_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_industrial_oct/01_real_paint_bscans.png)
 
@@ -9954,7 +9954,7 @@ Ops used (notes): [`glass`](https://furuse.work/ops/optics/design/glass.html) ·
 
 ## No.2026.237 —— Thin-Film Thickness by Spectral Reflectometry — Scored on Public Measured Data, then Fringes, Interference Colours, FFT versus Model Fit and Thickness Maps
 
-When measuring Thin-Film Thickness by Spectral Reflectometry, Scored on Public Measured Data, then. The Thin-Film Thickness by Spectral Reflectometry test uses five from synthetic data to separate. The contrast between five and filmoptics shows that scored on Public Measured Data, then Fringes, Interference.
+Thin-film reflectometry is scored on public-measured data, then covers fringes, interference colors, FFT and fitting, and thickness maps. Synthetic spectra verified fringes and the transfer matrix separately. The gap between substrate and material table marks the judgment limit.
 
 [![Thin-Film Thickness by Spectral Reflectometry — Scored on Public Measured Data, then Fringes, Interference Colours, FFT versus Model Fit and Thickness Maps](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_thin_film_reflectometry/01_real_micrograph_thickness_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_thin_film_reflectometry/01_real_micrograph_thickness.png)
 
@@ -9996,7 +9996,7 @@ Ops used (notes): [`annotate_colorbar`](https://furuse.work/ops/annotate/paper/a
 
 ## No.2026.238 —— Chromatic Confocal Displacement Sensor — A Rainbow Ruler from Glass Dispersion, Reading Height from the Colour that Comes Back
 
-For Chromatic Confocal Displacement Sensor, while Reading Height from the Colour that Comes Back. The Chromatic Confocal Displacement Sensor test uses revision from synthetic data to separate. The contrast between revision and spherical shows that a Rainbow Ruler from the method Dispersion, Reading Height from the.
+Chromatic confocal sensors use optical material dispersion as a "rainbow ruler" and read height from returning color. Synthetic data under revision verified the transparent plate and spherical aberration separately. The estimate and air-equivalent gap shows this ruler reading height from color.
 
 [![Chromatic Confocal Displacement Sensor — A Rainbow Ruler from Glass Dispersion, Reading Height from the Colour that Comes Back](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_chromatic_confocal/01_rainbow_ruler_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_chromatic_confocal/01_rainbow_ruler.png)
 
@@ -10038,7 +10038,7 @@ Ops used (notes): [`abbe_number`](https://furuse.work/ops/optics/matprop/abbe_nu
 
 ## No.2026.245 —— A Virtual SEM — Fire Electrons One by One into the Solid, and the Image and the Measured Line Width Change with the Voltage (Scored against Measured Data)
 
-When measuring A Virtual SEM, while and the Image and the Measured Line Width Change with the Voltage. For A Virtual SEM, the measured data compares photograph with surface and tracks tally. The contrast between photograph and surface shows that fire Electrons One by One into the Solid, and the Image and the.
+In a virtual SEM, electrons fired singly into a solid show accelerating voltage changing the image and measurable line width. Measured data on the SEM and surface showed how the photograph changes. The gap between scattering and primary electrons reveals this voltage effect.
 
 [![A Virtual SEM — Fire Electrons One by One into the Solid, and the Image and the Measured Line Width Change with the Voltage (Scored against Measured Data)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_virtual_sem_kv_cd_bse/01_sem_interaction_volume_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_virtual_sem_kv_cd_bse/01_sem_interaction_volume.png)
 
@@ -10080,7 +10080,7 @@ Ops used (notes): [`material_electron_properties`](https://furuse.work/ops/optic
 
 ## No.2026.246 —— A Virtual Transmission Electron Microscope — Thon Rings (CTF rings in a TEM power spectrum) Move with Focus, Fine Detail Reverses, and Defocus Is Read from Real Micrographs
 
-For A Virtual Transmission Electron Microscope, while and Defocus Is Read from Real Micrographs. For A Virtual Transmission Electron Microscope, the synthetic data compares turns with phase and. The contrast between turns and phase shows that thon Rings Move with Focus, while and Defocus Is Read from Real Micrographs.
+In a simulated TEM, sweeping focus shifts Thon rings and inverts fine detail, and defocus is estimated from real micrographs. Synthetic data on specimens and electrons were used to examine how phase changes. Comparing spherical aberration with brightness confirms both effects and the estimate.
 
 [![A Virtual Transmission Electron Microscope — Thon Rings (CTF rings in a TEM power spectrum) Move with Focus, Fine Detail Reverses, and Defocus Is Read from Real Micrographs](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tem_ctf_thon_rings/02_thon_rings_four_defoci_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tem_ctf_thon_rings/02_thon_rings_four_defoci.png)
 
@@ -10120,7 +10120,7 @@ Ops used (notes): [`tem_amorphous_film`](https://furuse.work/ops/optics/tem/tem_
 
 ## No.2026.250 —— Spectrometer and Illumination Trains — Where the Bandwidth Comes From, and Whether the Lamp Shows in the Field
 
-A comparison of Spectrometer and Illumination Trains matters when Where the Bandwidth Comes From, and. For Spectrometer and Illumination Trains, the computed data compares hyperspectral with used and. The contrast between hyperspectral and used shows that where the Bandwidth Comes From, and Whether the Lamp Shows.
+Spectrometers and illumination systems raise two questions: whether slit or grating sets the bandwidth, and whether the source pattern reaches the field. Computed data for hyperspectral and chromatic confocal use show how line width changes. Comparing figures with the entrance slit answers both.
 
 [![Spectrometer and Illumination Trains — Where the Bandwidth Comes From, and Whether the Lamp Shows in the Field](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_spectrometer_illumination/03_slit_image_smile_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_spectrometer_illumination/03_slit_image_smile.png)
 
@@ -10158,7 +10158,7 @@ Ops used (notes): [`chromatic_confocal_peaks`](https://furuse.work/ops/optics/co
 
 ## No.2026.251 —— Grating Interferometry — Fibre Orientation, Micro-Cracks and Pores That Absorption Cannot See, Read From the Fringe Amplitude (Dark Field)
 
-When measuring Grating Interferometry, while Read From the Fringe Amplitude. For Grating Interferometry, we place interferometer in computed data, then compare dark and field. The contrast between interferometer and dark shows that fibre Orientation, while Read From the Fringe Amplitude.
+In grating interferometry, fringe amplitude reveals fiber orientation, microcracks, and pores invisible in absorption. Computed dark-field data were prepared to compare the design with the closed form. Comparing phase and absorption gratings shows that fringe amplitude reveals these features.
 
 [![Grating Interferometry — Fibre Orientation, Micro-Cracks and Pores That Absorption Cannot See, Read From the Fringe Amplitude (Dark Field)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_grating_interferometry/12_real_three_images_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_grating_interferometry/12_real_three_images.png)
 
@@ -10202,7 +10202,7 @@ Ops used (notes): [`angular_spectrum_propagate`](https://furuse.work/ops/optics/
 
 ## No.2026.255 —— Bone and Glass in Meat, Separated by Material with Two X-ray Energies (Dual-Energy and Photon-Counting X-ray)
 
-In evaluating Bone and the method in Meat, Separated by Material with Two X-ray Energies. A measured data case for Bone and the method in Meat links single, transmission, and image. The contrast between single and transmission shows that separated by Material with Two X-ray Energies.
+Bone fragments and optical material embedded in meat are separated by material using two energies. Measured data including food were created to determine how X-ray inspection relates to transmission images. Comparing pixels with foreign bodies shows that two energies separate materials.
 
 [![Bone and Glass in Meat, Separated by Material with Two X-ray Energies (Dual-Energy and Photon-Counting X-ray)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dual_energy_xray/04_tray_single_vs_basis_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dual_energy_xray/04_tray_single_vs_basis.png)
 
@@ -10240,7 +10240,7 @@ Ops used (notes): [`basis_decomposition_crlb`](https://furuse.work/ops/tomograph
 
 ## No.2026.271 —— Budgeting Lens Manufacturing Tolerances through MTF (modulation transfer function), Yield, and Compensator Travel
 
-A comparison of Budgeting Lens Manufacturing Tolerances through MTF matters when Yield, and Compensator. The Budgeting Lens Manufacturing Tolerances through MTF test uses public from measured data to separate triplet from prescription. The contrast between public and triplet shows that yield, and Compensator Travel.
+Lens tolerance evaluation brings MTF, yield, and compensator stroke into one budget. A public prescription from observations was used to check the triplet and curvature separately. Comparing refractive index and Abbe number shows that all three belong in one budget.
 
 [![Budgeting Lens Manufacturing Tolerances through MTF (modulation transfer function), Yield, and Compensator Travel](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_tolerancing/01_sensitivity_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_tolerancing/01_sensitivity.png)
 
@@ -10284,7 +10284,7 @@ Ops used (notes): [`chief_ray`](https://furuse.work/ops/optics/design/chief_ray.
 
 ## No.2026.272 —— A Prescription-Based Plenoptic Camera
 
-Using A Prescription-Based in practice is difficult because the measurement can become unreliable. For A Prescription-Based, the synthetic data compares revision with depth and tracks refocus. The contrast between revision and depth shows that the measurement can become unreliable.
+For a plenoptic camera imaging from a prescription, measurement certainty is the challenge. Synthetic data covered the revision in progress and depth to show how refocusing changes. Comparing the epipolar-plane image and capture shows that measurement certainty is the challenge.
 
 [![A Prescription-Based Plenoptic Camera](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plenoptic_camera/03_raw_microimages_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plenoptic_camera/03_raw_microimages.png)
 
@@ -10328,7 +10328,7 @@ Ops used (notes): [`lens_scene`](https://furuse.work/ops/optics/lensrender/lens_
 
 ## No.2026.273 —— Measuring the Same Particles in Scanning and Transmission Images — Which Is Right, 52 nm or 48 nm?
 
-In evaluating Measuring the Same Particles in Scanning and Transmission Images, while 52 nm or nm. A computed data case for Measuring the Same Particles in Scanning and Transmission Images links ledger, fourteen, and spherical. The contrast between ledger and fourteen shows that which Is Right, nm or nm?.
+Comparing identical particles by scanning and transmission imaging asks whether fifty-two or forty-eight nanometres is correct. Calculations including spheres relate faceted particles to the ledger. Area-equivalent diameter and maximum slope show which value is correct.
 
 [![Measuring the Same Particles in Scanning and Transmission Images — Which Is Right, 52 nm or 48 nm?](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_sem_tem_same_particle/02_same_specimen_sem_tem_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_sem_tem_same_particle/02_same_specimen_sem_tem.png)
 
@@ -10370,7 +10370,7 @@ Ops used (notes): [`color_bar`](https://furuse.work/ops/annotate/furniture/color
 
 ## No.2026.274 —— Indirect and Direct Time of Flight on One 3-D Scene — Multipath, Mixed Pixels, Pile-up and Volume Error
 
-Using Indirect and Direct Time of Flight on One three-dimensional Scene in practice is difficult. The Indirect and Direct Time of Flight on One three-dimensional Scene test uses same from. The contrast between same and shown shows that multipath, Mixed Pixels, Pile-up and Volume Error.
+When indirect and direct ToF measure the same 3-D scene, the issues are mixed pixels, multipath, volume error, and pile-up. Synthetic pixel data were used to check the scene and amplitude separately. Comparing colour-coded distance with the point cloud reveals these four issues.
 
 [![Indirect and Direct Time of Flight on One 3-D Scene — Multipath, Mixed Pixels, Pile-up and Volume Error](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tof_camera/01_scene_viewer_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tof_camera/01_scene_viewer.png)
 
@@ -10412,7 +10412,7 @@ Ops used (notes): [`bilateral_filter_depth`](https://furuse.work/ops/3d/depth_de
 
 ## No.2026.275 —— Measurable Omnidirectional Inspection, Stereo Display and Moving Viewports
 
-A comparison of Measurable Omnidirectional Inspection matters when Stereo Display and Moving Viewports. A synthetic data case for Measurable Omnidirectional Inspection links m-radius, tunnel, and captured. The contrast between m-radius and tunnel shows that stereo Display and Moving Viewports.
+When omnidirectional inspection imaging and stereoscopic display share one measurement, certainty is the challenge. Synthetic data including the radius measured how the synthetic tunnel relates to the fisheyes. Comparing seam error and blind spots shows that certainty is the challenge.
 
 [![Measurable Omnidirectional Inspection, Stereo Display and Moving Viewports](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_omni360_inspection/08_anaglyph_and_limits_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_omni360_inspection/08_anaglyph_and_limits.png)
 
