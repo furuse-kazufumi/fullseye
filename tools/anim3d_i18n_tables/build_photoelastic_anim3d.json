@@ -1,1 +1,546 @@
-{"_":"English fallback translations for the low-cost prototype; formulas, values and op names are preserved.","example":"build_photoelastic_anim3d","strings":{"See force as colored fringes":{"ja":"力を色の縞として見る","zh":"See force as colored fringes","tw":"See force as colored fringes","ko":"See force as colored fringes","de":"See force as colored fringes","hi":"See force as colored fringes","fr":"See force as colored fringes"},"Measure stress in a transparent disc from polarized images":{"ja":"透明な円板の応力を偏光像から測る","zh":"Measure stress in a transparent disc from polarized images","tw":"Measure stress in a transparent disc from polarized images","ko":"Measure stress in a transparent disc from polarized images","de":"Measure stress in a transparent disc from polarized images","hi":"Measure stress in a transparent disc from polarized images","fr":"Measure stress in a transparent disc from polarized images"},"Drag to rotate and move the load slider":{"ja":"ドラッグで回し、荷重つまみを動かす","zh":"Drag to rotate and move the load slider","tw":"Drag to rotate and move the load slider","ko":"Drag to rotate and move the load slider","de":"Drag to rotate and move the load slider","hi":"Drag to rotate and move the load slider","fr":"Drag to rotate and move the load slider"},"Why colored fringes?":{"ja":"なぜ色の縞になる？","zh":"Why colored fringes?","tw":"Why colored fringes?","ko":"Why colored fringes?","de":"Why colored fringes?","hi":"Why colored fringes?","fr":"Why colored fringes?"},"Polarizers and quarter-wave plates turn stress-induced birefringence into brightness. Images include shot noise at a 10,000-electron full well, 1% read noise, and 8-bit quantization.":{"ja":"偏光子と 1/4 波長板を通った光は、応力で生じた二つの屈折率の差を明暗へ変える。像は満杯 10,000 電子のショット雑音、最大強度の 1 % の読出し雑音、8 bit 量子化を含む。","zh":"Polarizers and quarter-wave plates turn stress-induced birefringence into brightness. Images include shot noise at a 10,000-electron full well, 1% read noise, and 8-bit quantization.","tw":"Polarizers and quarter-wave plates turn stress-induced birefringence into brightness. Images include shot noise at a 10,000-electron full well, 1% read noise, and 8-bit quantization.","ko":"Polarizers and quarter-wave plates turn stress-induced birefringence into brightness. Images include shot noise at a 10,000-electron full well, 1% read noise, and 8-bit quantization.","de":"Polarizers and quarter-wave plates turn stress-induced birefringence into brightness. Images include shot noise at a 10,000-electron full well, 1% read noise, and 8-bit quantization.","hi":"Polarizers and quarter-wave plates turn stress-induced birefringence into brightness. Images include shot noise at a 10,000-electron full well, 1% read noise, and 8-bit quantization.","fr":"Polarizers and quarter-wave plates turn stress-induced birefringence into brightness. Images include shot noise at a 10,000-electron full well, 1% read noise, and 8-bit quantization."},"White-light fringes computed from the stress field":{"ja":"応力場から計算した白色光の縞","zh":"White-light fringes computed from the stress field","tw":"White-light fringes computed from the stress field","ko":"White-light fringes computed from the stress field","de":"White-light fringes computed from the stress field","hi":"White-light fringes computed from the stress field","fr":"White-light fringes computed from the stress field"},"Load estimated from six intensities and three wavelengths":{"ja":"6 強度と 3 波長から推定した荷重","zh":"Load estimated from six intensities and three wavelengths","tw":"Load estimated from six intensities and three wavelengths","ko":"Load estimated from six intensities and three wavelengths","de":"Load estimated from six intensities and three wavelengths","hi":"Load estimated from six intensities and three wavelengths","fr":"Load estimated from six intensities and three wavelengths"},"error \u003c 2% at three loads (1% read noise and shot noise reduced over 5×5 pixels)":{"ja":"3 荷重で誤差 \u003c 2 %（1 % 読出し雑音とショット雑音を 5×5 画素で低減）","zh":"error \u003c 2% at three loads (1% read noise and shot noise reduced over 5×5 pixels)","tw":"error \u003c 2% at three loads (1% read noise and shot noise reduced over 5×5 pixels)","ko":"error \u003c 2% at three loads (1% read noise and shot noise reduced over 5×5 pixels)","de":"error \u003c 2% at three loads (1% read noise and shot noise reduced over 5×5 pixels)","hi":"error \u003c 2% at three loads (1% read noise and shot noise reduced over 5×5 pixels)","fr":"error \u003c 2% at three loads (1% read noise and shot noise reduced over 5×5 pixels)"},"maximum 0.11% (3 conditions)":{"ja":"最大 0.11 %（3 条件）","zh":"maximum 0.11% (3 conditions)","tw":"maximum 0.11% (3 conditions)","ko":"maximum 0.11% (3 conditions)","de":"maximum 0.11% (3 conditions)","hi":"maximum 0.11% (3 conditions)","fr":"maximum 0.11% (3 conditions)"},"Load":{"ja":"荷重","zh":"Load","tw":"Load","ko":"Load","de":"Load","hi":"Load","fr":"Load"},"What changes when a transparent disc is loaded?":{"ja":"透明な円板に力を加えると何が変わる？","zh":"What changes when a transparent disc is loaded?","tw":"What changes when a transparent disc is loaded?","ko":"What changes when a transparent disc is loaded?","de":"What changes when a transparent disc is loaded?","hi":"What changes when a transparent disc is loaded?","fr":"What changes when a transparent disc is loaded?"},"Only thickness":{"ja":"厚さだけ","zh":"Only thickness","tw":"Only thickness","ko":"Only thickness","de":"Only thickness","hi":"Only thickness","fr":"Only thickness"},"Polarization phase delay":{"ja":"偏光の位相差","zh":"Polarization phase delay","tw":"Polarization phase delay","ko":"Polarization phase delay","de":"Polarization phase delay","hi":"Polarization phase delay","fr":"Polarization phase delay"},"Principal-stress difference creates phase delay.":{"ja":"主応力差が位相差を作る。","zh":"Principal-stress difference creates phase delay.","tw":"Principal-stress difference creates phase delay.","ko":"Principal-stress difference creates phase delay.","de":"Principal-stress difference creates phase delay.","hi":"Principal-stress difference creates phase delay.","fr":"Principal-stress difference creates phase delay."},"N = t(σ₁−σ₂)/fσ,  I = sin²(πN)":{"ja":"N = t(σ₁−σ₂)/fσ,  I = sin²(πN)","zh":"N = t(σ₁−σ₂)/fσ,  I = sin²(πN)","tw":"N = t(σ₁−σ₂)/fσ,  I = sin²(πN)","ko":"N = t(σ₁−σ₂)/fσ,  I = sin²(πN)","de":"N = t(σ₁−σ₂)/fσ,  I = sin²(πN)","hi":"N = t(σ₁−σ₂)/fσ,  I = sin²(πN)","fr":"N = t(σ₁−σ₂)/fσ,  I = sin²(πN)"},"Material coefficient and thickness are assumed uniform.":{"ja":"材料定数と厚さは一様と仮定する。","zh":"Material coefficient and thickness are assumed uniform.","tw":"Material coefficient and thickness are assumed uniform.","ko":"Material coefficient and thickness are assumed uniform.","de":"Material coefficient and thickness are assumed uniform.","hi":"Material coefficient and thickness are assumed uniform.","fr":"Material coefficient and thickness are assumed uniform."},"Load and fringes":{"ja":"荷重と縞","zh":"Load and fringes","tw":"Load and fringes","ko":"Load and fringes","de":"Load and fringes","hi":"Load and fringes","fr":"Load and fringes"},"Quadrupling the force increases the dark fringes crossing the centre.":{"ja":"押す力を 4 倍にすると、中心を通過する暗線の数が増える。","zh":"Quadrupling the force increases the dark fringes crossing the centre.","tw":"Quadrupling the force increases the dark fringes crossing the centre.","ko":"Quadrupling the force increases the dark fringes crossing the centre.","de":"Quadrupling the force increases the dark fringes crossing the centre.","hi":"Quadrupling the force increases the dark fringes crossing the centre.","fr":"Quadrupling the force increases the dark fringes crossing the centre."},"Colored fringes increasing with load":{"ja":"荷重とともに増える色の縞","zh":"Colored fringes increasing with load","tw":"Colored fringes increasing with load","ko":"Colored fringes increasing with load","de":"Colored fringes increasing with load","hi":"Colored fringes increasing with load","fr":"Colored fringes increasing with load"},"Dark lines crossing the centre":{"ja":"中心を通る暗線","zh":"Dark lines crossing the centre","tw":"Dark lines crossing the centre","ko":"Dark lines crossing the centre","de":"Dark lines crossing the centre","hi":"Dark lines crossing the centre","fr":"Dark lines crossing the centre"},"increase with load":{"ja":"荷重とともに増加","zh":"increase with load","tw":"increase with load","ko":"increase with load","de":"increase with load","hi":"increase with load","fr":"increase with load"},"What happens to fringes as load rises?":{"ja":"荷重を上げると縞は？","zh":"What happens to fringes as load rises?","tw":"What happens to fringes as load rises?","ko":"What happens to fringes as load rises?","de":"What happens to fringes as load rises?","hi":"What happens to fringes as load rises?","fr":"What happens to fringes as load rises?"},"Fewer":{"ja":"減る","zh":"Fewer","tw":"Fewer","ko":"Fewer","de":"Fewer","hi":"Fewer","fr":"Fewer"},"More":{"ja":"増える","zh":"More","tw":"More","ko":"More","de":"More","hi":"More","fr":"More"},"More phase cycles produce more dark lines.":{"ja":"位相差が何周も進むため暗線が増える。","zh":"More phase cycles produce more dark lines.","tw":"More phase cycles produce more dark lines.","ko":"More phase cycles produce more dark lines.","de":"More phase cycles produce more dark lines.","hi":"More phase cycles produce more dark lines.","fr":"More phase cycles produce more dark lines."},"I = sin²(πN)":{"ja":"I = sin²(πN)","zh":"I = sin²(πN)","tw":"I = sin²(πN)","ko":"I = sin²(πN)","de":"I = sin²(πN)","hi":"I = sin²(πN)","fr":"I = sin²(πN)"},"At high order, fringes crowd beyond pixel resolution.":{"ja":"高い次数では縞が詰まり、画素で分離できない。","zh":"At high order, fringes crowd beyond pixel resolution.","tw":"At high order, fringes crowd beyond pixel resolution.","ko":"At high order, fringes crowd beyond pixel resolution.","de":"At high order, fringes crowd beyond pixel resolution.","hi":"At high order, fringes crowd beyond pixel resolution.","fr":"At high order, fringes crowd beyond pixel resolution."},"Infer force from fringes":{"ja":"縞から力を逆算","zh":"Infer force from fringes","tw":"Infer force from fringes","ko":"Infer force from fringes","de":"Infer force from fringes","hi":"Infer force from fringes","fr":"Infer force from fringes"},"Independent fringe counting and six-intensity, three-wavelength phase recovery estimate central stress difference.":{"ja":"暗線の数え上げと、6 強度・3 波長の位相推定を別々に行い、中心の主応力差を比べる。","zh":"Independent fringe counting and six-intensity, three-wavelength phase recovery estimate central stress difference.","tw":"Independent fringe counting and six-intensity, three-wavelength phase recovery estimate central stress difference.","ko":"Independent fringe counting and six-intensity, three-wavelength phase recovery estimate central stress difference.","de":"Independent fringe counting and six-intensity, three-wavelength phase recovery estimate central stress difference.","hi":"Independent fringe counting and six-intensity, three-wavelength phase recovery estimate central stress difference.","fr":"Independent fringe counting and six-intensity, three-wavelength phase recovery estimate central stress difference."},"Noisy polarized image used for inversion":{"ja":"逆算に使う雑音入り偏光像","zh":"Noisy polarized image used for inversion","tw":"Noisy polarized image used for inversion","ko":"Noisy polarized image used for inversion","de":"Noisy polarized image used for inversion","hi":"Noisy polarized image used for inversion","fr":"Noisy polarized image used for inversion"},"Fringe order N(x) built from the image diameter":{"ja":"水平直径の像から作った縞次数 N(x)","zh":"Fringe order N(x) built from the image diameter","tw":"Fringe order N(x) built from the image diameter","ko":"Fringe order N(x) built from the image diameter","de":"Fringe order N(x) built from the image diameter","hi":"Fringe order N(x) built from the image diameter","fr":"Fringe order N(x) built from the image diameter"},"RMS difference from closed form \u003c 0.10 order":{"ja":"閉形式との RMS 差 \u003c 0.10 次","zh":"RMS difference from closed form \u003c 0.10 order","tw":"RMS difference from closed form \u003c 0.10 order","ko":"RMS difference from closed form \u003c 0.10 order","de":"RMS difference from closed form \u003c 0.10 order","hi":"RMS difference from closed form \u003c 0.10 order","fr":"RMS difference from closed form \u003c 0.10 order"},"maximum 0.059 order":{"ja":"最大 0.059 次","zh":"maximum 0.059 order","tw":"maximum 0.059 order","ko":"maximum 0.059 order","de":"maximum 0.059 order","hi":"maximum 0.059 order","fr":"maximum 0.059 order"},"Load estimates: dark-fringe image / six-intensity multiwavelength":{"ja":"暗線像 / 6 強度多波長の荷重推定","zh":"Load estimates: dark-fringe image / six-intensity multiwavelength","tw":"Load estimates: dark-fringe image / six-intensity multiwavelength","ko":"Load estimates: dark-fringe image / six-intensity multiwavelength","de":"Load estimates: dark-fringe image / six-intensity multiwavelength","hi":"Load estimates: dark-fringe image / six-intensity multiwavelength","fr":"Load estimates: dark-fringe image / six-intensity multiwavelength"},"route difference \u003c 4% (root-sum-square of 2% and 3% route budgets)":{"ja":"独立経路の差 \u003c 4 %（各経路 2 % と 3 % の二乗和平方根）","zh":"route difference \u003c 4% (root-sum-square of 2% and 3% route budgets)","tw":"route difference \u003c 4% (root-sum-square of 2% and 3% route budgets)","ko":"route difference \u003c 4% (root-sum-square of 2% and 3% route budgets)","de":"route difference \u003c 4% (root-sum-square of 2% and 3% route budgets)","hi":"route difference \u003c 4% (root-sum-square of 2% and 3% route budgets)","fr":"route difference \u003c 4% (root-sum-square of 2% and 3% route budgets)"},"Can load be recovered from images alone?":{"ja":"像だけから荷重を戻せる？","zh":"Can load be recovered from images alone?","tw":"Can load be recovered from images alone?","ko":"Can load be recovered from images alone?","de":"Can load be recovered from images alone?","hi":"Can load be recovered from images alone?","fr":"Can load be recovered from images alone?"},"Cannot recover":{"ja":"戻せない","zh":"Cannot recover","tw":"Cannot recover","ko":"Cannot recover","de":"Cannot recover","hi":"Cannot recover","fr":"Cannot recover"},"Yes, with material data":{"ja":"材料定数が分かれば戻せる","zh":"Yes, with material data","tw":"Yes, with material data","ko":"Yes, with material data","de":"Yes, with material data","hi":"Yes, with material data","fr":"Yes, with material data"},"Recover central stress from images, then use the disc relation for force.":{"ja":"中心応力差を像から求め、円板の関係式で荷重へ戻す。","zh":"Recover central stress from images, then use the disc relation for force.","tw":"Recover central stress from images, then use the disc relation for force.","ko":"Recover central stress from images, then use the disc relation for force.","de":"Recover central stress from images, then use the disc relation for force.","hi":"Recover central stress from images, then use the disc relation for force.","fr":"Recover central stress from images, then use the disc relation for force."},"P = πDt(σ₁−σ₂)/8":{"ja":"P = πDt(σ₁−σ₂)/8","zh":"P = πDt(σ₁−σ₂)/8","tw":"P = πDt(σ₁−σ₂)/8","ko":"P = πDt(σ₁−σ₂)/8","de":"P = πDt(σ₁−σ₂)/8","hi":"P = πDt(σ₁−σ₂)/8","fr":"P = πDt(σ₁−σ₂)/8"},"Residual stress cannot be separated from load stress.":{"ja":"残留応力は荷重による応力と区別できない。","zh":"Residual stress cannot be separated from load stress.","tw":"Residual stress cannot be separated from load stress.","ko":"Residual stress cannot be separated from load stress.","de":"Residual stress cannot be separated from load stress.","hi":"Residual stress cannot be separated from load stress.","fr":"Residual stress cannot be separated from load stress."},"Limits of visibility":{"ja":"見えない限界","zh":"Limits of visibility","tw":"Limits of visibility","ko":"Limits of visibility","de":"Limits of visibility","hi":"Limits of visibility","fr":"Limits of visibility"},"Subpixel fringes, residual stress, and thickness variation cannot be separated by this simple inversion.":{"ja":"縞が画素より細い領域、残留応力、厚さむらは、この単純な逆算では分けられない。","zh":"Subpixel fringes, residual stress, and thickness variation cannot be separated by this simple inversion.","tw":"Subpixel fringes, residual stress, and thickness variation cannot be separated by this simple inversion.","ko":"Subpixel fringes, residual stress, and thickness variation cannot be separated by this simple inversion.","de":"Subpixel fringes, residual stress, and thickness variation cannot be separated by this simple inversion.","hi":"Subpixel fringes, residual stress, and thickness variation cannot be separated by this simple inversion.","fr":"Subpixel fringes, residual stress, and thickness variation cannot be separated by this simple inversion."},"High order, residual stress, thickness variation":{"ja":"高次・残留応力・厚さむら","zh":"High order, residual stress, thickness variation","tw":"High order, residual stress, thickness variation","ko":"High order, residual stress, thickness variation","de":"High order, residual stress, thickness variation","hi":"High order, residual stress, thickness variation","fr":"High order, residual stress, thickness variation"},"uniquely isolate load stress":{"ja":"荷重だけの応力を一意に分離","zh":"uniquely isolate load stress","tw":"uniquely isolate load stress","ko":"uniquely isolate load stress","de":"uniquely isolate load stress","hi":"uniquely isolate load stress","fr":"uniquely isolate load stress"},"not separable from images alone":{"ja":"像だけでは分離不能","zh":"not separable from images alone","tw":"not separable from images alone","ko":"not separable from images alone","de":"not separable from images alone","hi":"not separable from images alone","fr":"not separable from images alone"},"Can order be counted when fringes are too fine?":{"ja":"縞が細かすぎると次数を数えられる？","zh":"Can order be counted when fringes are too fine?","tw":"Can order be counted when fringes are too fine?","ko":"Can order be counted when fringes are too fine?","de":"Can order be counted when fringes are too fine?","hi":"Can order be counted when fringes are too fine?","fr":"Can order be counted when fringes are too fine?"},"Yes":{"ja":"数えられる","zh":"Yes","tw":"Yes","ko":"Yes","de":"Yes","hi":"Yes","fr":"Yes"},"No":{"ja":"数えられない","zh":"No","tw":"No","ko":"No","de":"No","hi":"No","fr":"No"},"Brightness averages within a pixel and order is lost.":{"ja":"画素内で明暗が混ざると次数を失う。","zh":"Brightness averages within a pixel and order is lost.","tw":"Brightness averages within a pixel and order is lost.","ko":"Brightness averages within a pixel and order is lost.","de":"Brightness averages within a pixel and order is lost.","hi":"Brightness averages within a pixel and order is lost.","fr":"Brightness averages within a pixel and order is lost."},"Δxfringe \u003c pixel":{"ja":"Δxfringe \u003c pixel","zh":"Δxfringe \u003c pixel","tw":"Δxfringe \u003c pixel","ko":"Δxfringe \u003c pixel","de":"Δxfringe \u003c pixel","hi":"Δxfringe \u003c pixel","fr":"Δxfringe \u003c pixel"},"This synthetic model illustrates calibration; it does not certify a real inspection.":{"ja":"この合成モデルは校正の考え方を示すもので、実材料の検査条件を保証しない。","zh":"This synthetic model illustrates calibration; it does not certify a real inspection.","tw":"This synthetic model illustrates calibration; it does not certify a real inspection.","ko":"This synthetic model illustrates calibration; it does not certify a real inspection.","de":"This synthetic model illustrates calibration; it does not certify a real inspection.","hi":"This synthetic model illustrates calibration; it does not certify a real inspection.","fr":"This synthetic model illustrates calibration; it does not certify a real inspection."},"Synthetic data; material constants are illustrative assumptions.":{"ja":"合成データ。材料定数は説明用の仮定。","zh":"Synthetic data; material constants are illustrative assumptions.","tw":"Synthetic data; material constants are illustrative assumptions.","ko":"Synthetic data; material constants are illustrative assumptions.","de":"Synthetic data; material constants are illustrative assumptions.","hi":"Synthetic data; material constants are illustrative assumptions.","fr":"Synthetic data; material constants are illustrative assumptions."}}}
+{
+ "_": "English fallback translations for the low-cost prototype; formulas, values and op names are preserved.",
+ "example": "build_photoelastic_anim3d",
+ "strings": {
+  "not separable from images alone": {
+   "ja": "像だけでは分離不能",
+   "zh": "not separable from images alone",
+   "tw": "not separable from images alone",
+   "ko": "not separable from images alone",
+   "de": "not separable from images alone",
+   "hi": "not separable from images alone",
+   "fr": "not separable from images alone"
+  },
+  "Δxfringe < pixel": {
+   "ja": "Δxfringe < pixel",
+   "zh": "Δxfringe < pixel",
+   "tw": "Δxfringe < pixel",
+   "ko": "Δxfringe < pixel",
+   "de": "Δxfringe < pixel",
+   "hi": "Δxfringe < pixel",
+   "fr": "Δxfringe < pixel"
+  },
+  "Measure invisible stress with colored fringes": {
+   "ja": "見えない応力を色の縞で測る",
+   "zh": "Measure invisible stress with colored fringes",
+   "tw": "Measure invisible stress with colored fringes",
+   "ko": "Measure invisible stress with colored fringes",
+   "de": "Measure invisible stress with colored fringes",
+   "hi": "Measure invisible stress with colored fringes",
+   "fr": "Measure invisible stress with colored fringes"
+  },
+  "One op array for disc and holed plate: 3-D, four paper-style panels, CSV/PLY": {
+   "ja": "円板・穴あき板の同じ op 配列を 3-D、論文型4図、CSV/PLYへ",
+   "zh": "One op array for disc and holed plate: 3-D, four paper-style panels, CSV/PLY",
+   "tw": "One op array for disc and holed plate: 3-D, four paper-style panels, CSV/PLY",
+   "ko": "One op array for disc and holed plate: 3-D, four paper-style panels, CSV/PLY",
+   "de": "One op array for disc and holed plate: 3-D, four paper-style panels, CSV/PLY",
+   "hi": "One op array for disc and holed plate: 3-D, four paper-style panels, CSV/PLY",
+   "fr": "One op array for disc and holed plate: 3-D, four paper-style panels, CSV/PLY"
+  },
+  "Move the load slider and verify that 3-D and panels (a)-(d) stay synchronized": {
+   "ja": "荷重つまみを動かし、(a)〜(d) と 3-D が同期することを確かめる",
+   "zh": "Move the load slider and verify that 3-D and panels (a)-(d) stay synchronized",
+   "tw": "Move the load slider and verify that 3-D and panels (a)-(d) stay synchronized",
+   "ko": "Move the load slider and verify that 3-D and panels (a)-(d) stay synchronized",
+   "de": "Move the load slider and verify that 3-D and panels (a)-(d) stay synchronized",
+   "hi": "Move the load slider and verify that 3-D and panels (a)-(d) stay synchronized",
+   "fr": "Move the load slider and verify that 3-D and panels (a)-(d) stay synchronized"
+  },
+  "① Load the disc": {
+   "ja": "① 荷重を上げる円板",
+   "zh": "① Load the disc",
+   "tw": "① Load the disc",
+   "ko": "① Load the disc",
+   "de": "① Load the disc",
+   "hi": "① Load the disc",
+   "fr": "① Load the disc"
+  },
+  "As load rises, white-light fringes emerge at the contacts and crowd toward the centre. The 3-D field and panels (a)-(d) share one op array. Evidence: closed form.": {
+   "ja": "荷重を上げると、荷重点から白色光の縞が湧き、中心へ詰まる。同じ op 配列を 3-D と (a)〜(d) に使う。根拠: 閉形式。",
+   "zh": "As load rises, white-light fringes emerge at the contacts and crowd toward the centre. The 3-D field and panels (a)-(d) share one op array. Evidence: closed form.",
+   "tw": "As load rises, white-light fringes emerge at the contacts and crowd toward the centre. The 3-D field and panels (a)-(d) share one op array. Evidence: closed form.",
+   "ko": "As load rises, white-light fringes emerge at the contacts and crowd toward the centre. The 3-D field and panels (a)-(d) share one op array. Evidence: closed form.",
+   "de": "As load rises, white-light fringes emerge at the contacts and crowd toward the centre. The 3-D field and panels (a)-(d) share one op array. Evidence: closed form.",
+   "hi": "As load rises, white-light fringes emerge at the contacts and crowd toward the centre. The 3-D field and panels (a)-(d) share one op array. Evidence: closed form.",
+   "fr": "As load rises, white-light fringes emerge at the contacts and crowd toward the centre. The 3-D field and panels (a)-(d) share one op array. Evidence: closed form."
+  },
+  "central principal-stress difference": {
+   "ja": "中心の主応力差",
+   "zh": "central principal-stress difference",
+   "tw": "central principal-stress difference",
+   "ko": "central principal-stress difference",
+   "de": "central principal-stress difference",
+   "hi": "central principal-stress difference",
+   "fr": "central principal-stress difference"
+  },
+  "(a) white-light dark-field isochromatics": {
+   "ja": "(a) 白色光・暗視野の等色線",
+   "zh": "(a) white-light dark-field isochromatics",
+   "tw": "(a) white-light dark-field isochromatics",
+   "ko": "(a) white-light dark-field isochromatics",
+   "de": "(a) white-light dark-field isochromatics",
+   "hi": "(a) white-light dark-field isochromatics",
+   "fr": "(a) white-light dark-field isochromatics"
+  },
+  "(b) isoclinics": {
+   "ja": "(b) 等傾線",
+   "zh": "(b) isoclinics",
+   "tw": "(b) isoclinics",
+   "ko": "(b) isoclinics",
+   "de": "(b) isoclinics",
+   "hi": "(b) isoclinics",
+   "fr": "(b) isoclinics"
+  },
+  "(c) fringe order N | error from closed form": {
+   "ja": "(c) 縞次数 N | 閉形式との差",
+   "zh": "(c) fringe order N | error from closed form",
+   "tw": "(c) fringe order N | error from closed form",
+   "ko": "(c) fringe order N | error from closed form",
+   "de": "(c) fringe order N | error from closed form",
+   "hi": "(c) fringe order N | error from closed form",
+   "fr": "(c) fringe order N | error from closed form"
+  },
+  "(d) horizontal diameter: estimate (orange) / closed form (blue)": {
+   "ja": "(d) 水平直径: 推定（橙）/閉形式（青）",
+   "zh": "(d) horizontal diameter: estimate (orange) / closed form (blue)",
+   "tw": "(d) horizontal diameter: estimate (orange) / closed form (blue)",
+   "ko": "(d) horizontal diameter: estimate (orange) / closed form (blue)",
+   "de": "(d) horizontal diameter: estimate (orange) / closed form (blue)",
+   "hi": "(d) horizontal diameter: estimate (orange) / closed form (blue)",
+   "fr": "(d) horizontal diameter: estimate (orange) / closed form (blue)"
+  },
+  "disc-centre σ1−σ2": {
+   "ja": "円板中心 σ₁−σ₂",
+   "zh": "disc-centre σ1−σ2",
+   "tw": "disc-centre σ1−σ2",
+   "ko": "disc-centre σ1−σ2",
+   "de": "disc-centre σ1−σ2",
+   "hi": "disc-centre σ1−σ2",
+   "fr": "disc-centre σ1−σ2"
+  },
+  "relative difference from independent 8P/(πDt) < 1e-9": {
+   "ja": "独立な 8P/(πDt) と相対差 < 1e-9",
+   "zh": "relative difference from independent 8P/(πDt) < 1e-9",
+   "tw": "relative difference from independent 8P/(πDt) < 1e-9",
+   "ko": "relative difference from independent 8P/(πDt) < 1e-9",
+   "de": "relative difference from independent 8P/(πDt) < 1e-9",
+   "hi": "relative difference from independent 8P/(πDt) < 1e-9",
+   "fr": "relative difference from independent 8P/(πDt) < 1e-9"
+  },
+  "load from noisy polarization images": {
+   "ja": "雑音入り偏光像からの荷重",
+   "zh": "load from noisy polarization images",
+   "tw": "load from noisy polarization images",
+   "ko": "load from noisy polarization images",
+   "de": "load from noisy polarization images",
+   "hi": "load from noisy polarization images",
+   "fr": "load from noisy polarization images"
+  },
+  "maximum error < 2% at three loads": {
+   "ja": "3 荷重で最大誤差 < 2%",
+   "zh": "maximum error < 2% at three loads",
+   "tw": "maximum error < 2% at three loads",
+   "ko": "maximum error < 2% at three loads",
+   "de": "maximum error < 2% at three loads",
+   "hi": "maximum error < 2% at three loads",
+   "fr": "maximum error < 2% at three loads"
+  },
+  "load P": {
+   "ja": "荷重 P",
+   "zh": "load P",
+   "tw": "load P",
+   "ko": "load P",
+   "de": "load P",
+   "hi": "load P",
+   "fr": "load P"
+  },
+  "How does fringe count change with load?": {
+   "ja": "縞の数は荷重とどう変わる？",
+   "zh": "How does fringe count change with load?",
+   "tw": "How does fringe count change with load?",
+   "ko": "How does fringe count change with load?",
+   "de": "How does fringe count change with load?",
+   "hi": "How does fringe count change with load?",
+   "fr": "How does fringe count change with load?"
+  },
+  "increases": {
+   "ja": "増える",
+   "zh": "increases",
+   "tw": "increases",
+   "ko": "increases",
+   "de": "increases",
+   "hi": "increases",
+   "fr": "increases"
+  },
+  "decreases": {
+   "ja": "減る",
+   "zh": "decreases",
+   "tw": "decreases",
+   "ko": "decreases",
+   "de": "decreases",
+   "hi": "decreases",
+   "fr": "decreases"
+  },
+  "The stress-optic law makes fringe order proportional to principal-stress difference.": {
+   "ja": "応力光学則で縞次数は主応力差に比例する。",
+   "zh": "The stress-optic law makes fringe order proportional to principal-stress difference.",
+   "tw": "The stress-optic law makes fringe order proportional to principal-stress difference.",
+   "ko": "The stress-optic law makes fringe order proportional to principal-stress difference.",
+   "de": "The stress-optic law makes fringe order proportional to principal-stress difference.",
+   "hi": "The stress-optic law makes fringe order proportional to principal-stress difference.",
+   "fr": "The stress-optic law makes fringe order proportional to principal-stress difference."
+  },
+  "N=t(σ1−σ2)C/λ": {
+   "ja": "N=t(σ₁−σ₂)C/λ",
+   "zh": "N=t(σ1−σ2)C/λ",
+   "tw": "N=t(σ1−σ2)C/λ",
+   "ko": "N=t(σ1−σ2)C/λ",
+   "de": "N=t(σ1−σ2)C/λ",
+   "hi": "N=t(σ1−σ2)C/λ",
+   "fr": "N=t(σ1−σ2)C/λ"
+  },
+  "This exhibit cannot determine real-material residual stress or thickness variation.": {
+   "ja": "この展示で実材料の残留応力や厚さむらは言えない。",
+   "zh": "This exhibit cannot determine real-material residual stress or thickness variation.",
+   "tw": "This exhibit cannot determine real-material residual stress or thickness variation.",
+   "ko": "This exhibit cannot determine real-material residual stress or thickness variation.",
+   "de": "This exhibit cannot determine real-material residual stress or thickness variation.",
+   "hi": "This exhibit cannot determine real-material residual stress or thickness variation.",
+   "fr": "This exhibit cannot determine real-material residual stress or thickness variation."
+  },
+  "② Stress concentration at a hole": {
+   "ja": "② 穴の縁の応力集中",
+   "zh": "② Stress concentration at a hole",
+   "tw": "② Stress concentration at a hole",
+   "ko": "② Stress concentration at a hole",
+   "de": "② Stress concentration at a hole",
+   "hi": "② Stress concentration at a hole",
+   "fr": "② Stress concentration at a hole"
+  },
+  "Tension crowds fringes around the actual hole edge; the white ring marks the computed hole, not a box proxy. Evidence: Kirsch closed form.": {
+   "ja": "穴あき板を引くと穴の縁に縞が集中する。白い輪は計算領域の穴そのもので、箱による代用ではない。根拠: Kirsch の閉形式。",
+   "zh": "Tension crowds fringes around the actual hole edge; the white ring marks the computed hole, not a box proxy. Evidence: Kirsch closed form.",
+   "tw": "Tension crowds fringes around the actual hole edge; the white ring marks the computed hole, not a box proxy. Evidence: Kirsch closed form.",
+   "ko": "Tension crowds fringes around the actual hole edge; the white ring marks the computed hole, not a box proxy. Evidence: Kirsch closed form.",
+   "de": "Tension crowds fringes around the actual hole edge; the white ring marks the computed hole, not a box proxy. Evidence: Kirsch closed form.",
+   "hi": "Tension crowds fringes around the actual hole edge; the white ring marks the computed hole, not a box proxy. Evidence: Kirsch closed form.",
+   "fr": "Tension crowds fringes around the actual hole edge; the white ring marks the computed hole, not a box proxy. Evidence: Kirsch closed form."
+  },
+  "remote stress": {
+   "ja": "遠方応力",
+   "zh": "remote stress",
+   "tw": "remote stress",
+   "ko": "remote stress",
+   "de": "remote stress",
+   "hi": "remote stress",
+   "fr": "remote stress"
+  },
+  "closed-form hole edge": {
+   "ja": "穴縁の閉形式",
+   "zh": "closed-form hole edge",
+   "tw": "closed-form hole edge",
+   "ko": "closed-form hole edge",
+   "de": "closed-form hole edge",
+   "hi": "closed-form hole edge",
+   "fr": "closed-form hole edge"
+  },
+  "hole-edge hoop stress / σ∞": {
+   "ja": "穴縁の周方向応力 / σ∞",
+   "zh": "hole-edge hoop stress / σ∞",
+   "tw": "hole-edge hoop stress / σ∞",
+   "ko": "hole-edge hoop stress / σ∞",
+   "de": "hole-edge hoop stress / σ∞",
+   "hi": "hole-edge hoop stress / σ∞",
+   "fr": "hole-edge hoop stress / σ∞"
+  },
+  "independent Kirsch value 3, relative error < 1e-9": {
+   "ja": "Kirsch の独立値 3、相対差 < 1e-9",
+   "zh": "independent Kirsch value 3, relative error < 1e-9",
+   "tw": "independent Kirsch value 3, relative error < 1e-9",
+   "ko": "independent Kirsch value 3, relative error < 1e-9",
+   "de": "independent Kirsch value 3, relative error < 1e-9",
+   "hi": "independent Kirsch value 3, relative error < 1e-9",
+   "fr": "independent Kirsch value 3, relative error < 1e-9"
+  },
+  "remote stress σ∞": {
+   "ja": "遠方応力 σ∞",
+   "zh": "remote stress σ∞",
+   "tw": "remote stress σ∞",
+   "ko": "remote stress σ∞",
+   "de": "remote stress σ∞",
+   "hi": "remote stress σ∞",
+   "fr": "remote stress σ∞"
+  },
+  "What is the peak hole-edge stress?": {
+   "ja": "穴の縁の最大応力は遠方の何倍？",
+   "zh": "What is the peak hole-edge stress?",
+   "tw": "What is the peak hole-edge stress?",
+   "ko": "What is the peak hole-edge stress?",
+   "de": "What is the peak hole-edge stress?",
+   "hi": "What is the peak hole-edge stress?",
+   "fr": "What is the peak hole-edge stress?"
+  },
+  "about 1×": {
+   "ja": "約 1 倍",
+   "zh": "about 1×",
+   "tw": "about 1×",
+   "ko": "about 1×",
+   "de": "about 1×",
+   "hi": "about 1×",
+   "fr": "about 1×"
+  },
+  "about 3×": {
+   "ja": "約 3 倍",
+   "zh": "about 3×",
+   "tw": "about 3×",
+   "ko": "about 3×",
+   "de": "about 3×",
+   "hi": "about 3×",
+   "fr": "about 3×"
+  },
+  "Kirsch gives a peak hoop stress of 3σ∞ at the circular hole.": {
+   "ja": "Kirsch 解では円孔縁の最大周方向応力が 3σ∞。",
+   "zh": "Kirsch gives a peak hoop stress of 3σ∞ at the circular hole.",
+   "tw": "Kirsch gives a peak hoop stress of 3σ∞ at the circular hole.",
+   "ko": "Kirsch gives a peak hoop stress of 3σ∞ at the circular hole.",
+   "de": "Kirsch gives a peak hoop stress of 3σ∞ at the circular hole.",
+   "hi": "Kirsch gives a peak hoop stress of 3σ∞ at the circular hole.",
+   "fr": "Kirsch gives a peak hoop stress of 3σ∞ at the circular hole."
+  },
+  "Kt=σmax/σ∞=3": {
+   "ja": "Kt=σmax/σ∞=3",
+   "zh": "Kt=σmax/σ∞=3",
+   "tw": "Kt=σmax/σ∞=3",
+   "ko": "Kt=σmax/σ∞=3",
+   "de": "Kt=σmax/σ∞=3",
+   "hi": "Kt=σmax/σ∞=3",
+   "fr": "Kt=σmax/σ∞=3"
+  },
+  "This infinite-plate model says nothing about finite width, plasticity, contact, or crack growth.": {
+   "ja": "有限幅、塑性、接触、傷の成長はこの無限板模型では言えない。",
+   "zh": "This infinite-plate model says nothing about finite width, plasticity, contact, or crack growth.",
+   "tw": "This infinite-plate model says nothing about finite width, plasticity, contact, or crack growth.",
+   "ko": "This infinite-plate model says nothing about finite width, plasticity, contact, or crack growth.",
+   "de": "This infinite-plate model says nothing about finite width, plasticity, contact, or crack growth.",
+   "hi": "This infinite-plate model says nothing about finite width, plasticity, contact, or crack growth.",
+   "fr": "This infinite-plate model says nothing about finite width, plasticity, contact, or crack growth."
+  },
+  "③ Unwrap and error": {
+   "ja": "③ 巻き戻しと誤差",
+   "zh": "③ Unwrap and error",
+   "tw": "③ Unwrap and error",
+   "ko": "③ Unwrap and error",
+   "de": "③ Unwrap and error",
+   "hi": "③ Unwrap and error",
+   "fr": "③ Unwrap and error"
+  },
+  "The translucent surface height and color are σ1−σ2; panel (c) shows multi-wavelength N and its closed-form error. Evidence: numerical model checked by closed form.": {
+   "ja": "半透明曲面の高さと色は σ₁−σ₂、(c) 左は多波長で巻き戻した N、右は閉形式との差。根拠: 数値模型を閉形式で検証。",
+   "zh": "The translucent surface height and color are σ1−σ2; panel (c) shows multi-wavelength N and its closed-form error. Evidence: numerical model checked by closed form.",
+   "tw": "The translucent surface height and color are σ1−σ2; panel (c) shows multi-wavelength N and its closed-form error. Evidence: numerical model checked by closed form.",
+   "ko": "The translucent surface height and color are σ1−σ2; panel (c) shows multi-wavelength N and its closed-form error. Evidence: numerical model checked by closed form.",
+   "de": "The translucent surface height and color are σ1−σ2; panel (c) shows multi-wavelength N and its closed-form error. Evidence: numerical model checked by closed form.",
+   "hi": "The translucent surface height and color are σ1−σ2; panel (c) shows multi-wavelength N and its closed-form error. Evidence: numerical model checked by closed form.",
+   "fr": "The translucent surface height and color are σ1−σ2; panel (c) shows multi-wavelength N and its closed-form error. Evidence: numerical model checked by closed form."
+  },
+  "σ1−σ2": {
+   "ja": "σ₁−σ₂",
+   "zh": "σ1−σ2",
+   "tw": "σ1−σ2",
+   "ko": "σ1−σ2",
+   "de": "σ1−σ2",
+   "hi": "σ1−σ2",
+   "fr": "σ1−σ2"
+  },
+  "RMS fringe-order error after multi-wavelength unwrap": {
+   "ja": "多波長巻き戻し N の RMS",
+   "zh": "RMS fringe-order error after multi-wavelength unwrap",
+   "tw": "RMS fringe-order error after multi-wavelength unwrap",
+   "ko": "RMS fringe-order error after multi-wavelength unwrap",
+   "de": "RMS fringe-order error after multi-wavelength unwrap",
+   "hi": "RMS fringe-order error after multi-wavelength unwrap",
+   "fr": "RMS fringe-order error after multi-wavelength unwrap"
+  },
+  "low-modulation failures concentrated at isotropic points": {
+   "ja": "低変調による失敗の等方点への集中",
+   "zh": "low-modulation failures concentrated at isotropic points",
+   "tw": "low-modulation failures concentrated at isotropic points",
+   "ko": "low-modulation failures concentrated at isotropic points",
+   "de": "low-modulation failures concentrated at isotropic points",
+   "hi": "low-modulation failures concentrated at isotropic points",
+   "fr": "low-modulation failures concentrated at isotropic points"
+  },
+  "failure rate in isotropic region > elsewhere": {
+   "ja": "等方域の失敗率 > その他",
+   "zh": "failure rate in isotropic region > elsewhere",
+   "tw": "failure rate in isotropic region > elsewhere",
+   "ko": "failure rate in isotropic region > elsewhere",
+   "de": "failure rate in isotropic region > elsewhere",
+   "hi": "failure rate in isotropic region > elsewhere",
+   "fr": "failure rate in isotropic region > elsewhere"
+  },
+  "isotropic 42.4% / elsewhere 19.0%": {
+   "ja": "等方 42.4% / その他 19.0%",
+   "zh": "isotropic 42.4% / elsewhere 19.0%",
+   "tw": "isotropic 42.4% / elsewhere 19.0%",
+   "ko": "isotropic 42.4% / elsewhere 19.0%",
+   "de": "isotropic 42.4% / elsewhere 19.0%",
+   "hi": "isotropic 42.4% / elsewhere 19.0%",
+   "fr": "isotropic 42.4% / elsewhere 19.0%"
+  },
+  "Does unwrapping fail first at maximum stress?": {
+   "ja": "巻き戻しは最大応力から壊れる？",
+   "zh": "Does unwrapping fail first at maximum stress?",
+   "tw": "Does unwrapping fail first at maximum stress?",
+   "ko": "Does unwrapping fail first at maximum stress?",
+   "de": "Does unwrapping fail first at maximum stress?",
+   "hi": "Does unwrapping fail first at maximum stress?",
+   "fr": "Does unwrapping fail first at maximum stress?"
+  },
+  "yes": {
+   "ja": "保てる",
+   "zh": "yes",
+   "tw": "yes",
+   "ko": "yes",
+   "de": "yes",
+   "hi": "yes",
+   "fr": "yes"
+  },
+  "no, at low modulation": {
+   "ja": "いいえ、低変調域",
+   "zh": "no, at low modulation",
+   "tw": "no, at low modulation",
+   "ko": "no, at low modulation",
+   "de": "no, at low modulation",
+   "hi": "no, at low modulation",
+   "fr": "no, at low modulation"
+  },
+  "At isotropic points the phase axis is undefined, so failure can occur at low stress.": {
+   "ja": "等方点では位相軸が定まらず、応力が小さくても失敗する。",
+   "zh": "At isotropic points the phase axis is undefined, so failure can occur at low stress.",
+   "tw": "At isotropic points the phase axis is undefined, so failure can occur at low stress.",
+   "ko": "At isotropic points the phase axis is undefined, so failure can occur at low stress.",
+   "de": "At isotropic points the phase axis is undefined, so failure can occur at low stress.",
+   "hi": "At isotropic points the phase axis is undefined, so failure can occur at low stress.",
+   "fr": "At isotropic points the phase axis is undefined, so failure can occur at low stress."
+  },
+  "R=tC(σ1−σ2)": {
+   "ja": "R=tC(σ₁−σ₂)",
+   "zh": "R=tC(σ1−σ2)",
+   "tw": "R=tC(σ1−σ2)",
+   "ko": "R=tC(σ1−σ2)",
+   "de": "R=tC(σ1−σ2)",
+   "hi": "R=tC(σ1−σ2)",
+   "fr": "R=tC(σ1−σ2)"
+  },
+  "Quantitative stress is not guaranteed without experimental calibration.": {
+   "ja": "実験校正なしに定量応力を保証できない。",
+   "zh": "Quantitative stress is not guaranteed without experimental calibration.",
+   "tw": "Quantitative stress is not guaranteed without experimental calibration.",
+   "ko": "Quantitative stress is not guaranteed without experimental calibration.",
+   "de": "Quantitative stress is not guaranteed without experimental calibration.",
+   "hi": "Quantitative stress is not guaranteed without experimental calibration.",
+   "fr": "Quantitative stress is not guaranteed without experimental calibration."
+  },
+  "④ White-light limits": {
+   "ja": "④ 白色光の限界",
+   "zh": "④ White-light limits",
+   "tw": "④ White-light limits",
+   "ko": "④ White-light limits",
+   "de": "④ White-light limits",
+   "hi": "④ White-light limits",
+   "fr": "④ White-light limits"
+  },
+  "High-order fringes desaturate and merge under noise and pixel averaging. Failure conditions are shown on the same field. Evidence: numerical model.": {
+   "ja": "高次縞は退色し、雑音と画素平均で区別できなくなる。壊れる条件を隠さず同じ場で示す。根拠: 数値模型。",
+   "zh": "High-order fringes desaturate and merge under noise and pixel averaging. Failure conditions are shown on the same field. Evidence: numerical model.",
+   "tw": "High-order fringes desaturate and merge under noise and pixel averaging. Failure conditions are shown on the same field. Evidence: numerical model.",
+   "ko": "High-order fringes desaturate and merge under noise and pixel averaging. Failure conditions are shown on the same field. Evidence: numerical model.",
+   "de": "High-order fringes desaturate and merge under noise and pixel averaging. Failure conditions are shown on the same field. Evidence: numerical model.",
+   "hi": "High-order fringes desaturate and merge under noise and pixel averaging. Failure conditions are shown on the same field. Evidence: numerical model.",
+   "fr": "High-order fringes desaturate and merge under noise and pixel averaging. Failure conditions are shown on the same field. Evidence: numerical model."
+  },
+  "load": {
+   "ja": "荷重",
+   "zh": "load",
+   "tw": "load",
+   "ko": "load",
+   "de": "load",
+   "hi": "load",
+   "fr": "load"
+  },
+  "uniquely isolate load from high-order fringes": {
+   "ja": "高次縞から荷重だけを一意に分離",
+   "zh": "uniquely isolate load from high-order fringes",
+   "tw": "uniquely isolate load from high-order fringes",
+   "ko": "uniquely isolate load from high-order fringes",
+   "de": "uniquely isolate load from high-order fringes",
+   "hi": "uniquely isolate load from high-order fringes",
+   "fr": "uniquely isolate load from high-order fringes"
+  },
+  "separate residual stress, thickness variation, and desaturation": {
+   "ja": "残留応力・厚さむら・退色と分離",
+   "zh": "separate residual stress, thickness variation, and desaturation",
+   "tw": "separate residual stress, thickness variation, and desaturation",
+   "ko": "separate residual stress, thickness variation, and desaturation",
+   "de": "separate residual stress, thickness variation, and desaturation",
+   "hi": "separate residual stress, thickness variation, and desaturation",
+   "fr": "separate residual stress, thickness variation, and desaturation"
+  },
+  "Can order survive subpixel fringes?": {
+   "ja": "縞が画素より細いと次数を保てる？",
+   "zh": "Can order survive subpixel fringes?",
+   "tw": "Can order survive subpixel fringes?",
+   "ko": "Can order survive subpixel fringes?",
+   "de": "Can order survive subpixel fringes?",
+   "hi": "Can order survive subpixel fringes?",
+   "fr": "Can order survive subpixel fringes?"
+  },
+  "no": {
+   "ja": "保てない",
+   "zh": "no",
+   "tw": "no",
+   "ko": "no",
+   "de": "no",
+   "hi": "no",
+   "fr": "no"
+  },
+  "Pixel averaging and finite white-light coherence desaturate high-order fringes.": {
+   "ja": "画素内平均と白色光の有限コヒーレンスで高次縞が退色する。",
+   "zh": "Pixel averaging and finite white-light coherence desaturate high-order fringes.",
+   "tw": "Pixel averaging and finite white-light coherence desaturate high-order fringes.",
+   "ko": "Pixel averaging and finite white-light coherence desaturate high-order fringes.",
+   "de": "Pixel averaging and finite white-light coherence desaturate high-order fringes.",
+   "hi": "Pixel averaging and finite white-light coherence desaturate high-order fringes.",
+   "fr": "Pixel averaging and finite white-light coherence desaturate high-order fringes."
+  },
+  "This exhibit cannot certify a real part or predict failure load.": {
+   "ja": "この展示で実部品の合否や破壊荷重は言えない。",
+   "zh": "This exhibit cannot certify a real part or predict failure load.",
+   "tw": "This exhibit cannot certify a real part or predict failure load.",
+   "ko": "This exhibit cannot certify a real part or predict failure load.",
+   "de": "This exhibit cannot certify a real part or predict failure load.",
+   "hi": "This exhibit cannot certify a real part or predict failure load.",
+   "fr": "This exhibit cannot certify a real part or predict failure load."
+  },
+  "Synthetic data. Stress uses brazilian_disc_stress / kirsch_plate_stress; polarization and unwrapping use photoelastic ops.": {
+   "ja": "合成データ。応力場は brazilian_disc_stress / kirsch_plate_stress、偏光と巻き戻しは photoelastic op。",
+   "zh": "Synthetic data. Stress uses brazilian_disc_stress / kirsch_plate_stress; polarization and unwrapping use photoelastic ops.",
+   "tw": "Synthetic data. Stress uses brazilian_disc_stress / kirsch_plate_stress; polarization and unwrapping use photoelastic ops.",
+   "ko": "Synthetic data. Stress uses brazilian_disc_stress / kirsch_plate_stress; polarization and unwrapping use photoelastic ops.",
+   "de": "Synthetic data. Stress uses brazilian_disc_stress / kirsch_plate_stress; polarization and unwrapping use photoelastic ops.",
+   "hi": "Synthetic data. Stress uses brazilian_disc_stress / kirsch_plate_stress; polarization and unwrapping use photoelastic ops.",
+   "fr": "Synthetic data. Stress uses brazilian_disc_stress / kirsch_plate_stress; polarization and unwrapping use photoelastic ops."
+  },
+  "yes, at maximum stress": {
+   "ja": "はい",
+   "zh": "yes, at maximum stress",
+   "tw": "yes, at maximum stress",
+   "ko": "yes, at maximum stress",
+   "de": "yes, at maximum stress",
+   "hi": "yes, at maximum stress",
+   "fr": "yes, at maximum stress"
+  }
+ }
+}
