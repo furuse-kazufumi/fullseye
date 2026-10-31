@@ -52,7 +52,7 @@ py -3.11 examples/poc_barcode_1d.py
 
 [![電極の屈曲度を CT から測る ―― 経験則は空隙率しか見ない](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_battery_electrode_tortuosity/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_battery_electrode_tortuosity/01_scene.png)
 
-*↑ **電極の屈曲度を CT から測る ―― 経験則は空隙率しか見ない** ―― リチウムイオン電池の電極塗工層を合成マイクロ CT で作り、空隙率と屈曲度を出す。現場の既定値 Bruggeman τ = ε^(-0.5) をゼロ点に置き、同じボリュームで定常拡散方程式を解いた真値と比べると、ε = 0.4448 で 1.499 対 1.843(-18.6 %)、ε を 0.691 → 0.168 と振ると誤差は -8.2 % → -69.1 % と単調に開く(実測の指数は 1.78 と 2.70 で、1.5 乗則はどちらでもない)。画像解析がよく報告する測地屈曲度 1.182 はその 2 乗が Bruggeman に 1 %以内で寄り添うだけで、真値には寄らない。決定打は対照群 ―― 空隙率を 0.4448 対 0.4510 に揃えて粒子を 4:1 に潰すと厚み方向の τ は 1.843 → 6.794(異方比 0.97 → 4.20)なのに、経験則は両方に同じ 1.5 を返す(面内は -8 % で当たって見え、厚み方向は -78 %)。閉気孔は最大 1.92 % で犯人ではなく、効いているのは粒子半径の 0.40 倍しかない首。解像度の崖を予測して掃引したが崖は無く、voxel を 5.5 倍粗くすると ε は -0.4 % しか動かないのに τ は +72 % ずれる ―― 警告なしに。*
+*↑ **電極の屈曲度を CT から測る ―― 経験則は空隙率しか見ない** ―― 合成マイクロCT粒子床でBruggeman則を、同じ二値ボリュームと指定境界条件の定常拡散方程式による数値参照値と比較した。この構造族では空隙率0.4448で1.499対1.843。閉気孔率は最大1.92%で単独説明は難しく、狭い首は候補だが因果は分離していない。直線空隙は数値参照1対Bruggeman 2、非貫通構造はno_through_pathを返す。*
 
 用語: Bruggeman — 多孔質媒体の有効輸送特性を空隙率のべき乗で近似する関係で、電極では屈曲度や有効拡散係数の基準式として使われる。
 
@@ -84,15 +84,15 @@ py -3.11 examples/poc_battery_electrode_tortuosity.py
 
 この回が作った図は全部で **6 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_battery_electrode_tortuosity)
 
-使用 op(ノートへ): [`vol_distance_transform`](https://furuse.work/ops/3d/medial/vol_distance_transform.html) · [`vol_label`](https://furuse.work/ops/3d/regionprops/vol_label.html)
+使用 op(ノートへ): [`intersection`](https://furuse.work/ops/2d/nary/intersection.html) · [`vol_distance_transform`](https://furuse.work/ops/3d/medial/vol_distance_transform.html) · [`vol_label`](https://furuse.work/ops/3d/regionprops/vol_label.html)
 
-## No.2026.004 —— 転がり軸受の異常診断 ―― どこまで雑音に埋もれても当てられるか
+## No.2026.004 —— 合成軸受信号の7段階SNR掃引 ―― 生スペクトルと包絡線の検出率
 
 軸受の傷を振動から見つけるには、雑音の中で欠陥周波数をどこまで識別できるかを知りたい。既知の衝撃列を雑音へ沈め、包絡線スペクトルがSNR -18.4 dBでも全試行を検出する条件を測った。包絡線処理は生スペクトルより深い雑音に耐えるが、正常記録から決めたしきい値がなければ偽陽性を招く。
 
-[![転がり軸受の異常診断 ―― どこまで雑音に埋もれても当てられるか](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bearing_diagnosis/01_envelope_vs_raw_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bearing_diagnosis/01_envelope_vs_raw.png)
+[![合成軸受信号の7段階SNR掃引 ―― 生スペクトルと包絡線の検出率](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bearing_diagnosis/01_envelope_vs_raw_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bearing_diagnosis/01_envelope_vs_raw.png)
 
-*↑ **転がり軸受の異常診断 ―― どこまで雑音に埋もれても当てられるか** ―― 閉形式の欠陥周波数(BPFO 104.556 Hz)で合成した衝撃列を雑音に沈め、生スペクトルと包絡線スペクトルの検出率を並べた図。10/10 を保てた最悪の SNR は生 -0.9 dB、包絡線 -18.4 dB で 17.5 dB の差。ただし欠陥の無い記録でも大域顕著さは 43 まで出る ―― しきい値を null から決めていなければ、この PoC 自体が偽陽性を出していた。*
+*↑ **合成軸受信号の7段階SNR掃引 ―― 生スペクトルと包絡線の検出率** ―― 閉形式BPFO 104.556 Hzの合成衝撃列を7段階SNR、各10 seedで評価した。10/10だった最小試験点は生-0.9 dB、包絡線-18.4 dBだが、経験的境界であり検出限界ではない。10/10でも母検出率の片側95%下限は74.1%。独立null 20本で誤警報0/20、片側95%上限13.9%。*
 
 [![どちらも最悪条件では 0 に落ちる。包絡線は万能ではなく、崖が悪い SNR 側へ動くだけ。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bearing_diagnosis/02_detection_sweep_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bearing_diagnosis/02_detection_sweep.png)
 
@@ -1284,13 +1284,11 @@ py -3.11 examples/poc_braid_homotopy_classes.py
 
 ## No.2026.282 —— 同じRMS波面誤差でも収差形状でMaréchal近似の破綻点が変わる
 
-Noll正規化したデフォーカス、非点、コマ、球面収差を各121点、計484条件で掃引した。FullseyeのPSF FFTによる軸上Strehlと独立な瞳積分の最大絶対誤差は6.66e-16。Maréchal近似が5 %外れる境界はRMSで0.1283、0.2012、0.1633、0.1458波となり、同じRMSだけではStrehlを決められない。下段は0.20波RMSのPSF像そのもの。
+Noll正規化した4収差を計484条件で掃引した。固定軸強度比、同一像面のピーク比、ピーク位置を分けて定義する。コマ0.2/0.3波では固定軸比0.1816/0.0127、ピーク比0.2178/0.1437、ピーク移動8/17画素を再現した。Maréchal近似の5 %境界は固定軸比について0.1283、0.2012、0.1633、0.1458波。Mahajan (1982/1983) が収差別の結果を既に示しており、このPoCは定義と実装の再現確認である。
 
 [![同じRMS波面誤差でも収差形状でMaréchal近似の破綻点が変わる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_wavefront_aberration_limits/01_aberration_limits_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_wavefront_aberration_limits/01_aberration_limits.png)
 
-*↑ **同じRMS波面誤差でも収差形状でMaréchal近似の破綻点が変わる** ―― Noll正規化したデフォーカス、非点、コマ、球面収差を各121点、計484条件で掃引した。FullseyeのPSF FFTによる軸上Strehlと独立な瞳積分の最大絶対誤差は6.66e-16。Maréchal近似が5 %外れる境界はRMSで0.1283、0.2012、0.1633、0.1458波となり、同じRMSだけではStrehlを決められない。下段は0.20波RMSのPSF像そのもの。*
-
-用語: PSF — 点状の物体を撮ったときに像がどのように広がるかを表す、撮像系の空間応答。; Strehl — 収差のある光学系の点像中心強度を、同じ開口の無収差系の中心強度で割った像質指標。
+*↑ **同じRMS波面誤差でも収差形状でMaréchal近似の破綻点が変わる** ―― Noll正規化した4収差を計484条件で掃引した。固定軸強度比、同一像面のピーク比、ピーク位置を分けて定義する。コマ0.2/0.3波では固定軸比0.1816/0.0127、ピーク比0.2178/0.1437、ピーク移動8/17画素を再現した。Maréchal近似の5 %境界は固定軸比について0.1283、0.2012、0.1633、0.1458波。Mahajan (1982/1983) が収差別の結果を既に示しており、このPoCは定義と実装の再現確認である。*
 
 ```
 py -3.11 examples/poc_wavefront_aberration_limits.py
@@ -1324,13 +1322,13 @@ py -3.11 examples/poc_mueller_dofp_observability.py
 
 ## No.2026.284 —— 斜めエッジSFRは角度だけでなくガンマでもMTF50(MTFが50%になる空間周波数)を誤る
 
-3.45 µm画素、F/5.6、550 nmの系について、角度21、ガンマ5、雑音4段階の420条件を計算した。Fullseyeの回折MTFと円形瞳の閉形式は1e-12未満で一致し、画素開口を含む真値MTF50は0.34551 cycles/pixel。線形・無雑音の独立な面積標本化エッジ経路との差は最大0.01076 cycles/pixel。10 %超の破綻は掃引範囲の最小角1.0度から現れ、非線形トーン応答が角度選択と同程度に測定値を動かす。
+3.45 µm画素、F/5.6、550 nmの円形瞳Airy OTFを高解像度エッジへ適用してから画素面積積分し、真値とforward模型を全周波数で一致させた。中心差分補正はDCで1、Nyquistで1.1107207。420条件で、線形・無雑音の残る推定器誤差は最大0.00872 cycles/pixel、模型誤差は0として分離表示する。10 %超の破綻は1.0度から現れた。
 
 [![斜めエッジSFRは角度だけでなくガンマでもMTF50(MTFが50%になる空間周波数)を誤る](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_slanted_edge_sfr_limits/01_sfr_limits_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_slanted_edge_sfr_limits/01_sfr_limits.png)
 
-*↑ **斜めエッジSFRは角度だけでなくガンマでもMTF50(MTFが50%になる空間周波数)を誤る** ―― 3.45 µm画素、F/5.6、550 nmの系について、角度21、ガンマ5、雑音4段階の420条件を計算した。Fullseyeの回折MTFと円形瞳の閉形式は1e-12未満で一致し、画素開口を含む真値MTF50は0.34551 cycles/pixel。線形・無雑音の独立な面積標本化エッジ経路との差は最大0.01076 cycles/pixel。10 %超の破綻は掃引範囲の最小角1.0度から現れ、非線形トーン応答が角度選択と同程度に測定値を動かす。*
+*↑ **斜めエッジSFRは角度だけでなくガンマでもMTF50(MTFが50%になる空間周波数)を誤る** ―― 3.45 µm画素、F/5.6、550 nmの円形瞳Airy OTFを高解像度エッジへ適用してから画素面積積分し、真値とforward模型を全周波数で一致させた。中心差分補正はDCで1、Nyquistで1.1107207。420条件で、線形・無雑音の残る推定器誤差は最大0.00872 cycles/pixel、模型誤差は0として分離表示する。10 %超の破綻は1.0度から現れた。*
 
-用語: MTF50 — MTFが低周波での値の50%まで下がる空間周波数で、解像性能を一つの数に要約する指標。; MTF — 空間周波数ごとに像のコントラストが物体からどれだけ伝わるかを表す、光学伝達関数の絶対値。
+用語: MTF50 — MTFが低周波での値の50%まで下がる空間周波数で、解像性能を一つの数に要約する指標。; MTF — 空間周波数ごとに像のコントラストが物体からどれだけ伝わるかを表す、光学伝達関数の絶対値。; Nyquist — 標本化の間隔で表せる最も高い周波数。画素の間隔なら 1 画素あたり半周期で、それより細かい模様は折り返して別の模様に見える。
 
 ```
 py -3.11 examples/poc_slanted_edge_sfr_limits.py
@@ -1710,13 +1708,13 @@ py -3.11 examples/poc_metal_grain_size.py
 
 使用 op(ノートへ): [`bin_threshold`](https://furuse.work/ops/2d/segmentation/bin_threshold.html) · [`blob_features`](https://furuse.work/ops/blob/measure/blob_features.html) · [`blob_label`](https://furuse.work/ops/blob/connect/blob_label.html) · [`blob_overlay`](https://furuse.work/ops/blob/extract/blob_overlay.html) · [`bothat`](https://furuse.work/ops/2d/morphology/bothat.html) · [`dyn_threshold`](https://furuse.work/ops/2d/segmentation/dyn_threshold.html) · [`gray_bothat`](https://furuse.work/ops/2d/morphology/gray_bothat.html) · [`hx_close_edges`](https://furuse.work/ops/2d/halcon_ext/hx_close_edges.html) · [`invert_image`](https://furuse.work/ops/2d/gray/invert_image.html) · [`otsu`](https://furuse.work/ops/2d/segmentation/otsu.html) · [`threshold`](https://furuse.work/ops/2d/segmentation/threshold.html)
 
-## No.2026.100 —— 多ビーム測深で海底が笑う ―― 音速を取り違えると、壊れるのは外側ビームだけ
+## No.2026.100 —— 多ビーム測深で海底が笑う ―― 直下較正後も外側ビームに残る音速誤差
 
-【修正中 2026-10-31】層ごとに等音速とみなすレイトレースが、第 1 層で Snell の屈折を掛けていない誤りが見つかりました。以下の「粗い層分けは 1 次で収束」「2 層で +1.2994 m」はこの誤りによる値で、修正後に差し替えます。多ビーム音響測深で、水柱の**音速プロファイルを取り違えると平らな海底が反り返る**(smile / frown)。壊れるのは**外側ビームだけ**で、直下はほぼ無傷 —— だから現場でいちばん検査される所だけが正しく見える。真値は自分で植える: 深さ 50.0 m の完全な水平面、音速 1520 → 1480 m/s(勾配 -0.800 /s)、±70 度 141 本、判定は実在規格 **IHO S-44 Order 1a**(TVU(50 m) = **0.8201 m**)。★崖は**測る前に 2 通り印字**した。ラフな展開式 Δz ≈ (gD^2/2c0)tan^2θ の予測 **48.15 度**、一定勾配層で光線が円弧になることから出る厳密な閉形式 **48.68 度**。実測(エコー検出を止めた経路)は **48.68 度** —— **厳密式は当たり**(差 2.0e-11 m)、**展開式は 0.53 度手前に外した**(45 度まで 3.0 % 以内、70 度で 19.4 % 過大。「tan^2 で効く」は外側で崩れる)。★★**予測を 1 つ外した**: 「エコー検出は無視できる床」と見込んでいたが、**全経路の崖は 47.95 度**で 0.73 度早い。70 度ではビームが照らす帯のエコーが **21396 µs**(直下の 171 倍)に伸びて非対称になり、振幅検出の頂点が手前へ寄る(**-0.725 m**)。実機が外側で位相検出に切り替える理由が数字で出た。★**対照群で犯人を切り分ける**: 屈折だけで **-2.6974 m**、角度推定の床 **0.000000 m**、エコー検出の床 **-0.2221 m**。スマイルは角度誤差でもエコー検出誤差でもなく**屈折そのもの**。ただしエコーの床は角度とともに増えるので「床は一定」とは書けない。★**教科書式が実測の 34 % しかない**: 70 度のフットプリントは cos^2 式 **8.21 m** に対し実測 **24.14 m**。電子的に振った配列は開口が cosθ に縮んで見えるためビーム幅が 1/cosθ で広がり、正しい指数は 3(cos^3 式は -0.6 % で当たる)。★**実装の刻みだけで規格を割る**: 層内を等音速とみなす古い処理は、キャストを 2 層に切っただけで 65 度に **+1.2994 m**(TVU の 1.6 倍)。32 層で +0.0785 m と 1 次収束するので、**キャストの切り方は精度の一部**。★**真値なしでできる唯一の検査**は隣接測線の重なり。端では **2.697 m**(TVU の 3.3 倍)食い違うのに、**帯の真ん中では 0.0000 m** —— 両測線とも同じ振れ角で誤差が同じだけ乗って消えるので、帯の端まで見ないと見つからない。地形図にすると、継ぎ目なしの見かけ勾配は最大 2.99 度(スマイルの曲がり)、継ぎ目ありは最大 **49.367 度**(海底に無い崖が 1 本立つ)。★**上向き屈折(frown)では、深さが誤るのではなく何も記録されない** —— 限界角の予測 73.90 度に対し、届いた最後のビーム 73.0 度 / 届かない最初 74.0 度。swath が黙って狭くなるだけなので記録は異常に見えない。★掃引 200 ケース(音速差 25 通り × 深さ 8 通りの格子)では、±65 度 swath の **78.0 %** が端で Order 1a を割る。崖の角度は深さとともに 10 m の 64.47 度 → 200 m の 45.53 度へ単調に寄るが、漸近値 44.83 度に**ぴったりは乗らない**(TVU の定数項 a = 0.5 m が 200 m でもまだ 2 割残る)。★サーモクラインには一定勾配の当てはめも効かない: 最大 5.357 m → 1.253 m と 77 % しか取れず、しかも**直下で +0.262 m** 悪くなる —— いちばん検査される所を犠牲に外側を良くしている。★道具の穴も 4 層(fs / fs.op / fs.ledger / op_find)を引いて記録した。sonar / swath / bathym / tvu は 0 件、sound_speed / footprint / crossline は件数だけ返るが中身は無関係(件数を見て「在る」と読むと外す)。検証中に**片道の穴**も 1 つ塞いだ: ベクトル版 `refract` の docstring が「1 本ずつ回せ」としか書かず、**光線ごとに全反射を判定する `refract_rays` が既にある**ことに触れていなかった(逆向きの参照は在った)。
+多ビーム音響測深では、音速プロファイルを取り違えると平らな海底が反り返る。表面音速をそのまま使う条件では直下も +0.670 m ずれ、平均音速を直下で較正した条件では直下誤差が 0 になる一方、65 度に −2.697 m が残る。IHO S-44 Order 1a の TVU(50 m) は 0.8201 m。第 1 層の Snell 処理を修正する前に規格を割った値は層分割ではなく実装誤りであり、修正後の中点一定近似は 65 度・2 層で −0.016 m、約 2 次で収束して規格内である。合成モデルでは外側ほど振幅ピーク検出の偏りが増え、位相検出の利点と整合する。この PoC が実装した真値不要の自己整合検査は隣接測線の重なり比較で、端の差は 2.697 m。上向き屈折では限界角超のビームは記録されない一方、届く 65 度ビームにも +5.919 m の誤差が残る。一定勾配の当てはめは最大誤差を 5.357 m から 1.253 mへ 77 %減らすが、TVU 超の残差と直下 +0.262 m が残る。根拠は数値模型と一定勾配層の閉形式で、この PoC だけから実機の設計理由は確定できない。
 
-[![多ビーム測深で海底が笑う ―― 音速を取り違えると、壊れるのは外側ビームだけ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_multibeam_bathymetry/12_across_track_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_multibeam_bathymetry/12_across_track.png)
+[![多ビーム測深で海底が笑う ―― 直下較正後も外側ビームに残る音速誤差](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_multibeam_bathymetry/12_across_track_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_multibeam_bathymetry/12_across_track.png)
 
-*↑ **多ビーム測深で海底が笑う ―― 音速を取り違えると、壊れるのは外側ビームだけ** ―― 【修正中 2026-10-31】層ごとに等音速とみなすレイトレースが、第 1 層で Snell の屈折を掛けていない誤りが見つかりました。以下の「粗い層分けは 1 次で収束」「2 層で +1.2994 m」はこの誤りによる値で、修正後に差し替えます。多ビーム音響測深で、水柱の**音速プロファイルを取り違えると平らな海底が反り返る**(smile / frown)。壊れるのは**外側ビームだけ**で、直下はほぼ無傷 —— だから現場でいちばん検査される所だけが正しく見える。真値は自分で植える: 深さ 50.0 m の完全な水平面、音速 1520 → 1480 m/s(勾配 -0.800 /s)、±70 度 141 本、判定は実在規格 **IHO S-44 Order 1a**(TVU(50 m) = **0.8201 m**)。★崖は**測る前に 2 通り印字**した。ラフな展開式 Δz ≈ (gD^2/2c0)tan^2θ の予測 **48.15 度**、一定勾配層で光線が円弧になることから出る厳密な閉形式 **48.68 度**。実測(エコー検出を止めた経路)は **48.68 度** —— **厳密式は当たり**(差 2.0e-11 m)、**展開式は 0.53 度手前に外した**(45 度まで 3.0 % 以内、70 度で 19.4 % 過大。「tan^2 で効く」は外側で崩れる)。★★**予測を 1 つ外した**: 「エコー検出は無視できる床」と見込んでいたが、**全経路の崖は 47.95 度**で 0.73 度早い。70 度ではビームが照らす帯のエコーが **21396 µs**(直下の 171 倍)に伸びて非対称になり、振幅検出の頂点が手前へ寄る(**-0.725 m**)。実機が外側で位相検出に切り替える理由が数字で出た。★**対照群で犯人を切り分ける**: 屈折だけで **-2.6974 m**、角度推定の床 **0.000000 m**、エコー検出の床 **-0.2221 m**。スマイルは角度誤差でもエコー検出誤差でもなく**屈折そのもの**。ただしエコーの床は角度とともに増えるので「床は一定」とは書けない。★**教科書式が実測の 34 % しかない**: 70 度のフットプリントは cos^2 式 **8.21 m** に対し実測 **24.14 m**。電子的に振った配列は開口が cosθ に縮んで見えるためビーム幅が 1/cosθ で広がり、正しい指数は 3(cos^3 式は -0.6 % で当たる)。★**実装の刻みだけで規格を割る**: 層内を等音速とみなす古い処理は、キャストを 2 層に切っただけで 65 度に **+1.2994 m**(TVU の 1.6 倍)。32 層で +0.0785 m と 1 次収束するので、**キャストの切り方は精度の一部**。★**真値なしでできる唯一の検査**は隣接測線の重なり。端では **2.697 m**(TVU の 3.3 倍)食い違うのに、**帯の真ん中では 0.0000 m** —— 両測線とも同じ振れ角で誤差が同じだけ乗って消えるので、帯の端まで見ないと見つからない。地形図にすると、継ぎ目なしの見かけ勾配は最大 2.99 度(スマイルの曲がり)、継ぎ目ありは最大 **49.367 度**(海底に無い崖が 1 本立つ)。★**上向き屈折(frown)では、深さが誤るのではなく何も記録されない** —— 限界角の予測 73.90 度に対し、届いた最後のビーム 73.0 度 / 届かない最初 74.0 度。swath が黙って狭くなるだけなので記録は異常に見えない。★掃引 200 ケース(音速差 25 通り × 深さ 8 通りの格子)では、±65 度 swath の **78.0 %** が端で Order 1a を割る。崖の角度は深さとともに 10 m の 64.47 度 → 200 m の 45.53 度へ単調に寄るが、漸近値 44.83 度に**ぴったりは乗らない**(TVU の定数項 a = 0.5 m が 200 m でもまだ 2 割残る)。★サーモクラインには一定勾配の当てはめも効かない: 最大 5.357 m → 1.253 m と 77 % しか取れず、しかも**直下で +0.262 m** 悪くなる —— いちばん検査される所を犠牲に外側を良くしている。★道具の穴も 4 層(fs / fs.op / fs.ledger / op_find)を引いて記録した。sonar / swath / bathym / tvu は 0 件、sound_speed / footprint / crossline は件数だけ返るが中身は無関係(件数を見て「在る」と読むと外す)。検証中に**片道の穴**も 1 つ塞いだ: ベクトル版 `refract` の docstring が「1 本ずつ回せ」としか書かず、**光線ごとに全反射を判定する `refract_rays` が既にある**ことに触れていなかった(逆向きの参照は在った)。*
+*↑ **多ビーム測深で海底が笑う ―― 直下較正後も外側ビームに残る音速誤差** ―― 多ビーム音響測深では、音速プロファイルを取り違えると平らな海底が反り返る。表面音速をそのまま使う条件では直下も +0.670 m ずれ、平均音速を直下で較正した条件では直下誤差が 0 になる一方、65 度に −2.697 m が残る。IHO S-44 Order 1a の TVU(50 m) は 0.8201 m。第 1 層の Snell 処理を修正する前に規格を割った値は層分割ではなく実装誤りであり、修正後の中点一定近似は 65 度・2 層で −0.016 m、約 2 次で収束して規格内である。合成モデルでは外側ほど振幅ピーク検出の偏りが増え、位相検出の利点と整合する。この PoC が実装した真値不要の自己整合検査は隣接測線の重なり比較で、端の差は 2.697 m。上向き屈折では限界角超のビームは記録されない一方、届く 65 度ビームにも +5.919 m の誤差が残る。一定勾配の当てはめは最大誤差を 5.357 m から 1.253 mへ 77 %減らすが、TVU 超の残差と直下 +0.262 m が残る。根拠は数値模型と一定勾配層の閉形式で、この PoC だけから実機の設計理由は確定できない。*
 
 [![エコーは beamform_delay_sum の角度応答 × Lambert 後方散乱で海底の帯を足し上げて合成。find_peaks + peak_subbin で検出。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_multibeam_bathymetry/01_floor_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_multibeam_bathymetry/01_floor.png)
 
@@ -2004,11 +2002,11 @@ py -3.11 examples/poc_strain_history.py
 
 ## No.2026.040 —— 表面粗さ Sa / Sq / Sz は標本化とカットオフにどこまで耐えるか
 
-指定 PSD から合成した表面(Sq の真値は Parseval で解析的)に傾き・うねり・加工目・傷を足し、粗さパラメータを測った図。生の rms を Sq と呼ぶと 20 倍の過大、平面だけ除いても 1.8 倍。標本間隔 8 µm で Sa は -3.5 %(合格)、Sz は -19.8 %(不合格) ―― Sz は評価領域を広げると頭打ちにならず、「真の Sz」は存在しない。
+指定PSDから合成した表面を測った。生のrmsをSqと呼ぶと20倍、平面だけ除いても1.8倍の過大。標本間隔8マイクロメートルではSaが-3.5%、Szが-19.8%。Sqの変化が小さいのは今回のPSD・位相・標本条件であり、間引きが2次モーメントを一般に保存するわけではない。この合成面では試した評価領域でSzが頭打ちにならず、面積と帯域に依存しない単一値は得られなかった。最大高低差は標準RzではなくRt。
 
 [![表面粗さ Sa / Sq / Sz は標本化とカットオフにどこまで耐えるか](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_surface_roughness/01_surface_components_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_surface_roughness/01_surface_components.png)
 
-*↑ **表面粗さ Sa / Sq / Sz は標本化とカットオフにどこまで耐えるか** ―― 指定 PSD から合成した表面(Sq の真値は Parseval で解析的)に傾き・うねり・加工目・傷を足し、粗さパラメータを測った図。生の rms を Sq と呼ぶと 20 倍の過大、平面だけ除いても 1.8 倍。標本間隔 8 µm で Sa は -3.5 %(合格)、Sz は -19.8 %(不合格) ―― Sz は評価領域を広げると頭打ちにならず、「真の Sz」は存在しない。*
+*↑ **表面粗さ Sa / Sq / Sz は標本化とカットオフにどこまで耐えるか** ―― 指定PSDから合成した表面を測った。生のrmsをSqと呼ぶと20倍、平面だけ除いても1.8倍の過大。標本間隔8マイクロメートルではSaが-3.5%、Szが-19.8%。Sqの変化が小さいのは今回のPSD・位相・標本条件であり、間引きが2次モーメントを一般に保存するわけではない。この合成面では試した評価領域でSzが頭打ちにならず、面積と帯域に依存しない単一値は得られなかった。最大高低差は標準RzではなくRt。*
 
 [![dx=8 µm では Sa が ±5 % 合格で Sz が不合格。同じデータでも見るパラメータで結論が反転する。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_surface_roughness/02_sampling_cliff_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_surface_roughness/02_sampling_cliff.png)
 
@@ -4208,13 +4206,13 @@ py -3.11 examples/poc_real_sky_photometry.py
 
 使用 op(ノートへ): [`aperture_photometry`](https://furuse.work/ops/astrostack/photometry/aperture_photometry.html)
 
-## No.2026.080 —— 河川表面流速を斜め動画から測る(LSPIV)―― 速度の誤差と流量の誤差は別に数える
+## No.2026.080 —— 河川表面流速を斜め動画から測る ―― 流量proxyと実流量を分ける
 
-幅 8 m・最大 1.5 m/s のべき乗則の流速分布を真値に、泡トレーサを毎コマ動かして描いた川面を岸の斜めカメラ(ホモグラフィ既知)で 60 コマ撮り、空の映り込み・波紋・雑音を別々に足して、fullseye の piv_cross_correlate → warp_by_plane(正射化)→ piv_to_velocity で u(y) と流量 Q = h∫u dy を出す。ゼロ点(斜めのまま 1 尺度で換算)は近岸 +0.31 / 遠岸 -0.28 m/s と符号が逆で、見かけの川幅が 3.3 m に化けて流量 -57 %。正射化で速度 RMS 0.074 m/s・流量 -7.8 % だが、対照群でも流量 -3.0 % のうち -2.5 % は岸の台形積分だけで生じ、速度とは無関係。密度の崖は nan ではなく外れ値で来る(0.05 % で旗 44 %、アンサンブル相関は外れ窓を救わない)。窓を広げても岸の速度は「窓幅×勾配」の予想より桁で小さく(-0.008 m/s)、代わりに流量が -1.1 → -7.0 % と崖になる。動かない映り込みは細かいときだけ効き、引かれてから(速度比 0.70)張り付く(0.03)、時間中央値引きで 0.998 に戻る。dt の崖は 1/4 則ではなく対の消失で、探索上限を外しても同じ k=4 に立つ。
+幅8 m・最大1.5 m/sの合成川面を正射化して表面流速を測る。報告値は表面流速による流量proxyで、実流量には別に測定・校正した水深と速度係数が必要である。速度係数の文献平均は約0.8だが条件に依存する。速度RMSは0.074 m/s、proxy誤差は-7.8%。
 
-[![河川表面流速を斜め動画から測る(LSPIV)―― 速度の誤差と流量の誤差は別に数える](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_river_surface_velocity/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_river_surface_velocity/01_scene.png)
+[![河川表面流速を斜め動画から測る ―― 流量proxyと実流量を分ける](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_river_surface_velocity/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_river_surface_velocity/01_scene.png)
 
-*↑ **河川表面流速を斜め動画から測る(LSPIV)―― 速度の誤差と流量の誤差は別に数える** ―― 幅 8 m・最大 1.5 m/s のべき乗則の流速分布を真値に、泡トレーサを毎コマ動かして描いた川面を岸の斜めカメラ(ホモグラフィ既知)で 60 コマ撮り、空の映り込み・波紋・雑音を別々に足して、fullseye の piv_cross_correlate → warp_by_plane(正射化)→ piv_to_velocity で u(y) と流量 Q = h∫u dy を出す。ゼロ点(斜めのまま 1 尺度で換算)は近岸 +0.31 / 遠岸 -0.28 m/s と符号が逆で、見かけの川幅が 3.3 m に化けて流量 -57 %。正射化で速度 RMS 0.074 m/s・流量 -7.8 % だが、対照群でも流量 -3.0 % のうち -2.5 % は岸の台形積分だけで生じ、速度とは無関係。密度の崖は nan ではなく外れ値で来る(0.05 % で旗 44 %、アンサンブル相関は外れ窓を救わない)。窓を広げても岸の速度は「窓幅×勾配」の予想より桁で小さく(-0.008 m/s)、代わりに流量が -1.1 → -7.0 % と崖になる。動かない映り込みは細かいときだけ効き、引かれてから(速度比 0.70)張り付く(0.03)、時間中央値引きで 0.998 に戻る。dt の崖は 1/4 則ではなく対の消失で、探索上限を外しても同じ k=4 に立つ。*
+*↑ **河川表面流速を斜め動画から測る ―― 流量proxyと実流量を分ける** ―― 幅8 m・最大1.5 m/sの合成川面を正射化して表面流速を測る。報告値は表面流速による流量proxyで、実流量には別に測定・校正した水深と速度係数が必要である。速度係数の文献平均は約0.8だが条件に依存する。速度RMSは0.074 m/s、proxy誤差は-7.8%。*
 
 [![測定の図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_river_surface_velocity/02_frames_oblique_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_river_surface_velocity/02_frames_oblique.png)
 
@@ -4602,13 +4600,13 @@ py -3.11 examples/poc_gravitational_lens_invariants.py
 
 使用 op(ノートへ): [`blob_label`](https://furuse.work/ops/blob/connect/blob_label.html)
 
-## No.2026.257 —— 水田の雑草はどれだけあるか ―― 色と肌理だけで雑草の画素を分け、被度を宣言した境で 4 段階にする
+## No.2026.257 —— 水田の雑草イネ被度 ―― 深層学習なしの教師あり線形判別
 
-UAV の水田の RGB(WeedyRice-RGBMS、CC BY 4.0)。紫が注釈の雑草イネ、黄が 16 px 角の区画ごとの Fisher 判別(学習器なし、10 特徴の 1 次式)。段階の境は評価の前に 5 / 25 / 50 % と宣言した。test 148 枚で段階の一致 0.574(多数派だけ答えると 0.345)、κ 0.424、被度の相関 0.826、IoU 0.397(同じ割合でばらまくと 0.189)。R と G を入れ替えると κ は −0.023 に落ちる。撮影日を丸ごと外すと、季節の違う 1 日は日の中の相関が 0.14 —— 付属の分割の数字は見た飛行の別のコマの成績だった。
+UAV水田RGBを16画素格子に分け、trainで10特徴の教師ありFisher LDAを学習し、valで方式を選び、test 148枚を一度だけ評価した。境界は事前に5、25、50%と宣言。段階一致0.574、カッパ0.424、被度相関0.826、IoU 0.397。撮影日を丸ごと外すと季節の異なる1日は日内相関0.14だった。
 
-[![水田の雑草はどれだけあるか ―― 色と肌理だけで雑草の画素を分け、被度を宣言した境で 4 段階にする](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_weed_rice_ratio/05_real_examples_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_weed_rice_ratio/05_real_examples.png)
+[![水田の雑草イネ被度 ―― 深層学習なしの教師あり線形判別](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_weed_rice_ratio/05_real_examples_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_weed_rice_ratio/05_real_examples.png)
 
-*↑ **水田の雑草はどれだけあるか ―― 色と肌理だけで雑草の画素を分け、被度を宣言した境で 4 段階にする** ―― UAV の水田の RGB(WeedyRice-RGBMS、CC BY 4.0)。紫が注釈の雑草イネ、黄が 16 px 角の区画ごとの Fisher 判別(学習器なし、10 特徴の 1 次式)。段階の境は評価の前に 5 / 25 / 50 % と宣言した。test 148 枚で段階の一致 0.574(多数派だけ答えると 0.345)、κ 0.424、被度の相関 0.826、IoU 0.397(同じ割合でばらまくと 0.189)。R と G を入れ替えると κ は −0.023 に落ちる。撮影日を丸ごと外すと、季節の違う 1 日は日の中の相関が 0.14 —— 付属の分割の数字は見た飛行の別のコマの成績だった。*
+*↑ **水田の雑草イネ被度 ―― 深層学習なしの教師あり線形判別** ―― UAV水田RGBを16画素格子に分け、trainで10特徴の教師ありFisher LDAを学習し、valで方式を選び、test 148枚を一度だけ評価した。境界は事前に5、25、50%と宣言。段階一致0.574、カッパ0.424、被度相関0.826、IoU 0.397。撮影日を丸ごと外すと季節の異なる1日は日内相関0.14だった。*
 
 [![作物は細く濃い葉が畝の向きに揃い、雑草は広く明るい葉がばらばらの向き。雑草の割合は乱数場の分位点で厳密に置いた。判定は 16 px 角の区画ごとの Fisher 判別。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_weed_rice_ratio/01_synthetic_paddy_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_weed_rice_ratio/01_synthetic_paddy.png)
 

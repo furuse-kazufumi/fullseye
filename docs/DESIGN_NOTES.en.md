@@ -398,8 +398,8 @@ This repository records *why* things are the way they are in **comments in the s
 ## `examples/poc_battery_electrode_tortuosity.py`
 
 - **L136** — ★Processing not on a public path: a 6-neighbour adjacency graph in voxel space. fullseye has 3-D # connected components (vol_label) and a distance transform (vol_distance_transform), but # no entry point (geodesic distance, transport) for handling "a path passing through the void". # --------------------------------------------------------------------------- #
-- **L248** — ★Passing a 64-voxel slice as is gives a panel only 64 px wide, so the title text does not fit and the whole figure fails (examplefig does not give up silently).
-- **L269** — ★Leaving the solid phase at 0 makes log10(dissipation) negative, so **the solid phase is painted brightest** (we produced exactly that once on 2026-09-08). We map the solid phase to the bottom 2 % of the void.
+- **L258** — ★Passing a 64-voxel slice as is gives a panel only 64 px wide, so the title text does not fit and the whole figure fails (examplefig does not give up silently).
+- **L279** — ★Leaving the solid phase at 0 makes log10(dissipation) negative, so **the solid phase is painted brightest** (we produced exactly that once on 2026-09-08). We map the solid phase to the bottom 2 % of the void.
 
 ## `examples/poc_beam_modal_video.py`
 
@@ -478,9 +478,9 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `examples/poc_cold_chain_excursion.py`
 
-- **L568** — ★The window for finding the peak goes **only up to just before the next door opening/closing**. If you make it too wide, at large τ it picks up the rising edge of the next pulse and makes it look as though "the cliff never comes" (stepped on this on 2026-09-08 with a 200-minute window: the measured y=53 stretched to 153 minutes).
-- **L947** — ★Make the line-of-sight direction (the D axis) the **width**. If you project with (t, y, x) as is, D = time 720, and you only get a thin (H, W) = (60, 12) image.
-- **L1006** — ★Distinguish whether a "hit" is thanks to the convention or mere chance: perturb each point by ±1 m and count.
+- **L570** — ★The window for finding the peak goes **only up to just before the next door opening/closing**. If you make it too wide, at large τ it picks up the rising edge of the next pulse and makes it look as though "the cliff never comes" (stepped on this on 2026-09-08 with a 200-minute window: the measured y=53 stretched to 153 minutes).
+- **L949** — ★Make the line-of-sight direction (the D axis) the **width**. If you project with (t, y, x) as is, D = time 720, and you only get a thin (H, W) = (60, 12) image.
+- **L1008** — ★Distinguish whether a "hit" is thanks to the convention or mere chance: perturb each point by ±1 m and count.
 
 ## `examples/poc_colocalization_crosstalk.py`
 
@@ -779,7 +779,7 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `examples/poc_laser_line_speckle_floor.py`
 
-- **L332** _(ja)_ — ★2026-10-15: 壁時計は CI の並列のシャードで同じ機械の他のテストの負荷まで数える (poc_phase_measuring_deflectometry がこれで赤になった)。この門が抑えたいのはこの PoC 自身の計算量なので、プロセスの CPU 時間 (time.process_time)で測り、壁時計は併記する。
+- **L349** _(ja)_ — ★2026-10-15: 壁時計は CI の並列のシャードで同じ機械の他のテストの負荷まで数える (poc_phase_measuring_deflectometry がこれで赤になった)。この門が抑えたいのはこの PoC 自身の計算量なので、プロセスの CPU 時間 (time.process_time)で測り、壁時計は併記する。
 
 ## `examples/poc_leak_localization.py`
 
@@ -863,18 +863,18 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `examples/poc_multibeam_bathymetry.py`
 
-- **L357** _(ja)_ — ★走時を使い切った光線は cosθ が層の途中の値のまま残り、後ろの層で dt_full が 負になりうる。負の dt は rem を「生き返らせ」光線を進めてしまう(実データの 152 節点のキャストで 57 度・0.13 s が 110 m → 493 m になった)ので 0 で止める。
-- **L542** — The number of partial angles that synthesise the echo. ★Setting this to 61 makes, at 70 degrees, the arrival times of adjacent partial angles 330 µs apart, wider than the 64 µs pulse width, so the envelope becomes a **comb** and amplitude detection picks up one tooth (the detection offset came out as -1131 µs). It is more correct to build a histogram of the arrival-time density and convolve it with the pulse.
-- **L570** — ★Do not clip the lower bound at 0 —— the nadir beam then becomes one-sided and the illuminated band halves (stepped on this once, with the footprint coming out at half).
-- **L727** — ★Divide the x-axis by **the beam's own echo length**. Overlaying in raw µs lets 70 degrees (21 ms) monopolise the axis, collapsing nadir and 45 degrees into a single vertical line.
-- **L730** — ★``plot_series`` **rejects** points outside xlim (because they stick to the frame and look like real data). Clipping is the caller's job, so clip first.
-- **L1149** — ★Do not look at the **middle** of the overlap —— there both survey lines have the same swing angle, so the same error rides on both and the difference goes to zero. Take the **maximum over the whole band**.
-- **L1220** — ★Make the y-axis **height** (= −depth). Plotting depth as-is flips top and bottom, making a 'smiling' shape look like a 'frown'.
-- **L1291** — ★The y-axis is −depth. Plotting depth as-is gives an upside-down figure with the sea surface at the bottom and the seabed at the top.
-- **L1325** — ★``op_find`` matches on partial stems, so even when the count is non-zero the contents can be irrelevant ("footprint" → ``sk_median_disk``). **Look all the way to the top-level name** before saying 'it does not exist'.
-- **L1381** _(ja)_ — ★座標の約束: 格子の行 0 を**北(画像の上)**とし、世界座標は (x = 東, Y = 北 = -行方向, z = 上)。 行方向をそのまま +Y にすると左手系になり、絵が鏡像になる(上から見た静止図と左右が食い違う)。
-- **L1972** _(ja)_ — ★左右に分ける: 音速の取り違えは θ について**偶**(左右対称)。ロールの小さな 取付偏りや参照格子の左右の食い違いは**奇**(D tanθ δ)。中心対称な階級なので k と n−1−k が鏡像。偶部で崖を測り、奇部は両解で同じか(= 音速でない)を見る。
-- **L2229** — ★The cliff of the all-paths case is **earlier than predicted**. The difference is the bias of amplitude detection (a quantity absent from the closed form)
+- **L359** _(ja)_ — ★走時を使い切った光線は cosθ が層の途中の値のまま残り、後ろの層で dt_full が 負になりうる。負の dt は rem を「生き返らせ」光線を進めてしまう(実データの 152 節点のキャストで 57 度・0.13 s が 110 m → 493 m になった)ので 0 で止める。
+- **L544** — The number of partial angles that synthesise the echo. ★Setting this to 61 makes, at 70 degrees, the arrival times of adjacent partial angles 330 µs apart, wider than the 64 µs pulse width, so the envelope becomes a **comb** and amplitude detection picks up one tooth (the detection offset came out as -1131 µs). It is more correct to build a histogram of the arrival-time density and convolve it with the pulse.
+- **L572** — ★Do not clip the lower bound at 0 —— the nadir beam then becomes one-sided and the illuminated band halves (stepped on this once, with the footprint coming out at half).
+- **L729** — ★Divide the x-axis by **the beam's own echo length**. Overlaying in raw µs lets 70 degrees (21 ms) monopolise the axis, collapsing nadir and 45 degrees into a single vertical line.
+- **L732** — ★``plot_series`` **rejects** points outside xlim (because they stick to the frame and look like real data). Clipping is the caller's job, so clip first.
+- **L1151** — ★Do not look at the **middle** of the overlap —— there both survey lines have the same swing angle, so the same error rides on both and the difference goes to zero. Take the **maximum over the whole band**.
+- **L1222** — ★Make the y-axis **height** (= −depth). Plotting depth as-is flips top and bottom, making a 'smiling' shape look like a 'frown'.
+- **L1293** — ★The y-axis is −depth. Plotting depth as-is gives an upside-down figure with the sea surface at the bottom and the seabed at the top.
+- **L1327** — ★``op_find`` matches on partial stems, so even when the count is non-zero the contents can be irrelevant ("footprint" → ``sk_median_disk``). **Look all the way to the top-level name** before saying 'it does not exist'.
+- **L1383** _(ja)_ — ★座標の約束: 格子の行 0 を**北(画像の上)**とし、世界座標は (x = 東, Y = 北 = -行方向, z = 上)。 行方向をそのまま +Y にすると左手系になり、絵が鏡像になる(上から見た静止図と左右が食い違う)。
+- **L1974** _(ja)_ — ★左右に分ける: 音速の取り違えは θ について**偶**(左右対称)。ロールの小さな 取付偏りや参照格子の左右の食い違いは**奇**(D tanθ δ)。中心対称な階級なので k と n−1−k が鏡像。偶部で崖を測り、奇部は両解で同じか(= 音速でない)を見る。
+- **L2231** — ★The cliff of the all-paths case is **earlier than predicted**. The difference is the bias of amplitude detection (a quantity absent from the closed form)
 
 ## `examples/poc_nuclei_ploidy.py`
 
@@ -1133,7 +1133,7 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `examples/poc_surface_roughness.py`
 
-- **L272** — ★The truth is defined **only after declaring the band**. Not the roughness component itself, but "the roughness component after cutting at λc" is the truth. If you make this the raw rough_true, even measuring by the correct procedure is off by -23%, and that 23% mixes with the sampling error. There is no "roughness truth" that does not include a band -- this is also the claim of Section 2.
+- **L270** — ★The truth is defined **only after declaring the band**. Not the roughness component itself, but "the roughness component after cutting at λc" is the truth. If you make this the raw rough_true, even measuring by the correct procedure is off by -23%, and that 23% mixes with the sampling error. There is no "roughness truth" that does not include a band -- this is also the claim of Section 2.
 
 ## `examples/poc_swc_tree_truth.py`
 
@@ -1155,8 +1155,8 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `examples/poc_telecentric_metrology.py`
 
-- **L112** _(ja)_ — 狙い = iterative)。★2026-10-15 から門に使う: 手元に optiland が無いとき(CI)は、この記録値と telecentric.chief_ray_angle・raytrace.chief_ray(入射瞳が無限遠なら絞りを狙う)の両方を 2e-6 mm で照合する (記録は 6 桁に丸めてあるので丸めの幅 5e-7 mm を含む)。
-- **L1230** _(ja)_ — ★リングごとに自由な楕円(5 自由度)を当てると、影で弧が 90〜180° しか見えない外側のリングは長半径が外挿で 膨らむ・縮む(2026-10-15 に元の解像度で見て分かった: 外側のリングで楕円が白い線から外れ、間隔が 246〜257 px/mm と ばらついた)。テレセン(正射影)なら傾いた板の同心円は「中心と形を共有する楕円の族」に写るので、族ごと当てる。 族の仮定そのもの(中心の共有)は (c) でリングごとに中心を解き直して確かめる。
+- **L113** _(ja)_ — 狙い = iterative)。★2026-10-15 から門に使う: 手元に optiland が無いとき(CI)は、この記録値と telecentric.chief_ray_angle・raytrace.chief_ray(入射瞳が無限遠なら絞りを狙う)の両方を 2e-6 mm で照合する (記録は 6 桁に丸めてあるので丸めの幅 5e-7 mm を含む)。
+- **L1231** _(ja)_ — ★リングごとに自由な楕円(5 自由度)を当てると、影で弧が 90〜180° しか見えない外側のリングは長半径が外挿で 膨らむ・縮む(2026-10-15 に元の解像度で見て分かった: 外側のリングで楕円が白い線から外れ、間隔が 246〜257 px/mm と ばらついた)。テレセン(正射影)なら傾いた板の同心円は「中心と形を共有する楕円の族」に写るので、族ごと当てる。 族の仮定そのもの(中心の共有)は (c) でリングごとに中心を解き直して確かめる。
 
 ## `examples/poc_tem_ctf_thon_rings.py`
 
@@ -1182,24 +1182,24 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `examples/poc_thermal_radiometry.py`
 
-- **L507** — ★Forward is **direct integration**, inverse is a **calibration table**. Round-tripping through the same table trivially yields error 0 and does not count as measuring the floor.
-- **L528** — ★Case-0 being **exactly 0** is because 350.0 K happens to land on a table node. Move off the node and the interpolation error shows -- **calling 0 the floor is a lie**.
-- **L757** — ★The x-axis is the **rise above the surroundings**. Left as T_obj, the divergence collapses into a single vertical line at the left edge, and the crucial "where it jumps from" cannot be read.
-- **L767** — ★``plot_series`` **rejects** points outside the frame (because they stick to the frame and look like real data). The caller clips the diverging side first.
-- **L821** — ★The x-axis is the **absolute** Δε. Plotted as relative Δε/ε the three curves overlap exactly (because ε drops out of the equation, per §2) -- the plot says nothing.
-- **L1154** — ★What the guard band uses is the **upper** overhang. Since what we want to assert as a pass is that "the truth is not **above** the threshold", we clip at the upper end of the interval. Using the lower off[0] clips too shallow (by however much the distribution is right-skewed) -- wrote it that way once and noticed because the false passes did not decrease.
-- **L1257** — ★For the same mix-up, on the ε=0.10 surface L_obj drops negative and **raises an exception**. In other words, "halt or fail silently" is decided not by the mix-up but by the **scene**.
-- **L1331** — ★Make the heat source a **flat plateau**. As a peak, "the bolt and its surroundings at the same temperature" does not hold, and you cannot separate whether the apparent trough is due to emissivity or to temperature.
-- **L1378** — ★The correction removes the bias but multiplies the noise by 1/ε. That is why only the bolt is grainy in figure (d).
-- **L1450** — ★``op_find`` matches on partial stems. ``blackbody`` returns 4 hits, but their contents are morphology such as ``cv_blackhat`` and have **nothing to do with thermal radiation**. Reading "it exists" from the count misses. Say it only **after looking at the leading name**.
-- **L1600** — 3. ★A prediction that missed: the absolute error is **larger at higher temperature**
-- **L1602** — ★Even changing the yardstick, the emissivity error does **not diverge** with the rise ratio (it plateaus in Δε/ε)
-- **L1605** — ★What diverges is the reflected apparent temperature (the smaller the rise, the more it jumps)
-- **L1618** — 6. ★★Coverage rate. At the floor (ρ=0) both RSS and MC are 95 %; adding correlation makes RSS drop
-- **L1622** — ★The MC side settles at 94.4-94.6 % (not exactly 95 %). The interval ends are set by percentiles over 40000 trials, so there is sampling error, and in reality quantization is mixed in too. **Say "MC hits" including all of that**.
-- **L1638** — 7. ★The misses lean to one side (symmetric ±k·u misses a skewed distribution)
-- **L1642** — 8. ★★guard band: false passes are ignore > RSS > MC, false fails the reverse
-- **L1662** — ★The correction removes the bias but in exchange multiplies the noise by 1/ε (close to the ε ratio of 9.5)
+- **L522** — ★Forward is **direct integration**, inverse is a **calibration table**. Round-tripping through the same table trivially yields error 0 and does not count as measuring the floor.
+- **L543** — ★Case-0 being **exactly 0** is because 350.0 K happens to land on a table node. Move off the node and the interpolation error shows -- **calling 0 the floor is a lie**.
+- **L772** — ★The x-axis is the **rise above the surroundings**. Left as T_obj, the divergence collapses into a single vertical line at the left edge, and the crucial "where it jumps from" cannot be read.
+- **L782** — ★``plot_series`` **rejects** points outside the frame (because they stick to the frame and look like real data). The caller clips the diverging side first.
+- **L836** — ★The x-axis is the **absolute** Δε. Plotted as relative Δε/ε the three curves overlap exactly (because ε drops out of the equation, per §2) -- the plot says nothing.
+- **L1169** — ★What the guard band uses is the **upper** overhang. Since what we want to assert as a pass is that "the truth is not **above** the threshold", we clip at the upper end of the interval. Using the lower off[0] clips too shallow (by however much the distribution is right-skewed) -- wrote it that way once and noticed because the false passes did not decrease.
+- **L1272** — ★For the same mix-up, on the ε=0.10 surface L_obj drops negative and **raises an exception**. In other words, "halt or fail silently" is decided not by the mix-up but by the **scene**.
+- **L1346** — ★Make the heat source a **flat plateau**. As a peak, "the bolt and its surroundings at the same temperature" does not hold, and you cannot separate whether the apparent trough is due to emissivity or to temperature.
+- **L1392** — ★The correction removes the bias but multiplies the noise by 1/ε. That is why only the bolt is grainy in figure (d).
+- **L1464** — ★``op_find`` matches on partial stems. ``blackbody`` returns 4 hits, but their contents are morphology such as ``cv_blackhat`` and have **nothing to do with thermal radiation**. Reading "it exists" from the count misses. Say it only **after looking at the leading name**.
+- **L1614** — 3. ★A prediction that missed: the absolute error is **larger at higher temperature**
+- **L1616** — ★Even changing the yardstick, the emissivity error does **not diverge** with the rise ratio (it plateaus in Δε/ε)
+- **L1619** — ★What diverges is the reflected apparent temperature (the smaller the rise, the more it jumps)
+- **L1632** — 6. ★★Coverage rate. At the floor (ρ=0) both RSS and MC are 95 %; adding correlation makes RSS drop
+- **L1636** — ★The MC side settles at 94.4-94.6 % (not exactly 95 %). The interval ends are set by percentiles over 40000 trials, so there is sampling error, and in reality quantization is mixed in too. **Say "MC hits" including all of that**.
+- **L1652** — 7. ★The misses lean to one side (symmetric ±k·u misses a skewed distribution)
+- **L1656** — 8. ★★guard band: false passes are ignore > RSS > MC, false fails the reverse
+- **L1676** — ★The correction removes the bias but in exchange multiplies the noise by 1/ε (close to the ε ratio of 9.5)
 
 ## `examples/poc_thermography_ndt.py`
 
@@ -2723,23 +2723,23 @@ This repository records *why* things are the way they are in **comments in the s
 - **L813** _(ja)_ — ★2026-10-13: TYPE_CHECKS["pose"] は (R, t, info) の 3 つ組も pose として通す (register_spin / register_shot / register_cpd_rigid / icp …)。ここで 2 つに 展開すると、その組が引かれた連鎖で ValueError(seed 3_000_0xx、縞に近づく ハエの眼の 5 op を足して抽選がずれた回で露見)。先頭 2 つだけ取る。
 - **L946** — ★A point cloud with non-finite values **crashes the KD-tree construction itself with a raw ValueError** (scipy: "data must be finite"). The pool is designed to record NONFINITE and keep the values, so a dirty point cloud arriving here is expected -- the side that builds it must guard. Hit for real on 2026-09-06: a new family was added, the way chains are walked changed, and at seed 3_000_0xx this path was struck and the fuzzer itself halted (not a defect of the op but **a defect of the tool**. The promise is that unbindable input is skipped, not raised).
 - **L1298** _(ja)_ — ★単位空間は渡さない(渡すなら 3 つ全部)。渡さない形は「データ自身から 作る」訓練時の呼び方で、ファザーが最も広く回せる。
-- **L6922** _(ja)_ — ★2026-10-18: 窓 3 つ + 厚さ 0 から始まる勾配。窓の番号(low / high)のノブは窓が 3 つないと どの値も同じ 2 窓を指し、min_log(素通しに近い画素を拒否する下限)は L が 0.01〜0.04 の画素が 無いと効かない —— 効く入力を渡す(効かないノブを台帳に載せない)。 窓は 120 kV で 20 / 40 / 60 keV(隣り合う狭い窓 20〜35 / 35〜55 では Cr と Mn の R が逆転し、 effective_z_map が単調でないとして拒否する —— それは op の正しい拒否で、ノブの検査にならない)。
-- **L7132** _(ja)_ — ★obs2 の 2 点目は台車 0 の終点から (−0.15, 1.0) ずらした所: 射影の角 0.1 → 0.2 rad で終点と点の順が入れ替わり、 組紐語が変わる(角が「効かないノブ」に見えない入力。類が同じかは角に依らない —— それは門が別に見る)。
-- **L8110** _(ja)_ — ★2026-10-11: file = 書き出したファイルのパス(write_wav の返り、read_wav の入力)。 述語が無いあいだ、write_wav が None を返しても誰も気づかなかった。
-- **L8232** — ★Until 2026-09-02 it was ``lambda v: True`` = **since the predicate is counted as "present", it's worse than absent** (the inspection script also counts it as "has a predicate"). Measured, it let through even None / 42 / a string / a dict. The canon was decided by **running all** of the 6 consuming op (reprconv's pairs_to_signal / pairs_to_image2d / pairs_to_table / angles_to_normals / shape_index_to_curvature / polar_to_cscalar): all 6 op accept only the two shapes above, and everything else becomes a named fail-closed with "pairs: must be (N, 2) or a 2-tuple of equal-length 1-D arrays" (measured). Since **(2,N) is not accepted**, the 3 adapters that were collapsing a 2-tuple into (2,N) with np.stack were fixed to axis=1. Two arrays of differing length (histogram's counts/edges) are also not a "pair" and are rejected.
-- **L8364** — ★"Exactly 2 elements" is **deliberately different** from pose (which allows info via `len >= 2`). Measured 2026-09-02: the 4 existing consumers that take a mesh as one argument (face_normals / vertex_normals / mesh_area / vertex_curvature) emit "mesh must be a 2-element tuple (vertices, faces)" for a 3-tuple, and cadmap's `_mesh` and render3d._mesh_arrays also accept only 2 elements. In other words **the canon for this repo's mesh sort is a 2-tuple**, and an extra element is not "more information" but a type-level lie that wipes out everything downstream. The sole exception `voxel_to_mesh` (which returns (v, f, n)) now has the canonical order extracted in ops3d.RESULT_ADAPTERS (treated the same as gicp / vol_label).
-- **L8573** _(ja)_ — ★2026-10-11: ``system`` キーに最適化後の処方(同じ object_mm = inf)
-- **L8575** _(ja)_ — ★2026-10-15: 絞りと像面の前の面は平面(R = inf、lens_system の規約どおり)
-- **L8577** _(ja)_ — ★2026-10-15: 図の values に処方の平面の R = inf と、無焦点の EFL / BFL = inf、 分散の無い媒質の ν_d = inf を写す(lens_system の規約どおり)
-- **L8580** _(ja)_ — ★2026-10-15: 非共軸の系(raytrace3d)は面の R = inf・物体の inf を記録に持ち、 ゴーストの表・光線の束は「届かない光線 = NaN」(trace_rays と同じ規約)、 図の values にも平面の R = inf を写す。opd_samples は瞳の外 = NaN、 with_wavelength は処方(object_mm = inf)をそのまま返す。
-- **L8587** _(ja)_ — ★2026-10-19: 照準 / ケラレ係数を設定した処方もそのまま返す(R = inf、object_mm = inf)
-- **L8589** _(ja)_ — ★2026-10-18: .zmx から読んだ処方(lensfile)は lens_system そのもの(物体が無限遠 なら object_mm = inf、平面の R = inf、ファイル側の面の表の DISZ = INFINITY)
-- **L8592** _(ja)_ — ★2026-10-19: 構成ごとに解決した処方も lens_system そのもの(R = inf、object_mm = inf)
-- **L8594** _(ja)_ — ★2026-10-19: 硝材置換・大域探索は処方(R = inf)を入れ子で返す
-- **L8596** _(ja)_ — ★2026-10-19: 最適化後の処方(R = inf)を返す
-- **L8598** _(ja)_ — ★2026-10-20: 解を解いた・解を外した・afocal の・像面を曲げた処方(R = inf、object_mm = inf)と、 その解の一覧(R = inf の行)を返す
-- **L8621** _(ja)_ — ★2026-10-11(tests/test_ledger_contracts.py が初めて全台帳 op を呼んで挙げた分のうち、 **docstring が非有限を名指ししている**もの)。どれも「無い・測れない・届かない」を 0 で埋めず nan / inf で言う設計で、実際に非有限だった欄と docstring の欄が一致する ことを 1 本ずつ確かめた。docstring に書かれていない非有限(world_camera の depth の inf など)は**載せていない** —— 台帳の負債(docs/LEDGER_CONTRACT_DEBT.json)に残る。
-- **L8745** _(ja)_ — ★2026-10-07: プロセスごとに分ける。固定名だと xdist の別ワーカーが同じ捨て場を共有し、片方の テストが「中身を消してから、何か落ちたことを確かめる」間に相手が消す/書く(Windows では開いている ファイルの unlink が PermissionError)。
+- **L6930** _(ja)_ — ★2026-10-18: 窓 3 つ + 厚さ 0 から始まる勾配。窓の番号(low / high)のノブは窓が 3 つないと どの値も同じ 2 窓を指し、min_log(素通しに近い画素を拒否する下限)は L が 0.01〜0.04 の画素が 無いと効かない —— 効く入力を渡す(効かないノブを台帳に載せない)。 窓は 120 kV で 20 / 40 / 60 keV(隣り合う狭い窓 20〜35 / 35〜55 では Cr と Mn の R が逆転し、 effective_z_map が単調でないとして拒否する —— それは op の正しい拒否で、ノブの検査にならない)。
+- **L7140** _(ja)_ — ★obs2 の 2 点目は台車 0 の終点から (−0.15, 1.0) ずらした所: 射影の角 0.1 → 0.2 rad で終点と点の順が入れ替わり、 組紐語が変わる(角が「効かないノブ」に見えない入力。類が同じかは角に依らない —— それは門が別に見る)。
+- **L8120** _(ja)_ — ★2026-10-11: file = 書き出したファイルのパス(write_wav の返り、read_wav の入力)。 述語が無いあいだ、write_wav が None を返しても誰も気づかなかった。
+- **L8242** — ★Until 2026-09-02 it was ``lambda v: True`` = **since the predicate is counted as "present", it's worse than absent** (the inspection script also counts it as "has a predicate"). Measured, it let through even None / 42 / a string / a dict. The canon was decided by **running all** of the 6 consuming op (reprconv's pairs_to_signal / pairs_to_image2d / pairs_to_table / angles_to_normals / shape_index_to_curvature / polar_to_cscalar): all 6 op accept only the two shapes above, and everything else becomes a named fail-closed with "pairs: must be (N, 2) or a 2-tuple of equal-length 1-D arrays" (measured). Since **(2,N) is not accepted**, the 3 adapters that were collapsing a 2-tuple into (2,N) with np.stack were fixed to axis=1. Two arrays of differing length (histogram's counts/edges) are also not a "pair" and are rejected.
+- **L8374** — ★"Exactly 2 elements" is **deliberately different** from pose (which allows info via `len >= 2`). Measured 2026-09-02: the 4 existing consumers that take a mesh as one argument (face_normals / vertex_normals / mesh_area / vertex_curvature) emit "mesh must be a 2-element tuple (vertices, faces)" for a 3-tuple, and cadmap's `_mesh` and render3d._mesh_arrays also accept only 2 elements. In other words **the canon for this repo's mesh sort is a 2-tuple**, and an extra element is not "more information" but a type-level lie that wipes out everything downstream. The sole exception `voxel_to_mesh` (which returns (v, f, n)) now has the canonical order extracted in ops3d.RESULT_ADAPTERS (treated the same as gicp / vol_label).
+- **L8583** _(ja)_ — ★2026-10-11: ``system`` キーに最適化後の処方(同じ object_mm = inf)
+- **L8585** _(ja)_ — ★2026-10-15: 絞りと像面の前の面は平面(R = inf、lens_system の規約どおり)
+- **L8587** _(ja)_ — ★2026-10-15: 図の values に処方の平面の R = inf と、無焦点の EFL / BFL = inf、 分散の無い媒質の ν_d = inf を写す(lens_system の規約どおり)
+- **L8590** _(ja)_ — ★2026-10-15: 非共軸の系(raytrace3d)は面の R = inf・物体の inf を記録に持ち、 ゴーストの表・光線の束は「届かない光線 = NaN」(trace_rays と同じ規約)、 図の values にも平面の R = inf を写す。opd_samples は瞳の外 = NaN、 with_wavelength は処方(object_mm = inf)をそのまま返す。
+- **L8597** _(ja)_ — ★2026-10-19: 照準 / ケラレ係数を設定した処方もそのまま返す(R = inf、object_mm = inf)
+- **L8599** _(ja)_ — ★2026-10-18: .zmx から読んだ処方(lensfile)は lens_system そのもの(物体が無限遠 なら object_mm = inf、平面の R = inf、ファイル側の面の表の DISZ = INFINITY)
+- **L8602** _(ja)_ — ★2026-10-19: 構成ごとに解決した処方も lens_system そのもの(R = inf、object_mm = inf)
+- **L8604** _(ja)_ — ★2026-10-19: 硝材置換・大域探索は処方(R = inf)を入れ子で返す
+- **L8606** _(ja)_ — ★2026-10-19: 最適化後の処方(R = inf)を返す
+- **L8608** _(ja)_ — ★2026-10-20: 解を解いた・解を外した・afocal の・像面を曲げた処方(R = inf、object_mm = inf)と、 その解の一覧(R = inf の行)を返す
+- **L8631** _(ja)_ — ★2026-10-11(tests/test_ledger_contracts.py が初めて全台帳 op を呼んで挙げた分のうち、 **docstring が非有限を名指ししている**もの)。どれも「無い・測れない・届かない」を 0 で埋めず nan / inf で言う設計で、実際に非有限だった欄と docstring の欄が一致する ことを 1 本ずつ確かめた。docstring に書かれていない非有限(world_camera の depth の inf など)は**載せていない** —— 台帳の負債(docs/LEDGER_CONTRACT_DEBT.json)に残る。
+- **L8755** _(ja)_ — ★2026-10-07: プロセスごとに分ける。固定名だと xdist の別ワーカーが同じ捨て場を共有し、片方の テストが「中身を消してから、何か落ちたことを確かめる」間に相手が消す/書く(Windows では開いている ファイルの unlink が PermissionError)。
 
 ## `tools/chain_mine.py`
 
@@ -2904,13 +2904,13 @@ This repository records *why* things are the way they are in **comments in the s
 
 - **L52** _(ja)_ — 総合案内。★既存の Qiita 枠がこのファイルを指しているので、名前を変えない ―― 外部リンク・LGTM・ストックはこの URL に付いている。館の入口に充てるのが筋。
 - **L150** _(ja)_ — 1 展示に出す静止画の追加枚数。★2 枚固定をやめる(2026-09-24)
-- **L349** _(ja)_ — ★見出しは**収蔵番号**。順路番号(何番目か)は出さない —— 展示を 1 つ挟むだけで 以降が全部ずれ、記事を分けるたびに番号が動くため(2026-09-25)。
-- **L377** _(ja)_ — ★追加の静止画。説明は 1 文に切る(枚数を増やすのが目的で、詳しい 説明は主図と 2 枚目が持っている)。2026-09-24 に 2 枚固定をやめた。
-- **L403** _(ja)_ — ★展示に載るのは 1 本あたり 2 枚ほど。PoC は中央値 6 枚・最大 25 枚 作っているので、**残りへの道**を必ず出す(2026-09-24、ユーザー指摘 「生成した数百枚はどこにあるのか記事からは分からない」)。
-- **L428** _(ja)_ — ★解説板の「この部屋の {n} 点」は**生成で埋める**。手書きの数は腐る ―― 10 翼中 9 翼が展示 53 点の頃の数を名乗ったままだった(産業検査は 10 と 書いて実際 27、2026-09-25)。例外は出ず、門も赤くならない。 `.format` は使わない(解説板に別の波括弧が在ると壊れるため)。
-- **L477** _(ja)_ — 棟の目次。★展示数は毎回数えて出す(手で書くと必ず古くなる)。
-- **L483** _(ja)_ — 目次に出す短い翼名。★区切りは ` / ` —— 翼名そのものに「・」が入るので (寸法・形状計測 / 医用・生物 / 色・分離)、「・」で繋ぐと境目が読めなくなる。
-- **L589** _(ja)_ — ★`external` の部(手書きの数学記事)は描かない。`index` は案内なので上で出した。
+- **L405** _(ja)_ — ★見出しは**収蔵番号**。順路番号(何番目か)は出さない —— 展示を 1 つ挟むだけで 以降が全部ずれ、記事を分けるたびに番号が動くため(2026-09-25)。
+- **L433** _(ja)_ — ★追加の静止画。説明は 1 文に切る(枚数を増やすのが目的で、詳しい 説明は主図と 2 枚目が持っている)。2026-09-24 に 2 枚固定をやめた。
+- **L459** _(ja)_ — ★展示に載るのは 1 本あたり 2 枚ほど。PoC は中央値 6 枚・最大 25 枚 作っているので、**残りへの道**を必ず出す(2026-09-24、ユーザー指摘 「生成した数百枚はどこにあるのか記事からは分からない」)。
+- **L484** _(ja)_ — ★解説板の「この部屋の {n} 点」は**生成で埋める**。手書きの数は腐る ―― 10 翼中 9 翼が展示 53 点の頃の数を名乗ったままだった(産業検査は 10 と 書いて実際 27、2026-09-25)。例外は出ず、門も赤くならない。 `.format` は使わない(解説板に別の波括弧が在ると壊れるため)。
+- **L533** _(ja)_ — 棟の目次。★展示数は毎回数えて出す(手で書くと必ず古くなる)。
+- **L539** _(ja)_ — 目次に出す短い翼名。★区切りは ` / ` —— 翼名そのものに「・」が入るので (寸法・形状計測 / 医用・生物 / 色・分離)、「・」で繋ぐと境目が読めなくなる。
+- **L645** _(ja)_ — ★`external` の部(手書きの数学記事)は描かない。`index` は案内なので上で出した。
 
 ## `tools/gen_wingstudio_gallery.py`
 

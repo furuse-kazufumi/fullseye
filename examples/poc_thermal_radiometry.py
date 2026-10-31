@@ -457,6 +457,21 @@ class Camera:
         bb = self.b if b is None else np.asarray(b, np.float64)
         return (np.asarray(dn, np.float64) - bb) / aa
 
+    def add_emva_noise(self, dn_mean, rng, *, conversion_gain=0.05,
+                       dark_noise_e=2.0, quantization_sigma_dn=1.0 / np.sqrt(12.0)):
+        """EMVA 1288 形の雑音を DN に加える。
+
+        ``conversion_gain`` は K [DN/e-]。分散は
+        K² sigma_d² + sigma_q² + K(mu_y-mu_dark) で、黒レベル ``b`` は
+        信号電子数に含めない。この関数と NETD 雑音は同時には加えない。
+        """
+        mean = np.asarray(dn_mean, np.float64)
+        signal_dn = np.maximum(mean - self.b, 0.0)
+        variance = ((conversion_gain * dark_noise_e) ** 2
+                    + quantization_sigma_dn ** 2
+                    + conversion_gain * signal_dn)
+        return mean + rng.normal(0.0, np.sqrt(variance), size=mean.shape)
+
 
 # --------------------------------------------------------------------------- #
 # 1. 場面と往復 —— 床を測る                                                     #
@@ -1346,10 +1361,9 @@ def section_image(scene):
     t_true, eps_map = scene_truth()
     lm = forward_radiance(tab, t_true, eps_map, T_REFL_REF, TAU_REF, T_ATM_REF)
     rng = np.random.default_rng(4242)
-    dn = cam.to_dn(lm, rng, quantize=True)
-    # 光子検出器なら雑音は Poisson。`fs.photon_uncertainty` で 1σ を出して足す。
-    sigma_shot = np.asarray(fs.photon_uncertainty(dn, zero_floor=1.0), np.float64)
-    dn = np.clip(np.rint(dn + rng.normal(0.0, 0.05 * sigma_shot)), 0.0, cam.dn_max)
+    # この章は EMVA 1288 形の電子・暗・量子化雑音を使う。NETD と二重計上しない。
+    dn_mean = cam.to_dn(lm, rng=None, quantize=False)
+    dn = np.clip(np.rint(cam.add_emva_noise(dn_mean, rng)), 0.0, cam.dn_max)
     l_hat = cam.to_radiance(dn)
     t_apparent = np.asarray(invert_radiance(tab, l_hat, 1.0, T_REFL_REF, TAU_REF,
                                             T_ATM_REF, allow_out=True), np.float64)

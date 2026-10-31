@@ -191,12 +191,68 @@ def _thumb(poc_id: str, file: str) -> str:
     src = os.path.join(ASSETS, poc_id, file)
     name = os.path.splitext(file)[0] + "_720.jpg"
     dst = os.path.join(ASSETS, poc_id, name)
-    if not os.path.exists(dst) or os.path.getmtime(dst) < os.path.getmtime(src):
+    if _thumb_is_stale(src, dst):
         im = Image.open(src).convert("RGB")
         if im.width > THUMB_W:
             im = im.resize((THUMB_W, max(1, round(im.height * THUMB_W / im.width))), Image.LANCZOS)
-        im.save(dst, "JPEG", quality=JPEG_Q, optimize=True)
+        im.save(dst, "JPEG", quality=JPEG_Q, optimize=True,
+                comment=(_THUMB_TAG + _sha256(src)).encode("ascii"))
     return name
+
+
+#: サムネの JPEG の COM マーカーに書く「元の図の SHA-256」の前置き。
+_THUMB_TAG = "fullseye-thumb-src-sha256:"
+_DIRTY_CACHE: dict = {}
+
+
+def _sha256(path: str) -> str:
+    import hashlib
+    with open(path, "rb") as fh:
+        return hashlib.sha256(fh.read()).hexdigest()
+
+
+def _dirty_assets():
+    """git から見て変更・未追跡の図の集合(絶対パスを正規化)。git の外なら None。"""
+    if "set" not in _DIRTY_CACHE:
+        import subprocess
+        try:
+            out = subprocess.run(
+                ["git", "-C", _ROOT, "status", "--porcelain", "-z", "--untracked-files=all",
+                 "--", os.path.relpath(ASSETS, _ROOT)],
+                capture_output=True, check=True, timeout=120).stdout.decode("utf-8")
+            paths = set()
+            for rec in out.split("\0"):
+                if len(rec) > 3:
+                    paths.add(os.path.normcase(os.path.normpath(os.path.join(_ROOT, rec[3:]))))
+            _DIRTY_CACHE["set"] = paths
+        except (OSError, subprocess.SubprocessError, UnicodeDecodeError):
+            _DIRTY_CACHE["set"] = None
+    return _DIRTY_CACHE["set"]
+
+
+def _thumb_is_stale(src: str, dst: str) -> bool:
+    """サムネを書き直すか。★**更新時刻では決めない**(2026-10-31)。
+
+    CI の checkout ではファイルの mtime の順が偶然で決まり、図の PNG が数 ms 後に書かれると
+    「サムネが古い」と判定されて Linux の Pillow/libjpeg で作り直され、手元(Windows)で作った
+    JPEG とバイト列が違うので `regen_all --check` が落ちた(同じ 1 枚で 3 回、master は偶然通過)。
+    中身で決める: (1) 無ければ書く (2) JPEG の COM に元の図の SHA-256 があれば、それと一致しない
+    ときだけ書く (3) 記録の無い既存のサムネは、元の図が git で変更・未追跡のときだけ書く
+    (4) git の外では従来どおり更新時刻で決める。
+    """
+    if not os.path.exists(dst):
+        return True
+    from PIL import Image
+    with Image.open(dst) as im:
+        com = im.info.get("comment") or b""
+    if isinstance(com, bytes):
+        com = com.decode("ascii", "replace")
+    if com.startswith(_THUMB_TAG):
+        return com[len(_THUMB_TAG):] != _sha256(src)
+    dirty = _dirty_assets()
+    if dirty is None:
+        return os.path.getmtime(dst) < os.path.getmtime(src)
+    return os.path.normcase(os.path.normpath(src)) in dirty
 
 
 MONTAGE = "_hero_montage.jpg"

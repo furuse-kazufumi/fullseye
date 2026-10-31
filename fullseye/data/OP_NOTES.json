@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3607,
- "n_notes": 3613,
+ "n_ops": 3609,
+ "n_notes": 3615,
  "notes": {
   "vol_dilate": [
    {
@@ -35110,6 +35110,24 @@
     "in": "table",
     "out": "table",
     "path": "docs/ops/spc/pod/pod_hitmiss_fit.md"
+   }
+  ],
+  "proportion_interval": [
+   {
+    "op": "proportion_interval",
+    "dim": "spc",
+    "category": "pod",
+    "out": "table",
+    "path": "docs/ops/spc/pod/proportion_interval.md"
+   }
+  ],
+  "trials_for_all_success": [
+   {
+    "op": "trials_for_all_success",
+    "dim": "spc",
+    "category": "pod",
+    "out": "scalar",
+    "path": "docs/ops/spc/pod/trials_for_all_success.md"
    }
   ],
   "gum_expanded": [

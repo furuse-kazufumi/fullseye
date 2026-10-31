@@ -732,5 +732,25 @@
   "en": "A binomial-proportion confidence interval obtained by inverting the normal score test, generally more reliable than the Wald interval for small samples.",
   "source": "Wilson, Journal of the American Statistical Association 22(158), 1927",
   "review": false
+ },
+ "gum": {
+  "match": [
+   "GUM",
+   "Guide to the Expression of Uncertainty in Measurement"
+  ],
+  "ja": "測定の不確かさの見積もり方と書き方を定めた国際的な指針。入力ごとのばらつきを合成して結果の幅を示す。",
+  "en": "The international guide on how to evaluate and report measurement uncertainty, combining the spread of each input into the uncertainty of the result.",
+  "source": "JCGM 100:2008, Evaluation of measurement data — Guide to the expression of uncertainty in measurement",
+  "review": false
+ },
+ "nyquist": {
+  "match": [
+   "Nyquist",
+   "ナイキスト"
+  ],
+  "ja": "標本化の間隔で表せる最も高い周波数。画素の間隔なら 1 画素あたり半周期で、それより細かい模様は折り返して別の模様に見える。",
+  "en": "The highest frequency a sampling grid can represent: half a cycle per sample. Finer patterns fold back and appear as a different, coarser pattern.",
+  "source": "Shannon, Communication in the Presence of Noise, Proc. IRE 37, 1949",
+  "review": false
  }
 }

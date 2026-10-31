@@ -1,4 +1,4 @@
-{"generated_by": "tools/gen_mcp_data.py", "probe": "CPU, a=b=0.5, representative input", "n_ops": 3613, "ops": [
+{"generated_by": "tools/gen_mcp_data.py", "probe": "CPU, a=b=0.5, representative input", "n_ops": 3615, "ops": [
 {"name":"a3_distribution","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"aabb","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"abbe_number","status":"not_in_registry","reason":"not executable by fullseye.apply"},
@@ -2223,6 +2223,7 @@
 {"name":"projective_trans_image","status":"ok","in_sort":"image","out_sort":"image","probe_input":"op_probe.sample_input('image', structured=True)"},
 {"name":"projective_trans_image_size","status":"ok","in_sort":"image","out_sort":"image","probe_input":"op_probe.sample_input('image', structured=True)"},
 {"name":"projective_trans_region","status":"ok","in_sort":"region","out_sort":"region","probe_input":"op_probe.sample_input('region', structured=True)"},
+{"name":"proportion_interval","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"pruning","status":"ok","in_sort":"region","out_sort":"region","probe_input":"op_probe.sample_input('region', structured=True)"},
 {"name":"psd_welch","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"psf_fit","status":"not_in_registry","reason":"not executable by fullseye.apply"},
@@ -3234,6 +3235,7 @@
 {"name":"tree_morphometry","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"tree_run_length","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"tree_sholl","status":"not_in_registry","reason":"not executable by fullseye.apply"},
+{"name":"trials_for_all_success","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"triangulate","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"triangulate_column","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"triangulate_dlt","status":"not_in_registry","reason":"not executable by fullseye.apply"},

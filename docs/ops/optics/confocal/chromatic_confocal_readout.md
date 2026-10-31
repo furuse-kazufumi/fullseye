@@ -25,8 +25,9 @@ layer_material: 上の 2 ピークのあいだの層の材料(材料表の名前
 
   * ``thickness_paraxial_um`` = n(λ₂) × (z₂ − z₁) —— 見かけの厚さ × 屈折率(近軸)。λ₂ は下の面の
     ピーク波長(下の面に焦点を結んでいるのはこの色なので、群屈折率でなく位相屈折率)。
-  * ``thickness_um`` = n(λ₂)(z₂ − z₁) / (1 − g/2)、g = 1/n − cos α/√(n² − sin²α)(平板が足す縦球面
-    収差を厚さあたりで、応答のピークがその半分だけ深くずれる分を戻す。NA は λ₂ の較正の NA)。
+  * ``thickness_um`` = n(λ₂)(z₂ − z₁) / (1 − n·g/2)、g = 1/n − cos α/√(n² − sin²α)。
+    ``z`` と LSA は空気中で鏡を動かした実空間座標であり、平板の LSA ``t·g`` の半分だけ
+    応答ピークが動く。NA は λ₂ の較正の NA。
 
 返り値: ``heights_um``(各ピークの z、遠いほど大)/ ``wavelengths_nm`` / 層を指定したとき
 ``apparent_thickness_um`` / ``n_layer`` / ``na`` / ``thickness_paraxial_um`` / ``thickness_um``。

@@ -1,10 +1,33 @@
 {
-  "fft_vs_pupil_max_abs_error": 6.661338147750939e-16,
-  "five_percent_boundary_rms_waves": {
+  "fft_fixed_axis_vs_pupil_max_abs_error": 6.661338147750939e-16,
+  "five_percent_boundary_fixed_axis_rms_waves": {
     "defocus": 0.12833333333333333,
     "astigmatism": 0.20124999999999998,
     "coma": 0.16333333333333333,
     "spherical": 0.14583333333333331
   },
-  "conditions": 484
+  "coma_definition_check": {
+    "0.2": {
+      "fixed_axis_ratio": 0.18156187879872301,
+      "same_plane_peak_ratio": 0.21781193115484346,
+      "peak_shift_px": [
+        0,
+        -8
+      ]
+    },
+    "0.3": {
+      "fixed_axis_ratio": 0.01268719246411451,
+      "same_plane_peak_ratio": 0.1436763318823207,
+      "peak_shift_px": [
+        0,
+        -17
+      ]
+    }
+  },
+  "conditions": 484,
+  "definitions": {
+    "fixed_axis_ratio": "intensity at the unaberrated-axis sample / ideal peak",
+    "same_plane_peak_ratio": "maximum intensity in the fixed image plane / ideal peak",
+    "best_focus_ratio": "not computed in this fixed-plane sweep"
+  }
 }
