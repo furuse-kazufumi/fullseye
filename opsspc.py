@@ -121,6 +121,8 @@ _CATALOG = {
     # ★2-D の橋(tb_*)は架からない: 出力の table は backends_typed.TYPE_TO_SORT に
     #   写らないので _OP_BRIDGE_SKIP に入れる必要も無い(2026-10-12 に確認して決めた)。
     "pod": [
+        ("proportion_interval", "pod", [], "table"),
+        ("trials_for_all_success", "pod", [], "scalar"),
         ("pod_ahat_fit", "pod", ["table"], "table"),
         ("pod_from_ahat", "pod", ["table"], "table"),
         ("pod_hitmiss_fit", "pod", ["table"], "table"),

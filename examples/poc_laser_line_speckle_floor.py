@@ -53,6 +53,7 @@ import sys
 import time
 
 import numpy as np
+from scipy.special import ndtr
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
 import examplefig as figs  # noqa: E402
@@ -151,6 +152,13 @@ def block_centroid(img, block):
     b = img[:, : nb * block].reshape(ny, nb, block).sum(axis=2)
     r = np.arange(ny, dtype=float)[:, None]
     return (b * r).sum(axis=0) / b.sum(axis=0)
+
+
+def sampled_gaussian_centroid(center=0.23, sigma=0.3, pitch=1.0, extent=12):
+    """Centroid after exact pixel integration and assignment to pixel centres."""
+    x=np.arange(-extent,extent+1,dtype=float)*pitch
+    w=ndtr((x+pitch/2-center)/sigma)-ndtr((x-pitch/2-center)/sigma)
+    return float(np.sum(x*w)/np.sum(w))
 
 
 def rms_um(rows, truth, deg=THETA_DEG, pix=PIX_UM):
@@ -326,6 +334,15 @@ def main():
             check(diff < 1e-9 and cvis < 0.9,
                   "画素を 4 倍にすると見た目の粒は鈍るが、重心は 1e-9 µm も動かない",
                   "コントラスト %.2f、差 %.1e µm" % (cvis, diff))
+
+    pitches=np.array([.5,1.,2.]); sampled=np.array([sampled_gaussian_centroid(pitch=p) for p in pitches])
+    print("  sampling counterexample (center=.23, sigma=.3): " + " -> ".join("%.3f" % v for v in sampled))
+    check(np.allclose(sampled,[.22997,.17659,.01023],atol=6e-4),
+          "pixel-centre sampling does not generally preserve centroid", "pitch .5/1/2 -> " + "/".join("%.3f"%v for v in sampled))
+    if figs.enabled():
+        figs.save_plot("sampling_counterexample",[("sampled centroid",pitches,sampled),("continuous centre",pitches,np.full(3,.23))],
+                       xlabel="pixel pitch",ylabel="centroid",styles=[None,"dashed"],colors=["emphasis","reference"],
+                       caption="Analytically integrated Gaussian (centre 0.23, sigma 0.3): assigning each integral to a pixel centre introduces phase bias when undersampled.")
 
     elapsed = time.time() - t0
     cpu = time.process_time() - c0

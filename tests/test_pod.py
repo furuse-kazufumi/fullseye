@@ -480,7 +480,8 @@ def test_the_ledger_lists_every_op_and_nothing_is_missing():
     assert not opsspc.missing()
     for name in listed:
         assert opsspc.info(name)["module"] == "pod"
-        assert opsspc.info(name)["out"] == "table"
+        expected = "scalar" if name == "trials_for_all_success" else "table"
+        assert opsspc.info(name)["out"] == expected
         assert len(opsspc.info(name)["doc"]) >= 20
 
 
@@ -494,7 +495,7 @@ def test_every_op_is_reachable_from_the_public_tier():
 def test_the_typed_catalog_declares_the_family():
     import typed_catalog as tc
 
-    rows = {r[0]: r for r in tc.catalog() if r[0].startswith("pod_")}
+    rows = {r[0]: r for r in tc.catalog() if r[0] in pod.__all__}
     assert set(rows) == set(pod.__all__)
     assert rows["pod_false_call"][2] == ["signal"]
     assert rows["pod_decision_tradeoff"][2] == ["table", "signal"]
@@ -510,7 +511,10 @@ def test_the_fuzzer_builds_arguments_that_actually_compute():
         assert name in cf.OP_ARG_BUILDERS, name
         args, kw = cf.OP_ARG_BUILDERS[name](None, np.random.default_rng(0))
         out = getattr(pod, name)(*args, **kw)
-        assert cf.TYPE_CHECKS["table"](out)
+        if name == "trials_for_all_success":
+            assert isinstance(out, int) and out >= 1
+        else:
+            assert cf.TYPE_CHECKS["table"](out)
     fit = pod.pod_ahat_fit(*cf.OP_ARG_BUILDERS["pod_ahat_fit"](None, np.random.default_rng(0))[0],
                            **cf.OP_ARG_BUILDERS["pod_ahat_fit"](None, np.random.default_rng(0))[1])
     assert fit["n_left"] > 0 and fit["n_right"] > 0, "打ち切りの項が探針で一度も計算されない"

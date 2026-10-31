@@ -4,7 +4,7 @@ dim: optics
 category: plenoptic
 in: image2d × table
 out: lightfield
-examples: [plenoptic_decode_pipeline]
+examples: [plenoptic_decode_pipeline, poc_plenoptic_camera]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.8.1  # fullseye lib version this note was generated for
@@ -47,6 +47,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [plenoptic_decode_pipeline](../../../../examples/plenoptic_decode_pipeline.py) — `py -3.11 examples/plenoptic_decode_pipeline.py`
+- [poc_plenoptic_camera](../../../../examples/poc_plenoptic_camera.py) — `py -3.11 examples/poc_plenoptic_camera.py`
 
 ## 型が繋がる次の op(`lightfield` を入力に取れる)
 

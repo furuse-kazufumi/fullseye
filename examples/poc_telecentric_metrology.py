@@ -30,7 +30,8 @@
      テレセンは −0.013 %。オートフォーカスで合わせ直しても倍率は m = −f/(s − f) で +2.6 % 動き、戻らない
      (★この一致 6e-16 は近軸どうしの比較なので当然で、実光線の一致は上の 7e-5 のほう)。
   3. **段差のある部品を描いて測る**: ピン(高さ 5 mm)・ダイ(0.7 mm、電極つき)・穴(深さ 5 mm)を ``render3d`` で、
-     レンズの入射瞳に置いたピンホール(``lens_equivalent_pinhole``)から描き、ぼけは光線束の RMS(``defocus_spot_vs_depth``)
+     レンズの入射瞳に置いた近軸の代理ピンホール(``lens_equivalent_pinhole``)から描く。この章はレンズ処方の検証ではない。
+     ぼけは光線束の RMS(``defocus_spot_vs_depth``)
      で掛ける。門: 画像から測ったピン上面の径は閉形式 D·L/(L − 5 mm − Δz) と 7e-4 —— 通常 f = 25 mm は真値 1.6 mm を
      6.9 % 大きく読み、ワークが 6 mm 上下すると読みが 8.6 % 動く。穴の底が見える割合 0.948 は 2 つの円の重なりの閉形式
      0.949 と一致し、内壁が 2,053 画素見える。両側テレセンでは底が全部見え、内壁は 0 画素。
@@ -829,7 +830,7 @@ def chapter_dof(L):
     c_obj = 0.022                                   # 許すぼけの直径 [mm、物体側](5.5 µm 画素 × 2 / |m| 0.5)
     na_opt = 1.22 * lam / c_obj
     NUMBERS.update({"na_opt": na_opt, "dof_at_opt": c_obj / na_opt})
-    print("   許すぼけ c = 22 µm(物体側)を回折の円の直径 1.22λ/NA が超えない最小の NA = %.4f、そのとき被写界深度 c/NA = %.2f mm が上限"
+    print("   許すぼけ c = 22 µm(物体側)を回折の円の直径 1.22λ/NA が超えない最小の NA = %.4f。c/NA = %.2f mm は幾何学的必要条件の上限(同じ予算を回折とdefocusに二重使用し、同時達成値ではない)"
           "(NA 0.01 なら深さ %.1f mm だが回折の円が %.0f µm)" % (na_opt, c_obj / na_opt, c_obj / 0.01, 1.22 * lam / 0.01 * 1000))
     return rows
 
@@ -1043,7 +1044,7 @@ def make_figures(L, chief, depth, rend, sweep, field, dof):
         sty.append("dashed")
         col.append("reference")
     figs.save_plot("defocus_vs_na", ser, xlabel="物体の高さ Δz [mm]", ylabel="像面のぼけ RMS [µm]", styles=sty, colors=col,
-                   title="NA を倍にすると深さは半分(22 µm を分解する NA %.3f で深さ %.2f mm)" % (NUMBERS["na_opt"], NUMBERS["dof_at_opt"]),
+                   title="幾何学的必要条件の上限: NA %.3f で c/NA = %.2f mm" % (NUMBERS["na_opt"], NUMBERS["dof_at_opt"]),
                    caption="両側テレセンで NA だけを変えた。破線は一様な円の光束の RMS。NA 0.02 では最良の焦点が近軸の焦点から"
                            "ずれ(球面収差)、Δz = 0 の床も上がる —— NA を上げると深さだけでなく収差の余裕も減る。")
 
@@ -1490,7 +1491,7 @@ def make_real_figures(real):
         tiles += [im, np.ones((im.shape[0], 8, 3))]
     figs.save("real_resin_sphere", np.concatenate(tiles[:-1], 1),
               "【実画像】樹脂の 3D プリント球(公称半径 2.5 mm)を 2 台のテレセンで撮った生画像(1/2 に縮小)。円は輪郭を"
-              "閾値 0.015(緑)/ 0.03(黄)/ 0.06(橙)で取って当てたもの。陰の側の縁が暗く、閾値で半径が 8 %% 動くので、"
+              "閾値 0.015(緑)/ 0.03(黄)/ 0.06(橙)で取って当てたもの。陰の側の縁が暗く、閾値で半径が 8 % 動くので、"
               "この球は寸法の真値にならない(論文の計量級の球の生画像は公開データに無い)。" + REAL_SOURCE_SHORT, source=REAL_SOURCE)
 
 
