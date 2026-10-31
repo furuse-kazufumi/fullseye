@@ -1094,8 +1094,8 @@
    "caption_ja": "DNA 量 D と面積 A を別々のばらつきで撒いた蛍光核で、倍数性を面積と積分輝度から分けた図。真の面積でも誤分類 15.4 %、積分輝度は 0 %。背景を引き忘れると分類は生き残ったまま DNA 指数だけが 2.115 → 1.702(-20 %)壊れる ―― 分類だけを見ていたら気づけない。",
    "caption_en": "Fluorescent nuclei whose DNA content D and area A were drawn with independent spread, classified by area and by integrated intensity. Even the true area misclassifies 15.4 %; integrated intensity misclassifies 0 %. Forgetting to subtract background leaves the classification intact while the DNA index alone breaks from 2.115 to 1.702 (-20 %) — invisible if you only watch the classification.",
    "run": "py -3.11 examples/poc_nuclei_ploidy.py",
-   "lead_ja": "この展示は「蛍光核の積分輝度から倍数性を出す」を扱い、「面積では分かれない」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。",
-   "lead_en": "This exhibit covers “ploidy from integrated nuclear brightness”; the focus is “area cannot separate it”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer. The figure shows how the result and its error change across the tested conditions."
+   "lead_ja": "蛍光核の積分輝度から倍数性を出すでは、面積では分かれない。別々を含む計算データを作り、誤分類と背景の関係を測った。指数と対象の差を見ると、面積では分かれないことが分かる。",
+   "lead_en": "A comparison of Ploidy From Integrated Nuclear the method matters when Area Cannot Separate It. A computed data case links fluorescent, nuclei, and whose. The contrast between content and were shows that area Cannot Separate It."
   },
   {
    "id": "poc_pallet_load_utilization",
@@ -1106,8 +1106,8 @@
    "title_en": "Pallet load utilization — one number gives voids and overhang the same value",
    "caption_ja": "1200 x 1000 mm のパレットに、中身が正反対の 2 つの荷を積んだ。荷 A は上から見えない 400 x 400 x 420 mm の空洞と幅 20 / 50 / 120 mm の隙間だらけ、荷 B は詰まっているが 90 mm はみ出して天端が制限 1800 mm を 100 mm 超える。中段の高さを閉形式で 995.0 mm に解くと、見かけの積載率は 62.65 % と 62.67 %(差 0.02 pt)で一致する——同じ数字なのに A は 3.11 pt が見えない空洞、B ははみ出し 2.10 pt + 高さ超過 0.58 pt で、処置は「積み直す」と「降ろす」で逆。荷を 1 個の外形とみなすゼロ点は荷 B で AABB 113.90 % / OBB 166.44 % と 100 % を超え、真の中身と押し出し形の IoU は 0.9493 と 1.0000 でどちらも「よく合っている」としか読めない。高さマップのセル寸法という 1 つのつまみが逆向きに 2 通り壊し、幅 w の隙間は max(0, 1 - g/w) で消え(g = 40 mm で 20 mm の隙間は完全に消失、g = w ちょうどは位相で全か無かに割れて 5 回に 1 回だけ全部見える)、一方で 1 mm も出ていない荷 A に周長 x g/2 x 天端 の偽はみ出しが立ち、g = 40 mm からは本当に出ている荷 B の 0.0450 m3 を上回る。",
    "caption_en": "Two loads with opposite defects sit on a 1200 x 1000 mm pallet: load A hides a 400 x 400 x 420 mm cavity under a bridging layer plus 20 / 50 / 120 mm slots, while load B is solid but overhangs by 90 mm and tops out 100 mm above the 1800 mm limit. Solving the middle-layer height in closed form (995.0 mm) makes their apparent utilization identical — 62.65 % vs 62.67 %, a 0.02 pt gap — yet A's 3.11 pt is invisible void and B's is 2.10 pt overhang plus 0.58 pt over-height, so one load gets restacked and the other gets rejected. Treating the load as one envelope reports 113.90 % (AABB) and 166.44 % (PCA box) for load B, and the IoU between the true solid and the top-down extrusion is 0.9493 / 1.0000 — both read as 'good agreement'. One knob, the height-map cell size, breaks the answer in two opposite directions: a slot of width w survives only as max(0, 1 - g/w) (a 20 mm slot is gone at g = 40 mm, and at g = w exactly the grid phase decides all-or-nothing — 1 alignment in 5 sees everything), while a load that overhangs by nothing acquires a false overhang of perimeter x g/2 x height that overtakes load B's genuine 0.0450 m3 from g = 40 mm on.",
-   "lead_ja": "この展示は「パレットの積載率」を扱い、「1 つの数字が「隙間」と「はみ出し」を同じ値にする」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。",
-   "lead_en": "This exhibit covers “pallet load utilization”; the focus is “one number gives voids and overhang the same value”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer. The figure shows how the result and its error change across the tested conditions."
+   "lead_ja": "パレットの積載率の評価では、1 つの数字が「隙間」と「はみ出し」を同じ値にする。計算データの中身を使い、正反対と空洞を別々に確かめた。天端と制限の差を見ると、 つの数字が「隙間」と「はみ出し」を同じ値にすることが分かる。",
+   "lead_en": "Using Pallet load utilization in practice is difficult because one number gives voids and overhang the. The test uses loads from computed data to separate opposite from defects. The contrast between hides and cavity shows that one number gives voids and overhang the same value."
   },
   {
    "id": "poc_panorama_drift",
@@ -1119,8 +1119,8 @@
    "caption_ja": "既知の回転列で円筒パノラマから 36 枚を切り出し、隣接ペアの鎖で一周させた図。隣の継ぎ目は 0.12 px なのに閉じる 1 本だけ 1.5 px(13 倍)開く。埋もれていた `bundle_adjust_mosaic` は鎖を上回らず(30/36 枚が単位行列のまま)、姿勢の最悪誤差は鎖 1.65 → 大域最適化 0.56 px。",
    "caption_en": "36 frames cut from a cylindrical panorama by a known rotation sequence and chained pairwise around a full turn. Adjacent seams agree to 0.12 px, yet the one closing seam opens by 1.5 px (13x). The buried `bundle_adjust_mosaic` did not beat the chain (30 of 36 frames were left as the identity); the worst pose error goes from 1.65 px for the chain to 0.56 px with global optimisation.",
    "run": "py -3.11 examples/poc_panorama_drift.py",
-   "lead_ja": "この展示は「隣どうしを鎖でつなぐと、一周して元に戻れない」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。",
-   "lead_en": "This exhibit examines “chain the neighbours together and you cannot get back where…”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer. The figure shows how the result and its error change across the tested conditions."
+   "lead_ja": "隣どうしを鎖でつなぐとの評価では、一周して元に戻れない。計算データの回転列を使い、円筒パノラマと隣接ペアを別々に確かめた。上回と姿勢の差を見ると、一周して元に戻れないことが分かる。",
+   "lead_en": "For Chain the Neighbours Together and You Cannot Get, the measurement can become unreliable. The test uses frames from computed data to separate cylindrical from panorama. The contrast between rotation and sequence shows that the measurement can become unreliable."
   },
   {
    "id": "poc_particle_sizing",
@@ -1132,8 +1132,8 @@
    "caption_ja": "粒子を撒いた合成画像から D10 / D50 / D90 を出し、融合(大きい側へ)と縁切れ(小さい側へ)を別々に数えた図。面積率 13.8 % で D50 誤差 +0.55 % ―― 融合 28 件と縁切れ 19 件が釣り合っているだけ。個数基準と面積基準では同じ塊から D50 が 26.9 µm と 44.7 µm(1.66 倍)。",
    "caption_en": "D10 / D50 / D90 from a synthetic scatter of particles, with merges (pulling large) and edge cuts (pulling small) counted separately. At an area fraction of 13.8 % the D50 error is +0.55 % — because 28 merges and 19 edge cuts happen to balance. Number- and area-weighting give D50 values of 26.9 and 44.7 µm (1.66x) from the same blobs.",
    "run": "py -3.11 examples/poc_particle_sizing.py",
-   "lead_ja": "この展示は「粒度分布を画像から測る」を扱い、「融合と縁切れが逆向きに効き、途中で打ち消し合う」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。",
-   "lead_en": "This exhibit covers “particle size distribution from images”; the focus is “merging and edge cuts pull opposite ways and cancel”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer."
+   "lead_ja": "粒度分布を画像から測るとき、融合と縁切れが逆向きに効き、途中で打ち消し合う。合成データで粒子と合成画像を扱い、別々がどう変わるかを調べた。面積率と個数基準の差を見ると、融合と縁切れが逆向きに効き、途中で打ち消し合うことが分かる。",
+   "lead_en": "When measuring Particle Size Distribution From Images, Merging and Edge Cuts Pull Opposite Ways and. The synthetic data compares scatter with particles and tracks merges. The contrast between counted and separately shows that merging and Edge Cuts Pull Opposite Ways and Cancel."
   },
   {
    "id": "poc_particle_tracking",
@@ -1145,8 +1145,8 @@
    "caption_ja": "400 個の粒子の動画を追跡し、軌跡から拡散係数 D を読んだ図。曖昧な誤リンクは D を 0.925 倍に下げ、欠測による誤リンクは同じ動画で 3.429 倍に上げる ―― 誤り率 1 本では向きが決まらない。効くのは 1 対 1 制約ではなく、上限距離のゲート 1 行(3.429 → 1.304)。",
    "caption_en": "A video of 400 particles tracked, with the diffusion coefficient D read from the trajectories. Ambiguous mislinks pull D down to 0.925x; mislinks caused by missing targets push it up to 3.429x in the same video — one error rate cannot tell you the direction. What helps is not a one-to-one constraint but a single line imposing a maximum link distance (3.429 → 1.304).",
    "run": "py -3.11 examples/poc_particle_tracking.py",
-   "lead_ja": "この展示は「粒子追跡を (行, 列, 時刻) の体積として測る」を扱い、「誤リンクの向きは 1 種類ではない」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。",
-   "lead_en": "This exhibit covers “particle tracking as a (row, column, time) volume”; the focus is “mislinks come in two directions”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer. The figure shows how the result and its error change across the tested conditions."
+   "lead_ja": "粒子追跡を の体積として測る場面では、誤リンクの向きは 1 種類ではない。計算データに動画を用意し、軌跡と拡散係数を比べた。曖昧と欠測の差を見ると、誤リンクの向きは 種類ではないことが分かる。",
+   "lead_en": "When measuring Particle Tracking as a Volume, Mislinks Come in Two Directions. We place video in computed data, then compare particles and tracked. The contrast between diffusion and coefficient shows that mislinks Come in Two Directions."
   },
   {
    "id": "poc_photoelasticity",
@@ -1158,8 +1158,8 @@
    "caption_ja": "円板圧縮の閉形式応力場(中心 4.2441 MPa、縞次数 2.380)を Mueller 行列(偏光変化を表す4×4行列)の op で偏光像にし、縞から応力へ戻す図。op の偏光系は教科書式と 125 通りで最大差 2.2e-16。縞次数が 0.5 を超える 84.2 % の画素で位相が巻き、巻き戻しが最初に壊れるのは応力の大きい所ではなく、変調が落ちる等方点。",
    "caption_en": "The closed-form stress field of a diametrally loaded disc (4.2441 MPa at the centre, fringe order 2.380) turned into polariscope images by the Mueller-matrix (4-by-4 polarization-transfer matrix) ops and read back to stress. The op-built polariscope matches the textbook formula to 2.2e-16 across 125 cases. Phase wraps in the 84.2 % of pixels above fringe order 0.5, and unwrapping breaks first not where stress is highest but at the isotropic point, where modulation vanishes.",
    "run": "py -3.11 examples/poc_photoelasticity.py",
-   "lead_ja": "この展示は「光弾性で応力を測る」を扱い、「巻き戻しが最初に失敗するのは等方点」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。",
-   "lead_en": "This exhibit covers “stress by photoelasticity”; the focus is “unwrapping fails first at the isotropic point”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer. The figure shows how the result and its error change across the tested conditions."
+   "lead_ja": "光弾性で応力を測るとき、巻き戻しが最初に失敗するのは等方点。円板圧縮を含む計算データを作り、閉形式応力場と行列の関係を測った。手法と偏光像の差を見ると、巻き戻しが最初に失敗するのは等方点ことが分かる。",
+   "lead_en": "A comparison of Stress by Photoelasticity matters when Unwrapping Fails First at the Isotropic Point. A computed data case links closed-form, field, and diametrally. The contrast between loaded and disc shows that unwrapping Fails First at the Isotropic Point."
   },
   {
    "id": "poc_pigment_unmixing",
@@ -1171,8 +1171,8 @@
    "caption_ja": "地塗り・下絵・上塗り・褪色を重ねた分光キューブを合成し、層を分離した図。可視だけを 16 バンドに割っても RGB と同じ(再現率 0.118 対 0.119)で、勝ったのは近赤外を入れたこと。同じ検出器が群青で AUC 1.000、アズライトで 0.630、剥落部で 0.013 ―― 平均すると全部消える。褪色前の色の復元は ΔE00 16.79 → 16.46 で、ゼロ点にほぼ勝てなかった。",
    "caption_en": "A spectral cube of ground, underdrawing, glaze and fading stacked in layers, then unmixed. Splitting the visible range into 16 bands does no better than RGB (recall 0.118 versus 0.119); what won was adding near-infrared. The same detector scores an AUC of 1.000 on ultramarine, 0.630 on azurite and 0.013 on losses — averaged, all of that vanishes. Restoring the unfaded colour barely beat the null, ΔE00 16.79 → 16.46.",
    "run": "py -3.11 examples/poc_pigment_unmixing.py",
-   "lead_ja": "この展示は「多波長で層を剥がす」を扱い、「下絵・地塗り・上塗り・褪色を、真値を握ったまま分離する」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。",
-   "lead_en": "This exhibit covers “peeling layers with many wavelengths”; the focus is “underdrawing, ground, glaze and fading, truth in hand”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer."
+   "lead_ja": "多波長で層を剥がすでは、下絵・地塗り・上塗り・褪色を、真値を握ったまま分離する。合成データで分光キューブと可視を扱い、バンドがどう変わるかを調べた。近赤外と検出器の差を見ると、下絵・地塗り・上塗り・褪色を、真値を握ったまま分離することが分かる。",
+   "lead_en": "Using Peeling Layers With Many Wavelengths in practice is difficult because Underdrawing, Ground, Glaze. The computed data compares spectral with cube and tracks stacked. The contrast between then and unmixed shows that underdrawing, Ground, Glaze and Fading, Truth in Hand."
   },
   {
    "id": "poc_pipe_wall_loss",
@@ -1184,8 +1184,8 @@
    "caption_ja": "合成の管に孔食・全周減肉・管底腐食・溶接ビード・楕円化・曲がりを既知の深さで仕込み、管内を走る距離センサの軸を意図的にずらして展開図を作りました。軸が 4.0 mm ずれるだけで腐食ゼロの真円の管の 44.8 % が減肉と判定され(中心のずれは振幅 e の 1 周期の正弦波になる、という幾何の予測との差は 1.84 ポイント)、偽の減肉体積は本物の孔食の 149.9 倍になります。1 周期を消せば偽物は消えますが、下水管でいちばん多い管底の腐食もその 79 % が同じ 1 周期に居るので検出率が 100.0 → 34.4 % へ落ち、軸の動きを物理どおり(直線とたわみ)に縛って初めて両方が残ります。",
    "caption_en": "A synthetic pipe carries a pit, a full-circumference thinning band, invert corrosion, a weld bead, ovality and a sagging axis, all at known depths; the in-pipe range sensor is then deliberately run off-axis before the bore is unwrapped. A 4.0 mm axis offset alone flags 44.8 % of a corrosion-free round pipe as wall loss — within 1.84 points of the geometric prediction that an offset e appears as a one-cycle sinusoid of amplitude e — and the fictitious loss volume is 149.9 times the real pit. Removing the one-cycle term removes the fiction, but 79 % of invert corrosion (the commonest defect in sewers) lives in that same harmonic, so its detection falls from 100.0 % to 34.4 %; only constraining the axis the way physics does (a straight line plus a sag) keeps both.",
    "run": "py -3.11 examples/poc_pipe_wall_loss.py",
-   "lead_ja": "この展示は「配管内面の減肉を展開図で測る」を扱い、「軸を決めた分だけ、管底の腐食が消える」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。",
-   "lead_en": "This exhibit covers “pipe wall loss on the unwrapped map”; the focus is “the axis you choose eats the recover corrosion”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer. The figure shows how the result and its error change across the tested conditions."
+   "lead_ja": "配管内面の減肉を展開図で測る場面では、軸を決めた分だけ、管底の腐食が消える。合成データの孔食を使い、全周減肉と管底腐食を別々に確かめた。溶接ビードと楕円化の差を見ると、軸を決めた分だけ、管底の腐食が消えることが分かる。",
+   "lead_en": "For Pipe Wall Loss on the Unwrapped Map, The Axis You Choose Eats the the method Corrosion. The test uses carries from synthetic data to separate full-circumference from band. The contrast between weld and bead shows that the Axis You Choose Eats the the method Corrosion."
   },
   {
    "id": "poc_polarization_specular",
@@ -1197,8 +1197,8 @@
    "caption_ja": "拡散と鏡面を s/p 成分で合成し、フレネルの式から偏光度を出して分離結果を採点した図。偏光を使う手は入射角 20 度では 1.2 倍しか勝たない。拡散成分の誤差は閉形式 R_p·E に一致してブリュースター角 56.31 度で 0 ―― `polarization_separate` の拡散はその分だけ系統的に大きい。",
    "caption_en": "Diffuse and specular components synthesised as s/p terms with the degree of polarisation from the Fresnel equations, and the separation scored against them. At 20 degrees of incidence the polarisation method wins by only 1.2x. The diffuse error matches the closed form R_p·E exactly and vanishes at the Brewster angle of 56.31 degrees — the diffuse term of `polarization_separate` is systematically high by that amount.",
    "run": "py -3.11 examples/poc_polarization_specular.py",
-   "lead_ja": "この展示は「偏光で鏡面反射を剥がす」を扱い、「フレネルの式で真値を作り、分離結果を突き合わせる」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。",
-   "lead_en": "This exhibit covers “stripping specular reflection with polarisation”; the focus is “truth from the fresnel equations”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer. The figure shows how the result and its error change across the tested conditions."
+   "lead_ja": "偏光で鏡面反射を剥がすの評価では、フレネルの式で真値を作り、分離結果を突き合わせる。合成データに拡散を用意し、成分と偏光度を比べた。採点と入射角の差を見ると、フレネルの式で真値を作り、分離結果を突き合わせることが分かる。",
+   "lead_en": "For Stripping Specular Reflection With Polarisation, Truth From the Fresnel Equations. We place diffuse in computed data, then compare components and synthesised. The contrast between terms and degree shows that truth From the Fresnel Equations."
   },
   {
    "id": "poc_print_registration",
@@ -1211,8 +1211,8 @@
    "title_en": "Print Misregistration from the Sheet — A Halftone Is a Lattice, So the Answer Is Not Unique",
    "caption_ja": "オフセット・ラベル印刷の**版ずれ**を刷り上がりから測る。CMYK 4 版に慣行のスクリーン角(C 15°/M 75°/Y 0°/K 45°、133 lpi、1200 dpi でピッチ 9.02 px)と既知のずれを仕込んだ図。★★**網点は格子なので、相関で出るのは版ずれ d ではなく d mod Λ_θ** —— 軸方向で |d| ≤ p/2 = 4.51 px、対角で p/√2 = 6.38 px を超えると折り返す。これは測る前に閉形式で書けて、4 版 × 37 点 = 148 点のうち**144 点で予測と実測の差が 0.1096 px 以内**。残り 4 点は基本セルの境界のタイ(セル余裕 ≤ 0.165 px)で、格子で簡約した残差なら全点が合う —— **推定器は間違えておらず、格子で等価な答えのどれかを返している**(独立な 2 つの推定器が同じ折り返しをする)。★★効き方が具体的に効く: 真値 9.64 px は公差 2.0 px の 4.8 倍なのに、スクリーン角の違いだけで版ごとに 1.09〜3.32 px に見え、**4 版中 2 版が「合格」に見える** —— 同じ紙が同じだけずれた結果。★ゼロ点(インク重心)は折り返さない代わりに**縮尺が狂う**。傾きは閉形式 k = 1-β(β = 下地だけのインク量 ÷ 実際のインク量)で予測 0.3983 に対し実測 0.3711(差 0.0272)。★予測していなかったものが出た: 直線からの外れ 0.9864 px は網点ピッチ周期のさざ波で、**窓の縁で網点の列が出入りする**ため —— テーパ窓の対照群で 0.0048 px に落ちて原因が確定した。★対照群 (a): FM(確率)スクリーンに替えるだけで誤差は全域で最大 0.0029 px、折り返しゼロ。**崖の原因は推定器ではなく AM 網点の周期性**(代償はコントラスト 0.91 倍)。★対照群 (b): レジストマークを含む窓は当たる(0.0823 px)が、紙の伸び 0.600 %・版の傾き 0.120° があると誤差は距離に比例し(0.006319 px/px)、公差を超えるのは**予測 316.5 px / 実測 322.5 px** から —— 紙の 44 % が公差外。★★物差しを 2 つ置くと勝者が入れ替わる: 精度 1 位は素の相関 0.0071 px なのに判定一致率は 67.6 % で最下位、低域通過は判定 89.2 % でも精度が 94 倍悪い。**鈍い方で代表元を選び、鋭い方で詰める二段**なら両方勝つ(0.0071 px / 94.6 %)。成立条件「粗の誤差 < 基本セルの半径 4.511 px」も実測で確かめ、**二段が壊れた 2 点はすべて粗の誤差がその半径を超えた点**だった。絵柄をベタに寄せると 6 点中 3 点で丸ごと 1 格子跳ぶ。★合成器そのものが罠だった: 1200 dpi / 150 lpi(ピッチがちょうど 8.00 px)だと**全網点の標本位相が揃う**ので0.5 px ずらすたびに重心が 1.4 px 跳ねる。133 lpi にして解消した —— **整数比を避けるのが本質**で、スーパーサンプリングでは直らない。★★用途外の op を当てたら自信満々で外した: `fs.frame_align` は `inlier_ratio` **1.00** / `rms_px` 0.645 を返しながら真値 (0.00, +1.30) に対して **80.85 px** 外す(しかもその答えは網点格子のベクトルですらない = 折り返しとは別種の失敗)。**この PoC の指摘で op 側を直した** —— docstring に「繰り返し構造には使えない」を測った数字つきで書き、投票の**2 番手の山 / 1 番手**を `vote_margin` として返すようにした。賛成率はどちらの場合も 1.00 だが、`vote_margin` は網点 **1.000** / 星野 **0.143** で区別できる。",
    "caption_en": "Measuring print misregistration from the printed sheet. Four CMYK plates carry the conventional screen angles (C 15, M 75, Y 0, K 45 degrees) at 133 lpi scanned at 1200 dpi, giving a screen pitch of 9.02 px, and each plate is displaced by a known amount. The central claim is geometry: a halftone is a lattice, so correlation recovers not the displacement d but d modulo the screen lattice. Along the lattice axes that limit is p/2 = 4.51 px and along the diagonal p/sqrt(2) = 6.38 px; beyond it the measurement folds back. Stated in closed form before measuring, it matches at 144 of 148 points (four plates by 37 sweep positions) to within 0.1096 px. The four exceptions are ties on the boundary of the fundamental cell, with at most 0.165 px of margin, and reducing modulo the lattice makes every point agree: the estimator is not wrong, it returns one of the lattice-equivalent answers, and two independent estimators fold identically. The consequence is concrete. A true displacement of 9.64 px, 4.8 times the 2.0 px tolerance, appears as 1.09 to 3.32 px depending only on the screen angle, so two of the four plates look like they pass — from one sheet displaced by one amount. The null baseline, the centroid of ink, does not fold but loses its scale: the slope follows the closed form k = 1 - beta, where beta is the ink of the flat background over the total ink, predicted 0.3983 against 0.3711 measured. One effect was not predicted at all: a 0.9864 px ripple at the screen pitch, caused by rows of dots entering and leaving at the window edge, which a tapered-window control drops to 0.0048 px. Switching to an FM (stochastic) screen removes the folding entirely, with an error of at most 0.0029 px across the whole sweep, which places the blame on the periodicity of the AM screen rather than on the estimator, at the cost of 0.91 times the contrast. A window containing a registration mark reads correctly to 0.0823 px, but with 0.600 % paper stretch and 0.120 degrees of plate rotation the error grows linearly with distance at 0.006319 px per px and exceeds tolerance from 316.5 px predicted, 322.5 px measured — 44 % of the sheet. Two rulers reverse the ranking: raw correlation is the most accurate at 0.0071 px yet agrees with the pass/fail verdict only 67.6 % of the time, while low-pass filtering agrees 89.2 % of the time at 94 times the error; a two-stage estimator that picks the representative with the blunt method and refines with the sharp one wins both, and it fails exactly at the points where the coarse error exceeded the cell radius of 4.511 px. The synthesiser itself was a trap: at 150 lpi and 1200 dpi the pitch is exactly 8.00 px, every dot samples in phase, and the centroid jumps 1.4 px for each 0.5 px of displacement — avoiding the integer ratio is the fix, not supersampling. Finally, an operator used outside its domain failed confidently: fs.frame_align returned inlier_ratio 1.00 and rms_px 0.645 while missing the true (0.00, +1.30) by 80.85 px, and the answer was not even a lattice vector. That finding was fixed in the operator: its docstring now records the measurement, and the vote histogram's runner-up over winner is returned as vote_margin — 1.000 on this halftone against 0.143 on a star field, where the agreement ratio is 1.00 in both.",
-   "lead_ja": "この展示は「印刷の版ずれを刷り上がりから測る」を扱い、「網点は格子なので、答えは 1 つに決まらない」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。",
-   "lead_en": "This exhibit covers “print misregistration from the sheet”; the focus is “a halftone is a lattice, so the answer is not unique”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer. The figure shows how the result and its error change across the tested conditions."
+   "lead_ja": "印刷の版ずれを刷り上がりから測るとき、網点は格子なので、答えは 1 つに決まらない。合成データでオフセットとラベル印刷を扱い、慣行がどう変わるかを調べた。スクリーン角と仕込の差を見ると、網点は格子なので、答えは つに決まらないことが分かる。",
+   "lead_en": "A comparison of Print Misregistration from the Sheet matters when A Halftone Is a Lattice, So the. The measured data compares measuring with printed and tracks four. The contrast between cmyk and plates shows that a Halftone Is a Lattice, So the Answer Is Not Unique."
   },
   {
    "id": "poc_print_warpage_risk",
@@ -1224,8 +1224,8 @@
    "caption_ja": "1 層あたり一定の収縮ひずみを仕込んだ合成形状 7 つを層に切り、断面積の履歴だけから梁の閉形式で反りを予測して、層を 1 枚ずつ生やす有限要素の実測と突き合わせた。最終形状だけを見る予測器は原理的にゼロ(2.712e-21)を返し、履歴の閉形式は 7 形状中 4 形状で 0.4 % 以内に当たるが、面積を長さ方向に均した瞬間に「どこに置いたか」が消える。層面積の履歴が 1 mm^2 も違わない三つ子でたわみは 0.4109 / 0.3809 / 0.3271 mm と 26 % 開き、基板を引き剥がす力に至っては 11.8 対 573.5 N の 48 倍違って合否まで割れた。",
    "caption_en": "Seven synthetic parts are sliced into layers with a known constant per-layer shrinkage strain; warpage is first predicted in closed form from the layer-area history alone, then measured with an incremental layer-birth finite-element solve. A predictor that looks only at the final shape returns exactly zero (2.712e-21), and the history-based closed form lands within 0.4 % on 4 of the 7 shapes — but the moment the area is averaged along the length, where the material sits is lost. Three parts whose layer-area histories match to the last square millimetre bow by 0.4109 / 0.3809 / 0.3271 mm (a 26 % spread), and the force peeling them off the build plate differs by 48x (11.8 vs 573.5 N), flipping the pass/fail verdict.",
    "run": "py -3.11 examples/poc_print_warpage_risk.py",
-   "lead_ja": "この展示は「積層の反りは層の履歴が決める」を扱い、「均した面積は置き場所を捨てる」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。",
-   "lead_en": "This exhibit covers “warpage lives in the layer history”; the focus is “averaging the area throws the placement away”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer. The figure shows how the result and its error change across the tested conditions."
+   "lead_ja": "積層の反りは層の履歴が決めるとき、均した面積は置き場所を捨てる。合成データで一定と収縮を扱い、仕込がどう変わるかを調べた。合成形状と断面積の差を見ると、均した面積は置き場所を捨てることが分かる。",
+   "lead_en": "In evaluating Warpage lives in the layer history, averaging the area throws the placement away. The synthetic data compares seven with parts and tracks sliced. The contrast between into and layers shows that averaging the area throws the placement away."
   },
   {
    "id": "poc_prnu_camera_fingerprint",
@@ -1237,8 +1237,8 @@
    "caption_ja": "2 台の仮想カメラに固定の感度むら K を仕込み、30 枚の残差から指紋を推定して照合した。清浄条件では同一カメラの PCE 中央値 2192 に対し別カメラ 15.7(AUC 1.000)だが、JPEG 相当の量子化は品質 50 相当で PCE を 3.6 % に、0.5× 縮小は 1.5 % に落とす ―― 消したのは幾何ではなく残差抽出器だった。K=0 のカメラでも同じ背景を 30 枚写せば PCE 1706 の「指紋」ができる。被写体は指紋に化ける。",
    "caption_en": "Two virtual cameras carry a fixed sensitivity pattern K; the fingerprint is estimated from 30 residuals and matched. Under clean conditions the same camera scores a median PCE of 2192 against 15.7 for the other (AUC 1.000), but JPEG-like quantisation at quality 50 cuts PCE to 3.6 % and a 0.5x downscale to 1.5 % — and what killed it was the residual extractor, not the geometry. A camera with K = 0 still yields a 'fingerprint' with PCE 1706 if the same background is shot 30 times: the scene turns into a fingerprint.",
    "run": "py -3.11 examples/poc_prnu_camera_fingerprint.py",
-   "lead_ja": "この展示は「カメラ指紋(PRNU)で「どのカメラで撮ったか」を当てる」を扱い、「指紋は枚数で育ち、保存ボタンで消える」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。",
-   "lead_en": "This exhibit covers “camera fingerprints (PRNU): which camera took this”; the focus is “the fingerprint grows with frame count and dies at the save button”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer."
+   "lead_ja": "カメラ指紋で「どのカメラで撮ったか」を当てる場面では、指紋は枚数で育ち、保存ボタンで消える。計算データの仮想カメラを使い、固定と感度を別々に確かめた。仕込と残差の差を見ると、指紋は枚数で育ち、保存ボタンで消えることが分かる。",
+   "lead_en": "When measuring Camera Fingerprints: Which Camera Took This?, The Fingerprint Grows With Frame Count and. The test uses virtual from computed data to separate cameras from carry. The contrast between fixed and sensitivity shows that the Fingerprint Grows With Frame Count and Dies at the Save Button."
   },
   {
    "id": "poc_pv_thermal_survey",
@@ -1250,8 +1250,8 @@
    "caption_ja": "定常熱収支の閉形式でメガソーラーのアレイを合成し、既知の故障(セル内ホットスポット・ストリング故障)と、故障ではない温度差(影・汚れ)を仕込んだ図。余剰発熱 320 W/m² のホットスポットは薄まる前 11.20 K なのにカメラには 4.23 K しか届かず、薄めているのは予想した熱伝導(×0.960)ではなくカメラ(×0.511)だった。電気的故障をひとつも置かない対照群でも、画像平均を基準にすると塊が 6 個上がる(健全 1・非故障の温度差 5)。崖はしきい値ではなく面積の門が決め、ホットスポットは風速 1.0 m/s で消える(面積基準の予測 1.1 m/s、ピーク基準の予測 3.0 m/s は外れ)。列間影は同じストリングの日向側を +4.68 K 熱くし、本物のストリング故障 +5.55 K との差は 0.87 K しかない。",
    "caption_en": "A megawatt PV array synthesised from a closed-form steady-state heat balance, seeded with known electrical faults (an in-cell hotspot, a bypassed string) and with real-but-not-electrical temperature differences (shading, soiling). A hotspot dissipating 320 W/m² is 11.20 K before dilution yet reaches the camera as 4.23 K — and the dilution comes not from the lateral conduction we expected (x0.960) but from the camera (x0.511). A control scene containing no electrical fault at all still raises 6 blobs when the whole-image mean is the reference (1 healthy, 5 non-fault). The cliff is set by the minimum-area gate rather than the threshold: the hotspot disappears at 1.0 m/s of wind, matching the area-based prediction of 1.1 m/s while the peak-based prediction of 3.0 m/s is wrong. Row-to-row shading warms the sunlit cells of the same string by +4.68 K, only 0.87 K away from the genuine string fault at +5.55 K.",
    "run": "py -3.11 examples/poc_pv_thermal_survey.py",
-   "lead_ja": "この展示は「太陽光発電所のドローン熱画像」を扱い、「温度差を測っているつもりで、風と角度を測っている」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。",
-   "lead_en": "This exhibit covers “drone thermography of a PV plant”; the focus is “you think you are measuring temperature change…”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer. The figure shows how the result and its error change across the tested conditions."
+   "lead_ja": "太陽光発電所のドローン熱画像の評価では、温度差を測っているつもりで、風と角度を測っている。合成データの定常熱収支を使い、閉形式とメガソーラーを別々に確かめた。アレイと故障の差を見ると、温度差を測っているつもりで、風と角度を測っていることが分かる。",
+   "lead_en": "For Drone Thermography of a PV Plant, while but You Are Measuring Wind and Viewing Angle. The test uses megawatt from computed data to separate array from synthesised. The contrast between closed-form and steady-state shows that you Think You Are Measuring Temperature the method, but You Are Measuring Wind and."
   },
   {
    "id": "poc_rail_corrugation",
@@ -1264,8 +1264,8 @@
    "caption_ja": "軌道の凹凸を弦(正矢)で読む —— 2 点を結んだ弦から中点までの距離を測る、軌道検測とレール削正の受入れでいまも使われる方法。★ゼロ点(正矢をそのまま高さと読む)は波長で 0.0 % 〜 200.0 % に化ける: 同じ 1 本の 10 m 弦が λ=10 m を +100 %、λ=1.5 m を +50 %、λ=30 m を -50 %、λ=5.0 / 2.5 / 1.0 m を -100 % に読む —— **過大評価と過小評価が同時に起きる**ので、全体を一律の係数で直すことはできない。★★死角は幾何で厳密に予測できる: |H(λ)| = |1 - cos(πL/λ)| は λ = L/(2n) でちょうど 0、λ = L/(2n+1) で 2 倍。10 波長 × 2 本の弦の 20 通りで**予測と実測の差は最大 0.00000**、λ=5.00 m の 0.600 mm は 200 m 全長の最大絶対値でも 0.00000 mm。★1/3 オクターブ帯に整理しても消えない(比 0.00041 〜 2.000 = 4924 倍)。この節では op の total_power が効いた —— 帯の和は全 FFT ビンの和の 0.519 しかなく、欠けた 48 % は λ=30 m の通り変位が f_min の外に居るためで、帯だけ見ていたら気づけない。★|H| で割り戻す逆フィルタは死角で 6.9e7 mm に発散し、正則化を入れると 3 波長が**静かに「凹凸なし」**になる。★★弦を 2 本(10 m と 6 m)にすると 10 中 8 波長が誤差 0.1 % 以内に戻るが、共通の死角は 1 点ではなく λ = 1.000/k の**櫛**。予測を 1 つ外した —— 仕込んだ λ=0.100 m も残り、調べたら k=10 の歯だった。隣り合う死角の相対間隔はそのまま λ なので短波長ほど詰まり、波状摩耗の帯(0.03–0.30 m)だけで 30 本ある。★0.25 m 標本では 30 mm の波状摩耗が 0.750 m のうねり 0.0528 mm に化ける(短波長を止めた対照群 0.00584 mm の 9 倍。床が 0 でないのは長波長成分の漏れ)。★非対称弦(前 3.7 m / 後ろ 6.3 m)は長波長の死角を消すが、|H|=0 の条件が「a/λ も b/λ も整数」なので λ = gcd(a,b)/k = 0.100 m に死角ができる —— **波状摩耗を測るための弦が、波状摩耗の帯域に死角を作った**。",
    "caption_en": "Reading track irregularity with a chord (versine) — the distance from the mid-point to a chord drawn between two points, still the working method in track recording and in acceptance of rail re-profiling. The null baseline, reading the versine directly as height, ranges from 0.0 % to 200.0 % of the truth depending on wavelength: one and the same 10 m chord reads lambda=10 m at +100 %, lambda=1.5 m at +50 %, lambda=30 m at -50 %, and lambda=5.0 / 2.5 / 1.0 m at -100 %. Over-reading and under-reading happen at once, so no single correction factor repairs it. The blind spots are exact geometry: |H(lambda)| = |1 - cos(pi L / lambda)| is exactly zero at lambda = L/(2n) and doubles at lambda = L/(2n+1). Across ten wavelengths and two chords, twenty cases, prediction and measurement differ by at most 0.00000, and a 0.600 mm undulation at lambda=5.00 m gives a versine whose largest absolute value over 200 m is 0.00000 mm. Sorting into third-octave wavelength bands does not remove it (the ratio spans 0.00041 to 2.000, a factor of 4924), and the operator's total_power earned its place here: the band sum is only 0.519 of the sum over all FFT bins, and the missing 48 % is the 30 m irregularity sitting below f_min — invisible if only the bands are read. Dividing by |H| to invert diverges to 6.9e7 mm at the blind wavelengths, and regularising it makes three wavelengths quietly report 'no irregularity'. Two chords (10 m and 6 m) recover eight of the ten wavelengths to within 0.1 %, but the shared blind spot is not a point: it is the comb lambda = 1.000/k. One prediction was wrong — the planted lambda=0.100 m also survived, and it turned out to be the k=10 tooth. The relative spacing of the comb equals lambda itself, so it thickens toward short wavelengths: the corrugation band 0.03-0.30 m alone holds 30 blind wavelengths. At the 0.25 m sampling of a recording car, a 30 mm corrugation reappears as a 0.750 m undulation of 0.0528 mm, nine times the 0.00584 mm floor of a control with the short waves switched off. An asymmetric chord (3.7 m and 6.3 m arms) removes the long-wave blind spots, but |H| = 0 requires a/lambda and b/lambda to be integers together, so the blind spots move to lambda = gcd(a, b)/k = 0.100 m: the chord built to measure corrugation is blind inside the corrugation band.",
    "figure": "transfer",
-   "lead_ja": "この展示は「弦でレールを測る」を扱い、「伝達関数が 0 になる波長は、何 mm あっても 〇 mm と出る」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。",
-   "lead_en": "This exhibit covers “measuring rail with a chord”; the focus is “at the wavelengths where the transfer function is zero, any amplitude reads zero”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer."
+   "lead_ja": "弦でレールを測る場面では、伝達関数が 0 になる波長は、何 mm あっても mm と出る。実測データの軌道を使い、凹凸と中点を別々に確かめた。距離とレール削正の差を見ると、伝達関数が になる波長は、何 mm あっても mm と出ることが分かる。",
+   "lead_en": "Using Measuring Rail with a Chord in practice is difficult because At the Wavelengths Where the. The test uses reading from computed data to separate track from irregularity. The contrast between distance and mid-point shows that at the Wavelengths Where the Transfer Function Is Zero, Any Amplitude Reads Zero."
   },
   {
    "id": "poc_real_coin_metrology",
@@ -1286,8 +1286,8 @@
     "sobel_amp",
     "hough_circle_trans"
    ],
-   "lead_ja": "この展示は「実写のコインを数えて測る」を扱い、「当たっている答えに、余裕があるとは限らない」を調べる。実測データで条件を比べ、測定結果がどこまで保たれるかを確かめる。図では、条件ごとの測定結果と誤差の変化を読み取れる。",
-   "lead_en": "This exhibit covers “counting and measuring real coins”; the focus is “a correct answer is not a safe one”. Using measured data, it compares conditions and checks how far the measurement remains reliable. The figure shows how the result and its error change across the tested conditions."
+   "lead_ja": "実写のコインを数えて測るとき、当たっている答えに、余裕があるとは限らない。実測データで照明と大域を扱い、駄目がどう変わるかを調べた。有名と背景の差を見ると、当たっている答えに、余裕があるとは限らないことが分かる。",
+   "lead_en": "In evaluating Counting and Measuring Real Coins, A Correct Answer Is Not a Safe One. The computed data compares photograph with famous and tracks global. The contrast between cannot and work shows that a Correct Answer Is Not a Safe One."
   },
   {
    "id": "poc_real_deblur_honesty",
@@ -1305,8 +1305,8 @@
     "iv_unsharp_deblur",
     "sk_blur_effect"
    ],
-   "lead_ja": "この展示は「実写のブレを取る」を扱い、「3 つの物差しに、三人の勝者」を調べる。実測データで条件を比べ、測定結果がどこまで保たれるかを確かめる。図では、条件ごとの測定結果と誤差の変化を読み取れる。",
-   "lead_en": "This exhibit covers “deblurring a real photograph”; the focus is “three rulers, three different winners”. Using measured data, it compares conditions and checks how far the measurement remains reliable. The figure shows how the result and its error change across the tested conditions."
+   "lead_ja": "実写のブレを取るとき、3 つの物差しに、 人の勝者。実測データで劣化と自分を扱い、ゼロ点がどう変わるかを調べた。相手とノブの差を見ると、 つの物差しに、 人の勝者ことが分かる。",
+   "lead_en": "When measuring Deblurring a Real Photograph, Three Rulers, Three Different Winners. The computed data compares here with only and tracks degradation. The contrast between planted and straight shows that three Rulers, Three Different Winners."
   },
   {
    "id": "poc_real_defect_floor",
@@ -1318,8 +1318,8 @@
    "title_en": "How Faint a Defect Can Still Be Found — Planting a Known Truth in a Real Background",
    "caption_ja": "「うちのラインでどこまで薄い傷が見えるか」を見積もるとき、いちばん普通のやり方は**平らな地に白色雑音を載せた合成画像**で限界を測ることだ。その見積もりがどれだけ甘いかを、真値を厳密に持ったまま実写で測る。地は CC0 の実写テクスチャ 3 種(brick / grass / gravel)、仕込むのは**位置・大きさ・振幅が既知のガウシアン欠陥**。比較相手は **検出器が実際に見る残差 σ を実写に揃えた**合成の地 —— 「雑音の量」を同じにしてから、構造の効果だけを取り出す。判定は「仕込んだ位置が応答の最大点になる最小の振幅」で、閾値を使わないので op 側の正規化に左右されない。★★**雑音を揃えても実写の限界は 2.03〜3.47 倍高い**。限界を決めているのは雑音ではなく**地の構造**だった。背景窓 3 通り × 欠陥 σ 2 通り × 地 3 種の **18 通り全部**で比は 1 を超え(1.72〜4.56)、整合フィルタと `laplace_of_gauss` という独立な 2 つの検出器でも残る。★**予測を外した**: 「欠陥が大きいほど差が開く」と書こうとしたが、それは**振幅の刻みが作った差**だった —— 34 段では σ=1.5 と σ=3.0 が別の格子点に丸まって差が見えるが、60 段にすると両方 3.30 倍で消える。刻みもノブである。★★**「実写だから場所で変わる」も誤り**。場所による限界の散らばりは brick が 16.8 倍と突出する一方、grass 2.4 倍・gravel 3.3 倍は**σ を揃えた合成の 3.3 倍と区別がつかない**。散らばりを生むのは「実写であること」ではなく**目地という構造**。★★そして**ゼロ点**(背景を引かず、生の画素の最大点を取るだけ)が、**「当てる」という 1 つの物差しでは整合フィルタに勝つ**(0.65〜0.90 倍で先に当てる。整合フィルタは地の構造も一緒に増幅するので損をする)。無欠陥面での空振りも brick では 0 対 0 の引き分けだった。分かれるのは**照明が 2 % ずれた瞬間**で、ゼロ点は 1 万画素あたり 10.3 回鳴り、整合フィルタは 0.0 回のまま —— 生の画素の閾値は明るさの絶対値だからだ。**当てる力・空振り・ずれへの強さを別々に数えないと、役に立たない検出器を勝たせられる。**",
    "caption_en": "The usual way to estimate \"how faint a defect can we still catch\" is to measure the limit on a synthetic image: a flat field plus white noise. This exhibit measures how optimistic that estimate is, while keeping an exact ground truth. The backgrounds are three CC0 photographs (brick / grass / gravel); what is planted into them is a Gaussian defect of known position, width and amplitude. The control is a synthetic field whose **residual sigma — the variation the detector actually sees — is matched to the real one**, so the amount of noise is equal and only structure differs. The verdict is the smallest amplitude at which the planted position becomes the peak of the response; no threshold is involved, so per-image normalisation inside an operator cannot skew it. **Matching the noise is not enough: the real backgrounds raise the floor by 2.03x to 3.47x.** What sets the floor is structure, not noise. The gap survives all 18 knob settings (three background windows x two defect sizes x three grounds, 1.72x-4.56x) and both detectors — a matched filter and fullseye's `laplace_of_gauss`. **A prediction that failed:** \"the gap widens for larger defects\" turned out to be an artefact of the amplitude grid — on 34 steps the two sizes round to different grid points, on 60 steps both land at 3.30x. The grid is a knob too. **\"Real data is position-dependent\" is also wrong:** the spread of the floor across positions is 16.8x on brick but 2.4x on grass and 3.3x on gravel, indistinguishable from the 3.3x of the matched synthetic control. What creates the spread is the mortar lattice — a structure — not the fact that the image is a photograph. **And the null model wins on a single metric.** Taking the brightest raw pixel, with no background removed, localises the defect at 0.65x-0.90x the amplitude the matched filter needs, because the matched filter amplifies the background's structure too; false alarms on a defect-free surface tie at 0 on brick. The two separate the moment the lamp drifts by 2 %: the null model fires 10.3 times per 10,000 pixels while the matched filter stays at 0.0, because a raw-pixel threshold is an absolute brightness. **Count localisation, false alarms and drift separately, or a useless detector can be made to win.**",
-   "lead_ja": "この展示は「薄い欠陥はどこまで見えるか」を扱い、「実写の地に真値を仕込んで検出限界を測る」を調べる。合成データと実測データを使い、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。",
-   "lead_en": "This exhibit covers “how faint a defect can still be found”; the focus is “planting a known truth in a real background”. Using synthetic and measured data, it compares the measurement with a known answer. The figure shows how the result and its error change across the tested conditions."
+   "lead_ja": "薄い欠陥はどこまで見えるかを確かめる場面では、実写の地に真値を仕込んで検出限界を測る。合成データにラインを用意し、見積と普通を比べた。白色雑音と合成画像の差を見ると、実写の地に真値を仕込んで検出限界を測ることが分かる。",
+   "lead_en": "A comparison of How Faint a Defect Can Still Be Found matters when Planting a Known Truth in a Real. We place usual in synthetic data, then compare estimate and catch. The contrast between measure and limit shows that planting a Known Truth in a Real Background."
   },
   {
    "id": "poc_real_sky_photometry",
@@ -1333,8 +1333,8 @@
    "ops": [
     "aperture_photometry"
    ],
-   "lead_ja": "この展示は「実写の深宇宙に既知の星を仕込む」を扱い、「汚染は測定値と信頼度を同じ向きに嘘つかせる」を調べる。実測データで条件を比べ、測定結果がどこまで保たれるかを確かめる。図では、条件ごとの測定結果と誤差の変化を読み取れる。",
-   "lead_en": "This exhibit covers “planting known stars in a real deep field”; the focus is “contamination lies about the measurement and the confidence in the same direction”. Using measured data, it compares conditions and checks how far the measurement remains reliable."
+   "lead_ja": "実写の深宇宙に既知の星を仕込むの評価では、汚染は測定値と信頼度を同じ向きに嘘つかせる。実測データに本物を用意し、背景とフラックスを比べた。ガウシアン星と回収の差を見ると、汚染は測定値と信頼度を同じ向きに嘘つかせることが分かる。",
+   "lead_en": "In evaluating Planting Known Stars in a Real Deep Field, Contamination Lies About the Measurement and. We place flux in measured data, then compare planted and background. The contrast between hubble and certain shows that contamination Lies About the Measurement and the Confidence in the Same Direction."
   },
   {
    "id": "poc_real_stain_unmix",
@@ -1350,8 +1350,8 @@
     "stain_recompose",
     "stain_vectors_from_patches"
    ],
-   "lead_ja": "この展示は「実写の免疫染色を色で分ける」を扱い、「見張り役が、見張るべき誤りにだけ盲目だった」を調べる。合成データと実測データを使い、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。",
-   "lead_en": "This exhibit covers “separating a real immunostain by colour”; the focus is “the watchdog was blind to exactly the error it should catch”. Using synthetic and measured data, it compares the measurement with a known answer. The figure shows how the result and its error change across the tested conditions."
+   "lead_ja": "実写の免疫染色を色で分けるとき、見張り役が、見張るべき誤りにだけ盲目だった。免疫染色像を含む合成データを作り、色分離と完璧の関係を測った。濃度と画素の差を見ると、見張り役が、見張るべき誤りにだけ盲目だったことが分かる。",
+   "lead_en": "For Separating a Real Immunostain by Colour, The Watchdog Was Blind to Exactly the Error It Should Catch. A synthetic data case links deconvolution, separates, and perfectly. The contrast between recompose and unit shows that the Watchdog Was Blind to Exactly the Error It Should Catch."
   },
   {
    "id": "poc_real_stereo_depth",
@@ -1373,8 +1373,8 @@
     "colorize_disparity",
     "apply_cmap"
    ],
-   "lead_ja": "この展示は「実写のステレオ写真で測る」を扱い、「合成では出ない 3 つの躓き」を調べる。実測データで条件を比べ、測定結果がどこまで保たれるかを確かめる。図では、条件ごとの測定結果と誤差の変化を読み取れる。",
-   "lead_en": "This exhibit covers “measuring on a real stereo photograph”; the focus is “three stumbles synthesis never produces”. Using measured data, it compares conditions and checks how far the measurement remains reliable. The figure shows how the result and its error change across the tested conditions."
+   "lead_ja": "実写のステレオ写真で測るとき、合成では出ない 3 つの躓き。博物館を含む実測データを作り、配布元と注記の関係を測った。実際と中央視差の差を見ると、合成では出ない つの躓きことが分かる。",
+   "lead_en": "In evaluating Measuring on a Real Stereo Photograph, Three Stumbles Synthesis Never Produces. A measured data case links exhibit, this, and museum. The contrast between measured and distributor shows that three Stumbles Synthesis Never Produces."
   },
   {
    "id": "poc_real_texture_invariance",
