@@ -62,7 +62,7 @@ a90/95 は 2 通り返す:
 
 ## 同カテゴリ(`pod`)
 
-[pod_ahat_fit](pod_ahat_fit.md) · [pod_from_ahat](pod_from_ahat.md) · [pod_false_call](pod_false_call.md) · [pod_decision_tradeoff](pod_decision_tradeoff.md)
+[proportion_interval](proportion_interval.md) · [trials_for_all_success](trials_for_all_success.md) · [pod_ahat_fit](pod_ahat_fit.md) · [pod_from_ahat](pod_from_ahat.md) · [pod_false_call](pod_false_call.md) · [pod_decision_tradeoff](pod_decision_tradeoff.md)
 
 ---
 *Provenance: pod.py — SPC operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

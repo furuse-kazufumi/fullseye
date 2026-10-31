@@ -53,9 +53,9 @@
     "reason": "docs/op_knob.json measured no output effect"
   },
   "execution_summary": {
-    "executable": 3415,
+    "executable": 3417,
     "reasons": {
-      "python_signature": 2456,
+      "python_signature": 2458,
       "registry": 959
     },
     "not_executable_reasons": {
@@ -358,7 +358,7 @@
   },
   "counts": {
     "nodes": 101,
-    "edges": 3610,
+    "edges": 3612,
     "conversion_pairs": 395,
     "conversion_edge_incidence": 2343
   },
@@ -1192,7 +1192,7 @@
       "sort": "scalar",
       "container": "scalar",
       "size_hint": "input-dependent",
-      "produced_by": 88,
+      "produced_by": 89,
       "consumed_by": 397,
       "generator": false,
       "type_check": true,
@@ -1368,7 +1368,7 @@
       "sort": "table",
       "container": "sequence",
       "size_hint": "input-dependent",
-      "produced_by": 1162,
+      "produced_by": 1163,
       "consumed_by": 544,
       "generator": true,
       "type_check": true,
@@ -85725,6 +85725,137 @@
           "range": "undocumented",
           "unit": "undocumented",
           "default": 2
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00016"
+    },
+    {
+      "op": "proportion_interval",
+      "inputs": [],
+      "output": "table",
+      "category": "spc",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "source",
+      "consumes_input": false,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00016"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00016"
+        }
+      ],
+      "runtime_target": {
+        "module": "pod",
+        "callable": "proportion_interval"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "pod",
+        "callable": "proportion_interval"
+      },
+      "parameter_schema": [
+        {
+          "name": "k",
+          "type": "unannotated",
+          "required": true,
+          "range": "undocumented",
+          "unit": "undocumented"
+        },
+        {
+          "name": "n",
+          "type": "unannotated",
+          "required": true,
+          "range": "undocumented",
+          "unit": "undocumented"
+        },
+        {
+          "name": "confidence",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.95
+        },
+        {
+          "name": "sides",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": "two"
+        },
+        {
+          "name": "method",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": "clopper_pearson"
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00016"
+    },
+    {
+      "op": "trials_for_all_success",
+      "inputs": [],
+      "output": "scalar",
+      "category": "spc",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "source",
+      "consumes_input": false,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00016"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00016"
+        }
+      ],
+      "runtime_target": {
+        "module": "pod",
+        "callable": "trials_for_all_success"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "pod",
+        "callable": "trials_for_all_success"
+      },
+      "parameter_schema": [
+        {
+          "name": "p_min",
+          "type": "unannotated",
+          "required": true,
+          "range": "undocumented",
+          "unit": "undocumented"
+        },
+        {
+          "name": "confidence",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.95
         }
       ],
       "verified_executable": false,
