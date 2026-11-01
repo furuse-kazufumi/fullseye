@@ -43,6 +43,16 @@ class _PPFTable:
     def __len__(self):
         return len(self.keys)
 
+    # dict だった頃の読み手(set(model["table"]) で鍵を集める回転不変の門、PoC)を壊さない。
+    # Keep the mapping-like reads the old dict table supported (iteration = keys, membership).
+    def __iter__(self):
+        return iter(np.asarray(self.keys).tolist())
+
+    def __contains__(self, key):
+        keys = np.asarray(self.keys)
+        i = int(np.searchsorted(keys, key))
+        return i < len(keys) and keys[i] == key
+
 
 def _unit(v, axis=-1):
     n = np.linalg.norm(v, axis=axis, keepdims=True)
