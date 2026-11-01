@@ -12,8 +12,57 @@ import nrrd
 import nibabel as nib
 import tifffile
 from astropy.io import fits
+from PIL import Image, TiffImagePlugin
 
 import fileio
+
+
+def _pillow_ome_tiff(stack, *, size_c=None, unit="um", channel_names=None):
+    """Build a minimal OME-TIFF without using tifffile."""
+    size_t, actual_size_c, size_z, size_y, size_x = stack.shape
+    declared_size_c = actual_size_c if size_c is None else size_c
+    names = channel_names or [f"Channel {index}" for index in range(declared_size_c)]
+    channels = "".join(
+        f'<Channel ID="Channel:0:{index}" Name="{name}" SamplesPerPixel="1"/>'
+        for index, name in enumerate(names)
+    )
+    plane_count = size_t * actual_size_c * size_z
+    ome_xml = (
+        '<?xml version="1.0" encoding="UTF-8"?>'
+        '<OME xmlns="http://www.openmicroscopy.org/Schemas/OME/2016-06">'
+        '<Image ID="Image:0"><Pixels ID="Pixels:0" DimensionOrder="XYZCT" Type="uint16" '
+        f'SizeX="{size_x}" SizeY="{size_y}" SizeZ="{size_z}" '
+        f'SizeC="{declared_size_c}" SizeT="{size_t}" '
+        f'PhysicalSizeX="0.25" PhysicalSizeXUnit="{unit}" '
+        f'PhysicalSizeY="0.5" PhysicalSizeYUnit="{unit}" '
+        f'PhysicalSizeZ="1.5" PhysicalSizeZUnit="{unit}">'
+        f'{channels}<TiffData IFD="0" PlaneCount="{plane_count}"/>'
+        '</Pixels></Image></OME>'
+    )
+    pages = [Image.fromarray(plane) for plane in stack.reshape(-1, size_y, size_x)]
+    description = TiffImagePlugin.ImageFileDirectory_v2()
+    description[270] = ome_xml
+    stream = io.BytesIO()
+    pages[0].save(stream, format="TIFF", save_all=True, append_images=pages[1:],
+                  tiffinfo=description, compression="raw")
+    return stream.getvalue()
+
+
+def _pillow_pages_and_ome_xml(payload):
+    """Read TIFF pixels with Pillow and OME metadata with the stdlib XML parser."""
+    with Image.open(io.BytesIO(payload)) as image:
+        ome_xml = image.tag_v2[270]
+        # Pillow exposes UTF-8 ImageDescription bytes through a Latin-1 string.
+        # Recover the original bytes before handing the XML to ElementTree.
+        try:
+            ome_xml = ome_xml.encode("latin-1").decode("utf-8")
+        except (UnicodeEncodeError, UnicodeDecodeError):
+            pass
+        pages = []
+        for page_index in range(image.n_frames):
+            image.seek(page_index)
+            pages.append(np.asarray(image).copy())
+    return np.stack(pages), ET.fromstring(ome_xml)
 
 
 def test_fits_roundtrip_metadata_and_independent_astropy_reader(tmp_path):
@@ -251,7 +300,7 @@ def test_nifti_public_nibabel_anatomical_worked_example():
     assert actual.shape == (33, 41, 25) and meta["spatial_unit"] == "mm"
 
 
-def test_ome_tiff_roundtrip_metadata_and_independent_tifffile_paths(tmp_path):
+def test_ome_tiff_write_has_independent_pillow_pixels_and_stdlib_ome_xml(tmp_path):
     stack = np.arange(2 * 3 * 4 * 5 * 6, dtype=np.uint16).reshape(2, 3, 4, 5, 6)
     meta = {"axes": "TCZYX", "physical_size_x": 0.25, "physical_size_x_unit": "um",
             "physical_size_y": 0.5, "physical_size_y_unit": "um",
@@ -268,14 +317,54 @@ def test_ome_tiff_roundtrip_metadata_and_independent_tifffile_paths(tmp_path):
     assert actual_meta["physical_size_x_unit"] == "µm"
     assert actual_meta["physical_size_z_unit"] == "µm"
 
-    independent = tifffile.imread(io.BytesIO(payload))
-    np.testing.assert_array_equal(independent, stack)
-    with tifffile.TiffFile(io.BytesIO(payload)) as tif:
-        assert tif.series[0].axes == "TCZYX"
-        root = ET.fromstring(tif.ome_metadata)
+    pages, root = _pillow_pages_and_ome_xml(payload)
     pixels = next(node for node in root.iter() if node.tag.rsplit("}", 1)[-1] == "Pixels")
-    assert pixels.attrib["SizeT"] == "2" and pixels.attrib["SizeC"] == "3"
+    sizes = {axis: int(pixels.attrib[f"Size{axis}"]) for axis in "TCZYX"}
+    assert pixels.attrib["DimensionOrder"] == "XYZCT"
+    np.testing.assert_array_equal(
+        pages.reshape(sizes["T"], sizes["C"], sizes["Z"], sizes["Y"], sizes["X"]),
+        stack,
+    )
+    assert sizes == {"T": 2, "C": 3, "Z": 4, "Y": 5, "X": 6}
+    assert pixels.attrib["PhysicalSizeX"] == "0.25"
+    assert pixels.attrib["PhysicalSizeY"] == "0.5"
+    assert pixels.attrib["PhysicalSizeZ"] == "1.5"
     assert pixels.attrib["PhysicalSizeXUnit"] == "µm"
+    assert pixels.attrib["PhysicalSizeYUnit"] == "µm"
+    assert pixels.attrib["PhysicalSizeZUnit"] == "µm"
+    channels = [node.attrib["Name"] for node in pixels
+                if node.tag.rsplit("}", 1)[-1] == "Channel"]
+    assert channels == meta["channel_names"]
+
+
+def test_ome_tiff_read_accepts_independent_pillow_ome_tiff():
+    expected = np.arange(2 * 2 * 3 * 4 * 5, dtype=np.uint16).reshape(2, 2, 3, 4, 5)
+    payload = _pillow_ome_tiff(expected, channel_names=["DAPI", "FITC"])
+
+    actual, meta = fileio.ome_tiff_read(payload)
+
+    np.testing.assert_array_equal(actual, expected)
+    assert meta["axes"] == "TCZYX"
+    assert meta["physical_size_x"] == 0.25
+    assert meta["physical_size_y"] == 0.5
+    assert meta["physical_size_z"] == 1.5
+    assert meta["physical_size_x_unit"] == "µm"
+    assert meta["physical_size_y_unit"] == "µm"
+    assert meta["physical_size_z_unit"] == "µm"
+    assert meta["channel_names"] == ["DAPI", "FITC"]
+
+
+def test_ome_tiff_read_rejects_independent_pillow_bad_size_c_and_unit():
+    stack = np.arange(2 * 2 * 3 * 4 * 5, dtype=np.uint16).reshape(2, 2, 3, 4, 5)
+    wrong_size_c = _pillow_ome_tiff(stack, size_c=3,
+                                     channel_names=["DAPI", "FITC", "TRITC"])
+    with pytest.raises(ValueError, match="SizeT/SizeC/SizeZ declare 18 TIFF pages, found 12"):
+        fileio.ome_tiff_read(wrong_size_c)
+
+    unknown_unit = _pillow_ome_tiff(stack, unit="furlong",
+                                     channel_names=["DAPI", "FITC"])
+    with pytest.raises(ValueError, match="PhysicalSizeXUnit.*furlong"):
+        fileio.ome_tiff_read(unknown_unit)
 
 
 def test_ome_tiff_write_is_byte_deterministic():
@@ -296,11 +385,11 @@ def test_ome_tiff_corrupt_non_ome_and_metadata_mismatch_rejected():
     payload = fileio.ome_tiff_write(stack, meta=meta)
     with pytest.raises(ValueError, match="corrupt or truncated TIFF"):
         fileio.ome_tiff_read(payload[:128])
-    plain = io.BytesIO(); tifffile.imwrite(plain, np.zeros((4, 5), dtype=np.uint8), metadata=None)
+    plain = io.BytesIO(); Image.fromarray(np.zeros((4, 5), dtype=np.uint8)).save(plain, format="TIFF")
     with pytest.raises(ValueError, match="no OME-XML metadata"):
         fileio.ome_tiff_read(plain.getvalue())
     tampered = payload.replace(b'SizeC="2"', b'SizeC="3"', 1)
-    with pytest.raises(ValueError, match="SizeC|channels|corrupt"):
+    with pytest.raises(ValueError, match="SizeC|channels|TIFF pages|corrupt"):
         fileio.ome_tiff_read(tampered)
     with pytest.raises(ValueError, match="channel_names must contain 2"):
         fileio.ome_tiff_write(stack, meta={**meta, "channel_names": ["only one"]})

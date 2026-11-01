@@ -1679,11 +1679,16 @@ def ome_tiff_read(data):
             axes = series.axes
             array = series.asarray()
             xml = tif.ome_metadata
+            page_count = len(tif.pages)
     except Exception as exc:
         if isinstance(exc, ValueError) and str(exc).startswith(op + ":"):
             raise
         raise ValueError(f"{op}: corrupt or truncated TIFF: {exc}") from exc
     if len(axes) != array.ndim or "".join(axis for axis in _OME_AXIS_ORDER if axis in axes) != axes or not axes.endswith("YX"):
         raise ValueError(f"{op}: TIFF axes {axes!r} are not a canonical TCZYX subset ending in YX")
+    expected_pages = math.prod(array.shape[:-2])
+    if page_count != expected_pages:
+        raise ValueError(f"{op}: OME-XML SizeT/SizeC/SizeZ declare {expected_pages} TIFF pages, "
+                         f"found {page_count}")
     parsed = _ome_xml_meta(xml, array.shape, axes, array.dtype, op)
     return array, {"format": "OME-TIFF", "axes": axes, **parsed}
