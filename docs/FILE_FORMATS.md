@@ -25,7 +25,7 @@
 | MetaImage | `.mha` | `volio.read_volume` | `volio.write_volume` | — | optional: SimpleITK, tifffile | `tests/test_public_api.py`<br>`tests/test_volio.py` | — |
 | MetaImage | `.mhd` | `volio.read_volume` | `volio.write_volume` | — | optional: SimpleITK, tifffile | `tests/test_public_api.py`<br>`tests/test_volio.py` | — |
 | Matroska video | `.mkv` | — | `video.write_video` | — | optional: PIL, imageio | `tests/test_gen_visionlab_video.py`<br>`tests/test_perf_batch20_2026_10_20.py`<br>+2 | — |
-| MODEL | `.model` | `printpath.read_3mf` | — | `read_3mf` | stdlib / core | `tests/test_ledger_probe_fresh_cwd.py`<br>`tests/test_optdraw.py`<br>+3 | — |
+| MODEL | `.model` | `printpath.read_3mf` | — | `read_3mf` | stdlib / core | `tests/test_ledger_probe_fresh_cwd.py`<br>`tests/test_optdraw.py`<br>+2 | — |
 | MOV | `.mov` | — | `video.write_video` | — | optional: PIL, imageio | `tests/test_anomaly_patch.py`<br>`tests/test_astrostack_median.py`<br>+12 | — |
 | MP4 | `.mp4` | — | `video.write_video` | — | optional: PIL, imageio | `tests/test_docs_index_reachable.py`<br>`tests/test_examplefig_gif.py`<br>+7 | — |
 | NHDR | `.nhdr` | `volio.read_volume` | `volio.write_volume` | — | optional: SimpleITK, tifffile | `tests/test_public_api.py`<br>`tests/test_volio.py` | — |
@@ -35,7 +35,7 @@
 | NumPy archive | `.npz` | `mesh.read_points`<br>`motionio.read_events`<br>`volio.read_volume` | `mesh.write_points`<br>`volio.write_volume` | `read_events` | optional: SimpleITK, tifffile | `tests/test_carlabridge.py`<br>`tests/test_itokawa_anim3d.py`<br>+13 | — |
 | NRRD | `.nrrd` | `volio.read_volume` | `volio.write_volume` | — | optional: SimpleITK, tifffile | `tests/test_public_api.py`<br>`tests/test_volio.py` | — |
 | Wavefront OBJ | `.obj` | `driveworld.read_obj_colored`<br>`fileio.mesh_read_obj`<br>`mesh.read_mesh`<br>`mesh.read_points` | `fileio.mesh_write_obj`<br>`mesh.write_mesh` | `mesh_read_obj`<br>`mesh_write_obj` | stdlib / core | `tests/test_abi_apply.py`<br>`tests/test_audit_0_7_1_fixes_2026_10_21.py`<br>+13 | `trimesh` |
-| Geomview OFF | `.off` | `fileio.mesh_read_off`<br>`mesh.read_mesh`<br>`mesh.read_points` | `fileio.mesh_write_off`<br>`mesh.write_mesh` | `mesh_read_off`<br>`mesh_write_off` | stdlib / core | `tests/test_audit_file_formats.py`<br>`tests/test_drivelateral.py`<br>+9 | `trimesh` |
+| Geomview OFF | `.off` | `fileio.mesh_read_off`<br>`mesh.read_mesh`<br>`mesh.read_points` | `fileio.mesh_write_off`<br>`mesh.write_mesh` | `mesh_read_off`<br>`mesh_write_off` | stdlib / core | `tests/test_audit_file_formats.py`<br>`tests/test_drivelateral.py`<br>+8 | `trimesh` |
 | PBM | `.pbm` | — | `imgio.save` | — | optional: PIL, cv2 | `tests/test_acquire.py`<br>`tests/test_acquire_contract.py`<br>+60 | — |
 | PCL PCD | `.pcd` | `mesh.read_points`<br>`meshio_opt.read_pcd` | — | — | optional: pypcd4 | `tests/test_mesh.py`<br>`tests/test_meshio_opt.py`<br>+2 | — |
 | PFM | `.pfm` | `raster.read_depth`<br>`raster.read_pfm`<br>`raster.read_raster` | `imgio.save`<br>`raster.write_pfm` | — | optional: PIL, cv2, imageio, tifffile | `tests/test_acquire.py`<br>`tests/test_acquire_contract.py`<br>+62 | — |
