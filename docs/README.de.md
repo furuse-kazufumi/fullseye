@@ -657,7 +657,9 @@ Die vollständige Karte, damit **kein Dokument vom Index aus unerreichbar ist** 
 | [`literature/electron_microscopy.md`](literature/electron_microscopy.md) | 文献層: 電子顕微鏡の撮像と計測(厳選) _(ja)_ |
 | [`literature/industrial_optical_sensing.md`](literature/industrial_optical_sensing.md) | 文献層: 工業用光学センシング(厳選) _(ja)_ |
 | [`literature/sensitivity_uq_calibration.md`](literature/sensitivity_uq_calibration.md) | 文献層: 感度解析・不確かさ定量化・較正(厳選) _(ja)_ |
+| [`view2026/about.md`](view2026/about.md) | Fullseye |
 | [`view2026/de/index.md`](view2026/de/index.md) | Fullseye — ViEW2026 |
+| [`view2026/en/about.md`](view2026/en/about.md) | Fullseye |
 | [`view2026/en/index.md`](view2026/en/index.md) | Fullseye — ViEW2026 |
 | [`view2026/en/more.md`](view2026/en/more.md) | Extras: more PoCs |
 | [`view2026/fr/index.md`](view2026/fr/index.md) | Fullseye — ViEW2026 |
