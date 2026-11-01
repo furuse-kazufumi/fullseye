@@ -432,13 +432,13 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `examples/poc_cad_scan_deviation.py`
 
-- **L434** — ★The ledger's out adapter truncates the dict to (R, t), so rmse does not get through
-- **L897** — Chapter 6: ★The defect pulls the alignment —— predicted by projection onto the rigid-body 6-D # --------------------------------------------------------------------------- #
-- **L1103** — ★Do not add a defect —— if you do, Chapter 6's datum shift (0.107 mm) becomes a pedestal on the point movement and mixes with "the amount broken by the initial angle".
-- **L1256** — ★Producing a "%" for the control group whose ground truth is 0 gives a meaningless huge number from division by zero. Present the area in mm^2 as is, and append % only when the ground truth is meaningful.
-- **L1267** — ★Do not read the difference of a single run as "it worked" —— vary the seed and compare against the spread
-- **L1357** — ★An assert that fires once the gap is closed. It actually fired on 2026-09-07, and this line was rewritten: after the note that "cylindrical holes, chamfers, and fillets cannot be built", plane / cylinder / torus / capsule were added. The note changed the tool, so we record it and move on.
-- **L1379** _(ja)_ — ★座標の約束: 格子の行 0 を**北(画像の上)**とし、世界座標は (x = 東, Y = 北 = -行方向, z = 上)。 行方向をそのまま +Y にすると左手系になり、絵が鏡像になる(上から見た静止図と左右が食い違う)。
+- **L435** — ★The ledger's out adapter truncates the dict to (R, t), so rmse does not get through
+- **L898** — Chapter 6: ★The defect pulls the alignment —— predicted by projection onto the rigid-body 6-D # --------------------------------------------------------------------------- #
+- **L1104** — ★Do not add a defect —— if you do, Chapter 6's datum shift (0.107 mm) becomes a pedestal on the point movement and mixes with "the amount broken by the initial angle".
+- **L1257** — ★Producing a "%" for the control group whose ground truth is 0 gives a meaningless huge number from division by zero. Present the area in mm^2 as is, and append % only when the ground truth is meaningful.
+- **L1268** — ★Do not read the difference of a single run as "it worked" —— vary the seed and compare against the spread
+- **L1358** — ★An assert that fires once the gap is closed. It actually fired on 2026-09-07, and this line was rewritten: after the note that "cylindrical holes, chamfers, and fillets cannot be built", plane / cylinder / torus / capsule were added. The note changed the tool, so we record it and move on.
+- **L1380** _(ja)_ — ★座標の約束: 格子の行 0 を**北(画像の上)**とし、世界座標は (x = 東, Y = 北 = -行方向, z = 上)。 行方向をそのまま +Y にすると左手系になり、絵が鏡像になる(上から見た静止図と左右が食い違う)。
 
 ## `examples/poc_calipers_under_illusion.py`
 
@@ -650,8 +650,8 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `examples/poc_focus_stacking.py`
 
-- **L176** _(ja)_ — 絞り。★2026-10-14: defocus_blur のぼけが 2 倍広かった(σ = 錯乱円の直径/2、正しくは /4)のを直したら、F 5.6 では 被写界深度が 2 倍深くなり、0.42 mm 間隔の像で奥行きが区別できなくなった(テクスチャ有の RMS 0.47 → 0.91 mm)。 旧版の結果は「F 5.6 と書いて実質 F 2.8 のぼけ」の上に立っていた —— 書いた値と効いていた値を揃えて F 2.8 にする。
-- **L601** — 1. The picture works. ★The threshold is +3 dB — real semiconductor images are mostly smooth metal (die, leads), which is already in focus in a single frame, so the AIF gain is smaller than with a synthetic pattern that is high-frequency everywhere (the honest picture of the shop floor; the old full-texture field gave +14 dB).
+- **L178** _(ja)_ — 絞り。★2026-10-14: defocus_blur のぼけが 2 倍広かった(σ = 錯乱円の直径/2、正しくは /4)のを直したら、F 5.6 では 被写界深度が 2 倍深くなり、0.42 mm 間隔の像で奥行きが区別できなくなった(テクスチャ有の RMS 0.47 → 0.91 mm)。 旧版の結果は「F 5.6 と書いて実質 F 2.8 のぼけ」の上に立っていた —— 書いた値と効いていた値を揃えて F 2.8 にする。
+- **L606** — 1. The picture works. ★The threshold is +3 dB — real semiconductor images are mostly smooth metal (die, leads), which is already in focus in a single frame, so the AIF gain is smaller than with a synthetic pattern that is high-frequency everywhere (the honest picture of the shop floor; the old full-texture field gave +14 dB).
 
 ## `examples/poc_forensics_roc.py`
 
@@ -721,7 +721,7 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `examples/poc_grating_interferometry.py`
 
-- **L323** _(ja)_ — ★正直な限界: 段差の縁の 1 画素だけが π を超える板(平らな背景の隣)は、折り返しが見えずに通る
+- **L324** _(ja)_ — ★正直な限界: 段差の縁の 1 画素だけが π を超える板(平らな背景の隣)は、折り返しが見えずに通る
 
 ## `examples/poc_gravitational_lens_invariants.py`
 
@@ -750,10 +750,10 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `examples/poc_interferometry_step.py`
 
-- **L573** — 3) ★Repeated measurement — separate bias from spread # ------------------------------------------------------------------ #
-- **L616** — 4) ★Comparison with the zero point (the max sample of the envelope) # ------------------------------------------------------------------ #
-- **L688** — 6) ★Noise sweep — where measurement breaks down # ------------------------------------------------------------------ #
-- **L728** — ★A small spread is no evidence of correctness
+- **L579** — 3) ★Repeated measurement — separate bias from spread # ------------------------------------------------------------------ #
+- **L622** — 4) ★Comparison with the zero point (the max sample of the envelope) # ------------------------------------------------------------------ #
+- **L694** — 6) ★Noise sweep — where measurement breaks down # ------------------------------------------------------------------ #
+- **L734** — ★A small spread is no evidence of correctness
 
 ## `examples/poc_interreflection_fringe_error.py`
 
@@ -788,16 +788,16 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `examples/poc_lens_tolerancing.py`
 
-- **L165** _(ja)_ — ★2026-10-21: 棒の縦軸は 0 から(自動範囲は最小値の少し下から始まり、差を 10 倍に見せていた)。
+- **L166** _(ja)_ — ★2026-10-21: 棒の縦軸は 0 から(自動範囲は最小値の少し下から始まり、差を 10 倍に見せていた)。
 
 ## `examples/poc_lidar_terrain_change.py`
 
-- **L425** — ★The area of cores that could not be measured contributes nothing to the earth volume. Also return the value divided back by the effective rate —— without dividing back, you take the 'silently missing earth volume' for the correct value.
-- **L713** — ★A number close to the true value is not necessarily 'correct' —— count the two opposing errors separately
-- **L842** — ★When there are too few valid cores, do not treat the LoD as 'measured' (the standard deviation of 2 points is a number but carries no meaning).
-- **L845** — ★If you decimate here, C2C ends up measuring the 'post-decimation point spacing' and the density dependence vanishes (when I first wrote it aligned to 6000 points, it came out a constant 0.42 m at every density).
-- **L965** — --- ★ Change vanishes exactly by the amount you align away -------------------------------------- #
-- **L1329** _(ja)_ — ★座標の約束: 格子の行 0 を**北(画像の上)**とし、世界座標は (x = 東, Y = 北 = -行方向, z = 上)。 行方向をそのまま +Y にすると左手系になり、絵が鏡像になる(上から見た静止図と左右が食い違う)。
+- **L426** — ★The area of cores that could not be measured contributes nothing to the earth volume. Also return the value divided back by the effective rate —— without dividing back, you take the 'silently missing earth volume' for the correct value.
+- **L714** — ★A number close to the true value is not necessarily 'correct' —— count the two opposing errors separately
+- **L843** — ★When there are too few valid cores, do not treat the LoD as 'measured' (the standard deviation of 2 points is a number but carries no meaning).
+- **L846** — ★If you decimate here, C2C ends up measuring the 'post-decimation point spacing' and the density dependence vanishes (when I first wrote it aligned to 6000 points, it came out a constant 0.42 m at every density).
+- **L966** — --- ★ Change vanishes exactly by the amount you align away -------------------------------------- #
+- **L1330** _(ja)_ — ★座標の約束: 格子の行 0 を**北(画像の上)**とし、世界座標は (x = 東, Y = 北 = -行方向, z = 上)。 行方向をそのまま +Y にすると左手系になり、絵が鏡像になる(上から見た静止図と左右が食い違う)。
 
 ## `examples/poc_lightfield_depth.py`
 
@@ -919,20 +919,20 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `examples/poc_phase_measuring_deflectometry.py`
 
-- **L496** _(ja)_ — ★2026-10-15: 手元 23 秒の計算が、CI の並列のシャード(py3.12 3/4)では壁時計 120.6 秒になり、この門だけが赤に なった。壁時計は同じ機械で走る他のテストの負荷を数えてしまう。この門が抑えたいのは「この PoC 自身の計算量」 なので、プロセスの CPU 時間で測る(壁時計は併記する。テスト側の 600 秒の打ち切りは別にある)。
+- **L498** _(ja)_ — ★2026-10-15: 手元 23 秒の計算が、CI の並列のシャード(py3.12 3/4)では壁時計 120.6 秒になり、この門だけが赤に なった。壁時計は同じ機械で走る他のテストの負荷を数えてしまう。この門が抑えたいのは「この PoC 自身の計算量」 なので、プロセスの CPU 時間で測る(壁時計は併記する。テスト側の 600 秒の打ち切りは別にある)。
 
 ## `examples/poc_photoelasticity.py`
 
-- **L160** — ★Pin the finding: this is an **exact** cross-check against fullseye's Mueller op, agreeing to machine precision even sweeping δ once around in 15-degree steps and θ over 5 values (measured 2.2e-16). If this loosens, what Section 3 onward measures is not the "readout procedure" but a bug in the op.
-- **L181** — ★Pin the cross-check of the stress field itself too. If the integrated force does not match the load it is not the "ground truth", and the central value should be algebraically identical to the closed form 8P/(πDh).
-- **L207** — ★Pin the level of the zero point. Every subsequent "N×" uses this 1.09 MPa as the denominator, so if it moves the meaning of the comparison changes.
-- **L231** — ★Pin the finding: the naive procedure of reading only integer fringes from a single dark-field image **cannot even beat the zero point by 2×**. Because the resolution is rate-limited by the fσ/h = 1.78 MPa step. The contrast with Section 4's phase shift (whose error drops to machine precision) is the backbone of this PoC.
-- **L286** — ★Since we invert from the same intensity equation with zero noise, θ should come back **exactly** (the algebra that produces 4θ from the 4 plane-polarization images is itself the inverse map).
-- **L308** — ★Pin the finding. (1) The agreement exceeds 95 % but **never reaches 100 %**. The rest are pixels sign-flipped by the (δ,θ) ↔ (-δ,θ+90°) ambiguity, which cannot in principle be removed by a single measurement at one wavelength. Pin the finding as-is: neither "nearly matches" nor "fully matches".
-- **L371** — ★Pin the finding. (1) There is no depolarization (the Stokes magnitude is exactly 1). This is the basis for Section 5's claim that what drops in the modulation is not the light level but **the phase sensitivity**.
-- **L377** — (2) ★★The measurement says the **opposite** of the naive expectation that "passing a mask fixes it": no mask 97.0 % / excluding undersampling 97.1 % / **excluding low modulation as well drops to 81.9 %**. Because removing the low-modulation pixels fragments the region and skimage's unwrap picks a different 2π offset per island. "Both can be excluded by a mask" is **correct as a forecast but wrong as a prescription**. Pin the measured value.
-- **L442** — ★Pin the finding. (1) With neither noise nor quantization, δ comes back **exactly** from the bright-field/dark-field ratio.
-- **L445** — (2) ★The error from 8 bit quantization "alone" is the same order as the error from noise σ=0.002 alone (measured 0.00277 vs 0.00305). The camera's bit depth weighs as heavily as noise.
+- **L161** — ★Pin the finding: this is an **exact** cross-check against fullseye's Mueller op, agreeing to machine precision even sweeping δ once around in 15-degree steps and θ over 5 values (measured 2.2e-16). If this loosens, what Section 3 onward measures is not the "readout procedure" but a bug in the op.
+- **L182** — ★Pin the cross-check of the stress field itself too. If the integrated force does not match the load it is not the "ground truth", and the central value should be algebraically identical to the closed form 8P/(πDh).
+- **L208** — ★Pin the level of the zero point. Every subsequent "N×" uses this 1.09 MPa as the denominator, so if it moves the meaning of the comparison changes.
+- **L232** — ★Pin the finding: the naive procedure of reading only integer fringes from a single dark-field image **cannot even beat the zero point by 2×**. Because the resolution is rate-limited by the fσ/h = 1.78 MPa step. The contrast with Section 4's phase shift (whose error drops to machine precision) is the backbone of this PoC.
+- **L287** — ★Since we invert from the same intensity equation with zero noise, θ should come back **exactly** (the algebra that produces 4θ from the 4 plane-polarization images is itself the inverse map).
+- **L309** — ★Pin the finding. (1) The agreement exceeds 95 % but **never reaches 100 %**. The rest are pixels sign-flipped by the (δ,θ) ↔ (-δ,θ+90°) ambiguity, which cannot in principle be removed by a single measurement at one wavelength. Pin the finding as-is: neither "nearly matches" nor "fully matches".
+- **L372** — ★Pin the finding. (1) There is no depolarization (the Stokes magnitude is exactly 1). This is the basis for Section 5's claim that what drops in the modulation is not the light level but **the phase sensitivity**.
+- **L378** — (2) ★★The measurement says the **opposite** of the naive expectation that "passing a mask fixes it": no mask 97.0 % / excluding undersampling 97.1 % / **excluding low modulation as well drops to 81.9 %**. Because removing the low-modulation pixels fragments the region and skimage's unwrap picks a different 2π offset per island. "Both can be excluded by a mask" is **correct as a forecast but wrong as a prescription**. Pin the measured value.
+- **L443** — ★Pin the finding. (1) With neither noise nor quantization, δ comes back **exactly** from the bright-field/dark-field ratio.
+- **L446** — (2) ★The error from 8 bit quantization "alone" is the same order as the error from noise σ=0.002 alone (measured 0.00277 vs 0.00305). The camera's bit depth weighs as heavily as noise.
 
 ## `examples/poc_pigment_unmixing.py`
 
@@ -988,10 +988,10 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `examples/poc_pv_thermal_survey.py`
 
-- **L381** — ★MOD_SHELTER is a module that is **sound but not exposed to wind**. In Section 3 it turns into a "fault" under the whole-average criterion.
-- **L583** — ★Decide the module number **by area fraction per number**. Rounding the average of the numbers turns boundary pixels into a neighboring number (or 0) and breaks the per-module processing.
-- **L812** — ★The cost of the module median —— blind to a whole-module anomaly
-- **L1270** — ★``apply_cmap`` normalizes by **that array's min/max** if vmin/vmax are not passed (making the color's meaning change per condition), so always pass them.
+- **L384** — ★MOD_SHELTER is a module that is **sound but not exposed to wind**. In Section 3 it turns into a "fault" under the whole-average criterion.
+- **L586** — ★Decide the module number **by area fraction per number**. Rounding the average of the numbers turns boundary pixels into a neighboring number (or 0) and breaks the per-module processing.
+- **L830** — ★The cost of the module median —— blind to a whole-module anomaly
+- **L1288** — ★``apply_cmap`` normalizes by **that array's min/max** if vmin/vmax are not passed (making the color's meaning change per condition), so always pass them.
 
 ## `examples/poc_pxrd_phase_peel.py`
 
@@ -1182,44 +1182,44 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `examples/poc_thermal_radiometry.py`
 
-- **L522** — ★Forward is **direct integration**, inverse is a **calibration table**. Round-tripping through the same table trivially yields error 0 and does not count as measuring the floor.
-- **L543** — ★Case-0 being **exactly 0** is because 350.0 K happens to land on a table node. Move off the node and the interpolation error shows -- **calling 0 the floor is a lie**.
-- **L772** — ★The x-axis is the **rise above the surroundings**. Left as T_obj, the divergence collapses into a single vertical line at the left edge, and the crucial "where it jumps from" cannot be read.
-- **L782** — ★``plot_series`` **rejects** points outside the frame (because they stick to the frame and look like real data). The caller clips the diverging side first.
-- **L836** — ★The x-axis is the **absolute** Δε. Plotted as relative Δε/ε the three curves overlap exactly (because ε drops out of the equation, per §2) -- the plot says nothing.
-- **L1169** — ★What the guard band uses is the **upper** overhang. Since what we want to assert as a pass is that "the truth is not **above** the threshold", we clip at the upper end of the interval. Using the lower off[0] clips too shallow (by however much the distribution is right-skewed) -- wrote it that way once and noticed because the false passes did not decrease.
-- **L1272** — ★For the same mix-up, on the ε=0.10 surface L_obj drops negative and **raises an exception**. In other words, "halt or fail silently" is decided not by the mix-up but by the **scene**.
-- **L1346** — ★Make the heat source a **flat plateau**. As a peak, "the bolt and its surroundings at the same temperature" does not hold, and you cannot separate whether the apparent trough is due to emissivity or to temperature.
-- **L1392** — ★The correction removes the bias but multiplies the noise by 1/ε. That is why only the bolt is grainy in figure (d).
-- **L1464** — ★``op_find`` matches on partial stems. ``blackbody`` returns 4 hits, but their contents are morphology such as ``cv_blackhat`` and have **nothing to do with thermal radiation**. Reading "it exists" from the count misses. Say it only **after looking at the leading name**.
-- **L1614** — 3. ★A prediction that missed: the absolute error is **larger at higher temperature**
-- **L1616** — ★Even changing the yardstick, the emissivity error does **not diverge** with the rise ratio (it plateaus in Δε/ε)
-- **L1619** — ★What diverges is the reflected apparent temperature (the smaller the rise, the more it jumps)
-- **L1632** — 6. ★★Coverage rate. At the floor (ρ=0) both RSS and MC are 95 %; adding correlation makes RSS drop
-- **L1636** — ★The MC side settles at 94.4-94.6 % (not exactly 95 %). The interval ends are set by percentiles over 40000 trials, so there is sampling error, and in reality quantization is mixed in too. **Say "MC hits" including all of that**.
-- **L1652** — 7. ★The misses lean to one side (symmetric ±k·u misses a skewed distribution)
-- **L1656** — 8. ★★guard band: false passes are ignore > RSS > MC, false fails the reverse
-- **L1676** — ★The correction removes the bias but in exchange multiplies the noise by 1/ε (close to the ε ratio of 9.5)
+- **L525** — ★Forward is **direct integration**, inverse is a **calibration table**. Round-tripping through the same table trivially yields error 0 and does not count as measuring the floor.
+- **L546** — ★Case-0 being **exactly 0** is because 350.0 K happens to land on a table node. Move off the node and the interpolation error shows -- **calling 0 the floor is a lie**.
+- **L775** — ★The x-axis is the **rise above the surroundings**. Left as T_obj, the divergence collapses into a single vertical line at the left edge, and the crucial "where it jumps from" cannot be read.
+- **L785** — ★``plot_series`` **rejects** points outside the frame (because they stick to the frame and look like real data). The caller clips the diverging side first.
+- **L839** — ★The x-axis is the **absolute** Δε. Plotted as relative Δε/ε the three curves overlap exactly (because ε drops out of the equation, per §2) -- the plot says nothing.
+- **L1172** — ★What the guard band uses is the **upper** overhang. Since what we want to assert as a pass is that "the truth is not **above** the threshold", we clip at the upper end of the interval. Using the lower off[0] clips too shallow (by however much the distribution is right-skewed) -- wrote it that way once and noticed because the false passes did not decrease.
+- **L1275** — ★For the same mix-up, on the ε=0.10 surface L_obj drops negative and **raises an exception**. In other words, "halt or fail silently" is decided not by the mix-up but by the **scene**.
+- **L1349** — ★Make the heat source a **flat plateau**. As a peak, "the bolt and its surroundings at the same temperature" does not hold, and you cannot separate whether the apparent trough is due to emissivity or to temperature.
+- **L1403** — ★The correction removes the bias but multiplies the noise by 1/ε. That is why only the bolt is grainy in figure (d).
+- **L1475** — ★``op_find`` matches on partial stems. ``blackbody`` returns 4 hits, but their contents are morphology such as ``cv_blackhat`` and have **nothing to do with thermal radiation**. Reading "it exists" from the count misses. Say it only **after looking at the leading name**.
+- **L1625** — 3. ★A prediction that missed: the absolute error is **larger at higher temperature**
+- **L1627** — ★Even changing the yardstick, the emissivity error does **not diverge** with the rise ratio (it plateaus in Δε/ε)
+- **L1630** — ★What diverges is the reflected apparent temperature (the smaller the rise, the more it jumps)
+- **L1643** — 6. ★★Coverage rate. At the floor (ρ=0) both RSS and MC are 95 %; adding correlation makes RSS drop
+- **L1647** — ★The MC side settles at 94.4-94.6 % (not exactly 95 %). The interval ends are set by percentiles over 40000 trials, so there is sampling error, and in reality quantization is mixed in too. **Say "MC hits" including all of that**.
+- **L1663** — 7. ★The misses lean to one side (symmetric ±k·u misses a skewed distribution)
+- **L1667** — 8. ★★guard band: false passes are ignore > RSS > MC, false fails the reverse
+- **L1687** — ★The correction removes the bias but in exchange multiplies the noise by 1/ε (close to the ε ratio of 9.5)
 
 ## `examples/poc_thermography_ndt.py`
 
-- **L61** — ★Take the observation time **long enough — beyond the healthy part's t\* (6.8 s)**. Too short and the healthy part's knee goes outside the window, and TSR answers the healthy part as "the depth at the window edge" (in practice it stuck at 2.82 mm).
-- **L126** — ★This part alone is an approximation. Since the 1-D solution has no lateral diffusion, at each time we blur in-plane with a Gaussian of diffusion length σ(t)=√(2αt). The physical scaling law is correct, but it does not satisfy mass conservation at the boundary.
-- **L236** — The range over which TSR searches for t*. ★Excluding the ends is not decoration —— the 2nd derivative of a high-order polynomial always blows up at the ends (Runge). Without it the argmax sticks to the first or last frame, and depth sticks to the 2 values at the window ends (measured, 2026-09-06). We swept degrees 4–11 and settled on 8 (at 4–5, depths beyond 1.5 mm stuck to the ends; 8 and above give the same answer as 9/11).
-- **L271** — ★Rounding t* to the grid step quantizes depth into staircase steps (with 64 points, 5 % steps). We fit a parabola to 3 points to recover the sub-grid position of ln t.
-- **L329** — ★Pin down the observation. This is a **near-zero sanity check**, so if it breaks the implementation is broken.
-- **L343** — ★The bias of the estimator itself. **Without passing through any image**, we apply `tsr_depth` to an exact 1-D curve. The error here is the "floor of the polynomial fit," and only what remains after subtracting it from the deviations in Section 3 onward is the contribution of lateral diffusion and noise.
-- **L361** — ★Pin down the observation: the floor is **not zero but small**. We bound it on both sides —— if it became zero, the reinterpretation in Section 3 ("even a curve that doesn't pass through an image deviates by a few %"; ±5 % is roughly the same as the floor) would no longer hold, and if it grew large we could no longer attribute the deviations from Section 3 onward to lateral diffusion.
-- **L396** — ★Pin down the observation. That these 2 lines hold simultaneously is the very claim of this section. (1) When the 16 items are collapsed into a single average, TSR loses to the null baseline that "always answers 1.50 mm."
-- **L426** — ★Pin down the observation. (1) The lower-right triangle, where the diameter is 4 times or more the depth, is hit within a few % (roughly the same as the floor in Section 1).
-- **L457** — ★Control group: the same scene with **lateral diffusion turned off**. This separates "blame lateral diffusion" from "blame insufficient pixels / a mask that can't be extracted." Looking at only one side and blaming physics is the most common mistake in this kind of experiment.
-- **L504** — ★Pin down the control group's observation: **with lateral diffusion off, all 16 fall within ±8 %**. This one line is the evidence that "the only cause of breakage is lateral diffusion, not pixel coarseness nor how the mask is taken." Loosen it and the conclusion of Section 3 reverts to the misreading that 'raising the resolution fixes it'.
-- **L514** — ★If the reasoning above (the diffusion length at the end of the window matters) is correct, then **cutting the window fixes it**. When you form a hypothesis, always place one experiment shaped to disprove it. ------------------------------------------------------------------ #
-- **L535** — ★Pin down the heaviest observation of this PoC —— the "aspect-ratio limit" was not physics but **how the fitting time window is chosen**. (1) With a 4-second window, all 8 small ones fall within ±20 % (measured worst case -14 %).
-- **L623** — ★Pin down the observation: if heating is uniform, **the raw single frame detects the most**, while the 2nd derivative of TSR detects none. "It works for depth estimation but is unsuited to detection" = the same tool does not necessarily work for both, which is exactly this section's claim.
-- **L670** — ★Lamp reflection. This is the one with structure at **the same scale as the defect**.
-- **L697** — ★Pin down the observation. (1) The only thing that breaks it is (c)'s **unevenness at the same scale as the defect**. (b)'s gentle gradient barely breaks the raw single frame —— since this is where "the prediction was off," we explicitly confirm that (b) does not undercut (a).
-- **L778** — ★Put NETD into the default cube as well. With zero noise, the in-plane variation of the sound region becomes exactly 0 and the SNR turns into a meaningless number like 1e9 (measured and fixed).
+- **L62** — ★Take the observation time **long enough — beyond the healthy part's t\* (6.8 s)**. Too short and the healthy part's knee goes outside the window, and TSR answers the healthy part as "the depth at the window edge" (in practice it stuck at 2.82 mm).
+- **L127** — ★This part alone is an approximation. Since the 1-D solution has no lateral diffusion, at each time we blur in-plane with a Gaussian of diffusion length σ(t)=√(2αt). The physical scaling law is correct, but it does not satisfy mass conservation at the boundary.
+- **L239** — The range over which TSR searches for t*. ★Excluding the ends is not decoration —— the 2nd derivative of a high-order polynomial always blows up at the ends (Runge). Without it the argmax sticks to the first or last frame, and depth sticks to the 2 values at the window ends (measured, 2026-09-06). We swept degrees 4–11 and settled on 8 (at 4–5, depths beyond 1.5 mm stuck to the ends; 8 and above give the same answer as 9/11).
+- **L274** — ★Rounding t* to the grid step quantizes depth into staircase steps (with 64 points, 5 % steps). We fit a parabola to 3 points to recover the sub-grid position of ln t.
+- **L332** — ★Pin down the observation. This is a **near-zero sanity check**, so if it breaks the implementation is broken.
+- **L346** — ★The bias of the estimator itself. **Without passing through any image**, we apply `tsr_depth` to an exact 1-D curve. The error here is the "floor of the polynomial fit," and only what remains after subtracting it from the deviations in Section 3 onward is the contribution of lateral diffusion and noise.
+- **L364** — ★Pin down the observation: the floor is **not zero but small**. We bound it on both sides —— if it became zero, the reinterpretation in Section 3 ("even a curve that doesn't pass through an image deviates by a few %"; ±5 % is roughly the same as the floor) would no longer hold, and if it grew large we could no longer attribute the deviations from Section 3 onward to lateral diffusion.
+- **L399** — ★Pin down the observation. That these 2 lines hold simultaneously is the very claim of this section. (1) When the 16 items are collapsed into a single average, TSR loses to the null baseline that "always answers 1.50 mm."
+- **L429** — ★Pin down the observation. (1) The lower-right triangle, where the diameter is 4 times or more the depth, is hit within a few % (roughly the same as the floor in Section 1).
+- **L460** — ★Control group: the same scene with **lateral diffusion turned off**. This separates "blame lateral diffusion" from "blame insufficient pixels / a mask that can't be extracted." Looking at only one side and blaming physics is the most common mistake in this kind of experiment.
+- **L507** — ★Pin down the control group's observation: **with lateral diffusion off, all 16 fall within ±8 %**. This one line is the evidence that "the only cause of breakage is lateral diffusion, not pixel coarseness nor how the mask is taken." Loosen it and the conclusion of Section 3 reverts to the misreading that 'raising the resolution fixes it'.
+- **L517** — ★If the reasoning above (the diffusion length at the end of the window matters) is correct, then **cutting the window fixes it**. When you form a hypothesis, always place one experiment shaped to disprove it. ------------------------------------------------------------------ #
+- **L538** — ★Pin down the heaviest observation of this PoC —— the "aspect-ratio limit" was not physics but **how the fitting time window is chosen**. (1) With a 4-second window, all 8 small ones fall within ±20 % (measured worst case -14 %).
+- **L626** — ★Pin down the observation: if heating is uniform, **the raw single frame detects the most**, while the 2nd derivative of TSR detects none. "It works for depth estimation but is unsuited to detection" = the same tool does not necessarily work for both, which is exactly this section's claim.
+- **L673** — ★Lamp reflection. This is the one with structure at **the same scale as the defect**.
+- **L700** — ★Pin down the observation. (1) The only thing that breaks it is (c)'s **unevenness at the same scale as the defect**. (b)'s gentle gradient barely breaks the raw single frame —— since this is where "the prediction was off," we explicitly confirm that (b) does not undercut (a).
+- **L781** — ★Put NETD into the default cube as well. With zero noise, the in-plane variation of the sound region becomes exactly 0 and the SNR turns into a meaningless number like 1e9 (measured and fixed).
 
 ## `examples/poc_thin_film_reflectometry.py`
 
@@ -1279,7 +1279,7 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `examples/poc_video_physics_consistency.py`
 
-- **L175** _(ja)_ — ★ 縁に触れた bbox の辺は車の縁でなく画像の縁。そのまま使うと位置が 0.36 m ずれて黙って軌跡に入る(2026-10-23 の敵対的レビュー、 発射条件の端 3000 本中 2 本)。label_extent は切り詰めを知らないので、ここで止める。
+- **L177** _(ja)_ — ★ 縁に触れた bbox の辺は車の縁でなく画像の縁。そのまま使うと位置が 0.36 m ずれて黙って軌跡に入る(2026-10-23 の敵対的レビュー、 発射条件の端 3000 本中 2 本)。label_extent は切り詰めを知らないので、ここで止める。
 
 ## `examples/poc_warehouse_flow.py`
 

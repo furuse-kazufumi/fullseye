@@ -65,6 +65,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."
 import examplefig as figs  # noqa: E402
 import gratinginterf as GI  # noqa: E402
 import optics  # noqa: E402
+from fullseye.evaluation import GateAdapter, GateStyle  # noqa: E402
 
 REDUCED = os.environ.get("FULLSEYE_POC_BUDGET",
                          "reduced" if os.environ.get("CI") else "full") == "reduced"
@@ -81,14 +82,14 @@ PIX_UM = 40.0
 
 FAILS: list[str] = []
 GATES: list[str] = []
+_GATE = GateAdapter(
+    style=GateStyle(), all_names=GATES, failed_names=FAILS
+)
 R: dict = {}
 
 
 def gate(name: str, ok: bool, detail: str = "") -> None:
-    print("   [%s] %s%s" % ("ok" if ok else "NG", name, (" — " + detail) if detail else ""))
-    GATES.append(name)
-    if not ok:
-        FAILS.append(name)
+    _GATE(name, ok, detail)
 
 
 def _hsv(h, s, v):

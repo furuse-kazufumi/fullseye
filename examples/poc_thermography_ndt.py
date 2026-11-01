@@ -52,6 +52,7 @@ from scipy.ndimage import gaussian_filter
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import examplefig as figs                                        # noqa: E402
 import fullseye as fs                                            # noqa: E402
+from fullseye.evaluation import save_video as save_evaluation_video  # noqa: E402
 
 # --- 材料と撮影の諸元 -------------------------------------------------------- #
 ALPHA = 4.2e-7          # CFRP の板厚方向 熱拡散率 [m^2/s]
@@ -203,8 +204,10 @@ def save_camera_figures(depth_map, d_hat):
     ts, cube = camera_cube(depth_map)
     video_ids = np.linspace(0, len(ts) - 1, 48).round().astype(int)
     video = [_thermal_display(cube[i], 512) for i in video_ids]
-    figs.save_video("cooling", video, fps=12.0, gif_every=4,
-                    caption="Forty-eight uint8 cooling frames after a non-uniform flash.")
+    save_evaluation_video(
+        "cooling", video, caption="Forty-eight uint8 cooling frames after a non-uniform flash.",
+        capture_fps=12.0, playback_fps=12.0, hold_frames=0, gif_stride=4,
+        display_scale=480 / video[0].shape[1], interpolation="linear")
     import fullseye as fs
     import annotate as ann
     truth = depth_map * 1e3

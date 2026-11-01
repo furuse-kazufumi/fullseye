@@ -113,6 +113,7 @@ from scipy.spatial import cKDTree
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import examplefig as figs                                        # noqa: E402
 import fullseye as fs                                            # noqa: E402
+from fullseye.evaluation import save_video as save_evaluation_video  # noqa: E402
 
 # --- 部品の諸元 [mm] -------------------------------------------------------- #
 L, W, H = 60.0, 40.0, 12.0        # 台の直方体(x, y, z)。台の上面は z = H
@@ -1592,8 +1593,10 @@ def fig_align_orbit(ref: CadRef, al: dict, VW=640, VH=360, fps=30.0):
         img = _v_cbar(img, lut, (VW - 80, 92, 14, VH - 150), -S, S, "mm")
         img = _v_txt(img, "だいだい = 足りない\n青 = 余る", (VW - 8, 50), anchor="rt", fs=11)
         frames.append(img)
-    figs.save_video("align_orbit", frames, fps=fps, gif_every=4, gif_width=480,
-                    caption="主図(動画、%d × %d・%.0f fps・%.0f 秒): 前半は実測点群(だいだい)が CAD の参照点(灰)に重なるまで —— "
+    save_evaluation_video(
+        "align_orbit", frames, capture_fps=fps, playback_fps=fps, hold_frames=0, gif_stride=4,
+        display_scale=480 / frames[0].shape[1], interpolation="linear",
+        caption="主図(動画、%d × %d・%.0f fps・%.0f 秒): 前半は実測点群(だいだい)が CAD の参照点(灰)に重なるまで —— "
                             "位置合わせなし → FPFH 粗合わせ → 点-面 ICP の推定姿勢の間を補間して動かす(偏差 RMS %s → %s → %s µm)。"
                             "後半は重なった点群を一周し、符号付き偏差(±%.2f mm、だいだい = 足りない / 青 = 余る)で塗る(形が読めるよう陰影を薄く足した)。"
                             "公差 ±%.2f mm を外れた面積は推定 %s mm²、真値 %.1f mm²。左手前の 3 本の線は CAD の x・y・z 軸。"

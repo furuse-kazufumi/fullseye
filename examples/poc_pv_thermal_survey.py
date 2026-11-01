@@ -95,6 +95,9 @@ from scipy.ndimage import distance_transform_edt, gaussian_filter, map_coordinat
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import examplefig as figs                                        # noqa: E402
 import fullseye as fs                                            # noqa: E402
+from fullseye.evaluation import (                                # noqa: E402
+    CaseResult, GateResult, TruthBundle, artifacts_from_manifest, build_manifest,
+)
 
 # --- 発電所の諸元 ------------------------------------------------------------ #
 CELL = 0.156               # セル 1 枚の辺 [m](156 mm 角)
@@ -600,6 +603,20 @@ def ground_truth(gsd: float = GSD) -> dict:
             "mod_id": mods, "healthy": panel & ~fault & ~nonf}
 
 
+def truth_bundle(gt: dict) -> TruthBundle:
+    """Attach the shared unit/frame/mask contract to the established truth dict."""
+    units = {name: ("label" if name == "mod_id" else "1") for name in gt}
+    frames = {name: "image-row-col-raw" for name in gt}
+    return TruthBundle(
+        fields=gt,
+        units=units,
+        frames=frames,
+        masks={"valid": gt["panel"], "ignore": ~gt["panel"], "defect": gt["fault"]},
+        provenance={"processing_stage": "raw-pre-isp", "generator": "ground_truth", "gsd_m": GSD},
+        seed=SEED,
+    )
+
+
 # --------------------------------------------------------------------------- #
 # 判定 —— 正規化 3 通り + しきい値 + 塊                                         #
 # --------------------------------------------------------------------------- #
@@ -732,6 +749,7 @@ def section_truth() -> dict:
 
     sc = thermal_field(V_REF)
     gt = ground_truth()
+    gt_bundle = truth_bundle(gt)
     t_app = capture(sc["T"])
     print("\n  真値の面積[px]: 本物の故障 %d(内訳 ホットスポット %d / "
           "ストリング %d)、非故障の温度差 %d、健全 %d"
@@ -749,7 +767,7 @@ def section_truth() -> dict:
     assert 20.0 < dt_ok < 30.0, "健全セルの温度上昇が現実的でない"
     assert 0.30 < a_both < 0.60, "ホットスポットの薄まり率が想定外"
     assert 0.80 < gain < 1.00, "放射計の利得が想定外"
-    return {"scene": sc, "gt": gt, "t_app": t_app, "u": u, "dt_ok": dt_ok,
+    return {"scene": sc, "gt": gt, "truth": gt_bundle, "t_app": t_app, "u": u, "dt_ok": dt_ok,
             "a_cond": a_cond, "a_cam": a_cam, "a_both": a_both, "gain": gain}
 
 
@@ -1379,6 +1397,25 @@ def main() -> int:
     assert pv_gate["fpn_rms_k"] >= 0.02
     assert pv_gate["no_nuc_fpn_rms_k"] < 0.01
     section_tool_gaps()
+
+    evaluation = CaseResult(
+        case="poc_pv_thermal_survey",
+        gates=[
+            GateResult("hotspot-delta", 3.0 <= pv_gate["hotspot_delta_k"] <= 20.0,
+                       measured=pv_gate["hotspot_delta_k"], expected="3..20", relation="inside"),
+            GateResult("module-spread", 0.2 <= pv_gate["module_spread_k"] <= 5.0,
+                       measured=pv_gate["module_spread_k"], expected="0.2..5", relation="inside"),
+            GateResult("fresnel-gradient", pv_gate["fresnel_gradient_error"] <= 0.02,
+                       measured=pv_gate["fresnel_gradient_error"], expected=0.02, relation="<="),
+        ],
+        metrics={"hotspot_delta_k": pv_gate["hotspot_delta_k"]},
+        artifacts=artifacts_from_manifest(figs.manifest()), seed=SEED,
+        provenance={"migration": "P0-A"},
+    )
+    build_manifest(
+        evaluation.case, metrics=evaluation.metrics, arrays={"apparent_temperature": base["t_app"]},
+        truth=base["truth"], gates=evaluation.gates, figures=figs.manifest(), videos={}, seed=evaluation.seed,
+    )
 
     print("\n" + "=" * 78)
     print("まとめ")

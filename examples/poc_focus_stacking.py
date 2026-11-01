@@ -80,6 +80,8 @@ import numpy as np
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import examplefig as figs                                        # noqa: E402
 import fullseye as fs                                            # noqa: E402
+from fullseye.evaluation import rmse as evaluation_rmse           # noqa: E402
+from fullseye.evaluation import save_video as save_evaluation_video  # noqa: E402
 
 # ---------------------------------------------------------------------------
 # 場面と真値
@@ -249,7 +251,9 @@ def fuse(stack, fm, focus_mm):
 
 
 def rms(x):
-    return float(np.sqrt(np.mean(np.asarray(x, float) ** 2)))
+    value = np.asarray(x, float)
+    return evaluation_rmse(value, np.zeros_like(value), mask=None, nan_policy="raise", weights=None,
+                           unit="input", reduction="mean", empty="raise", domain="array")
 
 
 def psnr(a, b):
@@ -348,8 +352,9 @@ def fig_sweep_video(stack, focus_mm, fm0, tex, depth, flat, plain):
         f = np.clip(f, 0.0, 1.0)
         frames.extend([f] * rep)
     last = states[-1]
-    return figs.save_video(
-        "focus_sweep", frames, fps=6.0, gif_every=1, gif_width=720,
+    return save_evaluation_video(
+        "focus_sweep", frames, capture_fps=6.0, playback_fps=6.0, hold_frames=0, gif_stride=1,
+        display_scale=720 / frames[0].shape[1], interpolation="linear",
         caption="焦点を %.2f〜%.2f mm で %d 枚掃引し、1 枚進むたびに「ここまでで焦点評価が最大の"
                 "フレーム」を画素ごとに選び直す。左 = いまの 1 枚(橙 = この 1 枚で最良が更新された画素)、"
                 "中 = ここまでの全焦点画像、右 = ここまでの距離画像。全焦点画像の PSNR は %.2f dB から"
