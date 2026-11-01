@@ -74,6 +74,24 @@ def test_complete_table_fills_all_eight_languages():
     assert "zh" not in spec["tabs"][0]["label"]                       # 元の仕様は変えない
 
 
+def test_explicit_ja_en_publication_skips_the_eight_language_table():
+    spec = _mini_spec()
+    spec["_anim3d_i18n_langs"] = ["ja", "en"]
+    ready, langs = I18N.prepare(spec, {"strings": {}})
+    assert langs == ("ja", "en")
+    assert "_anim3d_i18n_langs" not in ready
+    assert ready["tabs"][0]["label"] == {"ja": "d", "en": "d"}
+    html = pv._build_html(ready, list(langs), detect_lang=True)
+    assert '"langs":["ja","en"]' in html
+
+
+def test_unsupported_publication_language_set_is_rejected():
+    spec = _spec()
+    spec["_anim3d_i18n_langs"] = ["ja", "en", "fr"]
+    with pytest.raises(ValueError, match="公開言語"):
+        I18N.prepare(spec, _table())
+
+
 def test_untranslated_string_stops_and_is_named():
     t = _table()
     del t["strings"]["Grasp"]
@@ -234,6 +252,23 @@ def test_entry_pages_build_with_no_public_anim3d():
     for lang in d["langs"]:
         page = G.build(d, lang)
         assert page.startswith('<div class="vlang" markdown="1">')
+
+
+def test_try_it_viewer_entry_accepts_ja_en_and_falls_back_to_english(tmp_path):
+    d = G.load()
+    viewer_id = "temporary_ja_en"
+    (G.BASE / "viewers" / (viewer_id + ".html")).write_text("temporary", encoding="utf-8")
+    try:
+        d["viewers"]["items"].append({
+            "id": viewer_id,
+            "title": {"ja": "二言語", "en": "Two languages"},
+            "line": {"ja": "値 2 を見る。", "en": "See value 2."},
+        })
+        assert not [x for x in G.validate(d) if viewer_id in x]
+        assert "Two languages" in G.build(d, "fr")
+        assert "See value 2." in G.build(d, "fr")
+    finally:
+        (G.BASE / "viewers" / (viewer_id + ".html")).unlink()
 
 
 def test_committed_table_passes_for_the_sample():
