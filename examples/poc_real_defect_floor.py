@@ -52,6 +52,7 @@ EXTEND: 自分のラインで使うなら :func:`grounds` の戻り値を撮影�
 """
 from __future__ import annotations
 
+import os
 import sys
 import time
 from pathlib import Path
@@ -317,6 +318,221 @@ def _pair_rgb(left, right):
                       dtype=np.float64)[..., :3]
 
 
+SHOWCASE_SIZE = (1280, 720)
+SHOWCASE_POS = (104, 72)       #: table の中央値と閾値交差が同じ格子に乗る代表位置
+SHOWCASE_AMPS = np.round(np.geomspace(0.02, 1.2, 36), 4)
+
+
+def _showcase_font(size=22, bold=False):
+    """日本語を 22 px 以上で描くフォントを fail-closed で選ぶ。"""
+    from PIL import ImageFont
+
+    names = ([r"C:\Windows\Fonts\YuGothB.ttc", r"C:\Windows\Fonts\meiryob.ttc"]
+             if bold else
+             [r"C:\Windows\Fonts\YuGothM.ttc", r"C:\Windows\Fonts\meiryo.ttc",
+              "/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc"])
+    for name in names:
+        if Path(name).is_file():
+            return ImageFont.truetype(name, size)
+    raise RuntimeError("showcase 用の日本語フォントが見つからない")
+
+
+def _showcase_text(draw, xy, text, box, *, size=22, fill=(238, 242, 246), bold=False):
+    """描画前に文字幅を測り、指定余白から 1 px でもはみ出せば止める。"""
+    font = _showcase_font(size, bold)
+    x, y = xy
+    bb = draw.multiline_textbbox((x, y), text, font=font, spacing=4)
+    bx0, by0, bx1, by1 = box
+    assert bb[0] >= bx0 and bb[1] >= by0 and bb[2] <= bx1 and bb[3] <= by1, \
+        (text, bb, box)
+    draw.multiline_text((x, y), text, font=font, fill=fill, spacing=4)
+
+
+def _showcase_rgb(a, vmin, vmax):
+    x = np.asarray(fs.colorize_depth(a, vmin=float(vmin), vmax=float(vmax)))[..., :3]
+    return np.rint(255 * np.clip(x, 0.0, 1.0)).astype(np.uint8)
+
+
+def _showcase_local_peak(response, pos=SHOWCASE_POS, radius=3):
+    """仕込んだ中心から 3 px 内の応答最大値と座標。"""
+    r, c = pos
+    yy, xx = np.mgrid[:response.shape[0], :response.shape[1]]
+    mask = (yy - r) ** 2 + (xx - c) ** 2 <= radius ** 2
+    flat = np.where(mask, response, -np.inf)
+    pr, pc = np.unravel_index(np.argmax(flat), response.shape)
+    assert (pr - r) ** 2 + (pc - c) ** 2 <= 3 ** 2, (pos, (pr, pc))
+    return float(response[pr, pc]), (int(pr), int(pc))
+
+
+def _showcase_audit(frames, name):
+    """依頼時だけ、先頭・中間・末尾と 12 コマの接触印画を書く。"""
+    root = os.environ.get("FULLSEYE_AUDIT_DIR", "").strip()
+    if not root:
+        return
+    from PIL import Image
+
+    out = Path(root) / name
+    out.mkdir(parents=True, exist_ok=True)
+    for fn, i in (("f000.png", 0), ("f_mid.png", len(frames) // 2),
+                  ("f_end.png", len(frames) - 1)):
+        Image.fromarray(frames[i]).save(out / fn)
+    ids = np.linspace(0, len(frames) - 1, 12).round().astype(int)
+    sheet = Image.new("RGB", (1280, 540), (10, 15, 22))
+    for n, i in enumerate(ids):
+        thumb = Image.fromarray(frames[i]).resize((320, 180), Image.Resampling.LANCZOS)
+        sheet.paste(thumb, ((n % 4) * 320, (n // 4) * 180))
+    sheet.save(out / "contact.png")
+
+
+def make_defect_floor_explained(real, table):
+    """検出器の応答・偽警報閾値・限界を 1 画面で結ぶ 36 コマ。"""
+    from PIL import Image, ImageDraw
+
+    g, syn = real["brick"], table["brick"][5]
+    r0, c0 = SHOWCASE_POS
+    grounds_ = (g, syn)
+    names = ("brick", "合成")
+    colors = ((238, 139, 71), (64, 164, 223))
+    thresholds = tuple(float(np.percentile(matched(a), 99.99)) for a in grounds_)
+
+    # 応答の疑似カラーは全コマ・両地で 1 つの尺度に固定する。
+    responses = [[matched(a + blob(a.shape, r0, c0, amp))
+                  for amp in SHOWCASE_AMPS] for a in grounds_]
+    response_lo = min(float(x.min()) for seq in responses for x in seq)
+    response_hi = max(float(x.max()) for seq in responses for x in seq)
+    scores = [[_showcase_local_peak(x)[0] for x in seq] for seq in responses]
+
+    # 表の限界は 16 位置の中央値なので、代表位置の閾値交差とは最大 1 格子だけ許す。
+    limit_grid = []
+    table_limits = (float(table["brick"][1]), float(table["brick"][2]))
+    for a, thr, tab in zip(grounds_, thresholds, table_limits):
+        vals = []
+        for amp in AMPS:
+            vals.append(_showcase_local_peak(matched(a + blob(a.shape, r0, c0, amp)))[0])
+        lim = next(float(amp) for amp, val in zip(AMPS, vals) if val > thr)
+        j = int(np.argmin(np.abs(AMPS - tab)))
+        one_step = max(tab - AMPS[max(0, j - 1)], AMPS[min(len(AMPS) - 1, j + 1)] - tab)
+        assert abs(lim - tab) <= one_step + 1e-12, (lim, tab, one_step)
+        limit_grid.append(lim)
+
+    # 残差 σ は同じ実行の地から計算し、揃っていることも数値で押さえる。
+    sigmas = (residual_std(g), residual_std(syn))
+    assert abs(sigmas[0] - sigmas[1]) < 1e-12, sigmas
+
+    def line(draw, pts, fill, width=2):
+        if len(pts) >= 2:
+            draw.line(pts, fill=fill, width=width, joint="curve")
+
+    frames = []
+    for k, amp in enumerate(SHOWCASE_AMPS):
+        im = Image.new("RGB", SHOWCASE_SIZE, (10, 15, 22))
+        d = ImageDraw.Draw(im)
+        d.rectangle((0, 0, 1279, 55), fill=(25, 35, 48))
+        d.rectangle((0, 690, 1279, 719), fill=(25, 35, 48))
+        _showcase_text(d, (18, 10),
+                       "薄い傷はどこで見えなくなるか —— 実写の地(brick)と雑音を揃えた合成の地",
+                       (0, 0, 1010, 56), size=25, bold=True)
+        _showcase_text(d, (1060, 12), "振幅 %.3f(%d/36)" % (amp, k + 1),
+                       (1040, 0, 1276, 56), size=22)
+
+        panel_x = (20, 335, 650, 965)
+        titles = ("実写 brick + 欠陥", "その検出器応答", "合成の地 + 欠陥", "その検出器応答")
+        panel_arrays = (g + blob(g.shape, r0, c0, amp), responses[0][k],
+                        syn + blob(syn.shape, r0, c0, amp), responses[1][k])
+        peak_positions = {}
+        for p, (x, title, a) in enumerate(zip(panel_x, titles, panel_arrays)):
+            d.rectangle((x, 70, x + 299, 369), fill=(18, 25, 34), outline=(83, 96, 111))
+            _showcase_text(d, (x + 8, 71), title, (x, 70, x + 300, 96), size=22, bold=True)
+            rgb = (_showcase_rgb(a, 0.0, 1.0) if p in (0, 2)
+                   else _showcase_rgb(a, response_lo, response_hi))
+            pane = Image.fromarray(rgb).resize((274, 274), Image.Resampling.BILINEAR)
+            im.paste(pane, (x + 13, 96))
+            if p in (0, 2):
+                crop = Image.fromarray(rgb).crop((c0 - 16, r0 - 16, c0 + 16, r0 + 16))
+                inset = crop.resize((64, 64), Image.Resampling.NEAREST)
+                im.paste(inset, (x + 222, 305))
+                d.rectangle((x + 221, 304, x + 286, 369), outline=(255, 255, 255), width=2)
+                _showcase_text(d, (x + 86, 371), "拡大 2×", (x, 370, x + 300, 400), size=22)
+            else:
+                gi = 0 if p == 1 else 1
+                val, (pr, pc) = _showcase_local_peak(a)
+                peak_positions[gi] = (pr, pc)
+                px = x + 13 + (pc + 0.5) * 274 / N
+                py = 96 + (pr + 0.5) * 274 / N
+                d.ellipse((px - 10, py - 10, px + 10, py + 10), outline=(255, 255, 255), width=3)
+                _showcase_text(d, (x + 55, 371), "応答 %.3f" % val,
+                               (x, 370, x + 300, 400), size=22)
+        assert all((p[0] - r0) ** 2 + (p[1] - c0) ** 2 <= 3 ** 2
+                   for p in peak_positions.values()), peak_positions
+
+        # 左下: 対数振幅に対する応答。文字は上・左・下の余白だけに置く。
+        d.rectangle((20, 400, 879, 679), fill=(18, 25, 34), outline=(83, 96, 111))
+        _showcase_text(d, (92, 402), "限界 brick %.3f" % table_limits[0],
+                       (20, 400, 410, 430), size=22, fill=colors[0], bold=True)
+        _showcase_text(d, (438, 402), "限界 合成 %.3f" % table_limits[1],
+                       (410, 400, 780, 430), size=22, fill=colors[1], bold=True)
+        x0, y0, x1, y1 = 104, 438, 855, 632
+        d.line((x0, y1, x1, y1), fill=(185, 195, 207), width=2)
+        d.line((x0, y0, x0, y1), fill=(185, 195, 207), width=2)
+        ymin = min(min(v) for v in scores + [list(thresholds)])
+        ymax = max(max(v) for v in scores + [list(thresholds)])
+        pad = 0.08 * (ymax - ymin)
+        ymin, ymax = ymin - pad, ymax + pad
+        xp = lambda a: x0 + (np.log(a) - np.log(.02)) / (np.log(1.2) - np.log(.02)) * (x1 - x0)
+        yp = lambda v: y1 - (v - ymin) / (ymax - ymin) * (y1 - y0)
+        for tick in (.02, .05, .1, .2, .5, 1.2):
+            xx = xp(tick)
+            d.line((xx, y1, xx, y1 + 5), fill=(185, 195, 207), width=2)
+            _showcase_text(d, (xx - 18, y1 + 7), "%g" % tick,
+                           (20, y1, 880, 662), size=22)
+        _showcase_text(d, (390, 651), "振幅(対数)", (20, 646, 880, 680), size=22)
+        ylabel = Image.new("RGBA", (132, 30), (0, 0, 0, 0))
+        yd = ImageDraw.Draw(ylabel)
+        _showcase_text(yd, (0, 0), "検出器応答", (0, 0, 132, 30), size=22)
+        ylabel = ylabel.rotate(90, expand=True)
+        im.paste(ylabel, (28, 469), ylabel)
+        for gi, color in enumerate(colors):
+            pale = tuple((v + 80) // 2 for v in color)
+            pts = [(xp(a), yp(v)) for a, v in zip(SHOWCASE_AMPS, scores[gi])]
+            line(d, pts, pale, 2)
+            line(d, pts[:k + 1], color, 4)
+            yy = yp(thresholds[gi])
+            for xx in np.arange(x0, x1, 12):
+                d.line((xx, yy, min(xx + 6, x1), yy), fill=color, width=2)
+            xx = xp(table_limits[gi])
+            for yy0 in np.arange(y0, y1, 12):
+                d.line((xx, yy0, xx, min(yy0 + 6, y1)), fill=color, width=2)
+            d.ellipse((xp(amp) - 7, yp(scores[gi][k]) - 7,
+                       xp(amp) + 7, yp(scores[gi][k]) + 7), fill=color, outline=(255, 255, 255), width=2)
+
+        # 右下: このコマの判定は応答と閾値の比較から作る。
+        d.rectangle((900, 400, 1259, 679), fill=(25, 35, 48), outline=(83, 96, 111))
+        verdicts = ["見える" if scores[i][k] > thresholds[i] else "見えない" for i in range(2)]
+        card = ["振幅 %.3f" % amp,
+                "brick: 応答 %.2f / 閾値 %.2f" % (scores[0][k], thresholds[0]),
+                "  → %s" % verdicts[0],
+                "合成: 応答 %.2f / 閾値 %.2f" % (scores[1][k], thresholds[1]),
+                "  → %s" % verdicts[1],
+                "残差 σ: brick %.3f = 合成 %.3f" % sigmas]
+        for i, text in enumerate(card):
+            _showcase_text(d, (916, 414 + 40 * i), text, (900, 400, 1260, 680),
+                           size=22, bold=(i == 0))
+
+        _showcase_text(d, (8, 692),
+                       "Fullseye: matched filter(matched)→無欠陥の地の99.99 %分位を閾値に。雑音量が同じでも地の構造(目地)が応答を押し下げる。",
+                       (0, 690, 1280, 720), size=22)
+        frames.append(np.asarray(im))
+
+    caption = ("同じ欠陥を実写 brick と残差 σ を揃えた合成の地へ仕込み、整合フィルタの応答が 99.99 %% 閾値を越えるまでを示す。"
+               "検出限界は brick %.3f、合成 %.3f、閾値は %.3f / %.3f。"
+               % (table_limits[0], table_limits[1], thresholds[0], thresholds[1]))
+    figs.save_video("defect_floor_explained", frames, fps=6.0, gif_every=1,
+                    caption=caption)
+    _showcase_audit(frames, "poc_real_defect_floor")
+    return len(frames), {"limits": table_limits, "thresholds": thresholds,
+                         "sigmas": sigmas}
+
+
 def make_figures(real, table):
     """限界の振幅で仕込んだ姿を並べ、振幅を上げていく GIF を書く。
 
@@ -364,7 +580,8 @@ def make_figures(real, table):
                           "右=**残差 σ を揃えた**合成の地。雑音の量は同じなのに、"
                           "右のほうが先に見えてくる。"
                           % (amps[0], amps[-1]))
-    return len(frames)
+    n, _metrics = make_defect_floor_explained(real, table)
+    return n
 
 
 def main():
