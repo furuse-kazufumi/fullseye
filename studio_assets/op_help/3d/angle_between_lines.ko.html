@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">angle_between_lines — 3D <code style="color:#22d3bf">geometry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">primitive</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.angle_between_lines(d1, d2)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import match3d; match3d.angle_between_lines(d1, d2)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;angle_between_lines&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>두 직선의 방향 벡터가 이루는 예각을 도 단위로 반환한다(방향은 구별하지 않음, 0〜90°).</p>
 <p><code style="color:#22d3bf">arccos(|d̂1·d̂2|)</code>를 도로 반환한다(float). 절댓값을 취하므로 <b>[0, 90]</b>(방향의 앞뒤를 구별하지 않는다. 둔각 쪽이 필요하면 <code style="color:#22d3bf">180 −</code>한다). <code style="color:#22d3bf">d1</code>, <code style="color:#22d3bf">d2</code>는 방향 벡터(길이는 상관없음, 내부에서 단위화), 수치의 2 또는 3 벡터이며 차원 혼재는 ValueError. 영벡터는 90이 반환된다.</p>

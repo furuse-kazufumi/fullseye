@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">lens_catalog — OPTICS <code style="color:#22d3bf">scene</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">table</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lens_catalog(maker: &#x27;str&#x27; = None, mount: &#x27;str&#x27; = None) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import optscene; optscene.lens_catalog(maker: &#x27;str&#x27; = None, mount: &#x27;str&#x27; = None) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsoptics.get(&quot;lens_catalog&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>工业镜头的规格表(可按型号查)。可用 <code style="color:#22d3bf">maker</code> / <code style="color:#22d3bf">mount</code> 筛选。</p>
 <p><b>只持有规格表上列出的项目</b> ―― 焦距、F 值范围、对应画幅、卡口、像圈。正如用户指出的，“镜头本身规格上列出的参数并没有那么多”，所以这样就够了。像差、MTF、畸变只以各机型的曲线图给出，所以<b>不持有</b>(持有会让人误以为是实测)。</p>

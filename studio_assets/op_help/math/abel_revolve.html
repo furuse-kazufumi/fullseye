@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">abel_revolve — MATH <code style="color:#22d3bf">transform</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">voxel</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.abel_revolve(slice_rows, dr: &#x27;float&#x27; = 1.0) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import mathtransforms; mathtransforms.abel_revolve(slice_rows, dr: &#x27;float&#x27; = 1.0) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsmath.get(&quot;abel_revolve&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>断面 f(z, r)((H, R)、r = 0, dr, …)を対称軸のまわりに回して 3-D ボリューム (H, 2R−1, 2R−1) にする。</p>
 <p><code style="color:#22d3bf">abel_inverse_image</code> と組むと、1 枚の写真から軸対称な物体の 3-D の分布が戻る。</p>

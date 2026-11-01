@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">retardation_convert — OPTICS <code style="color:#22d3bf">photoelastic</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.retardation_convert(value, from_unit=&#x27;rad&#x27;, to_unit=&#x27;nm&#x27;, wavelength_nm=550.0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import photoelastic; photoelastic.retardation_convert(value, from_unit=&#x27;rad&#x27;, to_unit=&#x27;nm&#x27;, wavelength_nm=550.0)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;retardation_convert&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>位相差の単位換算(rad / deg / nm / waves = 縞次数)。</p>
 <p><code style="color:#22d3bf">2π rad = 360 deg = λ nm = 1 wave</code>. The wavelength is in <b>nanometres</b> here (the name says so) and must lie in [10, 20000] nm.</p>

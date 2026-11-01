@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">blast_normals — OPTICS <code style="color:#22d3bf">finish</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">normalmap</code> → <code style="color:#22d3bf">normalmap</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.blast_normals(normals, grain=0.03, cell_px=3.0, seed=0) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import metalfinish; metalfinish.blast_normals(normals, grain=0.03, cell_px=3.0, seed=0) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;blast_normals&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>bead blasting / matte finish के <b>दिशाहीन सूक्ष्म उभार</b> को normals पर डालता है।</p>
 <p>grain: झुकाव की तीव्रता (लगभग 0–1)। cell_px: grain का आकार [px] (बड़ा = मोटा satin finish)।</p>

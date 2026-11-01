@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">pulse_echo_ascan — ACOUSTICS <code style="color:#22d3bf">ultrasonic</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pulse_echo_ascan(stack, f0=100000000.0, bandwidth=0.6, water_path=0.002, rate=None, duration=None, n_reverb=40)</code> (die Implementierung direkt: <code style="color:#22d3bf">import ultrasound; ultrasound.pulse_echo_ascan(stack, f0=100000000.0, bandwidth=0.6, water_path=0.002, rate=None, duration=None, n_reverb=40)</code>; aus dem Register: <code style="color:#22d3bf">opsacoustics.get(&quot;pulse_echo_ascan&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>HF-A-Bild eines Schichtstapels für einen Breitbandpuls bei senkrechtem Einfall: Stapelantwort per Transfermatrix, Wasserstrecke und Potenzgesetz-Dämpfung (<code style="color:#22d3bf">table</code>).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>

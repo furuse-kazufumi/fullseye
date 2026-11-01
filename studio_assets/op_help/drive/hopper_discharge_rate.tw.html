@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">hopper_discharge_rate — DRIVE <code style="color:#22d3bf">granular</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">signal × signal × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.hopper_discharge_rate(mass_below, times, mass_total: &#x27;float&#x27;, *, lo: &#x27;float&#x27; = 0.2, hi: &#x27;float&#x27; = 0.8) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import granular; granular.hopper_discharge_rate(mass_below, times, mass_total: &#x27;float&#x27;, *, lo: &#x27;float&#x27; = 0.2, hi: &#x27;float&#x27; = 0.8) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;hopper_discharge_rate&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由底板以下的質量序列 <code style="color:#22d3bf">m(t)</code> 求排出速率 [kg/s] —— 只對總質量 <code style="color:#22d3bf">lo</code> 至 <code style="color:#22d3bf">hi</code> 的區段做直線擬合(排除起始段與即將停止段；Beverloo 穩態流的假定)。回傳：<code style="color:#22d3bf">rate</code>、<code style="color:#22d3bf">n_frames</code>(區段內影格數)、<code style="color:#22d3bf">t_range</code>、<code style="color:#22d3bf">rms</code> [kg]。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>：區段內少於 3 個影格(排出過快以致沒有影格 —— 不會默默回傳 2 點的斜率)/ 時刻非單調。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

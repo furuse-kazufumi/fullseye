@@ -4,6 +4,7 @@ dim: imgforensics
 category: watermark
 in: image2d × phash
 out: table
+gpu: なし
 examples: [image_forensics_audit]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d × phash` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.watermark_capacity(image, bits, strengths=(0.02, 0.05, 0.1, 0.2, 0.4), wavelet: 'str' = 'haar', level: 'int' = 1, jpeg_quality=None) -> 'dict'` (実装を直接呼ぶなら `import imgforensics; imgforensics.watermark_capacity(image, bits, strengths=(0.02, 0.05, 0.1, 0.2, 0.4), wavelet: 'str' = 'haar', level: 'int' = 1, jpeg_quality=None) -> 'dict'`、台帳から引くなら `opsimgforensics.get("watermark_capacity")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

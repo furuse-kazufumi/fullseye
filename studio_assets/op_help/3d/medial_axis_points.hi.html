@@ -4,6 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.medial_axis_points(vol, min_radius=0.0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import medial; medial.medial_axis_points(vol, min_radius=0.0)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;medial_axis_points&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>Ledger के ज़रिए return value</b>: <code style="color:#22d3bf">fullseye.ledger.medial_axis_points(...)</code> <b>केवल घोषित out type <code style="color:#22d3bf">points</code> का value</b> लौटाता है (मूल function सहायक जानकारी भी लौटाता है)। जो हिस्सा छोड़ दिया गया है उसकी ज़रूरत हो तो <code style="color:#22d3bf">fullseye.ledger.medial_axis_points.raw(...)</code> का उपयोग करें, या <code style="color:#22d3bf">medial.medial_axis_points</code> को सीधे call करें।</p>
 <p style="margin:2px 0 2px 12px">• मूल function का return: <code style="color:#22d3bf">(points, radii)</code></p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>medial voxels के coordinates और local radius (= उस point का EDT value) को point cloud बनाता है। return value (points, radius)।</p>
 <p>मोटे हिस्सों में surface जैसे और पतले हिस्सों में line जैसे फैले medial points को (M,3) coordinate (z,y,x) और हर point के local radius (M,) के रूप में लौटाता है। सबसे बड़े radius वाला point shape के सबसे &quot;भीतरी&quot; हिस्से = centre की ओर इशारा करता है।</p>

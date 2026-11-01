@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">ae_size_correspondence — DRIVE <code style="color:#22d3bf">grind</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ae_size_correspondence(power, d50, group=None) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import grind; grind.ae_size_correspondence(power, d50, group=None) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;ae_size_correspondence&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>AE 频带功率与 D50 的对应关系(单调性、相关性、log–log 斜率 α，<code style="color:#22d3bf">P ∝ D50^α</code>)。</p>
 <p>传入 <code style="color:#22d3bf">group</code> 则按组(材料)分别输出(不同材料的功率水平相差数量级,混合后的相关性会捕捉到水平差异 —— <code style="color:#22d3bf">pooled</code> 仅供参考)。</p>

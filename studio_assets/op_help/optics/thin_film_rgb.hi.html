@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">thin_film_rgb — OPTICS <code style="color:#22d3bf">appearance</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">normalmap</code> → <code style="color:#22d3bf">rgbimage</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.thin_film_rgb(normals, view=(0.0, 0.0, 1.0), thickness_nm=350.0, n_film=1.33, n_sub=1.0, strength=1.0, light=None, nm=None, illuminant=None, polarization=&#x27;unpolarized&#x27;, n_out=1.0, under_layers=()) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import matappear; matappear.thin_film_rgb(normals, view=(0.0, 0.0, 1.0), thickness_nm=350.0, n_film=1.33, n_sub=1.0, strength=1.0, light=None, nm=None, illuminant=None, polarization=&#x27;unpolarized&#x27;, n_out=1.0, under_layers=()) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;thin_film_rgb&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>normal map + line of sight → <b>thin-film interference का रंग</b> (H, W, 3) linear sRGB।</p>
 <p>surface दृष्टि रेखा से जितनी अधिक झुकी हो, film के अंदर optical path उतना लंबा होता है, और रंग छोटी wavelengths की ओर खिसकता है ―― इसीलिए साबुन के बुलबुलों और गर्मी से रंगे titanium के रंग किनारों पर बदलते हैं।</p>

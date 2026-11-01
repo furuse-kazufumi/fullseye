@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">erf — MATH <code style="color:#22d3bf">numerics</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.erf(x) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import mathnumerics; mathnumerics.erf(x) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsmath.get(&quot;erf&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>error function erf(x) = (2/√π) ∫_0^x e^{−t²} dt।</p>
 <p>संचयी normal distribution, और blurred edge का असली आकार (Gaussian से convolve किया गया step): चौड़ाई σ के Gaussian से blur हुआ step ½(1 + erf(x / (σ√2))) है। Gate: odd function, erf(∞) = 1, derivative = (2/√π) e^{−x²}, Gauss quadrature वाले integral से मेल खाता है।</p>

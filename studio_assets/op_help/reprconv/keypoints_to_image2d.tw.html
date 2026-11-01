@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">keypoints_to_image2d — REPRCONV <code style="color:#22d3bf">keypoint</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">keypoints</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.keypoints_to_image2d(keypoints, shape=(64, 64))</code>(要直接呼叫實作,<code style="color:#22d3bf">import reprconv; reprconv.keypoints_to_image2d(keypoints, shape=(64, 64))</code>;從台帳取用則 <code style="color:#22d3bf">opsreprconv.get(&quot;keypoints_to_image2d&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>影像座標 <code style="color:#22d3bf">(N,2) = (u, v)</code> → 計數影像 <code style="color:#22d3bf">(H, W)</code>。<code style="color:#22d3bf">keypoints</code> 的第二個出口。</p>
 <p>以 <code style="color:#22d3bf">round(v)</code> 為列、<code style="color:#22d3bf">round(u)</code> 為行,逐個加 1。<b>到像素網格的量化就是損失</b>,與 <code style="color:#22d3bf">keypoints_from_image2d</code> 往返時位置最多偏移 0.5 像素(在相互遠離的 225 點上實測: <b>每個軸</b> RMS 0.2835 px = 與均勻量化的理論值 1/sqrt(12) = 0.2887 一致。依 2-D 距離為 sqrt(2) 倍的 0.4009 px,理論 sqrt(2/12) = 0.4082)。</p>

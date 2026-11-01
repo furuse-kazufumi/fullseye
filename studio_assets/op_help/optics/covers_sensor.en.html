@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">covers_sensor — OPTICS <code style="color:#22d3bf">scene</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.covers_sensor(lens: &#x27;dict&#x27;, sensor: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import optscene; optscene.covers_sensor(lens: &#x27;dict&#x27;, sensor: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;covers_sensor&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Whether the lens covers that sensor (image circle versus diagonal).</p>
 <p>If it cannot cover, <b>the four corners fall to black</b> (vignetting). A catalogue&#x27;s &quot;up to 1 inch&quot; etc. merely states this judgement by format name, so comparing real sizes is more reliable ―― line-scan sensors especially, whose length counts directly (16k x 7 µm = 115 mm), so a lens for area sensors falls far short.</p>

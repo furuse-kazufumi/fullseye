@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">course_distance — DRIVE <code style="color:#22d3bf">terrain</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table × points</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.course_distance(course, xy) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import driveterrain; driveterrain.course_distance(course, xy) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;course_distance&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>点 (N, 2) からコース(走れる多角形の和)への距離と、最寄り点から外へ向く単位ベクトル。</p>
 <p><code style="color:#22d3bf">{&quot;d&quot; (N,), &quot;nx&quot; (N,), &quot;ny&quot; (N,)}</code>。内側は d = 0、n = 0。外側の d は最寄りの辺への点-線分距離の閉形式で、中心軸(最寄り点が 2 つある所)を除いて |∇d| = 1(eikonal)。</p>

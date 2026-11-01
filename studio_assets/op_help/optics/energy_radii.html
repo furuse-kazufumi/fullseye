@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">energy_radii — OPTICS <code style="color:#22d3bf">imaging</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.energy_radii(psf, pixel_pitch_um=1.0, fractions=(0.5, 0.8, 0.9), kind=&#x27;circle&#x27;, centre=&#x27;centroid&#x27;)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import optics; optics.energy_radii(psf, pixel_pitch_um=1.0, fractions=(0.5, 0.8, 0.9), kind=&#x27;circle&#x27;, centre=&#x27;centroid&#x27;)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;energy_radii&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>The radius that holds a given fraction of a point-spread function&#x27;s energy (<code style="color:#22d3bf">table</code>).</p>
 <p>Solves the encircled (<code style="color:#22d3bf">kind=&#x27;circle&#x27;</code>) or ensquared (<code style="color:#22d3bf">kind=&#x27;square&#x27;</code>) energy curve for each fraction in *fractions* (strictly between 0 and 1, at most 16, ascending or not) by bisection on the exact edge-weighted curve of <code style="color:#22d3bf">encircled_energy</code> / <code style="color:#22d3bf">ensquared_energy</code>: the usual &quot;radius at 50 / 80 / 90 %&quot; figures of merit, in micrometres.</p>

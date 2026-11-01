@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">capsule_sdf — 3D <code style="color:#22d3bf">sdf_csg</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">coordgrid</code> → <code style="color:#22d3bf">sdf</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.capsule_sdf(grid, a, b, radius)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import sdf_ops; sdf_ops.capsule_sdf(grid, a, b, radius)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;capsule_sdf&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>선분 <code style="color:#22d3bf">a</code>–<code style="color:#22d3bf">b</code>를 반경 <code style="color:#22d3bf">radius</code>로 두껍게 한 캡슐의 <b>엄밀한</b> 부호 거리장.</p>
 <p><code style="color:#22d3bf">sdf(p) = ‖p - (a + clamp(((p-a)·(b-a))/‖b-a‖², 0, 1)·(b-a))‖ - radius</code>. 선분까지의 최단 거리 그 자체이므로 <b>전 공간에서 기울기 노름 1</b>(원기둥과 달리 끝이 둥근 만큼모서리가 없어 엄밀). 리브, 배관, 뼈, 와이어, 공구의 스윕 체적 근사에 적합하다.</p>

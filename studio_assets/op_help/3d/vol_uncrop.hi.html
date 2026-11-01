@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">vol_uncrop — 3D <code style="color:#22d3bf">domain</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">voxel</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_uncrop(part, offset, shape, fill=0.0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import volops; volops.vol_uncrop(part, offset, shape, fill=0.0)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;vol_uncrop&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>crop किए गए sub-volume को वापस पूरे frame में चिपकाता है (<code style="color:#22d3bf">vol_crop_domain</code> का inverse)।</p>
 <p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>

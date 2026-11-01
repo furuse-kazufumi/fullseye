@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">cr_checker_result — DRIVE <code style="color:#22d3bf">commonroad</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cr_checker_result(path) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import drivecommonroad; drivecommonroad.cr_checker_result(path) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;cr_checker_result&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Reads the JSON written by the official checker under WSL (tools/check_solution_json.py).</p>
 <p>Required keys <code style="color:#22d3bf">CHECKER_KEYS</code> (<code style="color:#22d3bf">valid</code> / <code style="color:#22d3bf">goal_reached</code> / <code style="color:#22d3bf">feasible</code> / <code style="color:#22d3bf">obstacle_collision</code> / <code style="color:#22d3bf">boundary_collision</code> are bool; <code style="color:#22d3bf">scenario</code> / <code style="color:#22d3bf">solution</code> / <code style="color:#22d3bf">checker_version</code> are strings). Other keys (<code style="color:#22d3bf">details</code> etc.) are returned as is.</p>

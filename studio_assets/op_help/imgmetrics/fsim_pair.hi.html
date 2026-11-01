@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">fsim_pair — IMGMETRICS <code style="color:#22d3bf">perceptual</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">rgbimage × rgbimage</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fsim_pair(ref, dist, data_range: &#x27;float&#x27; = 255.0, downsample: &#x27;bool&#x27; = True) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import iqafsim; iqafsim.fsim_pair(ref, dist, data_range: &#x27;float&#x27; = 255.0, downsample: &#x27;bool&#x27; = True) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsimgmetrics.get(&quot;fsim_pair&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>FSIM और FSIMc एक साथ (phase congruency 1 image पर केवल 1 बार गणना होती है — evaluator और PoC इसी को call करते हैं)।</p>
 <p>प्रक्रिया (paper §III): (1) F = max(1, round(min(H, W)/256)) से F×F औसत + decimation (TID2013 के 384×512 में F = 2 → 192×256), (2) Y की phase congruency PC और Scharr ([3 0 −3; 10 0 −10; 3 0 −3]/16) gradient magnitude G, (3) S_PC = (2 PC1 PC2 + T1)/(PC1² + PC2² + T1), S_G = (2 G1 G2 + T2)/(G1² + G2² + T2),</p>

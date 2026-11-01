@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">geodesic_heat — MATH <code style="color:#22d3bf">geometry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">mesh</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.geodesic_heat(vertices, faces=None, source=0, *, t: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import mathgeometry; mathgeometry.geodesic_heat(vertices, faces=None, source=0, *, t: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsmath.get(&quot;geodesic_heat&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>heat method से surface पर geodesic distance (Crane et al. 2013)। <code style="color:#22d3bf">source</code> vertex index है (या indices की series, default vertex 0)। mesh <code style="color:#22d3bf">(vertices, faces)</code> या 1 mesh tuple के रूप में दिया जा सकता है।</p>
 <p style="margin:2px 0 2px 12px">1) (M − tL) u = δ को 1 step के लिए हल करें (समय t तक heat फैलाएँ; default t = औसत edge लंबाई²)</p>

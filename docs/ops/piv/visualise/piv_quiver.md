@@ -4,6 +4,7 @@ dim: piv
 category: visualise
 in: flow2d
 out: rgb
+gpu: なし
 examples: [piv_field_analysis_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `flow2d` → `rgb`
 - **呼び出し**: `import fullseye as fs; fs.ledger.piv_quiver(flow, spacing=None, scale=None, upsample=8, background=None, color=(0.08, 0.08, 0.12), width=1.5)` (実装を直接呼ぶなら `import pivops; pivops.piv_quiver(flow, spacing=None, scale=None, upsample=8, background=None, color=(0.08, 0.08, 0.12), width=1.5)`、台帳から引くなら `opspiv.get("piv_quiver")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

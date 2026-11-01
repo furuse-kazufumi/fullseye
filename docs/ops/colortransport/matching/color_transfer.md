@@ -4,6 +4,7 @@ dim: colortransport
 category: matching
 in: rgbimage × rgbimage
 out: rgbimage
+gpu: なし
 examples: [color_transport]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `rgbimage × rgbimage` → `rgbimage`
 - **呼び出し**: `import fullseye as fs; fs.ledger.color_transfer(src, ref, method='reinhard', space='lab')` (実装を直接呼ぶなら `import colortransport; colortransport.color_transfer(src, ref, method='reinhard', space='lab')`、台帳から引くなら `opscolortransport.get("color_transfer")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">vol_local_maxima — 3D <code style="color:#22d3bf">feature</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_local_maxima(vol, min_distance, threshold=None)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import volops; volops.vol_local_maxima(vol, min_distance, threshold=None)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;vol_local_maxima&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>3-D local-maxima (peak) detection.</p>
 <p>A voxel is a peak if it equals the maximum over a cubic neighbourhood of half-width <code style="color:#22d3bf">min_distance</code> (side <code style="color:#22d3bf">2*min_distance + 1</code>) <b>and</b> that neighbourhood is not flat (its max strictly exceeds its min, so a constant region yields no peaks). Pass *threshold* to additionally require <code style="color:#22d3bf">vol &gt;= threshold</code> (drop weak peaks in noise).</p>

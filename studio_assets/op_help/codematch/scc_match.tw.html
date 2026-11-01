@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">scc_match — CODEMATCH <code style="color:#22d3bf">match</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.scc_match(image, template, flat_thresh=0.01, min_valid=32, min_mask_fraction=None, mask_extension=True, z_mask=4.0) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import codematch; codematch.scc_match(image, template, flat_thresh=0.01, min_valid=32, min_mask_fraction=None, mask_extension=True, z_mask=4.0) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opscodematch.get(&quot;scc_match&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>選擇性相關係數（SCC）：只用增量符號一致的像素計算正規化相關。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>

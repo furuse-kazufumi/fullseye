@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">scheimpflug_tilt — OPTICS <code style="color:#22d3bf">noncoaxial</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">table</code> (an op determined by its arguments alone — it takes no image or data input)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.scheimpflug_tilt(system=None, object_distance_mm=200.0, object_tilt_deg=30.0, verify=True, heights_mm=None)</code> (to call the implementation directly, <code style="color:#22d3bf">import raytrace3d; raytrace3d.scheimpflug_tilt(system=None, object_distance_mm=200.0, object_tilt_deg=30.0, verify=True, heights_mm=None)</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;scheimpflug_tilt&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Scheimpflug condition for a tilted object plane (<code style="color:#22d3bf">table</code>; closed form, optionally real rays).</p>
 <p>For a lens with focal length <code style="color:#22d3bf">f</code> and principal planes H, H&#x27; (from <code style="color:#22d3bf">raytrace.paraxial_trace</code>), an object plane through the axis point at distance <code style="color:#22d3bf">s</code> before H, tilted by θ (the plane <code style="color:#22d3bf">z = z₀ + y·tanθ</code>):</p>

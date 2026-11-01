@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">from_xld — SHAPE2D <code style="color:#22d3bf">descriptor</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">pairs</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.from_xld(contour, i=0)</code> (to call the implementation directly, <code style="color:#22d3bf">import fourierdesc; fourierdesc.from_xld(contour, i=0)</code>; from the registry, <code style="color:#22d3bf">opsshape2d.get(&quot;from_xld&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Extracts the i-th contour from an XLD contour dict (<code style="color:#22d3bf">{&quot;shape&quot;, &quot;cs&quot;:[Nx2,...]}</code>).</p>
 <p>What is returned is (N,2) in <b>(row, col)</b> order, the same as XLD. When passing it to <code style="color:#22d3bf">imagemorph</code>, swap to (x, y) with <code style="color:#22d3bf">[:, ::-1]</code> (the &quot;coordinate-order pitfall&quot; at the top of the module).</p>

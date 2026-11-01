@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">sph_kernel — DRIVE <code style="color:#22d3bf">swarmflow</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal × scalar</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sph_kernel(r, h: &#x27;float&#x27;, dim: &#x27;int&#x27; = 2, derivative: &#x27;bool&#x27; = False) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import swarmflow; swarmflow.sph_kernel(r, h: &#x27;float&#x27;, dim: &#x27;int&#x27; = 2, derivative: &#x27;bool&#x27; = False) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;sph_kernel&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>3rd क्रम का spline kernel W(r, h) (M4, support त्रिज्या 2h)। <code style="color:#22d3bf">derivative=True</code> से dW/dr (r की दिशा में derivative, 0 या कम)।</p>
 <p>W = σ_d [1 − 1.5 q² + 0.75 q³] (0 ≤ q &lt; 1), σ_d · 0.25 (2 − q)³ (1 ≤ q &lt; 2), 0 (q ≥ 2), q = r/h। σ_1 = 2/(3h), σ_2 = 10/(7π h²), σ_3 = 1/(π h³)। इन स्थिरांकों से ∫ W dV = 1 (सर्वसमिका; गेट से संख्यात्मक समाकलन से तुलना)।</p>

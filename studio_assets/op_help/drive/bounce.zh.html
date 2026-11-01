@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">bounce — DRIVE <code style="color:#22d3bf">ball</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.bounce(v, omega, normal, bp: &#x27;dict&#x27;, ip: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import ballistics; ballistics.bounce(v, omega, normal, bp: &#x27;dict&#x27;, ip: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;bounce&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>刚体球撞击平面瞬间的速度与角速度更新(库仑摩擦，Cross 2002 / Garwin 1969 的 2 种状态)。</p>
 <p>接触点滑移速度 s = v_t − r(ω × n)_t。若所需切向冲量不超过 μJ_n,则滑移停止转为滚动(grip), 超过则保持滑动(slip,切向冲量 = μJ_n)。法向为 v_n&#x27; = −e v_n(e 为常数或 |v_n| 的函数)。返回值 <code style="color:#22d3bf">{&quot;v&quot;, &quot;omega&quot;, &quot;regime&quot; (&quot;grip&quot;|&quot;slip&quot;|&quot;none&quot;), &quot;J_n&quot;, &quot;J_t&quot;, &quot;slip_speed&quot;, &quot;e&quot;}</code>。<code style="color:#22d3bf">v·n ≥ 0</code>(正在分离)时不做任何处理(regime &quot;none&quot;)。定理: 绕接触点的角动量守恒(<code style="color:#22d3bf">contact_angular_momentum</code>)。</p>

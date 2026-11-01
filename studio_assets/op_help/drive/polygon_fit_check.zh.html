@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">polygon_fit_check — DRIVE <code style="color:#22d3bf">pegsym</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">matrix × matrix</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.polygon_fit_check(peg_points, hole_vertices) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import pegsym; pegsym.polygon_fit_check(peg_points, hole_vertices) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;polygon_fit_check&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>点群(销的顶点，或倾斜销投影后的顶点)能否<b>仅靠平移</b>放入凸多边形的孔 —— 通过枚举 3 个约束取等号的顶点，精确求解使余量 m 最大的线性规划 max m s.t. n_j·(p + t) ≤ h_j − m(所有点、所有边)(边至多十几条，组合一并求解)。返回 <code style="color:#22d3bf">fit</code>(m ≥ 0)、<code style="color:#22d3bf">margin</code> [m] (为负时是最小的嵌入量)、<code style="color:#22d3bf">t</code>(最优平移 (2,))、<code style="color:#22d3bf">active</code>(取等号的边的编号)。<b>Raises</b> ValueError：点群不是 (N ≥ 1, 2) 或非有限、孔不是凸多边形、孔的法线不能包围所有方向(无界)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

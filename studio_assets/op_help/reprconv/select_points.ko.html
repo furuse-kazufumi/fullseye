@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">select_points — REPRCONV <code style="color:#22d3bf">index</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">points × indices</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.select_points(points, indices)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import reprconv; reprconv.select_points(points, indices)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsreprconv.get(&quot;select_points&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>점군 <code style="color:#22d3bf">(N,3)</code> 과 인덱스 <code style="color:#22d3bf">(M,)</code> → 부분 점군 <code style="color:#22d3bf">(M,3)</code>. <code style="color:#22d3bf">indices</code> 의 소비 쪽.</p>
 <p><code style="color:#22d3bf">indices</code> 를 낳는 op 는 6 개나 있는데(<code style="color:#22d3bf">iss_keypoints</code> / <code style="color:#22d3bf">farthest_point_sampling</code> / <code style="color:#22d3bf">alpha_shape_boundary</code> / <code style="color:#22d3bf">find_peaks</code> / <code style="color:#22d3bf">zero_crossings_funct_1d</code> / <code style="color:#22d3bf">cad_visible_faces</code>), <b>첨자를 먹는 단입력 op 가 1 개도 없었다</b> —— 첨자는 &quot;원래의 집합과 세트로 비로소 의미를 갖는다&quot;므로, 단입력으로는 원리적으로 만들 수 없다. 따라서 이것은 2 입력으로 했다.</p>

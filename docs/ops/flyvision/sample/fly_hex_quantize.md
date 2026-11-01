@@ -4,6 +4,7 @@ dim: flyvision
 category: sample
 in: signal
 out: signal
+gpu: なし
 examples: [poc_eye_to_brain]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal` → `signal`
 - **呼び出し**: `import fullseye as fs; fs.ledger.fly_hex_quantize(signal, bits=3, mode='log', contrast=0.2)` (実装を直接呼ぶなら `import flyvision; flyvision.fly_hex_quantize(signal, bits=3, mode='log', contrast=0.2)`、台帳から引くなら `opsflyvision.get("fly_hex_quantize")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

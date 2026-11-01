@@ -4,6 +4,7 @@ dim: math
 category: construct
 in: 
 out: measurement
+gpu: なし
 examples: [poc_theorems_as_pictures]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `measurement`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.ifs_similarity_dimension(preset='sierpinski', maps=None, tol=1e-13)` (実装を直接呼ぶなら `import mathops; mathops.ifs_similarity_dimension(preset='sierpinski', maps=None, tol=1e-13)`、台帳から引くなら `opsmath.get("ifs_similarity_dimension")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

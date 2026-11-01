@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">graph_rich_club — CONNGRAPH <code style="color:#22d3bf">stats</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">conn_graph</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graph_rich_club(W: &#x27;Any&#x27;, k: &#x27;int&#x27;) -&gt; &#x27;float&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import conngraph; conngraph.graph_rich_club(W: &#x27;Any&#x27;, k: &#x27;int&#x27;) -&gt; &#x27;float&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsconngraph.get(&quot;graph_rich_club&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>rich club 係数 φ(k): 総次数 (in+out、二値) &gt; k のノードが張る部分グラフの有向密度。</p>
 <p>φ = 辺数 / (r (r − 1))、r = 該当ノード数。r &lt; 2 なら 0(NaN を返さない)。</p>

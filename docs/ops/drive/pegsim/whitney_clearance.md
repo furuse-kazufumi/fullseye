@@ -4,6 +4,7 @@ dim: drive
 category: pegsim
 in: table
 out: table
+gpu: なし
 examples: [poc_peg_failure_recovery, poc_pegsim_insertion]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.whitney_clearance(kp=None) -> 'dict'` (実装を直接呼ぶなら `import pegsim; pegsim.whitney_clearance(kp=None) -> 'dict'`、台帳から引くなら `opsdrive.get("whitney_clearance")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

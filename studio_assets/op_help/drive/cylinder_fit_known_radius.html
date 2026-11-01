@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">cylinder_fit_known_radius — DRIVE <code style="color:#22d3bf">pegsim</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cylinder_fit_known_radius(points, r: &#x27;float&#x27;, axis_point, axis, iters: &#x27;int&#x27; = 25) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import pegsim; pegsim.cylinder_fit_known_radius(points, r: &#x27;float&#x27;, axis_point, axis, iters: &#x27;int&#x27; = 25) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;cylinder_fit_known_radius&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>半径 r が既知の円柱を 3-D 点群 (N, 3) に当てる: 軸上の点(軸に垂直な 2 自由度)と軸の向き(2 自由度)を Gauss-Newton で。</p>
 <p>初期値 <code style="color:#22d3bf">axis_point</code>・<code style="color:#22d3bf">axis</code> から出発し、残差 = 軸からの距離 − r。返り: <code style="color:#22d3bf">axis_point</code>(3,)、<code style="color:#22d3bf">axis</code>(単位、入力の向きを保つ)、<code style="color:#22d3bf">rms</code>、<code style="color:#22d3bf">n</code>。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 点が 5 未満、r ≤ 0、axis がゼロ。</p>

@@ -4,7 +4,7 @@ dim: 3d
 category: feature
 in: voxel
 out: hessian
-gpu: true
+gpu: なし
 examples: [diff_features]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `voxel` → `hessian`
 - **呼び出し**: `import fullseye as fs; fs.ledger.hessian3d(vol, device='cpu')` (実装を直接呼ぶなら `import match3d; match3d.hessian3d(vol, device='cpu')`、台帳から引くなら `ops3d.get("hessian3d")`)
-- **GPU**: この op は GPU 経路あり(`device="cuda"`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

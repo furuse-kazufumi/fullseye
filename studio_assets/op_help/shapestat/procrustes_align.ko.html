@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">procrustes_align — SHAPESTAT <code style="color:#22d3bf">procrustes</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.procrustes_align(source, target, scaling: &#x27;bool&#x27; = True, reflection: &#x27;bool&#x27; = False)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import shapestats; shapestats.procrustes_align(source, target, scaling: &#x27;bool&#x27; = True, reflection: &#x27;bool&#x27; = False)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsshapestat.get(&quot;procrustes_align&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>*source*를 *target*에 겹친 점. → <code style="color:#22d3bf">(N, 3)</code>(<code style="color:#22d3bf">procrustes_fit</code>의 적용).</p>
 <p><code style="color:#22d3bf">M = procrustes_fit(source, target, scaling, reflection)</code> 를 구하고, <code style="color:#22d3bf">source @ M[:3, :3].T + M[:3, 3]</code> 를 반환한다. 변환은 무게중심 맞춤 + SVD 에 의한 회전(+ 임의로 스케일)의 닮음 변환이며, <b>i 번째끼리가 대응하고 있음</b>이 전제. 대응이 없는 점군을 넘겨도 예외는 발생하지 않고 의미 없는 배치가 반환된다(그 경우에는 ICP 계열의 정합을 쓴다).</p>

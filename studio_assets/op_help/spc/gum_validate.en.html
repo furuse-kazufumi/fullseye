@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">gum_validate — SPC <code style="color:#22d3bf">uncertainty</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gum_validate(guf, mcm, ndig=2)</code> (to call the implementation directly, <code style="color:#22d3bf">import spc; spc.gum_validate(guf, mcm, ndig=2)</code>; from the registry, <code style="color:#22d3bf">opsspc.get(&quot;gum_validate&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p><b>Validate</b> the propagation-law result against the Monte Carlo result (<code style="color:#22d3bf">table</code>).</p>
 <p>*guf* is the return of <code style="color:#22d3bf">gum_expanded</code> (called with <code style="color:#22d3bf">estimate</code> to produce an interval), *mcm* is the return of <code style="color:#22d3bf">gum_monte_carlo</code>. The procedure follows clause 8.1.3 of the standard:</p>

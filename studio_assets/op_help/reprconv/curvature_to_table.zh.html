@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">curvature_to_table — REPRCONV <code style="color:#22d3bf">curvature</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">curvature</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.curvature_to_table(curvature)</code>(要直接调用实现,<code style="color:#22d3bf">import reprconv; reprconv.curvature_to_table(curvature)</code>;从台账取用则 <code style="color:#22d3bf">opsreprconv.get(&quot;curvature_to_table&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>曲率 → 分布的汇总 <code style="color:#22d3bf">table</code>。<b>单向</b>(统计的职责就是丢弃信息)。</p>
 <p>既接受 (N,) 的单个曲率,也接受 (N,2) 的主曲率对 —— 只是求统计的话,并不需要成对。把接收到的形式写回 <code style="color:#22d3bf">kind</code>,所以下游事后能判别&quot;是否为对&quot;。</p>

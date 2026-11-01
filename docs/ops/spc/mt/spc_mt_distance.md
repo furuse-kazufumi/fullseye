@@ -4,6 +4,7 @@ dim: spc
 category: mt
 in: matrix
 out: table
+gpu: なし
 examples: [poc_mt_hidden_fault, poc_spc]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `matrix` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.spc_mt_distance(data, mean=None, std=None, inv_corr=None, threshold=3.0)` (実装を直接呼ぶなら `import spc; spc.spc_mt_distance(data, mean=None, std=None, inv_corr=None, threshold=3.0)`、台帳から引くなら `opsspc.get("spc_mt_distance")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

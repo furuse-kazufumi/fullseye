@@ -4,6 +4,7 @@ dim: 3d
 category: geometry
 in: primitive
 out: measurement
+gpu: なし
 examples: [geometry_metrology]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,6 +16,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **データ種**: `primitive` → `measurement`
 - **呼び出し**: `import fullseye as fs; fs.ledger.distance_segment_segment(p0, p1, q0, q1)` (実装を直接呼ぶなら `import match3d; match3d.distance_segment_segment(p0, p1, q0, q1)`、台帳から引くなら `ops3d.get("distance_segment_segment")`)
 - **台帳経由の戻り値**: `fullseye.ledger.distance_segment_segment(...)` は**宣言 out 型 `measurement` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.distance_segment_segment.raw(...)`、または `match3d.distance_segment_segment` を直接呼ぶ。
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

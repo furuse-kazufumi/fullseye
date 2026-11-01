@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">extract_surface_points — 3D <code style="color:#22d3bf">tsdf_fusion</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">sdf</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.extract_surface_points(tsdf: &#x27;np.ndarray&#x27;, weight: &#x27;np.ndarray&#x27;, bounds: &#x27;Bounds&#x27;, res: &#x27;int&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import tsdf_fusion; tsdf_fusion.extract_surface_points(tsdf: &#x27;np.ndarray&#x27;, weight: &#x27;np.ndarray&#x27;, bounds: &#x27;Bounds&#x27;, res: &#x27;int&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;extract_surface_points&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由 TSDF 零交叉提取表面点 (M,3)(无需 marching cubes,线性插值)。</p>
 <p>对已观测(weight&gt;0)的相邻 voxel 对中 TSDF 符号发生变化的边,在其 2 个中心之间用 <code style="color:#22d3bf">alpha = t_a/(t_a - t_b)</code> 线性插值求出交点(表面点)。只采用两端 weight 都 &gt;0 的边(不与未观测的初始值 1.0 产生虚假交叉 = honest)。扫描 x/y/z 3 个轴的全部边。若无交叉则返回空 (0,3)(不造假,诚实地返回空)。</p>

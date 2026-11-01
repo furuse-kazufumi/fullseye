@@ -3,6 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image × image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: 입력이 2 장인 op 이므로 <code style="color:#22d3bf">fullseye.apply</code> 로는 호출할 수 없습니다(그것은 이미지 1 장 모델). <code style="color:#22d3bf">g = fullseye.FullseyeGraph(); g.add(&quot;out&quot;, &quot;abs_diff_image&quot;, [&quot;$in1&quot;, &quot;$in2&quot;], a=0.5, b=0.5); g.run({&quot;$in1&quot;: img1, &quot;$in2&quot;: img2}, terminal=&quot;out&quot;)</code> (<code style="color:#22d3bf">$</code> 로 시작하는 이름이 밖에서 넘기는 입력)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 대응</b>: <code style="color:#22d3bf">abs_diff_image</code>(의미·매개변수는 HALCON 레퍼런스가 참고가 됩니다)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>영상 2장의 차의 절댓값. HALCON의 <code style="color:#22d3bf">abs_diff_image</code>에 해당한다. <code style="color:#22d3bf">out = clip(|I1 - I2| * (0.5 + 1.5a), 0, 1)</code>. 변화 검출의 기본형으로, 부호를 버리는 대신 밝아지는 변화와 어두워지는 변화를 모두 잡는다. <code style="color:#22d3bf">b</code>는 사용하지 않는다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

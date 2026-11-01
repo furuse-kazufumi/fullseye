@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">stroke_tone_error — PRINTPATH <code style="color:#22d3bf">stroke</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d × pairs</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.stroke_tone_error(image, points, pen_width=1.0, blur_sigma=3.0, gamma=1.0)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import printpath; printpath.stroke_tone_error(image, points, pen_width=1.0, blur_sigma=3.0, gamma=1.0)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsprintpath.get(&quot;stroke_tone_error&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>선을 그은 결과의 <b>농담</b>이 목표와 얼마나 다른가. → <code style="color:#22d3bf">table</code></p>
 <p>★이것이 한붓그리기의 <b>진짜 목적 함수</b>. &quot;그림으로서 닮았다&quot;를 사람의 눈에 맡기지 않고, 펜 폭으로 그려서 눈의 척도로 흐리고, 목표의 어두움과 비교하여 수로 반환한다.</p>

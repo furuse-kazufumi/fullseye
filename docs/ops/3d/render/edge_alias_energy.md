@@ -4,6 +4,7 @@ dim: 3d
 category: render
 in: image2d
 out: measurement
+gpu: なし
 examples: [render_beauty, render_ssaa]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d` → `measurement`
 - **呼び出し**: `import fullseye as fs; fs.ledger.edge_alias_energy(img) -> 'float'` (実装を直接呼ぶなら `import render_ssaa; render_ssaa.edge_alias_energy(img) -> 'float'`、台帳から引くなら `ops3d.get("edge_alias_energy")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

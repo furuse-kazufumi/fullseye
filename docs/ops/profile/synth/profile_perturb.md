@@ -4,6 +4,7 @@ dim: profile
 category: synth
 in: pairs
 out: pairs
+gpu: なし
 examples: [profile_shape_inspection]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `pairs` → `pairs`
 - **呼び出し**: `import fullseye as fs; fs.ledger.profile_perturb(contour, kind='thicken', amount=0.001, extent=0.1, cycles=6.0)` (実装を直接呼ぶなら `import profileops; profileops.profile_perturb(contour, kind='thicken', amount=0.001, extent=0.1, cycles=6.0)`、台帳から引くなら `opsprofile.get("profile_perturb")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -4,6 +4,7 @@ dim: math
 category: geometry
 in: 
 out: table
+gpu: なし
 examples: [gallery_math_numerics_filters]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.nurbs_surface(control_net, weights=None, *, degree=(3, 3), knots_u=None, knots_v=None, n=(48, 48)) -> 'dict'` (実装を直接呼ぶなら `import mathgeometry; mathgeometry.nurbs_surface(control_net, weights=None, *, degree=(3, 3), knots_u=None, knots_v=None, n=(48, 48)) -> 'dict'`、台帳から引くなら `opsmath.get("nurbs_surface")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">emva_photon_transfer — OPTICS <code style="color:#22d3bf">sensorchar</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.emva_photon_transfer(mu_y, var_y, mu_y_dark, var_y_dark, mu_y_sat)</code> (die Implementierung direkt: <code style="color:#22d3bf">import sensorchar; sensorchar.emva_photon_transfer(mu_y, var_y, mu_y_dark, var_y_dark, mu_y_sat)</code>; aus dem Register: <code style="color:#22d3bf">opsoptics.get(&quot;emva_photon_transfer&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Bestimmt aus der Photon-Transfer-Kurve die Systemverstärkung K und das Dunkelrauschen σ_d (Gl. 50, 53, 54).</p>
 <p>*mu_y*, *var_y*: Mittelwert und zeitliche Varianz je Belichtungsstufe (<code style="color:#22d3bf">mu</code> und <code style="color:#22d3bf">var_temporal</code> von <code style="color:#22d3bf">emva_pair_statistics</code>). *mu_y_dark*, *var_y_dark*: dieselben Größen der Dunkelbilder. *mu_y_sat*: Mittelwert bei Sättigung (gemessen bei der Belichtung, bei der 0.1–0.2 % der Pixel den Maximalwert erreichen).</p>

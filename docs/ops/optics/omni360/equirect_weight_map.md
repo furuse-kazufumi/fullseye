@@ -4,6 +4,7 @@ dim: optics
 category: omni360
 in: 
 out: image2d
+gpu: なし
 examples: [poc_omni360_inspection]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `image2d`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.equirect_weight_map(h, w, solid_angle=False)` (実装を直接呼ぶなら `import omni360; omni360.equirect_weight_map(h, w, solid_angle=False)`、台帳から引くなら `opsoptics.get("equirect_weight_map")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

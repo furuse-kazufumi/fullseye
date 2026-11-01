@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">punch_pressure — DRIVE <code style="color:#22d3bf">tactorque</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">matrix × matrix × scalar × scalar</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.punch_pressure(X, Y, a: &#x27;float&#x27;, P: &#x27;float&#x27; = 0.0, M1=(0.0, 0.0), pitch: &#x27;float | None&#x27; = None, sub: &#x27;int&#x27; = 4) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import tactorque; tactorque.punch_pressure(X, Y, a: &#x27;float&#x27;, P: &#x27;float&#x27; = 0.0, M1=(0.0, 0.0), pitch: &#x27;float | None&#x27; = None, sub: &#x27;int&#x27; = 4) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;punch_pressure&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>平头圆形压头(半径 a [m])的压力 [Pa]：p = P/(2πa√(a²−r²)) + 3(M1_x x + M1_y y)/(2πa³√(a²−r²))(r &lt; a，外部为 0)。第 1 项 = Johnson 1985 式 3.34，第 2 项 = 满足 ∫ (x, y) p dA = M1 的反对称项(推导见模块 docstring，由门禁做数值确认)。传入 <code style="color:#22d3bf">pitch</code> 时，以 sub×sub 的子样本对像素取平均(减小边缘 1/√ 奇点的网格误差；4×4 时 Σ p h² 与 P 相差 0.6 %，实测)。<b>Raises</b> ValueError：a ≤ 0、P &lt; 0、X 与 Y 形状不同、|M1| &gt; Pa/3(接触脱离：线性公式不成立，fail-closed)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

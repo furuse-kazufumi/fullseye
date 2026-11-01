@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tid2013_by_distortion — IMGMETRICS <code style="color:#22d3bf">iqa</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">any × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tid2013_by_distortion(values, index: &#x27;dict&#x27;, idx=None) -&gt; &#x27;List[dict]&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import iqatid; iqatid.tid2013_by_distortion(values, index: &#x27;dict&#x27;, idx=None) -&gt; &#x27;List[dict]&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsimgmetrics.get(&quot;tid2013_by_distortion&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>왜곡 종류(24)별 지표와 MOS의 순위 상관.</p>
 <p><code style="color:#22d3bf">values</code>는 <code style="color:#22d3bf">idx</code>(대장의 행 번호, 생략 = 3000행 전부)에 대응하는 값. 각 행: <code style="color:#22d3bf">type</code>(1부터 시작), <code style="color:#22d3bf">name</code>(readme TABLE I), <code style="color:#22d3bf">n</code>, <code style="color:#22d3bf">n_inf</code>, <code style="color:#22d3bf">srocc</code>, <code style="color:#22d3bf">krocc</code>(τ_b). 1종 = 25 참조 × 5단 = 125쌍. 쌍이 2 미만인 종은 nan. 왜곡 18(채도 변화)은 Y′의 PSNR이 106 / 125쌍에서 inf(동순위)이므로, 그 종의 순위 상관은 낮게 나온다 -- 지표의 결함이 아니라 휘도만 보는 지표의 한계. <b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 길이 불일치, nan.</p>

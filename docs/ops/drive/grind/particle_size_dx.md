@@ -4,6 +4,7 @@ dim: drive
 category: grind
 in: table × scalar
 out: scalar
+gpu: なし
 examples: [poc_powder_grinding_ae]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table × scalar` → `scalar`
 - **呼び出し**: `import fullseye as fs; fs.ledger.particle_size_dx(psd: 'dict', q: 'float' = 50.0, convention: 'str' = 'log_edges') -> 'float'` (実装を直接呼ぶなら `import grind; grind.particle_size_dx(psd: 'dict', q: 'float' = 50.0, convention: 'str' = 'log_edges') -> 'float'`、台帳から引くなら `opsdrive.get("particle_size_dx")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

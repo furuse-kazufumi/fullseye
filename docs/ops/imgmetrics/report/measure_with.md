@@ -4,6 +4,7 @@ dim: imgmetrics
 category: report
 in: metrics × image2d × image2d
 out: metrics
+gpu: なし
 examples: [image_quality_metrics]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `metrics × image2d × image2d` → `metrics`
 - **呼び出し**: `import fullseye as fs; fs.ledger.measure_with(report, a, b, ms=False)` (実装を直接呼ぶなら `import imgmetrics; imgmetrics.measure_with(report, a, b, ms=False)`、台帳から引くなら `opsimgmetrics.get("measure_with")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">flow_apply — REPRCONV <code style="color:#22d3bf">flow</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">points × flow_scattered</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.flow_apply(points, flow)</code>(要直接调用实现,<code style="color:#22d3bf">import reprconv; reprconv.flow_apply(points, flow)</code>;从台账取用则 <code style="color:#22d3bf">opsreprconv.get(&quot;flow_apply&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把散在流 <code style="color:#22d3bf">(N,3)</code> 加到点群 <code style="color:#22d3bf">(N,3)</code> 上 → <code style="color:#22d3bf">points</code>。<code style="color:#22d3bf">flow</code> 的消费侧。</p>
 <p>由于 <code style="color:#22d3bf">estimate_flow(a, b)</code> 返回“从 a 的各点到 b 中最近邻的位移”, <code style="color:#22d3bf">flow_apply(a, estimate_flow(a, b))</code> 会移到 <b>b 的点中被 a 选为最近邻的那些点</b>。仅当对应是双射时往返才是严格的, 否则会按“a 的 2 个点落到 b 的同一点”的程度使形状收缩 —— <code style="color:#22d3bf">selftest</code> 会用数字给出这个残差。</p>

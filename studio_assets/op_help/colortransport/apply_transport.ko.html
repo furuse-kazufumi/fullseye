@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">apply_transport — COLORTRANSPORT <code style="color:#22d3bf">plan_use</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">transport_plan × signal</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.apply_transport(plan, target_values)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import colortransport; colortransport.apply_transport(plan, target_values)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opscolortransport.get(&quot;apply_transport&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>수송 계획으로 <code style="color:#22d3bf">target_values</code> 를 원래 점으로 되끌어옵니다(무게중심 사상).</p>
 <p>각 행(보내는 쪽)에 대해, 나른 질량으로 가중한 행선지 값의 평균을 반환한다. 이것이 &quot;계획을 <b>써서 그림을 고치는</b>&quot; 입구 -- 계획을 만들기만 하고 쓸 데가 없으면, <code style="color:#22d3bf">sinkhorn</code>의 출력은 대장의 막다른 골목이 된다(이 repo가 반복해서 밟아 온 &quot;입구는 있지만 소비 op가 없는 유형&quot;의 형태).</p>

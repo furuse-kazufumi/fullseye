@@ -4,6 +4,7 @@ dim: shape2d
 category: morph
 in: image2d × image2d × pairs × pairs
 out: images
+gpu: なし
 examples: [image_morph]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d × image2d × pairs × pairs` → `images`
 - **呼び出し**: `import fullseye as fs; fs.ledger.morph_sequence(imgA, imgB, ptsA, ptsB, n=7, method='affine', lam=0.0, with_corners=True)` (実装を直接呼ぶなら `import imagemorph; imagemorph.morph_sequence(imgA, imgB, ptsA, ptsB, n=7, method='affine', lam=0.0, with_corners=True)`、台帳から引くなら `opsshape2d.get("morph_sequence")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

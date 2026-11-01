@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">skeletonize_vol — 3D <code style="color:#22d3bf">medial</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">voxel</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.skeletonize_vol(vol)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import medial; medial.skeletonize_vol(vol)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;skeletonize_vol&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>3D 이진 voxel 을 세선화해 1 voxel 폭 골격으로. skimage 의 Lee(1994) 법 래퍼.</p>
 <p>method=&#x27;lee&#x27;는 3D를 지원하는 위상 보존 세선화. 덩어리까지 포함해 선 모양 골격으로 압축한다(medial *surface*가필요하면 distance_ridge를 사용). 반환값은 입력과 같은 형상의 bool 배열.</p>

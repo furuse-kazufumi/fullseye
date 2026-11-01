@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">fly_hex_quantize — FLYVISION <code style="color:#22d3bf">sample</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fly_hex_quantize(signal, bits=3, mode=&#x27;log&#x27;, contrast=0.2)</code>(要直接呼叫實作,<code style="color:#22d3bf">import flyvision; flyvision.fly_hex_quantize(signal, bits=3, mode=&#x27;log&#x27;, contrast=0.2)</code>;從台帳取用則 <code style="color:#22d3bf">opsflyvision.get(&quot;fly_hex_quantize&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>以與眼睛相同的方式量化小眼訊號：先做對數壓縮，再對每個小眼取 n 位元(<code style="color:#22d3bf">mode=&quot;onoff&quot;</code> 為 ON / OFF 2 個通道)。</p>
 <p>複眼天生就是量化器:每隻眼約 800 個小眼(間隔 4.6°),光受器對強度作對數壓縮並適應平均值, lamina 的 L1 / L2 把相對平均值的偏差分成 ON 與 OFF。此 op 重現這項預算,使下游模型(reservoir、視網膜拓撲對應檢驗)能被問到「究竟需要多少位元」。</p>

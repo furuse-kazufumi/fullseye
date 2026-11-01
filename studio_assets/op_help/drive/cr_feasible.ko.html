@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">cr_feasible — DRIVE <code style="color:#22d3bf">commonroad</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cr_feasible(run, *, params=None, tol=(0.02, 0.02, 0.03)) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivecommonroad; drivecommonroad.cr_feasible(run, *, params=None, tol=(0.02, 0.02, 0.03)) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;cr_feasible&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>운동학적 실현 가능성(채점기 <code style="color:#22d3bf">solution_feasible</code>과 같은 발상의 두 번째 구현(독립 구현)).</p>
 <p>각 전이에서 기록한 u 로 <code style="color:#22d3bf">ks_step</code> 을 돌려, 다음 상태와 |Δx|, |Δy| &lt; tol[0], tol[1], |Δψ| &lt; tol[2] 인지, u 가 제한 내인지(δ̇ ∈ [ddelta_min, ddelta_max], |a| ≤ a_max), 마찰원 a² + (v ψ̇)² ≤ a_max² 인지(ψ̇ = v/l_wb tan δ).</p>

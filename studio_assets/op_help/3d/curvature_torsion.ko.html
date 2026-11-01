@@ -4,6 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.curvature_torsion(curve)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import curve3d; curve3d.curvature_torsion(curve)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;curvature_torsion&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>원장 경유의 반환값</b>: <code style="color:#22d3bf">fullseye.ledger.curvature_torsion(...)</code> 는 <b>선언된 out 형 <code style="color:#22d3bf">pairs</code> 의 값만</b> 반환합니다(실제 함수는 보조 정보도 반환). 버려진 쪽이 필요하면 <code style="color:#22d3bf">fullseye.ledger.curvature_torsion.raw(...)</code> 를 쓰거나 <code style="color:#22d3bf">curve3d.curvature_torsion</code> 를 직접 호출하세요.</p>
 <p style="margin:2px 0 2px 12px">• 실제 반환: <code style="color:#22d3bf">(kappa,tau) → (N,2) pairs</code></p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>각 점의 곡률 κ 와 비틀림 τ(재매개변수화 불변인 닫힌 식). → (kappa (N,), tau (N,)).</p>
 <p>좌표의 균일 스케일 s에 대해 κ→κ/s, τ→τ/s로 올바르게 스케일된다. 0 나누기 방지용 epsilon은 <b>상대화</b>한다: 절대 1e-12는 cross_norm²(~s⁴)·r1_norm³(~s³)을 작은 좌표 스케일에서 지배하여 κ/τ를 파괴하므로, 대표 스케일 L=median‖r&#x27;‖(좌표 스케일 s에 선형)로 각 분모와 같은 차원으로정규화한 상대 eps를 쓴다. 이는 곡선을 L로 정규화한 뒤 계산하고 1/L로 되돌리는 것과 엄밀히 등가.</p>

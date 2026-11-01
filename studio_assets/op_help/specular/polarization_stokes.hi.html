@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">polarization_stokes — SPECULAR <code style="color:#22d3bf">polarization</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">polsweep</code> → <code style="color:#22d3bf">stokes</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.polarization_stokes(images, angles_deg=(0.0, 45.0, 90.0, 135.0), max_violation_frac=0.0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import specularity; specularity.polarization_stokes(images, angles_deg=(0.0, 45.0, 90.0, 135.0), max_violation_frac=0.0)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsspecular.get(&quot;polarization_stokes&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>polariser sweep का scene-integrated Stokes vector। → (4,), <code style="color:#22d3bf">optics.stokes_analyze</code> के लिए तैयार।</p>
 <p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>

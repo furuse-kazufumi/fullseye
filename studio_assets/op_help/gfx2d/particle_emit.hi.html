@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">particle_emit — GFX2D <code style="color:#22d3bf">particle</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">table</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.particle_emit(count, seed, origin=(0.0, 0.0), spread=0.0, speed=(10.0, 40.0), direction=(0.0, 360.0), life=(0.5, 1.5), size=(1.0, 3.0), color=&#x27;emphasis&#x27;, scheme=&#x27;okabe_ito&#x27;)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import gfx2d; gfx2d.particle_emit(count, seed, origin=(0.0, 0.0), spread=0.0, speed=(10.0, 40.0), direction=(0.0, 360.0), life=(0.5, 1.5), size=(1.0, 3.0), color=&#x27;emphasis&#x27;, scheme=&#x27;okabe_ito&#x27;)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsgfx2d.get(&quot;particle_emit&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p><code style="color:#22d3bf">origin</code> से <code style="color:#22d3bf">count</code> particle छोड़ता है, <code style="color:#22d3bf">seed</code> से deterministic रूप से।</p>
 <p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>

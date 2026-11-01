@@ -4,6 +4,7 @@ dim: imgmetrics
 category: perceptual
 in: image2d
 out: image2d
+gpu: なし
 examples: [poc_iqa_fsim_gmsd_vif]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.phase_congruency_pc(img, data_range: 'float' = 255.0, nscale: 'int' = 4, norient: 'int' = 4, min_wavelength: 'float' = 6.0, mult: 'float' = 2.0, sigma_onf: 'float' = 0.55, dtheta_on_sigma: 'float' = 1.2, k: 'float' = 2.0, epsilon: 'float' = 0.0001) -> 'np.ndarray'` (実装を直接呼ぶなら `import iqafsim; iqafsim.phase_congruency_pc(img, data_range: 'float' = 255.0, nscale: 'int' = 4, norient: 'int' = 4, min_wavelength: 'float' = 6.0, mult: 'float' = 2.0, sigma_onf: 'float' = 0.55, dtheta_on_sigma: 'float' = 1.2, k: 'float' = 2.0, epsilon: 'float' = 0.0001) -> 'np.ndarray'`、台帳から引くなら `opsimgmetrics.get("phase_congruency_pc")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

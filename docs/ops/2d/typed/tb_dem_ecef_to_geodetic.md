@@ -4,6 +4,7 @@ dim: 2d
 category: typed
 in: points
 out: points
+gpu: なし
 examples: []
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `points` → `points`
 - **呼び出し**: `fullseye.apply(img, "tb_dem_ecef_to_geodetic", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
+- **GPU**: なし(CPU 参照実装のみ)
 
 *図なし: 型は届くが、汎用の合成入力では定義域が合わない —— ECEF は地球表面座標(中心から ~6.4M m)を要るが、画像由来の合成点は原点付近で楕円体の evolute 内に落ち必ず拒否される。下の「実行できる例」で使い方を見ること。*
 

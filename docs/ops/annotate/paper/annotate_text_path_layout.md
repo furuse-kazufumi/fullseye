@@ -4,6 +4,7 @@ dim: annotate
 category: paper
 in: text
 out: table
+gpu: なし
 examples: [annotate_paper_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `text` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.annotate_text_path_layout(text, path, font_size=13, font_path=None, spacing=1.0, start=0.0, anchor='start', offset=0.0, upright=False, line_spacing=1.15)` (実装を直接呼ぶなら `import annotate; annotate.annotate_text_path_layout(text, path, font_size=13, font_path=None, spacing=1.0, start=0.0, anchor='start', offset=0.0, upright=False, line_spacing=1.15)`、台帳から引くなら `opsannotate.get("annotate_text_path_layout")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

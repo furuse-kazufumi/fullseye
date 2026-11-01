@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">warehouse_grid — DRIVE <code style="color:#22d3bf">agv</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">any</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.warehouse_grid(n_rack_rows=3, n_rack_cols=4, rack_len=4, aisle=1, margin=2)</code>(要直接调用实现,<code style="color:#22d3bf">import agvfleet; agvfleet.warehouse_grid(n_rack_rows=3, n_rack_cols=4, rack_len=4, aisle=1, margin=2)</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;warehouse_grid&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由货架行与通道构成的仓库网格(True = 可行驶)。</p>
 <p>架子是一个由 1 行 x <code style="color:#22d3bf">rack_len</code> 方块组成的水平块，其顶部、底部、左侧和右侧都被宽度为 <code style="color:#22d3bf">aisle</code> 的过道包围。周边的“边距” 放置方形跑步区（车站前）。返回的是“(grid, info)”，其中 info 有机架列表、“racks”和网格的“shape”。</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">brewster_angle_deg — OPTICS <code style="color:#22d3bf">interface</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">measurement</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.brewster_angle_deg(n1=1.0, n2=1.5) -&gt; &#x27;float&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import glassmirror; glassmirror.brewster_angle_deg(n1=1.0, n2=1.5) -&gt; &#x27;float&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;brewster_angle_deg&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Brewster angle [deg] = atan(n2/n1)। इस कोण पर p-polarised reflection exact रूप से 0 होता है।</p>
 <p>ठीक वही कोण जिस पर polarizer काँच पर के reflections को गायब कर देता है। इस कोण का cos <code style="color:#22d3bf">fresnel_dielectric(..., &quot;p&quot;)</code> को देने पर 0 लौटता है (tests में 1e-15 से नीचे सत्यापित)।</p>

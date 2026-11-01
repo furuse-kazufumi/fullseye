@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">japan_stats — DRIVE <code style="color:#22d3bf">japan</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.japan_stats(graph: &#x27;dict&#x27;) -&gt; &#x27;Dict[str, object]&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import drivejapan; drivejapan.japan_stats(graph: &#x27;dict&#x27;) -&gt; &#x27;Dict[str, object]&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;japan_stats&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>道路網の内訳の表: 種別ごとの辺数・延長・平均幅、幅の由来の内訳、特徴のある節点の数。</p>
 <p>空の入力(<code style="color:#22d3bf">graph</code> が空の dict)は ValueError。</p>

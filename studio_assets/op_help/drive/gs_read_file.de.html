@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">gs_read_file — DRIVE <code style="color:#22d3bf">gsplat</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">keine</code> → <code style="color:#22d3bf">table</code> (ein Operator, der allein durch seine Argumente bestimmt ist — er nimmt kein Bild und keine Daten entgegen)</p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gs_read_file(path, *, min_opacity: &#x27;float&#x27; = 0.0) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import gsplatnp; gsplatnp.gs_read_file(path, *, min_opacity: &#x27;float&#x27; = 0.0) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;gs_read_file&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Liest eine 3D-Gaussian-Splatting-Datei und gibt Mittelpunkte, Farben, Deckkraft, Größen und Ausrichtungen der Gaußschen zurück.</p>
 <p>Unterstützt: <b>.ply im INRIA-Format</b> (x, y, z, f_dc_0..2, opacity (logit), scale_0..2 (log), rot_0..3 (wxyz); auch die Ausgabe von <code style="color:#22d3bf">gsplat_train_native</code>) und <b>.splat</b> (je 32 Byte: Position 3×f32, Größe 3×f32, RGBA 4×u8, Rotation 4×u8 (wxyz, (q·128)+128)).</p>

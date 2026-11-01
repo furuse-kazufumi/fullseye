@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">match_pca — 3D <code style="color:#22d3bf">match_pose</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">pose</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.match_pca(pts_scene, pts_model)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import match3d; match3d.match_pca(pts_scene, pts_model)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;match_pca&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>PCA pose matching (structure=point cloud × method=principal-axis alignment)।</p>
 <p>दोनों cloud के principal axis को मिलाने वाला मोटा rigid transform (rotation R + translation t) लौटाता है। NCC/phase correlation जो नहीं संभाल पाते, वह <b>rotation</b> यहाँ संभाला जाता है (sign की 4 तरह की अस्पष्टता least squares से हल होती है। यह residual एक मोटा मानदंड है जो मानता है कि दोनों cloud के point एक ही क्रम में correspond करते हैं — बिना correspondence वाले measured cloud को आगे ICP आदि से refine करें)। Return value (R(3,3), t(3,))।</p>

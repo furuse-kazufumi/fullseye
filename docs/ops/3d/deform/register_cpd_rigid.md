@@ -4,6 +4,7 @@ dim: 3d
 category: deform
 in: points × points
 out: pose
+gpu: なし
 examples: [motion_scene]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `points × points` → `pose`
 - **呼び出し**: `import fullseye as fs; fs.ledger.register_cpd_rigid(src, dst, iters=50, w=0.0, tol=1e-08)` (実装を直接呼ぶなら `import deform3d; deform3d.register_cpd_rigid(src, dst, iters=50, w=0.0, tol=1e-08)`、台帳から引くなら `ops3d.get("register_cpd_rigid")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

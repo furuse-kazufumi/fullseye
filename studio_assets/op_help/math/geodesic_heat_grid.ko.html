@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">geodesic_heat_grid — MATH <code style="color:#22d3bf">geometry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.geodesic_heat_grid(mask, source=None, *, spacing=1.0, t: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import mathgeometry; mathgeometry.geodesic_heat_grid(mask, source=None, *, spacing=1.0, t: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsmath.get(&quot;geodesic_heat_grid&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>2-D 영상·3-D 볼륨의 격자 위에서 장애물을 피한 측지 거리를 열 방법으로 구한다(Crane et al. 2013의 격자판).</p>
 <p><code style="color:#22d3bf">mask</code>는 통과 가능한 화소/복셀이 True인 bool 배열(2-D 또는 3-D), <code style="color:#22d3bf">source</code>는 시작점의 인덱스(1점 <code style="color:#22d3bf">(i, j[, k])</code> 또는 점의 열. 생략하면 첫 번째 통과 가능한 화소). <code style="color:#22d3bf">spacing</code>은 축마다의 화소 크기(스칼라 또는 축마다).</p>

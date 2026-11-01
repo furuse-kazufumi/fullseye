@@ -3,6 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">depth</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fringe_ftp_phase(image, carrier_axis=&#x27;x&#x27;, carrier_period=None, bandwidth=0.35, k=1.0, min_modulation=None, return_info=False)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import fringe; fringe.fringe_ftp_phase(image, carrier_axis=&#x27;x&#x27;, carrier_period=None, bandwidth=0.35, k=1.0, min_modulation=None, return_info=False)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;fringe_ftp_phase&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>원장 경유의 반환값</b>: <code style="color:#22d3bf">fullseye.ledger.fringe_ftp_phase(...)</code> 는 <b>선언된 out 형 <code style="color:#22d3bf">depth</code> 의 값만</b> 반환합니다(실제 함수는 보조 정보도 반환). 버려진 쪽이 필요하면 <code style="color:#22d3bf">fullseye.ledger.fringe_ftp_phase.raw(...)</code> 를 쓰거나 <code style="color:#22d3bf">fringe.fringe_ftp_phase</code> 를 직접 호출하세요.</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>Takeda 푸리에 변환 프로파일로메트리로 줄무늬 영상 한 장에서 높이/위상을 복원한다.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>

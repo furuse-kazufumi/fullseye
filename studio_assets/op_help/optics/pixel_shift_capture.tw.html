@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">pixel_shift_capture — OPTICS <code style="color:#22d3bf">pixelshift</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">rgbimage × matrix</code> → <code style="color:#22d3bf">video</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pixel_shift_capture(scene, factor, shifts, pattern=&#x27;RGGB&#x27;, fill_factor=1.0, per_frame=False, margin=None)</code>(要直接呼叫實作,<code style="color:#22d3bf">import pixelshift; pixelshift.pixel_shift_capture(scene, factor, shifts, pattern=&#x27;RGGB&#x27;, fill_factor=1.0, per_frame=False, margin=None)</code>;從台帳取用則 <code style="color:#22d3bf">opsoptics.get(&quot;pixel_shift_capture&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用位移後的感測器拍攝:在像素開口(正方形箱)上<b>精確</b>積分場景,回傳 Bayer 或黑白的原始影像。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>

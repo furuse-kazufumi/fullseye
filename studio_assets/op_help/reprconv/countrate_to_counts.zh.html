@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">countrate_to_counts — REPRCONV <code style="color:#22d3bf">algebra</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">countrate</code> → <code style="color:#22d3bf">counts</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.countrate_to_counts(countrate, gate_s=0.001)</code>(要直接调用实现,<code style="color:#22d3bf">import reprconv; reprconv.countrate_to_counts(countrate, gate_s=0.001)</code>;从台账取用则 <code style="color:#22d3bf">opsreprconv.get(&quot;countrate_to_counts&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>计数率 <code style="color:#22d3bf">[Hz]</code> → 计数 <code style="color:#22d3bf">counts</code>。<code style="color:#22d3bf">countrate</code> 的出口(<b>可逆</b>)。</p>
 <p><b>单位就是转换的全部内容</b>: <code style="color:#22d3bf">[1/s] * [s] = [1]</code>。<code style="color:#22d3bf">gate_s</code> 是积分窗口的秒数, 默认 1 ms。<code style="color:#22d3bf">counts</code> 是“每个时间 bin 的光子数”的类型,所以若让速率序列直接冒充 counts,<b>会在数量级偏差 7 位的情况下悄悄通过</b> (<code style="color:#22d3bf">TYPE_CHECKS</code> 对两者都只检查“非负的 1-D”)。</p>

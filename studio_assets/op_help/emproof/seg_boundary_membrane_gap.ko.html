@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">seg_boundary_membrane_gap — EMPROOF <code style="color:#22d3bf">suspect</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">labels2d × image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.seg_boundary_membrane_gap(labels, membrane, tau: &#x27;float&#x27; = 0.2, min_len: &#x27;int&#x27; = 60, normalize: &#x27;bool&#x27; = True, ignore_zero: &#x27;bool&#x27; = True) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import emproof; emproof.seg_boundary_membrane_gap(labels, membrane, tau: &#x27;float&#x27; = 0.2, min_len: &#x27;int&#x27; = 60, normalize: &#x27;bool&#x27; = True, ignore_zero: &#x27;bool&#x27; = True) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsemproof.get(&quot;seg_boundary_membrane_gap&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p><b>분단 의심</b>: 인접한 2개 라벨의 경계 화소 중 막 응답이 <code style="color:#22d3bf">tau</code> 미만인 비율. 인접 쌍마다 1행.</p>
 <p>세포의 경계에는 반드시 막(어두운 선)이 있다. 막이 없는데 라벨이 바뀌는 경계는, 1 세포를 2 개로 자른분단의 흔적(<code style="color:#22d3bf">seg_inject_split</code> 의 직선이 바로 이것). 4 근방에서 다른 라벨이 접하는 화소를 세고, 경계의 막 응답은양쪽 중 강한 쪽을 취한다. CREMI sample A 의 시작품에서 인공 분단 vs 그 외: <b>AUC 0.99</b>(tau 0.2, 경계 길이 ≥ 60).</p>

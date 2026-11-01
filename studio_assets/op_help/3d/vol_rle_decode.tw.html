@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">vol_rle_decode — 3D <code style="color:#22d3bf">rle_region</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">rle_region</code> → <code style="color:#22d3bf">voxel</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_rle_decode(region) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import volregion; volregion.vol_rle_decode(region) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;vol_rle_decode&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把 <code style="color:#22d3bf">VolRLE</code> 解碼回稠密的 <code style="color:#22d3bf">(D, H, W)</code> float64 <code style="color:#22d3bf">{0, 1}</code> 體資料。</p>
 <p><code style="color:#22d3bf">vol_rle_encode</code> 的精確逆運算(逐位元一致的往返)。先驗證 region,因此損壞的 RLE 會拋出 <code style="color:#22d3bf">ValueError</code>, 而不會越界寫入。</p>

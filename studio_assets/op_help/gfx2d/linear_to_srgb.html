@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">linear_to_srgb — GFX2D <code style="color:#22d3bf">colorspace</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">rgb</code> → <code style="color:#22d3bf">rgb</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.linear_to_srgb(img)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import gfx2d; gfx2d.linear_to_srgb(img)</code>、台帳から引くなら <code style="color:#22d3bf">opsgfx2d.get(&quot;linear_to_srgb&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Linear light back to sRGB encoding. Exact inverse of <code style="color:#22d3bf">srgb_to_linear</code>.</p>
 <p>式(IEC 61966-2-1): <code style="color:#22d3bf">c &lt;= 0.0031308</code> なら <code style="color:#22d3bf">12.92 c</code>、それ以外は <code style="color:#22d3bf">1.055 c^(1/2.4) - 0.055</code>。チャネルごと・画素ごとに独立。</p>

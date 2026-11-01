@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">vol_gamma — 3D <code style="color:#22d3bf">gray</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">voxel</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_gamma(vol, gamma)</code> (to call the implementation directly, <code style="color:#22d3bf">import volgray; volgray.vol_gamma(vol, gamma)</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;vol_gamma&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Gamma (power-law) correction on the volume&#x27;s own range (HALCON <code style="color:#22d3bf">pow_image</code>).</p>
 <p>Normalises <code style="color:#22d3bf">[min, max]</code> to <code style="color:#22d3bf">[0, 1]</code>, applies <code style="color:#22d3bf">t**gamma</code>, and maps the result back to the original <code style="color:#22d3bf">[min, max]</code> — so the volume&#x27;s extremes are fixed points and only the mid-tones move: <code style="color:#22d3bf">gamma &gt; 1</code> darkens them, <code style="color:#22d3bf">gamma &lt; 1</code> brightens them, <code style="color:#22d3bf">gamma == 1</code> is the identity. The transform is strictly monotone, so intensity *ordering* is always preserved.</p>

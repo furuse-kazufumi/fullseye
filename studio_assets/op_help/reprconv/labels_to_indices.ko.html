@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">labels_to_indices — REPRCONV <code style="color:#22d3bf">index</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">labels</code> → <code style="color:#22d3bf">indices</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.labels_to_indices(labels)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import reprconv; reprconv.labels_to_indices(labels)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsreprconv.get(&quot;labels_to_indices&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p><code style="color:#22d3bf">labels</code> → 배경이 아닌 인덱스 <code style="color:#22d3bf">(N,)</code>. <code style="color:#22d3bf">indices_to_labels</code> 의 반대 방향.</p>
 <p>2-D 이상의 라벨 영상도 받는다 —— 그 경우의 첨자는 <b><code style="color:#22d3bf">labels.ravel()</code> 에 대한 첨자</b>(C 순서)이다. <code style="color:#22d3bf">np.unravel_index</code> 로좌표로 되돌릴 수 있지만, <b>되돌리려면 원래의 shape 가 필요</b>하므로, 이 방향은 <code style="color:#22d3bf">shape</code> 를 버리고 있다(비가역).</p>

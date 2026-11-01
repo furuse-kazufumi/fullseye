@@ -4,6 +4,7 @@ dim: drive
 category: decide
 in: signal
 out: table
+gpu: なし
 examples: [poc_driving_decisions]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.doppler_track(signal, fs, *, f_high: 'float' = 960.0, f_low: 'float' = 770.0, c: 'float' = 343.0, smooth: 'float' = 0.005, guard: 'float' = 0.01, edge: 'float' = 0.05, v_tol: 'float' = 1.0, verdict_window: 'float' = 0.5) -> 'Dict[str, object]'` (実装を直接呼ぶなら `import drivedecide; drivedecide.doppler_track(signal, fs, *, f_high: 'float' = 960.0, f_low: 'float' = 770.0, c: 'float' = 343.0, smooth: 'float' = 0.005, guard: 'float' = 0.01, edge: 'float' = 0.05, v_tol: 'float' = 1.0, verdict_window: 'float' = 0.5) -> 'Dict[str, object]'`、台帳から引くなら `opsdrive.get("doppler_track")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

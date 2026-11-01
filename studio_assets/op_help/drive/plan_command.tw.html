@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">plan_command — DRIVE <code style="color:#22d3bf">long</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.plan_command(plan: &#x27;dict&#x27;, road=None, params: &#x27;Optional[dict]&#x27; = None, hold_brake: &#x27;Optional[float]&#x27; = None, before: &#x27;Optional[Callable]&#x27; = None) -&gt; &#x27;Callable&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import drivelong; drivelong.plan_command(plan: &#x27;dict&#x27;, road=None, params: &#x27;Optional[dict]&#x27; = None, hold_brake: &#x27;Optional[float]&#x27; = None, before: &#x27;Optional[Callable]&#x27; = None) -&gt; &#x27;Callable&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;plan_command&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把 <code style="color:#22d3bf">stop_line_plan</code> 轉為 <code style="color:#22d3bf">command(t, s, v)</code>。t0 之前為 <code style="color:#22d3bf">before</code>(None = 保持速度)，react / cruise 保持速度(驅動 = 抵消坡度 + 滾動阻力 + 空氣阻力，下坡為負時改為制動)，brake1 / brake2 為計畫值，停下後保持 (制動 <code style="color:#22d3bf">hold_brake</code>(None = 上限)+ 潛行驅動)。</p>
 <p>空輸入(<code style="color:#22d3bf">plan</code> 為空 dict)會引發 <code style="color:#22d3bf">ValueError</code>。</p>

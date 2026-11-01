@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">piv_outlier_mask — PIV <code style="color:#22d3bf">validate</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">flow2d</code> → <code style="color:#22d3bf">mask</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_outlier_mask(flow, threshold=2.0, epsilon=0.1)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import pivops; pivops.piv_outlier_mask(flow, threshold=2.0, epsilon=0.1)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opspiv.get(&quot;piv_outlier_mask&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>정규화 중앙값 검정(Westerweel &amp; Scarano 2005)으로 이상 벡터를 찾는다.</p>
 <p>각 벡터에 대해, 8 근방의 중앙값으로부터의 잔차를 <b>근방 잔차의 중앙값</b>으로 나눈다. 분모에 <code style="color:#22d3bf">epsilon</code>(기본값 0.1 px, PIV 측정 불확도의 기준)을 더하는 것은, 균일한 장에서 분모가 0이 되어 전부가 이상값이 되는 것을 막기 위해서이다 —— 이 항이없으면 <b>이상적인 입력일수록 검정이 무너진다</b>.</p>

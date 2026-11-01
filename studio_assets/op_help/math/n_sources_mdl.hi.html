@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">n_sources_mdl — MATH <code style="color:#22d3bf">spectral</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.n_sources_mdl(X) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import mathspectral; mathspectral.n_sources_mdl(X) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsmath.get(&quot;n_sources_mdl&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>snapshots से MDL criterion द्वारा sources की संख्या का अनुमान लगाता है (Wax &amp; Kailath 1985)।</p>
 <p>covariance eigenvalues को घटते क्रम में रखा जाता है, और हर परिकल्पना &quot;निचले M−k बराबर हैं (= noise)&quot; के लिए MDL(k) = −K (M−k) log(geometric mean / arithmetic mean) + ½ k (2M−k) log K की गणना की जाती है; न्यूनतम वाला k चुना जाता है। मानता है कि noise white है और snapshots की संख्या K, elements की संख्या M से पर्याप्त बड़ी है।</p>

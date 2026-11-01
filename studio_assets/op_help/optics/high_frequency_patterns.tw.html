@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">high_frequency_patterns — OPTICS <code style="color:#22d3bf">light_transport</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">無</code> → <code style="color:#22d3bf">images</code>(僅由參數決定的運算子 —— 不接受影像或資料輸入)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.high_frequency_patterns(shape=(1, 256), period=8, kind=&#x27;stripes&#x27;, fill=0.5, n_shifts=None, complement=False)</code>(要直接呼叫實作,<code style="color:#22d3bf">import lighttransport; lighttransport.high_frequency_patterns(shape=(1, 256), period=8, kind=&#x27;stripes&#x27;, fill=0.5, n_shifts=None, complement=False)</code>;從台帳取用則 <code style="color:#22d3bf">opsoptics.get(&quot;high_frequency_patterns&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>平移的高頻投影圖案:點亮率為 α 的二值條紋、棋盤格,或相移正弦(一個或多個週期)(<code style="color:#22d3bf">images</code>)。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>

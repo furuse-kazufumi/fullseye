@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">spin_from_markers — DRIVE <code style="color:#22d3bf">balltrack</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.spin_from_markers(dirs0, dirs1, dt: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import balltrack; balltrack.spin_from_markers(dirs0, dirs1, dt: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;spin_from_markers&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>마커 방향의 쌍(전 (M, 3), 후 (M, 3), 단위 벡터)으로부터 각속도 벡터 ω [rad/s]를 구합니다.</p>
 <p>M ≥ 2 이면 Kabsch(SVD)로 회전 R 을 맞추고, 회전각 θ 와 축에서 ω = θ/dt·축(알려진 ω 로 회전시킨 방향을 넣으면 1e-9 로 되돌아온다 = 게이트). M = 1 이면 d₀ → d₁ 의 최소 회전(축 = d₀ × d₁)을 반환한다(&quot;full&quot; = False): 마커 방향 둘레의 성분은 원리적으로 결정되지 않으며, 프레임 간 회전각이 크면 ω 의 직교 성분의 근사로서도 빗나간다(마커는 ω 축 둘레의 소원을 그리므로 최소 회전의 대원과 다르다).</p>

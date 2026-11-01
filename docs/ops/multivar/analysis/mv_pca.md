@@ -4,6 +4,7 @@ dim: multivar
 category: analysis
 in: matrix
 out: table
+gpu: なし
 examples: [multivar_inspection_tour, poc_simcal_thin_film]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `matrix` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.mv_pca(X=None, standardize=True, n_components=None, threshold=0.9, n_parallel=200, parallel_stat='mean', seed=0, memory_budget=None) -> 'dict'` (実装を直接呼ぶなら `import multivar; multivar.mv_pca(X=None, standardize=True, n_components=None, threshold=0.9, n_parallel=200, parallel_stat='mean', seed=0, memory_budget=None) -> 'dict'`、台帳から引くなら `opsmultivar.get("mv_pca")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

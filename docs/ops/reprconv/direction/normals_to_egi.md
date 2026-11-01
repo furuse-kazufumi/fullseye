@@ -4,6 +4,7 @@ dim: reprconv
 category: direction
 in: normals
 out: image2d
+gpu: なし
 examples: [representation_conversion]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `normals` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.normals_to_egi(normals, n_az=36, n_el=18)` (実装を直接呼ぶなら `import reprconv; reprconv.normals_to_egi(normals, n_az=36, n_el=18)`、台帳から引くなら `opsreprconv.get("normals_to_egi")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

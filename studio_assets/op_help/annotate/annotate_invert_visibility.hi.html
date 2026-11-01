@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">annotate_invert_visibility — ANNOTATE <code style="color:#22d3bf">overlay</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d × mask</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_invert_visibility(img, mask, mode=&#x27;complement&#x27;, alpha=1.0, bits=128)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import annotate; annotate.annotate_invert_visibility(img, mask, mode=&#x27;complement&#x27;, alpha=1.0, bits=128)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsannotate.get(&quot;annotate_invert_visibility&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>बनाने से पहले मापता है कि inverted रंग <b>उस background पर वास्तव में दिखता है</b> या नहीं।</p>
 <p>inverted colour का लाभ यह है कि &quot;पृष्ठभूमि का रंग जानना ज़रूरी नहीं&quot;, लेकिन इसकी कमज़ोरी केवल 1 है, और वह घातक है -- <b>mid-tones में invert करने पर भी वही रंग बनता है</b>। 8bit grey में v=128 का complement v=127 है, और WCAG contrast ratio <b>1.014</b> है (ratio 1.0 का अर्थ &quot;वही रंग&quot;; measured 2026-09-08)। ratio 1.5 से नीचे की band v ∈ [113, 142] के 30/256 levels = सभी levels का 12 % है।</p>

@@ -4,6 +4,7 @@ dim: generative
 category: illusion
 in: 
 out: rgb
+gpu: なし
 examples: [gallery_illusion_invariants]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `rgb`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.illusion_fraser_spiral(rings: 'int' = 7, tilt_deg: 'float' = 22.0, size: 'int' = 520) -> 'np.ndarray'` (実装を直接呼ぶなら `import illusion; illusion.illusion_fraser_spiral(rings: 'int' = 7, tilt_deg: 'float' = 22.0, size: 'int' = 520) -> 'np.ndarray'`、台帳から引くなら `opsgenerative.get("illusion_fraser_spiral")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

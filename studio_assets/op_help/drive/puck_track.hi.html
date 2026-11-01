@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">puck_track — DRIVE <code style="color:#22d3bf">puck</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">any × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.puck_track(frames, cam: &#x27;dict&#x27;, *, max_jump_px: &#x27;float&#x27; = 40.0, **detect_kw) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import puck; puck.puck_track(frames, cam: &#x27;dict&#x27;, *, max_jump_px: &#x27;float&#x27; = 40.0, **detect_kw) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;puck_track&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>frame sequence → हर frame के candidates → <code style="color:#22d3bf">balltrack.ball_track</code> (constant-velocity prediction से जोड़ता है, <code style="color:#22d3bf">max_jump_px</code> से अधिक छलांग हटाता है) → world coordinates।</p>
 <p>लौटाया गया मान <code style="color:#22d3bf">{&quot;frame&quot; (N,), &quot;col&quot;,&quot;row&quot; (N,), &quot;xy&quot; (N,2), &quot;found&quot; (K,) bool}</code>। तेज़ पक (1 फ़्रेम में चाल &gt; max_jump_px) पर संगति टूट जाती है और फ़्रेम छूट जाते हैं —— वह किस तरह टूटता है, इसे गेट से मापा जाता है।</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">mesh_torus — MATH <code style="color:#22d3bf">geometry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">mesh</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mesh_torus(R: &#x27;float&#x27; = 2.0, r: &#x27;float&#x27; = 0.7, n_u: &#x27;int&#x27; = 32, n_v: &#x27;int&#x27; = 16) -&gt; &#x27;tuple&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import mathgeometry; mathgeometry.mesh_torus(R: &#x27;float&#x27; = 2.0, r: &#x27;float&#x27; = 0.7, n_u: &#x27;int&#x27; = 32, n_v: &#x27;int&#x27; = 16) -&gt; &#x27;tuple&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsmath.get(&quot;mesh_torus&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>토러스(도넛)의 닫힌 삼각형 메시 (vertices, faces). 큰 반경 R, 관의 반경 r(R &gt; r &gt; 0).</p>
 <p>종수 1인 곡면의 견본: χ = 0, 각 결손의 총합 = 0(바깥쪽 볼록한 부분이 양, 안쪽 안장 부분이 음으로 서로 상쇄한다). 정점은 (u, v) 격자(u가 대원, v가 관의 둘레)의 순서이며, <code style="color:#22d3bf">u = i·2π/n_u</code>, <code style="color:#22d3bf">v = j·2π/n_v</code>의 정점이 i·n_v + j번.</p>

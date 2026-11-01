@@ -4,6 +4,7 @@ dim: volcolor
 category: diagnose
 in: voxel
 out: table
+gpu: なし
 examples: [voxel_labels_color]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `voxel` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.vol_label_color_flicker(vol_binary, axis='z', seed: 'int' = 0, connectivity: 'int' = 26, connectivity_2d: 'int' = 8)` (実装を直接呼ぶなら `import volcolor; volcolor.vol_label_color_flicker(vol_binary, axis='z', seed: 'int' = 0, connectivity: 'int' = 26, connectivity_2d: 'int' = 8)`、台帳から引くなら `opsvolcolor.get("vol_label_color_flicker")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

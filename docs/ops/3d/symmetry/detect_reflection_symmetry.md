@@ -4,6 +4,7 @@ dim: 3d
 category: symmetry
 in: points
 out: primitive
+gpu: なし
 examples: [dl_mesh_symmetry, itokawa_symmetry_honest, reflection_symmetry, symmetry]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `points` → `primitive`
 - **呼び出し**: `import fullseye as fs; fs.ledger.detect_reflection_symmetry(points)` (実装を直接呼ぶなら `import symmetry3d; symmetry3d.detect_reflection_symmetry(points)`、台帳から引くなら `ops3d.get("detect_reflection_symmetry")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

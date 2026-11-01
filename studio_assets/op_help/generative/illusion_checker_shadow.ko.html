@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">illusion_checker_shadow — GENERATIVE <code style="color:#22d3bf">illusion</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">rgb</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.illusion_checker_shadow(size: &#x27;int&#x27; = 46, n: &#x27;int&#x27; = 8, light: &#x27;float&#x27; = 0.62, dark: &#x27;float&#x27; = 0.31) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import illusion; illusion.illusion_checker_shadow(size: &#x27;int&#x27; = 46, n: &#x27;int&#x27; = 8, light: &#x27;float&#x27; = 0.62, dark: &#x27;float&#x27; = 0.31) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsgenerative.get(&quot;illusion_checker_shadow&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>체커 섀도. <b>표시한 2개의 칸은 엄밀하게 같은 화소값</b>.</p>
 <p>그림자 계수를 <code style="color:#22d3bf">dark / light</code>로 잡으면, 그림자 속의 밝은 칸은 그림자 밖의 어두운 칸과 <b>수치로 같아진다</b>. ★이 그림은 <code style="color:#22d3bf">aa=0</code>(안티에일리어싱 없음)으로 그린다 -- 가장자리의 혼색이 들어가면 &quot;엄밀히 같은 값&quot;이라는 주장 쪽이 거짓이 되기 때문.</p>

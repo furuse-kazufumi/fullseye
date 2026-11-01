@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">ray_plane_range — DRIVE <code style="color:#22d3bf">lidar</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ray_plane_range(origin, dirs, plane) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import lidarsim; lidarsim.ray_plane_range(origin, dirs, plane) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;ray_plane_range&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Abstand, den Strahlen vom Ursprung <code style="color:#22d3bf">origin</code> in Richtung <code style="color:#22d3bf">dirs (...,3)</code> bis zum Auftreffen auf die Ebene <code style="color:#22d3bf">ax+by+cz+d=0</code> zurücklegen.</p>
 <p>Geschlossene Form <code style="color:#22d3bf">t = −(n·O + d)/(n·D)</code>, Abstand ist <code style="color:#22d3bf">t·‖D‖</code>. Kein Treffer voraus (t &gt; 0) oder parallel ergibt <code style="color:#22d3bf">inf</code>. Eine Null-Normale löst <code style="color:#22d3bf">ValueError</code> aus.</p>

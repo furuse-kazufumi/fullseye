@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">ozaki_error_bound — DRIVE <code style="color:#22d3bf">ozaki</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">matrix × matrix × scalar</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ozaki_error_bound(A, B, n_slices: &#x27;int&#x27;)</code> (to call the implementation directly, <code style="color:#22d3bf">import ozakimm; ozakimm.ozaki_error_bound(A, B, n_slices: &#x27;int&#x27;)</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;ozaki_error_bound&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Guaranteed element-wise upper bound (a matrix) on the truncation error of <code style="color:#22d3bf">matmul_ozaki(A, B, n_slices)</code> (Ozaki-I).</p>
 <p>An upper bound on the sum of the truncation remainders and the discarded slice pairs; the rounding of the final float64 assembly (on the order of <code style="color:#22d3bf">(s+1) u |A||B|</code>) is not included. In the gate, 0 violations over somewhat more than 260,000 elements (PoC and tests). Because it is computed with a reordered sum, the bound itself does not depend on the inner order either.</p>

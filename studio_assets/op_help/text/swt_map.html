@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">swt_map — TEXT <code style="color:#22d3bf">stroke</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.swt_map(img, dark_on_light: &#x27;bool&#x27; = True, sigma: &#x27;float&#x27; = 1.0, max_width: &#x27;int&#x27; = 64, angle_tol: &#x27;float&#x27; = 0.5235987755982988)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import textregion; textregion.swt_map(img, dark_on_light: &#x27;bool&#x27; = True, sigma: &#x27;float&#x27; = 1.0, max_width: &#x27;int&#x27; = 64, angle_tol: &#x27;float&#x27; = 0.5235987755982988)</code>、台帳から引くなら <code style="color:#22d3bf">opstext.get(&quot;swt_map&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Stroke Width Transform —— 各画素に、その画素を含むストロークの幅を書く。</p>
 <p>文字側の境界画素から、勾配の向きに沿って文字の内側へ光線を飛ばし、向かい合う境界画素(勾配がほぼ逆向き)に当たったら、光線上の全画素に幅(境界画素の中心間距離 + 1) を書く(既に小さい値があれば小さい方)。Epshtein 2010 §3 の手順で、2 回目の走査で光線上の中央値より大きい値を中央値に置き換える(角の過大を抑える)。エッジの規約は <code style="color:#22d3bf">_edges_and_gradient</code> に書いた(矩形ストロークで幅が厳密に整数になる)。</p>

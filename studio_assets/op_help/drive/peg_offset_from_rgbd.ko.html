@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">peg_offset_from_rgbd — DRIVE <code style="color:#22d3bf">pegsim</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">rgb × image2d × matrix × matrix</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.peg_offset_from_rgbd(rgb, depth, K, R_cam_to_world, r_peg: &#x27;float&#x27; = 0.005, hole_radius: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import pegsim; pegsim.peg_offset_from_rgbd(rgb, depth, K, R_cam_to_world, r_peg: &#x27;float&#x27; = 0.005, hole_radius: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;peg_offset_from_rgbd&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>손목 RGB-D 1장으로부터 구멍 중심에 대한 페그 선단의 상대 어긋남 (dx, dy) [m]를 월드(이송대) 좌표로 — 시각 서보의 관측량.</p>
 <p><code style="color:#22d3bf">R_cam_to_world</code> 는 카메라 좌표의 벡터를 세계로 돌리는 3×3(hand-eye). 어긋남은 판 평면 안의 성분, <code style="color:#22d3bf">height</code> 는 끝단의 판으로부터의 높이. <code style="color:#22d3bf">hole_radius</code> 를 주면 구멍의 원을 기지 반경으로 맞춘다(<code style="color:#22d3bf">hole_centre_from_rgbd</code>).</p>

@@ -4,6 +4,7 @@ dim: math
 category: geometry
 in: 
 out: mesh
+gpu: なし
 examples: [geometry_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `mesh`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.mesh_torus(R: 'float' = 2.0, r: 'float' = 0.7, n_u: 'int' = 32, n_v: 'int' = 16) -> 'tuple'` (実装を直接呼ぶなら `import mathgeometry; mathgeometry.mesh_torus(R: 'float' = 2.0, r: 'float' = 0.7, n_u: 'int' = 32, n_v: 'int' = 16) -> 'tuple'`、台帳から引くなら `opsmath.get("mesh_torus")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -5,6 +5,7 @@ category: features
 in: color
 out: feature
 halcon: count_channels
+gpu: なし
 examples: [gallery2d_features]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -16,6 +17,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **データ種**: `color` → `feature`
 - **呼び出し**: `fullseye.apply(img, "count_channels", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 - **HALCON 相当**: `count_channels`(意味・パラメータは HALCON リファレンスが参考になる)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ![count_channels: input → output](../../_fig/count_channels.png)
 

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">color_correction_matrix — GFX2D <code style="color:#22d3bf">isp</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">rgb × matrix</code> → <code style="color:#22d3bf">rgb</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.color_correction_matrix(rgb, ccm, normalize_rows=True)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import gfx2d; gfx2d.color_correction_matrix(rgb, ccm, normalize_rows=True)</code>、台帳から引くなら <code style="color:#22d3bf">opsgfx2d.get(&quot;color_correction_matrix&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>3x3 の色補正行列を画素ごとに掛ける(既定で行和 1 に正規化し、白を白のまま)。</p>
 <p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>

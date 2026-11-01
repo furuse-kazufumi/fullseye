@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">watersheds_marker — SEGMENTATION <code style="color:#22d3bf">watershed</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d × labels2d</code> → <code style="color:#22d3bf">labels2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.watersheds_marker(image, markers)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import segmentation; segmentation.watersheds_marker(image, markers)</code>, registry से लेना हो तो <code style="color:#22d3bf">opssegmentation.get(&quot;watersheds_marker&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>marker-controlled watershed segmentation (watersheds_marker)। markers: int label image (0=असाइन नहीं)।</p>
 <p>खाली इनपुट (<code style="color:#22d3bf">image</code> में 0 तत्व) पर <code style="color:#22d3bf">ValueError</code> उठता है।</p>

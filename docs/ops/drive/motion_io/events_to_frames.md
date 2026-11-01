@@ -4,6 +4,7 @@ dim: drive
 category: motion_io
 in: table
 out: voxel
+gpu: なし
 examples: [gallery_drive_world_io]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `voxel`
 - **呼び出し**: `import fullseye as fs; fs.ledger.events_to_frames(events: 'dict', n_frames: 'int' = 32, shape=None) -> 'np.ndarray'` (実装を直接呼ぶなら `import motionio; motionio.events_to_frames(events: 'dict', n_frames: 'int' = 32, shape=None) -> 'np.ndarray'`、台帳から引くなら `opsdrive.get("events_to_frames")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

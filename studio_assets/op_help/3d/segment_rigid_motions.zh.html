@@ -4,6 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.segment_rigid_motions(pts0, pts1, thresh, max_bodies: &#x27;int&#x27; = 5, min_inliers=None, n_iter: &#x27;int&#x27; = 100, k_sample: &#x27;int&#x27; = 6, seed: &#x27;int&#x27; = 0) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import motion_seg3d; motion_seg3d.segment_rigid_motions(pts0, pts1, thresh, max_bodies: &#x27;int&#x27; = 5, min_inliers=None, n_iter: &#x27;int&#x27; = 100, k_sample: &#x27;int&#x27; = 6, seed: &#x27;int&#x27; = 0) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;segment_rigid_motions&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>经台账调用的返回值</b>: <code style="color:#22d3bf">fullseye.ledger.segment_rigid_motions(...)</code> 只返回<b>声明的 out 类型 <code style="color:#22d3bf">labels</code> 的值</b>(底层函数还会返回辅助信息)。需要被丢弃的部分时,使用 <code style="color:#22d3bf">fullseye.ledger.segment_rigid_motions.raw(...)</code>,或直接调用 <code style="color:#22d3bf">motion_seg3d.segment_rigid_motions</code>。</p>
 <p style="margin:2px 0 2px 12px">• 底层返回: <code style="color:#22d3bf">{&quot;labels&quot;, &quot;motions&quot;} → labels</code></p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把两个点群按运动一致的刚体分割(迭代 RANSAC 的 multi-body 分割)。</p>
 <p>首先用 <code style="color:#22d3bf">estimate_flow</code> 求观测流(各 pts0 点 -&gt; pts1 中的最近邻)，并将 <code style="color:#22d3bf">target = pts0 + flow</code> 固定为对应目标。之后对剩余点集合：</p>

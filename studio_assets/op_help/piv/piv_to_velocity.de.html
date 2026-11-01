@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">piv_to_velocity — PIV <code style="color:#22d3bf">field</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">flow2d</code> → <code style="color:#22d3bf">flow2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_to_velocity(flow, pixel_size_m, dt_s)</code> (die Implementierung direkt: <code style="color:#22d3bf">import pivops; pivops.piv_to_velocity(flow, pixel_size_m, dt_s)</code>; aus dem Register: <code style="color:#22d3bf">opspiv.get(&quot;piv_to_velocity&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Pixel/Frame → m/s. <b>Beide sind Pflichtargumente</b> (es gibt keine Standardwerte).</p>
 <p>Verwechselte Einheiten ändern die Größenordnung, ohne eine Ausnahme auszulösen; ein Default würde den Unfall zum Default machen —— dieselbe Entscheidung wie bei <code style="color:#22d3bf">cell_size</code> in <code style="color:#22d3bf">demops</code>.</p>

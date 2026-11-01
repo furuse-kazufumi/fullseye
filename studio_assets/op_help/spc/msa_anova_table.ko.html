@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">msa_anova_table — SPC <code style="color:#22d3bf">msa</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.msa_anova_table(table, part=&#x27;part&#x27;, operator=&#x27;operator&#x27;, value=&#x27;value&#x27;)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import spc; spc.msa_anova_table(table, part=&#x27;part&#x27;, operator=&#x27;operator&#x27;, value=&#x27;value&#x27;)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsspc.get(&quot;msa_anova_table&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>교차 2요인 설계(부품 x 측정자 x 반복)의 분산분석표 (<code style="color:#22d3bf">table</code>).</p>
 <p>*table*은 열 *part* / *operator* / *value*가 있는 테이블입니다. 디자인은 ** 공정하다 ** 일(분목마다 반복수가 같다)—— 균형을 잡지 않으면 거절한다.</p>

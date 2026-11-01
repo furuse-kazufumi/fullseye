@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">laplace_inverse_talbot — MATH <code style="color:#22d3bf">transform</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">signal × signal × signal</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.laplace_inverse_talbot(num, den, t, *, M: &#x27;int&#x27; = 32) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import mathtransforms; mathtransforms.laplace_inverse_talbot(num, den, t, *, M: &#x27;int&#x27; = 32) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsmath.get(&quot;laplace_inverse_talbot&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Numerische inverse Laplace-Transformation einer rationalen Funktion F(s) = num(s)/den(s) (feste Talbot-Methode).</p>
 <p>Die exakte Lösung liefert <code style="color:#22d3bf">tf_impulse_response</code> über die Matrixexponentialfunktion, daher dient <b>ob 2 unabhängige Pfade dasselbe f(t) liefern</b> als Gegenprobe dieser op. Für ein beliebiges F(s) (etwa 1/√s) <code style="color:#22d3bf">laplace_inverse_func</code> verwenden.</p>

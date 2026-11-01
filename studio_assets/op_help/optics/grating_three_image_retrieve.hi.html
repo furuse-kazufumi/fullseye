@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">grating_three_image_retrieve — OPTICS <code style="color:#22d3bf">grating_interf</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">images × images</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.grating_three_image_retrieve(sample_stack, reference_stack=None, steps_per_period_sample=None, steps_per_period_reference=None, min_visibility=0.02, distance_mm=None, analyzer_period_um=None, reference_exposure=1.0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import gratinginterf; gratinginterf.grating_three_image_retrieve(sample_stack, reference_stack=None, steps_per_period_sample=None, steps_per_period_reference=None, min_visibility=0.02, distance_mm=None, analyzer_period_um=None, reference_exposure=1.0)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;grating_three_image_retrieve&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>दो phase-stepping stacks (sample के साथ और बिना) से transmission, differential phase और dark field को अलग करता है।</p>
 <p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>

@@ -4,7 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.harris3d_keypoints(vol, device=&#x27;cpu&#x27;, k=0.005, nms=3, topn=64, sigma_i=1.5, response=&#x27;mineig&#x27;, rel_thresh=0.01, border=2)</code>(要直接调用实现,<code style="color:#22d3bf">import feat_harris; feat_harris.harris3d_keypoints(vol, device=&#x27;cpu&#x27;, k=0.005, nms=3, topn=64, sigma_i=1.5, response=&#x27;mineig&#x27;, rel_thresh=0.01, border=2)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;harris3d_keypoints&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>经台账调用的返回值</b>: <code style="color:#22d3bf">fullseye.ledger.harris3d_keypoints(...)</code> 只返回<b>声明的 out 类型 <code style="color:#22d3bf">keypoints</code> 的值</b>(底层函数还会返回辅助信息)。需要被丢弃的部分时,使用 <code style="color:#22d3bf">fullseye.ledger.harris3d_keypoints.raw(...)</code>,或直接调用 <code style="color:#22d3bf">feat_harris.harris3d_keypoints</code>。</p>
 <p style="margin:2px 0 2px 12px">• 底层返回: <code style="color:#22d3bf">(keypoints, scores)</code></p>
-<p style="margin:2px 0 2px 12px">• <b>GPU</b>:该算子有 GPU 路径(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>3D Harris 关键点检测(2D Harris 角点检测的 3D 版)。</p>
 <p>从 voxel 密度场的 3D 梯度 g=(gz,gy,gx) 出发,在各体素构建局部结构张量 M=Σ_w w·g gᵀ(3x3 对称,用 gaussian 窗口 sigma_i 加权求和),测量角点性。响应在周围为极大且超过阈值的体素作为 keypoint(由于无需初始位姿估计即可检测,可用于大旋转+部分重叠的对应,或为 ICP 提供 coarse init)。</p>

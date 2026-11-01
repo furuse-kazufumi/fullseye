@@ -4,6 +4,7 @@ dim: drive
 category: granular
 in: image2d × scalar
 out: scalar
+gpu: なし
 examples: [poc_granular_heap_repose]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d × scalar` → `scalar`
 - **呼び出し**: `import fullseye as fs; fs.ledger.heap_volume_heightmap(hm, pitch: 'float', ground=None) -> 'float'` (実装を直接呼ぶなら `import granular; granular.heap_volume_heightmap(hm, pitch: 'float', ground=None) -> 'float'`、台帳から引くなら `opsdrive.get("heap_volume_heightmap")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

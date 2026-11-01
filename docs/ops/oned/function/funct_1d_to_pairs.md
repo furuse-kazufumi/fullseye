@@ -4,6 +4,7 @@ dim: oned
 category: function
 in: signal
 out: pairs
+gpu: なし
 examples: [signal_funct1d]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal` → `pairs`
 - **呼び出し**: `import fullseye as fs; fs.ledger.funct_1d_to_pairs(y)` (実装を直接呼ぶなら `import funct1d; funct1d.funct_1d_to_pairs(y)`、台帳から引くなら `ops1d.get("funct_1d_to_pairs")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

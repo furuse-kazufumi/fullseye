@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">wheel_sinkage — DRIVE <code style="color:#22d3bf">roverslip</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal × table × any</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.wheel_sinkage(load, wheel, soil, slip=0.0) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import roverslip; roverslip.wheel_sinkage(load, wheel, soil, slip=0.0) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;wheel_sinkage&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>धँसाव z [m] जिस पर 1 wheel slip ratio <code style="color:#22d3bf">slip</code> पर ऊर्ध्वाधर भार <code style="color:#22d3bf">load</code> [N] को सहारा देता है (F_z(z, s) = load पर bisection)।</p>
 <p><code style="color:#22d3bf">load</code> / <code style="color:#22d3bf">slip</code> ब्रॉडकास्ट होने योग्य ऐरे हैं। पहिए की त्रिज्या तक धँसने पर भी जो भार सहारा न पा सके उस पर <code style="color:#22d3bf">ValueError</code>।</p>

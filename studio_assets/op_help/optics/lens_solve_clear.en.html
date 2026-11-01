@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">lens_solve_clear — OPTICS <code style="color:#22d3bf">lenssolve</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lens_solve_clear(system=None, surface=None) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import lenssolve; lenssolve.lens_solve_clear(system=None, surface=None) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;lens_solve_clear&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Remove the solve rule of a surface: the solved values stay as plain numbers (<code style="color:#22d3bf">table</code>).</p>
 <p>*surface* <code style="color:#22d3bf">None</code> clears every rule. A surface without a rule is a <code style="color:#22d3bf">ValueError</code> (nothing to clear); the numbers the rules had solved stay as they were, so the traced system does not change.</p>

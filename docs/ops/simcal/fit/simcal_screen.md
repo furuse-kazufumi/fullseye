@@ -4,6 +4,7 @@ dim: simcal
 category: fit
 in: simmodel
 out: table
+gpu: なし
 examples: [poc_simcal_pixel_shift, poc_simcal_telecentric, poc_simcal_thin_film, simcal_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `simmodel` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.simcal_screen(model=None, method='morris', size=8, threshold=10.0, seed=0) -> 'dict'` (実装を直接呼ぶなら `import simcal; simcal.simcal_screen(model=None, method='morris', size=8, threshold=10.0, seed=0) -> 'dict'`、台帳から引くなら `opssimcal.get("simcal_screen")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

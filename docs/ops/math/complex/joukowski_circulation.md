@@ -4,6 +4,7 @@ dim: math
 category: complex
 in: 
 out: measurement
+gpu: なし
 examples: [poc_complex_plane_fields]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `measurement`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.joukowski_circulation(alpha_deg=5.0, speed=1.0, chord_b=1.0, centre_offset=(-0.09+0.09j))` (実装を直接呼ぶなら `import mathops; mathops.joukowski_circulation(alpha_deg=5.0, speed=1.0, chord_b=1.0, centre_offset=(-0.09+0.09j))`、台帳から引くなら `opsmath.get("joukowski_circulation")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

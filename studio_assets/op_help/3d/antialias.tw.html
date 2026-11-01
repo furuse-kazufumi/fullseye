@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">antialias — 3D <code style="color:#22d3bf">render</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.antialias(hi_res_image, ss, filter: &#x27;str&#x27; = &#x27;box&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import render_ssaa; render_ssaa.antialias(hi_res_image, ss, filter: &#x27;str&#x27; = &#x27;box&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;antialias&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>按整數倍 <code style="color:#22d3bf">ss</code> 縮小高解析度影像(面積平均抗鋸齒)。</p>
 <p><code style="color:#22d3bf">hi_res_image</code> 為 <code style="color:#22d3bf">(H*ss, W*ss)</code> 或 <code style="color:#22d3bf">(H*ss, W*ss, C)</code> 的 float 影像。對每個 <code style="color:#22d3bf">ss×ss</code> 區塊做加權平均,回傳 <code style="color:#22d3bf">(H, W[, C])</code>。<code style="color:#22d3bf">filter</code>:</p>

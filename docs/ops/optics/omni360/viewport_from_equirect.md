@@ -4,6 +4,7 @@ dim: optics
 category: omni360
 in: rgbimage
 out: rgbimage
+gpu: なし
 examples: [omni360_roundtrip, poc_omni360_inspection]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `rgbimage` → `rgbimage`
 - **呼び出し**: `import fullseye as fs; fs.ledger.viewport_from_equirect(equi, yaw=0, pitch=0, roll=0, fov_deg=90, size=(256, 256))` (実装を直接呼ぶなら `import omni360; omni360.viewport_from_equirect(equi, yaw=0, pitch=0, roll=0, fov_deg=90, size=(256, 256))`、台帳から引くなら `opsoptics.get("viewport_from_equirect")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

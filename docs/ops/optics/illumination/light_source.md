@@ -4,6 +4,7 @@ dim: optics
 category: illumination
 in: 
 out: table
+gpu: なし
 examples: [illumination_design_demo, poc_pocket_interreflection, poc_pod_lighting, virtual_machine_vision]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.light_source(kind='ring', radius_mm=60.0, height_mm=100.0, n=24, tilt_deg=None, length_mm=100.0, intensity=1.0, cos_exponent=1.0, position=None, emitters=None, directions=None)` (実装を直接呼ぶなら `import illumdesign; illumdesign.light_source(kind='ring', radius_mm=60.0, height_mm=100.0, n=24, tilt_deg=None, length_mm=100.0, intensity=1.0, cos_exponent=1.0, position=None, emitters=None, directions=None)`、台帳から引くなら `opsoptics.get("light_source")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

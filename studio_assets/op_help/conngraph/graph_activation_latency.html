@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">graph_activation_latency — CONNGRAPH <code style="color:#22d3bf">activity</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">labels</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graph_activation_latency(X: &#x27;Any&#x27;, thresh: &#x27;float&#x27; = 0.1) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import conngraph; conngraph.graph_activation_latency(X: &#x27;Any&#x27;, thresh: &#x27;float&#x27; = 0.1) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsconngraph.get(&quot;graph_activation_latency&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>各ノードが初めて「点いた」ステップ(0 始まり)の列 (n,)、整数。点かなかったノードは −1。</p>
 <p><code style="color:#22d3bf">X</code> は reservoir_states の (T, n)。「点いた」= |x| ≥ <b>全体の最大値</b> × thresh(thresh は(0, 1])。尺度はノードごとでなく 1 つ —— ノードごとに伸ばすと、ほとんど動かないノードの丸め屑も「点いた」になる。全零の X はすべて −1。</p>

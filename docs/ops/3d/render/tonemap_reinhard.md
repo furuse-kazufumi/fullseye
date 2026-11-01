@@ -4,6 +4,7 @@ dim: 3d
 category: render
 in: image2d
 out: image2d
+gpu: なし
 examples: [render_beauty, render_tonemap]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.tonemap_reinhard(hdr, exposure: 'float' = 1.0, white: 'float | None' = None) -> 'np.ndarray'` (実装を直接呼ぶなら `import render_tonemap; render_tonemap.tonemap_reinhard(hdr, exposure: 'float' = 1.0, white: 'float | None' = None) -> 'np.ndarray'`、台帳から引くなら `ops3d.get("tonemap_reinhard")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

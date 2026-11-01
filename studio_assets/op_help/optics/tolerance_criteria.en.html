@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tolerance_criteria — OPTICS <code style="color:#22d3bf">tolerancing</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">table</code> (an op determined by its arguments alone — it takes no image or data input)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tolerance_criteria(rms_spot=None, wavefront_rms=None, efl=None, mtf=None, distortion=None, back_focus=None, fields=None, wavelengths=None, rings=6, reference=&#x27;centroid&#x27;, psf_size=None)</code> (to call the implementation directly, <code style="color:#22d3bf">import lenstol; lenstol.tolerance_criteria(rms_spot=None, wavefront_rms=None, efl=None, mtf=None, distortion=None, back_focus=None, fields=None, wavelengths=None, rings=6, reference=&#x27;centroid&#x27;, psf_size=None)</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;tolerance_criteria&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Validate performance criteria and their optional <code style="color:#22d3bf">min</code>/<code style="color:#22d3bf">max</code> limits.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>

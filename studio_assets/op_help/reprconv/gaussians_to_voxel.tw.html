@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">gaussians_to_voxel — REPRCONV <code style="color:#22d3bf">gaussians</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">gaussians</code> → <code style="color:#22d3bf">voxel</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gaussians_to_voxel(gaussians, shape=(32, 32, 32), origin=(0.0, 0.0, 0.0), spacing=(1.0, 1.0, 1.0), truncate=3.0)</code>(要直接呼叫實作,<code style="color:#22d3bf">import reprconv; reprconv.gaussians_to_voxel(gaussians, shape=(32, 32, 32), origin=(0.0, 0.0, 0.0), spacing=(1.0, 1.0, 1.0), truncate=3.0)</code>;從台帳取用則 <code style="color:#22d3bf">opsreprconv.get(&quot;gaussians_to_voxel&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p><code style="color:#22d3bf">gaussians</code> → 密度 <code style="color:#22d3bf">voxel (D,H,W)</code>。<code style="color:#22d3bf">gaussians</code> 的第二個出口。</p>
 <p>將各高斯在 <code style="color:#22d3bf">truncate * sigma</code> 處截斷後累加。重點是<b>網格的原點與步長都作為明確引數</b>,若直接使用預設的 <code style="color:#22d3bf">spacing=(1,1,1)</code>, 就等於「把世界座標直接當作索引」,對真實資料幾乎必錯 —— 而且不會拋出例外,密度只是出現在別處,所以察覺不到。<code style="color:#22d3bf">tests/test_reprconv.py</code> 明確地量測了這種混淆。</p>

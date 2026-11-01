@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">signal_features — ONED <code style="color:#22d3bf">signal</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.signal_features(x, rate=1.0)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import dsp; dsp.signal_features(x, rate=1.0)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops1d.get(&quot;signal_features&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>이상 탐지를 위한 간결한 음향/진동 특징 벡터: <code style="color:#22d3bf">rms</code>, <code style="color:#22d3bf">peak</code>, <code style="color:#22d3bf">crest_factor</code>, <code style="color:#22d3bf">zcr</code>, <code style="color:#22d3bf">spectral_centroid</code>(Hz), <code style="color:#22d3bf">peak_freq</code>(Hz), <code style="color:#22d3bf">bandwidth</code>(Hz). 모두 유한 —— NaN / Inf 표본은 NaN 특징을 만드는 대신 <code style="color:#22d3bf">ValueError</code> 를 발생시킨다(2026-10-12부터 빈 신호도 마찬가지; 이전에는 0을 반환했다).</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>

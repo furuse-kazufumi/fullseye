@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">fp64_emulation_probe — DRIVE <code style="color:#22d3bf">ozaki</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fp64_emulation_probe()</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import ozakimm; ozakimm.fp64_emulation_probe()</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;fp64_emulation_probe&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>cuBLAS の FP64 エミュレーション(CUDA 13.0 Update 2 以降)が、この計算機で使えるかを表で返す。</p>
 <p><b>例外を出さない</b>: GPU・CUDA・cuBLAS 13 が無ければ <code style="color:#22d3bf">available=False</code> と理由を返す(重い依存は持たない。ctypes でライブラリを開いて版を読むだけ)。返り: <code style="color:#22d3bf">available</code>(bool)、<code style="color:#22d3bf">rows</code>(候補ごとの <code style="color:#22d3bf">library</code>・<code style="color:#22d3bf">path</code>・<code style="color:#22d3bf">loaded</code>・ <code style="color:#22d3bf">cublas_version</code>・<code style="color:#22d3bf">emulation_api</code>(<code style="color:#22d3bf">cublasSetEmulationStrategy</code> があるか)・<code style="color:#22d3bf">gpu</code>(ハンドルを作れたか)・ <code style="color:#22d3bf">reason</code>)、<code style="color:#22d3bf">how</code>(有効にする方法)、<code style="color:#22d3bf">note</code>。</p>

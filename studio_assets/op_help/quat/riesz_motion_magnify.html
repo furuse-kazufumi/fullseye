@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">riesz_motion_magnify — QUAT <code style="color:#22d3bf">motion</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">video</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.riesz_motion_magnify(video, alpha, f_lo, f_hi, fps, scales: &#x27;int&#x27; = 4) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import quatimage; quatimage.riesz_motion_magnify(video, alpha, f_lo, f_hi, fps, scales: &#x27;int&#x27; = 4) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsquat.get(&quot;riesz_motion_magnify&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Scale a clip&#x27;s in-band motion by *alpha*, by the Riesz route. → dict.</p>
 <p>The Riesz-pyramid magnifier of Wadhwa et al. (2014), and the direct counterpart of <code style="color:#22d3bf">motionmag.motion_magnify</code>: same contract, same <code style="color:#22d3bf">alpha</code> convention (a <b>displacement gain</b> — 1 is the identity, 2 doubles the motion, -1 reverses it), same honesty block, different decomposition.</p>

@@ -4,6 +4,7 @@ dim: drive
 category: tacsim
 in: text × scalar
 out: table
+gpu: なし
 examples: [poc_tacsim_elastic_membrane]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `text × scalar` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.membrane_indent_shape(shape: 'str', depth: 'float', n: 'int' = 128, fov: 'float' = 0.006, R: 'float' = 0.003, edge_deg: 'float' = 30.0, tip_radius: 'float' = 0.0003, size: 'float' = 0.002) -> 'dict'` (実装を直接呼ぶなら `import tacsim; tacsim.membrane_indent_shape(shape: 'str', depth: 'float', n: 'int' = 128, fov: 'float' = 0.006, R: 'float' = 0.003, edge_deg: 'float' = 30.0, tip_radius: 'float' = 0.0003, size: 'float' = 0.002) -> 'dict'`、台帳から引くなら `opsdrive.get("membrane_indent_shape")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

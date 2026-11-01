@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">warp_piecewise_affine — SHAPE2D <code style="color:#22d3bf">morph</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d × pairs × pairs</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.warp_piecewise_affine(img, src_pts, dst_pts, order=1)</code>(要直接调用实现,<code style="color:#22d3bf">import imagemorph; imagemorph.warp_piecewise_affine(img, src_pts, dst_pts, order=1)</code>;从台账取用则 <code style="color:#22d3bf">opsshape2d.get(&quot;warp_piecewise_affine&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>将 img 中 src_pts 处的内容移动到 dst_pts 的分段仿射变形。</p>
 <p>对 dst_pts 做 Delaunay 三角剖分，求出各输出像素所属三角形中的重心坐标，以相同的重心坐标映射到 src_pts 一侧的对应三角形，做逆映射采样。凸包外侧(不属于任何三角形的像素)以恒等(原位置)采样，因此把四角加入对应点(<code style="color:#22d3bf">add_frame_corners</code>)即可无空洞地覆盖整幅图像。</p>

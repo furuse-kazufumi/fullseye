@@ -3,6 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.oct_bscan(spectra, window=&#x27;hann&#x27;, dc=&#x27;reference&#x27;, zero_pad=1, a2=0.0, a3=0.0, method=&#x27;cubic&#x27;, db_range=None, k_center=None)</code>(要直接呼叫實作,<code style="color:#22d3bf">import octscan; octscan.oct_bscan(spectra, window=&#x27;hann&#x27;, dc=&#x27;reference&#x27;, zero_pad=1, a2=0.0, a3=0.0, method=&#x27;cubic&#x27;, db_range=None, k_center=None)</code>;從台帳取用則 <code style="color:#22d3bf">opsoptics.get(&quot;oct_bscan&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>經台帳呼叫的回傳值</b>: <code style="color:#22d3bf">fullseye.ledger.oct_bscan(...)</code> 只回傳<b>宣告的 out 型別 <code style="color:#22d3bf">image2d</code> 的值</b>(底層函式還會回傳輔助資訊)。需要被捨棄的部分時,請用 <code style="color:#22d3bf">fullseye.ledger.oct_bscan.raw(...)</code>,或直接呼叫 <code style="color:#22d3bf">octscan.oct_bscan</code>。</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>B 掃描的干涉光譜組 → <b>斷面影像</b>(深度 × 橫向,<code style="color:#22d3bf">table</code>;台帳中宣告為 20 log10 的影像 image2d)。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>

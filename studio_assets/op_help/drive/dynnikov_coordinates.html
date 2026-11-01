@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">dynnikov_coordinates — DRIVE <code style="color:#22d3bf">braidpath</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">signal × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dynnikov_coordinates(word, n_strands)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import braidpath; braidpath.dynnikov_coordinates(word, n_strands)</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;dynnikov_coordinates&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>標準の曲線図 E = (0, …, 0; −1, …, −1) に組紐を作用させた Dynnikov 座標(整数、溢れない)。</p>
 <p>n 本の紐に右端の穴を 1 つ足した n + 1 個の穴の円板で取る(a・b とも長さ n − 1)。この作用は忠実なので、<b>座標が等しい ⇔ 同じ組紐</b>。1 文字あたり定数回の加減算と max / min だけで、語の長さに比例する時間で済む(取っ手簡約や自由群の像と違って膨らまない —— 数が大きくなるだけで、Python の整数は溢れない)。</p>

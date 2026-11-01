@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">wavefront_stats — OPTICS <code style="color:#22d3bf">imaging</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.wavefront_stats(coeffs, radial=128, angular=192)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import optics; optics.wavefront_stats(coeffs, radial=128, angular=192)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;wavefront_stats&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Wavefront error statistics from a Zernike expansion: RMS, PV and Strehl.</p>
 <p>*coeffs* is exactly the dict <code style="color:#22d3bf">match3d.fit_zernike</code> returns — <code style="color:#22d3bf">{(n, m): coefficient}</code>, coefficients <b>in waves</b> — and this op re-uses <code style="color:#22d3bf">match3d</code>&#x27;s own basis builder, so the two cannot drift apart in normalisation or in the <code style="color:#22d3bf">(n, m)</code> convention. Fit with <code style="color:#22d3bf">fit_zernike</code>, characterise here.</p>

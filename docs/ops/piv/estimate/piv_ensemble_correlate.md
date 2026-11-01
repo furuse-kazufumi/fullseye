@@ -4,6 +4,7 @@ dim: piv
 category: estimate
 in: images
 out: flow2d
+gpu: なし
 examples: [piv_field_analysis_tour, poc_river_surface_velocity]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -16,6 +17,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **呼び出し**: `import fullseye as fs; fs.ledger.piv_ensemble_correlate(images, window=32, overlap=0.5, peak='gauss3', window_func='hann', normalize='overlap', search_limit=0.25)` (実装を直接呼ぶなら `import pivops; pivops.piv_ensemble_correlate(images, window=32, overlap=0.5, peak='gauss3', window_func='hann', normalize='overlap', search_limit=0.25)`、台帳から引くなら `opspiv.get("piv_ensemble_correlate")`)
 - **台帳経由の戻り値**: `fullseye.ledger.piv_ensemble_correlate(...)` は**宣言 out 型 `flow2d` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.piv_ensemble_correlate.raw(...)`、または `pivops.piv_ensemble_correlate` を直接呼ぶ。
   - 本体の返り: `(flow, info) -> flow2d`
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

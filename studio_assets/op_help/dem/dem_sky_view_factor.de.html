@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">dem_sky_view_factor — DEM <code style="color:#22d3bf">visibility</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">depth</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_sky_view_factor(dem, cell_size, n_azimuth=16, max_distance_m=None)</code> (die Implementierung direkt: <code style="color:#22d3bf">import demops; demops.dem_sky_view_factor(dem, cell_size, n_azimuth=16, max_distance_m=None)</code>; aus dem Register: <code style="color:#22d3bf">opsdem.get(&quot;dem_sky_view_factor&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Himmelssichtfaktor [0,1]: wie viel vom Himmel sichtbar ist.</p>
 <p>Aus den Horizont-Höhenwinkeln in <code style="color:#22d3bf">n_azimuth</code> Richtungen per <code style="color:#22d3bf">mean(cos^2(horizon))</code> bestimmt (Standardnäherung unter Annahme eines Himmels mit isotroper Leuchtdichte). <b>Auf ebener Fläche exakt 1</b>. Eine Größe, die bei städtischer Hitze und Kaltluftseen in Talböden wirkt.</p>

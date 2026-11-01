@@ -4,6 +4,7 @@ dim: drive
 category: decide
 in: 
 out: table
+gpu: なし
 examples: [poc_driving_decisions]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.siren_signal(duration: 'float', fs: 'float', *, f_high: 'float' = 960.0, f_low: 'float' = 770.0, period: 'float' = 1.3, source_start=(-60.0, 10.0), source_velocity=(15.0, 0.0), mics=((0.0, 0.0),), c: 'float' = 343.0, spreading: 'bool' = True, mic_velocity=(0.0, 0.0), mic_track=None) -> 'Dict[str, object]'` (実装を直接呼ぶなら `import drivedecide; drivedecide.siren_signal(duration: 'float', fs: 'float', *, f_high: 'float' = 960.0, f_low: 'float' = 770.0, period: 'float' = 1.3, source_start=(-60.0, 10.0), source_velocity=(15.0, 0.0), mics=((0.0, 0.0),), c: 'float' = 343.0, spreading: 'bool' = True, mic_velocity=(0.0, 0.0), mic_track=None) -> 'Dict[str, object]'`、台帳から引くなら `opsdrive.get("siren_signal")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

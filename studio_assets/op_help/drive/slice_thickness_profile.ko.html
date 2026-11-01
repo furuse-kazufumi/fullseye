@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">slice_thickness_profile — DRIVE <code style="color:#22d3bf">cutting</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">rgb × scalar × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.slice_thickness_profile(image, px_per_mm: &#x27;float&#x27;, board_row: &#x27;float&#x27;, z_band=None, win: &#x27;int&#x27; = 4) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import cutting; cutting.slice_thickness_profile(image, px_per_mm: &#x27;float&#x27;, board_row: &#x27;float&#x27;, z_band=None, win: &#x27;int&#x27; = 4) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;slice_thickness_profile&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>날끝 방향의 영상에서 행마다 &quot;식재료 끝면&quot;과 &quot;날의 평평한 면&quot;의 서브픽셀 위치를 구하고, 차 = 절편 두께(mm).</p>
 <p>각 화소를 3 색(배경, 식재료, 칼날)의 비율로 <b>선형 분해</b> 한다(채도 R − B 와 휘도의 2 채널 + 합 = 1). 배경의 비율은 단면에서 1 → 0 으로 떨어지는 순수한 계단, 칼날의 비율은 칼날 면에서 0 → 1 로 올라가는 순수한 계단이므로, 각 창 안의 합이 가장자리 위치가 된다(피복률법). 흐림은 비율의 합을 바꾸지 않으므로, 창을 흐림의 추정(단면 계단의 2 차 모멘트 σ)에 맞춰 ±(3σ + 1) px 로 넓히면 치우치지 않는다. 절편이 창보다 얇아도 두 계단은 별개의 비율이므로 간섭하지 않는다. 참조 색은 행마다 국소적으로 취한다(조명의 좌우 기울기에 추종). 칼날 판정은 &quot;칼날의 휘도가 배경과 식재료 사이의 어디에 있는가&quot;의 비로 하며, 밝기 배율(gain)에 의존하지 않는다.</p>

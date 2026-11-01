@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">emva_defect_pixels — OPTICS <code style="color:#22d3bf">sensorchar</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.emva_defect_pixels(avg_image, L, threshold)</code>(要直接呼叫實作,<code style="color:#22d3bf">import sensorchar; sensorchar.emva_defect_pixels(avg_image, L, threshold)</code>;從台帳取用則 <code style="color:#22d3bf">opsoptics.get(&quot;emva_defect_pixels&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>缺陷像素的特性描述(8.8 節)：對數直方圖(式 73〜75)與累積直方圖(式 77)，以及超過閾值的像素數。</p>
 <p>*avg_image*: L 張的平均影像(以平均消除時間雜訊)。*L*: 平均的張數(使區間寬度為 1/L 的整數倍)。*threshold*(必需)[DN]: 統計與平均值的絕對偏差<b>超過</b>該值的像素(用途的「阻帶」)。</p>

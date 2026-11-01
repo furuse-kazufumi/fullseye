@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">dem_roughness — DEM <code style="color:#22d3bf">surface</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">depth</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_roughness(dem, cell_size=1.0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import demops; demops.dem_roughness(dem, cell_size=1.0)</code>、台帳から引くなら <code style="color:#22d3bf">opsdem.get(&quot;dem_roughness&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>地形起伏指数 TRI —— 8 近傍との標高差の二乗平均平方根 [m]。</p>
 <p>Riley ほか (1999)。<code style="color:#22d3bf">cell_size</code> は結果に影響しないが、<b>単位が m であることを呼び出し側に意識させる</b>ために受け取る(検証もする)。</p>

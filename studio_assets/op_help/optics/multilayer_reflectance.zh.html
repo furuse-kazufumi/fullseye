@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">multilayer_reflectance — OPTICS <code style="color:#22d3bf">film</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">pairs</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.multilayer_reflectance(layers=((&#x27;SIO2&#x27;, 100.0),), substrate=&#x27;SI&#x27;, wl_min_nm=400.0, wl_max_nm=800.0, n_points=201, angle_deg=0.0, polarization=&#x27;unpolarized&#x27;, na=0.0, roughness_nm=0.0, ambient=1.0, quantity=&#x27;reflectance&#x27;, wavelengths_nm=None)</code>(要直接调用实现,<code style="color:#22d3bf">import filmoptics; filmoptics.multilayer_reflectance(layers=((&#x27;SIO2&#x27;, 100.0),), substrate=&#x27;SI&#x27;, wl_min_nm=400.0, wl_max_nm=800.0, n_points=201, angle_deg=0.0, polarization=&#x27;unpolarized&#x27;, na=0.0, roughness_nm=0.0, ambient=1.0, quantity=&#x27;reflectance&#x27;, wavelengths_nm=None)</code>;从台账取用则 <code style="color:#22d3bf">opsoptics.get(&quot;multilayer_reflectance&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>多层膜的光谱反射率(或透射率、吸收率),以 pairs(λ nm, 值)返回。特性矩阵(传输矩阵)的精确解。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>

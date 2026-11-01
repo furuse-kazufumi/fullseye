@@ -4,6 +4,7 @@ dim: optics
 category: interface
 in: signal
 out: signal
+gpu: なし
 examples: [example_polarization_metal, glass_and_mirror_optics, poc_phase_measuring_deflectometry, poc_pv_thermal_survey, poc_shape_from_polarization]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal` → `signal`
 - **呼び出し**: `import fullseye as fs; fs.ledger.fresnel_dielectric(cos_i, n1=1.0, n2=1.5, polarization='unpolarized') -> 'np.ndarray'` (実装を直接呼ぶなら `import glassmirror; glassmirror.fresnel_dielectric(cos_i, n1=1.0, n2=1.5, polarization='unpolarized') -> 'np.ndarray'`、台帳から引くなら `opsoptics.get("fresnel_dielectric")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

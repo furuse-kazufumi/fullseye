@@ -4,6 +4,7 @@ dim: optics
 category: spectral
 in: 
 out: pairs
+gpu: なし
 examples: [poc_fiber_light_guide, poc_nir_silicon_transmission, scintillator_sensor_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `pairs`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.silicon_photodiode_qe(collection_depth_um=3.0, dead_layer_um=0.0, front_reflectance=None, wl_min_nm=300.0, wl_max_nm=1200.0, n_points=181)` (実装を直接呼ぶなら `import spectralrad; spectralrad.silicon_photodiode_qe(collection_depth_um=3.0, dead_layer_um=0.0, front_reflectance=None, wl_min_nm=300.0, wl_max_nm=1200.0, n_points=181)`、台帳から引くなら `opsoptics.get("silicon_photodiode_qe")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

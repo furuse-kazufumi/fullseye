@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">gum_validate — SPC <code style="color:#22d3bf">uncertainty</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gum_validate(guf, mcm, ndig=2)</code>(要直接调用实现,<code style="color:#22d3bf">import spc; spc.gum_validate(guf, mcm, ndig=2)</code>;从台账取用则 <code style="color:#22d3bf">opsspc.get(&quot;gum_validate&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用蒙特卡罗的结果<b>验证</b>传播律的结果(<code style="color:#22d3bf">table</code>)。</p>
 <p>*guf* 是 <code style="color:#22d3bf">gum_expanded</code> 的返回(传入 <code style="color:#22d3bf">estimate</code> 求出区间的结果),*mcm* 是 <code style="color:#22d3bf">gum_monte_carlo</code> 的返回。步骤按标准 8.1.3:</p>

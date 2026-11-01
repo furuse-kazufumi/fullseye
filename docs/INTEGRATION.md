@@ -74,6 +74,12 @@ degradation ledger is always in the result. Paths outside the sandbox roots, unk
 operator names, sort mismatches, out-of-range knobs and unknown arguments are all refused
 explicitly — nothing is coerced to "the nearest thing".
 
+Every tool that runs operators accepts `device` (`auto` = CUDA when the host has it,
+otherwise CPU; `FULLSEYE_DEVICE` overrides; `cuda` on a CPU-only host is refused with the
+reason). On CUDA the result carries `acceleration` with `approximate: true` and the GPU/CPU
+segment plan; pass `parity_check: true` to also run the CPU reference and record
+`max_abs_diff_vs_cpu` (doubles the work, so it is opt-in).
+
 It runs from the wheel (0.2.0+). The catalog's sources of truth are `docs/OP_INDEX.json`
 and the front matter of `docs/ops/**/*.md`, which are not inside the package; so
 `tools/gen_mcp_data.py` copies the index and the six front-matter keys the server reads

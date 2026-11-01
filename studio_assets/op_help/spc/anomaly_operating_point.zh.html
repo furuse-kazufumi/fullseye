@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">anomaly_operating_point — SPC <code style="color:#22d3bf">anomaly_eval</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.anomaly_operating_point(scores, labels, recall=0.95, confidence=0.95)</code>(要直接调用实现,<code style="color:#22d3bf">import anomeval; anomeval.anomaly_operating_point(scores, labels, recall=0.95, confidence=0.95)</code>;从台账取用则 <code style="color:#22d3bf">opsspc.get(&quot;anomaly_operating_point&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>选出能以 <code style="color:#22d3bf">confidence</code> 的置信水平保证缺陷召回率不低于 <code style="color:#22d3bf">recall</code> 的最高阈值(<code style="color:#22d3bf">table</code>)。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>

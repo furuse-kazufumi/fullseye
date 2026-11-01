@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">braid_class_representatives — DRIVE <code style="color:#22d3bf">braidpath</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.braid_class_representatives(plans, obstacles=None, costs=None, angle=0.1, jitter=&#x27;auto&#x27;)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import braidpath; braidpath.braid_class_representatives(plans, obstacles=None, costs=None, angle=0.1, jitter=&#x27;auto&#x27;)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;braid_class_representatives&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>여러 계획(어느 계획기의 출력이든 가능)을 호모토피 류로 나누고, 류마다 비용이 가장 작은 계획을 대표로 고른다.</p>
 <p>계획은 (K, T, 2) 의 궤도이거나, 격자 경로의 열이거나, 계획기의 dict(<code style="color:#22d3bf">paths</code>, 실패한 <code style="color:#22d3bf">None</code> 은 건너뛰고 센다). 모든 계획의 시작점과 끝점이 일치해야 한다(류는 끝을 고정한 변형의 류). 비용은 <code style="color:#22d3bf">costs</code>, 없으면 궤도길이의 합.</p>

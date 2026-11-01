@@ -4,6 +4,7 @@ dim: reprconv
 category: direction
 in: pairs
 out: normals
+gpu: なし
 examples: [representation_roundtrip]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `pairs` → `normals`
 - **呼び出し**: `import fullseye as fs; fs.ledger.angles_to_normals(pairs)` (実装を直接呼ぶなら `import reprconv; reprconv.angles_to_normals(pairs)`、台帳から引くなら `opsreprconv.get("angles_to_normals")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

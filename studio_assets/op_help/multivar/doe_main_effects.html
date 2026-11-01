@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">doe_main_effects — MULTIVAR <code style="color:#22d3bf">analysis</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">design × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.doe_main_effects(design=None, y=None, goal=&#x27;larger&#x27;) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import multivar; multivar.doe_main_effects(design=None, y=None, goal=&#x27;larger&#x27;) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsmultivar.get(&quot;doe_main_effects&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Level means per factor — the response table of a designed experiment — with dispersion and SN.</p>
 <p><code style="color:#22d3bf">y</code> is (n,) or (n, r) with r repeated measurements (or noise-array conditions) per run. For each factor and level: the mean of y (location), the mean of log s over the runs at that level (dispersion, needs r &gt;= 2), the main-effect range (max - min of the level means) and its share of the total sum of squares.</p>

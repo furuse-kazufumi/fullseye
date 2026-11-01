@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tof_transport_depth — OPTICS <code style="color:#22d3bf">light_transport</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tof_transport_depth(transport, camera_xz=(0.0, 1.0), modulation_hz=20000000.0, n_bounces=None)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import lighttransport; lighttransport.tof_transport_depth(transport, camera_xz=(0.0, 1.0), modulation_hz=20000000.0, n_bounces=None)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsoptics.get(&quot;tof_transport_depth&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>상호 반사마다 경로 길이만큼의 지연을 넣은 복소 라디오시티로 오목한 Lambert 단면(방의 모서리)의 AMCW ToF 거리와 화소별 거리 편향을 구한다 (<code style="color:#22d3bf">table</code>).</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>

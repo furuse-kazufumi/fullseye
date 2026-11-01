@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">image_entropy — IMGMETRICS <code style="color:#22d3bf">information</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.image_entropy(a, bins=64, data_range=None)</code>(要直接调用实现,<code style="color:#22d3bf">import imgmetrics; imgmetrics.image_entropy(a, bins=64, data_range=None)</code>;从台账取用则 <code style="color:#22d3bf">opsimgmetrics.get(&quot;image_entropy&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>单张图像的香农熵 [bit]。</p>
 <p>与 <code style="color:#22d3bf">mutual_information</code> 使用<b>相同的分箱</b>,所以 <code style="color:#22d3bf">mutual_information(a, a) == image_entropy(a)</code> 严格成立(已用测试固定)。现有的 <code style="color:#22d3bf">entropy_gray</code> / <code style="color:#22d3bf">entropy_image</code>(backends) 分箱不同,所以值不一致 —— 本函数是与联合分布一致的那一方。</p>

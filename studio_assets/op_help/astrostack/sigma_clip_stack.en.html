@@ -4,6 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sigma_clip_stack(frames, mode=&#x27;sigma_clip&#x27;, kappa=3.0, iters=5, center=&#x27;median&#x27;, scale=&#x27;mad&#x27;)</code> (to call the implementation directly, <code style="color:#22d3bf">import astrostack; astrostack.sigma_clip_stack(frames, mode=&#x27;sigma_clip&#x27;, kappa=3.0, iters=5, center=&#x27;median&#x27;, scale=&#x27;mad&#x27;)</code>; from the registry, <code style="color:#22d3bf">opsastrostack.get(&quot;sigma_clip_stack&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>Return value through the ledger</b>: <code style="color:#22d3bf">fullseye.ledger.sigma_clip_stack(...)</code> returns <b>only the declared out type <code style="color:#22d3bf">image2d</code></b> (the underlying function also returns auxiliary values). When you need what was dropped, use <code style="color:#22d3bf">fullseye.ledger.sigma_clip_stack.raw(...)</code> or call <code style="color:#22d3bf">astrostack.sigma_clip_stack</code> directly.</p>
 <p style="margin:2px 0 2px 12px">• Underlying return: <code style="color:#22d3bf">(stack, accepted) -&gt; image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Combine a series of frames (mean / median / κ-σ clipping), with the accept/reject mask.</p>
 <p>*mode*:</p>

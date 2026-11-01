@@ -4,6 +4,7 @@ dim: optics
 category: tolerancing
 in: table × table × table
 out: table
+gpu: なし
 examples: [lensfile_tolerance_worst_mtf, poc_lens_tolerancing]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table × table × table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.tolerance_monte_carlo(system, table, criteria, compensators=None, trials=100, seed=0, histogram_bins=20, _return_draws=False)` (実装を直接呼ぶなら `import lenstol; lenstol.tolerance_monte_carlo(system, table, criteria, compensators=None, trials=100, seed=0, histogram_bins=20, _return_draws=False)`、台帳から引くなら `opsoptics.get("tolerance_monte_carlo")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

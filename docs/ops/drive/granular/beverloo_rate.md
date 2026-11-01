@@ -4,6 +4,7 @@ dim: drive
 category: granular
 in: scalar × scalar × scalar
 out: scalar
+gpu: なし
 examples: [poc_granular_heap_repose, poc_powder_scoop_pour]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `scalar × scalar × scalar` → `scalar`
 - **呼び出し**: `import fullseye as fs; fs.ledger.beverloo_rate(D0: 'float', d: 'float', bulk_density: 'float', C: 'float' = 0.58, k: 'float' = 1.4, g: 'float' = 9.80665) -> 'float'` (実装を直接呼ぶなら `import granular; granular.beverloo_rate(D0: 'float', d: 'float', bulk_density: 'float', C: 'float' = 0.58, k: 'float' = 1.4, g: 'float' = 9.80665) -> 'float'`、台帳から引くなら `opsdrive.get("beverloo_rate")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">local_std — ONED <code style="color:#22d3bf">signal</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.local_std(x, window=9)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import dsp; dsp.local_std(x, window=9)</code>、台帳から引くなら <code style="color:#22d3bf">ops1d.get(&quot;local_std&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Rolling standard deviation with a stated error bound.</p>
 <p>The 1-D counterpart of the image operator <code style="color:#22d3bf">local_std</code> (HALCON&#x27;s <code style="color:#22d3bf">deviation_image</code>): the variance is taken after subtracting the mean (<code style="color:#22d3bf">E[x^2] - E[x]^2</code> loses its significant digits on a signal that sits far from zero), unbiased by <code style="color:#22d3bf">n/(n-1)</code>, and the residual bias of the square root removed by <code style="color:#22d3bf">c4(n)</code>, so the estimate of <code style="color:#22d3bf">sigma</code> itself is unbiased.</p>

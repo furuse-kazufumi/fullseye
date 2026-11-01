@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">points_to_gaussians — REPRCONV <code style="color:#22d3bf">gaussians</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">gaussians</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.points_to_gaussians(points, k=6, scale=1.0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import reprconv; reprconv.points_to_gaussians(points, k=6, scale=1.0)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsreprconv.get(&quot;points_to_gaussians&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>point set <code style="color:#22d3bf">(N,3)</code> → isotropic <code style="color:#22d3bf">gaussians</code>। <b>इस type में आने का एकमात्र रास्ता</b>।</p>
 <p><code style="color:#22d3bf">gaussians</code> ledger में वह type है जिसे <code style="color:#22d3bf">fuse3d.to_points</code> consume करता है, लेकिन <b>इसे बनाने वाला 1 भी op नहीं था</b> (measured) -- जिस type के केवल consumer हों, वह तब तक कभी execute नहीं होता जब तक generator को seed के रूप में न रखा जाए। यहाँ इसे 3D Gaussian Splatting के initialisation की तरह ही बनाया जाता है: हर point के k nearest neighbours तक की <b>औसत दूरी</b> sigma है, और weights 1/N का बराबर बँटवारा हैं।</p>

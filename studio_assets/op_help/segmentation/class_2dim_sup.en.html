@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">class_2dim_sup — SEGMENTATION <code style="color:#22d3bf">classify</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d × image2d × mask</code> → <code style="color:#22d3bf">mask</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.class_2dim_sup(image1, image2, ref_region)</code> (to call the implementation directly, <code style="color:#22d3bf">import segmentation; segmentation.class_2dim_sup(image1, image2, ref_region)</code>; from the registry, <code style="color:#22d3bf">opssegmentation.get(&quot;class_2dim_sup&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Supervised classification in a 2-channel feature space: pixels inside the distribution of ref_region (class_2dim_sup).</p>
 <p>Empty input (<code style="color:#22d3bf">image1</code> with 0 elements) raises ValueError.</p>

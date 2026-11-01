@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">normal_consistency — 3D <code style="color:#22d3bf">metrics</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">points × normals</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.normal_consistency(points_a, normals_a, points_b, normals_b)</code> (die Implementierung direkt: <code style="color:#22d3bf">import metrics3d; metrics3d.normal_consistency(points_a, normals_a, points_b, normals_b)</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;normal_consistency&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Normalenübereinstimmung über Nächste-Nachbar-Korrespondenzen = mean|cos(na, nb)| (Orientierung ignoriert). → [0,1]. 1 = perfekte Übereinstimmung.</p>
 <p>Raises ValueError: wenn eine Punktwolke leer oder nicht (N,3) ist bzw. die Normalen den Punkten nicht 1-zu-1 entsprechen.</p>

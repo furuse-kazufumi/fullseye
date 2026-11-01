@@ -4,6 +4,7 @@ dim: drive
 category: racket
 in: table × table × table
 out: table
+gpu: なし
 examples: [gallery_drive_kendama_racket]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table × table × table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.shot_is_legal(p, v, w, bp, ip, tp, x_racket: 'float', side: 'int', hit_height=(0.05, 0.45)) -> 'dict'` (実装を直接呼ぶなら `import racket; racket.shot_is_legal(p, v, w, bp, ip, tp, x_racket: 'float', side: 'int', hit_height=(0.05, 0.45)) -> 'dict'`、台帳から引くなら `opsdrive.get("shot_is_legal")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

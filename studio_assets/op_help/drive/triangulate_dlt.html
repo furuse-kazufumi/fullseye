@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">triangulate_dlt — DRIVE <code style="color:#22d3bf">balltrack</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">matrix × any × any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.triangulate_dlt(uvs, poses, Ks) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import balltrack; balltrack.triangulate_dlt(uvs, poses, Ks) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;triangulate_dlt&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>1 点の多視点三角測量(線形 DLT、SVD): <code style="color:#22d3bf">uvs</code> (C, 2)、<code style="color:#22d3bf">poses</code> (C, 4, 4)、<code style="color:#22d3bf">Ks</code> (C, 3, 3)。返り値 <code style="color:#22d3bf">{&quot;p&quot; (3,), &quot;reproj_rms&quot; px, &quot;n_views&quot;}</code>。NaN の視点は飛ばす。2 視点未満なら ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

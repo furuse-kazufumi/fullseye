@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">mirror_image_side — DRIVE <code style="color:#22d3bf">pass</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mirror_image_side(eye_xy, mirror_center_xy, mirror_normal_xy, points, *, heading, velocities=None) -&gt; &#x27;Dict[str, object]&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import drivepass; drivepass.mirror_image_side(eye_xy, mirror_center_xy, mirror_normal_xy, points, *, heading, velocities=None) -&gt; &#x27;Dict[str, object]&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;mirror_image_side&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Ob ein im Verkehrsspiegel gesehener Punkt links oder rechts der Spiegelmitte erscheint und in welche Richtung er sich scheinbar bewegt (geschlossene Form für Planspiegel). Szenarien S064, S130.</p>
 <p>Die Links-rechts-Orientierung ist auch bei einem Konvexspiegel gleich (im Gate mit Raytracing abgeglichen; die konvexe Fläche verkleinert nur die Winkel).</p>

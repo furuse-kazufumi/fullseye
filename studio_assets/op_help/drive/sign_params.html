@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">sign_params — DRIVE <code style="color:#22d3bf">roadjp</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sign_params(kind: &#x27;str&#x27;, *, side: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import roadjp; roadjp.sign_params(kind: &#x27;str&#x27;, *, side: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;sign_params&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>標識 <code style="color:#22d3bf">kind</code> の形・寸法・色を返す(公表値、一次資料で要確認)。</p>
 <p><code style="color:#22d3bf">{&quot;shape&quot;, &quot;width&quot;, &quot;height&quot;, &quot;mount_height&quot;, &quot;ground&quot;, &quot;border&quot;, &quot;ink&quot;, &quot;side&quot;}</code>。shape は circle / triangle_down / diamond / pentagon / rect。width・height は板の外形 [m]:</p>

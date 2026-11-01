@@ -4,6 +4,7 @@ dim: optics
 category: scene
 in: rgbimage × table
 out: rgbimage
+gpu: なし
 examples: [vision_layout_from_catalog]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `rgbimage × table` → `rgbimage`
 - **呼び出し**: `import fullseye as fs; fs.ledger.diffraction_blur(image, camera, f_number: 'float' = 5.6, wavelength_nm: 'float' = 550.0) -> 'np.ndarray'` (実装を直接呼ぶなら `import optscene; optscene.diffraction_blur(image, camera, f_number: 'float' = 5.6, wavelength_nm: 'float' = 550.0) -> 'np.ndarray'`、台帳から引くなら `opsoptics.get("diffraction_blur")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

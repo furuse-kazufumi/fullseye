@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">world_apply_terrain — DRIVE <code style="color:#22d3bf">terrain</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">table × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.world_apply_terrain(world: &#x27;dict&#x27;, p: &#x27;dict&#x27;, step: &#x27;float&#x27; = 2.0) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import driveterrain; driveterrain.world_apply_terrain(world: &#x27;dict&#x27;, p: &#x27;dict&#x27;, step: &#x27;float&#x27; = 2.0) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;world_apply_terrain&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>world_build의 출력(평평한 월드)에 지형을 적용합니다(제자리에서 수정하고 같은 dict를 반환합니다).</p>
 <p>노면 메시(objects[0] &quot;ground&quot;)를 terrain_mesh 로 바꾸고, 자세를 가진 물체(자산/나무/보행자)는 자세의(x, y) 높이만큼 강체로 들어 올리며, 자세가 없는 물체(연석/백선/정지선/레일/경사로)는 정점마다 들어 올린다. <code style="color:#22d3bf">world[&quot;terrain&quot;] = p</code> 를 기록한다.</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">piv_swirling_strength — PIV <code style="color:#22d3bf">field</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">flow2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_swirling_strength(flow, spacing=1.0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import pivops; pivops.piv_swirling_strength(flow, spacing=1.0)</code>, registry से लेना हो तो <code style="color:#22d3bf">opspiv.get(&quot;piv_swirling_strength&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>swirling strength λ_ci — velocity-gradient tensor के complex eigenvalue के काल्पनिक भाग का परिमाण।</p>
 <p>Q-criterion की तरह यह &quot;shear को vortices से अलग करने वाली&quot; मात्रा है, लेकिन इसकी <b>units rotation के angular velocity के बराबर</b> हैं (1/frame)। Measured: rigid-body rotation ω=0.01 के लिए <code style="color:#22d3bf">0.01</code>, uniform expansion और shear के लिए <code style="color:#22d3bf">0.0</code>।</p>

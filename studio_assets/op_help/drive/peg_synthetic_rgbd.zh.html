@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">peg_synthetic_rgbd — DRIVE <code style="color:#22d3bf">pegsim</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.peg_synthetic_rgbd(kp=None, tip_xyz=(0.002, 0.001, 0.01), axis=(0.0, 0.0, 1.0), width: &#x27;int&#x27; = 320, height: &#x27;int&#x27; = 240, supersample: &#x27;int&#x27; = 4, cam_pos=(-0.06, 0.0, 0.07), fovy_deg: &#x27;float&#x27; = 40.0) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import pegsim; pegsim.peg_synthetic_rgbd(kp=None, tip_xyz=(0.002, 0.001, 0.01), axis=(0.0, 0.0, 1.0), width: &#x27;int&#x27; = 320, height: &#x27;int&#x27; = 240, supersample: &#x27;int&#x27; = 4, cam_pos=(-0.06, 0.0, 0.07), fovy_deg: &#x27;float&#x27; = 40.0) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;peg_synthetic_rgbd&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>带真值的合成 RGB-D(仅用 numpy，无需 mujoco)：从腕部相机(向下 45°，与 MJCF 同向)解析地对板 z = 0(灰)、孔的圆盘(半径 R + W，黑，面低 4 mm)、销(半径 r 的圆柱 + 末端圆盘，橙)进行光线投射。</p>
 <p>深度是<b>像素中心</b>处的 +Z 距离(真实 RGB-D 与 Fullseye 的约定),颜色是 <code style="color:#22d3bf">supersample</code>² 倍超采样的平均(抗锯齿 = 覆盖率)。这是为了在没有 mujoco 的情况下建立测量(<code style="color:#22d3bf">peg_offset_from_rgbd</code>)的门而准备的输入,并不是 MuJoCo 渲染的替代(不绘制阴影、光照和倒角的</p>

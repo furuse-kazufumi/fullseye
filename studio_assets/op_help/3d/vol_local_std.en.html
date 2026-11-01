@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">vol_local_std — 3D <code style="color:#22d3bf">feature</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">voxel</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_local_std(vol, size=5)</code> (to call the implementation directly, <code style="color:#22d3bf">import volops; volops.vol_local_std(vol, size=5)</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;vol_local_std&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Unbiased local standard deviation inside a cubic window.</p>
 <p>The 3-D counterpart of the registry op <code style="color:#22d3bf">local_std</code> (HALCON&#x27;s <code style="color:#22d3bf">deviation_image</code>).  The variance is taken <b>after subtracting the global mean</b> — <code style="color:#22d3bf">E[x^2] - E[x]^2</code> loses every significant digit on a volume whose values sit far from zero, and the leftover shows up as a fake texture on a uniform block.  It is then unbiased twice: <code style="color:#22d3bf">n/(n-1)</code> on the variance and <code style="color:#22d3bf">c4(n)</code> on the square root, so the estimate of <code style="color:#22d3bf">sigma</code> itself (not of <code style="color:#22d3bf">sigma^2</code>) is unbiased.</p>

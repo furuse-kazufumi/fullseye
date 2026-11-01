@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">ray_box_ranges — DRIVE <code style="color:#22d3bf">lidar</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ray_box_ranges(origin, dirs, box) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import lidarsim; lidarsim.ray_box_ranges(origin, dirs, box) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;ray_box_ranges&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>原点 <code style="color:#22d3bf">origin</code> から方向 <code style="color:#22d3bf">dirs (...,3)</code> のレイが軸平行箱に入るまでの距離(slab 法)。</p>
 <p><code style="color:#22d3bf">box = (xmin, ymin, zmin, xmax, ymax, zmax)</code>。外れは <code style="color:#22d3bf">inf</code>。原点が箱の内側なら前方で最初に当たる面(出口)までの距離。距離は <code style="color:#22d3bf">t·‖D‖</code>。<code style="color:#22d3bf">min &lt; max</code> でない箱は <code style="color:#22d3bf">ValueError</code>。</p>

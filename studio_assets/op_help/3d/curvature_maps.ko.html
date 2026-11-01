@@ -2,7 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">curvature_maps — 3D <code style="color:#22d3bf">feature</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">curvature</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.curvature_maps(vol, device=&#x27;cpu&#x27;, mc=0.000625)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import match3d; match3d.curvature_maps(vol, device=&#x27;cpu&#x27;, mc=0.000625)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;curvature_maps&quot;)</code>)</p>
-<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 이 연산자는 GPU 경로가 있습니다(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>level-set 의 주곡률 → 형상 지수 S(Koenderink)와 curvedness. 닫힌 식(Kindlmann 2003).</p>
 <p>2D 윤곽 곡률(스칼라 1개)의 <b>선→면 리프트</b>: 곡면은 주곡률 κ1,κ2의 2개를 가진다. mean = (κ1+κ2)/2 = (|g|²trH − gᵀHg)/|g|³, Gauss K = κ1κ2 = gᵀadj(H)g/|g|⁴(g=∇, H=Hessian). S=(2/π)atan2(κ1+κ2, κ1−κ2) ∈[-1,1]은 <b>강도·회전에 불변인 국소 곡면형</b>(cup−1/rut/saddle0/ ridge+.5/cap+1). 바깥 방향 법선 규약에서 밝은 볼록 blob=cap(+1). 반환값 (S, curvedness, mask, |g|), 모두 torch.</p>

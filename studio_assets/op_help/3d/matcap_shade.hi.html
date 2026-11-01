@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">matcap_shade — 3D <code style="color:#22d3bf">render</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">normalmap × image2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.matcap_shade(normals, matcap) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import render_shade; render_shade.matcap_shade(normals, matcap) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;matcap_shade&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>MatCap: view-space normals को lit-sphere texture पर map करके material का रूप transfer करता है। → <code style="color:#22d3bf">(H, W[, C])</code>।</p>
 <p>view space के unit normal <code style="color:#22d3bf">(nx, ny)</code> (<code style="color:#22d3bf">[-1,1]</code>) को texture coordinates पर map करता है (<code style="color:#22d3bf">u = (nx+1)/2</code>, <code style="color:#22d3bf">v = (1−ny)/2</code>, row दिशा में y उलटकर), और <code style="color:#22d3bf">matcap</code> image को <b>bilinear interpolation</b> से पढ़ता है। lighting की गणना के बिना, sphere पर प्रकाश डालकर ली गई 1 photo का material रूप किसी भी आकृति पर सीधे चिपकाया जा सकता है (धातु, मिट्टी, toon आदि)।</p>

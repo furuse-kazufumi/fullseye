@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">dynnikov_coordinates — DRIVE <code style="color:#22d3bf">braidpath</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dynnikov_coordinates(word, n_strands)</code> (to call the implementation directly, <code style="color:#22d3bf">import braidpath; braidpath.dynnikov_coordinates(word, n_strands)</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;dynnikov_coordinates&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Dynnikov coordinates of the braid acting on the standard curve diagram E = (0, …, 0; −1, …, −1) (integers, no overflow).</p>
 <p>Taken on the disk with n + 1 punctures: the n strands plus one extra puncture at the right end (a and b both have length n − 1). This action is faithful, so <b>coordinates equal ⇔ same braid</b>. Each letter needs only a constant number of additions/subtractions and max / min, so the time is proportional to the word length (unlike handle reduction or free-group images, nothing swells —— the numbers only get larger, and Python integers do not overflow).</p>

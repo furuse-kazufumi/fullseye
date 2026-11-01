@@ -4,6 +4,7 @@ dim: math
 category: estimation
 in: signal
 out: table
+gpu: なし
 examples: [gallery_math_stats_linalg]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.stat_ks_test(x, y=None, *, dist: 'str' = 'norm') -> 'dict'` (実装を直接呼ぶなら `import mathestimation; mathestimation.stat_ks_test(x, y=None, *, dist: 'str' = 'norm') -> 'dict'`、台帳から引くなら `opsmath.get("stat_ks_test")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

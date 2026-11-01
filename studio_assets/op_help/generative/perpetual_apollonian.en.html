@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">perpetual_apollonian — GENERATIVE <code style="color:#22d3bf">perpetual</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">rgb</code> (an op determined by its arguments alone — it takes no image or data input)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.perpetual_apollonian(depth: &#x27;int&#x27; = 6, size: &#x27;int&#x27; = 520) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import perpetual; perpetual.perpetual_apollonian(depth: &#x27;int&#x27; = 6, size: &#x27;int&#x27; = 520) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsgenerative.get(&quot;perpetual_apollonian&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Apollonian circle packing — keeps inserting circles tangent to the gaps (it never ends).</p>
 <p>Invariant: the curvatures of 4 mutually tangent circles satisfy <b>Descartes&#x27; circle theorem</b> <code style="color:#22d3bf">(Σk)² = 2Σk²</code> exactly. You can check it with <code style="color:#22d3bf">perpetual_identities</code>.</p>

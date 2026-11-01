@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tile_road_distance — DRIVE <code style="color:#22d3bf">inf</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">any × any × table</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tile_road_distance(i: &#x27;int&#x27;, j: &#x27;int&#x27;, x, y, tp: &#x27;dict&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import driveinf; driveinf.tile_road_distance(i: &#x27;int&#x27;, j: &#x27;int&#x27;, x, y, tp: &#x27;dict&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;tile_road_distance&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Distance from point (x, y) in tile (i, j) (in-tile coordinates) to the nearest road centerline. ★Also looks at the roads of the 8 neighboring tiles (shifting them into in-tile coordinates) — so that the tiles on both sides of a seam give the same distance near it.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

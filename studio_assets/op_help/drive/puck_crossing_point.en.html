@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">puck_crossing_point — DRIVE <code style="color:#22d3bf">puck</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table × scalar</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.puck_crossing_point(pred: &#x27;dict&#x27;, x_line: &#x27;float&#x27;)</code> (to call the implementation directly, <code style="color:#22d3bf">import puck; puck.puck_crossing_point(pred: &#x27;dict&#x27;, x_line: &#x27;float&#x27;)</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;puck_crossing_point&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Time and place where the predicted path first crosses the defense line x = <code style="color:#22d3bf">x_line</code> (closed form: solves d(τ)·uₓ = required distance per segment).</p>
 <p>Return value <code style="color:#22d3bf">{&quot;t&quot;, &quot;p&quot;, &quot;v&quot;, &quot;segment&quot;}</code>; <code style="color:#22d3bf">None</code> if it does not cross (fail-closed —— it stops, enters a goal, or times out).</p>

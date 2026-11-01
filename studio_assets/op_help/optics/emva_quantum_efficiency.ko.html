@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">emva_quantum_efficiency — OPTICS <code style="color:#22d3bf">sensorchar</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.emva_quantum_efficiency(mu_p, mu_y, mu_y_dark, mu_y_sat, K)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import sensorchar; sensorchar.emva_quantum_efficiency(mu_p, mu_y, mu_y_dark, mu_y_sat, K)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsoptics.get(&quot;emva_quantum_efficiency&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>응답(특성 곡선)의 기울기로부터 양자 효율 η를 구한다(식 49·52).</p>
 <p>*mu_p*: 노출 단계마다 화소당 평균 광자 수(조도계와 노출 시간으로부터: μ_p = A E t_exp λ/(hc)). R = μ_y − μ_y.dark를 μ_p에 맞춘 직선(<b>절편 0으로 고정</b>)의 기울기, η = R/K. 사용하는 점은 포화의 0–70 %.</p>

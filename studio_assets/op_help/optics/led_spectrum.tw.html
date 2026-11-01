@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">led_spectrum — OPTICS <code style="color:#22d3bf">spectral</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">無</code> → <code style="color:#22d3bf">pairs</code>(僅由參數決定的運算子 —— 不接受影像或資料輸入)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.led_spectrum(peak_nm=1050.0, fwhm_nm=50.0, wl_min_nm=800.0, wl_max_nm=1300.0, n_points=251, model=&#x27;ohno&#x27;)</code>(要直接呼叫實作,<code style="color:#22d3bf">import spectralrad; spectralrad.led_spectrum(peak_nm=1050.0, fwhm_nm=50.0, wl_min_nm=800.0, wl_max_nm=1300.0, n_points=251, model=&#x27;ohno&#x27;)</code>;從台帳取用則 <code style="color:#22d3bf">opsoptics.get(&quot;led_spectrum&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>LED 的相對光譜分布(峰值處為 1)。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>

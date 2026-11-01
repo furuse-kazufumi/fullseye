@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">fsim — IMGMETRICS <code style="color:#22d3bf">perceptual</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fsim(ref, dist, data_range: &#x27;float&#x27; = 255.0) -&gt; &#x27;float&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import iqafsim; iqafsim.fsim(ref, dist, data_range: &#x27;float&#x27; = 255.0) -&gt; &#x27;float&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsimgmetrics.get(&quot;fsim&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>FSIM(輝度のみ、1 = 同一、<b>higher is better</b>)。TID2013 の FSIM.txt と 4 桁一致するのは <b>Y′ limited の灰色画像</b>を渡したとき(<code style="color:#22d3bf">iqatid.tid2013_evaluate(root, fsim, luma=&quot;limited_u8&quot;)</code>、3,000 組 max |差| 5.0e-5)。詳細 <code style="color:#22d3bf">fsim_pair</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>

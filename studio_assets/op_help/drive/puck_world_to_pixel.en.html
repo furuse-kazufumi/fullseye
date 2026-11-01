@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">puck_world_to_pixel — DRIVE <code style="color:#22d3bf">puck</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table × matrix</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.puck_world_to_pixel(cam: &#x27;dict&#x27;, xy) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import puck; puck.puck_world_to_pixel(cam: &#x27;dict&#x27;, xy) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;puck_world_to_pixel&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>world (N,2) → pixel (col, row) (N,2) (passes H to <code style="color:#22d3bf">calib.image_to_world_plane</code>).</p>
 <p>Empty input (<code style="color:#22d3bf">cam</code> an empty dict) raises <code style="color:#22d3bf">ValueError</code>.</p>

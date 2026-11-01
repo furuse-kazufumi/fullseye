@@ -4,6 +4,7 @@ dim: drive
 category: pxrd
 in: any × signal × scalar
 out: table
+gpu: なし
 examples: [poc_pxrd_phase_peel]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `any × signal × scalar` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.phase_dictionary(phases, two_theta, wavelength, size=inf, K=0.9, instrumental_fwhm=0.02, lorentz='powder', eta=0.0)` (実装を直接呼ぶなら `import pxrd; pxrd.phase_dictionary(phases, two_theta, wavelength, size=inf, K=0.9, instrumental_fwhm=0.02, lorentz='powder', eta=0.0)`、台帳から引くなら `opsdrive.get("phase_dictionary")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">cplx_contour_integral — MATH <code style="color:#22d3bf">complex</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">cpoints × cpoints</code> → <code style="color:#22d3bf">cscalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cplx_contour_integral(z, fz)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import mathops; mathops.cplx_contour_integral(z, fz)</code>、台帳から引くなら <code style="color:#22d3bf">opsmath.get(&quot;cplx_contour_integral&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Closed contour integral <code style="color:#22d3bf">∮ f(z) dz</code> by the chordal trapezoidal rule.</p>
 <p>*z* are the contour vertices (closing segment implicit, see <code style="color:#22d3bf">cplx_contour_circle</code>) and *fz* the function sampled at exactly those points — the op never calls back into Python, so any <code style="color:#22d3bf">f</code> is allowed as long as you can sample it. The quadrature is <code style="color:#22d3bf">sum_k (f_k + f_{k+1})/2 * (z_{k+1} - z_k)</code>, i.e. the trapezoidal rule along the *chords*; it is exact for a piecewise-linear integrand and second order otherwise.</p>

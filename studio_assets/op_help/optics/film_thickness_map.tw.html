@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">film_thickness_map — OPTICS <code style="color:#22d3bf">film</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">images</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.film_thickness_map(images, wavelengths_nm=(450.0, 500.0, 550.0, 600.0, 650.0, 700.0), film=&#x27;SIO2&#x27;, substrate=&#x27;SI&#x27;, thickness_min_nm=0.0, thickness_max_nm=1500.0, mode=&#x27;spectral&#x27;, under=(), ambiguity_rms=0.01, step_nm=1.0, normalize=False, chunk=4096)</code>(要直接呼叫實作,<code style="color:#22d3bf">import filmoptics; filmoptics.film_thickness_map(images, wavelengths_nm=(450.0, 500.0, 550.0, 600.0, 650.0, 700.0), film=&#x27;SIO2&#x27;, substrate=&#x27;SI&#x27;, thickness_min_nm=0.0, thickness_max_nm=1500.0, mode=&#x27;spectral&#x27;, under=(), ambiguity_rms=0.01, step_nm=1.0, normalize=False, chunk=4096)</code>;從台帳取用則 <code style="color:#22d3bf">opsoptics.get(&quot;film_thickness_map&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由光譜影像(各波段反射率)或 RGB 影像求逐像素膜厚(查找表 + 拋物線精化)。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>

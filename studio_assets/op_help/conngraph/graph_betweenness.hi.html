@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">graph_betweenness — CONNGRAPH <code style="color:#22d3bf">stats</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">conn_graph</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graph_betweenness(W: &#x27;Any&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import conngraph; conngraph.graph_betweenness(W: &#x27;Any&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsconngraph.get(&quot;graph_betweenness&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>betweenness centrality (Brandes 2001, binary directed, normalisation नहीं)। हर node के लिए एक मान, लंबाई n का array।</p>
 <p>node v का मान = Σ_{s≠v≠t} σ_st(v) / σ_st (shortest paths की संख्या का अनुपात)। अगर binary structure symmetric है (सभी edges परस्पर हैं), तो इसे undirected graph मानकर (s, t) और (t, s) को 1 जोड़ा गिना जाता है और 2 से भाग दिया जाता है -- यही textbook मान हैं जिनमें undirected star (n nodes) का center (n−1)(n−2)/2 और leaves 0 होते हैं। अगर directed (asymmetric) है, तो ordered pairs जैसे हैं वैसे गिने जाते हैं।</p>

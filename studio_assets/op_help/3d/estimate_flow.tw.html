@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">estimate_flow — 3D <code style="color:#22d3bf">motion_segment</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">flow_scattered</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.estimate_flow(pts0, pts1) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import motion_seg3d; motion_seg3d.estimate_flow(pts0, pts1) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;estimate_flow&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>從 pts0 各點到 pts1 最近鄰的 3-D 位移向量場 (N, 3)(最近鄰流)。</p>
 <p>對 <code style="color:#22d3bf">pts0</code> 的各點 p，以 cKDTree 求 <code style="color:#22d3bf">pts1</code> 中的最近鄰 q，回傳位移 <code style="color:#22d3bf">q - p</code>。元素數可以 N != M。只有在位移遠小於局部點間距的小運動下，才能猜中「點 i 的真正對應點」(honest 的最近鄰的極限)。為 segment_rigid_motions 的 inlier 判定提供所用的<b>觀測流</b>。</p>

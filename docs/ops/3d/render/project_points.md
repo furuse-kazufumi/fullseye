@@ -4,6 +4,7 @@ dim: 3d
 category: render
 in: points
 out: keypoints
+gpu: なし
 examples: [pnp_pose_outliers, pose_estimation]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -16,6 +17,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **呼び出し**: `import fullseye as fs; fs.ledger.project_points(points, K, R=None, t=None)` (実装を直接呼ぶなら `import match3d; match3d.project_points(points, K, R=None, t=None)`、台帳から引くなら `ops3d.get("project_points")`)
 - **台帳経由の戻り値**: `fullseye.ledger.project_points(...)` は**宣言 out 型 `keypoints` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.project_points.raw(...)`、または `match3d.project_points` を直接呼ぶ。
   - 本体の返り: `(uv (N,2), depth (N,)) → uv`
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

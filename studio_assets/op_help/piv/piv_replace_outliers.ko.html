@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">piv_replace_outliers — PIV <code style="color:#22d3bf">validate</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">flow2d × mask</code> → <code style="color:#22d3bf">flow2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_replace_outliers(flow, mask, method=&#x27;median&#x27;)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import pivops; pivops.piv_replace_outliers(flow, mask, method=&#x27;median&#x27;)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opspiv.get(&quot;piv_replace_outliers&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>이상값을 근방 값으로 메운다. <code style="color:#22d3bf">method=&quot;nan&quot;</code>이면 <b>메우지 않고 결측으로 둔다</b>.</p>
 <p>메운 곳과 실측을 구별할 수 없게 되는 것이 메우기의 대가이므로, 어디를 메웠는지는 호출하는 쪽이 <code style="color:#22d3bf">mask</code>로 가지고 있다는 전제로 했다(이 op는 mask를 반환하지 않는다 —— 입력으로 받은 것이므로).</p>

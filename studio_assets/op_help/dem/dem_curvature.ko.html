@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">dem_curvature — DEM <code style="color:#22d3bf">surface</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">depth</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_curvature(dem, cell_size, kind=&#x27;profile&#x27;)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import demops; demops.dem_curvature(dem, cell_size, kind=&#x27;profile&#x27;)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdem.get(&quot;dem_curvature&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>곡률 [1/m]. <code style="color:#22d3bf">kind</code>는 <code style="color:#22d3bf">&quot;profile&quot;</code>(단면) / <code style="color:#22d3bf">&quot;planform&quot;</code>(평면) / <code style="color:#22d3bf">&quot;total&quot;</code>.</p>
 <p>Zevenbergen &amp; Thorne (1987)의 2차 곡면 피팅. 단면 곡률은 흐름 방향의요철(가속, 감속), 평면 곡률은 등고선의 굽음(집중, 발산)을 나타낸다.</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">fivebar_ik — DRIVE <code style="color:#22d3bf">puck</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">signal × table</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fivebar_ik(E, link: &#x27;dict&#x27;, *, branch: &#x27;str&#x27; = &#x27;out&#x27;)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import puck; puck.fivebar_ik(E, link: &#x27;dict&#x27;, *, branch: &#x27;str&#x27; = &#x27;out&#x27;)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;fivebar_ik&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>역기구학: 끝점 E → (q₁, q₂). 팔 i의 팔꿈치 = 원(Aᵢ, l₁) ∩ 원(E, l₂), &quot;out&quot;은 팔꿈치가 바깥쪽(팔 1은 −y 쪽, 팔 2는 +y 쪽), &quot;in&quot;은 그 반대. 닿지 않으면 <code style="color:#22d3bf">None</code>(fail-closed). FK∘IK = 항등이 되는 영역이 작업 영역입니다(<code style="color:#22d3bf">fivebar_workspace</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">encircled_energy — OPTICS <code style="color:#22d3bf">imaging</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">pairs</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.encircled_energy(psf, pixel_pitch_um=1.0, samples=64, max_radius_um=None, centre=&#x27;centroid&#x27;)</code> (die Implementierung direkt: <code style="color:#22d3bf">import optics; optics.encircled_energy(psf, pixel_pitch_um=1.0, samples=64, max_radius_um=None, centre=&#x27;centroid&#x27;)</code>; aus dem Register: <code style="color:#22d3bf">opsoptics.get(&quot;encircled_energy&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Eingeschlossene Energie einer Punktbildfunktion (PSF): der Energieanteil innerhalb eines Kreises vom Radius r.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>

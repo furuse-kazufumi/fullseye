@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">graph_cycle3 — GRAPH <code style="color:#22d3bf">motif</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graph_cycle3(adj)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import graphinv; graphinv.graph_cycle3(adj)</code>、台帳から引くなら <code style="color:#22d3bf">opsgraph.get(&quot;graph_cycle3&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Number of directed 3-cycles <code style="color:#22d3bf">i -&gt; j -&gt; k -&gt; i</code> as <code style="color:#22d3bf">tr(B^3) / 3</code>.</p>
 <p>Each cycle is counted once (the trace visits it from each of its three starting nodes). Self-loops are removed first. Returns a dict with <code style="color:#22d3bf">cycles3</code> and <code style="color:#22d3bf">n</code>.</p>

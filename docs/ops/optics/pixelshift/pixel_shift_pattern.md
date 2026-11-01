@@ -4,6 +4,7 @@ dim: optics
 category: pixelshift
 in: 
 out: matrix
+gpu: なし
 examples: [poc_pixel_shift]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `matrix`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.pixel_shift_pattern(mode='4shot', error_px=0.0, cycles=1, seed=0)` (実装を直接呼ぶなら `import pixelshift; pixelshift.pixel_shift_pattern(mode='4shot', error_px=0.0, cycles=1, seed=0)`、台帳から引くなら `opsoptics.get("pixel_shift_pattern")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

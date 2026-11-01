@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">acoustic_layer_stack — ACOUSTICS <code style="color:#22d3bf">ultrasonic</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">table</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.acoustic_layer_stack(layers=((&#x27;silicon&#x27;, 0.0001), (&#x27;sio2&#x27;, 2e-06)), substrate=&#x27;silicon&#x27;, couplant=&#x27;water&#x27;, allow_unverified=False)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import ultrasound; ultrasound.acoustic_layer_stack(layers=((&#x27;silicon&#x27;, 0.0001), (&#x27;sio2&#x27;, 2e-06)), substrate=&#x27;silicon&#x27;, couplant=&#x27;water&#x27;, allow_unverified=False)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsacoustics.get(&quot;acoustic_layer_stack&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>लंबवत आपतन pulse-echo के लिए परत-ढेर: couplant, ऊपर से परतें (सामग्री, मोटाई m में) और अर्ध-अनंत substrate (<code style="color:#22d3bf">table</code>)।</p>
 <p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>

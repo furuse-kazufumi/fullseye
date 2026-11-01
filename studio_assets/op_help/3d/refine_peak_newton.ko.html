@@ -3,7 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">score × position</code> → <code style="color:#22d3bf">position</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.refine_peak_newton(score, idx, device=&#x27;cpu&#x27;, max_iter=12, tol=0.0001)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import match3d; match3d.refine_peak_newton(score, idx, device=&#x27;cpu&#x27;, max_iter=12, tol=0.0001)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;refine_peak_newton&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>원장 경유의 반환값</b>: <code style="color:#22d3bf">fullseye.ledger.refine_peak_newton(...)</code> 는 <b>선언된 out 형 <code style="color:#22d3bf">position</code> 의 값만</b> 반환합니다(실제 함수는 보조 정보도 반환). 버려진 쪽이 필요하면 <code style="color:#22d3bf">fullseye.ledger.refine_peak_newton.raw(...)</code> 를 쓰거나 <code style="color:#22d3bf">match3d.refine_peak_newton</code> 를 직접 호출하세요.</p>
-<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 이 연산자는 GPU 경로가 있습니다(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>스코어/상관 volume 의 정수 피크를 3D Newton 으로 서브복셀 정련(반복 최적화).</p>
 <p>대략적 매치(정수 NCC / Fourier-Mellin ±3° / Hough ±0.5voxel)가 반환하는 정수 피크 idx를, 국소 2차 모델 f(x)≈f0+gᵀΔ+½ΔᵀHΔ의 정류점 Δ=-H⁻¹g로 반복 갱신하여 연속 좌표로 수렴시킨다. 축별 포물선 서브픽셀과 달리 <b>전체 3x3 Hessian(교차 곡률 fzy,fzx,fyx 포함)</b>을 쓰므로, 회전된(상호 곡률이 있는) 이방성 피크에서도 좌표축 간의 결합 바이어스를 제거할 수 있다.</p>

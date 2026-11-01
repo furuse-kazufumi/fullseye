@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">labels_to_indices — REPRCONV <code style="color:#22d3bf">index</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">labels</code> → <code style="color:#22d3bf">indices</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.labels_to_indices(labels)</code> (to call the implementation directly, <code style="color:#22d3bf">import reprconv; reprconv.labels_to_indices(labels)</code>; from the registry, <code style="color:#22d3bf">opsreprconv.get(&quot;labels_to_indices&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p><code style="color:#22d3bf">labels</code> → the indices <code style="color:#22d3bf">(N,)</code> of the non-background. The other direction of <code style="color:#22d3bf">indices_to_labels</code>.</p>
 <p>Also accepts label images of 2-D or more -- in that case the indices are <b>indices into <code style="color:#22d3bf">labels.ravel()</code></b> (C order). They can be turned back into coordinates with <code style="color:#22d3bf">np.unravel_index</code>, but <b>turning them back needs the original shape</b>, so this direction discards <code style="color:#22d3bf">shape</code> (irreversible).</p>

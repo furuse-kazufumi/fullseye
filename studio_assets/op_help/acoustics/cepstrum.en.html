@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">cepstrum — ACOUSTICS <code style="color:#22d3bf">bearing</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cepstrum(x, rate, mode=&#x27;real&#x27;, floor_ratio=1e-12, min_quefrency=0.0)</code> (to call the implementation directly, <code style="color:#22d3bf">import acoustics; acoustics.cepstrum(x, rate, mode=&#x27;real&#x27;, floor_ratio=1e-12, min_quefrency=0.0)</code>; from the registry, <code style="color:#22d3bf">opsacoustics.get(&quot;cepstrum&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>The spectrum of the log spectrum — periodic structure *in frequency*.</p>
 <p>A harmonic family or a family of modulation sidebands is periodic along the frequency axis, so it collapses to a single line along the cepstrum&#x27;s quefrency axis (in seconds). Two things this finds that a spectrum does not:</p>

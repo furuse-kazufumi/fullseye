@@ -4,6 +4,7 @@ dim: drive
 category: tacscalib
 in: matrix × signal × any
 out: table
+gpu: なし
 examples: [poc_tacscalib_sphere_lut]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `matrix × signal × any` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.field_position_sweep(centres, errors, image_shape) -> 'dict'` (実装を直接呼ぶなら `import tacscalib; tacscalib.field_position_sweep(centres, errors, image_shape) -> 'dict'`、台帳から引くなら `opsdrive.get("field_position_sweep")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

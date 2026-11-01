@@ -4,6 +4,7 @@ dim: videostream
 category: background
 in: video
 out: video
+gpu: なし
 examples: [video_streaming]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `video` → `video`
 - **呼び出し**: `import fullseye as fs; fs.ledger.running_gaussian_background(video, alpha: 'float' = 0.02, k: 'float' = 2.5, var_init: 'float' = 0.01, selective: 'bool' = True) -> 'np.ndarray'` (実装を直接呼ぶなら `import videostream; videostream.running_gaussian_background(video, alpha: 'float' = 0.02, k: 'float' = 2.5, var_init: 'float' = 0.01, selective: 'bool' = True) -> 'np.ndarray'`、台帳から引くなら `opsvideostream.get("running_gaussian_background")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

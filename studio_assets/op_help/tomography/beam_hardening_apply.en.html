@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">beam_hardening_apply — TOMOGRAPHY <code style="color:#22d3bf">artifact</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">sinogram</code> → <code style="color:#22d3bf">sinogram</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.beam_hardening_apply(sinogram, high_energy_fraction=0.5, attenuation_ratio=0.4)</code> (to call the implementation directly, <code style="color:#22d3bf">import tomography; tomography.beam_hardening_apply(sinogram, high_energy_fraction=0.5, attenuation_ratio=0.4)</code>; from the registry, <code style="color:#22d3bf">opstomography.get(&quot;beam_hardening_apply&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Turn a monochromatic sinogram into a <b>polychromatic</b> one — cupping.</p>
 <p>A real X-ray tube emits a spectrum, and low-energy photons are absorbed more, so the beam that survives a thick path is *harder* (higher mean energy) and therefore attenuated less per unit length than the beam that survives a thin one. The line integral stops being linear in path length, and the reconstruction of a uniform object comes back with a depressed centre: the cupping artefact.</p>

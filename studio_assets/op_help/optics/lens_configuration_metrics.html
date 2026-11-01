@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">lens_configuration_metrics — OPTICS <code style="color:#22d3bf">lensconfig</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lens_configuration_metrics(system=None, metric: &#x27;str&#x27; = &#x27;efl&#x27;, field=None, frequency_cpmm=None, radius_um=None) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import lensconfig; lensconfig.lens_configuration_metrics(system=None, metric: &#x27;str&#x27; = &#x27;efl&#x27;, field=None, frequency_cpmm=None, radius_um=None) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;lens_configuration_metrics&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>構成ごとに 1 つの指標(EFL・後端焦点距離・RMS スポット・MTF・囲みエネルギー)を並べる(<code style="color:#22d3bf">table</code>)。</p>
 <p>Runs one existing metric on every resolved configuration; nothing is recomputed here. *metric*:</p>

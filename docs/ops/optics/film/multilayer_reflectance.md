@@ -4,6 +4,7 @@ dim: optics
 category: film
 in: 
 out: pairs
+gpu: なし
 examples: [poc_simcal_thin_film, poc_thin_film_reflectometry]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `pairs`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.multilayer_reflectance(layers=(('SIO2', 100.0),), substrate='SI', wl_min_nm=400.0, wl_max_nm=800.0, n_points=201, angle_deg=0.0, polarization='unpolarized', na=0.0, roughness_nm=0.0, ambient=1.0, quantity='reflectance', wavelengths_nm=None)` (実装を直接呼ぶなら `import filmoptics; filmoptics.multilayer_reflectance(layers=(('SIO2', 100.0),), substrate='SI', wl_min_nm=400.0, wl_max_nm=800.0, n_points=201, angle_deg=0.0, polarization='unpolarized', na=0.0, roughness_nm=0.0, ambient=1.0, quantity='reflectance', wavelengths_nm=None)`、台帳から引くなら `opsoptics.get("multilayer_reflectance")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

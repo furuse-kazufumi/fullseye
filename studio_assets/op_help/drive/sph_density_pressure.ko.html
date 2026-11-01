@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">sph_density_pressure — DRIVE <code style="color:#22d3bf">swarmflow</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">matrix × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sph_density_pressure(points, h: &#x27;float&#x27;, mass: &#x27;float&#x27; = 1.0, rho0: &#x27;float&#x27; = 1.0, c: &#x27;float&#x27; = 10.0, box=None) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import swarmflow; swarmflow.sph_density_pressure(points, h: &#x27;float&#x27;, mass: &#x27;float&#x27; = 1.0, rho0: &#x27;float&#x27; = 1.0, c: &#x27;float&#x27; = 10.0, box=None) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;sph_density_pressure&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>점 집합의 SPH 밀도 ρ_i = Σ_j m W(|x_i − x_j|, h)(자신 포함)와 약압축성 상태 방정식 p = c² (ρ − ρ₀).</p>
 <p>격자 간격 Δ 로 m = ρ₀ Δ² 로 두면, 내부 점의 ρ 는 ρ₀ 에 가깝다(h = 1.3Δ 에서 0.3 % 이내 —— 게이트로 센다).</p>

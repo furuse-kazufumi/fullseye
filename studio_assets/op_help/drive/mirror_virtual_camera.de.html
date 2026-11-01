@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">mirror_virtual_camera — DRIVE <code style="color:#22d3bf">decide</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mirror_virtual_camera(cam_pose, mirror_plane) -&gt; &#x27;Dict[str, object]&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import drivedecide; drivedecide.mirror_virtual_camera(cam_pose, mirror_plane) -&gt; &#x27;Dict[str, object]&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;mirror_virtual_camera&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Eine <b>virtuelle Kamera</b>, die das Bild in einem Planspiegel aufnimmt.</p>
 <p><code style="color:#22d3bf">cam_pose</code> ist die world→camera-4×4-Matrix (Konvention von <code style="color:#22d3bf">render3d.look_at</code>: X_cam = P X, −Z nach vorn). <code style="color:#22d3bf">mirror_plane</code> ist (n_x, n_y, n_z, d) (n·X = d).</p>

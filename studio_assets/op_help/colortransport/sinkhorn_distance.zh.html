@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">sinkhorn_distance — COLORTRANSPORT <code style="color:#22d3bf">transport</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">signal × signal × matrix</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sinkhorn_distance(a, b, cost, reg=0.05, **kw)</code>(要直接调用实现,<code style="color:#22d3bf">import colortransport; colortransport.sinkhorn_distance(a, b, cost, reg=0.05, **kw)</code>;从台账取用则 <code style="color:#22d3bf">opscolortransport.get(&quot;sinkhorn_distance&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>正则化输运代价 <code style="color:#22d3bf">&lt;plan, cost&gt;</code>。<b>不是严格意义的距离</b>。</p>
 <p>由于正则化会产生系统性偏差,所以与自身的“距离”也不为 0 (该偏差幅度以实测值记录在测试中)。1 维中需要严格值时用 <code style="color:#22d3bf">wasserstein_1d</code>。</p>

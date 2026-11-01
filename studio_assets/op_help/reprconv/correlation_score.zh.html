@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">correlation_score — REPRCONV <code style="color:#22d3bf">score</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">voxel × voxel</code> → <code style="color:#22d3bf">score</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.correlation_score(voxel_a, voxel_b)</code>(要直接调用实现,<code style="color:#22d3bf">import reprconv; reprconv.correlation_score(voxel_a, voxel_b)</code>;从台账取用则 <code style="color:#22d3bf">opsreprconv.get(&quot;correlation_score&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>两个 <code style="color:#22d3bf">voxel</code> → 归一化互相关的 <code style="color:#22d3bf">score</code> 体。<b>该类型的唯一入口</b>。</p>
 <p><code style="color:#22d3bf">score</code> 是 <code style="color:#22d3bf">refine_peak_newton</code> 消费的类型,但<b>台账中没有任何 op 产生 <code style="color:#22d3bf">score</code></b>(实测。放置生成器种子后才终于到达)。这里返回基于 FFT 的循环互相关:</p>

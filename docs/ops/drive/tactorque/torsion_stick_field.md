@@ -4,6 +4,7 @@ dim: drive
 category: tactorque
 in: matrix × matrix × scalar × scalar × table × scalar
 out: table
+gpu: なし
 examples: [poc_tactile_dipole_torque]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `matrix × matrix × scalar × scalar × table × scalar` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.torsion_stick_field(X, Y, a: 'float', Mz: 'float', kern: 'dict', G: 'float') -> 'dict'` (実装を直接呼ぶなら `import tactorque; tactorque.torsion_stick_field(X, Y, a: 'float', Mz: 'float', kern: 'dict', G: 'float') -> 'dict'`、台帳から引くなら `opsdrive.get("torsion_stick_field")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

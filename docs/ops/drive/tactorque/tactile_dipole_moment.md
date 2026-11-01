@@ -4,6 +4,7 @@ dim: drive
 category: tactorque
 in: matrix × matrix
 out: table
+gpu: なし
 examples: [poc_tactile_dipole_torque]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `matrix × matrix` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.tactile_dipole_moment(pts, u, form: 'str' = 'divergence', origin='midpoint', weight: 'str' = 'area', area: 'float | None' = None, window=None, rho=None, radius: 'float | None' = None) -> 'dict'` (実装を直接呼ぶなら `import tactorque; tactorque.tactile_dipole_moment(pts, u, form: 'str' = 'divergence', origin='midpoint', weight: 'str' = 'area', area: 'float | None' = None, window=None, rho=None, radius: 'float | None' = None) -> 'dict'`、台帳から引くなら `opsdrive.get("tactile_dipole_moment")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -4,6 +4,7 @@ dim: optics
 category: noncoaxial
 in: 
 out: table
+gpu: なし
 examples: [poc_lens_file_roundtrip, poc_noncoaxial_optics, poc_photograph_through_prescription]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.noncoaxial_system(elements=None, stop=None, object_mm=inf, wavelength_um=0.58756, index_object=1.0, field=(0.0, 0.0), image_mm=None, image_tilt=(0.0, 0.0), object_tilt=(0.0, 0.0))` (実装を直接呼ぶなら `import raytrace3d; raytrace3d.noncoaxial_system(elements=None, stop=None, object_mm=inf, wavelength_um=0.58756, index_object=1.0, field=(0.0, 0.0), image_mm=None, image_tilt=(0.0, 0.0), object_tilt=(0.0, 0.0))`、台帳から引くなら `opsoptics.get("noncoaxial_system")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

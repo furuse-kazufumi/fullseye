@@ -4,6 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.medial_axis_points(vol, min_radius=0.0)</code> (to call the implementation directly, <code style="color:#22d3bf">import medial; medial.medial_axis_points(vol, min_radius=0.0)</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;medial_axis_points&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>Return value through the ledger</b>: <code style="color:#22d3bf">fullseye.ledger.medial_axis_points(...)</code> returns <b>only the declared out type <code style="color:#22d3bf">points</code></b> (the underlying function also returns auxiliary values). When you need what was dropped, use <code style="color:#22d3bf">fullseye.ledger.medial_axis_points.raw(...)</code> or call <code style="color:#22d3bf">medial.medial_axis_points</code> directly.</p>
 <p style="margin:2px 0 2px 12px">• Underlying return: <code style="color:#22d3bf">(points, radii)</code></p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Turn the medial voxels into a point set with their local radius (= that point&#x27;s EDT value). Returns (points, radius).</p>
 <p>Returns the medial points, distributed as surfaces in thick parts and as lines in thin parts, as (M,3) coordinates (z,y,x) together with each one&#x27;s local radius (M,). The point with the largest radius points to the &quot;innermost&quot; part of the shape = its centre.</p>

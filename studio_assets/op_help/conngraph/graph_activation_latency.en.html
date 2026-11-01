@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">graph_activation_latency — CONNGRAPH <code style="color:#22d3bf">activity</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">labels</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graph_activation_latency(X: &#x27;Any&#x27;, thresh: &#x27;float&#x27; = 0.1) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import conngraph; conngraph.graph_activation_latency(X: &#x27;Any&#x27;, thresh: &#x27;float&#x27; = 0.1) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsconngraph.get(&quot;graph_activation_latency&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Sequence (n,) of the step (0-based) at which each node first &quot;lit up&quot;, as integers. Nodes that never lit up get −1.</p>
 <p><code style="color:#22d3bf">X</code> is the (T, n) of reservoir_states. &quot;Lit&quot; = |x| ≥ <b>the global maximum</b> × thresh (thresh is in (0, 1]). There is 1 scale, not one per node -- stretching per node would make even the rounding dust of nodes that barely move count as &quot;lit&quot;. An all-zero X gives −1 everywhere.</p>

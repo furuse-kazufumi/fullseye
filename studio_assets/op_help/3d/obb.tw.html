@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">obb — 3D <code style="color:#22d3bf">bounds</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">primitive</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.obb(points) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import pcseg; pcseg.obb(points) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;obb&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用 PCA 求有向包圍盒。</p>
 <p>回傳 <code style="color:#22d3bf">{center, axes (3,3 columns = box axes), extents (3, half-widths), corners (8,3)}</code>。這是物體被分割出來後，機械臂用來推斷其大小與抓握寬度的緊貼包圍盒。</p>

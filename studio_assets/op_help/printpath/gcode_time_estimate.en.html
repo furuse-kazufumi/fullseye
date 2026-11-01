@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">gcode_time_estimate — PRINTPATH <code style="color:#22d3bf">gcode</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gcode_time_estimate(table: &#x27;Any&#x27;) -&gt; &#x27;float&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import printpath; printpath.gcode_time_estimate(table: &#x27;Any&#x27;) -&gt; &#x27;float&#x27;</code>; from the registry, <code style="color:#22d3bf">opsprintpath.get(&quot;gcode_time_estimate&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Lower bound on the run time [s] = Σ(segment length / feed rate) (ignoring acceleration and jerk, <code style="color:#22d3bf">measurement</code>). Segments with feed rate 0 are not counted.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">marker_direction — DRIVE <code style="color:#22d3bf">balltrack</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">signal</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.marker_direction(marker_uv, center_uv, radius_px, K=None) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import balltrack; balltrack.marker_direction(marker_uv, center_uv, radius_px, K=None) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;marker_direction&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>图像中标记的位置 (col, row) → 球面上的方向(相机坐标系的单位向量，前半球：x 右，y 上，z 朝向观察者)。</p>
 <p>传入 <code style="color:#22d3bf">K</code> (3, 3) 时<b>按透视精确</b>求解:由球的角半径 α = atan(半径 px / f) 得出到中心的距离(半径取 1 时为 1/sin α)与中心的视线,将图案像素的视线与球面相交,返回交点处的法线。★没有 K 的形式将圆盘视为正射投影,在以通过中心的视线为 z 的坐标系中作答 —— 若球偏离光轴,整个坐标系会旋转,在球运动的影像中视线的变化会直接成为表观旋转(在 0.6 m 外以 6 m/s 横穿的球,1 ms 内视线转动 0.01 rad,在每帧 0.15 rad 的旋转上多加了 7 %。2026-09-30, PoC ㉔ 的近距离相机)。没有 K 时与以往相同。</p>

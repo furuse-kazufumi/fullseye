@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">resample_uniform — 3D <code style="color:#22d3bf">curve</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.resample_uniform(curve, n)</code> (to call the implementation directly, <code style="color:#22d3bf">import curve3d; curve3d.resample_uniform(curve, n)</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;resample_uniform&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Resample to n points evenly spaced along the arc length (linear interpolation). → (n,3).</p>
 <p>Takes the positions <code style="color:#22d3bf">np.linspace(0, total, n)</code> with the cumulative arc length of <code style="color:#22d3bf">arc_length</code> as the parameter, and linearly interpolates x, y and z independently with <code style="color:#22d3bf">np.interp</code>. The output is float64 (n,3). The start and end points coincide with the first and last input points, and intermediate points lie on the polyline (they do not necessarily pass through the original points).</p>

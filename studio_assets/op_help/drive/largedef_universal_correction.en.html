@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">largedef_universal_correction — DRIVE <code style="color:#22d3bf">tacdome</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.largedef_universal_correction(d, k: &#x27;float&#x27; = 1.1111111111111112)</code> (to call the implementation directly, <code style="color:#22d3bf">import tacdome; tacdome.largedef_universal_correction(d, k: &#x27;float&#x27; = 1.1111111111111112)</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;largedef_universal_correction&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Universal-form correction κ(d) = (1 − k·d)⁻¹ (Eq. 6, k = 10/9). <b>Raises</b> <code style="color:#22d3bf">ValueError</code>: d outside [0, 1), k·d ≥ 1, k ≤ 0.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

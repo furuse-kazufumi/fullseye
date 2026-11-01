@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">retardation_from_birefringence — OPTICS <code style="color:#22d3bf">photoelastic</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.retardation_from_birefringence(delta_n, thickness_m, wavelength_m)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import photoelastic; photoelastic.retardation_from_birefringence(delta_n, thickness_m, wavelength_m)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;retardation_from_birefringence&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>複屈折 Δn から位相差 → dict(rad・nm・縞次数を並べて返す)。</p>
 <p><code style="color:#22d3bf">retardation = t·Δn</code> [m], <code style="color:#22d3bf">delta_rad = 2π t Δn / λ</code>, <code style="color:#22d3bf">fringe_order = t Δn / λ</code>. All three are returned so that the unit is never implicit.</p>

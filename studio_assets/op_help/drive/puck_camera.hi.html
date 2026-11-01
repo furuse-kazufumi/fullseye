@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">puck_camera — DRIVE <code style="color:#22d3bf">puck</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.puck_camera(table: &#x27;dict&#x27;, *, px_per_m: &#x27;float&#x27; = 200.0, margin: &#x27;float&#x27; = 0.06) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import puck; puck.puck_camera(table: &#x27;dict&#x27;, *, px_per_m: &#x27;float&#x27; = 200.0, margin: &#x27;float&#x27; = 0.06) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;puck_camera&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>ठीक ऊपर से देखने वाला synthetic camera: table को समान scale पर pixels में map करने वाली homography (affine)। col = (x + x_half + margin)·s, row = (y_half + margin − y)·s। return value <code style="color:#22d3bf">{&quot;H&quot; world→(col,row), &quot;Hinv&quot;, &quot;shape&quot;, &quot;px_per_m&quot;, &quot;margin&quot;, &quot;table&quot;}</code>।</p>
 <p>खाली इनपुट (<code style="color:#22d3bf">table</code> खाली dict) पर <code style="color:#22d3bf">ValueError</code> उठता है।</p>

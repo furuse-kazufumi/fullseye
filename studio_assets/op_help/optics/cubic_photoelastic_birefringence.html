@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">cubic_photoelastic_birefringence — OPTICS <code style="color:#22d3bf">photoelastic</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d × image2d × image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cubic_photoelastic_birefringence(sxx, syy, txy, pi11_minus_pi12, pi44, refractive_index, crystal_angle_deg=0.0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import photoelastic; photoelastic.cubic_photoelastic_birefringence(sxx, syy, txy, pi11_minus_pi12, pi44, refractive_index, crystal_angle_deg=0.0)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;cubic_photoelastic_birefringence&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>立方晶 {100} 面(Si ウェハなど)の応力複屈折 Δn と遅相軸 → dict。</p>
 <p>Light travels along the [100] normal of a {100} plate. <code style="color:#22d3bf">crystal_angle_deg</code> φ is the angle between the [010] direction and the x axis (Stoehr et al. 2020, Eq. 19). The 4th-order piezo-optic tensor of the cubic crystal is rotated, <code style="color:#22d3bf">π&#x27;_ijkl = R_im R_jn R_ko R_lp π_mnop</code>, the impermeability change is <code style="color:#22d3bf">ΔB_ij = π&#x27;_ijkl σ_kl</code> and the in-plane birefringence is <code style="color:#22d3bf">Δn = (n³/2)(ΔB_II − ΔB_I)</code> — which reproduces Eq. (26) of that paper::</p>

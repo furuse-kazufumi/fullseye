@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">print_layer_defect_map — PRINTPATH <code style="color:#22d3bf">inspect</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.print_layer_defect_map(observed: &#x27;Any&#x27;, expected: &#x27;Any&#x27;, tolerance_px: &#x27;int&#x27; = 2, threshold: &#x27;float&#x27; = 0.5) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import printpath; printpath.print_layer_defect_map(observed: &#x27;Any&#x27;, expected: &#x27;Any&#x27;, tolerance_px: &#x27;int&#x27; = 2, threshold: &#x27;float&#x27; = 0.5) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsprintpath.get(&quot;print_layer_defect_map&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>観測した層画像と期待の層画像(<code style="color:#22d3bf">gcode_layer_image</code>)を比べた<b>符号つきの欠陥図</b> <code style="color:#22d3bf">image2d</code>:</p>
 <p>+1 = あるはずの所に無い(欠け・詰まり)、−1 = 無いはずの所にある(糸引き・はみ出し・spaghetti)、0 = 一致。</p>

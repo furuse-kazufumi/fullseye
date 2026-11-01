@@ -4,6 +4,7 @@ dim: shapestat
 category: model
 in: shapemodel × points
 out: measurement
+gpu: なし
 examples: [shapestat_landmark_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `shapemodel × points` → `measurement`
 - **呼び出し**: `import fullseye as fs; fs.ledger.shape_mahalanobis(model, shape, align: 'bool' = True, cumulative: 'float' = 0.99, n_modes: 'int' = 0)` (実装を直接呼ぶなら `import shapestats; shapestats.shape_mahalanobis(model, shape, align: 'bool' = True, cumulative: 'float' = 0.99, n_modes: 'int' = 0)`、台帳から引くなら `opsshapestat.get("shape_mahalanobis")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

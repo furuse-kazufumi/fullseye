@@ -4,6 +4,7 @@ dim: optics
 category: material
 in: normalmap
 out: image2d
+gpu: なし
 examples: [machined_metal_and_materials]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `normalmap` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.subsurface_approx(normals, light=(0.3, 0.4, 0.87), view=(0.0, 0.0, 1.0), thickness=0.5, wrap=0.5) -> 'np.ndarray'` (実装を直接呼ぶなら `import surfacelib; surfacelib.subsurface_approx(normals, light=(0.3, 0.4, 0.87), view=(0.0, 0.0, 1.0), thickness=0.5, wrap=0.5) -> 'np.ndarray'`、台帳から引くなら `opsoptics.get("subsurface_approx")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

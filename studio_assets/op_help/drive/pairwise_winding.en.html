@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">pairwise_winding — DRIVE <code style="color:#22d3bf">braidpath</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pairwise_winding(trajectories, obstacles=None)</code> (to call the implementation directly, <code style="color:#22d3bf">import braidpath; braidpath.pairwise_winding(trajectories, obstacles=None)</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;pairwise_winding&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Relative winding number for each pair of strands [turns] (total change of the argument of the relative vector / 2π). Symmetric matrix, zero diagonal.</p>
 <p>The increment of the argument is taken as atan2(cross, dot) (principal value (−π, π]). If a single step turns half a revolution or more, the direction is undetermined, so it stops. Closed form: for a pure braid, with c the signed number of crossings between the two strands, 2π·W = π c exactly (gate). The winding number is a commutative invariant, so it cannot distinguish braids of the commutator form [A, B] (winding number 0 for every pair, yet nontrivial) —— which is why braids are used.</p>

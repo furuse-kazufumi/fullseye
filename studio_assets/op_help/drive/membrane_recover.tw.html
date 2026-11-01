@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">membrane_recover — DRIVE <code style="color:#22d3bf">tacsim</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">rgb × matrix × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.membrane_recover(rgb, lights, pitch: &#x27;float&#x27;, ambient: &#x27;float&#x27; = 0.0, albedo: &#x27;float&#x27; = 1.0) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import tacsim; tacsim.membrane_recover(rgb, lights, pitch: &#x27;float&#x27;, ambient: &#x27;float&#x27; = 0.0, albedo: &#x27;float&#x27; = 1.0) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;membrane_recover&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>視觸覺 RGB (H, W, 3) → 將 3 個通道視為 3 個光源下的影像，以 <code style="color:#22d3bf">photometric.photometric_stereo</code>(lit_only)求法線 → 以 <code style="color:#22d3bf">photometric.integrate_normals</code>(Frankot-Chellappa)求高度(像素單位 × pitch = m)。</p>
 <p><code style="color:#22d3bf">ambient</code>、<code style="color:#22d3bf">albedo</code> 為校正值: 先從影像中減去 albedo·ambient 再求解(Woodham 的線性模型不含合成 albedo·(N·L + ambient) 中的 ambient 項, 因此若不減去,法線會偏向 z 側,傾斜會系統性地偏小 ambient/sin(仰角) ≈ 3.7 %(0.03/0.82) —— 相當於實機的參考幀校正。這正是試作中 δ 偏低 3.5 % 的原因)。</p>

@@ -4,6 +4,7 @@ dim: 3d
 category: normals_orient
 in: points × normals
 out: normals
+gpu: なし
 examples: [oriented_normals]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `points × normals` → `normals`
 - **呼び出し**: `import fullseye as fs; fs.ledger.orient_normals(points, normals, k: 'int' = 20, seed_dir=None) -> 'np.ndarray'` (実装を直接呼ぶなら `import normals_orient; normals_orient.orient_normals(points, normals, k: 'int' = 20, seed_dir=None) -> 'np.ndarray'`、台帳から引くなら `ops3d.get("orient_normals")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

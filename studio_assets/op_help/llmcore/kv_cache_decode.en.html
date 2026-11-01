@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">kv_cache_decode — LLMCORE <code style="color:#22d3bf">decode</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">tokens × tokens × tokens</code> → <code style="color:#22d3bf">tokens</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.kv_cache_decode(query_step, key_cache, value_cache, scale=None) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import llmcore; llmcore.kv_cache_decode(query_step, key_cache, value_cache, scale=None) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsllmcore.get(&quot;kv_cache_decode&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Inference that advances by only 1 token (KV Cache) → tokens (1, dv).</p>
 <p>Under a causal mask, <b>rewriting the future does not move the earlier outputs by even 1 bit</b> (measured 0.0e+00), so you can keep the finished key/value and compute just 1 row — advancing sequentially 1 row at a time gives the same result as passing the whole sequence at once (relative difference 1.6e-16). The cost for 1 step is O(T d), equal to the batch O(T² d) divided over T steps.</p>

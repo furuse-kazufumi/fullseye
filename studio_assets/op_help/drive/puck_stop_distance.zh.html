@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">puck_stop_distance — DRIVE <code style="color:#22d3bf">puck</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">scalar × table</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.puck_stop_distance(v0: &#x27;float&#x27;, table: &#x27;dict&#x27;) -&gt; &#x27;float&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import puck; puck.puck_stop_distance(v0: &#x27;float&#x27;, table: &#x27;dict&#x27;) -&gt; &#x27;float&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;puck_stop_distance&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>停止距离 v₀²/(2μg)(与 <code style="color:#22d3bf">ballistics.slide_stop_distance</code> 公式相同，本函数从 table 取 μ、g)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">inlier_ratio — 3D <code style="color:#22d3bf">registration_metrics</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.inlier_ratio(source, target, transform, thresh: &#x27;float&#x27;) -&gt; &#x27;float&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import registration_eval; registration_eval.inlier_ratio(source, target, transform, thresh: &#x27;float&#x27;) -&gt; &#x27;float&#x27;</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;inlier_ratio&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Der Inlier-Anteil einer Korrespondenzmenge = der Anteil mit ‖T·source[i] − target[i]‖ &lt; thresh. → [0,1].</p>
 <p><code style="color:#22d3bf">source</code> und <code style="color:#22d3bf">target</code> sind gleich große Punktwolken mit <b>Index-Korrespondenz</b> (source[i] entspricht target[i]) (putative correspondences etwa aus FPFH werden angenommen). Monoton nicht fallend in thresh. Formabweichung oder nicht (N,3) ergibt ValueError (fail-closed).</p>

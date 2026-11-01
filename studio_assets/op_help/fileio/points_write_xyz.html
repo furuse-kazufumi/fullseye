@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">points_write_xyz — FILEIO <code style="color:#22d3bf">points</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">text</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.points_write_xyz(points)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import fileio; fileio.points_write_xyz(points)</code>、台帳から引くなら <code style="color:#22d3bf">opsfileio.get(&quot;points_write_xyz&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>有限な <code style="color:#22d3bf">(N,3)</code> 点群を17桁の XYZ テキストに書く(<code style="color:#22d3bf">text</code>)。</p>
 <p>1行に <code style="color:#22d3bf">x y z</code> を1点ずつ書く。呼び出し例: <code style="color:#22d3bf">text = points_write_xyz(points)</code>。</p>

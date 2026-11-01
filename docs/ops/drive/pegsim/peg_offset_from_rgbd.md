@@ -4,6 +4,7 @@ dim: drive
 category: pegsim
 in: rgb × image2d × matrix × matrix
 out: table
+gpu: なし
 examples: [poc_peg_failure_recovery, poc_peg_insertion_tactile, poc_pegsim_insertion]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `rgb × image2d × matrix × matrix` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.peg_offset_from_rgbd(rgb, depth, K, R_cam_to_world, r_peg: 'float' = 0.005, hole_radius: 'float | None' = None) -> 'dict'` (実装を直接呼ぶなら `import pegsim; pegsim.peg_offset_from_rgbd(rgb, depth, K, R_cam_to_world, r_peg: 'float' = 0.005, hole_radius: 'float | None' = None) -> 'dict'`、台帳から引くなら `opsdrive.get("peg_offset_from_rgbd")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

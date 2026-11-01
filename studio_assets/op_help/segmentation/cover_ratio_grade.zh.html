@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">cover_ratio_grade — SEGMENTATION <code style="color:#22d3bf">plant</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cover_ratio_grade(fraction, *, edges: &#x27;Sequence[float]&#x27; = (0.05, 0.25, 0.5)) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import cropweed; cropweed.cover_ratio_grade(fraction, *, edges: &#x27;Sequence[float]&#x27; = (0.05, 0.25, 0.5)) -&gt; &#x27;Dict[str, object]&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opssegmentation.get(&quot;cover_ratio_grade&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用<b>事先声明的边界</b> <code style="color:#22d3bf">edges</code> 把覆盖度（面积比例 0..1）分为 0..len(edges) 级。</p>
 <p>第 k 级为 edges[k−1] &lt;= f &lt; edges[k] (恰好落在边界上的值归入上一级)。默认边界 (0.05, 0.25, 0.50) 借自植被调查的盖度等级(Braun-Blanquet 的 5 % / 25 % / 50 %),得到 4 级(0 少 / 1 中等 / 2 多 / 3 严重)。它不是根据标注的分布决定的。<code style="color:#22d3bf">fraction</code> 为标量或一维数组。返回: <code style="color:#22d3bf">grade</code>(int 数组)、<code style="color:#22d3bf">edges</code>、<code style="color:#22d3bf">margin</code>(到最近边界的距离。越小判定越脆弱)、<code style="color:#22d3bf">n_grades</code>、<code style="color:#22d3bf">counts</code>(各级的个数)。空输入、非有限值、超出 [0, 1]、边界在 (0, 1) 内不严格递增时以 <code style="color:#22d3bf">ValueError</code> 拒绝。</p>

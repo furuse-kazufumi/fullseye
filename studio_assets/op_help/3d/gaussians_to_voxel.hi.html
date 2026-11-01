@@ -2,7 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">gaussians_to_voxel — 3D <code style="color:#22d3bf">transform</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">voxel</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gaussians_to_voxel(means, scales, opacities, size, bounds, device=&#x27;cpu&#x27;)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import match3d; match3d.gaussians_to_voxel(means, scales, opacities, size, bounds, device=&#x27;cpu&#x27;)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;gaussians_to_voxel&quot;)</code>)</p>
-<p style="margin:2px 0 2px 12px">• <b>GPU</b>: इस op का GPU path है (<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>3DGS (anisotropic Gaussians) → density voxel। हर Gaussian को means पर opacity के साथ रखता है, औसत scale से smooth करता है।</p>
 <p>सन्निकटन (isotropic splat + smoothing): सटीक anisotropic covariance rasterisation भारी है, इसलिए पहले means को opacity weight से splat किया जाता है → scale के औसत जितना gaussian smoothing। Matching के coarse alignment के लिए इतना काफ़ी है।</p>

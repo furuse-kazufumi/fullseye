@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tdi_sync_mtf — OPTICS <code style="color:#22d3bf">linescan</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tdi_sync_mtf(frequency_cyc_px=None, stages=64, sync_error=0.0, yaw_deg=0.0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import linescan; linescan.tdi_sync_mtf(frequency_cyc_px=None, stages=64, sync_error=0.0, yaw_deg=0.0)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;tdi_sync_mtf&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>TDI の同期ずれとヨー(斜行)が作るぼけの MTF(閉形式、<code style="color:#22d3bf">table</code>)。</p>
 <p>TDI は電荷を 1 ライン周期に 1 行ずつ送り、被写体も同じだけ進めば N 段が同じ物点を足す。速度(またはラインレート)の相対誤差 ε があると 1 段ごとに像が ε 画素ずつ滑り、N 段で <b>L = N·|ε| 画素</b>の一様な掃引になる。一様な掃引の MTF は <code style="color:#22d3bf">|sinc(f L)|</code>(<code style="color:#22d3bf">np.sinc</code> = sin(πx)/(πx))—— 最初の零は f = 1/L。</p>

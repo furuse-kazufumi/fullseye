@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">sun_at — DRIVE <code style="color:#22d3bf">env</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">any × scalar × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sun_at(when, lat: &#x27;float&#x27;, lon: &#x27;float&#x27;, *, refraction: &#x27;bool&#x27; = True) -&gt; &#x27;Dict[str, float]&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import driveenv; driveenv.sun_at(when, lat: &#x27;float&#x27;, lon: &#x27;float&#x27;, *, refraction: &#x27;bool&#x27; = True) -&gt; &#x27;Dict[str, float]&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;sun_at&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Sonnenhöhe und -azimut für einen Zeitpunkt (zeitzonenbewusstes datetime oder Julianisches Datum). Die Formeln stammen unverändert aus <code style="color:#22d3bf">geocam.sun_position</code> (NOAA-Sonnenstandsformeln = Version geringer Genauigkeit aus Meeus &quot;Astronomical Algorithms&quot; Kapitel 25, NOAA-Refraktion); ergänzt werden die Annahme des Zeitpunkts und der Abstand Erde–Sonne.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>

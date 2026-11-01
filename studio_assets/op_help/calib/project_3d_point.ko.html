@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">project_3d_point — CALIB <code style="color:#22d3bf">project</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">keypoints</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.project_3d_point(points_3d, cam_par, pose=None)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import calib; calib.project_3d_point(points_3d, cam_par, pose=None)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opscalib.get(&quot;project_3d_point&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>3D 점을 카메라에 투시 투영하여 화소 (row, col)를 돌려준다(project_3d_point).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>

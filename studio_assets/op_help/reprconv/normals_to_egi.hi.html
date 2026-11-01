@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">normals_to_egi — REPRCONV <code style="color:#22d3bf">direction</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">normals</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.normals_to_egi(normals, n_az=36, n_el=18)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import reprconv; reprconv.normals_to_egi(normals, n_az=36, n_el=18)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsreprconv.get(&quot;normals_to_egi&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>normal <code style="color:#22d3bf">(N,3)</code> → extended Gaussian image, <code style="color:#22d3bf">(n_el, n_az)</code> का <code style="color:#22d3bf">image2d</code>।</p>
 <p>दिशाओं का 2-D histogram (Horn, *Extended Gaussian Images*, Proc. IEEE 72(12) 1984)। &quot;किस दिशा की surface कितनी है&quot; का नक़्शा; जिन object में plane हावी हों उनमें 1 bin में peak खड़ा होता है। <b>irreversible</b> -- bin width जितना direction resolution छोड़ दिया जाता है। छोड़ी गई मात्रा मापी जा सकती है: सबसे भरे bin की केंद्र दिशा और input की औसत दिशा के बीच का कोण quantization error है, default (36, 18) पर 10 degree bin width के मुक़ाबले measured 3.7 degree (<code style="color:#22d3bf">selftest</code> देता है)।</p>

@@ -4,6 +4,7 @@ dim: drive
 category: pegsym
 in: image2d × image2d × scalar
 out: table
+gpu: なし
 examples: [poc_peg_symmetry_search]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d × image2d × scalar` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.relative_yaw_from_images(peg_view, hole_view, n: 'int', peg_polarity: 'str' = 'bright', hole_polarity: 'str' = 'dark', K: 'int' = 24) -> 'dict'` (実装を直接呼ぶなら `import pegsym; pegsym.relative_yaw_from_images(peg_view, hole_view, n: 'int', peg_polarity: 'str' = 'bright', hole_polarity: 'str' = 'dark', K: 'int' = 24) -> 'dict'`、台帳から引くなら `opsdrive.get("relative_yaw_from_images")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

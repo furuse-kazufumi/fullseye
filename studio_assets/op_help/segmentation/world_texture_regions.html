@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">world_texture_regions — SEGMENTATION <code style="color:#22d3bf">world</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.world_texture_regions(seed: &#x27;int&#x27; = 0, *, size=(192, 192), n_regions: &#x27;int&#x27; = 3, mean: &#x27;float&#x27; = 0.5, noise: &#x27;float&#x27; = 0.03) -&gt; &#x27;Dict[str, object]&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import segworld; segworld.world_texture_regions(seed: &#x27;int&#x27; = 0, *, size=(192, 192), n_regions: &#x27;int&#x27; = 3, mean: &#x27;float&#x27; = 0.5, noise: &#x27;float&#x27; = 0.03) -&gt; &#x27;Dict[str, object]&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opssegmentation.get(&quot;world_texture_regions&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>平均が同じで分散・周期だけ違う 2〜4 領域の世界(閾値では切れない)。真値 = 領域ラベル(1..n、背景なし)。</p>
 <p>領域 = 離した種の最近傍(ボロノイ)。模様は順に: 小さい雑音(σ = noise)、大きい雑音(σ = 4 noise)、縞(周期 P₁・向き θ₁、振幅 0.2)+ 雑音、縞(周期 P₂・向き θ₂)+ 雑音。どれも零平均で <code style="color:#22d3bf">mean</code> に足す(クリップは ±0.45 で対称 = 平均を保つ)。</p>

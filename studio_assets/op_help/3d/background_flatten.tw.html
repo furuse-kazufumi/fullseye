@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">background_flatten — 3D <code style="color:#22d3bf">surface_fit</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.background_flatten(image, degree=2)</code>(要直接呼叫實作,<code style="color:#22d3bf">import match3d; match3d.background_flatten(image, degree=2)</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;background_flatten&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>擬合並減去影像的低階曲面(照明不均)= 陰影校正。→ flattened。</p>
 <p>對 <code style="color:#22d3bf">(H,W)</code> 影像以 <code style="color:#22d3bf">x = 行</code>、<code style="color:#22d3bf">y = 列</code> 擬合 <code style="color:#22d3bf">fit_poly_surface(degree)</code>(預設 2 次), 以 float64 回傳 <code style="color:#22d3bf">image − fit</code>。輸出的平均值近乎 0,且<b>包含負值</b>(顯示或閾值化時請減去 <code style="color:#22d3bf">min</code> 或加上常數)。前景較大時,擬合也會被前景拉動,前景會被削掉(以去除前景的點 <code style="color:#22d3bf">fit_poly_surface</code> → 以 <code style="color:#22d3bf">eval_poly_surface</code> 相減較安全)。僅限灰階 2-D(3-D 會失敗)。存在 NaN 時 lstsq 會失敗。</p>

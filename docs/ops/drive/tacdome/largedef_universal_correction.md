@@ -4,6 +4,7 @@ dim: drive
 category: tacdome
 in: signal
 out: signal
+gpu: なし
 examples: [poc_tacdome_large_deformation]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal` → `signal`
 - **呼び出し**: `import fullseye as fs; fs.ledger.largedef_universal_correction(d, k: 'float' = 1.1111111111111112)` (実装を直接呼ぶなら `import tacdome; tacdome.largedef_universal_correction(d, k: 'float' = 1.1111111111111112)`、台帳から引くなら `opsdrive.get("largedef_universal_correction")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

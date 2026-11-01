@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">town_chain — DRIVE <code style="color:#22d3bf">town</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.town_chain(elements, *, start=(0.0, 0.0, 0.0), overlap: &#x27;float&#x27; = 0.05) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivetown; drivetown.town_chain(elements, *, start=(0.0, 0.0, 0.0), overlap: &#x27;float&#x27; = 0.05) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;town_chain&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>요소를 순서대로 이어 배치합니다: 요소 k+1의 entry를 요소 k의 exit(의 <code style="color:#22d3bf">overlap</code> 앞)에 맞추는 강체 배치를 닫힌 식으로 구해 <code style="color:#22d3bf">drivecourse.course_layout</code>에 넘깁니다.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>

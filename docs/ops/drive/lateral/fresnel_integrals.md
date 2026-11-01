@@ -4,6 +4,7 @@ dim: drive
 category: lateral
 in: any
 out: any
+gpu: なし
 examples: [gallery_drive_lateral_env]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `any` → `any`
 - **呼び出し**: `import fullseye as fs; fs.ledger.fresnel_integrals(x)` (実装を直接呼ぶなら `import drivelateral; drivelateral.fresnel_integrals(x)`、台帳から引くなら `opsdrive.get("fresnel_integrals")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

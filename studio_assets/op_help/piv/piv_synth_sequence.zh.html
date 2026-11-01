@@ -4,6 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_synth_sequence(shape, displacement, n_frames=8, density=0.02, diameter_px=2.5, seed=0, noise_sigma=0.0, intensity=(0.6, 1.0), background=0.0, jitter=0.0)</code>(要直接调用实现,<code style="color:#22d3bf">import pivops; pivops.piv_synth_sequence(shape, displacement, n_frames=8, density=0.02, diameter_px=2.5, seed=0, noise_sigma=0.0, intensity=(0.6, 1.0), background=0.0, jitter=0.0)</code>;从台账取用则 <code style="color:#22d3bf">opspiv.get(&quot;piv_synth_sequence&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>经台账调用的返回值</b>: <code style="color:#22d3bf">fullseye.ledger.piv_synth_sequence(...)</code> 只返回<b>声明的 out 类型 <code style="color:#22d3bf">images</code> 的值</b>(底层函数还会返回辅助信息)。需要被丢弃的部分时,使用 <code style="color:#22d3bf">fullseye.ledger.piv_synth_sequence.raw(...)</code>,或直接调用 <code style="color:#22d3bf">pivops.piv_synth_sequence</code>。</p>
 <p style="margin:2px 0 2px 12px">• 底层返回: <code style="color:#22d3bf">(frames, truth) -&gt; images</code></p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>同一批粒子被反复移动而得到的图像序列。返回 <code style="color:#22d3bf">(frames, truth)</code>。</p>
 <p><code style="color:#22d3bf">piv_synth_pair</code> 生成 2 幅，而这里生成<b>持续追踪 1 个流动的序列</b>。集合相关和时间统计只有用它才能验证 —— 若把独立的图像对排起来称为序列，相邻 2 幅之间没有对应关系，统计就失去意义(实测：相对平均 0.73 px，脉动 RMS 竟为 4.05 px，测到的是生成方式而不是流动)。</p>

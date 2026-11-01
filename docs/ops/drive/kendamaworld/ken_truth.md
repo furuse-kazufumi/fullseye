@@ -4,6 +4,7 @@ dim: drive
 category: kendamaworld
 in: table × table
 out: table
+gpu: なし
 examples: [gallery_drive_world_objects]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table × table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.ken_truth(world: 'dict', i_ken: 'int', cam: 'dict') -> 'dict'` (実装を直接呼ぶなら `import kendamaworld; kendamaworld.ken_truth(world: 'dict', i_ken: 'int', cam: 'dict') -> 'dict'`、台帳から引くなら `opsdrive.get("ken_truth")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

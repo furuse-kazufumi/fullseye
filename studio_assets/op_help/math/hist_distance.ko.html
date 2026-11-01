@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">hist_distance — MATH <code style="color:#22d3bf">estimation</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.hist_distance(p, q, metric: &#x27;str&#x27; = &#x27;kl&#x27;, *, eps: &#x27;float&#x27; = 1e-12) -&gt; &#x27;float&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import mathestimation; mathestimation.hist_distance(p, q, metric: &#x27;str&#x27; = &#x27;kl&#x27;, *, eps: &#x27;float&#x27; = 1e-12) -&gt; &#x27;float&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsmath.get(&quot;hist_distance&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>2개의 히스토그램(음이 아니며 합으로 정규화) 사이의 거리·발산.</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;kl&quot;</code> —— Kullback–Leibler D(p‖q) = Σ p log(p/q)(비대칭. q가 0이고 p가 양수이면 무한대 → eps로 하한).</p>

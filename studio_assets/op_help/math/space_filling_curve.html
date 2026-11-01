@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">space_filling_curve — MATH <code style="color:#22d3bf">construct</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">pairs</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.space_filling_curve(kind=&#x27;hilbert&#x27;, order=4)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import mathops; mathops.space_filling_curve(kind=&#x27;hilbert&#x27;, order=4)</code>、台帳から引くなら <code style="color:#22d3bf">opsmath.get(&quot;space_filling_curve&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Hilbert / Moore / scan orders on a <code style="color:#22d3bf">2**order</code> square — a permutation, checked.</p>
 <p>Returns the visiting order as <code style="color:#22d3bf">pairs</code> <code style="color:#22d3bf">(4**order, 2)</code> of integer grid coordinates. Two scan orders are included <b>as control groups</b>, not as</p>

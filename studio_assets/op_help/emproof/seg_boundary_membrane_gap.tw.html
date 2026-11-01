@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">seg_boundary_membrane_gap — EMPROOF <code style="color:#22d3bf">suspect</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">labels2d × image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.seg_boundary_membrane_gap(labels, membrane, tau: &#x27;float&#x27; = 0.2, min_len: &#x27;int&#x27; = 60, normalize: &#x27;bool&#x27; = True, ignore_zero: &#x27;bool&#x27; = True) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import emproof; emproof.seg_boundary_membrane_gap(labels, membrane, tau: &#x27;float&#x27; = 0.2, min_len: &#x27;int&#x27; = 60, normalize: &#x27;bool&#x27; = True, ignore_zero: &#x27;bool&#x27; = True) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsemproof.get(&quot;seg_boundary_membrane_gap&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p><b>疑似分割</b>：相鄰兩個標籤的邊界像素中，膜響應低於 <code style="color:#22d3bf">tau</code> 的比例。每個相鄰對一列。</p>
 <p>細胞的分界處必定有膜(暗線)。沒有膜而標籤卻改變的邊界,是把 1 個細胞切成 2 個的分割痕跡(<code style="color:#22d3bf">seg_inject_split</code> 的直線正是如此)。統計 4 鄰域中不同標籤相接的像素,邊界的膜響應取兩側中較強的一方。在 CREMI sample A 的原型上,人工分割 vs 其他:<b>AUC 0.99</b>(tau 0.2,邊界長 ≥ 60)。</p>

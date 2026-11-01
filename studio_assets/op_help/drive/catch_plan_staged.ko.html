@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">catch_plan_staged — DRIVE <code style="color:#22d3bf">kendama</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.catch_plan_staged(kp: &#x27;dict&#x27;, *, v_max: &#x27;float&#x27; = 2.0, a_max: &#x27;float&#x27; = 20.0, g: &#x27;float&#x27; = None, margin: &#x27;float&#x27; = 0.005, absorb_time: &#x27;float&#x27; = None, absorb_depth: &#x27;float&#x27; = 0.02)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import kendama; kendama.catch_plan_staged(kp: &#x27;dict&#x27;, *, v_max: &#x27;float&#x27; = 2.0, a_max: &#x27;float&#x27; = 20.0, g: &#x27;float&#x27; = None, margin: &#x27;float&#x27; = 0.005, absorb_time: &#x27;float&#x27; = None, absorb_depth: &#x27;float&#x27; = 0.02)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;catch_plan_staged&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>단계를 명시한 받기 제어(큰 접시·작은 접시·중간 접시·촛대에 같은 계획을 사용: 접시의 방향은 kp의 기술 자세에서). 반환값은 <code style="color:#22d3bf">plan(t, p, v, cup_state) → dict</code>(<code style="color:#22d3bf">kendama_simulate</code>의 <code style="color:#22d3bf">catch_plan</code>)입니다.</p>
 <p>단계(사람의 요령 &quot;무릎으로 바로 위로 끌어올리고, 실이 느슨해진 뒤 접시를 공의 바로 아래로 수평하게 옮기고, 착지에서 내려 충격을 흡수한다(떠내러 가지 않고 기다린다)&quot;를 옮긴다):</p>

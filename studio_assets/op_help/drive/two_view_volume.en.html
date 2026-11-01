@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">two_view_volume — DRIVE <code style="color:#22d3bf">scoop</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d × image2d × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.two_view_volume(side_a, side_b, pitch: &#x27;float&#x27;, *, threshold: &#x27;float&#x27; = 0.5) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import scoop; scoop.two_view_volume(side_a, side_b, pitch: &#x27;float&#x27;, *, threshold: &#x27;float&#x27; = 0.5) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;two_view_volume&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Volume from side images in 2 orthogonal directions — sum of ellipses whose axes are the 2 chords <code style="color:#22d3bf">W_a</code> and <code style="color:#22d3bf">W_b</code> of each row, <code style="color:#22d3bf">V = Σ f π (W_a/2)(W_b/2) pitch³</code>.</p>
 <p>Exact when the cross-section is an ellipse (a non-axisymmetric mound, an elongated heap); assuming a solid of revolution from only one view is off by the ratio of the ellipse&#x27;s flattening (in the PoC,</p>

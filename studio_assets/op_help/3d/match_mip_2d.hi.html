@@ -2,7 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">match_mip_2d — 3D <code style="color:#22d3bf">match_localize</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">voxel × voxel</code> → <code style="color:#22d3bf">position</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.match_mip_2d(scene_vol, model_vol, device=&#x27;cpu&#x27;)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import match3d; match3d.match_mip_2d(scene_vol, model_vol, device=&#x27;cpu&#x27;)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;match_mip_2d&quot;)</code>)</p>
-<p style="margin:2px 0 2px 12px">• <b>GPU</b>: इस op का GPU path है (<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>MIP projection → 2D NCC (structure=voxel → 2D × method=NCC, conversion=orthogonal MIP)।</p>
 <p>3 orthogonal दिशाओं के maximum intensity projection से समस्या को 3 2D समस्याओं में बदलता है, मौजूदा 2D NCC से locate करता है → 3 images से 3D coordinates का redundant अनुमान लगाता है। पूरे 3D NCC से सस्ता, coarse alignment के लिए। बिना rotation वाली translation search के लिए उपयुक्त।</p>

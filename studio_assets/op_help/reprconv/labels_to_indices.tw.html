@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">labels_to_indices — REPRCONV <code style="color:#22d3bf">index</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">labels</code> → <code style="color:#22d3bf">indices</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.labels_to_indices(labels)</code>(要直接呼叫實作,<code style="color:#22d3bf">import reprconv; reprconv.labels_to_indices(labels)</code>;從台帳取用則 <code style="color:#22d3bf">opsreprconv.get(&quot;labels_to_indices&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p><code style="color:#22d3bf">labels</code> → 非背景的索引 <code style="color:#22d3bf">(N,)</code>。<code style="color:#22d3bf">indices_to_labels</code> 的反向。</p>
 <p>也接受 2-D 以上的標籤影像 —— 此時的索引是 <b>對 <code style="color:#22d3bf">labels.ravel()</code> 的索引</b>(C 順序)。可用 <code style="color:#22d3bf">np.unravel_index</code> 還原為座標, 但<b>還原需要原來的 shape</b>,所以這個方向捨棄了 <code style="color:#22d3bf">shape</code>(不可逆)。</p>

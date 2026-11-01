@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">ncd — IMGMETRICS <code style="color:#22d3bf">compression</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ncd(a, b, compressor=&#x27;lzma&#x27;, levels=None, data_range=None, symmetric=True)</code>(要直接呼叫實作,<code style="color:#22d3bf">import imgmetrics; imgmetrics.ncd(a, b, compressor=&#x27;lzma&#x27;, levels=None, data_range=None, symmetric=True)</code>;從台帳取用則 <code style="color:#22d3bf">opsimgmetrics.get(&quot;ncd&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>正規化壓縮距離(Li, Chen, Li, Ma &amp; Vitányi, IEEE TIT 50(12), 2004)。</p>
 <p><code style="color:#22d3bf">NCD(x,y) = (C(xy) - min(C(x),C(y))) / max(C(x),C(y))</code>。相同的輸入趨近 0,無關的趨近 1 —— 但<b>實際的壓縮器不是理想的 Kolmogorov 複雜度</b>,所以即使輸入相同也不會嚴格為 0 (有標頭帶來的偏置)。該偏置的實測值記錄在測試中。</p>

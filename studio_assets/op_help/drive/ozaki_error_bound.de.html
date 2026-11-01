@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">ozaki_error_bound — DRIVE <code style="color:#22d3bf">ozaki</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">matrix × matrix × scalar</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ozaki_error_bound(A, B, n_slices: &#x27;int&#x27;)</code> (die Implementierung direkt: <code style="color:#22d3bf">import ozakimm; ozakimm.ozaki_error_bound(A, B, n_slices: &#x27;int&#x27;)</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;ozaki_error_bound&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Garantierte elementweise obere Schranke (eine Matrix) für den Abbruchfehler von <code style="color:#22d3bf">matmul_ozaki(A, B, n_slices)</code> (Ozaki-I).</p>
 <p>Eine obere Schranke für die Summe der Abschneidereste und der verworfenen Slice-Paare; die Rundung des abschließenden float64-Zusammenbaus (in der Größenordnung <code style="color:#22d3bf">(s+1) u |A||B|</code>) ist nicht enthalten. Im Gate 0 Verletzungen bei etwas über 260.000 Elementen (PoC und tests). Da mit einer umgeordneten Summe gerechnet wird, hängt auch die Schranke selbst nicht von der inneren Reihenfolge ab.</p>

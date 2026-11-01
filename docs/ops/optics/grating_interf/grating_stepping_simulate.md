@@ -4,6 +4,7 @@ dim: optics
 category: grating_interf
 in: image2d
 out: images
+gpu: なし
 examples: [grating_interferometry, poc_grating_interferometry]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,6 +16,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **データ種**: `image2d` → `images`
 - **呼び出し**: `import fullseye as fs; fs.ledger.grating_stepping_simulate(transmission=None, dpc_rad=None, darkfield=None, n_steps=8, ref_visibility=0.25, ref_phase_rad=0.0, steps_per_period=None, flux=None, seed=0, shape=(64, 64))` (実装を直接呼ぶなら `import gratinginterf; gratinginterf.grating_stepping_simulate(transmission=None, dpc_rad=None, darkfield=None, n_steps=8, ref_visibility=0.25, ref_phase_rad=0.0, steps_per_period=None, flux=None, seed=0, shape=(64, 64))`、台帳から引くなら `opsoptics.get("grating_stepping_simulate")`)
 - **台帳経由の戻り値**: `fullseye.ledger.grating_stepping_simulate(...)` は**宣言 out 型 `images` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.grating_stepping_simulate.raw(...)`、または `gratinginterf.grating_stepping_simulate` を直接呼ぶ。
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

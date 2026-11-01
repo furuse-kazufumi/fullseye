@@ -4,6 +4,7 @@ dim: shapestat
 category: symmetry
 in: points
 out: matrix
+gpu: なし
 examples: [shapestat_landmark_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `points` → `matrix`
 - **呼び出し**: `import fullseye as fs; fs.ledger.mirror_plane_from_pairs(landmarks, pairs=None, midline=None)` (実装を直接呼ぶなら `import shapestats; shapestats.mirror_plane_from_pairs(landmarks, pairs=None, midline=None)`、台帳から引くなら `opsshapestat.get("mirror_plane_from_pairs")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

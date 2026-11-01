@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">gs_render_fn — DRIVE <code style="color:#22d3bf">gsplat</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gs_render_fn(gs: &#x27;dict&#x27;, **render_kw)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import gsplatnp; gsplatnp.gs_render_fn(gs: &#x27;dict&#x27;, **render_kw)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;gs_render_fn&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p><code style="color:#22d3bf">render_fn(world, cam) → (H, W, 3)</code> (<code style="color:#22d3bf">kendamaworld.camera_perceiver</code> की rendering बदलने का plug-in point) लौटाता है: हर call पर <code style="color:#22d3bf">gs_update</code> से Gaussians को world के वर्तमान vertices पर फिर से लगाता है, और <code style="color:#22d3bf">cam</code> (dict: pose, K, width, height) से <code style="color:#22d3bf">gs_render</code> करता है। <code style="color:#22d3bf">render_kw</code> gs_render को जैसे का तैसा दिया जाता है। attributes <code style="color:#22d3bf">n_calls</code> और <code style="color:#22d3bf">n_pairs</code> (cumulative) रखता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

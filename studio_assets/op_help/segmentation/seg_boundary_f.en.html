@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">seg_boundary_f — SEGMENTATION <code style="color:#22d3bf">score</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">labels2d × labels2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.seg_boundary_f(labels_pred, labels_true, *, tau: &#x27;float&#x27; = 2.0) -&gt; &#x27;Dict[str, object]&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import segeval; segeval.seg_boundary_f(labels_pred, labels_true, *, tau: &#x27;float&#x27; = 2.0) -&gt; &#x27;Dict[str, object]&#x27;</code>; from the registry, <code style="color:#22d3bf">opssegmentation.get(&quot;seg_boundary_f&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Boundary F-measure at tolerance tau: precision = fraction of predicted boundary pixels within tau of a true boundary, recall the reverse (seg_boundary_f).</p>
 <p>F = 2PR/(P+R). Boundaries follow the convention of <code style="color:#22d3bf">_boundary</code> (cracks between labels, 1 pixel wide), so they do not depend on label numbers or on which label is background (only the shape of the partition matters). Distance is by distance transform (Euclidean, pixel centres). τ = 0 means pixel coincidence. If both boundaries are empty (both 1 colour), P = R = F = 1; if only one is empty, 0.</p>

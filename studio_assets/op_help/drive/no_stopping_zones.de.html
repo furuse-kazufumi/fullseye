@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">no_stopping_zones — DRIVE <code style="color:#22d3bf">crossing</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.no_stopping_zones(features: &#x27;Iterable[dict]&#x27;, *, in_service: &#x27;bool&#x27; = True) -&gt; &#x27;Dict[str, object]&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import drivecrossing; drivecrossing.no_stopping_zones(features: &#x27;Iterable[dict]&#x27;, *, in_service: &#x27;bool&#x27; = True) -&gt; &#x27;Dict[str, object]&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;no_stopping_zones&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Erzeugt aus Einrichtungen entlang der Straße die Abschnitte mit Halt- und Parkverbot nach Art. 44 Abs. 1.</p>
 <p>features[i] = {&quot;kind&quot;, &quot;start&quot;, &quot;end&quot;} (eine Bushaltestelle darf auch &quot;at&quot; = Position des Haltestellenschilds verwenden). kind ∈ <code style="color:#22d3bf">NO_STOP_DISTANCE</code>. Abschnitt = [start − d, end + d] (d = Abstand der jeweiligen Nr.). Bushaltestellen nur während der Betriebszeit (<code style="color:#22d3bf">in_service</code>).</p>

@@ -4,6 +4,7 @@ dim: drive
 category: pegtactile
 in: rgb × image2d × matrix × matrix × signal × signal × scalar
 out: table
+gpu: なし
 examples: [gallery_drive_peg]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `rgb × image2d × matrix × matrix × signal × signal × scalar` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.wrist_deflection_from_rgbd(rgb, depth, K, R_cam_to_world, cam_w, carriage_pos, r_peg: 'float', hinge_z: 'float' = 0.0) -> 'dict'` (実装を直接呼ぶなら `import pegtactile; pegtactile.wrist_deflection_from_rgbd(rgb, depth, K, R_cam_to_world, cam_w, carriage_pos, r_peg: 'float', hinge_z: 'float' = 0.0) -> 'dict'`、台帳から引くなら `opsdrive.get("wrist_deflection_from_rgbd")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

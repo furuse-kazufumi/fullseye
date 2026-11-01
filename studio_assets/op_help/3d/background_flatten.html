@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">background_flatten — 3D <code style="color:#22d3bf">surface_fit</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.background_flatten(image, degree=2)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import match3d; match3d.background_flatten(image, degree=2)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;background_flatten&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>画像の低次曲面(照明ムラ)をフィット減算=シェーディング補正。→ flattened。</p>
 <p><code style="color:#22d3bf">(H,W)</code> 画像に <code style="color:#22d3bf">x = 列</code>、<code style="color:#22d3bf">y = 行</code> で <code style="color:#22d3bf">fit_poly_surface(degree)</code>(既定 2 次)を当て、<code style="color:#22d3bf">image − fit</code> を float64 で返す。出力は平均がほぼ 0 で <b>負の値を含む</b>(表示・閾値化には <code style="color:#22d3bf">min</code> を引くか定数を足す)。前景が広いと前景もフィットに引かれて削られる(前景を除いた点で <code style="color:#22d3bf">fit_poly_surface</code> → <code style="color:#22d3bf">eval_poly_surface</code> で減算する方が安全)。グレースケール 2-D のみ(3-D は失敗)。NaN があると lstsq が失敗する。</p>

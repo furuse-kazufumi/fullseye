@@ -4,6 +4,7 @@ dim: optics
 category: light_transport
 in: 
 out: table
+gpu: なし
 examples: [converge_tour, poc_interreflection_fringe_error, poc_itof_multifreq]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.groove_profile(kind='vgroove', n_patches=240, width=1.0, angle_deg=None, floor_frac=None, vertices=None)` (実装を直接呼ぶなら `import lighttransport; lighttransport.groove_profile(kind='vgroove', n_patches=240, width=1.0, angle_deg=None, floor_frac=None, vertices=None)`、台帳から引くなら `opsoptics.get("groove_profile")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">assign_hungarian — MATH <code style="color:#22d3bf">estimation</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.assign_hungarian(cost, *, maximize: &#x27;bool&#x27; = False) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import mathestimation; mathestimation.assign_hungarian(cost, *, maximize: &#x27;bool&#x27; = False) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsmath.get(&quot;assign_hungarian&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Löst das Zuordnungsproblem für eine Kostenmatrix (n, m) (Ungarische Methode nach Kuhn 1955 / Munkres 1957, Implementierung von scipy).</p>
 <p>Ordnet Zeilen und Spalten 1 zu 1 zu und minimiert die Summe der gewählten Kosten (maximiert mit <code style="color:#22d3bf">maximize=True</code>). Bei n != m wird die kürzere Seite vollständig zugeordnet. Rückgabewert <code style="color:#22d3bf">{&quot;rows&quot;, &quot;cols&quot;, &quot;total&quot;, &quot;pairs&quot;}</code>. Gate: auf kleinen Matrizen Übereinstimmung mit dem Durchprobieren aller Permutationen.</p>

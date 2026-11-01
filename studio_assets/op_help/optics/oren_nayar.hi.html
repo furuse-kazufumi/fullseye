@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">oren_nayar — OPTICS <code style="color:#22d3bf">material</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">normalmap</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.oren_nayar(normals, light=(0.3, 0.4, 0.87), view=(0.0, 0.0, 1.0), roughness_deg=20.0, albedo=1.0) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import surfacelib; surfacelib.oren_nayar(normals, light=(0.3, 0.4, 0.87), view=(0.0, 0.0, 1.0), roughness_deg=20.0, albedo=1.0) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;oren_nayar&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>खुरदुरी diffuse surface की shading (Oren–Nayar)। कागज़, plaster, concrete और चाँद कैसे दिखते हैं।</p>
 <p>normals: (H, W, 3)। light / view: surface से light source / viewpoint की ओर की दिशा।</p>

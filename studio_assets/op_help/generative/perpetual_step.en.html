@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">perpetual_step — GENERATIVE <code style="color:#22d3bf">stream</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.perpetual_step(state: &#x27;dict&#x27;, steps: &#x27;int&#x27; = 1) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import perpetual; perpetual.perpetual_step(state: &#x27;dict&#x27;, steps: &#x27;int&#x27; = 1) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsgenerative.get(&quot;perpetual_step&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Advances the state by <code style="color:#22d3bf">steps</code> (returns the same dict — large arrays are not copied).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">peg_wrench_to_pad_loads — DRIVE <code style="color:#22d3bf">pegtactile</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal × signal × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.peg_wrench_to_pad_loads(F_pad, M_pad, pad: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import pegtactile; pegtactile.peg_wrench_to_pad_loads(F_pad, M_pad, pad: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;peg_wrench_to_pad_loads&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Wrench that the 2 pads apply to the peg (gripper frame, about the grasp point) → for each pad (normal force P, shear on the membrane q = (q_u, q_v)).</p>
 <p>Equilibrium (derivation): pad R (+x) applies −N_R x̂ and T_R to the peg, L (−x) applies +N_L x̂ and T_L. F_x = N_L − N_R, F_y = T_Ry + T_Ly, F_z = T_Rz + T_Lz, M_y = −w(T_Rz − T_Lz), M_z = w(T_Ry − T_Ly), M_x = torsion (half each). The normal is N = G₀ ∓ F_x/2 from the grip force.</p>

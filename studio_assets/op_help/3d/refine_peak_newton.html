@@ -3,7 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">score × position</code> → <code style="color:#22d3bf">position</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.refine_peak_newton(score, idx, device=&#x27;cpu&#x27;, max_iter=12, tol=0.0001)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import match3d; match3d.refine_peak_newton(score, idx, device=&#x27;cpu&#x27;, max_iter=12, tol=0.0001)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;refine_peak_newton&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>台帳経由の戻り値</b>: <code style="color:#22d3bf">fullseye.ledger.refine_peak_newton(...)</code> は<b>宣言 out 型 <code style="color:#22d3bf">position</code> の値だけ</b>を返す(本体は補助情報も返す)。捨てられた側が要るときは <code style="color:#22d3bf">fullseye.ledger.refine_peak_newton.raw(...)</code>、または <code style="color:#22d3bf">match3d.refine_peak_newton</code> を直接呼ぶ。</p>
-<p style="margin:2px 0 2px 12px">• <b>GPU</b>: この op は GPU 経路あり(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>スコア/相関 volume の整数ピークを 3D Newton でサブボクセル精緻化する(反復最適化)。</p>
 <p>粗いマッチ(整数 NCC / Fourier-Mellin ±3° / Hough ±0.5voxel)が返す整数ピーク idx を、局所の 2 次モデル f(x)≈f0+gᵀΔ+½ΔᵀHΔ の停留点 Δ=-H⁻¹g へ反復更新して連続座標へ収束させる。軸別の放物線サブピクセルと違い <b>全 3x3 Hessian(交差曲率 fzy,fzx,fyx を含む)</b> を使うため、回転した(相互曲率のある)異方性ピークでも座標軸間の結合バイアスを除去できる。</p>

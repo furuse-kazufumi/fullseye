@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">mueller_apply — OPTICS <code style="color:#22d3bf">polarization</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">matrix × stokes</code> → <code style="color:#22d3bf">stokes</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mueller_apply(mueller, stokes)</code> (die Implementierung direkt: <code style="color:#22d3bf">import optics; optics.mueller_apply(mueller, stokes)</code>; aus dem Register: <code style="color:#22d3bf">opsoptics.get(&quot;mueller_apply&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Schickt einen Stokes-Vektor durch eine Müller-Matrix: <code style="color:#22d3bf">S&#x27; = M @ S</code>.</p>
 <p>*mueller* ist eine reelle <code style="color:#22d3bf">(4, 4)</code>-Matrix (gebaut mit <code style="color:#22d3bf">mueller_element</code> oder als Produkt mehrerer) und *stokes* ein Stokes-Vektor mit 4 Komponenten <code style="color:#22d3bf">[S0, S1, S2, S3]</code>.</p>

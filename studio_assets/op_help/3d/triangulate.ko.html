@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">triangulate — 3D <code style="color:#22d3bf">two_view</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.triangulate(pts1, pts2, P1, P2)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import twoview; twoview.triangulate(pts1, pts2, P1, P2)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;triangulate&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>DLT 삼각측량: 두 시점의 대응점 + 투영 행렬 → 3D 점. → (N,3).</p>
 <p><b>무한원점은 <code style="color:#22d3bf">NaN</code>으로 반환한다</b>(<code style="color:#22d3bf">±inf</code>로는 하지 않는다). 동차 좌표의 제4성분이 0 = 2개의 시선이 평행하며, 그 대응은 유한한 3-D 점을 정하지 않는다. 이전에는 그대로 나눠서 <code style="color:#22d3bf">±inf</code>를 냈지만, 그러면 하류의 cheirality 판정 <code style="color:#22d3bf">depth &gt; 0</code>이 <b><code style="color:#22d3bf">inf</code>를 &quot;카메라 전방&quot;으로 센다</b>(<code style="color:#22d3bf">inf &gt; 0</code>은 <code style="color:#22d3bf">True</code>). <code style="color:#22d3bf">recover_pose</code>는 4개의 (R, t) 후보 중 전방 점이 가장 많은 것을 고르므로, 무한원점이 표를 가지면 후보 선택이 조용히 왜곡된다. <code style="color:#22d3bf">NaN</code>이면 비교가 <code style="color:#22d3bf">False</code>가 되어, 세어지지 않고 끝난다(2026-09-02, chain_fuzz가 도달해 발각).</p>

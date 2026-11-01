@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">matcap_shade — 3D <code style="color:#22d3bf">render</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">normalmap × image2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.matcap_shade(normals, matcap) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import render_shade; render_shade.matcap_shade(normals, matcap) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;matcap_shade&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>MatCap:把视空间法线映射到 lit-sphere 贴图,转移材质外观。→ <code style="color:#22d3bf">(H, W[, C])</code>。</p>
 <p>将视空间的单位法线 <code style="color:#22d3bf">(nx, ny)</code>(<code style="color:#22d3bf">[-1,1]</code>)映射到纹理坐标(<code style="color:#22d3bf">u = (nx+1)/2</code>, <code style="color:#22d3bf">v = (1−ny)/2</code>,在行方向上翻转 y),对 <code style="color:#22d3bf">matcap</code> 图像以<b>双线性插值</b>采样。不做光照计算,就能把对球打光拍下的 1 张材质外观原样贴到任意形状上(金属、黏土、卡通等)。</p>

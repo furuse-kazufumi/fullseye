@@ -4,6 +4,7 @@ dim: math
 category: stats
 in: signal
 out: pairs
+gpu: なし
 examples: [math_metrology, poc_thermal_radiometry]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,6 +16,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **データ種**: `signal` → `pairs`
 - **呼び出し**: `import fullseye as fs; fs.ledger.stat_histogram(x, bins=10, range=None, density=False)` (実装を直接呼ぶなら `import mathops; mathops.stat_histogram(x, bins=10, range=None, density=False)`、台帳から引くなら `opsmath.get("stat_histogram")`)
 - **台帳経由の戻り値**: `fullseye.ledger.stat_histogram(...)` は**宣言 out 型 `pairs` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.stat_histogram.raw(...)`、または `mathops.stat_histogram` を直接呼ぶ。
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

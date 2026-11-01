@@ -4,6 +4,7 @@ dim: measure1d
 category: scale
 in: table
 out: table
+gpu: なし
 examples: [example_inner_diameter_mm, example_scratch_width]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.table_px_to_mm(table, mm_per_px, keys=('width', 'radius', 'dist', 'rms', 'ra', 'rb', 'l1', 'l2'))` (実装を直接呼ぶなら `import measuring1d; measuring1d.table_px_to_mm(table, mm_per_px, keys=('width', 'radius', 'dist', 'rms', 'ra', 'rb', 'l1', 'l2'))`、台帳から引くなら `opsmeasure1d.get("table_px_to_mm")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">course_turnaround — DRIVE <code style="color:#22d3bf">course</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.course_turnaround(width=3.5, bay_width=3.5, depth=5.0, entry=5.0, corner_radius=1.0, arc_pts=16, side=&#x27;left&#x27;)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import drivecourse; drivecourse.course_turnaround(width=3.5, bay_width=3.5, depth=5.0, entry=5.0, corner_radius=1.0, arc_pts=16, side=&#x27;left&#x27;)</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;course_turnaround&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>方向変換コース(T 字): 幅 w の道路(x ∈ [0, 2E + bay_width])の側方中央に車庫(道路沿いの幅 bay_width、奥行 depth)、車庫口の両側に出入口部 E ずつ。</p>
 <p>別表第三の図(3JH00000217784)そのもの: 道路(幅 A)の途中に車庫(幅 B × 奥行 C)が直角に付き、車庫口の両側の道路が出入口部 D、車庫口の凹頂点 2 つがすみ切り E。図は上向きの道路の右側に車庫があるが、ここでは <code style="color:#22d3bf">side=&quot;left&quot;</code>(+y)を既定にし <code style="color:#22d3bf">&quot;right&quot;</code> で鏡映する。車は道路を進み、後退で車庫に入れ、来た方向へ出る(exit = (0, 0, π); 反対側へ出るときは配置側で向きを選ぶ)。centerline は道路の軸 → 車庫の軸。面積 = (2E + bay_width)·w + depth·bay_width + 2r²(1 − π/4)。</p>

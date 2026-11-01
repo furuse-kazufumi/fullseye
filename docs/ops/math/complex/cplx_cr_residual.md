@@ -4,6 +4,7 @@ dim: math
 category: complex
 in: cimage
 out: measurement
+gpu: なし
 examples: [math_complex, poc_complex_plane_fields]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `cimage` → `measurement`
 - **呼び出し**: `import fullseye as fs; fs.ledger.cplx_cr_residual(f, spacing=1.0)` (実装を直接呼ぶなら `import mathops; mathops.cplx_cr_residual(f, spacing=1.0)`、台帳から引くなら `opsmath.get("cplx_cr_residual")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

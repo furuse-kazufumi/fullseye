@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">world_blobs_touching — SEGMENTATION <code style="color:#22d3bf">world</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">table</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.world_blobs_touching(n: &#x27;int&#x27; = 10, overlap: &#x27;float&#x27; = 0.2, seed: &#x27;int&#x27; = 0, *, size=(160, 160), radius: &#x27;float&#x27; = 14.0, noise: &#x27;float&#x27; = 0.03) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import segworld; segworld.world_blobs_touching(n: &#x27;int&#x27; = 10, overlap: &#x27;float&#x27; = 0.2, seed: &#x27;int&#x27; = 0, *, size=(160, 160), radius: &#x27;float&#x27; = 14.0, noise: &#x27;float&#x27; = 0.03) -&gt; &#x27;Dict[str, object]&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opssegmentation.get(&quot;world_blobs_touching&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>重叠圆盘（细胞/颗粒）世界：等半径圆排成链，每个只与前一个在中心距 2r(1 - overlap) 处重叠（world_blobs_touching）。</p>
 <p>标签 = 在包含该像素的圆中最近的中心(重叠部分用垂直平分线划分)。图像 = 明亮的内部 + 暗的边缘 + 重叠处稍亮 + 模糊 + 噪声(细胞的外观)。链无法再延伸时开始新的链(该圆不与任何圆重叠)。</p>

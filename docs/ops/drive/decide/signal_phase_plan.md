@@ -4,6 +4,7 @@ dim: drive
 category: decide
 in: 
 out: table
+gpu: なし
 examples: [poc_driving_decisions]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.signal_phase_plan(*, crossing_length: 'float', ped_green: 'float', walk_speed: 'float' = 1.0, ped_red_to_amber: 'float' = 2.0, amber: 'float' = 3.0, all_red: 'float' = 2.0, cross_green: 'float' = 20.0, cross_amber: 'Optional[float]' = None, cross_all_red: 'Optional[float]' = None, flash_fraction: 'float' = 1.0) -> 'Dict[str, object]'` (実装を直接呼ぶなら `import drivedecide; drivedecide.signal_phase_plan(*, crossing_length: 'float', ped_green: 'float', walk_speed: 'float' = 1.0, ped_red_to_amber: 'float' = 2.0, amber: 'float' = 3.0, all_red: 'float' = 2.0, cross_green: 'float' = 20.0, cross_amber: 'Optional[float]' = None, cross_all_red: 'Optional[float]' = None, flash_fraction: 'float' = 1.0) -> 'Dict[str, object]'`、台帳から引くなら `opsdrive.get("signal_phase_plan")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

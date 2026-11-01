@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">chamfer_capture — DRIVE <code style="color:#22d3bf">pegsim</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.chamfer_capture(kp, eps0: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import pegsim; pegsim.chamfer_capture(kp, eps0: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;chamfer_capture&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>प्रारंभिक lateral offset ε₀ [m] को chamfer बिना सुधार के सोख सकता है या नहीं: |ε₀| ≤ W + c_r (सिरे के किनारे के chamfer surface पर उतरने की शर्त, व्युत्पन्न)।</p>
 <p>रिटर्न: <code style="color:#22d3bf">captured</code>, <code style="color:#22d3bf">eps_max</code> = W + c_r, <code style="color:#22d3bf">margin</code> = eps_max − |ε₀|। डिफ़ॉल्ट आयामों में 1.2 mm। झुकाव θ₀ होने पर सिरे के किनारे का प्रक्षेप खिसकता है, परंतु θ₀ ≤ 3° पर नगण्य है (प्रोटोटाइप ग्रिड में ε₀ = 2, 3 mm बिना सुधार के विफल हुए, यही आधार है)।</p>

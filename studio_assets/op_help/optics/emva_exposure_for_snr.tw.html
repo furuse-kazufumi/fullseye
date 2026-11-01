@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">emva_exposure_for_snr — OPTICS <code style="color:#22d3bf">sensorchar</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.emva_exposure_for_snr(snr, eta, sigma_d, K, sigma_q2=0.08333333333333333)</code>(要直接呼叫實作,<code style="color:#22d3bf">import sensorchar; sensorchar.emva_exposure_for_snr(snr, eta, sigma_d, K, sigma_q2=0.08333333333333333)</code>;從台帳取用則 <code style="color:#22d3bf">opsoptics.get(&quot;emva_exposure_for_snr&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>達到給定 SNR 所需的曝光 μ_p(SNR) = SNR²/(2η) (1 + √(1 + 4(σ²_d + σ²_q/K²)/SNR²))(式 25,式 21 的逆)。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>

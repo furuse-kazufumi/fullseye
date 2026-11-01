@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">hertz_sphere — DRIVE <code style="color:#22d3bf">tacsim</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">scalar × scalar × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.hertz_sphere(F: &#x27;float&#x27;, R: &#x27;float&#x27;, Estar: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import tacsim; tacsim.hertz_sphere(F: &#x27;float&#x27;, R: &#x27;float&#x27;, Estar: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;hertz_sphere&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>강체 구(반경 R)를 탄성 반공간(복합 탄성계수 E*)에 하중 F로 누르는 Hertz 접촉의 닫힌 식(Johnson 1985 §3).</p>
 <p>반환: <code style="color:#22d3bf">a</code>(접촉 반경 = (3FR/4E*)^{1/3}), <code style="color:#22d3bf">delta</code>(압입 = a²/R), <code style="color:#22d3bf">p0</code>(최대 압력 = 3F/(2πa²)), <code style="color:#22d3bf">pm</code>(평균 압력 = F/(πa²) = (2/3)p0)와 입력 <code style="color:#22d3bf">F</code>·<code style="color:#22d3bf">R</code>·<code style="color:#22d3bf">Estar</code>. <b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 어느 것이든 ≤ 0 또는 비유한.</p>

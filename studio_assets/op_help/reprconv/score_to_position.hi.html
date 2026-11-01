@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">score_to_position — REPRCONV <code style="color:#22d3bf">score</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">score</code> → <code style="color:#22d3bf">position</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.score_to_position(score)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import reprconv; reprconv.score_to_position(score)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsreprconv.get(&quot;score_to_position&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p><code style="color:#22d3bf">score</code> volume → अधिकतम मान की position <code style="color:#22d3bf">position (z, y, x)</code>। <code style="color:#22d3bf">score</code> से निकास।</p>
 <p>integer grid पर argmax (subpixel refinement नहीं करता -- वह मौजूदा <code style="color:#22d3bf">refine_peak_newton</code> का काम है; यहाँ उसकी नकल करने से 2 जगह अलग उत्तर आएँगे)। <b>एकतरफ़ा (one-way)</b> (1 position से volume वापस नहीं मिल सकता)।</p>

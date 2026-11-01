@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">ring_artifact_apply — TOMOGRAPHY <code style="color:#22d3bf">artifact</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">sinogram</code> → <code style="color:#22d3bf">sinogram</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ring_artifact_apply(sinogram, gain_sigma=0.02, seed=0, offsets=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import tomography; tomography.ring_artifact_apply(sinogram, gain_sigma=0.02, seed=0, offsets=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">opstomography.get(&quot;ring_artifact_apply&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>detector को हर bin का gain error देता है — ring artefact का स्रोत।</p>
 <p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>

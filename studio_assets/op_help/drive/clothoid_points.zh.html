@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">clothoid_points — DRIVE <code style="color:#22d3bf">lateral</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">table</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.clothoid_points(length: &#x27;float&#x27;, s, *, kappa0: &#x27;float&#x27; = 0.0, kappa1: &#x27;float&#x27; = 0.0, start=(0.0, 0.0), heading0: &#x27;float&#x27; = 0.0) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import drivelateral; drivelateral.clothoid_points(length: &#x27;float&#x27;, s, *, kappa0: &#x27;float&#x27; = 0.0, kappa1: &#x27;float&#x27; = 0.0, start=(0.0, 0.0), heading0: &#x27;float&#x27; = 0.0) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;clothoid_points&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>曲率随弧长线性变化 κ(s) = κ₀ + (κ₁ − κ₀) s / length 的曲线(回旋曲线的一部分；κ₀ = κ₁ 时为圆弧或直线)上的点。</p>
 <p><code style="color:#22d3bf">s</code>: 0 ≤ s ≤ length 的弧长(数组)。<code style="color:#22d3bf">start</code>、<code style="color:#22d3bf">heading0</code>: 起点及起点朝向。向左弯的曲率为正。回旋线部分用菲涅耳积分映射标准形(A² = 1/|dκ/ds|),再按起点、朝向旋转(不使用数值积分)。</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">four_f_filter — OPTICS <code style="color:#22d3bf">wave</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">cimage × cimage</code> → <code style="color:#22d3bf">cimage</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.four_f_filter(field, transfer, invert=True)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import optics; optics.four_f_filter(field, transfer, invert=True)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;four_f_filter&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>4f optical processor: 2 lenses और Fourier plane के filter से गुज़रने के बाद का आउटपुट।</p>
 <p>इनपुट plane → lens 1 → <b>Fourier plane</b> (<code style="color:#22d3bf">transfer</code> से गुणा) → lens 2 → आउटपुट plane। scalar diffraction के आदर्श 4f system में आउटपुट है</p>

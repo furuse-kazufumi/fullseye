@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">optscene_instances — OPTICS <code style="color:#22d3bf">scene</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">table × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.optscene_instances(scene, camera, min_area_px: &#x27;int&#x27; = 1) -&gt; &#x27;list&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import optscene; optscene.optscene_instances(scene, camera, min_area_px: &#x27;int&#x27; = 1) -&gt; &#x27;list&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsoptics.get(&quot;optscene_instances&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>결함을 <b>개체별로</b> 돌려줍니다(클래스·화소 마스크·bounding box·면적).</p>
 <p>1장의 합성 마스크만으로는 개체를 나눌 수 없어, 검출이나 계수의 학습에는 쓸 수 없다. 연결 성분으로 나누고, <code style="color:#22d3bf">min_area_px</code> 미만은 버린다(1화소의 알갱이까지는 세지 않는다).</p>

@@ -4,6 +4,7 @@ dim: drive
 category: balltrack
 in: any
 out: table
+gpu: なし
 examples: [poc_table_tennis_bounce, poc_table_tennis_spin]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `any` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.spin_from_marker_sequence(dirs, dt: 'float', *, lag: 'int' = 4, max_angle: 'float' = 0.5) -> 'dict'` (実装を直接呼ぶなら `import balltrack; balltrack.spin_from_marker_sequence(dirs, dt: 'float', *, lag: 'int' = 4, max_angle: 'float' = 0.5) -> 'dict'`、台帳から引くなら `opsdrive.get("spin_from_marker_sequence")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

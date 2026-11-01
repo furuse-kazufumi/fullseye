@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">annotate3d_bbox — 3D <code style="color:#22d3bf">annotate3d</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate3d_bbox(img, bounds, pose, K, depth=None, color=&#x27;emphasis&#x27;, width=1.5, occlusion_tol=0.01, scheme=&#x27;okabe_ito&#x27;)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import annotate3d; annotate3d.annotate3d_bbox(img, bounds, pose, K, depth=None, color=&#x27;emphasis&#x27;, width=1.5, occlusion_tol=0.01, scheme=&#x27;okabe_ito&#x27;)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;annotate3d_bbox&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>image (image2d) लौटाता है: axis-aligned 3-D box <code style="color:#22d3bf">((xmin,ymin,zmin),(xmax,ymax,zmax))</code> के 12 edges को project करके draw करता है।</p>
 <p><code style="color:#22d3bf">depth</code> देने पर <b>जिन edges के दोनों सिरे छिपे हों</b> उन्हें dashed बनाया जाता है।</p>

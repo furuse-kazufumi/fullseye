@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">ozaki_error_bound — DRIVE <code style="color:#22d3bf">ozaki</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">matrix × matrix × scalar</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ozaki_error_bound(A, B, n_slices: &#x27;int&#x27;)</code>(要直接调用实现,<code style="color:#22d3bf">import ozakimm; ozakimm.ozaki_error_bound(A, B, n_slices: &#x27;int&#x27;)</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;ozaki_error_bound&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p><code style="color:#22d3bf">matmul_ozaki(A, B, n_slices)</code>(Ozaki-I)截断误差的逐元素保证上界(矩阵)。</p>
 <p>截断余项与舍弃的切片对之和的上界,不包括最后 float64 组装的舍入(约 <code style="color:#22d3bf">(s+1) u |A||B|</code>)。在门(gate)中 26 万余个元素上违反数为 0(PoC 与 tests)。由于用重排后的和计算,上界本身也不依赖于内部顺序。</p>

@@ -4,6 +4,7 @@ dim: tomography
 category: layout
 in: 
 out: table
+gpu: なし
 examples: [ct_reconstruction, tomography_reconstruct]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.sinogram_design(n_angles=180, n_detectors=None, size=256, detector_pitch_mm=1.0, span_deg=180.0)` (実装を直接呼ぶなら `import tomography; tomography.sinogram_design(n_angles=180, n_detectors=None, size=256, detector_pitch_mm=1.0, span_deg=180.0)`、台帳から引くなら `opstomography.get("sinogram_design")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

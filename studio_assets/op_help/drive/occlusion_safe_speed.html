@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">occlusion_safe_speed — DRIVE <code style="color:#22d3bf">traffic</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.occlusion_safe_speed(d, *, reaction: &#x27;float&#x27;, brake: &#x27;float&#x27;)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import drivetraffic; drivetraffic.occlusion_safe_speed(d, *, reaction: &#x27;float&#x27;, brake: &#x27;float&#x27;)</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;occlusion_safe_speed&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>見えた瞬間から距離 d 以内に止まれる最大速度 v = b(−ρ + sqrt(ρ² + 2d/b))。</p>
 <p>v ρ + v²/(2b) = d(空走 + 制動。<code style="color:#22d3bf">rsssafety.rss_stopping_distance(v, ρ, accel=0, brake=b)</code> と同じ式)を v について解いた正の根。桁落ちを避けて v = 2d / (ρ + sqrt(ρ² + 2d/b)) で計算する(ρ = 0 で sqrt(2 b d))。d は配列でもよい。d ≤ 0 なら 0(見えた時には既に間に合わない)。</p>

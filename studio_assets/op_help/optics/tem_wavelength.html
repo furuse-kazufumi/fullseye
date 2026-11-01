@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tem_wavelength — OPTICS <code style="color:#22d3bf">tem</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tem_wavelength(kv=300.0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import temsim; temsim.tem_wavelength(kv=300.0)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;tem_wavelength&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>加速電圧 <code style="color:#22d3bf">kv</code> [kV] の電子の波長(相対論補正つき)と相互作用定数を表で返す。</p>
 <p>λ = h / √(2 m₀ e V (1 + eV / 2m₀c²))、σ = 2π γ m₀ e λ / h²(弱位相物体の位相 = σ × 投影ポテンシャル)。定数は CODATA 2018。公表値: 200 kV で 2.5079 pm、300 kV で 1.9687 pm(相対論補正を外すと 300 kV で 2.24 pm、14 % 長い —— 補正は省けない)。</p>

@@ -4,6 +4,7 @@ dim: colortransport
 category: transport
 in: signal × signal
 out: scalar
+gpu: なし
 examples: [color_transport, poc_physarum_transport]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal × signal` → `scalar`
 - **呼び出し**: `import fullseye as fs; fs.ledger.wasserstein_1d(u_values, v_values, p=1, u_weights=None, v_weights=None)` (実装を直接呼ぶなら `import colortransport; colortransport.wasserstein_1d(u_values, v_values, p=1, u_weights=None, v_weights=None)`、台帳から引くなら `opscolortransport.get("wasserstein_1d")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

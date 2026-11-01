@@ -4,6 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.surface_filter(z, dx, lambda_c=None, lambda_s=None, kind=&#x27;gaussian&#x27;, end_effect=&#x27;reject&#x27;, dy=None)</code>(要直接呼叫實作,<code style="color:#22d3bf">import roughness; roughness.surface_filter(z, dx, lambda_c=None, lambda_s=None, kind=&#x27;gaussian&#x27;, end_effect=&#x27;reject&#x27;, dy=None)</code>;從台帳取用則 <code style="color:#22d3bf">opsroughness.get(&quot;surface_filter&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>經台帳呼叫的回傳值</b>: <code style="color:#22d3bf">fullseye.ledger.surface_filter(...)</code> 只回傳<b>宣告的 out 型別 <code style="color:#22d3bf">depth</code> 的值</b>(底層函式還會回傳輔助資訊)。需要被捨棄的部分時,請用 <code style="color:#22d3bf">fullseye.ledger.surface_filter.raw(...)</code>,或直接呼叫 <code style="color:#22d3bf">roughness.surface_filter</code>。</p>
 <p style="margin:2px 0 2px 12px">• 底層回傳: <code style="color:#22d3bf">(roughness, waviness)</code></p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>將高度場分解為粗糙度與波紋度(ISO 16610-21 的高斯濾波器)。</p>
 <p>回傳值為 <code style="color:#22d3bf">(roughness, waviness)</code>。<code style="color:#22d3bf">roughness</code> 是比 λc 短的成分，<code style="color:#22d3bf">waviness</code> 是長的成分；只要不是 <code style="color:#22d3bf">end_effect=&quot;reject&quot;</code>，<code style="color:#22d3bf">roughness + waviness</code> 就與輸入（套用 λs 之後的原始形狀）嚴格一致。</p>

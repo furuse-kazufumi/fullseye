@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">warehouse_grid — DRIVE <code style="color:#22d3bf">agv</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">any</code> (an op determined by its arguments alone — it takes no image or data input)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.warehouse_grid(n_rack_rows=3, n_rack_cols=4, rack_len=4, aisle=1, margin=2)</code> (to call the implementation directly, <code style="color:#22d3bf">import agvfleet; agvfleet.warehouse_grid(n_rack_rows=3, n_rack_cols=4, rack_len=4, aisle=1, margin=2)</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;warehouse_grid&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Warehouse grid made of shelf rows and aisles (True = drivable).</p>
 <p>A shelf is a horizontal block of 1 row x <code style="color:#22d3bf">rack_len</code> squares, surrounded by aisles of width <code style="color:#22d3bf">aisle</code> on the top, bottom, left and right. <code style="color:#22d3bf">margin</code> around the perimeter Place the square running zone (in front of the station). The return is <code style="color:#22d3bf">(grid, info)</code>, where info has a list of racks, <code style="color:#22d3bf">racks</code>, and the <code style="color:#22d3bf">shape</code> of the grid.</p>

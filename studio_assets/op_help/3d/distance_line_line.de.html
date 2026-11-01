@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">distance_line_line — 3D <code style="color:#22d3bf">geometry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">primitive</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.distance_line_line(p1, d1, p2, d2)</code> (die Implementierung direkt: <code style="color:#22d3bf">import match3d; match3d.distance_line_line(p1, d1, p2, d2)</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;distance_line_line&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Der Abstand zweier Geraden (auch windschiefer). Bei Parallelität weicht er auf den Punkt-Geraden-Abstand aus.</p>
 <p>★Dies ist der Abstand <b>unendlicher Geraden</b>. Bei <b>endlichen Strecken</b> wie Gliedmaßen, Roboterlinks oder Rohren kann 0 herauskommen, obwohl sie getrennt sind (gemessen: (0,0,0)-(1,0,0) und (5,0,0)-(6,0,0) ergeben 0.0, Ground Truth 4.0). Für Streckenpaare <code style="color:#22d3bf">distance_segment_segment</code> verwenden — wer das bei der Sicherheitsabstandsprüfung verwechselt, liegt auf der Seite, die <b>die Gefahr unterschätzt</b>.</p>

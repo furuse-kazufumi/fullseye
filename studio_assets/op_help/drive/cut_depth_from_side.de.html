@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">cut_depth_from_side — DRIVE <code style="color:#22d3bf">cutting</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">rgb × table × scalar × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cut_depth_from_side(image, track, px_per_mm: &#x27;float&#x27;, board_row: &#x27;float&#x27;, win: &#x27;int&#x27; = 5) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import cutting; cutting.cut_depth_from_side(image, track, px_per_mm: &#x27;float&#x27;, board_row: &#x27;float&#x27;, win: &#x27;int&#x27; = 5) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;cut_depth_from_side&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Schnitttiefe (mm) aus der Oberseite des Schnittguts im Frontalbild (Sättigungskante, Subpixel pro Spalte → Median) und der Schneidenlinie.</p>
 <p>Tiefe = z der Oberseite − z der Schneide in der Mitte der Breite des Schneidguts (Interpolation der Geraden von <code style="color:#22d3bf">knife_edge_track</code>). Ist die Klinge gebogen, geht das unmittelbar als Fehler ein.</p>

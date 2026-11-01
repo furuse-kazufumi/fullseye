@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">dem_cell_size_webmercator — DEM <code style="color:#22d3bf">geodesy</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">measurement</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_cell_size_webmercator(zoom, lat_deg)</code>(要直接调用实现,<code style="color:#22d3bf">import demops; demops.dem_cell_size_webmercator(zoom, lat_deg)</code>;从台账取用则 <code style="color:#22d3bf">opsdem.get(&quot;dem_cell_size_webmercator&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>Web 墨卡托瓦片的地面分辨率 [m/px]。<b>随纬度变化</b>。</p>
 <p><code style="color:#22d3bf">156543.03392804097 * cos(lat) / 2^zoom</code>(瓦片为 256 px 时)。</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">hill_start_command — DRIVE <code style="color:#22d3bf">long</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">scalar × scalar × scalar × scalar</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.hill_start_command(t_release: &#x27;float&#x27;, tau: &#x27;float&#x27;, a_drive: &#x27;float&#x27;, b_hold: &#x27;float&#x27;, a_creep: &#x27;float&#x27; = 0.0, technique: &#x27;str&#x27; = &#x27;gap&#x27;, v_cruise: &#x27;Optional[float]&#x27; = None) -&gt; &#x27;Callable&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import drivelong; drivelong.hill_start_command(t_release: &#x27;float&#x27;, tau: &#x27;float&#x27;, a_drive: &#x27;float&#x27;, b_hold: &#x27;float&#x27;, a_creep: &#x27;float&#x27; = 0.0, technique: &#x27;str&#x27; = &#x27;gap&#x27;, v_cruise: &#x27;Optional[float]&#x27; = None) -&gt; &#x27;Callable&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;hill_start_command&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>坡道起步的指令。在 t_release 之前保持(蠕行 + 制动 b_hold)。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">technique=&quot;gap&quot;</code>:在 t_release 松开刹车,τ 后驱动 a_drive(换脚期间 = 溜车后退。闭式见 <code style="color:#22d3bf">hill_start_rollback</code>)。</p>

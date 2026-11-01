@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">pure_pursuit_circle_offset — DRIVE <code style="color:#22d3bf">lateral</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">table</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pure_pursuit_circle_offset(radius: &#x27;float&#x27;, lookahead: &#x27;float&#x27;, wheelbase: &#x27;float&#x27;, *, understeer: &#x27;float&#x27; = 0.0, speed: &#x27;float&#x27; = 0.0, params: &#x27;Optional[dict]&#x27; = None) -&gt; &#x27;Dict[str, float]&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivelateral; drivelateral.pure_pursuit_circle_offset(radius: &#x27;float&#x27;, lookahead: &#x27;float&#x27;, wheelbase: &#x27;float&#x27;, *, understeer: &#x27;float&#x27; = 0.0, speed: &#x27;float&#x27; = 0.0, params: &#x27;Optional[dict]&#x27; = None) -&gt; &#x27;Dict[str, float]&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;pure_pursuit_circle_offset&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>정상 원(반경 R)을 pure pursuit(뒤차축 중심 기준)로 추종할 때의 정상 원 반경 ρ와 횡방향 편차 ρ − R(바깥쪽이 양).</p>
 <p>** 운동학 + 언더 스티어 ** (<code style="color:#22d3bf">params</code> = None) : 명령의 타각 δ = L κ_cmd에 대한 실제 곡률은 κ_cmd / (1 + K v² / L) 가 된다고 하면, 동심원의 정상으로 ρ = √(R² + (K v²/L) L_d²)(이 판에서 지도한 폐형식). K = 0이면 ρ = R(수평 편차 0).</p>

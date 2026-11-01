@@ -4,6 +4,7 @@ dim: optics
 category: imaging
 in: image2d × image2d × image2d
 out: table
+gpu: なし
 examples: [poc_veiling_glare]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d × image2d × image2d` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.veiling_glare_index(img, dark_mask, bright_mask)` (実装を直接呼ぶなら `import edgesfr; edgesfr.veiling_glare_index(img, dark_mask, bright_mask)`、台帳から引くなら `opsoptics.get("veiling_glare_index")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">voronoi_cells — SEGMENTATION <code style="color:#22d3bf">world</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.voronoi_cells(seeds, size) -&gt; &#x27;Dict[str, object]&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import segworld; segworld.voronoi_cells(seeds, size) -&gt; &#x27;Dict[str, object]&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opssegmentation.get(&quot;voronoi_cells&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Voronoi-Partition von Keimen in einem Rechteck, als Polygone mit Flächen und inneren Kantenlängen zurückgegeben (Brute-Force-Halbebenen, O(n^2)) (voronoi_cells).</p>
 <p>Rückgabewert: <code style="color:#22d3bf">polygons</code> (Liste von Polygonen, jeweils (k, 2) [y, x]), <code style="color:#22d3bf">areas</code> (Gaußsche Trapezformel), <code style="color:#22d3bf">edge_length_total</code> (Summe der inneren Kantenlängen), <code style="color:#22d3bf">n_edges</code> (Anzahl innerer Kanten), <code style="color:#22d3bf">perimeter_internal</code> (n,) (innere Kantenlänge jeder Zelle).</p>

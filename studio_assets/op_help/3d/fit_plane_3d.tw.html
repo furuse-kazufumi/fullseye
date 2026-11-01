@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">fit_plane_3d — 3D <code style="color:#22d3bf">geometry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">primitive</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fit_plane_3d(points)</code>(要直接呼叫實作,<code style="color:#22d3bf">import match3d; match3d.fit_plane_3d(points)</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;fit_plane_3d&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>點群 → 最小平方平面(過重心,法線=最小主軸,殘差 RMS)。回傳 (point, normal, resid)。</p>
 <p>取 <code style="color:#22d3bf">(N,3)</code> 點雲(欄數不為 3、不足 3 點則 ValueError)的質心 <code style="color:#22d3bf">c</code>,以散布矩陣最小特徵值的特徵向量為法線(使正交距離平方和最小。<code style="color:#22d3bf">resid = sqrt(λ_min/N)</code> = 到平面的正交距離的 RMS)。<code style="color:#22d3bf">normal</code> 為單位向量,<b>符號任意</b>(若要朝外,依與視點或質心的關係翻轉)。3 點時為嚴格通過它們的平面,resid=0(BLAS 的負捨入誤差 clamp 為 0)。點呈直線狀(第 2 個特徵值也為 0)時法線不確定。對離群值敏感(先用 <code style="color:#22d3bf">ransac_plane</code> / <code style="color:#22d3bf">plane_segmentation</code> 取得內點)。僅限 3-D。</p>

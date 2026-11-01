@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">estimate_alpha — 3D <code style="color:#22d3bf">reconstruct</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.estimate_alpha(points)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import recon3d; recon3d.estimate_alpha(points)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;estimate_alpha&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>점군의 스케일로부터 권장 alpha 를 돌려줍니다(최근접 거리의 중앙값 기반).</p>
 <p>각 점의 최근접 거리의 중앙값 <code style="color:#22d3bf">m</code>을 구해, 반지름 임계값 1/alpha ≈ 2m(인접 간격의 약 2 배까지허용)이 되도록 <code style="color:#22d3bf">alpha = 1/(2m)</code>을 반환한다. 이로써 표면 부근의 성질이 좋은 사면체는 남기면서, 크게 늘어진 사면체(=오목부·바깥쪽)를 잘라낼 수 있다. 중복 점은 최근접 0이 되므로 양의 거리만 사용한다.</p>

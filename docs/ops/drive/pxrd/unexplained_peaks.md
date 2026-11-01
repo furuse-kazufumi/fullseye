@@ -4,6 +4,7 @@ dim: drive
 category: pxrd
 in: table
 out: table
+gpu: なし
 examples: [poc_pxrd_phase_peel]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.unexplained_peaks(fit_result, intensity=None, min_snr=6.0, index=True, noise=None, known_ratio=0.25, model_error=0.1)` (実装を直接呼ぶなら `import pxrd; pxrd.unexplained_peaks(fit_result, intensity=None, min_snr=6.0, index=True, noise=None, known_ratio=0.25, model_error=0.1)`、台帳から引くなら `opsdrive.get("unexplained_peaks")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

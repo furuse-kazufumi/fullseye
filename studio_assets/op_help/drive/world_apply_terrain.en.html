@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">world_apply_terrain — DRIVE <code style="color:#22d3bf">terrain</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.world_apply_terrain(world: &#x27;dict&#x27;, p: &#x27;dict&#x27;, step: &#x27;float&#x27; = 2.0) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import driveterrain; driveterrain.world_apply_terrain(world: &#x27;dict&#x27;, p: &#x27;dict&#x27;, step: &#x27;float&#x27; = 2.0) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;world_apply_terrain&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Applies the terrain to the output of world_build (a flat world) (in place; returns the same dict).</p>
 <p>Replaces the road-surface mesh (objects[0] &quot;ground&quot;) with terrain_mesh; objects that have a pose (assets, trees, pedestrians) are lifted rigidly by the height at the pose&#x27;s (x, y), and objects without one (kerbs, white lines, stop lines, rails, slopes) are lifted per vertex. Records <code style="color:#22d3bf">world[&quot;terrain&quot;] = p</code>.</p>

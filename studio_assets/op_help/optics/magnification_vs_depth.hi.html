@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">magnification_vs_depth — OPTICS <code style="color:#22d3bf">telecentric</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">pairs</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.magnification_vs_depth(system, field_mm=5.0, shift_min_mm=-2.0, shift_max_mm=2.0, n_points=21)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import telecentric; telecentric.magnification_vs_depth(system, field_mm=5.0, shift_min_mm=-2.0, shift_max_mm=2.0, n_points=21)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;magnification_vs_depth&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>object को axis के साथ हिलाने पर magnification m(Δz) (image plane स्थिर; वास्तविक chief ray की image ऊँचाई / object ऊँचाई)।</p>
 <p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>

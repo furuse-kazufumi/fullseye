@@ -4,6 +4,7 @@ dim: oned
 category: io
 in: file
 out: signal
+gpu: なし
 examples: [genspark_external_review]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -16,6 +17,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **呼び出し**: `import fullseye as fs; fs.ledger.read_wav(path)` (実装を直接呼ぶなら `import dsp; dsp.read_wav(path)`、台帳から引くなら `ops1d.get("read_wav")`)
 - **台帳経由の戻り値**: `fullseye.ledger.read_wav(...)` は**宣言 out 型 `signal` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.read_wav.raw(...)`、または `dsp.read_wav` を直接呼ぶ。
   - 本体の返り: `(x, rate)`
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

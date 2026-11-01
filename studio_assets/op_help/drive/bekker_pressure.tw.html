@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">bekker_pressure — DRIVE <code style="color:#22d3bf">roverslip</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">signal × scalar × any</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.bekker_pressure(sinkage, width, soil) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import roverslip; roverslip.bekker_pressure(sinkage, width, soil) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;bekker_pressure&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>Bekker 壓力–沉陷關係 <code style="color:#22d3bf">p = (k_c / b + k_φ) zⁿ</code> [kPa]。<code style="color:#22d3bf">sinkage</code> [m] 為純量或陣列(≥ 0)，<code style="color:#22d3bf">width</code> = b [m]。</p>
 <p>回傳與 <code style="color:#22d3bf">sinkage</code> 相同形狀的陣列(純量則為 0 維)。z = 0 時為 0,對 z 單調遞增。</p>

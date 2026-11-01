@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">residue_crt — RESIDUE <code style="color:#22d3bf">robust</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">matrix × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.residue_crt(residues, periods, weights=None, lo=0.0, hi=None, on_outside=&#x27;warn&#x27;) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import residue; residue.residue_crt(residues, periods, weights=None, lo=0.0, hi=None, on_outside=&#x27;warn&#x27;) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsresidue.get(&quot;residue_crt&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>針對實數週期的加權強健中國剩餘定理 -&gt; <code style="color:#22d3bf">dict</code>。</p>
 <p>在 <code style="color:#22d3bf">[lo, hi)</code> 內求解 <code style="color:#22d3bf">v ≡ residues[i] (mod periods[i])</code>。<code style="color:#22d3bf">residues</code> 的頻帶軸在最前，形狀為 <code style="color:#22d3bf">(N,)</code> 或 <code style="color:#22d3bf">(N, ...)</code> —— 後面的每個元素獨立求解(一個像素、一個樣本)。<code style="color:#22d3bf">weights</code>(同形狀，或 <code style="color:#22d3bf">(N,)</code>)表示對各頻帶的信任程度 —— 通常是給出相位的兩個振幅之積，沒有對比度的頻帶沒有投票權。</p>

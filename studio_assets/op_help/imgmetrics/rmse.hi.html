@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">rmse — IMGMETRICS <code style="color:#22d3bf">fidelity</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rmse(a, b)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import imgmetrics; imgmetrics.rmse(a, b)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsimgmetrics.get(&quot;rmse&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>root mean squared error (pixel मान वाली ही इकाई में)।</p>
 <p>सूत्र: <code style="color:#22d3bf">sqrt(mse(a, b))</code>। जाँच और विफलता की शर्तें <code style="color:#22d3bf">mse</code> जैसी ही -- समान shape / ख़ाली नहीं / finite, ये पूरे न हों तो <code style="color:#22d3bf">MetricContractError</code>। dimensions और dtype कोई भी।</p>

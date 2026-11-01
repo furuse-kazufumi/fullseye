@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">trace_rays — OPTICS <code style="color:#22d3bf">scene</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table × points × points</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.trace_rays(scene, origins, directions) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import optscene; optscene.trace_rays(scene, origins, directions) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsoptics.get(&quot;trace_rays&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Schießt ein Strahlenbündel und liefert den ersten Schnittpunkt (der öffentliche Operator, auf dem die Renderer aufbauen).</p>
 <p>Rückgabe-dict: <code style="color:#22d3bf">t</code> Abstand [mm] (inf, wenn nichts getroffen wird), <code style="color:#22d3bf">index</code> Nummer des getroffenen Primitivs (-1 = kein Treffer), <code style="color:#22d3bf">point</code> Schnittpunkt [mm], <code style="color:#22d3bf">normal</code> Einheitsnormale (0 für Zeilen ohne Treffer). Die Trefferprüfung ist fail-closed; eine leere Szene löst eine Ausnahme aus.</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">vol_labels_to_meshes — VOLCOLOR <code style="color:#22d3bf">render</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">labels</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_labels_to_meshes(labels, ids=None, spacing=None, seed: &#x27;int&#x27; = 0, level: &#x27;float&#x27; = 0.5, axes: &#x27;str&#x27; = &#x27;xyz&#x27;)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import volcolor; volcolor.vol_labels_to_meshes(labels, ids=None, spacing=None, seed: &#x27;int&#x27; = 0, level: &#x27;float&#x27; = 0.5, axes: &#x27;str&#x27; = &#x27;xyz&#x27;)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsvolcolor.get(&quot;vol_labels_to_meshes&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>हर component पर marching cubes चलाकर <b>रंगीन mesh का समूह</b> बनाता है।</p>
 <p><code style="color:#22d3bf">list[dict]</code> लौटाता है, हर element <code style="color:#22d3bf">{&quot;label&quot;, &quot;vertices&quot; (nv, 3) float64, &quot;faces&quot; (nf, 3) int64, &quot;color&quot; (r, g, b)}</code> है। रंग <code style="color:#22d3bf">vol_colorize_labels</code> वाली palette से ही आते हैं, इसलिए <b>section view और 3-D display में एक ही part का रंग एक ही होता है</b>।</p>

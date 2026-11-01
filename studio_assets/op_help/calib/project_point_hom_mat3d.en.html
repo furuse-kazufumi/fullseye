@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">project_point_hom_mat3d — CALIB <code style="color:#22d3bf">project</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">keypoints</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.project_point_hom_mat3d(points_3d, hom_mat3d)</code> (to call the implementation directly, <code style="color:#22d3bf">import calib; calib.project_point_hom_mat3d(points_3d, hom_mat3d)</code>; from the registry, <code style="color:#22d3bf">opscalib.get(&quot;project_point_hom_mat3d&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Projects 3-D points with a 4x4 or 3x4 projection matrix P=K[R|t] and returns pixels (row, col) (project_point_hom_mat3d).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>

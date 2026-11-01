@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">essential_8point — 3D <code style="color:#22d3bf">two_view</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.essential_8point(pts1, pts2, K1, K2=None)</code> (die Implementierung direkt: <code style="color:#22d3bf">import twoview; twoview.essential_8point(pts1, pts2, K1, K2=None)</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;essential_8point&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Die Essentialmatrix E direkt aus Korrespondenzen und K. → E (3,3).</p>
 <p>Ablauf: F mit <code style="color:#22d3bf">fundamental_8point(pts1, pts2)</code> schätzen, <code style="color:#22d3bf">E = K2ᵀ F K1</code> bilden und dann per SVD die Singulärwerte durch (1, 1, 0) ersetzen (Eigenschaft der Essential-Matrix; die Frobenius-Norm des Ergebnisses ist auf √2 fixiert).</p>

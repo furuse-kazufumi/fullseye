@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">ransac_cylinder — 3D <code style="color:#22d3bf">robust_fit</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points × normals</code> → <code style="color:#22d3bf">primitive</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ransac_cylinder(points, normals, thresh, iters=800, seed=0)</code> (to call the implementation directly, <code style="color:#22d3bf">import ransac_fit; ransac_fit.ransac_cylinder(points, normals, thresh, iters=800, seed=0)</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;ransac_cylinder&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Outlier-robust RANSAC cylinder fitting (point normals are required).</p>
 <p>The normals of a cylinder surface are orthogonal to the axis, so the axis direction is estimated from the cross product of the normals of 2 points → all points are projected onto the plane orthogonal to the axis → a circle is fitted in that plane → the inliers with |projected distance - r| &lt; <code style="color:#22d3bf">thresh</code> are maximised. On the final inliers the axis is re-estimated more robustly (smallest singular direction of the SVD of the normals = axis), and the projected circle is refitted by least squares. If there are no normals, estimate them on the caller side before passing them.</p>

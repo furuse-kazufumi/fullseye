@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">camera_orientation_from_sun — GEOCAM <code style="color:#22d3bf">sun</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">keypoints × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.camera_orientation_from_sun(sun_pixels, unix_times, lat_deg, lon_deg, K)</code>(要直接呼叫實作,<code style="color:#22d3bf">import geocam; geocam.camera_orientation_from_sun(sun_pixels, unix_times, lat_deg, lon_deg, K)</code>;從台帳取用則 <code style="color:#22d3bf">opsgeocam.get(&quot;camera_orientation_from_sun&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>帶時刻的太陽像素位置 ≥ 2 點 → 相機的 (yaw, pitch, roll)(Wahba 問題的 SVD 解 = Kabsch)。</p>
 <p>对于每次观测，像素 → 相机坐标射线 d_c(来自 K)，时间 → 全局太阳方向 s_w(<code style="color:#22d3bf">sun_position</code>, 使用包含<b>折射</b>的仰角：相机看到明显的太阳）。 <code style="color:#22d3bf">R = argmin Σ |R d_c − s_w|²</code> 使用 SVD（Kabsch 1976 / Markley 1988）以封閉形式求解它，並將其分解為「（偏航、俯仰、滾動）」。</p>

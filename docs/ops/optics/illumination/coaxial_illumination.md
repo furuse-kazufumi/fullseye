@@ -4,6 +4,7 @@ dim: optics
 category: illumination
 in: 
 out: table
+gpu: なし
 examples: [poc_spectrometer_illumination]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.coaxial_illumination(reflectance=0.5, absorptance=0.0, back_reflectance=0.04, plate_thickness_mm=1.0, plate_index=1.52, panel_mm=60.0, panel_distance_mm=60.0, camera_distance_mm=200.0, field_mm=20.0, part='mirror', telecentric=False, panel_radiance=None, shape=(65, 65), n_panel=None)` (実装を直接呼ぶなら `import illumdesign; illumdesign.coaxial_illumination(reflectance=0.5, absorptance=0.0, back_reflectance=0.04, plate_thickness_mm=1.0, plate_index=1.52, panel_mm=60.0, panel_distance_mm=60.0, camera_distance_mm=200.0, field_mm=20.0, part='mirror', telecentric=False, panel_radiance=None, shape=(65, 65), n_panel=None)`、台帳から引くなら `opsoptics.get("coaxial_illumination")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

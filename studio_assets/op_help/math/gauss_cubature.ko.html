@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">gauss_cubature — MATH <code style="color:#22d3bf">numerics</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">table</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gauss_cubature(n: &#x27;int&#x27;, dim: &#x27;int&#x27; = 2, a=-1.0, b=1.0) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import mathnumerics; mathnumerics.gauss_cubature(n: &#x27;int&#x27;, dim: &#x27;int&#x27; = 2, a=-1.0, b=1.0) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsmath.get(&quot;gauss_cubature&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>Gauss–Legendre의 텐서곱으로, 상자 [a, b]^dim(a, b는 축마다 달라도 됨)의 구적 절점 (n^dim, dim)과 가중치.</p>
 <p>영상의 화소 평균·볼륨의 체적 적분·PSF의 적분에. 각 축에서 2n−1차까지의 다항식의 곱을 <b>엄밀하게</b> 적분한다(게이트: x^p y^q에서 p, q &lt;= 2n−1은 엄밀, 어느 하나가 2n이면 오차). 점의 수는 n^dim이므로 고차원에서는 급격히 늘어난다(dim &gt; 6에서는 저불일치 수열 쪽이 적합하다).</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">vol_rle_encode — 3D <code style="color:#22d3bf">rle_region</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">rle_region</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_rle_encode(vol_binary) -&gt; &#x27;VolRLE&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import volregion; volregion.vol_rle_encode(vol_binary) -&gt; &#x27;VolRLE&#x27;</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;vol_rle_encode&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把二值体编码为 x 方向 run(3-D 的 HALCON region 表示)。</p>
 <p>非 <code style="color:#22d3bf">{0, 1}</code> 的输入以 <code style="color:#22d3bf">&gt; 0.5</code> 做阈值(<code style="color:#22d3bf">volops</code> 的约定)。NaN / Inf 被拒绝。空掩模编码为 0 个 run —— 这是合法的 region,decode 后全为背景。</p>

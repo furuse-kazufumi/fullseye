@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">band_width_profile — DRIVE <code style="color:#22d3bf">polish</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d × scalar × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.band_width_profile(image, threshold: &#x27;float&#x27;, res: &#x27;float&#x27;, along: &#x27;str&#x27; = &#x27;x&#x27;) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import polish; polish.band_width_profile(image, threshold: &#x27;float&#x27;, res: &#x27;float&#x27;, along: &#x27;str&#x27; = &#x27;x&#x27;) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;band_width_profile&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>직선 스트로크(<code style="color:#22d3bf">along</code> 방향)로 닦인 띠의 폭을, 띠에 직교하는 선마다 서브픽셀로 읽습니다: 임계값을 처음 넘는 곳과 마지막으로 넘는 곳을 이웃 픽셀과의 선형 보간으로 구하고, 그 차 × res를 폭으로 합니다. 반환 <code style="color:#22d3bf">widths</code>(선마다, 읽을 수 없는 선은 NaN), <code style="color:#22d3bf">centres</code>(띠 중심 위치 [m], 지도 좌표), <code style="color:#22d3bf">valid</code>, <code style="color:#22d3bf">median</code>. 띠가 1개라는 전제(띠가 여러 개면 바깥끼리의 폭이 됨). <b>Raises</b> ValueError: 영상 검사, res ≤ 0, along이 x / y가 아님, 임계값이 비유한.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

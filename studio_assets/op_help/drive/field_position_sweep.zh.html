@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">field_position_sweep — DRIVE <code style="color:#22d3bf">tacscalib</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">matrix × signal × any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.field_position_sweep(centres, errors, image_shape) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import tacscalib; tacscalib.field_position_sweep(centres, errors, image_shape) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;field_position_sweep&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>误差的位置依赖：将各图像的接触中心 (行, 列) 与误差(中位数等)按到图像中心的距离排列，返回最小二乘斜率 [误差 / 100 px] 与 Spearman 秩相关(并列取平均秩)(仅用 numpy)。返回：<code style="color:#22d3bf">dist_px</code>、<code style="color:#22d3bf">err</code>、<code style="color:#22d3bf">slope_per_100px</code>、<code style="color:#22d3bf">intercept</code>、<code style="color:#22d3bf">spearman</code>、<code style="color:#22d3bf">n</code>。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>：少于 3 组 / 形状不一致 / 非有限 / image_shape 的形状。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">extent_signature — 3D <code style="color:#22d3bf">shape_descriptor</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">descriptor</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.extent_signature(points) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import descriptors3d; descriptors3d.extent_signature(points) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;extent_signature&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>PCA principal axes (covariance के eigenvectors) की दिशा में फैलाव का अनुपात लौटाता है।</p>
 <p>covariance matrix के eigenvalues rotation से नहीं बदलते। यहाँ eigenvalues के square root (= हर principal axis की दिशा में standard deviation, लंबाई की dimension वाला) घटते क्रम में रखकर योग 1 पर normalise किए जाते हैं और (3,) vector बनता है। इससे absolute scale हट जाता है और यह <b>rotation, translation और scale से अपरिवर्तित</b> &quot;आकार की पतली-लंबाई&quot; का सूचकांक बनता है।</p>

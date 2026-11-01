@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">form_factors_2d — OPTICS <code style="color:#22d3bf">light_transport</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.form_factors_2d(profile)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import lighttransport; lighttransport.form_factors_2d(profile)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;form_factors_2d&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>凹んだ 2-D(押し出し形状)断面のパッチ間の形態係数を、Hottel の crossed-strings 則の閉形式で求める(<code style="color:#22d3bf">matrix</code>)。</p>
 <p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>

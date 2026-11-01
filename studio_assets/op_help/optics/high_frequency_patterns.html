@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">high_frequency_patterns — OPTICS <code style="color:#22d3bf">light_transport</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">images</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.high_frequency_patterns(shape=(1, 256), period=8, kind=&#x27;stripes&#x27;, fill=0.5, n_shifts=None, complement=False)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import lighttransport; lighttransport.high_frequency_patterns(shape=(1, 256), period=8, kind=&#x27;stripes&#x27;, fill=0.5, n_shifts=None, complement=False)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;high_frequency_patterns&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Shifted high-frequency projector patterns: binary stripes with fill ratio α, a checkerboard, or phase-shifted sinusoids (one or several periods).</p>
 <p>*shape* <code style="color:#22d3bf">(H, W)</code> is the projector frame; <code style="color:#22d3bf">x</code> is the column index.</p>

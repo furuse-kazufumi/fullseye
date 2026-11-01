@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">profile_deviation — PROFILE <code style="color:#22d3bf">compare</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">pairs × pairs</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.profile_deviation(measured, reference, n=200, align=&#x27;chord&#x27;, oversample=8)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import profileops; profileops.profile_deviation(measured, reference, n=200, align=&#x27;chord&#x27;, oversample=8)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsprofile.get(&quot;profile_deviation&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>설계 형상으로부터의 <b>부호 있는 법선 방향 편차</b>. 반환값은 dict.</p>
 <p>양이 &quot;두꺼운 쪽(바깥 방향)&quot;, 음이 &quot;얇은 쪽&quot;. 설계 윤곽의 바깥 법선을 기준으로 한다.</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">simcal_observe — SIMCAL <code style="color:#22d3bf">model</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">simmodel × images</code> → <code style="color:#22d3bf">simmodel</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.simcal_observe(model=None, images=None, roi=None, align=False, exposure=None, max_shift=8, split=&#x27;train&#x27;) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import simcal; simcal.simcal_observe(model=None, images=None, roi=None, align=False, exposure=None, max_shift=8, split=&#x27;train&#x27;) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opssimcal.get(&quot;simcal_observe&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>將實測影像附加到 simmodel：對位、感興趣區域與曝光正規化。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">dipole_to_torque_fit — DRIVE <code style="color:#22d3bf">tactorque</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dipole_to_torque_fit(D, M) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import tactorque; tactorque.dipole_to_torque_fit(D, M) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;dipole_to_torque_fit&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>dipole के 1 घटक की series D (K,) और ज्ञात moments M (K,) [N·m] के बीच linear calibration D ≈ k M (origin से होकर) और D ≈ k₁ M + b (intercept के साथ)। return <code style="color:#22d3bf">k</code>, <code style="color:#22d3bf">R2</code> (origin से होकर coefficient of determination = 1 − SS_res/SS_tot), <code style="color:#22d3bf">k1</code>, <code style="color:#22d3bf">b</code>, <code style="color:#22d3bf">R2_affine</code>, <code style="color:#22d3bf">rmse_M</code> (M में बदला गया residual RMS)। पेपर के calibration coefficient c = 1/k के समकक्ष। <b>Raises</b> ValueError: K &lt; 2, shapes अलग, सभी M समान।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

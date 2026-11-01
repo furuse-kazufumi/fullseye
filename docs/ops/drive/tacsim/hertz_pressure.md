@@ -4,6 +4,7 @@ dim: drive
 category: tacsim
 in: matrix × scalar × scalar
 out: matrix
+gpu: なし
 examples: [poc_tacsim_elastic_membrane, poc_tacsim_marker_shear, poc_tactile_dipole_torque]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `matrix × scalar × scalar` → `matrix`
 - **呼び出し**: `import fullseye as fs; fs.ledger.hertz_pressure(r, a: 'float', p0: 'float') -> 'np.ndarray'` (実装を直接呼ぶなら `import tacsim; tacsim.hertz_pressure(r, a: 'float', p0: 'float') -> 'np.ndarray'`、台帳から引くなら `opsdrive.get("hertz_pressure")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

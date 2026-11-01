@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">label_extent — DRIVE <code style="color:#22d3bf">ttc</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">labels2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.label_extent(label, value: &#x27;int&#x27;) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import drivettc; drivettc.label_extent(label, value: &#x27;int&#x27;) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;label_extent&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>label image में मान <code style="color:#22d3bf">value</code> वाले pixels का box: <code style="color:#22d3bf">{&quot;col0&quot;, &quot;col1&quot;, &quot;row0&quot;, &quot;row1&quot;, &quot;width&quot;, &quot;height&quot;, &quot;n&quot;}</code>।</p>
 <p>चौड़ाई और ऊँचाई पिक्सेल-संख्या हैं (<code style="color:#22d3bf">col1 − col0 + 1</code>)। न हो तो सब 0। <code style="color:#22d3bf">ttc_from_scale</code> का इनपुट (पूर्ण डिटेक्टर का स्थानापन्न)।</p>

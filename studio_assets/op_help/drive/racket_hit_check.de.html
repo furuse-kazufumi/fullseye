@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">racket_hit_check — DRIVE <code style="color:#22d3bf">racket</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.racket_hit_check(p_ball, center, normal, rp: &#x27;dict&#x27;, radius: &#x27;float&#x27;, up=(0.0, 0.0, 1.0)) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import racket; racket.racket_hit_check(p_ball, center, normal, rp: &#x27;dict&#x27;, radius: &#x27;float&#x27;, up=(0.0, 0.0, 1.0)) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;racket_hit_check&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Ob der Ballmittelpunkt innerhalb von <code style="color:#22d3bf">radius</code> zur Blattfläche und innerhalb des Blattrahmens (Breite × Höhe + Radius) liegt. <code style="color:#22d3bf">{&quot;hit&quot;, &quot;dist&quot;, &quot;u&quot;, &quot;v&quot;}</code> (u = Breitenrichtung, v = Höhenrichtung, Versatz zur Blattmitte).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

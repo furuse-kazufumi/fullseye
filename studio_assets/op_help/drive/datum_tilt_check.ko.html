@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">datum_tilt_check — DRIVE <code style="color:#22d3bf">granular</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.datum_tilt_check(result, warn_deg: &#x27;float&#x27; = 1.0) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import granular; granular.datum_tilt_check(result, warn_deg: &#x27;float&#x27; = 1.0) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;datum_tilt_check&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p><code style="color:#22d3bf">repose_angle_silhouette</code>의 반환값(좌우 사면각과 지면 기울기)으로 <b>기준면이 기울어져 있지 않은지</b>를 판정합니다.</p>
 <p>평평하지 않은 지면(datum)의 기울기 β 는 안식각에 더해진다(기존 체적 PoC 와 같은 함정). 전단형(<code style="color:#22d3bf">z&#x27; = z + x tan β</code>) 이면 좌우 사면은 <code style="color:#22d3bf">atan(tan φ ± tan β)</code>, 카메라의 롤(회전형)이면 <code style="color:#22d3bf">φ ± β</code> —— <b>어느 쪽이든 좌우 차 ≈ 2β</b> 이므로, 좌우 차가 <code style="color:#22d3bf">warn_deg</code> 를 넘으면 경보. 2 개의 모형은 1 차에서 다르므로(β = 5 도·φ = 30 도에서 왼쪽 사면이 33.62 대 35.00 도, 실측), 양쪽의 보정값을 반환하며, 어느 쪽을 쓸지는 지면의 유래(높이 맵의 datum 인지, 카메라의 기울기인지)로 정한다:</p>

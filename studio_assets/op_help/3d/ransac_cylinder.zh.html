@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">ransac_cylinder — 3D <code style="color:#22d3bf">robust_fit</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">points × normals</code> → <code style="color:#22d3bf">primitive</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ransac_cylinder(points, normals, thresh, iters=800, seed=0)</code>(要直接调用实现,<code style="color:#22d3bf">import ransac_fit; ransac_fit.ransac_cylinder(points, normals, thresh, iters=800, seed=0)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;ransac_cylinder&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>对外点稳健的 RANSAC 圆柱拟合(需要点法线)。</p>
 <p>圆柱表面的法线与轴正交,因此用 2 点法线的叉积估计轴方向 → 将全部点投影到与轴正交的平面上 → 在该平面内拟合圆 → 最大化 |投影距离 - r| &lt; <code style="color:#22d3bf">thresh</code> 的 inlier。最终 inlier 上以更稳健的方式重新估计轴(法线群 SVD 的最小奇异方向 = 轴), 并对投影圆做最小二乘重拟合。若没有法线,请在调用方先 estimate 再传入。</p>

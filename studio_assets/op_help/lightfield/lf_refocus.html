@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">lf_refocus — LIGHTFIELD <code style="color:#22d3bf">refocus</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">lightfield</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lf_refocus(lf, slope=0.0, *, interp=&#x27;linear&#x27;, edge=&#x27;nearest&#x27;)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import lightfield; lightfield.lf_refocus(lf, slope=0.0, *, interp=&#x27;linear&#x27;, edge=&#x27;nearest&#x27;)</code>、台帳から引くなら <code style="color:#22d3bf">opslightfield.get(&quot;lf_refocus&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Shift-and-add refocus: the synthetic-aperture image focused at *slope*.</p>
 <p>Every view <code style="color:#22d3bf">(v, u)</code> is shifted by <code style="color:#22d3bf">(-s*(v - v_c), -s*(u - u_c))</code> — the <b>minus</b> undoes the parallax of a point at slope <code style="color:#22d3bf">s</code> — and the shifted views are averaged. Points at that slope add coherently and stay sharp; everything else is smeared by an amount proportional to its slope difference times the angular baseline. <code style="color:#22d3bf">slope=0</code> is the plane the array was already focused on and returns the plain average of the views.</p>

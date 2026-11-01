@@ -4,6 +4,7 @@ dim: dem
 category: geodesy
 in: depth
 out: signal
+gpu: なし
 examples: [poc_geodetic_benchmarks_real, poc_geodetic_height_frames]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `depth` → `signal`
 - **呼び出し**: `import fullseye as fs; fs.ledger.dem_geoid_height(geoid, lat_deg, lon_deg, lat0_deg, lon0_deg, d_lat_deg, d_lon_deg)` (実装を直接呼ぶなら `import demops; demops.dem_geoid_height(geoid, lat_deg, lon_deg, lat0_deg, lon0_deg, d_lat_deg, d_lon_deg)`、台帳から引くなら `opsdem.get("dem_geoid_height")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">stat_ks_test — MATH <code style="color:#22d3bf">estimation</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.stat_ks_test(x, y=None, *, dist: &#x27;str&#x27; = &#x27;norm&#x27;) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import mathestimation; mathestimation.stat_ks_test(x, y=None, *, dist: &#x27;str&#x27; = &#x27;norm&#x27;) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsmath.get(&quot;stat_ks_test&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Kolmogorov–Smirnov test. Given <code style="color:#22d3bf">y</code>, a 2-sample test (whether both come from the same distribution); without it, goodness of fit to the standard normal distribution.</p>
 <p>D = the maximum difference between the empirical distribution functions. The p-value comes from scipy (exact/asymptotic chosen automatically).</p>

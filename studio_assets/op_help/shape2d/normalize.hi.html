@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">normalize — SHAPE2D <code style="color:#22d3bf">descriptor</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">efdmodel</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.normalize(model, size_invariant=True)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import fourierdesc; fourierdesc.normalize(model, size_invariant=True)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsshape2d.get(&quot;normalize&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>EFD गुणांकों को &quot;canonical pose&quot; के गुणांकों में बदलता है (1st harmonic के आधार पर align किया गया)।</p>
 <p>Kuhl–Giardina canonicalisation: (1) 1 ले harmonic के phase से <b>start point</b> की मनमानी हटाना, (2) 1 ले ellipse के long axis को reference axis पर घुमाकर <b>orientation</b> एक करना, (3) 1 ले harmonic के long axis की लंबाई से भाग देकर <b>आकार</b> एक करना। कई shapes को ऊपर-नीचे रखने/average करने जैसे &quot;canonical pose reconstruction&quot; के लिए।</p>

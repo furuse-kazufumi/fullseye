@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">profile_normalise — PROFILE <code style="color:#22d3bf">frame</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">pairs</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.profile_normalise(contour)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import profileops; profileops.profile_normalise(contour)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsprofile.get(&quot;profile_normalise&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>rotation और translation से normalise करता है ताकि chord की लंबाई 1 हो, leading edge origin पर हो और chord +x की ओर हो।</p>
 <p><b>scale केवल chord length से बदला जाता है</b> (shape विकृत नहीं होता)। normalise किया हुआ contour लौटाता है।</p>

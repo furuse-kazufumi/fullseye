@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">braid_class_representatives — DRIVE <code style="color:#22d3bf">braidpath</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.braid_class_representatives(plans, obstacles=None, costs=None, angle=0.1, jitter=&#x27;auto&#x27;)</code> (die Implementierung direkt: <code style="color:#22d3bf">import braidpath; braidpath.braid_class_representatives(plans, obstacles=None, costs=None, angle=0.1, jitter=&#x27;auto&#x27;)</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;braid_class_representatives&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Teilt mehrere Pläne (Ausgaben beliebiger Planer) in Homotopieklassen ein und wählt je Klasse den Plan mit den geringsten Kosten als Repräsentanten.</p>
 <p>Ein Plan ist eine (K, T, 2)-Trajektorie, eine Folge von Gitterpfaden oder ein Planer-dict (<code style="color:#22d3bf">paths</code>; fehlgeschlagene <code style="color:#22d3bf">None</code> werden übersprungen und gezählt). Alle Pläne müssen dieselben Start- und Endpunkte haben (die Klasse ist die Klasse der Deformationen mit festen Enden). Die Kosten sind <code style="color:#22d3bf">costs</code> oder, falls nicht vorhanden, die Summe der Trajektorienlängen.</p>

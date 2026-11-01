@@ -4,6 +4,7 @@ dim: printpath
 category: slice
 in: mesh
 out: table
+gpu: なし
 examples: [itokawa_gravity_tour, poc_print_layer_inspection]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `mesh` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.mesh_slice_contours(mesh: 'Any', z: 'float', tol: 'float' = 1e-06) -> 'dict[str, np.ndarray]'` (実装を直接呼ぶなら `import printpath; printpath.mesh_slice_contours(mesh: 'Any', z: 'float', tol: 'float' = 1e-06) -> 'dict[str, np.ndarray]'`、台帳から引くなら `opsprintpath.get("mesh_slice_contours")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

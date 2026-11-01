@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">decimate_qem — 3D <code style="color:#22d3bf">mesh_process</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">mesh</code> → <code style="color:#22d3bf">mesh</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.decimate_qem(V, F, target_faces, protect=None)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import meshrepair; meshrepair.decimate_qem(V, F, target_faces, protect=None)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;decimate_qem&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Quadric-error-metric edge-collapse decimation toward *target_faces*.</p>
 <p>*protect* (optional, (nv,) bool): vertices that must survive untouched — no edge incident to a protected vertex is collapsed, so the faces around a crater rim, a boulder or any region you flagged keep their exact geometry (<code style="color:#22d3bf">meshres.mesh_decimate_preserving</code> derives the mask from the detail map and reports what the rest of the reduction lost).</p>

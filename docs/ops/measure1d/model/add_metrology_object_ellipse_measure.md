@@ -4,6 +4,7 @@ dim: measure1d
 category: model
 in: metrologymodel
 out: scalar
+gpu: なし
 examples: [poc_dimensional_inspection]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `metrologymodel` → `scalar`
 - **呼び出し**: `import fullseye as fs; fs.ledger.add_metrology_object_ellipse_measure(model, row, col, phi, ra, rb, n: 'int' = 40) -> 'int'` (実装を直接呼ぶなら `import metrology; metrology.add_metrology_object_ellipse_measure(model, row, col, phi, ra, rb, n: 'int' = 40) -> 'int'`、台帳から引くなら `opsmeasure1d.get("add_metrology_object_ellipse_measure")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

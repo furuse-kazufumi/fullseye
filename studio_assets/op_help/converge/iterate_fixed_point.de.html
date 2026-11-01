@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">iterate_fixed_point — CONVERGE <code style="color:#22d3bf">iterate</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">keine</code> → <code style="color:#22d3bf">table</code> (ein Operator, der allein durch seine Argumente bestimmt ist — er nimmt kein Bild und keine Daten entgegen)</p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.iterate_fixed_point(g=&#x27;cos&#x27;, x0=None, method=&#x27;anderson&#x27;, tol=1e-10, rtol=0.0, max_iter=500, m=5, on_fail=&#x27;raise&#x27;, keep_iterates=False) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import converge; converge.iterate_fixed_point(g=&#x27;cos&#x27;, x0=None, method=&#x27;anderson&#x27;, tol=1e-10, rtol=0.0, max_iter=500, m=5, on_fail=&#x27;raise&#x27;, keep_iterates=False) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsconverge.get(&quot;iterate_fixed_point&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Löst x = g(x) durch Fixpunktiteration (einfach / Aitken / Anderson) und verweigert das Ergebnis, wenn sie nicht konvergiert.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>

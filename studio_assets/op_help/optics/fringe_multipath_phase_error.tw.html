@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">fringe_multipath_phase_error — OPTICS <code style="color:#22d3bf">light_transport</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">無</code> → <code style="color:#22d3bf">table</code>(僅由參數決定的運算子 —— 不接受影像或資料輸入)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fringe_multipath_phase_error(direct_amplitude, direct_phase, global_amplitude, global_phase)</code>(要直接呼叫實作,<code style="color:#22d3bf">import lighttransport; lighttransport.fringe_multipath_phase_error(direct_amplitude, direct_phase, global_amplitude, global_phase)</code>;從台帳取用則 <code style="color:#22d3bf">opsoptics.get(&quot;fringe_multipath_phase_error&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>直接條紋相量與全域相量相加時測得的相位 arg(a1 e^{iφ1} + a2 e^{iφ2})、相對 φ1 的偏差,以及最壞值 asin(a2/a1)(<code style="color:#22d3bf">table</code>)。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>

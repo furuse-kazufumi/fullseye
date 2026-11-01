@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">pixel_shift_capture — OPTICS <code style="color:#22d3bf">pixelshift</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">rgbimage × matrix</code> → <code style="color:#22d3bf">video</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pixel_shift_capture(scene, factor, shifts, pattern=&#x27;RGGB&#x27;, fill_factor=1.0, per_frame=False, margin=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import pixelshift; pixelshift.pixel_shift_capture(scene, factor, shifts, pattern=&#x27;RGGB&#x27;, fill_factor=1.0, per_frame=False, margin=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;pixel_shift_capture&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>shift किए गए sensor से capture: scene को pixel aperture (वर्गाकार box) पर <b>ठीक-ठीक</b> integrate करके Bayer या monochrome raw frames लौटाता है।</p>
 <p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>

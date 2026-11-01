@@ -4,6 +4,7 @@ dim: drive
 category: polish
 in: image2d × image2d
 out: image2d
+gpu: なし
 examples: [poc_polish_wipe_measure]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d × image2d` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.removal_depth_from_heights(z_before, z_after, ref_mask=None, frame: 'float' = 0.1) -> 'np.ndarray'` (実装を直接呼ぶなら `import polish; polish.removal_depth_from_heights(z_before, z_after, ref_mask=None, frame: 'float' = 0.1) -> 'np.ndarray'`、台帳から引くなら `opsdrive.get("removal_depth_from_heights")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

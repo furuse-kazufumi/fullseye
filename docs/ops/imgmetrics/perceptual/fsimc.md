@@ -4,6 +4,7 @@ dim: imgmetrics
 category: perceptual
 in: rgbimage × rgbimage
 out: scalar
+gpu: なし
 examples: [poc_iqa_fsim_gmsd_vif]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `rgbimage × rgbimage` → `scalar`
 - **呼び出し**: `import fullseye as fs; fs.ledger.fsimc(ref, dist, data_range: 'float' = 255.0) -> 'float'` (実装を直接呼ぶなら `import iqafsim; iqafsim.fsimc(ref, dist, data_range: 'float' = 255.0) -> 'float'`、台帳から引くなら `opsimgmetrics.get("fsimc")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

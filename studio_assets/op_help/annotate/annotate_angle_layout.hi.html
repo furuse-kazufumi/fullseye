@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">annotate_angle_layout — ANNOTATE <code style="color:#22d3bf">paper</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">table</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_angle_layout(a, vertex, b, radius=30.0, text_gap=12.0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import annotate; annotate.annotate_angle_layout(a, vertex, b, radius=30.0, text_gap=12.0)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsannotate.get(&quot;annotate_angle_layout&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>table (dict) लौटाता है: 3 point <code style="color:#22d3bf">a, vertex, b</code> से बने कोण (छोटे वाले) का चाप और text position।</p>
 <p>कोण screen coordinates (x दाएँ, y नीचे) में <code style="color:#22d3bf">atan2</code> से निकलते हैं, इसलिए <code style="color:#22d3bf">start_deg</code>/<code style="color:#22d3bf">end_deg</code> <code style="color:#22d3bf">arc</code> की तरह &quot;x axis से clockwise&quot; डिग्री में हैं।</p>

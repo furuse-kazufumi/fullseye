@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">stat_ttest_paired — MATH <code style="color:#22d3bf">estimation</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.stat_ttest_paired(x, y) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import mathestimation; mathestimation.stat_ttest_paired(x, y) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsmath.get(&quot;stat_ttest_paired&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>配对 t 检验：对同一对象测量 2 次所得差值 d = x − y 的均值是否为 0。</p>
 <p>t = mean(d) / (sd(d)/√n)，自由度 n−1，双侧 p 值。返回值 <code style="color:#22d3bf">{&quot;t&quot;, &quot;df&quot;, &quot;p&quot;, &quot;mean_diff&quot;}</code>。</p>

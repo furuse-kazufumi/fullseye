@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">blackbody_spectrum — OPTICS <code style="color:#22d3bf">spectral</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">pairs</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.blackbody_spectrum(temperature_k=2856.0, wl_min_nm=300.0, wl_max_nm=2500.0, n_points=221, normalize_nm=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import spectralrad; spectralrad.blackbody_spectrum(temperature_k=2856.0, wl_min_nm=300.0, wl_max_nm=2500.0, n_points=221, normalize_nm=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;blackbody_spectrum&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>कृष्णिका (blackbody) की spectral radiance L(λ, T), इकाई W m⁻² sr⁻¹ nm⁻¹ (Planck का नियम, SI 2019 के स्थिरांक)।</p>
 <p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>

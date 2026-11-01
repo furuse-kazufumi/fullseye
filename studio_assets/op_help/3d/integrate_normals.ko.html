@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">integrate_normals — 3D <code style="color:#22d3bf">photometric</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">normalmap</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.integrate_normals(normals, mask=None)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import photometric; photometric.integrate_normals(normals, mask=None)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;integrate_normals&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>법선장 → 높이장 z 를 Frankot-Chellappa 적분. → z HxW(상수 자유도 있음·평균 0 기준).</p>
 <p>절차: 법선 <code style="color:#22d3bf">(H,W,3)</code>을 기울기 <code style="color:#22d3bf">p = -nx/nz</code>, <code style="color:#22d3bf">q = -ny/nz</code>로 바꾸고(<code style="color:#22d3bf">|nz| &lt; 1e-6</code>인화소는 nz를 ±1e-6으로 치환해 0 나누기를 피한다), FFT 영역에서 최소제곱 해 <code style="color:#22d3bf">Z(wx,wy) = (-j·wx·P - j·wy·Q) / (wx² + wy²)</code>를 구하고(직류 성분은 0), 역변환하여평균을 0으로 뺀다. <code style="color:#22d3bf">mask</code> (bool HxW)를 주면 mask 밖의 기울기를 0으로 한 뒤 적분한다(그 영역은 평탄한 것으로 취급된다). 반환값은 float64의 <code style="color:#22d3bf">(H,W)</code>.</p>

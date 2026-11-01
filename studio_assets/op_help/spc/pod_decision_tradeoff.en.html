@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">pod_decision_tradeoff — SPC <code style="color:#22d3bf">pod</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pod_decision_tradeoff(fit, noise, a_dec_grid=None, n_grid=25, level=0.95)</code> (to call the implementation directly, <code style="color:#22d3bf">import pod; pod.pod_decision_tradeoff(fit, noise, a_dec_grid=None, n_grid=25, level=0.95)</code>; from the registry, <code style="color:#22d3bf">opsspc.get(&quot;pod_decision_tradeoff&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Trade-off table of (a50, a90, a90/95, false-call probability) as the decision threshold <code style="color:#22d3bf">a_dec</code> is varied (<code style="color:#22d3bf">table</code>).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>

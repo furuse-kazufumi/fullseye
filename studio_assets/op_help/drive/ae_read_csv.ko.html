@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">ae_read_csv — DRIVE <code style="color:#22d3bf">grind</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ae_read_csv(path, header_lines: &#x27;int&#x27; = 12, offset: &#x27;float&#x27; = 32768.0, full_scale: &#x27;float&#x27; = 32768.0) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import grind; grind.ae_read_csv(path, header_lines: &#x27;int&#x27; = 12, offset: &#x27;float&#x27; = 32768.0, full_scale: &#x27;float&#x27; = 32768.0) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;ae_read_csv&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>AE의 원시 CSV(헤더 <code style="color:#22d3bf">header_lines</code>행 + 1행에 1표본의 ADC 값)를 전압 [V] 신호로 만듭니다.</p>
 <p>공개 데이터의 ADC 는 16 bit·±1 V·스트레이트 오프셋 바이너리(0 → −1 V, 32768 → 0 V, 65535 → +1 V)이므로 <code style="color:#22d3bf">(raw − offset) / full_scale</code>(분석 코드의 변환과 같다). 경로는 반환값에 남기지 않는다. 수치가 아닌 행·빈 입력 → <code style="color:#22d3bf">ValueError</code>.</p>

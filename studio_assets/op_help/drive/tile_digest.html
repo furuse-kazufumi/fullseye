@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tile_digest — DRIVE <code style="color:#22d3bf">inf</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tile_digest(mesh: &#x27;dict&#x27;) -&gt; &#x27;str&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import driveinf; driveinf.tile_digest(mesh: &#x27;dict&#x27;) -&gt; &#x27;str&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;tile_digest&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>区画のメッシュの指紋(SHA-256、頂点・面・ラベル・色のバイト列)。作り直しのビット一致の門に使う。</p>
 <p>空の入力(<code style="color:#22d3bf">mesh</code> が空の dict)は ValueError。</p>

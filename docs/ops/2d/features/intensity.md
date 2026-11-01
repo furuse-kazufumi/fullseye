@@ -5,6 +5,7 @@ category: features
 in: image
 out: feature
 halcon: intensity
+gpu: なし
 examples: [gallery2d_bridge, gallery2d_features, poc_multibeam_bathymetry, poc_patch_anomaly, poc_pocket_interreflection, poc_pxrd_phase_peel, poc_solder_fillet_aoi, poc_video_cube]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -16,6 +17,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **データ種**: `image` → `feature`
 - **呼び出し**: `fullseye.apply(img, "intensity", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 - **HALCON 相当**: `intensity`(意味・パラメータは HALCON リファレンスが参考になる)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ![intensity: input → output](../../_fig/intensity.png)
 

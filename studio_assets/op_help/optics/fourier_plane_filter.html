@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">fourier_plane_filter — OPTICS <code style="color:#22d3bf">wave</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">cimage</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fourier_plane_filter(size=64, kind=&#x27;derivative_x&#x27;, order=1, charge=1, radius_frac=0.25, pixel_pitch_um=1.0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import optics; optics.fourier_plane_filter(size=64, kind=&#x27;derivative_x&#x27;, order=1, charge=1, radius_frac=0.25, pixel_pitch_um=1.0)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;fourier_plane_filter&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>4f 系のフーリエ面に置く複素透過関数 <code style="color:#22d3bf">H(fx, fy)</code>。</p>
 <p>返るのは <code style="color:#22d3bf">numpy.fft.fftfreq</code> の並び(<b>fftshift しない</b>)の complex128 <code style="color:#22d3bf">(size, size)</code> で、<code style="color:#22d3bf">four_f_filter</code> にそのまま渡せる。空間周波数の単位は cycles/um(<code style="color:#22d3bf">fftfreq(size, d=pixel_pitch_um)</code>)。</p>

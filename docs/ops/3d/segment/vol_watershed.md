@@ -4,6 +4,7 @@ dim: 3d
 category: segment
 in: voxel
 out: labels
+gpu: なし
 examples: [molecule_atom_count]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `voxel` → `labels`
 - **呼び出し**: `import fullseye as fs; fs.ledger.vol_watershed(vol, markers, mask=None)` (実装を直接呼ぶなら `import volops; volops.vol_watershed(vol, markers, mask=None)`、台帳から引くなら `ops3d.get("vol_watershed")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

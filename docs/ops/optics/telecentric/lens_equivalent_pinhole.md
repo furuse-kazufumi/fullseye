@@ -4,6 +4,7 @@ dim: optics
 category: telecentric
 in: table
 out: table
+gpu: なし
 examples: [poc_telecentric_metrology]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.lens_equivalent_pinhole(system, pixel_pitch_um=25.0, width=240, height=240, field_mm=None, max_pupil_distance_mm=10000000.0)` (実装を直接呼ぶなら `import telecentric; telecentric.lens_equivalent_pinhole(system, pixel_pitch_um=25.0, width=240, height=240, field_mm=None, max_pupil_distance_mm=10000000.0)`、台帳から引くなら `opsoptics.get("lens_equivalent_pinhole")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

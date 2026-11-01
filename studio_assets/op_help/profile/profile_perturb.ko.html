@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">profile_perturb — PROFILE <code style="color:#22d3bf">synth</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">pairs</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.profile_perturb(contour, kind=&#x27;thicken&#x27;, amount=0.001, extent=0.1, cycles=6.0)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import profileops; profileops.profile_perturb(contour, kind=&#x27;thicken&#x27;, amount=0.001, extent=0.1, cycles=6.0)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsprofile.get(&quot;profile_perturb&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>크기를 아는 결함을 넣은 윤곽을 반환한다. <code style="color:#22d3bf">PERTURB_KINDS</code>.</p>
 <p><b>이것이 없는 형상 검사는 조용히 합격을 낸다</b>. 0.001 시위의 두께 증가를 넣어, 검출기가 그것을 0.001 로 반환하는지 확인하는 데 쓴다.</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">apply_transport — COLORTRANSPORT <code style="color:#22d3bf">plan_use</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">transport_plan × signal</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.apply_transport(plan, target_values)</code> (to call the implementation directly, <code style="color:#22d3bf">import colortransport; colortransport.apply_transport(plan, target_values)</code>; from the registry, <code style="color:#22d3bf">opscolortransport.get(&quot;apply_transport&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Pull <code style="color:#22d3bf">target_values</code> back onto the source points through a transport plan (the barycentric map).</p>
 <p>For each row (source), it returns the mean of destination values weighted by the mass carried. This is the entry point for &quot;<b>using the plan to fix a picture</b>&quot; -- if a plan is only made and has no use, the output of <code style="color:#22d3bf">sinkhorn</code> becomes a dead end in the ledger (the shape of &quot;an entry point exists but no consumer op&quot;, which this repo has repeatedly stepped into).</p>

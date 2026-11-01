@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">estimate_oriented_normals — 3D <code style="color:#22d3bf">normals_orient</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">normals</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.estimate_oriented_normals(points, k: &#x27;int&#x27; = 20, seed_dir=None) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import normals_orient; normals_orient.estimate_oriented_normals(points, k: &#x27;int&#x27; = 20, seed_dir=None) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;estimate_oriented_normals&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>PCA 법선 추정 + Hoppe 전역 방향 지정의 결합. → 방향이 붙은 단위 법선 (N,3).</p>
 <p><code style="color:#22d3bf">estimate_normals</code>(방향 미정)→ <code style="color:#22d3bf">orient_normals</code>(MST 전파)를 거친다. 닫힌 곡면이면 모든 점이 바깥 방향, 평면이면 모든 점이 같은 반구로 맞춰진다. 얻은 법선을 <code style="color:#22d3bf">curvature3d.shape_index</code> 에 넘기면 오목/볼록 부호가 올바르게 나온다.</p>

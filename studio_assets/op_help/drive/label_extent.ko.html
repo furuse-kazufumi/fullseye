@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">label_extent — DRIVE <code style="color:#22d3bf">ttc</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">labels2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.label_extent(label, value: &#x27;int&#x27;) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivettc; drivettc.label_extent(label, value: &#x27;int&#x27;) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;label_extent&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>라벨 영상에서 값이 <code style="color:#22d3bf">value</code>인 화소의 상자: <code style="color:#22d3bf">{&quot;col0&quot;, &quot;col1&quot;, &quot;row0&quot;, &quot;row1&quot;, &quot;width&quot;, &quot;height&quot;, &quot;n&quot;}</code>.</p>
 <p>폭·높이는 화소 수(<code style="color:#22d3bf">col1 − col0 + 1</code>). 없으면 모두 0. <code style="color:#22d3bf">ttc_from_scale</code> 의 입력(완전한 검출기의 대역).</p>

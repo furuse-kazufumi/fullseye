@@ -5,6 +5,7 @@ category: region
 in: region
 out: region
 halcon: erosion_circle
+gpu: あり(reg_erode)
 examples: [degenerate_inputs, gallery2d_region, poc_colocalization_crosstalk, poc_leaf_disease_area]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -16,6 +17,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **データ種**: `region` → `region`
 - **呼び出し**: `fullseye.apply(img, "reg_erode", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 - **HALCON 相当**: `erosion_circle`(意味・パラメータは HALCON リファレンスが参考になる)
+- **GPU**: あり(`reg_erode`、`device="cuda"` で高速経路)
 
 ![reg_erode: input → output](../../_fig/reg_erode.png)
 

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">chebyshev_coeffs_nd — MATH <code style="color:#22d3bf">numerics</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.chebyshev_coeffs_nd(values, box=None, *, method=&#x27;exact&#x27;) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import mathnumerics; mathnumerics.chebyshev_coeffs_nd(values, box=None, *, method=&#x27;exact&#x27;) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsmath.get(&quot;chebyshev_coeffs_nd&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>tensor-product Chebyshev–Lobatto grid पर sample किए गए मानों से N-dimensional Chebyshev coefficients निकालता है (DCT-I)।</p>
 <p>Args:</p>

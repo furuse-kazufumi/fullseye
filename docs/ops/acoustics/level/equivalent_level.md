@@ -4,6 +4,7 @@ dim: acoustics
 category: level
 in: signal
 out: measurement
+gpu: なし
 examples: [acoustic_condition_monitoring]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal` → `measurement`
 - **呼び出し**: `import fullseye as fs; fs.ledger.equivalent_level(x, rate, weighting='A', ref=1.0, floor_db=-200.0, window='none')` (実装を直接呼ぶなら `import acoustics; acoustics.equivalent_level(x, rate, weighting='A', ref=1.0, floor_db=-200.0, window='none')`、台帳から引くなら `opsacoustics.get("equivalent_level")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

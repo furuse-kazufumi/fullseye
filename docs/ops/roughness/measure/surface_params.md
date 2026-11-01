@@ -4,6 +4,7 @@ dim: roughness
 category: measure
 in: depth
 out: table
+gpu: なし
 examples: [poc_polish_wipe_measure, poc_surface_roughness]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `depth` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.surface_params(z, dx=1.0, dy=None, assume_filtered=False)` (実装を直接呼ぶなら `import roughness; roughness.surface_params(z, dx=1.0, dy=None, assume_filtered=False)`、台帳から引くなら `opsroughness.get("surface_params")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

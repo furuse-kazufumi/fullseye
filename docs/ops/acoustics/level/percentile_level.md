@@ -4,6 +4,7 @@ dim: acoustics
 category: level
 in: signal
 out: table
+gpu: なし
 examples: [acoustic_condition_monitoring]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.percentile_level(x, rate, percentiles=(10.0, 50.0, 90.0), weighting='A', ref=1.0, window_s=0.125, floor_db=-200.0)` (実装を直接呼ぶなら `import acoustics; acoustics.percentile_level(x, rate, percentiles=(10.0, 50.0, 90.0), weighting='A', ref=1.0, window_s=0.125, floor_db=-200.0)`、台帳から引くなら `opsacoustics.get("percentile_level")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

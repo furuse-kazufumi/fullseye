@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">radial_reach_filter — CODEMATCH <code style="color:#22d3bf">change</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.radial_reach_filter(background, image, t_p=0.08, agree_thresh=0.625, max_reach=32, min_dirs=4, min_decided_fraction=0.01) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import codematch; codematch.radial_reach_filter(background, image, t_p=0.08, agree_thresh=0.625, max_reach=32, min_dirs=4, min_decided_fraction=0.01) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opscodematch.get(&quot;radial_reach_filter&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>Radial Reach Filter（RRF）：用 8 个方向的 reach 符号比较背景与当前图像。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>

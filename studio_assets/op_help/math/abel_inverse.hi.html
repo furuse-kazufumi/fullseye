@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">abel_inverse — MATH <code style="color:#22d3bf">transform</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.abel_inverse(A, dr: &#x27;float&#x27; = 1.0, *, method: &#x27;str&#x27; = &#x27;derivative&#x27;, n_quad: &#x27;int&#x27; = 64) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import mathtransforms; mathtransforms.abel_inverse(A, dr: &#x27;float&#x27; = 1.0, *, method: &#x27;str&#x27; = &#x27;derivative&#x27;, n_quad: &#x27;int&#x27; = 64) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsmath.get(&quot;abel_inverse&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>projection A(y) से axisymmetric distribution f(r) वापस निकालता है (inverse Abel transform = axisymmetric object की tomography)।</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;derivative&quot;</code> —— f(r) = −(1/π) ∫_r^R A&#x27;(y) / √(y² − r²) dy। y = √(r² + u²) रखने से singularity हट जाती है, और A को cubic spline से differentiate किया जाता है। smooth projections के लिए सटीक, पर <b>differentiation noise को बढ़ाता है</b>:</p>

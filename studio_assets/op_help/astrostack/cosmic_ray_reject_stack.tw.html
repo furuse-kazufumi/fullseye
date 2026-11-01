@@ -4,6 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cosmic_ray_reject_stack(frames, kappa=5.0, min_frames=3, read_sigma=None, gain=1.0)</code>(要直接呼叫實作,<code style="color:#22d3bf">import astrostack; astrostack.cosmic_ray_reject_stack(frames, kappa=5.0, min_frames=3, read_sigma=None, gain=1.0)</code>;從台帳取用則 <code style="color:#22d3bf">opsastrostack.get(&quot;cosmic_ray_reject_stack&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>經台帳呼叫的回傳值</b>: <code style="color:#22d3bf">fullseye.ledger.cosmic_ray_reject_stack(...)</code> 只回傳<b>宣告的 out 型別 <code style="color:#22d3bf">images</code> 的值</b>(底層函式還會回傳輔助資訊)。需要被捨棄的部分時,請用 <code style="color:#22d3bf">fullseye.ledger.cosmic_ray_reject_stack.raw(...)</code>,或直接呼叫 <code style="color:#22d3bf">astrostack.cosmic_ray_reject_stack</code>。</p>
 <p style="margin:2px 0 2px 12px">• 底層回傳: <code style="color:#22d3bf">(cleaned, masks) -&gt; images</code></p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>透過影格間比較剔除宇宙線 —— <b>同一處不會被擊中兩次</b>。</p>
 <p>宇宙射線在單幀偵測中之所以困難，是因為「星也是尖的」，但只要有多幀已對位的幀，事情就簡單了：星<b>每次都在同一像素</b>，宇宙射線<b>只來一次</b>。因此逐像素沿幀方向取中位數與 MAD，只剔除 <code style="color:#22d3bf">value &gt; median + kappa * sigma</code> 的幀，並以中位數填補(下側不剔除 —— 宇宙射線必定是<b>增加</b>方向的離群值，剔除下側會連缺損像素也一併抹去)。</p>

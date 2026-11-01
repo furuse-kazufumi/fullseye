@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">mutual_information — IMGMETRICS <code style="color:#22d3bf">information</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mutual_information(a, b, bins=64, data_range=None)</code>(要直接调用实现,<code style="color:#22d3bf">import imgmetrics; imgmetrics.mutual_information(a, b, bins=64, data_range=None)</code>;从台账取用则 <code style="color:#22d3bf">opsimgmetrics.get(&quot;mutual_information&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>互信息 I(A; B) [bit] = H(A) + H(B) - H(A, B)。</p>
 <p><b>依赖于分箱数</b>(分箱越多越偏高),所以 <code style="color:#22d3bf">bins</code> 是显式参数。即使是独立的 2 幅图,由于样本有限也不会严格为 0 —— 偏高多少已以数值形式记录在测试中。</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">dolp_to_zenith — OPTICS <code style="color:#22d3bf">shape_from_polarization</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dolp_to_zenith(dolp, refractive_index=1.5, model=&#x27;diffuse&#x27;, out_of_range=&#x27;clamp&#x27;)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import sfpolar; sfpolar.dolp_to_zenith(dolp, refractive_index=1.5, model=&#x27;diffuse&#x27;, out_of_range=&#x27;clamp&#x27;)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;dolp_to_zenith&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Invert DoLP to the set of zenith angles that produce it — one for the diffuse model, two (straddling Brewster) for the specular model.</p>
 <p>Returns a dict (a <code style="color:#22d3bf">table</code>):</p>

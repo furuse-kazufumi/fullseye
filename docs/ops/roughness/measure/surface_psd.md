@@ -4,6 +4,7 @@ dim: roughness
 category: measure
 in: depth
 out: pairs
+gpu: なし
 examples: [poc_surface_roughness]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -16,6 +17,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **呼び出し**: `import fullseye as fs; fs.ledger.surface_psd(z, dx, kind='areal', dy=None)` (実装を直接呼ぶなら `import roughness; roughness.surface_psd(z, dx, kind='areal', dy=None)`、台帳から引くなら `opsroughness.get("surface_psd")`)
 - **台帳経由の戻り値**: `fullseye.ledger.surface_psd(...)` は**宣言 out 型 `pairs` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.surface_psd.raw(...)`、または `roughness.surface_psd` を直接呼ぶ。
   - 本体の返り: `(q, C) -> (N,2)`
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

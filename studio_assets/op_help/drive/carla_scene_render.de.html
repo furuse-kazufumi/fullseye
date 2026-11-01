@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">carla_scene_render — DRIVE <code style="color:#22d3bf">carla</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.carla_scene_render(scene, *, lead_asset: &#x27;str&#x27; = &#x27;sedan&#x27;, asset_root=None) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import carlabridge; carlabridge.carla_scene_render(scene, *, lead_asset: &#x27;str&#x27; = &#x27;sedan&#x27;, asset_root=None) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;carla_scene_render&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Nimmt eine Szenenaufzeichnung in der eigenen Welt neu auf (gleiches K, gleiche Montagehöhe, gleicher Bildwinkel) → Bilder von driveworld.world_camera (<code style="color:#22d3bf">color</code> / <code style="color:#22d3bf">label</code> / <code style="color:#22d3bf">depth</code> …) + <code style="color:#22d3bf">pose</code> + <code style="color:#22d3bf">K</code>. Das Gegenstück, um es <b>neben</b> dem CARLA-Bild zu betrachten.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

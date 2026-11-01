@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">background_flatten — 3D <code style="color:#22d3bf">surface_fit</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.background_flatten(image, degree=2)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import match3d; match3d.background_flatten(image, degree=2)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;background_flatten&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>이미지의 저차 곡면(조명 얼룩)을 맞춰 빼기 = 셰이딩 보정. → flattened.</p>
 <p><code style="color:#22d3bf">(H,W)</code> 영상에 <code style="color:#22d3bf">x = 열</code>, <code style="color:#22d3bf">y = 행</code>으로 <code style="color:#22d3bf">fit_poly_surface(degree)</code>(기본값 2 차)를 맞추고, <code style="color:#22d3bf">image − fit</code>을 float64로 반환한다. 출력은 평균이 거의 0이며 <b>음의 값을 포함한다</b>(표시·임계값 처리에는 <code style="color:#22d3bf">min</code>을 빼거나 상수를 더한다). 전경이 넓으면 전경도 피팅에 끌려 깎인다(전경을 제외한 점으로 <code style="color:#22d3bf">fit_poly_surface</code> → <code style="color:#22d3bf">eval_poly_surface</code>로 감산하는 편이 안전). 그레이스케일 2-D 전용(3-D는 실패). NaN이 있으면 lstsq가 실패한다.</p>

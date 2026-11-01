@@ -4,6 +4,7 @@ dim: 3d
 category: segment
 in: points
 out: labels
+gpu: なし
 examples: [object_segmentation]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `points` → `labels`
 - **呼び出し**: `import fullseye as fs; fs.ledger.plane_segmentation(points, thresh: 'float', min_inliers: 'int', max_planes: 'int' = 5, iters: 'int' = 300, seed: 'int' = 0) -> 'np.ndarray'` (実装を直接呼ぶなら `import segment3d; segment3d.plane_segmentation(points, thresh: 'float', min_inliers: 'int', max_planes: 'int' = 5, iters: 'int' = 300, seed: 'int' = 0) -> 'np.ndarray'`、台帳から引くなら `ops3d.get("plane_segmentation")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

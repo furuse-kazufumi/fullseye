@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">surface_defect — OPTICS <code style="color:#22d3bf">scene</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table × image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.surface_defect(primitive: &#x27;dict&#x27;, field, mask=None, uv_size_mm=(20.0, 20.0), centre_mm=(0.0, 0.0), height_um: &#x27;float&#x27; = 0.0, height_field=None, roughness_um: &#x27;float&#x27; = 0.6) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import optscene; optscene.surface_defect(primitive: &#x27;dict&#x27;, field, mask=None, uv_size_mm=(20.0, 20.0), centre_mm=(0.0, 0.0), height_um: &#x27;float&#x27; = 0.0, height_field=None, roughness_um: &#x27;float&#x27; = 0.6) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsoptics.get(&quot;surface_defect&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把 2-D 缺陷图<b>贴到零件表面</b>(直接吃 <code style="color:#22d3bf">defectgen</code> 的输出)。</p>
 <p><code style="color:#22d3bf">field</code> 是亮度调制 (H, W)(0 = 无变化，−0.3 = 暗 30% 的划痕)。给出 <code style="color:#22d3bf">height_um</code> 时，同一张图也解释为<b>高度</b>，并由梯度倾斜法线 ―― 有了它，同一划痕在穹顶照明下消失、在暗场照明下发亮，这一 <b>改变照明的意义</b>得以再现(外观检测 AI 的训练数据的主体就在这里)。</p>

@@ -4,6 +4,7 @@ dim: generative
 category: sem
 in: 
 out: table
+gpu: なし
 examples: [poc_virtual_sem_kv_cd_bse]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.sem_line_profile(line_material='PMMA', substrate='SI', energy_kev: 'float' = 1.0, *, width_nm: 'float' = 40.0, height_nm: 'float' = 40.0, sidewall_deg: 'float' = 88.0, beam_sigma_nm: 'float' = 1.0, x_half_range_nm=None, x_step_nm: 'float' = 1.0, electrons_per_point: 'int' = 200, buried=None, seed: 'int' = 0) -> 'dict'` (実装を直接呼ぶなら `import sem; sem.sem_line_profile(line_material='PMMA', substrate='SI', energy_kev: 'float' = 1.0, *, width_nm: 'float' = 40.0, height_nm: 'float' = 40.0, sidewall_deg: 'float' = 88.0, beam_sigma_nm: 'float' = 1.0, x_half_range_nm=None, x_step_nm: 'float' = 1.0, electrons_per_point: 'int' = 200, buried=None, seed: 'int' = 0) -> 'dict'`、台帳から引くなら `opsgenerative.get("sem_line_profile")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

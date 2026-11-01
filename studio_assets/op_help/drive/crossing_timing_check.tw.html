@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">crossing_timing_check — DRIVE <code style="color:#22d3bf">crossing</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">無</code> → <code style="color:#22d3bf">table</code>(僅由參數決定的運算子 —— 不接受影像或資料輸入)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.crossing_timing_check(t_warning, t_closed, t_arrival, *, timing: &#x27;Optional[dict]&#x27; = None) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import drivecrossing; drivecrossing.crossing_timing_check(t_warning, t_closed, t_arrival, *, timing: &#x27;Optional[dict]&#x27; = None) -&gt; &#x27;Dict[str, object]&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;crossing_timing_check&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>將平交道的 3 個時刻(警報開始、柵欄動作結束、列車抵達)與解釋基準的標準值及最小值對照(陣列 = 每列列車)。</p>
 <p>警報→到達的 30 / 20 秒是解釋基準 5(3) 中<b>平交道警報機</b>(無遮斷機)的值。有遮斷機的平交道則適用 4(3)(5) 的 2 項(標準為 15 + 20 = 35 秒),30 / 20 秒這一側會自動滿足。</p>

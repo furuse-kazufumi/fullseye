@@ -4,6 +4,7 @@ dim: 3d
 category: preprocess
 in: voxel
 out: voxel
+gpu: なし
 examples: [volume_downsampling]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `voxel` → `voxel`
 - **呼び出し**: `import fullseye as fs; fs.ledger.volume_downsample(vol, factor, mode='mean')` (実装を直接呼ぶなら `import volops; volops.volume_downsample(vol, factor, mode='mean')`、台帳から引くなら `ops3d.get("volume_downsample")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

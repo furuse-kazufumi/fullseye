@@ -5,6 +5,7 @@ category: smoothing
 in: image
 out: image
 halcon: emphasize
+gpu: あり(unsharp_masking)
 examples: [gallery2d_smoothing_rank, poc_camera_shake_deblur, poc_real_deblur_honesty, poc_superresolution_limits]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -16,6 +17,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **データ種**: `image` → `image`
 - **呼び出し**: `fullseye.apply(img, "unsharp", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 - **HALCON 相当**: `emphasize`(意味・パラメータは HALCON リファレンスが参考になる)
+- **GPU**: あり(`unsharp_masking`、`device="cuda"` で高速経路)
 
 ![unsharp: input → output](../../_fig/unsharp.png)
 

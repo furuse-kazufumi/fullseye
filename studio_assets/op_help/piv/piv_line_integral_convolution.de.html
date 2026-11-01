@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">piv_line_integral_convolution — PIV <code style="color:#22d3bf">visualise</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">flow2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_line_integral_convolution(flow, length=12, upsample=4, seed=0)</code> (die Implementierung direkt: <code style="color:#22d3bf">import pivops; pivops.piv_line_integral_convolution(flow, length=12, upsample=4, seed=0)</code>; aus dem Register: <code style="color:#22d3bf">opspiv.get(&quot;piv_line_integral_convolution&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Line Integral Convolution (LIC) — ein Bild, dessen Muster entlang der Strömung verwischtes weißes Rauschen ist.</p>
 <p>Vektorpfeile verklumpen, wenn sie dicht sind, und verpassen Struktur, wenn sie spärlich sind. LIC mittelt Rauschen <b>pro Pixel</b> entlang von Stromlinien, daher ist keine Wahl der Dichte nötig. Richtungsinformation geht verloren (vorwärts und rückwärts werden nicht unterschieden), daher <b>zum Ablesen des Drehsinns mit Pfeilen oder einer Farbtonkarte kombinieren</b>.</p>

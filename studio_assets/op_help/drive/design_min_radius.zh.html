@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">design_min_radius — DRIVE <code style="color:#22d3bf">lateral</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.design_min_radius(design_speed_kmh, *, side_friction: &#x27;float&#x27;, superelevation: &#x27;float&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import drivelateral; drivelateral.design_min_radius(design_speed_kmh, *, side_friction: &#x27;float&#x27;, superelevation: &#x27;float&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;design_min_radius&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>道路构造令解说 (3) 式的最小曲线半径 R = V² / (127 (i + f)) [m] (V 单位为 km/h)。</p>
 <p>从 (2) 式中去掉分母的 i f(i f ≪ 1),并取 3.6² g ≈ 127 得到的设计公式。严格的上限速度见 <code style="color:#22d3bf">curve_speed_limit</code>。</p>

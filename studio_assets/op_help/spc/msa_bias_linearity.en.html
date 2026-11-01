@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">msa_bias_linearity — SPC <code style="color:#22d3bf">msa</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.msa_bias_linearity(table, reference=&#x27;reference&#x27;, measured=&#x27;measured&#x27;)</code> (to call the implementation directly, <code style="color:#22d3bf">import spc; spc.msa_bias_linearity(table, reference=&#x27;reference&#x27;, measured=&#x27;measured&#x27;)</code>; from the registry, <code style="color:#22d3bf">opsspc.get(&quot;msa_bias_linearity&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Bias against a reference value and how that bias depends on the reference (linearity) (<code style="color:#22d3bf">table</code>).</p>
 <p>Regresses the bias <code style="color:#22d3bf">bias = measured - reference</code> on the reference value (<code style="color:#22d3bf">bias = intercept + slope * reference</code>). If the slope is not 0, the measurement system is <b>off by a different amount depending on where in the measuring range it is</b> = a linearity problem.</p>

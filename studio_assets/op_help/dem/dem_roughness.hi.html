@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">dem_roughness — DEM <code style="color:#22d3bf">surface</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">depth</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_roughness(dem, cell_size=1.0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import demops; demops.dem_roughness(dem, cell_size=1.0)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdem.get(&quot;dem_roughness&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>terrain ruggedness index TRI — 8 पड़ोसियों से ऊँचाई के अंतर का root mean square [m]।</p>
 <p>Riley et al. (1999)। <code style="color:#22d3bf">cell_size</code> परिणाम को प्रभावित नहीं करता, लेकिन इसे स्वीकार (और validate) किया जाता है <b>ताकि caller को याद रहे कि इकाई m है</b>।</p>

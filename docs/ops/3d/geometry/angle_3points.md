@@ -4,6 +4,7 @@ dim: 3d
 category: geometry
 in: points
 out: measurement
+gpu: なし
 examples: [geometry_metrology]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `points` → `measurement`
 - **呼び出し**: `import fullseye as fs; fs.ledger.angle_3points(a, b, c)` (実装を直接呼ぶなら `import match3d; match3d.angle_3points(a, b, c)`、台帳から引くなら `ops3d.get("angle_3points")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -4,6 +4,7 @@ dim: 3d
 category: mesh_process
 in: mesh
 out: mesh
+gpu: なし
 examples: [mesh_smooth]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `mesh` → `mesh`
 - **呼び出し**: `import fullseye as fs; fs.ledger.taubin_smooth(mesh: 'Sequence', iters: 'int' = 10, lam: 'float' = 0.33, mu: 'float' = -0.34) -> 'Mesh'` (実装を直接呼ぶなら `import mesh_smooth; mesh_smooth.taubin_smooth(mesh: 'Sequence', iters: 'int' = 10, lam: 'float' = 0.33, mu: 'float' = -0.34) -> 'Mesh'`、台帳から引くなら `ops3d.get("taubin_smooth")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

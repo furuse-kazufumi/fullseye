@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">shape_mean — SHAPESTAT <code style="color:#22d3bf">procrustes</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">shapeset</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.shape_mean(shapes, max_iter: &#x27;int&#x27; = 100, tol: &#x27;float&#x27; = 1e-10, scaling: &#x27;bool&#x27; = True, reflection: &#x27;bool&#x27; = False)</code>(要直接调用实现,<code style="color:#22d3bf">import shapestats; shapestats.shape_mean(shapes, max_iter: &#x27;int&#x27; = 100, tol: &#x27;float&#x27; = 1e-10, scaling: &#x27;bool&#x27; = True, reflection: &#x27;bool&#x27; = False)</code>;从台账取用则 <code style="color:#22d3bf">opsshapestat.get(&quot;shape_mean&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>经 GPA 对齐之后的平均形状。→ <code style="color:#22d3bf">(N, 3)</code>。</p>
 <p>★ <b>不要与原始平均(<code style="color:#22d3bf">shapes.mean(0)</code>)混淆</b>。不对齐位置和朝向就求平均，个体散布多少，形状就缩小多少。先对齐再求平均，才是「平均形状」。</p>

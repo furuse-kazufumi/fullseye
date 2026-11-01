@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">gs_read_file — DRIVE <code style="color:#22d3bf">gsplat</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">無</code> → <code style="color:#22d3bf">table</code>(僅由參數決定的運算子 —— 不接受影像或資料輸入)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gs_read_file(path, *, min_opacity: &#x27;float&#x27; = 0.0) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import gsplatnp; gsplatnp.gs_read_file(path, *, min_opacity: &#x27;float&#x27; = 0.0) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;gs_read_file&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>讀取 3D Gaussian Splatting 檔案，回傳高斯的中心、顏色、不透明度、尺度與朝向。</p>
 <p>支援:<b>INRIA 格式的 .ply</b>(x, y, z, f_dc_0..2, opacity(logit), scale_0..2(log), rot_0..3(wxyz)。<code style="color:#22d3bf">gsplat_train_native</code> 的輸出也是這種)與 <b>.splat</b>(每個 32 位元組:位置 3×f32、大小 3×f32、RGBA 4×u8、旋轉 4×u8(wxyz、(q·128)+128))。</p>

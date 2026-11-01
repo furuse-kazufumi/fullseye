@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">cross_covariance_reproducible — DRIVE <code style="color:#22d3bf">ozaki</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cross_covariance_reproducible(P, Q, tol: &#x27;float&#x27; = 1.1102230246251565e-16)</code>(要直接调用实现,<code style="color:#22d3bf">import ozakimm; ozakimm.cross_covariance_reproducible(P, Q, tol: &#x27;float&#x27; = 1.1102230246251565e-16)</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;cross_covariance_reproducible&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>以与点顺序无关的比特返回 Kabsch / ICP 的互协方差 <code style="color:#22d3bf">H = (P − P̄)ᵀ (Q − Q̄)</code>(3×3)。</p>
 <p>均值用 <code style="color:#22d3bf">math.fsum</code>(正确舍入的求和),中心化逐元素进行,缩并用 <code style="color:#22d3bf">matmul_reproducible</code>。P 与 Q 为按行对应的 (N, 3)(N ≥ 3)。精度与 FP64 乘积相同水平(逐元素 <code style="color:#22d3bf">tol · (|P−P̄|ᵀ|Q−Q̄|)_ij</code> + 几个 ulp)。</p>

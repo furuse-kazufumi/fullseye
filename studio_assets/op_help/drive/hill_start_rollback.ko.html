@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">hill_start_rollback — DRIVE <code style="color:#22d3bf">long</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">scalar × scalar × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.hill_start_rollback(theta: &#x27;float&#x27;, tau: &#x27;float&#x27;, a_drive: &#x27;float&#x27;, c_rr: &#x27;float&#x27; = 0.012, a_creep: &#x27;float&#x27; = 0.0, g: &#x27;float&#x27; = 9.80665) -&gt; &#x27;Dict[str, float]&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivelong; drivelong.hill_start_rollback(theta: &#x27;float&#x27;, tau: &#x27;float&#x27;, a_drive: &#x27;float&#x27;, c_rr: &#x27;float&#x27; = 0.012, a_creep: &#x27;float&#x27; = 0.0, g: &#x27;float&#x27; = 9.80665) -&gt; &#x27;Dict[str, float]&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;hill_start_rollback&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>오르막(θ &gt; 0)에 멈춘 차가 브레이크를 떼고 τ초 후 구동 a_drive가 들어갈 때의 뒤로 밀림(공기 저항 없는 닫힌 식).</p>
 <p>τ 동안의 아래 방향 가속도 a₁ = g sin θ − c_rr g cos θ − a_creep(≤ 0 이면 밀리지 않는다). 거리 ½ a₁ τ², 속도 a₁ τ. 구동이 들어가면 뒤 방향의 움직임을 a₂ = a_drive − g sin θ + c_rr g cos θ 로 멈춘다(구름 저항도 움직임에 거스른다) → (a₁ τ)²/(2 a₂).</p>

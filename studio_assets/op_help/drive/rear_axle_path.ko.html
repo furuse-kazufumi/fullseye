@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">rear_axle_path — DRIVE <code style="color:#22d3bf">lateral</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rear_axle_path(front_path, wheelbase: &#x27;float&#x27;, *, rear0=None) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivelateral; drivelateral.rear_axle_path(front_path, wheelbase: &#x27;float&#x27;, *, rear0=None) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;rear_axle_path&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>앞차축 중심의 꺾은선 궤적으로부터 미끄럼 없이 끌려가는 뒤차축 중심의 궤적(구간마다 엄밀한 추적 곡선).</p>
 <p>앞이 직선을 Δ 나아가는 동안, 막대(뒤 → 앞)와 직선이 이루는 각 θ 는 tan(θ/2) = tan(θ₀/2) e^{−Δ/L}(엄밀). 꺾은선의 꼭짓점마다이것을 잇는다. <code style="color:#22d3bf">rear0</code>: 후차축의 처음 위치(None 이면 첫 구간 방향으로 L 만큼 뒤 = 똑바로). |앞 − 뒤| = L 을 요구.</p>

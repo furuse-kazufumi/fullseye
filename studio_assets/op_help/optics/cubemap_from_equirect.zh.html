@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">cubemap_from_equirect — OPTICS <code style="color:#22d3bf">omni360</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">rgbimage</code> → <code style="color:#22d3bf">rgbvideo</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cubemap_from_equirect(equi, face_size)</code>(要直接调用实现,<code style="color:#22d3bf">import omni360; omni360.cubemap_from_equirect(equi, face_size)</code>;从台账取用则 <code style="color:#22d3bf">opsoptics.get(&quot;cubemap_from_equirect&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>将等距柱状图重采样为六个立方体面。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>

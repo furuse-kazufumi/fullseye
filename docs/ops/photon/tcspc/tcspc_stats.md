@@ -4,6 +4,7 @@ dim: photon
 category: tcspc
 in: counts
 out: table
+gpu: なし
 examples: [photon_timeresolved]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `counts` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.tcspc_stats(hist, bin_ps=100.0)` (実装を直接呼ぶなら `import photoncount; photoncount.tcspc_stats(hist, bin_ps=100.0)`、台帳から引くなら `opsphoton.get("tcspc_stats")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

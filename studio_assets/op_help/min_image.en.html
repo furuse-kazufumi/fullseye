@@ -3,6 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image × image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: this op takes 2 inputs, so <code style="color:#22d3bf">fullseye.apply</code> cannot run it (that is the one-image model). <code style="color:#22d3bf">g = fullseye.FullseyeGraph(); g.add(&quot;out&quot;, &quot;min_image&quot;, [&quot;$in1&quot;, &quot;$in2&quot;], a=0.5, b=0.5); g.run({&quot;$in1&quot;: img1, &quot;$in2&quot;: img2}, terminal=&quot;out&quot;)</code> (names starting with <code style="color:#22d3bf">$</code> are the inputs you pass in)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">min_image</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Pixel-wise minimum of 2 images. Corresponds to HALCON&#x27;s <code style="color:#22d3bf">min_image</code>. <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> are unused. It keeps the darker one, so it is used to suppress specular highlights.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

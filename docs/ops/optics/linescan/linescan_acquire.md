@@ -4,6 +4,7 @@ dim: optics
 category: linescan
 in: image2d
 out: table
+gpu: なし
 examples: [poc_tdi_linescan]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.linescan_acquire(web=None, stages=8, photons_per_stage=200.0, eta=0.6, sigma_d=20.0, K=0.1, architecture='charge', full_well_e=None, dark_e=0.0, sync_error=0.0, yaw_deg=0.0, weave_px=0.0, weave_period_lines=200.0, encoder=False, encoder_error=None, lines=None, width=None, lens=None, noise=True, order=3, samples_per_px=4.0, oversample=1, seed=0)` (実装を直接呼ぶなら `import linescan; linescan.linescan_acquire(web=None, stages=8, photons_per_stage=200.0, eta=0.6, sigma_d=20.0, K=0.1, architecture='charge', full_well_e=None, dark_e=0.0, sync_error=0.0, yaw_deg=0.0, weave_px=0.0, weave_period_lines=200.0, encoder=False, encoder_error=None, lines=None, width=None, lens=None, noise=True, order=3, samples_per_px=4.0, oversample=1, seed=0)`、台帳から引くなら `opsoptics.get("linescan_acquire")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

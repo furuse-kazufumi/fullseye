@@ -4,6 +4,7 @@ dim: imgforensics
 category: compression
 in: image2d
 out: table
+gpu: なし
 examples: [image_forensics_audit]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.jpeg_quality_estimate(image, max_step: 'int' = 64, n_coeff: 'int' = 21) -> 'dict'` (実装を直接呼ぶなら `import imgforensics; imgforensics.jpeg_quality_estimate(image, max_step: 'int' = 64, n_coeff: 'int' = 21) -> 'dict'`、台帳から引くなら `opsimgforensics.get("jpeg_quality_estimate")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

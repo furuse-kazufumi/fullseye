@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tb_dem_ecef_to_geodetic — 2D <code style="color:#22d3bf">typed</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_dem_ecef_to_geodetic&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <p>*그림 없음: 타입은 닿지만 범용 합성 입력이 이 op의 정의역 밖 —— ECEF 는 지구 표면 좌표(중심에서 약 6.4M m)를 요구하지만, 영상에서 만든 합성 점은 원점 근처에 있어 타원체의 evolute 안에 떨어지므로 반드시 거부된다. 사용법은 아래 실행 가능한 예제를 볼 것.*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>ECEF → 측지 좌표. 반환값은 <code style="color:#22d3bf">(..., 3)</code>의 <code style="color:#22d3bf">(위도[도], 경도[도], 높이[m])</code>.</p>

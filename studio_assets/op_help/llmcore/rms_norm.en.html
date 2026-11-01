@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">rms_norm — LLMCORE <code style="color:#22d3bf">prepare</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">tokens</code> → <code style="color:#22d3bf">tokens</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rms_norm(tokens, eps: &#x27;float&#x27; = 0.0, weight=None) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import llmcore; llmcore.rms_norm(tokens, eps: &#x27;float&#x27; = 0.0, weight=None) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsllmcore.get(&quot;rms_norm&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>RMS normalization → tokens. <b>With the defaults (eps=0, no weight) the RMS of the output is exactly 1</b>.</p>
 <p>Zhang and Sennrich 2019. LayerNorm with the mean-subtraction stage dropped; what remains is only &quot;equalise the norm of each row&quot; -- so <b>RMS becoming 1 serves as the cross-check</b> (measured 2.2e-16). Adding <code style="color:#22d3bf">eps</code> shifts it away from 1. That is the price of <code style="color:#22d3bf">eps</code>.</p>

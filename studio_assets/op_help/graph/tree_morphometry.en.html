@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tree_morphometry — GRAPH <code style="color:#22d3bf">tree</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tree_morphometry(tree)</code> (to call the implementation directly, <code style="color:#22d3bf">import treemorph; treemorph.tree_morphometry(tree)</code>; from the registry, <code style="color:#22d3bf">opsgraph.get(&quot;tree_morphometry&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Counts and lengths of a tree table (from <code style="color:#22d3bf">tree_from_swc</code>).</p>
 <p>Returns <code style="color:#22d3bf">nodes</code>, <code style="color:#22d3bf">edges</code>, <code style="color:#22d3bf">bifurcations</code> (nodes with two or more children), <code style="color:#22d3bf">tips</code> (nodes with no child), <code style="color:#22d3bf">cable_length</code> (sum of segment lengths), <code style="color:#22d3bf">max_path_length</code> (longest root-to-node path along the tree) and <code style="color:#22d3bf">max_radial</code> (largest straight distance from the root).</p>

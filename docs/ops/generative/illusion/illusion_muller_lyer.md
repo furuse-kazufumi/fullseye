@@ -4,6 +4,7 @@ dim: generative
 category: illusion
 in: 
 out: rgb
+gpu: なし
 examples: [poc_calipers_under_illusion, poc_illusions_and_perpetual_drawing]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `rgb`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.illusion_muller_lyer(length: 'float' = 220.0, head: 'float' = 34.0, angle_deg: 'float' = 35.0) -> 'np.ndarray'` (実装を直接呼ぶなら `import illusion; illusion.illusion_muller_lyer(length: 'float' = 220.0, head: 'float' = 34.0, angle_deg: 'float' = 35.0) -> 'np.ndarray'`、台帳から引くなら `opsgenerative.get("illusion_muller_lyer")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -4,6 +4,7 @@ dim: math
 category: construct
 in: pairs
 out: table
+gpu: なし
 examples: [poc_theorems_as_pictures]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `pairs` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.curve_locality(points, gaps=(1, 2, 4, 8, 16, 32))` (実装を直接呼ぶなら `import mathops; mathops.curve_locality(points, gaps=(1, 2, 4, 8, 16, 32))`、台帳から引くなら `opsmath.get("curve_locality")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

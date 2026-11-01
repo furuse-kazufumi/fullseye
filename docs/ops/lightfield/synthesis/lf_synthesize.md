@@ -4,6 +4,7 @@ dim: lightfield
 category: synthesis
 in: 
 out: lightfield
+gpu: なし
 examples: [lightfield_depth, plenoptic_decode_pipeline, poc_compound_eye]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,6 +16,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **データ種**: `なし` → `lightfield`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.lf_synthesize(slopes=(0.0,), angular=(5, 5), shape=(64, 64), *, occlusion=True, coverage=0.55, texture_sigma=2.0, interp='linear', edge='wrap', seed=0)` (実装を直接呼ぶなら `import lightfield; lightfield.lf_synthesize(slopes=(0.0,), angular=(5, 5), shape=(64, 64), *, occlusion=True, coverage=0.55, texture_sigma=2.0, interp='linear', edge='wrap', seed=0)`、台帳から引くなら `opslightfield.get("lf_synthesize")`)
 - **台帳経由の戻り値**: `fullseye.ledger.lf_synthesize(...)` は**宣言 out 型 `lightfield` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.lf_synthesize.raw(...)`、または `lightfield.lf_synthesize` を直接呼ぶ。
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

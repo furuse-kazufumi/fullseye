@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">radiosity_progressive_3d — OPTICS <code style="color:#22d3bf">radiosity</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.radiosity_progressive_3d(patches, emission, form_factors=None, albedo=None, tol=1e-06, max_shots=None, n_quad=3)</code> (die Implementierung direkt: <code style="color:#22d3bf">import radiosity3d; radiosity3d.radiosity_progressive_3d(patches, emission, form_factors=None, albedo=None, tol=1e-06, max_shots=None, n_quad=3)</code>; aus dem Register: <code style="color:#22d3bf">opsoptics.get(&quot;radiosity_progressive_3d&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Progressive-Refinement-Radiosity (Cohen et al. 1988, Shooting, Gl. 7–8) auf einem 3-D-Patch-Satz, mit dem Nachweis der Konvergenz.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>

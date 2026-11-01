@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">camera_orientation_from_sun — GEOCAM <code style="color:#22d3bf">sun</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">keypoints × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.camera_orientation_from_sun(sun_pixels, unix_times, lat_deg, lon_deg, K)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import geocam; geocam.camera_orientation_from_sun(sun_pixels, unix_times, lat_deg, lon_deg, K)</code>、台帳から引くなら <code style="color:#22d3bf">opsgeocam.get(&quot;camera_orientation_from_sun&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>時刻つきの太陽の画素位置 ≥ 2 点 → カメラの (yaw, pitch, roll)(Wahba 問題の SVD 解 = Kabsch)。</p>
 <p>各観測で、画素 → カメラ座標の光線 d_c(K から)、時刻 → 世界の太陽方向 s_w(<code style="color:#22d3bf">sun_position</code>、<b>屈折込み</b>の仰角を使う: カメラが見るのは見かけの太陽)。<code style="color:#22d3bf">R = argmin Σ |R d_c − s_w|²</code> を SVD で閉形式に解き(Kabsch 1976 / Markley 1988)、<code style="color:#22d3bf">(yaw, pitch, roll)</code> に分解する。</p>

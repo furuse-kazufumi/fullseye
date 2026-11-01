@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">membrane_recover — DRIVE <code style="color:#22d3bf">tacsim</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">rgb × matrix × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.membrane_recover(rgb, lights, pitch: &#x27;float&#x27;, ambient: &#x27;float&#x27; = 0.0, albedo: &#x27;float&#x27; = 1.0) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import tacsim; tacsim.membrane_recover(rgb, lights, pitch: &#x27;float&#x27;, ambient: &#x27;float&#x27; = 0.0, albedo: &#x27;float&#x27; = 1.0) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;membrane_recover&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>시촉각 RGB (H, W, 3) → 3채널을 3광원의 영상으로 보고 <code style="color:#22d3bf">photometric.photometric_stereo</code>(lit_only)로 법선 → <code style="color:#22d3bf">photometric.integrate_normals</code>(Frankot-Chellappa)로 높이(화소 단위 × pitch = m).</p>
 <p><code style="color:#22d3bf">ambient</code>, <code style="color:#22d3bf">albedo</code> 는 보정값: 영상에서 albedo·ambient 를 뺀 뒤 푼다(합성 albedo·(N·L + ambient) 의 ambient 항을 Woodham 의 선형 모형은 갖지 않으므로, 빼지 않으면 법선이 z 쪽으로 쏠려 기울기가 ambient/sin(앙각) ≈ 3.7 %(0.03/0.82) 만큼 계통적으로작게 나온다 —— 실기의 참조 프레임 보정에 해당한다. 시작품에서 δ 가 3.5 % 낮았던 원인).</p>

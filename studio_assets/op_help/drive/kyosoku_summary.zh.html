@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">kyosoku_summary — DRIVE <code style="color:#22d3bf">town</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">table</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.kyosoku_summary(path=None) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import drivetown; drivetown.kyosoku_summary(path=None) -&gt; &#x27;Dict[str, object]&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;kyosoku_summary&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>读取交通教则场景的再现台账(docs/drive/kyosoku_scenarios.json)，生成 category × status 的计数表。</p>
 <p>若 <code style="color:#22d3bf">path</code> = None,则使用 repo 的 <code style="color:#22d3bf">docs/drive/kyosoku_scenarios.json</code>(从本模块的位置查找)。返回值 <code style="color:#22d3bf">{&quot;total&quot;, &quot;statuses&quot; (順序つき), &quot;by_status&quot;: {status: n}, &quot;categories&quot;: [...] (件数の多い順), &quot;by_category&quot;: {category: {status: n}}, &quot;table&quot;: [[category, n_reproduced, n_partial, n_pending, n_not_reproducible, total], ...]}</code>。</p>

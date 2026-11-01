@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">fiber_lp_modes — OPTICS <code style="color:#22d3bf">fiber</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">無</code> → <code style="color:#22d3bf">table</code>(僅由參數決定的運算子 —— 不接受影像或資料輸入)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fiber_lp_modes(v_number=6.0, max_modes=None)</code>(要直接呼叫實作,<code style="color:#22d3bf">import fiberoptics; fiberoptics.fiber_lp_modes(v_number=6.0, max_modes=None)</code>;從台帳取用則 <code style="color:#22d3bf">opsoptics.get(&quot;fiber_lp_modes&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>弱導波步階型光纖的 LP_lm 模:求解特徵方程,回傳各模的 u、w 與歸一化傳播常數 b(<code style="color:#22d3bf">table</code>)。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>

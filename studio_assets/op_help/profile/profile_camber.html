@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">profile_camber — PROFILE <code style="color:#22d3bf">measure</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">pairs</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.profile_camber(contour, n=101)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import profileops; profileops.profile_camber(contour, n=101)</code>、台帳から引くなら <code style="color:#22d3bf">opsprofile.get(&quot;profile_camber&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>キャンバー線(上下面の中線)。返りは <code style="color:#22d3bf">(n, 2)</code> の <code style="color:#22d3bf">(x, yc)</code>。</p>
 <p>★<b>定義の差を承知で使うこと</b>。ここが返すのは「弦の各位置での上下面の中点」で、NACA が翼型を<b>作るときに使う</b>キャンバー線(厚みを法線方向に載せる前の中心線)とは厳密には別物です。加えて弦の取り方も違う —— 幾何的な弦は「後縁の中点から最も遠い点」を前縁とするので、キャンバーのある翼では生成座標の原点からわずかにずれ、弦が 0.1 度ほど傾きます。</p>

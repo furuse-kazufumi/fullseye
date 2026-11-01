@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">geodesic_heat — MATH <code style="color:#22d3bf">geometry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">mesh</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.geodesic_heat(vertices, faces=None, source=0, *, t: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import mathgeometry; mathgeometry.geodesic_heat(vertices, faces=None, source=0, *, t: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsmath.get(&quot;geodesic_heat&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>熱法による曲面上の測地距離(Crane et al. 2013)。<code style="color:#22d3bf">source</code> は頂点番号(または番号の列、既定は頂点 0)。メッシュは <code style="color:#22d3bf">(vertices, faces)</code> でも mesh の組 1 つでもよい。</p>
 <p style="margin:2px 0 2px 12px">1) (M − tL) u = δ を 1 ステップ解く(熱を時間 t だけ広げる、t の既定 = 平均辺長²)</p>

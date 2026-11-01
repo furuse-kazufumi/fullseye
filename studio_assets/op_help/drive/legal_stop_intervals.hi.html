@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">legal_stop_intervals — DRIVE <code style="color:#22d3bf">crossing</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.legal_stop_intervals(merged, road_start: &#x27;float&#x27;, road_end: &#x27;float&#x27;, car_length: &#x27;float&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import drivecrossing; drivecrossing.legal_stop_intervals(merged, road_start: &#x27;float&#x27;, road_end: &#x27;float&#x27;, car_length: &#x27;float&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;legal_stop_intervals&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>no-stopping-or-parking खंडों (मिलाए गए (k, 2)) से बचते हुए, वाहन का body [rear, rear + car_length] पूरा समा सके ऐसी <b>पिछले सिरे की स्थितियों</b> के अंतराल (m, 2)।</p>
 <p>अंतराल के ठीक सिरे (जैसे दूरी ठीक 5 m) निषिद्ध पक्ष में गिने जाते हैं (&quot;भीतर&quot;), इसलिए वाहन का ढाँचा केवल सिरे को छूए तो अनुमति है (बंद अंतरालों के पूरक का संवरण)।</p>

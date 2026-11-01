@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">chirp_newtonian — ONED <code style="color:#22d3bf">matched</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">signal</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.chirp_newtonian(mass1_msun: &#x27;float&#x27; = 36.0, mass2_msun: &#x27;float&#x27; = 29.0, rate: &#x27;float&#x27; = 4096.0, duration_s: &#x27;float&#x27; = 1.0, *, f_low_hz: &#x27;float&#x27; = 20.0, distance_mpc: &#x27;float&#x27; = 410.0, phase_rad: &#x27;float&#x27; = 0.0) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import gwsearch; gwsearch.chirp_newtonian(mass1_msun: &#x27;float&#x27; = 36.0, mass2_msun: &#x27;float&#x27; = 29.0, rate: &#x27;float&#x27; = 4096.0, duration_s: &#x27;float&#x27; = 1.0, *, f_low_hz: &#x27;float&#x27; = 20.0, distance_mpc: &#x27;float&#x27; = 410.0, phase_rad: &#x27;float&#x27; = 0.0) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops1d.get(&quot;chirp_newtonian&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>뉴턴 근사(0PN) 인스파이럴 파형 h₊(t)를 signal로 반환(합체가 배열 끝).</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>

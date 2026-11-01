@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">piv_time_statistics — PIV <code style="color:#22d3bf">assess</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">images</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_time_statistics(images, window=32, overlap=0.5, **kw)</code>(要直接调用实现,<code style="color:#22d3bf">import pivops; pivops.piv_time_statistics(images, window=32, overlap=0.5, **kw)</code>;从台账取用则 <code style="color:#22d3bf">opspiv.get(&quot;piv_time_statistics&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>图像序列 → 时间平均、脉动的 RMS、雷诺应力。</p>
 <p>对每个连续的图像对测量位移，取时间方向的统计。描述湍流以这 3 项为出发点，<code style="color:#22d3bf">u&#x27;v&#x27;</code> 的符号和大小就是动量输运本身。</p>

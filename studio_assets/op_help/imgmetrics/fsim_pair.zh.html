@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">fsim_pair — IMGMETRICS <code style="color:#22d3bf">perceptual</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">rgbimage × rgbimage</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fsim_pair(ref, dist, data_range: &#x27;float&#x27; = 255.0, downsample: &#x27;bool&#x27; = True) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import iqafsim; iqafsim.fsim_pair(ref, dist, data_range: &#x27;float&#x27; = 255.0, downsample: &#x27;bool&#x27; = True) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsimgmetrics.get(&quot;fsim_pair&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>一次性计算 FSIM 和 FSIMc(每张图像的相位一致性只计算 1 次 —— 评估器和 PoC 调用的是这个函数)。</p>
 <p>步骤(论文 §III):(1) 以 F = max(1, round(min(H, W)/256)) 做 F×F 平均 + 抽取(TID2013 的 384×512 为 F = 2 → 192×256),(2) Y 的相位一致性 PC 与 Scharr([3 0 −3; 10 0 −10; 3 0 −3]/16)梯度的大小 G,(3) S_PC = (2 PC1 PC2 + T1)/(PC1² + PC2² + T1)、S_G = (2 G1 G2 + T2)/(G1² + G2² + T2),</p>

@@ -4,6 +4,7 @@ dim: 3d
 category: bundle_adjust
 in: pose × points
 out: table
+gpu: なし
 examples: [bundle_adjust]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `pose × points` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.bundle_adjust(cameras, points, obs_cam, obs_pt, obs_uv, K, fix_first=True, max_iter=200)` (実装を直接呼ぶなら `import bundle3d; bundle3d.bundle_adjust(cameras, points, obs_cam, obs_pt, obs_uv, K, fix_first=True, max_iter=200)`、台帳から引くなら `ops3d.get("bundle_adjust")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

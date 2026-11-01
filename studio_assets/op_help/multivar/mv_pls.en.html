@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">mv_pls — MULTIVAR <code style="color:#22d3bf">analysis</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">matrix × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mv_pls(X=None, Y=None, n_components=None, max_components=10, cv=7, method=&#x27;nipals&#x27;, standardize=True) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import multivar; multivar.mv_pls(X=None, Y=None, n_components=None, max_components=10, cv=7, method=&#x27;nipals&#x27;, standardize=True) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsmultivar.get(&quot;mv_pls&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Partial least squares regression of Y on X with cross-validated Q^2, the Q^2 rule and VIP.</p>
 <p>PLS finds directions in X that both vary and predict Y — the tool for many correlated predictors and few runs (image features -&gt; process settings, or the reverse). <code style="color:#22d3bf">method=&quot;nipals&quot;</code> (default, Wold, Sjöström &amp; Eriksson 2001) or <code style="color:#22d3bf">&quot;simpls&quot;</code> (de Jong 1993; identical to NIPALS for a single response — a test pins it). X and Y are centred and, by default, scaled to unit variance.</p>

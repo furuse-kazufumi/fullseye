@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">world_grains_voronoi — SEGMENTATION <code style="color:#22d3bf">world</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">無</code> → <code style="color:#22d3bf">table</code>(僅由參數決定的運算子 —— 不接受影像或資料輸入)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.world_grains_voronoi(n: &#x27;int&#x27; = 36, seed: &#x27;int&#x27; = 0, *, size=(192, 192), jitter: &#x27;float&#x27; = 0.8, boundary_width: &#x27;float&#x27; = 1.5, noise: &#x27;float&#x27; = 0.02) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import segworld; segworld.world_grains_voronoi(n: &#x27;int&#x27; = 36, seed: &#x27;int&#x27; = 0, *, size=(192, 192), jitter: &#x27;float&#x27; = 0.8, boundary_width: &#x27;float&#x27; = 1.5, noise: &#x27;float&#x27; = 0.02) -&gt; &#x27;Dict[str, object]&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opssegmentation.get(&quot;world_grains_voronoi&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>Voronoi 晶粒世界：格點上 n 個帶抖動的種子，標籤 = 最近種子的編號（1..n）（world_grains_voronoi）。</p>
 <p>影像 = 每個晶粒的亮度(0.4~0.75)× 晶界的暗線(寬 <code style="color:#22d3bf">boundary_width</code>,以到晶界距離的閉合式繪製)+ 雜訊。沒有背景(所有像素都屬於某個晶粒)。</p>

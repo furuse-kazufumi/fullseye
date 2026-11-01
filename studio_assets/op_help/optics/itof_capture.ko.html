@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">itof_capture — OPTICS <code style="color:#22d3bf">itof</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">depth</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.itof_capture(depth, reflectivity=None, frequencies_hz=(20000000.0,), n_phases=4, signal_electrons=2000.0, demod_contrast=0.5, ambient_electrons=0.0, read_noise_e=0.0, waveform=&#x27;sine&#x27;, paths_depth=None, paths_amplitude=None, supersample=1, falloff_m=None, noise=True, seed=0)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import itof; itof.itof_capture(depth, reflectivity=None, frequencies_hz=(20000000.0,), n_phases=4, signal_electrons=2000.0, demod_contrast=0.5, ambient_electrons=0.0, read_noise_e=0.0, waveform=&#x27;sine&#x27;, paths_depth=None, paths_amplitude=None, supersample=1, falloff_m=None, noise=True, seed=0)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsoptics.get(&quot;itof_capture&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>거리 맵 → 간접 ToF의 원시 신호(변조 주파수마다 K단 버킷, 전자 수). <code style="color:#22d3bf">table</code>(<code style="color:#22d3bf">dict</code>)을 반환한다.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>

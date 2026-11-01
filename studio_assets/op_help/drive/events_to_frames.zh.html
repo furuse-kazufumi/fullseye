@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">events_to_frames — DRIVE <code style="color:#22d3bf">motion_io</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">voxel</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.events_to_frames(events: &#x27;dict&#x27;, n_frames: &#x27;int&#x27; = 32, shape=None) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import motionio; motionio.events_to_frames(events: &#x27;dict&#x27;, n_frames: &#x27;int&#x27; = 32, shape=None) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;events_to_frames&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>将事件按时间等分为 n_frames，逐像素累加极性得到帧 (T, H, W)(ON = +1，OFF = −1)。</p>
 <p>全部事件的极性之和与各帧总和一致(使用默认的 <code style="color:#22d3bf">shape</code> 时没有丢弃的事件。若显式给出 <code style="color:#22d3bf">shape</code>，落在其外的事件会被丢弃，和也相应地不一致)。</p>

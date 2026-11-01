@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">lateral_offset — DRIVE <code style="color:#22d3bf">lateral</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lateral_offset(points, path, *, start_index=None, window: &#x27;int&#x27; = 40) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import drivelateral; drivelateral.lateral_offset(points, path, *, start_index=None, window: &#x27;int&#x27; = 40) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;lateral_offset&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Arc length s along a polyline path and lateral offset n (positive to the left of the direction of travel) of a point. Projection onto the nearest segment.</p>
 <p>If <code style="color:#22d3bf">start_index</code> (per point, or a single one) is given, only <code style="color:#22d3bf">window</code> segments before and after that segment are examined (speeds up repeated calls; it is wrong if the true nearest point lies outside the window, so use it when the points move little by little). If None, all segments are examined.</p>

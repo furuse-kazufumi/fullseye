@@ -4,6 +4,7 @@ dim: drive
 category: long
 in: table
 out: any
+gpu: なし
 examples: [poc_driving_longitudinal, poc_driving_weather]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `any`
 - **呼び出し**: `import fullseye as fs; fs.ledger.plan_command(plan: 'dict', road=None, params: 'Optional[dict]' = None, hold_brake: 'Optional[float]' = None, before: 'Optional[Callable]' = None) -> 'Callable'` (実装を直接呼ぶなら `import drivelong; drivelong.plan_command(plan: 'dict', road=None, params: 'Optional[dict]' = None, hold_brake: 'Optional[float]' = None, before: 'Optional[Callable]' = None) -> 'Callable'`、台帳から引くなら `opsdrive.get("plan_command")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

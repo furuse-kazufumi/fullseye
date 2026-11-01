@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">lateral_offset — DRIVE <code style="color:#22d3bf">lateral</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lateral_offset(points, path, *, start_index=None, window: &#x27;int&#x27; = 40) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import drivelateral; drivelateral.lateral_offset(points, path, *, start_index=None, window: &#x27;int&#x27; = 40) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;lateral_offset&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Bogenlänge s entlang eines Polygonzug-Pfads und Querabweichung n (links der Fahrtrichtung positiv) eines Punkts. Projektion auf den nächstgelegenen Abschnitt.</p>
 <p>Wird <code style="color:#22d3bf">start_index</code> (pro Punkt oder ein einzelner) angegeben, werden nur <code style="color:#22d3bf">window</code> Segmente vor und nach diesem Segment untersucht (beschleunigt wiederholte Aufrufe; liegt der wahre nächste Punkt außerhalb des Fensters, ist das Ergebnis falsch, daher nur verwenden, wenn sich die Punkte schrittweise bewegen). Bei None werden alle Segmente untersucht.</p>

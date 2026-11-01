@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">piv_divergence — PIV <code style="color:#22d3bf">field</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">flow2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_divergence(flow, spacing=1.0)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import pivops; pivops.piv_divergence(flow, spacing=1.0)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opspiv.get(&quot;piv_divergence&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>발산 <code style="color:#22d3bf">d(dy)/dy + d(dx)/dx</code>. <b>비압축이면 0</b> —— 독립적인 검산에 쓸 수 있다.</p>
 <p>식: <code style="color:#22d3bf">gradient(flow[0], spacing, axis=0) + gradient(flow[1], spacing, axis=1)</code> (<code style="color:#22d3bf">numpy.gradient</code>: 내부는 중앙 차분, 격자의 끝은 한쪽 차분). <code style="color:#22d3bf">flow[0]</code>이 행 방향의 변위 <code style="color:#22d3bf">dy</code>, <code style="color:#22d3bf">flow[1]</code>이 열 방향의 변위 <code style="color:#22d3bf">dx</code>, <code style="color:#22d3bf">x</code> = 열, <code style="color:#22d3bf">y</code> = 행. 행이 아래쪽이어도 발산의 부호는 좌표의 방향에 의존하지 않는다(와도 <code style="color:#22d3bf">piv_vorticity</code>와는 달리 반전하지 않는다). 양 = 솟아남, 음 = 빨려 들어감.</p>

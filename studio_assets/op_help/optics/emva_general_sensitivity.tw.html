@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">emva_general_sensitivity — OPTICS <code style="color:#22d3bf">sensorgeneral</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">signal × signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.emva_general_sensitivity(mu_p, mu_y, var_y, mu_y_dark, var_y_dark, mu_p_sat, n_intervals=8)</code>(要直接呼叫實作,<code style="color:#22d3bf">import sensorgeneral; sensorgeneral.emva_general_sensitivity(mu_p, mu_y, var_y, mu_y_dark, var_y_dark, mu_p_sat, n_intervals=8)</code>;從台帳取用則 <code style="color:#22d3bf">opsoptics.get(&quot;emva_general_sensitivity&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>特性曲線、輸入 SNR、絕對靈敏度閾值、DR 與以光子為單位的暗雜訊(General 2.1〜2.4、6.6〜6.8 節)。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>

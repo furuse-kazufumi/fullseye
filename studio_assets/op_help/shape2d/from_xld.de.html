@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">from_xld — SHAPE2D <code style="color:#22d3bf">descriptor</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">pairs</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.from_xld(contour, i=0)</code> (die Implementierung direkt: <code style="color:#22d3bf">import fourierdesc; fourierdesc.from_xld(contour, i=0)</code>; aus dem Register: <code style="color:#22d3bf">opsshape2d.get(&quot;from_xld&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Entnimmt die i-te Kontur aus einem XLD-Kontur-dict (<code style="color:#22d3bf">{&quot;shape&quot;, &quot;cs&quot;:[Nx2,...]}</code>).</p>
 <p>Zurückgegeben wird (N,2) in <b>(row, col)</b>-Reihenfolge, wie bei XLD. Bei der Übergabe an <code style="color:#22d3bf">imagemorph</code> mit <code style="color:#22d3bf">[:, ::-1]</code> auf (x, y) umstellen (die &quot;Falle der Koordinatenreihenfolge&quot; am Anfang des Moduls).</p>

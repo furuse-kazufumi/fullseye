@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">laplace_inverse_talbot — MATH <code style="color:#22d3bf">transform</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">signal × signal × signal</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.laplace_inverse_talbot(num, den, t, *, M: &#x27;int&#x27; = 32) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import mathtransforms; mathtransforms.laplace_inverse_talbot(num, den, t, *, M: &#x27;int&#x27; = 32) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsmath.get(&quot;laplace_inverse_talbot&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>有理関数 F(s) = num(s)/den(s) の数値逆ラプラス変換(固定 Talbot 法)。</p>
 <p>厳密解は <code style="color:#22d3bf">tf_impulse_response</code> が行列指数で出すので、<b>2 つの独立な経路で同じ f(t) が出るか</b>がこの op の検算になる。任意の F(s)(1/√s など)は <code style="color:#22d3bf">laplace_inverse_func</code> へ。</p>

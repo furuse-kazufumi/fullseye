@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">dem_aspect — DEM <code style="color:#22d3bf">surface</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">depth</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_aspect(dem, cell_size, method=&#x27;horn&#x27;, flat_tol=1e-12)</code>(要直接调用实现,<code style="color:#22d3bf">import demops; demops.dem_aspect(dem, cell_size, method=&#x27;horn&#x27;, flat_tol=1e-12)</code>;从台账取用则 <code style="color:#22d3bf">opsdem.get(&quot;dem_aspect&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>坡向 [度]。<b>北为 0 度，向东旋转</b>。平坦的格子单元为 <code style="color:#22d3bf">ASPECT_FLAT</code>。</p>
 <p>平坦处不返回 0,是因为 0 会表示“朝北的斜坡” —— 返回无法区分的值,是不抛异常却出错的典型。</p>

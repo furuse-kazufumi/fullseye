@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">gen_caltab — CALIB <code style="color:#22d3bf">target</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gen_caltab(rows=7, cols=7, spacing=1.0, radius=0.3, image_size=256)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import caltab; caltab.gen_caltab(rows=7, cols=7, spacing=1.0, radius=0.3, image_size=256)</code>、台帳から引くなら <code style="color:#22d3bf">opscalib.get(&quot;gen_caltab&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>円マーク格子の校正板画像を生成(gen_caltab)。</p>
 <p>返りは <code style="color:#22d3bf">image</code>(板の絵)・<code style="color:#22d3bf">centers</code>(絵の上のマーク中心 (row, col) [px])に加えて、<code style="color:#22d3bf">create_caltab</code> と同じ板の記述(<code style="color:#22d3bf">points</code> = 板中心を原点にした (y, x) [mm]、<code style="color:#22d3bf">spacing</code>) を持つ —— この dict はそのまま <code style="color:#22d3bf">sim_caltab</code> / <code style="color:#22d3bf">find_marks_and_pose</code> の板として使える。★2026-10-23 まで <code style="color:#22d3bf">spacing</code> は受け取るだけで返りのどこにも効いていなかった(台帳の探針が「効かないつまみ」として検出)。絵の配置は <code style="color:#22d3bf">image_size</code> で決まり、実寸は <code style="color:#22d3bf">points</code> に載る。</p>

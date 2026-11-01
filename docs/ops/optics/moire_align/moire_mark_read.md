@@ -4,6 +4,7 @@ dim: optics
 category: moire_align
 in: image2d × image2d
 out: table
+gpu: なし
 examples: [poc_moire_alignment, poc_moire_screen]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d × image2d` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.moire_mark_read(image, ref_image, pixel_um=0.5, p_mask_um=2.0, p_wafer_um=2.04, layout='differential', margin_px=4, moving='wafer', window='hann', method='lockin')` (実装を直接呼ぶなら `import moirealign; moirealign.moire_mark_read(image, ref_image, pixel_um=0.5, p_mask_um=2.0, p_wafer_um=2.04, layout='differential', margin_px=4, moving='wafer', window='hann', method='lockin')`、台帳から引くなら `opsoptics.get("moire_mark_read")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

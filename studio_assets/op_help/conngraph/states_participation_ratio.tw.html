@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">states_participation_ratio — CONNGRAPH <code style="color:#22d3bf">dimension</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.states_participation_ratio(X: &#x27;Any&#x27;) -&gt; &#x27;float&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import conngraph; conngraph.states_participation_ratio(X: &#x27;Any&#x27;) -&gt; &#x27;float&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsconngraph.get(&quot;states_participation_ratio&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>狀態序列 <code style="color:#22d3bf">X</code> (N, n) 的<b>有效維度</b> = participation ratio <code style="color:#22d3bf">PR = (Σλ)² / Σλ²</code>(λ 為共變異數的特徵值，Gao et al. 2017)。若所有欄獨立且變異數相同則為 n，若落在 1 個方向上則為 1。</p>
 <p>它依賴於樣本數 N(N 小時飽和於 PR ≤ N),因此比較時要統一 N。常數(變異數 0)時為 0。</p>

@@ -4,6 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.curvature_torsion(curve)</code>(要直接调用实现,<code style="color:#22d3bf">import curve3d; curve3d.curvature_torsion(curve)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;curvature_torsion&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>经台账调用的返回值</b>: <code style="color:#22d3bf">fullseye.ledger.curvature_torsion(...)</code> 只返回<b>声明的 out 类型 <code style="color:#22d3bf">pairs</code> 的值</b>(底层函数还会返回辅助信息)。需要被丢弃的部分时,使用 <code style="color:#22d3bf">fullseye.ledger.curvature_torsion.raw(...)</code>,或直接调用 <code style="color:#22d3bf">curve3d.curvature_torsion</code>。</p>
 <p style="margin:2px 0 2px 12px">• 底层返回: <code style="color:#22d3bf">(kappa,tau) → (N,2) pairs</code></p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>各点的曲率 κ 与挠率 τ(与重参数化无关的闭式)。→ (kappa (N,), tau (N,))。</p>
 <p>对坐标的均匀缩放 s,κ→κ/s、τ→τ/s 能正确缩放。防止除以 0 的 epsilon 做了<b>相对化</b>:绝对的 1e-12 在小坐标尺度下会支配 cross_norm²(~s⁴)、r1_norm³(~s³), 破坏 κ/τ,因此使用以代表尺度 L=median‖r&#x27;‖(与坐标尺度 s 成线性)归一化到与各分母同量纲的相对 eps。这与先用 L 归一化曲线再计算、最后以 1/L 还原严格等价。</p>

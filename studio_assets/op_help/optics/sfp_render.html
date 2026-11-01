@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">sfp_render — OPTICS <code style="color:#22d3bf">shape_from_polarization</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">normalmap</code> → <code style="color:#22d3bf">polsweep</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sfp_render(normals, refractive_index=1.5, specular_radiance=1.0, diffuse_radiance=0.0, angles_deg=(0.0, 45.0, 90.0, 135.0), mask=None)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import sfpolar; sfpolar.sfp_render(normals, refractive_index=1.5, specular_radiance=1.0, diffuse_radiance=0.0, angles_deg=(0.0, 45.0, 90.0, 135.0), mask=None)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;sfp_render&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Render the images a 4-direction polarisation camera records of a dielectric surface with the given normal map (the forward model of shape from polarisation).</p>
 <p>Each pixel is <code style="color:#22d3bf">I(t) = (S0/2) (1 + rho cos 2(t - psi))</code> with <code style="color:#22d3bf">rho</code> from <code style="color:#22d3bf">sfp_dolp_model</code> and <code style="color:#22d3bf">psi</code> the normal&#x27;s azimuth (diffuse) or the azimuth plus 90 degrees (specular). Orthographic camera looking down -z; angles in the module&#x27;s convention (x toward y).</p>

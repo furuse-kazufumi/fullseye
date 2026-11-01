@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">face_areas — 3D <code style="color:#22d3bf">mesh_process</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">mesh</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.face_areas(mesh) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import mesh_props; mesh_props.face_areas(mesh) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;face_areas&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p><b>Fläche jeder Facette</b> eines Dreiecksnetzes → <code style="color:#22d3bf">(M,)</code>.</p>
 <p>Gibt die Fläche = <code style="color:#22d3bf">0.5·|cross(v1−v0, v2−v0)|</code> je Fläche zurück (<code style="color:#22d3bf">mesh_area</code> ist deren Summe). Die Flächen sind dazu da, als <b>Gewichte</b> verwendet zu werden -- &quot;die Fläche der nach unten zeigenden Flächen&quot;, &quot;die Fläche außerhalb der Toleranz&quot; und &quot;der flächengewichtete Mittelwert der Krümmung&quot; sind allesamt Größen, die Flächen je Fläche benötigen und nicht aus der Summe gebildet werden können.</p>

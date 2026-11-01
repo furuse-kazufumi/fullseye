@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">world_pose_humanoid — DRIVE <code style="color:#22d3bf">humanoid</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.world_pose_humanoid(world: &#x27;dict&#x27;, i: &#x27;int&#x27;, clip: &#x27;dict&#x27;, distance: &#x27;float&#x27;, x: &#x27;float&#x27;, y: &#x27;float&#x27;, yaw: &#x27;float&#x27;) -&gt; &#x27;None&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import drivehumanoid; drivehumanoid.world_pose_humanoid(world: &#x27;dict&#x27;, i: &#x27;int&#x27;, clip: &#x27;dict&#x27;, distance: &#x27;float&#x27;, x: &#x27;float&#x27;, y: &#x27;float&#x27;, yaw: &#x27;float&#x27;) -&gt; &#x27;None&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;world_pose_humanoid&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>將世界中的物體 <code style="color:#22d3bf">i</code>(用 <code style="color:#22d3bf">driveterrain.add_mesh_object</code> 放置的 <code style="color:#22d3bf">humanoid_clip_mesh</code>)設為步行距離 <code style="color:#22d3bf">distance</code> 時的姿態，並重新放到 <code style="color:#22d3bf">(x, y, yaw)</code>(只改寫頂點。面、顏色、標籤、<code style="color:#22d3bf">dims</code> 不變)。</p>
 <p>空輸入(<code style="color:#22d3bf">world</code> 為空 dict)會引發 <code style="color:#22d3bf">ValueError</code>。</p>

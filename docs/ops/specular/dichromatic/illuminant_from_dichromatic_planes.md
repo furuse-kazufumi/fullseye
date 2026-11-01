@@ -4,6 +4,7 @@ dim: specular
 category: dichromatic
 in: rgbimage × labels
 out: vector
+gpu: なし
 examples: [poc_white_balance, specular_photometric]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `rgbimage × labels` → `vector`
 - **呼び出し**: `import fullseye as fs; fs.ledger.illuminant_from_dichromatic_planes(image_rgb, labels, min_pixels=16, min_plane_ratio=1e-06, min_intersection_ratio=1e-06)` (実装を直接呼ぶなら `import specularity; specularity.illuminant_from_dichromatic_planes(image_rgb, labels, min_pixels=16, min_plane_ratio=1e-06, min_intersection_ratio=1e-06)`、台帳から引くなら `opsspecular.get("illuminant_from_dichromatic_planes")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

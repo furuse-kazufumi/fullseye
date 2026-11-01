@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tether_tension_fixed — DRIVE <code style="color:#22d3bf">kendama</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">無</code> → <code style="color:#22d3bf">scalar</code>(僅由參數決定的運算子 —— 不接受影像或資料輸入)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tether_tension_fixed(v: &#x27;float&#x27;, theta: &#x27;float&#x27;, L: &#x27;float&#x27;, mass: &#x27;float&#x27;, g: &#x27;float&#x27; = 9.81) -&gt; &#x27;float&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import kendama; kendama.tether_tension_fixed(v: &#x27;float&#x27;, theta: &#x27;float&#x27;, L: &#x27;float&#x27;, mass: &#x27;float&#x27;, g: &#x27;float&#x27; = 9.81) -&gt; &#x27;float&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;tether_tension_fixed&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>手端固定、不可伸長的繩的張力 T = m(v²/L + g cos θ)(v = 速度，θ = 與正下方的夾角)。為負則「繩不能推」= 鬆弛。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

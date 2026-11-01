@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">particle_size_read — DRIVE <code style="color:#22d3bf">grind</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.particle_size_read(path) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import grind; grind.particle_size_read(path) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;particle_size_read&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>讀取雷射繞射粒徑分布 CSV(標頭的 <code style="color:#22d3bf">key,value</code> 列 + 以 <code style="color:#22d3bf">SizeClasses</code> 開頭的表)。</p>
 <p>回傳:<code style="color:#22d3bf">edges</code> [µm] (表的第 1 欄 = 區間端點)、<code style="color:#22d3bf">volume</code>(第 2 欄 = 端點 i 與 i+1 之間的體積 %)、<code style="color:#22d3bf">header</code> (字串的 dict)、<code style="color:#22d3bf">dx50_reported</code>(表頭的 <code style="color:#22d3bf">Dx (50)</code>,沒有則為 None)、<code style="color:#22d3bf">total_percent</code>(體積總和)、<code style="color:#22d3bf">n_rows</code>。讀取的路徑不保留在回傳值中。沒有表、不是數值、最後一列不為 0 → <code style="color:#22d3bf">ValueError</code>。</p>

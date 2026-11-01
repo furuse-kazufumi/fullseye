@@ -4,6 +4,7 @@ dim: spc
 category: anomaly_patch
 in: video
 out: table
+gpu: なし
 examples: [poc_patch_anomaly]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `video` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.patchbank_fit(stack, patch=8, stride=4, scales=(1.0, 2.0, 4.0), groups=('gradient', 'gabor', 'lbp'), n_orient=4, coreset=0.1, proj_dim=32, position_weight=0.0, seed=0)` (実装を直接呼ぶなら `import anomaly_patch; anomaly_patch.patchbank_fit(stack, patch=8, stride=4, scales=(1.0, 2.0, 4.0), groups=('gradient', 'gabor', 'lbp'), n_orient=4, coreset=0.1, proj_dim=32, position_weight=0.0, seed=0)`、台帳から引くなら `opsspc.get("patchbank_fit")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

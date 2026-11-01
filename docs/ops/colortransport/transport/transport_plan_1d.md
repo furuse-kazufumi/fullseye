@@ -4,6 +4,7 @@ dim: colortransport
 category: transport
 in: signal × signal
 out: transport_plan
+gpu: なし
 examples: [color_transport]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal × signal` → `transport_plan`
 - **呼び出し**: `import fullseye as fs; fs.ledger.transport_plan_1d(u_values, v_values)` (実装を直接呼ぶなら `import colortransport; colortransport.transport_plan_1d(u_values, v_values)`、台帳から引くなら `opscolortransport.get("transport_plan_1d")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">film_color — OPTICS <code style="color:#22d3bf">film</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.film_color(film=&#x27;SIO2&#x27;, substrate=&#x27;SI&#x27;, thickness_min_nm=0.0, thickness_max_nm=1000.0, n_points=101, under=(), angle_deg=0.0, na=0.0, wl_min_nm=380.0, wl_max_nm=780.0, ambient=1.0, exposure=1.0, illuminant=None)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import filmoptics; filmoptics.film_color(film=&#x27;SIO2&#x27;, substrate=&#x27;SI&#x27;, thickness_min_nm=0.0, thickness_max_nm=1000.0, n_points=101, under=(), angle_deg=0.0, na=0.0, wl_min_nm=380.0, wl_max_nm=780.0, ambient=1.0, exposure=1.0, illuminant=None)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;film_color&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>膜厚を振ったときの干渉色(ウェハの色見本)。D65 の照明・CIE 1931 の等色関数で見た色を返す。</p>
 <p>film:       膜の材料(材料表の鍵など)。<code style="color:#22d3bf">under</code> があればその上に乗る最上層。</p>

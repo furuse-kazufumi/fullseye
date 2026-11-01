@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">statistical_region_merging — SEGMENTATION <code style="color:#22d3bf">graph</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.statistical_region_merging(image, *, q: &#x27;float&#x27; = 32.0, g: &#x27;int&#x27; = 256, value_range=(0.0, 1.0), connectivity: &#x27;int&#x27; = 4) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import seggraph; seggraph.statistical_region_merging(image, *, q: &#x27;float&#x27; = 32.0, g: &#x27;int&#x27; = 256, value_range=(0.0, 1.0), connectivity: &#x27;int&#x27; = 4) -&gt; &#x27;Dict[str, object]&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opssegmentation.get(&quot;statistical_region_merging&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>統計區域合併 SRM（Nock–Nielsen 2004）：依 |I_p − I_q| 的遞增順序處理相鄰像素對，述詞 P(R, R&#x27;) 為真則合併（statistical_region_merging）。</p>
 <p>像素值把 <code style="color:#22d3bf">value_range</code> 線性對應到 [0, g − 1] 後使用(範圍外的值 ValueError)。P(R, R&#x27;) ⇔ |R̄ − R̄&#x27;| ≤ √(b²(R) + b²(R&#x27;)),b(R) = g √(ln(|R_|R||/δ) / (2Q|R|)),ln|R_l| = min(l, g) ln(l + 1), δ = 1/(6|I|²)(述詞的係數 <b>有待確認</b>,參見模組的說明)。Q(<code style="color:#22d3bf">q</code>)越大 b 越小,越不願合併(更細)。</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">video_write_gif — VIDEOCUBE <code style="color:#22d3bf">export</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">rgbvideo</code> → <code style="color:#22d3bf">text</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.video_write_gif(frames, path: &#x27;str&#x27;, fps: &#x27;float&#x27; = 10.0) -&gt; &#x27;str&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import videocube; videocube.video_write_gif(frames, path: &#x27;str&#x27;, fps: &#x27;float&#x27; = 10.0) -&gt; &#x27;str&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsvideocube.get(&quot;video_write_gif&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把影格序列寫成動畫 GIF(<code style="color:#22d3bf">text</code> = 寫入的路徑)。可重複使用的出口。</p>
 <p><code style="color:#22d3bf">frames</code> 是灰階的 <code style="color:#22d3bf">video</code> (T, H, W) 或彩色的 <code style="color:#22d3bf">rgbvideo</code> (F, H, W, 3)。float 把 [0, 1] 對應到 0..255, 整數直接轉為 uint8(超出範圍的截斷)。<b>儲存全部影格</b>(Pillow 會把與前一影格相同的畫面摺疊成 1 影格以減少影格數,因此使用 <code style="color:#22d3bf">video.write_video</code> 的全影格儲存路徑,寫入後再讀回影格數加以確認)。沒有 Pillow 則 ImportError(optional 相依)。<code style="color:#22d3bf">path</code> 必須以 <code style="color:#22d3bf">.gif</code> 結尾。</p>

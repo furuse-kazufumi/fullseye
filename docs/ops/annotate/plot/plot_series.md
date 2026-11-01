@@ -4,6 +4,7 @@ dim: annotate
 category: plot
 in: image2d × axes × signal × signal
 out: image2d
+gpu: なし
 examples: [annotate_gallery, poc_camera_calibration, poc_camera_shake_deblur, poc_crack_width_timeseries, poc_dehazing, poc_dic_strain, poc_driving_decisions, poc_driving_traffic, poc_focus_stacking, poc_interferometry_step, poc_measurement_system_analysis, poc_moire_alignment, poc_panorama_drift, poc_particle_tracking, poc_photoelasticity, poc_pxrd_phase_peel, poc_registration_basin, poc_river_surface_velocity, poc_simcal_thin_film, poc_superresolution_limits, poc_template_tracking, poc_timelapse_growth, poc_wound_area_tracking]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d × axes × signal × signal` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.plot_series(img, axes, x, y, kind='line', color='reference', width=2, marker_size=3, baseline=None, bar_width=0.7, clip=True, scheme='okabe_ito', style=None)` (実装を直接呼ぶなら `import annotate; annotate.plot_series(img, axes, x, y, kind='line', color='reference', width=2, marker_size=3, baseline=None, bar_width=0.7, clip=True, scheme='okabe_ito', style=None)`、台帳から引くなら `opsannotate.get("plot_series")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

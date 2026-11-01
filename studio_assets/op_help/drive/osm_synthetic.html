@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">osm_synthetic — DRIVE <code style="color:#22d3bf">japan</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">any</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.osm_synthetic(kind: &#x27;str&#x27; = &#x27;grid&#x27;, *, origin=(35.6716, 139.765), n: &#x27;int&#x27; = 3, pitch: &#x27;float&#x27; = 80.0) -&gt; &#x27;str&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import drivejapan; drivejapan.osm_synthetic(kind: &#x27;str&#x27; = &#x27;grid&#x27;, *, origin=(35.6716, 139.765), n: &#x27;int&#x27; = 3, pitch: &#x27;float&#x27; = 80.0) -&gt; &#x27;str&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;osm_synthetic&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>テストと fuzz 用の最小の OSM XML(本物と同じ要素: bounds / node / way / tag)。</p>
 <p>&quot;grid&quot; = n × n の格子(東西 = primary、lanes=2、南北 = residential、幅は既定)。中央の交差点に <code style="color:#22d3bf">highway=traffic_signals</code>、東の縁の中段(T 字路)に <code style="color:#22d3bf">highway=stop</code>、西の辺の途中に <code style="color:#22d3bf">highway=crossing</code>、南の辺の途中に <code style="color:#22d3bf">railway=level_crossing</code>。&quot;line&quot; = 東西 1 本の residential(長さ pitch × (n − 1))。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: kind が未知、n &lt; 2、pitch ≤ 0。</p>

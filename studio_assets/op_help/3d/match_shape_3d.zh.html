@@ -3,7 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">voxel × voxel</code> → <code style="color:#22d3bf">position</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.match_shape_3d(vol, template, device=&#x27;cpu&#x27;, mc=0.05, subvoxel=True)</code>(要直接调用实现,<code style="color:#22d3bf">import match3d; match3d.match_shape_3d(vol, template, device=&#x27;cpu&#x27;, mc=0.05, subvoxel=True)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;match_shape_3d&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>经台账调用的返回值</b>: <code style="color:#22d3bf">fullseye.ledger.match_shape_3d(...)</code> 只返回<b>声明的 out 类型 <code style="color:#22d3bf">position</code> 的值</b>(底层函数还会返回辅助信息)。需要被丢弃的部分时,使用 <code style="color:#22d3bf">fullseye.ledger.match_shape_3d.raw(...)</code>,或直接调用 <code style="color:#22d3bf">match3d.match_shape_3d</code>。</p>
-<p style="margin:2px 0 2px 12px">• <b>GPU</b>:该算子有 GPU 路径(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>3D 形状(梯度方向)匹配 = 2D shapematch_gpu 的 voxel 版(「轮廓匹配」)。</p>
 <p>模板与场景的 <b>单位梯度向量内积之和</b>(Steger 式)。对强度/对比度不变, 以边缘/形状衡量匹配。score(pos)=Σ&lt;û_scene(pos+dt), û_model(dt)&gt;/n,用 3 个分量的 conv3d 计算。</p>

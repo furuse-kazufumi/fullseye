@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">mat_logm — MATH <code style="color:#22d3bf">estimation</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mat_logm(A) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import mathestimation; mathestimation.mat_logm(A) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsmath.get(&quot;mat_logm&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>principal matrix logarithm log A (e^X = A वाले X में से वह जिसके eigenvalues के imaginary part (−π, π] में हैं, scipy)।</p>
 <p>ऋणात्मक वास्तविक eigenvalues वाले matrix का कोई real principal logarithm नहीं होता → ValueError (चुपचाप complex संख्याएँ नहीं लौटाता)।</p>

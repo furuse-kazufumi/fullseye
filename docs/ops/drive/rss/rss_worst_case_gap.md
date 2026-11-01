@@ -4,6 +4,7 @@ dim: drive
 category: rss
 in: table
 out: table
+gpu: なし
 examples: [poc_ttc_rss]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.rss_worst_case_gap(d0: 'float', v_rear: 'float', v_front: 'float', p: 'dict', p_front: 'Optional[dict]' = None, dt: 'float' = 0.001, t_max: 'Optional[float]' = None) -> 'Dict[str, object]'` (実装を直接呼ぶなら `import rsssafety; rsssafety.rss_worst_case_gap(d0: 'float', v_rear: 'float', v_front: 'float', p: 'dict', p_front: 'Optional[dict]' = None, dt: 'float' = 0.001, t_max: 'Optional[float]' = None) -> 'Dict[str, object]'`、台帳から引くなら `opsdrive.get("rss_worst_case_gap")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

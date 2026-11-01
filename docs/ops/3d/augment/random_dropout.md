@@ -4,6 +4,7 @@ dim: 3d
 category: augment
 in: points
 out: points
+gpu: なし
 examples: [augment_pointcloud]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,6 +16,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **データ種**: `points` → `points`
 - **呼び出し**: `import fullseye as fs; fs.ledger.random_dropout(points, ratio: 'float', seed: 'int' = 0) -> 'Tuple[np.ndarray, np.ndarray]'` (実装を直接呼ぶなら `import pcl_augment; pcl_augment.random_dropout(points, ratio: 'float', seed: 'int' = 0) -> 'Tuple[np.ndarray, np.ndarray]'`、台帳から引くなら `ops3d.get("random_dropout")`)
 - **台帳経由の戻り値**: `fullseye.ledger.random_dropout(...)` は**宣言 out 型 `points` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.random_dropout.raw(...)`、または `pcl_augment.random_dropout` を直接呼ぶ。
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

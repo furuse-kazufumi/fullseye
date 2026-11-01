@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">camera_calibration — CALIB <code style="color:#22d3bf">calibrate</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">keypoints</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.camera_calibration(object_points, image_points_list)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import calib; calib.camera_calibration(object_points, image_points_list)</code>, registry से लेना हो तो <code style="color:#22d3bf">opscalib.get(&quot;camera_calibration&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Zhang विधि से planar target के कई views से intrinsic matrix K का अनुमान लगाता है (camera_calibration)।</p>
 <p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>

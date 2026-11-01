@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">normals_to_angles — REPRCONV <code style="color:#22d3bf">direction</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">normals</code> → <code style="color:#22d3bf">pairs</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.normals_to_angles(normals)</code> (to call the implementation directly, <code style="color:#22d3bf">import reprconv; reprconv.normals_to_angles(normals)</code>; from the registry, <code style="color:#22d3bf">opsreprconv.get(&quot;normals_to_angles&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Normals <code style="color:#22d3bf">(N,3)</code> → azimuth/elevation pairs <code style="color:#22d3bf">(N,2)</code> <b>[deg]</b>. The exit from <code style="color:#22d3bf">normals</code>.</p>
 <p><code style="color:#22d3bf">az = atan2(c1, c0)</code> is the azimuth in the axis0-axis1 plane, <code style="color:#22d3bf">el = asin(c2/|v|)</code> is the elevation from axis 2. <b>It is defined with &quot;axis 0/1/2&quot;, not x/y/z</b>, because this repo has both point clouds in (z,y,x) order and point clouds in (x,y,z) order -- written with names, the meaning would change depending on which convention the passed array follows.</p>

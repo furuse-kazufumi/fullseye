@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">grating_step_period_estimate — OPTICS <code style="color:#22d3bf">grating_interf</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">images</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.grating_step_period_estimate(stack, p_min=None, p_max=None, p_step=0.05, region=None, min_visibility=0.05)</code>(要直接调用实现,<code style="color:#22d3bf">import gratinginterf; gratinginterf.grating_step_period_estimate(stack, p_min=None, p_max=None, p_step=0.05, region=None, min_visibility=0.05)</code>;从台账取用则 <code style="color:#22d3bf">opsoptics.get(&quot;grating_step_period_estimate&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由相位步进图像序列估计「一个周期包含多少步」(P),取正弦拟合残差的最小值。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>

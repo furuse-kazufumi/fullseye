@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">shape_index — 3D <code style="color:#22d3bf">curvature</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">descriptor</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.shape_index(points, k=25, normals=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import curvature3d; curvature3d.shape_index(points, k=25, normals=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;shape_index&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Koenderink का shape index s∈[-1,1] (convex sphere +1, cylinder +0.5, saddle 0, concave sphere -1)। → (N,)।</p>
 <p>umbilic/plane का निर्णय <b>curvature scale के सापेक्ष</b> है (कोई absolute threshold नहीं)। हल्के convex/concave क्षेत्र (curvature बहुत छोटा होने पर भी) अपना sign = concave/convex बनाए रखते हैं, और plane के रूप में s=0 केवल उन points को मिलता है जिनका curvature पूरे data के curvature scale के सापेक्ष 0 है।</p>

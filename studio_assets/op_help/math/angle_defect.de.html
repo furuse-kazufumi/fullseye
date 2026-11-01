@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">angle_defect — MATH <code style="color:#22d3bf">geometry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">mesh</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.angle_defect(vertices, faces=None) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import mathgeometry; mathgeometry.angle_defect(vertices, faces=None) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsmath.get(&quot;angle_defect&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Winkeldefekt je Vertex (diskrete Gauß-Krümmung) K_v = 2π − Σ(Winkel der Dreiecke an diesem Vertex). Für Randvertices π − Σ (geodätische Krümmung).</p>
 <p>Auf einem geschlossenen Mesh gilt Σ K_v = 2πχ <b>exakt</b> (Satz von Descartes). Mit Rand gilt Σ(innere K) + Σ(Rand π − Σθ) = 2πχ (diskreter Gauss–Bonnet). Rückgabewert <code style="color:#22d3bf">{&quot;defect&quot;, &quot;total&quot;, &quot;two_pi_chi&quot;, &quot;is_boundary&quot;}</code>.</p>

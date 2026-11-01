@@ -4,6 +4,7 @@ dim: 3d
 category: refine
 in: points × points × normals
 out: pose
+gpu: なし
 examples: [refinement]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `points × points × normals` → `pose`
 - **呼び出し**: `import fullseye as fs; fs.ledger.icp_point2plane(src, dst, dst_normals, iters=30, tol=1e-09, init=None, trim=None, device='cpu', reproducible=False)` (実装を直接呼ぶなら `import match3d; match3d.icp_point2plane(src, dst, dst_normals, iters=30, tol=1e-09, init=None, trim=None, device='cpu', reproducible=False)`、台帳から引くなら `ops3d.get("icp_point2plane")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

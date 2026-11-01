@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">camera_rig — DRIVE <code style="color:#22d3bf">ballworld</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.camera_rig(tp: &#x27;dict&#x27; = None, *, n: &#x27;int&#x27; = 2, distance: &#x27;float&#x27; = 2.2, height: &#x27;float&#x27; = 1.7, fov_deg: &#x27;float&#x27; = 55.0, width: &#x27;int&#x27; = 1280, height_px: &#x27;int&#x27; = 1024) -&gt; &#x27;list&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import ballworld; ballworld.camera_rig(tp: &#x27;dict&#x27; = None, *, n: &#x27;int&#x27; = 2, distance: &#x27;float&#x27; = 2.2, height: &#x27;float&#x27; = 1.7, fov_deg: &#x27;float&#x27; = 55.0, width: &#x27;int&#x27; = 1280, height_px: &#x27;int&#x27; = 1024) -&gt; &#x27;list&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;camera_rig&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>台を囲むカメラ(n = 2: 両端の斜め上、n = 4: 4 隅)。返り値 <code style="color:#22d3bf">[{&quot;pose&quot;, &quot;K&quot;, &quot;eye&quot;, &quot;width&quot;, &quot;height&quot;}, …]</code>、全部が台の中心を見る。</p>
 <p>空の入力(<code style="color:#22d3bf">tp</code> が空の dict)は ValueError。</p>

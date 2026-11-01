@@ -4,6 +4,7 @@ dim: drive
 category: env
 in: scalar
 out: scalar
+gpu: なし
 examples: [poc_driving_weather]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `scalar` → `scalar`
 - **呼び出し**: `import fullseye as fs; fs.ledger.beta_from_mor(mor: 'float', contrast: 'float' = 0.05) -> 'float'` (実装を直接呼ぶなら `import driveenv; driveenv.beta_from_mor(mor: 'float', contrast: 'float' = 0.05) -> 'float'`、台帳から引くなら `opsdrive.get("beta_from_mor")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

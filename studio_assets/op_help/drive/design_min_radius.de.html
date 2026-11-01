@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">design_min_radius — DRIVE <code style="color:#22d3bf">lateral</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.design_min_radius(design_speed_kmh, *, side_friction: &#x27;float&#x27;, superelevation: &#x27;float&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import drivelateral; drivelateral.design_min_radius(design_speed_kmh, *, side_friction: &#x27;float&#x27;, superelevation: &#x27;float&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;design_min_radius&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Minimaler Kurvenradius nach Gl. (3) der Erläuterungen zur Straßenbauverordnung (Road Structure Ordinance): R = V² / (127 (i + f)) [m] (V in km/h).</p>
 <p>Die Entwurfsformel, die aus Gleichung (2) das i f im Nenner weglässt (i f ≪ 1) und 3.6² g ≈ 127 setzt. Die exakte Höchstgeschwindigkeit liefert <code style="color:#22d3bf">curve_speed_limit</code>.</p>

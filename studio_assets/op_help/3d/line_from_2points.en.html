@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">line_from_2points — 3D <code style="color:#22d3bf">geometry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">primitive</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.line_from_2points(a, b)</code> (to call the implementation directly, <code style="color:#22d3bf">import match3d; match3d.line_from_2points(a, b)</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;line_from_2points&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Two points → a line (a point on it and a unit direction). Two coordinates fix the line (2-D and 3-D alike).</p>
 <p>Returns <code style="color:#22d3bf">(a, u)</code>: <code style="color:#22d3bf">a</code> is input point 1 (float array), <code style="color:#22d3bf">u = (b − a)/|b − a|</code>. The arguments are numeric 2- or 3-vectors (anything else, or mixed dimensions, raises ValueError). When <code style="color:#22d3bf">a == b</code> the direction is returned as the zero vector (no exception; check <code style="color:#22d3bf">|u| &gt; 0</code> on the caller side). The coordinate order does not matter (it is returned in the input order), so (x,y,z) or (z,y,x) is fine as long as it is consistent.</p>

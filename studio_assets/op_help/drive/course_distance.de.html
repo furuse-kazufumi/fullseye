@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">course_distance — DRIVE <code style="color:#22d3bf">terrain</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table × points</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.course_distance(course, xy) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import driveterrain; driveterrain.course_distance(course, xy) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;course_distance&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Abstand von Punkten (N, 2) zum Kurs (Vereinigung der befahrbaren Polygone) und der vom nächstgelegenen Punkt nach außen zeigende Einheitsvektor.</p>
 <p><code style="color:#22d3bf">{&quot;d&quot; (N,), &quot;nx&quot; (N,), &quot;ny&quot; (N,)}</code>. Innen d = 0, n = 0. Außen ist d der geschlossene Punkt-Strecken-Abstand zur nächsten Kante; außer auf der Mittelachse (wo es zwei nächste Punkte gibt) gilt |∇d| = 1 (eikonal).</p>

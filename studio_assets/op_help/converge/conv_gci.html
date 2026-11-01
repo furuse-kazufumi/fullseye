@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">conv_gci — CONVERGE <code style="color:#22d3bf">verification</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.conv_gci(phi=None, h=None, r=None, n_cells=None, dim=None, safety_factor=1.25) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import converge; converge.conv_gci(phi=None, h=None, r=None, n_cells=None, dim=None, safety_factor=1.25) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsconverge.get(&quot;conv_gci&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Grid convergence index of the finest solution: Celik et al. 2008 procedure, eqs. (1)-(7).</p>
 <p>Takes the same inputs as <code style="color:#22d3bf">conv_observed_order</code> (three solutions, finest first, and the refinement) and returns, with p from eq. (3):</p>

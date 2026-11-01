@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">geodesic_mesh — 3D <code style="color:#22d3bf">geodesic</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">mesh</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.geodesic_mesh(vertices: numpy.ndarray, faces: numpy.ndarray, source: int) -&gt; numpy.ndarray</code>(要直接调用实现,<code style="color:#22d3bf">import geodesic3d; geodesic3d.geodesic_mesh(vertices: numpy.ndarray, faces: numpy.ndarray, source: int) -&gt; numpy.ndarray</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;geodesic_mesh&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>在三角网格的边图上用 Dijkstra 求从 source 到各顶点的测地距离。→ (V,) float。</p>
 <p>将每个三角形的 3 条边 (0,1),(1,2),(2,0) 收集为无向边,按 (min,max) 去重后,以边长 = 两端顶点的 Euclid 距离为权重构建稀疏图,用 <code style="color:#22d3bf">dijkstra(directed=False)</code> 返回从 source 出发的最短路径长度。<code style="color:#22d3bf">d[source] = 0</code>,与 source 没有边相连的顶点为 <code style="color:#22d3bf">inf</code>。单位为顶点坐标的单位。</p>

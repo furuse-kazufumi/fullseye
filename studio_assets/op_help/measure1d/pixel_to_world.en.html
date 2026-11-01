@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">pixel_to_world — MEASURE1D <code style="color:#22d3bf">scale</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">measurement</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pixel_to_world(value_px, mm_per_px)</code> (to call the implementation directly, <code style="color:#22d3bf">import measuring1d; measuring1d.pixel_to_world(value_px, mm_per_px)</code>; from the registry, <code style="color:#22d3bf">opsmeasure1d.get(&quot;pixel_to_world&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Converts one length measured in pixels to real-world mm (<code style="color:#22d3bf">value_px * mm_per_px</code>).</p>
 <p>Pass a <code style="color:#22d3bf">mm_per_px</code> that was <b>measured</b> with <code style="color:#22d3bf">mm_per_px_from_reference</code>. <code style="color:#22d3bf">value_px</code> may be zero or negative (differences and biases convert as they are) but must be finite; <code style="color:#22d3bf">mm_per_px</code> must be finite and positive. Otherwise <code style="color:#22d3bf">ValueError</code>. Returns a float (<code style="color:#22d3bf">measurement</code> sort). For areas, square mm/px and multiply yourself (this op handles lengths only).</p>

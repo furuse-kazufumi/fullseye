@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">env_lightbox — OPTICS <code style="color:#22d3bf">scene</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.env_lightbox(directions, base: &#x27;float&#x27; = 0.45, key: &#x27;float&#x27; = 4.0, elevation: &#x27;float&#x27; = 0.85, width: &#x27;float&#x27; = 0.55, azimuth_width: &#x27;float&#x27; = 1.1, floor: &#x27;float&#x27; = 0.25)</code>(要直接调用实现,<code style="color:#22d3bf">import optscene; optscene.env_lightbox(directions, base: &#x27;float&#x27; = 0.45, key: &#x27;float&#x27; = 4.0, elevation: &#x27;float&#x27; = 0.85, width: &#x27;float&#x27; = 0.55, azimuth_width: &#x27;float&#x27; = 1.1, floor: &#x27;float&#x27; = 0.25)</code>;从台账取用则 <code style="color:#22d3bf">opsoptics.get(&quot;env_lightbox&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>摄影灯箱的环境(宽大的顶光 + 略亮的周围)。<b>无彩色</b>。</p>
 <p><code style="color:#22d3bf">env_studio</code> 是为了“戏剧化地呈现”的暗室 + 2 盏小柔光箱，而这个则是让<b>加工面看起来就是加工面</b>的环境。它被设计为满足 2026-09-05 实测中发现的 2 个条件：</p>

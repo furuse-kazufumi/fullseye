@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">ou_estimate — DRIVE <code style="color:#22d3bf">traffic</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ou_estimate(x, dt: &#x27;float&#x27;) -&gt; &#x27;Dict[str, float]&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import drivetraffic; drivetraffic.ou_estimate(x, dt: &#x27;float&#x27;) -&gt; &#x27;Dict[str, float]&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;ou_estimate&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>横ふらつき(平均 0 の OU 過程 dX = −θX dt + σ dW)の母数を、等間隔 dt の観測の列から読む。</p>
 <p>厳密離散化 x_{k+1} = φ x_k + ε_k(φ = e^{−θ dt}、ε ~ N(0, q²)、q² = σ²(1 − φ²)/(2θ))の条件つき最尤:</p>

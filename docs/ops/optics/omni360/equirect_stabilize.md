@@ -4,6 +4,7 @@ dim: optics
 category: omni360
 in: images
 out: table
+gpu: なし
 examples: [poc_omni360_inspection]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `images` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.equirect_stabilize(frames, residual_limit=0.08, sample_shape=(24, 48))` (実装を直接呼ぶなら `import omni360; omni360.equirect_stabilize(frames, residual_limit=0.08, sample_shape=(24, 48))`、台帳から引くなら `opsoptics.get("equirect_stabilize")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">angle_defect — MATH <code style="color:#22d3bf">geometry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">mesh</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.angle_defect(vertices, faces=None) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import mathgeometry; mathgeometry.angle_defect(vertices, faces=None) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsmath.get(&quot;angle_defect&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>हर vertex का angle defect (discrete Gauss curvature) K_v = 2π − Σ(उस vertex पर triangles के कोण)। boundary vertices के लिए π − Σ(geodesic curvature)।</p>
 <p>बंद mesh पर Σ K_v = 2πχ <b>सटीक रूप से</b> लागू होता है (Descartes का प्रमेय)। boundary होने पर, Σ(interior K) + Σ(boundary π − Σθ) = 2πχ (discrete Gauss–Bonnet)। <code style="color:#22d3bf">{&quot;defect&quot;, &quot;total&quot;, &quot;two_pi_chi&quot;, &quot;is_boundary&quot;}</code> लौटाता है।</p>

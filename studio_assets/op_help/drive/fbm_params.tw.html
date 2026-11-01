@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">fbm_params — DRIVE <code style="color:#22d3bf">terrain</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">無</code> → <code style="color:#22d3bf">table</code>(僅由參數決定的運算子 —— 不接受影像或資料輸入)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fbm_params(seed: &#x27;int&#x27; = 0, hurst: &#x27;float&#x27; = 0.8, n_waves: &#x27;int&#x27; = 128, f_min: &#x27;float&#x27; = 0.005, f_max: &#x27;float&#x27; = 0.125, amplitude: &#x27;float&#x27; = 1.0) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import driveterrain; driveterrain.fbm_params(seed: &#x27;int&#x27; = 0, hurst: &#x27;float&#x27; = 0.8, n_waves: &#x27;int&#x27; = 128, f_min: &#x27;float&#x27; = 0.005, f_max: &#x27;float&#x27; = 0.125, amplitude: &#x27;float&#x27; = 1.0) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;fbm_params&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>以隨機相位正弦之和建構 fBm 曲面的參數表(Saupe 1988 頻譜合成的連續版)。</p>
 <p>頻率在 [f_min, f_max] 上對數均勻,方向均勻,相位均勻,振幅 ∝ f^{−H}。對數均勻撒布的波在二維頻率面上的密度 ∝ f^{−2},因此功率譜 ∝ A(f)² f^{−2} = f^{−(2H+2)}, 即 β = 2H + E(E = 2)。振幅正規化使 RMS 等於 <code style="color:#22d3bf">amplitude</code>。</p>

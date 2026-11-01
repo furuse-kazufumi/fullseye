@@ -4,6 +4,7 @@ dim: drive
 category: town
 in: table
 out: table
+gpu: なし
 examples: [poc_driving_japan_town, poc_driving_town]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.town_run(layout, *, dt: 'float' = 0.05, v_max: 'float' = 8.0, a_max: 'float' = 1.5, b_max: 'float' = 3.0, stop_at: 'Optional[Sequence[str]]' = None, stop_hold: 'Optional[float]' = None, look_hold: 'Optional[float]' = None, stop_margin: 'float' = 0.5, idm_T: 'float' = 1.0, v_stop: 'Optional[float]' = None, t_max: 'Optional[float]' = None, rules: 'Optional[dict]' = None, train=None) -> 'Dict[str, object]'` (実装を直接呼ぶなら `import drivetown; drivetown.town_run(layout, *, dt: 'float' = 0.05, v_max: 'float' = 8.0, a_max: 'float' = 1.5, b_max: 'float' = 3.0, stop_at: 'Optional[Sequence[str]]' = None, stop_hold: 'Optional[float]' = None, look_hold: 'Optional[float]' = None, stop_margin: 'float' = 0.5, idm_T: 'float' = 1.0, v_stop: 'Optional[float]' = None, t_max: 'Optional[float]' = None, rules: 'Optional[dict]' = None, train=None) -> 'Dict[str, object]'`、台帳から引くなら `opsdrive.get("town_run")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

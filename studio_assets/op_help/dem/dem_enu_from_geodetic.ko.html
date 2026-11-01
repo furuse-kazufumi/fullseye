@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">dem_enu_from_geodetic — DEM <code style="color:#22d3bf">geodesy</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">points</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_enu_from_geodetic(lat_deg, lon_deg, h_m, lat0_deg, lon0_deg, h0_m)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import demops; demops.dem_enu_from_geodetic(lat_deg, lon_deg, h_m, lat0_deg, lon0_deg, h0_m)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdem.get(&quot;dem_enu_from_geodetic&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>측지 좌표 → 기준점 주위의 <b>국소 ENU</b>(동·북·상) [m] (<code style="color:#22d3bf">points</code>).</p>
 <p>현장 도면·로봇의 지도·점군의 대부분은 “원점으로부터의 동·북·상”으로 쓰인다. ECEF로부터의 변환은 기준점에서의 회전 1개로, <code style="color:#22d3bf">ENU = R(lat0, lon0) (X - X0)</code>.</p>

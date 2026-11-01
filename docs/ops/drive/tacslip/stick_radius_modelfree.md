@@ -4,6 +4,7 @@ dim: drive
 category: tacslip
 in: matrix × matrix
 out: table
+gpu: なし
 examples: [poc_tacsim_marker_shear]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `matrix × matrix` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.stick_radius_modelfree(pts_c, u_px, rel: 'float' = 0.08, abs_px: 'float' = 0.05) -> 'dict'` (実装を直接呼ぶなら `import tacslip; tacslip.stick_radius_modelfree(pts_c, u_px, rel: 'float' = 0.08, abs_px: 'float' = 0.05) -> 'dict'`、台帳から引くなら `opsdrive.get("stick_radius_modelfree")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

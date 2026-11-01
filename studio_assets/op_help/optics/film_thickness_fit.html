@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">film_thickness_fit — OPTICS <code style="color:#22d3bf">film</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.film_thickness_fit(spectrum, film=&#x27;SIO2&#x27;, substrate=&#x27;SI&#x27;, thickness_min_nm=0.0, thickness_max_nm=3000.0, under=(), angle_deg=0.0, na=0.0, fit_scale=False, ambient=1.0, roughness_nm=0.0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import filmoptics; filmoptics.film_thickness_fit(spectrum, film=&#x27;SIO2&#x27;, substrate=&#x27;SI&#x27;, thickness_min_nm=0.0, thickness_max_nm=3000.0, under=(), angle_deg=0.0, na=0.0, fit_scale=False, ambient=1.0, roughness_nm=0.0)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;film_thickness_fit&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>反射スペクトルに転送行列のモデルをあてはめて膜厚を出す(非線形最小二乗、大域の格子探索 → 局所の精密化)。</p>
 <p>spectrum:     <code style="color:#22d3bf">pairs</code>(λ [nm], R)。</p>

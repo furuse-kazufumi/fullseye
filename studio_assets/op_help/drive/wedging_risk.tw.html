@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">wedging_risk — DRIVE <code style="color:#22d3bf">pegfail</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">table × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.wedging_risk(kp, theta: &#x27;float&#x27;, margin_deg: &#x27;float&#x27; = 0.5) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import pegfail; pegfail.wedging_risk(kp, theta: &#x27;float&#x27;, margin_deg: &#x27;float&#x27; = 0.5) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;wedging_risk&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>傾角 θ [rad] 的楔住風險：相對邊界 c/μ(OCW p.28)的比值 θ/(c/μ)，以及考慮餘裕 <code style="color:#22d3bf">margin_deg</code> 的 3 級(<code style="color:#22d3bf">safe</code> / <code style="color:#22d3bf">near</code> / <code style="color:#22d3bf">over</code>)。封裝 pegsim.wedging_check，並以度為單位補充 <code style="color:#22d3bf">theta_limit_deg</code>、<code style="color:#22d3bf">headroom_deg</code> = c/μ − θ。μ = 0 時邊界為 inf，恆為 safe。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>：θ &lt; 0、margin_deg &lt; 0。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

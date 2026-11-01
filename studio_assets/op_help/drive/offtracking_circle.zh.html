@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">offtracking_circle — DRIVE <code style="color:#22d3bf">lateral</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">table</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.offtracking_circle(front_radius: &#x27;float&#x27;, wheelbase: &#x27;float&#x27;, arc_length, *, track: &#x27;float&#x27; = 0.0, gamma0: &#x27;float&#x27; = 0.0) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import drivelateral; drivelateral.offtracking_circle(front_radius: &#x27;float&#x27;, wheelbase: &#x27;float&#x27;, arc_length, *, track: &#x27;float&#x27; = 0.0, gamma0: &#x27;float&#x27; = 0.0) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;offtracking_circle&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>内轮差的过渡过程(闭式)：前轴中心进入半径 R 的圆后行进弧长 s 时的车辆位姿和内侧车轮的半径。</p>
 <p>后轴中心由前轴中心以长度 L 的杆牵引(无滑移)。杆与前方速度的夹角 γ 满足 dγ/ds = 1/R − sin γ / L。令 a = 1/R、b = 1/L、k = √(b² − a²)、t± = (b ± k)/a(t− = tan(γ*/2),sin γ* = L/R),则 Q = ((t+ − t₀)/(t− − t₀)) e^{k s},tan(γ/2) = (Q t− − t+)/(Q − 1)。</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">jpeg_ghost_map — IMGFORENSICS <code style="color:#22d3bf">compression</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">images</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.jpeg_ghost_map(image, qualities=None, block: &#x27;int&#x27; = 16) -&gt; &#x27;list&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import imgforensics; imgforensics.jpeg_ghost_map(image, qualities=None, block: &#x27;int&#x27; = 16) -&gt; &#x27;list&#x27;</code>; from the registry, <code style="color:#22d3bf">opsimgforensics.get(&quot;jpeg_ghost_map&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>JPEG ghosts (Farid 2009). A series of <b>re-compression residual maps</b> over a quality sweep. <code style="color:#22d3bf">images</code>.</p>
 <p>If a region has been compressed once at quality <code style="color:#22d3bf">q0</code>, recompressing at <code style="color:#22d3bf">q = q0</code> makes the difference in that region a <b>valley</b>. If the whole image has the same <code style="color:#22d3bf">q0</code> the valley appears everywhere, but if a part compressed at a different quality has been pasted in, <b>only that region forms a valley at a different <code style="color:#22d3bf">q</code></b>.</p>

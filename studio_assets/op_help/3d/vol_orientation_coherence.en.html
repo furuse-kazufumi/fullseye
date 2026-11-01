@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">vol_orientation_coherence — 3D <code style="color:#22d3bf">feature</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">voxel</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_orientation_coherence(vol, sigma=1.0, rho=3.0)</code> (to call the implementation directly, <code style="color:#22d3bf">import volops; volops.vol_orientation_coherence(vol, sigma=1.0, rho=3.0)</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;vol_orientation_coherence&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>How strongly the local structure points <b>one way</b> (3-D structure tensor).</p>
 <p>Builds <code style="color:#22d3bf">J = G_rho * (grad I)(grad I)^T</code> and returns</p>

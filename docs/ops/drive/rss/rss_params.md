@@ -4,6 +4,7 @@ dim: drive
 category: rss
 in: 
 out: table
+gpu: なし
 examples: [gallery_drive_lateral_env, poc_ttc_rss]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.rss_params(rho: 'float' = 1.0, accel_max: 'float' = 3.5, brake_min: 'float' = 4.0, brake_max: 'float' = 8.0, brake_min_correct: 'float' = 3.0, lat_accel_max: 'float' = 0.2, lat_brake_min: 'float' = 0.8, lat_margin: 'float' = 0.1, min_distance: 'float' = 0.0, v_max_accel: 'Optional[float]' = None) -> 'Dict[str, Optional[float]]'` (実装を直接呼ぶなら `import rsssafety; rsssafety.rss_params(rho: 'float' = 1.0, accel_max: 'float' = 3.5, brake_min: 'float' = 4.0, brake_max: 'float' = 8.0, brake_min_correct: 'float' = 3.0, lat_accel_max: 'float' = 0.2, lat_brake_min: 'float' = 0.8, lat_margin: 'float' = 0.1, min_distance: 'float' = 0.0, v_max_accel: 'Optional[float]' = None) -> 'Dict[str, Optional[float]]'`、台帳から引くなら `opsdrive.get("rss_params")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

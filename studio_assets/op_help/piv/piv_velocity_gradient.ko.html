@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">piv_velocity_gradient — PIV <code style="color:#22d3bf">field</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">flow2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_velocity_gradient(flow, spacing=1.0)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import pivops; pivops.piv_velocity_gradient(flow, spacing=1.0)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opspiv.get(&quot;piv_velocity_gradient&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>속도 구배 텐서의 성분과 그로부터 나오는 양을 함께 반환한다.</p>
 <p>와도·발산·Q 기준·와류 회전 강도·변형률 속도는 <b>모두 같은 4개의 미분</b>에서나오므로, 기울기를 4번 다시 계산하지 않아도 되도록 여기에 모은다. 개별 op (<code style="color:#22d3bf">piv_vorticity</code> 등)는 단독으로도 쓸 수 있지만, 여러 개가 필요하면 이쪽.</p>

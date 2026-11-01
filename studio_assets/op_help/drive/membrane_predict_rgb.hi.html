@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">membrane_predict_rgb — DRIVE <code style="color:#22d3bf">tacscalib</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">normalmap × table</code> → <code style="color:#22d3bf">rgb</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.membrane_predict_rgb(normals, fit: &#x27;dict&#x27;, *, chunk=262144) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import tacscalib; tacscalib.membrane_predict_rgb(normals, fit: &#x27;dict&#x27;, *, chunk=262144) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;membrane_predict_rgb&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>normals (H, W, 3) + <code style="color:#22d3bf">lights_fit_from_sphere</code> का परिणाम → background-subtracted RGB का prediction (H, W, 3) (linear, clip नहीं)। order 2 का परिणाम हर pixel पर a(x, y) और L(x, y) बनाता है (image का आकार calibration के समय जैसा होना चाहिए)। <b>Raises</b> <code style="color:#22d3bf">ValueError</code>: normals का shape / order 2 में image का आकार अलग।</p>
 <p>खाली इनपुट (<code style="color:#22d3bf">normals</code> में 0 तत्व) पर <code style="color:#22d3bf">ValueError</code> उठता है।</p>

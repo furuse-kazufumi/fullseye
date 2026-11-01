@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">stat_ttest_paired — MATH <code style="color:#22d3bf">estimation</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.stat_ttest_paired(x, y) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import mathestimation; mathestimation.stat_ttest_paired(x, y) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsmath.get(&quot;stat_ttest_paired&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Gepaarter t-Test: ob der Mittelwert der Differenzen d = x − y aus 2 Messungen derselben Objekte 0 ist.</p>
 <p>t = mean(d) / (sd(d)/√n), Freiheitsgrade n−1, zweiseitiger p-Wert. Rückgabewert <code style="color:#22d3bf">{&quot;t&quot;, &quot;df&quot;, &quot;p&quot;, &quot;mean_diff&quot;}</code>.</p>

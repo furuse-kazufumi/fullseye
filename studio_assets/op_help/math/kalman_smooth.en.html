@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">kalman_smooth — MATH <code style="color:#22d3bf">estimation</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">matrix × matrix × matrix × matrix × matrix × signal × matrix</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.kalman_smooth(z, F, H, Q, R, x0, P0, *, store_predictions: &#x27;bool&#x27; = True, method: &#x27;str&#x27; = &#x27;exact&#x27;) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import mathestimation; mathestimation.kalman_smooth(z, F, H, Q, R, x0, P0, *, store_predictions: &#x27;bool&#x27; = True, method: &#x27;str&#x27; = &#x27;exact&#x27;) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsmath.get(&quot;kalman_smooth&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Kalman filter (forward) and Rauch–Tung–Striebel smoother (backward) for the linear Gaussian state-space model x_{k+1} = F x_k + w (w ~ N(0,Q)), z_k = H x_k + v (v ~ N(0,R)).</p>
 <p><code style="color:#22d3bf">z</code> is the (T, m) observations (rows with NaN are treated as missing and the update is skipped). Returns <code style="color:#22d3bf">{&quot;x_filt&quot;, &quot;P_filt&quot;, &quot;x_smooth&quot;, &quot;P_smooth&quot;, &quot;nll&quot;}</code>.</p>

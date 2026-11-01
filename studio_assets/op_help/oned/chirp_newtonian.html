@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">chirp_newtonian — ONED <code style="color:#22d3bf">matched</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">signal</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.chirp_newtonian(mass1_msun: &#x27;float&#x27; = 36.0, mass2_msun: &#x27;float&#x27; = 29.0, rate: &#x27;float&#x27; = 4096.0, duration_s: &#x27;float&#x27; = 1.0, *, f_low_hz: &#x27;float&#x27; = 20.0, distance_mpc: &#x27;float&#x27; = 410.0, phase_rad: &#x27;float&#x27; = 0.0) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import gwsearch; gwsearch.chirp_newtonian(mass1_msun: &#x27;float&#x27; = 36.0, mass2_msun: &#x27;float&#x27; = 29.0, rate: &#x27;float&#x27; = 4096.0, duration_s: &#x27;float&#x27; = 1.0, *, f_low_hz: &#x27;float&#x27; = 20.0, distance_mpc: &#x27;float&#x27; = 410.0, phase_rad: &#x27;float&#x27; = 0.0) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">ops1d.get(&quot;chirp_newtonian&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>ニュートン近似(0PN)のインスパイラル波形 h₊(t) を <code style="color:#22d3bf">signal</code> で返す(合体が配列の末尾)。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>

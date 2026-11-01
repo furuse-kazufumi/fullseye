@@ -4,6 +4,7 @@ dim: interferometry
 category: envelope
 in: sweep
 out: signal
+gpu: なし
 examples: [coherence_scanning]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `sweep` → `signal`
 - **呼び出し**: `import fullseye as fs; fs.ledger.csi_envelope(signal, remove_bias=True)` (実装を直接呼ぶなら `import interferometry; interferometry.csi_envelope(signal, remove_bias=True)`、台帳から引くなら `opsinterferometry.get("csi_envelope")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

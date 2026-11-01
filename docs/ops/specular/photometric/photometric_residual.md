@@ -4,6 +4,7 @@ dim: specular
 category: photometric
 in: images
 out: image2d
+gpu: なし
 examples: [specular_photometric]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `images` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.photometric_residual(images, lights, normals=None, albedo=None, normalize=True)` (実装を直接呼ぶなら `import specularity; specularity.photometric_residual(images, lights, normals=None, albedo=None, normalize=True)`、台帳から引くなら `opsspecular.get("photometric_residual")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

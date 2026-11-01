@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">insertion_grid_summary — DRIVE <code style="color:#22d3bf">pegsim</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.insertion_grid_summary(rows) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import pegsim; pegsim.insertion_grid_summary(rows) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;insertion_grid_summary&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Aggregates the success-rate grid: from rows {eps_mm, tilt_deg, correct, success}, the table of success rates for with/without correction × ε₀ × θ₀, plus &quot;the largest ε₀ at which everything succeeds without correction&quot; and &quot;successes / total with correction&quot;.</p>
 <p>Returns: <code style="color:#22d3bf">eps_mm</code>, <code style="color:#22d3bf">tilt_deg</code> (axes), <code style="color:#22d3bf">rate</code>: {False: array of (n_eps, n_tilt), True: same}, <code style="color:#22d3bf">n_runs</code>, <code style="color:#22d3bf">max_eps_all_ok</code>:</p>

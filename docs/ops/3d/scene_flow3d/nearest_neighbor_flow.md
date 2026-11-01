@@ -4,6 +4,7 @@ dim: 3d
 category: scene_flow3d
 in: points × points
 out: flow_scattered
+gpu: なし
 examples: [scene_flow_rigid]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `points × points` → `flow_scattered`
 - **呼び出し**: `import fullseye as fs; fs.ledger.nearest_neighbor_flow(pts0, pts1) -> 'np.ndarray'` (実装を直接呼ぶなら `import scene_flow3d; scene_flow3d.nearest_neighbor_flow(pts0, pts1) -> 'np.ndarray'`、台帳から引くなら `ops3d.get("nearest_neighbor_flow")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

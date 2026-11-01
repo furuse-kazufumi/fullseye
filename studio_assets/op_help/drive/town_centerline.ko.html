@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">town_centerline — DRIVE <code style="color:#22d3bf">town</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.town_centerline(layout, step: &#x27;float&#x27; = 0.5) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivetown; drivetown.town_centerline(layout, step: &#x27;float&#x27; = 0.5) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;town_centerline&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>이어 붙인 중심선을 호 길이 <code style="color:#22d3bf">step</code>마다 샘플링합니다 → <code style="color:#22d3bf">(N, 4) = (s, x, y, yaw)</code>(끝점은 반드시 포함).</p>
 <p>관문: 직선부에서는 인접점의 간격이 엄밀히 step, 시점 = 첫 요소의 entry, 종점 = 마지막 요소의 exit.</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">town_stop_lines — DRIVE <code style="color:#22d3bf">town</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.town_stop_lines(layout, *, side: &#x27;str&#x27; = &#x27;left&#x27;) -&gt; &#x27;List[dict]&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import drivetown; drivetown.town_stop_lines(layout, *, side: &#x27;str&#x27; = &#x27;left&#x27;) -&gt; &#x27;List[dict]&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;town_stop_lines&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>按弧长顺序列出城镇的停止线: <code style="color:#22d3bf">[{&quot;s&quot;, &quot;x&quot;, &quot;y&quot;, &quot;yaw&quot;, &quot;kind&quot;, &quot;element&quot;, &quot;crossing_zone&quot;: (s0, s1) | None, &quot;drawn&quot;: bool}, ...]</code>。</p>
 <p>交叉口: 要素的 <code style="color:#22d3bf">stop_lines</code>(线段 (2, 2))中 <b>端点落在中心线上、并向行进方向 <code style="color:#22d3bf">side</code> 一侧延伸的那条</b> 是行驶路径的停止线(4 条中的 1 条。左侧通行为左边,右侧通行为镜像的 1 条)。铁路道口: 停止线位置为 <b>道口面 − stop_setback 的闭式</b> (drivecourse 只在左车道画白线,因此与 side 无关。<code style="color:#22d3bf">drawn</code> = 该侧是否画有白线)。<code style="color:#22d3bf">s</code> 是中心线上的弧长,<code style="color:#22d3bf">yaw</code> 是该处的行进方向。铁路道口还附带道口面的弧长范围 <code style="color:#22d3bf">crossing_zone</code>。</p>

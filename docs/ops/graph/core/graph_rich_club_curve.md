@@ -4,6 +4,7 @@ dim: graph
 category: core
 in: matrix
 out: table
+gpu: なし
 examples: [poc_worm_core_persists]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `matrix` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.graph_rich_club_curve(adj, mode='total', n_null=20, swaps_per_edge=5, seed=0)` (実装を直接呼ぶなら `import graphinv; graphinv.graph_rich_club_curve(adj, mode='total', n_null=20, swaps_per_edge=5, seed=0)`、台帳から引くなら `opsgraph.get("graph_rich_club_curve")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

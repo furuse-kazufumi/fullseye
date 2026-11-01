@@ -4,6 +4,7 @@ dim: segmentation
 category: watershed3d
 in: voxel
 out: labels
+gpu: なし
 examples: [watershed3d_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `voxel` → `labels`
 - **呼び出し**: `import fullseye as fs; fs.ledger.distance_peaks(binary, min_distance: 'float' = 1.0) -> 'np.ndarray'` (実装を直接呼ぶなら `import watershed3d; watershed3d.distance_peaks(binary, min_distance: 'float' = 1.0) -> 'np.ndarray'`、台帳から引くなら `opssegmentation.get("distance_peaks")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

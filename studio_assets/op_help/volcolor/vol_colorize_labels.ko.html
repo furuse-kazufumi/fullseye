@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">vol_colorize_labels — VOLCOLOR <code style="color:#22d3bf">colorize</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">labels</code> → <code style="color:#22d3bf">rgbvolume</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_colorize_labels(labels, seed: &#x27;int&#x27; = 0, background=(0.0, 0.0, 0.0))</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import volcolor; volcolor.vol_colorize_labels(labels, seed: &#x27;int&#x27; = 0, background=(0.0, 0.0, 0.0))</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsvolcolor.get(&quot;vol_colorize_labels&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>3-D 레이블 볼륨 -&gt; <code style="color:#22d3bf">(D, H, W, 3)</code> float64 의 RGB 볼륨.</p>
 <p>&quot;자르고 나서 색을 칠한다&quot;가 아니라 &quot;<b>색을 칠하고 나서 자른다</b>&quot;를 위한 입구. 라벨 <code style="color:#22d3bf">k</code> 의 색은 <code style="color:#22d3bf">vol_label_palette</code> 의 행 <code style="color:#22d3bf">k</code> 그 자체이며, <code style="color:#22d3bf">imgio.colorize_labels(labels, seed)</code> 를 같은 배열에 대해 호출한 결과와 <b>바이트 단위로 일치한다</b>(<code style="color:#22d3bf">tests/test_volcolor.py</code> 가 고정).</p>

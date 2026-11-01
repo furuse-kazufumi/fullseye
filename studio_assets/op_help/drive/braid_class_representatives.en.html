@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">braid_class_representatives — DRIVE <code style="color:#22d3bf">braidpath</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.braid_class_representatives(plans, obstacles=None, costs=None, angle=0.1, jitter=&#x27;auto&#x27;)</code> (to call the implementation directly, <code style="color:#22d3bf">import braidpath; braidpath.braid_class_representatives(plans, obstacles=None, costs=None, angle=0.1, jitter=&#x27;auto&#x27;)</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;braid_class_representatives&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Partitions several plans (output of any planner) into homotopy classes and picks the lowest-cost plan in each class as its representative.</p>
 <p>A plan is a (K, T, 2) trajectory, a sequence of grid paths, or a planner dict (<code style="color:#22d3bf">paths</code>; failed <code style="color:#22d3bf">None</code> entries are skipped and counted). All plans must share the same start and end points (the class is the class of deformations with fixed endpoints). The cost is <code style="color:#22d3bf">costs</code> or, if absent, the sum of the trajectory lengths.</p>

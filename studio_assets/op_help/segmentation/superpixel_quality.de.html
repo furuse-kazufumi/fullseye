@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">superpixel_quality — SEGMENTATION <code style="color:#22d3bf">graph</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">labels2d × labels2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.superpixel_quality(labels_sp, labels_true, *, tau: &#x27;float&#x27; = 2.0) -&gt; &#x27;Dict[str, object]&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import seggraph; seggraph.superpixel_quality(labels_sp, labels_true, *, tau: &#x27;float&#x27; = 2.0) -&gt; &#x27;Dict[str, object]&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opssegmentation.get(&quot;superpixel_quality&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Superpixel-Bewertung: Randrecall (der Recall von <code style="color:#22d3bf">segeval.seg_boundary_f</code>, Toleranz τ), der korrigierte Untersegmentierungsfehler CUSE = (1/N) Σ_k |S_k − G_max(S_k)| (Neubert–Protzel 2012, Gl. (2) des SNIC-Artikels), ASA = 1 − CUSE, der Untersegmentierungsfehler nach Neubert–Protzel UE = (1/N) Σ_G Σ_(S∩G≠∅) min(|S∩G|, |S − G|) und die Anzahl der Superpixel. Label 0 der Wahrheit zählt ebenfalls als Region (auch der Hintergrund muss abgedeckt werden) (superpixel_quality).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>

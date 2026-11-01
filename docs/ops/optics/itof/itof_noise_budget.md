@@ -4,6 +4,7 @@ dim: optics
 category: itof
 in: 
 out: table
+gpu: なし
 examples: [poc_itof_multifreq]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.itof_noise_budget(frequency_hz=20000000.0, signal_electrons=2000.0, demod_contrast=0.5, ambient_electrons=0.0, read_noise_e=0.0, n_phases=4)` (実装を直接呼ぶなら `import itof; itof.itof_noise_budget(frequency_hz=20000000.0, signal_electrons=2000.0, demod_contrast=0.5, ambient_electrons=0.0, read_noise_e=0.0, n_phases=4)`、台帳から引くなら `opsoptics.get("itof_noise_budget")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

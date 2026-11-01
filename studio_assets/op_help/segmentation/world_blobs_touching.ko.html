@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">world_blobs_touching — SEGMENTATION <code style="color:#22d3bf">world</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">table</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.world_blobs_touching(n: &#x27;int&#x27; = 10, overlap: &#x27;float&#x27; = 0.2, seed: &#x27;int&#x27; = 0, *, size=(160, 160), radius: &#x27;float&#x27; = 14.0, noise: &#x27;float&#x27; = 0.03) -&gt; &#x27;Dict[str, object]&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import segworld; segworld.world_blobs_touching(n: &#x27;int&#x27; = 10, overlap: &#x27;float&#x27; = 0.2, seed: &#x27;int&#x27; = 0, *, size=(160, 160), radius: &#x27;float&#x27; = 14.0, noise: &#x27;float&#x27; = 0.03) -&gt; &#x27;Dict[str, object]&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opssegmentation.get(&quot;world_blobs_touching&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>겹치는 원반(세포/입자) 세계: 같은 반지름의 원을 사슬처럼 배치하여 각 원이 중심거리 2r(1 - overlap)에서 앞의 원하고만 겹친다(world_blobs_touching).</p>
 <p>라벨 = 그 화소를 포함하는 원 중 가장 가까운 중심(겹침은 수직이등분선으로 나눔). 영상 = 밝은 내부 + 어두운 테두리 + 겹침은 약간 밝게 + 블러 + 잡음(세포의 모습). 사슬을 더 늘일 수 없으면 새 사슬을 시작한다(그 원은 누구와도 겹치지 않음).</p>

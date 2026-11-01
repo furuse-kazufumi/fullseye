@@ -4,6 +4,7 @@ dim: annotate
 category: overlay
 in: image2d × pairs
 out: image2d
+gpu: なし
 examples: [annotate_paper_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d × pairs` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.annotate_invert_path(img, points, width=1.5, closed=False, dash=None, mode='complement', alpha=1.0, bits=128, min_contrast=1.5, on_invisible='warn')` (実装を直接呼ぶなら `import annotate; annotate.annotate_invert_path(img, points, width=1.5, closed=False, dash=None, mode='complement', alpha=1.0, bits=128, min_contrast=1.5, on_invisible='warn')`、台帳から引くなら `opsannotate.get("annotate_invert_path")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

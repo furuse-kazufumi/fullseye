@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">piv_line_integral_convolution — PIV <code style="color:#22d3bf">visualise</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">flow2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_line_integral_convolution(flow, length=12, upsample=4, seed=0)</code>(要直接调用实现,<code style="color:#22d3bf">import pivops; pivops.piv_line_integral_convolution(flow, length=12, upsample=4, seed=0)</code>;从台账取用则 <code style="color:#22d3bf">opspiv.get(&quot;piv_line_integral_convolution&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>线积分卷积(LIC)—— 沿流动方向模糊白噪声而得的纹理图像。</p>
 <p>向量箭头画密了会挤成一团，画疏了会漏看结构。LIC <b>逐像素</b> 沿流线平均噪声，因此不需要选择密度。方向信息会丢失(不区分前后)，所以<b>想看旋转方向时，请与箭头图或色相图并用</b>。</p>

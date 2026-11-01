@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">vx_warp_affine — VX <code style="color:#22d3bf">geometry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d × matrix</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vx_warp_affine(image, matrix, *, interpolation, border, constant_value=0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import vxcore; vxcore.vx_warp_affine(image, matrix, *, interpolation, border, constant_value=0)</code>、台帳から引くなら <code style="color:#22d3bf">opsvx.get(&quot;vx_warp_affine&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>アフィン変換(3.56 節)。<b>逆写像</b>: 出力の画素 (x, y) は入力の (x0, y0) から取る(REQ-0498):</p>
 <p><code style="color:#22d3bf">x0 = M[0,0]·x + M[0,1]·y + M[0,2]</code>、<code style="color:#22d3bf">y0 = M[1,0]·x + M[1,1]·y + M[1,2]</code>。</p>

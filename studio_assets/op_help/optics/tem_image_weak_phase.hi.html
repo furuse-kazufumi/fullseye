@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tem_image_weak_phase — OPTICS <code style="color:#22d3bf">tem</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tem_image_weak_phase(potential, pixel_A=1.0, kv=300.0, cs_mm=2.7, defocus_A=10000.0, astig_A=0.0, astig_angle_deg=None, amplitude_contrast=0.07, phase_shift_deg=0.0, alpha_mrad=0.0, focal_spread_A=0.0, aperture_A_inv=None, mode=&#x27;linear&#x27;, dose_e_per_A2=None, seed=0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import temsim; temsim.tem_image_weak_phase(potential, pixel_A=1.0, kv=300.0, cs_mm=2.7, defocus_A=10000.0, astig_A=0.0, astig_angle_deg=None, amplitude_contrast=0.07, phase_shift_deg=0.0, alpha_mrad=0.0, focal_spread_A=0.0, aperture_A_inv=None, mode=&#x27;linear&#x27;, dose_e_per_A2=None, seed=0)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;tem_image_weak_phase&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>projected potential v_z (V Å) से TEM bright-field छवि (औसत 1 की तीव्रता, <code style="color:#22d3bf">image2d</code>)।</p>
 <p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>

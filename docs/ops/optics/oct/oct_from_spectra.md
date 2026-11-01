@@ -4,6 +4,7 @@ dim: optics
 category: oct
 in: matrix × signal
 out: table
+gpu: なし
 examples: [poc_industrial_oct]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `matrix × signal` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.oct_from_spectra(spectra, wavelength_nm, reference_spectrum=None, dark=None, center_nm=None, bandwidth_nm=None, x_um=None)` (実装を直接呼ぶなら `import octscan; octscan.oct_from_spectra(spectra, wavelength_nm, reference_spectrum=None, dark=None, center_nm=None, bandwidth_nm=None, x_um=None)`、台帳から引くなら `opsoptics.get("oct_from_spectra")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

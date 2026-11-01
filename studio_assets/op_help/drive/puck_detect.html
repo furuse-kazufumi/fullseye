@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">puck_detect — DRIVE <code style="color:#22d3bf">puck</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d × table</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.puck_detect(frame, cam: &#x27;dict&#x27;, *, mode: &#x27;str&#x27; = &#x27;dark&#x27;, thresh: &#x27;float&#x27; = 0.85, radius_tol: &#x27;float&#x27; = 0.5, color=None, color_tol: &#x27;float&#x27; = 0.25)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import puck; puck.puck_detect(frame, cam: &#x27;dict&#x27;, *, mode: &#x27;str&#x27; = &#x27;dark&#x27;, thresh: &#x27;float&#x27; = 0.85, radius_tol: &#x27;float&#x27; = 0.5, color=None, color_tol: &#x27;float&#x27; = 0.25)</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;puck_detect&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p><code style="color:#22d3bf">balltrack.ball_detect</code> の facade: 真上のコマから円盤を 1 つ取り、ホモグラフィで台の平面 (x, y) [m] に写す。</p>
 <p><code style="color:#22d3bf">mode</code> = &quot;dark&quot;(白い台に暗いパック、合成)/ &quot;color&quot;・&quot;chroma&quot;(色で、MuJoCo の赤いパック)。<code style="color:#22d3bf">thresh</code> は台の値(0.92)の少し下に置く: <code style="color:#22d3bf">ball_detect</code> の重みは (thresh − 画素値) なので、しきい値が台に近いほど重み ∝ 被覆率で重心が面積重心に一致する。中間の 0.5 では縁の画素が切れて位相依存の偏りが出る(実測 2026-10-04、r = 6.3 px:</p>

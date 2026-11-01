@@ -4,6 +4,7 @@ dim: drive
 category: traffic
 in: any
 out: any
+gpu: なし
 examples: [poc_driving_traffic]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `any` → `any`
 - **呼び出し**: `import fullseye as fs; fs.ledger.bus_stop_rate(x, *, bus_rear: 'float', bus_front: 'float', base: 'float', peak: 'float', spread: 'float')` (実装を直接呼ぶなら `import drivetraffic; drivetraffic.bus_stop_rate(x, *, bus_rear: 'float', bus_front: 'float', base: 'float', peak: 'float', spread: 'float')`、台帳から引くなら `opsdrive.get("bus_stop_rate")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

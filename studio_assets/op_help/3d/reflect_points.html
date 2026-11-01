@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">reflect_points — 3D <code style="color:#22d3bf">symmetry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.reflect_points(points, plane_point, plane_normal)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import symmetry3d; symmetry3d.reflect_points(points, plane_point, plane_normal)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;reflect_points&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>点群を平面(点 plane_point・法線 plane_normal)で鏡映。→ (N,3)。</p>
 <p>各点 p の平面からの符号付き距離 <code style="color:#22d3bf">d = (p - plane_point) · n</code>(n は正規化した法線)を取り、<code style="color:#22d3bf">p&#x27; = p - 2 d n</code> を返す(Householder 鏡映)。平面上の点は動かず、平面の両側の点が入れ替わる。点の並び順は保たれるので <code style="color:#22d3bf">p&#x27;[i]</code> は <code style="color:#22d3bf">p[i]</code> の鏡像。座標の単位はそのまま。</p>

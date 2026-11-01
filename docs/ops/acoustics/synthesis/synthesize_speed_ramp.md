@@ -4,6 +4,7 @@ dim: acoustics
 category: synthesis
 in: 
 out: table
+gpu: なし
 examples: [acoustic_condition_monitoring]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.synthesize_speed_ramp(rate=5000.0, duration=4.0, rpm_start=600.0, rpm_end=1800.0, orders=(1.0, 3.5), amplitudes=None, resonance_hz=None, noise_sigma=0.0, seed=None)` (実装を直接呼ぶなら `import acoustics; acoustics.synthesize_speed_ramp(rate=5000.0, duration=4.0, rpm_start=600.0, rpm_end=1800.0, orders=(1.0, 3.5), amplitudes=None, resonance_hz=None, noise_sigma=0.0, seed=None)`、台帳から引くなら `opsacoustics.get("synthesize_speed_ramp")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

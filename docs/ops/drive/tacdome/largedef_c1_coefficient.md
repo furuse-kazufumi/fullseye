@@ -4,6 +4,7 @@ dim: drive
 category: tacdome
 in: scalar
 out: scalar
+gpu: なし
 examples: [gallery_drive_soil_tactile]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `scalar` → `scalar`
 - **呼び出し**: `import fullseye as fs; fs.ledger.largedef_c1_coefficient(n: 'float', reading: 'str' = 'derived') -> 'float'` (実装を直接呼ぶなら `import tacdome; tacdome.largedef_c1_coefficient(n: 'float', reading: 'str' = 'derived') -> 'float'`、台帳から引くなら `opsdrive.get("largedef_c1_coefficient")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

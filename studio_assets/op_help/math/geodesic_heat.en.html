@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">geodesic_heat — MATH <code style="color:#22d3bf">geometry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">mesh</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.geodesic_heat(vertices, faces=None, source=0, *, t: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import mathgeometry; mathgeometry.geodesic_heat(vertices, faces=None, source=0, *, t: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsmath.get(&quot;geodesic_heat&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Geodesic distance on a surface by the heat method (Crane et al. 2013). <code style="color:#22d3bf">source</code> is a vertex index (or a sequence of indices; default vertex 0). The mesh may be given as <code style="color:#22d3bf">(vertices, faces)</code> or as 1 mesh tuple.</p>
 <p style="margin:2px 0 2px 12px">1) Solve (M − tL) u = δ for 1 step (spread heat for time t; default t = mean edge length²)</p>

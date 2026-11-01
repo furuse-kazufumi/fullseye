@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">seg_mean_surface_distance — SEGMENTATION <code style="color:#22d3bf">score</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">labels2d × labels2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.seg_mean_surface_distance(labels_pred, labels_true) -&gt; &#x27;Dict[str, float]&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import segeval; segeval.seg_mean_surface_distance(labels_pred, labels_true) -&gt; &#x27;Dict[str, float]&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opssegmentation.get(&quot;seg_mean_surface_distance&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>average symmetric surface distance (ASSD): दोनों दिशाओं में boundary pixel की दूरियों का एक साथ औसत = (Σ prediction→truth + Σ truth→prediction)/(n_p + n_t)। RMS भी।</p>
 <p>boundary <code style="color:#22d3bf">_boundary</code> की convention के अनुसार। किसी भी एक की boundary ख़ाली हो तो ValueError।</p>

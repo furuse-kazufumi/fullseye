@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">osm_synthetic — DRIVE <code style="color:#22d3bf">japan</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">any</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.osm_synthetic(kind: &#x27;str&#x27; = &#x27;grid&#x27;, *, origin=(35.6716, 139.765), n: &#x27;int&#x27; = 3, pitch: &#x27;float&#x27; = 80.0) -&gt; &#x27;str&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import drivejapan; drivejapan.osm_synthetic(kind: &#x27;str&#x27; = &#x27;grid&#x27;, *, origin=(35.6716, 139.765), n: &#x27;int&#x27; = 3, pitch: &#x27;float&#x27; = 80.0) -&gt; &#x27;str&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;osm_synthetic&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用于测试和 fuzz 的最小 OSM XML(与真实数据相同的元素: bounds / node / way / tag)。</p>
 <p>&quot;grid&quot; = n × n 的网格(东西向 = primary,lanes=2,南北向 = residential,宽度为默认值)。中央交叉口设 <code style="color:#22d3bf">highway=traffic_signals</code>, 东侧边缘中段(T 字路口)设 <code style="color:#22d3bf">highway=stop</code>,西侧某边中途设 <code style="color:#22d3bf">highway=crossing</code>,南侧某边中途设 <code style="color:#22d3bf">railway=level_crossing</code>。&quot;line&quot; = 一条东西向的 residential 道路(长度 pitch × (n − 1))。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>:kind 未知、n &lt; 2、pitch ≤ 0。</p>

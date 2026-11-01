@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">shot_is_legal — DRIVE <code style="color:#22d3bf">racket</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">table × table × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.shot_is_legal(p, v, w, bp, ip, tp, x_racket: &#x27;float&#x27;, side: &#x27;int&#x27;, hit_height=(0.05, 0.45)) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import racket; racket.shot_is_legal(p, v, w, bp, ip, tp, x_racket: &#x27;float&#x27;, side: &#x27;int&#x27;, hit_height=(0.05, 0.45)) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;shot_is_legal&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>타구 (p, v, ω)를 실제 물리로 미리 내다보고, 네트를 넘어 상대 코트에 1번만 떨어지며 상대 면 x = ∓x_r에서 칠 수 있는 높이로 도달하는지 판정합니다. <code style="color:#22d3bf">{&quot;legal&quot;, &quot;reason&quot;, &quot;p_arrive&quot;, &quot;t_arrive&quot;}</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

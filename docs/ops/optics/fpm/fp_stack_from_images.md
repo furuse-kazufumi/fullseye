@@ -4,6 +4,7 @@ dim: optics
 category: fpm
 in: volume × signal × signal
 out: table
+gpu: なし
 examples: [poc_fourier_ptychography]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `volume × signal × signal` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.fp_stack_from_images(images, na_x, na_y, wavelength_um, na_obj, pixel_um, values='intensity', exposure=None, led_xyz_mm=None)` (実装を直接呼ぶなら `import fourierptycho; fourierptycho.fp_stack_from_images(images, na_x, na_y, wavelength_um, na_obj, pixel_um, values='intensity', exposure=None, led_xyz_mm=None)`、台帳から引くなら `opsoptics.get("fp_stack_from_images")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -3,6 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">images</code> → <code style="color:#22d3bf">depth</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.depth_from_focus(images, focus_positions=None)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import ops3d; ops3d.depth_from_focus(images, focus_positions=None)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;depth_from_focus&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>台帳経由の戻り値</b>: <code style="color:#22d3bf">fullseye.ledger.depth_from_focus(...)</code> は<b>宣言 out 型 <code style="color:#22d3bf">depth</code> の値だけ</b>を返す(本体は補助情報も返す)。捨てられた側が要るときは <code style="color:#22d3bf">fullseye.ledger.depth_from_focus.raw(...)</code>、または <code style="color:#22d3bf">ops3d.depth_from_focus</code> を直接呼ぶ。</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>焦点を変えた画像から高さ・深さを画素ごとの最良合焦位置として推定する。</p>
 <p>「焦点を変えた画像から高さ」「ピントを変えた複数画像から深さ」を求める shape-from-focus の入口。詳細な信頼度が必要なら <code style="color:#22d3bf">reconstruction.depth_from_focus</code> を直接呼び <code style="color:#22d3bf">sharpness</code> も確認する。</p>

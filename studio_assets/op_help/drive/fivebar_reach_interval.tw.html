@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">fivebar_reach_interval — DRIVE <code style="color:#22d3bf">puck</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">table × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fivebar_reach_interval(link: &#x27;dict&#x27;, x_line: &#x27;float&#x27;, *, n: &#x27;int&#x27; = 801) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import puck; puck.fivebar_reach_interval(link: &#x27;dict&#x27;, x_line: &#x27;float&#x27;, *, n: &#x27;int&#x27; = 801) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;fivebar_reach_interval&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>防守線 x = x_line 上可達的 y 區間(按網格，含 FK∘IK 往返)。<code style="color:#22d3bf">{&quot;y_lo&quot;,&quot;y_hi&quot;,&quot;ok&quot;}</code>。</p>
 <p>空輸入(<code style="color:#22d3bf">link</code> 為空 dict)會引發 <code style="color:#22d3bf">ValueError</code>。</p>

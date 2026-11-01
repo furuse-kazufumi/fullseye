@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">defocus_from_shift — OPTICS <code style="color:#22d3bf">wave</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">無</code> → <code style="color:#22d3bf">measurement</code>(僅由參數決定的運算子 —— 不接受影像或資料輸入)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.defocus_from_shift(shift_um=10.0, wavelength_um=0.55, f_number=5.6)</code>(要直接呼叫實作,<code style="color:#22d3bf">import optics; optics.defocus_from_shift(shift_um=10.0, wavelength_um=0.55, f_number=5.6)</code>;從台帳取用則 <code style="color:#22d3bf">opsoptics.get(&quot;defocus_from_shift&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把軸向焦點偏移換算為離焦波前誤差(光瞳邊緣處的波數)。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>

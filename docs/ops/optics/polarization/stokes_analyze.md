@@ -4,6 +4,7 @@ dim: optics
 category: polarization
 in: stokes
 out: table
+gpu: なし
 examples: [optics_imaging, polarization_camera_pipeline, specular_photometric]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `stokes` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.stokes_analyze(stokes)` (実装を直接呼ぶなら `import optics; optics.stokes_analyze(stokes)`、台帳から引くなら `opsoptics.get("stokes_analyze")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

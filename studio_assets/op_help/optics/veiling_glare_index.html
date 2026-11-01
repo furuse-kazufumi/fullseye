@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">veiling_glare_index — OPTICS <code style="color:#22d3bf">imaging</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d × image2d × image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.veiling_glare_index(img, dark_mask, bright_mask)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import edgesfr; edgesfr.veiling_glare_index(img, dark_mask, bright_mask)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;veiling_glare_index&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>迷光(ベーリンググレア)指数: 黒い点の中心の明るさの平均 / 白地の明るさの平均(ISO 9358 の考え方)。</p>
 <p>*dark_mask*(必須): 黒い点の<b>中心部</b>の画素(点の縁の ぼけ を含めない —— 縁を含めるとコアの ぼけ まで迷光に数える)。*bright_mask*(必須): 白地の画素。★黒い点の大きさ(と光源の広さ)で答えが変わる: 裾が 1/(1+(r/r0)²) のレンズでは黒い点の一辺を 16 → 256 px にすると同じレンズの指数が 19.6 % → 4.5 %(<code style="color:#22d3bf">poc_veiling_glare</code> 3 節)。点の大きさは結果と一緒に報告すること。</p>

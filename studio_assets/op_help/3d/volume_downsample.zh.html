@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">volume_downsample — 3D <code style="color:#22d3bf">preprocess</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">voxel</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.volume_downsample(vol, factor, mode=&#x27;mean&#x27;)</code>(要直接调用实现,<code style="color:#22d3bf">import volops; volops.volume_downsample(vol, factor, mode=&#x27;mean&#x27;)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;volume_downsample&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>按每轴整数 *factor* 对 <code style="color:#22d3bf">(D, H, W)</code> 体做块池化(数据抽稀)。</p>
 <p>大型 CT / 层析(laminography)/ 仿真体数据在送入较重的 3-D 算子之前必须先抽稀(Frangi/Sato 的上限约为 ~256**3 体素,见 <code style="color:#22d3bf">MAX_EIGEN_VOXELS</code>)。这是点云 <code style="color:#22d3bf">voxel_grid_downsample</code> 与网格 <code style="color:#22d3bf">decimate_qem</code> 在体数据上的对应物 —— 是 Fullseye *抽稀*(decimation)家族的第三条腿,每种 3-D 数据 sort 各一个。</p>

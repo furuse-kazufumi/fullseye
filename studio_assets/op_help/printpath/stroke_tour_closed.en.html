@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">stroke_tour_closed — PRINTPATH <code style="color:#22d3bf">stroke</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">pairs</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.stroke_tour_closed(points, start=&#x27;nearest&#x27;, two_opt_rounds=8, order=None)</code> (to call the implementation directly, <code style="color:#22d3bf">import printpath; printpath.stroke_tour_closed(points, start=&#x27;nearest&#x27;, two_opt_rounds=8, order=None)</code>; from the registry, <code style="color:#22d3bf">opsprintpath.get(&quot;stroke_tour_closed&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Reorders the points into a <b>closed tour</b> that visits each point exactly 1 time and returns. → <code style="color:#22d3bf">pairs</code></p>
 <p>Returns <code style="color:#22d3bf">(N, 2)</code>: the same points as the input, reordered. It is closed by <b>returning from the last point to the first</b> (the first point is not duplicated at the end).</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">attention_weights — LLMCORE <code style="color:#22d3bf">score</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">attnmap</code> → <code style="color:#22d3bf">attnmap</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.attention_weights(scores, mask=None, window=None) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import llmcore; llmcore.attention_weights(scores, mask=None, window=None) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsllmcore.get(&quot;attention_weights&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>हर row पर softmax (mask सहित) → attnmap। <b>row का योग 1, mask वाली जगहें बिल्कुल 0</b>।</p>
 <p>हर row में पहले maximum घटाया जाता है, फिर exponential लिया जाता है। यह सजावट नहीं है -- बिना घटाए <code style="color:#22d3bf">exp</code> करने पर scores बड़े हों तो <b>सभी rows inf/NaN बन जाती हैं</b> (measured: 96 में से 96 rows)। घटाने पर 0 rows।</p>

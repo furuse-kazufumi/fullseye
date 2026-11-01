@@ -4,6 +4,7 @@ dim: optics
 category: material
 in: rgbimage
 out: rgbimage
+gpu: なし
 examples: [machined_metal_and_materials]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `rgbimage` → `rgbimage`
 - **呼び出し**: `import fullseye as fs; fs.ledger.wetness(base_rgb, wet=1.0, ior=1.33) -> 'np.ndarray'` (実装を直接呼ぶなら `import surfacelib; surfacelib.wetness(base_rgb, wet=1.0, ior=1.33) -> 'np.ndarray'`、台帳から引くなら `opsoptics.get("wetness")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

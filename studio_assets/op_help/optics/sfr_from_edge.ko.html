@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">sfr_from_edge — OPTICS <code style="color:#22d3bf">imaging</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">pairs</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sfr_from_edge(esf, window, *, correction, ends=1.0, apodize=&#x27;none&#x27;)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import edgesfr; edgesfr.sfr_from_edge(esf, window, *, correction, ends=1.0, apodize=&#x27;none&#x27;)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsoptics.get(&quot;sfr_from_edge&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>ESF로부터 SFR(에지로 측정하는 MTF)을 구한다.</p>
 <p>*esf*는 <code style="color:#22d3bf">edge_spread</code>의 반환값(딕셔너리) 또는 1 px 스텝의 1-D 배열(<code style="color:#22d3bf">oversample</code> = 1로 간주)이다. 가장자리 중심(차분 절댓값의 최대)에서 ±*window* px를 잘라, 양 끝 *ends* px의 평균을 흑/백 기준으로 정규화하고, 전진 차분으로 LSF를 만들어 푸리에 변환의 절댓값을 DC로 나눈다.</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">edge_spread — OPTICS <code style="color:#22d3bf">imaging</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.edge_spread(img, roi, *, oversample=4, orientation=&#x27;auto&#x27;)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import edgesfr; edgesfr.edge_spread(img, roi, *, oversample=4, orientation=&#x27;auto&#x27;)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;edge_spread&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>झुकी हुई edge (ISO 12233) के ROI से pixel से भी बारीक ESF बनाता है।</p>
 <p>प्रक्रिया: ROI को ऐसे संरेखित करें कि &quot;edge rows को काटे&quot; (<code style="color:#22d3bf">orientation=&quot;auto&quot;</code> column और row दिशाओं के gradient magnitudes से तय करता है, <code style="color:#22d3bf">&quot;vertical&quot;</code> = edge खड़ी चलती है / <code style="color:#22d3bf">&quot;horizontal&quot;</code> = आड़ी चलती है) → हर row में, 1st difference के centroid से edge का स्थान खोजें → row संख्या के सापेक्ष स्थिति पर सीधी रेखा fit करें (least squares) → हर pixel केंद्र की edge से <b>लंबवत दूरी</b> d की गणना करें, 1/oversample px चौड़ाई के bins में बाँटें और औसत लें।</p>

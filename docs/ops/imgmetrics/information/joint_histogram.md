@@ -4,6 +4,7 @@ dim: imgmetrics
 category: information
 in: image2d × image2d
 out: image2d
+gpu: なし
 examples: [image_quality_metrics]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d × image2d` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.joint_histogram(a, b, bins=64, data_range=None)` (実装を直接呼ぶなら `import imgmetrics; imgmetrics.joint_histogram(a, b, bins=64, data_range=None)`、台帳から引くなら `opsimgmetrics.get("joint_histogram")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

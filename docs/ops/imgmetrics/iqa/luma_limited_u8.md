@@ -4,6 +4,7 @@ dim: imgmetrics
 category: iqa
 in: any
 out: any
+gpu: なし
 examples: [poc_iqa_tid2013]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `any` → `any`
 - **呼び出し**: `import fullseye as fs; fs.ledger.luma_limited_u8(rgb) -> 'np.ndarray'` (実装を直接呼ぶなら `import iqatid; iqatid.luma_limited_u8(rgb) -> 'np.ndarray'`、台帳から引くなら `opsimgmetrics.get("luma_limited_u8")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

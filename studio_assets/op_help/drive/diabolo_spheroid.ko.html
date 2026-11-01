@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">diabolo_spheroid — DRIVE <code style="color:#22d3bf">diabolo</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">signal × signal × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.diabolo_spheroid(p_left, p_right, string_length: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import diabolo; diabolo.diabolo_spheroid(p_left, p_right, string_length: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;diabolo_spheroid&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>스틱 끝 2점(초점)과 끈 길이 → 보조 회전 타원체: a = l/2, c = |x_L − x_R|/2, b = √(a² − c²)(식 1의 올바른 형태).</p>
 <p>★원문의 (1b) 는 b = √(a² − |x_L − x_R|/2) 로, 길이와 길이 제곱의 차이므로 차원이 맞지 않는다. 논문의 실기 치수(실 1.45 m, 막대 간격 1.10 m)를 넣으면 근호 안이 음수가 된다(NaN). 타원 항등식 a² = b² + c² 의 형태로 고쳤다(공개 구현도 제곱으로 쓴다). 원문의 값은 <code style="color:#22d3bf">b_paper_literal</code> 에 남긴다. 원문의 서문은 &quot;반장축 b 와 반단축 a&quot; 로 이름이 반대(a = l/2 가 반장축)이며, 식 쪽을 따른다.</p>

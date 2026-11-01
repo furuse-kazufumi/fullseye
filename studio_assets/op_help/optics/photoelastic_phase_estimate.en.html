@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">photoelastic_phase_estimate — OPTICS <code style="color:#22d3bf">photoelastic</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">polsweep</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.photoelastic_phase_estimate(images, analyzers=&#x27;camera4&#x27;, min_modulation=0.01, sum_tolerance=0.05)</code> (to call the implementation directly, <code style="color:#22d3bf">import photoelastic; photoelastic.photoelastic_phase_estimate(images, analyzers=&#x27;camera4&#x27;, min_modulation=0.01, sum_tolerance=0.05)</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;photoelastic_phase_estimate&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Closed-form inversion of polarisation images to retardation δ and principal axis θ → dict.</p>
 <p>Inverse of <code style="color:#22d3bf">photoelastic_polarization_images</code> (right-circular illumination). With <code style="color:#22d3bf">S0 = ½(I0 + I90 + I45 + I135)</code> (the mean of the two pair sums), <code style="color:#22d3bf">S1 = I0 − I90</code>, <code style="color:#22d3bf">S2 = I45 − I135</code>:</p>

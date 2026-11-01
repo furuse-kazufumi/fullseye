@@ -4,6 +4,7 @@ dim: colortransport
 category: plan_use
 in: transport_plan × matrix
 out: scalar
+gpu: なし
 examples: [color_transport]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `transport_plan × matrix` → `scalar`
 - **呼び出し**: `import fullseye as fs; fs.ledger.transport_cost(plan, cost)` (実装を直接呼ぶなら `import colortransport; colortransport.transport_cost(plan, cost)`、台帳から引くなら `opscolortransport.get("transport_cost")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

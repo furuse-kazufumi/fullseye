@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">annotate_markers — ANNOTATE <code style="color:#22d3bf">paper</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_markers(img, points, labels=None, start=1, radius=9.0, color=&#x27;emphasis&#x27;, text_color=None, font_size=11, scheme=&#x27;okabe_ito&#x27;, font_path=None, min_contrast=2.0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import annotate; annotate.annotate_markers(img, points, labels=None, start=1, radius=9.0, color=&#x27;emphasis&#x27;, text_color=None, font_size=11, scheme=&#x27;okabe_ito&#x27;, font_path=None, min_contrast=2.0)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsannotate.get(&quot;annotate_markers&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>image (image2d) लौटाता है: हर point पर क्रमांक (या छोटा text) वाला गोल marker।</p>
 <p><code style="color:#22d3bf">annotate_legend</code> वाले ही <code style="color:#22d3bf">start</code> / <code style="color:#22d3bf">labels</code> देने पर, figure के नंबर और legend के नंबर हमेशा मेल खाते हैं।</p>

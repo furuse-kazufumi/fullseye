@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">fuzzy_measure_pairing — MEASURE1D <code style="color:#22d3bf">caliper</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d × measurehandle</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fuzzy_measure_pairing(image, measure, sigma=1.0, threshold=0.1, pair_size=None)</code>(要直接调用实现,<code style="color:#22d3bf">import measuring1d; measuring1d.fuzzy_measure_pairing(image, measure, sigma=1.0, threshold=0.1, pair_size=None)</code>;从台账取用则 <code style="color:#22d3bf">opsmeasure1d.get(&quot;fuzzy_measure_pairing&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>选择最符合模糊准则(预期宽度 pair_size)的边缘对(fuzzy_measure_pairing)。</p>
 <p>步骤: 用 <code style="color:#22d3bf">measure_pairs(image, measure, sigma, threshold)</code> 取极性不同的相邻边缘对，给各对附上 <code style="color:#22d3bf">fuzzy_score = exp(-((width - pair_size) / (0.5 pair_size))^2)</code>，并<b>按得分降序排列</b>。恰为预期宽度时为 1, 宽度偏离 <code style="color:#22d3bf">±0.5 pair_size</code> 时为 <code style="color:#22d3bf">e^-1</code> ≈ 0.37。第一个元素是最吻合的对。</p>

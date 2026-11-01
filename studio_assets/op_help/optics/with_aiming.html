@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">with_aiming — OPTICS <code style="color:#22d3bf">design</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.with_aiming(system, aim=&#x27;stop&#x27;, vignetting=None)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import raytrace; raytrace.with_aiming(system, aim=&#x27;stop&#x27;, vignetting=None)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;with_aiming&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Copy of *system* with a ray-aiming mode and/or vignetting factors set (<code style="color:#22d3bf">table</code>).</p>
 <p><code style="color:#22d3bf">aim=&quot;stop&quot;</code> (the default here: this is the op for switching real-ray aiming on) makes every spot / fan / OPD / PSF / MTF op launch each pupil ray at its own point on the stop surface (<code style="color:#22d3bf">lens_system</code> explains the iteration); <code style="color:#22d3bf">aim=&quot;paraxial&quot;</code> returns to the original launch at the paraxial entrance pupil. *vignetting* replaces the per-field factors when given (the list of <code style="color:#22d3bf">lens_system</code>; <code style="color:#22d3bf">[]</code> clears them), otherwise they are kept.</p>

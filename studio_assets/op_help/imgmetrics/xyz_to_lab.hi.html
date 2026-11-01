@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">xyz_to_lab — IMGMETRICS <code style="color:#22d3bf">colorspace</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">rgb</code> → <code style="color:#22d3bf">lab</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.xyz_to_lab(xyz, white=(0.95047, 1.0, 1.08883))</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import imgmetrics; imgmetrics.xyz_to_lab(xyz, white=(0.95047, 1.0, 1.08883))</code>, registry से लेना हो तो <code style="color:#22d3bf">opsimgmetrics.get(&quot;xyz_to_lab&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>CIE XYZ → CIE 1976 L*a*b*। default white point D65 2° है।</p>
 <p>सूत्र: <code style="color:#22d3bf">t = XYZ / white</code> लेकर <code style="color:#22d3bf">f(t) = cbrt(t)</code> (<code style="color:#22d3bf">t &gt; (6/29)^3</code>), अन्यथा <code style="color:#22d3bf">t / (3 (6/29)^2) + 4/29</code>। <code style="color:#22d3bf">L = 116 f(Y) - 16</code>, <code style="color:#22d3bf">a = 500 (f(X) - f(Y))</code>, <code style="color:#22d3bf">b = 200 (f(Y) - f(Z))</code>।</p>

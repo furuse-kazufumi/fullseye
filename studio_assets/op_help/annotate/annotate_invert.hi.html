@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">annotate_invert — ANNOTATE <code style="color:#22d3bf">overlay</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d × mask</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_invert(img, mask, draw=&#x27;fill&#x27;, width=1.5, mode=&#x27;complement&#x27;, alpha=1.0, bits=128, min_contrast=1.5, on_invisible=&#x27;warn&#x27;)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import annotate; annotate.annotate_invert(img, mask, draw=&#x27;fill&#x27;, width=1.5, mode=&#x27;complement&#x27;, alpha=1.0, bits=128, min_contrast=1.5, on_invisible=&#x27;warn&#x27;)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsannotate.get(&quot;annotate_invert&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>region को <b>inverted रंग</b> से भरता है / उसकी outline बनाता है।</p>
 <p>यह उस स्थिति की पुरानी तरकीब है जब &quot;पता नहीं पृष्ठभूमि हल्की है या गहरी, इसलिए ऐसे रंग से बनाना है जो दोनों पर दिखे&quot;। fill colour तय करने से छुटकारा मिलता है, लेकिन बदले में यह <b>mid-tones में गायब हो जाता है</b>, इसलिए <code style="color:#22d3bf">annotate_invert_visibility</code> का माप अंदर हमेशा चलाया जाता है।</p>

@@ -4,6 +4,7 @@ dim: 3d
 category: medial
 in: voxel
 out: table
+gpu: なし
 examples: [medial_topology]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `voxel` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.topology_signature(skeleton)` (実装を直接呼ぶなら `import medial; medial.topology_signature(skeleton)`、台帳から引くなら `ops3d.get("topology_signature")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

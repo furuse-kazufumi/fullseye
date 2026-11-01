@@ -4,6 +4,7 @@ dim: 3d
 category: terrain
 in: mesh
 out: mesh
+gpu: なし
 examples: [itokawa_regolith_hero]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `mesh` → `mesh`
 - **呼び出し**: `import fullseye as fs; fs.ledger.mesh_displace_spectrum(V, F, wavelengths=(0.06, 0.03, 0.015, 0.0075, 0.00375), amplitudes=(0.003, 0.00176, 0.00103, 0.0006, 0.00035), *, seed: 'int' = 0, nyquist: 'float' = 2.0, fade: 'float' = 1.0, weights=None, local_edge=None)` (実装を直接呼ぶなら `import render3d; render3d.mesh_displace_spectrum(V, F, wavelengths=(0.06, 0.03, 0.015, 0.0075, 0.00375), amplitudes=(0.003, 0.00176, 0.00103, 0.0006, 0.00035), *, seed: 'int' = 0, nyquist: 'float' = 2.0, fade: 'float' = 1.0, weights=None, local_edge=None)`、台帳から引くなら `ops3d.get("mesh_displace_spectrum")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

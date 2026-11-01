@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">voxel_iou — 3D <code style="color:#22d3bf">metrics</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">voxel × voxel</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.voxel_iou(vol_a, vol_b, iso=0.5)</code> (to call the implementation directly, <code style="color:#22d3bf">import metrics3d; metrics3d.voxel_iou(vol_a, vol_b, iso=0.5)</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;voxel_iou&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>The IoU (intersection over union) of voxel occupancy. → [0,1]. Volumetric agreement.</p>
 <p>Both volumes must have the same shape. Different shapes would appear to match via numpy broadcasting and silently return a wrong IoU (e.g. (10,1,10) vs (1,10,10) → 1.0), so, fail-closed, a shape mismatch is rejected with ValueError.</p>

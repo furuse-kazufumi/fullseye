@@ -5,6 +5,7 @@ category: segmentation
 in: image
 out: region
 halcon: nonmax_suppression_amp
+gpu: あり(nonmax_suppression_amp)
 examples: [gallery2d_segmentation]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -16,6 +17,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **データ種**: `image` → `region`
 - **呼び出し**: `fullseye.apply(img, "nonmax_suppression_amp", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 - **HALCON 相当**: `nonmax_suppression_amp`(意味・パラメータは HALCON リファレンスが参考になる)
+- **GPU**: あり(`nonmax_suppression_amp`、`device="cuda"` で高速経路)
 
 ![nonmax_suppression_amp: input → output](../../_fig/nonmax_suppression_amp.png)
 

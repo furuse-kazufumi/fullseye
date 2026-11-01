@@ -4,6 +4,7 @@ dim: 2d
 category: morphology
 in: image
 out: image
+gpu: なし
 examples: [gallery2d_morphology]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image` → `image`
 - **呼び出し**: `fullseye.apply(img, "xsk3_area_closing", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ![xsk3_area_closing: input → output](../../_fig/xsk3_area_closing.png)
 

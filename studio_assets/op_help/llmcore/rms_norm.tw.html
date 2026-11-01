@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">rms_norm — LLMCORE <code style="color:#22d3bf">prepare</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">tokens</code> → <code style="color:#22d3bf">tokens</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rms_norm(tokens, eps: &#x27;float&#x27; = 0.0, weight=None) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import llmcore; llmcore.rms_norm(tokens, eps: &#x27;float&#x27; = 0.0, weight=None) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsllmcore.get(&quot;rms_norm&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>RMS 正規化 → tokens。<b>預設(eps=0，無 weight)時輸出的 RMS 嚴格為 1</b>。</p>
 <p>Zhang、Sennrich 2019。去掉了 LayerNorm 中減去平均值的一段,剩下的只是「把列的範數統一」—— 所以 <b>RMS 變為 1 就成了驗算</b> (實測 2.2e-16)。加入 <code style="color:#22d3bf">eps</code> 會偏離 1。這就是 <code style="color:#22d3bf">eps</code> 的代價。</p>

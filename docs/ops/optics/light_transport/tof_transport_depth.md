@@ -4,6 +4,7 @@ dim: optics
 category: light_transport
 in: table
 out: table
+gpu: なし
 examples: [poc_interreflection_fringe_error, poc_itof_multifreq]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.tof_transport_depth(transport, camera_xz=(0.0, 1.0), modulation_hz=20000000.0, n_bounces=None)` (実装を直接呼ぶなら `import lighttransport; lighttransport.tof_transport_depth(transport, camera_xz=(0.0, 1.0), modulation_hz=20000000.0, n_bounces=None)`、台帳から引くなら `opsoptics.get("tof_transport_depth")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

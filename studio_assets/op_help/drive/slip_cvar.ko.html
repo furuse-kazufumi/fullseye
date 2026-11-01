@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">slip_cvar — DRIVE <code style="color:#22d3bf">roverslip</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">table × signal × scalar</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.slip_cvar(model, slopes, alpha: &#x27;float&#x27; = 0.9, sign: &#x27;float&#x27; = 1.0) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import roverslip; roverslip.slip_cvar(model, slopes, alpha: &#x27;float&#x27; = 0.9, sign: &#x27;float&#x27; = 1.0) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;slip_cvar&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>슬립률의 CVaR_α(상측 1 − α 꼬리의 조건부 기댓값). <code style="color:#22d3bf">sign = −1</code>이면 −s의 CVaR(내리막의 공주·옆미끄럼의 크기).</p>
 <p>가우스 과정은 닫힌 형식 <code style="color:#22d3bf">μ + σ φ(Φ⁻¹(α)) / (1 − α)</code>(α = 0 에서 평균, σ 는 관측의 예측 분포). 분위수 회귀는 <code style="color:#22d3bf">(1/(1 − α)) ∫_α^{q_max} Q(u) du</code> 를 적합한 단계에서 사다리꼴 규칙으로, <code style="color:#22d3bf">q_max</code> 보다 위의 꼬리는 최상단의 값으로 채운다(꼬리를 가늘게 어림하는 방향의 근사 —— 단계 밖의 분포는 알 수 없다). 반환값 (n,).</p>

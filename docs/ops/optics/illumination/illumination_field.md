@@ -4,6 +4,7 @@ dim: optics
 category: illumination
 in: table
 out: image2d
+gpu: なし
 examples: [poc_document_scan, poc_spectrometer_illumination]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.illumination_field(train, source_radiance=None, shape=(65, 65), field_mm=None, n_pupil=16)` (実装を直接呼ぶなら `import illumdesign; illumdesign.illumination_field(train, source_radiance=None, shape=(65, 65), field_mm=None, n_pupil=16)`、台帳から引くなら `opsoptics.get("illumination_field")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

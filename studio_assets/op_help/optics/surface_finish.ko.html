@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">surface_finish — OPTICS <code style="color:#22d3bf">scene</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.surface_finish(primitive: &#x27;dict&#x27;, kind: &#x27;str&#x27; = &#x27;turned&#x27;, pitch_um: &#x27;float&#x27; = 120.0, depth_um: &#x27;float&#x27; = 1.5, uv_size_mm=(20.0, 20.0), seed: &#x27;int&#x27; = 0, shape=(384, 384)) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import optscene; optscene.surface_finish(primitive: &#x27;dict&#x27;, kind: &#x27;str&#x27; = &#x27;turned&#x27;, pitch_um: &#x27;float&#x27; = 120.0, depth_um: &#x27;float&#x27; = 1.5, uv_size_mm=(20.0, 20.0), seed: &#x27;int&#x27; = 0, shape=(384, 384)) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsoptics.get(&quot;surface_finish&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>부품 면에 <b>가공 결</b>을 새깁니다(선반 자국·헤어라인·널링·무광 블라스트·연삭 자국).</p>
 <p>결함이 아니다 ―― 양품에도 반드시 있으므로 <code style="color:#22d3bf">optscene_defect_mask</code>에는 나오지 않는다. 그래도 필요한 것은, 가공 자국이 <b>검사를 가장 어렵게 만드는 장본인</b>이기 때문. 선반 자국과가는 흠집은 암시야에서 똑같이 빛나므로, 가공 자국이 없는 매끈한 면으로 학습시킨모델은 실기에서 가공 자국을 전부 결함이라고 부른다.</p>

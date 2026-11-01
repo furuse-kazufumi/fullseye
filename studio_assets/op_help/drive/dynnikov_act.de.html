@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">dynnikov_act — DRIVE <code style="color:#22d3bf">braidpath</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">any × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dynnikov_act(coords, word)</code> (die Implementierung direkt: <code style="color:#22d3bf">import braidpath; braidpath.dynnikov_act(coords, word)</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;dynnikov_act&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Wendet ein Zopfwort auf beliebige Dynnikov-Koordinaten (a; b) an (ganzzahlig oder reell —— die Formeln sind stückweise linear).</p>
 <p><code style="color:#22d3bf">coords</code> ist ein dict (<code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code>) oder eine Folge der Länge 2(n − 1) (erste Hälfte a, zweite Hälfte b). Die Strangzahl ist n = len(a) + 1. Die Relationen σᵢσᵢ₊₁σᵢ = σᵢ₊₁σᵢσᵢ₊₁, σᵢσⱼ = σⱼσᵢ, σᵢσᵢ⁻¹ = 1 gelten <b>identisch für jedes (a; b)</b> (Gate 1, mit zufälligen reellen Koordinaten).</p>

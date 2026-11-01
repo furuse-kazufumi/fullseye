@@ -4,6 +4,7 @@ dim: 3d
 category: geodesic
 in: points
 out: graph
+gpu: なし
 examples: [pcl_geodesic]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `points` → `graph`
 - **呼び出し**: `import fullseye as fs; fs.ledger.knn_graph(points: numpy.ndarray, k: int = 8) -> Tuple[numpy.ndarray, numpy.ndarray]` (実装を直接呼ぶなら `import geodesic3d; geodesic3d.knn_graph(points: numpy.ndarray, k: int = 8) -> Tuple[numpy.ndarray, numpy.ndarray]`、台帳から引くなら `ops3d.get("knn_graph")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -4,6 +4,7 @@ dim: dem
 category: geodesy
 in: signal × signal
 out: signal
+gpu: なし
 examples: [poc_geodetic_benchmarks_real, poc_geodetic_height_frames]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal × signal` → `signal`
 - **呼び出し**: `import fullseye as fs; fs.ledger.dem_height_frame_convert(height_m, geoid_height_m, frm='ellipsoidal', to='orthometric')` (実装を直接呼ぶなら `import demops; demops.dem_height_frame_convert(height_m, geoid_height_m, frm='ellipsoidal', to='orthometric')`、台帳から引くなら `opsdem.get("dem_height_frame_convert")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

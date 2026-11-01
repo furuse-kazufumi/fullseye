@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">procrustes_align — SHAPESTAT <code style="color:#22d3bf">procrustes</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.procrustes_align(source, target, scaling: &#x27;bool&#x27; = True, reflection: &#x27;bool&#x27; = False)</code>(要直接调用实现,<code style="color:#22d3bf">import shapestats; shapestats.procrustes_align(source, target, scaling: &#x27;bool&#x27; = True, reflection: &#x27;bool&#x27; = False)</code>;从台账取用则 <code style="color:#22d3bf">opsshapestat.get(&quot;procrustes_align&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>将 *source* 叠合到 *target* 上之后的点。→ <code style="color:#22d3bf">(N, 3)</code>(应用 <code style="color:#22d3bf">procrustes_fit</code>)。</p>
 <p>求出 <code style="color:#22d3bf">M = procrustes_fit(source, target, scaling, reflection)</code>, 返回 <code style="color:#22d3bf">source @ M[:3, :3].T + M[:3, 3]</code>。变换是质心对齐 + 基于 SVD 的旋转(+ 可选的缩放)的相似变换，前提是<b>第 i 个点彼此对应</b>。传入无对应关系的点集也不会抛出异常，而是返回无意义的配置(这种情况下请使用 ICP 系的配准)。</p>

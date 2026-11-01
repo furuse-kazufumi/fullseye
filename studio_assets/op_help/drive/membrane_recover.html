@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">membrane_recover — DRIVE <code style="color:#22d3bf">tacsim</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">rgb × matrix × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.membrane_recover(rgb, lights, pitch: &#x27;float&#x27;, ambient: &#x27;float&#x27; = 0.0, albedo: &#x27;float&#x27; = 1.0) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import tacsim; tacsim.membrane_recover(rgb, lights, pitch: &#x27;float&#x27;, ambient: &#x27;float&#x27; = 0.0, albedo: &#x27;float&#x27; = 1.0) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;membrane_recover&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>視触覚 RGB (H, W, 3) → 3 チャネルを 3 光源の像として <code style="color:#22d3bf">photometric.photometric_stereo</code>(lit_only)で法線 → <code style="color:#22d3bf">photometric.integrate_normals</code>(Frankot-Chellappa)で高さ(画素単位 × pitch = m)。</p>
 <p><code style="color:#22d3bf">ambient</code>・<code style="color:#22d3bf">albedo</code> は較正値: 像から albedo·ambient を引いてから解く(合成 albedo·(N·L + ambient) の ambient 項を Woodham の線形模型は持たないので、引かないと法線が z 側へ寄り、傾きが ambient/sin(仰角) ≈ 3.7 %(0.03/0.82)系統的に小さく出る —— 実機の参照フレーム較正に当たる。試作で δ が 3.5 % 低かった原因)。</p>

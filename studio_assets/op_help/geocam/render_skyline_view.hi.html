@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">render_skyline_view — GEOCAM <code style="color:#22d3bf">skyline</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.render_skyline_view(sky_table, K, shape, yaw_deg, pitch_deg, roll_deg)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import geocam; geocam.render_skyline_view(sky_table, K, shape, yaw_deg, pitch_deg, roll_deg)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsgeocam.get(&quot;render_skyline_view&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>skyline table और orientation से, उस दिशा में देखते camera को दिखने वाला <b>आकाश का mask</b> (H, W) बनाता है → image2d (0/1)।</p>
 <p>हर pixel की ray को world में घुमाया जाता है; अगर वह उस azimuth की skyline elevation से ऊपर हो तो आसमान (1), नीचे हो तो terrain (0)। synthetic photos बनाने (PoC) और अनुमानित pose को photo पर रखकर आँख से जाँचने वाले चित्रों के लिए इस्तेमाल होता है। यह <code style="color:#22d3bf">camera_orientation_from_skyline</code> की prediction वाली ही geometry है, इसलिए <b>बनाना → निकालना → fit करना</b> का round trip बंद होता है (tests का ground truth)।</p>

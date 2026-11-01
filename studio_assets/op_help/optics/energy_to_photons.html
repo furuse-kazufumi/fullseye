@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">energy_to_photons — OPTICS <code style="color:#22d3bf">spectral</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">pairs</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.energy_to_photons(spectrum)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import spectralrad; spectralrad.energy_to_photons(spectrum)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;energy_to_photons&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>エネルギーの分光分布(W/nm)を光子数の分布(光子 s⁻¹ nm⁻¹)にする: λ/(hc) を掛ける。</p>
 <p>量子効率(電子/光子)を掛ける前に通す。相対分布でも、波長ごとの重みの比は正しくなる。</p>

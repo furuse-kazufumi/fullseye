@@ -4,6 +4,7 @@ dim: drive
 category: pegsim
 in: table
 out: table
+gpu: なし
 examples: [gallery_drive_peg, poc_peg_failure_recovery, poc_peg_insertion_tactile, poc_pegsim_insertion]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.peg_synthetic_rgbd(kp=None, tip_xyz=(0.002, 0.001, 0.01), axis=(0.0, 0.0, 1.0), width: 'int' = 320, height: 'int' = 240, supersample: 'int' = 4, cam_pos=(-0.06, 0.0, 0.07), fovy_deg: 'float' = 40.0) -> 'dict'` (実装を直接呼ぶなら `import pegsim; pegsim.peg_synthetic_rgbd(kp=None, tip_xyz=(0.002, 0.001, 0.01), axis=(0.0, 0.0, 1.0), width: 'int' = 320, height: 'int' = 240, supersample: 'int' = 4, cam_pos=(-0.06, 0.0, 0.07), fovy_deg: 'float' = 40.0) -> 'dict'`、台帳から引くなら `opsdrive.get("peg_synthetic_rgbd")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

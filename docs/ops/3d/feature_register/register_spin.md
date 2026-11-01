@@ -4,6 +4,7 @@ dim: 3d
 category: feature_register
 in: points × points
 out: pose
+gpu: なし
 examples: [feature_register]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `points × points` → `pose`
 - **呼び出し**: `import fullseye as fs; fs.ledger.register_spin(src, dst, device='cpu', n_keypoints=220, normal_k=18, support_radius=None, n_alpha=16, n_beta=16, support_angle_deg=60.0, lowe_ratio=0.85, ransac_iters=4000, inlier_thr=None, min_inliers=8, seed=0)` (実装を直接呼ぶなら `import feat_spin; feat_spin.register_spin(src, dst, device='cpu', n_keypoints=220, normal_k=18, support_radius=None, n_alpha=16, n_beta=16, support_angle_deg=60.0, lowe_ratio=0.85, ransac_iters=4000, inlier_thr=None, min_inliers=8, seed=0)`、台帳から引くなら `ops3d.get("register_spin")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

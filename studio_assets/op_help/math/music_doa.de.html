@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">music_doa — MATH <code style="color:#22d3bf">spectral</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.music_doa(X, n_sources: &#x27;int | None&#x27; = None, *, spacing: &#x27;float&#x27; = 0.5, grid_deg=None) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import mathspectral; mathspectral.music_doa(X, n_sources: &#x27;int | None&#x27; = None, *, spacing: &#x27;float&#x27; = 0.5, grid_deg=None) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsmath.get(&quot;music_doa&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>MUSIC (Schmidt 1986): sucht die Richtungen, die zum Rauschunterraum der Kovarianz orthogonal sind.</p>
 <p>P(θ) = 1 / ‖E_nᴴ a(θ)‖². In der wahren Richtung wird der Nenner fast 0, und es entsteht eine scharfe Spitze.</p>

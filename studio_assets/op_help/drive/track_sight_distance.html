@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">track_sight_distance — DRIVE <code style="color:#22d3bf">crossing</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.track_sight_distance(v_train, clear_time, *, margin: &#x27;float&#x27; = 0.0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import drivecrossing; drivecrossing.track_sight_distance(v_train, clear_time, *, margin: &#x27;float&#x27; = 0.0)</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;track_sight_distance&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>渡り切る前に列車が着かないために、線路の上で見えていなければならない距離 = v_train · (clear_time + margin)。</p>
 <p>見える距離がこれ以上なら、見えていない列車は渡り切る前に踏切に着かない(到達時刻 = 距離 / 速さ &gt; 渡り切る時間)。配列可。</p>

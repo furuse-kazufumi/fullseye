@@ -4,6 +4,7 @@ dim: 3d
 category: geodesic
 in: points
 out: signal
+gpu: なし
 examples: [geodesic_distance]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `points` → `signal`
 - **呼び出し**: `import fullseye as fs; fs.ledger.geodesic_distances(points: numpy.ndarray, source: int, k: int = 8) -> numpy.ndarray` (実装を直接呼ぶなら `import geodesic3d; geodesic3d.geodesic_distances(points: numpy.ndarray, source: int, k: int = 8) -> numpy.ndarray`、台帳から引くなら `ops3d.get("geodesic_distances")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

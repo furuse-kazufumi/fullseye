@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">itof_capture — OPTICS <code style="color:#22d3bf">itof</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">depth</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.itof_capture(depth, reflectivity=None, frequencies_hz=(20000000.0,), n_phases=4, signal_electrons=2000.0, demod_contrast=0.5, ambient_electrons=0.0, read_noise_e=0.0, waveform=&#x27;sine&#x27;, paths_depth=None, paths_amplitude=None, supersample=1, falloff_m=None, noise=True, seed=0)</code>(要直接调用实现,<code style="color:#22d3bf">import itof; itof.itof_capture(depth, reflectivity=None, frequencies_hz=(20000000.0,), n_phases=4, signal_electrons=2000.0, demod_contrast=0.5, ambient_electrons=0.0, read_noise_e=0.0, waveform=&#x27;sine&#x27;, paths_depth=None, paths_amplitude=None, supersample=1, falloff_m=None, noise=True, seed=0)</code>;从台账取用则 <code style="color:#22d3bf">opsoptics.get(&quot;itof_capture&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>距离图 → 间接 ToF 的原始信号(每个调制频率 K 个相位步进的累积桶,单位为电子数)。返回 <code style="color:#22d3bf">table</code>(<code style="color:#22d3bf">dict</code>)。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>

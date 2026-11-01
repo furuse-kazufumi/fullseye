@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">icp_point2point_3d — 3D <code style="color:#22d3bf">refine</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">pose</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.icp_point2point_3d(src, dst, iters=50, init_R=None, init_t=None, tol=1e-06, max_corr_dist=None, trim_ratio=None, device=&#x27;cpu&#x27;, reproducible=False)</code>(要直接呼叫實作,<code style="color:#22d3bf">import match3d; match3d.icp_point2point_3d(src, dst, iters=50, init_R=None, init_t=None, tol=1e-06, max_corr_dist=None, trim_ratio=None, device=&#x27;cpu&#x27;, reproducible=False)</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;icp_point2point_3d&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用 point-to-point ICP(Kabsch/SVD)精化點群。</p>
 <p>透過粗匹配估計獲得（整數 NCC/Fourier-Mellin±3°/Hough±0.5voxel）從初始姿態（init_R，init_t）開始，src側點被嚴格地轉換為dst側點。對齊。在每次迭代時，重新縫合最近鄰對應關係（cKDTree）並使用 Kabsch 演算法透過使用（SVD）計算和累積相對旋轉和平移，即使對應關係未知，收斂到亞體素精度。</p>

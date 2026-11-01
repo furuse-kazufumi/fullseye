@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">ellipse — ANNOTATE <code style="color:#22d3bf">shape</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ellipse(img, center, radii, angle_deg=0.0, color=&#x27;neutral&#x27;, width=2, fill=False, alpha=1.0, scheme=&#x27;okabe_ito&#x27;)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import annotate; annotate.ellipse(img, center, radii, angle_deg=0.0, color=&#x27;neutral&#x27;, width=2, fill=False, alpha=1.0, scheme=&#x27;okabe_ito&#x27;)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsannotate.get(&quot;ellipse&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>ellipse (<code style="color:#22d3bf">angle_deg</code> से घुमाया गया, <code style="color:#22d3bf">fill=True</code> से भरा)।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>

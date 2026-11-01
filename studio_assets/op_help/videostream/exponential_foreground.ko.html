@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">exponential_foreground — VIDEOSTREAM <code style="color:#22d3bf">recursive</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">video</code> → <code style="color:#22d3bf">video</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.exponential_foreground(video, alpha: &#x27;float&#x27; = 0.05, threshold: &#x27;float&#x27; = 0.1) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import videostream; videostream.exponential_foreground(video, alpha: &#x27;float&#x27; = 0.05, threshold: &#x27;float&#x27; = 0.1) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsvideostream.get(&quot;exponential_foreground&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>전경 마스크 <code style="color:#22d3bf">|frame − 지수 배경| &gt; threshold</code> → 0/1 <code style="color:#22d3bf">(T, H, W)</code>(<code style="color:#22d3bf">video</code>).</p>
 <p><code style="color:#22d3bf">exponential_background</code> 와 같은 지수 이동 평균 <code style="color:#22d3bf">bg += α (frame - bg)</code> 를 돌리고, 각 프레임에서 <b>갱신 후의</b> <code style="color:#22d3bf">bg</code> 와의 차 <code style="color:#22d3bf">|frame - bg| &gt; threshold</code> 를 1 로 한다. 첫 프레임은 <code style="color:#22d3bf">bg</code> 의 초기화에 쓰여 차가 0 이므로 <code style="color:#22d3bf">t = 0</code> 은 전 화소 0.</p>

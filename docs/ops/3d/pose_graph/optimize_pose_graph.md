@@ -4,6 +4,7 @@ dim: 3d
 category: pose_graph
 in: pose
 out: table
+gpu: なし
 examples: [pose_graph_slam]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `pose` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.optimize_pose_graph(poses_init, edges, fix_first=True, max_iter=200)` (実装を直接呼ぶなら `import pose_graph; pose_graph.optimize_pose_graph(poses_init, edges, fix_first=True, max_iter=200)`、台帳から引くなら `ops3d.get("optimize_pose_graph")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

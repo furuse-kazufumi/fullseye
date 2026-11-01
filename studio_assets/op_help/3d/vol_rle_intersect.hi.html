@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">vol_rle_intersect — 3D <code style="color:#22d3bf">rle_region</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">rle_region × rle_region</code> → <code style="color:#22d3bf">rle_region</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_rle_intersect(a, b)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import volregion; volregion.vol_rle_intersect(a, b)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;vol_rle_intersect&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>runs पर दो RLE regions का intersection (decode के बिना)।</p>
 <p><code style="color:#22d3bf">vol_rle_union</code> वाले ही sweep engine (<code style="color:#22d3bf">_rle_boolean</code>) से, केवल वे अंतराल runs के रूप में रखे जाते हैं जिनकी coverage state <code style="color:#22d3bf">ia &amp; ib</code> (दोनों के अंदर) हो। गणना की लागत runs की संख्या के लिए O(n log n) है, और voxels की संख्या पर निर्भर नहीं करती।</p>

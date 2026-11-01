@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">music_doa — MATH <code style="color:#22d3bf">spectral</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.music_doa(X, n_sources: &#x27;int | None&#x27; = None, *, spacing: &#x27;float&#x27; = 0.5, grid_deg=None) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import mathspectral; mathspectral.music_doa(X, n_sources: &#x27;int | None&#x27; = None, *, spacing: &#x27;float&#x27; = 0.5, grid_deg=None) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsmath.get(&quot;music_doa&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>MUSIC (Schmidt 1986): covariance के noise subspace के orthogonal directions खोजता है।</p>
 <p>P(θ) = 1 / ‖E_nᴴ a(θ)‖²। सही दिशा में denominator लगभग 0 हो जाता है और एक तीखा peak उठता है।</p>

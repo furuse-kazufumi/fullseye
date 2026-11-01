@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">shape_index_to_curvature — REPRCONV <code style="color:#22d3bf">curvature</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">curvature</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.shape_index_to_curvature(pairs)</code> (die Implementierung direkt: <code style="color:#22d3bf">import reprconv; reprconv.shape_index_to_curvature(pairs)</code>; aus dem Register: <code style="color:#22d3bf">opsreprconv.get(&quot;shape_index_to_curvature&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Formindex und Gekrümmtheit <code style="color:#22d3bf">(N,2)</code> → Hauptkrümmungen <code style="color:#22d3bf">(N,2)</code>. Die Umkehrung von <code style="color:#22d3bf">curvature_to_shape_index</code>.</p>
 <p>Mit theta = pi*S/2 gilt <code style="color:#22d3bf">k1 = C(sin+cos)</code>, <code style="color:#22d3bf">k2 = C(sin-cos)</code>. Die geschlossene Form durch Auflösen der Definitionsgleichungen von (S, C); weder Näherung noch Iteration ist enthalten.</p>

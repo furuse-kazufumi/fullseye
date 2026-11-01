@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">profile_normalise — PROFILE <code style="color:#22d3bf">frame</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">pairs</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.profile_normalise(contour)</code> (die Implementierung direkt: <code style="color:#22d3bf">import profileops; profileops.profile_normalise(contour)</code>; aus dem Register: <code style="color:#22d3bf">opsprofile.get(&quot;profile_normalise&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Normiert durch Rotation und Translation so, dass die Sehnenlänge 1 ist, die Vorderkante im Ursprung liegt und die Sehne in +x zeigt.</p>
 <p><b>Die Skalierung erfolgt nur über die Sehnenlänge</b> (die Form wird nicht verzerrt). Zurückgegeben wird die normierte Kontur.</p>

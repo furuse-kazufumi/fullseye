@@ -4,6 +4,7 @@ dim: fit
 category: registration
 in: image2d × image2d
 out: table
+gpu: なし
 examples: [fit_ops_from_knowhow]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d × image2d` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.phase_correlation_shift(image1, image2, window: 'str | None' = 'hann', whitening: 'float' = 0.5, method: 'str' = 'upsample', upsample_factor: 'int' = 100) -> 'dict'` (実装を直接呼ぶなら `import filters_freq; filters_freq.phase_correlation_shift(image1, image2, window: 'str | None' = 'hann', whitening: 'float' = 0.5, method: 'str' = 'upsample', upsample_factor: 'int' = 100) -> 'dict'`、台帳から引くなら `opsfit.get("phase_correlation_shift")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">write_wav — ONED <code style="color:#22d3bf">io</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">file</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.write_wav(path, x, rate=44100)</code>(要直接调用实现,<code style="color:#22d3bf">import dsp; dsp.write_wav(path, x, rate=44100)</code>;从台账取用则 <code style="color:#22d3bf">ops1d.get(&quot;write_wav&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把 float <code style="color:#22d3bf">[-1,1]</code> 单声道信号写成 16-bit PCM WAV(标准库)。非有限样本会抛出异常(否则会变成损坏的 PCM)。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>

@@ -4,6 +4,7 @@ dim: emproof
 category: score
 in: labels2d × labels2d
 out: table
+gpu: なし
 examples: [gallery_mesh_seg_sun_gains]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `labels2d × labels2d` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.seg_contingency(a, b, ignore_label=None)` (実装を直接呼ぶなら `import segcompare; segcompare.seg_contingency(a, b, ignore_label=None)`、台帳から引くなら `opsemproof.get("seg_contingency")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

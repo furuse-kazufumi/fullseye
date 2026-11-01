@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">dem_geoid_height — DEM <code style="color:#22d3bf">geodesy</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">depth</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_geoid_height(geoid, lat_deg, lon_deg, lat0_deg, lon0_deg, d_lat_deg, d_lon_deg)</code>(要直接调用实现,<code style="color:#22d3bf">import demops; demops.dem_geoid_height(geoid, lat_deg, lon_deg, lat0_deg, lon0_deg, d_lat_deg, d_lon_deg)</code>;从台账取用则 <code style="color:#22d3bf">opsdem.get(&quot;dem_geoid_height&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>按纬度、经度对大地水准面高网格做<b>双线性插值</b>，返回 <code style="color:#22d3bf">N</code> [m] (<code style="color:#22d3bf">signal</code>)。</p>
 <p>GNSS 返回的是椭球高 <code style="color:#22d3bf">h</code>,地图和设计图使用的是正高 <code style="color:#22d3bf">H</code>。两者之差是大地水准面高 <code style="color:#22d3bf">N</code>(<code style="color:#22d3bf">H = h - N</code>),在日本附近大致为 <b>+30~+40 m</b>。本 op 是读取已公开的大地水准面模型网格(如 GSIGEO / EGM 系列那样的等间隔网格)的工具,<b>本身不包含模型</b> —— 使用哪个版本由调用方负责,版本一变高程会变动几 cm。</p>

@@ -4,6 +4,7 @@ dim: reprconv
 category: algebra
 in: pairs
 out: cscalar
+gpu: なし
 examples: [representation_conversion]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `pairs` → `cscalar`
 - **呼び出し**: `import fullseye as fs; fs.ledger.polar_to_cscalar(pairs)` (実装を直接呼ぶなら `import reprconv; reprconv.polar_to_cscalar(pairs)`、台帳から引くなら `opsreprconv.get("polar_to_cscalar")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

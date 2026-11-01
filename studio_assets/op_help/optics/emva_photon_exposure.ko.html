@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">emva_photon_exposure — OPTICS <code style="color:#22d3bf">sensorchar</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.emva_photon_exposure(irradiance, area_um2, t_exp_ms, wavelength_um)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import sensorchar; sensorchar.emva_photon_exposure(irradiance, area_um2, t_exp_ms, wavelength_um)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsoptics.get(&quot;emva_photon_exposure&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>센서 면의 방사 조도로부터 화소당 평균 광자 수 μ_p = A E t_exp/(hc/λ)(식 3)를 규격의 편리한 단위로(식 4).</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>

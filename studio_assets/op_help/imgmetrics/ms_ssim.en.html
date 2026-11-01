@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">ms_ssim — IMGMETRICS <code style="color:#22d3bf">fidelity</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ms_ssim(a, b, data_range=None, win_size=11, sigma=1.5, K1=0.01, K2=0.03, weights=(0.0448, 0.2856, 0.3001, 0.2363, 0.1333), crop_border=True)</code> (to call the implementation directly, <code style="color:#22d3bf">import imgmetrics; imgmetrics.ms_ssim(a, b, data_range=None, win_size=11, sigma=1.5, K1=0.01, K2=0.03, weights=(0.0448, 0.2856, 0.3001, 0.2363, 0.1333), crop_border=True)</code>; from the registry, <code style="color:#22d3bf">opsimgmetrics.get(&quot;ms_ssim&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Multi-scale SSIM (Wang, Simoncelli &amp; Bovik, Asilomar Conf. 2003).</p>
 <p>It goes through 5 levels of downsampling, so for an 11-pixel window to be valid at the last level, <b>176 pixels per side</b> are required. When that is not met, <b>the number of levels is not silently reduced</b> -- an MS-SSIM with a different number of levels is a different metric, and comparing them would be a lie. If too small, <code style="color:#22d3bf">ValueError</code>.</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">world_pose_humanoid — DRIVE <code style="color:#22d3bf">humanoid</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.world_pose_humanoid(world: &#x27;dict&#x27;, i: &#x27;int&#x27;, clip: &#x27;dict&#x27;, distance: &#x27;float&#x27;, x: &#x27;float&#x27;, y: &#x27;float&#x27;, yaw: &#x27;float&#x27;) -&gt; &#x27;None&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import drivehumanoid; drivehumanoid.world_pose_humanoid(world: &#x27;dict&#x27;, i: &#x27;int&#x27;, clip: &#x27;dict&#x27;, distance: &#x27;float&#x27;, x: &#x27;float&#x27;, y: &#x27;float&#x27;, yaw: &#x27;float&#x27;) -&gt; &#x27;None&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;world_pose_humanoid&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>世界の物体 <code style="color:#22d3bf">i</code>(<code style="color:#22d3bf">driveterrain.add_mesh_object</code> で <code style="color:#22d3bf">humanoid_clip_mesh</code> を置いたもの)を、歩いた距離 <code style="color:#22d3bf">distance</code> の姿勢にして <code style="color:#22d3bf">(x, y, yaw)</code> へ置き直す(頂点だけ書き換える。面・色・ラベル・<code style="color:#22d3bf">dims</code> は不変)。</p>
 <p>空の入力(<code style="color:#22d3bf">world</code> が空の dict)は ValueError。</p>

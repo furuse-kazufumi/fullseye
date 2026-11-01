@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">naive_execute — DRIVE <code style="color:#22d3bf">agv</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.naive_execute(paths, delay_prob=0.3, seed=0, max_steps=10000)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import agvfleet; agvfleet.naive_execute(paths, delay_prob=0.3, seed=0, max_steps=10000)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;naive_execute&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>तुलना के लिए साधारण execution: plan के केवल <b>cells के क्रम</b> का उपयोग करता है और अगला cell खाली हो तो आगे बढ़ता है (क्रम का कोई समझौता नहीं)।</p>
 <p>देरी आने पर, योजना के अनुसार समय-अंतर से एक-दूसरे को पार करने वाले 2 वाहन आमने-सामने रुक जाते हैं। लौटाया गया मान <code style="color:#22d3bf">adg_execute</code> के समान रूप का है, साथ में <code style="color:#22d3bf">waits_for</code> (गतिरोध के क्षण में &quot;कौन किसकी प्रतीक्षा करता है&quot; के किनारे) जोड़ा गया है।</p>

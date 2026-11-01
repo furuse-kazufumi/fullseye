@@ -4,6 +4,7 @@ dim: 2d
 category: 3d
 in: volume
 out: volume
+gpu: あり(vol_opening_ball_g)
 examples: [gallery2d_physics_alife_3d, poc_warehouse_flow]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `volume` → `volume`
 - **呼び出し**: `fullseye.apply(img, "vol_opening_ball", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
+- **GPU**: あり(`vol_opening_ball_g`、`device="cuda"` で高速経路)
 
 ![vol_opening_ball: input → output](../../_fig/vol_opening_ball.png)
 

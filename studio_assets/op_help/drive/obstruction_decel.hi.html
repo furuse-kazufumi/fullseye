@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">obstruction_decel — DRIVE <code style="color:#22d3bf">crossing</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.obstruction_decel(dist, speed, t_free, *, sudden: &#x27;float&#x27; = 2.0) -&gt; &#x27;Dict[str, object]&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import drivecrossing; drivecrossing.obstruction_decel(dist, speed, t_free, *, sudden: &#x27;float&#x27; = 2.0) -&gt; &#x27;Dict[str, object]&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;obstruction_decel&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>cross road के वाहन (zone तक dist, गति speed) के t_free से पहले zone में प्रवेश न करने के लिए आवश्यक स्थिर deceleration (closed form, arrays भी चलते हैं)।</p>
 <p>T = t_free। यदि speed·T ≤ dist हो तो 0 (बिना मंदन के भी समय पर)। यदि T ≤ 2 dist / speed हो तो 2(speed·T − dist)/T², उसके बाद speed² / (2 dist) (क्षेत्र से पहले रुकना)। <code style="color:#22d3bf">obstructs</code> = मंदन &gt; <code style="color:#22d3bf">sudden</code> (<b>धारणा</b> 2.0 m/s², सड़क यातायात अधिनियम (जापान) अनुच्छेद 2 मद 22: &quot;गति या दिशा अचानक बदलनी पड़े&quot;)। dist ≤ 0 (पहले से क्षेत्र में) और T &gt; 0 पर ∞।</p>

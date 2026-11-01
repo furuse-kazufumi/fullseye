@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">vol_colorize_labels — VOLCOLOR <code style="color:#22d3bf">colorize</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">labels</code> → <code style="color:#22d3bf">rgbvolume</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_colorize_labels(labels, seed: &#x27;int&#x27; = 0, background=(0.0, 0.0, 0.0))</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import volcolor; volcolor.vol_colorize_labels(labels, seed: &#x27;int&#x27; = 0, background=(0.0, 0.0, 0.0))</code>, registry से लेना हो तो <code style="color:#22d3bf">opsvolcolor.get(&quot;vol_colorize_labels&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>3-D label volume -&gt; <code style="color:#22d3bf">(D, H, W, 3)</code> float64 का RGB volume।</p>
 <p>&quot;पहले काटो, फिर रंगो&quot; के बजाय &quot;<b>पहले रंगो, फिर काटो</b>&quot; के लिए entry point। label <code style="color:#22d3bf">k</code> का रंग ठीक <code style="color:#22d3bf">vol_label_palette</code> की row <code style="color:#22d3bf">k</code> है, और उसी array पर <code style="color:#22d3bf">imgio.colorize_labels(labels, seed)</code> call करने के result से <b>byte-दर-byte मेल खाता है</b> (<code style="color:#22d3bf">tests/test_volcolor.py</code> पक्का करता है)।</p>

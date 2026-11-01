@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">vol_label_mpr_rgb — VOLCOLOR <code style="color:#22d3bf">slice</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">rgbvolume</code> → <code style="color:#22d3bf">rgbimage</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_label_mpr_rgb(rgbvol, center=None, gap: &#x27;int&#x27; = 4, background=(0.05, 0.05, 0.07))</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import volcolor; volcolor.vol_label_mpr_rgb(rgbvol, center=None, gap: &#x27;int&#x27; = 4, background=(0.05, 0.05, 0.07))</code>、台帳から引くなら <code style="color:#22d3bf">opsvolcolor.get(&quot;vol_label_mpr_rgb&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>色付きボリュームの直交 3 断面を <b>1 枚の RGB</b> に並べた図を返す。</p>
 <p>左から axial <code style="color:#22d3bf">(H, W)</code> / coronal <code style="color:#22d3bf">(D, W)</code> / sagittal <code style="color:#22d3bf">(D, H)</code>。*center* は <code style="color:#22d3bf">(z, y, x)</code> の交点(既定は各軸の中央)。パネルの高さは最大値へ *background* で下詰めパディングし、間に *gap* 画素の隙間を空ける。</p>

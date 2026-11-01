@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">project_cylindrical — 3D <code style="color:#22d3bf">lidar_projection</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.project_cylindrical(points, h_res: &#x27;int&#x27; = 1024, z_bins: &#x27;int&#x27; = 64, z_range=None) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import spherical_proj; spherical_proj.project_cylindrical(points, h_res: &#x27;int&#x27; = 1024, z_bins: &#x27;int&#x27; = 64, z_range=None) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;project_cylindrical&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>원통 레인지 이미지로 투영 (z_bins, h_res). 방위각(열) × z(행), 화소=수평 반지름 ρ=hypot(x,y).</p>
 <p>구면 투영이 앙각으로 층을 자르는 데 비해, 원통 투영은 <b>높이 z를 등간격으로 자른다</b>(벽/기둥/회랑의 전개에 적합). 화소값은 z 축으로부터의 수평 거리 ρ(원통 위의 점이 일정해지는 자연스러운 불변량). 빈 셀=0, 가까운 점 우선(최소 ρ). z_range=(z_min,z_max)를 지정하지 않으면 점군의 [z.min, z.max]를 채용한다. z 폭 0은 fail-closed(실패 시 거부)(ValueError). 행 0 = 위쪽 끝(z=z_max). z_range 밖, z 축 위(ρ=0), 비유한 좌표인 점은 버린다.</p>

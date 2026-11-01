@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">angle_3points — 3D <code style="color:#22d3bf">geometry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.angle_3points(a, b, c)</code> (die Implementierung direkt: <code style="color:#22d3bf">import match3d; match3d.angle_3points(a, b, c)</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;angle_3points&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Der Winkel an drei Punkten (Scheitel b, in Grad). ∠ABC.</p>
 <p>Gibt <code style="color:#22d3bf">arccos(û·v̂)</code> (<code style="color:#22d3bf">u = a − b</code>, <code style="color:#22d3bf">v = c − b</code>) in Grad zurück (float). Der Wert liegt in <b>[0, 180]</b> und hat kein Vorzeichen (auch in 2-D wird die Drehrichtung nicht unterschieden). Die Argumente sind numerische 2- oder 3-Vektoren; gemischte Dimensionen lösen ValueError aus. Bei <code style="color:#22d3bf">a == b</code> oder <code style="color:#22d3bf">c == b</code> ist das Skalarprodukt mit dem Nullvektor 0 und es wird 90 zurückgegeben (keine Exception). Das Skalarprodukt wird auf [−1,1] geclippt, daher entsteht durch numerische Fehler kein NaN.</p>

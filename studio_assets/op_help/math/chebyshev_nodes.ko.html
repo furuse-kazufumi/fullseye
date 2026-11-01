@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">chebyshev_nodes — MATH <code style="color:#22d3bf">numerics</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">signal</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.chebyshev_nodes(n: &#x27;int&#x27;, a: &#x27;float&#x27; = -1.0, b: &#x27;float&#x27; = 1.0, kind: &#x27;int&#x27; = 2) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import mathnumerics; mathnumerics.chebyshev_nodes(n: &#x27;int&#x27;, a: &#x27;float&#x27; = -1.0, b: &#x27;float&#x27; = 1.0, kind: &#x27;int&#x27; = 2) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsmath.get(&quot;chebyshev_nodes&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>구간 [a, b]의 Chebyshev 점 n개(오름차순).</p>
 <p><code style="color:#22d3bf">kind=2</code>(기본값)는 끝점을 포함하는 Chebyshev–Lobatto 점 x_k = cos(kπ/(n−1)), <code style="color:#22d3bf">kind=1</code>은 끝점을 포함하지 않는 Chebyshev–Gauss 점 cos((2k+1)π/(2n)). 끝으로 갈수록 조밀해져 다항식 보간의 요동(Runge 현상)을 억제한다.</p>

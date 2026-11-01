@@ -3,6 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.radius_outlier_removal(points, radius: &#x27;float&#x27;, min_neighbors: &#x27;int&#x27; = 8)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import pcl_filter; pcl_filter.radius_outlier_removal(points, radius: &#x27;float&#x27;, min_neighbors: &#x27;int&#x27; = 8)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;radius_outlier_removal&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>台帳経由の戻り値</b>: <code style="color:#22d3bf">fullseye.ledger.radius_outlier_removal(...)</code> は<b>宣言 out 型 <code style="color:#22d3bf">points</code> の値だけ</b>を返す(本体は補助情報も返す)。捨てられた側が要るときは <code style="color:#22d3bf">fullseye.ledger.radius_outlier_removal.raw(...)</code>、または <code style="color:#22d3bf">pcl_filter.radius_outlier_removal</code> を直接呼ぶ。</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>半径 radius 内の近傍数が min_neighbors 未満の点を除去する(孤立点除去)。</p>
 <p>各点を中心に半径 <code style="color:#22d3bf">radius</code> の球を張り、その中に居る他点の数が <code style="color:#22d3bf">min_neighbors</code> に満たない点を「孤立した粒」として落とす。統計的手法より局所的・直接的で、センサの実スケールが分かっているときにしきい値を決めやすい。</p>

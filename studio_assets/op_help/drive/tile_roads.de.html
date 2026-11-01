@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tile_roads — DRIVE <code style="color:#22d3bf">inf</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tile_roads(i: &#x27;int&#x27;, j: &#x27;int&#x27;, tp: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import driveinf; driveinf.tile_roads(i: &#x27;int&#x27;, j: &#x27;int&#x27;, tp: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;tile_roads&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Straßen in einer Kachel: Kreuzungspunkte (Koordinaten in der Kachel), der Verzweigungspunkt und die Segmente vom Verzweigungspunkt zu jedem Punkt. Rückgabewert <code style="color:#22d3bf">{&quot;hub&quot; (2,), &quot;ends&quot; [(side, (x, y))], &quot;segments&quot; (K, 2, 2)}</code> (leer, wenn es keine Kreuzungspunkte gibt).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

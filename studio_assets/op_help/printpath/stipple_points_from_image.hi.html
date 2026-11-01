@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">stipple_points_from_image — PRINTPATH <code style="color:#22d3bf">stroke</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">pairs</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.stipple_points_from_image(image, n_points, iterations=30, gamma=1.0, floor=0.02, seed=0, metric=&#x27;euclidean&#x27;)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import printpath; printpath.stipple_points_from_image(image, n_points, iterations=30, gamma=1.0, floor=0.02, seed=0, metric=&#x27;euclidean&#x27;)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsprintpath.get(&quot;stipple_points_from_image&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>grey स्तर को <b>point density</b> में map करता है (weighted Lloyd = centroidal Voronoi)। → <code style="color:#22d3bf">pairs</code></p>
 <p>जहाँ अँधेरा है वहाँ points घने इकट्ठा होते हैं। लौटता है <code style="color:#22d3bf">(n_points, 2)</code> के रूप में <b>(row, col)</b> ।</p>

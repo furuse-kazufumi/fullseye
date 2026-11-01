@@ -4,6 +4,7 @@ dim: simcal
 category: check
 in: calresult
 out: calresult
+gpu: なし
 examples: [poc_simcal_pixel_shift, poc_simcal_telecentric, poc_simcal_thin_film, simcal_checks_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `calresult` → `calresult`
 - **呼び出し**: `import fullseye as fs; fs.ledger.simcal_identifiability(result=None, at=None, profile=True, level=0.95, threshold=None) -> 'dict'` (実装を直接呼ぶなら `import simcalcheck; simcalcheck.simcal_identifiability(result=None, at=None, profile=True, level=0.95, threshold=None) -> 'dict'`、台帳から引くなら `opssimcal.get("simcal_identifiability")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

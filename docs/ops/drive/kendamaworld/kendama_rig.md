@@ -4,6 +4,7 @@ dim: drive
 category: kendamaworld
 in: table
 out: table
+gpu: なし
 examples: [gallery_drive_world_objects, poc_kendama]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.kendama_rig(kp: 'dict' = None, *, n: 'int' = 2, distance: 'float' = 1.5, height: 'float' = 1.05, fov_deg: 'float' = 45.0, width: 'int' = 480, height_px: 'int' = 360, target=(0.0, 0.0, 1.0)) -> 'list'` (実装を直接呼ぶなら `import kendamaworld; kendamaworld.kendama_rig(kp: 'dict' = None, *, n: 'int' = 2, distance: 'float' = 1.5, height: 'float' = 1.05, fov_deg: 'float' = 45.0, width: 'int' = 480, height_px: 'int' = 360, target=(0.0, 0.0, 1.0)) -> 'list'`、台帳から引くなら `opsdrive.get("kendama_rig")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

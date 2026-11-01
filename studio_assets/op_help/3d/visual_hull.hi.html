@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">visual_hull — 3D <code style="color:#22d3bf">space_carving</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">images</code> → <code style="color:#22d3bf">voxel</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.visual_hull(silhouettes: &#x27;Sequence[np.ndarray]&#x27;, Ks: &#x27;Sequence[np.ndarray]&#x27;, Rs: &#x27;Sequence[np.ndarray]&#x27;, ts: &#x27;Sequence[np.ndarray]&#x27;, bounds: &#x27;Bounds&#x27;, res: &#x27;int&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import visualhull; visualhull.visual_hull(silhouettes: &#x27;Sequence[np.ndarray]&#x27;, Ks: &#x27;Sequence[np.ndarray]&#x27;, Rs: &#x27;Sequence[np.ndarray]&#x27;, ts: &#x27;Sequence[np.ndarray]&#x27;, bounds: &#x27;Bounds&#x27;, res: &#x27;int&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;visual_hull&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>multi-view silhouettes का visual hull voxel occupancy के रूप में लौटाता है (<code style="color:#22d3bf">carve</code> का दूसरा नाम)।</p>
 <p>arguments, return value और exceptions <code style="color:#22d3bf">carve</code> जैसे ही हैं (अंदर से यह सीधे <code style="color:#22d3bf">carve</code> को ही call करता है)।</p>

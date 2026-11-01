@@ -4,6 +4,7 @@ dim: oned
 category: matched
 in: signal × pairs
 out: measurement
+gpu: なし
 examples: [poc_gw_detector_pseudo_simulation]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal × pairs` → `measurement`
 - **呼び出し**: `import fullseye as fs; fs.ledger.optimal_snr(template, psd, rate: 'float' = 4096.0, *, f_low_hz: 'float | None' = 20.0, f_high_hz: 'float | None' = None) -> 'float'` (実装を直接呼ぶなら `import gwsearch; gwsearch.optimal_snr(template, psd, rate: 'float' = 4096.0, *, f_low_hz: 'float | None' = 20.0, f_high_hz: 'float | None' = None) -> 'float'`、台帳から引くなら `ops1d.get("optimal_snr")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

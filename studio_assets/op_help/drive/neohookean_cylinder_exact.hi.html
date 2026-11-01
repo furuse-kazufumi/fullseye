@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">neohookean_cylinder_exact — DRIVE <code style="color:#22d3bf">tacdome</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.neohookean_cylinder_exact(d, mu: &#x27;float&#x27; = 1.0, area: &#x27;float&#x27; = 1.0) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import tacdome; tacdome.neohookean_cylinder_exact(d, mu: &#x27;float&#x27; = 1.0, area: &#x27;float&#x27; = 1.0) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;neohookean_cylinder_exact&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>incompressible neo-Hookean cylinder के घर्षण-रहित uniaxial compression का exact हल (continuum mechanics की पाठ्यपुस्तक का परिणाम, model से स्वतंत्र)।</p>
 <p>खिंचाव λ = 1 − d, अनुप्रस्थ λ^{−1/2} (आयतन स्थिर)। नाममात्र प्रतिबल P = μ(λ⁻² − λ) (संपीडन धनात्मक), Cauchy प्रतिबल σ = μ(λ⁻¹ − λ²), बल F = P·area, रैखिक बल 3μ·d·area (E = 3μ), <code style="color:#22d3bf">kappa</code> = F/रैखिक, <code style="color:#22d3bf">radius_ratio</code> = λ^{−1/2}। <b>Raises</b> <code style="color:#22d3bf">ValueError</code>: d [0, 1) से बाहर, μ या area ≤ 0।</p>

@@ -4,6 +4,7 @@ dim: imgmetrics
 category: colorspace
 in: rgbimage
 out: lab
+gpu: なし
 examples: [image_quality_metrics, poc_colormap_readability, poc_leaf_disease_area, poc_solder_fillet_aoi]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `rgbimage` → `lab`
 - **呼び出し**: `import fullseye as fs; fs.ledger.rgb_to_lab(rgb, white=(0.95047, 1.0, 1.08883))` (実装を直接呼ぶなら `import imgmetrics; imgmetrics.rgb_to_lab(rgb, white=(0.95047, 1.0, 1.08883))`、台帳から引くなら `opsimgmetrics.get("rgb_to_lab")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

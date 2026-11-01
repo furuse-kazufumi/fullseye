@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">curvature_to_shape_index — REPRCONV <code style="color:#22d3bf">curvature</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">curvature</code> → <code style="color:#22d3bf">pairs</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.curvature_to_shape_index(curvature)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import reprconv; reprconv.curvature_to_shape_index(curvature)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsreprconv.get(&quot;curvature_to_shape_index&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>principal curvature <code style="color:#22d3bf">(N,2)</code> → shape index और curvedness, <code style="color:#22d3bf">(N,2)</code> के <code style="color:#22d3bf">pairs</code>। <code style="color:#22d3bf">curvature</code> से निकास।</p>
 <p>Koenderink &amp; van Doorn, *Surface shape and curvature scales*, Image and Vision Computing 10(8) 1992 का (S, C):</p>

@@ -4,6 +4,7 @@ dim: 3d
 category: lidar_projection
 in: points
 out: image2d
+gpu: なし
 examples: [curvilinear_proj]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `points` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.project_cylindrical(points, h_res: 'int' = 1024, z_bins: 'int' = 64, z_range=None) -> 'np.ndarray'` (実装を直接呼ぶなら `import spherical_proj; spherical_proj.project_cylindrical(points, h_res: 'int' = 1024, z_bins: 'int' = 64, z_range=None) -> 'np.ndarray'`、台帳から引くなら `ops3d.get("project_cylindrical")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

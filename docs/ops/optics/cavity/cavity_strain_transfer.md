@@ -4,6 +4,7 @@ dim: optics
 category: cavity
 in: 
 out: pairs
+gpu: なし
 examples: [poc_gw_detector_pseudo_simulation]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `pairs`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.cavity_strain_transfer(length_m: 'float' = 3994.5, finesse: 'float' = 445.0, f_min_hz: 'float' = 1.0, f_max_hz: 'float' = 100000.0, n_points: 'int' = 512) -> 'np.ndarray'` (実装を直接呼ぶなら `import cavityoptics; cavityoptics.cavity_strain_transfer(length_m: 'float' = 3994.5, finesse: 'float' = 445.0, f_min_hz: 'float' = 1.0, f_max_hz: 'float' = 100000.0, n_points: 'int' = 512) -> 'np.ndarray'`、台帳から引くなら `opsoptics.get("cavity_strain_transfer")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

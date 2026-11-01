@@ -4,6 +4,7 @@ dim: drive
 category: japan
 in: any
 out: any
+gpu: なし
 examples: [gallery_drive_city_terrain]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `any` → `any`
 - **呼び出し**: `import fullseye as fs; fs.ledger.building_prisms(buildings: 'Iterable[dict[str, Any]]', *, color_fn: 'Callable[[dict[str, Any]], Sequence[float]] | None' = None, base_z: 'float | None' = 0.0, roof_shade: 'float' = 0.92) -> 'tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]'` (実装を直接呼ぶなら `import driveplateau; driveplateau.building_prisms(buildings: 'Iterable[dict[str, Any]]', *, color_fn: 'Callable[[dict[str, Any]], Sequence[float]] | None' = None, base_z: 'float | None' = 0.0, roof_shade: 'float' = 0.92) -> 'tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]'`、台帳から引くなら `opsdrive.get("building_prisms")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

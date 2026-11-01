@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">poisson_lite — 3D <code style="color:#22d3bf">reconstruct</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">mesh</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.poisson_lite(points, size=64, sigma=1.0, iso=0.5, normals=None, method=&#x27;exact&#x27;)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import recon3d; recon3d.poisson_lite(points, size=64, sigma=1.0, iso=0.5, normals=None, method=&#x27;exact&#x27;)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;poisson_lite&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>点群 (N,3) → (vertices(V,3), faces(F,3)) の表面メッシュ(スクリーンド Poisson 軽量近似)。</p>
 <p>点群を size³ の voxel 格子へ splat し、等値面場を作って marching cubes で三角形メッシュ化する。出力頂点は入力点群と同じ<b>世界座標</b>(bbox から逆写像)。bounds は点群 bbox(+σ 依存の padding)。</p>

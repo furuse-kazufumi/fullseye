@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">plan_cost — DRIVE <code style="color:#22d3bf">agv</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.plan_cost(paths)</code> (die Implementierung direkt: <code style="color:#22d3bf">import agvfleet; agvfleet.plan_cost(paths)</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;plan_cost&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Gesamtkosten (sum of costs): Summe der Zeitpunkte, zu denen jedes Fahrzeug <b>endgültig</b> sein Ziel erreicht (nach der Ankunft darf es sich nicht mehr bewegen).</p>
 <p>Leere Eingabe (<code style="color:#22d3bf">paths</code> ohne Einträge) löst <code style="color:#22d3bf">ValueError</code> aus.</p>

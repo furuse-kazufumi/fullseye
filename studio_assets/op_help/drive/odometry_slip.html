@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">odometry_slip — DRIVE <code style="color:#22d3bf">roverslip</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">any × signal × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.odometry_slip(position, wheel_angle, radius: &#x27;float&#x27;, window: &#x27;int&#x27; = 1) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import roverslip; roverslip.odometry_slip(position, wheel_angle, radius: &#x27;float&#x27;, window: &#x27;int&#x27; = 1) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;odometry_slip&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>視覚オドメトリの位置の列と車輪の累積回転角から、実際の滑り率 <code style="color:#22d3bf">s = 1 − Δx / (r Δφ)</code>。</p>
 <p><code style="color:#22d3bf">position</code> は (T,) の進んだ距離か (T, 2) の平面の位置 [m]、<code style="color:#22d3bf">wheel_angle</code> は (T,) の車輪の累積回転角 [rad]、<code style="color:#22d3bf">radius</code> = r [m]。<code style="color:#22d3bf">window</code> 個ぶんの区間でまとめて割る(短い区間は雑音を拾う)。車輪がほとんど回らない区間(<code style="color:#22d3bf">r Δφ</code> が全体の中央値の 1 % 未満)は nan。返り値 <code style="color:#22d3bf">{&quot;slip&quot;: (T − window,), &quot;slip_total&quot;: 全区間の 1 個, &quot;distance&quot;: 区間ごとの車体の移動 [m], &quot;wheel_travel&quot;: 区間ごとの r Δφ [m]}</code>。</p>

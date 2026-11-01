@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">image_entropy — IMGMETRICS <code style="color:#22d3bf">information</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.image_entropy(a, bins=64, data_range=None)</code> (die Implementierung direkt: <code style="color:#22d3bf">import imgmetrics; imgmetrics.image_entropy(a, bins=64, data_range=None)</code>; aus dem Register: <code style="color:#22d3bf">opsimgmetrics.get(&quot;image_entropy&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Shannon-Entropie eines Bildes [bit].</p>
 <p>Es verwendet <b>dieselbe Bin-Einteilung</b> wie <code style="color:#22d3bf">mutual_information</code>, daher gilt <code style="color:#22d3bf">mutual_information(a, a) == image_entropy(a)</code> exakt (per Test festgenagelt). Die vorhandenen <code style="color:#22d3bf">entropy_gray</code> / <code style="color:#22d3bf">entropy_image</code> (backends) verwenden eine andere Bin-Einteilung, daher stimmen die Werte nicht überein -- diese hier ist die mit der Verbundverteilung konsistente.</p>

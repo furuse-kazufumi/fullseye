@@ -4,6 +4,7 @@ dim: imgforensics
 category: hash
 in: phash × phash
 out: measurement
+gpu: なし
 examples: [image_forensics_audit]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `phash × phash` → `measurement`
 - **呼び出し**: `import fullseye as fs; fs.ledger.hash_distance(hash1, hash2) -> 'int'` (実装を直接呼ぶなら `import imgforensics; imgforensics.hash_distance(hash1, hash2) -> 'int'`、台帳から引くなら `opsimgforensics.get("hash_distance")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

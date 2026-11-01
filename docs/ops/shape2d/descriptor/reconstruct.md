@@ -4,6 +4,7 @@ dim: shape2d
 category: descriptor
 in: efdmodel
 out: pairs
+gpu: なし
 examples: [contour_fourier]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `efdmodel` → `pairs`
 - **呼び出し**: `import fullseye as fs; fs.ledger.reconstruct(model, n_points=300, n_harmonics=None)` (実装を直接呼ぶなら `import fourierdesc; fourierdesc.reconstruct(model, n_points=300, n_harmonics=None)`、台帳から引くなら `opsshape2d.get("reconstruct")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

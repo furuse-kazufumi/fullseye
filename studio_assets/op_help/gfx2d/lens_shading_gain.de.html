@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">lens_shading_gain — GFX2D <code style="color:#22d3bf">isp</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lens_shading_gain(flat, pattern=None, smooth_sigma=0.0)</code> (die Implementierung direkt: <code style="color:#22d3bf">import gfx2d; gfx2d.lens_shading_gain(flat, pattern=None, smooth_sigma=0.0)</code>; aus dem Register: <code style="color:#22d3bf">opsgfx2d.get(&quot;lens_shading_gain&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Erzeugt aus einem Flatfield (weiße Tafel) die Verstärkungskarte gegen die Vignettierung: je Kanal mean / flat.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>

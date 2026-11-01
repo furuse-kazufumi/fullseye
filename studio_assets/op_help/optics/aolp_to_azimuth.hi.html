@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">aolp_to_azimuth — OPTICS <code style="color:#22d3bf">shape_from_polarization</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.aolp_to_azimuth(aolp_deg, model=&#x27;diffuse&#x27;)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import sfpolar; sfpolar.aolp_to_azimuth(aolp_deg, model=&#x27;diffuse&#x27;)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;aolp_to_azimuth&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>linear polarisation के कोण (AoLP) को surface normal के azimuth के 2 उम्मीदवारों (π अस्पष्टता) में बदलना; diffuse और specular में 90° का अंतर (<code style="color:#22d3bf">table</code>)।</p>
 <p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">pulse_echo_ascan — ACOUSTICS <code style="color:#22d3bf">ultrasonic</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pulse_echo_ascan(stack, f0=100000000.0, bandwidth=0.6, water_path=0.002, rate=None, duration=None, n_reverb=40)</code> (to call the implementation directly, <code style="color:#22d3bf">import ultrasound; ultrasound.pulse_echo_ascan(stack, f0=100000000.0, bandwidth=0.6, water_path=0.002, rate=None, duration=None, n_reverb=40)</code>; from the registry, <code style="color:#22d3bf">opsacoustics.get(&quot;pulse_echo_ascan&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>RF A-scan of a layered stack for a broadband pulse at normal incidence: transfer-matrix stack response, water path and power-law attenuation (<code style="color:#22d3bf">table</code>).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>

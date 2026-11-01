@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tolerance_table — OPTICS <code style="color:#22d3bf">tolerancing</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tolerance_table(system, defaults=None, overrides=None)</code> (to call the implementation directly, <code style="color:#22d3bf">import lenstol; lenstol.tolerance_table(system, defaults=None, overrides=None)</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;tolerance_table&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Build validated tolerance rows, one independent manufacturing variable per row.</p>
 <p><code style="color:#22d3bf">defaults</code> maps tolerance kinds to magnitudes and expands them over every applicable surface. <code style="color:#22d3bf">overrides</code> is a sequence of explicit row dicts; an override with the same <code style="color:#22d3bf">kind</code>/target/axis replaces the generated row. Radius power fringes use <code style="color:#22d3bf">delta_R/R = wavelength/(2*abs(sag_edge))</code> at the clear semi-aperture, the standard test-plate power-fringe formula.</p>

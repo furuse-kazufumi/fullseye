@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">ae_read_csv — DRIVE <code style="color:#22d3bf">grind</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ae_read_csv(path, header_lines: &#x27;int&#x27; = 12, offset: &#x27;float&#x27; = 32768.0, full_scale: &#x27;float&#x27; = 32768.0) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import grind; grind.ae_read_csv(path, header_lines: &#x27;int&#x27; = 12, offset: &#x27;float&#x27; = 32768.0, full_scale: &#x27;float&#x27; = 32768.0) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;ae_read_csv&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>将 AE 的原始 CSV(表头 <code style="color:#22d3bf">header_lines</code> 行 + 每 1 行 1 个样本的 ADC 值)转换为电压 [V] 信号。</p>
 <p>公开数据的 ADC 为 16 bit、±1 V、直接偏移二进制(0 → −1 V、32768 → 0 V、65535 → +1 V),因此 <code style="color:#22d3bf">(raw − offset) / full_scale</code>(与分析代码的转换相同)。返回值中不保留路径。非数值行、空 → <code style="color:#22d3bf">ValueError</code>。</p>

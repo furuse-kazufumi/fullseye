@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">pairs_to_signal — REPRCONV <code style="color:#22d3bf">pairs</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pairs_to_signal(pairs)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import reprconv; reprconv.pairs_to_signal(pairs)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsreprconv.get(&quot;pairs_to_signal&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>쌍 <code style="color:#22d3bf">(N,2)</code> → 종속변수의 <code style="color:#22d3bf">signal (N,)</code>. <code style="color:#22d3bf">pairs</code> 의 두 번째 출구.</p>
 <p>열 1(y)만 꺼낸다. <code style="color:#22d3bf">funct_1d_to_pairs</code> 가 (x, y) 를 늘어놓은(N,2) 를 반환하므로 그 역방향에 해당한다 —— <b>x 가 등간격이라면</b> <code style="color:#22d3bf">signal -&gt; pairs -&gt; signal</code> 은 bit 일치한다. 등간격이 아닌 x 를 가진 쌍을통과시키면 <b>x 의 정보가 조용히 떨어진다</b>(<code style="color:#22d3bf">signal</code> 은 첨자가 등간격이라는 전제의 형).</p>

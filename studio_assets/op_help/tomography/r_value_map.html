@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">r_value_map — TOMOGRAPHY <code style="color:#22d3bf">spectral_xray</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">images</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.r_value_map(signal, channels=None, photons_per_pixel: &#x27;float&#x27; = 100000.0, low: &#x27;int&#x27; = 0, high: &#x27;int&#x27; = -1, flat=None, min_log: &#x27;float&#x27; = 0.02) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import dualxray; dualxray.r_value_map(signal, channels=None, photons_per_pixel: &#x27;float&#x27; = 100000.0, low: &#x27;int&#x27; = 0, high: &#x27;int&#x27; = -1, flat=None, min_log: &#x27;float&#x27; = 0.02) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opstomography.get(&quot;r_value_map&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>R = L_low / L_high(低エネルギーと高エネルギーの対数減衰の比)の像を返す。</p>
 <p>単色なら R = μ(E_low)/μ(E_high) で<b>厚みに依らず材質だけで決まる</b>(Z が大きいほど光電効果で低エネルギーの μ が大きく、R が大きい)。多色ではビーム硬化で厚みとともに少し動く —— その動きが「厚い軽元素と薄い重元素」の交絡の源。L_high &lt; <code style="color:#22d3bf">min_log</code> の画素(ほぼ素通しで比が雑音だけになる)と信号が 0 以下の画素は NaN(拒否)。</p>

@@ -4,6 +4,7 @@ dim: 3d
 category: fusion
 in: any × any
 out: pose
+gpu: なし
 examples: [transforms_repr]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `any × any` → `pose`
 - **呼び出し**: `import fullseye as fs; fs.ledger.register_cross(src, src_kind, dst, dst_kind, method='fpfh', samples=15000, **kw)` (実装を直接呼ぶなら `import fuse3d; fuse3d.register_cross(src, src_kind, dst, dst_kind, method='fpfh', samples=15000, **kw)`、台帳から引くなら `ops3d.get("register_cross")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

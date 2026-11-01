@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">fisher_lda_fit — SEGMENTATION <code style="color:#22d3bf">classify</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">matrix × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fisher_lda_fit(X, y, *, ridge: &#x27;float&#x27; = 1e-06, prior1: &#x27;Optional[float]&#x27; = None) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import cropweed; cropweed.fisher_lda_fit(X, y, *, ridge: &#x27;float&#x27; = 1e-06, prior1: &#x27;Optional[float]&#x27; = None) -&gt; &#x27;Dict[str, object]&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opssegmentation.get(&quot;fisher_lda_fit&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>學習兩類 Fisher 線性判別（閉式解，無迭代）。</p>
 <p><code style="color:#22d3bf">X</code> 為 (N, D) 的特徵(<code style="color:#22d3bf">superpixel_color_texture_features</code> 回傳的 dict 也可直接傳入), <code style="color:#22d3bf">y</code> 為 N 個 0 / 1 類別。特徵依整體平均與標準差標準化(變異數為 0 的欄維持尺度 1, 記入 <code style="color:#22d3bf">constant_columns</code>),在類內共同共變異數 Σ = (S₀ + S₁)/(N − 2) 上加 <code style="color:#22d3bf">ridge</code> × tr(Σ)/D 後求 w = Σ⁻¹(μ₁ − μ₀)。判定截距是兩個等變異常態分布的對數概似比 w·z − w·(μ₀ + μ₁)/2 + log(π₁/π₀) 為 0 的點(<code style="color:#22d3bf">prior1</code> = π₁,預設為訓練資料中的比例)。</p>

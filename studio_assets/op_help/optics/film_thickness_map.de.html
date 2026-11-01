@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">film_thickness_map — OPTICS <code style="color:#22d3bf">film</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">images</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.film_thickness_map(images, wavelengths_nm=(450.0, 500.0, 550.0, 600.0, 650.0, 700.0), film=&#x27;SIO2&#x27;, substrate=&#x27;SI&#x27;, thickness_min_nm=0.0, thickness_max_nm=1500.0, mode=&#x27;spectral&#x27;, under=(), ambiguity_rms=0.01, step_nm=1.0, normalize=False, chunk=4096)</code> (die Implementierung direkt: <code style="color:#22d3bf">import filmoptics; filmoptics.film_thickness_map(images, wavelengths_nm=(450.0, 500.0, 550.0, 600.0, 650.0, 700.0), film=&#x27;SIO2&#x27;, substrate=&#x27;SI&#x27;, thickness_min_nm=0.0, thickness_max_nm=1500.0, mode=&#x27;spectral&#x27;, under=(), ambiguity_rms=0.01, step_nm=1.0, normalize=False, chunk=4096)</code>; aus dem Register: <code style="color:#22d3bf">opsoptics.get(&quot;film_thickness_map&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Schichtdicke pro Pixel aus einem Spektralbild (Reflexion je Band) oder einem RGB-Bild (Nachschlagetabelle plus parabolische Verfeinerung).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>

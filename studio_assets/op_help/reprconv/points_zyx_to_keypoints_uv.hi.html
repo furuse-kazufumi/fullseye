@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">points_zyx_to_keypoints_uv — REPRCONV <code style="color:#22d3bf">keypoint</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">keypoints</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.points_zyx_to_keypoints_uv(points)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import reprconv; reprconv.points_zyx_to_keypoints_uv(points)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsreprconv.get(&quot;points_zyx_to_keypoints_uv&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>point set <code style="color:#22d3bf">(N,3) = (z, y, x)</code> → image coordinate <code style="color:#22d3bf">(N,2) = (u, v)</code>।</p>
 <p><code style="color:#22d3bf">keypoints_uv_to_points</code> की उलटी दिशा। <b>irreversible</b> -- z छूट जाता है। छूटी मात्रा मापी जा सकती है: round trip के बाद जो मान वापस नहीं आते वे ठीक z column हैं, और <code style="color:#22d3bf">selftest</code> इसे &quot;z का RMS = छोड़ी गई जानकारी की मात्रा&quot; के रूप में अंक में देता है।</p>

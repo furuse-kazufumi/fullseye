@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">render_compare_prescriptions — OPTICS <code style="color:#22d3bf">lensrender</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.render_compare_prescriptions(systems=None, scene=None, sensor=None, labels=None, edge_roi=None, fields=(0.0, 0.7, 1.0), field_max=None, **render_kw) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import lensrender; lensrender.render_compare_prescriptions(systems=None, scene=None, sensor=None, labels=None, edge_roi=None, fields=(0.0, 0.7, 1.0), field_max=None, **render_kw) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;render_compare_prescriptions&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>同じ場面を 2 本以上の処方で撮り、絵ごとの品質を表にする -&gt; dict。</p>
 <p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>

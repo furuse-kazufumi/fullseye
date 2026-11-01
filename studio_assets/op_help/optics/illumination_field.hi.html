@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">illumination_field — OPTICS <code style="color:#22d3bf">illumination</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.illumination_field(train, source_radiance=None, shape=(65, 65), field_mm=None, n_pupil=16)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import illumdesign; illumdesign.illumination_field(train, source_radiance=None, shape=(65, 65), field_mm=None, n_pupil=16)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;illumination_field&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>paraxial backward tracing से source तक जाकर illumination train द्वारा specimen पर irradiance (<code style="color:#22d3bf">image2d</code>) निकालता है।</p>
 <p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>

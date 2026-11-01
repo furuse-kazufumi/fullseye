@@ -4,6 +4,7 @@ dim: drive
 category: pass
 in: table
 out: table
+gpu: なし
 examples: [poc_driving_pass]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.overtaken_conduct_check(trajectory, *, t_caught: 'float', t_passed: 'float', kind: 'str' = 'car', overtaker_higher_limit: 'bool' = True, continuing_slower: 'bool' = False, lanes: 'bool' = False, room: 'Optional[float]' = None, room_needed: 'Optional[float]' = None, tol: 'float' = 0.2) -> 'Dict[str, object]'` (実装を直接呼ぶなら `import drivepass; drivepass.overtaken_conduct_check(trajectory, *, t_caught: 'float', t_passed: 'float', kind: 'str' = 'car', overtaker_higher_limit: 'bool' = True, continuing_slower: 'bool' = False, lanes: 'bool' = False, room: 'Optional[float]' = None, room_needed: 'Optional[float]' = None, tol: 'float' = 0.2) -> 'Dict[str, object]'`、台帳から引くなら `opsdrive.get("overtaken_conduct_check")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

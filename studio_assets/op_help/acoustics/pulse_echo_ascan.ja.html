@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">pulse_echo_ascan — ACOUSTICS <code style="color:#22d3bf">ultrasonic</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pulse_echo_ascan(stack, f0=100000000.0, bandwidth=0.6, water_path=0.002, rate=None, duration=None, n_reverb=40)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import ultrasound; ultrasound.pulse_echo_ascan(stack, f0=100000000.0, bandwidth=0.6, water_path=0.002, rate=None, duration=None, n_reverb=40)</code>、台帳から引くなら <code style="color:#22d3bf">opsacoustics.get(&quot;pulse_echo_ascan&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>垂直入射の広帯域パルスに対する積層の RF の A スキャン: 伝達行列の積層応答、水の経路、べき乗則の減衰(<code style="color:#22d3bf">table</code>)。</p>
 <p>パルスはガウス型スペクトル(中心 <code style="color:#22d3bf">f0</code> [Hz]、−6 dB の比帯域 <code style="color:#22d3bf">bandwidth</code>)。応答 <code style="color:#22d3bf">S(f) = w(f) · exp(−2ik_w z_w) · R_stack(f)</code>、<code style="color:#22d3bf">k = 2πf/c − iα(f)</code>。振幅の単位は「焦点の完全反射体・水の損失なし」の包絡線の山 = 1。時間窓は表面エコーの手前から始まり、<code style="color:#22d3bf">n_reverb</code> 回分の積層の往復(残響)を含む。FFT の周期で窓の外の残響が先頭へ折り返すので、長い残響の積層は <code style="color:#22d3bf">duration</code> を伸ばす。</p>

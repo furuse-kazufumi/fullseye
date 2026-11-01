@@ -4,6 +4,7 @@ dim: drive
 category: traffic
 in: signal
 out: table
+gpu: なし
 examples: [poc_driving_traffic]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.ou_estimate(x, dt: 'float') -> 'Dict[str, float]'` (実装を直接呼ぶなら `import drivetraffic; drivetraffic.ou_estimate(x, dt: 'float') -> 'Dict[str, float]'`、台帳から引くなら `opsdrive.get("ou_estimate")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

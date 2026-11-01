@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">convex_mirror_fov — DRIVE <code style="color:#22d3bf">decide</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">table</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.convex_mirror_fov(radius, aperture, eye_distance) -&gt; &#x27;Dict[str, float]&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import drivedecide; drivedecide.convex_mirror_fov(radius, aperture, eye_distance) -&gt; &#x27;Dict[str, float]&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;convex_mirror_fov&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>convex दर्पण (गोलाकार, त्रिज्या <code style="color:#22d3bf">radius</code>, aperture का व्यास <code style="color:#22d3bf">aperture</code>) को axis पर <code style="color:#22d3bf">eye_distance</code> (शीर्ष से) पर स्थित आँख से देखने पर field of view।</p>
 <p>सटीक (अक्ष सहित काट): h = a/2, α = asin(h/R), s = R − sqrt(R² − h²), β = atan(h/(D + s)), <b>कुल दृश्य-कोण = 2(β + 2α)</b>। <code style="color:#22d3bf">radius = inf</code> समतल दर्पण 2 atan(h/D) है।</p>

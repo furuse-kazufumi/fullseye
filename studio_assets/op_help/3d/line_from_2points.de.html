@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">line_from_2points — 3D <code style="color:#22d3bf">geometry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">primitive</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.line_from_2points(a, b)</code> (die Implementierung direkt: <code style="color:#22d3bf">import match3d; match3d.line_from_2points(a, b)</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;line_from_2points&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Zwei Punkte → eine Gerade (Punkt darauf und Einheitsrichtung). Zwei Koordinaten legen die Gerade fest (2-D wie 3-D).</p>
 <p>Rückgabewert <code style="color:#22d3bf">(a, u)</code>: <code style="color:#22d3bf">a</code> ist der 1. Eingabepunkt (float-Array), <code style="color:#22d3bf">u = (b − a)/|b − a|</code>. Die Argumente sind numerische 2- oder 3-Vektoren (alles andere oder gemischte Dimensionen lösen ValueError aus). Bei <code style="color:#22d3bf">a == b</code> wird die Richtung als Nullvektor zurückgegeben (keine Exception; beim Aufrufer <code style="color:#22d3bf">|u| &gt; 0</code> prüfen). Die Reihenfolge der Koordinaten spielt keine Rolle (sie wird in der Eingabe- reihenfolge zurückgegeben), daher ist (x,y,z) oder (z,y,x) in Ordnung, solange es konsistent ist.</p>

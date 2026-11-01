@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">solid_angle_sweep — OPTICS <code style="color:#22d3bf">illumination</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">keine</code> → <code style="color:#22d3bf">pairs</code> (ein Operator, der allein durch seine Argumente bestimmt ist — er nimmt kein Bild und keine Daten entgegen)</p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.solid_angle_sweep(slope_deg=2.0, view_na=0.1, half_angles_deg=None, tilt_deg=0.0, roughness_deg=0.0, n_samples=2048)</code> (die Implementierung direkt: <code style="color:#22d3bf">import illumdesign; illumdesign.solid_angle_sweep(slope_deg=2.0, view_na=0.1, half_angles_deg=None, tilt_deg=0.0, roughness_deg=0.0, n_samples=2048)</code>; aus dem Register: <code style="color:#22d3bf">opsoptics.get(&quot;solid_angle_sweep&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Kontrast einer Facette gegen den ebenen Grund über dem Halbwinkel des Beleuchtungskegels (<code style="color:#22d3bf">pairs</code>).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>

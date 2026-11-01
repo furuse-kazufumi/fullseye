@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">string_mesh — DRIVE <code style="color:#22d3bf">kendamaworld</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">keine</code> → <code style="color:#22d3bf">any</code> (ein Operator, der allein durch seine Argumente bestimmt ist — er nimmt kein Bild und keine Daten entgegen)</p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.string_mesh(p_ball, p_cup, radius: &#x27;float&#x27; = 0.0015)</code> (die Implementierung direkt: <code style="color:#22d3bf">import kendamaworld; kendamaworld.string_mesh(p_ball, p_cup, radius: &#x27;float&#x27; = 0.0015)</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;string_mesh&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Ein dünnes Prisma zwischen 2 Punkten (dem Schnurloch der Kugel p_ball und dem Schnurloch des Querstücks p_cup) (4 Seiten + beide Enden, 8 Vertices, 12 Flächen, nach außen gerichtet). Quadratischer Querschnitt mit Kantenlänge 2·radius. ValueError, wenn beide Punkte zusammenfallen.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

@@ -5,6 +5,7 @@ category: region
 in: region
 out: region
 halcon: fill_up
+gpu: あり(fill_holes)
 examples: [gallery2d_region, poc_cell_counting, poc_document_scan, poc_leaf_disease_area, poc_mesh_quality_repair, poc_real_coin_metrology, poc_symmetry_restoration]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -16,6 +17,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **データ種**: `region` → `region`
 - **呼び出し**: `fullseye.apply(img, "fill_holes", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 - **HALCON 相当**: `fill_up`(意味・パラメータは HALCON リファレンスが参考になる)
+- **GPU**: あり(`fill_holes`、`device="cuda"` で高速経路)
 
 ![fill_holes: input → output](../../_fig/fill_holes.png)
 

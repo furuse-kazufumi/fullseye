@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">surface_normals — 3D <code style="color:#22d3bf">photometric</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">normalmap</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.surface_normals(z)</code>(要直接调用实现,<code style="color:#22d3bf">import photometric; photometric.surface_normals(z)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;surface_normals&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>高度场 z(HxW)→ 单位法线 (H,W,3)。n ∝ (-dz/dx, -dz/dy, 1)。深度→法线的正向变换。</p>
 <p>用 <code style="color:#22d3bf">np.gradient</code> 的中心差分(边缘为单侧差分)求行方向的 <code style="color:#22d3bf">dz/dy</code> 和列方向的 <code style="color:#22d3bf">dz/dx</code>, 将 <code style="color:#22d3bf">n = (-dz/dx, -dz/dy, 1)</code> 归一化为长度 1(用 <code style="color:#22d3bf">+1e-12</code> 避免除零)。网格间距视为 1 像素,因此当 <code style="color:#22d3bf">z</code> 的单位与像素不同(mm 等)时,若不事先换算为 <code style="color:#22d3bf">z / 像素间距</code>,倾斜会比实际偏强/偏弱。法线的 z 分量始终为正(朝向相机)。返回值为 float32 的 <code style="color:#22d3bf">(H,W,3)</code>,第 3 轴为 (x, y, z) 分量,x 沿列方向, y 沿行方向。没有输入校验,传入非 2-D 数据时会在 <code style="color:#22d3bf">np.gradient</code> 的展开处失败。它相当于 <code style="color:#22d3bf">integrate_normals</code> 的逆变换,且与 <code style="color:#22d3bf">photometric_stereo</code> 的输出法线约定相同, 因此可直接传给 <code style="color:#22d3bf">render_lambertian</code> 合成阴影图像。</p>

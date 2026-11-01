@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">separate_direct_global — OPTICS <code style="color:#22d3bf">light_transport</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">images</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.separate_direct_global(images, fill=0.5, black_level=0.0, scheme=&#x27;shift&#x27;)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import lighttransport; lighttransport.separate_direct_global(images, fill=0.5, black_level=0.0, scheme=&#x27;shift&#x27;)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;separate_direct_global&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Separate direct and global (interreflection) components from images under shifted high-frequency patterns, from per-pixel L_max and L_min (Nayar et al. 2006).</p>
 <p>With a fraction α of the projector lit in a pattern of high frequency, a pixel whose scene point is lit sees <code style="color:#22d3bf">L_d + α L_g</code> (the global part only depends on the average power when it is smooth over the pattern period) and an unlit one sees only the global part.</p>

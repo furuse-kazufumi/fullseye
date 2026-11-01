@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">container_fill_level — DRIVE <code style="color:#22d3bf">granular</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.container_fill_level(side, *, threshold: &#x27;float&#x27; = 0.5) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import granular; granular.container_fill_level(side, *, threshold: &#x27;float&#x27; = 0.5) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;container_fill_level&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>container के अंदर की side image (powder coverage, container के भीतरी माप = image) से fill fraction और powder सतह का tilt पढ़ता है।</p>
 <p>भराव-अनुपात = प्रति स्तंभ पाउडर-सतह (सीमा का प्रतिच्छेदन, उप-पिक्सेल) का औसत / पंक्तियों की संख्या। पाउडर-सतह → <code style="color:#22d3bf">fit_line</code> → <code style="color:#22d3bf">surface_tilt_deg</code> (दायाँ जितना ऊँचा उतना धनात्मक) और <code style="color:#22d3bf">surface_rms</code> (समतल से विचलन [px])। <b>Raises</b> <code style="color:#22d3bf">ValueError</code>: खाली (सीमा या अधिक वाले पिक्सेल नहीं) / पूरा भरा होने से पाउडर-सतह नहीं दिखती (सबसे ऊपरी पंक्ति पाउडर है)।</p>

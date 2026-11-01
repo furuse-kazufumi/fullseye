@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">score_to_image2d — REPRCONV <code style="color:#22d3bf">score</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">score</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.score_to_image2d(score, axis=0)</code>(要直接调用实现,<code style="color:#22d3bf">import reprconv; reprconv.score_to_image2d(score, axis=0)</code>;从台账取用则 <code style="color:#22d3bf">opsreprconv.get(&quot;score_to_image2d&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p><code style="color:#22d3bf">score</code> 体 → 最大值投影 <code style="color:#22d3bf">image2d</code>。<code style="color:#22d3bf">score</code> 的第二个出口。</p>
 <p>沿指定轴的最大值投影(MIP)。<b>单向</b>。用于确认相关峰“从任何面看都是 1 根”—— 若看到 2 根,则意味着对应是模糊的。</p>

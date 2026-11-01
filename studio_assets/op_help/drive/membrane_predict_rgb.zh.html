@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">membrane_predict_rgb — DRIVE <code style="color:#22d3bf">tacscalib</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">normalmap × table</code> → <code style="color:#22d3bf">rgb</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.membrane_predict_rgb(normals, fit: &#x27;dict&#x27;, *, chunk=262144) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import tacscalib; tacscalib.membrane_predict_rgb(normals, fit: &#x27;dict&#x27;, *, chunk=262144) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;membrane_predict_rgb&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>法线 (H, W, 3) + <code style="color:#22d3bf">lights_fit_from_sphere</code> 的结果 → 背景差分 RGB 的预测 (H, W, 3)(线性，不裁剪)。order 2 的结果按像素生成 a(x, y)、L(x, y)(图像尺寸须与标定时相同)。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>：法线形状 / order 2 时图像尺寸不同。</p>
 <p>空输入(<code style="color:#22d3bf">normals</code> 为 0 个元素)会引发 <code style="color:#22d3bf">ValueError</code>。</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tdi_sync_mtf — OPTICS <code style="color:#22d3bf">linescan</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">table</code> (an op determined by its arguments alone — it takes no image or data input)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tdi_sync_mtf(frequency_cyc_px=None, stages=64, sync_error=0.0, yaw_deg=0.0)</code> (to call the implementation directly, <code style="color:#22d3bf">import linescan; linescan.tdi_sync_mtf(frequency_cyc_px=None, stages=64, sync_error=0.0, yaw_deg=0.0)</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;tdi_sync_mtf&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>MTF of the blur caused by a TDI synchronisation error and by yaw (a skewed web) (closed form, <code style="color:#22d3bf">table</code>).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>

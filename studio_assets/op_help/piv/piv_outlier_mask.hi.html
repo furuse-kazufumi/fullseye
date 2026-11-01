@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">piv_outlier_mask — PIV <code style="color:#22d3bf">validate</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">flow2d</code> → <code style="color:#22d3bf">mask</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_outlier_mask(flow, threshold=2.0, epsilon=0.1)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import pivops; pivops.piv_outlier_mask(flow, threshold=2.0, epsilon=0.1)</code>, registry से लेना हो तो <code style="color:#22d3bf">opspiv.get(&quot;piv_outlier_mask&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>normalised median test (Westerweel &amp; Scarano 2005) से outlier vector खोजता है।</p>
 <p>हर vector के लिए, उसके 8 पड़ोसियों के median से residual को <b>पड़ोसियों के residuals के median</b> से भाग दिया जाता है। भाजक में <code style="color:#22d3bf">epsilon</code> (default 0.1 px, PIV measurement uncertainty का मोटा माप) जोड़ा जाता है ताकि uniform field में भाजक 0 न हो जाए और सब कुछ outlier न बन जाए —— इस term के बिना, <b>इनपुट जितना आदर्श, test उतना ही टूटता है</b>।</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">rope_rotate — LLMCORE <code style="color:#22d3bf">prepare</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">tokens</code> → <code style="color:#22d3bf">tokens</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rope_rotate(tokens, positions=None, base: &#x27;float&#x27; = 10000.0) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import llmcore; llmcore.rope_rotate(tokens, positions=None, base: &#x27;float&#x27; = 10000.0) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsllmcore.get(&quot;rope_rotate&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>基于旋转的位置编码(RoPE)→ tokens。<b>由于是旋转，所以保持范数</b>。</p>
 <p>Su 等 2021。把偶奇对 (x₂ᵢ, x₂ᵢ₊₁) 旋转角度 <code style="color:#22d3bf">pos · base**(−2i/d)</code>。由于是平面旋转的直和,<code style="color:#22d3bf">‖RoPE(x)‖ == ‖x‖</code> <b>严格</b>成立(实测 8.9e-16), 而且旋转后 2 个向量的内积<b>只由位置之差</b>决定(把绝对位置移动 40 种,幅度 8.9e-15) —— “把相对位置嵌入内积”这一主张,原样成为验算。</p>

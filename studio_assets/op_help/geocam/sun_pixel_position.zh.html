@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">sun_pixel_position — GEOCAM <code style="color:#22d3bf">sun</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">keypoints</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sun_pixel_position(image, threshold=0.98, min_area=4)</code>(要直接调用实现,<code style="color:#22d3bf">import geocam; geocam.sun_pixel_position(image, threshold=0.98, min_area=4)</code>;从台账取用则 <code style="color:#22d3bf">opsgeocam.get(&quot;sun_pixel_position&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>图像中太阳(使传感器<b>饱和</b>的圆盘)的重心 → keypoints (1, 2) = (u, v)。</p>
 <p>前提是“太阳使传感器饱和,云和雪停在饱和之前”。把值不低于 <code style="color:#22d3bf">threshold</code>(绝对值, 图像为 0~1)的像素按 8 邻域连通,返回<b>最大团块</b>的亮度质心。团块小于 <code style="color:#22d3bf">min_area</code>, 或没有饱和像素,则视为“太阳不在画面中”而 ValueError(不悄悄返回云的反射 —— 这是为了在太阳被山遮住时刻的照片中,不把云当成太阳而污染位姿的门禁)。<b>不是相对于图像最大值的比值</b>(若用比值,在没有太阳的照片里最亮的云必然会成为“太阳”)。夜景的人工光源和太阳的水面反射可能饱和,因此这些场景不能使用。团块必须是<b>紧凑的圆</b>(填充率 ≥ 0.4, 纵横比 ≤ 2.5)—— 因过曝而天空一条带饱和的照片会成为细长团块,被拒绝。</p>

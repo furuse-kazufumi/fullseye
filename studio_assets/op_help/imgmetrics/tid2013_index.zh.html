@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tid2013_index — IMGMETRICS <code style="color:#22d3bf">iqa</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tid2013_index(root) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import iqatid; iqatid.tid2013_index(root) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsimgmetrics.get(&quot;tid2013_index&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>读取 <code style="color:#22d3bf">mos_with_names.txt</code>，返回图像对的台账。</p>
 <p>返回值:<code style="color:#22d3bf">names</code>(3000,保持发布包的拼写)、<code style="color:#22d3bf">mos</code> (3000,)、<code style="color:#22d3bf">ref</code> / <code style="color:#22d3bf">dist_type</code> / <code style="color:#22d3bf">level</code>(各为 int 数组,从 1 开始)、<code style="color:#22d3bf">ref_files</code>(25 张参考图的路径,按编号顺序)、<code style="color:#22d3bf">dist_files</code>(3000 张失真图的路径,按台账顺序)、<code style="color:#22d3bf">root</code>。作者值 <code style="color:#22d3bf">metrics_values/*.txt</code> 中没有名称,按<b>此台账的顺序</b>(i01_01_1 … i25_24_5)排列,所以顺序由本函数掌握。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>:行数 ≠ 3000、名称不是 iXX_YY_Z.bmp 的形式、名称集合与 <code style="color:#22d3bf">distorted_images/</code> 的 BMP 不一致(忽略大小写)、25 张参考图不齐、MOS 在 [0, 9] 之外。</p>

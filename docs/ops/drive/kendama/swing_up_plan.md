@@ -4,6 +4,7 @@ dim: drive
 category: kendama
 in: table
 out: any
+gpu: なし
 examples: [poc_kendama]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `any`
 - **呼び出し**: `import fullseye as fs; fs.ledger.swing_up_plan(kp: 'dict', *, lift: 'float' = 0.265, T_lift: 'float' = 0.15, kind: 'str' = 'bang', origin=(0.0, 0.0, 0.0), dodge=(0.0, 0.0, 0.0))` (実装を直接呼ぶなら `import kendama; kendama.swing_up_plan(kp: 'dict', *, lift: 'float' = 0.265, T_lift: 'float' = 0.15, kind: 'str' = 'bang', origin=(0.0, 0.0, 0.0), dodge=(0.0, 0.0, 0.0))`、台帳から引くなら `opsdrive.get("swing_up_plan")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

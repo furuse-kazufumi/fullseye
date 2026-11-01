@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">spc_mt_sn_ratio — SPC <code style="color:#22d3bf">mt</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.spc_mt_sn_ratio(md)</code> (to call the implementation directly, <code style="color:#22d3bf">import spc; spc.spc_mt_sn_ratio(md)</code>; from the registry, <code style="color:#22d3bf">opsspc.get(&quot;spc_mt_sn_ratio&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Larger-the-better SN ratio of abnormal-sample distances, in decibels.</p>
 <p>MT-method item selection asks which features earn their place: run the unit space with a subset of features, score the *abnormal* samples, and keep the subset whose distances are largest. The figure of merit is the larger-the-better signal-to-noise ratio</p>

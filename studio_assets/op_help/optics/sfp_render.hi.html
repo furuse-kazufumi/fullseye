@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">sfp_render — OPTICS <code style="color:#22d3bf">shape_from_polarization</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">normalmap</code> → <code style="color:#22d3bf">polsweep</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sfp_render(normals, refractive_index=1.5, specular_radiance=1.0, diffuse_radiance=0.0, angles_deg=(0.0, 45.0, 90.0, 135.0), mask=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import sfpolar; sfpolar.sfp_render(normals, refractive_index=1.5, specular_radiance=1.0, diffuse_radiance=0.0, angles_deg=(0.0, 45.0, 90.0, 135.0), mask=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;sfp_render&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>दिए गए normal map वाली dielectric सतह की 4-दिशा polarisation camera से ली गई images बनाना (shape from polarisation का forward model, <code style="color:#22d3bf">polsweep</code>)।</p>
 <p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>

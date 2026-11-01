@@ -4,6 +4,7 @@ dim: drive
 category: carla
 in: 
 out: table
+gpu: なし
 examples: [gallery_drive_carla_bridge, poc_carla_bridge]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.carla_scene_synthetic(lead_distance_m: 'float' = 20.0, *, width: 'int' = 320, height: 'int' = 180, fov_deg: 'float' = 90.0, cam_height: 'float' = 1.6, lateral: 'float' = 0.0, lead_asset: 'str' = 'sedan', asset_root=None) -> 'dict'` (実装を直接呼ぶなら `import carlabridge; carlabridge.carla_scene_synthetic(lead_distance_m: 'float' = 20.0, *, width: 'int' = 320, height: 'int' = 180, fov_deg: 'float' = 90.0, cam_height: 'float' = 1.6, lateral: 'float' = 0.0, lead_asset: 'str' = 'sedan', asset_root=None) -> 'dict'`、台帳から引くなら `opsdrive.get("carla_scene_synthetic")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

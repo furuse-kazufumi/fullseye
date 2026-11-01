@@ -4,6 +4,7 @@ dim: optics
 category: imaging_sim
 in: table
 out: table
+gpu: なし
 examples: [lens_defect_dataset_demo, poc_photograph_through_prescription, poc_zmx_public_verify]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.distortion_map(system, image_size=(256, 256), pixel_pitch_um=5.5, fields=None, order=2)` (実装を直接呼ぶなら `import lensimage; lensimage.distortion_map(system, image_size=(256, 256), pixel_pitch_um=5.5, fields=None, order=2)`、台帳から引くなら `opsoptics.get("distortion_map")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

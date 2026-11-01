@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">vx_warp_perspective — VX <code style="color:#22d3bf">geometry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image2d × matrix</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vx_warp_perspective(image, matrix, *, interpolation, border, constant_value=0)</code> (die Implementierung direkt: <code style="color:#22d3bf">import vxcore; vxcore.vx_warp_perspective(image, matrix, *, interpolation, border, constant_value=0)</code>; aus dem Register: <code style="color:#22d3bf">opsvx.get(&quot;vx_warp_perspective&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Perspektivische Transformation (Abschnitt 3.57). Inverse Abbildung: <code style="color:#22d3bf">x0 = M[0]·(x, y, 1)</code>, <code style="color:#22d3bf">y0 = M[1]·(x, y, 1)</code>, <code style="color:#22d3bf">z0 = M[2]·(x, y, 1)</code>, Ausgabe (x, y) = Eingabe (x0/z0, y0/z0) (REQ-0508). Pixel mit z0 = 0 werden wie außerhalb liegende gefüllt.</p>
 <p>*matrix*: 3×3 in mathematischer Anordnung (die C-Deklaration <code style="color:#22d3bf">mat[3][3]</code> der Spezifikation ist transponiert). Die übrigen Argumente sind wie bei <code style="color:#22d3bf">vx_warp_affine</code>.</p>

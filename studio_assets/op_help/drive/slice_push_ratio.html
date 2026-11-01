@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">slice_push_ratio — DRIVE <code style="color:#22d3bf">cutting</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">scalar × scalar × scalar</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.slice_push_ratio(theta_deg: &#x27;float&#x27;, vx: &#x27;float&#x27;, vz: &#x27;float&#x27;) -&gt; &#x27;float&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import cutting; cutting.slice_push_ratio(theta_deg: &#x27;float&#x27;, vx: &#x27;float&#x27;, vz: &#x27;float&#x27;) -&gt; &#x27;float&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;slice_push_ratio&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>刃先の傾き θ(x-z、反時計回り)と刃の速度 (vx, −vz)(vz &gt; 0 で下へ)から slice/push 比 ξ。</p>
 <p>刃先方向 u = (cos θ, sin θ)、法線 n = (−sin θ, cos θ) として ξ = |v·u| / |v·n|。vx = 0 なら ξ = tan|θ|(Atkins 2016 の本文「傾けた刃を縦に動かすと ξ = tan i」)に戻る。刃が自分の刃先に沿って動く(押しが無い)と ValueError。</p>

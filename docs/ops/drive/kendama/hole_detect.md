@@ -4,6 +4,7 @@ dim: drive
 category: kendama
 in: image2d
 out: table
+gpu: なし
 examples: [poc_kendama]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.hole_detect(img, ball_center, ball_radius, *, dark_ratio: 'float' = 0.45, min_sat: 'float' = 0.35, min_chroma: 'float' = 0.1, min_area: 'int' = 3) -> 'dict'` (実装を直接呼ぶなら `import kendama; kendama.hole_detect(img, ball_center, ball_radius, *, dark_ratio: 'float' = 0.45, min_sat: 'float' = 0.35, min_chroma: 'float' = 0.1, min_area: 'int' = 3) -> 'dict'`、台帳から引くなら `opsdrive.get("hole_detect")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

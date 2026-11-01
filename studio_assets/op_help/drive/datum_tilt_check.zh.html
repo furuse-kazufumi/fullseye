@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">datum_tilt_check — DRIVE <code style="color:#22d3bf">granular</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.datum_tilt_check(result, warn_deg: &#x27;float&#x27; = 1.0) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import granular; granular.datum_tilt_check(result, warn_deg: &#x27;float&#x27; = 1.0) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;datum_tilt_check&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>根据 <code style="color:#22d3bf">repose_angle_silhouette</code> 的返回值(左右斜面角与地面倾斜)判定<b>基准面是否倾斜</b>。</p>
 <p>不平的地面(datum)的倾斜 β 会叠加到休止角上(与已有体积 PoC 相同的陷阱)。剪切型(<code style="color:#22d3bf">z&#x27; = z + x tan β</code>) 时左右斜面为 <code style="color:#22d3bf">atan(tan φ ± tan β)</code>,相机横滚(旋转型)时为 <code style="color:#22d3bf">φ ± β</code> —— <b>两者左右差都 ≈ 2β</b>,因此左右差超过 <code style="color:#22d3bf">warn_deg</code> 时报警。两个模型在 1 阶上不同(β = 5 度、φ = 30 度时左侧斜面为 33.62 对 35.00 度, 实测),因此返回两种修正值,用哪个由地面的来源(高度图的 datum,还是相机倾斜)决定:</p>

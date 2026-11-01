@@ -4,6 +4,7 @@ dim: drive
 category: balltrack
 in: points × matrix × matrix
 out: matrix
+gpu: なし
 examples: [poc_ball_bounce, poc_kendama, poc_table_tennis_bounce, poc_table_tennis_spin]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `points × matrix × matrix` → `matrix`
 - **呼び出し**: `import fullseye as fs; fs.ledger.reproject(points, pose, K) -> 'np.ndarray'` (実装を直接呼ぶなら `import balltrack; balltrack.reproject(points, pose, K) -> 'np.ndarray'`、台帳から引くなら `opsdrive.get("reproject")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

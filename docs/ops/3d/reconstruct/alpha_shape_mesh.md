@@ -4,6 +4,7 @@ dim: 3d
 category: reconstruct
 in: points
 out: mesh
+gpu: なし
 examples: [alpha_shape_topology]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `points` → `mesh`
 - **呼び出し**: `import fullseye as fs; fs.ledger.alpha_shape_mesh(points, alpha)` (実装を直接呼ぶなら `import recon3d; recon3d.alpha_shape_mesh(points, alpha)`、台帳から引くなら `ops3d.get("alpha_shape_mesh")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">crosswalk_stopped_vehicle_check — DRIVE <code style="color:#22d3bf">crossing</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.crosswalk_stopped_vehicle_check(ego, stopped, *, crosswalk_start: &#x27;float&#x27;, crosswalk_end: &#x27;float&#x27;, near: &#x27;float&#x27; = 3.0, approach: &#x27;float&#x27; = 10.0, v_stop: &#x27;float&#x27; = 0.05) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import drivecrossing; drivecrossing.crosswalk_stopped_vehicle_check(ego, stopped, *, crosswalk_start: &#x27;float&#x27;, crosswalk_end: &#x27;float&#x27;, near: &#x27;float&#x27; = 3.0, approach: &#x27;float&#x27; = 10.0, v_stop: &#x27;float&#x27; = 0.05) -&gt; &#x27;Dict[str, object]&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;crosswalk_stopped_vehicle_check&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>在從停於行人穿越道等(或其緊鄰前方)的車輛側方通過並超到其前方之前，是否先停車再開(第38條第2項)。</p>
 <p>stopped[i] = {&quot;x&quot;: 停止車輛的前端, &quot;t0&quot;, &quot;t1&quot;: 停止的時間}。只有前端位於 [crosswalk_start − near, crosswalk_end] 的車輛是對象(near = 「正前方」,<b>假設</b> 3 m)。若自車前端越過該前端的時刻 t_e 在 [t0, t1] 之內, 而在 t_e 之前、前端位於 [x − approach, x] 期間速率未降到 ≤ v_stop,則為違規(approach 為 <b>假設</b> 10 m)。</p>

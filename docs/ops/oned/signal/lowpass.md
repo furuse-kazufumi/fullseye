@@ -4,6 +4,7 @@ dim: oned
 category: signal
 in: signal
 out: signal
+gpu: なし
 examples: [degenerate_inputs, gallery2d_texture_freq, optics_four_f_processor, signal_filter]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal` → `signal`
 - **呼び出し**: `import fullseye as fs; fs.ledger.lowpass(x, rate, cutoff, order=4)` (実装を直接呼ぶなら `import dsp; dsp.lowpass(x, rate, cutoff, order=4)`、台帳から引くなら `ops1d.get("lowpass")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

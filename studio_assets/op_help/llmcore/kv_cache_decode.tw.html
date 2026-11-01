@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">kv_cache_decode — LLMCORE <code style="color:#22d3bf">decode</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">tokens × tokens × tokens</code> → <code style="color:#22d3bf">tokens</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.kv_cache_decode(query_step, key_cache, value_cache, scale=None) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import llmcore; llmcore.kv_cache_decode(query_step, key_cache, value_cache, scale=None) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsllmcore.get(&quot;kv_cache_decode&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>只前進 1 個 token 的推論(KV Cache)→ tokens (1, dv)。</p>
 <p>在因果遮罩下,<b>改寫未來不會讓之前的輸出變動哪怕 1 位元</b>(實測 0.0e+00), 所以只要保存已完成的 key/value,只計算 1 列即可 —— 循序每次推進 1 列得到的結果,與一次通過整個序列的結果一致(相對差 1.6e-16)。每 1 步的計算量是 O(T d),等於把一次性的 O(T² d) 分攤到 T 步。</p>

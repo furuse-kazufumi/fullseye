@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">color_correction_matrix — GFX2D <code style="color:#22d3bf">isp</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">rgb × matrix</code> → <code style="color:#22d3bf">rgb</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.color_correction_matrix(rgb, ccm, normalize_rows=True)</code>(要直接呼叫實作,<code style="color:#22d3bf">import gfx2d; gfx2d.color_correction_matrix(rgb, ccm, normalize_rows=True)</code>;從台帳取用則 <code style="color:#22d3bf">opsgfx2d.get(&quot;color_correction_matrix&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>逐像素套用 3x3 色彩校正矩陣(預設行正規化為 1,白保持白)。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>

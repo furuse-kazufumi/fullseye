@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">nice_ticks — ANNOTATE <code style="color:#22d3bf">plot</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">signal</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.nice_ticks(lo, hi, n=5, scale=&#x27;linear&#x27;)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import annotate; annotate.nice_ticks(lo, hi, n=5, scale=&#x27;linear&#x27;)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsannotate.get(&quot;nice_ticks&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>[lo, hi] 를 덮는 「딱 떨어지는」 눈금값(1/2/5 × 10^k, <b>닫힌 식</b>).</p>
 <p>끝은 <b>포함한다</b>(<code style="color:#22d3bf">lo</code>나 <code style="color:#22d3bf">hi</code>가 정확히 눈금에 올라가면 반드시 나온다). 부동소수의 반올림으로 끝이 1개 빠지는 off-by-one을 피하기 위해, 판정에는 <code style="color:#22d3bf">step*1e-9</code>의 허용치를 사용한다.</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">aic_from_rss — DRIVE <code style="color:#22d3bf">ball</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">keine</code> → <code style="color:#22d3bf">scalar</code> (ein Operator, der allein durch seine Argumente bestimmt ist — er nimmt kein Bild und keine Daten entgegen)</p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.aic_from_rss(rss: &#x27;float&#x27;, n: &#x27;int&#x27;, k: &#x27;int&#x27;) -&gt; &#x27;float&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import ballistics; ballistics.aic_from_rss(rss: &#x27;float&#x27;, n: &#x27;int&#x27;, k: &#x27;int&#x27;) -&gt; &#x27;float&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;aic_from_rss&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Akaike-Informationskriterium aus der Residuenquadratsumme der kleinsten Quadrate: AIC = n ln(RSS/n) + 2k (Gaußsches Rauschen, Varianz per Maximum-Likelihood geschätzt, Konstante weggelassen). Nur <b>Differenzen</b> zwischen an dieselben Daten angepassten Modellen sind aussagekräftig (der Absolutwert hängt von Skala und n ab). n ≤ k, RSS ≤ 0 und nicht endliche Werte lösen ValueError aus (RSS = 0 wäre AIC = −∞, die Modellwahl stellt sich nicht).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

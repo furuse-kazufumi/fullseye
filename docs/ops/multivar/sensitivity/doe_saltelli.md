@@ -4,6 +4,7 @@ dim: multivar
 category: sensitivity
 in: 
 out: design
+gpu: なし
 examples: [sensitivity_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `design`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.doe_saltelli(n=1024, factors=3, seed=0) -> 'dict'` (実装を直接呼ぶなら `import sensitivity; sensitivity.doe_saltelli(n=1024, factors=3, seed=0) -> 'dict'`、台帳から引くなら `opsmultivar.get("doe_saltelli")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

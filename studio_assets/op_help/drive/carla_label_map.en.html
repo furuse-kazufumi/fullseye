@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">carla_label_map — DRIVE <code style="color:#22d3bf">carla</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.carla_label_map(semantic) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import carlabridge; carlabridge.carla_label_map(semantic) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;carla_label_map&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>CARLA semantic segmentation (uint8 image of tags) → Fullseye label image (int, −1 = empty/unlabeled). Unknown tags raise ValueError.</p>
 <p>Empty input (<code style="color:#22d3bf">semantic</code> with 0 elements) raises <code style="color:#22d3bf">ValueError</code>.</p>

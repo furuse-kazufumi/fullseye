@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">aabb — 3D <code style="color:#22d3bf">bounds</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">primitive</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.aabb(points)</code> (to call the implementation directly, <code style="color:#22d3bf">import pcseg; pcseg.aabb(points)</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;aabb&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Axis-aligned bounding box. Returns <code style="color:#22d3bf">(min (3,), max (3,))</code>.</p>
 <p>Returns the minimum and maximum of each axis of the point cloud as is (<code style="color:#22d3bf">P.min(0)</code>, <code style="color:#22d3bf">P.max(0)</code>). The return value is 2 (3,) float64 arrays, in order <code style="color:#22d3bf">(xmin, ymin, zmin)</code> and <code style="color:#22d3bf">(xmax, ymax, zmax)</code> (the axis order is the column order of the input). The box size is <code style="color:#22d3bf">max - min</code>, the center <code style="color:#22d3bf">(min + max) / 2</code>. The unit is the coordinate unit.</p>

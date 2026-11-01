@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">msa_bias_linearity — SPC <code style="color:#22d3bf">msa</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.msa_bias_linearity(table, reference=&#x27;reference&#x27;, measured=&#x27;measured&#x27;)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import spc; spc.msa_bias_linearity(table, reference=&#x27;reference&#x27;, measured=&#x27;measured&#x27;)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsspc.get(&quot;msa_bias_linearity&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>reference value के सापेक्ष bias, और reference value पर उसकी निर्भरता (linearity) (<code style="color:#22d3bf">table</code>)।</p>
 <p>bias <code style="color:#22d3bf">bias = measured - reference</code> को reference value पर regress करता है (<code style="color:#22d3bf">bias = intercept + slope * reference</code>)। slope 0 न हो तो measurement system measuring range में <b>जगह के हिसाब से अलग-अलग मात्रा में खिसका हुआ है</b> = linearity की समस्या।</p>

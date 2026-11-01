@@ -4,6 +4,7 @@ dim: optics
 category: polarization
 in: image2d
 out: polsweep
+gpu: なし
 examples: [poc_shape_from_polarization, polarization_camera_pipeline]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d` → `polsweep`
 - **呼び出し**: `import fullseye as fs; fs.ledger.polarization_demosaic(raw, layout=((90.0, 45.0), (135.0, 0.0)))` (実装を直接呼ぶなら `import optics; optics.polarization_demosaic(raw, layout=((90.0, 45.0), (135.0, 0.0)))`、台帳から引くなら `opsoptics.get("polarization_demosaic")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

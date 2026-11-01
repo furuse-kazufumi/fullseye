@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">annotate_table_layout — ANNOTATE <code style="color:#22d3bf">paper</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">text</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_table_layout(text, xy, anchor=&#x27;lt&#x27;, font_size=13, font_path=None, pad=6, col_gap=None, row_gap=0, align=&#x27;auto&#x27;, header=False, bold=False, italic=False, line_spacing=1.15)</code>(要直接调用实现,<code style="color:#22d3bf">import annotate; annotate.annotate_table_layout(text, xy, anchor=&#x27;lt&#x27;, font_size=13, font_path=None, pad=6, col_gap=None, row_gap=0, align=&#x27;auto&#x27;, header=False, bold=False, italic=False, line_spacing=1.15)</code>;从台账取用则 <code style="color:#22d3bf">opsannotate.get(&quot;annotate_table_layout&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>返回 table(dict)：将制表符分隔的字符串作为<b>表格</b>放置时的列与行位置。</p>
 <p>行按 <code style="color:#22d3bf">\n</code>、列按 <code style="color:#22d3bf">\t</code> 切分。列宽由<b>用指定大小的实际字体逐 1 个单元格测得的宽度的最大值</b>决定 —— 按字符数计算的话,日文与英文数字之间必然出现偏差,所以除了实测没有其他正确做法。</p>

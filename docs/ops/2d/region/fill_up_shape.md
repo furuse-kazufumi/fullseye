@@ -5,6 +5,7 @@ category: region
 in: region
 out: region
 halcon: fill_up_shape
+gpu: なし
 examples: [gallery2d_region]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -16,6 +17,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **データ種**: `region` → `region`
 - **呼び出し**: `fullseye.apply(img, "fill_up_shape", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 - **HALCON 相当**: `fill_up_shape`(意味・パラメータは HALCON リファレンスが参考になる)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ![fill_up_shape: input → output](../../_fig/fill_up_shape.png)
 

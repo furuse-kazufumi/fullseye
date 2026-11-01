@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">awb_gains — GFX2D <code style="color:#22d3bf">isp</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">rgb</code> → <code style="color:#22d3bf">vector</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.awb_gains(rgb, method=&#x27;gray_world&#x27;, percentile=99.0)</code>(要直接调用实现,<code style="color:#22d3bf">import gfx2d; gfx2d.awb_gains(rgb, method=&#x27;gray_world&#x27;, percentile=99.0)</code>;从台账取用则 <code style="color:#22d3bf">opsgfx2d.get(&quot;awb_gains&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>估计白平衡增益 (g_R, g_G, g_B)(gray-world / white-patch,g_G = 1)。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>

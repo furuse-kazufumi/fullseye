@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">sfp_dolp_model — OPTICS <code style="color:#22d3bf">shape_from_polarization</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sfp_dolp_model(zenith_deg, refractive_index=1.5, model=&#x27;specular&#x27;)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import sfpolar; sfpolar.sfp_dolp_model(zenith_deg, refractive_index=1.5, model=&#x27;specular&#x27;)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;sfp_dolp_model&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Degree of linear polarisation of reflected (specular) or emitted (diffuse) light versus zenith angle, from the Fresnel equations.</p>
 <p>*zenith_deg* is the angle between the surface normal and the viewing direction, in degrees, <code style="color:#22d3bf">0 &lt;= zenith &lt;= 90</code> (a scalar or an array of any shape — an <code style="color:#22d3bf">(H, W)</code> zenith map gives an <code style="color:#22d3bf">(H, W)</code> DoLP map).</p>

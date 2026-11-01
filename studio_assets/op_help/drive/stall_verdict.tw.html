@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">stall_verdict — DRIVE <code style="color:#22d3bf">pegtactile</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">table × scalar × any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.stall_verdict(kp, theta: &#x27;float&#x27;, mu_hat) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import pegtactile; pegtactile.stall_verdict(kp, theta: &#x27;float&#x27;, mu_hat) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;stall_verdict&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>兩點接觸停住時的 Whitney 判定(OCW p.28)：θ &gt; c/μ̂ 為楔住(即使撤去力也拔不出的一側)，否則為卡死(可藉由力的方向解開)。c = (R − r)/R。μ̂ 是在同一次插入的滑動區間由觸覺讀出的值(<code style="color:#22d3bf">friction_from_single_contact</code>)，若為 None 或 ≤ 0 則不作推測，回傳 <code style="color:#22d3bf">&quot;unknown&quot;</code>。回傳 <code style="color:#22d3bf">verdict</code>(&quot;wedging&quot; / &quot;jamming&quot; / &quot;unknown&quot;)、<code style="color:#22d3bf">theta_limit</code>。<b>Raises</b> ValueError：θ 非有限或為負。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

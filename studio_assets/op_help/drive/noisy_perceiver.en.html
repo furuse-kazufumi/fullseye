@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">noisy_perceiver — DRIVE <code style="color:#22d3bf">kendama</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">any</code> (an op determined by its arguments alone — it takes no image or data input)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.noisy_perceiver(rng, noise_pos: &#x27;float&#x27; = 0.0, noise_vel: &#x27;float&#x27; = 0.0)</code> (to call the implementation directly, <code style="color:#22d3bf">import kendama; kendama.noisy_perceiver(rng, noise_pos: &#x27;float&#x27; = 0.0, noise_vel: &#x27;float&#x27; = 0.0)</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;noisy_perceiver&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Adds isotropic Gaussian noise to perception: <code style="color:#22d3bf">perceive(t, p, v) → (p̂, v̂)</code> (position σ = noise_pos [m], velocity σ = noise_vel [m/s]). A negative σ raises ValueError. rng = numpy.random.Generator.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

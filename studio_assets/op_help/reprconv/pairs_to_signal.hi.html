@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">pairs_to_signal — REPRCONV <code style="color:#22d3bf">pairs</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pairs_to_signal(pairs)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import reprconv; reprconv.pairs_to_signal(pairs)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsreprconv.get(&quot;pairs_to_signal&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>जोड़े <code style="color:#22d3bf">(N,2)</code> → dependent variable का <code style="color:#22d3bf">signal</code> <code style="color:#22d3bf">(N,)</code>। <code style="color:#22d3bf">pairs</code> से 2रा निकास।</p>
 <p>केवल column 1 (y) निकालता है। <code style="color:#22d3bf">funct_1d_to_pairs</code> (x, y) को साथ-साथ रखकर (N,2) लौटाता है, यह उसकी उलटी दिशा है -- <b>अगर x बराबर अंतराल पर हो</b>, तो <code style="color:#22d3bf">signal -&gt; pairs -&gt; signal</code> bit-दर-bit मेल खाता है। बराबर अंतराल न होने वाले x के pairs देने पर <b>x की जानकारी चुपचाप छूट जाती है</b> (<code style="color:#22d3bf">signal</code> वह type है जो index के बराबर अंतराल को मानकर चलता है)।</p>

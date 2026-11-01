@@ -4,6 +4,7 @@ dim: drive
 category: balltrack
 in: image2d
 out: table
+gpu: なし
 examples: [poc_ball_bounce, poc_driving_longitudinal, poc_driving_school, poc_driving_weather, poc_kendama, poc_table_tennis_bounce, poc_table_tennis_spin]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.ball_detect(image, *, mode: 'str' = 'bright', thresh=None, color=None, color_tol: 'float' = 0.25, radius_range=(1.5, 80.0), max_candidates: 'int' = 8) -> 'list'` (実装を直接呼ぶなら `import balltrack; balltrack.ball_detect(image, *, mode: 'str' = 'bright', thresh=None, color=None, color_tol: 'float' = 0.25, radius_range=(1.5, 80.0), max_candidates: 'int' = 8) -> 'list'`、台帳から引くなら `opsdrive.get("ball_detect")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -4,6 +4,7 @@ dim: optics
 category: telecentric
 in: 
 out: table
+gpu: なし
 examples: [poc_optics_drawings, poc_telecentric_metrology]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.telecentric_lens(kind='object', focal_mm=100.0, magnification=-0.5, na_object=0.01, front_aperture_mm=12.5, stop_shift_mm=0.0, glass='N-BK7', wavelength_um=0.58756)` (実装を直接呼ぶなら `import telecentric; telecentric.telecentric_lens(kind='object', focal_mm=100.0, magnification=-0.5, na_object=0.01, front_aperture_mm=12.5, stop_shift_mm=0.0, glass='N-BK7', wavelength_um=0.58756)`、台帳から引くなら `opsoptics.get("telecentric_lens")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

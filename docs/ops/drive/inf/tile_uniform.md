@@ -4,6 +4,7 @@ dim: drive
 category: inf
 in: 
 out: scalar
+gpu: なし
 examples: [gallery_drive_world_io]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `scalar`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.tile_uniform(i: 'int', j: 'int', seed: 'int', salt: 'int' = 0) -> 'float'` (実装を直接呼ぶなら `import driveinf; driveinf.tile_uniform(i: 'int', j: 'int', seed: 'int', salt: 'int' = 0) -> 'float'`、台帳から引くなら `opsdrive.get("tile_uniform")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

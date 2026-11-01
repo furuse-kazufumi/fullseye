@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">angle_between_planes — 3D <code style="color:#22d3bf">geometry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">primitive</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.angle_between_planes(n1, n2)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import match3d; match3d.angle_between_planes(n1, n2)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;angle_between_planes&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>2 planes के बीच dihedral angle (normals n1,n2, डिग्री)।</p>
 <p>normals के बीच का कोण <code style="color:#22d3bf">arccos(|n̂1·n̂2|)</code> डिग्री में लौटाता है (float)। absolute value लेने के कारण यह <b>[0, 90]</b> की न्यून कोण वाली ओर होता है (normal की दिशा पर निर्भर नहीं; अधिक कोण वाली ओर चाहिए तो <code style="color:#22d3bf">180 −</code>)। 0 = समानांतर, 90 = लंबवत। <code style="color:#22d3bf">n1</code>, <code style="color:#22d3bf">n2</code> संख्यात्मक 2 या 3 vector हैं (लंबाई मायने नहीं रखती), आयामों का मिश्रण ValueError देता है। zero vector पर 90 लौटता है।</p>

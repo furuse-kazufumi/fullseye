@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">dem_fill_sinks — DEM <code style="color:#22d3bf">hydrology</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">depth</code> → <code style="color:#22d3bf">depth</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_fill_sinks(dem, epsilon=0.0, nodata=&#x27;error&#x27;)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import demops; demops.dem_fill_sinks(dem, epsilon=0.0, nodata=&#x27;error&#x27;)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdem.get(&quot;dem_fill_sinks&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>गड्ढे भरा हुआ DEM। Barnes, Lehman &amp; Mulla (2014) का priority-flood।</p>
 <p><code style="color:#22d3bf">epsilon</code> को सूक्ष्म मान (उदा. 1e-6) देने से भरे गए समतल भागों में हल्की slope जुड़ जाती है (इसके बिना, समतल भागों पर flow direction अपरिभाषित होती है और accumulation बीच में ही गायब हो जाता है)।</p>

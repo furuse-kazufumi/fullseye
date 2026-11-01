@@ -4,6 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_granulometry(vol_binary, radii=None, spacing=None)</code> (die Implementierung direkt: <code style="color:#22d3bf">import volops; volops.vol_granulometry(vol_binary, radii=None, spacing=None)</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;vol_granulometry&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>Rückgabewert über das Register</b>: <code style="color:#22d3bf">fullseye.ledger.vol_granulometry(...)</code> liefert <b>nur den Wert des deklarierten Out-Typs <code style="color:#22d3bf">measurement</code></b> (die zugrunde liegende Funktion gibt zusätzlich Hilfsinformationen zurück). Wird das Verworfene gebraucht, nutze <code style="color:#22d3bf">fullseye.ledger.vol_granulometry.raw(...)</code> oder rufe <code style="color:#22d3bf">volops.vol_granulometry</code> direkt auf.</p>
 <p style="margin:2px 0 2px 12px">• Rückgabe der Funktion: <code style="color:#22d3bf">中央径</code></p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p><b>Größenverteilung</b> von Poren bzw. Partikeln eines Binärvolumens (Öffnungsreihe).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>

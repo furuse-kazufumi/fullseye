@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tem_amorphous_film — OPTICS <code style="color:#22d3bf">tem</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">image2d</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tem_amorphous_film(shape=256, pixel_A=1.0, thickness_A=100.0, density_g_cm3=2.0, element=&#x27;C&#x27;, seed=0, min_distance_A=1.2)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import temsim; temsim.tem_amorphous_film(shape=256, pixel_A=1.0, thickness_A=100.0, density_g_cm3=2.0, element=&#x27;C&#x27;, seed=0, min_distance_A=1.2)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;tem_amorphous_film&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>非晶質の膜の投影ポテンシャル [V Å] (Thon リングの標準試料、<code style="color:#22d3bf">image2d</code>)。</p>
 <p>原子を一様乱数で置き(最近接距離 <code style="color:#22d3bf">min_distance_A</code> 未満の対は間引く = ハードコアの近似)、<code style="color:#22d3bf">tem_projected_potential</code> で投影する。数密度 = ρ N_A / M(炭素 2.0 g/cm³ で 0.100 Å⁻³)。厚さ 100 Å・1 Å/画素の 256² で約 6.6 万原子。<code style="color:#22d3bf">seed</code> で決まる(同じ seed は同じ膜)。</p>

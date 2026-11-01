@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">points_to_position — REPRCONV <code style="color:#22d3bf">keypoint</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">position</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.points_to_position(points)</code>(要直接调用实现,<code style="color:#22d3bf">import reprconv; reprconv.points_to_position(points)</code>;从台账取用则 <code style="color:#22d3bf">opsreprconv.get(&quot;points_to_position&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>点群 <code style="color:#22d3bf">(N,3)</code> → 重心 <code style="color:#22d3bf">(z, y, x)</code>。<b>不可逆</b>(丢弃了分布)。</p>
 <p>舍弃的量可以测量: 绕质心的 RMS 距离就是&quot;压缩成 1 点时失去的分布范围&quot; 本身,<code style="color:#22d3bf">selftest</code> 以数字给出。只有 N = 1 时,与 <code style="color:#22d3bf">position_to_points</code> 的往返才按位一致。</p>

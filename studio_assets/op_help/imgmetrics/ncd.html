@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">ncd — IMGMETRICS <code style="color:#22d3bf">compression</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ncd(a, b, compressor=&#x27;lzma&#x27;, levels=None, data_range=None, symmetric=True)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import imgmetrics; imgmetrics.ncd(a, b, compressor=&#x27;lzma&#x27;, levels=None, data_range=None, symmetric=True)</code>、台帳から引くなら <code style="color:#22d3bf">opsimgmetrics.get(&quot;ncd&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>正規化圧縮距離(Li, Chen, Li, Ma &amp; Vitányi, IEEE TIT 50(12), 2004)。</p>
 <p><code style="color:#22d3bf">NCD(x,y) = (C(xy) - min(C(x),C(y))) / max(C(x),C(y))</code>。同じものなら 0 に近づき、無関係なら 1 に近づく ―― ただし <b>実際の圧縮器は理想的な Kolmogorov 複雑度ではない</b>ので、同一入力でも厳密に 0 にはならない(ヘッダぶんの下駄がある)。その下駄の実測値はテストに残してある。</p>

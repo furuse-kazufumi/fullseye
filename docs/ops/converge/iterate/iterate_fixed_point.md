@@ -4,6 +4,7 @@ dim: converge
 category: iterate
 in: 
 out: table
+gpu: なし
 examples: [converge_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.iterate_fixed_point(g='cos', x0=None, method='anderson', tol=1e-10, rtol=0.0, max_iter=500, m=5, on_fail='raise', keep_iterates=False) -> 'dict'` (実装を直接呼ぶなら `import converge; converge.iterate_fixed_point(g='cos', x0=None, method='anderson', tol=1e-10, rtol=0.0, max_iter=500, m=5, on_fail='raise', keep_iterates=False) -> 'dict'`、台帳から引くなら `opsconverge.get("iterate_fixed_point")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

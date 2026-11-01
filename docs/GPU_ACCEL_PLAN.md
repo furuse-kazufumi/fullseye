@@ -166,6 +166,7 @@
 - [x] **fullseye API から device 指定 完了**(2026-08-26): `api.run_pipeline(..., device="cuda")` /
       `api.apply(..., device="cuda")` を追加。device!="cpu" は accel_bridge の GPU 常駐経路(未対応 op
       は CPU、torch/GPU 不在は静かに CPU フォールバック)。既定 device="cpu" は挙動不変(回帰テスト)。
+      **2026-11-02 更新**: 既定は `device="auto"`(CUDA が使えれば cuda、無ければ cpu。`FULLSEYE_DEVICE` で上書き、CPU だけの環境では結果は bit 同一=`tests/test_device_default.py`)。`cuda` を明示して CUDA が無い時は理由つき `RuntimeError`。MCP は `device` と任意の `parity_check` を受ける(`docs/INTEGRATION.md`)。
       **CUDA vs CPU-torch 実結果照合**(loco venv): region/volume は **bit 一致(0.0)**、illuminate/ncc は
       float32 epsilon(5.96e-08)、ncc 位置は完全一致 → GPU が正しく計算していることを確認。
       tests/test_api_device.py(4)。**これで公開層から GPU 経路が通り、他プロジェクトの土台になる。**

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">piv_vorticity — PIV <code style="color:#22d3bf">field</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">flow2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_vorticity(flow, spacing=1.0)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import pivops; pivops.piv_vorticity(flow, spacing=1.0)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opspiv.get(&quot;piv_vorticity&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>와도 <code style="color:#22d3bf">d(dx)/dy - d(dy)/dx</code>. <b>반시계 방향이 양</b>(영상 좌표에서의 정의).</p>
 <p>행이 아래쪽으로 증가하는 이미지 좌표에서는 수학의 xy 좌표와 위아래가 반대가 된다. 이 부호를정하지 않고 쓰면 소용돌이의 방향이 조용히 반전되므로, 정의를 docstring에 고정한다.</p>

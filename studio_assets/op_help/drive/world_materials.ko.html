@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">world_materials — DRIVE <code style="color:#22d3bf">terrain</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">table × table × matrix × matrix × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.world_materials(world: &#x27;dict&#x27;, view: &#x27;dict&#x27;, pose, K, m: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import driveterrain; driveterrain.world_materials(world: &#x27;dict&#x27;, view: &#x27;dict&#x27;, pose, K, m: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;world_materials&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>렌더링 결과 <code style="color:#22d3bf">view</code>(world_camera, &quot;shade&quot; 포함)에 노면 재질을 화소별로 적용합니다.</p>
 <p>노면(라벨 0)과 지형(10)의 화소는 세계 좌표에서 재질을 다시 평가한다: 아스팔트 알갱이(Perlin 8 주기/m), 풀의 색 얼룩, 얼룩(어두운 반점, 라벨은 0 그대로), 물웅덩이(하늘의 반사, 라벨 11). 백선/횡단보도(9/12)는 마모율 wear 로노면 색에 섞는다(라벨은 불변, 참값 &quot;wear&quot; 에 남음). 물웅덩이 반사의 강도(0.1~0.9, Perlin 1.5 주기/m)는 참값 &quot;refl&quot;. 반환값 = <code style="color:#22d3bf">{&quot;color&quot;, &quot;label&quot;, &quot;puddle&quot;, &quot;refl&quot;, &quot;stain&quot;, &quot;wear&quot;, &quot;xyz&quot;}</code>.</p>

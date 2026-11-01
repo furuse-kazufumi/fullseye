@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">angle_3points — 3D <code style="color:#22d3bf">geometry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.angle_3points(a, b, c)</code> (to call the implementation directly, <code style="color:#22d3bf">import match3d; match3d.angle_3points(a, b, c)</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;angle_3points&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>The angle at three points (vertex b, in degrees). ∠ABC.</p>
 <p>Returns <code style="color:#22d3bf">arccos(û·v̂)</code> (<code style="color:#22d3bf">u = a − b</code>, <code style="color:#22d3bf">v = c − b</code>) in degrees (float). The value is in <b>[0, 180]</b> and has no sign (even in 2-D the direction of rotation is not distinguished). The arguments are numeric 2- or 3-vectors; mixed dimensions raise ValueError. If <code style="color:#22d3bf">a == b</code> or <code style="color:#22d3bf">c == b</code>, the dot product with the zero vector is 0 and 90 is returned (no exception). The dot product is clipped to [−1,1], so numerical error does not produce NaN.</p>

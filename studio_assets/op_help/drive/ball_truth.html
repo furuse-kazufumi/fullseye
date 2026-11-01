@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">ball_truth — DRIVE <code style="color:#22d3bf">ballworld</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ball_truth(world: &#x27;dict&#x27;, i: &#x27;int&#x27;, cam: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import ballworld; ballworld.ball_truth(world: &#x27;dict&#x27;, i: &#x27;int&#x27;, cam: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;ball_truth&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>球 i の真値の投影: 中心の (col, row)、像の半径 [px] (≈ f·r/深度)、模様の中心の (col, row)(裏側なら NaN)。</p>
 <p>空の入力(<code style="color:#22d3bf">world</code> が空の dict)は ValueError。</p>

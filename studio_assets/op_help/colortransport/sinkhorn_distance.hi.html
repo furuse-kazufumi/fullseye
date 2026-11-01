@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">sinkhorn_distance — COLORTRANSPORT <code style="color:#22d3bf">transport</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal × signal × matrix</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sinkhorn_distance(a, b, cost, reg=0.05, **kw)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import colortransport; colortransport.sinkhorn_distance(a, b, cost, reg=0.05, **kw)</code>, registry से लेना हो तो <code style="color:#22d3bf">opscolortransport.get(&quot;sinkhorn_distance&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>regularised transport cost <code style="color:#22d3bf">&lt;plan, cost&gt;</code>। <b>यह exact दूरी नहीं है</b>।</p>
 <p>regularisation के कारण इसमें व्यवस्थित bias होता है, इसलिए स्वयं से &quot;दूरी&quot; भी 0 नहीं होती (उस अंतर का माप tests में दर्ज है)। 1 आयाम में exact मान चाहिए तो <code style="color:#22d3bf">wasserstein_1d</code>।</p>

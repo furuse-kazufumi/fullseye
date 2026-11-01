@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">two_point_depth — DRIVE <code style="color:#22d3bf">pegsim</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.two_point_depth(kp, theta: &#x27;float&#x27;, model: &#x27;str&#x27; = &#x27;exact&#x27;) -&gt; &#x27;float&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import pegsim; pegsim.two_point_depth(kp, theta: &#x27;float&#x27;, model: &#x27;str&#x27; = &#x27;exact&#x27;) -&gt; &#x27;float&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;two_point_depth&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>倾角 θ [rad] 下开始两点接触的插入深度 l₂ [m] (从最窄处到末端中心)。按名称选择 3 种模型之一。</p>
 <p><code style="color:#22d3bf">&quot;exact&quot;</code>: 在 3-D 圆柱上严格,l₂ = (2R − r(cos θ + sec θ)) / tan θ(推导 (1′))。<code style="color:#22d3bf">&quot;small_angle&quot;</code>: l₂ = 2c_r / sin θ (将 OCW p.9 的 l/d = c/θ 用半径 clearance 表示)。<code style="color:#22d3bf">&quot;rectangle&quot;</code>: 2-D 长方形近似 (D − d/cos θ)/tan θ(忽略边缘点的高度 r sin θ,因此在 θ = 6° 时会浅 0.5 mm —— 保留它是为了测量误差的大小)。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: θ ≤ 0、θ ≥ θ_m_exact(连入口都进不去)、未知的 model。</p>

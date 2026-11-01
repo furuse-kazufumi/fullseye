@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">sam_frequency_tradeoff — ACOUSTICS <code style="color:#22d3bf">ultrasonic</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sam_frequency_tradeoff(stack, void_diameter, water_path=0.001, f_number=3.0, interface=None, k_res=1.02, f_min=1000000.0, f_max=5000000000.0, n_grid=600, bandwidth=0.6, n_sigma_gate=5.0)</code> (to call the implementation directly, <code style="color:#22d3bf">import ultrasound; ultrasound.sam_frequency_tradeoff(stack, void_diameter, water_path=0.001, f_number=3.0, interface=None, k_res=1.02, f_min=1000000.0, f_max=5000000000.0, n_grid=600, bandwidth=0.6, n_sigma_gate=5.0)</code>; from the registry, <code style="color:#22d3bf">opsacoustics.get(&quot;sam_frequency_tradeoff&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Optimal SAM frequency for a void of given size at a buried interface: lateral fill (1 - 2^-(a/w)^2, w = k_res*lambda_w*F#) against two-way attenuation; closed form when all losses go as f^2 (<code style="color:#22d3bf">table</code>).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>

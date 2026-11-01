@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">gauss_cubature — MATH <code style="color:#22d3bf">numerics</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">keine</code> → <code style="color:#22d3bf">table</code> (ein Operator, der allein durch seine Argumente bestimmt ist — er nimmt kein Bild und keine Daten entgegen)</p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gauss_cubature(n: &#x27;int&#x27;, dim: &#x27;int&#x27; = 2, a=-1.0, b=1.0) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import mathnumerics; mathnumerics.gauss_cubature(n: &#x27;int&#x27;, dim: &#x27;int&#x27; = 2, a=-1.0, b=1.0) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsmath.get(&quot;gauss_cubature&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Knoten (n^dim, dim) und Gewichte für die Quadratur über den Quader [a, b]^dim (a, b auch je Achse möglich) mittels Tensorprodukt von Gauß-Legendre-Regeln.</p>
 <p>Für Pixelmittel von Bildern, Volumenintegrale über Volumina und PSF-Integrale. Integriert Produkte von Polynomen bis Grad 2n−1 auf jeder Achse <b>exakt</b> (Gate: x^p y^q mit p, q &lt;= 2n−1 exakt; Fehler, wenn einer davon 2n ist). Die Punktzahl ist n^dim, wächst also in hohen Dimensionen rasch (für dim &gt; 6 eignen sich Folgen niedriger Diskrepanz besser).</p>

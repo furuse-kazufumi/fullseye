@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">course_loop_bend — DRIVE <code style="color:#22d3bf">course</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">table</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.course_loop_bend(radius=30.0, width=8.0, arc_pts=64)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivecourse; drivecourse.course_loop_bend(radius=30.0, width=8.0, arc_pts=64)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;course_loop_bend&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>주회 코스 끝의 반원(왼쪽으로 180° 회전): 진입 (0, 0, 0) → 중심 (0, R) 주위를 돌아 → 진출 (0, 2R, π). 다각형은 바깥 호(반경 R + w/2)와 안쪽 호(R − w/2)로 둘러싼 고리의 절반입니다. 면적 = π R w(닫힌 식)이며, 호를 꺾은선으로 근사한 만큼 작고 arc_pts를 늘리면 수렴합니다. 규격(주회 코스): 폭 8 m 이상, 대체로 장원형.</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: R ≤ w/2(안쪽 호가 찌그러진다), 폭·반경이 양수가 아님, arc_pts 가 부정.</p>

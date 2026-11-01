@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">surface_defect — OPTICS <code style="color:#22d3bf">scene</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">table × image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.surface_defect(primitive: &#x27;dict&#x27;, field, mask=None, uv_size_mm=(20.0, 20.0), centre_mm=(0.0, 0.0), height_um: &#x27;float&#x27; = 0.0, height_field=None, roughness_um: &#x27;float&#x27; = 0.6) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import optscene; optscene.surface_defect(primitive: &#x27;dict&#x27;, field, mask=None, uv_size_mm=(20.0, 20.0), centre_mm=(0.0, 0.0), height_um: &#x27;float&#x27; = 0.0, height_field=None, roughness_um: &#x27;float&#x27; = 0.6) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsoptics.get(&quot;surface_defect&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>2-D 결함 그림을 <b>부품 면에 붙입니다</b>(<code style="color:#22d3bf">defectgen</code> 의 출력을 그대로 먹습니다).</p>
 <p><code style="color:#22d3bf">field</code>는 밝기의 변조 (H, W)(0 = 변화 없음, −0.3 = 30% 어두운 흠집). <code style="color:#22d3bf">height_um</code>을 주면 같은 그림을 <b>높이</b>로도 해석하여, 기울기로부터 법선을 기울인다 ―― 이것이 있으면, 같은 흠집이 돔 조명에서는 사라지고 암시야 조명에서 빛난다는 <b>조명을 바꾸는 의미</b>가 재현된다(외관 검사 AI 학습 데이터는 여기가 본체).</p>

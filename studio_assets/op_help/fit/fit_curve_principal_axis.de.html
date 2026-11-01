@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">fit_curve_principal_axis — FIT <code style="color:#22d3bf">fit</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">keypoints</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fit_curve_principal_axis(points, degree: &#x27;int&#x27; = 2, *, isotropy_ratio: &#x27;float&#x27; = 0.95) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import measure; measure.fit_curve_principal_axis(points, degree: &#x27;int&#x27; = 2, *, isotropy_ratio: &#x27;float&#x27; = 0.95) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsfit.get(&quot;fit_curve_principal_axis&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Dreht eine schräge gekrümmte Kante auf ihre Hauptachse und passt dann y&#x27;=f(x&#x27;) an.</p>
 <p>PCA legt vor der polynomialen Ausgleichung ein stabiles lokales System fest. Ergebnis sind Winkel, Schwerpunkt, Koeffizienten, Achsen, lokale und angepasste Punkte sowie geometrischer RMS; isotrope Punktwolken werden abgewiesen.</p>

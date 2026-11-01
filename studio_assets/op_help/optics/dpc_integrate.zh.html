@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">dpc_integrate — OPTICS <code style="color:#22d3bf">grating_interf</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dpc_integrate(dpc_rad, pixel_um, distance_mm, analyzer_period_um, wavelength_nm=None, energy_kev=None, axis=1, baseline=&#x27;left&#x27;, baseline_px=8, delta=None)</code>(要直接调用实现,<code style="color:#22d3bf">import gratinginterf; gratinginterf.dpc_integrate(dpc_rad, pixel_um, distance_mm, analyzer_period_um, wavelength_nm=None, energy_kev=None, axis=1, baseline=&#x27;left&#x27;, baseline_px=8, delta=None)</code>;从台账取用则 <code style="color:#22d3bf">opsoptics.get(&quot;dpc_integrate&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>将微分相位(条纹相位偏移 φ)沿光栅的灵敏方向积分,还原为波前相位 Φ [rad]。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>

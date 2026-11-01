@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">scintillator_sensor_qe — TOMOGRAPHY <code style="color:#22d3bf">spectral_xray</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">無</code> → <code style="color:#22d3bf">table</code>(僅由參數決定的運算子 —— 不接受影像或資料輸入)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.scintillator_sensor_qe(scintillator=&#x27;CSI:TL&#x27;, thickness_mm: &#x27;float&#x27; = 0.6, e_min_kev: &#x27;float&#x27; = 10.0, e_max_kev: &#x27;float&#x27; = 150.0, n_points: &#x27;int&#x27; = 141, photodetector_qe=None, emission_spectrum=None, light_yield_per_mev=None, light_collection: &#x27;float&#x27; = 1.0, emission_geometry=None) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import dualxray; dualxray.scintillator_sensor_qe(scintillator=&#x27;CSI:TL&#x27;, thickness_mm: &#x27;float&#x27; = 0.6, e_min_kev: &#x27;float&#x27; = 10.0, e_max_kev: &#x27;float&#x27; = 150.0, n_points: &#x27;int&#x27; = 141, photodetector_qe=None, emission_spectrum=None, light_yield_per_mev=None, light_collection: &#x27;float&#x27; = 1.0, emission_geometry=None) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opstomography.get(&quot;scintillator_sensor_qe&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>閃爍體耦合感測器的量子效率:1 個 X 射線光子 → 閃爍體吸收 → 發光 → 光偵測器中的電子數。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>

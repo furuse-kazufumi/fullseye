@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">lens_field_profile — OPTICS <code style="color:#22d3bf">linescan</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lens_field_profile(system=None, image_heights_mm=None, frequencies_lp_mm=(10.0, 20.0, 35.0), grid=96, wavelength_um=None)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import linescan; linescan.lens_field_profile(system=None, image_heights_mm=None, frequencies_lp_mm=(10.0, 20.0, 35.0), grid=96, wavelength_um=None)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;lens_field_profile&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>像高ごとの<b>相対照度</b>と <b>MTF</b> を光線追跡で(<code style="color:#22d3bf">table</code>、有限距離の物体 = ラインスキャンの使い方)。</p>
 <p>照度: Lambert の物点から射影立体角の一様格子で光線を出し、像面に届いた光束を数える(<code style="color:#22d3bf">_flux_trace</code>)。像面の照度 = 光束 ÷ 像の面積要素(径方向の倍率 × 接線方向の倍率、像高の有限差分 —— 歪曲も入る)。相対照度は 3 つの積に<b>厳密に</b>分かれる(どれも返す):</p>

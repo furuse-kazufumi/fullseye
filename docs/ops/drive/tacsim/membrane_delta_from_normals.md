@@ -4,6 +4,7 @@ dim: drive
 category: tacsim
 in: normalmap × matrix × matrix × scalar
 out: scalar
+gpu: なし
 examples: [poc_tacsim_elastic_membrane]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `normalmap × matrix × matrix × scalar` → `scalar`
 - **呼び出し**: `import fullseye as fs; fs.ledger.membrane_delta_from_normals(normals, X, Y, pitch: 'float', tail: 'str' = 'boussinesq', centre_xy=None) -> 'float'` (実装を直接呼ぶなら `import tacsim; tacsim.membrane_delta_from_normals(normals, X, Y, pitch: 'float', tail: 'str' = 'boussinesq', centre_xy=None) -> 'float'`、台帳から引くなら `opsdrive.get("membrane_delta_from_normals")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">stick_radius_modelfree — DRIVE <code style="color:#22d3bf">tacslip</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">matrix × matrix</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.stick_radius_modelfree(pts_c, u_px, rel: &#x27;float&#x27; = 0.08, abs_px: &#x27;float&#x27; = 0.05) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import tacslip; tacslip.stick_radius_modelfree(pts_c, u_px, rel: &#x27;float&#x27; = 0.08, abs_px: &#x27;float&#x27; = 0.05) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;stick_radius_modelfree&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Modellfreier Haftradius: in der Reihenfolge des Abstands von der Mitte, ausgehend vom Median δ̂ der inneren 6 Punkte, der Radius <code style="color:#22d3bf">c_px</code> des Mittelpunkts zwischen dem ersten Punkt, bei dem |ux − δ̂| den Wert rel·|δ̂| + abs_px überschreitet, und dem Punkt davor (Auflösung = Markierungsabstand). <code style="color:#22d3bf">core_px</code> = δ̂. pts_c ist mittelpunktsbezogen (M, 2) [px], u_px ist (M, 2) [px]. <b>Raises</b> ValueError: weniger als 6 Punkte.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

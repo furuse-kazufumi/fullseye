@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">illumination_field — OPTICS <code style="color:#22d3bf">illumination</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.illumination_field(train, source_radiance=None, shape=(65, 65), field_mm=None, n_pupil=16)</code> (to call the implementation directly, <code style="color:#22d3bf">import illumdesign; illumdesign.illumination_field(train, source_radiance=None, shape=(65, 65), field_mm=None, n_pupil=16)</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;illumination_field&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Irradiance on the specimen of an illumination train (<code style="color:#22d3bf">image2d</code>), by paraxial backward tracing.</p>
 <p>For every specimen pixel (x, y) and every direction (u, v) on an *n_pupil* x *n_pupil* grid of the illumination cone, the ray is traced back through each stop (rays outside a stop are blocked) to the source plane, where the radiance is looked up: <code style="color:#22d3bf">E(x) = sum L(source point) du dv</code> (paraxial, so for a uniform source filling the cone <code style="color:#22d3bf">E = L pi NA^2</code> — a gate).</p>

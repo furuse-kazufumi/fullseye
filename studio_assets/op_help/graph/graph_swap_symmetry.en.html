@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">graph_swap_symmetry — GRAPH <code style="color:#22d3bf">symmetry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graph_swap_symmetry(adj, pairs)</code> (to call the implementation directly, <code style="color:#22d3bf">import graphinv; graphinv.graph_swap_symmetry(adj, pairs)</code>; from the registry, <code style="color:#22d3bf">opsgraph.get(&quot;graph_swap_symmetry&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>How much of the wiring survives exchanging node pairs (a left/right test).</p>
 <p><code style="color:#22d3bf">pairs</code> is a sequence of <code style="color:#22d3bf">(i, j)</code> index pairs to exchange (each node in at most one pair). The wiring is re-indexed by the exchange and compared with the original:</p>

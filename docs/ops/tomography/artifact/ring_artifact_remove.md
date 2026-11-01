@@ -4,6 +4,7 @@ dim: tomography
 category: artifact
 in: sinogram
 out: sinogram
+gpu: なし
 examples: [ct_reconstruction]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `sinogram` → `sinogram`
 - **呼び出し**: `import fullseye as fs; fs.ledger.ring_artifact_remove(sinogram, window=5, mode='median')` (実装を直接呼ぶなら `import tomography; tomography.ring_artifact_remove(sinogram, window=5, mode='median')`、台帳から引くなら `opstomography.get("ring_artifact_remove")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

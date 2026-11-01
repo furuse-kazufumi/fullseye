@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">vx_table_lookup — VX <code style="color:#22d3bf">pixel</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image2d × signal</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vx_table_lookup(image, table, *, offset=0)</code>(要直接呼叫實作,<code style="color:#22d3bf">import vxcore; vxcore.vx_table_lookup(image, table, *, offset=0)</code>;從台帳取用則 <code style="color:#22d3bf">opsvx.get(&quot;vx_table_lookup&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>查表(3.47 節)：輸出 = table[像素值 + offset] (REQ-0421)。接受 U8 與 S16(REQ-0422)。輸出的 dtype 為表的 dtype。</p>
 <p>*offset*: S16 的表為了查負的像素值而把 0 放在中央(VX_LUT_OFFSET,典型為 32768)。U8 為 0。★若有像素查到表外則停止(不會默默貼到端點)。</p>

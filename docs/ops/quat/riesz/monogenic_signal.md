@@ -4,6 +4,7 @@ dim: quat
 category: riesz
 in: image2d
 out: qimage
+gpu: なし
 examples: [perf_monogenic_metrics, quaternion_monogenic]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d` → `qimage`
 - **呼び出し**: `import fullseye as fs; fs.ledger.monogenic_signal(image, wavelength_px=8.0, bandwidth_octaves=1.0) -> 'np.ndarray'` (実装を直接呼ぶなら `import quatimage; quatimage.monogenic_signal(image, wavelength_px=8.0, bandwidth_octaves=1.0) -> 'np.ndarray'`、台帳から引くなら `opsquat.get("monogenic_signal")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

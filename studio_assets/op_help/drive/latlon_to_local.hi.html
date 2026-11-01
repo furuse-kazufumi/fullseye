@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">latlon_to_local — DRIVE <code style="color:#22d3bf">japan</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">any × any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.latlon_to_local(lat, lon, origin) -&gt; &#x27;Tuple[np.ndarray, np.ndarray]&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import drivejapan; drivejapan.latlon_to_local(lat, lon, origin) -&gt; &#x27;Tuple[np.ndarray, np.ndarray]&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;latlon_to_local&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>latitude-longitude [deg] → origin origin = (lat0, lon0) के आसपास equirectangular approximation के planar coordinates (x पूर्व, y उत्तर) [m]।</p>
 <p>x = R cos(lat0) Δλ, y = R Δφ (R = 6378137 m)। 1 km वर्ग में 1e-5 की विकृति (cos का परिवर्तन), इसलिए एक कस्बे के लिए पर्याप्त। सरणी स्वीकार्य। <b>Raises</b> <code style="color:#22d3bf">ValueError</code>: अक्षांश/देशांतर सीमा से बाहर या अपरिमित।</p>

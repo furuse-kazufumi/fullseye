@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">lockin_phase — OPTICS <code style="color:#22d3bf">lockin</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">video</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lockin_phase(video, f_ref, fps, window=&#x27;rect&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import lockin; lockin.lockin_phase(video, f_ref, fps, window=&#x27;rect&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;lockin_phase&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Phase map phi (radians, (-pi, pi]) of the part of every pixel that follows the reference -&gt; (H, W) image.</p>
 <p>The phase is unaffected by a multiplicative change of the whole pixel signal (reflectance, emissivity, a non-uniform heating or illumination level): it reads where the response is late, not how strong it is. A pixel with zero amplitude has no phase and reads 0.</p>

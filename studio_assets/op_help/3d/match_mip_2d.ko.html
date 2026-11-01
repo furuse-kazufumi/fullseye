@@ -2,7 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">match_mip_2d — 3D <code style="color:#22d3bf">match_localize</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">voxel × voxel</code> → <code style="color:#22d3bf">position</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.match_mip_2d(scene_vol, model_vol, device=&#x27;cpu&#x27;)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import match3d; match3d.match_mip_2d(scene_vol, model_vol, device=&#x27;cpu&#x27;)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;match_mip_2d&quot;)</code>)</p>
-<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 이 연산자는 GPU 경로가 있습니다(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>MIP 투영 → 2D NCC(구조=voxel → 2D, 기법=NCC, 변환=직교 MIP).</p>
 <p>3 직교 방향의 최댓값 투영으로 3 장의 2D 문제로 떨어뜨리고, 기존 2D NCC 로 위치 추정 → 3 장에서 3D 좌표를중복 추정. 전체 3D NCC 보다 싸게 coarse alignment 에. 회전이 없는 평행 이동 탐색용.</p>

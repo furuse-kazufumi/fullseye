@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">homotopy_shortest_paths — DRIVE <code style="color:#22d3bf">braidpath</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d × any × any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.homotopy_shortest_paths(grid, start, goal, k=4, obstacles=None, angle=0.1, max_states=400000, max_cost=None)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import braidpath; braidpath.homotopy_shortest_paths(grid, start, goal, k=4, obstacles=None, angle=0.1, max_states=400000, max_cost=None)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;homotopy_shortest_paths&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>격자(True = 주행 가능, 4 근방) 위에서 start 에서 goal 까지 호모토피 류가 서로 다른 최단 경로를 짧은 순으로 k 개.</p>
 <p>상태 = (칸, 브레이드의 Dynnikov 좌표). 장애물 점을 움직이지 않는 가닥으로 보고, 한 수마다 교차 문자를 더해 좌표를 갱신한다(좌표는 류의 완전 불변량이므로, 같은 (칸, 좌표) 는 한 번만 연다). Dijkstra 가 이 “류로 들어 올린” 격자를비용 순으로 열기 때문에, 새로운 좌표로 goal 에 도착한 순서가 류별 최단 경로의 짧은 순서가 된다.</p>

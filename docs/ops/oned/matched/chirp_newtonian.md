@@ -4,6 +4,7 @@ dim: oned
 category: matched
 in: 
 out: signal
+gpu: なし
 examples: [poc_gw_detector_pseudo_simulation]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `signal`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.chirp_newtonian(mass1_msun: 'float' = 36.0, mass2_msun: 'float' = 29.0, rate: 'float' = 4096.0, duration_s: 'float' = 1.0, *, f_low_hz: 'float' = 20.0, distance_mpc: 'float' = 410.0, phase_rad: 'float' = 0.0) -> 'np.ndarray'` (実装を直接呼ぶなら `import gwsearch; gwsearch.chirp_newtonian(mass1_msun: 'float' = 36.0, mass2_msun: 'float' = 29.0, rate: 'float' = 4096.0, duration_s: 'float' = 1.0, *, f_low_hz: 'float' = 20.0, distance_mpc: 'float' = 410.0, phase_rad: 'float' = 0.0) -> 'np.ndarray'`、台帳から引くなら `ops1d.get("chirp_newtonian")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

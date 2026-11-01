@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">inlier_ratio — 3D <code style="color:#22d3bf">registration_metrics</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.inlier_ratio(source, target, transform, thresh: &#x27;float&#x27;) -&gt; &#x27;float&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import registration_eval; registration_eval.inlier_ratio(source, target, transform, thresh: &#x27;float&#x27;) -&gt; &#x27;float&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;inlier_ratio&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>correspondence set का inlier अनुपात = ‖T·source[i] − target[i]‖ &lt; thresh वाला हिस्सा। → [0,1]।</p>
 <p><code style="color:#22d3bf">source</code> और <code style="color:#22d3bf">target</code> <b>index correspondence</b> वाले (source[i] का मेल target[i] से) समान संख्या के point clouds हैं (FPFH आदि की putative correspondence मानी गई है)। thresh में monotonically non-decreasing। shape मेल न खाए या (N,3) न हो तो ValueError (fail-closed)।</p>

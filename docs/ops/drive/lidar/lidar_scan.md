@@ -4,6 +4,7 @@ dim: drive
 category: lidar
 in: mesh × table × matrix
 out: table
+gpu: なし
 examples: [poc_driving_school]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `mesh × table × matrix` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.lidar_scan(V, F, spec, T_sensor, *, labels=None, seed: 'int' = 0) -> 'dict'` (実装を直接呼ぶなら `import lidarsim; lidarsim.lidar_scan(V, F, spec, T_sensor, *, labels=None, seed: 'int' = 0) -> 'dict'`、台帳から引くなら `opsdrive.get("lidar_scan")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

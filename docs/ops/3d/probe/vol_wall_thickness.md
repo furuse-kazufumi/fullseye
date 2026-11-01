@@ -4,6 +4,7 @@ dim: 3d
 category: probe
 in: voxel
 out: signal
+gpu: なし
 examples: [wall_thickness_probe]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,6 +16,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **データ種**: `voxel` → `signal`
 - **呼び出し**: `import fullseye as fs; fs.ledger.vol_wall_thickness(vol, p0, p1, sigma=1.0, threshold=0.1, spacing=None)` (実装を直接呼ぶなら `import volprobe; volprobe.vol_wall_thickness(vol, p0, p1, sigma=1.0, threshold=0.1, spacing=None)`、台帳から引くなら `ops3d.get("vol_wall_thickness")`)
 - **台帳経由の戻り値**: `fullseye.ledger.vol_wall_thickness(...)` は**宣言 out 型 `signal` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.vol_wall_thickness.raw(...)`、または `volprobe.vol_wall_thickness` を直接呼ぶ。
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

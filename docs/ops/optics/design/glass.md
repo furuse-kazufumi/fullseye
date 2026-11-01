@@ -4,6 +4,7 @@ dim: optics
 category: design
 in: 
 out: table
+gpu: なし
 examples: [lens_design_demo, lens_optimize_demo, poc_industrial_oct, poc_lens_global_search, poc_material_optical_library, poc_optics_drawings]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.glass(nd, vd)` (実装を直接呼ぶなら `import raytrace; raytrace.glass(nd, vd)`、台帳から引くなら `opsoptics.get("glass")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

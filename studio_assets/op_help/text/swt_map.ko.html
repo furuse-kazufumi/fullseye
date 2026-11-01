@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">swt_map — TEXT <code style="color:#22d3bf">stroke</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.swt_map(img, dark_on_light: &#x27;bool&#x27; = True, sigma: &#x27;float&#x27; = 1.0, max_width: &#x27;int&#x27; = 64, angle_tol: &#x27;float&#x27; = 0.5235987755982988)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import textregion; textregion.swt_map(img, dark_on_light: &#x27;bool&#x27; = True, sigma: &#x27;float&#x27; = 1.0, max_width: &#x27;int&#x27; = 64, angle_tol: &#x27;float&#x27; = 0.5235987755982988)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opstext.get(&quot;swt_map&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>스트로크 폭 변환 — 각 화소에 그 화소를 포함하는 스트로크의 폭을 기록한다.</p>
 <p>문자 쪽 경계 화소에서 기울기 방향을 따라 문자 안쪽으로 광선을 쏘고, 마주 보는 경계화소(기울기가 거의 반대 방향)에 맞으면 광선 위의 모든 화소에 폭(경계 화소 중심 간 거리 + 1) 을 쓴다(이미 더 작은 값이 있으면 작은 쪽). Epshtein 2010 §3 의 절차로, 2 번째 주사에서광선 위의 중앙값보다 큰 값을 중앙값으로 바꾼다(모서리의 과대를 억제). 에지의 규약은 <code style="color:#22d3bf">_edges_and_gradient</code> 에 적었다(직사각형 획에서 폭이 엄밀히 정수가 된다).</p>

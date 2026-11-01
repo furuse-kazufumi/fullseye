@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">joint_histogram — IMGMETRICS <code style="color:#22d3bf">information</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.joint_histogram(a, b, bins=64, data_range=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import imgmetrics; imgmetrics.joint_histogram(a, b, bins=64, data_range=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsimgmetrics.get(&quot;joint_histogram&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>2 image का joint histogram (normalised joint probability)।</p>
 <p>bin की चौड़ाई <code style="color:#22d3bf">data_range</code> से तय होती है -- हर image के min/max से फैलाने-सिकोड़ने पर <b>एकसमान अंधेरी तस्वीर और एकसमान चमकीली तस्वीर की mutual information समान हो जाती</b>।</p>

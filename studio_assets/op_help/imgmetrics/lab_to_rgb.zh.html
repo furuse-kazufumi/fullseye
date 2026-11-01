@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">lab_to_rgb — IMGMETRICS <code style="color:#22d3bf">colorspace</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">lab</code> → <code style="color:#22d3bf">rgbimage</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lab_to_rgb(lab, white=(0.95047, 1.0, 1.08883))</code>(要直接调用实现,<code style="color:#22d3bf">import imgmetrics; imgmetrics.lab_to_rgb(lab, white=(0.95047, 1.0, 1.08883))</code>;从台账取用则 <code style="color:#22d3bf">opsimgmetrics.get(&quot;lab_to_rgb&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>CIE L*a*b* → sRGB <code style="color:#22d3bf">[0, 1]</code>。<b>超出色域的颜色会被截断</b>,因此与 <code style="color:#22d3bf">rgb_to_lab</code> 的往返只在色域内一致(有测试固定)。</p>
 <p>步骤:把 <code style="color:#22d3bf">fy = (L + 16) / 116</code>、<code style="color:#22d3bf">fx = fy + a / 500</code>、<code style="color:#22d3bf">fz = fy - b / 200</code> 用 <code style="color:#22d3bf">xyz_to_lab</code> 的反函数还原为 XYZ(乘以 <code style="color:#22d3bf">white</code>),再乘以 XYZ→线性 RGB 的逆矩阵,然后施加 sRGB 的传递函数。在传递函数之前把线性 RGB <b>无提示地裁剪</b>到 <code style="color:#22d3bf">[0, 1]</code> —— 这就是“色域外被截断”的实质, 不会抛出异常。</p>

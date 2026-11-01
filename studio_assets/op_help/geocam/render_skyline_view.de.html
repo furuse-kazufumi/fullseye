@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">render_skyline_view — GEOCAM <code style="color:#22d3bf">skyline</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.render_skyline_view(sky_table, K, shape, yaw_deg, pitch_deg, roll_deg)</code> (die Implementierung direkt: <code style="color:#22d3bf">import geocam; geocam.render_skyline_view(sky_table, K, shape, yaw_deg, pitch_deg, roll_deg)</code>; aus dem Register: <code style="color:#22d3bf">opsgeocam.get(&quot;render_skyline_view&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Zeichnet aus einer Skyline-Tabelle und einer Orientierung die <b>Himmelsmaske</b> (H, W), die eine so ausgerichtete Kamera sieht → image2d (0/1).</p>
 <p>Der Strahl jedes Pixels wird in die Welt gedreht; liegt er über der Skyline-Elevation dieses Azimuts, ist es Himmel (1), darunter Gelände (0). Verwendet zum Erzeugen synthetischer Fotos (PoC) und für Abbildungen, die eine geschätzte Pose über ein Foto legen, um sie mit dem Auge zu prüfen. Es ist dieselbe Geometrie wie die Vorhersage von <code style="color:#22d3bf">camera_orientation_from_skyline</code>, daher schließt sich der Kreis <b>zeichnen → extrahieren → anpassen</b> (die Ground Truth für Tests).</p>

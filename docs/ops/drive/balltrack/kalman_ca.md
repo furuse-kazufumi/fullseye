@@ -4,6 +4,7 @@ dim: drive
 category: balltrack
 in: points
 out: table
+gpu: なし
 examples: [poc_air_hockey_intercept, poc_ball_bounce]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `points` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.kalman_ca(z, dt: 'float', *, q: 'float' = 1.0, r: 'float' = 1.0, x0=None, P0: 'float' = 1000.0) -> 'dict'` (実装を直接呼ぶなら `import balltrack; balltrack.kalman_ca(z, dt: 'float', *, q: 'float' = 1.0, r: 'float' = 1.0, x0=None, P0: 'float' = 1000.0) -> 'dict'`、台帳から引くなら `opsdrive.get("kalman_ca")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

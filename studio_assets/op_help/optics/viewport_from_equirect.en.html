@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">viewport_from_equirect — OPTICS <code style="color:#22d3bf">omni360</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">rgbimage</code> → <code style="color:#22d3bf">rgbimage</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.viewport_from_equirect(equi, yaw=0, pitch=0, roll=0, fov_deg=90, size=(256, 256))</code> (to call the implementation directly, <code style="color:#22d3bf">import omni360; omni360.viewport_from_equirect(equi, yaw=0, pitch=0, roll=0, fov_deg=90, size=(256, 256))</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;viewport_from_equirect&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Extract a rectilinear viewer viewport from an equirectangular image.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">scene_cylinder — OPTICS <code style="color:#22d3bf">scene</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">table</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.scene_cylinder(center_mm, radius_mm: &#x27;float&#x27;, half_height_mm: &#x27;float&#x27;, material=None) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import optscene; optscene.scene_cylinder(center_mm, radius_mm: &#x27;float&#x27;, half_height_mm: &#x27;float&#x27;, material=None) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;scene_cylinder&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>z axis के parallel सीमित cylinder (end caps सहित)। <b>वह shape जिस पर machining finish वास्तव में बैठती है</b>।</p>
 <p>end faces (discs) पर concentric lathe marks दिखते हैं, side पर hairlines और knurling ―― किसी sphere पर hairline होना वास्तविकता में दुर्लभ है (2026-09-05 की user टिप्पणी)। पतला बनाने पर यह एक disc है, मोटा बनाने पर shaft part, और बड़े <code style="color:#22d3bf">radius_mm</code> के साथ यह disc-आकार के stage का काम भी करता है।</p>

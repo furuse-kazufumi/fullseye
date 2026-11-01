@@ -4,6 +4,7 @@ dim: drive
 category: pegsim
 in: points
 out: table
+gpu: なし
 examples: [gallery_drive_peg]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `points` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.cylinder_fit_known_radius(points, r: 'float', axis_point, axis, iters: 'int' = 25) -> 'dict'` (実装を直接呼ぶなら `import pegsim; pegsim.cylinder_fit_known_radius(points, r: 'float', axis_point, axis, iters: 'int' = 25) -> 'dict'`、台帳から引くなら `opsdrive.get("cylinder_fit_known_radius")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

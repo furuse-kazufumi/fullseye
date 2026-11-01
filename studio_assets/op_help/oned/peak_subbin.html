@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">peak_subbin — ONED <code style="color:#22d3bf">signal</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">signal × indices</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.peak_subbin(x, idx=None, mode=&#x27;parabola&#x27;)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import dsp; dsp.peak_subbin(x, idx=None, mode=&#x27;parabola&#x27;)</code>、台帳から引くなら <code style="color:#22d3bf">ops1d.get(&quot;peak_subbin&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Peak position <b>between</b> samples — the vertex of a fit through 3 points.</p>
 <p><code style="color:#22d3bf">find_peaks</code> returns integer indices, so the position of a spectral line or a correlation peak is quantised to the bin grid no matter how finely the peak itself is resolved. This refines each index to a float by fitting the sample and its two neighbours.</p>

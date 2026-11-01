@@ -4,6 +4,7 @@ dim: 3d
 category: geometry
 in: primitive
 out: measurement
+gpu: なし
 examples: [geometry_metrology]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `primitive` → `measurement`
 - **呼び出し**: `import fullseye as fs; fs.ledger.distance_line_line(p1, d1, p2, d2)` (実装を直接呼ぶなら `import match3d; match3d.distance_line_line(p1, d1, p2, d2)`、台帳から引くなら `ops3d.get("distance_line_line")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

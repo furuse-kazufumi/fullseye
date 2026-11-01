@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">perlin2 — DRIVE <code style="color:#22d3bf">terrain</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.perlin2(x, y, seed: &#x27;int&#x27; = 0, freq: &#x27;float&#x27; = 1.0) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import driveterrain; driveterrain.perlin2(x, y, seed: &#x27;int&#x27; = 0, freq: &#x27;float&#x27; = 1.0) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;perlin2&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Wertet Perlins 2-D-Gradientenrauschen (2002, improved noise) an den Weltkoordinaten (x, y) aus.</p>
 <p>Das Gitter hat den Abstand <code style="color:#22d3bf">freq</code> [Perioden/m], die Gradienten sind Einheitsvektoren in 8 Richtungen, die Interpolation ist der quintische Fade <code style="color:#22d3bf">6t⁵−15t⁴+10t³</code>. Rückgabewert <code style="color:#22d3bf">{&quot;value&quot;, &quot;dx&quot;, &quot;dy&quot;}</code> (Ableitungen analytisch, <code style="color:#22d3bf">d/dx</code> pro Weltkoordinate). Sätze: Wert 0 an Gitterpunkten, Periode 256 Gitterzellen, |value| ≤ 1.</p>

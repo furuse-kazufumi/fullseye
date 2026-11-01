@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">estimate_flow — 3D <code style="color:#22d3bf">motion_segment</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">flow_scattered</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.estimate_flow(pts0, pts1) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import motion_seg3d; motion_seg3d.estimate_flow(pts0, pts1) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;estimate_flow&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>pts0 の各点から pts1 の最近傍への 3-D 変位ベクトル場 (N, 3) を返す(最近傍フロー)。</p>
 <p><code style="color:#22d3bf">pts0</code> の各点 p について <code style="color:#22d3bf">pts1</code> 中の最近傍 q を cKDTree で求め、変位 <code style="color:#22d3bf">q - p</code> を返す。要素数は N != M でよい。変位が局所点間隔より十分小さい小運動でのみ「点 i の真の対応先」を当てる(honest な最近傍の限界)。segment_rigid_motions が inlier 判定に使う <b>観測フロー</b> を与える。</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">punch_surface_uz — DRIVE <code style="color:#22d3bf">tactorque</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">matrix × scalar × scalar × scalar × scalar</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.punch_surface_uz(r, a: &#x27;float&#x27;, P: &#x27;float&#x27;, G: &#x27;float&#x27;, nu: &#x27;float&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import tactorque; tactorque.punch_surface_uz(r, a: &#x27;float&#x27;, P: &#x27;float&#x27;, G: &#x27;float&#x27;, nu: &#x27;float&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;punch_surface_uz&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>平頭圓形壓頭(法向力 P)作用下半空間表面的法向位移 [m] (下沉方向為正)：圓內為均勻的 δ = P(1−ν)/(4Ga)，圓外為 (2δ/π) arcsin(a/r)(Johnson 1985 §3.4 的平頭壓頭。正文中未能確認式號，<b>unverified</b> —— 透過與 Boussinesq 核 <code style="color:#22d3bf">Kz</code> 的卷積在 0.35 % 內一致做了數值驗證)。<b>Raises</b> ValueError：a, P, G ≤ 0。</p>
 <p>空輸入(<code style="color:#22d3bf">r</code> 為 0 個元素)會引發 <code style="color:#22d3bf">ValueError</code>。</p>

@@ -4,6 +4,7 @@ dim: optics
 category: radiosity
 in: table
 out: matrix
+gpu: なし
 examples: [poc_pocket_interreflection]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `matrix`
 - **呼び出し**: `import fullseye as fs; fs.ledger.form_factor_matrix(patches, n_quad=3, symmetric=True, far_ratio=8.0, memory_budget_mb=256.0)` (実装を直接呼ぶなら `import radiosity3d; radiosity3d.form_factor_matrix(patches, n_quad=3, symmetric=True, far_ratio=8.0, memory_budget_mb=256.0)`、台帳から引くなら `opsoptics.get("form_factor_matrix")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">cut_force_csv_load — DRIVE <code style="color:#22d3bf">cutting</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">any × any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cut_force_csv_load(path, license: &#x27;str&#x27;) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import cutting; cutting.cut_force_csv_load(path, license: &#x27;str&#x27;) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;cut_force_csv_load&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>유한요소 절단 시뮬레이션이 출력한 날의 힘 CSV를 읽습니다(1행에 <code style="color:#22d3bf">Rcforc</code>, 2행이 열 이름, 열 = 시각과 힘의 3성분이 교대로).</p>
 <p>상정하고 있는 것은 arXiv:2105.12244 가 공개한 데이터셋(CC BY-NC 4.0 = 비상업). <code style="color:#22d3bf">license</code> 는 호출자가 <b>반드시</b> 쓴다(데이터의 용도를 반환값에 남기기 위해, 비어 있으면 ValueError). 데이터는 repo 에 넣지 않으며, 위치는 환경 변수로 넘긴다.</p>

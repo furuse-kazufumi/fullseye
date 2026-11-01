@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">warp_piecewise_affine — SHAPE2D <code style="color:#22d3bf">morph</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d × pairs × pairs</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.warp_piecewise_affine(img, src_pts, dst_pts, order=1)</code> (to call the implementation directly, <code style="color:#22d3bf">import imagemorph; imagemorph.warp_piecewise_affine(img, src_pts, dst_pts, order=1)</code>; from the registry, <code style="color:#22d3bf">opsshape2d.get(&quot;warp_piecewise_affine&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Piecewise affine warp that moves the content at src_pts of img to dst_pts.</p>
 <p>Delaunay-triangulates dst_pts, finds for each output pixel the barycentric coordinates in the triangle it belongs to, maps them with the same barycentric coordinates to the corresponding triangle on the src_pts side, and samples by inverse mapping. Outside the convex hull (pixels belonging to no triangle) is sampled with the identity (original position), so including the four corners as corresponding points (<code style="color:#22d3bf">add_frame_corners</code>) covers the whole image without holes.</p>

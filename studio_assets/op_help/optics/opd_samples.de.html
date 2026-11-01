@@ -3,6 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.opd_samples(system, field=None, size=64, wavelength_um=None, image_mm=None, aim=None, vignetting=None)</code> (die Implementierung direkt: <code style="color:#22d3bf">import raytrace; raytrace.opd_samples(system, field=None, size=64, wavelength_um=None, image_mm=None, aim=None, vignetting=None)</code>; aus dem Register: <code style="color:#22d3bf">opsoptics.get(&quot;opd_samples&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>Rückgabewert über das Register</b>: <code style="color:#22d3bf">fullseye.ledger.opd_samples(...)</code> liefert <b>nur den Wert des deklarierten Out-Typs <code style="color:#22d3bf">table</code></b> (die zugrunde liegende Funktion gibt zusätzlich Hilfsinformationen zurück). Wird das Verworfene gebraucht, nutze <code style="color:#22d3bf">fullseye.ledger.opd_samples.raw(...)</code> oder rufe <code style="color:#22d3bf">raytrace.opd_samples</code> direkt auf.</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>OPD (in Wellenlängen) an Pupillen-Gitterpunkten: liefert <code style="color:#22d3bf">(px, py, opd, valid)</code>.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>

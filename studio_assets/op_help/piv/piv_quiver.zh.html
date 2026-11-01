@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">piv_quiver — PIV <code style="color:#22d3bf">visualise</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">flow2d</code> → <code style="color:#22d3bf">rgb</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_quiver(flow, spacing=None, scale=None, upsample=8, background=None, color=(0.08, 0.08, 0.12), width=1.5)</code>(要直接调用实现,<code style="color:#22d3bf">import pivops; pivops.piv_quiver(flow, spacing=None, scale=None, upsample=8, background=None, color=(0.08, 0.08, 0.12), width=1.5)</code>;从台账取用则 <code style="color:#22d3bf">opspiv.get(&quot;piv_quiver&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>箭头图(MATLAB 的 <code style="color:#22d3bf">quiver</code>)。返回 <code style="color:#22d3bf">(h*upsample, w*upsample, 3)</code>。</p>
 <p>每 <code style="color:#22d3bf">spacing</code> 个网格画 1 根，起点放在网格点上，箭头尖画到 <code style="color:#22d3bf">起点 + scale * v</code> 处。省略 <code style="color:#22d3bf">scale</code> 时<b>最长的箭头为间隔的 0.9 倍</b>(与 MATLAB 的自动倍率相同的思路，不与相邻箭头重叠)。<b>倍率每张图都会变</b>，因此并排比较的图请固定 <code style="color:#22d3bf">scale</code>。长度不足 1 像素的箭头不画(没有方向的点会被读作标记)。</p>

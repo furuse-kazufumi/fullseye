@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">contour_fourier_truncation_energy — SHAPE2D <code style="color:#22d3bf">descriptor</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.contour_fourier_truncation_energy(spectrum, orders=None)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import fourierdesc; fourierdesc.contour_fourier_truncation_energy(spectrum, orders=None)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsshape2d.get(&quot;contour_fourier_truncation_energy&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>절단 차수마다 <b>예측되는</b> 오차(<code style="color:#22d3bf">table</code>) —— 파스발의 엄밀식.</p>
 <p>차수 <code style="color:#22d3bf">K</code> 에서 자른 재구성 <code style="color:#22d3bf">z^K</code> 에 대해, 표본 위의 제곱평균 오차는 <code style="color:#22d3bf">mean|z - z^K|^2 = Σ_{|k| &gt; K} |c_k|^2</code> 와 <b>엄밀히 같다</b>. 그러므로재구성을 1 번도 하지 않고 &quot;몇 항이 있으면 몇 화소까지 닮는가&quot;를 먼저 말할 수 있다.</p>

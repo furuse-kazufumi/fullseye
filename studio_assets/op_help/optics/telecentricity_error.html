@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">telecentricity_error — OPTICS <code style="color:#22d3bf">telecentric</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.telecentricity_error(system, field_mm=5.0, step_height_mm=1.0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import telecentric; telecentric.telecentricity_error(system, field_mm=5.0, step_height_mm=1.0)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;telecentricity_error&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>段差 *step_height_mm* の上と下の面に同じ寸法の物があるとき、像の上で寸法がどれだけ違って見えるか。</p>
 <p>返り値: <code style="color:#22d3bf">object_angle_deg</code>(下の面での主光線の傾き)・<code style="color:#22d3bf">magnification_low</code> / <code style="color:#22d3bf">magnification_high</code>(実光線)・ <code style="color:#22d3bf">relative_size_error</code>(m_high / m_low − 1、寸法の読みの相対誤差)・<code style="color:#22d3bf">lateral_shift_um</code>(上の面の点が下の面の基準で何 µm ずれて見えるか、実光線)・<code style="color:#22d3bf">closed_form_shift_um</code>(主光線の幾何 Δz·tanθ。θ は下の面の主光線、符号は光軸から離れる向きが正)・<code style="color:#22d3bf">closed_form_relative</code>(Δz/(L − Δz)、L は実光線の入射瞳までの距離)。★寸法の検査で「高さの違う面を同じ倍率で換算する」誤りの大きさそのもの。テレセン度 0.1° の残りでも、高さ 1 mm で 1.75 µm(tan 0.1° × 1 mm)ずれる。</p>

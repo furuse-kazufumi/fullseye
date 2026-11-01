@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">peg_offset_from_rgbd — DRIVE <code style="color:#22d3bf">pegsim</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">rgb × image2d × matrix × matrix</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.peg_offset_from_rgbd(rgb, depth, K, R_cam_to_world, r_peg: &#x27;float&#x27; = 0.005, hole_radius: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import pegsim; pegsim.peg_offset_from_rgbd(rgb, depth, K, R_cam_to_world, r_peg: &#x27;float&#x27; = 0.005, hole_radius: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;peg_offset_from_rgbd&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>从 1 帧腕部 RGB-D 求销末端相对孔中心的偏差 (dx, dy) [m] (世界(滑台)坐标) —— 视觉伺服的观测量。</p>
 <p><code style="color:#22d3bf">R_cam_to_world</code> 是把相机坐标的向量旋转到世界坐标的 3×3(hand-eye)。偏移是板平面内的分量,<code style="color:#22d3bf">height</code> 是尖端离板的高度。给出 <code style="color:#22d3bf">hole_radius</code> 时以已知半径拟合孔的圆(<code style="color:#22d3bf">hole_centre_from_rgbd</code>)。</p>

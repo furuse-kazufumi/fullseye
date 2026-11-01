@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">town_chain — DRIVE <code style="color:#22d3bf">town</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.town_chain(elements, *, start=(0.0, 0.0, 0.0), overlap: &#x27;float&#x27; = 0.05) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import drivetown; drivetown.town_chain(elements, *, start=(0.0, 0.0, 0.0), overlap: &#x27;float&#x27; = 0.05) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;town_chain&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>要素を順に継いで配置する: 要素 k+1 の entry を要素 k の exit(の <code style="color:#22d3bf">overlap</code> 手前)に合わせる剛体配置を閉形式で求め、<code style="color:#22d3bf">drivecourse.course_layout</code> に渡す。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">track_triangulate — DRIVE <code style="color:#22d3bf">balltrack</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table × any × any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.track_triangulate(tracks, poses, Ks, n_frames: &#x27;int&#x27;) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import balltrack; balltrack.track_triangulate(tracks, poses, Ks, n_frames: &#x27;int&#x27;) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;track_triangulate&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>हर camera की trajectory (<code style="color:#22d3bf">ball_track</code> की return value) को triangulate करके 3-D trajectory बनाता है: <code style="color:#22d3bf">{&quot;frame&quot;, &quot;p&quot; (N, 3), &quot;reproj_rms&quot; (N,)}</code> (केवल 2 या अधिक views में दिखे frames)।</p>
 <p>खाली इनपुट (<code style="color:#22d3bf">tracks</code> में कोई आइटम नहीं) पर <code style="color:#22d3bf">ValueError</code> उठता है।</p>

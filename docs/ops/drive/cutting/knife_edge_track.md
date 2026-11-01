@@ -4,6 +4,7 @@ dim: drive
 category: cutting
 in: rgb
 out: table
+gpu: なし
 examples: [poc_food_cutting_measure]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `rgb` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.knife_edge_track(image, board_row: 'float | None' = None, win: 'int' = 6, reject_px: 'float' = 1.0, method: 'str' = 'coverage') -> 'dict'` (実装を直接呼ぶなら `import cutting; cutting.knife_edge_track(image, board_row: 'float | None' = None, win: 'int' = 6, reject_px: 'float' = 1.0, method: 'str' = 'coverage') -> 'dict'`、台帳から引くなら `opsdrive.get("knife_edge_track")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

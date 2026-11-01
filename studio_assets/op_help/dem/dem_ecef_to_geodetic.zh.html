@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">dem_ecef_to_geodetic — DEM <code style="color:#22d3bf">geodesy</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_ecef_to_geodetic(xyz)</code>(要直接调用实现,<code style="color:#22d3bf">import demops; demops.dem_ecef_to_geodetic(xyz)</code>;从台账取用则 <code style="color:#22d3bf">opsdem.get(&quot;dem_ecef_to_geodetic&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>ECEF → 大地坐标。返回 <code style="color:#22d3bf">(..., 3)</code> 的 <code style="color:#22d3bf">(纬度[度], 经度[度], 高度[m])</code>。</p>
 <p>接近 Bowring (1976) 闭式的解法。往返(大地→ECEF→大地)的误差 <b>随取样位置不同会变动一个数量级以上</b>,因此附上范围来写(2026-09-08 重测。以前写的是“纬度、经度小于 1e-12 度,高度小于 1e-7 m”,但 ★这在纬度 ±85 度、高度 -500~9000 m 的 4000 个点上就已经以 <b>最大 6.4e-12 度 / 8.5e-07 m</b> 超出了 —— 当时是与中位数 2.6e-13 度 / 3.3e-08 m 混淆了):</p>

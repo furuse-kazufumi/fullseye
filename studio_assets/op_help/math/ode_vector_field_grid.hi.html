@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">ode_vector_field_grid — MATH <code style="color:#22d3bf">dynsys</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">flow2d</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ode_vector_field_grid(system=&#x27;rossler&#x27;, params=None, bounds=(-10.0, 10.0, -10.0, 10.0), shape=(64, 64), plane=&#x27;xy&#x27;, offset=0.0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import mathops; mathops.ode_vector_field_grid(system=&#x27;rossler&#x27;, params=None, bounds=(-10.0, 10.0, -10.0, 10.0), shape=(64, 64), plane=&#x27;xy&#x27;, offset=0.0)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsmath.get(&quot;ode_vector_field_grid&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>नाम वाले field को grid पर sample करता है — एक <code style="color:#22d3bf">flow2d</code> जिसे मौजूदा viewers लेते हैं।</p>
 <p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">graph_clustering_coefficient — CONNGRAPH <code style="color:#22d3bf">stats</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">conn_graph</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graph_clustering_coefficient(W: &#x27;Any&#x27;) -&gt; &#x27;float&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import conngraph; conngraph.graph_clustering_coefficient(W: &#x27;Any&#x27;) -&gt; &#x27;float&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsconngraph.get(&quot;graph_clustering_coefficient&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>평균 국소 클러스터 계수(방향을 접은 이진 그래프, Watts–Strogatz). 차수 &lt; 2인 노드는 0으로 센다.</p>
 <p>C_i = (A³)_ii / (k_i (k_i − 1)), A 는 대칭 이진. 완전 그래프에서 1, 트리에서 0.</p>

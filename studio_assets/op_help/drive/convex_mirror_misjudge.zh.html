@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">convex_mirror_misjudge — DRIVE <code style="color:#22d3bf">pass</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">any × any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.convex_mirror_misjudge(object_distance, speed, radius: &#x27;float&#x27;, *, eye_distance: &#x27;float&#x27;) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import drivepass; drivepass.convex_mirror_misjudge(object_distance, speed, radius: &#x27;float&#x27;, *, eye_distance: &#x27;float&#x27;) -&gt; &#x27;Dict[str, object]&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;convex_mirror_misjudge&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把凸面镜中车辆的距离和速度当作平面镜来读时的误判(近轴闭式，可用数组)。场景 S064、S130。</p>
 <p>k = 1 + 2e/R。距离(由大小推断): â = k a。速度按解读方式有 3 种:</p>

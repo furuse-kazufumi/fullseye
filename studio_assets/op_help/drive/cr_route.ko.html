@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">cr_route — DRIVE <code style="color:#22d3bf">commonroad</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cr_route(scene, lanelet_from, lanelet_to=None, *, goal=None, step: &#x27;float&#x27; = 0.5) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivecommonroad; drivecommonroad.cr_route(scene, lanelet_from, lanelet_to=None, *, goal=None, step: &#x27;float&#x27; = 0.5) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;cr_route&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>successor의 BFS(hop 수 최소)로 lanelet 열을 구하고, 중심선을 이어 <code style="color:#22d3bf">step</code> m마다 재샘플링합니다.</p>
 <p><code style="color:#22d3bf">lanelet_to</code> 가 None 이면 <code style="color:#22d3bf">goal[&quot;position_lanelets&quot;]</code> 를 종점으로 한다(둘 다 없으면 ValueError). 반환값 <code style="color:#22d3bf">{&quot;lanelets&quot;, &quot;polyline&quot; (K,2), &quot;cum&quot; (K,), &quot;length&quot;, &quot;speed_limit_mps&quot; (経路上の最小 | None), &quot;lanelet_s&quot; (各 lanelet が始まる弧長), &quot;lanelet_len&quot;, &quot;polygons&quot; [多角形]}</code>. <code style="color:#22d3bf">length</code> = 이은 중심선의 꺾은선 길이(이음매에서 겹치는 꼭짓점은 하나로 합친다).</p>

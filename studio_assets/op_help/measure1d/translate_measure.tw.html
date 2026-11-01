@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">translate_measure — MEASURE1D <code style="color:#22d3bf">caliper</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">measurehandle</code> → <code style="color:#22d3bf">measurehandle</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.translate_measure(measure, drow, dcol)</code>(要直接呼叫實作,<code style="color:#22d3bf">import measuring1d; measuring1d.translate_measure(measure, drow, dcol)</code>;從台帳取用則 <code style="color:#22d3bf">opsmeasure1d.get(&quot;translate_measure&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>平移量測物件(translate_measure)。</p>
 <p>回傳在 <code style="color:#22d3bf">rows</code> / <code style="color:#22d3bf">cols</code> 上加上 <code style="color:#22d3bf">(drow, dcol)</code> [px] 的<b>淺複製</b>(不改變輸入的 dict)。<code style="color:#22d3bf">gen_measure_rectangle2</code> 的 <code style="color:#22d3bf">origin</code> 與 <code style="color:#22d3bf">gen_measure_arc</code> 的 <code style="color:#22d3bf">center</code> 也移動相同的量，因此兩端延長(<code style="color:#22d3bf">_extended_coords</code>)的幾何不會錯位。<code style="color:#22d3bf">phi</code> / <code style="color:#22d3bf">dir</code> / <code style="color:#22d3bf">angles</code> / <code style="color:#22d3bf">radius</code> / <code style="color:#22d3bf">width</code> / <code style="color:#22d3bf">spacing</code> 保持不變 —— <b>不做旋轉或半徑變更</b>。</p>

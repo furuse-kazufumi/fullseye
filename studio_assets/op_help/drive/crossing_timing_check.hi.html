@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">crossing_timing_check — DRIVE <code style="color:#22d3bf">crossing</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">table</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.crossing_timing_check(t_warning, t_closed, t_arrival, *, timing: &#x27;Optional[dict]&#x27; = None) -&gt; &#x27;Dict[str, object]&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import drivecrossing; drivecrossing.crossing_timing_check(t_warning, t_closed, t_arrival, *, timing: &#x27;Optional[dict]&#x27; = None) -&gt; &#x27;Dict[str, object]&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;crossing_timing_check&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>railway crossing के 3 समयों (warning का आरंभ, gate arm की गति का अंत, train का आगमन) की तुलना interpretation standard के standard और न्यूनतम मानों से करता है (array = हर train के लिए)।</p>
 <p>चेतावनी → आगमन के 30 / 20 सेकंड व्याख्या मानदंड 5(3) के <b>क्रॉसिंग चेतावनी-यंत्र</b> (बिना बैरियर) के मान हैं। बैरियर वाले क्रॉसिंग में 4(3)(5) के 2 मान (15 + 20 = 35 सेकंड मानक) लागू होते हैं, और 30 / 20 सेकंड वाली शर्त स्वतः पूरी हो जाती है।</p>

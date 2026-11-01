@@ -4,6 +4,7 @@ dim: drive
 category: swarmflow
 in: 
 out: table
+gpu: なし
 examples: [poc_swarm_obstacle_from_flow]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.swarm_simulate(obstacle=None, speed: 'float' = 1.0, box=(8.0, 5.0), spacing: 'float' = 0.15, h_factor: 'float' = 1.3, tau: 'float' = 0.1, c: 'float' = 10.0, alpha: 'float' = 0.5, t_warm: 'float' = 2.0, n_frames: 'int' = 20, frame_dt: 'float' = 0.06, noise: 'float' = 0.0, seed: 'int' = 0) -> 'dict'` (実装を直接呼ぶなら `import swarmflow; swarmflow.swarm_simulate(obstacle=None, speed: 'float' = 1.0, box=(8.0, 5.0), spacing: 'float' = 0.15, h_factor: 'float' = 1.3, tau: 'float' = 0.1, c: 'float' = 10.0, alpha: 'float' = 0.5, t_warm: 'float' = 2.0, n_frames: 'int' = 20, frame_dt: 'float' = 0.06, noise: 'float' = 0.0, seed: 'int' = 0) -> 'dict'`、台帳から引くなら `opsdrive.get("swarm_simulate")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

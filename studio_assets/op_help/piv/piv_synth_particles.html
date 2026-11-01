@@ -4,6 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_synth_particles(shape, density=0.02, diameter_px=2.5, seed=0, intensity=(0.6, 1.0), background=0.0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import pivops; pivops.piv_synth_particles(shape, density=0.02, diameter_px=2.5, seed=0, intensity=(0.6, 1.0), background=0.0)</code>、台帳から引くなら <code style="color:#22d3bf">opspiv.get(&quot;piv_synth_particles&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>台帳経由の戻り値</b>: <code style="color:#22d3bf">fullseye.ledger.piv_synth_particles(...)</code> は<b>宣言 out 型 <code style="color:#22d3bf">image2d</code> の値だけ</b>を返す(本体は補助情報も返す)。捨てられた側が要るときは <code style="color:#22d3bf">fullseye.ledger.piv_synth_particles.raw(...)</code>、または <code style="color:#22d3bf">pivops.piv_synth_particles</code> を直接呼ぶ。</p>
 <p style="margin:2px 0 2px 12px">• 本体の返り: <code style="color:#22d3bf">(image, positions) -&gt; image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>トレーサ粒子を撒いた 1 枚を作る。返りは <code style="color:#22d3bf">(image, positions)</code>。</p>
 <p>粒子はガウス輝点(直径 = 1/e^2 幅ではなく<b>標準偏差の 2 倍</b>を <code style="color:#22d3bf">diameter_px</code> と呼ぶ、PIV の慣行)。位置は連続値なので、サブピクセルの真値を持つ画像が作れる。</p>

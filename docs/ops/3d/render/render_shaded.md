@@ -4,6 +4,7 @@ dim: 3d
 category: render
 in: normalmap
 out: image2d
+gpu: なし
 examples: [render_ao]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `normalmap` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.render_shaded(normals_img, light=(0, 0, 1), ambient=0.1)` (実装を直接呼ぶなら `import match3d; match3d.render_shaded(normals_img, light=(0, 0, 1), ambient=0.1)`、台帳から引くなら `ops3d.get("render_shaded")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

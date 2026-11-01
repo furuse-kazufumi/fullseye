@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">membrane_indent_shape — DRIVE <code style="color:#22d3bf">tacsim</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">text × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.membrane_indent_shape(shape: &#x27;str&#x27;, depth: &#x27;float&#x27;, n: &#x27;int&#x27; = 128, fov: &#x27;float&#x27; = 0.006, R: &#x27;float&#x27; = 0.003, edge_deg: &#x27;float&#x27; = 30.0, tip_radius: &#x27;float&#x27; = 0.0003, size: &#x27;float&#x27; = 0.002) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import tacsim; tacsim.membrane_indent_shape(shape: &#x27;str&#x27;, depth: &#x27;float&#x27;, n: &#x27;int&#x27; = 128, fov: &#x27;float&#x27; = 0.006, R: &#x27;float&#x27; = 0.003, edge_deg: &#x27;float&#x27; = 30.0, tip_radius: &#x27;float&#x27; = 0.0003, size: &#x27;float&#x27; = 0.002) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;membrane_indent_shape&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>以<b>几何贴合</b>生成已知形状刚体压入 <code style="color:#22d3bf">depth</code> 深度后的凝胶膜高度场：h = −max(0, depth − z_ind(x, y))。</p>
 <p>不包含弹性的裙边(Hertz 的外侧解)—— 球由 <code style="color:#22d3bf">membrane_indent_sphere</code> 用 Hertz 精确生成,因此本函数是用于<b>以同样方式</b>排列圆柱、直线边缘、印章这类没有闭式裙边的形状的工具。<code style="color:#22d3bf">shape</code>:</p>

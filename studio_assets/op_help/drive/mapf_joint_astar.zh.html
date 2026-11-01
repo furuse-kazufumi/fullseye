@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">mapf_joint_astar — DRIVE <code style="color:#22d3bf">agv</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mapf_joint_astar(grid, starts, goals, max_expansions=2000000)</code>(要直接调用实现,<code style="color:#22d3bf">import agvfleet; agvfleet.mapf_joint_astar(grid, starts, goals, max_expansions=2000000)</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;mapf_joint_astar&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>将所有车辆位置合为 1 个状态的 A*。<b>仅限小问题</b>的最优解(CBS 门禁的真值)。</p>
 <p>为了精确计算 sum of costs,每辆车带有&quot;已结束(此后一直停在目的地)&quot;的标志:</p>

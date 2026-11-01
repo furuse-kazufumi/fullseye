@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">pairwise_winding — DRIVE <code style="color:#22d3bf">braidpath</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pairwise_winding(trajectories, obstacles=None)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import braidpath; braidpath.pairwise_winding(trajectories, obstacles=None)</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;pairwise_winding&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>紐の対ごとの相対の巻き数 [回転] (相対ベクトルの偏角の総変化 / 2π)。対称行列、対角は 0。</p>
 <p>偏角の増分は atan2(外積, 内積) で取る(主値 (−π, π])。1 刻みで半回転以上回ると向きが決まらないので止める。</p>

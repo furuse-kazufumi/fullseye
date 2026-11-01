@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tps_fit — 3D <code style="color:#22d3bf">deform</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">deformation</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tps_fit(src_ctrl, dst_ctrl, lam=0.0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import deform3d; deform3d.tps_fit(src_ctrl, dst_ctrl, lam=0.0)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;tps_fit&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>control point correspondences से 3D Thin-Plate-Spline fit करता है।</p>
 <p>moving control points <code style="color:#22d3bf">src_ctrl</code> को fixed <code style="color:#22d3bf">dst_ctrl</code> पर ले जाने वाले TPS coefficients, saddle-point system को least squares (<code style="color:#22d3bf">numpy.linalg.lstsq</code>) से हल करके निकालता है। λ=0 पर control points पर बिल्कुल सटीक interpolation होता है (<code style="color:#22d3bf">tps_warp(model, src_ctrl) == dst_ctrl</code>), λ&gt;0 पर smoothing होती है।</p>

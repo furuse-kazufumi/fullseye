@@ -4,6 +4,7 @@ dim: gfx2d
 category: particle
 in: table
 out: table
+gpu: なし
 examples: [gfx2d_scene]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.particle_step(state, dt, gravity=(0.0, 98.0), drag=0.0)` (実装を直接呼ぶなら `import gfx2d; gfx2d.particle_step(state, dt, gravity=(0.0, 98.0), drag=0.0)`、台帳から引くなら `opsgfx2d.get("particle_step")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

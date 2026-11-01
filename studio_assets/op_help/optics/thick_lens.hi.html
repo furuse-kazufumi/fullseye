@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">thick_lens — OPTICS <code style="color:#22d3bf">design</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">table</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.thick_lens(R1=50.0, R2=-50.0, thickness=5.0, index=1.5168)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import raytrace; raytrace.thick_lens(R1=50.0, R2=-50.0, thickness=5.0, index=1.5168)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;thick_lens&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>air में closed-form thick lens: EFL, back/front focal lengths, principal points।</p>
 <p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>

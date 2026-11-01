@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">image_entropy — IMGMETRICS <code style="color:#22d3bf">information</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.image_entropy(a, bins=64, data_range=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import imgmetrics; imgmetrics.image_entropy(a, bins=64, data_range=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsimgmetrics.get(&quot;image_entropy&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>1 image की Shannon entropy [bit]।</p>
 <p>यह <code style="color:#22d3bf">mutual_information</code> जैसी ही <b>bin विभाजन</b> इस्तेमाल करता है, इसलिए <code style="color:#22d3bf">mutual_information(a, a) == image_entropy(a)</code> ठीक-ठीक सही रहता है (test से fix किया गया)। मौजूदा <code style="color:#22d3bf">entropy_gray</code> / <code style="color:#22d3bf">entropy_image</code> (backends) अलग bin विभाजन इस्तेमाल करते हैं, इसलिए मान मेल नहीं खाते -- यह joint distribution के साथ संगत पक्ष है।</p>

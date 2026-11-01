@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">mm_per_px_from_reference — MEASURE1D <code style="color:#22d3bf">scale</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">measurement</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mm_per_px_from_reference(measured_px, known_mm)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import measuring1d; measuring1d.mm_per_px_from_reference(measured_px, known_mm)</code>、台帳から引くなら <code style="color:#22d3bf">opsmeasure1d.get(&quot;mm_per_px_from_reference&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>既知寸法の的(スケールバー・基準穴・ゲージ)から画素ピッチ mm/px を出す(校正)。</p>
 <p><code style="color:#22d3bf">mm_per_px = known_mm / measured_px</code>。<code style="color:#22d3bf">measured_px</code> は同じ光学系・同じ作動距離で <b>この族の op が実際に測った</b>値(<code style="color:#22d3bf">measure_pairs</code> の <code style="color:#22d3bf">width</code>、<code style="color:#22d3bf">apply_metrology_model</code> の <code style="color:#22d3bf">radius</code> の 2 倍など)を渡す。図面値や公称の倍率から置くと、作動距離が 10 % ずれれば全部の寸法が 10 % ずれる。</p>

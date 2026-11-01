@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">msa_attribute_agreement — SPC <code style="color:#22d3bf">msa</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.msa_attribute_agreement(table, appraiser=&#x27;appraiser&#x27;, part=&#x27;part&#x27;, rating=&#x27;rating&#x27;)</code>(要直接调用实现,<code style="color:#22d3bf">import spc; spc.msa_attribute_agreement(table, appraiser=&#x27;appraiser&#x27;, part=&#x27;part&#x27;, rating=&#x27;rating&#x27;)</code>;从台账取用则 <code style="color:#22d3bf">opsspc.get(&quot;msa_attribute_agreement&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>计数型(合格/不合格)检验中检验员之间的一致性(<code style="color:#22d3bf">table</code>)。</p>
 <p>从多名检验员对同一部件作出判定的表中,返回<b>检验员两两之间的 Cohen kappa</b>、整体的 <b>Fleiss kappa</b>,以及原始一致率。</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">material_electron_properties — OPTICS <code style="color:#22d3bf">matprop</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.material_electron_properties(material=&#x27;SI&#x27;) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import materials; materials.material_electron_properties(material=&#x27;SI&#x27;) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;material_electron_properties&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>電子線の物性(元素ごとの Z・A・質量分率、密度、二次電子の脱出深さと生成エネルギー)を返す。</p>
 <p>仮想 SEM のモンテカルロ(<code style="color:#22d3bf">semsim.sem_electron_mc</code> ほか)が引く表で、光学の材料表と同じ名前(別名可: SILICON / FUSED_SILICA …)で引ける。組成は原子数の比から質量分率に直して返す(<code style="color:#22d3bf">composition</code> = ((Z, A, 質量分率), ...))。<code style="color:#22d3bf">z_mean</code> は質量分率で平均した Z。</p>

@@ -4,6 +4,7 @@ dim: drive
 category: decide
 in: table
 out: any
+gpu: なし
 examples: [poc_driving_decisions]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `any`
 - **呼び出し**: `import fullseye as fs; fs.ledger.signal_state(plan: 'dict', signal: 'str', t) -> 'np.ndarray'` (実装を直接呼ぶなら `import drivedecide; drivedecide.signal_state(plan: 'dict', signal: 'str', t) -> 'np.ndarray'`、台帳から引くなら `opsdrive.get("signal_state")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

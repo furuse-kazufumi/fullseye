@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">bounce_detect — DRIVE <code style="color:#22d3bf">balltrack</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.bounce_detect(t, z, *, min_gap: &#x27;int&#x27; = 2) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import balltrack; balltrack.bounce_detect(t, z, *, min_gap: &#x27;int&#x27; = 2) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;bounce_detect&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Liefert Kontaktkandidaten aus einer Höhenfolge z(t): lokale Minima, an denen die abwärts gerichtete Geschwindigkeit nach oben umschlägt (Minimum über <code style="color:#22d3bf">min_gap</code> Samples davor und danach). Rückgabewert <code style="color:#22d3bf">{&quot;index&quot; (M,), &quot;t&quot; (M,), &quot;z&quot; (M,)}</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

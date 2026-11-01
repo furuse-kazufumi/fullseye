@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">camera_orientation_from_skyline — GEOCAM <code style="color:#22d3bf">orientation</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">signal × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.camera_orientation_from_skyline(skyline_rows, K, sky_table, yaw_step_deg=1.0, pitch_range=(-15.0, 15.0), roll_range=(-10.0, 10.0), coarse_step_deg=2.5)</code>(要直接调用实现,<code style="color:#22d3bf">import geocam; geocam.camera_orientation_from_skyline(skyline_rows, K, sky_table, yaw_step_deg=1.0, pitch_range=(-15.0, 15.0), roll_range=(-10.0, 10.0), coarse_step_deg=2.5)</code>;从台账取用则 <code style="color:#22d3bf">opsgeocam.get(&quot;camera_orientation_from_skyline&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由照片的天际线(每列的行)与 DEM 的天际线确定 (yaw, pitch, roll) → table。</p>
 <p>把照片的边界像素 (u, v) 变为相机光线,用假定的位姿旋转到世界中,每一列就成为 (方位, 仰角) 的点。该仰角与在该方位查 DEM 天际线得到的仰角之差的 RMS 就是位姿的代价。yaw 以 <code style="color:#22d3bf">yaw_step_deg</code> 步长绕一周,pitch、roll 以 <code style="color:#22d3bf">coarse_step_deg</code> 步长做网格搜索,再从最小点出发用 Nelder–Mead 细化到连续值(scipy)。这是把 Baatz 等 2012 的天际线匹配,缩小到位置已知、1 台相机的形式。</p>

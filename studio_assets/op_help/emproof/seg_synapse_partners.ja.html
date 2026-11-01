@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">seg_synapse_partners — EMPROOF <code style="color:#22d3bf">wiring</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">labels2d × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.seg_synapse_partners(labels, synapses, spacing=None, background=0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import segcompare; segcompare.seg_synapse_partners(labels, synapses, spacing=None, background=0)</code>、台帳から引くなら <code style="color:#22d3bf">opsemproof.get(&quot;seg_synapse_partners&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>分割から配線図を読む。シナプスの前後の点がどの物体に落ちるかと、(前の物体, 後の物体) の接続の一覧。</p>
 <p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>

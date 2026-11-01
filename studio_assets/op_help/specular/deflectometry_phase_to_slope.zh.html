@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">deflectometry_phase_to_slope — SPECULAR <code style="color:#22d3bf">deflectometry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">normalmap</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.deflectometry_phase_to_slope(phase_x, phase_y, rig=None, period_mm=10.0, z_ref=0.0)</code>(要直接调用实现,<code style="color:#22d3bf">import deflectometry; deflectometry.deflectometry_phase_to_slope(phase_x, phase_y, rig=None, period_mm=10.0, z_ref=0.0)</code>;从台账取用则 <code style="color:#22d3bf">opsspecular.get(&quot;deflectometry_phase_to_slope&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>两张屏幕绝对相位(u 方向与 v 方向的条纹)→ 被测面网格上的法线图 (H, W, 3)。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>

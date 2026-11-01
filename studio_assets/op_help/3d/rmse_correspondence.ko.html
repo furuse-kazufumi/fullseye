@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">rmse_correspondence — 3D <code style="color:#22d3bf">metrics</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rmse_correspondence(a, b)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import metrics3d; metrics3d.rmse_correspondence(a, b)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;rmse_correspondence&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>대응이 알려진(같은 index) RMSE = sqrt(mean |a_i - b_i|^2). → scalar. 정합 잔차의 평가.</p>
 <p>계산: <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code>를 float 배열로 하고, 행별 유클리드 거리의 2제곱 <code style="color:#22d3bf">sum((a - b)**2, axis=1)</code>을 평균하여 제곱근을 취한다. <b>최근접 탐색은 하지 않는다</b> — <code style="color:#22d3bf">a[i]</code>와 <code style="color:#22d3bf">b[i]</code>가 같은 점의 대응임을 호출자가 보장한다(등록으로 변환한 <code style="color:#22d3bf">src @ R.T + t</code>와 대응하는 <code style="color:#22d3bf">dst</code>의 점열, 합성 데이터의 GT 대응 등).</p>

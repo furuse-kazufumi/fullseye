@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">glass_nearest — OPTICS <code style="color:#22d3bf">lensglobal</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.glass_nearest(n_d=1.5168, v_d=64.17, catalog=None, k: &#x27;int&#x27; = 1, metric: &#x27;str&#x27; = &#x27;nd_vd&#x27;, p_gf=None) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import lensglobal; lensglobal.glass_nearest(n_d=1.5168, v_d=64.17, catalog=None, k: &#x27;int&#x27; = 1, metric: &#x27;str&#x27; = &#x27;nd_vd&#x27;, p_gf=None) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;glass_nearest&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>(n_d, V_d) に最も近いカタログ硝材 k 個を、距離つきで返す(<code style="color:#22d3bf">table</code>)。</p>
 <p>The catalogue (default: the 46 optical glasses of <code style="color:#22d3bf">materials.glass_map</code>; or a list of <code style="color:#22d3bf">{&quot;name&quot;, &quot;nd&quot;, &quot;vd&quot;[, &quot;PgF&quot;]}</code> dicts) is ranked by the distance in the Abbe plane:</p>

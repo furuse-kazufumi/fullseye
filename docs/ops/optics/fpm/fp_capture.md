@@ -4,6 +4,7 @@ dim: optics
 category: fpm
 in: image2d × image2d
 out: table
+gpu: なし
 examples: [poc_fourier_ptychography]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d × image2d` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.fp_capture(amplitude, phase=None, pixel_um=0.325, wavelength_um=0.532, na_obj=0.1, downsample=4, led_pitch_mm=4.0, led_distance_mm=70.0, n_side=13, pupil_aberration=None, photons=4000.0, read_noise_e=2.0, darkfield_gain=8.0, cos_exponent=1.0, seed=0, led_offset_mm=(0.0, 0.0), led_rotation_deg=0.0, led_height_error_mm=0.0, height_um=None, pad_px=None)` (実装を直接呼ぶなら `import fourierptycho; fourierptycho.fp_capture(amplitude, phase=None, pixel_um=0.325, wavelength_um=0.532, na_obj=0.1, downsample=4, led_pitch_mm=4.0, led_distance_mm=70.0, n_side=13, pupil_aberration=None, photons=4000.0, read_noise_e=2.0, darkfield_gain=8.0, cos_exponent=1.0, seed=0, led_offset_mm=(0.0, 0.0), led_rotation_deg=0.0, led_height_error_mm=0.0, height_um=None, pad_px=None)`、台帳から引くなら `opsoptics.get("fp_capture")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

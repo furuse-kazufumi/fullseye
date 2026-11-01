@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">superpixel_quality — SEGMENTATION <code style="color:#22d3bf">graph</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">labels2d × labels2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.superpixel_quality(labels_sp, labels_true, *, tau: &#x27;float&#x27; = 2.0) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import seggraph; seggraph.superpixel_quality(labels_sp, labels_true, *, tau: &#x27;float&#x27; = 2.0) -&gt; &#x27;Dict[str, object]&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opssegmentation.get(&quot;superpixel_quality&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>超像素评分：边界召回率（<code style="color:#22d3bf">segeval.seg_boundary_f</code> 的 recall，容差 τ）、校正欠分割误差 CUSE = (1/N) Σ_k |S_k − G_max(S_k)|（Neubert–Protzel 2012，SNIC 论文的式 (2)）、ASA = 1 − CUSE、Neubert–Protzel 的欠分割误差 UE = (1/N) Σ_G Σ_(S∩G≠∅) min(|S∩G|, |S − G|)、超像素的数量。真值的 0 也算作一个区域（背景也是覆盖的对象）（superpixel_quality）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>

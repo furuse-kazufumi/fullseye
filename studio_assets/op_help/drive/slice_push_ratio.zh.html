@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">slice_push_ratio — DRIVE <code style="color:#22d3bf">cutting</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">scalar × scalar × scalar</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.slice_push_ratio(theta_deg: &#x27;float&#x27;, vx: &#x27;float&#x27;, vz: &#x27;float&#x27;) -&gt; &#x27;float&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import cutting; cutting.slice_push_ratio(theta_deg: &#x27;float&#x27;, vx: &#x27;float&#x27;, vz: &#x27;float&#x27;) -&gt; &#x27;float&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;slice_push_ratio&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由刃口倾角 θ(x-z，逆时针)和刀刃速度 (vx, −vz)(vz &gt; 0 为向下)求 slice/push 比 ξ。</p>
 <p>设刃口方向 u = (cos θ, sin θ)、法线 n = (−sin θ, cos θ),则 ξ = |v·u| / |v·n|。vx = 0 时回到 ξ = tan|θ|(Atkins 2016 正文 &quot;将倾斜的刀刃竖直移动则 ξ = tan i&quot;)。刀刃沿自身刃口移动(没有推进)时 ValueError。</p>

@@ -4,6 +4,7 @@ dim: 3d
 category: edges
 in: voxel
 out: voxel
+gpu: なし
 examples: [sensor_seg]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -16,6 +17,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **呼び出し**: `import fullseye as fs; fs.ledger.link_edges(edge_mask)` (実装を直接呼ぶなら `import edges3d; edges3d.link_edges(edge_mask)`、台帳から引くなら `ops3d.get("link_edges")`)
 - **台帳経由の戻り値**: `fullseye.ledger.link_edges(...)` は**宣言 out 型 `voxel` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.link_edges.raw(...)`、または `edges3d.link_edges` を直接呼ぶ。
   - 本体の返り: `(linked, n)`
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

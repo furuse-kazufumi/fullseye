@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">edge_alias_energy — 3D <code style="color:#22d3bf">render</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.edge_alias_energy(img) -&gt; &#x27;float&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import render_ssaa; render_ssaa.edge_alias_energy(img) -&gt; &#x27;float&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;edge_alias_energy&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>에지의 에일리어스(계단) 에너지 = 라플라시안의 RMS(작을수록 매끄러움).</p>
 <p>래스터화의 에일리어스는 계단 모양의 날카로운 모서리(높은 2 계 미분)로 나타난다. 라플라시안은고주파를 강조하므로, 그 제곱 평균 제곱근(RMS)은 경계의 계단 정도를 단조롭게 포착한다 — SSAA로에지가 매끄러운 기울기가 되면 라플라시안의 고주파 에너지는 줄어든다(low-pass는 고주파를감쇠시키고 라플라시안은 그것을 증폭하므로, 평활화된 에지일수록 본 양은 작다).</p>

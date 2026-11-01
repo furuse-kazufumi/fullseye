@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">fit_surface_principal_axes — 3D <code style="color:#22d3bf">geometry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fit_surface_principal_axes(points, degree: &#x27;int&#x27; = 2, *, isotropy_ratio: &#x27;float&#x27; = 0.95) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import measure3d; measure3d.fit_surface_principal_axes(points, degree: &#x27;int&#x27; = 2, *, isotropy_ratio: &#x27;float&#x27; = 0.95) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;fit_surface_principal_axes&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>비스듬히 휜 면을 PCA 축으로 회전한 뒤 다항식 z&#x27;=f(x&#x27;,y&#x27;)를 맞춥니다.</p>
 <p>가장 큰 두 PCA 축이 국소 x/y 평면을, 가장 작은 축이 z를 정합니다. 지정한 총차수까지 모든 단항식을 맞추고 중심, 축, 지수, 계수, 맞춤점, 중심 법선과 기하 RMS를 반환합니다. 평면 내 등방 점군은 거부합니다.</p>

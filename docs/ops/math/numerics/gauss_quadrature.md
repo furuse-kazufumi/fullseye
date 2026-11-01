@@ -4,6 +4,7 @@ dim: math
 category: numerics
 in: 
 out: table
+gpu: なし
 examples: [numerics_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.gauss_quadrature(n: 'int', kind: 'str' = 'legendre', a: 'float | None' = None, b: 'float | None' = None) -> 'dict'` (実装を直接呼ぶなら `import mathnumerics; mathnumerics.gauss_quadrature(n: 'int', kind: 'str' = 'legendre', a: 'float | None' = None, b: 'float | None' = None) -> 'dict'`、台帳から引くなら `opsmath.get("gauss_quadrature")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

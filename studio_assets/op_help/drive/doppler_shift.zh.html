@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">doppler_shift — DRIVE <code style="color:#22d3bf">decide</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.doppler_shift(f, v_source_radial, c: &#x27;float&#x27; = 343.0)</code>(要直接调用实现,<code style="color:#22d3bf">import drivedecide; drivedecide.doppler_shift(f, v_source_radial, c: &#x27;float&#x27; = 343.0)</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;doppler_shift&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>声源运动、听者静止时听到的频率(闭式)。</p>
 <p>f_obs = f · c / (c − v_r)</p>

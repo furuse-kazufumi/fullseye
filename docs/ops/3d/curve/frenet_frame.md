@@ -4,6 +4,7 @@ dim: 3d
 category: curve
 in: points
 out: frame
+gpu: なし
 examples: [space_curve, torus_knot_curve]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `points` → `frame`
 - **呼び出し**: `import fullseye as fs; fs.ledger.frenet_frame(curve)` (実装を直接呼ぶなら `import curve3d; curve3d.frenet_frame(curve)`、台帳から引くなら `ops3d.get("frenet_frame")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

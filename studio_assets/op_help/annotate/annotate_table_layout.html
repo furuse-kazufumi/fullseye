@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">annotate_table_layout — ANNOTATE <code style="color:#22d3bf">paper</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">text</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_table_layout(text, xy, anchor=&#x27;lt&#x27;, font_size=13, font_path=None, pad=6, col_gap=None, row_gap=0, align=&#x27;auto&#x27;, header=False, bold=False, italic=False, line_spacing=1.15)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import annotate; annotate.annotate_table_layout(text, xy, anchor=&#x27;lt&#x27;, font_size=13, font_path=None, pad=6, col_gap=None, row_gap=0, align=&#x27;auto&#x27;, header=False, bold=False, italic=False, line_spacing=1.15)</code>、台帳から引くなら <code style="color:#22d3bf">opsannotate.get(&quot;annotate_table_layout&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>table(dict)を返す: タブ区切りの文字列を<b>表</b>として置く桁と行の位置。</p>
 <p>行は <code style="color:#22d3bf">\n</code>、桁は <code style="color:#22d3bf">\t</code> で切る。桁幅は<b>指定されたサイズの実フォントで 1 セルずつ測った幅の最大</b>で決まる —— 文字数で数えると和文と英数字で必ずずれるので、測る以外に正しくやりようがない。</p>

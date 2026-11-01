@@ -4,6 +4,7 @@ dim: drive
 category: humanoid
 in: table × matrix × matrix
 out: table
+gpu: なし
 examples: [poc_driving_humanoids]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table × matrix × matrix` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.world_camera_impostors(world: 'dict', pose, K, width: 'int' = 640, height: 'int' = 400, actors=(), **camera_kw) -> 'dict'` (実装を直接呼ぶなら `import drivehumanoid; drivehumanoid.world_camera_impostors(world: 'dict', pose, K, width: 'int' = 640, height: 'int' = 400, actors=(), **camera_kw) -> 'dict'`、台帳から引くなら `opsdrive.get("world_camera_impostors")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

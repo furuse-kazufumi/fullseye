@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">anaglyph_crosstalk — OPTICS <code style="color:#22d3bf">omni360</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">rgbimage × rgbimage</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.anaglyph_crosstalk(left, right, glasses_transmission=None, method=&#x27;dubois&#x27;)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import omni360; omni360.anaglyph_crosstalk(left, right, glasses_transmission=None, method=&#x27;dubois&#x27;)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;anaglyph_crosstalk&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>左右の見え方と誤像漏れのエネルギー比を返す。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">ファミリ共通の入力契約(fail-closed)</h3>

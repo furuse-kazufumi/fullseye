@@ -3,6 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">pairs</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.x_range_funct_1d(y)</code> (die Implementierung direkt: <code style="color:#22d3bf">import funct1d; funct1d.x_range_funct_1d(y)</code>; aus dem Register: <code style="color:#22d3bf">ops1d.get(&quot;x_range_funct_1d&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>Rückgabewert über das Register</b>: <code style="color:#22d3bf">fullseye.ledger.x_range_funct_1d(...)</code> liefert <b>nur den Wert des deklarierten Out-Typs <code style="color:#22d3bf">pairs</code></b> (die zugrunde liegende Funktion gibt zusätzlich Hilfsinformationen zurück). Wird das Verworfene gebraucht, nutze <code style="color:#22d3bf">fullseye.ledger.x_range_funct_1d.raw(...)</code> oder rufe <code style="color:#22d3bf">funct1d.x_range_funct_1d</code> direkt auf.</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Der x-Bereich <code style="color:#22d3bf">(0.0, n - 1.0)</code> (HALCON <code style="color:#22d3bf">x_range_funct_1d</code>).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">spectrometer_spectrum — OPTICS <code style="color:#22d3bf">spectrometer</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table × pairs</code> → <code style="color:#22d3bf">pairs</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.spectrometer_spectrum(design, spectrum, slit_width_um=25.0, pixel_um=14.0, input_na=0.1, max_order_multiple=3, higher_order_efficiency=0.3, longpass_nm=None, oversample=8, pupil=&#x27;circular&#x27;)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import gratingspec; gratingspec.spectrometer_spectrum(design, spectrum, slit_width_um=25.0, pixel_um=14.0, input_na=0.1, max_order_multiple=3, higher_order_efficiency=0.3, longpass_nm=None, oversample=8, pupil=&#x27;circular&#x27;)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;spectrometer_spectrum&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>入力スペクトル → 検出器の画素の読み(1 次の像に高次の像が重なる)。</p>
 <p>design: <code style="color:#22d3bf">czerny_turner_design</code> の表。spectrum: pairs(λ [nm] 昇順, 分光放射輝度 ≥ 0、nm あたり)。slit_width_um / pixel_um / input_na / pupil: <code style="color:#22d3bf">spectrometer_bandpass</code> と同じ(装置関数を決める)。max_order_multiple: 設計の次数 m の何倍までの次数を足すか(1 = 高次なし、3 なら m, 2m, 3m)。higher_order_efficiency: 高次の回折効率の 1 次に対する比(次数によらず一定の模型)。</p>

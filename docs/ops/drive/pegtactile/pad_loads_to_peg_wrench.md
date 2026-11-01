@@ -4,6 +4,7 @@ dim: drive
 category: pegtactile
 in: scalar × signal × scalar × signal × table
 out: table
+gpu: なし
 examples: [poc_peg_insertion_tactile]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `scalar × signal × scalar × signal × table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.pad_loads_to_peg_wrench(PR: 'float', qR, PL: 'float', qL, pad: 'dict', torsion: 'float' = 0.0) -> 'dict'` (実装を直接呼ぶなら `import pegtactile; pegtactile.pad_loads_to_peg_wrench(PR: 'float', qR, PL: 'float', qL, pad: 'dict', torsion: 'float' = 0.0) -> 'dict'`、台帳から引くなら `opsdrive.get("pad_loads_to_peg_wrench")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

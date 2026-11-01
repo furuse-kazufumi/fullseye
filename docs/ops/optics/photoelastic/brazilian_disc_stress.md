@@ -4,6 +4,7 @@ dim: optics
 category: photoelastic
 in: 
 out: table
+gpu: なし
 examples: [photoelastic_roundtrip]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.brazilian_disc_stress(radius_m=0.025, thickness_m=0.006, load_n=500.0, size=129, x=None, y=None)` (実装を直接呼ぶなら `import photoelastic; photoelastic.brazilian_disc_stress(radius_m=0.025, thickness_m=0.006, load_n=500.0, size=129, x=None, y=None)`、台帳から引くなら `opsoptics.get("brazilian_disc_stress")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

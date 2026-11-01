@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">fly_egomotion_from_flow — FLYVISION <code style="color:#22d3bf">selfmotion</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">matrix × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fly_egomotion_from_flow(flow, lattice, axes=None, weights=None)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import flyvision; flyvision.fly_egomotion_from_flow(flow, lattice, axes=None, weights=None)</code>、台帳から引くなら <code style="color:#22d3bf">opsflyvision.get(&quot;fly_egomotion_from_flow&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Least-squares rotation of the eye from its flow field — and how badly the eye&#x27;s own shape conditions the answer.</p>
 <p>Given the flow <code style="color:#22d3bf">f_i</code> at known viewing directions <code style="color:#22d3bf">d_i</code>, a pure rotation <code style="color:#22d3bf">w</code> predicts <code style="color:#22d3bf">f_i = -(w x d_i)</code>, which is <b>linear in w</b>: projecting on the tangent basis gives <code style="color:#22d3bf">f_az = -w . (d x e_az)</code> and <code style="color:#22d3bf">f_el = -w . (d x e_el)</code>, so the estimate is one <code style="color:#22d3bf">2n x 3</code> least-squares solve with no iteration and no starting guess (Franz et al.&#x27;s linear egomotion estimate, *Biol. Cybern.* 2004).</p>

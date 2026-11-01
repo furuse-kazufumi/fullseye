@@ -4,6 +4,7 @@ dim: optics
 category: wave
 in: image2d
 out: image2d
+gpu: なし
 examples: [optics_imaging, poc_wavefront_aberration_limits]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.pupil_psf(pupil, defocus_waves=0.0, wavelength_um=0.55, f_number=5.6, oversample=4, pixel_pitch_um=None, opd_waves=None)` (実装を直接呼ぶなら `import optics; optics.pupil_psf(pupil, defocus_waves=0.0, wavelength_um=0.55, f_number=5.6, oversample=4, pixel_pitch_um=None, opd_waves=None)`、台帳から引くなら `opsoptics.get("pupil_psf")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

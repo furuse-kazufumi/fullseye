@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">two_point_depth — DRIVE <code style="color:#22d3bf">pegsim</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.two_point_depth(kp, theta: &#x27;float&#x27;, model: &#x27;str&#x27; = &#x27;exact&#x27;) -&gt; &#x27;float&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import pegsim; pegsim.two_point_depth(kp, theta: &#x27;float&#x27;, model: &#x27;str&#x27; = &#x27;exact&#x27;) -&gt; &#x27;float&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;two_point_depth&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>기울기 θ [rad]에서 2점 접촉이 시작되는 삽입 깊이 l₂ [m] (최협부에서 선단 중심까지). 3가지 모델을 이름으로 선택.</p>
 <p><code style="color:#22d3bf">&quot;exact&quot;</code>: 3-D 원기둥에서 엄밀, l₂ = (2R − r(cos θ + sec θ)) / tan θ(유도 (1′)). <code style="color:#22d3bf">&quot;small_angle&quot;</code>: l₂ = 2c_r / sin θ (OCW p.9 의 l/d = c/θ 를 반경 clearance 로 쓴 것). <code style="color:#22d3bf">&quot;rectangle&quot;</code>: 2-D 직사각형 근사 (D − d/cos θ)/tan θ(가장자리 점의높이 r sin θ 를 무시하므로 θ = 6° 에서 0.5 mm 얕게 나온다 —— 오차의 크기를 재기 위해 남겨 둔다). <b>Raises</b> <code style="color:#22d3bf">ValueError</code>: θ ≤ 0, θ ≥ θ_m_exact(입구에조차 들어가지 않음), 알 수 없는 model.</p>

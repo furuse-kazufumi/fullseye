@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">cr_collision — DRIVE <code style="color:#22d3bf">commonroad</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cr_collision(scene, run, *, margin: &#x27;float&#x27; = 0.0, lanelets: &#x27;str&#x27; = &#x27;all&#x27;) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import drivecommonroad; drivecommonroad.cr_collision(scene, run, *, margin: &#x27;float&#x27; = 0.0, lanelets: &#x27;str&#x27; = &#x27;all&#x27;) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;cr_collision&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Kollision mit Hindernissen (SAT Rechteck gegen Rechteck, je time_step) und Straßenbegrenzung (ob die 4 Fahrzeugecken in der Vereinigung der Lanelet-Polygone liegen).</p>
 <p><code style="color:#22d3bf">lanelets=&quot;all&quot;</code> (Standard) umfasst alle lanelets der Szene (derselbe Bereich wie boundary_collision des Bewerters), <code style="color:#22d3bf">&quot;route&quot;</code> nur die lanelets der Route. <code style="color:#22d3bf">margin</code> ist der Abstand (m), um den der SAT der Hindernisse vergrößert wird.</p>

@@ -4,6 +4,7 @@ dim: drive
 category: traffic
 in: points × points × points
 out: any
+gpu: なし
 examples: [gallery_drive_mirrors_crowds]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `points × points × points` → `any`
 - **呼び出し**: `import fullseye as fs; fs.ledger.social_force_step(pos, vel, goals, *, dt: 'float', v0, tau: 'float', A: 'float', B: 'float', radius, walls=None)` (実装を直接呼ぶなら `import drivetraffic; drivetraffic.social_force_step(pos, vel, goals, *, dt: 'float', v0, tau: 'float', A: 'float', B: 'float', radius, walls=None)`、台帳から引くなら `opsdrive.get("social_force_step")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

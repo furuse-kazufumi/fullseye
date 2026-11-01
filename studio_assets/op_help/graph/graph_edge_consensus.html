@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">graph_edge_consensus — GRAPH <code style="color:#22d3bf">population</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graph_edge_consensus(adjs, ordered=False, n_null=0, swaps_per_edge=5, seed=0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import graphinv; graphinv.graph_edge_consensus(adjs, ordered=False, n_null=0, swaps_per_edge=5, seed=0)</code>、台帳から引くなら <code style="color:#22d3bf">opsgraph.get(&quot;graph_edge_consensus&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>How many individuals share each connection — K wiring matrices on one node order.</p>
 <p><code style="color:#22d3bf">adjs</code> is either a list of K square matrices or a table <code style="color:#22d3bf">{name: matrix}</code> (its insertion order is the individual order), all on the <b>same</b> node order (align the cell names first; a node absent from an individual is a zero row and column). Weights (synapse counts) are kept for the synapse shares; presence is <code style="color:#22d3bf">&gt; 0</code>. Self-loops are dropped.</p>

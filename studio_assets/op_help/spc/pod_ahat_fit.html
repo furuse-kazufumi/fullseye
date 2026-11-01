@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">pod_ahat_fit — SPC <code style="color:#22d3bf">pod</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pod_ahat_fit(table, size=&#x27;a&#x27;, response=&#x27;ahat&#x27;, log_size=False, log_response=False, censor_low=None, censor_high=None)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import pod; pod.pod_ahat_fit(table, size=&#x27;a&#x27;, response=&#x27;ahat&#x27;, log_size=False, log_response=False, censor_low=None, censor_high=None)</code>、台帳から引くなら <code style="color:#22d3bf">opsspc.get(&quot;pod_ahat_fit&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>â vs a の回帰を、左右の打ち切りつき最尤法で当てる(<code style="color:#22d3bf">table</code>)。</p>
 <p>モデル(MIL-HDBK-1823A G.3.4)は <code style="color:#22d3bf">y = β0 + β1 x + ε, ε ~ N(0, σ²)</code>、<code style="color:#22d3bf">x = a</code> または <code style="color:#22d3bf">ln a</code>、<code style="color:#22d3bf">y = â</code> または <code style="color:#22d3bf">ln â</code>。応答が <code style="color:#22d3bf">censor_low</code> 以下の行は<b>左打ち切り</b>(雑音床に埋もれて「それ以下だった」としか分からない)、<code style="color:#22d3bf">censor_high</code> 以上の行は<b>右打ち切り</b>(飽和)として、対数尤度に <code style="color:#22d3bf">ln Φ((y_L − μ_i)/σ)</code> / <code style="color:#22d3bf">ln Φ((μ_i − y_H)/σ)</code> で入る(Tobin 1958)。</p>

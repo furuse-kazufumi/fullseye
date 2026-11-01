@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">skeleton_prune3d — 3D <code style="color:#22d3bf">medial</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">voxel</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.skeleton_prune3d(vol, length=1)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import medial; medial.skeleton_prune3d(vol, length=1)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;skeleton_prune3d&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>3D skeleton की मूँछें (छोटी branches) काटता है। end point removal को length बार दोहराना = लंबाई &lt;=length वाली branches हटाना।</p>
 <p>2D के <code style="color:#22d3bf">pruning</code> का 3D संस्करण। isolated voxel endpoint माने जाते हैं और हट जाते हैं।</p>

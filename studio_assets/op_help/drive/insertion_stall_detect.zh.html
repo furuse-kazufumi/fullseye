@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">insertion_stall_detect — DRIVE <code style="color:#22d3bf">pegfail</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.insertion_stall_detect(depth, window: &#x27;int&#x27; = 30, min_advance: &#x27;float&#x27; = 5e-05, arm_advance: &#x27;float&#x27; = 0.0005) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import pegfail; pegfail.insertion_stall_detect(depth, window: &#x27;int&#x27; = 30, min_advance: &#x27;float&#x27; = 5e-05, arm_advance: &#x27;float&#x27; = 0.0005) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;insertion_stall_detect&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>从深度时间序列 [m] 检测停滞(在每个时间步 i，若 depth[i] − depth[i − window] &lt; min_advance 则为 stalled)。</p>
 <p>下降开始之前(保持姿势期间)深度不变,朴素的检测器会报警 —— 因此仅在前进 <code style="color:#22d3bf">arm_advance</code> 之后才 <b>武装</b>(onset 为此后的第一个 stalled)。返回: <code style="color:#22d3bf">stalled</code>(bool 序列,长度相同)、<code style="color:#22d3bf">onset</code>(第一次停滞的下标,无则 −1)、<code style="color:#22d3bf">armed_at</code>(武装时的下标, −1 表示未武装 = 一次也未前进)、<code style="color:#22d3bf">n_stalled</code>。单调下降(速度 ≥ min_advance/window)时不会报警(门)。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: window &lt; 1、min_advance ≤ 0、序列为空。</p>

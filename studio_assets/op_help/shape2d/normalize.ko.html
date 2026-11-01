@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">normalize — SHAPE2D <code style="color:#22d3bf">descriptor</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">efdmodel</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.normalize(model, size_invariant=True)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import fourierdesc; fourierdesc.normalize(model, size_invariant=True)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsshape2d.get(&quot;normalize&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>EFD 계수를 &#x27;정준 자세&#x27;의 계수로 변환한다(제1고조파를 기준으로 정렬).</p>
 <p>Kuhl–Giardina 의 정준화: (1) 제1 고조파의 위상으로 <b>시작점</b>의 임의성을 제거, (2) 제1 타원의 장축을 기준축으로 돌려 <b>방향</b>을 맞추고, (3) 제1 고조파의 장축 길이로 나누어 <b>크기</b> 를 맞춘다. 여러 형상을 겹치기/평균하기 등의 &quot;정준 자세 재구성&quot;용.</p>

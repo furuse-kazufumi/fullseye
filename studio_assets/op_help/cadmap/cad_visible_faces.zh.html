@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">cad_visible_faces — CADMAP <code style="color:#22d3bf">visibility</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">mesh</code> → <code style="color:#22d3bf">indices</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cad_visible_faces(mesh, K=None, R=None, t=None, width=64, height=64, cull_backfaces=True, strict=True)</code>(要直接调用实现,<code style="color:#22d3bf">import cadmap; cadmap.cad_visible_faces(mesh, K=None, R=None, t=None, width=64, height=64, cull_backfaces=True, strict=True)</code>;从台账取用则 <code style="color:#22d3bf">opscadmap.get(&quot;cad_visible_faces&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>从该相机<b>实际可见</b>的面 ID(升序,<code style="color:#22d3bf">indices</code> sort)。</p>
 <p>向图像网格(<code style="color:#22d3bf">width</code> x <code style="color:#22d3bf">height</code>,像素中心在整数坐标)发射光线,收集最靠前的面。背面(法线不朝向相机)以及完全被前方的面遮住的面不包括在内。直接返回检测覆盖率 —— “从这个视点看,CAD 的哪些面算是看过了”—— 的量,与 <code style="color:#22d3bf">mesh_area</code> 组合即可得到 “未检测的面积”。</p>

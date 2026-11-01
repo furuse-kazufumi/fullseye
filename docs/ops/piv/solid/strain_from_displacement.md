@@ -4,6 +4,7 @@ dim: piv
 category: solid
 in: image2d × image2d
 out: image2d
+gpu: なし
 examples: [poc_dic_strain]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,6 +16,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **データ種**: `image2d × image2d` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.strain_from_displacement(u: 'Any', v: 'Any', window: 'int', method: 'str', spacing: 'float' = 1.0) -> 'tuple[np.ndarray, np.ndarray, np.ndarray]'` (実装を直接呼ぶなら `import dic; dic.strain_from_displacement(u: 'Any', v: 'Any', window: 'int', method: 'str', spacing: 'float' = 1.0) -> 'tuple[np.ndarray, np.ndarray, np.ndarray]'`、台帳から引くなら `opspiv.get("strain_from_displacement")`)
 - **台帳経由の戻り値**: `fullseye.ledger.strain_from_displacement(...)` は**宣言 out 型 `image2d` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.strain_from_displacement.raw(...)`、または `dic.strain_from_displacement` を直接呼ぶ。
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

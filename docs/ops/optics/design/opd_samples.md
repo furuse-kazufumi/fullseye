@@ -4,6 +4,7 @@ dim: optics
 category: design
 in: table
 out: table
+gpu: なし
 examples: [anim3d_lens_aberrations, poc_lens_tolerancing, poc_noncoaxial_optics]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,6 +16,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.opd_samples(system, field=None, size=64, wavelength_um=None, image_mm=None, aim=None, vignetting=None)` (実装を直接呼ぶなら `import raytrace; raytrace.opd_samples(system, field=None, size=64, wavelength_um=None, image_mm=None, aim=None, vignetting=None)`、台帳から引くなら `opsoptics.get("opd_samples")`)
 - **台帳経由の戻り値**: `fullseye.ledger.opd_samples(...)` は**宣言 out 型 `table` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.opd_samples.raw(...)`、または `raytrace.opd_samples` を直接呼ぶ。
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

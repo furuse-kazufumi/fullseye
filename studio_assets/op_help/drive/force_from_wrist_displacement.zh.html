@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">force_from_wrist_displacement — DRIVE <code style="color:#22d3bf">cutting</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">signal × signal × scalar</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.force_from_wrist_displacement(z_meas_mm, z_cmd_mm, k_n_per_mm: &#x27;float&#x27;)</code>(要直接调用实现,<code style="color:#22d3bf">import cutting; cutting.force_from_wrist_displacement(z_meas_mm, z_cmd_mm, k_n_per_mm: &#x27;float&#x27;)</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;force_from_wrist_displacement&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>柔顺腕部(竖直弹簧 k，N/mm)时，压力 F = k (z_meas − z_cmd)：刀刃高于指令的部分即为力(N 的数组)。</p>
 <p>准静态近似: 不计手腕的惯性和阻尼。以速度 v 下降阻尼为 c 的手腕时,在空中扣皮重时会包含 c·v,只有在刀刃被食材挡住期间它才会消失 —— 误差上限为 c·v(在 PoC 的 --full 中与 MuJoCo 的约束力比较)。</p>

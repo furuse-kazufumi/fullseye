@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">profile_deviation — PROFILE <code style="color:#22d3bf">compare</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">pairs × pairs</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.profile_deviation(measured, reference, n=200, align=&#x27;chord&#x27;, oversample=8)</code>(要直接调用实现,<code style="color:#22d3bf">import profileops; profileops.profile_deviation(measured, reference, n=200, align=&#x27;chord&#x27;, oversample=8)</code>;从台账取用则 <code style="color:#22d3bf">opsprofile.get(&quot;profile_deviation&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>相对设计形状的<b>带符号法向偏差</b>。返回 dict。</p>
 <p>正为「偏厚的一侧(向外)」，负为「偏薄的一侧」。以设计轮廓的外法线为基准。</p>

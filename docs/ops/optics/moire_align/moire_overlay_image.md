@@ -4,6 +4,7 @@ dim: optics
 category: moire_align
 in: 
 out: image2d
+gpu: なし
 examples: [poc_moire_alignment, poc_moire_screen]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `image2d`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.moire_overlay_image(shape=(256, 1024), pixel_um=0.5, p_mask_um=2.0, p_wafer_um=2.04, shift_nm=0.0, layout='single', profile='square', duty=0.5, blur_sigma_um=1.5, gap_um=0.0, wavelength_um=None, drift_nm=0.0, illum_gradient=0.0, noise_sigma=0.0, seed=0, moving='wafer', n_harmonics=15, allow_aliasing=False, with_mask=True)` (実装を直接呼ぶなら `import moirealign; moirealign.moire_overlay_image(shape=(256, 1024), pixel_um=0.5, p_mask_um=2.0, p_wafer_um=2.04, shift_nm=0.0, layout='single', profile='square', duty=0.5, blur_sigma_um=1.5, gap_um=0.0, wavelength_um=None, drift_nm=0.0, illum_gradient=0.0, noise_sigma=0.0, seed=0, moving='wafer', n_harmonics=15, allow_aliasing=False, with_mask=True)`、台帳から引くなら `opsoptics.get("moire_overlay_image")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

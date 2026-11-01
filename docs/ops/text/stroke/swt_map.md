@@ -4,6 +4,7 @@ dim: text
 category: stroke
 in: image2d
 out: table
+gpu: なし
 examples: [poc_text_region_truth]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.swt_map(img, dark_on_light: 'bool' = True, sigma: 'float' = 1.0, max_width: 'int' = 64, angle_tol: 'float' = 0.5235987755982988)` (実装を直接呼ぶなら `import textregion; textregion.swt_map(img, dark_on_light: 'bool' = True, sigma: 'float' = 1.0, max_width: 'int' = 64, angle_tol: 'float' = 0.5235987755982988)`、台帳から引くなら `opstext.get("swt_map")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

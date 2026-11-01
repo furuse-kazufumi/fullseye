@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">two_view_volume — DRIVE <code style="color:#22d3bf">scoop</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d × image2d × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.two_view_volume(side_a, side_b, pitch: &#x27;float&#x27;, *, threshold: &#x27;float&#x27; = 0.5) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import scoop; scoop.two_view_volume(side_a, side_b, pitch: &#x27;float&#x27;, *, threshold: &#x27;float&#x27; = 0.5) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;two_view_volume&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由 2 个正交方向的侧视图像求体积 —— 以每行的 2 条弦 <code style="color:#22d3bf">W_a</code>、<code style="color:#22d3bf">W_b</code> 为轴的椭圆之和 <code style="color:#22d3bf">V = Σ f π (W_a/2)(W_b/2) pitch³</code>。</p>
 <p>截面为椭圆(非轴对称的山、纵长的堆)时严格成立;仅用一侧视图的旋转体假设会按椭圆扁平度之比偏离(PoC 中</p>

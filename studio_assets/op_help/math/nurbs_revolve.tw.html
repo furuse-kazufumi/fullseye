@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">nurbs_revolve — MATH <code style="color:#22d3bf">geometry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.nurbs_revolve(profile, weights=None, *, degree: &#x27;int&#x27; = 2, knots=None, n=(48, 48)) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import mathgeometry; mathgeometry.nurbs_revolve(profile, weights=None, *, degree: &#x27;int&#x27; = 2, knots=None, n=(48, 48)) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsmath.get(&quot;nurbs_revolve&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>將平面 NURBS 曲線 (r, z) 繞 z 軸旋轉 1 周得到的旋轉面(Piegl &amp; Tiller §8.5)。</p>
 <p>將截面的每個控制點用 <code style="color:#22d3bf">nurbs_circle</code> 的 9 個點旋轉，並把權重相乘。若截面是精確的圓弧，所得曲面也是精確的球面、環面、圓錐面（多項式曲面只能做近似）。</p>

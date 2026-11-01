@@ -4,6 +4,7 @@ dim: astrostack
 category: align
 in: images
 out: images
+gpu: なし
 examples: [astro_stacking]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -16,6 +17,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **呼び出し**: `import fullseye as fs; fs.ledger.align_frames(frames, reference=0, order=3, **align_kw)` (実装を直接呼ぶなら `import astrostack; astrostack.align_frames(frames, reference=0, order=3, **align_kw)`、台帳から引くなら `opsastrostack.get("align_frames")`)
 - **台帳経由の戻り値**: `fullseye.ledger.align_frames(...)` は**宣言 out 型 `images` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.align_frames.raw(...)`、または `astrostack.align_frames` を直接呼ぶ。
   - 本体の返り: `(aligned, matrices) -> images`
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

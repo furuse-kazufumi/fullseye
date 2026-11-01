@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">sdf_union — 3D <code style="color:#22d3bf">sdf_csg</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">sdf × sdf</code> → <code style="color:#22d3bf">sdf</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sdf_union(a, b)</code>(要直接调用实现,<code style="color:#22d3bf">import sdf_ops; sdf_ops.sdf_union(a, b)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;sdf_union&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>两个 SDF 的并集 A∪B = 逐元素 min(a, b)(任一为负即在内侧)。</p>
 <p>零等值面与两形状边界的并集严格一致。外侧为严格的 SDF（到最近表面的距离），内侧为保守下界。<code style="color:#22d3bf">a</code>/<code style="color:#22d3bf">b</code> 只需能够广播匹配即可。</p>

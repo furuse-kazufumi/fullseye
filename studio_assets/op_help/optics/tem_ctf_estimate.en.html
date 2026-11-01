@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tem_ctf_estimate — OPTICS <code style="color:#22d3bf">tem</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tem_ctf_estimate(image, pixel_A=1.0, kv=300.0, cs_mm=2.7, amplitude_contrast=0.07, phase_shift_deg=0.0, defocus_min_A=3000.0, defocus_max_A=50000.0, k_min=0.03333333333333333, k_max=None, tile=None, overlap=0.5, astigmatism=True, min_rings=3, min_peak_z=8.0, on_fail=&#x27;raise&#x27;)</code> (to call the implementation directly, <code style="color:#22d3bf">import temsim; temsim.tem_ctf_estimate(image, pixel_A=1.0, kv=300.0, cs_mm=2.7, amplitude_contrast=0.07, phase_shift_deg=0.0, defocus_min_A=3000.0, defocus_max_A=50000.0, k_min=0.03333333333333333, k_max=None, tile=None, overlap=0.5, astigmatism=True, min_rings=3, min_peak_z=8.0, on_fail=&#x27;raise&#x27;)</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;tem_ctf_estimate&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Estimate defocus (and astigmatism) from the Thon rings in the power spectrum of a micrograph (table).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">fly_expansion_readout — FLYVISION <code style="color:#22d3bf">looming</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">matrix × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fly_expansion_readout(flow, lattice, axis=None, weights=None)</code> (to call the implementation directly, <code style="color:#22d3bf">import flyvision; flyvision.fly_expansion_readout(flow, lattice, axis=None, weights=None)</code>; from the registry, <code style="color:#22d3bf">opsflyvision.get(&quot;fly_expansion_readout&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Time-to-contact from the flow over the whole eye — and the aperture effect&#x27;s 2x.</p>
 <p>A fronto-parallel surface approached at speed <code style="color:#22d3bf">v</code> from distance <code style="color:#22d3bf">d</code> moves the line of sight at polar angle <code style="color:#22d3bf">theta</code> outward at <code style="color:#22d3bf">sin theta cos theta / tau</code> with <code style="color:#22d3bf">tau = d/v</code>. This op projects the measured flow onto the outward radial direction and fits that one number, <code style="color:#22d3bf">1/tau</code>, by weighted least</p>

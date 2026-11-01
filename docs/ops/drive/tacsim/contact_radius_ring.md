@@ -4,6 +4,7 @@ dim: drive
 category: tacsim
 in: image2d × scalar
 out: table
+gpu: なし
 examples: [poc_tacscalib_sphere_lut, poc_tacsim_elastic_membrane]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d × scalar` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.contact_radius_ring(h, pitch: 'float', n_az: 'int' = 72, step_px: 'float' = 0.25, r_max_px: 'float | None' = None) -> 'dict'` (実装を直接呼ぶなら `import tacsim; tacsim.contact_radius_ring(h, pitch: 'float', n_az: 'int' = 72, step_px: 'float' = 0.25, r_max_px: 'float | None' = None) -> 'dict'`、台帳から引くなら `opsdrive.get("contact_radius_ring")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

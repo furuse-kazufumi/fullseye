@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">raw_black_level — GFX2D <code style="color:#22d3bf">isp</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.raw_black_level(raw, offsets, white=1.0, pattern=&#x27;RGGB&#x27;)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import gfx2d; gfx2d.raw_black_level(raw, offsets, white=1.0, pattern=&#x27;RGGB&#x27;)</code>、台帳から引くなら <code style="color:#22d3bf">opsgfx2d.get(&quot;raw_black_level&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Black-level compensation on a Bayer frame: <code style="color:#22d3bf">(raw - offset) / (white - offset)</code> per colour channel, clipped to <code style="color:#22d3bf">[0, 1]</code>.</p>
 <p>A sensor&#x27;s dark output is not zero (pedestal + dark current); every later stage that multiplies (gains, CCM) would scale that pedestal into a colour cast, so this runs <b>first</b>. *offsets* is a scalar, 3 values <code style="color:#22d3bf">(R, G, B)</code> or 4 values <code style="color:#22d3bf">(R, G1, G2, B)</code> in the same <code style="color:#22d3bf">[0, 1]</code> units as *raw*; *white* is the saturation level, so a pixel at *white* maps to exactly 1.</p>

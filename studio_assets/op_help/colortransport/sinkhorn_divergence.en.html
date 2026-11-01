@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">sinkhorn_divergence — COLORTRANSPORT <code style="color:#22d3bf">transport</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal × signal × matrix</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sinkhorn_divergence(a, b, cost, cost_aa=None, cost_bb=None, reg=0.05, **kw)</code> (to call the implementation directly, <code style="color:#22d3bf">import colortransport; colortransport.sinkhorn_divergence(a, b, cost, cost_aa=None, cost_bb=None, reg=0.05, **kw)</code>; from the registry, <code style="color:#22d3bf">opscolortransport.get(&quot;sinkhorn_divergence&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>The <b>debiased</b> Sinkhorn distance (Genevay, Peyré &amp; Cuturi, AISTATS 2018).</p>
 <p><code style="color:#22d3bf">S(a,b) - (S(a,a) + S(b,b)) / 2</code>. Because of the regularisation <code style="color:#22d3bf">sinkhorn_distance</code> is systematically biased upward, and <b>its &quot;distance&quot; to itself is not 0</b> (measured: above 0.05 at reg=0.2 ). Subtracting the same bias via the distance to itself cancels it, and <b>the value against itself returns to 0</b> -- exactly what TRIZ calls counterweight (cancelling with a counteraction).</p>

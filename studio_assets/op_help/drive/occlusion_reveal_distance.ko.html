@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">occlusion_reveal_distance — DRIVE <code style="color:#22d3bf">traffic</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.occlusion_reveal_distance(ego_xy, ego_heading: &#x27;float&#x27;, parked_box, emerge_xy) -&gt; &#x27;float&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivetraffic; drivetraffic.occlusion_reveal_distance(ego_xy, ego_heading: &#x27;float&#x27;, parked_box, emerge_xy) -&gt; &#x27;float&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;occlusion_reveal_distance&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>갓길 주차 차량(방향이 있는 상자)의 그늘에 있는 점 <code style="color:#22d3bf">emerge_xy</code>가 자차의 눈에서 <b>처음 보이는</b> 때의 종방향 거리.</p>
 <p>자차의 눈은 p(s) = ego_xy + s h(h = (cos ψ, sin ψ), s ≥ 0 = 전진량)를 움직인다. 시선 = 선분 p(s) → e 가 상자의 내부를지나지 않으면 보인다. 상자는 볼록이므로 &quot;보이지 않는 s&quot; 는 구간이 되며, 그 끝은 <b>시선이 상자의 모서리를 스치는</b> 곳이거나 진로가 상자의 변을가로지르는 곳. 각 모서리 c 에 대해 직선 e + λ(c − e) 와 진로의 교점 s_c 를 2×2 연립으로 풀고(닫힌 형식), 후보 {0, s_c, 진로와 변의교점} 를 작은 순서로 보이는지 조사하여, 처음 보이는 s* 에서 d = h · (e − p(s*)) 를 반환한다.</p>

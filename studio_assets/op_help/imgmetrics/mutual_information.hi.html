@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">mutual_information — IMGMETRICS <code style="color:#22d3bf">information</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mutual_information(a, b, bins=64, data_range=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import imgmetrics; imgmetrics.mutual_information(a, b, bins=64, data_range=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsimgmetrics.get(&quot;mutual_information&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>mutual information I(A; B) [bit] = H(A) + H(B) - H(A, B)।</p>
 <p><b>यह bins की संख्या पर निर्भर करता है</b> (जितने अधिक bins, उतना ऊपर की ओर झुकाव), इसलिए <code style="color:#22d3bf">bins</code> एक स्पष्ट argument है। स्वतंत्र 2 images के लिए भी sample finite होने से यह ठीक 0 नहीं होता -- कितना ऊपर झुकता है, यह tests में संख्या के रूप में दर्ज है।</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">spectral_kurtosis — ACOUSTICS <code style="color:#22d3bf">bearing</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.spectral_kurtosis(x, rate, win=None, hop=None, window=&#x27;hann&#x27;)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import acoustics; acoustics.spectral_kurtosis(x, rate, win=None, hop=None, window=&#x27;hann&#x27;)</code>、台帳から引くなら <code style="color:#22d3bf">opsacoustics.get(&quot;spectral_kurtosis&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Which frequency band is impulsive — i.e. where to demodulate.</p>
 <p><code style="color:#22d3bf">envelope_spectrum</code> needs a band, and picking it by eye from a spectrum picks the *loudest* band, which is usually a gear mesh or a line harmonic rather than the bearing. Spectral kurtosis picks the *most non-stationary* band instead: for each frequency bin it measures the fourth-order behaviour of that bin&#x27;s STFT coefficient across frames.</p>

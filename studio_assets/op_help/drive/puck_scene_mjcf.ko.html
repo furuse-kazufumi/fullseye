@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">puck_scene_mjcf — DRIVE <code style="color:#22d3bf">puck</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.puck_scene_mjcf(table: &#x27;dict&#x27;, *, cam_height: &#x27;float&#x27; = 1.5, fovy: &#x27;float&#x27; = 50.0, offwidth: &#x27;int&#x27; = 1024, offheight: &#x27;int&#x27; = 768) -&gt; &#x27;str&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import puck; puck.puck_scene_mjcf(table: &#x27;dict&#x27;, *, cam_height: &#x27;float&#x27; = 1.5, fovy: &#x27;float&#x27; = 50.0, offwidth: &#x27;int&#x27; = 1024, offheight: &#x27;int&#x27; = 768) -&gt; &#x27;str&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;puck_scene_mjcf&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>자체 제작한 최소 MJCF(Coulomb 버전, mujoco 불필요): 마찰이 있는 평면 위의 원기둥 퍽(자유 관절), 4장의 벽(박스), 바로 위 카메라. Challenge의 테이블은 점성 감쇠이므로, Coulomb 등감속을 MuJoCo에서 확인하려면 이쪽을 씁니다. 벽의 반발은 연접촉이므로 e는 측정합니다.</p>
 <p>빈 입력(<code style="color:#22d3bf">table</code> 이(가) 빈 dict)은 <code style="color:#22d3bf">ValueError</code> 를 발생시킨다.</p>

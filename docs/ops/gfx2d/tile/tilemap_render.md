@@ -4,6 +4,7 @@ dim: gfx2d
 category: tile
 in: sprites
 out: rgba
+gpu: なし
 examples: [gfx2d_scene]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `sprites` → `rgba`
 - **呼び出し**: `import fullseye as fs; fs.ledger.tilemap_render(tiles, indices, empty=-1)` (実装を直接呼ぶなら `import gfx2d; gfx2d.tilemap_render(tiles, indices, empty=-1)`、台帳から引くなら `opsgfx2d.get("tilemap_render")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

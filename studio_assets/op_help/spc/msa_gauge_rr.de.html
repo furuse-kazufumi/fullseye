@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">msa_gauge_rr — SPC <code style="color:#22d3bf">msa</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.msa_gauge_rr(table, part=&#x27;part&#x27;, operator=&#x27;operator&#x27;, value=&#x27;value&#x27;, tolerance=None, pool_interaction=&#x27;auto&#x27;, pool_alpha=0.25)</code> (die Implementierung direkt: <code style="color:#22d3bf">import spc; spc.msa_gauge_rr(table, part=&#x27;part&#x27;, operator=&#x27;operator&#x27;, value=&#x27;value&#x27;, tolerance=None, pool_interaction=&#x27;auto&#x27;, pool_alpha=0.25)</code>; aus dem Register: <code style="color:#22d3bf">opsspc.get(&quot;msa_gauge_rr&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Wiederhol- und Vergleichpräzision eines Messmittels nach dem Varianzanalyseverfahren (<code style="color:#22d3bf">table</code>).</p>
 <p>Wiederholpräzision EV (die Streuung, wenn dieselbe Person dasselbe Teil erneut misst), Vergleichspräzision AV (die Streuung, wenn die Person wechselt; enthält die Wechselwirkung), deren Kombination GRR, Teil-zu-Teil PV, Gesamtstreuung TV, <code style="color:#22d3bf">%GRR = 100 GRR/TV</code> und die Anzahl unterscheidbarer Klassen <code style="color:#22d3bf">ndc = 1.41 PV/GRR</code>.</p>

@@ -4,6 +4,7 @@ dim: optics
 category: scene
 in: 
 out: table
+gpu: なし
 examples: [poc_nir_silicon_transmission, poc_optics_drawings, studio_raytrace_scene, vision_layout_from_catalog]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.light_spec(kind: 'str' = None, source: 'str' = None, wavelength_nm: 'float' = None, bandwidth_nm: 'float' = None, radius_mm: 'float' = None, height_mm: 'float' = None, size_mm: 'float' = None, n: 'int' = 196, intensity: 'float' = 1.0, cos_exponent: 'float' = 1.0, polarization: 'str' = None, model: 'str' = None, maker: 'str' = None, color_temperature_k: 'float' = None, band_nm=None, splitter_reflectance: 'float' = 0.5, splitter_transmittance: 'float' = 0.5) -> 'dict'` (実装を直接呼ぶなら `import optscene; optscene.light_spec(kind: 'str' = None, source: 'str' = None, wavelength_nm: 'float' = None, bandwidth_nm: 'float' = None, radius_mm: 'float' = None, height_mm: 'float' = None, size_mm: 'float' = None, n: 'int' = 196, intensity: 'float' = 1.0, cos_exponent: 'float' = 1.0, polarization: 'str' = None, model: 'str' = None, maker: 'str' = None, color_temperature_k: 'float' = None, band_nm=None, splitter_reflectance: 'float' = 0.5, splitter_transmittance: 'float' = 0.5) -> 'dict'`、台帳から引くなら `opsoptics.get("light_spec")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

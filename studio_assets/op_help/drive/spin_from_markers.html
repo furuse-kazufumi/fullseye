@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">spin_from_markers — DRIVE <code style="color:#22d3bf">balltrack</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.spin_from_markers(dirs0, dirs1, dt: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import balltrack; balltrack.spin_from_markers(dirs0, dirs1, dt: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;spin_from_markers&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>模様の向きの組(前 (M, 3)、後 (M, 3)、単位ベクトル)から角速度ベクトル ω [rad/s] を出す。</p>
 <p>M ≥ 2 なら Kabsch(SVD)で回転 R を当て、回転角 θ と軸から ω = θ/dt·軸(既知の ω で回した向きを入れると 1e-9 で戻る = 門)。M = 1 なら d₀ → d₁ の最小回転(軸 = d₀ × d₁)を返す(&quot;full&quot; = False): 模様の向きまわりの成分は原理的に決まらず、コマ間の回転角が大きいと ω の直交成分の近似としても外れる(模様は ω の軸まわりの小円を描くので、最小回転の大円と違う)。</p>

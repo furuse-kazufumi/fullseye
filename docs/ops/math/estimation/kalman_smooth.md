@@ -4,6 +4,7 @@ dim: math
 category: estimation
 in: matrix × matrix × matrix × matrix × matrix × signal × matrix
 out: table
+gpu: なし
 examples: [estimation_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `matrix × matrix × matrix × matrix × matrix × signal × matrix` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.kalman_smooth(z, F, H, Q, R, x0, P0, *, store_predictions: 'bool' = True, method: 'str' = 'exact') -> 'dict'` (実装を直接呼ぶなら `import mathestimation; mathestimation.kalman_smooth(z, F, H, Q, R, x0, P0, *, store_predictions: 'bool' = True, method: 'str' = 'exact') -> 'dict'`、台帳から引くなら `opsmath.get("kalman_smooth")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

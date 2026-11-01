@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">estimate_alpha — 3D <code style="color:#22d3bf">reconstruct</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.estimate_alpha(points)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import recon3d; recon3d.estimate_alpha(points)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;estimate_alpha&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>point cloud के scale से सुझाया गया alpha लौटाता है (nearest-neighbour distance के median पर आधारित)।</p>
 <p>हर point की nearest neighbour distance का median <code style="color:#22d3bf">m</code> निकालकर, <code style="color:#22d3bf">alpha = 1/(2m)</code> लौटाता है ताकि radius threshold 1/alpha ≈ 2m हो (पड़ोसी अंतराल के लगभग 2 गुना तक अनुमति)। इससे surface के पास के अच्छे tetrahedra बने रहते हैं, जबकि बहुत खिंचे हुए tetrahedra (= concavities, बाहरी भाग) काटे जा सकते हैं। duplicate points की nearest neighbour distance 0 होती है, इसलिए केवल धनात्मक distances उपयोग होती हैं।</p>

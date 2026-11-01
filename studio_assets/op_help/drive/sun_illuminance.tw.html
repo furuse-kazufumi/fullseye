@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">sun_illuminance — DRIVE <code style="color:#22d3bf">env</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sun_illuminance(elevation: &#x27;float&#x27;, cloud: &#x27;float&#x27; = 0.0) -&gt; &#x27;Dict[str, float]&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import driveenv; driveenv.sun_illuminance(elevation: &#x27;float&#x27;, cloud: &#x27;float&#x27; = 0.0) -&gt; &#x27;Dict[str, float]&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;sun_illuminance&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>晴天(雲量 <code style="color:#22d3bf">cloud</code> ∈ [0, 1])的太陽照度 [lx]: <code style="color:#22d3bf">direct_normal</code>(正對太陽的面)、<code style="color:#22d3bf">diffuse</code>(水平面上的散射)、<code style="color:#22d3bf">air_mass</code>。</p>
 <p>直射 = 1361 W/m² × 0.7^{AM^0.678}(Meinel)× 105 lm/W × (1 − cloud),AM = Kasten &amp; Young 1989 1 / (sin h + 0.50572 (h + 6.07995°)^{−1.6364})。散射 = 晨昏表(高度 ≤ 0)/ 400 + 16000 sin h(高度 &gt; 0), 再乘以雲的 (1 + 0.5 cloud) —— 這是假設(見模組的 docstring)。</p>

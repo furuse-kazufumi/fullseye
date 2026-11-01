@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">abel_inverse — MATH <code style="color:#22d3bf">transform</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.abel_inverse(A, dr: &#x27;float&#x27; = 1.0, *, method: &#x27;str&#x27; = &#x27;derivative&#x27;, n_quad: &#x27;int&#x27; = 64) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import mathtransforms; mathtransforms.abel_inverse(A, dr: &#x27;float&#x27; = 1.0, *, method: &#x27;str&#x27; = &#x27;derivative&#x27;, n_quad: &#x27;int&#x27; = 64) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsmath.get(&quot;abel_inverse&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Gewinnt eine achsensymmetrische Verteilung f(r) aus der Projektion A(y) zurück (inverse Abel-Transformation = Tomographie eines achsensymmetrischen Objekts).</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;derivative&quot;</code> —— f(r) = −(1/π) ∫_r^R A&#x27;(y) / √(y² − r²) dy. Die Substitution y = √(r² + u²) beseitigt die Singularität, A wird mit einem kubischen Spline differenziert. Genau für glatte Projektionen, aber <b>die Ableitung verstärkt Rauschen</b>:</p>

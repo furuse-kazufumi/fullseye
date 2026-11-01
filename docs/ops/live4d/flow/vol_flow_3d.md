@@ -4,6 +4,7 @@ dim: live4d
 category: flow
 in: voxel × voxel
 out: flow_dense
+gpu: なし
 examples: [poc_live4d]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `voxel × voxel` → `flow_dense`
 - **呼び出し**: `import fullseye as fs; fs.ledger.vol_flow_3d(vol_a, vol_b, win: 'int' = 3, pyr_levels: 'int' = 3, iters: 'int' = 5, reg: 'float' = 0.001) -> 'np.ndarray'` (実装を直接呼ぶなら `import live4d; live4d.vol_flow_3d(vol_a, vol_b, win: 'int' = 3, pyr_levels: 'int' = 3, iters: 'int' = 5, reg: 'float' = 0.001) -> 'np.ndarray'`、台帳から引くなら `opslive4d.get("vol_flow_3d")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

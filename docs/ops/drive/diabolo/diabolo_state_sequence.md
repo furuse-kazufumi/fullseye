@@ -4,6 +4,7 @@ dim: drive
 category: diabolo
 in: matrix × any × table
 out: signal
+gpu: なし
 examples: [poc_diabolo_model_and_vision]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `matrix × any × table` → `signal`
 - **呼び出し**: `import fullseye as fs; fs.ledger.diabolo_state_sequence(X, sticks, params: 'dict', *, flying_rule: 'str' = 'paper', mode0: 'str' = 'on_string') -> 'np.ndarray'` (実装を直接呼ぶなら `import diabolo; diabolo.diabolo_state_sequence(X, sticks, params: 'dict', *, flying_rule: 'str' = 'paper', mode0: 'str' = 'on_string') -> 'np.ndarray'`、台帳から引くなら `opsdrive.get("diabolo_state_sequence")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">polyhedron_gravity — DRIVE <code style="color:#22d3bf">polygrav</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">any × points</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.polyhedron_gravity(mesh, points, density: &#x27;float&#x27; = 1.0, G: &#x27;float&#x27; = 6.6743e-11, omega: &#x27;float&#x27; = 0.0, spin_axis=(0.0, 0.0, 1.0), spin_center=None, normals=None) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import polygrav; polygrav.polyhedron_gravity(mesh, points, density: &#x27;float&#x27; = 1.0, G: &#x27;float&#x27; = 6.6743e-11, omega: &#x27;float&#x27; = 0.0, spin_axis=(0.0, 0.0, 1.0), spin_center=None, normals=None) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;polyhedron_gravity&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>एकसमान घनत्व वाला बंद बहुफलक प्रेक्षण बिंदुओं पर जो गुरुत्व पैदा करता है (Werner &amp; Scheeres 1997 का सटीक सूत्र)।</p>
 <p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>

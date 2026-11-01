@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">vx_nonmax_suppression — VX <code style="color:#22d3bf">suppress</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vx_nonmax_suppression(image, *, window, mask=None)</code> (to call the implementation directly, <code style="color:#22d3bf">import vxcore; vxcore.vx_nonmax_suppression(image, *, window, mask=None)</code>; from the registry, <code style="color:#22d3bf">opsvx.get(&quot;vx_nonmax_suppression&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Non-maximum suppression (Section 3.39). A pixel (x, y) survives only if, within the window, it is <b>≥ its preceding neighbors (the row above and the left in the same row) and &gt; its following neighbors</b> (REQ-0337). This asymmetry is why exactly 1 pixel survives on a flat peak. Nonzero pixels of *mask* are not compared and are kept as is (nor are they used in comparisons for other pixels, REQ-0336). Suppressed pixels become 0 for U8 and INT16_MIN for S16 (REQ-0335). Neighbors that fall outside the window are not compared.</p>
 <p>*window* (required): side length of an odd window (3, 5, …).</p>

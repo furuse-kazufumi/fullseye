@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">exponential_background — VIDEOSTREAM <code style="color:#22d3bf">recursive</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">video</code> → <code style="color:#22d3bf">video</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.exponential_background(video, alpha: &#x27;float&#x27; = 0.05) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import videostream; videostream.exponential_background(video, alpha: &#x27;float&#x27; = 0.05) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsvideostream.get(&quot;exponential_background&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>递归背景 <code style="color:#22d3bf">bg ← (1−α)·bg + α·frame</code> 逐帧 → <code style="color:#22d3bf">(T, H, W)</code>(<code style="color:#22d3bf">video</code>)。</p>
 <p>用第一帧初始化 <code style="color:#22d3bf">bg</code>，之后逐像素重复 <code style="color:#22d3bf">bg += α (frame - bg)</code> 的指数移动平均。状态只有 1 张背景(不持有窗口)。帧 <code style="color:#22d3bf">t</code> 的输出是该时刻 <code style="color:#22d3bf">bg</code> 的副本，<code style="color:#22d3bf">t = 0</code> 即输入的第一帧本身。</p>

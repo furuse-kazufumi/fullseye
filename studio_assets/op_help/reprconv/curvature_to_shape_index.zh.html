@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">curvature_to_shape_index — REPRCONV <code style="color:#22d3bf">curvature</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">curvature</code> → <code style="color:#22d3bf">pairs</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.curvature_to_shape_index(curvature)</code>(要直接调用实现,<code style="color:#22d3bf">import reprconv; reprconv.curvature_to_shape_index(curvature)</code>;从台账取用则 <code style="color:#22d3bf">opsreprconv.get(&quot;curvature_to_shape_index&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>主曲率 <code style="color:#22d3bf">(N,2)</code> → 形状指数与弯曲度 <code style="color:#22d3bf">(N,2)</code> 的 <code style="color:#22d3bf">pairs</code>。<code style="color:#22d3bf">curvature</code> 的出口。</p>
 <p>Koenderink &amp; van Doorn, *Surface shape and curvature scales*, Image and Vision Computing 10(8) 1992 的 (S, C):</p>

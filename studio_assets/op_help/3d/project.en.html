@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">project — 3D <code style="color:#22d3bf">bundle_adjust</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">keypoints</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.project(points, rvec, t, K)</code> (to call the implementation directly, <code style="color:#22d3bf">import bundle3d; bundle3d.project(points, rvec, t, K)</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;project&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Project 3-D points (n,3) to 2-D (n,2) with a camera (rvec, t, K) (perspective division).</p>
 <p>Computes <code style="color:#22d3bf">X_cam = R(rvec) @ X + t</code>, <code style="color:#22d3bf">x = K @ X_cam</code>, <code style="color:#22d3bf">uv = x[:2] / x[2]</code> for all points at once (same convention as <code style="color:#22d3bf">project_points</code>). <code style="color:#22d3bf">rvec</code> is a rotation vector (axis × angle [rad], scipy&#x27;s <code style="color:#22d3bf">Rotation.from_rotvec</code>), <code style="color:#22d3bf">t</code> is a (3,) translation and <code style="color:#22d3bf">K</code> a (3,3) intrinsic matrix. The return value is (n,2) float with column 0 = u (horizontal, column direction) and column 1 = v (vertical, row direction), in pixels following K.</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tid2013_index — IMGMETRICS <code style="color:#22d3bf">iqa</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tid2013_index(root) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import iqatid; iqatid.tid2013_index(root) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsimgmetrics.get(&quot;tid2013_index&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>讀取 <code style="color:#22d3bf">mos_with_names.txt</code>，回傳影像對的台帳。</p>
 <p>回傳值:<code style="color:#22d3bf">names</code>(3000,保持發布包的拼寫)、<code style="color:#22d3bf">mos</code> (3000,)、<code style="color:#22d3bf">ref</code> / <code style="color:#22d3bf">dist_type</code> / <code style="color:#22d3bf">level</code>(各為 int 陣列,從 1 開始)、<code style="color:#22d3bf">ref_files</code>(25 張參考圖的路徑,按編號順序)、<code style="color:#22d3bf">dist_files</code>(3000 張失真圖的路徑,按台帳順序)、<code style="color:#22d3bf">root</code>。作者值 <code style="color:#22d3bf">metrics_values/*.txt</code> 中沒有名稱,按<b>此台帳的順序</b>(i01_01_1 … i25_24_5)排列,所以順序由本函式掌握。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>:列數 ≠ 3000、名稱不是 iXX_YY_Z.bmp 的形式、名稱集合與 <code style="color:#22d3bf">distorted_images/</code> 的 BMP 不一致(忽略大小寫)、25 張參考圖不齊、MOS 在 [0, 9] 之外。</p>

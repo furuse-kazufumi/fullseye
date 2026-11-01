@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">rgb_apply_gains — GFX2D <code style="color:#22d3bf">isp</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">rgb × vector</code> → <code style="color:#22d3bf">rgb</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rgb_apply_gains(rgb, gains)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import gfx2d; gfx2d.rgb_apply_gains(rgb, gains)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsgfx2d.get(&quot;rgb_apply_gains&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>R, G, B channel को <code style="color:#22d3bf">gains</code> (3 मान) से गुणा करके <code style="color:#22d3bf">[0, 1]</code> पर clip करता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

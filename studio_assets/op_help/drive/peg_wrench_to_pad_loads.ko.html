@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">peg_wrench_to_pad_loads — DRIVE <code style="color:#22d3bf">pegtactile</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">signal × signal × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.peg_wrench_to_pad_loads(F_pad, M_pad, pad: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import pegtactile; pegtactile.peg_wrench_to_pad_loads(F_pad, M_pad, pad: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;peg_wrench_to_pad_loads&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>2개의 패드가 페그에 가하는 렌치(그리퍼 좌표계, 파지점 기준) → 각 패드의 (법선력 P, 막이 받는 전단 q = (q_u, q_v)).</p>
 <p>평형(유도): 패드 R(+x)는 페그에 −N_R x̂ 와 T_R, L(−x)는 +N_L x̂ 와 T_L. F_x = N_L − N_R, F_y = T_Ry + T_Ly, F_z = T_Rz + T_Lz, M_y = −w(T_Rz − T_Lz), M_z = w(T_Ry − T_Ly), M_x = 비틀림(절반씩). 법선은 파지력으로 N = G₀ ∓ F_x/2.</p>

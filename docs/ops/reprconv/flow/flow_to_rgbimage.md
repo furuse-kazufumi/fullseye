@@ -4,6 +4,7 @@ dim: reprconv
 category: flow
 in: flow_dense
 out: rgbimage
+gpu: なし
 examples: [representation_conversion]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `flow_dense` → `rgbimage`
 - **呼び出し**: `import fullseye as fs; fs.ledger.flow_to_rgbimage(flow, index=None, scale=None)` (実装を直接呼ぶなら `import reprconv; reprconv.flow_to_rgbimage(flow, index=None, scale=None)`、台帳から引くなら `opsreprconv.get("flow_to_rgbimage")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

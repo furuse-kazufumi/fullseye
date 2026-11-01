@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">distance_point_line — 3D <code style="color:#22d3bf">geometry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">points × primitive</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.distance_point_line(p, line_pt, d)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import match3d; match3d.distance_point_line(p, line_pt, d)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;distance_point_line&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>점에서 직선(통과점과 방향)까지의 수직 거리를 반환한다(2-D / 3-D 공통).</p>
 <p><code style="color:#22d3bf">w = p − line_pt</code>의, 방향 <code style="color:#22d3bf">d̂</code>에 직교하는 성분의 길이 <code style="color:#22d3bf">|w − (w·d̂)d̂|</code>를 float로 반환한다(<code style="color:#22d3bf">d</code>는 내부에서 단위화. 2-D/3-D 공통). <code style="color:#22d3bf">p</code>, <code style="color:#22d3bf">line_pt</code>, <code style="color:#22d3bf">d</code>는 수치의 2 또는 3 벡터, 차원 혼재는 ValueError. <code style="color:#22d3bf">d</code>가 영벡터이면 <code style="color:#22d3bf">|w|</code>가 그대로 반환된다. 단위는 입력 좌표의 단위.</p>

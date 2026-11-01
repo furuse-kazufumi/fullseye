@@ -4,6 +4,7 @@ dim: optics
 category: spectral
 in: pairs
 out: pairs
+gpu: なし
 examples: [poc_hyperspectral_foreign_matter]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `pairs` → `pairs`
 - **呼び出し**: `import fullseye as fs; fs.ledger.kubelka_munk_reflectance(absorption, scattering_per_mm=5.0, thickness_mm=1.0, background_reflectance=0.0, diffuse_factor=2.0)` (実装を直接呼ぶなら `import spectralrad; spectralrad.kubelka_munk_reflectance(absorption, scattering_per_mm=5.0, thickness_mm=1.0, background_reflectance=0.0, diffuse_factor=2.0)`、台帳から引くなら `opsoptics.get("kubelka_munk_reflectance")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

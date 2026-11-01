@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">vol_gaussian_psf — 3D <code style="color:#22d3bf">restoration</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">measurement</code> → <code style="color:#22d3bf">voxel</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_gaussian_psf(sigma, truncate=4.0)</code>(要直接调用实现,<code style="color:#22d3bf">import volrestore; volrestore.vol_gaussian_psf(sigma, truncate=4.0)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;vol_gaussian_psf&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>归一化(和为 1)的 3-D 高斯 PSF 核。*sigma* 为标量或逐轴。</p>
 <p>逐轴的 *sigma* 为 <code style="color:#22d3bf">(sz, sy, sx)</code>,单位为 voxel;核在每个轴上覆盖 <code style="color:#22d3bf">+-truncate*sigma</code> (奇数尺寸,中心位于中间 voxel)。当仪器 PSF 可很好地近似为 Gaussian 时,它是 <code style="color:#22d3bf">vol_richardson_lucy</code> 的便捷搭档。超过 <code style="color:#22d3bf">PSF_MAX_ELEMENTS</code> (~256^3) 的核会引发 <code style="color:#22d3bf">ValueError</code> —— 那么大的 PSF 是输入错误,而不是仪器。</p>

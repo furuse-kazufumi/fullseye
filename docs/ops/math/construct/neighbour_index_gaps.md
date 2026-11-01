@@ -4,6 +4,7 @@ dim: math
 category: construct
 in: pairs
 out: signal
+gpu: なし
 examples: [poc_theorems_as_pictures]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `pairs` → `signal`
 - **呼び出し**: `import fullseye as fs; fs.ledger.neighbour_index_gaps(points, k=6, chunk=65536)` (実装を直接呼ぶなら `import mathops; mathops.neighbour_index_gaps(points, k=6, chunk=65536)`、台帳から引くなら `opsmath.get("neighbour_index_gaps")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

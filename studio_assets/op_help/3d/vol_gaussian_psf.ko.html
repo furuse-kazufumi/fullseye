@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">vol_gaussian_psf — 3D <code style="color:#22d3bf">restoration</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">measurement</code> → <code style="color:#22d3bf">voxel</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_gaussian_psf(sigma, truncate=4.0)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import volrestore; volrestore.vol_gaussian_psf(sigma, truncate=4.0)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;vol_gaussian_psf&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>총합 1 로 정규화한 3-D 가우스 PSF 커널. *sigma* 는 스칼라 또는 축별.</p>
 <p>축별 *sigma* 는 <code style="color:#22d3bf">(sz, sy, sx)</code>, voxel 단위; 커널은 축마다 <code style="color:#22d3bf">+-truncate*sigma</code> 를 덮는다(홀수 크기, 중심은 가운데 voxel). 장비 PSF 가 Gaussian 으로잘 근사될 때 <code style="color:#22d3bf">vol_richardson_lucy</code> 의 편리한 짝이다. <code style="color:#22d3bf">PSF_MAX_ELEMENTS</code> (~256^3) 를 넘는 커널은 <code style="color:#22d3bf">ValueError</code> 를 낸다 — 그렇게 큰 PSF 는 장비가 아니라 입력 실수다.</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">linescan_lens_columns — OPTICS <code style="color:#22d3bf">linescan</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.linescan_lens_columns(profile=None, width=8192, pixel_um=7.0, frequency_index=None)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import linescan; linescan.linescan_lens_columns(profile=None, width=8192, pixel_um=7.0, frequency_index=None)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;linescan_lens_columns&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p><code style="color:#22d3bf">lens_field_profile</code> の像高の表を、ラインセンサの<b>画素列ごと</b>の照度とぼけにする(<code style="color:#22d3bf">table</code>)。</p>
 <p>列 j の像高 = |j − (width − 1)/2| × 画素ピッチ。照度は像高で線形補間(表の外は ValueError —— 外挿しない)。ぼけは MTF を 1 つの周波数 ν(<code style="color:#22d3bf">frequency_index</code>、既定は表の真ん中)でガウスに合わせた σ:</p>

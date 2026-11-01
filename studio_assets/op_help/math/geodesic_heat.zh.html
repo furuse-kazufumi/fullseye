@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">geodesic_heat — MATH <code style="color:#22d3bf">geometry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">mesh</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.geodesic_heat(vertices, faces=None, source=0, *, t: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import mathgeometry; mathgeometry.geodesic_heat(vertices, faces=None, source=0, *, t: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsmath.get(&quot;geodesic_heat&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用热方法求曲面上的测地距离(Crane et al. 2013)。<code style="color:#22d3bf">source</code> 为顶点编号(或编号序列，默认为顶点 0)。网格可以是 <code style="color:#22d3bf">(vertices, faces)</code>，也可以是1 个 mesh 元组。</p>
 <p style="margin:2px 0 2px 12px">1) 解 (M − tL) u = δ 1 步(使热扩散时间 t，t 的默认值 = 平均边长²)</p>

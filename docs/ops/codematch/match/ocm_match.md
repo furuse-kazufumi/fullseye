@@ -4,6 +4,7 @@ dim: codematch
 category: match
 in: image2d × image2d
 out: table
+gpu: なし
 examples: [poc_code_matching_breakdown]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d × image2d` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.ocm_match(image, template, n_codes=16, grad_thresh=0.05, min_valid=32, min_valid_fraction=0.05) -> 'dict'` (実装を直接呼ぶなら `import codematch; codematch.ocm_match(image, template, n_codes=16, grad_thresh=0.05, min_valid=32, min_valid_fraction=0.05) -> 'dict'`、台帳から引くなら `opscodematch.get("ocm_match")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

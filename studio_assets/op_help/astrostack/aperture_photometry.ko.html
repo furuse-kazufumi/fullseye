@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">aperture_photometry — ASTROSTACK <code style="color:#22d3bf">photometry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d × keypoints</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.aperture_photometry(image, centers, r_aperture=5.0, r_inner=8.0, r_outer=12.0, read_sigma=0.0, gain=1.0, supersample=8, method=&#x27;exact&#x27;)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import astrostack; astrostack.aperture_photometry(image, centers, r_aperture=5.0, r_inner=8.0, r_outer=12.0, read_sigma=0.0, gain=1.0, supersample=8, method=&#x27;exact&#x27;)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsastrostack.get(&quot;aperture_photometry&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>원형 조리개 + 환형 배경 측광(고전적 CCD 측광).</p>
 <p><code style="color:#22d3bf">method=&quot;patch&quot;</code>는 개구 주변만 할당하는 메모리 절약 변형이다. 2048 정사각형 영상, 반경 8.2, 8배 샘플링에서 최대 사용량이 33.6 MB에서 0.34 MB로 줄어든다. 합산 순서가 바뀌므로 큰 직류 성분이 있는 영상에서는 마지막 비트가 달라질 수 있다. 기본 <code style="color:#22d3bf">&quot;exact&quot;</code>는 기존 동작을 유지한다.</p>

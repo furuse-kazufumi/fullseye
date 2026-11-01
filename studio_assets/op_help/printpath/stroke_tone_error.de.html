@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">stroke_tone_error — PRINTPATH <code style="color:#22d3bf">stroke</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image2d × pairs</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.stroke_tone_error(image, points, pen_width=1.0, blur_sigma=3.0, gamma=1.0)</code> (die Implementierung direkt: <code style="color:#22d3bf">import printpath; printpath.stroke_tone_error(image, points, pen_width=1.0, blur_sigma=3.0, gamma=1.0)</code>; aus dem Register: <code style="color:#22d3bf">opsprintpath.get(&quot;stroke_tone_error&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Wie stark der aus dem Zeichnen der Linien resultierende <b>Tonwert</b> vom Ziel abweicht. → <code style="color:#22d3bf">table</code></p>
 <p>★Dies ist die <b>eigentliche Zielfunktion</b> des Zeichnens in einem durchgehenden Zug. Statt &quot;es ähnelt dem Bild&quot; dem menschlichen Auge zu überlassen, wird mit der Stiftbreite gezeichnet, auf den Maßstab des Auges weichgezeichnet, mit der Zieldunkelheit verglichen und als Zahl zurückgegeben.</p>

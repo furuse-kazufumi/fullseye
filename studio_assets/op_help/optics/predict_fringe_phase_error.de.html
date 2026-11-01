@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">predict_fringe_phase_error — OPTICS <code style="color:#22d3bf">light_transport</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.predict_fringe_phase_error(transport, period=16.0, triangulation_deg=20.0, projector_width=None, irradiance=1.0)</code> (die Implementierung direkt: <code style="color:#22d3bf">import lighttransport; lighttransport.predict_fringe_phase_error(transport, period=16.0, triangulation_deg=20.0, projector_width=None, irradiance=1.0)</code>; aus dem Register: <code style="color:#22d3bf">opsoptics.get(&quot;predict_fringe_phase_error&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Sagt je Kamerapixel aus der Lichttransportmatrix die Streifenphasen-Abweichung und den Höhenfehler voraus, die Interreflexion bei der Phasenschiebe-Profilometrie verursacht (<code style="color:#22d3bf">table</code>).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>

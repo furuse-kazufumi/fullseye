@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">slip_predict — DRIVE <code style="color:#22d3bf">roverslip</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">table × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.slip_predict(model, slopes, level: &#x27;float&#x27; = 0.9) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import roverslip; roverslip.slip_predict(model, slopes, level: &#x27;float&#x27; = 0.9) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;slip_predict&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>滑移率的預測與雙側 <code style="color:#22d3bf">level</code> 區間帶。高斯過程為觀測的預測分布(潛在變異數 + 雜訊)，分位數迴歸則為曲線本身。</p>
 <p>回傳 <code style="color:#22d3bf">{&quot;mean&quot;, &quot;std&quot;, &quot;lower&quot;, &quot;upper&quot;, &quot;median&quot;, &quot;level&quot;}</code>(各為 (n,))。分位數迴歸的 <code style="color:#22d3bf">mean</code> 為擬合的各分位數的平均,<code style="color:#22d3bf">std</code> 為四分位距 / 1.349,帶的兩端為 (1 ± level)/2 的分位數(不在擬合的段中則 ValueError), 若有共形校正(<code style="color:#22d3bf">slip_quantile_fit</code> 的 <code style="color:#22d3bf">conformal</code>)則再加上該寬度。</p>

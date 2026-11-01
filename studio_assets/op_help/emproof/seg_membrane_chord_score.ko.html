@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">seg_membrane_chord_score — EMPROOF <code style="color:#22d3bf">suspect</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">labels2d × image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.seg_membrane_chord_score(labels, membrane, tau: &#x27;float&#x27; = 0.2, band: &#x27;int&#x27; = 4, min_area: &#x27;int&#x27; = 1500, min_segment: &#x27;int&#x27; = 20, normalize: &#x27;bool&#x27; = True, ignore_zero: &#x27;bool&#x27; = True, max_points: &#x27;int&#x27; = 400, min_hole: &#x27;int&#x27; = 4) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import emproof; emproof.seg_membrane_chord_score(labels, membrane, tau: &#x27;float&#x27; = 0.2, band: &#x27;int&#x27; = 4, min_area: &#x27;int&#x27; = 1500, min_segment: &#x27;int&#x27; = 20, normalize: &#x27;bool&#x27; = True, ignore_zero: &#x27;bool&#x27; = True, max_points: &#x27;int&#x27; = 400, min_hole: &#x27;int&#x27; = 4) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsemproof.get(&quot;seg_membrane_chord_score&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p><b>융합 의심</b>: 라벨 내부를 가로지르는 막의 &#x27;현&#x27; 길이 / 라벨의 지름. 라벨(연결 성분)마다 1행.</p>
 <p>절차 : 성분의 내부 (경계에서 &quot;band&quot;px보다 내)에서 막 응답&gt; &quot;tau&quot;의 픽셀을 8 개의 연결 성분으로 만들고,</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">jpeg_ghost_map — IMGFORENSICS <code style="color:#22d3bf">compression</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">images</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.jpeg_ghost_map(image, qualities=None, block: &#x27;int&#x27; = 16) -&gt; &#x27;list&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import imgforensics; imgforensics.jpeg_ghost_map(image, qualities=None, block: &#x27;int&#x27; = 16) -&gt; &#x27;list&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsimgforensics.get(&quot;jpeg_ghost_map&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>JPEG 고스트(Farid 2009). 품질을 훑어 얻은 <b>재압축 잔차 지도의 열</b>. <code style="color:#22d3bf">images</code>.</p>
 <p>어떤 영역이 품질 <code style="color:#22d3bf">q0</code>로 한 번 압축되어 있으면, <code style="color:#22d3bf">q = q0</code>로 재압축했을 때그 영역의 차분이 <b>골</b>이 된다. 화상 전체가 같은 <code style="color:#22d3bf">q0</code>이면 골은 전면에 나오지만, 다른 품질로 압축된 부분이 붙어 있으면 <b>그 영역만 다른 <code style="color:#22d3bf">q</code>에서 골이 된다</b>.</p>

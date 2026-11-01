@@ -4,6 +4,7 @@ dim: oned
 category: matched
 in: signal × signal
 out: table
+gpu: なし
 examples: [poc_gw_detector_pseudo_simulation]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal × signal` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.coincidence_delay(snr_a, snr_b, rate: 'float' = 4096.0, *, max_delay_s: 'float' = 0.01) -> 'dict'` (実装を直接呼ぶなら `import gwsearch; gwsearch.coincidence_delay(snr_a, snr_b, rate: 'float' = 4096.0, *, max_delay_s: 'float' = 0.01) -> 'dict'`、台帳から引くなら `ops1d.get("coincidence_delay")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

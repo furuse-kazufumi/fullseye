@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">assign_hungarian — MATH <code style="color:#22d3bf">estimation</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.assign_hungarian(cost, *, maximize: &#x27;bool&#x27; = False) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import mathestimation; mathestimation.assign_hungarian(cost, *, maximize: &#x27;bool&#x27; = False) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsmath.get(&quot;assign_hungarian&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>비용 행렬 (n, m)의 할당 문제를 푼다(Kuhn 1955 / Munkres 1957의 헝가리안 방법, scipy 구현).</p>
 <p>행과 열을 1 대 1로 짝지어, 고른 비용의 총합을 최소(<code style="color:#22d3bf">maximize=True</code>이면 최대)로 한다. n != m이면 짧은 쪽이 전부 짝지어진다. 반환값 <code style="color:#22d3bf">{&quot;rows&quot;, &quot;cols&quot;, &quot;total&quot;, &quot;pairs&quot;}</code>. 게이트: 작은 행렬에서 모든 순열의 전수 조사와 일치한다.</p>

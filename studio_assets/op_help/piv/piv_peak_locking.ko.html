@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">piv_peak_locking — PIV <code style="color:#22d3bf">assess</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">flow2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_peak_locking(flow, bins=20)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import pivops; pivops.piv_peak_locking(flow, bins=20)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opspiv.get(&quot;piv_peak_locking&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>피크 로킹의 강도. 소수부의 분포가 균일 분포에서 얼마나 벗어나 있는가.</p>
 <p>서브 픽셀 추정은 진정한 변위의 소수 부분이 0 또는 0.5 일 때 거기에 끌립니다. 편향 (상관 피크의 형태와 맞는 함수의 형태가 다르기 때문에 PIV 교과서 계통 오차). 흐름이 균일하지 않으면 소수부는 균일 분포에 가까워야 하며, 거기로부터의 어긋남을 측정한다.</p>

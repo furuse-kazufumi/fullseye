@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">fit_aero — DRIVE <code style="color:#22d3bf">ball</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">signal × points × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fit_aero(t, p, omega, bp: &#x27;dict&#x27;, *, iters: &#x27;int&#x27; = 15, dt: &#x27;float&#x27; = 0.001) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import ballistics; ballistics.fit_aero(t, p, omega, bp: &#x27;dict&#x27;, *, iters: &#x27;int&#x27; = 15, dt: &#x27;float&#x27; = 0.001) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;fit_aero&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>從軌跡<b>連同空氣動力係數一起</b>辨識：以 Gauss–Newton 求 (p₀, v₀, C_d, C_L) 的 8 個參數(ω 已知，C_L 作為常數擬合)。阻力與速度的 2 次方成比例，馬格努斯與 ω × v 成比例，因此除非軌跡為非直線(有旋轉、夠長)，否則 C_L 難以確定(與 <code style="color:#22d3bf">rms</code> 一起回傳 <code style="color:#22d3bf">cond</code> = Jacobian 的條件數，可據此判斷)。回傳值 <code style="color:#22d3bf">{&quot;p0&quot;, &quot;v0&quot;, &quot;cd&quot;, &quot;cl&quot;, &quot;rms&quot;, &quot;cond&quot;, &quot;iters&quot;}</code>。對真值軌跡(以常數 C_L 產生)可在 1e-6 內還原(門檻)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

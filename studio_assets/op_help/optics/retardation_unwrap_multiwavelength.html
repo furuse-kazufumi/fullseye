@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">retardation_unwrap_multiwavelength — OPTICS <code style="color:#22d3bf">photoelastic</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">images</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.retardation_unwrap_multiwavelength(deltas_rad, wavelengths_nm, max_retardation_nm, folded=True)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import photoelastic; photoelastic.retardation_unwrap_multiwavelength(deltas_rad, wavelengths_nm, max_retardation_nm, folded=True)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;retardation_unwrap_multiwavelength&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>複数波長の巻いた位相差から絶対位相差(nm)を決める(分散なしの仮定)→ dict。</p>
 <p>The retardation <code style="color:#22d3bf">R = t·Δn</code> [nm] is assumed independent of wavelength (no dispersion of C). For each pixel, every candidate from the first wavelength, <code style="color:#22d3bf">R = (k + f)λ1</code> (and <code style="color:#22d3bf">(k + 1 − f)λ1</code> when <code style="color:#22d3bf">folded</code>, <code style="color:#22d3bf">f = δ1/2π</code>), up to <code style="color:#22d3bf">max_retardation_nm</code>, is scored by how well it predicts the measured phase at every other wavelength (residual in nm); the best candidate wins.</p>

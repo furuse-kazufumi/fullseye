@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">conv_observed_order — CONVERGE <code style="color:#22d3bf">verification</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.conv_observed_order(phi=None, h=None, r=None, n_cells=None, dim=None) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import converge; converge.conv_observed_order(phi=None, h=None, r=None, n_cells=None, dim=None) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsconverge.get(&quot;conv_observed_order&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Apparent order of convergence p from three systematically refined solutions (Celik et al. 2008, eq. 3).</p>
 <p><code style="color:#22d3bf">phi</code> = (phi1, phi2, phi3) on grids 1 (finest) .. 3 (coarsest). The refinement is given by exactly one of <code style="color:#22d3bf">h</code> = (h1, h2, h3) representative cell sizes, <code style="color:#22d3bf">r</code> = (r21, r32) with r21 = h2/h1 and r32 = h3/h2, or <code style="color:#22d3bf">n_cells</code> = (N1, N2, N3) with <code style="color:#22d3bf">dim</code> (h from Celik eqs. (1)-(2)). With eps32 = phi3 - phi2 and eps21 = phi2 - phi1 (Step 3):</p>

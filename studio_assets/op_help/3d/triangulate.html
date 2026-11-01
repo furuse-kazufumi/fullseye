@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">triangulate — 3D <code style="color:#22d3bf">two_view</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.triangulate(pts1, pts2, P1, P2)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import twoview; twoview.triangulate(pts1, pts2, P1, P2)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;triangulate&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>DLT 三角測量: 2 視点の対応点 + 射影行列 → 3D 点。→ (N,3)。</p>
 <p><b>無限遠点は <code style="color:#22d3bf">NaN</code> で返す</b>(<code style="color:#22d3bf">±inf</code> にはしない)。同次座標の第 4 成分が 0 = 2 本の視線が平行で、その対応は有限の 3-D 点を決めない。以前はそのまま割って <code style="color:#22d3bf">±inf</code> を出していたが、それだと下流の cheirality 判定 <code style="color:#22d3bf">depth &gt; 0</code> が <b><code style="color:#22d3bf">inf</code> を「カメラ前方」として数える</b>(<code style="color:#22d3bf">inf &gt; 0</code> は <code style="color:#22d3bf">True</code>)。<code style="color:#22d3bf">recover_pose</code> は 4 つの (R, t) 候補のうち前方点が最多のものを選ぶので、無限遠点が票を持つと候補選択が静かに歪む。<code style="color:#22d3bf">NaN</code> なら比較が <code style="color:#22d3bf">False</code> になり、数えられずに済む(2026-09-02、chain_fuzz が到達して発覚)。</p>

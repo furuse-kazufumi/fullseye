@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">delaunay_triangulate — MATH <code style="color:#22d3bf">geometry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.delaunay_triangulate(points) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import mathgeometry; mathgeometry.delaunay_triangulate(points) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsmath.get(&quot;delaunay_triangulate&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>planar (N, 2) points का triangulation, या spatial (N, 3) points का tetrahedralization (Delaunay, scipy.spatial = Qhull)।</p>
 <p><code style="color:#22d3bf">{&quot;simplices&quot;, &quot;hull&quot;, &quot;n_simplices&quot;, &quot;circumcenters&quot;, &quot;circumradii&quot;, &quot;dim&quot;}</code> लौटाता है (2-D में समान सामग्री वाले <code style="color:#22d3bf">triangles</code> / <code style="color:#22d3bf">n_triangles</code> भी)। Circumcircles और circumspheres drawing और Voronoi के लिए हैं।</p>

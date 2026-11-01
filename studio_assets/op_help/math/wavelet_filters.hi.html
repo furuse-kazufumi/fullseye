@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">wavelet_filters — MATH <code style="color:#22d3bf">transform</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">table</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.wavelet_filters(order: &#x27;int&#x27; = 2) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import mathtransforms; mathtransforms.wavelet_filters(order: &#x27;int&#x27; = 2) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsmath.get(&quot;wavelet_filters&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Daubechies orthonormal wavelet dbN के filters, textbook construction (spectral factorization) से बनाता है।</p>
 <p>|H(ω)|² = cos^{2N}(ω/2)·P(sin²(ω/2)), P(y) = Σ_{k&lt;N} C(N−1+k, k) y^k (Daubechies 1988)। P के roots में से unit circle के अंदर वाले zeros चुनकर (1 + z⁻¹)^N से गुणा किया जाता है। कोई table copy नहीं की जाती, इसलिए significant digits खोने से होने वाली नकल की गलतियाँ नहीं होतीं (gate मानों को जाँचता है)।</p>

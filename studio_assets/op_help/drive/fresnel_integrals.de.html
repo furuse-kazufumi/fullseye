@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">fresnel_integrals — DRIVE <code style="color:#22d3bf">lateral</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fresnel_integrals(x)</code> (die Implementierung direkt: <code style="color:#22d3bf">import drivelateral; drivelateral.fresnel_integrals(x)</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;fresnel_integrals&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Fresnel-Integrale C(x) = ∫₀ˣ cos(π t²/2) dt, S(x) = ∫₀ˣ sin(π t²/2) dt (ungerade Funktionen).</p>
 <p>Für |x| ≤ 3.5 eine Potenzreihe, darüber eine asymptotische Entwicklung (Hilfsfunktionen f, g). Fehler höchstens 1e-8 (Gate: numerische Integration).</p>

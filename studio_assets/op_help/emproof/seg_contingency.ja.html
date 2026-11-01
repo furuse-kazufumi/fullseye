@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">seg_contingency — EMPROOF <code style="color:#22d3bf">score</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">labels2d × labels2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.seg_contingency(a, b, ignore_label=None)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import segcompare; segcompare.seg_contingency(a, b, ignore_label=None)</code>、台帳から引くなら <code style="color:#22d3bf">opsemproof.get(&quot;seg_contingency&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>正解と候補の 2 つの分割の分割表(同時に現れるラベルの対と画素数)。</p>
 <p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>

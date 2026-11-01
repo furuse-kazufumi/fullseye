@@ -4,6 +4,7 @@ dim: optics
 category: illumination
 in: image2d
 out: table
+gpu: なし
 examples: [illumination_design_demo]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.illumination_uniformity(irradiance, region_fraction=0.8)` (実装を直接呼ぶなら `import illumdesign; illumdesign.illumination_uniformity(irradiance, region_fraction=0.8)`、台帳から引くなら `opsoptics.get("illumination_uniformity")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

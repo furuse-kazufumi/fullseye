@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">mesh_slice_stack — PRINTPATH <code style="color:#22d3bf">slice</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">mesh</code> → <code style="color:#22d3bf">voxel</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mesh_slice_stack(mesh: &#x27;Any&#x27;, layer_mm: &#x27;float&#x27; = 0.2, px_per_mm: &#x27;float&#x27; = 10.0, bounds=None) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import printpath; printpath.mesh_slice_stack(mesh: &#x27;Any&#x27;, layer_mm: &#x27;float&#x27; = 0.2, px_per_mm: &#x27;float&#x27; = 10.0, bounds=None) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsprintpath.get(&quot;mesh_slice_stack&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>메시를 <code style="color:#22d3bf">layer_mm</code> 간격으로 자른 <b>층 마스크의 적층</b> <code style="color:#22d3bf">voxel</code> (Z, Y, X)(0 / 1, Z는 아래부터).</p>
 <p>각 층은 <code style="color:#22d3bf">mesh_slice_contours</code> 의 윤곽을 <b>nonzero winding</b> 으로 칠한다(바깥 방향 법선의 고리는 속, 안쪽 방향 법선 = 구멍의 고리는뺀다. 구멍만 남는 층은 비어 있다). 메시의 면 방향이 맞춰져 있는 것이 전제(STL / 3MF 의 규약). <code style="color:#22d3bf">bounds</code> 는 x–y 의범위(mm), 없으면 메시 전체 + 2 mm. 형태에 닿지 않는 층(위아래 끝)은 0 그대로.</p>

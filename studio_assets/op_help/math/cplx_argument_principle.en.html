@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">cplx_argument_principle — MATH <code style="color:#22d3bf">complex</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">cpoints × cpoints</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cplx_argument_principle(z, fz)</code> (to call the implementation directly, <code style="color:#22d3bf">import mathops; mathops.cplx_argument_principle(z, fz)</code>; from the registry, <code style="color:#22d3bf">opsmath.get(&quot;cplx_argument_principle&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Argument principle: count zeros minus poles enclosed by a contour, from sampled values of <code style="color:#22d3bf">f</code> alone.</p>
 <p><code style="color:#22d3bf">Z - P = 1/(2*pi*i) ∮ f&#x27;/f dz</code> equals the winding number of the <b>image curve</b> <code style="color:#22d3bf">f(z)</code> around the origin (Cauchy 1831 / Riemann): as the contour is traversed once counter-clockwise, the argument of <code style="color:#22d3bf">f</code> increases by <code style="color:#22d3bf">2*pi (Z - P)</code>, counting multiplicities. Computing it as a winding number of the image needs no derivative and no root finding — only <code style="color:#22d3bf">f</code> sampled on the path — and returns an exact integer.</p>

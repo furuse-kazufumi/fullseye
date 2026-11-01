@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">cylinder_sdf — 3D <code style="color:#22d3bf">sdf_csg</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">coordgrid</code> → <code style="color:#22d3bf">sdf</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cylinder_sdf(grid, center, axis, radius, height)</code>(要直接调用实现,<code style="color:#22d3bf">import sdf_ops; sdf_ops.cylinder_sdf(grid, center, axis, radius, height)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;cylinder_sdf&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>有限长圆柱(两端为平盖)的<b>精确</b>有符号距离场(内侧为负、外侧为正)。</p>
 <p>拆分为轴向距离 <code style="color:#22d3bf">t</code> 和到轴的半径 <code style="color:#22d3bf">r</code>，令 <code style="color:#22d3bf">q = (r - radius, |t| - height/2)</code>，则 <code style="color:#22d3bf">outside = ‖max(q, 0)‖</code>、<code style="color:#22d3bf">inside = min(max(q), 0)</code>、<code style="color:#22d3bf">sdf = outside + inside</code>。这是把与 <code style="color:#22d3bf">box_sdf</code> 相同的 Quilez 式构造应用于“（半径，轴）的 2-D 截面”，因此对侧面、端盖、角（边缘）都是真正的欧几里得距离。</p>

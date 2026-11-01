@@ -4,6 +4,7 @@ dim: dem
 category: geodesy
 in: points
 out: points
+gpu: なし
 examples: [poc_geodetic_benchmarks_real, poc_geodetic_height_frames]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `points` → `points`
 - **呼び出し**: `import fullseye as fs; fs.ledger.dem_geodetic_from_enu(enu, lat0_deg, lon0_deg, h0_m)` (実装を直接呼ぶなら `import demops; demops.dem_geodetic_from_enu(enu, lat0_deg, lon0_deg, h0_m)`、台帳から引くなら `opsdem.get("dem_geodetic_from_enu")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

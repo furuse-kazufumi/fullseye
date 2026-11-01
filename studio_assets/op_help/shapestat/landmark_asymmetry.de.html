@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">landmark_asymmetry — SHAPESTAT <code style="color:#22d3bf">symmetry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.landmark_asymmetry(landmarks, pairs=None, plane=None)</code> (die Implementierung direkt: <code style="color:#22d3bf">import shapestats; shapestats.landmark_asymmetry(landmarks, pairs=None, plane=None)</code>; aus dem Register: <code style="color:#22d3bf">opsshapestat.get(&quot;landmark_asymmetry&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p><b>Vorzeichenbehaftete</b> Asymmetrie je Links/Rechts-Paar. → <code style="color:#22d3bf">(M,)</code>.</p>
 <p>Für jedes Paar wird ein Punkt an der Ebene gespiegelt und mit dem anderen verglichen; zurückgegeben wird die Differenz entlang der Ebenennormalen. Das Vorzeichen ist &quot;positiv, wenn rechts außen liegt&quot; (<code style="color:#22d3bf">mirror_plane_from_pairs</code> richtet die Normale in diese Richtung aus). <b>Es wird nicht zu einem Absolutwert zusammengefasst</b> -- welche Seite, links oder rechts, hervorsteht, bedeutet klinisch wie in der Prüfung etwas anderes.</p>

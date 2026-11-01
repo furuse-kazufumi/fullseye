@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">flow_magnitude — REPRCONV <code style="color:#22d3bf">flow</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">flow_dense</code> → <code style="color:#22d3bf">voxel</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.flow_magnitude(flow)</code> (die Implementierung direkt: <code style="color:#22d3bf">import reprconv; reprconv.flow_magnitude(flow)</code>; aus dem Register: <code style="color:#22d3bf">opsreprconv.get(&quot;flow_magnitude&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Dichter Szenenfluss <code style="color:#22d3bf">(3,D,H,W)</code> → ein Geschwindigkeitsvolumen <code style="color:#22d3bf">voxel (D,H,W)</code>. Der Ausgang aus <code style="color:#22d3bf">flow</code>.</p>
 <p><code style="color:#22d3bf">sqrt(dz^2 + dy^2 + dx^2)</code>. <b>Einseitig</b> (die Richtung wird verworfen, daher nicht umkehrbar). Das Verworfene lässt sich explizit benennen: Von den 3 Komponenten verschwindet die Richtung im Umfang von 2 Freiheitsgraden, übrig bleibt nur der Betrag. Wer auch die Richtung sehen will: <code style="color:#22d3bf">flow_to_rgbimage</code>.</p>

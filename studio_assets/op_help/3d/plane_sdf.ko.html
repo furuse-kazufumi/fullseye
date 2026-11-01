@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">plane_sdf — 3D <code style="color:#22d3bf">sdf_csg</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">coordgrid</code> → <code style="color:#22d3bf">sdf</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.plane_sdf(grid, point, normal, method=&#x27;exact&#x27;)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import sdf_ops; sdf_ops.plane_sdf(grid, point, normal, method=&#x27;exact&#x27;)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;plane_sdf&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>반공간의 엄밀한 부호 거리장. <code style="color:#22d3bf">fast</code> 는 1e6에서 상대 차이 1.5e-10으로 측정된 선택 경로이며 기본값은 <code style="color:#22d3bf">exact</code> 이다.</p>
 <p><code style="color:#22d3bf">sdf(p) = (p - point) · n̂</code>. 법선 <code style="color:#22d3bf">n̂</code> 이 <b>가리키는 쪽이 바깥(양)</b>이고, 반대쪽이 안쪽이다. 모따기(chamfer), 절단, &quot;기판에서 위쪽만&quot; 같은 <b>한쪽만 남기는</b> 연산에 쓴다. <code style="color:#22d3bf">sdf_intersect</code> 를 겹치면 임의의 볼록 다면체를 만들 수 있다. 단 <b>max 에 의한 교차는 모서리 바깥에서엄밀하지 않다</b>: 6 장으로 직육면체를 만들면 점유(<code style="color:#22d3bf">&lt;= 0</code>)와 안쪽 값은 <code style="color:#22d3bf">box_sdf</code> 와 완전히 일치하지만, 바깥은 모서리 근처에서 최대 2.1(반변 2 의 상자, 격자 0.25 에서 실측)만큼 <b>과소평가</b>한다 —— CSG 의 표준적인 성질로, 거리 자체가 필요하면 <code style="color:#22d3bf">box_sdf</code> 를 쓴다.</p>

@@ -4,6 +4,7 @@ dim: reprconv
 category: keypoint
 in: points
 out: position
+gpu: なし
 examples: [representation_conversion, representation_roundtrip]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `points` → `position`
 - **呼び出し**: `import fullseye as fs; fs.ledger.points_to_position(points)` (実装を直接呼ぶなら `import reprconv; reprconv.points_to_position(points)`、台帳から引くなら `opsreprconv.get("points_to_position")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

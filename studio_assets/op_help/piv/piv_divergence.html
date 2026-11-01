@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">piv_divergence — PIV <code style="color:#22d3bf">field</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">flow2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_divergence(flow, spacing=1.0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import pivops; pivops.piv_divergence(flow, spacing=1.0)</code>、台帳から引くなら <code style="color:#22d3bf">opspiv.get(&quot;piv_divergence&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>発散 <code style="color:#22d3bf">d(dy)/dy + d(dx)/dx</code>。<b>非圧縮なら 0</b> —— 独立な検算に使える。</p>
 <p>式: <code style="color:#22d3bf">gradient(flow[0], spacing, axis=0) + gradient(flow[1], spacing, axis=1)</code> (<code style="color:#22d3bf">numpy.gradient</code>: 内部は中央差分、格子の端は片側差分)。<code style="color:#22d3bf">flow[0]</code> が行方向の変位 <code style="color:#22d3bf">dy</code>、<code style="color:#22d3bf">flow[1]</code> が列方向の変位 <code style="color:#22d3bf">dx</code>、<code style="color:#22d3bf">x</code> = 列、<code style="color:#22d3bf">y</code> = 行。行が下向きでも発散の符号は座標の向きに依らない(渦度 <code style="color:#22d3bf">piv_vorticity</code> とは違い、反転しない)。正 = 湧き出し、負 = 吸い込み。</p>

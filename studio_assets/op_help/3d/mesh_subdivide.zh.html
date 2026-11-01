@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">mesh_subdivide — 3D <code style="color:#22d3bf">terrain</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">mesh</code> → <code style="color:#22d3bf">mesh</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mesh_subdivide(V, F, *, levels: &#x27;int&#x27; = 1, target_edge=None, max_faces: &#x27;int&#x27; = 4000000)</code>(要直接调用实现,<code style="color:#22d3bf">import render3d; render3d.mesh_subdivide(V, F, *, levels: &#x27;int&#x27; = 1, target_edge=None, max_faces: &#x27;int&#x27; = 4000000)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;mesh_subdivide&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用中点细分或自适应细分细化三角网格 → <code style="color:#22d3bf">(V, F)</code>。</p>
 <p>可以是一致的中点细分(<code style="color:#22d3bf">levels</code> 遍,每遍 ×4 个面)或<b>按目标边长的自适应细分</b>(<code style="color:#22d3bf">target_edge</code>：中位边长 = target，边段 ≤ 1.5×target，面内 Delaunay 边 &lt; 2×target)。</p>

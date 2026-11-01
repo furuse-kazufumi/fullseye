@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">render_skyline_view — GEOCAM <code style="color:#22d3bf">skyline</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.render_skyline_view(sky_table, K, shape, yaw_deg, pitch_deg, roll_deg)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import geocam; geocam.render_skyline_view(sky_table, K, shape, yaw_deg, pitch_deg, roll_deg)</code>、台帳から引くなら <code style="color:#22d3bf">opsgeocam.get(&quot;render_skyline_view&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>スカイライン table と姿勢から、その向きのカメラが見る<b>空のマスク</b>(H, W)を描く → image2d(0/1)。</p>
 <p>各画素の光線を世界へ回し、その方位のスカイライン仰角より上なら空(1)、下なら地形(0)。合成の写真づくり(PoC)と、推定した姿勢を写真に重ねて目で確かめる図に使う。<code style="color:#22d3bf">camera_orientation_from_skyline</code> の予測と同じ幾何なので、<b>描いて → 抜いて → 当てる</b>の往復が閉じる(テストの真値)。</p>

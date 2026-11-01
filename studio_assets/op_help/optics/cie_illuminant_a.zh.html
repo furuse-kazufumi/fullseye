@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">cie_illuminant_a — OPTICS <code style="color:#22d3bf">spectral</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">pairs</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cie_illuminant_a(wl_min_nm=300.0, wl_max_nm=830.0, n_points=107)</code>(要直接调用实现,<code style="color:#22d3bf">import spectralrad; spectralrad.cie_illuminant_a(wl_min_nm=300.0, wl_max_nm=830.0, n_points=107)</code>;从台账取用则 <code style="color:#22d3bf">opsoptics.get(&quot;cie_illuminant_a&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>CIE 标准照明体 A 的相对光谱功率分布(CIE 15:2004 的定义式,560 nm 处为 100)。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>

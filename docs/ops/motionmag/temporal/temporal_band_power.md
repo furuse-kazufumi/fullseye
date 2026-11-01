@@ -4,6 +4,7 @@ dim: motionmag
 category: temporal
 in: video
 out: image2d
+gpu: なし
 examples: [motion_magnification, poc_motion_magnification]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `video` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.temporal_band_power(video, f_lo, f_hi, fps) -> 'np.ndarray'` (実装を直接呼ぶなら `import motionmag; motionmag.temporal_band_power(video, f_lo, f_hi, fps) -> 'np.ndarray'`、台帳から引くなら `opsmotionmag.get("temporal_band_power")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

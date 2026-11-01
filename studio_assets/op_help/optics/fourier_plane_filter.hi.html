@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">fourier_plane_filter — OPTICS <code style="color:#22d3bf">wave</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">cimage</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fourier_plane_filter(size=64, kind=&#x27;derivative_x&#x27;, order=1, charge=1, radius_frac=0.25, pixel_pitch_um=1.0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import optics; optics.fourier_plane_filter(size=64, kind=&#x27;derivative_x&#x27;, order=1, charge=1, radius_frac=0.25, pixel_pitch_um=1.0)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;fourier_plane_filter&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>4f system के Fourier plane में रखा गया complex transmission function <code style="color:#22d3bf">H(fx, fy)</code>।</p>
 <p><code style="color:#22d3bf">numpy.fft.fftfreq</code> क्रम (<b>fftshift नहीं किया गया</b>) में shape <code style="color:#22d3bf">(size, size)</code> का complex128 array लौटाता है, जिसे सीधे <code style="color:#22d3bf">four_f_filter</code> को दिया जा सकता है। spatial frequency की इकाई cycles/um है (<code style="color:#22d3bf">fftfreq(size, d=pixel_pitch_um)</code>)।</p>

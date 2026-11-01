@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">line_from_2points — 3D <code style="color:#22d3bf">geometry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">primitive</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.line_from_2points(a, b)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import match3d; match3d.line_from_2points(a, b)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;line_from_2points&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>두 점 → 직선(통과점, 단위 방향). 두 좌표로 직선이 정해집니다(2D/3D 공통).</p>
 <p>반환값 <code style="color:#22d3bf">(a, u)</code>: <code style="color:#22d3bf">a</code>는 입력의 1 번째 점(float 배열), <code style="color:#22d3bf">u = (b − a)/|b − a|</code>. 인수는 수치의 2 또는 3 벡터(그 외·차원 혼재는 ValueError). <code style="color:#22d3bf">a == b</code>일 때는 방향이 영벡터인채로 반환된다(예외는 나지 않는다. 호출 측에서 <code style="color:#22d3bf">|u| &gt; 0</code>을 확인한다). 좌표의 나열 순서는 상관없으므로(입력의순서 그대로 반환) (x,y,z)든 (z,y,x)든 일관되면 된다.</p>

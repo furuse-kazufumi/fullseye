@@ -4,6 +4,7 @@ dim: drive
 category: agv
 in: table
 out: table
+gpu: なし
 examples: [poc_agv_fleet]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.vda5050_order(path, *, order_id='order-1', order_update_id=0, cell_size=1.0, map_id='floor', allowed_xy=0.05, allowed_theta=0.087, max_speed=1.0, released_nodes=None)` (実装を直接呼ぶなら `import agvfleet; agvfleet.vda5050_order(path, *, order_id='order-1', order_update_id=0, cell_size=1.0, map_id='floor', allowed_xy=0.05, allowed_theta=0.087, max_speed=1.0, released_nodes=None)`、台帳から引くなら `opsdrive.get("vda5050_order")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

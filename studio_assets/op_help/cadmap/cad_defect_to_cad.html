@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">cad_defect_to_cad — CADMAP <code style="color:#22d3bf">defect</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">mesh × labels</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cad_defect_to_cad(mesh, labels, K=None, R=None, t=None, cull_backfaces=True, min_pixels=1, background=0, strict=False)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import cadmap; cadmap.cad_defect_to_cad(mesh, labels, K=None, R=None, t=None, cull_backfaces=True, min_pixels=1, background=0, strict=False)</code>、台帳から引くなら <code style="color:#22d3bf">opscadmap.get(&quot;cad_defect_to_cad&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>2-D の欠陥ラベル画像 → <b>CAD 面上の表</b>(面 ID / 面上の面積 / 3-D 重心)。</p>
 <p><code style="color:#22d3bf">labels</code> は (H, W) の整数ラベル画像(<code style="color:#22d3bf">background</code> は無視、bool マスクも可)。ラベルごとに全画素の視線を撃ち、当たった面と、その画素が<b>面の上で占める実面積</b>を積む。面積は画素数ではなく</p>

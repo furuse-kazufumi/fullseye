@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">occlusion_safe_speed — DRIVE <code style="color:#22d3bf">traffic</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.occlusion_safe_speed(d, *, reaction: &#x27;float&#x27;, brake: &#x27;float&#x27;)</code>(要直接调用实现,<code style="color:#22d3bf">import drivetraffic; drivetraffic.occlusion_safe_speed(d, *, reaction: &#x27;float&#x27;, brake: &#x27;float&#x27;)</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;occlusion_safe_speed&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>从可见瞬间起能在距离 d 内停下的最大速度 v = b(−ρ + sqrt(ρ² + 2d/b))。</p>
 <p>对 v ρ + v²/(2b) = d(空走 + 制动。与 <code style="color:#22d3bf">rsssafety.rss_stopping_distance(v, ρ, accel=0, brake=b)</code> 同一公式)关于 v 求解的正根。为避免相消误差按 v = 2d / (ρ + sqrt(ρ² + 2d/b)) 计算(ρ = 0 时为 sqrt(2 b d))。d 也可以是数组。d ≤ 0 时为 0(看见时已经来不及)。</p>

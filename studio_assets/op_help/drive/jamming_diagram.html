@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">jamming_diagram — DRIVE <code style="color:#22d3bf">pegsim</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.jamming_diagram(kp, depth: &#x27;float&#x27;, fx_over_fz: &#x27;float | None&#x27; = None, m_over_rfz: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import pegsim; pegsim.jamming_diagram(kp, depth: &#x27;float&#x27;, fx_over_fz: &#x27;float | None&#x27; = None, m_over_rfz: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;jamming_diagram&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>かじり(jamming)の図(OCW p.34): 二点接触の深さ l [m] で、加える力の比 (F_x/F_z, M/(rF_z)) が進める領域の平行四辺形。</p>
 <p>λ = l/(2rμ)。頂点は (−1/μ, 2λ+1), (1/μ, −1), (1/μ, −(2λ+1)), (−1/μ, 1)、縦軸の切片 ±λ、縦辺は F_x/F_z = ±1/μ。深さが増える(λ が増える)と縦に広がり、かじりにくくなる。<code style="color:#22d3bf">fx_over_fz</code> と <code style="color:#22d3bf">m_over_rfz</code> を与えると <code style="color:#22d3bf">inside</code>(内側なら進む)と <code style="color:#22d3bf">margin</code>(4 辺の不等式の最小の余裕、負なら外)も返す。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: l &lt; 0、μ ≤ 0(摩擦なしは平行四辺形が無限に広い)。</p>

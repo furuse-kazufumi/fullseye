@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">fresnel_water_air — OPTICS <code style="color:#22d3bf">watermedia</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fresnel_water_air(theta_deg, wavelength_um=0.55, polarization=&#x27;s&#x27;, direction=&#x27;air_to_water&#x27;, n_water=None) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import watermedia; watermedia.fresnel_water_air(theta_deg, wavelength_um=0.55, polarization=&#x27;s&#x27;, direction=&#x27;air_to_water&#x27;, n_water=None) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;fresnel_water_air&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>空気と水の界面のフレネル反射率と透過率 -&gt; dict。</p>
 <p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">elliptic_k_agm — DRIVE <code style="color:#22d3bf">kendama</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">scalar</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.elliptic_k_agm(k) -&gt; &#x27;float&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import kendama; kendama.elliptic_k_agm(k) -&gt; &#x27;float&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;elliptic_k_agm&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>पहले प्रकार (1st kind) का complete elliptic integral K(k) = ∫₀^{π/2} dφ / √(1 − k² sin² φ) arithmetic-geometric mean से: K(k) = π / (2·AGM(1, √(1 − k²)))। |k| &lt; 1 (अन्यथा ValueError)। gate: K(0) = π/2, K(0.5) = 1.685750354812596 (प्रकाशित मान, parameter m = k² = 0.25)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">carla_depth_decode — DRIVE <code style="color:#22d3bf">carla</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">rgb</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.carla_depth_decode(depth_raw) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import carlabridge; carlabridge.carla_depth_decode(depth_raw) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;carla_depth_decode&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>CARLA 深度相机的原始图像(R 低位、G、B 高位的 24 bit)→ 到像平面的距离 [m]。d = code / (2²⁴ − 1) · 1000。</p>
 <p>空输入(<code style="color:#22d3bf">depth_raw</code> 为 0 个元素)会引发 <code style="color:#22d3bf">ValueError</code>。</p>

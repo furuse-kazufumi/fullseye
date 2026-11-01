@@ -4,6 +4,7 @@ dim: drive
 category: carla
 in: any
 out: any
+gpu: なし
 examples: [gallery_drive_carla_bridge]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `any` → `any`
 - **呼び出し**: `import fullseye as fs; fs.ledger.carla_xy_yaw(transform6) -> 'tuple'` (実装を直接呼ぶなら `import carlabridge; carlabridge.carla_xy_yaw(transform6) -> 'tuple'`、台帳から引くなら `opsdrive.get("carla_xy_yaw")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

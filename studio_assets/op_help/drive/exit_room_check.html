@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">exit_room_check — DRIVE <code style="color:#22d3bf">crossing</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.exit_room_check(queue_rear, far_edge: &#x27;float&#x27;, car_length: &#x27;float&#x27;, *, gap: &#x27;float&#x27; = 1.0, beyond: &#x27;float&#x27; = 0.5)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import drivecrossing; drivecrossing.exit_room_check(queue_rear, far_edge: &#x27;float&#x27;, car_length: &#x27;float&#x27;, *, gap: &#x27;float&#x27; = 1.0, beyond: &#x27;float&#x27; = 0.5)</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;exit_room_check&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>踏切(横断歩道・交差点も同じ)の向こう側に、自分が止まれる余地があるか(50 条 2 項)。配列可。</p>
 <p>前の車の後端 <code style="color:#22d3bf">queue_rear</code> の後ろ <code style="color:#22d3bf">gap</code> で止まると、自分の後端 = queue_rear − gap − car_length。これが far_edge + beyond 以上なら入ってよい。返り値: <code style="color:#22d3bf">room</code> = queue_rear − far_edge、<code style="color:#22d3bf">need</code> = car_length + gap + beyond、<code style="color:#22d3bf">ok</code>、<code style="color:#22d3bf">rear_if_stopped</code>。前の車が無い場合は queue_rear = +∞。</p>

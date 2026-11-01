@@ -4,6 +4,7 @@ dim: optics
 category: scene
 in: table
 out: table
+gpu: なし
 examples: [virtual_machine_vision]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.surface_finish(primitive: 'dict', kind: 'str' = 'turned', pitch_um: 'float' = 120.0, depth_um: 'float' = 1.5, uv_size_mm=(20.0, 20.0), seed: 'int' = 0, shape=(384, 384)) -> 'dict'` (実装を直接呼ぶなら `import optscene; optscene.surface_finish(primitive: 'dict', kind: 'str' = 'turned', pitch_um: 'float' = 120.0, depth_um: 'float' = 1.5, uv_size_mm=(20.0, 20.0), seed: 'int' = 0, shape=(384, 384)) -> 'dict'`、台帳から引くなら `opsoptics.get("surface_finish")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

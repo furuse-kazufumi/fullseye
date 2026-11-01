@@ -4,6 +4,7 @@ dim: oned
 category: signal
 in: signal × indices
 out: signal
+gpu: なし
 examples: [poc_multibeam_bathymetry, poc_print_registration, poc_web_roll_periodicity]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal × indices` → `signal`
 - **呼び出し**: `import fullseye as fs; fs.ledger.peak_subbin(x, idx=None, mode='parabola')` (実装を直接呼ぶなら `import dsp; dsp.peak_subbin(x, idx=None, mode='parabola')`、台帳から引くなら `ops1d.get("peak_subbin")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

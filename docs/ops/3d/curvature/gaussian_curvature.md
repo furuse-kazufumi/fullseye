@@ -4,6 +4,7 @@ dim: 3d
 category: curvature
 in: points
 out: signal
+gpu: なし
 examples: [curvature_grasp, curvature_shape_index]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `points` → `signal`
 - **呼び出し**: `import fullseye as fs; fs.ledger.gaussian_curvature(points, k=25)` (実装を直接呼ぶなら `import curvature3d; curvature3d.gaussian_curvature(points, k=25)`、台帳から引くなら `ops3d.get("gaussian_curvature")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

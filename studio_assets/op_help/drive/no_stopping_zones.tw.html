@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">no_stopping_zones — DRIVE <code style="color:#22d3bf">crossing</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.no_stopping_zones(features: &#x27;Iterable[dict]&#x27;, *, in_service: &#x27;bool&#x27; = True) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import drivecrossing; drivecrossing.no_stopping_zones(features: &#x27;Iterable[dict]&#x27;, *, in_service: &#x27;bool&#x27; = True) -&gt; &#x27;Dict[str, object]&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;no_stopping_zones&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>根據道路沿線設施產生第44條第1項的禁止停車區間。</p>
 <p>features[i] = {&quot;kind&quot;, &quot;start&quot;, &quot;end&quot;}(公車站也可用 &quot;at&quot; = 站牌的位置)。kind ∈ <code style="color:#22d3bf">NO_STOP_DISTANCE</code>。區間 = [start − d, end + d] (d = 該款的距離)。公車站僅在營運時間內(<code style="color:#22d3bf">in_service</code>)。</p>

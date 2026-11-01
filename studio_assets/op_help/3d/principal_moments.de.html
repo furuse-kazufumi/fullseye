@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">principal_moments — 3D <code style="color:#22d3bf">moment_invariant</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">descriptor</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.principal_moments(points) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import moments3d; moments3d.principal_moments(points) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;principal_moments&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Die Eigenwerte des Trägheitstensors (die Hauptträgheitsmomente, absteigend sortiert, rotationsinvariant).</p>
 <p>Der Trägheitstensor ist symmetrisch, daher sind die Eigenwerte reell. Dreht man die Punktwolke mit R, wird I → R I Rᵀ ähnlichkeitstransformiert, und die Eigenwerte sind invariant (exakt). Die Rückgabe ist absteigend sortiert und stimmt daher unabhängig von Koordinatensystem und Rotation überein.</p>

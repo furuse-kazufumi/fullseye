@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">kubelka_munk_reflectance — OPTICS <code style="color:#22d3bf">spectral</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">pairs</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.kubelka_munk_reflectance(absorption, scattering_per_mm=5.0, thickness_mm=1.0, background_reflectance=0.0, diffuse_factor=2.0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import spectralrad; spectralrad.kubelka_munk_reflectance(absorption, scattering_per_mm=5.0, thickness_mm=1.0, background_reflectance=0.0, diffuse_factor=2.0)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;kubelka_munk_reflectance&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>散乱する層の拡散反射率を Kubelka–Munk の閉形式で(吸収係数の曲線から)。</p>
 <p>K = *diffuse_factor* · α(拡散光は斜めに通るので平行光の吸収係数の約 2 倍、Kubelka 1948)、S = *scattering_per_mm*。*thickness_mm*(既定 1 mm)が None なら無限厚 R∞ = 1 + K/S − √((K/S)² + 2K/S)、有限の厚さ X なら背景 R_g の上の層:</p>

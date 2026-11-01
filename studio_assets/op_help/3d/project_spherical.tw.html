@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">project_spherical — 3D <code style="color:#22d3bf">lidar_projection</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.project_spherical(points, h_res: &#x27;int&#x27; = 1024, v_res: &#x27;int&#x27; = 64, v_fov=(-25.0, 15.0)) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import spherical_proj; spherical_proj.project_spherical(points, h_res: &#x27;int&#x27; = 1024, v_res: &#x27;int&#x27; = 64, v_fov=(-25.0, 15.0)) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;project_spherical&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>投影到旋轉式 LiDAR 的球面距離影像 (v_res, h_res)。空格=0,近點優先(最小 range)。</p>
 <p>將各點落入方位角(行)× 仰角(列)的 bin，寫入到感測器原點的 range(slant distance)。v_fov=(v_min,v_max)[度] 仰角帶之外、位於原點(r=0)、座標非有限的點會被捨棄(honest drop)。為空或全部被捨棄時回傳全零影像(=什麼也沒看到，honest)。</p>

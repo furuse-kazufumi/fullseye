@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">threshold_kapur — SEGMENTATION <code style="color:#22d3bf">threshold</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.threshold_kapur(image, *, nbins: &#x27;int&#x27; = 256) -&gt; &#x27;Dict[str, object]&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import seggraph; seggraph.threshold_kapur(image, *, nbins: &#x27;int&#x27; = 256) -&gt; &#x27;Dict[str, object]&#x27;</code>; from the registry, <code style="color:#22d3bf">opssegmentation.get(&quot;threshold_kapur&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Maximum-entropy threshold (Kapur–Sahoo–Wong 1985): the bin t that maximises H(t) = −Σ_(i ≤ t) (p_i/P1) ln(p_i/P1) − Σ_(i &gt; t) (p_i/P2) ln(p_i/P2) (only bins where both sides have positive probability). Returns: <code style="color:#22d3bf">threshold</code> = upper edge of that bin, <code style="color:#22d3bf">mask</code> (bin index &gt; t), <code style="color:#22d3bf">bin</code>, <code style="color:#22d3bf">entropy</code> (H, nan for excluded bins) (threshold_kapur).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>

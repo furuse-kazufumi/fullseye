@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">noisy_perceiver — DRIVE <code style="color:#22d3bf">kendama</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">any</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.noisy_perceiver(rng, noise_pos: &#x27;float&#x27; = 0.0, noise_vel: &#x27;float&#x27; = 0.0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import kendama; kendama.noisy_perceiver(rng, noise_pos: &#x27;float&#x27; = 0.0, noise_vel: &#x27;float&#x27; = 0.0)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;noisy_perceiver&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>perception में isotropic Gaussian noise जोड़ता है <code style="color:#22d3bf">perceive(t, p, v) → (p̂, v̂)</code> (position σ = noise_pos [m], velocity σ = noise_vel [m/s])। ऋणात्मक σ पर ValueError। rng = numpy.random.Generator।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

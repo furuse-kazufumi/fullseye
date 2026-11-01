@@ -4,6 +4,7 @@ dim: colortransport
 category: transport
 in: signal × signal × matrix
 out: scalar
+gpu: なし
 examples: [color_transport]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal × signal × matrix` → `scalar`
 - **呼び出し**: `import fullseye as fs; fs.ledger.sinkhorn_distance(a, b, cost, reg=0.05, **kw)` (実装を直接呼ぶなら `import colortransport; colortransport.sinkhorn_distance(a, b, cost, reg=0.05, **kw)`、台帳から引くなら `opscolortransport.get("sinkhorn_distance")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

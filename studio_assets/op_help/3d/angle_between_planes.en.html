@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">angle_between_planes — 3D <code style="color:#22d3bf">geometry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">primitive</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.angle_between_planes(n1, n2)</code> (to call the implementation directly, <code style="color:#22d3bf">import match3d; match3d.angle_between_planes(n1, n2)</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;angle_between_planes&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>The dihedral angle between two planes (normals n1, n2; in degrees).</p>
 <p>Returns the angle between the normals <code style="color:#22d3bf">arccos(|n̂1·n̂2|)</code> in degrees (float). Because the absolute value is taken it is the acute side in <b>[0, 90]</b> (independent of the normal orientation; if you need the obtuse side, <code style="color:#22d3bf">180 −</code>). 0 = parallel, 90 = orthogonal. <code style="color:#22d3bf">n1</code>, <code style="color:#22d3bf">n2</code> are numeric 2- or 3-vectors (length does not matter); mixed dimensions raise ValueError. A zero vector returns 90.</p>

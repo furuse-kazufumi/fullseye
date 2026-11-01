@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">idm_equilibrium_gap — DRIVE <code style="color:#22d3bf">traffic</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.idm_equilibrium_gap(v, *, v0: &#x27;float&#x27;, T: &#x27;float&#x27;, s0: &#x27;float&#x27;, delta: &#x27;float&#x27; = 4.0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import drivetraffic; drivetraffic.idm_equilibrium_gap(v, *, v0: &#x27;float&#x27;, T: &#x27;float&#x27;, s0: &#x27;float&#x27;, delta: &#x27;float&#x27; = 4.0)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;idm_equilibrium_gap&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>IDM का equilibrium gap s_e(v) = (s0 + v T) / sqrt(1 − (v/v0)^δ) (0 ≤ v &lt; v0)।</p>
 <p>Δv = 0 पर <code style="color:#22d3bf">idm_accel</code> = 0 रखकर हल किया गया (s* = s0 + vT)। v → v0 पर अपसारी होता है (इच्छित गति पर अंतराल की आवश्यकता नहीं = आगे वाला वाहन अनंत दूर)। a, b पर निर्भर नहीं।</p>

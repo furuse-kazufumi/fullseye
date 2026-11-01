@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">occlusion_safe_speed — DRIVE <code style="color:#22d3bf">traffic</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.occlusion_safe_speed(d, *, reaction: &#x27;float&#x27;, brake: &#x27;float&#x27;)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import drivetraffic; drivetraffic.occlusion_safe_speed(d, *, reaction: &#x27;float&#x27;, brake: &#x27;float&#x27;)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;occlusion_safe_speed&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>दिखने के क्षण से दूरी d के भीतर रुक सकने वाली अधिकतम गति v = b(−ρ + sqrt(ρ² + 2d/b))।</p>
 <p>v ρ + v²/(2b) = d (प्रतिक्रिया-दूरी + ब्रेकिंग; <code style="color:#22d3bf">rsssafety.rss_stopping_distance(v, ρ, accel=0, brake=b)</code> जैसा ही सूत्र) को v के लिए हल करने पर धनात्मक मूल। अंक-लोप से बचने के लिए v = 2d / (ρ + sqrt(ρ² + 2d/b)) से गणना की जाती है (ρ = 0 पर sqrt(2 b d))। d सरणी भी हो सकता है। d ≤ 0 हो तो 0 (दिखने तक पहले ही देर हो चुकी)।</p>

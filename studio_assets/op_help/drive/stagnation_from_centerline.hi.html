@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">stagnation_from_centerline — DRIVE <code style="color:#22d3bf">swarmflow</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.stagnation_from_centerline(field, speed=None, d_range=(0.04, 0.6), min_points: &#x27;int&#x27; = 4, n_iter: &#x27;int&#x27; = 80) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import swarmflow; swarmflow.stagnation_from_centerline(field, speed=None, d_range=(0.04, 0.6), min_points: &#x27;int&#x27; = 4, n_iter: &#x27;int&#x27; = 80) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;stagnation_from_centerline&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>centerline की कमी को linear बनाकर upstream टक्कर बिंदु (stagnation point), बाधा का केंद्र और त्रिज्या पढ़ता है (implementation 1, केवल upstream point)।</p>
 <p style="margin:2px 0 2px 12px">1. जिन ग्रिड कोशिकाओं की कमी (3 × 3 औसत) <code style="color:#22d3bf">d_range</code> की ऊपरी सीमा से अधिक है, उनमें सबसे ऊपरी धारा (अपस्ट्रीम) वाली को &quot;टक्कर बिंदु के पास&quot; माना जाता है।</p>

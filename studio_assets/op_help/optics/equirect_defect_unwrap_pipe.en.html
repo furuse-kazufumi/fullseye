@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">equirect_defect_unwrap_pipe — OPTICS <code style="color:#22d3bf">omni360</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.equirect_defect_unwrap_pipe(equi, axis=&#x27;horizontal&#x27;, radius_m=None, length_m=None)</code> (to call the implementation directly, <code style="color:#22d3bf">import omni360; omni360.equirect_defect_unwrap_pipe(equi, axis=&#x27;horizontal&#x27;, radius_m=None, length_m=None)</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;equirect_defect_unwrap_pipe&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Unwrap the cylindrical wall; equirect longitude is circumference and latitude is axial.</p>
 <p>Empty input (<code style="color:#22d3bf">equi</code> has zero elements) returns an empty image (reason: an empty upstream inspection has no cylindrical samples to unwrap).</p>

@@ -4,6 +4,7 @@ dim: optics
 category: design
 in: table
 out: table
+gpu: なし
 examples: [lens_design_demo, poc_optics_drawings]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.tolerance_analysis(system, tolerances=None, trials=100, seed=0, field=None, rings=6, compensator='auto')` (実装を直接呼ぶなら `import raytrace; raytrace.tolerance_analysis(system, tolerances=None, trials=100, seed=0, field=None, rings=6, compensator='auto')`、台帳から引くなら `opsoptics.get("tolerance_analysis")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

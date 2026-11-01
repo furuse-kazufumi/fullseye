@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">relative_motion — DRIVE <code style="color:#22d3bf">ttc</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">matrix × matrix</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.relative_motion(pose0, pose1, motion=None) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import drivettc; drivettc.relative_motion(pose0, pose1, motion=None) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;relative_motion&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Rigid motion <code style="color:#22d3bf">T_rel</code> of points seen in camera coordinates between 2 frames (<code style="color:#22d3bf">P_c1 = T_rel · P_c0</code>).</p>
 <p><code style="color:#22d3bf">pose0</code> / <code style="color:#22d3bf">pose1</code> are each frame&#x27;s world → camera (<code style="color:#22d3bf">driveworld.camera_pose</code>). <code style="color:#22d3bf">motion</code> is the 4×4 by which the object moved in the world (world → world; for a static world None = identity). <code style="color:#22d3bf">T_rel = pose1 · motion · pose0⁻¹</code>.</p>

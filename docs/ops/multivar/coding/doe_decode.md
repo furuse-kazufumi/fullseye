@@ -4,6 +4,7 @@ dim: multivar
 category: coding
 in: design
 out: matrix
+gpu: なし
 examples: [doe_plan_tour, multivar_inspection_tour, poc_simcal_thin_film, sensitivity_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `design` → `matrix`
 - **呼び出し**: `import fullseye as fs; fs.ledger.doe_decode(design=None, coded=None) -> 'np.ndarray'` (実装を直接呼ぶなら `import doe; doe.doe_decode(design=None, coded=None) -> 'np.ndarray'`、台帳から引くなら `opsmultivar.get("doe_decode")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

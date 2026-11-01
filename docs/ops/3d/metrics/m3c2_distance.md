@@ -4,6 +4,7 @@ dim: 3d
 category: metrics
 in: points × points
 out: signal
+gpu: なし
 examples: [metrics_eval]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,6 +16,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **データ種**: `points × points` → `signal`
 - **呼び出し**: `import fullseye as fs; fs.ledger.m3c2_distance(a, b, cores, normals, radius, max_depth=None, min_points=4)` (実装を直接呼ぶなら `import metrics3d; metrics3d.m3c2_distance(a, b, cores, normals, radius, max_depth=None, min_points=4)`、台帳から引くなら `ops3d.get("m3c2_distance")`)
 - **台帳経由の戻り値**: `fullseye.ledger.m3c2_distance(...)` は**宣言 out 型 `signal` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.m3c2_distance.raw(...)`、または `metrics3d.m3c2_distance` を直接呼ぶ。
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

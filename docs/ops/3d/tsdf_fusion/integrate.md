@@ -4,6 +4,7 @@ dim: 3d
 category: tsdf_fusion
 in: sdf × depth
 out: sdf
+gpu: なし
 examples: [transforms_repr]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `sdf × depth` → `sdf`
 - **呼び出し**: `import fullseye as fs; fs.ledger.integrate(tsdf: 'np.ndarray', weight: 'np.ndarray', depth: 'np.ndarray', K, R, t, trunc: 'float', bounds: 'Optional[Bounds]' = None) -> 'None'` (実装を直接呼ぶなら `import tsdf_fusion; tsdf_fusion.integrate(tsdf: 'np.ndarray', weight: 'np.ndarray', depth: 'np.ndarray', K, R, t, trunc: 'float', bounds: 'Optional[Bounds]' = None) -> 'None'`、台帳から引くなら `ops3d.get("integrate")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

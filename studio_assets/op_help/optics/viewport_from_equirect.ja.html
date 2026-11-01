@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">viewport_from_equirect — OPTICS <code style="color:#22d3bf">omni360</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">rgbimage</code> → <code style="color:#22d3bf">rgbimage</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.viewport_from_equirect(equi, yaw=0, pitch=0, roll=0, fov_deg=90, size=(256, 256))</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import omni360; omni360.viewport_from_equirect(equi, yaw=0, pitch=0, roll=0, fov_deg=90, size=(256, 256))</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;viewport_from_equirect&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>正距円筒画像から透視投影の視野を切り出す。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">ファミリ共通の入力契約(fail-closed)</h3>

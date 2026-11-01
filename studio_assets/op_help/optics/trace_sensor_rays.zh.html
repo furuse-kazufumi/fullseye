@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">trace_sensor_rays — OPTICS <code style="color:#22d3bf">lensrender</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.trace_sensor_rays(system, pixel_xy_mm=None, pupil_xy_mm=None, wavelength_um=None, defocus_mm=0.0, fresnel=False, focus_mm=None) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import lensrender; lensrender.trace_sensor_rays(system, pixel_xy_mm=None, pupil_xy_mm=None, wavelength_um=None, defocus_mm=0.0, fresnel=False, focus_mm=None) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsoptics.get(&quot;trace_sensor_rays&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>从传感器上的点经出瞳上的点,把光线<b>逆向</b>追迹到物空间 -&gt; 字典。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>

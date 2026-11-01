@@ -4,6 +4,7 @@ dim: drive
 category: tacslip
 in: image2d × image2d × scalar × scalar × scalar
 out: table
+gpu: なし
 examples: [poc_tacsim_marker_shear]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d × image2d × scalar × scalar × scalar` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.marker_track(m_ref, m_cur, dark: 'float', pitch_px: 'float', r_px: 'float', piv: 'bool' = False) -> 'dict'` (実装を直接呼ぶなら `import tacslip; tacslip.marker_track(m_ref, m_cur, dark: 'float', pitch_px: 'float', r_px: 'float', piv: 'bool' = False) -> 'dict'`、台帳から引くなら `opsdrive.get("marker_track")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

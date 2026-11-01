@@ -4,6 +4,7 @@ dim: gfx2d
 category: tile
 in: sprites
 out: rgba
+gpu: なし
 examples: [gfx2d_scene]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `sprites` → `rgba`
 - **呼び出し**: `import fullseye as fs; fs.ledger.parallax_layers(layers, camera_x, factors, camera_y=0.0, factors_y=None)` (実装を直接呼ぶなら `import gfx2d; gfx2d.parallax_layers(layers, camera_x, factors, camera_y=0.0, factors_y=None)`、台帳から引くなら `opsgfx2d.get("parallax_layers")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -4,6 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.surface_filter(z, dx, lambda_c=None, lambda_s=None, kind=&#x27;gaussian&#x27;, end_effect=&#x27;reject&#x27;, dy=None)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import roughness; roughness.surface_filter(z, dx, lambda_c=None, lambda_s=None, kind=&#x27;gaussian&#x27;, end_effect=&#x27;reject&#x27;, dy=None)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsroughness.get(&quot;surface_filter&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>원장 경유의 반환값</b>: <code style="color:#22d3bf">fullseye.ledger.surface_filter(...)</code> 는 <b>선언된 out 형 <code style="color:#22d3bf">depth</code> 의 값만</b> 반환합니다(실제 함수는 보조 정보도 반환). 버려진 쪽이 필요하면 <code style="color:#22d3bf">fullseye.ledger.surface_filter.raw(...)</code> 를 쓰거나 <code style="color:#22d3bf">roughness.surface_filter</code> 를 직접 호출하세요.</p>
 <p style="margin:2px 0 2px 12px">• 실제 반환: <code style="color:#22d3bf">(roughness, waviness)</code></p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>높이장을 거칠기와 파상도로 나눈다(ISO 16610-21의 가우스 필터).</p>
 <p>반환값은 <code style="color:#22d3bf">(roughness, waviness)</code>. <code style="color:#22d3bf">roughness</code> 가 λc 보다 짧은 성분, <code style="color:#22d3bf">waviness</code> 가 긴 성분이며, <code style="color:#22d3bf">end_effect=&quot;reject&quot;</code> 가 아니면 <code style="color:#22d3bf">roughness + waviness</code> 는 입력(λs 를 건 뒤의 일차 형상)과 엄밀히 일치한다.</p>

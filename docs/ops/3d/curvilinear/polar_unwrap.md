@@ -4,7 +4,7 @@ dim: 3d
 category: curvilinear
 in: image2d
 out: image2d
-gpu: true
+gpu: なし
 examples: [curvilinear_proj]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.polar_unwrap(image, center=None, r_in=0.0, r_out=None, ntheta=360, nr=64, device='cpu')` (実装を直接呼ぶなら `import match3d; match3d.polar_unwrap(image, center=None, r_in=0.0, r_out=None, ntheta=360, nr=64, device='cpu')`、台帳から引くなら `ops3d.get("polar_unwrap")`)
-- **GPU**: この op は GPU 経路あり(`device="cuda"`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

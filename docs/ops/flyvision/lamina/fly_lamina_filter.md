@@ -4,6 +4,7 @@ dim: flyvision
 category: lamina
 in: matrix
 out: matrix
+gpu: なし
 examples: [poc_fly_optomotor_steering]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `matrix` → `matrix`
 - **呼び出し**: `import fullseye as fs; fs.ledger.fly_lamina_filter(movie, dt_s, tau_adapt_s=0.2, tau_lp_s=0.02, mode='divisive', floor=0.001)` (実装を直接呼ぶなら `import flyvision; flyvision.fly_lamina_filter(movie, dt_s, tau_adapt_s=0.2, tau_lp_s=0.02, mode='divisive', floor=0.001)`、台帳から引くなら `opsflyvision.get("fly_lamina_filter")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

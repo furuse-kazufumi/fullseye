@@ -4,6 +4,7 @@ dim: drive
 category: cutting
 in: table × scalar × scalar × scalar
 out: rgb
+gpu: なし
 examples: [poc_food_cutting_measure]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table × scalar × scalar × scalar` → `rgb`
 - **呼び出し**: `import fullseye as fs; fs.ledger.cutting_face_render(scene, heel_x: 'float', heel_z: 'float', theta_deg: 'float', gain: 'float' = 1.0, gradient: 'float' = 0.0, blur_px: 'float' = 0.0, noise: 'float' = 0.0, seed: 'int' = 0, food_visible: 'bool' = True)` (実装を直接呼ぶなら `import cutting; cutting.cutting_face_render(scene, heel_x: 'float', heel_z: 'float', theta_deg: 'float', gain: 'float' = 1.0, gradient: 'float' = 0.0, blur_px: 'float' = 0.0, noise: 'float' = 0.0, seed: 'int' = 0, food_visible: 'bool' = True)`、台帳から引くなら `opsdrive.get("cutting_face_render")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

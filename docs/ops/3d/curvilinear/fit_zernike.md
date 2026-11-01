@@ -4,7 +4,7 @@ dim: 3d
 category: curvilinear
 in: image2d
 out: table
-gpu: true
+gpu: なし
 examples: [curvilinear_proj]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.fit_zernike(disk_image, n_max=6, device='cpu', nr=48, nt=72, center=None, radius=None)` (実装を直接呼ぶなら `import match3d; match3d.fit_zernike(disk_image, n_max=6, device='cpu', nr=48, nt=72, center=None, radius=None)`、台帳から引くなら `ops3d.get("fit_zernike")`)
-- **GPU**: この op は GPU 経路あり(`device="cuda"`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

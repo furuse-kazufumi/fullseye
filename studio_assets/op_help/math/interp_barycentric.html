@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">interp_barycentric — MATH <code style="color:#22d3bf">numerics</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">signal × signal × signal</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.interp_barycentric(xk, yk, x, *, nodes: &#x27;str | None&#x27; = None) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import mathnumerics; mathnumerics.interp_barycentric(xk, yk, x, *, nodes: &#x27;str | None&#x27; = None) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsmath.get(&quot;interp_barycentric&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>点 (xk, yk) を通る多項式(次数 len−1)を、重心公式で x に評価する(Berrut &amp; Trefethen 2004)。</p>
 <p>係数を経由しない(Vandermonde 行列は解かない)ので高次でも数値的に安定。等間隔点では <b>Runge 現象</b>(端の振動)がそのまま出る —— それは公式の欠陥ではなく、点の置き方の問題。</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">video360_viewport_track — OPTICS <code style="color:#22d3bf">omni360</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">rgbvideo</code> → <code style="color:#22d3bf">rgbvideo</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.video360_viewport_track(frames, yaw, pitch, fov=90, size=(256, 256))</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import omni360; omni360.video360_viewport_track(frames, yaw, pitch, fov=90, size=(256, 256))</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;video360_viewport_track&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>सर्वदिशीय फ़्रेम क्रम से चलता दृश्य क्षेत्र निकालता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पूरी family का input contract (fail-closed)</h3>

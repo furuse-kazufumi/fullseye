@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">piv_outlier_mask — PIV <code style="color:#22d3bf">validate</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">flow2d</code> → <code style="color:#22d3bf">mask</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_outlier_mask(flow, threshold=2.0, epsilon=0.1)</code> (to call the implementation directly, <code style="color:#22d3bf">import pivops; pivops.piv_outlier_mask(flow, threshold=2.0, epsilon=0.1)</code>; from the registry, <code style="color:#22d3bf">opspiv.get(&quot;piv_outlier_mask&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Finds outlier vectors with the normalised median test (Westerweel &amp; Scarano 2005).</p>
 <p>For each vector, the residual from the median of its 8 neighbours is divided by <b>the median of the neighbours&#x27; residuals</b>. <code style="color:#22d3bf">epsilon</code> (default 0.1 px, a rough measure of PIV measurement uncertainty) is added to the denominator to prevent the denominator from becoming 0 in a uniform field and everything becoming an outlier —— without this term, <b>the more ideal the input, the more the test breaks</b>.</p>

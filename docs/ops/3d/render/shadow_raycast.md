@@ -4,6 +4,7 @@ dim: 3d
 category: render
 in: mesh × vector
 out: image2d
+gpu: なし
 examples: [itokawa_regolith_hero]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `mesh × vector` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.shadow_raycast(V, F, light, *, pose=None, intrinsics=None, width: 'int' = 256, height: 'int' = 256, angular_diameter_deg: 'float' = 0.0, samples: 'int' = 1, grid=None, bias=None) -> 'np.ndarray'` (実装を直接呼ぶなら `import render_shadow; render_shadow.shadow_raycast(V, F, light, *, pose=None, intrinsics=None, width: 'int' = 256, height: 'int' = 256, angular_diameter_deg: 'float' = 0.0, samples: 'int' = 1, grid=None, bias=None) -> 'np.ndarray'`、台帳から引くなら `ops3d.get("shadow_raycast")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

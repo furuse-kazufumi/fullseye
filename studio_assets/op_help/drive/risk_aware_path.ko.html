@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">risk_aware_path — DRIVE <code style="color:#22d3bf">roverslip</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">table × any × any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.risk_aware_path(cost_map, start, goal) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import roverslip; roverslip.risk_aware_path(cost_map, start, goal) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;risk_aware_path&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p><code style="color:#22d3bf">cvar_cost_map</code>의 에지 소요 시간 위에서 8근방 Dijkstra(방향이 있는 에지 —— 오르막과 내리막이 다름).</p>
 <p><code style="color:#22d3bf">start</code>·<code style="color:#22d3bf">goal</code> 은 (행, 열). 반환값 <code style="color:#22d3bf">{&quot;path&quot;: (n, 2) の添字, &quot;cost&quot;: 合計の所要時間 [s] (届かなければ inf), &quot;reached&quot;: bool, &quot;cost_to_come&quot;: (H, W)}</code>. 닿지 않을 때는 <code style="color:#22d3bf">path</code> 가 비어 있다.</p>

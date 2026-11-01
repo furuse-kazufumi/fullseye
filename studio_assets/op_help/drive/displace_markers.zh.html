@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">displace_markers — DRIVE <code style="color:#22d3bf">tacslip</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">matrix × matrix × matrix × scalar</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.displace_markers(pts, fx, fy, pitch: &#x27;float&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import tacslip; tacslip.displace_markers(pts, fx, fy, pitch: &#x27;float&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;displace_markers&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用位移场 fx, fy (n, n) [m] 移动标记中心 (N, 2) [px] (在中心位置双线性采样场，换算为像素后相加)。<b>Raises</b> ValueError：pts 不是 (N, 2)，fx 与 fy 形状不同，pitch ≤ 0。</p>
 <p>空输入(<code style="color:#22d3bf">pts</code> 为 0 个元素)会引发 <code style="color:#22d3bf">ValueError</code>。</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">sinkhorn_distance — COLORTRANSPORT <code style="color:#22d3bf">transport</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">signal × signal × matrix</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sinkhorn_distance(a, b, cost, reg=0.05, **kw)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import colortransport; colortransport.sinkhorn_distance(a, b, cost, reg=0.05, **kw)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opscolortransport.get(&quot;sinkhorn_distance&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>정칙화된 수송 비용 <code style="color:#22d3bf">&lt;plan, cost&gt;</code>. <b>엄밀한 거리가 아닙니다</b>.</p>
 <p>정칙화만큼 계통적으로 치우치므로, 자기 자신과의 &quot;거리&quot;도 0이 되지 않는다(그 어긋남 폭은 테스트에 실측으로 남겨 두었다). 1차원에서 엄밀함이 필요할 때는 <code style="color:#22d3bf">wasserstein_1d</code>.</p>

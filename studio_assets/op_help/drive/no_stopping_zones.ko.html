@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">no_stopping_zones — DRIVE <code style="color:#22d3bf">crossing</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.no_stopping_zones(features: &#x27;Iterable[dict]&#x27;, *, in_service: &#x27;bool&#x27; = True) -&gt; &#x27;Dict[str, object]&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivecrossing; drivecrossing.no_stopping_zones(features: &#x27;Iterable[dict]&#x27;, *, in_service: &#x27;bool&#x27; = True) -&gt; &#x27;Dict[str, object]&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;no_stopping_zones&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>도로를 따라 있는 시설로부터 제44조 제1항의 주정차 금지 구간을 생성.</p>
 <p>features[i] = {&quot;kind&quot;, &quot;start&quot;, &quot;end&quot;}(버스 정류장은 &quot;at&quot; = 표지판의 위치여도 됨). kind ∈ <code style="color:#22d3bf">NO_STOP_DISTANCE</code>. 구간 = [start − d, end + d] (d = 해당 호의 거리). 버스 정류장은 운행 시간 중(<code style="color:#22d3bf">in_service</code>)에만.</p>

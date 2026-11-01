@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">voronoi_cells — SEGMENTATION <code style="color:#22d3bf">world</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.voronoi_cells(seeds, size) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import segworld; segworld.voronoi_cells(seeds, size) -&gt; &#x27;Dict[str, object]&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opssegmentation.get(&quot;voronoi_cells&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>矩形内种子的 Voronoi 分割，以多边形返回（含面积与内部边长；半平面暴力法，O(n^2)）（voronoi_cells）。</p>
 <p>返回值: <code style="color:#22d3bf">polygons</code>(多边形的列表,各为 (k, 2) [y, x])、<code style="color:#22d3bf">areas</code>(鞋带公式)、<code style="color:#22d3bf">edge_length_total</code>(内部边长之和)、<code style="color:#22d3bf">n_edges</code>(内部边的数量)、<code style="color:#22d3bf">perimeter_internal</code> (n,)(各单元的内部边长)。</p>

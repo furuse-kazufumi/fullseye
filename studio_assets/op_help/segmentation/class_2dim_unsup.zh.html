@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">class_2dim_unsup — SEGMENTATION <code style="color:#22d3bf">classify</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">labels2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.class_2dim_unsup(image1, image2, n_clusters=3, iters=20)</code>(要直接调用实现,<code style="color:#22d3bf">import segmentation; segmentation.class_2dim_unsup(image1, image2, n_clusters=3, iters=20)</code>;从台账取用则 <code style="color:#22d3bf">opssegmentation.get(&quot;class_2dim_unsup&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>二通道特征空间的 k-means 无监督分类，返回标签图像(class_2dim_unsup)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>

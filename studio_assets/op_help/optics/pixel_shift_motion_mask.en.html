@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">pixel_shift_motion_mask — OPTICS <code style="color:#22d3bf">pixelshift</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">video × matrix</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pixel_shift_motion_mask(frames, shifts, pattern=&#x27;RGGB&#x27;, scale=1, threshold=4.0, noise_sigma=0.0)</code> (to call the implementation directly, <code style="color:#22d3bf">import pixelshift; pixelshift.pixel_shift_motion_mask(frames, shifts, pattern=&#x27;RGGB&#x27;, scale=1, threshold=4.0, noise_sigma=0.0)</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;pixel_shift_motion_mask&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Map of moved pixels <code style="color:#22d3bf">(H·scale, W·scale)</code> (1.0 = moved, 0.0 = static or undecidable).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>

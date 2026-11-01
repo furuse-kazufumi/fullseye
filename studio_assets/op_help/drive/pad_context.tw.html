@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">pad_context — DRIVE <code style="color:#22d3bf">pegtactile</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pad_context(pad: &#x27;dict&#x27;, jitter_px: &#x27;float&#x27; = 0.5, seed: &#x27;int&#x27; = 7) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import pegtactile; pegtactile.pad_context(pad: &#x27;dict&#x27;, jitter_px: &#x27;float&#x27; = 0.5, seed: &#x27;int&#x27; = 7) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;pad_context&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>在膜的合成與讀取中只建立 1 次的工具：像素中心網格 (X, Y)、Cerruti 核、3 色光源、無負載膜的背景與標記基準影像。</p>
 <p>標記點以 <code style="color:#22d3bf">jitter_px</code> 的均勻抖動打散相位(相當於印刷偏差的程度)。<b>規則格網(0 px)上所有標記點的次像素相位相同,因此重心的 pixel-locking 成為整個場的共模,即使剪切為零也會出現虛假剪切</b>(PoC 的門中 11 mN → 0.9 mN)。<code style="color:#22d3bf">seed</code> 是抖動的亂數種子。回傳的 <code style="color:#22d3bf">_model_cache</code>、<code style="color:#22d3bf">_sr_cache</code> 是讀取用的內部快取。<b>Raises</b> ValueError:jitter &lt; 0。</p>

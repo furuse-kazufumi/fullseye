@@ -4,6 +4,7 @@ dim: spc
 category: pod
 in: table
 out: table
+gpu: なし
 examples: [poc_pod_lighting, poc_sam_hybrid_bonding_voids]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.pod_from_ahat(fit, a_dec, level=0.95, n_grid=200, a=None)` (実装を直接呼ぶなら `import pod; pod.pod_from_ahat(fit, a_dec, level=0.95, n_grid=200, a=None)`、台帳から引くなら `opsspc.get("pod_from_ahat")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

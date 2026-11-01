@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">gen_measure_rectangle2 — MEASURE1D <code style="color:#22d3bf">caliper</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">measurehandle</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gen_measure_rectangle2(row, col, phi, length1, length2, shape)</code>(要直接调用实现,<code style="color:#22d3bf">import measuring1d; measuring1d.gen_measure_rectangle2(row, col, phi, length1, length2, shape)</code>;从台账取用则 <code style="color:#22d3bf">opsmeasure1d.get(&quot;gen_measure_rectangle2&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>定义旋转测量矩形(沿长轴 <code style="color:#22d3bf">phi</code> 方向以 1 px 间隔取剖面)(gen_measure_rectangle2)。采样数 n = max(2, round(2*length1)+1)，起点位于距中心 -(n-1)/2 px 处。<code style="color:#22d3bf">length2</code> 为宽度方向的平均宽度 [px]。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>

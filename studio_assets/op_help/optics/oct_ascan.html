@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">oct_ascan — OPTICS <code style="color:#22d3bf">oct</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.oct_ascan(interferogram, window=&#x27;hann&#x27;, dc=&#x27;reference&#x27;, zero_pad=2, quadrature=None, a2=0.0, a3=0.0, k_center=None)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import octscan; octscan.oct_ascan(interferogram, window=&#x27;hann&#x27;, dc=&#x27;reference&#x27;, zero_pad=2, quadrature=None, a2=0.0, a3=0.0, k_center=None)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;oct_ascan&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>k 等間隔の干渉スペクトル → <b>A スキャン</b>(深さ方向の反射の振幅、<code style="color:#22d3bf">table</code>)。</p>
 <p>手順: DC 除去(<code style="color:#22d3bf">dc</code>: &quot;reference&quot; = 参照腕だけのスペクトルを引く / &quot;reference+sample&quot; = 試料腕だけも引く(自己相関のアーチファクトを消す)/ &quot;mean&quot;(束なら列の中央値)/ &quot;smooth&quot;(各スペクトルの緩やかな包絡 = 幅 N/80 のガウスの低域を引く。参照を測っていない記録向け)/ &quot;none&quot;)→ 窓(<code style="color:#22d3bf">window</code>)→ 分散補償(a2・a3、0 なら何もしない) → <code style="color:#22d3bf">zero_pad</code> 倍に詰めて FFT。深さ = <b>片道の光路</b>(空気中 µm)z_j = π j/(N_pad δk)、範囲 z_max = π/(2δk)。</p>

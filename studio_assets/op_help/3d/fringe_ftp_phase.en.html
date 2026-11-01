@@ -3,6 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">depth</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fringe_ftp_phase(image, carrier_axis=&#x27;x&#x27;, carrier_period=None, bandwidth=0.35, k=1.0, min_modulation=None, return_info=False)</code> (to call the implementation directly, <code style="color:#22d3bf">import fringe; fringe.fringe_ftp_phase(image, carrier_axis=&#x27;x&#x27;, carrier_period=None, bandwidth=0.35, k=1.0, min_modulation=None, return_info=False)</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;fringe_ftp_phase&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>Return value through the ledger</b>: <code style="color:#22d3bf">fullseye.ledger.fringe_ftp_phase(...)</code> returns <b>only the declared out type <code style="color:#22d3bf">depth</code></b> (the underlying function also returns auxiliary values). When you need what was dropped, use <code style="color:#22d3bf">fullseye.ledger.fringe_ftp_phase.raw(...)</code> or call <code style="color:#22d3bf">fringe.fringe_ftp_phase</code> directly.</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Recover height/phase from one fringe image using Takeda Fourier-transform profilometry.</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>

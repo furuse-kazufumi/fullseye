@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">mapf_prioritized — DRIVE <code style="color:#22d3bf">agv</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mapf_prioritized(grid, starts, goals, order=None, horizon=None)</code>(要直接调用实现,<code style="color:#22d3bf">import agvfleet; agvfleet.mapf_prioritized(grid, starts, goals, order=None, horizon=None)</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;mapf_prioritized&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>带优先级的规划：按顺序每次 1 台，避开先确定车辆的通行路线(预约表)进行规划。</p>
 <p>快速但<b>不完备</b> —— 即使问题有解,也可能因优先顺序(无论哪种顺序)而找不到(Ma 等 2019)。返回 dict:<code style="color:#22d3bf">paths</code>(失败时为 None)、<code style="color:#22d3bf">cost</code>、<code style="color:#22d3bf">solved</code>、<code style="color:#22d3bf">failed_agent</code>(最先卡住的车辆)。</p>

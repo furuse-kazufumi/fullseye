@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">score_to_position — REPRCONV <code style="color:#22d3bf">score</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">score</code> → <code style="color:#22d3bf">position</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.score_to_position(score)</code>(要直接呼叫實作,<code style="color:#22d3bf">import reprconv; reprconv.score_to_position(score)</code>;從台帳取用則 <code style="color:#22d3bf">opsreprconv.get(&quot;score_to_position&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p><code style="color:#22d3bf">score</code> 體 → 最大值的位置 <code style="color:#22d3bf">position (z, y, x)</code>。<code style="color:#22d3bf">score</code> 的出口。</p>
 <p>整數網格上的 argmax(不做次像素精化 —— 那是既有 <code style="color:#22d3bf">refine_peak_newton</code> 的工作,在這裡模仿會在 2 處得出不同的答案)。<b>單向</b>(無法從 1 個位置還原 volume)。</p>

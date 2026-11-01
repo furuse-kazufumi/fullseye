@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">dem_enu_from_geodetic — DEM <code style="color:#22d3bf">geodesy</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">points</code> (an op determined by its arguments alone — it takes no image or data input)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_enu_from_geodetic(lat_deg, lon_deg, h_m, lat0_deg, lon0_deg, h0_m)</code> (to call the implementation directly, <code style="color:#22d3bf">import demops; demops.dem_enu_from_geodetic(lat_deg, lon_deg, h_m, lat0_deg, lon0_deg, h0_m)</code>; from the registry, <code style="color:#22d3bf">opsdem.get(&quot;dem_enu_from_geodetic&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Geodetic coordinates → <b>local ENU</b> (east, north, up) around a reference point [m] (<code style="color:#22d3bf">points</code>).</p>
 <p>Most site drawings, robot maps and point clouds are written as &quot;east, north, up from an origin&quot;. The conversion from ECEF is 1 rotation at the reference point: <code style="color:#22d3bf">ENU = R(lat0, lon0) (X - X0)</code>.</p>

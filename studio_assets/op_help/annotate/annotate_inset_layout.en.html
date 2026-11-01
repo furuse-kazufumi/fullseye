@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">annotate_inset_layout — ANNOTATE <code style="color:#22d3bf">paper</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">table</code> (an op determined by its arguments alone — it takes no image or data input)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_inset_layout(shape, src_rect, corner=&#x27;rt&#x27;, factor=None, margin=10, max_fraction=0.4)</code> (to call the implementation directly, <code style="color:#22d3bf">import annotate; annotate.annotate_inset_layout(shape, src_rect, corner=&#x27;rt&#x27;, factor=None, margin=10, max_fraction=0.4)</code>; from the registry, <code style="color:#22d3bf">opsannotate.get(&quot;annotate_inset_layout&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Returns a table (dict): where the magnified inset goes and at what factor, in closed form.</p>
 <p>With <code style="color:#22d3bf">factor=None</code>, among factors where &quot;width and height are both at most <code style="color:#22d3bf">max_fraction</code> of the image&quot;, the largest integer magnification. A corner where the inset would overlap the source box is a ValueError (it would hide its own source).</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">peg_wrench_to_pad_loads — DRIVE <code style="color:#22d3bf">pegtactile</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">signal × signal × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.peg_wrench_to_pad_loads(F_pad, M_pad, pad: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import pegtactile; pegtactile.peg_wrench_to_pad_loads(F_pad, M_pad, pad: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;peg_wrench_to_pad_loads&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Dyname, die die 2 Pads auf den Stift ausüben (Greiferkoordinaten, bezogen auf den Greifpunkt) → für jedes Pad (Normalkraft P, von der Membran aufgenommene Scherung q = (q_u, q_v)).</p>
 <p>Gleichgewicht (Herleitung): Pad R (+x) übt −N_R x̂ und T_R auf den Stift aus, L (−x) übt +N_L x̂ und T_L aus. F_x = N_L − N_R, F_y = T_Ry + T_Ly, F_z = T_Rz + T_Lz, M_y = −w(T_Rz − T_Lz), M_z = w(T_Ry − T_Ly), M_x = Torsion (je zur Hälfte). Die Normalkraft ergibt sich aus der Greifkraft als N = G₀ ∓ F_x/2.</p>

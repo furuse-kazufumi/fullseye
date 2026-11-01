@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">gum_validate — SPC <code style="color:#22d3bf">uncertainty</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gum_validate(guf, mcm, ndig=2)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import spc; spc.gum_validate(guf, mcm, ndig=2)</code>、台帳から引くなら <code style="color:#22d3bf">opsspc.get(&quot;gum_validate&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>モンテカルロの結果で伝播則の結果を<b>検証</b>する(<code style="color:#22d3bf">table</code>)。</p>
 <p>*guf* は <code style="color:#22d3bf">gum_expanded</code>(<code style="color:#22d3bf">estimate</code> を渡して区間を出したもの)、*mcm* は <code style="color:#22d3bf">gum_monte_carlo</code> の返り。手続きは規格 8.1.3 のとおり:</p>

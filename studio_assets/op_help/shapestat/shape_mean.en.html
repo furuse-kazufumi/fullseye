@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">shape_mean — SHAPESTAT <code style="color:#22d3bf">procrustes</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">shapeset</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.shape_mean(shapes, max_iter: &#x27;int&#x27; = 100, tol: &#x27;float&#x27; = 1e-10, scaling: &#x27;bool&#x27; = True, reflection: &#x27;bool&#x27; = False)</code> (to call the implementation directly, <code style="color:#22d3bf">import shapestats; shapestats.shape_mean(shapes, max_iter: &#x27;int&#x27; = 100, tol: &#x27;float&#x27; = 1e-10, scaling: &#x27;bool&#x27; = True, reflection: &#x27;bool&#x27; = False)</code>; from the registry, <code style="color:#22d3bf">opsshapestat.get(&quot;shape_mean&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Mean shape after alignment by GPA. → <code style="color:#22d3bf">(N, 3)</code>.</p>
 <p>★ <b>Do not confuse it with the raw mean (<code style="color:#22d3bf">shapes.mean(0)</code>)</b>. Averaging without aligning position and orientation shrinks the shape by as much as the individuals are scattered. Aligning first and then averaging is the &quot;mean shape&quot;.</p>

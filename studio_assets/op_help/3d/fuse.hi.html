@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">fuse — 3D <code style="color:#22d3bf">tsdf_fusion</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">depth</code> → <code style="color:#22d3bf">sdf</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fuse(depths: &#x27;Sequence[np.ndarray]&#x27;, Ks: &#x27;Sequence&#x27;, Rs: &#x27;Sequence&#x27;, ts: &#x27;Sequence&#x27;, bounds: &#x27;Bounds&#x27;, res: &#x27;int&#x27;, trunc: &#x27;float&#x27;) -&gt; &#x27;Tuple[np.ndarray, np.ndarray]&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import tsdf_fusion; tsdf_fusion.fuse(depths: &#x27;Sequence[np.ndarray]&#x27;, Ks: &#x27;Sequence&#x27;, Rs: &#x27;Sequence&#x27;, ts: &#x27;Sequence&#x27;, bounds: &#x27;Bounds&#x27;, res: &#x27;int&#x27;, trunc: &#x27;float&#x27;) -&gt; &#x27;Tuple[np.ndarray, np.ndarray]&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;fuse&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>depth series को new_volume + integrate से 1 TSDF volume में fuse करता है। return value (tsdf, weight)।</p>
 <p>हर frame का (K,R,t) world→camera है। कई viewpoint से एक ही surface देखने पर weight जुड़ते जाते हैं, और एक frame में न दिखने वाली (self-occluded) सतहें दूसरे viewpoint से भर जाती हैं।</p>

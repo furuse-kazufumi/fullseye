@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">rotation_search_plan — DRIVE <code style="color:#22d3bf">pegsym</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">scalar × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rotation_search_plan(n_sym: &#x27;int&#x27;, phi_cap: &#x27;float&#x27;, estimate: &#x27;float&#x27; = 0.0, order: &#x27;str&#x27; = &#x27;alternate&#x27;) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import pegsym; pegsym.rotation_search_plan(n_sym: &#x27;int&#x27;, phi_cap: &#x27;float&#x27;, estimate: &#x27;float&#x27; = 0.0, order: &#x27;str&#x27; = &#x27;alternate&#x27;) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;rotation_search_plan&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>旋轉搜尋的候選(施加給銷的 yaw 修正)：將 1 個週期 P = 2π/n_sym 等分為 M = ⌈P/(2 phi_cap)⌉ 份的步長 s = P/M(≤ 2 phi_cap，因此捕獲窗口無縫覆蓋)。<code style="color:#22d3bf">order</code> = &quot;alternate&quot;(從估計值起 0, +s, −s, +2s, …)或 &quot;sweep&quot;(0, s, 2s, …)。n_sym = 0(圓)為 1 個候選。回傳 <code style="color:#22d3bf">angles</code>(M,)、<code style="color:#22d3bf">step</code>、<code style="color:#22d3bf">period</code>、<code style="color:#22d3bf">M</code>。<b>Raises</b> ValueError：n_sym &lt; 0、phi_cap ≤ 0、order 未知。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

@@ -4,6 +4,7 @@ dim: imgmetrics
 category: colorspace
 in: rgb
 out: lab
+gpu: なし
 examples: [image_quality_metrics]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `rgb` → `lab`
 - **呼び出し**: `import fullseye as fs; fs.ledger.xyz_to_lab(xyz, white=(0.95047, 1.0, 1.08883))` (実装を直接呼ぶなら `import imgmetrics; imgmetrics.xyz_to_lab(xyz, white=(0.95047, 1.0, 1.08883))`、台帳から引くなら `opsimgmetrics.get("xyz_to_lab")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

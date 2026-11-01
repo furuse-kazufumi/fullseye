@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">flash_frequency — DRIVE <code style="color:#22d3bf">decide</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.flash_frequency(intensity_series, fps, *, f_min: &#x27;float&#x27; = 0.0, pad: &#x27;int&#x27; = 8) -&gt; &#x27;Dict[str, float]&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivedecide; drivedecide.flash_frequency(intensity_series, fps, *, f_min: &#x27;float&#x27; = 0.0, pad: &#x27;int&#x27; = 8) -&gt; &#x27;Dict[str, float]&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;flash_frequency&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>픽셀(또는 영역 평균)의 밝기 시계열로부터 점멸 주파수를 추정합니다(FFT의 가장 높은 피크).</p>
 <p>평균을 빼고 Hann 창을 곱하고 <code style="color:#22d3bf">pad</code> 배로 0 을 채워 rFFT. <code style="color:#22d3bf">f_min</code> 이상에서 가장 높은 봉우리를 로그 진폭의 포물선으로보간한다. 반환되는 주파수는 <b>겉보기</b> 주파수(fps/2 를 넘는 점멸은 <code style="color:#22d3bf">aliased_frequency</code> 의 값으로 접혀 보인다).</p>

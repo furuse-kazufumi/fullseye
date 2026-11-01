@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">reflect — 3D <code style="color:#22d3bf">optics</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">vector × normals</code> → <code style="color:#22d3bf">normals</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.reflect(d, n)</code>(要直接呼叫實作,<code style="color:#22d3bf">import match3d; match3d.reflect(d, n)</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;reflect&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把入射方向 d 在法線為 n 的面上鏡面反射。r = d − 2(d·n)n。</p>
 <p><code style="color:#22d3bf">d</code>, <code style="color:#22d3bf">n</code> 在內部單位化(長度不限),因此回傳值 <code style="color:#22d3bf">r</code> 也是單位向量。將最後一個軸視為向量,因此 <code style="color:#22d3bf">(3,)</code> 或 <code style="color:#22d3bf">(N,3)</code> 的批次都能運作(2-D 的 <code style="color:#22d3bf">(2,)</code> 也可以)。<code style="color:#22d3bf">n</code> 的朝向不限(<code style="color:#22d3bf">n</code> 與 <code style="color:#22d3bf">−n</code> 得到相同的 <code style="color:#22d3bf">r</code>)。<code style="color:#22d3bf">d</code> 請依「射向面」的方向(光線的行進方向) 傳入。零向量被 1e-12 除後仍以 0 回傳(不拋例外)。</p>

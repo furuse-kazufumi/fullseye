@@ -4,6 +4,7 @@ dim: drive
 category: course
 in: table
 out: image2d
+gpu: なし
 examples: [poc_driving_school]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,6 +16,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **データ種**: `table` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.course_occupancy(course, cell: 'float' = 0.25, margin: 'float' = 2.0)` (実装を直接呼ぶなら `import drivecourse; drivecourse.course_occupancy(course, cell: 'float' = 0.25, margin: 'float' = 2.0)`、台帳から引くなら `opsdrive.get("course_occupancy")`)
 - **台帳経由の戻り値**: `fullseye.ledger.course_occupancy(...)` は**宣言 out 型 `image2d` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.course_occupancy.raw(...)`、または `drivecourse.course_occupancy` を直接呼ぶ。
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

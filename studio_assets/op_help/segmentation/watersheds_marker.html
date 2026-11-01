@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">watersheds_marker — SEGMENTATION <code style="color:#22d3bf">watershed</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d × labels2d</code> → <code style="color:#22d3bf">labels2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.watersheds_marker(image, markers)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import segmentation; segmentation.watersheds_marker(image, markers)</code>、台帳から引くなら <code style="color:#22d3bf">opssegmentation.get(&quot;watersheds_marker&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>マーカー制御 watershed 分割(watersheds_marker)。markers: int ラベル画像(0=未割当)。</p>
 <p>空の入力(<code style="color:#22d3bf">image</code> が 0 要素)は ValueError。</p>

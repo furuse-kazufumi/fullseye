@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">stick_radius_modelfree — DRIVE <code style="color:#22d3bf">tacslip</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">matrix × matrix</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.stick_radius_modelfree(pts_c, u_px, rel: &#x27;float&#x27; = 0.08, abs_px: &#x27;float&#x27; = 0.05) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import tacslip; tacslip.stick_radius_modelfree(pts_c, u_px, rel: &#x27;float&#x27; = 0.08, abs_px: &#x27;float&#x27; = 0.05) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;stick_radius_modelfree&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>बिना model का stick radius: केंद्र से दूरी के क्रम में, भीतरी 6 बिंदुओं के median δ̂ से |ux − δ̂| के rel·|δ̂| + abs_px से अधिक होने वाले पहले बिंदु और उससे ठीक पहले के बिंदु के मध्य-बिंदु की त्रिज्या <code style="color:#22d3bf">c_px</code> (resolution = marker अंतराल)। <code style="color:#22d3bf">core_px</code> = δ̂। pts_c केंद्र के सापेक्ष (M, 2) [px], u_px (M, 2) [px]। <b>Raises</b> ValueError: 6 से कम बिंदु।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

@@ -4,6 +4,7 @@ dim: drive
 category: lateral
 in: 
 out: table
+gpu: なし
 examples: [poc_driving_lateral]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.offtracking_circle(front_radius: 'float', wheelbase: 'float', arc_length, *, track: 'float' = 0.0, gamma0: 'float' = 0.0) -> 'Dict[str, np.ndarray]'` (実装を直接呼ぶなら `import drivelateral; drivelateral.offtracking_circle(front_radius: 'float', wheelbase: 'float', arc_length, *, track: 'float' = 0.0, gamma0: 'float' = 0.0) -> 'Dict[str, np.ndarray]'`、台帳から引くなら `opsdrive.get("offtracking_circle")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

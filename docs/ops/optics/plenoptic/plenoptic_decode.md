@@ -4,6 +4,7 @@ dim: optics
 category: plenoptic
 in: image2d × table
 out: lightfield
+gpu: なし
 examples: [plenoptic_decode_pipeline, poc_plenoptic_camera]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d × table` → `lightfield`
 - **呼び出し**: `import fullseye as fs; fs.ledger.plenoptic_decode(raw, calibration, *, angular=(5, 5))` (実装を直接呼ぶなら `import plenoptic; plenoptic.plenoptic_decode(raw, calibration, *, angular=(5, 5))`、台帳から引くなら `opsoptics.get("plenoptic_decode")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

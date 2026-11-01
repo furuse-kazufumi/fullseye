@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">nice_ticks — ANNOTATE <code style="color:#22d3bf">plot</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">無</code> → <code style="color:#22d3bf">signal</code>(僅由參數決定的運算子 —— 不接受影像或資料輸入)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.nice_ticks(lo, hi, n=5, scale=&#x27;linear&#x27;)</code>(要直接呼叫實作,<code style="color:#22d3bf">import annotate; annotate.nice_ticks(lo, hi, n=5, scale=&#x27;linear&#x27;)</code>;從台帳取用則 <code style="color:#22d3bf">opsannotate.get(&quot;nice_ticks&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>涵蓋 [lo, hi] 的「取整」刻度值(1/2/5 × 10^k,<b>閉合式</b>)。</p>
 <p>端點<b>包含在內</b>(<code style="color:#22d3bf">lo</code> 或 <code style="color:#22d3bf">hi</code> 恰好落在刻度上時必定出現)。為避免浮點捨入導致端點少 1 個的 off-by-one,判定時使用 <code style="color:#22d3bf">step*1e-9</code> 的容差。</p>

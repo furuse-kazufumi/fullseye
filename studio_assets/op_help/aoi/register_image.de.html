@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">register_image — AOI <code style="color:#22d3bf">geometric</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.register_image(reference, moving, upsample=20, method=&#x27;phase&#x27;, window=&#x27;hann&#x27;, max_shift=None, ambiguity_ratio=0.8, residual_tolerance=0.25)</code> (die Implementierung direkt: <code style="color:#22d3bf">import aoi; aoi.register_image(reference, moving, upsample=20, method=&#x27;phase&#x27;, window=&#x27;hann&#x27;, max_shift=None, ambiguity_ratio=0.8, residual_tolerance=0.25)</code>; aus dem Register: <code style="color:#22d3bf">opsaoi.get(&quot;register_image&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Liefert die Verschiebung, die ein Prüfbild auf ein Referenzbild ausrichtet, zusammen mit Größen, die erkennen lassen, wenn sie nicht passt. → dict.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>

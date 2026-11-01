@@ -4,6 +4,7 @@ dim: gfx2d
 category: isp
 in: image2d
 out: image2d
+gpu: なし
 examples: [raw_to_display_isp]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.raw_dead_pixel_mask(raw, threshold=0.1)` (実装を直接呼ぶなら `import gfx2d; gfx2d.raw_dead_pixel_mask(raw, threshold=0.1)`、台帳から引くなら `opsgfx2d.get("raw_dead_pixel_mask")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

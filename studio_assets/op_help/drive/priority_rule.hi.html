@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">priority_rule — DRIVE <code style="color:#22d3bf">crossing</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.priority_rule(own, cross, *, signalised: &#x27;bool&#x27; = False, wide_ratio: &#x27;float&#x27; = 1.5) -&gt; &#x27;Dict[str, object]&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import drivecrossing; drivecrossing.priority_rule(own, cross, *, signalised: &#x27;bool&#x27; = False, wide_ratio: &#x27;float&#x27; = 1.5) -&gt; &#x27;Dict[str, object]&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;priority_rule&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>traffic control रहित चौराहे पर अपना वाहन (own) cross road के वाहन (cross) को रास्ता देता है या नहीं (धारा 36(1)-(3))।</p>
 <p>own, cross = {&quot;width&quot;: सड़क की चौड़ाई [m], &quot;priority_sign&quot;: प्राथमिकता सड़क का संकेत, &quot;centre_line&quot;: चौराहे के भीतर तक मध्य रेखा, वाहन लेन}। प्राथमिकता सड़क = संकेत or मध्य रेखा (सड़क यातायात अधिनियम (जापान) की धारा 36 उपधारा 2 का कोष्ठक-अंश)। स्पष्ट रूप से चौड़ी = चौड़ाई का अनुपात ≥ <code style="color:#22d3bf">wide_ratio</code> (<b>मान्यता</b>)।</p>

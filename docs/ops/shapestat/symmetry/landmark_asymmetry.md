@@ -4,6 +4,7 @@ dim: shapestat
 category: symmetry
 in: points
 out: signal
+gpu: なし
 examples: [shapestat_landmark_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `points` → `signal`
 - **呼び出し**: `import fullseye as fs; fs.ledger.landmark_asymmetry(landmarks, pairs=None, plane=None)` (実装を直接呼ぶなら `import shapestats; shapestats.landmark_asymmetry(landmarks, pairs=None, plane=None)`、台帳から引くなら `opsshapestat.get("landmark_asymmetry")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

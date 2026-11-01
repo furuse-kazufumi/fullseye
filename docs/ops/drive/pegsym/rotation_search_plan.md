@@ -4,6 +4,7 @@ dim: drive
 category: pegsym
 in: scalar × scalar
 out: table
+gpu: なし
 examples: [poc_peg_symmetry_search]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `scalar × scalar` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.rotation_search_plan(n_sym: 'int', phi_cap: 'float', estimate: 'float' = 0.0, order: 'str' = 'alternate') -> 'dict'` (実装を直接呼ぶなら `import pegsym; pegsym.rotation_search_plan(n_sym: 'int', phi_cap: 'float', estimate: 'float' = 0.0, order: 'str' = 'alternate') -> 'dict'`、台帳から引くなら `opsdrive.get("rotation_search_plan")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

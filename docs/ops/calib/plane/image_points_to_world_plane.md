@@ -4,6 +4,7 @@ dim: calib
 category: plane
 in: table
 out: keypoints
+gpu: なし
 examples: []
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `keypoints`
 - **呼び出し**: `import fullseye as fs; fs.ledger.image_points_to_world_plane(cam_par, pose, image_points, scale=1.0)` (実装を直接呼ぶなら `import calib; calib.image_points_to_world_plane(cam_par, pose, image_points, scale=1.0)`、台帳から引くなら `opscalib.get("image_points_to_world_plane")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

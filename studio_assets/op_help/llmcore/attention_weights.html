@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">attention_weights — LLMCORE <code style="color:#22d3bf">score</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">attnmap</code> → <code style="color:#22d3bf">attnmap</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.attention_weights(scores, mask=None, window=None) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import llmcore; llmcore.attention_weights(scores, mask=None, window=None) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsllmcore.get(&quot;attention_weights&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>行ごとの softmax(マスクつき)→ attnmap。<b>行和は 1、mask 位置は厳密に 0</b>。</p>
 <p>行ごとに最大値を引いてから指数を取る。これは飾りではない —— 引かずに <code style="color:#22d3bf">exp</code> するとスコアが大きいとき<b>全行が inf/NaN になる</b>(実測: 96 行中 96 行)。引けば 0 行。</p>

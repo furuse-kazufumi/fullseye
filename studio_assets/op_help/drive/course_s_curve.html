@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">course_s_curve — DRIVE <code style="color:#22d3bf">course</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.course_s_curve(width=3.5, radius_outer=7.5, arc_fraction=0.375, entry=4.0, arc_pts=48)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import drivecourse; drivecourse.course_s_curve(width=3.5, radius_outer=7.5, arc_fraction=0.375, entry=4.0, arc_pts=48)</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;course_s_curve&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>曲線コース(S 字): 直線 E → 左弧(中心角 2π·f)→ 右弧(同じ)→ 直線 E。</p>
 <p>外径 R_o = <code style="color:#22d3bf">radius_outer</code>、内径 R_i = R_o − w、中心線の半径 R_c = (R_o + R_i)/2。2 つの弧は共通接線点で曲率の向きが反転する。多角形は中心線の標本点を法線方向に ±w/2 ずらして作る(弧の標本点は外円・内円の上に厳密に乗る)。面積 = 2πf(R_o² − R_i²) + 2Ew。規格: A = 3.5, B = 7.5, C = 3/8 → <code style="color:#22d3bf">params[&quot;regulation&quot;]</code>。</p>

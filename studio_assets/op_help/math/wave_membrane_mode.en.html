@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">wave_membrane_mode — MATH <code style="color:#22d3bf">wave</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">matrix</code> (an op determined by its arguments alone — it takes no image or data input)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.wave_membrane_mode(kind=&#x27;rectangular&#x27;, m=2, n=3, shape=(256, 256), aspect=1.0, free_edge=True)</code> (to call the implementation directly, <code style="color:#22d3bf">import mathops; mathops.wave_membrane_mode(kind=&#x27;rectangular&#x27;, m=2, n=3, shape=(256, 256), aspect=1.0, free_edge=True)</code>; from the registry, <code style="color:#22d3bf">opsmath.get(&quot;wave_membrane_mode&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>One eigenmode of a vibrating <b>membrane</b> — the shape the sand draws.</p>
 <p>★<b>This is a membrane, not a plate.</b> The familiar Chladni pattern <code style="color:#22d3bf">cos(m pi x) cos(n pi y) - cos(n pi x) cos(m pi y)</code> solves the Helmholtz equation with free (Neumann) edges; a real Chladni *plate* obeys the <b>biharmonic</b> equation and has a different frequency ladder. The pictures look alike, the frequencies do not — so this op says membrane and is checked against membrane truth only.</p>

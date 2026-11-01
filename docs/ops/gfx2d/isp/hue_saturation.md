@@ -4,6 +4,7 @@ dim: gfx2d
 category: isp
 in: rgb
 out: rgb
+gpu: なし
 examples: [raw_to_display_isp]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `rgb` → `rgb`
 - **呼び出し**: `import fullseye as fs; fs.ledger.hue_saturation(rgb, hue_deg=0.0, saturation=1.0)` (実装を直接呼ぶなら `import gfx2d; gfx2d.hue_saturation(rgb, hue_deg=0.0, saturation=1.0)`、台帳から引くなら `opsgfx2d.get("hue_saturation")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

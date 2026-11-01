@@ -4,6 +4,7 @@ dim: piv
 category: assess
 in: flow2d
 out: table
+gpu: なし
 examples: [piv_field_analysis_tour, poc_battery_electrode_breathing]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `flow2d` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.piv_peak_locking(flow, bins=20)` (実装を直接呼ぶなら `import pivops; pivops.piv_peak_locking(flow, bins=20)`、台帳から引くなら `opspiv.get("piv_peak_locking")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

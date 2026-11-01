@@ -4,6 +4,7 @@ dim: 3d
 category: regionprops
 in: voxel
 out: voxel
+gpu: なし
 examples: [region_props_3d]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `voxel` → `voxel`
 - **呼び出し**: `import fullseye as fs; fs.ledger.largest_component(vol, connectivity: 'int' = 26) -> 'np.ndarray'` (実装を直接呼ぶなら `import regionprops3d; regionprops3d.largest_component(vol, connectivity: 'int' = 26) -> 'np.ndarray'`、台帳から引くなら `ops3d.get("largest_component")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

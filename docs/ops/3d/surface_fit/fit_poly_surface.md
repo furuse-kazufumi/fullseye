@@ -4,6 +4,7 @@ dim: 3d
 category: surface_fit
 in: image2d × image2d × image2d
 out: poly_surface
+gpu: なし
 examples: [contours_to_terrain]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d × image2d × image2d` → `poly_surface`
 - **呼び出し**: `import fullseye as fs; fs.ledger.fit_poly_surface(x, y, z, degree=2)` (実装を直接呼ぶなら `import match3d; match3d.fit_poly_surface(x, y, z, degree=2)`、台帳から引くなら `ops3d.get("fit_poly_surface")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

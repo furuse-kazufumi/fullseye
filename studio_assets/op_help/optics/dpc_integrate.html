@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">dpc_integrate — OPTICS <code style="color:#22d3bf">grating_interf</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dpc_integrate(dpc_rad, pixel_um, distance_mm, analyzer_period_um, wavelength_nm=None, energy_kev=None, axis=1, baseline=&#x27;left&#x27;, baseline_px=8, delta=None)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import gratinginterf; gratinginterf.dpc_integrate(dpc_rad, pixel_um, distance_mm, analyzer_period_um, wavelength_nm=None, energy_kev=None, axis=1, baseline=&#x27;left&#x27;, baseline_px=8, delta=None)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;dpc_integrate&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>微分位相(縞の位相のずれ φ)を格子の感度の向きに積分して、波面の位相 Φ [rad] に戻す。</p>
 <p>屈折角 α = φ·p2/(2π d)(Weitkamp ら 2005 の式 1)、∂Φ/∂x = (2π/λ)·α。画素の中で平均した α を画素の幅で足すと、画素の境界での Φ が出る(<code style="color:#22d3bf">np.cumsum</code>)。返すのは隣り合う境界の平均(画素の中心)。dpc_rad は 2-D の図か、<code style="color:#22d3bf">grating_three_image_retrieve</code> の返り値(表。<code style="color:#22d3bf">dpc_rad</code> を取り出す)。delta(屈折率の 1 からのずれ δ)を渡すと、投影の厚さ t = −Φ·λ/(2π δ) [µm] も返す。</p>

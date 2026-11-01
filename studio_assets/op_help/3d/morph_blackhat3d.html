@@ -2,7 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">morph_blackhat3d — 3D <code style="color:#22d3bf">morphology</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">voxel</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.morph_blackhat3d(vol, r=1, device=&#x27;cpu&#x27;, se=&#x27;cube&#x27;)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import match3d; match3d.morph_blackhat3d(vol, r=1, device=&#x27;cpu&#x27;, se=&#x27;cube&#x27;)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;morph_blackhat3d&quot;)</code>)</p>
-<p style="margin:2px 0 2px 12px">• <b>GPU</b>: この op は GPU 経路あり(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>3D black-hat = closing − vol。SE より小さい <b>暗構造/穴</b>を抽出。</p>
 <p><code style="color:#22d3bf">morph_close3d(vol, r, ...) − vol(float32)</code>。値は 0 以上で、SE(一辺 <code style="color:#22d3bf">2r+1</code> の cube か半径 r の ball)より小さい暗い穴・亀裂・隙間だけがその深さで残り、大きな暗領域と背景は 0 になる。占有 voxel なら「SE で埋まる空洞 = 1」。<code style="color:#22d3bf">r</code> は検出したい穴の半径より大きく取る。<code style="color:#22d3bf">se</code> は &quot;cube&quot;/&quot;ball&quot;(他は ValueError)、<code style="color:#22d3bf">device</code> は cube+torch のときだけ有効。返り値 <code style="color:#22d3bf">(D,H,W)</code> float32 numpy。明るい構造を取るなら <code style="color:#22d3bf">morph_tophat3d</code>。</p>

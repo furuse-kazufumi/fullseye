@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">chromatic_confocal_probe — OPTICS <code style="color:#22d3bf">confocal</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">無</code> → <code style="color:#22d3bf">table</code>(僅由參數決定的運算子 —— 不接受影像或資料輸入)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.chromatic_confocal_probe(surfaces=None, stop: &#x27;int&#x27; = 0, wl_min_nm: &#x27;float&#x27; = 450.0, wl_max_nm: &#x27;float&#x27; = 700.0, n_points: &#x27;int&#x27; = 26) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import chromconf; chromconf.chromatic_confocal_probe(surfaces=None, stop: &#x27;int&#x27; = 0, wl_min_nm: &#x27;float&#x27; = 450.0, wl_max_nm: &#x27;float&#x27; = 700.0, n_points: &#x27;int&#x27; = 26) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsoptics.get(&quot;chromatic_confocal_probe&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由物鏡的處方產生波長 → 焦點位置的校正表(彩虹尺的刻度)。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>

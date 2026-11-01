@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">shape_mean — SHAPESTAT <code style="color:#22d3bf">procrustes</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">shapeset</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.shape_mean(shapes, max_iter: &#x27;int&#x27; = 100, tol: &#x27;float&#x27; = 1e-10, scaling: &#x27;bool&#x27; = True, reflection: &#x27;bool&#x27; = False)</code> (die Implementierung direkt: <code style="color:#22d3bf">import shapestats; shapestats.shape_mean(shapes, max_iter: &#x27;int&#x27; = 100, tol: &#x27;float&#x27; = 1e-10, scaling: &#x27;bool&#x27; = True, reflection: &#x27;bool&#x27; = False)</code>; aus dem Register: <code style="color:#22d3bf">opsshapestat.get(&quot;shape_mean&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Mittlere Form nach der Ausrichtung per GPA. → <code style="color:#22d3bf">(N, 3)</code>.</p>
 <p>★ <b>Nicht mit dem rohen Mittelwert (<code style="color:#22d3bf">shapes.mean(0)</code>) verwechseln</b>. Mittelt man, ohne Lage und Orientierung anzugleichen, schrumpft die Form um so viel, wie die Individuen verstreut liegen. Erst ausrichten und dann mitteln ergibt die &quot;Mittelform&quot;.</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">gs_render_fn — DRIVE <code style="color:#22d3bf">gsplat</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gs_render_fn(gs: &#x27;dict&#x27;, **render_kw)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import gsplatnp; gsplatnp.gs_render_fn(gs: &#x27;dict&#x27;, **render_kw)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;gs_render_fn&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p><code style="color:#22d3bf">render_fn(world, cam) → (H, W, 3)</code>(<code style="color:#22d3bf">kendamaworld.camera_perceiver</code>의 그리기를 교체하는 입구)를 반환합니다: 호출될 때마다 <code style="color:#22d3bf">gs_update</code>로 월드의 현재 정점에 가우시안을 다시 붙이고, <code style="color:#22d3bf">cam</code>(dict: pose, K, width, height)으로 <code style="color:#22d3bf">gs_render</code>합니다. <code style="color:#22d3bf">render_kw</code>는 gs_render에 그대로 전달합니다. 속성 <code style="color:#22d3bf">n_calls</code>·<code style="color:#22d3bf">n_pairs</code>(누계)를 가집니다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

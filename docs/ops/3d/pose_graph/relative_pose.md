@@ -4,6 +4,7 @@ dim: 3d
 category: pose_graph
 in: pose × pose
 out: pose
+gpu: なし
 examples: [pose_graph_slam, sfm_recon]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `pose × pose` → `pose`
 - **呼び出し**: `import fullseye as fs; fs.ledger.relative_pose(pose_i, pose_j)` (実装を直接呼ぶなら `import pose_graph; pose_graph.relative_pose(pose_i, pose_j)`、台帳から引くなら `ops3d.get("relative_pose")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">roundabout_signal_point — DRIVE <code style="color:#22d3bf">pass</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.roundabout_signal_point(arm_angles: &#x27;Sequence[float]&#x27;, entry: &#x27;int&#x27;, exit: &#x27;int&#x27;) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import drivepass; drivepass.roundabout_signal_point(arm_angles: &#x27;Sequence[float]&#x27;, entry: &#x27;int&#x27;, exit: &#x27;int&#x27;) -&gt; &#x27;Dict[str, object]&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;roundabout_signal_point&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>駛出圓環時開始打左轉燈的位置(沿順時針行進的角度)。場景 S069。</p>
 <p>日本《交通教則》5-5-1(2)、5-7-2(4): 在通過擬駛出地點之前一個出口的側方時打燈號;若從駛入後緊接著的出口駛出,則在駛入時(日本道路交通法第 53 條第 2 項。關於時機的政令 = 施行令第 21 條未確認)。<code style="color:#22d3bf">arm_angles</code> = 各分支的角度,<code style="color:#22d3bf">entry</code> / <code style="color:#22d3bf">exit</code> = 編號。從入口順時針量測的各分支角 d_i = (θ_entry − θ_i) mod 2π(出口 = 入口則為 2π,迴轉)。燈號角 = 小於目標出口角的 d_i 的最大值(沒有則為 0 = 駛入時)。回傳值: <code style="color:#22d3bf">signal_angle</code>、<code style="color:#22d3bf">exit_angle</code>、<code style="color:#22d3bf">exits_before</code>(經過的出口數)、<code style="color:#22d3bf">signal_theta</code>(環道上的角度)。</p>

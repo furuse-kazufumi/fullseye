@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">mapf_joint_astar — DRIVE <code style="color:#22d3bf">agv</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mapf_joint_astar(grid, starts, goals, max_expansions=2000000)</code> (to call the implementation directly, <code style="color:#22d3bf">import agvfleet; agvfleet.mapf_joint_astar(grid, starts, goals, max_expansions=2000000)</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;mapf_joint_astar&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>A* with the positions of all vehicles as 1 single state. Optimal solution <b>for small problems only</b> (the ground truth for the CBS gate).</p>
 <p>To count the sum of costs exactly, each vehicle carries a &quot;finished (stays at its goal from now on)&quot; flag:</p>

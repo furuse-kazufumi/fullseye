@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">sam_cscan — ACOUSTICS <code style="color:#22d3bf">ultrasonic</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">labels2d × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sam_cscan(bond_map, stacks, pixel_size=2e-06, f0=150000000.0, bandwidth=0.6, f_number=3.0, water_path=0.001, gate_interface=1, half_width=None, k_res=1.02, noise_rms=0.0, seed=0, n_reverb=40, psf_nodes=32)</code>(要直接调用实现,<code style="color:#22d3bf">import ultrasound; ultrasound.sam_cscan(bond_map, stacks, pixel_size=2e-06, f0=150000000.0, bandwidth=0.6, f_number=3.0, water_path=0.001, gate_interface=1, half_width=None, k_res=1.02, noise_rms=0.0, seed=0, n_reverb=40, psf_nodes=32)</code>;从台账取用则 <code style="color:#22d3bf">opsacoustics.get(&quot;sam_cscan&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>对二维键合面图进行聚焦探头 C 扫描:逐频率的高斯横向 PSF、界面处的时间门,输出幅值、相位、同相(带符号)与带符号峰值图像(<code style="color:#22d3bf">table</code>)。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">scatter_offroad — DRIVE <code style="color:#22d3bf">terrain</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.scatter_offroad(course, bounds, n: &#x27;int&#x27; = 60, r_min: &#x27;float&#x27; = 4.0, margin: &#x27;float&#x27; = 3.0, seed: &#x27;int&#x27; = 0, max_tries: &#x27;int&#x27; = 20000) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import driveterrain; driveterrain.scatter_offroad(course, bounds, n: &#x27;int&#x27; = 60, r_min: &#x27;float&#x27; = 4.0, margin: &#x27;float&#x27; = 3.0, seed: &#x27;int&#x27; = 0, max_tries: &#x27;int&#x27; = 20000) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;scatter_offroad&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Scatters objects off the road (dart throwing): each point is at least <code style="color:#22d3bf">margin</code> from the course and at least <code style="color:#22d3bf">r_min</code> from every other point.</p>
 <p>Returns (n&#x27;, 3) = (x, y, yaw). If n is not reached within <code style="color:#22d3bf">max_tries</code>, returns as many as there are (n&#x27; ≤ n).</p>

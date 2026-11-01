@@ -4,6 +4,7 @@ dim: shapestat
 category: deviation
 in: points × points
 out: signal
+gpu: なし
 examples: [poc_am_thermal_to_ct, shapestat_landmark_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `points × points` → `signal`
 - **呼び出し**: `import fullseye as fs; fs.ledger.signed_surface_distance(query, surface, surface_normals=None, k: 'int' = 1)` (実装を直接呼ぶなら `import shapestats; shapestats.signed_surface_distance(query, surface, surface_normals=None, k: 'int' = 1)`、台帳から引くなら `opsshapestat.get("signed_surface_distance")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

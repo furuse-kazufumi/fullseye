@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">video_summary_keyframes — VIDEOCUBE <code style="color:#22d3bf">summary</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">video</code> → <code style="color:#22d3bf">indices</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.video_summary_keyframes(video, k: &#x27;int&#x27; = 5, min_gap: &#x27;int | None&#x27; = None, bins: &#x27;int&#x27; = 32) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import videocube; videocube.video_summary_keyframes(video, k: &#x27;int&#x27; = 5, min_gap: &#x27;int | None&#x27; = None, bins: &#x27;int&#x27; = 32) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsvideocube.get(&quot;video_summary_keyframes&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>代表帧的下标 <code style="color:#22d3bf">(k,)</code> int64，升序(<code style="color:#22d3bf">indices</code>)。</p>
 <p>每帧的得分 = 运动量(|I_t − I_{t−1}| 的平均,归一化到 [0, 1])+ 场景变化(直方图的 χ² 距离,归一化)。按得分从高到低,贪心地选出 <code style="color:#22d3bf">k</code> 帧,要求与已选帧相距 <code style="color:#22d3bf">min_gap</code>(默认 T // (2k))以上。T &lt; k 时取全部帧。这是无学习的“发生了某事的帧”,而不是语义上的摘要。</p>

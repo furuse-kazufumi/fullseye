@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">emva_quantum_efficiency — OPTICS <code style="color:#22d3bf">sensorchar</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.emva_quantum_efficiency(mu_p, mu_y, mu_y_dark, mu_y_sat, K)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import sensorchar; sensorchar.emva_quantum_efficiency(mu_p, mu_y, mu_y_dark, mu_y_sat, K)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;emva_quantum_efficiency&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>応答(特性曲線)の傾きから量子効率 η を出す(式 49・52)。</p>
 <p>*mu_p*: 露光段ごとの画素あたりの平均光子数(照度計と露光時間から: μ_p = A E t_exp λ/(hc))。R = μ_y − μ_y.dark を μ_p に当てた直線(<b>切片 0 に固定</b>)の傾き、η = R/K。使う点は飽和の 0〜70 %。</p>

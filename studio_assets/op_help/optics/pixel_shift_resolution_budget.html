@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">pixel_shift_resolution_budget — OPTICS <code style="color:#22d3bf">pixelshift</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pixel_shift_resolution_budget(pitch_um, f_number, wavelength_um=0.55, fill_factor=1.0, step_px=0.5)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import pixelshift; pixelshift.pixel_shift_resolution_budget(pitch_um, f_number, wavelength_um=0.55, fill_factor=1.0, step_px=0.5)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;pixel_shift_resolution_budget&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>ピクセルシフトで解像が上がるかの閉形式の予算(レンズ律速か画素律速か)。</p>
 <p>周波数 f は cyc/px(センサ画素あたり)。</p>

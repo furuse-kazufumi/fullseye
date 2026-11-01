@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">steady_cornering — DRIVE <code style="color:#22d3bf">lateral</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">table</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.steady_cornering(speed: &#x27;float&#x27;, radius: &#x27;float&#x27;, params: &#x27;dict&#x27;) -&gt; &#x27;Dict[str, float]&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import drivelateral; drivelateral.steady_cornering(speed: &#x27;float&#x27;, radius: &#x27;float&#x27;, params: &#x27;dict&#x27;) -&gt; &#x27;Dict[str, float]&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;steady_cornering&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>linear 2-wheel equivalent (bicycle) model का steady-state circular cornering (गति u, मोड़ की त्रिज्या R = u/r, बायाँ मोड़ धनात्मक)।</p>
 <p>R को अग्र गति u और यॉ दर r से परिभाषित किया जाता है (रैखिक मॉडल की परिपाटी)। गुरुत्व केंद्र के पथ की वास्तविक त्रिज्या परिणामी गति / r = R √(1 + tan²β) है, जो छोटे β की सीमा में R के बराबर है (गेट से जाँचा गया अंतर β² की कोटि का है)।</p>

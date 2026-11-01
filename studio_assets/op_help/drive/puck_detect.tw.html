@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">puck_detect — DRIVE <code style="color:#22d3bf">puck</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image2d × table</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.puck_detect(frame, cam: &#x27;dict&#x27;, *, mode: &#x27;str&#x27; = &#x27;dark&#x27;, thresh: &#x27;float&#x27; = 0.85, radius_tol: &#x27;float&#x27; = 0.5, color=None, color_tol: &#x27;float&#x27; = 0.25)</code>(要直接呼叫實作,<code style="color:#22d3bf">import puck; puck.puck_detect(frame, cam: &#x27;dict&#x27;, *, mode: &#x27;str&#x27; = &#x27;dark&#x27;, thresh: &#x27;float&#x27; = 0.85, radius_tol: &#x27;float&#x27; = 0.5, color=None, color_tol: &#x27;float&#x27; = 0.25)</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;puck_detect&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p><code style="color:#22d3bf">balltrack.ball_detect</code> 的 facade：從正上方的影格中取出 1 個圓盤，並以單應性映射到球桌平面 (x, y) [m]。</p>
 <p><code style="color:#22d3bf">mode</code> = &quot;dark&quot;(白台上的暗色冰球,合成)/ &quot;color&quot;、&quot;chroma&quot;(依顏色,MuJoCo 的紅色冰球)。<code style="color:#22d3bf">thresh</code> 設在台面值(0.92)稍下方: <code style="color:#22d3bf">ball_detect</code> 的權重為 (thresh − 像素值),所以閾值越接近台面,權重越 ∝ 覆蓋率, 重心與面積重心一致。取中間的 0.5 時邊緣像素被截斷,出現依賴相位的偏差(實測 2026-10-04,r = 6.3 px:</p>

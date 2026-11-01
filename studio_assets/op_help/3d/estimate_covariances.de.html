@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">estimate_covariances — 3D <code style="color:#22d3bf">gicp</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">descriptor</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.estimate_covariances(points, k: &#x27;int&#x27; = 20, epsilon: &#x27;float&#x27; = 0.001) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import gicp; gicp.estimate_covariances(points, k: &#x27;int&#x27; = 20, epsilon: &#x27;float&#x27; = 0.001) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;estimate_covariances&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Plane-to-Plane-Kovarianzen (N,3,3): die lokale Kovarianz jedes Punktes mit auf (ε,1,1) gesetzten Eigenwerten.</p>
 <p>Zerlegt die Stichprobenkovarianz der k nächsten Nachbarn (einschließlich des Punktes selbst) in Eigenwerte und rekonstruiert sie, wobei die Eigenwerte <b>in der Tangentialebene durch 1 und in Richtung der Flächennormale (Richtung des kleinsten Eigenwerts) durch ε</b> ersetzt werden. Die Größe der Kovarianz ist unabhängig von der Ausdehnung der Nachbarschaft konstant (ε,1,1); so entsteht ein skaleninvariantes Modell der &quot;flächigen Plausibilität&quot; (der Kern von GICP).</p>

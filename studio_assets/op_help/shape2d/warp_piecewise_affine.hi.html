@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">warp_piecewise_affine — SHAPE2D <code style="color:#22d3bf">morph</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d × pairs × pairs</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.warp_piecewise_affine(img, src_pts, dst_pts, order=1)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import imagemorph; imagemorph.warp_piecewise_affine(img, src_pts, dst_pts, order=1)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsshape2d.get(&quot;warp_piecewise_affine&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>img के src_pts पर की सामग्री को dst_pts तक ले जाने वाला piecewise affine warp।</p>
 <p>dst_pts का Delaunay triangulation करके, हर output pixel जिस triangle में है उसके barycentric coordinates निकालता है, उन्हीं barycentric coordinates से src_pts की ओर के corresponding triangle पर map करके inverse mapping से sample करता है। convex hull के बाहर (किसी triangle में न आने वाले pixels) identity (मूल position) से sample होते हैं, इसलिए चारों कोनों को corresponding points में शामिल करने पर (<code style="color:#22d3bf">add_frame_corners</code>) पूरी image बिना छेद के ढक जाती है।</p>

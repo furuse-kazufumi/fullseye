@@ -4,6 +4,7 @@ dim: annotate
 category: text
 in: text
 out: table
+gpu: なし
 examples: [annotate_gallery, annotate_paper_tour, poc_diabolo_model_and_vision, poc_interferometry_step, poc_polarization_specular]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `text` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.measure_text(text, font_size=14, font_path=None, max_width=None, min_font_size=9, line_spacing=1.15, wrap=True, bold=False, italic=False)` (実装を直接呼ぶなら `import annotate; annotate.measure_text(text, font_size=14, font_path=None, max_width=None, min_font_size=9, line_spacing=1.15, wrap=True, bold=False, italic=False)`、台帳から引くなら `opsannotate.get("measure_text")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 
