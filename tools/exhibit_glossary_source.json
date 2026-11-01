@@ -264,6 +264,19 @@
   "_short_ja": "反復最近点法",
   "_short_en": "iterative closest point"
  },
+ "ransac": {
+  "match": [
+   "RANSAC",
+   "random sample consensus",
+   "ランダムサンプルコンセンサス"
+  ],
+  "ja": "標本から小さな部分集合を反復抽出してモデルを当て、許容誤差内の点が最も多いモデルを選ぶ外れ値に強い推定法。",
+  "en": "A robust estimator that repeatedly fits a model to small random subsets and selects the model supported by the most inliers within a tolerance.",
+  "source": "Fischler and Bolles, Communications of the ACM 24(6), 1981",
+  "review": false,
+  "_short_ja": "外れ値に強い反復モデル推定",
+  "_short_en": "robust random-sample model fitting"
+ },
  "ggx": {
   "match": [
    "GGX",

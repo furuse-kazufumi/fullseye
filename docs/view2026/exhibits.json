@@ -19633,6 +19633,23 @@
    }
   },
   {
+   "id": "poc_real_tless_6dof",
+   "group": "wing_geometry",
+   "media": "01_pose_overlay.png",
+   "motion": false,
+   "thumb_src": "01_pose_overlay_720.jpg",
+   "label": {
+    "ja": "実深度点群で既知部品の6自由度姿勢を推定する",
+    "en": "Estimate known-part 6-DoF pose from real depth point clouds",
+    "zh": "从真实深度点云估计已知零件的六自由度姿态",
+    "tw": "從真實深度點雲估計已知零件的六自由度姿態",
+    "ko": "실제 깊이 포인트 클라우드에서 알려진 부품의 6자유도 자세 추정",
+    "de": "Die 6-DoF-Pose bekannter Teile aus realen Tiefenpunktwolken schätzen",
+    "hi": "वास्तविक depth point cloud से ज्ञात भाग की 6-DoF pose का अनुमान",
+    "fr": "Estimer la pose 6-DoF de pièces connues à partir de vrais nuages de profondeur"
+   }
+  },
+  {
    "id": "poc_star_tracker",
    "group": "wing_threed",
    "media": "star_tracker_anim3d.html",
@@ -19775,9 +19792,17 @@
     "ko": "3차원 점군에서 평면도 구하기",
     "de": "Ebenheit einer Fläche aus einer 3-D-Punktwolke",
     "hi": "3-D point cloud से सतह की समतलता (flatness)",
-    "fr": "Calculer la planéité à partir d'un nuage de points 3-D"
-   },
-   "polarisation-specular-removal": {
+   "fr": "Calculer la planéité à partir d'un nuage de points 3-D"
+  },
+  "six-dof-surface-pose": {
+   "zh": "从点云中以六自由度定位已知三维零件",
+   "tw": "從點雲中以六自由度定位已知 3D 零件",
+   "ko": "포인트 클라우드에서 알려진 3D 부품의 6자유도 자세 추정",
+   "de": "Ein bekanntes 3-D-Teil mit sechs Freiheitsgraden in einer Punktwolke lokalisieren",
+   "hi": "point cloud में ज्ञात 3-D भाग का छह स्वतंत्रता अंशों में पता लगाएँ",
+   "fr": "Localiser une pièce 3D connue dans un nuage de points avec six degrés de liberté"
+  },
+  "polarisation-specular-removal": {
     "zh": "用 4 个偏振方向去除镜面反射(区分电介质与金属)",
     "tw": "用 4 個偏振方向去除鏡面反射(區分介電質與金屬)",
     "ko": "편광 4 방향으로 정반사 제거(유전체와 금속을 구분)",

@@ -4,7 +4,7 @@ dim: annotate
 category: plot
 in: axes × signal × signal
 out: pairs
-examples: [annotate_gallery, poc_beam_modal_video, poc_camera_calibration, poc_crack_width_timeseries, poc_moire_alignment, poc_motion_magnification, poc_strain_history, poc_structure_4d_deterioration, poc_superresolution_limits, poc_traffic_counting, poc_wound_area_tracking, poc_xyt_event_surface]
+examples: [annotate_gallery, poc_beam_modal_video, poc_camera_calibration, poc_crack_width_timeseries, poc_moire_alignment, poc_motion_magnification, poc_real_tless_6dof, poc_strain_history, poc_structure_4d_deterioration, poc_superresolution_limits, poc_traffic_counting, poc_wound_area_tracking, poc_xyt_event_surface]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.8.1  # fullseye lib version this note was generated for
@@ -73,6 +73,7 @@ Notes
 - [poc_crack_width_timeseries](../../../../examples/poc_crack_width_timeseries.py) — `py -3.11 examples/poc_crack_width_timeseries.py`
 - [poc_moire_alignment](../../../../examples/poc_moire_alignment.py) — `py -3.11 examples/poc_moire_alignment.py`
 - [poc_motion_magnification](../../../../examples/poc_motion_magnification.py) — `py -3.11 examples/poc_motion_magnification.py`
+- [poc_real_tless_6dof](../../../../examples/poc_real_tless_6dof.py) — `py -3.11 examples/poc_real_tless_6dof.py`
 - [poc_strain_history](../../../../examples/poc_strain_history.py) — `py -3.11 examples/poc_strain_history.py`
 - [poc_structure_4d_deterioration](../../../../examples/poc_structure_4d_deterioration.py) — `py -3.11 examples/poc_structure_4d_deterioration.py`
 - [poc_superresolution_limits](../../../../examples/poc_superresolution_limits.py) — `py -3.11 examples/poc_superresolution_limits.py`

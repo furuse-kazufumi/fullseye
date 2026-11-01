@@ -585,6 +585,7 @@ EXCLUDED = {
 #: だから**釣れたものは全部ここに名前と理由を書いて外す**(印は緩めない)。
 _OUT_REASON = "出力は out/(gitignore)で、コミット物を書かない。"
 NOT_A_GENERATOR = {
+    "tools/fetch_tless.py": "取得器(T-LESS を repo の外のキャッシュへ落とし SHA-256 を照合する)。生成物は無く、CI では回さない。",
     # ---- 2026-11-01: ViEW2026 の目玉 14 本の受け取り検査(生成物を書かない) ----
     "tools/check_view2026_figure_scale.py": "検査。図が最近傍拡大でなく描画倍率どおりかを数えて表にする(repo の生成物は書かない)。",
     "tools/make_view2026_before_after.py": "検査用の比較画像を repo の外(--output)へ書く。受け取りで目視するためだけに手で回す。",

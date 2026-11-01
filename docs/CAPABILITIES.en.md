@@ -17,7 +17,7 @@ claim with nothing behind it cannot survive.
 `py -3.11 tools/gen_capabilities_index.py` (this index is generated —
 do not edit it by hand).
 
-**Currently 97 capabilities**
+**Currently 98 capabilities**
 
 ## Look up by task (recommended pipeline)
 
@@ -72,6 +72,7 @@ Every operator exists in the registry and the types connect from one step to the
 | [Measure the same particles in scanning and transmission images and compare both size biases](capabilities/sem-tem-same-particle.md) | `sem_render` → `tem_power_spectrum` | `poc_sem_tem_same_particle` |
 | [Sequential lens-design metrics (ideal lens surface, encircled energy, tangential / sagittal MTF, through-focus MTF)](capabilities/sequential-lens-design-metrics.md) | `lens_system` → `psf_from_opd` → `encircled_energy` → `energy_radii` → `mtf_tangential_sagittal` → `through_focus_mtf` | `optical_design_metrics` |
 | [Fit a physical model's coefficients to real images (sim-to-real calibration) — no number for a coefficient the images do not determine, the determined combination and the reason instead](capabilities/sim-to-real-calibration.md) | `simcal_model` → `simcal_observe` → `simcal_fit` → `simcal_identifiability` → `simcal_report` | `simcal_tour` |
+| [Locate a known 3-D part in a point cloud with six degrees of freedom](capabilities/six-dof-surface-pose.md) | `depth_to_points` → `estimate_normals` → `ransac_plane` → `icp_point2point_3d` | `poc_registration_basin` |
 | [Measure dimensions from an image, below the pixel](capabilities/subpixel-2d-metrology.md) | `gen_measure_rectangle2` → `measure_pos` → `measure_pairs` → `table_px_to_mm` | `poc_dimensional_inspection` |
 | [Surface relief defects, from lighting design to detection](capabilities/surface-defects-with-lighting.md) | `illumination_design` → `lighting_sweep` → `light_source` → `defect_contrast` → `irradiance_map` → `illumination_uniformity` → `photometric_stereo` → `integrate_normals` → `surface_form_error` → `bothat` → `auto_threshold` → `remove_small` | `illumination_design_demo` |
 | [TDI line-scan cameras and line-scan lenses (stages and SNR, synchronisation MTF, illumination and MTF across the image height)](capabilities/tdi-linescan-and-lens.md) | `tdi_snr` → `tdi_sync_mtf` → `linescan_lens_example` → `lens_field_profile` → `linescan_lens_columns` → `linescan_acquire` | `poc_tdi_linescan` |
@@ -466,7 +467,7 @@ Operators: `ode_flow_states`, `ode_vector_field_grid`, `dynsys_poincare_section`
 
 Runnable: `poc_what_a_picture_cannot_check`
 
-## Detect (13)
+## Detect (14)
 
 ### [Segment regions, select them, and count](capabilities/blob-and-region.md)
 
@@ -587,6 +588,18 @@ Pulse-echo ultrasound in layered stacks and scanning-acoustic-microscope C-scans
 Operators: `acoustic_material_table`, `acoustic_layer_stack`, `acoustic_interface_coefficients`, `pulse_echo_ascan`, `sam_cscan`, `echo_phase_polarity`, `sam_frequency_tradeoff`
 
 Runnable: `poc_sam_hybrid_bonding_voids`
+
+### [Locate a known 3-D part in a point cloud with six degrees of freedom](capabilities/six-dof-surface-pose.md)
+
+Matches a known CAD or reconstructed model to a measured depth cloud and returns the rotation R and translation t from model coordinates to camera coordinates. The running pipeline back-projects depth, orients normals toward the camera, removes the table with RANSAC, votes with Point Pair Features per cluster, and refines with ICP.
+
+Operators: `depth_to_points`, `estimate_normals`, `fit_plane_ransac`, `euclidean_clusters`, `ppf_model`, `surface_match`, `icp_point2point_3d`
+
+Pipeline: [`depth_to_points`](ops/3d/transform/depth_to_points.md) → [`estimate_normals`](ops/3d/curvature/estimate_normals.md) → [`ransac_plane`](ops/3d/robust_fit/ransac_plane.md) → [`icp_point2point_3d`](ops/3d/refine/icp_point2point_3d.md)
+
+Alternatives: `find_surface_pose`, `point_to_plane_icp`, `fpfh`, [`register_cross`](ops/3d/fusion/register_cross.md)
+
+Runnable: `poc_registration_basin`, `poc_real_tless_6dof`
 
 ### [Surface relief defects, from lighting design to detection](capabilities/surface-defects-with-lighting.md)
 
@@ -1064,7 +1077,7 @@ Pipeline: [`points_render`](ops/3d/render/points_render.md)
 
 Alternatives: [`render_point_depth`](ops/3d/render/render_point_depth.md), [`points_activity_video`](ops/conngraph/activity/points_activity_video.md), [`gs_render`](ops/drive/gsplat/gs_render.md), `render_mesh`
 
-Runnable: `points_render_basics`, `poc_flybrain_pointcloud`
+Runnable: `points_render_basics`, `poc_flybrain_pointcloud`, `poc_real_tless_6dof`
 
 ### [Put text and tables exactly where you want them on an image](capabilities/text-and-tables-on-images.md)
 
