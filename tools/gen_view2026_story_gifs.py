@@ -422,10 +422,11 @@ def _write_gif(path: Path, rows: list[dict], folder: Path, lang: str,
             diffs = _content_mads(decoded, old["frames"], folder)
             if max(diffs, default=0.0) > COLOR_MAD_LIMIT:
                 return None, "color_mad_over_%.1f" % COLOR_MAD_LIMIT, rows
-            old = dict(old); old.update(source_sha256=digest,
-                                        color_mad=[round(x, 4) for x in diffs],
-                                        max_color_mad=round(max(diffs, default=0.0), 4))
-            return old, None, rows
+            # ★キャッシュ命中時は台帳の数値を書き換えない。color_mad は commit 済み GIF を復号して
+            #   元図を再標本化した差で、Pillow の版が違う CI では 4 桁目が動き、台帳だけが drift した
+            #   (PR #227、2026-11-01: 手元は差ゼロ、CI は story_gifs.json だけ食い違う)。
+            #   ここでは限度を越えていないことだけ確かめ、数値は描画した機械の値を保つ。
+            return dict(old, source_sha256=digest), None, rows
     frames, meta = _render(rows, folder)
     blob = _encode(frames)
     while len(blob) > MAX_BYTES and len(rows) > 3:
