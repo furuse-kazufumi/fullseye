@@ -611,7 +611,13 @@ def chapter_real():
 
 # ─────────────────────────────── 図 ───────────────────────────────
 def _zoom(a, k):
-    return np.kron(a, np.ones((k, k)))
+    """表示用に双三次補間する(最近傍の画素複製は発表図で使わない)。"""
+    from PIL import Image
+
+    src = np.asarray(a, dtype=np.float32)
+    h, w = src.shape
+    return np.asarray(Image.fromarray(src, mode="F").resize(
+        (w * k, h * k), Image.Resampling.BICUBIC))
 
 
 def _pupil_crop(P, S, k=4):
@@ -640,7 +646,7 @@ def make_figures(design, res1, res2, rows, pup, led, refl, real):
     c1 = int(max(e["horizontal_bars_box"][3] for e in els9)) + 4
     sl = (slice(max(r0, 0), r1), slice(max(c0, 0), c1))
     figs.save_grid("group9_zoom", [_zoom(res1["low"][sl], 3), _zoom(rec["amplitude"][sl], 3), _zoom(res1["c20"][sl], 3)],
-                   captions=["4 倍の 1 枚", "FP", "20 倍 / NA 0.40"], ncols=3, gray=True,
+                   captions=["4 倍の 1 枚", "FP", "20 倍 / NA 0.40"], ncols=1, gray=True,
                    caption="G9(周期 1.95〜1.06 µm)を 3 倍に拡大。FP は E5(%.2f µm)まで 3 本の棒が分かれる。" % NUMBERS["fp_last"])
     names = list(res1["reads"].keys())
     els = res1["reads"]["FP"]["elements"]
