@@ -33,7 +33,16 @@ def main():
     assert nrrd_back_meta["voxel_spacing"] == [0.5, 0.75, 1.25]
     assert nrrd_back_meta["space_unit"] == "mm"
 
-    print("PASS: FITS, MRC, and gzip NRRD arrays and geometry round-trip in memory")
+    affine = np.array([[-0.5, 0.0, 0.0, 10.0], [0.0, 0.75, 0.0, -20.0],
+                       [0.0, 0.0, 1.25, 30.0], [0.0, 0.0, 0.0, 1.0]])
+    nifti_bytes = fs.nifti_write(volume, meta={"affine": affine, "spatial_unit": "mm"},
+                                 compressed=True)
+    nifti_volume, nifti_meta = fs.nifti_read(nifti_bytes)
+    np.testing.assert_array_equal(nifti_volume, volume)
+    np.testing.assert_allclose(nifti_meta["affine"], affine)
+    assert nifti_meta["spatial_unit"] == "mm" and nifti_meta["compressed"]
+
+    print("PASS: FITS, MRC, NRRD, and NIfTI arrays and geometry round-trip in memory")
 
 
 if __name__ == "__main__":

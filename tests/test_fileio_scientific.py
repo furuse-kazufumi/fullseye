@@ -7,6 +7,7 @@ import numpy as np
 import pytest
 import mrcfile
 import nrrd
+import nibabel as nib
 from astropy.io import fits
 
 import fileio
@@ -181,3 +182,67 @@ def test_nrrd_public_pynrrd_readme_worked_example(tmp_path):
     actual, meta = fileio.nrrd_read(path.read_bytes())
     np.testing.assert_array_equal(actual, expected)
     assert meta["space_directions"] is None and meta["space_unit"] is None
+
+
+@pytest.mark.parametrize("compressed", [False, True])
+def test_nifti_roundtrip_affine_and_independent_nibabel_reader(tmp_path, compressed):
+    volume = (np.arange(4 * 5 * 6).reshape(4, 5, 6) - 20).astype(np.int16)
+    affine = np.array([[-2.0, 0.0, 0.0, 32.0], [0.0, 2.5, 0.0, -40.0],
+                       [0.0, 0.0, 3.0, -16.0], [0.0, 0.0, 0.0, 1.0]])
+    meta = {"affine": affine, "spatial_unit": "mm"}
+    before = set(tmp_path.iterdir())
+    payload = fileio.nifti_write(volume, meta=meta, compressed=compressed)
+    assert isinstance(payload, bytes) and set(tmp_path.iterdir()) == before
+    back, actual_meta = fileio.nifti_read(payload)
+    np.testing.assert_array_equal(back, volume)
+    np.testing.assert_allclose(actual_meta["affine"], affine, rtol=0, atol=0)
+    np.testing.assert_allclose(actual_meta["qform_affine"], affine, rtol=0, atol=1e-6)
+    np.testing.assert_allclose(actual_meta["sform_affine"], affine, rtol=0, atol=0)
+    np.testing.assert_array_equal(actual_meta["pixdim"], [2.0, 2.5, 3.0])
+    assert actual_meta["spatial_unit"] == "mm" and actual_meta["compressed"] is compressed
+
+    path = tmp_path / ("independent.nii.gz" if compressed else "independent.nii")
+    path.write_bytes(payload)
+    independent = nib.load(path)
+    np.testing.assert_array_equal(np.asanyarray(independent.dataobj), volume)
+    np.testing.assert_allclose(independent.affine, affine, rtol=0, atol=0)
+    assert independent.header.get_xyzt_units() == ("mm", "unknown")
+
+
+def test_nifti_4d_time_pixdim_roundtrip():
+    data = np.arange(2 * 3 * 4 * 5, dtype=np.float32).reshape(2, 3, 4, 5)
+    affine = np.diag([0.8, 0.9, 1.5, 1.0])
+    payload = fileio.nifti_write(data, meta={"affine": affine, "spatial_unit": "mm",
+                                             "time_step": 2.5, "time_unit": "s"}, compressed=True)
+    actual, meta = fileio.nifti_read(payload)
+    np.testing.assert_array_equal(actual, data)
+    np.testing.assert_allclose(meta["pixdim"], [0.8, 0.9, 1.5, 2.5], rtol=0, atol=1e-7)
+    assert meta["time_unit"] == "s"
+
+
+def test_nifti_corrupt_input_is_rejected_by_name():
+    data = np.arange(24, dtype=np.int16).reshape(2, 3, 4)
+    meta = {"affine": np.eye(4), "spatial_unit": "mm"}
+    payload = fileio.nifti_write(data, meta=meta, compressed=False)
+    with pytest.raises(ValueError, match="header is truncated"):
+        fileio.nifti_read(payload[:200])
+    broken_datatype = bytearray(payload)
+    broken_datatype[70:72] = (32).to_bytes(2, "little", signed=True)
+    with pytest.raises(ValueError, match="unsupported NIfTI datatype code 32"):
+        fileio.nifti_read(broken_datatype)
+    with pytest.raises(ValueError, match="declare .* total bytes"):
+        fileio.nifti_read(payload[:-2])
+    shear = np.eye(4); shear[0, 1] = 0.25
+    with pytest.raises(ValueError, match="affine contains shear"):
+        fileio.nifti_write(data, meta={"affine": shear, "spatial_unit": "mm"}, compressed=False)
+
+
+def test_nifti_public_nibabel_anatomical_worked_example():
+    """Read NiBabel's published MIT/BSD anatomical.nii worked file."""
+    path = Path(nib.__file__).parent / "tests" / "data" / "anatomical.nii"
+    assert path.is_file(), "nibabel export-verify installation must include NIfTI worked examples"
+    actual, meta = fileio.nifti_read(path.read_bytes())
+    independent = nib.load(path)
+    np.testing.assert_array_equal(actual, np.asanyarray(independent.dataobj))
+    np.testing.assert_allclose(meta["affine"], independent.affine, rtol=0, atol=0)
+    assert actual.shape == (33, 41, 25) and meta["spatial_unit"] == "mm"

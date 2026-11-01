@@ -35,6 +35,7 @@ __all__ = [
     "astro_fits_write", "astro_fits_read",
     "em_mrc_write", "em_mrc_read",
     "nrrd_write", "nrrd_read",
+    "nifti_write", "nifti_read",
 ]
 
 _CSV_META_REQUIRED = ("source", "generated_at", "coordinate_meaning")
@@ -71,6 +72,15 @@ _NRRD_TYPE_ALIASES = {
     "ulonglong": "uint64", "unsigned long long": "uint64",
     "unsigned long long int": "uint64", "uint64_t": "uint64",
 }
+_NIFTI_DTYPES = {
+    2: np.dtype("u1"), 4: np.dtype("i2"), 8: np.dtype("i4"),
+    16: np.dtype("f4"), 64: np.dtype("f8"), 256: np.dtype("i1"),
+    512: np.dtype("u2"), 768: np.dtype("u4"), 1024: np.dtype("i8"),
+    1280: np.dtype("u8"),
+}
+_NIFTI_SPATIAL_UNITS = {1: "m", 2: "mm", 3: "um"}
+_NIFTI_TIME_UNITS = {8: "s", 16: "ms", 24: "us"}
+_NIFTI_EXTENSIONS = (".nii", ".nii.gz")
 
 
 def _csv_columns(table, op: str) -> dict[str, np.ndarray]:
@@ -1272,3 +1282,229 @@ def nrrd_read(data):
     return array, {"format": "NRRD", "encoding": encoding, "space_directions": vectors,
                    "voxel_spacing": spacing, "space_unit": unit,
                    "space_origin": origin, "kinds": kinds}
+
+
+def _nifti_units(spatial, temporal, op: str):
+    spatial_aliases = {"m": 1, "meter": 1, "mm": 2, "millimeter": 2,
+                       "um": 3, "µm": 3, "micrometer": 3}
+    time_aliases = {None: 0, "": 0, "s": 8, "sec": 8, "second": 8,
+                    "ms": 16, "msec": 16, "millisecond": 16,
+                    "us": 24, "usec": 24, "microsecond": 24}
+    s_code = spatial_aliases.get(str(spatial).strip().lower())
+    t_key = None if temporal is None else str(temporal).strip().lower()
+    t_code = time_aliases.get(t_key)
+    if s_code is None:
+        raise ValueError(f"{op}: spatial_unit must be m/mm/um, got {spatial!r}")
+    if t_code is None:
+        raise ValueError(f"{op}: time_unit must be s/ms/us, got {temporal!r}")
+    return s_code, t_code
+
+
+def _rotation_quaternion(matrix, op: str):
+    rotation = np.asarray(matrix, dtype=np.float64)
+    if not np.allclose(rotation.T @ rotation, np.eye(3), rtol=0, atol=1e-5) or not np.isclose(np.linalg.det(rotation), 1.0, atol=1e-5):
+        raise ValueError(f"{op}: affine contains shear or a non-orthogonal rotation; NIfTI qform cannot represent it")
+    trace = float(np.trace(rotation))
+    if trace > 0:
+        s = math.sqrt(trace + 1.0) * 2
+        a, b, c, d = 0.25 * s, (rotation[2, 1] - rotation[1, 2]) / s, (rotation[0, 2] - rotation[2, 0]) / s, (rotation[1, 0] - rotation[0, 1]) / s
+    else:
+        axis = int(np.argmax(np.diag(rotation)))
+        if axis == 0:
+            s = math.sqrt(1.0 + rotation[0, 0] - rotation[1, 1] - rotation[2, 2]) * 2
+            a, b, c, d = (rotation[2, 1] - rotation[1, 2]) / s, 0.25 * s, (rotation[0, 1] + rotation[1, 0]) / s, (rotation[0, 2] + rotation[2, 0]) / s
+        elif axis == 1:
+            s = math.sqrt(1.0 + rotation[1, 1] - rotation[0, 0] - rotation[2, 2]) * 2
+            a, b, c, d = (rotation[0, 2] - rotation[2, 0]) / s, (rotation[0, 1] + rotation[1, 0]) / s, 0.25 * s, (rotation[1, 2] + rotation[2, 1]) / s
+        else:
+            s = math.sqrt(1.0 + rotation[2, 2] - rotation[0, 0] - rotation[1, 1]) * 2
+            a, b, c, d = (rotation[1, 0] - rotation[0, 1]) / s, (rotation[0, 2] + rotation[2, 0]) / s, (rotation[1, 2] + rotation[2, 1]) / s, 0.25 * s
+    quat = np.asarray([a, b, c, d], dtype=np.float64)
+    quat /= np.linalg.norm(quat)
+    if quat[0] < 0:
+        quat *= -1
+    return quat
+
+
+def _nifti_affine_parts(meta, ndim: int, op: str):
+    if not isinstance(meta, Mapping):
+        raise ValueError(f"{op}: meta must be a mapping")
+    allowed = {"affine", "spatial_unit", "time_step", "time_unit"}
+    unknown = set(meta) - allowed
+    if unknown:
+        raise ValueError(f"{op}: unsupported metadata key(s): {', '.join(sorted(map(str, unknown)))}")
+    if "affine" not in meta or "spatial_unit" not in meta:
+        raise ValueError(f"{op}: meta requires affine and explicit spatial_unit")
+    affine = np.asarray(meta["affine"], dtype=np.float64)
+    if affine.shape != (4, 4) or not np.all(np.isfinite(affine)) or not np.allclose(affine[3], [0, 0, 0, 1], rtol=0, atol=1e-12):
+        raise ValueError(f"{op}: affine must be a finite 4x4 homogeneous matrix")
+    zooms = np.linalg.norm(affine[:3, :3], axis=0)
+    if np.any(zooms <= 0):
+        raise ValueError(f"{op}: affine spatial axes must have nonzero scale")
+    rotation = affine[:3, :3] / zooms
+    qfac = 1.0
+    if np.linalg.det(rotation) < 0:
+        qfac = -1.0
+        rotation[:, 2] *= -1
+    quat = _rotation_quaternion(rotation, op)
+    if ndim == 4:
+        if "time_step" not in meta or "time_unit" not in meta:
+            raise ValueError(f"{op}: 4-D data requires time_step and explicit time_unit")
+        time_step = float(meta["time_step"])
+        if not math.isfinite(time_step) or time_step <= 0:
+            raise ValueError(f"{op}: time_step must be positive and finite")
+        temporal = meta["time_unit"]
+    else:
+        if "time_step" in meta or "time_unit" in meta:
+            raise ValueError(f"{op}: time_step/time_unit apply only to 4-D data")
+        time_step, temporal = 0.0, None
+    unit_codes = _nifti_units(meta["spatial_unit"], temporal, op)
+    return affine, zooms, qfac, quat, time_step, unit_codes
+
+
+def nifti_write(volume, *, meta, compressed):
+    """3-D/4-D 配列と affine/pixdim を単一ファイル NIfTI-1 の ``bytes`` にする。
+
+    ``meta`` は ``affine`` と ``spatial_unit``(``m/mm/um``)を必須とし、4-D では
+    ``time_step`` と ``time_unit`` も必須。qform と sform の両方へ同じ affine を書く。
+    ``compressed`` で ``.nii`` / ``.nii.gz`` 相当を選ぶ。呼び出し例:
+    ``nifti_write(vol, meta={"affine": affine, "spatial_unit": "mm"}, compressed=True)``。
+    """
+    op = "nifti_write"
+    array = np.asarray(volume)
+    if array.ndim not in (3, 4) or array.size == 0:
+        raise ValueError(f"{op}: data must be a non-empty 3-D or 4-D array, got {array.shape!r}")
+    native_dtype = array.dtype.newbyteorder("=")
+    datatype_by_dtype = {dtype: code for code, dtype in _NIFTI_DTYPES.items()}
+    if native_dtype not in datatype_by_dtype:
+        raise ValueError(f"{op}: unsupported dtype {array.dtype}; use fixed-width integers or float32/float64")
+    if not isinstance(compressed, (bool, np.bool_)):
+        raise ValueError(f"{op}: compressed must be bool (False for {_NIFTI_EXTENSIONS[0]}, True for {_NIFTI_EXTENSIONS[1]})")
+    affine, zooms, qfac, quat, time_step, unit_codes = _nifti_affine_parts(meta, array.ndim, op)
+    datatype = datatype_by_dtype[native_dtype]
+    header = bytearray(352)
+    struct.pack_into("<i", header, 0, 348)
+    dims = [array.ndim, *array.shape, *([1] * (7 - array.ndim))]
+    struct.pack_into("<8h", header, 40, *dims)
+    struct.pack_into("<2h", header, 70, datatype, native_dtype.itemsize * 8)
+    pixdim = [qfac, *zooms, time_step, 1.0, 1.0, 1.0]
+    struct.pack_into("<8f", header, 76, *pixdim)
+    struct.pack_into("<3f", header, 108, 352.0, 1.0, 0.0)
+    header[123] = unit_codes[0] | unit_codes[1]
+    description = b"Fullseye in-memory NIfTI-1 writer"
+    header[148:148 + len(description)] = description
+    struct.pack_into("<2h", header, 252, 1, 1)
+    struct.pack_into("<3f", header, 256, *quat[1:])
+    struct.pack_into("<3f", header, 268, *affine[:3, 3])
+    struct.pack_into("<4f", header, 280, *affine[0])
+    struct.pack_into("<4f", header, 296, *affine[1])
+    struct.pack_into("<4f", header, 312, *affine[2])
+    header[344:348] = b"n+1\0"
+    stored = np.asarray(array, dtype=native_dtype.newbyteorder("<")).tobytes(order="F")
+    payload = bytes(header) + stored
+    return gzip.compress(payload, compresslevel=9, mtime=0) if compressed else payload
+
+
+def _nifti_qform(raw: bytes, endian: str, pixdim):
+    b, c, d = struct.unpack_from(endian + "3f", raw, 256)
+    norm = b * b + c * c + d * d
+    a = math.sqrt(max(0.0, 1.0 - norm)) if norm <= 1.00001 else 0.0
+    if norm > 1.00001:
+        scale = math.sqrt(norm)
+        b, c, d = b / scale, c / scale, d / scale
+    rotation = np.asarray([
+        [a*a+b*b-c*c-d*d, 2*b*c-2*a*d, 2*b*d+2*a*c],
+        [2*b*c+2*a*d, a*a+c*c-b*b-d*d, 2*c*d-2*a*b],
+        [2*b*d-2*a*c, 2*c*d+2*a*b, a*a+d*d-c*c-b*b],
+    ], dtype=np.float64)
+    qfac = -1.0 if pixdim[0] < 0 else 1.0
+    affine = np.eye(4, dtype=np.float64)
+    affine[:3, :3] = rotation @ np.diag([pixdim[1], pixdim[2], pixdim[3] * qfac])
+    affine[:3, 3] = struct.unpack_from(endian + "3f", raw, 268)
+    return affine
+
+
+def nifti_read(data):
+    """単一ファイル NIfTI-1(``.nii`` / ``.nii.gz``)を ``(array, meta)`` として読む。
+
+    3-D/4-D、qform/sform、pixdim と空間・時間単位を返す。pair 形式、拡張、未知 datatype、
+    header/shape/byte 数の不一致は拒否する。呼び出し例: ``volume, meta = nifti_read(payload)``。
+    """
+    op = "nifti_read"
+    encoded = _file_bytes(data, op)
+    compressed = encoded.startswith(b"\x1f\x8b")
+    if compressed:
+        try:
+            raw = gzip.decompress(encoded)
+        except (OSError, EOFError) as exc:
+            raise ValueError(f"{op}: corrupt or truncated .nii.gz payload: {exc}") from exc
+    else:
+        raw = encoded
+    if len(raw) < 352:
+        raise ValueError(f"{op}: NIfTI-1 header is truncated ({len(raw)} bytes; need at least 352)")
+    little, big = struct.unpack_from("<i", raw, 0)[0], struct.unpack_from(">i", raw, 0)[0]
+    if little == 348:
+        endian = "<"
+    elif big == 348:
+        endian = ">"
+    else:
+        raise ValueError(f"{op}: sizeof_hdr is not 348 in either byte order")
+    magic = raw[344:348]
+    if magic != b"n+1\0":
+        if magic == b"ni1\0":
+            raise ValueError(f"{op}: two-file .hdr/.img NIfTI is unsupported; pass a single .nii")
+        raise ValueError(f"{op}: invalid NIfTI-1 magic {magic!r} for {_NIFTI_EXTENSIONS}")
+    dims = struct.unpack_from(endian + "8h", raw, 40)
+    ndim = dims[0]
+    if ndim not in (3, 4):
+        raise ValueError(f"{op}: dim[0] must be 3 or 4, got {ndim}")
+    shape = tuple(int(v) for v in dims[1:ndim + 1])
+    if any(v <= 0 for v in shape):
+        raise ValueError(f"{op}: dimensions must be positive, got {shape!r}")
+    datatype, bitpix = struct.unpack_from(endian + "2h", raw, 70)
+    if datatype not in _NIFTI_DTYPES:
+        raise ValueError(f"{op}: unsupported NIfTI datatype code {datatype}")
+    dtype = _NIFTI_DTYPES[datatype]
+    if bitpix != dtype.itemsize * 8:
+        raise ValueError(f"{op}: datatype {datatype} requires bitpix {dtype.itemsize * 8}, got {bitpix}")
+    vox_offset, slope, intercept = struct.unpack_from(endian + "3f", raw, 108)
+    if vox_offset != 352.0 or raw[348:352] != b"\0\0\0\0":
+        raise ValueError(f"{op}: NIfTI extensions or vox_offset {vox_offset:g} are unsupported")
+    count = math.prod(shape)
+    expected = 352 + count * dtype.itemsize
+    if len(raw) != expected:
+        raise ValueError(f"{op}: dimensions/datatype declare {expected} total bytes, got {len(raw)}")
+    dtype = dtype.newbyteorder(endian)
+    array = np.frombuffer(raw, dtype=dtype, count=count, offset=352).reshape(shape, order="F").copy()
+    if array.dtype.itemsize > 1:
+        array = array.astype(array.dtype.newbyteorder("="), copy=False)
+    if slope != 0 and (slope != 1 or intercept != 0):
+        if not math.isfinite(slope) or not math.isfinite(intercept):
+            raise ValueError(f"{op}: scl_slope/scl_inter must be finite")
+        array = array.astype(np.float64) * slope + intercept
+    pixdim = np.asarray(struct.unpack_from(endian + "8f", raw, 76), dtype=np.float64)
+    if np.any(~np.isfinite(pixdim[1:ndim + 1])) or np.any(pixdim[1:ndim + 1] <= 0):
+        raise ValueError(f"{op}: pixdim must be positive and finite for every data axis")
+    qform_code, sform_code = struct.unpack_from(endian + "2h", raw, 252)
+    qform = _nifti_qform(raw, endian, pixdim) if qform_code > 0 else None
+    if sform_code > 0:
+        sform = np.eye(4, dtype=np.float64)
+        sform[:3] = np.asarray([struct.unpack_from(endian + "4f", raw, offset)
+                                for offset in (280, 296, 312)], dtype=np.float64)
+        if not np.all(np.isfinite(sform)):
+            raise ValueError(f"{op}: sform contains NaN/Inf")
+    else:
+        sform = None
+    fallback = np.diag([pixdim[1], pixdim[2], pixdim[3], 1.0])
+    affine = sform if sform is not None else qform if qform is not None else fallback
+    units = raw[123]
+    spatial_code, temporal_code = units & 0x07, units & 0x38
+    if spatial_code not in _NIFTI_SPATIAL_UNITS:
+        raise ValueError(f"{op}: spatial xyzt_units code {spatial_code} is unknown; unit must be explicit")
+    if ndim == 4 and temporal_code not in _NIFTI_TIME_UNITS:
+        raise ValueError(f"{op}: temporal xyzt_units code {temporal_code} is unknown for 4-D data")
+    return array, {"format": "NIfTI-1", "compressed": compressed,
+                   "affine": affine, "qform_affine": qform, "sform_affine": sform,
+                   "qform_code": int(qform_code), "sform_code": int(sform_code),
+                   "pixdim": pixdim[1:ndim + 1], "spatial_unit": _NIFTI_SPATIAL_UNITS[spatial_code],
+                   "time_unit": _NIFTI_TIME_UNITS.get(temporal_code)}

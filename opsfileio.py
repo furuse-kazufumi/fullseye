@@ -39,6 +39,10 @@ _CATALOG = {
         ("nrrd_write", ["any"], "any"),
         ("nrrd_read", ["any"], "any"),
     ],
+    "nifti": [
+        ("nifti_write", ["any"], "any"),
+        ("nifti_read", ["any"], "any"),
+    ],
 }
 
 

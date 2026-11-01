@@ -1,8 +1,8 @@
 {
- "n_ops": 3629,
+ "n_ops": 3631,
  "tiers": {
   "color": 12,
-  "ledger": 2670,
+  "ledger": 2672,
   "nary": 17,
   "registry": 930
  },
@@ -18983,6 +18983,32 @@
    "ledger": "opsannotate",
    "dim": "annotate",
    "in_sorts": []
+  },
+  {
+   "name": "nifti_read",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "any",
+   "category": "nifti",
+   "tier": "ledger",
+   "ledger": "opsfileio",
+   "dim": "fileio",
+   "in_sorts": [
+    "any"
+   ]
+  },
+  {
+   "name": "nifti_write",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "any",
+   "category": "nifti",
+   "tier": "ledger",
+   "ledger": "opsfileio",
+   "dim": "fileio",
+   "in_sorts": [
+    "any"
+   ]
   },
   {
    "name": "nine_slice",

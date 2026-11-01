@@ -31,7 +31,7 @@ FORMAT_NAMES = {
     ".hdr": "Radiance HDR", ".jpeg": "JPEG", ".jpg": "JPEG", ".json": "JSON",
     ".las": "LAS", ".laz": "LAZ", ".mha": "MetaImage", ".mhd": "MetaImage",
     ".mjcf": "MuJoCo XML", ".mkv": "Matroska video", ".mrc": "MRC",
-    ".nii": "NIfTI", ".npy": "NumPy array", ".npz": "NumPy archive",
+    ".nii": "NIfTI", ".nii.gz": "NIfTI", ".npy": "NumPy array", ".npz": "NumPy archive",
     ".nrrd": "NRRD", ".obj": "Wavefront OBJ", ".off": "Geomview OFF",
     ".ogg": "Ogg audio", ".ome.tif": "OME-TIFF", ".ome.tiff": "OME-TIFF",
     ".pcd": "PCL PCD", ".pfm": "PFM", ".ply": "Stanford PLY", ".png": "PNG",
@@ -56,6 +56,7 @@ _VERIFY_READERS = {
     ".fits": ("astropy",),
     ".mrc": ("mrcfile",),
     ".nrrd": ("nrrd",),
+    ".nii": ("nibabel",), ".nii.gz": ("nibabel",),
 }
 _NAME_EXTS = {ext[1:]: ext for ext in FORMAT_NAMES if "." not in ext[1:]}
 
