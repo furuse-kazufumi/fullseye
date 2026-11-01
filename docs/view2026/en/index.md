@@ -48,8 +48,6 @@ Run the paper's figures yourself, on a phone too. Switch methods with the tabs a
 - **[Photoelasticity](../viewers/poc_photoelasticity.html?lang=en)**: Rotating the analyser moves the photoelastic fringes and cycles their mean intensity
 - **[Fly compound eye](../viewers/poc_compound_eye.html?lang=en)**: Higher per-view SNR brings the compound-eye image closer to its noise-free image
 - **[Joint voids (CT)](../viewers/poc_ct_void_morphology.html?lang=en)**: Raising the threshold expands the segmented voids and increases their volume fraction
-- **[Measure automotive paint layers with OCT](../viewers/industrial_oct_anim3d.html?lang=en)**: View measured B-scan layers in 3-D; index and centre-wavelength sweeps synchronize thickness with 4 paper-style panels.
-- **[Measure micron dents from reflected fringes](../viewers/phase_measuring_deflectometry_anim3d.html?lang=en)**: Show photograph-invisible 3 µm and 1 µm dents as curvature colour in 3-D, sweeping distance error and the k_d 0.9 limit.
 - **[Active contours](../viewers/poc_active_contours.html?lang=en)**: More iterations bring the GVF contour closer to its final shape
 
 ## Highlights

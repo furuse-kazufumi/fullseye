@@ -48,8 +48,6 @@ Manipulez vous-même les figures de l'article, même sur téléphone. Changez de
 - **[Contraintes en photoélasticimétrie](../viewers/poc_photoelasticity.html?lang=fr)**: Tourner l’analyseur déplace les franges photoélastiques et fait osciller leur intensité moyenne
 - **[Œil composé de la mouche](../viewers/poc_compound_eye.html?lang=fr)**: Augmenter le SNR par vue rapproche l’image de l’œil composé de l’image sans bruit
 - **[Vides dans la couche de jonction](../viewers/poc_ct_void_morphology.html?lang=fr)**: Relever le seuil étend les vides segmentés et augmente leur fraction volumique
-- **[Measure automotive paint layers with OCT](../viewers/industrial_oct_anim3d.html?lang=fr)**: View measured B-scan layers in 3-D; index and centre-wavelength sweeps synchronize thickness with 4 paper-style panels.
-- **[Measure micron dents from reflected fringes](../viewers/phase_measuring_deflectometry_anim3d.html?lang=fr)**: Show photograph-invisible 3 µm and 1 µm dents as curvature colour in 3-D, sweeping distance error and the k_d 0.9 limit.
 - **[Contours actifs](../viewers/poc_active_contours.html?lang=fr)**: Les itérations rapprochent le contour GVF de sa forme finale
 
 ## Points forts

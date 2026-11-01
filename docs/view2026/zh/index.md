@@ -48,8 +48,6 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - **[光弹性应力](../viewers/poc_photoelasticity.html?lang=zh)**: 转动检偏器会移动光弹性条纹，并使平均亮度周期变化
 - **[苍蝇复眼](../viewers/poc_compound_eye.html?lang=zh)**: 提高每视点信噪比，复眼图像越接近无噪声图像
 - **[接合层空洞](../viewers/poc_ct_void_morphology.html?lang=zh)**: 提高阈值会扩大空洞分割并增加体积分数
-- **[Measure automotive paint layers with OCT](../viewers/industrial_oct_anim3d.html?lang=zh)**: View measured B-scan layers in 3-D; index and centre-wavelength sweeps synchronize thickness with 4 paper-style panels.
-- **[Measure micron dents from reflected fringes](../viewers/phase_measuring_deflectometry_anim3d.html?lang=zh)**: Show photograph-invisible 3 µm and 1 µm dents as curvature colour in 3-D, sweeping distance error and the k_d 0.9 limit.
 - **[主动轮廓](../viewers/poc_active_contours.html?lang=zh)**: 迭代越多，GVF 轮廓越接近最终形状
 
 ## 精选

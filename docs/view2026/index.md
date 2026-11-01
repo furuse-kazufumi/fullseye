@@ -63,8 +63,6 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - **[光弾性の応力](viewers/poc_photoelasticity.html?lang=ja)**: 検光子を回すと光弾性縞が動き、平均輝度が周期的に変わる
 - **[ハエの複眼](viewers/poc_compound_eye.html?lang=ja)**: 視点ごとのSNRを上げるほど複眼像が無雑音像に近づく
 - **[接合層のボイド](viewers/poc_ct_void_morphology.html?lang=ja)**: しきい値を上げるほどボイド判定が広がり、体積率が増える
-- **[自動車塗装の層をOCTで測る](viewers/industrial_oct_anim3d.html?lang=ja)**: 実測Bスキャンの層を3-Dで見て、屈折率と中心波長を動かすと層厚と論文型4図が同期する。
-- **[縞の鏡像で微小な凹みを測る](viewers/phase_measuring_deflectometry_anim3d.html?lang=ja)**: 写真に写らない3 µmと1 µmの凹みを曲率色で3-D表示し、距離誤差とk_d 0.9の限界を掃引する。
 - **[動的輪郭](viewers/poc_active_contours.html?lang=ja)**: 反復を重ねるほどGVF輪郭が最終形へ近づく
 
 ## 見どころ
