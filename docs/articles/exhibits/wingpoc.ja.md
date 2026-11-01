@@ -9696,7 +9696,7 @@ py -3.11 examples/poc_sem_wafer_defect_edge_bias.py
 
 ## No.2026.285 —— 実物 IC の SEM 像で配線幅とビアを測る ―― 仮想 SEM の縁補正は実機でも効くか
 
-Rothaug ほかの metal-2 SEM データ(14.65 nm/px、CC BY 4.0、DOI 10.17617/3.HY5SYN)10枚を使い、既存 op `svg_entities` と独立 XML reader の一致を門にした。初版の幅偏り −296.3 nm は、切り出しのざらついた縁から生えたスケルトンの枝をラベルと違う手続きで数えた計測誤りだった。生スケルトンの画素/主軸長はラベル 1.07 対切り出し 6.80、端点中央は 2 対 46。ラベル中心線の両端と曲がり角を除いた 47,271 断面を両方に同じ手続きで当てると、ラベル p10/50/90 = 293.0/380.9/536.2 nm、Otsu 切り出し 263.7/351.6/519.0 nm、偏り −14.6 nm。同一中心線の距離変換幅とも 1 px 以内で一致した。端切れ track 領域も ROI から除くと Otsu の IoU 中央 0.819、境界距離平均 58.1 nm。図 02 下端の帯は画像端へ続く不完全ラベルで、橙で採点除外を明示した。欠陥は重複 via 1,740、端切れ via 112、端切れ track 1,239、未ラベル端成分 51、部分欠け 7。edge-spread の PSF σ 中央 51.9 nmの模型補正は −14.6 → +3.1 nmと絶対偏りを 78.5 %縮め、この測り方では有効だった。via は TP/FP/FN = 5,604/124/361、適合率 0.978、再現率 0.939。データはrepo外に置き、CIでは6.4 GBを取得しない。
+Rothaug ほかの metal-2 SEM データ(14.65 nm/px、CC BY 4.0、DOI 10.17617/3.HY5SYN)10枚を使い、既存 op `svg_entities` と独立 XML reader の一致を門にした。初版の幅偏り −296.3 nm は、切り出しのざらついた縁から生えたスケルトンの枝をラベルと違う手続きで数えた計測誤りだった。生スケルトンの画素/主軸長はラベル 1.07 対切り出し 6.80、端点中央は 2 対 46。ラベル中心線の両端と曲がり角を除いた 47,271 断面を両方に同じ手続きで当てると、ラベル p10/50/90 = 293.0/380.9/536.2 nm、Otsu 切り出し 263.7/351.6/519.0 nm、偏り −14.6 nm。同一中心線の距離変換幅とも 1 px 以内で一致した。端切れ track 領域も ROI から除くと Otsu の IoU 中央 0.819、境界距離平均 58.1 nm。図 02 下端の帯は画像端へ続く不完全ラベルで、橙で採点除外を明示した。欠陥は重複 via 1,740、端切れ via 112、端切れ track 1,239、未ラベル端成分 51、部分欠け 7。PSF 補正を独立性で分けると、切り出し自身の境界だけを使うラベル不使用は −14.6 → −7.8 nm(絶対偏り46.9 %縮小)、10枚を5/5に入れ替える分割検証は −14.6 → −0.5 nm。同一画像・同一ラベルで求めた −14.6 → +3.1 nmは循環する参考値に隔離した。15 keV BSE・14.65 nm標本・真幅350 nmを入れた仮想 SEM の Cu/Si 代理断面は −10.5 nmを予測し実測との差は +4.2 nmだが、材料・配線高さ・側壁角・ビーム径は不明で、平坦な埋込 metal-2 も模型外なので一致とはしない。via は TP/FP/FN = 5,604/124/361、適合率 0.978、再現率 0.939。データはrepo外に置き、CIでは6.4 GBを取得しない。
 
 [![実物 IC の SEM 像で配線幅とビアを測る ―― 仮想 SEM の縁補正は実機でも効くか](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_sem_metal_layer/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_sem_metal_layer/01_scene.png)
 
@@ -9710,9 +9710,9 @@ Rothaug ほかの metal-2 SEM データ(14.65 nm/px、CC BY 4.0、DOI 10.17617/3
 
 *↑ ラベルの主中心線上で両端と曲がり角を除き、等間隔の連続断面幅をラベルと切り出しに同じ手続きで測った。*
 
-[![edge-spread から測った PSF sigma による補正。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_sem_metal_layer/04_psf_correction_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_sem_metal_layer/04_psf_correction.png)
+[![補正前 -14.6 nmに対し、ラベル不使用 -7.8 nm、5/5 分割 -0.5 nm、同一画像 +3.1 nm（同一画像は循環する参考値）。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_sem_metal_layer/04_psf_correction_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_sem_metal_layer/04_psf_correction.png)
 
-*↑ edge-spread から測った PSF sigma による補正。*
+*↑ 補正前 -14.6 nmに対し、ラベル不使用 -7.8 nm、5/5 分割 -0.5 nm、同一画像 +3.1 nm（同一画像は循環する参考値）。*
 
 ```
 py -3.11 examples/poc_real_sem_metal_layer.py
@@ -9722,7 +9722,7 @@ py -3.11 examples/poc_real_sem_metal_layer.py
 
 この回が作った図は全部で **4 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_real_sem_metal_layer)
 
-使用 op(ノートへ): [`blob_boundaries`](https://furuse.work/ops/blob/extract/blob_boundaries.html) · [`blob_distance`](https://furuse.work/ops/blob/split/blob_distance.html) · [`blob_features`](https://furuse.work/ops/blob/measure/blob_features.html) · [`blob_label`](https://furuse.work/ops/blob/connect/blob_label.html) · [`closing_circle`](https://furuse.work/ops/2d/region/closing_circle.html) · [`ellipse`](https://furuse.work/ops/annotate/shape/ellipse.html) · [`fill_holes`](https://furuse.work/ops/2d/region/fill_holes.html) · [`intersection`](https://furuse.work/ops/2d/nary/intersection.html) · [`opening_circle`](https://furuse.work/ops/2d/region/opening_circle.html) · [`otsu`](https://furuse.work/ops/2d/segmentation/otsu.html) · [`polygon_area`](https://furuse.work/ops/drive/japan/polygon_area.html) · [`skeleton`](https://furuse.work/ops/2d/region/skeleton.html) · [`sobel_mag`](https://furuse.work/ops/2d/edges/sobel_mag.html) · [`svg_entities`](https://furuse.work/ops/optics/drawing/svg_entities.html) · [`threshold`](https://furuse.work/ops/2d/segmentation/threshold.html)
+使用 op(ノートへ): [`blob_boundaries`](https://furuse.work/ops/blob/extract/blob_boundaries.html) · [`blob_distance`](https://furuse.work/ops/blob/split/blob_distance.html) · [`blob_features`](https://furuse.work/ops/blob/measure/blob_features.html) · [`blob_label`](https://furuse.work/ops/blob/connect/blob_label.html) · [`closing_circle`](https://furuse.work/ops/2d/region/closing_circle.html) · [`ellipse`](https://furuse.work/ops/annotate/shape/ellipse.html) · [`fill_holes`](https://furuse.work/ops/2d/region/fill_holes.html) · [`intersection`](https://furuse.work/ops/2d/nary/intersection.html) · [`opening_circle`](https://furuse.work/ops/2d/region/opening_circle.html) · [`otsu`](https://furuse.work/ops/2d/segmentation/otsu.html) · [`polygon_area`](https://furuse.work/ops/drive/japan/polygon_area.html) · [`sem_cd_measure`](https://furuse.work/ops/generative/sem/sem_cd_measure.html) · [`sem_line_profile`](https://furuse.work/ops/generative/sem/sem_line_profile.html) · [`skeleton`](https://furuse.work/ops/2d/region/skeleton.html) · [`sobel_mag`](https://furuse.work/ops/2d/edges/sobel_mag.html) · [`svg_entities`](https://furuse.work/ops/optics/drawing/svg_entities.html) · [`threshold`](https://furuse.work/ops/2d/segmentation/threshold.html)
 
 ## No.2026.228 —— 重力波望遠鏡の擬似シミュレーション ―― 共振器の式・量子雑音の予算・整合フィルタを閉形式で繋ぎ、GW150914 の実データで採点
 

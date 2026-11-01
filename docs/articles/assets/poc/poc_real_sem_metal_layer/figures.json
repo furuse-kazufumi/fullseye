@@ -35,10 +35,10 @@
  {
   "file": "04_psf_correction.png",
   "name": "psf_correction",
-  "caption": "edge-spread から測った PSF sigma による補正。-14.6 nm から +3.1 nm。",
+  "caption": "補正前 -14.6 nmに対し、ラベル不使用 -7.8 nm、5/5 分割 -0.5 nm、同一画像 +3.1 nm（同一画像は循環する参考値）。",
   "shape": [
    360,
-   666,
+   708,
    3
   ],
   "source": "Rothaug et al., A Real-World Metal-Layer SEM Image Dataset with Partial Labels, Edmond/MPG, DOI 10.17617/3.HY5SYN, CC BY 4.0; paper DOI 10.1145/3605769.3624000"

@@ -56,6 +56,32 @@ def test_noisy_300_nm_band_width_is_within_one_pixel_and_methods_agree():
     assert abs(got["pred_px"] - got["skeleton_px"]) <= 1.0 + 1e-9
 
 
+def test_image_only_psf_model_uses_extraction_boundary_not_label():
+    mask = np.zeros((96, 128), bool)
+    mask[:, 42:86] = True
+    image = np.where(mask, 0.8, 0.2).astype(np.float64)
+    image = poc.ndi.gaussian_filter(image, 2.0)
+    threshold = 0.5
+    extraction = image >= threshold
+    got = poc.psf_edge_model_image_only(image, extraction, threshold)
+    assert got is not None
+    assert got["uses_label"] is False
+    assert 1.0 < got["sigma_px"] < 4.0
+
+
+def test_correction_evaluation_cross_fits_label_models_both_directions():
+    widths = [{"image": i, "label_nm": 100.0, "pred_nm": 110.0} for i in range(4)]
+    image_models = [{"image": i, "width_correction_nm": float(i + 1)} for i in range(4)]
+    label_models = [{"image": i, "width_correction_nm": v}
+                    for i, v in enumerate((10.0, 12.0, 2.0, 4.0))]
+    got = poc.evaluate_corrections(widths, image_models, label_models)
+    assert got["split_images"] == [[0, 1], [2, 3]]
+    assert got["split_train_correction_nm"] == [11.0, 3.0]
+    assert got["split"]["before_nm"] == 10.0
+    assert got["split"]["after_nm"] == 3.0
+    assert got["image_only"]["after_nm"] == 7.5
+
+
 def test_partial_border_track_label_gap_is_counted_and_only_gap_is_excluded():
     fixed = np.zeros((40, 100), bool)
     fixed[15:25, :] = True

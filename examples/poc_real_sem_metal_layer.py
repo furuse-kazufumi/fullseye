@@ -15,10 +15,13 @@ Rothaug ほかの公開データ(Edmond/MPG、DOI 10.17617/3.HY5SYN、CC BY 4.0)
 2. Fullseye op だけで fixed threshold / Otsu / Sobel-edge の 3 通りに切り出す。
    IoU、対称境界距離、ラベルの主中心線上の等間隔な法線方向断面幅を
    nm で出す。両端と曲がり角は除き、ラベルと切り出しを同じ断面で測る。
-3. ラベル境界を横切る実像の edge-spread から PSF sigma を測る。仮想 SEM の模型
-   ``I=Ibg+(Ifg-Ibg) Phi(x/sigma)`` が予測する両縁の太りを線幅から引き、偏りが
-   本当に縮むかを数える。縮まなければ PASS に見せず、そのまま印字する。
-4. 高しきい値の blob を via とし、重複を除いたラベルに対する適合率・再現率を出す。
+3. Otsu 切り出し自身の境界を横切る edge-spread から、ラベルを使わず PSF sigma と
+   しきい値位置を測る。ラベルを使う推定は 10 枚を 5/5 に分けて逆側へだけ適用する。
+   同じ画像・同じラベルへ戻す循環値は参考行に隔離する。
+4. ``sem_line_profile`` / ``sem_cd_measure`` の 15 keV BSE 模型へ 14.65 nm の
+   標本間隔と 350 nm の線を入れ、予測される幅偏りを実測と比べる。データに無い
+   材料・断面は仮定を明記し、模型に入らない条件を一致と取り違えない。
+5. 高しきい値の blob を via とし、重複を除いたラベルに対する適合率・再現率を出す。
 
 図(``FULLSEYE_FIGURE_DIR`` があるときだけ): (a) 実像とラベルの重ね合わせ(代表図)、
 (b) 切り出しとの差、(c) 線幅分布と偏り、(d) PSF 補正の前後。図中ラベルは日本語。
@@ -26,7 +29,8 @@ Rothaug ほかの公開データ(Edmond/MPG、DOI 10.17617/3.HY5SYN、CC BY 4.0)
 
 経緯: 初版は切り出しのざらついた縁から生えたスケルトンの枝上で距離変換の
 中央値を取り、ラベルと異なる量を比べていた。そのため旧版の大きな負の幅偏りは
-計測手順の誤りであり、この版で同一断面の対応比較に取り直した。
+計測手順の誤りであり、この版で同一断面の対応比較に取り直した。次版では、同じ
+ラベルから補正量と補正後誤差を求めた循環評価も修正し、像単独推定を主結果とした。
 
 実行例::
 
@@ -57,6 +61,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import examplefig as figs  # noqa: E402
 import fullseye as fs  # noqa: E402
 import realdata  # noqa: E402
+import semsim as SM  # noqa: E402
 
 PIXEL_NM = 14.65
 FIXED_TRACK_THRESHOLD = 67.0 / 255.0  # 配布元の conventional baseline と同じ値
@@ -79,10 +84,26 @@ RECORDED = {
     "label_width_nm_p10_p50_p90": [293.0, 380.90000000000003, 536.1900000000004],
     "measured_width_nm_p10_p50_p90": [263.7, 351.6, 518.9762500000002],
     "bias_before_nm": -14.649999999999977,
-    "bias_after_nm": 3.1433118011275987,
-    "bias_reduction_fraction": 0.7854394674998223,
+    "bias_after_nm": -7.776317219744855,
+    "bias_reduction_fraction": 0.4691933638399408,
     "correction_effective": True,
-    "psf_sigma_nm": 51.9345592851607,
+    "psf_sigma_nm": 47.19316203771437,
+    "correction_evaluation": {
+        "label_free": {"correction_nm": -3.2590907839626007,
+                       "before_nm": -14.649999999999977,
+                       "after_nm": -7.776317219744855},
+        "split_5_5": {"train_corrections_nm": [-1.4087537956515248,
+                                                 -17.793311801127576],
+                      "before_nm": -14.649999999999977,
+                      "after_nm": -0.5191881988724241},
+        "same_image_circular_reference": {"correction_nm": -8.043655672201684,
+                                           "before_nm": -14.649999999999977,
+                                           "after_nm": 3.1433118011275987},
+    },
+    "virtual_sem": {"energy_kev": 15.0, "detector": "BSE", "pixel_nm": 14.65,
+                    "true_width_nm": 350.0, "predicted_width_nm": 339.51851017301385,
+                    "predicted_edge_inflation_nm": -10.481489826986149,
+                    "proxy": "Cu/Si, height 40 nm, sidewall 88 deg, beam sigma 1 nm"},
     "raw_skeleton_pixels_per_major_axis_label_pred": [1.0689945741812077,
                                                          6.798318698173031],
     "raw_skeleton_endpoints_label_pred": [2.0, 46.0],
@@ -544,9 +565,24 @@ def _otsu_value(img):
 
 
 def psf_edge_model(img, truth, threshold):
-    """境界を横切る edge-spread から sigma としきい値位置の太りを測る。"""
-    di = np.asarray(fs.ledger.blob_distance(truth, spacing=1.0), np.float64)
-    do = np.asarray(fs.ledger.blob_distance(~truth, spacing=1.0), np.float64)
+    """ラベル境界を横切る edge-spread 模型（分割検証・循環参考用）。"""
+    return _psf_edge_model_from_boundary(img, truth, threshold, uses_label=True)
+
+
+def psf_edge_model_image_only(img, segmented, threshold):
+    """切り出し自身の境界から edge-spread を取り、ラベルなしで補正量を出す。
+
+    境界までの距離は Fullseye の ``blob_distance`` を内外へ通す。補正量の推定には
+    ``segmented`` と ``img`` しか使わず、正解ラベルは補正後の採点だけに使う。
+    """
+    return _psf_edge_model_from_boundary(img, segmented, threshold, uses_label=False)
+
+
+def _psf_edge_model_from_boundary(img, boundary_mask, threshold, *, uses_label):
+    """任意の二値境界を横切る edge-spread の共通実装。"""
+    boundary_mask = np.asarray(boundary_mask, bool)
+    di = np.asarray(fs.ledger.blob_distance(boundary_mask, spacing=1.0), np.float64)
+    do = np.asarray(fs.ledger.blob_distance(~boundary_mask, spacing=1.0), np.float64)
     signed = di - do
     xs = np.arange(-7, 8, dtype=np.float64)
     values = []
@@ -570,7 +606,67 @@ def psf_edge_model(img, truth, threshold):
     q = float(np.clip((threshold - bg) / (fg - bg), 1e-4, 1.0 - 1e-4))
     outward = float(-sigma * ndtri(q))
     return {"sigma_px": sigma, "bg": bg, "fg": fg, "threshold": threshold,
-            "q": q, "outward_px": outward, "width_correction_nm": 2.0 * outward * PIXEL_NM}
+            "q": q, "outward_px": outward, "width_correction_nm": 2.0 * outward * PIXEL_NM,
+            "uses_label": bool(uses_label)}
+
+
+def evaluate_corrections(width_rows, image_models, label_models):
+    """像単独・5/5 分割・同一画像（循環）の補正を同じ幅行で比べる。"""
+    before = np.asarray([r["pred_nm"] - r["label_nm"] for r in width_rows], np.float64)
+    images = sorted({int(r["image"]) for r in width_rows})
+    if len(images) < 2:
+        raise ValueError("correction evaluation needs at least two images")
+    split = len(images) // 2
+    first, second = set(images[:split]), set(images[split:])
+    image_corr = {int(m["image"]): float(m["width_correction_nm"]) for m in image_models}
+    label_corr = {int(m["image"]): float(m["width_correction_nm"]) for m in label_models}
+    train_first = float(np.median([label_corr[i] for i in first if i in label_corr]))
+    train_second = float(np.median([label_corr[i] for i in second if i in label_corr]))
+
+    def collect(kind):
+        b, a, corrections = [], [], []
+        for value, row in zip(before, width_rows):
+            image = int(row["image"])
+            if kind == "image_only":
+                correction = image_corr.get(image)
+            elif kind == "split":
+                correction = train_second if image in first else train_first
+            else:
+                correction = label_corr.get(image)
+            if correction is None:
+                continue
+            b.append(float(value)); a.append(float(value - correction)); corrections.append(correction)
+        b = np.asarray(b, np.float64); a = np.asarray(a, np.float64)
+        before_med = float(np.median(b)); after_med = float(np.median(a))
+        reduction = abs(before_med) - abs(after_med)
+        return {"before_nm": before_med, "after_nm": after_med,
+                "correction_nm_median": float(np.median(corrections)),
+                "reduction_nm": reduction,
+                "reduction_fraction": reduction / abs(before_med) if before_med else 0.0,
+                "rows": int(len(a))}
+
+    return {"image_only": collect("image_only"), "split": collect("split"),
+            "same_image": collect("same_image"),
+            "split_train_correction_nm": [train_first, train_second],
+            "split_images": [sorted(first), sorted(second)]}
+
+
+def virtual_sem_prediction():
+    """既存 op の 15 keV BSE 模型による、明記した代理断面の幅偏り予測。"""
+    width_nm = 350.0
+    profile = SM.sem_line_profile(
+        "CU", "SI", 15.0, width_nm=width_nm, height_nm=40.0, sidewall_deg=88.0,
+        beam_sigma_nm=1.0, x_half_range_nm=500.0, x_step_nm=PIXEL_NM,
+        electrons_per_point=900, seed=1)
+    measured = SM.sem_cd_measure(
+        np.stack([profile["x_nm"], profile["bse"]], axis=1), method="threshold",
+        smooth_nm=1.5)
+    return {"energy_kev": 15.0, "detector": "BSE", "pixel_nm": PIXEL_NM,
+            "true_width_nm": width_nm, "predicted_width_nm": float(measured["width_nm"]),
+            "predicted_edge_inflation_nm": float(measured["width_nm"] - width_nm),
+            "line_material": "CU", "substrate": "SI", "height_nm": 40.0,
+            "sidewall_deg": 88.0, "beam_sigma_nm": 1.0,
+            "electrons_per_point": 900}
 
 
 def detect_vias(img):
@@ -661,7 +757,8 @@ def main() -> None:
 
     method_scores = defaultdict(list)
     widths = defaultdict(list)
-    models = defaultdict(list)
+    label_models = defaultdict(list)
+    image_models = defaultdict(list)
     defects = {"via_duplicates": 0, "via_border": 0, "track_clipped_labels": 0,
                "track_missing_border_components": 0,
                "track_partial_border_components": 0}
@@ -718,10 +815,14 @@ def main() -> None:
                     widths[name].append(row)
 
         for name, threshold in (("固定しきい値", FIXED_TRACK_THRESHOLD), ("大津", _otsu_value(img))):
-            model = psf_edge_model(img, truth, threshold)
-            if model is not None:
-                model["image"] = index
-                models[name].append(model)
+            label_model = psf_edge_model(img, truth, threshold)
+            if label_model is not None:
+                label_model["image"] = index
+                label_models[name].append(label_model)
+            image_model = psf_edge_model_image_only(img, methods[name], threshold)
+            if image_model is not None:
+                image_model["image"] = index
+                image_models[name].append(image_model)
 
         detected = detect_vias(img)
         tp, fp, fn = score_vias(detected, vias)
@@ -787,30 +888,44 @@ def main() -> None:
                rec["raw_pred_skeleton_endpoints_median"]))
 
     threshold_best = max(("固定しきい値", "大津"), key=lambda n: summary[n]["iou_median"])
-    model_corr = np.array([m["width_correction_nm"] for m in models[threshold_best]], np.float64)
-    sigma_nm = np.array([m["sigma_px"] * PIXEL_NM for m in models[threshold_best]], np.float64)
-    before = np.array([r["pred_nm"] - r["label_nm"] for r in widths[threshold_best]], np.float64)
-    correction_by_image = {int(m["image"]): m["width_correction_nm"] for m in models[threshold_best]}
-    corrected = np.array([b - correction_by_image[int(r["image"])]
-                          for b, r in zip(before, widths[threshold_best])
-                          if int(r["image"]) in correction_by_image], np.float64)
-    before_med = float(np.median(before)); after_med = float(np.median(corrected))
-    reduction_nm = abs(before_med) - abs(after_med)
-    reduction_fraction = reduction_nm / abs(before_med) if before_med else 0.0
+    correction_eval = evaluate_corrections(
+        widths[threshold_best], image_models[threshold_best], label_models[threshold_best])
+    sigma_nm = np.array([m["sigma_px"] * PIXEL_NM for m in image_models[threshold_best]],
+                        np.float64)
+    before_med = correction_eval["image_only"]["before_nm"]
+    after_med = correction_eval["image_only"]["after_nm"]
+    reduction_nm = correction_eval["image_only"]["reduction_nm"]
+    reduction_fraction = correction_eval["image_only"]["reduction_fraction"]
     shrank = reduction_nm > 0.0
     effective = shrank and reduction_fraction >= 0.25
-    print("\n仮想 SEM の縁太り模型を実機へ (%s):" % threshold_best)
-    print("  実像 edge-spread の PSF sigma 中央 %.1f nm、模型の線幅補正量 中央 %+.1f nm" %
-          (float(np.median(sigma_nm)), float(np.median(model_corr))))
-    print("  幅の偏り: 補正前 %+.1f nm -> 補正後 %+.1f nm (絶対値 %+.1f nm、%.1f %% %s)。" %
-          (before_med, after_med, -reduction_nm, 100.0 * reduction_fraction,
+    print("\nPSF 補正の独立性 (%s、補正量だけを各方式で変更):" % threshold_best)
+    print("  %-18s %10s %10s %10s" % ("方式", "補正量[nm]", "補正前[nm]", "補正後[nm]"))
+    for key, label in (("image_only", "ラベル不使用"), ("split", "分割検証 5/5"),
+                       ("same_image", "参考: 同一画像")):
+        row = correction_eval[key]
+        print("  %-18s %+10.1f %+10.1f %+10.1f" %
+              (label, row["correction_nm_median"], row["before_nm"], row["after_nm"]))
+    print("  注: 『参考: 同一画像』は同じ画像・同じラベルで補正量と誤差を求める循環評価。"
+          "主結果には使わない。")
+    print("  分割検証: 画像 %s から得た補正 %+.1f nmを画像 %sへ、逆向きは %+.1f nm。" %
+          (correction_eval["split_images"][0], correction_eval["split_train_correction_nm"][0],
+           correction_eval["split_images"][1], correction_eval["split_train_correction_nm"][1]))
+    print("  ラベル不使用: 切り出し自身の符号付き距離を Fullseye blob_distance で作り、"
+          "edge-spread の PSF sigma 中央 %.1f nm。絶対偏りを %.1f %% %s。" %
+          (float(np.median(sigma_nm)), abs(100.0 * reduction_fraction),
            "縮小" if shrank else "悪化"))
-    if float(np.median(model_corr)) < 0:
-        print("  -> この高いしきい値では模型も縁太りでなく内側への移動を予測した。")
-    if not effective:
-        print("  -> 残差の %.1f %% が残り、PSF 補正は有効でない。BSE の材料コントラスト、"
-              "ラベル輪郭の規約、局所しきい値変動が支配する。" %
-              (100.0 * abs(after_med) / max(abs(before_med), 1e-12)))
+
+    virtual = virtual_sem_prediction()
+    virtual_delta = virtual["predicted_edge_inflation_nm"] - before_med
+    print("\n仮想 SEM の予測と実測:")
+    print("  15 keV BSE、標本間隔 %.2f nm、真幅 %.1f nm -> 模型幅 %.1f nm、"
+          "縁の太り %+.1f nm。実測の補正前偏り %+.1f nm、差 %+.1f nm。" %
+          (virtual["pixel_nm"], virtual["true_width_nm"], virtual["predicted_width_nm"],
+           virtual["predicted_edge_inflation_nm"], before_med, virtual_delta))
+    print("  模型へ入れた代理条件: Cu/Si、隆起高さ 40 nm、側壁 88 度、ビーム sigma 1 nm。"
+          "データに無い材料組成・配線高さ・側壁角・ビーム径は決められない。"
+          "sem_render の sec(theta) は SE 模型で BSE には使えず、sem_line_profile も"
+          "平坦な埋込 metal-2 の材料境界を表せないため、数値の近さは模型の検証ではない。")
 
     tp, fp, fn = via_totals
     precision = tp / (tp + fp) if tp + fp else 0.0
@@ -829,10 +944,11 @@ def main() -> None:
         "dataset_sha256": realdata.SEM_METAL_SHA256,
         "method": threshold_best, "methods": summary,
         "psf_sigma_nm_median": float(np.median(sigma_nm)),
-        "model_width_correction_nm_median": float(np.median(model_corr)),
+        "correction_evaluation": correction_eval,
         "bias_before_nm": before_med, "bias_after_nm": after_med,
         "bias_reduction_nm": reduction_nm, "bias_reduction_fraction": reduction_fraction,
         "correction_shrank": shrank, "correction_effective": effective,
+        "virtual_sem": virtual,
         "via_precision": precision, "via_recall": recall,
         "via_tp_fp_fn": [tp, fp, fn], "label_defects": defects,
     }
@@ -861,13 +977,16 @@ def main() -> None:
         figs.save_plot(
             "psf_correction",
             [("補正前", [0, 1], [before_med, before_med]),
-             ("補正後", [0, 1], [after_med, after_med]),
+             ("ラベル不使用", [0, 1], [after_med, after_med]),
+             ("分割検証", [0, 1], [correction_eval["split"]["after_nm"]] * 2),
+             ("同一画像（循環）", [0, 1], [correction_eval["same_image"]["after_nm"]] * 2),
              ("偏りゼロ", [0, 1], [0.0, 0.0])],
             xlabel="", ylabel="線幅の偏り [nm]",
-            title="PSF 補正後も偏りの %.1f %% が残る" %
-                  (100.0 * abs(after_med) / max(abs(before_med), 1e-12)),
-            caption="edge-spread から測った PSF sigma による補正。%+.1f nm から %+.1f nm。"
-                    % (before_med, after_med), source=SOURCE)
+            title="PSF 補正: 像単独・5/5 分割・循環参考を分離",
+            caption="補正前 %+.1f nmに対し、ラベル不使用 %+.1f nm、5/5 分割 %+.1f nm、"
+                    "同一画像 %+.1f nm（同一画像は循環する参考値）。" %
+                    (before_med, after_med, correction_eval["split"]["after_nm"],
+                     correction_eval["same_image"]["after_nm"]), source=SOURCE)
 
     print("門: 合成幅 ±1 px / 実データの二方式 ±1 px / SVG 二重読取一致 / "
           "全指標有限 / via 対応 1対1 / 図の環境変数門")
