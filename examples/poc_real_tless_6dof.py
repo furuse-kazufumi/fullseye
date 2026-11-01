@@ -599,8 +599,8 @@ def _save_metric_comparison(ar_real, ar_synth):
 
 def _save_density_sweep():
     """図06: scene点数に対するAR_MSSDと秒/対象（2000点は時間下限）。"""
-    width, height = 760, 430
-    rect = (78, 46, width - 170, height - 116)
+    width, height = 1280, 720
+    rect = (130, 90, width - 330, height - 190)
     image = np.ones((height, width, 3), np.float64)
     x = np.asarray([row["scene"] for row in DENSITY_SWEEP], np.float64)
     ar = np.asarray([np.nan if row["ar_mssd"] is None else row["ar_mssd"]
@@ -613,23 +613,37 @@ def _save_density_sweep():
     image = np.asarray(fs.grid_lines(image, left, xticks=xticks, yticks=yticks, alpha=0.25))
     image = np.asarray(fs.axes_frame(image, left, width=1))
     image = np.asarray(fs.ticks(image, left, xticks=xticks, yticks=yticks,
-                                tick_len=5, font_size=9, label_fmt="{:g}"))
+                                tick_len=8, font_size=22, label_fmt="{:g}"))
     image = np.asarray(fs.plot_series(image, left, x[:3], ar[:3], kind="line",
-                                      color="right", width=2, marker_size=4))
+                                      color="right", width=3))
     image = np.asarray(fs.plot_series(image, right, x, seconds, kind="line",
-                                      color="wrong", width=2, marker_size=4))
+                                      color="wrong", width=3))
+    for px, py in zip(*fs.data_to_pixel(left, x[:3], ar[:3])):
+        image = np.asarray(fs.ellipse(image, (px, py), (9, 9),
+                                      color="right", width=3))
+    wrong = fs.role_color("wrong")
+    for px, py in zip(*fs.data_to_pixel(right, x, seconds)):
+        image = np.asarray(fs.draw_line(image, (px - 8, py - 8), (px + 8, py + 8),
+                                        color=wrong, width=3))
+        image = np.asarray(fs.draw_line(image, (px - 8, py + 8), (px + 8, py - 8),
+                                        color=wrong, width=3))
     for value in (0.0, 15.0, 30.0, 45.0, 60.0):
         px, py = fs.data_to_pixel(right, 2100.0, value)
-        image = np.asarray(fs.text_box(image, f"{value:g}", (px + 8, py),
-                                       anchor="lm", font_size=9, pad=1,
+        image = np.asarray(fs.text_box(image, f"{value:g}", (px + 12, py),
+                                       anchor="lm", font_size=22, pad=1,
                                        box_alpha=0.0, border=0))
-    image = np.asarray(fs.text_box(image, "密度 vs AR と時間", (10, 8),
-                                   anchor="lt", font_size=13))
+    px, py = fs.data_to_pixel(right, x[-1], seconds[-1])
+    image = np.asarray(fs.text_box(image, "> 54.6 s(未完走)", (px - 18, py + 18),
+                                   anchor="rt", font_size=22, pad=4,
+                                   box_alpha=0.82, border=0))
+    image = np.asarray(fs.text_box(image, "密度 vs AR と時間", (20, 16),
+                                   anchor="lt", font_size=28))
     image = np.asarray(fs.text_box(image, "scene 点数   |   左: AR_MSSD   |   右: 秒/対象",
-                                   (10, height - 10), anchor="lb", font_size=11))
+                                   (20, height - 20), anchor="lb", font_size=22))
     image = np.asarray(fs.legend_box(
         image, [("right", "AR_MSSD"), ("wrong", "秒/対象（2000点は下限）")],
-        (rect[0] + 8, rect[1] + 8), anchor="lt", markers=True, font_size=10))
+        (rect[0] + 16, rect[1] + 16), anchor="lt", markers=True, font_size=22,
+        swatch=22))
     figs.save("density_vs_ar_time", image,
               "180/160、500/500、1000/1000は132対象の完走値。"
               "2000/2000は2時間で未完走のため54.6秒/対象以上、ARは未記録。")
