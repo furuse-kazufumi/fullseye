@@ -110,7 +110,7 @@ Raises:
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 
-—
+[symmetry_difference_map](../symmetry/symmetry_difference_map.md) · [symmetry_score](../symmetry/symmetry_score.md)
 
 ## 同カテゴリ(`geometric`)
 

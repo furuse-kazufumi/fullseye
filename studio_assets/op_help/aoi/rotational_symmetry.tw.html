@@ -1,0 +1,38 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">rotational_symmetry — AOI <code style="color:#22d3bf">symmetry</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rotational_symmetry(image, max_order=12, angular_samples=720, score_threshold=0.18)</code>(要直接呼叫實作,<code style="color:#22d3bf">import symmetry2d; symmetry2d.rotational_symmetry(image, max_order=12, angular_samples=720, score_threshold=0.18)</code>;從台帳取用則 <code style="color:#22d3bf">opsaoi.get(&quot;rotational_symmetry&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>回傳180度點對稱中心及由極座標自相關得到的旋轉對稱階數。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
+<p>image : array-like, shape (H, W)</p>
+<p>グレー画像または region。</p>
+<p>max_order : int, default 12</p>
+<p>調べる最大次数。範囲は [2, 36]。</p>
+<p>angular_samples : int, default 720</p>
+<p>極座標の角度標本数。範囲は [180, 2880] で、2..max_order の公倍数を推奨。</p>
+<p>score_threshold : float, default 0.18</p>
+<p>正規化 RMS 差を対称とみなす上限。範囲は (0, 1)。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>dict</p>
+<p><code style="color:#22d3bf">center=(row,col)</code>、<code style="color:#22d3bf">point_symmetric</code>、<code style="color:#22d3bf">order</code>、各次数の polar</p>
+<p>autocorrelation と差を持つ table。order=1 は非回転対称を表す。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Notes</h4>
+<p>中心は外側エッジ対から推定し、その中心で極座標画像を作る。角度方向に 360/n 度循環シフトした自己相関を測り、しきい値を満たす最大 n を次数とする。定数入力、中心が求まらない入力は <code style="color:#22d3bf">ValueError</code>。同心円のように連続回転対称な像、角度標本数で割り切れない次数、中心から画像端まで対象が切れる像では次数は多義または不安定になる。</p>
+<p>Loy and Zelinsky, Fast radial symmetry for detecting points of interest, IEEE TPAMI 25(8), 2003; Liu et al., FnT CGV 5(1-2), 2010.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideaoi:aoi_frontend">aoi_frontend 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_symmetry_self_reference_inspection">poc_symmetry_self_reference_inspection</a> — <code style="color:#22d3bf">py -3.11 examples/poc_symmetry_self_reference_inspection.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="opaoi:symmetry_difference_map">symmetry_difference_map</a> · <a style="color:#22d3bf" href="opaoi:symmetry_score">symmetry_score</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">symmetry</code>)</h3>
+<p><a style="color:#22d3bf" href="opaoi:center_from_symmetric_edges">center_from_symmetric_edges</a> · <a style="color:#22d3bf" href="opaoi:reflection_axis">reflection_axis</a> · <a style="color:#22d3bf" href="opaoi:symmetry_difference_map">symmetry_difference_map</a> · <a style="color:#22d3bf" href="opaoi:symmetry_score">symmetry_score</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: symmetry2d.py — AOI 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

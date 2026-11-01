@@ -53,9 +53,9 @@
     "reason": "docs/op_knob.json measured no output effect"
   },
   "execution_summary": {
-    "executable": 3417,
+    "executable": 3422,
     "reasons": {
-      "python_signature": 2458,
+      "python_signature": 2463,
       "registry": 959
     },
     "not_executable_reasons": {
@@ -358,9 +358,9 @@
   },
   "counts": {
     "nodes": 101,
-    "edges": 3626,
+    "edges": 3631,
     "conversion_pairs": 395,
-    "conversion_edge_incidence": 2343
+    "conversion_edge_incidence": 2349
   },
   "nodes": [
     {
@@ -752,8 +752,8 @@
       "sort": "image",
       "container": "dense_array",
       "size_hint": "input-dependent",
-      "produced_by": 721,
-      "consumed_by": 1046,
+      "produced_by": 722,
+      "consumed_by": 1051,
       "generator": true,
       "type_check": true,
       "choose_when": "undocumented",
@@ -884,7 +884,7 @@
       "sort": "measurement",
       "container": "structured_value",
       "size_hint": "input-dependent",
-      "produced_by": 93,
+      "produced_by": 94,
       "consumed_by": 6,
       "generator": true,
       "type_check": true,
@@ -1368,8 +1368,8 @@
       "sort": "table",
       "container": "sequence",
       "size_hint": "input-dependent",
-      "produced_by": 1166,
-      "consumed_by": 547,
+      "produced_by": 1169,
+      "consumed_by": 549,
       "generator": true,
       "type_check": true,
       "choose_when": "undocumented",
@@ -140616,6 +140616,325 @@
           "range": "undocumented",
           "unit": "undocumented",
           "default": false
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00026"
+    },
+    {
+      "op": "center_from_symmetric_edges",
+      "inputs": [
+        "image"
+      ],
+      "output": "table",
+      "category": "aoi",
+      "family": null,
+      "family_candidate": "edge_detection",
+      "family_candidate_source": "heuristic_regex",
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00026"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00026"
+        }
+      ],
+      "runtime_target": {
+        "module": "symmetry2d",
+        "callable": "center_from_symmetric_edges"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "symmetry2d",
+        "callable": "center_from_symmetric_edges"
+      },
+      "parameter_schema": [
+        {
+          "name": "threshold",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.08
+        },
+        {
+          "name": "sigma",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 1.0
+        },
+        {
+          "name": "min_span",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 6.0
+        },
+        {
+          "name": "mad_z",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 3.5
+        },
+        {
+          "name": "diagonals",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": false
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00026"
+    },
+    {
+      "op": "reflection_axis",
+      "inputs": [
+        "image"
+      ],
+      "output": "table",
+      "category": "aoi",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00026"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00026"
+        }
+      ],
+      "runtime_target": {
+        "module": "symmetry2d",
+        "callable": "reflection_axis"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "symmetry2d",
+        "callable": "reflection_axis"
+      },
+      "parameter_schema": [
+        {
+          "name": "angle_step",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 2.0
+        },
+        {
+          "name": "offset_search",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 4.0
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00026"
+    },
+    {
+      "op": "rotational_symmetry",
+      "inputs": [
+        "image"
+      ],
+      "output": "table",
+      "category": "aoi",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00026"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00026"
+        }
+      ],
+      "runtime_target": {
+        "module": "symmetry2d",
+        "callable": "rotational_symmetry"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "symmetry2d",
+        "callable": "rotational_symmetry"
+      },
+      "parameter_schema": [
+        {
+          "name": "max_order",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 12
+        },
+        {
+          "name": "angular_samples",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 720
+        },
+        {
+          "name": "score_threshold",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.18
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00026"
+    },
+    {
+      "op": "symmetry_difference_map",
+      "inputs": [
+        "image",
+        "table"
+      ],
+      "output": "image",
+      "category": "aoi",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00026"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00026"
+        }
+      ],
+      "runtime_target": {
+        "module": "symmetry2d",
+        "callable": "symmetry_difference_map"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "symmetry2d",
+        "callable": "symmetry_difference_map"
+      },
+      "parameter_schema": [
+        {
+          "name": "exclusion_mask",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
+        },
+        {
+          "name": "detrend",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": true
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00026"
+    },
+    {
+      "op": "symmetry_score",
+      "inputs": [
+        "image",
+        "table"
+      ],
+      "output": "measurement",
+      "category": "aoi",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00026"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00026"
+        }
+      ],
+      "runtime_target": {
+        "module": "symmetry2d",
+        "callable": "symmetry_score"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "symmetry2d",
+        "callable": "symmetry_score"
+      },
+      "parameter_schema": [
+        {
+          "name": "exclusion_mask",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
+        },
+        {
+          "name": "detrend",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": true
         }
       ],
       "verified_executable": false,

@@ -15468,6 +15468,23 @@
    }
   },
   {
+   "id": "poc_symmetry_self_reference_inspection",
+   "group": "wing_industrial",
+   "media": "01_self_reference_defect.png",
+   "motion": false,
+   "thumb_src": "01_self_reference_defect_720.jpg",
+   "label": {
+    "ja": "2-D対称性の自己参照検査",
+    "en": "Self-referenced 2-D symmetry inspection",
+    "zh": "二维对称性自参考检测",
+    "tw": "二維對稱性自參考檢測",
+    "ko": "2-D 대칭 자기참조 검사",
+    "de": "Selbstreferenzierte 2-D-Symmetrieprüfung",
+    "hi": "Self-referenced 2-D symmetry inspection",
+    "fr": "Inspection auto-référencée par symétrie 2-D"
+   }
+  },
+  {
    "id": "poc_dic_strain",
    "group": "wing_metrology",
    "media": "05_tensile_ramp.mp4",

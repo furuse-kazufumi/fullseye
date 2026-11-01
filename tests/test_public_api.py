@@ -44,6 +44,9 @@ GOLDEN = [
     # 3-D metrology fits — (depth,row,col) analogue of the 2-D fits (numpy-only, always present)
     "fit_line3", "fit_plane3", "fit_sphere3", "fit_circle3",
     "smallest_box3", "smallest_box3_axis", "fit_box3", "smallest_sphere3", "inner_box3",
+    # 2-D self-referenced symmetry inspection
+    "center_from_symmetric_edges", "reflection_axis", "rotational_symmetry",
+    "symmetry_difference_map", "symmetry_score",
 ]
 
 

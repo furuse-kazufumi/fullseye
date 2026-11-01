@@ -31186,6 +31186,51 @@
    "de": "Teilt ein Bild in Kacheln und macht aus einer Größe je Kachel eine kleine Karte. → dict.",
    "hi": "image को tiles में बाँटता है और हर tile की मात्रा से एक छोटा map बनाता है। → dict."
   },
+  "aoi/center_from_symmetric_edges": {
+   "fp": "883dce2423d5",
+   "en": "Robustly pools the midpoints of symmetric outer-edge pairs and returns a 2-D centre.",
+   "zh": "稳健汇总对称外缘对的中点，返回二维中心。",
+   "tw": "穩健彙整對稱外緣對的中點，回傳二維中心。",
+   "ko": "대칭인 바깥쪽 에지 쌍의 중점을 강건하게 모아 2-D 중심을 반환한다.",
+   "de": "Fasst die Mittelpunkte symmetrischer Außenkantenpaare robust zusammen und liefert ein 2-D-Zentrum.",
+   "hi": "सममित बाहरी edge-pairs के midpoints को robust ढंग से जोड़कर 2-D center लौटाता है।"
+  },
+  "aoi/reflection_axis": {
+   "fp": "f3cf56a99697",
+   "en": "Estimates the angle and offset of the reflection axis of a line-symmetric 2-D image.",
+   "zh": "估计线对称二维图像的反射轴角度与偏移。",
+   "tw": "估計線對稱二維影像的反射軸角度與偏移。",
+   "ko": "선대칭 2-D 영상의 반사축 각도와 오프셋을 추정한다.",
+   "de": "Schätzt Winkel und Versatz der Spiegelachse eines achsensymmetrischen 2-D-Bildes.",
+   "hi": "line-symmetric 2-D image के reflection axis का angle और offset अनुमानित करता है।"
+  },
+  "aoi/rotational_symmetry": {
+   "fp": "1596a155a82d",
+   "en": "Returns the 180-degree point-symmetry centre and the rotational order from polar autocorrelation.",
+   "zh": "返回180度点对称中心及由极坐标自相关得到的旋转对称阶数。",
+   "tw": "回傳180度點對稱中心及由極座標自相關得到的旋轉對稱階數。",
+   "ko": "180도 점대칭 중심과 극좌표 자기상관으로 구한 회전대칭 차수를 반환한다.",
+   "de": "Liefert das Zentrum der 180-Grad-Punktsymmetrie und die Rotationsordnung aus der polaren Autokorrelation.",
+   "hi": "180-degree point-symmetry center और polar autocorrelation से rotational order लौटाता है।"
+  },
+  "aoi/symmetry_difference_map": {
+   "fp": "ff6fd31bcd4e",
+   "en": "Returns a self-referenced difference map against an estimated reflection axis or rotation centre.",
+   "zh": "返回相对于估计反射轴或旋转中心的自参考差分图。",
+   "tw": "回傳相對於估計反射軸或旋轉中心的自參考差分圖。",
+   "ko": "추정한 반사축 또는 회전 중심에 대한 자기참조 차이 지도를 반환한다.",
+   "de": "Liefert eine selbstreferenzierte Differenzkarte zu einer geschätzten Spiegelachse oder einem Rotationszentrum.",
+   "hi": "अनुमानित reflection axis या rotation center के विरुद्ध self-referenced difference map लौटाता है।"
+  },
+  "aoi/symmetry_score": {
+   "fp": "2ef0dfde6bb7",
+   "en": "Returns distance from symmetry by normalising the self-referenced difference by image dynamic range.",
+   "zh": "以图像动态范围归一化自参考差分，返回到对称状态的距离。",
+   "tw": "以影像動態範圍正規化自參考差分，回傳到對稱狀態的距離。",
+   "ko": "자기참조 차이를 영상 동적 범위로 정규화해 대칭으로부터의 거리를 반환한다.",
+   "de": "Liefert den Abstand von der Symmetrie, indem die selbstreferenzierte Differenz mit dem Bilddynamikbereich normiert wird.",
+   "hi": "self-referenced difference को image dynamic range से normalise कर symmetry से दूरी लौटाता है।"
+  },
   "calib/project_3d_point": {
    "fp": "d3fc949c7a2d",
    "en": "Perspective-projects 3-D points into the camera and returns pixels (row, col) (project_3d_point).",
