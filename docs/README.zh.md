@@ -64,7 +64,7 @@
 | `validated-public-real-data` | 使用公开实测数据的示例在检查中实际运行 | 18 |
 | `validated-hardware` | 已在实机上验证(仅在接受外部报告时) | 0 |
 
-449 个示例中,检查实际运行的有 449 个。
+450 个示例中,检查实际运行的有 450 个。
 
 ### 各版本的算子数
 
@@ -301,7 +301,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 <!-- docmap:start -->
 
-## 文档地图 — 共 305 篇
+## 文档地图 — 共 307 篇
 
 完整地图，确保**没有任何文档无法从索引到达**(`docs/ops/` 下的 3,629 篇算子说明与 69 篇族群指南从上面的「查找算子」进入; 文章见 [articles/](articles/README.md))。**正文多为日语。**
 
@@ -387,7 +387,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`FSCRIPT_LANGUAGE.md`](FSCRIPT_LANGUAGE.md) | Fullseye Script — Language / Runtime / Watch IDE Design Specification (North Star) → [`FSCRIPT_LANGUAGE.en.md`](FSCRIPT_LANGUAGE.en.md) · 原文 _(ja)_ |
 | [`FSCRIPT_MEASUREMENTS.md`](FSCRIPT_MEASUREMENTS.md) | Fullseye Runtime — 実測記録 (2026-08-15) _(ja)_ |
 
-**Quality and honesty**(13)
+**Quality and honesty**(14)
 
 | 文档 | 内容 |
 |---|---|
@@ -404,6 +404,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`RELEASE_CHECKLIST.md`](RELEASE_CHECKLIST.md) | リリース手順書 — 同じ間違いを繰り返さないための門 _(ja)_ |
 | [`I18N.md`](I18N.md) | Fullseye の多言語対応 — 全体設計 / Internationalisation design _(ja)_ |
 | [`VALIDATION_CONTRIBUTING.md`](VALIDATION_CONTRIBUTING.md) | Reporting validation on real hardware or real data → [`VALIDATION_CONTRIBUTING.en.md`](VALIDATION_CONTRIBUTING.en.md) · 原文 _(ja)_ |
+| [`POC_QUALITY_CRITERIA.md`](POC_QUALITY_CRITERIA.md) | Quality criteria for PoCs, figures, videos and exhibits (for whoever asks and whoever builds) → [`POC_QUALITY_CRITERIA.en.md`](POC_QUALITY_CRITERIA.en.md) · 原文 _(ja)_ |
 
 **Performance and GPU**(4)
 
@@ -443,7 +444,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`ARTICLE_GPU_SHAPEMATCH.md`](ARTICLE_GPU_SHAPEMATCH.md) | 記事材料: 形状マッチングを GPU に載せる —— 勾配方向スコアの conv2d 定式化 _(ja)_ |
 | [`FULLSEYE_OP_ARTICLE_SPEC.md`](FULLSEYE_OP_ARTICLE_SPEC.md) | Fullseye op カタログ画像・専用記事 仕様書(第 2 陣企画書) _(ja)_ |
 
-**Other**(222)
+**Other**(223)
 
 | 文档 | 内容 |
 |---|---|
@@ -512,6 +513,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`P0A_EVALUATION_CANDIDATES.md`](P0A_EVALUATION_CANDIDATES.md) | P0-A 重複候補の全件比較表 _(ja)_ |
 | [`P0A_EVALUATION_REPORT.md`](P0A_EVALUATION_REPORT.md) | 評価の枠組み共通層 P0-A 実施報告 _(ja)_ |
 | [`PIPELINE_SHAPES.md`](PIPELINE_SHAPES.md) | Typed DAG execution |
+| [`POC_QUALITY_CRITERIA.en.md`](POC_QUALITY_CRITERIA.en.md) | Quality criteria for PoCs, figures, videos and exhibits (for whoever asks and whoever builds) |
 | [`SAMPLE_IMAGE_REFERENCES.en.md`](SAMPLE_IMAGE_REFERENCES.en.md) | Sample images — provenance, source papers & public repositories |
 | [`STUDIO_GUIDE.de.md`](STUDIO_GUIDE.de.md) | Vollständiger Leitfaden zu Fullseye Studio |
 | [`STUDIO_GUIDE.en.md`](STUDIO_GUIDE.en.md) | The complete guide to Fullseye Studio |

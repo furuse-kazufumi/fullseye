@@ -99,7 +99,7 @@ The 97 capabilities, split by how they are verified (`docs/maturity.json`, rebui
 | `validated-public-real-data` | an example on public measured data runs in a gate | 18 |
 | `validated-hardware` | validated on hardware (only from accepted external reports) | 0 |
 
-Of 449 examples, 449 are actually run by a gate.
+Of 450 examples, 450 are actually run by a gate.
 
 ### Operator counts by version
 
@@ -341,6 +341,32 @@ Everything below lives in the repo — start at the guide that matches what you 
   benchmark numbers are measured, not asserted; limitations are disclosed, not hidden.
 - **Optional heavy dependencies** — a numpy+scipy core always works; richer backends and
   GPU are opt-in.
+
+## ViEW2026 入口メディアの検証(2026-11-01)
+
+### `poc_interferometry_step` — `09_csi_scan_explained`
+
+| 門 | 判定 |
+|---|---|
+| 解像度・コマ数・fps | 実測: 1280×720、48 コマ、12 fps |
+| 文字のはみ出し | 描画前に全ラベルを `measure_text` で測定。はみ出し 0、最小 22 px |
+| データ面の最近傍拡大 | なし。512→560、512→300/260 は双一次補間 |
+| 画面の数字 = 実行の数字 | assert: 傾斜補正後の段差 0.661020 µm、真値 0.650000 µm、差 +11.020 nm |
+| 追加の門 | assert: 差は 20 nm 以内。最終コマは有限な高さ 241,172 画素を全数着色 |
+| 決定性 | 2 回描画した MP4/GIF の SHA-256 がそれぞれ一致 |
+| `regen_all.py --check` | 緑 |
+
+### `poc_polarization_specular` — `08_analyzer_sweep_explained`
+
+| 門 | 判定 |
+|---|---|
+| 解像度・コマ数・fps | 実測: 1280×720、72 コマ、12 fps |
+| 文字のはみ出し | 描画前に全ラベルを `measure_text` で測定。はみ出し 0、最小 22 px |
+| データ面の最近傍拡大 | 1024→560 と 512→300/230 は双一次。DoFP の 24×24 crop だけ「拡大 12×」と明記して整数最近傍 |
+| 画面の数字 = 実行の数字 | 同じ `r` から DoLP A/B/C = 0.900024 / 0.155788 / 0.000314 を取得 |
+| 追加の門 | assert: 最大/最小比 A/B/C = 23.9563 / 1.35288 / 1.00000。A ≥ 5、C ≤ 1.1 |
+| 決定性 | 2 回描画した MP4/GIF の SHA-256 がそれぞれ一致 |
+| `regen_all.py --check` | 緑 |
 
 ## License
 
