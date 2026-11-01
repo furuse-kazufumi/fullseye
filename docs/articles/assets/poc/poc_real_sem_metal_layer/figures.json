@@ -13,7 +13,7 @@
  {
   "file": "02_segmentation_difference.png",
   "name": "segmentation_difference",
-  "caption": "大津。緑=一致、赤=太り、青=欠け。",
+  "caption": "大津。緑=一致、赤=太り、青=欠け、橙=画像端から続くラベル欠け(採点除外)。",
   "shape": [
    1024,
    1024,
@@ -24,7 +24,7 @@
  {
   "file": "03_line_width_distribution.png",
   "name": "line_width_distribution",
-  "caption": "距離変換で track ごとの中央値を測った。",
+  "caption": "ラベルの主中心線上で両端と曲がり角を除き、等間隔の連続断面幅をラベルと切り出しに同じ手続きで測った。",
   "shape": [
    360,
    560,
@@ -35,7 +35,7 @@
  {
   "file": "04_psf_correction.png",
   "name": "psf_correction",
-  "caption": "edge-spread から測った PSF sigma による補正。-296.3 nm から -285.6 nm。",
+  "caption": "edge-spread から測った PSF sigma による補正。-14.6 nm から +3.1 nm。",
   "shape": [
    360,
    666,

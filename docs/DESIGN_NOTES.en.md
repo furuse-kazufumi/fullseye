@@ -2018,8 +2018,8 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `realdata.py`
 
-- **L138** — ★ Only those whose ``public`` column is true may be used in figures to be published. Those limited to cited use for research and education purposes carry ``cite``.
-- **L197** — ★ skimage only holds a bundled subset; the rest it fetches at runtime via pooch. Whatever it cannot fetch **we do not use in this repo** (if a PoC depends on the connection, it becomes unclear whether a failure was the implementation or the network).
+- **L146** — ★ Only those whose ``public`` column is true may be used in figures to be published. Those limited to cited use for research and education purposes carry ``cite``.
+- **L205** — ★ skimage only holds a bundled subset; the rest it fetches at runtime via pooch. Whatever it cannot fetch **we do not use in this repo** (if a PoC depends on the connection, it becomes unclear whether a failure was the implementation or the network).
 
 ## `render3d.py`
 

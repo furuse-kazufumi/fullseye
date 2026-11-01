@@ -13,7 +13,8 @@ Rothaug ほかの公開データ(Edmond/MPG、DOI 10.17617/3.HY5SYN、CC BY 4.0)
    実物の重複ラベルとしてクラスタ化し、画像端で切れた track と、端から続くのに
    ラベルと重ならない明部成分も数えて採点から除く。
 2. Fullseye op だけで fixed threshold / Otsu / Sobel-edge の 3 通りに切り出す。
-   IoU、対称境界距離、各 track の距離変換幅と法線方向 line profile 幅を nm で出す。
+   IoU、対称境界距離、ラベルの主中心線上の等間隔な法線方向断面幅を
+   nm で出す。両端と曲がり角は除き、ラベルと切り出しを同じ断面で測る。
 3. ラベル境界を横切る実像の edge-spread から PSF sigma を測る。仮想 SEM の模型
    ``I=Ibg+(Ifg-Ibg) Phi(x/sigma)`` が予測する両縁の太りを線幅から引き、偏りが
    本当に縮むかを数える。縮まなければ PASS に見せず、そのまま印字する。
@@ -23,6 +24,10 @@ Rothaug ほかの公開データ(Edmond/MPG、DOI 10.17617/3.HY5SYN、CC BY 4.0)
 (b) 切り出しとの差、(c) 線幅分布と偏り、(d) PSF 補正の前後。図中ラベルは日本語。
 データが無い CI では取得せず、下の ``RECORDED`` を表示して実データ章を飛ばす。
 
+経緯: 初版は切り出しのざらついた縁から生えたスケルトンの枝上で距離変換の
+中央値を取り、ラベルと異なる量を比べていた。そのため旧版の大きな負の幅偏りは
+計測手順の誤りであり、この版で同一断面の対応比較に取り直した。
+
 実行例::
 
     py -3.11 tools/fetch_sem_metal_layer.py
@@ -30,6 +35,7 @@ Rothaug ほかの公開データ(Edmond/MPG、DOI 10.17617/3.HY5SYN、CC BY 4.0)
 """
 from __future__ import annotations
 
+import heapq
 import json
 import math
 import os
@@ -57,6 +63,9 @@ FIXED_TRACK_THRESHOLD = 67.0 / 255.0  # 配布元の conventional baseline と�
 VIA_THRESHOLD = 157.0 / 255.0
 MAX_IMAGES = 10
 MAX_WIDTH_TRACKS_PER_IMAGE = 160
+PROFILE_STEP_PX = 8.0
+PROFILE_SAMPLE_PX = 0.25
+PROFILE_HALF_LENGTH_PX = 80.0
 SOURCE = realdata.sem_metal_layer_credit()
 
 # 実データを走らせた後、stdout の ``RECORDED_JSON`` と同じ値へ固定する。
@@ -65,18 +74,26 @@ RECORDED = {
     "images": 10,
     "dataset_sha256": "14e0aef2ceeee0aa46b324521535133eba2e33bea222c9b360a0e7b505024753",
     "method": "大津",
-    "iou_median": 0.597233577528688,
-    "boundary_nm_mean": 316.29300501927685,
-    "label_width_nm_p10_p50_p90": [293.0, 351.6, 491.1575001972382],
-    "measured_width_nm_p10_p50_p90": [29.3, 41.43645737753169, 132.58022513333927],
-    "bias_before_nm": -296.306518253653,
-    "bias_after_nm": -285.6303998969665,
+    "iou_median": 0.8194012531006987,
+    "boundary_nm_mean": 58.074351193503766,
+    "label_width_nm_p10_p50_p90": [293.0, 380.90000000000003, 536.1900000000004],
+    "measured_width_nm_p10_p50_p90": [263.7, 351.6, 518.9762500000002],
+    "bias_before_nm": -14.649999999999977,
+    "bias_after_nm": 3.1433118011275987,
+    "bias_reduction_fraction": 0.7854394674998223,
+    "correction_effective": True,
     "psf_sigma_nm": 51.9345592851607,
+    "raw_skeleton_pixels_per_major_axis_label_pred": [1.0689945741812077,
+                                                         6.798318698173031],
+    "raw_skeleton_endpoints_label_pred": [2.0, 46.0],
+    "profile_distance_delta_px_label_pred": [0.9999999999999984,
+                                               1.0000000000000022],
     "via_precision": 0.9783519553072626,
     "via_recall": 0.9394803017602682,
     "via_tp_fp_fn": [5604, 124, 361],
     "label_defects": {"via_duplicates": 1740, "via_border": 112,
-                      "track_clipped_labels": 1239, "track_missing_border_components": 51},
+                      "track_clipped_labels": 1239, "track_missing_border_components": 51,
+                      "track_partial_border_components": 7},
 }
 
 
@@ -217,15 +234,28 @@ def segment_tracks(img):
 
 
 def _label_missing_border_tracks(fixed, label_mask):
-    """端から続く明部成分のうち、ラベルとほぼ重ならないものを欠けとして数える。"""
+    """端から続く track のラベル欠けを数え、欠け部分の ROI を返す。
+
+    配布元が明記する「tracks spanning multiple images」に対応する。成分全体が
+    未ラベルの場合だけでなく、端に続く一本の一部だけがラベルになった場合も
+    「部分欠け」として数える。部分欠けではラベル近傍の切り出しは残し、
+    ラベルから 12 px より離れた未注釈区間だけを採点から除く。
+    """
     labels = np.asarray(fs.ledger.blob_label(fixed), np.int32)
     n = int(labels.max(initial=0))
     sizes = np.bincount(labels.ravel(), minlength=n + 1)
     overlap = np.bincount(labels[label_mask].ravel(), minlength=n + 1)
     border_ids = np.unique(np.concatenate([labels[0], labels[-1], labels[:, 0], labels[:, -1]]))
     ratios = overlap / np.maximum(sizes, 1)
-    bad = border_ids[(border_ids > 0) & (sizes[border_ids] >= 30) & (ratios[border_ids] < 0.10)]
-    return np.isin(labels, bad), int(len(bad))
+    valid = border_ids[(border_ids > 0) & (sizes[border_ids] >= 30)]
+    missing_ids = valid[ratios[valid] < 0.10]
+    missing = np.isin(labels, missing_ids)
+    near_label = ndi.binary_dilation(label_mask, iterations=12)
+    far_sizes = np.bincount(labels[~near_label].ravel(), minlength=n + 1)
+    partial_ids = valid[(ratios[valid] >= 0.10) & (far_sizes[valid] >= 30)]
+    if len(partial_ids):
+        missing |= np.isin(labels, partial_ids) & ~near_label
+    return missing, int(len(missing_ids)), int(len(partial_ids))
 
 
 def _boundaries(mask):
@@ -258,58 +288,249 @@ def _one_polygon_mask(points, pad=3):
     return np.asarray(im, bool), (y0, y1, x0, x1)
 
 
-def _profile_width(mask, points):
-    """track の主軸に直交する 1-D profile の連続前景長を返す [px]。"""
-    p = np.asarray(points, np.float64)
-    q = p - p.mean(axis=0)
-    cov = q.T @ q
-    val, vec = np.linalg.eigh(cov)
-    normal = vec[:, int(np.argmin(val))]
-    center = p.mean(axis=0)
-    s = np.arange(-80.0, 80.01, 0.25)
-    xy = center[None, :] + s[:, None] * normal[None, :]
+def _clean_width_mask(mask):
+    """幅測定前にラベルと切り出しの両方へ同じ平滑化を施す。"""
+    out = np.asarray(fs.op.opening_circle(mask.astype(np.float64), a=0.0, b=0.0), np.float64)
+    out = np.asarray(fs.op.closing_circle(out, a=0.34, b=0.0), np.float64)
+    out = np.asarray(fs.op.fill_holes(out, a=0.5, b=0.5), np.float64)
+    return out > 0.5
+
+
+def _skeleton_graph(mask):
+    """スケルトンの 8 近傍グラフと次数を返す。"""
+    skel = np.asarray(fs.op.skeleton(mask.astype(np.float64), a=0.5, b=0.5), bool)
+    coords = np.argwhere(skel)
+    if not len(coords):
+        return skel, coords, [], np.empty(0, np.int32)
+    index = np.full(skel.shape, -1, np.int32)
+    index[coords[:, 0], coords[:, 1]] = np.arange(len(coords), dtype=np.int32)
+    graph = [[] for _ in range(len(coords))]
+    for i, (y, x) in enumerate(coords):
+        for dy in (-1, 0, 1):
+            for dx in (-1, 0, 1):
+                if (dy == 0 and dx == 0) or not (0 <= y + dy < skel.shape[0]
+                                                   and 0 <= x + dx < skel.shape[1]):
+                    continue
+                j = int(index[y + dy, x + dx])
+                if j >= 0:
+                    graph[i].append((j, math.hypot(dx, dy)))
+    degree = np.asarray([len(row) for row in graph], np.int32)
+    return skel, coords, graph, degree
+
+
+def _dijkstra_farthest(graph, start, candidates=None):
+    dist = np.full(len(graph), np.inf, np.float64)
+    previous = np.full(len(graph), -1, np.int32)
+    dist[start] = 0.0
+    queue = [(0.0, int(start))]
+    while queue:
+        d, i = heapq.heappop(queue)
+        if d != dist[i]:
+            continue
+        for j, weight in graph[i]:
+            nd = d + weight
+            if nd < dist[j]:
+                dist[j] = nd
+                previous[j] = i
+                heapq.heappush(queue, (nd, j))
+    ids = np.flatnonzero(np.isfinite(dist)) if candidates is None else np.asarray(candidates)
+    ids = ids[np.isfinite(dist[ids])]
+    farthest = int(ids[np.argmax(dist[ids])]) if len(ids) else int(start)
+    return farthest, dist, previous
+
+
+def _main_centerline(mask):
+    """ラベルスケルトンの最長経路を (x, y) 順で返す。"""
+    skel, coords, graph, degree = _skeleton_graph(mask)
+    if not len(coords):
+        return np.empty((0, 2), np.float64), np.empty(0), skel, degree
+    ends = np.flatnonzero(degree == 1)
+    candidates = ends if len(ends) >= 2 else None
+    start = int(ends[0]) if len(ends) else 0
+    a, _dist, _prev = _dijkstra_farthest(graph, start, candidates)
+    b, _dist, previous = _dijkstra_farthest(graph, a, candidates)
+    path = [b]
+    while path[-1] != a and previous[path[-1]] >= 0:
+        path.append(int(previous[path[-1]]))
+    path.reverse()
+    xy = coords[np.asarray(path, np.int32)][:, ::-1].astype(np.float64)
+    arc = np.zeros(len(xy), np.float64)
+    if len(xy) > 1:
+        arc[1:] = np.cumsum(np.linalg.norm(np.diff(xy, axis=0), axis=1))
+    return xy, arc, skel, degree
+
+
+def _centerline_sections(label):
+    """両端と曲がり角を除いた等間隔の (中心, 法線) を作る。"""
+    path, arc, skel, degree = _main_centerline(label)
+    if len(path) < 3 or arc[-1] <= 0:
+        return [], skel, degree
+    distance = ndi.distance_transform_edt(label)
+    center_width = 2.0 * float(np.median(distance[skel])) if skel.any() else 0.0
+    margin = max(8.0, 0.75 * center_width)
+    if arc[-1] <= 2.0 * margin + PROFILE_STEP_PX:
+        margin = max(3.0, 0.20 * arc[-1])
+    targets = np.arange(margin, arc[-1] - margin + 1e-9, PROFILE_STEP_PX)
+    sections = []
+    for target in targets:
+        i = int(np.argmin(np.abs(arc - target)))
+        before = int(np.argmin(np.abs(arc - max(0.0, arc[i] - 6.0))))
+        after = int(np.argmin(np.abs(arc - min(arc[-1], arc[i] + 6.0))))
+        vb = path[i] - path[before]
+        va = path[after] - path[i]
+        nb, na = np.linalg.norm(vb), np.linalg.norm(va)
+        if nb < 2.0 or na < 2.0 or float(np.dot(vb, va) / (nb * na)) < math.cos(math.radians(25.0)):
+            continue
+        tangent = path[after] - path[before]
+        tangent /= np.linalg.norm(tangent)
+        normal = np.array([-tangent[1], tangent[0]], np.float64)
+        sections.append((path[i], normal))
+    return sections, skel, degree
+
+
+def _profile_width(mask, center, normal):
+    """中心を含む 1-D 断面の連続前景長を返す [px]。"""
+    s = np.arange(-PROFILE_HALF_LENGTH_PX, PROFILE_HALF_LENGTH_PX + 1e-9,
+                  PROFILE_SAMPLE_PX)
+    xy = np.asarray(center)[None, :] + s[:, None] * np.asarray(normal)[None, :]
     prof = ndi.map_coordinates(mask.astype(np.float64), [xy[:, 1], xy[:, 0]], order=0,
                                mode="constant", cval=0.0) > 0.5
     k0 = int(np.argmin(np.abs(s)))
     if not prof[k0]:
-        hits = np.flatnonzero(prof)
-        if not len(hits):
-            return float("nan")
-        k0 = int(hits[np.argmin(np.abs(hits - k0))])
+        return 0.0
     lo = k0
     hi = k0
     while lo > 0 and prof[lo - 1]:
         lo -= 1
     while hi + 1 < len(prof) and prof[hi + 1]:
         hi += 1
-    return float((hi - lo + 1) * 0.25)
+    return float((hi - lo + 1) * PROFILE_SAMPLE_PX)
+
+
+def _centerline_distance_width(mask, sections):
+    """同じ断面上の局所中心で測る距離変換幅 [px]。"""
+    if not sections:
+        return float("nan")
+    distance = ndi.distance_transform_edt(mask)
+    values = []
+    offsets = np.arange(-PROFILE_HALF_LENGTH_PX, PROFILE_HALF_LENGTH_PX + 1.0)
+    for center, normal in sections:
+        xy = np.rint(np.asarray(center)[None, :] + offsets[:, None] * normal[None, :]).astype(int)
+        inside = ((xy[:, 0] >= 0) & (xy[:, 0] < mask.shape[1])
+                  & (xy[:, 1] >= 0) & (xy[:, 1] < mask.shape[0]))
+        foreground = np.zeros(len(offsets), bool)
+        foreground[inside] = mask[xy[inside, 1], xy[inside, 0]]
+        k0 = len(offsets) // 2
+        if not foreground[k0]:
+            values.append(0.0)
+            continue
+        lo = hi = k0
+        while lo > 0 and foreground[lo - 1]:
+            lo -= 1
+        while hi + 1 < len(foreground) and foreground[hi + 1]:
+            hi += 1
+        run_xy = xy[lo:hi + 1]
+        d = float(np.max(distance[run_xy[:, 1], run_xy[:, 0]]))
+        # EDT は画素中心から背景画素中心までなので、直径の連続前景長に
+        # 合わせて 1 px のセル幅を戻す。
+        values.append(0.0 if d <= 0.0 else 2.0 * d + 1.0)
+    return float(np.median(values))
+
+
+def _raw_skeleton_diagnostics(mask):
+    """枝荒れの証拠となるスケルトン画素/主軸長と端点数。"""
+    skel, coords, _graph, degree = _skeleton_graph(mask)
+    if not len(coords):
+        return {"pixels_per_major_axis": float("nan"), "endpoints": 0}
+    xy = coords[:, ::-1].astype(np.float64)
+    centered = xy - xy.mean(axis=0)
+    _values, vectors = np.linalg.eigh(centered.T @ centered)
+    projection = centered @ vectors[:, -1]
+    major_axis = max(1.0, float(projection.max() - projection.min() + 1.0))
+    return {"pixels_per_major_axis": float(len(coords) / major_axis),
+            "endpoints": int(np.count_nonzero(degree == 1))}
+
+
+def _prepare_track_width(points, shape):
+    label, (y0, y1, x0, x1) = _one_polygon_mask(points, pad=16)
+    h = min(label.shape[0], shape[0] - y0)
+    w = min(label.shape[1], shape[1] - x0)
+    label = label[:h, :w]
+    raw_label_diag = _raw_skeleton_diagnostics(label)
+    label = _clean_width_mask(label)
+    if not label.any():
+        return None
+    sections, _skel, _degree = _centerline_sections(label)
+    if not sections:
+        return None
+    label_profiles = np.asarray([_profile_width(label, center, normal)
+                                 for center, normal in sections], np.float64)
+    valid = label_profiles > 0
+    if not valid.any():
+        return None
+    return {"bounds": (y0, y0 + h, x0, x0 + w),
+            "gate": ndi.binary_dilation(label, iterations=12), "sections": sections,
+            "valid": valid, "label_px": float(np.median(label_profiles[valid])),
+            "label_distance_px": _centerline_distance_width(label, sections),
+            "raw_label_diag": raw_label_diag}
+
+
+def _measure_prepared_track(prepared, pred):
+    y0, y1, x0, x1 = prepared["bounds"]
+    pred_crop = pred[y0:y1, x0:x1]
+    picked_raw = np.asarray(fs.apply([pred_crop, prepared["gate"]],
+                                     "intersection", on_error="raise"), bool)
+    raw_pred_diag = _raw_skeleton_diagnostics(picked_raw)
+    picked = _clean_width_mask(picked_raw)
+    if not picked.any():
+        return None
+    sections = prepared["sections"]
+    pred_profiles = np.asarray([_profile_width(picked, center, normal)
+                                for center, normal in sections], np.float64)
+    valid = prepared["valid"]
+    label_px = prepared["label_px"]
+    pred_px = float(np.median(pred_profiles[valid]))
+    pred_skeleton_px = _centerline_distance_width(picked, sections)
+    raw_label_diag = prepared["raw_label_diag"]
+    return {
+        "label_nm": label_px * PIXEL_NM,
+        "pred_nm": pred_px * PIXEL_NM,
+        "sections": int(np.count_nonzero(valid)),
+        "label_skeleton_nm": prepared["label_distance_px"] * PIXEL_NM,
+        "pred_skeleton_nm": pred_skeleton_px * PIXEL_NM,
+        "raw_label_skeleton_pixels_per_major_axis": raw_label_diag["pixels_per_major_axis"],
+        "raw_pred_skeleton_pixels_per_major_axis": raw_pred_diag["pixels_per_major_axis"],
+        "raw_label_skeleton_endpoints": raw_label_diag["endpoints"],
+        "raw_pred_skeleton_endpoints": raw_pred_diag["endpoints"],
+    }
 
 
 def track_width_pair(points, pred):
-    label, (y0, y1, x0, x1) = _one_polygon_mask(points, pad=16)
-    pred_crop = pred[y0:y1, x0:x1]
-    if pred_crop.shape != label.shape:
-        h = min(pred_crop.shape[0], label.shape[0]); w = min(pred_crop.shape[1], label.shape[1])
-        pred_crop, label = pred_crop[:h, :w], label[:h, :w]
-    gate = ndi.binary_dilation(label, iterations=10)
-    picked = np.asarray(fs.apply([pred_crop, gate], "intersection", on_error="raise"), bool)
-    if not picked.any() or not label.any():
-        return None
-    dl = np.asarray(fs.ledger.blob_distance(label, spacing=PIXEL_NM), np.float64)
-    dp = np.asarray(fs.ledger.blob_distance(picked, spacing=PIXEL_NM), np.float64)
-    sl = np.asarray(fs.op.skeleton(label.astype(np.float64), a=0.5, b=0.5), bool)
-    sp = np.asarray(fs.op.skeleton(picked.astype(np.float64), a=0.5, b=0.5), bool)
-    wl = 2.0 * dl[sl & (dl > 0)]
-    wp = 2.0 * dp[sp & (dp > 0)]
-    if not len(wl) or not len(wp):
-        return None
-    local_points = [(x - x0, y - y0) for x, y in points]
-    return {
-        "label_nm": float(np.median(wl)),
-        "pred_nm": float(np.median(wp)),
-        "label_profile_nm": _profile_width(label, local_points) * PIXEL_NM,
-        "pred_profile_nm": _profile_width(picked, local_points) * PIXEL_NM,
-    }
+    prepared = _prepare_track_width(points, pred.shape)
+    return None if prepared is None else _measure_prepared_track(prepared, pred)
+
+
+def synthetic_width_gate():
+    """300 nm 相当の点雑音付き帯で断面測定を検査する。"""
+    truth = np.zeros((96, 192), bool)
+    truth[38:58, 20:172] = True  # 20 px = 293 nm; 300 nm に 0.48 px の帯
+    noisy = truth.copy()
+    noisy[37, 24:168:9] = True
+    noisy[58, 29:168:11] = True
+    noisy[38, 35:168:13] = False
+    points = [(20, 38), (171, 38), (171, 57), (20, 57)]
+    row = track_width_pair(points, noisy)
+    if row is None:
+        raise AssertionError("synthetic width gate produced no measurement")
+    truth_px = 300.0 / PIXEL_NM
+    label_px = row["label_nm"] / PIXEL_NM
+    pred_px = row["pred_nm"] / PIXEL_NM
+    skeleton_px = row["pred_skeleton_nm"] / PIXEL_NM
+    assert abs(label_px - truth_px) <= 1.0, (label_px, truth_px)
+    assert abs(pred_px - truth_px) <= 1.0, (pred_px, truth_px)
+    assert abs(pred_px - skeleton_px) <= 1.0 + 1e-9, (pred_px, skeleton_px)
+    return {"truth_px": truth_px, "label_px": label_px, "pred_px": pred_px,
+            "skeleton_px": skeleton_px}
 
 
 def _otsu_value(img):
@@ -392,13 +613,15 @@ def _overlay(img, truth, vias, crop):
     return base
 
 
-def _difference_image(img, truth, pred, crop):
+def _difference_image(img, truth, pred, roi, crop):
     y0, y1, x0, x1 = crop
     rgb = np.repeat(img[y0:y1, x0:x1, None] * 0.45, 3, axis=2)
     t = truth[y0:y1, x0:x1]; p = pred[y0:y1, x0:x1]
     rgb[t & p] = (0.1, 0.8, 0.2)
     rgb[p & ~t] = (1.0, 0.15, 0.10)  # 太り / false positive
     rgb[t & ~p] = (0.15, 0.35, 1.0)  # 欠け / false negative
+    excluded = ~roi[y0:y1, x0:x1]
+    rgb[excluded & p] = (1.0, 0.65, 0.05)  # 画像端へ続く未注釈 track
     return rgb
 
 
@@ -409,6 +632,11 @@ def _print_recorded():
 
 def main() -> None:
     t0 = time.perf_counter()
+    synthetic = synthetic_width_gate()
+    print("合成幅の門: 300 nm = %.2f px、断面 ラベル %.2f px / 切り出し "
+          "%.2f px、同一中心線の距離変換 %.2f px" %
+          (synthetic["truth_px"], synthetic["label_px"], synthetic["pred_px"],
+           synthetic["skeleton_px"]))
     if os.environ.get("CI") and not os.environ.get("FULLSEYE_SEM_METAL_DATA"):
         _print_recorded()
         return
@@ -433,10 +661,10 @@ def main() -> None:
 
     method_scores = defaultdict(list)
     widths = defaultdict(list)
-    profile_bias = defaultdict(list)
     models = defaultdict(list)
     defects = {"via_duplicates": 0, "via_border": 0, "track_clipped_labels": 0,
-               "track_missing_border_components": 0}
+               "track_missing_border_components": 0,
+               "track_partial_border_components": 0}
     via_totals = [0, 0, 0]
     representative = None
 
@@ -444,7 +672,8 @@ def main() -> None:
         img = _read_image(image_path)
         tracks, raw_vias = read_label(svg_path, img.shape)
         clean_tracks = [p for p in tracks if not _touches_border(p, img.shape)]
-        clipped = len(tracks) - len(clean_tracks)
+        clipped_tracks = [p for p in tracks if _touches_border(p, img.shape)]
+        clipped = len(clipped_tracks)
         vias, duplicates, via_border = deduplicate_vias(raw_vias, img.shape)
         defects["via_duplicates"] += duplicates
         defects["via_border"] += via_border
@@ -452,13 +681,19 @@ def main() -> None:
         truth = _polygon_mask(img.shape, clean_tracks)
         all_label = _polygon_mask(img.shape, tracks)
         methods = segment_tracks(img)
-        missing, missing_n = _label_missing_border_tracks(methods["固定しきい値"], all_label)
+        missing, missing_n, partial_n = _label_missing_border_tracks(
+            methods["固定しきい値"], all_label)
         defects["track_missing_border_components"] += missing_n
-        roi = ~missing
+        defects["track_partial_border_components"] += partial_n
+        # 端に触れる track ラベルは不完全なため truth から除いている。
+        # その領域を ROI からも除かないと、正しい切り出しが false positive になる。
+        clipped_mask = _polygon_mask(img.shape, clipped_tracks)
+        roi = ~missing & ~ndi.binary_dilation(clipped_mask, iterations=12)
         roi[:2, :] = False; roi[-2:, :] = False; roi[:, :2] = False; roi[:, -2:] = False
         print("\n[%d/%d] %s: track %d (端切れ除外 %d)、via %d (重複除外 %d / 端除外 %d)、"
-              "ラベル欠け候補 %d" % (index + 1, len(pairs), image_path.name, len(clean_tracks), clipped,
-                                      len(vias), duplicates, via_border, missing_n))
+              "ラベル欠け 全体 %d / 部分 %d" %
+              (index + 1, len(pairs), image_path.name, len(clean_tracks), clipped,
+               len(vias), duplicates, via_border, missing_n, partial_n))
         for name, pred in methods.items():
             iou, bd, p95 = score_mask(pred, truth, roi)
             method_scores[name].append((iou, bd, p95))
@@ -474,14 +709,13 @@ def main() -> None:
             step = len(ranked) / width_limit
             ranked = [ranked[min(int(k * step), len(ranked) - 1)]
                       for k in range(width_limit)]
+        prepared_tracks = [_prepare_track_width(points, img.shape) for points in ranked]
         for name, pred in methods.items():
-            for points in ranked:
-                row = track_width_pair(points, pred)
+            for prepared in prepared_tracks:
+                row = None if prepared is None else _measure_prepared_track(prepared, pred)
                 if row is not None:
                     row["image"] = index
                     widths[name].append(row)
-                    if np.isfinite(row["label_profile_nm"]) and np.isfinite(row["pred_profile_nm"]):
-                        profile_bias[name].append(row["pred_profile_nm"] - row["label_profile_nm"])
 
         for name, threshold in (("固定しきい値", FIXED_TRACK_THRESHOLD), ("大津", _otsu_value(img))):
             model = psf_edge_model(img, truth, threshold)
@@ -497,7 +731,7 @@ def main() -> None:
             h, w = img.shape
             cy, cx = h // 2, w // 2
             crop = (max(0, cy - 512), min(h, cy + 512), max(0, cx - 512), min(w, cx + 512))
-            representative = (img, truth, vias, methods, crop)
+            representative = (img, truth, vias, methods, roi, crop)
 
     print("\n集計: 切り出し")
     summary = {}
@@ -507,7 +741,14 @@ def main() -> None:
         bias = np.array([r["pred_nm"] - r["label_nm"] for r in rows], np.float64)
         label_width = np.array([r["label_nm"] for r in rows], np.float64)
         pred_width = np.array([r["pred_nm"] for r in rows], np.float64)
-        pb = np.asarray(profile_bias[name], np.float64)
+        label_skeleton = np.array([r["label_skeleton_nm"] for r in rows], np.float64)
+        pred_skeleton = np.array([r["pred_skeleton_nm"] for r in rows], np.float64)
+        finite_label_skeleton = label_skeleton[np.isfinite(label_skeleton)]
+        finite_pred_skeleton = pred_skeleton[np.isfinite(pred_skeleton)]
+        label_method_delta_px = abs(float(np.median(label_width))
+                                    - float(np.median(finite_label_skeleton))) / PIXEL_NM
+        pred_method_delta_px = abs(float(np.median(pred_width))
+                                   - float(np.median(finite_pred_skeleton))) / PIXEL_NM
         rec = {
             "iou_median": float(np.nanmedian(a[:, 0])),
             "boundary_nm_mean": float(np.nanmean(a[:, 1])),
@@ -516,15 +757,34 @@ def main() -> None:
             "label_width_nm_p10_p50_p90": [float(x) for x in np.percentile(label_width, [10, 50, 90])],
             "pred_width_nm_p10_p50_p90": [float(x) for x in np.percentile(pred_width, [10, 50, 90])],
             "width_bias_nm_median": float(np.median(bias)),
-            "profile_bias_nm_median": float(np.median(pb)) if len(pb) else float("nan"),
+            "sections": int(sum(r["sections"] for r in rows)),
+            "label_skeleton_width_nm_median": float(np.median(finite_label_skeleton)),
+            "pred_skeleton_width_nm_median": float(np.median(finite_pred_skeleton)),
+            "label_profile_skeleton_delta_px": label_method_delta_px,
+            "pred_profile_skeleton_delta_px": pred_method_delta_px,
+            "raw_label_skeleton_pixels_per_major_axis_median": float(np.median(
+                [r["raw_label_skeleton_pixels_per_major_axis"] for r in rows])),
+            "raw_pred_skeleton_pixels_per_major_axis_median": float(np.median(
+                [r["raw_pred_skeleton_pixels_per_major_axis"] for r in rows])),
+            "raw_label_skeleton_endpoints_median": float(np.median(
+                [r["raw_label_skeleton_endpoints"] for r in rows])),
+            "raw_pred_skeleton_endpoints_median": float(np.median(
+                [r["raw_pred_skeleton_endpoints"] for r in rows])),
         }
         summary[name] = rec
-        print("  %s: IoU 中央 %.3f、境界平均 %.1f nm、幅 n=%d、ラベル p10/50/90 "
+        print("  %s: IoU 中央 %.3f、境界平均 %.1f nm、幅 track=%d / 断面=%d、"
+              "ラベル p10/50/90 "
               "%.1f/%.1f/%.1f nm、切出し %.1f/%.1f/%.1f nm、偏り %+.1f nm "
-              "(line profile %+.1f nm)" %
-              (name, rec["iou_median"], rec["boundary_nm_mean"], len(rows),
+              "(断面 vs 同一中心線の距離変換: ラベル %.2f px / 切出し %.2f px)" %
+              (name, rec["iou_median"], rec["boundary_nm_mean"], len(rows), rec["sections"],
                *rec["label_width_nm_p10_p50_p90"], *rec["pred_width_nm_p10_p50_p90"],
-               rec["width_bias_nm_median"], rec["profile_bias_nm_median"]))
+               rec["width_bias_nm_median"], label_method_delta_px, pred_method_delta_px))
+        print("    生スケルトン: 画素/主軸長 ラベル %.2f / 切出し %.2f、"
+              "端点中央 ラベル %.1f / 切出し %.1f" %
+              (rec["raw_label_skeleton_pixels_per_major_axis_median"],
+               rec["raw_pred_skeleton_pixels_per_major_axis_median"],
+               rec["raw_label_skeleton_endpoints_median"],
+               rec["raw_pred_skeleton_endpoints_median"]))
 
     threshold_best = max(("固定しきい値", "大津"), key=lambda n: summary[n]["iou_median"])
     model_corr = np.array([m["width_correction_nm"] for m in models[threshold_best]], np.float64)
@@ -558,9 +818,11 @@ def main() -> None:
     print("\nvia (重複ラベルを除外): TP %d / FP %d / FN %d、適合率 %.3f、再現率 %.3f" %
           (tp, fp, fn, precision, recall))
     print("ラベル欠陥: via 重複 %d、via 端切れ %d、端で切れた track ラベル %d、"
-          "端から続く未ラベル track 成分 %d (すべて理由つきで採点から除外)" %
+          "端から続く未ラベル track 成分 %d、部分的なラベル欠け %d "
+          "(すべて理由つきで採点から除外)" %
           (defects["via_duplicates"], defects["via_border"], defects["track_clipped_labels"],
-           defects["track_missing_border_components"]))
+           defects["track_missing_border_components"],
+           defects["track_partial_border_components"]))
 
     record = {
         "date": "2026-11-01", "images": len(pairs), "pixel_nm": PIXEL_NM,
@@ -577,14 +839,16 @@ def main() -> None:
     print("RECORDED_JSON=" + json.dumps(record, ensure_ascii=False, sort_keys=True))
 
     if representative is not None and figs.enabled():
-        img, truth, vias, methods, crop = representative
+        img, truth, vias, methods, roi, crop = representative
         best_all = max(summary, key=lambda n: summary[n]["iou_median"])
         overlay = _overlay(img, truth, vias, crop)
         figs.save("scene", overlay,
                   caption="実 SEM 像。緑=track ラベル、赤=重複除去後の via ラベル。",
                   source=SOURCE)
-        figs.save("segmentation_difference", _difference_image(img, truth, methods[best_all], crop),
-                  caption="%s。緑=一致、赤=太り、青=欠け。" % best_all, source=SOURCE)
+        figs.save("segmentation_difference",
+                  _difference_image(img, truth, methods[best_all], roi, crop),
+                  caption="%s。緑=一致、赤=太り、青=欠け、橙=画像端から続く"
+                          "ラベル欠け(採点除外)。" % best_all, source=SOURCE)
         wr = widths[threshold_best]
         figs.save_plot(
             "line_width_distribution",
@@ -592,7 +856,8 @@ def main() -> None:
              ("切り出し", list(range(len(wr))), sorted(r["pred_nm"] for r in wr))],
             xlabel="track（幅の小さい順）", ylabel="線幅 [nm]",
             title="線幅分布と偏り（%s、n=%d）" % (threshold_best, len(wr)),
-            caption="距離変換で track ごとの中央値を測った。", source=SOURCE)
+            caption="ラベルの主中心線上で両端と曲がり角を除き、等間隔の連続断面幅を"
+                    "ラベルと切り出しに同じ手続きで測った。", source=SOURCE)
         figs.save_plot(
             "psf_correction",
             [("補正前", [0, 1], [before_med, before_med]),
@@ -604,8 +869,11 @@ def main() -> None:
             caption="edge-spread から測った PSF sigma による補正。%+.1f nm から %+.1f nm。"
                     % (before_med, after_med), source=SOURCE)
 
-    print("門: SVG 二重読取一致 / 全指標有限 / via 対応 1対1 / 図の環境変数門")
+    print("門: 合成幅 ±1 px / 実データの二方式 ±1 px / SVG 二重読取一致 / "
+          "全指標有限 / via 対応 1対1 / 図の環境変数門")
     assert all(np.isfinite(v["iou_median"]) for v in summary.values())
+    assert summary[threshold_best]["label_profile_skeleton_delta_px"] <= 1.0 + 1e-9
+    assert summary[threshold_best]["pred_profile_skeleton_delta_px"] <= 1.0 + 1e-9
     assert tp <= min(tp + fp, tp + fn)
     print("完了: %.1f s" % (time.perf_counter() - t0))
 

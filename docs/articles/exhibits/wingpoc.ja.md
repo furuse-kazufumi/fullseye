@@ -9696,19 +9696,19 @@ py -3.11 examples/poc_sem_wafer_defect_edge_bias.py
 
 ## No.2026.285 —— 実物 IC の SEM 像で配線幅とビアを測る ―― 仮想 SEM の縁補正は実機でも効くか
 
-Rothaug ほかの metal-2 SEM データ(14.65 nm/px、CC BY 4.0、DOI 10.17617/3.HY5SYN)10枚を使い、既存 op `svg_entities` と独立 XML reader の一致を門にした。重複 via 1,740、端切れ via 112、端で切れた track ラベル 1,239、端から続く未ラベル track 成分 51 を数え、理由つきで採点から除いた。固定しきい値、Otsu、Sobel-edge を Fullseye op だけで比較し、Otsu の IoU 中央は 0.597、境界距離平均は 316.3 nm。track 1,599本の距離変換幅はラベル p10/50/90 = 293.0/351.6/491.2 nmに対して切り出し 29.3/41.4/132.6 nm、偏りは −296.3 nmで、太る予想と逆に細った。line profile の偏りは −29.3 nmで、幅の定義にも敏感である。実像の edge-spread から測った PSF σ 中央 51.9 nmによる補正は −296.3 → −285.6 nmと3.6 %縮めただけで、残差の96.4 %が残るため有効ではない。via は TP/FP/FN = 5,604/124/361、適合率0.978、再現率0.939。データはrepo外に置き、CIでは6.4 GBを取得せず記録値だけを表示する。
+Rothaug ほかの metal-2 SEM データ(14.65 nm/px、CC BY 4.0、DOI 10.17617/3.HY5SYN)10枚を使い、既存 op `svg_entities` と独立 XML reader の一致を門にした。初版の幅偏り −296.3 nm は、切り出しのざらついた縁から生えたスケルトンの枝をラベルと違う手続きで数えた計測誤りだった。生スケルトンの画素/主軸長はラベル 1.07 対切り出し 6.80、端点中央は 2 対 46。ラベル中心線の両端と曲がり角を除いた 47,271 断面を両方に同じ手続きで当てると、ラベル p10/50/90 = 293.0/380.9/536.2 nm、Otsu 切り出し 263.7/351.6/519.0 nm、偏り −14.6 nm。同一中心線の距離変換幅とも 1 px 以内で一致した。端切れ track 領域も ROI から除くと Otsu の IoU 中央 0.819、境界距離平均 58.1 nm。図 02 下端の帯は画像端へ続く不完全ラベルで、橙で採点除外を明示した。欠陥は重複 via 1,740、端切れ via 112、端切れ track 1,239、未ラベル端成分 51、部分欠け 7。edge-spread の PSF σ 中央 51.9 nmの模型補正は −14.6 → +3.1 nmと絶対偏りを 78.5 %縮め、この測り方では有効だった。via は TP/FP/FN = 5,604/124/361、適合率 0.978、再現率 0.939。データはrepo外に置き、CIでは6.4 GBを取得しない。
 
 [![実物 IC の SEM 像で配線幅とビアを測る ―― 仮想 SEM の縁補正は実機でも効くか](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_sem_metal_layer/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_sem_metal_layer/01_scene.png)
 
 *↑ **実物 IC の SEM 像で配線幅とビアを測る ―― 仮想 SEM の縁補正は実機でも効くか** ―― 商用 128 nm IC の metal-2 BSE 像に、SVG から読んだ track 輪郭を緑、重複を除いた via 輪郭を赤で重ねた。*
 
-[![大津。緑=一致、赤=太り、青=欠け。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_sem_metal_layer/02_segmentation_difference_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_sem_metal_layer/02_segmentation_difference.png)
+[![大津。緑=一致、赤=太り、青=欠け、橙=画像端から続くラベル欠け(採点除外)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_sem_metal_layer/02_segmentation_difference_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_sem_metal_layer/02_segmentation_difference.png)
 
-*↑ 測定の図 ―― 大津。緑=一致、赤=太り、青=欠け。*
+*↑ 測定の図 ―― 大津。緑=一致、赤=太り、青=欠け、橙=画像端から続くラベル欠け(採点除外)。*
 
-[![距離変換で track ごとの中央値を測った。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_sem_metal_layer/03_line_width_distribution_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_sem_metal_layer/03_line_width_distribution.png)
+[![ラベルの主中心線上で両端と曲がり角を除き、等間隔の連続断面幅をラベルと切り出しに同じ手続きで測った。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_sem_metal_layer/03_line_width_distribution_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_sem_metal_layer/03_line_width_distribution.png)
 
-*↑ 距離変換で track ごとの中央値を測った。*
+*↑ ラベルの主中心線上で両端と曲がり角を除き、等間隔の連続断面幅をラベルと切り出しに同じ手続きで測った。*
 
 [![edge-spread から測った PSF sigma による補正。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_sem_metal_layer/04_psf_correction_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_sem_metal_layer/04_psf_correction.png)
 

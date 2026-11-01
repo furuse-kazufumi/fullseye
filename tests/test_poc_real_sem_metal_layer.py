@@ -50,6 +50,24 @@ def test_via_duplicates_and_border_are_counted():
     assert keep == [(10.0, 10.0, 5.0), (30.0, 30.0, 4.0)]
 
 
+def test_noisy_300_nm_band_width_is_within_one_pixel_and_methods_agree():
+    got = poc.synthetic_width_gate()
+    assert abs(got["pred_px"] - got["truth_px"]) <= 1.0
+    assert abs(got["pred_px"] - got["skeleton_px"]) <= 1.0 + 1e-9
+
+
+def test_partial_border_track_label_gap_is_counted_and_only_gap_is_excluded():
+    fixed = np.zeros((40, 100), bool)
+    fixed[15:25, :] = True
+    label = np.zeros_like(fixed)
+    label[15:25, :70] = True
+    missing, whole, partial = poc._label_missing_border_tracks(fixed, label)
+    assert whole == 0
+    assert partial == 1
+    assert not missing[20, 50]
+    assert missing[20, 95]
+
+
 def test_realdata_pair_discovery_is_fail_closed(tmp_path, monkeypatch):
     root = tmp_path / "dataset"
     (root / "sems").mkdir(parents=True)
