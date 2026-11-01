@@ -1969,7 +1969,7 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `ppf.py`
 
-- **L126** — ★ Rohe PCA-Normalen haben ein **beliebiges Vorzeichen** und kippen unter Rotation bei 40% der Punkte. Da PPF-Merkmale Winkel zwischen Normalen sind, ändert sich beim Kippen der Schlüssel. Gemessen (400 Punkte, um die z-Achse): mit rohen Normalen ist die Schlüssel-Übereinstimmungsrate bei 0/37/90/143 Grad 100 / 73.6 / 69.4 / 67.2 %, mit orientierten Normalen **alle 100 %**. Dasselbe Loch, in das ``pointcloud.fpfh`` getreten war, am selben Tag zusammen behoben.
+- **L251** — ★ Rohe PCA-Normalen haben ein **beliebiges Vorzeichen** und kippen unter Rotation bei 40% der Punkte. Da PPF-Merkmale Winkel zwischen Normalen sind, ändert sich beim Kippen der Schlüssel. Gemessen (400 Punkte, um die z-Achse): mit rohen Normalen ist die Schlüssel-Übereinstimmungsrate bei 0/37/90/143 Grad 100 / 73.6 / 69.4 / 67.2 %, mit orientierten Normalen **alle 100 %**. Dasselbe Loch, in das ``pointcloud.fpfh`` getreten war, am selben Tag zusammen behoben.
 
 ## `printpath.py`
 

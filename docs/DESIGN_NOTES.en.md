@@ -1969,7 +1969,7 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `ppf.py`
 
-- **L126** — ★ Raw PCA normals have an **arbitrary sign**, and under rotation flip on 40% of points. Since PPF features are angles between normals, if they flip the key changes. Measured (400 points, about the z-axis): with raw normals the key match rate at 0/37/90/143 degrees is 100 / 73.6 / 69.4 / 67.2 %, with oriented normals **all 100 %**. The same hole that ``pointcloud.fpfh`` had stepped on, fixed together the same day.
+- **L251** — ★ Raw PCA normals have an **arbitrary sign**, and under rotation flip on 40% of points. Since PPF features are angles between normals, if they flip the key changes. Measured (400 points, about the z-axis): with raw normals the key match rate at 0/37/90/143 degrees is 100 / 73.6 / 69.4 / 67.2 %, with oriented normals **all 100 %**. The same hole that ``pointcloud.fpfh`` had stepped on, fixed together the same day.
 
 ## `printpath.py`
 
