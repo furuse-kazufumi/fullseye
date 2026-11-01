@@ -10,6 +10,8 @@
 
 タイルを押すと動画・図が開きます(▶ = 動く)。
 
+[Fullseye とは(読み物)](about.md)
+
 <style>
 .vlang { font-size: 14px; line-height: 2; }
 .vg { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin: 12px 0 20px; }

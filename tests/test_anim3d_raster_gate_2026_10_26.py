@@ -2,6 +2,8 @@
 """anim3d のページ一致門が OS フォント由来の pane 画素だけを除外する。"""
 from __future__ import annotations
 
+import base64
+import json
 import os
 import sys
 
@@ -35,6 +37,40 @@ def _page(frames=None, xyz_value=0.0, check_result="1.0", second_pane=False) -> 
     )
     spec = pv.viewer_spec("raster-gate", _tx("title"), _tx("subtitle"), _tx("hint"), [tab])
     return pv._build_html(spec, ["ja", "en"])
+
+
+def _relief_page(samples: np.ndarray) -> str:
+    q = np.asarray(samples, dtype=np.uint8)
+    side = q.shape[0]
+    assert q.shape == (side, side) and q.min() == 0 and q.max() == 255
+    yy, xx = np.mgrid[:side, :side]
+    pos = np.c_[xx.ravel(), yy.ravel(), np.zeros(side * side)]
+    faces = []
+    for y in range(side - 1):
+        for x in range(side - 1):
+            a = y * side + x
+            faces.extend([[a, a + 1, a + side + 1], [a, a + side + 1, a + side]])
+    tab = pv.viewer_anim3d_tab(
+        "relief", _tx("relief"), "passed", _tx("text"),
+        t=[0.0, 1.0],
+        bodies=[{"name": "field", "pos": pos, "faces": faces, "rgb": [1, 2, 3],
+                 "val": q.astype(float).ravel(), "relief_default": 0.0}],
+        xyz=np.zeros((2, 1, 3)),
+        quat=np.array([[[1.0, 0.0, 0.0, 0.0]], [[1.0, 0.0, 0.0, 0.0]]]),
+        static_reason="The scalar field is intentionally static in this comparison gate.",
+    )
+    spec = pv.viewer_spec("relief-gate", _tx("title"), _tx("subtitle"), _tx("hint"), [tab])
+    return pv._build_html(spec, ["ja", "en"])
+
+
+def _change_relief_valid_byte(html: str) -> str:
+    data, start, end = gate._embedded_data(html)
+    key = data["tabs"][0]["bodies"][0]["relief_valid"]
+    record = data["arrays"][key]
+    raw = bytearray(base64.b64decode(record["b64"]))
+    raw[0] = 0
+    record["b64"] = base64.b64encode(raw).decode("ascii")
+    return html[:start] + json.dumps(data, ensure_ascii=False, separators=(",", ":")) + html[end:]
 
 
 def test_one_changed_pixel_is_only_accepted_off_the_reference_font(monkeypatch):
@@ -108,8 +144,36 @@ def test_portable_comparison_rejects_string_and_array_count_changes():
     data, start, end = gate._embedded_data(base)
     key = data["tabs"][0]["quat"]
     del data["arrays"][key]
-    import json
     fewer = base[:start] + json.dumps(data, ensure_ascii=False, separators=(",", ":")) + base[end:]
     differences = gate.compare_pages_portable(base, fewer)
     assert differences
     assert any("count" in item or "quat" in item for item in differences)
+
+
+def test_portable_comparison_bounds_quantized_relief_png_drift():
+    samples = (np.arange(16, dtype=np.uint8) * 10).reshape(4, 4)
+    samples[-1, -1] = 255
+    base = _relief_page(samples)
+
+    six_steps = samples.copy()
+    six_steps.ravel()[1:7] += 1
+    assert gate.compare_pages_portable(base, _relief_page(six_steps)) == []
+
+    two_steps = samples.copy()
+    two_steps.ravel()[1] += 2
+    assert gate.compare_pages_portable(base, _relief_page(two_steps))
+
+    nine_steps = samples.copy()
+    nine_steps.ravel()[1:10] += 1
+    differences = gate.compare_pages_portable(base, _relief_page(nine_steps))
+    assert differences
+    assert any("limit 8" in item and "9 values" in item for item in differences)
+
+
+def test_portable_comparison_keeps_non_quantized_u8_arrays_exact():
+    samples = (np.arange(16, dtype=np.uint8) * 10).reshape(4, 4)
+    samples[-1, -1] = 255
+    base = _relief_page(samples)
+    differences = gate.compare_pages_portable(base, _change_relief_valid_byte(base))
+    assert differences
+    assert any("relief_valid" in item and "delta 1" in item for item in differences)
