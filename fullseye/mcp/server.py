@@ -869,8 +869,8 @@ def _resolve_pipeline_ref(ref: str, values: dict, store: HandleStore | None):
 
 def physical_parameter_catalog() -> dict[str, dict[str, dict]]:
     """Named physical controls, mechanically enumerated from param_specs' op ledger."""
-    from param_specs import mcp_physical_param_specs
-    return mcp_physical_param_specs()
+    from param_specs import _mcp_physical_param_specs
+    return _mcp_physical_param_specs()
 
 
 def _physical_value_to_knob(op: str, name: str, value: Any, spec: dict) -> float:

@@ -1020,8 +1020,8 @@ def op_cards(names: list[str], budget_tokens: int = 500) -> dict:
         raise ValueError("op_cards: budget_tokens must be a positive int")
     table = {r["name"]: r for r in _load_data(PKG_CARDS)["ops"]}
     try:
-        from param_specs import mcp_physical_param_specs
-        physical = mcp_physical_param_specs()
+        from param_specs import _mcp_physical_param_specs
+        physical = _mcp_physical_param_specs()
     except (ImportError, KeyError):
         physical = {}
     import difflib

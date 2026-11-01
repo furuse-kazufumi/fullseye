@@ -312,7 +312,7 @@ MCP_PHYSICAL_PARAMS: dict[str, dict[str, str]] = {
 }
 
 
-def mcp_physical_param_specs() -> dict[str, dict[str, dict[str, Any]]]:
+def _mcp_physical_param_specs() -> dict[str, dict[str, dict[str, Any]]]:
     """Return the named MCP physical controls, enumerated from the op ledger."""
     return {
         op: {name: dict(PARAM_SPECS[op][knob], knob=knob)
