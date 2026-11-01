@@ -10,9 +10,12 @@ import pytest
 import mrcfile
 import nrrd
 import nibabel as nib
-import tifffile
 from astropy.io import fits
 from PIL import Image, TiffImagePlugin
+
+# tifffile は optional backend。top-level import は収集を止めうる(test_suite_hygiene)ので
+# importorskip で包む。ただし CI では volume/raster extra が入るので skip で逃げない(下の test_tifffile_is_present_in_ci)。
+tifffile = pytest.importorskip("tifffile")
 
 import fileio
 
@@ -424,3 +427,10 @@ def test_ome_tiff_missing_dependency_fails_closed(monkeypatch):
                                meta={"axes": "YX", "physical_size_x": 1,
                                      "physical_size_x_unit": "um", "physical_size_y": 1,
                                      "physical_size_y_unit": "um"})
+
+
+def test_tifffile_is_present_in_ci():
+    """CI では optional backend が入っているはず。入っていなければ上の importorskip が全部を黙って飛ばすので、ここで落とす。"""
+    import os
+    if os.environ.get("CI"):
+        assert tifffile.__version__
