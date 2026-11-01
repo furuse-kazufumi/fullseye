@@ -45,6 +45,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import examplefig as figs                                        # noqa: E402
 import match3d                                                   # noqa: E402
 import specularity                                               # noqa: E402
+from fullseye.evaluation import rmse as evaluation_rmse           # noqa: E402
 
 ETA = 1.5                       # 誘電体(ガラス / 樹脂)の屈折率
 THETA_B = math.degrees(math.atan(ETA))          # ブリュースター角 = 56.3099 度
@@ -236,7 +237,8 @@ def render_sweep(diffuse, spec_s, spec_p, angles=ANGLES, azimuth=AZIMUTH):
 
 
 def rmse(a, b):
-    return float(np.sqrt(np.mean((np.asarray(a) - np.asarray(b)) ** 2)))
+    return evaluation_rmse(a, b, mask=None, nan_policy="raise", weights=None,
+                           unit="radiance", reduction="mean", empty="raise", domain="array")
 
 
 def ratio(num, den):
