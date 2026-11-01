@@ -50,6 +50,7 @@ import numpy as np
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import examplefig as figs                                        # noqa: E402
 import fullseye as fs                                            # noqa: E402
+from fullseye.evaluation import save_video as save_evaluation_video  # noqa: E402
 
 # --- 試験片と光学系の諸元 ---------------------------------------------------- #
 R_MM = 25.0             # 円板の半径 [mm]
@@ -604,8 +605,10 @@ def fig_load_video(npx=361, n_load=120, n_rot=90, n_hold=10, fps=15.0):
         f[TB:, xs[1]:xs[1] + S] = b
         frames.append(np.clip(f, 0.0, 1.0))
     frames += [frames[-1]] * n_hold
-    figs.save_video("load_and_isoclinics", frames, fps=fps, gif_every=3, gif_width=720,
-                    caption="動画(%d コマ、円板 φ%.0f mm を %d 画素で描画、半径 0.9R の外は描かない): 前半は荷重を"
+    save_evaluation_video(
+        "load_and_isoclinics", frames, capture_fps=fps, playback_fps=fps, hold_frames=0, gif_stride=3,
+        display_scale=720 / frames[0].shape[1], interpolation="linear",
+        caption="動画(%d コマ、円板 φ%.0f mm を %d 画素で描画、半径 0.9R の外は描かない): 前半は荷重を"
                             " 0 → %.0f N へ上げる。暗視野(円偏光)の暗線は縞次数が整数の等値線で、荷重点から湧き出して"
                             "中心へ寄る。中心の縞次数は荷重に比例して %.2f まで増え(閉形式 h(σ1-σ2)/fσ)、右のグラフの"
                             "中心の明るさ sin²(πN) が 0 に落ちるたびに暗線が中心を通過する(通過 %d 回)。後半は荷重 %.0f N の"
