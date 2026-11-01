@@ -253,7 +253,7 @@ def fig_analyzer_sweep_explained():
 
     def draw_graph(im, k):
         d = ImageDraw.Draw(im)
-        rect = (990, 120, 1244, 405)
+        rect = (990, 145, 1244, 397)
         d.rectangle(rect, outline=(185, 190, 200), width=1)
         rx0, ry0, rx1, ry1 = rect
         xp = lambda v: rx0 + float(v) / 180.0 * (rx1 - rx0)
@@ -275,9 +275,9 @@ def fig_analyzer_sweep_explained():
                      fill=col, plate=(18, 21, 28), pad=1)
         cur = int(round(xp(theta_deg[k])))
         d.line((cur, ry0, cur, ry1), fill=(255, 238, 80), width=2)
-        put_text(im, "3画素の強度対 θ", (950, 72), size=24)
-        put_text(im, "強度", (950, 94))
-        put_text(im, "θ [度]", ((rx0 + rx1) // 2, 443), anchor="ct")
+        put_text(im, "3画素の強度対 θ", (950, 62), size=24)
+        put_text(im, "強度", (950, 104))
+        put_text(im, "θ [度]", ((rx0 + rx1) // 2, 438), anchor="ct")
         put_text(im, "偏光度 DoLP\nA %.2f / B %.2f / C %.3f" % tuple(dolps),
                  (950, 485), size=22)
         put_text(im, "最大/最小比\nA %.2f / B %.2f / C %.2f" % tuple(ratios),
@@ -308,15 +308,15 @@ def fig_analyzer_sweep_explained():
             put_text(im, lab, (px + 10, py), size=22, anchor="lm", fill=col,
                      plate=(18, 21, 28), pad=1)
 
-        put_text(im, "鏡面を剥がした像 S0 − √(S1²+S2²)", (610, 70), size=22)
-        im.paste(static_glare, (610, 104))
+        put_text(im, "鏡面を剥がした像\nS0 − √(S1²+S2²)", (610, 62), size=22)
+        im.paste(static_glare.resize((300, 230), Image.Resampling.BILINEAR), (610, 140))
 
-        im.paste(mosaic_zoom, (616, 402))
-        put_text(im, "4方位モザイク(DoFP)の一部　拡大12×", (610, 370), size=22,
+        im.paste(mosaic_zoom, (616, 410))
+        put_text(im, "DoFPモザイク　拡大12×", (610, 370), size=22,
                  plate=(18, 21, 28), pad=2)
         # 12 px の単画素へ 22 px 文字は入らないため、代表 2×2 格子を同じ並びの
         # 22 px ラベルで示す。元画素への最近傍拡大は上の 24×24 crop だけに限定。
-        for text, px, py in (("0°", 630, 410), ("45°", 765, 410),
+        for text, px, py in (("0°", 630, 420), ("45°", 765, 420),
                              ("90°", 630, 650), ("135°", 755, 650)):
             put_text(im, text, (px, py), size=22, plate=(18, 21, 28), pad=1)
 

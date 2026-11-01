@@ -255,7 +255,7 @@ def fig_csi_scan_explained():
 
     def graph(im, k):
         d = ImageDraw.Draw(im)
-        rect = (990, 120, 1244, 407)
+        rect = (990, 145, 1244, 397)
         d.rectangle(rect, outline=(185, 190, 200), width=1)
         x0, y0, x3, y3 = rect
         xp = lambda v: x0 + (float(v) - z[0]) / (z[-1] - z[0]) * (x3 - x0)
@@ -276,13 +276,13 @@ def fig_csi_scan_explained():
         for hv, col in zip((height[y, x1], height[y, x2]), cols):
             px = int(round(xp(hv))); d.line((px, y0, px, y3), fill=col, width=2)
         cur = int(round(xp(z[k]))); d.line((cur, y0, cur, y3), fill=(255, 238, 80), width=2)
-        put_text(im, "2画素の信号対 z", (950, 72), size=24)
-        put_text(im, "強度", (950, 94))
-        put_text(im, "z [µm]", ((x0 + x3) // 2, 444), anchor="ct")
+        put_text(im, "2画素の信号対 z", (950, 62), size=24)
+        put_text(im, "強度", (950, 104))
+        put_text(im, "z [µm]", ((x0 + x3) // 2, 438), anchor="ct")
         put_text(im, "P1 高さ %.3f µm\nP2 高さ %.3f µm" %
-                 (height[y, x1], height[y, x2]), (950, 470), size=22)
-        put_text(im, "段差(P2−P1、傾斜補正)\n測定 %.3f µm\n真値 %.3f µm" %
-                 (step_meas, step_truth), (950, 530), size=22)
+                 (height[y, x1], height[y, x2]), (950, 475), size=22)
+        put_text(im, "段差(傾斜補正) %.3f µm\n真値 %.3f µm" %
+                 (step_meas, step_truth), (950, 552), size=22)
         put_text(im, "差 %+.0f nm" % step_err_nm, (950, 640), size=24,
                  fill=(255, 220, 90))
 
@@ -305,7 +305,7 @@ def fig_csi_scan_explained():
         pts = [(20 + int(round(v * 559 / 511)), 70 + int(round(u * 559 / 511)))
                for u, v in zip(ey, ex)]
         ImageDraw.Draw(im).point(pts, fill=(255, 235, 40))
-        put_text(im, "黄 = 真値の高さが今の z に一致する場所。\n縞のコントラストが立つ場所と一致する",
+        put_text(im, "黄 = 真値が今の z。縞のコントラストが立つ場所と一致",
                  (20, 639), size=22)
 
         accumulated = np.maximum(accumulated, np.abs(stack[k] - 0.5))
@@ -318,10 +318,10 @@ def fig_csi_scan_explained():
         bar = np.linspace(hi, lo, 256)[:, None]
         bar_rgb = rgb8(fs.colorize_depth(bar, name="turbo", vmin=lo, vmax=hi))
         im.paste(Image.fromarray(np.repeat(bar_rgb, 18, axis=1)), (878, 434))
-        put_text(im, "%.2f" % hi, (902, 434), anchor="lt")
-        put_text(im, "µm", (902, 550), anchor="lm")
-        put_text(im, "%.2f" % lo, (902, 690), anchor="lb")
-        put_text(im, "通過 = 真値 ≤ 現在 z − 0.3 µm", (610, 662), size=22,
+        put_text(im, "%.2f" % hi, (872, 434), anchor="rt")
+        put_text(im, "µm", (887, 550), anchor="cm")
+        put_text(im, "%.2f" % lo, (872, 675), anchor="rb")
+        put_text(im, "通過 = 真値 ≤ z − 0.3 µm", (610, 636), size=22,
                  plate=(18, 21, 28))
 
         graph(im, k)
