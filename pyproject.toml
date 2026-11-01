@@ -403,7 +403,12 @@ py-modules = [
 # **プロセスごと segfault**(exit 139、py3.12)した。ダンプは「どこで固まったか」を
 # 見るためのもので、10 分あれば本物のハングは十分に拾える(pytest 自体の timeout は
 # 900 秒で別に効く)。
-faulthandler_timeout = 600
+# 2026-11-01: 600 → 6000。PoC 一括実行のテストは timeout(5400) を名指しで持つのに、
+# faulthandler は 600 秒で全スレッドをダンプし、PoC の BLAS スレッドが走っている最中に
+# **また** segfault(exit 139、PR #224 の shard 5、PoC 側に変更なし)。ダンプは最長の
+# 正当なテスト(5400 秒)より後に出す。本物のハングは pytest-timeout(900 秒、thread 方式、
+# 自分でスタックを印字する)が先に拾うので、検出力は落ちない。
+faulthandler_timeout = 6000
 timeout = 900
 timeout_method = "thread"     # Windows には signal 方式が無い
 testpaths = ["tests"]
