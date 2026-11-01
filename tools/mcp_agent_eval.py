@@ -33,6 +33,7 @@ import numpy as np
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_TASKS = ROOT / "docs" / "ops" / "mcp_agent_tasks.json"
 CATEGORIES = ("general", "positioning", "multi_product", "specular_transparent", "fast_3d")
+MCP_EVAL_PROFILE = "full"
 
 
 def load_tasks(path: str | Path = DEFAULT_TASKS) -> dict[str, Any]:
@@ -365,7 +366,8 @@ class MCPClient:
     def __init__(self, input_root: Path):
         env = dict(os.environ)
         env.update({"PYTHONUTF8": "1", "PYTHONIOENCODING": "utf-8",
-                    "FULLSEYE_MCP_ROOT": str(input_root), "FULLSEYE_MCP_PROFILE": "minimal"})
+                    "FULLSEYE_MCP_ROOT": str(input_root),
+                    "FULLSEYE_MCP_PROFILE": MCP_EVAL_PROFILE})
         self.process = subprocess.Popen(
             [sys.executable, "-m", "fullseye.mcp"], cwd=ROOT, env=env,
             stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL,

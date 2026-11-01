@@ -75,5 +75,6 @@ def test_every_named_judge_is_deterministic_and_accepts_its_synthetic_truth(tmp_
 
 
 def test_real_mcp_server_lists_required_tools_and_reads_every_task_input():
+    assert evaluation.MCP_EVAL_PROFILE == "full"
     result = evaluation.validate_inputs(evaluation.load_tasks())
     assert result == {"tasks": 20, "mcp": "ok"}

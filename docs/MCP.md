@@ -41,7 +41,7 @@ claude mcp add fullseye -- py -3.11 -m fullseye.mcp
 set FULLSEYE_MCP_ROOT=C:\path\to\images;D:\more   (PowerShell: $env:FULLSEYE_MCP_ROOT = "...")
 ```
 
-## 最小プロファイル(opはデータとして検索する)
+## 最小プロファイルは10道具(opはデータとして検索する)
 
 op はデータで、tool は「探す・読む・読み込む・走らせる・観察する」の数個だけ。
 tool を 1,942 個並べると LLM の文脈を食い潰す(TheMCPCompany の実測: 18,000 tool は
@@ -276,5 +276,5 @@ Function Hijacking(tool 選択の乗っ取り ASR 70〜100 %)—— と、TRIZ �
 公開する計画入口は `fullseye_plan`、`fullseye_describe`、`fullseye_choose` の3つだけである。
 未計測の制約は推測で補わず、fail-closedの理由として返す。`tools/list` に
 `{"profile":"minimal"}` を渡すか、`FULLSEYE_MCP_PROFILE=minimal`を設定すると実行に必要な10道具を公開する。
-`docs/mcp_context_benchmark.json`を生成する実測では、全22道具が3,539トークン、最小12道具が1,716トークンである。
+`docs/mcp_context_benchmark.json`を生成する実測では、全22道具が3,539トークン、最小10道具が1,497トークンである。
 未検証の設計パターンと重複した計画入口はMCP一覧に出さない。

@@ -8,6 +8,7 @@ from fullseye.mcp.handles import HandleStore
 from fullseye.mcp.server import (
     MINIMAL_TOOLS,
     OP_EXECUTION_TOOLS,
+    TOOLS,
     call_tool,
     physical_parameter_catalog,
     validate_pipeline,
@@ -87,12 +88,14 @@ def test_goal_semantics_change_plan_rank_and_explain_the_exact_boost():
 def test_zero_hit_retry_and_each_search_candidate_has_next_call():
     rescued = search_ops("員数", 3)
     assert rescued["ops"] == []
-    assert rescued["retry_queries"] and rescued["retry_ops"]
-    assert all(row["retry_query"] in rescued["retry_queries"] for row in rescued["retry_ops"])
+    retry_ops = rescued["retry_ops"]
+    assert rescued["retry_queries"] and retry_ops
+    assert all(row["retry_query"] in rescued["retry_queries"] for row in retry_ops)
     found = search_ops("remove gaussian noise", 3)
-    assert found["ops"]
+    found_ops = found["ops"]
+    assert found_ops
     assert all("fullseye_" in row["next_call"] and "pipeline" in row["next_call"]
-               for row in found["ops"])
+               for row in found_ops)
 
 
 def test_sort_mismatch_is_structured_with_loader_or_conversion_fix():
@@ -100,9 +103,10 @@ def test_sort_mismatch_is_structured_with_loader_or_conversion_fix():
     mismatch = next(row for row in result["errors"] if row["reason"] == "sort_mismatch")
     assert mismatch["actual"] == ["color"]
     assert mismatch["expected"] == ["image"]
-    assert mismatch["fixes"]
+    fixes = mismatch["fixes"]
+    assert fixes
     assert any(fix.get("tool") == "fullseye_load_image" or fix.get("kind") == "conversion"
-               for fix in mismatch["fixes"])
+               for fix in fixes)
 
 
 def test_unique_high_level_proposal_is_validated_and_ambiguous_query_is_not_chosen():
@@ -144,6 +148,9 @@ def test_template_handle_is_required_and_drives_positioning_pipeline(tmp_path):
     assert record["value"][0] > 0.9
 
 
-def test_new_tools_stay_in_minimal_profile_without_broadening_op_execution_allowlist():
-    assert {"fullseye_load_template", "fullseye_suggest_pipeline"} <= MINIMAL_TOOLS
+def test_new_tools_stay_in_full_profile_without_broadening_minimal_or_execution_allowlist():
+    new_tools = {"fullseye_load_template", "fullseye_suggest_pipeline"}
+    assert new_tools <= set(TOOLS)
+    assert not (new_tools & MINIMAL_TOOLS)
+    assert len(MINIMAL_TOOLS) == 10
     assert OP_EXECUTION_TOOLS == {"fullseye_apply", "fullseye_pipeline"}

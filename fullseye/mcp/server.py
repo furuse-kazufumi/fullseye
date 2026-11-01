@@ -1637,8 +1637,7 @@ def _version() -> str:
 
 
 MINIMAL_TOOLS = {"fullseye_find_ops", "fullseye_plan", "fullseye_describe", "fullseye_op_cards",
-                 "fullseye_suggest_pipeline", "fullseye_validate_pipeline", "fullseye_pipeline",
-                 "fullseye_load_image", "fullseye_load_template",
+                 "fullseye_validate_pipeline", "fullseye_pipeline", "fullseye_load_image",
                  "fullseye_load_stack", "fullseye_list_samples", "fullseye_inspect"}
 for _internal_tool in ("fullseye_patterns", "fullseye_plan_chain", "fullseye_required_inputs",
                        "fullseye_pipeline_shape", "fullseye_sort_guide", "fullseye_param_space",
