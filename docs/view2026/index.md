@@ -190,6 +190,8 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 光学設計や三次元計測などのセンシングを含む物理シミュレーションと古典画像処理を、MCP と RAG で AI に渡し、課題ごとに組み合わせを考えさせ、型整合性と真値つき評価で確かめながら対話的に課題を解く基盤です。オープンソース(Apache-2.0)。
 
+[Fullseye について、もう少し詳しく読む](about.md)
+
 [おまけ:そのほかの PoC](more.md)も見る。
 
 <details markdown="1">

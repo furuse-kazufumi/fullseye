@@ -175,6 +175,8 @@ Run the paper's figures yourself, on a phone too. Switch methods with the tabs a
 
 A foundation that hands physics simulation (including sensing such as optical design and 3-D measurement) and classic image processing to an AI through MCP and RAG, lets it work out a combination for each task, and solves the task interactively while checking type consistency and evaluating against ground truth. Open source (Apache-2.0).
 
+[Read more about Fullseye](../about.md) _(ja)_
+
 See [Extras: more PoCs](more.md), too.
 
 <details markdown="1">
