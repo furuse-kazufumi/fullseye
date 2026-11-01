@@ -29,7 +29,7 @@
         "02_sample.png",
         "05_dimple_profile.png",
         "07_height_slope_ambiguity.png",
-        "14_focus_tradeoff.png"
+        "18_real_force_vs_hammer.png"
       ],
       "excluded_frames": [],
       "variants": {
@@ -65,10 +65,12 @@
               "file": "02_sample.png",
               "content_box": [
                 0,
-                106,
+                178,
                 720,
-                477
-              ]
+                333
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 2.164649
             },
             {
               "file": "05_dimple_profile.png",
@@ -93,15 +95,15 @@
               "source_aspect": 1.722222
             },
             {
-              "file": "14_focus_tradeoff.png",
+              "file": "18_real_force_vs_hammer.png",
               "content_box": [
                 0,
-                136,
+                160,
                 720,
-                418
+                369
               ],
               "contain_reason": "aspect_within_2_4",
-              "source_aspect": 1.722222
+              "source_aspect": 1.952381
             }
           ],
           "frame_count": 6,
@@ -113,17 +115,17 @@
             1600,
             1600
           ],
-          "bytes": 557116,
+          "bytes": 508428,
           "color_mad": [
             0.9814,
             0.1196,
-            0.4161,
-            0.087,
-            0.0599,
-            0.1046
+            0.796,
+            0.0735,
+            0.0467,
+            0.1326
           ],
           "max_color_mad": 0.9814,
-          "source_sha256": "ac4862636355a99088d43b59bdbc4f7eb1cd1fafde9f2f2815c2d1c1a68cf3cf"
+          "source_sha256": "ef4c43f178954488493553295482689ee35859d7623d2252e5b9edb3ec4b2114"
         },
         "en": {
           "path": "articles/assets/poc/poc_phase_measuring_deflectometry/story.en.gif",
@@ -157,10 +159,12 @@
               "file": "02_sample.png",
               "content_box": [
                 0,
-                106,
+                178,
                 720,
-                477
-              ]
+                333
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 2.164649
             },
             {
               "file": "05_dimple_profile.png",
@@ -185,15 +189,15 @@
               "source_aspect": 1.722222
             },
             {
-              "file": "14_focus_tradeoff.png",
+              "file": "18_real_force_vs_hammer.png",
               "content_box": [
                 0,
-                136,
+                160,
                 720,
-                418
+                369
               ],
               "contain_reason": "aspect_within_2_4",
-              "source_aspect": 1.722222
+              "source_aspect": 1.952381
             }
           ],
           "frame_count": 6,
@@ -205,17 +209,17 @@
             1600,
             1600
           ],
-          "bytes": 557116,
+          "bytes": 508428,
           "color_mad": [
             0.9814,
             0.1196,
-            0.4161,
-            0.087,
-            0.0599,
-            0.1046
+            0.796,
+            0.0735,
+            0.0467,
+            0.1326
           ],
           "max_color_mad": 0.9814,
-          "source_sha256": "c8c0ac65e6ebbc32df0ce7a0a750770201846e46252bc0cb3ca0dd834d50697b"
+          "source_sha256": "b254e1d952b371e63579d028d0976efb22b077f99d4584a595421bd57c5e2389"
         }
       },
       "thumbnail": {
@@ -247,7 +251,7 @@
         {
           "file": "02_real_thickness_table.png",
           "reason": "crop_text_only",
-          "source_aspect": 4.159091
+          "source_aspect": 4.147727
         }
       ],
       "variants": {
@@ -305,12 +309,12 @@
               "file": "14_lateral_vs_dof.png",
               "content_box": [
                 0,
-                178,
+                177,
                 720,
-                334
+                336
               ],
               "contain_reason": "aspect_within_2_4",
-              "source_aspect": 2.158333
+              "source_aspect": 2.143056
             }
           ],
           "frame_count": 5,
@@ -321,16 +325,16 @@
             1600,
             1600
           ],
-          "bytes": 474358,
+          "bytes": 459207,
           "color_mad": [
             0.7917,
-            0.3096,
-            0.0785,
-            0.0865,
-            0.1195
+            0.2418,
+            0.061,
+            0.0682,
+            0.1051
           ],
           "max_color_mad": 0.7917,
-          "source_sha256": "f44891cf0f399fdaa850719b889338c82eda53166889d7448f672c4fa32c1f84"
+          "source_sha256": "cbcf21b75b54a6189c4885f449b4d275a6c3f552144d16fb31e21b55ca5adfca"
         },
         "en": {
           "path": "articles/assets/poc/poc_industrial_oct/story.en.gif",
@@ -386,12 +390,12 @@
               "file": "14_lateral_vs_dof.png",
               "content_box": [
                 0,
-                178,
+                177,
                 720,
-                334
+                336
               ],
               "contain_reason": "aspect_within_2_4",
-              "source_aspect": 2.158333
+              "source_aspect": 2.143056
             }
           ],
           "frame_count": 5,
@@ -402,16 +406,16 @@
             1600,
             1600
           ],
-          "bytes": 474358,
+          "bytes": 459207,
           "color_mad": [
             0.7917,
-            0.3096,
-            0.0785,
-            0.0865,
-            0.1195
+            0.2418,
+            0.061,
+            0.0682,
+            0.1051
           ],
           "max_color_mad": 0.7917,
-          "source_sha256": "dcb2676c2ef7e19a33ffecad4c0ffd46b518bf2475c9bb06832c8032aac96033"
+          "source_sha256": "fd5576538c1b7c3afb5e85dbc3c2c2f8ed2d539cc2461faba653bff5ea57e604"
         }
       },
       "thumbnail": {
@@ -480,12 +484,12 @@
               "file": "03_real_polymer_confusion.png",
               "content_box": [
                 0,
-                186,
+                185,
                 720,
-                318
+                319
               ],
               "contain_reason": "aspect_within_2_4",
-              "source_aspect": 2.263393
+              "source_aspect": 2.258929
             },
             {
               "file": "14_failure_wet_and_drift.png",
@@ -526,17 +530,17 @@
             1600,
             1600
           ],
-          "bytes": 361860,
+          "bytes": 346469,
           "color_mad": [
             1.5068,
-            0.2326,
-            0.0392,
-            0.095,
-            0.0535,
+            0.2184,
+            0.0279,
+            0.0682,
+            0.0423,
             0.5347
           ],
           "max_color_mad": 1.5068,
-          "source_sha256": "480cb2325ac56f8495231e154483ab444c5a7d3818d6ed3beffcb3aa1d6cae1f"
+          "source_sha256": "ad1cbef7bee4be7acd2109fa57d1dc099843fa02c48d4753efd194ad8ead4032"
         },
         "en": {
           "path": "articles/assets/poc/poc_hyperspectral_foreign_matter/story.en.gif",
@@ -572,12 +576,12 @@
               "file": "03_real_polymer_confusion.png",
               "content_box": [
                 0,
-                186,
+                185,
                 720,
-                318
+                319
               ],
               "contain_reason": "aspect_within_2_4",
-              "source_aspect": 2.263393
+              "source_aspect": 2.258929
             },
             {
               "file": "14_failure_wet_and_drift.png",
@@ -618,17 +622,17 @@
             1600,
             1600
           ],
-          "bytes": 361860,
+          "bytes": 346469,
           "color_mad": [
             1.5068,
-            0.2326,
-            0.0392,
-            0.095,
-            0.0535,
+            0.2184,
+            0.0279,
+            0.0682,
+            0.0423,
             0.5347
           ],
           "max_color_mad": 1.5068,
-          "source_sha256": "167f8762a9c982bd88a4708865d7a3d6ea34e0a41a7f4ea15ea677c27eef178e"
+          "source_sha256": "575d6207181e34eec810076332c30afbefb0535803c7dbe50d4065d01bebcd3b"
         }
       },
       "thumbnail": {
@@ -682,12 +686,12 @@
               "file": "02_real_spectra.png",
               "content_box": [
                 0,
-                174,
+                172,
                 720,
-                342
+                345
               ],
               "contain_reason": "aspect_within_2_4",
-              "source_aspect": 2.105556
+              "source_aspect": 2.0875
             },
             {
               "file": "04_fringes_vs_thickness.png",
@@ -735,17 +739,17 @@
             1600,
             1600
           ],
-          "bytes": 657003,
+          "bytes": 654216,
           "color_mad": [
             0.555,
-            0.1137,
+            0.0965,
             0.5241,
-            0.1738,
-            0.5294,
-            1.3872
+            0.1445,
+            0.5773,
+            1.7194
           ],
-          "max_color_mad": 1.3872,
-          "source_sha256": "05779353ab8b747688ad89a84767c2363f48574d4ce1e9388c6ef6095986e569"
+          "max_color_mad": 1.7194,
+          "source_sha256": "6a75a4e724a9d8ffce0f57e252e1dac944e3551cacac00926833a44409d56c93"
         },
         "en": {
           "path": "articles/assets/poc/poc_thin_film_reflectometry/story.en.gif",
@@ -770,12 +774,12 @@
               "file": "02_real_spectra.png",
               "content_box": [
                 0,
-                174,
+                172,
                 720,
-                342
+                345
               ],
               "contain_reason": "aspect_within_2_4",
-              "source_aspect": 2.105556
+              "source_aspect": 2.0875
             },
             {
               "file": "04_fringes_vs_thickness.png",
@@ -823,17 +827,17 @@
             1600,
             1600
           ],
-          "bytes": 657003,
+          "bytes": 654216,
           "color_mad": [
             0.555,
-            0.1137,
+            0.0965,
             0.5241,
-            0.1738,
-            0.5294,
-            1.3872
+            0.1445,
+            0.5773,
+            1.7194
           ],
-          "max_color_mad": 1.3872,
-          "source_sha256": "2ec06c05d80f7727a575362fd4de568a0d2fda5bd7c9e190da149b828d35be4e"
+          "max_color_mad": 1.7194,
+          "source_sha256": "7b5678f11ce6a5fde0140149a85d72c620f514023e5c9d7612cca8e8201e08f1"
         }
       },
       "thumbnail": {
@@ -898,20 +902,20 @@
               "file": "02_methods.png",
               "content_box": [
                 0,
-                217,
+                216,
                 720,
-                255
+                258
               ],
               "contain_reason": "protected_both_edges",
-              "source_aspect": 2.818548
+              "source_aspect": 2.794355
             },
             {
               "file": "03_deviation_maps.png",
               "content_box": [
                 0,
-                54,
+                127,
                 720,
-                582
+                435
               ]
             },
             {
@@ -927,12 +931,12 @@
               "file": "13_controls.png",
               "content_box": [
                 0,
-                215,
+                214,
                 720,
-                259
+                261
               ],
               "contain_reason": "protected_both_edges",
-              "source_aspect": 2.783088
+              "source_aspect": 2.759191
             }
           ],
           "frame_count": 6,
@@ -944,17 +948,17 @@
             1600,
             1600
           ],
-          "bytes": 449341,
+          "bytes": 376446,
           "color_mad": [
             0.5029,
             0.2341,
-            0.044,
-            0.524,
-            0.1231,
-            0.0395
+            0.0349,
+            0.9793,
+            0.0915,
+            0.0327
           ],
-          "max_color_mad": 0.524,
-          "source_sha256": "d27640bebfe0eed809e09c587328e2455acdd8c2aceb02c629b10d1154348eb0"
+          "max_color_mad": 0.9793,
+          "source_sha256": "a46de10c22661a5f0cf2358cc956fd8c051f119664caa72dd549ff52921818f3"
         },
         "en": {
           "path": "articles/assets/poc/poc_cad_scan_deviation/story.en.gif",
@@ -990,20 +994,20 @@
               "file": "02_methods.png",
               "content_box": [
                 0,
-                217,
+                216,
                 720,
-                255
+                258
               ],
               "contain_reason": "protected_both_edges",
-              "source_aspect": 2.818548
+              "source_aspect": 2.794355
             },
             {
               "file": "03_deviation_maps.png",
               "content_box": [
                 0,
-                54,
+                127,
                 720,
-                582
+                435
               ]
             },
             {
@@ -1019,12 +1023,12 @@
               "file": "13_controls.png",
               "content_box": [
                 0,
-                215,
+                214,
                 720,
-                259
+                261
               ],
               "contain_reason": "protected_both_edges",
-              "source_aspect": 2.783088
+              "source_aspect": 2.759191
             }
           ],
           "frame_count": 6,
@@ -1036,17 +1040,17 @@
             1600,
             1600
           ],
-          "bytes": 449341,
+          "bytes": 376446,
           "color_mad": [
             0.5029,
             0.2341,
-            0.044,
-            0.524,
-            0.1231,
-            0.0395
+            0.0349,
+            0.9793,
+            0.0915,
+            0.0327
           ],
-          "max_color_mad": 0.524,
-          "source_sha256": "f753b79ce8793ead41d8017cfade31d5da9a552f2e6b010e0baef7e327222c31"
+          "max_color_mad": 0.9793,
+          "source_sha256": "22669cbc6f5782af3727fb534d31005273b58d296d52e735df0fb2ee3afc34b3"
         }
       },
       "thumbnail": {
@@ -1100,21 +1104,19 @@
               "file": "01_lens_layouts.png",
               "content_box": [
                 0,
-                33,
+                31,
                 720,
-                624
+                627
               ]
             },
             {
               "file": "02_magnification_vs_height.png",
               "content_box": [
                 0,
-                170,
+                113,
                 720,
-                349
-              ],
-              "contain_reason": "aspect_within_2_4",
-              "source_aspect": 2.061111
+                463
+              ]
             },
             {
               "file": "05_stop_shift_telecentricity.png",
@@ -1155,17 +1157,17 @@
             1600,
             1600
           ],
-          "bytes": 852225,
+          "bytes": 869575,
           "color_mad": [
             1.2805,
-            0.2471,
-            0.138,
-            0.0934,
+            0.2489,
+            0.1416,
+            0.0667,
             0.2497,
             0.3595
           ],
           "max_color_mad": 1.2805,
-          "source_sha256": "bcfe4ee0f106d7c9566fdc537f9925389cf260118eb5651e6fc23fc8ec9a8141"
+          "source_sha256": "065a8e8061661c550c32ea38af1e0a592e373fdc85f23032da08c681d0251a43"
         },
         "en": {
           "path": "articles/assets/poc/poc_telecentric_metrology/story.en.gif",
@@ -1190,21 +1192,19 @@
               "file": "01_lens_layouts.png",
               "content_box": [
                 0,
-                33,
+                31,
                 720,
-                624
+                627
               ]
             },
             {
               "file": "02_magnification_vs_height.png",
               "content_box": [
                 0,
-                170,
+                113,
                 720,
-                349
-              ],
-              "contain_reason": "aspect_within_2_4",
-              "source_aspect": 2.061111
+                463
+              ]
             },
             {
               "file": "05_stop_shift_telecentricity.png",
@@ -1245,17 +1245,17 @@
             1600,
             1600
           ],
-          "bytes": 852225,
+          "bytes": 869575,
           "color_mad": [
             1.2805,
-            0.2471,
-            0.138,
-            0.0934,
+            0.2489,
+            0.1416,
+            0.0667,
             0.2497,
             0.3595
           ],
           "max_color_mad": 1.2805,
-          "source_sha256": "d2cdf8e40276b4b9d7d13d34f398094557c347cd6cc8aeb7c838cde1db897304"
+          "source_sha256": "e2c9a76f33b0451cb95db80cf840e6c97ce11921080dad5264162444403d5137"
         }
       },
       "thumbnail": {
@@ -1309,12 +1309,12 @@
               "file": "03_ctf_curves.png",
               "content_box": [
                 0,
-                208,
+                207,
                 720,
-                274
+                275
               ],
               "contain_reason": "protected_both_edges",
-              "source_aspect": 2.628947
+              "source_aspect": 2.614474
             },
             {
               "file": "07_estimate_profile.png",
@@ -1322,10 +1322,10 @@
                 0,
                 222,
                 720,
-                245
+                246
               ],
               "contain_reason": "protected_both_edges",
-              "source_aspect": 2.941176
+              "source_aspect": 2.930882
             },
             {
               "file": "08_weak_phase_breakdown.png",
@@ -1356,7 +1356,7 @@
                 166
               ],
               "contain_reason": "protected_both_edges",
-              "source_aspect": 4.335526
+              "source_aspect": 4.325658
             }
           ],
           "frame_count": 6,
@@ -1368,17 +1368,17 @@
             1600,
             1600
           ],
-          "bytes": 989366,
+          "bytes": 988313,
           "color_mad": [
             0.1477,
-            0.1337,
-            0.0635,
-            0.0443,
+            0.1304,
+            0.0491,
+            0.0357,
             0.0004,
-            0.0378
+            0.0275
           ],
           "max_color_mad": 0.1477,
-          "source_sha256": "361cec24e42d29bd60c2edfaec963409165ac91592c033040c51e9eb0f777dfa"
+          "source_sha256": "46d3dc22d2ba43af3193c5ea2ce2256d73be55953ee82030560b51890a263e62"
         },
         "en": {
           "path": "articles/assets/poc/poc_tem_ctf_thon_rings/story.en.gif",
@@ -1403,12 +1403,12 @@
               "file": "03_ctf_curves.png",
               "content_box": [
                 0,
-                208,
+                207,
                 720,
-                274
+                275
               ],
               "contain_reason": "protected_both_edges",
-              "source_aspect": 2.628947
+              "source_aspect": 2.614474
             },
             {
               "file": "07_estimate_profile.png",
@@ -1416,10 +1416,10 @@
                 0,
                 222,
                 720,
-                245
+                246
               ],
               "contain_reason": "protected_both_edges",
-              "source_aspect": 2.941176
+              "source_aspect": 2.930882
             },
             {
               "file": "08_weak_phase_breakdown.png",
@@ -1450,7 +1450,7 @@
                 166
               ],
               "contain_reason": "protected_both_edges",
-              "source_aspect": 4.335526
+              "source_aspect": 4.325658
             }
           ],
           "frame_count": 6,
@@ -1462,17 +1462,17 @@
             1600,
             1600
           ],
-          "bytes": 989366,
+          "bytes": 988313,
           "color_mad": [
             0.1477,
-            0.1337,
-            0.0635,
-            0.0443,
+            0.1304,
+            0.0491,
+            0.0357,
             0.0004,
-            0.0378
+            0.0275
           ],
           "max_color_mad": 0.1477,
-          "source_sha256": "98e570bbc1a310d04e4bb55d4df12c77d2b5c6101ba00bdf9c102880dc80a0e6"
+          "source_sha256": "202498f6bbfeef89295cb6ebf972fe9c2efbb8b45fbfd383695f4aac2f593d92"
         }
       },
       "thumbnail": {
@@ -1562,12 +1562,12 @@
               "file": "08_sem_charging_by_kv.png",
               "content_box": [
                 0,
-                169,
+                167,
                 720,
-                351
+                355
               ],
               "contain_reason": "aspect_within_2_4",
-              "source_aspect": 2.05
+              "source_aspect": 2.030556
             }
           ],
           "frame_count": 6,
@@ -1579,17 +1579,17 @@
             1600,
             1600
           ],
-          "bytes": 924667,
+          "bytes": 940710,
           "color_mad": [
             0.1486,
-            0.3582,
-            0.1881,
-            0.0386,
-            0.1818,
-            0.1231
+            1.0014,
+            0.1401,
+            0.0291,
+            0.1657,
+            0.1044
           ],
-          "max_color_mad": 0.3582,
-          "source_sha256": "013af2dae42545e5ce419113c369dd74738fba3de9e1ac41169becf8a01ab73a"
+          "max_color_mad": 1.0014,
+          "source_sha256": "ccf9bc53a8b2ff8e6c1180f36d7663d410009a62c10861963fca5d1e42c42be8"
         },
         "en": {
           "path": "articles/assets/poc/poc_virtual_sem_kv_cd_bse/story.en.gif",
@@ -1650,12 +1650,12 @@
               "file": "08_sem_charging_by_kv.png",
               "content_box": [
                 0,
-                169,
+                167,
                 720,
-                351
+                355
               ],
               "contain_reason": "aspect_within_2_4",
-              "source_aspect": 2.05
+              "source_aspect": 2.030556
             }
           ],
           "frame_count": 6,
@@ -1667,17 +1667,17 @@
             1600,
             1600
           ],
-          "bytes": 924667,
+          "bytes": 940710,
           "color_mad": [
             0.1486,
-            0.3582,
-            0.1881,
-            0.0386,
-            0.1818,
-            0.1231
+            1.0014,
+            0.1401,
+            0.0291,
+            0.1657,
+            0.1044
           ],
-          "max_color_mad": 0.3582,
-          "source_sha256": "e30e352654890951fc0f196e7e8fe638e074c14382477fe4d1643b87b25a68d8"
+          "max_color_mad": 1.0014,
+          "source_sha256": "296e931f680b2541e2648b68d9b092687bf78a5583122405c36cab2bc827ab53"
         }
       },
       "thumbnail": {
@@ -1731,12 +1731,12 @@
               "file": "01_spectrum_and_windows.png",
               "content_box": [
                 0,
-                192,
+                190,
                 720,
-                306
+                309
               ],
               "contain_reason": "aspect_within_2_4",
-              "source_aspect": 2.35
+              "source_aspect": 2.330556
             },
             {
               "file": "02_mass_attenuation.png",
@@ -1753,12 +1753,12 @@
               "file": "07_r_value_scatter.png",
               "content_box": [
                 0,
-                163,
+                162,
                 720,
-                363
+                365
               ],
               "contain_reason": "aspect_within_2_4",
-              "source_aspect": 1.981818
+              "source_aspect": 1.971591
             },
             {
               "file": "10_threshold_sweep.png",
@@ -1788,17 +1788,17 @@
             1600,
             1600
           ],
-          "bytes": 292079,
+          "bytes": 280714,
           "color_mad": [
             0.8697,
-            0.0791,
-            0.2231,
-            0.0851,
-            0.0345,
-            0.0713
+            0.0822,
+            0.1827,
+            0.0718,
+            0.0226,
+            0.0485
           ],
           "max_color_mad": 0.8697,
-          "source_sha256": "2d8db8a6cebebcb5e824cdce21e4231c1e11910e185c0b42f2ae84d1cec30d5a"
+          "source_sha256": "180cd863564006cd8bb51b4ddf0f1404e530abaa74920187adb60c06a5f6ace1"
         },
         "en": {
           "path": "articles/assets/poc/poc_dual_energy_xray/story.en.gif",
@@ -1823,12 +1823,12 @@
               "file": "01_spectrum_and_windows.png",
               "content_box": [
                 0,
-                192,
+                190,
                 720,
-                306
+                309
               ],
               "contain_reason": "aspect_within_2_4",
-              "source_aspect": 2.35
+              "source_aspect": 2.330556
             },
             {
               "file": "02_mass_attenuation.png",
@@ -1845,12 +1845,12 @@
               "file": "07_r_value_scatter.png",
               "content_box": [
                 0,
-                163,
+                162,
                 720,
-                363
+                365
               ],
               "contain_reason": "aspect_within_2_4",
-              "source_aspect": 1.981818
+              "source_aspect": 1.971591
             },
             {
               "file": "10_threshold_sweep.png",
@@ -1880,17 +1880,17 @@
             1600,
             1600
           ],
-          "bytes": 292079,
+          "bytes": 280714,
           "color_mad": [
             0.8697,
-            0.0791,
-            0.2231,
-            0.0851,
-            0.0345,
-            0.0713
+            0.0822,
+            0.1827,
+            0.0718,
+            0.0226,
+            0.0485
           ],
           "max_color_mad": 0.8697,
-          "source_sha256": "b5725b09cde90b5f6a567da81e22c589a7af101af11cbd8e0146b6b8d9f67a0d"
+          "source_sha256": "98f5f6c213475bf78d674b997209af76164c2f80ec62c4f529afe4febcd34e7b"
         }
       },
       "thumbnail": {
@@ -1955,12 +1955,12 @@
               "file": "03_detect_vs_diameter.png",
               "content_box": [
                 0,
-                164,
+                162,
                 720,
-                362
+                365
               ],
               "contain_reason": "aspect_within_2_4",
-              "source_aspect": 1.988889
+              "source_aspect": 1.972222
             },
             {
               "file": "04_cnr_prediction.png",
@@ -1975,12 +1975,12 @@
               "file": "10_scatter_diameter_bias.png",
               "content_box": [
                 0,
-                169,
+                167,
                 720,
-                352
+                355
               ],
               "contain_reason": "aspect_within_2_4",
-              "source_aspect": 2.047222
+              "source_aspect": 2.030556
             },
             {
               "file": "12_grade_errors.png",
@@ -1988,10 +1988,10 @@
                 0,
                 257,
                 720,
-                175
+                176
               ],
               "contain_reason": "protected_both_edges",
-              "source_aspect": 4.107955
+              "source_aspect": 4.09375
             }
           ],
           "frame_count": 6,
@@ -2003,17 +2003,17 @@
             1600,
             1600
           ],
-          "bytes": 547559,
+          "bytes": 539366,
           "color_mad": [
             1.523,
             0.4854,
-            0.0666,
-            0.0869,
-            0.1525,
-            0.0477
+            0.0549,
+            0.0627,
+            0.1238,
+            0.0337
           ],
           "max_color_mad": 1.523,
-          "source_sha256": "ea2bdadb27d124e1c01d2407837320e7cfd30432935e00c0b7f04e5bda183a56"
+          "source_sha256": "1e9ada1cf3dbcdf9dce1324d1e67de8574772ad6f29969afffdb9c0cb872c9ec"
         },
         "en": {
           "path": "articles/assets/poc/poc_weld_radiograph_porosity/story.en.gif",
@@ -2049,12 +2049,12 @@
               "file": "03_detect_vs_diameter.png",
               "content_box": [
                 0,
-                164,
+                162,
                 720,
-                362
+                365
               ],
               "contain_reason": "aspect_within_2_4",
-              "source_aspect": 1.988889
+              "source_aspect": 1.972222
             },
             {
               "file": "04_cnr_prediction.png",
@@ -2069,12 +2069,12 @@
               "file": "10_scatter_diameter_bias.png",
               "content_box": [
                 0,
-                169,
+                167,
                 720,
-                352
+                355
               ],
               "contain_reason": "aspect_within_2_4",
-              "source_aspect": 2.047222
+              "source_aspect": 2.030556
             },
             {
               "file": "12_grade_errors.png",
@@ -2082,10 +2082,10 @@
                 0,
                 257,
                 720,
-                175
+                176
               ],
               "contain_reason": "protected_both_edges",
-              "source_aspect": 4.107955
+              "source_aspect": 4.09375
             }
           ],
           "frame_count": 6,
@@ -2097,17 +2097,17 @@
             1600,
             1600
           ],
-          "bytes": 547559,
+          "bytes": 539366,
           "color_mad": [
             1.523,
             0.4854,
-            0.0666,
-            0.0869,
-            0.1525,
-            0.0477
+            0.0549,
+            0.0627,
+            0.1238,
+            0.0337
           ],
           "max_color_mad": 1.523,
-          "source_sha256": "b60f454c977fe14177b7b56df91c0846bc43515ebc0389da6c1bf3fd7151eaf1"
+          "source_sha256": "5f8a99992069cdb8cfb0ff981c8054dc4577a917a39ed2a28b064d0ad7a749fc"
         }
       },
       "thumbnail": {
@@ -2171,12 +2171,12 @@
               "file": "03_visa_metrics_vs_n.png",
               "content_box": [
                 0,
-                169,
+                168,
                 720,
-                351
+                353
               ],
               "contain_reason": "aspect_within_2_4",
-              "source_aspect": 2.052778
+              "source_aspect": 2.040278
             },
             {
               "file": "04_visa_explanation.png",
@@ -2207,16 +2207,16 @@
             1600,
             1600
           ],
-          "bytes": 529088,
+          "bytes": 529605,
           "color_mad": [
             1.3054,
-            0.7649,
-            0.1434,
+            0.9591,
+            0.1137,
             0.8396,
-            0.049
+            0.0404
           ],
           "max_color_mad": 1.3054,
-          "source_sha256": "faa4a2495facca4a8d1e9dfad4f7e99abf67684851dade86506ae02ae4f37009"
+          "source_sha256": "741cfc120a4477ef65b362b501ba4bbee41581918134164dace17006fa3e4442"
         },
         "en": {
           "path": "articles/assets/poc/poc_good_sample_variation_model/story.en.gif",
@@ -2252,12 +2252,12 @@
               "file": "03_visa_metrics_vs_n.png",
               "content_box": [
                 0,
-                169,
+                168,
                 720,
-                351
+                353
               ],
               "contain_reason": "aspect_within_2_4",
-              "source_aspect": 2.052778
+              "source_aspect": 2.040278
             },
             {
               "file": "04_visa_explanation.png",
@@ -2288,16 +2288,16 @@
             1600,
             1600
           ],
-          "bytes": 529088,
+          "bytes": 529605,
           "color_mad": [
             1.3054,
-            0.7649,
-            0.1434,
+            0.9591,
+            0.1137,
             0.8396,
-            0.049
+            0.0404
           ],
           "max_color_mad": 1.3054,
-          "source_sha256": "689e00d1d0c15ef3d5773fbeed53a94a250f1055f390369ea717f75a1cbf3822"
+          "source_sha256": "39c9948389260c471001d6f34c8f6fa78849faa016f7fe48f9e050e44b7cb78f"
         }
       },
       "thumbnail": {
@@ -2329,7 +2329,7 @@
         {
           "file": "10_breakdown_table.png",
           "reason": "crop_text_only",
-          "source_aspect": 2.136364
+          "source_aspect": 2.130682
         }
       ],
       "variants": {
@@ -2401,16 +2401,16 @@
             1600,
             1600
           ],
-          "bytes": 569555,
+          "bytes": 602419,
           "color_mad": [
             1.7654,
-            0.0008,
-            0.0012,
-            0.4632,
+            0.0731,
+            0.0824,
+            0.8667,
             0.0991
           ],
           "max_color_mad": 1.7654,
-          "source_sha256": "d84e4cd871776e35bf78742f5159709f93c85173466f0d9105220030555bb08b"
+          "source_sha256": "67fc9291c68d38b3c6da096c0299752d49686d6a33fe530efcdb091a6992341c"
         },
         "en": {
           "path": "articles/assets/poc/poc_code_matching_breakdown/story.en.gif",
@@ -2480,16 +2480,16 @@
             1600,
             1600
           ],
-          "bytes": 569555,
+          "bytes": 602419,
           "color_mad": [
             1.7654,
-            0.0008,
-            0.0012,
-            0.4632,
+            0.0731,
+            0.0824,
+            0.8667,
             0.0991
           ],
           "max_color_mad": 1.7654,
-          "source_sha256": "cb894e352b0ba79648676339652b01370cad866c3f0754cfebcf45750d744ab1"
+          "source_sha256": "6e3807c8026afa23ab4f7a762a948cd99dee20d7b7decdcb302c54044360824d"
         }
       },
       "thumbnail": {
@@ -2543,12 +2543,12 @@
               "file": "02_group9_zoom.png",
               "content_box": [
                 0,
-                321,
+                142,
                 720,
-                48
+                406
               ],
-              "contain_reason": "protected_both_edges",
-              "source_aspect": 14.909091
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 1.772595
             },
             {
               "file": "05_overlap_vs_convergence.png",
@@ -2600,17 +2600,17 @@
             1600,
             1600
           ],
-          "bytes": 637792,
+          "bytes": 751228,
           "color_mad": [
             0.1473,
-            0.1126,
-            0.1052,
-            0.3084,
+            0.118,
+            0.0938,
+            0.3011,
             0.1618,
-            0.075
+            0.0565
           ],
-          "max_color_mad": 0.3084,
-          "source_sha256": "3bdbffc743b01fa8bf607940a8867628f8828a98b9f8b3f1f32cf6a87d65534d"
+          "max_color_mad": 0.3011,
+          "source_sha256": "5ad0f5e638612a0aaf79960c26e67c836f7405d5e3c174e872a1bad97122c926"
         },
         "en": {
           "path": "articles/assets/poc/poc_fourier_ptychography/story.en.gif",
@@ -2635,12 +2635,12 @@
               "file": "02_group9_zoom.png",
               "content_box": [
                 0,
-                321,
+                142,
                 720,
-                48
+                406
               ],
-              "contain_reason": "protected_both_edges",
-              "source_aspect": 14.909091
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 1.772595
             },
             {
               "file": "05_overlap_vs_convergence.png",
@@ -2692,17 +2692,17 @@
             1600,
             1600
           ],
-          "bytes": 637792,
+          "bytes": 751228,
           "color_mad": [
             0.1473,
-            0.1126,
-            0.1052,
-            0.3084,
+            0.118,
+            0.0938,
+            0.3011,
             0.1618,
-            0.075
+            0.0565
           ],
-          "max_color_mad": 0.3084,
-          "source_sha256": "fed090208a218fa062a8efa0715eda83cfe5030261cd9c3d2755f33efb53bb89"
+          "max_color_mad": 0.3011,
+          "source_sha256": "69bb426b3b7c8a5c533cc909f80eac5d7c1214dce24de6e2c7813d0343aecdbd"
         }
       },
       "thumbnail": {
@@ -2778,14 +2778,14 @@
             1600,
             1600
           ],
-          "bytes": 622820,
+          "bytes": 624942,
           "color_mad": [
             0.3037,
-            0.6117,
-            0.8383
+            1.0699,
+            1.1089
           ],
-          "max_color_mad": 0.8383,
-          "source_sha256": "a72cfb2c825c02a8dc20df5759dbc8c3353f428fa12750391ef911d6118c9d94"
+          "max_color_mad": 1.1089,
+          "source_sha256": "e9f065f40e5036654d0be2eec4a69569a5535a872eb580633ee792cc1af4974f"
         },
         "en": {
           "path": "articles/assets/poc/poc_photoelasticity/story.en.gif",
@@ -2835,14 +2835,14 @@
             1600,
             1600
           ],
-          "bytes": 622820,
+          "bytes": 624942,
           "color_mad": [
             0.3037,
-            0.6117,
-            0.8383
+            1.0699,
+            1.1089
           ],
-          "max_color_mad": 0.8383,
-          "source_sha256": "040090ad234513d9d28036b20af7acdcfa12534e440b0d5c9229328e9419ef2e"
+          "max_color_mad": 1.1089,
+          "source_sha256": "4403eb5da3b876847372b1c0cb19223fdd5d33a6bf86e2fef004aed3165cbc7c"
         }
       },
       "thumbnail": {
