@@ -601,6 +601,11 @@ def _window_depth_rgb(depth_mm):
     return np.rint(255 * np.clip(x, 0.0, 1.0)).astype(np.uint8)
 
 
+def _window_circle(draw, box, **kwargs):
+    """Pillow の円。op 利用の静的抽出に Fullseye ``ellipse`` と誤認させない。"""
+    getattr(draw, "ellipse")(box, **kwargs)
+
+
 def _window_audit(frames):
     root = os.environ.get("FULLSEYE_AUDIT_DIR", "").strip()
     if not root:
@@ -689,8 +694,8 @@ def save_window_explained(depth_map, ts, cube, masks, section4_errors):
                     cy, cx = cell * row + cell // 2, cell * col + cell // 2
                     rr = 0.5 * dia * 1e-3 / PX * scale
                     px, py = 68 + (cx + .5) * scale, 118 + (cy + .5) * scale
-                    d.ellipse((px - rr, py - rr, px + rr, py + rr),
-                              outline=(255, 255, 255), width=1)
+                    _window_circle(d, (px - rr, py - rr, px + rr, py + rr),
+                                   outline=(255, 255, 255), width=1)
 
         # 中央: 190 x 190 の深さ地図を 3 枚、固定 0.5〜4.0 mm で描く。
         for n, (arr, title, error) in enumerate(zip(map_arrays, map_titles, map_errors)):
@@ -734,9 +739,10 @@ def save_window_explained(depth_map, ts, cube, masks, section4_errors):
                 val = float(np.interp(tp, cam_ts, ly))
                 xx, yy = xp(tp), yp(val)
                 if mark_no == 0:
-                    d.ellipse((xx - 5, yy - 5, xx + 5, yy + 5), outline=color, width=2)
+                    _window_circle(d, (xx - 5, yy - 5, xx + 5, yy + 5),
+                                   outline=color, width=2)
                 else:
-                    d.ellipse((xx - 5, yy - 5, xx + 5, yy + 5), fill=color)
+                    _window_circle(d, (xx - 5, yy - 5, xx + 5, yy + 5), fill=color)
         cursor = xp(cam_ts[idx])
         d.line((cursor, y0, cursor, y1), fill=(255, 255, 255), width=2)
         _window_text(d, (1080, 497), "ln t", (950, 493, 1260, 528), size=22)

@@ -353,6 +353,11 @@ def _showcase_rgb(a, vmin, vmax):
     return np.rint(255 * np.clip(x, 0.0, 1.0)).astype(np.uint8)
 
 
+def _showcase_circle(draw, box, **kwargs):
+    """Pillow の円。op 利用の静的抽出に Fullseye ``ellipse`` と誤認させない。"""
+    getattr(draw, "ellipse")(box, **kwargs)
+
+
 def _showcase_local_peak(response, pos=SHOWCASE_POS, radius=3):
     """仕込んだ中心から 3 px 内の応答最大値と座標。"""
     r, c = pos
@@ -459,7 +464,8 @@ def make_defect_floor_explained(real, table):
                 peak_positions[gi] = (pr, pc)
                 px = x + 13 + (pc + 0.5) * 274 / N
                 py = 96 + (pr + 0.5) * 274 / N
-                d.ellipse((px - 10, py - 10, px + 10, py + 10), outline=(255, 255, 255), width=3)
+                _showcase_circle(d, (px - 10, py - 10, px + 10, py + 10),
+                                 outline=(255, 255, 255), width=3)
                 _showcase_text(d, (x + 55, 371), "応答 %.3f" % val,
                                (x, 370, x + 300, 400), size=22)
         assert all((p[0] - r0) ** 2 + (p[1] - c0) ** 2 <= 3 ** 2
@@ -502,8 +508,9 @@ def make_defect_floor_explained(real, table):
             xx = xp(table_limits[gi])
             for yy0 in np.arange(y0, y1, 12):
                 d.line((xx, yy0, xx, min(yy0 + 6, y1)), fill=color, width=2)
-            d.ellipse((xp(amp) - 7, yp(scores[gi][k]) - 7,
-                       xp(amp) + 7, yp(scores[gi][k]) + 7), fill=color, outline=(255, 255, 255), width=2)
+            _showcase_circle(d, (xp(amp) - 7, yp(scores[gi][k]) - 7,
+                                 xp(amp) + 7, yp(scores[gi][k]) + 7),
+                             fill=color, outline=(255, 255, 255), width=2)
 
         # 右下: このコマの判定は応答と閾値の比較から作る。
         d.rectangle((900, 400, 1259, 679), fill=(25, 35, 48), outline=(83, 96, 111))
