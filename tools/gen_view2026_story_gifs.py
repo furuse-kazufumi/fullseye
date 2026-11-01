@@ -22,7 +22,29 @@ import io
 import json
 from pathlib import Path
 
+import numpy as np
 from PIL import Image, ImageSequence
+
+try:
+    from tools.gen_view2026_thumbs import (
+        DOCS as THUMB_DOCS,
+        SIZE as THUMB_SIZE,
+        SPEC as THUMB_SPEC,
+        _contain_square,
+        _load as _load_thumb_source,
+        _square,
+        thumbnail_specs,
+    )
+except ModuleNotFoundError:  # ``py tools/gen_view2026_story_gifs.py``
+    from gen_view2026_thumbs import (  # type: ignore[no-redef]
+        DOCS as THUMB_DOCS,
+        SIZE as THUMB_SIZE,
+        SPEC as THUMB_SPEC,
+        _contain_square,
+        _load as _load_thumb_source,
+        _square,
+        thumbnail_specs,
+    )
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -40,6 +62,10 @@ MAX_FRAMES = 6
 COLOR_MAD_LIMIT = 6.0
 FIRST_MS = 2500
 OTHER_MS = 1600
+MIN_ASPECT = 0.60
+MAX_ASPECT = 1.67
+MIN_LAPLACIAN_DENSITY = 0.0005
+MIN_CONTENT_FRACTION = 0.36
 RASTER = {".png", ".jpg", ".jpeg", ".webp", ".bmp", ".tif", ".tiff"}
 EYE_CATCHERS = """poc_phase_measuring_deflectometry poc_industrial_oct
 poc_hyperspectral_foreign_matter poc_thin_film_reflectometry poc_cad_scan_deviation
@@ -122,14 +148,105 @@ def _cover_file(exhibit: dict, caption: dict, figures: list[dict], folder: Path)
     return first["file"] if first else None
 
 
-def _prepared_image(path: Path) -> Image.Image:
+def _prepared_image(path: Path, crop: list[int] | tuple[int, int, int, int] | None = None) -> Image.Image:
     with Image.open(path) as im:
         im = im.convert("RGB")
-        scale = min(1.0, WIDTH / im.width, CONTENT_HEIGHT / im.height)
-        if scale < 1.0:
-            size = (max(1, round(im.width * scale)), max(1, round(im.height * scale)))
+        if crop is not None:
+            x, y, w, h = crop
+            im = im.crop((x, y, x + w, y + h))
+        scale = min(WIDTH / im.width, CONTENT_HEIGHT / im.height)
+        size = (max(1, round(im.width * scale)), max(1, round(im.height * scale)))
+        if size != im.size:
             im = im.resize(size, Image.Resampling.LANCZOS)
         return im.copy()
+
+
+def _dense_crop(im: Image.Image) -> tuple[list[int] | None, float]:
+    """極端比率の図から、絶対値 Laplacian の総和が最大になる窓を選ぶ。"""
+    gray = np.asarray(im.convert("L"), dtype=np.int16)
+    h, w = gray.shape
+    lap = np.zeros((h, w), dtype=np.int32)
+    lap[1:-1, 1:-1] = np.abs(
+        4 * gray[1:-1, 1:-1] - gray[:-2, 1:-1] - gray[2:, 1:-1]
+        - gray[1:-1, :-2] - gray[1:-1, 2:]
+    )
+    if w / h > MAX_ASPECT:
+        crop_w = min(w, max(1, int(MAX_ASPECT * h)))
+        scores = np.convolve(lap.sum(axis=0, dtype=np.int64),
+                             np.ones(crop_w, dtype=np.int64), mode="valid")
+        x, y, crop_h = int(np.argmax(scores)), 0, h
+        score = int(scores[x])
+    elif w / h < MIN_ASPECT:
+        crop_h = min(h, max(1, int(w / MIN_ASPECT)))
+        scores = np.convolve(lap.sum(axis=1, dtype=np.int64),
+                             np.ones(crop_h, dtype=np.int64), mode="valid")
+        x, y, crop_w = 0, int(np.argmax(scores)), w
+        score = int(scores[y])
+    else:
+        return None, 0.0
+    density = score / (1020.0 * crop_w * crop_h)
+    return [x, y, crop_w, crop_h], density
+
+
+def _text_only_name(row: dict) -> bool:
+    """切り出すと列や文章の断片にしかならない明示的な表・数表を見分ける。"""
+    tokens = set(Path(row.get("file", "")).stem.lower().split("_"))
+    return bool(tokens & {"table", "numbers"})
+
+
+def _plan_rows(pid: str, rows: list[dict]) -> tuple[list[dict], list[dict]]:
+    """先頭にサムネ仕様を付け、以後の極端比率だけ内容の濃い窓へ切り出す。"""
+    specs, contained = thumbnail_specs()
+    by_id = {thumb_pid: (rel, frame, crop) for thumb_pid, rel, frame, crop in specs}
+    planned = [dict(rows[0])]
+    if pid in by_id:
+        rel, frame, crop = by_id[pid]
+        planned[0]["_thumbnail"] = {
+            "source": rel,
+            "frame": frame,
+            "crop": list(crop) if crop is not None else None,
+            "mode": "contain" if pid in contained else "square",
+            "rendered": "view2026/thumbs/%s.jpg" % pid,
+        }
+    excluded = []
+    for row in rows[1:]:
+        candidate = dict(row)
+        with Image.open(ASSETS / pid / row["file"]) as source:
+            ratio = source.width / source.height
+            crop, density = _dense_crop(source) if ratio < MIN_ASPECT or ratio > MAX_ASPECT else (None, 0.0)
+        if crop is not None and _text_only_name(row):
+            excluded.append({"file": row["file"], "reason": "crop_text_only",
+                             "source_aspect": round(ratio, 6)})
+            continue
+        if crop is not None and density < MIN_LAPLACIAN_DENSITY:
+            excluded.append({"file": row["file"], "reason": "crop_content_below_threshold",
+                             "source_aspect": round(ratio, 6),
+                             "laplacian_density": round(density, 8)})
+            continue
+        if crop is not None:
+            candidate["crop"] = crop
+            candidate["source_aspect"] = round(ratio, 6)
+            candidate["laplacian_density"] = round(density, 8)
+        planned.append(candidate)
+    return planned, excluded
+
+
+def _prepared_row(row: dict, folder: Path) -> Image.Image:
+    thumb = row.get("_thumbnail")
+    if thumb:
+        source = _load_thumb_source(THUMB_DOCS / thumb["source"], thumb["frame"])
+        if thumb["mode"] == "contain":
+            preview = _contain_square(source, THUMB_SIZE)
+        else:
+            preview = _square(source, thumb["crop"], THUMB_SIZE)
+        # JPEG 圧縮後のサムネそのものを拡大し、320 px に戻したときの色も揃える。
+        rendered = THUMB_DOCS / thumb["rendered"]
+        with Image.open(rendered) as saved:
+            saved = saved.convert("RGB")
+            if saved.size != preview.size:
+                raise ValueError("サムネイルの寸法が仕様と違う: %s" % rendered)
+            return saved.resize((WIDTH, HEIGHT), Image.Resampling.LANCZOS)
+    return _prepared_image(folder / row["file"], row.get("crop"))
 
 
 def _progress_dot(filled: bool, size: int = 11) -> Image.Image:
@@ -149,11 +266,14 @@ def _progress_dot(filled: bool, size: int = 11) -> Image.Image:
 
 
 def _render(rows: list[dict], folder: Path) -> tuple[list[Image.Image], list[dict]]:
-    pictures = [_prepared_image(folder / r["file"]) for r in rows]
+    pictures = [_prepared_row(r, folder) for r in rows]
     frames, meta = [], []
     for i, (row, picture) in enumerate(zip(rows, pictures)):
         canvas = Image.new("RGB", (WIDTH, HEIGHT), "white")
-        x, y = (WIDTH - picture.width) // 2, (CONTENT_HEIGHT - picture.height) // 2
+        if row.get("_thumbnail"):
+            x, y = (WIDTH - picture.width) // 2, (HEIGHT - picture.height) // 2
+        else:
+            x, y = (WIDTH - picture.width) // 2, (CONTENT_HEIGHT - picture.height) // 2
         canvas.paste(picture, (x, y))
         dot_size, gap = 11, 7
         strip_width = len(rows) * dot_size + (len(rows) - 1) * gap
@@ -162,7 +282,13 @@ def _render(rows: list[dict], folder: Path) -> tuple[list[Image.Image], list[dic
         for j in range(len(rows)):
             canvas.paste(_progress_dot(j <= i, dot_size), (dot_x + j * (dot_size + gap), dot_y))
         frames.append(canvas)
-        meta.append({"file": row["file"], "content_box": [x, y, picture.width, picture.height]})
+        item = {"file": row["file"], "content_box": [x, y, picture.width, picture.height]}
+        if row.get("crop") is not None:
+            item.update(crop=row["crop"], source_aspect=row["source_aspect"],
+                        laplacian_density=row["laplacian_density"])
+        if row.get("_thumbnail"):
+            item["thumbnail"] = row["_thumbnail"]
+        meta.append(item)
     return frames, meta
 
 
@@ -191,21 +317,27 @@ def _content_mads(decoded: list[Image.Image], meta: list[dict], folder: Path) ->
     out = []
     for frame, row in zip(decoded, meta):
         x, y, w, h = row["content_box"]
-        source = _prepared_image(folder / row["file"])
+        prepared = dict(row)
+        if "thumbnail" in prepared:
+            prepared["_thumbnail"] = prepared["thumbnail"]
+        source = _prepared_row(prepared, folder)
         out.append(_mad(source, frame.crop((x, y, x + w, y + h))))
     return out
 
 
-def _digest(rows: list[dict], folder: Path, lang: str, version: str = "story-v4-square") -> str:
+def _digest(rows: list[dict], folder: Path, lang: str, version: str = "story-v8-rendered-thumb") -> str:
     h = hashlib.sha256()
     h.update((lang + "|" + version + "|" + json.dumps(rows, ensure_ascii=False, sort_keys=True)).encode("utf-8"))
     for row in rows:
         h.update((folder / row["file"]).read_bytes())
+        if row.get("_thumbnail"):
+            h.update((THUMB_DOCS / row["_thumbnail"]["source"]).read_bytes())
+            h.update((THUMB_DOCS / row["_thumbnail"]["rendered"]).read_bytes())
     return h.hexdigest()
 
 
 def _write_gif(path: Path, rows: list[dict], folder: Path, lang: str,
-               old: dict | None) -> tuple[dict | None, str | None]:
+               old: dict | None) -> tuple[dict | None, str | None, list[dict]]:
     digest = _digest(rows, folder, lang)
     if (old and old.get("source_sha256") == digest and path.is_file() and
             [x.get("file") for x in old.get("frames", [])] == [x["file"] for x in rows] and
@@ -214,11 +346,11 @@ def _write_gif(path: Path, rows: list[dict], folder: Path, lang: str,
         if len(decoded) == len(rows) and all(x.size == (WIDTH, HEIGHT) for x in decoded):
             diffs = _content_mads(decoded, old["frames"], folder)
             if max(diffs, default=0.0) > COLOR_MAD_LIMIT:
-                return None, "color_mad_over_%.1f" % COLOR_MAD_LIMIT
+                return None, "color_mad_over_%.1f" % COLOR_MAD_LIMIT, rows
             old = dict(old); old.update(source_sha256=digest,
                                         color_mad=[round(x, 4) for x in diffs],
                                         max_color_mad=round(max(diffs, default=0.0), 4))
-            return old, None
+            return old, None, rows
     frames, meta = _render(rows, folder)
     blob = _encode(frames)
     while len(blob) > MAX_BYTES and len(rows) > 3:
@@ -227,18 +359,18 @@ def _write_gif(path: Path, rows: list[dict], folder: Path, lang: str,
         blob = _encode(frames)
         digest = _digest(rows, folder, lang)
     if len(blob) > MAX_BYTES:
-        return None, "capacity_over_2_5_mb"
+        return None, "capacity_over_2_5_mb", rows
     decoded = _decoded(blob)
     diffs = _content_mads(decoded, meta, folder)
     if len(decoded) != len(frames):
-        return None, "gif_frame_coalescing"
+        return None, "gif_frame_coalescing", rows
     if max(diffs, default=0.0) > COLOR_MAD_LIMIT:
-        return None, "color_mad_over_%.1f" % COLOR_MAD_LIMIT
+        return None, "color_mad_over_%.1f" % COLOR_MAD_LIMIT, rows
     path.write_bytes(blob)
     return {"path": path.relative_to(ROOT / "docs").as_posix(), "frames": meta,
             "frame_count": len(meta), "durations_ms": [FIRST_MS] + [OTHER_MS] * (len(meta) - 1),
             "bytes": len(blob), "color_mad": [round(x, 4) for x in diffs],
-            "max_color_mad": round(max(diffs, default=0.0), 4), "source_sha256": digest}, None
+            "max_color_mad": round(max(diffs, default=0.0), 4), "source_sha256": digest}, None, rows
 
 
 def main() -> int:
@@ -269,15 +401,33 @@ def main() -> int:
             entries[pid] = {**base, "reason": "two_or_fewer_raster_figures", "usable_figures": len(selected)}; continue
         if not selected:
             entries[pid] = {**base, "reason": "representative_not_a_static_figure"}; continue
+        selected, excluded_frames = _plan_rows(pid, selected)
+        if len(selected) <= 2:
+            for lang in ("ja", "en"):
+                path = folder / ("story.%s.gif" % lang)
+                if path.exists():
+                    path.unlink()
+            entries[pid] = {**base, "reason": "two_or_fewer_readable_frames_after_crop",
+                            "selected": [x["file"] for x in selected],
+                            "excluded_frames": excluded_frames,
+                            "usable_figures": len(selected)}
+            continue
         item = {**base, "selected": [x["file"] for x in selected],
-                "excluded_frames": [], "variants": {}}
+                "excluded_frames": excluded_frames, "variants": {}}
+        if selected[0].get("_thumbnail"):
+            item["thumbnail"] = selected[0]["_thumbnail"]
         failed = None
         for lang in ("ja", "en"):
             path = folder / ("story.%s.gif" % lang)
-            variant, reason = _write_gif(path, selected, folder, lang,
-                                         old.get(pid, {}).get("variants", {}).get(lang))
+            variant, reason, used = _write_gif(path, selected, folder, lang,
+                                               old.get(pid, {}).get("variants", {}).get(lang))
             if reason:
                 failed = reason; break
+            if len(used) < len(selected):
+                item["excluded_frames"].extend(
+                    {"file": row["file"], "reason": "capacity_limit"} for row in selected[len(used):])
+                selected = used
+                item["selected"] = [x["file"] for x in selected]
             item["variants"][lang] = variant
         if failed:
             for lang in ("ja", "en"):
@@ -296,10 +446,15 @@ def main() -> int:
                              "en": cap.get("lead_en") or cap.get("title_en") or exhibit["label"]["en"]})
         entries[pid] = item
     ledger = {"_": "Generated by tools/gen_view2026_story_gifs.py; do not edit.",
-              "schema": 2, "width": WIDTH, "height": HEIGHT, "max_bytes": MAX_BYTES,
+              "schema": 3, "width": WIDTH, "height": HEIGHT, "max_bytes": MAX_BYTES,
               "color_metric": "mean absolute RGB channel difference inside the source-image content box",
               "color_mad_limit": COLOR_MAD_LIMIT, "first_duration_ms": FIRST_MS,
-              "other_duration_ms": OTHER_MS, "target_count": len(targets), "entries": entries}
+              "other_duration_ms": OTHER_MS, "target_count": len(targets),
+              "crop_aspect_range": [MIN_ASPECT, MAX_ASPECT],
+              "crop_metric": "maximum summed absolute 4-neighbour Laplacian",
+              "min_laplacian_density": MIN_LAPLACIAN_DENSITY,
+              "min_content_fraction": MIN_CONTENT_FRACTION,
+              "manual_thumbnail_spec_count": len(THUMB_SPEC), "entries": entries}
     text = json.dumps(ledger, ensure_ascii=False, indent=2) + "\n"
     LEDGER.write_text(text, encoding="utf-8", newline="\n")
     made = sum(x["status"] == "gif" for x in entries.values())

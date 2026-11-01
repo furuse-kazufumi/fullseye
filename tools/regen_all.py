@@ -242,6 +242,7 @@ READS = {
     "tools/gen_capabilities_index.py": ["docs/OP_INDEX.json"],
     "tools/gen_wingpoc_gallery.py": ["docs/articles/exhibits/exhibit_numbers.json",
                                       "docs/articles/exhibits/glossary.json"],
+    "tools/gen_view2026_story_gifs.py": ["docs/articles/assets/poc/*_720.jpg"],
     "tools/gen_view2026_pages.py": ["docs/articles/exhibits/glossary.json",
                                       "docs/view2026/story_gifs.json"],
     "tools/gen_trust_block.py": ["docs/OP_INDEX.json", "docs/maturity.json",
@@ -840,7 +841,7 @@ def table_problems() -> list:
             probs.append("READS に鎖に無い段: %s" % s)
     for s, pats in READS.items():
         for rp in pats:
-            if not any(_overlap(rp, wp) for w, wps in OUTPUTS.items() if w != s for wp in wps):
+            if not any(_overlap(rp, wp) for w in scripts if w != s for wp in _all_outputs(w)):
                 probs.append("%s の READS %r は、どの(他の)段の出力でもない" % (s, rp))
     for s, pats in OUTPUTS.items():
         if not pats:

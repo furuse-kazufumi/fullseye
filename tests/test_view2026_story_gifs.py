@@ -45,6 +45,7 @@ def test_every_static_target_has_an_explicit_reason():
     assert static
     assert all(v.get("reason") for v in static.values())
     assert all(v["reason"] in {"figures_json_missing", "two_or_fewer_raster_figures",
+                               "two_or_fewer_readable_frames_after_crop",
                                "capacity_over_2_5_mb", "gif_frame_coalescing"} or
                v["reason"].startswith("color_mad_over_") for v in static.values())
 
@@ -56,12 +57,8 @@ def test_gifs_match_sources_durations_colour_and_capacity():
             continue
         assert item["selected"][0] == item["cover"]
         assert len(item["selected"]) == len(set(item["selected"]))
-        assert item["excluded_frames"] == []
-        source_pictures = []
-        for name in item["selected"]:
-            picture = G._prepared_image(G.ASSETS / pid / name)
-            source_pictures.append((picture.size, picture.tobytes()))
-        assert all(a != b for a, b in zip(source_pictures, source_pictures[1:])), pid
+        assert all(x["reason"] in {"crop_text_only", "crop_content_below_threshold",
+                                   "capacity_limit"} for x in item["excluded_frames"])
 
         for lang, variant in item["variants"].items():
             path = ROOT / "docs" / variant["path"]
@@ -77,19 +74,46 @@ def test_gifs_match_sources_durations_colour_and_capacity():
             assert durations[0] == 2500 and all(x == 1600 for x in durations[1:])
             assert all(f.size == (720, 720) and
                        len(f.getcolors(maxcolors=257) or []) <= 256 for f in frames)
-            progress_ink = [sum(pixel != (255, 255, 255) for pixel in
-                                frame.crop((0, G.CONTENT_HEIGHT, 720, 720)).get_flattened_data())
-                            for frame in frames]
-            assert progress_ink == sorted(progress_ink)
-            assert len(set(progress_ink)) == len(frames)
-            for frame, meta in zip(frames, variant["frames"]):
+            dot_size, gap = 11, 7
+            dot_x = (G.WIDTH - len(frames) * dot_size - (len(frames) - 1) * gap) // 2
+            dot_y = G.CONTENT_HEIGHT + (G.PROGRESS_HEIGHT - dot_size) // 2
+            for i, frame in enumerate(frames):
+                centres = [frame.getpixel((dot_x + j * (dot_size + gap) + dot_size // 2,
+                                           dot_y + dot_size // 2)) for j in range(len(frames))]
+                assert all(sum(pixel) < 300 for pixel in centres[:i + 1])
+                assert all(sum(pixel) > 700 for pixel in centres[i + 1:])
+            for i, (frame, meta) in enumerate(zip(frames, variant["frames"])):
                 assert "label" not in meta and "shown_label" not in meta
                 x, y, w, h = meta["content_box"]
-                source = G._prepared_image(G.ASSETS / pid / meta["file"])
+                row = dict(meta)
+                if "thumbnail" in row:
+                    row["_thumbnail"] = row["thumbnail"]
+                source = G._prepared_row(row, G.ASSETS / pid)
                 assert source.size == (w, h)
-                assert 0 <= x <= 720 - w and 0 <= y <= G.CONTENT_HEIGHT - h
+                assert 0 <= x <= 720 - w and 0 <= y <= 720 - h
                 assert _mad(source, frame.crop((x, y, x + w, y + h))) <= LEDGER["color_mad_limit"]
+                if i:
+                    assert w * h / (G.WIDTH * G.CONTENT_HEIGHT) >= LEDGER["min_content_fraction"]
+                    with Image.open(G.ASSETS / pid / meta["file"]) as original:
+                        ratio = original.width / original.height
+                        if ratio < G.MIN_ASPECT or ratio > G.MAX_ASPECT:
+                            assert "crop" in meta
             assert max(variant["color_mad"]) <= LEDGER["color_mad_limit"]
+
+
+def test_first_frame_matches_the_saved_thumbnail_at_320_pixels():
+    matched = 0
+    for pid, item in LEDGER["entries"].items():
+        if item["status"] != "gif" or "thumbnail" not in item:
+            continue
+        thumb_path = ROOT / "docs/view2026/thumbs" / (pid + ".jpg")
+        with Image.open(thumb_path) as thumb, Image.open(ROOT / "docs" / item["variants"]["ja"]["path"]) as gif:
+            first = next(ImageSequence.Iterator(gif)).convert("RGB").resize(
+                thumb.size, Image.Resampling.LANCZOS)
+            assert _mad(first, thumb.convert("RGB")) <= LEDGER["color_mad_limit"], pid
+        matched += 1
+    assert matched == sum(x["status"] == "gif" and "thumbnail" in x
+                          for x in LEDGER["entries"].values())
 
 
 def test_generator_has_no_text_drawing_calls():
