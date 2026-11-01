@@ -144,7 +144,7 @@
 
 **3,629 本の op ノート**(呼び出し方・型の契約・HALCON 対応・文献・来歴)と **69 本の族ガイド**があります。次元ごとの入口:
 
-**網羅の実測**: 進化 op 942/942、型つき台帳 2652/2664、1 行ファサード `fullseye.<名前>` 724/1510。**ファサード側はまだ半分**(残りは補助関数・クラス・再輸出モジュール)。
+**網羅の実測**: 進化 op 942/942、型つき台帳 2652/2664、1 行ファサード `fullseye.<名前>` 724/1514。**ファサード側はまだ半分**(残りは補助関数・クラス・再輸出モジュール)。
 
 **ノートの中身の実測**: 3629 本のうち、実行できる例が付いているのは **3595 本**(34 本は例ゼロ)、使い方の説明が 120 字以上あるのは **3428 本**(201 本は 1 行の要約だけ)。構造(呼び出し・型・次に繋がる op)は 3629 本すべてにある。
 
@@ -303,7 +303,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 <!-- docmap:start -->
 
-## ドキュメント地図 — 全 301 本
+## ドキュメント地図 — 全 303 本
 
 **索引から 1 本も辿れない文書を作らない**ための全体地図です(`docs/ops/` の op ノート 3,629 本と族ガイド 69 本は上の「オペレータを探す」から、記事は [articles/](articles/README.md) から辿れます)。到達できない文書が 1 本でもあれば `tests/test_docs_index_reachable.py` が落ちます。**本文はほとんどが日本語**です。
 
@@ -445,7 +445,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`ARTICLE_GPU_SHAPEMATCH.md`](ARTICLE_GPU_SHAPEMATCH.md) | 記事材料: 形状マッチングを GPU に載せる —— 勾配方向スコアの conv2d 定式化 |
 | [`FULLSEYE_OP_ARTICLE_SPEC.md`](FULLSEYE_OP_ARTICLE_SPEC.md) | Fullseye op カタログ画像・専用記事 仕様書(第 2 陣企画書) |
 
-**そのほか**(218)
+**そのほか**(220)
 
 | 文書 | 内容 |
 |---|---|
@@ -659,7 +659,9 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`literature/electron_microscopy.md`](literature/electron_microscopy.md) | 文献層: 電子顕微鏡の撮像と計測(厳選) |
 | [`literature/industrial_optical_sensing.md`](literature/industrial_optical_sensing.md) | 文献層: 工業用光学センシング(厳選) |
 | [`literature/sensitivity_uq_calibration.md`](literature/sensitivity_uq_calibration.md) | 文献層: 感度解析・不確かさ定量化・較正(厳選) |
+| [`view2026/about.md`](view2026/about.md) | Fullseye |
 | [`view2026/de/index.md`](view2026/de/index.md) | Fullseye — ViEW2026 |
+| [`view2026/en/about.md`](view2026/en/about.md) | Fullseye |
 | [`view2026/en/index.md`](view2026/en/index.md) | Fullseye — ViEW2026 |
 | [`view2026/fr/index.md`](view2026/fr/index.md) | Fullseye — ViEW2026 |
 | [`view2026/hi/index.md`](view2026/hi/index.md) | Fullseye — ViEW2026 |
