@@ -61,10 +61,12 @@ from exhibit_glossary import LEDGER as GLOSSARY_LEDGER, glossary_line, load_glos
 DOCS = ROOT / "docs"
 BASE = DOCS / "view2026"
 DATA = BASE / "exhibits.json"
+STORY_DATA = BASE / "story_gifs.json"
 GH_EXAMPLE = "%s/blob/master/examples/%s.py"
 QIITA = "https://qiita.com/furuse-kazufumi/items/"
 JA_MARK = "_(ja)_"                     # tools/i18n_status.py の印と同じ
 PIXEL = "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="
+STORIES = json.loads(STORY_DATA.read_text(encoding="utf-8"))["entries"] if STORY_DATA.is_file() else {}
 _KANA = re.compile(r"[぀-ヿ]")
 _GARBLE = re.compile(r"\ufffd|\?{3,}|(?<=\d)\?(?=\d)")
 _NUM = re.compile(r"\d+(?:\.\d+)?")
@@ -78,6 +80,8 @@ STYLE = """<style>
 @media (min-width: 900px) { .vg { grid-template-columns: repeat(4, minmax(0, 1fr)); } .vg.vs { grid-template-columns: repeat(7, minmax(0, 1fr)); } }
 .vg a, .vser a { display: block; position: relative; text-decoration: none; color: inherit; }
 .vg img { display: block; width: 100%; max-width: 100%; height: auto; aspect-ratio: 1 / 1; object-fit: cover; border-radius: 6px; background: #222; }
+.vg picture { display: block; width: 100%; aspect-ratio: 1 / 1; overflow: hidden; border-radius: 6px; background: #fff; }
+.vg picture img { height: 100%; aspect-ratio: auto; object-fit: contain; border-radius: 0; background: #fff; }
 .vg b { position: absolute; top: 6px; right: 6px; background: rgba(0,0,0,.6); color: #fff; font-size: 12px; padding: 1px 6px; border-radius: 9px; }
 .vg span { display: block; font-size: 13px; line-height: 1.3; margin-top: 3px; }
 .vg.vs span { font-size: 11px; }
@@ -140,6 +144,26 @@ def _glossary_inputs() -> tuple[dict, dict]:
 def _media_rel(d: dict, e: dict) -> str:
     """docs/ からの相対の図の経路。"""
     return e["media_path"] if e.get("media_path") else "%s/%s/%s" % (d["media_root"], e["id"], e["media"])
+
+
+def _representative_img(d: dict, e: dict, lang: str, up: str, docs: str,
+                        width: int, lazy_all: bool = False) -> str:
+    """台帳に GIF があればそれを使い、動きを減らす環境では元の代表図に戻す。"""
+    story = STORIES.get(e["id"], {})
+    if story.get("status") == "gif":
+        label_lang = "ja" if lang == "ja" else "en"
+        gif = docs + story["variants"][label_lang]["path"]
+        still = docs + story["still"]
+        alt = story["alt"][label_lang].replace('"', "&quot;")
+        return ('<picture><source media="(prefers-reduced-motion: reduce)" srcset="%s">'
+                '<img src="%s" alt="%s" loading="lazy" width="%d" height="%d"></picture>'
+                % (still, gif, alt, width, width))
+    alt = e["label"][lang].replace('"', "&quot;")
+    if lazy_all:
+        return '<img src="%s" data-src="%sthumbs/all/%s.jpg" alt="%s" width="%d" height="%d">' % (
+            PIXEL, up, e["id"], alt, width, width)
+    return '<img src="%sthumbs/%s.jpg" alt="%s" loading="lazy" width="%d" height="%d">' % (
+        up, e["id"], alt, width, width)
 
 
 def _source(d: dict, e: dict) -> str:
@@ -402,8 +426,8 @@ def build(d: dict, lang: str) -> str:
         lab = e["label"][lang]
         mark = "<b>&#9654;</b>" if e["motion"] else ""
         cap = "%s · %s" % (lab, _viewer_mb(d, e)) if _is_viewer(d, e) else lab
-        out.append('<a href="%s"><img src="%sthumbs/%s.jpg" alt="%s" loading="lazy" width="320" height="320">%s<span>%s</span></a>'
-                   % (media(e), up, e["id"], lab, mark, cap))
+        out.append('<a href="%s">%s%s<span>%s</span></a>'
+                   % (media(e), _representative_img(d, e, lang, up, docs, 320), mark, cap))
     out += ["</div>", ""]
 
     # 2. シリーズ記事
@@ -448,8 +472,8 @@ def build(d: dict, lang: str) -> str:
         for e in rows:
             lab = e["label"][lang]
             mark = "<b>&#9654;</b>" if e["motion"] else ""
-            cells.append('<a href="%s"><img src="%s" data-src="%sthumbs/all/%s.jpg" alt="%s" width="200" height="200">%s<span>%s</span></a>'
-                         % (media(e), PIXEL, up, e["id"], lab, mark, lab))
+            cells.append('<a href="%s">%s%s<span>%s</span></a>'
+                         % (media(e), _representative_img(d, e, lang, up, docs, 200, True), mark, lab))
         out += ['<details class="vall"><summary><b>%s</b> (%d)</summary>' % (g["name"][lang], len(rows)),
                 '<div class="vg vs">'] + cells + ["</div>", "</details>", ""]
     out += [LAZY, ""]

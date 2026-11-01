@@ -13,13 +13,13 @@
 | DICOM | `.dcm` | `volio.read_volume` | `volio.write_volume` | — | optional: SimpleITK, tifffile | `tests/test_public_api.py`<br>`tests/test_volio.py` | — |
 | DICOM | `.dicom` | `volio.read_volume` | `volio.write_volume` | — | optional: SimpleITK, tifffile | `tests/test_public_api.py`<br>`tests/test_volio.py` | — |
 | ASTM E57 | `.e57` | `fileio.e57_read` | `fileio.e57_write` | `e57_read`<br>`e57_write` | optional: pye57 | `tests/test_audit_file_formats.py`<br>`tests/test_fileio_e57.py` | `pye57` |
-| GIF | `.gif` | — | `examplefig.save_gif`<br>`projmap.save_gif`<br>`videocube.video_write_gif` | `video_write_gif` | optional: PIL, fullseye, mujoco | `tests/test_docs_index_reachable.py`<br>`tests/test_examplefig_gif.py`<br>+9 | — |
+| GIF | `.gif` | — | `examplefig.save_gif`<br>`projmap.save_gif`<br>`videocube.video_write_gif` | `video_write_gif` | optional: PIL, fullseye, mujoco | `tests/test_docs_index_reachable.py`<br>`tests/test_examplefig_gif.py`<br>+10 | — |
 | glTF | `.gltf` | `meshio_opt.read_gltf`<br>`meshio_opt.read_gltf_merged` | — | — | stdlib / core | `tests/test_mesh.py`<br>`tests/test_meshio_opt.py`<br>+1 | — |
 | Radiance HDR | `.hdr` | `volio.read_volume` | `specops.write_envi`<br>`volio.write_volume` | — | optional: SimpleITK, tifffile | `tests/test_public_api.py`<br>`tests/test_specops.py`<br>+2 | — |
 | IMG | `.img` | `volio.read_volume` | `specops.write_envi`<br>`volio.write_volume` | — | optional: SimpleITK, tifffile | `tests/test_public_api.py`<br>`tests/test_specops.py`<br>+3 | — |
 | JPEG | `.jpeg` | `raster.read_raster` | — | — | optional: cv2, imageio, tifffile | `tests/test_docs_index_reachable.py`<br>`tests/test_imgforensics.py`<br>+2 | — |
 | JPEG | `.jpg` | `raster.read_raster` | — | — | optional: cv2, imageio, tifffile | `tests/test_docs_index_reachable.py`<br>`tests/test_help_rendering.py`<br>+11 | — |
-| JSON | `.json` | `backends_auto.load_specs`<br>`fullseye.jsonio.load_json` | `fullseye.jsonio.save_json` | — | optional: cv2, skimage | `tests/test_accel_bridge.py`<br>`tests/test_accel_match.py`<br>+130 | — |
+| JSON | `.json` | `backends_auto.load_specs`<br>`fullseye.jsonio.load_json` | `fullseye.jsonio.save_json` | — | optional: cv2, skimage | `tests/test_accel_bridge.py`<br>`tests/test_accel_match.py`<br>+131 | — |
 | LAS | `.las` | `meshio_opt.read_las` | — | — | stdlib / core | `tests/test_backends.py`<br>`tests/test_coherent.py`<br>+6 | — |
 | M4V | `.m4v` | — | `video.write_video` | — | optional: PIL, imageio | `tests/test_gen_visionlab_video.py`<br>`tests/test_perf_batch20_2026_10_20.py`<br>+2 | — |
 | MetaImage | `.mha` | `volio.read_volume` | `volio.write_volume` | — | optional: SimpleITK, tifffile | `tests/test_public_api.py`<br>`tests/test_volio.py` | — |
