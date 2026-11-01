@@ -4,7 +4,7 @@ dim: annotate
 category: text
 in: text
 out: table
-examples: [annotate_gallery, annotate_paper_tour, poc_diabolo_model_and_vision]
+examples: [annotate_gallery, annotate_paper_tour, poc_diabolo_model_and_vision, poc_interferometry_step, poc_polarization_specular]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.8.1  # fullseye lib version this note was generated for
@@ -81,6 +81,8 @@ ValueError
 - [annotate_gallery](../../../../examples/annotate_gallery.py) — `py -3.11 examples/annotate_gallery.py`
 - [annotate_paper_tour](../../../../examples/annotate_paper_tour.py) — `py -3.11 examples/annotate_paper_tour.py`
 - [poc_diabolo_model_and_vision](../../../../examples/poc_diabolo_model_and_vision.py) — `py -3.11 examples/poc_diabolo_model_and_vision.py`
+- [poc_interferometry_step](../../../../examples/poc_interferometry_step.py) — `py -3.11 examples/poc_interferometry_step.py`
+- [poc_polarization_specular](../../../../examples/poc_polarization_specular.py) — `py -3.11 examples/poc_polarization_specular.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 
