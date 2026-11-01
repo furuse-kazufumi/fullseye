@@ -588,6 +588,7 @@ NOT_A_GENERATOR = {
     "tools/probe_studio_web/compare_outputs.py": "探針の照合。2 つの実行の出力を ULP で比べ、結果は引数の出力先へ。--ops-json で studio_lite/ops_subset.json(実測の台帳)を書くが、それは手で回して commit する(node + Pyodide が要り CI では作れない)。",
     "tools/probe_studio_web/build_proof.py": ("探針の証明ページを --out(repo の外)に組む(Pyodide 本体の複製 + repo 内モジュールの zip)。"
                                                "dist は repo に入れない。"),
+    "tools/mcp_agent_eval.py": "測定器(ローカル LLM に MCP ツールだけで課題を解かせ、真値で採点する)。LLM の応答で結果が変わり、出力は --output/--report の指定先(repo の外)。--validate-only は LLM なしの門で tests/test_mcp_agent_eval_tasks.py が回す。",
     "tools/check_fallback_parity.py": "門の実測(min 構成 = cv2/skimage/PIL なしで op が別の答えを返さないか、full と ULP 照合)。出力は一時 dir か --out の指定先で、repo の生成物は無い。",
     "tools/algo_gate.py": "門(algo 層の合否を出す)。出力は out/ へ。", "tools/mutation_probe.py": "門の実測。出力は指定先、一時変更は復元。",
     "gsviewer.py": "ライブラリ + CLI(fs.gs_viewer_html / gs_catalog_html)。呼び出し側が指定した出力先へ 1 つの HTML を書く道具で、repo の生成物ではない(公開ページの生成器は tools/build_gsplat_pages.py)。",
