@@ -41,7 +41,7 @@ claude mcp add fullseye -- py -3.11 -m fullseye.mcp
 set FULLSEYE_MCP_ROOT=C:\path\to\images;D:\more   (PowerShell: $env:FULLSEYE_MCP_ROOT = "...")
 ```
 
-## 最小プロファイルは10道具(opはデータとして検索する)
+## 最小プロファイル(opはデータとして検索する)
 
 op はデータで、tool は「探す・読む・読み込む・走らせる・観察する」の数個だけ。
 tool を 1,942 個並べると LLM の文脈を食い潰す(TheMCPCompany の実測: 18,000 tool は
@@ -50,15 +50,17 @@ retrieval 無しでは使えない)。
 | tool | 何をするか |
 |---|---|
 | `fullseye_search_ops` | 名前・HALCON 名・カテゴリ・次元の部分一致。返り値の `sources` が出どころ(index / registry / ledger / note / facade)、`by_sources` が層別の内訳 |
-| `fullseye_find_ops` | やりたいことの言葉(日本語・英語・中文 簡/繁・한국어・Deutsch・हिन्दी)で探す。op の要約 7 言語・名前・HALCON 名・型を BM25 で照合し、順位つきで要約(問い合わせの言語)とノートの場所を返す。同義語は拾わない |
-| `fullseye_plan` | have・want・goalから型付きDAGを返す。後ろ向きも同じ超グラフ探索器を使う |
+| `fullseye_find_ops` | やりたいことの言葉で探す。候補ごとに loader + pipeline の次呼び出し骨格を返す。直接0件なら業務表現の英語候補と型同義語で再検索し、`retry_queries` / `retry_ops` を同じ応答に載せる |
+| `fullseye_plan` | have・want・goalから型付きDAGを返す。「暗い欠陥」「照明むら」「細い傷」等がop説明に一致したときは、`evidence` に一致語・op・説明・固定加点を返す |
 | `fullseye_describe` | sort・op・族を1件だけ説明する |
 | `fullseye_op_cards` | 候補 op の短いカードを token 予算内で返す。カードの途中では切らない |
+| `fullseye_suggest_pipeline` | 検索候補が一意なときだけ、カードと検証済み一段pipeline案を一手で返す。曖昧なら`candidate_not_unique`で選ばない |
 | `fullseye_validate_pipeline` | op 名、型連鎖、a/b の範囲、段数を実行せず検査し、段番号つきの理由と候補を返す |
 | `fullseye_op_help` | op の知識層ノート(使い方・つまみ a/b の実効・HALCON 相当)+ 生成済みで実行が検証された図を `resource_link` で |
 | `fullseye_catalog_coverage` | カタログ 5 層の交差。検索がどれだけの機能を見えているか |
 | `fullseye_list_samples` | 同梱サンプル(来歴・ライセンスつき) |
 | `fullseye_load_image` | 画像 → ハンドル。画素は返さず、数値統計 + 判定 |
+| `fullseye_load_template` | 位置決め用の登録見本 → ハンドル。`fullseye_pipeline.template_handle`へ明示的に渡す |
 | `fullseye_load_stack` | 複数画像 → `images` / `seq<image>` / `polsweep` の束ハンドル |
 | `fullseye_apply` | ハンドルに op を 1 つ。出力ハンドル + 数値統計 + 判定 + 劣化台帳 |
 | `fullseye_pipeline` | op を順に。段ごとに記録、型連鎖は走らせる前に検査、strict は失敗段で停止 |
@@ -77,6 +79,29 @@ retrieval 無しでは使えない)。
 {"name":"fullseye_op_cards","arguments":{"names":["otsu","count_obj"]}}
 {"name":"fullseye_validate_pipeline","arguments":{"start_sort":"image","stages":[{"op":"otsu"},{"op":"count_obj"}]}}
 ```
+
+## 名前つき物理量・見本ハンドル・一手のpipeline案
+
+画素単位の窓、σ、半径は `params` の名前で渡す。対象と範囲は `param_specs.py` の
+op台帳 `MCP_PHYSICAL_PARAMS` から列挙され、現在は14 opである。例: `gaussian.sigma_px`
+は0.3〜3.0 px、`sk_rolling_ball.radius_px`は5〜25 px、top-hat系の`window_px`は
+3/5/7/9 px。範囲外や選択肢外はMCP境界で理由つき拒否し、丸めもclipもしない。
+
+```json
+{"name":"fullseye_pipeline","arguments":{"handle":"fullseye://img/<scene>","stages":[{"op":"gaussian","params":{"sigma_px":1.2}}]}}
+{"name":"fullseye_suggest_pipeline","arguments":{"query":"gaussian","start_sort":"image","goal_sort":"image"}}
+```
+
+位置決めopは見本を暗黙の状態から読まない。見本を読み、返ったハンドルを同じpipeline呼び出しに渡す。
+`ncc_locate` / `shape_locate`で`template_handle`を省くと`missing_template_handle`で停止する。
+
+```json
+{"name":"fullseye_load_template","arguments":{"path":"template.npy","vision":"none"}}
+{"name":"fullseye_pipeline","arguments":{"handle":"fullseye://img/<scene>","template_handle":"fullseye://img/<template>","stages":[{"op":"ncc_locate"}],"vision":"none"}}
+```
+
+ローカルで実際に動かす一式は [`examples/mcp_usability.py`](../examples/mcp_usability.py)。
+
 
 `find_ops` の `probe` は既定入力での試し実行結果である。
 失敗は「その入力では動かなかった」という選択材料であり、op 自体の故障とは断定しない。
@@ -251,5 +276,5 @@ Function Hijacking(tool 選択の乗っ取り ASR 70〜100 %)—— と、TRIZ �
 公開する計画入口は `fullseye_plan`、`fullseye_describe`、`fullseye_choose` の3つだけである。
 未計測の制約は推測で補わず、fail-closedの理由として返す。`tools/list` に
 `{"profile":"minimal"}` を渡すか、`FULLSEYE_MCP_PROFILE=minimal`を設定すると実行に必要な10道具を公開する。
-`docs/mcp_context_benchmark.json`を生成する実測では、全20道具が3,256トークン、最小10道具が1,458トークンである。
+`docs/mcp_context_benchmark.json`を生成する実測では、全22道具が3,539トークン、最小12道具が1,716トークンである。
 未検証の設計パターンと重複した計画入口はMCP一覧に出さない。

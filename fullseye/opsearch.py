@@ -61,6 +61,43 @@ _GERMAN = re.compile(r"[äöüß]|\b(?:der|die|das|und|nicht|mit|eines?|bild|kan
 
 _CACHE: dict = {}
 
+# Deterministic shop-floor vocabulary.  The Japanese terms come from the
+# docs/ops descriptions/synonym table; the canonical operator vocabulary is
+# also exercised by docs/ops/rag_benchmark.json.  A rule contributes a fixed
+# number of points and is returned verbatim as planning evidence.
+_GOAL_RULES = (
+    {"terms": ("暗い欠陥", "暗い傷", "dark defect", "dark flaw"),
+     "ops": ("bothat", "gray_bothat", "cv_blackhat"), "points": 80.0,
+     "description": "black/bottom-hat: 周囲より暗い小さな欠陥を抽出",
+     "source": "docs/ops/2d/morphology/bothat.md"},
+    {"terms": ("照明むら", "照明ムラ", "uneven illumination", "illumination gradient"),
+     "ops": ("sk_rolling_ball", "adaptive_gauss_thresh", "dyn_threshold"), "points": 80.0,
+     "description": "rolling-ball/background estimate: 緩やかな照明むらを背景として除去",
+     "source": "docs/ops/2d/smoothing/sk_rolling_ball.md"},
+    {"terms": ("細い傷", "細線", "thin scratch", "fine scratch"),
+     "ops": ("morph_grad", "lines_gauss", "canny"), "points": 80.0,
+     "description": "line/gradient response: 細い線状欠陥を強調",
+     "source": "docs/ops/2d/guides/gallery2d_contour_measure.md"},
+)
+
+
+def _goal_evidence(goal: str) -> dict[str, list[dict]]:
+    """Return fixed semantic boosts keyed by op, including auditable evidence."""
+    q = unicodedata.normalize("NFKC", str(goal or "")).lower()
+    out: dict[str, list[dict]] = {}
+    for rule in _GOAL_RULES:
+        matched = next((term for term in rule["terms"]
+                        if unicodedata.normalize("NFKC", term).lower() in q), None)
+        if not matched:
+            continue
+        for op in rule["ops"]:
+            out.setdefault(op, []).append({
+                "term": matched, "op": op, "field": "docs/ops description",
+                "matched_description": rule["description"],
+                "points": rule["points"], "source": rule["source"],
+            })
+    return out
+
 
 def _load_json(name: str) -> dict:
     """Load a non-op-list generated table, refusing missing or empty data."""
@@ -161,6 +198,9 @@ def _hypergraph_plans(starts: list[str], want: str, query: str, *, executable_on
     graph = _graph()
     score_rows = search_ops(query, k=len(graph["edges"]))["ops"]
     scores = {r["name"]: r["score"] for r in score_rows}
+    semantic = _goal_evidence(query)
+    for op, rows in semantic.items():
+        scores[op] = scores.get(op, 0.0) + sum(float(row["points"]) for row in rows)
     identities, groups = _identity_tables()
     # Search presents one representative per implementation, but planning
     # still needs the representative's relevance on every executable alias.
@@ -249,6 +289,8 @@ def _hypergraph_plans(starts: list[str], want: str, query: str, *, executable_on
         plans.append({"dag": {"stages": stages, "outputs": outputs},
                       "ops": [x["op"] for x in stages], "weight": round(root["cost"], 6),
                       "depth": root["depth"], "consumed_have": sorted(root["consumed"]),
+                      "evidence": [item for op in [x["op"] for x in stages]
+                                   for item in semantic.get(op, ())],
                       "difference": difference,
                       "line": "%s | %s -> %s" % (" -> ".join(x["op"] for x in stages),
                                                     ",".join(starts), want)})
@@ -526,6 +568,33 @@ def _with_probe(row: dict, probes: dict) -> dict:
     out["probe"] = probes.get(row["name"], {"status": "not_in_registry", "reason": "not executable by fullseye.apply"})
     return out
 
+
+def _next_call_skeleton(row: dict) -> str:
+    """One-line loader + executable pipeline skeleton for a search candidate."""
+    sort = normalize_sort(row.get("in_sort"))
+    op = row["name"]
+    if op in ("ncc_locate", "shape_locate"):
+        return ("fullseye_load_image(path=<scene>) + fullseye_load_template(path=<template>) -> "
+                "fullseye_pipeline(handle=<scene_handle>, template_handle=<template_handle>, "
+                "stages=[{\"op\":%r}])" % op)
+    if sort in ("seq<image>", "polsweep", "images"):
+        loader = "fullseye_load_stack(paths=[...], sort=%r)" % sort
+    elif sort in ("image", "color"):
+        loader = "fullseye_load_image(path=...)"
+    else:
+        loader = "obtain handle of sort %s" % (sort or "required input")
+    try:
+        edge = next((e for e in _graph()["edges"] if e["op"] == op), None)
+    except (FileNotFoundError, ValueError):
+        edge = None
+    inputs = list((edge or {}).get("inputs") or ([sort] if sort else []))
+    if len(inputs) <= 1:
+        stage = '{"op":%r}' % op
+        return "%s -> fullseye_pipeline(handle=<handle>, stages=[%s])" % (loader, stage)
+    refs = ["have:%s" % normalize_sort(s) for s in inputs]
+    stage = '{"op":%r,"inputs":%r}' % (op, refs)
+    return "%s -> fullseye_pipeline(bindings={<typed handles>}, stages=[%s])" % (loader, stage)
+
 #: 同じ言語の中の言い換え(手で書いた表、2026-10-07)。要約の 6 言語は**言語をまたぐ**対応は持っているが、
 #: 同じ言語の別の言い方(「檢測」と「偵測」、「校正」と「キャリブレーション」)は持たない。問い合わせにどれかが
 #: あれば残りを弱い重み(:data:`_W_SYNONYM`)で足す。表に無い言い換えは拾わない(``hint`` で案内する)。
@@ -544,6 +613,24 @@ SYNONYMS: tuple = (
     ("registration", "align", "alignment"),
 )
 _W_SYNONYM = 0.6
+
+# Failed shop-floor phrasings -> deterministic English retries.  Type names are
+# added separately below, so this table describes intent rather than topology.
+_BUSINESS_RETRIES = (
+    (("部品", "製品", "ワーク"), ("object", "component", "connected components")),
+    (("個数", "何個", "総数", "数えて", "員数"), ("count objects", "component count")),
+    (("領域化", "自動二値化"), ("automatic threshold", "segmentation")),
+    (("角点", "コーナー"), ("good corner features", "corner detection")),
+    (("偏光度", "線偏光度"), ("degree of linear polarization", "polarization dolp map")),
+    (("縞画像", "位相シフト"), ("phase shift fringe", "wrapped phase")),
+    (("登録見本", "見本"), ("template matching", "normalized correlation")),
+)
+
+_SORT_RETRY_TERMS = {
+    "image": "image grayscale", "color": "color image", "region": "binary region mask",
+    "seq<image>": "image sequence frames", "polsweep": "polarization sweep frames",
+    "feature": "feature points", "match": "match position", "depth": "depth height map",
+}
 
 #: ヒンディー語の機能語(後置詞・助動詞・代名詞)。どの要約にも出るので、残すと「का」1 語で 1,000 op が当たる
 #: (2026-10-07 実測: 「किनारे का पता लगाना」が 1,226 件・上位は無関係)。索引と問い合わせの両方から外す。
@@ -729,7 +816,8 @@ def _name_tables(rows: list) -> tuple[dict, dict]:
 
 
 def search_ops(query: str, k: int | None = None, *, lang: str | None = None, in_sort: str | None = None,
-               out_sort: str | None = None, dim: str | None = None, index_path: str | None = None) -> dict:
+               out_sort: str | None = None, dim: str | None = None, index_path: str | None = None,
+               _rescue: bool = True) -> dict:
     """``query``(:data:`LANGS` のどの言語でも)に合う op を順位つきで返す。
 
     返り: ``{"query", "lang", "total", "ops": [{"name", "dim", "category", "in_sort", "out_sort",
@@ -826,10 +914,12 @@ def search_ops(query: str, k: int | None = None, *, lang: str | None = None, in_
         probes = _probe_map()
     except (FileNotFoundError, ValueError):
         probes = {}
-    out = [_with_probe(r, probes) for r in out]
+    out = [dict(_with_probe(r, probes), next_call=_next_call_skeleton(r)) for r in out]
     hint = None
     alternatives = []
     conversion_paths = []
+    retry_queries: list[str] = []
+    retry_ops: list[dict] = []
     if not out:
         known = [t for t in q if t in idf]
         hint = ("どの語も索引に無い。別の言い方・英語・op 名の一部を試す" if not known else
@@ -850,14 +940,43 @@ def search_ops(query: str, k: int | None = None, *, lang: str | None = None, in_
                                                  "ops": [stage["op"] for stage in stages]})
                     if len(conversion_paths) == 2:
                         break
-    result = {"ok": bool(out), "reason": "operators found" if out else "no matching operator",
-            "next_tool": "fullseye_plan" if out else "fullseye_find_ops",
+        if _rescue:
+            fq = _fold(query)
+            for triggers, replacements in _BUSINESS_RETRIES:
+                if any(_fold(term) in fq for term in triggers):
+                    retry_queries.extend(replacements)
+            typed = " ".join(x for x in (_SORT_RETRY_TERMS.get(in_sort or ""),
+                                           _SORT_RETRY_TERMS.get(out_sort or "")) if x)
+            if typed:
+                retry_queries.append((query + " " + typed).strip())
+            retry_queries = list(dict.fromkeys(q for q in retry_queries if _fold(q) != fq))[:6]
+            seen = set()
+            for retry in retry_queries:
+                rr = search_ops(retry, k, lang=lang, in_sort=in_sort, out_sort=out_sort,
+                                dim=dim, index_path=index_path, _rescue=False)
+                for row in rr["ops"]:
+                    if row["name"] in seen:
+                        continue
+                    seen.add(row["name"])
+                    retry_ops.append(dict(row, retry_query=retry))
+                    if len(retry_ops) == k:
+                        break
+                if len(retry_ops) == k:
+                    break
+    result = {"ok": bool(out or retry_ops),
+            "reason": ("operators found" if out else
+                       "operators found by deterministic retry" if retry_ops else "no matching operator"),
+            "next_tool": "fullseye_plan" if (out or retry_ops) else "fullseye_find_ops",
             "query": query, "lang": show, "total": len(hits), "n_ops_indexed": ix["n_ops"],
             "ops": out, "hint": hint or "call fullseye_plan with the selected input/output sorts"}
     if alternatives:
         result["unfiltered_top"] = alternatives
     if conversion_paths:
         result["conversion_paths"] = conversion_paths
+    if retry_queries:
+        result["retry_queries"] = retry_queries
+    if retry_ops:
+        result["retry_ops"] = retry_ops
     return result
 
 
@@ -900,6 +1019,11 @@ def op_cards(names: list[str], budget_tokens: int = 500) -> dict:
     if not isinstance(budget_tokens, int) or budget_tokens < 1:
         raise ValueError("op_cards: budget_tokens must be a positive int")
     table = {r["name"]: r for r in _load_data(PKG_CARDS)["ops"]}
+    try:
+        from param_specs import mcp_physical_param_specs
+        physical = mcp_physical_param_specs()
+    except (ImportError, KeyError):
+        physical = {}
     import difflib
     edges={e["op"]:e for e in _graph()["edges"]}
     cards, missing = [], []
@@ -912,6 +1036,8 @@ def op_cards(names: list[str], budget_tokens: int = 500) -> dict:
                      "executable":bool(edge.get("executable")),
                      "executable_reason":edge.get("executable_reason"),
                      "parameters":edge.get("parameter_schema",[])})
+        if name in physical:
+            card["named_physical_parameters"] = physical[name]
         executor=edge.get("executor")
         if executor and executor.get("kind")=="python":
             card["python_call"]="%s.%s(%s)"%(executor["module"],executor["callable"],

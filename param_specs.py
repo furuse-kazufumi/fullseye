@@ -110,6 +110,14 @@ PARAM_SPECS: dict[str, dict[str, dict[str, Any]]] = {
                            "Gaussian σ = 0.3 + 2.7·a", "0.3 + 2.7 * a"),
                  "b": UNUSED},
     "mean_box": {"a": _kernel("box (uniform) filter size"), "b": UNUSED},
+    "mean_box_wh": {
+        "a": _spec("window width", "choice", choices=[str(x) for x in range(1, 16, 2)],
+                   unit="px", doc="odd horizontal window 1..15 px",
+                   source="1 + 2 * min(7, int(8 * a))"),
+        "b": _spec("window height", "choice", choices=[str(x) for x in range(1, 16, 2)],
+                   unit="px", doc="odd vertical window 1..15 px",
+                   source="1 + 2 * min(7, int(8 * b))"),
+    },
     "median": {"a": _kernel("median filter size"), "b": UNUSED},
     "min_filter": {"a": _kernel("minimum filter size"), "b": UNUSED},
     "max_filter": {"a": _kernel("maximum filter size"), "b": UNUSED},
@@ -228,6 +236,25 @@ PARAM_SPECS: dict[str, dict[str, dict[str, Any]]] = {
     "identity": {"a": UNUSED, "b": UNUSED},
     "ncc_locate": {"a": UNUSED, "b": UNUSED},
     "shape_locate": {"a": UNUSED, "b": UNUSED},
+    # ---- MCP physical-size entries (backend/alias ops) ----
+    # These are source-derived just like the core entries above.  Keeping them in
+    # this ledger lets every UI boundary enumerate the affected ops mechanically.
+    "sk_rolling_ball": {
+        "a": _int_floor("ball radius", 5, 25, "px",
+                        "rolling-ball background radius = 5 + int(20*a)",
+                        "5 + int(a * 20)"),
+        "b": UNUSED,
+    },
+    "cv_tophat": {"a": _spec("structuring window", "choice",
+                                choices=["3", "5", "7", "9"], unit="px",
+                                doc="elliptic top-hat window, 3/5/7/9 px",
+                                source="3 + 2 * int(a * 3)"), "b": UNUSED},
+    "cv_blackhat": {"a": _spec("structuring window", "choice",
+                                  choices=["3", "5", "7", "9"], unit="px",
+                                  doc="elliptic black-hat window, 3/5/7/9 px",
+                                  source="3 + 2 * int(a * 3)"), "b": UNUSED},
+    "gray_tophat": {"a": _kernel("rectangular white top-hat window"), "b": UNUSED},
+    "gray_bothat": {"a": _kernel("rectangular black top-hat window"), "b": UNUSED},
     # ---- volumes ----
     "vol_gaussian": {"a": _lin("blur " + _SIGMA, 0.3, 3.0, 0.01, "vx", "σ = 0.3 + 2.7·a", "0.3 + 2.7 * a"),
                      "b": UNUSED},
@@ -261,6 +288,37 @@ PARAM_SPECS: dict[str, dict[str, dict[str, Any]]] = {
                                  "b": _spec("8-connected", "bool", doc="off = 4-connected, on = 8 (b > 0.5)",
                                             source="2 if b > 0.5 else 1", true_if=">0.5")},
 }
+
+
+# Public MCP names for physical image-scale controls.  This is deliberately a
+# ledger, not a name-pattern heuristic: aliases and backend ops are included only
+# after their source formula and range have been entered in PARAM_SPECS above.
+# Consumers enumerate this table and obtain ranges/units from PARAM_SPECS.
+MCP_PHYSICAL_PARAMS: dict[str, dict[str, str]] = {
+    "gaussian": {"sigma_px": "a"},
+    "mean_box": {"window_px": "a"},
+    "mean_box_wh": {"window_width_px": "a", "window_height_px": "b"},
+    "gopen": {"window_px": "a"},
+    "gclose": {"window_px": "a"},
+    "tophat": {"window_px": "a"},
+    "bothat": {"window_px": "a"},
+    "gray_tophat": {"window_px": "a"},
+    "gray_bothat": {"window_px": "a"},
+    "cv_tophat": {"window_px": "a"},
+    "cv_blackhat": {"window_px": "a"},
+    "dyn_threshold": {"window_px": "a"},
+    "adaptive_gauss_thresh": {"sigma_px": "a"},
+    "sk_rolling_ball": {"radius_px": "a"},
+}
+
+
+def mcp_physical_param_specs() -> dict[str, dict[str, dict[str, Any]]]:
+    """Return the named MCP physical controls, enumerated from the op ledger."""
+    return {
+        op: {name: dict(PARAM_SPECS[op][knob], knob=knob)
+             for name, knob in names.items()}
+        for op, names in MCP_PHYSICAL_PARAMS.items()
+    }
 
 
 def hand_written_ops() -> list[str]:
