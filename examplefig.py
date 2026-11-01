@@ -121,7 +121,7 @@ def enabled() -> bool:
     return target_dir() is not None
 
 
-def figure_scale(scale=None) -> int:
+def _figure_scale(scale=None) -> int:
     """描画倍率を返す。``scale`` が無ければ :data:`ENV_SCALE`、さらに無ければ 2。
 
     現在の描画器は画素格子へ整数で配置するため、倍率も正の整数に限定する。誤った
@@ -755,7 +755,7 @@ def save_plot(name: str, series, xlabel: str = "", ylabel: str = "", title: str 
     try:
         img = render_plot(series, xlabel=xlabel, ylabel=ylabel, title=title or name, size=size,
                           xlim=xlim, ylim=ylim, kinds=kinds, styles=styles, colors=colors,
-                          aspect=aspect, scale=scale)
+                          aspect=aspect, scale=_figure_scale(scale))
         return save(name, img, caption, source=source)
     except Exception as exc:                            # noqa: BLE001
         _errors.append("%s(plot): %s: %s" % (name, type(exc).__name__, exc))
@@ -774,7 +774,9 @@ def render_plot(series, xlabel: str = "", ylabel: str = "", title: str = "", siz
     import fullseye as fs
     if not series:
         raise ValueError("render_plot: series is empty")
-    s = figure_scale(scale)
+    # 直接描画は Studio などの画面表示にも使うため等倍を既定にする。発表資料へ
+    # 保存する経路だけが FULLSEYE_FIGURE_SCALE を解決して明示的に渡す。
+    s = _figure_scale(1 if scale is None else scale)
     logical_w, logical_h = size
     w, h = logical_w * s, logical_h * s
     img = np.full((h, w, 3), 1.0)
@@ -919,11 +921,11 @@ def _column_widths(header, rows, col_w=None, scale=1) -> list[int]:
     return out
 
 
-def render_table(header, rows, title: str = "", col_w=None, row_h=24, scale=None):
+def _render_table(header, rows, title: str = "", col_w=None, row_h=24, scale=None):
     """表の画像だけを返す。寸法・文字・余白を同じ倍率で描く。"""
     import fullseye as fs
 
-    s = figure_scale(scale)
+    s = _figure_scale(1 if scale is None else scale)
     ncol = len(header)
     widths = _column_widths(header, rows, col_w, scale=s)
     xs = [14 * s + sum(widths[:j]) for j in range(ncol)]
@@ -967,8 +969,8 @@ def save_table(name: str, header, rows, title: str = "", caption: str = "",
     if target_dir() is None:
         return None
     try:
-        img = render_table(header, rows, title=title, col_w=col_w, row_h=row_h,
-                           scale=scale)
+        img = _render_table(header, rows, title=title, col_w=col_w, row_h=row_h,
+                            scale=_figure_scale(scale))
         path = save(name, img, caption)
         if path is not None:
             _write_table_data(path, header, rows)

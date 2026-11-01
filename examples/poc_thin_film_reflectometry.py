@@ -983,7 +983,7 @@ def make_figures(lam, chart, est, imgs, ident, micro, real):
                            "色の向きだけで照合するので、薄い側でも候補が増える。")
     # 6. 膜厚を振る GIF(スペクトル + 色)
     frames = []
-    figure_scale = figs.figure_scale()
+    figure_scale = figs._figure_scale()
     for d in np.linspace(0.0, 1500.0, 46):
         p = spectrum(d)
         plot = figs.render_plot([("R(λ)", p[:, 0], p[:, 1])], xlabel="波長 [nm]", ylabel="反射率",

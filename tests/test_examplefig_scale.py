@@ -52,9 +52,23 @@ def test_unchanged_save_plot_call_uses_default_scale_two(tmp_path, monkeypatch):
         assert image.size == (600, 400)
 
 
-def test_environment_can_select_scale_one(monkeypatch):
-    monkeypatch.setenv(figs.ENV_SCALE, "1")
-    assert figs.render_table(["name", "value"], [["a", "1"]]).shape[0] == 104
+def test_direct_renderers_stay_at_scale_one_when_environment_selects_two(monkeypatch):
+    monkeypatch.setenv(figs.ENV_SCALE, "2")
+    assert _plot(1).shape == figs.render_plot(
+        [("", [0, 1], [0, 1])], size=(560, 360)
+    ).shape
+    assert figs._render_table(["name", "value"], [["a", "1"]]).shape[0] == 104
+
+
+def test_saved_table_uses_environment_scale(tmp_path, monkeypatch):
+    monkeypatch.setenv(figs.ENV_DIR, str(tmp_path))
+    monkeypatch.setenv(figs.ENV_SCALE, "2")
+    figs.reset()
+    path = figs.save_table("scaled_table", ["name", "value"], [["a", "1"]])
+    assert path is not None
+    from PIL import Image
+    with Image.open(path) as image:
+        assert image.height == 208
 
 
 def test_grid_enlargement_uses_bicubic_not_pixel_repetition():
