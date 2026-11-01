@@ -38,8 +38,8 @@
 | NRRD | `.nrrd` | `fileio.nrrd_read`<br>`volio.read_volume` | `fileio.nrrd_write`<br>`volio.write_volume` | `nrrd_read`<br>`nrrd_write` | optional: SimpleITK, tifffile | `tests/test_fileio_scientific.py`<br>`tests/test_public_api.py`<br>+1 | `nrrd` |
 | Wavefront OBJ | `.obj` | `driveworld.read_obj_colored`<br>`fileio.mesh_read_obj`<br>`mesh.read_mesh`<br>`mesh.read_points` | `fileio.mesh_write_obj`<br>`mesh.write_mesh` | `mesh_read_obj`<br>`mesh_write_obj` | stdlib / core | `tests/test_abi_apply.py`<br>`tests/test_audit_0_7_1_fixes_2026_10_21.py`<br>+13 | `trimesh` |
 | Geomview OFF | `.off` | `fileio.mesh_read_off`<br>`mesh.read_mesh`<br>`mesh.read_points` | `fileio.mesh_write_off`<br>`mesh.write_mesh` | `mesh_read_off`<br>`mesh_write_off` | stdlib / core | `tests/test_audit_file_formats.py`<br>`tests/test_drivelateral.py`<br>+8 | `trimesh` |
-| OME-TIFF | `.ome.tif` | `fileio.ome_tiff_read` | `fileio.ome_tiff_write` | `ome_tiff_read`<br>`ome_tiff_write` | optional: tifffile | `tests/test_fileio_scientific.py` | `tifffile` |
-| OME-TIFF | `.ome.tiff` | `fileio.ome_tiff_read` | `fileio.ome_tiff_write` | `ome_tiff_read`<br>`ome_tiff_write` | optional: tifffile | `tests/test_fileio_scientific.py` | `tifffile` |
+| OME-TIFF | `.ome.tif` | `fileio.ome_tiff_read` | `fileio.ome_tiff_write` | `ome_tiff_read`<br>`ome_tiff_write` | optional: tifffile | `tests/test_fileio_scientific.py` | — |
+| OME-TIFF | `.ome.tiff` | `fileio.ome_tiff_read` | `fileio.ome_tiff_write` | `ome_tiff_read`<br>`ome_tiff_write` | optional: tifffile | `tests/test_fileio_scientific.py` | — |
 | PBM | `.pbm` | — | `imgio.save` | — | optional: PIL, cv2 | `tests/test_acquire.py`<br>`tests/test_acquire_contract.py`<br>+61 | — |
 | PCL PCD | `.pcd` | `mesh.read_points`<br>`meshio_opt.read_pcd` | — | — | optional: pypcd4 | `tests/test_mesh.py`<br>`tests/test_meshio_opt.py`<br>+2 | — |
 | PFM | `.pfm` | `raster.read_depth`<br>`raster.read_pfm`<br>`raster.read_raster` | `imgio.save`<br>`raster.write_pfm` | — | optional: PIL, cv2, imageio, tifffile | `tests/test_acquire.py`<br>`tests/test_acquire_contract.py`<br>+63 | — |
@@ -62,6 +62,6 @@
 
 ## 集計
 
-形式（拡張子） **54**、読みあり **43**、書きあり **45**、読み書き対 **34**、公開 op あり **22**、テストあり **54**、独立の読み手による検証あり **13**。
+形式（拡張子） **54**、読みあり **43**、書きあり **45**、読み書き対 **34**、公開 op あり **22**、テストあり **54**、独立の読み手による検証あり **11**。
 
 集計値も上表から生成しており、文書内に別の手書き件数は持たない。
