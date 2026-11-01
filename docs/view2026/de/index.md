@@ -484,7 +484,7 @@ Einige PoC-Beschreibungen sind auf Englisch.
 
 ## Alles ansehen
 
-283 PoCs und 5 Roboter-Demos. Eine Gruppe aufklappen lädt ihre Vorschaubilder.
+284 PoCs und 5 Roboter-Demos. Eine Gruppe aufklappen lädt ihre Vorschaubilder.
 
 <noscript><p><a href="../../GALLERY.en.html">(Ohne JavaScript stehen alle Abbildungen auf der Galerieseite.)</a></p></noscript>
 
@@ -503,7 +503,7 @@ Einige PoC-Beschreibungen sind auf Englisch.
 </div>
 </details>
 
-<details class="vall"><summary><b>Industrielle Prüfung</b> (50)</summary>
+<details class="vall"><summary><b>Industrielle Prüfung</b> (51)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_barcode_1d/01_misread_split.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_barcode_1d.jpg" alt="1-D-Barcode" width="200" height="200"><span>1-D-Barcode</span></a>
 <a href="../../articles/assets/poc/poc_battery_electrode_tortuosity/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_battery_electrode_tortuosity.jpg" alt="Elektroden-Tortuosität" width="200" height="200"><span>Elektroden-Tortuosität</span></a>
@@ -555,6 +555,7 @@ Einige PoC-Beschreibungen sind auf Englisch.
 <a href="../../articles/assets/poc/poc_wavefront_aberration_limits/01_aberration_limits.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_wavefront_aberration_limits.jpg" alt="Grenzen der Maréchal-Näherung je nach Aberrationsform" width="200" height="200"><span>Grenzen der Maréchal-Näherung je nach Aberrationsform</span></a>
 <a href="../../articles/assets/poc/poc_mueller_dofp_observability/01_observability.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_mueller_dofp_observability.jpg" alt="Sieben Mueller-Dimensionen, die eine Vier-Winkel-Polarisationskamera nicht sieht" width="200" height="200"><span>Sieben Mueller-Dimensionen, die eine Vier-Winkel-Polarisationskamera nicht sieht</span></a>
 <a href="../../articles/assets/poc/poc_slanted_edge_sfr_limits/01_sfr_limits.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_slanted_edge_sfr_limits.jpg" alt="Schrägkanten-SFR verfälscht MTF50 durch Gamma" width="200" height="200"><span>Schrägkanten-SFR verfälscht MTF50 durch Gamma</span></a>
+<a href="../../articles/assets/poc/poc_threshold_transfer_after_normalization/01_threshold_transfer.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_threshold_transfer_after_normalization.jpg" alt="Raw grey-level thresholds need retuning across lighting, while k-sigma and P-tile transfer" width="200" height="200"><span>Raw grey-level thresholds need retuning across lighting, while k-sigma and P-tile transfer</span></a>
 </div>
 </details>
 

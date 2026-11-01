@@ -499,7 +499,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## ぜんぶ見る
 
-PoC 283 本と、ロボットの例 5 本。グループを開くとサムネイルが出ます。
+PoC 284 本と、ロボットの例 5 本。グループを開くとサムネイルが出ます。
 
 <noscript><p><a href="../GALLERY.html">(JavaScript が無い環境では、ギャラリーのページで全部の図を見られます)</a></p></noscript>
 
@@ -518,7 +518,7 @@ PoC 283 本と、ロボットの例 5 本。グループを開くとサムネイ
 </div>
 </details>
 
-<details class="vall"><summary><b>産業検査</b> (50)</summary>
+<details class="vall"><summary><b>産業検査</b> (51)</summary>
 <div class="vg vs">
 <a href="../articles/assets/poc/poc_barcode_1d/01_misread_split.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_barcode_1d.jpg" alt="1 次元バーコード" width="200" height="200"><span>1 次元バーコード</span></a>
 <a href="../articles/assets/poc/poc_battery_electrode_tortuosity/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_battery_electrode_tortuosity.jpg" alt="電極の屈曲度" width="200" height="200"><span>電極の屈曲度</span></a>
@@ -570,6 +570,7 @@ PoC 283 本と、ロボットの例 5 本。グループを開くとサムネイ
 <a href="../articles/assets/poc/poc_wavefront_aberration_limits/01_aberration_limits.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_wavefront_aberration_limits.jpg" alt="収差の形で変わる Maréchal 近似の限界" width="200" height="200"><span>収差の形で変わる Maréchal 近似の限界</span></a>
 <a href="../articles/assets/poc/poc_mueller_dofp_observability/01_observability.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_mueller_dofp_observability.jpg" alt="4 方位偏光カメラに見えない Mueller 行列の 7 次元" width="200" height="200"><span>4 方位偏光カメラに見えない Mueller 行列の 7 次元</span></a>
 <a href="../articles/assets/poc/poc_slanted_edge_sfr_limits/01_sfr_limits.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_slanted_edge_sfr_limits.jpg" alt="斜めエッジ SFR はガンマで MTF50 を誤る" width="200" height="200"><span>斜めエッジ SFR はガンマで MTF50 を誤る</span></a>
+<a href="../articles/assets/poc/poc_threshold_transfer_after_normalization/01_threshold_transfer.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_threshold_transfer_after_normalization.jpg" alt="生の輝度しきい値は照明ごとに合わせ直すが、kσ と P-tile はそのまま移る" width="200" height="200"><span>生の輝度しきい値は照明ごとに合わせ直すが、kσ と P-tile はそのまま移る</span></a>
 </div>
 </details>
 

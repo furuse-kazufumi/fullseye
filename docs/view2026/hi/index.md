@@ -484,7 +484,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## सब कुछ देखें
 
-283 PoCs और 5 robot demos। group खोलने पर thumbnails load होते हैं।
+284 PoCs और 5 robot demos। group खोलने पर thumbnails load होते हैं।
 
 <noscript><p><a href="../../GALLERY.en.html">(JavaScript के बिना सभी figures gallery page पर हैं।)</a></p></noscript>
 
@@ -503,7 +503,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 </div>
 </details>
 
-<details class="vall"><summary><b>Industrial inspection</b> (50)</summary>
+<details class="vall"><summary><b>Industrial inspection</b> (51)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_barcode_1d/01_misread_split.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_barcode_1d.jpg" alt="1-D barcode" width="200" height="200"><span>1-D barcode</span></a>
 <a href="../../articles/assets/poc/poc_battery_electrode_tortuosity/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_battery_electrode_tortuosity.jpg" alt="Electrode tortuosity" width="200" height="200"><span>Electrode tortuosity</span></a>
@@ -555,6 +555,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../../articles/assets/poc/poc_wavefront_aberration_limits/01_aberration_limits.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_wavefront_aberration_limits.jpg" alt="विपथन के आकार के अनुसार Maréchal सन्निकटन की सीमा" width="200" height="200"><span>विपथन के आकार के अनुसार Maréchal सन्निकटन की सीमा</span></a>
 <a href="../../articles/assets/poc/poc_mueller_dofp_observability/01_observability.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_mueller_dofp_observability.jpg" alt="चार-कोण ध्रुवण कैमरा Mueller मैट्रिक्स के 7 आयाम नहीं देख पाता" width="200" height="200"><span>चार-कोण ध्रुवण कैमरा Mueller मैट्रिक्स के 7 आयाम नहीं देख पाता</span></a>
 <a href="../../articles/assets/poc/poc_slanted_edge_sfr_limits/01_sfr_limits.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_slanted_edge_sfr_limits.jpg" alt="तिरछी किनारी SFR गामा के कारण MTF50 गलत पढ़ती है" width="200" height="200"><span>तिरछी किनारी SFR गामा के कारण MTF50 गलत पढ़ती है</span></a>
+<a href="../../articles/assets/poc/poc_threshold_transfer_after_normalization/01_threshold_transfer.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_threshold_transfer_after_normalization.jpg" alt="Raw grey-level thresholds need retuning across lighting, while k-sigma and P-tile transfer" width="200" height="200"><span>Raw grey-level thresholds need retuning across lighting, while k-sigma and P-tile transfer</span></a>
 </div>
 </details>
 

@@ -474,6 +474,7 @@ with warnings.catch_warnings():
     from filters_flow import gen_gauss_bandpass, apply_bandpass  # noqa: E402,F401
     from gsplat_sugar import gaussians_to_mesh  # noqa: E402,F401  (open3d は呼んだときだけ要る)
     from imgio import ensure_gray, ensure_color  # noqa: E402,F401
+    from normalized_threshold import image_standardize_raw  # noqa: E402,F401
     from morph_minkowski import dilation2  # noqa: E402,F401
     from objmodel3d import get_bounding_box_object_model_3d  # noqa: E402,F401
     from photometric import normals_to_gradients, integrate_gradients  # noqa: E402,F401
@@ -866,7 +867,7 @@ __all__ = [
     "fallbacks", "fallback_counts", "fallback_overflow", "clear_fallbacks", "FullseyeFallbackWarning",
     "strict_mode", "set_match_template", "FAILED_BACKENDS", "ambiguous_aliases", "reset_gpu", "gpu_open_ops",
     "reset_fast", "fast_open_ops", "MissingBackendError", "MissingDependencyError",
-    "read_image", "write_image", "RT", "REGISTRY", "__version__", "version",
+    "read_image", "write_image", "image_standardize_raw", "RT", "REGISTRY", "__version__", "version",
     "stereo", "disparity_map", "disparity_subpixel", "lr_consistency",
     "depth_from_disparity", "reproject_to_points",
     "census_transform", "disparity_census", "disparity_sgm",

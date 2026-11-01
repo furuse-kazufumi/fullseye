@@ -76,6 +76,11 @@ EXAMPLES = [
      "name": "変換核の再利用と省メモリ処理を一緒に確かめる",
      "summary": "Hankel 核のキャッシュ、PIV 外れ値マスクの行分割、packed 10-bit pixel の low-memory 復号が各基準結果と一致することを確かめる。"},
     # -- PoC series(真値つきで実問題を解く。領域ごとの実証)------------------- #
+    {"id": "poc_threshold_transfer_after_normalization", "task": "segmentation", "data": "synthetic",
+     "name": "先に正規化すると、しきい値を別の照明・材質へ移せる",
+     "summary": "同じ欠陥を照明利得・オフセット・雑音・材質の明るさを変えて撮り、生の輝度しきい値と、"
+                "頑健標準化後の kσ・P-tile を比較する。基準画像で合わせたつまみの移植 IoU と、"
+                "IoU 0.98 に戻すまでの追加評価回数を全条件で数える。"},
     {"id": "poc_aoi_ct_traceability", "task": "metrology", "data": "synthetic",
      "name": "全数の表面像と抜き取り断層像を同じ接合部へ結ぶ",
      "summary": "緑の基板、配線、部品、環状照明を映す接合材、欠品・立ち・橋絡を 512 px の表面像にし、"

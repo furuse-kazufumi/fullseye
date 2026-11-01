@@ -1,0 +1,32 @@
+[
+ {
+  "file": "01_threshold_transfer.png",
+  "name": "threshold_transfer",
+  "caption": "基準像で決めた同じしきい値を移送した。利得・オフセット・材質変化では生のしきい値の二値像がほぼ白く崩れる一方、頑健標準化後の kσ は真値の輪郭を保つ。",
+  "shape": [
+   753,
+   1606,
+   3
+  ]
+ },
+ {
+  "file": "02_transfer_iou.png",
+  "name": "transfer_iou",
+  "caption": "基準像で選んだ値を各条件へそのまま移した結果。棒上の数値はIoU。",
+  "shape": [
+   1200,
+   2403,
+   3
+  ]
+ },
+ {
+  "file": "03_tuning_evaluations.png",
+  "name": "tuning_evaluations",
+  "caption": "基準像で選んだ値を各条件へそのまま移した結果。棒上の数値は評価回数。",
+  "shape": [
+   1200,
+   2160,
+   3
+  ]
+ }
+]

@@ -484,7 +484,7 @@ Certaines descriptions de PoC sont en anglais.
 
 ## Tout voir
 
-283 PoC et 5 exemples de robots. Ouvrez un groupe pour afficher ses vignettes.
+284 PoC et 5 exemples de robots. Ouvrez un groupe pour afficher ses vignettes.
 
 <noscript><p><a href="../../GALLERY.en.html">(Sans JavaScript, toutes les figures sont visibles sur la page de la galerie.)</a></p></noscript>
 
@@ -503,7 +503,7 @@ Certaines descriptions de PoC sont en anglais.
 </div>
 </details>
 
-<details class="vall"><summary><b>Inspection industrielle</b> (50)</summary>
+<details class="vall"><summary><b>Inspection industrielle</b> (51)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_barcode_1d/01_misread_split.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_barcode_1d.jpg" alt="Code-barres 1-D" width="200" height="200"><span>Code-barres 1-D</span></a>
 <a href="../../articles/assets/poc/poc_battery_electrode_tortuosity/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_battery_electrode_tortuosity.jpg" alt="Tortuosité des électrodes" width="200" height="200"><span>Tortuosité des électrodes</span></a>
@@ -555,6 +555,7 @@ Certaines descriptions de PoC sont en anglais.
 <a href="../../articles/assets/poc/poc_wavefront_aberration_limits/01_aberration_limits.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_wavefront_aberration_limits.jpg" alt="Limites de l'approximation de Maréchal selon la forme de l'aberration" width="200" height="200"><span>Limites de l'approximation de Maréchal selon la forme de l'aberration</span></a>
 <a href="../../articles/assets/poc/poc_mueller_dofp_observability/01_observability.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_mueller_dofp_observability.jpg" alt="Sept dimensions de Mueller invisibles pour une caméra de polarisation à quatre angles" width="200" height="200"><span>Sept dimensions de Mueller invisibles pour une caméra de polarisation à quatre angles</span></a>
 <a href="../../articles/assets/poc/poc_slanted_edge_sfr_limits/01_sfr_limits.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_slanted_edge_sfr_limits.jpg" alt="La SFR à bord incliné fausse le MTF50 à cause du gamma" width="200" height="200"><span>La SFR à bord incliné fausse le MTF50 à cause du gamma</span></a>
+<a href="../../articles/assets/poc/poc_threshold_transfer_after_normalization/01_threshold_transfer.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_threshold_transfer_after_normalization.jpg" alt="Raw grey-level thresholds need retuning across lighting, while k-sigma and P-tile transfer" width="200" height="200"><span>Raw grey-level thresholds need retuning across lighting, while k-sigma and P-tile transfer</span></a>
 </div>
 </details>
 

@@ -1,10 +1,10 @@
 {
- "n_ops": 3623,
+ "n_ops": 3626,
  "tiers": {
   "color": 12,
   "ledger": 2664,
   "nary": 17,
-  "registry": 930
+  "registry": 933
  },
  "sorts": [
   "angle",
@@ -38972,6 +38972,16 @@
    ]
   },
   {
+   "name": "image_standardize",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "gray",
+   "tier": "registry",
+   "module": "ops",
+   "requires": []
+  },
+  {
    "name": "img_to_beatcube",
    "halcon": "",
    "in_sort": "image",
@@ -40428,6 +40438,16 @@
    ]
   },
   {
+   "name": "ptile_threshold",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "feature",
+   "category": "segmentation",
+   "tier": "registry",
+   "module": "ops",
+   "requires": []
+  },
+  {
    "name": "quantization_error",
    "halcon": null,
    "in_sort": "image",
@@ -41221,6 +41241,16 @@
     "cv2",
     "skimage"
    ]
+  },
+  {
+   "name": "sigma_threshold",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "region",
+   "category": "segmentation",
+   "tier": "registry",
+   "module": "ops",
+   "requires": []
   },
   {
    "name": "sigmoid",

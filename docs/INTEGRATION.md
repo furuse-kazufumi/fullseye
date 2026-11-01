@@ -103,7 +103,7 @@ plain C ABI there are no per-language bindings to maintain: Python (`ctypes`,
 toolchains were actually run (clang, gcc/MinGW, MSVC, .NET SDK 9, LuaJIT 2.1, CPython 3.11
 as of 2026-09-15) rather than which ones exist.
 
-What this is **not**: it is not the Python library (3,623 operators in the machine-readable
+What this is **not**: it is not the Python library (3,626 operators in the machine-readable
 index) in another language. Its
 purpose is to be a *second implementation* of a small contract, so that a differential
 fuzzer and a header-including C caller can find specification bugs the Python tests cannot
@@ -114,7 +114,7 @@ language wins, and the losses were SIMD losses; see `CHANGELOG.md` 0.1.11.
 
 ### Every operator through one function: `fs_apply`
 
-**Every operator of the 2-D registry (942 single-input operators; the 959 2-D operators of the
+**Every operator of the 2-D registry (945 single-input operators; the 962 2-D operators of the
 index minus the 17 n-ary ones; those whose backend is installed) is reachable through
 `fs_apply`; the five contract operators also have a native route. Look at `route`.** The typed
 ledgers (2,664 operators whose inputs are point clouds, signals, tables …) and the n-ary

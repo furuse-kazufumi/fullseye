@@ -32,7 +32,7 @@ import time
 import unicodedata
 from collections import Counter
 
-__all__ = ["search_ops", "plan", "describe", "choose", "plan_chain", "op_cards", "choose_op", "required_inputs", "param_space",
+__all__ = ["search_ops", "plan", "describe", "choose", "plan_chain", "op_cards", "tuning_cards", "choose_op", "required_inputs", "param_space",
            "pipeline_shape", "pattern_skeleton", "sort_guide",
            "load_index", "tokenize", "detect_lang", "normalize_sort", "sort_aliases", "known_sorts", "LANGS", "main"]
 
@@ -44,6 +44,7 @@ PKG_PROBE = "OP_PROBE.json"
 PKG_GRAPH = "OP_GRAPH.json"
 PKG_FAMILIES = "OP_FAMILIES.json"
 PKG_SHAPES = "OP_SHAPES.json"
+PKG_TUNING = "TUNING_CARDS.json"
 _STEM = 6
 _K1, _B = 1.2, 0.75
 #: 場ごとの重み: 名前に入っている語は要約の語より強い手掛かり
@@ -326,9 +327,60 @@ def plan(have, want: str, direction: str = "forward", pattern: str | None = None
     if not solutions:
         return _result(False, "no executable typed path", hint="inspect blocked_at or broaden have", next_tool="find_ops",
                        have=starts, want=want, direction=direction, partial=meta, blocked_at=[want])
+    solutions = _normalized_threshold_alternative(solutions, starts, want, k, query)
+    cards = tuning_cards(query, [op for p in solutions for op in p.get("ops", ())], limit=3)
     return _result(True, "executable typed path found", next_tool="op_cards", have=starts, want=want,
                     goal=query, direction=direction, pattern=pattern, executable_only=executable_only,
-                    search=meta, plans=solutions)
+                    search=meta, plans=solutions, tuning_cards=cards)
+
+
+_RAW_GLOBAL_THRESHOLDS = frozenset({
+    "threshold", "otsu", "auto_threshold", "binary_threshold", "bin_threshold",
+    "cv_otsu", "sk_otsu", "sk_li", "sk_yen", "threshold_triangle",
+    "threshold_isodata", "threshold_kittler", "threshold_kapur",
+})
+
+
+def _normalized_threshold_alternative(solutions: list[dict], starts: list[str], want: str,
+                                      k: int, query: str = "") -> list[dict]:
+    """Replace the least-ranked near-duplicate with one explicit normalize→kσ route."""
+    if not solutions or "image" not in starts or want not in ("mask", "region"):
+        return solutions
+    query_words = set(_norm(query).split())
+    raw_threshold_request = "threshold" in query_words and bool(
+        query_words.intersection({"raw", "fixed", "global", "intensity"})
+    )
+    if not raw_threshold_request and not any(
+        _RAW_GLOBAL_THRESHOLDS.intersection(p.get("ops", ())) for p in solutions
+    ):
+        return solutions
+    if any("image_standardize" in p.get("ops", ()) for p in solutions):
+        return solutions
+    edges = {e["op"]: e for e in _graph()["edges"]}
+    standardize, threshold = edges.get("image_standardize"), edges.get("sigma_threshold")
+    if not standardize or not threshold or not standardize.get("verified_executable") or not threshold.get("verified_executable"):
+        return solutions
+    stages = [
+        {"id": "stage:1", "op": "image_standardize", "inputs": ["have:image"],
+         "in_sorts": standardize.get("inputs", ["image"]), "out_sort": standardize.get("output", "image"),
+         "params": {"method": "robust"}},
+        {"id": "stage:2", "op": "sigma_threshold", "inputs": ["stage:1"],
+         "in_sorts": threshold.get("inputs", ["image"]), "out_sort": threshold.get("output", want),
+         "params": {"k": 3.0, "polarity": "bright", "standardization": "none"}},
+    ]
+    alt = {"dag": {"stages": stages, "outputs": ["stage:2"]},
+           "ops": ["image_standardize", "sigma_threshold"],
+           "weight": round(max(float(p.get("weight", 0.0)) for p in solutions) + 0.001, 6),
+           "depth": 2, "consumed_have": ["image"],
+           "difference": "robust normalization, threshold in sigma units",
+           "alternative_kind": "normalized_threshold",
+           "line": "image_standardize -> sigma_threshold | image -> %s" % want}
+    out = list(solutions)
+    if len(out) >= k:
+        out[-1] = alt
+    else:
+        out.append(alt)
+    return out
 
 
 def describe(kind: str, name: str, budget_tokens: int = 800) -> dict:
@@ -1060,6 +1112,28 @@ def op_cards(names: list[str], budget_tokens: int = 500) -> dict:
                    if cards else 0)
     return {"cards": cards, "used_tokens": actual_tokens, "budget_tokens": budget_tokens,
             "truncated": len(cards) + len(missing) < len(names), "missing": missing}
+
+
+def tuning_cards(query: str, op_names: list[str] | None = None, limit: int = 3) -> list[dict]:
+    """Return sourced normalize-then-tune cards by deterministic token/op overlap."""
+    if not isinstance(query, str) or not query.strip():
+        return []
+    if not isinstance(limit, int) or limit < 1:
+        raise ValueError("tuning_cards: limit must be a positive int")
+    rows = _load_json(PKG_TUNING).get("cards") or []
+    q = set(tokenize(query))
+    names = set(op_names or ())
+    ranked = []
+    for row in rows:
+        text = " ".join(str(row.get(key, "")) for key in
+                        ("id", "situation", "normalization", "knob", "typical", "reference"))
+        overlap = len(q & set(tokenize(text)))
+        op_overlap = len(names & set(row.get("ops") or ()))
+        score = overlap + 4 * op_overlap
+        if score:
+            ranked.append((-score, row["id"], row))
+    ranked.sort(key=lambda item: (item[0], item[1]))
+    return [dict(row) for _score, _id, row in ranked[:limit]]
 
 
 def _format(res: dict) -> str:

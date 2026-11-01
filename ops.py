@@ -27,6 +27,7 @@ from typing import Callable, Optional
 
 import numpy as np
 from scipy import ndimage
+import normalized_threshold as _normalized_threshold
 
 from fslib import FsValueError
 
@@ -1391,6 +1392,54 @@ Raises:
     return (v > a).astype(np.float64)
 
 
+def _ptile_threshold(v, a, b):
+    """面積率で決める P-tile しきい値を feature として返す。
+
+``a`` を ``p = 0.001 + 0.998*a``（CDF の端を除く面積率）、``b < 0.5`` を明側、
+それ以外を暗側に写す。Doyle (1962) の順位統計であり、値域の利得・オフセットを
+つまみにしない。詳細な ``p`` と極性を名前付きで渡す公開 API は
+``fullseye.ledger.ptile_threshold``。
+
+**空入力は分布を持たないため拒否し、しきい値を捏造しない。**
+"""
+    p = 0.001 + 0.998 * float(np.clip(a, 0.0, 1.0))
+    polarity = "bright" if float(b) < 0.5 else "dark"
+    return _normalized_threshold.ptile_threshold(v, p=p, polarity=polarity)
+
+
+def _image_standardize(v, a, b):
+    """画像を標準化し、符号付き偏差を ``[0,1]`` の強度画像へ写す。
+
+``a`` の 3 帯が ``zscore`` / ``robust`` / ``percentile``。``b`` はクリップ幅を
+1〜6 尺度に写し、``-幅`` / ``+幅`` を 0 / 1、零偏差を 0.5 にする。百分位方式は
+1 / 99 % を使う。生の σ 単位は ``normalized_threshold.image_standardize_raw`` を使う。
+image sort が ``[0,1]`` を要求するため、登録 op は生の標準化値を返さない。
+
+**空入力は尺度を推定できないため拒否する。定数入力は全 0.5 を返す（理由: 偏差 0
+を符号付き強度表現の中立点へ写すため）。**
+"""
+    which = min(2, int(float(np.clip(a, 0.0, 1.0)) * 3.0))
+    method = ("zscore", "robust", "percentile")[which]
+    clip_sigma = 1.0 + 5.0 * float(np.clip(b, 0.0, 1.0))
+    return _normalized_threshold.image_standardize(
+        v, method=method, p_lo=1.0, p_hi=99.0, clip_sigma=clip_sigma)
+
+
+def _sigma_threshold(v, a, b):
+    """画像を頑健標準化し、``k = 2 + 3*a`` σで二値化する。
+
+``b`` の 3 帯が明側 ``x>k`` / 暗側 ``x<-k`` / 両側 ``|x|>k``。``image`` sort
+の入力は ``[0,1]`` 強度なので、この 2-D レジストリ版は中央値と 1.4826×MAD で
+内部標準化してから比較する。名前付き API は既に σ 単位の入力も直接扱える。
+
+**空入力は σ単位を検査できないため拒否し、空 region へ黙って落とさない。**
+"""
+    k = 2.0 + 3.0 * float(np.clip(a, 0.0, 1.0))
+    polarity = ("bright", "dark", "both")[min(2, int(float(np.clip(b, 0.0, 1.0)) * 3.0))]
+    return _normalized_threshold.sigma_threshold(
+        v, k=k, polarity=polarity, standardization="robust").astype(np.float64)
+
+
 def _otsu(v, a, b):
     """大津の判別分析法（Otsu's method）による自動しきい値処理。HALCON の ``binary_threshold``（Segment an image using binary thresholding.）に相当。
 
@@ -2365,6 +2414,9 @@ _DEFS = [
     ("local_thickness", "morphology", None, IMAGE, IMAGE, _local_thickness),
     # image -> region (segmentation)
     ("threshold", "segmentation", "threshold", IMAGE, REGION, _threshold),
+    ("ptile_threshold", "segmentation", "", IMAGE, FEATURE, _ptile_threshold),
+    ("image_standardize", "gray", "", IMAGE, IMAGE, _image_standardize),
+    ("sigma_threshold", "segmentation", "", IMAGE, REGION, _sigma_threshold),
     ("otsu", "segmentation", "binary_threshold", IMAGE, REGION, _otsu),
     ("dyn_threshold", "segmentation", "dyn_threshold", IMAGE, REGION, _dyn_threshold),
     # region -> region

@@ -32553,6 +32553,33 @@
    "ko": ":func:`table_write_csv`가 만든 단위 포함 CSV를 읽고 열, 단위, 메타데이터가 든 ``table``을 반환한다.",
    "de": "Liest das von :func:`table_write_csv` erzeugte CSV mit Einheiten und gibt eine ``table`` mit Spalten, Einheiten und Metadaten zurück.",
    "hi": ":func:`table_write_csv` से बने इकाई-सहित CSV को पढ़कर columns, units और metadata वाली ``table`` लौटाता है।"
+  },
+  "2d/ptile_threshold": {
+   "fp": "c942008d5261",
+   "en": "Returns a P-tile threshold chosen by area fraction as a feature.",
+   "zh": "将按面积比例选择的 P-tile 阈值作为特征返回。",
+   "tw": "將按面積比例選擇的 P-tile 閾值作為特徵回傳。",
+   "ko": "면적 비율로 정한 P-tile 임계값을 특징값으로 반환한다.",
+   "de": "Liefert einen über den Flächenanteil bestimmten P-Tile-Schwellwert als Merkmal.",
+   "hi": "area fraction से चुना गया P-tile threshold feature के रूप में लौटाता है।"
+  },
+  "2d/image_standardize": {
+   "fp": "81cfb456352b",
+   "en": "Standardises an image and maps signed deviations to an intensity image in ``[0,1]``.",
+   "zh": "对图像进行标准化，并将带符号偏差映射为 ``[0,1]`` 强度图像。",
+   "tw": "對影像進行標準化，並將帶符號偏差映射為 ``[0,1]`` 強度影像。",
+   "ko": "영상을 표준화하고 부호 있는 편차를 ``[0,1]`` 강도 영상으로 매핑한다.",
+   "de": "Standardisiert ein Bild und bildet vorzeichenbehaftete Abweichungen auf ein Intensitätsbild in ``[0,1]`` ab.",
+   "hi": "image को standardize करके signed deviations को ``[0,1]`` intensity image में map करता है।"
+  },
+  "2d/sigma_threshold": {
+   "fp": "9a83e56e5284",
+   "en": "Robustly standardises an image and binarises it at ``k = 2 + 3*a`` sigma.",
+   "zh": "对图像进行稳健标准化，并以 ``k = 2 + 3*a`` 个标准差二值化。",
+   "tw": "對影像進行穩健標準化，並以 ``k = 2 + 3*a`` 個標準差二值化。",
+   "ko": "영상을 강건하게 표준화하고 ``k = 2 + 3*a`` 시그마에서 이진화한다.",
+   "de": "Standardisiert ein Bild robust und binarisiert es bei ``k = 2 + 3*a`` Sigma.",
+   "hi": "image को robust ढंग से standardize करके ``k = 2 + 3*a`` sigma पर binarize करता है।"
   }
  }
 }

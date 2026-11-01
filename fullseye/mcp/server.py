@@ -1826,7 +1826,7 @@ def call_tool(name: str, args: Any, cat: Catalog, store: HandleStore | None = No
                        source=a.get("source"), limit=a.get("limit", 20))
         return tool_result(_search_text(r), r, max_structured_bytes=max_structured_bytes)
     if name == "fullseye_find_ops":
-        from fullseye.opsearch import _format, search_ops
+        from fullseye.opsearch import _format, search_ops, tuning_cards
         try:
             from fssystem import get_system
             total_limit = a.get("limit", get_system("find_ops_k"))
@@ -1842,6 +1842,7 @@ def call_tool(name: str, args: Any, cat: Catalog, store: HandleStore | None = No
         from fullseye.recipesearch import find_recipes
         r["recipes"] = find_recipes(a["query"], limit=recipe_limit, lang=a.get("lang"),
                                       in_sort=a.get("in_sort"), out_sort=a.get("out_sort"))
+        r["tuning_cards"] = tuning_cards(a["query"], [row["name"] for row in r["ops"]], limit=3)
         if a.get("detail"):
             text = _format(r)
             for recipe in r["recipes"]:

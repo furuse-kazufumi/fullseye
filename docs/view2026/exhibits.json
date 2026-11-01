@@ -19633,6 +19633,23 @@
    }
   },
   {
+   "id": "poc_threshold_transfer_after_normalization",
+   "group": "wing_industrial",
+   "media": "01_threshold_transfer.png",
+   "motion": false,
+   "thumb_src": "01_threshold_transfer.png",
+   "label": {
+    "ja": "生の輝度しきい値は照明ごとに合わせ直すが、kσ と P-tile はそのまま移る",
+    "en": "Raw grey-level thresholds need retuning across lighting, while k-sigma and P-tile transfer",
+    "zh": "Raw grey-level thresholds need retuning across lighting, while k-sigma and P-tile transfer",
+    "tw": "Raw grey-level thresholds need retuning across lighting, while k-sigma and P-tile transfer",
+    "ko": "Raw grey-level thresholds need retuning across lighting, while k-sigma and P-tile transfer",
+    "de": "Raw grey-level thresholds need retuning across lighting, while k-sigma and P-tile transfer",
+    "hi": "Raw grey-level thresholds need retuning across lighting, while k-sigma and P-tile transfer",
+    "fr": "Raw grey-level thresholds need retuning across lighting, while k-sigma and P-tile transfer"
+   }
+  },
+  {
    "id": "poc_star_tracker",
    "group": "wing_threed",
    "media": "star_tracker_anim3d.html",
