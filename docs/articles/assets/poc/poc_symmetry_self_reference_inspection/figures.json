@@ -24,20 +24,20 @@
  {
   "file": "03_rotational_order_noise.png",
   "name": "rotational_order_noise",
-  "caption": "n=2,3,4,6 × 3 条件の正答率 12/12。",
+  "caption": "n=2 は blur 6 px・noise 0.114 で低下（1未満 22 格子）；n=3 は blur 6 px・noise 0.114 で低下（1未満 22 格子）；n=4 は blur 6 px・noise 0.114 で低下（1未満 22 格子）；n=6 は blur 5 px・noise 0.000 で低下（1未満 27 格子）。",
   "shape": [
-   360,
-   560,
+   735,
+   1094,
    3
   ]
  },
  {
   "file": "04_symmetry_score_monotone.png",
   "name": "symmetry_score_monotone",
-  "caption": "5 段階すべてで隣接差が正。軸モデルは固定して比較した。",
+  "caption": "noise 0.010 では振幅 3.16 から検出；noise 0.025 では振幅 5.47 から検出；noise 0.050 では振幅 8.23 から検出。",
   "shape": [
    360,
-   560,
+   780,
    3
   ]
  }

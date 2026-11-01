@@ -116,13 +116,13 @@ A symmetric part agrees with its own reflected or rotated copy when defect-free.
 
 *↑ The measurement ―― 片側欠けではエッジ対中心 0.231 px、面積重心 3.171 px。欠け無しでは重心 0.041 px がエッジ対 0.305 px より精密。 (figure labels are in Japanese; the numbers are the same)*
 
-[![n=2,3,4,6 × 3 条件の正答率 12/12。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symmetry_self_reference_inspection/03_rotational_order_noise_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symmetry_self_reference_inspection/03_rotational_order_noise.png)
+[![n=2 は blur 6 px・noise 0.114 で低下（1未満 22 格子）；n=3 は blur 6 px・noise 0.114 で低下（1未満 22 格子）；n=4 は blur 6 p](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symmetry_self_reference_inspection/03_rotational_order_noise_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symmetry_self_reference_inspection/03_rotational_order_noise.png)
 
-*↑ n=2,3,4,6 × 3 条件の正答率 12/12。*
+*↑ n=2 は blur 6 px・noise 0.114 で低下（1未満 22 格子）；n=3 は blur 6 px・noise 0.114 で低下（1未満 22 格子）；n=4 は blur 6 px・noise 0.114 で低下（1未満 22 格子）；n=6 は blur 5 px・noise…*
 
-[![5 段階すべてで隣接差が正。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symmetry_self_reference_inspection/04_symmetry_score_monotone_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symmetry_self_reference_inspection/04_symmetry_score_monotone.png)
+[![noise 0.010 では振幅 3.16 から検出；noise 0.025 では振幅 5.47 から検出；noise 0.050 では振幅 8.23 から検出。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symmetry_self_reference_inspection/04_symmetry_score_monotone_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symmetry_self_reference_inspection/04_symmetry_score_monotone.png)
 
-*↑ 5 段階すべてで隣接差が正。*
+*↑ noise 0.010 では振幅 3.16 から検出；noise 0.025 では振幅 5.47 から検出；noise 0.050 では振幅 8.23 から検出。*
 
 ```
 py -3.11 examples/poc_symmetry_self_reference_inspection.py

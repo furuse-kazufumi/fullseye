@@ -730,6 +730,79 @@ def save_plot(name: str, series, xlabel: str = "", ylabel: str = "", title: str 
         return None
 
 
+def render_heatmap(values, xvalues, yvalues, xlabel: str = "", ylabel: str = "",
+                   vrange=(0.0, 1.0), boundary=None, size=(420, 300),
+                   cmap="turbo", colorbar_unit: str = ""):
+    """固定尺度のヒートマップを軸・目盛り・任意の白い境界線つきで描く。
+
+    ``boundary`` は ``values`` と同じ形の bool 配列。True/False が隣り合う
+    セル境界だけを白線で描く。小さな格子は最近傍で拡大し、存在しない中間値を
+    作らない。返り値は :func:`save_grid` のパネルとしてそのまま使える。
+    """
+    import fullseye as fs
+
+    z = np.asarray(values, dtype=np.float64)
+    xv = np.asarray(xvalues, dtype=np.float64).ravel()
+    yv = np.asarray(yvalues, dtype=np.float64).ravel()
+    if z.ndim != 2 or z.shape != (yv.size, xv.size):
+        raise ValueError("render_heatmap: values must have shape (len(yvalues), len(xvalues))")
+    if xv.size < 2 or yv.size < 2 or np.any(np.diff(xv) <= 0.0) or np.any(np.diff(yv) <= 0.0):
+        raise ValueError("render_heatmap: xvalues/yvalues must be strictly increasing with 2+ values")
+    if boundary is not None and np.asarray(boundary).shape != z.shape:
+        raise ValueError("render_heatmap: boundary must match values")
+    lo, hi = float(vrange[0]), float(vrange[1])
+    if not np.isfinite(z).all() or not lo < hi:
+        raise ValueError("render_heatmap: values and vrange must be finite, with lo < hi")
+
+    w, h = map(int, size)
+    # 8 x 7 程度の格子を整数倍できる描画域。余りは白い軸余白へ回す。
+    cell_w = max(1, (w - 100) // xv.size)
+    cell_h = max(1, (h - 76) // yv.size)
+    rw, rh = cell_w * xv.size, cell_h * yv.size
+    rect = (64, 14, rw, rh)
+    img = np.ones((h, w, 3), dtype=np.float64)
+    rgb = _to_rgb8(z, signed=False, gray=False, vrange=(lo, hi), cmap=cmap)
+    enlarged = np.repeat(np.repeat(rgb, cell_h, axis=0), cell_w, axis=1)
+    x0, y0, _, _ = rect
+    img[y0:y0 + rh, x0:x0 + rw] = enlarged.astype(np.float64) / 255.0
+
+    dx = float(np.median(np.diff(xv)))
+    dy = float(np.median(np.diff(yv)))
+    axes = fs.axes_transform(rect, (xv[0] - dx / 2.0, xv[-1] + dx / 2.0),
+                             (yv[0] - dy / 2.0, yv[-1] + dy / 2.0), invert_y=False)
+    img = np.asarray(fs.axes_frame(img, axes, width=1))
+    img = np.asarray(fs.ticks(img, axes, xticks=xv, yticks=[], label_fmt="{:.2f}",
+                              tick_len=4, font_size=11))
+    img = np.asarray(fs.ticks(img, axes, xticks=[], yticks=yv, label_fmt="{:.0f}",
+                              tick_len=4, font_size=11))
+
+    if boundary is not None:
+        b = np.asarray(boundary, dtype=bool)
+        # セル間で判定が変わる辺だけを描くので、等高線補間による架空の値を作らない。
+        for row in range(yv.size):
+            for col in range(xv.size - 1):
+                if b[row, col] != b[row, col + 1]:
+                    xx = 0.5 * (xv[col] + xv[col + 1])
+                    p0 = fs.data_to_pixel(axes, xx, yv[row] - dy / 2.0)
+                    p1 = fs.data_to_pixel(axes, xx, yv[row] + dy / 2.0)
+                    img = np.asarray(fs.draw_line(img, p0, p1, color=(1.0, 1.0, 1.0), width=3))
+        for row in range(yv.size - 1):
+            for col in range(xv.size):
+                if b[row, col] != b[row + 1, col]:
+                    yy = 0.5 * (yv[row] + yv[row + 1])
+                    p0 = fs.data_to_pixel(axes, xv[col] - dx / 2.0, yy)
+                    p1 = fs.data_to_pixel(axes, xv[col] + dx / 2.0, yy)
+                    img = np.asarray(fs.draw_line(img, p0, p1, color=(1.0, 1.0, 1.0), width=3))
+
+    foot = (xlabel + ("   |   " if xlabel and ylabel else "") + ylabel).strip()
+    if foot:
+        img = np.asarray(fs.text_box(img, foot, (10, h - 8), anchor="lb", font_size=12))
+    if colorbar_unit:
+        img = _append_colorbar(img, z, unit=colorbar_unit, cmap=cmap,
+                               signed=False, vrange=(lo, hi))
+    return img
+
+
 def render_plot(series, xlabel: str = "", ylabel: str = "", title: str = "", size=(560, 360),
                 xlim=None, ylim=None, kinds=None, styles=None, colors=None, aspect=None):
     """:func:`save_plot` の絵だけを返す(``(h, w, 3)`` float、[0, 1])。ファイルは書かない。

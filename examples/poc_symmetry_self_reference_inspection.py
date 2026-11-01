@@ -3,8 +3,8 @@
 
 合成部品へ対称な模様、線形照明むら、非対称欠陥を別々の式で植え、次の独立な量を
 検査する。(a) 鏡映差分の欠陥領域 / 模様領域の残差比、(b) 欠けた円板でのエッジ対中心
-と面積重心の真値誤差、(c) n=2,3,4,6 の回転次数を雑音・ぼけで振った正答率、(d) 欠陥
-振幅に対する対称性スコアの単調性。絵がもっともらしいことは合否に使わない。
+と面積重心の真値誤差、(c) n=2,3,4,6 の回転次数が雑音・ぼけで壊れる境界、(d) 欠陥
+振幅に対する対称性スコアが欠陥なしの雑音床を越える点。絵がもっともらしいことは合否に使わない。
 """
 from __future__ import annotations
 
@@ -99,46 +99,111 @@ def main():
                  "欠け無しでは重心 0.041 px がエッジ対 0.305 px より精密。"),
     )
 
-    print("\n=== C. 回転次数: 雑音・ぼけを振る ===")
+    print("\n=== C. 回転次数: 雑音・ぼけで壊れるまで掃く ===")
     orders = (2, 3, 4, 6)
-    conditions = ((0.0, 0.7), (0.01, 1.4), (0.025, 2.0))
-    series = [("真値", orders, orders)]
-    correct = 0
-    estimates = []
-    for noise, blur in conditions:
-        got = []
-        for order in orders:
-            out = fs.rotational_symmetry(rotor(order, noise, blur, order + int(100 * noise)),
-                                         max_order=8, score_threshold=0.18)
-            got.append(out["order"])
-            correct += int(out["order"] == order)
-        estimates.append(got)
-        label = f"noise={noise:.3f}, blur={blur:.1f}"
-        series.append((label, orders, got))
-        print(f"{label:24s}: 真値 {orders} -> 推定 {tuple(got)}")
-    accuracy = correct / (len(orders) * len(conditions))
-    print(f"正答率: {correct}/{len(orders) * len(conditions)} = {accuracy:.1%}")
-    figs.save_plot(
-        "rotational_order_noise", series, xlabel="真の回転次数 n", ylabel="推定次数",
-        title="極座標自己相関の次数推定", xlim=(1.5, 6.5), ylim=(1.5, 6.5),
-        styles=["dashed", None, None, None], colors=["reference", "emphasis", "right", "neutral"],
-        caption=f"n=2,3,4,6 × 3 条件の正答率 {correct}/{len(orders) * len(conditions)}。",
+    noises = np.linspace(0.0, 0.2, 8)
+    blurs = np.linspace(0.0, 6.0, 7)
+    seeds = range(5)
+    accuracy_maps = []
+    rotation_metrics = []
+    for order in orders:
+        rates = np.empty((len(blurs), len(noises)), dtype=float)
+        for blur_index, blur in enumerate(blurs):
+            for noise_index, noise in enumerate(noises):
+                correct = 0
+                for seed in seeds:
+                    # 格子・次数・seed の組から一意に決まる。実行順を変えても同じ像になる。
+                    trial_seed = 100000 * order + 1000 * blur_index + 10 * noise_index + seed
+                    out = fs.rotational_symmetry(
+                        rotor(order, float(noise), float(blur), trial_seed),
+                        max_order=8, score_threshold=0.18)
+                    correct += int(out["order"] == order)
+                rates[blur_index, noise_index] = correct / len(seeds)
+        accuracy_maps.append(rates)
+        failed = np.argwhere(rates < 1.0)
+        # 同じ noise なら小さい blur を先に選び、最初に観測した低下点を面下の文にする。
+        first = min(failed, key=lambda rc: (noises[rc[1]], blurs[rc[0]]))
+        first_blur, first_noise = float(blurs[first[0]]), float(noises[first[1]])
+        rotation_metrics.append((order, first_blur, first_noise, int(len(failed))))
+
+    def rotation_line(metric):
+        order, blur, noise, failed = metric
+        return f"n={order} は blur {blur:.0f} px・noise {noise:.3f} で低下（1未満 {failed} 格子）"
+
+    printed_rotation_caption = "；".join(rotation_line(m) for m in rotation_metrics) + "。"
+    rotation_caption = "；".join(rotation_line(m) for m in rotation_metrics) + "。"
+    print(printed_rotation_caption)
+    panels = [figs.render_heatmap(
+        rates, noises, blurs, xlabel="横: noise σ", ylabel="縦: blur σ [px]",
+        vrange=(0.0, 1.0), boundary=rates == 1.0, colorbar_unit="正答率")
+        for rates in accuracy_maps]
+    figs.save_grid(
+        "rotational_order_noise", panels,
+        captions=[rotation_line(m) for m in rotation_metrics], ncols=2,
+        title="回転次数の推定はどこで壊れるか", caption=rotation_caption,
     )
 
-    print("\n=== D. 対称性スコアの単調性 ===")
-    amplitudes = np.array([0.0, 0.1, 0.2, 0.3, 0.4])
+    print("\n=== D. 欠陥スコアが欠陥なしの雑音床を越える点 ===")
+    amplitudes = np.linspace(0.0, 10.0, 101)
     scores = []
     for amplitude in amplitudes:
         _, disturbed, _, _, _, model = inspection_scene(float(amplitude))
         scores.append(fs.symmetry_score(disturbed, model, detrend=True))
     scores = np.asarray(scores)
-    print("欠陥振幅:", " ".join(f"{x:.1f}" for x in amplitudes))
-    print("score   :", " ".join(f"{x:.9f}" for x in scores))
-    print("隣接差  :", " ".join(f"{x:.9f}" for x in np.diff(scores)))
+    noise_levels = (0.01, 0.025, 0.05)
+    noise_trials = 500
+    _, clean, _, _, _, model = inspection_scene(0.0)
+    floors = []
+    for noise_index, noise in enumerate(noise_levels):
+        null_scores = []
+        for seed in range(noise_trials):
+            rng = np.random.default_rng(30000 + 1000 * noise_index + seed)
+            noisy = np.clip(clean + rng.normal(0.0, noise, clean.shape), 0.0, 1.0)
+            null_scores.append(fs.symmetry_score(noisy, model, detrend=True))
+        floors.append(float(np.quantile(null_scores, 0.99)))
+
+    crossings = []
+    for floor in floors:
+        above = np.flatnonzero(scores >= floor)
+        assert len(above), "欠陥振幅の掃引が雑音床まで届いていない"
+        hi = int(above[0])
+        if hi == 0:
+            crossing = float(amplitudes[0])
+        else:
+            lo = hi - 1
+            crossing = float(amplitudes[lo] + (floor - scores[lo])
+                             * (amplitudes[hi] - amplitudes[lo])
+                             / (scores[hi] - scores[lo]))
+        crossings.append(crossing)
+
+    def detection_line(noise, crossing):
+        return f"noise {noise:.3f} では振幅 {crossing:.2f} から検出"
+
+    printed_detection_caption = "；".join(
+        detection_line(noise, crossing) for noise, crossing in zip(noise_levels, crossings)) + "。"
+    detection_caption = "；".join(
+        detection_line(noise, crossing) for noise, crossing in zip(noise_levels, crossings)) + "。"
+    print("99 % 雑音床:", " ".join(f"{floor:.6f}" for floor in floors))
+    print(printed_detection_caption)
+    plot_series = [("欠陥スコア", amplitudes, scores)]
+    plot_styles = [None]
+    plot_colors = ["emphasis"]
+    floor_colors = ("right", "wrong", "neutral")
+    for noise, floor, color in zip(noise_levels, floors, floor_colors):
+        plot_series.append((f"noise {noise:.3f} の99%床 {floor:.4f}",
+                            [amplitudes[0], amplitudes[-1]], [floor, floor]))
+        plot_styles.append("dashed")
+        plot_colors.append(color)
+    for noise, floor, crossing, color in zip(noise_levels, floors, crossings, floor_colors):
+        plot_series.append((f"noise {noise:.3f} → 振幅 {crossing:.2f}",
+                            [crossing, crossing], [0.0, floor]))
+        plot_styles.append("dotted")
+        plot_colors.append(color)
     figs.save_plot(
-        "symmetry_score_monotone", [("対称からの距離", amplitudes, scores)],
-        xlabel="欠陥振幅", ylabel="symmetry_score", title="乱れを増すとスコアは単調増加",
-        colors=["emphasis"], caption="5 段階すべてで隣接差が正。軸モデルは固定して比較した。",
+        "symmetry_score_monotone", plot_series,
+        xlabel="欠陥振幅", ylabel="symmetry_score", title="欠陥が雑音の床を越える振幅",
+        xlim=(0.0, 10.0), ylim=(0.0, max(scores[-1], max(floors)) * 1.05),
+        styles=plot_styles, colors=plot_colors, caption=detection_caption,
     )
 
     # Pictures are illustrative; these independent quantities decide PASS.
@@ -146,8 +211,11 @@ def main():
     assert 0.1 <= center_values["片側を欠く"][0] <= 0.3
     assert 3.0 <= center_values["片側を欠く"][1] <= 3.4
     assert center_values["欠け無し"][1] < center_values["欠け無し"][0]
-    assert accuracy == 1.0
+    assert all(np.count_nonzero(rates < 1.0) >= 1 for rates in accuracy_maps)
+    assert printed_rotation_caption == rotation_caption
     assert np.all(np.diff(scores) > 0.0)
+    assert len(floors) == len(crossings) == 3
+    assert printed_detection_caption == detection_caption
     if figs.errors():
         raise RuntimeError("図の書き出しに失敗: " + "; ".join(figs.errors()))
     print("\nPASS")
