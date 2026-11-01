@@ -115,6 +115,7 @@ def test_field_viewer_garbled_text_stops_generation() -> None:
     broken = copy.deepcopy(G.load())
     broken["field_viewers"]["items"][0]["title"]["ja"] = "???"
     bad = G.validate(broken)
+    assert bad, "文字化けした題を入れても validate が 0 件では門になっていない"
     assert any("field_viewers" in message and "文字化け" in message for message in bad)
 
 

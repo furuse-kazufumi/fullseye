@@ -31,7 +31,9 @@ def test_every_capability_doc_is_on_every_page():
     d = G.load()
     langs = d["langs"]
     assert langs[0] == "ja" and len(langs) >= 7   # 言語を足しても通る(ja が先頭、既存の 7 言語は残る)
-    for lang in [lang for lang in langs if lang not in ("ja", "en")]:
+    others = [lang for lang in langs if lang not in ("ja", "en")]
+    assert len(others) >= 5, others   # ja/en 以外の言語が消えると 0 周で通ってしまう
+    for lang in others:
         page = G.build(d, lang)
         missing = [c["id"] for c in caps if "capabilities/%s.md" % c["id"] not in page]
         assert not missing, "%s: 載っていない説明がある: %s" % (lang, missing)
