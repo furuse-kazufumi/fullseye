@@ -5,7 +5,7 @@ category: edges
 in: image
 out: image
 halcon: sobel_amp
-examples: [find_ops_by_meaning, gallery2d_edges]
+examples: [find_ops_by_meaning, gallery2d_edges, poc_real_sem_metal_layer]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.8.1  # fullseye lib version this note was generated for
@@ -65,6 +65,7 @@ sobel_mag 0.40 0.50
 
 - [find_ops_by_meaning](../../../../examples/find_ops_by_meaning.py) — `py -3.11 examples/find_ops_by_meaning.py`
 - [gallery2d_edges](../../../../examples/gallery2d_edges.py) — `py -3.11 examples/gallery2d_edges.py`
+- [poc_real_sem_metal_layer](../../../../examples/poc_real_sem_metal_layer.py) — `py -3.11 examples/poc_real_sem_metal_layer.py`
 
 ## 型が繋がる次の op(`image` を入力に取れる)
 

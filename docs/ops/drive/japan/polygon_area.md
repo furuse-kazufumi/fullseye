@@ -4,7 +4,7 @@ dim: drive
 category: japan
 in: any
 out: scalar
-examples: [poc_driving_school, poc_thermal_drift_metrology]
+examples: [poc_driving_school, poc_real_sem_metal_layer, poc_thermal_drift_metrology]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.8.1  # fullseye lib version this note was generated for
@@ -34,6 +34,7 @@ Raises:
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [poc_driving_school](../../../../examples/poc_driving_school.py) — `py -3.11 examples/poc_driving_school.py`
+- [poc_real_sem_metal_layer](../../../../examples/poc_real_sem_metal_layer.py) — `py -3.11 examples/poc_real_sem_metal_layer.py`
 - [poc_thermal_drift_metrology](../../../../examples/poc_thermal_drift_metrology.py) — `py -3.11 examples/poc_thermal_drift_metrology.py`
 
 ## 型が繋がる次の op(`scalar` を入力に取れる)

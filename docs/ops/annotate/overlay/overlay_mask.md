@@ -4,7 +4,7 @@ dim: annotate
 category: overlay
 in: image2d × mask
 out: image2d
-examples: [annotate_gallery, poc_kendama, poc_pv_thermal_survey]
+examples: [annotate_gallery, poc_kendama, poc_pv_thermal_survey, poc_real_sem_metal_layer]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.8.1  # fullseye lib version this note was generated for
@@ -53,6 +53,7 @@ ValueError
 - [annotate_gallery](../../../../examples/annotate_gallery.py) — `py -3.11 examples/annotate_gallery.py`
 - [poc_kendama](../../../../examples/poc_kendama.py) — `py -3.11 examples/poc_kendama.py`
 - [poc_pv_thermal_survey](../../../../examples/poc_pv_thermal_survey.py) — `py -3.11 examples/poc_pv_thermal_survey.py`
+- [poc_real_sem_metal_layer](../../../../examples/poc_real_sem_metal_layer.py) — `py -3.11 examples/poc_real_sem_metal_layer.py`
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)
 

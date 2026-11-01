@@ -484,7 +484,7 @@ Certaines descriptions de PoC sont en anglais.
 
 ## Tout voir
 
-283 PoC et 5 exemples de robots. Ouvrez un groupe pour afficher ses vignettes.
+284 PoC et 5 exemples de robots. Ouvrez un groupe pour afficher ses vignettes.
 
 <noscript><p><a href="../../GALLERY.en.html">(Sans JavaScript, toutes les figures sont visibles sur la page de la galerie.)</a></p></noscript>
 
@@ -558,7 +558,7 @@ Certaines descriptions de PoC sont en anglais.
 </div>
 </details>
 
-<details class="vall"><summary><b>Métrologie dimensionnelle et de forme</b> (55)</summary>
+<details class="vall"><summary><b>Métrologie dimensionnelle et de forme</b> (56)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_aoi_ct_traceability/01_inspection_and_reconstructed_ct.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_aoi_ct_traceability.jpg" alt="Appariement AOI et CT" width="200" height="200"><span>Appariement AOI et CT</span></a>
 <a href="../../articles/assets/poc/poc_asbuilt_wall_deviation/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_asbuilt_wall_deviation.jpg" alt="Déformation des murs construits" width="200" height="200"><span>Déformation des murs construits</span></a>
@@ -615,6 +615,7 @@ Certaines descriptions de PoC sont en anglais.
 <a href="../../articles/assets/poc/poc_simcal_telecentric/02_real_model_residuals.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_simcal_telecentric.jpg" alt="Étalonner un modèle d'imagerie sur une image télécentrique réelle" width="200" height="200"><span>Étalonner un modèle d'imagerie sur une image télécentrique réelle</span></a>
 <a href="../../articles/assets/poc/poc_robust_profile_filter/04_scratched_surface.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_robust_profile_filter.jpg" alt="De combien une rayure creuse la ligne moyenne, et où les filtres robustes cèdent" width="200" height="200"><span>De combien une rayure creuse la ligne moyenne, et où les filtres robustes cèdent</span></a>
 <a href="../../articles/assets/poc/poc_sem_tem_same_particle/08_tem_focus_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_sem_tem_same_particle.jpg" alt="Les mêmes particules en imagerie à balayage et en transmission" width="200" height="200"><b>&#9654;</b><span>Les mêmes particules en imagerie à balayage et en transmission</span></a>
+<a href="../../articles/assets/poc/poc_real_sem_metal_layer/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_real_sem_metal_layer.jpg" alt="Métrologie de couches métalliques en MEB réel" width="200" height="200"><span>Métrologie de couches métalliques en MEB réel</span></a>
 </div>
 </details>
 

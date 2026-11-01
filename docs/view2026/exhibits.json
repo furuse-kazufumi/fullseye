@@ -19649,6 +19649,23 @@
     "hi": "Estimate satellite attitude from a synthetic star image",
     "fr": "Estimate satellite attitude from a synthetic star image"
    }
+  },
+  {
+   "id": "poc_real_sem_metal_layer",
+   "group": "wing_metrology",
+   "media": "01_scene.png",
+   "motion": false,
+   "thumb_src": "01_scene.png",
+   "label": {
+    "ja": "実SEM金属配線の寸法計測",
+    "en": "Metrology on real SEM metal layers",
+    "zh": "真实 SEM 金属层测量",
+    "tw": "真實 SEM 金屬層量測",
+    "ko": "실제 SEM 금속층 계측",
+    "de": "Metrologie realer REM-Metallschichten",
+    "hi": "वास्तविक SEM धातु परत की मापिकी",
+    "fr": "Métrologie de couches métalliques en MEB réel"
+   }
   }
  ],
  "all_source": "docs/articles/exhibits/poc_captions.json",

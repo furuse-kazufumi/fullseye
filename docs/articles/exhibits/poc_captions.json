@@ -3316,6 +3316,22 @@
    "lead_en": ""
   },
   {
+   "id": "poc_real_sem_metal_layer",
+   "wing": "wing_device",
+   "added": "2026-11-01",
+   "figure": "scene",
+   "figure_caption_ja": "商用 128 nm IC の metal-2 BSE 像に、SVG から読んだ track 輪郭を緑、重複を除いた via 輪郭を赤で重ねた。",
+   "figure_caption_en": "A measured metal-2 BSE image of a commercial 128 nm IC, with SVG track outlines in green and deduplicated via outlines in red.",
+   "numbers_source": "log",
+   "title_ja": "実物 IC の SEM 像で配線幅とビアを測る ―― 仮想 SEM の縁補正は実機でも効くか",
+   "title_en": "Measuring Tracks and Vias in a Real IC SEM Image — Does the Virtual-SEM Edge Correction Transfer?",
+   "caption_ja": "Rothaug ほかの metal-2 SEM データ(14.65 nm/px、CC BY 4.0、DOI 10.17617/3.HY5SYN)10枚を使い、既存 op `svg_entities` と独立 XML reader の一致を門にした。初版の幅偏り −296.3 nm は、切り出しのざらついた縁から生えたスケルトンの枝をラベルと違う手続きで数えた計測誤りだった。生スケルトンの画素/主軸長はラベル 1.07 対切り出し 6.80、端点中央は 2 対 46。ラベル中心線の両端と曲がり角を除いた 47,271 断面を両方に同じ手続きで当てると、ラベル p10/50/90 = 293.0/380.9/536.2 nm、Otsu 切り出し 263.7/351.6/519.0 nm、偏り −14.6 nm。同一中心線の距離変換幅とも 1 px 以内で一致した。端切れ track 領域も ROI から除くと Otsu の IoU 中央 0.819、境界距離平均 58.1 nm。図 02 下端の帯は画像端へ続く不完全ラベルで、橙で採点除外を明示した。欠陥は重複 via 1,740、端切れ via 112、端切れ track 1,239、未ラベル端成分 51、部分欠け 7。PSF 補正を独立性で分けると、切り出し自身の境界だけを使うラベル不使用は −14.6 → −7.8 nm(絶対偏り46.9 %縮小)、10枚を5/5に入れ替える分割検証は −14.6 → −0.5 nm。ただし前半5枚から求めた補正は −1.4 nm、後半5枚からは −17.8 nm で、画像の組による差が大きい。同一画像・同一ラベルで求めた −14.6 → +3.1 nmは循環する参考値に隔離した。15 keV BSE・14.65 nm標本・真幅350 nmを入れた仮想 SEM の Cu/Si 代理断面は −10.5 nmを予測し実測との差は +4.2 nmだが、材料・配線高さ・側壁角・ビーム径は不明で、平坦な埋込 metal-2 も模型外なので一致とはしない。via は TP/FP/FN = 5,604/124/361、適合率 0.978、再現率 0.939。データはrepo外に置き、CIでは6.4 GBを取得しない。",
+   "caption_en": "Ten measured metal-2 SEM images from Rothaug et al. (14.65 nm/px, CC BY 4.0, DOI 10.17617/3.HY5SYN) are admitted only after the existing `svg_entities` operator agrees with an independent XML reader. The original -296.3 nm width bias was a measurement error: ragged extraction edges created many skeleton branches, so the extraction and label were not measuring the same quantity. Raw skeleton pixels per major-axis length are 1.07 for labels versus 6.80 for extractions, and median endpoint counts are 2 versus 46. Re-measuring both masks at the same 47,271 cross-sections along the label centerline, excluding ends and corners, gives label width p10/50/90 of 293.0/380.9/536.2 nm and Otsu extraction width of 263.7/351.6/519.0 nm, a -14.6 nm median bias. A same-centerline distance-transform method agrees within 1 px. Excluding border-clipped label regions from the ROI as well as the truth gives Otsu median IoU 0.819 and mean boundary distance 58.1 nm. The bottom band in Figure 02 is an incomplete label continuing to the image edge and is shown in orange as excluded. The audit counts 1,740 duplicate vias, 112 border vias, 1,239 clipped tracks, 51 wholly missing border components, and 7 partial border-label gaps. Separating the PSF evaluation by independence, the label-free estimate from the extraction's own boundary changes the bias from -14.6 to -7.8 nm, reducing absolute bias by 46.9%; two-way 5/5 image cross-validation gives -0.5 nm, although the correction estimated from the first five images (-1.4 nm) and from the last five (-17.8 nm) differ widely. The -14.6 to +3.1 nm same-image result uses the same image and label to estimate and score the correction, so it is retained only as a circular reference. A virtual-SEM proxy at 15 keV BSE, 14.65 nm sampling, and 350 nm true width predicts -10.5 nm, 4.2 nm from the measured bias. This is not validation: the Cu/Si material pair, 40 nm height, 88-degree sidewall, and 1 nm beam sigma are assumptions, while the model cannot represent the flat embedded metal-2 material boundary. Via TP/FP/FN is 5,604/124/361, precision 0.978 and recall 0.939. The 6.4 GB archive stays outside the repository and CI does not download it.",
+   "run": "py -3.11 examples/poc_real_sem_metal_layer.py",
+   "lead_ja": "",
+   "lead_en": ""
+  },
+  {
    "id": "poc_si_wafer_pl_defect_visibility",
    "wing": "wing_industrial",
    "added": "2026-10-13",

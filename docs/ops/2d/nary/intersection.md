@@ -5,7 +5,7 @@ category: nary
 in: region × region
 out: region
 halcon: intersection
-examples: [gallery_nary_image_algebra, poc_battery_electrode_tortuosity, poc_connectome_across_decades, poc_connectome_across_worms, poc_driving_crossing, poc_driving_japan_town, poc_driving_pass, poc_driving_school, poc_driving_town, poc_worm_neurites_grow]
+examples: [gallery_nary_image_algebra, poc_battery_electrode_tortuosity, poc_connectome_across_decades, poc_connectome_across_worms, poc_driving_crossing, poc_driving_japan_town, poc_driving_pass, poc_driving_school, poc_driving_town, poc_real_sem_metal_layer, poc_worm_neurites_grow]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.8.1  # fullseye lib version this note was generated for
@@ -37,6 +37,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - [poc_driving_pass](../../../../examples/poc_driving_pass.py) — `py -3.11 examples/poc_driving_pass.py`
 - [poc_driving_school](../../../../examples/poc_driving_school.py) — `py -3.11 examples/poc_driving_school.py`
 - [poc_driving_town](../../../../examples/poc_driving_town.py) — `py -3.11 examples/poc_driving_town.py`
+- [poc_real_sem_metal_layer](../../../../examples/poc_real_sem_metal_layer.py) — `py -3.11 examples/poc_real_sem_metal_layer.py`
 - [poc_worm_neurites_grow](../../../../examples/poc_worm_neurites_grow.py) — `py -3.11 examples/poc_worm_neurites_grow.py`
 
 ## 型が繋がる次の op(`region` を入力に取れる)
