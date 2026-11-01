@@ -245,6 +245,8 @@ def validate(d: dict) -> list[str]:
             if src is None or src.get("numbers_source") != e["numbers_source"]:
                 bad.append("%s: 台帳の numbers_source と一致しない —— build_view2026_featured_batch.py を再実行すること" % pid)
             else:
+                if "ops" in e and src.get("ops") != e["ops"]:
+                    bad.append("%s: 台帳の ops と一致しない —— build_view2026_featured_batch.py を再実行すること" % pid)
                 for l in langs:
                     expected = src["caption_ja" if l == "ja" else "caption_en"]
                     got = e["see"][l] + e["num"][l]
@@ -380,7 +382,12 @@ def build(d: dict, lang: str) -> str:
         sw.append("**%s**" % name if l == lang else
                   "[%s](%s)" % (name, up + ("index.md" if l == "ja" else l + "/index.md")))
     out = ['<div class="vlang" markdown="1">', "", " · ".join(sw), "", "</div>", "",
-           "# Fullseye — ViEW2026", "", ui["tagline"], "", ui["tap"], "", STYLE, ""]
+           "# Fullseye — ViEW2026", "", ui["tagline"], "", ui["tap"], ""]
+    if lang == "ja":
+        out += ["[Fullseye とは(読み物)](about.md)", ""]
+    elif lang == "en":
+        out += ["[About Fullseye (reading)](about.md)", ""]
+    out += [STYLE, ""]
     if lang == "ja":
         # 送り先の言語は exhibits.json の langs から(zh / tw は上の行で別に分ける)。
         out += [REDIRECT.replace("@LATIN@", "|".join(
@@ -472,6 +479,9 @@ def build(d: dict, lang: str) -> str:
             out.append("- [%s](%s) (%s): %s" % (
                 e["label"][lang], media(e), kind, e["lead"][lang]))
             out.append("  %s%s%s" % (e["see"][lang], num, link + youtube))
+            if lang in ("ja", "en") and e.get("ops"):
+                label = "使った Fullseye の op" if lang == "ja" else "Fullseye ops used"
+                out.append("  %s: %s" % (label, " · ".join("`%s`" % op for op in e["ops"])))
             source_exhibit = glossary_ledger.get(e["id"])
             term_line = glossary_line(source_exhibit, lang, glossary) if source_exhibit else ""
             if term_line:

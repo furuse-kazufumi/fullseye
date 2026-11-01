@@ -1086,7 +1086,13 @@ def _pack_anim3d(tab: dict, out: dict, store: _Store, where: str, ctx: _Ctx) -> 
             side = int(round(math.sqrt(n)))
             if val.ndim == 1 and side * side == n:
                 base_lo, base_hi = float(np.min(val)), float(np.max(val))
-                q = np.rint((val - base_lo) / max(base_hi - base_lo, 1e-30) * 255).astype(np.uint8)
+                # Stabilise the value in quantizer units before ``rint``.  In
+                # particular, old Linux numpy/libm and Windows can evaluate an
+                # exact half step as 229.49999999999997 and 229.5 respectively.
+                # The rest of the array packer already uses the same nine-digit
+                # canonicalisation before quantisation.
+                units = _round_sig((val - base_lo) / max(base_hi - base_lo, 1e-30) * 255)
+                q = np.rint(units).astype(np.uint8)
                 pb["val"] = store.put(q.reshape(1, side, side), "png")
                 pb["relief_png"] = {"lo": base_lo, "hi": base_hi}
             else:
