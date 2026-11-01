@@ -63,14 +63,18 @@ def test_glossary_has_no_dead_entries():
 
 def test_every_view_exhibit_with_terms_gets_a_term_line_in_every_language():
     data = VIEW.load()
+    public = VIEW.public_data(data)
     glossary = G.load_glossary()
     ledger = {e["id"]: e for e in _ledger()}
     for lang in data["langs"]:
         expected = sum(bool(G.terms_for_exhibit(ledger[e["id"]], lang, glossary))
-                       for e in data["exhibits"] if e["id"] in ledger)
-        page = VIEW.build(data, lang)
+                       for e in public["exhibits"] if e["id"] in ledger)
+        assert expected >= 60, "%s: 用語を含む公開展示が %d 本まで減った" % (lang, expected)
+        pages = [VIEW.build(data, lang)]
+        if lang in ("ja", "en"):
+            pages.append(VIEW.build_more(data, lang))
         label = "  用語:" if lang == "ja" else "  Terms:"
-        actual = sum(line.startswith(label) for line in page.splitlines())
+        actual = sum(line.startswith(label) for page in pages for line in page.splitlines())
         assert actual >= expected, "%s: 用語行 %d / 用語を含む展示 %d" % (lang, actual, expected)
 
 

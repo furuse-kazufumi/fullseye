@@ -77,7 +77,9 @@ CHAIN = [
     (["tools/gen_wingpoc_gallery.py"], "PoC 展示館(総合案内 + 棟、ja/en)"),
     (["tools/gen_examples_readme.py"], "examples/README.md"),
     (["tools/gen_oss_landscape.py"], "既存 OSS の地図(docs/literature/oss_landscape.json → OSS_LANDSCAPE.md)"),
-    (["tools/gen_view2026_pages.py"], "docs/view2026/**/index.md(論文の QR の行き先、正本は exhibits.json)"),
+    # 索引と op ノートの後(複製するので)。ViEW の Fullseye 使用門もこの複製を読む。
+    (["tools/gen_mcp_data.py"], "fullseye/data operator search, cards, and probe metadata"),
+    (["tools/gen_view2026_pages.py"], "docs/view2026/**/{index,more}.md(論文の QR の行き先、正本は exhibits.json)"),
     # gen_maturity の後(maturity.json を読む)、索引の後(docs/OP_INDEX.json と照合する)。
     # README*.md は gen_docs_index_ops も書くが、マーカーが別なので互いの中身には触れない
     # (ORDER_EXEMPT)。
@@ -116,8 +118,6 @@ CHAIN = [
     # 手書き部分にある実装由来の数だけを最後に更新する。RAG ガイドの訳は、正本・訳の
     # 差分が数値だけだと確認できた場合に限り source-sha も更新する。
     (["tools/gen_doc_counts.py"], "README の registry 件数 + AI_RAG_GUIDE の op ノート件数"),
-    # 索引と op ノートの後(複製するので)。
-    (["tools/gen_mcp_data.py"], "fullseye/data operator search, cards, and probe metadata"),
     (["tools/gen_recipe_index.py"], "existing-example recipe retrieval index and source inventory"),
     (["tools/gen_recipe_retrieval_report.py"], "business-language recipe recall report"),
     (["tools/measure_mcp_context.py"], "six-task minimal MCP context benchmark"),
@@ -165,7 +165,8 @@ OUTPUTS = {
                                      "docs/articles/assets/poc/_hero_montage.jpg"],
     "tools/gen_examples_readme.py": ["examples/README.md"],
     "tools/gen_oss_landscape.py": ["docs/literature/OSS_LANDSCAPE.md"],
-    "tools/gen_view2026_pages.py": ["docs/view2026/index.md", "docs/view2026/*/index.md"],
+    "tools/gen_view2026_pages.py": ["docs/view2026/index.md", "docs/view2026/*/index.md",
+                                     "docs/view2026/more.md", "docs/view2026/*/more.md"],
     "tools/gen_trust_block.py": ["README.md", "docs/README.md", "docs/README.*.md",
                                  "docs/OP_COUNT_HISTORY.md"],
     "tools/gen_examples3d_doc.py": ["docs/EXAMPLES_3D.md"],
@@ -235,7 +236,8 @@ READS = {
     "tools/gen_capabilities_index.py": ["docs/OP_INDEX.json"],
     "tools/gen_wingpoc_gallery.py": ["docs/articles/exhibits/exhibit_numbers.json",
                                       "docs/articles/exhibits/glossary.json"],
-    "tools/gen_view2026_pages.py": ["docs/articles/exhibits/glossary.json"],
+    "tools/gen_view2026_pages.py": ["docs/articles/exhibits/glossary.json",
+                                     "fullseye/data/OP_INDEX.json"],
     "tools/gen_trust_block.py": ["docs/OP_INDEX.json", "docs/maturity.json",
                                  "docs/README.md", "docs/README.*.md"],
     "tools/gen_design_notes.py": ["auto_specs_data.py"],
@@ -250,7 +252,8 @@ READS = {
         "docs/HALCON_PARITY.md",
         "docs/DESIGN_NOTES.md", "docs/DESIGN_NOTES.*.md",
         "docs/AI_RAG_GUIDE.md", "docs/AI_RAG_GUIDE.*.md",
-        "docs/view2026/index.md", "docs/view2026/*/index.md"],
+        "docs/view2026/index.md", "docs/view2026/*/index.md",
+        "docs/view2026/more.md", "docs/view2026/*/more.md"],
     "tools/gen_mcp_data.py": ["docs/OP_INDEX.json", "docs/ops/*"],
     "tools/gen_op_facets.py": ["docs/OP_INDEX.json", "docs/ops/families.json",
                                   "docs/ops/families_timing.json"],

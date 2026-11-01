@@ -31,7 +31,9 @@ def test_every_capability_doc_is_on_every_page():
     d = G.load()
     langs = d["langs"]
     assert langs[0] == "ja" and len(langs) >= 7   # 言語を足しても通る(ja が先頭、既存の 7 言語は残る)
-    for lang in langs:
+    others = [lang for lang in langs if lang not in ("ja", "en")]
+    assert len(others) >= 5, others   # ja/en 以外の言語が消えると 0 周で通ってしまう
+    for lang in others:
         page = G.build(d, lang)
         missing = [c["id"] for c in caps if "capabilities/%s.md" % c["id"] not in page]
         assert not missing, "%s: 載っていない説明がある: %s" % (lang, missing)
@@ -41,8 +43,9 @@ def test_every_capability_doc_is_on_every_page():
 def test_other_examples_are_counted_not_typed():
     n = G.other_example_count()
     assert n > 50
-    page = G.build(G.load(), "ja")
-    assert ("PoC 以外の使用例 %d 本" % n) in page
+    d = G.load()
+    page = G.build(d, "de")
+    assert d["ui"]["other_examples"]["de"].format(n=n) in page
 
 
 def test_every_highlight_has_lead_in_all_languages_and_renders_it_first():
@@ -67,8 +70,13 @@ def test_every_highlight_has_lead_in_all_languages_and_renders_it_first():
             for lang in d["langs"][2:]:
                 assert exhibit["lead"][lang] == expected_en
 
-    page = G.build(d, "ja")
+    main_page = G.build(d, "ja")
+    more_page = G.build_more(d, "ja")
+    public_ids = {item["id"] for item in G.public_data(d)["exhibits"]}
     for exhibit in d["exhibits"]:
+        if exhibit["id"] not in public_ids:
+            continue
+        page = main_page if exhibit["tier"] in ("showcase", "featured") else more_page
         marker = "- [%s]" % exhibit["label"]["ja"]
         start = page.index(marker)
         end = page.find("\n- [", start + len(marker))
@@ -93,7 +101,7 @@ def test_youtube_is_hidden_when_empty_and_invalid_urls_stop_generation():
     d = G.load()
     assert len(d["exhibits"]) >= 100
     assert all("youtube_url" in e for e in d["exhibits"])
-    assert "[YouTube](" not in G.build(d, "en")
+    assert "[YouTube](" not in G.build(d, "en") + G.build_more(d, "en")
     broken = copy.deepcopy(d)
     broken["exhibits"][0]["youtube_url"] = "https://example.invalid/static.mp4"
     bad = G.validate(broken)
@@ -131,7 +139,7 @@ def test_a_missing_example_stops_the_generator(monkeypatch):
 
 def test_japanese_only_docs_are_marked_on_other_languages():
     d = G.load()
-    page = G.build(d, "en")
+    page = G.build(d, "de")
     lines = [ln for ln in page.splitlines() if "/capabilities/" in ln]
     assert lines
     assert all(G.JA_MARK in ln for ln in lines)
