@@ -2018,8 +2018,8 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `realdata.py`
 
-- **L38** — ★ Nur solche, deren ``public``-Spalte true ist, dürfen in zu veröffentlichenden Abbildungen verwendet werden. Solche, die auf zitierte Nutzung zu Forschungs- und Bildungszwecken beschränkt sind, tragen ``cite``.
-- **L97** — ★ skimage hält nur eine gebündelte Teilmenge; den Rest holt es zur Laufzeit über pooch. Was es nicht holen kann, **verwenden wir in diesem Repo nicht** (wenn ein PoC von der Verbindung abhängt, wird unklar, ob ein Fehler die Implementierung oder das Netzwerk war).
+- **L138** — ★ Nur solche, deren ``public``-Spalte true ist, dürfen in zu veröffentlichenden Abbildungen verwendet werden. Solche, die auf zitierte Nutzung zu Forschungs- und Bildungszwecken beschränkt sind, tragen ``cite``.
+- **L197** — ★ skimage hält nur eine gebündelte Teilmenge; den Rest holt es zur Laufzeit über pooch. Was es nicht holen kann, **verwenden wir in diesem Repo nicht** (wenn ein PoC von der Verbindung abhängt, wird unklar, ob ein Fehler die Implementierung oder das Netzwerk war).
 
 ## `render3d.py`
 

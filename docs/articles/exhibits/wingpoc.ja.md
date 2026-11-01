@@ -9134,7 +9134,7 @@ py -3.11 examples/poc_star_tracker.py
 
 ### 装置の棟 ―― 生の出力から、装置固有の壊れ方まで再現する
 
-計測装置を名前だけ借り、都合のよい画像を出すのは簡単です。この部屋の 32 点は逆に、光子・電子・干渉・熱拡散・走査・光線追跡から装置の生出力を作り、そこから普段の測定値までを一続きにしています。
+計測装置を名前だけ借り、都合のよい画像を出すのは簡単です。この部屋の 33 点は逆に、光子・電子・干渉・熱拡散・走査・光線追跡から装置の生出力を作り、そこから普段の測定値までを一続きにしています。
 
 同じ距離でも iToF と dToF では多重反射と pile-up の現れ方が違い、同じ粒子でも SEM と TEM では直径が違って読めます。TDI は段数を増やせば暗い欠陥が見える一方、同期ずれを段数ぶん積み重ねます。装置名が同じでも、物理を省いた模型では壊れる場所を再現できません。
 
@@ -9693,6 +9693,36 @@ py -3.11 examples/poc_sem_wafer_defect_edge_bias.py
 この回が作った図は全部で **5 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_sem_wafer_defect_edge_bias)
 
 使用 op(ノートへ): [`blob_features`](https://furuse.work/ops/blob/measure/blob_features.html) · [`blob_label`](https://furuse.work/ops/blob/connect/blob_label.html) · [`pod_hitmiss_fit`](https://furuse.work/ops/spc/pod/pod_hitmiss_fit.html) · [`seg_boundary_f`](https://furuse.work/ops/segmentation/score/seg_boundary_f.html) · [`seg_dice_jaccard`](https://furuse.work/ops/segmentation/score/seg_dice_jaccard.html) · [`sem_image`](https://furuse.work/ops/generative/sem/sem_image.html) · [`sem_render`](https://furuse.work/ops/generative/sem/sem_render.html)
+
+## No.2026.285 —— 実物 IC の SEM 像で配線幅とビアを測る ―― 仮想 SEM の縁補正は実機でも効くか
+
+Rothaug ほかの metal-2 SEM データ(14.65 nm/px、CC BY 4.0、DOI 10.17617/3.HY5SYN)10枚を使い、既存 op `svg_entities` と独立 XML reader の一致を門にした。重複 via 1,740、端切れ via 112、端で切れた track ラベル 1,239、端から続く未ラベル track 成分 51 を数え、理由つきで採点から除いた。固定しきい値、Otsu、Sobel-edge を Fullseye op だけで比較し、Otsu の IoU 中央は 0.597、境界距離平均は 316.3 nm。track 1,599本の距離変換幅はラベル p10/50/90 = 293.0/351.6/491.2 nmに対して切り出し 29.3/41.4/132.6 nm、偏りは −296.3 nmで、太る予想と逆に細った。line profile の偏りは −29.3 nmで、幅の定義にも敏感である。実像の edge-spread から測った PSF σ 中央 51.9 nmによる補正は −296.3 → −285.6 nmと3.6 %縮めただけで、残差の96.4 %が残るため有効ではない。via は TP/FP/FN = 5,604/124/361、適合率0.978、再現率0.939。データはrepo外に置き、CIでは6.4 GBを取得せず記録値だけを表示する。
+
+[![実物 IC の SEM 像で配線幅とビアを測る ―― 仮想 SEM の縁補正は実機でも効くか](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_sem_metal_layer/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_sem_metal_layer/01_scene.png)
+
+*↑ **実物 IC の SEM 像で配線幅とビアを測る ―― 仮想 SEM の縁補正は実機でも効くか** ―― 商用 128 nm IC の metal-2 BSE 像に、SVG から読んだ track 輪郭を緑、重複を除いた via 輪郭を赤で重ねた。*
+
+[![大津。緑=一致、赤=太り、青=欠け。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_sem_metal_layer/02_segmentation_difference_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_sem_metal_layer/02_segmentation_difference.png)
+
+*↑ 測定の図 ―― 大津。緑=一致、赤=太り、青=欠け。*
+
+[![距離変換で track ごとの中央値を測った。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_sem_metal_layer/03_line_width_distribution_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_sem_metal_layer/03_line_width_distribution.png)
+
+*↑ 距離変換で track ごとの中央値を測った。*
+
+[![edge-spread から測った PSF sigma による補正。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_sem_metal_layer/04_psf_correction_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_sem_metal_layer/04_psf_correction.png)
+
+*↑ edge-spread から測った PSF sigma による補正。*
+
+```
+py -3.11 examples/poc_real_sem_metal_layer.py
+```
+
+ソース: [examples/poc_real_sem_metal_layer.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_sem_metal_layer.py)
+
+この回が作った図は全部で **4 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_real_sem_metal_layer)
+
+使用 op(ノートへ): [`blob_boundaries`](https://furuse.work/ops/blob/extract/blob_boundaries.html) · [`blob_distance`](https://furuse.work/ops/blob/split/blob_distance.html) · [`blob_features`](https://furuse.work/ops/blob/measure/blob_features.html) · [`blob_label`](https://furuse.work/ops/blob/connect/blob_label.html) · [`closing_circle`](https://furuse.work/ops/2d/region/closing_circle.html) · [`ellipse`](https://furuse.work/ops/annotate/shape/ellipse.html) · [`fill_holes`](https://furuse.work/ops/2d/region/fill_holes.html) · [`intersection`](https://furuse.work/ops/2d/nary/intersection.html) · [`opening_circle`](https://furuse.work/ops/2d/region/opening_circle.html) · [`otsu`](https://furuse.work/ops/2d/segmentation/otsu.html) · [`polygon_area`](https://furuse.work/ops/drive/japan/polygon_area.html) · [`skeleton`](https://furuse.work/ops/2d/region/skeleton.html) · [`sobel_mag`](https://furuse.work/ops/2d/edges/sobel_mag.html) · [`svg_entities`](https://furuse.work/ops/optics/drawing/svg_entities.html) · [`threshold`](https://furuse.work/ops/2d/segmentation/threshold.html)
 
 ## No.2026.228 —— 重力波望遠鏡の擬似シミュレーション ―― 共振器の式・量子雑音の予算・整合フィルタを閉形式で繋ぎ、GW150914 の実データで採点
 

@@ -3271,6 +3271,22 @@
    "lead_en": ""
   },
   {
+   "id": "poc_real_sem_metal_layer",
+   "wing": "wing_device",
+   "added": "2026-11-01",
+   "figure": "scene",
+   "figure_caption_ja": "商用 128 nm IC の metal-2 BSE 像に、SVG から読んだ track 輪郭を緑、重複を除いた via 輪郭を赤で重ねた。",
+   "figure_caption_en": "A measured metal-2 BSE image of a commercial 128 nm IC, with SVG track outlines in green and deduplicated via outlines in red.",
+   "numbers_source": "log",
+   "title_ja": "実物 IC の SEM 像で配線幅とビアを測る ―― 仮想 SEM の縁補正は実機でも効くか",
+   "title_en": "Measuring Tracks and Vias in a Real IC SEM Image — Does the Virtual-SEM Edge Correction Transfer?",
+   "caption_ja": "Rothaug ほかの metal-2 SEM データ(14.65 nm/px、CC BY 4.0、DOI 10.17617/3.HY5SYN)10枚を使い、既存 op `svg_entities` と独立 XML reader の一致を門にした。重複 via 1,740、端切れ via 112、端で切れた track ラベル 1,239、端から続く未ラベル track 成分 51 を数え、理由つきで採点から除いた。固定しきい値、Otsu、Sobel-edge を Fullseye op だけで比較し、Otsu の IoU 中央は 0.597、境界距離平均は 316.3 nm。track 1,599本の距離変換幅はラベル p10/50/90 = 293.0/351.6/491.2 nmに対して切り出し 29.3/41.4/132.6 nm、偏りは −296.3 nmで、太る予想と逆に細った。line profile の偏りは −29.3 nmで、幅の定義にも敏感である。実像の edge-spread から測った PSF σ 中央 51.9 nmによる補正は −296.3 → −285.6 nmと3.6 %縮めただけで、残差の96.4 %が残るため有効ではない。via は TP/FP/FN = 5,604/124/361、適合率0.978、再現率0.939。データはrepo外に置き、CIでは6.4 GBを取得せず記録値だけを表示する。",
+   "caption_en": "Ten measured metal-2 SEM images from Rothaug et al. (14.65 nm/px, CC BY 4.0, DOI 10.17617/3.HY5SYN) are admitted only after the existing `svg_entities` operator agrees with an independent XML reader. The audit counts and excludes with reasons 1,740 duplicate via labels, 112 border-clipped vias, 1,239 border-clipped track labels and 51 bright border components missing from the labels. Fixed thresholding, Otsu and Sobel-edge extraction use Fullseye operators only; Otsu reaches median IoU 0.597 and mean boundary distance 316.3 nm. Across 1,599 tracks, distance-transform width p10/50/90 is 293.0/351.6/491.2 nm in the labels and 29.3/41.4/132.6 nm after extraction, a -296.3 nm median bias: the result narrows rather than inflates. The line-profile bias is -29.3 nm, showing sensitivity to the width definition. A correction based on the measured edge-spread PSF sigma of 51.9 nm changes -296.3 to -285.6 nm, only 3.6%, leaving 96.4% of the bias and therefore not transferring effectively. Deduplicated via detection gives TP/FP/FN 5,604/124/361, precision 0.978 and recall 0.939. The 6.4 GB archive stays outside the repository and CI prints recorded values without downloading it.",
+   "run": "py -3.11 examples/poc_real_sem_metal_layer.py",
+   "lead_ja": "",
+   "lead_en": ""
+  },
+  {
    "id": "poc_si_wafer_pl_defect_visibility",
    "wing": "wing_industrial",
    "added": "2026-10-13",

@@ -484,7 +484,7 @@ Some PoC descriptions are in English.
 
 ## See everything
 
-283 PoCs plus 5 robot demos. Open a group to load its thumbnails.
+284 PoCs plus 5 robot demos. Open a group to load its thumbnails.
 
 <noscript><p><a href="../../GALLERY.en.html">(Without JavaScript, every figure is on the gallery page.)</a></p></noscript>
 
@@ -558,7 +558,7 @@ Some PoC descriptions are in English.
 </div>
 </details>
 
-<details class="vall"><summary><b>Dimensional and shape metrology</b> (55)</summary>
+<details class="vall"><summary><b>Dimensional and shape metrology</b> (56)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_aoi_ct_traceability/01_inspection_and_reconstructed_ct.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_aoi_ct_traceability.jpg" alt="AOI-to-CT matching" width="200" height="200"><span>AOI-to-CT matching</span></a>
 <a href="../../articles/assets/poc/poc_asbuilt_wall_deviation/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_asbuilt_wall_deviation.jpg" alt="As-built walls" width="200" height="200"><span>As-built walls</span></a>
@@ -615,6 +615,7 @@ Some PoC descriptions are in English.
 <a href="../../articles/assets/poc/poc_simcal_telecentric/02_real_model_residuals.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_simcal_telecentric.jpg" alt="Calibrating an imaging model on a real telecentric image" width="200" height="200"><span>Calibrating an imaging model on a real telecentric image</span></a>
 <a href="../../articles/assets/poc/poc_robust_profile_filter/04_scratched_surface.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_robust_profile_filter.jpg" alt="How far a scratch dents the mean line, and where robust filters break" width="200" height="200"><span>How far a scratch dents the mean line, and where robust filters break</span></a>
 <a href="../../articles/assets/poc/poc_sem_tem_same_particle/08_tem_focus_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_sem_tem_same_particle.jpg" alt="The same particles in scanning and transmission images" width="200" height="200"><b>&#9654;</b><span>The same particles in scanning and transmission images</span></a>
+<a href="../../articles/assets/poc/poc_real_sem_metal_layer/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_real_sem_metal_layer.jpg" alt="Metrology on real SEM metal layers" width="200" height="200"><span>Metrology on real SEM metal layers</span></a>
 </div>
 </details>
 

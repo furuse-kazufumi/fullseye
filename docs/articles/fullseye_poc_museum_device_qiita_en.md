@@ -4,13 +4,13 @@
 
 > One wing of **[A Metrology Museum on Paper — the entrance](https://qiita.com/furuse-kazufumi/items/8a8f23e53b19ee8cdc10)**, where the other wings, the glossary and the thesis live.
 
-**32 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
+**33 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
 
 > The "Ops used" line under each exhibit links to that op's note (type contract, pitfalls, figures, a runnable Studio program): [Operator catalogue](https://furuse.work/OP_CATALOG.html) / [Op notes index](https://furuse.work/ops/INDEX.html).
 
 ### The Instrument Wing — From Raw Output to Instrument-Specific Failure
 
-It is easy to borrow an instrument's name and produce a convenient image. The 32 exhibits in this room instead build raw output from photons, electrons, interference, heat diffusion, scanning and ray tracing, then carry that output through to the quantity normally reported.
+It is easy to borrow an instrument's name and produce a convenient image. The 33 exhibits in this room instead build raw output from photons, electrons, interference, heat diffusion, scanning and ray tracing, then carry that output through to the quantity normally reported.
 
 The same range fails differently in iToF and dToF through multipath and pile-up; the same particles read at different diameters in SEM and TEM. More TDI stages reveal dark defects while accumulating each synchronisation error across all stages. A model that omits the instrument physics cannot reproduce where the instrument breaks.
 
@@ -569,6 +569,36 @@ Source: [examples/poc_sem_wafer_defect_edge_bias.py](https://github.com/furuse-k
 This run produced **5 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_sem_wafer_defect_edge_bias)
 
 Ops used (notes): [`blob_features`](https://furuse.work/ops/blob/measure/blob_features.html) · [`blob_label`](https://furuse.work/ops/blob/connect/blob_label.html) · [`pod_hitmiss_fit`](https://furuse.work/ops/spc/pod/pod_hitmiss_fit.html) · [`seg_boundary_f`](https://furuse.work/ops/segmentation/score/seg_boundary_f.html) · [`seg_dice_jaccard`](https://furuse.work/ops/segmentation/score/seg_dice_jaccard.html) · [`sem_image`](https://furuse.work/ops/generative/sem/sem_image.html) · [`sem_render`](https://furuse.work/ops/generative/sem/sem_render.html)
+
+## No.2026.285 —— Measuring Tracks and Vias in a Real IC SEM Image — Does the Virtual-SEM Edge Correction Transfer?
+
+Ten measured metal-2 SEM images from Rothaug et al. (14.65 nm/px, CC BY 4.0, DOI 10.17617/3.HY5SYN) are admitted only after the existing `svg_entities` operator agrees with an independent XML reader. The audit counts and excludes with reasons 1,740 duplicate via labels, 112 border-clipped vias, 1,239 border-clipped track labels and 51 bright border components missing from the labels. Fixed thresholding, Otsu and Sobel-edge extraction use Fullseye operators only; Otsu reaches median IoU 0.597 and mean boundary distance 316.3 nm. Across 1,599 tracks, distance-transform width p10/50/90 is 293.0/351.6/491.2 nm in the labels and 29.3/41.4/132.6 nm after extraction, a -296.3 nm median bias: the result narrows rather than inflates. The line-profile bias is -29.3 nm, showing sensitivity to the width definition. A correction based on the measured edge-spread PSF sigma of 51.9 nm changes -296.3 to -285.6 nm, only 3.6%, leaving 96.4% of the bias and therefore not transferring effectively. Deduplicated via detection gives TP/FP/FN 5,604/124/361, precision 0.978 and recall 0.939. The 6.4 GB archive stays outside the repository and CI prints recorded values without downloading it.
+
+[![Measuring Tracks and Vias in a Real IC SEM Image — Does the Virtual-SEM Edge Correction Transfer?](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_sem_metal_layer/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_sem_metal_layer/01_scene.png)
+
+*↑ **Measuring Tracks and Vias in a Real IC SEM Image — Does the Virtual-SEM Edge Correction Transfer?** ―― A measured metal-2 BSE image of a commercial 128 nm IC, with SVG track outlines in green and deduplicated via outlines in red.*
+
+[![大津。緑=一致、赤=太り、青=欠け。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_sem_metal_layer/02_segmentation_difference_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_sem_metal_layer/02_segmentation_difference.png)
+
+*↑ The measurement ―― 大津。緑=一致、赤=太り、青=欠け。 (figure labels are in Japanese; the numbers are the same)*
+
+[![距離変換で track ごとの中央値を測った。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_sem_metal_layer/03_line_width_distribution_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_sem_metal_layer/03_line_width_distribution.png)
+
+*↑ 距離変換で track ごとの中央値を測った。*
+
+[![edge-spread から測った PSF sigma による補正。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_sem_metal_layer/04_psf_correction_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_sem_metal_layer/04_psf_correction.png)
+
+*↑ edge-spread から測った PSF sigma による補正。*
+
+```
+py -3.11 examples/poc_real_sem_metal_layer.py
+```
+
+Source: [examples/poc_real_sem_metal_layer.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_sem_metal_layer.py)
+
+This run produced **4 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_real_sem_metal_layer)
+
+Ops used (notes): [`blob_boundaries`](https://furuse.work/ops/blob/extract/blob_boundaries.html) · [`blob_distance`](https://furuse.work/ops/blob/split/blob_distance.html) · [`blob_features`](https://furuse.work/ops/blob/measure/blob_features.html) · [`blob_label`](https://furuse.work/ops/blob/connect/blob_label.html) · [`closing_circle`](https://furuse.work/ops/2d/region/closing_circle.html) · [`ellipse`](https://furuse.work/ops/annotate/shape/ellipse.html) · [`fill_holes`](https://furuse.work/ops/2d/region/fill_holes.html) · [`intersection`](https://furuse.work/ops/2d/nary/intersection.html) · [`opening_circle`](https://furuse.work/ops/2d/region/opening_circle.html) · [`otsu`](https://furuse.work/ops/2d/segmentation/otsu.html) · [`polygon_area`](https://furuse.work/ops/drive/japan/polygon_area.html) · [`skeleton`](https://furuse.work/ops/2d/region/skeleton.html) · [`sobel_mag`](https://furuse.work/ops/2d/edges/sobel_mag.html) · [`svg_entities`](https://furuse.work/ops/optics/drawing/svg_entities.html) · [`threshold`](https://furuse.work/ops/2d/segmentation/threshold.html)
 
 ## No.2026.228 —— A Pseudo-Simulation of a Gravitational-Wave Detector — Cavity Optics, the Quantum-Noise Budget and the Matched Filter in Closed Form, Scored on the Real GW150914 Data
 
