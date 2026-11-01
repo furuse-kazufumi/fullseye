@@ -16,10 +16,7 @@
 from __future__ import annotations
 
 import hashlib
-import io
-import lzma
 import os
-import tarfile
 import tempfile
 import threading
 
@@ -50,20 +47,9 @@ def _cache_base():
     return os.path.join(os.path.expanduser("~"), ".cache", "fullseye")
 
 
-def _safe_members(tf):
-    """書庫の中身を検める: 通常ファイルとディレクトリだけ、絶対パス・``..``・リンクは拒否(展開先の外へ書かせない)。"""
-    out = []
-    for m in tf.getmembers():
-        name = m.name.replace("\\", "/")
-        if name.startswith("/") or ".." in name.split("/") or ":" in name:
-            raise ValueError("helpstore: unsafe path in the help archive: %r" % m.name)
-        if not (m.isfile() or m.isdir()):
-            raise ValueError("helpstore: only files and directories are allowed in the help archive (%r)" % m.name)
-        out.append(m)
-    return out
-
-
 def _extract(archive):
+    import fileio
+
     with open(archive, "rb") as f:
         digest = hashlib.sha256(f.read()).hexdigest()[:16]
     dest = os.path.join(_cache_base(), "op_help-" + digest)
@@ -71,16 +57,15 @@ def _extract(archive):
         return dest
     os.makedirs(os.path.dirname(dest), exist_ok=True)
     tmp = tempfile.mkdtemp(prefix="op_help-tmp-", dir=os.path.dirname(dest))
-    with tarfile.open(archive, mode="r:xz") as tf:
-        members = _safe_members(tf)
-        for m in members:
-            target = os.path.join(tmp, *m.name.replace("\\", "/").split("/"))
-            if m.isdir():
-                os.makedirs(target, exist_ok=True)
-                continue
-            os.makedirs(os.path.dirname(target), exist_ok=True)
-            with tf.extractfile(m) as src, open(target, "wb") as dst:
-                dst.write(src.read())
+    # The help cache keeps only its cache-key and inter-process replacement
+    # policy here; archive validation and extraction use the promoted fileio op.
+    # キャッシュ固有処理だけを残し、書庫の安全契約は共通 op へ委譲する。
+    try:
+        fileio.archive_extract(archive, tmp)
+    except ValueError as exc:
+        import shutil
+        shutil.rmtree(tmp, ignore_errors=True)
+        raise ValueError(f"helpstore: unsafe path or invalid help archive: {exc}") from exc
     open(os.path.join(tmp, ".complete"), "w").close()
     try:
         os.replace(tmp, dest)                       # 別プロセスと競ったら、先に入れ替えた方を使う
@@ -123,6 +108,8 @@ def logical_path(path):
 
 def pack_archive(src_dir=HELP_DIR, dst=ARCHIVE):
     """``src_dir`` の HTML(直下と 1 段下)を決定的な tar.xz にする。返り値 = (枚数, バイト数)。"""
+    import fileio
+
     names = []
     for dp, _dirs, files in os.walk(src_dir):
         rel_dir = os.path.relpath(dp, src_dir)
@@ -135,16 +122,8 @@ def pack_archive(src_dir=HELP_DIR, dst=ARCHIVE):
     names.sort()
     if not names:
         raise ValueError("helpstore.pack_archive: no .html files under %r" % src_dir)
-    buf = io.BytesIO()
-    with lzma.LZMAFile(buf, "wb", format=lzma.FORMAT_XZ, preset=9 | lzma.PRESET_EXTREME) as xz:
-        with tarfile.open(fileobj=xz, mode="w", format=tarfile.USTAR_FORMAT) as tf:
-            for n in names:
-                with open(os.path.join(src_dir, *n.split("/")), "rb") as f:
-                    data = f.read()
-                ti = tarfile.TarInfo(n)
-                ti.size, ti.mtime, ti.mode, ti.uid, ti.gid, ti.uname, ti.gname = len(data), 0, 0o644, 0, 0, "", ""
-                tf.addfile(ti, io.BytesIO(data))
-    blob = buf.getvalue()
+    paths = [os.path.join(src_dir, *name.split("/")) for name in names]
+    blob = fileio.archive_create(paths, "tar.xz", root=src_dir, deterministic=True)
     os.makedirs(os.path.dirname(os.path.abspath(dst)), exist_ok=True)
     with open(dst, "wb") as f:
         f.write(blob)

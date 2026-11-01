@@ -34,7 +34,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 ## 型が繋がる次の op(`points` を入力に取れる)
 
-[mesh_read_ply](../mesh/mesh_read_ply.md) · [mesh_read_stl](../mesh/mesh_read_stl.md) · [points_write_xyz](points_write_xyz.md) · [e57_read](../e57/e57_read.md)
+[mesh_read_ply](../mesh/mesh_read_ply.md) · [mesh_read_stl](../mesh/mesh_read_stl.md) · [points_write_xyz](points_write_xyz.md) · [e57_read](../e57/e57_read.md) · [archive_probe](../archive/archive_probe.md) · [archive_list](../archive/archive_list.md)
 
 ## 同カテゴリ(`points`)
 

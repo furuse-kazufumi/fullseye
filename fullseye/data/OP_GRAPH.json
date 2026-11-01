@@ -61,7 +61,7 @@
     "not_executable_reasons": {
       "python_callable_not_found": 14,
       "python_signature_has_fewer_inputs_than_graph": 1,
-      "unknown_input_or_output_sort": 194
+      "unknown_input_or_output_sort": 198
     }
   },
   "sources": {
@@ -358,7 +358,7 @@
   },
   "counts": {
     "nodes": 101,
-    "edges": 3626,
+    "edges": 3630,
     "conversion_pairs": 395,
     "conversion_edge_incidence": 2343
   },
@@ -1368,7 +1368,7 @@
       "sort": "table",
       "container": "sequence",
       "size_hint": "input-dependent",
-      "produced_by": 1166,
+      "produced_by": 1167,
       "consumed_by": 547,
       "generator": true,
       "type_check": true,
@@ -1379,7 +1379,7 @@
       "sort": "text",
       "container": "structured_value",
       "size_hint": "input-dependent",
-      "produced_by": 12,
+      "produced_by": 13,
       "consumed_by": 28,
       "generator": true,
       "type_check": true,
@@ -1412,8 +1412,8 @@
       "sort": "unknown",
       "container": "structured_value",
       "size_hint": "input-dependent",
-      "produced_by": 94,
-      "consumed_by": 161,
+      "produced_by": 96,
+      "consumed_by": 165,
       "generator": false,
       "type_check": false,
       "choose_when": "undocumented",
@@ -185760,6 +185760,186 @@
           "under_2_seconds"
         ]
       },
+      "bundle_semantics": "unknown",
+      "source_ref": "S00056"
+    },
+    {
+      "op": "archive_create",
+      "inputs": [
+        "unknown"
+      ],
+      "output": "unknown",
+      "category": "archive",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "unknown",
+      "consumes_input": true,
+      "executable": false,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "unknown",
+        "source_ref": "S00056"
+      },
+      "implementations": [
+        {
+          "backend": "registry",
+          "status": "available",
+          "source_ref": "S00056"
+        }
+      ],
+      "parameters": {
+        "a": {
+          "used": false,
+          "source": "unmeasured",
+          "effect": 0.0,
+          "kind": "unused"
+        },
+        "b": {
+          "used": false,
+          "source": "unmeasured",
+          "effect": 0.0,
+          "kind": "unused"
+        }
+      },
+      "executable_reason": "unknown_input_or_output_sort",
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00056"
+    },
+    {
+      "op": "archive_extract",
+      "inputs": [
+        "unknown"
+      ],
+      "output": "unknown",
+      "category": "archive",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "unknown",
+      "consumes_input": true,
+      "executable": false,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "unknown",
+        "source_ref": "S00056"
+      },
+      "implementations": [
+        {
+          "backend": "registry",
+          "status": "available",
+          "source_ref": "S00056"
+        }
+      ],
+      "parameters": {
+        "a": {
+          "used": false,
+          "source": "unmeasured",
+          "effect": 0.0,
+          "kind": "unused"
+        },
+        "b": {
+          "used": false,
+          "source": "unmeasured",
+          "effect": 0.0,
+          "kind": "unused"
+        }
+      },
+      "executable_reason": "unknown_input_or_output_sort",
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00056"
+    },
+    {
+      "op": "archive_list",
+      "inputs": [
+        "unknown"
+      ],
+      "output": "table",
+      "category": "archive",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "unknown",
+      "consumes_input": true,
+      "executable": false,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "unknown",
+        "source_ref": "S00056"
+      },
+      "implementations": [
+        {
+          "backend": "registry",
+          "status": "available",
+          "source_ref": "S00056"
+        }
+      ],
+      "parameters": {
+        "a": {
+          "used": false,
+          "source": "unmeasured",
+          "effect": 0.0,
+          "kind": "unused"
+        },
+        "b": {
+          "used": false,
+          "source": "unmeasured",
+          "effect": 0.0,
+          "kind": "unused"
+        }
+      },
+      "executable_reason": "unknown_input_or_output_sort",
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00056"
+    },
+    {
+      "op": "archive_probe",
+      "inputs": [
+        "unknown"
+      ],
+      "output": "text",
+      "category": "archive",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "unknown",
+      "consumes_input": true,
+      "executable": false,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "unknown",
+        "source_ref": "S00056"
+      },
+      "implementations": [
+        {
+          "backend": "registry",
+          "status": "available",
+          "source_ref": "S00056"
+        }
+      ],
+      "parameters": {
+        "a": {
+          "used": false,
+          "source": "unmeasured",
+          "effect": 0.0,
+          "kind": "unused"
+        },
+        "b": {
+          "used": false,
+          "source": "unmeasured",
+          "effect": 0.0,
+          "kind": "unused"
+        }
+      },
+      "executable_reason": "unknown_input_or_output_sort",
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
       "bundle_semantics": "unknown",
       "source_ref": "S00056"
     },

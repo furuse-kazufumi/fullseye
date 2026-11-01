@@ -34,7 +34,7 @@ ASCII / little-endian binary STL を読み、共有頂点の ``mesh`` `(vertices
 
 ## 型が繋がる次の op(`mesh` を入力に取れる)
 
-[mesh_read_ply](mesh_read_ply.md) · [mesh_write_stl](mesh_write_stl.md) · [mesh_write_obj](mesh_write_obj.md) · [mesh_write_off](mesh_write_off.md) · [e57_read](../e57/e57_read.md)
+[mesh_read_ply](mesh_read_ply.md) · [mesh_write_stl](mesh_write_stl.md) · [mesh_write_obj](mesh_write_obj.md) · [mesh_write_off](mesh_write_off.md) · [e57_read](../e57/e57_read.md) · [archive_probe](../archive/archive_probe.md) · [archive_list](../archive/archive_list.md)
 
 ## 同カテゴリ(`mesh`)
 

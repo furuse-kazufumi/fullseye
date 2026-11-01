@@ -284,9 +284,15 @@ def plan(have, want: str, direction: str = "forward", pattern: str | None = None
     if not solutions:
         return _result(False, "no executable typed path", hint="inspect blocked_at or broaden have", next_tool="find_ops",
                        have=starts, want=want, direction=direction, partial=meta, blocked_at=[want])
-    return _result(True, "executable typed path found", next_tool="op_cards", have=starts, want=want,
-                    goal=query, direction=direction, pattern=pattern, executable_only=executable_only,
-                    search=meta, plans=solutions)
+    result = _result(True, "executable typed path found", next_tool="op_cards", have=starts, want=want,
+                     goal=query, direction=direction, pattern=pattern, executable_only=executable_only,
+                     search=meta, plans=solutions)
+    # A bounded search may find a route before exhausting the frontier.  Keep
+    # the partial-search contract visible even in that successful case.
+    # 上限到達前に経路が見つかっても、未探索部分がある事実を応答から落とさない。
+    if meta["limit_reached"]:
+        result["partial"] = meta
+    return result
 
 
 def describe(kind: str, name: str, budget_tokens: int = 800) -> dict:

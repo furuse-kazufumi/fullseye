@@ -271,6 +271,10 @@ KNOB_SKIP_SLOW = frozenset({
 KNOB_EXEMPT = {
     ("fit_circle_geometric", "radius_limit_factor"):
         "safety bound: changing it only accepts or rejects a line-like circle fit",
+    ("archive_extract", "max_members"):
+        "safety bound: changing it only accepts or rejects an archive member count",
+    ("archive_extract", "max_total_bytes"):
+        "safety bound: changing it only accepts or rejects an expanded byte count",
 }
 
 
