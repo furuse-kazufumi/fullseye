@@ -1,0 +1,22 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">ome_tiff_write — FILEIO <code style="color:#22d3bf">ome_tiff</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">any</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ome_tiff_write(stack, *, meta)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import fileio; fileio.ome_tiff_write(stack, *, meta)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsfileio.get(&quot;ome_tiff_write&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>physical sizes और channel names वाले TCZYX multidimensional array को OME-TIFF <code style="color:#22d3bf">bytes</code> में लिखता है।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p><code style="color:#22d3bf">meta[&#x27;axes&#x27;]</code> は TCZYX の部分列で YX 終端。X/Y(および Z 軸があれば Z)の <code style="color:#22d3bf">physical_size_*</code> と <code style="color:#22d3bf">*_unit</code>、C 軸があれば <code style="color:#22d3bf">channel_names</code> を必須とする。</p>
+<p>呼び出し例: <code style="color:#22d3bf">ome_tiff_write(stack, meta={&quot;axes&quot;: &quot;CZYX&quot;, ...})</code>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:fileio_scientific_roundtrip">fileio_scientific_roundtrip</a> — <code style="color:#22d3bf">py -3.11 examples/fileio_scientific_roundtrip.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">any</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opfileio:table_write_csv">table_write_csv</a> · <a style="color:#22d3bf" href="opfileio:table_read_csv">table_read_csv</a> · <a style="color:#22d3bf" href="opfileio:mesh_write_ply">mesh_write_ply</a> · <a style="color:#22d3bf" href="opfileio:mesh_read_ply">mesh_read_ply</a> · <a style="color:#22d3bf" href="opfileio:mesh_write_stl">mesh_write_stl</a> · <a style="color:#22d3bf" href="opfileio:mesh_read_stl">mesh_read_stl</a> · <a style="color:#22d3bf" href="opfileio:mesh_write_obj">mesh_write_obj</a> · <a style="color:#22d3bf" href="opfileio:mesh_read_obj">mesh_read_obj</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">ome_tiff</code>)</h3>
+<p><a style="color:#22d3bf" href="opfileio:ome_tiff_read">ome_tiff_read</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: fileio.py — FILEIO operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

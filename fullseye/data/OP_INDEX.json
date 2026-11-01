@@ -1,8 +1,8 @@
 {
- "n_ops": 3623,
+ "n_ops": 3633,
  "tiers": {
   "color": 12,
-  "ledger": 2664,
+  "ledger": 2674,
   "nary": 17,
   "registry": 930
  },
@@ -1721,6 +1721,32 @@
    "dim": "math",
    "in_sorts": [
     "matrix"
+   ]
+  },
+  {
+   "name": "astro_fits_read",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "any",
+   "category": "fits",
+   "tier": "ledger",
+   "ledger": "opsfileio",
+   "dim": "fileio",
+   "in_sorts": [
+    "any"
+   ]
+  },
+  {
+   "name": "astro_fits_write",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "any",
+   "category": "fits",
+   "tier": "ledger",
+   "ledger": "opsfileio",
+   "dim": "fileio",
+   "in_sorts": [
+    "any"
    ]
   },
   {
@@ -8082,6 +8108,32 @@
    "ledger": "opsdrive",
    "dim": "drive",
    "in_sorts": []
+  },
+  {
+   "name": "em_mrc_read",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "any",
+   "category": "mrc",
+   "tier": "ledger",
+   "ledger": "opsfileio",
+   "dim": "fileio",
+   "in_sorts": [
+    "any"
+   ]
+  },
+  {
+   "name": "em_mrc_write",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "any",
+   "category": "mrc",
+   "tier": "ledger",
+   "ledger": "opsfileio",
+   "dim": "fileio",
+   "in_sorts": [
+    "any"
+   ]
   },
   {
    "name": "emva_bspline_regression",
@@ -18933,6 +18985,32 @@
    "in_sorts": []
   },
   {
+   "name": "nifti_read",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "any",
+   "category": "nifti",
+   "tier": "ledger",
+   "ledger": "opsfileio",
+   "dim": "fileio",
+   "in_sorts": [
+    "any"
+   ]
+  },
+  {
+   "name": "nifti_write",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "any",
+   "category": "nifti",
+   "tier": "ledger",
+   "ledger": "opsfileio",
+   "dim": "fileio",
+   "in_sorts": [
+    "any"
+   ]
+  },
+  {
    "name": "nine_slice",
    "halcon": "",
    "in_sort": "rgba",
@@ -19225,6 +19303,32 @@
    "dim": "reprconv",
    "in_sorts": [
     "normals"
+   ]
+  },
+  {
+   "name": "nrrd_read",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "any",
+   "category": "nrrd",
+   "tier": "ledger",
+   "ledger": "opsfileio",
+   "dim": "fileio",
+   "in_sorts": [
+    "any"
+   ]
+  },
+  {
+   "name": "nrrd_write",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "any",
+   "category": "nrrd",
+   "tier": "ledger",
+   "ledger": "opsfileio",
+   "dim": "fileio",
+   "in_sorts": [
+    "any"
    ]
   },
   {
@@ -19723,6 +19827,32 @@
    "ledger": "opsdrive",
    "dim": "drive",
    "in_sorts": []
+  },
+  {
+   "name": "ome_tiff_read",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "any",
+   "category": "ome_tiff",
+   "tier": "ledger",
+   "ledger": "opsfileio",
+   "dim": "fileio",
+   "in_sorts": [
+    "any"
+   ]
+  },
+  {
+   "name": "ome_tiff_write",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "any",
+   "category": "ome_tiff",
+   "tier": "ledger",
+   "ledger": "opsfileio",
+   "dim": "fileio",
+   "in_sorts": [
+    "any"
+   ]
   },
   {
    "name": "omni_anaglyph_compose",

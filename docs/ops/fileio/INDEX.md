@@ -1,4 +1,4 @@
-# FILEIO operator help — 22 ops in 8 categories
+# FILEIO operator help — 24 ops in 9 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/fileio/<category>/<op>.md` を走査。
 
@@ -27,6 +27,10 @@
 ### nrrd (2)
 
 [nrrd_read](nrrd/nrrd_read.md) · [nrrd_write](nrrd/nrrd_write.md)
+
+### ome_tiff (2)
+
+[ome_tiff_read](ome_tiff/ome_tiff_read.md) · [ome_tiff_write](ome_tiff/ome_tiff_write.md)
 
 ### points (2)
 

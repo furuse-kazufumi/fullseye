@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.nrrd_read(data)</code> (die Implementierung direkt: <code style="color:#22d3bf">import fileio; fileio.nrrd_read(data)</code>; aus dem Register: <code style="color:#22d3bf">opsfileio.get(&quot;nrrd_read&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>raw/gzip NRRD を <code style="color:#22d3bf">(array, meta)</code> として読み、空間単位を明示して返す。</p>
+<p>Liest Raw/Gzip-NRRD als <code style="color:#22d3bf">(array, meta)</code> mit expliziten Raumeinheiten.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p><code style="color:#22d3bf">meta</code> は <code style="color:#22d3bf">space_directions</code>、方向ベクトルの長さから得た <code style="color:#22d3bf">voxel_spacing</code>、<code style="color:#22d3bf">space_unit</code>、<code style="color:#22d3bf">space_origin</code>、<code style="color:#22d3bf">kinds</code> を持つ。detached data、未知の encoding、shape/dtype/byte 数の不一致は拒否する。呼び出し例: <code style="color:#22d3bf">array, meta = nrrd_read(payload)</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>

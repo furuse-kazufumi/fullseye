@@ -16,7 +16,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 ### 2-D 画像/信号/幾何(450 例)
 
 **fileio**
-- **科学画像・体積を標準形式で受け渡す** — FITS の WCS、MRC の Å 単位 geometry、gzip NRRD の space directions、NIfTI の affine をメモリ上で往復し、配列と単位つきメタデータを自己検査する。 `py -3.11 examples/fileio_scientific_roundtrip.py`
+- **科学画像・体積を標準形式で受け渡す** — FITS の WCS、MRC/NRRD/NIfTI の単位つき geometry、OME-TIFF の TCZYX・物理サイズ・チャネル名をメモリ上で往復して自己検査する。 `py -3.11 examples/fileio_scientific_roundtrip.py`
 - **表・メッシュ・点群を標準形式で受け渡す** — 単位と由来を持つ CSV、属性つき PLY、STL、OBJ、OFF、XYZ、E57 をメモリ上で書いて読み戻し、pandas、plyfile、numpy-stl、trimesh、pye57 でも同じ内容を読めることを自己検査する。 `py -3.11 examples/fileio_roundtrip.py`
 
 **metrology**
@@ -797,9 +797,9 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Operators by family(族 → カテゴリ、全 op)
 
-_計 3637 ops / 56 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
+_計 3639 ops / 56 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
 
-族の一覧: **2d** 959 · **3d** 376 · **fit** 3 · **math** 114 · **optics** 483 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 41 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 717 · **tomography** 32 · **volcolor** 11 · **reprconv** 42 · **fileio** 22 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 3 · **calib** 21 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 16 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
+族の一覧: **2d** 959 · **3d** 376 · **fit** 3 · **math** 114 · **optics** 483 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 41 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 717 · **tomography** 32 · **volcolor** 11 · **reprconv** 42 · **fileio** 24 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 3 · **calib** 21 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 16 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
 
 ### 2d(959 ops / 49 categories)
 
@@ -4519,7 +4519,7 @@ _計 3637 ops / 56 families。並びとノートの在り処は `docs/ops/INDEX.
 - `score_to_image2d` `score → image2d` — ``score`` volume → 最大値投影 ``image2d``。``score`` の 2 つ目の出口。 · 例: `representation_conversion`
 - `score_to_position` `score → position` — ``score`` volume → 最大値の位置 ``position (z, y, x)``。``score`` の出口。 · 例: `representation_conversion`
 
-### fileio(22 ops / 8 categories)
+### fileio(24 ops / 9 categories)
 
 #### fileio / e57(2)
 - `e57_read` `any → table` — ASTM E57 の ``bytes`` を読み、座標・強度・色・pose の点群 ``table`` を返す。 · 例: `fileio_roundtrip`
@@ -4550,6 +4550,10 @@ _計 3637 ops / 56 families。並びとノートの在り処は `docs/ops/INDEX.
 #### fileio / nrrd(2)
 - `nrrd_read` `any → any` — raw/gzip NRRD を ``(array, meta)`` として読み、空間単位を明示して返す。 · 例: `fileio_scientific_roundtrip`
 - `nrrd_write` `any → any` — 多次元配列と ``space directions`` を raw/gzip NRRD の ``bytes`` にする。 · 例: `fileio_scientific_roundtrip`
+
+#### fileio / ome_tiff(2)
+- `ome_tiff_read` `any → any` — OME-TIFF を ``(stack, meta)`` として読み、OME-XML と配列を相互検証する。 · 例: `fileio_scientific_roundtrip`
+- `ome_tiff_write` `any → any` — TCZYX 多次元配列と物理サイズ・チャネル名を OME-TIFF の ``bytes`` にする。 · 例: `fileio_scientific_roundtrip`
 
 #### fileio / points(2)
 - `points_read_xyz` `text → points` — 空白区切りの XYZ テキストを読み、`(N,3)` の ``points`` を返す。 · 例: `fileio_roundtrip`

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.em_mrc_read(data)</code>(要直接调用实现,<code style="color:#22d3bf">import fileio; fileio.em_mrc_read(data)</code>;从台账取用则 <code style="color:#22d3bf">opsfileio.get(&quot;em_mrc_read&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>MRC2014/CCP4 の mode 0/1/2/6 を <code style="color:#22d3bf">(image_or_volume, meta)</code> として読む。</p>
+<p>读取 MRC2014/CCP4 的 mode 0/1/2/6，返回 <code style="color:#22d3bf">(image_or_volume, meta)</code>。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p><code style="color:#22d3bf">meta</code> は Å 単位を明示した <code style="color:#22d3bf">voxel_size</code> / <code style="color:#22d3bf">origin</code> を返す。非標準軸順、extended header、切れたデータ、shape と mode の不一致は名指しで拒否する。</p>
 <p>呼び出し例: <code style="color:#22d3bf">volume, meta = em_mrc_read(payload)</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

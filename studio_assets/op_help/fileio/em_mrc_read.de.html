@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.em_mrc_read(data)</code> (die Implementierung direkt: <code style="color:#22d3bf">import fileio; fileio.em_mrc_read(data)</code>; aus dem Register: <code style="color:#22d3bf">opsfileio.get(&quot;em_mrc_read&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>MRC2014/CCP4 の mode 0/1/2/6 を <code style="color:#22d3bf">(image_or_volume, meta)</code> として読む。</p>
+<p>Liest MRC2014/CCP4-Modus 0/1/2/6 als <code style="color:#22d3bf">(image_or_volume, meta)</code>.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p><code style="color:#22d3bf">meta</code> は Å 単位を明示した <code style="color:#22d3bf">voxel_size</code> / <code style="color:#22d3bf">origin</code> を返す。非標準軸順、extended header、切れたデータ、shape と mode の不一致は名指しで拒否する。</p>
 <p>呼び出し例: <code style="color:#22d3bf">volume, meta = em_mrc_read(payload)</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

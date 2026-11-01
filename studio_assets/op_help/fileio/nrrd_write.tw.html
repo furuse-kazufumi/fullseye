@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.nrrd_write(array, *, meta, encoding)</code>(要直接呼叫實作,<code style="color:#22d3bf">import fileio; fileio.nrrd_write(array, *, meta, encoding)</code>;從台帳取用則 <code style="color:#22d3bf">opsfileio.get(&quot;nrrd_write&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>多次元配列と <code style="color:#22d3bf">space directions</code> を raw/gzip NRRD の <code style="color:#22d3bf">bytes</code> にする。</p>
+<p>將多維陣列與 <code style="color:#22d3bf">space directions</code> 寫成 raw/gzip NRRD <code style="color:#22d3bf">bytes</code>。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p><code style="color:#22d3bf">meta</code> は各配列軸の方向ベクトル(非空間軸は <code style="color:#22d3bf">None</code>)、<code style="color:#22d3bf">space_origin</code>、<code style="color:#22d3bf">space_unit</code>(<code style="color:#22d3bf">mm</code> / <code style="color:#22d3bf">um</code> / <code style="color:#22d3bf">angstrom</code>)を持つ。<code style="color:#22d3bf">encoding</code> は <code style="color:#22d3bf">raw</code> または <code style="color:#22d3bf">gzip</code> を明示する。呼び出し例: <code style="color:#22d3bf">nrrd_write(vol, meta=geometry, encoding=&quot;gzip&quot;)</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>

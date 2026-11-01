@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.nifti_read(data)</code> (die Implementierung direkt: <code style="color:#22d3bf">import fileio; fileio.nifti_read(data)</code>; aus dem Register: <code style="color:#22d3bf">opsfileio.get(&quot;nifti_read&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>単一ファイル NIfTI-1(<code style="color:#22d3bf">.nii</code> / <code style="color:#22d3bf">.nii.gz</code>)を <code style="color:#22d3bf">(array, meta)</code> として読む。</p>
+<p>Liest eine NIfTI-1-Einzeldatei (<code style="color:#22d3bf">.nii</code> / <code style="color:#22d3bf">.nii.gz</code>) als <code style="color:#22d3bf">(array, meta)</code>.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>3-D/4-D、qform/sform、pixdim と空間・時間単位を返す。pair 形式、拡張、未知 datatype、header/shape/byte 数の不一致は拒否する。呼び出し例: <code style="color:#22d3bf">volume, meta = nifti_read(payload)</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>

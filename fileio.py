@@ -21,6 +21,7 @@ import tempfile
 import threading
 import types
 import uuid
+import xml.etree.ElementTree as _ET
 from collections.abc import Mapping
 
 import numpy as np
@@ -36,6 +37,7 @@ __all__ = [
     "em_mrc_write", "em_mrc_read",
     "nrrd_write", "nrrd_read",
     "nifti_write", "nifti_read",
+    "ome_tiff_write", "ome_tiff_read",
 ]
 
 _CSV_META_REQUIRED = ("source", "generated_at", "coordinate_meaning")
@@ -81,6 +83,8 @@ _NIFTI_DTYPES = {
 _NIFTI_SPATIAL_UNITS = {1: "m", 2: "mm", 3: "um"}
 _NIFTI_TIME_UNITS = {8: "s", 16: "ms", 24: "us"}
 _NIFTI_EXTENSIONS = (".nii", ".nii.gz")
+_OME_AXIS_ORDER = "TCZYX"
+_OME_EXTENSIONS = (".ome.tif", ".ome.tiff")
 
 
 def _csv_columns(table, op: str) -> dict[str, np.ndarray]:
@@ -1508,3 +1512,178 @@ def nifti_read(data):
                    "qform_code": int(qform_code), "sform_code": int(sform_code),
                    "pixdim": pixdim[1:ndim + 1], "spatial_unit": _NIFTI_SPATIAL_UNITS[spatial_code],
                    "time_unit": _NIFTI_TIME_UNITS.get(temporal_code)}
+
+
+def _require_tifffile():
+    try:
+        import tifffile
+    except ImportError as exc:
+        raise ImportError("OME-TIFF operators require tifffile; install it with `pip install tifffile`") from exc
+    return tifffile
+
+
+def _ome_unit(value, op: str, key: str):
+    aliases = {"m": "m", "meter": "m", "mm": "mm", "millimeter": "mm",
+               "um": "µm", "µm": "µm", "micrometer": "µm", "nm": "nm",
+               "nanometer": "nm", "angstrom": "Å", "ångström": "Å", "å": "Å"}
+    unit = aliases.get(str(value).strip().lower())
+    if unit is None:
+        raise ValueError(f"{op}: {key} must be one of m/mm/um/nm/angstrom, got {value!r}")
+    return unit
+
+
+def _ome_axes_meta(array, meta, op: str):
+    if not isinstance(meta, Mapping):
+        raise ValueError(f"{op}: meta must be a mapping")
+    allowed = {"axes", "physical_size_x", "physical_size_x_unit",
+               "physical_size_y", "physical_size_y_unit", "physical_size_z",
+               "physical_size_z_unit", "channel_names"}
+    unknown = set(meta) - allowed
+    if unknown:
+        raise ValueError(f"{op}: unsupported metadata key(s): {', '.join(sorted(map(str, unknown)))}")
+    axes = str(meta.get("axes", "")).upper()
+    if len(axes) != array.ndim or len(set(axes)) != len(axes) or any(axis not in _OME_AXIS_ORDER for axis in axes):
+        raise ValueError(f"{op}: axes must contain one unique TCZYX letter per array dimension")
+    if "".join(axis for axis in _OME_AXIS_ORDER if axis in axes) != axes or not axes.endswith("YX"):
+        raise ValueError(f"{op}: axes must follow canonical TCZYX order and end in YX, got {axes!r}")
+    physical = {}
+    for axis in "XY" + ("Z" if "Z" in axes else ""):
+        key, unit_key = f"physical_size_{axis.lower()}", f"physical_size_{axis.lower()}_unit"
+        if key not in meta or unit_key not in meta:
+            raise ValueError(f"{op}: meta requires {key} and explicit {unit_key}")
+        value = float(meta[key])
+        if not math.isfinite(value) or value <= 0:
+            raise ValueError(f"{op}: {key} must be positive and finite")
+        physical[axis] = (value, _ome_unit(meta[unit_key], op, unit_key))
+    if "Z" not in axes and ("physical_size_z" in meta or "physical_size_z_unit" in meta):
+        raise ValueError(f"{op}: physical_size_z applies only when axes contains Z")
+    if "C" in axes:
+        if "channel_names" not in meta:
+            raise ValueError(f"{op}: axes contains C, so channel_names is required")
+        names = list(meta["channel_names"])
+        channel_count = array.shape[axes.index("C")]
+        if len(names) != channel_count or any(not isinstance(name, str) or not name.strip() for name in names):
+            raise ValueError(f"{op}: channel_names must contain {channel_count} non-empty strings")
+    else:
+        names = list(meta.get("channel_names", []))
+        if names:
+            raise ValueError(f"{op}: channel_names requires a C axis")
+    return axes, physical, names
+
+
+def ome_tiff_write(stack, *, meta):
+    """TCZYX 多次元配列と物理サイズ・チャネル名を OME-TIFF の ``bytes`` にする。
+
+    ``meta['axes']`` は TCZYX の部分列で YX 終端。X/Y(および Z 軸があれば Z)の
+    ``physical_size_*`` と ``*_unit``、C 軸があれば ``channel_names`` を必須とする。
+    呼び出し例: ``ome_tiff_write(stack, meta={"axes": "CZYX", ...})``。
+    """
+    op = "ome_tiff_write"
+    array = np.asarray(stack)
+    if array.ndim < 2 or array.size == 0:
+        raise ValueError(f"{op}: stack for {_OME_EXTENSIONS} must be a non-empty array with at least YX axes")
+    if array.dtype.kind not in "uibf" or array.dtype.itemsize not in (1, 2, 4, 8):
+        raise ValueError(f"{op}: unsupported TIFF dtype {array.dtype}")
+    axes, physical, channel_names = _ome_axes_meta(array, meta, op)
+    metadata = {"axes": axes}
+    for axis, (value, unit) in physical.items():
+        metadata[f"PhysicalSize{axis}"] = value
+        metadata[f"PhysicalSize{axis}Unit"] = unit
+    if channel_names:
+        metadata["Channel"] = {"Name": channel_names}
+    digest = hashlib.sha256()
+    digest.update(array.dtype.str.encode("ascii"))
+    digest.update(repr(array.shape).encode("ascii"))
+    digest.update(array.tobytes(order="C"))
+    for key in sorted(metadata):
+        digest.update(key.encode("ascii"))
+        digest.update(repr(metadata[key]).encode("utf-8"))
+    metadata["UUID"] = str(uuid.UUID(hex=digest.hexdigest()[:32]))
+    tifffile = _require_tifffile()
+    stream = io.BytesIO()
+    try:
+        tifffile.imwrite(stream, array, ome=True, metadata=metadata,
+                         photometric="minisblack", compression=None)
+    except Exception as exc:
+        raise ValueError(f"{op}: tifffile could not encode the TCZYX stack: {exc}") from exc
+    return stream.getvalue()
+
+
+def _ome_xml_meta(xml: str, shape, axes: str, dtype, op: str):
+    try:
+        root = _ET.fromstring(xml)
+    except _ET.ParseError as exc:
+        raise ValueError(f"{op}: malformed OME-XML: {exc}") from exc
+    images = [node for node in root.iter() if node.tag.rsplit("}", 1)[-1] == "Image"]
+    if len(images) != 1:
+        raise ValueError(f"{op}: expected exactly one OME Image, found {len(images)}")
+    pixels_nodes = [node for node in images[0] if node.tag.rsplit("}", 1)[-1] == "Pixels"]
+    if len(pixels_nodes) != 1:
+        raise ValueError(f"{op}: OME Image must contain exactly one Pixels element")
+    pixels = pixels_nodes[0]
+    dimension_order = pixels.attrib.get("DimensionOrder")
+    if dimension_order not in ("XYZCT", "XYZTC", "XYCZT", "XYCTZ", "XYTCZ", "XYTZC"):
+        raise ValueError(f"{op}: unsupported OME DimensionOrder {dimension_order!r}")
+    size_map = {axis: shape[axes.index(axis)] if axis in axes else 1 for axis in _OME_AXIS_ORDER}
+    for axis in _OME_AXIS_ORDER:
+        key = f"Size{axis}"
+        try:
+            declared = int(pixels.attrib[key])
+        except (KeyError, ValueError) as exc:
+            raise ValueError(f"{op}: OME-XML has invalid or missing {key}") from exc
+        if declared != size_map[axis]:
+            raise ValueError(f"{op}: OME-XML {key}={declared} disagrees with {axes} array shape {shape!r}")
+    physical, units = {}, {}
+    for axis in "XY" + ("Z" if "Z" in axes else ""):
+        value_key, unit_key = f"PhysicalSize{axis}", f"PhysicalSize{axis}Unit"
+        if value_key not in pixels.attrib or unit_key not in pixels.attrib:
+            raise ValueError(f"{op}: OME-XML requires {value_key} and explicit {unit_key}")
+        try:
+            value = float(pixels.attrib[value_key])
+        except ValueError as exc:
+            raise ValueError(f"{op}: invalid {value_key}") from exc
+        if not math.isfinite(value) or value <= 0:
+            raise ValueError(f"{op}: {value_key} must be positive and finite")
+        physical[axis], units[axis] = value, _ome_unit(pixels.attrib[unit_key], op, unit_key)
+    channels = [node for node in pixels if node.tag.rsplit("}", 1)[-1] == "Channel"]
+    names = [node.attrib.get("Name", "") for node in channels]
+    if "C" in axes:
+        if len(channels) != size_map["C"] or any(not name for name in names):
+            raise ValueError(f"{op}: OME-XML must name all {size_map['C']} channels")
+    elif len(channels) != 1:
+        raise ValueError(f"{op}: OME-XML without C axis must have one implicit channel")
+    return {"dimension_order": dimension_order,
+            "physical_size_x": physical["X"], "physical_size_x_unit": units["X"],
+            "physical_size_y": physical["Y"], "physical_size_y_unit": units["Y"],
+            **({"physical_size_z": physical["Z"], "physical_size_z_unit": units["Z"]} if "Z" in axes else {}),
+            "channel_names": names if "C" in axes else []}
+
+
+def ome_tiff_read(data):
+    """OME-TIFF を ``(stack, meta)`` として読み、OME-XML と配列を相互検証する。
+
+    ``meta`` は TCZYX 部分列の ``axes``、物理サイズと単位、チャネル名を持つ。
+    通常 TIFF、複数 Image、XML の Size/dtype と TIFF の不一致、無名チャネルは拒否する。
+    呼び出し例: ``stack, meta = ome_tiff_read(payload)``。
+    """
+    op = "ome_tiff_read"
+    raw = _file_bytes(data, op)
+    tifffile = _require_tifffile()
+    try:
+        with tifffile.TiffFile(io.BytesIO(raw)) as tif:
+            if not tif.is_ome or not tif.ome_metadata:
+                raise ValueError(f"{op}: input is TIFF but has no OME-XML metadata required by {_OME_EXTENSIONS}")
+            if len(tif.series) != 1:
+                raise ValueError(f"{op}: expected exactly one TIFF series, found {len(tif.series)}")
+            series = tif.series[0]
+            axes = series.axes
+            array = series.asarray()
+            xml = tif.ome_metadata
+    except Exception as exc:
+        if isinstance(exc, ValueError) and str(exc).startswith(op + ":"):
+            raise
+        raise ValueError(f"{op}: corrupt or truncated TIFF: {exc}") from exc
+    if len(axes) != array.ndim or "".join(axis for axis in _OME_AXIS_ORDER if axis in axes) != axes or not axes.endswith("YX"):
+        raise ValueError(f"{op}: TIFF axes {axes!r} are not a canonical TCZYX subset ending in YX")
+    parsed = _ome_xml_meta(xml, array.shape, axes, array.dtype, op)
+    return array, {"format": "OME-TIFF", "axes": axes, **parsed}

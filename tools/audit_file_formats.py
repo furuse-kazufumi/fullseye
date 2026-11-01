@@ -57,6 +57,7 @@ _VERIFY_READERS = {
     ".mrc": ("mrcfile",),
     ".nrrd": ("nrrd",),
     ".nii": ("nibabel",), ".nii.gz": ("nibabel",),
+    ".ome.tif": ("tifffile",), ".ome.tiff": ("tifffile",),
 }
 _NAME_EXTS = {ext[1:]: ext for ext in FORMAT_NAMES if "." not in ext[1:]}
 

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.astro_fits_read(data)</code> (die Implementierung direkt: <code style="color:#22d3bf">import fileio; fileio.astro_fits_read(data)</code>; aus dem Register: <code style="color:#22d3bf">opsfileio.get(&quot;astro_fits_read&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>primary HDU の 2-D/3-D FITS を <code style="color:#22d3bf">(image_or_volume, meta)</code> として読む。</p>
+<p>Liest ein 2-D/3-D-FITS-Bild aus der Primary HDU als <code style="color:#22d3bf">(image_or_volume, meta)</code>.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p><code style="color:#22d3bf">meta</code> は <code style="color:#22d3bf">bitpix</code>、<code style="color:#22d3bf">bzero</code>、<code style="color:#22d3bf">bscale</code> と基本 WCS の <code style="color:#22d3bf">wcs</code> 辞書を持つ。切れたブロック、random groups、BLANK、次元・BITPIX・データ長の不一致は名指しで拒否する。</p>
 <p>呼び出し例: <code style="color:#22d3bf">image, meta = astro_fits_read(payload)</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

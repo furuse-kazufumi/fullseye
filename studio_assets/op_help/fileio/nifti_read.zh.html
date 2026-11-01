@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.nifti_read(data)</code>(要直接调用实现,<code style="color:#22d3bf">import fileio; fileio.nifti_read(data)</code>;从台账取用则 <code style="color:#22d3bf">opsfileio.get(&quot;nifti_read&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>単一ファイル NIfTI-1(<code style="color:#22d3bf">.nii</code> / <code style="color:#22d3bf">.nii.gz</code>)を <code style="color:#22d3bf">(array, meta)</code> として読む。</p>
+<p>读取单文件 NIfTI-1（<code style="color:#22d3bf">.nii</code> / <code style="color:#22d3bf">.nii.gz</code>），返回 <code style="color:#22d3bf">(array, meta)</code>。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>3-D/4-D、qform/sform、pixdim と空間・時間単位を返す。pair 形式、拡張、未知 datatype、header/shape/byte 数の不一致は拒否する。呼び出し例: <code style="color:#22d3bf">volume, meta = nifti_read(payload)</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>

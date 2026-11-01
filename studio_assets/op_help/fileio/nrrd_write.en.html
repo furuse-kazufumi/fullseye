@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.nrrd_write(array, *, meta, encoding)</code> (to call the implementation directly, <code style="color:#22d3bf">import fileio; fileio.nrrd_write(array, *, meta, encoding)</code>; from the registry, <code style="color:#22d3bf">opsfileio.get(&quot;nrrd_write&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>多次元配列と <code style="color:#22d3bf">space directions</code> を raw/gzip NRRD の <code style="color:#22d3bf">bytes</code> にする。</p>
+<p>Write a multidimensional array and <code style="color:#22d3bf">space directions</code> as raw/gzip NRRD <code style="color:#22d3bf">bytes</code>.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p><code style="color:#22d3bf">meta</code> は各配列軸の方向ベクトル(非空間軸は <code style="color:#22d3bf">None</code>)、<code style="color:#22d3bf">space_origin</code>、<code style="color:#22d3bf">space_unit</code>(<code style="color:#22d3bf">mm</code> / <code style="color:#22d3bf">um</code> / <code style="color:#22d3bf">angstrom</code>)を持つ。<code style="color:#22d3bf">encoding</code> は <code style="color:#22d3bf">raw</code> または <code style="color:#22d3bf">gzip</code> を明示する。呼び出し例: <code style="color:#22d3bf">nrrd_write(vol, meta=geometry, encoding=&quot;gzip&quot;)</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>

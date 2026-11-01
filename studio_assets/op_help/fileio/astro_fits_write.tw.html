@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.astro_fits_write(image, *, header)</code>(要直接呼叫實作,<code style="color:#22d3bf">import fileio; fileio.astro_fits_write(image, *, header)</code>;從台帳取用則 <code style="color:#22d3bf">opsfileio.get(&quot;astro_fits_write&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>2-D/3-D 天文画像と基本 WCS を primary-HDU FITS の <code style="color:#22d3bf">bytes</code> にする。</p>
+<p>將二維/三維天文影像與基本 WCS 寫成主 HDU FITS <code style="color:#22d3bf">bytes</code>。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p><code style="color:#22d3bf">header</code> は FITS の基本 WCS キー(<code style="color:#22d3bf">CTYPE*</code>, <code style="color:#22d3bf">CRPIX*</code>, <code style="color:#22d3bf">CRVAL*</code>, <code style="color:#22d3bf">CDELT*</code>, <code style="color:#22d3bf">PC*_*</code>, <code style="color:#22d3bf">CD*_*</code>, <code style="color:#22d3bf">CUNIT*</code> など)だけを持つ辞書。構造キーは配列から作り、uint16/uint32 は標準の BZERO 規約で保存する。呼び出し例:</p>
 <p><code style="color:#22d3bf">payload = astro_fits_write(image, header={&quot;CTYPE1&quot;: &quot;RA---TAN&quot;})</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

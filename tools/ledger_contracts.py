@@ -1279,6 +1279,11 @@ def _fileio_builders():
     nrrd_meta = {"space_directions": np.diag([1.0, 1.0, 2.0]),
                  "space_unit": "mm", "space_origin": [0, 0, 0]}
     nifti_meta = {"affine": np.diag([1.0, 1.0, 2.0, 1.0]), "spatial_unit": "mm"}
+    ome_stack = np.arange(48, dtype=np.uint16).reshape(2, 2, 3, 4)
+    ome_meta = {"axes": "CZYX", "physical_size_x": 1, "physical_size_x_unit": "um",
+                "physical_size_y": 1, "physical_size_y_unit": "um",
+                "physical_size_z": 2, "physical_size_z_unit": "um",
+                "channel_names": ["A", "B"]}
 
     def csv_payload():
         return fileio.table_write_csv(csv_table, units=units, meta=meta)
@@ -1306,6 +1311,8 @@ def _fileio_builders():
         "nrrd_read": lambda pool, rng: ([fileio.nrrd_write(mrc_volume, meta=nrrd_meta, encoding="raw")], {}),
         "nifti_write": lambda pool, rng: ([mrc_volume], {"meta": nifti_meta, "compressed": False}),
         "nifti_read": lambda pool, rng: ([fileio.nifti_write(mrc_volume, meta=nifti_meta, compressed=False)], {}),
+        "ome_tiff_write": lambda pool, rng: ([ome_stack], {"meta": ome_meta}),
+        "ome_tiff_read": lambda pool, rng: ([fileio.ome_tiff_write(ome_stack, meta=ome_meta)], {}),
     }
 
 

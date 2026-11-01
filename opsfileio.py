@@ -43,6 +43,10 @@ _CATALOG = {
         ("nifti_write", ["any"], "any"),
         ("nifti_read", ["any"], "any"),
     ],
+    "ome_tiff": [
+        ("ome_tiff_write", ["any"], "any"),
+        ("ome_tiff_read", ["any"], "any"),
+    ],
 }
 
 

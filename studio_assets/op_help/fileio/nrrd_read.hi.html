@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.nrrd_read(data)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import fileio; fileio.nrrd_read(data)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsfileio.get(&quot;nrrd_read&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
-<p>&gt; इस op के विवरण का अभी अनुवाद नहीं हुआ है। मूल text जैसा है वैसा दिया गया है।</p>
-<p>raw/gzip NRRD を <code style="color:#22d3bf">(array, meta)</code> として読み、空間単位を明示して返す。</p>
+<p>raw/gzip NRRD पढ़कर स्पष्ट spatial units वाला <code style="color:#22d3bf">(array, meta)</code> लौटाता है।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
 <p><code style="color:#22d3bf">meta</code> は <code style="color:#22d3bf">space_directions</code>、方向ベクトルの長さから得た <code style="color:#22d3bf">voxel_spacing</code>、<code style="color:#22d3bf">space_unit</code>、<code style="color:#22d3bf">space_origin</code>、<code style="color:#22d3bf">kinds</code> を持つ。detached data、未知の encoding、shape/dtype/byte 数の不一致は拒否する。呼び出し例: <code style="color:#22d3bf">array, meta = nrrd_read(payload)</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>

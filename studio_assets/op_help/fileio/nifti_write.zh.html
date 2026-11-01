@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.nifti_write(volume, *, meta, compressed)</code>(要直接调用实现,<code style="color:#22d3bf">import fileio; fileio.nifti_write(volume, *, meta, compressed)</code>;从台账取用则 <code style="color:#22d3bf">opsfileio.get(&quot;nifti_write&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>3-D/4-D 配列と affine/pixdim を単一ファイル NIfTI-1 の <code style="color:#22d3bf">bytes</code> にする。</p>
+<p>将带 affine/pixdim 的三维/四维数组写成单文件 NIfTI-1 <code style="color:#22d3bf">bytes</code>。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p><code style="color:#22d3bf">meta</code> は <code style="color:#22d3bf">affine</code> と <code style="color:#22d3bf">spatial_unit</code>(<code style="color:#22d3bf">m/mm/um</code>)を必須とし、4-D では <code style="color:#22d3bf">time_step</code> と <code style="color:#22d3bf">time_unit</code> も必須。qform と sform の両方へ同じ affine を書く。<code style="color:#22d3bf">compressed</code> で <code style="color:#22d3bf">.nii</code> / <code style="color:#22d3bf">.nii.gz</code> 相当を選ぶ。呼び出し例:</p>
 <p><code style="color:#22d3bf">nifti_write(vol, meta={&quot;affine&quot;: affine, &quot;spatial_unit&quot;: &quot;mm&quot;}, compressed=True)</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

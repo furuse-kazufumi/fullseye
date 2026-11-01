@@ -5,9 +5,9 @@
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue)](LICENSE)
 [![Docs](https://img.shields.io/badge/docs-furuse.work-informational)](https://furuse.work/)
 
-**Documentation: [furuse.work](https://furuse.work/)** — the operator index (3,631
+**Documentation: [furuse.work](https://furuse.work/)** — the operator index (3,633
 operators in the machine-readable index, `docs/OP_INDEX.json`: 942 single-input 2-D operators +
-17 n-ary + 2,672 in the typed ledgers, each with a per-operator note), the family guides, and the
+17 n-ary + 2,674 in the typed ledgers, each with a per-operator note), the family guides, and the
 release notes.
 
 **What it can do: [CAPABILITIES.en.md](docs/CAPABILITIES.en.md)** — an index organised by
@@ -99,7 +99,7 @@ The 97 capabilities, split by how they are verified (`docs/maturity.json`, rebui
 | `validated-public-real-data` | an example on public measured data runs in a gate | 18 |
 | `validated-hardware` | validated on hardware (only from accepted external reports) | 0 |
 
-Of 449 examples, 449 are actually run by a gate.
+Of 450 examples, 450 are actually run by a gate.
 
 ### Operator counts by version
 
@@ -146,7 +146,7 @@ Two more doors, both new since 0.1.11 and both honest about their limits:
 | Door | For | Run this first | Status |
 |---|---|---|---|
 | **From an LLM (MCP)** | Claude Code / Claude Desktop users | `py -3.11 -m fullseye.mcp --demo` — search an op, read its note, load a sample, run a pipeline, get a verdict | PoC. 9 tools, strict by default, runs from the wheel (the catalog index and the notes' front matter ship as package data; note bodies fall back to the shipped help HTML). [`docs/MCP.md`](docs/MCP.md) |
-| **From C / C++ / C# / Lua** (and Python `ctypes`) | embedding into an existing product | `cargo build --release` in `rust/fullseye_core`, then one example per language in [`rust/fullseye_core/examples/`](rust/fullseye_core/examples/README.md) — all four print the same five lines | A C ABI (`fullseye_abi.h`) with **one generic entry point, `fs_apply`, that reaches the whole 2-D registry** (942 single-input operators, by name + JSON parameters; 0.2.0, the registry runs in an embedded CPython, `cargo build --features embed` — the 17 n-ary 2-D operators and the 2,672 typed-ledger operators, whose inputs are not one image or region, are refused with a reason, not yet routed), plus a **5-operator contract** that also has a native Rust route. The contract's job is to find specification bugs by being a second implementation (nine found so far); `fs_apply` always reports which route ran |
+| **From C / C++ / C# / Lua** (and Python `ctypes`) | embedding into an existing product | `cargo build --release` in `rust/fullseye_core`, then one example per language in [`rust/fullseye_core/examples/`](rust/fullseye_core/examples/README.md) — all four print the same five lines | A C ABI (`fullseye_abi.h`) with **one generic entry point, `fs_apply`, that reaches the whole 2-D registry** (942 single-input operators, by name + JSON parameters; 0.2.0, the registry runs in an embedded CPython, `cargo build --features embed` — the 17 n-ary 2-D operators and the 2,674 typed-ledger operators, whose inputs are not one image or region, are refused with a reason, not yet routed), plus a **5-operator contract** that also has a native Rust route. The contract's job is to find specification bugs by being a second implementation (nine found so far); `fs_apply` always reports which route ran |
 
 ## Install
 
@@ -190,7 +190,7 @@ knobs in `[0, 1]`. Feature operators return a Python float; contour operators a 
 
 ## Operator library
 
-**3,631 typed operators** (959 2-D in the registry, 17 of them n-ary, + 2,672 in the typed ledgers,
+**3,633 typed operators** (959 2-D in the registry, 17 of them n-ary, + 2,674 in the typed ledgers,
 the 3-D ledger among them), covering denoising, smoothing, sharpening,
 thresholding/segmentation, morphology, edge/corner/blob detection, distance
 transforms, color-space conversion, texture/shape features, contours, and the 3-D
@@ -320,7 +320,7 @@ Everything below lives in the repo — start at the guide that matches what you 
 | **Read the whole story end to end (long-form)** | [`docs/articles/fullseye_overview_qiita_en.md`](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/fullseye_overview_qiita_en.md) · [日本語](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/fullseye_overview_qiita_ja.md) |
 | See what the operators produce (result gallery) | `docs/GALLERY.md` |
 | Browse the paper exhibits (151 op demos, en/ja) | `docs/articles/exhibits/` |
-| Look up any of the 3,631 operators in the machine-readable index | `docs/ops/INDEX.md` (full TOC) · `docs/OP_CATALOG.md` (one-page catalog) |
+| Look up any of the 3,633 operators in the machine-readable index | `docs/ops/INDEX.md` (full TOC) · `docs/OP_CATALOG.md` (one-page catalog) |
 | Find real sample data (meshes / volumes / images, with licenses) | `docs/ops/SAMPLES.md` |
 | Use Fullseye as an AI/RAG knowledge base | `docs/AI_RAG_GUIDE.md` (+ `fullseye-rag`) |
 | Drive the Studio IDE | `docs/STUDIO_GUIDE.md` · `docs/HDEVELOP_DEV_OPS.md` (dev_* window ops) |

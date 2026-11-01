@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.astro_fits_write(image, *, header)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import fileio; fileio.astro_fits_write(image, *, header)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsfileio.get(&quot;astro_fits_write&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
-<p>&gt; इस op के विवरण का अभी अनुवाद नहीं हुआ है। मूल text जैसा है वैसा दिया गया है।</p>
-<p>2-D/3-D 天文画像と基本 WCS を primary-HDU FITS の <code style="color:#22d3bf">bytes</code> にする。</p>
+<p>2-D/3-D astronomical image और basic WCS को primary-HDU FITS <code style="color:#22d3bf">bytes</code> में लिखता है।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
 <p><code style="color:#22d3bf">header</code> は FITS の基本 WCS キー(<code style="color:#22d3bf">CTYPE*</code>, <code style="color:#22d3bf">CRPIX*</code>, <code style="color:#22d3bf">CRVAL*</code>, <code style="color:#22d3bf">CDELT*</code>, <code style="color:#22d3bf">PC*_*</code>, <code style="color:#22d3bf">CD*_*</code>, <code style="color:#22d3bf">CUNIT*</code> など)だけを持つ辞書。構造キーは配列から作り、uint16/uint32 は標準の BZERO 規約で保存する。呼び出し例:</p>
 <p><code style="color:#22d3bf">payload = astro_fits_write(image, header={&quot;CTYPE1&quot;: &quot;RA---TAN&quot;})</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

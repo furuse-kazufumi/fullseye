@@ -1,13 +1,16 @@
 from __future__ import annotations
 
 import io
+import builtins
 from pathlib import Path
+import xml.etree.ElementTree as ET
 
 import numpy as np
 import pytest
 import mrcfile
 import nrrd
 import nibabel as nib
+import tifffile
 from astropy.io import fits
 
 import fileio
@@ -246,3 +249,89 @@ def test_nifti_public_nibabel_anatomical_worked_example():
     np.testing.assert_array_equal(actual, np.asanyarray(independent.dataobj))
     np.testing.assert_allclose(meta["affine"], independent.affine, rtol=0, atol=0)
     assert actual.shape == (33, 41, 25) and meta["spatial_unit"] == "mm"
+
+
+def test_ome_tiff_roundtrip_metadata_and_independent_tifffile_paths(tmp_path):
+    stack = np.arange(2 * 3 * 4 * 5 * 6, dtype=np.uint16).reshape(2, 3, 4, 5, 6)
+    meta = {"axes": "TCZYX", "physical_size_x": 0.25, "physical_size_x_unit": "um",
+            "physical_size_y": 0.5, "physical_size_y_unit": "um",
+            "physical_size_z": 1.5, "physical_size_z_unit": "um",
+            "channel_names": ["DAPI", "FITC", "TRITC"]}
+    before = set(tmp_path.iterdir())
+    payload = fileio.ome_tiff_write(stack, meta=meta)
+    assert isinstance(payload, bytes) and set(tmp_path.iterdir()) == before
+    back, actual_meta = fileio.ome_tiff_read(payload)
+    np.testing.assert_array_equal(back, stack)
+    assert actual_meta["axes"] == "TCZYX"
+    assert actual_meta["channel_names"] == meta["channel_names"]
+    assert actual_meta["physical_size_x"] == 0.25
+    assert actual_meta["physical_size_x_unit"] == "µm"
+    assert actual_meta["physical_size_z_unit"] == "µm"
+
+    independent = tifffile.imread(io.BytesIO(payload))
+    np.testing.assert_array_equal(independent, stack)
+    with tifffile.TiffFile(io.BytesIO(payload)) as tif:
+        assert tif.series[0].axes == "TCZYX"
+        root = ET.fromstring(tif.ome_metadata)
+    pixels = next(node for node in root.iter() if node.tag.rsplit("}", 1)[-1] == "Pixels")
+    assert pixels.attrib["SizeT"] == "2" and pixels.attrib["SizeC"] == "3"
+    assert pixels.attrib["PhysicalSizeXUnit"] == "µm"
+
+
+def test_ome_tiff_write_is_byte_deterministic():
+    stack = np.arange(2 * 2 * 3 * 4, dtype=np.uint16).reshape(2, 2, 3, 4)
+    meta = {"axes": "CZYX", "physical_size_x": 0.5,
+            "physical_size_x_unit": "um", "physical_size_y": 0.6,
+            "physical_size_y_unit": "um", "physical_size_z": 1.2,
+            "physical_size_z_unit": "um", "channel_names": ["A", "B"]}
+    assert fileio.ome_tiff_write(stack, meta=meta) == fileio.ome_tiff_write(stack, meta=meta)
+
+
+def test_ome_tiff_corrupt_non_ome_and_metadata_mismatch_rejected():
+    stack = np.zeros((2, 3, 4, 5), dtype=np.uint8)
+    meta = {"axes": "CZYX", "physical_size_x": 1, "physical_size_x_unit": "mm",
+            "physical_size_y": 1, "physical_size_y_unit": "mm",
+            "physical_size_z": 2, "physical_size_z_unit": "mm",
+            "channel_names": ["A", "B"]}
+    payload = fileio.ome_tiff_write(stack, meta=meta)
+    with pytest.raises(ValueError, match="corrupt or truncated TIFF"):
+        fileio.ome_tiff_read(payload[:128])
+    plain = io.BytesIO(); tifffile.imwrite(plain, np.zeros((4, 5), dtype=np.uint8), metadata=None)
+    with pytest.raises(ValueError, match="no OME-XML metadata"):
+        fileio.ome_tiff_read(plain.getvalue())
+    tampered = payload.replace(b'SizeC="2"', b'SizeC="3"', 1)
+    with pytest.raises(ValueError, match="SizeC|channels|corrupt"):
+        fileio.ome_tiff_read(tampered)
+    with pytest.raises(ValueError, match="channel_names must contain 2"):
+        fileio.ome_tiff_write(stack, meta={**meta, "channel_names": ["only one"]})
+
+
+def test_ome_tiff_public_tifffile_hyperstack_worked_example():
+    """Read the public tifffile OME hyperstack example through our stricter metadata contract."""
+    expected = np.arange(2 * 3 * 4 * 5 * 6, dtype=np.uint8).reshape(2, 3, 4, 5, 6)
+    stream = io.BytesIO()
+    tifffile.imwrite(stream, expected, ome=True, photometric="minisblack",
+                     metadata={"axes": "TCZYX", "PhysicalSizeX": 0.1,
+                               "PhysicalSizeXUnit": "µm", "PhysicalSizeY": 0.1,
+                               "PhysicalSizeYUnit": "µm", "PhysicalSizeZ": 0.3,
+                               "PhysicalSizeZUnit": "µm",
+                               "Channel": {"Name": ["C0", "C1", "C2"]}})
+    actual, meta = fileio.ome_tiff_read(stream.getvalue())
+    np.testing.assert_array_equal(actual, expected)
+    assert meta["axes"] == "TCZYX" and meta["channel_names"] == ["C0", "C1", "C2"]
+
+
+def test_ome_tiff_missing_dependency_fails_closed(monkeypatch):
+    real_import = builtins.__import__
+
+    def missing(name, *args, **kwargs):
+        if name == "tifffile":
+            raise ModuleNotFoundError("tifffile deliberately hidden")
+        return real_import(name, *args, **kwargs)
+
+    monkeypatch.setattr(builtins, "__import__", missing)
+    with pytest.raises(ImportError, match=r"pip install tifffile"):
+        fileio.ome_tiff_write(np.zeros((2, 2), dtype=np.uint8),
+                               meta={"axes": "YX", "physical_size_x": 1,
+                                     "physical_size_x_unit": "um", "physical_size_y": 1,
+                                     "physical_size_y_unit": "um"})

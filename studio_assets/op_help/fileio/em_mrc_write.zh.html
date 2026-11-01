@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.em_mrc_write(volume, *, meta)</code>(要直接调用实现,<code style="color:#22d3bf">import fileio; fileio.em_mrc_write(volume, *, meta)</code>;从台账取用则 <code style="color:#22d3bf">opsfileio.get(&quot;em_mrc_write&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>2-D/3-D 電顕データを MRC2014/CCP4 の <code style="color:#22d3bf">bytes</code> にする。</p>
+<p>将二维/三维电镜数据写成 MRC2014/CCP4 <code style="color:#22d3bf">bytes</code>。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>mode 0/1/2/6(<code style="color:#22d3bf">int8/int16/float32/uint16</code>)を扱う。<code style="color:#22d3bf">meta</code> は <code style="color:#22d3bf">voxel_size</code> / <code style="color:#22d3bf">origin</code> の x,y,z と、それぞれの単位キー <code style="color:#22d3bf">voxel_unit=&#x27;angstrom&#x27;</code> / <code style="color:#22d3bf">origin_unit=&#x27;angstrom&#x27;</code> を必須とする。</p>
 <p>呼び出し例: <code style="color:#22d3bf">em_mrc_write(vol, meta={&quot;voxel_size&quot;: [1,1,2], &quot;voxel_unit&quot;: &quot;angstrom&quot;, &quot;origin&quot;: [0,0,0], &quot;origin_unit&quot;: &quot;angstrom&quot;})</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

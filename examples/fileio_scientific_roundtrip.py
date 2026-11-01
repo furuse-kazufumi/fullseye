@@ -42,7 +42,15 @@ def main():
     np.testing.assert_allclose(nifti_meta["affine"], affine)
     assert nifti_meta["spatial_unit"] == "mm" and nifti_meta["compressed"]
 
-    print("PASS: FITS, MRC, NRRD, and NIfTI arrays and geometry round-trip in memory")
+    ome_meta = {"axes": "ZYX", "physical_size_x": 0.5, "physical_size_x_unit": "um",
+                "physical_size_y": 0.75, "physical_size_y_unit": "um",
+                "physical_size_z": 1.25, "physical_size_z_unit": "um"}
+    ome_bytes = fs.ome_tiff_write(volume, meta=ome_meta)
+    ome_volume, ome_back_meta = fs.ome_tiff_read(ome_bytes)
+    np.testing.assert_array_equal(ome_volume, volume)
+    assert ome_back_meta["axes"] == "ZYX" and ome_back_meta["physical_size_x_unit"] == "µm"
+
+    print("PASS: FITS, MRC, NRRD, NIfTI, and OME-TIFF arrays and geometry round-trip in memory")
 
 
 if __name__ == "__main__":

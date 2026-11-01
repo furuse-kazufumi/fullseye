@@ -217,6 +217,7 @@ from fileio import (  # noqa: E402,F401
     em_mrc_write, em_mrc_read,
     nrrd_write, nrrd_read,
     nifti_write, nifti_read,
+    ome_tiff_write, ome_tiff_read,
 )
 from meshio_opt import (  # noqa: E402,F401
     read_gltf, read_gltf_merged, read_las, read_pcd, formats_available,
@@ -1181,6 +1182,7 @@ __all__ = [
     "em_mrc_write", "em_mrc_read",
     "nrrd_write", "nrrd_read",
     "nifti_write", "nifti_read",
+    "ome_tiff_write", "ome_tiff_read",
     "mesh_to_points", "voxelize", "bounds", "recenter", "normalize_scale",
     "meshio_opt", "read_gltf", "read_gltf_merged", "read_las", "read_pcd", "formats_available",
     "volio", "read_volume", "write_volume", "list_dicom_series", "VolumeMeta",

@@ -40,7 +40,7 @@ DIR = os.path.join(_ROOT, "examples")
 EXAMPLES = [
     {"id": "fileio_scientific_roundtrip", "task": "fileio", "data": "synthetic",
      "name": "科学画像・体積を標準形式で受け渡す",
-     "summary": "FITS の WCS、MRC の Å 単位 geometry、gzip NRRD の space directions、NIfTI の affine をメモリ上で往復し、配列と単位つきメタデータを自己検査する。"},
+     "summary": "FITS の WCS、MRC/NRRD/NIfTI の単位つき geometry、OME-TIFF の TCZYX・物理サイズ・チャネル名をメモリ上で往復して自己検査する。"},
     {"id": "fileio_roundtrip", "task": "fileio", "data": "synthetic",
      "name": "表・メッシュ・点群を標準形式で受け渡す",
      "summary": "単位と由来を持つ CSV、属性つき PLY、STL、OBJ、OFF、XYZ、E57 をメモリ上で書いて読み戻し、"

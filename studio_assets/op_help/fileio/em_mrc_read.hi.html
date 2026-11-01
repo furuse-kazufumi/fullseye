@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.em_mrc_read(data)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import fileio; fileio.em_mrc_read(data)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsfileio.get(&quot;em_mrc_read&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
-<p>&gt; इस op के विवरण का अभी अनुवाद नहीं हुआ है। मूल text जैसा है वैसा दिया गया है।</p>
-<p>MRC2014/CCP4 の mode 0/1/2/6 を <code style="color:#22d3bf">(image_or_volume, meta)</code> として読む。</p>
+<p>MRC2014/CCP4 mode 0/1/2/6 को <code style="color:#22d3bf">(image_or_volume, meta)</code> के रूप में पढ़ता है।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
 <p><code style="color:#22d3bf">meta</code> は Å 単位を明示した <code style="color:#22d3bf">voxel_size</code> / <code style="color:#22d3bf">origin</code> を返す。非標準軸順、extended header、切れたデータ、shape と mode の不一致は名指しで拒否する。</p>
 <p>呼び出し例: <code style="color:#22d3bf">volume, meta = em_mrc_read(payload)</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
