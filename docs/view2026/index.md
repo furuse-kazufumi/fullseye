@@ -78,8 +78,8 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../articles/assets/poc/poc_stockpile_volume/07_scan_orbit.mp4"><img src="thumbs/poc_stockpile_volume.jpg" alt="堆積物の体積" loading="lazy" width="320" height="320"><b>&#9654;</b><span>堆積物の体積</span></a>
 <a href="../articles/assets/poc/poc_ct_fidelity/01_recon_sweep.png"><img src="thumbs/poc_ct_fidelity.jpg" alt="CT 再構成" loading="lazy" width="320" height="320"><span>CT 再構成</span></a>
 <a href="../articles/assets/poc/poc_ct_void_morphology/13_section_sweep.mp4"><img src="thumbs/poc_ct_void_morphology.jpg" alt="CT のボイド" loading="lazy" width="320" height="320"><b>&#9654;</b><span>CT のボイド</span></a>
-<a href="../articles/assets/poc/poc_interferometry_step/03_surface_z_scan.mp4"><img src="thumbs/poc_interferometry_step.jpg" alt="白色干渉の段差" loading="lazy" width="320" height="320"><b>&#9654;</b><span>白色干渉の段差</span></a>
-<a href="../articles/assets/poc/poc_polarization_specular/01_raw_polarizer_mosaic.png"><img src="thumbs/poc_polarization_specular.jpg" alt="偏光で鏡面除去" loading="lazy" width="320" height="320"><span>偏光で鏡面除去</span></a>
+<a href="../articles/assets/poc/poc_interferometry_step/09_csi_scan_explained.mp4"><img src="thumbs/poc_interferometry_step.jpg" alt="白色干渉の段差" loading="lazy" width="320" height="320"><b>&#9654;</b><span>白色干渉の段差</span></a>
+<a href="../articles/assets/poc/poc_polarization_specular/08_analyzer_sweep_explained.mp4"><img src="thumbs/poc_polarization_specular.jpg" alt="偏光で鏡面除去" loading="lazy" width="320" height="320"><b>&#9654;</b><span>偏光で鏡面除去</span></a>
 <a href="../articles/assets/poc/poc_photoelasticity/03_load_and_isoclinics.mp4"><img src="thumbs/poc_photoelasticity.jpg" alt="光弾性の応力" loading="lazy" width="320" height="320"><b>&#9654;</b><span>光弾性の応力</span></a>
 <a href="../articles/assets/poc/poc_thermography_ndt/02_depth_map.png"><img src="thumbs/poc_thermography_ndt.jpg" alt="熱画像の欠陥深さ" loading="lazy" width="320" height="320"><span>熱画像の欠陥深さ</span></a>
 <a href="../articles/assets/poc/poc_motion_magnification/05_magnify_video.mp4"><img src="thumbs/poc_motion_magnification.jpg" alt="微小振動の拡大" loading="lazy" width="320" height="320"><b>&#9654;</b><span>微小振動の拡大</span></a>
@@ -495,7 +495,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 </div>
 
-[PoC 以外の使用例 175 本の一覧](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
+[PoC 以外の使用例 176 本の一覧](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
 
 ## ぜんぶ見る
 
@@ -584,7 +584,7 @@ PoC 283 本と、ロボットの例 5 本。グループを開くとサムネイ
 <a href="../articles/assets/poc/poc_dimensional_inspection/01_slot_bias.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_dimensional_inspection.jpg" alt="部品の寸法検査" width="200" height="200"><span>部品の寸法検査</span></a>
 <a href="../articles/assets/poc/poc_fiber_orientation/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_fiber_orientation.jpg" alt="繊維の配向" width="200" height="200"><span>繊維の配向</span></a>
 <a href="../articles/assets/poc/poc_gear_tooth_metrology/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_gear_tooth_metrology.jpg" alt="歯車の歯形" width="200" height="200"><span>歯車の歯形</span></a>
-<a href="../articles/assets/poc/poc_interferometry_step/03_surface_z_scan.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_interferometry_step.jpg" alt="白色干渉の段差" width="200" height="200"><b>&#9654;</b><span>白色干渉の段差</span></a>
+<a href="../articles/assets/poc/poc_interferometry_step/09_csi_scan_explained.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_interferometry_step.jpg" alt="白色干渉の段差" width="200" height="200"><b>&#9654;</b><span>白色干渉の段差</span></a>
 <a href="../articles/assets/poc/poc_metal_grain_size/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_metal_grain_size.jpg" alt="結晶粒度" width="200" height="200"><span>結晶粒度</span></a>
 <a href="../articles/assets/poc/poc_multibeam_bathymetry/17_survey.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_multibeam_bathymetry.jpg" alt="多ビーム測深" width="200" height="200"><b>&#9654;</b><span>多ビーム測深</span></a>
 <a href="../articles/assets/poc/poc_particle_sizing/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_particle_sizing.jpg" alt="粒度分布" width="200" height="200"><span>粒度分布</span></a>
@@ -719,7 +719,7 @@ PoC 283 本と、ロボットの例 5 本。グループを開くとサムネイ
 <a href="../articles/assets/poc/poc_nir_silicon_transmission/05_best_led_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_nir_silicon_transmission.jpg" alt="Si ウェハ越しの近赤外透過(LED の波長を選ぶ)" width="200" height="200"><b>&#9654;</b><span>Si ウェハ越しの近赤外透過(LED の波長を選ぶ)</span></a>
 <a href="../articles/assets/poc/poc_material_optical_library/07_silicon_window_thickness.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_material_optical_library.jpg" alt="材料の光学物性ライブラリ(86 種が同じ表から)" width="200" height="200"><b>&#9654;</b><span>材料の光学物性ライブラリ(86 種が同じ表から)</span></a>
 <a href="../articles/assets/poc/poc_pigment_unmixing/01_per_field_auc.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_pigment_unmixing.jpg" alt="顔料の層を分離" width="200" height="200"><span>顔料の層を分離</span></a>
-<a href="../articles/assets/poc/poc_polarization_specular/01_raw_polarizer_mosaic.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_polarization_specular.jpg" alt="偏光で鏡面除去" width="200" height="200"><span>偏光で鏡面除去</span></a>
+<a href="../articles/assets/poc/poc_polarization_specular/08_analyzer_sweep_explained.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_polarization_specular.jpg" alt="偏光で鏡面除去" width="200" height="200"><b>&#9654;</b><span>偏光で鏡面除去</span></a>
 <a href="../articles/assets/poc/poc_real_stain_unmix/01_separation.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_real_stain_unmix.jpg" alt="実写の染色分離" width="200" height="200"><span>実写の染色分離</span></a>
 <a href="../articles/assets/poc/poc_white_balance/01_casts.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_white_balance.jpg" alt="ホワイトバランス" width="200" height="200"><span>ホワイトバランス</span></a>
 <a href="../articles/assets/poc/poc_lens_file_roundtrip/02_spot_diagram.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_lens_file_roundtrip.jpg" alt="光学設計ファイル(.zmx)の読み書き(別の 2 実装と照合)" width="200" height="200"><span>光学設計ファイル(.zmx)の読み書き(別の 2 実装と照合)</span></a>
@@ -1276,9 +1276,9 @@ document.querySelectorAll("details.vall").forEach(function (d) {
 
 **光学・干渉・偏光**
 
-- [白色干渉の段差](../articles/assets/poc/poc_interferometry_step/03_surface_z_scan.mp4) (動画): 白色干渉計の走査スタックを合成し、50〜500 nm の段差を測り返した図。雑音 1 % で偏り 2.4 nm 以内・標準偏差 14.1 nm 以内、しかも段差の大きさにほぼ依らない。ゼロ点(包絡線の最大サンプル)の誤差は走査ステップの半分に厳密一致し、Nyquist 上限 0.15 µm の手前 0.14 µm では雑音なしでも +14.1 nm。
+- [白色干渉の段差](../articles/assets/poc/poc_interferometry_step/09_csi_scan_explained.mp4) (動画): 白色干渉計の走査スタックを合成し、50〜500 nm の段差を測り返した図。雑音 1 % で偏り 2.4 nm 以内・標準偏差 14.1 nm 以内、しかも段差の大きさにほぼ依らない。ゼロ点(包絡線の最大サンプル)の誤差は走査ステップの半分に厳密一致し、Nyquist 上限 0.15 µm の手前 0.14 µm では雑音なしでも +14.1 nm。
   雑音が増えると白色干渉の段差誤差が広がる **雑音 1 % で偏り 2.4 nm 以内(段差 50〜500 nm)。位相シフト法は 0.153 µm で λ/2 跳ぶ。** [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_interferometry_step.py)
-- [偏光で鏡面除去](../articles/assets/poc/poc_polarization_specular/01_raw_polarizer_mosaic.png) (図): 拡散と鏡面を s/p 成分で合成し、フレネルの式から偏光度を出して分離結果を採点した図。偏光を使う手は入射角 20 度では 1.2 倍しか勝たない。拡散成分の誤差は閉形式 R_p·E に一致してブリュースター角 56.31 度で 0 ―― `polarization_separate` の拡散はその分だけ系統的に大きい。
+- [偏光で鏡面除去](../articles/assets/poc/poc_polarization_specular/08_analyzer_sweep_explained.mp4) (動画): 拡散と鏡面を s/p 成分で合成し、フレネルの式から偏光度を出して分離結果を採点した図。偏光を使う手は入射角 20 度では 1.2 倍しか勝たない。拡散成分の誤差は閉形式 R_p·E に一致してブリュースター角 56.31 度で 0 ―― `polarization_separate` の拡散はその分だけ系統的に大きい。
   入射角で鏡面分離の誤差が変わり、ブリュースター角近傍で最小になる **拡散成分の誤差は閉形式 R_p·E と一致し、ブリュースター角 56.31 度で 0。** [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_polarization_specular.py)
 - [光弾性の応力](../articles/assets/poc/poc_photoelasticity/03_load_and_isoclinics.mp4) (動画): 透明な樹脂に力を加えて偏光を通すと、内部の応力が縞として見える。円板を押しつぶした応力場を偏光像にし、縞次数が 0.5 を超えて位相が巻いた画素から応力を戻した。戻しが最初に失敗するのは、応力の大きい所ではなく縞の変調が落ちる等方点だった。
   検光子を回すと光弾性縞が動き、平均輝度が周期的に変わる **中心の縞次数 2.38(閉形式どおり)。op の偏光系は教科書の式と最大差 2.2e-16。** [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_photoelasticity.py)
