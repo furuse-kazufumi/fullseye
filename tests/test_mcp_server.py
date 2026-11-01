@@ -293,9 +293,11 @@ def test_every_declared_tool_has_a_body(cat):
     from fullseye.mcp.handles import HandleStore
     store = HandleStore()
     order = ["fullseye_search_ops", "fullseye_find_ops", "fullseye_op_cards",
+             "fullseye_suggest_pipeline",
              "fullseye_plan", "fullseye_describe", "fullseye_choose",
              "fullseye_validate_pipeline", "fullseye_op_help", "fullseye_catalog_coverage",
-             "fullseye_list_samples", "fullseye_load_image", "fullseye_load_stack", "fullseye_apply", "fullseye_inspect",
+             "fullseye_list_samples", "fullseye_load_image", "fullseye_load_template",
+             "fullseye_load_stack", "fullseye_apply", "fullseye_inspect",
              "fullseye_pipeline", "fullseye_fix_text",
              "fullseye_import_json", "fullseye_export_json", "fullseye_estimate_distortion",
              "fullseye_write_viewer"]
@@ -310,6 +312,8 @@ def test_every_declared_tool_has_a_body(cat):
             a = {"query": "count objects", "start_sort": "image", "goal_sort": "feature"}
         elif n == "fullseye_op_cards":
             a = {"names": ["gaussian", "otsu"]}
+        elif n == "fullseye_suggest_pipeline":
+            a = {"query": "gaussian", "start_sort": "image", "goal_sort": "image"}
         elif n == "fullseye_plan":
             a = {"have": "image", "want": "region"}
         elif n == "fullseye_describe":
@@ -334,6 +338,8 @@ def test_every_declared_tool_has_a_body(cat):
             a = {"name": "gaussian"}
         elif n == "fullseye_load_image":
             a = {"path": ctx["sample_path"]}
+        elif n == "fullseye_load_template":
+            a = {"path": ctx["sample_path"], "vision": "none"}
         elif n == "fullseye_load_stack":
             a = {"paths": [ctx["sample_path"], ctx["sample_path"]], "sort": "images"}
         elif n == "fullseye_apply":
