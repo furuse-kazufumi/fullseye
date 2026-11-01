@@ -97,8 +97,8 @@ TOOLS: dict[str, dict] = {
             "やりたいことの言葉(日本語・英語・中文(簡/繁)・한국어・Deutsch・हिन्दी)で op を探す。"
             "op の要約 6 言語・名前・HALCON 名・型と、文献層のテーマ表で人が書いた文脈(現場の言い方、日本語と英訳)を BM25 で照合し、"
             "順位つきで要約とノートの場所(文脈のある op は contexts も)を返す。"
-            "名前を知っているなら fullseye_search_ops(部分一致)の方が速い。同義語は拾わないので、"
-            "0 件なら別の言い方・英語で試す。"),
+            "各候補は loader と pipeline stage の次呼び出し骨格つき。直接 0 件なら業務表現の"
+            "英語候補と型同義語で決定的に再検索し、retry_ops を同じ応答で返す。"),
         "inputSchema": {
             "type": "object",
             "properties": {
@@ -162,6 +162,15 @@ TOOLS: dict[str, dict] = {
             "names": {"type": "array", "minItems": 1, "maxItems": 100, "items": {"type": "string"}}},
             "required": ["names"], "additionalProperties": False},
     },
+    "fullseye_suggest_pipeline": {
+        "description": (
+            "検索候補が一意なときだけ、その op のカードと fail-closed 検証済み一段 pipeline 案を"
+            "1 回で返す。曖昧なら候補を返すだけで勝手に選ばない。次に fullseye_pipeline を呼ぶ。"),
+        "inputSchema": {"type":"object","properties":{
+            "query":{"type":"string","minLength":1,"maxLength":200},
+            "start_sort":{"type":"string"},"goal_sort":{"type":"string"}},
+            "required":["query","start_sort","goal_sort"],"additionalProperties":False},
+    },
     "fullseye_validate_pipeline": {
         "description": "Validate op existence, knob ranges, stage count, and type chaining without execution (fail-closed).",
         "inputSchema": {"type": "object", "properties": {
@@ -214,6 +223,14 @@ TOOLS: dict[str, dict] = {
             "additionalProperties": False,
         },
     },
+    "fullseye_load_template": {
+        "description": (
+            "位置決め用の登録見本を画像ハンドルとして読む。返った handle は fullseye_pipeline の"
+            "template_handle に必ず渡す。パス制約・画素上限・型検査は load_image と同じ。"),
+        "inputSchema": {
+            "type":"object","properties":{"path":{"type":"string","maxLength":1024},
+            "vision":_VISION},"required":["path"],"additionalProperties":False},
+    },
     "fullseye_load_stack": {
         "description": "Load several sandboxed images into one typed sequence handle for multi-frame operators.",
         "inputSchema": {"type":"object","properties":{
@@ -235,6 +252,8 @@ TOOLS: dict[str, dict] = {
                 "op": {"type": "string", "maxLength": 120},
                 "a": {"type": "number", "minimum": 0.0, "maximum": 1.0},
                 "b": {"type": "number", "minimum": 0.0, "maximum": 1.0},
+                "params": {"type":"object", "description":
+                           "op台帳で公開された名前つき物理量(例: sigma_px/window_px/radius_px)"},
                 "allow_degraded": {"type": "boolean"},
                 "vision": _VISION,
             },
@@ -261,6 +280,7 @@ TOOLS: dict[str, dict] = {
             "type": "object",
             "properties": {
                 "handle": _HANDLE,
+                "template_handle": _HANDLE,
                 "bindings": {"type":"object","additionalProperties":_HANDLE},
                 "outputs": {"type":"array","items":{"type":"string"}},
                 "vision": _VISION,
@@ -279,7 +299,7 @@ TOOLS: dict[str, dict] = {
                         "required": ["op"],
                         "additionalProperties": False,
                     },
-                    "description": "[{op, a?, b?}, …]。a/b の既定は 0.5",
+                    "description": "[{op, params?}, …]。物理量は名前つきparamsを使う。a/bは互換用",
                 },
             },
             "required": ["handle", "stages"],
@@ -418,6 +438,10 @@ TOOLS: dict[str, dict] = {
 class ArgError(ValueError):
     """入力スキーマ違反。JSON-RPC の -32602 に写す。"""
 
+    def __init__(self, message: str, *, data: dict | None = None):
+        super().__init__(message)
+        self.data = data
+
 
 MAX_SCHEMA_DEPTH = 64
 
@@ -536,8 +560,11 @@ def _ok(req_id, result) -> dict:
     return {"jsonrpc": "2.0", "id": req_id, "result": result}
 
 
-def _err(req_id, code: int, message: str) -> dict:
-    return {"jsonrpc": "2.0", "id": req_id, "error": {"code": code, "message": message}}
+def _err(req_id, code: int, message: str, *, data: dict | None = None) -> dict:
+    error = {"code": code, "message": message}
+    if data is not None:
+        error["data"] = data
+    return {"jsonrpc": "2.0", "id": req_id, "error": error}
 
 
 def _log(*parts) -> None:
@@ -701,6 +728,21 @@ def _load_image(a: dict, store: HandleStore) -> dict:
     text = "%s  sort=%s\n%s" % (meta["handle"], meta["sort"], _stats_line(st, vd))
     return tool_result(text, structured, links=links)
 
+
+def _load_template(a: dict, store: HandleStore) -> dict:
+    """Load a 2-D registration template without hidden global registration."""
+    loaded = _load_image({"path": a["path"], "vision": a.get("vision", "auto")}, store)
+    structured = loaded["structuredContent"]
+    if structured["sort"] != "image" or len(structured["shape"]) != 2:
+        raise ArgError("template must be a 2-D grayscale image; got sort=%s shape=%s" %
+                       (structured["sort"], structured["shape"]))
+    structured["role"] = "template"
+    structured["next_call"] = ("fullseye_pipeline(handle=<scene_handle>, "
+                               "template_handle=%s, stages=[{op:ncc_locate}])" %
+                               structured["handle"])
+    loaded["content"][0]["text"] += "\nrole=template; pass this handle as pipeline.template_handle"
+    return loaded
+
 def _load_stack(a: dict, store: HandleStore) -> dict:
     arrays, provenance, notes = [], [], []
     pixels = 0; limit = int(get_system("mcp_stack_max_pixels"))
@@ -825,6 +867,83 @@ def _resolve_pipeline_ref(ref: str, values: dict, store: HandleStore | None):
     raise ArgError("unknown pipeline reference: %s" % ref)
 
 
+def physical_parameter_catalog() -> dict[str, dict[str, dict]]:
+    """Named physical controls, mechanically enumerated from param_specs' op ledger."""
+    from param_specs import _mcp_physical_param_specs
+    return _mcp_physical_param_specs()
+
+
+def _physical_value_to_knob(op: str, name: str, value: Any, spec: dict) -> float:
+    """Validate a displayed physical value before converting it to an a/b knob."""
+    if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(float(value)):
+        raise ArgError("%s.%s must be a finite number in %s %s" %
+                       (op, name, spec.get("choices") or [spec.get("min"), spec.get("max")],
+                        spec.get("unit") or ""))
+    shown = float(value)
+    choices = spec.get("choices")
+    if choices:
+        allowed = [float(x) for x in choices]
+        if shown not in allowed:
+            raise ArgError("%s.%s=%s is outside the documented choices %s %s; values are not rounded" %
+                           (op, name, value, allowed, spec.get("unit") or ""))
+        return (allowed.index(shown) + 0.5) / len(allowed)
+    lo, hi = float(spec["min"]), float(spec["max"])
+    if shown < lo or shown > hi:
+        raise ArgError("%s.%s=%s is outside the documented range [%s, %s] %s; values are not clipped" %
+                       (op, name, value, lo, hi, spec.get("unit") or ""))
+    if spec.get("kind") == "int" and shown != round(shown):
+        raise ArgError("%s.%s=%s must be an integer in [%s, %s] %s" %
+                       (op, name, value, int(lo), int(hi), spec.get("unit") or ""))
+    from param_specs import display_to_knob
+    return display_to_knob(spec, shown)
+
+
+def _named_knobs(op: str, params: dict | None, a: float = 0.5,
+                 b: float = 0.5) -> tuple[float, float, dict]:
+    """Resolve named physical params to knobs; unknown/conflicting values fail closed."""
+    params = dict(params or {})
+    catalog = physical_parameter_catalog()
+    declared = catalog.get(op, {})
+    named = {key: value for key, value in params.items() if key in declared}
+    unknown = sorted(set(params) - set(declared))
+    if unknown:
+        raise ArgError("%s has unknown named parameters %s; physical parameters are %s" %
+                       (op, unknown, sorted(declared)))
+    if not named:
+        return float(a), float(b), {}
+    knobs = {"a": float(a), "b": float(b)}
+    used = {}
+    for name, value in named.items():
+        spec = declared[name]
+        knob = spec["knob"]
+        knobs[knob] = _physical_value_to_knob(op, name, value, spec)
+        used[name] = {"value": value, "unit": spec.get("unit"), "knob": knob,
+                      "range": spec.get("choices") or [spec.get("min"), spec.get("max")]}
+    return knobs["a"], knobs["b"], used
+
+
+def _sort_mismatch_fixes(actual: str, expected: str) -> list[dict]:
+    """Concrete, bounded repair candidates for a structured type mismatch."""
+    fixes = []
+    if expected in ("image", "color"):
+        fixes.append({"kind":"loader", "tool":"fullseye_load_image",
+                      "call":"fullseye_load_image(path=..., color=%s)" % (expected == "color")})
+    elif expected in ("seq<image>", "polsweep"):
+        fixes.append({"kind":"loader", "tool":"fullseye_load_stack",
+                      "call":"fullseye_load_stack(paths=[...], sort=%r)" % expected})
+    try:
+        from fullseye.opsearch import plan
+        route = plan(actual, expected, constraints={"k":1, "max_depth":3,
+                     "max_expansions":1000, "timeout_ms":200})
+        if route.get("ok") and route.get("plans"):
+            ops = route["plans"][0]["ops"]
+            fixes.append({"kind":"conversion", "ops":ops,
+                          "stage":" -> ".join(ops)})
+    except (TypeError, ValueError, FileNotFoundError):
+        pass
+    return fixes
+
+
 def validate_pipeline(stages: list[dict], start_sort: str | None, cat: Catalog, *,
                       max_stages: int | None = None, bindings: dict | None = None,
                       store: HandleStore | None = None, outputs: list[str] | None = None) -> dict:
@@ -854,6 +973,7 @@ def validate_pipeline(stages: list[dict], start_sort: str | None, cat: Catalog, 
                   "output": normalize_sort(e.get("output"))}
         for e in _graph()["edges"]
     }
+    physical_catalog = physical_parameter_catalog()
     binding_sorts = {}; binding_values = {}
     for ref, handle in bindings.items():
         if not ref.startswith("have:"):
@@ -924,20 +1044,31 @@ def validate_pipeline(stages: list[dict], start_sort: str | None, cat: Catalog, 
             mismatches=[{"input":j,"actual":a,"expected":b} for j,(a,b) in enumerate(zip(actual,edge["inputs"]))
                         if b not in ("poly",a)]
             if mismatches:
-                errors.append({"layer":"stage","stage":i,"reason":"sort_mismatch","value":mismatches,"candidates":[]})
+                for mismatch in mismatches:
+                    mismatch["fixes"] = _sort_mismatch_fixes(mismatch["actual"], mismatch["expected"])
+                errors.append({"layer":"stage","stage":i,"reason":"sort_mismatch",
+                               "actual":[m["actual"] for m in mismatches],
+                               "expected":[m["expected"] for m in mismatches],
+                               "value":mismatches,
+                               "fixes":[fix for m in mismatches for fix in m["fixes"]],
+                               "candidates":[]})
             roles=edge.get("input_roles",[])
             if len(set(resolved)) != len(resolved) and len(set(roles)) > 1 and not spec.get("allow_reuse",False):
                 errors.append({"layer":"stage","stage":i,"reason":"distinct_role_reuses_reference",
                                "value":list(zip(roles,refs)),"candidates":[]})
             schema={p["name"]:p for p in edge.get("parameter_schema",[])}
-            unknown_params=sorted(set(spec.get("params",{}))-set(schema))
+            physical = physical_catalog.get(name, {})
+            schema_names = set(schema) | set(physical)
+            unknown_params=sorted(set(spec.get("params",{}))-schema_names)
             if unknown_params:
                 errors.append({"layer":"stage","stage":i,"reason":"unknown_parameter","value":unknown_params,
-                               "candidates":sorted(schema)})
+                               "candidates":sorted(schema_names)})
             missing=[n for n,p in schema.items() if p.get("required") and n not in spec.get("params",{})]
             if missing:
                 errors.append({"layer":"stage","stage":i,"reason":"missing_parameter","value":missing,"candidates":[]})
             for pname,pvalue in spec.get("params",{}).items():
+                if pname in physical:
+                    continue
                 if isinstance(pvalue,dict) and "ref" in pvalue:
                     expected=edge.get("ref_parameters",{}).get(pname)
                     known={**binding_values,**{r:({"sort":s,"handle":r},None) for r,s in stage_sorts.items()}}
@@ -959,10 +1090,25 @@ def validate_pipeline(stages: list[dict], start_sort: str | None, cat: Catalog, 
                     except (TypeError,ValueError) as exc:
                         errors.append({"layer":"stage","stage":i,"reason":"unknown_profile",
                                        "value":pvalue.get("profile"),"detail":str(exc),"candidates":[]})
+            ka, kb = float(spec.get("a", 0.5)), float(spec.get("b", 0.5))
+            named_used = {}
+            if physical:
+                conflicts = sorted(name0 for name0, ps in physical.items()
+                                   if name0 in spec.get("params", {}) and ps["knob"] in spec)
+                if conflicts:
+                    errors.append({"layer":"stage","stage":i,"reason":"conflicting_parameter_forms",
+                                   "value":conflicts,"detail":"use named params or a/b, not both",
+                                   "candidates":sorted(physical)})
+                try:
+                    ka, kb, named_used = _named_knobs(name, spec.get("params"), ka, kb)
+                except ArgError as exc:
+                    errors.append({"layer":"stage","stage":i,"reason":"physical_parameter_out_of_range",
+                                   "value":dict(spec.get("params",{})),"detail":str(exc),
+                                   "candidates":physical})
             out = actual[0] if edge["output"] == "poly" and actual else edge["output"]
             ref="stage:%d"%i; stage_sorts[ref]=out; cur=out
             normalized.append({"stage":i,"op":name,"inputs":list(refs),"params":dict(spec.get("params",{})),
-                               "a":float(spec.get("a",0.5)),"b":float(spec.get("b",0.5)),
+                               "a":ka,"b":kb,"named_params":named_used,
                                "in_sorts":edge["inputs"],"out_sort":out})
             continue
     known_outputs={**binding_values,**{r:({"sort":s,"handle":r},None) for r,s in stage_sorts.items()}}
@@ -1133,13 +1279,21 @@ def _apply(a: dict, cat: Catalog, store: HandleStore, *,
     op = _resolve_op(a["op"], cat)
     meta, arr = store.get(a["handle"])
     _check_sort(op, meta["sort"], prev="ハンドル %s" % meta["handle"])
-    ka, kb = float(a.get("a", 0.5)), float(a.get("b", 0.5))
+    physical = physical_parameter_catalog().get(op.name, {})
+    conflicts = sorted(name for name, spec in physical.items()
+                       if name in a.get("params", {}) and spec["knob"] in a)
+    if conflicts:
+        raise ArgError("%s: use named params or a/b, not both (%s)" % (op.name, conflicts))
+    ka, kb, named = _named_knobs(op.name, a.get("params"),
+                                  float(a.get("a", 0.5)), float(a.get("b", 0.5)))
     allow = bool(a.get("allow_degraded", False))
     rec, links, _, out = _stage(store, meta, arr, op, ka, kb, allow, vision=a.get("vision", "auto"),
                                 thumb_allowed=True, tag=op.name)
     if "error" in rec:
         text = _stage_text(rec) + "\n(allow_degraded=true で fail-soft を許せるが、劣化は degraded に載る)"
         return _tool_error(text, rec)
+    if named:
+        rec["named_params"] = named
     text = _stage_text(rec)
     addon = _typed_json_addon(out, _out_sort(op, meta["sort"]), max_structured_bytes)
     if addon is not None:
@@ -1167,6 +1321,21 @@ def _pipeline_dag(a: dict, cat: Catalog, store: HandleStore, *, max_structured_b
     bindings=dict(a.get("bindings",{}))
     if a.get("handle") and start_sort:
         bindings.setdefault("have:%s"%start_sort,a["handle"])
+    matching = {stage.get("op") for stage in a["stages"]} & {"ncc_locate", "shape_locate"}
+    template_value = None
+    if matching:
+        if not a.get("template_handle"):
+            detail = {"valid":False, "reason":"missing_template_handle",
+                      "actual":None, "expected":"2-D image template handle",
+                      "fixes":[{"tool":"fullseye_load_template",
+                                "call":"fullseye_load_template(path=<template path>)"}]}
+            return _tool_error(json.dumps(detail, ensure_ascii=False), detail)
+        tmeta, template_value = store.get(a["template_handle"])
+        if tmeta.get("sort") != "image" or np.asarray(template_value).ndim != 2:
+            detail = {"valid":False, "reason":"template_sort_mismatch",
+                      "actual":tmeta.get("sort"), "expected":"image",
+                      "fixes":[{"tool":"fullseye_load_template"}]}
+            return _tool_error(json.dumps(detail, ensure_ascii=False), detail)
     checked=validate_pipeline(a["stages"],start_sort,cat,bindings=bindings,store=store,
                               outputs=a.get("outputs"))
     if not checked["valid"]:
@@ -1179,7 +1348,7 @@ def _pipeline_dag(a: dict, cat: Catalog, store: HandleStore, *, max_structured_b
             op=a["stages"][first.get("stage",1)-1].get("op") if first.get("stage") else "pipeline"
             label="型の不一致: " if first.get("reason")=="sort_mismatch" else ""
             raise ArgError("%s段 %s %s: %s"%(label,first.get("stage",0),op,
-                json.dumps(first,ensure_ascii=False)))
+                json.dumps(first,ensure_ascii=False)), data=checked)
         return _tool_error(json.dumps(checked,ensure_ascii=False),checked)
     bindings = checked["bindings"]
     outputs=a.get("outputs") or (["stage:%d"%len(a["stages"])] if a["stages"] else [])
@@ -1201,8 +1370,10 @@ def _pipeline_dag(a: dict, cat: Catalog, store: HandleStore, *, max_structured_b
                 values.pop(used_ref,None)
 
     original={i:s for i,s in enumerate(a["stages"],1)}
+    normalized_by_stage={s["stage"]:s for s in checked["stages"]}
     for i in checked["execution_order"]:
         spec=original[i]
+        normalized_spec=normalized_by_stage[i]
         edge=edges[spec["op"]]; args=[]; metas=[]
         refs=next(x["inputs"] for x in checked["stages"] if x["stage"]==i)
         param_refs=[v["ref"] for v in spec.get("params",{}).values()
@@ -1240,7 +1411,14 @@ def _pipeline_dag(a: dict, cat: Catalog, store: HandleStore, *, max_structured_b
                 if actual != expected:
                     raise RuntimeError("registry target mismatch: %r != %r"%(actual,expected))
                 with backend_safe.strict_mode(True), backend_safe.current_op(edge["op"]):
-                    out=registered.fn(incoming,float(spec.get("a",.5)),float(spec.get("b",.5)))
+                    if edge["op"] in {"ncc_locate", "shape_locate"}:
+                        runtime_ops.set_match_template(template_value)
+                    try:
+                        out=registered.fn(incoming,float(normalized_spec["a"]),
+                                          float(normalized_spec["b"]))
+                    finally:
+                        if edge["op"] in {"ncc_locate", "shape_locate"}:
+                            runtime_ops.set_match_template(None)
             else:
                 fn=getattr(importlib.import_module(executor["module"]),executor["callable"])
                 out=fn(*args,**params)
@@ -1283,6 +1461,10 @@ def _pipeline_dag(a: dict, cat: Catalog, store: HandleStore, *, max_structured_b
             "verdict":"value","escalate":False,"reasons":[]}
         rec={"stage":i,"ref":ref,"op":edge["op"],"inputs":refs,"status":"ok",
              "params":spec.get("params",{}),"out_sort":out_sort,"handle":handle,"stats":st,**vd,"degraded":[]}
+        if isinstance(out, np.ndarray) and out_sort not in _BULKY_SORTS and out.size <= 256:
+            rec["value"] = out.tolist()
+        if normalized_spec.get("named_params"):
+            rec["named_params"] = normalized_spec["named_params"]
         if isinstance(out,np.ndarray) and vd.get("escalate") and not links and a.get("vision","auto")!="none":
             links=_maybe_thumb(store,meta,args[0] if args else None,out,vision=a.get("vision","auto"),
                                escalate=True,quantity=False,tag="stage%d_%s"%(i,edge["op"]))
@@ -1621,7 +1803,11 @@ def call_tool(name: str, args: Any, cat: Catalog, store: HandleStore | None = No
             for number, proposal in enumerate(r.get("plans", ()), 1):
                 stages = " -> ".join(proposal.get("ops", ()))
                 types = "%s -> %s" % (",".join(r.get("have", ())), r.get("want"))
-                lines.append("%d | %s | %s" % (number, stages, types))
+                evidence = ", ".join("%s→%s +%g" %
+                                     (ev["term"], ev["op"], ev["points"])
+                                     for ev in proposal.get("evidence", ()))
+                lines.append("%d | %s | %s%s" %
+                             (number, stages, types, " | evidence: " + evidence if evidence else ""))
             text = "\n".join(lines)
         else:
             text = json.dumps(r, ensure_ascii=False, indent=2)
@@ -1667,9 +1853,13 @@ def call_tool(name: str, args: Any, cat: Catalog, store: HandleStore | None = No
                 purpose = " ".join(op.get("summary", "").replace("\n", " ").split()[:12]) or "目的説明なし"
                 aliases = op.get("same_as") or []
                 alias_text = (" = " + " = ".join(aliases)) if aliases else ""
-                lines.append("%s%s | %s → %s | %s" %
+                lines.append("%s%s | %s → %s | %s | next: %s" %
                              (op["name"], alias_text, op.get("in_sort") or "?",
-                              op.get("out_sort") or "?", purpose))
+                              op.get("out_sort") or "?", purpose, op.get("next_call", "?")))
+            for op in r.get("retry_ops", []):
+                lines.append("retry[%s]: %s | %s → %s | next: %s" %
+                             (op["retry_query"], op["name"], op.get("in_sort") or "?",
+                              op.get("out_sort") or "?", op.get("next_call", "?")))
             for recipe in r["recipes"]:
                 ops = [stage[0] if isinstance(stage, list) else stage.get("op", "?")
                        for stage in recipe.get("stages", [])]
@@ -1677,8 +1867,35 @@ def call_tool(name: str, args: Any, cat: Catalog, store: HandleStore | None = No
                              (recipe["name"], len(ops), " → ".join(ops)))
             text = "\n".join(lines) or _format(r)
         r["proposals"] = ([{"kind": "op", **row} for row in r["ops"]] +
+                          [{"kind": "retry_op", **row} for row in r.get("retry_ops", [])] +
                           [{"kind": "recipe", **row} for row in r["recipes"]])[:total_limit]
         return tool_result(text, r, max_structured_bytes=max_structured_bytes)
+    if name == "fullseye_suggest_pipeline":
+        from fullseye.opsearch import normalize_sort, search_ops, op_cards
+        start, goal = normalize_sort(a["start_sort"]), normalize_sort(a["goal_sort"])
+        found = search_ops(a["query"], 5, in_sort=start, out_sort=goal)
+        candidates = found["ops"] or found.get("retry_ops", [])
+        qkey = a["query"].strip().lower().replace(" ", "_")
+        exact = [row for row in candidates if qkey in
+                 {str(row.get("name", "")).lower(), str(row.get("halcon", "")).lower()}]
+        unique = len(candidates) == 1 or len(exact) == 1
+        chosen = exact[0] if len(exact) == 1 else (candidates[0] if len(candidates) == 1 else None)
+        result = {"ok": bool(chosen), "unique": bool(chosen), "query": a["query"],
+                  "start_sort": start, "goal_sort": goal,
+                  "candidates": [{k: row.get(k) for k in ("name","in_sort","out_sort","score")}
+                                 for row in candidates[:5]]}
+        if chosen is not None:
+            stages = [{"op": chosen["name"]}]
+            checked = validate_pipeline(stages, start, cat)
+            result.update({"op": chosen["name"], "pipeline": {"start_sort":start,"stages":stages},
+                           "validation": checked, "card": op_cards([chosen["name"]])["cards"][0],
+                           "next_call": chosen.get("next_call")})
+            if not checked["valid"]:
+                result["ok"] = result["unique"] = False
+        else:
+            result["reason"] = "candidate_not_unique"
+        text = json.dumps(result, ensure_ascii=False, indent=2)
+        return tool_result(text, result, max_structured_bytes=max_structured_bytes)
     if name == "fullseye_plan_chain":
         from fullseye.opsearch import plan_chain
         try:
@@ -1744,6 +1961,8 @@ def call_tool(name: str, args: Any, cat: Catalog, store: HandleStore | None = No
     try:
         if name == "fullseye_load_image":
             return _load_image(a, store)
+        if name == "fullseye_load_template":
+            return _load_template(a, store)
         if name == "fullseye_load_stack":
             return _load_stack(a, store)
         if name == "fullseye_apply":
@@ -1805,7 +2024,7 @@ def dispatch(msg: dict, cat: Catalog, store: HandleStore | None = None) -> dict 
             return _err(req_id, -32601, "知らない method: %r" % method)
     except ArgError as exc:
         _log("tools/call", repr(params.get("name"))[:80], "-32602", str(exc)[:200])
-        return None if is_notification else _err(req_id, -32602, str(exc))
+        return None if is_notification else _err(req_id, -32602, str(exc), data=exc.data)
     except CatalogError as exc:
         return None if is_notification else _err(req_id, -32603, "カタログ: %s" % exc)
     except Exception as exc:                                    # noqa: BLE001 - 最後の網: ループを殺さない
