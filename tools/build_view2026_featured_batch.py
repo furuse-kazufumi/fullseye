@@ -9,9 +9,13 @@ from __future__ import annotations
 
 import json
 import re
+import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT / "tools") not in sys.path:
+    sys.path.insert(0, str(ROOT / "tools"))
+from view2026_fullseye_gate import withdrawn_ids
 DATA = ROOT / "docs/view2026/exhibits.json"
 LEDGER = ROOT / "docs/articles/exhibits/poc_captions.json"
 ASSETS = ROOT / "docs/articles/assets/poc"
@@ -28,17 +32,6 @@ WING_CATEGORY = {
 #: 英語のキャプションの中で、日本語のまま引くのが正しい語(路面標示の文字など)。ここに無いかなは訳し忘れとして止める。
 QUOTED_JA = {"止まれ"}
 _KANA = re.compile(r"[\u3040-\u30ff]+")
-VIEW2026_A_OP_IDS = {
-    "poc_phase_measuring_deflectometry", "poc_industrial_oct",
-    "poc_hyperspectral_foreign_matter", "poc_thin_film_reflectometry",
-    "poc_cad_scan_deviation", "poc_telecentric_metrology",
-    "poc_tem_ctf_thon_rings", "poc_virtual_sem_kv_cd_bse",
-    "poc_dual_energy_xray", "poc_weld_radiograph_porosity",
-    "poc_good_sample_variation_model", "poc_code_matching_breakdown",
-    "poc_fourier_ptychography", "poc_photoelasticity",
-}
-
-
 def caption_for(src: dict, lang: str) -> str:
     """その言語のページに載せるキャプション。日本語以外はかなの漏れを検査し、引用語だけなら日本語の印を付ける。"""
     if lang == "ja":
@@ -73,6 +66,7 @@ def media_for(pid: str) -> str | None:
 
 def main() -> None:
     d = json.loads(DATA.read_text(encoding="utf-8"))
+    withdrawn = withdrawn_ids()
     ledger = json.loads(LEDGER.read_text(encoding="utf-8"))["exhibits"]
     ledger_by_id = {e["id"]: e for e in ledger}
     for item in d["exhibits"]:
@@ -82,13 +76,15 @@ def main() -> None:
                 lang: lead_for(src, lang) for lang in d["langs"]
             }
     all_by_id = {e["id"]: e for e in d["all"]}
-    previous = {e["id"]: e for e in d["exhibits"]}
+    previous = {e["id"]: e for e in d["exhibits"] if e["id"] not in withdrawn}
     # Re-running replaces this generated batch and preserves hand-curated cards.
-    d["exhibits"] = [e for e in d["exhibits"] if "numbers_source" not in e]
+    d["exhibits"] = [e for e in d["exhibits"] if "numbers_source" not in e and e["id"] not in withdrawn]
     old = {e["id"] for e in d["exhibits"]}
     candidates = []
     for e in ledger:
         pid = e["id"]
+        if pid in withdrawn:
+            continue
         media = previous.get(pid, {}).get("media") or media_for(pid)
         if (pid in old or pid not in all_by_id or e["wing"] not in WING_CATEGORY or
                 not media or not re.search(r"\d", e.get("caption_en", ""))):
@@ -112,7 +108,8 @@ def main() -> None:
     chosen = industrial + varied
     # ★2026-10-30: 「出来れば全 PoC を載せたい」。初版は 80 本で切っていた。台帳の PoC は手書きの見どころか
     #   この一括のどちらかに必ず載る —— 載らない PoC があれば理由(図が無い・数が無い・分類の無い翼)ごと止める。
-    left = [e["id"] for e in ledger if e["id"] not in old and e["id"] not in {x[2] for x in chosen}]
+    left = [e["id"] for e in ledger if e["id"] not in withdrawn and
+            e["id"] not in old and e["id"] not in {x[2] for x in chosen}]
     if left:
         raise SystemExit("台帳の PoC が見どころに載らない: %s" % left)
     for _, _, pid, src, media in chosen:
@@ -124,13 +121,15 @@ def main() -> None:
             "lead": {lang: lead_for(src, lang) for lang in d["langs"]},
             "see": captions, "num": {lang: "" for lang in d["langs"]},
             "numbers_source": src["numbers_source"], "youtube_url": "",
+            "tier": previous.get(pid, {}).get("tier", "more"),
         }
-        if pid in VIEW2026_A_OP_IDS:
-            item["ops"] = src["ops"]
+        selected_ops = src.get("ops") or previous.get(pid, {}).get("ops")
+        if item["tier"] in ("showcase", "featured") and selected_ops:
+            item["ops"] = selected_ops
         d["exhibits"].append(item)
-    ops_by_id = {e["id"]: e["ops"] for e in ledger if e["id"] in VIEW2026_A_OP_IDS}
+    ops_by_id = {e["id"]: e["ops"] for e in ledger if e.get("ops")}
     for item in d["exhibits"]:
-        if item["id"] in ops_by_id:
+        if item.get("tier") in ("showcase", "featured") and item["id"] in ops_by_id:
             item["ops"] = ops_by_id[item["id"]]
     DATA.write_text(json.dumps(d, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
     print("added", len(chosen))

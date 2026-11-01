@@ -130,9 +130,11 @@ def test_the_order_gate_catches_the_old_order():
         ("tools/gen_trust_block.py", "imgevolve.py"),
         # 2026-10-22: 互換プロファイルは HALCON_PARITY.md を書き、旧順序では docs 索引がそれを先に読む。
         ("tools/gen_docs_index_ops.py", "tools/halcon_compat_profile.py"),
-        # FILE_FORMATS.md は audit_file_formats が書き、docs 索引が文書地図へ載せる。
-        ("tools/gen_docs_index_ops.py", "tools/audit_file_formats.py"),
-            ("tools/gen_rag_benchmark_report.py", "tools/gen_op_facets.py"),
+            # FILE_FORMATS.md は audit_file_formats が書き、docs 索引が文書地図へ載せる。
+            ("tools/gen_docs_index_ops.py", "tools/audit_file_formats.py"),
+            # ViEW の使用門は配布用 OP_INDEX を読むので、gen_mcp_data より前では古い索引を見る。
+            ("tools/gen_view2026_pages.py", "tools/gen_mcp_data.py"),
+                ("tools/gen_rag_benchmark_report.py", "tools/gen_op_facets.py"),
     } | {("tools/gen_docs_index_ops.py", w) for w in (
         "tools/gen_examples3d_doc.py", "tools/gen_sensor_playbook.py", "catalog.py",
         "references.py", "samples.py", "tools/conversion_matrix.py", "tools/gen_design_notes.py")}
