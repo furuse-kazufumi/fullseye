@@ -392,13 +392,17 @@ py -3.11 examples/poc_print_registration.py
 
 *↑ 測定の図 ―― 同じ欠陥を振幅 0.02 から 1.20 まで上げていく。左=実写の brick、右=**残差 σ を揃えた**合成の地。雑音の量は同じなのに、右のほうが先に見えてくる。*
 
+[![同じ欠陥を実写 brick と残差 σ を揃えた合成の地へ仕込み、整合フィルタの応答が 99.99 % 閾値を越えるまでを示す。検出限界は brick 0.475、合成 0.137、閾値は 0.836 / 0.275。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_defect_floor/03_defect_floor_explained.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_defect_floor/03_defect_floor_explained.gif)
+
+*↑ 動く図 ―― 同じ欠陥を実写 brick と残差 σ を揃えた合成の地へ仕込み、整合フィルタの応答が 99.99 % 閾値を越えるまでを示す。検出限界は brick 0.475、合成 0.137、閾値は 0.836 / 0.275。*
+
 ```
 py -3.11 examples/poc_real_defect_floor.py
 ```
 
 ソース: [examples/poc_real_defect_floor.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_defect_floor.py)
 
-この回が作った図は全部で **2 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_real_defect_floor)
+この回が作った図は全部で **3 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_real_defect_floor)
 
 使用 op(ノートへ): [`annotate_inset`](https://furuse.work/ops/annotate/paper/annotate_inset.html) · [`annotate_legend`](https://furuse.work/ops/annotate/paper/annotate_legend.html) · [`laplace_of_gauss`](https://furuse.work/ops/2d/edges/laplace_of_gauss.html) · [`reflect`](https://furuse.work/ops/3d/optics/reflect.html)
 
@@ -9440,13 +9444,17 @@ py -3.11 examples/poc_thermal_radiometry.py
 
 *↑ 動く図 ―― Forty-eight uint8 cooling frames after a non-uniform flash.*
 
+[![冷却像と TSR の 25 秒窓・4 秒窓の深さ地図を同じ計算で並べる。深さ 0.5 mm・直径 2 mm の誤差は +612 % から -9 % に縮む。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_thermography_ndt/07_window_explained.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_thermography_ndt/07_window_explained.gif)
+
+*↑ 動く図 ―― 冷却像と TSR の 25 秒窓・4 秒窓の深さ地図を同じ計算で並べる。深さ 0.5 mm・直径 2 mm の誤差は +612 % から -9 % に縮む。*
+
 ```
 py -3.11 examples/poc_thermography_ndt.py
 ```
 
 ソース: [examples/poc_thermography_ndt.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_thermography_ndt.py)
 
-この回が作った図は全部で **7 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_thermography_ndt)
+この回が作った図は全部で **8 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_thermography_ndt)
 
 使用 op(ノートへ): [`color_bar`](https://furuse.work/ops/annotate/furniture/color_bar.html)
 

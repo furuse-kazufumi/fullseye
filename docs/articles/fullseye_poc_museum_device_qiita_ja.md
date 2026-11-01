@@ -316,13 +316,17 @@ py -3.11 examples/poc_thermal_radiometry.py
 
 *↑ 動く図 ―― Forty-eight uint8 cooling frames after a non-uniform flash.*
 
+[![冷却像と TSR の 25 秒窓・4 秒窓の深さ地図を同じ計算で並べる。深さ 0.5 mm・直径 2 mm の誤差は +612 % から -9 % に縮む。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_thermography_ndt/07_window_explained.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_thermography_ndt/07_window_explained.gif)
+
+*↑ 動く図 ―― 冷却像と TSR の 25 秒窓・4 秒窓の深さ地図を同じ計算で並べる。深さ 0.5 mm・直径 2 mm の誤差は +612 % から -9 % に縮む。*
+
 ```
 py -3.11 examples/poc_thermography_ndt.py
 ```
 
 ソース: [examples/poc_thermography_ndt.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_thermography_ndt.py)
 
-この回が作った図は全部で **7 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_thermography_ndt)
+この回が作った図は全部で **8 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_thermography_ndt)
 
 使用 op(ノートへ): [`color_bar`](https://furuse.work/ops/annotate/furniture/color_bar.html)
 
