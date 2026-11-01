@@ -298,6 +298,18 @@ def fig_csi_scan_explained():
         put_text(im, "z = %.2f µm(%d/48)" % (z[k], k + 1), (1265, 10), size=24, anchor="rt")
 
         paste_gray(im, stack[k], (20, 70, 560, 560))
+
+        # P1/P2 の位置を左パネルに印す(右の信号図と同じ色)。無印だと読者が画素を探せない。
+
+        sx, sy = 560 / stack.shape[2], 560 / stack.shape[1]
+
+        for px0, col, lab in zip((x1, x2), ((75, 175, 255), (255, 155, 45)), ('P1', 'P2')):
+
+            cx, cy = int(round(20 + px0 * sx)), int(round(70 + y * sy))
+
+            d.ellipse((cx - 7, cy - 7, cx + 7, cy + 7), outline=col, width=3)
+
+            put_text(im, lab, (cx + 10, cy - 14), fill=col)
         mask = np.abs(truth - z[k]) < 0.02
         edge = mask & ~(np.roll(mask, 1, 0) & np.roll(mask, -1, 0)
                         & np.roll(mask, 1, 1) & np.roll(mask, -1, 1))
