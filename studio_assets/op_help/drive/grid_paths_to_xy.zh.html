@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">grid_paths_to_xy — DRIVE <code style="color:#22d3bf">braidpath</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.grid_paths_to_xy(paths) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import braidpath; braidpath.grid_paths_to_xy(paths) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;grid_paths_to_xy&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>将网格路径(各台的 (row, col) 序列)转为 (K, T, 2) 的 [x, y] = [col, −row] (较短的路径用最后一个点补齐)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

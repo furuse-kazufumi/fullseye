@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">mirror_plane_from_pairs — SHAPESTAT <code style="color:#22d3bf">symmetry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mirror_plane_from_pairs(landmarks, pairs=None, midline=None)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import shapestats; shapestats.mirror_plane_from_pairs(landmarks, pairs=None, midline=None)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsshapestat.get(&quot;mirror_plane_from_pairs&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>좌우 대응 랜드마크로부터 정중면을 구한다. → <code style="color:#22d3bf">(2, 3)</code>(1행 = 점, 2행 = 법선).</p>
 <p>좌우 쌍 <code style="color:#22d3bf">(i, j)</code> 의 <b>중점</b>은 모두 정중면 위에 놓인다. 그러므로 그 중점 집합에평면을 맞추면 된다 —— 변형의 양에 상관없이 면이 정해지는 것이 요점이며, 잔차를 최소로하는 면(<code style="color:#22d3bf">symmetry3d.detect_reflection_symmetry</code>)과는 다른 것이다.</p>

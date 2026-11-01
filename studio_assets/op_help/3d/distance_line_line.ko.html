@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">distance_line_line — 3D <code style="color:#22d3bf">geometry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">primitive</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.distance_line_line(p1, d1, p2, d2)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import match3d; match3d.distance_line_line(p1, d1, p2, d2)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;distance_line_line&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>두 직선 사이 거리(꼬인 위치도 가능). 평행하면 점-선 거리로 물러납니다.</p>
 <p>★이것은 <b>무한 직선</b> 사이의 거리이다. 팔다리, 로봇 링크, 배관 같은 <b>유한 선분</b>에사용하면 떨어져 있는데도 0이 반환될 수 있다(실측: (0,0,0)-(1,0,0)과(5,0,0)-(6,0,0)에서 0.0, 참값 4.0). 선분끼리는 <code style="color:#22d3bf">distance_segment_segment</code>를 사용할 것 —— 안전 거리 판정에서 이를 혼동하면 <b>위험을 과소평가하는</b> 쪽으로 빗나간다.</p>

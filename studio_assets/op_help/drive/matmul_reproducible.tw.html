@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">matmul_reproducible — DRIVE <code style="color:#22d3bf">ozaki</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">matrix × matrix</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.matmul_reproducible(A, B, tol: &#x27;float&#x27; = 1.1102230246251565e-16)</code>(要直接呼叫實作,<code style="color:#22d3bf">import ozakimm; ozakimm.matmul_reproducible(A, B, tol: &#x27;float&#x27; = 1.1102230246251565e-16)</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;matmul_reproducible&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>逐位元可重現的 FP64 精度 <code style="color:#22d3bf">A @ B</code>(無法保證時拋出 <code style="color:#22d3bf">ValueError</code> = fail-closed)。</p>
 <p><code style="color:#22d3bf">matmul_ozaki</code> 的 Ozaki-I 自動選擇,固定 <code style="color:#22d3bf">on_insufficient=&quot;raise&quot;</code>。每個元素的誤差不超過 <code style="color:#22d3bf">tol · (|A||B|)_ij</code> + 最後組裝的捨入(幾個 ulp)。不受內側索引順序(點的順序)、BLAS 執行緒數影響,回傳相同的位元。適用於點雲的 3×N @ N×3 或 6×N @ N×6 縮併(輸出大的乘積比 DGEMM 慢 15〜83 倍)。</p>

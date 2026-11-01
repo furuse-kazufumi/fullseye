@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">mesh_volume — 3D <code style="color:#22d3bf">mesh_process</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">mesh</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mesh_volume(mesh) -&gt; &#x27;float&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import mesh_props; mesh_props.mesh_volume(mesh) -&gt; &#x27;float&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;mesh_volume&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>닫힌 삼각형 메시가 둘러싸는 <b>부호 있는 부피</b> → float.</p>
 <p>발산 정리(divergence theorem)로 <code style="color:#22d3bf">V = (1/6)·Σ v0 · (v1 × v2)</code>. 면의 감김 순서가 바깥 방향(오른손 좌표계)이면 양, 안쪽 방향이면 음이 된다 —— <b>부호가 곧 방향 검사</b>이며, 음수가반환되면 법선이 뒤집혀 있다.</p>

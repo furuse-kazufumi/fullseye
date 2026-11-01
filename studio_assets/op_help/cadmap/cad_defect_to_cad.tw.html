@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">cad_defect_to_cad — CADMAP <code style="color:#22d3bf">defect</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">mesh × labels</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cad_defect_to_cad(mesh, labels, K=None, R=None, t=None, cull_backfaces=True, min_pixels=1, background=0, strict=False)</code>(要直接呼叫實作,<code style="color:#22d3bf">import cadmap; cadmap.cad_defect_to_cad(mesh, labels, K=None, R=None, t=None, cull_backfaces=True, min_pixels=1, background=0, strict=False)</code>;從台帳取用則 <code style="color:#22d3bf">opscadmap.get(&quot;cad_defect_to_cad&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>2-D 缺陷標籤圖 → <b>CAD 面上的表</b>(面 ID / 面上面積 / 3-D 重心)。</p>
 <p><code style="color:#22d3bf">labels</code> 是 (H, W) 的整數標籤影像(忽略 <code style="color:#22d3bf">background</code>,bool 遮罩也可以)。對每個標籤發射所有像素的視線,累計命中的面以及這些像素<b>在面上所佔的實際面積</b>。面積不是像素數,而是</p>

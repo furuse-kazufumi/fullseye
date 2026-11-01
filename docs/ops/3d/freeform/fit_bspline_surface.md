@@ -4,6 +4,7 @@ dim: 3d
 category: freeform
 in: image2d × image2d × image2d
 out: bspline_surface
+gpu: なし
 examples: [bspline_freeform]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d × image2d × image2d` → `bspline_surface`
 - **呼び出し**: `import fullseye as fs; fs.ledger.fit_bspline_surface(x, y, z, kx=3, ky=3, smooth=None)` (実装を直接呼ぶなら `import bspline_surf; bspline_surf.fit_bspline_surface(x, y, z, kx=3, ky=3, smooth=None)`、台帳から引くなら `ops3d.get("fit_bspline_surface")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

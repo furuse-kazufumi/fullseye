@@ -4,6 +4,7 @@ dim: multivar
 category: plan
 in: 
 out: design
+gpu: なし
 examples: [doe_plan_tour, multivar_inspection_tour, sensitivity_tour, simcal_checks_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `design`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.doe_lhs(n=10, factors=3, seed=0, maximin=0, centered=False) -> 'dict'` (実装を直接呼ぶなら `import doe; doe.doe_lhs(n=10, factors=3, seed=0, maximin=0, centered=False) -> 'dict'`、台帳から引くなら `opsmultivar.get("doe_lhs")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">perpetual_ten_print — GENERATIVE <code style="color:#22d3bf">perpetual</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">rgb</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.perpetual_ten_print(cols: &#x27;int&#x27; = 32, rows: &#x27;int&#x27; = 24, cell: &#x27;int&#x27; = 18, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import perpetual; perpetual.perpetual_ten_print(cols: &#x27;int&#x27; = 32, rows: &#x27;int&#x27; = 24, cell: &#x27;int&#x27; = 18, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsgenerative.get(&quot;perpetual_ten_print&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p><code style="color:#22d3bf">10 PRINT CHR$(205.5+RND(1)); : GOTO 10</code> — अनंत तक बढ़ने वाली भूलभुलैया।</p>
 <p>Commodore 64 का एक line का program। हर cell में 2 तरह की तिरछी lines में से एक रख देने भर से यह भूलभुलैया जैसा दिखता है। <b>cell की सामग्री के केवल 2 रूप होते हैं</b> (कोई मिश्रित cell नहीं) -- यही invariant है।</p>

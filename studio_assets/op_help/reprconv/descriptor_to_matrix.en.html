@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">descriptor_to_matrix — REPRCONV <code style="color:#22d3bf">descriptor</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">descriptor</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.descriptor_to_matrix(descriptor)</code> (to call the implementation directly, <code style="color:#22d3bf">import reprconv; reprconv.descriptor_to_matrix(descriptor)</code>; from the registry, <code style="color:#22d3bf">opsreprconv.get(&quot;descriptor_to_matrix&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Descriptor → <code style="color:#22d3bf">matrix</code>. The exit from <code style="color:#22d3bf">descriptor</code> (<b>invertible</b>).</p>
 <p>A 1-D descriptor (n,) becomes a 1-row matrix <b>(1, n)</b>. A 2-D descriptor bundle (&quot;points x dimensions&quot;, like the (12, 9) of <code style="color:#22d3bf">sh_descriptor</code>) passes through unchanged. This way <code style="color:#22d3bf">mat_svd</code> / <code style="color:#22d3bf">mat_pinv</code> / <code style="color:#22d3bf">mat_cond</code> can be applied to a descriptor bank directly -- a descriptor is essentially a vector, so handing it to the matrix vocabulary is a change of packaging, not a transformation.</p>

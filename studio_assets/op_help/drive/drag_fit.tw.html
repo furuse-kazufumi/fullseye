@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">drag_fit — DRIVE <code style="color:#22d3bf">ball</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">signal × points × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.drag_fit(t, p, bp: &#x27;dict&#x27;, *, iters: &#x27;int&#x27; = 20, dt: &#x27;float&#x27; = 0.001) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import ballistics; ballistics.drag_fit(t, p, bp: &#x27;dict&#x27;, *, iters: &#x27;int&#x27; = 20, dt: &#x27;float&#x27; = 0.001) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;drag_fit&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>以 <b>(p₀, v₀, C_d) 共 7 個參數</b>(平面輸入則為 5 個)把「重力 + 阻力」模型擬合到軌跡 (t_i, p_i)——是 <code style="color:#22d3bf">thrust_fit</code> 的無推力版本(<code style="color:#22d3bf">flight_fit</code> 把 C_d 視為已知、6 個參數;這裡連 C_d 一起辨識)。回傳鍵與入口檢查(<code style="color:#22d3bf">dt</code> ≤ 取樣間隔、<code style="color:#22d3bf">iters</code> ≥ 1、拒絕真空)與 <code style="color:#22d3bf">thrust_fit</code> 相同,<code style="color:#22d3bf">thrust</code> 為零向量。真值軌跡可將 C_d 還原到 1e-4(門檻)。</p>
 <p>空輸入(<code style="color:#22d3bf">t</code> 為 0 個元素)會引發 ValueError。</p>

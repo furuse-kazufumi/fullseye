@@ -4,6 +4,7 @@ dim: graph
 category: path
 in: matrix
 out: table
+gpu: なし
 examples: [poc_car_parking, poc_driving_school]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `matrix` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.car_dubins_path(poses, radius=1.0, step=0.05)` (実装を直接呼ぶなら `import carpath; carpath.car_dubins_path(poses, radius=1.0, step=0.05)`、台帳から引くなら `opsgraph.get("car_dubins_path")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">film_color — OPTICS <code style="color:#22d3bf">film</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">keine</code> → <code style="color:#22d3bf">table</code> (ein Operator, der allein durch seine Argumente bestimmt ist — er nimmt kein Bild und keine Daten entgegen)</p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.film_color(film=&#x27;SIO2&#x27;, substrate=&#x27;SI&#x27;, thickness_min_nm=0.0, thickness_max_nm=1000.0, n_points=101, under=(), angle_deg=0.0, na=0.0, wl_min_nm=380.0, wl_max_nm=780.0, ambient=1.0, exposure=1.0, illuminant=None)</code> (die Implementierung direkt: <code style="color:#22d3bf">import filmoptics; filmoptics.film_color(film=&#x27;SIO2&#x27;, substrate=&#x27;SI&#x27;, thickness_min_nm=0.0, thickness_max_nm=1000.0, n_points=101, under=(), angle_deg=0.0, na=0.0, wl_min_nm=380.0, wl_max_nm=780.0, ambient=1.0, exposure=1.0, illuminant=None)</code>; aus dem Register: <code style="color:#22d3bf">opsoptics.get(&quot;film_color&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Interferenzfarbe in Abhängigkeit von der Schichtdicke (die Wafer-Farbtafel), gesehen unter D65 mit den CIE-1931-Normspektralwertfunktionen.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>

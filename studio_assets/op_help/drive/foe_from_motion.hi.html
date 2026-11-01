@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">foe_from_motion — DRIVE <code style="color:#22d3bf">ttc</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">matrix × matrix</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.foe_from_motion(K, T_rel) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import drivettc; drivettc.foe_from_motion(K, T_rel) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;foe_from_motion&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>focus of expansion (FoE) का pixel <code style="color:#22d3bf">(col, row)</code>: relative motion के translation <code style="color:#22d3bf">t</code> का अनंत पर projection।</p>
 <p>यदि <code style="color:#22d3bf">T_rel</code> का घूर्णन इकाई नहीं है तो FoE परिभाषित नहीं है (<code style="color:#22d3bf">ValueError</code>)। गहराई की दिशा में स्थानांतरण 0 हो (शुद्ध पार्श्व फिसलन) तो <code style="color:#22d3bf">(nan, nan)</code>।</p>

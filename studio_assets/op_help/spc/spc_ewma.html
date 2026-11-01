@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">spc_ewma — SPC <code style="color:#22d3bf">change</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.spc_ewma(signal, target, lam=0.2, L=3.0, sigma=None)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import spc; spc.spc_ewma(signal, target, lam=0.2, L=3.0, sigma=None)</code>、台帳から引くなら <code style="color:#22d3bf">opsspc.get(&quot;spc_ewma&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>EWMA control chart for individual measurements (Roberts 1959).</p>
 <p><code style="color:#22d3bf">signal</code> is a 1-D series of individual measurements. With a reference value <code style="color:#22d3bf">target</code> (the in-control mean), a smoothing constant <code style="color:#22d3bf">lam</code> in <code style="color:#22d3bf">(0, 1]</code> and a control-limit width <code style="color:#22d3bf">L</code> (in sigmas), the exponentially weighted moving average and its time-varying limits are::</p>

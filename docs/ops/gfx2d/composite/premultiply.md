@@ -4,6 +4,7 @@ dim: gfx2d
 category: composite
 in: rgba
 out: rgba_premul
+gpu: なし
 examples: [gfx2d_scene]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `rgba` → `rgba_premul`
 - **呼び出し**: `import fullseye as fs; fs.ledger.premultiply(rgba)` (実装を直接呼ぶなら `import gfx2d; gfx2d.premultiply(rgba)`、台帳から引くなら `opsgfx2d.get("premultiply")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

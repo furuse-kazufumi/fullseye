@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">defocus_spot_vs_depth — OPTICS <code style="color:#22d3bf">telecentric</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">pairs</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.defocus_spot_vs_depth(system, field_mm=0.0, shift_min_mm=-1.0, shift_max_mm=1.0, n_points=11, samples=61)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import telecentric; telecentric.defocus_spot_vs_depth(system, field_mm=0.0, shift_min_mm=-1.0, shift_max_mm=1.0, n_points=11, samples=61)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;defocus_spot_vs_depth&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>物体を ±Δz 動かしたときの像面(固定)での RMS ぼけ半径(µm、光線束を傾きの格子で総当たりに追う)。</p>
 <p>pairs <code style="color:#22d3bf">(Δz mm, RMS 半径 µm)</code>。一様な円の光線束なら RMS = 幾何半径/√2 で、幾何半径 = |m|·NA·|Δz| (物体側 NA)—— 被写界深度は NA に反比例し、回折の限界 0.61λ/NA は NA に反比例して<b>逆に</b>悪くなる。Δz = 0 の値は収差の床(0 にならない)。光線束は絞りと各面の口径で実際に蹴られた残りなので、入射瞳が無限遠の処方でも狙いの近似が入らない。*samples* は傾きの格子の一辺の本数。</p>

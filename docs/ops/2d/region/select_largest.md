@@ -5,6 +5,7 @@ category: region
 in: region
 out: region
 halcon: select_shape_std
+gpu: なし
 examples: [gallery2d_region, poc_document_scan, poc_leaf_disease_area]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -16,6 +17,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **データ種**: `region` → `region`
 - **呼び出し**: `fullseye.apply(img, "select_largest", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 - **HALCON 相当**: `select_shape_std`(意味・パラメータは HALCON リファレンスが参考になる)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ![select_largest: input → output](../../_fig/select_largest.png)
 

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">flow_speed — REPRCONV <code style="color:#22d3bf">flow</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">flow_scattered</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.flow_speed(flow)</code> (to call the implementation directly, <code style="color:#22d3bf">import reprconv; reprconv.flow_speed(flow)</code>; from the registry, <code style="color:#22d3bf">opsreprconv.get(&quot;flow_speed&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Scattered flow <code style="color:#22d3bf">(N,3)</code> → a speed <code style="color:#22d3bf">signal (N,)</code>. The exit from scattered <code style="color:#22d3bf">flow</code>.</p>
 <p><b>One-way</b> (the direction is discarded). Passing a dense flow is fail-closed -- under the same type name <code style="color:#22d3bf">flow</code> 2 different things live, so the receiving side must always be made to choose.</p>

@@ -4,6 +4,7 @@ dim: drive
 category: pegsim
 in: table
 out: table
+gpu: なし
 examples: [poc_peg_failure_recovery, poc_pegsim_insertion]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.chamfer_capture(kp, eps0: 'float') -> 'dict'` (実装を直接呼ぶなら `import pegsim; pegsim.chamfer_capture(kp, eps0: 'float') -> 'dict'`、台帳から引くなら `opsdrive.get("chamfer_capture")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

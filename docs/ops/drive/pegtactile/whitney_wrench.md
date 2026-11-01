@@ -4,6 +4,7 @@ dim: drive
 category: pegtactile
 in: table × text × scalar × scalar × scalar × scalar
 out: table
+gpu: なし
 examples: [gallery_drive_peg, poc_peg_insertion_tactile]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table × text × scalar × scalar × scalar × scalar` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.whitney_wrench(kp, state: 'str', theta: 'float', depth: 'float', mu: 'float', fn_tip: 'float', fn_mouth: 'float' = 0.0, g=None) -> 'dict'` (実装を直接呼ぶなら `import pegtactile; pegtactile.whitney_wrench(kp, state: 'str', theta: 'float', depth: 'float', mu: 'float', fn_tip: 'float', fn_mouth: 'float' = 0.0, g=None) -> 'dict'`、台帳から引くなら `opsdrive.get("whitney_wrench")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

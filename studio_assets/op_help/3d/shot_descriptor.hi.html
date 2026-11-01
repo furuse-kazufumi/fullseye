@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">shot_descriptor — 3D <code style="color:#22d3bf">feature_register</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points × normals</code> → <code style="color:#22d3bf">descriptor</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.shot_descriptor(points, normals, kp_idx, tree, radius, n_azim=8, n_elev=2, n_rad=2, n_cos=11)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import feat_shot; feat_shot.shot_descriptor(points, normals, kp_idx, tree, radius, n_azim=8, n_elev=2, n_rad=2, n_cos=11)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;shot_descriptor&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>SHOT descriptor (Tombari 2010)। हर keypoint पर LRF बनाता है और spherical support लेता है।</p>
 <p>support को radial 2 × elevation 2 × azimuth 8 = 32 spatial cells में बाँटकर, हर cell में &quot;LRF z axis और neighbour point normal के बीच cos angle&quot; को quadrilinear interpolation से n_cos=11 bins के histogram में जमा किया जाता है → 32×11=352 dimensions को L2 normalise किया जाता है। (Kp,352) लौटाता है। जिन points का LRF नहीं बन सकता उनके लिए zero vector।</p>

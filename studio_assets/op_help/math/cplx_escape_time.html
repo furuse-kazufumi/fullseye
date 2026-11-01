@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">cplx_escape_time — MATH <code style="color:#22d3bf">complex</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">image2d</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cplx_escape_time(kind=&#x27;mandelbrot&#x27;, param=0j, centre=0j, half_width=2.0, shape=(256, 256), max_iter=64, escape_radius=2.0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import mathops; mathops.cplx_escape_time(kind=&#x27;mandelbrot&#x27;, param=0j, centre=0j, half_width=2.0, shape=(256, 256), max_iter=64, escape_radius=2.0)</code>、台帳から引くなら <code style="color:#22d3bf">opsmath.get(&quot;cplx_escape_time&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>How many steps of <code style="color:#22d3bf">z -&gt; z**2 + c</code> it takes to leave the escape disc.</p>
 <p><code style="color:#22d3bf">kind=&quot;mandelbrot&quot;</code> varies <code style="color:#22d3bf">c</code> over the window from <code style="color:#22d3bf">z = 0</code>; <code style="color:#22d3bf">kind=&quot;julia&quot;</code> fixes <code style="color:#22d3bf">c = param</code> and varies the starting <code style="color:#22d3bf">z</code>. The result is a float image of iteration counts; points that never escape carry <code style="color:#22d3bf">max_iter</code>.</p>

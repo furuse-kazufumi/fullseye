@@ -4,6 +4,7 @@ dim: 3d
 category: geometry
 in: points
 out: primitive
+gpu: なし
 examples: [primitive_fitting_3d]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `points` → `primitive`
 - **呼び出し**: `import fullseye as fs; fs.ledger.fit_line3(points) -> 'dict'` (実装を直接呼ぶなら `import measure3d; measure3d.fit_line3(points) -> 'dict'`、台帳から引くなら `ops3d.get("fit_line3")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

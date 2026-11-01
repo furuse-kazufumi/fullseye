@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">material_nir_absorption — OPTICS <code style="color:#22d3bf">matprop</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">無</code> → <code style="color:#22d3bf">pairs</code>(僅由參數決定的運算子 —— 不接受影像或資料輸入)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.material_nir_absorption(material=&#x27;POLYETHYLENE&#x27;, wl_min_nm: &#x27;float&#x27; = 900.0, wl_max_nm: &#x27;float&#x27; = 2500.0, n_points: &#x27;int&#x27; = 321, water_fraction=None, bands=None)</code>(要直接呼叫實作,<code style="color:#22d3bf">import materials; materials.material_nir_absorption(material=&#x27;POLYETHYLENE&#x27;, wl_min_nm: &#x27;float&#x27; = 900.0, wl_max_nm: &#x27;float&#x27; = 2500.0, n_points: &#x27;int&#x27; = 321, water_fraction=None, bands=None)</code>;從台帳取用則 <code style="color:#22d3bf">opsoptics.get(&quot;material_nir_absorption&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>近紅外(0.9〜2.5 µm)的吸收係數 α(λ) [1/mm] (自然對數),由吸收帶疊加而成。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>

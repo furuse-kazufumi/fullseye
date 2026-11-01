@@ -4,6 +4,7 @@ dim: drive
 category: japan
 in: table
 out: table
+gpu: なし
 examples: [poc_driving_japan_town]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.osm_route(graph: 'dict', src: 'int', dst: 'int', *, side: 'str' = 'left', step: 'float' = 0.5, lane_offset=None, signal_setback: 'float' = 1.0, crossing_setback: 'float' = 3.0) -> 'Dict[str, object]'` (実装を直接呼ぶなら `import drivejapan; drivejapan.osm_route(graph: 'dict', src: 'int', dst: 'int', *, side: 'str' = 'left', step: 'float' = 0.5, lane_offset=None, signal_setback: 'float' = 1.0, crossing_setback: 'float' = 3.0) -> 'Dict[str, object]'`、台帳から引くなら `opsdrive.get("osm_route")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

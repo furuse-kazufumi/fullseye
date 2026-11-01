@@ -4,6 +4,7 @@ dim: drive
 category: polish
 in: scalar
 out: any
+gpu: なし
 examples: [poc_polish_wipe_measure]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `scalar` → `any`
 - **呼び出し**: `import fullseye as fs; fs.ledger.polish_scene_mjcf(radius: 'float' = 0.008, k_z: 'float' = 500.0, k_xy: 'float' = 20000.0, mass: 'float' = 0.2, friction: 'float' = 0.3, thickness: 'float' = 0.004, timestep: 'float' = 0.0005) -> 'str'` (実装を直接呼ぶなら `import polish; polish.polish_scene_mjcf(radius: 'float' = 0.008, k_z: 'float' = 500.0, k_xy: 'float' = 20000.0, mass: 'float' = 0.2, friction: 'float' = 0.3, thickness: 'float' = 0.004, timestep: 'float' = 0.0005) -> 'str'`、台帳から引くなら `opsdrive.get("polish_scene_mjcf")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

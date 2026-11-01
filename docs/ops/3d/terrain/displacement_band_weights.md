@@ -4,6 +4,7 @@ dim: 3d
 category: terrain
 in: mesh
 out: matrix
+gpu: なし
 examples: [itokawa_regolith_hero]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `mesh` → `matrix`
 - **呼び出し**: `import fullseye as fs; fs.ledger.displacement_band_weights(V, F, wavelengths=(0.06, 0.03, 0.015, 0.0075, 0.00375), *, nyquist: 'float' = 2.0, fade: 'float' = 1.0, local_edge=None) -> 'np.ndarray'` (実装を直接呼ぶなら `import render3d; render3d.displacement_band_weights(V, F, wavelengths=(0.06, 0.03, 0.015, 0.0075, 0.00375), *, nyquist: 'float' = 2.0, fade: 'float' = 1.0, local_edge=None) -> 'np.ndarray'`、台帳から引くなら `ops3d.get("displacement_band_weights")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

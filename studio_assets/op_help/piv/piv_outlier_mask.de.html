@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">piv_outlier_mask — PIV <code style="color:#22d3bf">validate</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">flow2d</code> → <code style="color:#22d3bf">mask</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_outlier_mask(flow, threshold=2.0, epsilon=0.1)</code> (die Implementierung direkt: <code style="color:#22d3bf">import pivops; pivops.piv_outlier_mask(flow, threshold=2.0, epsilon=0.1)</code>; aus dem Register: <code style="color:#22d3bf">opspiv.get(&quot;piv_outlier_mask&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Findet Ausreißervektoren mit dem normalisierten Mediantest (Westerweel &amp; Scarano 2005).</p>
 <p>Für jeden Vektor wird das Residuum gegenüber dem Median seiner 8 Nachbarn durch <b>den Median der Nachbarresiduen</b> geteilt. <code style="color:#22d3bf">epsilon</code> (Default 0.1 px, ein Richtwert der PIV-Messunsicherheit) wird zum Nenner addiert, damit der Nenner in einem gleichförmigen Feld nicht 0 wird und alles zum Ausreißer wird —— ohne diesen Term <b>bricht der Test umso eher, je idealer die Eingabe ist</b>.</p>

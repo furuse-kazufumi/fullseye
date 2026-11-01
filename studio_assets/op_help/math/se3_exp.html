@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">se3_exp — MATH <code style="color:#22d3bf">estimation</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.se3_exp(xi) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import mathestimation; mathestimation.se3_exp(xi) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsmath.get(&quot;se3_exp&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>SE(3) の指数写像: 6 次元のねじれ ξ = (v, ω)(並進速度 v、回転ベクトル ω)→ 4×4 の剛体変換。</p>
 <p>閉じた式(Rodrigues + 左ヤコビアン): R = I + sinθ/θ ω̂ + (1−cosθ)/θ² ω̂²、t = V v、V = I + (1−cosθ)/θ² ω̂ + (θ−sinθ)/θ³ ω̂²。θ → 0 は級数で。門: 4×4 の生成元の mat_expm と一致。</p>

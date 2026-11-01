@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">seg_label_changes — EMPROOF <code style="color:#22d3bf">inject</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">labels2d × labels2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.seg_label_changes(before, after, min_pixels: &#x27;int&#x27; = 1, ignore_zero: &#x27;bool&#x27; = True) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import emproof; emproof.seg_label_changes(before, after, min_pixels: &#x27;int&#x27; = 1, ignore_zero: &#x27;bool&#x27; = True) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsemproof.get(&quot;seg_label_changes&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Gibt den Unterschied zweier Labelbilder <b>als Paare von Verschmelzungen und Trennungen</b> zurück (vor/nach der Kalibrierung oder Abgleich eingebauter Fehler mit der Lösung).</p>
 <p>Zählt Paare, bei denen Label b von <code style="color:#22d3bf">before</code> und Label a von <code style="color:#22d3bf">after</code> mindestens <code style="color:#22d3bf">min_pixels</code> gleiche Pixel teilen;</p>

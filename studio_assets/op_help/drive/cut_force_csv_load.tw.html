@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">cut_force_csv_load — DRIVE <code style="color:#22d3bf">cutting</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">any × any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cut_force_csv_load(path, license: &#x27;str&#x27;) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import cutting; cutting.cut_force_csv_load(path, license: &#x27;str&#x27;) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;cut_force_csv_load&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>讀取有限元素切割模擬輸出的刀刃力 CSV(第 1 行為 <code style="color:#22d3bf">Rcforc</code>，第 2 行為欄名，欄 = 時刻與力的 3 個分量交替)。</p>
 <p>預設對象是 arXiv:2105.12244 公開的資料集(CC BY-NC 4.0 = 非商業)。<code style="color:#22d3bf">license</code> 由呼叫端<b>必須</b>填寫(為了在回傳值中保留資料的用途,空的話 ValueError)。資料不放入 repo,存放位置以環境變數傳入。</p>

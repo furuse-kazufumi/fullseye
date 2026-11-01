@@ -4,6 +4,7 @@ dim: 2d
 category: smoothing
 in: image
 out: image
+gpu: あり(sk_tv)
 examples: [find_ops_by_meaning, gallery2d_smoothing_rank, poc_prnu_camera_fingerprint]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image` → `image`
 - **呼び出し**: `fullseye.apply(img, "sk_tv", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
+- **GPU**: あり(`sk_tv`、`device="cuda"` で高速経路)
 
 ![sk_tv: input → output](../../_fig/sk_tv.png)
 

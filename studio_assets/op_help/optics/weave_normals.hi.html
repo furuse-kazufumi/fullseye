@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">weave_normals — OPTICS <code style="color:#22d3bf">surface</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">normalmap</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.weave_normals(shape, warp_px=8.0, weft_px=8.0, depth=0.25, angle_deg=0.0) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import surfacelib; surfacelib.weave_normals(shape, warp_px=8.0, weft_px=8.0, depth=0.25, angle_deg=0.0) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;weave_normals&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>बुनावट का normal field (कपड़ा, carbon fibre, wire mesh)। 2 orthogonal periodic उभार।</p>
 <p>shape: (H, W)। warp_px / weft_px: warp / weft धागों की दूरी [px]। depth: ridge की गहराई।</p>

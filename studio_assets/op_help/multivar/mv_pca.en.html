@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">mv_pca — MULTIVAR <code style="color:#22d3bf">analysis</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mv_pca(X=None, standardize=True, n_components=None, threshold=0.9, n_parallel=200, parallel_stat=&#x27;mean&#x27;, seed=0, memory_budget=None) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import multivar; multivar.mv_pca(X=None, standardize=True, n_components=None, threshold=0.9, n_parallel=200, parallel_stat=&#x27;mean&#x27;, seed=0, memory_budget=None) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsmultivar.get(&quot;mv_pca&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Principal components of a table (samples x variables) and how many of them the data support.</p>
 <p>PCA is the SVD of the centred (by default also unit-variance) matrix <code style="color:#22d3bf">Xc = U S V^T</code>: scores <code style="color:#22d3bf">U S</code>, loadings <code style="color:#22d3bf">V</code>, eigenvalues <code style="color:#22d3bf">S^2/(n-1)</code> (the covariance or correlation eigenvalues — the tests check this identity).</p>

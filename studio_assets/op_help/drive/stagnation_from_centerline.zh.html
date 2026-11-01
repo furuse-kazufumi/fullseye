@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">stagnation_from_centerline — DRIVE <code style="color:#22d3bf">swarmflow</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.stagnation_from_centerline(field, speed=None, d_range=(0.04, 0.6), min_points: &#x27;int&#x27; = 4, n_iter: &#x27;int&#x27; = 80) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import swarmflow; swarmflow.stagnation_from_centerline(field, speed=None, d_range=(0.04, 0.6), min_points: &#x27;int&#x27; = 4, n_iter: &#x27;int&#x27; = 80) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;stagnation_from_centerline&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>将中心线上的亏损线性化，读取上游的撞击点(驻点)、障碍物中心与半径(实现 1，只用上游的点)。</p>
 <p style="margin:2px 0 2px 12px">1. 在亏损(3 × 3 平均)超过 <code style="color:#22d3bf">d_range</code> 上限的网格中,将最上游者视为&quot;撞击点附近&quot;。</p>

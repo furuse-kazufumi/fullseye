@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">fit_superquadric — 3D <code style="color:#22d3bf">superquadric</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">primitive</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fit_superquadric(points) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import superquadric; superquadric.fit_superquadric(points) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;fit_superquadric&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>点群にスーパー2次曲面を least_squares で当てはめ dict{a,eps,R,t,residual} を返す。</p>
 <p>初期姿勢 = 慣性テンソル固有ベクトル、初期 a = 主軸 bbox 半分、初期 eps=(1,1)。<code style="color:#22d3bf">a</code> は正、<code style="color:#22d3bf">eps</code> は [0.1, 2.0] にクリップして最適化する。</p>

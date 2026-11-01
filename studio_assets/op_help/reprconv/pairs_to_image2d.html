@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">pairs_to_image2d — REPRCONV <code style="color:#22d3bf">pairs</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pairs_to_image2d(pairs, shape=(64, 64))</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import reprconv; reprconv.pairs_to_image2d(pairs, shape=(64, 64))</code>、台帳から引くなら <code style="color:#22d3bf">opsreprconv.get(&quot;pairs_to_image2d&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>対 <code style="color:#22d3bf">(N,2)</code> → 散布密度画像 <code style="color:#22d3bf">(H, W)</code>。<code style="color:#22d3bf">pairs</code> の 3 つ目の出口。</p>
 <p>列 0 を行方向、列 1 を列方向に、それぞれの最小-最大で正規化して bin へ落とす(2-D ヒストグラム)。位相図・相関図として見るためのもので、<b>不可逆</b> (bin 幅ぶんの量子化 + 正規化で絶対値のスケールを捨てる)。捨てたスケールは戻せるように <code style="color:#22d3bf">extent</code> を…返さない —— 返すと <code style="color:#22d3bf">image2d</code></p>

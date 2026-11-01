@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">seg_label_changes — EMPROOF <code style="color:#22d3bf">inject</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">labels2d × labels2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.seg_label_changes(before, after, min_pixels: &#x27;int&#x27; = 1, ignore_zero: &#x27;bool&#x27; = True) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import emproof; emproof.seg_label_changes(before, after, min_pixels: &#x27;int&#x27; = 1, ignore_zero: &#x27;bool&#x27; = True) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsemproof.get(&quot;seg_label_changes&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>2장의 라벨 영상의 차이를 <b>융합과 분단의 쌍으로</b> 반환한다(캘리브레이션 전후 비교, 또는 심어 둔 오류의 정답 대조).</p>
 <p><code style="color:#22d3bf">before</code> 의 라벨 b 와 <code style="color:#22d3bf">after</code> 의 라벨 a 가 같은 화소를 <code style="color:#22d3bf">min_pixels</code> 이상 공유하는 쌍을 세고,</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">osm_road_loops — DRIVE <code style="color:#22d3bf">japan</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.osm_road_loops(roadmask: &#x27;dict&#x27;, *, tolerance_px: &#x27;float&#x27; = 0.75) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import drivejapan; drivejapan.osm_road_loops(roadmask: &#x27;dict&#x27;, *, tolerance_px: &#x27;float&#x27; = 0.75) -&gt; &#x27;Dict[str, object]&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;osm_road_loops&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>道路并集的边界环。分为外环(道路边缘)与孔(街区)，并用 Douglas–Peucker 抽稀。</p>
 <p>追踪沿像素的边进行(<code style="color:#22d3bf">contours_xld._trace_mask_boundaries</code>),因此抽稀前的环面积之和 = 像素数 × step² (外侧 − 孔)严格成立(<code style="color:#22d3bf">area_check</code>)。是孔还是外侧,由环最左侧竖边紧右侧的像素是否为道路来决定。返回值 <code style="color:#22d3bf">{&quot;outer&quot;: [(K,2) xy], &quot;holes&quot;: [(K,2) xy], &quot;outer_raw&quot;, &quot;holes_raw&quot;, &quot;area_check&quot;: {&quot;loops_m2&quot;, &quot;pixels_m2&quot;, &quot;abs_err&quot;}}</code>。</p>

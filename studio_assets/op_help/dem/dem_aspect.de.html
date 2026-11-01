@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">dem_aspect — DEM <code style="color:#22d3bf">surface</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">depth</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_aspect(dem, cell_size, method=&#x27;horn&#x27;, flat_tol=1e-12)</code> (die Implementierung direkt: <code style="color:#22d3bf">import demops; demops.dem_aspect(dem, cell_size, method=&#x27;horn&#x27;, flat_tol=1e-12)</code>; aus dem Register: <code style="color:#22d3bf">opsdem.get(&quot;dem_aspect&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Hangexposition [Grad]. <b>Norden 0 Grad, nach Osten zunehmend</b>. Flache Zellen erhalten <code style="color:#22d3bf">ASPECT_FLAT</code>.</p>
 <p>Ebene Zellen werden nicht als 0 zurückgegeben, weil 0 &quot;nach Norden geneigter Hang&quot; bedeuten würde —— einen nicht unterscheidbaren Wert zurückzugeben ist der typische Fall, falsch zu liegen ohne Exception.</p>

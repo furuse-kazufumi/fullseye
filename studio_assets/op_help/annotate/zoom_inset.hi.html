@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">zoom_inset — ANNOTATE <code style="color:#22d3bf">compose</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.zoom_inset(img, src_rect, dst_xy, factor=3, color=&#x27;emphasis&#x27;, width=2, connect=True, scheme=&#x27;okabe_ito&#x27;, style=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import annotate; annotate.zoom_inset(img, src_rect, dst_xy, factor=3, color=&#x27;emphasis&#x27;, width=2, connect=True, scheme=&#x27;okabe_ito&#x27;, style=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsannotate.get(&quot;zoom_inset&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>बड़ा किया गया inset — मूल figure में <b>frame</b> और <b>leader line</b> जोड़ता है।</p>
 <p>magnification <code style="color:#22d3bf">np.repeat</code> का <b>nearest neighbour</b> है (integer गुणा)। interpolation नहीं करता, ताकि guarantee रहे कि बड़ा चित्र &quot;मूल pixels ही&quot; है (smooth करने पर ऐसा लगेगा मानो कोई ऐसी संरचना बन गई जो थी ही नहीं)।</p>

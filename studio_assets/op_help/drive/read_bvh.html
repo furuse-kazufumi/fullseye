@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">read_bvh — DRIVE <code style="color:#22d3bf">motion_io</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.read_bvh(path) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import motionio; motionio.read_bvh(path) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;read_bvh&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>BVH を読み、骨格と全コマの関節の世界座標を返す。</p>
 <p>Returns:</p>

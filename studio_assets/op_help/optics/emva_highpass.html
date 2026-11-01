@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">emva_highpass — OPTICS <code style="color:#22d3bf">sensorchar</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.emva_highpass(image, method=&#x27;r4&#x27;, line_scan=False)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import sensorchar; sensorchar.emva_highpass(image, method=&#x27;r4&#x27;, line_scan=False)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;emva_highpass&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>照明のむらを除く高域フィルタ(8.1 節。旧版は付録 C.5 の式 84〜87)。</p>
 <p>8.1 節: 「7 × 7 の箱、11 × 11 の箱、3 × 3 の二項を順にかけて平滑化し、元の画像から引く」。DSNU・PRNU(式 66・67)、スペクトログラム(8.6 節)、欠陥画素のヒストグラム(8.8 節)はこの画像から求める(縦横の断面 8.7 節だけはかけない)。*method* <code style="color:#22d3bf">&quot;r4&quot;</code>(既定、Release 4.0)/ <code style="color:#22d3bf">&quot;r3.1&quot;</code>(付録 C.5: 5 × 5 の箱を引く、式 84)。*line_scan*: <code style="color:#22d3bf">&quot;r3.1&quot;</code> だけ —— 横 5 × 1 の箱(付録 C.5 の線カメラ)。r4 の線カメラ版は本文に無いので拒む。</p>

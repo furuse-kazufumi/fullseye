@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">film_thickness_fit — OPTICS <code style="color:#22d3bf">film</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.film_thickness_fit(spectrum, film=&#x27;SIO2&#x27;, substrate=&#x27;SI&#x27;, thickness_min_nm=0.0, thickness_max_nm=3000.0, under=(), angle_deg=0.0, na=0.0, fit_scale=False, ambient=1.0, roughness_nm=0.0)</code>(要直接呼叫實作,<code style="color:#22d3bf">import filmoptics; filmoptics.film_thickness_fit(spectrum, film=&#x27;SIO2&#x27;, substrate=&#x27;SI&#x27;, thickness_min_nm=0.0, thickness_max_nm=3000.0, under=(), angle_deg=0.0, na=0.0, fit_scale=False, ambient=1.0, roughness_nm=0.0)</code>;從台帳取用則 <code style="color:#22d3bf">opsoptics.get(&quot;film_thickness_fit&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>將傳輸矩陣模型擬合到反射光譜以求膜厚(非線性最小平方:全域格點搜尋後局部精化)。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>

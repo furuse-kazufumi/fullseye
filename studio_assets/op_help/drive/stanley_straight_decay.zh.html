@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">stanley_straight_decay — DRIVE <code style="color:#22d3bf">lateral</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">signal</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.stanley_straight_decay(e0: &#x27;float&#x27;, t, *, gain: &#x27;float&#x27;, speed: &#x27;float&#x27;, softening: &#x27;float&#x27; = 0.0) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import drivelateral; drivelateral.stanley_straight_decay(e0: &#x27;float&#x27;, t, *, gain: &#x27;float&#x27;, speed: &#x27;float&#x27;, softening: &#x27;float&#x27; = 0.0) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;stanley_straight_decay&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>直线路径上 Stanley(不限幅)的前轴横向偏差 e(t) 的闭式。</p>
 <p>ė = −v k e / √(a² + k² e²),a = k_s + v。F(e) = √(a² + k²e²) − a ln((a + √(a² + k²e²))/(k|e|)) 满足 dF/dt = −v k(常数)。对 F(e(t)) = F(e₀) − v k t 在 |e| ∈ (0, |e₀|] 上用二分法求解(F 关于 |e| 单调递增)。e 较小时 e ≈ e₀&#x27; e^{−k t v/a}(指数),e 较大时 |e| 大致按 v t 减小(直线)。</p>

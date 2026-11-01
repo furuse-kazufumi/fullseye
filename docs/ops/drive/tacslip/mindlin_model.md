@@ -4,6 +4,7 @@ dim: drive
 category: tacslip
 in: table × matrix × matrix × table × scalar × scalar
 out: table
+gpu: なし
 examples: [gallery_drive_soil_tactile, poc_tacsim_marker_shear]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table × matrix × matrix × table × scalar × scalar` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.mindlin_model(hz: 'dict', X, Y, kern: 'dict', G: 'float', nu: 'float') -> 'dict'` (実装を直接呼ぶなら `import tacslip; tacslip.mindlin_model(hz: 'dict', X, Y, kern: 'dict', G: 'float', nu: 'float') -> 'dict'`、台帳から引くなら `opsdrive.get("mindlin_model")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

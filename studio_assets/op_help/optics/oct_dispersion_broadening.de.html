@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">oct_dispersion_broadening — OPTICS <code style="color:#22d3bf">oct</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">keine</code> → <code style="color:#22d3bf">table</code> (ein Operator, der allein durch seine Argumente bestimmt ist — er nimmt kein Bild und keine Daten entgegen)</p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.oct_dispersion_broadening(material=&#x27;SILICA&#x27;, length_mm=10.0, center_nm=840.0, bandwidth_nm=50.0)</code> (die Implementierung direkt: <code style="color:#22d3bf">import octscan; octscan.oct_dispersion_broadening(material=&#x27;SILICA&#x27;, length_mm=10.0, center_nm=840.0, bandwidth_nm=50.0)</code>; aus dem Register: <code style="color:#22d3bf">opsoptics.get(&quot;oct_dispersion_broadening&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Wie stark sich ein A-Scan-Peak durch eine Dispersionsfehlanpassung verbreitert, ein Material (Länge L, Hin- und Rückweg) nur im Probenarm (<code style="color:#22d3bf">table</code>, geschlossene Form).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>

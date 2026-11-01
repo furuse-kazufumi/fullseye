@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">knn_graph — 3D <code style="color:#22d3bf">geodesic</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">graph</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.knn_graph(points: numpy.ndarray, k: int = 8) -&gt; Tuple[numpy.ndarray, numpy.ndarray]</code>(要直接调用实现,<code style="color:#22d3bf">import geodesic3d; geodesic3d.knn_graph(points: numpy.ndarray, k: int = 8) -&gt; Tuple[numpy.ndarray, numpy.ndarray]</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;knn_graph&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>每点的 k 近邻索引与欧氏距离(不含自身)。→ (idx (N,k) int, dist (N,k) float)。</p>
 <p>用 <code style="color:#22d3bf">scipy.spatial.cKDTree</code> 查找每个点的 k+1 个近邻,返回除去自身(距离 0)的 k 个。<code style="color:#22d3bf">idx[i, j]</code> 是距点 i 第 j 近的点的索引,<code style="color:#22d3bf">dist[i, j]</code> 是其 Euclid 距离(坐标单位), 各行按距离升序。</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">ford_circles — MATH <code style="color:#22d3bf">construct</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">table</code> (an op determined by its arguments alone — it takes no image or data input)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ford_circles(max_denominator=12, lo=0, hi=1)</code> (to call the implementation directly, <code style="color:#22d3bf">import mathops; mathops.ford_circles(max_denominator=12, lo=0, hi=1)</code>; from the registry, <code style="color:#22d3bf">opsmath.get(&quot;ford_circles&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Ford circles for the Farey fractions — tangency *is* an integer identity.</p>
 <p>For a fraction <code style="color:#22d3bf">p/q</code> in lowest terms the Ford circle sits at <code style="color:#22d3bf">(p/q, 1/(2q**2))</code> with radius <code style="color:#22d3bf">1/(2q**2)</code>. Two such circles are <b>tangent if and only if</b> <code style="color:#22d3bf">|p*s - q*r| == 1</code> — the Farey-neighbour condition — and otherwise strictly disjoint. They never overlap.</p>

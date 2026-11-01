@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">camera_orientation_from_sun — GEOCAM <code style="color:#22d3bf">sun</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">keypoints × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.camera_orientation_from_sun(sun_pixels, unix_times, lat_deg, lon_deg, K)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import geocam; geocam.camera_orientation_from_sun(sun_pixels, unix_times, lat_deg, lon_deg, K)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsgeocam.get(&quot;camera_orientation_from_sun&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>समय सहित सूर्य की pixel position, ≥ 2 point → camera का (yaw, pitch, roll) (Wahba समस्या का SVD हल = Kabsch)।</p>
 <p>प्रत्येक अवलोकन के लिए, पिक्सेल → कैमरा निर्देशांक किरण d_c(K से), समय → वैश्विक सूर्य दिशा s_w(<code style="color:#22d3bf">sun_position</code>, <b>अपवर्तन शामिल</b> के साथ एक उन्नयन कोण का उपयोग करें: कैमरा स्पष्ट सूर्य को देखता है)। <code style="color:#22d3bf">R = argmin Σ |R d_c - s_w|²</code> इसे एसवीडी (काब्श 1976/मार्कले 1988) का उपयोग करके बंद रूप में हल करें और इसे <code style="color:#22d3bf">(यॉ, पिच, रोल)</code> में विघटित करें।</p>

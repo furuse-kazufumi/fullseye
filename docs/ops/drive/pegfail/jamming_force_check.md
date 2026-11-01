@@ -4,6 +4,7 @@ dim: drive
 category: pegfail
 in: table × scalar × scalar × scalar
 out: table
+gpu: なし
 examples: [poc_peg_failure_recovery]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table × scalar × scalar × scalar` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.jamming_force_check(kp, depth: 'float', fx_over_fz: 'float', m_over_rfz: 'float', tol: 'float' = 0.0, side: 'int' = 0) -> 'dict'` (実装を直接呼ぶなら `import pegfail; pegfail.jamming_force_check(kp, depth: 'float', fx_over_fz: 'float', m_over_rfz: 'float', tol: 'float' = 0.0, side: 'int' = 0) -> 'dict'`、台帳から引くなら `opsdrive.get("jamming_force_check")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

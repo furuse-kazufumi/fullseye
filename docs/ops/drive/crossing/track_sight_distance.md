@@ -4,6 +4,7 @@ dim: drive
 category: crossing
 in: any
 out: any
+gpu: なし
 examples: [poc_driving_crossing]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `any` → `any`
 - **呼び出し**: `import fullseye as fs; fs.ledger.track_sight_distance(v_train, clear_time, *, margin: 'float' = 0.0)` (実装を直接呼ぶなら `import drivecrossing; drivecrossing.track_sight_distance(v_train, clear_time, *, margin: 'float' = 0.0)`、台帳から引くなら `opsdrive.get("track_sight_distance")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

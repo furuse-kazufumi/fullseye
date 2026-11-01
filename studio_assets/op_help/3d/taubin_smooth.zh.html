@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">taubin_smooth — 3D <code style="color:#22d3bf">mesh_process</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">mesh</code> → <code style="color:#22d3bf">mesh</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.taubin_smooth(mesh: &#x27;Sequence&#x27;, iters: &#x27;int&#x27; = 10, lam: &#x27;float&#x27; = 0.33, mu: &#x27;float&#x27; = -0.34) -&gt; &#x27;Mesh&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import mesh_smooth; mesh_smooth.taubin_smooth(mesh: &#x27;Sequence&#x27;, iters: &#x27;int&#x27; = 10, lam: &#x27;float&#x27; = 0.33, mu: &#x27;float&#x27; = -0.34) -&gt; &#x27;Mesh&#x27;</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;taubin_smooth&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>Taubin λ|μ 滤波的<b>非收缩</b>平滑。→ (verts, faces)。</p>
 <p>每次迭代连续施加“用正的 <code style="color:#22d3bf">lam</code> 拉近的步骤”→“用负的 <code style="color:#22d3bf">mu</code> 推回的步骤”。取 <code style="color:#22d3bf">|mu| &gt; lam</code> 后成为让低频（整体形状）通过、只衰减高频（噪声）的带通滤波器，抵消 Laplacian 的收缩伪影（球的平均半径几乎保持不变）。默认 <code style="color:#22d3bf">lam=0.33, mu=-0.34</code> 接近 Taubin (1995) 的推荐值。</p>

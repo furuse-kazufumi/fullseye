@@ -4,6 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.project_points(points, K, R=None, t=None)</code> (to call the implementation directly, <code style="color:#22d3bf">import match3d; match3d.project_points(points, K, R=None, t=None)</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;project_points&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>Return value through the ledger</b>: <code style="color:#22d3bf">fullseye.ledger.project_points(...)</code> returns <b>only the declared out type <code style="color:#22d3bf">keypoints</code></b> (the underlying function also returns auxiliary values). When you need what was dropped, use <code style="color:#22d3bf">fullseye.ledger.project_points.raw(...)</code> or call <code style="color:#22d3bf">match3d.project_points</code> directly.</p>
 <p style="margin:2px 0 2px 12px">• Underlying return: <code style="color:#22d3bf">(uv (N,2), depth (N,)) → uv</code></p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>3-D point set (N,3) → image coordinates (u,v) and depth. Pinhole (the forward direction of depth_to_points).</p>
 <p>K = camera intrinsic matrix [[fx,0,cx],[0,fy,cy],[0,0,1]]. R,t give the extrinsic pose. The observation map of a world model.</p>

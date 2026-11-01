@@ -4,6 +4,7 @@ dim: optics
 category: noncoaxial
 in: 
 out: table
+gpu: なし
 examples: [poc_noncoaxial_optics]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.tilted_plate_shift(thickness_mm=5.0, glass='BK7', tilt_deg=30.0, wavelength_um=0.58756)` (実装を直接呼ぶなら `import raytrace3d; raytrace3d.tilted_plate_shift(thickness_mm=5.0, glass='BK7', tilt_deg=30.0, wavelength_um=0.58756)`、台帳から引くなら `opsoptics.get("tilted_plate_shift")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

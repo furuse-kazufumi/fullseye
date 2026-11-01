@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">cad_defect_to_cad — CADMAP <code style="color:#22d3bf">defect</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">mesh × labels</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cad_defect_to_cad(mesh, labels, K=None, R=None, t=None, cull_backfaces=True, min_pixels=1, background=0, strict=False)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import cadmap; cadmap.cad_defect_to_cad(mesh, labels, K=None, R=None, t=None, cull_backfaces=True, min_pixels=1, background=0, strict=False)</code>, registry से लेना हो तो <code style="color:#22d3bf">opscadmap.get(&quot;cad_defect_to_cad&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>2-D defect label image → <b>CAD सतह पर table</b> (face ID / face पर क्षेत्रफल / 3-D centroid)।</p>
 <p><code style="color:#22d3bf">labels</code> एक (H, W) integer label image है (<code style="color:#22d3bf">background</code> अनदेखा किया जाता है, bool mask भी चलता है)। हर label के लिए सभी pixels की rays भेजता है, और hit हुए faces तथा उन pixels के <b>face पर घेरे गए वास्तविक क्षेत्रफल</b> को जोड़ता है। क्षेत्रफल pixel count नहीं बल्कि</p>

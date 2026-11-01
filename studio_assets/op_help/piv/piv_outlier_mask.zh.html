@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">piv_outlier_mask — PIV <code style="color:#22d3bf">validate</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">flow2d</code> → <code style="color:#22d3bf">mask</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_outlier_mask(flow, threshold=2.0, epsilon=0.1)</code>(要直接调用实现,<code style="color:#22d3bf">import pivops; pivops.piv_outlier_mask(flow, threshold=2.0, epsilon=0.1)</code>;从台账取用则 <code style="color:#22d3bf">opspiv.get(&quot;piv_outlier_mask&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用归一化中值检验(Westerweel &amp; Scarano 2005)找出离群矢量。</p>
 <p>对每个向量，把它与 8 邻域中位数的残差除以<b>邻域残差的中位数</b>。在分母上加 <code style="color:#22d3bf">epsilon</code>(默认 0.1 px，PIV 测量不确定度的大致量级)，是为了防止在均匀场中分母变为 0、全部都成了离群值 —— 没有这一项，<b>输入越理想，检验越会崩溃</b>。</p>

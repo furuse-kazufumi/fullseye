@@ -1,7 +1,7 @@
 """公開 API(api.run_pipeline / api.apply)の device 引数テスト。
 
-device="cpu"(既定)は従来どおり core を鎖状適用(挙動不変)。device!="cpu" は accel_bridge の
-GPU 常駐経路(未対応 op は CPU、torch/GPU 不在なら静かに CPU フォールバック)。GPU の実結果は
+device="cpu" は従来どおり core を鎖状適用(挙動不変)。既定 ``auto`` はCUDA可ならGPU、
+無ければCPU。明示した ``cuda`` が無い環境では黙ってCPUへ落とさずエラーにする。GPU の実結果は
 CPU-torch と一致することを別途確認済(accel/accel_vol/accel_match/accel_region の各テスト +
 loco venv での cuda vs cpu 照合 = region/volume は bit 一致、float 系は float32 epsilon)。
 ここでは API 層の配線(既定不変・graceful fallback)を固定する。
@@ -29,10 +29,14 @@ def test_run_pipeline_cpu_unchanged():
 
 
 def test_run_pipeline_device_graceful():
-    """device='cuda' は落ちず、正しい形の結果を返す(GPU 不在なら CPU にフォールバック)。"""
+    """device='cuda' はGPU上で走り、GPU不在なら明示エラー。"""
     img = _img()
     stages = [("median_image", 0.5, 0.4), ("gauss_filter", 0.4, 0.4)]
-    out = api.run_pipeline(img, stages, device="cuda")
+    try:
+        out = api.run_pipeline(img, stages, device="cuda")
+    except RuntimeError as exc:
+        assert "CUDA is not available" in str(exc)
+        return
     assert out.shape == img.shape and np.isfinite(out).all()
 
 
@@ -44,5 +48,9 @@ def test_apply_cpu_unchanged():
 
 def test_apply_device_graceful():
     img = _img()
-    out = api.apply(img, "median_image", 0.5, 0.4, device="cuda")
+    try:
+        out = api.apply(img, "median_image", 0.5, 0.4, device="cuda")
+    except RuntimeError as exc:
+        assert "CUDA is not available" in str(exc)
+        return
     assert out.shape == img.shape and np.isfinite(out).all()

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">warp_tps_image — SHAPE2D <code style="color:#22d3bf">morph</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image2d × pairs × pairs</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.warp_tps_image(img, src_pts, dst_pts, lam=0.0, order=1)</code> (die Implementierung direkt: <code style="color:#22d3bf">import imagemorph; imagemorph.warp_tps_image(img, src_pts, dst_pts, lam=0.0, order=1)</code>; aus dem Register: <code style="color:#22d3bf">opsshape2d.get(&quot;warp_tps_image&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Glatte Verzerrung, die src_pts von img mittels Thin-Plate-Spline nach dst_pts bewegt.</p>
 <p>Passt den TPS der inversen Abbildung von Ausgabekoordinaten → Eingabekoordinaten (dst→src) an, wertet ihn auf dem gesamten Ausgabegitter aus und tastet ab. Mit lam=0 entsprechen sich die Kontrollpunkte exakt (Merkmale landen korrekt); lam&gt;0 glättet die Deformation. Glatter als stückweise affin, aber mit den Kosten der Kernelauswertung für alle Pixel × Kontrollpunkte.</p>

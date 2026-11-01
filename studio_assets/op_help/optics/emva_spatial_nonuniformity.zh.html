@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">emva_spatial_nonuniformity — OPTICS <code style="color:#22d3bf">sensorchar</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">volume × volume</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.emva_spatial_nonuniformity(dark_stack, bright_stack, K, highpass=None)</code>(要直接调用实现,<code style="color:#22d3bf">import sensorchar; sensorchar.emva_spatial_nonuniformity(dark_stack, bright_stack, K, highpass=None)</code>;从台账取用则 <code style="color:#22d3bf">opsoptics.get(&quot;emva_spatial_nonuniformity&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>DSNU 与 PRNU(式 33〜42、65〜67)。</p>
 <p>*dark_stack*, *bright_stack*: 同一曝光下拍摄的 L 张(<code style="color:#22d3bf">(L, M, N)</code>,L ≥ 2)。bright 在约 50 % 饱和处拍摄。从平均图像的空间方差中减去残余的时间噪声 σ²_y/L(式 36),分解为列、行、像素分量(式 42), DSNU1288 = s_y.dark / K [e⁻] (式 66)、PRNU1288 = √(s²_y.50 − s²_y.dark)/(μ_y.50 − μ_y.dark)(式 67,比值)。</p>

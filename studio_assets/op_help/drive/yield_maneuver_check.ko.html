@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">yield_maneuver_check — DRIVE <code style="color:#22d3bf">decide</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.yield_maneuver_check(trajectory, *, t_approach: &#x27;float&#x27;, t_passed: &#x27;float&#x27;, intersections=(), near_margin: &#x27;float&#x27; = 30.0, left_tol: &#x27;float&#x27; = 1.0, stop_speed: &#x27;float&#x27; = 0.1, car_length: &#x27;float&#x27; = 4.5) -&gt; &#x27;Dict[str, object]&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivedecide; drivedecide.yield_maneuver_check(trajectory, *, t_approach: &#x27;float&#x27;, t_passed: &#x27;float&#x27;, intersections=(), near_margin: &#x27;float&#x27; = 30.0, left_tol: &#x27;float&#x27; = 1.0, stop_speed: &#x27;float&#x27; = 0.1, car_length: &#x27;float&#x27; = 4.5) -&gt; &#x27;Dict[str, object]&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;yield_maneuver_check&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>긴급자동차가 접근할 때의 자차 움직임을 도로교통법 제40조로 채점합니다.</p>
 <p>제 40 조 제 1 항: 교차로 또는 그 부근 → 교차로를 피해 도로 왼쪽에 붙어 <b>일시 정지</b>. 제 40 조 제 2 항: 그 밖의 경우 → 도로 왼쪽에 붙어 진로를 양보(정지까지는 요구하지 않음). (일방통행에서 왼쪽에 붙으면 방해가 되는 경우의 오른쪽 붙기는 다루지 않는다.)</p>

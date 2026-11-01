@@ -4,6 +4,7 @@ dim: 3d
 category: curve
 in: points
 out: measurement
+gpu: なし
 examples: [space_curve, torus_knot_curve]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -16,6 +17,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **呼び出し**: `import fullseye as fs; fs.ledger.arc_length(curve)` (実装を直接呼ぶなら `import curve3d; curve3d.arc_length(curve)`、台帳から引くなら `ops3d.get("arc_length")`)
 - **台帳経由の戻り値**: `fullseye.ledger.arc_length(...)` は**宣言 out 型 `measurement` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.arc_length.raw(...)`、または `curve3d.arc_length` を直接呼ぶ。
   - 本体の返り: `(cumulative, total) → 全長 float`
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">moire_talbot_gap — OPTICS <code style="color:#22d3bf">moire_align</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.moire_talbot_gap(p_mask_um=2.0, wavelength_um=0.55, gap_um=10.0, duty=0.5, samples=512)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import moirealign; moirealign.moire_talbot_gap(p_mask_um=2.0, wavelength_um=0.55, gap_um=10.0, duty=0.5, samples=512)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;moire_talbot_gap&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>近接ギャップの Talbot 効果: マスクの格子の像が、ギャップの先でどれだけ・どちらの符号で残るか。</p>
 <p>近接露光ではマスクとウェハの間にギャップ g があり、マスクの格子を通った光はウェハに届くまでに回折する。縞の振幅はマスクの像の基本波(1/p の成分)に比例するので、その振幅の gap = 0 に対する比を返す。対称な格子ではこの比は<b>実数</b>で、ギャップによって符号が反転する(反転 = 縞が半周期ずれる = 読みが p/2 跳ぶ)。Talbot 長 z_T = 2p²/λ(近軸)で像は元に戻り、z_T/2 で半周期ずれた像になる。伝搬は <code style="color:#22d3bf">optics.angular_spectrum_propagate</code>(近軸近似を使わない)なので、z_T は近軸の値からわずかにずれる。</p>

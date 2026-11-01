@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">deflectometry_screen_pattern — SPECULAR <code style="color:#22d3bf">deflectometry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">keine</code> → <code style="color:#22d3bf">images</code> (ein Operator, der allein durch seine Argumente bestimmt ist — er nimmt kein Bild und keine Daten entgegen)</p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.deflectometry_screen_pattern(rig=None, period_mm=10.0, n_steps=4, direction=&#x27;x&#x27;, kind=&#x27;fringe&#x27;, max_side_px=1024)</code> (die Implementierung direkt: <code style="color:#22d3bf">import deflectometry; deflectometry.deflectometry_screen_pattern(rig=None, period_mm=10.0, n_steps=4, direction=&#x27;x&#x27;, kind=&#x27;fringe&#x27;, max_side_px=1024)</code>; aus dem Register: <code style="color:#22d3bf">opsspecular.get(&quot;deflectometry_screen_pattern&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Das auf dem Bildschirm gezeigte Muster (im Pixelraster des Bildschirms). → Liste von Bildern (je (Zeilen, Spalten), Werte [0, 1]).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>

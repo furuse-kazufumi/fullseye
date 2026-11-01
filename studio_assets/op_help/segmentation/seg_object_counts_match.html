@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">seg_object_counts_match — SEGMENTATION <code style="color:#22d3bf">score</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">labels2d × labels2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.seg_object_counts_match(labels_pred, labels_true, *, background: &#x27;int&#x27; = 0, min_overlap: &#x27;float&#x27; = 0.5) -&gt; &#x27;Dict[str, object]&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import segeval; segeval.seg_object_counts_match(labels_pred, labels_true, *, background: &#x27;int&#x27; = 0, min_overlap: &#x27;float&#x27; = 0.5) -&gt; &#x27;Dict[str, object]&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opssegmentation.get(&quot;seg_object_counts_match&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>物体の個数の一致: 分裂・融合・欠落・偽・一致を、「主に重なる」辺の 2 部グラフの次数で数える。</p>
 <p>真 i と予測 j(どちらも背景でない)の間に辺を置く条件 = 重なり n_ij ≥ <code style="color:#22d3bf">min_overlap</code> × min(|i|, |j|) (小さい方がもう一方に主に入っている)。真の次数 d_i、予測の次数 e_j:</p>

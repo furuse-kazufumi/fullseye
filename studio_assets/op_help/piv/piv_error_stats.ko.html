@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">piv_error_stats — PIV <code style="color:#22d3bf">assess</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">flow2d × flow2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_error_stats(flow, truth, trim=1)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import pivops; pivops.piv_error_stats(flow, truth, trim=1)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opspiv.get(&quot;piv_error_stats&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>참값과의 차이의 내역. <b>편향과 산포를 나누어</b> 반환한다.</p>
 <p>어느 한쪽만 내면, 계통적으로 어긋나 있는 구현이 &quot;오차 0.3 px&quot;로서통과해 버린다. 치우침(평균 오차)과 흩어짐(표준편차)은 서로 다른 원인을 가리킨다.</p>

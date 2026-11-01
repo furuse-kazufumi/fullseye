@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">moire_phase_crlb — OPTICS <code style="color:#22d3bf">moire_align</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">table</code> (an op determined by its arguments alone — it takes no image or data input)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.moire_phase_crlb(noise_sigma=0.01, amplitude=0.2, n_rows=256, n_cols=1024, p_mask_um=2.0, p_wafer_um=2.04, moving=&#x27;wafer&#x27;, window=&#x27;hann&#x27;, noisy_reference=True)</code> (to call the implementation directly, <code style="color:#22d3bf">import moirealign; moirealign.moire_phase_crlb(noise_sigma=0.01, amplitude=0.2, n_rows=256, n_cols=1024, p_mask_um=2.0, p_wafer_um=2.04, moving=&#x27;wafer&#x27;, window=&#x27;hann&#x27;, noisy_reference=True)</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;moire_phase_crlb&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>How finely the fringe phase and the displacement can be read under white Gaussian noise (closed-form lower bound).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>

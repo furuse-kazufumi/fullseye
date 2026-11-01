@@ -4,6 +4,7 @@ dim: optics
 category: sensorchar
 in: signal × signal
 out: table
+gpu: なし
 examples: [poc_emva1288_in_camera_processing]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal × signal` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.emva_bspline_regression(x, y, n_intervals=8, x_max=None, x_eval=None)` (実装を直接呼ぶなら `import sensorchar; sensorchar.emva_bspline_regression(x, y, n_intervals=8, x_max=None, x_eval=None)`、台帳から引くなら `opsoptics.get("emva_bspline_regression")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

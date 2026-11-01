@@ -4,6 +4,7 @@ dim: reprconv
 category: curvature
 in: curvature
 out: pairs
+gpu: なし
 examples: [representation_roundtrip]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `curvature` → `pairs`
 - **呼び出し**: `import fullseye as fs; fs.ledger.curvature_to_shape_index(curvature)` (実装を直接呼ぶなら `import reprconv; reprconv.curvature_to_shape_index(curvature)`、台帳から引くなら `opsreprconv.get("curvature_to_shape_index")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

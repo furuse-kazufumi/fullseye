@@ -4,6 +4,7 @@ dim: optics
 category: polarization
 in: 
 out: matrix
+gpu: なし
 examples: [optics_imaging, poc_mueller_dofp_observability, poc_photoelasticity, polarization_camera_pipeline]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `matrix`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.mueller_element(kind='polarizer', angle_deg=0.0, retardance_deg=90.0)` (実装を直接呼ぶなら `import optics; optics.mueller_element(kind='polarizer', angle_deg=0.0, retardance_deg=90.0)`、台帳から引くなら `opsoptics.get("mueller_element")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

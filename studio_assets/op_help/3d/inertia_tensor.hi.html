@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">inertia_tensor — 3D <code style="color:#22d3bf">moment_invariant</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.inertia_tensor(points) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import moments3d; moments3d.inertia_tensor(points) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;inertia_tensor&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>point cloud का inertia tensor (3,3) (central 2nd-order moments से, समान mass, कुल mass 1)।</p>
 <p>I_xx = mean(y²+z²), I_yy = mean(x²+z²), I_zz = mean(x²+y²), I_xy = -mean(xy), I_xz = -mean(xz), I_yz = -mean(yz)। covariance C से यह I = tr(C)·E₃ − C (E₃ identity matrix है) के बराबर है। symmetric और positive semi-definite। centroid centring के कारण translation invariant।</p>

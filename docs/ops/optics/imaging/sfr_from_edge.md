@@ -4,6 +4,7 @@ dim: optics
 category: imaging
 in: table
 out: pairs
+gpu: なし
 examples: [poc_pixel_shift, poc_veiling_glare]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `pairs`
 - **呼び出し**: `import fullseye as fs; fs.ledger.sfr_from_edge(esf, window, *, correction, ends=1.0, apodize='none')` (実装を直接呼ぶなら `import edgesfr; edgesfr.sfr_from_edge(esf, window, *, correction, ends=1.0, apodize='none')`、台帳から引くなら `opsoptics.get("sfr_from_edge")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

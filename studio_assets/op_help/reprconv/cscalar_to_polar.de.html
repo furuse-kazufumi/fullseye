@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">cscalar_to_polar — REPRCONV <code style="color:#22d3bf">algebra</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">cscalar</code> → <code style="color:#22d3bf">pairs</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cscalar_to_polar(cscalar)</code> (die Implementierung direkt: <code style="color:#22d3bf">import reprconv; reprconv.cscalar_to_polar(cscalar)</code>; aus dem Register: <code style="color:#22d3bf">opsreprconv.get(&quot;cscalar_to_polar&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Komplexer Skalar → Polarform <code style="color:#22d3bf">pairs (1,2) = [|z|, arg z [Grad]]</code>. Der Ausgang aus <code style="color:#22d3bf">cscalar</code>.</p>
 <p>Der komplexe Skalar, den <code style="color:#22d3bf">cplx_contour_integral</code> / <code style="color:#22d3bf">cplx_cauchy_value</code> liefern, hat einen eigenen Typ, weil er, in <code style="color:#22d3bf">measurement</code> (nur reelle Skalare) gemischt, nachgelagert mit einem rohen TypeError abstürzen würde. Als Paar in Polarform lässt er sich an das 1-D-Vokabular übergeben.</p>

@@ -4,6 +4,7 @@ dim: optics
 category: scene
 in: 
 out: table
+gpu: なし
 examples: [vision_layout_from_catalog]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.optical_budget(focal_mm: 'float' = 25.0, working_distance_mm: 'float' = 200.0, f_number: 'float' = None, na: 'float' = None, pixel_um: 'float' = 3.45, wavelength_nm: 'float' = 550.0, coc_um: 'float' = None) -> 'dict'` (実装を直接呼ぶなら `import optscene; optscene.optical_budget(focal_mm: 'float' = 25.0, working_distance_mm: 'float' = 200.0, f_number: 'float' = None, na: 'float' = None, pixel_um: 'float' = 3.45, wavelength_nm: 'float' = 550.0, coc_um: 'float' = None) -> 'dict'`、台帳から引くなら `opsoptics.get("optical_budget")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

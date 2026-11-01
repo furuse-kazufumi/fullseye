@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">stroke_resample_closed — PRINTPATH <code style="color:#22d3bf">stroke</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">pairs</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.stroke_resample_closed(points, n_points, allow_shortening=False)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import printpath; printpath.stroke_resample_closed(points, n_points, allow_shortening=False)</code>、台帳から引くなら <code style="color:#22d3bf">opsprintpath.get(&quot;stroke_resample_closed&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>閉じた線を<b>等弧長</b>に打ち直す。→ <code style="color:#22d3bf">pairs</code></p>
 <p>フーリエへ渡す前段。★媒介変数の取り方で係数が変わる(実測で最大 47 倍)ので、ここは<b>弧長で等間隔</b>と明示する。弧長の間隔は機械精度で一定(実測 cv 1e-14)。</p>

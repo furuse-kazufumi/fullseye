@@ -4,6 +4,7 @@ dim: drive
 category: long
 in: scalar
 out: scalar
+gpu: なし
 examples: [poc_driving_longitudinal]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `scalar` → `scalar`
 - **呼び出し**: `import fullseye as fs; fs.ledger.hill_hold_brake_min(theta: 'float', c_rr: 'float' = 0.012, a_creep: 'float' = 0.0, g: 'float' = 9.80665) -> 'float'` (実装を直接呼ぶなら `import drivelong; drivelong.hill_hold_brake_min(theta: 'float', c_rr: 'float' = 0.012, a_creep: 'float' = 0.0, g: 'float' = 9.80665) -> 'float'`、台帳から引くなら `opsdrive.get("hill_hold_brake_min")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

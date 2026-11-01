@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">holdout_threshold — EMPROOF <code style="color:#22d3bf">evaluate</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">signal × signal × signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.holdout_threshold(train_pos, train_neg, test_pos, test_neg, target_fpr: &#x27;float&#x27; = 0.05) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import emproof; emproof.holdout_threshold(train_pos, train_neg, test_pos, test_neg, target_fpr: &#x27;float&#x27; = 0.05) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsemproof.get(&quot;holdout_threshold&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p><b>在训练侧选定阈值，在另一侧</b>测量评估(score 越高越“可疑”)。</p>
 <p><code style="color:#22d3bf">tau</code> = 使训练负例(未植入的分量、对)的假阳性率不超过 <code style="color:#22d3bf">target_fpr</code> 的最小阈值(负例分数的上 <code style="color:#22d3bf">target_fpr</code> 分位)。返回 <code style="color:#22d3bf">tau</code> 以及训练、评估各自的 AUC、TPR、FPR 和件数。只用评估侧的数字作为主张 —— 在选阈值的一侧测得的 TPR 必然偏乐观(把 evolve 的 holdout 规矩单独做成 op)。AUC 为 Mann–Whitney(同分 0.5)。</p>

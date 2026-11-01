@@ -4,6 +4,7 @@ dim: segmentation
 category: score
 in: labels2d × labels2d
 out: table
+gpu: なし
 examples: [gallery_seg_measures]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `labels2d × labels2d` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.seg_hausdorff(labels_pred, labels_true, *, percentile: 'float' = 95.0) -> 'Dict[str, float]'` (実装を直接呼ぶなら `import segeval; segeval.seg_hausdorff(labels_pred, labels_true, *, percentile: 'float' = 95.0) -> 'Dict[str, float]'`、台帳から引くなら `opssegmentation.get("seg_hausdorff")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">braid_from_trajectories — DRIVE <code style="color:#22d3bf">braidpath</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.braid_from_trajectories(trajectories, obstacles=None, angle=0.1, jitter=&#x27;auto&#x27;)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import braidpath; braidpath.braid_from_trajectories(trajectories, obstacles=None, angle=0.1, jitter=&#x27;auto&#x27;)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;braid_from_trajectories&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>평면 궤적들(과 움직이지 않는 장애물 점)로부터 브레이드 단어(교차 부호의 열)를 만든다.</p>
 <p>각 스텝 사이에서는 직선으로 움직인다고 보고, 사영 축 x&#x27; = x cos θ + y sin θ 위에서 이웃한 두 가닥의 순서가 바뀌는 시각을닫힌 형태로 구하고(상대 운동도 직선이므로 영점은 많아야 1 개), 시각 순으로 문자로 만든다. 왼쪽 가닥이 <b>아래</b>(y&#x27; 가 작은 쪽)를지나 오른쪽으로 나가면 <code style="color:#22d3bf">+i</code>(반시계 방향 반회전), 위를 지나면 <code style="color:#22d3bf">−i</code>.</p>

@@ -4,7 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.harris3d_keypoints(vol, device=&#x27;cpu&#x27;, k=0.005, nms=3, topn=64, sigma_i=1.5, response=&#x27;mineig&#x27;, rel_thresh=0.01, border=2)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import feat_harris; feat_harris.harris3d_keypoints(vol, device=&#x27;cpu&#x27;, k=0.005, nms=3, topn=64, sigma_i=1.5, response=&#x27;mineig&#x27;, rel_thresh=0.01, border=2)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;harris3d_keypoints&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>원장 경유의 반환값</b>: <code style="color:#22d3bf">fullseye.ledger.harris3d_keypoints(...)</code> 는 <b>선언된 out 형 <code style="color:#22d3bf">keypoints</code> 의 값만</b> 반환합니다(실제 함수는 보조 정보도 반환). 버려진 쪽이 필요하면 <code style="color:#22d3bf">fullseye.ledger.harris3d_keypoints.raw(...)</code> 를 쓰거나 <code style="color:#22d3bf">feat_harris.harris3d_keypoints</code> 를 직접 호출하세요.</p>
 <p style="margin:2px 0 2px 12px">• 실제 반환: <code style="color:#22d3bf">(keypoints, scores)</code></p>
-<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 이 연산자는 GPU 경로가 있습니다(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>3D Harris 키포인트 검출(2D Harris 코너 검출의 3D 판).</p>
 <p>voxel 밀도장의 3D 기울기 g=(gz,gy,gx) 로부터, 각 복셀에서 국소 구조 텐서 M=Σ_w w·g gᵀ(3x3 대칭, gaussian 창 sigma_i 로 가중합)를 구성하고, 코너성을측정한다. 응답이 주변에서 극대이고 임계값을 넘는 복셀을 keypoint 로 한다(초기 자세추정 없이 검출할 수 있으므로, 대회전+부분 겹침의 대응이나 ICP 의 coarse init 공급에 쓸 수 있다).</p>

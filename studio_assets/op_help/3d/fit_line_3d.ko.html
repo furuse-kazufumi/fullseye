@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">fit_line_3d — 3D <code style="color:#22d3bf">geometry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">primitive</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fit_line_3d(points)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import match3d; match3d.fit_line_3d(points)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;fit_line_3d&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>점군 → 최소제곱 직선(통과점=무게중심, 방향=최대 주축). 반환값 (point, direction).</p>
 <p><code style="color:#22d3bf">(N,3)</code> 점군(수치이고 열 수가 3이 아니면 ValueError, 2점 미만도 ValueError)의 무게중심 <code style="color:#22d3bf">c</code>와산포 행렬 <code style="color:#22d3bf">(P−c)ᵀ(P−c)</code>의 최대 고윳값의 고유벡터를 반환한다(직교 거리 제곱합을 최소화하는 직선. z=f(x)형 회귀가 아니다). <code style="color:#22d3bf">direction</code>은 단위 벡터이며 <b>부호는 임의</b>(<code style="color:#22d3bf">eigh</code>에 따름. 방향을맞추려면 <code style="color:#22d3bf">(P[-1] − P[0]) @ direction</code>의 부호로 반전). 2점뿐이면 2점을 지나는 직선. 점이 평면 형태로 퍼져 있으면 최대 축은 &quot;가장 긴 방향&quot;이 될 뿐이며직선이라고는 할 수 없다(잔차는 반환하지 않으므로 <code style="color:#22d3bf">distance_point_line</code>으로 확인한다). 이상값에 약하다(강건하게는 <code style="color:#22d3bf">ransac_line</code>). 3-D 전용(2-D 점은 ValueError).</p>

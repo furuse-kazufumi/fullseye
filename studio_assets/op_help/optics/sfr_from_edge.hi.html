@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">sfr_from_edge — OPTICS <code style="color:#22d3bf">imaging</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">pairs</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sfr_from_edge(esf, window, *, correction, ends=1.0, apodize=&#x27;none&#x27;)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import edgesfr; edgesfr.sfr_from_edge(esf, window, *, correction, ends=1.0, apodize=&#x27;none&#x27;)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;sfr_from_edge&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>ESF से SFR (edge से मापा गया MTF) निकालता है।</p>
 <p>*esf*, <code style="color:#22d3bf">edge_spread</code> का return value (एक dict) है या 1 px step वाला 1-D array (<code style="color:#22d3bf">oversample</code> = 1 माना जाता है)। edge केंद्र (absolute difference का maximum) के आसपास ±*window* px काटें, दोनों सिरों पर *ends* px के means को black/white references मानकर normalize करें, LSF पाने के लिए forward difference लें, और उसके Fourier transform के absolute value को DC से भाग दें।</p>

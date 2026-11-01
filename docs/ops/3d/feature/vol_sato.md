@@ -4,6 +4,7 @@ dim: 3d
 category: feature
 in: voxel
 out: voxel
+gpu: なし
 examples: [vessel_metrology]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `voxel` → `voxel`
 - **呼び出し**: `import fullseye as fs; fs.ledger.vol_sato(vol, scales=(1, 2, 3), black_ridges=False)` (実装を直接呼ぶなら `import volops; volops.vol_sato(vol, scales=(1, 2, 3), black_ridges=False)`、台帳から引くなら `ops3d.get("vol_sato")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

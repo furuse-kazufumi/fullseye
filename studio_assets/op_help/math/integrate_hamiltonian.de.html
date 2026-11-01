@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">integrate_hamiltonian — MATH <code style="color:#22d3bf">numerics</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.integrate_hamiltonian(q0, p0, dt: &#x27;float&#x27; = 0.05, n_steps: &#x27;int&#x27; = 1000, *, system: &#x27;str&#x27; = &#x27;harmonic&#x27;, method: &#x27;str&#x27; = &#x27;verlet&#x27;, **params) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import mathnumerics; mathnumerics.integrate_hamiltonian(q0, p0, dt: &#x27;float&#x27; = 0.05, n_steps: &#x27;int&#x27; = 1000, *, system: &#x27;str&#x27; = &#x27;harmonic&#x27;, method: &#x27;str&#x27; = &#x27;verlet&#x27;, **params) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsmath.get(&quot;integrate_hamiltonian&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Integriert ein benanntes Hamiltonsches System (Masse 1) in der Zeit. Rückgabewert <code style="color:#22d3bf">{&quot;t&quot;,&quot;q&quot;,&quot;p&quot;,&quot;energy&quot;,&quot;energy_drift&quot;,&quot;method&quot;,&quot;system&quot;}</code>.</p>
 <p><code style="color:#22d3bf">method</code>:</p>

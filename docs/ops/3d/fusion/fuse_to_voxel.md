@@ -4,7 +4,7 @@ dim: 3d
 category: fusion
 in: any
 out: voxel
-gpu: true
+gpu: なし
 examples: [transforms_repr]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -17,7 +17,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **呼び出し**: `import fullseye as fs; fs.ledger.fuse_to_voxel(items, size=64, bounds=None, device='cpu', smooth=0.8)` (実装を直接呼ぶなら `import fuse3d; fuse3d.fuse_to_voxel(items, size=64, bounds=None, device='cpu', smooth=0.8)`、台帳から引くなら `ops3d.get("fuse_to_voxel")`)
 - **台帳経由の戻り値**: `fullseye.ledger.fuse_to_voxel(...)` は**宣言 out 型 `voxel` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.fuse_to_voxel.raw(...)`、または `fuse3d.fuse_to_voxel` を直接呼ぶ。
   - 本体の返り: `(voxel, bounds)`
-- **GPU**: この op は GPU 経路あり(`device="cuda"`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

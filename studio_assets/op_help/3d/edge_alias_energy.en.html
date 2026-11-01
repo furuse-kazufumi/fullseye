@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">edge_alias_energy — 3D <code style="color:#22d3bf">render</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.edge_alias_energy(img) -&gt; &#x27;float&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import render_ssaa; render_ssaa.edge_alias_energy(img) -&gt; &#x27;float&#x27;</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;edge_alias_energy&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>The aliasing (jaggy) energy of edges = the RMS of the Laplacian (smaller is smoother).</p>
 <p>Rasterisation aliasing appears as sharp staircase corners (a high 2nd derivative). The Laplacian emphasises high frequencies, so its root mean square (RMS) monotonically captures how stair-stepped the boundaries are — once SSAA turns the edges into smooth gradients, the Laplacian&#x27;s high-frequency energy decreases (low-pass attenuates high frequencies and the Laplacian amplifies them, so the smoother the edges, the smaller this quantity).</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">insertion_grid_summary — DRIVE <code style="color:#22d3bf">pegsim</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.insertion_grid_summary(rows) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import pegsim; pegsim.insertion_grid_summary(rows) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;insertion_grid_summary&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>彙總成功率網格：由列 = {eps_mm, tilt_deg, correct, success} 的序列，得到 有/無修正 × ε₀ × θ₀ 的成功率表，以及「無修正時全部成功的最大 ε₀」與「有修正時的成功數 / 總數」。</p>
 <p>回傳: <code style="color:#22d3bf">eps_mm</code>、<code style="color:#22d3bf">tilt_deg</code>(軸)、<code style="color:#22d3bf">rate</code>: {False: (n_eps, n_tilt) 的陣列, True: 同}、<code style="color:#22d3bf">n_runs</code>、<code style="color:#22d3bf">max_eps_all_ok</code>:</p>

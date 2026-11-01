@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">sfp_normals — OPTICS <code style="color:#22d3bf">shape_from_polarization</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">polsweep</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sfp_normals(sweep, refractive_index=1.5, model=&#x27;specular&#x27;, angles_deg=(0.0, 45.0, 90.0, 135.0), violation_tol=0.05, out_of_range=&#x27;invalid&#x27;)</code> (die Implementierung direkt: <code style="color:#22d3bf">import sfpolar; sfpolar.sfp_normals(sweep, refractive_index=1.5, model=&#x27;specular&#x27;, angles_deg=(0.0, 45.0, 90.0, 135.0), violation_tol=0.05, out_of_range=&#x27;invalid&#x27;)</code>; aus dem Register: <code style="color:#22d3bf">opsoptics.get(&quot;sfp_normals&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Vom Polarisator-Sweep zur expliziten Menge der Kandidaten-Normalen je Pixel — 2 im diffusen, 4 im spiegelnden Modell (2 Zenit × 2 Azimut) (<code style="color:#22d3bf">table</code>).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>

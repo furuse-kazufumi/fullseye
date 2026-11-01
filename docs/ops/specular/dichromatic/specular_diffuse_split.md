@@ -4,6 +4,7 @@ dim: specular
 category: dichromatic
 in: rgbimage
 out: rgbimage
+gpu: なし
 examples: [specular_photometric]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,6 +16,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **データ種**: `rgbimage` → `rgbimage`
 - **呼び出し**: `import fullseye as fs; fs.ledger.specular_diffuse_split(image_rgb, illuminant_rgb=(1.0, 1.0, 1.0), body_rgb=None, max_rank_ratio=0.1, max_negative_frac=0.02)` (実装を直接呼ぶなら `import specularity; specularity.specular_diffuse_split(image_rgb, illuminant_rgb=(1.0, 1.0, 1.0), body_rgb=None, max_rank_ratio=0.1, max_negative_frac=0.02)`、台帳から引くなら `opsspecular.get("specular_diffuse_split")`)
 - **台帳経由の戻り値**: `fullseye.ledger.specular_diffuse_split(...)` は**宣言 out 型 `rgbimage` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.specular_diffuse_split.raw(...)`、または `specularity.specular_diffuse_split` を直接呼ぶ。
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

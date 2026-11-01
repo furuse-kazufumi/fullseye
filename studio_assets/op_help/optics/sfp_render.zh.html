@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">sfp_render — OPTICS <code style="color:#22d3bf">shape_from_polarization</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">normalmap</code> → <code style="color:#22d3bf">polsweep</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sfp_render(normals, refractive_index=1.5, specular_radiance=1.0, diffuse_radiance=0.0, angles_deg=(0.0, 45.0, 90.0, 135.0), mask=None)</code>(要直接调用实现,<code style="color:#22d3bf">import sfpolar; sfpolar.sfp_render(normals, refractive_index=1.5, specular_radiance=1.0, diffuse_radiance=0.0, angles_deg=(0.0, 45.0, 90.0, 135.0), mask=None)</code>;从台账取用则 <code style="color:#22d3bf">opsoptics.get(&quot;sfp_render&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>渲染 4 方向偏振相机拍摄给定法线图的电介质表面所得的图像(偏振形状恢复的正向模型,<code style="color:#22d3bf">polsweep</code>)。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>

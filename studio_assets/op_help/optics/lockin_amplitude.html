@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">lockin_amplitude — OPTICS <code style="color:#22d3bf">lockin</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">video</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lockin_amplitude(video, f_ref, fps, window=&#x27;rect&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import lockin; lockin.lockin_amplitude(video, f_ref, fps, window=&#x27;rect&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;lockin_amplitude&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Amplitude map A of the part of every pixel that follows the reference -&gt; (H, W) image.</p>
 <p>The same number as <code style="color:#22d3bf">lockin_demodulate(...)[&quot;amplitude&quot;]</code>; a steady background, drift outside the reference frequency and other modulation frequencies do not contribute (a whole number of periods rejects them exactly, to rounding).</p>

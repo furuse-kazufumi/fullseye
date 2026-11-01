@@ -4,6 +4,7 @@ dim: optics
 category: imaging_sim
 in: image2d × table
 out: image2d
+gpu: なし
 examples: [lens_defect_dataset_demo, poc_zmx_public_verify]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d × table` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.render_through_lens(image, system, pixel_pitch_um=5.5, field_of_view=None, zones=3, noise=None, seed=0, illumination='traced', size=None, oversample=None)` (実装を直接呼ぶなら `import lensimage; lensimage.render_through_lens(image, system, pixel_pitch_um=5.5, field_of_view=None, zones=3, noise=None, seed=0, illumination='traced', size=None, oversample=None)`、台帳から引くなら `opsoptics.get("render_through_lens")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

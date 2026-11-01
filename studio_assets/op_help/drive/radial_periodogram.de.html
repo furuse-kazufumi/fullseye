@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">radial_periodogram — DRIVE <code style="color:#22d3bf">terrain</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.radial_periodogram(field, dx: &#x27;float&#x27;, n_bins: &#x27;int&#x27; = 48) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import driveterrain; driveterrain.radial_periodogram(field, dx: &#x27;float&#x27;, n_bins: &#x27;int&#x27; = 48) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;radial_periodogram&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Mittelt das Periodogramm eines Höhenfelds (H, W) auf einem Gitter radial: <code style="color:#22d3bf">{&quot;f&quot;, &quot;power&quot;, &quot;count&quot;}</code> (f in Perioden/m).</p>
 <p>Es ist der Mittelwert, nicht das Integral über den Ring (Integrieren würde einmal mit f multiplizieren und die Steigung ändern). DC wird ausgeschlossen.</p>

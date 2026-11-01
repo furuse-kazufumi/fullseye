@@ -4,6 +4,7 @@ dim: 3d
 category: bundle_adjust
 in: pose × points
 out: measurement
+gpu: なし
 examples: [bundle_adjust]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `pose × points` → `measurement`
 - **呼び出し**: `import fullseye as fs; fs.ledger.mean_reprojection_error(cameras, points, obs_cam, obs_pt, obs_uv, K)` (実装を直接呼ぶなら `import bundle3d; bundle3d.mean_reprojection_error(cameras, points, obs_cam, obs_pt, obs_uv, K)`、台帳から引くなら `ops3d.get("mean_reprojection_error")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

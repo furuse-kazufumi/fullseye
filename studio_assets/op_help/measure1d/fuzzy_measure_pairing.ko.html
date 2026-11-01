@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">fuzzy_measure_pairing — MEASURE1D <code style="color:#22d3bf">caliper</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d × measurehandle</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fuzzy_measure_pairing(image, measure, sigma=1.0, threshold=0.1, pair_size=None)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import measuring1d; measuring1d.fuzzy_measure_pairing(image, measure, sigma=1.0, threshold=0.1, pair_size=None)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsmeasure1d.get(&quot;fuzzy_measure_pairing&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>퍼지 기준(예상 폭 pair_size)에 가장 잘 맞는 에지 쌍을 고른다(fuzzy_measure_pairing).</p>
 <p>절차: <code style="color:#22d3bf">measure_pairs(image, measure, sigma, threshold)</code> 로 극성이 다른 인접에지의 쌍을 구하고, 각 쌍에 <code style="color:#22d3bf">fuzzy_score = exp(-((width - pair_size) / (0.5 pair_size))^2)</code> 를 붙여 <b>점수 내림차순으로 다시 정렬한다</b>. 상정 폭과 딱 맞으면 1, 폭이 <code style="color:#22d3bf">±0.5 pair_size</code> 어긋나면 <code style="color:#22d3bf">e^-1</code> ≈ 0.37. 첫 요소가 가장 잘 맞는 쌍.</p>

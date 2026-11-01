@@ -3,6 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.course_occupancy(course, cell: &#x27;float&#x27; = 0.25, margin: &#x27;float&#x27; = 2.0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import drivecourse; drivecourse.course_occupancy(course, cell: &#x27;float&#x27; = 0.25, margin: &#x27;float&#x27; = 2.0)</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;course_occupancy&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>台帳経由の戻り値</b>: <code style="color:#22d3bf">fullseye.ledger.course_occupancy(...)</code> は<b>宣言 out 型 <code style="color:#22d3bf">image2d</code> の値だけ</b>を返す(本体は補助情報も返す)。捨てられた側が要るときは <code style="color:#22d3bf">fullseye.ledger.course_occupancy.raw(...)</code>、または <code style="color:#22d3bf">drivecourse.course_occupancy</code> を直接呼ぶ。</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>コース(要素または配置)を占有格子 <code style="color:#22d3bf">(occ bool [row = y, col = x], extent)</code> に落とす。</p>
 <p><b>走れる領域の外 = True(障害物)</b>。格子は bounds を <code style="color:#22d3bf">margin</code> だけ広げた範囲を <code style="color:#22d3bf">cell</code> で覆い、各 cell の中心で偶奇判定する。<code style="color:#22d3bf">extent = (xmin, xmax, ymin, ymax)</code> は格子がちょうど覆う範囲(xmax = xmin + nx·cell)、row 0 = ymin。占有率は cell → 0 で 1 − 面積/格子面積 に収束する(門)。</p>

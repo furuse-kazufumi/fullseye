@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">render_transport — OPTICS <code style="color:#22d3bf">light_transport</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table × images</code> → <code style="color:#22d3bf">images</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.render_transport(transport, patterns, triangulation_deg=20.0, irradiance=1.0, black_level=0.0, rows=1)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import lighttransport; lighttransport.render_transport(transport, patterns, triangulation_deg=20.0, irradiance=1.0, black_level=0.0, rows=1)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;render_transport&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>投影パターンの下での Lambert の凹んだ断面のカメラ画像を、光輸送行列(直接 + 相互反射)を通して描く(<code style="color:#22d3bf">images</code>)。</p>
 <p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>

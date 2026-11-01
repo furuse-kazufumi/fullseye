@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">gs_update — DRIVE <code style="color:#22d3bf">gsplat</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gs_update(gs: &#x27;dict&#x27;, world: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import gsplatnp; gsplatnp.gs_update(gs: &#x27;dict&#x27;, world: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;gs_update&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>根据世界<b>当前的</b>顶点重新计算高斯的中心与朝向(原地修改并返回同一个 dict)。</p>
 <p>μ = Σ_k bary_k · V[F[face, k]] + R · offset_local，R = 面的局部坐标 [t1 t2 n]。 <code style="color:#22d3bf">gs[&quot;face&quot;]</code> 指向的脸如果当前世界中不存在 ValueError。即使最后添加了表面，如果现有表面编号有效，也可以更新它。由刚体移动的物体的高斯以相同的刚体变换（门）移动。</p>

@@ -4,6 +4,7 @@ dim: tomography
 category: spectral_xray
 in: pairs
 out: table
+gpu: なし
 examples: [poc_dual_energy_xray]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `pairs` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.photon_counting_channels(spectrum, thresholds_kev=(20.0, 50.0), detector: 'str' = 'CDTE', detector_mm: 'float' = 2.0, energy_resolution_fwhm_kev: 'float' = 0.0, charge_sharing: 'float' = 0.0, upper_kev=None) -> 'dict'` (実装を直接呼ぶなら `import dualxray; dualxray.photon_counting_channels(spectrum, thresholds_kev=(20.0, 50.0), detector: 'str' = 'CDTE', detector_mm: 'float' = 2.0, energy_resolution_fwhm_kev: 'float' = 0.0, charge_sharing: 'float' = 0.0, upper_kev=None) -> 'dict'`、台帳から引くなら `opstomography.get("photon_counting_channels")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

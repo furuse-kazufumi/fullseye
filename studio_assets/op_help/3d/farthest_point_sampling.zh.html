@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">farthest_point_sampling — 3D <code style="color:#22d3bf">geodesic</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">indices</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.farthest_point_sampling(points: numpy.ndarray, n: int, k: int = 8, start: int = 0) -&gt; numpy.ndarray</code>(要直接调用实现,<code style="color:#22d3bf">import geodesic3d; geodesic3d.farthest_point_sampling(points: numpy.ndarray, n: int, k: int = 8, start: int = 0) -&gt; numpy.ndarray</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;farthest_point_sampling&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>按测地距离的最远点采样(均匀抽稀)。→ 选中索引序列 (n,) int。</p>
 <p>以 <code style="color:#22d3bf">start</code> 为第 1 个代表点,每次 1 个地添加&quot;到已选点集的测地距离最大的点&quot;的贪心法(FPS)。距离用 <code style="color:#22d3bf">knn_graph(points, k)</code> 的无向 kNN 图上的 Dijkstra 测量,到已选集合的距离保存为各代表点单源距离的逐元素最小值 <code style="color:#22d3bf">mind</code>,每增加 1 个代表点就用 <code style="color:#22d3bf">mind = min(mind, d_new)</code> 更新。每 1 个代表点执行 1 次 Dijkstra,因此计算量为 n 次单源最短路径。不使用随机数,是确定性的。</p>

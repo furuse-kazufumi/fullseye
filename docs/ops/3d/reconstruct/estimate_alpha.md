@@ -4,6 +4,7 @@ dim: 3d
 category: reconstruct
 in: points
 out: measurement
+gpu: なし
 examples: [alpha_shape_topology, sfm_recon]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `points` → `measurement`
 - **呼び出し**: `import fullseye as fs; fs.ledger.estimate_alpha(points)` (実装を直接呼ぶなら `import recon3d; recon3d.estimate_alpha(points)`、台帳から引くなら `ops3d.get("estimate_alpha")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

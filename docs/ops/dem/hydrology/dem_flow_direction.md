@@ -4,6 +4,7 @@ dim: dem
 category: hydrology
 in: depth
 out: labels
+gpu: なし
 examples: [dem_terrain_analysis_tour, poc_geodetic_height_frames]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `depth` → `labels`
 - **呼び出し**: `import fullseye as fs; fs.ledger.dem_flow_direction(dem, cell_size, nodata='error')` (実装を直接呼ぶなら `import demops; demops.dem_flow_direction(dem, cell_size, nodata='error')`、台帳から引くなら `opsdem.get("dem_flow_direction")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

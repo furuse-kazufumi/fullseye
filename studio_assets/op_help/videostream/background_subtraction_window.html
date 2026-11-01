@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">background_subtraction_window — VIDEOSTREAM <code style="color:#22d3bf">window</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">video</code> → <code style="color:#22d3bf">video</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.background_subtraction_window(video, window: &#x27;int&#x27; = 5, threshold: &#x27;float&#x27; = 0.1) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import videostream; videostream.background_subtraction_window(video, window: &#x27;int&#x27; = 5, threshold: &#x27;float&#x27; = 0.1) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsvideostream.get(&quot;background_subtraction_window&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Causal window-median background → per-frame 0/1 foreground masks <code style="color:#22d3bf">(T, H, W)</code> (<code style="color:#22d3bf">video</code>).</p>
 <p>フレーム <code style="color:#22d3bf">t</code> ごとに、直近 <code style="color:#22d3bf">window</code> 枚(<code style="color:#22d3bf">max(0, t-window+1) .. t</code>、<b>そのフレーム自身を含む</b>)の画素ごとの中央値を背景 <code style="color:#22d3bf">bg</code> とし、<code style="color:#22d3bf">|frame_t - bg| &gt; threshold</code> を 1、それ以外を 0 にする。未来のフレームは見ない(因果的)ので、先頭では枚数が足りないぶん窓が短い。</p>

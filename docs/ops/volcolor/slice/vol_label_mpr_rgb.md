@@ -4,6 +4,7 @@ dim: volcolor
 category: slice
 in: rgbvolume
 out: rgbimage
+gpu: なし
 examples: [voxel_labels_color]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `rgbvolume` → `rgbimage`
 - **呼び出し**: `import fullseye as fs; fs.ledger.vol_label_mpr_rgb(rgbvol, center=None, gap: 'int' = 4, background=(0.05, 0.05, 0.07))` (実装を直接呼ぶなら `import volcolor; volcolor.vol_label_mpr_rgb(rgbvol, center=None, gap: 'int' = 4, background=(0.05, 0.05, 0.07))`、台帳から引くなら `opsvolcolor.get("vol_label_mpr_rgb")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

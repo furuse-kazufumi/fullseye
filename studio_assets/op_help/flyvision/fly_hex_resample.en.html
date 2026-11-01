@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">fly_hex_resample — FLYVISION <code style="color:#22d3bf">sample</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d × table</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fly_hex_resample(image2d, lattice, drho_deg=8.23, fov_deg=90.0, mode=&#x27;pinhole&#x27;)</code> (to call the implementation directly, <code style="color:#22d3bf">import flyvision; flyvision.fly_hex_resample(image2d, lattice, drho_deg=8.23, fov_deg=90.0, mode=&#x27;pinhole&#x27;)</code>; from the registry, <code style="color:#22d3bf">opsflyvision.get(&quot;fly_hex_resample&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Resample a pinhole image onto an ommatidial lattice (the eye&#x27;s view).</p>
 <p>Each ommatidium integrates the image under a Gaussian acceptance function of full width at half maximum *drho_deg* weighted by the pixel solid angle::</p>

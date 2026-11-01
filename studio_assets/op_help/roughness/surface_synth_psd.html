@@ -4,6 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.surface_synth_psd(n, dx, hurst, lambda_lo, lambda_hi, sq, seed=0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import roughness; roughness.surface_synth_psd(n, dx, hurst, lambda_lo, lambda_hi, sq, seed=0)</code>、台帳から引くなら <code style="color:#22d3bf">opsroughness.get(&quot;surface_synth_psd&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>台帳経由の戻り値</b>: <code style="color:#22d3bf">fullseye.ledger.surface_synth_psd(...)</code> は<b>宣言 out 型 <code style="color:#22d3bf">depth</code> の値だけ</b>を返す(本体は補助情報も返す)。捨てられた側が要るときは <code style="color:#22d3bf">fullseye.ledger.surface_synth_psd.raw(...)</code>、または <code style="color:#22d3bf">roughness.surface_synth_psd</code> を直接呼ぶ。</p>
 <p style="margin:2px 0 2px 12px">• 本体の返り: <code style="color:#22d3bf">(z, sq_analytic)</code></p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>指定した PSD から高さ場を合成する。<code style="color:#22d3bf">(z, sq_analytic)</code> を返す。</p>
 <p>帯域 <code style="color:#22d3bf">lambda_lo &lt;= λ &lt;= lambda_hi</code> の各モードに振幅 <code style="color:#22d3bf">A(q) ∝ q^-(H+1)</code>(= 面 PSD <code style="color:#22d3bf">C(q) ∝ q^-2(H+1)</code>、自己アフィン)を置き、<b>位相だけ</b>乱数にする。全体を <code style="color:#22d3bf">sq</code> に規格化して返す。</p>

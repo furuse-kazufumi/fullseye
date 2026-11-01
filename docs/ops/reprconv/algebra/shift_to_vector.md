@@ -4,6 +4,7 @@ dim: reprconv
 category: algebra
 in: shift
 out: vector
+gpu: なし
 examples: [representation_conversion]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `shift` → `vector`
 - **呼び出し**: `import fullseye as fs; fs.ledger.shift_to_vector(shift)` (実装を直接呼ぶなら `import reprconv; reprconv.shift_to_vector(shift)`、台帳から引くなら `opsreprconv.get("shift_to_vector")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

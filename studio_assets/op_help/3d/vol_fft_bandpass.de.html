@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">vol_fft_bandpass — 3D <code style="color:#22d3bf">frequency</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">voxel</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_fft_bandpass(vol, low, high, spacing=None)</code> (die Implementierung direkt: <code style="color:#22d3bf">import volfreq; volfreq.vol_fft_bandpass(vol, low, high, spacing=None)</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;vol_fft_bandpass&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Gauß-Bandpass <code style="color:#22d3bf">lowpass(high) - lowpass(low)</code>: behält die Struktur zwischen zwei Skalen.</p>
 <p><code style="color:#22d3bf">low &lt; high</code> ist erforderlich, beide in cycles/voxel oder mit *spacing* in cycles/mm. Typische Anwendung: eine Texturskala isolieren oder ein periodisches Artefaktband herausnehmen, bevor man es subtrahiert.</p>

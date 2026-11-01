@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">laser_line_coherent — OPTICS <code style="color:#22d3bf">coherent</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">image2d</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.laser_line_coherent(shape=(96, 512), wavelength_um=0.65, sin_u_obs=0.05, pixel_um=2.0, line_width_um=20.0, height_um=20.0, sin_theta=0.5, row0=None, polarizations=1, n_patterns=1, pixel_oversample=2, roughness_rad=None, noise=0.0, seed=0, noise_seed=None, *, method=&#x27;exact&#x27;)</code>(要直接调用实现,<code style="color:#22d3bf">import coherent; coherent.laser_line_coherent(shape=(96, 512), wavelength_um=0.65, sin_u_obs=0.05, pixel_um=2.0, line_width_um=20.0, height_um=20.0, sin_theta=0.5, row0=None, polarizations=1, n_patterns=1, pixel_oversample=2, roughness_rad=None, noise=0.0, seed=0, noise_seed=None, *, method=&#x27;exact&#x27;)</code>;从台账取用则 <code style="color:#22d3bf">opsoptics.get(&quot;laser_line_coherent&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>照在粗糙表面上的光切法激光线,连同散斑一起成像(<code style="color:#22d3bf">image2d</code>)。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>

@@ -4,6 +4,7 @@ dim: optics
 category: sensorchar
 in: signal
 out: matrix
+gpu: なし
 examples: [poc_emva1288_sensor]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal` → `matrix`
 - **呼び出し**: `import fullseye as fs; fs.ledger.emva_total_snr(mu_p, eta, sigma_d, K, dsnu_e, prnu, sigma_q2=0.08333333333333333)` (実装を直接呼ぶなら `import sensorchar; sensorchar.emva_total_snr(mu_p, eta, sigma_d, K, dsnu_e, prnu, sigma_q2=0.08333333333333333)`、台帳から引くなら `opsoptics.get("emva_total_snr")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

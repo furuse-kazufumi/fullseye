@@ -4,6 +4,7 @@ dim: drive
 category: humanoid
 in: table
 out: table
+gpu: なし
 examples: [poc_driving_humanoids]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.humanoid_impostors(clip: 'dict', *, n_yaw: 'int' = 16, n_phase: 'int' = 12, res: 'int' = 128, distance: 'float' = 30.0, light=(0.3, -0.5, 0.8), ambient: 'float' = 0.35) -> 'dict'` (実装を直接呼ぶなら `import drivehumanoid; drivehumanoid.humanoid_impostors(clip: 'dict', *, n_yaw: 'int' = 16, n_phase: 'int' = 12, res: 'int' = 128, distance: 'float' = 30.0, light=(0.3, -0.5, 0.8), ambient: 'float' = 0.35) -> 'dict'`、台帳から引くなら `opsdrive.get("humanoid_impostors")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

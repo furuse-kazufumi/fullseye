@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">boundary_vertices — 3D <code style="color:#22d3bf">mesh_process</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">mesh</code> → <code style="color:#22d3bf">indices</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.boundary_vertices(mesh) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import mesh_props; mesh_props.boundary_vertices(mesh) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;boundary_vertices&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>열린 가장자리(경계)에 놓인 <b>정점의 index</b> → <code style="color:#22d3bf">(K,)</code>.</p>
 <p>무향 변 가운데 <b>정확히 1 개의 면에서만 쓰이는 변</b>(경계 변)의 끝점을 모아반환한다. 닫힌 다양체라면 빈 배열 —— 즉 <code style="color:#22d3bf">len(boundary_vertices(mesh)) == 0</code> 이 <b>수밀성(watertight) 판정</b>이 된다. 구멍 메우기·부피 계산·곡률 모두 경계의유무에 따라 의미가 달라지므로, 먼저 여기를 본다.</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">steady_cornering — DRIVE <code style="color:#22d3bf">lateral</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">table</code> (an op determined by its arguments alone — it takes no image or data input)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.steady_cornering(speed: &#x27;float&#x27;, radius: &#x27;float&#x27;, params: &#x27;dict&#x27;) -&gt; &#x27;Dict[str, float]&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import drivelateral; drivelateral.steady_cornering(speed: &#x27;float&#x27;, radius: &#x27;float&#x27;, params: &#x27;dict&#x27;) -&gt; &#x27;Dict[str, float]&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;steady_cornering&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Steady-state circular cornering of the linear 2-wheel equivalent (bicycle) model (speed u, turning radius R = u/r, left turn positive).</p>
 <p>R is defined by the forward speed u and the yaw rate r (the convention of the linear model). The actual radius of the centre-of-gravity path is resultant speed / r = R √(1 + tan²β), which equals R for small β (the difference checked by a gate is of order β²).</p>

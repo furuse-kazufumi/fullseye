@@ -4,6 +4,7 @@ dim: 3d
 category: edges
 in: voxel
 out: points
+gpu: なし
 examples: [edges_3d]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `voxel` → `points`
 - **呼び出し**: `import fullseye as fs; fs.ledger.edge_points(edge_mask) -> 'np.ndarray'` (実装を直接呼ぶなら `import edges3d; edges3d.edge_points(edge_mask) -> 'np.ndarray'`、台帳から引くなら `ops3d.get("edge_points")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

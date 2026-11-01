@@ -4,6 +4,7 @@ dim: drive
 category: crossing
 in: table
 out: table
+gpu: なし
 examples: [poc_driving_crossing]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.no_stopping_zones(features: 'Iterable[dict]', *, in_service: 'bool' = True) -> 'Dict[str, object]'` (実装を直接呼ぶなら `import drivecrossing; drivecrossing.no_stopping_zones(features: 'Iterable[dict]', *, in_service: 'bool' = True) -> 'Dict[str, object]'`、台帳から引くなら `opsdrive.get("no_stopping_zones")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

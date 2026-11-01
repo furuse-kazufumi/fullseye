@@ -4,6 +4,7 @@ dim: 3d
 category: transform
 in: voxel
 out: images
+gpu: なし
 examples: [transforms_repr]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `voxel` → `images`
 - **呼び出し**: `import fullseye as fs; fs.ledger.voxel_to_mips(vol)` (実装を直接呼ぶなら `import match3d; match3d.voxel_to_mips(vol)`、台帳から引くなら `ops3d.get("voxel_to_mips")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

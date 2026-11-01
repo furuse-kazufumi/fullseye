@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">normal_from_reflection — 3D <code style="color:#22d3bf">optics</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">vector × vector</code> → <code style="color:#22d3bf">vector</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.normal_from_reflection(incident, reflected)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import match3d; match3d.normal_from_reflection(incident, reflected)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;normal_from_reflection&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>incident + reflected से mirror surface का normal वापस निकालता है (deflectometry)। n ∝ (r − d), incident के विपरीत दिशा में।</p>
 <p>ज्ञात pattern के reflection का अवलोकन → surface normal → integrate करके specular आकार। specular (reflective) वस्तुओं के आकार मापन का मूल।</p>

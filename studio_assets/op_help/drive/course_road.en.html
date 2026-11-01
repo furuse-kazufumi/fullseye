@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">course_road — DRIVE <code style="color:#22d3bf">course</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">table</code> (an op determined by its arguments alone — it takes no image or data input)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.course_road(length=20.0, width=7.0)</code> (to call the implementation directly, <code style="color:#22d3bf">import drivecourse; drivecourse.course_road(length=20.0, width=7.0)</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;course_road&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Connector road (part of the main course): a straight of width w and length L. An element for leading the exit of a task course back to the loop course or for extending the main course. Standard (main course): width 7 m or more, must connect to the loop course. Area = w·L.</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: length or width not positive.</p>

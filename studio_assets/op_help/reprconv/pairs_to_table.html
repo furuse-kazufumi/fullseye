@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">pairs_to_table — REPRCONV <code style="color:#22d3bf">pairs</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pairs_to_table(pairs)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import reprconv; reprconv.pairs_to_table(pairs)</code>、台帳から引くなら <code style="color:#22d3bf">opsreprconv.get(&quot;pairs_to_table&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>対 <code style="color:#22d3bf">(N,2)</code> → 要約 <code style="color:#22d3bf">table</code>。<b>一方向</b>。</p>
 <p><code style="color:#22d3bf">x_uniform</code> は「列 0 が等間隔か」の判定で、これが False の対を <code style="color:#22d3bf">pairs_to_signal</code> に通すと x が黙って落ちる(上の docstring 参照)。判定は差分の最大値と最小値の開きで行い、閾値は全幅に対して 1e-9(相対)。</p>

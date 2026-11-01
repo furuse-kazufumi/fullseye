@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">dynnikov_coordinates — DRIVE <code style="color:#22d3bf">braidpath</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">signal × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dynnikov_coordinates(word, n_strands)</code>(要直接呼叫實作,<code style="color:#22d3bf">import braidpath; braidpath.dynnikov_coordinates(word, n_strands)</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;dynnikov_coordinates&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>辮作用於標準曲線圖 E = (0, …, 0; −1, …, −1) 所得的 Dynnikov 座標(整數,不溢位)。</p>
 <p>在 n 根股加上右端 1 個孔、共 n + 1 個孔的圓盤上取(a、b 的長度皆為 n − 1)。此作用是忠實的,因此 <b>座標相等 ⇔ 同一辮</b>。每個字母只需常數次加減法與 max / min,耗時與字長成正比(與柄約化或自由群的像不同,不會膨脹 —— 只是數變大,Python 的整數不會溢位)。</p>

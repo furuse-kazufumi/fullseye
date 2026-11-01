@@ -4,6 +4,7 @@ dim: drive
 category: puck
 in: table × scalar
 out: table
+gpu: なし
 examples: [poc_air_hockey_intercept]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table × scalar` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.fivebar_reach_interval(link: 'dict', x_line: 'float', *, n: 'int' = 801) -> 'dict'` (実装を直接呼ぶなら `import puck; puck.fivebar_reach_interval(link: 'dict', x_line: 'float', *, n: 'int' = 801) -> 'dict'`、台帳から引くなら `opsdrive.get("fivebar_reach_interval")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

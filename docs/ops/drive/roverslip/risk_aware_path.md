@@ -4,6 +4,7 @@ dim: drive
 category: roverslip
 in: table × any × any
 out: table
+gpu: なし
 examples: [poc_rover_slip_risk_path]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table × any × any` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.risk_aware_path(cost_map, start, goal) -> 'dict'` (実装を直接呼ぶなら `import roverslip; roverslip.risk_aware_path(cost_map, start, goal) -> 'dict'`、台帳から引くなら `opsdrive.get("risk_aware_path")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">mc_photon_slab — CONVERGE <code style="color:#22d3bf">montecarlo</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mc_photon_slab(layers=None, n_above=1.0, n_below=1.0, n_photons=100000, tol=None, confidence=0.95, batch=50000, seed=1, w_threshold=0.0001, roulette_m=10) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import mcphoton; mcphoton.mc_photon_slab(layers=None, n_above=1.0, n_below=1.0, n_photons=100000, tol=None, confidence=0.95, batch=50000, seed=1, w_threshold=0.0001, roulette_m=10) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsconverge.get(&quot;mc_photon_slab&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>多層の濁ったスラブの拡散反射・全透過・吸収を MCML 型のモンテカルロで、信頼区間つきで求める。</p>
 <p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>

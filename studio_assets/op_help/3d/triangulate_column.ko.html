@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">triangulate_column — 3D <code style="color:#22d3bf">structured_light</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">depth</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.triangulate_column(column, k_cam, k_proj, rot, trans) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import fringe; fringe.triangulate_column(column, k_cam, k_proj, rot, trans) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;triangulate_column&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>각 카메라 화소의 「프로젝터 컬럼 번호」로부터 깊이 Z 를 삼각측량(구조광의 최종 단).</p>
 <p>구조광 스캐너의 기하 그 자체: 카메라 화소 (u,v)는 1 개의 시선을 펼치고, 프로젝터의 컬럼번호 u_p는 1 장의 평면(프로젝터 중심과 그 컬럼을 포함하는 평면)을 펼친다. 시선과 평면의 교점이표면의 3D 점이며, 그 카메라 좌표계 Z가 깊이가 된다. <b>닫힌 식</b> 이므로 반복도 최적화도 필요 없다.</p>

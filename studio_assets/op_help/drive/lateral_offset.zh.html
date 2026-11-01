@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">lateral_offset — DRIVE <code style="color:#22d3bf">lateral</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lateral_offset(points, path, *, start_index=None, window: &#x27;int&#x27; = 40) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import drivelateral; drivelateral.lateral_offset(points, path, *, start_index=None, window: &#x27;int&#x27; = 40) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;lateral_offset&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>点沿折线路径的弧长 s 与横向偏差 n(行进方向左侧为正)。投影到最近的区段。</p>
 <p>给出 <code style="color:#22d3bf">start_index</code>(每个点各一个,或单个)时,只检查该区间前后 <code style="color:#22d3bf">window</code> 个区间(加快重复调用。若真正的最近点在窗口外则会出错,因此用于点逐步移动的情况)。为 None 时检查全部区间。</p>

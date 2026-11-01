@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">stroke_tone_error — PRINTPATH <code style="color:#22d3bf">stroke</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d × pairs</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.stroke_tone_error(image, points, pen_width=1.0, blur_sigma=3.0, gamma=1.0)</code> (to call the implementation directly, <code style="color:#22d3bf">import printpath; printpath.stroke_tone_error(image, points, pen_width=1.0, blur_sigma=3.0, gamma=1.0)</code>; from the registry, <code style="color:#22d3bf">opsprintpath.get(&quot;stroke_tone_error&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>How much the <b>tone</b> resulting from drawing the lines differs from the target. → <code style="color:#22d3bf">table</code></p>
 <p>★This is the <b>true objective function</b> of single-stroke drawing. Instead of leaving &quot;it looks like the picture&quot; to the human eye, it draws with the pen width, blurs to the scale of the eye, compares with the target darkness, and returns numbers.</p>

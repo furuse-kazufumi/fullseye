@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">aperture_photometry — ASTROSTACK <code style="color:#22d3bf">photometry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d × keypoints</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.aperture_photometry(image, centers, r_aperture=5.0, r_inner=8.0, r_outer=12.0, read_sigma=0.0, gain=1.0, supersample=8, method=&#x27;exact&#x27;)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import astrostack; astrostack.aperture_photometry(image, centers, r_aperture=5.0, r_inner=8.0, r_outer=12.0, read_sigma=0.0, gain=1.0, supersample=8, method=&#x27;exact&#x27;)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsastrostack.get(&quot;aperture_photometry&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>वृत्ताकार aperture + annular background से photometry (पारंपरिक CCD photometry)।</p>
 <p><code style="color:#22d3bf">method=&quot;patch&quot;</code> एक memory-saving variant है जो केवल aperture के आसपास का क्षेत्र allocate करता है। 2048 वर्गाकार image, radius 8.2 और 8 गुना sampling पर peak 33.6 MB से घटकर 0.34 MB हो जाता है। जोड़ने का क्रम बदलने के कारण बड़े DC component वाली images में अंतिम bit अलग हो सकता है। Default <code style="color:#22d3bf">&quot;exact&quot;</code> पुराना व्यवहार बनाए रखता है।</p>

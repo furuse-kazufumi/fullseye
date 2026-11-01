@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">transport_cost — COLORTRANSPORT <code style="color:#22d3bf">plan_use</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">transport_plan × matrix</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.transport_cost(plan, cost)</code>(要直接调用实现,<code style="color:#22d3bf">import colortransport; colortransport.transport_cost(plan, cost)</code>;从台账取用则 <code style="color:#22d3bf">opscolortransport.get(&quot;transport_cost&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>输运计划的总代价 <code style="color:#22d3bf">&lt;plan, cost&gt;</code>。<b>消费计划</b>的那一侧算子。</p>
 <p>设计是一个矩阵，意味着行和列的总和与边际分布匹配，并且是将其视为“矩阵”会默默地破坏质量守恒定律。这是作为计划的检查。（非负/有限）然后支付成本。总质量没有限制。</p>

@@ -4,6 +4,7 @@ dim: drive
 category: crossing
 in: 
 out: any
+gpu: なし
 examples: [poc_driving_crossing]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `any`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.crossing_lamp_signal(t, *, t_on: 'float', t_off: 'float', flash_per_min: 'float' = 50.0, duty: 'float' = 0.5, exposure: 'float' = 0.0) -> 'np.ndarray'` (実装を直接呼ぶなら `import drivecrossing; drivecrossing.crossing_lamp_signal(t, *, t_on: 'float', t_off: 'float', flash_per_min: 'float' = 50.0, duty: 'float' = 0.5, exposure: 'float' = 0.0) -> 'np.ndarray'`、台帳から引くなら `opsdrive.get("crossing_lamp_signal")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

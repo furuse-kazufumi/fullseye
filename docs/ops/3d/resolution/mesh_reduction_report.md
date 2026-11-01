@@ -4,6 +4,7 @@ dim: 3d
 category: resolution
 in: mesh × mesh
 out: table
+gpu: なし
 examples: [mesh_resolution_demo]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `mesh × mesh` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.mesh_reduction_report(V, F, V2, F2, samples=4000, seed=0, detail_quantile=0.9)` (実装を直接呼ぶなら `import meshres; meshres.mesh_reduction_report(V, F, V2, F2, samples=4000, seed=0, detail_quantile=0.9)`、台帳から引くなら `ops3d.get("mesh_reduction_report")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

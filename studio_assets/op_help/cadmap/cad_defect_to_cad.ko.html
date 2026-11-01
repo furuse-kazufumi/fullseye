@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">cad_defect_to_cad — CADMAP <code style="color:#22d3bf">defect</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">mesh × labels</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cad_defect_to_cad(mesh, labels, K=None, R=None, t=None, cull_backfaces=True, min_pixels=1, background=0, strict=False)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import cadmap; cadmap.cad_defect_to_cad(mesh, labels, K=None, R=None, t=None, cull_backfaces=True, min_pixels=1, background=0, strict=False)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opscadmap.get(&quot;cad_defect_to_cad&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>2-D 결함 레이블 이미지 → <b>CAD 면 위의 표</b>(면 ID / 면 위 면적 / 3-D 무게중심).</p>
 <p><code style="color:#22d3bf">labels</code>는 (H, W)의 정수 라벨 영상(<code style="color:#22d3bf">background</code>는 무시, bool 마스크도가능). 라벨마다 모든 화소의 시선을 쏘아, 적중한 면과 그 화소가 <b>면 위에서차지하는 실면적</b>을 쌓는다. 면적은 화소 수가 아니라</p>

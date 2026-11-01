@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">dem_fill_sinks — DEM <code style="color:#22d3bf">hydrology</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">depth</code> → <code style="color:#22d3bf">depth</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_fill_sinks(dem, epsilon=0.0, nodata=&#x27;error&#x27;)</code>(要直接调用实现,<code style="color:#22d3bf">import demops; demops.dem_fill_sinks(dem, epsilon=0.0, nodata=&#x27;error&#x27;)</code>;从台账取用则 <code style="color:#22d3bf">opsdem.get(&quot;dem_fill_sinks&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>填平洼地后的 DEM。Barnes, Lehman &amp; Mulla (2014) 的 priority-flood。</p>
 <p>给 <code style="color:#22d3bf">epsilon</code> 一个微小值(例如 1e-6),会在填平的平坦面上加上轻微的倾斜(否则平坦面上流向无法确定,汇水量会中途消失)。</p>

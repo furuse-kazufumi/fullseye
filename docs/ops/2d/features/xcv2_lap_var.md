@@ -4,6 +4,7 @@ dim: 2d
 category: features
 in: image
 out: feature
+gpu: なし
 examples: [gallery2d_features, poc_focus_stacking]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image` → `feature`
 - **呼び出し**: `fullseye.apply(img, "xcv2_lap_var", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ![xcv2_lap_var: input → output](../../_fig/xcv2_lap_var.png)
 

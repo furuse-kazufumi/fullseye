@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">coaxial_illumination — OPTICS <code style="color:#22d3bf">illumination</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">table</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.coaxial_illumination(reflectance=0.5, absorptance=0.0, back_reflectance=0.04, plate_thickness_mm=1.0, plate_index=1.52, panel_mm=60.0, panel_distance_mm=60.0, camera_distance_mm=200.0, field_mm=20.0, part=&#x27;mirror&#x27;, telecentric=False, panel_radiance=None, shape=(65, 65), n_panel=None)</code>(要直接调用实现,<code style="color:#22d3bf">import illumdesign; illumdesign.coaxial_illumination(reflectance=0.5, absorptance=0.0, back_reflectance=0.04, plate_thickness_mm=1.0, plate_index=1.52, panel_mm=60.0, panel_distance_mm=60.0, camera_distance_mm=200.0, field_mm=20.0, part=&#x27;mirror&#x27;, telecentric=False, panel_radiance=None, shape=(65, 65), n_panel=None)</code>;从台账取用则 <code style="color:#22d3bf">opsoptics.get(&quot;coaxial_illumination&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>同轴落射照明(半透半反镜):往返 T*R 的收支与相机看到的像(<code style="color:#22d3bf">table</code>)。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>

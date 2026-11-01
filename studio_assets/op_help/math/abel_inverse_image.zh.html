@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">abel_inverse_image — MATH <code style="color:#22d3bf">transform</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.abel_inverse_image(image, dr: &#x27;float&#x27; = 1.0, *, center: &#x27;float | None&#x27; = None, method: &#x27;str&#x27; = &#x27;onion&#x27;) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import mathtransforms; mathtransforms.abel_inverse_image(image, dr: &#x27;float&#x27; = 1.0, *, center: &#x27;float | None&#x27; = None, method: &#x27;str&#x27; = &#x27;onion&#x27;) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsmath.get(&quot;abel_inverse_image&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>对从侧面拍摄的轴对称物体<b>图像</b>(纵向 = 对称轴方向，横向 = 距轴的距离)逐行做逆 Abel 变换，得到截面图像。</p>
 <p>火焰、等离子体、射流的照片只能拍到沿深度方向叠加的投影。将每行在中心列处分为左右，对 2 个半边取平均(抹平左右不对称)后再做逆 Abel 变换。<code style="color:#22d3bf">center</code> 是对称轴所在的列(默认 = 亮度重心，整幅图像共用 1 条，而非逐行)。返回值 <code style="color:#22d3bf">{&quot;slice&quot;, &quot;center&quot;, &quot;asymmetry&quot;}</code> —— slice 是 (H, R+1) 的 f(z, r)，asymmetry 是左右两半之差的大小(越接近 0，轴对称的假定越成立)。</p>

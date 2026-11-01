@@ -4,6 +4,7 @@ dim: annotate
 category: paper
 in: image2d
 out: image2d
+gpu: なし
 examples: [annotate_paper_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.annotate_panel_label(img, letter='a', corner='lt', margin=8, style='paren', font_size=16, color='neutral', box_alpha=0.72, text_color=None, box_color=None, scheme='okabe_ito', font_path=None)` (実装を直接呼ぶなら `import annotate; annotate.annotate_panel_label(img, letter='a', corner='lt', margin=8, style='paren', font_size=16, color='neutral', box_alpha=0.72, text_color=None, box_color=None, scheme='okabe_ito', font_path=None)`、台帳から引くなら `opsannotate.get("annotate_panel_label")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

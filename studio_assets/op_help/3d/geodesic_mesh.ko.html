@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">geodesic_mesh — 3D <code style="color:#22d3bf">geodesic</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">mesh</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.geodesic_mesh(vertices: numpy.ndarray, faces: numpy.ndarray, source: int) -&gt; numpy.ndarray</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import geodesic3d; geodesic3d.geodesic_mesh(vertices: numpy.ndarray, faces: numpy.ndarray, source: int) -&gt; numpy.ndarray</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;geodesic_mesh&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>삼각 메시의 엣지 그래프에서 Dijkstra 로 source 에서 각 정점까지의 측지 거리. → (V,) float.</p>
 <p>각 삼각형의 3 변 (0,1),(1,2),(2,0) 을 무향 변으로 모으고, (min,max) 로 유일화한 뒤 변의 길이 = 양 끝정점의 Euclid 거리를 가중치로 한 희소 그래프를 만들어, <code style="color:#22d3bf">dijkstra(directed=False)</code> 로 source 로부터의최단 경로 길이를 반환한다. <code style="color:#22d3bf">d[source] = 0</code>, source 와 변으로 이어지지 않는 정점은 <code style="color:#22d3bf">inf</code>. 단위는 정점 좌표의 단위.</p>

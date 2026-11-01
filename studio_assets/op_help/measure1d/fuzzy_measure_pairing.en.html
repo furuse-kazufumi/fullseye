@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">fuzzy_measure_pairing — MEASURE1D <code style="color:#22d3bf">caliper</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d × measurehandle</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fuzzy_measure_pairing(image, measure, sigma=1.0, threshold=0.1, pair_size=None)</code> (to call the implementation directly, <code style="color:#22d3bf">import measuring1d; measuring1d.fuzzy_measure_pairing(image, measure, sigma=1.0, threshold=0.1, pair_size=None)</code>; from the registry, <code style="color:#22d3bf">opsmeasure1d.get(&quot;fuzzy_measure_pairing&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Selects the edge pair that best matches a fuzzy criterion (expected width pair_size) (fuzzy_measure_pairing).</p>
 <p>Procedure: <code style="color:#22d3bf">measure_pairs(image, measure, sigma, threshold)</code> takes pairs of adjacent edges of opposite polarity, attaches <code style="color:#22d3bf">fuzzy_score = exp(-((width - pair_size) / (0.5 pair_size))^2)</code> to each pair, and <b>sorts them in descending score order</b>. Exactly the expected width gives 1; a width off by <code style="color:#22d3bf">±0.5 pair_size</code> gives <code style="color:#22d3bf">e^-1</code> ≈ 0.37. The first element is the best-matching pair.</p>

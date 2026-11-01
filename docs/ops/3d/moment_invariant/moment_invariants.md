@@ -4,6 +4,7 @@ dim: 3d
 category: moment_invariant
 in: points
 out: descriptor
+gpu: なし
 examples: [moment_invariants]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `points` → `descriptor`
 - **呼び出し**: `import fullseye as fs; fs.ledger.moment_invariants(points) -> 'np.ndarray'` (実装を直接呼ぶなら `import moments3d; moments3d.moment_invariants(points) -> 'np.ndarray'`、台帳から引くなら `ops3d.get("moment_invariants")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

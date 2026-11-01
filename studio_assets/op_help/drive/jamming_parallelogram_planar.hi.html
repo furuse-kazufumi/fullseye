@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">jamming_parallelogram_planar — DRIVE <code style="color:#22d3bf">pegfail</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.jamming_parallelogram_planar(kp, depth: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import pegfail; pegfail.jamming_parallelogram_planar(kp, depth: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;jamming_parallelogram_planar&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>jamming parallelogram को <b>two-point contact की planar statics से व्युत्पन्न</b> करता है (pegsim.jamming_diagram के शीर्षों = OCW p.34 के मानों से मिलाने वाला 2nd रास्ता)।</p>
 <p>तल (x दाएँ, z ऊपर) में सिरे का किनारा गहराई l पर −x ओर की दीवार को छूता है (अभिलंब बल f₁ ≥ 0, +x की ओर), और +x ओर के मुख का किनारा धड़ को छूता है (f₂ ≥ 0, −x की ओर)। दोनों बिंदुओं के नीचे फिसलने वाले Coulomb घर्षण (ऊपर की ओर μf) में, सिरे पर लगाए गए (F_x, F_z नीचे धनात्मक, M वामावर्त धनात्मक) का संतुलन है</p>

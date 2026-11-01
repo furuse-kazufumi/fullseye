@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">spoon_tilt_critical — DRIVE <code style="color:#22d3bf">granular</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">scalar × scalar × scalar</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.spoon_tilt_critical(phi_deg: &#x27;float&#x27;, L: &#x27;float&#x27;, h0: &#x27;float&#x27;, lip: &#x27;str&#x27; = &#x27;wall&#x27;) -&gt; &#x27;float&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import granular; granular.spoon_tilt_critical(phi_deg: &#x27;float&#x27;, L: &#x27;float&#x27;, h0: &#x27;float&#x27;, lip: &#x27;str&#x27; = &#x27;wall&#x27;) -&gt; &#x27;float&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;spoon_tilt_critical&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>粉体开始从勺子洒出的倾角 θ_c [度] (2 维截面、准静态、无壁面摩擦 —— <b>自行推导</b>)。</p>
 <p>模型:底面长度 <code style="color:#22d3bf">L</code>(从唇口到后壁,后壁垂直于底面),水平时平铺到深度 <code style="color:#22d3bf">h0</code> 的粉末。压低唇口使底面倾斜 θ。粉末的自由表面相对水平最多只能立到 φ(安息角),因此通过唇口的斜面<b>从底面看为 φ − θ</b>。</p>

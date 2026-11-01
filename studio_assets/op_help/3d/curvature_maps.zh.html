@@ -2,7 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">curvature_maps — 3D <code style="color:#22d3bf">feature</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">curvature</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.curvature_maps(vol, device=&#x27;cpu&#x27;, mc=0.000625)</code>(要直接调用实现,<code style="color:#22d3bf">import match3d; match3d.curvature_maps(vol, device=&#x27;cpu&#x27;, mc=0.000625)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;curvature_maps&quot;)</code>)</p>
-<p style="margin:2px 0 2px 12px">• <b>GPU</b>:该算子有 GPU 路径(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>level-set 的主曲率 → 形状指数 S(Koenderink)与弯曲度。闭式(Kindlmann 2003)。</p>
 <p>2D 轮廓曲率(1 个标量)的 <b>线→面提升</b>: 曲面有 2 个主曲率 κ1,κ2。mean = (κ1+κ2)/2 = (|g|²trH − gᵀHg)/|g|³,Gauss K = κ1κ2 = gᵀadj(H)g/|g|⁴(g=∇, H=Hessian)。S=(2/π)atan2(κ1+κ2, κ1−κ2) ∈[-1,1] 是 <b>对强度、旋转不变的局部曲面类型</b>(cup−1/rut/saddle0/ ridge+.5/cap+1)。按外向法线约定,亮的凸 blob=cap(+1)。返回值 (S, curvedness, mask, |g|),全为 torch。</p>

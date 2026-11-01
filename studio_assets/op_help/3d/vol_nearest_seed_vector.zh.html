@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">vol_nearest_seed_vector — 3D <code style="color:#22d3bf">medial</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">flow_dense</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_nearest_seed_vector(vol_binary, spacing=None)</code>(要直接调用实现,<code style="color:#22d3bf">import volops; volops.vol_nearest_seed_vector(vol_binary, spacing=None)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;vol_nearest_seed_vector&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p><b>每个 voxel 到最近 seed voxel 的位移向量</b> <code style="color:#22d3bf">(3, D, H, W)</code>(<code style="color:#22d3bf">flow_dense</code>，分量 dz, dy, dx [voxel])。</p>
 <p>seed = 非零 voxel(以 <code style="color:#22d3bf">&gt; 0.5</code> 二值化)。seed 上为 0。<code style="color:#22d3bf">vol_distance_transform</code> 只返回距离的<b>值</b>，“哪个 voxel 最近”丢失了 —— 从骨架出发的半径(表面 → 骨架的位移)、到膜的壁厚、ESDF 的梯度、标签的 Voronoi 划分都需要这个<b>方向</b>(2026-09-21，连接组基础中的漏洞)。传入 <code style="color:#22d3bf">spacing</code> <code style="color:#22d3bf">(sz, sy, sx)</code> 时，最近邻判定按物理距离进行(返回的位移仍以 voxel 为单位 —— <code style="color:#22d3bf">|v * spacing|</code> 即物理距离)。</p>

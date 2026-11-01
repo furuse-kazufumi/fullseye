@@ -4,6 +4,7 @@ dim: math
 category: construct
 in: 
 out: pairs
+gpu: なし
 examples: [poc_theorems_as_pictures]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `pairs`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.ifs_fractal(preset='sierpinski', maps=None, n_points=60000, seed=0, burn_in=32)` (実装を直接呼ぶなら `import mathops; mathops.ifs_fractal(preset='sierpinski', maps=None, n_points=60000, seed=0, burn_in=32)`、台帳から引くなら `opsmath.get("ifs_fractal")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

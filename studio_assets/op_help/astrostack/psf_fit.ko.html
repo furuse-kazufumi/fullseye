@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">psf_fit — ASTROSTACK <code style="color:#22d3bf">photometry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d × keypoints</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.psf_fit(image, centers, model=&#x27;gaussian&#x27;, box=11, max_iter=200)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import astrostack; astrostack.psf_fit(image, centers, model=&#x27;gaussian&#x27;, box=11, max_iter=200)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsastrostack.get(&quot;psf_fit&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>별상에 PSF 를 맞춰 중심과 FWHM 을 냅니다.</p>
 <p>*model* <code style="color:#22d3bf">&quot;gaussian&quot;</code>은 <b>타원</b> 가우시안 <code style="color:#22d3bf">bkg + amp * exp(-((dr/sr)^2 + (dc/sc)^2)/2)</code>의 6 파라미터 피팅으로, 진원도(<code style="color:#22d3bf">roundness = min(sr,sc)/max(sr,sc)</code>)가 부산물로 나온다 —— 추적 오차나 바람으로 늘어난 별상은 여기에 나타난다. <code style="color:#22d3bf">&quot;moffat&quot;</code>은 원대칭인 <code style="color:#22d3bf">bkg + amp * (1 + r^2/alpha^2)^(-beta)</code>(Moffat 1969)이며, <code style="color:#22d3bf">beta</code>도자유 파라미터이다. 최소제곱은 <code style="color:#22d3bf">scipy.optimize.least_squares</code> (Trust Region Reflective)이고, 초기값은 2차 모멘트로부터 만드는 결정적인 값 —— 난수를 쓰지 않으므로 같은 입력이면 같은 답.</p>

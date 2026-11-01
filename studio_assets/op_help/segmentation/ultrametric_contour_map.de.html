@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">ultrametric_contour_map — SEGMENTATION <code style="color:#22d3bf">graph</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ultrametric_contour_map(image, *, mask=None, connectivity: &#x27;int&#x27; = 4, distance_matrix: &#x27;bool&#x27; = False) -&gt; &#x27;Dict[str, object]&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import seggraph; seggraph.ultrametric_contour_map(image, *, mask=None, connectivity: &#x27;int&#x27; = 4, distance_matrix: &#x27;bool&#x27; = False) -&gt; &#x27;Dict[str, object]&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opssegmentation.get(&quot;ultrametric_contour_map&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Ultrametrische Konturkarte (UCM) der Dynamics-Hierarchie: der Wert zwischen benachbarten Pixeln p, q = die kleinste Schwelle, bei der p und q in dieselbe Region fallen (ultrametric_contour_map).</p>
 <p>Kanten innerhalb eines Beckens sind 0; Kanten an der Grenze zwischen Becken erhalten die Höhe, bei der sich die 2 Becken in einem 2. Kruskal (Verschmelzen des Beckenbaums in aufsteigender saliency) treffen.</p>

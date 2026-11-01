@@ -4,6 +4,7 @@ dim: oned
 category: signal
 in: signal
 out: measurement
+gpu: なし
 examples: [gallery_oned_audio_funct, gallery_spectrum_signal_bridge]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal` → `measurement`
 - **呼び出し**: `import fullseye as fs; fs.ledger.zero_crossing_rate(x)` (実装を直接呼ぶなら `import dsp; dsp.zero_crossing_rate(x)`、台帳から引くなら `ops1d.get("zero_crossing_rate")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">diffraction_peaks — DRIVE <code style="color:#22d3bf">pxrd</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.diffraction_peaks(two_theta, intensity, min_snr=6.0, baseline_window=None, max_peaks=200, noise=None)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import pxrd; pxrd.diffraction_peaks(two_theta, intensity, min_snr=6.0, baseline_window=None, max_peaks=200, noise=None)</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;diffraction_peaks&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>1-D の回折プロファイルから山を拾い、ガウス + 直線の局所の当てはめで位置・高さ・FWHM・面積を出す。</p>
 <p>手順: 窓 <code style="color:#22d3bf">baseline_window</code> [deg] (既定 = 範囲の 4 %)の転がり最小 → 転がり平均で背景を作り、背景を引いた値の局所の最大のうち <code style="color:#22d3bf">min_snr</code> × 雑音を超えるものを候補にする(雑音は間隔 1〜8 の差分の MAD の最大から。<code style="color:#22d3bf">noise</code> に</p>

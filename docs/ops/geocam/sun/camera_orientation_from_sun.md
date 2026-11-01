@@ -4,6 +4,7 @@ dim: geocam
 category: sun
 in: keypoints × signal
 out: table
+gpu: なし
 examples: [poc_public_camera_heading]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `keypoints × signal` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.camera_orientation_from_sun(sun_pixels, unix_times, lat_deg, lon_deg, K)` (実装を直接呼ぶなら `import geocam; geocam.camera_orientation_from_sun(sun_pixels, unix_times, lat_deg, lon_deg, K)`、台帳から引くなら `opsgeocam.get("camera_orientation_from_sun")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

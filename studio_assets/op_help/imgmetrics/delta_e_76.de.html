@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">delta_e_76 — IMGMETRICS <code style="color:#22d3bf">colordiff</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">lab × lab</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.delta_e_76(lab1, lab2)</code> (die Implementierung direkt: <code style="color:#22d3bf">import imgmetrics; imgmetrics.delta_e_76(lab1, lab2)</code>; aus dem Register: <code style="color:#22d3bf">opsimgmetrics.get(&quot;delta_e_76&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>CIE76-Farbabstand — der euklidische Abstand im Lab-Raum.</p>
 <p>Einfach, aber <b>es passt nicht zur Wahrnehmung</b> (besonders bei stark gesättigtem Blau), daher ist es nur als Vergleichsbasis vorhanden. Für die Praxis <code style="color:#22d3bf">delta_e_2000</code>.</p>

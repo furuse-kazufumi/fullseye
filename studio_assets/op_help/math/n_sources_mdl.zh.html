@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">n_sources_mdl — MATH <code style="color:#22d3bf">spectral</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.n_sources_mdl(X) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import mathspectral; mathspectral.n_sources_mdl(X) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsmath.get(&quot;n_sources_mdl&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>根据快拍数据，用 MDL 准则估计信号源的数量(Wax &amp; Kailath 1985)。</p>
 <p>将协方差的特征值按从大到小排列，对“从下数 M−k 个相等(= 噪声)”的每个假设计算 MDL(k) = −K (M−k) log(几何平均 / 算术平均) + ½ k (2M−k) log K，选取最小的 k。前提是噪声为白噪声，且快照数 K 远多于阵元数 M。</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">dispense_mass_from_video — DRIVE <code style="color:#22d3bf">granular</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">any × scalar × scalar × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dispense_mass_from_video(frames, pitch: &#x27;float&#x27;, bulk_density: &#x27;float&#x27;, times, ground=None) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import granular; granular.dispense_mass_from_video(frames, pitch: &#x27;float&#x27;, bulk_density: &#x27;float&#x27;, times, ground=None) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;dispense_mass_from_video&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由高度图序列求出料质量与排出速率 —— 各帧料堆体积 × ρ_b，对时间做直线拟合(最小二乘)。</p>
 <p>返回: <code style="color:#22d3bf">masses</code> [kg]、<code style="color:#22d3bf">rate</code>(斜率 [kg/s])、<code style="color:#22d3bf">total</code>(最后 − 最初)、<code style="color:#22d3bf">rms</code>(直线残差 [kg])。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 帧少于 2 / 时刻数不一致 / 时刻不单调。图像的体积分辨率为 <code style="color:#22d3bf">pitch³ ρ_b</code> 量级(1 mm、1500 kg/m³ 时为 1.5 mg/像素³,但边缘 1 像素的不确定性会乘以 面积 × pitch,因此实际为克级)。毫克级交给秤。</p>

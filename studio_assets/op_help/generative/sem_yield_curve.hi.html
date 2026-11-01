@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">sem_yield_curve — GENERATIVE <code style="color:#22d3bf">sem</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">table</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sem_yield_curve(material=&#x27;SI&#x27;, energies_kev=None, *, n_electrons: &#x27;int&#x27; = 2000, seed: &#x27;int&#x27; = 0) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import sem; sem.sem_yield_curve(material=&#x27;SI&#x27;, energies_kev=None, *, n_electrons: &#x27;int&#x27; = 2000, seed: &#x27;int&#x27; = 0) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsgenerative.get(&quot;sem_yield_curve&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>accelerating voltage बदलते हुए Monte Carlo से η(E) और δ(E) निकालना, और δ के आकार की सार्वभौमिक वक्र से तुलना।</p>
 <p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>

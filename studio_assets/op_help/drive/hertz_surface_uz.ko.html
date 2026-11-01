@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">hertz_surface_uz — DRIVE <code style="color:#22d3bf">tacsim</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">matrix × scalar × scalar × scalar</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.hertz_surface_uz(r, a: &#x27;float&#x27;, delta: &#x27;float&#x27;, R: &#x27;float&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import tacsim; tacsim.hertz_surface_uz(r, a: &#x27;float&#x27;, delta: &#x27;float&#x27;, R: &#x27;float&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;hertz_surface_uz&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>Hertz 구 접촉에서 반공간 표면의 법선 변위 ū_z(r)(침하량 ≥ 0, r과 같은 형태의 배열).</p>
 <p>안쪽 r ≤ a: δ − r²/(2R). 바깥쪽: (1/πR)[(2a² − r²) arcsin(a/r) + a r √(1 − a²/r²)] (Johnson 식 3.42a). r = a 에서 δ/2 로 연속. <b>Raises</b> <code style="color:#22d3bf">ValueError</code>: a, δ, R ≤ 0, a² 와 Rδ 가 1 % 이상 어긋남(Hertz 가 아닌 조).</p>

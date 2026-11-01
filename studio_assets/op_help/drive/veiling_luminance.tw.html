@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">veiling_luminance — DRIVE <code style="color:#22d3bf">env</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">any × any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.veiling_luminance(E_glare, theta_deg, *, model: &#x27;str&#x27; = &#x27;stiles_holladay&#x27;, age: &#x27;float&#x27; = 40.0, p: &#x27;float&#x27; = 0.5)</code>(要直接呼叫實作,<code style="color:#22d3bf">import driveenv; driveenv.veiling_luminance(E_glare, theta_deg, *, model: &#x27;str&#x27; = &#x27;stiles_holladay&#x27;, age: &#x27;float&#x27; = 40.0, p: &#x27;float&#x27; = 0.5)</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;veiling_luminance&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>失能眩光的光幕輝度 L_v [cd/m²] (可用陣列)。E_glare = 眼睛位置處光源的照度 [lx]，θ = 光源與視線的夾角 [度]。</p>
 <p><code style="color:#22d3bf">model=&quot;stiles_holladay&quot;</code>: L_v = 10 E / θ²(θ 約在 1°~30° 範圍內使用的經驗公式)。<code style="color:#22d3bf">model=&quot;cie&quot;</code>: CIE 146:2002 的一般式 L_v/E = 10/θ³ + (5/θ² + 0.1 p/θ)(1 + (age/62.5)⁴) + 0.0025 p (p = 眼睛色素係數,預設 0.5)。θ ≤ 0 會被拒絕(光源本身不是光幕而是像)。</p>

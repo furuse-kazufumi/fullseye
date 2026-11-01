@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">env_studio — OPTICS <code style="color:#22d3bf">scene</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.env_studio(directions, key: &#x27;float&#x27; = 12.0, fill: &#x27;float&#x27; = 3.2, horizon: &#x27;float&#x27; = 0.45, sky: &#x27;float&#x27; = 0.14, ground: &#x27;float&#x27; = 0.05)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import optscene; optscene.env_studio(directions, key: &#x27;float&#x27; = 12.0, fill: &#x27;float&#x27; = 3.2, horizon: &#x27;float&#x27; = 0.45, sky: &#x27;float&#x27; = 0.14, ground: &#x27;float&#x27; = 0.05)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;env_studio&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>studio environment की radiance (दिशा -&gt; brightness)। <b>achromatic (रंगहीन)</b>।</p>
 <p>2 softboxes + एक sky gradient + एक पतली क्षैतिज पट्टी। इसे बिना रंग के छोड़ा गया है ताकि picture के भीतर ही यह सुनिश्चित हो कि metal का रंग environment से नहीं बल्कि <b>Fresnel(n, k) से</b> आता है। <code style="color:#22d3bf">directions</code> shape (..., 3) के unit vectors हैं (z ऊपर)। return value का shape (...,) है।</p>

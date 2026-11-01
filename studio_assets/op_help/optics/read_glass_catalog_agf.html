@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">read_glass_catalog_agf — OPTICS <code style="color:#22d3bf">matprop</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.read_glass_catalog_agf(source=None) -&gt; &#x27;list&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import materials; materials.read_glass_catalog_agf(source=None) -&gt; &#x27;list&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;read_glass_catalog_agf&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>硝材カタログ(光学設計ソフトの .agf 形式)を読んで材料レコードの列(<code style="color:#22d3bf">table</code>)にする。</p>
 <p><code style="color:#22d3bf">source</code> は .agf ファイルのパス、.agf を並べたディレクトリ(全部読む)、または <code style="color:#22d3bf">None</code>(同梱の雛形 <code style="color:#22d3bf">AGF_EXAMPLE</code> を読む —— 自分のカタログを置く場所は <code style="color:#22d3bf">os.environ[&quot;FULLSEYE_GLASS_DIR&quot;]</code> を渡す)。メーカーのカタログ本体は同梱しない。</p>

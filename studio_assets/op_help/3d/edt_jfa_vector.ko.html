@@ -3,7 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">flow_dense</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.edt_jfa_vector(seed_bool, device=&#x27;cpu&#x27;)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import match3d; match3d.edt_jfa_vector(seed_bool, device=&#x27;cpu&#x27;)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;edt_jfa_vector&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>원장 경유의 반환값</b>: <code style="color:#22d3bf">fullseye.ledger.edt_jfa_vector(...)</code> 는 <b>선언된 out 형 <code style="color:#22d3bf">flow_dense</code> 의 값만</b> 반환합니다(실제 함수는 보조 정보도 반환). 버려진 쪽이 필요하면 <code style="color:#22d3bf">fullseye.ledger.edt_jfa_vector.raw(...)</code> 를 쓰거나 <code style="color:#22d3bf">match3d.edt_jfa_vector</code> 를 직접 호출하세요.</p>
-<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 이 연산자는 GPU 경로가 있습니다(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>각 voxel에서 가장 가까운 seed까지의 변위 <code style="color:#22d3bf">(3, D, H, W)</code>(<code style="color:#22d3bf">flow_dense</code>, dz, dy, dx [voxel])를 <b>GPU의 JFA</b>로 구한다.</p>
 <p><code style="color:#22d3bf">edt_jfa</code>는 거리 값만 반환하지만, JFA는 내부에서 가장 가까운 seed의 좌표를 운반하고 있다 —— 그것을 그대로 출력한다(추가 비용 거의 0). CPU / scipy 경로는 <code style="color:#22d3bf">vol_nearest_seed_vector</code>(같은 값, N≤160에서 엄밀 일치를 실측). seed가 없으면 ValueError (<code style="color:#22d3bf">edt_jfa</code>는 1e6으로 포화시키지만, 방향에는 &quot;무한원&quot;이 없다). 반환은 torch float32(대장 경유에서는 numpy).</p>

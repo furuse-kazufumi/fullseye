@@ -2,7 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">morph_gradient3d — 3D <code style="color:#22d3bf">morphology</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">voxel</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.morph_gradient3d(vol, r=1, device=&#x27;cpu&#x27;, se=&#x27;cube&#x27;)</code>(要直接调用实现,<code style="color:#22d3bf">import match3d; match3d.morph_gradient3d(vol, r=1, device=&#x27;cpu&#x27;, se=&#x27;cube&#x27;)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;morph_gradient3d&quot;)</code>)</p>
-<p style="margin:2px 0 2px 12px">• <b>GPU</b>:该算子有 GPU 路径(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>3D 形态学梯度 = dilation − erosion。提取<b>边界/表面</b>(可替代 sobel 的边缘源)。</p>
 <p>在同一 SE(边长 <code style="color:#22d3bf">2r+1</code> 的 cube 或半径 r 的 ball)上的局部 max − 局部 min。值始终不小于 0, 均匀区域为 0,在明暗边界处为阶跃大小(<code style="color:#22d3bf">r</code> 越大边界越粗;<code style="color:#22d3bf">r=1</code> 时为 2 voxel 宽)。没有方向信息(需要方向时用 <code style="color:#22d3bf">sobel3d</code>)。与 <code style="color:#22d3bf">sobel3d</code> 不同,无需增益校正, 对 2 值 volume 会直接得到“边界 voxel = 1”的壳。<code style="color:#22d3bf">se</code> 为 &quot;cube&quot;/&quot;ball&quot;(其他为 ValueError),<code style="color:#22d3bf">device</code> 仅在 cube+torch 时有效。返回值为 <code style="color:#22d3bf">(D,H,W)</code> float32 numpy。</p>

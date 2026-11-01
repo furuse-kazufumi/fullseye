@@ -4,6 +4,7 @@ dim: optics
 category: tolerancing
 in: table
 out: text
+gpu: なし
 examples: [poc_lens_tolerancing]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `text`
 - **呼び出し**: `import fullseye as fs; fs.ledger.tolerance_report(result, sensitivity=None, as_dict=False)` (実装を直接呼ぶなら `import lenstol; lenstol.tolerance_report(result, sensitivity=None, as_dict=False)`、台帳から引くなら `opsoptics.get("tolerance_report")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

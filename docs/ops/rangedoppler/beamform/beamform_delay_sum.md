@@ -4,6 +4,7 @@ dim: rangedoppler
 category: beamform
 in: beatcube
 out: signal
+gpu: なし
 examples: [fmcw_range_doppler, poc_multibeam_bathymetry]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `beatcube` → `signal`
 - **呼び出し**: `import fullseye as fs; fs.ledger.beamform_delay_sum(cube, wavelength_m=0.0038934, element_spacing_m=None, angles_deg=None, range_bin=None, doppler_bin=None, normalize=False)` (実装を直接呼ぶなら `import rangedoppler; rangedoppler.beamform_delay_sum(cube, wavelength_m=0.0038934, element_spacing_m=None, angles_deg=None, range_bin=None, doppler_bin=None, normalize=False)`、台帳から引くなら `opsrangedoppler.get("beamform_delay_sum")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

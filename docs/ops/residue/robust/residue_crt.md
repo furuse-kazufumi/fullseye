@@ -4,6 +4,7 @@ dim: residue
 category: robust
 in: matrix × signal
 out: table
+gpu: なし
 examples: [poc_itof_multifreq, poc_residue_crt]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `matrix × signal` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.residue_crt(residues, periods, weights=None, lo=0.0, hi=None, on_outside='warn') -> 'dict'` (実装を直接呼ぶなら `import residue; residue.residue_crt(residues, periods, weights=None, lo=0.0, hi=None, on_outside='warn') -> 'dict'`、台帳から引くなら `opsresidue.get("residue_crt")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

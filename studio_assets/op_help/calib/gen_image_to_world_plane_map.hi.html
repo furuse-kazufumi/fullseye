@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">gen_image_to_world_plane_map — CALIB <code style="color:#22d3bf">plane</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">table</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gen_image_to_world_plane_map(cam_par, pose, shape, scale=1.0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import caltab; caltab.gen_image_to_world_plane_map(cam_par, pose, shape, scale=1.0)</code>, registry से लेना हो तो <code style="color:#22d3bf">opscalib.get(&quot;gen_image_to_world_plane_map&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>image → world plane (z=0) की mapping table बनाता है (gen_image_to_world_plane_map)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>

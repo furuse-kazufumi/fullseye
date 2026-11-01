@@ -4,6 +4,7 @@ dim: drive
 category: puck
 in: table
 out: table
+gpu: なし
 examples: [poc_air_hockey_intercept]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.fivebar_workspace(link: 'dict', *, n: 'int' = 161, tol: 'float' = 1e-09) -> 'dict'` (実装を直接呼ぶなら `import puck; puck.fivebar_workspace(link: 'dict', *, n: 'int' = 161, tol: 'float' = 1e-09) -> 'dict'`、台帳から引くなら `opsdrive.get("fivebar_workspace")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

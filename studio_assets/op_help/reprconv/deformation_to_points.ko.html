@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">deformation_to_points — REPRCONV <code style="color:#22d3bf">algebra</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">deformation</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.deformation_to_points(deformation)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import reprconv; reprconv.deformation_to_points(deformation)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsreprconv.get(&quot;deformation_to_points&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>TPS 변형 <code style="color:#22d3bf">deformation</code> → 제어점 <code style="color:#22d3bf">points (N,3)</code>. <code style="color:#22d3bf">deformation</code> 의 출구.</p>
 <p><code style="color:#22d3bf">tps_fit</code>이 반환하는 dict의 <code style="color:#22d3bf">ctrl</code>을 꺼낸다. &quot;이 왜곡은 어디에고정되어 있는가&quot;를 점군 어휘로 보기 위한 것이며, <b>단방향</b> (제어점만으로는 가중치 <code style="color:#22d3bf">w</code>와 아핀 항 <code style="color:#22d3bf">a</code>를 복원할 수 없다).</p>

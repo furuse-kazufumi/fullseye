@@ -4,6 +4,7 @@ dim: optics
 category: confocal
 in: 
 out: pairs
+gpu: なし
 examples: [poc_chromatic_confocal]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `pairs`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.confocal_axial_response(z_min_um: 'float' = -40.0, z_max_um: 'float' = 40.0, n_points: 'int' = 401, wavelength_nm: 'float' = 550.0, numerical_aperture: 'float' = 0.2, n_medium: 'float' = 1.0, longitudinal_sa_um: 'float' = 0.0, target: 'str' = 'mirror') -> 'np.ndarray'` (実装を直接呼ぶなら `import chromconf; chromconf.confocal_axial_response(z_min_um: 'float' = -40.0, z_max_um: 'float' = 40.0, n_points: 'int' = 401, wavelength_nm: 'float' = 550.0, numerical_aperture: 'float' = 0.2, n_medium: 'float' = 1.0, longitudinal_sa_um: 'float' = 0.0, target: 'str' = 'mirror') -> 'np.ndarray'`、台帳から引くなら `opsoptics.get("confocal_axial_response")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

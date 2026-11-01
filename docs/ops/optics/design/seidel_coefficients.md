@@ -4,6 +4,7 @@ dim: optics
 category: design
 in: table
 out: table
+gpu: なし
 examples: [anim3d_lens_aberrations, lens_design_demo, poc_lens_file_roundtrip, poc_lens_solves_afocal]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.seidel_coefficients(system, field=None)` (実装を直接呼ぶなら `import raytrace; raytrace.seidel_coefficients(system, field=None)`、台帳から引くなら `opsoptics.get("seidel_coefficients")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

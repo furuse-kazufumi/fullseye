@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">set_vignetting — OPTICS <code style="color:#22d3bf">design</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.set_vignetting(system, fields=None, rings=8, wavelength_um=None, mode=&#x27;four&#x27;)</code> (to call the implementation directly, <code style="color:#22d3bf">import raytrace; raytrace.set_vignetting(system, fields=None, rings=8, wavelength_um=None, mode=&#x27;four&#x27;)</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;set_vignetting&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Compute the vignetting factors that remove every aperture-clipped ray, as &quot;set vignetting&quot; does (<code style="color:#22d3bf">table</code>).</p>
 <p>For each field (a list of radial field values; default the existing records&#x27; fields, else the system&#x27;s own <code style="color:#22d3bf">field</code>) the real-ray-aimed pupil is searched along ±x and ±y for the edge of the clear region (bisection to 1e-13): <code style="color:#22d3bf">VDX, VDY</code> are the centres and <code style="color:#22d3bf">VCX, VCY</code> one minus the half-widths, <code style="color:#22d3bf">VAN</code> is 0.</p>

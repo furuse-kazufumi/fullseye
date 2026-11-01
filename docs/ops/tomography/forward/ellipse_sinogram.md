@@ -4,6 +4,7 @@ dim: tomography
 category: forward
 in: 
 out: sinogram
+gpu: なし
 examples: [ct_reconstruction, poc_ct_fidelity]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `sinogram`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.ellipse_sinogram(size=256, ellipses=None, angles_deg=None, n_detectors=None)` (実装を直接呼ぶなら `import tomography; tomography.ellipse_sinogram(size=256, ellipses=None, angles_deg=None, n_detectors=None)`、台帳から引くなら `opstomography.get("ellipse_sinogram")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

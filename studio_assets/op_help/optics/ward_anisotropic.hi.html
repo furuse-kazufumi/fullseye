@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">ward_anisotropic — OPTICS <code style="color:#22d3bf">appearance</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">normalmap</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ward_anisotropic(normals, light=(0.0, 0.0, 1.0), view=(0.0, 0.0, 1.0), tangent=(1.0, 0.0, 0.0), alpha_x=0.3, alpha_y=0.03) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import matappear; matappear.ward_anisotropic(normals, light=(0.0, 0.0, 1.0), view=(0.0, 0.0, 1.0), tangent=(1.0, 0.0, 0.0), alpha_x=0.3, alpha_y=0.03) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;ward_anisotropic&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Ward का anisotropic reflection (elliptical Gaussian microfacet)। hairline finish की <b>खिंची हुई highlight</b>।</p>
 <p>normals: (H, W, 3) normal map। light / view: surface से light source / viewpoint की दिशा (3,)।</p>

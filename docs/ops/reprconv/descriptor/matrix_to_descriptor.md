@@ -4,6 +4,7 @@ dim: reprconv
 category: descriptor
 in: matrix
 out: descriptor
+gpu: なし
 examples: [representation_conversion]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `matrix` → `descriptor`
 - **呼び出し**: `import fullseye as fs; fs.ledger.matrix_to_descriptor(matrix)` (実装を直接呼ぶなら `import reprconv; reprconv.matrix_to_descriptor(matrix)`、台帳から引くなら `opsreprconv.get("matrix_to_descriptor")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

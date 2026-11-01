@@ -4,6 +4,7 @@ dim: optics
 category: polarization
 in: signal
 out: matrix
+gpu: なし
 examples: [polarization_camera_pipeline]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal` → `matrix`
 - **呼び出し**: `import fullseye as fs; fs.ledger.mueller_from_intensities(intensities, psg, psa, rank_tol=1e-09)` (実装を直接呼ぶなら `import optics; optics.mueller_from_intensities(intensities, psg, psa, rank_tol=1e-09)`、台帳から引くなら `opsoptics.get("mueller_from_intensities")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

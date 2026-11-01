@@ -4,6 +4,7 @@ dim: drive
 category: pegsim
 in: matrix
 out: table
+gpu: なし
 examples: [poc_pegsim_insertion]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `matrix` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.circle_fit_known_radius(points, r: 'float', iters: 'int' = 30) -> 'dict'` (実装を直接呼ぶなら `import pegsim; pegsim.circle_fit_known_radius(points, r: 'float', iters: 'int' = 30) -> 'dict'`、台帳から引くなら `opsdrive.get("circle_fit_known_radius")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

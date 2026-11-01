@@ -4,6 +4,7 @@ dim: rangedoppler
 category: process
 in: beatcube
 out: signal
+gpu: なし
 examples: [fmcw_range_doppler]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `beatcube` → `signal`
 - **呼び出し**: `import fullseye as fs; fs.ledger.fmcw_range_profile(cube, chirp=None, antenna=None, normalize=False)` (実装を直接呼ぶなら `import rangedoppler; rangedoppler.fmcw_range_profile(cube, chirp=None, antenna=None, normalize=False)`、台帳から引くなら `opsrangedoppler.get("fmcw_range_profile")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

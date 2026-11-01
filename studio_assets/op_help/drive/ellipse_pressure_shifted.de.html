@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">ellipse_pressure_shifted — DRIVE <code style="color:#22d3bf">tactorque</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">matrix × matrix × scalar × scalar × scalar</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ellipse_pressure_shifted(X, Y, a: &#x27;float&#x27;, b: &#x27;float&#x27;, P: &#x27;float&#x27;, d=(0.0, 0.0)) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import tactorque; tactorque.ellipse_pressure_shifted(X, Y, a: &#x27;float&#x27;, b: &#x27;float&#x27;, P: &#x27;float&#x27;, d=(0.0, 0.0)) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;ellipse_pressure_shifted&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Elliptischer Hertz-Druck p0 √(1 − x′²/a² − y′²/b²) [Pa] mit den Halbachsen a (x) und b (y) [m], P = 2πab p0/3 (Johnson 1985 Gl. 4.24), Zentrum auf d verschoben. Für b ≫ a nähert sich die Form einer zylindrischen (grat- oder keilförmigen) Eindrückung — das 3. Gate der Formunabhängigkeit. <b>Raises</b> ValueError: a, b, P ≤ 0, X und Y haben unterschiedliche Form.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

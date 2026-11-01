@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">mutual_information — IMGMETRICS <code style="color:#22d3bf">information</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mutual_information(a, b, bins=64, data_range=None)</code> (die Implementierung direkt: <code style="color:#22d3bf">import imgmetrics; imgmetrics.mutual_information(a, b, bins=64, data_range=None)</code>; aus dem Register: <code style="color:#22d3bf">opsimgmetrics.get(&quot;mutual_information&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Transinformation I(A; B) [bit] = H(A) + H(B) - H(A, B).</p>
 <p><b>Es hängt von der Bin-Anzahl ab</b> (je mehr Bins, desto stärker nach oben verzerrt), daher ist <code style="color:#22d3bf">bins</code> ein explizites Argument. Auch für 2 unabhängige Bilder ist es wegen der endlichen Stichprobe nicht exakt 0 -- wie stark es nach oben verzerrt ist, ist in den Tests als Zahl festgehalten.</p>

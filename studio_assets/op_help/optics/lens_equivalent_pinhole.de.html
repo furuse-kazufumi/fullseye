@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">lens_equivalent_pinhole — OPTICS <code style="color:#22d3bf">telecentric</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lens_equivalent_pinhole(system, pixel_pitch_um=25.0, width=240, height=240, field_mm=None, max_pupil_distance_mm=10000000.0)</code> (die Implementierung direkt: <code style="color:#22d3bf">import telecentric; telecentric.lens_equivalent_pinhole(system, pixel_pitch_um=25.0, width=240, height=240, field_mm=None, max_pupil_distance_mm=10000000.0)</code>; aus dem Register: <code style="color:#22d3bf">opsoptics.get(&quot;lens_equivalent_pinhole&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Bildet die Hauptstrahlgeometrie auf eine Lochkamera (pose, K) für <code style="color:#22d3bf">render3d.render_mesh</code> ab.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>

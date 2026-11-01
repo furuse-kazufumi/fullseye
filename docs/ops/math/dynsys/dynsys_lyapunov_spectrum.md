@@ -4,6 +4,7 @@ dim: math
 category: dynsys
 in: 
 out: signal
+gpu: なし
 examples: [poc_what_a_picture_cannot_check]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `signal`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.dynsys_lyapunov_spectrum(system='lorenz', params=None, x0=None, t_end=200.0, dt=0.005, burn_in=20.0)` (実装を直接呼ぶなら `import mathops; mathops.dynsys_lyapunov_spectrum(system='lorenz', params=None, x0=None, t_end=200.0, dt=0.005, burn_in=20.0)`、台帳から引くなら `opsmath.get("dynsys_lyapunov_spectrum")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

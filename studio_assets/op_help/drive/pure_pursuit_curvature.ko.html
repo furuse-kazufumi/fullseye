@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">pure_pursuit_curvature — DRIVE <code style="color:#22d3bf">lateral</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pure_pursuit_curvature(pose, path, lookahead, *, start_index=None, window: &#x27;int&#x27; = 40) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivelateral; drivelateral.pure_pursuit_curvature(pose, path, lookahead, *, start_index=None, window: &#x27;int&#x27; = 40) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;pure_pursuit_curvature&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>pure pursuit: 뒤차축 중심(<code style="color:#22d3bf">pose</code> = (x, y, ψ), (N, 3) 가능)에서 경로 위 거리 L_d 앞의 점을 겨누는 곡률 κ = 2 sin α / L_d.</p>
 <p>경로는 꺾은선 (M, 2). 가장 가까운 점을 찾고, 거기서 앞쪽으로 처음 거리가 L_d 가 되는 점을 구간 위에서 2 차 방정식으로 구한다(경로 끝까지 닿지 않으면 끝점을 겨누고 L_d 를 그 거리로 한다). <code style="color:#22d3bf">start_index</code> 와 <code style="color:#22d3bf">window</code> 로 가장 가까운 점을찾는 범위를 좁힌다(긴 경로의 반복을 빠르게 한다. None 이면 전체).</p>

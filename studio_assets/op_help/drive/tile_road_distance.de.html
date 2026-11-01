@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tile_road_distance — DRIVE <code style="color:#22d3bf">inf</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">any × any × table</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tile_road_distance(i: &#x27;int&#x27;, j: &#x27;int&#x27;, x, y, tp: &#x27;dict&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import driveinf; driveinf.tile_road_distance(i: &#x27;int&#x27;, j: &#x27;int&#x27;, x, y, tp: &#x27;dict&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;tile_road_distance&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Abstand vom Punkt (x, y) in der Kachel (i, j) (Koordinaten in der Kachel) zur nächsten Straßenmittellinie. ★Berücksichtigt auch die Straßen der 8 Nachbarkacheln (in Koordinaten der Kachel verschoben) — damit die Kacheln auf beiden Seiten einer Naht dort denselben Abstand liefern.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

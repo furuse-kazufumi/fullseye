@@ -4,6 +4,7 @@ dim: spc
 category: anomaly_eval
 in: video × video
 out: table
+gpu: なし
 examples: [poc_patch_anomaly]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `video × video` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.anomaly_pixel_f1_max(scores, masks)` (実装を直接呼ぶなら `import anomeval; anomeval.anomaly_pixel_f1_max(scores, masks)`、台帳から引くなら `opsspc.get("anomaly_pixel_f1_max")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

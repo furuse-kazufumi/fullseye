@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">course_contains — DRIVE <code style="color:#22d3bf">course</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table × points</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.course_contains(course, xy)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import drivecourse; drivecourse.course_contains(course, xy)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;course_contains&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>bool array जो even-odd rule से बताता है कि बिंदु <b>चलने योग्य क्षेत्र</b> (element का polygon, layout में elements का union) के अंदर हैं या नहीं।</p>
 <p><code style="color:#22d3bf">xy</code> <code style="color:#22d3bf">(N, 2)</code> है (<code style="color:#22d3bf">(2,)</code> हो तो bool स्केलर)। सीमा पर स्थित बिंदु अपरिभाषित हैं। प्रत्येक तत्व को पहले bounds से छाना जाता है।</p>

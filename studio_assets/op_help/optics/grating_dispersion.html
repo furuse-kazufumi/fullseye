@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">grating_dispersion — OPTICS <code style="color:#22d3bf">spectrometer</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.grating_dispersion(groove_density_per_mm=1200.0, wavelength_nm=550.0, incidence_deg=10.0, order=1, focal_length_mm=100.0, illuminated_width_mm=25.0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import gratingspec; gratingspec.grating_dispersion(groove_density_per_mm=1200.0, wavelength_nm=550.0, incidence_deg=10.0, order=1, focal_length_mm=100.0, illuminated_width_mm=25.0)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;grating_dispersion&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>格子の式 mλ = d(sin α + sin β) を解き、角分散・逆線分散・分解能・重なる次数を表にする。</p>
 <p>groove_density_per_mm: 溝の密度 G [本/mm]。溝の間隔は d = 1/G。</p>

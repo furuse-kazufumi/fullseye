@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">gcode_write — PRINTPATH <code style="color:#22d3bf">gcode</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">table × text</code> → <code style="color:#22d3bf">text</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gcode_write(table: &#x27;Any&#x27;, path: &#x27;str&#x27;, layer_tags: &#x27;bool&#x27; = True) -&gt; &#x27;str&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import printpath; printpath.gcode_write(table: &#x27;Any&#x27;, path: &#x27;str&#x27;, layer_tags: &#x27;bool&#x27; = True) -&gt; &#x27;str&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsprintpath.get(&quot;gcode_write&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把線段表寫成 G-code(G21 / G90 / M82，G1 的絕對座標與絕對 E)。回傳寫入的路徑(<code style="color:#22d3bf">text</code>)。</p>
 <p>可與 <code style="color:#22d3bf">gcode_read</code> 往返(層以 <code style="color:#22d3bf">;LAYER:n</code> 寫出)。僅移動的線段不推進 E。</p>

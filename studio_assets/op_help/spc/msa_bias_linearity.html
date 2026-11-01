@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">msa_bias_linearity — SPC <code style="color:#22d3bf">msa</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.msa_bias_linearity(table, reference=&#x27;reference&#x27;, measured=&#x27;measured&#x27;)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import spc; spc.msa_bias_linearity(table, reference=&#x27;reference&#x27;, measured=&#x27;measured&#x27;)</code>、台帳から引くなら <code style="color:#22d3bf">opsspc.get(&quot;msa_bias_linearity&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>基準値に対する偏りと、その基準値依存(直線性)(<code style="color:#22d3bf">table</code>)。</p>
 <p>偏り <code style="color:#22d3bf">bias = measured - reference</code> を基準値に回帰する(<code style="color:#22d3bf">bias = intercept + slope * reference</code>)。傾きが 0 でなければ、測定系は測定範囲の<b>場所によって違う量だけずれている</b> = 直線性の問題。</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">dynsys_poincare_section — MATH <code style="color:#22d3bf">dynsys</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">pairs</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dynsys_poincare_section(states, axis=2, value=None, direction=1)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import mathops; mathops.dynsys_poincare_section(states, axis=2, value=None, direction=1)</code>、台帳から引くなら <code style="color:#22d3bf">opsmath.get(&quot;dynsys_poincare_section&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Where a trajectory crosses a plane — with the crossing point interpolated.</p>
 <p>Takes the <code style="color:#22d3bf">x</code> block of <code style="color:#22d3bf">ode_flow_states</code> and returns the points where coordinate *axis* crosses *value* in the given *direction* (+1 upward, -1 downward, 0 either). The crossing is found by <b>linear interpolation between the two straddling samples</b>, not by taking the nearer sample — otherwise the section is quantised by the step size and a periodic orbit looks like a cloud.</p>

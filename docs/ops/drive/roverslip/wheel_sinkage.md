@@ -4,6 +4,7 @@ dim: drive
 category: roverslip
 in: signal × table × any
 out: signal
+gpu: なし
 examples: [poc_rover_slip_risk_path]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal × table × any` → `signal`
 - **呼び出し**: `import fullseye as fs; fs.ledger.wheel_sinkage(load, wheel, soil, slip=0.0) -> 'np.ndarray'` (実装を直接呼ぶなら `import roverslip; roverslip.wheel_sinkage(load, wheel, soil, slip=0.0) -> 'np.ndarray'`、台帳から引くなら `opsdrive.get("wheel_sinkage")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

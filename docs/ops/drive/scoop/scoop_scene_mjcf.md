@@ -4,6 +4,7 @@ dim: drive
 category: scoop
 in: scalar × scalar
 out: table
+gpu: なし
 examples: [poc_powder_scoop_pour]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `scalar × scalar` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.scoop_scene_mjcf(n_spheres: 'int' = 500, radius: 'float' = 0.002, *, a: 'float' = 0.03, h: 'float' = 0.012, rim_height: 'float' = 0.1, mu_slide: 'float' = 0.16, mu_roll: 'float' = 0.09, density: 'float' = 2500.0, bowl_mu: 'float' = 0.5, tile: 'float' = 0.006, drop_gap: 'float' = 0.0003, timestep: 'float' = 0.0015, contact_tc: 'float' = 0.006, solver_iterations: 'int' = 50, solver: 'str' = 'CG', cone: 'str' = 'elliptic', condim: 'int' = 6, seed: 'int' = 0) -> 'dict'` (実装を直接呼ぶなら `import scoop; scoop.scoop_scene_mjcf(n_spheres: 'int' = 500, radius: 'float' = 0.002, *, a: 'float' = 0.03, h: 'float' = 0.012, rim_height: 'float' = 0.1, mu_slide: 'float' = 0.16, mu_roll: 'float' = 0.09, density: 'float' = 2500.0, bowl_mu: 'float' = 0.5, tile: 'float' = 0.006, drop_gap: 'float' = 0.0003, timestep: 'float' = 0.0015, contact_tc: 'float' = 0.006, solver_iterations: 'int' = 50, solver: 'str' = 'CG', cone: 'str' = 'elliptic', condim: 'int' = 6, seed: 'int' = 0) -> 'dict'`、台帳から引くなら `opsdrive.get("scoop_scene_mjcf")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

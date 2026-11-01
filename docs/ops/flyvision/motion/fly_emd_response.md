@@ -4,6 +4,7 @@ dim: flyvision
 category: motion
 in: signal × signal
 out: signal
+gpu: なし
 examples: [poc_fly_vision, poc_zebra_stripes_fly_eye]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal × signal` → `signal`
 - **呼び出し**: `import fullseye as fs; fs.ledger.fly_emd_response(signal_a, signal_b, tau_s=0.05, dt_s=0.001)` (実装を直接呼ぶなら `import flyvision; flyvision.fly_emd_response(signal_a, signal_b, tau_s=0.05, dt_s=0.001)`、台帳から引くなら `opsflyvision.get("fly_emd_response")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

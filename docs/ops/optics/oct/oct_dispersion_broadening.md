@@ -4,6 +4,7 @@ dim: optics
 category: oct
 in: 
 out: table
+gpu: なし
 examples: [poc_industrial_oct]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.oct_dispersion_broadening(material='SILICA', length_mm=10.0, center_nm=840.0, bandwidth_nm=50.0)` (実装を直接呼ぶなら `import octscan; octscan.oct_dispersion_broadening(material='SILICA', length_mm=10.0, center_nm=840.0, bandwidth_nm=50.0)`、台帳から引くなら `opsoptics.get("oct_dispersion_broadening")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

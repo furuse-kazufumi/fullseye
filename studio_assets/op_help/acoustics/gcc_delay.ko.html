@@ -3,6 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gcc_delay(a, b, rate=1.0, weight=&#x27;phat&#x27;, band=None, interpolate=True)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import acoustics; acoustics.gcc_delay(a, b, rate=1.0, weight=&#x27;phat&#x27;, band=None, interpolate=True)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsacoustics.get(&quot;gcc_delay&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>원장 경유의 반환값</b>: <code style="color:#22d3bf">fullseye.ledger.gcc_delay(...)</code> 는 <b>선언된 out 형 <code style="color:#22d3bf">measurement</code> 의 값만</b> 반환합니다(실제 함수는 보조 정보도 반환). 버려진 쪽이 필요하면 <code style="color:#22d3bf">fullseye.ledger.gcc_delay.raw(...)</code> 를 쓰거나 <code style="color:#22d3bf">acoustics.gcc_delay</code> 를 직접 호출하세요.</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>2채널의 <b>도달 시간차</b>를 일반화 상호상관(GCC)으로 측정한다. → <code style="color:#22d3bf">(delay, table)</code>.</p>
 <p>누수 위치 결정, 음원 방향, 초음파 두께, 진동 전파 —— 모두 &quot;같은 원천이 2곳에언제 도착했는가&quot;의 차이로 정해진다. 이 op는 그 차이를 <b>초</b>(<code style="color:#22d3bf">rate</code>가 기본값 1.0이면 표본)로반환한다. 위치로 바꾸려면 경로 길이와 전파 속도를 곱한다(<code style="color:#22d3bf">x = (L - c·delay) / 2</code>의 형태).</p>

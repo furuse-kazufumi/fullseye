@@ -4,6 +4,7 @@ dim: shape2d
 category: descriptor
 in: pairs
 out: efdmodel
+gpu: なし
 examples: [contour_fourier, shape2d_morph_descriptor_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `pairs` → `efdmodel`
 - **呼び出し**: `import fullseye as fs; fs.ledger.elliptic_fourier(points, n_harmonics=10)` (実装を直接呼ぶなら `import fourierdesc; fourierdesc.elliptic_fourier(points, n_harmonics=10)`、台帳から引くなら `opsshape2d.get("elliptic_fourier")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

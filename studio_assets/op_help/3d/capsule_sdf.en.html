@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">capsule_sdf — 3D <code style="color:#22d3bf">sdf_csg</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">coordgrid</code> → <code style="color:#22d3bf">sdf</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.capsule_sdf(grid, a, b, radius)</code> (to call the implementation directly, <code style="color:#22d3bf">import sdf_ops; sdf_ops.capsule_sdf(grid, a, b, radius)</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;capsule_sdf&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p><b>Exact</b> signed distance field of a capsule formed by thickening the segment <code style="color:#22d3bf">a</code>–<code style="color:#22d3bf">b</code> by radius <code style="color:#22d3bf">radius</code>.</p>
 <p><code style="color:#22d3bf">sdf(p) = ‖p - (a + clamp(((p-a)·(b-a))/‖b-a‖², 0, 1)·(b-a))‖ - radius</code>. It is exactly the shortest distance to a segment, so it has <b>gradient norm 1 over all space</b> (unlike a cylinder, its ends are round, so it has no corners and is exact). Suited to approximating ribs, piping, bones, wires and the swept volume of a tool.</p>

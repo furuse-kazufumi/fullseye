@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">graph_adjacency_image — CONNGRAPH <code style="color:#22d3bf">view</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">conn_graph</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graph_adjacency_image(W: &#x27;Any&#x27;, order: &#x27;str&#x27; = &#x27;none&#x27;, log: &#x27;bool&#x27; = True) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import conngraph; conngraph.graph_adjacency_image(W: &#x27;Any&#x27;, order: &#x27;str&#x27; = &#x27;none&#x27;, log: &#x27;bool&#x27; = True) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsconngraph.get(&quot;graph_adjacency_image&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Turns the adjacency matrix into an image (n, n) in [0, 1]. order = none / degree (descending total degree) / component (component order).</p>
 <p>The value is |W| (after log1p if log) divided by its maximum. If all zero, an all-zero image.</p>

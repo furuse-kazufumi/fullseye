@@ -4,6 +4,7 @@ dim: optics
 category: tem
 in: 
 out: image2d
+gpu: なし
 examples: [poc_tem_ctf_thon_rings]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `image2d`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.tem_ctf(shape=256, pixel_A=1.0, kv=300.0, cs_mm=2.7, defocus_A=10000.0, astig_A=0.0, astig_angle_deg=None, amplitude_contrast=0.07, phase_shift_deg=0.0, alpha_mrad=0.0, focal_spread_A=0.0, envelope=True)` (実装を直接呼ぶなら `import temsim; temsim.tem_ctf(shape=256, pixel_A=1.0, kv=300.0, cs_mm=2.7, defocus_A=10000.0, astig_A=0.0, astig_angle_deg=None, amplitude_contrast=0.07, phase_shift_deg=0.0, alpha_mrad=0.0, focal_spread_A=0.0, envelope=True)`、台帳から引くなら `opsoptics.get("tem_ctf")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

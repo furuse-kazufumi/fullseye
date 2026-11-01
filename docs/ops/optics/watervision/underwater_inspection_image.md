@@ -4,6 +4,7 @@ dim: optics
 category: watervision
 in: rgbimage × image2d
 out: table
+gpu: なし
 examples: [poc_water_inspection_images]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `rgbimage × image2d` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.underwater_inspection_image(scene_albedo, distance_map_m, water_type, light='camera', lamp_power=1.0, camera_distance_m=None, depth_m=2.0, exposure_photons=10000.0, fov_deg=60.0, beam_exponent=6.0) -> 'dict'` (実装を直接呼ぶなら `import watervision; watervision.underwater_inspection_image(scene_albedo, distance_map_m, water_type, light='camera', lamp_power=1.0, camera_distance_m=None, depth_m=2.0, exposure_photons=10000.0, fov_deg=60.0, beam_exponent=6.0) -> 'dict'`、台帳から引くなら `opsoptics.get("underwater_inspection_image")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

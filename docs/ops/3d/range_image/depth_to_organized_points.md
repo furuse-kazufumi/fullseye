@@ -4,6 +4,7 @@ dim: 3d
 category: range_image
 in: depth
 out: pointmap
+gpu: なし
 examples: [range_image]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `depth` → `pointmap`
 - **呼び出し**: `import fullseye as fs; fs.ledger.depth_to_organized_points(depth, fx=None, fy=None, cx=None, cy=None)` (実装を直接呼ぶなら `import range_image; range_image.depth_to_organized_points(depth, fx=None, fy=None, cx=None, cy=None)`、台帳から引くなら `ops3d.get("depth_to_organized_points")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -4,6 +4,7 @@ dim: tomography
 category: forward
 in: image2d
 out: sinogram
+gpu: なし
 examples: [ct_reconstruction, poc_aoi_ct_traceability, poc_ct_fidelity, poc_sem_tem_same_particle]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d` → `sinogram`
 - **呼び出し**: `import fullseye as fs; fs.ledger.radon_transform(image, angles_deg=None, n_detectors=None, oversample=1)` (実装を直接呼ぶなら `import tomography; tomography.radon_transform(image, angles_deg=None, n_detectors=None, oversample=1)`、台帳から引くなら `opstomography.get("radon_transform")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

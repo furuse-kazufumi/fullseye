@@ -4,6 +4,7 @@ dim: conngraph
 category: stats
 in: conn_graph
 out: signal
+gpu: なし
 examples: [gallery_conngraph_closed_forms]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `conn_graph` → `signal`
 - **呼び出し**: `import fullseye as fs; fs.ledger.graph_betweenness(W: 'Any') -> 'np.ndarray'` (実装を直接呼ぶなら `import conngraph; conngraph.graph_betweenness(W: 'Any') -> 'np.ndarray'`、台帳から引くなら `opsconngraph.get("graph_betweenness")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

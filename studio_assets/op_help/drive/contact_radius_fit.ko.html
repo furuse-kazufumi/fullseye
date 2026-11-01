@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">contact_radius_fit — DRIVE <code style="color:#22d3bf">tacsim</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">normalmap × matrix × matrix × scalar × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.contact_radius_fit(normals, X, Y, R: &#x27;float&#x27;, pitch: &#x27;float&#x27;, centre_xy=None) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import tacsim; tacsim.contact_radius_fit(normals, X, Y, R: &#x27;float&#x27;, pitch: &#x27;float&#x27;, centre_xy=None) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;contact_radius_fit&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>법선장의 <b>반경 방향 기울기 분포</b>에 Hertz 기울기 모델 dh/dr(r; a)를 1매개변수 a로 피팅해 접촉 반경을 읽음.</p>
 <p>모형: 안쪽 r/R, 바깥쪽 (2/πR)[r arcsin(a/r) − a √(1 − a²/r²)] (유도, r = a 에서 a/R 에 연속). 높이의 적분을 거치지 않으므로 FFT 적분의 진폭 감쇠·유한 창의 원방장·높이 기준(오프셋)의 영향을 받지 않는다. a 는 [0.2, 3] × 거친 초기값의 격자에서 SSE (빈의 개수로 가중)를 최소화하고, 포물선으로 부격자까지 좁힌다. <code style="color:#22d3bf">centre_xy</code> 는 (x, y)[m], 생략하면 법선으로부터 높이를 적분하여 무게중심.</p>

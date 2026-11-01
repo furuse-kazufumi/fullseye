@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">spheroid_closest — DRIVE <code style="color:#22d3bf">diabolo</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">signal × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.spheroid_closest(x, sph: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import diabolo; diabolo.spheroid_closest(x, sph: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;spheroid_closest&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>점 x → 회전 타원체 면의 최근접점 <code style="color:#22d3bf">point</code>, 부호 있는 거리 <code style="color:#22d3bf">s</code>(내부 &gt; 0, 논문의 s 정의), 바깥쪽 단위 법선 <code style="color:#22d3bf">normal</code>(최근접점에서의 기울기 방향).</p>
 <p>최근접점은 자오면 타원에 대한 Eberly 의 이분법. ★공개 구현은 중심에서 방사 방향으로 줄여 되돌리며(최근접점이 아니다, 타원체 밖 5 mm 의 점에서최대 2.2 mm 차이), 법선을 (x/b, y/a, z/b) 로 근사한다(기울기라면 제곱, 축 위 이외에서는 최대 12.2° 어긋난다). 여기서는 본문의 &quot;가장 가까운 점으로 이동&quot;과 참 법선으로 쓴다. <b>Raises</b> <code style="color:#22d3bf">ValueError</code>: x 가 유한한 3-vector 가 아님, sph 가 타원체 dict 가 아님.</p>

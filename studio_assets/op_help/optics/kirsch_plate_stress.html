@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">kirsch_plate_stress — OPTICS <code style="color:#22d3bf">photoelastic</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.kirsch_plate_stress(hole_radius_m=0.005, remote_stress_pa=1000000.0, load_angle_deg=0.0, half_width_m=0.02, size=129, x=None, y=None)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import photoelastic; photoelastic.kirsch_plate_stress(hole_radius_m=0.005, remote_stress_pa=1000000.0, load_angle_deg=0.0, half_width_m=0.02, size=129, x=None, y=None)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;kirsch_plate_stress&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>穴のある無限板の一軸引張(Kirsch の解)の σx, σy, τxy と極座標成分の閉形式 → dict。</p>
 <p>Infinite plate with a circular hole of radius <code style="color:#22d3bf">a</code> under a remote uniaxial stress <code style="color:#22d3bf">S</code> along the direction <code style="color:#22d3bf">load_angle_deg</code> (Kirsch 1898). With <code style="color:#22d3bf">θ</code> measured from the load direction::</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tile_edge_crossing — DRIVE <code style="color:#22d3bf">inf</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tile_edge_crossing(i: &#x27;int&#x27;, j: &#x27;int&#x27;, side: &#x27;str&#x27;, tp: &#x27;dict&#x27;)</code> (die Implementierung direkt: <code style="color:#22d3bf">import driveinf; driveinf.tile_edge_crossing(i: &#x27;int&#x27;, j: &#x27;int&#x27;, side: &#x27;str&#x27;, tp: &#x27;dict&#x27;)</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;tile_edge_crossing&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Position, an der eine Straße eine Kante der Kachel (i, j) kreuzt (Koordinaten in der Kachel, 0..tile entlang der Kante). None, falls keine. <code style="color:#22d3bf">side</code> ∈ {&quot;E&quot;, &quot;W&quot;, &quot;N&quot;, &quot;S&quot;}. ★Bestimmt durch den Kantenindex: E der Kachel (i, j) und W der Kachel (i+1, j) sind dieselbe Kante (gleicher Hash).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

@@ -4,6 +4,7 @@ dim: acoustics
 category: ultrasonic
 in: table
 out: table
+gpu: なし
 examples: [poc_sam_hybrid_bonding_voids]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.pulse_echo_ascan(stack, f0=100000000.0, bandwidth=0.6, water_path=0.002, rate=None, duration=None, n_reverb=40)` (実装を直接呼ぶなら `import ultrasound; ultrasound.pulse_echo_ascan(stack, f0=100000000.0, bandwidth=0.6, water_path=0.002, rate=None, duration=None, n_reverb=40)`、台帳から引くなら `opsacoustics.get("pulse_echo_ascan")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

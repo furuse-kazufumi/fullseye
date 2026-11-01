@@ -4,6 +4,7 @@ dim: drive
 category: puck
 in: table × signal
 out: table
+gpu: なし
 examples: [poc_air_hockey_intercept]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table × signal` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.puck_state_at(pred: 'dict', t) -> 'dict'` (実装を直接呼ぶなら `import puck; puck.puck_state_at(pred: 'dict', t) -> 'dict'`、台帳から引くなら `opsdrive.get("puck_state_at")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

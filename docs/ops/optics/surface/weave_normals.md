@@ -4,6 +4,7 @@ dim: optics
 category: surface
 in: 
 out: normalmap
+gpu: なし
 examples: [machined_metal_and_materials, poc_pixel_shift]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `normalmap`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.weave_normals(shape, warp_px=8.0, weft_px=8.0, depth=0.25, angle_deg=0.0) -> 'np.ndarray'` (実装を直接呼ぶなら `import surfacelib; surfacelib.weave_normals(shape, warp_px=8.0, weft_px=8.0, depth=0.25, angle_deg=0.0) -> 'np.ndarray'`、台帳から引くなら `opsoptics.get("weave_normals")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

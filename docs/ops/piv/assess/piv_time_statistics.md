@@ -4,6 +4,7 @@ dim: piv
 category: assess
 in: images
 out: table
+gpu: なし
 examples: [piv_field_analysis_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `images` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.piv_time_statistics(images, window=32, overlap=0.5, **kw)` (実装を直接呼ぶなら `import pivops; pivops.piv_time_statistics(images, window=32, overlap=0.5, **kw)`、台帳から引くなら `opspiv.get("piv_time_statistics")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

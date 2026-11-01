@@ -4,6 +4,7 @@ dim: geocam
 category: sun
 in: image2d
 out: keypoints
+gpu: なし
 examples: [poc_public_camera_heading]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d` → `keypoints`
 - **呼び出し**: `import fullseye as fs; fs.ledger.sun_pixel_position(image, threshold=0.98, min_area=4)` (実装を直接呼ぶなら `import geocam; geocam.sun_pixel_position(image, threshold=0.98, min_area=4)`、台帳から引くなら `opsgeocam.get("sun_pixel_position")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">darkfield_scatter_relation — OPTICS <code style="color:#22d3bf">grating_interf</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">table</code> (an op determined by its arguments alone — it takes no image or data input)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.darkfield_scatter_relation(darkfield=None, sigma_urad=None, distance_mm=23.2, analyzer_period_um=2.0, thickness_mm=None, wavelength_nm=None)</code> (to call the implementation directly, <code style="color:#22d3bf">import gratinginterf; gratinginterf.darkfield_scatter_relation(darkfield=None, sigma_urad=None, distance_mm=23.2, analyzer_period_um=2.0, thickness_mm=None, wavelength_nm=None)</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;darkfield_scatter_relation&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Converts between the dark field D (a visibility ratio) and the width σ of the scattering-angle distribution (published formula for Gaussian scattering).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>

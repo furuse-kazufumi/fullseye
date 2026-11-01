@@ -4,6 +4,7 @@ dim: 3d
 category: surface
 in: 
 out: voxel
+gpu: なし
 examples: [minimal_surfaces]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `voxel`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.gyroid_solid_mask(shape=(64, 64, 64), level=0.0, periods=1.0, thickness=0.3)` (実装を直接呼ぶなら `import render3d; render3d.gyroid_solid_mask(shape=(64, 64, 64), level=0.0, periods=1.0, thickness=0.3)`、台帳から引くなら `ops3d.get("gyroid_solid_mask")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

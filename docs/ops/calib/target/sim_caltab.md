@@ -4,6 +4,7 @@ dim: calib
 category: target
 in: table
 out: table
+gpu: なし
 examples: []
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.sim_caltab(caltab, cam_par, pose, image_size=256, mark_radius=3.0)` (実装を直接呼ぶなら `import caltab; caltab.sim_caltab(caltab, cam_par, pose, image_size=256, mark_radius=3.0)`、台帳から引くなら `opscalib.get("sim_caltab")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

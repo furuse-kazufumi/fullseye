@@ -4,6 +4,7 @@ dim: 3d
 category: occupancy
 in: sdf × points
 out: signal
+gpu: なし
 examples: [occupancy_esdf]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `sdf × points` → `signal`
 - **呼び出し**: `import fullseye as fs; fs.ledger.query_distance(esdf_grid, bounds, res, query_points, mode='trilinear', *, chunk=262144)` (実装を直接呼ぶなら `import occupancy; occupancy.query_distance(esdf_grid, bounds, res, query_points, mode='trilinear', *, chunk=262144)`、台帳から引くなら `ops3d.get("query_distance")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

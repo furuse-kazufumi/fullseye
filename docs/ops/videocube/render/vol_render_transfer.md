@@ -4,6 +4,7 @@ dim: videocube
 category: render
 in: voxel
 out: rgb
+gpu: なし
 examples: [poc_print_layer_inspection, poc_video_cube]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `voxel` → `rgb`
 - **呼び出し**: `import fullseye as fs; fs.ledger.vol_render_transfer(vol, color=None, yaw: 'float' = 35.0, pitch: 'float' = 25.0, size: 'int' = 256, alpha_gain: 'float' = 1.0, static_alpha: 'float' = 0.0, background=(0.04, 0.04, 0.06), frame: 'bool' = True, depth_samples: 'int | None' = None, static_color=None) -> 'np.ndarray'` (実装を直接呼ぶなら `import videocube; videocube.vol_render_transfer(vol, color=None, yaw: 'float' = 35.0, pitch: 'float' = 25.0, size: 'int' = 256, alpha_gain: 'float' = 1.0, static_alpha: 'float' = 0.0, background=(0.04, 0.04, 0.06), frame: 'bool' = True, depth_samples: 'int | None' = None, static_color=None) -> 'np.ndarray'`、台帳から引くなら `opsvideocube.get("vol_render_transfer")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -5,6 +5,7 @@ category: color
 in: color
 out: color
 halcon: trans_from_rgb
+gpu: なし
 examples: [gallery2d_color_artistic, poc_leaf_disease_area, poc_solder_fillet_aoi]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -16,6 +17,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **データ種**: `color` → `color`
 - **呼び出し**: `fullseye.apply(img, "trans_from_rgb", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 - **HALCON 相当**: `trans_from_rgb`(意味・パラメータは HALCON リファレンスが参考になる)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ![trans_from_rgb: input → output](../../_fig/trans_from_rgb.png)
 

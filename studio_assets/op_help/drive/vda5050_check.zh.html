@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">vda5050_check — DRIVE <code style="color:#22d3bf">agv</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vda5050_check(order)</code>(要直接调用实现,<code style="color:#22d3bf">import agvfleet; agvfleet.vda5050_check(order)</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;vda5050_check&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>检查 VDA 5050 order 的<b>结构规则</b>(独立于官方 JSON 模式的自研第二实现(独立实现))。</p>
 <p>规则: 必需键/节点的 sequenceId 从 0 起为连续偶数,边为连续奇数/边数 = 节点数 − 1/ 各边的起点、终点为前后节点/released 从 base 开头连续(仅有一次 base → horizon 的切换)/ 边的 released 与其终点节点相同。返回违规文字的列表(空 = 合格)。</p>

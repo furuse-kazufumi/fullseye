@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">material_absorption — OPTICS <code style="color:#22d3bf">matprop</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">pairs</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.material_absorption(material=&#x27;SI&#x27;, wl_min_nm: &#x27;float&#x27; = 400.0, wl_max_nm: &#x27;float&#x27; = 1400.0, n_points: &#x27;int&#x27; = 101) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import materials; materials.material_absorption(material=&#x27;SI&#x27;, wl_min_nm: &#x27;float&#x27; = 400.0, wl_max_nm: &#x27;float&#x27; = 1400.0, n_points: &#x27;int&#x27; = 101) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;material_absorption&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>吸収係数の曲線 α(λ) = 4πk/λ [1/cm] を <code style="color:#22d3bf">pairs</code>(λ [nm], α)で返す。</p>
 <p>Si では 1.0 µm で ≈ 64 /cm、1.2 µm で ≈ 0.02 /cm(Green 2008)—— 吸収端(≈ 1.1 µm)を跨ぐと 3 桁落ちる。これが NIR 透過検査の波長を決める数字。</p>

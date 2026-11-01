@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">rgb_to_xyz — IMGMETRICS <code style="color:#22d3bf">colorspace</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">rgbimage</code> → <code style="color:#22d3bf">rgb</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rgb_to_xyz(rgb)</code> (to call the implementation directly, <code style="color:#22d3bf">import imgmetrics; imgmetrics.rgb_to_xyz(rgb)</code>; from the registry, <code style="color:#22d3bf">opsimgmetrics.get(&quot;rgb_to_xyz&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>sRGB (<code style="color:#22d3bf">(..., 3)</code>) → CIE XYZ. The transfer function is removed first, then the matrix is applied.</p>
 <p>Procedure: <code style="color:#22d3bf">srgb_to_linear</code> normalises integer dtypes to <code style="color:#22d3bf">[0, 1]</code> while removing the transfer function (IEC 61966-2-1), then the sRGB (D65)→XYZ 3x3 matrix is applied to linear RGB. White <code style="color:#22d3bf">(1, 1, 1)</code> maps to <code style="color:#22d3bf">(0.9505, 1.0, 1.0890)</code> (a scale with Y normalised to 1).</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">phase_peel — DRIVE <code style="color:#22d3bf">pxrd</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">signal × signal × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.phase_peel(two_theta, intensity, dictionary, max_phases=None, min_gain=0.05, min_fraction=0.005, background_order=4, sigma=None)</code>(要直接呼叫實作,<code style="color:#22d3bf">import pxrd; pxrd.phase_peel(two_theta, intensity, dictionary, max_phases=None, min_gain=0.05, min_fraction=0.005, background_order=4, sigma=None)</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;phase_peel&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>從混合物中逐一(每次 1 個)剝離物相(貪婪前向選擇)。</p>
 <p>階段 0 只有背景。每個階段把尚未選中的相逐一加入並以 <code style="color:#22d3bf">phase_fractions</code> 擬合,選出使 <code style="color:#22d3bf">rwp</code> 下降最多的相。若 <code style="color:#22d3bf">rwp</code> 的相對下降幅度小於 <code style="color:#22d3bf">min_gain</code>,或所選相的重量分率小於 <code style="color:#22d3bf">min_fraction</code>,則停止。</p>

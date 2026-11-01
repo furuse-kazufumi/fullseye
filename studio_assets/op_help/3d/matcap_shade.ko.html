@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">matcap_shade — 3D <code style="color:#22d3bf">render</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">normalmap × image2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.matcap_shade(normals, matcap) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import render_shade; render_shade.matcap_shade(normals, matcap) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;matcap_shade&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>MatCap: 시점 공간 법선을 lit-sphere 텍스처에 대응시켜 소재의 겉모습을 옮깁니다. → <code style="color:#22d3bf">(H, W[, C])</code>.</p>
 <p>시공간의 단위 법선 <code style="color:#22d3bf">(nx, ny)</code>(<code style="color:#22d3bf">[-1,1]</code>)를 텍스처 좌표로 사상하고(<code style="color:#22d3bf">u = (nx+1)/2</code>, <code style="color:#22d3bf">v = (1−ny)/2</code>, 행 방향으로 y를 반전), <code style="color:#22d3bf">matcap</code> 영상을 <b>쌍선형 보간</b>으로 조회한다. 조명 계산 없이, 구에 조명을 비추어 찍은 1 장의 재질 외관을임의 형상에 그대로 붙일 수 있다(금속·점토·툰 등).</p>

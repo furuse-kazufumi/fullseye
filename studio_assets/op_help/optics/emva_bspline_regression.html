@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">emva_bspline_regression — OPTICS <code style="color:#22d3bf">sensorchar</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.emva_bspline_regression(x, y, n_intervals=8, x_max=None, x_eval=None)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import sensorchar; sensorchar.emva_bspline_regression(x, y, n_intervals=8, x_max=None, x_eval=None)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;emva_bspline_regression&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>3 次 B-スプラインの最小二乗の当てはめと、その傾き(General 6.6 節、式 44〜49)。</p>
 <p>区間 [0, x_max] を P 等分(Δ = x_max/P)、基底 f_p(x) = β₃(x/Δ − (p − 1))(p = 0..P+2 の P + 3 個、式 44・46)。係数 a_p は Σ_q (Σ_p a_p f_p(x_q) − y_q)² の最小(式 47、Q &gt; P + 3 点が要る)。傾きは Σ_p a_p β₃&#x27;(x/Δ − (p − 1)) / Δ(式 48 に連鎖律の 1/Δ を足した —— 本文は正規化した変数での傾き)。General は「露光の段数が推奨どおりなら 6〜8 区間」と書く。</p>

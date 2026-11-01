@@ -4,6 +4,7 @@ dim: optics
 category: appearance
 in: normalmap
 out: rgbimage
+gpu: なし
 examples: [appearance_structural_colour]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `normalmap` → `rgbimage`
 - **呼び出し**: `import fullseye as fs; fs.ledger.thin_film_rgb(normals, view=(0.0, 0.0, 1.0), thickness_nm=350.0, n_film=1.33, n_sub=1.0, strength=1.0, light=None, nm=None, illuminant=None, polarization='unpolarized', n_out=1.0, under_layers=()) -> 'np.ndarray'` (実装を直接呼ぶなら `import matappear; matappear.thin_film_rgb(normals, view=(0.0, 0.0, 1.0), thickness_nm=350.0, n_film=1.33, n_sub=1.0, strength=1.0, light=None, nm=None, illuminant=None, polarization='unpolarized', n_out=1.0, under_layers=()) -> 'np.ndarray'`、台帳から引くなら `opsoptics.get("thin_film_rgb")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

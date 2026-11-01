@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">kendama_clearance — DRIVE <code style="color:#22d3bf">kendamaworld</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.kendama_clearance(kp: &#x27;dict&#x27;, hand, p_ball, *, R_ken=None, grip=None) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import kendamaworld; kendamaworld.kendama_clearance(kp: &#x27;dict&#x27;, hand, p_ball, *, R_ken=None, grip=None) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;kendama_clearance&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>从球表面到剑玉(剑、皿胴的回转体)的间隙 [m] (负 = 球陷入剑玉)。使用 kp 中招式的姿态(R_ken，握持处 grip)、手端 <code style="color:#22d3bf">hand</code>、球心 <code style="color:#22d3bf">p_ball</code>(均为 (3,) 或 (N, 3))。到回转体的距离严格等于到子午面轮廓的 2-D 距离，因此与网格离散化无关。返回 <code style="color:#22d3bf">{&quot;gap&quot; (N,), &quot;ken&quot; (N,), &quot;cross&quot; (N,)}</code>(ken / cross = 到各部件的间隙)。物理不求解剑玉与球的碰撞，因此用此量统计&quot;球穿透剑玉&quot;的 step(用于门禁与诚实报告)。<code style="color:#22d3bf">R_ken</code>(第 19 轮，连续技的换持)：以 (3, 3) 或逐时刻的 (N, 3, 3) 代替 kp[&quot;R_ken&quot;] 传入姿态。<code style="color:#22d3bf">grip</code> = 握持处(局部)的覆盖。两者都为 None 则与以前相同。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

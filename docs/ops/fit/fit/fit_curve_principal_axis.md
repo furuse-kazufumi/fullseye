@@ -4,6 +4,7 @@ dim: fit
 category: fit
 in: keypoints
 out: table
+gpu: なし
 examples: [fit_ops_from_knowhow]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `keypoints` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.fit_curve_principal_axis(points, degree: 'int' = 2, *, isotropy_ratio: 'float' = 0.95) -> 'dict'` (実装を直接呼ぶなら `import measure; measure.fit_curve_principal_axis(points, degree: 'int' = 2, *, isotropy_ratio: 'float' = 0.95) -> 'dict'`、台帳から引くなら `opsfit.get("fit_curve_principal_axis")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

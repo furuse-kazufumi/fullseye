@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tdoa_bearing — DRIVE <code style="color:#22d3bf">decide</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tdoa_bearing(sig_left, sig_right, fs, mic_spacing, *, c: &#x27;float&#x27; = 343.0, upsample: &#x27;int&#x27; = 16) -&gt; &#x27;Dict[str, object]&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivedecide; drivedecide.tdoa_bearing(sig_left, sig_right, fs, mic_spacing, *, c: &#x27;float&#x27; = 343.0, upsample: &#x27;int&#x27; = 16) -&gt; &#x27;Dict[str, object]&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;tdoa_bearing&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>2개 마이크(왼쪽 = +y, 오른쪽 = −y, 간격 <code style="color:#22d3bf">mic_spacing</code>)의 도달 시간차로부터 음원의 방위(원거리 근사).</p>
 <p>Δt = t_오른쪽 − t_왼쪽(왼쪽에 먼저 도달하면 양), sin θ = c Δt / d, θ = 전방으로부터의 각(왼쪽이 양)</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">pairwise_winding — DRIVE <code style="color:#22d3bf">braidpath</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pairwise_winding(trajectories, obstacles=None)</code>(要直接调用实现,<code style="color:#22d3bf">import braidpath; braidpath.pairwise_winding(trajectories, obstacles=None)</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;pairwise_winding&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>每对股之间的相对绕数 [圈] (相对向量辐角的总变化 / 2π)。对称矩阵,对角为 0。</p>
 <p>辐角的增量用 atan2(外积, 内积) 求(主值 (−π, π])。1 步转过半圈以上时方向无法确定,因此停止。</p>

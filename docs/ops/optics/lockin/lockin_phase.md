@@ -4,6 +4,7 @@ dim: optics
 category: lockin
 in: video
 out: image2d
+gpu: なし
 examples: [poc_lockin_imaging]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `video` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.lockin_phase(video, f_ref, fps, window='rect') -> 'np.ndarray'` (実装を直接呼ぶなら `import lockin; lockin.lockin_phase(video, f_ref, fps, window='rect') -> 'np.ndarray'`、台帳から引くなら `opsoptics.get("lockin_phase")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">moire_mark_read — OPTICS <code style="color:#22d3bf">moire_align</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.moire_mark_read(image, ref_image, pixel_um=0.5, p_mask_um=2.0, p_wafer_um=2.04, layout=&#x27;differential&#x27;, margin_px=4, moving=&#x27;wafer&#x27;, window=&#x27;hann&#x27;, method=&#x27;lockin&#x27;)</code>(要直接调用实现,<code style="color:#22d3bf">import moirealign; moirealign.moire_mark_read(image, ref_image, pixel_um=0.5, p_mask_um=2.0, p_wafer_um=2.04, layout=&#x27;differential&#x27;, margin_px=4, moving=&#x27;wafer&#x27;, window=&#x27;hann&#x27;, method=&#x27;lockin&#x27;)</code>;从台账取用则 <code style="color:#22d3bf">opsoptics.get(&quot;moire_mark_read&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由测量图像与参考图像(位移为 0 时拍摄)读取一个对准标记。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>

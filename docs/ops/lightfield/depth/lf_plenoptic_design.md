@@ -4,6 +4,7 @@ dim: lightfield
 category: depth
 in: 
 out: table
+gpu: なし
 examples: [lightfield_depth, poc_compound_eye]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.lf_plenoptic_design(focal_mm=50.0, f_number=8.0, object_mm=300.0, pixel_um=3.45, mla_pitch_um=27.6, sensor_px=(2048, 2448), *, subpixel_px=0.1)` (実装を直接呼ぶなら `import lightfield; lightfield.lf_plenoptic_design(focal_mm=50.0, f_number=8.0, object_mm=300.0, pixel_um=3.45, mla_pitch_um=27.6, sensor_px=(2048, 2448), *, subpixel_px=0.1)`、台帳から引くなら `opslightfield.get("lf_plenoptic_design")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

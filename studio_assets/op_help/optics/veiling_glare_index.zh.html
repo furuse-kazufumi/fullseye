@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">veiling_glare_index — OPTICS <code style="color:#22d3bf">imaging</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d × image2d × image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.veiling_glare_index(img, dark_mask, bright_mask)</code>(要直接调用实现,<code style="color:#22d3bf">import edgesfr; edgesfr.veiling_glare_index(img, dark_mask, bright_mask)</code>;从台账取用则 <code style="color:#22d3bf">opsoptics.get(&quot;veiling_glare_index&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>杂散光(遮蔽眩光)指数：黑点中心亮度的平均 / 白底亮度的平均(ISO 9358 的思路)。</p>
 <p>*dark_mask*(必需)：黑点<b>中心部分</b>的像素(不含点边缘的模糊 —— 若含边缘，连核心的模糊也会算作杂散光)。*bright_mask*(必需)：白底的像素。★答案随黑点的大小(及光源的范围)而变：对拖尾为 1/(1+(r/r0)²) 的透镜，把黑点边长从 16 → 256 px，同一透镜的指数从 19.6 % → 4.5 %(<code style="color:#22d3bf">poc_veiling_glare</code> 第 3 节)。点的大小须与结果一同报告。</p>

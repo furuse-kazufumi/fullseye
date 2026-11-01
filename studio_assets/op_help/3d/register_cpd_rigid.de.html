@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">register_cpd_rigid — 3D <code style="color:#22d3bf">deform</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">pose</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.register_cpd_rigid(src, dst, iters=50, w=0.0, tol=1e-08)</code> (die Implementierung direkt: <code style="color:#22d3bf">import deform3d; deform3d.register_cpd_rigid(src, dst, iters=50, w=0.0, tol=1e-08)</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;register_cpd_rigid&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Schätzt Rotation und Translation per EM mit der starren Variante von Coherent Point Drift (CPD).</p>
 <p>Richtet <code style="color:#22d3bf">src</code> (bewegt Y, M Punkte) per Starrkörpertransformation an <code style="color:#22d3bf">dst</code> (fest X, N Punkte) aus. CPD betrachtet dst über eine isotrope Gauß-Mischung, deren Schwerpunkte bei src liegen; der E-Schritt aktualisiert die weichen Korrespondenzen (posterior), der M-Schritt die Maximum-Likelihood-Starrkörpertransformation und die Varianz. Anders als bei ICP werden Korrespondenzen nicht hart festgelegt, daher robust gegen anfängliche Fehlausrichtung und teilweise Ausreißer. Skala fest auf 1 (rein starr).</p>

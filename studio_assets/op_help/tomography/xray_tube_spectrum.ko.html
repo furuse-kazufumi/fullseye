@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">xray_tube_spectrum — TOMOGRAPHY <code style="color:#22d3bf">spectral_xray</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">pairs</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.xray_tube_spectrum(kvp: &#x27;float&#x27; = 80.0, anode: &#x27;str&#x27; = &#x27;W&#x27;, takeoff_deg: &#x27;float&#x27; = 12.0, filtration=((&#x27;AL&#x27;, 2.5),), e_min_kev: &#x27;float&#x27; = 5.0, de_kev: &#x27;float&#x27; = 0.5, characteristic: &#x27;bool&#x27; = True, self_absorption: &#x27;bool&#x27; = True) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import dualxray; dualxray.xray_tube_spectrum(kvp: &#x27;float&#x27; = 80.0, anode: &#x27;str&#x27; = &#x27;W&#x27;, takeoff_deg: &#x27;float&#x27; = 12.0, filtration=((&#x27;AL&#x27;, 2.5),), e_min_kev: &#x27;float&#x27; = 5.0, de_kev: &#x27;float&#x27; = 0.5, characteristic: &#x27;bool&#x27; = True, self_absorption: &#x27;bool&#x27; = True) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opstomography.get(&quot;xray_tube_spectrum&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>X선관의 광자 스펙트럼을 <code style="color:#22d3bf">pairs</code>(E [keV], 광자 수 / keV)로 반환한다(Σ φ ΔE = 1로 정규화).</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>

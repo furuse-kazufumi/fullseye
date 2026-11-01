@@ -4,6 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.surface_filter(z, dx, lambda_c=None, lambda_s=None, kind=&#x27;gaussian&#x27;, end_effect=&#x27;reject&#x27;, dy=None)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import roughness; roughness.surface_filter(z, dx, lambda_c=None, lambda_s=None, kind=&#x27;gaussian&#x27;, end_effect=&#x27;reject&#x27;, dy=None)</code>、台帳から引くなら <code style="color:#22d3bf">opsroughness.get(&quot;surface_filter&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>台帳経由の戻り値</b>: <code style="color:#22d3bf">fullseye.ledger.surface_filter(...)</code> は<b>宣言 out 型 <code style="color:#22d3bf">depth</code> の値だけ</b>を返す(本体は補助情報も返す)。捨てられた側が要るときは <code style="color:#22d3bf">fullseye.ledger.surface_filter.raw(...)</code>、または <code style="color:#22d3bf">roughness.surface_filter</code> を直接呼ぶ。</p>
 <p style="margin:2px 0 2px 12px">• 本体の返り: <code style="color:#22d3bf">(roughness, waviness)</code></p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>高さ場を粗さとうねりに分ける(ISO 16610-21 のガウスフィルタ)。</p>
 <p>戻り値は <code style="color:#22d3bf">(roughness, waviness)</code>。<code style="color:#22d3bf">roughness</code> が λc より短い成分、<code style="color:#22d3bf">waviness</code> が長い成分で、<code style="color:#22d3bf">end_effect=&quot;reject&quot;</code> でなければ <code style="color:#22d3bf">roughness + waviness</code> は入力(λs を掛けたあとの一次形状)に厳密に一致する。</p>

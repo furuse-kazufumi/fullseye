@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">material_from_curves — OPTICS <code style="color:#22d3bf">matprop</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">table</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.material_from_curves(n_curve=((400.0, 1.530849), (550.0, 1.518522), (700.0, 1.513064), (1000.0, 1.507502)), k_curve=None, name: &#x27;str&#x27; = &#x27;custom&#x27;, material_class: &#x27;str&#x27; = &#x27;custom&#x27;, reference: &#x27;str&#x27; = &#x27;&#x27;) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import materials; materials.material_from_curves(n_curve=((400.0, 1.530849), (550.0, 1.518522), (700.0, 1.513064), (1000.0, 1.507502)), k_curve=None, name: &#x27;str&#x27; = &#x27;custom&#x27;, material_class: &#x27;str&#x27; = &#x27;custom&#x27;, reference: &#x27;str&#x27; = &#x27;&#x27;) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;material_from_curves&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>measured n(λ) (और k(λ)) की pairs (λ [nm], value) से material record बनाता है।</p>
 <p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>

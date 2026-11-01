@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">hertz_pressure — DRIVE <code style="color:#22d3bf">tacsim</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">matrix × scalar × scalar</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.hertz_pressure(r, a: &#x27;float&#x27;, p0: &#x27;float&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import tacsim; tacsim.hertz_pressure(r, a: &#x27;float&#x27;, p0: &#x27;float&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;hertz_pressure&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>Hertz 接触压力 p(r) = p0 √(1 − r²/a²)(r &lt; a)，外部为 0。与 r 同形状。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>：a, p0 ≤ 0。</p>
 <p>空输入(<code style="color:#22d3bf">r</code> 为 0 个元素)会引发 <code style="color:#22d3bf">ValueError</code>。</p>

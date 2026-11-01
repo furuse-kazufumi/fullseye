@@ -1,0 +1,513 @@
+{
+  "generated_by": "tools/profile_ops.py",
+  "python": "C:\\Program Files\\Python311\\python.exe",
+  "cwd": "C:\\dev\\projects\\imgevolve_wt_gpu",
+  "runs": [
+    {
+      "script": "examples/poc_cell_counting.py",
+      "status": "ok",
+      "error": null,
+      "elapsed_s": 16.828697800054215
+    },
+    {
+      "script": "examples/poc_crack_width.py",
+      "status": "ok",
+      "error": null,
+      "elapsed_s": 12.346456300001591
+    },
+    {
+      "script": "examples/poc_crop_phenotyping.py",
+      "status": "ok",
+      "error": null,
+      "elapsed_s": 47.449982100049965
+    },
+    {
+      "script": "examples/poc_ct_void_morphology.py",
+      "status": "ok",
+      "error": null,
+      "elapsed_s": 124.01718520000577
+    },
+    {
+      "script": "examples/poc_dehazing.py",
+      "status": "ok",
+      "error": null,
+      "elapsed_s": 16.606210900004953
+    },
+    {
+      "script": "examples/poc_document_scan.py",
+      "status": "ok",
+      "error": null,
+      "elapsed_s": 14.760335800005123
+    },
+    {
+      "script": "examples/poc_fabric_defect.py",
+      "status": "ok",
+      "error": null,
+      "elapsed_s": 7.533203199971467
+    },
+    {
+      "script": "examples/poc_fiber_orientation.py",
+      "status": "ok",
+      "error": null,
+      "elapsed_s": 14.087053299997933
+    },
+    {
+      "script": "examples/poc_focus_stacking.py",
+      "status": "ok",
+      "error": null,
+      "elapsed_s": 21.99559060006868
+    },
+    {
+      "script": "examples/poc_fresco_craquelure.py",
+      "status": "ok",
+      "error": null,
+      "elapsed_s": 74.35514330002479
+    },
+    {
+      "script": "examples/poc_leaf_disease_area.py",
+      "status": "ok",
+      "error": null,
+      "elapsed_s": 58.47466049995273
+    },
+    {
+      "script": "examples/poc_metal_grain_size.py",
+      "status": "ok",
+      "error": null,
+      "elapsed_s": 27.287284099962562
+    },
+    {
+      "script": "examples/poc_mri_bias_field.py",
+      "status": "ok",
+      "error": null,
+      "elapsed_s": 44.39608390000649
+    },
+    {
+      "script": "examples/poc_nuclei_ploidy.py",
+      "status": "ok",
+      "error": null,
+      "elapsed_s": 12.786606200039387
+    },
+    {
+      "script": "examples/poc_particle_sizing.py",
+      "status": "ok",
+      "error": null,
+      "elapsed_s": 33.83640470006503
+    },
+    {
+      "script": "examples/poc_photoelasticity.py",
+      "status": "ok",
+      "error": null,
+      "elapsed_s": 18.91321789997164
+    },
+    {
+      "script": "examples/poc_pipe_wall_loss.py",
+      "status": "ok",
+      "error": null,
+      "elapsed_s": 31.66034030006267
+    },
+    {
+      "script": "examples/poc_print_registration.py",
+      "status": "ok",
+      "error": null,
+      "elapsed_s": 64.83280110009946
+    },
+    {
+      "script": "examples/poc_recycling_sorting.py",
+      "status": "ok",
+      "error": null,
+      "elapsed_s": 137.97379780001938
+    },
+    {
+      "script": "examples/poc_safety_clearance.py",
+      "status": "ok",
+      "error": null,
+      "elapsed_s": 45.82380100002047
+    }
+  ],
+  "ops": [
+    {
+      "op": "xsk_meijering",
+      "family": "texture",
+      "gpu": null,
+      "calls": 52,
+      "mean_ms": 63.699246153846154,
+      "total_s": 3.3123608
+    },
+    {
+      "op": "xsk2_h_maxima",
+      "family": "segmentation",
+      "gpu": null,
+      "calls": 2751,
+      "mean_ms": 0.9387632497273718,
+      "total_s": 2.5825377
+    },
+    {
+      "op": "sk_area_opening",
+      "family": "morphology",
+      "gpu": null,
+      "calls": 61,
+      "mean_ms": 35.918259016393435,
+      "total_s": 2.1910138
+    },
+    {
+      "op": "fill_holes",
+      "family": "region",
+      "gpu": "fill_holes",
+      "calls": 498,
+      "mean_ms": 1.2065849397590362,
+      "total_s": 0.6008793
+    },
+    {
+      "op": "select_largest",
+      "family": "region",
+      "gpu": null,
+      "calls": 378,
+      "mean_ms": 1.2144798941798942,
+      "total_s": 0.4590734
+    },
+    {
+      "op": "xsk2_multiotsu",
+      "family": "segmentation",
+      "gpu": null,
+      "calls": 434,
+      "mean_ms": 1.0195877880184332,
+      "total_s": 0.4425011
+    },
+    {
+      "op": "gray_bothat",
+      "family": "morphology",
+      "gpu": "gray_bothat@twin",
+      "calls": 47,
+      "mean_ms": 9.374863829787234,
+      "total_s": 0.4406186
+    },
+    {
+      "op": "opening_circle",
+      "family": "region",
+      "gpu": "opening_circle",
+      "calls": 38,
+      "mean_ms": 10.381442105263158,
+      "total_s": 0.3944948
+    },
+    {
+      "op": "hx_close_edges",
+      "family": "halcon_ext",
+      "gpu": null,
+      "calls": 41,
+      "mean_ms": 8.959985365853658,
+      "total_s": 0.3673594
+    },
+    {
+      "op": "sk_otsu",
+      "family": "segmentation",
+      "gpu": null,
+      "calls": 585,
+      "mean_ms": 0.5080300854700855,
+      "total_s": 0.2971976
+    },
+    {
+      "op": "trans_from_rgb",
+      "family": "color",
+      "gpu": null,
+      "calls": 120,
+      "mean_ms": 2.2200583333333332,
+      "total_s": 0.266407
+    },
+    {
+      "op": "thinning",
+      "family": "region",
+      "gpu": null,
+      "calls": 29,
+      "mean_ms": 8.30613448275862,
+      "total_s": 0.2408779
+    },
+    {
+      "op": "sk_frangi",
+      "family": "texture",
+      "gpu": null,
+      "calls": 3,
+      "mean_ms": 76.303,
+      "total_s": 0.228909
+    },
+    {
+      "op": "otsu",
+      "family": "segmentation",
+      "gpu": "otsu",
+      "calls": 60,
+      "mean_ms": 3.3835883333333334,
+      "total_s": 0.2030153
+    },
+    {
+      "op": "sobel_dir",
+      "family": "edges",
+      "gpu": "sobel_dir",
+      "calls": 41,
+      "mean_ms": 4.760214634146341,
+      "total_s": 0.1951688
+    },
+    {
+      "op": "xsk_sato",
+      "family": "texture",
+      "gpu": null,
+      "calls": 3,
+      "mean_ms": 62.568733333333334,
+      "total_s": 0.1877062
+    },
+    {
+      "op": "dyn_threshold",
+      "family": "segmentation",
+      "gpu": "dyn_threshold",
+      "calls": 47,
+      "mean_ms": 3.8564148936170217,
+      "total_s": 0.1812515
+    },
+    {
+      "op": "reg_close",
+      "family": "region",
+      "gpu": null,
+      "calls": 340,
+      "mean_ms": 0.5307920588235294,
+      "total_s": 0.1804693
+    },
+    {
+      "op": "gauss_filter",
+      "family": "smoothing",
+      "gpu": "gauss_filter@twin",
+      "calls": 89,
+      "mean_ms": 1.9925719101123596,
+      "total_s": 0.1773389
+    },
+    {
+      "op": "gaussian",
+      "family": "smoothing",
+      "gpu": "gauss_filter",
+      "calls": 451,
+      "mean_ms": 0.392030155210643,
+      "total_s": 0.1768056
+    },
+    {
+      "op": "get_region_contour",
+      "family": "region",
+      "gpu": null,
+      "calls": 33,
+      "mean_ms": 4.832972727272727,
+      "total_s": 0.1594881
+    },
+    {
+      "op": "bin_threshold",
+      "family": "segmentation",
+      "gpu": null,
+      "calls": 46,
+      "mean_ms": 3.370965217391304,
+      "total_s": 0.1550644
+    },
+    {
+      "op": "r2_endpoints_skeleton",
+      "family": "region",
+      "gpu": null,
+      "calls": 61,
+      "mean_ms": 2.3930606557377048,
+      "total_s": 0.1459767
+    },
+    {
+      "op": "sobel_amp",
+      "family": "edges",
+      "gpu": "sobel_amp@twin",
+      "calls": 57,
+      "mean_ms": 2.4066929824561405,
+      "total_s": 0.1371815
+    },
+    {
+      "op": "cv_blackhat",
+      "family": "morphology",
+      "gpu": null,
+      "calls": 64,
+      "mean_ms": 1.82213125,
+      "total_s": 0.1166164
+    },
+    {
+      "op": "pruning",
+      "family": "region",
+      "gpu": null,
+      "calls": 61,
+      "mean_ms": 1.3344131147540985,
+      "total_s": 0.0813992
+    },
+    {
+      "op": "junctions_skeleton",
+      "family": "region",
+      "gpu": null,
+      "calls": 61,
+      "mean_ms": 1.179072131147541,
+      "total_s": 0.0719234
+    },
+    {
+      "op": "hysteresis_threshold",
+      "family": "segmentation",
+      "gpu": null,
+      "calls": 61,
+      "mean_ms": 1.164744262295082,
+      "total_s": 0.0710494
+    },
+    {
+      "op": "corner_response",
+      "family": "edges",
+      "gpu": null,
+      "calls": 2,
+      "mean_ms": 30.77355,
+      "total_s": 0.0615471
+    },
+    {
+      "op": "skeleton",
+      "family": "region",
+      "gpu": null,
+      "calls": 61,
+      "mean_ms": 1.0075918032786886,
+      "total_s": 0.0614631
+    },
+    {
+      "op": "invert_image",
+      "family": "gray",
+      "gpu": "invert_image@twin",
+      "calls": 47,
+      "mean_ms": 1.1987829787234041,
+      "total_s": 0.0563428
+    },
+    {
+      "op": "access_channel",
+      "family": "color",
+      "gpu": null,
+      "calls": 115,
+      "mean_ms": 0.3825834782608695,
+      "total_s": 0.0439971
+    },
+    {
+      "op": "threshold",
+      "family": "segmentation",
+      "gpu": "threshold",
+      "calls": 108,
+      "mean_ms": 0.3854185185185185,
+      "total_s": 0.0416252
+    },
+    {
+      "op": "dc_homomorphic",
+      "family": "decomposition",
+      "gpu": null,
+      "calls": 5,
+      "mean_ms": 8.079780000000001,
+      "total_s": 0.0403989
+    },
+    {
+      "op": "hx_split_skeleton_region",
+      "family": "halcon_ext",
+      "gpu": null,
+      "calls": 61,
+      "mean_ms": 0.5652245901639344,
+      "total_s": 0.0344787
+    },
+    {
+      "op": "mean_image",
+      "family": "smoothing",
+      "gpu": "mean_image@twin",
+      "calls": 302,
+      "mean_ms": 0.11170794701986757,
+      "total_s": 0.0337358
+    },
+    {
+      "op": "var_threshold",
+      "family": "segmentation",
+      "gpu": null,
+      "calls": 1,
+      "mean_ms": 14.9812,
+      "total_s": 0.0149812
+    },
+    {
+      "op": "illuminate",
+      "family": "gray",
+      "gpu": "illuminate",
+      "calls": 1,
+      "mean_ms": 10.863,
+      "total_s": 0.010863
+    },
+    {
+      "op": "sg_gmm_segment",
+      "family": "segment",
+      "gpu": null,
+      "calls": 5,
+      "mean_ms": 1.64424,
+      "total_s": 0.0082212
+    },
+    {
+      "op": "gray_tophat",
+      "family": "morphology",
+      "gpu": "gray_tophat@twin",
+      "calls": 1,
+      "mean_ms": 7.1625,
+      "total_s": 0.0071625
+    },
+    {
+      "op": "laplace",
+      "family": "edges",
+      "gpu": "laplace",
+      "calls": 35,
+      "mean_ms": 0.17219142857142858,
+      "total_s": 0.0060267
+    },
+    {
+      "op": "xcv2_lap_var",
+      "family": "features",
+      "gpu": null,
+      "calls": 17,
+      "mean_ms": 0.2530470588235294,
+      "total_s": 0.0043018
+    },
+    {
+      "op": "clahe",
+      "family": "gray",
+      "gpu": null,
+      "calls": 3,
+      "mean_ms": 1.3594,
+      "total_s": 0.0040782
+    },
+    {
+      "op": "reg_erode",
+      "family": "region",
+      "gpu": "reg_erode",
+      "calls": 8,
+      "mean_ms": 0.239375,
+      "total_s": 0.001915
+    },
+    {
+      "op": "equalize",
+      "family": "gray",
+      "gpu": "equalize_image",
+      "calls": 3,
+      "mean_ms": 0.43206666666666665,
+      "total_s": 0.0012962
+    },
+    {
+      "op": "distance_transform",
+      "family": "region",
+      "gpu": null,
+      "calls": 4,
+      "mean_ms": 0.107175,
+      "total_s": 0.0004287
+    },
+    {
+      "op": "dilation_circle",
+      "family": "region",
+      "gpu": "dilation_circle",
+      "calls": 1,
+      "mean_ms": 0.3773,
+      "total_s": 0.0003773
+    },
+    {
+      "op": "circularity",
+      "family": "features",
+      "gpu": null,
+      "calls": 1,
+      "mean_ms": 0.3008,
+      "total_s": 0.0003008
+    }
+  ]
+}

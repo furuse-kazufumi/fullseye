@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">piv_divergence — PIV <code style="color:#22d3bf">field</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">flow2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_divergence(flow, spacing=1.0)</code>(要直接呼叫實作,<code style="color:#22d3bf">import pivops; pivops.piv_divergence(flow, spacing=1.0)</code>;從台帳取用則 <code style="color:#22d3bf">opspiv.get(&quot;piv_divergence&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>散度 <code style="color:#22d3bf">d(dy)/dy + d(dx)/dx</code>。<b>不可壓縮時為 0</b> —— 可用作獨立的驗算。</p>
 <p>公式：<code style="color:#22d3bf">gradient(flow[0], spacing, axis=0) + gradient(flow[1], spacing, axis=1)</code> (<code style="color:#22d3bf">numpy.gradient</code>：內部為中心差分，網格邊緣為單側差分)。<code style="color:#22d3bf">flow[0]</code> 是列方向的位移 <code style="color:#22d3bf">dy</code>，<code style="color:#22d3bf">flow[1]</code> 是行方向的位移 <code style="color:#22d3bf">dx</code>，<code style="color:#22d3bf">x</code> = 行，<code style="color:#22d3bf">y</code> = 列。即使列朝下，散度的符號也不依座標的方向而定(與渦度 <code style="color:#22d3bf">piv_vorticity</code> 不同，不會反轉)。正 = 源，負 = 匯。</p>

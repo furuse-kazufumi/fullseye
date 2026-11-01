@@ -4,6 +4,7 @@ dim: tomography
 category: spectral_xray
 in: images
 out: image2d
+gpu: なし
 examples: []
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `images` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.r_value_map(signal, channels=None, photons_per_pixel: 'float' = 100000.0, low: 'int' = 0, high: 'int' = -1, flat=None, min_log: 'float' = 0.02) -> 'np.ndarray'` (実装を直接呼ぶなら `import dualxray; dualxray.r_value_map(signal, channels=None, photons_per_pixel: 'float' = 100000.0, low: 'int' = 0, high: 'int' = -1, flat=None, min_log: 'float' = 0.02) -> 'np.ndarray'`、台帳から引くなら `opstomography.get("r_value_map")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -4,6 +4,7 @@ dim: math
 category: numerics
 in: signal
 out: signal
+gpu: なし
 examples: [poc_dfm_thickness_overhang, poc_itof_multifreq]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal` → `signal`
 - **呼び出し**: `import fullseye as fs; fs.ledger.erfc(x) -> 'np.ndarray'` (実装を直接呼ぶなら `import mathnumerics; mathnumerics.erfc(x) -> 'np.ndarray'`、台帳から引くなら `opsmath.get("erfc")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

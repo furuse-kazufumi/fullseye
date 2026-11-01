@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">film_thickness_fit — OPTICS <code style="color:#22d3bf">film</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.film_thickness_fit(spectrum, film=&#x27;SIO2&#x27;, substrate=&#x27;SI&#x27;, thickness_min_nm=0.0, thickness_max_nm=3000.0, under=(), angle_deg=0.0, na=0.0, fit_scale=False, ambient=1.0, roughness_nm=0.0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import filmoptics; filmoptics.film_thickness_fit(spectrum, film=&#x27;SIO2&#x27;, substrate=&#x27;SI&#x27;, thickness_min_nm=0.0, thickness_max_nm=3000.0, under=(), angle_deg=0.0, na=0.0, fit_scale=False, ambient=1.0, roughness_nm=0.0)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;film_thickness_fit&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>reflectance spectrum पर transfer-matrix model fit करके film की मोटाई (non-linear least squares: global grid search, फिर local refinement)।</p>
 <p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>

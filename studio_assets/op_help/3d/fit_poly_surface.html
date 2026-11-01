@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">fit_poly_surface — 3D <code style="color:#22d3bf">surface_fit</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d × image2d × image2d</code> → <code style="color:#22d3bf">poly_surface</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fit_poly_surface(x, y, z, degree=2)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import match3d; match3d.fit_poly_surface(x, y, z, degree=2)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;fit_poly_surface&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>散布 (x,y,z) → z=f(x,y) 多項式最小二乗。返り値 model(coef/powers/degree/rms/pv)。</p>
 <p>基底 <code style="color:#22d3bf">{x^i·y^j : i + j &lt;= degree}</code>(項数 <code style="color:#22d3bf">(degree+1)(degree+2)/2</code>。degree=1 で 3 項の平面、2 で 6 項の 2 次曲面)を <code style="color:#22d3bf">lstsq</code> で当てる。<code style="color:#22d3bf">x, y, z</code> は同じ要素数なら形は問わない(内部で ravel。格子なら <code style="color:#22d3bf">np.mgrid</code> の出力をそのまま)。返り値 dict: <code style="color:#22d3bf">coef</code> (T,) 係数、<code style="color:#22d3bf">powers</code> は各係数の <code style="color:#22d3bf">(i, j)</code>(項 <code style="color:#22d3bf">x**i * y**j</code>)、<code style="color:#22d3bf">degree</code>、<code style="color:#22d3bf">rms</code> は残差 RMS、<code style="color:#22d3bf">pv</code> は残差の peak-to-valley(max − min)。単位は z。</p>

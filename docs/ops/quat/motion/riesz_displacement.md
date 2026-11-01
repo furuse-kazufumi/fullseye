@@ -4,6 +4,7 @@ dim: quat
 category: motion
 in: video
 out: table
+gpu: なし
 examples: [quaternion_monogenic]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `video` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.riesz_displacement(video, f_lo, f_hi, fps, scales: 'int' = 4) -> 'dict'` (実装を直接呼ぶなら `import quatimage; quatimage.riesz_displacement(video, f_lo, f_hi, fps, scales: 'int' = 4) -> 'dict'`、台帳から引くなら `opsquat.get("riesz_displacement")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

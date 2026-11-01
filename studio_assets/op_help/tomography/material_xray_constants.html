@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">material_xray_constants — TOMOGRAPHY <code style="color:#22d3bf">spectral_xray</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.material_xray_constants(material=&#x27;CU&#x27;, energy_kev: &#x27;float&#x27; = 8.0, density_g_cm3=None) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import materials; materials.material_xray_constants(material=&#x27;CU&#x27;, energy_kev: &#x27;float&#x27; = 8.0, density_g_cm3=None) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opstomography.get(&quot;material_xray_constants&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>1 エネルギーの X 線の定数(μ/ρ・μ_en/ρ・μ・半価層・平均自由行程)と出典を返す。</p>
 <p>返り値: dict(name, energy_kev, mu_rho_cm2_g, mu_en_rho_cm2_g, density_g_cm3, mu_per_cm, hvl_mm = 10·ln 2/μ, mfp_mm = 10/μ, edges(±20 % の範囲にある吸収端の (元素, 端, keV)), kind, reference)。単色 X 線の半価層は ln 2/μ そのもの(多色の線質の半価層は <code style="color:#22d3bf">dualxray.xray_beam_quality</code>)。</p>

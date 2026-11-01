@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">points_render — 3D <code style="color:#22d3bf">render</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">rgbimage</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.points_render(points, colors=None, size=(256, 256), K=None, R=None, t=None, projection=&#x27;orthographic&#x27;, radius_px=1.5, footprint=&#x27;gaussian&#x27;, composite=&#x27;over&#x27;, opacity=1.0, depth_cue=0.0, background=(0.0, 0.0, 0.0), margin=0.05)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import render3d; render3d.points_render(points, colors=None, size=(256, 256), K=None, R=None, t=None, projection=&#x27;orthographic&#x27;, radius_px=1.5, footprint=&#x27;gaussian&#x27;, composite=&#x27;over&#x27;, opacity=1.0, depth_cue=0.0, background=(0.0, 0.0, 0.0), margin=0.05)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;points_render&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>(N, 3) point cloud को RGB image (H, W, 3) में render करता है: anti-aliased splats, depth के क्रम में, deterministic।</p>
 <p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>

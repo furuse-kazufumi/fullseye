@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">mv_pls — MULTIVAR <code style="color:#22d3bf">analysis</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">matrix × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mv_pls(X=None, Y=None, n_components=None, max_components=10, cv=7, method=&#x27;nipals&#x27;, standardize=True) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import multivar; multivar.mv_pls(X=None, Y=None, n_components=None, max_components=10, cv=7, method=&#x27;nipals&#x27;, standardize=True) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsmultivar.get(&quot;mv_pls&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Y を X に回帰する部分最小二乗(交差検証の Q^2、Q^2 による成分数の規則、VIP つき)。</p>
 <p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>

@@ -2,7 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">gaussians_to_voxel — 3D <code style="color:#22d3bf">transform</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">voxel</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gaussians_to_voxel(means, scales, opacities, size, bounds, device=&#x27;cpu&#x27;)</code>(要直接调用实现,<code style="color:#22d3bf">import match3d; match3d.gaussians_to_voxel(means, scales, opacities, size, bounds, device=&#x27;cpu&#x27;)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;gaussians_to_voxel&quot;)</code>)</p>
-<p style="margin:2px 0 2px 12px">• <b>GPU</b>:该算子有 GPU 路径(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>3DGS(各向异性高斯)→ 密度体素。把每个高斯按 opacity 置于 means,再用平均 scale 平滑。</p>
 <p>近似(各向同性 splat + 平滑): 精确的各向异性协方差光栅化很重,所以先以 opacity 为权重对 means 做 splat → 按 scale 平均值做 gaussian 平滑。对匹配的 coarse alignment 已足够。</p>

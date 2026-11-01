@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">noncoaxial_drawing — OPTICS <code style="color:#22d3bf">drawing</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.noncoaxial_drawing(system, fields=None, rays=3, view=&#x27;yz&#x27;, scale=None, title=None, profile_points=61, rotate_deg=0, overlays=None)</code> (die Implementierung direkt: <code style="color:#22d3bf">import optdraw; optdraw.noncoaxial_drawing(system, fields=None, rays=3, view=&#x27;yz&#x27;, scale=None, title=None, profile_points=61, rotate_deg=0, overlays=None)</code>; aus dem Register: <code style="color:#22d3bf">opsoptics.get(&quot;noncoaxial_drawing&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Schnitt- / Aufstellungszeichnung eines gefalteten Systems (<code style="color:#22d3bf">table</code>, ein Zeichnungs-dict) — Flächen, Spiegel, Strahlteiler, Bildebene und Strahlen eines <code style="color:#22d3bf">raytrace3d</code>-Systems, in globalen Koordinaten auf die Meridionalebene projiziert.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>

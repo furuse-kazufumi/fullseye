@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">n_sources_mdl — MATH <code style="color:#22d3bf">spectral</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.n_sources_mdl(X) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import mathspectral; mathspectral.n_sources_mdl(X) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsmath.get(&quot;n_sources_mdl&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Estimates the number of sources from snapshots by the MDL criterion (Wax &amp; Kailath 1985).</p>
 <p>The covariance eigenvalues are sorted in descending order, and for each hypothesis &quot;the bottom M−k are equal (= noise)&quot; MDL(k) = −K (M−k) log(geometric mean / arithmetic mean) + ½ k (2M−k) log K is computed; the k with the minimum is chosen. Assumes the noise is white and the number of snapshots K is sufficiently larger than the number of elements M.</p>

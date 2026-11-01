@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">raw_dead_pixel_correct — GFX2D <code style="color:#22d3bf">isp</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.raw_dead_pixel_correct(raw, threshold=0.1)</code> (to call the implementation directly, <code style="color:#22d3bf">import gfx2d; gfx2d.raw_dead_pixel_correct(raw, threshold=0.1)</code>; from the registry, <code style="color:#22d3bf">opsgfx2d.get(&quot;raw_dead_pixel_correct&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Replace every dead pixel (<code style="color:#22d3bf">raw_dead_pixel_mask</code>) by the <b>median of its 8 same-colour neighbours</b>; every other pixel is returned bit-for-bit.</p>
 <p>The median rather than the mean so that two adjacent defects do not pull each other&#x27;s replacement. Ground truth: in a smooth frame with planted defects the corrected values are within the neighbours&#x27; range and the untouched pixels are identical to the input.</p>

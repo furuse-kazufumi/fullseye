@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">cutting_wrist_mjcf — DRIVE <code style="color:#22d3bf">cutting</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">table × scalar</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cutting_wrist_mjcf(scene=None, theta_deg: &#x27;float&#x27; = 4.0, k_n_per_mm: &#x27;float&#x27; = 4.0, damping: &#x27;float&#x27; = 25.0, mass: &#x27;float&#x27; = 0.15) -&gt; &#x27;str&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import cutting; cutting.cutting_wrist_mjcf(scene=None, theta_deg: &#x27;float&#x27; = 4.0, k_n_per_mm: &#x27;float&#x27; = 4.0, damping: &#x27;float&#x27; = 25.0, mass: &#x27;float&#x27; = 0.15) -&gt; &#x27;str&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;cutting_wrist_mjcf&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>柔順腕部的刀刃場景(MJCF 字串，不需要 mujoco)。刀刃有 1 個垂直滑動關節(彈簧 <code style="color:#22d3bf">k</code>、阻尼)，食材與砧板僅供顯示。</p>
 <p>攝影機 <code style="color:#22d3bf">face</code> 為正射投影,配置成使像素尺寸與 <code style="color:#22d3bf">board_row</code> 和 <code style="color:#22d3bf">cutting_face_render</code> 相同。影像中心以像素中心計為 ((H−1)/2, (W−1)/2)(寫成 H/2 會偏 0.5 px)。關節的摩擦損失設得較硬(預設的柔軟摩擦損失表現得像與速度成正比的黏性,切斷力會小 1 個數量級)。食材的阻力在行進中每一步改寫為關節的摩擦損失(<code style="color:#22d3bf">cutting_mujoco_wrist</code>)。</p>

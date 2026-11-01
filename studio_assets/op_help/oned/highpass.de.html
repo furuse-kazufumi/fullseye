@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">highpass — ONED <code style="color:#22d3bf">signal</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.highpass(x, rate, cutoff, order=4)</code> (die Implementierung direkt: <code style="color:#22d3bf">import dsp; dsp.highpass(x, rate, cutoff, order=4)</code>; aus dem Register: <code style="color:#22d3bf">ops1d.get(&quot;highpass&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Butterworth-Hochpass. Gleicher Nyquist- / Längenvertrag wie <code style="color:#22d3bf">lowpass</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

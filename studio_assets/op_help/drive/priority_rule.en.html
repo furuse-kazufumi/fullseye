@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">priority_rule — DRIVE <code style="color:#22d3bf">crossing</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.priority_rule(own, cross, *, signalised: &#x27;bool&#x27; = False, wide_ratio: &#x27;float&#x27; = 1.5) -&gt; &#x27;Dict[str, object]&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import drivecrossing; drivecrossing.priority_rule(own, cross, *, signalised: &#x27;bool&#x27; = False, wide_ratio: &#x27;float&#x27; = 1.5) -&gt; &#x27;Dict[str, object]&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;priority_rule&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>At an intersection without traffic control, whether the own vehicle (own) yields to a vehicle on the crossing road (cross) (Art. 36(1)-(3)).</p>
 <p>own, cross = {&quot;width&quot;: road width [m], &quot;priority_sign&quot;: priority-road sign, &quot;centre_line&quot;: centre line / vehicle lanes continuing into the intersection}. Priority road = sign or centre line (the parenthetical in Article 36(2) of the Road Traffic Act (Japan)). Clearly wider = width ratio ≥ <code style="color:#22d3bf">wide_ratio</code> (<b>assumption</b>).</p>

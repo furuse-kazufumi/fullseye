@@ -4,6 +4,7 @@ dim: optics
 category: omni360
 in: rgbvideo
 out: rgbvideo
+gpu: なし
 examples: [poc_omni360_inspection]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `rgbvideo` → `rgbvideo`
 - **呼び出し**: `import fullseye as fs; fs.ledger.video360_viewport_track(frames, yaw, pitch, fov=90, size=(256, 256))` (実装を直接呼ぶなら `import omni360; omni360.video360_viewport_track(frames, yaw, pitch, fov=90, size=(256, 256))`、台帳から引くなら `opsoptics.get("video360_viewport_track")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

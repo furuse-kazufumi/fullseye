@@ -4,6 +4,7 @@ dim: annotate
 category: shape
 in: image2d
 out: image2d
+gpu: なし
 examples: [annotate_gallery, poc_dimensional_inspection, poc_driving_crossing, poc_driving_lateral, poc_driving_pass, poc_dual_energy_xray, poc_interferometry_step, poc_machine_condition_fusion, poc_peg_insertion_tactile, poc_polarization_specular, poc_public_camera_heading_real]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.ellipse(img, center, radii, angle_deg=0.0, color='neutral', width=2, fill=False, alpha=1.0, scheme='okabe_ito')` (実装を直接呼ぶなら `import annotate; annotate.ellipse(img, center, radii, angle_deg=0.0, color='neutral', width=2, fill=False, alpha=1.0, scheme='okabe_ito')`、台帳から引くなら `opsannotate.get("ellipse")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">swarm_render_overhead — DRIVE <code style="color:#22d3bf">swarmflow</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">matrix × any × scalar</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.swarm_render_overhead(points, shape, res: &#x27;float&#x27;, center=(0.0, 0.0), diameter_px: &#x27;float&#x27; = 3.0, intensity: &#x27;float&#x27; = 1.0, background: &#x27;float&#x27; = 0.0) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import swarmflow; swarmflow.swarm_render_overhead(points, shape, res: &#x27;float&#x27;, center=(0.0, 0.0), diameter_px: &#x27;float&#x27; = 3.0, intensity: &#x27;float&#x27; = 1.0, background: &#x27;float&#x27; = 0.0) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;swarm_render_overhead&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>सदस्यों की position → ऊपर से देखा 1 frame (Gaussian चमकीले बिंदु, व्यास = standard deviation का 2 गुना = PIV की परिपाटी, pivops जैसा ही)।</p>
 <p>Args:</p>

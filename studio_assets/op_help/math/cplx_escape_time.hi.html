@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">cplx_escape_time — MATH <code style="color:#22d3bf">complex</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">image2d</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cplx_escape_time(kind=&#x27;mandelbrot&#x27;, param=0j, centre=0j, half_width=2.0, shape=(256, 256), max_iter=64, escape_radius=2.0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import mathops; mathops.cplx_escape_time(kind=&#x27;mandelbrot&#x27;, param=0j, centre=0j, half_width=2.0, shape=(256, 256), max_iter=64, escape_radius=2.0)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsmath.get(&quot;cplx_escape_time&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p><code style="color:#22d3bf">z -&gt; z**2 + c</code> के कितने steps में escape disc से बाहर निकलता है।</p>
 <p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>

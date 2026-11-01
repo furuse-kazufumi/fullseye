@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">axes_transform — ANNOTATE <code style="color:#22d3bf">plot</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">axes</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.axes_transform(rect, xlim, ylim, invert_y=True, xscale=&#x27;linear&#x27;, yscale=&#x27;linear&#x27;)</code>(要直接调用实现,<code style="color:#22d3bf">import annotate; annotate.axes_transform(rect, xlim, ylim, invert_y=True, xscale=&#x27;linear&#x27;, yscale=&#x27;linear&#x27;)</code>;从台账取用则 <code style="color:#22d3bf">opsannotate.get(&quot;axes_transform&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>构建数据坐标 → 像素坐标的(<b>闭式</b>)映射。</p>
 <p>把图像的事实 <code style="color:#22d3bf">row 向下</code> 与图表的惯例 <code style="color:#22d3bf">y 向上</code> 之间的偏差,<b>只在这 1 处</b>吸收。绘图代码随身携带这个字典。</p>

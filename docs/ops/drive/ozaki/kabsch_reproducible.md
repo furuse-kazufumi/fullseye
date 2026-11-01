@@ -4,6 +4,7 @@ dim: drive
 category: ozaki
 in: points × points
 out: table
+gpu: なし
 examples: [poc_reproducible_icp]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `points × points` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.kabsch_reproducible(P, Q)` (実装を直接呼ぶなら `import ozakimm; ozakimm.kabsch_reproducible(P, Q)`、台帳から引くなら `opsdrive.get("kabsch_reproducible")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

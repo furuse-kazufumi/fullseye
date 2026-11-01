@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">measure_pos — MEASURE1D <code style="color:#22d3bf">caliper</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d × measurehandle</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.measure_pos(image, measure, sigma=1.0, threshold=0.1, transition=&#x27;all&#x27;)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import measuring1d; measuring1d.measure_pos(image, measure, sigma=1.0, threshold=0.1, transition=&#x27;all&#x27;)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsmeasure1d.get(&quot;measure_pos&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>측정선 위의 에지 위치(서브픽셀)와 진폭을 추출한다(measure_pos).</p>
 <p>각 에지: <code style="color:#22d3bf">pos</code>(샘플 index, 사각형은 시작점부터의 px) / <code style="color:#22d3bf">dist</code>(시작점부터의거리 [px]) / <code style="color:#22d3bf">row</code>, <code style="color:#22d3bf">col</code> / <code style="color:#22d3bf">amplitude</code>(부호 있는 그레이 차) / <code style="color:#22d3bf">polarity</code> (&quot;positive&quot; = 측정 방향으로 밝아진다). <code style="color:#22d3bf">threshold</code> 는 |amplitude| 의 하한, <code style="color:#22d3bf">transition</code> 은 &quot;all&quot; / &quot;positive&quot; / &quot;negative&quot;.</p>

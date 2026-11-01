@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">vol_gaussian_psf — 3D <code style="color:#22d3bf">restoration</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">measurement</code> → <code style="color:#22d3bf">voxel</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_gaussian_psf(sigma, truncate=4.0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import volrestore; volrestore.vol_gaussian_psf(sigma, truncate=4.0)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;vol_gaussian_psf&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>normalised (योग 1) 3-D Gaussian PSF kernel; *sigma* एक scalar है या हर axis के लिए अलग।</p>
 <p>हर axis के लिए *sigma* <code style="color:#22d3bf">(sz, sy, sx)</code> है, voxel में; kernel हर axis पर <code style="color:#22d3bf">+-truncate*sigma</code> तक फैला होता है (odd size, center बीच वाले voxel पर)। जब instrument PSF को Gaussian से अच्छी तरह approximate किया जा सके, तब यह <code style="color:#22d3bf">vol_richardson_lucy</code> का सुविधाजनक साथी है। <code style="color:#22d3bf">PSF_MAX_ELEMENTS</code> (~256^3) से बड़े kernel <code style="color:#22d3bf">ValueError</code> देते हैं — इतना बड़ा PSF इनपुट की गलती है, instrument नहीं।</p>

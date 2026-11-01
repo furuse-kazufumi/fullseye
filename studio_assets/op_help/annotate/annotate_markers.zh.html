@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">annotate_markers — ANNOTATE <code style="color:#22d3bf">paper</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_markers(img, points, labels=None, start=1, radius=9.0, color=&#x27;emphasis&#x27;, text_color=None, font_size=11, scheme=&#x27;okabe_ito&#x27;, font_path=None, min_contrast=2.0)</code>(要直接调用实现,<code style="color:#22d3bf">import annotate; annotate.annotate_markers(img, points, labels=None, start=1, radius=9.0, color=&#x27;emphasis&#x27;, text_color=None, font_size=11, scheme=&#x27;okabe_ito&#x27;, font_path=None, min_contrast=2.0)</code>;从台账取用则 <code style="color:#22d3bf">opsannotate.get(&quot;annotate_markers&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>返回图像(image2d):在每个点放置带编号(或短字符串)的圆形标记。</p>
 <p>若传入与 <code style="color:#22d3bf">annotate_legend</code> 相同的 <code style="color:#22d3bf">start</code> / <code style="color:#22d3bf">labels</code>,图中的编号与图例的编号必定一致。</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">project_point_hom_mat3d — CALIB <code style="color:#22d3bf">project</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">keypoints</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.project_point_hom_mat3d(points_3d, hom_mat3d)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import calib; calib.project_point_hom_mat3d(points_3d, hom_mat3d)</code>、台帳から引くなら <code style="color:#22d3bf">opscalib.get(&quot;project_point_hom_mat3d&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>4x4 or 3x4 射影行列 P=K[R|t] で 3D 点を投影し画素 (row, col) を返す(project_point_hom_mat3d)。</p>
 <p><code style="color:#22d3bf">project_3d_point</code> と同じ (row, col) 規約(2026-09-02 以前は (x, y) を返しており兄弟 API と食い違っていた)。</p>

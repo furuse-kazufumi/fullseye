@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">illusion_simultaneous_contrast — GENERATIVE <code style="color:#22d3bf">illusion</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">rgb</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.illusion_simultaneous_contrast(patch: &#x27;int&#x27; = 90, size: &#x27;int&#x27; = 320) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import illusion; illusion.illusion_simultaneous_contrast(patch: &#x27;int&#x27; = 90, size: &#x27;int&#x27; = 320) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsgenerative.get(&quot;illusion_simultaneous_contrast&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>同時対比。<b>2 つの灰色パッチは厳密に同じ値</b>(周りだけが違う)。</p>
 <p>不変量: 左右のパッチの画素値が完全に一致。</p>

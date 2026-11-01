@@ -4,6 +4,7 @@ dim: 3d
 category: resolution
 in: mesh
 out: table
+gpu: なし
 examples: [mesh_resolution_demo]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `mesh` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.mesh_lod_chain(V, F, fractions=(0.5, 0.25, 0.125), samples=2000, seed=0)` (実装を直接呼ぶなら `import meshres; meshres.mesh_lod_chain(V, F, fractions=(0.5, 0.25, 0.125), samples=2000, seed=0)`、台帳から引くなら `ops3d.get("mesh_lod_chain")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

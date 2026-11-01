@@ -3,7 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">voxel × voxel</code> → <code style="color:#22d3bf">position</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.match_chamfer_3d(scene, template, device=&#x27;cpu&#x27;, thr=0.3, edt=&#x27;scipy&#x27;)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import match3d; match3d.match_chamfer_3d(scene, template, device=&#x27;cpu&#x27;, thr=0.3, edt=&#x27;scipy&#x27;)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;match_chamfer_3d&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>원장 경유의 반환값</b>: <code style="color:#22d3bf">fullseye.ledger.match_chamfer_3d(...)</code> 는 <b>선언된 out 형 <code style="color:#22d3bf">position</code> 의 값만</b> 반환합니다(실제 함수는 보조 정보도 반환). 버려진 쪽이 필요하면 <code style="color:#22d3bf">fullseye.ledger.match_chamfer_3d.raw(...)</code> 를 쓰거나 <code style="color:#22d3bf">match3d.match_chamfer_3d</code> 를 직접 호출하세요.</p>
-<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 이 연산자는 GPU 경로가 있습니다(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>chamfer / 거리장 매칭(부분·가림에 강건). voxel × chamfer 열.</p>
 <p>장면 가장자리의 EDT (각 voxel에서 최근 가장자리까지의 거리)에 템플리의 가장자리 점을 놓습니다. 거리 합을 최소화. score(pos)=Σ_{template edge} DT_scene(pos+edge)/n. <b>낮을수록 좋은 일치</b>. 가장자리 점의 일부가 없어도 효과가 있습니다 (NCC보다 차폐에 강함). 상관(conv3d)은 항상 GPU. 거리장은 edt=&quot;scipy&quot;(CPU, 기본값) 또는 edt=&quot;jfa&quot;(<code style="color:#22d3bf">edt_jfa</code>, 모든 GPU에서 CPU 왕복 없음, scipy와 정확히 일치). 반환값 [chamfer 거리, d, h, w].</p>

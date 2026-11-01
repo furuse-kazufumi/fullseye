@@ -4,6 +4,7 @@ dim: drive
 category: tacdome
 in: signal × scalar
 out: signal
+gpu: なし
 examples: [poc_tacdome_large_deformation]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal × scalar` → `signal`
 - **呼び出し**: `import fullseye as fs; fs.ledger.largedef_radius_ratio(d, p: 'float', method: 'str' = 'quadrature')` (実装を直接呼ぶなら `import tacdome; tacdome.largedef_radius_ratio(d, p: 'float', method: 'str' = 'quadrature')`、台帳から引くなら `opsdrive.get("largedef_radius_ratio")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

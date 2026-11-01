@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">predict_fringe_phase_error — OPTICS <code style="color:#22d3bf">light_transport</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.predict_fringe_phase_error(transport, period=16.0, triangulation_deg=20.0, projector_width=None, irradiance=1.0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import lighttransport; lighttransport.predict_fringe_phase_error(transport, period=16.0, triangulation_deg=20.0, projector_width=None, irradiance=1.0)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;predict_fringe_phase_error&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>相互反射が位相シフト法に入れる縞位相のバイアスと高さ誤差を、光輸送行列から画素ごとに予測する(<code style="color:#22d3bf">table</code>)。</p>
 <p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>

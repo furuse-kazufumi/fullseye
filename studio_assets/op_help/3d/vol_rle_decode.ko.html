@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">vol_rle_decode — 3D <code style="color:#22d3bf">rle_region</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">rle_region</code> → <code style="color:#22d3bf">voxel</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_rle_decode(region) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import volregion; volregion.vol_rle_decode(region) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;vol_rle_decode&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p><code style="color:#22d3bf">VolRLE</code> 를 조밀한 <code style="color:#22d3bf">(D, H, W)</code> float64 <code style="color:#22d3bf">{0, 1}</code> 볼륨으로 복호.</p>
 <p><code style="color:#22d3bf">vol_rle_encode</code>의 정확한 역연산(비트 단위로 동일한 왕복). region을 먼저 검증하므로, 손상된 RLE는 범위 밖에 쓰는 대신 <code style="color:#22d3bf">ValueError</code>를 발생시킨다.</p>

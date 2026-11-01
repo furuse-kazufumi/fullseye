@@ -2,7 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">morph_gradient3d — 3D <code style="color:#22d3bf">morphology</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">voxel</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.morph_gradient3d(vol, r=1, device=&#x27;cpu&#x27;, se=&#x27;cube&#x27;)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import match3d; match3d.morph_gradient3d(vol, r=1, device=&#x27;cpu&#x27;, se=&#x27;cube&#x27;)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;morph_gradient3d&quot;)</code>)</p>
-<p style="margin:2px 0 2px 12px">• <b>GPU</b>: この op は GPU 経路あり(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>3D モルフォロジー勾配 = dilation − erosion。<b>境界/表面</b>を抽出(sobel 代替のエッジ源)。</p>
 <p>同じ SE(一辺 <code style="color:#22d3bf">2r+1</code> の cube か半径 r の ball)での局所 max − 局所 min。値は常に 0 以上、一様な領域で 0、明暗の境界で段差の大きさ(<code style="color:#22d3bf">r</code> が大きいほど境界が太い。<code style="color:#22d3bf">r=1</code> で 2 voxel 幅)。方向情報は無い(方向が要るなら <code style="color:#22d3bf">sobel3d</code>)。<code style="color:#22d3bf">sobel3d</code> と違い利得の補正が要らず、2 値 volume では「境界 voxel = 1」の殻がそのまま出る。<code style="color:#22d3bf">se</code> は &quot;cube&quot;/&quot;ball&quot;(他は ValueError)、<code style="color:#22d3bf">device</code> は cube+torch のときだけ有効。返り値 <code style="color:#22d3bf">(D,H,W)</code> float32 numpy。</p>

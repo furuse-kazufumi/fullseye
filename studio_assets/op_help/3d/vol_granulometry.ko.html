@@ -4,6 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_granulometry(vol_binary, radii=None, spacing=None)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import volops; volops.vol_granulometry(vol_binary, radii=None, spacing=None)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;vol_granulometry&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>원장 경유의 반환값</b>: <code style="color:#22d3bf">fullseye.ledger.vol_granulometry(...)</code> 는 <b>선언된 out 형 <code style="color:#22d3bf">measurement</code> 의 값만</b> 반환합니다(실제 함수는 보조 정보도 반환). 버려진 쪽이 필요하면 <code style="color:#22d3bf">fullseye.ledger.vol_granulometry.raw(...)</code> 를 쓰거나 <code style="color:#22d3bf">volops.vol_granulometry</code> 를 직접 호출하세요.</p>
 <p style="margin:2px 0 2px 12px">• 실제 반환: <code style="color:#22d3bf">中央径</code></p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>이진 볼륨의 기공・입자 <b>크기 분포</b>(열림 연산 계열에서).</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>

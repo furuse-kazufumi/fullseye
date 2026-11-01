@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">surface_divergence_closed_form — DRIVE <code style="color:#22d3bf">tactorque</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">matrix × scalar × scalar</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.surface_divergence_closed_form(p, G: &#x27;float&#x27;, nu: &#x27;float&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import tactorque; tactorque.surface_divergence_closed_form(p, G: &#x27;float&#x27;, nu: &#x27;float&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;surface_divergence_closed_form&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>半空間表面切向位移散度的閉合式 ∇·ū = −(1−2ν) p/(2G)(本模組的推導：Boussinesq 點負載 ū_r = −(1−2ν)P/(4πGr) 與 2 維的 ∇·(r̂/r) = 2πδ²)。與卷積的數值散度比較的門檻(r &lt; 0.8a 時 0.2 %，實測)。<b>Raises</b> ValueError：G ≤ 0。</p>
 <p>空輸入(<code style="color:#22d3bf">p</code> 為 0 個元素)會引發 <code style="color:#22d3bf">ValueError</code>。</p>

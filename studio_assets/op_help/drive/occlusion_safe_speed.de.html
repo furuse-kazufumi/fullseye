@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">occlusion_safe_speed — DRIVE <code style="color:#22d3bf">traffic</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.occlusion_safe_speed(d, *, reaction: &#x27;float&#x27;, brake: &#x27;float&#x27;)</code> (die Implementierung direkt: <code style="color:#22d3bf">import drivetraffic; drivetraffic.occlusion_safe_speed(d, *, reaction: &#x27;float&#x27;, brake: &#x27;float&#x27;)</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;occlusion_safe_speed&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Höchstgeschwindigkeit, mit der ab dem Moment der Sichtbarkeit innerhalb der Strecke d angehalten werden kann: v = b(−ρ + sqrt(ρ² + 2d/b)).</p>
 <p>Die positive Wurzel von v ρ + v²/(2b) = d (Reaktionsweg + Bremsweg; dieselbe Formel wie <code style="color:#22d3bf">rsssafety.rss_stopping_distance(v, ρ, accel=0, brake=b)</code>), nach v aufgelöst. Um Auslöschung zu vermeiden, wird v = 2d / (ρ + sqrt(ρ² + 2d/b)) berechnet (bei ρ = 0 sqrt(2 b d)). d darf ein Array sein. Ist d ≤ 0, dann 0 (wenn es sichtbar wird, ist es bereits zu spät).</p>

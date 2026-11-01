@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">sdf_offset — 3D <code style="color:#22d3bf">sdf_csg</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">sdf</code> → <code style="color:#22d3bf">sdf</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sdf_offset(sdf, r)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import sdf_ops; sdf_ops.sdf_offset(sdf, r)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;sdf_offset&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>SDF 의 영등가면을 거리 <code style="color:#22d3bf">r</code> 만큼 법선 방향으로 이동 = <code style="color:#22d3bf">sdf - r</code>(r&gt;0 팽창, r&lt;0 수축).</p>
 <p>새 영 집합은 이전 <code style="color:#22d3bf">sdf == r</code> 의 등위면. 모든 점에서 거리가 균일하게 <code style="color:#22d3bf">r</code> 만큼 이동하므로, 거리장으로서의 성질(기울기 노름 1)은 유지된다. 프리미티브의 두께 부여(둥근 셸)나 배관의간극 확보에 쓴다.</p>

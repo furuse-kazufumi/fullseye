@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">curve_speed_limit — DRIVE <code style="color:#22d3bf">lateral</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.curve_speed_limit(radius, *, side_friction: &#x27;float&#x27;, superelevation: &#x27;float&#x27; = 0.0, g: &#x27;float&#x27; = 9.81)</code>(要直接调用实现,<code style="color:#22d3bf">import drivelateral; drivelateral.curve_speed_limit(radius, *, side_friction: &#x27;float&#x27;, superelevation: &#x27;float&#x27; = 0.0, g: &#x27;float&#x27; = 9.81)</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;curve_speed_limit&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>在超高 i、横向滑动摩擦系数 f 的曲线(半径 R)上不向外侧滑出的上限速度 v = √(g R (i + f)/(1 − i f)) [m/s]。</p>
 <p>将日本《道路构造令》解说中的 (2) 式 Z cos α − G sin α ≤ f (Z sin α + G cos α)(Z = G v²/(gR),i = tan α)对 v 求解得到的严格形式。若 i f ≥ 1(任何速度都不会向外侧滑),则为 <code style="color:#22d3bf">inf</code>。<code style="color:#22d3bf">radius</code> 也可以是数组(&gt; 0)。</p>

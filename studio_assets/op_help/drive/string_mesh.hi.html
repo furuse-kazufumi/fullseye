@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">string_mesh — DRIVE <code style="color:#22d3bf">kendamaworld</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">any</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.string_mesh(p_ball, p_cup, radius: &#x27;float&#x27; = 0.0015)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import kendamaworld; kendamaworld.string_mesh(p_ball, p_cup, radius: &#x27;float&#x27; = 0.0015)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;string_mesh&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>2 बिंदुओं (गेंद का डोरी वाला छेद p_ball और cross-piece का डोरी वाला छेद p_cup) को जोड़ने वाला पतला prism (4 sides + दोनों सिरे, 8 vertices 12 faces, बाहर की ओर)। cross-section 2·radius भुजा का square। दोनों बिंदु एक हों तो ValueError।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

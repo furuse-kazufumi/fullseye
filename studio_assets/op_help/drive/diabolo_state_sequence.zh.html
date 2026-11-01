@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">diabolo_state_sequence — DRIVE <code style="color:#22d3bf">diabolo</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">matrix × any × table</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.diabolo_state_sequence(X, sticks, params: &#x27;dict&#x27;, *, flying_rule: &#x27;str&#x27; = &#x27;paper&#x27;, mode0: &#x27;str&#x27; = &#x27;on_string&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import diabolo; diabolo.diabolo_state_sequence(X, sticks, params: &#x27;dict&#x27;, *, flying_rule: &#x27;str&#x27; = &#x27;paper&#x27;, mode0: &#x27;str&#x27; = &#x27;on_string&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;diabolo_state_sequence&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由位置序列 X (N, 3) 和棍 (N, 2, 3) 只运行论文的状态转移(用于对观测轨迹分类，不求解动力学)。非有限的行保持前一状态(跟踪丢失的帧)。返回 (N,) 的状态名。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>：形状、长度、拼写。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

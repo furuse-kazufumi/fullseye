@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">nurbs_revolve — MATH <code style="color:#22d3bf">geometry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.nurbs_revolve(profile, weights=None, *, degree: &#x27;int&#x27; = 2, knots=None, n=(48, 48)) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import mathgeometry; mathgeometry.nurbs_revolve(profile, weights=None, *, degree: &#x27;int&#x27; = 2, knots=None, n=(48, 48)) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsmath.get(&quot;nurbs_revolve&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Surface of revolution obtained by sweeping a planar NURBS curve (r, z) 1 full turn around the z axis (Piegl &amp; Tiller §8.5).</p>
 <p>Rotates each control point of the cross-section with the 9 points of <code style="color:#22d3bf">nurbs_circle</code> and multiplies the weights. If the cross-section is an exact circular arc, the resulting surface is also an exact sphere, torus or cone (polynomial surfaces can only approximate them).</p>

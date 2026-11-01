@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">cr_collision — DRIVE <code style="color:#22d3bf">commonroad</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">table × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cr_collision(scene, run, *, margin: &#x27;float&#x27; = 0.0, lanelets: &#x27;str&#x27; = &#x27;all&#x27;) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import drivecommonroad; drivecommonroad.cr_collision(scene, run, *, margin: &#x27;float&#x27; = 0.0, lanelets: &#x27;str&#x27; = &#x27;all&#x27;) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;cr_collision&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>與障礙物的碰撞(矩形間的 SAT，逐 time_step)及道路邊界(車輛 4 個角是否位於 lanelet 多邊形的聯集內)。</p>
 <p><code style="color:#22d3bf">lanelets=&quot;all&quot;</code>(預設)為場景中所有 lanelet(與評分器的 boundary_collision 相同範圍),<code style="color:#22d3bf">&quot;route&quot;</code> 則只有路徑上的 lanelet。<code style="color:#22d3bf">margin</code> 為膨脹障礙物 SAT 的距離(m)。</p>

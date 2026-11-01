@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">combined_modulus — DRIVE <code style="color:#22d3bf">tacsim</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">scalar × scalar</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.combined_modulus(E1: &#x27;float&#x27;, nu1: &#x27;float&#x27;, E2: &#x27;float | None&#x27; = None, nu2: &#x27;float&#x27; = 0.0) -&gt; &#x27;float&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import tacsim; tacsim.combined_modulus(E1: &#x27;float&#x27;, nu1: &#x27;float&#x27;, E2: &#x27;float | None&#x27; = None, nu2: &#x27;float&#x27; = 0.0) -&gt; &#x27;float&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;combined_modulus&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Effektiver E-Modul E*: 1/E* = (1 − ν1²)/E1 + (1 − ν2²)/E2 (Johnson 1985 Gl. 4.9). <code style="color:#22d3bf">E2=None</code> bedeutet einen starren Eindringkörper (2. Term gleich 0).</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: E ≤ 0, |ν| ≥ 1 (physikalisch ist die Poissonzahl (−1, 0.5], die Obergrenze wird jedoch nicht geprüft).</p>

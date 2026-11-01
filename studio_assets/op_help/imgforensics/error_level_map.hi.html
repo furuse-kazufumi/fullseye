@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">error_level_map — IMGFORENSICS <code style="color:#22d3bf">compression</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.error_level_map(image, quality: &#x27;int&#x27; = 90, normalize: &#x27;bool&#x27; = True) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import imgforensics; imgforensics.error_level_map(image, quality: &#x27;int&#x27; = 90, normalize: &#x27;bool&#x27; = True) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsimgforensics.get(&quot;error_level_map&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>ELA (error-level analysis)। दी गई quality पर <b>दोबारा compress करने के अंतर</b> का map लौटाता है। <code style="color:#22d3bf">image2d</code>।</p>
 <p>Krawetz 2007। JPEG हर 8x8 block पर quantize करता है, इसलिए <b>एक बार compress हो चुका region</b> समान quality पर फिर से compress करने पर कम error दिखाता है, जबकि <b>बाद में चिपकाया / बनाया गया region</b> बड़ा error छोड़ता है; यही इसका आधारभूत विचार है।</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">rope_rotate — LLMCORE <code style="color:#22d3bf">prepare</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">tokens</code> → <code style="color:#22d3bf">tokens</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rope_rotate(tokens, positions=None, base: &#x27;float&#x27; = 10000.0) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import llmcore; llmcore.rope_rotate(tokens, positions=None, base: &#x27;float&#x27; = 10000.0) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsllmcore.get(&quot;rope_rotate&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>rotary position encoding (RoPE) → tokens। <b>rotation है, इसलिए norm बनाए रखता है</b>।</p>
 <p>Su आदि 2021। हर even/odd जोड़े (x₂ᵢ, x₂ᵢ₊₁) को कोण <code style="color:#22d3bf">pos · base**(−2i/d)</code> जितना घुमाया जाता है। यह plane rotations का direct sum है, इसलिए <code style="color:#22d3bf">‖RoPE(x)‖ == ‖x‖</code> <b>ठीक-ठीक</b> लागू होता है (measured 8.9e-16), और घुमाए गए 2 vectors का inner product <b>केवल position के अंतर से</b> तय होता है (absolute position को 40 तरह से खिसकाने पर फैलाव 8.9e-15) — &quot;relative position को inner product में बिठाना&quot; वाला दावा सीधे cross-check बन जाता है।</p>

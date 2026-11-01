@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">chromatic_confocal_readout — OPTICS <code style="color:#22d3bf">confocal</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.chromatic_confocal_readout(peaks, probe, layer_material=None) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import chromconf; chromconf.chromatic_confocal_readout(peaks, probe, layer_material=None) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;chromatic_confocal_readout&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>ピーク波長を較正表で高さ(z)へ戻し、2 ピークなら透明な層の厚さを出す。</p>
 <p>peaks: <code style="color:#22d3bf">chromatic_confocal_peaks</code> の返り値(dict の列)か、波長 [nm] の列。</p>

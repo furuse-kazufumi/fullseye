@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">fp_design — OPTICS <code style="color:#22d3bf">fpm</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">table</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fp_design(na_obj=0.1, wavelength_um=0.532, led_pitch_mm=4.0, led_distance_mm=70.0, n_side=13, magnification=4.0, camera_pixel_um=5.2, target_na=None, field_of_view_um=None, boundary_tolerance_na=0.005)</code>(要直接调用实现,<code style="color:#22d3bf">import fourierptycho; fourierptycho.fp_design(na_obj=0.1, wavelength_um=0.532, led_pitch_mm=4.0, led_distance_mm=70.0, n_side=13, magnification=4.0, camera_pixel_um=5.2, target_na=None, field_of_view_um=None, boundary_tolerance_na=0.005)</code>;从台账取用则 <code style="color:#22d3bf">opsoptics.get(&quot;fp_design&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>在<b>拍摄之前</b>用闭式求出傅里叶叠层成像的性能(<code style="color:#22d3bf">table</code>):合成 NA、截止周期、频谱重叠率、LED 数量与像素采样。</p>
 <p>正方形网格(<code style="color:#22d3bf">n_side</code> × <code style="color:#22d3bf">n_side</code>,间距 <code style="color:#22d3bf">led_pitch_mm</code>)的 LED 置于样品下方 <code style="color:#22d3bf">led_distance_mm</code> 处, 中心 LED 与光轴对准的配置。</p>

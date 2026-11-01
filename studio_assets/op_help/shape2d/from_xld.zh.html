@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">from_xld — SHAPE2D <code style="color:#22d3bf">descriptor</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">pairs</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.from_xld(contour, i=0)</code>(要直接调用实现,<code style="color:#22d3bf">import fourierdesc; fourierdesc.from_xld(contour, i=0)</code>;从台账取用则 <code style="color:#22d3bf">opsshape2d.get(&quot;from_xld&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>从 XLD 轮廓 dict(<code style="color:#22d3bf">{&quot;shape&quot;, &quot;cs&quot;:[Nx2,...]}</code>)中取出第 i 个轮廓。</p>
 <p>返回的是与 XLD 相同 <b>(row, col)</b> 顺序的 (N,2)。传给 <code style="color:#22d3bf">imagemorph</code> 时，请用 <code style="color:#22d3bf">[:, ::-1]</code> 换成 (x, y)(见模块开头的「坐标顺序的陷阱」)。</p>

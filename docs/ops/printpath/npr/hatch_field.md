@@ -4,6 +4,7 @@ dim: printpath
 category: npr
 in: image2d
 out: image2d
+gpu: なし
 examples: [poc_beats_fringes_and_screens]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.hatch_field(image, spacing_px=8.0, sigma=2.0, levels=3, cross_deg=90.0)` (実装を直接呼ぶなら `import printpath; printpath.hatch_field(image, spacing_px=8.0, sigma=2.0, levels=3, cross_deg=90.0)`、台帳から引くなら `opsprintpath.get("hatch_field")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

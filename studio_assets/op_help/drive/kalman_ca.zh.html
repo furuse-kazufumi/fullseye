@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">kalman_ca — DRIVE <code style="color:#22d3bf">balltrack</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.kalman_ca(z, dt: &#x27;float&#x27;, *, q: &#x27;float&#x27; = 1.0, r: &#x27;float&#x27; = 1.0, x0=None, P0: &#x27;float&#x27; = 1000.0) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import balltrack; balltrack.kalman_ca(z, dt: &#x27;float&#x27;, *, q: &#x27;float&#x27; = 1.0, r: &#x27;float&#x27; = 1.0, x0=None, P0: &#x27;float&#x27; = 1000.0) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;kalman_ca&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>等加速度模型的 Kalman 滤波(位置观测 (N, D)，状态 = 位置、速度、加速度 × D)。</p>
 <p>返回值 <code style="color:#22d3bf">{&quot;x&quot; (N, 3D) 更新後, &quot;x_pred&quot; (N, 3D) 予測, &quot;P&quot; (N, 3D, 3D), &quot;innovation&quot; (N, D)}</code>。<code style="color:#22d3bf">q</code> = 加速度变化的方差(白色 jerk)、<code style="color:#22d3bf">r</code> = 观测的方差。输入抛物线的真值时(模型是严格的),收敛后的新息 → 0,r → 0 时更新后的位置 = 观测(门)。NaN 的观测只做预测(缺测)。</p>

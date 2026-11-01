@@ -4,6 +4,7 @@ dim: tomography
 category: geometry
 in: sinogram
 out: measurement
+gpu: なし
 examples: [ct_reconstruction]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `sinogram` → `measurement`
 - **呼び出し**: `import fullseye as fs; fs.ledger.sinogram_center_of_rotation(sinogram, angles_deg=None, min_condition=0.02)` (実装を直接呼ぶなら `import tomography; tomography.sinogram_center_of_rotation(sinogram, angles_deg=None, min_condition=0.02)`、台帳から引くなら `opstomography.get("sinogram_center_of_rotation")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

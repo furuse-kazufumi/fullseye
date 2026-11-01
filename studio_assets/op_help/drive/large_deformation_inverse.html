@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">large_deformation_inverse — DRIVE <code style="color:#22d3bf">tacdome</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">scalar × scalar × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.large_deformation_inverse(a: &#x27;float&#x27;, L: &#x27;float&#x27;, lin: &#x27;dict&#x27;, reading: &#x27;str&#x27; = &#x27;derived&#x27;, tol: &#x27;float&#x27; = 1e-14) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import tacdome; tacdome.large_deformation_inverse(a: &#x27;float&#x27;, L: &#x27;float&#x27;, lin: &#x27;dict&#x27;, reading: &#x27;str&#x27; = &#x27;derived&#x27;, tol: &#x27;float&#x27; = 1e-14) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;large_deformation_inverse&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>測った接触半径 a から押し込みと力を逆に読む(式 4 を d について解き、式 2 で力)。センサの読み出しの本体。</p>
 <p>平頭は閉形式 d = 1 − (a0/a)²。それ以外は a(d) = (a/a_L)(d)·D·(dL)^{1/p} が d の単調増加なので二分法(相対 <code style="color:#22d3bf">tol</code>)。</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">critical_angle_deg — OPTICS <code style="color:#22d3bf">interface</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">measurement</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.critical_angle_deg(n1=1.5, n2=1.0) -&gt; &#x27;float&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import glassmirror; glassmirror.critical_angle_deg(n1=1.5, n2=1.0) -&gt; &#x27;float&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;critical_angle_deg&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>total internal reflection का critical angle [deg] = asin(n2/n1)। n1 &gt; n2 न हो तो ValueError (अस्तित्व नहीं)।</p>
 <p>यह केवल तब होता है जब प्रकाश काँच से हवा में निकलता है। optical fibres और prisms में total-internal-reflection faces का design मान।</p>

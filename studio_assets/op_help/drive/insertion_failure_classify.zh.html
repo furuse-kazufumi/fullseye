@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">insertion_failure_classify — DRIVE <code style="color:#22d3bf">pegfail</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.insertion_failure_classify(signature, table=None) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import pegfail; pegfail.insertion_failure_classify(signature, table=None) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;insertion_failure_classify&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用表查签名(fail-closed)：命中 1 行则返回其类与恢复，0 行则为 <code style="color:#22d3bf">&quot;unknown&quot;</code>(不做推测)，2 行以上则视为表的缺陷抛出 <code style="color:#22d3bf">ValueError</code>(通过 <code style="color:#22d3bf">insertion_failure_validate</code> 的表不会发生)。</p>
 <p>若签名的字段中有词汇表以外的值,则 <code style="color:#22d3bf">ValueError</code>(拼写破坏)。返回: <code style="color:#22d3bf">cls</code>、<code style="color:#22d3bf">recovery</code>、<code style="color:#22d3bf">row</code>(命中行的下标,无则 −1)、<code style="color:#22d3bf">n_match</code>、<code style="color:#22d3bf">basis</code>。</p>

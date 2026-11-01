@@ -4,6 +4,7 @@ dim: 3d
 category: transform
 in: mesh
 out: points
+gpu: なし
 examples: [mesh_decimate]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `mesh` → `points`
 - **呼び出し**: `import fullseye as fs; fs.ledger.mesh_to_points(vertices, faces, samples=20000, seed=0)` (実装を直接呼ぶなら `import match3d; match3d.mesh_to_points(vertices, faces, samples=20000, seed=0)`、台帳から引くなら `ops3d.get("mesh_to_points")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

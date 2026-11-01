@@ -4,6 +4,7 @@ dim: optics
 category: film
 in: pairs
 out: table
+gpu: なし
 examples: [poc_thin_film_reflectometry]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `pairs` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.film_thickness_fft(spectrum, film='SIO2', window='hann', pad_factor=16)` (実装を直接呼ぶなら `import filmoptics; filmoptics.film_thickness_fft(spectrum, film='SIO2', window='hann', pad_factor=16)`、台帳から引くなら `opsoptics.get("film_thickness_fft")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -4,6 +4,7 @@ dim: tomography
 category: reconstruct
 in: sinogram
 out: image2d
+gpu: なし
 examples: [ct_reconstruction, poc_aoi_ct_traceability, poc_ct_fidelity, poc_sem_tem_same_particle]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `sinogram` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.filtered_backprojection(sinogram, angles_deg=None, size=None, filter_name='ramp', cutoff=1.0, span_deg=None, _op='filtered_backprojection')` (実装を直接呼ぶなら `import tomography; tomography.filtered_backprojection(sinogram, angles_deg=None, size=None, filter_name='ramp', cutoff=1.0, span_deg=None, _op='filtered_backprojection')`、台帳から引くなら `opstomography.get("filtered_backprojection")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

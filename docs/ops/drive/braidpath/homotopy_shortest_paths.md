@@ -4,6 +4,7 @@ dim: drive
 category: braidpath
 in: image2d × any × any
 out: table
+gpu: なし
 examples: [poc_braid_homotopy_classes]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d × any × any` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.homotopy_shortest_paths(grid, start, goal, k=4, obstacles=None, angle=0.1, max_states=400000, max_cost=None)` (実装を直接呼ぶなら `import braidpath; braidpath.homotopy_shortest_paths(grid, start, goal, k=4, obstacles=None, angle=0.1, max_states=400000, max_cost=None)`、台帳から引くなら `opsdrive.get("homotopy_shortest_paths")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

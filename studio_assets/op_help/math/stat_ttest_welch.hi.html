@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">stat_ttest_welch — MATH <code style="color:#22d3bf">estimation</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.stat_ttest_welch(x, y) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import mathestimation; mathestimation.stat_ttest_welch(x, y) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsmath.get(&quot;stat_ttest_welch&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Welch&#x27;s t-test: बराबर variance माने बिना 2 groups के means का अंतर (degrees of freedom Welch–Satterthwaite से)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पूरी family का input contract (fail-closed)</h3>

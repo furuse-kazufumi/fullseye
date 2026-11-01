@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">dem_tpi — DEM <code style="color:#22d3bf">surface</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">depth</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_tpi(dem, cell_size=1.0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import demops; demops.dem_tpi(dem, cell_size=1.0)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdem.get(&quot;dem_tpi&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>topographic position index TPI — cell और उसके 8 पड़ोसियों के औसत का अंतर [m]। धनात्मक = ridge, ऋणात्मक = घाटी।</p>
 <p>सूत्र: <code style="color:#22d3bf">tpi = z - mean(z of the 8 neighbours)</code> (न्यूनतम 3x3 पड़ोस के साथ लिया गया Weiss का TPI)। किनारों को border मानों की नकल से pad किया जाता है। पड़ोस 1 cell पर तय है, इसलिए <b>scale 1 <code style="color:#22d3bf">cell_size</code> पर तय है</b>; व्यापक ridges/valleys देखने के लिए पहले <code style="color:#22d3bf">dem</code> को मोटा करें (इस op में कोई radius argument नहीं है)।</p>

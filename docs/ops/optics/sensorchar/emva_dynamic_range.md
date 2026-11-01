@@ -4,6 +4,7 @@ dim: optics
 category: sensorchar
 in: 
 out: table
+gpu: なし
 examples: [poc_emva1288_in_camera_processing, poc_emva1288_sensor]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.emva_dynamic_range(mu_p_sat, mu_p_min)` (実装を直接呼ぶなら `import sensorchar; sensorchar.emva_dynamic_range(mu_p_sat, mu_p_min)`、台帳から引くなら `opsoptics.get("emva_dynamic_range")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

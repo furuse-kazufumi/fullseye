@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">perpetual_ten_print — GENERATIVE <code style="color:#22d3bf">perpetual</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">rgb</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.perpetual_ten_print(cols: &#x27;int&#x27; = 32, rows: &#x27;int&#x27; = 24, cell: &#x27;int&#x27; = 18, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import perpetual; perpetual.perpetual_ten_print(cols: &#x27;int&#x27; = 32, rows: &#x27;int&#x27; = 24, cell: &#x27;int&#x27; = 18, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsgenerative.get(&quot;perpetual_ten_print&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p><code style="color:#22d3bf">10 PRINT CHR$(205.5+RND(1)); : GOTO 10</code> — 무한히 뻗어 가는 미로.</p>
 <p>Commodore 64의 한 줄 프로그램. 각 칸에 2종류의 사선 중 하나를 놓기만 해도미로처럼 보인다. <b>칸의 내용은 2가지뿐</b>(섞인 칸은 없음)이라는 것이 불변량.</p>

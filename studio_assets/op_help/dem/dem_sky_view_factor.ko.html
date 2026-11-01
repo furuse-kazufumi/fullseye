@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">dem_sky_view_factor — DEM <code style="color:#22d3bf">visibility</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">depth</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_sky_view_factor(dem, cell_size, n_azimuth=16, max_distance_m=None)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import demops; demops.dem_sky_view_factor(dem, cell_size, n_azimuth=16, max_distance_m=None)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdem.get(&quot;dem_sky_view_factor&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>천공률 [0,1]. 하늘이 얼마나 보이는가.</p>
 <p><code style="color:#22d3bf">n_azimuth</code> 방위의 지평선 앙각으로부터 <code style="color:#22d3bf">mean(cos^2(horizon))</code>로 구한다(등방 휘도의 하늘을 가정한 표준적인 근사). <b>평탄면에서는 엄밀하게 1</b>. 도시의 더위나 골짜기 바닥의 냉각에 효과가 있는 양.</p>

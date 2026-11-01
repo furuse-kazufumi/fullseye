@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">descriptor_to_table — REPRCONV <code style="color:#22d3bf">descriptor</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">descriptor</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.descriptor_to_table(descriptor)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import reprconv; reprconv.descriptor_to_table(descriptor)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsreprconv.get(&quot;descriptor_to_table&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>descriptor → सारांश <code style="color:#22d3bf">table</code>। <b>एक-तरफ़ा</b>।</p>
 <p>dimension, norm और energy concentration (normalised sum of squares में ऊपर के 10% का हिस्सा) देता है। यह देखने के लिए है कि descriptor &quot;असल में कितने dimension इस्तेमाल करता है&quot;, और dimension तो बहुत पर लगभग सब 0 होने वाली विफलता को दिखाता है।</p>

@@ -4,6 +4,7 @@ dim: videocube
 category: render
 in: video
 out: rgbvideo
+gpu: なし
 examples: [poc_video_cube]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `video` → `rgbvideo`
 - **呼び出し**: `import fullseye as fs; fs.ledger.video_cube_orbit(video, n_frames: 'int' = 36, pitch: 'float' = 25.0, yaw_start: 'float' = 0.0, yaw_span: 'float' = 360.0, size: 'int' = 256, sigma: 'float' = 1.0, alpha_gain: 'float' = 1.0, static_alpha: 'float' = 0.02, color: 'str' = 'time', mode: 'str' = 'motion', depth_samples: 'int | None' = None, floor: 'float' = 0.15) -> 'np.ndarray'` (実装を直接呼ぶなら `import videocube; videocube.video_cube_orbit(video, n_frames: 'int' = 36, pitch: 'float' = 25.0, yaw_start: 'float' = 0.0, yaw_span: 'float' = 360.0, size: 'int' = 256, sigma: 'float' = 1.0, alpha_gain: 'float' = 1.0, static_alpha: 'float' = 0.02, color: 'str' = 'time', mode: 'str' = 'motion', depth_samples: 'int | None' = None, floor: 'float' = 0.15) -> 'np.ndarray'`、台帳から引くなら `opsvideocube.get("video_cube_orbit")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

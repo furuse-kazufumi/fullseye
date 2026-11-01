@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">render_skyline_view — GEOCAM <code style="color:#22d3bf">skyline</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.render_skyline_view(sky_table, K, shape, yaw_deg, pitch_deg, roll_deg)</code> (to call the implementation directly, <code style="color:#22d3bf">import geocam; geocam.render_skyline_view(sky_table, K, shape, yaw_deg, pitch_deg, roll_deg)</code>; from the registry, <code style="color:#22d3bf">opsgeocam.get(&quot;render_skyline_view&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>From a skyline table and an orientation, draws the <b>sky mask</b> (H, W) seen by a camera pointing that way → image2d (0/1).</p>
 <p>The ray of each pixel is rotated into the world; if it is above the skyline elevation of that azimuth it is sky (1), below it terrain (0). Used for making synthetic photos (PoC) and for figures that overlay an estimated pose on a photo to check it by eye. It is the same geometry as the prediction of <code style="color:#22d3bf">camera_orientation_from_skyline</code>, so the round trip <b>draw → extract → fit</b> closes (the ground truth for tests).</p>

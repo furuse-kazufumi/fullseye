@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">vx_remap — VX <code style="color:#22d3bf">geometry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d × matrix × matrix</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vx_remap(image, map_x, map_y, *, interpolation, border, constant_value=0)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import vxcore; vxcore.vx_remap(image, map_x, map_y, *, interpolation, border, constant_value=0)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsvx.get(&quot;vx_remap&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>remap(3.44절): 출력 (x, y) = 입력 (map_x[y, x], map_y[y, x])(REQ-0392). 표는 출력의 형태이고, 좌표는 입력 화소의 중심이 정수다.</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: U8 의 2-D 가 아니다 / map_x 와 map_y 가 같은 형태의 2-D 실수가 아니다 / interpolation · border 가 목록에 없다.</p>

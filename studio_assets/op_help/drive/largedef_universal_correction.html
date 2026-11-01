@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">largedef_universal_correction — DRIVE <code style="color:#22d3bf">tacdome</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.largedef_universal_correction(d, k: &#x27;float&#x27; = 1.1111111111111112)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import tacdome; tacdome.largedef_universal_correction(d, k: &#x27;float&#x27; = 1.1111111111111112)</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;largedef_universal_correction&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>普遍形の補正 κ(d) = (1 − k·d)⁻¹(式 6、k = 10/9)。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: d が [0, 1) の外、k·d ≥ 1、k ≤ 0。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

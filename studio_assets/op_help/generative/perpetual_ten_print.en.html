@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">perpetual_ten_print — GENERATIVE <code style="color:#22d3bf">perpetual</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">rgb</code> (an op determined by its arguments alone — it takes no image or data input)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.perpetual_ten_print(cols: &#x27;int&#x27; = 32, rows: &#x27;int&#x27; = 24, cell: &#x27;int&#x27; = 18, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import perpetual; perpetual.perpetual_ten_print(cols: &#x27;int&#x27; = 32, rows: &#x27;int&#x27; = 24, cell: &#x27;int&#x27; = 18, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsgenerative.get(&quot;perpetual_ten_print&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p><code style="color:#22d3bf">10 PRINT CHR$(205.5+RND(1)); : GOTO 10</code> — a maze that grows forever.</p>
 <p>A Commodore 64 one-line program. Simply placing 1 of 2 kinds of diagonal in each cell makes it look like a maze. The invariant is that <b>a cell&#x27;s content has only 2 possibilities</b> (there are no mixed cells).</p>

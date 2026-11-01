@@ -4,6 +4,7 @@ dim: optics
 category: telecentric
 in: table
 out: table
+gpu: なし
 examples: [poc_optics_drawings, poc_simcal_telecentric, poc_telecentric_metrology]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.chief_ray_angle(system, field_mm=5.0, object_shift_mm=0.0)` (実装を直接呼ぶなら `import telecentric; telecentric.chief_ray_angle(system, field_mm=5.0, object_shift_mm=0.0)`、台帳から引くなら `opsoptics.get("chief_ray_angle")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

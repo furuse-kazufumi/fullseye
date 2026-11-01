@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">xray_beam_quality — TOMOGRAPHY <code style="color:#22d3bf">spectral_xray</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.xray_beam_quality(spectrum, material: &#x27;str&#x27; = &#x27;AL&#x27;) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import dualxray; dualxray.xray_beam_quality(spectrum, material: &#x27;str&#x27; = &#x27;AL&#x27;) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opstomography.get(&quot;xray_beam_quality&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>スペクトルの線質: 第 1・第 2 半価層、均等度、平均エネルギー、実効エネルギーを返す。</p>
 <p>半価層は<b>空気カーマ</b>が半分になる吸収体の厚さ(線量計で測る量の定義どおり):</p>

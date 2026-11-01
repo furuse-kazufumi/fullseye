@@ -4,6 +4,7 @@ dim: 3d
 category: optics
 in: vector × normals
 out: normals
+gpu: なし
 examples: [sensor_seg, snell_refraction]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `vector × normals` → `normals`
 - **呼び出し**: `import fullseye as fs; fs.ledger.reflect(d, n)` (実装を直接呼ぶなら `import match3d; match3d.reflect(d, n)`、台帳から引くなら `ops3d.get("reflect")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

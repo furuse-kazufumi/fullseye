@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">spiral_expected_tries — DRIVE <code style="color:#22d3bf">pegsym</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">matrix × scalar × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.spiral_expected_tries(points, capture: &#x27;float&#x27;, rho: &#x27;float&#x27;, grid: &#x27;int&#x27; = 161) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import pegsym; pegsym.spiral_expected_tries(points, capture: &#x27;float&#x27;, rho: &#x27;float&#x27;, grid: &#x27;int&#x27; = 161) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;spiral_expected_tries&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>横向偏差在半径 <code style="color:#22d3bf">rho</code> 的圆盘内均匀时，依次尝试点列 <code style="color:#22d3bf">points</code> 直到首次捕获(距离 ≤ <code style="color:#22d3bf">capture</code>)的期望尝试次数。<code style="color:#22d3bf">measured</code> = 圆盘内网格(grid × grid，舍弃圆外)的平均。<code style="color:#22d3bf">closed</code> = 扫过面积的近似：k 个点扫过面积 k·p·s，因此到达半径 r 时 k = πr²/(ps)，若 r 在圆盘内均匀则 E = πρ²/(2ps) + 1/2(p、s 由点列估计：s = 相邻点距离的中位数，p = 外圈点半径每圈的增量)。若有任何点都捕获不到的网格点，则 <code style="color:#22d3bf">uncovered</code> &gt; 0(覆盖的漏洞)。<b>Raises</b> ValueError：点不是 (N ≥ 3, 2)、capture、rho ≤ 0、grid &lt; 11。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

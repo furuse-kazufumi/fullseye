@@ -4,6 +4,7 @@ dim: vx
 category: suppress
 in: image2d
 out: image2d
+gpu: なし
 examples: [gallery_openvx_spec_values]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.vx_nonmax_suppression(image, *, window, mask=None)` (実装を直接呼ぶなら `import vxcore; vxcore.vx_nonmax_suppression(image, *, window, mask=None)`、台帳から引くなら `opsvx.get("vx_nonmax_suppression")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

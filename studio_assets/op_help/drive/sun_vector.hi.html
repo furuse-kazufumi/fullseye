@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">sun_vector — DRIVE <code style="color:#22d3bf">env</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">scalar × scalar</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sun_vector(elevation: &#x27;float&#x27;, azimuth: &#x27;float&#x27;, north_yaw: &#x27;float&#x27; = 90.0) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import driveenv; driveenv.sun_vector(elevation: &#x27;float&#x27;, azimuth: &#x27;float&#x27;, north_yaw: &#x27;float&#x27; = 90.0) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;sun_vector&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>सूर्य की दिशा का unit vector (world frame, ज़मीन से सूर्य की ओर)।</p>
 <p><code style="color:#22d3bf">north_yaw</code> = विश्व +x से वामावर्त मापी गई उत्तर की दिशा [डिग्री] (डिफ़ॉल्ट 90° = +y उत्तर, +x पूर्व)। दिगंश उत्तर से दक्षिणावर्त है।</p>

@@ -4,6 +4,7 @@ dim: optics
 category: spectral
 in: pairs
 out: table
+gpu: なし
 examples: [poc_nir_silicon_transmission]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `pairs` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.spectral_stats(spectrum)` (実装を直接呼ぶなら `import spectralrad; spectralrad.spectral_stats(spectrum)`、台帳から引くなら `opsoptics.get("spectral_stats")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

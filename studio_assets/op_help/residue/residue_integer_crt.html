@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">residue_integer_crt — RESIDUE <code style="color:#22d3bf">theorem</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.residue_integer_crt(residues, moduli) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import residue; residue.residue_integer_crt(residues, moduli) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsresidue.get(&quot;residue_integer_crt&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Exact integer CRT (Garner&#x27;s mixed-radix algorithm) -&gt; <code style="color:#22d3bf">dict</code>.</p>
 <p><code style="color:#22d3bf">residues</code> and <code style="color:#22d3bf">moduli</code> are equal-length integer sequences; the moduli must be pairwise coprime and &gt;= 2. Returns <code style="color:#22d3bf">{&quot;value&quot;: int, &quot;modulus&quot;: int, &quot;mixed_radix&quot;: [digits]}</code> where <code style="color:#22d3bf">value</code> is the unique solution in <code style="color:#22d3bf">[0, prod(moduli))</code>. Arithmetic is Python&#x27;s arbitrary-precision <code style="color:#22d3bf">int</code> — there is no rounding anywhere, which is why this op is the oracle for <code style="color:#22d3bf">residue_crt</code>.</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">mirror_virtual_camera — DRIVE <code style="color:#22d3bf">decide</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mirror_virtual_camera(cam_pose, mirror_plane) -&gt; &#x27;Dict[str, object]&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivedecide; drivedecide.mirror_virtual_camera(cam_pose, mirror_plane) -&gt; &#x27;Dict[str, object]&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;mirror_virtual_camera&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>평면 거울에 비친 상을 찍는 <b>가상 카메라</b>.</p>
 <p><code style="color:#22d3bf">cam_pose</code> 는 world→camera 의 4×4(<code style="color:#22d3bf">render3d.look_at</code> 의 규약: X_cam = P X, −Z 가 앞). <code style="color:#22d3bf">mirror_plane</code> 은(n_x, n_y, n_z, d)(n·X = d).</p>

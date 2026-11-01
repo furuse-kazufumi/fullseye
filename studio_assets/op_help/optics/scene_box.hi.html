@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">scene_box — OPTICS <code style="color:#22d3bf">scene</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">table</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.scene_box(center_mm, half_size_mm, material=None) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import optscene; optscene.scene_box(center_mm, half_size_mm, material=None) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;scene_box&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>axis-aligned box part (AABB)। <code style="color:#22d3bf">half_size_mm</code> हर axis का आधा size [mm] है।</p>
 <p>x / y / z axes के समानांतर edges वाला और बिना rotation का box (इसे तिरछा रखने का कोई तरीका नहीं है)। हर axis पर घेरी गई range <code style="color:#22d3bf">center ± half</code> है।</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">graph_degree_preserving_null — GRAPH <code style="color:#22d3bf">null</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graph_degree_preserving_null(adj, n_samples=20, swaps_per_edge=5, seed=0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import graphinv; graphinv.graph_degree_preserving_null(adj, n_samples=20, swaps_per_edge=5, seed=0)</code>、台帳から引くなら <code style="color:#22d3bf">opsgraph.get(&quot;graph_degree_preserving_null&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Compare 3-cycles and reciprocity against a degree-preserving null model.</p>
 <p>Each null sample requests <code style="color:#22d3bf">swaps_per_edge * |E|</code> edge swaps that keep every node&#x27;s in- and out-degree <b>exactly</b> (Maslov &amp; Sneppen 2002); a swap that would create a self-loop or duplicate edge is skipped, so dense graphs accept fewer (<code style="color:#22d3bf">swaps_accepted</code>). The sample&#x27;s degree sequences are checked against the original before it is used — a null that drifted would make every ratio a lie, so this fails closed.</p>

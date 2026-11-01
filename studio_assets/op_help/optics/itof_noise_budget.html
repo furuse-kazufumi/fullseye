@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">itof_noise_budget — OPTICS <code style="color:#22d3bf">itof</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.itof_noise_budget(frequency_hz=20000000.0, signal_electrons=2000.0, demod_contrast=0.5, ambient_electrons=0.0, read_noise_e=0.0, n_phases=4)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import itof; itof.itof_noise_budget(frequency_hz=20000000.0, signal_electrons=2000.0, demod_contrast=0.5, ambient_electrons=0.0, read_noise_e=0.0, n_phases=4)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;itof_noise_budget&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>間接 ToF の距離の雑音の閉形式(1 画素・1 周波数・等間隔 K 段)。<code style="color:#22d3bf">table</code> を返す。</p>
 <p>1 回の測定(K 段の合計)に信号 S 電子・背景光 S_bg 電子が入るとき、段ごとに <code style="color:#22d3bf">A = c_d · S / K</code>(振幅)、<code style="color:#22d3bf">B = (S + S_bg) / K</code>(オフセット)。各バケットの分散を <code style="color:#22d3bf">B + σ_r²</code> とすると、等間隔 K 段の位相の推定の標準偏差は</p>

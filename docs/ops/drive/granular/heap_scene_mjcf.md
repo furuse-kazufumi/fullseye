@@ -4,6 +4,7 @@ dim: drive
 category: granular
 in: scalar × scalar
 out: table
+gpu: なし
 examples: [poc_granular_heap_repose]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `scalar × scalar` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.heap_scene_mjcf(n_spheres: 'int' = 1200, radius: 'float' = 0.004, *, mu_slide: 'float' = 0.16, mu_roll: 'float' = 0.09, density: 'float' = 2500.0, orifice_d: 'float' = 0.048, orifice_height: 'float' = 0.06, bin_radius: 'float' = 0.05, timestep: 'float' = 0.0015, base_roll: 'float' = 0.01, base_slide: 'float' = 1.0, solver_iterations: 'int' = 50, solver: 'str' = 'CG', cone: 'str' = 'elliptic', condim: 'int' = 6, contact_tc: 'float' = 0.006, seed: 'int' = 0) -> 'dict'` (実装を直接呼ぶなら `import granular; granular.heap_scene_mjcf(n_spheres: 'int' = 1200, radius: 'float' = 0.004, *, mu_slide: 'float' = 0.16, mu_roll: 'float' = 0.09, density: 'float' = 2500.0, orifice_d: 'float' = 0.048, orifice_height: 'float' = 0.06, bin_radius: 'float' = 0.05, timestep: 'float' = 0.0015, base_roll: 'float' = 0.01, base_slide: 'float' = 1.0, solver_iterations: 'int' = 50, solver: 'str' = 'CG', cone: 'str' = 'elliptic', condim: 'int' = 6, contact_tc: 'float' = 0.006, seed: 'int' = 0) -> 'dict'`、台帳から引くなら `opsdrive.get("heap_scene_mjcf")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

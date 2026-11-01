@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">dem_flow_direction — DEM <code style="color:#22d3bf">hydrology</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">depth</code> → <code style="color:#22d3bf">labels</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_flow_direction(dem, cell_size, nodata=&#x27;error&#x27;)</code> (die Implementierung direkt: <code style="color:#22d3bf">import demops; demops.dem_flow_direction(dem, cell_size, nodata=&#x27;error&#x27;)</code>; aus dem Register: <code style="color:#22d3bf">opsdem.get(&quot;dem_flow_direction&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>D8-Fließrichtung. O&#x27;Callaghan &amp; Mark (1984).</p>
 <p>Der Rückgabewert ist eine Ganzzahl von „(H, W)“, wobei 0-7 die Sequenz von _D8 und „-1“ die Sequenz von _D8 ist. „Kein Ziel“ (Depression). Grenzzellen von „nodata=&quot;outlet&quot; haben 0-7, die außerhalb der Grenzen liegen.</p>

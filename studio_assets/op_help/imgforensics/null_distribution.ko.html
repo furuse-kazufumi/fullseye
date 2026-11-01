@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">null_distribution — IMGFORENSICS <code style="color:#22d3bf">calibration</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.null_distribution(values)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import imgforensics; imgforensics.null_distribution(values)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsimgforensics.get(&quot;null_distribution&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p><b>변조가 없다고</b> 알려진 표본으로부터 증거량의 귀무분포를 정리합니다.</p>
 <p>이 족은 일관되게 판정을 반환하지 않는다. 그것은 옳지만, 그대로라면 이용자는 <code style="color:#22d3bf">PCE 1832</code> 같은 수치를 받고도 <b>해석할 수단이 없다</b>. 그렇다고임계값을 동봉하면 거짓말이 된다 ―― 분리점은 장수·해상도·압축률·피사체에 따라움직이므로, 출하 시에 정할 수 있는 값이 아니다.</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">gum_expanded — SPC <code style="color:#22d3bf">uncertainty</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gum_expanded(table, u=&#x27;u&#x27;, sensitivity=&#x27;sensitivity&#x27;, dof=&#x27;dof&#x27;, level=0.95, correlation=None, estimate=None, lower_bound=None, upper_bound=None)</code> (die Implementierung direkt: <code style="color:#22d3bf">import spc; spc.gum_expanded(table, u=&#x27;u&#x27;, sensitivity=&#x27;sensitivity&#x27;, dof=&#x27;dof&#x27;, level=0.95, correlation=None, estimate=None, lower_bound=None, upper_bound=None)</code>; aus dem Register: <code style="color:#22d3bf">opsspc.get(&quot;gum_expanded&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Effektive Freiheitsgrade nach Welch-Satterthwaite, Erweiterungsfaktor k und erweiterte Unsicherheit U (<code style="color:#22d3bf">table</code>).</p>
 <p>nu_eff = u_c^4 / sum_i (c_i u_i)^4 / nu_i        U = k u_c,  k = t_{p}(floor(nu_eff))</p>

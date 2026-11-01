@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">transport_plan_1d — COLORTRANSPORT <code style="color:#22d3bf">transport</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">transport_plan</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.transport_plan_1d(u_values, v_values)</code> (die Implementierung direkt: <code style="color:#22d3bf">import colortransport; colortransport.transport_plan_1d(u_values, v_values)</code>; aus dem Register: <code style="color:#22d3bf">opscolortransport.get(&quot;transport_plan_1d&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Der exakte 1-D-Transportplan (Nordwest-Ecken-Regel). Liefert eine <code style="color:#22d3bf">(n, m)</code>-Massenmatrix.</p>
 <p>Zeilensummen sind <code style="color:#22d3bf">1/n</code>, Spaltensummen <code style="color:#22d3bf">1/m</code> -- das ist <b>konstruktionsbedingt exakt</b>, und es weicht außer durch numerische Fehler nie ab (per Test festgenagelt).</p>

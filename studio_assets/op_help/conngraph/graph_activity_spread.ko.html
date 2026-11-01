@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">graph_activity_spread — CONNGRAPH <code style="color:#22d3bf">activity</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">matrix × points × labels</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graph_activity_spread(X: &#x27;Any&#x27;, P: &#x27;Any&#x27;, source: &#x27;Any&#x27;, thresh: &#x27;float&#x27; = 0.1) -&gt; &#x27;dict[str, np.ndarray]&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import conngraph; conngraph.graph_activity_spread(X: &#x27;Any&#x27;, P: &#x27;Any&#x27;, source: &#x27;Any&#x27;, thresh: &#x27;float&#x27; = 0.1) -&gt; &#x27;dict[str, np.ndarray]&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsconngraph.get(&quot;graph_activity_spread&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>활동이 어디까지 퍼졌는지의 시계열 표: 열 step / mean_distance / active_fraction / source_fraction.</p>
 <p><code style="color:#22d3bf">X</code> = (T, n) 의 상태열, <code style="color:#22d3bf">P</code> = (n, 3) 의 좌표, <code style="color:#22d3bf">source</code> = 자극한 노드의 지시자(길이 n 의정수, 0 이 아니면 = 자극. 1 개 이상). mean_distance[t] = Σ|x_i(t)| ‖P_i − c‖ / Σ|x_i(t)|(c = 자극 노드의 무게중심, |x| 로 가중한활동의 평균 거리, 단위는 P 와 같다. 활동이 전부 0 인 스텝은 0). active_fraction[t] = |x_i(t)| ≥ 전체 최대 × thresh 인 노드의 비율. source_fraction[t] = 활동 중 자극 노드에 있는 몫 Σ_source |x| / Σ|x|(전부 0 이면 0).</p>

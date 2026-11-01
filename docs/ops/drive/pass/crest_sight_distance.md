@@ -4,6 +4,7 @@ dim: drive
 category: pass
 in: 
 out: table
+gpu: なし
 examples: [poc_driving_pass]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.crest_sight_distance(*, radius: 'Optional[float]' = None, grade_in: 'Optional[float]' = None, grade_out: 'Optional[float]' = None, length: 'Optional[float]' = None, eye_height: 'float' = 1.2, object_height: 'float' = 0.1) -> 'Dict[str, object]'` (実装を直接呼ぶなら `import drivepass; drivepass.crest_sight_distance(*, radius: 'Optional[float]' = None, grade_in: 'Optional[float]' = None, grade_out: 'Optional[float]' = None, length: 'Optional[float]' = None, eye_height: 'float' = 1.2, object_height: 'float' = 0.1) -> 'Dict[str, object]'`、台帳から引くなら `opsdrive.get("crest_sight_distance")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

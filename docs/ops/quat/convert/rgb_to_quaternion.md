@@ -4,6 +4,7 @@ dim: quat
 category: convert
 in: rgbimage
 out: qimage
+gpu: なし
 examples: [quaternion_monogenic]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `rgbimage` → `qimage`
 - **呼び出し**: `import fullseye as fs; fs.ledger.rgb_to_quaternion(image_rgb) -> 'np.ndarray'` (実装を直接呼ぶなら `import quatimage; quatimage.rgb_to_quaternion(image_rgb) -> 'np.ndarray'`、台帳から引くなら `opsquat.get("rgb_to_quaternion")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

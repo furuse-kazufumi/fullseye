@@ -4,6 +4,7 @@ dim: drive
 category: tacslip
 in: table × matrix × matrix
 out: table
+gpu: なし
 examples: [poc_tacsim_marker_shear]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table × matrix × matrix` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.mindlin_fit(model: 'dict', pts_px, u_m, n_coarse: 'int' = 101, n_fine: 'int' = 41, rigid: 'bool' = False) -> 'dict'` (実装を直接呼ぶなら `import tacslip; tacslip.mindlin_fit(model: 'dict', pts_px, u_m, n_coarse: 'int' = 101, n_fine: 'int' = 41, rigid: 'bool' = False) -> 'dict'`、台帳から引くなら `opsdrive.get("mindlin_fit")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

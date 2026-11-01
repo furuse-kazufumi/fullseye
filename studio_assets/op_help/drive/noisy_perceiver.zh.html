@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">noisy_perceiver — DRIVE <code style="color:#22d3bf">kendama</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">any</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.noisy_perceiver(rng, noise_pos: &#x27;float&#x27; = 0.0, noise_vel: &#x27;float&#x27; = 0.0)</code>(要直接调用实现,<code style="color:#22d3bf">import kendama; kendama.noisy_perceiver(rng, noise_pos: &#x27;float&#x27; = 0.0, noise_vel: &#x27;float&#x27; = 0.0)</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;noisy_perceiver&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>在感知上加各向同性高斯噪声 <code style="color:#22d3bf">perceive(t, p, v) → (p̂, v̂)</code>(位置 σ = noise_pos [m]，速度 σ = noise_vel [m/s])。σ 为负则 ValueError。rng = numpy.random.Generator。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

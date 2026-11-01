@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">silicon_photodiode_qe — OPTICS <code style="color:#22d3bf">spectral</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">pairs</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.silicon_photodiode_qe(collection_depth_um=3.0, dead_layer_um=0.0, front_reflectance=None, wl_min_nm=300.0, wl_max_nm=1200.0, n_points=181)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import spectralrad; spectralrad.silicon_photodiode_qe(collection_depth_um=3.0, dead_layer_um=0.0, front_reflectance=None, wl_min_nm=300.0, wl_max_nm=1200.0, n_points=181)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;silicon_photodiode_qe&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Si フォトダイオードの外部量子効率(電子/光子)を Si の n,k から。</p>
 <p>QE(λ) = (1 − R(λ)) · [exp(−α d₀) − exp(−α (d₀ + W))]、α = 4πk/λ(Si の k は <code style="color:#22d3bf">materials</code> の Green 2008、300 K)。W = *collection_depth_um*(空乏層 + 拡散で集まる深さ。裏面照射の CMOS で ≈ 3 µm、NIR 強化品で 6〜10 µm、PIN フォトダイオードで 50 µm 以上)、d₀ = *dead_layer_um* (表面の再結合で失う層)。*front_reflectance* が None なら空気/Si の Fresnel(≈ 0.3、反射防止膜なし)、数を与えればその一定値(反射防止膜つきなら 0.02〜0.05)。</p>

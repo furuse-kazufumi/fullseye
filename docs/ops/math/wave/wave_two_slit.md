@@ -4,6 +4,7 @@ dim: math
 category: wave
 in: 
 out: image2d
+gpu: なし
 examples: [poc_beats_fringes_and_screens]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `image2d`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.wave_two_slit(wavelength_nm=550.0, slit_sep_um=20.0, distance_mm=200.0, shape=(256, 512), pixel_um=5.0, slit_width_um=2.0)` (実装を直接呼ぶなら `import mathops; mathops.wave_two_slit(wavelength_nm=550.0, slit_sep_um=20.0, distance_mm=200.0, shape=(256, 512), pixel_um=5.0, slit_width_um=2.0)`、台帳から引くなら `opsmath.get("wave_two_slit")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

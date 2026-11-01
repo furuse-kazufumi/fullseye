@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">skeleton_junctions3d — 3D <code style="color:#22d3bf">medial</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">voxel</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.skeleton_junctions3d(vol)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import medial; medial.skeleton_junctions3d(vol)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;skeleton_junctions3d&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>3D skeleton के branch points (joint, 26-neighbourhood में 3 या अधिक skeleton voxels) को voxel mask के रूप में लौटाता है।</p>
 <p>जो input skeleton नहीं है (interior वाला blob), उसे मापने से पहले skeletonize_vol से thin किया जाता है। 2D के <code style="color:#22d3bf">junctions_skeleton</code> का 3D संस्करण। blood vessel, porous material और network जैसी संरचनाओं को graph में बदलने (node निकालने) के लिए उपयोग होता है। केवल branch degree का सार चाहिए तो topology_signature उसे dict में लौटाता है।</p>

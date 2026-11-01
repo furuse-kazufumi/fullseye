@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">cplx_rational_field — MATH <code style="color:#22d3bf">complex</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">roots × roots</code> → <code style="color:#22d3bf">cimage</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cplx_rational_field(zeros, poles, gain=1.0, centre=0j, half_width=2.0, shape=(256, 256))</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import mathops; mathops.cplx_rational_field(zeros, poles, gain=1.0, centre=0j, half_width=2.0, shape=(256, 256))</code>、台帳から引くなら <code style="color:#22d3bf">opsmath.get(&quot;cplx_rational_field&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Sample a rational function <code style="color:#22d3bf">R(z) = gain * prod(z - zeros) / prod(z - poles)</code>.</p>
 <p>Returns the complex image <code style="color:#22d3bf">R(z)</code> over a rectangular window of the plane — the *area* counterpart of this family&#x27;s contour operators. The product is formed in log space (<code style="color:#22d3bf">exp(sum(log(z - zk)) - sum(log(z - pm)))</code>) so a degree-30 numerator does not overflow before the denominator can divide it back down; the branch cuts of the individual logarithms cancel in the exponential, so the result is the ordinary principal value of the quotient, not a branch of it.</p>

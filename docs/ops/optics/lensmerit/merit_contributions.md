@@ -4,6 +4,7 @@ dim: optics
 category: lensmerit
 in: table
 out: table
+gpu: なし
 examples: [poc_lens_merit_operands]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.merit_contributions(system=None, operands=None, fields=None, wavelengths=None, field_weights=None, wavelength_weights=None, top=None) -> 'dict'` (実装を直接呼ぶなら `import lensmerit; lensmerit.merit_contributions(system=None, operands=None, fields=None, wavelengths=None, field_weights=None, wavelength_weights=None, top=None) -> 'dict'`、台帳から引くなら `opsoptics.get("merit_contributions")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

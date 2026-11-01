@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">mapf_joint_astar — DRIVE <code style="color:#22d3bf">agv</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mapf_joint_astar(grid, starts, goals, max_expansions=2000000)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import agvfleet; agvfleet.mapf_joint_astar(grid, starts, goals, max_expansions=2000000)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;mapf_joint_astar&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>모든 차량의 위치를 1개의 상태로 한 A*. <b>작은 문제 전용</b>의 최적해(CBS 게이트의 참값).</p>
 <p>sum of costs 를 엄밀히 세기 위해 각 차량에 「끝났다(이후 목적지에 계속 머문다)」 플래그를 둔다:</p>

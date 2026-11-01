@@ -4,6 +4,7 @@ dim: printpath
 category: format
 in: text
 out: mesh
+gpu: なし
 examples: [poc_print_layer_inspection]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `text` → `mesh`
 - **呼び出し**: `import fullseye as fs; fs.ledger.read_3mf(path: 'str') -> 'tuple[np.ndarray, np.ndarray]'` (実装を直接呼ぶなら `import printpath; printpath.read_3mf(path: 'str') -> 'tuple[np.ndarray, np.ndarray]'`、台帳から引くなら `opsprintpath.get("read_3mf")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

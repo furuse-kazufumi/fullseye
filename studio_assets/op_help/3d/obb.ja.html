@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">obb — 3D <code style="color:#22d3bf">bounds</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">primitive</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.obb(points) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import pcseg; pcseg.obb(points) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;obb&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>PCA による有向外接直方体。</p>
 <p>Returns <code style="color:#22d3bf">{center, axes (3,3 columns = box axes), extents (3, half-widths), corners (8,3)}</code>. The tight-fitting box a manipulator uses to reason about an object&#x27;s size and grasp width once it has been segmented out.</p>

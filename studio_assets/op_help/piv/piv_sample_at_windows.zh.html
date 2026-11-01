@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">piv_sample_at_windows — PIV <code style="color:#22d3bf">assess</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">flow2d</code> → <code style="color:#22d3bf">flow2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_sample_at_windows(field, info)</code>(要直接调用实现,<code style="color:#22d3bf">import pivops; pivops.piv_sample_at_windows(field, info)</code>;从台账取用则 <code style="color:#22d3bf">opspiv.get(&quot;piv_sample_at_windows&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>将逐像素的场 <code style="color:#22d3bf">(2, H, W)</code> 落到窗口中心的网格上(最近邻)。</p>
 <p>真值以像素分辨率生成，而 PIV 的输出落在窗口网格上。<b>比较之前必须把它带到同一网格上</b>，而带过去的方式(最近邻或窗口内平均)会改变误差。这里用最近邻 —— 若用窗口内平均，在有梯度的场中就无法与 PIV 自身的平滑区分开。</p>

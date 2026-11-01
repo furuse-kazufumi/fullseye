@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">comminution_law_fit — DRIVE <code style="color:#22d3bf">grind</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.comminution_law_fit(t, d, law: &#x27;str&#x27; = &#x27;all&#x27;) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import grind; grind.comminution_law_fit(t, d, law: &#x27;str&#x27; = &#x27;all&#x27;) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;comminution_law_fit&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>कण के आकार के समय के साथ बदलाव <code style="color:#22d3bf">d(t)</code> पर comminution नियम fit करता है (ऊर्जा ∝ <code style="color:#22d3bf">t</code> की मान्यता, module की शुरुआत देखें)। त्रुटि <b>log(व्यास)</b> में मापी जाती है।</p>
 <p><code style="color:#22d3bf">t</code>: शुद्ध पिसाई समय (ऊर्जा के स्थान पर, ≥ 0), <code style="color:#22d3bf">d</code>: उस समय का प्रतिनिधि व्यास [µm] (D50 आदि)। स्वतंत्र प्रयासों को एक ही <code style="color:#22d3bf">t</code> पर कई बार रखा जा सकता है।</p>

@@ -4,6 +4,7 @@ dim: optics
 category: sensorchar
 in: signal
 out: signal
+gpu: なし
 examples: [poc_emva1288_sensor]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal` → `signal`
 - **呼び出し**: `import fullseye as fs; fs.ledger.emva_photon_exposure(irradiance, area_um2, t_exp_ms, wavelength_um)` (実装を直接呼ぶなら `import sensorchar; sensorchar.emva_photon_exposure(irradiance, area_um2, t_exp_ms, wavelength_um)`、台帳から引くなら `opsoptics.get("emva_photon_exposure")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

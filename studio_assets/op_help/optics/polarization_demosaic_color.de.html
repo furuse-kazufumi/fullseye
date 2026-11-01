@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">polarization_demosaic_color — OPTICS <code style="color:#22d3bf">polarization</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">rgbvolume</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.polarization_demosaic_color(raw, layout=((90.0, 45.0), (135.0, 0.0)), bayer=&#x27;RGGB&#x27;)</code> (die Implementierung direkt: <code style="color:#22d3bf">import optics; optics.polarization_demosaic_color(raw, layout=((90.0, 45.0), (135.0, 0.0)), bayer=&#x27;RGGB&#x27;)</code>; aus dem Register: <code style="color:#22d3bf">opsoptics.get(&quot;polarization_demosaic_color&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Zerlegt das Mosaik eines Farb-Polarisationssensors (IMX250MYR-Familie, 4x4-Block) in vier RGB-Bilder (4, H, W, 3).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>

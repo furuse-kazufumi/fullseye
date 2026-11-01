@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">polarization_stokes_map — SPECULAR <code style="color:#22d3bf">polarization</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">polsweep</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.polarization_stokes_map(images, angles_deg=(0.0, 45.0, 90.0, 135.0), max_violation_frac=0.0)</code>(要直接调用实现,<code style="color:#22d3bf">import specularity; specularity.polarization_stokes_map(images, angles_deg=(0.0, 45.0, 90.0, 135.0), max_violation_frac=0.0)</code>;从台账取用则 <code style="color:#22d3bf">opsspecular.get(&quot;polarization_stokes_map&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由检偏器扫描(DoFP 的 4 个方位,或任意 N &gt;= 3 个方位的最小二乘)得到逐像素线性 Stokes 图像以及 DoLP、AoLP 图。→ (H, W) 图的 dict。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">envelope_spectrum — ACOUSTICS <code style="color:#22d3bf">bearing</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.envelope_spectrum(x, rate, low, high, order=4, n_peaks=5)</code> (to call the implementation directly, <code style="color:#22d3bf">import acoustics; acoustics.envelope_spectrum(x, rate, low, high, order=4, n_peaks=5)</code>; from the registry, <code style="color:#22d3bf">opsacoustics.get(&quot;envelope_spectrum&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Band-pass, demodulate, transform — where a bearing defect actually shows.</p>
 <p>The three steps are each already available (<code style="color:#22d3bf">dsp.bandpass</code>, <code style="color:#22d3bf">dsp.envelope</code>, <code style="color:#22d3bf">numpy.fft</code>); what is not available anywhere in <code style="color:#22d3bf">dsp</code> is the *composition*, and the composition is the diagnostic. The raw spectrum of a defective bearing shows a resonance at some kHz and nothing at the defect rate; the envelope of that resonance band, transformed, shows the defect rate as a clean line.</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">rotation_translation_error — 3D <code style="color:#22d3bf">registration_metrics</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">pose × pose</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rotation_translation_error(gt, est)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import registration_eval; registration_eval.rotation_translation_error(gt, est)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;rotation_translation_error&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>2 4×4 transforms के बीच relative rotation error (geodesic angle [डिग्री], RRE) और relative translation error (RTE)।</p>
 <p>RRE = कोण(gt_R^T · est_R) = atan2(|axial(dR − dRᵀ)|/2, (tr−1)/2), degrees में। किसी भी axis के चारों ओर कोण θ के rotation अंतर के लिए RRE=θ। RTE = ‖gt_t − est_t‖। → (rre_deg, rte)। 4×4 न हो तो ValueError (fail-closed)।</p>

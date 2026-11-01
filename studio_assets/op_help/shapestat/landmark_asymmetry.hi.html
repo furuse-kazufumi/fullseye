@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">landmark_asymmetry — SHAPESTAT <code style="color:#22d3bf">symmetry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.landmark_asymmetry(landmarks, pairs=None, plane=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import shapestats; shapestats.landmark_asymmetry(landmarks, pairs=None, plane=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsshapestat.get(&quot;landmark_asymmetry&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>हर बाएँ/दाएँ जोड़े के लिए <b>sign सहित</b> asymmetry। → <code style="color:#22d3bf">(M,)</code>।</p>
 <p>हर जोड़े के लिए, एक point को plane से mirror करके दूसरे से तुलना की जाती है, और plane के normal की दिशा में अंतर लौटाया जाता है। चिह्न &quot;दायाँ बाहर हो तो धनात्मक&quot; है (<code style="color:#22d3bf">mirror_plane_from_pairs</code> normal को उसी दिशा में रखता है)। <b>इसे absolute value में नहीं समेटा जाता</b> -- बाएँ या दाएँ में से कौन-सा उभरा है, इसका अर्थ clinical काम और inspection दोनों में अलग होता है।</p>

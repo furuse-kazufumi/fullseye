@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">no_overtaking_zones — DRIVE <code style="color:#22d3bf">pass</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.no_overtaking_zones(features: &#x27;Iterable[dict]&#x27;, *, priority_road: &#x27;bool&#x27; = False, vicinity: &#x27;Optional[dict]&#x27; = None, steep_grade: &#x27;float&#x27; = 0.1, zone: &#x27;float&#x27; = 30.0) -&gt; &#x27;Dict[str, object]&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import drivepass; drivepass.no_overtaking_zones(features: &#x27;Iterable[dict]&#x27;, *, priority_road: &#x27;bool&#x27; = False, vicinity: &#x27;Optional[dict]&#x27; = None, steep_grade: &#x27;float&#x27; = 0.1, zone: &#x27;float&#x27; = 30.0) -&gt; &#x27;Dict[str, object]&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;no_overtaking_zones&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Builds the sections where overtaking under Art. 30 (lane changes or passing alongside for overtaking) is prohibited, from facilities along the road. Scenarios S081, S009, S130.</p>
 <p>features[i] = {&quot;kind&quot;, &quot;start&quot;, &quot;end&quot;} (point facilities use &quot;at&quot;). kind:</p>

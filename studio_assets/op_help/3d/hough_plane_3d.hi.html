@@ -2,7 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">hough_plane_3d — 3D <code style="color:#22d3bf">detect</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">primitive</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.hough_plane_3d(vol, device=&#x27;cpu&#x27;, ndir=200, nd=128, mc=0.0, iso=0.5, tol=1.0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import match3d; match3d.hough_plane_3d(vol, device=&#x27;cpu&#x27;, ndir=200, nd=128, mc=0.0, iso=0.5, tol=1.0)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;hough_plane_3d&quot;)</code>)</p>
-<p style="margin:2px 0 2px 12px">• <b>GPU</b>: इस op का GPU path है (<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>plane detection (2D Hough line का 3D lift)। gradient=normal का उपयोग करके (normal n, distance d) space में vote करता है।</p>
 <p>पतली boundary surface का हर voxel अपने normal-direction bin और d=n·p के लिए vote करता है → peak = dominant plane। normal को जीतने वाले bin के वास्तविक normal के औसत से refine किया जाता है, d को projection के mode से। point cloud/voxel से ज़मीन या दीवार निकालने के लिए। Return value (n(3,), d, inliers, total)।</p>

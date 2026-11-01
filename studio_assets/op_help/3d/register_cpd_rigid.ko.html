@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">register_cpd_rigid — 3D <code style="color:#22d3bf">deform</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">pose</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.register_cpd_rigid(src, dst, iters=50, w=0.0, tol=1e-08)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import deform3d; deform3d.register_cpd_rigid(src, dst, iters=50, w=0.0, tol=1e-08)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;register_cpd_rigid&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>Coherent Point Drift(CPD) 강체판으로 회전+병진을 EM 추정합니다.</p>
 <p><code style="color:#22d3bf">src</code>(이동 측 Y, M점)를 <code style="color:#22d3bf">dst</code>(고정 측 X, N점)에 강체 변환으로 맞춘다. CPD는 dst를, src를 중심에 둔 등방 가우스 혼합의 무게중심으로 보고, E 스텝에서 소프트 대응(posterior)을, M 스텝에서 최대우도 강체 변환과 분산을 갱신한다. ICP와 달리 대응을하드하게 정하지 않으므로 초기 어긋남과 부분적 이상값에 강건하다. 스케일은 1 고정(순수 강체).</p>

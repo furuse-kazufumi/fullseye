@@ -4,6 +4,7 @@ dim: oned
 category: signal
 in: signal
 out: signal
+gpu: なし
 examples: [poc_cold_chain_excursion]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal` → `signal`
 - **呼び出し**: `import fullseye as fs; fs.ledger.quantize(x, bits=8, mode='round', dither=None, seed=0)` (実装を直接呼ぶなら `import dsp; dsp.quantize(x, bits=8, mode='round', dither=None, seed=0)`、台帳から引くなら `ops1d.get("quantize")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

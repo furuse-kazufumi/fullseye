@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">sdf_offset — 3D <code style="color:#22d3bf">sdf_csg</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">sdf</code> → <code style="color:#22d3bf">sdf</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sdf_offset(sdf, r)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import sdf_ops; sdf_ops.sdf_offset(sdf, r)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;sdf_offset&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>SDF की zero level set को दूरी <code style="color:#22d3bf">r</code> जितना normal direction में खिसकाता है = <code style="color:#22d3bf">sdf - r</code> (r&gt;0 फैलाव, r&lt;0 सिकुड़न)।</p>
 <p>नया zero set पुराने field का isosurface <code style="color:#22d3bf">sdf == r</code> है। हर point पर दूरी एक समान <code style="color:#22d3bf">r</code> से खिसकती है, इसलिए distance field के रूप में गुण (gradient norm 1) बने रहते हैं। primitives को मोटाई देने (गोल shell) या piping की clearance सुनिश्चित करने के लिए उपयोग होता है।</p>

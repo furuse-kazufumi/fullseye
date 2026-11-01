@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">dem_datum_shift_3param — DEM <code style="color:#22d3bf">geodesy</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">points</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_datum_shift_3param(lat_deg, lon_deg, h_m, dx_m, dy_m, dz_m, a_from_m, f_from, a_to_m, f_to)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import demops; demops.dem_datum_shift_3param(lat_deg, lon_deg, h_m, dx_m, dy_m, dz_m, a_from_m, f_from, a_to_m, f_to)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdem.get(&quot;dem_datum_shift_3param&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>geodetic datum बदलना — geocentric 3-parameter translation (<code style="color:#22d3bf">points</code>)।</p>
 <p>एक ही &quot;35 degrees 41 minutes उत्तर&quot; भी पुराने Japanese geodetic system और world geodetic system में <b>ज़मीन पर कई सौ metres दूर</b> स्थानों की ओर इशारा करता है। यह op उस बदलाव को geocentric Cartesian coordinates में translation के रूप में करता है (बिना rotation या scale वाला <code style="color:#22d3bf">Molodensky-Badekas</code> case)::</p>

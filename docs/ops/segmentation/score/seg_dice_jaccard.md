@@ -4,6 +4,7 @@ dim: segmentation
 category: score
 in: labels2d × labels2d
 out: table
+gpu: なし
 examples: [poc_active_contours, poc_am_thermal_to_ct, poc_graph_hierarchy_segmentation, poc_segmentation_gauntlet, poc_sem_wafer_defect_edge_bias]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `labels2d × labels2d` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.seg_dice_jaccard(labels_pred, labels_true, *, background: 'int' = 0, per_label: 'bool' = False) -> 'Dict[str, object]'` (実装を直接呼ぶなら `import segeval; segeval.seg_dice_jaccard(labels_pred, labels_true, *, background: 'int' = 0, per_label: 'bool' = False) -> 'Dict[str, object]'`、台帳から引くなら `opssegmentation.get("seg_dice_jaccard")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

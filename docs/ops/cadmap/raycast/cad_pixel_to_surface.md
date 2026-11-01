@@ -4,6 +4,7 @@ dim: cadmap
 category: raycast
 in: mesh × keypoints
 out: table
+gpu: なし
 examples: [defect_to_cad]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `mesh × keypoints` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.cad_pixel_to_surface(mesh, pixels, K=None, R=None, t=None, cull_backfaces=True, image_size=None, strict=False)` (実装を直接呼ぶなら `import cadmap; cadmap.cad_pixel_to_surface(mesh, pixels, K=None, R=None, t=None, cull_backfaces=True, image_size=None, strict=False)`、台帳から引くなら `opscadmap.get("cad_pixel_to_surface")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">emva_defect_pixels — OPTICS <code style="color:#22d3bf">sensorchar</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.emva_defect_pixels(avg_image, L, threshold)</code> (to call the implementation directly, <code style="color:#22d3bf">import sensorchar; sensorchar.emva_defect_pixels(avg_image, L, threshold)</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;emva_defect_pixels&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Characterization of defect pixels (Section 8.8): logarithmic histogram (Eqs. 73–75) and accumulated histogram (Eq. 77), and the number of pixels exceeding a threshold.</p>
 <p>*avg_image*: mean image of L frames (temporal noise removed by averaging). *L*: number of averaged frames (makes the bin width an integer multiple of 1/L). *threshold* (required) [DN]: counts the pixels whose absolute deviation from the mean <b>exceeds</b> this (the application&#x27;s &quot;stop band&quot;).</p>

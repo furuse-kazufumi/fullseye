@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">piv_peak_locking — PIV <code style="color:#22d3bf">assess</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">flow2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_peak_locking(flow, bins=20)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import pivops; pivops.piv_peak_locking(flow, bins=20)</code>, registry से लेना हो तो <code style="color:#22d3bf">opspiv.get(&quot;piv_peak_locking&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>peak locking की शक्ति। भिन्नात्मक भाग का distribution uniform से कितना हटा है।</p>
 <p>जब आंशिक भाग 0 या 0.5 होता है तो उपपिक्सेल अनुमान वास्तविक विस्थापन की ओर बढ़ता है। पूर्वाग्रह (सहसंबंध शिखर के आकार और फिट किए गए फ़ंक्शन के आकार में अंतर के कारण) पाठ्यपुस्तक व्यवस्थित त्रुटि)। <b>यदि प्रवाह एक समान नहीं है, तो भिन्नात्मक भाग समान वितरण के करीब होना चाहिए</b>, वहां से विचलन को मापें.</p>

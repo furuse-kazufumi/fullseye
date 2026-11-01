@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">linescan_lens_columns — OPTICS <code style="color:#22d3bf">linescan</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.linescan_lens_columns(profile=None, width=8192, pixel_um=7.0, frequency_index=None)</code>(要直接呼叫實作,<code style="color:#22d3bf">import linescan; linescan.linescan_lens_columns(profile=None, width=8192, pixel_um=7.0, frequency_index=None)</code>;從台帳取用則 <code style="color:#22d3bf">opsoptics.get(&quot;linescan_lens_columns&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把 <code style="color:#22d3bf">lens_field_profile</code> 的像高表換成線感測器<b>每一列像素</b>的照度和模糊(<code style="color:#22d3bf">table</code>)。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>

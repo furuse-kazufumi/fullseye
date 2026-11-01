@@ -4,6 +4,7 @@ dim: optics
 category: scene
 in: 
 out: table
+gpu: なし
 examples: [poc_focus_stacking, poc_pocket_interreflection, studio_raytrace_scene, virtual_machine_vision, vision_layout_from_catalog]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.optical_camera(focal_mm: 'float' = 25.0, pixel_um: 'float' = 3.45, resolution=(256, 256), working_distance_mm: 'float' = 200.0, look_at_mm=(0.0, 0.0, 0.0), tilt_deg: 'float' = 0.0, azimuth_deg: 'float' = 0.0, image_distance_mm: 'float' = None, telecentric: 'bool' = False) -> 'dict'` (実装を直接呼ぶなら `import optscene; optscene.optical_camera(focal_mm: 'float' = 25.0, pixel_um: 'float' = 3.45, resolution=(256, 256), working_distance_mm: 'float' = 200.0, look_at_mm=(0.0, 0.0, 0.0), tilt_deg: 'float' = 0.0, azimuth_deg: 'float' = 0.0, image_distance_mm: 'float' = None, telecentric: 'bool' = False) -> 'dict'`、台帳から引くなら `opsoptics.get("optical_camera")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

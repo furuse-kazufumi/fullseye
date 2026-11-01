@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">stroke_tone_error — PRINTPATH <code style="color:#22d3bf">stroke</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image2d × pairs</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.stroke_tone_error(image, points, pen_width=1.0, blur_sigma=3.0, gamma=1.0)</code>(要直接呼叫實作,<code style="color:#22d3bf">import printpath; printpath.stroke_tone_error(image, points, pen_width=1.0, blur_sigma=3.0, gamma=1.0)</code>;從台帳取用則 <code style="color:#22d3bf">opsprintpath.get(&quot;stroke_tone_error&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>畫線所得的<b>濃淡</b>與目標相差多少。→ <code style="color:#22d3bf">table</code></p>
 <p>★這才是一筆畫的<b>真正目標函數</b>。不把「畫得像不像」交給人眼, 而是用筆寬畫出、依人眼的尺度模糊,與目標暗度比較後以數值回傳。</p>

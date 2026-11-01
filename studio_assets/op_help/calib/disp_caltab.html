@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">disp_caltab — CALIB <code style="color:#22d3bf">target</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.disp_caltab(caltab)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import caltab; caltab.disp_caltab(caltab)</code>、台帳から引くなら <code style="color:#22d3bf">opscalib.get(&quot;disp_caltab&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>校正板画像を返す(表示用)(disp_caltab)。</p>
 <p><code style="color:#22d3bf">gen_caltab</code> / <code style="color:#22d3bf">sim_caltab</code> の返り(<code style="color:#22d3bf">image</code> を持つ dict)か、2-D の画像そのもの。画像を持たない dict や非有限の画像は <code style="color:#22d3bf">ValueError</code>(以前は dict をそのまま返していた)。</p>

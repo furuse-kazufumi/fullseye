@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">retardation_from_birefringence — OPTICS <code style="color:#22d3bf">photoelastic</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.retardation_from_birefringence(delta_n, thickness_m, wavelength_m)</code> (to call the implementation directly, <code style="color:#22d3bf">import photoelastic; photoelastic.retardation_from_birefringence(delta_n, thickness_m, wavelength_m)</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;retardation_from_birefringence&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Retardation from a birefringence Δn → dict (returns rad, nm and fringe order side by side).</p>
 <p><code style="color:#22d3bf">retardation = t·Δn</code> [m], <code style="color:#22d3bf">delta_rad = 2π t Δn / λ</code>, <code style="color:#22d3bf">fringe_order = t Δn / λ</code>. All three are returned so that the unit is never implicit.</p>

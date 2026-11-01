@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">dynnikov_act — DRIVE <code style="color:#22d3bf">braidpath</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">any × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dynnikov_act(coords, word)</code>(要直接调用实现,<code style="color:#22d3bf">import braidpath; braidpath.dynnikov_act(coords, word)</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;dynnikov_act&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>将辫字作用于任意 Dynnikov 坐标 (a; b)(整数或实数均可 —— 公式是分段线性的)。</p>
 <p><code style="color:#22d3bf">coords</code> 为 dict(<code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code>)或长度为 2(n − 1) 的序列(前半为 a,后半为 b)。股数 n = len(a) + 1。关系式 σᵢσᵢ₊₁σᵢ = σᵢ₊₁σᵢσᵢ₊₁、σᵢσⱼ = σⱼσᵢ、σᵢσᵢ⁻¹ = 1 <b>对任意 (a; b) 恒等地</b>成立(门 1,用随机实数坐标)。</p>

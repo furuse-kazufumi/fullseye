@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">talbot_grating_design — OPTICS <code style="color:#22d3bf">grating_interf</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.talbot_grating_design(period_um=4.0, wavelength_nm=None, energy_kev=None, grating=&#x27;pi&#x27;, order=1, source_distance_mm=None)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import gratinginterf; gratinginterf.talbot_grating_design(period_um=4.0, wavelength_nm=None, energy_kev=None, grating=&#x27;pi&#x27;, order=1, source_distance_mm=None)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;talbot_grating_design&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>格子干渉計の幾何: 第 1 格子の自己像の距離(分数タルボ距離)、縞と分析格子の周期、線源格子の周期(閉形式)。</p>
 <p>第 1 格子(周期 period_um = p1)を通った波は、ある距離で格子の像(またはその周期の半分の像)を結ぶ。その距離に周期の合った吸収格子(分析格子)を置き、どちらかの格子を 1 周期ずらしながら撮ると、各画素で縞の正弦が取れる。この op はその距離と周期を返す。</p>

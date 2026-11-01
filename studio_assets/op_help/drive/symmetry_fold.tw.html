@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">symmetry_fold — DRIVE <code style="color:#22d3bf">pegsym</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">scalar × scalar</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.symmetry_fold(angle: &#x27;float&#x27;, n: &#x27;int&#x27;) -&gt; &#x27;float&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import pegsym; pegsym.symmetry_fold(angle: &#x27;float&#x27;, n: &#x27;int&#x27;) -&gt; &#x27;float&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;symmetry_fold&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>將角折疊到 n 重對稱的商 SO(2)/C_n 的代表區間 (−π/n, π/n] (n = 1 時為 (−π, π]，n = 0 = 圓時為 0)。群恆等式 symmetry_fold(α + 2πk/n, n) = symmetry_fold(α, n) 即為門檻。<b>Raises</b> ValueError：n &lt; 0、角非有限。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

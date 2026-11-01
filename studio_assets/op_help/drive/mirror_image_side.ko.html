@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">mirror_image_side — DRIVE <code style="color:#22d3bf">pass</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mirror_image_side(eye_xy, mirror_center_xy, mirror_normal_xy, points, *, heading, velocities=None) -&gt; &#x27;Dict[str, object]&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivepass; drivepass.mirror_image_side(eye_xy, mirror_center_xy, mirror_normal_xy, points, *, heading, velocities=None) -&gt; &#x27;Dict[str, object]&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;mirror_image_side&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>커브 미러에 비친 점이 거울 중심의 좌우 어느 쪽에 보이는지·어느 쪽으로 움직여 보이는지(평면거울의 닫힌 식). 장면 S064·S130.</p>
 <p>좌우 방향은 볼록 거울이어도 같다(게이트에서 광선 추적과 대조. 볼록면은 각을 줄일 뿐).</p>

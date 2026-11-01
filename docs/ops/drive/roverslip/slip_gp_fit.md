@@ -4,6 +4,7 @@ dim: drive
 category: roverslip
 in: signal × signal
 out: table
+gpu: なし
 examples: [gallery_drive_soil_tactile, poc_rover_slip_risk_path]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal × signal` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.slip_gp_fit(slopes, slips, length_scales=None, noise_levels=None) -> 'dict'` (実装を直接呼ぶなら `import roverslip; roverslip.slip_gp_fit(slopes, slips, length_scales=None, noise_levels=None) -> 'dict'`、台帳から引くなら `opsdrive.get("slip_gp_fit")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

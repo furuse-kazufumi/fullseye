@@ -4,6 +4,7 @@ dim: optics
 category: matprop
 in: 
 out: pairs
+gpu: なし
 examples: [poc_hyperspectral_foreign_matter]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `pairs`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.material_nir_absorption(material='POLYETHYLENE', wl_min_nm: 'float' = 900.0, wl_max_nm: 'float' = 2500.0, n_points: 'int' = 321, water_fraction=None, bands=None)` (実装を直接呼ぶなら `import materials; materials.material_nir_absorption(material='POLYETHYLENE', wl_min_nm: 'float' = 900.0, wl_max_nm: 'float' = 2500.0, n_points: 'int' = 321, water_fraction=None, bands=None)`、台帳から引くなら `opsoptics.get("material_nir_absorption")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

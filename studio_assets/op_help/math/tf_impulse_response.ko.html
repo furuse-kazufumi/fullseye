@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tf_impulse_response — MATH <code style="color:#22d3bf">transform</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">signal × signal × signal</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tf_impulse_response(num, den, t) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import mathtransforms; mathtransforms.tf_impulse_response(num, den, t) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsmath.get(&quot;tf_impulse_response&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>임펄스 응답 h(t) = L⁻¹[H(s)] (t)(엄밀하게 프로퍼한 부분. 직달항의 델타는 반환하지 않는다).</p>
 <p>h(t) = C e^{At} B를 행렬 지수로 직접 평가한다(부분분수에 의존하지 않으므로 중근·원점의 극점에서도 분기하지 않는다).</p>

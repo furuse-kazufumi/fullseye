@@ -4,6 +4,7 @@ dim: drive
 category: kendama
 in: table
 out: table
+gpu: なし
 examples: [poc_kendama]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.kendama_simulate(kp: 'dict', handle, *, p0, v0, t_end: 'float', dt: 'float' = 0.001, perceive=None, catch_plan=None, g: 'float' = None, v_max: 'float' = 2.0, a_max: 'float' = 20.0, v_rel_max: 'float' = 1.0, plan_from: 'float' = 0.0, stop_on_miss: 'bool' = True, contact=None, contact_tol: 'float' = 0.0005) -> 'dict'` (実装を直接呼ぶなら `import kendama; kendama.kendama_simulate(kp: 'dict', handle, *, p0, v0, t_end: 'float', dt: 'float' = 0.001, perceive=None, catch_plan=None, g: 'float' = None, v_max: 'float' = 2.0, a_max: 'float' = 20.0, v_rel_max: 'float' = 1.0, plan_from: 'float' = 0.0, stop_on_miss: 'bool' = True, contact=None, contact_tol: 'float' = 0.0005) -> 'dict'`、台帳から引くなら `opsdrive.get("kendama_simulate")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

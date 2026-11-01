@@ -4,6 +4,7 @@ dim: optics
 category: geometric
 in: matrix
 out: table
+gpu: なし
 examples: [optics_imaging]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `matrix` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.abcd_trace(matrix, height_mm=1.0, angle_mrad=0.0)` (実装を直接呼ぶなら `import optics; optics.abcd_trace(matrix, height_mm=1.0, angle_mrad=0.0)`、台帳から引くなら `opsoptics.get("abcd_trace")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

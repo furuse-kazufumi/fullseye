@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">normals_from_depth — 3D <code style="color:#22d3bf">range_image</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">depth</code> → <code style="color:#22d3bf">normalmap</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.normals_from_depth(depth, fx=None, fy=None, cx=None, cy=None, orient_to_camera=True, spacing=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import range_image; range_image.normals_from_depth(depth, fx=None, fy=None, cx=None, cy=None, orient_to_camera=True, spacing=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;normals_from_depth&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>organized depth → oriented unit normals (H,W,3)। पड़ोसी pixels के 3D points का cross product (grid structure का उपयोग, O(HW))।</p>
 <p>fx,fy देने पर perspective, न देने पर orthographic। orient_to_camera=True पर normals का sign camera (origin) की ओर एक-समान किया जाता है।</p>

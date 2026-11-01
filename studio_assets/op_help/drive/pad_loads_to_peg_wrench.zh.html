@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">pad_loads_to_peg_wrench — DRIVE <code style="color:#22d3bf">pegtactile</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">scalar × signal × scalar × signal × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pad_loads_to_peg_wrench(PR: &#x27;float&#x27;, qR, PL: &#x27;float&#x27;, qL, pad: &#x27;dict&#x27;, torsion: &#x27;float&#x27; = 0.0) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import pegtactile; pegtactile.pad_loads_to_peg_wrench(PR: &#x27;float&#x27;, qR, PL: &#x27;float&#x27;, qL, pad: &#x27;dict&#x27;, torsion: &#x27;float&#x27; = 0.0) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;pad_loads_to_peg_wrench&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p><code style="color:#22d3bf">peg_wrench_to_pad_loads</code> 的逆运算：2 个垫的 (P, q) 与膜承受的扭转(每 1 个垫，绕夹爪 x 轴)→ 垫施加于销的力旋量(夹爪坐标系，以抓握点为矩心)与抓握力。施加于销的扭转 = −2·torsion。返回 <code style="color:#22d3bf">F</code>、<code style="color:#22d3bf">M</code>(3,)、<code style="color:#22d3bf">grip</code> = (N_R + N_L)/2。<b>Raises</b> ValueError：q 不是有限的 2 个分量、P 或 torsion 非有限。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

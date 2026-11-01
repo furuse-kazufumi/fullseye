@@ -4,6 +4,7 @@ dim: drive
 category: commonroad
 in: table × table
 out: any
+gpu: なし
 examples: [poc_driving_commonroad]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table × table` → `any`
 - **呼び出し**: `import fullseye as fs; fs.ledger.cr_solution_xml(scene, run, *, vehicle_model: 'str' = 'KS', vehicle_type: 'str' = 'BMW_320i', cost: 'str' = 'JB1', benchmark_version: 'str' = '2020a', date=None) -> 'str'` (実装を直接呼ぶなら `import drivecommonroad; drivecommonroad.cr_solution_xml(scene, run, *, vehicle_model: 'str' = 'KS', vehicle_type: 'str' = 'BMW_320i', cost: 'str' = 'JB1', benchmark_version: 'str' = '2020a', date=None) -> 'str'`、台帳から引くなら `opsdrive.get("cr_solution_xml")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

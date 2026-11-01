@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">occlusion_visible_intervals — DRIVE <code style="color:#22d3bf">traffic</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.occlusion_visible_intervals(ego_xy, ego_heading: &#x27;float&#x27;, parked_box, emerge_xy, s_max: &#x27;float&#x27;) -&gt; &#x27;list&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivetraffic; drivetraffic.occlusion_visible_intervals(ego_xy, ego_heading: &#x27;float&#x27;, parked_box, emerge_xy, s_max: &#x27;float&#x27;) -&gt; &#x27;list&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;occlusion_visible_intervals&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>자차의 눈이 p(s) = ego_xy + s h를 0 ≤ s ≤ s_max만큼 나아가는 동안 점 <code style="color:#22d3bf">emerge_xy</code>가 <b>보이는</b> 전진량 구간의 열.</p>
 <p><code style="color:#22d3bf">occlusion_reveal_distance</code> 는 &quot;처음 보이는 곳&quot; 만을 반환하지만, 보이는 방식은 단조가 아니다: 주차 차량의 폭의 띠 밖(보도 위)의 점은, 멀리서는 차와 연석의 틈 너머로 보이고, 가까이 가면 가려지고, 다시 보인다. 여기서는 보임/안 보임이 바뀔 수 있는 후보(모서리를 스치는 시선과진로의 교점, 진로와 변의 교점 —— 닫힌 형식)로 [0, s_max] 를 나누고, 각 구간의 중점에서 시선을 판정하여, 보이는 구간을 [(s0, s1), ...] (오름차순, 이웃한 보이는 구간은 결합)로 반환한다. 구간 끝의 종방향 거리는 h · (e − p(s)). 점이 상자 내부이면 [].</p>

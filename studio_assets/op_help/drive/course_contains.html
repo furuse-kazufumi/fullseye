@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">course_contains — DRIVE <code style="color:#22d3bf">course</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table × points</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.course_contains(course, xy)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import drivecourse; drivecourse.course_contains(course, xy)</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;course_contains&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>点が <b>走れる領域</b>(要素の多角形、配置なら要素の和)の内側かを偶奇規則で判定した bool 配列。</p>
 <p><code style="color:#22d3bf">xy</code> は <code style="color:#22d3bf">(N, 2)</code>(<code style="color:#22d3bf">(2,)</code> なら bool スカラ)。境界上の点は未定義。要素ごとに bounds で先に篩う。</p>

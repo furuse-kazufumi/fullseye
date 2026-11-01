@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">insertion_failure_table — DRIVE <code style="color:#22d3bf">pegfail</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">table</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.insertion_failure_table() -&gt; &#x27;list&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import pegfail; pegfail.insertion_failure_table() -&gt; &#x27;list&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;insertion_failure_table&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>실패 분류표(데이터): 각 행 = {<code style="color:#22d3bf">cls</code>, <code style="color:#22d3bf">when</code>(칸 → 허용 값의 집합, <code style="color:#22d3bf">&quot;*&quot;</code> = 무엇이든), <code style="color:#22d3bf">recovery</code>, <code style="color:#22d3bf">basis</code>}.</p>
 <p>각 행의 근거(<code style="color:#22d3bf">basis</code>)는 Whitney 1982(OCW 슬라이드의 쪽) 또는 접촉 형성의 기하. 순서에는 의미가 없다 —— 서명에 일치하는 행은 <b>많아야 1 행</b> (<code style="color:#22d3bf">insertion_failure_validate</code> 가 모든 쌍으로 확인한다). 회복 프리미티브의 어휘는 <code style="color:#22d3bf">insertion_recovery_primitive</code>.</p>

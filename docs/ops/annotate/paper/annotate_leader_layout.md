@@ -4,6 +4,7 @@ dim: annotate
 category: paper
 in: 
 out: table
+gpu: なし
 examples: [paper_figure]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.annotate_leader_layout(shape, points, labels=None, font_size=12, pad=4, gap=22, side='auto', font_path=None, min_font_size=9)` (実装を直接呼ぶなら `import annotate; annotate.annotate_leader_layout(shape, points, labels=None, font_size=12, pad=4, gap=22, side='auto', font_path=None, min_font_size=9)`、台帳から引くなら `opsannotate.get("annotate_leader_layout")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

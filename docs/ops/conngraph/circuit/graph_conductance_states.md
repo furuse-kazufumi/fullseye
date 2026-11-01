@@ -4,6 +4,7 @@ dim: conngraph
 category: circuit
 in: conn_graph × matrix
 out: matrix
+gpu: なし
 examples: [poc_fly_optomotor_steering]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `conn_graph × matrix` → `matrix`
 - **呼び出し**: `import fullseye as fs; fs.ledger.graph_conductance_states(W: 'Any', drive: 'Any', dt_s: 'float' = 0.001, tau_s: 'float' = 0.02, e_rest: 'float' = 0.0, e_exc: 'float' = 1.0, e_inh: 'float' = -1.0, release: 'str' = 'relu', v_half: 'float' = 0.5, slope: 'float' = 4.0, gain: 'float' = 1.0, v0: 'Any' = None) -> 'np.ndarray'` (実装を直接呼ぶなら `import conngraph; conngraph.graph_conductance_states(W: 'Any', drive: 'Any', dt_s: 'float' = 0.001, tau_s: 'float' = 0.02, e_rest: 'float' = 0.0, e_exc: 'float' = 1.0, e_inh: 'float' = -1.0, release: 'str' = 'relu', v_half: 'float' = 0.5, slope: 'float' = 4.0, gain: 'float' = 1.0, v0: 'Any' = None) -> 'np.ndarray'`、台帳から引くなら `opsconngraph.get("graph_conductance_states")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

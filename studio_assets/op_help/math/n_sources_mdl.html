@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">n_sources_mdl — MATH <code style="color:#22d3bf">spectral</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.n_sources_mdl(X) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import mathspectral; mathspectral.n_sources_mdl(X) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsmath.get(&quot;n_sources_mdl&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>スナップショットから波源の数を MDL 基準で推定する(Wax &amp; Kailath 1985)。</p>
 <p>共分散の固有値を大きい順に並べ、「下から M−k 個が等しい(= 雑音)」という仮説ごとに MDL(k) = −K (M−k) log(幾何平均 / 算術平均) + ½ k (2M−k) log K を計算し、最小の k を選ぶ。雑音が白色で、スナップショット数 K が素子数 M より十分多いことが前提。</p>

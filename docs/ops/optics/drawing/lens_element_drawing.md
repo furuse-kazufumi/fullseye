@@ -4,6 +4,7 @@ dim: optics
 category: drawing
 in: table
 out: table
+gpu: なし
 examples: [poc_optics_drawings]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.lens_element_drawing(system, element=0, tolerances=None, outer_diameter_mm=None, clear_aperture_mm=None, chamfer_mm=0.2, irregularity_fringes=None, surface_imperfections=None, stress_birefringence=20.0, bubbles='1/3x0.16', inhomogeneity='2/1;1', trials=200, seed=0, radius_tolerance='radius', plane_power_fringes=2.0, scale=None, title=None)` (実装を直接呼ぶなら `import optdraw; optdraw.lens_element_drawing(system, element=0, tolerances=None, outer_diameter_mm=None, clear_aperture_mm=None, chamfer_mm=0.2, irregularity_fringes=None, surface_imperfections=None, stress_birefringence=20.0, bubbles='1/3x0.16', inhomogeneity='2/1;1', trials=200, seed=0, radius_tolerance='radius', plane_power_fringes=2.0, scale=None, title=None)`、台帳から引くなら `opsoptics.get("lens_element_drawing")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

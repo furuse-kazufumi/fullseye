@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">foe_from_flow — DRIVE <code style="color:#22d3bf">ttc</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.foe_from_flow(u, v, mask=None, *, min_speed: &#x27;float&#x27; = 0.3, max_speed: &#x27;float&#x27; = inf, iters: &#x27;int&#x27; = 5, angle_scale: &#x27;float&#x27; = 0.05) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import drivettc; drivettc.foe_from_flow(u, v, mask=None, *, min_speed: &#x27;float&#x27; = 0.3, max_speed: &#x27;float&#x27; = inf, iters: &#x27;int&#x27; = 5, angle_scale: &#x27;float&#x27; = 0.05) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;foe_from_flow&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由光流估計擴張焦點(FoE)：<code style="color:#22d3bf">{&quot;foe&quot;: (col, row), &quot;n&quot;, &quot;residual&quot;}</code>。</p>
 <p>純平移的流從 FoE 呈放射狀(Longuet-Higgins &amp; Prazdny 1980),所以各像素的流線(沿流向通過點 p_i 的直線)全部通過 FoE。FoE = 使 Σ w_i·dist(F, 流線_i)² 最小的點(2×2 正規方程)。權重疊代為 <code style="color:#22d3bf">1/|p_i − F|·1/(1 + (角度残差/angle_scale)²)</code>(Cauchy 風格)。越遠的像素,其流線方向誤差對 FoE 位置影響越大,所以除以距離,並用角度殘差剔除離群值(遮蔽、無紋理)。這是從流中求出第 15 輪中作為「已知」的 FoE 的入口(第 16 輪)。</p>

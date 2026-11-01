@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">estimate_point_normals — 3D <code style="color:#22d3bf">transform</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">normals</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.estimate_point_normals(points, k=16, viewpoint=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import match3d; match3d.estimate_point_normals(points, k=16, viewpoint=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;estimate_point_normals&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>point cloud (N,3) → unit normals (local k-neighbourhood covariance का सबसे छोटा eigenvector = PCA)।</p>
 <p>FPFH/SHOT/point-to-plane ICP को जिन normals की ज़रूरत है, उन्हें raw point cloud से बनाता है। दिशा के 2 नियम हैं:</p>

@@ -3,6 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.radius_outlier_removal(points, radius: &#x27;float&#x27;, min_neighbors: &#x27;int&#x27; = 8)</code>(要直接调用实现,<code style="color:#22d3bf">import pcl_filter; pcl_filter.radius_outlier_removal(points, radius: &#x27;float&#x27;, min_neighbors: &#x27;int&#x27; = 8)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;radius_outlier_removal&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>经台账调用的返回值</b>: <code style="color:#22d3bf">fullseye.ledger.radius_outlier_removal(...)</code> 只返回<b>声明的 out 类型 <code style="color:#22d3bf">points</code> 的值</b>(底层函数还会返回辅助信息)。需要被丢弃的部分时,使用 <code style="color:#22d3bf">fullseye.ledger.radius_outlier_removal.raw(...)</code>,或直接调用 <code style="color:#22d3bf">pcl_filter.radius_outlier_removal</code>。</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>去除半径 radius 内邻居数少于 min_neighbors 的点(孤立点去除)。</p>
 <p>以每个点为中心张开半径 <code style="color:#22d3bf">radius</code> 的球,其中其他点的数量少于 <code style="color:#22d3bf">min_neighbors</code> 的点被视为&quot;孤立颗粒&quot;而剔除。比统计方法更局部、更直接, 在已知传感器实际尺度时容易确定阈值。</p>

@@ -4,6 +4,7 @@ dim: 3d
 category: feature
 in: voxel
 out: measurement
+gpu: なし
 examples: [ct_porosity_and_fibre_morphometry]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -16,6 +17,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **呼び出し**: `import fullseye as fs; fs.ledger.vol_granulometry(vol_binary, radii=None, spacing=None)` (実装を直接呼ぶなら `import volops; volops.vol_granulometry(vol_binary, radii=None, spacing=None)`、台帳から引くなら `ops3d.get("vol_granulometry")`)
 - **台帳経由の戻り値**: `fullseye.ledger.vol_granulometry(...)` は**宣言 out 型 `measurement` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.vol_granulometry.raw(...)`、または `volops.vol_granulometry` を直接呼ぶ。
   - 本体の返り: `中央径`
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

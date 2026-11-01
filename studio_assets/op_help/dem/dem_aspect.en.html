@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">dem_aspect — DEM <code style="color:#22d3bf">surface</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">depth</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_aspect(dem, cell_size, method=&#x27;horn&#x27;, flat_tol=1e-12)</code> (to call the implementation directly, <code style="color:#22d3bf">import demops; demops.dem_aspect(dem, cell_size, method=&#x27;horn&#x27;, flat_tol=1e-12)</code>; from the registry, <code style="color:#22d3bf">opsdem.get(&quot;dem_aspect&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Slope aspect [degrees]. <b>North is 0 degrees, increasing towards east</b>. Flat cells get <code style="color:#22d3bf">ASPECT_FLAT</code>.</p>
 <p>Flat cells are not returned as 0 because 0 would mean &quot;north-facing slope&quot; —— returning an indistinguishable value is the textbook case of being wrong without raising.</p>

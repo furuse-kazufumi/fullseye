@@ -4,6 +4,7 @@ dim: tomography
 category: volume
 in: voxel
 out: sinostack
+gpu: なし
 examples: [poc_battery_ct_degradation, tomography_reconstruct]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `voxel` → `sinostack`
 - **呼び出し**: `import fullseye as fs; fs.ledger.radon_volume(volume, angles_deg=None, n_detectors=None, oversample=1)` (実装を直接呼ぶなら `import tomography; tomography.radon_volume(volume, angles_deg=None, n_detectors=None, oversample=1)`、台帳から引くなら `opstomography.get("radon_volume")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">fit_spline_curve — 3D <code style="color:#22d3bf">curve</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fit_spline_curve(points, smooth=0.0, k=3, n=None)</code>(要直接调用实现,<code style="color:#22d3bf">import curve3d; curve3d.fit_spline_curve(points, smooth=0.0, k=3, n=None)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;fit_spline_curve&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用 B 样条平滑并重采样有序 3D 点列。→ (M,3)。用于平滑带噪的轨迹/边缘。</p>
 <p>scipy.interpolate.splprep/splev。smooth=0 为插值,&gt;0 为平滑。n=输出点数(默认=输入数)。</p>

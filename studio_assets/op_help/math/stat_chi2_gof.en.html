@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">stat_chi2_gof — MATH <code style="color:#22d3bf">estimation</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.stat_chi2_gof(observed, expected=None) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import mathestimation; mathestimation.stat_chi2_gof(observed, expected=None) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsmath.get(&quot;stat_chi2_gof&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>χ² goodness-of-fit test: whether the counts <code style="color:#22d3bf">observed</code> match the expected counts (uniform by default). Degrees of freedom = number of bins − 1.</p>
 <p>If any bin has an expected count below 5, the approximation is poor (the number is returned in <code style="color:#22d3bf">low_expected</code>).</p>

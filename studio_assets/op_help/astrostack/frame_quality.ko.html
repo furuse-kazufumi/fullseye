@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">frame_quality — ASTROSTACK <code style="color:#22d3bf">quality</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.frame_quality(image, threshold_sigma=5.0, max_stars=25, min_separation=3, psf_box=11, n_score_stars=5)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import astrostack; astrostack.frame_quality(image, threshold_sigma=5.0, max_stars=25, min_separation=3, psf_box=11, n_score_stars=5)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsastrostack.get(&quot;frame_quality&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>프레임 한 장의 품질을 셉니다 —— 첨예도·FWHM·배경·진원도, 그리고 선별용 점수.</p>
 <p>lucky imaging의 선별 기준은 역사적으로 <b>&quot;기준성의 피크 강도&quot;</b>이다(Law, Mackay &amp; Baldwin, *Lucky imaging: high angular resolution imaging in the visible from the ground*, A&amp;A 446, 739 (2006)) —— 대기가 좋은 순간일수록같은 총 플럭스가 적은 화소에 모이므로, <code style="color:#22d3bf">피크 / 총 플럭스</code>가올라간다. 여기서도 그것을 채택하고, 추적의 늘어짐을 튕기기 위해 진원도를 곱한다::</p>

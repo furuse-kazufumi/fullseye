@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">laplacian_smooth — 3D <code style="color:#22d3bf">mesh_process</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">mesh</code> → <code style="color:#22d3bf">mesh</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.laplacian_smooth(mesh: &#x27;Sequence&#x27;, iters: &#x27;int&#x27; = 10, lam: &#x27;float&#x27; = 0.5) -&gt; &#x27;Mesh&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import mesh_smooth; mesh_smooth.laplacian_smooth(mesh: &#x27;Sequence&#x27;, iters: &#x27;int&#x27; = 10, lam: &#x27;float&#x27; = 0.5) -&gt; &#x27;Mesh&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;laplacian_smooth&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用 umbrella Laplacian 平滑三角網格。→ (verts, faces)。</p>
 <p>每次疊代把所有頂點更新為 <code style="color:#22d3bf">v_i += lam * (mean(隣接 v_j) - v_i)</code>。能可靠地減少高頻雜訊，但在閉曲面上會像平均曲率流一樣<b>向內收縮(shrinkage)</b> （球會隨疊代縮小）。想避免收縮時用 <code style="color:#22d3bf">taubin_smooth</code>。</p>

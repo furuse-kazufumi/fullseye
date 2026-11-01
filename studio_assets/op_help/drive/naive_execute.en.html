@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">naive_execute — DRIVE <code style="color:#22d3bf">agv</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.naive_execute(paths, delay_prob=0.3, seed=0, max_steps=10000)</code> (to call the implementation directly, <code style="color:#22d3bf">import agvfleet; agvfleet.naive_execute(paths, delay_prob=0.3, seed=0, max_steps=10000)</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;naive_execute&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Naive execution for comparison: uses only the plan&#x27;s <b>sequence of cells</b> and advances whenever the next cell is free (no ordering agreement).</p>
 <p>Once delays are introduced, 2 vehicles that per the plan should pass each other with a time offset end up stopped facing each other. The return value has the same form as <code style="color:#22d3bf">adg_execute</code> plus <code style="color:#22d3bf">waits_for</code> (the edges of &quot;who waits for whom&quot; at the moment of deadlock).</p>

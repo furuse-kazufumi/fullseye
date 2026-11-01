@@ -4,6 +4,7 @@ dim: 3d
 category: refine
 in: points × points
 out: pose
+gpu: なし
 examples: [gicp_register, itokawa_self_register, itokawa_shape_match, partial_overlap_icp]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `points × points` → `pose`
 - **呼び出し**: `import fullseye as fs; fs.ledger.icp_point2point_3d(src, dst, iters=50, init_R=None, init_t=None, tol=1e-06, max_corr_dist=None, trim_ratio=None, device='cpu', reproducible=False)` (実装を直接呼ぶなら `import match3d; match3d.icp_point2point_3d(src, dst, iters=50, init_R=None, init_t=None, tol=1e-06, max_corr_dist=None, trim_ratio=None, device='cpu', reproducible=False)`、台帳から引くなら `ops3d.get("icp_point2point_3d")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

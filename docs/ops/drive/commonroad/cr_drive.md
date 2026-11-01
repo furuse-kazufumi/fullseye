@@ -4,6 +4,7 @@ dim: drive
 category: commonroad
 in: table
 out: table
+gpu: なし
 examples: [poc_driving_commonroad]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.cr_drive(scene, pp_index: 'int' = 0, *, route=None, v_cruise=None, a_max: 'float' = 1.5, b_max: 'float' = 3.0, lookahead: 'float' = 5.0, dt=None, stop_lines=None, hold_s: 'float' = 2.0, goal_inset: 'float' = 0.2, idm_T: 'float' = 1.2, stop_margin: 'float' = 0.6, a_lat: 'float' = 2.5, k_v: 'float' = 0.6, follow_width: 'float' = 2.0, follow_obstacles: 'bool' = True, curvature_window: 'float' = 10.0, horizon=None, params=None) -> 'dict'` (実装を直接呼ぶなら `import drivecommonroad; drivecommonroad.cr_drive(scene, pp_index: 'int' = 0, *, route=None, v_cruise=None, a_max: 'float' = 1.5, b_max: 'float' = 3.0, lookahead: 'float' = 5.0, dt=None, stop_lines=None, hold_s: 'float' = 2.0, goal_inset: 'float' = 0.2, idm_T: 'float' = 1.2, stop_margin: 'float' = 0.6, a_lat: 'float' = 2.5, k_v: 'float' = 0.6, follow_width: 'float' = 2.0, follow_obstacles: 'bool' = True, curvature_window: 'float' = 10.0, horizon=None, params=None) -> 'dict'`、台帳から引くなら `opsdrive.get("cr_drive")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

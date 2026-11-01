@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">transform_funct_1d — ONED <code style="color:#22d3bf">function</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">pairs</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.transform_funct_1d(y, mult_x=1.0, add_x=0.0, mult_y=1.0, add_y=0.0)</code> (to call the implementation directly, <code style="color:#22d3bf">import funct1d; funct1d.transform_funct_1d(y, mult_x=1.0, add_x=0.0, mult_y=1.0, add_y=0.0)</code>; from the registry, <code style="color:#22d3bf">ops1d.get(&quot;transform_funct_1d&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Independent affine transform of x and y (HALCON <code style="color:#22d3bf">transform_funct_1d</code>).</p>
 <p>Returns explicit pairs <code style="color:#22d3bf">(mult_x * i + add_x, mult_y * y[i] + add_y)</code> for <code style="color:#22d3bf">i = 0..n-1</code>. Note <code style="color:#22d3bf">mult_x = 0</code> collapses the abscissa to a single point (accepted; the result is then not a function of x).</p>

@@ -4,6 +4,7 @@ dim: drive
 category: swarmflow
 in: signal × signal × any
 out: table
+gpu: なし
 examples: [poc_swarm_obstacle_from_flow]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal × signal × any` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.potential_flow_cylinder(x, y, cylinder, speed: 'float' = 1.0, grid: 'bool' = False) -> 'dict'` (実装を直接呼ぶなら `import swarmflow; swarmflow.potential_flow_cylinder(x, y, cylinder, speed: 'float' = 1.0, grid: 'bool' = False) -> 'dict'`、台帳から引くなら `opsdrive.get("potential_flow_cylinder")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

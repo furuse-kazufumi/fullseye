@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">patch_features — SPC <code style="color:#22d3bf">anomaly_patch</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.patch_features(image, patch=8, stride=4, scales=(1.0, 2.0, 4.0), groups=(&#x27;gradient&#x27;, &#x27;gabor&#x27;, &#x27;lbp&#x27;), n_orient=4)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import anomaly_patch; anomaly_patch.patch_features(image, patch=8, stride=4, scales=(1.0, 2.0, 4.0), groups=(&#x27;gradient&#x27;, &#x27;gabor&#x27;, &#x27;lbp&#x27;), n_orient=4)</code>、台帳から引くなら <code style="color:#22d3bf">opsspc.get(&quot;patch_features&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Classical patch features on a grid: one D-vector per patch (<code style="color:#22d3bf">table</code>).</p>
 <p><code style="color:#22d3bf">image</code> is (H, W) or (H, W, 3). Pixel channels are computed at every Gaussian scale in <code style="color:#22d3bf">scales</code> (sigma, px) and averaged over <code style="color:#22d3bf">patch</code> x <code style="color:#22d3bf">patch</code> windows every <code style="color:#22d3bf">stride</code> px:</p>

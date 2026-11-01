@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">fiber_v_number — OPTICS <code style="color:#22d3bf">fiber</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fiber_v_number(core_radius_um=4.1, na=0.12, wavelength_nm=1550.0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import fiberoptics; fiberoptics.fiber_v_number(core_radius_um=4.1, na=0.12, wavelength_nm=1550.0)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;fiber_v_number&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>規格化周波数 V = 2π a NA / λ と、単一モードかどうか(V &lt; 2.4048 = J0 の最初の零点)。</p>
 <p>返り値: dict(v, single_mode, cutoff_wavelength_nm) —— cutoff は V = 2.4048 になる波長(これより長い波長で単一モード)。</p>

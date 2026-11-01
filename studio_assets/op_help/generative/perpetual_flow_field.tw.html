@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">perpetual_flow_field — GENERATIVE <code style="color:#22d3bf">perpetual</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">無</code> → <code style="color:#22d3bf">rgb</code>(僅由參數決定的運算子 —— 不接受影像或資料輸入)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.perpetual_flow_field(size: &#x27;int&#x27; = 520, seed: &#x27;int&#x27; = 0, lines: &#x27;int&#x27; = 420, steps: &#x27;int&#x27; = 150, scale: &#x27;float&#x27; = 0.01) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import perpetual; perpetual.perpetual_flow_field(size: &#x27;int&#x27; = 520, seed: &#x27;int&#x27; = 0, lines: &#x27;int&#x27; = 420, steps: &#x27;int&#x27; = 150, scale: &#x27;float&#x27; = 0.01) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsgenerative.get(&quot;perpetual_flow_field&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>流場 —— 讓粒子隨場持續流動(不停止就不會結束)。</p>
 <p>★場是透過將每個點的位能 ψ 的旋轉歸一化為單位長度而創建的。歸一化前的旋轉場為儘管散度一致為 0，但移動粒子的歸一化場並不是嚴格不可壓縮的場。<code style="color:#22d3bf">perpetual_identities</code> 以數字形式給予標準化之前的身份。</p>

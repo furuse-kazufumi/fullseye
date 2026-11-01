@@ -4,6 +4,7 @@ dim: optics
 category: itof
 in: depth
 out: image2d
+gpu: なし
 examples: [poc_itof_multifreq, tof_realdata]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `depth` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.itof_flying_pixel_mask(depth, threshold_m=0.04, rel_threshold=0.0, radius=1, plateau_ratio=0.5, depth_sigma=None, n_sigma=3.0)` (実装を直接呼ぶなら `import itof; itof.itof_flying_pixel_mask(depth, threshold_m=0.04, rel_threshold=0.0, radius=1, plateau_ratio=0.5, depth_sigma=None, n_sigma=3.0)`、台帳から引くなら `opsoptics.get("itof_flying_pixel_mask")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

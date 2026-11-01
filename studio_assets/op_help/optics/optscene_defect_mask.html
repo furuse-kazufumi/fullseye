@@ -3,6 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table × table</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.optscene_defect_mask(scene, camera, index: &#x27;int&#x27; = None) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import optscene; optscene.optscene_defect_mask(scene, camera, index: &#x27;int&#x27; = None) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;optscene_defect_mask&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>台帳経由の戻り値</b>: <code style="color:#22d3bf">fullseye.ledger.optscene_defect_mask(...)</code> は<b>宣言 out 型 <code style="color:#22d3bf">image2d</code> の値だけ</b>を返す(本体は補助情報も返す)。捨てられた側が要るときは <code style="color:#22d3bf">fullseye.ledger.optscene_defect_mask.raw(...)</code>、または <code style="color:#22d3bf">optscene.optscene_defect_mask</code> を直接呼ぶ。</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p><b>欠陥画素の真値マスク</b> (H, W)。学習・評価のラベルはこれを使う。</p>
 <p><code style="color:#22d3bf">index</code> を省くとシーン中のすべての欠陥を合成する。画素完全で、レンダリングと同じ交差計算から出るので、検出結果との IoU をそのまま測れる。欠陥が <b>その照明で見えるかどうかとは無関係</b>に真値を返す ―― 見えないのに正解があるのが外観検査の難しさで、そこを隠すと「検出ゼロ = 頑健」と誤読される。</p>

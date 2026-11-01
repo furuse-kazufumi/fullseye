@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">particle_size_synth — DRIVE <code style="color:#22d3bf">grind</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">scalar × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.particle_size_synth(d50: &#x27;float&#x27;, sigma_ln: &#x27;float&#x27;, edges=None) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import grind; grind.particle_size_synth(d50: &#x27;float&#x27;, sigma_ln: &#x27;float&#x27;, edges=None) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;particle_size_synth&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Particle size distribution of a log-normal <b>volume</b> distribution allocated to the same size classes as the instrument (with ground truth).</p>
 <p>Cumulative volume <code style="color:#22d3bf">F(x) = Φ((ln x − ln d50) / σ)</code>. If <code style="color:#22d3bf">edges</code> is omitted, the 74 edges of the public-data instrument (ratio 1.13616) are used.</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">polyhedron_clip_halfspace — DRIVE <code style="color:#22d3bf">polygrav</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">any × any × any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.polyhedron_clip_halfspace(mesh, point, normal)</code>(要直接呼叫實作,<code style="color:#22d3bf">import polygrav; polygrav.polyhedron_clip_halfspace(mesh, point, normal)</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;polyhedron_clip_halfspace&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>以平面切開封閉網格,把 <code style="color:#22d3bf">(x − point)·normal ≥ 0</code> 一側作為封閉實體回傳 → (vertices, faces)。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>

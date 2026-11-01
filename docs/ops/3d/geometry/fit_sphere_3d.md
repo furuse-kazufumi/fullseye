@@ -4,6 +4,7 @@ dim: 3d
 category: geometry
 in: points
 out: primitive
+gpu: なし
 examples: [geometry_metrology]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `points` → `primitive`
 - **呼び出し**: `import fullseye as fs; fs.ledger.fit_sphere_3d(points)` (実装を直接呼ぶなら `import match3d; match3d.fit_sphere_3d(points)`、台帳から引くなら `ops3d.get("fit_sphere_3d")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

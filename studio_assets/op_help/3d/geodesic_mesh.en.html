@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">geodesic_mesh — 3D <code style="color:#22d3bf">geodesic</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">mesh</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.geodesic_mesh(vertices: numpy.ndarray, faces: numpy.ndarray, source: int) -&gt; numpy.ndarray</code> (to call the implementation directly, <code style="color:#22d3bf">import geodesic3d; geodesic3d.geodesic_mesh(vertices: numpy.ndarray, faces: numpy.ndarray, source: int) -&gt; numpy.ndarray</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;geodesic_mesh&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Geodesic distance from a source to each vertex by Dijkstra on the triangle mesh&#x27;s edge graph. → (V,) float.</p>
 <p>Collects the 3 edges (0,1),(1,2),(2,0) of each triangle as undirected edges, makes them unique by (min,max), builds a sparse graph weighted by edge length = Euclidean distance between the two end vertices, and returns the shortest path lengths from source with <code style="color:#22d3bf">dijkstra(directed=False)</code>. <code style="color:#22d3bf">d[source] = 0</code>; vertices not connected to source by edges are <code style="color:#22d3bf">inf</code>. Units are the units of the vertex coordinates.</p>

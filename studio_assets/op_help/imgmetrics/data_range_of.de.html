@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">data_range_of — IMGMETRICS <code style="color:#22d3bf">report</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.data_range_of(*arrays, data_range=None)</code> (die Implementierung direkt: <code style="color:#22d3bf">import imgmetrics; imgmetrics.data_range_of(*arrays, data_range=None)</code>; aus dem Register: <code style="color:#22d3bf">opsimgmetrics.get(&quot;data_range_of&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Bestimmt die Spanne, die die Pixelwerte annehmen können. <b>Es wird nichts geraten.</b></p>
 <p>Bei Integer-dtypes ist er eindeutig durch den dtype bestimmt. float gilt nur dann als 1.0, wenn es in <code style="color:#22d3bf">[0, 1]</code> liegt; andernfalls ist die explizite Angabe von <code style="color:#22d3bf">data_range</code> erforderlich.</p>

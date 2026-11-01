@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">bicycle_model_step — DRIVE <code style="color:#22d3bf">lateral</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.bicycle_model_step(state, steer, speed, params: &#x27;dict&#x27;, dt: &#x27;float&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import drivelateral; drivelateral.bicycle_model_step(state, steer, speed, params: &#x27;dict&#x27;, dt: &#x27;float&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;bicycle_model_step&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>線形 2 輪等価モデルの 1 刻み(古典的な 4 次 Runge–Kutta、刻みの間 δ と u は一定)。</p>
 <p><code style="color:#22d3bf">state</code>: (..., 5) = (x, y, ψ, v_y, r)(重心の位置 [m]、向き [rad]、車の座標の横速度 [m/s]、ヨーレート [rad/s])。<code style="color:#22d3bf">steer</code>: 前輪の舵角 δ [rad] (state の先頭の形に放送)。<code style="color:#22d3bf">speed</code>: 前向きの速さ u [m/s] (&gt; 0、放送)。<code style="color:#22d3bf">params</code> には <code style="color:#22d3bf">inertia</code>(I_z [kg m²])も要る。返り値: 次の状態(同じ形)。</p>

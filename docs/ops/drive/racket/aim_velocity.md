@@ -4,6 +4,7 @@ dim: drive
 category: racket
 in: table
 out: table
+gpu: なし
 examples: [gallery_drive_kendama_racket, poc_table_tennis_rally_loop]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.aim_velocity(p, target, T: 'float', bp: 'dict', omega=(0.0, 0.0, 0.0), refine: 'int' = 6, dt: 'float' = 0.001) -> 'dict'` (実装を直接呼ぶなら `import racket; racket.aim_velocity(p, target, T: 'float', bp: 'dict', omega=(0.0, 0.0, 0.0), refine: 'int' = 6, dt: 'float' = 0.001) -> 'dict'`、台帳から引くなら `opsdrive.get("aim_velocity")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

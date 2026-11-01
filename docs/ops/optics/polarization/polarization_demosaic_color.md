@@ -4,6 +4,7 @@ dim: optics
 category: polarization
 in: image2d
 out: rgbvolume
+gpu: なし
 examples: [polarization_camera_pipeline]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d` → `rgbvolume`
 - **呼び出し**: `import fullseye as fs; fs.ledger.polarization_demosaic_color(raw, layout=((90.0, 45.0), (135.0, 0.0)), bayer='RGGB')` (実装を直接呼ぶなら `import optics; optics.polarization_demosaic_color(raw, layout=((90.0, 45.0), (135.0, 0.0)), bayer='RGGB')`、台帳から引くなら `opsoptics.get("polarization_demosaic_color")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

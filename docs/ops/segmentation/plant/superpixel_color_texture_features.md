@@ -4,6 +4,7 @@ dim: segmentation
 category: plant
 in: rgbimage × labels2d
 out: table
+gpu: なし
 examples: [poc_weed_rice_ratio]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `rgbimage × labels2d` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.superpixel_color_texture_features(rgb, labels, *, dark_floor: 'float' = 0.02, texture_sigma: 'float' = 1.0, min_size: 'int' = 4) -> 'Dict[str, object]'` (実装を直接呼ぶなら `import cropweed; cropweed.superpixel_color_texture_features(rgb, labels, *, dark_floor: 'float' = 0.02, texture_sigma: 'float' = 1.0, min_size: 'int' = 4) -> 'Dict[str, object]'`、台帳から引くなら `opssegmentation.get("superpixel_color_texture_features")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

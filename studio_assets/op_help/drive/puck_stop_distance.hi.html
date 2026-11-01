@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">puck_stop_distance — DRIVE <code style="color:#22d3bf">puck</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">scalar × table</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.puck_stop_distance(v0: &#x27;float&#x27;, table: &#x27;dict&#x27;) -&gt; &#x27;float&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import puck; puck.puck_stop_distance(v0: &#x27;float&#x27;, table: &#x27;dict&#x27;) -&gt; &#x27;float&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;puck_stop_distance&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>रुकने की दूरी v₀²/(2μg) (<code style="color:#22d3bf">ballistics.slide_stop_distance</code> जैसा ही सूत्र; यह μ और g table से लेता है)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

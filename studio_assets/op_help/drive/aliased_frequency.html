@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">aliased_frequency — DRIVE <code style="color:#22d3bf">decide</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.aliased_frequency(f, fps)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import drivedecide; drivedecide.aliased_frequency(f, fps)</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;aliased_frequency&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>周波数 <code style="color:#22d3bf">f</code> [Hz] の明滅をフレームレート <code style="color:#22d3bf">fps</code> で標本化したときの <b>見かけの</b> 周波数(閉形式)。</p>
 <p>f_a = | f − fps · round(f / fps) |  ∈ [0, fps/2]</p>

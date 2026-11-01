@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">shape_reconstruct — SHAPESTAT <code style="color:#22d3bf">model</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">shapemodel × signal</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.shape_reconstruct(model, scores)</code> (to call the implementation directly, <code style="color:#22d3bf">import shapestats; shapestats.shape_reconstruct(model, scores)</code>; from the registry, <code style="color:#22d3bf">opsshapestat.get(&quot;shape_reconstruct&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Reconstructs a shape from scores. → <code style="color:#22d3bf">(N, 3)</code>.</p>
 <p>If fewer scores than components are given, the rest are treated as 0 (= left at the mean). If more, <code style="color:#22d3bf">ValueError</code> -- silently truncating would produce the hard-to-trace symptom &quot;a mode I put in has no effect&quot;.</p>

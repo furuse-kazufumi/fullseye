@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">contact_patch_radius — DRIVE <code style="color:#22d3bf">tacdome</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image2d × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.contact_patch_radius(img, pitch: &#x27;float&#x27;, ring_px: &#x27;float&#x27; = 4.0) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import tacdome; tacdome.contact_patch_radius(img, pitch: &#x27;float&#x27;, ring_px: &#x27;float&#x27; = 4.0) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;contact_patch_radius&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>從接觸影像(<code style="color:#22d3bf">dome_contact_image</code> 的型別)讀取接觸半徑。以覆蓋率的線性和(面積法)利用到邊緣的次像素。</p>
 <p style="margin:2px 0 2px 12px">1) 以門檻 (1 % 點 + 99.9 % 點)/2 得到粗略的圓盤 → 重心與半徑 r_t。2) 以內側 r &lt; r_t − <code style="color:#22d3bf">ring_px</code> 的中位數為 fg,外環</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">mesh_isotropic_remesh — 3D <code style="color:#22d3bf">resolution</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">mesh</code> → <code style="color:#22d3bf">mesh</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mesh_isotropic_remesh(V, F, target_edge, iterations=5, project=True, relax=0.5)</code> (to call the implementation directly, <code style="color:#22d3bf">import meshres; meshres.mesh_isotropic_remesh(V, F, target_edge, iterations=5, project=True, relax=0.5)</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;mesh_isotropic_remesh&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Incremental isotropic remeshing to a uniform *target_edge* (<code style="color:#22d3bf">mesh</code>).</p>
 <p>Botsch &amp; Kobbelt, *A Remeshing Approach to Multiresolution Modeling* (SGP 2004): per iteration (1) split edges longer than 4/3·L, (2) collapse edges shorter than 4/5·L into their midpoint when the link condition holds, no incident edge would exceed 4/3·L and no face flips, (3) flip edges that bring the four valences closer to 6, (4) relax each vertex toward its neighbours&#x27; centroid in the tangent plane (*relax* ∈ [0,1]),</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">alpha_shape_boundary — 3D <code style="color:#22d3bf">reconstruct</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">indices</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.alpha_shape_boundary(points, alpha)</code> (die Implementierung direkt: <code style="color:#22d3bf">import recon3d; recon3d.alpha_shape_boundary(points, alpha)</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;alpha_shape_boundary&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Die <b>Indizes der Randpunkte</b> über Alpha-Shapes (Punktmenge → Randpunkte).</p>
 <p>Sammelt die Oberflächendreiecke (Randflächen) der Delaunay-Tetraeder mit Umkugelradius &lt; 1/alpha und nimmt deren Vertex- menge als Randpunkte. Geeignet, um aus einer massiven Punktwolke (Oberfläche + Inneres) nur die Punkte der Oberflächenschale zu extrahieren. Ein größeres alpha macht den zulässigen Radius 1/alpha kleiner und ergibt einen enger anliegenden Rand (der Details erfasst).</p>

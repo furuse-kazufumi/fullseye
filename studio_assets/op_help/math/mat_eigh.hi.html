@@ -3,6 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mat_eigh(a)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import mathops; mathops.mat_eigh(a)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsmath.get(&quot;mat_eigh&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>Ledger के ज़रिए return value</b>: <code style="color:#22d3bf">fullseye.ledger.mat_eigh(...)</code> <b>केवल घोषित out type <code style="color:#22d3bf">table</code> का value</b> लौटाता है (मूल function सहायक जानकारी भी लौटाता है)। जो हिस्सा छोड़ दिया गया है उसकी ज़रूरत हो तो <code style="color:#22d3bf">fullseye.ledger.mat_eigh.raw(...)</code> का उपयोग करें, या <code style="color:#22d3bf">mathops.mat_eigh</code> को सीधे call करें।</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p><b>symmetric</b> matrix का eigen-decomposition (LAPACK <code style="color:#22d3bf">syevd</code>)।</p>
 <p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>

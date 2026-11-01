@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">membrane_lights — DRIVE <code style="color:#22d3bf">tacsim</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">scalar</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.membrane_lights(elev_deg: &#x27;float&#x27; = 55.0, azimuths_deg=(90.0, 210.0, 330.0)) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import tacsim; tacsim.membrane_lights(elev_deg: &#x27;float&#x27; = 55.0, azimuths_deg=(90.0, 210.0, 330.0)) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;membrane_lights&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>बहु-दिशात्मक रंगीन lights के unit direction vectors (N, 3) (row k = colour channel k का light source; default azimuth 90/210/330° और elevation 55° की 3 lights)।</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: उन्नयन कोण (0°, 90°] से बाहर, 3 से कम प्रकाश स्रोत, 3 प्रकाश स्रोत एक ही तल में (rank &lt; 3, इसलिए फ़ोटोमेट्रिक स्टीरियो हल नहीं होता)।</p>

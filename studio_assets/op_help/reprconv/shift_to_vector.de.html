@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">shift_to_vector — REPRCONV <code style="color:#22d3bf">algebra</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">shift</code> → <code style="color:#22d3bf">vector</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.shift_to_vector(shift)</code> (die Implementierung direkt: <code style="color:#22d3bf">import reprconv; reprconv.shift_to_vector(shift)</code>; aus dem Register: <code style="color:#22d3bf">opsreprconv.get(&quot;shift_to_vector&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Eine ganzzahlige Verschiebung <code style="color:#22d3bf">(dz, dy, dx)</code> → ein <code style="color:#22d3bf">vector (3,)</code>. Der Ausgang aus <code style="color:#22d3bf">shift</code> (<b>invertierbar</b>).</p>
 <p><code style="color:#22d3bf">match_phase_3d</code> liefert ein ganzzahliges 3-tuple. Auf <code style="color:#22d3bf">vector</code> gelegt, schließt es an das <code style="color:#22d3bf">points</code>-Vokabular an (es gibt einen bestehenden <code style="color:#22d3bf">vector -&gt; points</code>-op).</p>

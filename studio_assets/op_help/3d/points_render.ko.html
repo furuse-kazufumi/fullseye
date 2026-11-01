@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">points_render — 3D <code style="color:#22d3bf">render</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">rgbimage</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.points_render(points, colors=None, size=(256, 256), K=None, R=None, t=None, projection=&#x27;orthographic&#x27;, radius_px=1.5, footprint=&#x27;gaussian&#x27;, composite=&#x27;over&#x27;, opacity=1.0, depth_cue=0.0, background=(0.0, 0.0, 0.0), margin=0.05)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import render3d; render3d.points_render(points, colors=None, size=(256, 256), K=None, R=None, t=None, projection=&#x27;orthographic&#x27;, radius_px=1.5, footprint=&#x27;gaussian&#x27;, composite=&#x27;over&#x27;, opacity=1.0, depth_cue=0.0, background=(0.0, 0.0, 0.0), margin=0.05)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;points_render&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>(N, 3) 점군을 RGB 영상 (H, W, 3) 으로 그립니다: 안티에일리어싱된 발자국, 깊이 순서, 결정적.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>

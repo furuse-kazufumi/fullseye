@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">generalized_procrustes — SHAPESTAT <code style="color:#22d3bf">procrustes</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">shapeset</code> → <code style="color:#22d3bf">shapeset</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.generalized_procrustes(shapes, max_iter: &#x27;int&#x27; = 100, tol: &#x27;float&#x27; = 1e-10, scaling: &#x27;bool&#x27; = True, reflection: &#x27;bool&#x27; = False)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import shapestats; shapestats.generalized_procrustes(shapes, max_iter: &#x27;int&#x27; = 100, tol: &#x27;float&#x27; = 1e-10, scaling: &#x27;bool&#x27; = True, reflection: &#x27;bool&#x27; = False)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsshapestat.get(&quot;generalized_procrustes&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>일반화 Procrustes 분석(GPA). 모든 개체를 공통 좌표틀로 옮긴다. → <code style="color:#22d3bf">(K, N, 3)</code>.</p>
 <p>절차는 교과서대로: 1 개체를 임시 평균으로 삼아 전원을 맞추고, 평균을 다시 구하고, 그 평균을 <b>첫 개체에 다시 맞추어</b> 틀의 표류를 멈추고, 수렴할 때까지 반복한다. 마지막 한 수가 없으면 평균이 매번 천천히 돌아 <code style="color:#22d3bf">tol</code> 에 도달하지 않는다.</p>

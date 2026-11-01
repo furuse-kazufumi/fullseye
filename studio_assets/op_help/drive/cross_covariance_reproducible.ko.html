@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">cross_covariance_reproducible — DRIVE <code style="color:#22d3bf">ozaki</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cross_covariance_reproducible(P, Q, tol: &#x27;float&#x27; = 1.1102230246251565e-16)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import ozakimm; ozakimm.cross_covariance_reproducible(P, Q, tol: &#x27;float&#x27; = 1.1102230246251565e-16)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;cross_covariance_reproducible&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>Kabsch / ICP의 상호 공분산 <code style="color:#22d3bf">H = (P − P̄)ᵀ (Q − Q̄)</code>(3×3)를 점의 순서에 의존하지 않는 비트로 반환합니다.</p>
 <p>평균은 <code style="color:#22d3bf">math.fsum</code>(정확하게 반올림한 합), 중심화는 요소별, 축약은 <code style="color:#22d3bf">matmul_reproducible</code>. P 와 Q 는 행마다대응하는 (N, 3)(N ≥ 3). 정밀도는 FP64 곱과 같은 수준(요소별로 <code style="color:#22d3bf">tol · (|P−P̄|ᵀ|Q−Q̄|)_ij</code> + 수 ulp).</p>

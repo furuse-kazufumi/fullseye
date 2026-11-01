@@ -4,6 +4,7 @@ dim: drive
 category: pass
 in: points
 out: table
+gpu: なし
 examples: [gallery_drive_mirrors_crowds]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `points` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.mirror_image_side(eye_xy, mirror_center_xy, mirror_normal_xy, points, *, heading, velocities=None) -> 'Dict[str, object]'` (実装を直接呼ぶなら `import drivepass; drivepass.mirror_image_side(eye_xy, mirror_center_xy, mirror_normal_xy, points, *, heading, velocities=None) -> 'Dict[str, object]'`、台帳から引くなら `opsdrive.get("mirror_image_side")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

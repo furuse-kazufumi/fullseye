@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">lateral_wobble — DRIVE <code style="color:#22d3bf">traffic</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">signal</code> (an op determined by its arguments alone — it takes no image or data input)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lateral_wobble(n: &#x27;int&#x27;, dt: &#x27;float&#x27;, *, theta: &#x27;float&#x27;, sigma: &#x27;float&#x27;, seed: &#x27;Optional[int]&#x27;, x0: &#x27;Optional[float]&#x27; = None) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import drivetraffic; drivetraffic.lateral_wobble(n: &#x27;int&#x27;, dt: &#x27;float&#x27;, *, theta: &#x27;float&#x27;, sigma: &#x27;float&#x27;, seed: &#x27;Optional[int]&#x27;, x0: &#x27;Optional[float]&#x27; = None) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;lateral_wobble&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Exact discretization of the Ornstein–Uhlenbeck process dX = −θ X dt + σ dW (a sequence of length n, step dt).</p>
 <p>x_{k+1} = x_k e^{−θ dt} + σ sqrt((1 − e^{−2θ dt}) / (2θ)) ξ_k,   ξ_k ~ N(0, 1) independent</p>

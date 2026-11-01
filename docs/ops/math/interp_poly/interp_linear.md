@@ -4,6 +4,7 @@ dim: math
 category: interp_poly
 in: signal × signal × signal
 out: signal
+gpu: なし
 examples: [math_metrology, poc_thermal_radiometry]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal × signal × signal` → `signal`
 - **呼び出し**: `import fullseye as fs; fs.ledger.interp_linear(x, y, xq, out_of_range='raise')` (実装を直接呼ぶなら `import mathops; mathops.interp_linear(x, y, xq, out_of_range='raise')`、台帳から引くなら `opsmath.get("interp_linear")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">edge_spread — OPTICS <code style="color:#22d3bf">imaging</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.edge_spread(img, roi, *, oversample=4, orientation=&#x27;auto&#x27;)</code>(要直接调用实现,<code style="color:#22d3bf">import edgesfr; edgesfr.edge_spread(img, roi, *, oversample=4, orientation=&#x27;auto&#x27;)</code>;从台账取用则 <code style="color:#22d3bf">opsoptics.get(&quot;edge_spread&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由倾斜边缘(ISO 12233)的 ROI 构建比像素更细的 ESF。</p>
 <p>步骤：把 ROI 调整为“边缘横穿各行”的方向(<code style="color:#22d3bf">orientation=&quot;auto&quot;</code> 按列方向与行方向梯度的大小决定，<code style="color:#22d3bf">&quot;vertical&quot;</code> = 边缘纵向延伸 / <code style="color:#22d3bf">&quot;horizontal&quot;</code> = 横向延伸)→ 每行用 1 阶差分的重心求出边缘位置 → 用直线把位置拟合到行号(最小二乘)→ 求各像素中心到边缘的<b>垂直距离</b> d，分配到宽 1/oversample px 的箱中并取平均。</p>

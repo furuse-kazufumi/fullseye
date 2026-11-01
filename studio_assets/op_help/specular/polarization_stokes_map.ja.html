@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">polarization_stokes_map — SPECULAR <code style="color:#22d3bf">polarization</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">polsweep</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.polarization_stokes_map(images, angles_deg=(0.0, 45.0, 90.0, 135.0), max_violation_frac=0.0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import specularity; specularity.polarization_stokes_map(images, angles_deg=(0.0, 45.0, 90.0, 135.0), max_violation_frac=0.0)</code>、台帳から引くなら <code style="color:#22d3bf">opsspecular.get(&quot;polarization_stokes_map&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>検光子の掃引(DoFP の 4 方位、または任意の N &gt;= 3 方位を最小二乗)から、画素ごとの直線 Stokes 画像と DoLP・AoLP の地図。→ (H, W) の地図の dict。</p>
 <p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>

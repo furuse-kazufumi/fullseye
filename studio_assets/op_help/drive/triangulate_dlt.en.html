@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">triangulate_dlt — DRIVE <code style="color:#22d3bf">balltrack</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">matrix × any × any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.triangulate_dlt(uvs, poses, Ks) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import balltrack; balltrack.triangulate_dlt(uvs, poses, Ks) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;triangulate_dlt&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Multi-view triangulation of 1 point (linear DLT, SVD): <code style="color:#22d3bf">uvs</code> (C, 2), <code style="color:#22d3bf">poses</code> (C, 4, 4), <code style="color:#22d3bf">Ks</code> (C, 3, 3). Return value <code style="color:#22d3bf">{&quot;p&quot; (3,), &quot;reproj_rms&quot; px, &quot;n_views&quot;}</code>. Views with NaN are skipped. ValueError if there are fewer than 2 views.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">aic_from_rss — DRIVE <code style="color:#22d3bf">ball</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">scalar</code> (an op determined by its arguments alone — it takes no image or data input)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.aic_from_rss(rss: &#x27;float&#x27;, n: &#x27;int&#x27;, k: &#x27;int&#x27;) -&gt; &#x27;float&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import ballistics; ballistics.aic_from_rss(rss: &#x27;float&#x27;, n: &#x27;int&#x27;, k: &#x27;int&#x27;) -&gt; &#x27;float&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;aic_from_rss&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Akaike information criterion from a least-squares residual sum of squares: AIC = n ln(RSS/n) + 2k (Gaussian noise, variance estimated by maximum likelihood, constant term dropped). Only <b>differences</b> between models fitted to the same data are meaningful (the absolute value depends on scale and n). n ≤ k, RSS ≤ 0 and non-finite values raise ValueError (RSS = 0 is AIC = −∞ and the model-selection question does not arise).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

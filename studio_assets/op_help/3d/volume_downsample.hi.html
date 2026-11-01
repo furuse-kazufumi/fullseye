@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">volume_downsample — 3D <code style="color:#22d3bf">preprocess</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">voxel</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.volume_downsample(vol, factor, mode=&#x27;mean&#x27;)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import volops; volops.volume_downsample(vol, factor, mode=&#x27;mean&#x27;)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;volume_downsample&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p><code style="color:#22d3bf">(D, H, W)</code> volume को हर axis पर integer *factor* से block-pool करता है (data decimation)।</p>
 <p>बड़े CT / laminography / simulation volumes को भारी 3-D operators से पहले thin करना ज़रूरी है (Frangi/Sato की सीमा ~256**3 voxels है, देखें <code style="color:#22d3bf">MAX_EIGEN_VOXELS</code>)। यह point-cloud वाले <code style="color:#22d3bf">voxel_grid_downsample</code> और mesh वाले <code style="color:#22d3bf">decimate_qem</code> का volume रूप है — यह Fullseye के *decimation* परिवार का तीसरा हिस्सा है, हर 3-D data sort के लिए एक।</p>

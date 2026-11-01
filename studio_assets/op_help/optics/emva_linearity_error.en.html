@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">emva_linearity_error — OPTICS <code style="color:#22d3bf">sensorchar</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.emva_linearity_error(H, mu_y, mu_y_dark, mu_y_sat)</code> (to call the implementation directly, <code style="color:#22d3bf">import sensorchar; sensorchar.emva_linearity_error(H, mu_y, mu_y_dark, mu_y_sat)</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;emva_linearity_error&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Linearity error LE (Eqs. 58–63). Fits y = μ_y − μ_y.dark against exposure H <b>weighted by the relative deviation, 1/y²</b> (Eqs. 59–61), and takes as LE the mean absolute value of the relative deviation δy[i] = 100 (y − (a0 + a1 H))/(a0 + a1 H) [%] over the points between 5 and 95 % of saturation.</p>
 <p>Returns <code style="color:#22d3bf">{&quot;LE_percent&quot;, &quot;a0&quot;, &quot;a1&quot;, &quot;deviation_percent&quot;, &quot;used&quot;}</code>.</p>

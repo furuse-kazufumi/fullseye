@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">lab_to_rgb — IMGMETRICS <code style="color:#22d3bf">colorspace</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">lab</code> → <code style="color:#22d3bf">rgbimage</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lab_to_rgb(lab, white=(0.95047, 1.0, 1.08883))</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import imgmetrics; imgmetrics.lab_to_rgb(lab, white=(0.95047, 1.0, 1.08883))</code>、台帳から引くなら <code style="color:#22d3bf">opsimgmetrics.get(&quot;lab_to_rgb&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>CIE L*a*b* → sRGB <code style="color:#22d3bf">[0, 1]</code>。<b>色域外は切り詰められる</b>ので <code style="color:#22d3bf">rgb_to_lab</code> との往復は色域内でしか一致しない(テストで固定)。</p>
 <p>手順: <code style="color:#22d3bf">fy = (L + 16) / 116</code>、<code style="color:#22d3bf">fx = fy + a / 500</code>、<code style="color:#22d3bf">fz = fy - b / 200</code> を <code style="color:#22d3bf">xyz_to_lab</code> の逆関数で XYZ に戻し(<code style="color:#22d3bf">white</code> を掛ける)、XYZ→線形 RGB の逆行列を掛けてから sRGB の伝達関数を掛ける。伝達関数の手前で線形 RGB を <code style="color:#22d3bf">[0, 1]</code> に <b>無言でクリップ</b>する ―― ここが「色域外は切り詰め」の実体で、例外は出ない。</p>

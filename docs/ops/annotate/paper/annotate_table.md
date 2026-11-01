@@ -4,6 +4,7 @@ dim: annotate
 category: paper
 in: image2d × text
 out: image2d
+gpu: なし
 examples: [annotate_paper_tour, poc_rotation_invariance_audit]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d × text` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.annotate_table(img, text, xy, anchor='lt', font_size=13, color='neutral', text_color=None, box_color=None, box_alpha=0.72, pad=6, col_gap=None, row_gap=0, align='auto', header=False, grid=False, border=0, border_color=None, font_path=None, scheme='okabe_ito', min_contrast=2.0, bold=False, italic=False, line_spacing=1.15, style=None, layout=None)` (実装を直接呼ぶなら `import annotate; annotate.annotate_table(img, text, xy, anchor='lt', font_size=13, color='neutral', text_color=None, box_color=None, box_alpha=0.72, pad=6, col_gap=None, row_gap=0, align='auto', header=False, grid=False, border=0, border_color=None, font_path=None, scheme='okabe_ito', min_contrast=2.0, bold=False, italic=False, line_spacing=1.15, style=None, layout=None)`、台帳から引くなら `opsannotate.get("annotate_table")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

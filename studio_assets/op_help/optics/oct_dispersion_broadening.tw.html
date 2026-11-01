@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">oct_dispersion_broadening — OPTICS <code style="color:#22d3bf">oct</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">無</code> → <code style="color:#22d3bf">table</code>(僅由參數決定的運算子 —— 不接受影像或資料輸入)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.oct_dispersion_broadening(material=&#x27;SILICA&#x27;, length_mm=10.0, center_nm=840.0, bandwidth_nm=50.0)</code>(要直接呼叫實作,<code style="color:#22d3bf">import octscan; octscan.oct_dispersion_broadening(material=&#x27;SILICA&#x27;, length_mm=10.0, center_nm=840.0, bandwidth_nm=50.0)</code>;從台帳取用則 <code style="color:#22d3bf">opsoptics.get(&quot;oct_dispersion_broadening&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>只在樣品臂中存在的材料(長度 L,往返)造成的色散失配使 A 掃描的峰展寬多少倍(<code style="color:#22d3bf">table</code>,閉式解)。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>

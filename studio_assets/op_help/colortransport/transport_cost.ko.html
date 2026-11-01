@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">transport_cost — COLORTRANSPORT <code style="color:#22d3bf">plan_use</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">transport_plan × matrix</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.transport_cost(plan, cost)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import colortransport; colortransport.transport_cost(plan, cost)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opscolortransport.get(&quot;transport_cost&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>수송 계획의 총비용 <code style="color:#22d3bf">&lt;plan, cost&gt;</code>. <b>계획을 소비하는</b> 쪽 연산자.</p>
 <p>계획은 &quot;행화 / 열화가 주변 분포와 일치한다&quot;는 의미를 갖는 행렬이며, <code style="color:#22d3bf">matrix</code>로 취급하면 질량 보존이 침묵하고 깨진다. 여기는 계획으로서의 검사(비부·유한)을 통해서부터 비용을 낸다. 질량의 합계는 제한되지 않는다.</p>

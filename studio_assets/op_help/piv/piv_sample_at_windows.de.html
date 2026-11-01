@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">piv_sample_at_windows — PIV <code style="color:#22d3bf">assess</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">flow2d</code> → <code style="color:#22d3bf">flow2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_sample_at_windows(field, info)</code> (die Implementierung direkt: <code style="color:#22d3bf">import pivops; pivops.piv_sample_at_windows(field, info)</code>; aus dem Register: <code style="color:#22d3bf">opspiv.get(&quot;piv_sample_at_windows&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Überträgt ein pixelweises Feld <code style="color:#22d3bf">(2, H, W)</code> auf das Gitter der Fenstermittelpunkte (nächster Nachbar).</p>
 <p>Die Ground Truth wird in Pixelauflösung erzeugt, die PIV-Ausgabe liegt aber auf dem Fenstergitter. <b>Vor dem Vergleich muss sie auf dasselbe Gitter gebracht werden</b>, und die Art, wie das geschieht (nächster Nachbar oder Fenstermittel), verändert den Fehler. Hier: nächster Nachbar —— mit dem Fenstermittel wäre es in Feldern mit Gradienten nicht mehr von der eigenen Glättung von PIV zu unterscheiden.</p>

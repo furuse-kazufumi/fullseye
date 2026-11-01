@@ -5,6 +5,7 @@ category: nary
 in: image × region
 out: image
 halcon: reduce_domain
+gpu: なし
 examples: [gallery_nary_image_algebra]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -16,6 +17,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **データ種**: `image × region` → `image`
 - **呼び出し**: 入力 2 枚の op なので `fullseye.apply` では呼べない(あれは 1 画像モデル)。`g = fullseye.FullseyeGraph(); g.add("out", "reduce_domain", ["$in1", "$in2"], a=0.5, b=0.5); g.run({"$in1": img1, "$in2": img2}, terminal="out")` (`$` 始まりが外から渡す入力)
 - **HALCON 相当**: `reduce_domain`(意味・パラメータは HALCON リファレンスが参考になる)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

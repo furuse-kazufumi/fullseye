@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">ou_estimate — DRIVE <code style="color:#22d3bf">traffic</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ou_estimate(x, dt: &#x27;float&#x27;) -&gt; &#x27;Dict[str, float]&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import drivetraffic; drivetraffic.ou_estimate(x, dt: &#x27;float&#x27;) -&gt; &#x27;Dict[str, float]&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;ou_estimate&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>從等間隔 dt 的觀測序列讀出橫向擺動(平均 0 的 OU 過程 dX = −θX dt + σ dW)的參數。</p>
 <p>精確離散化 x_{k+1} = φ x_k + ε_k(φ = e^{−θ dt},ε ~ N(0, q²),q² = σ²(1 − φ²)/(2θ))的條件最大概似:</p>

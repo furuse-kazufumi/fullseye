@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">acoustic_layer_stack — ACOUSTICS <code style="color:#22d3bf">ultrasonic</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">keine</code> → <code style="color:#22d3bf">table</code> (ein Operator, der allein durch seine Argumente bestimmt ist — er nimmt kein Bild und keine Daten entgegen)</p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.acoustic_layer_stack(layers=((&#x27;silicon&#x27;, 0.0001), (&#x27;sio2&#x27;, 2e-06)), substrate=&#x27;silicon&#x27;, couplant=&#x27;water&#x27;, allow_unverified=False)</code> (die Implementierung direkt: <code style="color:#22d3bf">import ultrasound; ultrasound.acoustic_layer_stack(layers=((&#x27;silicon&#x27;, 0.0001), (&#x27;sio2&#x27;, 2e-06)), substrate=&#x27;silicon&#x27;, couplant=&#x27;water&#x27;, allow_unverified=False)</code>; aus dem Register: <code style="color:#22d3bf">opsacoustics.get(&quot;acoustic_layer_stack&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Schichtstapel für Puls-Echo bei senkrechtem Einfall: Koppelmedium, Schichten (Material, Dicke in m) von oben und ein halbunendliches Substrat (<code style="color:#22d3bf">table</code>).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>

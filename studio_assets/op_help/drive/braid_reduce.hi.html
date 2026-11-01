@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">braid_reduce — DRIVE <code style="color:#22d3bf">braidpath</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal × scalar</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.braid_reduce(word, n_strands)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import braidpath; braidpath.braid_reduce(word, n_strands)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;braid_reduce&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Braid word को Dehornoy handle reduction से reduce करता है। <b>खाली word लौटे ⇔ trivial braid</b> (वही class)।</p>
 <p>Handle = σⱼ^e u σⱼ^(−e) (u में σⱼ^(±1), σⱼ₋₁^(±1) नहीं होते)। u के अंदर के σⱼ₊₁^d को σⱼ₊₁^(−e) σⱼ^d σⱼ₊₁^e से बदलकर, बाहर के 2 letters हटा दिए जाते हैं (केवल relations का उपयोग होता है, इसलिए braid नहीं बदलता)। बाईं ओर से सबसे पहले बंद होने वाला handle चुना जाता है —— उसके अंदर कोई दूसरा handle नहीं होता, इसलिए वह Dehornoy के अर्थ में permitted है, और प्रक्रिया finite steps में रुकती है। लौटाए गए word में कोई handle नहीं होता; यदि वह खाली नहीं है, तो उसमें आने वाले सबसे छोटे index के letters का sign एक जैसा होता है (σ-positive / σ-negative)।</p>

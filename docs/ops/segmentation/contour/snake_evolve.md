@@ -4,6 +4,7 @@ dim: segmentation
 category: contour
 in: image2d × pairs
 out: table
+gpu: なし
 examples: [poc_active_contours]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d × pairs` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.snake_evolve(image, init_points, *, alpha: 'float' = 0.1, beta: 'float' = 0.1, gamma: 'float' = 1.0, external: 'str' = 'edge', w_line: 'float' = 0.0, w_edge: 'float' = 1.0, sigma: 'float' = 1.0, kappa: 'float' = 1.0, gvf=None, gvf_mu: 'float' = 0.2, max_px_move: 'Optional[float]' = None, n_iter: 'int' = 300, spline_order: 'int' = 3, tol: 'float' = 0.0, resample_every: 'int' = 0, record_every: 'int' = 0) -> 'Dict[str, object]'` (実装を直接呼ぶなら `import segcontour; segcontour.snake_evolve(image, init_points, *, alpha: 'float' = 0.1, beta: 'float' = 0.1, gamma: 'float' = 1.0, external: 'str' = 'edge', w_line: 'float' = 0.0, w_edge: 'float' = 1.0, sigma: 'float' = 1.0, kappa: 'float' = 1.0, gvf=None, gvf_mu: 'float' = 0.2, max_px_move: 'Optional[float]' = None, n_iter: 'int' = 300, spline_order: 'int' = 3, tol: 'float' = 0.0, resample_every: 'int' = 0, record_every: 'int' = 0) -> 'Dict[str, object]'`、台帳から引くなら `opssegmentation.get("snake_evolve")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

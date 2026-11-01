@@ -4,6 +4,7 @@ dim: 3d
 category: deform
 in: points × points
 out: points
+gpu: なし
 examples: [nonrigid_deform]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -16,6 +17,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **呼び出し**: `import fullseye as fs; fs.ledger.register_nonrigid(src, dst, iters=20, lam=1.0, k_smooth=None)` (実装を直接呼ぶなら `import deform3d; deform3d.register_nonrigid(src, dst, iters=20, lam=1.0, k_smooth=None)`、台帳から引くなら `ops3d.get("register_nonrigid")`)
 - **台帳経由の戻り値**: `fullseye.ledger.register_nonrigid(...)` は**宣言 out 型 `points` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.register_nonrigid.raw(...)`、または `deform3d.register_nonrigid` を直接呼ぶ。
   - 本体の返り: `(warped, info, info)`
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

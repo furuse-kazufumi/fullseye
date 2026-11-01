@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">lateral_offset — DRIVE <code style="color:#22d3bf">lateral</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lateral_offset(points, path, *, start_index=None, window: &#x27;int&#x27; = 40) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import drivelateral; drivelateral.lateral_offset(points, path, *, start_index=None, window: &#x27;int&#x27; = 40) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;lateral_offset&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>बिंदु का polyline path के साथ arc length s और lateral offset n (चलने की दिशा के बाईं ओर धनात्मक)। निकटतम segment पर projection।</p>
 <p><code style="color:#22d3bf">start_index</code> (प्रति बिंदु, या एक) देने पर केवल उस खंड के आगे-पीछे के <code style="color:#22d3bf">window</code> खंड जाँचे जाते हैं (बार-बार की कॉल तेज़ होती है; यदि वास्तविक निकटतम बिंदु विंडो के बाहर हो तो परिणाम गलत होगा, इसलिए तब उपयोग करें जब बिंदु थोड़ा-थोड़ा खिसकते हों)। None होने पर सभी खंड जाँचे जाते हैं।</p>

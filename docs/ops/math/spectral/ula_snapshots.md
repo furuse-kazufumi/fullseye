@@ -4,6 +4,7 @@ dim: math
 category: spectral
 in: signal
 out: matrix
+gpu: なし
 examples: [spectral_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal` → `matrix`
 - **呼び出し**: `import fullseye as fs; fs.ledger.ula_snapshots(angles_deg=(10.0, 16.0), n_elements: 'int' = 8, n_snapshots: 'int' = 200, *, spacing: 'float' = 0.5, snr_db: 'float | None' = None, seed: 'int' = 0) -> 'np.ndarray'` (実装を直接呼ぶなら `import mathspectral; mathspectral.ula_snapshots(angles_deg=(10.0, 16.0), n_elements: 'int' = 8, n_snapshots: 'int' = 200, *, spacing: 'float' = 0.5, snr_db: 'float | None' = None, seed: 'int' = 0) -> 'np.ndarray'`、台帳から引くなら `opsmath.get("ula_snapshots")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

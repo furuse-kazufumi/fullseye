@@ -4,6 +4,7 @@ dim: optics
 category: illumination
 in: 
 out: pairs
+gpu: なし
 examples: [illumination_design_demo]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `pairs`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.lighting_sweep(surface='glossy', slope_deg=10.0, elevations_deg=None, radius_mm=60.0, n=24, camera_height_mm=300.0, kind='ring')` (実装を直接呼ぶなら `import illumdesign; illumdesign.lighting_sweep(surface='glossy', slope_deg=10.0, elevations_deg=None, radius_mm=60.0, n=24, camera_height_mm=300.0, kind='ring')`、台帳から引くなら `opsoptics.get("lighting_sweep")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -4,6 +4,7 @@ dim: 3d
 category: surface_fit
 in: image2d
 out: image2d
+gpu: なし
 examples: [geometry_metrology]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.background_flatten(image, degree=2)` (実装を直接呼ぶなら `import match3d; match3d.background_flatten(image, degree=2)`、台帳から引くなら `ops3d.get("background_flatten")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

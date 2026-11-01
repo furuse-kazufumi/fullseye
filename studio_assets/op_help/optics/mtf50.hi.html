@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">mtf50 — OPTICS <code style="color:#22d3bf">imaging</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mtf50(sfr)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import edgesfr; edgesfr.mtf50(sfr)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;mtf50&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>वह frequency जहाँ SFR (pairs: frequency, मान) <b>पहली बार</b> 0.5 से नीचे जाता है (linear interpolation)। 0.5 से नीचे न जाए तो <code style="color:#22d3bf">ValueError</code> (&quot;मापने योग्य range के ऊपर तक 0.5 या अधिक&quot; को अधिकतम मान के रूप में चुपचाप नहीं लौटाता)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पूरी family का input contract (fail-closed)</h3>

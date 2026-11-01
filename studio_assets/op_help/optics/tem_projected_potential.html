@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tem_projected_potential — OPTICS <code style="color:#22d3bf">tem</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">image2d</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tem_projected_potential(atoms, elements=&#x27;C&#x27;, shape=256, pixel_A=0.5)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import temsim; temsim.tem_projected_potential(atoms, elements=&#x27;C&#x27;, shape=256, pixel_A=0.5)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;tem_projected_potential&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>原子の座標 → z 方向に投影したポテンシャル v_z(x, y) [V Å] (周期境界、<code style="color:#22d3bf">image2d</code>)。</p>
 <p><code style="color:#22d3bf">atoms</code> は (N, 2) か (N, 3) の Å の座標(z は捨てる)、<code style="color:#22d3bf">elements</code> は元素名 1 つか N 個の列(<code style="color:#22d3bf">pxrd.FORM_FACTORS</code> にあるもの: C, O, Si, Al, Mg, Cu, Fe … ── 無いものは ValueError)。v_z = (h² / 2π m₀ e) F⁻¹[ f_e(q/2) S(q) ] / 画素の面積、S は原子の構造因子。原子は双線形の重みで格子に置き、その伝達(sinc²)を Fourier 側で割り戻す。1 個の原子の v_z の積分は 47.878 × f_e(0) [V Å³]。弱位相物体の位相は <code style="color:#22d3bf">σ × v_z</code>(<code style="color:#22d3bf">tem_wavelength</code> の <code style="color:#22d3bf">sigma_rad_per_VA</code>)。</p>

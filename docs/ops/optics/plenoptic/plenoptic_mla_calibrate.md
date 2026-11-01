@@ -4,6 +4,7 @@ dim: optics
 category: plenoptic
 in: image2d
 out: table
+gpu: なし
 examples: [poc_plenoptic_camera]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.plenoptic_mla_calibrate(white_image, pitch_px_guess, *, max_residual_px=0.25)` (実装を直接呼ぶなら `import plenoptic; plenoptic.plenoptic_mla_calibrate(white_image, pitch_px_guess, *, max_residual_px=0.25)`、台帳から引くなら `opsoptics.get("plenoptic_mla_calibrate")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

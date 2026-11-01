@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">separate_touching — SEGMENTATION <code style="color:#22d3bf">watershed3d</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">labels</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.separate_touching(binary, min_distance: &#x27;float&#x27; = 5.0, method: &#x27;str&#x27; = &#x27;auto&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import watershed3d; watershed3d.separate_touching(binary, min_distance: &#x27;float&#x27; = 5.0, method: &#x27;str&#x27; = &#x27;auto&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opssegmentation.get(&quot;separate_touching&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>genuinely-new (B): an everyday wrapper that automatically separates touching objects in 1 call.</p>
 <p>Folds the standard pipeline distance transform → maximum NMS seeding → watershed into 1 call that splits the typical case of &quot;several objects touching and fused into 1 connected component&quot; (in the public API this needs 3 ops wired by hand, so it is made into 1 function for the common case). Inside it is <code style="color:#22d3bf">watershed_vol(..., markers=None)</code>.</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">ball_truth — DRIVE <code style="color:#22d3bf">ballworld</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ball_truth(world: &#x27;dict&#x27;, i: &#x27;int&#x27;, cam: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import ballworld; ballworld.ball_truth(world: &#x27;dict&#x27;, i: &#x27;int&#x27;, cam: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;ball_truth&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Ground-Truth-Projektion von Ball i: (col, row) des Mittelpunkts, Bildradius [px] (≈ f·r/Tiefe), (col, row) der Markierungsmitte (NaN, wenn auf der Rückseite).</p>
 <p>Leere Eingabe (<code style="color:#22d3bf">world</code> ein leeres dict) löst <code style="color:#22d3bf">ValueError</code> aus.</p>

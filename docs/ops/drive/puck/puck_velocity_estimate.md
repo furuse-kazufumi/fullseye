@@ -4,6 +4,7 @@ dim: drive
 category: puck
 in: signal × matrix × table
 out: table
+gpu: なし
 examples: [poc_air_hockey_intercept]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal × matrix × table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.puck_velocity_estimate(t, xy, table: 'dict', *, model: 'str' = 'coulomb', t_ref=None, iters: 'int' = 3) -> 'dict'` (実装を直接呼ぶなら `import puck; puck.puck_velocity_estimate(t, xy, table: 'dict', *, model: 'str' = 'coulomb', t_ref=None, iters: 'int' = 3) -> 'dict'`、台帳から引くなら `opsdrive.get("puck_velocity_estimate")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

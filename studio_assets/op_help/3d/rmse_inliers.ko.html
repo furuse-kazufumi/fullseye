@@ -4,6 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rmse_inliers(source, target, transform, thresh: &#x27;float&#x27;)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import registration_eval; registration_eval.rmse_inliers(source, target, transform, thresh: &#x27;float&#x27;)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;rmse_inliers&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>원장 경유의 반환값</b>: <code style="color:#22d3bf">fullseye.ledger.rmse_inliers(...)</code> 는 <b>선언된 out 형 <code style="color:#22d3bf">measurement</code> 의 값만</b> 반환합니다(실제 함수는 보조 정보도 반환). 버려진 쪽이 필요하면 <code style="color:#22d3bf">fullseye.ledger.rmse_inliers.raw(...)</code> 를 쓰거나 <code style="color:#22d3bf">registration_eval.rmse_inliers</code> 를 직접 호출하세요.</p>
 <p style="margin:2px 0 2px 12px">• 실제 반환: <code style="color:#22d3bf">(rmse, n_inliers) → rmse</code></p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>인라이어 대응(잔차 &lt; thresh) 위의 RMSE 와 인라이어 수. → (rmse, n_inliers).</p>
 <p><code style="color:#22d3bf">source[i]↔target[i]</code> 의 index 대응이 전제(<code style="color:#22d3bf">inlier_ratio</code> 와 같다). inlier 가 0 개이면 RMSE 는 정의되지 않음 → <code style="color:#22d3bf">(nan, 0)</code> 을 반환(honest; 날조하지 않는다). 형상 불일치, 비 (N,3) 는 ValueError(fail-closed).</p>

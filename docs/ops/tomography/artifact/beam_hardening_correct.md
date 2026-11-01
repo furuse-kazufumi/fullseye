@@ -4,6 +4,7 @@ dim: tomography
 category: artifact
 in: sinogram
 out: sinogram
+gpu: なし
 examples: [ct_reconstruction]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `sinogram` → `sinogram`
 - **呼び出し**: `import fullseye as fs; fs.ledger.beam_hardening_correct(sinogram, high_energy_fraction=0.5, attenuation_ratio=0.4, poly_coeffs=None, n_table=4096)` (実装を直接呼ぶなら `import tomography; tomography.beam_hardening_correct(sinogram, high_energy_fraction=0.5, attenuation_ratio=0.4, poly_coeffs=None, n_table=4096)`、台帳から引くなら `opstomography.get("beam_hardening_correct")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

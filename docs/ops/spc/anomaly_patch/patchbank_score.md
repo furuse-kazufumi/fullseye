@@ -4,6 +4,7 @@ dim: spc
 category: anomaly_patch
 in: image2d × table
 out: table
+gpu: なし
 examples: [poc_patch_anomaly]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d × table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.patchbank_score(image, model, k=1, smooth=4.0)` (実装を直接呼ぶなら `import anomaly_patch; anomaly_patch.patchbank_score(image, model, k=1, smooth=4.0)`、台帳から引くなら `opsspc.get("patchbank_score")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

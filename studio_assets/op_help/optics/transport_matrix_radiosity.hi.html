@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">transport_matrix_radiosity — OPTICS <code style="color:#22d3bf">light_transport</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.transport_matrix_radiosity(profile, albedo=0.8, n_bounces=None, *, chunk=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import lighttransport; lighttransport.transport_matrix_radiosity(profile, albedo=0.8, n_bounces=None, *, chunk=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;transport_matrix_radiosity&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Lambertian अवतल अनुप्रस्थ-काट का light-transport matrix: radiosity B = T E, जहाँ T = (I − diag(ρ)F)^-1 diag(ρ) (<code style="color:#22d3bf">table</code>)।</p>
 <p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>

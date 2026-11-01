@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">msa_gauge_rr — SPC <code style="color:#22d3bf">msa</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.msa_gauge_rr(table, part=&#x27;part&#x27;, operator=&#x27;operator&#x27;, value=&#x27;value&#x27;, tolerance=None, pool_interaction=&#x27;auto&#x27;, pool_alpha=0.25)</code>(要直接调用实现,<code style="color:#22d3bf">import spc; spc.msa_gauge_rr(table, part=&#x27;part&#x27;, operator=&#x27;operator&#x27;, value=&#x27;value&#x27;, tolerance=None, pool_interaction=&#x27;auto&#x27;, pool_alpha=0.25)</code>;从台账取用则 <code style="color:#22d3bf">opsspc.get(&quot;msa_gauge_rr&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>基于方差分析法的量具重复性与再现性(<code style="color:#22d3bf">table</code>)。</p>
 <p>重复性 EV(同一人重新测量同一物体时的离散)、再现性 AV(换人时的离散。含交互作用)、两者合成的 GRR、部件间 PV、总变差 TV、<code style="color:#22d3bf">%GRR = 100 GRR/TV</code>、可区分的类别数 <code style="color:#22d3bf">ndc = 1.41 PV/GRR</code>。</p>

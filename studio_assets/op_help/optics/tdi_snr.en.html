@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tdi_snr — OPTICS <code style="color:#22d3bf">linescan</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">table</code> (an op determined by its arguments alone — it takes no image or data input)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tdi_snr(photons_per_stage=200.0, stages=(1, 2, 4, 8, 16, 32, 64, 128), eta=0.6, sigma_d=20.0, K=0.1, architecture=&#x27;charge&#x27;, sigma_q2=0.08333333333333333)</code> (to call the implementation directly, <code style="color:#22d3bf">import linescan; linescan.tdi_snr(photons_per_stage=200.0, stages=(1, 2, 4, 8, 16, 32, 64, 128), eta=0.6, sigma_d=20.0, K=0.1, architecture=&#x27;charge&#x27;, sigma_q2=0.08333333333333333)</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;tdi_snr&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>SNR of a TDI sensor for each stage count N (<code style="color:#22d3bf">table</code>) — the EMVA 1288 linear model scaled by the number of stages.</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>

@@ -4,6 +4,7 @@ dim: printpath
 category: npr
 in: image2d × pairs
 out: image2d
+gpu: なし
 examples: [poc_beats_fringes_and_screens]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d × pairs` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.mosaic_tiles_render(image, sites)` (実装を直接呼ぶなら `import printpath; printpath.mosaic_tiles_render(image, sites)`、台帳から引くなら `opsprintpath.get("mosaic_tiles_render")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

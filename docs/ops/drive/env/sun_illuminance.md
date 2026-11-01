@@ -4,6 +4,7 @@ dim: drive
 category: env
 in: scalar
 out: table
+gpu: なし
 examples: [poc_driving_weather]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `scalar` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.sun_illuminance(elevation: 'float', cloud: 'float' = 0.0) -> 'Dict[str, float]'` (実装を直接呼ぶなら `import driveenv; driveenv.sun_illuminance(elevation: 'float', cloud: 'float' = 0.0) -> 'Dict[str, float]'`、台帳から引くなら `opsdrive.get("sun_illuminance")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

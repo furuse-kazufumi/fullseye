@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">interp_scattered — MATH <code style="color:#22d3bf">interp_poly</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points × signal × points</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.interp_scattered(points, values, query, method=&#x27;linear&#x27;, fill_value=nan, rescale=False, neighbors=None)</code> (to call the implementation directly, <code style="color:#22d3bf">import mathops; mathops.interp_scattered(points, values, query, method=&#x27;linear&#x27;, fill_value=nan, rescale=False, neighbors=None)</code>; from the registry, <code style="color:#22d3bf">opsmath.get(&quot;interp_scattered&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Values at *query* from <b>scattered</b> samples — sensor nets, boreholes, weather.</p>
 <p><code style="color:#22d3bf">interp_linear</code> and <code style="color:#22d3bf">interp_cubic</code> need samples on a sorted 1-D axis. A great deal of measurement does not arrive that way: temperature sensors bolted wherever a rack allowed, boreholes drilled where access permitted, weather stations placed by history. This is the N-D scattered entry point (<code style="color:#22d3bf">scipy.interpolate</code>), and it returns <b>how much of the answer was not interpolation at all</b>.</p>

@@ -4,6 +4,7 @@ dim: drive
 category: pass
 in: signal × signal
 out: table
+gpu: なし
 examples: [poc_driving_pass]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal × signal` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.roundabout_signal_check(progress, left_on, *, arm_angles: 'Sequence[float]', entry: 'int', exit: 'int', right_on=None, tol: 'float' = 0.05) -> 'Dict[str, object]'` (実装を直接呼ぶなら `import drivepass; drivepass.roundabout_signal_check(progress, left_on, *, arm_angles: 'Sequence[float]', entry: 'int', exit: 'int', right_on=None, tol: 'float' = 0.05) -> 'Dict[str, object]'`、台帳から引くなら `opsdrive.get("roundabout_signal_check")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

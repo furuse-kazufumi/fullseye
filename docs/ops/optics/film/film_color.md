@@ -4,6 +4,7 @@ dim: optics
 category: film
 in: 
 out: table
+gpu: なし
 examples: [poc_thin_film_reflectometry]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.film_color(film='SIO2', substrate='SI', thickness_min_nm=0.0, thickness_max_nm=1000.0, n_points=101, under=(), angle_deg=0.0, na=0.0, wl_min_nm=380.0, wl_max_nm=780.0, ambient=1.0, exposure=1.0, illuminant=None)` (実装を直接呼ぶなら `import filmoptics; filmoptics.film_color(film='SIO2', substrate='SI', thickness_min_nm=0.0, thickness_max_nm=1000.0, n_points=101, under=(), angle_deg=0.0, na=0.0, wl_min_nm=380.0, wl_max_nm=780.0, ambient=1.0, exposure=1.0, illuminant=None)`、台帳から引くなら `opsoptics.get("film_color")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

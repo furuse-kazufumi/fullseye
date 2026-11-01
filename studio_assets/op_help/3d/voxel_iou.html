@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">voxel_iou — 3D <code style="color:#22d3bf">metrics</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">voxel × voxel</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.voxel_iou(vol_a, vol_b, iso=0.5)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import metrics3d; metrics3d.voxel_iou(vol_a, vol_b, iso=0.5)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;voxel_iou&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>voxel 占有の IoU(intersection over union)。→ [0,1]。体積一致度。</p>
 <p>両 volume は同一 shape が必須。異形状は numpy broadcasting で見かけ上一致し誤った IoU(例: (10,1,10) vs (1,10,10) → 1.0)を静かに返すので、fail-closed で shape 不一致は ValueError で拒否する。</p>

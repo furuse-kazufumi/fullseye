@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">plane_sweep_depth — 3D <code style="color:#22d3bf">plane_sweep_stereo</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">depth</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.plane_sweep_depth(img_ref: &#x27;np.ndarray&#x27;, img_src: &#x27;np.ndarray&#x27;, K: &#x27;np.ndarray&#x27;, R: &#x27;np.ndarray&#x27;, t: &#x27;np.ndarray&#x27;, depth_candidates, window: &#x27;int&#x27; = 1, normal=(0.0, 0.0, 1.0)) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import plane_sweep; plane_sweep.plane_sweep_depth(img_ref: &#x27;np.ndarray&#x27;, img_src: &#x27;np.ndarray&#x27;, K: &#x27;np.ndarray&#x27;, R: &#x27;np.ndarray&#x27;, t: &#x27;np.ndarray&#x27;, depth_candidates, window: &#x27;int&#x27; = 1, normal=(0.0, 0.0, 1.0)) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;plane_sweep_depth&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用 plane-sweep stereo 估計稠密深度圖。→ (H,W) depth。</p>
 <p>在各深度平面上將 src 扭曲到 ref，逐像素選出 photo-consistency 最小的候選深度(winner-take-all)。所有候選下都在視野外的像素為 NaN。fail-closed(失敗即拒絕)(空/非 2D/shape 不一致/非正深度)。</p>

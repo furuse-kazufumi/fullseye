@@ -4,6 +4,7 @@ dim: drive
 category: tactorque
 in: matrix × matrix × matrix × scalar
 out: table
+gpu: なし
 examples: [poc_tactile_dipole_torque]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `matrix × matrix × matrix × scalar` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.pressure_first_moment(p, X, Y, pitch: 'float') -> 'dict'` (実装を直接呼ぶなら `import tactorque; tactorque.pressure_first_moment(p, X, Y, pitch: 'float') -> 'dict'`、台帳から引くなら `opsdrive.get("pressure_first_moment")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

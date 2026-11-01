@@ -4,6 +4,7 @@ dim: drive
 category: tactorque
 in: matrix × matrix × table
 out: table
+gpu: なし
 examples: [poc_tactile_dipole_torque]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `matrix × matrix × table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.tilt_shear_field(p_before, p_after, kern: 'dict') -> 'dict'` (実装を直接呼ぶなら `import tactorque; tactorque.tilt_shear_field(p_before, p_after, kern: 'dict') -> 'dict'`、台帳から引くなら `opsdrive.get("tilt_shear_field")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

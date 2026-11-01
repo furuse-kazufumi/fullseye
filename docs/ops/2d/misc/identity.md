@@ -5,6 +5,7 @@ category: misc
 in: any
 out: any
 halcon: copy_image
+gpu: なし
 examples: [gallery_nary_image_algebra, optics_four_f_processor, poc_em_branch_territory, poc_food_cutting_measure]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -16,6 +17,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **データ種**: `any` → `any`
 - **呼び出し**: `fullseye.apply(img, "identity", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 - **HALCON 相当**: `copy_image`(意味・パラメータは HALCON リファレンスが参考になる)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ![identity: input → output](../../_fig/identity.png)
 

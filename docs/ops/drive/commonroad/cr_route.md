@@ -4,6 +4,7 @@ dim: drive
 category: commonroad
 in: table
 out: table
+gpu: なし
 examples: [poc_driving_commonroad]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.cr_route(scene, lanelet_from, lanelet_to=None, *, goal=None, step: 'float' = 0.5) -> 'dict'` (実装を直接呼ぶなら `import drivecommonroad; drivecommonroad.cr_route(scene, lanelet_from, lanelet_to=None, *, goal=None, step: 'float' = 0.5) -> 'dict'`、台帳から引くなら `opsdrive.get("cr_route")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

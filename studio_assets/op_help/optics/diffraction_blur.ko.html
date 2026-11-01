@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">diffraction_blur — OPTICS <code style="color:#22d3bf">scene</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">rgbimage × table</code> → <code style="color:#22d3bf">rgbimage</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.diffraction_blur(image, camera, f_number: &#x27;float&#x27; = 5.6, wavelength_nm: &#x27;float&#x27; = 550.0) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import optscene; optscene.diffraction_blur(image, camera, f_number: &#x27;float&#x27; = 5.6, wavelength_nm: &#x27;float&#x27; = 550.0) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsoptics.get(&quot;diffraction_blur&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>조리개가 정하는 <b>회절 흐림</b>을 입힙니다(에어리 디스크를 가우스로 근사).</p>
 <p>기하 광학만으로 만든 상은 실기보다 세부가 지나치게 나온다. 조일수록 피사계 심도는 깊어지지만회절로 세부가 뭉개진다 ―― 이 줄다리기를 보지 않고 조리개를 정하면, 시뮬레이션상으로는보이던 결함이 실기에서 사라진다.</p>

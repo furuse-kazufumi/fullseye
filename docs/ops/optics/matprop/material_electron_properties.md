@@ -4,6 +4,7 @@ dim: optics
 category: matprop
 in: 
 out: table
+gpu: なし
 examples: [poc_virtual_sem_kv_cd_bse]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.material_electron_properties(material='SI') -> 'dict'` (実装を直接呼ぶなら `import materials; materials.material_electron_properties(material='SI') -> 'dict'`、台帳から引くなら `opsoptics.get("material_electron_properties")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

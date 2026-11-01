@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">fit_circle_3d — 3D <code style="color:#22d3bf">geometry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">primitive</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fit_circle_3d(points)</code>(要直接调用实现,<code style="color:#22d3bf">import match3d; match3d.fit_circle_3d(points)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;fit_circle_3d&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>点群 → 3D 圆(先平面拟合,再在面内做 2D 圆拟合)。返回 (center, radius, normal)。</p>
 <p>用 <code style="color:#22d3bf">fit_plane_3d</code> 求平面 <code style="color:#22d3bf">(c, n)</code>,将点投影到面内正交归一基 <code style="color:#22d3bf">(e1, e2)</code> 上,求解 2-D 的代数圆拟合(<code style="color:#22d3bf">|q|² = 2·cc·q + k</code> 的 <code style="color:#22d3bf">lstsq</code>),再把圆心变回 3-D。<code style="color:#22d3bf">(N,3)</code> 中不足 3 点则 ValueError(3 点时平面严格成立,圆通过这 3 点)。<code style="color:#22d3bf">center</code> 为平面上的 3-D 点,<code style="color:#22d3bf">radius</code> 为 float(负根 clamp 为 0),<code style="color:#22d3bf">normal</code> 为平面的单位法线(符号任意)。只有部分圆弧、或偏离平面的点较多时半径会有偏差(代数拟合的性质。不返回面内残差)。</p>

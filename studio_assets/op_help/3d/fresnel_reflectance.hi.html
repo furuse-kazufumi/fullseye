@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">fresnel_reflectance — 3D <code style="color:#22d3bf">optics</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">measurement</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fresnel_reflectance(cos_i, eta1=1.0, eta2=1.5)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import match3d; match3d.fresnel_reflectance(cos_i, eta1=1.0, eta2=1.5)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;fresnel_reflectance&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Fresnel reflectance (unpolarised = s/p औसत)। transparent interface पर reflection/transmission में बँटने वाला हिस्सा।</p>
 <p>लंबवत incidence पर ((n1−n2)/(n1+n2))² (air→glass=0.04)। critical angle से अधिक पर 1.0 (total internal reflection)। transparent वस्तुओं के rendering/inspection के लिए।</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">add_ball — DRIVE <code style="color:#22d3bf">ballworld</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">table × table</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.add_ball(world: &#x27;dict&#x27;, mesh: &#x27;dict&#x27;, p, R=None, *, name: &#x27;str&#x27; = &#x27;ball&#x27;) -&gt; &#x27;int&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import ballworld; ballworld.add_ball(world: &#x27;dict&#x27;, mesh: &#x27;dict&#x27;, p, R=None, *, name: &#x27;str&#x27; = &#x27;ball&#x27;) -&gt; &#x27;int&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;add_ball&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>공을 자세 (p, R)로 월드에 추가합니다. 면별 라벨(공 23 / 마커 24)은 그대로입니다. 반환값 = objects의 인덱스.</p>
 <p>빈 입력(<code style="color:#22d3bf">world</code> 이(가) 빈 dict)은 <code style="color:#22d3bf">ValueError</code> 를 발생시킨다.</p>

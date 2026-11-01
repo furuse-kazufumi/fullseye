@@ -4,6 +4,7 @@ dim: interferometry
 category: chromatic
 in: sweep
 out: measurement
+gpu: なし
 examples: [coherence_scanning]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `sweep` → `measurement`
 - **呼び出し**: `import fullseye as fs; fs.ledger.chromatic_confocal_height(spectrum, wavelength_start_nm=500.0, wavelength_step_nm=0.5, dispersion_um_per_nm=0.2, reference_wavelength_nm=600.0, mode='gaussian', subtract_background=True, min_visibility=0.3, min_peak_bins=2.0, max_carrier_fraction=0.1)` (実装を直接呼ぶなら `import interferometry; interferometry.chromatic_confocal_height(spectrum, wavelength_start_nm=500.0, wavelength_step_nm=0.5, dispersion_um_per_nm=0.2, reference_wavelength_nm=600.0, mode='gaussian', subtract_background=True, min_visibility=0.3, min_peak_bins=2.0, max_carrier_fraction=0.1)`、台帳から引くなら `opsinterferometry.get("chromatic_confocal_height")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

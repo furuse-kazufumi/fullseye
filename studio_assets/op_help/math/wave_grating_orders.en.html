@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">wave_grating_orders — MATH <code style="color:#22d3bf">wave</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">table</code> (an op determined by its arguments alone — it takes no image or data input)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.wave_grating_orders(pitch_um=1.6, wavelength_nm=550.0, sin_in=0.0, orders=(-2, -1, 1, 2))</code> (to call the implementation directly, <code style="color:#22d3bf">import mathops; mathops.wave_grating_orders(pitch_um=1.6, wavelength_nm=550.0, sin_in=0.0, orders=(-2, -1, 1, 2))</code>; from the registry, <code style="color:#22d3bf">opsmath.get(&quot;wave_grating_orders&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Where a grating sends each order: <code style="color:#22d3bf">d (sin_out - sin_in) = m lambda</code> solved for the angle.</p>
 <p>The companion to the existing <code style="color:#22d3bf">grating_wavelengths</code> (which solves the same identity for *lambda*): given the pitch and the wavelength, this returns the outgoing direction of each order, and marks the orders that are <b>evanescent</b> — <code style="color:#22d3bf">|sin_out| &gt; 1</code> means that order does not propagate, which is why a CD shows fewer colours at grazing incidence.</p>

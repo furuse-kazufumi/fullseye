@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">pendulum_period_exact — DRIVE <code style="color:#22d3bf">kendama</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">scalar</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pendulum_period_exact(L: &#x27;float&#x27;, theta0: &#x27;float&#x27;, g: &#x27;float&#x27; = 9.81) -&gt; &#x27;float&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import kendama; kendama.pendulum_period_exact(L: &#x27;float&#x27;, theta0: &#x27;float&#x27;, g: &#x27;float&#x27; = 9.81) -&gt; &#x27;float&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;pendulum_period_exact&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>振幅 θ₀ ∈ (0, π) の振り子(棒、または弛まない範囲のひも)の周期 4√(L/g)·K(sin(θ₀/2))。θ₀ → 0 で 2π√(L/g)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

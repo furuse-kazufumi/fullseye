@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">minimal_surface_bend — 3D <code style="color:#22d3bf">surface</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">mesh</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.minimal_surface_bend(t=0.0, nu=80, nv=120, extent=1.5, scale=1.0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import render3d; render3d.minimal_surface_bend(t=0.0, nu=80, nv=120, extent=1.5, scale=1.0)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;minimal_surface_bend&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>The catenoid-helicoid bend — every member of the family is still minimal.</p>
 <p>The *associate family* <code style="color:#22d3bf">cos(t) * helicoid + sin(t) * catenoid</code> (in the Weierstrass sense) deforms one into the other <b>without stretching</b>: the surfaces are isometric at every <code style="color:#22d3bf">t</code>, and every one of them is minimal. <code style="color:#22d3bf">t = 0</code> is the helicoid, <code style="color:#22d3bf">t = pi/2</code> the catenoid.</p>

@@ -4,6 +4,7 @@ dim: imgforensics
 category: sensor
 in: fingerprint
 out: image2d
+gpu: なし
 examples: [image_forensics_audit]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `fingerprint` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.fingerprint_strength_map(fingerprint, block: 'int' = 16) -> 'np.ndarray'` (実装を直接呼ぶなら `import imgforensics; imgforensics.fingerprint_strength_map(fingerprint, block: 'int' = 16) -> 'np.ndarray'`、台帳から引くなら `opsimgforensics.get("fingerprint_strength_map")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

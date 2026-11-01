@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">pose_normalize — DRIVE <code style="color:#22d3bf">inf</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">any</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pose_normalize(i: &#x27;int&#x27;, j: &#x27;int&#x27;, x: &#x27;float&#x27;, y: &#x27;float&#x27;, tile: &#x27;float&#x27;)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import driveinf; driveinf.pose_normalize(i: &#x27;int&#x27;, j: &#x27;int&#x27;, x: &#x27;float&#x27;, y: &#x27;float&#x27;, tile: &#x27;float&#x27;)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;pose_normalize&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>(tile, tile के अंदर के coordinates) में tile index को ऊपर-नीचे करता है ताकि coordinates [0, tile) में आ जाएँ। return value (i, j, x, y)। ★global coordinates में जोड़कर फिर से भाग देने के बजाय केवल tile के अंदर के coordinates को हिलाता है —— इसलिए step का आकार दूरी पर निर्भर नहीं करता।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

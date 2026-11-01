@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">illusion_poggendorff — GENERATIVE <code style="color:#22d3bf">illusion</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">rgb</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.illusion_poggendorff(angle_deg: &#x27;float&#x27; = 30.0, bar: &#x27;float&#x27; = 90.0) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import illusion; illusion.illusion_poggendorff(angle_deg: &#x27;float&#x27; = 30.0, bar: &#x27;float&#x27; = 90.0) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsgenerative.get(&quot;illusion_poggendorff&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>ポッゲンドルフ錯視。<b>斜線は厳密に 1 本の直線</b>(帯で隠れているだけ)。</p>
 <p>不変量: 左右に見えている 2 本の線分は共線(同じ傾き・同じ切片)。</p>

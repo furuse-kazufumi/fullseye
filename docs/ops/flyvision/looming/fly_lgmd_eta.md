@@ -4,6 +4,7 @@ dim: flyvision
 category: looming
 in: signal
 out: signal
+gpu: なし
 examples: [poc_fly_vision]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal` → `signal`
 - **呼び出し**: `import fullseye as fs; fs.ledger.fly_lgmd_eta(theta_signal, dt_s, alpha=4.7, delay_s=0.0)` (実装を直接呼ぶなら `import flyvision; flyvision.fly_lgmd_eta(theta_signal, dt_s, alpha=4.7, delay_s=0.0)`、台帳から引くなら `opsflyvision.get("fly_lgmd_eta")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

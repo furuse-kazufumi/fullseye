@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">mesh_area — 3D <code style="color:#22d3bf">mesh_process</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">mesh</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mesh_area(mesh) -&gt; &#x27;float&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import mesh_props; mesh_props.mesh_area(mesh) -&gt; &#x27;float&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;mesh_area&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>三角形メッシュの<b>表面積</b>(全三角形面積の総和)。→ float。</p>
 <p>面積 = Σ 0.5·|cross(v1−v0, v2−v0)|。頂点数に定数を掛ける素朴な近似ではなく、実際の面の大きさを積算するので、メッシュのスケール・形状に正しく追随する。</p>

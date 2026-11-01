@@ -4,6 +4,7 @@ dim: optics
 category: lockin
 in: image2d
 out: video
+gpu: なし
 examples: [poc_lockin_imaging, poc_thermal_drift_metrology]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d` → `video`
 - **呼び出し**: `import fullseye as fs; fs.ledger.lockin_thermal_wave(depth, thermal_diffusivity, f_heat, frames_per_period, n_periods, nonuniformity=None) -> 'np.ndarray'` (実装を直接呼ぶなら `import lockin; lockin.lockin_thermal_wave(depth, thermal_diffusivity, f_heat, frames_per_period, n_periods, nonuniformity=None) -> 'np.ndarray'`、台帳から引くなら `opsoptics.get("lockin_thermal_wave")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

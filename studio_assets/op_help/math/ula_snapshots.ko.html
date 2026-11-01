@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">ula_snapshots — MATH <code style="color:#22d3bf">spectral</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ula_snapshots(angles_deg=(10.0, 16.0), n_elements: &#x27;int&#x27; = 8, n_snapshots: &#x27;int&#x27; = 200, *, spacing: &#x27;float&#x27; = 0.5, snr_db: &#x27;float | None&#x27; = None, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import mathspectral; mathspectral.ula_snapshots(angles_deg=(10.0, 16.0), n_elements: &#x27;int&#x27; = 8, n_snapshots: &#x27;int&#x27; = 200, *, spacing: &#x27;float&#x27; = 0.5, snr_db: &#x27;float | None&#x27; = None, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsmath.get(&quot;ula_snapshots&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>등간격 선형 어레이가 받는 복소 스냅숏 (M, K)를 만든다(도래 방향 추정의 답이 정해져 있는 입력).</p>
 <p>파원마다 독립된 복소 가우스 신호(무상관). <code style="color:#22d3bf">snr_db</code>를 주면 소자마다 백색 잡음을 더한다(None = 잡음 없음).</p>

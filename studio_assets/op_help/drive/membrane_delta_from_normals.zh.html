@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">membrane_delta_from_normals — DRIVE <code style="color:#22d3bf">tacsim</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">normalmap × matrix × matrix × scalar</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.membrane_delta_from_normals(normals, X, Y, pitch: &#x27;float&#x27;, tail: &#x27;str&#x27; = &#x27;boussinesq&#x27;, centre_xy=None) -&gt; &#x27;float&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import tacsim; tacsim.membrane_delta_from_normals(normals, X, Y, pitch: &#x27;float&#x27;, tail: &#x27;str&#x27; = &#x27;boussinesq&#x27;, centre_xy=None) -&gt; &#x27;float&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;membrane_delta_from_normals&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由法线场求中心沉陷 δ：将径向斜率 s̄(r) 从中心到窗口边缘做 1D 积分(∫ s̄ dr = ū_z(0) − ū_z(r_max))，<code style="color:#22d3bf">tail=&quot;boussinesq&quot;</code> 时由远场 ū_z ≈ C/r(点载荷的 Boussinesq 解，Johnson §3.2)加上剩余尾部 ū_z(r_max) = r_max · s̄(r_max)(取窗口边缘最后 3 个分箱的中位数)。<code style="color:#22d3bf">tail=&quot;none&quot;</code> 不加尾部(直接返回有限窗口的低估值 —— 用于测量误差的大小)。</p>
 <p>不经过高度的 FFT 积分,因此不受振幅衰减影响。返回:δ [m]。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>:未知的 tail、pitch ≤ 0。空输入(<code style="color:#22d3bf">normals</code> 为 0 个元素)会引发 <code style="color:#22d3bf">ValueError</code>。</p>

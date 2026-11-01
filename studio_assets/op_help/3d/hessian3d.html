@@ -2,7 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">hessian3d — 3D <code style="color:#22d3bf">feature</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">hessian</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.hessian3d(vol, device=&#x27;cpu&#x27;)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import match3d; match3d.hessian3d(vol, device=&#x27;cpu&#x27;)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;hessian3d&quot;)</code>)</p>
-<p style="margin:2px 0 2px 12px">• <b>GPU</b>: この op は GPU 経路あり(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>3D Hessian の 6 独立成分 (fzz,fyy,fxx,fzy,fzx,fyx)。分離 conv3d(2 階/1 階×平滑)。</p>
 <p>カーネル: 2 階 [1,−2,1] (利得 1)、1 階 [−0.5,0,0.5] (利得 1)、残りの軸は [1,2,1]/4 の平滑(利得 1)。対角成分は「その軸の 2 階 × 他 2 軸の平滑」、交差成分は「2 軸の 1 階 × 残り軸の平滑」。<b>単位は 1/voxel² の真の値</b>(<code style="color:#22d3bf">sobel3d</code> の 32 倍利得とは違う)。端は replicate。返り値は <b>list の torch tensor 6 本</b>、各 <code style="color:#22d3bf">(D,H,W)</code> float32、<code style="color:#22d3bf">device</code> 上、順は(zz, yy, xx, zy, zx, yx)(軸 0=z, 1=y, 2=x)。numpy が要れば <code style="color:#22d3bf">.cpu().numpy()</code>。入力は numpy 相当(float32 に変換)。</p>

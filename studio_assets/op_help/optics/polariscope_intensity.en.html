@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">polariscope_intensity — OPTICS <code style="color:#22d3bf">photoelastic</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.polariscope_intensity(delta_rad, axis_deg=45.0, setup=&#x27;plane_dark&#x27;, polarizer_deg=0.0, intensity=1.0)</code> (to call the implementation directly, <code style="color:#22d3bf">import photoelastic; photoelastic.polariscope_intensity(delta_rad, axis_deg=45.0, setup=&#x27;plane_dark&#x27;, polarizer_deg=0.0, intensity=1.0)</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;polariscope_intensity&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Closed-form intensity of plane and circular polariscopes in dark and bright field (isochromatics and isoclinics).</p>
 <p><code style="color:#22d3bf">intensity</code> is the intensity of the polarised beam leaving the first polariser. With retardance δ and principal (isoclinic) direction θ:</p>

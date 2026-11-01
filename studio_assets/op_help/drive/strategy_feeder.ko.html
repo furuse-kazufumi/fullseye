@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">strategy_feeder — DRIVE <code style="color:#22d3bf">racket</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.strategy_feeder(side: &#x27;int&#x27;, ctx: &#x27;dict&#x27;, rng, step: &#x27;float&#x27; = 0.06) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import racket; racket.strategy_feeder(side: &#x27;int&#x27;, ctx: &#x27;dict&#x27;, rng, step: &#x27;float&#x27; = 0.06) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;strategy_feeder&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>이전과 가깝지만 약간 어긋난 위치로 공을 돌려보냅니다(상대가 받기 쉬운 공): 이전의 자기 조준점을 ±step의 균일 난수로 옮기고, 코트 안쪽(가장자리에서 12 cm)에 들어오게 합니다. 체공 시간은 느린 0.42 s입니다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

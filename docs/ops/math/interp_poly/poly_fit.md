@@ -4,6 +4,7 @@ dim: math
 category: interp_poly
 in: signal × signal
 out: table
+gpu: なし
 examples: [math_metrology, poc_strain_history, poc_thermal_radiometry, signal_filter]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal × signal` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.poly_fit(x, y, degree)` (実装を直接呼ぶなら `import mathops; mathops.poly_fit(x, y, degree)`、台帳から引くなら `opsmath.get("poly_fit")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

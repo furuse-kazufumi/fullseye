@@ -4,6 +4,7 @@ dim: optics
 category: coherent
 in: image2d × image2d
 out: image2d
+gpu: なし
 examples: [poc_fourier_ptychography, poc_laser_line_speckle_floor]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d × image2d` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.coherent_image(amplitude, phase=None, cutoff=0.25, pupil=None, defocus_waves=0.0)` (実装を直接呼ぶなら `import coherent; coherent.coherent_image(amplitude, phase=None, cutoff=0.25, pupil=None, defocus_waves=0.0)`、台帳から引くなら `opsoptics.get("coherent_image")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

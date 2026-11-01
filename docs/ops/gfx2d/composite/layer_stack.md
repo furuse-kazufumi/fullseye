@@ -4,6 +4,7 @@ dim: gfx2d
 category: composite
 in: table
 out: rgba
+gpu: なし
 examples: [gfx2d_scene]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `rgba`
 - **呼び出し**: `import fullseye as fs; fs.ledger.layer_stack(layers)` (実装を直接呼ぶなら `import gfx2d; gfx2d.layer_stack(layers)`、台帳から引くなら `opsgfx2d.get("layer_stack")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

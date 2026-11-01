@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">dem_tpi — DEM <code style="color:#22d3bf">surface</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">depth</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_tpi(dem, cell_size=1.0)</code>(要直接调用实现,<code style="color:#22d3bf">import demops; demops.dem_tpi(dem, cell_size=1.0)</code>;从台账取用则 <code style="color:#22d3bf">opsdem.get(&quot;dem_tpi&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>地形位置指数 TPI —— 本格子单元与 8 邻域均值之差 [m]。正为山脊，负为山谷。</p>
 <p>公式:<code style="color:#22d3bf">tpi = z - mean(8 邻域的 z)</code>(以最小的 3x3 邻域求取的 Weiss TPI)。边缘用复制边界值填充。邻域固定为 1 个单元,所以<b>尺度固定为 1 个 <code style="color:#22d3bf">cell_size</code></b>;想看更宽的山脊/山谷时,先把 <code style="color:#22d3bf">dem</code> 变粗(此 op 没有半径参数)。</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">mirror_plane_from_pairs — SHAPESTAT <code style="color:#22d3bf">symmetry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mirror_plane_from_pairs(landmarks, pairs=None, midline=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import shapestats; shapestats.mirror_plane_from_pairs(landmarks, pairs=None, midline=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsshapestat.get(&quot;mirror_plane_from_pairs&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>बाएँ/दाएँ के संगत landmark से median (midsagittal) plane निकालता है। → <code style="color:#22d3bf">(2, 3)</code> (row 1 = point, row 2 = normal)।</p>
 <p>बाएँ-दाएँ जोड़ों <code style="color:#22d3bf">(i, j)</code> के <b>मध्यबिंदु</b> सभी midsagittal plane पर स्थित होते हैं। इसलिए उस मध्यबिंदु-समूह पर plane fit कर देना काफ़ी है -- मुख्य बात यह है कि plane deformation की मात्रा से स्वतंत्र तय होता है, और यह residual को न्यूनतम करने वाले plane (<code style="color:#22d3bf">symmetry3d.detect_reflection_symmetry</code>) से अलग चीज़ है।</p>

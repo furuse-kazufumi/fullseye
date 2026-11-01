@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">world_apply_terrain — DRIVE <code style="color:#22d3bf">terrain</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.world_apply_terrain(world: &#x27;dict&#x27;, p: &#x27;dict&#x27;, step: &#x27;float&#x27; = 2.0) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import driveterrain; driveterrain.world_apply_terrain(world: &#x27;dict&#x27;, p: &#x27;dict&#x27;, step: &#x27;float&#x27; = 2.0) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;world_apply_terrain&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Wendet das Gelände auf die Ausgabe von world_build (eine flache Welt) an (in place; gibt dasselbe dict zurück).</p>
 <p>Ersetzt das Fahrbahnnetz (objects[0] &quot;ground&quot;) durch terrain_mesh; Objekte mit Pose (Assets, Bäume, Fußgänger) werden starr um die Höhe an der (x, y)-Position ihrer Pose angehoben, Objekte ohne Pose (Bordsteine, weiße Linien, Haltelinien, Schienen, Rampen) pro Vertex. Zeichnet <code style="color:#22d3bf">world[&quot;terrain&quot;] = p</code> auf.</p>

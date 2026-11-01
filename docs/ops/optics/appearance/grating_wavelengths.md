@@ -4,6 +4,7 @@ dim: optics
 category: appearance
 in: 
 out: vector
+gpu: なし
 examples: [appearance_structural_colour, poc_beats_fringes_and_screens]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `vector`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.grating_wavelengths(pitch_um, sin_in, sin_out, orders=(1, 2, 3)) -> 'np.ndarray'` (実装を直接呼ぶなら `import matappear; matappear.grating_wavelengths(pitch_um, sin_in, sin_out, orders=(1, 2, 3)) -> 'np.ndarray'`、台帳から引くなら `opsoptics.get("grating_wavelengths")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

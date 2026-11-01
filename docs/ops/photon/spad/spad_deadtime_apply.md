@@ -4,6 +4,7 @@ dim: photon
 category: spad
 in: countrate
 out: countrate
+gpu: なし
 examples: [photon_timeresolved, poc_dtof_ranging]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `countrate` → `countrate`
 - **呼び出し**: `import fullseye as fs; fs.ledger.spad_deadtime_apply(rate_hz, dead_time_ns=50.0, paralyzable=False)` (実装を直接呼ぶなら `import photoncount; photoncount.spad_deadtime_apply(rate_hz, dead_time_ns=50.0, paralyzable=False)`、台帳から引くなら `opsphoton.get("spad_deadtime_apply")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

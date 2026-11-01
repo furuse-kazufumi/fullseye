@@ -4,6 +4,7 @@ dim: optics
 category: oct
 in: table
 out: table
+gpu: なし
 examples: [poc_industrial_oct]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.oct_dispersion_compensate(interferogram, a2=0.0, a3=0.0, k_center=None, dc='reference')` (実装を直接呼ぶなら `import octscan; octscan.oct_dispersion_compensate(interferogram, a2=0.0, a3=0.0, k_center=None, dc='reference')`、台帳から引くなら `opsoptics.get("oct_dispersion_compensate")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

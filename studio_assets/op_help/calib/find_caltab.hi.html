@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">find_caltab — CALIB <code style="color:#22d3bf">target</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">keypoints</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.find_caltab(image, thresh=0.5)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import caltab; caltab.find_caltab(image, thresh=0.5)</code>, registry से लेना हो तो <code style="color:#22d3bf">opscalib.get(&quot;find_caltab&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>image में calibration plate के गोल marks के केंद्र खोजता है (connected components के centroid) (find_caltab)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>

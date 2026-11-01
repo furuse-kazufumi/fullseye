@@ -2019,6 +2019,34 @@ _NOACCEL = object()
 # breaker is per op name, opens on the first failure, and `reset_gpu()` closes it
 # (half-open: the next call tries the GPU again).
 _GPU_OPEN: set = set()
+_TORCH_IMPORT_FAILURE: str | None = None     # torch が import できない理由(一度だけ試す)
+
+
+def resolve_device(device: str = "auto") -> str:
+    """実行 device を解決する / Resolve ``auto`` and ``FULLSEYE_DEVICE``.
+
+    明示した引数より ``FULLSEYE_DEVICE`` を優先する。CUDA を明示して利用できない場合は
+    CPU へ黙って落とさず、入口で理由つき ``RuntimeError`` にする。
+    """
+    requested = os.environ.get("FULLSEYE_DEVICE", device).strip().lower()
+    if requested not in ("auto", "cpu", "cuda"):
+        raise ValueError("device must be 'auto', 'cpu', or 'cuda'; got %r" % requested)
+    if requested == "cpu":
+        return "cpu"
+    global _TORCH_IMPORT_FAILURE
+    if _TORCH_IMPORT_FAILURE is not None:
+        available, why = False, _TORCH_IMPORT_FAILURE
+    else:
+        try:
+            import torch
+            available = bool(torch.cuda.is_available())
+            why = "torch %s: torch.cuda.is_available() is False" % torch.__version__
+        except Exception as exc:  # noqa: BLE001 - an absent/broken optional torch is a CPU-only host
+            available = False
+            why = _TORCH_IMPORT_FAILURE = "torch could not be imported: %s: %s" % (type(exc).__name__, str(exc)[:120])
+    if requested == "cuda" and not available:
+        raise RuntimeError("device='cuda' requested but CUDA is not available here (%s)" % why)
+    return "cuda" if available else "cpu"
 
 
 def reset_gpu() -> list:
@@ -2583,7 +2611,7 @@ def _explain_gpu_failure(device, e):
 
 
 def apply(image, name: str, a: float = 0.5, b: float = 0.5, coerce: bool = True,
-          device: str = "cpu", on_error: str | None = None, template=None,
+          device: str = "auto", on_error: str | None = None, template=None,
           fast: bool | None = None, allow_nonfinite: bool = False):
     """Apply one operator to *image* and return its raw output.
 
@@ -2605,7 +2633,9 @@ def apply(image, name: str, a: float = 0.5, b: float = 0.5, coerce: bool = True,
     ``on_error="raise"``. It used to be handed to the op unchanged, which produced a
     uint8/float16/all-ones result with no exception — see :func:`_contract_dtype`.
 
-    ``device`` (default ``"cpu"``): ``"cuda"`` runs accel-enabled ops on the GPU.
+    ``device`` (default ``"auto"`` = CUDA when available, else CPU; ``FULLSEYE_DEVICE``
+    overrides): ``"cuda"`` runs accel-enabled ops on the GPU and is refused with the reason
+    when the host has no CUDA.
     torch/accel *absent* falls back to CPU silently (documented); a kernel that
     FAILS is recorded in the fallback ledger and raises under ``on_error="raise"``.
 
@@ -2648,6 +2678,7 @@ def apply(image, name: str, a: float = 0.5, b: float = 0.5, coerce: bool = True,
     hatch; the answer is then whatever the implementation does with NaN).
     """
     policy = _policy(on_error)
+    device = resolve_device(device)
     if template is None:
         return _apply_impl(image, name, a, b, coerce, device, policy, fast, allow_nonfinite)
     prev = _ops._MATCH_CTX.get("template")
@@ -3038,7 +3069,7 @@ def _pipeline_steps(image, norm, ops_, coerce, policy, use_fast, entry=True):
 
 
 def run_pipeline(image, stages: Iterable, a: float = 0.5, b: float = 0.5,
-                 coerce: bool = True, device: str = "cpu", on_error: str | None = None,
+                 coerce: bool = True, device: str = "auto", on_error: str | None = None,
                  fast: bool | None = None):
     """Apply a sequence of operators, threading the array through each.
 
@@ -3052,7 +3083,8 @@ def run_pipeline(image, stages: Iterable, a: float = 0.5, b: float = 0.5,
     themselves, so re-coercing mid-chain would only strip gray levels a stage may
     still want (see :func:`_coerce_input`).
 
-    ``device`` (default ``"cpu"``): ``"cuda"`` (or any non-cpu) runs the chain on the
+    ``device`` (default ``"auto"`` = CUDA when available, else CPU; ``FULLSEYE_DEVICE``
+    overrides): ``"cuda"`` (or any non-cpu) runs the chain on the
     ``accel_bridge`` resident pipeline (unsupported ops fall back to CPU inside the
     bridge; consecutive accel ops share one transfer). torch/GPU *absent* silently
     uses the CPU path; a bridge that FAILS is recorded (source ``"gpu"``) and raises
@@ -3073,6 +3105,7 @@ def run_pipeline(image, stages: Iterable, a: float = 0.5, b: float = 0.5,
     recorded, or refused under ``on_error="raise"``). See :func:`_check_chain_sorts`.
     """
     policy = _policy(on_error)
+    device = resolve_device(device)
     image, norm, ops_ = _prepare_pipeline(image, stages, a, b, policy)
 
     if isinstance(image, PrecisionUnion) and device != "cpu":

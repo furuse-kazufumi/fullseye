@@ -4,6 +4,7 @@ dim: annotate
 category: paper
 in: image2d
 out: image2d
+gpu: なし
 examples: [paper_figure, poc_real_defect_floor]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.annotate_legend(img, labels, xy, anchor='lt', start=1, radius=7.0, color='emphasis', text_color=None, font_size=12, pad=8, row_gap=4, box_color=None, box_alpha=0.72, border=1, border_color='neutral', scheme='okabe_ito', font_path=None, min_font_size=9, numbers=None)` (実装を直接呼ぶなら `import annotate; annotate.annotate_legend(img, labels, xy, anchor='lt', start=1, radius=7.0, color='emphasis', text_color=None, font_size=12, pad=8, row_gap=4, box_color=None, box_alpha=0.72, border=1, border_color='neutral', scheme='okabe_ito', font_path=None, min_font_size=9, numbers=None)`、台帳から引くなら `opsannotate.get("annotate_legend")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -4,6 +4,7 @@ dim: optics
 category: scene
 in: table
 out: points
+gpu: なし
 examples: [poc_itof_multifreq, poc_nir_silicon_transmission, poc_pocket_interreflection, studio_raytrace_scene]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,6 +16,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **データ種**: `table` → `points`
 - **呼び出し**: `import fullseye as fs; fs.ledger.camera_rays(camera: 'dict') -> 'tuple'` (実装を直接呼ぶなら `import optscene; optscene.camera_rays(camera: 'dict') -> 'tuple'`、台帳から引くなら `opsoptics.get("camera_rays")`)
 - **台帳経由の戻り値**: `fullseye.ledger.camera_rays(...)` は**宣言 out 型 `points` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.camera_rays.raw(...)`、または `optscene.camera_rays` を直接呼ぶ。
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

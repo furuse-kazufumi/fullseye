@@ -4,6 +4,7 @@ dim: drive
 category: tacdome
 in: image2d × scalar
 out: table
+gpu: なし
 examples: [poc_tacdome_large_deformation]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d × scalar` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.contact_patch_radius(img, pitch: 'float', ring_px: 'float' = 4.0) -> 'dict'` (実装を直接呼ぶなら `import tacdome; tacdome.contact_patch_radius(img, pitch: 'float', ring_px: 'float' = 4.0) -> 'dict'`、台帳から引くなら `opsdrive.get("contact_patch_radius")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

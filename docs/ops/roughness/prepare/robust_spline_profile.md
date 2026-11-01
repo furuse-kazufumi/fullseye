@@ -4,6 +4,7 @@ dim: roughness
 category: prepare
 in: signal
 out: signal
+gpu: なし
 examples: [poc_robust_profile_filter]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -16,6 +17,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **呼び出し**: `import fullseye as fs; fs.ledger.robust_spline_profile(z, dx, lambda_c, c=4.4, robust=True, max_iter=None, tol=1e-06)` (実装を直接呼ぶなら `import roughness; roughness.robust_spline_profile(z, dx, lambda_c, c=4.4, robust=True, max_iter=None, tol=1e-06)`、台帳から引くなら `opsroughness.get("robust_spline_profile")`)
 - **台帳経由の戻り値**: `fullseye.ledger.robust_spline_profile(...)` は**宣言 out 型 `signal` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.robust_spline_profile.raw(...)`、または `roughness.robust_spline_profile` を直接呼ぶ。
   - 本体の返り: `(roughness, mean_line, info)`
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

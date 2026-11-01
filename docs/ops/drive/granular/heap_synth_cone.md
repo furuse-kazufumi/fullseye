@@ -4,6 +4,7 @@ dim: drive
 category: granular
 in: scalar × scalar
 out: table
+gpu: なし
 examples: [poc_granular_heap_repose]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `scalar × scalar` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.heap_synth_cone(phi_deg: 'float', radius_px: 'float', pitch: 'float' = 0.001, *, toe_round_px: 'float' = 0.0, apex_blunt_px: 'float' = 0.0, ground_tilt_deg: 'float' = 0.0, margin_px: 'int' = 12, supersample: 'int' = 8, noise: 'float' = 0.0, seed: 'int | None' = None) -> 'dict'` (実装を直接呼ぶなら `import granular; granular.heap_synth_cone(phi_deg: 'float', radius_px: 'float', pitch: 'float' = 0.001, *, toe_round_px: 'float' = 0.0, apex_blunt_px: 'float' = 0.0, ground_tilt_deg: 'float' = 0.0, margin_px: 'int' = 12, supersample: 'int' = 8, noise: 'float' = 0.0, seed: 'int | None' = None) -> 'dict'`、台帳から引くなら `opsdrive.get("heap_synth_cone")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

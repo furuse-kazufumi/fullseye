@@ -4,6 +4,7 @@ dim: drive
 category: pxrd
 in: signal × signal
 out: table
+gpu: なし
 examples: [poc_pxrd_phase_peel]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal × signal` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.diffraction_peaks(two_theta, intensity, min_snr=6.0, baseline_window=None, max_peaks=200, noise=None)` (実装を直接呼ぶなら `import pxrd; pxrd.diffraction_peaks(two_theta, intensity, min_snr=6.0, baseline_window=None, max_peaks=200, noise=None)`、台帳から引くなら `opsdrive.get("diffraction_peaks")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

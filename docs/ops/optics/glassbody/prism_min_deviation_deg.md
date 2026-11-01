@@ -4,6 +4,7 @@ dim: optics
 category: glassbody
 in: signal
 out: signal
+gpu: なし
 examples: [glass_and_mirror_optics]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal` → `signal`
 - **呼び出し**: `import fullseye as fs; fs.ledger.prism_min_deviation_deg(wavelength_nm=550.0, apex_deg=60.0, glass='N-BK7') -> 'np.ndarray'` (実装を直接呼ぶなら `import glassmirror; glassmirror.prism_min_deviation_deg(wavelength_nm=550.0, apex_deg=60.0, glass='N-BK7') -> 'np.ndarray'`、台帳から引くなら `opsoptics.get("prism_min_deviation_deg")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">polygon_offset — DRIVE <code style="color:#22d3bf">pegsym</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">matrix × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.polygon_offset(vertices, clearance: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import pegsym; pegsym.polygon_offset(vertices, clearance: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;polygon_offset&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>convex polygon की हर edge को <code style="color:#22d3bf">clearance</code> [m] बाहर खिसकाकर बना polygon (कोने नुकीले ही रहते हैं = छेद के drawing ऐसे ही बनते हैं)। नियमित polygon के लिए यह समरूप बढ़ाव है, इसलिए दिशा और symmetry नहीं बदलती। <code style="color:#22d3bf">vertices</code>, <code style="color:#22d3bf">normals</code> और <code style="color:#22d3bf">offsets</code> (n·x ≤ h) लौटाता है। <b>Raises</b> ValueError: convex नहीं है, clearance &lt; 0 या finite नहीं, खिसकाने पर edge गायब हो जाती है (reflex कोने नहीं होते, इसलिए यहाँ केवल वे shape स्वीकार होते हैं जिनमें ऐसा नहीं हो सकता)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

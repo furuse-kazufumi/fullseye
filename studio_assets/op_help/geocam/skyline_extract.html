@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">skyline_extract — GEOCAM <code style="color:#22d3bf">skyline</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.skyline_extract(image, sky_is_bright=True, smooth=1.5, max_jump=3, jump_penalty=0.5)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import geocam; geocam.skyline_extract(image, sky_is_bright=True, smooth=1.5, max_jump=3, jump_penalty=0.5)</code>、台帳から引くなら <code style="color:#22d3bf">opsgeocam.get(&quot;skyline_extract&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>写真から<b>列ごとの空と地形の境界の行</b>を動的計画法で 1 本抜く → signal (W,)。</p>
 <p>Lie・Lin・Hsu 2005(*Pattern Recognition*: 航法のための頑健なスカイライン抽出)と同じ考え:</p>

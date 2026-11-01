@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">table_write_csv — FILEIO <code style="color:#22d3bf">table</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">text</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.table_write_csv(table, *, units, meta)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import fileio; fileio.table_write_csv(table, *, units, meta)</code>、台帳から引くなら <code style="color:#22d3bf">opsfileio.get(&quot;table_write_csv&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>単位と由来を持つ表を、pandas / MATLAB でも読める CSV 文字列にする(<code style="color:#22d3bf">text</code>)。</p>
 <p><code style="color:#22d3bf">table</code> は <code style="color:#22d3bf">{列名: 1-D 配列}</code>。<code style="color:#22d3bf">units</code> は全列の単位を同じキーで持つ辞書、<code style="color:#22d3bf">meta</code> は <code style="color:#22d3bf">source</code>(出所)、<code style="color:#22d3bf">generated_at</code>(ISO 8601)、<code style="color:#22d3bf">coordinate_meaning</code>(座標の意味)を必ず持つ。1 行目は列名、2 行目は <code style="color:#22d3bf"># units:</code>、続く <code style="color:#22d3bf"># key: value</code> 行はメタデータ、その後がデータ。<code style="color:#22d3bf">pandas.read_csv(StringIO(text), comment=&quot;#&quot;)</code> で列名と値を読み、MATLAB ではコメント行を除外して <code style="color:#22d3bf">readtable</code> で読める。浮動小数は Python の <code style="color:#22d3bf">repr</code> で丸めず、列長不一致・単位欠落・無限値は拒否する。</p>

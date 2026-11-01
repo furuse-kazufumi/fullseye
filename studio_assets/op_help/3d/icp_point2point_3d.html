@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">icp_point2point_3d — 3D <code style="color:#22d3bf">refine</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">pose</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.icp_point2point_3d(src, dst, iters=50, init_R=None, init_t=None, tol=1e-06, max_corr_dist=None, trim_ratio=None, device=&#x27;cpu&#x27;, reproducible=False)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import match3d; match3d.icp_point2point_3d(src, dst, iters=50, init_R=None, init_t=None, tol=1e-06, max_corr_dist=None, trim_ratio=None, device=&#x27;cpu&#x27;, reproducible=False)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;icp_point2point_3d&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>点群を point-to-point ICP(Kabsch/SVD)で精緻化する。</p>
 <p>粗いマッチ推定(整数NCC / Fourier-Mellin±3° / Hough±0.5voxel)で得た初期姿勢 (init_R, init_t) を出発点に、src 側点群を dst 側点群へ剛体変換で位置合わせする。各反復で最近傍対応(cKDTree)を張り直し、Kabsch アルゴリズム(SVD)で相対回転・並進を求めて累積することで、対応が既知でなくてもサブボクセル精度へ収束させる。</p>

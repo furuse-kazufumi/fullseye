@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">phase_dictionary — DRIVE <code style="color:#22d3bf">pxrd</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">any × signal × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.phase_dictionary(phases, two_theta, wavelength, size=inf, K=0.9, instrumental_fwhm=0.02, lorentz=&#x27;powder&#x27;, eta=0.0)</code>(要直接调用实现,<code style="color:#22d3bf">import pxrd; pxrd.phase_dictionary(phases, two_theta, wavelength, size=inf, K=0.9, instrumental_fwhm=0.02, lorentz=&#x27;powder&#x27;, eta=0.0)</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;phase_dictionary&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>物相参考图谱字典：在 2θ 网格上按物相排列每单位体积分数 1 的 1 维强度。</p>
 <p>1 行 = <code style="color:#22d3bf">(1/V²) Σ m|F|² L(2θ) × 形</code>(形为以 Scherrer 的 <code style="color:#22d3bf">size</code> [Å] 与仪器 FWHM 按高斯相加的宽度的 pseudo-Voigt, <code style="color:#22d3bf">eta</code> 为 Lorentz 比例)。<code style="color:#22d3bf">instrumental_fwhm</code> 为数值 [deg] 或 <code style="color:#22d3bf">(2θ の列, FWHM の列)</code> 的表 —— 平板探测器上像素张开的角度按 <code style="color:#22d3bf">cos² 2θ</code> 缩小,因此仪器宽度随 2θ 变化。正确做法是将无展宽的标准样(Si)的像以相同几何积分,</p>

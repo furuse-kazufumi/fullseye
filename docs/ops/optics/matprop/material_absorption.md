@@ -4,6 +4,7 @@ dim: optics
 category: matprop
 in: 
 out: pairs
+gpu: なし
 examples: [poc_material_optical_library]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `pairs`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.material_absorption(material='SI', wl_min_nm: 'float' = 400.0, wl_max_nm: 'float' = 1400.0, n_points: 'int' = 101) -> 'np.ndarray'` (実装を直接呼ぶなら `import materials; materials.material_absorption(material='SI', wl_min_nm: 'float' = 400.0, wl_max_nm: 'float' = 1400.0, n_points: 'int' = 101) -> 'np.ndarray'`、台帳から引くなら `opsoptics.get("material_absorption")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

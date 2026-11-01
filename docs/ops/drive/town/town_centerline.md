@@ -4,6 +4,7 @@ dim: drive
 category: town
 in: table
 out: any
+gpu: なし
 examples: [poc_driving_town]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `any`
 - **呼び出し**: `import fullseye as fs; fs.ledger.town_centerline(layout, step: 'float' = 0.5) -> 'np.ndarray'` (実装を直接呼ぶなら `import drivetown; drivetown.town_centerline(layout, step: 'float' = 0.5) -> 'np.ndarray'`、台帳から引くなら `opsdrive.get("town_centerline")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

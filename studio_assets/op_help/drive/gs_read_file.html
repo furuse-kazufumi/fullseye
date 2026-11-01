@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">gs_read_file — DRIVE <code style="color:#22d3bf">gsplat</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gs_read_file(path, *, min_opacity: &#x27;float&#x27; = 0.0) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import gsplatnp; gsplatnp.gs_read_file(path, *, min_opacity: &#x27;float&#x27; = 0.0) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;gs_read_file&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>3D Gaussian Splatting のファイルを読み、ガウスの中心・色・不透明度・大きさ・向きを返す。</p>
 <p>対応: <b>INRIA 形式の .ply</b>(x, y, z, f_dc_0..2, opacity(logit), scale_0..2(log), rot_0..3(wxyz)。<code style="color:#22d3bf">gsplat_train_native</code> の出力もこれ)と <b>.splat</b>(1 個 32 バイト: 位置 3×f32、大きさ 3×f32、RGBA 4×u8、回転 4×u8(wxyz、(q·128)+128))。</p>

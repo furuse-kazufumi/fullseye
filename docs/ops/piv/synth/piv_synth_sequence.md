@@ -4,6 +4,7 @@ dim: piv
 category: synth
 in: 
 out: images
+gpu: なし
 examples: [piv_field_analysis_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -16,6 +17,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **呼び出し**: `import fullseye as fs; fs.ledger.piv_synth_sequence(shape, displacement, n_frames=8, density=0.02, diameter_px=2.5, seed=0, noise_sigma=0.0, intensity=(0.6, 1.0), background=0.0, jitter=0.0)` (実装を直接呼ぶなら `import pivops; pivops.piv_synth_sequence(shape, displacement, n_frames=8, density=0.02, diameter_px=2.5, seed=0, noise_sigma=0.0, intensity=(0.6, 1.0), background=0.0, jitter=0.0)`、台帳から引くなら `opspiv.get("piv_synth_sequence")`)
 - **台帳経由の戻り値**: `fullseye.ledger.piv_synth_sequence(...)` は**宣言 out 型 `images` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.piv_synth_sequence.raw(...)`、または `pivops.piv_synth_sequence` を直接呼ぶ。
   - 本体の返り: `(frames, truth) -> images`
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

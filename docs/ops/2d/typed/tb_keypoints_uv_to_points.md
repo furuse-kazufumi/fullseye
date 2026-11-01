@@ -4,6 +4,7 @@ dim: 2d
 category: typed
 in: keypoints
 out: points
+gpu: なし
 examples: []
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `keypoints` → `points`
 - **呼び出し**: `fullseye.apply(img, "tb_keypoints_uv_to_points", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ![tb_keypoints_uv_to_points: input → output](../../_fig/tb_keypoints_uv_to_points.png)
 

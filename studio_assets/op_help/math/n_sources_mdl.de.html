@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">n_sources_mdl — MATH <code style="color:#22d3bf">spectral</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.n_sources_mdl(X) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import mathspectral; mathspectral.n_sources_mdl(X) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsmath.get(&quot;n_sources_mdl&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Schätzt die Anzahl der Quellen aus Snapshots mit dem MDL-Kriterium (Wax &amp; Kailath 1985).</p>
 <p>Die Eigenwerte der Kovarianz werden absteigend sortiert, und für jede Hypothese „die unteren M−k sind gleich (= Rauschen)“ wird MDL(k) = −K (M−k) log(geometrisches Mittel / arithmetisches Mittel) + ½ k (2M−k) log K berechnet; das k mit dem Minimum wird gewählt.</p>

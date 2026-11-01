@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">background_subtraction_window — VIDEOSTREAM <code style="color:#22d3bf">window</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">video</code> → <code style="color:#22d3bf">video</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.background_subtraction_window(video, window: &#x27;int&#x27; = 5, threshold: &#x27;float&#x27; = 0.1) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import videostream; videostream.background_subtraction_window(video, window: &#x27;int&#x27; = 5, threshold: &#x27;float&#x27; = 0.1) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsvideostream.get(&quot;background_subtraction_window&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>因果視窗中位數背景 → 逐影格 0/1 前景遮罩 <code style="color:#22d3bf">(T, H, W)</code>(<code style="color:#22d3bf">video</code>)。</p>
 <p>對每一幀 <code style="color:#22d3bf">t</code>，把最近 <code style="color:#22d3bf">window</code> 幀(<code style="color:#22d3bf">max(0, t-window+1) .. t</code>,<b>包含該幀本身</b>)的逐像素中位數作為背景 <code style="color:#22d3bf">bg</code>，將 <code style="color:#22d3bf">|frame_t - bg| &gt; threshold</code> 設為 1，其餘設為 0。不看未來的幀(因果的)，因此在開頭幀數不足的部分視窗較短。</p>

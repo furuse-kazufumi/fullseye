@@ -4,6 +4,7 @@ dim: drive
 category: ballworld
 in: table × table
 out: scalar
+gpu: なし
 examples: [poc_ball_bounce, poc_table_tennis_bounce, poc_table_tennis_spin]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table × table` → `scalar`
 - **呼び出し**: `import fullseye as fs; fs.ledger.add_ball(world: 'dict', mesh: 'dict', p, R=None, *, name: 'str' = 'ball') -> 'int'` (実装を直接呼ぶなら `import ballworld; ballworld.add_ball(world: 'dict', mesh: 'dict', p, R=None, *, name: 'str' = 'ball') -> 'int'`、台帳から引くなら `opsdrive.get("add_ball")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

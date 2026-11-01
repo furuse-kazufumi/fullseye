@@ -4,6 +4,7 @@ dim: printpath
 category: stroke
 in: image2d × pairs
 out: measurement
+gpu: なし
 examples: [poc_beats_fringes_and_screens, poc_one_stroke_epicycles]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d × pairs` → `measurement`
 - **呼び出し**: `import fullseye as fs; fs.ledger.stipple_energy(image, points, gamma=1.0, floor=0.02)` (実装を直接呼ぶなら `import printpath; printpath.stipple_energy(image, points, gamma=1.0, floor=0.02)`、台帳から引くなら `opsprintpath.get("stipple_energy")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

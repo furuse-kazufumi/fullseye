@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">dem_viewshed — DEM <code style="color:#22d3bf">visibility</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">depth</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_viewshed(dem, cell_size, observer_rc, observer_height_m=1.7, target_height_m=0.0, max_distance_m=None)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import demops; demops.dem_viewshed(dem, cell_size, observer_rc, observer_height_m=1.7, target_height_m=0.0, max_distance_m=None)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdem.get(&quot;dem_viewshed&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>1개 점에서의 가시 영역(1 = 보임). 시선이 지형에 가려지는지를 판정한다.</p>
 <p><code style="color:#22d3bf">observer_rc</code>는 <code style="color:#22d3bf">(row, col)</code>. 관측점 자신은 항상 가시.</p>

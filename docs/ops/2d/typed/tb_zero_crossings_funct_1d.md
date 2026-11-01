@@ -4,6 +4,7 @@ dim: 2d
 category: typed
 in: signal
 out: signal
+gpu: なし
 examples: []
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal` → `signal`
 - **呼び出し**: `fullseye.apply(img, "tb_zero_crossings_funct_1d", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
+- **GPU**: なし(CPU 参照実装のみ)
 
 *図なし: 走ったが返り値が空だった(合成入力ではこの op の答えが無い —— 零交差や外れ値が無い、など)。空を図にはしない。下の「Studio で試す」のプログラムは走るので、自分の画像で試すこと。*
 

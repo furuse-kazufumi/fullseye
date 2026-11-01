@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">parabola_fit_g — DRIVE <code style="color:#22d3bf">kendama</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">table</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.parabola_fit_g(t, P, *, g: &#x27;float&#x27; = 9.81, t_ref: &#x27;float&#x27; = None) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import kendama; kendama.parabola_fit_g(t, P, *, g: &#x27;float&#x27; = 9.81, t_ref: &#x27;float&#x27; = None) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;parabola_fit_g&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>在重力 g(−z)已知的前提下，用最小二乘拟合抛物线 p(t) = p_r + v_r (t − t_ref) − ½ g (t − t_ref)² ẑ(未知数 6 个 = 位置与速度)。</p>
 <p><code style="color:#22d3bf">t</code> (N,)、<code style="color:#22d3bf">P</code> (N, 3)(含 NaN 的行跳过)。<code style="color:#22d3bf">t_ref</code> 默认 = 使用的最后时刻(= 返回该瞬间的状态)。各轴在 [1, t − t_ref] 上做线性最小二乘(z 先加上 ½ g (t − t_ref)²)。返回值 <code style="color:#22d3bf">{&quot;p&quot;, &quot;v&quot;, &quot;t_ref&quot;, &quot;rms&quot; (残差の RMS [m]), &quot;n&quot;}</code>。有效点少于 2、时刻全部相同、g ≤ 0 会引发 ValueError。对真空的精确样本,能以舍入误差还原 (p, v)(门)。</p>

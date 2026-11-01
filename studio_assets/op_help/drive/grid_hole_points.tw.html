@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">grid_hole_points — DRIVE <code style="color:#22d3bf">braidpath</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.grid_hole_points(grid) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import braidpath; braidpath.grid_hole_points(grid) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;grid_hole_points&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>為每個網格孔(不接觸外圍的阻塞格子連通分量)取 1 個代表點:離重心最近的阻塞格子的中心 [x, y]。</p>
 <p>接觸外圍的阻塞區域與外部世界相連,因此不構成孔(不會增加路徑的類)。4 連通(與移動相同)。</p>

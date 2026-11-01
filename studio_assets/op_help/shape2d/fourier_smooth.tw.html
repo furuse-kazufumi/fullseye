@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">fourier_smooth — SHAPE2D <code style="color:#22d3bf">descriptor</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">pairs</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fourier_smooth(points, keep)</code>(要直接呼叫實作,<code style="color:#22d3bf">import fourierdesc; fourierdesc.fourier_smooth(points, keep)</code>;從台帳取用則 <code style="color:#22d3bf">opsshape2d.get(&quot;fourier_smooth&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>以複數 FFT 對輪廓進行頻帶限制以達到平滑。</p>
 <p>把輪廓視為複數訊號 z(t)=x(t)+i·y(t) 做 FFT，只保留低頻 <code style="color:#22d3bf">keep</code> 個(及對稱分量) 再做逆變換。keep 越小越平滑(去掉高頻=細節/雜訊)。keep 不小於全部頻率數時為恆等變換。回傳值是與輸入點數相同的 (N,2)。</p>

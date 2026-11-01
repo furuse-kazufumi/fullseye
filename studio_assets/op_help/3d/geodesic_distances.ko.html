@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">geodesic_distances — 3D <code style="color:#22d3bf">geodesic</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.geodesic_distances(points: numpy.ndarray, source: int, k: int = 8) -&gt; numpy.ndarray</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import geodesic3d; geodesic3d.geodesic_distances(points: numpy.ndarray, source: int, k: int = 8) -&gt; numpy.ndarray</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;geodesic_distances&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>source 에서 모든 점까지의 측지 거리(kNN 그래프 위 Dijkstra). → (N,) float(도달 불가는 inf).</p>
 <p><code style="color:#22d3bf">knn_graph(points, k)</code> 로 만든 k 근방 그래프(변의 가중치 = 점 사이의 Euclid 거리 = 현의 길이)를 <code style="color:#22d3bf">directed=False</code> 로 무향화하고, <code style="color:#22d3bf">scipy.sparse.csgraph.dijkstra</code> 로 단일 시점 최단 경로를 푼다. <code style="color:#22d3bf">d[i]</code> 는 source 에서 점 i 까지의 그래프 위 경로 길이로 <code style="color:#22d3bf">d[source] = 0</code>, source 와 이어지지 않은연결 성분의 점은 <code style="color:#22d3bf">inf</code>. 단위는 좌표의 단위 그대로.</p>

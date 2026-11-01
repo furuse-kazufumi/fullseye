@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">attention_tiled — LLMCORE <code style="color:#22d3bf">attend</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">tokens × tokens × tokens</code> → <code style="color:#22d3bf">tokens</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.attention_tiled(query, key, value, tile: &#x27;int&#x27; = 64, mask=None, window=None, scale=None) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import llmcore; llmcore.attention_tiled(query, key, value, tile: &#x27;int&#x27; = 64, mask=None, window=None, scale=None) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsllmcore.get(&quot;attention_tiled&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>分块 + online softmax 的注意力(FlashAttention 的核心)→ tokens。<b>不是近似</b>。</p>
 <p>Dao 等 2022。每次读取 <code style="color:#22d3bf">tile</code> 行 key/value,一边就地修正运行中的最大值和分母一边累加。构造的中间矩阵只有 (T, <code style="color:#22d3bf">tile</code>),<b>从不构造 (T, T)</b> —— 速度的来源不是近似,而是存放位置。与 <code style="color:#22d3bf">attention_softmax</code> 的相对差在 128 块时也只有 <b>1.2e-15</b>(1 块时为 8.2e-16,所以块数增加到 128 倍,差也只变为 1.5 倍)。</p>

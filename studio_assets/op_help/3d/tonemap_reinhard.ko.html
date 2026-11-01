@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tonemap_reinhard — 3D <code style="color:#22d3bf">render</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tonemap_reinhard(hdr, exposure: &#x27;float&#x27; = 1.0, white: &#x27;float | None&#x27; = None) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import render_tonemap; render_tonemap.tonemap_reinhard(hdr, exposure: &#x27;float&#x27; = 1.0, white: &#x27;float | None&#x27; = None) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;tonemap_reinhard&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>Reinhard 톤 매핑으로 HDR 을 <code style="color:#22d3bf">[0, 1]</code> 의 LDR 로 압축. → float64, 입력과 같은 형상.</p>
 <p>노출을 곱한 <code style="color:#22d3bf">x = hdr * exposure</code>에 대해:</p>

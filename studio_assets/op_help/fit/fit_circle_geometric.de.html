@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">fit_circle_geometric — FIT <code style="color:#22d3bf">fit</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">keypoints</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fit_circle_geometric(points, *, max_iterations: &#x27;int&#x27; = 100, radius_limit_factor: &#x27;float&#x27; = 1000000.0) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import measure; measure.fit_circle_geometric(points, *, max_iterations: &#x27;int&#x27; = 100, radius_limit_factor: &#x27;float&#x27; = 1000000.0) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsfit.get(&quot;fit_circle_geometric&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Passt Kreis und Radius geometrisch an (Zeile, Spalte)-Punkte einschließlich kurzer Bögen an.</p>
 <p>Kåsa initialisiert eine Levenberg–Marquardt-Minimierung der radialen Abstände. Zurückgegeben werden Mittelpunkt, Radius, geometrischer RMS, Iterationen und Konvergenz; ungültige, kollineare oder divergente Fälle lösen ValueError aus.</p>

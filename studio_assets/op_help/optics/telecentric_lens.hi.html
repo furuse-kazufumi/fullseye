@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">telecentric_lens — OPTICS <code style="color:#22d3bf">telecentric</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">table</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.telecentric_lens(kind=&#x27;object&#x27;, focal_mm=100.0, magnification=-0.5, na_object=0.01, front_aperture_mm=12.5, stop_shift_mm=0.0, glass=&#x27;N-BK7&#x27;, wavelength_um=0.58756)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import telecentric; telecentric.telecentric_lens(kind=&#x27;object&#x27;, focal_mm=100.0, magnification=-0.5, na_object=0.01, front_aperture_mm=12.5, stop_shift_mm=0.0, glass=&#x27;N-BK7&#x27;, wavelength_um=0.58756)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;telecentric_lens&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>एक ही singlet से केवल stop की स्थिति बदलकर बने तीन imaging lens के prescription (<code style="color:#22d3bf">raytrace.lens_system</code> table)।</p>
 <p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>

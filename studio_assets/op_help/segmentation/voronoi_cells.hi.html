@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">voronoi_cells — SEGMENTATION <code style="color:#22d3bf">world</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.voronoi_cells(seeds, size) -&gt; &#x27;Dict[str, object]&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import segworld; segworld.voronoi_cells(seeds, size) -&gt; &#x27;Dict[str, object]&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opssegmentation.get(&quot;voronoi_cells&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>rectangle [−0.5, W − 0.5] × [−0.5, H − 0.5] के अंदर seed का Voronoi विभाजन polygon के रूप में लौटाता है (half-plane का brute force, O(n²))।</p>
 <p>Returns: <code style="color:#22d3bf">polygons</code> (polygons की सूची, हर एक (k, 2) [y, x]), <code style="color:#22d3bf">areas</code> (shoelace formula), <code style="color:#22d3bf">edge_length_total</code> (भीतरी edges की लंबाइयों का योग), <code style="color:#22d3bf">n_edges</code> (भीतरी edges की संख्या), <code style="color:#22d3bf">perimeter_internal</code> (n,) (हर cell के भीतरी edges की लंबाई)।</p>

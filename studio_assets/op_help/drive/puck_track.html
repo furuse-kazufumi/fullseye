@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">puck_track — DRIVE <code style="color:#22d3bf">puck</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">any × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.puck_track(frames, cam: &#x27;dict&#x27;, *, max_jump_px: &#x27;float&#x27; = 40.0, **detect_kw) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import puck; puck.puck_track(frames, cam: &#x27;dict&#x27;, *, max_jump_px: &#x27;float&#x27; = 40.0, **detect_kw) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;puck_track&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>コマ列 → コマごとの候補 → <code style="color:#22d3bf">balltrack.ball_track</code>(等速予測で繋ぐ、<code style="color:#22d3bf">max_jump_px</code> 超えは落とす)→ world 座標。</p>
 <p>返り値 <code style="color:#22d3bf">{&quot;frame&quot; (N,), &quot;col&quot;,&quot;row&quot; (N,), &quot;xy&quot; (N,2), &quot;found&quot; (K,) bool}</code>。速いパック(1 コマの移動 &gt; max_jump_px)では対応が切れてコマが落ちる —— その破れ方は門で測る。</p>

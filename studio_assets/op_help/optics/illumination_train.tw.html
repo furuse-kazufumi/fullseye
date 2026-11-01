@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">illumination_train — OPTICS <code style="color:#22d3bf">illumination</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">無</code> → <code style="color:#22d3bf">table</code>(僅由參數決定的運算子 —— 不接受影像或資料輸入)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.illumination_train(kind=&#x27;kohler&#x27;, source_mm=2.0, collector_f_mm=20.0, condenser_f_mm=10.0, field_stop_mm=6.0, aperture_stop_mm=6.0, source_distance_mm=30.0)</code>(要直接呼叫實作,<code style="color:#22d3bf">import illumdesign; illumdesign.illumination_train(kind=&#x27;kohler&#x27;, source_mm=2.0, collector_f_mm=20.0, condenser_f_mm=10.0, field_stop_mm=6.0, aperture_stop_mm=6.0, source_distance_mm=30.0)</code>;從台帳取用則 <code style="color:#22d3bf">opsoptics.get(&quot;illumination_train&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>以近軸方式排布顯微鏡照明系統(<code style="color:#22d3bf">kohler</code> 或 <code style="color:#22d3bf">critical</code>)(<code style="color:#22d3bf">table</code>)。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">add_frame_corners — SHAPE2D <code style="color:#22d3bf">morph</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">pairs</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.add_frame_corners(pts, shape)</code> (to call the implementation directly, <code style="color:#22d3bf">import imagemorph; imagemorph.add_frame_corners(pts, shape)</code>; from the registry, <code style="color:#22d3bf">opsshape2d.get(&quot;add_frame_corners&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Adds the four corners of the image (+ the edge midpoints) to the point set as fixed points.</p>
 <p>The standard measure so that the warp&#x27;s triangulation covers the whole image and prevents holes outside the convex hull. Added to both src/dst in the same order, the four corners act as &quot;corresponding points that do not move&quot;.</p>

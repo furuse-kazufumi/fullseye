@@ -4,6 +4,7 @@ dim: astrostack
 category: quality
 in: image2d
 out: measurement
+gpu: なし
 examples: [astro_stacking, poc_colocalization_crosstalk, poc_search_sweep_width, poc_star_astrometry, poc_thermal_radiometry]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d` → `measurement`
 - **呼び出し**: `import fullseye as fs; fs.ledger.noise_sigma(image, method='mad', kappa=3.0, iters=5)` (実装を直接呼ぶなら `import astrostack; astrostack.noise_sigma(image, method='mad', kappa=3.0, iters=5)`、台帳から引くなら `opsastrostack.get("noise_sigma")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

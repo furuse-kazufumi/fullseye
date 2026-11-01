@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">braid_class_representatives — DRIVE <code style="color:#22d3bf">braidpath</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.braid_class_representatives(plans, obstacles=None, costs=None, angle=0.1, jitter=&#x27;auto&#x27;)</code>(要直接调用实现,<code style="color:#22d3bf">import braidpath; braidpath.braid_class_representatives(plans, obstacles=None, costs=None, angle=0.1, jitter=&#x27;auto&#x27;)</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;braid_class_representatives&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>将多个规划(任何规划器的输出均可)按同伦类划分,并在每类中选费用最小的规划作为代表。</p>
 <p>规划可以是 (K, T, 2) 的轨迹、网格路径的序列,或规划器的 dict(<code style="color:#22d3bf">paths</code>,失败的 <code style="color:#22d3bf">None</code> 会跳过并计数)。所有规划的起点和终点必须一致(类是固定端点的变形的类)。费用为 <code style="color:#22d3bf">costs</code>,没有时为轨迹长度之和。</p>

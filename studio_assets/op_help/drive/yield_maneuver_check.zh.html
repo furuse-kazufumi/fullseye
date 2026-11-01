@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">yield_maneuver_check — DRIVE <code style="color:#22d3bf">decide</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.yield_maneuver_check(trajectory, *, t_approach: &#x27;float&#x27;, t_passed: &#x27;float&#x27;, intersections=(), near_margin: &#x27;float&#x27; = 30.0, left_tol: &#x27;float&#x27; = 1.0, stop_speed: &#x27;float&#x27; = 0.1, car_length: &#x27;float&#x27; = 4.5) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import drivedecide; drivedecide.yield_maneuver_check(trajectory, *, t_approach: &#x27;float&#x27;, t_passed: &#x27;float&#x27;, intersections=(), near_margin: &#x27;float&#x27; = 30.0, left_tol: &#x27;float&#x27; = 1.0, stop_speed: &#x27;float&#x27; = 0.1, car_length: &#x27;float&#x27; = 4.5) -&gt; &#x27;Dict[str, object]&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;yield_maneuver_check&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>按道路交通法第40条对紧急车辆接近时本车的动作进行评分。</p>
 <p>第 40 条第 1 款: 在交叉口或其附近 → 避开交叉口,靠道路左侧 <b>暂时停车</b>。第 40 条第 2 款: 其他情况 → 靠道路左侧让出路线(不要求停车)。(单行道上靠左会造成妨碍时的靠右不予处理。)</p>

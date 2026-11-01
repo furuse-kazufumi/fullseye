@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">latlon_to_local — DRIVE <code style="color:#22d3bf">japan</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">any × any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.latlon_to_local(lat, lon, origin) -&gt; &#x27;Tuple[np.ndarray, np.ndarray]&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivejapan; drivejapan.latlon_to_local(lat, lon, origin) -&gt; &#x27;Tuple[np.ndarray, np.ndarray]&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;latlon_to_local&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>위도·경도 [deg] → 원점 origin = (lat0, lon0) 주위의 등장방형 근사 평면 좌표 (x 동, y 북) [m].</p>
 <p>x = R cos(lat0) Δλ, y = R Δφ(R = 6378137 m). 1 km 사방에서 1e-5 의 왜곡(cos 의 변화)이므로 동네 하나에는 충분하다. 배열 가능. <b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 위도·경도가 범위 밖·유한하지 않음.</p>

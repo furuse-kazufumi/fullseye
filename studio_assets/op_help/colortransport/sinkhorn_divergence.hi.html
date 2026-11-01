@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">sinkhorn_divergence — COLORTRANSPORT <code style="color:#22d3bf">transport</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal × signal × matrix</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sinkhorn_divergence(a, b, cost, cost_aa=None, cost_bb=None, reg=0.05, **kw)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import colortransport; colortransport.sinkhorn_divergence(a, b, cost, cost_aa=None, cost_bb=None, reg=0.05, **kw)</code>, registry से लेना हो तो <code style="color:#22d3bf">opscolortransport.get(&quot;sinkhorn_divergence&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p><b>bias हटाई गई</b> Sinkhorn दूरी (Genevay, Peyré &amp; Cuturi, AISTATS 2018)।</p>
 <p><code style="color:#22d3bf">S(a,b) - (S(a,a) + S(b,b)) / 2</code>। <code style="color:#22d3bf">sinkhorn_distance</code> regularisation के कारण व्यवस्थित रूप से ऊपर झुका रहता है, और <b>स्वयं से इसकी &quot;दूरी&quot; 0 नहीं होती</b> (मापा गया: reg=0.2 पर 0.05 से अधिक)। स्वयं से दूरी द्वारा वही bias घटाने पर यह कट जाता है, और <b>स्वयं के साथ मान 0 पर लौट आता है</b> -- यही TRIZ का counterweight (प्रतिक्रिया से निरस्त करना) है।</p>

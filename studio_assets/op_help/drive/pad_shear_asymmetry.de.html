@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">pad_shear_asymmetry — DRIVE <code style="color:#22d3bf">pegtactile</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pad_shear_asymmetry(qR, qL) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import pegtactile; pegtactile.pad_shear_asymmetry(qR, qL) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;pad_shear_asymmetry&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Zerlegt die Membranscherung der 2 Pads in einen gemeinsamen Anteil (= Axialkraft, Richtung von F_z/2) und einen Differenzanteil (= Kräftepaar, M/(2w)): gemeinsam = (q_R + q_L)/2, Differenz = (q_R − q_L)/2. <code style="color:#22d3bf">ratio_v</code> = |Differenz_v| / (|gemeinsam_v| + |Differenz_v|) (0 = gleiche Richtung, 1 = reines Kräftepaar), <code style="color:#22d3bf">opposite_v</code> = ob das Vorzeichen der v-Komponente links und rechts entgegengesetzt ist. <b>Raises</b> ValueError: keine 2 endlichen Komponenten.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

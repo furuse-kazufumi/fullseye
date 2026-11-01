@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">msa_anova_table — SPC <code style="color:#22d3bf">msa</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.msa_anova_table(table, part=&#x27;part&#x27;, operator=&#x27;operator&#x27;, value=&#x27;value&#x27;)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import spc; spc.msa_anova_table(table, part=&#x27;part&#x27;, operator=&#x27;operator&#x27;, value=&#x27;value&#x27;)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsspc.get(&quot;msa_anova_table&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>crossed 2-factor design (part x operator x repetition) की analysis of variance table (<code style="color:#22d3bf">table</code>)।</p>
 <p>*टेबल* *पार्ट* / *ऑपरेटर* / *वैल्यू* कॉलम वाली एक टेबल है। डिज़ाइन <b>संतुलित</b> है (प्रत्येक वर्ग के लिए दोहराव की संख्या समान है) - यदि यह संतुलित नहीं है, तो इसे अस्वीकार कर दिया जाएगा।</p>

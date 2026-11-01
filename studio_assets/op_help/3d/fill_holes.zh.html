@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">fill_holes — 3D <code style="color:#22d3bf">depth_denoise</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">depth</code> → <code style="color:#22d3bf">depth</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fill_holes(depth: &#x27;np.ndarray&#x27;, max_radius: &#x27;float&#x27;, *, invalid: &#x27;float | None&#x27; = 0.0, max_iter: &#x27;int | None&#x27; = None, rel_tol: &#x27;float&#x27; = 1e-06) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import depth_bilateral; depth_bilateral.fill_holes(depth: &#x27;np.ndarray&#x27;, max_radius: &#x27;float&#x27;, *, invalid: &#x27;float | None&#x27; = 0.0, max_iter: &#x27;int | None&#x27; = None, rel_tol: &#x27;float&#x27; = 1e-06) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;fill_holes&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用调和(拉普拉斯)松弛由邻近有效像素插补无效像素(空洞)。→ float64 (H,W)。</p>
 <p>若每个洞像素到最近有效像素的距离不超过 max_radius 则作为插值对象，超出的深洞不插值而保留为 NaN (fail-closed)。插值是 4 邻域平均的迭代（Dirichlet 边界 = 原有效像素），线性场（平面）是离散调和函数的不动点，因此随迭代收敛平面被严格复原。初始值为最近有效像素值(EDT)。</p>

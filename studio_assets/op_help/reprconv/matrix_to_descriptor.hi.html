@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">matrix_to_descriptor — REPRCONV <code style="color:#22d3bf">descriptor</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">descriptor</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.matrix_to_descriptor(matrix)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import reprconv; reprconv.matrix_to_descriptor(matrix)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsreprconv.get(&quot;matrix_to_descriptor&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p><code style="color:#22d3bf">matrix</code> → descriptor। <code style="color:#22d3bf">descriptor_to_matrix</code> का उल्टा।</p>
 <p>1 row वाली matrix (1, n) को (n,) में वापस किया जाता है (क्योंकि वही मूल 1-D descriptor है)। 2 या अधिक row जस की तस रहती हैं। <b>यह असममिति जान-बूझकर है</b>: इसके बिना <code style="color:#22d3bf">descriptor -&gt; matrix -&gt; descriptor</code> का round trip shape को (n,) से (1,n) में चुपचाप बदल देता = type का शुद्ध झूठ।</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">occlusion_edges — 3D <code style="color:#22d3bf">range_image</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">depth</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.occlusion_edges(depth, rel_thresh=0.05)</code>(要直接调用实现,<code style="color:#22d3bf">import range_image; range_image.occlusion_edges(depth, rel_thresh=0.05)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;occlusion_edges&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>检测深度不连续(前景/背景边界 = 遮挡边缘)。→ bool HxW。</p>
 <p>遮挡边缘是深度的<b>不连续(step)</b>,而不是倾斜(slope)。均匀的倾斜面是连续的、不含遮挡,因此不得 flag。一阶梯度(=深度/像素)就是倾斜本身, 无法区分阶跃与斜面(而且与绝对深度的比例相比较在量纲上不一致)。</p>

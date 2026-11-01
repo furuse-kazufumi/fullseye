@@ -4,6 +4,7 @@ dim: drive
 category: env
 in: any × any × scalar × scalar × scalar
 out: table
+gpu: なし
 examples: [poc_driving_weather]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `any × any × scalar × scalar × scalar` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.fog_beta_from_profile(rows, luminance, horizon_row: 'float', focal: 'float', cam_height: 'float', pitch: 'float' = 0.0, *, method: 'str' = 'fit', slant: 'bool' = True, beta_range=(0.0001, 0.5), n_grid: 'int' = 400) -> 'Dict[str, float]'` (実装を直接呼ぶなら `import driveenv; driveenv.fog_beta_from_profile(rows, luminance, horizon_row: 'float', focal: 'float', cam_height: 'float', pitch: 'float' = 0.0, *, method: 'str' = 'fit', slant: 'bool' = True, beta_range=(0.0001, 0.5), n_grid: 'int' = 400) -> 'Dict[str, float]'`、台帳から引くなら `opsdrive.get("fog_beta_from_profile")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

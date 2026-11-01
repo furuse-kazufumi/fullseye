@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">lamp_pair_phase — DRIVE <code style="color:#22d3bf">crossing</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lamp_pair_phase(a, b, fps: &#x27;float&#x27;, *, f_min: &#x27;float&#x27; = 0.0, pad: &#x27;int&#x27; = 8, tol: &#x27;float&#x27; = 0.25) -&gt; &#x27;Dict[str, object]&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivecrossing; drivecrossing.lamp_pair_phase(a, b, fps: &#x27;float&#x27;, *, f_min: &#x27;float&#x27; = 0.0, pad: &#x27;int&#x27; = 8, tol: &#x27;float&#x27; = 0.25) -&gt; &#x27;Dict[str, object]&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;lamp_pair_phase&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>2개의 밝기 시계열(2등의 화소)로부터 공통 점멸 주파수와 위상차를 교차 스펙트럼으로 추정.</p>
 <p>평균을 빼고 Hann 창을 씌우고, <code style="color:#22d3bf">pad</code> 배로 0 을 채운 rFFT. |A| + |B| 의 봉우리(<code style="color:#22d3bf">f_min</code> 이상, 0 Hz 의 자락 제외)에서 φ = arg(A_k B̄_k) 를 [0, π] 로 접는다. <code style="color:#22d3bf">delay</code> = φ / (2π f). <code style="color:#22d3bf">alternating</code> = |φ − π| &lt; tol(교대 점멸). 주파수는 <b>겉보기</b> 값(fps/2 를 넘는 점멸은 접혀 돌아온다). 어느 한쪽이 일정하면 ValueError.</p>

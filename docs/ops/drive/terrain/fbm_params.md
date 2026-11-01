@@ -4,6 +4,7 @@ dim: drive
 category: terrain
 in: 
 out: table
+gpu: なし
 examples: [poc_rover_slip_risk_path]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.fbm_params(seed: 'int' = 0, hurst: 'float' = 0.8, n_waves: 'int' = 128, f_min: 'float' = 0.005, f_max: 'float' = 0.125, amplitude: 'float' = 1.0) -> 'dict'` (実装を直接呼ぶなら `import driveterrain; driveterrain.fbm_params(seed: 'int' = 0, hurst: 'float' = 0.8, n_waves: 'int' = 128, f_min: 'float' = 0.005, f_max: 'float' = 0.125, amplitude: 'float' = 1.0) -> 'dict'`、台帳から引くなら `opsdrive.get("fbm_params")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

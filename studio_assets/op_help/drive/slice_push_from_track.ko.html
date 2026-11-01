@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">slice_push_from_track — DRIVE <code style="color:#22d3bf">cutting</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">scalar × signal × signal</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.slice_push_from_track(theta_deg: &#x27;float&#x27;, x_mm, z_mm) -&gt; &#x27;float&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import cutting; cutting.slice_push_from_track(theta_deg: &#x27;float&#x27;, x_mm, z_mm) -&gt; &#x27;float&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;slice_push_from_track&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>날 위 1점의 궤적 (x, z)(영상에서)와 날끝의 기울기 θ(영상에서)로 ξ를 구합니다. 속도는 궤적의 직선 피팅 방향(ξ는 비).</p>
 <p>밀고 있는 구간만 넘길 것. 진입 시작(손목이 줄어드는 도중)을 섞으면 칼날이 지령보다 늦어져 ξ 가 치우친다 —— 칼날이 식재료의 전체 폭을자르고 있는 정상 구간을 사용한다(PoC 에서 0.63 → 0.57 = 참값으로 돌아오는 것을 확인했다).</p>

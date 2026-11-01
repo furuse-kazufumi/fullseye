@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">sfp_estimate_index — OPTICS <code style="color:#22d3bf">shape_from_polarization</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sfp_estimate_index(dolp, zenith_deg, model=&#x27;specular&#x27;, mask=None, n_bounds=(1.05, 3.0))</code> (to call the implementation directly, <code style="color:#22d3bf">import sfpolar; sfpolar.sfp_estimate_index(dolp, zenith_deg, model=&#x27;specular&#x27;, mask=None, n_bounds=(1.05, 3.0))</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;sfp_estimate_index&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Estimate the refractive index from DoLP observed at known zenith angles — a least-squares fit of the Fresnel curve, plus Brewster&#x27;s <code style="color:#22d3bf">n = tan(theta_B)</code> at the DoLP maximum for the specular model.</p>
 <p>*dolp* and *zenith_deg* are maps of the same shape (the zenith from a coarse geometry such as a sphere&#x27;s silhouette, a CAD model or a coarse depth). The fit minimises <code style="color:#22d3bf">sum (rho_model(theta; n) - dolp)^2</code> over *mask* with a coarse grid over *n_bounds* followed by a bounded scalar minimisation.</p>

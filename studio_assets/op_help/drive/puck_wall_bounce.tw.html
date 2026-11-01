@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">puck_wall_bounce — DRIVE <code style="color:#22d3bf">puck</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">signal × signal × scalar × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.puck_wall_bounce(v, normal, e: &#x27;float&#x27;, kt: &#x27;float&#x27; = 1.0) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import puck; puck.puck_wall_bounce(v, normal, e: &#x27;float&#x27;, kt: &#x27;float&#x27; = 1.0) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;puck_wall_bounce&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>與壁的碰撞：法向分量 vₙ&#x27; = −e vₙ，切向分量 vₜ&#x27; = kₜ vₜ(e = 法向恢復係數，kₜ = 切向保持率 = 切向恢復係數)。</p>
 <p>不攜帶旋轉(由牆壁摩擦引入的旋轉已折算進切向的衰減。Cross 2022 的圓盤碰撞以「滑動還是抓握」來寫切向的恢復係數 —— 這 2 個區域未納入)。回傳值 <code style="color:#22d3bf">{&quot;v&quot;, &quot;vn_in&quot;, &quot;vn_out&quot;, &quot;vt_in&quot;, &quot;vt_out&quot;, &quot;energy_ratio&quot;}</code>。僅法向的碰撞時 energy_ratio = e²(門)。若 <code style="color:#22d3bf">v·n ≥ 0</code>(正在遠離)則不做任何處理。</p>

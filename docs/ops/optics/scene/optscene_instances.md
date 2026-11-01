@@ -4,6 +4,7 @@ dim: optics
 category: scene
 in: table × table
 out: table
+gpu: なし
 examples: [virtual_machine_vision]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table × table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.optscene_instances(scene, camera, min_area_px: 'int' = 1) -> 'list'` (実装を直接呼ぶなら `import optscene; optscene.optscene_instances(scene, camera, min_area_px: 'int' = 1) -> 'list'`、台帳から引くなら `opsoptics.get("optscene_instances")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

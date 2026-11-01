@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">gauss_cubature — MATH <code style="color:#22d3bf">numerics</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">table</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gauss_cubature(n: &#x27;int&#x27;, dim: &#x27;int&#x27; = 2, a=-1.0, b=1.0) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import mathnumerics; mathnumerics.gauss_cubature(n: &#x27;int&#x27;, dim: &#x27;int&#x27; = 2, a=-1.0, b=1.0) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsmath.get(&quot;gauss_cubature&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Gauss–Legendre के tensor product से, box [a, b]^dim (a, b हर axis के लिए अलग भी हो सकते हैं) पर quadrature के nodes (n^dim, dim) और weights।</p>
 <p>images के pixel औसत, volumes पर volume integrals, और PSF integrals के लिए। हर axis पर degree 2n−1 तक के polynomials के गुणनफलों को <b>सटीक</b> integrate करता है (gate: p, q &lt;= 2n−1 वाला x^p y^q सटीक है; इनमें से कोई भी 2n हो तो error)। points की संख्या n^dim है, इसलिए ऊँची dimensions में तेज़ी से बढ़ती है (dim &gt; 6 के लिए low-discrepancy sequences अधिक उपयुक्त हैं)।</p>

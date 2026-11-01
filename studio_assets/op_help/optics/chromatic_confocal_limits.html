@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">chromatic_confocal_limits — OPTICS <code style="color:#22d3bf">confocal</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.chromatic_confocal_limits(probe, layer_material=None, tilt_max_deg: &#x27;float&#x27; = 30.0, n_tilt: &#x27;int&#x27; = 61) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import chromconf; chromconf.chromatic_confocal_limits(probe, layer_material=None, tilt_max_deg: &#x27;float&#x27; = 30.0, n_tilt: &#x27;int&#x27; = 61) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;chromatic_confocal_limits&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>較正表から、測定範囲・軸方向分解能・戻る傾きの上限・最小の膜厚を閉形式で出す。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">range_um</code> —— 較正表の端から端(焦点ずれの総量)。</p>

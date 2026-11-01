@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">veiling_glare_index — OPTICS <code style="color:#22d3bf">imaging</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d × image2d × image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.veiling_glare_index(img, dark_mask, bright_mask)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import edgesfr; edgesfr.veiling_glare_index(img, dark_mask, bright_mask)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;veiling_glare_index&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>veiling glare (stray light) index: काले बिंदुओं के केंद्र की brightness का औसत / सफ़ेद पृष्ठभूमि की brightness का औसत (ISO 9358 की सोच)।</p>
 <p>*dark_mask* (आवश्यक): काले धब्बे के <b>केंद्रीय भाग</b> के pixels (धब्बे के किनारे का blur छोड़कर —— किनारा शामिल करने से core का blur भी stray light गिना जाता)। *bright_mask* (आवश्यक): सफ़ेद background के pixels। ★उत्तर काले धब्बे के आकार (और light source के विस्तार) के साथ बदलता है: tails 1/(1+(r/r0)²) वाले lens के लिए, काले धब्बे की भुजा 16 → 256 px बढ़ाने पर उसी lens का index 19.6 % → 4.5 % बदल जाता है (<code style="color:#22d3bf">poc_veiling_glare</code> section 3)। परिणाम के साथ धब्बे का आकार भी बताएँ।</p>

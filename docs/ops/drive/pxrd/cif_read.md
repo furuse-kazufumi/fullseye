@@ -4,6 +4,7 @@ dim: drive
 category: pxrd
 in: any
 out: table
+gpu: なし
 examples: [poc_pxrd_phase_peel]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `any` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.cif_read(cif, name=None, default_b=0.5)` (実装を直接呼ぶなら `import pxrd; pxrd.cif_read(cif, name=None, default_b=0.5)`、台帳から引くなら `opsdrive.get("cif_read")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

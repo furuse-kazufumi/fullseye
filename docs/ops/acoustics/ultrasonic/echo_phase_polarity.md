@@ -4,6 +4,7 @@ dim: acoustics
 category: ultrasonic
 in: table
 out: table
+gpu: なし
 examples: [poc_sam_hybrid_bonding_voids]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.echo_phase_polarity(echo, interface=1, half_width=None, reference_interface=0, tol_deg=45.0)` (実装を直接呼ぶなら `import ultrasound; ultrasound.echo_phase_polarity(echo, interface=1, half_width=None, reference_interface=0, tol_deg=45.0)`、台帳から引くなら `opsacoustics.get("echo_phase_polarity")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

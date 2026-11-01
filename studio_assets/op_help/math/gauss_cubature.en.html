@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">gauss_cubature — MATH <code style="color:#22d3bf">numerics</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">table</code> (an op determined by its arguments alone — it takes no image or data input)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gauss_cubature(n: &#x27;int&#x27;, dim: &#x27;int&#x27; = 2, a=-1.0, b=1.0) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import mathnumerics; mathnumerics.gauss_cubature(n: &#x27;int&#x27;, dim: &#x27;int&#x27; = 2, a=-1.0, b=1.0) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsmath.get(&quot;gauss_cubature&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Nodes (n^dim, dim) and weights for quadrature over the box [a, b]^dim (a, b may also be per axis) by a tensor product of Gauss–Legendre rules.</p>
 <p>For pixel averages of images, volume integrals over volumes, and PSF integrals. Integrates products of polynomials up to degree 2n−1 on each axis <b>exactly</b> (gate: x^p y^q with p, q &lt;= 2n−1 is exact; an error if any of them is 2n). The number of points is n^dim, so it grows rapidly in high dimensions (for dim &gt; 6 low-discrepancy sequences are better suited).</p>

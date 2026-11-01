@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">vx_sobel3x3 — VX <code style="color:#22d3bf">gradient</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vx_sobel3x3(image, *, border, constant_value=0)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import vxcore; vxcore.vx_sobel3x3(image, *, border, constant_value=0)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsvx.get(&quot;vx_sobel3x3&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>Sobel 3×3(3.46절): G_x = [[−1,0,1],[−2,0,2],[−1,0,1]], G_y = [[−1,−2,−1],[0,0,0],[1,2,1]] (REQ-0415)를 상관으로 적용한다.</p>
 <p>*image*: U8. *border*(필수): <code style="color:#22d3bf">&quot;replicate&quot;</code> / <code style="color:#22d3bf">&quot;constant&quot;</code>(*constant_value* 로 채움)/ <code style="color:#22d3bf">&quot;undefined&quot;</code>(끝 1 화소는규격상 미정의 —— 0 을 넣고 <code style="color:#22d3bf">valid</code> 바깥으로 반환).</p>

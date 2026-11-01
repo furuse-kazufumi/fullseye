@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">voxel_grid_downsample — 3D <code style="color:#22d3bf">preprocess</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.voxel_grid_downsample(points, voxel_size: &#x27;float&#x27;)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import pcl_filter; pcl_filter.voxel_grid_downsample(points, voxel_size: &#x27;float&#x27;)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;voxel_grid_downsample&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>voxel_size भुजा वाले grid से point cloud को पतला करता है, हर cell को 1 centroid point में समेटता है (deterministic)।</p>
 <p>space को <code style="color:#22d3bf">voxel_size</code> भुजा वाले cube cells में बाँटता है, और एक ही cell में गिरे points को उनके centroid के 1 point से दर्शाता है। density की असमानता को बराबर करने और downstream (ICP, features) की गणना को points की संख्या से सीमित करने का standard तरीका। output का क्रम voxel coordinates के lexicographic क्रम में तय है (एक ही input पर हमेशा एक ही output = deterministic)।</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">dem_height_frame_residual — DEM <code style="color:#22d3bf">geodesy</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">signal × signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_height_frame_residual(h_ellipsoidal_m, h_orthometric_m, geoid_height_m, tol_m=0.1)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import demops; demops.dem_height_frame_residual(h_ellipsoidal_m, h_orthometric_m, geoid_height_m, tol_m=0.1)</code>、台帳から引くなら <code style="color:#22d3bf">opsdem.get(&quot;dem_height_frame_residual&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p><code style="color:#22d3bf">h - H - N</code> の残差 —— 高さの取り違えを<b>静かにさせない</b>検出器(<code style="color:#22d3bf">table</code>)。</p>
 <p>楕円体高・標高・ジオイド高は 1 つの恒等式で結ばれている(<code style="color:#22d3bf">h = H + N</code>)。3 つそろった点でその残差を測れば、<b>どれかが別の基準・別のモデル・別の版で作られている</b>ことが数値で出る。測量成果どうしなら残差は cm 級に収まり、楕円体高をそのまま標高として使っていれば残差は <code style="color:#22d3bf">-N</code>(日本付近で −30〜−40 m) に張り付く。</p>

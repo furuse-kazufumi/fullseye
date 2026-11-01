@@ -4,6 +4,7 @@ dim: reprconv
 category: gaussians
 in: gaussians
 out: voxel
+gpu: なし
 examples: [representation_roundtrip]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `gaussians` → `voxel`
 - **呼び出し**: `import fullseye as fs; fs.ledger.gaussians_to_voxel(gaussians, shape=(32, 32, 32), origin=(0.0, 0.0, 0.0), spacing=(1.0, 1.0, 1.0), truncate=3.0)` (実装を直接呼ぶなら `import reprconv; reprconv.gaussians_to_voxel(gaussians, shape=(32, 32, 32), origin=(0.0, 0.0, 0.0), spacing=(1.0, 1.0, 1.0), truncate=3.0)`、台帳から引くなら `opsreprconv.get("gaussians_to_voxel")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

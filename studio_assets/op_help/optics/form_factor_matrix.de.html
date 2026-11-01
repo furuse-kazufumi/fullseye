@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">form_factor_matrix — OPTICS <code style="color:#22d3bf">radiosity</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.form_factor_matrix(patches, n_quad=3, symmetric=True, far_ratio=8.0, memory_budget_mb=256.0)</code> (die Implementierung direkt: <code style="color:#22d3bf">import radiosity3d; radiosity3d.form_factor_matrix(patches, n_quad=3, symmetric=True, far_ratio=8.0, memory_budget_mb=256.0)</code>; aus dem Register: <code style="color:#22d3bf">opsoptics.get(&quot;form_factor_matrix&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Alle Patch-zu-Patch-Sichtfaktoren F_ij eines <code style="color:#22d3bf">radiosity_patches</code>-Satzes (Verdeckung über Strahlen der Szene).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>

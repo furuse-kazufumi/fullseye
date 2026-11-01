@@ -4,6 +4,7 @@ dim: drive
 category: japan
 in: table
 out: table
+gpu: なし
 examples: [poc_driving_japan_town]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.japan_world(graph: 'dict', *, step: 'float' = 0.5, kerb_height: 'float' = 0.15, kerb_width: 'float' = 0.3, ground_step: 'float' = 2.0, margin: 'float' = 6.0, buildings=None, props: 'bool' = True, pole_pitch: 'float' = 30.0, lines: 'bool' = True, tolerance_px: 'float' = 0.75, side: 'str' = 'left') -> 'Dict[str, object]'` (実装を直接呼ぶなら `import drivejapan; drivejapan.japan_world(graph: 'dict', *, step: 'float' = 0.5, kerb_height: 'float' = 0.15, kerb_width: 'float' = 0.3, ground_step: 'float' = 2.0, margin: 'float' = 6.0, buildings=None, props: 'bool' = True, pole_pitch: 'float' = 30.0, lines: 'bool' = True, tolerance_px: 'float' = 0.75, side: 'str' = 'left') -> 'Dict[str, object]'`、台帳から引くなら `opsdrive.get("japan_world")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

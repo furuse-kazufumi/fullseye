@@ -4,6 +4,7 @@ dim: drive
 category: decide
 in: signal × signal
 out: table
+gpu: なし
 examples: [poc_driving_decisions]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal × signal` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.tdoa_bearing(sig_left, sig_right, fs, mic_spacing, *, c: 'float' = 343.0, upsample: 'int' = 16) -> 'Dict[str, object]'` (実装を直接呼ぶなら `import drivedecide; drivedecide.tdoa_bearing(sig_left, sig_right, fs, mic_spacing, *, c: 'float' = 343.0, upsample: 'int' = 16) -> 'Dict[str, object]'`、台帳から引くなら `opsdrive.get("tdoa_bearing")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

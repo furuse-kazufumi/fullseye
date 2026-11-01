@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">sfp_disambiguate — OPTICS <code style="color:#22d3bf">shape_from_polarization</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">normalmap</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sfp_disambiguate(candidates, prior=&#x27;convex&#x27;, mask=None, center=None, prior_normals=None, coarse_depth=None, brewster_tol=0.02, invalid=&#x27;raise&#x27;)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import sfpolar; sfpolar.sfp_disambiguate(candidates, prior=&#x27;convex&#x27;, mask=None, center=None, prior_normals=None, coarse_depth=None, brewster_tol=0.02, invalid=&#x27;raise&#x27;)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;sfp_disambiguate&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p><code style="color:#22d3bf">sfp_normals</code> の候補から画素ごとに 1 本を、明示した事前情報で選ぶ —— 凸 + Brewster の稜線での領域分け、または粗い深度・法線(<code style="color:#22d3bf">normalmap</code>)。</p>
 <p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>

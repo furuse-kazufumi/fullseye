@@ -4,6 +4,7 @@ dim: segmentation
 category: contour
 in: image2d × mask
 out: table
+gpu: なし
 examples: [poc_active_contours]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d × mask` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.morph_chan_vese(image, init, *, n_iter: 'int' = 100, smoothing: 'int' = 1, lambda1: 'float' = 1.0, lambda2: 'float' = 1.0, phase: 'int' = 0, record_every: 'int' = 0) -> 'Dict[str, object]'` (実装を直接呼ぶなら `import segcontour; segcontour.morph_chan_vese(image, init, *, n_iter: 'int' = 100, smoothing: 'int' = 1, lambda1: 'float' = 1.0, lambda2: 'float' = 1.0, phase: 'int' = 0, record_every: 'int' = 0) -> 'Dict[str, object]'`、台帳から引くなら `opssegmentation.get("morph_chan_vese")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

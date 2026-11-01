@@ -4,6 +4,7 @@ dim: optics
 category: oct
 in: 
 out: table
+gpu: なし
 examples: [poc_industrial_oct]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.oct_interferogram(sample=None, center_nm=840.0, bandwidth_nm=50.0, mode='sd', n_pixels=2048, wl_min_nm=None, wl_max_nm=None, spectrometer_fwhm_px=1.0, linewidth_nm=None, sweep_nonlinearity=0.0, source_spectrum=None, photons_ref_per_pixel=20000.0, photons_mirror_per_pixel=None, eta=0.8, sigma_d=10.0, K=1.0, full_well=None, quantize=False, reference_phase_rad=0.0, mismatch_material=None, mismatch_length_mm=0.0, focus_um=None, beam_waist_um=None, oversample=8, noise=True, seed=0, grid='lambda')` (実装を直接呼ぶなら `import octscan; octscan.oct_interferogram(sample=None, center_nm=840.0, bandwidth_nm=50.0, mode='sd', n_pixels=2048, wl_min_nm=None, wl_max_nm=None, spectrometer_fwhm_px=1.0, linewidth_nm=None, sweep_nonlinearity=0.0, source_spectrum=None, photons_ref_per_pixel=20000.0, photons_mirror_per_pixel=None, eta=0.8, sigma_d=10.0, K=1.0, full_well=None, quantize=False, reference_phase_rad=0.0, mismatch_material=None, mismatch_length_mm=0.0, focus_um=None, beam_waist_um=None, oversample=8, noise=True, seed=0, grid='lambda')`、台帳から引くなら `opsoptics.get("oct_interferogram")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

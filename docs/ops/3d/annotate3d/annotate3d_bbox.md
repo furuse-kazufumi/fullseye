@@ -4,6 +4,7 @@ dim: 3d
 category: annotate3d
 in: image2d
 out: image2d
+gpu: なし
 examples: [annotate3d_figure]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.annotate3d_bbox(img, bounds, pose, K, depth=None, color='emphasis', width=1.5, occlusion_tol=0.01, scheme='okabe_ito')` (実装を直接呼ぶなら `import annotate3d; annotate3d.annotate3d_bbox(img, bounds, pose, K, depth=None, color='emphasis', width=1.5, occlusion_tol=0.01, scheme='okabe_ito')`、台帳から引くなら `ops3d.get("annotate3d_bbox")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

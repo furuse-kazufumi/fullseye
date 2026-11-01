@@ -4,6 +4,7 @@ dim: optics
 category: imaging
 in: image2d
 out: pairs
+gpu: なし
 examples: [optics_imaging, poc_lens_file_roundtrip, poc_veiling_glare, poc_zmx_public_verify]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d` → `pairs`
 - **呼び出し**: `import fullseye as fs; fs.ledger.psf_to_mtf(psf, pixel_pitch_um=1.0)` (実装を直接呼ぶなら `import optics; optics.psf_to_mtf(psf, pixel_pitch_um=1.0)`、台帳から引くなら `opsoptics.get("psf_to_mtf")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

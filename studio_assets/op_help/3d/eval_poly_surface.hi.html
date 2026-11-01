@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">eval_poly_surface — 3D <code style="color:#22d3bf">surface_fit</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">poly_surface × image2d × image2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.eval_poly_surface(model, x, y)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import match3d; match3d.eval_poly_surface(model, x, y)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;eval_poly_surface&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>model को (x,y) पर evaluate करता है → z (x के shape में लौटाता है)।</p>
 <p>*model* <code style="color:#22d3bf">fit_poly_surface</code> का return value (dict) है। <b>fail-closed</b>: B-spline surface/curve का tck (FITPACK की list) देने पर पहले <code style="color:#22d3bf">model[&quot;degree&quot;]</code> पर <code style="color:#22d3bf">TypeError: list indices must be integers...</code> के साथ crash होता था (2026-09-01 को 7 बार मापा गया)। polynomial model और B-spline model की सामग्री अलग होती है, इसलिए यहाँ इन्हें स्पष्ट रूप से अस्वीकार किया जाता है (ops3d ledger में भी poly_surface / bspline_surface के type अलग रखे गए हैं)।</p>

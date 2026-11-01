@@ -4,6 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_granulometry(vol_binary, radii=None, spacing=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import volops; volops.vol_granulometry(vol_binary, radii=None, spacing=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;vol_granulometry&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>Ledger के ज़रिए return value</b>: <code style="color:#22d3bf">fullseye.ledger.vol_granulometry(...)</code> <b>केवल घोषित out type <code style="color:#22d3bf">measurement</code> का value</b> लौटाता है (मूल function सहायक जानकारी भी लौटाता है)। जो हिस्सा छोड़ दिया गया है उसकी ज़रूरत हो तो <code style="color:#22d3bf">fullseye.ledger.vol_granulometry.raw(...)</code> का उपयोग करें, या <code style="color:#22d3bf">volops.vol_granulometry</code> को सीधे call करें।</p>
 <p style="margin:2px 0 2px 12px">• मूल function का return: <code style="color:#22d3bf">中央径</code></p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>binary volume का pore / particle <b>size distribution</b> (opening series)।</p>
 <p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>

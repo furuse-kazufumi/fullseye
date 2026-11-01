@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">sdf_union — 3D <code style="color:#22d3bf">sdf_csg</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">sdf × sdf</code> → <code style="color:#22d3bf">sdf</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sdf_union(a, b)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import sdf_ops; sdf_ops.sdf_union(a, b)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;sdf_union&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>두 SDF 의 합집합 A∪B = 요소별 min(a, b)(어느 한쪽이 음이면 안쪽).</p>
 <p>영 등위면은 두 형상 경계의 합집합과 엄밀히 일치한다. 바깥에서는 엄밀한 SDF(최근접 표면까지의 거리), 안쪽은 보수적 하계. <code style="color:#22d3bf">a</code>/<code style="color:#22d3bf">b</code> 는 브로드캐스트 정합만 되면 된다.</p>

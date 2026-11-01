@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">covers_sensor — OPTICS <code style="color:#22d3bf">scene</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.covers_sensor(lens: &#x27;dict&#x27;, sensor: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import optscene; optscene.covers_sensor(lens: &#x27;dict&#x27;, sensor: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsoptics.get(&quot;covers_sensor&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>镜头能否覆盖该传感器(像圈 对 对角线)。</p>
 <p>覆盖不了就会<b>四角发黑</b>(渐晕)。目录上的“最大 1 英寸”等只是用画幅名表述这一判定，所以用实际尺寸比较更可靠 ―― 尤其是线阵传感器，长度直接起作用(16k x 7 µm = 115 mm)，面阵用镜头完全不够。</p>

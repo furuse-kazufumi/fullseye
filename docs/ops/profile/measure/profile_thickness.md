@@ -4,6 +4,7 @@ dim: profile
 category: measure
 in: pairs
 out: pairs
+gpu: なし
 examples: [profile_shape_inspection]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `pairs` → `pairs`
 - **呼び出し**: `import fullseye as fs; fs.ledger.profile_thickness(contour, n=101)` (実装を直接呼ぶなら `import profileops; profileops.profile_thickness(contour, n=101)`、台帳から引くなら `opsprofile.get("profile_thickness")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -4,6 +4,7 @@ dim: drive
 category: ttc
 in: matrix × matrix
 out: signal
+gpu: なし
 examples: [poc_ttc_rss, poc_world_terrain]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `matrix × matrix` → `signal`
 - **呼び出し**: `import fullseye as fs; fs.ledger.foe_from_motion(K, T_rel) -> 'np.ndarray'` (実装を直接呼ぶなら `import drivettc; drivettc.foe_from_motion(K, T_rel) -> 'np.ndarray'`、台帳から引くなら `opsdrive.get("foe_from_motion")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">alpha_tree — SEGMENTATION <code style="color:#22d3bf">graph</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.alpha_tree(image, alphas: &#x27;Sequence[float]&#x27; = (0.0,), *, connectivity: &#x27;int&#x27; = 4) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import seggraph; seggraph.alpha_tree(image, alphas: &#x27;Sequence[float]&#x27; = (0.0,), *, connectivity: &#x27;int&#x27; = 4) -&gt; &#x27;Dict[str, object]&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opssegmentation.get(&quot;alpha_tree&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>α-tree：构建以相邻差为权重的网格最小生成树（scipy 的 Kruskal），仅用权重 ≤ α 的树边给出每个 α 的划分（alpha_tree）。</p>
 <p>scipy 把权重为 0 的边读作&quot;没有边&quot;,所以先只把权重为 0 的边替换为&quot;正权重最小值的一半&quot;再建树(边的顺序不变 = 最小生成树相同)。<b>不采用给所有边加 1 的做法</b>: 当 0.3 的差在浮点中分裂为 0.29999999999999993 和 0.30000000000000004 时,+1 的舍入让 2 者变成同值,树选了较重的一个,α = 0.3 的切割发生偏移(实测, 测试 test_quasi_flat_zones_equal_mst_cut)。树的边权重根据下标重新计算 |f_p − f_q|。</p>

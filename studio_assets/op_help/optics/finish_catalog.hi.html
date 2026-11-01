@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">finish_catalog — OPTICS <code style="color:#22d3bf">finish</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">table</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.finish_catalog() -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import metalfinish; metalfinish.finish_catalog() -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;finish_catalog&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>finish name → default parameters की table (αx, αy, grain)।</p>
 <p>मान design मान हैं, मापे गए Ra नहीं ―― इस बारे में ईमानदारी है। अर्थपूर्ण मात्रा roughness का <b>क्रम</b> है (mirror polish &lt; hairline &lt; cross-hatch &lt; satin finish)।</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">food_cut_width — DRIVE <code style="color:#22d3bf">cutting</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">scalar × scalar × scalar × scalar</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.food_cut_width(theta_deg: &#x27;float&#x27;, edge_z_at_xc: &#x27;float&#x27;, food_w: &#x27;float&#x27;, food_top: &#x27;float&#x27;) -&gt; &#x27;float&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import cutting; cutting.food_cut_width(theta_deg: &#x27;float&#x27;, edge_z_at_xc: &#x27;float&#x27;, food_w: &#x27;float&#x27;, food_top: &#x27;float&#x27;) -&gt; &#x27;float&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;food_cut_width&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Length in x over which the cutting-edge line (height <code style="color:#22d3bf">edge_z_at_xc</code> at the center of the food item, inclination θ) lies below the top surface of the food item = cut width (mm, closed form).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

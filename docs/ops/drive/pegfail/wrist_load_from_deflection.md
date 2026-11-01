@@ -4,6 +4,7 @@ dim: drive
 category: pegfail
 in: table × signal × signal × signal × signal × signal
 out: table
+gpu: なし
 examples: [poc_peg_failure_recovery]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table × signal × signal × signal × signal × signal` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.wrist_load_from_deflection(kp, q_slide, q_hinge, q_hinge_rest, tip_xyz, axis, lg: 'float | None' = None, peg_mass: 'float' = 0.04, com_from_tip: 'float | None' = None, gravity: 'float' = 9.81) -> 'dict'` (実装を直接呼ぶなら `import pegfail; pegfail.wrist_load_from_deflection(kp, q_slide, q_hinge, q_hinge_rest, tip_xyz, axis, lg: 'float | None' = None, peg_mass: 'float' = 0.04, com_from_tip: 'float | None' = None, gravity: 'float' = 9.81) -> 'dict'`、台帳から引くなら `opsdrive.get("wrist_load_from_deflection")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

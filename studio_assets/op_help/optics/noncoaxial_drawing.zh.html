@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">noncoaxial_drawing — OPTICS <code style="color:#22d3bf">drawing</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.noncoaxial_drawing(system, fields=None, rays=3, view=&#x27;yz&#x27;, scale=None, title=None, profile_points=61, rotate_deg=0, overlays=None)</code>(要直接调用实现,<code style="color:#22d3bf">import optdraw; optdraw.noncoaxial_drawing(system, fields=None, rays=3, view=&#x27;yz&#x27;, scale=None, title=None, profile_points=61, rotate_deg=0, overlays=None)</code>;从台账取用则 <code style="color:#22d3bf">opsoptics.get(&quot;noncoaxial_drawing&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>折转系统的截面图/安装图(<code style="color:#22d3bf">table</code>,图的 dict)——把 <code style="color:#22d3bf">raytrace3d</code> 系统的面、反射镜、分束器、像面与光线以全局坐标投影到子午面绘制。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>

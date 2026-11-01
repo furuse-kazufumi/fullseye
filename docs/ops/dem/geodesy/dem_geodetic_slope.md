@@ -4,6 +4,7 @@ dim: dem
 category: geodesy
 in: depth
 out: image2d
+gpu: なし
 examples: [dem_geodesy_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `depth` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.dem_geodetic_slope(dem, lat0_deg, d_lat_deg, d_lon_deg, method='horn', units='degrees')` (実装を直接呼ぶなら `import demops; demops.dem_geodetic_slope(dem, lat0_deg, d_lat_deg, d_lon_deg, method='horn', units='degrees')`、台帳から引くなら `opsdem.get("dem_geodetic_slope")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

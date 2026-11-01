@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">cr_checker_result — DRIVE <code style="color:#22d3bf">commonroad</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cr_checker_result(path) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import drivecommonroad; drivecommonroad.cr_checker_result(path) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;cr_checker_result&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>WSL の公式チェッカー(tools/check_solution_json.py)が書いた JSON を読む。</p>
 <p>必須キー <code style="color:#22d3bf">CHECKER_KEYS</code>(<code style="color:#22d3bf">valid</code> / <code style="color:#22d3bf">goal_reached</code> / <code style="color:#22d3bf">feasible</code> / <code style="color:#22d3bf">obstacle_collision</code> / <code style="color:#22d3bf">boundary_collision</code> は bool、<code style="color:#22d3bf">scenario</code> / <code style="color:#22d3bf">solution</code> / <code style="color:#22d3bf">checker_version</code> は文字列)。それ以外のキー(<code style="color:#22d3bf">details</code> 等)はそのまま返す。</p>

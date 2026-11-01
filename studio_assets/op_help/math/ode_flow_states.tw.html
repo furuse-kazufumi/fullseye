@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">ode_flow_states — MATH <code style="color:#22d3bf">dynsys</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">無</code> → <code style="color:#22d3bf">table</code>(僅由參數決定的運算子 —— 不接受影像或資料輸入)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ode_flow_states(system=&#x27;lorenz&#x27;, params=None, x0=None, t_end=40.0, dt=0.005, method=&#x27;rk4&#x27;)</code>(要直接呼叫實作,<code style="color:#22d3bf">import mathops; mathops.ode_flow_states(system=&#x27;lorenz&#x27;, params=None, x0=None, t_end=40.0, dt=0.005, method=&#x27;rk4&#x27;)</code>;從台帳取用則 <code style="color:#22d3bf">opsmath.get(&quot;ode_flow_states&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>對具名向量場做積分 —— 軌道,以及你所付出的階數。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>

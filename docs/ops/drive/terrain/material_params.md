@@ -4,6 +4,7 @@ dim: drive
 category: terrain
 in: 
 out: table
+gpu: なし
 examples: [poc_world_terrain]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.material_params(seed: 'int' = 0, grain: 'float' = 0.05, puddle_level: 'float' = 0.55, puddle_freq: 'float' = 0.6, stain_level: 'float' = 0.6, stain_freq: 'float' = 0.9, wear: 'float' = 0.6, wear_freq: 'float' = 2.0, grass_var: 'float' = 0.1, sky=(0.62, 0.75, 0.92)) -> 'dict'` (実装を直接呼ぶなら `import driveterrain; driveterrain.material_params(seed: 'int' = 0, grain: 'float' = 0.05, puddle_level: 'float' = 0.55, puddle_freq: 'float' = 0.6, stain_level: 'float' = 0.6, stain_freq: 'float' = 0.9, wear: 'float' = 0.6, wear_freq: 'float' = 2.0, grass_var: 'float' = 0.1, sky=(0.62, 0.75, 0.92)) -> 'dict'`、台帳から引くなら `opsdrive.get("material_params")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

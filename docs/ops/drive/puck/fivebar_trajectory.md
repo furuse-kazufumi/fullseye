@@ -4,6 +4,7 @@ dim: drive
 category: puck
 in: signal × table × signal
 out: matrix
+gpu: なし
 examples: [poc_air_hockey_intercept]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal × table × signal` → `matrix`
 - **呼び出し**: `import fullseye as fs; fs.ledger.fivebar_trajectory(q_now, plan: 'dict', t) -> 'np.ndarray'` (実装を直接呼ぶなら `import puck; puck.fivebar_trajectory(q_now, plan: 'dict', t) -> 'np.ndarray'`、台帳から引くなら `opsdrive.get("fivebar_trajectory")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -4,6 +4,7 @@ dim: conngraph
 category: stats
 in: conn_graph
 out: table
+gpu: なし
 examples: [poc_larval_connectome_reservoir, poc_theorems_as_pictures]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `conn_graph` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.graph_degree_table(W: 'Any') -> 'dict[str, np.ndarray]'` (実装を直接呼ぶなら `import conngraph; conngraph.graph_degree_table(W: 'Any') -> 'dict[str, np.ndarray]'`、台帳から引くなら `opsconngraph.get("graph_degree_table")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

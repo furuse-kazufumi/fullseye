@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">dlt_pose — 3D <code style="color:#22d3bf">pose_estimation</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points × keypoints</code> → <code style="color:#22d3bf">pose</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dlt_pose(points_3d, points_2d, K)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import pnp3d; pnp3d.dlt_pose(points_3d, points_2d, K)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;dlt_pose&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>DLT से 3D-2D correspondences से camera pose वापस निकालता है (K ज्ञात)। → (R (3,3), t (3,))। कम से कम 6 points आवश्यक।</p>
 <p><code style="color:#22d3bf">pnp_pose</code> का (R, t) हिस्सा (normalised DLT + planar PnP branch + LM refinement)। reprojection RMS भी चाहिए तो <code style="color:#22d3bf">pnp_pose</code> इस्तेमाल करें। coplanar input (checkerboard आदि) अपने-आप planar PnP को भेजा जाता है (पुराना implementation इसे fail-closed तरीक़े से अस्वीकार करता था, पर यह सही ढंग से हल हो सकता है, इसलिए हल किया जाता है)।</p>

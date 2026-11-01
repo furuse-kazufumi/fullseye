@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">racket_impact — DRIVE <code style="color:#22d3bf">racket</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.racket_impact(v, omega, normal, v_racket, bp: &#x27;dict&#x27;, rp: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import racket; racket.racket_impact(v, omega, normal, v_racket, bp: &#x27;dict&#x27;, rp: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;racket_impact&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Ein Ball trifft einen bewegten Schläger (Normale n, Geschwindigkeit v_r): <code style="color:#22d3bf">ballistics.bounce</code> mit der Relativgeschwindigkeit im Schlägersystem → zurücktransformieren. Rückgabewert = wie bei bounce + <code style="color:#22d3bf">&quot;v_rel_in&quot;</code>. n zeigt zur Seite des Balls (der Ball nähert sich entgegen n).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

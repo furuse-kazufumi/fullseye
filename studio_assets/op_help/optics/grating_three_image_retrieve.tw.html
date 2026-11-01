@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">grating_three_image_retrieve — OPTICS <code style="color:#22d3bf">grating_interf</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">images × images</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.grating_three_image_retrieve(sample_stack, reference_stack=None, steps_per_period_sample=None, steps_per_period_reference=None, min_visibility=0.02, distance_mm=None, analyzer_period_um=None, reference_exposure=1.0)</code>(要直接呼叫實作,<code style="color:#22d3bf">import gratinginterf; gratinginterf.grating_three_image_retrieve(sample_stack, reference_stack=None, steps_per_period_sample=None, steps_per_period_reference=None, min_visibility=0.02, distance_mm=None, analyzer_period_um=None, reference_exposure=1.0)</code>;從台帳取用則 <code style="color:#22d3bf">opsoptics.get(&quot;grating_three_image_retrieve&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>從兩組相位步進序列(有樣品、無樣品)中分離出穿透、微分相位、暗場 3 張圖。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>

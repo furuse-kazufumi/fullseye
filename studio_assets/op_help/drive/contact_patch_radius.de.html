@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">contact_patch_radius — DRIVE <code style="color:#22d3bf">tacdome</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image2d × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.contact_patch_radius(img, pitch: &#x27;float&#x27;, ring_px: &#x27;float&#x27; = 4.0) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import tacdome; tacdome.contact_patch_radius(img, pitch: &#x27;float&#x27;, ring_px: &#x27;float&#x27; = 4.0) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;contact_patch_radius&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Liest den Kontaktradius aus einem Kontaktbild (vom Typ <code style="color:#22d3bf">dome_contact_image</code>). Nutzt über eine lineare Summe des Bedeckungsgrads (Flächenmethode) den Rand bis auf Subpixel genau.</p>
 <p style="margin:2px 0 2px 12px">1) Grobe Scheibe mit Schwelle (1-%-Punkt + 99.9-%-Punkt)/2 → Schwerpunkt und Radius r_t. 2) Median innen r &lt; r_t − <code style="color:#22d3bf">ring_px</code> als fg, Median des äußeren Rings</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">profile_normalise — PROFILE <code style="color:#22d3bf">frame</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">pairs</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.profile_normalise(contour)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import profileops; profileops.profile_normalise(contour)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsprofile.get(&quot;profile_normalise&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>시위 길이 1, 앞전이 원점, 시위가 +x 방향이 되도록 회전과 평행 이동으로 정규화한다.</p>
 <p><b>스케일은 시위 길이로만 바꾼다</b>(형상을 왜곡하지 않는다). 반환은 정규화한 윤곽.</p>

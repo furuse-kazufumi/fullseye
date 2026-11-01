@@ -4,6 +4,7 @@ dim: acoustics
 category: order
 in: signal
 out: table
+gpu: なし
 examples: [acoustic_condition_monitoring]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.order_spectrum(x, rate, rpm, samples_per_rev=64, revolutions=None, max_order=None, n_peaks=5)` (実装を直接呼ぶなら `import acoustics; acoustics.order_spectrum(x, rate, rpm, samples_per_rev=64, revolutions=None, max_order=None, n_peaks=5)`、台帳から引くなら `opsacoustics.get("order_spectrum")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

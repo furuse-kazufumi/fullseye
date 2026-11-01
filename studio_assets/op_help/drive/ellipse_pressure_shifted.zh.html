@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">ellipse_pressure_shifted — DRIVE <code style="color:#22d3bf">tactorque</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">matrix × matrix × scalar × scalar × scalar</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ellipse_pressure_shifted(X, Y, a: &#x27;float&#x27;, b: &#x27;float&#x27;, P: &#x27;float&#x27;, d=(0.0, 0.0)) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import tactorque; tactorque.ellipse_pressure_shifted(X, Y, a: &#x27;float&#x27;, b: &#x27;float&#x27;, P: &#x27;float&#x27;, d=(0.0, 0.0)) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;ellipse_pressure_shifted&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>半轴为 a(x)、b(y) [m] 的椭圆 Hertz 压力 p0 √(1 − x′²/a² − y′²/b²) [Pa]，P = 2πab p0/3(Johnson 1985 式 4.24)，中心移到 d。b ≫ a 时形状接近圆柱(棱、楔状)的压入 —— 形状不变门禁的第 3 个。<b>Raises</b> ValueError：a, b, P ≤ 0，X 与 Y 形状不同。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

@@ -4,6 +4,7 @@ dim: acoustics
 category: dual
 in: signal × signal
 out: table
+gpu: なし
 examples: [acoustic_condition_monitoring, poc_leak_localization]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal × signal` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.transfer_function(x, y, rate, win=None, hop=None, window='hann', estimator='h1', ref=1.0, floor_db=-200.0)` (実装を直接呼ぶなら `import acoustics; acoustics.transfer_function(x, y, rate, win=None, hop=None, window='hann', estimator='h1', ref=1.0, floor_db=-200.0)`、台帳から引くなら `opsacoustics.get("transfer_function")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

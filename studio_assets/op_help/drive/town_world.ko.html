@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">town_world — DRIVE <code style="color:#22d3bf">town</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.town_world(layout, *, props=(), **kwargs) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivetown; drivetown.town_world(layout, *, props=(), **kwargs) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;town_world&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p><code style="color:#22d3bf">driveworld.world_build</code>의 얇은 래퍼(<code style="color:#22d3bf">props</code>와 나머지 인수를 그대로 전달)로, 정지선·신호기·철도 건널목 위치 표를 <code style="color:#22d3bf">world[&quot;town&quot;]</code>으로 추가하고, 건널목 요소마다 <b>차단기 달린 경보기 2기·차단봉(올림)·건널목 판·열차(멀리서 대기)</b>를 배치합니다.</p>
 <p><code style="color:#22d3bf">world[&quot;town&quot;] = {&quot;stop_lines&quot;: [(x, y, yaw, kind)], &quot;signals&quot;: [(x, y, yaw, kind)], &quot;crossings&quot;: [(x0, y0, x1, y1, s0, s1)], &quot;gear&quot;: [踏切ごとの設備の索引 dict], &quot;total_length&quot;}</code>(signals 는 교차로의 4 기 전부, yaw = 등기가 향하는 방향. stop_lines 는좌측 통행의 것). 설비의 상태는 <code style="color:#22d3bf">town_crossing_state</code> 로 시각마다 고쳐 쓴다.</p>

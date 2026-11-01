@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">alpha_shape_mesh — 3D <code style="color:#22d3bf">reconstruct</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">mesh</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.alpha_shape_mesh(points, alpha)</code>(要直接呼叫實作,<code style="color:#22d3bf">import recon3d; recon3d.alpha_shape_mesh(points, alpha)</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;alpha_shape_mesh&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用 alpha shapes 給出<b>表面三角網格</b>(點群 → (vertices, faces))。</p>
 <p>將與 <code style="color:#22d3bf">alpha_shape_boundary</code> 相同的邊界三角形,作為只重新打包所用頂點的網格回傳。不經 voxel、直接從點雲張成的表面。能保留凹陷/孔洞,這是與 marching cubes 系的差異所在。</p>

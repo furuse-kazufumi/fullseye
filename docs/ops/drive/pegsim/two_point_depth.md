@@ -4,6 +4,7 @@ dim: drive
 category: pegsim
 in: table
 out: scalar
+gpu: なし
 examples: [gallery_drive_peg, poc_peg_insertion_tactile, poc_pegsim_insertion]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `scalar`
 - **呼び出し**: `import fullseye as fs; fs.ledger.two_point_depth(kp, theta: 'float', model: 'str' = 'exact') -> 'float'` (実装を直接呼ぶなら `import pegsim; pegsim.two_point_depth(kp, theta: 'float', model: 'str' = 'exact') -> 'float'`、台帳から引くなら `opsdrive.get("two_point_depth")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

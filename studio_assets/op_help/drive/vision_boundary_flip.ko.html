@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">vision_boundary_flip — DRIVE <code style="color:#22d3bf">pegfail</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">table × signal × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vision_boundary_flip(kp, eps_true, sigma: &#x27;float&#x27;, n: &#x27;int&#x27; = 2000, seed: &#x27;int&#x27; = 0) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import pegfail; pegfail.vision_boundary_flip(kp, eps_true, sigma: &#x27;float&#x27;, n: &#x27;int&#x27; = 2000, seed: &#x27;int&#x27; = 0) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;vision_boundary_flip&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>&quot;어디서 깨지는가&quot;: 실제 어긋남 ε에 표준편차 σ의 계측 잡음을 더했을 때, offset 칸(small/large, 경계 W + c_r)이 참값과 <b>반전되는</b> 확률을 각 ε에서 셉니다(numpy만 사용). 경계에서 σ의 몇 배 떨어져 있는지(<code style="color:#22d3bf">z</code>)와 이론값 Φ(−|z|)도 반환합니다(잡음이 정규분포이면 일치하는 게이트).</p>
 <p>반환: <code style="color:#22d3bf">eps</code>(m), <code style="color:#22d3bf">flip_rate</code>, <code style="color:#22d3bf">z</code> = (|ε| − eps_max)/σ, <code style="color:#22d3bf">flip_theory</code> = Φ(−|z|), <code style="color:#22d3bf">eps_max</code>. <b>Raises</b> <code style="color:#22d3bf">ValueError</code>: σ ≤ 0.</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">blob_select_largest — BLOB <code style="color:#22d3bf">select</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">labels2d</code> → <code style="color:#22d3bf">labels2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.blob_select_largest(labels: &#x27;Any&#x27;, count: &#x27;int&#x27; = 1) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import blob2d; blob2d.blob_select_largest(labels: &#x27;Any&#x27;, count: &#x27;int&#x27; = 1) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsblob.get(&quot;blob_select_largest&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Keeps only <code style="color:#22d3bf">count</code> objects in order of decreasing area (<b>the numbers are reassigned in descending order of area</b>).</p>
 <p>When areas tie, the one with the smaller original number comes first (<code style="color:#22d3bf">argsort</code> is fixed to a stable sort so the order does not change between runs). Even if <code style="color:#22d3bf">count</code> exceeds the number of objects, <b>whatever exists</b> is returned (falling short is not an exception -- asking for &quot;the top 3&quot; and getting only 2 is not an anomaly).</p>

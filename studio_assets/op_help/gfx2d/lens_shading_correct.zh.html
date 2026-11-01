@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">lens_shading_correct — GFX2D <code style="color:#22d3bf">isp</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lens_shading_correct(raw, gain)</code>(要直接调用实现,<code style="color:#22d3bf">import gfx2d; gfx2d.lens_shading_correct(raw, gain)</code>;从台账取用则 <code style="color:#22d3bf">opsgfx2d.get(&quot;lens_shading_correct&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>将增益图乘到帧上并裁剪到 [0, 1]。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

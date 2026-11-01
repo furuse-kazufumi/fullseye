@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">itof_flying_pixel_mask — OPTICS <code style="color:#22d3bf">itof</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">depth</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.itof_flying_pixel_mask(depth, threshold_m=0.04, rel_threshold=0.0, radius=1, plateau_ratio=0.5, depth_sigma=None, n_sigma=3.0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import itof; itof.itof_flying_pixel_mask(depth, threshold_m=0.04, rel_threshold=0.0, radius=1, plateau_ratio=0.5, depth_sigma=None, n_sigma=3.0)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;itof_flying_pixel_mask&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>距離の図 → フライングピクセル(前景と背景の<b>間に浮いた</b>画素)の印 <code style="color:#22d3bf">(H, W)</code>(1.0 = 浮いている)。</p>
 <p>画素の視野が段差をまたぐと、iToF は 2 つの位相のフェーザ和を返し、距離は前景と背景の<b>間</b>に出る(段差の縁に沿って宙に浮いた点の列ができる)。ある方向(横・縦・2 つの斜め)の両側 ±r 画素の距離 <code style="color:#22d3bf">a</code>・<code style="color:#22d3bf">b</code> に対して、次の 3 つがそろったとき印をつける:</p>

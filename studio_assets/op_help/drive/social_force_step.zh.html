@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">social_force_step — DRIVE <code style="color:#22d3bf">traffic</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">points × points × points</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.social_force_step(pos, vel, goals, *, dt: &#x27;float&#x27;, v0, tau: &#x27;float&#x27;, A: &#x27;float&#x27;, B: &#x27;float&#x27;, radius, walls=None)</code>(要直接调用实现,<code style="color:#22d3bf">import drivetraffic; drivetraffic.social_force_step(pos, vel, goals, *, dt: &#x27;float&#x27;, v0, tau: &#x27;float&#x27;, A: &#x27;float&#x27;, B: &#x27;float&#x27;, radius, walls=None)</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;social_force_step&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>social force 的 1 步(单位质量。Helbing &amp; Molnár 1995 / Helbing, Farkas, Vicsek 2000 的形式)。</p>
 <p>dv_i/dt = (v0_i e_i − v_i)/τ + Σ_j A exp((r_ij − d_ij)/B) n_ij + Σ_W A exp((r_i − d_iW)/B) n_iW</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">panel_grid — ANNOTATE <code style="color:#22d3bf">compose</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.panel_grid(panels, labels=None, ncols=3, pad=10, label_h=32, background=0.05, title=None, title_h=0, font_size=15, min_font_size=9, font_path=None, text_color=None, border=0, border_color=&#x27;neutral&#x27;, scheme=&#x27;okabe_ito&#x27;, style=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import annotate; annotate.panel_grid(panels, labels=None, ncols=3, pad=10, label_h=32, background=0.05, title=None, title_h=0, font_size=15, min_font_size=9, font_path=None, text_color=None, border=0, border_color=&#x27;neutral&#x27;, scheme=&#x27;okabe_ito&#x27;, style=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsannotate.get(&quot;panel_grid&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>panel को grid पर सजाता है, हर frame के नीचे label की पट्टी के साथ (montage / contact sheet)।</p>
 <p>6 generators में हर एक का अपना अलग implementation था -- <b>यह इस repo का सबसे अधिक duplicate हुआ figure component</b> है। यहाँ के नियम:</p>

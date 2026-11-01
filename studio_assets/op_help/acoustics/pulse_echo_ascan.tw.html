@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">pulse_echo_ascan — ACOUSTICS <code style="color:#22d3bf">ultrasonic</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pulse_echo_ascan(stack, f0=100000000.0, bandwidth=0.6, water_path=0.002, rate=None, duration=None, n_reverb=40)</code>(要直接呼叫實作,<code style="color:#22d3bf">import ultrasound; ultrasound.pulse_echo_ascan(stack, f0=100000000.0, bandwidth=0.6, water_path=0.002, rate=None, duration=None, n_reverb=40)</code>;從台帳取用則 <code style="color:#22d3bf">opsacoustics.get(&quot;pulse_echo_ascan&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>疊層結構對垂直入射寬頻脈衝的射頻 A 掃描:傳遞矩陣的疊層響應、水路程與冪律衰減(<code style="color:#22d3bf">table</code>)。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>

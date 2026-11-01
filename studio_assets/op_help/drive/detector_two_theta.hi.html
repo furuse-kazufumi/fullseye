@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">detector_two_theta — DRIVE <code style="color:#22d3bf">pxrd</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">any × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.detector_two_theta(shape, geometry)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import pxrd; pxrd.detector_two_theta(shape, geometry)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;detector_two_theta&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>detector के हर pixel का 2θ, azimuth χ और सापेक्ष solid angle (झुकाव, दूरी और केंद्र सहित)।</p>
 <p><code style="color:#22d3bf">shape = (H, W)</code>, <code style="color:#22d3bf">geometry</code> module docstring का Fit2D प्रकार है। रिटर्न मान (dict): <code style="color:#22d3bf">two_theta</code> [deg], <code style="color:#22d3bf">chi</code> [deg] (<code style="color:#22d3bf">atan2</code>, +स्तंभ 0, +पंक्ति +90), <code style="color:#22d3bf">solid_angle</code> (बीम-केंद्र पर झुकाव 0 होने पर 1 होने वाला सापेक्ष मान, <code style="color:#22d3bf">cos³</code> से घटता है)। 2θ <code style="color:#22d3bf">atan2(hypot(Pₓ, P_y), P_z)</code> से निकाला जाता है (acos का उपयोग करने पर 2θ → 0 के पास पूर्णांकन का तल आ जाता है)।</p>

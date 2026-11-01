@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">graph_swap_symmetry — GRAPH <code style="color:#22d3bf">symmetry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graph_swap_symmetry(adj, pairs)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import graphinv; graphinv.graph_swap_symmetry(adj, pairs)</code>、台帳から引くなら <code style="color:#22d3bf">opsgraph.get(&quot;graph_swap_symmetry&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>節点の対を入れ替えた配線との Jaccard(恒等ペアで 1.0)—— 左右対称の検査。</p>
 <p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">depth_to_points — 3D <code style="color:#22d3bf">transform</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">depth</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.depth_to_points(depth, fx, fy, cx, cy, stride=1)</code>(要直接调用实现,<code style="color:#22d3bf">import match3d; match3d.depth_to_points(depth, fx, fy, cx, cy, stride=1)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;depth_to_points&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>深度图(2.5D)→ 点云(针孔反投影)。把 depth 行接到所有方法。</p>
 <p>由像素 (行 v, 列 u) 的深度 z 生成 <code style="color:#22d3bf">X = (u − cx)·z/fx</code>、<code style="color:#22d3bf">Y = (v − cy)·z/fy</code>、<code style="color:#22d3bf">Z = z</code>。返回值为 <code style="color:#22d3bf">(N,3)</code> float64,各列是 <b>(X, Y, Z) 的相机坐标</b>(与深度同单位)。z 为 0 以下的像素被丢弃,所以 N 不超过像素数(约定以 0 表示无效深度)。</p>

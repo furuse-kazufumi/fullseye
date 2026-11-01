@@ -4,6 +4,7 @@ dim: dem
 category: surface
 in: depth
 out: image2d
+gpu: なし
 examples: [dem_geodesy_tour, poc_crop_phenotyping, poc_dem_terrain, poc_geodetic_height_frames, poc_lidar_terrain_change, poc_multibeam_bathymetry, poc_stockpile_volume]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `depth` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.dem_slope(dem, cell_size, method='horn', units='degrees')` (実装を直接呼ぶなら `import demops; demops.dem_slope(dem, cell_size, method='horn', units='degrees')`、台帳から引くなら `opsdem.get("dem_slope")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

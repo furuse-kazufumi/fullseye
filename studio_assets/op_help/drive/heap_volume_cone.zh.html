@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">heap_volume_cone — DRIVE <code style="color:#22d3bf">granular</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">scalar × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.heap_volume_cone(R: &#x27;float | None&#x27; = None, H: &#x27;float | None&#x27; = None, phi_deg: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import granular; granular.heap_volume_cone(R: &#x27;float | None&#x27; = None, H: &#x27;float | None&#x27; = None, phi_deg: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;heap_volume_cone&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>圆锥料堆的闭式 —— 给定 <code style="color:#22d3bf">R</code>、<code style="color:#22d3bf">H</code>、<code style="color:#22d3bf">phi_deg</code> 中的<b>恰好 2 个</b>，返回其余一个及体积。</p>
 <p><code style="color:#22d3bf">V = (π/3) R² H</code>,<code style="color:#22d3bf">H = R tan φ</code>。返回:<code style="color:#22d3bf">R</code>, <code style="color:#22d3bf">H</code>, <code style="color:#22d3bf">phi_deg</code>, <code style="color:#22d3bf">V</code> [m³]、<code style="color:#22d3bf">A</code>(底面积 πR²)。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>:给出的数不是 2 个,或 ≤ 0 / 非有限 / 角在 (0, 90) 之外。3 个全给时也拒绝(不会默默用其中之一覆盖矛盾的三元组)。</p>

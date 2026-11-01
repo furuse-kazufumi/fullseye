@@ -4,6 +4,7 @@ dim: graph
 category: path
 in: image2d × matrix
 out: table
+gpu: なし
 examples: [poc_car_parking, poc_driving_school]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d × matrix` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.car_hybrid_astar(occupancy, poses, radius=1.0, cell=1.0, step=None, n_theta=72, allow_reverse=True, footprint=None, clearance=0.0, reverse_penalty=0.0, switch_penalty=0.0, steer_penalty=0.0, shot_every=None, max_expansions=200000, return_tree=False, method='exact')` (実装を直接呼ぶなら `import carpath; carpath.car_hybrid_astar(occupancy, poses, radius=1.0, cell=1.0, step=None, n_theta=72, allow_reverse=True, footprint=None, clearance=0.0, reverse_penalty=0.0, switch_penalty=0.0, steer_penalty=0.0, shot_every=None, max_expansions=200000, return_tree=False, method='exact')`、台帳から引くなら `opsgraph.get("car_hybrid_astar")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

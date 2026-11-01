@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">two_view_volume — DRIVE <code style="color:#22d3bf">scoop</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d × image2d × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.two_view_volume(side_a, side_b, pitch: &#x27;float&#x27;, *, threshold: &#x27;float&#x27; = 0.5) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import scoop; scoop.two_view_volume(side_a, side_b, pitch: &#x27;float&#x27;, *, threshold: &#x27;float&#x27; = 0.5) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;two_view_volume&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>직교하는 2방향의 측면 영상에서 부피 —— 행마다 2개의 현 <code style="color:#22d3bf">W_a</code>·<code style="color:#22d3bf">W_b</code>를 축으로 하는 타원의 합 <code style="color:#22d3bf">V = Σ f π (W_a/2)(W_b/2) pitch³</code>.</p>
 <p>단면이 타원(축대칭이 아닌 산, 세로로 긴 더미)이면 엄밀하며, 한쪽만으로 한 회전체 가정은 타원의 편평도 비만큼 어긋난다(PoC 에서</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">dynnikov_act — DRIVE <code style="color:#22d3bf">braidpath</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">any × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dynnikov_act(coords, word)</code> (to call the implementation directly, <code style="color:#22d3bf">import braidpath; braidpath.dynnikov_act(coords, word)</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;dynnikov_act&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Applies a braid word to arbitrary Dynnikov coordinates (a; b) (integer or real —— the formulas are piecewise linear).</p>
 <p><code style="color:#22d3bf">coords</code> is a dict (<code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code>) or a sequence of length 2(n − 1) (first half a, second half b). The number of strands is n = len(a) + 1. The relations σᵢσᵢ₊₁σᵢ = σᵢ₊₁σᵢσᵢ₊₁, σᵢσⱼ = σⱼσᵢ, σᵢσᵢ⁻¹ = 1 hold <b>identically for every (a; b)</b> (gate 1, on random real coordinates).</p>

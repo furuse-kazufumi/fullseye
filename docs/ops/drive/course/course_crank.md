@@ -4,6 +4,7 @@ dim: drive
 category: course
 in: 
 out: table
+gpu: なし
 examples: [poc_driving_school, poc_driving_town]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.course_crank(width=3.5, between=12.0, entry=4.0, corner_radius=1.0, arc_pts=16)` (実装を直接呼ぶなら `import drivecourse; drivecourse.course_crank(width=3.5, between=12.0, entry=4.0, corner_radius=1.0, arc_pts=16)`、台帳から引くなら `opsdrive.get("course_crank")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -4,6 +4,7 @@ dim: 3d
 category: resolution
 in: mesh
 out: points
+gpu: なし
 examples: [mesh_resolution_demo]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `mesh` → `points`
 - **呼び出し**: `import fullseye as fs; fs.ledger.mesh_sample_points(V, F, spacing=None, n=None, method='poisson', seed=0, oversample=6)` (実装を直接呼ぶなら `import meshres; meshres.mesh_sample_points(V, F, spacing=None, n=None, method='poisson', seed=0, oversample=6)`、台帳から引くなら `ops3d.get("mesh_sample_points")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

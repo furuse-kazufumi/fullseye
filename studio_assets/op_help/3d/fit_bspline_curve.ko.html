@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">fit_bspline_curve — 3D <code style="color:#22d3bf">freeform</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">bspline_curve</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fit_bspline_curve(points, smooth=0.0, k=3, nest=None)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import bspline_surf; bspline_surf.fit_bspline_curve(points, smooth=0.0, k=3, nest=None)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;fit_bspline_curve&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>순서 있는 점열 (M,D) 에 B 스플라인 곡선을 적합(splprep, 매개변수).</p>
 <p>심/에지/계측 프로브 궤적 등 &quot;나열 순서가 의미를 갖는&quot; 점열을 매끄러운파라메트릭 곡선 r(u), u∈[0,1]로 복원한다. z=f(x,y)와 달리 다가(되접힘·루프)인 형상도 나타낼 수 있다.</p>

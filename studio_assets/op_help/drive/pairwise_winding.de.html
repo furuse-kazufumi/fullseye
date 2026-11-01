@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">pairwise_winding — DRIVE <code style="color:#22d3bf">braidpath</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pairwise_winding(trajectories, obstacles=None)</code> (die Implementierung direkt: <code style="color:#22d3bf">import braidpath; braidpath.pairwise_winding(trajectories, obstacles=None)</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;pairwise_winding&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Relative Windungszahl je Strangpaar [Umdrehungen] (Gesamtänderung des Arguments des Relativvektors / 2π). Symmetrische Matrix, Diagonale 0.</p>
 <p>Der Zuwachs des Arguments wird als atan2(Kreuzprodukt, Skalarprodukt) bestimmt (Hauptwert (−π, π]). Dreht es sich in einem Schritt um eine halbe Umdrehung oder mehr, ist die Richtung unbestimmt, daher wird abgebrochen. Geschlossene Form: Bei einem reinen Zopf gilt mit c als vorzeichenbehafteter Anzahl der Kreuzungen zwischen den beiden Strängen exakt 2π·W = π c (Gate). Die Windungszahl ist eine kommutative Invariante und kann daher Zöpfe der Kommutatorform [A, B] (Windungszahl 0 für alle Paare, aber nicht trivial) nicht unterscheiden —— genau deshalb werden Zöpfe verwendet.</p>

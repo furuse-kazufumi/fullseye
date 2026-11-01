@@ -4,6 +4,7 @@ dim: piv
 category: validate
 in: flow2d
 out: mask
+gpu: なし
 examples: [perf_hankel_plan_and_piv_stream, piv_flow_from_particles, poc_change_detection_misreg, poc_river_surface_velocity]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `flow2d` → `mask`
 - **呼び出し**: `import fullseye as fs; fs.ledger.piv_outlier_mask(flow, threshold=2.0, epsilon=0.1)` (実装を直接呼ぶなら `import pivops; pivops.piv_outlier_mask(flow, threshold=2.0, epsilon=0.1)`、台帳から引くなら `opspiv.get("piv_outlier_mask")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

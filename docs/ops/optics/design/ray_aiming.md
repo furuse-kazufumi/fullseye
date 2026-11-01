@@ -4,6 +4,7 @@ dim: optics
 category: design
 in: table
 out: table
+gpu: なし
 examples: [optical_design_metrics]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.ray_aiming(system, field=None, rings=8, wavelength_um=None, aim='stop', vignetting=None)` (実装を直接呼ぶなら `import raytrace; raytrace.ray_aiming(system, field=None, rings=8, wavelength_um=None, aim='stop', vignetting=None)`、台帳から引くなら `opsoptics.get("ray_aiming")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

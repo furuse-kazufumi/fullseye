@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">seg_object_counts_match — SEGMENTATION <code style="color:#22d3bf">score</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">labels2d × labels2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.seg_object_counts_match(labels_pred, labels_true, *, background: &#x27;int&#x27; = 0, min_overlap: &#x27;float&#x27; = 0.5) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import segeval; segeval.seg_object_counts_match(labels_pred, labels_true, *, background: &#x27;int&#x27; = 0, min_overlap: &#x27;float&#x27; = 0.5) -&gt; &#x27;Dict[str, object]&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opssegmentation.get(&quot;seg_object_counts_match&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>物體個數一致性：由「主要重疊」邊的二部圖次數來計數分裂/融合/漏檢/誤檢/匹配（seg_object_counts_match）。</p>
 <p>在真 i 與預測 j(皆非背景)之間放置邊的條件 = 重疊 n_ij ≥ <code style="color:#22d3bf">min_overlap</code> × min(|i|, |j|) (較小的一方主要落在另一方內部)。真的度 d_i,預測的度 e_j:</p>

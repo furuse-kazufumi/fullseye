@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">normals_to_angles — REPRCONV <code style="color:#22d3bf">direction</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">normals</code> → <code style="color:#22d3bf">pairs</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.normals_to_angles(normals)</code> (die Implementierung direkt: <code style="color:#22d3bf">import reprconv; reprconv.normals_to_angles(normals)</code>; aus dem Register: <code style="color:#22d3bf">opsreprconv.get(&quot;normals_to_angles&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Normalen <code style="color:#22d3bf">(N,3)</code> → Azimut-/Elevationspaare <code style="color:#22d3bf">(N,2)</code> <b>[Grad]</b>. Der Ausgang aus <code style="color:#22d3bf">normals</code>.</p>
 <p><code style="color:#22d3bf">az = atan2(c1, c0)</code> ist der Azimut in der Ebene Achse0-Achse1, <code style="color:#22d3bf">el = asin(c2/|v|)</code> ist die Elevation ab Achse 2. <b>Definiert wird mit &quot;Achse 0/1/2&quot;, nicht mit x/y/z</b>, weil es in diesem repo sowohl Punktwolken in (z,y,x)-Reihenfolge als auch in (x,y,z)-Reihenfolge gibt -- mit Namen geschrieben, würde sich die Bedeutung je nach Konvention des übergebenen Arrays ändern.</p>

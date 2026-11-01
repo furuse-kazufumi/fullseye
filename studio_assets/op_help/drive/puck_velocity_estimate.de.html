@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">puck_velocity_estimate — DRIVE <code style="color:#22d3bf">puck</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">signal × matrix × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.puck_velocity_estimate(t, xy, table: &#x27;dict&#x27;, *, model: &#x27;str&#x27; = &#x27;coulomb&#x27;, t_ref=None, iters: &#x27;int&#x27; = 3) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import puck; puck.puck_velocity_estimate(t, xy, table: &#x27;dict&#x27;, *, model: &#x27;str&#x27; = &#x27;coulomb&#x27;, t_ref=None, iters: &#x27;int&#x27; = 3) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;puck_velocity_estimate&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Geschwindigkeit per kleinster Quadrate aus N Positionen: Modell gleichmäßiger Verzögerung mit fester Richtung û, p(τ) = p_ref + v_ref τ − ½ μg τ² û (τ = t − t_ref).</p>
 <p>û wird aus v_ref genommen, daher 3 Iterationen (Startwert = Differenz der Endpunkte). &quot;viscous&quot; ist linear in der Basis (1 − e^{−kτ})/k, &quot;none&quot; ist eine Gerade.</p>

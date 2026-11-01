@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">ocean_height_field — OPTICS <code style="color:#22d3bf">watermedia</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ocean_height_field(size, extent_m, wind_speed_mps, wind_dir_deg, t=0.0, seed=0, kind=&#x27;pierson_moskowitz&#x27;, directional=&#x27;cos2&#x27;, choppiness=0.0, depth_m=None, spreading_s=10.0, fetch_m=None, single_mode=None) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import watermedia; watermedia.ocean_height_field(size, extent_m, wind_speed_mps, wind_dir_deg, t=0.0, seed=0, kind=&#x27;pierson_moskowitz&#x27;, directional=&#x27;cos2&#x27;, choppiness=0.0, depth_m=None, spreading_s=10.0, fetch_m=None, single_mode=None) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;ocean_height_field&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>時刻 t の Tessendorf(2001)の FFT の海面 -&gt; dict(高さ・傾き・法線マップ・変位)。</p>
 <p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>

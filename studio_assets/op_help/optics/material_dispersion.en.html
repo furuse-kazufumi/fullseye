@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">material_dispersion — OPTICS <code style="color:#22d3bf">matprop</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">pairs</code> (an op determined by its arguments alone — it takes no image or data input)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.material_dispersion(material=&#x27;N-BK7&#x27;, wl_min_nm: &#x27;float&#x27; = 400.0, wl_max_nm: &#x27;float&#x27; = 1000.0, n_points: &#x27;int&#x27; = 121) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import materials; materials.material_dispersion(material=&#x27;N-BK7&#x27;, wl_min_nm: &#x27;float&#x27; = 400.0, wl_max_nm: &#x27;float&#x27; = 1000.0, n_points: &#x27;int&#x27; = 121) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;material_dispersion&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Dispersion curve n(λ) as pairs (λ [nm], n), evenly spaced n_points.</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>

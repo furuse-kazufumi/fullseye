@@ -4,6 +4,7 @@ dim: drive
 category: grind
 in: signal × signal
 out: table
+gpu: なし
 examples: [poc_powder_grinding_ae]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal × signal` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.comminution_law_fit(t, d, law: 'str' = 'all') -> 'dict'` (実装を直接呼ぶなら `import grind; grind.comminution_law_fit(t, d, law: 'str' = 'all') -> 'dict'`、台帳から引くなら `opsdrive.get("comminution_law_fit")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">photoelastic_retardation — OPTICS <code style="color:#22d3bf">photoelastic</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.photoelastic_retardation(stress_difference_pa, thickness_m, stress_optic_coefficient, wavelength_m)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import photoelastic; photoelastic.photoelastic_retardation(stress_difference_pa, thickness_m, stress_optic_coefficient, wavelength_m)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;photoelastic_retardation&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>समदैशिक पदार्थ का प्रतिबल-प्रकाशिक नियम δ = 2π t C (σ1−σ2)/λ → dict (rad, nm, फ्रिंज क्रम और पदार्थ फ्रिंज मान)।</p>
 <p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>

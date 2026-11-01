@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">aliased_frequency — DRIVE <code style="color:#22d3bf">decide</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.aliased_frequency(f, fps)</code> (die Implementierung direkt: <code style="color:#22d3bf">import drivedecide; drivedecide.aliased_frequency(f, fps)</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;aliased_frequency&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Die <b>scheinbare</b> Frequenz, wenn ein Flackern der Frequenz <code style="color:#22d3bf">f</code> [Hz] mit der Bildrate <code style="color:#22d3bf">fps</code> abgetastet wird (geschlossene Form).</p>
 <p>f_a = | f − fps · round(f / fps) |  ∈ [0, fps/2]</p>

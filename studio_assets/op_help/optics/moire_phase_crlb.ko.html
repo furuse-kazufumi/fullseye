@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">moire_phase_crlb — OPTICS <code style="color:#22d3bf">moire_align</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">table</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.moire_phase_crlb(noise_sigma=0.01, amplitude=0.2, n_rows=256, n_cols=1024, p_mask_um=2.0, p_wafer_um=2.04, moving=&#x27;wafer&#x27;, window=&#x27;hann&#x27;, noisy_reference=True)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import moirealign; moirealign.moire_phase_crlb(noise_sigma=0.01, amplitude=0.2, n_rows=256, n_cols=1024, p_mask_um=2.0, p_wafer_um=2.04, moving=&#x27;wafer&#x27;, window=&#x27;hann&#x27;, noisy_reference=True)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsoptics.get(&quot;moire_phase_crlb&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>백색 가우스 잡음 아래에서 줄무늬 위상과 변위를 얼마나 세밀하게 읽을 수 있는가(하한의 닫힌 형식).</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>

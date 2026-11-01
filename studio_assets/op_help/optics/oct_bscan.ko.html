@@ -3,6 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.oct_bscan(spectra, window=&#x27;hann&#x27;, dc=&#x27;reference&#x27;, zero_pad=1, a2=0.0, a3=0.0, method=&#x27;cubic&#x27;, db_range=None, k_center=None)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import octscan; octscan.oct_bscan(spectra, window=&#x27;hann&#x27;, dc=&#x27;reference&#x27;, zero_pad=1, a2=0.0, a3=0.0, method=&#x27;cubic&#x27;, db_range=None, k_center=None)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsoptics.get(&quot;oct_bscan&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>원장 경유의 반환값</b>: <code style="color:#22d3bf">fullseye.ledger.oct_bscan(...)</code> 는 <b>선언된 out 형 <code style="color:#22d3bf">image2d</code> 의 값만</b> 반환합니다(실제 함수는 보조 정보도 반환). 버려진 쪽이 필요하면 <code style="color:#22d3bf">fullseye.ledger.oct_bscan.raw(...)</code> 를 쓰거나 <code style="color:#22d3bf">octscan.oct_bscan</code> 를 직접 호출하세요.</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>B 스캔 간섭 스펙트럼 묶음 → <b>단면 영상</b>(깊이 × 가로, <code style="color:#22d3bf">table</code>; 대장에는 20 log10 영상 image2d로 선언).</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>

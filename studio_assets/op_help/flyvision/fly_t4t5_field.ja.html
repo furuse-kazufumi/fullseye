@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">fly_t4t5_field — FLYVISION <code style="color:#22d3bf">direction</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">matrix × table</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fly_t4t5_field(movie, lattice, dt_s, tau_s=0.25, k_e=5.0, k_d=5.0, k_s=10.0, dc=1.0, model=&#x27;three_arm&#x27;, tau_hr_s=0.05, reduce=&#x27;mean&#x27;)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import flyvision; flyvision.fly_t4t5_field(movie, lattice, dt_s, tau_s=0.25, k_e=5.0, k_d=5.0, k_s=10.0, dc=1.0, model=&#x27;three_arm&#x27;, tau_hr_s=0.05, reduce=&#x27;mean&#x27;)</code>、台帳から引くなら <code style="color:#22d3bf">opsflyvision.get(&quot;fly_t4t5_field&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>六角格子の 6 方向すべてで方向選択(Haag らの三腕・増強だけ・抑制だけ・相関器を選べる)。</p>
 <p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>

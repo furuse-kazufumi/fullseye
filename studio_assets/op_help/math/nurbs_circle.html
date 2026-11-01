@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">nurbs_circle — MATH <code style="color:#22d3bf">geometry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.nurbs_circle(radius: &#x27;float&#x27; = 1.0, center=(0.0, 0.0)) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import mathgeometry; mathgeometry.nurbs_circle(radius: &#x27;float&#x27; = 1.0, center=(0.0, 0.0)) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsmath.get(&quot;nurbs_circle&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>円を厳密に表す 2 次 NURBS(Piegl &amp; Tiller 例 7.1: 正方形の 4 隅と 4 辺の中点、隅の重みは 1/√2)。</p>
 <p>返す <code style="color:#22d3bf">control_points</code>・<code style="color:#22d3bf">weights</code>・<code style="color:#22d3bf">knots</code>・<code style="color:#22d3bf">degree</code> をそのまま <code style="color:#22d3bf">nurbs_curve</code> に渡すと、どの点も中心から <code style="color:#22d3bf">radius</code> の距離にある(丸め誤差まで)。隅の制御点は円の外 (√2 − 1)·radius の所にあり、曲線は通らない。</p>

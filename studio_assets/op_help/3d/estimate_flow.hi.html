@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">estimate_flow — 3D <code style="color:#22d3bf">motion_segment</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">flow_scattered</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.estimate_flow(pts0, pts1) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import motion_seg3d; motion_seg3d.estimate_flow(pts0, pts1) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;estimate_flow&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>pts0 के हर point से pts1 के nearest neighbour तक 3-D displacement vector field (N, 3) लौटाता है (nearest-neighbour flow)।</p>
 <p><code style="color:#22d3bf">pts0</code> के हर point p के लिए <code style="color:#22d3bf">pts1</code> में nearest neighbour q को cKDTree से ढूँढता है, और displacement <code style="color:#22d3bf">q - p</code> लौटाता है। elements की संख्या N != M हो सकती है। केवल उन छोटे motions में, जहाँ displacement local point spacing से काफ़ी छोटा हो, यह &quot;point i का असली correspondence&quot; सही पकड़ता है (nearest neighbour की honest सीमा)। segment_rigid_motions के inlier निर्णय में उपयोग होने वाला <b>observed flow</b> देता है।</p>

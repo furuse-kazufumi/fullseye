@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">subsurface_approx — OPTICS <code style="color:#22d3bf">material</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">normalmap</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.subsurface_approx(normals, light=(0.3, 0.4, 0.87), view=(0.0, 0.0, 1.0), thickness=0.5, wrap=0.5) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import surfacelib; surfacelib.subsurface_approx(normals, light=(0.3, 0.4, 0.87), view=(0.0, 0.0, 1.0), thickness=0.5, wrap=0.5) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsoptics.get(&quot;subsurface_approx&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Eine Näherung für durchscheinendes Umgriffslicht (Blätter, Haut, Marmor, Milchkunststoff).</p>
 <p>thickness: Durchscheinen (0–1, größer = mehr Licht umgreift von hinten). wrap: wie weit das Licht in die Schattenseite umgreift.</p>

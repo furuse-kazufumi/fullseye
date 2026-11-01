@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">thin_film_reflectance — OPTICS <code style="color:#22d3bf">appearance</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.thin_film_reflectance(nm, thickness_nm=350.0, n_film=1.33, n_sub=1.0, cos_theta=1.0, n_out=1.0, polarization=&#x27;unpolarized&#x27;, under_layers=()) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import matappear; matappear.thin_film_reflectance(nm, thickness_nm=350.0, n_film=1.33, n_sub=1.0, cos_theta=1.0, n_out=1.0, polarization=&#x27;unpolarized&#x27;, under_layers=()) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsoptics.get(&quot;thin_film_reflectance&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>박막(두께 d, 굴절률 n_film)의 분광 반사율. 특성 행렬법의 엄밀해(다중 반사를 모두 포함).</p>
 <p>nm:           파장 [nm] (배열 가능).</p>

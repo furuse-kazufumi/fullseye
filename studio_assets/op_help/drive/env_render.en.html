@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">env_render — DRIVE <code style="color:#22d3bf">env</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table × matrix × matrix</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.env_render(world: &#x27;dict&#x27;, pose, K, width: &#x27;int&#x27; = 640, height: &#x27;int&#x27; = 400, env: &#x27;Optional[dict]&#x27; = None, *, ego=None, ego_pose=None, shadows: &#x27;bool&#x27; = True, shadow_cache: &#x27;Optional[dict]&#x27; = None, shadow_res: &#x27;int&#x27; = 1024) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import driveenv; driveenv.env_render(world: &#x27;dict&#x27;, pose, K, width: &#x27;int&#x27; = 640, height: &#x27;int&#x27; = 400, env: &#x27;Optional[dict]&#x27; = None, *, ego=None, ego_pose=None, shadows: &#x27;bool&#x27; = True, shadow_cache: &#x27;Optional[dict]&#x27; = None, shadow_res: &#x27;int&#x27; = 1024) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;env_render&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Renders sun, sky, shadows, lamps, headlights, fog, rain and glare in physical units.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>

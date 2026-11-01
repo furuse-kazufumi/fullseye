@@ -4,6 +4,7 @@ dim: drive
 category: crossing
 in: 
 out: scalar
+gpu: なし
 examples: [poc_driving_crossing]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `scalar`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.sight_triangle_distance(eye_offset: 'float', eye_distance: 'float', corner_offset: 'float', corner_distance: 'float') -> 'float'` (実装を直接呼ぶなら `import drivecrossing; drivecrossing.sight_triangle_distance(eye_offset: 'float', eye_distance: 'float', corner_offset: 'float', corner_distance: 'float') -> 'float'`、台帳から引くなら `opsdrive.get("sight_triangle_distance")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

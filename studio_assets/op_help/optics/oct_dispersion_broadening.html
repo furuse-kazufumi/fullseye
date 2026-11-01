@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">oct_dispersion_broadening — OPTICS <code style="color:#22d3bf">oct</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.oct_dispersion_broadening(material=&#x27;SILICA&#x27;, length_mm=10.0, center_nm=840.0, bandwidth_nm=50.0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import octscan; octscan.oct_dispersion_broadening(material=&#x27;SILICA&#x27;, length_mm=10.0, center_nm=840.0, bandwidth_nm=50.0)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;oct_dispersion_broadening&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>試料腕だけにある材料(長さ L、往復)の分散の不一致で A スキャンのピークが何倍に広がるか(<code style="color:#22d3bf">table</code>、閉形式)。</p>
 <p>往復の位相 φ(k) = 2 L k (n(k) − n_g(k0))(群遅延は参照腕で合わせた前提)を k0 で展開し、φ₂ = 2L d²(nk)/dk²、φ₃ = 2L d³(nk)/dk³。ガウス光源(パワーの標準偏差 σ = Δk/2.355)の包絡は <b>√(1 + σ⁴ φ₂²) 倍</b>に広がる(2 次まで厳密、3 次は非対称な裾)。数値補償の係数は a2 = φ₂/2 [µm²]、a3 = φ₃/6 [µm³] で、展開の中心は k0 = 2π/λ0(<code style="color:#22d3bf">k_center</code>)—— <code style="color:#22d3bf">oct_dispersion_compensate</code> / <code style="color:#22d3bf">oct_ascan</code> には a2・a3 と<b>同じ k_center</b> を渡す(中心がずれると a2 が 3 a3 δk だけ変わる)。層そのものの分散(厚い樹脂の底の界面が広がる)も同じ式で、L に層の厚さを入れる。</p>

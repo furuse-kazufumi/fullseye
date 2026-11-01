@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">dem_geoid_height — DEM <code style="color:#22d3bf">geodesy</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">depth</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_geoid_height(geoid, lat_deg, lon_deg, lat0_deg, lon0_deg, d_lat_deg, d_lon_deg)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import demops; demops.dem_geoid_height(geoid, lat_deg, lon_deg, lat0_deg, lon0_deg, d_lat_deg, d_lon_deg)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdem.get(&quot;dem_geoid_height&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>지오이드고 격자를 위도·경도로 <b>쌍선형 보간</b>하여 <code style="color:#22d3bf">N</code> [m]을 반환한다(<code style="color:#22d3bf">signal</code>).</p>
 <p>GNSS가 반환하는 것은 타원체고 <code style="color:#22d3bf">h</code>, 지도와 설계도가 쓰는 것은 표고 <code style="color:#22d3bf">H</code>. 그 차이가지오이드고 <code style="color:#22d3bf">N</code>(<code style="color:#22d3bf">H = h - N</code>)이며, 일본 부근에서는 대략 <b>+30~+40 m</b> 있다. 이 op는 공개된 지오이드 모델의 격자(GSIGEO / EGM 계열 같은등간격 그리드)를 읽는 쪽의 도구로, <b>모델 자체는 갖지 않는다</b> —— 어느 판을썼는지는 호출자의 책임이며, 판이 바뀌면 표고는 수 cm 움직인다.</p>

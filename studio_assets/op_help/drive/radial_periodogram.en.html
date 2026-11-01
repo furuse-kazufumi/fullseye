@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">radial_periodogram — DRIVE <code style="color:#22d3bf">terrain</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.radial_periodogram(field, dx: &#x27;float&#x27;, n_bins: &#x27;int&#x27; = 48) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import driveterrain; driveterrain.radial_periodogram(field, dx: &#x27;float&#x27;, n_bins: &#x27;int&#x27; = 48) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;radial_periodogram&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Radially averages the periodogram of a height field (H, W) on a grid: <code style="color:#22d3bf">{&quot;f&quot;, &quot;power&quot;, &quot;count&quot;}</code> (f in cycles/m).</p>
 <p>It is the mean, not the integral over the ring (integrating would multiply by f once and change the slope). DC is excluded.</p>

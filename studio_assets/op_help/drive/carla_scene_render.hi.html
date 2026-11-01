@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">carla_scene_render — DRIVE <code style="color:#22d3bf">carla</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.carla_scene_render(scene, *, lead_asset: &#x27;str&#x27; = &#x27;sedan&#x27;, asset_root=None) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import carlabridge; carlabridge.carla_scene_render(scene, *, lead_asset: &#x27;str&#x27; = &#x27;sedan&#x27;, asset_root=None) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;carla_scene_render&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>scene record को अपने world में फिर से shoot करता है (वही K, वही mounting ऊँचाई, वही field of view) → driveworld.world_camera की images (<code style="color:#22d3bf">color</code> / <code style="color:#22d3bf">label</code> / <code style="color:#22d3bf">depth</code> …) + <code style="color:#22d3bf">pose</code> + <code style="color:#22d3bf">K</code>। CARLA image के साथ <b>बगल में रखकर</b> देखने वाला जोड़ीदार।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

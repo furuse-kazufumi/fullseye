@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">track_sight_distance — DRIVE <code style="color:#22d3bf">crossing</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.track_sight_distance(v_train, clear_time, *, margin: &#x27;float&#x27; = 0.0)</code> (to call the implementation directly, <code style="color:#22d3bf">import drivecrossing; drivecrossing.track_sight_distance(v_train, clear_time, *, margin: &#x27;float&#x27; = 0.0)</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;track_sight_distance&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Distance along the track that must be visible so that no train arrives before the crossing is cleared = v_train · (clear_time + margin).</p>
 <p>If the visible distance is at least this, an unseen train does not reach the crossing before the car has finished crossing (arrival time = distance / speed &gt; time to finish crossing). Arrays accepted.</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">crt_displacement — RESIDUE <code style="color:#22d3bf">image</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.crt_displacement(image0, image1, periods=(5.0, 7.0, 9.0, 11.0, 13.0, 16.0), sigma_px=40.0, max_disp=40.0, axis=&#x27;x&#x27;, refine=2) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import residue; residue.crt_displacement(image0, image1, periods=(5.0, 7.0, 9.0, 11.0, 13.0, 16.0), sigma_px=40.0, max_disp=40.0, axis=&#x27;x&#x27;, refine=2) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsresidue.get(&quot;crt_displacement&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>複数の波長の帯域の位相から局所変位を求め、中国剰余定理で折り返しを解く -&gt; <code style="color:#22d3bf">dict</code>。</p>
 <p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>

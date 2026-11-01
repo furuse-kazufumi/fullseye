@@ -4,6 +4,7 @@ dim: volcolor
 category: render
 in: labels
 out: rgbimage
+gpu: なし
 examples: [voxel_labels_color]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `labels` → `rgbimage`
 - **呼び出し**: `import fullseye as fs; fs.ledger.vol_label_volume_render(labels, axis='z', mode: 'str' = 'front', seed: 'int' = 0, alpha: 'float' = 0.35, background=(0.0, 0.0, 0.0))` (実装を直接呼ぶなら `import volcolor; volcolor.vol_label_volume_render(labels, axis='z', mode: 'str' = 'front', seed: 'int' = 0, alpha: 'float' = 0.35, background=(0.0, 0.0, 0.0))`、台帳から引くなら `opsvolcolor.get("vol_label_volume_render")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

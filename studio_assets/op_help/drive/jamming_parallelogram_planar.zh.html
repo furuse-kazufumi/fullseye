@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">jamming_parallelogram_planar — DRIVE <code style="color:#22d3bf">pegfail</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.jamming_parallelogram_planar(kp, depth: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import pegfail; pegfail.jamming_parallelogram_planar(kp, depth: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;jamming_parallelogram_planar&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p><b>由两点接触的平面静力学推导</b>卡死(jamming)平行四边形(与 pegsim.jamming_diagram 的顶点 = OCW p.34 的值相互核对的第 2 路径)。</p>
 <p>在平面(x 向右、z 向上)中,前端的边缘在深度 l 处接触 −x 侧的壁(法向力 f₁ ≥ 0,朝 +x),+x 侧的孔口边缘接触杆身(f₂ ≥ 0,朝 −x)。在两点都向下滑动的 Coulomb 摩擦(向上 μf)下,施加于前端的 (F_x, F_z 向下为正, M 逆时针为正) 的平衡为</p>

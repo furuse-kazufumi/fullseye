@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">illusion_cafe_wall — GENERATIVE <code style="color:#22d3bf">illusion</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">rgb</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.illusion_cafe_wall(size: &#x27;int&#x27; = 40, rows: &#x27;int&#x27; = 8, cols: &#x27;int&#x27; = 10, mortar: &#x27;float&#x27; = 2.0, shift: &#x27;float&#x27; = 0.5) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import illusion; illusion.illusion_cafe_wall(size: &#x27;int&#x27; = 40, rows: &#x27;int&#x27; = 8, cols: &#x27;int&#x27; = 10, mortar: &#x27;float&#x27; = 2.0, shift: &#x27;float&#x27; = 0.5) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsgenerative.get(&quot;illusion_cafe_wall&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>カフェウォール錯視。<b>目地は厳密な水平線</b>なのに、傾いて見える。</p>
 <p><code style="color:#22d3bf">shift</code> は 1 行ごとの市松のずれ(<code style="color:#22d3bf">size</code> 比)。ずれが 0 または 0.5 では錯視は消える —— <b>0.25 前後が最も強い</b>というのが古典的な観察で、この op はそのままずらし量を振れるようにしてある(<code style="color:#22d3bf">shift=0.25</code> が既定ではないのは、生成器の既定値で「効果が最大」を主張したくないため)。</p>

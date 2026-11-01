@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">hertz_surface_uz — DRIVE <code style="color:#22d3bf">tacsim</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">matrix × scalar × scalar × scalar</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.hertz_surface_uz(r, a: &#x27;float&#x27;, delta: &#x27;float&#x27;, R: &#x27;float&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import tacsim; tacsim.hertz_surface_uz(r, a: &#x27;float&#x27;, delta: &#x27;float&#x27;, R: &#x27;float&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;hertz_surface_uz&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Hertz 球接触の半空間表面の法線変位 ū_z(r)(沈む量 ≥ 0、r と同じ形の配列)。</p>
 <p>内側 r ≤ a: δ − r²/(2R)。外側: (1/πR)[(2a² − r²) arcsin(a/r) + a r √(1 − a²/r²)] (Johnson 式 3.42a)。r = a で δ/2 に連続。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: a, δ, R ≤ 0、a² と Rδ が 1 % 以上食い違う(Hertz でない組)。</p>

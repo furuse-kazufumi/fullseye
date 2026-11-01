@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">states_layer_dimension — CONNGRAPH <code style="color:#22d3bf">dimension</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">matrix × labels</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.states_layer_dimension(X: &#x27;Any&#x27;, labels: &#x27;Any&#x27;) -&gt; &#x27;dict[str, np.ndarray]&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import conngraph; conngraph.states_layer_dimension(X: &#x27;Any&#x27;, labels: &#x27;Any&#x27;) -&gt; &#x27;dict[str, np.ndarray]&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsconngraph.get(&quot;states_layer_dimension&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>층별 실효 차원의 표: 열 layer / n / participation_ratio / ratio(= PR / n).</p>
 <p><code style="color:#22d3bf">X</code> = <code style="color:#22d3bf">graph_layer_propagate</code> 의 반환 (N, n), <code style="color:#22d3bf">labels</code> = 노드의 층 id. &quot;뇌 → 목 → 복수 → 근육&quot;에서차원이 어디서 떨어지는지(움직임의 양자화)를 1 개의 수식으로 읽는다.</p>

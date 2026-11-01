@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">estimate_oriented_normals — 3D <code style="color:#22d3bf">normals_orient</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">normals</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.estimate_oriented_normals(points, k: &#x27;int&#x27; = 20, seed_dir=None) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import normals_orient; normals_orient.estimate_oriented_normals(points, k: &#x27;int&#x27; = 20, seed_dir=None) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;estimate_oriented_normals&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>PCA normal estimation + Hoppe global orientation का संयोजन। → (N,3) oriented unit normals।</p>
 <p><code style="color:#22d3bf">estimate_normals</code> (दिशा अनिर्धारित) → <code style="color:#22d3bf">orient_normals</code> (MST propagation) से गुज़ारता है। बंद सतह पर सभी points बाहर की ओर, और plane पर सभी points एक ही hemisphere की ओर संरेखित होते हैं। मिले हुए normals को <code style="color:#22d3bf">curvature3d.shape_index</code> को देने पर अवतल/उत्तल का sign सही निकलता है।</p>

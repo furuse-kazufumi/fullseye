@@ -4,6 +4,7 @@ dim: llmcore
 category: prepare
 in: tokens
 out: tokens
+gpu: なし
 examples: [poc_attention_identities]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `tokens` → `tokens`
 - **呼び出し**: `import fullseye as fs; fs.ledger.rms_norm(tokens, eps: 'float' = 0.0, weight=None) -> 'np.ndarray'` (実装を直接呼ぶなら `import llmcore; llmcore.rms_norm(tokens, eps: 'float' = 0.0, weight=None) -> 'np.ndarray'`、台帳から引くなら `opsllmcore.get("rms_norm")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

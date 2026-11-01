@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">vol_distance_transform — 3D <code style="color:#22d3bf">medial</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">voxel</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_distance_transform(vol_binary, spacing=None)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import volops; volops.vol_distance_transform(vol_binary, spacing=None)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;vol_distance_transform&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Exact Euclidean distance transform of a binary volume.</p>
 <p>Each foreground (non-zero) voxel is labelled with its Euclidean distance to the nearest background voxel, via <code style="color:#22d3bf">scipy.ndimage.distance_transform_edt</code>. Pass *spacing* <code style="color:#22d3bf">(sz, sy, sx)</code> (e.g. <code style="color:#22d3bf">VolumeMeta.spacing_mm</code>, or the <code style="color:#22d3bf">VolumeMeta</code> itself) to make the distance <b>anisotropy-aware</b> — millimetres rather than voxels; otherwise unit spacing is assumed. A non-<code style="color:#22d3bf">{0, 1}</code> input is thresholded at <code style="color:#22d3bf">&gt; 0.5</code>.</p>

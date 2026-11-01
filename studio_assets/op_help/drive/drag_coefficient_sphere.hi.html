@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">drag_coefficient_sphere — DRIVE <code style="color:#22d3bf">ball</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.drag_coefficient_sphere(reynolds) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import ballistics; ballistics.drag_coefficient_sphere(reynolds) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;drag_coefficient_sphere&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>चिकने गोले के drag coefficient का empirical सूत्र (Morrison 2013, Re ≲ 1e6): 24/Re + 2.6(Re/5)/(1 + (Re/5)^1.52) + 0.411(Re/263000)^−7.94/(1 + (Re/263000)^−8) + 0.25(Re/1e6)/(1 + Re/1e6)। table tennis की गेंद (Re ≈ 1–5 × 10⁴) के लिए ≈ 0.4–0.5।</p>
 <p>खाली इनपुट (<code style="color:#22d3bf">reynolds</code> में 0 तत्व) पर <code style="color:#22d3bf">ValueError</code> उठता है।</p>

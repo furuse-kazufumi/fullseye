@@ -4,6 +4,7 @@ dim: videostream
 category: recursive
 in: video
 out: table
+gpu: なし
 examples: [video_streaming]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `video` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.running_mean_std(video) -> 'dict'` (実装を直接呼ぶなら `import videostream; videostream.running_mean_std(video) -> 'dict'`、台帳から引くなら `opsvideostream.get("running_mean_std")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

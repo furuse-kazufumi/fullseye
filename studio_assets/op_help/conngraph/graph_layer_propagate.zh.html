@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">graph_layer_propagate — CONNGRAPH <code style="color:#22d3bf">dimension</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">conn_graph × labels × matrix</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graph_layer_propagate(W: &#x27;Any&#x27;, labels: &#x27;Any&#x27;, U: &#x27;Any&#x27;, activation: &#x27;str&#x27; = &#x27;kwta&#x27;, active_frac: &#x27;float&#x27; = 0.1, gain: &#x27;float&#x27; = 1.0) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import conngraph; conngraph.graph_layer_propagate(W: &#x27;Any&#x27;, labels: &#x27;Any&#x27;, U: &#x27;Any&#x27;, activation: &#x27;str&#x27; = &#x27;kwta&#x27;, active_frac: &#x27;float&#x27; = 0.1, gain: &#x27;float&#x27; = 1.0) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsconngraph.get(&quot;graph_layer_propagate&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>将层 0 的状态 <code style="color:#22d3bf">U</code> (N, n_0) 经由区块 <code style="color:#22d3bf">W[layer a → layer a+1]</code> <b>逐级向前</b>传递，得到全部层的状态 <code style="color:#22d3bf">(N, n)</code>(<code style="color:#22d3bf">matrix</code>，列按节点顺序，层 0 的列就是 <code style="color:#22d3bf">U</code> 本身)。</p>
 <p>对每个接收者,先把输入权重之和归一化为 1 再取加权和(与层的大小无关),然后用 <code style="color:#22d3bf">activation</code></p>

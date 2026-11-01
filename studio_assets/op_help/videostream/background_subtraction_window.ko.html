@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">background_subtraction_window — VIDEOSTREAM <code style="color:#22d3bf">window</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">video</code> → <code style="color:#22d3bf">video</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.background_subtraction_window(video, window: &#x27;int&#x27; = 5, threshold: &#x27;float&#x27; = 0.1) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import videostream; videostream.background_subtraction_window(video, window: &#x27;int&#x27; = 5, threshold: &#x27;float&#x27; = 0.1) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsvideostream.get(&quot;background_subtraction_window&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>인과적 윈도 중앙값 배경 → 프레임별 0/1 전경 마스크 <code style="color:#22d3bf">(T, H, W)</code>(<code style="color:#22d3bf">video</code>).</p>
 <p>프레임 <code style="color:#22d3bf">t</code> 마다 직전 <code style="color:#22d3bf">window</code> 장(<code style="color:#22d3bf">max(0, t-window+1) .. t</code>, <b>그 프레임자신을 포함</b>)의 화소별 중앙값을 배경 <code style="color:#22d3bf">bg</code> 로 하고, <code style="color:#22d3bf">|frame_t - bg| &gt; threshold</code> 를 1, 그 외를 0 으로 한다. 미래 프레임은 보지 않으므로(인과적) 앞부분에서는장수가 모자라는 만큼 창이 짧다.</p>

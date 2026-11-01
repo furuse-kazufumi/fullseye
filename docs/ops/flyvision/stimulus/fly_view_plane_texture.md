@@ -4,6 +4,7 @@ dim: flyvision
 category: stimulus
 in: table
 out: signal
+gpu: なし
 examples: [poc_zebra_stripes_fly_eye]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `signal`
 - **呼び出し**: `import fullseye as fs; fs.ledger.fly_view_plane_texture(lattice, distance_m, period_m, pattern='vertical', drho_deg=8.23, contrast=1.0, mean=0.5, lateral_m=(0.0, 0.0), phase_deg=0.0)` (実装を直接呼ぶなら `import flyvision; flyvision.fly_view_plane_texture(lattice, distance_m, period_m, pattern='vertical', drho_deg=8.23, contrast=1.0, mean=0.5, lateral_m=(0.0, 0.0), phase_deg=0.0)`、台帳から引くなら `opsflyvision.get("fly_view_plane_texture")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

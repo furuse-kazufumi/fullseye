@@ -4,6 +4,7 @@ dim: multivar
 category: analysis
 in: design × signal
 out: table
+gpu: なし
 examples: [multivar_inspection_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `design × signal` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.rsm_fit(design=None, y=None, model='quadratic') -> 'dict'` (実装を直接呼ぶなら `import multivar; multivar.rsm_fit(design=None, y=None, model='quadratic') -> 'dict'`、台帳から引くなら `opsmultivar.get("rsm_fit")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

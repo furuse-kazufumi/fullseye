@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tonemap_aces — 3D <code style="color:#22d3bf">render</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tonemap_aces(hdr, exposure: &#x27;float&#x27; = 1.0) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import render_tonemap; render_tonemap.tonemap_aces(hdr, exposure: &#x27;float&#x27; = 1.0) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;tonemap_aces&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>ACES filmic 近似(Narkowicz 2015)で HDR を <code style="color:#22d3bf">[0, 1]</code> の LDR へ圧縮。→ float64。</p>
 <p><code style="color:#22d3bf">x = hdr * exposure</code> に対し <code style="color:#22d3bf">f(x) = x(a x + b) / (x(c x + d) + e)</code> を適用する。フィルム的な S 字カーブで暗部を持ち上げハイライトを緩やかに巻き取り、映像制作標準の「見栄え」を出す。<code style="color:#22d3bf">x &lt; ~7.24</code> の範囲では狭義単調増加・出力 &lt; 1(それ以上は 1 に飽和しクリップ)。カラー <code style="color:#22d3bf">(H, W, C)</code> はチャンネル独立に写像する。</p>

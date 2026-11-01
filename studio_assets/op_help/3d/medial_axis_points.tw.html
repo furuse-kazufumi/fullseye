@@ -4,6 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.medial_axis_points(vol, min_radius=0.0)</code>(要直接呼叫實作,<code style="color:#22d3bf">import medial; medial.medial_axis_points(vol, min_radius=0.0)</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;medial_axis_points&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>經台帳呼叫的回傳值</b>: <code style="color:#22d3bf">fullseye.ledger.medial_axis_points(...)</code> 只回傳<b>宣告的 out 型別 <code style="color:#22d3bf">points</code> 的值</b>(底層函式還會回傳輔助資訊)。需要被捨棄的部分時,請用 <code style="color:#22d3bf">fullseye.ledger.medial_axis_points.raw(...)</code>,或直接呼叫 <code style="color:#22d3bf">medial.medial_axis_points</code>。</p>
 <p style="margin:2px 0 2px 12px">• 底層回傳: <code style="color:#22d3bf">(points, radii)</code></p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把 medial 體素的座標與局部半徑(= 該點的 EDT 值)變成點群。回傳 (points, radius)。</p>
 <p>把粗的部分呈面狀、細的部分呈線狀分布的 medial 點,以 (M,3) 座標(z,y,x)及各自的局部半徑 (M,) 回傳。半徑最大的點指向形狀最「內側」= 中心。</p>

@@ -4,6 +4,7 @@ dim: oned
 category: signal
 in: positions
 out: table
+gpu: なし
 examples: [poc_web_roll_periodicity]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `positions` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.point_spectrum(positions, extent=None, n_freq=2048, f_max=None, method='direct', weights=None, bins_per_period=8, memory_budget=None)` (実装を直接呼ぶなら `import dsp; dsp.point_spectrum(positions, extent=None, n_freq=2048, f_max=None, method='direct', weights=None, bins_per_period=8, memory_budget=None)`、台帳から引くなら `ops1d.get("point_spectrum")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

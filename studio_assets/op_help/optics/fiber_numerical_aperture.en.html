@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">fiber_numerical_aperture — OPTICS <code style="color:#22d3bf">fiber</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">table</code> (an op determined by its arguments alone — it takes no image or data input)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fiber_numerical_aperture(n_core=1.4682, n_clad=1.4629, wavelength_nm=None)</code> (to call the implementation directly, <code style="color:#22d3bf">import fiberoptics; fiberoptics.fiber_numerical_aperture(n_core=1.4682, n_clad=1.4629, wavelength_nm=None)</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;fiber_numerical_aperture&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Numerical aperture NA = √(n_core² − n_clad²), the acceptance half-angle (degrees) and the relative index difference Δ. Indices are numbers or material names.</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>

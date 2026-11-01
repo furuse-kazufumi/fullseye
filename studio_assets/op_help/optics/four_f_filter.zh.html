@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">four_f_filter — OPTICS <code style="color:#22d3bf">wave</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">cimage × cimage</code> → <code style="color:#22d3bf">cimage</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.four_f_filter(field, transfer, invert=True)</code>(要直接调用实现,<code style="color:#22d3bf">import optics; optics.four_f_filter(field, transfer, invert=True)</code>;从台账取用则 <code style="color:#22d3bf">opsoptics.get(&quot;four_f_filter&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>4f 光学处理器：经过 2 片透镜与傅里叶面滤波器后的输出。</p>
 <p>输入面 → 透镜 1 → <b>傅里叶面</b>(乘以 <code style="color:#22d3bf">transfer</code>)→ 透镜 2 → 输出面。标量衍射的理想 4f 系统中输出为</p>

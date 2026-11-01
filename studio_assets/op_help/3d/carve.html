@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">carve — 3D <code style="color:#22d3bf">space_carving</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">images</code> → <code style="color:#22d3bf">voxel</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.carve(silhouettes: &#x27;Sequence[np.ndarray]&#x27;, Ks: &#x27;Sequence[np.ndarray]&#x27;, Rs: &#x27;Sequence[np.ndarray]&#x27;, ts: &#x27;Sequence[np.ndarray]&#x27;, bounds: &#x27;Bounds&#x27;, res: &#x27;int&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import visualhull; visualhull.carve(silhouettes: &#x27;Sequence[np.ndarray]&#x27;, Ks: &#x27;Sequence[np.ndarray]&#x27;, Rs: &#x27;Sequence[np.ndarray]&#x27;, ts: &#x27;Sequence[np.ndarray]&#x27;, bounds: &#x27;Bounds&#x27;, res: &#x27;int&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;carve&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>bounds を res^3 voxel に離散化し、全シルエット内に射影される voxel を残す(空間彫刻)。</p>
 <p>各 voxel 中心を全カメラ <code style="color:#22d3bf">m</code> に <code style="color:#22d3bf">X_cam = R_m X + t_m</code> で射影し、depth&gt;0・画像内・ <code style="color:#22d3bf">silhouettes[m]</code> が前景、を <b>すべて</b> 満たす voxel だけ keep する(視錐の共通部分)。シルエット/カメラは長さ M のリスト。</p>

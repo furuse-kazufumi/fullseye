@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">sfp_normals — OPTICS <code style="color:#22d3bf">shape_from_polarization</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">polsweep</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sfp_normals(sweep, refractive_index=1.5, model=&#x27;specular&#x27;, angles_deg=(0.0, 45.0, 90.0, 135.0), violation_tol=0.05, out_of_range=&#x27;invalid&#x27;)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import sfpolar; sfpolar.sfp_normals(sweep, refractive_index=1.5, model=&#x27;specular&#x27;, angles_deg=(0.0, 45.0, 90.0, 135.0), violation_tol=0.05, out_of_range=&#x27;invalid&#x27;)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;sfp_normals&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>偏光画像から画素ごとの面法線の候補の集合を明示的に返す —— 拡散 2 本、鏡面 4 本(天頂 2 × 方位 2)(<code style="color:#22d3bf">table</code>)。</p>
 <p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>

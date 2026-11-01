@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tid2013_published — IMGMETRICS <code style="color:#22d3bf">iqa</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">table</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tid2013_published() -&gt; &#x27;Dict[str, Tuple[float, float]]&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import iqatid; iqatid.tid2013_published() -&gt; &#x27;Dict[str, Tuple[float, float]]&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsimgmetrics.get(&quot;tid2013_published&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>公开的秩相关表 {metric: (SROCC, KROCC)}(14 个)。</p>
 <p>出处:https://www.ponomarenko.info/tid2013.htm(Last changed 2015-03-23)的“Ranking of compared metrics in accordance with Spearman / Kendall correlation with MOS”,与发布包 readme 的 TABLE III / IV 相同。键是发布包 <code style="color:#22d3bf">metrics_values/&lt;键&gt;.txt</code> 的文件名(小写)。<b>由附带的作者值和 mos.txt,按 Spearman = 平均秩、Kendall = τ_b,14 个指标全部 3 位一致</b> (|差| ≤ 0.0005 / 0.00044,2026-10-04)。网页开头的“PSNR … is 0.69”和使用示例中的“FSIMc Full : 0.666”与表不符(前者是 TID2008 的遗留,后者与 τ_a 0.66626 一致 —— 两者都是推测),所以不用于门禁。</p>

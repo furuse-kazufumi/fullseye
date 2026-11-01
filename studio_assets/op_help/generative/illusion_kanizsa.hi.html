@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">illusion_kanizsa — GENERATIVE <code style="color:#22d3bf">illusion</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">rgb</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.illusion_kanizsa(radius: &#x27;float&#x27; = 54.0, size: &#x27;int&#x27; = 420) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import illusion; illusion.illusion_kanizsa(radius: &#x27;float&#x27; = 54.0, size: &#x27;int&#x27; = 420) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsgenerative.get(&quot;illusion_kanizsa&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Kanizsa triangle। <b>1 भी contour line नहीं बनाई गई है</b>, फिर भी त्रिभुज दिखता है।</p>
 <p>invariant: illusory contour पर image <b>background का स्थिरांक</b> है (gradient ठीक 0)।</p>

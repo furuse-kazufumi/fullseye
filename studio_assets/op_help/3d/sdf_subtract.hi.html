@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">sdf_subtract — 3D <code style="color:#22d3bf">sdf_csg</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">sdf × sdf</code> → <code style="color:#22d3bf">sdf</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sdf_subtract(a, b)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import sdf_ops; sdf_ops.sdf_subtract(a, b)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;sdf_subtract&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>difference A\B = max(a, -b) (A के अंदर और B के बाहर = <code style="color:#22d3bf">-b</code> के अंदर)।</p>
 <p><code style="color:#22d3bf">b</code> का sign उलटने से &quot;B का बाहर अंदर और B का अंदर बाहर&quot; हो जाता है (complement), इसलिए A के साथ इसका गुणनफल A में से B को खोखला करके निकाला गया आकार बनता है। non-commutative: <code style="color:#22d3bf">sdf_subtract(a,b) != sdf_subtract(b,a)</code>।</p>

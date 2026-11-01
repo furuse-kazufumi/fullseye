@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">puck_scene_mjcf — DRIVE <code style="color:#22d3bf">puck</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.puck_scene_mjcf(table: &#x27;dict&#x27;, *, cam_height: &#x27;float&#x27; = 1.5, fovy: &#x27;float&#x27; = 50.0, offwidth: &#x27;int&#x27; = 1024, offheight: &#x27;int&#x27; = 768) -&gt; &#x27;str&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import puck; puck.puck_scene_mjcf(table: &#x27;dict&#x27;, *, cam_height: &#x27;float&#x27; = 1.5, fovy: &#x27;float&#x27; = 50.0, offwidth: &#x27;int&#x27; = 1024, offheight: &#x27;int&#x27; = 768) -&gt; &#x27;str&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;puck_scene_mjcf&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>自製的最小 MJCF(Coulomb 版，不需要 mujoco)：有摩擦的平面上的圓柱球餅(自由關節)、4 面壁(箱體)、正上方相機。Challenge 的球桌是黏性阻尼，因此要在 MuJoCo 中驗證 Coulomb 等減速請用這個。壁的反彈為軟接觸，e 需量測。</p>
 <p>空輸入(<code style="color:#22d3bf">table</code> 為空 dict)會引發 <code style="color:#22d3bf">ValueError</code>。</p>

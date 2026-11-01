@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">sun_pixel_position — GEOCAM <code style="color:#22d3bf">sun</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">keypoints</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sun_pixel_position(image, threshold=0.98, min_area=4)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import geocam; geocam.sun_pixel_position(image, threshold=0.98, min_area=4)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsgeocam.get(&quot;sun_pixel_position&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>영상 속 태양(센서를 <b>포화</b>시키는 원반)의 무게중심 → keypoints (1, 2) = (u, v).</p>
 <p>전제는 &quot;태양은 센서를 포화시키고, 구름이나 눈은 포화 직전에서 멈춘다&quot;. 값이 <code style="color:#22d3bf">threshold</code>(절댓값, 영상은 0~1) 이상인 화소를 8 근방으로 연결하고, <b>최대 덩어리</b>의 휘도 무게중심을 반환한다. 덩어리가 <code style="color:#22d3bf">min_area</code> 미만, 또는 포화 화소가 없으면 &quot;태양이 찍혀 있지 않다&quot;로서 ValueError(조용히 구름의 반사를 반환하지 않는다 —— 태양이산에 가려진 시각의 사진에서, 구름을 태양으로 읽어 자세를 더럽히지 않기 위한 게이트). <b>영상의 최댓값에 대한 비가아니다</b>(비로 하면, 태양이 없는 사진에서 가장 밝은 구름이 반드시 &quot;태양&quot;이 된다). 야경의 인공 광원이나태양의 수면 반사는 포화할 수 있으므로, 그런 장면에서는 쓸 수 없다. 덩어리는 <b>꽉 찬 원</b>이어야 한다(충전율 ≥ 0.4, 종횡비 ≤ 2.5)—— 노출 과다로 하늘의 띠가 포화된 사진은 가늘고 긴 덩어리가 되어 거부된다.</p>

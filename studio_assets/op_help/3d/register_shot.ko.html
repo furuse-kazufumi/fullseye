@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">register_shot — 3D <code style="color:#22d3bf">feature_register</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">pose</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.register_shot(src, dst, radius=None, normal_k=16, ratio=0.9, ransac_iters=2000, inlier_thr=None, refine_icp=True, max_kp=400, device=&#x27;cpu&#x27;, seed=0)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import feat_shot; feat_shot.register_shot(src, dst, radius=None, normal_k=16, ratio=0.9, ransac_iters=2000, inlier_thr=None, refine_icp=True, max_kp=400, device=&#x27;cpu&#x27;, seed=0)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;register_shot&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>SHOT 기술자에 의한 희소 특징 매칭 + RANSAC 강체 자세 추정(전체 파이프라인).</p>
 <p>초기 추정 없이 대회전·부분 중첩인 2 개 점군을 대응시켜 강체 변환(회전 R + 병진 t)을 반환한다. 밀집 매칭(NCC/Hough/PCA)과 달리 ISS 키포인트마다 국소 참조 프레임(LRF)을 세우고, 구형 분할 셀의법선 각도 히스토그램(SHOT)으로 기술 → Lowe 비율 테스트 + 상호 최근접으로매칭 → RANSAC으로 이상값에 강건하게 자세를 추정한다. 얻은 자세는 ICP의거친 초기값(coarse init) 공급에도 쓸 수 있다.</p>

@@ -4,6 +4,7 @@ dim: drive
 category: tacscalib
 in: any × any × scalar × scalar × scalar
 out: table
+gpu: なし
 examples: [poc_tacscalib_sphere_lut]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `any × any × scalar × scalar × scalar` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.sphere_cap_height(shape, centre, a_px: 'float', R_px: 'float', pitch: 'float') -> 'dict'` (実装を直接呼ぶなら `import tacscalib; tacscalib.sphere_cap_height(shape, centre, a_px: 'float', R_px: 'float', pitch: 'float') -> 'dict'`、台帳から引くなら `opsdrive.get("sphere_cap_height")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

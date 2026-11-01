@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">mueller_apply — OPTICS <code style="color:#22d3bf">polarization</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">matrix × stokes</code> → <code style="color:#22d3bf">stokes</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mueller_apply(mueller, stokes)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import optics; optics.mueller_apply(mueller, stokes)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;mueller_apply&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Stokes vector को Mueller matrix से गुज़ारता है: <code style="color:#22d3bf">S&#x27; = M @ S</code>।</p>
 <p>*mueller* एक <code style="color:#22d3bf">(4, 4)</code> real matrix है (इसे <code style="color:#22d3bf">mueller_element</code> से बनाएँ, या कई को आपस में गुणा करें) और *stokes* एक 4-component Stokes vector <code style="color:#22d3bf">[S0, S1, S2, S3]</code> है।</p>

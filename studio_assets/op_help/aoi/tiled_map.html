@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tiled_map — AOI <code style="color:#22d3bf">aggregate</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tiled_map(image, tile=16, stat=&#x27;mean&#x27;, overlap=0, drop_partial=False)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import aoi; aoi.tiled_map(image, tile=16, stat=&#x27;mean&#x27;, overlap=0, drop_partial=False)</code>、台帳から引くなら <code style="color:#22d3bf">opsaoi.get(&quot;tiled_map&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>画像をタイルに割り、タイルごとの量を小さな地図にする。→ dict。</p>
 <p><code style="color:#22d3bf">tile</code> 画素角のタイルを <code style="color:#22d3bf">tile - overlap</code> 画素ずつずらして敷き、各タイルの中の量(<code style="color:#22d3bf">TILE_STATS</code>)を 1 つずつ計算して <code style="color:#22d3bf">(h, w)</code> の地図にする。AOI では、明るさのむら・ざらつき・欠陥の密度を「どのあたりが怪しいか」の粗い地図にして、次の段(閾値・<code style="color:#22d3bf">spc</code> の管理図)へ渡すのに使う。</p>

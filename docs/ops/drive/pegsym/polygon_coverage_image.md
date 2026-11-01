@@ -4,6 +4,7 @@ dim: drive
 category: pegsym
 in: matrix
 out: image2d
+gpu: なし
 examples: [poc_peg_symmetry_search]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `matrix` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.polygon_coverage_image(vertices_px, size: 'int' = 160, ss: 'int' = 8, width: 'int | None' = None) -> 'np.ndarray'` (実装を直接呼ぶなら `import pegsym; pegsym.polygon_coverage_image(vertices_px, size: 'int' = 160, ss: 'int' = 8, width: 'int | None' = None) -> 'np.ndarray'`、台帳から引くなら `opsdrive.get("polygon_coverage_image")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

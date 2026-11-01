@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">plateau_parse — DRIVE <code style="color:#22d3bf">japan</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.plateau_parse(source: &#x27;str | Path | bytes&#x27;, *, origin: &#x27;tuple[float, float] | None&#x27; = None, max_buildings: &#x27;int | None&#x27; = None) -&gt; &#x27;dict[str, Any]&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import driveplateau; driveplateau.plateau_parse(source: &#x27;str | Path | bytes&#x27;, *, origin: &#x27;tuple[float, float] | None&#x27; = None, max_buildings: &#x27;int | None&#x27; = None) -&gt; &#x27;dict[str, Any]&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;plateau_parse&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>PLATEAU CityGML에서 건물의 바닥 다각형·높이·바닥면 표고를 스트림으로 읽습니다.</p>
 <p><code style="color:#22d3bf">iterparse</code> 로 <code style="color:#22d3bf">Building</code>(로컬 이름)의 end 이벤트마다 처리하고, 처리 후 <code style="color:#22d3bf">elem.clear()</code> 로 메모리를 해제한다(파일 1 개가 수백 MB 여도 동작하는 설계).</p>

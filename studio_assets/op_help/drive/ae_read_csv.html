@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">ae_read_csv — DRIVE <code style="color:#22d3bf">grind</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ae_read_csv(path, header_lines: &#x27;int&#x27; = 12, offset: &#x27;float&#x27; = 32768.0, full_scale: &#x27;float&#x27; = 32768.0) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import grind; grind.ae_read_csv(path, header_lines: &#x27;int&#x27; = 12, offset: &#x27;float&#x27; = 32768.0, full_scale: &#x27;float&#x27; = 32768.0) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;ae_read_csv&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>AE の生の CSV(ヘッダ <code style="color:#22d3bf">header_lines</code> 行 + 1 行 1 標本の ADC 値)を電圧 [V] の信号にする。</p>
 <p>公開データの ADC は 16 bit・±1 V・ストレートオフセットバイナリ(0 → −1 V、32768 → 0 V、65535 → +1 V)なので <code style="color:#22d3bf">(raw − offset) / full_scale</code>(解析コードの変換と同じ)。パスは返り値に残さない。数値でない行・空 → <code style="color:#22d3bf">ValueError</code>。</p>

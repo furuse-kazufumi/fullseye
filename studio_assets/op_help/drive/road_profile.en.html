@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">road_profile — DRIVE <code style="color:#22d3bf">long</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.road_profile(profile_xz, l0: &#x27;float&#x27; = 0.0) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import drivelong; drivelong.road_profile(profile_xz, l0: &#x27;float&#x27; = 0.0) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;road_profile&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Turns a polyline of horizontal distance and height (x, z) (same form as <code style="color:#22d3bf">profile</code> of drivecourse.course_slope) into a longitudinal profile over <b>arc length l along the road surface</b>.</p>
 <p>Returns = <code style="color:#22d3bf">{&quot;l&quot; (n,), &quot;x&quot; (n,), &quot;z&quot; (n,), &quot;sin&quot; (n−1,), &quot;cos&quot; (n−1,)}</code>. l is the arc length of the break points starting from <code style="color:#22d3bf">l0</code>. The grade angle θ_i of segment i has sin = Δz/Δl, cos = Δx/Δl (flat outside both ends: θ = 0, z is the end value).</p>

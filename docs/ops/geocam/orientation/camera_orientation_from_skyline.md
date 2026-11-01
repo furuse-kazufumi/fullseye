@@ -4,6 +4,7 @@ dim: geocam
 category: orientation
 in: signal × table
 out: table
+gpu: なし
 examples: [poc_public_camera_heading]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal × table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.camera_orientation_from_skyline(skyline_rows, K, sky_table, yaw_step_deg=1.0, pitch_range=(-15.0, 15.0), roll_range=(-10.0, 10.0), coarse_step_deg=2.5)` (実装を直接呼ぶなら `import geocam; geocam.camera_orientation_from_skyline(skyline_rows, K, sky_table, yaw_step_deg=1.0, pitch_range=(-15.0, 15.0), roll_range=(-10.0, 10.0), coarse_step_deg=2.5)`、台帳から引くなら `opsgeocam.get("camera_orientation_from_skyline")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

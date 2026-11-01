@@ -4,6 +4,7 @@ dim: videocube
 category: cube
 in: video
 out: image2d
+gpu: なし
 examples: [poc_video_cube]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `video` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.video_cube_cut(video, plane: 'str' = 'xt', position: 'float' = 0.5) -> 'np.ndarray'` (実装を直接呼ぶなら `import videocube; videocube.video_cube_cut(video, plane: 'str' = 'xt', position: 'float' = 0.5) -> 'np.ndarray'`、台帳から引くなら `opsvideocube.get("video_cube_cut")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

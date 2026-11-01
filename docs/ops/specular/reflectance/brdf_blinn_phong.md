@@ -4,6 +4,7 @@ dim: specular
 category: reflectance
 in: normalmap
 out: image2d
+gpu: なし
 examples: [poc_shape_from_polarization, specular_photometric]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `normalmap` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.brdf_blinn_phong(normals, light=(0.0, 0.0, 1.0), view=(0.0, 0.0, 1.0), shininess=32.0)` (実装を直接呼ぶなら `import specularity; specularity.brdf_blinn_phong(normals, light=(0.0, 0.0, 1.0), view=(0.0, 0.0, 1.0), shininess=32.0)`、台帳から引くなら `opsspecular.get("brdf_blinn_phong")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

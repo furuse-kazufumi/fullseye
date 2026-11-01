@@ -5,6 +5,7 @@ category: frequency
 in: image
 out: image
 halcon: fft_image
+gpu: なし
 examples: [degenerate_inputs, gallery2d_texture_freq, poc_moire_screen]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -16,6 +17,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **データ種**: `image` → `image`
 - **呼び出し**: `fullseye.apply(img, "fft_image", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 - **HALCON 相当**: `fft_image`(意味・パラメータは HALCON リファレンスが参考になる)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ![fft_image: input → output](../../_fig/fft_image.png)
 

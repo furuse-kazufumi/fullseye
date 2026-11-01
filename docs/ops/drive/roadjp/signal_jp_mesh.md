@@ -4,6 +4,7 @@ dim: drive
 category: roadjp
 in: 
 out: table
+gpu: なし
 examples: [gallery_drive_japan_roads]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.signal_jp_mesh(*, lens: 'float' = 0.3, n: 'int' = 3, hood: 'bool' = True, state: 'str' = 'off') -> 'dict'` (実装を直接呼ぶなら `import roadjp; roadjp.signal_jp_mesh(*, lens: 'float' = 0.3, n: 'int' = 3, hood: 'bool' = True, state: 'str' = 'off') -> 'dict'`、台帳から引くなら `opsdrive.get("signal_jp_mesh")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

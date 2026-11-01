@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">risk_aware_path — DRIVE <code style="color:#22d3bf">roverslip</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table × any × any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.risk_aware_path(cost_map, start, goal) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import roverslip; roverslip.risk_aware_path(cost_map, start, goal) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;risk_aware_path&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p><code style="color:#22d3bf">cvar_cost_map</code> の辺の所要時間の上で、8 近傍の Dijkstra(向きのある辺 —— 登りと下りで違う)。</p>
 <p><code style="color:#22d3bf">start</code>・<code style="color:#22d3bf">goal</code> は (行, 列)。返り値 <code style="color:#22d3bf">{&quot;path&quot;: (n, 2) の添字, &quot;cost&quot;: 合計の所要時間 [s] (届かなければ inf), &quot;reached&quot;: bool, &quot;cost_to_come&quot;: (H, W)}</code>。届かないときは <code style="color:#22d3bf">path</code> が空。</p>

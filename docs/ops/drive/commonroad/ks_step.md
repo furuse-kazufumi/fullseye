@@ -4,6 +4,7 @@ dim: drive
 category: commonroad
 in: any × any
 out: any
+gpu: なし
 examples: [poc_driving_commonroad]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `any × any` → `any`
 - **呼び出し**: `import fullseye as fs; fs.ledger.ks_step(state, u, dt: 'float', params=None) -> 'np.ndarray'` (実装を直接呼ぶなら `import drivecommonroad; drivecommonroad.ks_step(state, u, dt: 'float', params=None) -> 'np.ndarray'`、台帳から引くなら `opsdrive.get("ks_step")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

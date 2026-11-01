@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">chief_ray — OPTICS <code style="color:#22d3bf">design</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.chief_ray(system, field=None, wavelength_um=None, image_mm=None)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import raytrace; raytrace.chief_ray(system, field=None, wavelength_um=None, image_mm=None)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;chief_ray&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Trace the chief ray (through the stop centre) at one field (<code style="color:#22d3bf">table</code>).</p>
 <p>Returns <code style="color:#22d3bf">{&quot;image_x&quot;, &quot;image_y&quot;}</code> (mm on the image plane), <code style="color:#22d3bf">&quot;valid&quot;</code>, the full <code style="color:#22d3bf">points</code> (n_surf+2, 3) / <code style="color:#22d3bf">dirs</code> polylines and <code style="color:#22d3bf">&quot;opl&quot;</code>. Fields are along +y (degrees for a distant object, mm otherwise), as everywhere in this module; <code style="color:#22d3bf">lensimage.distortion_map</code> uses this. The chief ray is always the <b>unvignetted</b> one (pupil centre) and goes through the stop centre whatever the system&#x27;s <code style="color:#22d3bf">aim</code> is.</p>

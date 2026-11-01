@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">fisher_lda_fit — SEGMENTATION <code style="color:#22d3bf">classify</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">matrix × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fisher_lda_fit(X, y, *, ridge: &#x27;float&#x27; = 1e-06, prior1: &#x27;Optional[float]&#x27; = None) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import cropweed; cropweed.fisher_lda_fit(X, y, *, ridge: &#x27;float&#x27; = 1e-06, prior1: &#x27;Optional[float]&#x27; = None) -&gt; &#x27;Dict[str, object]&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opssegmentation.get(&quot;fisher_lda_fit&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>学习两类 Fisher 线性判别（闭式解，无迭代）。</p>
 <p><code style="color:#22d3bf">X</code> 为 (N, D) 的特征(<code style="color:#22d3bf">superpixel_color_texture_features</code> 返回的 dict 也可直接传入), <code style="color:#22d3bf">y</code> 为 N 个 0 / 1 类别。特征按整体平均与标准差标准化(方差为 0 的列保持尺度 1, 记入 <code style="color:#22d3bf">constant_columns</code>),在类内共同协方差 Σ = (S₀ + S₁)/(N − 2) 上加 <code style="color:#22d3bf">ridge</code> × tr(Σ)/D 后求 w = Σ⁻¹(μ₁ − μ₀)。判定截距是两个等方差正态分布的对数似然比 w·z − w·(μ₀ + μ₁)/2 + log(π₁/π₀) 为 0 的点(<code style="color:#22d3bf">prior1</code> = π₁,默认为训练数据中的比例)。</p>

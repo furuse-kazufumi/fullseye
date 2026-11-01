@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">laplacian_smooth — 3D <code style="color:#22d3bf">mesh_process</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">mesh</code> → <code style="color:#22d3bf">mesh</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.laplacian_smooth(mesh: &#x27;Sequence&#x27;, iters: &#x27;int&#x27; = 10, lam: &#x27;float&#x27; = 0.5) -&gt; &#x27;Mesh&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import mesh_smooth; mesh_smooth.laplacian_smooth(mesh: &#x27;Sequence&#x27;, iters: &#x27;int&#x27; = 10, lam: &#x27;float&#x27; = 0.5) -&gt; &#x27;Mesh&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;laplacian_smooth&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>umbrella Laplacian による三角形メッシュ平滑化。→ (verts, faces)。</p>
 <p>各反復で全頂点を <code style="color:#22d3bf">v_i += lam * (mean(隣接 v_j) - v_i)</code> と更新する。高周波ノイズを確実に減らす一方、閉曲面では平均曲率流と同様に <b>内側へ収縮(shrinkage)</b> する(球は反復とともに縮む)。収縮を避けたい場合は <code style="color:#22d3bf">taubin_smooth</code> を使う。</p>

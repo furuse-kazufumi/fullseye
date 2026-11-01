@@ -4,6 +4,7 @@ dim: 3d
 category: surface_fit
 in: image2d
 out: measurement
+gpu: なし
 examples: [geometry_metrology]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -16,6 +17,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **呼び出し**: `import fullseye as fs; fs.ledger.surface_form_error(height, degree=1)` (実装を直接呼ぶなら `import match3d; match3d.surface_form_error(height, degree=1)`、台帳から引くなら `ops3d.get("surface_form_error")`)
 - **台帳経由の戻り値**: `fullseye.ledger.surface_form_error(...)` は**宣言 out 型 `measurement` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.surface_form_error.raw(...)`、または `match3d.surface_form_error` を直接呼ぶ。
   - 本体の返り: `(residual, rms, pv) → pv float`
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

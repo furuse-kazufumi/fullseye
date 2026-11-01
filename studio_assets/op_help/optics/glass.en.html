@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">glass — OPTICS <code style="color:#22d3bf">design</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">table</code> (an op determined by its arguments alone — it takes no image or data input)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.glass(nd, vd)</code> (to call the implementation directly, <code style="color:#22d3bf">import raytrace; raytrace.glass(nd, vd)</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;glass&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>A dispersive medium from its d-line index *nd* and Abbe number *vd*.</p>
 <p>Returns <code style="color:#22d3bf">{&quot;nd&quot;: nd, &quot;vd&quot;: vd, &quot;A&quot;: A, &quot;B&quot;: B}</code> — the two-term Cauchy model <code style="color:#22d3bf">n(λ) = A + B/λ²</code> (λ in µm) fitted so that <code style="color:#22d3bf">n(λ_d) = n_d</code> and <code style="color:#22d3bf">n(λ_F) − n(λ_C) = (n_d − 1)/V_d</code>. Good to ~1e-4 over the visible for ordinary crowns and flints; it is a *model*, not a catalogue.</p>

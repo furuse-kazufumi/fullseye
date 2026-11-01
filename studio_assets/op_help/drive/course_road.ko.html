@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">course_road — DRIVE <code style="color:#22d3bf">course</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">table</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.course_road(length=20.0, width=7.0)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivecourse; drivecourse.course_road(length=20.0, width=7.0)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;course_road&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>연결로(간선의 일부): 폭 w, 길이 L의 직선. 과제 코스의 출구를 주회 코스로 되돌리거나 간선을 연장하기 위한 요소. 규격(간선 코스): 폭 7 m 이상, 주회 코스와 연결할 것. 면적 = w·L.</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 길이·폭이 양수가 아님.</p>

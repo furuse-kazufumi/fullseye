@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">area_opening_attr — SEGMENTATION <code style="color:#22d3bf">graph</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.area_opening_attr(image, threshold: &#x27;float&#x27; = 16.0, *, attribute: &#x27;str&#x27; = &#x27;area&#x27;, connectivity: &#x27;int&#x27; = 4) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import seggraph; seggraph.area_opening_attr(image, threshold: &#x27;float&#x27; = 16.0, *, attribute: &#x27;str&#x27; = &#x27;area&#x27;, connectivity: &#x27;int&#x27; = 4) -&gt; &#x27;Dict[str, object]&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opssegmentation.get(&quot;area_opening_attr&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>屬性斷開（Salembier 等 1998）：刪除成分樹中屬性 &lt; <code style="color:#22d3bf">threshold</code> 的節點，並使每個像素取「屬性 ≥ 閾值的最近祖先」的值（area_opening_attr）。</p>
 <p><code style="color:#22d3bf">attribute</code> = <code style="color:#22d3bf">&quot;area&quot;</code>(像素數,與 skimage 的 area_opening 相同的「消除面積小於閾值的明亮結構」)或 <code style="color:#22d3bf">&quot;diameter&quot;</code> (外接矩形的長邊,skimage 的 diameter_opening)。兩者都是 <b>2 值集合的</b> 遞增屬性,所以結果是代數斷開 = 冪等、反擴張、遞增。依賴成分中最大值的「高度」不是集合的屬性(與 h-maxima 一樣)不具冪等性,因此不收錄(實測第 2 次時值發生了變化)。</p>

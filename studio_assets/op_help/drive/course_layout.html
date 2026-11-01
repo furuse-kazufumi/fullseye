@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">course_layout — DRIVE <code style="color:#22d3bf">course</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.course_layout(elements, placements)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import drivecourse; drivecourse.course_layout(elements, placements)</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;course_layout&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>複数の要素を剛体運動 <code style="color:#22d3bf">(x, y, yaw)</code> で配置して 1 つの dict にする。</p>
 <p>各要素の polygon / centerline / rails / stop_lines は点として、entry / exit / signal_poses は姿勢として(yaw も回す)変換する。<code style="color:#22d3bf">profile</code>(坂道の (s, z))は要素の局所弧長なのでそのまま。返り値は <code style="color:#22d3bf">{&quot;kind&quot;: &quot;layout&quot;, &quot;elements&quot;: [変換済み要素(各々 &quot;placement&quot; を持つ)], &quot;polygon&quot;: None, &quot;bounds&quot;: (xmin, xmax, ymin, ymax), &quot;placements&quot;: [...]}</code>。内外判定は要素の和(<code style="color:#22d3bf">course_contains</code> / <code style="color:#22d3bf">course_occupancy</code>)。要素の重なりは和として扱う。</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">mesh_write_ply — FILEIO <code style="color:#22d3bf">mesh</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mesh_write_ply(table, *, binary)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import fileio; fileio.mesh_write_ply(table, *, binary)</code>、台帳から引くなら <code style="color:#22d3bf">opsfileio.get(&quot;mesh_write_ply&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>頂点・面・色・法線・任意スカラー属性を ASCII / little-endian PLY に書く(<code style="color:#22d3bf">text</code> / <code style="color:#22d3bf">bytes</code>)。</p>
 <p><code style="color:#22d3bf">table</code> は <code style="color:#22d3bf">vertices</code> と任意の <code style="color:#22d3bf">faces/colors/normals/attributes</code> を持つ。<code style="color:#22d3bf">binary=False</code> は ASCII 文字列、<code style="color:#22d3bf">binary=True</code> は binary_little_endian bytes。色は最近傍整数へ丸める。</p>

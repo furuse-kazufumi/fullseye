@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">hertz_surface_uz — DRIVE <code style="color:#22d3bf">tacsim</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">matrix × scalar × scalar × scalar</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.hertz_surface_uz(r, a: &#x27;float&#x27;, delta: &#x27;float&#x27;, R: &#x27;float&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import tacsim; tacsim.hertz_surface_uz(r, a: &#x27;float&#x27;, delta: &#x27;float&#x27;, R: &#x27;float&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;hertz_surface_uz&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Normalverschiebung ū_z(r) der Halbraumoberfläche beim Hertzschen Kugelkontakt (Einsenkung ≥ 0, Array derselben Form wie r).</p>
 <p>Innen r ≤ a: δ − r²/(2R). Außen: (1/πR)[(2a² − r²) arcsin(a/r) + a r √(1 − a²/r²)] (Johnson Gl. 3.42a). Bei r = a stetig mit δ/2. <b>Raises</b> <code style="color:#22d3bf">ValueError</code>: a, δ, R ≤ 0, a² und Rδ weichen um 1 % oder mehr ab (kein Hertz-Paar).</p>

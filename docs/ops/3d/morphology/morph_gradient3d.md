@@ -4,7 +4,7 @@ dim: 3d
 category: morphology
 in: voxel
 out: voxel
-gpu: true
+gpu: なし
 examples: [morphology_3d]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `voxel` → `voxel`
 - **呼び出し**: `import fullseye as fs; fs.ledger.morph_gradient3d(vol, r=1, device='cpu', se='cube')` (実装を直接呼ぶなら `import match3d; match3d.morph_gradient3d(vol, r=1, device='cpu', se='cube')`、台帳から引くなら `ops3d.get("morph_gradient3d")`)
-- **GPU**: この op は GPU 経路あり(`device="cuda"`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

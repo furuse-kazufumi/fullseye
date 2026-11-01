@@ -4,6 +4,7 @@ dim: optics
 category: photoelastic
 in: image2d × image2d × image2d
 out: table
+gpu: なし
 examples: [photoelastic_roundtrip]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d × image2d × image2d` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.cubic_photoelastic_birefringence(sxx, syy, txy, pi11_minus_pi12, pi44, refractive_index, crystal_angle_deg=0.0)` (実装を直接呼ぶなら `import photoelastic; photoelastic.cubic_photoelastic_birefringence(sxx, syy, txy, pi11_minus_pi12, pi44, refractive_index, crystal_angle_deg=0.0)`、台帳から引くなら `opsoptics.get("cubic_photoelastic_birefringence")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

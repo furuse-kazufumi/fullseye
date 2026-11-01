@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">equirect_from_fisheye_pair — OPTICS <code style="color:#22d3bf">omni360</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">images</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.equirect_from_fisheye_pair(images, rotations, out_shape, model=&#x27;equidistant&#x27;, f_px=None, centres=None, fov_deg=190, feather_deg=8)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import omni360; omni360.equirect_from_fisheye_pair(images, rotations, out_shape, model=&#x27;equidistant&#x27;, f_px=None, centres=None, fov_deg=190, feather_deg=8)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;equirect_from_fisheye_pair&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Stitch two calibrated fisheyes and report overlap, seam error and blind spots.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">ファミリ共通の入力契約(fail-closed)</h3>

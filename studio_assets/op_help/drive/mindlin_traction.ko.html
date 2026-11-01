@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">mindlin_traction — DRIVE <code style="color:#22d3bf">tacslip</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">matrix × table</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mindlin_traction(r, mp: &#x27;dict&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import tacslip; tacslip.mindlin_traction(r, mp: &#x27;dict&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;mindlin_traction&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>접선 트랙션 q(r) = q′ − q″ [Pa]: q′ = μp0√(1−r²/a²)(r &lt; a), q″ = μp0(c/a)√(1−r²/c²)(r &lt; c). 미끄럼 고리 c ≤ r &lt; a에서는 q = μp(r)(Coulomb 한계에 붙음), 고착 원에서는 q &lt; μp. <code style="color:#22d3bf">mp</code>는 <code style="color:#22d3bf">mindlin_partial_slip</code>의 표. r과 같은 형태. <b>Raises</b> ValueError: mp에 a/c/mu/p0가 없음.</p>
 <p>빈 입력(<code style="color:#22d3bf">r</code> 이(가) 0 개 요소)은 <code style="color:#22d3bf">ValueError</code> 를 발생시킨다.</p>

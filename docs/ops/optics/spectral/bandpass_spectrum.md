@@ -4,6 +4,7 @@ dim: optics
 category: spectral
 in: 
 out: pairs
+gpu: なし
 examples: [poc_nir_silicon_transmission]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `pairs`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.bandpass_spectrum(center_nm=1100.0, fwhm_nm=40.0, peak_transmittance=0.9, order=4, blocking=0.0001, wl_min_nm=800.0, wl_max_nm=1400.0, n_points=301)` (実装を直接呼ぶなら `import spectralrad; spectralrad.bandpass_spectrum(center_nm=1100.0, fwhm_nm=40.0, peak_transmittance=0.9, order=4, blocking=0.0001, wl_min_nm=800.0, wl_max_nm=1400.0, n_points=301)`、台帳から引くなら `opsoptics.get("bandpass_spectrum")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

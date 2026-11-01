@@ -2,7 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">morph_erode3d — 3D <code style="color:#22d3bf">morphology</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">voxel</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.morph_erode3d(vol, r=1, device=&#x27;cpu&#x27;, se=&#x27;cube&#x27;)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import match3d; match3d.morph_erode3d(vol, r=1, device=&#x27;cpu&#x27;, se=&#x27;cube&#x27;)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;morph_erode3d&quot;)</code>)</p>
-<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 이 연산자는 GPU 경로가 있습니다(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>3D 그레이스케일 erosion(SE 의 국소 min). 밝은 영역을 수축. se 는 dilate 와 동일.</p>
 <p>한 변의 길이 <code style="color:#22d3bf">2r+1</code> 의 cube 또는 반지름 r 의 ball 안에서 최솟값을 취한다. 경계 밖은 +∞ 취급(영상 안의값만으로 min. torch 경로는 <code style="color:#22d3bf">-max_pool3d(-v)</code>, scipy 경로는 <code style="color:#22d3bf">cval=+inf</code>)이므로, 끝에서 0 으로떨어지는 일은 없다. <code style="color:#22d3bf">r=0</code> 은 항등. <code style="color:#22d3bf">se</code> 가 &quot;cube&quot;/&quot;ball&quot; 이외면 ValueError. <code style="color:#22d3bf">device</code> 는 cube+torch 일 때만 효과가 있다. 반환값 <code style="color:#22d3bf">(D,H,W)</code> float32 numpy. 2 값 volume 에서는 &quot;SE 가 통째로 들어가는 voxel 만 남김&quot; = 가는 구조·얇은 껍질의 제거.</p>

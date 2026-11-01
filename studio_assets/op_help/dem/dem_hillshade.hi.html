@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">dem_hillshade — DEM <code style="color:#22d3bf">shading</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">depth</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_hillshade(dem, cell_size, azimuth_deg=315.0, altitude_deg=45.0, z_factor=1.0, method=&#x27;horn&#x27;)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import demops; demops.dem_hillshade(dem, cell_size, azimuth_deg=315.0, altitude_deg=45.0, z_factor=1.0, method=&#x27;horn&#x27;)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdem.get(&quot;dem_hillshade&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>hillshade [0,1]। <code style="color:#22d3bf">azimuth_deg</code> प्रकाश स्रोत का azimuth है (उत्तर 0 degree, पूर्व की ओर बढ़ता)।</p>
 <p>यह ज्यों-का-त्यों Lambert का cosine नियम है, और <b>occlusion पर विचार नहीं किया जाता</b> (cell के सामने की ridge से छाया में पड़ा भाग शामिल नहीं है)। यदि cast shadows चाहिए, तो <code style="color:#22d3bf">dem_horizon_angle</code> के साथ मिलाएँ —— यह मान लेना कि &quot;hillshade में छायाएँ शामिल हैं&quot; एक क्लासिक भ्रांति है।</p>

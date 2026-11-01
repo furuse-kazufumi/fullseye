@@ -4,6 +4,7 @@ dim: drive
 category: tactorque
 in: image2d × image2d × scalar × scalar × scalar × scalar × scalar × scalar
 out: table
+gpu: なし
 examples: [poc_tactile_dipole_torque]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d × image2d × scalar × scalar × scalar × scalar × scalar × scalar` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.grasp_torque_frame(m_ref, m_cur, dark: 'float', pitch_px: 'float', r_px: 'float', pitch: 'float', G: 'float', nu: 'float', a: 'float | None' = None, window=None, coef: 'float | None' = None, P: 'float | None' = None, mu: 'float | None' = None, torsion_model: 'str' = 'partial_slip') -> 'dict'` (実装を直接呼ぶなら `import tactorque; tactorque.grasp_torque_frame(m_ref, m_cur, dark: 'float', pitch_px: 'float', r_px: 'float', pitch: 'float', G: 'float', nu: 'float', a: 'float | None' = None, window=None, coef: 'float | None' = None, P: 'float | None' = None, mu: 'float | None' = None, torsion_model: 'str' = 'partial_slip') -> 'dict'`、台帳から引くなら `opsdrive.get("grasp_torque_frame")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

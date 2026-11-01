@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">ghost_path — OPTICS <code style="color:#22d3bf">noncoaxial</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ghost_path(system, i=None, j=None, field=None, rings=3, pupil_fill=0.98)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import raytrace3d; raytrace3d.ghost_path(system, i=None, j=None, field=None, rings=3, pupil_fill=0.98)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;ghost_path&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>1 組の 2 回反射のゴーストの実光線の折れ線(<code style="color:#22d3bf">table</code>): 経路 i &lt; j・光線・エネルギー。</p>
 <p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>

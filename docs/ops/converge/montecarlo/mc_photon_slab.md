@@ -4,6 +4,7 @@ dim: converge
 category: montecarlo
 in: 
 out: table
+gpu: なし
 examples: [converge_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.mc_photon_slab(layers=None, n_above=1.0, n_below=1.0, n_photons=100000, tol=None, confidence=0.95, batch=50000, seed=1, w_threshold=0.0001, roulette_m=10) -> 'dict'` (実装を直接呼ぶなら `import mcphoton; mcphoton.mc_photon_slab(layers=None, n_above=1.0, n_below=1.0, n_photons=100000, tol=None, confidence=0.95, batch=50000, seed=1, w_threshold=0.0001, roulette_m=10) -> 'dict'`、台帳から引くなら `opsconverge.get("mc_photon_slab")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

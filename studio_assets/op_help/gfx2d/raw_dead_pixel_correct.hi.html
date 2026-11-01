@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">raw_dead_pixel_correct — GFX2D <code style="color:#22d3bf">isp</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.raw_dead_pixel_correct(raw, threshold=0.1)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import gfx2d; gfx2d.raw_dead_pixel_correct(raw, threshold=0.1)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsgfx2d.get(&quot;raw_dead_pixel_correct&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>हर dead pixel (<code style="color:#22d3bf">raw_dead_pixel_mask</code>) को <b>उसके 8 समान-रंग पड़ोसियों के median</b> से बदलता है; बाकी हर pixel bit-for-bit लौटाया जाता है।</p>
 <p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>

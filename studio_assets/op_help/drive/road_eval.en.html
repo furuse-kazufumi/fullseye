@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">road_eval — DRIVE <code style="color:#22d3bf">long</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table × scalar</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.road_eval(road, l: &#x27;float&#x27;) -&gt; &#x27;Tuple[float, float, float]&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import drivelong; drivelong.road_eval(road, l: &#x27;float&#x27;) -&gt; &#x27;Tuple[float, float, float]&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;road_eval&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Looks up the road&#x27;s longitudinal profile at arc length l: (z, sin θ, cos θ). <code style="color:#22d3bf">road</code> = None (flat) / a number (constant grade angle θ [rad], z = l sin θ) / the dict from <code style="color:#22d3bf">road_profile</code>. On a break point, the value of the following segment is used (right-continuous).</p>
 <p>Empty input (<code style="color:#22d3bf">road</code> an empty dict) raises <code style="color:#22d3bf">ValueError</code>.</p>

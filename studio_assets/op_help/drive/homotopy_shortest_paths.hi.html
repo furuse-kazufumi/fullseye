@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">homotopy_shortest_paths — DRIVE <code style="color:#22d3bf">braidpath</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d × any × any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.homotopy_shortest_paths(grid, start, goal, k=4, obstacles=None, angle=0.1, max_states=400000, max_cost=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import braidpath; braidpath.homotopy_shortest_paths(grid, start, goal, k=4, obstacles=None, angle=0.1, max_states=400000, max_cost=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;homotopy_shortest_paths&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Grid (True = चलने योग्य, 4-neighbourhood) पर start से goal तक अलग-अलग homotopy classes के k shortest paths, छोटे से बड़े क्रम में।</p>
 <p>State = (cell, braid के Dynnikov coordinates)। Obstacle points को स्थिर strands मानकर, हर move पर crossing letter जोड़कर coordinates update किए जाते हैं (coordinates class के complete invariant हैं, इसलिए एक ही (cell, coordinates) केवल एक बार expand होता है)। Dijkstra इस “class से lift किए गए” grid को cost के क्रम में expand करता है, इसलिए नए coordinates के साथ goal तक पहुँचने का क्रम ही हर class के shortest path का छोटे से बड़े का क्रम है।</p>

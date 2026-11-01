@@ -4,6 +4,7 @@ dim: printpath
 category: gcode
 in: table
 out: image2d
+gpu: なし
 examples: [poc_print_layer_inspection]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.gcode_layer_image(table: 'Any', layer: 'int', px_per_mm: 'float' = 10.0, line_width_mm: 'float' = 0.4, bounds=None, travel: 'bool' = False) -> 'np.ndarray'` (実装を直接呼ぶなら `import printpath; printpath.gcode_layer_image(table: 'Any', layer: 'int', px_per_mm: 'float' = 10.0, line_width_mm: 'float' = 0.4, bounds=None, travel: 'bool' = False) -> 'np.ndarray'`、台帳から引くなら `opsprintpath.get("gcode_layer_image")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

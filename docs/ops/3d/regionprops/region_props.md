@@ -4,6 +4,7 @@ dim: 3d
 category: regionprops
 in: voxel
 out: table
+gpu: なし
 examples: [region_props_3d]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `voxel` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.region_props(vol, connectivity: 'int' = 26) -> 'list[dict]'` (実装を直接呼ぶなら `import regionprops3d; regionprops3d.region_props(vol, connectivity: 'int' = 26) -> 'list[dict]'`、台帳から引くなら `ops3d.get("region_props")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

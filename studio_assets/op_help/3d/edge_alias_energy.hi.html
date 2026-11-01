@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">edge_alias_energy — 3D <code style="color:#22d3bf">render</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.edge_alias_energy(img) -&gt; &#x27;float&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import render_ssaa; render_ssaa.edge_alias_energy(img) -&gt; &#x27;float&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;edge_alias_energy&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>edges की aliasing (jaggy) energy = Laplacian का RMS (जितना छोटा उतना smooth)।</p>
 <p>rasterisation की aliasing सीढ़ीनुमा तीखे कोनों (ऊँचा 2nd derivative) के रूप में दिखती है। Laplacian high frequency को उभारता है, इसलिए इसका root mean square (RMS) सीमाओं की सीढ़ीनुमा मात्रा को monotonic रूप से पकड़ता है — SSAA से edge smooth gradient बन जाएँ तो Laplacian की high-frequency energy घटती है (low-pass high frequency को कम करता है और Laplacian उसे बढ़ाता है, इसलिए edge जितने smooth हों यह मात्रा उतनी छोटी)।</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">legal_stop_intervals — DRIVE <code style="color:#22d3bf">crossing</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.legal_stop_intervals(merged, road_start: &#x27;float&#x27;, road_end: &#x27;float&#x27;, car_length: &#x27;float&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import drivecrossing; drivecrossing.legal_stop_intervals(merged, road_start: &#x27;float&#x27;, road_end: &#x27;float&#x27;, car_length: &#x27;float&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;legal_stop_intervals&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Intervals (m, 2) of <b>rear-end positions</b> at which the car body [rear, rear + car_length] fits entirely while avoiding the no-stopping-or-parking sections (merged (k, 2)).</p>
 <p>Exact interval ends (e.g. a distance of exactly 5 m) are included on the prohibited side (&quot;within&quot;), so a vehicle body merely touching an end is allowed (closure of the complement of closed intervals).</p>

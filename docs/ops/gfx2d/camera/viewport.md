@@ -4,6 +4,7 @@ dim: gfx2d
 category: camera
 in: rgb
 out: rgb
+gpu: なし
 examples: [gfx2d_scene, omni360_roundtrip]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `rgb` → `rgb`
 - **呼び出し**: `import fullseye as fs; fs.ledger.viewport(img, x, y, width, height, scale=1.0, interp='bilinear')` (実装を直接呼ぶなら `import gfx2d; gfx2d.viewport(img, x, y, width, height, scale=1.0, interp='bilinear')`、台帳から引くなら `opsgfx2d.get("viewport")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

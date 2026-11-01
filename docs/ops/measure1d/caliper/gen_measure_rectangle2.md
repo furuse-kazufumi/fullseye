@@ -4,6 +4,7 @@ dim: measure1d
 category: caliper
 in: 
 out: measurehandle
+gpu: なし
 examples: [example_scratch_width, poc_barcode_1d, poc_battery_electrode_breathing, poc_calipers_under_illusion, poc_dimensional_inspection, poc_screw_thread_metrology, poc_solar_limb_darkening, poc_telecentric_metrology, poc_tree_ring_dendro, poc_water_level, poc_weld_bead_profile, poc_weld_radiograph_porosity]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `measurehandle`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.gen_measure_rectangle2(row, col, phi, length1, length2, shape)` (実装を直接呼ぶなら `import measuring1d; measuring1d.gen_measure_rectangle2(row, col, phi, length1, length2, shape)`、台帳から引くなら `opsmeasure1d.get("gen_measure_rectangle2")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

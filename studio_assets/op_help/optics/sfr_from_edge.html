@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">sfr_from_edge — OPTICS <code style="color:#22d3bf">imaging</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">pairs</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sfr_from_edge(esf, window, *, correction, ends=1.0, apodize=&#x27;none&#x27;)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import edgesfr; edgesfr.sfr_from_edge(esf, window, *, correction, ends=1.0, apodize=&#x27;none&#x27;)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;sfr_from_edge&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>ESF から SFR(エッジから測る MTF)を出す。</p>
 <p>*esf* は <code style="color:#22d3bf">edge_spread</code> の返り値(辞書)か、1 px 刻みの 1-D 配列(<code style="color:#22d3bf">oversample</code> = 1 とみなす)。エッジの中心(差分の絶対値の最大)から ±*window* px を切り、両端 *ends* px の平均を黒/白の基準に正規化し、前進差分で LSF にしてフーリエ変換の絶対値を DC で割る。</p>

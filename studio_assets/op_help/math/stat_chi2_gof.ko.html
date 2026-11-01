@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">stat_chi2_gof — MATH <code style="color:#22d3bf">estimation</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.stat_chi2_gof(observed, expected=None) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import mathestimation; mathestimation.stat_chi2_gof(observed, expected=None) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsmath.get(&quot;stat_chi2_gof&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>χ² 적합도 검정: 도수 <code style="color:#22d3bf">observed</code>가 기대 도수(기본값은 균일)에 맞는가. 자유도 = 구간 수 − 1.</p>
 <p>기대 도수가 5 미만인 구간이 있으면 근사가 나쁘다(<code style="color:#22d3bf">low_expected</code>에 개수를 반환한다).</p>

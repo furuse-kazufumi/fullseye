@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">normals_to_egi — REPRCONV <code style="color:#22d3bf">direction</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">normals</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.normals_to_egi(normals, n_az=36, n_el=18)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import reprconv; reprconv.normals_to_egi(normals, n_az=36, n_el=18)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsreprconv.get(&quot;normals_to_egi&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>법선 <code style="color:#22d3bf">(N,3)</code> → 확장 가우스 상 <code style="color:#22d3bf">(n_el, n_az)</code> 의 <code style="color:#22d3bf">image2d</code>.</p>
 <p>방향의 2-D 히스토그램(Horn, *Extended Gaussian Images*, Proc. IEEE 72(12) 1984). &quot;어느 방향의 면이 얼마나 있는가&quot;의 지도로, 평면이 지배적인 물체에서는 1 개의 bin 에 산이 선다. <b>비가역</b> —— bin 폭만큼의 방향 해상도를 버린다. 버린 양은 잴 수 있다: 최빈 bin 의 중심 방향과 입력 평균 방향의 각도 차가 양자화 오차이며, 기본값 (36, 18) 에서는 bin 폭 10 도에 대해 실측 3.7 도(<code style="color:#22d3bf">selftest</code> 가 낸다).</p>

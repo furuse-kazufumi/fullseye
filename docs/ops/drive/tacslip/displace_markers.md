@@ -4,6 +4,7 @@ dim: drive
 category: tacslip
 in: matrix × matrix × matrix × scalar
 out: matrix
+gpu: なし
 examples: [poc_tacsim_marker_shear, poc_tactile_dipole_torque]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `matrix × matrix × matrix × scalar` → `matrix`
 - **呼び出し**: `import fullseye as fs; fs.ledger.displace_markers(pts, fx, fy, pitch: 'float') -> 'np.ndarray'` (実装を直接呼ぶなら `import tacslip; tacslip.displace_markers(pts, fx, fy, pitch: 'float') -> 'np.ndarray'`、台帳から引くなら `opsdrive.get("displace_markers")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

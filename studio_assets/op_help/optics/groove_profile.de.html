@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">groove_profile — OPTICS <code style="color:#22d3bf">light_transport</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">keine</code> → <code style="color:#22d3bf">table</code> (ein Operator, der allein durch seine Argumente bestimmt ist — er nimmt kein Bild und keine Daten entgegen)</p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.groove_profile(kind=&#x27;vgroove&#x27;, n_patches=240, width=1.0, angle_deg=None, floor_frac=None, vertices=None)</code> (die Implementierung direkt: <code style="color:#22d3bf">import lighttransport; lighttransport.groove_profile(kind=&#x27;vgroove&#x27;, n_patches=240, width=1.0, angle_deg=None, floor_frac=None, vertices=None)</code>; aus dem Register: <code style="color:#22d3bf">opsoptics.get(&quot;groove_profile&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Zerlegt einen konkaven Querschnitt (V-Nut, Kreisbogenrinne, Kehlnaht oder beliebiger konkaver Polygonzug) in Patches, je eine Kamerapixelspalte (<code style="color:#22d3bf">table</code>).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>

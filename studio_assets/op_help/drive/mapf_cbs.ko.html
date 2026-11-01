@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">mapf_cbs — DRIVE <code style="color:#22d3bf">agv</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mapf_cbs(grid, starts, goals, max_nodes=20000, horizon=None)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import agvfleet; agvfleet.mapf_cbs(grid, starts, goals, max_nodes=20000, horizon=None)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;mapf_cbs&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>Conflict-Based Search(Sharon, Stern, Felner, Sturtevant 2015). 총비용이 최적인 충돌 없는 계획.</p>
 <p>상단은 「충돌을 하나 골라 두 대 중 한쪽에 제약을 더하는」 이진 트리의 최우선 탐색, 하단은 1 대의 시공간 A*. 반환은 dict: <code style="color:#22d3bf">paths</code>(각 차량의 칸의 열), <code style="color:#22d3bf">cost</code>(sum of costs), <code style="color:#22d3bf">nodes</code>(전개한 노드 수), <code style="color:#22d3bf">solved</code>. 노드 상한에 도달하면 <code style="color:#22d3bf">solved=False</code>(<b>최적이 아닌 해를 조용히 반환하지 않는다</b>).</p>

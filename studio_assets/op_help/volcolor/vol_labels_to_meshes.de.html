@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">vol_labels_to_meshes — VOLCOLOR <code style="color:#22d3bf">render</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">labels</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_labels_to_meshes(labels, ids=None, spacing=None, seed: &#x27;int&#x27; = 0, level: &#x27;float&#x27; = 0.5, axes: &#x27;str&#x27; = &#x27;xyz&#x27;)</code> (die Implementierung direkt: <code style="color:#22d3bf">import volcolor; volcolor.vol_labels_to_meshes(labels, ids=None, spacing=None, seed: &#x27;int&#x27; = 0, level: &#x27;float&#x27; = 0.5, axes: &#x27;str&#x27; = &#x27;xyz&#x27;)</code>; aus dem Register: <code style="color:#22d3bf">opsvolcolor.get(&quot;vol_labels_to_meshes&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Führt Marching Cubes pro Komponente aus und liefert eine <b>Menge eingefärbter Meshes</b>.</p>
 <p>Liefert <code style="color:#22d3bf">list[dict]</code>, jedes Element ist <code style="color:#22d3bf">{&quot;label&quot;, &quot;vertices&quot; (nv, 3) float64, &quot;faces&quot; (nf, 3) int64, &quot;color&quot; (r, g, b)}</code>. Die Farben stammen aus derselben Palette wie bei <code style="color:#22d3bf">vol_colorize_labels</code>, daher <b>hat dasselbe Teil in Schnittbildern und in der 3-D-Darstellung dieselbe Farbe</b>.</p>

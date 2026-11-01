@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">puck_render_frame — DRIVE <code style="color:#22d3bf">puck</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table × signal</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.puck_render_frame(cam: &#x27;dict&#x27;, p, *, v=None, exposure: &#x27;float&#x27; = 0.0, n_sub: &#x27;int&#x27; = 16, noise: &#x27;float&#x27; = 0.0, rng=None, puck_value: &#x27;float&#x27; = 0.12, table_value: &#x27;float&#x27; = 0.92, wall_value: &#x27;float&#x27; = 0.55) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import puck; puck.puck_render_frame(cam: &#x27;dict&#x27;, p, *, v=None, exposure: &#x27;float&#x27; = 0.0, n_sub: &#x27;int&#x27; = 16, noise: &#x27;float&#x27; = 0.0, rng=None, puck_value: &#x27;float&#x27; = 0.12, table_value: &#x27;float&#x27; = 0.92, wall_value: &#x27;float&#x27; = 0.55) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;puck_render_frame&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>合成 1 帧正上方视图(float (H,W)，0〜1)：白色球台、灰色的壁、深色冰球(1 阶抗锯齿)。</p>
 <p><code style="color:#22d3bf">exposure</code> &gt; 0 时,把曝光期间 [t, t+exposure] 冰球移动 v·exposure 的部分以 n_sub 个子曝光的平均计入(运动模糊)。帧的时刻为<b>曝光开始</b>: 模糊后像的重心前进 v·exposure/2(闭式解,门)。<code style="color:#22d3bf">noise</code> 为高斯噪声的 σ。</p>

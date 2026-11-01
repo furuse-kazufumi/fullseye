@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">vx_phase — VX <code style="color:#22d3bf">gradient</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vx_phase(gx, gy, *, mapping)</code>(要直接呼叫實作,<code style="color:#22d3bf">import vxcore; vxcore.vx_phase(gx, gy, *, mapping)</code>;從台帳取用則 <code style="color:#22d3bf">opsvx.get(&quot;vx_phase&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>梯度相位(3.41 節)：將 ϕ = atan2(gy, gx) 移到 0 ≤ ϕ &lt; 2π，再映射到 0〜255(REQ-0364)。輸出 U8。</p>
 <p>*mapping*(必要): 規格沒有寫映射時的捨入。<code style="color:#22d3bf">&quot;floor&quot;</code> = ⌊ϕ·256/(2π)⌋(0 ≤ 值 ≤ 255 自動成立), <code style="color:#22d3bf">&quot;round&quot;</code> = ⌊ϕ·256/(2π) + 0.5⌋ mod 256(2π 之前回捲為 0)。gx = gy = 0 的像素依 atan2 的約定取 ϕ = 0。</p>

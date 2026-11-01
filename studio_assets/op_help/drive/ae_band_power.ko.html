@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">ae_band_power — DRIVE <code style="color:#22d3bf">grind</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">signal × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ae_band_power(x, rate: &#x27;float&#x27;, f_lo: &#x27;float&#x27; = 100000.0, f_hi: &#x27;float&#x27; = 1000000.0, start: &#x27;int&#x27; = 0, stop: &#x27;int | None&#x27; = None, win: &#x27;int&#x27; = 4096) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import grind; grind.ae_band_power(x, rate: &#x27;float&#x27;, f_lo: &#x27;float&#x27; = 100000.0, f_hi: &#x27;float&#x27; = 1000000.0, start: &#x27;int&#x27; = 0, stop: &#x27;int | None&#x27; = None, win: &#x27;int&#x27; = 4096) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;ae_band_power&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>AE의 대역 전력을 2가지로 구합니다(하나는 공개 분석 코드의 정의, 다른 하나는 <code style="color:#22d3bf">acoustics.stft</code>의 밀도 스펙트럼).</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">power_fft</code>: 창 없는 FFT 의 진폭 <code style="color:#22d3bf">2|X|/N</code> 의 제곱을 <code style="color:#22d3bf">f_lo ≤ f ≤ f_hi</code> 에서 더한 값 [V²] (분석 코드와 같다. 진폭 A 인 정현파라면 A²).</p>

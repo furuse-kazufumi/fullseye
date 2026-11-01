@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">metrics_table — IMGMETRICS <code style="color:#22d3bf">report</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">metrics</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.metrics_table(report, order=None)</code> (to call the implementation directly, <code style="color:#22d3bf">import imgmetrics; imgmetrics.metrics_table(report, order=None)</code>; from the registry, <code style="color:#22d3bf">opsimgmetrics.get(&quot;metrics_table&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Turn a report into a <code style="color:#22d3bf">(name, value)</code> table — the rows describing the conditions are <b>always listed with it</b>.</p>
 <p>The gist of this op is to make it impossible to create tables with only numerical values. <code style="color:#22d3bf">contract</code> Each item is in the same table as <code style="color:#22d3bf">Condition: &lt;name&gt;</code>.</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">shape_index — 3D <code style="color:#22d3bf">curvature</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">descriptor</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.shape_index(points, k=25, normals=None)</code>(要直接调用实现,<code style="color:#22d3bf">import curvature3d; curvature3d.shape_index(points, k=25, normals=None)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;shape_index&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>Koenderink 的 shape index s∈[-1,1] (凸球+1・圆柱+0.5・鞍点0・凹球-1)。→ (N,)。</p>
 <p>脐点/平面判定<b>相对于曲率尺度</b>(无绝对阈值)。平缓的凸/凹(即使曲率极小) 也保留符号=凹凸,平面仅对相对于整个数据的曲率尺度为 0 的点设 s=0。</p>

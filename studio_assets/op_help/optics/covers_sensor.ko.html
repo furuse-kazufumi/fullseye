@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">covers_sensor — OPTICS <code style="color:#22d3bf">scene</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">table × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.covers_sensor(lens: &#x27;dict&#x27;, sensor: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import optscene; optscene.covers_sensor(lens: &#x27;dict&#x27;, sensor: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsoptics.get(&quot;covers_sensor&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>렌즈가 그 센서를 덮을 수 있는지(이미지 서클 대 대각선).</p>
 <p>덮지 못하면 <b>네 귀퉁이가 검게 떨어진다</b>(비네팅). 카탈로그의 &quot;1인치까지&quot; 등은 이 판정을형식명으로 말하고 있을 뿐이므로, 실치수로 비교하는 편이 확실하다 ―― 특히 라인 센서는길이가 그대로 효과를 내므로(16k x 7 µm = 115 mm), 에어리어용 렌즈로는 전혀 부족하다.</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">perlin2 — DRIVE <code style="color:#22d3bf">terrain</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.perlin2(x, y, seed: &#x27;int&#x27; = 0, freq: &#x27;float&#x27; = 1.0) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import driveterrain; driveterrain.perlin2(x, y, seed: &#x27;int&#x27; = 0, freq: &#x27;float&#x27; = 1.0) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;perlin2&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>Perlin(2002, improved noise)의 2차원 그래디언트 노이즈를 월드 좌표 (x, y)에서 평가합니다.</p>
 <p>격자는 <code style="color:#22d3bf">freq</code> [주기/m] 간격, 기울기는 8 방향의 단위 벡터, 보간은 quintic fade <code style="color:#22d3bf">6t⁵−15t⁴+10t³</code>. 반환값 <code style="color:#22d3bf">{&quot;value&quot;, &quot;dx&quot;, &quot;dy&quot;}</code>(도함수는 해석적, <code style="color:#22d3bf">d/dx</code> 는 월드 좌표당). 정리: 격자점에서 값 0, 주기 256 격자, |value| ≤ 1.</p>

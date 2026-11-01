@@ -4,6 +4,7 @@ dim: optics
 category: lensrender
 in: 
 out: table
+gpu: なし
 examples: [poc_photograph_through_prescription]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.render_compare_prescriptions(systems=None, scene=None, sensor=None, labels=None, edge_roi=None, fields=(0.0, 0.7, 1.0), field_max=None, **render_kw) -> 'dict'` (実装を直接呼ぶなら `import lensrender; lensrender.render_compare_prescriptions(systems=None, scene=None, sensor=None, labels=None, edge_roi=None, fields=(0.0, 0.7, 1.0), field_max=None, **render_kw) -> 'dict'`、台帳から引くなら `opsoptics.get("render_compare_prescriptions")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

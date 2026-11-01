@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">sensor_diagonal_mm — OPTICS <code style="color:#22d3bf">scene</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sensor_diagonal_mm(sensor: &#x27;dict&#x27;) -&gt; &#x27;float&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import optscene; optscene.sensor_diagonal_mm(sensor: &#x27;dict&#x27;) -&gt; &#x27;float&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;sensor_diagonal_mm&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>sensor का diagonal [mm]। lens के image circle से तुलना करके देखता है कि <b>वह sensor को cover कर सकता है या नहीं</b>।</p>
 <p>सूत्र: <code style="color:#22d3bf">hypot(width * pixel_um, height * pixel_um) / 1000</code>। effective pixel संख्या × pixel pitch से वास्तविक आकार; &quot;2/3-inch&quot; जैसे format names का उपयोग नहीं होता (format name diagonal का केवल एक label है, और एक ही label के अलग-अलग वास्तविक आकार हो सकते हैं)।</p>

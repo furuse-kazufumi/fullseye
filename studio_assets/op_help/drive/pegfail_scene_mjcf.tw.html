@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">pegfail_scene_mjcf — DRIVE <code style="color:#22d3bf">pegfail</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pegfail_scene_mjcf(kp=None, lg: &#x27;float | None&#x27; = None, blocked_depth: &#x27;float | None&#x27; = None, decoy_xy=None, offsamples: &#x27;int&#x27; = 4) -&gt; &#x27;str&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import pegfail; pegfail.pegfail_scene_mjcf(kp=None, lg: &#x27;float | None&#x27; = None, blocked_depth: &#x27;float | None&#x27; = None, decoy_xy=None, offsamples: &#x27;int&#x27; = 4) -&gt; &#x27;str&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;pegfail_scene_mjcf&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>帶失敗注入的場景的 MJCF 字串(不需 mujoco)：以 ElementTree 讀取 pegsim.peg_scene_mjcf，並加入 (i) 腕部力/扭矩感測器(site <code style="color:#22d3bf">peg_top</code> = 腕部原點，子 body 與父層之間的交互作用力)，(ii) 若給定 <code style="color:#22d3bf">blocked_depth</code> [m]，在孔內放置以該深度為上表面的塞子(圓柱)，(iii) 若給定 <code style="color:#22d3bf">decoy_xy</code>，則加入誘餌孔(複製壁、倒角、凸緣(collar)並平移，名稱加上 <code style="color:#22d3bf">decoy_</code> 前綴；方框與誘餌重疊，因此移除)。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>：塞子深度在孔外、誘餌與目標孔重疊(中心距離 &lt; 2(R + W) + 1 mm)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">class_2dim_sup — SEGMENTATION <code style="color:#22d3bf">classify</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image2d × image2d × mask</code> → <code style="color:#22d3bf">mask</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.class_2dim_sup(image1, image2, ref_region)</code>(要直接呼叫實作,<code style="color:#22d3bf">import segmentation; segmentation.class_2dim_sup(image1, image2, ref_region)</code>;從台帳取用則 <code style="color:#22d3bf">opssegmentation.get(&quot;class_2dim_sup&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>二通道特徵空間的監督分類：落入 ref_region 分布內的像素(class_2dim_sup)。</p>
 <p>空輸入(<code style="color:#22d3bf">image1</code> 為 0 個元素)會引發 ValueError。</p>

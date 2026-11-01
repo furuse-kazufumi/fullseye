@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">stipple_points_from_image — PRINTPATH <code style="color:#22d3bf">stroke</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">pairs</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.stipple_points_from_image(image, n_points, iterations=30, gamma=1.0, floor=0.02, seed=0, metric=&#x27;euclidean&#x27;)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import printpath; printpath.stipple_points_from_image(image, n_points, iterations=30, gamma=1.0, floor=0.02, seed=0, metric=&#x27;euclidean&#x27;)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsprintpath.get(&quot;stipple_points_from_image&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>농담을 <b>점의 밀도</b>로 옮긴다(가중 Lloyd = 무게중심 보로노이). → <code style="color:#22d3bf">pairs</code></p>
 <p>어두운 곳에 점이 조밀하게 모인다. 반환되는 것은 <code style="color:#22d3bf">(n_points, 2)</code> 의 <b>(row, col)</b>.</p>

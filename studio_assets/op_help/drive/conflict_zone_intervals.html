@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">conflict_zone_intervals — DRIVE <code style="color:#22d3bf">crossing</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.conflict_zone_intervals(dist_to_zone, zone_length: &#x27;float&#x27;, car_length: &#x27;float&#x27;, *, v0: &#x27;float&#x27;, accel: &#x27;float&#x27; = 0.0, v_max: &#x27;Optional[float]&#x27; = None) -&gt; &#x27;Dict[str, object]&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import drivecrossing; drivecrossing.conflict_zone_intervals(dist_to_zone, zone_length: &#x27;float&#x27;, car_length: &#x27;float&#x27;, *, v0: &#x27;float&#x27;, accel: &#x27;float&#x27; = 0.0, v_max: &#x27;Optional[float]&#x27; = None) -&gt; &#x27;Dict[str, object]&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;conflict_zone_intervals&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>衝突の領域(交差点の中で 2 つの進路が重なる所)を車が占める時刻 [t_in, t_out] (閉形式、配列可)。</p>
 <p>前端が dist_to_zone 進むと入り、前端が dist_to_zone + zone_length + car_length 進むと後端が出る。初速 v0 から <code style="color:#22d3bf">accel</code> で <code style="color:#22d3bf">v_max</code> まで加速(accel = 0 なら一定の速さ)。既に領域に入っている(dist_to_zone &lt; 0)場合は t_in = 0。</p>

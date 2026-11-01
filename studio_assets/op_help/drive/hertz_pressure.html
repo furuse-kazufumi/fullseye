@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">hertz_pressure — DRIVE <code style="color:#22d3bf">tacsim</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">matrix × scalar × scalar</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.hertz_pressure(r, a: &#x27;float&#x27;, p0: &#x27;float&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import tacsim; tacsim.hertz_pressure(r, a: &#x27;float&#x27;, p0: &#x27;float&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;hertz_pressure&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Hertz の接触圧 p(r) = p0 √(1 − r²/a²)(r &lt; a)、外は 0。r と同じ形。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: a, p0 ≤ 0。</p>
 <p>空の入力(<code style="color:#22d3bf">r</code> が 0 要素)は ValueError。</p>

@@ -4,6 +4,7 @@ dim: drive
 category: terrain
 in: table × table
 out: scalar
+gpu: なし
 examples: [gallery_drive_world_objects, poc_driving_crossing, poc_driving_decisions, poc_driving_humanoids, poc_driving_lateral, poc_driving_traffic, poc_world_terrain]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table × table` → `scalar`
 - **呼び出し**: `import fullseye as fs; fs.ledger.add_mesh_object(world: 'dict', mesh: 'dict', x: 'float', y: 'float', yaw: 'float', *, name: 'str' = '', z: 'float' = 0.0) -> 'int'` (実装を直接呼ぶなら `import driveterrain; driveterrain.add_mesh_object(world: 'dict', mesh: 'dict', x: 'float', y: 'float', yaw: 'float', *, name: 'str' = '', z: 'float' = 0.0) -> 'int'`、台帳から引くなら `opsdrive.get("add_mesh_object")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

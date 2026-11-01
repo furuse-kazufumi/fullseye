@@ -4,6 +4,7 @@ dim: optics
 category: lensmerit
 in: table
 out: table
+gpu: なし
 examples: [optimized_lens_tolerance_sensitivity, poc_lens_merit_operands]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.optimize_lens_operands(system=None, operands=None, variables=None, iterations: 'int' = 30, fields=None, wavelengths=None, field_weights=None, wavelength_weights=None, damping: 'float' = 0.001, tolerance: 'float' = 1e-07, min_thickness: 'float' = 0.5, max_thickness=None, min_radius: 'float' = 1.0, glass_candidates=None, glass_iterations: 'int' = 12, outer_iterations: 'int' = 3) -> 'dict'` (実装を直接呼ぶなら `import lensmerit; lensmerit.optimize_lens_operands(system=None, operands=None, variables=None, iterations: 'int' = 30, fields=None, wavelengths=None, field_weights=None, wavelength_weights=None, damping: 'float' = 0.001, tolerance: 'float' = 1e-07, min_thickness: 'float' = 0.5, max_thickness=None, min_radius: 'float' = 1.0, glass_candidates=None, glass_iterations: 'int' = 12, outer_iterations: 'int' = 3) -> 'dict'`、台帳から引くなら `opsoptics.get("optimize_lens_operands")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

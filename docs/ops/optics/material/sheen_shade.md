@@ -4,6 +4,7 @@ dim: optics
 category: material
 in: normalmap
 out: image2d
+gpu: なし
 examples: [machined_metal_and_materials]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `normalmap` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.sheen_shade(normals, light=(0.3, 0.4, 0.87), view=(0.0, 0.0, 1.0), sheen=1.0, exponent=4.0) -> 'np.ndarray'` (実装を直接呼ぶなら `import surfacelib; surfacelib.sheen_shade(normals, light=(0.3, 0.4, 0.87), view=(0.0, 0.0, 1.0), sheen=1.0, exponent=4.0) -> 'np.ndarray'`、台帳から引くなら `opsoptics.get("sheen_shade")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

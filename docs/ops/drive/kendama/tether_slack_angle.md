@@ -4,6 +4,7 @@ dim: drive
 category: kendama
 in: 
 out: any
+gpu: なし
 examples: [poc_kendama]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `any`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.tether_slack_angle(theta0: 'float', L: 'float', g: 'float' = 9.81)` (実装を直接呼ぶなら `import kendama; kendama.tether_slack_angle(theta0: 'float', L: 'float', g: 'float' = 9.81)`、台帳から引くなら `opsdrive.get("tether_slack_angle")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

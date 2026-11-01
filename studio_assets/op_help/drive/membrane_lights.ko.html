@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">membrane_lights — DRIVE <code style="color:#22d3bf">tacsim</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">scalar</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.membrane_lights(elev_deg: &#x27;float&#x27; = 55.0, azimuths_deg=(90.0, 210.0, 330.0)) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import tacsim; tacsim.membrane_lights(elev_deg: &#x27;float&#x27; = 55.0, azimuths_deg=(90.0, 210.0, 330.0)) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;membrane_lights&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>다방향 색 조명의 단위 방향 벡터 (N, 3)(행 k가 색 채널 k의 광원, 기본값은 방위 90/210/330°·앙각 55°의 3등).</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 앙각이 (0°, 90°] 밖, 광원이 3 개 미만, 3 개 광원이 동일 평면(rank &lt; 3 이라 포토메트릭 스테레오를 풀 수 없음).</p>

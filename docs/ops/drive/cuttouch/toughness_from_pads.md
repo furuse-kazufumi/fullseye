@@ -4,6 +4,7 @@ dim: drive
 category: cuttouch
 in: any × signal
 out: table
+gpu: なし
 examples: [poc_knife_tactile_toughness]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `any × signal` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.toughness_from_pads(loads, w_eff_mm, xi: 'float | None' = None, min_w_mm: 'float' = 2.0, readable_only: 'bool' = True) -> 'dict'` (実装を直接呼ぶなら `import cuttouch; cuttouch.toughness_from_pads(loads, w_eff_mm, xi: 'float | None' = None, min_w_mm: 'float' = 2.0, readable_only: 'bool' = True) -> 'dict'`、台帳から引くなら `opsdrive.get("toughness_from_pads")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

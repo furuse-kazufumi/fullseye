@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">contour_fourier_complex — SHAPE2D <code style="color:#22d3bf">descriptor</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.contour_fourier_complex(points, n_harmonics=None, parametrisation=&#x27;index&#x27;)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import fourierdesc; fourierdesc.contour_fourier_complex(points, n_harmonics=None, parametrisation=&#x27;index&#x27;)</code>、台帳から引くなら <code style="color:#22d3bf">opsshape2d.get(&quot;contour_fourier_complex&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>閉輪郭を複素フーリエ級数の係数にする —— <code style="color:#22d3bf">z(t) = Σ c_k exp(2πi k t)</code>。</p>
 <p>引数:</p>

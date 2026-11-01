@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">iterate_fixed_point — CONVERGE <code style="color:#22d3bf">iterate</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">table</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.iterate_fixed_point(g=&#x27;cos&#x27;, x0=None, method=&#x27;anderson&#x27;, tol=1e-10, rtol=0.0, max_iter=500, m=5, on_fail=&#x27;raise&#x27;, keep_iterates=False) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import converge; converge.iterate_fixed_point(g=&#x27;cos&#x27;, x0=None, method=&#x27;anderson&#x27;, tol=1e-10, rtol=0.0, max_iter=500, m=5, on_fail=&#x27;raise&#x27;, keep_iterates=False) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsconverge.get(&quot;iterate_fixed_point&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用不动点迭代（普通迭代 / Aitken / Anderson）求解 x = g(x)，不收敛时拒绝而不返回值。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>

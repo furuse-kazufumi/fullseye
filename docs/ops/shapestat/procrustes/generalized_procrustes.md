@@ -4,6 +4,7 @@ dim: shapestat
 category: procrustes
 in: shapeset
 out: shapeset
+gpu: なし
 examples: [shapestat_landmark_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `shapeset` → `shapeset`
 - **呼び出し**: `import fullseye as fs; fs.ledger.generalized_procrustes(shapes, max_iter: 'int' = 100, tol: 'float' = 1e-10, scaling: 'bool' = True, reflection: 'bool' = False)` (実装を直接呼ぶなら `import shapestats; shapestats.generalized_procrustes(shapes, max_iter: 'int' = 100, tol: 'float' = 1e-10, scaling: 'bool' = True, reflection: 'bool' = False)`、台帳から引くなら `opsshapestat.get("generalized_procrustes")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

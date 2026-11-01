@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">emva_quantum_efficiency — OPTICS <code style="color:#22d3bf">sensorchar</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.emva_quantum_efficiency(mu_p, mu_y, mu_y_dark, mu_y_sat, K)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import sensorchar; sensorchar.emva_quantum_efficiency(mu_p, mu_y, mu_y_dark, mu_y_sat, K)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;emva_quantum_efficiency&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>response (characteristic curve) के slope से quantum efficiency η निकालता है (समीकरण 49, 52)।</p>
 <p>*mu_p*: हर exposure step में प्रति pixel photons की औसत संख्या (illuminance meter और exposure time से: μ_p = A E t_exp λ/(hc))। R, μ_p के सापेक्ष μ_y − μ_y.dark पर fit की गई सीधी रेखा (<b>intercept 0 पर स्थिर</b>) का slope है, और η = R/K। उपयोग किए points: saturation का 0–70 %।</p>

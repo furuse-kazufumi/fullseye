@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">fsimc — IMGMETRICS <code style="color:#22d3bf">perceptual</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">rgbimage × rgbimage</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fsimc(ref, dist, data_range: &#x27;float&#x27; = 255.0) -&gt; &#x27;float&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import iqafsim; iqafsim.fsimc(ref, dist, data_range: &#x27;float&#x27; = 255.0) -&gt; &#x27;float&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsimgmetrics.get(&quot;fsimc&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>FSIMc(彩度 I / Q を含む、1 = 同一、<b>higher is better</b>)。TID2013 の FSIMc.txt と 4 桁一致するのは色画像(RGB → YIQ full range)を渡したとき(<code style="color:#22d3bf">iqatid.tid2013_evaluate(root, fsimc, luma=&quot;rgb&quot;)</code>、3,000 組 max |差| 5.0e-5)。(H, W) 入力なら FSIM と同じ値。詳細 <code style="color:#22d3bf">fsim_pair</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>

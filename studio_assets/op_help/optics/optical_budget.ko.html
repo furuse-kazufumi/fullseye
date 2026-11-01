@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">optical_budget — OPTICS <code style="color:#22d3bf">scene</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">table</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.optical_budget(focal_mm: &#x27;float&#x27; = 25.0, working_distance_mm: &#x27;float&#x27; = 200.0, f_number: &#x27;float&#x27; = None, na: &#x27;float&#x27; = None, pixel_um: &#x27;float&#x27; = 3.45, wavelength_nm: &#x27;float&#x27; = 550.0, coc_um: &#x27;float&#x27; = None) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import optscene; optscene.optical_budget(focal_mm: &#x27;float&#x27; = 25.0, working_distance_mm: &#x27;float&#x27; = 200.0, f_number: &#x27;float&#x27; = None, na: &#x27;float&#x27; = None, pixel_um: &#x27;float&#x27; = 3.45, wavelength_nm: &#x27;float&#x27; = 550.0, coc_um: &#x27;float&#x27; = None) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsoptics.get(&quot;optical_budget&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>관찰 광학계의 <b>분해능 버짓</b>을 닫힌 식으로 냅니다(찍기 전에 성립하는지 봅니다).</p>
 <p>NA와 F값은 어느 쪽으로 주어도 된다(N = 1/(2·NA)). 배율은 얇은 렌즈 근사 m = f / (WD − f), 실효(작동) F값은 N_w = (1 + |m|)·N. 반환하는 양:</p>

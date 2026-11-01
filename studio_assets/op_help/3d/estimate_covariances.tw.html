@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">estimate_covariances — 3D <code style="color:#22d3bf">gicp</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">descriptor</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.estimate_covariances(points, k: &#x27;int&#x27; = 20, epsilon: &#x27;float&#x27; = 0.001) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import gicp; gicp.estimate_covariances(points, k: &#x27;int&#x27; = 20, epsilon: &#x27;float&#x27; = 0.001) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;estimate_covariances&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把每點局部共變異數的特徵值替換為 (ε,1,1) 的 plane-to-plane 共變異數 (N,3,3)。</p>
 <p>對 k 近鄰(包含自身)的樣本共變異數做特徵分解,將特徵值<b>在切平面內替換為 1、在表面法線方向(最小特徵值方向)替換為 ε</b> 後重建。共變異數的大小與鄰域的分布範圍無關,恆為 (ε,1,1),成為尺度不變的「面狀可信度」模型(GICP 的核心)。</p>

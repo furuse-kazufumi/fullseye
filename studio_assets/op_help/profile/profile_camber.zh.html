@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">profile_camber — PROFILE <code style="color:#22d3bf">measure</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">pairs</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.profile_camber(contour, n=101)</code>(要直接调用实现,<code style="color:#22d3bf">import profileops; profileops.profile_camber(contour, n=101)</code>;从台账取用则 <code style="color:#22d3bf">opsprofile.get(&quot;profile_camber&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>中弧线(上下表面的中线)。返回 <code style="color:#22d3bf">(n, 2)</code> 的 <code style="color:#22d3bf">(x, yc)</code>。</p>
 <p>★<b>使用时须清楚定义上的差别</b>。这里返回的是「弦上各位置处上下表面的中点」，与 NACA 构造翼型时<b>所使用的</b>中弧线(沿法线方向叠加厚度之前的中心线)严格来说并不相同。此外，弦的取法也不同 —— 几何弦把「离后缘中点最远的点」作为前缘，因此对有弯度的翼型，会稍稍偏离生成坐标的原点，弦倾斜约 0.1 度。</p>

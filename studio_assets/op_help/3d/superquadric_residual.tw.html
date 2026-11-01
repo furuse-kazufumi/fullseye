@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">superquadric_residual — 3D <code style="color:#22d3bf">superquadric</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.superquadric_residual(points, a, eps, R, t) -&gt; &#x27;float&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import superquadric; superquadric.superquadric_residual(points, a, eps, R, t) -&gt; &#x27;float&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;superquadric_residual&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>Gross-Boult 體積修正殘差 mean( (sqrt(a1 a2 a3)(F^eps1 - 1))^2 )。</p>
 <p>用 <code style="color:#22d3bf">inside_outside(points, a, eps, R, t)</code> 求出各點的內外函數 F,將逐點殘差 <code style="color:#22d3bf">r_i = sqrt(a1*a2*a3) * (F_i**eps1 - 1)</code> 的 2 次方平均值以 float 回傳。表面上的點 <code style="color:#22d3bf">F=1</code>,因此殘差為 0,內側為負、外側為正的殘差(取 2 次方後符號消失)。與 <code style="color:#22d3bf">fit_superquadric</code> 最小化的量相同,回傳 dict 中的 <code style="color:#22d3bf">residual</code> 也是這個值。</p>

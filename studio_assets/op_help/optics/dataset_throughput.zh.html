@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">dataset_throughput — OPTICS <code style="color:#22d3bf">scene</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dataset_throughput(dataset) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import optscene; optscene.dataset_throughput(dataset) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsoptics.get(&quot;dataset_throughput&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p><code style="color:#22d3bf">inspection_dataset</code> 的结果 → 生成吞吐量的实测汇总。</p>
 <p>由于大量生成是常规运行，因此以能估算“这个设置下 1 万张需要几小时”的形式返回。返回值 dict：<code style="color:#22d3bf">images</code> / <code style="color:#22d3bf">seconds_total</code> / <code style="color:#22d3bf">seconds_per_image</code> / <code style="color:#22d3bf">images_per_hour</code> / <code style="color:#22d3bf">pixels_per_second</code> / <code style="color:#22d3bf">render_fraction</code>(追踪光线的时间占比。其余是 3 张真值的部分)。</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tb_keypoints_to_image2d — 2D <code style="color:#22d3bf">typed</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">keypoints</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_keypoints_to_image2d&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <p>*그림 없음: 타입은 닿지만 범용 합성 입력이 이 op의 정의역 밖 —— 브리지에서 묶은 raster 가 64×64 로 고정되어 있어, 128×128 의 점은 밖으로 떨어진다. 사용법은 아래 실행 가능한 예제를 볼 것.*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>이미지 좌표 <code style="color:#22d3bf">(N,2) = (u, v)</code> → 카운트 영상 <code style="color:#22d3bf">(H, W)</code>. <code style="color:#22d3bf">keypoints</code>의 두 번째 출구.</p>

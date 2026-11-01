@@ -4,6 +4,7 @@ dim: oned
 category: function
 in: signal
 out: pairs
+gpu: なし
 examples: [gallery_oned_audio_funct]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal` → `pairs`
 - **呼び出し**: `import fullseye as fs; fs.ledger.transform_funct_1d(y, mult_x=1.0, add_x=0.0, mult_y=1.0, add_y=0.0)` (実装を直接呼ぶなら `import funct1d; funct1d.transform_funct_1d(y, mult_x=1.0, add_x=0.0, mult_y=1.0, add_y=0.0)`、台帳から引くなら `ops1d.get("transform_funct_1d")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

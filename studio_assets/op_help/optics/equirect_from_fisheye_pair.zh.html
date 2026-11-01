@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">equirect_from_fisheye_pair — OPTICS <code style="color:#22d3bf">omni360</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">images</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.equirect_from_fisheye_pair(images, rotations, out_shape, model=&#x27;equidistant&#x27;, f_px=None, centres=None, fov_deg=190, feather_deg=8)</code>(要直接调用实现,<code style="color:#22d3bf">import omni360; omni360.equirect_from_fisheye_pair(images, rotations, out_shape, model=&#x27;equidistant&#x27;, f_px=None, centres=None, fov_deg=190, feather_deg=8)</code>;从台账取用则 <code style="color:#22d3bf">opsoptics.get(&quot;equirect_from_fisheye_pair&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>拼接两个已标定鱼眼图并报告重叠、接缝误差和盲区。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>

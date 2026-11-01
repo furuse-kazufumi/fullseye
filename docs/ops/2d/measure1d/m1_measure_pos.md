@@ -5,6 +5,7 @@ category: measure1d
 in: image
 out: contour
 halcon: measure_pos
+gpu: なし
 examples: [gallery2d_contour_measure, poc_dimensional_inspection]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -16,6 +17,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **データ種**: `image` → `contour`
 - **呼び出し**: `fullseye.apply(img, "m1_measure_pos", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 - **HALCON 相当**: `measure_pos`(意味・パラメータは HALCON リファレンスが参考になる)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ![m1_measure_pos: input → output](../../_fig/m1_measure_pos.png)
 

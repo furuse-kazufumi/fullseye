@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">braid_reduce — DRIVE <code style="color:#22d3bf">braidpath</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">signal × scalar</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.braid_reduce(word, n_strands)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import braidpath; braidpath.braid_reduce(word, n_strands)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;braid_reduce&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>브레이드 단어를 Dehornoy 핸들 축약으로 축약한다. <b>빈 단어가 반환됨 ⇔ 자명한 브레이드</b>(같은 류).</p>
 <p>핸들 = σⱼ^e u σⱼ^(−e)(u 에 σⱼ^(±1), σⱼ₋₁^(±1) 이 없음). u 안의 σⱼ₊₁^d 를 σⱼ₊₁^(−e) σⱼ^d σⱼ₊₁^e 로 바꾸고, 바깥쪽 2 문자를 지운다(관계식만 쓰므로 브레이드는 바뀌지 않는다). 왼쪽에서 처음으로 닫히는 핸들을 고른다 —— 그 안에는 다른 핸들이없으므로 Dehornoy 의 의미에서 허용되며, 유한 번에 멈춘다. 반환된 단어는 핸들을 갖지 않으며, 비어 있지 않으면 나타나는 최소 첨자의문자의 부호가 같다(σ 양 / σ 음).</p>

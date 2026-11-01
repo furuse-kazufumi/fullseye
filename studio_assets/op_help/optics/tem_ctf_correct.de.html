@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tem_ctf_correct — OPTICS <code style="color:#22d3bf">tem</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tem_ctf_correct(image, pixel_A=1.0, kv=300.0, cs_mm=2.7, defocus_A=10000.0, astig_A=None, astig_angle_deg=None, amplitude_contrast=0.07, phase_shift_deg=0.0, method=&#x27;phase_flip&#x27;, snr=None)</code> (die Implementierung direkt: <code style="color:#22d3bf">import temsim; temsim.tem_ctf_correct(image, pixel_A=1.0, kv=300.0, cs_mm=2.7, defocus_A=10000.0, astig_A=None, astig_angle_deg=None, amplitude_contrast=0.07, phase_shift_deg=0.0, method=&#x27;phase_flip&#x27;, snr=None)</code>; aus dem Register: <code style="color:#22d3bf">opsoptics.get(&quot;tem_ctf_correct&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>CTF-Korrektur (<code style="color:#22d3bf">image2d</code>). <code style="color:#22d3bf">method=&quot;phase_flip&quot;</code>: F⁻¹[ F(I − ⟨I⟩) · sign(CTF) ] (Phasenumkehr, Amplituden unverändert) / <code style="color:#22d3bf">&quot;wiener&quot;</code>: F⁻¹[ F(I − ⟨I⟩) · CTF / (CTF² + 1/snr) ].</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>

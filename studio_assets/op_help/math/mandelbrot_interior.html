@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">mandelbrot_interior — MATH <code style="color:#22d3bf">complex</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">cimage</code> → <code style="color:#22d3bf">mask</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mandelbrot_interior(c)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import mathops; mathops.mandelbrot_interior(c)</code>、台帳から引くなら <code style="color:#22d3bf">opsmath.get(&quot;mandelbrot_interior&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Closed-form interior test for the main cardioid and the period-2 bulb.</p>
 <p>Returns a boolean array: <code style="color:#22d3bf">True</code> where <code style="color:#22d3bf">c</code> is <b>provably</b> in the Mandelbrot set, because the period-1 fixed point is attracting (<code style="color:#22d3bf">|1 - sqrt(1 - 4c)| &lt; 1</code>) or <code style="color:#22d3bf">c</code> lies in the period-2 bulb (<code style="color:#22d3bf">|c + 1| &lt; 1/4</code>). <code style="color:#22d3bf">False</code> means &quot;not proven by these two tests&quot; — the smaller bulbs and the filaments are not covered, so this is a <b>lower bound</b> on the set, which is exactly what makes it usable as a gate: <code style="color:#22d3bf">cplx_escape_time</code> must return <code style="color:#22d3bf">max_iter</code> everywhere this is True, and no tolerance is involved.</p>

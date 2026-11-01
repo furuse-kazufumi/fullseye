@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">heap_volume_heightmap — DRIVE <code style="color:#22d3bf">granular</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d × scalar</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.heap_volume_heightmap(hm, pitch: &#x27;float&#x27;, ground=None) -&gt; &#x27;float&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import granular; granular.heap_volume_heightmap(hm, pitch: &#x27;float&#x27;, ground=None) -&gt; &#x27;float&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;heap_volume_heightmap&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>高度图中料堆的体积 <code style="color:#22d3bf">Σ (z − z_ground) pitch²</code> [m³]。<code style="color:#22d3bf">ground</code> 为同形状的地面高度(None = 0)。负高度(低于地面)截为 0 —— 不从料堆中减去坑洞。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>：形状、pitch。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

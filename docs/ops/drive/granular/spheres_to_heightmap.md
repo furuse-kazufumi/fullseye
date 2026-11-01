@@ -4,6 +4,7 @@ dim: drive
 category: granular
 in: matrix × scalar × scalar × scalar
 out: image2d
+gpu: なし
 examples: [poc_granular_heap_repose]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `matrix × scalar × scalar × scalar` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.spheres_to_heightmap(pos, radius: 'float', pitch: 'float', extent: 'float') -> 'np.ndarray'` (実装を直接呼ぶなら `import granular; granular.spheres_to_heightmap(pos, radius: 'float', pitch: 'float', extent: 'float') -> 'np.ndarray'`、台帳から引くなら `opsdrive.get("spheres_to_heightmap")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">dilemma_zone — DRIVE <code style="color:#22d3bf">decide</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dilemma_zone(v, *, reaction: &#x27;float&#x27;, decel: &#x27;float&#x27;, amber: &#x27;float&#x27;, intersection_width: &#x27;float&#x27;, car_length: &#x27;float&#x27;, accel: &#x27;float&#x27; = 0.0) -&gt; &#x27;Dict[str, object]&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import drivedecide; drivedecide.dilemma_zone(v, *, reaction: &#x27;float&#x27;, decel: &#x27;float&#x27;, amber: &#x27;float&#x27;, intersection_width: &#x27;float&#x27;, car_length: &#x27;float&#x27;, accel: &#x27;float&#x27; = 0.0) -&gt; &#x27;Dict[str, object]&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;dilemma_zone&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Dilemma zone of the amber (yellow) signal (Gazis, Herman, Maradudin 1960).</p>
 <p>The amber light comes on while you are at distance x before the stop line at speed <code style="color:#22d3bf">v</code>:</p>

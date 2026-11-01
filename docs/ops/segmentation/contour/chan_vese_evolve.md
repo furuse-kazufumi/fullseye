@@ -4,6 +4,7 @@ dim: segmentation
 category: contour
 in: image2d × mask
 out: table
+gpu: なし
 examples: [poc_active_contours]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d × mask` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.chan_vese_evolve(image, init, *, method: 'str' = 'convex', mu: 'float' = 0.1, nu: 'float' = 0.0, lambda1: 'float' = 1.0, lambda2: 'float' = 1.0, eps: 'float' = 1.0, eta: 'float' = 0.1, dt: 'float' = 5.0, n_iter: 'int' = 200, n_inner: 'int' = 200, tol: 'float' = 0.0, record_every: 'int' = 0) -> 'Dict[str, object]'` (実装を直接呼ぶなら `import segcontour; segcontour.chan_vese_evolve(image, init, *, method: 'str' = 'convex', mu: 'float' = 0.1, nu: 'float' = 0.0, lambda1: 'float' = 1.0, lambda2: 'float' = 1.0, eps: 'float' = 1.0, eta: 'float' = 0.1, dt: 'float' = 5.0, n_iter: 'int' = 200, n_inner: 'int' = 200, tol: 'float' = 0.0, record_every: 'int' = 0) -> 'Dict[str, object]'`、台帳から引くなら `opssegmentation.get("chan_vese_evolve")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

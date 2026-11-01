@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">keypoints_from_image2d — REPRCONV <code style="color:#22d3bf">keypoint</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">keypoints</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.keypoints_from_image2d(image2d, threshold=0.0)</code>(要直接调用实现,<code style="color:#22d3bf">import reprconv; reprconv.keypoints_from_image2d(image2d, threshold=0.0)</code>;从台账取用则 <code style="color:#22d3bf">opsreprconv.get(&quot;keypoints_from_image2d&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>计数/响应图像 <code style="color:#22d3bf">(H, W)</code> → 图像坐标 <code style="color:#22d3bf">(N,2) = (u, v)</code>。往返的回程。</p>
 <p>把 <code style="color:#22d3bf">&gt; threshold</code> 的像素按 8 邻域分成连通分量,返回各分量的<b>强度加权质心</b>。之所以加权,是为了在保留亚像素信息的响应图像(相关峰等)上能把往返误差降到量化以下。</p>

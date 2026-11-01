@@ -4,6 +4,7 @@ dim: 3d
 category: depth_denoise
 in: depth
 out: depth
+gpu: なし
 examples: [depth_denoise]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `depth` → `depth`
 - **呼び出し**: `import fullseye as fs; fs.ledger.fill_holes(depth: 'np.ndarray', max_radius: 'float', *, invalid: 'float | None' = 0.0, max_iter: 'int | None' = None, rel_tol: 'float' = 1e-06) -> 'np.ndarray'` (実装を直接呼ぶなら `import depth_bilateral; depth_bilateral.fill_holes(depth: 'np.ndarray', max_radius: 'float', *, invalid: 'float | None' = 0.0, max_iter: 'int | None' = None, rel_tol: 'float' = 1e-06) -> 'np.ndarray'`、台帳から引くなら `ops3d.get("fill_holes")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

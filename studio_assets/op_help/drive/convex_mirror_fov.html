@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">convex_mirror_fov — DRIVE <code style="color:#22d3bf">decide</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.convex_mirror_fov(radius, aperture, eye_distance) -&gt; &#x27;Dict[str, float]&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import drivedecide; drivedecide.convex_mirror_fov(radius, aperture, eye_distance) -&gt; &#x27;Dict[str, float]&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;convex_mirror_fov&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>凸面鏡(球面、半径 <code style="color:#22d3bf">radius</code>、開口の直径 <code style="color:#22d3bf">aperture</code>)を軸上 <code style="color:#22d3bf">eye_distance</code>(頂点から)の眼で見たときの視野角。</p>
 <p>厳密(軸を含む断面): h = a/2、α = asin(h/R)、s = R − sqrt(R² − h²)、β = atan(h/(D + s))、<b>全視野角 = 2(β + 2α)</b>。<code style="color:#22d3bf">radius = inf</code> は平面鏡 2 atan(h/D)。</p>

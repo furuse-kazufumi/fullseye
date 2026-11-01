@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">hausdorff_distance — 3D <code style="color:#22d3bf">metrics</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.hausdorff_distance(a, b)</code>(要直接呼叫實作,<code style="color:#22d3bf">import metrics3d; metrics3d.hausdorff_distance(a, b)</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;hausdorff_distance&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>對稱 Hausdorff 距離 = max(max_a min_b, max_b min_a)。→ scalar。最壞情況的偏離。</p>
 <p>Raises ValueError：任一方為空或不是 (N,3) 時(空集合的最大值會變成 numpy 的原始例外)。</p>

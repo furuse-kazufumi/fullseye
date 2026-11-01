@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">color_correction_matrix — GFX2D <code style="color:#22d3bf">isp</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">rgb × matrix</code> → <code style="color:#22d3bf">rgb</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.color_correction_matrix(rgb, ccm, normalize_rows=True)</code> (die Implementierung direkt: <code style="color:#22d3bf">import gfx2d; gfx2d.color_correction_matrix(rgb, ccm, normalize_rows=True)</code>; aus dem Register: <code style="color:#22d3bf">opsgfx2d.get(&quot;color_correction_matrix&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Wendet eine 3x3-Farbkorrekturmatrix pixelweise an (standardmäßig zeilennormiert, Weiß bleibt Weiß).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>

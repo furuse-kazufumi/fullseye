@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">design_min_radius — DRIVE <code style="color:#22d3bf">lateral</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.design_min_radius(design_speed_kmh, *, side_friction: &#x27;float&#x27;, superelevation: &#x27;float&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import drivelateral; drivelateral.design_min_radius(design_speed_kmh, *, side_friction: &#x27;float&#x27;, superelevation: &#x27;float&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;design_min_radius&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Minimum curve radius from Eq. (3) of the commentary on the Road Structure Ordinance: R = V² / (127 (i + f)) [m] (V in km/h).</p>
 <p>The design formula obtained from eq. (2) by dropping i f in the denominator (i f ≪ 1) and taking 3.6² g ≈ 127. The exact upper speed limit is <code style="color:#22d3bf">curve_speed_limit</code>.</p>

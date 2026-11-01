@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">cscalar_to_polar — REPRCONV <code style="color:#22d3bf">algebra</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">cscalar</code> → <code style="color:#22d3bf">pairs</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cscalar_to_polar(cscalar)</code> (to call the implementation directly, <code style="color:#22d3bf">import reprconv; reprconv.cscalar_to_polar(cscalar)</code>; from the registry, <code style="color:#22d3bf">opsreprconv.get(&quot;cscalar_to_polar&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Complex scalar → polar form <code style="color:#22d3bf">pairs (1,2) = [|z|, arg z [deg]]</code>. The exit from <code style="color:#22d3bf">cscalar</code>.</p>
 <p>The complex scalar returned by <code style="color:#22d3bf">cplx_contour_integral</code> / <code style="color:#22d3bf">cplx_cauchy_value</code> has its own type because, mixed into <code style="color:#22d3bf">measurement</code> (real scalars only), it would make downstream code crash with a raw TypeError. As a polar pair it can be passed to the 1-D vocabulary.</p>

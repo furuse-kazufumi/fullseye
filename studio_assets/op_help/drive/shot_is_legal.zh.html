@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">shot_is_legal — DRIVE <code style="color:#22d3bf">racket</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table × table × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.shot_is_legal(p, v, w, bp, ip, tp, x_racket: &#x27;float&#x27;, side: &#x27;int&#x27;, hit_height=(0.05, 0.45)) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import racket; racket.shot_is_legal(p, v, w, bp, ip, tp, x_racket: &#x27;float&#x27;, side: &#x27;int&#x27;, hit_height=(0.05, 0.45)) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;shot_is_legal&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用真实物理预测击球 (p, v, ω)，判定其是否越过球网、只在对方台面落 1 次，并以对方击球面 x = ∓x_r 处可击打的高度到达。<code style="color:#22d3bf">{&quot;legal&quot;, &quot;reason&quot;, &quot;p_arrive&quot;, &quot;t_arrive&quot;}</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">add_ball — DRIVE <code style="color:#22d3bf">ballworld</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table × table</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.add_ball(world: &#x27;dict&#x27;, mesh: &#x27;dict&#x27;, p, R=None, *, name: &#x27;str&#x27; = &#x27;ball&#x27;) -&gt; &#x27;int&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import ballworld; ballworld.add_ball(world: &#x27;dict&#x27;, mesh: &#x27;dict&#x27;, p, R=None, *, name: &#x27;str&#x27; = &#x27;ball&#x27;) -&gt; &#x27;int&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;add_ball&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Adds a ball to the world at pose (p, R). The per-face labels (ball 23 / marker 24) are kept as is. Return value = index into objects.</p>
 <p>Empty input (<code style="color:#22d3bf">world</code> an empty dict) raises <code style="color:#22d3bf">ValueError</code>.</p>

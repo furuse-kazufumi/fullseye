@@ -4,6 +4,7 @@ dim: optics
 category: scene
 in: table
 out: table
+gpu: なし
 examples: [virtual_machine_vision]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.random_defects(primitive: 'dict', count: 'int' = 2, kinds=('scratch', 'crack', 'pits', 'blob', 'stain', 'foreign'), seed: 'int' = 0, uv_size_mm=(20.0, 20.0), height_um=(5.0, 40.0), albedo_defects: 'bool' = True, shape=(192, 192), defect_roughness_um: 'float' = 0.6) -> 'dict'` (実装を直接呼ぶなら `import optscene; optscene.random_defects(primitive: 'dict', count: 'int' = 2, kinds=('scratch', 'crack', 'pits', 'blob', 'stain', 'foreign'), seed: 'int' = 0, uv_size_mm=(20.0, 20.0), height_um=(5.0, 40.0), albedo_defects: 'bool' = True, shape=(192, 192), defect_roughness_um: 'float' = 0.6) -> 'dict'`、台帳から引くなら `opsoptics.get("random_defects")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

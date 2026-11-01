@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">fit_sphere_3d — 3D <code style="color:#22d3bf">geometry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">primitive</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fit_sphere_3d(points)</code>(要直接调用实现,<code style="color:#22d3bf">import match3d; match3d.fit_sphere_3d(points)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;fit_sphere_3d&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>点群 → 最小二乘球(代数拟合)。返回 (center, radius)。用于管道/球体计量。</p>
 <p>以 <code style="color:#22d3bf">[2p, 1]</code> 的线性最小二乘(<code style="color:#22d3bf">lstsq</code>)求解 <code style="color:#22d3bf">|p|² = 2c·p + (r² − |c|²)</code> 的代数拟合(并非最小化几何距离,因此只看到球的一部分或噪声大时半径会有偏差)。<code style="color:#22d3bf">(N,3)</code> 不足 4 点则 ValueError。<code style="color:#22d3bf">radius</code> 为 <code style="color:#22d3bf">sqrt(max(s + |c|², 0))</code>,负值 clamp 为 0。点共面、共线时会静默返回 <code style="color:#22d3bf">lstsq</code> 的最小范数解(没有校验。也不返回残差,因此请用 <code style="color:#22d3bf">|p − c| − r</code> 确认)。若要按几何距离精修,可将本 op 的结果作为初值做非线性最小二乘;离群值则用 <code style="color:#22d3bf">ransac_sphere</code>。从 voxel 检测用 <code style="color:#22d3bf">hough_sphere_3d</code>。</p>

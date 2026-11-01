@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">itof_wiggling_correct — OPTICS <code style="color:#22d3bf">itof</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.itof_wiggling_correct(phase, frequencies_hz=None, waveform=&#x27;square&#x27;, n_phases=4, calibration=None, n_harmonics=2)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import itof; itof.itof_wiggling_correct(phase, frequencies_hz=None, waveform=&#x27;square&#x27;, n_phases=4, calibration=None, n_harmonics=2)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;itof_wiggling_correct&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>高調波による周期誤差(wiggling)を補正した位相と距離。<code style="color:#22d3bf">table</code> を返す。</p>
 <p>変調と復調が矩形波だと、相関は三角波(<code style="color:#22d3bf">waveform=&quot;square&quot;</code>)になり、K 段の推定は奇数次の高調波を基本波に折り返す。4 段なら真の位相 φ が第 1 象限にあるとき <code style="color:#22d3bf">u = 2φ/π</code> として推定は <code style="color:#22d3bf">atan(u / (1 − u))</code> になり、誤差は周期 π/2 で波打つ(最大 ±0.071 rad 程度、20 MHz で ±8.5 cm)。</p>

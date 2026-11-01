@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">synthesize_silhouette — 3D <code style="color:#22d3bf">space_carving</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.synthesize_silhouette(points, K, R, t, size: &#x27;Tuple[int, int]&#x27;, *, fill: &#x27;bool&#x27; = True, dilate: &#x27;int&#x27; = 1) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import visualhull; visualhull.synthesize_silhouette(points, K, R, t, size: &#x27;Tuple[int, int]&#x27;, *, fill: &#x27;bool&#x27; = True, dilate: &#x27;int&#x27; = 1) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;synthesize_silhouette&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把 3-D 點群投影到 (K,R,t) 相機,回傳佔據像素為 True 的輪廓(H,W bool)。</p>
 <p>用於產生 GT。將 <code style="color:#22d3bf">points</code> (N,3) 依 <code style="color:#22d3bf">X_cam = R X + t</code> 投影,把 depth&gt;0 且落在影像內的像素設為 True。稀疏點雲的投影像會出現空洞,因此預設進行孔洞填補(<code style="color:#22d3bf">fill</code>, scipy.ndimage.binary_fill_holes),得到內部填實的前景遮罩。再僅依 <code style="color:#22d3bf">dilate</code> 個像素進行膨脹,使其成為「pixel 只要稍微接觸物體就算前景」這種覆蓋(coverage)意義上的輪廓 —— 這是為了在離散化誤差下也能保證 visual hull 的 recall(不漏掉物體 voxel )而採取的保守側捨入。</p>

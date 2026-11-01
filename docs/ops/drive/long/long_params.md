@@ -4,6 +4,7 @@ dim: drive
 category: long
 in: 
 out: table
+gpu: なし
 examples: [poc_driving_longitudinal, poc_driving_town, poc_driving_traffic, poc_driving_weather]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.long_params(mass: 'float' = 1300.0, c_rr: 'float' = 0.012, cda: 'float' = 0.65, rho_air: 'float' = 1.2, a_drive_max: 'float' = 3.0, a_brake_max: 'float' = 6.0, reaction: 'float' = 0.75, mu: 'float' = 0.8, a_creep: 'float' = 0.3, g: 'float' = 9.80665) -> 'Dict[str, float]'` (実装を直接呼ぶなら `import drivelong; drivelong.long_params(mass: 'float' = 1300.0, c_rr: 'float' = 0.012, cda: 'float' = 0.65, rho_air: 'float' = 1.2, a_drive_max: 'float' = 3.0, a_brake_max: 'float' = 6.0, reaction: 'float' = 0.75, mu: 'float' = 0.8, a_creep: 'float' = 0.3, g: 'float' = 9.80665) -> 'Dict[str, float]'`、台帳から引くなら `opsdrive.get("long_params")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">piv_streamlines — PIV <code style="color:#22d3bf">visualise</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">flow2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_streamlines(flow, seeds=None, separation=None, step=0.25, max_length=None, min_speed=0.001, test_ratio=0.5)</code>(要直接呼叫實作,<code style="color:#22d3bf">import pivops; pivops.piv_streamlines(flow, seeds=None, separation=None, step=0.25, max_length=None, min_speed=0.001, test_ratio=0.5)</code>;從台帳取用則 <code style="color:#22d3bf">opspiv.get(&quot;piv_streamlines&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>以 RK4 追蹤流線(相當於 MATLAB 的 <code style="color:#22d3bf">stream2</code> / <code style="color:#22d3bf">streamslice</code>)。</p>
 <p>省略 <code style="color:#22d3bf">seeds</code> 時，以 <b>Jobard–Lefer(1997)的等間距配置</b>自動放置種子。流線彼此以約 <code style="color:#22d3bf">separation</code> 的間隔排列，在比 <code style="color:#22d3bf">test_ratio * separation</code> 更近處截斷。箭頭圖畫密了會擠成一團，手動放種子會留下空白，而這種配置<b>既不產生空白也不產生重疊</b>(以下面 2 個性質作為門檻)。</p>

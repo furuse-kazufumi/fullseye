@@ -4,6 +4,7 @@ dim: drive
 category: traffic
 in: any
 out: signal
+gpu: なし
 examples: [poc_driving_traffic]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `any` → `signal`
 - **呼び出し**: `import fullseye as fs; fs.ledger.poisson_events(rate_fn: 'Callable', x_max: 'float', *, rate_max: 'float', seed, n_grid: 'int' = 2001) -> 'np.ndarray'` (実装を直接呼ぶなら `import drivetraffic; drivetraffic.poisson_events(rate_fn: 'Callable', x_max: 'float', *, rate_max: 'float', seed, n_grid: 'int' = 2001) -> 'np.ndarray'`、台帳から引くなら `opsdrive.get("poisson_events")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

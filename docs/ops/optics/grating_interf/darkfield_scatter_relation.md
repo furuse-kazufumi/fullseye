@@ -4,6 +4,7 @@ dim: optics
 category: grating_interf
 in: 
 out: table
+gpu: なし
 examples: [grating_interferometry]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.darkfield_scatter_relation(darkfield=None, sigma_urad=None, distance_mm=23.2, analyzer_period_um=2.0, thickness_mm=None, wavelength_nm=None)` (実装を直接呼ぶなら `import gratinginterf; gratinginterf.darkfield_scatter_relation(darkfield=None, sigma_urad=None, distance_mm=23.2, analyzer_period_um=2.0, thickness_mm=None, wavelength_nm=None)`、台帳から引くなら `opsoptics.get("darkfield_scatter_relation")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

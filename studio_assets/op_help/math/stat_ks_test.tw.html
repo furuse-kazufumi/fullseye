@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">stat_ks_test — MATH <code style="color:#22d3bf">estimation</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.stat_ks_test(x, y=None, *, dist: &#x27;str&#x27; = &#x27;norm&#x27;) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import mathestimation; mathestimation.stat_ks_test(x, y=None, *, dist: &#x27;str&#x27; = &#x27;norm&#x27;) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsmath.get(&quot;stat_ks_test&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>Kolmogorov–Smirnov 檢定。給定 <code style="color:#22d3bf">y</code> 時為 2 樣本檢定(是否來自同一分布)，否則為與標準常態分布的適合度檢定。</p>
 <p>D = 經驗分布函數之間的最大差。p 值由 scipy 給出(自動選擇精確/漸近)。</p>

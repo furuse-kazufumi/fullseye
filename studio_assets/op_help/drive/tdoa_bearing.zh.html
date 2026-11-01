@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tdoa_bearing — DRIVE <code style="color:#22d3bf">decide</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tdoa_bearing(sig_left, sig_right, fs, mic_spacing, *, c: &#x27;float&#x27; = 343.0, upsample: &#x27;int&#x27; = 16) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import drivedecide; drivedecide.tdoa_bearing(sig_left, sig_right, fs, mic_spacing, *, c: &#x27;float&#x27; = 343.0, upsample: &#x27;int&#x27; = 16) -&gt; &#x27;Dict[str, object]&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;tdoa_bearing&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由 2 个麦克风(左 = +y，右 = −y，间距 <code style="color:#22d3bf">mic_spacing</code>)的到达时间差求声源方位(远场近似)。</p>
 <p>Δt = t_右 − t_左(先到达左侧为正),sin θ = c Δt / d,θ = 相对前方的角度(左为正)</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">braid_from_trajectories — DRIVE <code style="color:#22d3bf">braidpath</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.braid_from_trajectories(trajectories, obstacles=None, angle=0.1, jitter=&#x27;auto&#x27;)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import braidpath; braidpath.braid_from_trajectories(trajectories, obstacles=None, angle=0.1, jitter=&#x27;auto&#x27;)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;braid_from_trajectories&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>समतल trajectories (और स्थिर obstacle points) से braid word (crossing signs का क्रम) बनाता है।</p>
 <p>हर step के भीतर गति को सीधी रेखा मानकर, projection axis x&#x27; = x cos θ + y sin θ पर दो पड़ोसी strands का क्रम जिस समय बदलता है, उसे closed form में निकाला जाता है (relative गति भी सीधी है, इसलिए zero अधिकतम 1), और समय के क्रम में letters बनाए जाते हैं। बायाँ strand <b>नीचे</b> (y&#x27; के छोटे वाले तरफ़) से होकर दाईं ओर निकले तो <code style="color:#22d3bf">+i</code> (counter-clockwise half-twist), ऊपर से निकले तो <code style="color:#22d3bf">−i</code>।</p>

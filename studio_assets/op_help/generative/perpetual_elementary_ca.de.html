@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">perpetual_elementary_ca — GENERATIVE <code style="color:#22d3bf">perpetual</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">keine</code> → <code style="color:#22d3bf">rgb</code> (ein Operator, der allein durch seine Argumente bestimmt ist — er nimmt kein Bild und keine Daten entgegen)</p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.perpetual_elementary_ca(rule: &#x27;int&#x27; = 90, width: &#x27;int&#x27; = 401, rows: &#x27;int&#x27; = 200, seed: &#x27;int&#x27; = -1, cell: &#x27;int&#x27; = 2) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import perpetual; perpetual.perpetual_elementary_ca(rule: &#x27;int&#x27; = 90, width: &#x27;int&#x27; = 401, rows: &#x27;int&#x27; = 200, seed: &#x27;int&#x27; = -1, cell: &#x27;int&#x27; = 2) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsgenerative.get(&quot;perpetual_elementary_ca&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Elementarer zellulärer Automat (Wolframs 256 Regeln), endlos von oben nach unten fortgesetzt.</p>
 <p><code style="color:#22d3bf">seed &lt; 0</code> startet von <b>1 Punkt in der Mitte</b> (Regel 90 ergibt Sierpinski, Regel 30 Pseudozufall, Regel 110 universelle Berechnung).</p>

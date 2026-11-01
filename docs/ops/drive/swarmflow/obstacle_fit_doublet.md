@@ -4,6 +4,7 @@ dim: drive
 category: swarmflow
 in: table
 out: table
+gpu: なし
 examples: [poc_swarm_obstacle_from_flow]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.obstacle_fit_doublet(field, speed=None, upstream_only: 'bool' = False, exclude_margin: 'float' = 1.25, min_explained: 'float' = 0.5, min_radius=None) -> 'dict'` (実装を直接呼ぶなら `import swarmflow; swarmflow.obstacle_fit_doublet(field, speed=None, upstream_only: 'bool' = False, exclude_margin: 'float' = 1.25, min_explained: 'float' = 0.5, min_radius=None) -> 'dict'`、台帳から引くなら `opsdrive.get("obstacle_fit_doublet")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

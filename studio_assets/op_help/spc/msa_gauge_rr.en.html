@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">msa_gauge_rr — SPC <code style="color:#22d3bf">msa</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.msa_gauge_rr(table, part=&#x27;part&#x27;, operator=&#x27;operator&#x27;, value=&#x27;value&#x27;, tolerance=None, pool_interaction=&#x27;auto&#x27;, pool_alpha=0.25)</code> (to call the implementation directly, <code style="color:#22d3bf">import spc; spc.msa_gauge_rr(table, part=&#x27;part&#x27;, operator=&#x27;operator&#x27;, value=&#x27;value&#x27;, tolerance=None, pool_interaction=&#x27;auto&#x27;, pool_alpha=0.25)</code>; from the registry, <code style="color:#22d3bf">opsspc.get(&quot;msa_gauge_rr&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Gauge repeatability and reproducibility by the analysis-of-variance method (<code style="color:#22d3bf">table</code>).</p>
 <p>Repeatability EV (the scatter when the same person re-measures the same item), reproducibility AV (the scatter when the person changes; includes the interaction), their combination GRR, part-to-part PV, total variation TV, <code style="color:#22d3bf">%GRR = 100 GRR/TV</code>, and the number of distinct categories <code style="color:#22d3bf">ndc = 1.41 PV/GRR</code>.</p>

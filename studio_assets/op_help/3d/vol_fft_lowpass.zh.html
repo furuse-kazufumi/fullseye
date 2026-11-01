@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">vol_fft_lowpass — 3D <code style="color:#22d3bf">frequency</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">voxel</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_fft_lowpass(vol, cutoff, spacing=None)</code>(要直接调用实现,<code style="color:#22d3bf">import volfreq; volfreq.vol_fft_lowpass(vol, cutoff, spacing=None)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;vol_fft_lowpass&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>高斯低通:保留比 <code style="color:#22d3bf">1/cutoff</code> 更粗的结构(体素单位或实际尺寸)。</p>
 <p>更细的细节被平滑地衰减。传递函数 <code style="color:#22d3bf">exp(-f^2 / (2 cutoff^2))</code> —— DC 分量(平均强度)原样</p>

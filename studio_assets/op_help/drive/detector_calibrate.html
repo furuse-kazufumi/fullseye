@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">detector_calibrate — DRIVE <code style="color:#22d3bf">pxrd</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d × signal × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.detector_calibrate(image, d_spacings, geometry_guess, n_azimuth=180, fit_tilt=True, min_rings=2)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import pxrd; pxrd.detector_calibrate(image, d_spacings, geometry_guess, n_azimuth=180, fit_tilt=True, min_rings=2)</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;detector_calibrate&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>既知の標準(Si など)の環から検出器の中心・距離・傾きを較正する。</p>
 <p><code style="color:#22d3bf">d_spacings</code> は標準の面間隔 [Å] の list(強い順でなくてよい)、<code style="color:#22d3bf">geometry_guess</code> には少なくとも <code style="color:#22d3bf">pixel</code> と</p>

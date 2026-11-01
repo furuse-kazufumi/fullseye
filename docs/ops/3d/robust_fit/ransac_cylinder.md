@@ -4,6 +4,7 @@ dim: 3d
 category: robust_fit
 in: points × normals
 out: primitive
+gpu: なし
 examples: [ransac_prim]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `points × normals` → `primitive`
 - **呼び出し**: `import fullseye as fs; fs.ledger.ransac_cylinder(points, normals, thresh, iters=800, seed=0)` (実装を直接呼ぶなら `import ransac_fit; ransac_fit.ransac_cylinder(points, normals, thresh, iters=800, seed=0)`、台帳から引くなら `ops3d.get("ransac_cylinder")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

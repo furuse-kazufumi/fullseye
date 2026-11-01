@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">stroke_tour_closed — PRINTPATH <code style="color:#22d3bf">stroke</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">pairs</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.stroke_tour_closed(points, start=&#x27;nearest&#x27;, two_opt_rounds=8, order=None)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import printpath; printpath.stroke_tour_closed(points, start=&#x27;nearest&#x27;, two_opt_rounds=8, order=None)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsprintpath.get(&quot;stroke_tour_closed&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>점을 1번씩 지나 되돌아오는 <b>닫힌 순회로</b>로 재배열한다. → <code style="color:#22d3bf">pairs</code></p>
 <p>반환되는 것은 입력과 같은 점을 재배열한 <code style="color:#22d3bf">(N, 2)</code>. <b>마지막 점에서 첫 점으로 돌아가는</b> 것으로 닫는다(끝에 첫 점을 중복시키지 않는다).</p>

@@ -4,6 +4,7 @@ dim: 3d
 category: space_carving
 in: points
 out: image2d
+gpu: なし
 examples: [space_carving]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `points` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.synthesize_silhouette(points, K, R, t, size: 'Tuple[int, int]', *, fill: 'bool' = True, dilate: 'int' = 1) -> 'np.ndarray'` (実装を直接呼ぶなら `import visualhull; visualhull.synthesize_silhouette(points, K, R, t, size: 'Tuple[int, int]', *, fill: 'bool' = True, dilate: 'int' = 1) -> 'np.ndarray'`、台帳から引くなら `ops3d.get("synthesize_silhouette")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

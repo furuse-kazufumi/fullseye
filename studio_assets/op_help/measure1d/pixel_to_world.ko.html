@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">pixel_to_world — MEASURE1D <code style="color:#22d3bf">scale</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">measurement</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pixel_to_world(value_px, mm_per_px)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import measuring1d; measuring1d.pixel_to_world(value_px, mm_per_px)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsmeasure1d.get(&quot;pixel_to_world&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>화소로 잰 길이 하나를 실제 치수 mm 로 바꾼다(<code style="color:#22d3bf">value_px * mm_per_px</code>).</p>
 <p><code style="color:#22d3bf">mm_per_px</code> 는 <code style="color:#22d3bf">mm_per_px_from_reference</code> 로 <b>실측</b>한 값을 넘긴다. <code style="color:#22d3bf">value_px</code> 는 0 이나 음수여도 되지만(차이·편향을 그대로 환산) 유한해야 하고, <code style="color:#22d3bf">mm_per_px</code> 는 유한한 양수여야 한다. 아니면 <code style="color:#22d3bf">ValueError</code>. 반환값은 float(<code style="color:#22d3bf">measurement</code> 형). 면적은 mm/px 를 제곱해 직접 곱한다(이 op 는 길이만).</p>

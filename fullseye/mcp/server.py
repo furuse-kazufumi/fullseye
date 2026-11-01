@@ -255,6 +255,8 @@ TOOLS: dict[str, dict] = {
                 "params": {"type":"object", "description":
                            "op台帳で公開された名前つき物理量(例: sigma_px/window_px/radius_px)"},
                 "allow_degraded": {"type": "boolean"},
+                "device": {"type":"string","enum":["auto","cpu","cuda"]},
+                "parity_check": {"type":"boolean","description":"device=cuda の時だけ有効。CPU 参照も走らせて max_abs_diff_vs_cpu を記録する(所要時間は 2 倍)"},
                 "vision": _VISION,
             },
             "required": ["handle", "op"],
@@ -284,6 +286,8 @@ TOOLS: dict[str, dict] = {
                 "bindings": {"type":"object","additionalProperties":_HANDLE},
                 "outputs": {"type":"array","items":{"type":"string"}},
                 "vision": _VISION,
+                "device": {"type":"string","enum":["auto","cpu","cuda"]},
+                "parity_check": {"type":"boolean","description":"device=cuda の時だけ有効。CPU 参照も走らせて max_abs_diff_vs_cpu を記録する(所要時間は 2 倍)"},
                 "stages": {
                     "type": "array", "minItems": 1, "maxItems": 64,
                     "items": {
@@ -1122,25 +1126,26 @@ def validate_pipeline(stages: list[dict], start_sort: str | None, cat: Catalog, 
             "stages": normalized, "execution_order":[x[0] for x in ordered], "errors": errors}
 
 
-def _run_op(arr, op, ka: float, kb: float, allow: bool):
+def _run_op(arr, op, ka: float, kb: float, allow: bool, device: str = "auto"):
     """1 op を走らせる。strict で失敗したら (None, degraded, err)。"""
     import backend_safe
     import fullseye
     backend_safe.clear_fallbacks()
     try:
-        out = fullseye.apply(arr, op.name, ka, kb, on_error=("fallback" if allow else "raise"))
+        out = fullseye.apply(arr, op.name, ka, kb, device=device,
+                            on_error=("fallback" if allow else "raise"))
     except Exception as exc:                                    # noqa: BLE001
         return None, backend_safe.fallbacks(), {"type": type(exc).__name__, "message": str(exc)[:400]}
     return out, backend_safe.fallbacks(), None
 
 
 def _stage(store: HandleStore, meta: dict, arr, op, ka: float, kb: float, allow: bool, *,
-           vision: str, thumb_allowed: bool, tag: str):
+           vision: str, thumb_allowed: bool, tag: str, device: str = "auto"):
     """apply 1 段ぶん: 記録(数値 + 判定 + 劣化台帳)と、必要なら小図。
     返り値 = (record, links, out_meta | None, out_value)。out_meta は配列のときだけ。"""
     import numpy as np
     import ops
-    out, degraded, err = _run_op(arr, op, ka, kb, allow)
+    out, degraded, err = _run_op(arr, op, ka, kb, allow, device=device)
     out_sort = _out_sort(op, meta.get("sort"))
     rec: dict = {"op": op.name, "a": ka, "b": kb, "handle_in": meta.get("handle"),
                  "in_sort": op.in_sort, "out_sort": out_sort,
@@ -1288,12 +1293,21 @@ def _apply(a: dict, cat: Catalog, store: HandleStore, *,
                                   float(a.get("a", 0.5)), float(a.get("b", 0.5)))
     allow = bool(a.get("allow_degraded", False))
     rec, links, _, out = _stage(store, meta, arr, op, ka, kb, allow, vision=a.get("vision", "auto"),
-                                thumb_allowed=True, tag=op.name)
+                                thumb_allowed=True, tag=op.name, device=a.get("device", "auto"))
     if "error" in rec:
         text = _stage_text(rec) + "\n(allow_degraded=true で fail-soft を許せるが、劣化は degraded に載る)"
         return _tool_error(text, rec)
     if named:
         rec["named_params"] = named
+    import fullseye
+    resolved_device = fullseye.resolve_device(a.get("device", "auto"))
+    rec["acceleration"] = {"device": resolved_device, "approximate": resolved_device == "cuda"}
+    # CPU 参照との照合は求められた時だけ(既定で毎回 2 回走らせると GPU の意味が無い)
+    if resolved_device == "cuda" and bool(a.get("parity_check", False)) and isinstance(out, np.ndarray):
+        cpu = fullseye.apply(arr, op.name, ka, kb, device="cpu", on_error="raise")
+        if isinstance(cpu, np.ndarray) and cpu.shape == out.shape:
+            rec["acceleration"]["max_abs_diff_vs_cpu"] = float(
+                np.max(np.abs(np.asarray(out, np.float64) - np.asarray(cpu, np.float64))))
     text = _stage_text(rec)
     addon = _typed_json_addon(out, _out_sort(op, meta["sort"]), max_structured_bytes)
     if addon is not None:
@@ -1316,6 +1330,8 @@ def _pipeline_dag(a: dict, cat: Catalog, store: HandleStore, *, max_structured_b
     from fullseye.opsearch import _graph
     edges={e["op"]:e for e in _graph()["edges"]}
     policy=_execution_policy()
+    device=fullseye.resolve_device(a.get("device", "auto"))
+    parity_check=bool(a.get("parity_check", False))
     explicit=bool(a.get("bindings") or a.get("outputs") or any("inputs" in s or "params" in s for s in a["stages"]))
     start_sort=store.get(a["handle"])[0]["sort"] if a.get("handle") else None
     bindings=dict(a.get("bindings",{}))
@@ -1397,6 +1413,7 @@ def _pipeline_dag(a: dict, cat: Catalog, store: HandleStore, *, max_structured_b
                 from fssystem import resolve_profile
                 try: params[pname]=resolve_profile(pvalue["profile"])
                 except ValueError as exc: raise ArgError(str(exc)) from exc
+        parity_meta = None
         try:
             executor=edge["executor"]
             if executor["kind"]=="identity":
@@ -1414,8 +1431,19 @@ def _pipeline_dag(a: dict, cat: Catalog, store: HandleStore, *, max_structured_b
                     if edge["op"] in {"ncc_locate", "shape_locate"}:
                         runtime_ops.set_match_template(template_value)
                     try:
-                        out=registered.fn(incoming,float(normalized_spec["a"]),
-                                          float(normalized_spec["b"]))
+                        if device == "cuda" and len(args) == 1:
+                            out=fullseye.apply(incoming, edge["op"], float(normalized_spec["a"]),
+                                               float(normalized_spec["b"]), device=device,
+                                               on_error="raise")
+                        else:
+                            out=registered.fn(incoming,float(normalized_spec["a"]),
+                                              float(normalized_spec["b"]))
+                        if device == "cuda" and parity_check and len(args) == 1 and isinstance(out, np.ndarray):
+                            cpu=fullseye.apply(incoming,edge["op"],float(normalized_spec["a"]),
+                                               float(normalized_spec["b"]),device="cpu",on_error="raise")
+                            if isinstance(cpu,np.ndarray) and cpu.shape == out.shape:
+                                parity_meta={"approximate":True,"max_abs_diff_vs_cpu":float(
+                                    np.max(np.abs(np.asarray(out,np.float64)-np.asarray(cpu,np.float64))))}
                     finally:
                         if edge["op"] in {"ncc_locate", "shape_locate"}:
                             runtime_ops.set_match_template(None)
@@ -1461,6 +1489,8 @@ def _pipeline_dag(a: dict, cat: Catalog, store: HandleStore, *, max_structured_b
             "verdict":"value","escalate":False,"reasons":[]}
         rec={"stage":i,"ref":ref,"op":edge["op"],"inputs":refs,"status":"ok",
              "params":spec.get("params",{}),"out_sort":out_sort,"handle":handle,"stats":st,**vd,"degraded":[]}
+        if parity_meta is not None:
+            rec["parity"] = parity_meta
         if isinstance(out, np.ndarray) and out_sort not in _BULKY_SORTS and out.size <= 256:
             rec["value"] = out.tolist()
         if normalized_spec.get("named_params"):
@@ -1484,10 +1514,19 @@ def _pipeline_dag(a: dict, cat: Catalog, store: HandleStore, *, max_structured_b
                  for ref in outputs if ref in values]
     first_failed=next((r["stage"] for r in records if r.get("status")=="failed"),None)
     visible_records=records if explicit else [r for r in records if r.get("status")!="skipped"]
+    linear_specs=[(s["op"], s["a"], s["b"]) for s in checked["stages"]]
+    try:
+        import accel_bridge
+        acceleration=accel_bridge.coverage(linear_specs)
+    except Exception:  # noqa: BLE001 - metadata must not change execution outcome
+        acceleration={"n_gpu_segments":0,"segments":[],"n_transfers":0}
+    acceleration["device"] = device
+    acceleration["n_transfers"] = (2 * acceleration.get("n_gpu_segments", 0)
+                                     if device == "cuda" else 0)
     result={"completed":sum(r.get("status")=="ok" for r in records),"failed":sum(r.get("status")=="failed" for r in records),
             "stopped_at":first_failed,"strict":True,"stages":visible_records,"outputs":output_rows,
             "intermediate_bytes":intermediate_bytes,"intermediate_byte_limit":intermediate_limit,
-            "system_policy":policy}
+            "system_policy":policy,"acceleration":acceleration}
     if len(output_rows)==1:
         result.update({"handle":output_rows[0]["handle"],"out_sort":output_rows[0]["sort"],
                        "output_ref":output_rows[0]["ref"]})

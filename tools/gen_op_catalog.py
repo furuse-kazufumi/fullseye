@@ -221,7 +221,8 @@ def _families_section() -> list[str]:
                 io_ = f"`{r.get('in') or '入力なし'} → {r.get('out') or '?'}`"
                 ex = _ex_link(r.get("examples")) if dim in ("2d", "3d") else (
                     _ex_link(r.get("examples")) if r.get("examples") else "")
-                out.append(f"- `{r['name']}`{hal} {io_}" + (f" — {summ}" if summ else "") + ex)
+                gpu = f" GPU: {r.get('gpu_status', 'なし')}"
+                out.append(f"- `{r['name']}`{hal} {io_}{gpu}" + (f" — {summ}" if summ else "") + ex)
             out.append("")
     return out
 

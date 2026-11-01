@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">skeleton_graph3d — 3D <code style="color:#22d3bf">medial</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.skeleton_graph3d(vol, distance=None, spacing=(1.0, 1.0, 1.0), min_branch_len=0.0)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import medial; medial.skeleton_graph3d(vol, distance=None, spacing=(1.0, 1.0, 1.0), min_branch_len=0.0)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;skeleton_graph3d&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>3D 골격을 <b>노드(접합점·끝점)와 가지(길이·반경)의 그래프</b>로 조립한다.</p>
 <p><code style="color:#22d3bf">skeleton_junctions3d</code> / <code style="color:#22d3bf">skeleton_endpoints3d</code> / <code style="color:#22d3bf">skeleton_branches3d</code>는 &quot;어느 voxel이 노드인지/가지인지&quot;를 <b>마스크</b>로 반환할 뿐이며, <b>어느 가지가 어느 노드와어느 노드를 잇는지</b>는 반환하지 않는다. 회로로 만들려면 그 연결이 필요하다 —— 신경 형태의케이블 이론에서는 구획의 축 방향 컨덕턴스가 <b>직경과 길이</b>로 정해지고, 구획끼리의 <b>연결 방식</b>이 회로 그 자체가 된다. 이 op는 그 1단을 메운다.</p>

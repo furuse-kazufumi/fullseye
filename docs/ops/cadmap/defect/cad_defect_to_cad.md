@@ -4,6 +4,7 @@ dim: cadmap
 category: defect
 in: mesh × labels
 out: table
+gpu: なし
 examples: [defect_to_cad]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `mesh × labels` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.cad_defect_to_cad(mesh, labels, K=None, R=None, t=None, cull_backfaces=True, min_pixels=1, background=0, strict=False)` (実装を直接呼ぶなら `import cadmap; cadmap.cad_defect_to_cad(mesh, labels, K=None, R=None, t=None, cull_backfaces=True, min_pixels=1, background=0, strict=False)`、台帳から引くなら `opscadmap.get("cad_defect_to_cad")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

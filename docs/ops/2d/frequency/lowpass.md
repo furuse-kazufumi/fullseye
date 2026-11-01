@@ -4,6 +4,7 @@ dim: 2d
 category: frequency
 in: image
 out: image
+gpu: あり(lowpass_image)
 examples: [degenerate_inputs, gallery2d_texture_freq, optics_four_f_processor, signal_filter]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image` → `image`
 - **呼び出し**: `fullseye.apply(img, "lowpass", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
+- **GPU**: あり(`lowpass_image`、`device="cuda"` で高速経路)
 
 ![lowpass: input → output](../../_fig/lowpass.png)
 

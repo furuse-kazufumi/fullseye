@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">ken_set_pose — DRIVE <code style="color:#22d3bf">kendamaworld</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table × matrix</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ken_set_pose(world: &#x27;dict&#x27;, i: &#x27;int&#x27;, p, R) -&gt; &#x27;None&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import kendamaworld; kendamaworld.ken_set_pose(world: &#x27;dict&#x27;, i: &#x27;int&#x27;, p, R) -&gt; &#x27;None&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;ken_set_pose&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>ken i का pose (p, R) करता है (केवल vertices बदलता है)। ken न होने वाली वस्तु पर ValueError।</p>
 <p>खाली इनपुट (<code style="color:#22d3bf">world</code> खाली dict) पर <code style="color:#22d3bf">ValueError</code> उठता है।</p>

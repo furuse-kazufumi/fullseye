@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">scene_difference — OPTICS <code style="color:#22d3bf">scene</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.scene_difference(solid: &#x27;dict&#x27;, cavity: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import optscene; optscene.scene_difference(solid: &#x27;dict&#x27;, cavity: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;scene_difference&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p><code style="color:#22d3bf">solid</code> से <code style="color:#22d3bf">cavity</code> को काटकर निकालता है (CSG difference)। <b>खोखला part</b> बनाने का एकमात्र तरीका।</p>
 <p>एक cup = बाहरी cylinder − तली से ऊपर खिसकाया गया भीतरी cylinder। washers, through-holes, counterbores भी ―― असली parts में आमतौर पर छेद होते हैं, और केवल spheres काफ़ी नहीं हैं (2026-09-05 की user टिप्पणी)।</p>

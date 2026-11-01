@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">sign_params — DRIVE <code style="color:#22d3bf">roadjp</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">table</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sign_params(kind: &#x27;str&#x27;, *, side: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import roadjp; roadjp.sign_params(kind: &#x27;str&#x27;, *, side: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;sign_params&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>返回交通标志 <code style="color:#22d3bf">kind</code> 的形状、尺寸和颜色(公开值，需以一手资料核实)。</p>
 <p><code style="color:#22d3bf">{&quot;shape&quot;, &quot;width&quot;, &quot;height&quot;, &quot;mount_height&quot;, &quot;ground&quot;, &quot;border&quot;, &quot;ink&quot;, &quot;side&quot;}</code>。shape 为 circle / triangle_down / diamond / pentagon / rect。width、height 为标志板的外形尺寸 [m]:</p>

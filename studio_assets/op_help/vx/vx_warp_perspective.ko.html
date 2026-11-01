@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">vx_warp_perspective — VX <code style="color:#22d3bf">geometry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d × matrix</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vx_warp_perspective(image, matrix, *, interpolation, border, constant_value=0)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import vxcore; vxcore.vx_warp_perspective(image, matrix, *, interpolation, border, constant_value=0)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsvx.get(&quot;vx_warp_perspective&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>사영 변환(3.57절). 역사상: <code style="color:#22d3bf">x0 = M[0]·(x, y, 1)</code>, <code style="color:#22d3bf">y0 = M[1]·(x, y, 1)</code>, <code style="color:#22d3bf">z0 = M[2]·(x, y, 1)</code>, 출력 (x, y) = 입력 (x0/z0, y0/z0)(REQ-0508). z0 = 0인 화소는 바깥으로 간주해 채운다.</p>
 <p>*matrix*: 수학 순서의 3×3(규격의 C 선언 <code style="color:#22d3bf">mat[3][3]</code> 은 전치된 순서). 다른 인수는 <code style="color:#22d3bf">vx_warp_affine</code> 와 같다.</p>

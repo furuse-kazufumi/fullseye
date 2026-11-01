@@ -4,6 +4,7 @@ dim: optics
 category: omni360
 in: images
 out: table
+gpu: なし
 examples: [omni360_roundtrip]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `images` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.equirect_from_perspectives(images, extrinsics, intrinsics, out_shape, feather=0.05)` (実装を直接呼ぶなら `import omni360; omni360.equirect_from_perspectives(images, extrinsics, intrinsics, out_shape, feather=0.05)`、台帳から引くなら `opsoptics.get("equirect_from_perspectives")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

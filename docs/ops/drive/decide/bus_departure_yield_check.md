@@ -4,6 +4,7 @@ dim: drive
 category: decide
 in: table
 out: table
+gpu: なし
 examples: [poc_driving_decisions]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.bus_departure_yield_check(trajectory, *, t_signal: 'float', bus_rear_x: 'float', merge_time: 'float' = 4.0, reaction: 'float' = 1.0, sudden_decel: 'float' = 3.0, standoff: 'float' = 2.0) -> 'Dict[str, object]'` (実装を直接呼ぶなら `import drivedecide; drivedecide.bus_departure_yield_check(trajectory, *, t_signal: 'float', bus_rear_x: 'float', merge_time: 'float' = 4.0, reaction: 'float' = 1.0, sudden_decel: 'float' = 3.0, standoff: 'float' = 2.0) -> 'Dict[str, object]'`、台帳から引くなら `opsdrive.get("bus_departure_yield_check")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

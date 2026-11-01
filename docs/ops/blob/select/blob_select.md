@@ -4,6 +4,7 @@ dim: blob
 category: select
 in: labels2d
 out: labels2d
+gpu: なし
 examples: [poc_particle_sizing, poc_pipe_wall_loss, poc_pv_thermal_survey, poc_solar_el_inspection, poc_weld_radiograph_porosity]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `labels2d` → `labels2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.blob_select(labels: 'Any', feature: 'str', vmin: 'Optional[float]' = None, vmax: 'Optional[float]' = None, spacing: 'float' = 1.0) -> 'np.ndarray'` (実装を直接呼ぶなら `import blob2d; blob2d.blob_select(labels: 'Any', feature: 'str', vmin: 'Optional[float]' = None, vmax: 'Optional[float]' = None, spacing: 'float' = 1.0) -> 'np.ndarray'`、台帳から引くなら `opsblob.get("blob_select")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

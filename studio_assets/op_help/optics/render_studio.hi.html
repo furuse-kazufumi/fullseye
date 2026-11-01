@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">render_studio — OPTICS <code style="color:#22d3bf">scene</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table × table</code> → <code style="color:#22d3bf">rgbimage</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.render_studio(scene, camera, depth: &#x27;int&#x27; = 3, samples: &#x27;int&#x27; = 16, environment=None, supersample: &#x27;int&#x27; = 1) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import optscene; optscene.render_studio(scene, camera, depth: &#x27;int&#x27; = 3, samples: &#x27;int&#x27; = 16, environment=None, supersample: &#x27;int&#x27; = 1) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;render_studio&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p><b>दिखाने के लिए picture</b> बनाता है: environment light, multiple reflections, refraction और dispersion के साथ (photometric ground truth नहीं होता)।</p>
 <p>inspection data चाहिए तो <code style="color:#22d3bf">render_optscene</code> का उपयोग करें ―― <b>अलग तरीके से बना एक अलग op</b>। return value (H, W, 3) linear RGB है।</p>

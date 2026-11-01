@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">gradient3d — 3D <code style="color:#22d3bf">edges</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">gradient</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gradient3d(vol, sigma: &#x27;float&#x27; = 1.0)</code> (to call the implementation directly, <code style="color:#22d3bf">import edges3d; edges3d.gradient3d(vol, sigma: &#x27;float&#x27; = 1.0)</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;gradient3d&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Smooths a volume with a Gaussian, then takes the 3-D gradient (magnitude and vector) by central differences.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>

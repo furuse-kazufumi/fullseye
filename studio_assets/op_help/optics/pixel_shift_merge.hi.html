@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">pixel_shift_merge — OPTICS <code style="color:#22d3bf">pixelshift</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">video × matrix</code> → <code style="color:#22d3bf">rgbimage</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pixel_shift_merge(frames, shifts, pattern=&#x27;RGGB&#x27;, scale=1, motion_threshold=0.0, noise_sigma=0.0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import pixelshift; pixelshift.pixel_shift_merge(frames, shifts, pattern=&#x27;RGGB&#x27;, scale=1, motion_threshold=0.0, noise_sigma=0.0)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;pixel_shift_merge&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>pixel-shift frames को <b>nominal</b> shifts से grid पर बाँटकर जोड़ता है। interpolation नहीं (हर grid बिंदु के samples का केवल औसत)।</p>
 <p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>

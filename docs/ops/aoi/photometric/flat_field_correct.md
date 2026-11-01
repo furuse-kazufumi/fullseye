@@ -4,6 +4,7 @@ dim: aoi
 category: photometric
 in: image2d × image2d
 out: image2d
+gpu: なし
 examples: [aoi_frontend_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d × image2d` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.flat_field_correct(image, flat, dark=None, target=None, min_response=None, clip=True)` (実装を直接呼ぶなら `import aoi; aoi.flat_field_correct(image, flat, dark=None, target=None, min_response=None, clip=True)`、台帳から引くなら `opsaoi.get("flat_field_correct")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">kv_cache_decode — LLMCORE <code style="color:#22d3bf">decode</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">tokens × tokens × tokens</code> → <code style="color:#22d3bf">tokens</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.kv_cache_decode(query_step, key_cache, value_cache, scale=None) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import llmcore; llmcore.kv_cache_decode(query_step, key_cache, value_cache, scale=None) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsllmcore.get(&quot;kv_cache_decode&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>只前进 1 个 token 的推理(KV Cache)→ tokens (1, dv)。</p>
 <p>在因果掩模下,<b>改写未来不会让之前的输出变动哪怕 1 位</b>(实测 0.0e+00), 所以只要保存已完成的 key/value,只计算 1 行即可 —— 按顺序每次推进 1 行得到的结果,与一次性通过整个序列的结果一致(相对差 1.6e-16)。每 1 步的计算量是 O(T d),等于把一次性的 O(T² d) 分摊到 T 步。</p>

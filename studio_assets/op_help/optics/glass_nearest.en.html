@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">glass_nearest — OPTICS <code style="color:#22d3bf">lensglobal</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">table</code> (an op determined by its arguments alone — it takes no image or data input)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.glass_nearest(n_d=1.5168, v_d=64.17, catalog=None, k: &#x27;int&#x27; = 1, metric: &#x27;str&#x27; = &#x27;nd_vd&#x27;, p_gf=None) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import lensglobal; lensglobal.glass_nearest(n_d=1.5168, v_d=64.17, catalog=None, k: &#x27;int&#x27; = 1, metric: &#x27;str&#x27; = &#x27;nd_vd&#x27;, p_gf=None) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;glass_nearest&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Return the k catalogue glasses nearest to (n_d, V_d), with their distances (<code style="color:#22d3bf">table</code>).</p>
 <p>The catalogue (default: the 46 optical glasses of <code style="color:#22d3bf">materials.glass_map</code>; or a list of <code style="color:#22d3bf">{&quot;name&quot;, &quot;nd&quot;, &quot;vd&quot;[, &quot;PgF&quot;]}</code> dicts) is ranked by the distance in the Abbe plane:</p>

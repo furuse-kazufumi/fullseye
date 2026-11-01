@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">delaunay_triangulate — MATH <code style="color:#22d3bf">geometry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.delaunay_triangulate(points) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import mathgeometry; mathgeometry.delaunay_triangulate(points) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsmath.get(&quot;delaunay_triangulate&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>平面 (N, 2) の三角形分割、または空間 (N, 3) の四面体分割(Delaunay、scipy.spatial = Qhull)。</p>
 <p>返り値 <code style="color:#22d3bf">{&quot;simplices&quot;, &quot;hull&quot;, &quot;n_simplices&quot;, &quot;circumcenters&quot;, &quot;circumradii&quot;, &quot;dim&quot;}</code>(2-D では <code style="color:#22d3bf">triangles</code> / <code style="color:#22d3bf">n_triangles</code> も同じ中身で返す)。外接円・外接球は描画・Voronoi 用。</p>

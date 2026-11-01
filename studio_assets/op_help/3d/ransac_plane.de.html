@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">ransac_plane — 3D <code style="color:#22d3bf">robust_fit</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">primitive</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ransac_plane(points, thresh, iters=500, seed=0)</code> (die Implementierung direkt: <code style="color:#22d3bf">import ransac_fit; ransac_fit.ransac_plane(points, thresh, iters=500, seed=0)</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;ransac_plane&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Ausreißerrobuste RANSAC-Ebenenanpassung.</p>
 <p>3 Punkte ziehen → Ebenennormale (Kreuzprodukt von 2 Kanten) → Inlier mit Punkt-Ebene-Abstand |n·(p-p0)| &lt; <code style="color:#22d3bf">thresh</code> maximieren → Kleinste-Quadrate-Neuanpassung auf den finalen Inliern (Normale = kleinste Hauptachse der Kovarianz).</p>

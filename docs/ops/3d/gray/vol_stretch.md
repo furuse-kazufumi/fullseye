@@ -4,6 +4,7 @@ dim: 3d
 category: gray
 in: voxel
 out: voxel
+gpu: なし
 examples: [gray_window_level]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `voxel` → `voxel`
 - **呼び出し**: `import fullseye as fs; fs.ledger.vol_stretch(vol, p_low=1.0, p_high=99.0)` (実装を直接呼ぶなら `import volgray; volgray.vol_stretch(vol, p_low=1.0, p_high=99.0)`、台帳から引くなら `ops3d.get("vol_stretch")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">patchbank_score — SPC <code style="color:#22d3bf">anomaly_patch</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image2d × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.patchbank_score(image, model, k=1, smooth=4.0)</code> (die Implementierung direkt: <code style="color:#22d3bf">import anomaly_patch; anomaly_patch.patchbank_score(image, model, k=1, smooth=4.0)</code>; aus dem Register: <code style="color:#22d3bf">opsspc.get(&quot;patchbank_score&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Ein Bild gegen die Speicherbank bewerten: Anomaliekarte aus dem Abstand jedes Patches zu seinen k nächsten guten Patches (<code style="color:#22d3bf">table</code>).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>

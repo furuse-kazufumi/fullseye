@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">adg_build — DRIVE <code style="color:#22d3bf">agv</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.adg_build(paths)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import agvfleet; agvfleet.adg_build(paths)</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;adg_build&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>行動依存グラフ(Hönig, Kiesel, Tinka, Durham, Ayanian 2019)。</p>
 <p>各車両の行動 = 「訪れるマスの列の k 番目に入る」。依存は 2 種類:</p>

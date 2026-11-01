@@ -4,6 +4,7 @@ dim: 3d
 category: space_carving
 in: vector
 out: pose
+gpu: なし
 examples: [space_carving]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `vector` → `pose`
 - **呼び出し**: `import fullseye as fs; fs.ledger.carve_look_at(eye, target=(0.0, 0.0, 0.0), up=(0.0, 0.0, 1.0))` (実装を直接呼ぶなら `import visualhull; visualhull.carve_look_at(eye, target=(0.0, 0.0, 0.0), up=(0.0, 0.0, 1.0))`、台帳から引くなら `ops3d.get("carve_look_at")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

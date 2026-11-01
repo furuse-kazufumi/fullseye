@@ -4,6 +4,7 @@ dim: drive
 category: scoop
 in: scalar × scalar × scalar × scalar
 out: table
+gpu: なし
 examples: [poc_powder_scoop_pour]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `scalar × scalar × scalar × scalar` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.tilt_wedge_retained(theta_deg: 'float', phi_deg: 'float', L: 'float', h0: 'float') -> 'dict'` (実装を直接呼ぶなら `import scoop; scoop.tilt_wedge_retained(theta_deg: 'float', phi_deg: 'float', L: 'float', h0: 'float') -> 'dict'`、台帳から引くなら `opsdrive.get("tilt_wedge_retained")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

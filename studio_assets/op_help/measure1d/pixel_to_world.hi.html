@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">pixel_to_world — MEASURE1D <code style="color:#22d3bf">scale</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">measurement</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pixel_to_world(value_px, mm_per_px)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import measuring1d; measuring1d.pixel_to_world(value_px, mm_per_px)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsmeasure1d.get(&quot;pixel_to_world&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>pixel में मापी गई एक लंबाई को वास्तविक mm में बदलता है (<code style="color:#22d3bf">value_px * mm_per_px</code>)।</p>
 <p><code style="color:#22d3bf">mm_per_px</code> में <code style="color:#22d3bf">mm_per_px_from_reference</code> से <b>मापी गई</b> value दें। <code style="color:#22d3bf">value_px</code> 0 या ऋणात्मक हो सकता है (अंतर और bias वैसे ही बदले जाते हैं) पर finite होना चाहिए; <code style="color:#22d3bf">mm_per_px</code> finite और धनात्मक हो। अन्यथा <code style="color:#22d3bf">ValueError</code>। return float (<code style="color:#22d3bf">measurement</code> sort) है। क्षेत्रफल के लिए mm/px का वर्ग खुद गुणा करें (यह op केवल लंबाई के लिए है)।</p>

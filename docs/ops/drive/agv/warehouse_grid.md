@@ -4,6 +4,7 @@ dim: drive
 category: agv
 in: 
 out: any
+gpu: なし
 examples: [poc_agv_fleet]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `any`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.warehouse_grid(n_rack_rows=3, n_rack_cols=4, rack_len=4, aisle=1, margin=2)` (実装を直接呼ぶなら `import agvfleet; agvfleet.warehouse_grid(n_rack_rows=3, n_rack_cols=4, rack_len=4, aisle=1, margin=2)`、台帳から引くなら `opsdrive.get("warehouse_grid")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

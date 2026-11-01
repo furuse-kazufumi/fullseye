@@ -4,6 +4,7 @@ dim: optics
 category: light_transport
 in: 
 out: images
+gpu: なし
 examples: [poc_interreflection_fringe_error]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `images`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.high_frequency_patterns(shape=(1, 256), period=8, kind='stripes', fill=0.5, n_shifts=None, complement=False)` (実装を直接呼ぶなら `import lighttransport; lighttransport.high_frequency_patterns(shape=(1, 256), period=8, kind='stripes', fill=0.5, n_shifts=None, complement=False)`、台帳から引くなら `opsoptics.get("high_frequency_patterns")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

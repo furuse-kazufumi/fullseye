@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">piv_streamline_image — PIV <code style="color:#22d3bf">visualise</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">flow2d</code> → <code style="color:#22d3bf">rgb</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_streamline_image(flow, upsample=8, background=None, color=(0.08, 0.08, 0.12), width=1.5, arrows=True, **stream_kw)</code>(要直接呼叫實作,<code style="color:#22d3bf">import pivops; pivops.piv_streamline_image(flow, upsample=8, background=None, color=(0.08, 0.08, 0.12), width=1.5, arrows=True, **stream_kw)</code>;從台帳取用則 <code style="color:#22d3bf">opspiv.get(&quot;piv_streamline_image&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>流線圖(MATLAB 的 <code style="color:#22d3bf">streamslice</code>)。回傳 <code style="color:#22d3bf">(h*upsample, w*upsample, 3)</code>。</p>
 <p>以 <code style="color:#22d3bf">piv_streamlines</code> 的等間距配置畫線，在每條線弧長的中段放 1 個表示方向的箭頭尖(與 LIC 不同，<b>能讀出前後</b>)。線的間距一致，因此 <b>線的密度不表示速度</b> —— 想看速度時，在 <code style="color:#22d3bf">background</code> 中鋪 <code style="color:#22d3bf">piv_flow_magnitude</code> 或色相圖。</p>

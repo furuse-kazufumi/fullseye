@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">seidel_coefficients — OPTICS <code style="color:#22d3bf">design</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.seidel_coefficients(system, field=None)</code> (to call the implementation directly, <code style="color:#22d3bf">import raytrace; raytrace.seidel_coefficients(system, field=None)</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;seidel_coefficients&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Third-order (Seidel) aberration sums in <code style="color:#22d3bf">per_surface</code> and <code style="color:#22d3bf">total</code>.</p>
 <p>Uses the paraxial marginal ray (through the stop edge) and chief ray (through the stop centre) at the system&#x27;s default field (or *field*), with Welford&#x27;s refraction-invariant form: <code style="color:#22d3bf">A = n(yc + u)</code>, <code style="color:#22d3bf">Δ(u/n)</code>, Lagrange invariant <code style="color:#22d3bf">H = n(ūy − uȳ)</code>::</p>

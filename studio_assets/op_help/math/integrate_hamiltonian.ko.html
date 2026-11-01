@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">integrate_hamiltonian — MATH <code style="color:#22d3bf">numerics</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.integrate_hamiltonian(q0, p0, dt: &#x27;float&#x27; = 0.05, n_steps: &#x27;int&#x27; = 1000, *, system: &#x27;str&#x27; = &#x27;harmonic&#x27;, method: &#x27;str&#x27; = &#x27;verlet&#x27;, **params) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import mathnumerics; mathnumerics.integrate_hamiltonian(q0, p0, dt: &#x27;float&#x27; = 0.05, n_steps: &#x27;int&#x27; = 1000, *, system: &#x27;str&#x27; = &#x27;harmonic&#x27;, method: &#x27;str&#x27; = &#x27;verlet&#x27;, **params) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsmath.get(&quot;integrate_hamiltonian&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>이름이 붙은 해밀턴계(질량 1)를 시간 적분한다. 반환값 <code style="color:#22d3bf">{&quot;t&quot;,&quot;q&quot;,&quot;p&quot;,&quot;energy&quot;,&quot;energy_drift&quot;,&quot;method&quot;,&quot;system&quot;}</code>.</p>
 <p><code style="color:#22d3bf">method</code>:</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">contour_fourier_truncation_energy — SHAPE2D <code style="color:#22d3bf">descriptor</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.contour_fourier_truncation_energy(spectrum, orders=None)</code>(要直接调用实现,<code style="color:#22d3bf">import fourierdesc; fourierdesc.contour_fourier_truncation_energy(spectrum, orders=None)</code>;从台账取用则 <code style="color:#22d3bf">opsshape2d.get(&quot;contour_fourier_truncation_energy&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>每个截断阶数<b>预测的</b>误差(<code style="color:#22d3bf">table</code>)—— 帕塞瓦尔的精确式。</p>
 <p>对于在阶数 <code style="color:#22d3bf">K</code> 处截断的重建 <code style="color:#22d3bf">z^K</code>，样本上的均方误差 <b>严格等于</b> <code style="color:#22d3bf">mean|z - z^K|^2 = Σ_{|k| &gt; K} |c_k|^2</code>。因此无需做 1 次重建，就能预先说出「需要几项才能相似到几个像素」。</p>

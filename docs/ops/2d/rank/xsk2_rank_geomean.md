@@ -4,6 +4,7 @@ dim: 2d
 category: rank
 in: image
 out: image
+gpu: なし
 examples: [gallery2d_smoothing_rank]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image` → `image`
 - **呼び出し**: `fullseye.apply(img, "xsk2_rank_geomean", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ![xsk2_rank_geomean: input → output](../../_fig/xsk2_rank_geomean.png)
 

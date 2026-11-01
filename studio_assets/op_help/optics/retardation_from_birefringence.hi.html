@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">retardation_from_birefringence — OPTICS <code style="color:#22d3bf">photoelastic</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.retardation_from_birefringence(delta_n, thickness_m, wavelength_m)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import photoelastic; photoelastic.retardation_from_birefringence(delta_n, thickness_m, wavelength_m)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;retardation_from_birefringence&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>द्विअपवर्तन Δn से मंदन (retardation) → dict (rad, nm और फ्रिंज क्रम साथ-साथ लौटाता है)।</p>
 <p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>

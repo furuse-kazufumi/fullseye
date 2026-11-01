@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">boundary_vertices — 3D <code style="color:#22d3bf">mesh_process</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">mesh</code> → <code style="color:#22d3bf">indices</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.boundary_vertices(mesh) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import mesh_props; mesh_props.boundary_vertices(mesh) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;boundary_vertices&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>खुले किनारों (boundary) पर स्थित <b>vertices के index</b> → <code style="color:#22d3bf">(K,)</code>।</p>
 <p>undirected edges में से <b>ठीक 1 face द्वारा ही इस्तेमाल होने वाले edges</b> (boundary edges) के endpoints इकट्ठा करके लौटाता है। closed manifold के लिए यह खाली array होता है —— यानी <code style="color:#22d3bf">len(boundary_vertices(mesh)) == 0</code> <b>watertightness (watertight) की जाँच</b> बन जाता है। hole filling, volume calculation और curvature, सभी का अर्थ boundary होने या न होने से बदलता है, इसलिए पहले यहाँ देखें।</p>

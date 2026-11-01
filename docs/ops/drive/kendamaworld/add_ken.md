@@ -4,6 +4,7 @@ dim: drive
 category: kendamaworld
 in: table × table
 out: scalar
+gpu: なし
 examples: [gallery_drive_world_objects]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table × table` → `scalar`
 - **呼び出し**: `import fullseye as fs; fs.ledger.add_ken(world: 'dict', mesh: 'dict', p, R=None, *, name: 'str' = 'ken') -> 'int'` (実装を直接呼ぶなら `import kendamaworld; kendamaworld.add_ken(world: 'dict', mesh: 'dict', p, R=None, *, name: 'str' = 'ken') -> 'int'`、台帳から引くなら `opsdrive.get("add_ken")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

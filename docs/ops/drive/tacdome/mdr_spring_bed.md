@@ -4,6 +4,7 @@ dim: drive
 category: tacdome
 in: scalar × scalar × table
 out: table
+gpu: なし
 examples: [poc_tacdome_large_deformation]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `scalar × scalar × table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.mdr_spring_bed(delta: 'float', L: 'float', lin: 'dict', n_springs: 'int' = 4000) -> 'dict'` (実装を直接呼ぶなら `import tacdome; tacdome.mdr_spring_bed(delta: 'float', L: 'float', lin: 'dict', n_springs: 'int' = 4000) -> 'dict'`、台帳から引くなら `opsdrive.get("mdr_spring_bed")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

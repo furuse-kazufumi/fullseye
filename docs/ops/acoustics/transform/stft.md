@@ -4,6 +4,7 @@ dim: acoustics
 category: transform
 in: signal
 out: table
+gpu: なし
 examples: [acoustic_condition_monitoring]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.stft(x, rate, win=256, hop=None, window='hann', nfft=None, scaling='none')` (実装を直接呼ぶなら `import acoustics; acoustics.stft(x, rate, win=256, hop=None, window='hann', nfft=None, scaling='none')`、台帳から引くなら `opsacoustics.get("stft")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

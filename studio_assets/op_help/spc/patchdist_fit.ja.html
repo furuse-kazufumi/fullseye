@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">patchdist_fit — SPC <code style="color:#22d3bf">anomaly_patch</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">video</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.patchdist_fit(stack, patch=8, stride=4, scales=(1.0, 2.0, 4.0), groups=(&#x27;gradient&#x27;, &#x27;gabor&#x27;, &#x27;lbp&#x27;), n_orient=4, shrinkage=&#x27;auto&#x27;, n_dims=None, seed=0, ridge=1e-06, pool=&#x27;position&#x27;)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import anomaly_patch; anomaly_patch.patchdist_fit(stack, patch=8, stride=4, scales=(1.0, 2.0, 4.0), groups=(&#x27;gradient&#x27;, &#x27;gabor&#x27;, &#x27;lbp&#x27;), n_orient=4, shrinkage=&#x27;auto&#x27;, n_dims=None, seed=0, ridge=1e-06, pool=&#x27;position&#x27;)</code>、台帳から引くなら <code style="color:#22d3bf">opsspc.get(&quot;patchdist_fit&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>良品の画像から、格子の位置ごとにパッチ特徴の正規分布を学ぶ(縮小推定を宣言、特異なら拒否)(<code style="color:#22d3bf">table</code>)。</p>
 <p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>

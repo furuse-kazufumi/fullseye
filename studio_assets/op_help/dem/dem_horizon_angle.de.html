@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">dem_horizon_angle — DEM <code style="color:#22d3bf">visibility</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">depth</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_horizon_angle(dem, cell_size, azimuth_deg, max_distance_m=None)</code> (die Implementierung direkt: <code style="color:#22d3bf">import demops; demops.dem_horizon_angle(dem, cell_size, azimuth_deg, max_distance_m=None)</code>; aus dem Register: <code style="color:#22d3bf">opsdem.get(&quot;dem_horizon_angle&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Horizonthöhenwinkel in einem gegebenen Azimut [Grad]. 0 ist horizontal, 90 bedeutet, dass der Himmel direkt darüber verdeckt ist.</p>
 <p>Von jeder Zelle aus wird eine Sichtlinie in Richtung <code style="color:#22d3bf">azimuth_deg</code> vorangetrieben und das Maximum von <code style="color:#22d3bf">atan((z_j - z_0)/d)</code> zurückgegeben. Vorarbeit für Schlagschatten, Sonnenscheindauer und Himmelssichtfaktor.</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">resample_uniform — 3D <code style="color:#22d3bf">curve</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.resample_uniform(curve, n)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import curve3d; curve3d.resample_uniform(curve, n)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;resample_uniform&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>弧長で等間隔に n 点へ再サンプル(線形補間)。→ (n,3)。</p>
 <p><code style="color:#22d3bf">arc_length</code> の累積弧長をパラメータとして <code style="color:#22d3bf">np.linspace(0, total, n)</code> の位置を取り、x・y・z を独立に <code style="color:#22d3bf">np.interp</code> で線形補間する。出力は float64 の (n,3)。始点と終点は入力の先頭・末尾に一致し、中間点は折れ線上に乗る(元の点を通るとは限らない)。</p>

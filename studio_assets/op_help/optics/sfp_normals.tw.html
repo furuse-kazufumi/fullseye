@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">sfp_normals — OPTICS <code style="color:#22d3bf">shape_from_polarization</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">polsweep</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sfp_normals(sweep, refractive_index=1.5, model=&#x27;specular&#x27;, angles_deg=(0.0, 45.0, 90.0, 135.0), violation_tol=0.05, out_of_range=&#x27;invalid&#x27;)</code>(要直接呼叫實作,<code style="color:#22d3bf">import sfpolar; sfpolar.sfp_normals(sweep, refractive_index=1.5, model=&#x27;specular&#x27;, angles_deg=(0.0, 45.0, 90.0, 135.0), violation_tol=0.05, out_of_range=&#x27;invalid&#x27;)</code>;從台帳取用則 <code style="color:#22d3bf">opsoptics.get(&quot;sfp_normals&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由偏振掃描得到每個像素表面法線的顯式候選集 —— 漫射 2 個,鏡面 4 個(天頂 2 × 方位 2)(<code style="color:#22d3bf">table</code>)。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>

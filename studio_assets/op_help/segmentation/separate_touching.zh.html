@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">separate_touching — SEGMENTATION <code style="color:#22d3bf">watershed3d</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">labels</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.separate_touching(binary, min_distance: &#x27;float&#x27; = 5.0, method: &#x27;str&#x27; = &#x27;auto&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import watershed3d; watershed3d.separate_touching(binary, min_distance: &#x27;float&#x27; = 5.0, method: &#x27;str&#x27; = &#x27;auto&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opssegmentation.get(&quot;separate_touching&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>genuinely-new (B)：用 1 次调用自动分离接触物体的常用封装。</p>
 <p>把&quot;多个物体相互接触而融合为 1 个连通分量&quot;的典型情况,用距离变换→极大 NMS 种子化→ 分水岭这一固定流水线折叠成 1 次调用来分开(公开 API 中需要手工连接 3 个 op 的地方,针对常用情况做成 1 个函数)。内部是 <code style="color:#22d3bf">watershed_vol(..., markers=None)</code>。</p>

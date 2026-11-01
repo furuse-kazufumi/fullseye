@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">fit_poly_surface — 3D <code style="color:#22d3bf">surface_fit</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d × image2d × image2d</code> → <code style="color:#22d3bf">poly_surface</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fit_poly_surface(x, y, z, degree=2)</code>(要直接调用实现,<code style="color:#22d3bf">import match3d; match3d.fit_poly_surface(x, y, z, degree=2)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;fit_poly_surface&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>散布 (x,y,z) → z=f(x,y) 多项式最小二乘。返回 model(coef/powers/degree/rms/pv)。</p>
 <p>用 <code style="color:#22d3bf">lstsq</code> 拟合基 <code style="color:#22d3bf">{x^i·y^j : i + j &lt;= degree}</code>(项数 <code style="color:#22d3bf">(degree+1)(degree+2)/2</code>。degree=1 为 3 项的平面, 2 为 6 项的 2 次曲面)。<code style="color:#22d3bf">x, y, z</code> 只要元素数相同,形状不限(内部 ravel。网格可直接传入 <code style="color:#22d3bf">np.mgrid</code> 的输出)。返回 dict: <code style="color:#22d3bf">coef</code> (T,) 系数,<code style="color:#22d3bf">powers</code> 为各系数的 <code style="color:#22d3bf">(i, j)</code>(项 <code style="color:#22d3bf">x**i * y**j</code>), <code style="color:#22d3bf">degree</code>,<code style="color:#22d3bf">rms</code> 为残差 RMS,<code style="color:#22d3bf">pv</code> 为残差的 peak-to-valley(max − min)。单位同 z。</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">course_loop_bend — DRIVE <code style="color:#22d3bf">course</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">keine</code> → <code style="color:#22d3bf">table</code> (ein Operator, der allein durch seine Argumente bestimmt ist — er nimmt kein Bild und keine Daten entgegen)</p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.course_loop_bend(radius=30.0, width=8.0, arc_pts=64)</code> (die Implementierung direkt: <code style="color:#22d3bf">import drivecourse; drivecourse.course_loop_bend(radius=30.0, width=8.0, arc_pts=64)</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;course_loop_bend&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Halbkreis am Ende des Rundkurses (180° nach links): Einfahrt (0, 0, 0) → um den Mittelpunkt (0, R) → Ausfahrt (0, 2R, π). Das Polygon ist der halbe Kreisring zwischen dem äußeren Bogen (Radius R + w/2) und dem inneren Bogen (R − w/2). Fläche = π R w (geschlossene Form); das Polygon ist um den Anteil der Polygonzug-Näherung der Bögen kleiner und konvergiert mit wachsendem arc_pts. Norm (Rundkurs): Breite mindestens 8 m, annähernd oval.</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: R ≤ w/2 (der innere Bogen entartet), Breite oder Radius nicht positiv, arc_pts ungültig.</p>

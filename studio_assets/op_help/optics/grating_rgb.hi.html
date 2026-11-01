@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">grating_rgb — OPTICS <code style="color:#22d3bf">appearance</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">normalmap</code> → <code style="color:#22d3bf">rgbimage</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.grating_rgb(normals, light=(0.0, 0.0, 1.0), view=(0.0, 0.0, 1.0), tangent=(1.0, 0.0, 0.0), pitch_um=1.6, orders=(1, 2), strength=1.0, width_nm=60.0) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import matappear; matappear.grating_rgb(normals, light=(0.0, 0.0, 1.0), view=(0.0, 0.0, 1.0), tangent=(1.0, 0.0, 0.0), pitch_um=1.6, orders=(1, 2), strength=1.0, width_nm=60.0) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;grating_rgb&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>normal map + light source + line of sight → <b>diffraction से इंद्रधनुषी रंग</b> (H, W, 3) linear sRGB।</p>
 <p>CD/DVD का recording track समान दूरी वाले grooves हैं = एक reflective diffraction grating। grooves के लंबवत दिशा में &quot;incidence और exit के sines का अंतर&quot; wavelength चुनता है, इसलिए surface का orientation बदलने पर रंग बदलता है।</p>

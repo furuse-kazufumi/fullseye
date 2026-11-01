@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">particle_image_d50 — DRIVE <code style="color:#22d3bf">grind</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image2d × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.particle_image_d50(image, pitch: &#x27;float&#x27;, basis: &#x27;str&#x27; = &#x27;volume&#x27;, threshold: &#x27;float&#x27; = 0.02, border: &#x27;str&#x27; = &#x27;exclude&#x27;) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import grind; grind.particle_image_d50(image, pitch: &#x27;float&#x27;, basis: &#x27;str&#x27; = &#x27;volume&#x27;, threshold: &#x27;float&#x27; = 0.02, border: &#x27;str&#x27; = &#x27;exclude&#x27;) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;particle_image_d50&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由覆蓋率影像中的顆粒求 D10 / D50 / D90 [µm]。面積為 <b>標籤內覆蓋率之和</b>(計入邊緣的部分像素，不會因門檻值而變粗)。</p>
 <p><code style="color:#22d3bf">basis</code>:<code style="color:#22d3bf">&quot;volume&quot;</code>(視為球體以 d³ 加權 —— 與雷射繞射相同的體積基準)、<code style="color:#22d3bf">&quot;number&quot;</code>(個數基準)。即使是同一影像, 這兩者也是不同的分布,體積基準的結果偏大。<code style="color:#22d3bf">border</code>:<code style="color:#22d3bf">&quot;exclude&quot;</code>(捨棄接觸邊緣的顆粒)/ <code style="color:#22d3bf">&quot;include&quot;</code>。</p>

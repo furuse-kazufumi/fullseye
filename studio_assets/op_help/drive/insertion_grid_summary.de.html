@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">insertion_grid_summary — DRIVE <code style="color:#22d3bf">pegsim</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.insertion_grid_summary(rows) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import pegsim; pegsim.insertion_grid_summary(rows) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;insertion_grid_summary&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Fasst das Erfolgsraten-Gitter zusammen: aus Zeilen {eps_mm, tilt_deg, correct, success} die Tabelle der Erfolgsraten für mit/ohne Korrektur × ε₀ × θ₀ sowie &quot;größtes ε₀, bei dem ohne Korrektur alles gelingt&quot; und &quot;Erfolge / Gesamtzahl mit Korrektur&quot;.</p>
 <p>Rückgabe: <code style="color:#22d3bf">eps_mm</code>, <code style="color:#22d3bf">tilt_deg</code> (Achsen), <code style="color:#22d3bf">rate</code>: {False: Array der Form (n_eps, n_tilt), True: ebenso}, <code style="color:#22d3bf">n_runs</code>, <code style="color:#22d3bf">max_eps_all_ok</code>:</p>

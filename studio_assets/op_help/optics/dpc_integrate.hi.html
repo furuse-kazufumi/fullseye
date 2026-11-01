@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">dpc_integrate — OPTICS <code style="color:#22d3bf">grating_interf</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dpc_integrate(dpc_rad, pixel_um, distance_mm, analyzer_period_um, wavelength_nm=None, energy_kev=None, axis=1, baseline=&#x27;left&#x27;, baseline_px=8, delta=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import gratinginterf; gratinginterf.dpc_integrate(dpc_rad, pixel_um, distance_mm, analyzer_period_um, wavelength_nm=None, energy_kev=None, axis=1, baseline=&#x27;left&#x27;, baseline_px=8, delta=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;dpc_integrate&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>differential phase (fringe phase shift φ) को grating की sensitive दिशा में integrate करके wavefront phase Φ [rad] वापस लाता है।</p>
 <p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>

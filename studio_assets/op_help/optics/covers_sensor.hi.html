@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">covers_sensor — OPTICS <code style="color:#22d3bf">scene</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.covers_sensor(lens: &#x27;dict&#x27;, sensor: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import optscene; optscene.covers_sensor(lens: &#x27;dict&#x27;, sensor: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;covers_sensor&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>क्या lens उस sensor को cover कर सकता है (image circle बनाम diagonal)।</p>
 <p>यदि cover नहीं कर सकता, तो <b>चारों कोने काले पड़ जाते हैं</b> (vignetting)। catalogue का &quot;1 inch तक&quot; आदि केवल इसी निर्णय को format name से बताता है, इसलिए वास्तविक आकारों की तुलना अधिक विश्वसनीय है ―― ख़ासकर line-scan sensors, जिनकी लंबाई सीधे मायने रखती है (16k x 7 µm = 115 mm), इसलिए area sensors वाला lens बहुत कम पड़ता है।</p>

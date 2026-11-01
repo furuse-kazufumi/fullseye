@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">hill_start_command — DRIVE <code style="color:#22d3bf">long</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">scalar × scalar × scalar × scalar</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.hill_start_command(t_release: &#x27;float&#x27;, tau: &#x27;float&#x27;, a_drive: &#x27;float&#x27;, b_hold: &#x27;float&#x27;, a_creep: &#x27;float&#x27; = 0.0, technique: &#x27;str&#x27; = &#x27;gap&#x27;, v_cruise: &#x27;Optional[float]&#x27; = None) -&gt; &#x27;Callable&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivelong; drivelong.hill_start_command(t_release: &#x27;float&#x27;, tau: &#x27;float&#x27;, a_drive: &#x27;float&#x27;, b_hold: &#x27;float&#x27;, a_creep: &#x27;float&#x27; = 0.0, technique: &#x27;str&#x27; = &#x27;gap&#x27;, v_cruise: &#x27;Optional[float]&#x27; = None) -&gt; &#x27;Callable&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;hill_start_command&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>언덕 출발 명령. t_release까지는 유지(크리프 + 제동 b_hold).</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">technique=&quot;gap&quot;</code>: t_release 에서 브레이크를 떼고, τ 후에 구동 a_drive(발을 옮기는 동안 = 뒤로 밀린다. 닫힌 형식은 <code style="color:#22d3bf">hill_start_rollback</code>).</p>

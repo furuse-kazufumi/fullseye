@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">stopping_distance_grade — DRIVE <code style="color:#22d3bf">long</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">scalar × scalar × scalar</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.stopping_distance_grade(v: &#x27;float&#x27;, reaction: &#x27;float&#x27;, brake: &#x27;float&#x27;, theta: &#x27;float&#x27; = 0.0, c_rr: &#x27;float&#x27; = 0.0, k: &#x27;float&#x27; = 0.0, g: &#x27;float&#x27; = 9.80665) -&gt; &#x27;float&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivelong; drivelong.stopping_distance_grade(v: &#x27;float&#x27;, reaction: &#x27;float&#x27;, brake: &#x27;float&#x27;, theta: &#x27;float&#x27; = 0.0, c_rr: &#x27;float&#x27; = 0.0, k: &#x27;float&#x27; = 0.0, g: &#x27;float&#x27; = 9.80665) -&gt; &#x27;float&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;stopping_distance_grade&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>정지거리의 닫힌 식 = 공주거리 v ρ + 제동거리 (1/(2k)) ln(1 + k v²/A), A = brake + g sin θ + c_rr g cos θ(k = 0이면 v²/(2A)).</p>
 <p>θ &gt; 0 이 오르막(멈추기 쉬움), θ &lt; 0 이 내리막. ρ 동안은 속도를 유지한다. A ≤ 0(내리막에서 제동이 경사에 진다)이면 멈추지 않는다 → <code style="color:#22d3bf">inf</code>. 평지, c_rr = k = 0 에서 <code style="color:#22d3bf">rsssafety.rss_stopping_distance(v, ρ, 0, brake)</code> 와 같은 식.</p>

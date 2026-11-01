@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">blob_seeds — BLOB <code style="color:#22d3bf">split</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">labels2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.blob_seeds(distance: &#x27;Any&#x27;, h: &#x27;float&#x27;, connectivity: &#x27;int&#x27; = 8) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import blob2d; blob2d.blob_seeds(distance: &#x27;Any&#x27;, h: &#x27;float&#x27;, connectivity: &#x27;int&#x27; = 8) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsblob.get(&quot;blob_seeds&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>h-maxima 种子。<b><code style="color:#22d3bf">h</code> 是与 <code style="color:#22d3bf">distance</code> 同单位的绝对值</b>。</p>
 <p>只保留“隆起高度不低于 <code style="color:#22d3bf">h</code> 的极大值”,对连通分量编号后返回。用作分割融合团块时的种子。</p>

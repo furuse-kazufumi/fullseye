@@ -4,6 +4,7 @@ dim: gfx2d
 category: particle
 in: 
 out: table
+gpu: なし
 examples: [gfx2d_scene]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.particle_emit(count, seed, origin=(0.0, 0.0), spread=0.0, speed=(10.0, 40.0), direction=(0.0, 360.0), life=(0.5, 1.5), size=(1.0, 3.0), color='emphasis', scheme='okabe_ito')` (実装を直接呼ぶなら `import gfx2d; gfx2d.particle_emit(count, seed, origin=(0.0, 0.0), spread=0.0, speed=(10.0, 40.0), direction=(0.0, 360.0), life=(0.5, 1.5), size=(1.0, 3.0), color='emphasis', scheme='okabe_ito')`、台帳から引くなら `opsgfx2d.get("particle_emit")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">osm_road_loops — DRIVE <code style="color:#22d3bf">japan</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.osm_road_loops(roadmask: &#x27;dict&#x27;, *, tolerance_px: &#x27;float&#x27; = 0.75) -&gt; &#x27;Dict[str, object]&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivejapan; drivejapan.osm_road_loops(roadmask: &#x27;dict&#x27;, *, tolerance_px: &#x27;float&#x27; = 0.75) -&gt; &#x27;Dict[str, object]&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;osm_road_loops&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>도로 합집합의 경계 루프. 바깥쪽(도로 가장자리)과 구멍(가구)으로 나누고 Douglas–Peucker로 단순화합니다.</p>
 <p>추적은 픽셀의 변을 따르므로(<code style="color:#22d3bf">contours_xld._trace_mask_boundaries</code>), 솎아내기 전 루프 면적의 합 = 픽셀 수 × step² (바깥 − 구멍)이 엄밀히 성립한다(<code style="color:#22d3bf">area_check</code>). 구멍인지 바깥인지는, 루프의 가장 왼쪽 세로 변 바로 오른쪽 픽셀이 도로인지로 정한다. 반환값 <code style="color:#22d3bf">{&quot;outer&quot;: [(K,2) xy], &quot;holes&quot;: [(K,2) xy], &quot;outer_raw&quot;, &quot;holes_raw&quot;, &quot;area_check&quot;: {&quot;loops_m2&quot;, &quot;pixels_m2&quot;, &quot;abs_err&quot;}}</code>.</p>

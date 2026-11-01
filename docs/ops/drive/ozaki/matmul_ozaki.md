@@ -4,6 +4,7 @@ dim: drive
 category: ozaki
 in: matrix × matrix
 out: matrix
+gpu: なし
 examples: [poc_reproducible_icp]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `matrix × matrix` → `matrix`
 - **呼び出し**: `import fullseye as fs; fs.ledger.matmul_ozaki(A, B, n_slices=None, scheme: 'str' = 'ozaki1', tol: 'float' = 1.1102230246251565e-16, on_insufficient: 'str' = 'raise', return_info: 'bool' = False)` (実装を直接呼ぶなら `import ozakimm; ozakimm.matmul_ozaki(A, B, n_slices=None, scheme: 'str' = 'ozaki1', tol: 'float' = 1.1102230246251565e-16, on_insufficient: 'str' = 'raise', return_info: 'bool' = False)`、台帳から引くなら `opsdrive.get("matmul_ozaki")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

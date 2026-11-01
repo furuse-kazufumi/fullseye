@@ -4,6 +4,7 @@ dim: optics
 category: mirror
 in: 
 out: vector
+gpu: なし
 examples: [glass_and_mirror_optics, poc_illumination_cone_vs_na, poc_material_optical_library, poc_telecentric_metrology]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `vector`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.metal_mirror_rgb(metal='ag', cos_i=1.0, samples=61, source='materials') -> 'np.ndarray'` (実装を直接呼ぶなら `import glassmirror; glassmirror.metal_mirror_rgb(metal='ag', cos_i=1.0, samples=61, source='materials') -> 'np.ndarray'`、台帳から引くなら `opsoptics.get("metal_mirror_rgb")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

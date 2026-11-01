@@ -4,6 +4,7 @@ dim: drive
 category: lidar
 in: points × points
 out: signal
+gpu: なし
 examples: [gallery_drive_city_terrain]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `points × points` → `signal`
 - **呼び出し**: `import fullseye as fs; fs.ledger.ray_box_ranges(origin, dirs, box) -> 'np.ndarray'` (実装を直接呼ぶなら `import lidarsim; lidarsim.ray_box_ranges(origin, dirs, box) -> 'np.ndarray'`、台帳から引くなら `opsdrive.get("ray_box_ranges")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

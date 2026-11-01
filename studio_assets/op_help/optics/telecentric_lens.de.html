@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">telecentric_lens — OPTICS <code style="color:#22d3bf">telecentric</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">keine</code> → <code style="color:#22d3bf">table</code> (ein Operator, der allein durch seine Argumente bestimmt ist — er nimmt kein Bild und keine Daten entgegen)</p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.telecentric_lens(kind=&#x27;object&#x27;, focal_mm=100.0, magnification=-0.5, na_object=0.01, front_aperture_mm=12.5, stop_shift_mm=0.0, glass=&#x27;N-BK7&#x27;, wavelength_um=0.58756)</code> (die Implementierung direkt: <code style="color:#22d3bf">import telecentric; telecentric.telecentric_lens(kind=&#x27;object&#x27;, focal_mm=100.0, magnification=-0.5, na_object=0.01, front_aperture_mm=12.5, stop_shift_mm=0.0, glass=&#x27;N-BK7&#x27;, wavelength_um=0.58756)</code>; aus dem Register: <code style="color:#22d3bf">opsoptics.get(&quot;telecentric_lens&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Vorschriften dreier abbildender Objektive aus derselben Einzellinse, bei denen nur die Blende verschoben ist (eine <code style="color:#22d3bf">raytrace.lens_system</code>-Tabelle).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>

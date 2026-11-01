@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">perlin2 — DRIVE <code style="color:#22d3bf">terrain</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.perlin2(x, y, seed: &#x27;int&#x27; = 0, freq: &#x27;float&#x27; = 1.0) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import driveterrain; driveterrain.perlin2(x, y, seed: &#x27;int&#x27; = 0, freq: &#x27;float&#x27; = 1.0) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;perlin2&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>在世界座標 (x, y) 處計算 Perlin(2002，improved noise)的 2 維梯度雜訊。</p>
 <p>格子間隔為 <code style="color:#22d3bf">freq</code> [週期/m],梯度為 8 個方向的單位向量,內插為 quintic fade <code style="color:#22d3bf">6t⁵−15t⁴+10t³</code>。回傳值 <code style="color:#22d3bf">{&quot;value&quot;, &quot;dx&quot;, &quot;dy&quot;}</code>(導數為解析解,<code style="color:#22d3bf">d/dx</code> 為每單位世界座標)。定理: 格點處值為 0、週期 256 格、|value| ≤ 1。</p>

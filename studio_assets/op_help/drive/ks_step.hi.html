@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">ks_step — DRIVE <code style="color:#22d3bf">commonroad</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">any × any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ks_step(state, u, dt: &#x27;float&#x27;, params=None) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import drivecommonroad; drivecommonroad.ks_step(state, u, dt: &#x27;float&#x27;, params=None) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;ks_step&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>kinematic single-track (KS) model को piecewise-constant इनपुट u = (δ̇, a) से dt जितना RK4 द्वारा आगे बढ़ाता है। reference point = पिछले axle का केंद्र।</p>
 <p>state = (x_rear, y_rear, δ, v, ψ)। समीकरण: ẋ = v cos ψ, ẏ = v sin ψ, δ̇ = u₀, v̇ = u₁, ψ̇ = v / l_wb · tan δ (commonroad-vehicle-models <code style="color:#22d3bf">vehicle_dynamics_ks</code>; इनपुट की संतृप्ति <code style="color:#22d3bf">steering_constraints</code> / <code style="color:#22d3bf">acceleration_constraints</code> भी वही)।</p>

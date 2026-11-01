@@ -4,6 +4,7 @@ dim: blob
 category: split
 in: mask
 out: table
+gpu: なし
 examples: [poc_dense_bubble_count]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `mask` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.blob_count_interval(region: 'Any', rel_lo: 'float' = 0.05, rel_hi: 'float' = 0.15, min_prominence: 'float' = 1.0, round_tol: 'Optional[float]' = None, connectivity: 'int' = 8) -> 'dict'` (実装を直接呼ぶなら `import blob2d; blob2d.blob_count_interval(region: 'Any', rel_lo: 'float' = 0.05, rel_hi: 'float' = 0.15, min_prominence: 'float' = 1.0, round_tol: 'Optional[float]' = None, connectivity: 'int' = 8) -> 'dict'`、台帳から引くなら `opsblob.get("blob_count_interval")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">confocal_axial_response — OPTICS <code style="color:#22d3bf">confocal</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">無</code> → <code style="color:#22d3bf">pairs</code>(僅由參數決定的運算子 —— 不接受影像或資料輸入)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.confocal_axial_response(z_min_um: &#x27;float&#x27; = -40.0, z_max_um: &#x27;float&#x27; = 40.0, n_points: &#x27;int&#x27; = 401, wavelength_nm: &#x27;float&#x27; = 550.0, numerical_aperture: &#x27;float&#x27; = 0.2, n_medium: &#x27;float&#x27; = 1.0, longitudinal_sa_um: &#x27;float&#x27; = 0.0, target: &#x27;str&#x27; = &#x27;mirror&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import chromconf; chromconf.confocal_axial_response(z_min_um: &#x27;float&#x27; = -40.0, z_max_um: &#x27;float&#x27; = 40.0, n_points: &#x27;int&#x27; = 401, wavelength_nm: &#x27;float&#x27; = 550.0, numerical_aperture: &#x27;float&#x27; = 0.2, n_medium: &#x27;float&#x27; = 1.0, longitudinal_sa_um: &#x27;float&#x27; = 0.0, target: &#x27;str&#x27; = &#x27;mirror&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsoptics.get(&quot;confocal_axial_response&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>以 pairs 傳回共焦顯微鏡的軸向響應 I(z)(相對離焦量 z [µm] 的偵測強度)。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>

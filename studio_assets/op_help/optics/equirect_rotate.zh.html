@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">equirect_rotate — OPTICS <code style="color:#22d3bf">omni360</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">rgbimage × matrix</code> → <code style="color:#22d3bf">rgbimage</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.equirect_rotate(equi, R)</code>(要直接调用实现,<code style="color:#22d3bf">import omni360; omni360.equirect_rotate(equi, R)</code>;从台账取用则 <code style="color:#22d3bf">opsoptics.get(&quot;equirect_rotate&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>对全景图应用正规三维旋转。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>

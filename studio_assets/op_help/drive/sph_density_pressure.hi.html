@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">sph_density_pressure — DRIVE <code style="color:#22d3bf">swarmflow</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">matrix × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sph_density_pressure(points, h: &#x27;float&#x27;, mass: &#x27;float&#x27; = 1.0, rho0: &#x27;float&#x27; = 1.0, c: &#x27;float&#x27; = 10.0, box=None) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import swarmflow; swarmflow.sph_density_pressure(points, h: &#x27;float&#x27;, mass: &#x27;float&#x27; = 1.0, rho0: &#x27;float&#x27; = 1.0, c: &#x27;float&#x27; = 10.0, box=None) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;sph_density_pressure&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>point set की SPH density ρ_i = Σ_j m W(|x_i − x_j|, h) (स्वयं सहित) और weakly compressible अवस्था समीकरण p = c² (ρ − ρ₀)।</p>
 <p>ग्रिड अंतराल Δ के साथ m = ρ₀ Δ² रखने पर आंतरिक बिंदुओं का ρ, ρ₀ के निकट होता है (h = 1.3Δ पर 0.3 % के भीतर —— गेट से गिना गया)।</p>

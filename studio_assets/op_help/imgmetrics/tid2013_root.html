@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tid2013_root — IMGMETRICS <code style="color:#22d3bf">iqa</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">any</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tid2013_root(root=None) -&gt; &#x27;Optional[Path]&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import iqatid; iqatid.tid2013_root(root=None) -&gt; &#x27;Optional[Path]&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsimgmetrics.get(&quot;tid2013_root&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>配布物の展開先。<code style="color:#22d3bf">root</code> が無ければ環境変数 <code style="color:#22d3bf">FULLSEYE_TID2013_DATA</code>。どちらも無い・<code style="color:#22d3bf">mos_with_names.txt</code> が無ければ <code style="color:#22d3bf">None</code> (呼び手は skip する —— データは repo に無い)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>

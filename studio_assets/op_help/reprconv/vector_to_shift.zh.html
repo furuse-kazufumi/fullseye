@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">vector_to_shift — REPRCONV <code style="color:#22d3bf">algebra</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">vector</code> → <code style="color:#22d3bf">shift</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vector_to_shift(vector)</code>(要直接调用实现,<code style="color:#22d3bf">import reprconv; reprconv.vector_to_shift(vector)</code>;从台账取用则 <code style="color:#22d3bf">opsreprconv.get(&quot;vector_to_shift&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p><code style="color:#22d3bf">vector (3,)</code> → 整数位移 <code style="color:#22d3bf">(dz, dy, dx)</code>。<code style="color:#22d3bf">shift_to_vector</code> 的反向。</p>
 <p><b>不可逆</b>(舍入到最近的整数)。丢掉的量正是舍入残差, <code style="color:#22d3bf">|v - round(v)| &lt;= 0.5</code> 是各轴的上界。只有传入整数的往返才 bit 一致。</p>

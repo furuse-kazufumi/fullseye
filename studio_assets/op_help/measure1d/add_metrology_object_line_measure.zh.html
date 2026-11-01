@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">add_metrology_object_line_measure — MEASURE1D <code style="color:#22d3bf">model</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">metrologymodel</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.add_metrology_object_line_measure(model, row1, col1, row2, col2, n: &#x27;int&#x27; = 25) -&gt; &#x27;int&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import metrology; metrology.add_metrology_object_line_measure(model, row1, col1, row2, col2, n: &#x27;int&#x27; = 25) -&gt; &#x27;int&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsmeasure1d.get(&quot;add_metrology_object_line_measure&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>添加直线计量对象(add_metrology_object_line_measure)。返回 index。</p>
 <p>把参考线段 <code style="color:#22d3bf">(row1, col1) → (row2, col2)</code> [px] 堆叠到 <code style="color:#22d3bf">model[&quot;objects&quot;]</code> (原地更新 dict)。<code style="color:#22d3bf">apply_metrology_model</code> 在此线段上等间隔(含两端)放置 <code style="color:#22d3bf">n</code> 个点，从各点<b>沿线段的法线方向</b>拉出短测量线，寻找亚像素边缘，再对所得点用最小二乘重新拟合直线。</p>

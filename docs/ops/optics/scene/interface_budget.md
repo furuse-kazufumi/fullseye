@@ -4,6 +4,7 @@ dim: optics
 category: scene
 in: table
 out: table
+gpu: なし
 examples: [vision_layout_from_catalog]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.interface_budget(sensor: 'dict', interface: 'str' = 'CXP-12', links: 'int' = 4, efficiency: 'float' = 0.85, line_scan: 'bool' = False) -> 'dict'` (実装を直接呼ぶなら `import optscene; optscene.interface_budget(sensor: 'dict', interface: 'str' = 'CXP-12', links: 'int' = 4, efficiency: 'float' = 0.85, line_scan: 'bool' = False) -> 'dict'`、台帳から引くなら `opsoptics.get("interface_budget")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

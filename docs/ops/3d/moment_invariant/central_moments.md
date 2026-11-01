@@ -4,6 +4,7 @@ dim: 3d
 category: moment_invariant
 in: points
 out: table
+gpu: なし
 examples: [moment_invariants]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `points` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.central_moments(points, max_order: 'int' = 3) -> 'dict'` (実装を直接呼ぶなら `import moments3d; moments3d.central_moments(points, max_order: 'int' = 3) -> 'dict'`、台帳から引くなら `ops3d.get("central_moments")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -2,7 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">sh_descriptor — 3D <code style="color:#22d3bf">describe</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">descriptor</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sh_descriptor(vol, L=8, nradii=12, ntheta=32, nphi=64, device=&#x27;cpu&#x27;)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import match3d; match3d.sh_descriptor(vol, L=8, nradii=12, ntheta=32, nphi=64, device=&#x27;cpu&#x27;)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;sh_descriptor&quot;)</code>)</p>
-<p style="margin:2px 0 2px 12px">• <b>GPU</b>: इस op का GPU path है (<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>spherical harmonic descriptor। concentric sphere shells की SH band energy ‖f_l(r)‖ को (radius × frequency) के रूप में लौटाता है।</p>
 <p>2D closed contour को 1D Fourier descriptor से दर्शाने का <b>line → surface lift</b>: 3D closed surface को SH से दर्शाया जाता है, और band energy <b>rotation invariant</b> है क्योंकि rotation केवल band के भीतर m को मिलाता है (Kazhdan 2003)। सभी shell को grid_sample से लिया जाता है, fixed SH basis के साथ inner product → हर band का sum of squares। retrieval/verification के लिए global signature। Return value (nradii,L+1)।</p>

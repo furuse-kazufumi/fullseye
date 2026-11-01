@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">solid_angle_brightness — OPTICS <code style="color:#22d3bf">illumination</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.solid_angle_brightness(light, view_na=0.1, slopes_deg=(0.0, 1.0, 2.0, 5.0, 10.0), slope_azimuth_deg=0.0, roughness_deg=0.0, n_samples=4096, seed=0)</code> (to call the implementation directly, <code style="color:#22d3bf">import illumdesign; illumdesign.solid_angle_brightness(light, view_na=0.1, slopes_deg=(0.0, 1.0, 2.0, 5.0, 10.0), slope_azimuth_deg=0.0, roughness_deg=0.0, n_samples=4096, seed=0)</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;solid_angle_brightness&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Brightness of a smooth or rough specular facet versus its slope (<code style="color:#22d3bf">table</code>).</p>
 <p>For each facet slope θ in *slopes_deg* (tilted toward *slope_azimuth_deg*; a negative slope tilts the other way) the camera (object-side NA *view_na*, half-angle β = asin NA, on the +z axis) records the share of its pupil that sees the mirrored illumination cone of *light* (<code style="color:#22d3bf">solid_angle_light</code>, half-angle α, axis tilt ψ):</p>

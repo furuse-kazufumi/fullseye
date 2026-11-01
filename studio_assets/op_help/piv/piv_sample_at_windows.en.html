@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">piv_sample_at_windows — PIV <code style="color:#22d3bf">assess</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">flow2d</code> → <code style="color:#22d3bf">flow2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_sample_at_windows(field, info)</code> (to call the implementation directly, <code style="color:#22d3bf">import pivops; pivops.piv_sample_at_windows(field, info)</code>; from the registry, <code style="color:#22d3bf">opspiv.get(&quot;piv_sample_at_windows&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Drops a per-pixel field <code style="color:#22d3bf">(2, H, W)</code> onto the grid of window centers (nearest neighbor).</p>
 <p>The ground truth is made at pixel resolution, but PIV output sits on the window grid. <b>Before comparing, it must be brought onto the same grid</b>, and the way it is brought there (nearest neighbour or window mean) changes the error. Here it is nearest neighbour —— with the window mean, in fields with gradients it becomes impossible to tell it apart from PIV&#x27;s own smoothing.</p>

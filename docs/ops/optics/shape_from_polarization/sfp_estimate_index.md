@@ -4,6 +4,7 @@ dim: optics
 category: shape_from_polarization
 in: image2d × image2d
 out: table
+gpu: なし
 examples: [poc_shape_from_polarization]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d × image2d` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.sfp_estimate_index(dolp, zenith_deg, model='specular', mask=None, n_bounds=(1.05, 3.0))` (実装を直接呼ぶなら `import sfpolar; sfpolar.sfp_estimate_index(dolp, zenith_deg, model='specular', mask=None, n_bounds=(1.05, 3.0))`、台帳から引くなら `opsoptics.get("sfp_estimate_index")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

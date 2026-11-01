@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">fly_hex_lattice — FLYVISION <code style="color:#22d3bf">lattice</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fly_hex_lattice(radius=15, dphi_deg=4.63, az0_deg=0.0, el0_deg=0.0, geometry=&#x27;regular&#x27;)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import flyvision; flyvision.fly_hex_lattice(radius=15, dphi_deg=4.63, az0_deg=0.0, el0_deg=0.0, geometry=&#x27;regular&#x27;)</code>、台帳から引くなら <code style="color:#22d3bf">opsflyvision.get(&quot;fly_hex_lattice&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Hexagonal ommatidial lattice: viewing directions of a compound eye.</p>
 <p>A hexagon of <code style="color:#22d3bf">n = 3*radius*(radius+1)+1</code> ommatidia on axial coordinates <code style="color:#22d3bf">(u, v)</code> with <code style="color:#22d3bf">-radius &lt;= u &lt;= radius</code> and <code style="color:#22d3bf">max(-radius, -radius-u) &lt;= v &lt;= min(radius, radius-u)</code> (u outer, v inner), each given an azimuth, an elevation and a unit viewing direction in body coordinates (x forward, y left, z up; <code style="color:#22d3bf">az = atan2(y, x)</code> left positive, <code style="color:#22d3bf">el = asin(z)</code>).</p>

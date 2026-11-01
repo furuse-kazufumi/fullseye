@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">peg_wrench_to_pad_loads — DRIVE <code style="color:#22d3bf">pegtactile</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">signal × signal × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.peg_wrench_to_pad_loads(F_pad, M_pad, pad: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import pegtactile; pegtactile.peg_wrench_to_pad_loads(F_pad, M_pad, pad: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;peg_wrench_to_pad_loads&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>2 个垫施加于销的力旋量(夹爪坐标系，以抓握点为矩心)→ 各垫的 (法向力 P，膜承受的剪切 q = (q_u, q_v))。</p>
 <p>平衡(推导): 垫片 R(+x)对销钉施加 −N_R x̂ 与 T_R,L(−x)施加 +N_L x̂ 与 T_L。F_x = N_L − N_R、F_y = T_Ry + T_Ly、F_z = T_Rz + T_Lz、M_y = −w(T_Rz − T_Lz)、M_z = w(T_Ry − T_Ly)、M_x = 扭转(各一半)。法向由夹持力得 N = G₀ ∓ F_x/2。</p>

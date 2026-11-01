@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">mesh_read_ply — FILEIO <code style="color:#22d3bf">mesh</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mesh_read_ply(data)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import fileio; fileio.mesh_read_ply(data)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsfileio.get(&quot;mesh_read_ply&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>ASCII या binary PLY पढ़कर vertices, faces, रंग, normals और scalar attributes की <code style="color:#22d3bf">table</code> लौटाता है।</p>
 <p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>

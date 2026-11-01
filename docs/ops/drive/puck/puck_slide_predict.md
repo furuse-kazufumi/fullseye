@@ -4,6 +4,7 @@ dim: drive
 category: puck
 in: signal × signal × table × scalar
 out: table
+gpu: なし
 examples: [poc_air_hockey_intercept]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal × signal × table × scalar` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.puck_slide_predict(p0, v0, table: 'dict', t_end: 'float', *, model: 'str' = 'coulomb', max_bounces: 'int' = 50, goals: 'bool' = True, t0: 'float' = 0.0) -> 'dict'` (実装を直接呼ぶなら `import puck; puck.puck_slide_predict(p0, v0, table: 'dict', t_end: 'float', *, model: 'str' = 'coulomb', max_bounces: 'int' = 50, goals: 'bool' = True, t0: 'float' = 0.0) -> 'dict'`、台帳から引くなら `opsdrive.get("puck_slide_predict")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

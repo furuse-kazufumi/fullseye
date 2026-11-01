@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">peg_scene_mjcf — DRIVE <code style="color:#22d3bf">pegsim</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.peg_scene_mjcf(kp=None, lg: &#x27;float | None&#x27; = None, offsamples: &#x27;int&#x27; = 4, timestep: &#x27;float&#x27; = 0.0005) -&gt; &#x27;str&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import pegsim; pegsim.peg_scene_mjcf(kp=None, lg: &#x27;float | None&#x27; = None, offsamples: &#x27;int&#x27; = 4, timestep: &#x27;float&#x27; = 0.0005) -&gt; &#x27;str&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;peg_scene_mjcf&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>场景的 MJCF 字符串(无需 mujoco)：孔 = 内切面半径为 R 的 n_seg 个箱体组成的环 + 45° 倒角的环 + 孔口面的环圈 + 方框；位置控制的滑台(x, y, z 滑动)上装有由 6 个弹簧关节构成的柔顺腕部，其末端为销(圆柱)。腕部相机位于滑台后方 60 mm、上方 20 mm，向下 45°；侧面相机固定。</p>
 <p><code style="color:#22d3bf">lg</code> = 从尖端到旋转顺应中心的距离（无 → 手腕原点 = 销钉长度，0 → 尖端中心 = RCC）。 <code style="color:#22d3bf">offsamples</code> 是 MSAA（分别编译 RGB 为 4 和深度为 0 — 深度是样本 0 处的陷阱）。气缸的<code style="color:#22d3bf">&lt;quality numslices=&quot;128&quot;&gt;</code> 多边形近似的半径误差约为0.03%（默认28约为0.6%，半径6毫米内部为0.04毫米）。单位 m，嘴平面 z = 0。</p>

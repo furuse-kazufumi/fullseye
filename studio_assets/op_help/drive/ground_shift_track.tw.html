@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">ground_shift_track — DRIVE <code style="color:#22d3bf">roverslip</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ground_shift_track(frames, pixel_size: &#x27;float&#x27; = 1.0) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import roverslip; roverslip.ground_shift_track(frames, pixel_size: &#x27;float&#x27; = 1.0) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;ground_shift_track&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>從俯視地面的相機影格序列中，以加窗互相關(整數)與平移 Lucas–Kanade(次像素)量測相鄰影格之間的平移並累積。</p>
 <p><code style="color:#22d3bf">frames</code> 為 (T, H, W) 陣列或同形 2-D 陣列的序列(T ≥ 2)。<code style="color:#22d3bf">pixel_size</code> 為地面上像素的大小 [m]。回傳值 <code style="color:#22d3bf">{&quot;step&quot;: (T−1, 2) の (drow, dcol) [m]、&quot;position&quot;: (T, 2) の累積 [m]、&quot;peak&quot;: (T−1,) 合わせた後の正規化相関}</code>。<code style="color:#22d3bf">step</code> 是<b>影像中紋樣移動的量</b>(相機·車身的移動方向與之相反 —— 前進時地面向後流)。每格畫面的移動最多約為影像的 1/4(相關是週期的,超過一半會折返)。</p>

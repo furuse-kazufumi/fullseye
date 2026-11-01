@@ -4,6 +4,7 @@ dim: segmentation
 category: contour
 in: mask
 out: table
+gpu: なし
 examples: [poc_active_contours]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `mask` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.level_set_reinit(phi, *, method: 'str' = 'sussman', n_iter: 'int' = 100, dt: 'float' = 0.5, band: 'float' = 3.0) -> 'Dict[str, object]'` (実装を直接呼ぶなら `import segcontour; segcontour.level_set_reinit(phi, *, method: 'str' = 'sussman', n_iter: 'int' = 100, dt: 'float' = 0.5, band: 'float' = 3.0) -> 'Dict[str, object]'`、台帳から引くなら `opssegmentation.get("level_set_reinit")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

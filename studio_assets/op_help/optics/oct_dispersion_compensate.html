@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">oct_dispersion_compensate — OPTICS <code style="color:#22d3bf">oct</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.oct_dispersion_compensate(interferogram, a2=0.0, a3=0.0, k_center=None, dc=&#x27;reference&#x27;)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import octscan; octscan.oct_dispersion_compensate(interferogram, a2=0.0, a3=0.0, k_center=None, dc=&#x27;reference&#x27;)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;oct_dispersion_compensate&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>数値分散補償(<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code>): DC を除いた k 等間隔のスペクトルを解析信号にして exp(−i(a2Δk² + a3Δk³))。</p>
 <p>Δk = k − k_c(既定は k の範囲の中央)。a2 [µm²]、a3 [µm³] は <code style="color:#22d3bf">oct_dispersion_broadening</code> の a2・a3 (既知の材料)か <code style="color:#22d3bf">oct_dispersion_estimate</code>(測ったスペクトルから)。解析信号は正の周波数だけなので、補償後の A スキャンは片側(鏡像の側は捨てる —— 鏡像の分離ではない)。k 等間隔でなければ拒否。</p>

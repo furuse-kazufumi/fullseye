@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">braid_artin_images — DRIVE <code style="color:#22d3bf">braidpath</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">signal × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.braid_artin_images(word, n_strands)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import braidpath; braidpath.braid_artin_images(word, n_strands)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;braid_artin_images&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>브레이드의 Artin 표현: 자유군 F_n 의 생성원 x₁..xₙ 의 상(자유 축약한 단어).</p>
 <p>σᵢ: xᵢ ↦ xᵢ xᵢ₊₁ xᵢ⁻¹, xᵢ₊₁ ↦ xᵢ, 나머지는 움직이지 않는다. 단어 w = σ_{i1} σ_{i2} … 의 상은 왼쪽부터 차례로 대입하여 만든다. 이 표현은 충실(Artin 1925)하므로 <b>상이 모두 일치 ⇔ 같은 브레이드</b>. 자유 축약만 쓰는 엄밀한 판정으로, Dynnikov 좌표와독립적으로 “같다”를 확인하는 두 번째 구현이 된다. 상의 길이는 단어 길이에 대해 지수적으로 늘어날 수 있으므로 <code style="color:#22d3bf">MAX_WORD</code> 문자에서 멈춘다(RuntimeError). ★상한은 인자로 두지 않는다: 답을 바꾸지 않는 중단은 “효과 없는 노브”가 된다(2026-10-23). 빈 입력(<code style="color:#22d3bf">word</code> 가 0 요소)은 항등 사상의 상을 반환한다(이유: 빈 단어는 항등원이며, 상은 각 xₖ 그 자체).</p>

@@ -4,6 +4,7 @@ dim: optics
 category: omni360
 in: pairs
 out: table
+gpu: なし
 examples: [poc_omni360_inspection]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `pairs` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.video360_tile_coverage(view_path, tiles=(8, 4), fov_deg=90)` (実装を直接呼ぶなら `import omni360; omni360.video360_tile_coverage(view_path, tiles=(8, 4), fov_deg=90)`、台帳から引くなら `opsoptics.get("video360_tile_coverage")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

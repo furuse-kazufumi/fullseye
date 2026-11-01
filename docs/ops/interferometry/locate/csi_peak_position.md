@@ -4,6 +4,7 @@ dim: interferometry
 category: locate
 in: sweep
 out: measurement
+gpu: なし
 examples: [coherence_scanning]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `sweep` → `measurement`
 - **呼び出し**: `import fullseye as fs; fs.ledger.csi_peak_position(signal, z_step_um=0.05, z_start_um=0.0, wavelength_um=0.6, mode='gaussian', remove_bias=True, min_visibility=0.3, max_edge_envelope=0.05, carrier_tolerance=2.0)` (実装を直接呼ぶなら `import interferometry; interferometry.csi_peak_position(signal, z_step_um=0.05, z_start_um=0.0, wavelength_um=0.6, mode='gaussian', remove_bias=True, min_visibility=0.3, max_edge_envelope=0.05, carrier_tolerance=2.0)`、台帳から引くなら `opsinterferometry.get("csi_peak_position")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

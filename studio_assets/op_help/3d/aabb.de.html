@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">aabb — 3D <code style="color:#22d3bf">bounds</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">primitive</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.aabb(points)</code> (die Implementierung direkt: <code style="color:#22d3bf">import pcseg; pcseg.aabb(points)</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;aabb&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Achsenparallele Bounding Box. Liefert <code style="color:#22d3bf">(min (3,), max (3,))</code>.</p>
 <p>Gibt Minimum und Maximum jeder Achse der Punktwolke unverändert zurück (<code style="color:#22d3bf">P.min(0)</code>, <code style="color:#22d3bf">P.max(0)</code>). Der Rückgabewert sind 2 (3,)- float64-Arrays, in der Reihenfolge <code style="color:#22d3bf">(xmin, ymin, zmin)</code> und <code style="color:#22d3bf">(xmax, ymax, zmax)</code> (die Achsenreihenfolge ist die Spaltenreihenfolge der Eingabe). Die Boxgröße ist <code style="color:#22d3bf">max - min</code>, der Mittelpunkt <code style="color:#22d3bf">(min + max) / 2</code>. Die Einheit ist die Koordinateneinheit.</p>

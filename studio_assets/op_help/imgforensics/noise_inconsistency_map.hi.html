@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">noise_inconsistency_map — IMGFORENSICS <code style="color:#22d3bf">noise</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.noise_inconsistency_map(image, block: &#x27;int&#x27; = 16) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import imgforensics; imgforensics.noise_inconsistency_map(image, block: &#x27;int&#x27; = 16) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsimgforensics.get(&quot;noise_inconsistency_map&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>हर block के <b>noise standard deviation</b> का map। <code style="color:#22d3bf">image2d</code>।</p>
 <p>Immerkær 1996 के 3x3 mask से high-frequency component लेता है, हर non-overlapping <code style="color:#22d3bf">block</code>-वर्ग block के लिए <code style="color:#22d3bf">sigma = sqrt(pi/2) / 6 * mean(|conv|)</code> की गणना करता है और उसे block constants के रूप में वापस फैलाता है। यदि चिपकाया गया region किसी अलग exposure, compression ratio या camera से आया है, तो यह मान अपने आसपास के सापेक्ष एक <b>step</b> बनाता है।</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">shape_index_to_curvature — REPRCONV <code style="color:#22d3bf">curvature</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">curvature</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.shape_index_to_curvature(pairs)</code>(要直接调用实现,<code style="color:#22d3bf">import reprconv; reprconv.shape_index_to_curvature(pairs)</code>;从台账取用则 <code style="color:#22d3bf">opsreprconv.get(&quot;shape_index_to_curvature&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>形状指数与弯曲度 <code style="color:#22d3bf">(N,2)</code> → 主曲率 <code style="color:#22d3bf">(N,2)</code>。<code style="color:#22d3bf">curvature_to_shape_index</code> 的逆。</p>
 <p>令 theta = pi*S/2,则 <code style="color:#22d3bf">k1 = C(sin+cos)</code>, <code style="color:#22d3bf">k2 = C(sin-cos)</code>。这是解 (S, C) 定义式得到的闭式,不含近似也不含迭代。</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">ray_aiming — OPTICS <code style="color:#22d3bf">design</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ray_aiming(system, field=None, rings=8, wavelength_um=None, aim=&#x27;stop&#x27;, vignetting=None)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import raytrace; raytrace.ray_aiming(system, field=None, rings=8, wavelength_um=None, aim=&#x27;stop&#x27;, vignetting=None)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;ray_aiming&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>1 つの視野で瞳の光線がどれだけ絞りに届くか: 本数・残差・瞳の広がり(<code style="color:#22d3bf">table</code>)。</p>
 <p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>

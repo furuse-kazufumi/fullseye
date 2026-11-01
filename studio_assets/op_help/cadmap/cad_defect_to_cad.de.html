@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">cad_defect_to_cad — CADMAP <code style="color:#22d3bf">defect</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">mesh × labels</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cad_defect_to_cad(mesh, labels, K=None, R=None, t=None, cull_backfaces=True, min_pixels=1, background=0, strict=False)</code> (die Implementierung direkt: <code style="color:#22d3bf">import cadmap; cadmap.cad_defect_to_cad(mesh, labels, K=None, R=None, t=None, cull_backfaces=True, min_pixels=1, background=0, strict=False)</code>; aus dem Register: <code style="color:#22d3bf">opscadmap.get(&quot;cad_defect_to_cad&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>2-D-Defektlabelbild → eine <b>Tabelle auf der CAD-Fläche</b> (Flächen-ID / Fläche darauf / 3-D-Schwerpunkt).</p>
 <p><code style="color:#22d3bf">labels</code> ist ein (H, W)-Label-Bild aus Ganzzahlen (<code style="color:#22d3bf">background</code> wird ignoriert, eine bool-Maske ist auch erlaubt). Pro Label werden Strahlen für alle Pixel geschossen und die getroffenen Flächen sowie <b>die reale Fläche, die die Pixel auf der Oberfläche einnehmen</b>, aufsummiert. Die Fläche ist nicht die Pixelzahl, sondern</p>

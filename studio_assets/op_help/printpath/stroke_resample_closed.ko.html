@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">stroke_resample_closed — PRINTPATH <code style="color:#22d3bf">stroke</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">pairs</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.stroke_resample_closed(points, n_points, allow_shortening=False)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import printpath; printpath.stroke_resample_closed(points, n_points, allow_shortening=False)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsprintpath.get(&quot;stroke_resample_closed&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>닫힌 선을 <b>등호장</b>으로 다시 찍는다. → <code style="color:#22d3bf">pairs</code></p>
 <p>푸리에로 넘기기 전 단계. ★매개변수를 잡는 방식으로 계수가 바뀌므로(실측으로 최대 47 배), 여기는 <b>호 길이로 등간격</b>이라고 명시한다. 호 길이의 간격은 기계 정밀도로 일정(실측 cv 1e-14).</p>

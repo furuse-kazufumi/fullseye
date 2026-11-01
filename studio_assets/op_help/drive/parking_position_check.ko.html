@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">parking_position_check — DRIVE <code style="color:#22d3bf">crossing</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">table</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.parking_position_check(rear: &#x27;float&#x27;, front: &#x27;float&#x27;, zones_result: &#x27;dict&#x27;) -&gt; &#x27;Dict[str, object]&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivecrossing; drivecrossing.parking_position_check(rear: &#x27;float&#x27;, front: &#x27;float&#x27;, zones_result: &#x27;dict&#x27;) -&gt; &#x27;Dict[str, object]&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;parking_position_check&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>차체 [rear, front]가 주정차 금지 구간과 겹치는지. <code style="color:#22d3bf">zones_result</code> = <code style="color:#22d3bf">no_stopping_zones</code>의 반환값.</p>
 <p>반환값: <code style="color:#22d3bf">ok</code>, <code style="color:#22d3bf">overlap</code> = 겹침 길이의 최대 [m], <code style="color:#22d3bf">reasons</code> = 겹친 구간의 (kind, 호). 끝에 닿기만 하는 것은 겹치지 않는다.</p>

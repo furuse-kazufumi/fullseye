@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">fit_torus — 3D <code style="color:#22d3bf">robust_fit</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">primitive</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fit_torus(points, method: &#x27;str&#x27; = &#x27;exact&#x27;, axis_parameterization: &#x27;str&#x27; = &#x27;cartesian&#x27;) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import fit_primitives_ext; fit_primitives_ext.fit_torus(points, method: &#x27;str&#x27; = &#x27;exact&#x27;, axis_parameterization: &#x27;str&#x27; = &#x27;cartesian&#x27;) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;fit_torus&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>对点群拟合圆环面,返回 <code style="color:#22d3bf">{center, axis, R, r, residual}</code>。</p>
 <p>用 <code style="color:#22d3bf">scipy.optimize.least_squares</code> 最小化点-圆环距离 <code style="color:#22d3bf">sqrt((ρ−R)² + a²) − r</code>(<code style="color:#22d3bf">a</code>=轴向分量, <code style="color:#22d3bf">ρ</code>=到轴的半径, <code style="color:#22d3bf">R</code>=主半径, <code style="color:#22d3bf">r</code>=管半径)。初值为 PCA 轴(与众不同的那个特征向量)+ <code style="color:#22d3bf">R0=mean(ρ)</code>、<code style="color:#22d3bf">r0</code>(到管中心圆距离的平均)。</p>

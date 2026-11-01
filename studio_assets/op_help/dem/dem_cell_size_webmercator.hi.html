@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">dem_cell_size_webmercator — DEM <code style="color:#22d3bf">geodesy</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">measurement</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_cell_size_webmercator(zoom, lat_deg)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import demops; demops.dem_cell_size_webmercator(zoom, lat_deg)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdem.get(&quot;dem_cell_size_webmercator&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Web Mercator tile का ज़मीनी resolution [m/px]। <b>latitude के साथ बदलता है</b>।</p>
 <p><code style="color:#22d3bf">156543.03392804097 * cos(lat) / 2^zoom</code> (256 px tiles के लिए)।</p>

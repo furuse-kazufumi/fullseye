@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">stat_chi2_gof — MATH <code style="color:#22d3bf">estimation</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.stat_chi2_gof(observed, expected=None) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import mathestimation; mathestimation.stat_chi2_gof(observed, expected=None) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsmath.get(&quot;stat_chi2_gof&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>χ² 適合度検定: 度数 <code style="color:#22d3bf">observed</code> が期待度数(既定は一様)に合うか。自由度 = 区分数 − 1。</p>
 <p>期待度数が 5 未満の区分があると近似が悪い(<code style="color:#22d3bf">low_expected</code> に数を返す)。</p>

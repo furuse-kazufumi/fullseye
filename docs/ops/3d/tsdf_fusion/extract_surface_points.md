@@ -4,6 +4,7 @@ dim: 3d
 category: tsdf_fusion
 in: sdf
 out: points
+gpu: なし
 examples: [transforms_repr, tsdf_fusion_demo]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `sdf` → `points`
 - **呼び出し**: `import fullseye as fs; fs.ledger.extract_surface_points(tsdf: 'np.ndarray', weight: 'np.ndarray', bounds: 'Bounds', res: 'int') -> 'np.ndarray'` (実装を直接呼ぶなら `import tsdf_fusion; tsdf_fusion.extract_surface_points(tsdf: 'np.ndarray', weight: 'np.ndarray', bounds: 'Bounds', res: 'int') -> 'np.ndarray'`、台帳から引くなら `ops3d.get("extract_surface_points")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

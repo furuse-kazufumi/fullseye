@@ -4,6 +4,7 @@ dim: optics
 category: lensconfig
 in: table
 out: table
+gpu: なし
 examples: [poc_zoom_configurations]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.lens_with_configuration(system=None, k: 'int' = 0) -> 'dict'` (実装を直接呼ぶなら `import lensconfig; lensconfig.lens_with_configuration(system=None, k: 'int' = 0) -> 'dict'`、台帳から引くなら `opsoptics.get("lens_with_configuration")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

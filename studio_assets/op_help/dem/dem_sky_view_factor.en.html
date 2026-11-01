@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">dem_sky_view_factor — DEM <code style="color:#22d3bf">visibility</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">depth</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_sky_view_factor(dem, cell_size, n_azimuth=16, max_distance_m=None)</code> (to call the implementation directly, <code style="color:#22d3bf">import demops; demops.dem_sky_view_factor(dem, cell_size, n_azimuth=16, max_distance_m=None)</code>; from the registry, <code style="color:#22d3bf">opsdem.get(&quot;dem_sky_view_factor&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Sky view factor [0,1]: how much of the sky is visible.</p>
 <p>Computed as <code style="color:#22d3bf">mean(cos^2(horizon))</code> from the horizon elevation angles in <code style="color:#22d3bf">n_azimuth</code> directions (the standard approximation assuming a sky of isotropic luminance). <b>Exactly 1 on a flat surface</b>. A quantity that matters for urban heat and cold pooling in valley bottoms.</p>

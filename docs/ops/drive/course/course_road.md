@@ -4,6 +4,7 @@ dim: drive
 category: course
 in: 
 out: table
+gpu: なし
 examples: [gallery_drive_city_terrain, gallery_drive_japan_roads, gallery_drive_world_objects, poc_driving_longitudinal, poc_driving_school, poc_driving_town, poc_driving_weather]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.course_road(length=20.0, width=7.0)` (実装を直接呼ぶなら `import drivecourse; drivecourse.course_road(length=20.0, width=7.0)`、台帳から引くなら `opsdrive.get("course_road")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

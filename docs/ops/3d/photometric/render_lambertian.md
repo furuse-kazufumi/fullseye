@@ -4,6 +4,7 @@ dim: 3d
 category: photometric
 in: normalmap
 out: image2d
+gpu: なし
 examples: [photometric_stereo, render_shade]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `normalmap` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.render_lambertian(normals, albedo, light, ambient=0.0)` (実装を直接呼ぶなら `import photometric; photometric.render_lambertian(normals, albedo, light, ambient=0.0)`、台帳から引くなら `ops3d.get("render_lambertian")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

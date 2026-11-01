@@ -4,6 +4,7 @@ dim: drive
 category: roverslip
 in: table × signal × scalar
 out: signal
+gpu: なし
 examples: [gallery_drive_soil_tactile]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table × signal × scalar` → `signal`
 - **呼び出し**: `import fullseye as fs; fs.ledger.slip_cvar(model, slopes, alpha: 'float' = 0.9, sign: 'float' = 1.0) -> 'np.ndarray'` (実装を直接呼ぶなら `import roverslip; roverslip.slip_cvar(model, slopes, alpha: 'float' = 0.9, sign: 'float' = 1.0) -> 'np.ndarray'`、台帳から引くなら `opsdrive.get("slip_cvar")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

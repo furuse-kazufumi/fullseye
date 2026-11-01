@@ -4,6 +4,7 @@ dim: tomography
 category: forward
 in: 
 out: image2d
+gpu: なし
 examples: [ct_reconstruction, poc_ct_fidelity, tomography_reconstruct]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `image2d`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.ellipse_phantom(size=256, ellipses=None, supersample=4)` (実装を直接呼ぶなら `import tomography; tomography.ellipse_phantom(size=256, ellipses=None, supersample=4)`、台帳から引くなら `opstomography.get("ellipse_phantom")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

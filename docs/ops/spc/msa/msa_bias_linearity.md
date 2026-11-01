@@ -4,6 +4,7 @@ dim: spc
 category: msa
 in: table
 out: table
+gpu: なし
 examples: [poc_measurement_system_analysis]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.msa_bias_linearity(table, reference='reference', measured='measured')` (実装を直接呼ぶなら `import spc; spc.msa_bias_linearity(table, reference='reference', measured='measured')`、台帳から引くなら `opsspc.get("msa_bias_linearity")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

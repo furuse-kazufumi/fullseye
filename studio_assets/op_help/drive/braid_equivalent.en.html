@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">braid_equivalent — DRIVE <code style="color:#22d3bf">braidpath</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal × signal × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.braid_equivalent(word_a, word_b, n_strands, method=&#x27;dynnikov&#x27;)</code> (to call the implementation directly, <code style="color:#22d3bf">import braidpath; braidpath.braid_equivalent(word_a, word_b, n_strands, method=&#x27;dynnikov&#x27;)</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;braid_equivalent&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Whether two braid words represent the same braid (are related by the relations alone).</p>
 <p>method: <code style="color:#22d3bf">&quot;dynnikov&quot;</code> (compare coordinates, fast) / <code style="color:#22d3bf">&quot;handle&quot;</code> (handle-reduce a b⁻¹ and check whether it is empty) / <code style="color:#22d3bf">&quot;artin&quot;</code> (compare the free-group images) / <code style="color:#22d3bf">&quot;all&quot;</code> (compute all three; RuntimeError if they disagree —— an implementation check).</p>

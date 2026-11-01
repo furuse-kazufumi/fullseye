@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">matrix_to_descriptor — REPRCONV <code style="color:#22d3bf">descriptor</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">descriptor</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.matrix_to_descriptor(matrix)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import reprconv; reprconv.matrix_to_descriptor(matrix)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsreprconv.get(&quot;matrix_to_descriptor&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p><code style="color:#22d3bf">matrix</code> → 기술자. <code style="color:#22d3bf">descriptor_to_matrix</code> 의 역.</p>
 <p>1 행의 행렬 (1, n) 은 (n,) 로 되돌린다(그것이 원래의 1-D 기술자이므로). 2 행 이상은 그대로. <b>이 비대칭은 의도적</b>이며, 이것이 없으면 <code style="color:#22d3bf">descriptor -&gt; matrix -&gt; descriptor</code> 의 왕복이 (n,) 에서 (1,n) 으로조용히 형태를 바꾼다 = 형의 거짓말 그 자체가 된다.</p>

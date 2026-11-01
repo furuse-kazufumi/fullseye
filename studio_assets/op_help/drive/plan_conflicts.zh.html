@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">plan_conflicts — DRIVE <code style="color:#22d3bf">agv</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.plan_conflicts(paths)</code>(要直接调用实现,<code style="color:#22d3bf">import agvfleet; agvfleet.plan_conflicts(paths)</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;plan_conflicts&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>冲突列表：同一时刻同一格子(vertex)、交错而过(edge)、跟随(follow)。</p>
 <p>返回 <code style="color:#22d3bf">[(種類, i, j, 時刻, マス)]</code>。已到达的车辆视为停留在原地进行计数。follow 指&quot;i 在时刻 t <b>进入</b>格子 v 时,j 在 t-1 时位于 v 且在 t 时已离开 v&quot;(i ≠ j)。</p>

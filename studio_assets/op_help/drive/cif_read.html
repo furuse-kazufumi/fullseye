@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">cif_read — DRIVE <code style="color:#22d3bf">pxrd</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cif_read(cif, name=None, default_b=0.5)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import pxrd; pxrd.cif_read(cif, name=None, default_b=0.5)</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;cif_read&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>CIF(結晶構造の標準書式)を読んで、単位格子の中の全原子に展開した「相」を返す。</p>
 <p><code style="color:#22d3bf">cif</code> はファイルのパスか CIF の本文(文字列。<code style="color:#22d3bf">data_</code> か <code style="color:#22d3bf">_cell_length_a</code> を含むなら本文とみなす)。</p>

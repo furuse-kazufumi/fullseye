@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">score_to_position — REPRCONV <code style="color:#22d3bf">score</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">score</code> → <code style="color:#22d3bf">position</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.score_to_position(score)</code> (to call the implementation directly, <code style="color:#22d3bf">import reprconv; reprconv.score_to_position(score)</code>; from the registry, <code style="color:#22d3bf">opsreprconv.get(&quot;score_to_position&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>A <code style="color:#22d3bf">score</code> volume → the location of its maximum, <code style="color:#22d3bf">position (z, y, x)</code>. The exit from <code style="color:#22d3bf">score</code>.</p>
 <p>argmax on the integer grid (no subpixel refinement -- that is the job of the existing <code style="color:#22d3bf">refine_peak_newton</code>; imitating it here would give different answers in 2 places). <b>One-way</b> (the volume cannot be recovered from 1 position).</p>

@@ -4,6 +4,7 @@ dim: geocam
 category: sun
 in: image2d
 out: table
+gpu: なし
 examples: [gallery_mesh_seg_sun_gains]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.sun_bloom_fit(image, threshold=0.97, ignore_top_rows=0, min_area=30, max_area_frac=0.15, min_rim_fraction=0.3)` (実装を直接呼ぶなら `import geocam; geocam.sun_bloom_fit(image, threshold=0.97, ignore_top_rows=0, min_area=30, max_area_frac=0.15, min_rim_fraction=0.3)`、台帳から引くなら `opsgeocam.get("sun_bloom_fit")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

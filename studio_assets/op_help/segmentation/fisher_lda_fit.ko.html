@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">fisher_lda_fit — SEGMENTATION <code style="color:#22d3bf">classify</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">matrix × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fisher_lda_fit(X, y, *, ridge: &#x27;float&#x27; = 1e-06, prior1: &#x27;Optional[float]&#x27; = None) -&gt; &#x27;Dict[str, object]&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import cropweed; cropweed.fisher_lda_fit(X, y, *, ridge: &#x27;float&#x27; = 1e-06, prior1: &#x27;Optional[float]&#x27; = None) -&gt; &#x27;Dict[str, object]&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opssegmentation.get(&quot;fisher_lda_fit&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>2클래스 Fisher 선형 판별을 학습한다(닫힌 형태, 반복 없음).</p>
 <p><code style="color:#22d3bf">X</code>는 (N, D) 특징(<code style="color:#22d3bf">superpixel_color_texture_features</code>가 돌려준 dict도 그대로 넘길 수 있다), <code style="color:#22d3bf">y</code>는 0 / 1의 N개 클래스. 특징을 전체 평균과 표준편차로 표준화하고(분산 0인 열은 척도 1로 두고 <code style="color:#22d3bf">constant_columns</code>에 기록), 클래스 내 공통 공분산 Σ = (S₀ + S₁)/(N − 2)에 <code style="color:#22d3bf">ridge</code> × tr(Σ)/D를 더한 뒤 w = Σ⁻¹(μ₁ − μ₀). 판정의 절편은 두 등분산 정규분포의 로그 우도비 w·z − w·(μ₀ + μ₁)/2 + log(π₁/π₀)가 0이 되는 점(<code style="color:#22d3bf">prior1</code> = π₁, 기본은 학습 데이터의 비율).</p>

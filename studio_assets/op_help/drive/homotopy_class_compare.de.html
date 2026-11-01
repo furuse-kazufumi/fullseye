@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">homotopy_class_compare — DRIVE <code style="color:#22d3bf">braidpath</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">any × any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.homotopy_class_compare(traj_a, traj_b, obstacles=None, angle=0.1, jitter=&#x27;auto&#x27;, tol=1e-09)</code> (die Implementierung direkt: <code style="color:#22d3bf">import braidpath; braidpath.homotopy_class_compare(traj_a, traj_b, obstacles=None, angle=0.1, jitter=&#x27;auto&#x27;, tol=1e-09)</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;homotopy_class_compare&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Ob zwei Pfadfamilien mit gleichen Start- und Endpunkten (Mehragentenpläne) in derselben Homotopieklasse liegen.</p>
 <p>Kollisionsfrei (weder Agenten untereinander noch mit Hindernispunkten überlappend) bei festgehaltenen Start- und Endpunkten stetig deformierbar ⇔ die Zöpfe sind gleich. Der Zopf stammt aus <code style="color:#22d3bf">braid_from_trajectories</code>, verglichen wird über Dynnikov-Koordinaten. Unabhängig vom Projektionswinkel (das Gate variiert mehrere Winkel).</p>

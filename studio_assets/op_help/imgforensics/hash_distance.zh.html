@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">hash_distance — IMGFORENSICS <code style="color:#22d3bf">hash</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">phash × phash</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.hash_distance(hash1, hash2) -&gt; &#x27;int&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import imgforensics; imgforensics.hash_distance(hash1, hash2) -&gt; &#x27;int&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsimgforensics.get(&quot;hash_distance&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>两个感知哈希的汉明距离(不同比特数)。</p>
 <p><b>检查 dtype 和长度，fail-closed(失败即拒绝)</b>。若接受 float 的 1-D 并用 <code style="color:#22d3bf">!=</code> 计数，几乎必然得到“全部位都不同”= 最大距离这一 *看似合理*的值 —— 那是类型混淆，而不是图像的差异。</p>

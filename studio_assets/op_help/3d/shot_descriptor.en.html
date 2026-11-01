@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">shot_descriptor — 3D <code style="color:#22d3bf">feature_register</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points × normals</code> → <code style="color:#22d3bf">descriptor</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.shot_descriptor(points, normals, kp_idx, tree, radius, n_azim=8, n_elev=2, n_rad=2, n_cos=11)</code> (to call the implementation directly, <code style="color:#22d3bf">import feat_shot; feat_shot.shot_descriptor(points, normals, kp_idx, tree, radius, n_azim=8, n_elev=2, n_rad=2, n_cos=11)</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;shot_descriptor&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>The SHOT descriptor (Tombari 2010). It builds a local reference frame at each keypoint and takes a spherical support.</p>
 <p>The support is divided into radial 2 × elevation 2 × azimuth 8 = 32 spatial cells; in each cell, the &quot;cosine of the angle between the LRF z axis and the neighbour point normal&quot; is accumulated by quadrilinear interpolation into a histogram of n_cos=11 bins → the 32×11=352 dimensions are L2-normalised. Returns (Kp,352). Points without a valid LRF get a zero vector.</p>

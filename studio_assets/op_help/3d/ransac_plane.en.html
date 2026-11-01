@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">ransac_plane — 3D <code style="color:#22d3bf">robust_fit</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">primitive</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ransac_plane(points, thresh, iters=500, seed=0)</code> (to call the implementation directly, <code style="color:#22d3bf">import ransac_fit; ransac_fit.ransac_plane(points, thresh, iters=500, seed=0)</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;ransac_plane&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Outlier-robust RANSAC plane fitting.</p>
 <p>Sample 3 points → plane normal (cross product of 2 edges) → maximise the inliers with point-plane distance |n·(p-p0)| &lt; <code style="color:#22d3bf">thresh</code> → least-squares refit on the final inliers (normal = minor principal axis of the covariance).</p>

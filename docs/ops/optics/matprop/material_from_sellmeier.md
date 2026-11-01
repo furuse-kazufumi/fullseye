@@ -4,6 +4,7 @@ dim: optics
 category: matprop
 in: 
 out: table
+gpu: なし
 examples: [poc_dual_energy_xray, poc_material_optical_library]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.material_from_sellmeier(name: 'str' = 'custom', b=(1.03961212, 0.231792344, 1.01046945), c=(0.00600069867, 0.0200179144, 103.560653), range_um=(0.3, 2.5), material_class: 'str' = 'glass', reference: 'str' = '') -> 'dict'` (実装を直接呼ぶなら `import materials; materials.material_from_sellmeier(name: 'str' = 'custom', b=(1.03961212, 0.231792344, 1.01046945), c=(0.00600069867, 0.0200179144, 103.560653), range_um=(0.3, 2.5), material_class: 'str' = 'glass', reference: 'str' = '') -> 'dict'`、台帳から引くなら `opsoptics.get("material_from_sellmeier")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

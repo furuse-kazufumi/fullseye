@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">emva_filter_distortion — OPTICS <code style="color:#22d3bf">sensorchar</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.emva_filter_distortion(kernel, temporal_alpha=1.0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import sensorchar; sensorchar.emva_filter_distortion(kernel, temporal_alpha=1.0)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;emva_filter_distortion&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>カメラの中の線形な前処理が EMVA 1288 Linear の数をどれだけ動かすか —— 閉形式(この族の導出、規格の式ではない)。</p>
 <p>*kernel*: 画像ごとにかかる 2-D の線形フィルタ w(1 × 1 なら数字のゲイン g)。*temporal_alpha*: 続けた画像にかかる 1 次の再帰 y_t = α x_t + (1 − α) y_{t−1}(1 = 時間フィルタ無し)。平均は G = Σw 倍、白い時間雑音の分散は Σw² 倍になる。2 枚の差の分散(式 18)は再帰で α²/(2 − α) 倍になる。S = (Σw²/G²) · α²/(2 − α) とおくと、photon transfer(式 50)の傾き K&#x27; = G S K、応答 R&#x27; = G R(式 49)、η&#x27; = R&#x27;/K&#x27; = η/S(式 52)、σ_d&#x27; = σ_d/√S(式 53、量子化を無視)、SNR(μ_p)&#x27; = SNR/√S(式 21)。固定パターンは空間の w だけを通る: 白い画素の模様の分散は Σw² 倍、列の模様は Σ_n(Σ_m w[m][n])² 倍、行も同様。だから DSNU1288&#x27; [e⁻] = DSNU · √(gain_x)/S、PRNU1288&#x27; = PRNU · √(gain_x)(gain_x = 正規化した各成分の利得)。隣の画素の時間雑音の相関の予測 ρ_h・ρ_v・ρ_d と分散比(<code style="color:#22d3bf">emva_noise_whiteness</code> と同じ定義)も返す。</p>

@@ -200,7 +200,7 @@ def build_search() -> dict:
                 break
         row = {"n": r["name"], "d": r["dim"], "c": r.get("category"), "i": r.get("in"), "o": r.get("out"),
                "h": r.get("halcon") or None, "p": path, "s": summ, "t": ctx.get(r["name"]) or None,
-               "te": ctx_en.get(r["name"]) or None}
+               "te": ctx_en.get(r["name"]) or None, "gpu": r.get("gpu_status", "なし")}
         rows.append({k: v for k, v in row.items() if v not in (None, "", {})})
     if not rows:
         raise SystemExit("opdocs の記録が 0 件 —— 検索索引を書かない")

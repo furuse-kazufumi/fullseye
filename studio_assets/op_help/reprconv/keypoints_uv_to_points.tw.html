@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">keypoints_uv_to_points — REPRCONV <code style="color:#22d3bf">keypoint</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">keypoints</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.keypoints_uv_to_points(keypoints, z=0.0)</code>(要直接呼叫實作,<code style="color:#22d3bf">import reprconv; reprconv.keypoints_uv_to_points(keypoints, z=0.0)</code>;從台帳取用則 <code style="color:#22d3bf">opsreprconv.get(&quot;keypoints_uv_to_points&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>影像座標 <code style="color:#22d3bf">(N,2) = (u, v)</code> → 點群 <code style="color:#22d3bf">(N,3) = (z, y, x)</code>。<code style="color:#22d3bf">keypoints</code> 的出口。</p>
 <p><b>op 名中寫明了軸的約定</b>,是因為本 repo 中產出 <code style="color:#22d3bf">keypoints</code> 的 <code style="color:#22d3bf">match3d.project_points</code> 回傳 <b>(u, v) = (行, 列)</b>,而產出 <code style="color:#22d3bf">points</code> 的 <code style="color:#22d3bf">fuse3d.to_points(voxel)</code> 回傳 <b>(z, y, x)</b> —— 若直接當作「前 2 行」連接,<b>就會在既沒有例外也沒有 NaN 的情況下列行互換</b>。這裡明確地以 <code style="color:#22d3bf">y = v</code>、<code style="color:#22d3bf">x = u</code> 互換後再傳遞。</p>

@@ -4,6 +4,7 @@ dim: rangedoppler
 category: process
 in: beatcube
 out: image2d
+gpu: なし
 examples: [fmcw_range_doppler]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `beatcube` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.range_doppler_map(cube, combine='incoherent', antenna=None, normalize=False)` (実装を直接呼ぶなら `import rangedoppler; rangedoppler.range_doppler_map(cube, combine='incoherent', antenna=None, normalize=False)`、台帳から引くなら `opsrangedoppler.get("range_doppler_map")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

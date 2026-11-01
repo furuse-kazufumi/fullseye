@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">road_profile — DRIVE <code style="color:#22d3bf">long</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.road_profile(profile_xz, l0: &#x27;float&#x27; = 0.0) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import drivelong; drivelong.road_profile(profile_xz, l0: &#x27;float&#x27; = 0.0) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;road_profile&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把水平距离与高度的折线 (x, z)(与 drivecourse.course_slope 的 <code style="color:#22d3bf">profile</code> 形式相同)转换为以<b>沿路面的弧长 l</b> 表示的纵断面。</p>
 <p>返回值 = <code style="color:#22d3bf">{&quot;l&quot; (n,), &quot;x&quot; (n,), &quot;z&quot; (n,), &quot;sin&quot; (n−1,), &quot;cos&quot; (n−1,)}</code>。l 为从 <code style="color:#22d3bf">l0</code> 开始的折点弧长。区间 i 的坡度角 θ_i: sin = Δz/Δl、cos = Δx/Δl(两端之外为平坦: θ = 0,z 取端点值)。</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">edge_alias_energy — 3D <code style="color:#22d3bf">render</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.edge_alias_energy(img) -&gt; &#x27;float&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import render_ssaa; render_ssaa.edge_alias_energy(img) -&gt; &#x27;float&#x27;</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;edge_alias_energy&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Die Aliasing-(Treppen-)Energie von Kanten = der RMS des Laplace-Operators (kleiner ist glatter).</p>
 <p>Rasterisierungs-Aliasing erscheint als scharfe treppenförmige Ecken (hohe 2. Ableitung). Der Laplace-Operator betont hohe Frequenzen, daher erfasst sein quadratisches Mittel (RMS) monoton, wie treppenartig die Ränder sind — macht SSAA die Kanten zu glatten Gradienten, sinkt die Hochfrequenzenergie des Laplace-Operators (low-pass dämpft hohe Frequenzen, der Laplace-Operator verstärkt sie, daher ist diese Größe umso kleiner, je geglätteter die Kanten sind).</p>

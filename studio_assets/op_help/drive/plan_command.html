@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">plan_command — DRIVE <code style="color:#22d3bf">long</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.plan_command(plan: &#x27;dict&#x27;, road=None, params: &#x27;Optional[dict]&#x27; = None, hold_brake: &#x27;Optional[float]&#x27; = None, before: &#x27;Optional[Callable]&#x27; = None) -&gt; &#x27;Callable&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import drivelong; drivelong.plan_command(plan: &#x27;dict&#x27;, road=None, params: &#x27;Optional[dict]&#x27; = None, hold_brake: &#x27;Optional[float]&#x27; = None, before: &#x27;Optional[Callable]&#x27; = None) -&gt; &#x27;Callable&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;plan_command&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p><code style="color:#22d3bf">stop_line_plan</code> を <code style="color:#22d3bf">command(t, s, v)</code> にする。t0 より前は <code style="color:#22d3bf">before</code>(None = 速さを保つ)、react / cruise は速さを保つ(駆動 = 坂 + 転がり + 空気抵抗の打ち消し、下りで負なら制動)、brake1 / brake2 は計画の値、止まったら保持(制動 <code style="color:#22d3bf">hold_brake</code>(None = 上限)+ クリープの駆動)。</p>
 <p>空の入力(<code style="color:#22d3bf">plan</code> が空の dict)は ValueError。</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">stagnation_from_centerline — DRIVE <code style="color:#22d3bf">swarmflow</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.stagnation_from_centerline(field, speed=None, d_range=(0.04, 0.6), min_points: &#x27;int&#x27; = 4, n_iter: &#x27;int&#x27; = 80) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import swarmflow; swarmflow.stagnation_from_centerline(field, speed=None, d_range=(0.04, 0.6), min_points: &#x27;int&#x27; = 4, n_iter: &#x27;int&#x27; = 80) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;stagnation_from_centerline&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Linearisiert das Defizit auf der Mittellinie und liest den stromaufwärtigen Auftreffpunkt (Staupunkt), den Hindernismittelpunkt und den Radius ab (Implementierung 1, nur stromaufwärtige Punkte).</p>
 <p style="margin:2px 0 2px 12px">1. Unter den Gitterzellen, deren Defizit (3 × 3-Mittel) die Obergrenze von <code style="color:#22d3bf">d_range</code> überschreitet, gilt die am weitesten stromaufwärts gelegene als &quot;nahe am Aufprallpunkt&quot;.</p>

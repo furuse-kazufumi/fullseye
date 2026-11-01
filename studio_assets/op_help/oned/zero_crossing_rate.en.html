@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">zero_crossing_rate — ONED <code style="color:#22d3bf">signal</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.zero_crossing_rate(x)</code> (to call the implementation directly, <code style="color:#22d3bf">import dsp; dsp.zero_crossing_rate(x)</code>; from the registry, <code style="color:#22d3bf">ops1d.get(&quot;zero_crossing_rate&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Fraction of adjacent samples that change sign — a cheap pitch/noisiness cue.</p>
 <p>Exact zeros are neither a crossing nor a sign: a crossing is counted only when the sign changes between consecutive *non-zero* samples, and the rate divides by the number of adjacent sample pairs <code style="color:#22d3bf">len(x) - 1</code>. So <code style="color:#22d3bf">[1, 0, 1, 0, 1]</code> is <code style="color:#22d3bf">0.0</code> and <code style="color:#22d3bf">[1, 0, -1]</code> is <code style="color:#22d3bf">0.5</code> (before 2026-09-02 <code style="color:#22d3bf">diff(sign(x))</code> counted every touch of zero as a crossing: <code style="color:#22d3bf">1.0</code> for both).</p>

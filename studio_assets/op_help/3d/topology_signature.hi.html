@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">topology_signature — 3D <code style="color:#22d3bf">medial</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.topology_signature(skeleton)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import medial; medial.topology_signature(skeleton)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;topology_signature&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>skeleton के 26-neighbourhood degree से topology descriptor बनाता है। end points/branch points/सामान्य points/isolated points की संख्या लौटाता है।</p>
 <p>हर skeleton voxel के लिए उसके 26-neighbourhood में skeleton voxel की संख्या (degree) गिनी जाती है, और</p>

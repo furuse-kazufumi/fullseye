@@ -4,6 +4,7 @@ dim: 3d
 category: geometry
 in: points
 out: table
+gpu: なし
 examples: [primitive_fitting_3d]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `points` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.fit_surface_principal_axes(points, degree: 'int' = 2, *, isotropy_ratio: 'float' = 0.95) -> 'dict'` (実装を直接呼ぶなら `import measure3d; measure3d.fit_surface_principal_axes(points, degree: 'int' = 2, *, isotropy_ratio: 'float' = 0.95) -> 'dict'`、台帳から引くなら `ops3d.get("fit_surface_principal_axes")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

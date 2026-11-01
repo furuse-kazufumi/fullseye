@@ -2,7 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">refine_lm — 3D <code style="color:#22d3bf">refine</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">voxel × voxel × position</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.refine_lm(scene, template, init_pos, device=&#x27;cpu&#x27;, iters=50, scale=True, gain=False, lam0=0.001, tol=1e-08)</code>(要直接调用实现,<code style="color:#22d3bf">import match3d; match3d.refine_lm(scene, template, init_pos, device=&#x27;cpu&#x27;, iters=50, scale=True, gain=False, lam0=0.001, tol=1e-08)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;refine_lm&quot;)</code>)</p>
-<p style="margin:2px 0 2px 12px">• <b>GPU</b>:该算子有 GPU 路径(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用 Levenberg-Marquardt 做平移(+各向同性缩放/亮度增益)的亚体素精化。</p>
 <p>以粗匹配位置 init_pos(模板中心在 scene 内的坐标 [z,y,x])为起点, 用带阻尼的 Gauss-Newton(LM)求解 forward-additive Lucas-Kanade,使 SSD</p>

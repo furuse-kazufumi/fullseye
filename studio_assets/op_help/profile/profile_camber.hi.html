@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">profile_camber — PROFILE <code style="color:#22d3bf">measure</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">pairs</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.profile_camber(contour, n=101)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import profileops; profileops.profile_camber(contour, n=101)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsprofile.get(&quot;profile_camber&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>camber line (ऊपरी और निचली सतह के बीच की रेखा)। <code style="color:#22d3bf">(n, 2)</code> के रूप में <code style="color:#22d3bf">(x, yc)</code> लौटाता है।</p>
 <p>★<b>definition के अंतर को जानते हुए इस्तेमाल करें</b> । यह जो लौटाता है वह &quot;chord की हर position पर upper और lower surface का मध्यबिंदु&quot; है, जो NACA द्वारा airfoil <b>बनाते समय इस्तेमाल होने वाली</b> camber line (normal दिशा में मोटाई चढ़ाने से पहले की centerline) से सख्ती से कहें तो अलग चीज़ है। इसके अलावा chord लेने का तरीका भी अलग है -- geometric chord &quot;trailing edge के मध्यबिंदु से सबसे दूर के point&quot; को leading edge मानता है, इसलिए camber वाले airfoil में यह generating coordinates के origin से थोड़ा खिसक जाता है, और chord लगभग 0.1 degree झुक जाता है।</p>

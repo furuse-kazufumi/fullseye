@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">puck_camera — DRIVE <code style="color:#22d3bf">puck</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.puck_camera(table: &#x27;dict&#x27;, *, px_per_m: &#x27;float&#x27; = 200.0, margin: &#x27;float&#x27; = 0.06) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import puck; puck.puck_camera(table: &#x27;dict&#x27;, *, px_per_m: &#x27;float&#x27; = 200.0, margin: &#x27;float&#x27; = 0.06) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;puck_camera&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Synthetische Kamera mit Draufsicht: eine Homographie (affin), die den Tisch mit einheitlichem Maßstab auf Pixel abbildet. col = (x + x_half + margin)·s, row = (y_half + margin − y)·s. Rückgabewert <code style="color:#22d3bf">{&quot;H&quot; world→(col,row), &quot;Hinv&quot;, &quot;shape&quot;, &quot;px_per_m&quot;, &quot;margin&quot;, &quot;table&quot;}</code>.</p>
 <p>Leere Eingabe (<code style="color:#22d3bf">table</code> ein leeres dict) löst <code style="color:#22d3bf">ValueError</code> aus.</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">shape_project — SHAPESTAT <code style="color:#22d3bf">model</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">shapemodel × points</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.shape_project(model, shape, align: &#x27;bool&#x27; = True)</code> (die Implementierung direkt: <code style="color:#22d3bf">import shapestats; shapestats.shape_project(model, shape, align: &#x27;bool&#x27; = True)</code>; aus dem Register: <code style="color:#22d3bf">opsshapestat.get(&quot;shape_project&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Bildet eine Form auf Modellkoordinaten (Hauptkomponenten-Scores) ab. → <code style="color:#22d3bf">(k,)</code>.</p>
 <p>Mit <code style="color:#22d3bf">align=True</code> wird zuerst per Procrustes an die Mittelform ausgerichtet. Projiziert man ohne Ausrichtung, sickern Lage- und Orientierungsunterschiede in die Scores, und <b>dieselbe Form sieht wie ein anderes Individuum aus</b>.</p>

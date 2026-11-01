@@ -4,6 +4,7 @@ dim: converge
 category: stopping
 in: image2d
 out: table
+gpu: なし
 examples: [converge_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.iv_richardson_lucy_until(image=None, psf_sigma=1.5, psf=None, noise='poisson', sigma=None, gain=1.0, tau=1.0, max_iter=2000, plateau_window=25, plateau_rtol=0.0001, keep_history=True, callback=None) -> 'dict'` (実装を直接呼ぶなら `import deconvstop; deconvstop.iv_richardson_lucy_until(image=None, psf_sigma=1.5, psf=None, noise='poisson', sigma=None, gain=1.0, tau=1.0, max_iter=2000, plateau_window=25, plateau_rtol=0.0001, keep_history=True, callback=None) -> 'dict'`、台帳から引くなら `opsconverge.get("iv_richardson_lucy_until")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -2,7 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">morph_blackhat3d — 3D <code style="color:#22d3bf">morphology</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">voxel</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.morph_blackhat3d(vol, r=1, device=&#x27;cpu&#x27;, se=&#x27;cube&#x27;)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import match3d; match3d.morph_blackhat3d(vol, r=1, device=&#x27;cpu&#x27;, se=&#x27;cube&#x27;)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;morph_blackhat3d&quot;)</code>)</p>
-<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 이 연산자는 GPU 경로가 있습니다(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>3D black-hat = closing − vol. SE 보다 작은 <b>어두운 구조/구멍</b>을 추출.</p>
 <p><code style="color:#22d3bf">morph_close3d(vol, r, ...) − vol(float32)</code>. 값은 0 이상이며, SE(한 변의 길이 <code style="color:#22d3bf">2r+1</code> 의 cube 또는반지름 r 의 ball)보다 작은 어두운 구멍·균열·틈만 그 깊이로 남고, 큰 어두운 영역과 배경은 0 이 된다. 점유 voxel 이면 &quot;SE 로 메워지는 공동 = 1&quot;. <code style="color:#22d3bf">r</code> 은 검출하고 싶은 구멍의 반지름보다 크게 잡는다. <code style="color:#22d3bf">se</code> 는 &quot;cube&quot;/&quot;ball&quot;(그 외는 ValueError), <code style="color:#22d3bf">device</code> 는 cube+torch 일 때만 유효. 반환값 <code style="color:#22d3bf">(D,H,W)</code> float32 numpy. 밝은 구조를 취하려면 <code style="color:#22d3bf">morph_tophat3d</code>.</p>

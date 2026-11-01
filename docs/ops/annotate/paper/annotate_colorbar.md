@@ -4,6 +4,7 @@ dim: annotate
 category: paper
 in: image2d × image2d
 out: image2d
+gpu: なし
 examples: [paper_figure, poc_thin_film_reflectometry]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d × image2d` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.annotate_colorbar(img, field, rect, lut=None, vmin=None, vmax=None, alpha=0.6, mask=None, unit='', label_fmt='{:.3g}', orientation='vertical', font_size=12, scheme='okabe_ito', font_path=None, text_color=None, nan_transparent=False)` (実装を直接呼ぶなら `import annotate; annotate.annotate_colorbar(img, field, rect, lut=None, vmin=None, vmax=None, alpha=0.6, mask=None, unit='', label_fmt='{:.3g}', orientation='vertical', font_size=12, scheme='okabe_ito', font_path=None, text_color=None, nan_transparent=False)`、台帳から引くなら `opsannotate.get("annotate_colorbar")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">emva_dark_current — OPTICS <code style="color:#22d3bf">sensorchar</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.emva_dark_current(t_exp, mu_y_dark, K, *, var_y_dark=None)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import sensorchar; sensorchar.emva_dark_current(t_exp, mu_y_dark, K, *, var_y_dark=None)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;emva_dark_current&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>暗電流(7.1 節): 暗画像の平均(と分散)を露光時間に直線で当てた傾き。</p>
 <p>μ_I.y [DN/s] = 平均の傾き、μ_I.e [e⁻/s] = μ_I.y / K。*var_y_dark* を渡すと分散の傾き [DN²/s] / K² も出す(暗電流の補正があるカメラは分散からしか測れない)。露光時間は <b>6 点以上</b>・等間隔を規格が求める。</p>

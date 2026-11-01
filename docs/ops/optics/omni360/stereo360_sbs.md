@@ -4,6 +4,7 @@ dim: optics
 category: omni360
 in: rgbimage × rgbimage
 out: rgbimage
+gpu: なし
 examples: [omni360_roundtrip]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `rgbimage × rgbimage` → `rgbimage`
 - **呼び出し**: `import fullseye as fs; fs.ledger.stereo360_sbs(left, right)` (実装を直接呼ぶなら `import omni360; omni360.stereo360_sbs(left, right)`、台帳から引くなら `opsoptics.get("stereo360_sbs")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -4,6 +4,7 @@ dim: specular
 category: reflectance
 in: normalmap
 out: image2d
+gpu: なし
 examples: [poc_solder_fillet_aoi, specular_photometric]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `normalmap` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.brdf_microfacet(normals, light=(0.0, 0.0, 1.0), view=(0.0, 0.0, 1.0), roughness=0.3, f0=0.04)` (実装を直接呼ぶなら `import specularity; specularity.brdf_microfacet(normals, light=(0.0, 0.0, 1.0), view=(0.0, 0.0, 1.0), roughness=0.3, f0=0.04)`、台帳から引くなら `opsspecular.get("brdf_microfacet")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

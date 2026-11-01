@@ -4,6 +4,7 @@ dim: oned
 category: signal
 in: signal
 out: table
+gpu: なし
 examples: [gallery_oned_audio_funct]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.signal_features(x, rate=1.0)` (実装を直接呼ぶなら `import dsp; dsp.signal_features(x, rate=1.0)`、台帳から引くなら `ops1d.get("signal_features")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

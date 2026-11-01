@@ -4,6 +4,7 @@ dim: optics
 category: lensrender
 in: table
 out: table
+gpu: なし
 examples: [poc_photograph_through_prescription]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.render_ghost_overlay(system, scene=None, light_xy_mm=None, distance_mm=1000.0, intensity_W_sr_nm=1.0, reflectance=0.04, sensor=None, wavelengths=None, exposure_s=0.0001, rings=10, max_ghosts=6, defocus_mm=0.0, focus_mm=None, base_electrons=None, band_nm=None, illuminant=None) -> 'dict'` (実装を直接呼ぶなら `import lensrender; lensrender.render_ghost_overlay(system, scene=None, light_xy_mm=None, distance_mm=1000.0, intensity_W_sr_nm=1.0, reflectance=0.04, sensor=None, wavelengths=None, exposure_s=0.0001, rings=10, max_ghosts=6, defocus_mm=0.0, focus_mm=None, base_electrons=None, band_nm=None, illuminant=None) -> 'dict'`、台帳から引くなら `opsoptics.get("render_ghost_overlay")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

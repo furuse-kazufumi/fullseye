@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">shadow_cast_2d — GFX2D <code style="color:#22d3bf">light</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.shadow_cast_2d(occluder, x, y, steps=None, softness=0.0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import gfx2d; gfx2d.shadow_cast_2d(occluder, x, y, steps=None, softness=0.0)</code>、台帳から引くなら <code style="color:#22d3bf">opsgfx2d.get(&quot;shadow_cast_2d&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Visibility of every pixel from a point light at <code style="color:#22d3bf">(x, y)</code>, as <code style="color:#22d3bf">image2d</code>.</p>
 <p>Ray-marches the segment from each pixel to the light, sampling <code style="color:#22d3bf">occluder</code> (2-D, <code style="color:#22d3bf">[0, 1]</code>, 1 = fully blocking) at <code style="color:#22d3bf">steps</code> points with nearest lookup, and returns <code style="color:#22d3bf">1 - max(occluder along the ray)</code>. For a binary occluder that is exactly 0 or 1 — no tolerance involved.</p>

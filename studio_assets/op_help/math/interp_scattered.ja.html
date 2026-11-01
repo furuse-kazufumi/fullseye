@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">interp_scattered — MATH <code style="color:#22d3bf">interp_poly</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">points × signal × points</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.interp_scattered(points, values, query, method=&#x27;linear&#x27;, fill_value=nan, rescale=False, neighbors=None)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import mathops; mathops.interp_scattered(points, values, query, method=&#x27;linear&#x27;, fill_value=nan, rescale=False, neighbors=None)</code>、台帳から引くなら <code style="color:#22d3bf">opsmath.get(&quot;interp_scattered&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p><b>散らばった</b>標本から *query* の位置の値を求める —— センサ網・ボーリング・気象。</p>
 <p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>

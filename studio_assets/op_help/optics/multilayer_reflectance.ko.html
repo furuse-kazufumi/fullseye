@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">multilayer_reflectance — OPTICS <code style="color:#22d3bf">film</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">pairs</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.multilayer_reflectance(layers=((&#x27;SIO2&#x27;, 100.0),), substrate=&#x27;SI&#x27;, wl_min_nm=400.0, wl_max_nm=800.0, n_points=201, angle_deg=0.0, polarization=&#x27;unpolarized&#x27;, na=0.0, roughness_nm=0.0, ambient=1.0, quantity=&#x27;reflectance&#x27;, wavelengths_nm=None)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import filmoptics; filmoptics.multilayer_reflectance(layers=((&#x27;SIO2&#x27;, 100.0),), substrate=&#x27;SI&#x27;, wl_min_nm=400.0, wl_max_nm=800.0, n_points=201, angle_deg=0.0, polarization=&#x27;unpolarized&#x27;, na=0.0, roughness_nm=0.0, ambient=1.0, quantity=&#x27;reflectance&#x27;, wavelengths_nm=None)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsoptics.get(&quot;multilayer_reflectance&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>다층막의 분광 반사율(또는 투과율, 흡수율)을 pairs(λ nm, 값)로 반환한다. 특성 행렬(전달 행렬)의 엄밀해.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>

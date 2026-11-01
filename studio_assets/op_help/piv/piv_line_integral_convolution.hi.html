@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">piv_line_integral_convolution — PIV <code style="color:#22d3bf">visualise</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">flow2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_line_integral_convolution(flow, length=12, upsample=4, seed=0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import pivops; pivops.piv_line_integral_convolution(flow, length=12, upsample=4, seed=0)</code>, registry से लेना हो तो <code style="color:#22d3bf">opspiv.get(&quot;piv_line_integral_convolution&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>line integral convolution (LIC) — flow के साथ white noise को धुंधला करके बने pattern की image।</p>
 <p>Vector तीर घने होने पर आपस में गड्डमड्ड हो जाते हैं और विरल होने पर संरचना छूट जाती है। LIC noise को streamlines के साथ <b>हर pixel पर</b> औसत करता है, इसलिए घनत्व चुनने की आवश्यकता नहीं होती। दिशा की जानकारी खो जाती है (आगे और पीछे में अंतर नहीं होता), इसलिए <b>घूर्णन की दिशा देखनी हो तो इसे तीरों या hue map के साथ मिलाएँ</b>।</p>

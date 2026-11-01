@@ -4,6 +4,7 @@ dim: optics
 category: design
 in: table
 out: table
+gpu: なし
 examples: [anim3d_lens_aberrations, lens_design_demo]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.wavefront_from_opd(system, field=None, size=64, n_max=6, wavelength_um=None, image_mm=None)` (実装を直接呼ぶなら `import raytrace; raytrace.wavefront_from_opd(system, field=None, size=64, n_max=6, wavelength_um=None, image_mm=None)`、台帳から引くなら `opsoptics.get("wavefront_from_opd")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

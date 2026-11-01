@@ -2,7 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">hessian3d — 3D <code style="color:#22d3bf">feature</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">hessian</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.hessian3d(vol, device=&#x27;cpu&#x27;)</code>(要直接呼叫實作,<code style="color:#22d3bf">import match3d; match3d.hessian3d(vol, device=&#x27;cpu&#x27;)</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;hessian3d&quot;)</code>)</p>
-<p style="margin:2px 0 2px 12px">• <b>GPU</b>:該運算子有 GPU 路徑(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>3D Hessian 的 6 個獨立分量 (fzz,fyy,fxx,fzy,fzx,fyx)。可分離 conv3d(二階/一階×平滑)。</p>
 <p>核: 2 階 [1,−2,1] (增益 1)、1 階 [−0.5,0,0.5] (增益 1)、其餘軸為 [1,2,1]/4 的平滑(增益 1)。對角分量為「該軸的 2 階 × 其他 2 軸的平滑」,交叉分量為「2 個軸的 1 階 × 其餘軸的平滑」。<b>單位為 1/voxel² 的真實值</b>(與 <code style="color:#22d3bf">sobel3d</code> 的 32 倍增益不同)。邊緣 replicate。回傳值為 <b>6 個 torch tensor 組成的 list</b>,各為 <code style="color:#22d3bf">(D,H,W)</code> float32,位於 <code style="color:#22d3bf">device</code> 上,順序為(zz, yy, xx, zy, zx, yx)(軸 0=z, 1=y, 2=x)。需要 numpy 時用 <code style="color:#22d3bf">.cpu().numpy()</code>。輸入為 numpy 等價物(轉換為 float32)。</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">align_metrology_model — MEASURE1D <code style="color:#22d3bf">apply</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">metrologymodel</code> → <code style="color:#22d3bf">metrologymodel</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.align_metrology_model(model, drow=0.0, dcol=0.0) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import metrology; metrology.align_metrology_model(model, drow=0.0, dcol=0.0) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsmeasure1d.get(&quot;align_metrology_model&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>平移计量模型的所有对象以进行对齐(align_metrology_model)。</p>
 <p>返回在所有对象的位置上加上 <code style="color:#22d3bf">(drow, dcol)</code> [px] 的<b>新模型</b> (不修改输入的 dict)。<code style="color:#22d3bf">line</code> 移动两端点 <code style="color:#22d3bf">(row1, col1)</code>、<code style="color:#22d3bf">(row2, col2)</code>, <code style="color:#22d3bf">circle</code> / <code style="color:#22d3bf">rect</code> / <code style="color:#22d3bf">ellipse</code> 移动中心 <code style="color:#22d3bf">(row, col)</code>。半径、半边长、<code style="color:#22d3bf">phi</code>、<code style="color:#22d3bf">n</code> 不变 —— <b>不处理旋转和缩放</b>。</p>

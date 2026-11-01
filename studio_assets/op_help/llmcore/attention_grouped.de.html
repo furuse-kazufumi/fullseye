@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">attention_grouped — LLMCORE <code style="color:#22d3bf">attend</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">tokens × tokens × tokens</code> → <code style="color:#22d3bf">tokens</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.attention_grouped(query, key, value, n_heads: &#x27;int&#x27;, n_kv_heads: &#x27;int&#x27;, mask=None, window=None) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import llmcore; llmcore.attention_grouped(query, key, value, n_heads: &#x27;int&#x27;, n_kv_heads: &#x27;int&#x27;, mask=None, window=None) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsllmcore.get(&quot;attention_grouped&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Attention, die Köpfe bündelt (GQA) → tokens. <b>Stimmt bei n_kv_heads == n_heads exakt mit MHA und bei == 1 exakt mit MQA überein</b>.</p>
 <p>Ainslie et al. 2023. query wird in <code style="color:#22d3bf">n_heads</code> Köpfe aufgeteilt, key/value besitzen nur <code style="color:#22d3bf">n_kv_heads</code> Köpfe und werden wiederverwendet. Beide Extreme fallen <b>exakt</b> auf die 2 bestehenden Verfahren (MHA / MQA) (beide 0.0e+00), sodass sich die Behauptung &quot;es liegt dazwischen&quot; an den Enden gegenprüfen lässt.</p>

@@ -4,6 +4,7 @@ dim: annotate
 category: compose
 in: image2d
 out: image2d
+gpu: なし
 examples: [annotate_gallery, poc_diabolo_model_and_vision, poc_food_cutting_measure]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.zoom_inset(img, src_rect, dst_xy, factor=3, color='emphasis', width=2, connect=True, scheme='okabe_ito', style=None)` (実装を直接呼ぶなら `import annotate; annotate.zoom_inset(img, src_rect, dst_xy, factor=3, color='emphasis', width=2, connect=True, scheme='okabe_ito', style=None)`、台帳から引くなら `opsannotate.get("zoom_inset")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

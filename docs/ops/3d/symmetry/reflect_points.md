@@ -4,6 +4,7 @@ dim: 3d
 category: symmetry
 in: points
 out: points
+gpu: なし
 examples: [reflection_symmetry]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `points` → `points`
 - **呼び出し**: `import fullseye as fs; fs.ledger.reflect_points(points, plane_point, plane_normal)` (実装を直接呼ぶなら `import symmetry3d; symmetry3d.reflect_points(points, plane_point, plane_normal)`、台帳から引くなら `ops3d.get("reflect_points")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

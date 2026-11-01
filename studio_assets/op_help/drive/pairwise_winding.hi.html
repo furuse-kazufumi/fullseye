@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">pairwise_winding — DRIVE <code style="color:#22d3bf">braidpath</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pairwise_winding(trajectories, obstacles=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import braidpath; braidpath.pairwise_winding(trajectories, obstacles=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;pairwise_winding&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>हर strand pair का relative winding number [घुमाव] (relative vector के argument का कुल परिवर्तन / 2π)। Symmetric matrix, diagonal 0।</p>
 <p>Argument का increment atan2(cross product, dot product) से लिया जाता है (principal value (−π, π])। 1 step में आधा घुमाव या अधिक हो तो दिशा तय नहीं होती, इसलिए रुक जाता है। Closed form: pure braid में दोनों strands के बीच crossings की signed संख्या c हो तो 2π·W = π c ठीक-ठीक (gate)। Winding number एक commutative invariant है, इसलिए commutator [A, B] रूप के braids (सभी pairs में winding number 0 फिर भी non-trivial) को अलग नहीं कर पाता —— यही braid के उपयोग का कारण है।</p>

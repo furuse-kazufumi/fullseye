@@ -4,6 +4,7 @@ dim: optics
 category: imaging_sim
 in: table
 out: table
+gpu: なし
 examples: [lens_calibration_loop_demo]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.calibration_views(system, image_size=(1024, 1024), pixel_pitch_um=5.5, target=(9, 7, 5.0), poses=None, distance_mm=None, noise_px=0.0, seed=0, order=2)` (実装を直接呼ぶなら `import lensimage; lensimage.calibration_views(system, image_size=(1024, 1024), pixel_pitch_um=5.5, target=(9, 7, 5.0), poses=None, distance_mm=None, noise_px=0.0, seed=0, order=2)`、台帳から引くなら `opsoptics.get("calibration_views")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

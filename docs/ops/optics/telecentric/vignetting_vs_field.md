@@ -4,6 +4,7 @@ dim: optics
 category: telecentric
 in: table
 out: pairs
+gpu: なし
 examples: [poc_telecentric_metrology]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `pairs`
 - **呼び出し**: `import fullseye as fs; fs.ledger.vignetting_vs_field(system, field_max_mm=None, n_points=41, samples=81)` (実装を直接呼ぶなら `import telecentric; telecentric.vignetting_vs_field(system, field_max_mm=None, n_points=41, samples=81)`、台帳から引くなら `opsoptics.get("vignetting_vs_field")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

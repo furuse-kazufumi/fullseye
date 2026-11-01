@@ -4,6 +4,7 @@ dim: fileio
 category: table
 in: text
 out: table
+gpu: なし
 examples: [fileio_roundtrip]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `text` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.table_read_csv(text)` (実装を直接呼ぶなら `import fileio; fileio.table_read_csv(text)`、台帳から引くなら `opsfileio.get("table_read_csv")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -5,6 +5,7 @@ category: gray
 in: image
 out: image
 halcon: bit_lshift
+gpu: なし
 examples: [gallery2d_gray_arith]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -16,6 +17,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **データ種**: `image` → `image`
 - **呼び出し**: `fullseye.apply(img, "it_bit_lshift", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 - **HALCON 相当**: `bit_lshift`(意味・パラメータは HALCON リファレンスが参考になる)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ![it_bit_lshift: input → output](../../_fig/it_bit_lshift.png)
 

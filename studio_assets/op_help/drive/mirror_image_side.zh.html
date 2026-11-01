@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">mirror_image_side — DRIVE <code style="color:#22d3bf">pass</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mirror_image_side(eye_xy, mirror_center_xy, mirror_normal_xy, points, *, heading, velocities=None) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import drivepass; drivepass.mirror_image_side(eye_xy, mirror_center_xy, mirror_normal_xy, points, *, heading, velocities=None) -&gt; &#x27;Dict[str, object]&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;mirror_image_side&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>道路凸面镜中映出的点看起来位于镜面中心的左侧还是右侧、看起来向哪边移动(平面镜闭式)。场景 S064、S130。</p>
 <p>即使是凸面镜,左右朝向也相同(在门中与光线追踪核对。凸面只是缩小角度)。</p>

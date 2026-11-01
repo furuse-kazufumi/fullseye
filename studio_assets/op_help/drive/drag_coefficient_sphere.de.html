@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">drag_coefficient_sphere — DRIVE <code style="color:#22d3bf">ball</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.drag_coefficient_sphere(reynolds) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import ballistics; ballistics.drag_coefficient_sphere(reynolds) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;drag_coefficient_sphere&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Empirische Formel für den Widerstandsbeiwert einer glatten Kugel (Morrison 2013, Re ≲ 1e6): 24/Re + 2.6(Re/5)/(1 + (Re/5)^1.52) + 0.411(Re/263000)^−7.94/(1 + (Re/263000)^−8) + 0.25(Re/1e6)/(1 + Re/1e6). Für einen Tischtennisball (Re ≈ 1–5 × 10⁴) ≈ 0.4–0.5.</p>
 <p>Leere Eingabe (<code style="color:#22d3bf">reynolds</code> mit 0 Elementen) löst <code style="color:#22d3bf">ValueError</code> aus.</p>

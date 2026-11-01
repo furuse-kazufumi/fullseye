@@ -4,6 +4,7 @@ dim: optics
 category: shape_from_polarization
 in: table
 out: normalmap
+gpu: なし
 examples: [poc_shape_from_polarization]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `normalmap`
 - **呼び出し**: `import fullseye as fs; fs.ledger.sfp_disambiguate(candidates, prior='convex', mask=None, center=None, prior_normals=None, coarse_depth=None, brewster_tol=0.02, invalid='raise')` (実装を直接呼ぶなら `import sfpolar; sfpolar.sfp_disambiguate(candidates, prior='convex', mask=None, center=None, prior_normals=None, coarse_depth=None, brewster_tol=0.02, invalid='raise')`、台帳から引くなら `opsoptics.get("sfp_disambiguate")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

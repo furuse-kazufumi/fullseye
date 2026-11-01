@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">generalized_procrustes — SHAPESTAT <code style="color:#22d3bf">procrustes</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">shapeset</code> → <code style="color:#22d3bf">shapeset</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.generalized_procrustes(shapes, max_iter: &#x27;int&#x27; = 100, tol: &#x27;float&#x27; = 1e-10, scaling: &#x27;bool&#x27; = True, reflection: &#x27;bool&#x27; = False)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import shapestats; shapestats.generalized_procrustes(shapes, max_iter: &#x27;int&#x27; = 100, tol: &#x27;float&#x27; = 1e-10, scaling: &#x27;bool&#x27; = True, reflection: &#x27;bool&#x27; = False)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsshapestat.get(&quot;generalized_procrustes&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Generalised Procrustes (GPA)। सभी सदस्यों को एक साझा frame में लाता है। → <code style="color:#22d3bf">(K, N, 3)</code>।</p>
 <p>प्रक्रिया textbook जैसी ही है: 1 individual को अस्थायी mean मानकर सबको align करें, mean फिर से निकालें, उस mean को <b>पहले individual से फिर align करके</b> frame का बहाव रोकें, और converge होने तक दोहराएँ। आख़िरी कदम न हो तो mean हर बार धीरे-धीरे घूमता है और <code style="color:#22d3bf">tol</code> तक नहीं पहुँचता।</p>

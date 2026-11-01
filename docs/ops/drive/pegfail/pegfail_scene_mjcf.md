@@ -4,6 +4,7 @@ dim: drive
 category: pegfail
 in: table
 out: any
+gpu: なし
 examples: [poc_peg_failure_recovery]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `any`
 - **呼び出し**: `import fullseye as fs; fs.ledger.pegfail_scene_mjcf(kp=None, lg: 'float | None' = None, blocked_depth: 'float | None' = None, decoy_xy=None, offsamples: 'int' = 4) -> 'str'` (実装を直接呼ぶなら `import pegfail; pegfail.pegfail_scene_mjcf(kp=None, lg: 'float | None' = None, blocked_depth: 'float | None' = None, decoy_xy=None, offsamples: 'int' = 4) -> 'str'`、台帳から引くなら `opsdrive.get("pegfail_scene_mjcf")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -4,6 +4,7 @@ dim: piv
 category: field
 in: flow2d
 out: table
+gpu: なし
 examples: [piv_field_analysis_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `flow2d` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.piv_velocity_gradient(flow, spacing=1.0)` (実装を直接呼ぶなら `import pivops; pivops.piv_velocity_gradient(flow, spacing=1.0)`、台帳から引くなら `opspiv.get("piv_velocity_gradient")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

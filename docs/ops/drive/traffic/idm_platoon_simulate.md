@@ -4,6 +4,7 @@ dim: drive
 category: traffic
 in: any
 out: table
+gpu: なし
 examples: [poc_driving_traffic]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `any` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.idm_platoon_simulate(lead_v_of_t, n_followers: 'int', *, params_per_vehicle, dt: 'float', t_end: 'float', reaction_delay: 'float' = 0.0, seed: 'Optional[int]' = None) -> 'Dict[str, object]'` (実装を直接呼ぶなら `import drivetraffic; drivetraffic.idm_platoon_simulate(lead_v_of_t, n_followers: 'int', *, params_per_vehicle, dt: 'float', t_end: 'float', reaction_delay: 'float' = 0.0, seed: 'Optional[int]' = None) -> 'Dict[str, object]'`、台帳から引くなら `opsdrive.get("idm_platoon_simulate")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

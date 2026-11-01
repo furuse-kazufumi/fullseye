@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">track_triangulate — DRIVE <code style="color:#22d3bf">balltrack</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table × any × any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.track_triangulate(tracks, poses, Ks, n_frames: &#x27;int&#x27;) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import balltrack; balltrack.track_triangulate(tracks, poses, Ks, n_frames: &#x27;int&#x27;) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;track_triangulate&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>カメラごとの軌跡(<code style="color:#22d3bf">ball_track</code> の返り値)を三角測量して 3-D の軌跡に: <code style="color:#22d3bf">{&quot;frame&quot;, &quot;p&quot; (N, 3), &quot;reproj_rms&quot; (N,)}</code> (2 視点以上で見えたコマだけ)。</p>
 <p>空の入力(<code style="color:#22d3bf">tracks</code> が 0 件)は ValueError。</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">evidence_quantile — IMGFORENSICS <code style="color:#22d3bf">calibration</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">measurement × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.evidence_quantile(measurement, null, higher_is_stronger=True)</code>(要直接呼叫實作,<code style="color:#22d3bf">import imgforensics; imgforensics.evidence_quantile(measurement, null, higher_is_stronger=True)</code>;從台帳取用則 <code style="color:#22d3bf">opsimgforensics.get(&quot;evidence_quantile&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>證據量落在乾淨分布的<b>什麼位置</b>。不給出判定。</p>
 <p>消費 <code style="color:#22d3bf">null_distribution</code> 輸出的一方。回傳的是「比百分之幾的乾淨組更靠外」，而不是「已被竄改」 ―― 落在外側只意味著在該條件下 <b>罕見</b>(罕見的乾淨影像是存在的)。</p>

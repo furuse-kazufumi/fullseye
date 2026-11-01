@@ -4,6 +4,7 @@ dim: optics
 category: oct
 in: table
 out: image2d
+gpu: なし
 examples: [poc_industrial_oct]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,6 +16,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **データ種**: `table` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.oct_bscan(spectra, window='hann', dc='reference', zero_pad=1, a2=0.0, a3=0.0, method='cubic', db_range=None, k_center=None)` (実装を直接呼ぶなら `import octscan; octscan.oct_bscan(spectra, window='hann', dc='reference', zero_pad=1, a2=0.0, a3=0.0, method='cubic', db_range=None, k_center=None)`、台帳から引くなら `opsoptics.get("oct_bscan")`)
 - **台帳経由の戻り値**: `fullseye.ledger.oct_bscan(...)` は**宣言 out 型 `image2d` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.oct_bscan.raw(...)`、または `octscan.oct_bscan` を直接呼ぶ。
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

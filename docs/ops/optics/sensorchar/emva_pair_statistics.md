@@ -4,6 +4,7 @@ dim: optics
 category: sensorchar
 in: image2d × image2d
 out: table
+gpu: なし
 examples: [poc_emva1288_in_camera_processing, poc_emva1288_sensor, poc_tdi_linescan]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d × image2d` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.emva_pair_statistics(y0, y1)` (実装を直接呼ぶなら `import sensorchar; sensorchar.emva_pair_statistics(y0, y1)`、台帳から引くなら `opsoptics.get("emva_pair_statistics")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

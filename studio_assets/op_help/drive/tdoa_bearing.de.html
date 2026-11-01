@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tdoa_bearing — DRIVE <code style="color:#22d3bf">decide</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tdoa_bearing(sig_left, sig_right, fs, mic_spacing, *, c: &#x27;float&#x27; = 343.0, upsample: &#x27;int&#x27; = 16) -&gt; &#x27;Dict[str, object]&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import drivedecide; drivedecide.tdoa_bearing(sig_left, sig_right, fs, mic_spacing, *, c: &#x27;float&#x27; = 343.0, upsample: &#x27;int&#x27; = 16) -&gt; &#x27;Dict[str, object]&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;tdoa_bearing&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Richtung der Schallquelle aus der Laufzeitdifferenz an 2 Mikrofonen (links = +y, rechts = −y, Abstand <code style="color:#22d3bf">mic_spacing</code>) (Fernfeldnäherung).</p>
 <p>Δt = t_rechts − t_links (positiv, wenn das Signal zuerst links ankommt), sin θ = c Δt / d, θ = Winkel von vorn (links positiv)</p>

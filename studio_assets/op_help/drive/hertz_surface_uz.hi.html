@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">hertz_surface_uz — DRIVE <code style="color:#22d3bf">tacsim</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">matrix × scalar × scalar × scalar</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.hertz_surface_uz(r, a: &#x27;float&#x27;, delta: &#x27;float&#x27;, R: &#x27;float&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import tacsim; tacsim.hertz_surface_uz(r, a: &#x27;float&#x27;, delta: &#x27;float&#x27;, R: &#x27;float&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;hertz_surface_uz&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Hertz sphere contact में half-space surface का normal displacement ū_z(r) (धँसने की मात्रा ≥ 0, r जैसे shape का array)।</p>
 <p>भीतर r ≤ a: δ − r²/(2R)। बाहर: (1/πR)[(2a² − r²) arcsin(a/r) + a r √(1 − a²/r²)] (Johnson समीकरण 3.42a)। r = a पर δ/2 के साथ सतत। <b>Raises</b> <code style="color:#22d3bf">ValueError</code>: a, δ, R ≤ 0, a² और Rδ में 1 % या अधिक का अंतर (Hertz युग्म नहीं)।</p>

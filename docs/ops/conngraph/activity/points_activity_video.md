@@ -4,6 +4,7 @@ dim: conngraph
 category: activity
 in: points × matrix
 out: rgbvideo
+gpu: なし
 examples: [poc_connectome_motor_bottleneck, poc_em_branch_territory, poc_em_second_opinion, poc_eye_to_brain, poc_malecns_activity_wave, poc_microns_brain_wave]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `points × matrix` → `rgbvideo`
 - **呼び出し**: `import fullseye as fs; fs.ledger.points_activity_video(P: 'Any', X: 'Any', colors: 'Any' = None, size: 'int' = 480, aspect: 'float' = 0.75, pitch: 'float' = 15.0, yaw_start: 'float' = 0.0, yaw_span: 'float' = 360.0, substeps: 'int' = 1, point_px: 'int' = 2, gain: 'float' = 100.0, background: 'Any' = None, views: 'Any' = None) -> 'np.ndarray'` (実装を直接呼ぶなら `import conngraph; conngraph.points_activity_video(P: 'Any', X: 'Any', colors: 'Any' = None, size: 'int' = 480, aspect: 'float' = 0.75, pitch: 'float' = 15.0, yaw_start: 'float' = 0.0, yaw_span: 'float' = 360.0, substeps: 'int' = 1, point_px: 'int' = 2, gain: 'float' = 100.0, background: 'Any' = None, views: 'Any' = None) -> 'np.ndarray'`、台帳から引くなら `opsconngraph.get("points_activity_video")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

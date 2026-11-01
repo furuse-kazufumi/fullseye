@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">spc_ewma — SPC <code style="color:#22d3bf">change</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.spc_ewma(signal, target, lam=0.2, L=3.0, sigma=None)</code>(要直接调用实现,<code style="color:#22d3bf">import spc; spc.spc_ewma(signal, target, lam=0.2, L=3.0, sigma=None)</code>;从台账取用则 <code style="color:#22d3bf">opsspc.get(&quot;spc_ewma&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>针对单值测量的 EWMA 控制图(Roberts 1959)。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>

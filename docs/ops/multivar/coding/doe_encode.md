@@ -4,6 +4,7 @@ dim: multivar
 category: coding
 in: matrix
 out: design
+gpu: なし
 examples: [multivar_inspection_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `matrix` → `design`
 - **呼び出し**: `import fullseye as fs; fs.ledger.doe_encode(natural=None, factors=None) -> 'dict'` (実装を直接呼ぶなら `import doe; doe.doe_encode(natural=None, factors=None) -> 'dict'`、台帳から引くなら `opsmultivar.get("doe_encode")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

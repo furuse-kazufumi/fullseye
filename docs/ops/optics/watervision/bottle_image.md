@@ -4,6 +4,7 @@ dim: optics
 category: watervision
 in: 
 out: table
+gpu: なし
 examples: [poc_water_inspection_images]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.bottle_image(radius_mm, wall_mm, height_mm, fill_fraction, n_glass, n_liquid, meniscus_mm=0.0, bubbles=None, camera_distance_mm=500.0, pixel_pitch_um=20.0, size=None, light='backlight', n_air=1.0) -> 'dict'` (実装を直接呼ぶなら `import watervision; watervision.bottle_image(radius_mm, wall_mm, height_mm, fill_fraction, n_glass, n_liquid, meniscus_mm=0.0, bubbles=None, camera_distance_mm=500.0, pixel_pitch_um=20.0, size=None, light='backlight', n_air=1.0) -> 'dict'`、台帳から引くなら `opsoptics.get("bottle_image")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

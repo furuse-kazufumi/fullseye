@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">caltab_points — CALIB <code style="color:#22d3bf">target</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">keypoints</code> (an op determined by its arguments alone — it takes no image or data input)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.caltab_points(rows=7, cols=7, spacing=1.0)</code> (to call the implementation directly, <code style="color:#22d3bf">import caltab; caltab.caltab_points(rows=7, cols=7, spacing=1.0)</code>; from the registry, <code style="color:#22d3bf">opscalib.get(&quot;caltab_points&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Returns the ideal mark coordinates of a calibration plate (world, mm; origin = first mark) as (y, x) (caltab_points).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>

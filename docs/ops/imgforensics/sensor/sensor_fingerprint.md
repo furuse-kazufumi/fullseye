@@ -4,6 +4,7 @@ dim: imgforensics
 category: sensor
 in: images
 out: fingerprint
+gpu: なし
 examples: [image_forensics_audit, poc_prnu_camera_fingerprint]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `images` → `fingerprint`
 - **呼び出し**: `import fullseye as fs; fs.ledger.sensor_fingerprint(images, denoiser: 'str' = 'wiener', sigma: 'float' = 0.02, zero_mean: 'bool' = True) -> 'np.ndarray'` (実装を直接呼ぶなら `import imgforensics; imgforensics.sensor_fingerprint(images, denoiser: 'str' = 'wiener', sigma: 'float' = 0.02, zero_mean: 'bool' = True) -> 'np.ndarray'`、台帳から引くなら `opsimgforensics.get("sensor_fingerprint")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">anaglyph_from_ods — OPTICS <code style="color:#22d3bf">omni360</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">rgbimage × rgbimage</code> → <code style="color:#22d3bf">rgbimage</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.anaglyph_from_ods(left, right, yaw=0, pitch=0, fov=90, size=(256, 256), method=&#x27;dubois&#x27;)</code>(要直接调用实现,<code style="color:#22d3bf">import omni360; omni360.anaglyph_from_ods(left, right, yaw=0, pitch=0, fov=90, size=(256, 256), method=&#x27;dubois&#x27;)</code>;从台账取用则 <code style="color:#22d3bf">opsoptics.get(&quot;anaglyph_from_ods&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>从全景立体对中提取视口并生成彩色滤镜图。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>

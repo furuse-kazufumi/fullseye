@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">histogram_match — COLORTRANSPORT <code style="color:#22d3bf">matching</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.histogram_match(src, ref, bins=None, ties=&#x27;average&#x27;)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import colortransport; colortransport.histogram_match(src, ref, bins=None, ties=&#x27;average&#x27;)</code>, registry से लेना हो तो <code style="color:#22d3bf">opscolortransport.get(&quot;histogram_match&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p><code style="color:#22d3bf">src</code> के मान distribution को <code style="color:#22d3bf">ref</code> से मिलाता है (1-D exact optimal transport)।</p>
 <p>rank को बनाए रखते हुए मानों को reference के quantiles से बदल देता है। <code style="color:#22d3bf">bins</code> देने पर उतने स्तरों वाले cumulative distribution से approximate करता है -- तेज़ है पर <b>exact नहीं रहता</b>, इसलिए default <code style="color:#22d3bf">None</code> (exact) रखा गया है।</p>

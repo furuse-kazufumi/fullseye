@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">skeletonize_vol — 3D <code style="color:#22d3bf">medial</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">voxel</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.skeletonize_vol(vol)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import medial; medial.skeletonize_vol(vol)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;skeletonize_vol&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>3D binary voxel को पतला करके 1 voxel चौड़ा skeleton बनाता है। skimage की Lee (1994) method का wrapper।</p>
 <p>method=&#x27;lee&#x27; 3D को support करने वाला topology-preserving thinning है। blob को भी line जैसे skeleton में बदल देता है (medial *surface* चाहिए तो distance_ridge का उपयोग करें)। return value input के समान shape का bool array है।</p>

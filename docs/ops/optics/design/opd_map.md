@@ -4,6 +4,7 @@ dim: optics
 category: design
 in: table
 out: image2d
+gpu: なし
 examples: [lens_design_demo]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.opd_map(system, field=None, size=64, wavelength_um=None, image_mm=None, fill=0.0)` (実装を直接呼ぶなら `import raytrace; raytrace.opd_map(system, field=None, size=64, wavelength_um=None, image_mm=None, fill=0.0)`、台帳から引くなら `opsoptics.get("opd_map")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

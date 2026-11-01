@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">gum_standard_uncertainty — SPC <code style="color:#22d3bf">uncertainty</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gum_standard_uncertainty(table, halfwidth=&#x27;halfwidth&#x27;, distribution=&#x27;distribution&#x27;)</code> (die Implementierung direkt: <code style="color:#22d3bf">import spc; spc.gum_standard_uncertainty(table, halfwidth=&#x27;halfwidth&#x27;, distribution=&#x27;distribution&#x27;)</code>; aus dem Register: <code style="color:#22d3bf">opsspc.get(&quot;gum_standard_uncertainty&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Unsicherheitskomponenten anhand der <b>Form ihrer Verteilung</b> in Standardunsicherheiten umrechnen (<code style="color:#22d3bf">table</code>).</p>
 <p>Kalibrierscheine und Normen geben Formen wie &quot;Halbbreite a&quot; oder &quot;±U bei 95 %&quot; an, keine Standardabweichung. Das Fortpflanzungsgesetz kann nur Standardunsicherheiten verarbeiten, deshalb werden sie hier angeglichen:</p>

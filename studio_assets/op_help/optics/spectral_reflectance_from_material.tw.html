@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">spectral_reflectance_from_material — OPTICS <code style="color:#22d3bf">spectral</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">無</code> → <code style="color:#22d3bf">pairs</code>(僅由參數決定的運算子 —— 不接受影像或資料輸入)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.spectral_reflectance_from_material(material=&#x27;NUT_KERNEL&#x27;, particle_um=None, thickness_mm=10.0, background_reflectance=0.05, water_fraction=None, carbon_black_fraction=0.0, internal_reflectance=0.6, wl_min_nm=900.0, wl_max_nm=2500.0, n_points=321)</code>(要直接呼叫實作,<code style="color:#22d3bf">import spectralrad; spectralrad.spectral_reflectance_from_material(material=&#x27;NUT_KERNEL&#x27;, particle_um=None, thickness_mm=10.0, background_reflectance=0.05, water_fraction=None, carbon_black_fraction=0.0, internal_reflectance=0.6, wl_min_nm=900.0, wl_max_nm=2500.0, n_points=321)</code>;從台帳取用則 <code style="color:#22d3bf">opsoptics.get(&quot;spectral_reflectance_from_material&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由材料表的近紅外吸收帶產生顆粒(碎片)的漫反射光譜(被觀察對象一側)。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>

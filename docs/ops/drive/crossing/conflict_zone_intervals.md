@@ -4,6 +4,7 @@ dim: drive
 category: crossing
 in: any
 out: table
+gpu: なし
 examples: [poc_driving_crossing]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `any` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.conflict_zone_intervals(dist_to_zone, zone_length: 'float', car_length: 'float', *, v0: 'float', accel: 'float' = 0.0, v_max: 'Optional[float]' = None) -> 'Dict[str, object]'` (実装を直接呼ぶなら `import drivecrossing; drivecrossing.conflict_zone_intervals(dist_to_zone, zone_length: 'float', car_length: 'float', *, v0: 'float', accel: 'float' = 0.0, v_max: 'Optional[float]' = None) -> 'Dict[str, object]'`、台帳から引くなら `opsdrive.get("conflict_zone_intervals")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

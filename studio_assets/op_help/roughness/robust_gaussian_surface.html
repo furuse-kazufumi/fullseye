@@ -4,6 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.robust_gaussian_surface(z, dx, lambda_c, c=4.4, order=1, robust=True, truncate=1.0, dy=None, max_iter=None, tol=1e-06)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import roughness; roughness.robust_gaussian_surface(z, dx, lambda_c, c=4.4, order=1, robust=True, truncate=1.0, dy=None, max_iter=None, tol=1e-06)</code>、台帳から引くなら <code style="color:#22d3bf">opsroughness.get(&quot;robust_gaussian_surface&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>台帳経由の戻り値</b>: <code style="color:#22d3bf">fullseye.ledger.robust_gaussian_surface(...)</code> は<b>宣言 out 型 <code style="color:#22d3bf">depth</code> の値だけ</b>を返す(本体は補助情報も返す)。捨てられた側が要るときは <code style="color:#22d3bf">fullseye.ledger.robust_gaussian_surface.raw(...)</code>、または <code style="color:#22d3bf">roughness.robust_gaussian_surface</code> を直接呼ぶ。</p>
 <p style="margin:2px 0 2px 12px">• 本体の返り: <code style="color:#22d3bf">(roughness, mean_surface, info)</code></p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>ロバスト・ガウシアン回帰フィルタ(面): 傷・突起に引きずられない面のうねりと粗さ。</p>
 <p><code style="color:#22d3bf">robust_gaussian_profile</code> の 2 次元版(核は x・y に可分、局所面 <code style="color:#22d3bf">c + p u + q v</code> の回帰、biweight は面全体の残差の中央値で作る)。重みが非可分でも、必要なのは重み画像と <code style="color:#22d3bf">u^a v^b</code> を掛けた核との可分相関だけなので、 <code style="color:#22d3bf">O(N · 窓幅)</code> で済む。</p>

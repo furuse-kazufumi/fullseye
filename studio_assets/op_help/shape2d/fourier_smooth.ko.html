@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">fourier_smooth — SHAPE2D <code style="color:#22d3bf">descriptor</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">pairs</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fourier_smooth(points, keep)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import fourierdesc; fourierdesc.fourier_smooth(points, keep)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsshape2d.get(&quot;fourier_smooth&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>복소 FFT로 윤곽의 대역을 제한하여 평활화한다.</p>
 <p>윤곽을 복소 신호 z(t)=x(t)+i·y(t) 로 보고 FFT 하여, 저주파 <code style="color:#22d3bf">keep</code> 개(와 대칭 성분) 만 남기고 역변환한다. keep 가 작을수록 매끄럽다(고주파=세부/노이즈를 떨군다). keep 가 전 주파수 이상이면 항등. 반환값은 입력과 같은 점 수의 (N,2).</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">spheres_to_silhouette — DRIVE <code style="color:#22d3bf">granular</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">matrix × scalar × scalar × scalar × scalar</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.spheres_to_silhouette(pos, radius: &#x27;float&#x27;, pitch: &#x27;float&#x27;, extent: &#x27;float&#x27;, height: &#x27;float&#x27;, supersample: &#x27;int&#x27; = 4) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import granular; granular.spheres_to_silhouette(pos, radius: &#x27;float&#x27;, pitch: &#x27;float&#x27;, extent: &#x27;float&#x27;, height: &#x27;float&#x27;, supersample: &#x27;int&#x27; = 4) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;spheres_to_silhouette&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Orthographic coverage image seen from the side (y direction), from the sphere centers (union of disks, anti-aliased). Row 0 is at the top.</p>
 <p>Empty input (<code style="color:#22d3bf">pos</code> with 0 elements) raises <code style="color:#22d3bf">ValueError</code>.</p>

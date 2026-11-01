@@ -4,6 +4,7 @@ dim: photon
 category: lifetime
 in: counts
 out: table
+gpu: なし
 examples: [photon_timeresolved]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `counts` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.lifetime_phasor(decay, bin_ps=100.0, harmonic=1, background=0.0)` (実装を直接呼ぶなら `import photoncount; photoncount.lifetime_phasor(decay, bin_ps=100.0, harmonic=1, background=0.0)`、台帳から引くなら `opsphoton.get("lifetime_phasor")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">piv_to_velocity — PIV <code style="color:#22d3bf">field</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">flow2d</code> → <code style="color:#22d3bf">flow2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_to_velocity(flow, pixel_size_m, dt_s)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import pivops; pivops.piv_to_velocity(flow, pixel_size_m, dt_s)</code>, registry से लेना हो तो <code style="color:#22d3bf">opspiv.get(&quot;piv_to_velocity&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>pixel/frame → m/s। <b>दोनों आवश्यक argument हैं</b> (कोई default मान नहीं)।</p>
 <p>Units मिल जाने से बिना exception raise हुए order of magnitude बदल जाता है, इसलिए default देने से दुर्घटनाएँ ही default बन जाएँगी —— <code style="color:#22d3bf">demops</code> में <code style="color:#22d3bf">cell_size</code> जैसा ही निर्णय।</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">msa_anova_table — SPC <code style="color:#22d3bf">msa</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.msa_anova_table(table, part=&#x27;part&#x27;, operator=&#x27;operator&#x27;, value=&#x27;value&#x27;)</code> (to call the implementation directly, <code style="color:#22d3bf">import spc; spc.msa_anova_table(table, part=&#x27;part&#x27;, operator=&#x27;operator&#x27;, value=&#x27;value&#x27;)</code>; from the registry, <code style="color:#22d3bf">opsspc.get(&quot;msa_anova_table&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Analysis-of-variance table for a crossed two-factor design (part x operator x replicate) (<code style="color:#22d3bf">table</code>).</p>
 <p>*table* is a table with columns *part* / *operator* / *value*. The design is <b>balanced</b> (The number of repetitions for each square is the same) - If it is not balanced, it will be rejected.</p>

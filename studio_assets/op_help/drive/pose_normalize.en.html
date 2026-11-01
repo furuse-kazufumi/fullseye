@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">pose_normalize — DRIVE <code style="color:#22d3bf">inf</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">any</code> (an op determined by its arguments alone — it takes no image or data input)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pose_normalize(i: &#x27;int&#x27;, j: &#x27;int&#x27;, x: &#x27;float&#x27;, y: &#x27;float&#x27;, tile: &#x27;float&#x27;)</code> (to call the implementation directly, <code style="color:#22d3bf">import driveinf; driveinf.pose_normalize(i: &#x27;int&#x27;, j: &#x27;int&#x27;, x: &#x27;float&#x27;, y: &#x27;float&#x27;, tile: &#x27;float&#x27;)</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;pose_normalize&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Carries the tile index up or down so that the coordinates of (tile, in-tile coordinates) fall within [0, tile). Returns (i, j, x, y). ★It moves only the in-tile coordinates instead of adding to global coordinates and dividing again — so the step size does not depend on distance.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

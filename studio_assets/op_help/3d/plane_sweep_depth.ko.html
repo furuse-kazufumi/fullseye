@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">plane_sweep_depth — 3D <code style="color:#22d3bf">plane_sweep_stereo</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">depth</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.plane_sweep_depth(img_ref: &#x27;np.ndarray&#x27;, img_src: &#x27;np.ndarray&#x27;, K: &#x27;np.ndarray&#x27;, R: &#x27;np.ndarray&#x27;, t: &#x27;np.ndarray&#x27;, depth_candidates, window: &#x27;int&#x27; = 1, normal=(0.0, 0.0, 1.0)) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import plane_sweep; plane_sweep.plane_sweep_depth(img_ref: &#x27;np.ndarray&#x27;, img_src: &#x27;np.ndarray&#x27;, K: &#x27;np.ndarray&#x27;, R: &#x27;np.ndarray&#x27;, t: &#x27;np.ndarray&#x27;, depth_candidates, window: &#x27;int&#x27; = 1, normal=(0.0, 0.0, 1.0)) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;plane_sweep_depth&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>plane-sweep stereo 로 조밀 깊이 맵을 추정. → (H,W) depth.</p>
 <p>각 깊이 평면에서 src를 ref로 워프하고, photo-consistency가 최소인 후보 깊이를 화소마다 고른다(winner-take-all). 모든 후보에서 시야 밖인 화소는 NaN. fail-closed(실패 시 거부)(빈 입력/비 2D/shape 불일치/비양수 깊이).</p>

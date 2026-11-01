@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">town_centerline — DRIVE <code style="color:#22d3bf">town</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.town_centerline(layout, step: &#x27;float&#x27; = 0.5) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import drivetown; drivetown.town_centerline(layout, step: &#x27;float&#x27; = 0.5) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;town_centerline&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>जोड़ी गई centerline को हर <code style="color:#22d3bf">step</code> arc length पर sample करता है → <code style="color:#22d3bf">(N, 4) = (s, x, y, yaw)</code> (अंतिम बिंदु हमेशा शामिल)।</p>
 <p>द्वार: सीधे भागों में आसन्न बिंदुओं के बीच की दूरी ठीक step है, आरंभ = पहले तत्व का entry, अंत = अंतिम तत्व का exit।</p>

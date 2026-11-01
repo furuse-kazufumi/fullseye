@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">landmark_asymmetry — SHAPESTAT <code style="color:#22d3bf">symmetry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.landmark_asymmetry(landmarks, pairs=None, plane=None)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import shapestats; shapestats.landmark_asymmetry(landmarks, pairs=None, plane=None)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsshapestat.get(&quot;landmark_asymmetry&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>좌우 쌍마다의 <b>부호 있는</b> 비대칭량. → <code style="color:#22d3bf">(M,)</code>.</p>
 <p>각 쌍에 대해 한쪽을 면으로 거울 반사하여 다른 쪽과 비교하고, 면의 법선 방향 차를 반환한다. 부호는 &quot;오른쪽이 바깥이면 양&quot;(<code style="color:#22d3bf">mirror_plane_from_pairs</code> 가 법선을 그 방향으로맞추어 두었다). <b>절댓값으로 합치지 않는다</b> —— 좌우 어느 쪽이 튀어나와 있는지는임상에서도 검사에서도 의미가 다르다.</p>

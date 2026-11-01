@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">skyline_extract — GEOCAM <code style="color:#22d3bf">skyline</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.skyline_extract(image, sky_is_bright=True, smooth=1.5, max_jump=3, jump_penalty=0.5)</code> (die Implementierung direkt: <code style="color:#22d3bf">import geocam; geocam.skyline_extract(image, sky_is_bright=True, smooth=1.5, max_jump=3, jump_penalty=0.5)</code>; aus dem Register: <code style="color:#22d3bf">opsgeocam.get(&quot;skyline_extract&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Extrahiert aus einem Foto per dynamischer Programmierung 1 Linie mit <b>der Zeile der Grenze zwischen Himmel und Gelände für jede Spalte</b> → signal (W,).</p>
 <p>Dieselbe Idee wie Lie, Lin und Hsu 2005 (*Pattern Recognition*: Robust Skyline Extraction for Navigation):</p>

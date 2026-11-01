@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">region_growing — 3D <code style="color:#22d3bf">segment</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">labels</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.region_growing(points, normals=None, angle_thresh_deg: &#x27;float&#x27; = 15.0, k: &#x27;int&#x27; = 20, min_region_size: &#x27;int&#x27; = 3) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import segment3d; segment3d.region_growing(points, normals=None, angle_thresh_deg: &#x27;float&#x27; = 15.0, k: &#x27;int&#x27; = 20, min_region_size: &#x27;int&#x27; = 3) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;region_growing&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>법선 유사도로 영역 성장해 이어진 매끄러운 영역에 같은 레이블을 붙입니다(곡률 게이트 없는 변종).</p>
 <p>각 점을 k 근방 그래프 위에서 BFS 로 성장시키고, 인접 점 q 를 &quot;법선 n_p 와 n_q 가 이루는 각이 <code style="color:#22d3bf">angle_thresh_deg</code> 미만&quot;일 때만 같은 영역에 추가한다. 평면 안의 법선은 거의 평행하므로같은 영역으로 연결되고, 방향이 다른 면의 경계에서는 각도가 벌어져 연결이 끊긴다 → 면마다 별도 영역. 법선은 부호가 정해지지 않으므로(PCA 유래) <code style="color:#22d3bf">|n_p·n_q|</code> 로 판정(앞뒤를 동일시).</p>

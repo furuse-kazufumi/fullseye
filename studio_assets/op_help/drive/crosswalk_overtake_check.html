@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">crosswalk_overtake_check — DRIVE <code style="color:#22d3bf">crossing</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.crosswalk_overtake_check(ego, others, *, crosswalk_start: &#x27;float&#x27;, crosswalk_end: &#x27;float&#x27;, zone: &#x27;float&#x27; = 30.0, v_moving: &#x27;float&#x27; = 0.5) -&gt; &#x27;Dict[str, object]&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import drivecrossing; drivecrossing.crosswalk_overtake_check(ego, others, *, crosswalk_start: &#x27;float&#x27;, crosswalk_end: &#x27;float&#x27;, zone: &#x27;float&#x27; = 30.0, v_moving: &#x27;float&#x27; = 0.5) -&gt; &#x27;Dict[str, object]&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;crosswalk_overtake_check&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>横断歩道等とその手前 <code style="color:#22d3bf">zone</code> m の中で、前方を進行している車の前に出たか(38 条 3 項)。</p>
 <p>ego, others[i] = {&quot;t&quot;, &quot;x&quot;[, &quot;v&quot;], &quot;kind&quot;}(x = 前端)。他の車の前端を自分の前端が後ろから越えた瞬間(線形補間)を「前方に出た」とし、そのときの自分の前端の位置が [crosswalk_start − zone, crosswalk_end] で、相手が進行中(速さ &gt; <code style="color:#22d3bf">v_moving</code>、<b>仮定</b>)かつ特定小型原動機付自転車等(<code style="color:#22d3bf">EXEMPT_KINDS</code>)でなければ違反。</p>

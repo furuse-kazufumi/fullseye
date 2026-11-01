@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">shape_project — SHAPESTAT <code style="color:#22d3bf">model</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">shapemodel × points</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.shape_project(model, shape, align: &#x27;bool&#x27; = True)</code> (to call the implementation directly, <code style="color:#22d3bf">import shapestats; shapestats.shape_project(model, shape, align: &#x27;bool&#x27; = True)</code>; from the registry, <code style="color:#22d3bf">opsshapestat.get(&quot;shape_project&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Maps a shape into model coordinates (principal-component scores). → <code style="color:#22d3bf">(k,)</code>.</p>
 <p>With <code style="color:#22d3bf">align=True</code> it first aligns to the mean shape by Procrustes. Projecting without aligning leaks the differences in position and orientation into the scores, and <b>the same shape looks like a different individual</b>.</p>

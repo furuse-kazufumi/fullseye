@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">mirror_aim_normal — DRIVE <code style="color:#22d3bf">decide</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">any</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mirror_aim_normal(eye, mirror_center, look_dir) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import drivedecide; drivedecide.mirror_aim_normal(eye, mirror_center, look_dir) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;mirror_aim_normal&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>आँख <code style="color:#22d3bf">eye</code> से दर्पण के केंद्र <code style="color:#22d3bf">mirror_center</code> पर आई ray को दिशा <code style="color:#22d3bf">look_dir</code> में परावर्तित करने वाला दर्पण का normal (2D और 3D दोनों में)।</p>
 <p>n = normalize(unit(E − M) + unit(ℓ))</p>

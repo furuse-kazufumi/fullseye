@@ -4,6 +4,7 @@ dim: photon
 category: tcspc
 in: counts
 out: counts
+gpu: なし
 examples: [photon_timeresolved, poc_dtof_ranging]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `counts` → `counts`
 - **呼び出し**: `import fullseye as fs; fs.ledger.tcspc_background_subtract(hist, method='median', leading_bins=None, quantile=0.5, scale=1.0)` (実装を直接呼ぶなら `import photoncount; photoncount.tcspc_background_subtract(hist, method='median', leading_bins=None, quantile=0.5, scale=1.0)`、台帳から引くなら `opsphoton.get("tcspc_background_subtract")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

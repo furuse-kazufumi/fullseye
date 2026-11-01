@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">fly_expansion_readout — FLYVISION <code style="color:#22d3bf">looming</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">matrix × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fly_expansion_readout(flow, lattice, axis=None, weights=None)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import flyvision; flyvision.fly_expansion_readout(flow, lattice, axis=None, weights=None)</code>、台帳から引くなら <code style="color:#22d3bf">opsflyvision.get(&quot;fly_expansion_readout&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>眼全体の流れから衝突時間 τ を読む —— 縦縞のアパーチャ効果は厳密に 2τ。</p>
 <p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>

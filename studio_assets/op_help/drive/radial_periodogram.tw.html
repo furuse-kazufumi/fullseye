@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">radial_periodogram — DRIVE <code style="color:#22d3bf">terrain</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.radial_periodogram(field, dx: &#x27;float&#x27;, n_bins: &#x27;int&#x27; = 48) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import driveterrain; driveterrain.radial_periodogram(field, dx: &#x27;float&#x27;, n_bins: &#x27;int&#x27; = 48) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;radial_periodogram&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>將網格上高度場 (H, W) 的週期圖沿徑向平均：<code style="color:#22d3bf">{&quot;f&quot;, &quot;power&quot;, &quot;count&quot;}</code>(f 單位為 週期/m)。</p>
 <p>是平均值而非環上的積分(積分會多乘一個 f,使斜率改變)。不含 DC。</p>

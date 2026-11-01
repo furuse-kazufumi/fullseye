@@ -4,6 +4,7 @@ dim: optics
 category: spectral
 in: pairs
 out: measurement
+gpu: なし
 examples: [poc_fiber_light_guide, poc_nir_silicon_transmission]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `pairs` → `measurement`
 - **呼び出し**: `import fullseye as fs; fs.ledger.spectral_integral(spectrum, wl_min_nm=None, wl_max_nm=None)` (実装を直接呼ぶなら `import spectralrad; spectralrad.spectral_integral(spectrum, wl_min_nm=None, wl_max_nm=None)`、台帳から引くなら `opsoptics.get("spectral_integral")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

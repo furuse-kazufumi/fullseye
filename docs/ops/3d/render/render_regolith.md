@@ -4,6 +4,7 @@ dim: 3d
 category: render
 in: mesh
 out: rgbimage
+gpu: なし
 examples: [itokawa_regolith_hero]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `mesh` → `rgbimage`
 - **呼び出し**: `import fullseye as fs; fs.ledger.render_regolith(V, F, *, pose=None, intrinsics=None, size: 'int' = 512, ss: 'int' = 2, sun: 'Sequence[float]' = (0.3, 0.4, 1.0), w: 'float' = 0.42, g: 'float' = -0.35, B0: 'float' = 0.87, h: 'float' = 0.01, roughness_deg: 'float' = 26.0, sun_angular_diameter_deg: 'float' = 0.53, shadow_samples: 'int' = 4, ao_samples: 'int' = 32, tint: 'Sequence[float]' = (1.0, 0.97, 0.93), self_illumination: 'float' = 1.0, exposure='auto', albedo_variation: 'float' = 0.12, seed: 'int' = 0, smooth_normals: 'bool' = True, background: 'Sequence[float]' = (0.0, 0.0, 0.0), bump=None, vertex_normals=None, vertex_albedo=None, exposure_target: 'float' = 0.45) -> 'np.ndarray'` (実装を直接呼ぶなら `import render_beauty; render_beauty.render_regolith(V, F, *, pose=None, intrinsics=None, size: 'int' = 512, ss: 'int' = 2, sun: 'Sequence[float]' = (0.3, 0.4, 1.0), w: 'float' = 0.42, g: 'float' = -0.35, B0: 'float' = 0.87, h: 'float' = 0.01, roughness_deg: 'float' = 26.0, sun_angular_diameter_deg: 'float' = 0.53, shadow_samples: 'int' = 4, ao_samples: 'int' = 32, tint: 'Sequence[float]' = (1.0, 0.97, 0.93), self_illumination: 'float' = 1.0, exposure='auto', albedo_variation: 'float' = 0.12, seed: 'int' = 0, smooth_normals: 'bool' = True, background: 'Sequence[float]' = (0.0, 0.0, 0.0), bump=None, vertex_normals=None, vertex_albedo=None, exposure_target: 'float' = 0.45) -> 'np.ndarray'`、台帳から引くなら `ops3d.get("render_regolith")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

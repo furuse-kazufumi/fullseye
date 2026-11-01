@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">pad_context — DRIVE <code style="color:#22d3bf">pegtactile</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pad_context(pad: &#x27;dict&#x27;, jitter_px: &#x27;float&#x27; = 0.5, seed: &#x27;int&#x27; = 7) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import pegtactile; pegtactile.pad_context(pad: &#x27;dict&#x27;, jitter_px: &#x27;float&#x27; = 0.5, seed: &#x27;int&#x27; = 7) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;pad_context&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>막 합성과 읽기에서 1번만 만드는 도구: 픽셀 중심 격자 (X, Y), Cerruti 커널, 3색 광원, 무하중 막의 배경과 마커 기준 영상.</p>
 <p>마커는 <code style="color:#22d3bf">jitter_px</code> 의 균일 지터로 위상을 흩뜨린다(인쇄 편차 정도). <b>규칙 격자(0 px)는 모든 마커가 같은 부화소 위상이므로, 무게중심의 pixel-locking 이 장 전체의 공통 모드가 되어 전단이 0 이어도 가짜 전단이 나온다</b>(PoC 게이트에서 11 mN → 0.9 mN). <code style="color:#22d3bf">seed</code> 는 지터의 난수. 반환되는 <code style="color:#22d3bf">_model_cache</code>·<code style="color:#22d3bf">_sr_cache</code> 는 읽기의 내부 캐시. <b>Raises</b> ValueError: jitter &lt; 0.</p>

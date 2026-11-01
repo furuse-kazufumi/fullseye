@@ -4,6 +4,7 @@ dim: optics
 category: moire_align
 in: 
 out: table
+gpu: なし
 examples: [poc_moire_alignment, poc_moire_screen]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.moire_phase_to_shift(phase_rad=0.5, phase_ref_rad=0.0, p_mask_um=2.0, p_wafer_um=2.04, moving='wafer', coarse_shift_nm=None)` (実装を直接呼ぶなら `import moirealign; moirealign.moire_phase_to_shift(phase_rad=0.5, phase_ref_rad=0.0, p_mask_um=2.0, p_wafer_um=2.04, moving='wafer', coarse_shift_nm=None)`、台帳から引くなら `opsoptics.get("moire_phase_to_shift")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

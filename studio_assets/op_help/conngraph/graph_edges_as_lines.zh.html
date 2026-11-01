@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">graph_edges_as_lines — CONNGRAPH <code style="color:#22d3bf">view</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">conn_graph × points</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graph_edges_as_lines(W: &#x27;Any&#x27;, P: &#x27;Any&#x27;, thresh: &#x27;float&#x27; = 0.0) -&gt; &#x27;dict[str, np.ndarray]&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import conngraph; conngraph.graph_edges_as_lines(W: &#x27;Any&#x27;, P: &#x27;Any&#x27;, thresh: &#x27;float&#x27; = 0.0) -&gt; &#x27;dict[str, np.ndarray]&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsconngraph.get(&quot;graph_edges_as_lines&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>将边转换为线段表(在 Studio 中叠加到点云上的出口)：列 pre / post / x0 y0 z0 / x1 y1 z1 / weight。</p>
 <p><code style="color:#22d3bf">P</code> 是 graph_layout_spectral 的 (n, 3)(或 (n, 2),补上 z = 0)。|W| &gt; thresh 的边才输出,对角(自连接)长度为 0,不输出。</p>

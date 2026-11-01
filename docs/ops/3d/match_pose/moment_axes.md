@@ -4,6 +4,7 @@ dim: 3d
 category: match_pose
 in: points
 out: axes
+gpu: なし
 examples: [itokawa_pose_canonical]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `points` → `axes`
 - **呼び出し**: `import fullseye as fs; fs.ledger.moment_axes(points, weights=None)` (実装を直接呼ぶなら `import match3d; match3d.moment_axes(points, weights=None)`、台帳から引くなら `ops3d.get("moment_axes")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

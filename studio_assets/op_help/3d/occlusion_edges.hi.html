@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">occlusion_edges — 3D <code style="color:#22d3bf">range_image</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">depth</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.occlusion_edges(depth, rel_thresh=0.05)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import range_image; range_image.occlusion_edges(depth, rel_thresh=0.05)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;occlusion_edges&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>depth discontinuity (foreground/background boundary = occlusion edge) पहचानता है। → bool HxW।</p>
 <p>occlusion edge depth की <b>discontinuity (step)</b> है, slope नहीं। एक-समान slope वाली surface continuous होती है और उसमें occlusion नहीं होता, इसलिए उसे flag नहीं करना चाहिए। first-order gradient (=depth/pixel) ख़ुद slope है, और step व slope में फ़र्क नहीं कर सकता (और इसे absolute depth के अनुपात से तुलना करना dimension के हिसाब से असंगत है)।</p>

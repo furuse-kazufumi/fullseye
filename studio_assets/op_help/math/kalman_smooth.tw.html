@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">kalman_smooth — MATH <code style="color:#22d3bf">estimation</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">matrix × matrix × matrix × matrix × matrix × signal × matrix</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.kalman_smooth(z, F, H, Q, R, x0, P0, *, store_predictions: &#x27;bool&#x27; = True, method: &#x27;str&#x27; = &#x27;exact&#x27;) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import mathestimation; mathestimation.kalman_smooth(z, F, H, Q, R, x0, P0, *, store_predictions: &#x27;bool&#x27; = True, method: &#x27;str&#x27; = &#x27;exact&#x27;) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsmath.get(&quot;kalman_smooth&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>線性高斯狀態空間模型 x_{k+1} = F x_k + w(w ~ N(0,Q))、z_k = H x_k + v(v ~ N(0,R))的 Kalman 濾波(前向)與 Rauch–Tung–Striebel 平滑(後向)。</p>
 <p><code style="color:#22d3bf">z</code> 為 (T, m) 的觀測(含 NaN 的列視為缺測，跳過更新)。回傳值 <code style="color:#22d3bf">{&quot;x_filt&quot;, &quot;P_filt&quot;, &quot;x_smooth&quot;, &quot;P_smooth&quot;, &quot;nll&quot;}</code>。</p>

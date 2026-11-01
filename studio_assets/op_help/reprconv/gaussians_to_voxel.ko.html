@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">gaussians_to_voxel — REPRCONV <code style="color:#22d3bf">gaussians</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">gaussians</code> → <code style="color:#22d3bf">voxel</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gaussians_to_voxel(gaussians, shape=(32, 32, 32), origin=(0.0, 0.0, 0.0), spacing=(1.0, 1.0, 1.0), truncate=3.0)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import reprconv; reprconv.gaussians_to_voxel(gaussians, shape=(32, 32, 32), origin=(0.0, 0.0, 0.0), spacing=(1.0, 1.0, 1.0), truncate=3.0)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsreprconv.get(&quot;gaussians_to_voxel&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p><code style="color:#22d3bf">gaussians</code> → 밀도 <code style="color:#22d3bf">voxel (D,H,W)</code>. <code style="color:#22d3bf">gaussians</code> 의 두 번째 출구.</p>
 <p>각 가우시안을 <code style="color:#22d3bf">truncate * sigma</code>에서 잘라 더한다. <b>격자의 원점과스텝을 명시 인수로 해 둔</b> 것이 요점이며, 기본값 <code style="color:#22d3bf">spacing=(1,1,1)</code>을그대로 쓰면 &quot;월드 좌표를 그대로 첨자로 삼는&quot; 것이 되어, 실데이터에서는거의 틀린다 —— 게다가 예외는 나지 않고 밀도가 다른 곳에 설 뿐이라 알아챌 수 없다. <code style="color:#22d3bf">tests/test_reprconv.py</code>는 이 혼동을 명시적으로 측정하고 있다.</p>

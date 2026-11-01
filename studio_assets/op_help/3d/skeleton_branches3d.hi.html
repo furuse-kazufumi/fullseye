@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">skeleton_branches3d — 3D <code style="color:#22d3bf">medial</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">voxel</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.skeleton_branches3d(vol, min_length=0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import medial; medial.skeleton_branches3d(vol, min_length=0)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;skeleton_branches3d&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>3D skeleton को branch points पर काटकर branches (segments) में बाँटता है। 2D के <code style="color:#22d3bf">r2_split_skeleton_lines</code> का 3D संस्करण।</p>
 <p>branch point voxel हटाने के बाद जो बचता है वही branch है। min_length &gt; 0 हो तो जिन टुकड़ों के 26-connected component में voxel की संख्या उससे कम है, उन्हें हटाया जाता है।</p>

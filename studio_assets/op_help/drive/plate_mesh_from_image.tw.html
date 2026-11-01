@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">plate_mesh_from_image — DRIVE <code style="color:#22d3bf">roadjp</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">rgba</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.plate_mesh_from_image(rgba, width: &#x27;float&#x27;, height: &#x27;float&#x27;, *, cell: &#x27;int&#x27; = 4, thickness: &#x27;float&#x27; = 0.004, back_color=(0.55, 0.55, 0.55), label: &#x27;int&#x27; = 4) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import roadjp; roadjp.plate_mesh_from_image(rgba, width: &#x27;float&#x27;, height: &#x27;float&#x27;, *, cell: &#x27;int&#x27; = 4, thickness: &#x27;float&#x27; = 0.004, back_color=(0.55, 0.55, 0.55), label: &#x27;int&#x27; = 4) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;plate_mesh_from_image&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>將 RGBA 影像轉換為帶面顏色的薄板網格(mesh)。</p>
 <p>將影像切成 <code style="color:#22d3bf">cell × cell</code> 像素的區塊,只把 alpha 平均值在 0.5 以上的區塊做成面(2 個三角形)。面的顏色 = 該區塊以 alpha 加權的平均色 <code style="color:#22d3bf">Σ(α·rgb) / Σα</code>。正面的法線 = <b>−x</b>(在 yaw 0 時朝向沿 +x 駛來的車), 背面形狀相同,顏色為 <code style="color:#22d3bf">back_color</code>(法線 +x)。原點 = 板的中心,板位於 y-z 平面(影像的左 = +y、上 = +z), 厚度 <code style="color:#22d3bf">thickness</code> 沿 x 方向分配為 ±一半。不保留未使用的頂點(以便從頂點量測尺寸)。</p>

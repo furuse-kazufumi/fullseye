@@ -4,6 +4,7 @@ dim: 3d
 category: occupancy
 in: voxel
 out: voxel
+gpu: なし
 examples: [sensor_seg]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `voxel` → `voxel`
 - **呼び出し**: `import fullseye as fs; fs.ledger.inflate(occupancy, radius, voxel_size=1.0)` (実装を直接呼ぶなら `import occupancy; occupancy.inflate(occupancy, radius, voxel_size=1.0)`、台帳から引くなら `ops3d.get("inflate")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

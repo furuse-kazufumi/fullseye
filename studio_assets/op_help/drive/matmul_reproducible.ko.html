@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">matmul_reproducible — DRIVE <code style="color:#22d3bf">ozaki</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">matrix × matrix</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.matmul_reproducible(A, B, tol: &#x27;float&#x27; = 1.1102230246251565e-16)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import ozakimm; ozakimm.matmul_reproducible(A, B, tol: &#x27;float&#x27; = 1.1102230246251565e-16)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;matmul_reproducible&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>비트 단위로 재현되는 FP64 정밀도의 <code style="color:#22d3bf">A @ B</code>(보장할 수 없으면 <code style="color:#22d3bf">ValueError</code> = fail-closed).</p>
 <p><code style="color:#22d3bf">matmul_ozaki</code> 의 Ozaki-I 자동 선택에 <code style="color:#22d3bf">on_insufficient=&quot;raise&quot;</code> 를 고정한 것. 오차는 요소마다 <code style="color:#22d3bf">tol · (|A||B|)_ij</code> + 마지막 조립의 반올림(몇 ulp) 이하. 내부 첨자의 순서(점의 순서)·BLAS 스레드 수와 관계없이같은 비트를 반환한다. 점군의 3×N @ N×3 이나 6×N @ N×6 축약용(출력이 큰 곱에서는 DGEMM 의 15〜83 배 느리다).</p>

@@ -4,6 +4,7 @@ dim: multivar
 category: identifiability
 in: matrix
 out: table
+gpu: なし
 examples: [sensitivity_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `matrix` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.mv_residual_pca(R=None, noise_sigma=None, n_perm=100, seed=0) -> 'dict'` (実装を直接呼ぶなら `import sensitivity; sensitivity.mv_residual_pca(R=None, noise_sigma=None, n_perm=100, seed=0) -> 'dict'`、台帳から引くなら `opsmultivar.get("mv_residual_pca")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

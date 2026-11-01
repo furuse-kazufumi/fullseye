@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">piv_velocity_gradient — PIV <code style="color:#22d3bf">field</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">flow2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_velocity_gradient(flow, spacing=1.0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import pivops; pivops.piv_velocity_gradient(flow, spacing=1.0)</code>, registry से लेना हो तो <code style="color:#22d3bf">opspiv.get(&quot;piv_velocity_gradient&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>velocity-gradient tensor के घटक और उनसे निकलने वाली मात्राएँ एक साथ लौटाता है।</p>
 <p>Vorticity, divergence, Q-criterion, swirling strength और strain rate सभी <b>समान 4 derivatives</b> से निकलते हैं, इसलिए gradient की 4 बार दोबारा गणना से बचने के लिए इन्हें यहाँ इकट्ठा किया गया है। अलग-अलग ops (<code style="color:#22d3bf">piv_vorticity</code> आदि) अकेले इस्तेमाल हो सकते हैं, लेकिन अगर कई चाहिए, तो इसे इस्तेमाल करें।</p>
