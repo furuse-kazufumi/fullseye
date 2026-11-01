@@ -94,6 +94,16 @@ RECORDED = {
                        "after_nm": -7.776317219744855},
         "split_5_5": {"train_corrections_nm": [-1.4087537956515248,
                                                  -17.793311801127576],
+                      "directions": [
+                          {"train_images": [0, 1, 2, 3, 4],
+                           "target_images": [5, 6, 7, 8, 9],
+                           "correction_nm": -1.4087537956515248,
+                           "after_nm": -13.24124620434851},
+                          {"train_images": [5, 6, 7, 8, 9],
+                           "target_images": [0, 1, 2, 3, 4],
+                           "correction_nm": -17.793311801127576,
+                           "after_nm": 10.468311801127587},
+                      ],
                       "before_nm": -14.649999999999977,
                       "after_nm": -0.5191881988724241},
         "same_image_circular_reference": {"correction_nm": -8.043655672201684,
@@ -645,10 +655,115 @@ def evaluate_corrections(width_rows, image_models, label_models):
                 "reduction_fraction": reduction / abs(before_med) if before_med else 0.0,
                 "rows": int(len(a))}
 
+    def split_direction(train_images, target_images, correction):
+        values = np.asarray([value for value, row in zip(before, width_rows)
+                             if int(row["image"]) in target_images], np.float64)
+        before_med = float(np.median(values))
+        after_med = float(np.median(values - correction))
+        return {"train_images": sorted(train_images), "target_images": sorted(target_images),
+                "correction_nm": float(correction), "before_nm": before_med,
+                "after_nm": after_med, "rows": int(len(values))}
+
+    split_directions = [
+        split_direction(first, second, train_first),
+        split_direction(second, first, train_second),
+    ]
+
     return {"image_only": collect("image_only"), "split": collect("split"),
             "same_image": collect("same_image"),
             "split_train_correction_nm": [train_first, train_second],
-            "split_images": [sorted(first), sorted(second)]}
+            "split_images": [sorted(first), sorted(second)],
+            "split_directions": split_directions}
+
+
+def psf_correction_caption(correction_eval):
+    """図 04 と台帳が同じ実測値を説明する caption を返す。"""
+    first_to_second, second_to_first = correction_eval["split_directions"]
+    return ("線幅の偏りの中央値。補正前 %+.1f nm、ラベル不使用 %+.1f nm、"
+            "5/5 分割 %+.1f nm、同一画像 %+.1f nm。分割の点は、前半5枚で得た補正 "
+            "%+.1f nmを後半へ適用した偏り %+.1f nmと、後半5枚の補正 %+.1f nmを"
+            "前半へ適用した偏り %+.1f nm。薄色斜線の同一画像は循環する参考値。" %
+            (correction_eval["image_only"]["before_nm"],
+             correction_eval["image_only"]["after_nm"],
+             correction_eval["split"]["after_nm"],
+             correction_eval["same_image"]["after_nm"],
+             first_to_second["correction_nm"], first_to_second["after_nm"],
+             second_to_first["correction_nm"], second_to_first["after_nm"]))
+
+
+def render_psf_correction(correction_eval, size=(780, 440)):
+    """図 04 のカテゴリ棒グラフを examplefig と同じ注記 op・文字寸法で描く。"""
+    w, h = size
+    if w < 720 or h < 420:
+        raise ValueError("PSF correction figure needs at least 720x420 px")
+    values = np.asarray([
+        correction_eval["image_only"]["before_nm"],
+        correction_eval["image_only"]["after_nm"],
+        correction_eval["split"]["after_nm"],
+        correction_eval["same_image"]["after_nm"],
+    ], np.float64)
+    directions = correction_eval["split_directions"]
+    direction_values = np.asarray([d["after_nm"] for d in directions], np.float64)
+    all_values = np.concatenate([values, direction_values, [0.0]])
+    if not np.all(np.isfinite(all_values)):
+        raise ValueError("PSF correction figure values must be finite")
+    ymin = min(-5.0, 5.0 * math.floor((float(all_values.min()) - 3.0) / 5.0))
+    ymax = max(5.0, 5.0 * math.ceil((float(all_values.max()) + 3.0) / 5.0))
+
+    img = np.ones((h, w, 3), np.float64)
+    rect = (72, 58, w - 96, h - 182)
+    ax = fs.axes_transform(rect, (-0.6, 3.6), (ymin, ymax))
+    yticks = fs.nice_ticks(ymin, ymax, 6)
+    img = np.asarray(fs.grid_lines(img, ax, xticks=[], yticks=yticks, alpha=0.25))
+    img = np.asarray(fs.axes_frame(img, ax, width=1))
+    img = np.asarray(fs.ticks(img, ax, xticks=[], yticks=yticks, tick_len=5, font_size=10))
+
+    colors = ("wrong", "emphasis", "right", "reference")
+    single_bar_width = 0.68 / (ax["xlim"][1] - ax["xlim"][0])
+    circular_mask = None
+    for x, value, color in zip(range(4), values, colors):
+        before_bar = img.copy()
+        img = np.asarray(fs.plot_series(img, ax, [x], [value], kind="bar", color=color,
+                                        baseline=0.0, bar_width=single_bar_width))
+        if x == 3:
+            circular_mask = np.max(np.abs(img - before_bar), axis=2) > 0.02
+
+    # 循環評価は色だけに依存せず、白黒印刷でも参考値だと分かる斜線にする。
+    yy, xx = np.indices(img.shape[:2])
+    hatch = circular_mask & (((xx + yy) % 12) < 2)
+    img = np.asarray(fs.overlay_mask(img, hatch, color=(0.25, 0.25, 0.25), alpha=0.65))
+
+    img = np.asarray(fs.plot_series(img, ax, [-0.6, 3.6], [0.0, 0.0],
+                                    kind="line", color="neutral", width=2))
+    img = np.asarray(fs.plot_series(img, ax, [2.0, 2.0], direction_values,
+                                    kind="line", color="neutral", width=1))
+    img = np.asarray(fs.plot_series(img, ax, [1.90, 2.10], direction_values,
+                                    kind="scatter", color="neutral", width=2, marker_size=5))
+
+    labels = ("補正前", "ラベル不使用", "分割検証", "同一画像\n（循環・参考）")
+    bottom = rect[1] + rect[3] + 8
+    for x, value, label in zip(range(4), values, labels):
+        px, py = fs.data_to_pixel(ax, [x], [value])
+        anchor = "ct" if value <= 0.0 else "cb"
+        offset = 4.0 if value <= 0.0 else -4.0
+        img = np.asarray(fs.text_box(img, "%+.1f" % value,
+                                     (float(px[0]), float(py[0] + offset)), anchor=anchor,
+                                     pad=1, box_alpha=0.70, font_size=11))
+        img = np.asarray(fs.text_box(img, label, (float(px[0]), bottom), anchor="ct",
+                                     pad=1, box_alpha=0.0, font_size=11))
+
+    img = np.asarray(fs.text_box(img, "PSF 補正で線幅の偏りがどう変わるか", (10, 8),
+                                 anchor="lt", font_size=13))
+    img = np.asarray(fs.text_box(
+        img, "棒 = 全断面の中央値　● = 分割検証の各方向　薄色斜線 = 循環・参考",
+        (10, 29), anchor="lt", font_size=11))
+    img = np.asarray(fs.text_box(img, "線幅の偏りの中央値 [nm]（0 = 偏りなし）",
+                                 (10, h - 48), anchor="lb", font_size=11))
+    img = np.asarray(fs.text_box(
+        img, "分割: 前半5枚→後半  補正 %+.1f nm / 後半5枚→前半  補正 %+.1f nm" %
+        (directions[0]["correction_nm"], directions[1]["correction_nm"]),
+        (10, h - 24), anchor="lb", font_size=10))
+    return img
 
 
 def virtual_sem_prediction():
@@ -910,6 +1025,10 @@ def main() -> None:
     print("  分割検証: 画像 %s から得た補正 %+.1f nmを画像 %sへ、逆向きは %+.1f nm。" %
           (correction_eval["split_images"][0], correction_eval["split_train_correction_nm"][0],
            correction_eval["split_images"][1], correction_eval["split_train_correction_nm"][1]))
+    for direction in correction_eval["split_directions"]:
+        print("    画像 %s -> %s: 補正 %+.1f nm、適用後の偏り %+.1f nm。" %
+              (direction["train_images"], direction["target_images"],
+               direction["correction_nm"], direction["after_nm"]))
     print("  ラベル不使用: 切り出し自身の符号付き距離を Fullseye blob_distance で作り、"
           "edge-spread の PSF sigma 中央 %.1f nm。絶対偏りを %.1f %% %s。" %
           (float(np.median(sigma_nm)), abs(100.0 * reduction_fraction),
@@ -974,19 +1093,8 @@ def main() -> None:
             title="線幅分布と偏り（%s、n=%d）" % (threshold_best, len(wr)),
             caption="ラベルの主中心線上で両端と曲がり角を除き、等間隔の連続断面幅を"
                     "ラベルと切り出しに同じ手続きで測った。", source=SOURCE)
-        figs.save_plot(
-            "psf_correction",
-            [("補正前", [0, 1], [before_med, before_med]),
-             ("ラベル不使用", [0, 1], [after_med, after_med]),
-             ("分割検証", [0, 1], [correction_eval["split"]["after_nm"]] * 2),
-             ("同一画像（循環）", [0, 1], [correction_eval["same_image"]["after_nm"]] * 2),
-             ("偏りゼロ", [0, 1], [0.0, 0.0])],
-            xlabel="", ylabel="線幅の偏り [nm]",
-            title="PSF 補正: 像単独・5/5 分割・循環参考を分離",
-            caption="補正前 %+.1f nmに対し、ラベル不使用 %+.1f nm、5/5 分割 %+.1f nm、"
-                    "同一画像 %+.1f nm（同一画像は循環する参考値）。" %
-                    (before_med, after_med, correction_eval["split"]["after_nm"],
-                     correction_eval["same_image"]["after_nm"]), source=SOURCE)
+        figs.save("psf_correction", render_psf_correction(correction_eval),
+                  caption=psf_correction_caption(correction_eval), source=SOURCE)
 
     print("門: 合成幅 ±1 px / 実データの二方式 ±1 px / SVG 二重読取一致 / "
           "全指標有限 / via 対応 1対1 / 図の環境変数門")

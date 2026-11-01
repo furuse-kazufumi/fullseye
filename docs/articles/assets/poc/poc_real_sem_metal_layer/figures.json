@@ -35,10 +35,10 @@
  {
   "file": "04_psf_correction.png",
   "name": "psf_correction",
-  "caption": "補正前 -14.6 nmに対し、ラベル不使用 -7.8 nm、5/5 分割 -0.5 nm、同一画像 +3.1 nm（同一画像は循環する参考値）。",
+  "caption": "線幅の偏りの中央値。補正前 -14.6 nm、ラベル不使用 -7.8 nm、5/5 分割 -0.5 nm、同一画像 +3.1 nm。分割の点は、前半5枚で得た補正 -1.4 nmを後半へ適用した偏り -13.2 nmと、後半5枚の補正 -17.8 nmを前半へ適用した偏り +10.5 nm。薄色斜線の同一画像は循環する参考値。",
   "shape": [
-   360,
-   708,
+   440,
+   780,
    3
   ],
   "source": "Rothaug et al., A Real-World Metal-Layer SEM Image Dataset with Partial Labels, Edmond/MPG, DOI 10.17617/3.HY5SYN, CC BY 4.0; paper DOI 10.1145/3605769.3624000"

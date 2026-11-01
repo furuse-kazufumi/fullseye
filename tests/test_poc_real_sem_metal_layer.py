@@ -80,6 +80,18 @@ def test_correction_evaluation_cross_fits_label_models_both_directions():
     assert got["split"]["before_nm"] == 10.0
     assert got["split"]["after_nm"] == 3.0
     assert got["image_only"]["after_nm"] == 7.5
+    assert got["split_directions"] == [
+        {"train_images": [0, 1], "target_images": [2, 3], "correction_nm": 11.0,
+         "before_nm": 10.0, "after_nm": -1.0, "rows": 2},
+        {"train_images": [2, 3], "target_images": [0, 1], "correction_nm": 3.0,
+         "before_nm": 10.0, "after_nm": 7.0, "rows": 2},
+    ]
+    fig = poc.render_psf_correction(got)
+    assert fig.shape == (440, 780, 3)
+    assert np.isfinite(fig).all()
+    caption = poc.psf_correction_caption(got)
+    assert "前半5枚で得た補正 +11.0 nmを後半へ適用した偏り -1.0 nm" in caption
+    assert "薄色斜線" in caption
 
 
 def test_partial_border_track_label_gap_is_counted_and_only_gap_is_excluded():
