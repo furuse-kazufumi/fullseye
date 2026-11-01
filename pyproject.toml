@@ -142,7 +142,7 @@ py-modules = [
   # `torch_lazy` is the lazy torch/torch.nn.functional shim imported by
   # accel_match / match3d / feat_* — it MUST ship or those modules ImportError
   # on a pip install (it keeps `import torch`, ~700 ms, off every start-up).
-  "api", "param_specs", "ops", "backend_safe", "torch_lazy", "fileio", "opsfileio",
+  "api", "param_specs", "ops", "backend_safe", "torch_lazy", "fileio", "opsfileio", "_archive_tarxz",
   # ★2026-10-25: numpy_twins は backends_auto / backends_filters2 / backends_regions2 が import する
   #   (scikit-image の無い環境の双子)。py-modules に無いと wheel から落ちて 3 backend ごと消える。
   "numpy_twins",

@@ -34,6 +34,7 @@ from collections.abc import Mapping
 
 import numpy as np
 import mesh as _mesh
+import _archive_tarxz
 
 __all__ = [
     "table_write_csv", "table_read_csv",
@@ -1269,6 +1270,9 @@ def archive_create(paths_or_items, fmt, *, root=None, level=None, deterministic=
         raise ValueError(f"{op}: level must be an integer from 0 through 9")
     if fmt == "tar" and level != 9:
         raise ValueError(f"{op}: level has no meaning for uncompressed tar; leave it as None")
+    if fmt == "tar.xz":
+        return _archive_tarxz.create(paths_or_items, root=root, level=level,
+                                     deterministic=deterministic, op=op)
     entries = _archive_items(paths_or_items, root, deterministic, op)
     if fmt == "zip":
         return _create_zip(entries, level, deterministic)
