@@ -56,6 +56,38 @@ ENV_DIR = "FULLSEYE_FIGURE_DIR"
 #: この倍率で Fullseye の annotate 族へ渡す。未設定時は発表用の 2 倍描画。
 ENV_SCALE = "FULLSEYE_FIGURE_SCALE"
 
+#: 日本語を描けるフォントの既知パス。PoC 2 本にあった固定順探索を共通化し、
+#: Ubuntu の fonts-noto-cjk / fonts-ipafont-gothic と macOS の標準パスを補った。
+_JAPANESE_FONT_PATHS = {
+    False: (
+        r"C:\Windows\Fonts\YuGothM.ttc",
+        r"C:\Windows\Fonts\meiryo.ttc",
+        r"C:\Windows\Fonts\msgothic.ttc",
+        "/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc",
+        "/usr/share/fonts/opentype/noto/NotoSansCJKjp-Regular.otf",
+        "/usr/share/fonts/opentype/ipafont-gothic/ipag.ttf",
+        "/usr/share/fonts/opentype/ipafont-gothic/ipagp.ttf",
+        "/usr/share/fonts/truetype/fonts-japanese-gothic.ttf",
+        "/usr/share/fonts/truetype/vlgothic/VL-Gothic-Regular.ttf",
+        "/usr/share/fonts/truetype/takao-gothic/TakaoPGothic.ttf",
+        "/System/Library/Fonts/ヒラギノ角ゴシック W3.ttc",
+        "/System/Library/Fonts/Hiragino Sans GB.ttc",
+    ),
+    True: (
+        r"C:\Windows\Fonts\YuGothB.ttc",
+        r"C:\Windows\Fonts\meiryob.ttc",
+        "/usr/share/fonts/opentype/noto/NotoSansCJK-Bold.ttc",
+        "/usr/share/fonts/opentype/noto/NotoSansCJKjp-Bold.otf",
+        "/System/Library/Fonts/ヒラギノ角ゴシック W6.ttc",
+    ),
+}
+
+_JAPANESE_FONT_FAMILIES = (
+    "Yu Gothic", "Meiryo", "MS Gothic", "Noto Sans CJK JP", "Noto Sans JP",
+    "BIZ UDGothic", "IPA Gothic", "IPAGothic", "VL Gothic", "TakaoGothic",
+    "Hiragino Sans",
+)
+
 #: 1 回の実行で書く枚数の上限。暴走した例がディスクを埋めないための歯止め。
 MAX_FIGURES = 64
 
@@ -119,6 +151,57 @@ _auto_default()
 def enabled() -> bool:
     """図を出す設定になっているか。重い描画を組む前の分岐に使う。"""
     return target_dir() is not None
+
+
+def japanese_font_path(*, bold: bool = False, fail_closed: bool = True) -> Path | None:
+    """日本語フォントのファイルを固定順で探す。
+
+    ``bold`` は通常体と太字体を混ぜない。既知の Windows/Linux/macOS パスを先に
+    調べ、matplotlib があれば登録済みフォントも同じ書体順で調べる。見つからない
+    ときは既定で、調べたパスをすべて含む :class:`RuntimeError` を送出する。
+    matplotlib のように英語へ退避できる呼び出し側だけ ``fail_closed=False`` を使う。
+    """
+    searched: list[Path] = []
+
+    def consider(raw_path) -> Path | None:
+        path = Path(raw_path)
+        if path not in searched:
+            searched.append(path)
+        return path if path.is_file() else None
+
+    for raw_path in _JAPANESE_FONT_PATHS[bool(bold)]:
+        found = consider(raw_path)
+        if found is not None:
+            return found
+
+    # mesh_props.py の探索範囲を維持する。matplotlib は任意依存なので、無ければ
+    # 既知パスだけで完結する。
+    try:
+        from matplotlib import font_manager
+    except ImportError:
+        pass
+    else:
+        family_order = {name: n for n, name in enumerate(_JAPANESE_FONT_FAMILIES)}
+        bold_weights = {"bold", "demibold", "semibold", "heavy", "black", "700", "800", "900"}
+        entries = []
+        for entry in font_manager.fontManager.ttflist:
+            if entry.name not in family_order:
+                continue
+            entry_is_bold = str(entry.weight).lower() in bold_weights
+            if entry_is_bold == bool(bold):
+                entries.append((family_order[entry.name], str(entry.fname)))
+        for _order, raw_path in sorted(entries):
+            found = consider(raw_path)
+            if found is not None:
+                return found
+
+    if not fail_closed:
+        return None
+    paths = "\n".join("  - %s" % path for path in searched) or "  - (候補なし)"
+    raise RuntimeError(
+        "showcase 用の日本語%sフォントが見つからない。探したパス:\n%s"
+        % ("太字" if bold else "", paths)
+    )
 
 
 def _figure_scale(scale=None) -> int:

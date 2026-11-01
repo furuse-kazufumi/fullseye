@@ -47,6 +47,7 @@ import numpy as np
 # モジュールに解決されるようにする(PYTHONPATH=. で既にルートが末尾にある場合の先取りも兼ねる)。
 _REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(_REPO_ROOT))
+import examplefig as figs  # noqa: E402
 
 from mesh_props import (  # noqa: E402  (sys.path 調整後に import)
     boundary_vertices,
@@ -147,15 +148,13 @@ def _use_jp_font(fm, plt) -> bool:
 
     見つからなければ False を返し、呼び出し側は英語ラベルへ退避する(tofu 回避)。
     """
-    candidates = ["Yu Gothic", "Meiryo", "MS Gothic", "Noto Sans CJK JP",
-                  "Noto Sans JP", "BIZ UDGothic", "Yu Mincho", "MS Mincho"]
-    available = {f.name for f in fm.fontManager.ttflist}
-    for name in candidates:
-        if name in available:
-            plt.rcParams["font.family"] = name
-            plt.rcParams["axes.unicode_minus"] = False   # マイナス記号の tofu 回避
-            return True
-    return False
+    path = figs.japanese_font_path(fail_closed=False)
+    if path is None:
+        return False
+    fm.fontManager.addfont(str(path))
+    plt.rcParams["font.family"] = fm.FontProperties(fname=str(path)).get_name()
+    plt.rcParams["axes.unicode_minus"] = False   # マイナス記号の tofu 回避
+    return True
 
 
 def render_gallery(sphere, sph_vn, torus, tor_curv, bars, out_path: Path) -> bool:
