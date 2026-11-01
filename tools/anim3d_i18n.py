@@ -17,7 +17,9 @@
 作例の build スクリプトは **書き換えない**。作例は文字列を ``fs.viewer_text(ja, en)`` の 2 言語で書くので、
 その ``main()`` を走らせ、``fs.write_viewer`` に渡った仕様(spec)を横取りする(作例自身の検査はそのまま走る)。
 仕様の中の ja/en だけの文字列の辞書をすべて見つけ、翻訳表から zh / tw / ko / de / hi / fr を埋めて
-8 言語の仕様にし、``write_viewer(..., lang=LANGS, detect_lang=True)`` で書く
+通常は 8 言語の仕様にし、``write_viewer(..., lang=LANGS, detect_lang=True)`` で書く。
+作例が ``ANIM3D_I18N_LANGS = ("ja", "en")`` を明示した場合だけ、翻訳表を要求せず ja/en の仕様をそのまま書く
+(既存作例は従来どおり 8 言語)。
 (``?lang=xx`` が最優先、無ければブラウザの言語)。
 
 横取りの間、``write_viewer`` は **要求されたパスに書かない**(一時フォルダに同じ名前で書いてそのパスを返す)。
@@ -304,6 +306,13 @@ def capture_specs(script: Path, argv: list[str] | None = None, quiet: bool = Tru
             if not hasattr(mod, "main"):
                 raise RuntimeError("%s に main() が無い" % script.name)
             rc = mod.main(list(argv or []))
+            requested = getattr(mod, "ANIM3D_I18N_LANGS", None)
+            if requested is not None:
+                requested = tuple(requested)
+                if requested != ("ja", "en"):
+                    raise ValueError("ANIM3D_I18N_LANGS は ('ja', 'en') だけ指定できる: %r" % (requested,))
+                for spec in got:
+                    spec["_anim3d_i18n_langs"] = list(requested)
     except SystemExit as exc:
         rc = exc.code
     except Exception:
@@ -336,12 +345,29 @@ def pick_spec(specs: list[dict], viewer_id: str | None) -> dict:
     return specs[0]
 
 
+def requested_languages(spec: dict) -> tuple[dict, tuple[str, ...]]:
+    """Return a clean spec and its explicitly requested publication languages."""
+    clean = copy.deepcopy(spec)
+    langs = tuple(clean.pop("_anim3d_i18n_langs", LANGS))
+    if langs not in (tuple(LANGS), ("ja", "en")):
+        raise ValueError("公開言語は 8 言語または ja/en だけ: %r" % (langs,))
+    return clean, langs
+
+
+def prepare(spec: dict, table: dict) -> tuple[dict, tuple[str, ...]]:
+    """Apply the translation gate only when the source requests all eight languages."""
+    clean, langs = requested_languages(spec)
+    if langs == ("ja", "en"):
+        return clean, langs
+    return translate(clean, table), langs
+
+
 def build(example: str, out: str | os.PathLike, table: dict | None = None, viewer_id: str | None = None,
           argv: list[str] | None = None) -> str:
-    """作例を走らせ、門を通し、8 言語(?lang → ブラウザの言語)の HTML を ``out`` に書く。"""
+    """作例を走らせ、門を通し、要求言語(?lang → ブラウザの言語)の HTML を ``out`` に書く。"""
     spec = pick_spec(capture_specs(example_script(example), argv), viewer_id)
-    spec8 = translate(spec, table if table is not None else load_table(example))
-    return pv.write_viewer(spec8, out, list(LANGS), detect_lang=True)
+    ready, langs = prepare(spec, table if table is not None else load_table(example))
+    return pv.write_viewer(ready, out, list(langs), detect_lang=True)
 
 
 # --------------------------------------------------------------------------- commit 済みページの門
@@ -747,16 +773,19 @@ def main(argv: list[str] | None = None) -> int:
             else:
                 print(js)
             return 0
-        _, unused = audit(spec, table)
-        for u in unused:
-            print("警告: 使われていない訳 %r" % u, file=sys.stderr)
-        spec8 = translate(spec, table)
-        n = len({d["en"] for _, d in iter_texts(spec8)})
+        clean, langs = requested_languages(spec)
+        if langs == tuple(LANGS):
+            _, unused = audit(clean, table)
+            for u in unused:
+                print("警告: 使われていない訳 %r" % u, file=sys.stderr)
+        ready, langs = prepare(spec, table)
+        n = len({d["en"] for _, d in iter_texts(ready)})
+        lang_label = "8 言語" if len(langs) == 8 else "ja/en"
         if a.check:
-            print("ok: %s の文字列 %d 本が 8 言語そろい、数値・コード片も en と一致" % (ex, n))
+            print("ok: %s の文字列 %d 本、%s の門を通過" % (ex, n, lang_label))
             return 0
-        path = pv.write_viewer(spec8, a.out, list(LANGS), detect_lang=True)
-        print("wrote %s (%.2f MB, 8 言語, 文字列 %d 本)" % (path, os.path.getsize(path) / 1e6, n))
+        path = pv.write_viewer(ready, a.out, list(langs), detect_lang=True)
+        print("wrote %s (%.2f MB, %s, 文字列 %d 本)" % (path, os.path.getsize(path) / 1e6, lang_label, n))
         return 0
     except GateError as exc:
         print(str(exc), file=sys.stderr)
