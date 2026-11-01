@@ -17,7 +17,7 @@ import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import examplefig as figs
-from normalized_threshold import image_standardize, ptile_threshold, sigma_threshold
+from normalized_threshold import image_standardize_raw, ptile_threshold, sigma_threshold
 
 
 SLUG = "poc_threshold_transfer_after_normalization"
@@ -81,7 +81,7 @@ def raw_mask(image: np.ndarray, threshold: float) -> np.ndarray:
 
 
 def sigma_mask(image: np.ndarray, k: float) -> np.ndarray:
-    z = image_standardize(image, method="robust")
+    z = image_standardize_raw(image, method="robust")
     return sigma_threshold(z, k=k, polarity="bright")
 
 
