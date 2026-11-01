@@ -480,6 +480,10 @@ with warnings.catch_warnings():
     from reconstruction import triangulate_points, rel_pose_to_essential_matrix  # noqa: E402,F401
     from shapematch import pyr_down, image_pyramid  # noqa: E402,F401
     from symmetry3d import rotational_symmetry_score  # noqa: E402,F401
+    from symmetry2d import (  # noqa: E402,F401
+        center_from_symmetric_edges, reflection_axis, rotational_symmetry,
+        symmetry_difference_map, symmetry_score,
+    )
     # 3-D 合成パイプライン(pipeline3d が import できない環境では api 側の代役 = 呼ぶと ImportError)
     from api import (  # noqa: E402,F401
         register_pointclouds, align_cad_to_scan, measure_plane, inspect_roundness, match_sdf, register_auto)
@@ -1254,6 +1258,8 @@ __all__ = [
     "dilation2", "get_bounding_box_object_model_3d", "normals_to_gradients", "integrate_gradients",
     "triangulate_points", "rel_pose_to_essential_matrix", "pyr_down", "image_pyramid",
     "rotational_symmetry_score",
+    "center_from_symmetric_edges", "reflection_axis", "rotational_symmetry",
+    "symmetry_difference_map", "symmetry_score",
     "register_pointclouds", "align_cad_to_scan", "measure_plane", "inspect_roundness", "match_sdf",
     "register_auto",
 ]

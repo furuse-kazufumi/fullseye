@@ -1,0 +1,41 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">center_from_symmetric_edges — AOI <code style="color:#22d3bf">symmetry</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.center_from_symmetric_edges(image, threshold=0.08, sigma=1.0, min_span=6.0, mad_z=3.5, diagonals=False)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import symmetry2d; symmetry2d.center_from_symmetric_edges(image, threshold=0.08, sigma=1.0, min_span=6.0, mad_z=3.5, diagonals=False)</code>、台帳から引くなら <code style="color:#22d3bf">opsaoi.get(&quot;center_from_symmetric_edges&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>対称な外側エッジ対の中点を頑健に集約し、2-D 中心を返す。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
+<p>image : array-like, shape (H, W)</p>
+<p>グレー画像または region。各行・列のプロファイルを既存の</p>
+<p><code style="color:#22d3bf">measuring1d.measure_pos</code> でサブピクセル計測する。</p>
+<p>threshold : float, default 0.08</p>
+<p>エッジ振幅の下限。画像ダイナミックレンジに対する比で、範囲は (0, 1]。</p>
+<p>sigma : float, default 1.0</p>
+<p>1-D プロファイルを微分する前の Gaussian sigma [px]。範囲は [0, 10]。</p>
+<p>min_span : float, default 6.0</p>
+<p>採用する外側エッジ対の最小間隔 [px]。範囲は (0, min(H,W)]。</p>
+<p>mad_z : float, default 3.5</p>
+<p>中点を残す MAD 尺度。範囲は [1, 20]。</p>
+<p>diagonals : bool, default False</p>
+<p>True なら ±45 度の走査線も中心候補に加える。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>dict</p>
+<p><code style="color:#22d3bf">center=(row,col)</code>、採用対数、MAD、走査方向別の中点を持つ table。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Notes</h4>
+<p>片側の欠けは少数の中点だけを動かすため面積重心より頑健だが、欠けのない滑らかな領域では全画素を使う重心の方が精密になり得る。対が 3 本未満、定数入力、対象が画像端で切れる場合は <code style="color:#22d3bf">ValueError</code>。内部模様の最外エッジが外形より強い場合や、欠けが走査線の半数を超える場合は頑健集約でも救えない。</p>
+<p>Liu, Hel-Or, Kaplan and Van Gool, Computational Symmetry in Computer Vision and Computer Graphics, FnT CGV 5(1-2), 2010.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideaoi:aoi_frontend">aoi_frontend ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_symmetry_self_reference_inspection">poc_symmetry_self_reference_inspection</a> — <code style="color:#22d3bf">py -3.11 examples/poc_symmetry_self_reference_inspection.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opaoi:symmetry_difference_map">symmetry_difference_map</a> · <a style="color:#22d3bf" href="opaoi:symmetry_score">symmetry_score</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">symmetry</code>)</h3>
+<p><a style="color:#22d3bf" href="opaoi:reflection_axis">reflection_axis</a> · <a style="color:#22d3bf" href="opaoi:rotational_symmetry">rotational_symmetry</a> · <a style="color:#22d3bf" href="opaoi:symmetry_difference_map">symmetry_difference_map</a> · <a style="color:#22d3bf" href="opaoi:symmetry_score">symmetry_score</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: symmetry2d.py — AOI operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

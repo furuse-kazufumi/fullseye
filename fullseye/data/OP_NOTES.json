@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3623,
- "n_notes": 3629,
+ "n_ops": 3628,
+ "n_notes": 3634,
  "notes": {
   "vol_dilate": [
    {
@@ -14700,6 +14700,56 @@
     "in": "image2d × image2d",
     "out": "image2d",
     "path": "docs/ops/aoi/photometric/flat_field_correct.md"
+   }
+  ],
+  "center_from_symmetric_edges": [
+   {
+    "op": "center_from_symmetric_edges",
+    "dim": "aoi",
+    "category": "symmetry",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/aoi/symmetry/center_from_symmetric_edges.md"
+   }
+  ],
+  "reflection_axis": [
+   {
+    "op": "reflection_axis",
+    "dim": "aoi",
+    "category": "symmetry",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/aoi/symmetry/reflection_axis.md"
+   }
+  ],
+  "rotational_symmetry": [
+   {
+    "op": "rotational_symmetry",
+    "dim": "aoi",
+    "category": "symmetry",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/aoi/symmetry/rotational_symmetry.md"
+   }
+  ],
+  "symmetry_difference_map": [
+   {
+    "op": "symmetry_difference_map",
+    "dim": "aoi",
+    "category": "symmetry",
+    "in": "image2d × table",
+    "out": "image2d",
+    "path": "docs/ops/aoi/symmetry/symmetry_difference_map.md"
+   }
+  ],
+  "symmetry_score": [
+   {
+    "op": "symmetry_score",
+    "dim": "aoi",
+    "category": "symmetry",
+    "in": "image2d × table",
+    "out": "measurement",
+    "path": "docs/ops/aoi/symmetry/symmetry_score.md"
    }
   ],
   "align_frames": [

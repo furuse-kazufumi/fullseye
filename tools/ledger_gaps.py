@@ -271,6 +271,8 @@ KNOB_SKIP_SLOW = frozenset({
 KNOB_EXEMPT = {
     ("fit_circle_geometric", "radius_limit_factor"):
         "safety bound: changing it only accepts or rejects a line-like circle fit",
+    ("center_from_symmetric_edges", "min_span"):
+        "acceptance bound: changing it only admits or rejects short edge pairs",
 }
 
 

@@ -1,8 +1,8 @@
 {
- "n_ops": 3623,
+ "n_ops": 3628,
  "tiers": {
   "color": 12,
-  "ledger": 2664,
+  "ledger": 2669,
   "nary": 17,
   "registry": 930
  },
@@ -3519,6 +3519,19 @@
    "ledger": "opsoptics",
    "dim": "optics",
    "in_sorts": []
+  },
+  {
+   "name": "center_from_symmetric_edges",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "symmetry",
+   "tier": "ledger",
+   "ledger": "opsaoi",
+   "dim": "aoi",
+   "in_sorts": [
+    "image2d"
+   ]
   },
   {
    "name": "central_moments",
@@ -24696,6 +24709,19 @@
    ]
   },
   {
+   "name": "reflection_axis",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "symmetry",
+   "tier": "ledger",
+   "ledger": "opsaoi",
+   "dim": "aoi",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
    "name": "reflection_symmetry_score",
    "halcon": "",
    "in_sort": "points",
@@ -25892,6 +25918,19 @@
     "scalar",
     "scalar",
     "scalar"
+   ]
+  },
+  {
+   "name": "rotational_symmetry",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "symmetry",
+   "tier": "ledger",
+   "ledger": "opsaoi",
+   "dim": "aoi",
+   "in_sorts": [
+    "image2d"
    ]
   },
   {
@@ -30371,6 +30410,20 @@
    ]
   },
   {
+   "name": "symmetry_difference_map",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "image2d",
+   "category": "symmetry",
+   "tier": "ledger",
+   "ledger": "opsaoi",
+   "dim": "aoi",
+   "in_sorts": [
+    "image2d",
+    "table"
+   ]
+  },
+  {
    "name": "symmetry_fold",
    "halcon": "",
    "in_sort": "scalar",
@@ -30395,6 +30448,20 @@
    "dim": "drive",
    "in_sorts": [
     "matrix"
+   ]
+  },
+  {
+   "name": "symmetry_score",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "measurement",
+   "category": "symmetry",
+   "tier": "ledger",
+   "ledger": "opsaoi",
+   "dim": "aoi",
+   "in_sorts": [
+    "image2d",
+    "table"
    ]
   },
   {

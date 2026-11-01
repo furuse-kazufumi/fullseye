@@ -1,0 +1,37 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">symmetry_score — AOI <code style="color:#22d3bf">symmetry</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d × table</code> → <code style="color:#22d3bf">measurement</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.symmetry_score(image, symmetry, exclusion_mask=None, detrend=True)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import symmetry2d; symmetry2d.symmetry_score(image, symmetry, exclusion_mask=None, detrend=True)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsaoi.get(&quot;symmetry_score&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>self-referenced difference को image dynamic range से normalise कर symmetry से दूरी लौटाता है।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
+<p>image : array-like, shape (H, W)</p>
+<p>検査するグレー画像。</p>
+<p>symmetry : dict</p>
+<p>反射軸または回転中心の table。</p>
+<p>exclusion_mask : array-like or None, default None</p>
+<p>設計上の非対称を除外する mask。形は image と同じ。</p>
+<p>detrend : bool, default True</p>
+<p>線形照明差を除くなら True。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>float</p>
+<p>有効画素の平均絶対差 / 画像ダイナミックレンジ。0 が完全対称で、大きいほど</p>
+<p>対称から遠い連続値。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Notes</h4>
+<p>定数・一様入力は相対床で <code style="color:#22d3bf">ValueError</code>。この値は同じ画像、同じモデル、同じ mask の乱れを比較する量で、異なる補間床や画角の画像を一律の合否しきい値で比べない。軸・中心を乱れた画像自身から毎回再推定すると、推定器が欠陥へ寄って単調性を弱める。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideaoi:aoi_frontend">aoi_frontend family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_symmetry_self_reference_inspection">poc_symmetry_self_reference_inspection</a> — <code style="color:#22d3bf">py -3.11 examples/poc_symmetry_self_reference_inspection.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">measurement</code> को input के रूप में लेते हैं)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">symmetry</code>)</h3>
+<p><a style="color:#22d3bf" href="opaoi:center_from_symmetric_edges">center_from_symmetric_edges</a> · <a style="color:#22d3bf" href="opaoi:reflection_axis">reflection_axis</a> · <a style="color:#22d3bf" href="opaoi:rotational_symmetry">rotational_symmetry</a> · <a style="color:#22d3bf" href="opaoi:symmetry_difference_map">symmetry_difference_map</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: symmetry2d.py — AOI operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

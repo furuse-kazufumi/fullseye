@@ -484,7 +484,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 전부 보기
 
-PoC 283개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
+PoC 284개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
 
 <noscript><p><a href="../../GALLERY.en.html">(JavaScript가 없으면 갤러리 페이지에서 모든 그림을 볼 수 있습니다.)</a></p></noscript>
 
@@ -503,7 +503,7 @@ PoC 283개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
 </div>
 </details>
 
-<details class="vall"><summary><b>산업 검사</b> (50)</summary>
+<details class="vall"><summary><b>산업 검사</b> (51)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_barcode_1d/01_misread_split.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_barcode_1d.jpg" alt="1차원 바코드" width="200" height="200"><span>1차원 바코드</span></a>
 <a href="../../articles/assets/poc/poc_battery_electrode_tortuosity/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_battery_electrode_tortuosity.jpg" alt="전극 굴곡도" width="200" height="200"><span>전극 굴곡도</span></a>
@@ -538,6 +538,7 @@ PoC 283개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
 <a href="../../articles/assets/poc/poc_print_layer_inspection/01_slice_stack.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_print_layer_inspection.jpg" alt="3D 프린트 층 검사" width="200" height="200"><span>3D 프린트 층 검사</span></a>
 <a href="../../articles/assets/poc/poc_agv_fleet/01_agv_naive_vs_adg.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_agv_fleet.jpg" alt="AGV 창고" width="200" height="200"><b>&#9654;</b><span>AGV 창고</span></a>
 <a href="../../articles/assets/poc/poc_am_thermal_to_ct/01_melt_pool_frames.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_am_thermal_to_ct.jpg" alt="적층 제조와 CT" width="200" height="200"><b>&#9654;</b><span>적층 제조와 CT</span></a>
+<a href="../../articles/assets/poc/poc_symmetry_self_reference_inspection/01_self_reference_defect.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_symmetry_self_reference_inspection.jpg" alt="2-D 대칭 자기참조 검사" width="200" height="200"><span>2-D 대칭 자기참조 검사</span></a>
 <a href="../../articles/assets/poc/poc_sam_hybrid_bonding_voids/03_amplitude_vs_phase.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_sam_hybrid_bonding_voids.jpg" alt="에코 위상으로 하이브리드 접합 보이드 찾기" width="200" height="200"><span>에코 위상으로 하이브리드 접합 보이드 찾기</span></a>
 <a href="../../articles/assets/poc/poc_si_wafer_pl_defect_visibility/01_pl_groove_vs_diffusion_length.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_si_wafer_pl_defect_visibility.jpg" alt="PL 영상의 홈과 확산 길이" width="200" height="200"><span>PL 영상의 홈과 확산 길이</span></a>
 <a href="../../articles/assets/poc/poc_illumination_cone_vs_na/06_hairline_cone_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_illumination_cone_vs_na.jpg" alt="조명 원뿔과 관찰 NA" width="200" height="200"><b>&#9654;</b><span>조명 원뿔과 관찰 NA</span></a>

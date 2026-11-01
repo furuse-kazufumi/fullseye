@@ -1,0 +1,44 @@
+[
+ {
+  "file": "01_self_reference_defect.png",
+  "name": "self_reference_defect",
+  "caption": "欠陥領域の平均残差 0.193、模様・照明領域 1.5e-15。比 1.2e+14 で欠陥だけが残る。",
+  "shape": [
+   254,
+   859,
+   3
+  ]
+ },
+ {
+  "file": "02_center_tradeoff.png",
+  "name": "center_tradeoff",
+  "caption": "片側欠けではエッジ対中心 0.231 px、面積重心 3.171 px。欠け無しでは重心 0.041 px がエッジ対 0.305 px より精密。",
+  "shape": [
+   128,
+   309,
+   3
+  ],
+  "csv": "02_center_tradeoff.csv",
+  "tsv": "02_center_tradeoff.tsv"
+ },
+ {
+  "file": "03_rotational_order_noise.png",
+  "name": "rotational_order_noise",
+  "caption": "n=2,3,4,6 × 3 条件の正答率 12/12。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_symmetry_score_monotone.png",
+  "name": "symmetry_score_monotone",
+  "caption": "5 段階すべてで隣接差が正。軸モデルは固定して比較した。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ }
+]

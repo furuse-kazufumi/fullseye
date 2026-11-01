@@ -484,7 +484,7 @@ Certaines descriptions de PoC sont en anglais.
 
 ## Tout voir
 
-283 PoC et 5 exemples de robots. Ouvrez un groupe pour afficher ses vignettes.
+284 PoC et 5 exemples de robots. Ouvrez un groupe pour afficher ses vignettes.
 
 <noscript><p><a href="../../GALLERY.en.html">(Sans JavaScript, toutes les figures sont visibles sur la page de la galerie.)</a></p></noscript>
 
@@ -503,7 +503,7 @@ Certaines descriptions de PoC sont en anglais.
 </div>
 </details>
 
-<details class="vall"><summary><b>Inspection industrielle</b> (50)</summary>
+<details class="vall"><summary><b>Inspection industrielle</b> (51)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_barcode_1d/01_misread_split.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_barcode_1d.jpg" alt="Code-barres 1-D" width="200" height="200"><span>Code-barres 1-D</span></a>
 <a href="../../articles/assets/poc/poc_battery_electrode_tortuosity/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_battery_electrode_tortuosity.jpg" alt="Tortuosité des électrodes" width="200" height="200"><span>Tortuosité des électrodes</span></a>
@@ -538,6 +538,7 @@ Certaines descriptions de PoC sont en anglais.
 <a href="../../articles/assets/poc/poc_print_layer_inspection/01_slice_stack.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_print_layer_inspection.jpg" alt="Inspection des couches d'impression 3D" width="200" height="200"><span>Inspection des couches d'impression 3D</span></a>
 <a href="../../articles/assets/poc/poc_agv_fleet/01_agv_naive_vs_adg.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_agv_fleet.jpg" alt="Entrepôt à AGV" width="200" height="200"><b>&#9654;</b><span>Entrepôt à AGV</span></a>
 <a href="../../articles/assets/poc/poc_am_thermal_to_ct/01_melt_pool_frames.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_am_thermal_to_ct.jpg" alt="Fabrication additive et CT" width="200" height="200"><b>&#9654;</b><span>Fabrication additive et CT</span></a>
+<a href="../../articles/assets/poc/poc_symmetry_self_reference_inspection/01_self_reference_defect.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_symmetry_self_reference_inspection.jpg" alt="Inspection auto-référencée par symétrie 2-D" width="200" height="200"><span>Inspection auto-référencée par symétrie 2-D</span></a>
 <a href="../../articles/assets/poc/poc_sam_hybrid_bonding_voids/03_amplitude_vs_phase.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_sam_hybrid_bonding_voids.jpg" alt="Détection des vides de collage hybride par la phase" width="200" height="200"><span>Détection des vides de collage hybride par la phase</span></a>
 <a href="../../articles/assets/poc/poc_si_wafer_pl_defect_visibility/01_pl_groove_vs_diffusion_length.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_si_wafer_pl_defect_visibility.jpg" alt="Rainure dans l'image PL et longueur de diffusion" width="200" height="200"><span>Rainure dans l'image PL et longueur de diffusion</span></a>
 <a href="../../articles/assets/poc/poc_illumination_cone_vs_na/06_hairline_cone_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_illumination_cone_vs_na.jpg" alt="Cône d'éclairage et ON d'observation" width="200" height="200"><b>&#9654;</b><span>Cône d'éclairage et ON d'observation</span></a>

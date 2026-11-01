@@ -1,0 +1,35 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">reflection_axis — AOI <code style="color:#22d3bf">symmetry</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.reflection_axis(image, angle_step=2.0, offset_search=4.0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import symmetry2d; symmetry2d.reflection_axis(image, angle_step=2.0, offset_search=4.0)</code>、台帳から引くなら <code style="color:#22d3bf">opsaoi.get(&quot;reflection_axis&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>線対称な 2-D 画像から反射軸の角度とオフセットを推定する。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
+<p>image : array-like, shape (H, W)</p>
+<p>グレー画像または region。回転済みの試験像はグレーを補間してから二値化する。</p>
+<p>angle_step : float, default 2.0</p>
+<p>粗い角度走査の刻み [degree]。範囲は [0.25, 15]。最良点は連続最適化で詰める。</p>
+<p>offset_search : float, default 4.0</p>
+<p>エッジ対中心から軸法線方向に探索する半幅 [px]。範囲は [0.5, min(H,W)/3]。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>dict</p>
+<p><code style="color:#22d3bf">angle_deg</code> は +col 軸から +row 方向へ測る [0,180) 度、<code style="color:#22d3bf">offset_px</code> は</p>
+<p>画像中心から軸の法線方向への符号付き距離。score、2位との差 margin も返す。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Notes</h4>
+<p>線形補間した鏡像との正規化絶対差を最小化する。定数入力、外側エッジ対が足りない入力は <code style="color:#22d3bf">ValueError</code>。円・正方形・回転対称と線対称を併せ持つ図形では軸が多義で、小さい <code style="color:#22d3bf">margin</code> がその警告になる。画像外で切れた対象や反射で等価な内部模様も一意な軸を保証しない。</p>
+<p>Liu et al., Computational Symmetry in Computer Vision and Computer Graphics, FnT CGV 5(1-2), 2010.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideaoi:aoi_frontend">aoi_frontend ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• (まだありません)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opaoi:symmetry_difference_map">symmetry_difference_map</a> · <a style="color:#22d3bf" href="opaoi:symmetry_score">symmetry_score</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">symmetry</code>)</h3>
+<p><a style="color:#22d3bf" href="opaoi:center_from_symmetric_edges">center_from_symmetric_edges</a> · <a style="color:#22d3bf" href="opaoi:rotational_symmetry">rotational_symmetry</a> · <a style="color:#22d3bf" href="opaoi:symmetry_difference_map">symmetry_difference_map</a> · <a style="color:#22d3bf" href="opaoi:symmetry_score">symmetry_score</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: symmetry2d.py — AOI operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -499,7 +499,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## ぜんぶ見る
 
-PoC 283 本と、ロボットの例 5 本。グループを開くとサムネイルが出ます。
+PoC 284 本と、ロボットの例 5 本。グループを開くとサムネイルが出ます。
 
 <noscript><p><a href="../GALLERY.html">(JavaScript が無い環境では、ギャラリーのページで全部の図を見られます)</a></p></noscript>
 
@@ -518,7 +518,7 @@ PoC 283 本と、ロボットの例 5 本。グループを開くとサムネイ
 </div>
 </details>
 
-<details class="vall"><summary><b>産業検査</b> (50)</summary>
+<details class="vall"><summary><b>産業検査</b> (51)</summary>
 <div class="vg vs">
 <a href="../articles/assets/poc/poc_barcode_1d/01_misread_split.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_barcode_1d.jpg" alt="1 次元バーコード" width="200" height="200"><span>1 次元バーコード</span></a>
 <a href="../articles/assets/poc/poc_battery_electrode_tortuosity/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_battery_electrode_tortuosity.jpg" alt="電極の屈曲度" width="200" height="200"><span>電極の屈曲度</span></a>
@@ -553,6 +553,7 @@ PoC 283 本と、ロボットの例 5 本。グループを開くとサムネイ
 <a href="../articles/assets/poc/poc_print_layer_inspection/01_slice_stack.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_print_layer_inspection.jpg" alt="3D プリント層検査" width="200" height="200"><span>3D プリント層検査</span></a>
 <a href="../articles/assets/poc/poc_agv_fleet/01_agv_naive_vs_adg.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_agv_fleet.jpg" alt="AGV の倉庫" width="200" height="200"><b>&#9654;</b><span>AGV の倉庫</span></a>
 <a href="../articles/assets/poc/poc_am_thermal_to_ct/01_melt_pool_frames.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_am_thermal_to_ct.jpg" alt="積層造形と CT" width="200" height="200"><b>&#9654;</b><span>積層造形と CT</span></a>
+<a href="../articles/assets/poc/poc_symmetry_self_reference_inspection/01_self_reference_defect.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_symmetry_self_reference_inspection.jpg" alt="2-D対称性の自己参照検査" width="200" height="200"><span>2-D対称性の自己参照検査</span></a>
 <a href="../articles/assets/poc/poc_sam_hybrid_bonding_voids/03_amplitude_vs_phase.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_sam_hybrid_bonding_voids.jpg" alt="ハイブリッド接合のボイドを位相で" width="200" height="200"><span>ハイブリッド接合のボイドを位相で</span></a>
 <a href="../articles/assets/poc/poc_si_wafer_pl_defect_visibility/01_pl_groove_vs_diffusion_length.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_si_wafer_pl_defect_visibility.jpg" alt="PL 像の溝と拡散長" width="200" height="200"><span>PL 像の溝と拡散長</span></a>
 <a href="../articles/assets/poc/poc_illumination_cone_vs_na/06_hairline_cone_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_illumination_cone_vs_na.jpg" alt="照明の円錐と観察の NA" width="200" height="200"><b>&#9654;</b><span>照明の円錐と観察の NA</span></a>

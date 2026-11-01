@@ -4,13 +4,13 @@
 
 > **[紙面の計測館 総合案内](https://qiita.com/furuse-kazufumi/items/c1606bcfa2085d204ad6)** の一棟です。ほかの棟・用語・テーゼは案内にあります。
 
-この棟には **133 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
+この棟には **134 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
 
 > 各展示の「使用 op」から、その op のノート(型契約・罠・図・Studio で走るプログラム)へ飛べます: [オペレータ目録](https://furuse.work/OP_CATALOG.html) / [op ノートの索引](https://furuse.work/ops/INDEX.html)。
 
 ### 産業検査ウィング ―― 合格の数字と不合格の数字は両立する
 
-検査ラインの数字は合否に直結するので、1 つの指標に畳みたくなります。この部屋の 40 点は、畳んだ瞬間に消えるものを並べたものです。まとめた ROC が種類別の盲点を隠す織物、MTF が合格のまま黒レベルが不合格になる迷光、読取率だけ見ると寛容なデコーダが良く見えるバーコード。
+検査ラインの数字は合否に直結するので、1 つの指標に畳みたくなります。この部屋の 41 点は、畳んだ瞬間に消えるものを並べたものです。まとめた ROC が種類別の盲点を隠す織物、MTF が合格のまま黒レベルが不合格になる迷光、読取率だけ見ると寛容なデコーダが良く見えるバーコード。
 
 真値はどれも自分で仕込んであります。周期地の閉形式、レーザー断面の h(x)、1 次元熱伝導の解析解、閉形式の欠陥周波数。だから「検出できました」の先にある「どこで検出できなくなるか」を、しきい値を後から合わせずに測れます。
 
@@ -111,6 +111,36 @@ py -3.11 examples/poc_bearing_diagnosis.py
 この回が作った図は全部で **3 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_bearing_diagnosis)
 
 使用 op(ノートへ): [`bearing_defect_frequencies`](https://furuse.work/ops/acoustics/bearing/bearing_defect_frequencies.html) · [`envelope_spectrum`](https://furuse.work/ops/acoustics/bearing/envelope_spectrum.html) · [`spectral_kurtosis`](https://furuse.work/ops/acoustics/bearing/spectral_kurtosis.html) · [`spectrum`](https://furuse.work/ops/oned/signal/spectrum.html) · [`synthesize_bearing_signal`](https://furuse.work/ops/acoustics/synthesis/synthesize_bearing_signal.html)
+
+## No.2026.285 —— 2-D対称性の自己参照検査 ―― 正解画像なしで欠陥だけを残す
+
+対称な部品は、欠陥がなければ自身の鏡像や回転像と一致する。模様と照明むらを消した差分では、欠陥領域の平均が0.193になった。中心推定の頑健さと回転次数の正答率も併せて確かめた。
+
+[![2-D対称性の自己参照検査 ―― 正解画像なしで欠陥だけを残す](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symmetry_self_reference_inspection/01_self_reference_defect_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symmetry_self_reference_inspection/01_self_reference_defect.png)
+
+*↑ **2-D対称性の自己参照検査 ―― 正解画像なしで欠陥だけを残す** ―― 対称模様と線形照明むらを持つ部品へ非対称欠陥を1個入れ、推定軸で鏡映した自身との差を取った。一次面を除いた差分は欠陥領域で平均0.193、模様・照明領域で1.5e-15。片側を欠いた円板の中心誤差はエッジ対0.231 px、面積重心3.171 pxだが、欠け無しでは重心の方が精密だった。回転次数はn=2,3,4,6と雑音・ぼけ3条件の12/12で正答した。*
+
+[![片側欠けではエッジ対中心 0.231 px、面積重心 3.171 px。欠け無しでは重心 0.041 px がエッジ対 0.305 px より精密。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symmetry_self_reference_inspection/02_center_tradeoff_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symmetry_self_reference_inspection/02_center_tradeoff.png)
+
+*↑ 測定の図 ―― 片側欠けではエッジ対中心 0.231 px、面積重心 3.171 px。欠け無しでは重心 0.041 px がエッジ対 0.305 px より精密。*
+
+[![n=2,3,4,6 × 3 条件の正答率 12/12。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symmetry_self_reference_inspection/03_rotational_order_noise_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symmetry_self_reference_inspection/03_rotational_order_noise.png)
+
+*↑ n=2,3,4,6 × 3 条件の正答率 12/12。*
+
+[![5 段階すべてで隣接差が正。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symmetry_self_reference_inspection/04_symmetry_score_monotone_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symmetry_self_reference_inspection/04_symmetry_score_monotone.png)
+
+*↑ 5 段階すべてで隣接差が正。*
+
+```
+py -3.11 examples/poc_symmetry_self_reference_inspection.py
+```
+
+ソース: [examples/poc_symmetry_self_reference_inspection.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_symmetry_self_reference_inspection.py)
+
+この回が作った図は全部で **4 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_symmetry_self_reference_inspection)
+
+使用 op(ノートへ): [`center_from_symmetric_edges`](https://furuse.work/ops/aoi/symmetry/center_from_symmetric_edges.html) · [`rotational_symmetry`](https://furuse.work/ops/aoi/symmetry/rotational_symmetry.html) · [`symmetry_difference_map`](https://furuse.work/ops/aoi/symmetry/symmetry_difference_map.html) · [`symmetry_score`](https://furuse.work/ops/aoi/symmetry/symmetry_score.html)
 
 ## No.2026.094 —— バンプの共平面性を基板そりから分ける ―― 引きすぎると本物の不良も消える
 
