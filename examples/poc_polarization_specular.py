@@ -55,7 +55,7 @@ AZIMUTH = 22.5                  # 入射面の方位。4 方位の格子から�
 THETAS = (20.0, 40.0, THETA_B, 70.0)
 
 
-def dofp_inspection_scene(size=1024, seed=33, extinction_ratio=120.0):
+def dofp_inspection_scene(size=1024, seed=33, extinction_ratio=120.0, return_truth=False):
     """Create a four-angle focal-plane mosaic of a glossy inspection scene."""
     if size < 64 or size % 2:
         raise ValueError("size must be an even integer of at least 64")
@@ -72,9 +72,17 @@ def dofp_inspection_scene(size=1024, seed=33, extinction_ratio=120.0):
     glare = np.exp(-(((xn - 0.70) / 0.052) ** 2 + ((yn - 0.39) / 0.10) ** 2)) * plastic
     metal_glare = np.exp(-(((xn - 0.27) / 0.035) ** 2 + ((yn - 0.39) / 0.13) ** 2)) * metal
     az = 28.0
-    s0 = diffuse + 2.25 * glare + 1.35 * metal_glare
-    dolp_true = np.clip(0.995 * glare / np.maximum(s0, 1e-9)
-                        + 0.18 * metal_glare / np.maximum(s0, 1e-9), 0.0, 0.995)
+    if return_truth:
+        # 入口動画は検光子の理想応答を教えるため、飽和する既存カメラ露光とは分け、
+        # 同じ幾何・拡散・光沢ローブの線形 HDR 真値を返す。既定値 False の既存シーン、
+        # 戻り値、図、数値は一切変えない。
+        s0 = diffuse + 0.45 * glare + 0.35 * metal_glare
+        dolp_true = np.clip(0.92 * glare / np.max(glare)
+                            + 0.15 * metal_glare / np.max(metal_glare), 0.0, 0.995)
+    else:
+        s0 = diffuse + 2.25 * glare + 1.35 * metal_glare
+        dolp_true = np.clip(0.995 * glare / np.maximum(s0, 1e-9)
+                            + 0.18 * metal_glare / np.maximum(s0, 1e-9), 0.0, 0.995)
     phase = np.deg2rad(2.0 * az)
     s1 = s0 * dolp_true * np.cos(phase)
     s2 = s0 * dolp_true * np.sin(phase)
@@ -98,11 +106,16 @@ def dofp_inspection_scene(size=1024, seed=33, extinction_ratio=120.0):
     dolp = np.hypot(st1, st2) / np.maximum(st0, 1e-9)
     aolp = np.mod(0.5 * np.degrees(np.arctan2(st2, st1)), 180.0)
     glare_removed = np.clip(st0 - np.hypot(st1, st2), 0.0, 1.0)
-    return {"raw_mosaic": raw, "analyzers": analyzers,
-            "stokes": np.stack([st0, st1, st2]), "dolp": dolp,
-            "aolp_deg": aolp, "glare_removed": glare_removed,
-            "scene_masks": {"metal": metal, "plastic": plastic},
-            "azimuth_deg": az, "extinction_ratio": extinction_ratio}
+    result = {"raw_mosaic": raw, "analyzers": analyzers,
+              "stokes": np.stack([st0, st1, st2]), "dolp": dolp,
+              "aolp_deg": aolp, "glare_removed": glare_removed,
+              "scene_masks": {"metal": metal, "plastic": plastic},
+              "azimuth_deg": az, "extinction_ratio": extinction_ratio}
+    if return_truth:
+        result.update({"truth_stokes": np.stack([s0, s1, s2]),
+                       "truth_dolp": dolp_true, "truth_diffuse": diffuse,
+                       "truth_glare": glare, "truth_metal_glare": metal_glare})
+    return result
 
 
 def polarization_resemblance_gate(size=256, seed=34):
@@ -170,6 +183,155 @@ def fig_dofp_camera():
                    signed=[False, True, True, False, False, False],
                    caption="Stokes fields, polarization degree, hue-wheel angle and the minimum-polarized component. Low-degree regions retain angle noise.")
     return r
+
+
+def fig_analyzer_sweep_explained():
+    """入口動画: 検光子を回した真値像、Stokes 分離、3 標本の呼吸を同時に示す。"""
+    if not figs.enabled():
+        return None
+    from PIL import Image, ImageDraw
+    import annotate as AN
+
+    r = dofp_inspection_scene(size=1024, seed=33, return_truth=True)
+    s0, s1, s2 = [np.asarray(a, dtype=np.float64) for a in r["truth_stokes"]]
+    glare = np.asarray(r["truth_glare"])
+    metal_glare = np.asarray(r["truth_metal_glare"])
+    diffuse = np.asarray(r["truth_diffuse"])
+    a_yx = np.unravel_index(np.argmax(glare), glare.shape)
+    b_yx = np.unravel_index(np.argmax(metal_glare), metal_glare.shape)
+    # C は拡散が中央値付近、両光沢ローブが実質ゼロの候補から、観測 DoLP が
+    # 最小の点を機械的に選ぶ。「動かない地」を目で選ばない。
+    med = float(np.median(diffuse))
+    candidates = (np.abs(diffuse - med) < 0.003) & (glare < 1e-6) & (metal_glare < 1e-6)
+    cy, cx = np.nonzero(candidates)
+    ci = int(np.argmin(r["dolp"][cy // 2, cx // 2]))
+    c_yx = (int(cy[ci]), int(cx[ci]))
+    samples = (a_yx, b_yx, c_yx)
+    labels = ("A", "B", "C")
+
+    theta_deg = np.arange(72, dtype=np.float64) * 2.5
+    theta = np.deg2rad(theta_deg)
+    curves = []
+    for yy, xx in samples:
+        curves.append(0.5 * (s0[yy, xx] + s1[yy, xx] * np.cos(2.0 * theta)
+                             + s2[yy, xx] * np.sin(2.0 * theta)))
+    ratios = [float(np.max(v) / np.min(v)) for v in curves]
+    dolps = [float(r["dolp"][yy // 2, xx // 2]) for yy, xx in samples]
+    assert ratios[0] >= 5.0
+    assert ratios[2] <= 1.1
+
+    def put_text(im, text, xy, size=22, anchor="lt", fill=(245, 245, 245),
+                 plate=None, pad=3):
+        m = AN.measure_text(text, font_size=size, min_font_size=size, wrap=False)
+        w, h = m["width"], m["height"]
+        ax, ay = anchor
+        x0 = int(xy[0] - (w if ax == "r" else w // 2 if ax == "c" else 0))
+        y0 = int(xy[1] - (h if ay == "b" else h // 2 if ay == "m" else 0))
+        if x0 - pad < 0 or y0 - pad < 0 or x0 + w + pad > im.width or y0 + h + pad > im.height:
+            raise ValueError("text overflow: %r at %r, rect=(%d,%d,%d,%d), canvas=%r" %
+                             (text, xy, x0, y0, w, h, im.size))
+        d = ImageDraw.Draw(im)
+        if plate is not None:
+            d.rectangle((x0 - pad, y0 - pad, x0 + w + pad, y0 + h + pad), fill=plate)
+        for i, line in enumerate(m["lines"]):
+            d.text((x0, y0 + i * m["line_height"]), line, font=m["font"], fill=fill)
+
+    def gray_rgb(a, gamma=True):
+        q = np.clip(np.asarray(a, dtype=np.float64), 0.0, 1.0)
+        if gamma:
+            q = q ** (1.0 / 2.2)
+        q = np.rint(q * 255.0).astype(np.uint8)
+        return np.repeat(q[..., None], 3, axis=2)
+
+    static_glare = Image.fromarray(gray_rgb(r["glare_removed"])).resize(
+        (300, 266), Image.Resampling.BILINEAR)
+    ay, ax = a_yx
+    y0 = min(max(0, ay - 12), r["raw_mosaic"].shape[0] - 24)
+    x0 = min(max(0, ax - 12), r["raw_mosaic"].shape[1] - 24)
+    crop = gray_rgb(r["raw_mosaic"][y0:y0 + 24, x0:x0 + 24], gamma=False)
+    mosaic_zoom = Image.fromarray(crop).resize((288, 288), Image.Resampling.NEAREST)
+
+    def draw_graph(im, k):
+        d = ImageDraw.Draw(im)
+        rect = (990, 145, 1244, 397)
+        d.rectangle(rect, outline=(185, 190, 200), width=1)
+        rx0, ry0, rx1, ry1 = rect
+        xp = lambda v: rx0 + float(v) / 180.0 * (rx1 - rx0)
+        yp = lambda v: ry1 - float(v) * (ry1 - ry0)
+        for tv in (0, 45, 90, 135, 180):
+            px = int(round(xp(tv))); d.line((px, ry1, px, ry1 + 5), fill=(185, 190, 200))
+            put_text(im, str(tv), (px, ry1 + 8), anchor="ct")
+        for tv in (0.0, 0.5, 1.0):
+            py = int(round(yp(tv))); d.line((rx0 - 5, py, rx0, py), fill=(185, 190, 200))
+            put_text(im, "%.1f" % tv, (rx0 - 8, py), anchor="rm")
+        colors = ((255, 145, 55), (75, 180, 255), (115, 230, 140))
+        for lab, curve, col in zip(labels, curves, colors):
+            pts = [(int(round(xp(t))), int(round(yp(np.clip(v, 0.0, 1.0)))))
+                   for t, v in zip(theta_deg, curve)]
+            d.line(pts, fill=col, width=3)
+            for p in pts:
+                d.ellipse((p[0] - 2, p[1] - 2, p[0] + 2, p[1] + 2), fill=col)
+            put_text(im, lab, (pts[-1][0] - 5, pts[-1][1]), size=22, anchor="rm",
+                     fill=col, plate=(18, 21, 28), pad=1)
+        cur = int(round(xp(theta_deg[k])))
+        d.line((cur, ry0, cur, ry1), fill=(255, 238, 80), width=2)
+        put_text(im, "3画素の強度対 θ", (950, 62), size=24)
+        put_text(im, "強度", (950, 104))
+        put_text(im, "θ [度]", ((rx0 + rx1) // 2, 438), anchor="ct")
+        put_text(im, "偏光度 DoLP\nA %.2f / B %.2f / C %.3f" % tuple(dolps),
+                 (950, 485), size=22)
+        put_text(im, "最大/最小比\nA %.2f / B %.2f / C %.2f" % tuple(ratios),
+                 (950, 560), size=22)
+
+    frames = []
+    for k, deg in enumerate(theta_deg):
+        analyser = 0.5 * (s0 + s1 * np.cos(2.0 * theta[k]) + s2 * np.sin(2.0 * theta[k]))
+        im = Image.new("RGB", (1280, 720), (18, 21, 28))
+        d = ImageDraw.Draw(im)
+        d.rectangle((0, 0, 1279, 55), fill=(31, 38, 51))
+        put_text(im, "偏光で鏡面を剥がす —— 検光子を回すと光沢だけが cos² で呼吸する",
+                 (14, 10), size=24)
+        put_text(im, "検光子 θ = %.1f°" % deg, (1265, 10), size=24, anchor="rt")
+
+        left = Image.fromarray(gray_rgb(analyser)).resize((560, 560), Image.Resampling.BILINEAR)
+        im.paste(left, (20, 70))
+        ld = ImageDraw.Draw(im)
+        dcx, dcy, rr = 62, 112, 28
+        ld.ellipse((dcx - rr, dcy - rr, dcx + rr, dcy + rr), outline=(255, 245, 100), width=2)
+        rad = np.deg2rad(deg)
+        ld.line((dcx, dcy, dcx + rr * np.cos(rad), dcy + rr * np.sin(rad)),
+                fill=(255, 245, 100), width=3)
+        for (yy, xx), lab, col in zip(samples, labels,
+                                      ((255, 145, 55), (75, 180, 255), (115, 230, 140))):
+            px = 20 + int(round(xx * 559 / 1023)); py = 70 + int(round(yy * 559 / 1023))
+            ld.ellipse((px - 7, py - 7, px + 7, py + 7), outline=col, width=3)
+            put_text(im, lab, (px + 10, py), size=22, anchor="lm", fill=col,
+                     plate=(18, 21, 28), pad=1)
+
+        put_text(im, "鏡面を剥がした像\nS0 − √(S1²+S2²)", (610, 62), size=22)
+        im.paste(static_glare.resize((300, 230), Image.Resampling.BILINEAR), (610, 140))
+
+        im.paste(mosaic_zoom, (616, 410))
+        put_text(im, "DoFPモザイク　拡大12×", (610, 370), size=22,
+                 plate=(18, 21, 28), pad=2)
+        # 12 px の単画素へ 22 px 文字は入らないため、代表 2×2 格子を同じ並びの
+        # 22 px ラベルで示す。元画素への最近傍拡大は上の 24×24 crop だけに限定。
+        for text, px, py in (("0°", 630, 420), ("45°", 765, 420),
+                             ("90°", 630, 650), ("135°", 755, 650)):
+            put_text(im, text, (px, py), size=22, plate=(18, 21, 28), pad=1)
+
+        draw_graph(im, k)
+        ImageDraw.Draw(im).rectangle((0, 680, 1279, 719), fill=(31, 38, 51))
+        put_text(im, "Fullseye: polarization_separate(4方位→Stokes)。鏡面=偏光成分、拡散=無偏光。ブリュースター角近傍で分離が最良。",
+                 (12, 679), size=22, pad=0)
+        frames.append(np.asarray(im, dtype=np.uint8))
+
+    figs.save_video("analyzer_sweep_explained", frames, fps=12.0, gif_every=2, gif_width=640,
+                    caption="検光子を0〜177.5度まで回すと、プラスチックの光沢Aだけが強く呼吸し、拡散地Cは動かない。"
+                            "観測DoLPはA/B/C = %.2f/%.2f/%.3f、最大/最小比は %.2f/%.2f/%.2f。"
+                            % (*dolps, *ratios))
+    return {"dolp": dict(zip(labels, dolps)), "max_min_ratio": dict(zip(labels, ratios)),
+            "sample_yx": dict(zip(labels, samples))}
 
 
 # --------------------------------------------------------------------------- #
@@ -602,6 +764,7 @@ def main():
                     caption="画素率 1.8 倍で誤差 2.8 倍 —— 雑音(σ に比例)や較正誤差"
                             "(δ に比例)と違い、飽和は超線形に効く。",
                     col_w=125)
+    fig_analyzer_sweep_explained()
     print("  → 白飛びは **一度も例外を出さない**。I_max が頭打ちになると振幅が")
     print("     縮み、I_min が持ち上がり、拡散が過大評価される側へ静かに倒れる。")
     print("     しかも壊れ方が急峻: 飽和 0.6% で 70 度の偏りの 0.15 倍、1.3% で")
