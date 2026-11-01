@@ -28,16 +28,17 @@ sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."
 import examplefig as figs  # noqa: E402
 import lenstol as LT  # noqa: E402
 import raytrace as RT  # noqa: E402
+from fullseye.evaluation import GateAdapter, GateStyle  # noqa: E402
+from fullseye.evaluation import save_video as save_evaluation_video  # noqa: E402
 
 CI = bool(os.environ.get("CI"))
 FAILS = []
+_GATE = GateAdapter(style=GateStyle(), failed_names=FAILS)
 NUMBERS = {}
 
 
 def gate(name, ok, detail=""):
-    print("   [%s] %s%s" % ("ok" if ok else "NG", name, " — " + detail if detail else ""))
-    if not ok:
-        FAILS.append(name)
+    _GATE(name, ok, detail)
 
 
 def triplet():
@@ -194,8 +195,10 @@ def figures(system, tab, crit, sens, base, after, distributions, rebudget, tight
         frames.append(figs.render_plot([("spot", xy[:, 0], xy[:, 1])], title="%s = %+.4g" % (tab[0]["id"], v),
                                        size=(1200, 600), kinds=["scatter"], colors=["emphasis"],
                                        xlabel="x [um]", ylabel="y [um]", aspect="equal"))
-    figs.save_video("tolerance_sweep", frames, caption="感度首行を -tol から +tol へ掃引した点像。", fps=12, gif_every=2,
-                    gif_width=1200)
+    save_evaluation_video(
+        "tolerance_sweep", frames, caption="感度首行を -tol から +tol へ掃引した点像。",
+        capture_fps=12, playback_fps=12, hold_frames=0, gif_stride=2,
+        display_scale=1200 / frames[0].shape[1], interpolation="linear")
 
 
 def main():
