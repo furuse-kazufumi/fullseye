@@ -52,6 +52,10 @@ import numpy as np
 #: 図を書き出すディレクトリを指す環境変数。未設定なら :func:`save` は無処理。
 ENV_DIR = "FULLSEYE_FIGURE_DIR"
 
+#: グラフと表を論理寸法の何倍で描くか。寸法だけを後から拡大せず、文字・線・余白も
+#: この倍率で Fullseye の annotate 族へ渡す。未設定時は発表用の 2 倍描画。
+ENV_SCALE = "FULLSEYE_FIGURE_SCALE"
+
 #: 1 回の実行で書く枚数の上限。暴走した例がディスクを埋めないための歯止め。
 MAX_FIGURES = 64
 
@@ -115,6 +119,22 @@ _auto_default()
 def enabled() -> bool:
     """図を出す設定になっているか。重い描画を組む前の分岐に使う。"""
     return target_dir() is not None
+
+
+def _figure_scale(scale=None) -> int:
+    """描画倍率を返す。``scale`` が無ければ :data:`ENV_SCALE`、さらに無ければ 2。
+
+    現在の描画器は画素格子へ整数で配置するため、倍率も正の整数に限定する。誤った
+    環境変数を黙って 1 倍へ戻すと発表用の図だけ粗くなるので、ここは fail-closed。
+    """
+    raw = os.environ.get(ENV_SCALE, "2") if scale is None else scale
+    try:
+        value = int(raw)
+    except (TypeError, ValueError) as exc:
+        raise ValueError("%s は正の整数で指定する: %r" % (ENV_SCALE, raw)) from exc
+    if value < 1 or str(raw).strip() not in (str(value), "+" + str(value)):
+        raise ValueError("%s は正の整数で指定する: %r" % (ENV_SCALE, raw))
+    return value
 
 
 def errors() -> list[str]:
@@ -652,9 +672,9 @@ def save_grid(name: str, panels, captions=None, title=None, ncols=2,
         # 24×24 の縮小マップは PoC で普通に出るのに、エラーは
         # 「題を短くしろ」と言う —— 実際の直し方は「パネルを大きくしろ」。
         # 2 人の担当が独立に同じ穴に落ちた(看板の scene 図が 1 枚消えた例あり)ので、
-        # 呼び手ごとに拡大を書かせず、ここで 1 度だけ最近傍拡大する。
-        # 最近傍にするのは、拡大で**値を作らない**ため(補間すると図の上で
-        # 存在しない中間値が生まれ、疑似カラーが嘘をつく)。
+        # 呼び手ごとに拡大を書かせず、ここで 1 度だけ補間する。入力が十分大きければ
+        # 1 倍のままなので実データの解像度を保つ。拡大が必要な小画像だけは、発表図で
+        # 画素の四角を増やす最近傍を避け、双三次補間する。
         for factor in _grid_upscales(imgs, caps):
             try:
                 fig = fs.annotate_figure_grid(_upscale(imgs, factor), captions=caps,
@@ -670,7 +690,7 @@ def save_grid(name: str, panels, captions=None, title=None, ncols=2,
         return None
 
 
-#: 題が入らないときに試す拡大率(最近傍。1 = そのまま)。
+#: 題が入らないときに試す拡大率(双三次補間。1 = そのまま)。
 _GRID_UPSCALES = (1, 2, 3, 4, 6, 8)
 
 
@@ -693,19 +713,31 @@ def _grid_upscales(imgs, caps):
 
 
 def _upscale(imgs, factor):
-    """最近傍で整数倍に拡大する(値を作らない)。``factor == 1`` は素通し。"""
+    """双三次補間で整数倍に拡大する。``factor == 1`` は元配列を素通し。"""
     if factor == 1:
         return imgs
+    from PIL import Image
+
     out = []
     for im in imgs:
         a = np.asarray(im)
-        out.append(np.repeat(np.repeat(a, factor, axis=0), factor, axis=1))
+        h, w = a.shape[:2]
+        if np.issubdtype(a.dtype, np.floating):
+            # Pillow の RGB float は未対応なので uint8 を補間して元の [0, 1] 表現へ戻す。
+            rgb8 = np.clip(np.rint(a * 255.0), 0, 255).astype(np.uint8)
+            resized = np.asarray(Image.fromarray(rgb8).resize(
+                (w * factor, h * factor), Image.Resampling.BICUBIC))
+            out.append(resized.astype(a.dtype) / 255.0)
+        else:
+            out.append(np.asarray(Image.fromarray(a).resize(
+                (w * factor, h * factor), Image.Resampling.BICUBIC)))
     return out
 
 
 def save_plot(name: str, series, xlabel: str = "", ylabel: str = "", title: str = "",
               caption: str = "", size=(560, 360), xlim=None, ylim=None,
-              kinds=None, styles=None, colors=None, aspect=None, source: str = "") -> Path | None:
+              kinds=None, styles=None, colors=None, aspect=None, source: str = "",
+              scale=None) -> Path | None:
     """折れ線・散布のグラフを書く。``series`` = ``[(ラベル, x, y), ...]``。``source`` は :func:`save` と同じ(出典)。
 
     ``styles`` は系列ごとの線種(``None`` / ``"dashed"`` / ``"dotted"``)の列。**真値・参照線は破線**にする
@@ -723,7 +755,7 @@ def save_plot(name: str, series, xlabel: str = "", ylabel: str = "", title: str 
     try:
         img = render_plot(series, xlabel=xlabel, ylabel=ylabel, title=title or name, size=size,
                           xlim=xlim, ylim=ylim, kinds=kinds, styles=styles, colors=colors,
-                          aspect=aspect)
+                          aspect=aspect, scale=_figure_scale(scale))
         return save(name, img, caption, source=source)
     except Exception as exc:                            # noqa: BLE001
         _errors.append("%s(plot): %s: %s" % (name, type(exc).__name__, exc))
@@ -731,7 +763,8 @@ def save_plot(name: str, series, xlabel: str = "", ylabel: str = "", title: str 
 
 
 def render_plot(series, xlabel: str = "", ylabel: str = "", title: str = "", size=(560, 360),
-                xlim=None, ylim=None, kinds=None, styles=None, colors=None, aspect=None):
+                xlim=None, ylim=None, kinds=None, styles=None, colors=None, aspect=None,
+                scale=None):
     """:func:`save_plot` の絵だけを返す(``(h, w, 3)`` float、[0, 1])。ファイルは書かない。
 
     ★2026-10-03 に切り出した。Studio の結果ビューが 1-D 系列や表の列を**同じ見た目の
@@ -741,7 +774,11 @@ def render_plot(series, xlabel: str = "", ylabel: str = "", title: str = "", siz
     import fullseye as fs
     if not series:
         raise ValueError("render_plot: series is empty")
-    w, h = size
+    # 直接描画は Studio などの画面表示にも使うため等倍を既定にする。発表資料へ
+    # 保存する経路だけが FULLSEYE_FIGURE_SCALE を解決して明示的に渡す。
+    s = _figure_scale(1 if scale is None else scale)
+    logical_w, logical_h = size
+    w, h = logical_w * s, logical_h * s
     img = np.full((h, w, 3), 1.0)
     xs_all = np.concatenate([np.asarray(x, float).ravel() for _, x, _ in series])
     ys_all = np.concatenate([np.asarray(y, float).ravel() for _, _, y in series])
@@ -754,7 +791,7 @@ def render_plot(series, xlabel: str = "", ylabel: str = "", title: str = "", siz
     pad = 0.06 * (yl[1] - yl[0] or 1.0)
     yl = (yl[0] - pad, yl[1] + pad)
     if aspect == "equal":
-        pw, ph = w - 96, h - 108                       # 下の rect と同じ大きさ
+        pw, ph = (logical_w - 96) * s, (logical_h - 108) * s  # 下の rect と同じ大きさ
         sx, sy = (xl[1] - xl[0]) / pw, (yl[1] - yl[0]) / ph
         if sx > sy:
             c_, half = 0.5 * (yl[0] + yl[1]), 0.5 * sx * ph
@@ -766,12 +803,13 @@ def render_plot(series, xlabel: str = "", ylabel: str = "", title: str = "", siz
         raise ValueError("save_plot: aspect は None か 'equal'")
     # ★2026-10-03: 下の余白を 16 px 広げた。軸名の帯(左下)が x 軸の目盛りの数字に重なって
     #   「0.5」や「20」を隠していた(transforms_tour の図で踏んだ。全部の save_plot に効く)。
-    rect = (72, 44, w - 96, h - 108)
+    rect = (72 * s, 44 * s, (logical_w - 96) * s, (logical_h - 108) * s)
     ax = fs.axes_transform(rect, xl, yl)
     xt, yt = fs.nice_ticks(xl[0], xl[1], 6), fs.nice_ticks(yl[0], yl[1], 5)
     img = np.asarray(fs.grid_lines(img, ax, xticks=xt, yticks=yt, alpha=0.25))
-    img = np.asarray(fs.axes_frame(img, ax, width=1))
-    img = np.asarray(fs.ticks(img, ax, xticks=xt, yticks=yt, tick_len=5, font_size=10))
+    img = np.asarray(fs.axes_frame(img, ax, width=1 * s))
+    img = np.asarray(fs.ticks(img, ax, xticks=xt, yticks=yt,
+                              tick_len=5 * s, font_size=10 * s))
     plain = img.copy()                              # データを描く前(凡例の置き場所を選ぶのに使う)
     # 役名は annotate の配色表にあるものだけ("accent" は無い)。
     colours = ("reference", "emphasis", "right", "wrong", "neutral")
@@ -804,7 +842,7 @@ def render_plot(series, xlabel: str = "", ylabel: str = "", title: str = "", siz
             extra["bar_width"] = single_bar_width
         img = np.asarray(fs.plot_series(img, ax, np.asarray(x, float),
                                         np.asarray(y, float), kind=kind,
-                                        color=c, width=2, marker_size=3, **extra))
+                                        color=c, width=2 * s, marker_size=3 * s, **extra))
         if label and (c, label) not in legend:
             legend.append((c, label))
     if len(legend) > 1:
@@ -813,34 +851,41 @@ def render_plot(series, xlabel: str = "", ylabel: str = "", title: str = "", siz
         #   半分隠した —— 隠れるのは「点」でなく「線の画素」なので、各隅に凡例を試しに描き、
         #   その矩形の下にあるデータの画素(背景でも格子でもない画素)を数えて最少の隅を選ぶ。
         x0, y0, rw, rh = rect
-        pos = {"rt": (x0 + rw - 6, y0 + 6), "lt": (x0 + 6, y0 + 6),
-               "rb": (x0 + rw - 6, y0 + rh - 6), "lb": (x0 + 6, y0 + rh - 6)}
+        pos = {"rt": (x0 + rw - 6 * s, y0 + 6 * s), "lt": (x0 + 6 * s, y0 + 6 * s),
+               "rb": (x0 + rw - 6 * s, y0 + rh - 6 * s),
+               "lb": (x0 + 6 * s, y0 + rh - 6 * s)}
         ink = np.abs(img - plain).max(axis=2) > 0.05       # データ線だけが描いた画素
         best, best_cost, box_w = "rt", None, 0
         for corner in ("rt", "lt", "rb", "lb"):
             probe = np.asarray(fs.legend_box(np.ones_like(img), legend, pos[corner], anchor=corner,
-                                             markers=True, font_size=11, swatch=11, pad=6))
+                                             markers=True, font_size=11 * s,
+                                             swatch=11 * s, pad=6 * s))
             box = np.abs(probe - 1.0).max(axis=2) > 0.02
             cols = np.flatnonzero(box.any(axis=0))
             box_w = max(box_w, int(cols.max() - cols.min() + 1) if cols.size else 0)
             cost = int(np.sum(ink & box))
             if best_cost is None or cost < best_cost:
                 best, best_cost = corner, cost
-        if best_cost > 40:
+        if best_cost > 40 * s * s:
             # どの隅でもデータを隠す(Runge の図は四隅すべてに線がある)→ 軸の外、右に出す
             # (MATLAB の 'eastoutside')。キャンバスを凡例の幅だけ広げる。
-            wide = np.ones((img.shape[0], img.shape[1] + box_w + 16, 3))
+            wide = np.ones((img.shape[0], img.shape[1] + box_w + 16 * s, 3))
             wide[:, :img.shape[1]] = img
-            img = np.asarray(fs.legend_box(wide, legend, (img.shape[1] + 4, y0 + 6), anchor="lt",
-                                           markers=True, font_size=11, swatch=11, pad=6))
+            img = np.asarray(fs.legend_box(wide, legend,
+                                           (img.shape[1] + 4 * s, y0 + 6 * s), anchor="lt",
+                                           markers=True, font_size=11 * s,
+                                           swatch=11 * s, pad=6 * s))
         else:
             img = np.asarray(fs.legend_box(img, legend, pos[best], anchor=best,
-                                           markers=True, font_size=11, swatch=11, pad=6))
+                                           markers=True, font_size=11 * s,
+                                           swatch=11 * s, pad=6 * s))
     if title:
-        img = np.asarray(fs.text_box(img, title, (10, 8), anchor="lt", font_size=13))
+        img = np.asarray(fs.text_box(img, title, (10 * s, 8 * s), anchor="lt",
+                                     font_size=13 * s))
     foot = (xlabel + ("   |   " if xlabel and ylabel else "") + ylabel).strip()
     if foot:
-        img = np.asarray(fs.text_box(img, foot, (10, h - 10), anchor="lb", font_size=11))
+        img = np.asarray(fs.text_box(img, foot, (10 * s, h - 10 * s), anchor="lb",
+                                     font_size=11 * s))
     return img
 
 
@@ -852,7 +897,7 @@ COL_W_MIN, COL_W_MAX = 56, 320
 COL_GAP = 22
 
 
-def _column_widths(header, rows, col_w=None) -> list[int]:
+def _column_widths(header, rows, col_w=None, scale=1) -> list[int]:
     """表の列幅を **中身を測って**決める(:func:`fullseye.measure_text`)。
 
     ★2026-09-06 まで固定 110 px だった。数字だけの列でも 110 px 取り、
@@ -866,17 +911,45 @@ def _column_widths(header, rows, col_w=None) -> list[int]:
 
     ncol = len(header)
     if col_w is not None:
-        return [int(col_w)] * ncol
+        return [int(col_w) * scale] * ncol
     out = []
     for j in range(ncol):
         cells = [str(header[j])] + [str(r[j]) for r in rows if j < len(r)]
-        wide = max(int(fs.measure_text(c, font_size=11)["width"]) for c in cells)
-        out.append(int(min(COL_W_MAX, max(COL_W_MIN, wide + COL_GAP))))
+        wide = max(int(fs.measure_text(c, font_size=11 * scale)["width"]) for c in cells)
+        out.append(int(min(COL_W_MAX * scale,
+                           max(COL_W_MIN * scale, wide + COL_GAP * scale))))
     return out
 
 
+def _render_table(header, rows, title: str = "", col_w=None, row_h=24, scale=None):
+    """表の画像だけを返す。寸法・文字・余白を同じ倍率で描く。"""
+    import fullseye as fs
+
+    s = _figure_scale(1 if scale is None else scale)
+    ncol = len(header)
+    widths = _column_widths(header, rows, col_w, scale=s)
+    xs = [14 * s + sum(widths[:j]) for j in range(ncol)]
+    w = 24 * s + sum(widths)
+    h = 56 * s + row_h * s * (len(rows) + 1)
+    img = np.full((h, w, 3), 1.0)
+    if title:
+        img = np.asarray(fs.text_box(img, title, (12 * s, 8 * s), anchor="lt",
+                                     font_size=13 * s))
+    y0 = 40 * s
+    for j, cell in enumerate(header):
+        img = np.asarray(fs.text_box(img, str(cell), (xs[j], y0),
+                                     anchor="lt", font_size=11 * s, color="emphasis"))
+    for i, row in enumerate(rows):
+        for j, cell in enumerate(row[:ncol]):
+            img = np.asarray(fs.text_box(img, str(cell),
+                                         (xs[j], y0 + row_h * s * (i + 1)),
+                                         anchor="lt", font_size=11 * s,
+                                         box_alpha=0.0, border=0))
+    return img
+
+
 def save_table(name: str, header, rows, title: str = "", caption: str = "",
-               col_w=None, row_h=24) -> Path | None:
+               col_w=None, row_h=24, scale=None) -> Path | None:
     """数表を**画像として**書き、**同じ内容を CSV/TSV でも置く**。
 
     「表も Fullseye で作れる」——`text_box` を格子状に置くだけ。値の整形は
@@ -896,26 +969,8 @@ def save_table(name: str, header, rows, title: str = "", caption: str = "",
     if target_dir() is None:
         return None
     try:
-        import fullseye as fs
-
-        ncol = len(header)
-        widths = _column_widths(header, rows, col_w)
-        xs = [14 + sum(widths[:j]) for j in range(ncol)]
-        w = 24 + sum(widths)
-        h = 56 + row_h * (len(rows) + 1)
-        img = np.full((h, w, 3), 1.0)
-        if title:
-            img = np.asarray(fs.text_box(img, title, (12, 8), anchor="lt", font_size=13))
-        y0 = 40
-        for j, cell in enumerate(header):
-            img = np.asarray(fs.text_box(img, str(cell), (xs[j], y0),
-                                         anchor="lt", font_size=11, color="emphasis"))
-        for i, row in enumerate(rows):
-            for j, cell in enumerate(row[:ncol]):
-                img = np.asarray(fs.text_box(img, str(cell),
-                                             (xs[j], y0 + row_h * (i + 1)),
-                                             anchor="lt", font_size=11,
-                                             box_alpha=0.0, border=0))
+        img = _render_table(header, rows, title=title, col_w=col_w, row_h=row_h,
+                            scale=_figure_scale(scale))
         path = save(name, img, caption)
         if path is not None:
             _write_table_data(path, header, rows)
