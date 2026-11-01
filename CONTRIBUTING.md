@@ -33,6 +33,13 @@ input. The fastest routes:
    goes through the i18n tables; comments and docstrings are **bilingual ja+en**
    in new code.
 
+## Figures, videos and exhibits
+
+They are judged by whether a reader gets the claim from the picture, which CI cannot
+check. `docs/POC_QUALITY_CRITERIA.md` (English: `docs/POC_QUALITY_CRITERIA.en.md`) holds
+the gate table, the brief skeleton and the report form; coding agents read the short
+version in `AGENTS.md`.
+
 ## Adding an operator
 
 `docs/ADDING_OPS.md` has the full walkthrough. Short version: implement + register
