@@ -35,6 +35,8 @@ def test_sweeps_move_colour_and_keep_thickness_closed_form():
         assert np.ptp(a[key]["thickness_endpoints"], axis=0).min() > 0
     bias = 100 * (a["index"]["thickness_endpoints"][0] / a["index"]["thickness_endpoints"][1] - 1)
     assert np.allclose(bias, [0.9, 1.9], atol=1e-12)
+    assert a["index"]["axial_exaggeration"] == 8.0
+    assert np.max(np.abs(a["index"]["interface_peak_offsets"])) <= 2
     assert all(c["ok"] for tab in spec["tabs"] for c in tab["checks"])
 
 
@@ -46,6 +48,9 @@ def test_paper_panels_exports_and_quality_gate():
         assert tab["panes"][1]["data"].shape[1:] == (3, 2)
         assert np.asarray(tab["bodies"][0]["val"]).ndim == 2
         assert np.asarray(tab["bodies"][1]["pos"]).ndim == 3
+        assert len(tab["bodies"]) == 6
+        assert all(s["lo"] > 0 and s["hi"] > s["lo"] for s in tab["series"])
+        assert all(len(s["references"]) == 1 for s in tab["series"])
     data = B.pv._pack_spec(spec, ["ja", "en"])
     B.pv.viewer_quality_gate_data(data)
     B.pv.viewer_motion_gate_data(data)

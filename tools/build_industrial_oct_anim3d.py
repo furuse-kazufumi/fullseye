@@ -4,11 +4,12 @@ from __future__ import annotations
 
 import argparse
 import math
+import os
 import sys
 from pathlib import Path
 
 import numpy as np
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageFont
 
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
@@ -27,6 +28,8 @@ PANEL = 256
 N_CLEAR_GROUP = 1.56
 N_BASE_GROUP = 1.64
 PHASE_BIAS = np.array([0.009, 0.019])
+AXIAL_EXAGGERATION = 8.0
+LATERAL_UM_PER_WORLD = 1000.0 / 4.5
 KEYS = ("V-D", "VI-D", "III-B", "IV-C")
 PAPER = {
     "V-D": ("濃色 A", "dark A", (44.6, 11.8), (45.5, 12.2)),
@@ -34,10 +37,29 @@ PAPER = {
     "III-B": ("黒 A", "black A", (99.8, 20.9), (103.3, 20.6)),
     "IV-C": ("黒 B", "black B", (72.3, 15.3), (74.4, 14.7)),
 }
+for _font_path in (Path(os.environ.get("WINDIR", "C:/Windows")) / "Fonts" / "arial.ttf",
+                   Path("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf")):
+    if _font_path.is_file():
+        PANEL_FONT = ImageFont.truetype(str(_font_path), 11)
+        break
+else:  # pragma: no cover - supported build hosts provide one of the fonts above
+    PANEL_FONT = ImageFont.load_default()
 
 
 def _e(value):
     return "< 1e-12" if abs(float(value)) < 1e-12 else "%.4g" % float(value)
+
+
+def _snap_to_column_mean_peak(image, z, target, max_rows=6):
+    """Snap an op-detected interface to the nearest local maximum in the flattened B-scan."""
+    mean = np.nanmean(np.asarray(image, float), axis=1)
+    maxima = np.flatnonzero((mean[1:-1] >= mean[:-2]) & (mean[1:-1] >= mean[2:])) + 1
+    row = int(np.argmin(np.abs(np.asarray(z) - target)))
+    nearby = maxima[np.abs(maxima - row) <= max_rows]
+    if not len(nearby):
+        return float(target)
+    peak = int(nearby[np.argmin(np.abs(nearby - row))])
+    return float(np.asarray(z)[peak])
 
 
 def _real_sample(data, key, n_lines=64):
@@ -59,12 +81,19 @@ def _real_sample(data, key, n_lines=64):
     second = octs.oct_layer_thickness(
         flat, n_interfaces=1, z_range_um=(z2 + 8.0, z2 + 60.0), min_prominence_db=1.0)
     z3 = float(second["z_opt_um"][0])
+    image_flat = np.asarray(flat["flat_image_db"], float)
+    z_flat = np.asarray(flat["z_um"], float) - 20.0
+    cumulative = np.array([
+        _snap_to_column_mean_peak(image_flat, z_flat, z2 - 20.0),
+        _snap_to_column_mean_peak(image_flat, z_flat, z3 - 20.0),
+    ])
+    optical = np.diff(np.r_[0.0, cumulative])
     return {
-        "key": key, "image": np.asarray(flat["flat_image_db"], float),
-        "z": np.asarray(flat["z_um"], float) - 20.0,
+        "key": key, "image": image_flat,
+        "z": z_flat,
         "profile": np.asarray(flat["db"], float),
-        "optical": np.array([z2 - 20.0, z3 - z2]),
-        "group_thickness": np.array([(z2 - 20.0) / N_CLEAR_GROUP, (z3 - z2) / N_BASE_GROUP]),
+        "optical": optical,
+        "group_thickness": optical / np.array([N_CLEAR_GROUP, N_BASE_GROUP]),
     }
 
 
@@ -101,9 +130,15 @@ def _synthetic_samples():
         except ValueError:
             group_t = np.array([25.0, 40.0]) * scale
             optical = group_t * np.array([N_CLEAR_GROUP, N_BASE_GROUP])
+        image_flat = np.asarray(flat["flat_image_db"], float)
+        z_flat = np.asarray(flat["z_um"], float) - 20.0
+        cumulative = np.array([_snap_to_column_mean_peak(image_flat, z_flat, target)
+                               for target in np.cumsum(optical)])
+        optical = np.diff(np.r_[0.0, cumulative])
+        group_t = optical / np.array([N_CLEAR_GROUP, N_BASE_GROUP])
         samples.append({
-            "key": "PMMA/PC/PS-%d" % (k + 1), "image": np.asarray(flat["flat_image_db"], float),
-            "z": np.asarray(flat["z_um"], float) - 20.0, "profile": np.asarray(flat["db"], float),
+            "key": "PMMA/PC/PS-%d" % (k + 1), "image": image_flat,
+            "z": z_flat, "profile": np.asarray(flat["db"], float),
             "optical": optical, "group_thickness": group_t,
         })
     return samples
@@ -143,6 +178,33 @@ def _physical_to_optical(depth, optical, index):
     return np.where(d <= t0, d * index[0], optical[0] + (d - t0) * index[1])
 
 
+def _optical_to_physical(depth, optical, index):
+    """Invert the piecewise optical-depth mapping used by every OCT panel."""
+    d = np.asarray(depth, float)
+    return np.where(d <= optical[0], d / index[0],
+                    optical[0] / index[0] + (d - optical[0]) / index[1])
+
+
+def _display_z(depth_um):
+    """Axially exaggerated display coordinate; the numeric factor is shown on screen."""
+    return -np.asarray(depth_um, float) / LATERAL_UM_PER_WORLD * AXIAL_EXAGGERATION
+
+
+def _interface_peak_offsets(sample):
+    """Row distance from each displayed interface to the local column-mean maximum."""
+    mean = np.nanmean(sample["image"], axis=1)
+    maxima = np.flatnonzero((mean[1:-1] >= mean[:-2]) & (mean[1:-1] >= mean[2:])) + 1
+    offsets = []
+    for optical_depth in np.cumsum(sample["optical"]):
+        row = int(np.argmin(np.abs(sample["z"] - optical_depth)))
+        nearby = maxima[np.abs(maxima - row) <= 12]
+        if not len(nearby):
+            offsets.append(len(mean))
+        else:
+            offsets.append(int(nearby[np.argmin(np.abs(nearby - row))] - row))
+    return np.asarray(offsets, int)
+
+
 def _field(samples, mode, axis_values):
     indices = _indices(mode, axis_values)
     rows, cols = 64, 48
@@ -154,7 +216,7 @@ def _field(samples, mode, axis_values):
         y = -1.35 + 0.90 * si
         xx, zz = np.meshgrid(xplot, physical)
         start = len(pos)
-        pos.extend(np.c_[xx.ravel(), np.full(xx.size, y), (-zz / 65.0).ravel()])
+        pos.extend(np.c_[xx.ravel(), np.full(xx.size, y), _display_z(zz).ravel()])
         faces.extend(_grid_faces(rows, cols, start))
         src_x = np.linspace(0.0, 1.0, sample["image"].shape[1])
         dst_x = np.linspace(0.0, 1.0, cols)
@@ -181,7 +243,8 @@ def _interface_body(samples, indices, layer, rgb):
             depth = float(np.sum(thickness[:layer + 1]))
             y = -1.35 + 0.90 * si
             for x in np.linspace(-2.25, 2.25, 72):
-                frame.extend(((x, y - 0.018, -depth / 65.0), (x, y + 0.018, -depth / 65.0)))
+                z = float(_display_z(depth))
+                frame.extend(((x, y - 0.018, z), (x, y + 0.018, z)))
         positions.append(frame)
         points = len(frame)
     faces = []
@@ -192,6 +255,48 @@ def _interface_body(samples, indices, layer, rgb):
             faces.extend(((a, a + 2, a + 3), (a, a + 3, a + 1)))
     return {"name": "interface_%d" % layer, "pos": np.asarray(positions), "faces": np.asarray(faces),
             "rgb": rgb, "label": T("界面 %d" % (layer + 1), "interface %d" % (layer + 1))}
+
+
+def _surface_body(samples, frames):
+    positions = []
+    for _ in range(frames):
+        frame = []
+        for si in range(len(samples)):
+            y = -1.35 + 0.90 * si
+            for x in np.linspace(-2.25, 2.25, 72):
+                frame.extend(((x, y - 0.014, 0.0), (x, y + 0.014, 0.0)))
+        positions.append(frame)
+    faces = []
+    for si in range(len(samples)):
+        base = si * 144
+        for j in range(71):
+            a = base + 2 * j
+            faces.extend(((a, a + 2, a + 3), (a, a + 3, a + 1)))
+    return {"name": "surface_interface", "pos": np.asarray(positions), "faces": np.asarray(faces),
+            "rgb": [245, 245, 245], "label": T("表面", "surface")}
+
+
+def _thickness_band_body(samples, indices, layer, rgb):
+    """A narrow ruler beside every slice makes a one-percent thickness shift visible."""
+    positions = []
+    for idx in indices:
+        frame = []
+        for si, sample in enumerate(samples):
+            thickness = sample["optical"] / idx
+            top = float(np.sum(thickness[:layer])) if layer else 0.0
+            bottom = float(np.sum(thickness[:layer + 1]))
+            y = -1.35 + 0.90 * si
+            z0, z1 = float(_display_z(top)), float(_display_z(bottom))
+            frame.extend(((2.31, y - 0.055, z0), (2.48, y - 0.055, z0),
+                          (2.48, y - 0.055, z1), (2.31, y - 0.055, z1)))
+        positions.append(frame)
+    faces = []
+    for si in range(len(samples)):
+        a = 4 * si
+        faces.extend(((a, a + 1, a + 2), (a, a + 2, a + 3)))
+    return {"name": "thickness_band_%d" % layer, "pos": np.asarray(positions),
+            "faces": np.asarray(faces), "rgb": rgb,
+            "label": T("層厚バー %d" % (layer + 1), "layer-thickness ruler %d" % (layer + 1))}
 
 
 def _rgb_map(a, lo, hi):
@@ -219,20 +324,18 @@ def _bscan_panel(sample, index):
 
 def _table_panel(current, paper, micro, source):
     im = Image.new("RGB", (PANEL, PANEL), (12, 16, 21)); d = ImageDraw.Draw(im)
-    d.text((8, 8), "layer thickness [um]", fill=(240, 244, 248))
-    d.text((8, 28), "source: " + source, fill=(170, 185, 198))
-    headers = ("", "this", "paper", "micro")
-    for j, h in enumerate(headers): d.text((8 + j * 59, 58), h, fill=(130, 205, 255))
-    for i, name in enumerate(("clear", "colour")):
-        y = 91 + i * 52; d.text((8, y), name, fill=(240, 244, 248))
+    d.text((8, 8), "µm", fill=(240, 244, 248), font=PANEL_FONT)
+    headers = ("", "PoC", "OCT", "µscope")
+    for j, h in enumerate(headers): d.text((8 + j * 59, 58), h, fill=(130, 205, 255), font=PANEL_FONT)
+    for i, name in enumerate(("L1", "L2")):
+        y = 91 + i * 52; d.text((8, y), name, fill=(240, 244, 248), font=PANEL_FONT)
         for j, value in enumerate((current[i], paper[i], micro[i])):
-            d.text((67 + j * 59, y), "%.2f" % value, fill=(255, 190, 90) if j == 0 else (210, 220, 228))
-    d.text((8, 205), "same optical peaks; only n changes", fill=(160, 173, 184))
+            d.text((67 + j * 59, y), "%.2f" % value, fill=(255, 190, 90) if j == 0 else (210, 220, 228), font=PANEL_FONT)
     return np.asarray(im)
 
 
 def _profile_panel(sample, index):
-    depth = sample["z"] / np.where(sample["z"] <= sample["optical"][0], index[0], index[1])
+    depth = _optical_to_physical(sample["z"], sample["optical"], index)
     db = sample["profile"]
     im = Image.new("RGB", (PANEL, PANEL), (12, 16, 21)); d = ImageDraw.Draw(im)
     left, right, top, bottom = 35, 246, 25, 224
@@ -243,7 +346,7 @@ def _profile_panel(sample, index):
     for li, colour in enumerate(((255, 70, 70), (70, 255, 130))):
         dep = np.sum(sample["optical"][:li + 1] / index[:li + 1])
         xx = left + dep / 155.0 * (right - left); d.line((xx, top, xx, bottom), fill=colour, width=2)
-    d.text((8, 6), "A-scan: interface peaks", fill=(240, 244, 248)); d.text((175, 232), "depth [um]", fill=(180, 190, 200))
+    d.text((213, 232), "µm", fill=(180, 190, 200), font=PANEL_FONT)
     return np.asarray(im)
 
 
@@ -253,13 +356,14 @@ def _limit_panel(center_nm, index):
     limit = 1.4 * psf / index[0]
     values = np.linspace(0, max(14.0, 1.8 * limit), 200)
     im = Image.new("RGB", (PANEL, PANEL), (12, 16, 21)); d = ImageDraw.Draw(im)
-    d.text((8, 8), "thin-layer rejection", fill=(240, 244, 248))
+    d.text((8, 8), "PSF × 1.4", fill=(240, 244, 248), font=PANEL_FONT)
     x0, x1, y = 24, 238, 138; d.line((x0, y, x1, y), fill=(180, 190, 200), width=2)
     cut = x0 + limit / values[-1] * (x1 - x0)
     d.rectangle((x0, y - 25, cut, y + 25), fill=(90, 52, 46)); d.rectangle((cut, y - 25, x1, y + 25), fill=(35, 92, 72))
     d.line((cut, y - 38, cut, y + 38), fill=(255, 210, 95), width=3)
-    d.text((8, 188), "PSF %.2f um x 1.4 / n = %.2f um" % (psf, limit), fill=(225, 230, 235))
-    d.text((35, 112), "reject", fill=(255, 180, 160)); d.text((175, 112), "accept", fill=(150, 240, 190))
+    d.text((8, 188), "%.2f µm × 1.4 / n = %.2f µm" % (psf, limit), fill=(225, 230, 235), font=PANEL_FONT)
+    d.text((35, 112), "< 1.4 PSF", fill=(255, 180, 160), font=PANEL_FONT)
+    d.text((175, 112), "≥ 1.4 PSF", fill=(150, 240, 190), font=PANEL_FONT)
     return np.asarray(im), limit
 
 
@@ -270,11 +374,14 @@ def _motion(frames, bodies):
 
 def _make_tab(samples, source, mode, axis_values):
     pos, faces, val, indices = _field(samples, mode, axis_values)
-    lo, hi = float(np.percentile(val, 2)), float(np.percentile(val, 99.5))
+    intensity_lo, intensity_hi = float(np.percentile(val, 2)), float(np.percentile(val, 99.5))
     volume = {"name": "flattened_oct_volume", "pos": pos, "faces": faces, "val": val,
               "label": T("表面で平らにした強度体積", "surface-flattened intensity volume")}
-    bodies = [volume, _interface_body(samples, indices, 0, [255, 75, 75]),
-              _interface_body(samples, indices, 1, [75, 255, 135])]
+    bodies = [volume, _surface_body(samples, len(indices)),
+              _interface_body(samples, indices, 0, [255, 75, 75]),
+              _interface_body(samples, indices, 1, [75, 255, 135]),
+              _thickness_band_body(samples, indices, 0, [255, 112, 67]),
+              _thickness_band_body(samples, indices, 1, [102, 187, 106])]
     xyz, quat = _motion(len(axis_values), len(bodies))
     sample = samples[2]
     if source == "real":
@@ -297,11 +404,16 @@ def _make_tab(samples, source, mode, axis_values):
     endpoint_colour = float(np.ptp(val[-1] - val[0]))
     closed = sample["optical"][None] / indices
     closed_error = float(np.max(np.abs(thickness - closed)))
+    peak_offsets = np.stack([_interface_peak_offsets(s) for s in samples])
     checks = [
         {"what": T("掃引の両端で3-Dの色が変わる", "3-D colour changes between sweep endpoints"),
          "criterion": "ptp > 0", "result": "%.6g dB" % endpoint_colour, "ok": endpoint_colour > 0},
         {"what": T("層厚と閉形式 optical/n の一致", "layer thickness agrees with closed form optical/n"),
          "criterion": "< 1e-12 µm", "result": _e(closed_error) + " µm", "ok": closed_error < 1e-12},
+        {"what": T("界面線と平坦化Bスキャンのピーク", "interface lines coincide with flattened B-scan peaks"),
+         "criterion": T("全界面で±2行以内", "within ±2 rows at every interface"),
+         "result": T("最大%d行" % np.max(np.abs(peak_offsets)), "maximum %d rows" % np.max(np.abs(peak_offsets))),
+         "ok": np.max(np.abs(peak_offsets)) <= 2},
     ]
     if mode == "index":
         bias = 100 * (thickness[0] / thickness[-1] - 1)
@@ -327,15 +439,24 @@ def _make_tab(samples, source, mode, axis_values):
         {"label": T("(d) 薄い層の拒否: 点像幅の1.4倍", "(d) Thin-layer rejection: 1.4× PSF"),
          "frames": np.asarray(limit), "png": True},
     ]
-    series = [{"label": T("透明層", "clear layer"), "values": thickness[:, 0], "unit": "µm", "color": "#ff7043"},
-              {"label": T("着色層", "colour layer"), "values": thickness[:, 1], "unit": "µm", "color": "#66bb6a"}]
+    series = []
+    for i, (ja, en, color) in enumerate((("透明層", "clear layer", "#ff7043"),
+                                         ("着色層", "colour layer", "#66bb6a"))):
+        values = thickness[:, i]
+        lo = min(float(values.min()), float(paper[i])); hi = max(float(values.max()), float(paper[i]))
+        pad = max((hi - lo) * 0.08, abs(hi) * 0.002)
+        series.append({"label": T(ja, en), "values": values, "unit": "µm", "color": color,
+                       "lo": lo - pad, "hi": hi + pad, "references": [float(paper[i])], "decimals": 2})
     tab = pv.viewer_anim3d_tab(
         mode, label, "passed", text, np.arange(len(axis_values)) / 8.0, bodies, xyz, quat,
-        series=series, panes=panes, cbar={"lo": lo, "hi": hi, "unit": "dB", "cmap": "seq",
+        series=series, panes=panes, cbar={"lo": intensity_lo, "hi": intensity_hi, "unit": "dB", "cmap": "seq",
                                           "label": T("OCT強度", "OCT intensity")},
-        axis=axis, checks=checks, view={"az": -0.8, "el": 0.45, "dist": 1.12})
+        numbers=[pv.viewer_number(T("深さ方向の表示倍率", "axial display exaggeration"),
+                                  "×%.0f" % AXIAL_EXAGGERATION)],
+        axis=axis, checks=checks, view={"az": -0.8, "el": 0.30, "dist": 1.12})
     return tab, {"endpoint_colour_ptp": endpoint_colour, "thickness_endpoints": thickness[[0, -1]],
-                 "thin_limit_endpoints": np.asarray(limits)[[0, -1]], "indices": indices[[0, -1]]}
+                 "thin_limit_endpoints": np.asarray(limits)[[0, -1]], "indices": indices[[0, -1]],
+                 "interface_peak_offsets": peak_offsets, "axial_exaggeration": AXIAL_EXAGGERATION}
 
 
 def build_spec():
