@@ -14,8 +14,8 @@
   "name": "sample",
   "caption": "左が真値の高さ(視野 40 mm、青 = 高い・橙 = 低い)。左上が凹み A(3 µm)、右下が凹み B(1 µm)、右上の斑が研磨ムラ、全体の斜めの縞がうねり。右は縞の鏡像から測った平均曲率(青 = 凹み)。",
   "shape": [
-   444,
-   670,
+   413,
+   894,
    3
   ]
  },
@@ -44,8 +44,8 @@
   "name": "dimple_profile",
   "caption": "真値(破線)と復元(実線)はほぼ重なるので、差を 10 倍にして点線で重ねた。凹み A の深さ(局所の 2 次形状を外した物差し): 復元 2.662 µm、真値 2.676 µm。凹み B: 0.990 / 0.994 µm。うねり 0.8 µm も重なっている。",
   "shape": [
-   340,
-   760,
+   680,
+   1520,
    3
   ]
  },
@@ -54,8 +54,8 @@
   "name": "sensitivity",
   "caption": "傾きの雑音の実測が閉形式より小さいのは、面の格子点をカメラの画素の間で双線形に読むため(独立な雑音の平均)。",
   "shape": [
-   200,
-   461,
+   400,
+   908,
    3
   ],
   "csv": "06_sensitivity.csv",
@@ -66,8 +66,8 @@
   "name": "height_slope_ambiguity",
   "caption": "1 台のカメラと 1 枚の画面では、面が Δz 高いことと、法線が Δz sin θ / d 傾いていることが同じ位相を作る(PMD の既知の不定性)。",
   "shape": [
-   360,
-   620,
+   720,
+   1240,
    3
   ]
  },
@@ -77,7 +77,7 @@
   "caption": "平らな板を 0.3 mm 浮かせただけで、測った高さは 40 mm で約 14 µm 傾く(左、視野の中心で 3.4e-4 rad)。傾きの狂いは視野の中で一様でない(画素ごとに入射角と距離が違う)ので、平面を引いても半径 388 m の椀に相当する曲がりが残る(右)。凹みの位置に残る小さな濃淡が局所の影響で、深さは 1 % 未満しか変わらない。",
   "shape": [
    413,
-   670,
+   894,
    3
   ]
  },
@@ -100,8 +100,8 @@
   "name": "diffuse_noise",
   "caption": "右の 4 点(k_d ≤ 0.85)は傾き −1 の直線(1 / (1 − k_d))に乗る。k_d ≥ 0.9 では粗い縞の次数が飛び始め、飛んだ画素(誤差が周期の 1/4 を超えるもの)を雑音の計算から外すので、実測は直線から外れて頭打ちになる —— ここから先は「雑音が増える」でなく「測れない」の領域。",
   "shape": [
-   380,
-   620,
+   760,
+   1240,
    3
   ]
  },
@@ -110,8 +110,8 @@
   "name": "diffuse_table",
   "caption": "8 bit・雑音 σ 0.004。振幅が 1 段(0.0039)に近づくと位相が決まらない。",
   "shape": [
-   296,
-   469,
+   592,
+   936,
    3
   ],
   "csv": "11_diffuse_table.csv",
@@ -122,8 +122,8 @@
   "name": "glass_back_reflection",
   "caption": "表と裏の反射率はほぼ同じ(R1 0.043、R2 0.039)なので、2 つの縞の和の位相は上限 1.16 rad までずれ得る。しかも裏面の光は凹みの斜面(くさび)を往復して逆向きに曲がるので、傾きの感度は閉形式 0.246(実測 0.246)に縮み、凹みの深さは厚さによらず -75 / -75 / -75 / -74 / -71 % と狂う。",
   "shape": [
-   360,
-   620,
+   720,
+   1240,
    3
   ]
  },
@@ -132,8 +132,8 @@
   "name": "glass_depth",
   "caption": "凹みの斜面は表と平らな裏面のあいだで「くさび」になる。表で返る光は −2α 曲がるが、裏面で返る光はくさびを往復して +1.15 α と逆向きに曲がり、2 つの縞の和の位相では傾きの感度が (2 R1 − 1.15 R2) / 2(R1 + R2) = 0.246 に縮む(実測 0.246)。厚い板では 2 つの縞の位相差が開いて少し戻る。",
   "shape": [
-   360,
-   857,
+   720,
+   1705,
    3
   ]
  },
@@ -142,9 +142,61 @@
   "name": "focus_tradeoff",
   "caption": "面に合わせると画面側の錯乱円 A·d/L = 6 mm で縞の振幅が 0.60 倍に落ちる。画面に合わせると縞はくっきりするが、面側の錯乱円 A·d/(L+d) = 3.4 mm で凹みがぼけ、深さが 0.52 倍に見える(開口の 24 点で光線を追った)。",
   "shape": [
-   360,
-   620,
+   720,
+   1240,
    3
   ]
+ },
+ {
+  "file": "15_real_grid_mirror.png",
+  "name": "real_grid_mirror",
+  "caption": "1 周期 = 5 画素(印刷した格子の周期 5.88 mm、板から 1.37 m)。たわんだ板の鏡像では格子がわずかに歪む(1 周期の 1/3 ほど)が、目ではほとんど分からない。出典: R. Kaufmann, S. N. Olufsen, E. Fagerholt (NTNU), Experimental data for force reconstruction using impact hammer and deflectometry, DataverseNO, doi:10.18710/TKS7SI, CC0 1.0 (切り出し・位相解析は Fullseye)",
+  "shape": [
+   412,
+   606,
+   3
+  ]
+ },
+ {
+  "file": "16_real_phase_two_methods.png",
+  "name": "real_phase_two_methods",
+  "caption": "基準(打撃の前の 30 枚の平均)からの位相の変化(巻き込み、±π)。上端の帯は板の枠の影で、格子の変調度が下限 0.05 を割る(ここにかかる窓は拒否する)。そのままの差は標本化モアレの雑音(平滑が 1 方向の箱だけで、行ごとの補間の筋が出る)。同じ平滑を掛けると差は 20 倍しても暗く、縁と上端の帯にだけ残る。",
+  "shape": [
+   1159,
+   890,
+   3
+  ]
+ },
+ {
+  "file": "17_real_slopes_and_windows.png",
+  "name": "real_slopes_and_windows",
+  "caption": "傾き = p Δφ / (4π h)。荷重点のまわりの窓(半幅 70 画素 = 41 mm、縁の 60 画素で仮想変位が滑らかに 0 へ落ちる)で力を測り、同じ大きさの窓を荷重の無い所に 5 つ置いて「見かけの力」の床を測る。",
+  "shape": [
+   1159,
+   890,
+   3
+  ]
+ },
+ {
+  "file": "18_real_force_vs_hammer.png",
+  "name": "real_force_vs_hammer",
+  "caption": "峰 366.4 N @ 1.800 ms(ハンマー 347.1 N @ 1.773 ms、+5.6 %)、相関 0.990、力積 -8.8 %。荷重の無い窓の見かけの力は最大 9.5 N(2.2〜2.4 ms、たわみが最大の頃に出る系統の誤差)。",
+  "shape": [
+   840,
+   1640,
+   3
+  ],
+  "source": "R. Kaufmann, S. N. Olufsen, E. Fagerholt (NTNU), Experimental data for force reconstruction using impact hammer and deflectometry, DataverseNO, doi:10.18710/TKS7SI, CC0 1.0 (切り出し・位相解析は Fullseye)"
+ },
+ {
+  "file": "19_real_window_size.png",
+  "name": "real_window_size",
+  "caption": "傾斜の幅を同じにして窓だけ広げた。縁に近い所の傾きの系統の誤差を拾うほど峰が上がり、データの著者の recolo でも板全体を足すと 422 N(+15 %)になる。窓は荷重の無い対照の窓で選ぶ。",
+  "shape": [
+   720,
+   1240,
+   3
+  ],
+  "source": "R. Kaufmann, S. N. Olufsen, E. Fagerholt (NTNU), Experimental data for force reconstruction using impact hammer and deflectometry, DataverseNO, doi:10.18710/TKS7SI, CC0 1.0 (切り出し・位相解析は Fullseye)"
  }
 ]

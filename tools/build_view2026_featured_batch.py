@@ -28,6 +28,15 @@ WING_CATEGORY = {
 #: 英語のキャプションの中で、日本語のまま引くのが正しい語(路面標示の文字など)。ここに無いかなは訳し忘れとして止める。
 QUOTED_JA = {"止まれ"}
 _KANA = re.compile(r"[\u3040-\u30ff]+")
+VIEW2026_A_OP_IDS = {
+    "poc_phase_measuring_deflectometry", "poc_industrial_oct",
+    "poc_hyperspectral_foreign_matter", "poc_thin_film_reflectometry",
+    "poc_cad_scan_deviation", "poc_telecentric_metrology",
+    "poc_tem_ctf_thon_rings", "poc_virtual_sem_kv_cd_bse",
+    "poc_dual_energy_xray", "poc_weld_radiograph_porosity",
+    "poc_good_sample_variation_model", "poc_code_matching_breakdown",
+    "poc_fourier_ptychography", "poc_photoelasticity",
+}
 
 
 def caption_for(src: dict, lang: str) -> str:
@@ -73,13 +82,14 @@ def main() -> None:
                 lang: lead_for(src, lang) for lang in d["langs"]
             }
     all_by_id = {e["id"]: e for e in d["all"]}
+    previous = {e["id"]: e for e in d["exhibits"]}
     # Re-running replaces this generated batch and preserves hand-curated cards.
     d["exhibits"] = [e for e in d["exhibits"] if "numbers_source" not in e]
     old = {e["id"] for e in d["exhibits"]}
     candidates = []
     for e in ledger:
         pid = e["id"]
-        media = media_for(pid)
+        media = previous.get(pid, {}).get("media") or media_for(pid)
         if (pid in old or pid not in all_by_id or e["wing"] not in WING_CATEGORY or
                 not media or not re.search(r"\d", e.get("caption_en", ""))):
             continue
@@ -115,7 +125,13 @@ def main() -> None:
             "see": captions, "num": {lang: "" for lang in d["langs"]},
             "numbers_source": src["numbers_source"], "youtube_url": "",
         }
+        if pid in VIEW2026_A_OP_IDS:
+            item["ops"] = src["ops"]
         d["exhibits"].append(item)
+    ops_by_id = {e["id"]: e["ops"] for e in ledger if e["id"] in VIEW2026_A_OP_IDS}
+    for item in d["exhibits"]:
+        if item["id"] in ops_by_id:
+            item["ops"] = ops_by_id[item["id"]]
     DATA.write_text(json.dumps(d, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
     print("added", len(chosen))
     for x in chosen:

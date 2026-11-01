@@ -23,6 +23,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "tools"))
 
 import build_exhibits as B  # noqa: E402
+import gen_wingpoc_gallery as WG  # noqa: E402
 from exhibit_glossary import load_glossary, terms_for_exhibit  # noqa: E402
 
 BASE = "https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/"
@@ -340,6 +341,33 @@ def test_lead_glossary_terms_are_explained_on_the_same_exhibit():
                     if term_id not in displayed:
                         problems.append((exhibit["id"], lang, term_id))
     assert not problems, problems[:30]
+
+A_EXHIBITS = {
+    "poc_phase_measuring_deflectometry", "poc_industrial_oct",
+    "poc_hyperspectral_foreign_matter", "poc_thin_film_reflectometry",
+    "poc_cad_scan_deviation", "poc_telecentric_metrology",
+    "poc_tem_ctf_thon_rings", "poc_virtual_sem_kv_cd_bse",
+    "poc_dual_energy_xray", "poc_weld_radiograph_porosity",
+    "poc_good_sample_variation_model", "poc_code_matching_breakdown",
+    "poc_fourier_ptychography", "poc_photoelasticity",
+}
+
+
+def test_view2026_a_ops_match_source_and_op_index():
+    ledger = json.loads((ROOT / "docs/articles/exhibits/poc_captions.json").read_text(encoding="utf-8"))
+    rows = {e["id"]: e for e in ledger["exhibits"] if e["id"] in A_EXHIBITS}
+    index = json.loads((ROOT / "docs/OP_INDEX.json").read_text(encoding="utf-8"))
+    known = {e["name"] for e in index["ops"]}
+    assert set(rows) == A_EXHIBITS
+    for poc_id, row in rows.items():
+        assert row["ops"] == sorted(set(row["ops"]))
+        assert set(row["ops"]) <= known
+        assert row["ops"] == WG._ops_used(poc_id)
+        for lang, label in (("ja", "使った Fullseye の op"),
+                            ("en", "Fullseye ops used")):
+            rendered = WG._ops_line(poc_id, lang, row["ops"])
+            assert label in rendered
+            assert all("`%s`" % op in rendered for op in row["ops"])
 
 
 def test_manifest_is_wellformed():

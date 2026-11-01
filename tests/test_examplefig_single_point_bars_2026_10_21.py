@@ -25,7 +25,7 @@ def _hue_masks(img: np.ndarray):
 def test_two_single_point_bar_series_do_not_overlap():
     img = figs.render_plot([("", [0], [0.8]), ("", [1], [0.5])], size=(640, 430),
                            kinds=["bar", "bar"], colors=["wrong", "right"],
-                           xlim=(-0.5, 1.5), ylim=(0, 1))
+                           xlim=(-0.5, 1.5), ylim=(0, 1), scale=1)
     orange, blue = _hue_masks(np.asarray(img))
     co, cb = _columns(orange), _columns(blue)
     plot_w = 640 - 96
@@ -41,7 +41,7 @@ def test_two_single_point_bar_series_do_not_overlap():
 
 def test_single_bar_uses_the_tick_spacing():
     img = figs.render_plot([("", [0], [0.8])], size=(640, 430), kinds=["bar"],
-                           colors=["wrong"], xlim=(-0.5, 1.5), ylim=(0, 1))
+                           colors=["wrong"], xlim=(-0.5, 1.5), ylim=(0, 1), scale=1)
     orange, _ = _hue_masks(np.asarray(img))
     co = _columns(orange)
     plot_w = 640 - 96
@@ -52,7 +52,7 @@ def test_single_bar_uses_the_tick_spacing():
 def test_multi_point_bar_series_are_unchanged():
     x = np.arange(5, dtype=float)
     before = figs.render_plot([("", x, x + 1.0)], size=(640, 430), kinds=["bar"],
-                              xlim=(-0.5, 4.5), ylim=(0, 6))
+                              xlim=(-0.5, 4.5), ylim=(0, 6), scale=1)
     orange, blue = _hue_masks(np.asarray(before))
     # 既定色 reference(青)。5 本が別々の列に立つ。
     cols = sorted(_columns(blue))
