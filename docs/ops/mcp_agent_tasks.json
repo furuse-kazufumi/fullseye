@@ -1,0 +1,158 @@
+{
+  "version": 1,
+  "description": "Deterministic end-to-end tasks for an LLM using Fullseye only through MCP. Requests intentionally omit op names.",
+  "max_steps": 12,
+  "categories": [
+    "general",
+    "positioning",
+    "multi_product",
+    "specular_transparent",
+    "fast_3d"
+  ],
+  "tasks": [
+    {
+      "id": "ge_components_3",
+      "category": "general",
+      "request": "画像中の明るい製品を背景から自動で分け、互いに離れた製品が何個あるか整数で答えてください。",
+      "input": {"generator": "binary_components", "params": {"count": 3, "seed": 101}},
+      "judge": "judge_component_count"
+    },
+    {
+      "id": "ge_components_5",
+      "category": "general",
+      "request": "暗い背景に散らばる明るい部品を自動二値化し、独立した部品の総数を数えてください。",
+      "input": {"generator": "binary_components", "params": {"count": 5, "seed": 102}},
+      "judge": "judge_component_count"
+    },
+    {
+      "id": "ge_fill_fraction",
+      "category": "general",
+      "request": "明るい検査対象を背景から自動で領域化し、画像全面に占める対象画素の割合を求めてください。",
+      "input": {"generator": "binary_rectangle", "params": {"x": 18, "y": 24, "width": 42, "height": 30}},
+      "judge": "judge_region_fraction"
+    },
+    {
+      "id": "ge_gaussian_noise",
+      "category": "general",
+      "request": "センサーの細かなランダムノイズを正規分布状の平滑化で抑え、処理後画像の標準偏差を報告してください。",
+      "input": {"generator": "noisy_gradient", "params": {"seed": 103, "sigma": 0.12}},
+      "judge": "judge_smoothed_std"
+    },
+
+    {
+      "id": "po_template_xy",
+      "category": "positioning",
+      "request": "登録見本との正規化相関を使ってワークを探し、最良一致のスコアと中心の y, x 座標を求めてください。",
+      "input": {"generator": "template_scene", "params": {"x": 57, "y": 31, "rotation": 0}},
+      "judge": "judge_match_position"
+    },
+    {
+      "id": "po_shape_pose",
+      "category": "positioning",
+      "request": "輪郭形状を手掛かりにワークの位置を決め、中心の y, x 座標と向きを数値で求めてください。",
+      "input": {"generator": "template_scene", "params": {"x": 27, "y": 58, "rotation": 90}},
+      "judge": "judge_match_position"
+    },
+    {
+      "id": "po_fixture_corners",
+      "category": "positioning",
+      "request": "治具合わせに使える安定したコーナー特徴を画像から抽出し、検出数を報告してください。",
+      "input": {"generator": "corner_grid", "params": {"cells": 4, "margin": 14}},
+      "judge": "judge_feature_count"
+    },
+    {
+      "id": "po_grasp_corners",
+      "category": "positioning",
+      "request": "ロボット把持前の位置合わせ用に良質な角点を抽出し、得られた点の数を報告してください。",
+      "input": {"generator": "corner_grid", "params": {"cells": 5, "margin": 10}},
+      "judge": "judge_feature_count"
+    },
+
+    {
+      "id": "mv_variant_template",
+      "category": "multi_product",
+      "request": "段取り替え後の部品を登録見本との相関で探し、最良一致位置の y, x 座標を求めてください。",
+      "input": {"generator": "template_scene", "params": {"x": 63, "y": 19, "rotation": 0}},
+      "judge": "judge_match_position"
+    },
+    {
+      "id": "mv_variant_shape",
+      "category": "multi_product",
+      "request": "品種ごとの輪郭モデルを使って混流中の部品位置を探し、中心座標を求めてください。",
+      "input": {"generator": "template_scene", "params": {"x": 22, "y": 49, "rotation": 180}},
+      "judge": "judge_match_position"
+    },
+    {
+      "id": "mv_common_corners_4",
+      "category": "multi_product",
+      "request": "形の異なる部品にも共通して使えるコーナー特徴を抽出し、検出数を答えてください。",
+      "input": {"generator": "corner_grid", "params": {"cells": 4, "margin": 9}},
+      "judge": "judge_feature_count"
+    },
+    {
+      "id": "mv_common_corners_6",
+      "category": "multi_product",
+      "request": "製品切替後も追跡に使える角点特徴を画像から取り、点の個数を報告してください。",
+      "input": {"generator": "corner_grid", "params": {"cells": 6, "margin": 8}},
+      "judge": "judge_feature_count"
+    },
+
+    {
+      "id": "sp_dolp_020",
+      "category": "specular_transparent",
+      "request": "偏光板を 0, 45, 90, 135 度に回して撮った4枚から、表面の線偏光度マップを求め、その平均値を報告してください。",
+      "input": {"generator": "polar_sweep", "params": {"diffuse": 0.64, "specular": 0.16, "azimuth": 12}},
+      "judge": "judge_dolp_mean"
+    },
+    {
+      "id": "sp_dolp_035",
+      "category": "specular_transparent",
+      "request": "4方向の偏光撮像から透明面の線偏光度を画素ごとに計算し、画像全体の平均を求めてください。角度順は 0, 45, 90, 135 度です。",
+      "input": {"generator": "polar_sweep", "params": {"diffuse": 0.52, "specular": 0.28, "azimuth": 31}},
+      "judge": "judge_dolp_mean"
+    },
+    {
+      "id": "sp_dolp_050",
+      "category": "specular_transparent",
+      "request": "鏡面反射の偏りを調べるため、0, 45, 90, 135 度の偏光画像列から線偏光度マップとその平均を出してください。",
+      "input": {"generator": "polar_sweep", "params": {"diffuse": 0.40, "specular": 0.40, "azimuth": 54}},
+      "judge": "judge_dolp_mean"
+    },
+    {
+      "id": "sp_dolp_065",
+      "category": "specular_transparent",
+      "request": "偏光方向別の4枚を合成して光沢面の線偏光度を求め、平均値を報告してください。フレームは 0, 45, 90, 135 度順です。",
+      "input": {"generator": "polar_sweep", "params": {"diffuse": 0.28, "specular": 0.52, "azimuth": 73}},
+      "judge": "judge_dolp_mean"
+    },
+
+    {
+      "id": "m3_wrapped_ramp_x",
+      "category": "fast_3d",
+      "request": "等間隔に位相をずらした4枚の縞画像から、二πの範囲に巻かれた位相マップを計算し、その平均値を報告してください。",
+      "input": {"generator": "fringe_sweep", "params": {"axis": "x", "phase_min": -1.2, "phase_max": 1.8}},
+      "judge": "judge_phase_mean"
+    },
+    {
+      "id": "m3_wrapped_ramp_y",
+      "category": "fast_3d",
+      "request": "4ステップの位相シフト縞からラップされた位相を復元し、全画素の平均位相を求めてください。",
+      "input": {"generator": "fringe_sweep", "params": {"axis": "y", "phase_min": -2.0, "phase_max": 1.0}},
+      "judge": "judge_phase_mean"
+    },
+    {
+      "id": "m3_depth_ramp_x",
+      "category": "fast_3d",
+      "request": "4枚の位相シフト縞画像から連続した高さマップを一括復元し、平均高さを報告してください。較正係数は 1.0 です。",
+      "input": {"generator": "fringe_sweep", "params": {"axis": "x", "phase_min": -1.0, "phase_max": 2.0}},
+      "judge": "judge_depth_mean"
+    },
+    {
+      "id": "m3_depth_ramp_y",
+      "category": "fast_3d",
+      "request": "高速三次元計測用の4ステップ縞画像から連続位相の高さを復元し、その平均を求めてください。位相から高さへの係数は 1.0 です。",
+      "input": {"generator": "fringe_sweep", "params": {"axis": "y", "phase_min": -1.8, "phase_max": 0.8}},
+      "judge": "judge_depth_mean"
+    }
+  ]
+}
