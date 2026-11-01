@@ -6260,7 +6260,7 @@ Ops used (notes): [`moving_average_window`](https://furuse.work/ops/videostream/
 
 ### The Geometry and Calibration Wing — A Small Residual Is Not Proof of Correctness
 
-Reprojection error in camera calibration, seam mismatch in a panorama, residual in point-cloud registration: all are read as 'smaller is better'. The 19 exhibits here, with ground truth in hand, show where that reading fails.
+Reprojection error in camera calibration, seam mismatch in a panorama, residual in point-cloud registration: all are read as 'smaller is better'. The 20 exhibits here, with ground truth in hand, show where that reading fails.
 
 Reprojection RMS of 0.0688–0.0690 px alongside focal-length errors of 0.026–7.334 %. Adjacent seams at 0.12 px while the single closing seam opens by 1.5 px. Spheres and cylinders converging to the same residual with an arbitrary pose. Least squares drives the residual down to the noise; whether it lands on the truth is a separate question.
 
@@ -6333,6 +6333,42 @@ Source: [examples/poc_panorama_drift.py](https://github.com/furuse-kazufumi/full
 This run produced **5 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_panorama_drift)
 
 Ops used (notes): [`axes_frame`](https://furuse.work/ops/annotate/plot/axes_frame.html) · [`axes_transform`](https://furuse.work/ops/annotate/plot/axes_transform.html) · [`hom_vector_to_proj_hom_mat2d`](https://furuse.work/ops/calib/fit/hom_vector_to_proj_hom_mat2d.html) · [`plot_series`](https://furuse.work/ops/annotate/plot/plot_series.html) · [`pose_error`](https://furuse.work/ops/3d/metrics/pose_error.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`ticks`](https://furuse.work/ops/annotate/plot/ticks.html) · [`warp_by_plane`](https://furuse.work/ops/3d/plane_sweep_stereo/warp_by_plane.html)
+
+## No.2026.285 —— Six-DoF PPF Matching of Industrial Parts in Real RGB-D Data
+
+Two measured PrimeSense scenes and ten objects from BOP T-LESS (CC BY 4.0) run through depth, point cloud, oriented normals, RANSAC table removal, clustering, PPF and ICP, scored with symmetry-aware MSSD, MSPD and ADD-S. The fixed PoC subset reaches AR_MSSD 0.290 and AR_MSPD 0.320, below the official full-test Drost-CVPR10-3D-Only scores of 0.478/0.480 and Vidal-Sensors18 scores of 0.575/0.574. Ideal depth from the same models and poses reaches 0.880/0.880, so the synthetic-to-real drops are 0.590/0.560. Removing ICP gives MSSD 0.280 and leaving normals unoriented gives 0.200. Six of ten objects exceed MSSD 0.2d; overlapping causes include one merged contact cluster, two objects below 0.8 visibility, two thin objects, one above one-percent missing depth, and four symmetric objects.
+
+[![Six-DoF PPF Matching of Industrial Parts in Real RGB-D Data](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/01_pose_overlay_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/01_pose_overlay.png)
+
+*↑ **Six-DoF PPF Matching of Industrial Parts in Real RGB-D Data** ―― Two measured PrimeSense scenes and ten objects from BOP T-LESS (CC BY 4.0) run through depth, point cloud, oriented normals, RANSAC table removal, clustering, PPF and ICP, scored with symmetry-aware MSSD, MSPD and ADD-S. The fixed PoC subset reaches AR_MSSD 0.290 and AR_MSPD 0.320, below the official full-test Drost-CVPR10-3D-Only scores of 0.478/0.480 and Vidal-Sensors18 scores of 0.575/0.574. Ideal depth from the same models and poses reaches 0.880/0.880, so the synthetic-to-real drops are 0.590/0.560. Removing ICP gives MSSD 0.280 and leaving normals unoriented gives 0.200. Six of ten objects exceed MSSD 0.2d; overlapping causes include one merged contact cluster, two objects below 0.8 visibility, two thin objects, one above one-percent missing depth, and four symmetric objects.*
+
+Terms: ICP — A registration method that alternates nearest-point correspondence with rigid-transform estimation between two point clouds.
+
+[![欠測 3678 px、孤立飛び候補 0 px。 BOP T-LESS, CC BY 4.0。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/02_rgb_depth_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/02_rgb_depth.png)
+
+*↑ The measurement ―― 欠測 3678 px、孤立飛び候補 0 px。 BOP T-LESS, CC BY 4.0。 (figure labels are in Japanese; the numbers are the same)*
+
+[![0.05d..0.50d の 10 閾値平均。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/03_mssd_by_object_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/03_mssd_by_object.png)
+
+*↑ 0.05d..0.50d の 10 閾値平均。*
+
+[![理想 z-buffer 深度と PrimeSense 深度を同じ PPF+ICP で採点。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/04_synthetic_vs_real_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/04_synthetic_vs_real.png)
+
+*↑ 理想 z-buffer 深度と PrimeSense 深度を同じ PPF+ICP で採点。*
+
+[![橙=推定、青=真値。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/05_failure_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/05_failure.png)
+
+*↑ 橙=推定、青=真値。*
+
+```
+py -3.11 examples/poc_real_tless_6dof.py
+```
+
+Source: [examples/poc_real_tless_6dof.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_tless_6dof.py)
+
+This run produced **5 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_real_tless_6dof)
+
+Ops used (notes): [`depth_to_points`](https://furuse.work/ops/3d/transform/depth_to_points.html) · [`estimate_normals`](https://furuse.work/ops/3d/curvature/estimate_normals.html) · [`project_points`](https://furuse.work/ops/3d/render/project_points.html) · [`render_point_depth`](https://furuse.work/ops/3d/render/render_point_depth.html)
 
 ## No.2026.108 —— Measuring on a Real Stereo Photograph — Three Stumbles Synthesis Never Produces
 

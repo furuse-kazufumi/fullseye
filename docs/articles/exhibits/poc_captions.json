@@ -1354,6 +1354,27 @@
    "lead_en": ""
   },
   {
+   "id": "poc_real_tless_6dof",
+   "wing": "wing_geometry",
+   "added": "2026-11-01",
+   "numbers_source": "log",
+   "title_ja": "実機 RGB-D の産業部品を PPF で 6 自由度照合する",
+   "title_en": "Six-DoF PPF Matching of Industrial Parts in Real RGB-D Data",
+   "caption_ja": "BOP T-LESS(CC BY 4.0)の PrimeSense 実測 2 場面・10 対象を、深度→点群→法線→RANSAC 平面除去→クラスタ→PPF+ICP と通し、対称性を含む MSSD/MSPD/ADD-S で採点した。PoC subset は AR_MSSD 0.290 / AR_MSPD 0.320 で、公式全 test の Drost-CVPR10-3D-Only 0.478/0.480、Vidal-Sensors18 0.575/0.574 に負けた。同じモデル・姿勢の理想深度は 0.880/0.880 なので、合成から実機で 0.590/0.560 落ちる。ICP 無しは MSSD 0.280、符号未整理の法線は 0.200。MSSD>0.2d の失敗 6/10 の内訳は、接触クラスタ 1、可視率<0.8 が 2、薄い部品 2、深度欠損>1% が 1、対称部品 4(重複)。",
+   "caption_en": "Two measured PrimeSense scenes and ten objects from BOP T-LESS (CC BY 4.0) run through depth, point cloud, oriented normals, RANSAC table removal, clustering, PPF and ICP, scored with symmetry-aware MSSD, MSPD and ADD-S. The fixed PoC subset reaches AR_MSSD 0.290 and AR_MSPD 0.320, below the official full-test Drost-CVPR10-3D-Only scores of 0.478/0.480 and Vidal-Sensors18 scores of 0.575/0.574. Ideal depth from the same models and poses reaches 0.880/0.880, so the synthetic-to-real drops are 0.590/0.560. Removing ICP gives MSSD 0.280 and leaving normals unoriented gives 0.200. Six of ten objects exceed MSSD 0.2d; overlapping causes include one merged contact cluster, two objects below 0.8 visibility, two thin objects, one above one-percent missing depth, and four symmetric objects.",
+   "ops": [
+    "depth_to_points",
+    "estimate_normals",
+    "fit_plane_ransac",
+    "euclidean_clusters",
+    "ppf_model",
+    "surface_match",
+    "icp_point2point_3d"
+   ],
+   "lead_ja": "",
+   "lead_en": ""
+  },
+  {
    "id": "poc_real_stereo_depth",
    "wing": "wing_geometry",
    "added": "2026-09-08",

@@ -4,7 +4,7 @@ title: 3-D 点群から平面度を出す
 title_en: Flatness of a surface from a 3-D point cloud
 category: 測る
 ops: [ransac_plane, fit_plane_3d, distance_point_plane, statistical_outlier_removal]
-examples: [geometry_metrology, poc_bump_coplanarity, poc_scan_to_bim_asbuilt]
+examples: [geometry_metrology, poc_bump_coplanarity, poc_scan_to_bim_asbuilt, poc_real_tless_6dof]
 version: 0.2.0
 inputs: [points]
 pipeline: [statistical_outlier_removal, ransac_plane, fit_plane_3d, distance_point_plane]

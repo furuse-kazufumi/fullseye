@@ -15,6 +15,12 @@ release notes.
 **What the PoCs hardened: [HARDENING.en.md](docs/HARDENING.en.md)** — the ledger of defects
 the PoC series found, what changed, and which gate now stops each one coming back.
 
+**Real RGB-D 6-DoF PoC:** [`poc_real_tless_6dof`](examples/poc_real_tless_6dof.py)
+runs the depth-to-point-cloud, normal, table-removal, clustering, PPF and ICP chain on
+BOP T-LESS (CC BY 4.0), scores it with symmetry-aware MSSD/MSPD, and compares it with
+the public Drost and Vidal baselines. Dataset citation: Hodaň et al., T-LESS, WACV 2017,
+[doi:10.1109/WACV.2017.8](https://doi.org/10.1109/WACV.2017.8).
+
 > **Real-hardware and real-data results wanted.** Fullseye is developed without physical
 > measurement rigs, so it is validated against virtual optical systems and simulated ground
 > truth. Results from real hardware or real data are very welcome — **your data does not have
@@ -90,16 +96,16 @@ Not measured: plausible but wrong values (distance from ground truth), speed, OS
 
 ### Verification stage
 
-The 97 capabilities, split by how they are verified (`docs/maturity.json`, rebuilt by `tools/gen_maturity.py` from the current tree (pyproject version 0.8.1); stage definitions in [MATURITY.md](docs/MATURITY.md)).
+The 98 capabilities, split by how they are verified (`docs/maturity.json`, rebuilt by `tools/gen_maturity.py` from the current tree (pyproject version 0.8.1); stage definitions in [MATURITY.md](docs/MATURITY.md)).
 
 | stage | meaning | capabilities |
 |---|---|---|
 | `research-prototype` | implemented; tests or a running example still missing | 0 |
-| `verified-synthetic` | verified automatically against synthetic ground truth | 79 |
-| `validated-public-real-data` | an example on public measured data runs in a gate | 18 |
+| `verified-synthetic` | verified automatically against synthetic ground truth | 78 |
+| `validated-public-real-data` | an example on public measured data runs in a gate | 20 |
 | `validated-hardware` | validated on hardware (only from accepted external reports) | 0 |
 
-Of 449 examples, 449 are actually run by a gate.
+Of 450 examples, 450 are actually run by a gate.
 
 ### Operator counts by version
 

@@ -16,7 +16,7 @@
 `py -3.11 tools/gen_capabilities_index.py` を実行するだけです
 (この索引は生成物なので直接編集しないでください)。
 
-**収録 97 項目**
+**収録 98 項目**
 
 ## 課題から引く(推奨パイプライン)
 
@@ -71,6 +71,7 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 | [同じ粒子を走査像と透過像で測り、二つの寸法偏りを比べる](capabilities/sem-tem-same-particle.md) | `sem_render` → `tem_power_spectrum` | `poc_sem_tem_same_particle` |
 | [逐次光学設計の指標(理想レンズ面 → 囲みエネルギー → 子午/球欠 MTF → スルーフォーカス MTF)](capabilities/sequential-lens-design-metrics.md) | `lens_system` → `psf_from_opd` → `encircled_energy` → `energy_radii` → `mtf_tangential_sagittal` → `through_focus_mtf` | `optical_design_metrics` |
 | [実物の画像から物理モデルの係数を合わせる(sim-to-real 較正)—— 画像が決めない係数には数を出さず、決まる組み合わせと理由を返す](capabilities/sim-to-real-calibration.md) | `simcal_model` → `simcal_observe` → `simcal_fit` → `simcal_identifiability` → `simcal_report` | `simcal_tour` |
+| [既知の 3-D 部品を点群から 6 自由度で見つける](capabilities/six-dof-surface-pose.md) | `depth_to_points` → `estimate_normals` → `ransac_plane` → `icp_point2point_3d` | `poc_registration_basin` |
 | [画像から寸法をサブピクセルで測る](capabilities/subpixel-2d-metrology.md) | `gen_measure_rectangle2` → `measure_pos` → `measure_pairs` → `table_px_to_mm` | `poc_dimensional_inspection` |
 | [表面の凹凸欠陥を、照明の設計から検出まで](capabilities/surface-defects-with-lighting.md) | `illumination_design` → `lighting_sweep` → `light_source` → `defect_contrast` → `irradiance_map` → `illumination_uniformity` → `photometric_stereo` → `integrate_normals` → `surface_form_error` → `bothat` → `auto_threshold` → `remove_small` | `illumination_design_demo` |
 | [TDI ラインスキャンとラインスキャン用レンズ(段数と SNR → 同期ずれの MTF → 像高ごとの照度と MTF)](capabilities/tdi-linescan-and-lens.md) | `tdi_snr` → `tdi_sync_mtf` → `linescan_lens_example` → `lens_field_profile` → `linescan_lens_columns` → `linescan_acquire` | `poc_tdi_linescan` |
@@ -331,7 +332,7 @@ X 線(や可視光)の透過像は「どれだけ吸われたか」しか写し�
 
 実寸校正: 点群の座標系の単位(m / mm)を揃える。センサの測距雑音 σ を先に測り、PV は σ√(2 ln N) の床と比べて読む。
 
-動く例: `geometry_metrology`, `poc_bump_coplanarity`, `poc_scan_to_bim_asbuilt`
+動く例: `geometry_metrology`, `poc_bump_coplanarity`, `poc_scan_to_bim_asbuilt`, `poc_real_tless_6dof`
 
 ### [どの大きさなら見つかるか(検出確率 POD と a90/95、MIL-HDBK-1823A)](capabilities/probability-of-detection.md)
 
@@ -557,7 +558,7 @@ X 線(や可視光)の透過像は「どれだけ吸われたか」しか写し�
 
 動く例: `poc_what_a_picture_cannot_check`
 
-## 見つける (13)
+## 見つける (14)
 
 ### [領域を切り出して、選んで、数える](capabilities/blob-and-region.md)
 
@@ -710,6 +711,22 @@ X 線(や可視光)の透過像は「どれだけ吸われたか」しか写し�
 使う op: `acoustic_material_table`, `acoustic_layer_stack`, `acoustic_interface_coefficients`, `pulse_echo_ascan`, `sam_cscan`, `echo_phase_polarity`, `sam_frequency_tradeoff`
 
 動く例: `poc_sam_hybrid_bonding_voids`
+
+### [既知の 3-D 部品を点群から 6 自由度で見つける](capabilities/six-dof-surface-pose.md)
+
+既知の CAD・再構成モデルを実機の深度点群へ当て、モデル座標からカメラ座標への回転 R と並進 t を返します。深度を逆射影し、法線をカメラ向きに揃え、作業台を RANSAC で除き、物体 cluster ごとに Point Pair Features で大域探索して ICP で詰めます。
+
+使う op: `depth_to_points`, `estimate_normals`, `fit_plane_ransac`, `euclidean_clusters`, `ppf_model`, `surface_match`, `icp_point2point_3d`
+
+推奨パイプライン: [`depth_to_points`](ops/3d/transform/depth_to_points.md) → [`estimate_normals`](ops/3d/curvature/estimate_normals.md) → [`ransac_plane`](ops/3d/robust_fit/ransac_plane.md) → [`icp_point2point_3d`](ops/3d/refine/icp_point2point_3d.md)
+
+代替: `find_surface_pose`, `point_to_plane_icp`, `fpfh`, [`register_cross`](ops/3d/fusion/register_cross.md)
+
+限界: T-LESS の実機 subset では AR_MSSD 0.290。理想深度 0.880 から 0.590 落ち、Drost-CVPR10-3D-Only の公式 0.478、Vidal-Sensors18 の 0.575 に負ける。接触物体の cluster 結合、遮蔽、深度欠損、対称形状を別々に数える。
+
+実寸校正: 深度とモデルの長さ単位を揃え、K と depth_scale を撮影フレームの値で読む。対称性を models_info.json から採点へ入れ、回転角だけで合否を決めない。
+
+動く例: `poc_registration_basin`, `poc_real_tless_6dof`
 
 ### [表面の凹凸欠陥を、照明の設計から検出まで](capabilities/surface-defects-with-lighting.md)
 
@@ -1303,7 +1320,7 @@ PoC や計測の結果を、**自己完結した 1 枚の HTML ビューア**に
 
 実寸校正: 画素校正は無い。縮尺が要るなら K の fx(画素 / 座標単位)から スケールバーを置く(annotate_scale_bar)。
 
-動く例: `points_render_basics`, `poc_flybrain_pointcloud`
+動く例: `points_render_basics`, `poc_flybrain_pointcloud`, `poc_real_tless_6dof`
 
 ### [画像の上に、文字と表を置きたい場所へ置く](capabilities/text-and-tables-on-images.md)
 

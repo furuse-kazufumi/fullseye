@@ -1,0 +1,52 @@
+[
+ {
+  "file": "01_pose_overlay.png",
+  "name": "pose_overlay",
+  "caption": "scene 1/image 157。PPF+ICP の推定モデル(橙)と BOP 真値(青)。",
+  "shape": [
+   633,
+   740,
+   3
+  ]
+ },
+ {
+  "file": "02_rgb_depth.png",
+  "name": "rgb_depth",
+  "caption": "欠測 3678 px、孤立飛び候補 0 px。 BOP T-LESS, CC BY 4.0。",
+  "shape": [
+   633,
+   1694,
+   3
+  ]
+ },
+ {
+  "file": "03_mssd_by_object.png",
+  "name": "mssd_by_object",
+  "caption": "0.05d..0.50d の 10 閾値平均。接触クラスタで落ちる。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_synthetic_vs_real.png",
+  "name": "synthetic_vs_real",
+  "caption": "理想 z-buffer 深度と PrimeSense 深度を同じ PPF+ICP で採点。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "05_failure.png",
+  "name": "failure",
+  "caption": "橙=推定、青=真値。MSSD 108.6 mm、cluster merged=True。",
+  "shape": [
+   633,
+   740,
+   3
+  ]
+ }
+]

@@ -6256,7 +6256,7 @@ py -3.11 examples/poc_periodic_video_boundary.py
 
 ### 幾何・校正ウィング ―― 残差が小さいことは正しさの証明にならない
 
-カメラ校正の再投影誤差、パノラマの継ぎ目、点群位置合わせの残差。どれも「小さいほど良い」と読まれる数字ですが、この部屋の 19 点はその読み方が成り立たない場面を、真値を握った上で並べています。
+カメラ校正の再投影誤差、パノラマの継ぎ目、点群位置合わせの残差。どれも「小さいほど良い」と読まれる数字ですが、この部屋の 20 点はその読み方が成り立たない場面を、真値を握った上で並べています。
 
 再投影誤差 0.0688〜0.0690 px で焦点距離の誤差が 0.026〜7.334 %。隣の継ぎ目が 0.12 px なのに閉じる 1 本だけ 1.5 px。球や円柱では残差が同じまま姿勢が任意。最小二乗は残差を雑音まで落とすのが仕事で、落ちた先が真値かどうかは別の話です。
 
@@ -6329,6 +6329,42 @@ py -3.11 examples/poc_panorama_drift.py
 この回が作った図は全部で **5 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_panorama_drift)
 
 使用 op(ノートへ): [`axes_frame`](https://furuse.work/ops/annotate/plot/axes_frame.html) · [`axes_transform`](https://furuse.work/ops/annotate/plot/axes_transform.html) · [`hom_vector_to_proj_hom_mat2d`](https://furuse.work/ops/calib/fit/hom_vector_to_proj_hom_mat2d.html) · [`plot_series`](https://furuse.work/ops/annotate/plot/plot_series.html) · [`pose_error`](https://furuse.work/ops/3d/metrics/pose_error.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`ticks`](https://furuse.work/ops/annotate/plot/ticks.html) · [`warp_by_plane`](https://furuse.work/ops/3d/plane_sweep_stereo/warp_by_plane.html)
+
+## No.2026.285 —— 実機 RGB-D の産業部品を PPF で 6 自由度照合する
+
+BOP T-LESS(CC BY 4.0)の PrimeSense 実測 2 場面・10 対象を、深度→点群→法線→RANSAC 平面除去→クラスタ→PPF+ICP と通し、対称性を含む MSSD/MSPD/ADD-S で採点した。PoC subset は AR_MSSD 0.290 / AR_MSPD 0.320 で、公式全 test の Drost-CVPR10-3D-Only 0.478/0.480、Vidal-Sensors18 0.575/0.574 に負けた。同じモデル・姿勢の理想深度は 0.880/0.880 なので、合成から実機で 0.590/0.560 落ちる。ICP 無しは MSSD 0.280、符号未整理の法線は 0.200。MSSD>0.2d の失敗 6/10 の内訳は、接触クラスタ 1、可視率<0.8 が 2、薄い部品 2、深度欠損>1% が 1、対称部品 4(重複)。
+
+[![実機 RGB-D の産業部品を PPF で 6 自由度照合する](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/01_pose_overlay_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/01_pose_overlay.png)
+
+*↑ **実機 RGB-D の産業部品を PPF で 6 自由度照合する** ―― BOP T-LESS(CC BY 4.0)の PrimeSense 実測 2 場面・10 対象を、深度→点群→法線→RANSAC 平面除去→クラスタ→PPF+ICP と通し、対称性を含む MSSD/MSPD/ADD-S で採点した。PoC subset は AR_MSSD 0.290 / AR_MSPD 0.320 で、公式全 test の Drost-CVPR10-3D-Only 0.478/0.480、Vidal-Sensors18 0.575/0.574 に負けた。同じモデル・姿勢の理想深度は 0.880/0.880 なので、合成から実機で 0.590/0.560 落ちる。ICP 無しは MSSD 0.280、符号未整理の法線は 0.200。MSSD>0.2d の失敗 6/10 の内訳は、接触クラスタ 1、可視率<0.8 が 2、薄い部品 2、深度欠損>1% が 1、対称部品 4(重複)。*
+
+用語: ICP — 二つの点群で最近点対応と剛体変換の推定を交互に繰り返し、位置合わせする方法。
+
+[![欠測 3678 px、孤立飛び候補 0 px。 BOP T-LESS, CC BY 4.0。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/02_rgb_depth_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/02_rgb_depth.png)
+
+*↑ 測定の図 ―― 欠測 3678 px、孤立飛び候補 0 px。 BOP T-LESS, CC BY 4.0。*
+
+[![0.05d..0.50d の 10 閾値平均。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/03_mssd_by_object_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/03_mssd_by_object.png)
+
+*↑ 0.05d..0.50d の 10 閾値平均。*
+
+[![理想 z-buffer 深度と PrimeSense 深度を同じ PPF+ICP で採点。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/04_synthetic_vs_real_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/04_synthetic_vs_real.png)
+
+*↑ 理想 z-buffer 深度と PrimeSense 深度を同じ PPF+ICP で採点。*
+
+[![橙=推定、青=真値。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/05_failure_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/05_failure.png)
+
+*↑ 橙=推定、青=真値。*
+
+```
+py -3.11 examples/poc_real_tless_6dof.py
+```
+
+ソース: [examples/poc_real_tless_6dof.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_tless_6dof.py)
+
+この回が作った図は全部で **5 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_real_tless_6dof)
+
+使用 op(ノートへ): [`depth_to_points`](https://furuse.work/ops/3d/transform/depth_to_points.html) · [`estimate_normals`](https://furuse.work/ops/3d/curvature/estimate_normals.html) · [`project_points`](https://furuse.work/ops/3d/render/project_points.html) · [`render_point_depth`](https://furuse.work/ops/3d/render/render_point_depth.html)
 
 ## No.2026.108 —— 実写のステレオ写真で測る ―― 合成では出ない 3 つの躓き
 
