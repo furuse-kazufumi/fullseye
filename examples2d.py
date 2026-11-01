@@ -38,6 +38,10 @@ DIR = os.path.join(_ROOT, "examples")
 # id -> metadata. `name`/`summary` are plain-language (what real problem it solves);
 # `task` groups the gallery; `data` is the provenance. Every id maps to examples/<id>.py.
 EXAMPLES = [
+    {"id": "mcp_usability", "task": "workflow", "data": "synthetic",
+     "name": "MCPで物理量・登録見本・検証済みpipeline案を明示して使う",
+     "summary": "外部資産なしの合成画像で、名前つき物理量による平滑化、明示的な登録見本ハンドルによる位置決め、"
+                "候補が一意なときだけ返す検証済みpipeline案を実行し、結果を自己検査する。"},
     {"id": "archive_roundtrip", "task": "fileio", "data": "synthetic",
      "name": "書庫を同じbytesで作り、安全に一覧・展開する",
      "summary": "zip、tar、tar.gz、tar.xzを2回作ってSHA-256一致を確かめ、標準ライブラリという独立の読み手と"
