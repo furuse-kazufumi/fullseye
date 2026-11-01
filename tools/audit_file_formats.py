@@ -55,6 +55,7 @@ _VERIFY_READERS = {
     ".e57": ("pye57",), ".xlsx": ("openpyxl",), ".dxf": ("ezdxf",),
     ".fits": ("astropy",),
     ".mrc": ("mrcfile",),
+    ".nrrd": ("nrrd",),
 }
 _NAME_EXTS = {ext[1:]: ext for ext in FORMAT_NAMES if "." not in ext[1:]}
 

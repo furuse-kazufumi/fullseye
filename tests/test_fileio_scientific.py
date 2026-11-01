@@ -6,6 +6,7 @@ from pathlib import Path
 import numpy as np
 import pytest
 import mrcfile
+import nrrd
 from astropy.io import fits
 
 import fileio
@@ -124,3 +125,59 @@ def test_mrc_public_mrcfile_readme_worked_example(tmp_path):
     actual, meta = fileio.em_mrc_read(path.read_bytes())
     np.testing.assert_array_equal(actual, expected)
     assert meta["mode"] == 0 and meta["voxel_unit"] == "angstrom"
+
+
+@pytest.mark.parametrize("encoding", ["raw", "gzip"])
+def test_nrrd_roundtrip_geometry_and_independent_pynrrd_reader(tmp_path, encoding):
+    array = np.arange(4 * 3 * 2 * 5, dtype=np.int16).reshape(4, 3, 2, 5)
+    directions = [np.array([0.5, 0.0, 0.0]), np.array([0.0, 0.75, 0.0]),
+                  np.array([0.0, 0.0, 1.25]), None]
+    meta = {"space_directions": directions, "space_unit": "mm",
+            "space_origin": [-2.0, 3.0, 4.5], "kinds": ["domain", "domain", "domain", "time"]}
+    before = set(tmp_path.iterdir())
+    payload = fileio.nrrd_write(array, meta=meta, encoding=encoding)
+    assert isinstance(payload, bytes) and set(tmp_path.iterdir()) == before
+    back, actual_meta = fileio.nrrd_read(payload)
+    np.testing.assert_array_equal(back, array)
+    assert actual_meta["encoding"] == encoding
+    assert actual_meta["voxel_spacing"] == [0.5, 0.75, 1.25, None]
+    assert actual_meta["space_unit"] == "mm"
+    np.testing.assert_array_equal(actual_meta["space_origin"], meta["space_origin"])
+    for actual, expected in zip(actual_meta["space_directions"], directions):
+        if expected is None:
+            assert actual is None
+        else:
+            np.testing.assert_array_equal(actual, expected)
+
+    path = tmp_path / f"independent-{encoding}.nrrd"
+    path.write_bytes(payload)
+    independent, header = nrrd.read(path, index_order="F")
+    np.testing.assert_array_equal(independent, array)
+    assert header["encoding"] in (encoding, "gz")
+    np.testing.assert_array_equal(header["space origin"], meta["space_origin"])
+
+
+def test_nrrd_corrupt_input_is_rejected_by_name():
+    array = np.arange(24, dtype=np.float32).reshape(2, 3, 4)
+    meta = {"space_directions": np.diag([0.5, 0.75, 1.0]), "space_unit": "um",
+            "space_origin": [0, 0, 0]}
+    raw = fileio.nrrd_write(array, meta=meta, encoding="raw")
+    with pytest.raises(ValueError, match="declare 96 data bytes, got 92"):
+        fileio.nrrd_read(raw[:-4])
+    with pytest.raises(ValueError, match="unsupported encoding 'bzip2'"):
+        fileio.nrrd_read(raw.replace(b"encoding: raw", b"encoding: bzip2"))
+    with pytest.raises(ValueError, match="space directions must have 3 axis entries"):
+        fileio.nrrd_read(raw.replace(b"space directions: (0.5,0,0) (0,0.75,0) (0,0,1)",
+                                     b"space directions: (0.5,0,0) (0,0.75,0)        "))
+    with pytest.raises(ValueError, match="space_unit must be one of"):
+        fileio.nrrd_write(array, meta={**meta, "space_unit": "seconds"}, encoding="raw")
+
+
+def test_nrrd_public_pynrrd_readme_worked_example(tmp_path):
+    """Read pynrrd's published MIT-licensed zeros((5,4,3,2)) worked example."""
+    expected = np.zeros((5, 4, 3, 2), dtype=np.float64)
+    path = tmp_path / "pynrrd-readme.nrrd"
+    nrrd.write(str(path), expected, index_order="F")
+    actual, meta = fileio.nrrd_read(path.read_bytes())
+    np.testing.assert_array_equal(actual, expected)
+    assert meta["space_directions"] is None and meta["space_unit"] is None

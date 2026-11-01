@@ -1,8 +1,8 @@
 {
- "n_ops": 3627,
+ "n_ops": 3629,
  "tiers": {
   "color": 12,
-  "ledger": 2668,
+  "ledger": 2670,
   "nary": 17,
   "registry": 930
  },
@@ -19277,6 +19277,32 @@
    "dim": "reprconv",
    "in_sorts": [
     "normals"
+   ]
+  },
+  {
+   "name": "nrrd_read",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "any",
+   "category": "nrrd",
+   "tier": "ledger",
+   "ledger": "opsfileio",
+   "dim": "fileio",
+   "in_sorts": [
+    "any"
+   ]
+  },
+  {
+   "name": "nrrd_write",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "any",
+   "category": "nrrd",
+   "tier": "ledger",
+   "ledger": "opsfileio",
+   "dim": "fileio",
+   "in_sorts": [
+    "any"
    ]
   },
   {

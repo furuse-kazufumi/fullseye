@@ -10,10 +10,12 @@ from __future__ import annotations
 
 import csv
 import datetime as _datetime
+import gzip
 import hashlib
 import io
 import math
 import os
+import re
 import struct
 import tempfile
 import threading
@@ -32,6 +34,7 @@ __all__ = [
     "e57_write", "e57_read",
     "astro_fits_write", "astro_fits_read",
     "em_mrc_write", "em_mrc_read",
+    "nrrd_write", "nrrd_read",
 ]
 
 _CSV_META_REQUIRED = ("source", "generated_at", "coordinate_meaning")
@@ -49,6 +52,25 @@ _FITS_WCS_KEYS = (
 )
 _MRC_MODE_DTYPES = {0: np.dtype("i1"), 1: np.dtype("i2"),
                     2: np.dtype("f4"), 6: np.dtype("u2")}
+_NRRD_DTYPES = {
+    "int8": np.dtype("i1"), "uint8": np.dtype("u1"),
+    "int16": np.dtype("i2"), "uint16": np.dtype("u2"),
+    "int32": np.dtype("i4"), "uint32": np.dtype("u4"),
+    "int64": np.dtype("i8"), "uint64": np.dtype("u8"),
+    "float": np.dtype("f4"), "double": np.dtype("f8"),
+}
+_NRRD_TYPE_ALIASES = {
+    "signed char": "int8", "int8_t": "int8", "uchar": "uint8",
+    "unsigned char": "uint8", "uint8_t": "uint8", "short": "int16",
+    "short int": "int16", "signed short": "int16", "signed short int": "int16",
+    "int16_t": "int16", "ushort": "uint16", "unsigned short": "uint16",
+    "unsigned short int": "uint16", "uint16_t": "uint16", "int": "int32",
+    "signed int": "int32", "int32_t": "int32", "uint": "uint32",
+    "unsigned int": "uint32", "uint32_t": "uint32", "longlong": "int64",
+    "long long": "int64", "long long int": "int64", "int64_t": "int64",
+    "ulonglong": "uint64", "unsigned long long": "uint64",
+    "unsigned long long int": "uint64", "uint64_t": "uint64",
+}
 
 
 def _csv_columns(table, op: str) -> dict[str, np.ndarray]:
@@ -1004,3 +1026,249 @@ def em_mrc_read(data):
     return result, {"format": "MRC2014", "mode": int(mode),
                     "voxel_size": voxel, "voxel_unit": "angstrom",
                     "origin": origin, "origin_unit": "angstrom"}
+
+
+def _nrrd_unit(value, op: str):
+    aliases = {"mm": "mm", "millimeter": "mm", "millimeters": "mm",
+               "um": "um", "µm": "um", "micrometer": "um", "micrometers": "um",
+               "angstrom": "angstrom", "ångström": "angstrom", "å": "angstrom"}
+    unit = aliases.get(str(value).strip().lower())
+    if unit is None:
+        raise ValueError(f"{op}: space_unit must be one of mm/um/angstrom, got {value!r}")
+    return unit
+
+
+def _nrrd_geometry(meta, ndim: int, op: str):
+    if not isinstance(meta, Mapping):
+        raise ValueError(f"{op}: meta must be a mapping")
+    allowed = {"space_directions", "space_unit", "space_origin", "kinds"}
+    unknown = set(meta) - allowed
+    if unknown:
+        raise ValueError(f"{op}: unsupported metadata key(s): {', '.join(sorted(map(str, unknown)))}")
+    if "space_directions" not in meta or "space_unit" not in meta:
+        raise ValueError(f"{op}: meta requires space_directions and explicit space_unit")
+    raw_directions = list(meta["space_directions"])
+    if len(raw_directions) != ndim:
+        raise ValueError(f"{op}: space_directions has {len(raw_directions)} axes; array has {ndim}")
+    vectors, space_dim = [], None
+    for axis, value in enumerate(raw_directions):
+        if value is None:
+            vectors.append(None)
+            continue
+        vector = np.asarray(value, dtype=np.float64)
+        if vector.ndim != 1 or vector.size == 0 or not np.all(np.isfinite(vector)):
+            raise ValueError(f"{op}: space_directions axis {axis} must be a finite vector or None")
+        if not np.any(vector):
+            raise ValueError(f"{op}: space_directions axis {axis} must not be a zero vector")
+        if space_dim is None:
+            space_dim = len(vector)
+        elif len(vector) != space_dim:
+            raise ValueError(f"{op}: all space direction vectors must have the same length")
+        vectors.append(vector)
+    if space_dim is None:
+        raise ValueError(f"{op}: space_directions must contain at least one spatial vector")
+    unit = _nrrd_unit(meta["space_unit"], op)
+    origin = np.asarray(meta.get("space_origin", np.zeros(space_dim)), dtype=np.float64)
+    if origin.shape != (space_dim,) or not np.all(np.isfinite(origin)):
+        raise ValueError(f"{op}: space_origin must be {space_dim} finite values")
+    kinds = list(meta.get("kinds", ["domain" if value is not None else "list" for value in vectors]))
+    if len(kinds) != ndim or any(not isinstance(v, str) or not v or any(c.isspace() for c in v) for v in kinds):
+        raise ValueError(f"{op}: kinds must contain one whitespace-free name per array axis")
+    return vectors, unit, origin, kinds
+
+
+def _nrrd_vector_text(vector) -> str:
+    if vector is None:
+        return "none"
+    return "(" + ",".join("%.17g" % float(value) for value in vector) + ")"
+
+
+def nrrd_write(array, *, meta, encoding):
+    """多次元配列と ``space directions`` を raw/gzip NRRD の ``bytes`` にする。
+
+    ``meta`` は各配列軸の方向ベクトル(非空間軸は ``None``)、``space_origin``、
+    ``space_unit``(``mm`` / ``um`` / ``angstrom``)を持つ。``encoding`` は ``raw`` または
+    ``gzip`` を明示する。呼び出し例: ``nrrd_write(vol, meta=geometry, encoding="gzip")``。
+    """
+    op = "nrrd_write"
+    values = np.asarray(array)
+    if values.ndim < 1 or values.size == 0:
+        raise ValueError(f"{op}: array must be non-empty and at least 1-D, got {values.shape!r}")
+    native_dtype = values.dtype.newbyteorder("=")
+    type_by_dtype = {dtype: name for name, dtype in _NRRD_DTYPES.items()}
+    if native_dtype not in type_by_dtype:
+        raise ValueError(f"{op}: unsupported dtype {values.dtype}; use fixed-width integers or float32/float64")
+    encoding = str(encoding).lower()
+    if encoding not in ("raw", "gzip"):
+        raise ValueError(f"{op}: encoding must be 'raw' or 'gzip', got {encoding!r}")
+    vectors, unit, origin, kinds = _nrrd_geometry(meta, values.ndim, op)
+    space_dim = len(origin)
+    header = ["NRRD0005", "# Created by Fullseye", f"type: {type_by_dtype[native_dtype]}",
+              f"dimension: {values.ndim}", "sizes: " + " ".join(map(str, values.shape)),
+              f"space dimension: {space_dim}",
+              "space directions: " + " ".join(_nrrd_vector_text(v) for v in vectors),
+              "kinds: " + " ".join(kinds),
+              "space units: " + " ".join(f'"{unit}"' for _ in range(space_dim)),
+              "space origin: " + _nrrd_vector_text(origin),
+              f"encoding: {encoding}"]
+    if native_dtype.itemsize > 1:
+        header.append("endian: little")
+    stored = np.asarray(values, dtype=native_dtype.newbyteorder("<")).tobytes(order="F")
+    if encoding == "gzip":
+        stored = gzip.compress(stored, compresslevel=9, mtime=0)
+    return ("\n".join(header) + "\n\n").encode("ascii") + stored
+
+
+def _nrrd_fields(raw: bytes, op: str):
+    marker = raw.find(b"\n\n")
+    marker_size = 2
+    if marker < 0:
+        marker = raw.find(b"\r\n\r\n")
+        marker_size = 4
+    if marker < 0:
+        raise ValueError(f"{op}: NRRD header has no blank-line terminator")
+    try:
+        text = raw[:marker].decode("ascii").replace("\r\n", "\n")
+    except UnicodeDecodeError as exc:
+        raise ValueError(f"{op}: NRRD header must be ASCII") from exc
+    lines = text.splitlines()
+    if not lines or not lines[0].startswith("NRRD000") or lines[0][-1:] not in "12345":
+        raise ValueError(f"{op}: unsupported or missing NRRD magic/version")
+    fields = {}
+    for number, line in enumerate(lines[1:], 2):
+        if not line or line.startswith("#"):
+            continue
+        if ":=" in line:
+            raise ValueError(f"{op}: custom key/value field on header line {number} is unsupported")
+        if ":" not in line:
+            raise ValueError(f"{op}: malformed header line {number}: {line!r}")
+        key, value = (part.strip() for part in line.split(":", 1))
+        key = key.lower()
+        if key in fields:
+            raise ValueError(f"{op}: duplicate header field {key!r}")
+        fields[key] = value
+    return fields, raw[marker + marker_size:]
+
+
+def _nrrd_directions(text: str, dimension: int, op: str):
+    tokens = []
+    current, depth = [], 0
+    for char in text.strip():
+        if char == "(" :
+            depth += 1
+        elif char == ")":
+            depth -= 1
+            if depth < 0:
+                raise ValueError(f"{op}: malformed space directions")
+        if char.isspace() and depth == 0:
+            if current:
+                tokens.append("".join(current)); current = []
+        else:
+            current.append(char)
+    if current:
+        tokens.append("".join(current))
+    if depth != 0 or len(tokens) != dimension:
+        raise ValueError(f"{op}: space directions must have {dimension} axis entries")
+    vectors, size = [], None
+    for axis, token in enumerate(tokens):
+        if token.lower() == "none":
+            vectors.append(None)
+            continue
+        if not (token.startswith("(") and token.endswith(")")):
+            raise ValueError(f"{op}: malformed space direction for axis {axis}: {token!r}")
+        try:
+            vector = np.asarray([float(v) for v in token[1:-1].split(",")], dtype=np.float64)
+        except ValueError as exc:
+            raise ValueError(f"{op}: non-numeric space direction for axis {axis}") from exc
+        if vector.size == 0 or not np.all(np.isfinite(vector)) or not np.any(vector):
+            raise ValueError(f"{op}: invalid space direction for axis {axis}")
+        if size is None:
+            size = len(vector)
+        elif len(vector) != size:
+            raise ValueError(f"{op}: space direction vector lengths disagree")
+        vectors.append(vector)
+    return vectors, size
+
+
+def nrrd_read(data):
+    """raw/gzip NRRD を ``(array, meta)`` として読み、空間単位を明示して返す。
+
+    ``meta`` は ``space_directions``、方向ベクトルの長さから得た ``voxel_spacing``、
+    ``space_unit``、``space_origin``、``kinds`` を持つ。detached data、未知の encoding、
+    shape/dtype/byte 数の不一致は拒否する。呼び出し例: ``array, meta = nrrd_read(payload)``。
+    """
+    op = "nrrd_read"
+    raw = _file_bytes(data, op)
+    fields, payload = _nrrd_fields(raw, op)
+    required = ("type", "dimension", "sizes", "encoding")
+    missing = [key for key in required if key not in fields]
+    if missing:
+        raise ValueError(f"{op}: missing required header field(s): {', '.join(missing)}")
+    if any(key in fields for key in ("data file", "datafile", "line skip", "byte skip")):
+        raise ValueError(f"{op}: detached data and line/byte skip headers are unsupported")
+    type_name = fields["type"].lower()
+    type_name = _NRRD_TYPE_ALIASES.get(type_name, type_name)
+    if type_name not in _NRRD_DTYPES:
+        raise ValueError(f"{op}: unsupported NRRD type {fields['type']!r}")
+    try:
+        dimension = int(fields["dimension"])
+        sizes = tuple(int(v) for v in fields["sizes"].split())
+    except ValueError as exc:
+        raise ValueError(f"{op}: dimension and sizes must be integers") from exc
+    if dimension < 1 or len(sizes) != dimension or any(v <= 0 for v in sizes):
+        raise ValueError(f"{op}: dimension {dimension} and sizes {sizes!r} are inconsistent")
+    encoding = fields["encoding"].lower()
+    if encoding in ("gz", "gzip"):
+        try:
+            payload = gzip.decompress(payload)
+        except (OSError, EOFError) as exc:
+            raise ValueError(f"{op}: corrupt or truncated gzip payload: {exc}") from exc
+    elif encoding != "raw":
+        raise ValueError(f"{op}: unsupported encoding {encoding!r}; expected raw/gzip")
+    dtype = _NRRD_DTYPES[type_name]
+    if dtype.itemsize > 1:
+        endian = fields.get("endian", "").lower()
+        if endian not in ("little", "big"):
+            raise ValueError(f"{op}: multi-byte type requires endian: little or big")
+        dtype = dtype.newbyteorder("<" if endian == "little" else ">")
+    expected = math.prod(sizes) * dtype.itemsize
+    if len(payload) != expected:
+        raise ValueError(f"{op}: sizes/type declare {expected} data bytes, got {len(payload)}")
+    array = np.frombuffer(payload, dtype=dtype).reshape(sizes, order="F").copy()
+    if array.dtype.itemsize > 1:
+        array = array.astype(array.dtype.newbyteorder("="), copy=False)
+    vectors, space_dim = (None, None)
+    if "space directions" in fields:
+        vectors, space_dim = _nrrd_directions(fields["space directions"], dimension, op)
+        declared = fields.get("space dimension")
+        if declared is not None and int(declared) != space_dim:
+            raise ValueError(f"{op}: space dimension {declared} disagrees with direction vectors of length {space_dim}")
+    unit = None
+    if "space units" in fields:
+        units = re.findall(r'"([^"\\]*(?:\\.[^"\\]*)*)"', fields["space units"])
+        if space_dim is None or len(units) != space_dim:
+            raise ValueError(f"{op}: space units count must match space dimension")
+        canonical = [_nrrd_unit(value, op) for value in units]
+        if len(set(canonical)) != 1:
+            raise ValueError(f"{op}: mixed spatial units are unsupported; convert them before reading")
+        unit = canonical[0]
+    if vectors is not None and unit is None:
+        raise ValueError(f"{op}: space directions require explicit space units")
+    origin = None
+    if "space origin" in fields:
+        token = fields["space origin"]
+        if not (token.startswith("(") and token.endswith(")")):
+            raise ValueError(f"{op}: malformed space origin")
+        try:
+            origin = np.asarray([float(v) for v in token[1:-1].split(",")], dtype=np.float64)
+        except ValueError as exc:
+            raise ValueError(f"{op}: non-numeric space origin") from exc
+        if space_dim is None or origin.shape != (space_dim,) or not np.all(np.isfinite(origin)):
+            raise ValueError(f"{op}: space origin length must match space dimension")
+    kinds = fields.get("kinds", "").split() or None
+    if kinds is not None and len(kinds) != dimension:
+        raise ValueError(f"{op}: kinds count must match dimension")
+    spacing = None if vectors is None else [None if v is None else float(np.linalg.norm(v)) for v in vectors]
+    return array, {"format": "NRRD", "encoding": encoding, "space_directions": vectors,
+                   "voxel_spacing": spacing, "space_unit": unit,
+                   "space_origin": origin, "kinds": kinds}

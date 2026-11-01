@@ -35,7 +35,7 @@
 | NII.GZ | `.nii.gz` | `volio.read_volume` | `volio.write_volume` | — | optional: SimpleITK, tifffile | `tests/test_public_api.py`<br>`tests/test_volio.py` | — |
 | NumPy array | `.npy` | `mesh.read_points`<br>`motionio.read_events`<br>`volio.read_volume` | `mesh.write_points`<br>`studio_display.save_outputs`<br>`volio.write_volume` | `read_events` | optional: SimpleITK, tifffile | `tests/test_capabilities.py`<br>`tests/test_examples3d.py`<br>+20 | — |
 | NumPy archive | `.npz` | `mesh.read_points`<br>`motionio.read_events`<br>`volio.read_volume` | `mesh.write_points`<br>`volio.write_volume` | `read_events` | optional: SimpleITK, tifffile | `tests/test_carlabridge.py`<br>`tests/test_itokawa_anim3d.py`<br>+13 | — |
-| NRRD | `.nrrd` | `volio.read_volume` | `volio.write_volume` | — | optional: SimpleITK, tifffile | `tests/test_public_api.py`<br>`tests/test_volio.py` | — |
+| NRRD | `.nrrd` | `fileio.nrrd_read`<br>`volio.read_volume` | `fileio.nrrd_write`<br>`volio.write_volume` | `nrrd_read`<br>`nrrd_write` | optional: SimpleITK, tifffile | `tests/test_fileio_scientific.py`<br>`tests/test_public_api.py`<br>+1 | `nrrd` |
 | Wavefront OBJ | `.obj` | `driveworld.read_obj_colored`<br>`fileio.mesh_read_obj`<br>`mesh.read_mesh`<br>`mesh.read_points` | `fileio.mesh_write_obj`<br>`mesh.write_mesh` | `mesh_read_obj`<br>`mesh_write_obj` | stdlib / core | `tests/test_abi_apply.py`<br>`tests/test_audit_0_7_1_fixes_2026_10_21.py`<br>+13 | `trimesh` |
 | Geomview OFF | `.off` | `fileio.mesh_read_off`<br>`mesh.read_mesh`<br>`mesh.read_points` | `fileio.mesh_write_off`<br>`mesh.write_mesh` | `mesh_read_off`<br>`mesh_write_off` | stdlib / core | `tests/test_audit_file_formats.py`<br>`tests/test_drivelateral.py`<br>+8 | `trimesh` |
 | PBM | `.pbm` | — | `imgio.save` | — | optional: PIL, cv2 | `tests/test_acquire.py`<br>`tests/test_acquire_contract.py`<br>+59 | — |
@@ -60,6 +60,6 @@
 
 ## 集計
 
-形式（拡張子） **52**、読みあり **41**、書きあり **43**、読み書き対 **32**、公開 op あり **16**、テストあり **52**、独立の読み手による検証あり **8**。
+形式（拡張子） **52**、読みあり **41**、書きあり **43**、読み書き対 **32**、公開 op あり **17**、テストあり **52**、独立の読み手による検証あり **9**。
 
 集計値も上表から生成しており、文書内に別の手書き件数は持たない。

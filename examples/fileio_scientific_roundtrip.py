@@ -25,7 +25,15 @@ def main():
     np.testing.assert_allclose(mrc_back_meta["voxel_size"], mrc_meta["voxel_size"])
     np.testing.assert_allclose(mrc_back_meta["origin"], mrc_meta["origin"])
 
-    print("PASS: FITS WCS and MRC voxel geometry round-trip in memory")
+    nrrd_meta = {"space_directions": np.diag([0.5, 0.75, 1.25]),
+                 "space_unit": "mm", "space_origin": [1.0, 2.0, 3.0]}
+    nrrd_bytes = fs.nrrd_write(volume, meta=nrrd_meta, encoding="gzip")
+    nrrd_volume, nrrd_back_meta = fs.nrrd_read(nrrd_bytes)
+    np.testing.assert_array_equal(nrrd_volume, volume)
+    assert nrrd_back_meta["voxel_spacing"] == [0.5, 0.75, 1.25]
+    assert nrrd_back_meta["space_unit"] == "mm"
+
+    print("PASS: FITS, MRC, and gzip NRRD arrays and geometry round-trip in memory")
 
 
 if __name__ == "__main__":

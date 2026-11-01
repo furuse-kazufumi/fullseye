@@ -35,6 +35,10 @@ _CATALOG = {
         ("em_mrc_write", ["any"], "any"),
         ("em_mrc_read", ["any"], "any"),
     ],
+    "nrrd": [
+        ("nrrd_write", ["any"], "any"),
+        ("nrrd_read", ["any"], "any"),
+    ],
 }
 
 
