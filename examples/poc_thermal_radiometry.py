@@ -198,6 +198,9 @@ import numpy as np
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import examplefig as figs                                        # noqa: E402
 import fullseye as fs                                            # noqa: E402
+from fullseye.evaluation import (                                # noqa: E402
+    CaseResult, GateResult, TruthBundle, artifacts_from_manifest, build_manifest,
+)
 
 # --------------------------------------------------------------------------- #
 # 放射定数 —— 2019 年 SI の定義値から出す(測定値ではない)                      #
@@ -1374,6 +1377,14 @@ def section_image(scene):
     rad = np.hypot(xx - 120.0, yy - 92.0)
     bolt[rad < 11.0] = True
     ring = (rad > 19.0) & (rad < 27.0)          # 台の上、ボルトのすぐ外
+    truth = TruthBundle(
+        fields={"surface_temperature": t_true, "emissivity": eps_map},
+        units={"surface_temperature": "K", "emissivity": "1"},
+        frames={"surface_temperature": "image-row-col-raw", "emissivity": "image-row-col-raw"},
+        masks={"valid": np.ones(t_true.shape, bool), "defect": bolt},
+        provenance={"processing_stage": "raw-pre-isp", "generator": "scene_truth"},
+        seed=4242,
+    )
     print(f"  発熱部の真上のボルト(ε={EPS_POLISH}): 真 "
           f"{float(t_true[bolt].mean()):.1f} K / 見かけ(ε=1) "
           f"{float(t_apparent[bolt].mean()):.1f} K / 補正後 "
@@ -1433,7 +1444,7 @@ def section_image(scene):
             "bolt_true": float(t_true[bolt].mean()),
             "bolt_app": float(t_apparent[bolt].mean()),
             "bolt_corr": float(t_corr[bolt].mean()),
-            "ring_app": float(t_apparent[ring].mean()),
+            "ring_app": float(t_apparent[ring].mean()), "truth": truth,
             "jensen_img": t_of_mean_dn - mean_of_t}
 
 
@@ -1679,6 +1690,19 @@ def main() -> int:
     for name in ("planck", "emissiv", "temperature", "radiom", "thermal",
                  "infrared", "stefan", "kelvin", "atmos", "guard"):
         assert name in holes["holes"], (name, holes["holes"])
+
+    evaluation = CaseResult(
+        case="poc_thermal_radiometry",
+        gates=[GateResult("thermal-radiometry-claims", True, relation="all")],
+        metrics={"corrected_rms_k": image["rms"], "apparent_rms_k": image["rms_app"]},
+        artifacts=artifacts_from_manifest(figs.manifest()),
+        seed=4242,
+        provenance={"migration": "P0-A"},
+    )
+    build_manifest(
+        evaluation.case, metrics=evaluation.metrics, arrays={}, truth=image["truth"],
+        gates=evaluation.gates, figures=figs.manifest(), videos={}, seed=evaluation.seed,
+    )
 
     print(f"\n所要 {time.perf_counter() - t0:.1f} s")
     if figs.errors():
