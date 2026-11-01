@@ -91,7 +91,7 @@ For AI integration, we envisage collaborative development in which generated pro
 ### Generate → execute → observe → evaluate → revise
 
 - **Specification-based generation:** AI refers to operator types, mathematical specifications, and parameter conditions to compose processing candidates.
-- **An interface for AI:** The project will provide an MCP server through which AI can search for operators, execute them, and observe their results. Unknown names and connections with incompatible types will be rejected with reasons rather than silently replaced by similar alternatives.
+- **An interface for AI:** Fullseye provides an MCP server through which AI can search for operators, execute them, and observe their results. Unknown names and connections with incompatible types are rejected with reasons rather than silently replaced by similar alternatives.
 - **Staged verification:** Syntax, types, connection consistency, unit tests, and evaluation of execution results are combined.
 - **Visual feedback:** We are considering a mechanism in which a VLM observes intermediate images and final results and proposes the stage at which a problem occurs or candidates for changes.
 - **Quantitative evaluation and human judgement:** Positioning error, detection accuracy, reprojection error, processing time, and memory use are compared, and people decide whether to accept a change after confirming its effect and validity.
