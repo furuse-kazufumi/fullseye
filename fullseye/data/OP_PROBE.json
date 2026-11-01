@@ -1,4 +1,4 @@
-{"generated_by": "tools/gen_mcp_data.py", "probe": "CPU, a=b=0.5, representative input", "n_ops": 3635, "ops": [
+{"generated_by": "tools/gen_mcp_data.py", "probe": "CPU, a=b=0.5, representative input", "n_ops": 3632, "ops": [
 {"name":"a3_distribution","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"aabb","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"abbe_number","status":"not_in_registry","reason":"not executable by fullseye.apply"},
@@ -1329,7 +1329,6 @@
 {"name":"image_orientation","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"image_points_to_world_plane","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"image_standardize","status":"ok","in_sort":"image","out_sort":"image","probe_input":"op_probe.sample_input('image', structured=True)"},
-{"name":"image_standardize","status":"ok","in_sort":"image","out_sort":"image","probe_input":"op_probe.sample_input('image', structured=True)"},
 {"name":"image_to_world_plane","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"img_to_beatcube","status":"ok","in_sort":"image","out_sort":"beatcube","probe_input":"op_probe.sample_input('image', structured=True)"},
 {"name":"img_to_cimage","status":"ok","in_sort":"image","out_sort":"cimage","probe_input":"op_probe.sample_input('image', structured=True)"},
@@ -2245,7 +2244,6 @@
 {"name":"psf_to_mtf","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"psnr","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"ptile_threshold","status":"ok","in_sort":"image","out_sort":"feature","probe_input":"op_probe.sample_input('image', structured=True)"},
-{"name":"ptile_threshold","status":"ok","in_sort":"image","out_sort":"feature","probe_input":"op_probe.sample_input('image', structured=True)"},
 {"name":"puck_camera","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"puck_crossing_point","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"puck_detect","status":"not_in_registry","reason":"not executable by fullseye.apply"},
@@ -2636,7 +2634,6 @@
 {"name":"sight_triangle_distance","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"sigma_clip_stack","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"sigma_image","status":"ok","in_sort":"image","out_sort":"image","probe_input":"op_probe.sample_input('image', structured=True)"},
-{"name":"sigma_threshold","status":"ok","in_sort":"image","out_sort":"region","probe_input":"op_probe.sample_input('image', structured=True)"},
 {"name":"sigma_threshold","status":"ok","in_sort":"image","out_sort":"region","probe_input":"op_probe.sample_input('image', structured=True)"},
 {"name":"sigmoid","status":"ok","in_sort":"image","out_sort":"image","probe_input":"op_probe.sample_input('image', structured=True)"},
 {"name":"sign_image","status":"not_in_registry","reason":"not executable by fullseye.apply"},

@@ -1,4 +1,4 @@
-# SEGMENTATION operator help — 62 ops in 11 categories
+# SEGMENTATION operator help — 59 ops in 11 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/segmentation/<category>/<op>.md` を走査。
 
@@ -42,9 +42,9 @@
 
 [seg_boundary_f](score/seg_boundary_f.md) · [seg_confusion_table](score/seg_confusion_table.md) · [seg_dice_jaccard](score/seg_dice_jaccard.md) · [seg_hausdorff](score/seg_hausdorff.md) · [seg_mean_surface_distance](score/seg_mean_surface_distance.md) · [seg_object_counts_match](score/seg_object_counts_match.md) · [seg_score_card](score/seg_score_card.md) · [seg_under_over_segmentation](score/seg_under_over_segmentation.md)
 
-### threshold (7)
+### threshold (4)
 
-[image_standardize](threshold/image_standardize.md) · [ptile_threshold](threshold/ptile_threshold.md) · [sigma_threshold](threshold/sigma_threshold.md) · [threshold_isodata](threshold/threshold_isodata.md) · [threshold_kapur](threshold/threshold_kapur.md) · [threshold_kittler](threshold/threshold_kittler.md) · [threshold_triangle](threshold/threshold_triangle.md)
+[threshold_isodata](threshold/threshold_isodata.md) · [threshold_kapur](threshold/threshold_kapur.md) · [threshold_kittler](threshold/threshold_kittler.md) · [threshold_triangle](threshold/threshold_triangle.md)
 
 ### watershed (1)
 

@@ -15,6 +15,16 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **データ種**: `image` → `feature`
 - **呼び出し**: `fullseye.apply(img, "ptile_threshold", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 
+![ptile_threshold: input → output](../../_fig/ptile_threshold.png)
+
+*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*
+
+**つまみ a を振る**(0.1 / 0.5 / 0.9、もう一方は既定):
+
+![ptile_threshold: knob a sweep](../../_fig/ptile_threshold.a.jpg)
+
+*つまみ b は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*
+
 ## 使い方
 
 面積率で決める P-tile しきい値を feature として返す。
@@ -30,6 +40,14 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。
 - [演算子の来歴・参考文献](../../../REFERENCES.md) — この op 族の元になった研究/手法の出典。
+
+## Studio で試す
+
+下のプログラムは実際に走ることを確かめてある(図と同じ入力)。Studio のヘルプではこのブロックがボタンになり、その場で読み込んで実行できる。
+
+```program
+ptile_threshold 0.50 0.50
+```
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 

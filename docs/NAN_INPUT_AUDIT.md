@@ -2,7 +2,7 @@
 
 ## 方法
 
-登録表の全 942 件を列挙し、適用可能な op へ有限な基準入力、中央の1要素だけを NaN、+inf にした入力を渡した。
+登録表の全 945 件を列挙し、適用可能な op へ有限な基準入力、中央の1要素だけを NaN、+inf にした入力を渡した。
 各呼出しは 20 秒で打ち切り、入れ子の数値出力も検査した。基準入力が失敗した行は注入結果から除外した。
 
 ## 結果
@@ -10,7 +10,7 @@
 | outcome | NaN | +inf |
 |---|---:|---:|
 | `raises_fsvalueerror` | 0 | 0 |
-| `raises_other` | 34 | 27 |
+| `raises_other` | 37 | 30 |
 | `propagates_nan` | 300 | 225 |
 | `silent_finite` | 282 | 392 |
 | `silent_identical` | 258 | 230 |
@@ -20,11 +20,11 @@
 
 ## 包み紙(fullseye.apply)経由
 
-上の表は生の実装(登録表の関数を直接呼んだ結果)で、そちらは変えていない。公開の入口 `fullseye.apply` は 非有限な浮動小数の入力を op を呼ぶ前に `FsValueError` で拒否する(2026-10-23 の契約変更、逃げ道は `allow_nonfinite=True`)。適用可能な 875 op を同じ注入入力で入口経由に通した結果:
+上の表は生の実装(登録表の関数を直接呼んだ結果)で、そちらは変えていない。公開の入口 `fullseye.apply` は 非有限な浮動小数の入力を op を呼ぶ前に `FsValueError` で拒否する(2026-10-23 の契約変更、逃げ道は `allow_nonfinite=True`)。適用可能な 878 op を同じ注入入力で入口経由に通した結果:
 
 | behaviour | NaN | +inf |
 |---|---:|---:|
-| `raised_FsValueError` | 875 | 875 |
+| `raised_FsValueError` | 878 | 878 |
 
 入口が拒否しなかった op(silent_finite の包み紙版): なし。
 

@@ -1358,7 +1358,7 @@ py -3.11 examples/poc_threshold_transfer_after_normalization.py
 
 この回が作った図は全部で **3 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_threshold_transfer_after_normalization)
 
-使用 op(ノートへ): [`axes_transform`](https://furuse.work/ops/annotate/plot/axes_transform.html) · [`image_standardize`](https://furuse.work/ops/2d/gray/image_standardize.html) · [`ptile_threshold`](https://furuse.work/ops/2d/segmentation/ptile_threshold.html) · [`sigma_threshold`](https://furuse.work/ops/2d/segmentation/sigma_threshold.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html)
+使用 op(ノートへ): [`axes_transform`](https://furuse.work/ops/annotate/plot/axes_transform.html) · [`ptile_threshold`](https://furuse.work/ops/2d/segmentation/ptile_threshold.html) · [`sigma_threshold`](https://furuse.work/ops/2d/segmentation/sigma_threshold.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html)
 
 ### 寸法・形状計測ウィング ―― 偏りと散らばりは別々に持つ
 

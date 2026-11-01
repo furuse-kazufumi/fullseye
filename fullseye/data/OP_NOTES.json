@@ -11,7 +11,7 @@
   "path"
  ],
  "n_ops": 3626,
- "n_notes": 3635,
+ "n_notes": 3632,
  "notes": {
   "vol_dilate": [
    {
@@ -3465,14 +3465,6 @@
     "in": "image",
     "out": "image",
     "path": "docs/ops/2d/gray/image_standardize.md"
-   },
-   {
-    "op": "image_standardize",
-    "dim": "segmentation",
-    "category": "threshold",
-    "in": "image2d",
-    "out": "image2d",
-    "path": "docs/ops/segmentation/threshold/image_standardize.md"
    }
   ],
   "invert": [
@@ -7074,14 +7066,6 @@
     "in": "image",
     "out": "feature",
     "path": "docs/ops/2d/segmentation/ptile_threshold.md"
-   },
-   {
-    "op": "ptile_threshold",
-    "dim": "segmentation",
-    "category": "threshold",
-    "in": "image2d",
-    "out": "scalar",
-    "path": "docs/ops/segmentation/threshold/ptile_threshold.md"
    }
   ],
   "regiongrowing": [
@@ -7125,14 +7109,6 @@
     "in": "image",
     "out": "region",
     "path": "docs/ops/2d/segmentation/sigma_threshold.md"
-   },
-   {
-    "op": "sigma_threshold",
-    "dim": "segmentation",
-    "category": "threshold",
-    "in": "image2d",
-    "out": "mask",
-    "path": "docs/ops/segmentation/threshold/sigma_threshold.md"
    }
   ],
   "sk_canny": [

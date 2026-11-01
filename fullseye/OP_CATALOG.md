@@ -797,9 +797,9 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Operators by family(族 → カテゴリ、全 op)
 
-_計 3635 ops / 56 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
+_計 3632 ops / 56 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
 
-族の一覧: **2d** 962 · **3d** 376 · **fit** 3 · **math** 114 · **optics** 483 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 41 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 717 · **tomography** 32 · **volcolor** 11 · **reprconv** 42 · **fileio** 14 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 3 · **calib** 21 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 16 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 62
+族の一覧: **2d** 962 · **3d** 376 · **fit** 3 · **math** 114 · **optics** 483 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 41 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 717 · **tomography** 32 · **volcolor** 11 · **reprconv** 42 · **fileio** 14 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 3 · **calib** 21 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 16 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
 
 ### 2d(962 ops / 49 categories)
 
@@ -1168,7 +1168,7 @@ _計 3635 ops / 56 families。並びとノートの在り処は `docs/ops/INDEX.
 - `gamma` (halcon: `pow_image`) `image → image` — ガンマ補正（べき乗変換）。HALCON の ``pow_image``（Raise an image to a power.）に相当。 · 例: `gallery2d_gray_arith`, `poc_itof_multifreq`, `poc_simcal_thin_film`
 - `gamma_image` (halcon: `gamma_image`) `image → image` — ガンマ補正 ``x ** (0.3 + 2.5*a)``。``a`` が 0 に近いほど指数は 0.3 に 近づき暗部を持ち上げ、``a`` が 1 に近いほど指数は 2.8 に近づき暗部を潰して コントラストを強める。HALCON の ``gamma_image``（Perform a gamma encoding or decoding of an image.）の代役。 · 例: `gallery2d_gray_arith`
 - `illuminate` (halcon: `illuminate`) `image → image` — アンシャープマスク型の局所コントラスト強調。``sm`` = ガウシアンぼかし (半径 ``3+12*a``)を引いた差分 ``x - sm`` を元画像に足し戻すことで、 低周波の照明ムラを残しつつ局所的なエッジ・テクスチャを持ち上げる。HALCON の ``illuminate``（Illuminate image.）の代役。 · 例: `gallery2d_gray_arith`, `poc_document_scan`, `poc_matrix_code_reading`
-- `image_standardize` `image → image` — 画像を z-score・頑健 MAD・百分位のいずれかで零中心に標準化する。 · 例: `poc_threshold_transfer_after_normalization`
+- `image_standardize` `image → image` — 画像を標準化し、符号付き偏差を ``[0,1]`` の強度画像へ写す。 · 例: `gallery2d_gray_arith`
 - `invert` (halcon: `invert_image`) `image → image` — 階調反転（ネガポジ反転）。HALCON の ``invert_image``（Invert an image.）に相当。 · 例: `gallery2d_gray_arith`, `genspark_external_review`, `poc_tacscalib_sphere_lut`
 - `invert_image` (halcon: `invert_image`) `image → image` — 階調を反転する ``1.0 - x``(ネガポジ反転)。HALCON の ``invert_image`` （Invert an image.）にそのまま対応する、近似ではなく厳密に等価な演算。 · 例: `gallery2d_gray_arith`, `poc_metal_grain_size`
 - `it_bit_lshift` (halcon: `bit_lshift`) `image → image` — bit_lshift: 8-bit quantise, left-shift every pixel by round(a*7), mask to 8 bits (wrap-around, as HALCON does), and map back to [0,1]. ``b`` ignored. · 例: `gallery2d_gray_arith`
@@ -1541,7 +1541,7 @@ _計 3635 ops / 56 families。並びとノートの在り処は `docs/ops/INDEX.
 - `regiongrowing` (halcon: `regiongrowing`) `image → region` — 領域成長の簡易近似。まず高いしきい値(``x > 0.5+0.3*a``)でシード (種)領域を作り、それを ``1+4*b`` 回だけ二値膨張して広げる ―― 真の領域成長 (隣接画素との類似度を逐次判定しながら広げる)ではなく、しきい値+膨張という 軽量な代用になっている(近似の限界)。HALCON の ``regiongrowing`` （Segment an image using region growing.）の代役。 · 例: `gallery2d_segmentation`
 - `regiongrowing_mean` (halcon: `regiongrowing_mean`) `image → region` — 実装は ``regiongrowing`` と同一(しきい値によるシード生成+膨張)。 HALCON の ``regiongrowing_mean``（Perform a region growing using mean gray values.）は本来、各領域の平均輝度との近さを基準に成長させる演算子だが、 この代役では平均輝度による判定を行わず ``regiongrowing`` と同じ処理を 返す(近似の限界)。 · 例: `gallery2d_segmentation`
 - `segment_image_mser` (halcon: `segment_image_mser`) `image → region` — MSER(Maximally Stable Extremal Regions、最大安定極値領域)検出 (``cv2.MSER_create``)。しきい値を連続的に変化させても形が安定して残る 領域を検出し、その境界線を返す(文字・ロゴなど照明変化に頑健な領域検出に 使われる)。HALCON の ``segment_image_mser``（Segment image using Maximally Stable Extremal Regions (MSER).）に相当。 · 例: `gallery2d_segmentation`
-- `sigma_threshold` `image → region` — 零中心・σ単位の画像を ``k = 2 + 3*a`` で二値化する。 · 例: `poc_threshold_transfer_after_normalization`
+- `sigma_threshold` `image → region` — 画像を頑健標準化し、``k = 2 + 3*a`` σで二値化する。 · 例: `poc_threshold_transfer_after_normalization`
 - `sk_canny` (halcon: `edges_image`) `image → region` — Canny エッジ検出(領域版)。ガウス平滑化 → 勾配計算 → 非極大抑制 → ヒステリシスしきい値、という古典的な多段パイプラインでエッジ画素を求め、真偽値の領域として返す。 · 例: `find_ops_by_meaning`, `gallery2d_segmentation`, `genspark_external_review`
 - `sk_chan_vese` `image → region` — Chan-Vese セグメンテーション。レベルセット(等位集合)を輝度の分散が領域内で最小になるように反復して動かす能動輪郭モデルで、エッジがはっきりしない対象でも領域を検出できる。 · 例: `gallery2d_segmentation`, `poc_active_contours`, `poc_segmentation_gauntlet`
 - `sk_felzenszwalb` `image → region` — Felzenszwalb のグラフベース領域分割。画素をノードとする最小全域木クラスタリングで、明確な境界が無くても画像を過分割(オーバーセグメンテーション)する高速な手法。ここでは分割結果の境界線を領域として返す。 · 例: `gallery2d_segmentation`, `poc_segmentation_gauntlet`
@@ -5520,7 +5520,7 @@ _計 3635 ops / 56 families。並びとノートの在り処は `docs/ops/INDEX.
 - `attention_scores` `tokens × tokens → attnmap` — 生の注意スコア QKᵀ/√d → attnmap (T, S)。 · 例: `poc_attention_identities`
 - `attention_weights` `attnmap → attnmap` — 行ごとの softmax(マスクつき)→ attnmap。**行和は 1、mask 位置は厳密に 0**。 · 例: `poc_attention_identities`
 
-### segmentation(62 ops / 11 categories)
+### segmentation(59 ops / 11 categories)
 
 #### segmentation / classify(7)
 - `class_2dim_sup` `image2d × image2d × mask → mask` — 2 チャネル特徴空間で ref_region の分布に入る画素を分類(教師つき)(class_2dim_sup)。 · 例: `halcon_segmentation_tour`
@@ -5579,10 +5579,7 @@ _計 3635 ops / 56 families。並びとノートの在り処は `docs/ops/INDEX.
 - `seg_score_card` `labels2d × labels2d → table` — 全部の物差しを 1 枚に: Dice・Jaccard(マスク)、VI・split・merge、Rand・ARI(``segcompare``)、境界 F(τ)、 Hausdorff・HD95・ASSD(境界が無ければ NaN)、過分割・未分割、分裂・融合・欠落・偽・一致、個数。 · 例: `poc_active_contours`, `poc_graph_hierarchy_segmentation`, `poc_segmentation_gauntlet`
 - `seg_under_over_segmentation` `labels2d × labels2d → table` — 過分割・未分割の数を、分割表の多数決の多重度で数える(Levine & Nazif 流: 領域の数で)。 · 例: `poc_graph_hierarchy_segmentation`
 
-#### segmentation / threshold(7)
-- `image_standardize` `image2d → image2d` — 画像全体を z-score・頑健 MAD・百分位のいずれかで零中心に標準化する。 · 例: `poc_threshold_transfer_after_normalization`
-- `ptile_threshold` `image2d → scalar` — P-tile 法で面積率 *p* を明または暗側に置くグレー値しきい値を返す。 · 例: `poc_threshold_transfer_after_normalization`
-- `sigma_threshold` `image2d → mask` — 標準化画像を *k* σで二値化し、必要なら先に頑健標準化する。 · 例: `poc_threshold_transfer_after_normalization`
+#### segmentation / threshold(4)
 - `threshold_isodata` `image2d → table` — isodata(Ridler–Calvard 1978): t ← (μ_≤t + μ_>t)/2 を **画素の値の上で** 分割が変わらなくなるまで反復(初期値 = 平均)。 · 例: `poc_graph_hierarchy_segmentation`
 - `threshold_kapur` `image2d → table` — 最大エントロピー閾値(Kapur–Sahoo–Wong 1985): H(t) = −Σ_(i ≤ t) (p_i/P1) ln(p_i/P1) − Σ_(i > t) (p_i/P2) ln(p_i/P2) を最大にするビン t(両側とも確率が正のビンだけ)。返す: ``threshold`` = そのビンの上端、``mask``(ビンの番号 > t)、 ``bin``、``entropy``(H、除いたビンは nan)。 · 例: `poc_graph_hierarchy_segmentation`
 - `threshold_kittler` `image2d → table` — 最小誤差閾値(Kittler–Illingworth 1986): 各ビン t で低い側(ビン ≤ t)と高い側に分け、 J(t) = 1 + 2(P1 ln σ1 + P2 ln σ2) − 2(P1 ln P1 + P2 ln P2) を最小にする(σ は各側のビンの中心の標準偏差。どちらかの側の σ が 0 のビンは除く)。返す: ``threshold`` = そのビンの上端(mask はビンの番号 > t で決める = 端の値も矛盾なし)、 ``mask``、``bin``、``criterion``(J、除いたビンは nan)。 · 例: `poc_graph_hierarchy_segmentation`

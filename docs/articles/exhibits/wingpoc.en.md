@@ -1358,7 +1358,7 @@ Source: [examples/poc_threshold_transfer_after_normalization.py](https://github.
 
 This run produced **3 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_threshold_transfer_after_normalization)
 
-Ops used (notes): [`axes_transform`](https://furuse.work/ops/annotate/plot/axes_transform.html) · [`image_standardize`](https://furuse.work/ops/2d/gray/image_standardize.html) · [`ptile_threshold`](https://furuse.work/ops/2d/segmentation/ptile_threshold.html) · [`sigma_threshold`](https://furuse.work/ops/2d/segmentation/sigma_threshold.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html)
+Ops used (notes): [`axes_transform`](https://furuse.work/ops/annotate/plot/axes_transform.html) · [`ptile_threshold`](https://furuse.work/ops/2d/segmentation/ptile_threshold.html) · [`sigma_threshold`](https://furuse.work/ops/2d/segmentation/sigma_threshold.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html)
 
 ### The Dimensional and Shape Metrology Wing — Keep Bias and Scatter Apart
 

@@ -32564,49 +32564,22 @@
    "hi": "area fraction से चुना गया P-tile threshold feature के रूप में लौटाता है।"
   },
   "2d/image_standardize": {
-   "fp": "3fb2292a2c59",
-   "en": "Standardises an image around zero using z-score, robust MAD, or percentiles.",
-   "zh": "用 z-score、稳健 MAD 或百分位将图像标准化为零中心。",
-   "tw": "用 z-score、穩健 MAD 或百分位將影像標準化為零中心。",
-   "ko": "z-score, 강건 MAD 또는 백분위수로 영상을 0 중심으로 표준화한다.",
-   "de": "Standardisiert ein Bild mit Z-Score, robustem MAD oder Perzentilen um null.",
-   "hi": "z-score, robust MAD या percentiles से image को शून्य-केंद्रित standardize करता है।"
+   "fp": "81cfb456352b",
+   "en": "Standardises an image and maps signed deviations to an intensity image in ``[0,1]``.",
+   "zh": "对图像进行标准化，并将带符号偏差映射为 ``[0,1]`` 强度图像。",
+   "tw": "對影像進行標準化，並將帶符號偏差映射為 ``[0,1]`` 強度影像。",
+   "ko": "영상을 표준화하고 부호 있는 편차를 ``[0,1]`` 강도 영상으로 매핑한다.",
+   "de": "Standardisiert ein Bild und bildet vorzeichenbehaftete Abweichungen auf ein Intensitätsbild in ``[0,1]`` ab.",
+   "hi": "image को standardize करके signed deviations को ``[0,1]`` intensity image में map करता है।"
   },
   "2d/sigma_threshold": {
-   "fp": "d99b2100bf57",
-   "en": "Binarises a zero-centred image in sigma units at ``k = 2 + 3*a``.",
-   "zh": "以 ``k = 2 + 3*a`` 二值化零中心、σ 单位的图像。",
-   "tw": "以 ``k = 2 + 3*a`` 二值化零中心、σ 單位的影像。",
-   "ko": "0 중심의 시그마 단위 영상을 ``k = 2 + 3*a`` 에서 이진화한다.",
-   "de": "Binarisiert ein nullzentriertes Bild in Sigma-Einheiten bei ``k = 2 + 3*a``.",
-   "hi": "शून्य-केंद्रित sigma-unit image को ``k = 2 + 3*a`` पर binarize करता है।"
-  },
-  "segmentation/ptile_threshold": {
-   "fp": "c7786693fad2",
-   "en": "Returns a grey-value threshold that places area fraction *p* on the bright or dark side using the P-tile method.",
-   "zh": "用 P-tile 法返回灰度阈值，使面积比例 *p* 落在明侧或暗侧。",
-   "tw": "用 P-tile 法回傳灰階閾值，使面積比例 *p* 落在亮側或暗側。",
-   "ko": "P-tile 방법으로 면적 비율 *p* 를 밝은 쪽 또는 어두운 쪽에 두는 회색값 임계값을 반환한다.",
-   "de": "Liefert mit der P-Tile-Methode einen Grauwertschwellwert, der den Flächenanteil *p* auf die helle oder dunkle Seite legt.",
-   "hi": "P-tile विधि से ऐसा gray-value threshold लौटाता है जो area fraction *p* को उजली या गहरी ओर रखता है।"
-  },
-  "segmentation/image_standardize": {
-   "fp": "307c9a775ebc",
-   "en": "Standardises a whole image around zero using z-score, robust MAD, or percentiles.",
-   "zh": "用 z-score、稳健 MAD 或百分位将整幅图像标准化为零中心。",
-   "tw": "用 z-score、穩健 MAD 或百分位將整幅影像標準化為零中心。",
-   "ko": "z-score, 강건 MAD 또는 백분위수로 전체 영상을 0 중심으로 표준화한다.",
-   "de": "Standardisiert ein ganzes Bild mit Z-Score, robustem MAD oder Perzentilen um null.",
-   "hi": "z-score, robust MAD या percentiles से पूरी image को शून्य-केंद्रित standardize करता है।"
-  },
-  "segmentation/sigma_threshold": {
-   "fp": "857354a3cc3c",
-   "en": "Binarises a standardised image at *k* sigma and can first apply robust standardisation.",
-   "zh": "按 *k* 个标准差二值化已标准化图像，并可先做稳健标准化。",
-   "tw": "按 *k* 個標準差二值化已標準化影像，並可先做穩健標準化。",
-   "ko": "표준화된 영상을 *k* 시그마에서 이진화하며, 먼저 강건 표준화를 적용할 수도 있다.",
-   "de": "Binarisiert ein standardisiertes Bild bei *k* Sigma und kann zuvor robust standardisieren.",
-   "hi": "standardized image को *k* sigma पर binarize करता है और पहले robust standardization भी कर सकता है।"
+   "fp": "9a83e56e5284",
+   "en": "Robustly standardises an image and binarises it at ``k = 2 + 3*a`` sigma.",
+   "zh": "对图像进行稳健标准化，并以 ``k = 2 + 3*a`` 个标准差二值化。",
+   "tw": "對影像進行穩健標準化，並以 ``k = 2 + 3*a`` 個標準差二值化。",
+   "ko": "영상을 강건하게 표준화하고 ``k = 2 + 3*a`` 시그마에서 이진화한다.",
+   "de": "Standardisiert ein Bild robust und binarisiert es bei ``k = 2 + 3*a`` Sigma.",
+   "hi": "image को robust ढंग से standardize करके ``k = 2 + 3*a`` sigma पर binarize करता है।"
   }
  }
 }
