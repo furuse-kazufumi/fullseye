@@ -16,6 +16,7 @@ from pathlib import Path
 import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+import examplefig as figs
 from normalized_threshold import image_standardize, ptile_threshold, sigma_threshold
 
 
@@ -34,6 +35,17 @@ CONDITIONS = [
     ("material_+0.18", 1.00, 0.00, 0.58, 0.020),
     ("combined", 0.85, 0.08, 0.55, 0.030),
 ]
+
+CONDITION_JA = {
+    "baseline": "基準",
+    "gain_x1.35": "利得 1.35 倍",
+    "offset_+0.18": "オフセット +0.18",
+    "noise_x2": "雑音 2 倍",
+    "material_+0.18": "材質 +0.18",
+    "combined": "複合条件",
+}
+
+METHOD_JA = {"raw": "生のしきい値", "k_sigma": "kσ", "p_tile": "P-tile"}
 
 
 def truth_mask(shape=(192, 256)) -> np.ndarray:
@@ -135,54 +147,123 @@ def measure() -> tuple[list[dict], dict, dict]:
     return rows, selected, images
 
 
-def save_figure(rows: list[dict], selected: dict, images: dict) -> dict:
-    import matplotlib.pyplot as plt
+def _row(rows: list[dict], condition: str, method: str) -> dict:
+    return next(r for r in rows if r["condition"] == condition and r["method"] == method)
 
-    fig = plt.figure(figsize=(16, 9), dpi=100)
-    gs = fig.add_gridspec(3, len(CONDITIONS), height_ratios=(1.0, 1.0, 0.8))
-    for col, (name, *_rest) in enumerate(CONDITIONS):
-        image, truth = images[name]
-        ax = fig.add_subplot(gs[0, col])
-        ax.imshow(image, cmap="gray")
-        ax.set_title(name)
-        ax.axis("off")
-        ax = fig.add_subplot(gs[1, col])
-        ax.imshow(sigma_mask(image, selected["k_sigma"]), cmap="gray", vmin=0, vmax=1)
-        ax.contour(truth, levels=[0.5], colors=["#f28e2b"], linewidths=0.8)
-        ax.set_title("fixed kσ (orange=truth)")
-        ax.axis("off")
-    ax = fig.add_subplot(gs[2, :])
-    x = np.arange(len(CONDITIONS))
-    width = 0.24
-    for j, method in enumerate(("raw", "k_sigma", "p_tile")):
-        vals = [next(r["tuning_evaluations"] for r in rows if r["condition"] == c[0] and r["method"] == method)
-                for c in CONDITIONS]
-        ax.bar(x + (j - 1) * width, vals, width, label=method)
-    ax.set_xticks(x, [c[0] for c in CONDITIONS])
-    ax.set_ylabel("additional tuning evaluations (baseline includes initial tuning)")
-    ax.set_title("A raw grey-level threshold needs retuning; normalized knobs transfer")
-    ax.legend()
-    ax.grid(axis="y", alpha=0.25)
-    fig.tight_layout()
-    OUT.mkdir(parents=True, exist_ok=True)
-    filename = "01_threshold_transfer.png"
-    fig.savefig(OUT / filename)
-    plt.close(fig)
-    return {"file": filename, "name": "threshold_transfer",
-            "caption": "Synthetic product images under gain, offset, noise, and material-brightness changes; fixed robust k-sigma masks and the measured retuning evaluations for raw, k-sigma, and P-tile thresholds.",
-            "shape": [900, 1600, 4]}
+
+def _mask_with_truth(mask: np.ndarray, truth: np.ndarray) -> np.ndarray:
+    """二値像を白黒、真値の内側輪郭を橙で描く。補間は一切しない。"""
+    mask = np.asarray(mask, bool)
+    truth = np.asarray(truth, bool)
+    interior = truth.copy()
+    interior[1:-1, 1:-1] &= (truth[:-2, 1:-1] & truth[2:, 1:-1]
+                               & truth[1:-1, :-2] & truth[1:-1, 2:])
+    outline = truth & ~interior
+    rgb = np.repeat(mask[..., None], 3, axis=2).astype(np.float64)
+    rgb[outline] = (0.95, 0.45, 0.05)
+    return rgb
+
+
+def _save_conditions(rows: list[dict], selected: dict, images: dict) -> None:
+    panels, captions, gray = [], [], []
+    for name, *_ in CONDITIONS:
+        panels.append(images[name][0])
+        captions.append(CONDITION_JA[name])
+        gray.append(True)
+    for method, fn in (("raw", raw_mask), ("k_sigma", sigma_mask)):
+        for name, *_ in CONDITIONS:
+            image, truth = images[name]
+            iou = _row(rows, name, method)["transfer_iou"]
+            panels.append(_mask_with_truth(fn(image, selected[method]), truth))
+            captions.append("%s移送 | IoU %.4f" % (METHOD_JA[method], iou))
+            gray.append(False)
+    figs.save_grid(
+        "threshold_transfer",
+        panels,
+        captions=captions,
+        title="同じ欠陥を6条件で撮像: 上段=入力、中段=生のしきい値、下段=kσ（橙=真値）",
+        ncols=len(CONDITIONS),
+        gray=gray,
+        caption="基準像で決めた同じしきい値を移送した。利得・オフセット・材質変化では生のしきい値の"
+                "二値像がほぼ白く崩れる一方、頑健標準化後の kσ は真値の輪郭を保つ。",
+    )
+
+
+def _save_grouped_bars(name: str, rows: list[dict], field: str, title: str,
+                       ylabel: str, ylim: tuple[float, float], value_fmt: str,
+                       footer_note: str = "") -> None:
+    """examplefig の棒グラフへ数値ラベルを重ねて保存する。"""
+    import fullseye as fs
+
+    size, scale = (1080, 600), 2
+    offsets = {"raw": -0.24, "k_sigma": 0.0, "p_tile": 0.24}
+    colors = {"raw": "wrong", "k_sigma": "right", "p_tile": "emphasis"}
+    series, kinds, roles, labels = [], [], [], []
+    for method in ("raw", "k_sigma", "p_tile"):
+        for i, (condition, *_) in enumerate(CONDITIONS):
+            value = float(_row(rows, condition, method)[field])
+            series.append((METHOD_JA[method] if i == 0 else "", [i + offsets[method]], [value]))
+            kinds.append("bar")
+            roles.append(colors[method])
+            labels.append((i + offsets[method], value, value_fmt % value))
+    mapping = "条件 0=基準、1=利得1.35倍、2=オフセット+0.18、3=雑音2倍、4=材質+0.18、5=複合"
+    xlabel = mapping + ((" | " + footer_note) if footer_note else "")
+    image = figs.render_plot(
+        series,
+        xlabel=xlabel,
+        ylabel=ylabel,
+        title=title,
+        size=size,
+        xlim=(-0.65, 5.65),
+        ylim=ylim,
+        kinds=kinds,
+        colors=roles,
+        scale=scale,
+    )
+    # render_plot は明示 ylim に上下 6 % の余白を加える。同じ変換で棒上へ値を置く。
+    pad = 0.06 * (ylim[1] - ylim[0])
+    plotted_ylim = (ylim[0] - pad, ylim[1] + pad)
+    ax = fs.axes_transform((72 * scale, 44 * scale,
+                            (size[0] - 96) * scale, (size[1] - 108) * scale),
+                           (-0.65, 5.65), plotted_ylim)
+    x0, y0, width, height = ax["rect"]
+    for x, value, label in labels:
+        px = x0 + (x - ax["xlim"][0]) / (ax["xlim"][1] - ax["xlim"][0]) * (width - 1)
+        py = y0 + (height - 1) - ((value - ax["ylim"][0])
+             / (ax["ylim"][1] - ax["ylim"][0]) * (height - 1))
+        image = np.asarray(fs.text_box(image, label, (px, max(y0 + 18, py - 5)),
+                                       anchor="cb", font_size=9 * scale, pad=2 * scale,
+                                       box_alpha=0.82))
+    figs.save(name, image, caption=(
+        "基準像で選んだ値を各条件へそのまま移した結果。棒上の数値は" + ylabel + "。"
+    ))
+
+
+def save_figures(rows: list[dict], selected: dict, images: dict) -> None:
+    _save_conditions(rows, selected, images)
+    _save_grouped_bars(
+        "transfer_iou", rows, "transfer_iou",
+        "基準像で決めたしきい値を移送した後の IoU",
+        "IoU", (0.0, 1.08), "%.3f",
+    )
+    _save_grouped_bars(
+        "tuning_evaluations", rows, "tuning_evaluations",
+        "IoU 0.98へ戻すまでに要した評価回数",
+        "評価回数", (0.0, 15.0), "%.0f",
+        footer_note="基準は初期調整を含む",
+    )
 
 
 def main() -> None:
     rows, selected, images = measure()
-    figure = save_figure(rows, selected, images)
+    if figs.enabled():
+        save_figures(rows, selected, images)
     summary = {"target_iou": TARGET_IOU, "selected_on_baseline": selected,
                "defect_area_fraction": float(np.mean(truth_mask())), "conditions": rows,
                "additional_evaluations": {m: int(sum(r["tuning_evaluations"] for r in rows if r["method"] == m))
                                           for m in ("raw", "k_sigma", "p_tile")}}
     OUT.mkdir(parents=True, exist_ok=True)
     (OUT / "metrics.json").write_text(json.dumps(summary, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    (OUT / "figures.json").write_text(json.dumps([figure], ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print("condition\tmethod\tIoU\tFPR\tFNR\tevaluations")
     for row in rows:
         print("{condition}\t{method}\t{transfer_iou:.4f}\t{fpr:.4f}\t{fnr:.4f}\t{tuning_evaluations}".format(**row))
@@ -190,6 +271,7 @@ def main() -> None:
     assert summary["additional_evaluations"]["raw"] > summary["additional_evaluations"]["k_sigma"]
     assert summary["additional_evaluations"]["raw"] > summary["additional_evaluations"]["p_tile"]
     assert all(r["transfer_iou"] >= TARGET_IOU for r in rows if r["method"] in ("k_sigma", "p_tile"))
+    assert not figs.errors(), figs.errors()
     print("PASS", SLUG)
 
 

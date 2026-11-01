@@ -1342,13 +1342,21 @@ Ops used (notes): [`mtf_diffraction`](https://furuse.work/ops/optics/imaging/mtf
 
 ## No.2026.285 —— Raw Grey-Level Thresholds Need Retuning across Lighting, while k-Sigma and P-Tile Transfer
 
-A synthetic product with fixed defect shape and area is re-imaged under 1.35x gain, +0.18 offset, 2x noise, +0.18 material brightness, and a combined condition. The raw threshold tuned on the baseline falls below IoU 0.98 in four of five transfers and uses 49 extra evaluations (50 including baseline). Robust centring and scaling by 1.4826 MAD followed by k-sigma uses two baseline evaluations and zero extra evaluations, with transferred IoU at least 0.9832. P-tile uses one baseline evaluation at the known defect area fraction and zero extra evaluations, with transferred IoU at least 0.9820. Under doubled noise, foreground and background overlap; normalisation cannot recover information that is no longer present. An evaluation means scoring one deterministic candidate against truth until IoU 0.98, not runtime.
+A synthetic product with fixed defect shape and area is re-imaged under 1.35x gain, +0.18 offset, 2x noise, +0.18 material brightness, and a combined condition. The raw threshold tuned on the baseline falls below IoU 0.98 in all five transfers and uses 49 extra evaluations (50 including baseline). Robust centring and scaling by 1.4826 MAD followed by k-sigma uses two baseline evaluations and zero extra evaluations, with transferred IoU at least 0.9832. P-tile uses one baseline evaluation at the known defect area fraction and zero extra evaluations, with transferred IoU at least 0.9820. Under doubled noise, foreground and background overlap; normalisation cannot recover information that is no longer present. An evaluation means scoring one deterministic candidate against truth until IoU 0.98, not runtime.
 
 [![Raw Grey-Level Thresholds Need Retuning across Lighting, while k-Sigma and P-Tile Transfer](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_threshold_transfer_after_normalization/01_threshold_transfer_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_threshold_transfer_after_normalization/01_threshold_transfer.png)
 
-*↑ **Raw Grey-Level Thresholds Need Retuning across Lighting, while k-Sigma and P-Tile Transfer** ―― A synthetic product with fixed defect shape and area is re-imaged under 1.35x gain, +0.18 offset, 2x noise, +0.18 material brightness, and a combined condition. The raw threshold tuned on the baseline falls below IoU 0.98 in four of five transfers and uses 49 extra evaluations (50 including baseline). Robust centring and scaling by 1.4826 MAD followed by k-sigma uses two baseline evaluations and zero extra evaluations, with transferred IoU at least 0.9832. P-tile uses one baseline evaluation at the known defect area fraction and zero extra evaluations, with transferred IoU at least 0.9820. Under doubled noise, foreground and background overlap; normalisation cannot recover information that is no longer present. An evaluation means scoring one deterministic candidate against truth until IoU 0.98, not runtime.*
+*↑ **Raw Grey-Level Thresholds Need Retuning across Lighting, while k-Sigma and P-Tile Transfer** ―― A synthetic product with fixed defect shape and area is re-imaged under 1.35x gain, +0.18 offset, 2x noise, +0.18 material brightness, and a combined condition. The raw threshold tuned on the baseline falls below IoU 0.98 in all five transfers and uses 49 extra evaluations (50 including baseline). Robust centring and scaling by 1.4826 MAD followed by k-sigma uses two baseline evaluations and zero extra evaluations, with transferred IoU at least 0.9832. P-tile uses one baseline evaluation at the known defect area fraction and zero extra evaluations, with transferred IoU at least 0.9820. Under doubled noise, foreground and background overlap; normalisation cannot recover information that is no longer present. An evaluation means scoring one deterministic candidate against truth until IoU 0.98, not runtime.*
 
 Terms: IoU — A 0-to-1 overlap score equal to the area of the intersection of two regions divided by the area of their union.
+
+[![基準像で選んだ値を各条件へそのまま移した結果。棒上の数値はIoU。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_threshold_transfer_after_normalization/02_transfer_iou_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_threshold_transfer_after_normalization/02_transfer_iou.png)
+
+*↑ The measurement ―― 基準像で選んだ値を各条件へそのまま移した結果。棒上の数値はIoU。 (figure labels are in Japanese; the numbers are the same)*
+
+[![基準像で選んだ値を各条件へそのまま移した結果。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_threshold_transfer_after_normalization/03_tuning_evaluations_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_threshold_transfer_after_normalization/03_tuning_evaluations.png)
+
+*↑ 基準像で選んだ値を各条件へそのまま移した結果。*
 
 ```
 py -3.11 examples/poc_threshold_transfer_after_normalization.py
@@ -1356,9 +1364,9 @@ py -3.11 examples/poc_threshold_transfer_after_normalization.py
 
 Source: [examples/poc_threshold_transfer_after_normalization.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_threshold_transfer_after_normalization.py)
 
-This run produced **1 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_threshold_transfer_after_normalization)
+This run produced **3 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_threshold_transfer_after_normalization)
 
-Ops used (notes): [`image_standardize`](https://furuse.work/ops/2d/gray/image_standardize.html) · [`ptile_threshold`](https://furuse.work/ops/2d/segmentation/ptile_threshold.html) · [`sigma_threshold`](https://furuse.work/ops/2d/segmentation/sigma_threshold.html)
+Ops used (notes): [`axes_transform`](https://furuse.work/ops/annotate/plot/axes_transform.html) · [`image_standardize`](https://furuse.work/ops/2d/gray/image_standardize.html) · [`ptile_threshold`](https://furuse.work/ops/2d/segmentation/ptile_threshold.html) · [`sigma_threshold`](https://furuse.work/ops/2d/segmentation/sigma_threshold.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html)
 
 ### The Dimensional and Shape Metrology Wing — Keep Bias and Scatter Apart
 
