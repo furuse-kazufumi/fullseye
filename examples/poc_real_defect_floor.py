@@ -327,14 +327,7 @@ def _showcase_font(size=22, bold=False):
     """日本語を 22 px 以上で描くフォントを fail-closed で選ぶ。"""
     from PIL import ImageFont
 
-    names = ([r"C:\Windows\Fonts\YuGothB.ttc", r"C:\Windows\Fonts\meiryob.ttc"]
-             if bold else
-             [r"C:\Windows\Fonts\YuGothM.ttc", r"C:\Windows\Fonts\meiryo.ttc",
-              "/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc"])
-    for name in names:
-        if Path(name).is_file():
-            return ImageFont.truetype(name, size)
-    raise RuntimeError("showcase 用の日本語フォントが見つからない")
+    return ImageFont.truetype(figs.japanese_font_path(bold=bold), size)
 
 
 def _showcase_text(draw, xy, text, box, *, size=22, fill=(238, 242, 246), bold=False):
@@ -355,7 +348,8 @@ def _showcase_rgb(a, vmin, vmax):
 
 def _showcase_circle(draw, box, **kwargs):
     """Pillow の円。op 利用の静的抽出に Fullseye ``ellipse`` と誤認させない。"""
-    getattr(draw, "ellipse")(box, **kwargs)
+    draw_oval = draw.ellipse
+    draw_oval(box, **kwargs)
 
 
 def _showcase_local_peak(response, pos=SHOWCASE_POS, radius=3):
@@ -599,7 +593,7 @@ def main():
     worst, best, _small, _large = section_knobs(real, rng)
     spread = section_position(real, rng)
     loc, fa, drift = section_null(real)
-    n = make_figures(real, table)
+    n = make_figures(real, table) if figs.enabled() else 0
     if figs.errors():
         print("図の書き出しで失敗:", "; ".join(figs.errors()))
 

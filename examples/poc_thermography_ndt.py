@@ -577,14 +577,7 @@ WINDOW_SHOWCASE_SIZE = (1280, 720)
 def _window_font(size=22, bold=False):
     from PIL import ImageFont
 
-    names = ([r"C:\Windows\Fonts\YuGothB.ttc", r"C:\Windows\Fonts\meiryob.ttc"]
-             if bold else
-             [r"C:\Windows\Fonts\YuGothM.ttc", r"C:\Windows\Fonts\meiryo.ttc",
-              "/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc"])
-    for name in names:
-        if Path(name).is_file():
-            return ImageFont.truetype(name, size)
-    raise RuntimeError("showcase 用の日本語フォントが見つからない")
+    return ImageFont.truetype(figs.japanese_font_path(bold=bold), size)
 
 
 def _window_text(draw, xy, text, box, *, size=22, fill=(238, 242, 246), bold=False):
@@ -603,7 +596,8 @@ def _window_depth_rgb(depth_mm):
 
 def _window_circle(draw, box, **kwargs):
     """Pillow の円。op 利用の静的抽出に Fullseye ``ellipse`` と誤認させない。"""
-    getattr(draw, "ellipse")(box, **kwargs)
+    draw_oval = draw.ellipse
+    draw_oval(box, **kwargs)
 
 
 def _window_audit(frames):

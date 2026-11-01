@@ -267,15 +267,15 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `examplefig.py`
 
-- **L168** _(ja)_ — 書いた図の sha256 -> 名前。★同じ中身の図が 2 枚出たら台帳に積む
-- **L240** — ★`colorize_depth` gibt **float [0,1]** zurück. Empfängt man es mit `np.asarray(..., np.uint8)`, wird jedes 0.x auf 0 abgeschnitten und pechschwarz (getroffen am 2026-09-06).
-- **L398** — ★Lass den Textkörper des Beispiels nicht weg. Schade, dass die Abbildung nicht erscheint, aber die Zahlen müssen gezeigt werden.
-- **L437** — ★Reiche hier nicht einfach an :func:`_to_rgb8` weiter. Das übergibt (H,W) an `colorize_depth`, aber **darin wird jeder Frame einzeln normalisiert**, sodass ein Frame, der ganz 0 ist, und einer, der ganz 1 ist, in derselben Farbe herauskommen (von einem Test am 2026-09-09 gefangen). Erst durch die explizite Übergabe des Wertebereichs wird der Maßstab zu einem einzigen.
-- **L502** — ★Pillow **faltet einen mit dem vorherigen identischen Frame zu einem einzigen** (diese Zeit wird zur Anzeigezeit des vorherigen Frames addiert, sodass sich die Bewegungsgeschwindigkeit nicht ändert). Wir zählen nach dem Schreiben und halten, wenn es von der übergebenen Zahl abweicht, **beide** im Register fest —— um nicht still ein "72-Frame-GIF" durchgehen zu lassen, dessen Inhalt 40 Frames hat.
-- **L670** _(ja)_ — ★2026-09-08: パネルが小さいと題が入らず、``annotate_figure_grid`` が (正しく)拒否して**図が 1 枚黙って消えていた**。29×19 の core 格子や 24×24 の縮小マップは PoC で普通に出るのに、エラーは 「題を短くしろ」と言う —— 実際の直し方は「パネルを大きくしろ」。 2 人の担当が独立に同じ穴に落ちた(看板の scene 図が 1 枚消えた例あり)ので、 呼び手ごとに拡大を書かせず、ここで 1 度だけ補間する。入力が十分大きければ 1 倍のままなので実データの解像度を保つ。拡大が必要な小画像だけは、発表図で 画素の四角を増やす最近傍を避け、双三次補間する。
-- **L804** _(ja)_ — ★2026-10-03: 下の余白を 16 px 広げた。軸名の帯(左下)が x 軸の目盛りの数字に重なって 「0.5」や「20」を隠していた(transforms_tour の図で踏んだ。全部の save_plot に効く)。
-- **L817** _(ja)_ — ★2026-10-21: 棒を 1 本ずつ別の系列にした図(色を棒ごとに変えるため)は、系列の中に x が 1 つしか なく plot_series が間隔を知れないので、棒が描画域の 70 % の幅になり隣と重なった(製造公差 PoC の 歩留まりの対比図で目視)。棒の x を**全系列**から集め、その最小間隔(棒が 1 本しかなければ目盛りの 間隔)を画素に直して、1 点の系列にだけ bar_width として渡す。複数点の系列は従来どおり自分の間隔。
-- **L849** _(ja)_ — ★2026-10-03: 凡例は**データを最も隠さない隅**に置く(MATLAB の legend('best'))。右上固定だと 減衰の遅い応答の山が凡例の下に隠れた。点の数で象限を選ぶ最初の版も、Runge の端の山を 半分隠した —— 隠れるのは「点」でなく「線の画素」なので、各隅に凡例を試しに描き、 その矩形の下にあるデータの画素(背景でも格子でもない画素)を数えて最少の隅を選ぶ。
+- **L251** _(ja)_ — 書いた図の sha256 -> 名前。★同じ中身の図が 2 枚出たら台帳に積む
+- **L323** — ★`colorize_depth` gibt **float [0,1]** zurück. Empfängt man es mit `np.asarray(..., np.uint8)`, wird jedes 0.x auf 0 abgeschnitten und pechschwarz (getroffen am 2026-09-06).
+- **L481** — ★Lass den Textkörper des Beispiels nicht weg. Schade, dass die Abbildung nicht erscheint, aber die Zahlen müssen gezeigt werden.
+- **L520** — ★Reiche hier nicht einfach an :func:`_to_rgb8` weiter. Das übergibt (H,W) an `colorize_depth`, aber **darin wird jeder Frame einzeln normalisiert**, sodass ein Frame, der ganz 0 ist, und einer, der ganz 1 ist, in derselben Farbe herauskommen (von einem Test am 2026-09-09 gefangen). Erst durch die explizite Übergabe des Wertebereichs wird der Maßstab zu einem einzigen.
+- **L585** — ★Pillow **faltet einen mit dem vorherigen identischen Frame zu einem einzigen** (diese Zeit wird zur Anzeigezeit des vorherigen Frames addiert, sodass sich die Bewegungsgeschwindigkeit nicht ändert). Wir zählen nach dem Schreiben und halten, wenn es von der übergebenen Zahl abweicht, **beide** im Register fest —— um nicht still ein "72-Frame-GIF" durchgehen zu lassen, dessen Inhalt 40 Frames hat.
+- **L753** _(ja)_ — ★2026-09-08: パネルが小さいと題が入らず、``annotate_figure_grid`` が (正しく)拒否して**図が 1 枚黙って消えていた**。29×19 の core 格子や 24×24 の縮小マップは PoC で普通に出るのに、エラーは 「題を短くしろ」と言う —— 実際の直し方は「パネルを大きくしろ」。 2 人の担当が独立に同じ穴に落ちた(看板の scene 図が 1 枚消えた例あり)ので、 呼び手ごとに拡大を書かせず、ここで 1 度だけ補間する。入力が十分大きければ 1 倍のままなので実データの解像度を保つ。拡大が必要な小画像だけは、発表図で 画素の四角を増やす最近傍を避け、双三次補間する。
+- **L887** _(ja)_ — ★2026-10-03: 下の余白を 16 px 広げた。軸名の帯(左下)が x 軸の目盛りの数字に重なって 「0.5」や「20」を隠していた(transforms_tour の図で踏んだ。全部の save_plot に効く)。
+- **L900** _(ja)_ — ★2026-10-21: 棒を 1 本ずつ別の系列にした図(色を棒ごとに変えるため)は、系列の中に x が 1 つしか なく plot_series が間隔を知れないので、棒が描画域の 70 % の幅になり隣と重なった(製造公差 PoC の 歩留まりの対比図で目視)。棒の x を**全系列**から集め、その最小間隔(棒が 1 本しかなければ目盛りの 間隔)を画素に直して、1 点の系列にだけ bar_width として渡す。複数点の系列は従来どおり自分の間隔。
+- **L932** _(ja)_ — ★2026-10-03: 凡例は**データを最も隠さない隅**に置く(MATLAB の legend('best'))。右上固定だと 減衰の遅い応答の山が凡例の下に隠れた。点の数で象限を選ぶ最初の版も、Runge の端の山を 半分隠した —— 隠れるのは「点」でなく「線の画素」なので、各隅に凡例を試しに描き、 その矩形の下にあるデータの画素(背景でも格子でもない画素)を数えて最少の隅を選ぶ。
 
 ## `examples/acoustic_condition_monitoring.py`
 
@@ -1216,10 +1216,10 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L520** — ★Den Befund der Kontrollgruppe festhalten: **mit abgeschalteter Querdiffusion fallen alle 16 innerhalb ±8 %**. Diese eine Zeile ist der Beleg dafür, dass "die einzige Ursache des Versagens die Querdiffusion ist, weder die Pixelgrobheit noch die Art der Maskengewinnung". Lockert man sie, kehrt die Schlussfolgerung von Abschnitt 3 zur Fehldeutung zurück, dass 'eine höhere Auflösung es behebt'.
 - **L530** — ★Wenn die obige Überlegung (die Diffusionslänge am Ende des Fensters wirkt) korrekt ist, dann **behebt das Abschneiden des Fensters es**. Wenn du eine Hypothese aufstellst, platziere stets ein Experiment, das sie widerlegen könnte. ------------------------------------------------------------------ #
 - **L543** — ★Den schwersten Befund dieses PoC festhalten —— die "Seitenverhältnis-Grenze" war keine Physik, sondern **die Wahl des Anpassungs-Zeitfensters**. (1) Mit einem 4-Sekunden-Fenster fallen alle 8 kleinen innerhalb ±20 % (gemessener schlimmster Fall -14 %).
-- **L828** — ★Den Befund festhalten: bei gleichmäßiger Erwärmung **erkennt das rohe Einzelbild am meisten**, während die 2. Ableitung von TSR keines erkennt. "Es taugt zur Tiefenschätzung, aber nicht zur Detektion" = dasselbe Werkzeug wirkt nicht zwangsläufig für beides, was genau die Aussage dieses Abschnitts ist.
-- **L875** — ★Lampenspiegelung. Diese hat Struktur auf **derselben Skala wie der Defekt**.
-- **L902** — ★Den Befund festhalten. (1) Das Einzige, was es bricht, ist die **Ungleichmäßigkeit auf derselben Skala wie der Defekt** in (c). Der sanfte Gradient in (b) bricht das rohe Einzelbild kaum —— da hier "die Vorhersage danebenlag", halten wir explizit fest, dass (b) (a) nicht unterschreitet.
-- **L983** — ★Auch dem Standard-Cube NETD hinzufügen. Bei null Rauschen wird die Schwankung des gesunden Bereichs in der Ebene exakt 0 und der SNR wird zu einer bedeutungslosen Zahl wie 1e9 (gemessen und behoben).
+- **L822** — ★Den Befund festhalten: bei gleichmäßiger Erwärmung **erkennt das rohe Einzelbild am meisten**, während die 2. Ableitung von TSR keines erkennt. "Es taugt zur Tiefenschätzung, aber nicht zur Detektion" = dasselbe Werkzeug wirkt nicht zwangsläufig für beides, was genau die Aussage dieses Abschnitts ist.
+- **L869** — ★Lampenspiegelung. Diese hat Struktur auf **derselben Skala wie der Defekt**.
+- **L896** — ★Den Befund festhalten. (1) Das Einzige, was es bricht, ist die **Ungleichmäßigkeit auf derselben Skala wie der Defekt** in (c). Der sanfte Gradient in (b) bricht das rohe Einzelbild kaum —— da hier "die Vorhersage danebenlag", halten wir explizit fest, dass (b) (a) nicht unterschreitet.
+- **L977** — ★Auch dem Standard-Cube NETD hinzufügen. Bei null Rauschen wird die Schwankung des gesunden Bereichs in der Ebene exakt 0 und der SNR wird zu einer bedeutungslosen Zahl wie 1e9 (gemessen und behoben).
 
 ## `examples/poc_thin_film_reflectometry.py`
 
@@ -1399,7 +1399,7 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `examples_3d/mesh_props.py`
 
-- **L404** — ★Das Umkehren der Umlaufrichtung kehrt das Vorzeichen des Volumens um = das Vorzeichen ist selbst eine Orientierungsprüfung
+- **L403** — ★Das Umkehren der Umlaufrichtung kehrt das Vorzeichen des Volumens um = das Vorzeichen ist selbst eine Orientierungsprüfung
 
 ## `examples_3d/metrics_eval.py`
 
