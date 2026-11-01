@@ -33,8 +33,8 @@
   "name": "fresnel",
   "caption": "R_p がブリュースター角で 0 を横切る。浅すぎても深すぎても偏光度は落ちる —— 使える窓は限られる。",
   "shape": [
-   360,
-   815,
+   720,
+   1616,
    3
   ]
  },
@@ -43,8 +43,8 @@
   "name": "angle_error",
   "caption": "実測と閉形式が重なる。70 度の絶対誤差は 20 度より悪いのに、ゼロ点比では 70 度が最良 —— 最適角は評価軸で割れる。",
   "shape": [
-   360,
-   560,
+   720,
+   1120,
    3
   ]
  },
@@ -63,11 +63,33 @@
   "name": "saturation",
   "caption": "画素率 1.8 倍で誤差 2.8 倍 —— 雑音(σ に比例)や較正誤差(δ に比例)と違い、飽和は超線形に効く。",
   "shape": [
-   224,
-   649,
+   448,
+   1298,
    3
   ],
   "csv": "07_saturation.csv",
   "tsv": "07_saturation.tsv"
+ },
+ {
+  "file": "08_analyzer_sweep_explained.gif",
+  "name": "analyzer_sweep_explained",
+  "caption": "検光子を0〜177.5度まで回すと、プラスチックの光沢Aだけが強く呼吸し、拡散地Cは動かない。観測DoLPはA/B/C = 0.90/0.16/0.000、最大/最小比は 23.96/1.35/1.00。",
+  "shape": [
+   360,
+   640,
+   3
+  ],
+  "animated": true,
+  "frames": 36,
+  "frames_written": 36,
+  "fps": 6.0,
+  "video": "08_analyzer_sweep_explained.mp4",
+  "video_frames": 72,
+  "video_fps": 12.0,
+  "video_shape": [
+   720,
+   1280,
+   3
+  ]
  }
 ]
