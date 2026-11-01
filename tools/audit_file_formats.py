@@ -31,7 +31,7 @@ FORMAT_NAMES = {
     ".hdr": "Radiance HDR", ".jpeg": "JPEG", ".jpg": "JPEG", ".json": "JSON",
     ".las": "LAS", ".laz": "LAZ", ".mha": "MetaImage", ".mhd": "MetaImage",
     ".mjcf": "MuJoCo XML", ".mkv": "Matroska video", ".mrc": "MRC",
-    ".nii": "NIfTI", ".npy": "NumPy array", ".npz": "NumPy archive",
+    ".nii": "NIfTI", ".nii.gz": "NIfTI", ".npy": "NumPy array", ".npz": "NumPy archive",
     ".nrrd": "NRRD", ".obj": "Wavefront OBJ", ".off": "Geomview OFF",
     ".ogg": "Ogg audio", ".ome.tif": "OME-TIFF", ".ome.tiff": "OME-TIFF",
     ".pcd": "PCL PCD", ".pfm": "PFM", ".ply": "Stanford PLY", ".png": "PNG",
@@ -53,6 +53,11 @@ _VERIFY_READERS = {
     ".csv": ("csv", "pandas"), ".ply": ("plyfile", "trimesh"),
     ".stl": ("stl", "trimesh"), ".obj": ("trimesh",), ".off": ("trimesh",),
     ".e57": ("pye57",), ".xlsx": ("openpyxl",), ".dxf": ("ezdxf",),
+    ".fits": ("astropy",),
+    ".mrc": ("mrcfile",),
+    ".nrrd": ("nrrd",),
+    ".nii": ("nibabel",), ".nii.gz": ("nibabel",),
+    ".ome.tif": ("tifffile",), ".ome.tiff": ("tifffile",),
 }
 _NAME_EXTS = {ext[1:]: ext for ext in FORMAT_NAMES if "." not in ext[1:]}
 

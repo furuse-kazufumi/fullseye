@@ -34,7 +34,7 @@ property は名前を示して拒否する。呼び出し例: ``table = mesh_rea
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 
-[table_write_csv](../table/table_write_csv.md) · [mesh_write_ply](mesh_write_ply.md) · [mesh_read_stl](mesh_read_stl.md) · [e57_write](../e57/e57_write.md) · [e57_read](../e57/e57_read.md)
+[table_write_csv](../table/table_write_csv.md) · [mesh_write_ply](mesh_write_ply.md) · [mesh_read_stl](mesh_read_stl.md) · [e57_write](../e57/e57_write.md) · [e57_read](../e57/e57_read.md) · [astro_fits_write](../fits/astro_fits_write.md) · [astro_fits_read](../fits/astro_fits_read.md) · [em_mrc_write](../mrc/em_mrc_write.md)
 
 ## 同カテゴリ(`mesh`)
 

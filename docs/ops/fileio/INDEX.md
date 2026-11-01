@@ -1,4 +1,4 @@
-# FILEIO operator help — 14 ops in 4 categories
+# FILEIO operator help — 24 ops in 9 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/fileio/<category>/<op>.md` を走査。
 
@@ -8,9 +8,29 @@
 
 [e57_read](e57/e57_read.md) · [e57_write](e57/e57_write.md)
 
+### fits (2)
+
+[astro_fits_read](fits/astro_fits_read.md) · [astro_fits_write](fits/astro_fits_write.md)
+
 ### mesh (8)
 
 [mesh_read_obj](mesh/mesh_read_obj.md) · [mesh_read_off](mesh/mesh_read_off.md) · [mesh_read_ply](mesh/mesh_read_ply.md) · [mesh_read_stl](mesh/mesh_read_stl.md) · [mesh_write_obj](mesh/mesh_write_obj.md) · [mesh_write_off](mesh/mesh_write_off.md) · [mesh_write_ply](mesh/mesh_write_ply.md) · [mesh_write_stl](mesh/mesh_write_stl.md)
+
+### mrc (2)
+
+[em_mrc_read](mrc/em_mrc_read.md) · [em_mrc_write](mrc/em_mrc_write.md)
+
+### nifti (2)
+
+[nifti_read](nifti/nifti_read.md) · [nifti_write](nifti/nifti_write.md)
+
+### nrrd (2)
+
+[nrrd_read](nrrd/nrrd_read.md) · [nrrd_write](nrrd/nrrd_write.md)
+
+### ome_tiff (2)
+
+[ome_tiff_read](ome_tiff/ome_tiff_read.md) · [ome_tiff_write](ome_tiff/ome_tiff_write.md)
 
 ### points (2)
 

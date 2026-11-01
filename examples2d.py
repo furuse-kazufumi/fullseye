@@ -38,6 +38,9 @@ DIR = os.path.join(_ROOT, "examples")
 # id -> metadata. `name`/`summary` are plain-language (what real problem it solves);
 # `task` groups the gallery; `data` is the provenance. Every id maps to examples/<id>.py.
 EXAMPLES = [
+    {"id": "fileio_scientific_roundtrip", "task": "fileio", "data": "synthetic",
+     "name": "科学画像・体積を標準形式で受け渡す",
+     "summary": "FITS の WCS、MRC/NRRD/NIfTI の単位つき geometry、OME-TIFF の TCZYX・物理サイズ・チャネル名をメモリ上で往復して自己検査する。"},
     {"id": "mcp_usability", "task": "workflow", "data": "synthetic",
      "name": "MCPで物理量・登録見本・検証済みpipeline案を明示して使う",
      "summary": "外部資産なしの合成画像で、名前つき物理量による平滑化、明示的な登録見本ハンドルによる位置決め、"

@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3623,
- "n_notes": 3629,
+ "n_ops": 3633,
+ "n_notes": 3639,
  "notes": {
   "vol_dilate": [
    {
@@ -23150,6 +23150,26 @@
     "path": "docs/ops/fileio/e57/e57_write.md"
    }
   ],
+  "astro_fits_read": [
+   {
+    "op": "astro_fits_read",
+    "dim": "fileio",
+    "category": "fits",
+    "in": "any",
+    "out": "any",
+    "path": "docs/ops/fileio/fits/astro_fits_read.md"
+   }
+  ],
+  "astro_fits_write": [
+   {
+    "op": "astro_fits_write",
+    "dim": "fileio",
+    "category": "fits",
+    "in": "any",
+    "out": "any",
+    "path": "docs/ops/fileio/fits/astro_fits_write.md"
+   }
+  ],
   "mesh_read_obj": [
    {
     "op": "mesh_read_obj",
@@ -23228,6 +23248,86 @@
     "in": "mesh",
     "out": "any",
     "path": "docs/ops/fileio/mesh/mesh_write_stl.md"
+   }
+  ],
+  "em_mrc_read": [
+   {
+    "op": "em_mrc_read",
+    "dim": "fileio",
+    "category": "mrc",
+    "in": "any",
+    "out": "any",
+    "path": "docs/ops/fileio/mrc/em_mrc_read.md"
+   }
+  ],
+  "em_mrc_write": [
+   {
+    "op": "em_mrc_write",
+    "dim": "fileio",
+    "category": "mrc",
+    "in": "any",
+    "out": "any",
+    "path": "docs/ops/fileio/mrc/em_mrc_write.md"
+   }
+  ],
+  "nifti_read": [
+   {
+    "op": "nifti_read",
+    "dim": "fileio",
+    "category": "nifti",
+    "in": "any",
+    "out": "any",
+    "path": "docs/ops/fileio/nifti/nifti_read.md"
+   }
+  ],
+  "nifti_write": [
+   {
+    "op": "nifti_write",
+    "dim": "fileio",
+    "category": "nifti",
+    "in": "any",
+    "out": "any",
+    "path": "docs/ops/fileio/nifti/nifti_write.md"
+   }
+  ],
+  "nrrd_read": [
+   {
+    "op": "nrrd_read",
+    "dim": "fileio",
+    "category": "nrrd",
+    "in": "any",
+    "out": "any",
+    "path": "docs/ops/fileio/nrrd/nrrd_read.md"
+   }
+  ],
+  "nrrd_write": [
+   {
+    "op": "nrrd_write",
+    "dim": "fileio",
+    "category": "nrrd",
+    "in": "any",
+    "out": "any",
+    "path": "docs/ops/fileio/nrrd/nrrd_write.md"
+   }
+  ],
+  "ome_tiff_read": [
+   {
+    "op": "ome_tiff_read",
+    "dim": "fileio",
+    "category": "ome_tiff",
+    "in": "any",
+    "out": "any",
+    "path": "docs/ops/fileio/ome_tiff/ome_tiff_read.md"
+   }
+  ],
+  "ome_tiff_write": [
+   {
+    "op": "ome_tiff_write",
+    "dim": "fileio",
+    "category": "ome_tiff",
+    "in": "any",
+    "out": "any",
+    "path": "docs/ops/fileio/ome_tiff/ome_tiff_write.md"
    }
   ],
   "points_read_xyz": [

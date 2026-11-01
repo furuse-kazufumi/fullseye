@@ -13,7 +13,11 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(450 例)
+### 2-D 画像/信号/幾何(451 例)
+
+**fileio**
+- **科学画像・体積を標準形式で受け渡す** — FITS の WCS、MRC/NRRD/NIfTI の単位つき geometry、OME-TIFF の TCZYX・物理サイズ・チャネル名をメモリ上で往復して自己検査する。 `py -3.11 examples/fileio_scientific_roundtrip.py`
+- **表・メッシュ・点群を標準形式で受け渡す** — 単位と由来を持つ CSV、属性つき PLY、STL、OBJ、OFF、XYZ、E57 をメモリ上で書いて読み戻し、pandas、plyfile、numpy-stl、trimesh、pye57 でも同じ内容を読めることを自己検査する。 `py -3.11 examples/fileio_roundtrip.py`
 
 **workflow**
 - **MCPで物理量・登録見本・検証済みpipeline案を明示して使う** — 外部資産なしの合成画像で、名前つき物理量による平滑化、明示的な登録見本ハンドルによる位置決め、候補が一意なときだけ返す検証済みpipeline案を実行し、結果を自己検査する。 `py -3.11 examples/mcp_usability.py`
@@ -30,9 +34,6 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **imgevolve quickstart — 全ワークフローを 1 ファイルで** — レジストリ→型付き手組みパイプライン→ゲノム復号→タスク採点→進化ドライバ→codegen + 差分テスト(約 1.5 分、repo root から実行)。 `py -3.11 examples/quickstart.py`
 - **やりたいことを 6 言語で書いて同じ op にたどり着く(RAG の入口)** — fullseye.search_ops で「エッジ検出 / edge detection / 边缘检测 / 에지 검출 / Kantenerkennung / 邊緣」と「ノイズ除去」を 6 言語で引き、全言語で意味の合う op が上位 8 件に入ること、返った op を呼んで段差で応答が最大・雑音の標準偏差が下がることを確かめる(grep では 0 件の言葉でも引ける)。 `py -3.11 examples/find_ops_by_meaning.py`
 - **外観検査の「測る前」の 3 段(照明を戻す / 位置を合わせる / タイルの地図にする)** — 検査ラインが寸法や欠陥を測る手前に必ず入る 3 段(aoi 族 3 op)を、真値を植えた合成ラインで一巡する。★既知の cos⁴ ビネット(隅が中心の 0.196 倍)+ 暗電流 0.05 は flat_field_correct で 最大相対誤差 1.8e-16 まで戻るが、**dark を省くと 2.3e-01 までしか戻らず**隅/中心の比は 真値 0.1209 に対し 0.4867 のまま —— 絵は破綻しないので目では合格に見えて数字だけ狂う。★register_image は整数 (3,5) px を残差 0.000000 で、副画素 (2.5,-1.5) px を誤差 0.0000 px で 回収する一方、回転 5 度では残差 0.6537 で **consistent=False** を返す(小さい並進として 返りはするが、合っていないと分かる量が一緒に出る)。★周期 8 px の市松は peak_ratio 1.0000 で ambiguous=True になるが、**縞は ambiguous=False のまま** —— peak_ratio は離れた 2 番目の『山』を見る量で、縞が作るのは『尾根』だから数えられない(正直な限界として門に固定)。★tiled_map は分解可能な平均をタイル統計から全体平均へ誤差 0.0e+00 で戻し、70px を 16px 角で 割った端数 9 枚を黙って捨てない。捨てる指定をしたときだけ dropped_tiles=9 / covered_fraction=0.8359 として返り値に残る。 `py -3.11 examples/aoi_frontend_tour.py`
-
-**fileio**
-- **表・メッシュ・点群を標準形式で受け渡す** — 単位と由来を持つ CSV、属性つき PLY、STL、OBJ、OFF、XYZ、E57 をメモリ上で書いて読み戻し、pandas、plyfile、numpy-stl、trimesh、pye57 でも同じ内容を読めることを自己検査する。 `py -3.11 examples/fileio_roundtrip.py`
 
 **metrology**
 - **短い円弧・小数移動・斜めの曲線を偏りなく当てはめる** — 幾何距離の円、局所アップサンプル位相相関、主軸へ回してからの曲線・曲面当てはめを真値で検証する。 `py -3.11 examples/fit_ops_from_knowhow.py`
@@ -797,9 +798,9 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Operators by family(族 → カテゴリ、全 op)
 
-_計 3629 ops / 56 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
+_計 3639 ops / 56 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
 
-族の一覧: **2d** 959 · **3d** 376 · **fit** 3 · **math** 114 · **optics** 483 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 41 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 717 · **tomography** 32 · **volcolor** 11 · **reprconv** 42 · **fileio** 14 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 3 · **calib** 21 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 16 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
+族の一覧: **2d** 959 · **3d** 376 · **fit** 3 · **math** 114 · **optics** 483 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 41 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 717 · **tomography** 32 · **volcolor** 11 · **reprconv** 42 · **fileio** 24 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 3 · **calib** 21 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 16 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
 
 ### 2d(959 ops / 49 categories)
 
@@ -4519,11 +4520,15 @@ _計 3629 ops / 56 families。並びとノートの在り処は `docs/ops/INDEX.
 - `score_to_image2d` `score → image2d` — ``score`` volume → 最大値投影 ``image2d``。``score`` の 2 つ目の出口。 · 例: `representation_conversion`
 - `score_to_position` `score → position` — ``score`` volume → 最大値の位置 ``position (z, y, x)``。``score`` の出口。 · 例: `representation_conversion`
 
-### fileio(14 ops / 4 categories)
+### fileio(24 ops / 9 categories)
 
 #### fileio / e57(2)
 - `e57_read` `any → table` — ASTM E57 の ``bytes`` を読み、座標・強度・色・pose の点群 ``table`` を返す。 · 例: `fileio_roundtrip`
 - `e57_write` `table → any` — 座標・強度・色・pose を持つ点群 ``table`` を ASTM E57 の ``bytes`` に書く。 · 例: `fileio_roundtrip`
+
+#### fileio / fits(2)
+- `astro_fits_read` `any → any` — primary HDU の 2-D/3-D FITS を ``(image_or_volume, meta)`` として読む。 · 例: `fileio_scientific_roundtrip`
+- `astro_fits_write` `any → any` — 2-D/3-D 天文画像と基本 WCS を primary-HDU FITS の ``bytes`` にする。 · 例: `fileio_scientific_roundtrip`
 
 #### fileio / mesh(8)
 - `mesh_read_obj` `text → mesh` — Wavefront OBJ の ``v`` / ``f``(``v//vn`` を含む)を読み、三角形 ``mesh`` を返す。
@@ -4534,6 +4539,22 @@ _計 3629 ops / 56 families。並びとノートの在り処は `docs/ops/INDEX.
 - `mesh_write_off` `mesh → text` — 三角形 mesh を Geomview OFF 文字列に書く(``text``)。
 - `mesh_write_ply` `table → any` — 頂点・面・色・法線・任意スカラー属性を ASCII / little-endian PLY に書く(``text`` / ``bytes``)。 · 例: `fileio_roundtrip`
 - `mesh_write_stl` `mesh → any` — 三角形 mesh を ASCII または little-endian binary STL に書く(``text`` / ``bytes``)。
+
+#### fileio / mrc(2)
+- `em_mrc_read` `any → any` — MRC2014/CCP4 の mode 0/1/2/6 を ``(image_or_volume, meta)`` として読む。 · 例: `fileio_scientific_roundtrip`
+- `em_mrc_write` `any → any` — 2-D/3-D 電顕データを MRC2014/CCP4 の ``bytes`` にする。 · 例: `fileio_scientific_roundtrip`
+
+#### fileio / nifti(2)
+- `nifti_read` `any → any` — 単一ファイル NIfTI-1(``.nii`` / ``.nii.gz``)を ``(array, meta)`` として読む。 · 例: `fileio_scientific_roundtrip`
+- `nifti_write` `any → any` — 3-D/4-D 配列と affine/pixdim を単一ファイル NIfTI-1 の ``bytes`` にする。 · 例: `fileio_scientific_roundtrip`
+
+#### fileio / nrrd(2)
+- `nrrd_read` `any → any` — raw/gzip NRRD を ``(array, meta)`` として読み、空間単位を明示して返す。 · 例: `fileio_scientific_roundtrip`
+- `nrrd_write` `any → any` — 多次元配列と ``space directions`` を raw/gzip NRRD の ``bytes`` にする。 · 例: `fileio_scientific_roundtrip`
+
+#### fileio / ome_tiff(2)
+- `ome_tiff_read` `any → any` — OME-TIFF を ``(stack, meta)`` として読み、OME-XML と配列を相互検証する。 · 例: `fileio_scientific_roundtrip`
+- `ome_tiff_write` `any → any` — TCZYX 多次元配列と物理サイズ・チャネル名を OME-TIFF の ``bytes`` にする。 · 例: `fileio_scientific_roundtrip`
 
 #### fileio / points(2)
 - `points_read_xyz` `text → points` — 空白区切りの XYZ テキストを読み、`(N,3)` の ``points`` を返す。 · 例: `fileio_roundtrip`

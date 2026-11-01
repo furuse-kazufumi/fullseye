@@ -27,6 +27,26 @@ _CATALOG = {
         ("e57_write", ["table"], "any"),
         ("e57_read", ["any"], "table"),
     ],
+    "fits": [
+        ("astro_fits_write", ["any"], "any"),
+        ("astro_fits_read", ["any"], "any"),
+    ],
+    "mrc": [
+        ("em_mrc_write", ["any"], "any"),
+        ("em_mrc_read", ["any"], "any"),
+    ],
+    "nrrd": [
+        ("nrrd_write", ["any"], "any"),
+        ("nrrd_read", ["any"], "any"),
+    ],
+    "nifti": [
+        ("nifti_write", ["any"], "any"),
+        ("nifti_read", ["any"], "any"),
+    ],
+    "ome_tiff": [
+        ("ome_tiff_write", ["any"], "any"),
+        ("ome_tiff_read", ["any"], "any"),
+    ],
 }
 
 
