@@ -1,0 +1,12 @@
+[
+  {
+    "file": "01_threshold_transfer.png",
+    "name": "threshold_transfer",
+    "caption": "Synthetic product images under gain, offset, noise, and material-brightness changes; fixed robust k-sigma masks and the measured retuning evaluations for raw, k-sigma, and P-tile thresholds.",
+    "shape": [
+      900,
+      1600,
+      4
+    ]
+  }
+]

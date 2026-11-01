@@ -27,6 +27,7 @@ from typing import Callable, Optional
 
 import numpy as np
 from scipy import ndimage
+import normalized_threshold as _normalized_threshold
 
 from fslib import FsValueError
 
@@ -1391,6 +1392,50 @@ Raises:
     return (v > a).astype(np.float64)
 
 
+def _ptile_threshold(v, a, b):
+    """面積率で決める P-tile しきい値を feature として返す。
+
+``a`` を ``p = 0.001 + 0.998*a``（CDF の端を除く面積率）、``b < 0.5`` を明側、
+それ以外を暗側に写す。Doyle (1962) の順位統計であり、値域の利得・オフセットを
+つまみにしない。詳細な ``p`` と極性を名前付きで渡す公開 API は
+``fullseye.ledger.ptile_threshold``。
+
+**空入力は分布を持たないため拒否し、しきい値を捏造しない。**
+"""
+    p = 0.001 + 0.998 * float(np.clip(a, 0.0, 1.0))
+    polarity = "bright" if float(b) < 0.5 else "dark"
+    return _normalized_threshold.ptile_threshold(v, p=p, polarity=polarity)
+
+
+def _image_standardize(v, a, b):
+    """画像を z-score・頑健 MAD・百分位のいずれかで零中心に標準化する。
+
+``a`` の 3 帯が ``zscore`` / ``robust`` / ``percentile``。百分位方式では ``b`` を
+片側の切り落とし率 0.5〜10 % に写し、対応する上下分位点を -1 / +1 にする。
+出力は clip しない float64。MAD=0 など尺度を定義できない入力は拒否する。
+
+**空入力と尺度 0 の入力は、標準化後の単位を定義できないため拒否する。**
+"""
+    which = min(2, int(float(np.clip(a, 0.0, 1.0)) * 3.0))
+    method = ("zscore", "robust", "percentile")[which]
+    tail = 0.5 + 9.5 * float(np.clip(b, 0.0, 1.0))
+    return _normalized_threshold.image_standardize(v, method=method, p_lo=tail, p_hi=100.0 - tail)
+
+
+def _sigma_threshold(v, a, b):
+    """零中心・σ単位の画像を ``k = 2 + 3*a`` で二値化する。
+
+``b`` の 3 帯が明側 ``x>k`` / 暗側 ``x<-k`` / 両側 ``|x|>k``。この 2-D
+レジストリ版は入力が標準化済みであることを前提とし、生画像からなら先に
+``image_standardize`` をつなぐ。名前付き API は内部で頑健標準化する選択肢も持つ。
+
+**空入力は σ単位を検査できないため拒否し、空 region へ黙って落とさない。**
+"""
+    k = 2.0 + 3.0 * float(np.clip(a, 0.0, 1.0))
+    polarity = ("bright", "dark", "both")[min(2, int(float(np.clip(b, 0.0, 1.0)) * 3.0))]
+    return _normalized_threshold.sigma_threshold(v, k=k, polarity=polarity).astype(np.float64)
+
+
 def _otsu(v, a, b):
     """大津の判別分析法（Otsu's method）による自動しきい値処理。HALCON の ``binary_threshold``（Segment an image using binary thresholding.）に相当。
 
@@ -2365,6 +2410,9 @@ _DEFS = [
     ("local_thickness", "morphology", None, IMAGE, IMAGE, _local_thickness),
     # image -> region (segmentation)
     ("threshold", "segmentation", "threshold", IMAGE, REGION, _threshold),
+    ("ptile_threshold", "segmentation", "", IMAGE, FEATURE, _ptile_threshold),
+    ("image_standardize", "gray", "", IMAGE, IMAGE, _image_standardize),
+    ("sigma_threshold", "segmentation", "", IMAGE, REGION, _sigma_threshold),
     ("otsu", "segmentation", "binary_threshold", IMAGE, REGION, _otsu),
     ("dyn_threshold", "segmentation", "dyn_threshold", IMAGE, REGION, _dyn_threshold),
     # region -> region

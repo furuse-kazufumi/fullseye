@@ -1,6 +1,6 @@
 # imgevolve — cross-library operator catalog
 
-942 operators across 48 categories, typed by sort (image/region/feature). Each maps to the nearest single-call API in HALCON / OpenCV / scikit-image / MATLAB. `-` = no direct one-call analog.
+945 operators across 48 categories, typed by sort (image/region/feature). Each maps to the nearest single-call API in HALCON / OpenCV / scikit-image / MATLAB. `-` = no direct one-call analog.
 
 | op | sort | category | halcon | opencv | skimage | matlab |
 |---|---|---|---|---|---|---|
@@ -54,6 +54,9 @@
 | `structure_tensor_coherence` | image | texture | None | - | - | - |
 | `local_thickness` | image | morphology | None | - | - | - |
 | `threshold` | image->region | segmentation | threshold | threshold | img>t | imbinarize |
+| `ptile_threshold` | image->feature | segmentation |  | - | - | - |
+| `image_standardize` | image | gray |  | - | - | - |
+| `sigma_threshold` | image->region | segmentation |  | - | - | - |
 | `otsu` | image->region | segmentation | binary_threshold | threshold(OTSU) | filters.threshold_otsu | otsuthresh/graythresh |
 | `reg_erode` | region | region | erosion_circle | erode | morphology.binary_erosion | imerode |
 | `reg_dilate` | region | region | dilation_circle | dilate | morphology.binary_dilation | imdilate |
@@ -948,9 +951,9 @@
 | `feature_to_img` | feature->image | bridge |  | - | - | - |
 
 ## Coverage (ops with a direct analog)
-- opencv: 310/942
-- skimage: 383/942
-- matlab: 259/942
+- opencv: 310/945
+- skimage: 383/945
+- matlab: 259/945
 
 ## Roadmap toward full coverage
 - HALCON ~2100 operators: add regions/XLD-contours/matching/OCR/calibration sorts.

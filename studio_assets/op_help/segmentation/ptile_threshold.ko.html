@@ -1,0 +1,39 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">ptile_threshold — SEGMENTATION <code style="color:#22d3bf">threshold</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">scalar</code></p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ptile_threshold(image, p: &#x27;float&#x27; = 0.01, polarity: &#x27;str&#x27; = &#x27;bright&#x27;) -&gt; &#x27;float&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import normalized_threshold; normalized_threshold.ptile_threshold(image, p: &#x27;float&#x27; = 0.01, polarity: &#x27;str&#x27; = &#x27;bright&#x27;) -&gt; &#x27;float&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opssegmentation.get(&quot;ptile_threshold&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
+<p>P-tile 방법으로 면적 비율 *p* 를 밝은 쪽 또는 어두운 쪽에 두는 회색값 임계값을 반환한다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>Doyle (1962) の P-tile 法に従い、画素を明るさ順に並べ、指定した側の <code style="color:#22d3bf">ceil(p * N)</code> 画素と残りの境界をしきい値にする。隣接する 2 値の中点を返すため、値が異なる境界では <code style="color:#22d3bf">image &gt; threshold</code> (<code style="color:#22d3bf">bright</code>)または <code style="color:#22d3bf">image &lt; threshold</code> (<code style="color:#22d3bf">dark</code>)が指定個数をそのまま選ぶ。同値画素が境界をまたぐ離散ヒストグラムでは面積率を厳密に分けられないため、その同値をしきい値として返す。画素を恣意的に間引いて割合だけを合わせることはしない。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
+<p>image : array-like</p>
+<p>有限値だけからなる空でない 2-D 画像。値域は限定しない。</p>
+<p>p : float</p>
+<p>前景にしたい面積率。<code style="color:#22d3bf">0 &lt; p &lt; 1</code>。<code style="color:#22d3bf">p=0</code> / <code style="color:#22d3bf">p=1</code> は境界の両側が</p>
+<p>存在せず、有限なしきい値を定義できないため <code style="color:#22d3bf">ValueError</code> で拒否する。</p>
+<p>polarity : {&#x27;bright&#x27;, &#x27;dark&#x27;}</p>
+<p><code style="color:#22d3bf">bright</code> は明るい側、<code style="color:#22d3bf">dark</code> は暗い側を面積率 *p* にする。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>float</p>
+<p>元画像と同じグレー値単位のしきい値。</p>
+<p><b>空入力は分布を持たないため拒否し、しきい値を捏造しない。</b></p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">References</h4>
+<p>W. Doyle, &quot;Operations Useful for Similarity-Invariant Pattern Recognition,&quot; *Journal of the ACM*, 9(2), 1962, pp. 259-267.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation 패밀리 가이드</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:graph_hierarchy_and_thresholds">graph_hierarchy_and_thresholds</a> — 그래프·계층·임계값 정리로 만드는 분할 — 무엇이 엄밀하고 어디서 분할이 무너지는가</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
+<p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
+<p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
+<p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_threshold_transfer_after_normalization">poc_threshold_transfer_after_normalization</a> — <code style="color:#22d3bf">py -3.11 examples/poc_threshold_transfer_after_normalization.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">scalar</code> 를 입력으로 받는 것)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">threshold</code>)</h3>
+<p><a style="color:#22d3bf" href="opsegmentation:threshold_triangle">threshold_triangle</a> · <a style="color:#22d3bf" href="opsegmentation:threshold_isodata">threshold_isodata</a> · <a style="color:#22d3bf" href="opsegmentation:threshold_kittler">threshold_kittler</a> · <a style="color:#22d3bf" href="opsegmentation:threshold_kapur">threshold_kapur</a> · <a style="color:#22d3bf" href="opsegmentation:image_standardize">image_standardize</a> · <a style="color:#22d3bf" href="opsegmentation:sigma_threshold">sigma_threshold</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: normalized_threshold.py — SEGMENTATION 연산자 레지스트리. 이 op 노트는 <code style="color:#22d3bf">tools/opdocs.py md</code> 가 자동 생성합니다(직접 편집하지 마세요).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

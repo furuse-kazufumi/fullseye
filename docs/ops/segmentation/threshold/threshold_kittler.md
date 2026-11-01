@@ -46,7 +46,7 @@ J(t) = 1 + 2(P1 ln σ1 + P2 ln σ2) − 2(P1 ln P1 + P2 ln P2) を最小にす�
 
 ## 同カテゴリ(`threshold`)
 
-[threshold_triangle](threshold_triangle.md) · [threshold_isodata](threshold_isodata.md) · [threshold_kapur](threshold_kapur.md)
+[threshold_triangle](threshold_triangle.md) · [threshold_isodata](threshold_isodata.md) · [threshold_kapur](threshold_kapur.md) · [ptile_threshold](ptile_threshold.md) · [image_standardize](image_standardize.md) · [sigma_threshold](sigma_threshold.md)
 
 ---
 *Provenance: seggraph.py — SEGMENTATION operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

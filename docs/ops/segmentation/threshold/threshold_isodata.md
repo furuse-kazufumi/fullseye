@@ -47,7 +47,7 @@ isodata(Ridler–Calvard 1978): t ← (μ_≤t + μ_>t)/2 を **画素の値の�
 
 ## 同カテゴリ(`threshold`)
 
-[threshold_triangle](threshold_triangle.md) · [threshold_kittler](threshold_kittler.md) · [threshold_kapur](threshold_kapur.md)
+[threshold_triangle](threshold_triangle.md) · [threshold_kittler](threshold_kittler.md) · [threshold_kapur](threshold_kapur.md) · [ptile_threshold](ptile_threshold.md) · [image_standardize](image_standardize.md) · [sigma_threshold](sigma_threshold.md)
 
 ---
 *Provenance: seggraph.py — SEGMENTATION operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

@@ -1,6 +1,6 @@
 # imgevolve — operator research provenance
 
-Seminal references for the 942 operators (families collapse many variants). The point: a designed pipeline is traceable to the literature, and the RAD image corpus is the mining source for *new* operators.
+Seminal references for the 945 operators (families collapse many variants). The point: a designed pipeline is traceable to the literature, and the RAD image corpus is the mining source for *new* operators.
 
 | op | category | seminal reference |
 |---|---|---|
@@ -54,6 +54,9 @@ Seminal references for the 942 operators (families collapse many variants). The 
 | `structure_tensor_coherence` | texture | - |
 | `local_thickness` | morphology | - |
 | `threshold` | segmentation | Sauvola & Pietikäinen (2000). Adaptive document image binarization. Pattern Recognition. |
+| `ptile_threshold` | segmentation | Sauvola & Pietikäinen (2000). Adaptive document image binarization. Pattern Recognition. |
+| `image_standardize` | gray | - |
+| `sigma_threshold` | segmentation | Sauvola & Pietikäinen (2000). Adaptive document image binarization. Pattern Recognition. |
 | `otsu` | segmentation | Otsu, N. (1979). A threshold selection method from gray-level histograms. IEEE TSMC. |
 | `reg_erode` | region | Serra, J. (1982). Image Analysis and Mathematical Morphology. (Matheron 1975). |
 | `reg_dilate` | region | Serra, J. (1982). Image Analysis and Mathematical Morphology. (Matheron 1975). |
@@ -947,7 +950,7 @@ Seminal references for the 942 operators (families collapse many variants). The 
 | `contour_to_img` | bridge | - |
 | `feature_to_img` | bridge | - |
 
-**Provenance coverage: 175/942 operators cite a seminal paper.**
+**Provenance coverage: 177/945 operators cite a seminal paper.**
 
 ## Mining new operators from research (RAD)
 - RAD image / diffusion / deep_learning corpora (thousands of papers) = the source for operators beyond the classics: modern denoisers (BM3D, DnCNN), learned edges (HED), superpixels (SLIC), diffusion priors, foundation segmenters (SAM).

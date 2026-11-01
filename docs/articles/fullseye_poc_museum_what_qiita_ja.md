@@ -4,13 +4,13 @@
 
 > **[紙面の計測館 総合案内](https://qiita.com/furuse-kazufumi/items/c1606bcfa2085d204ad6)** の一棟です。ほかの棟・用語・テーゼは案内にあります。
 
-この棟には **133 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
+この棟には **134 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
 
 > 各展示の「使用 op」から、その op のノート(型契約・罠・図・Studio で走るプログラム)へ飛べます: [オペレータ目録](https://furuse.work/OP_CATALOG.html) / [op ノートの索引](https://furuse.work/ops/INDEX.html)。
 
 ### 産業検査ウィング ―― 合格の数字と不合格の数字は両立する
 
-検査ラインの数字は合否に直結するので、1 つの指標に畳みたくなります。この部屋の 40 点は、畳んだ瞬間に消えるものを並べたものです。まとめた ROC が種類別の盲点を隠す織物、MTF が合格のまま黒レベルが不合格になる迷光、読取率だけ見ると寛容なデコーダが良く見えるバーコード。
+検査ラインの数字は合否に直結するので、1 つの指標に畳みたくなります。この部屋の 41 点は、畳んだ瞬間に消えるものを並べたものです。まとめた ROC が種類別の盲点を隠す織物、MTF が合格のまま黒レベルが不合格になる迷光、読取率だけ見ると寛容なデコーダが良く見えるバーコード。
 
 真値はどれも自分で仕込んであります。周期地の閉形式、レーザー断面の h(x)、1 次元熱伝導の解析解、閉形式の欠陥周波数。だから「検出できました」の先にある「どこで検出できなくなるか」を、しきい値を後から合わせずに測れます。
 
@@ -1339,6 +1339,26 @@ py -3.11 examples/poc_slanted_edge_sfr_limits.py
 この回が作った図は全部で **1 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_slanted_edge_sfr_limits)
 
 使用 op(ノートへ): [`mtf_diffraction`](https://furuse.work/ops/optics/imaging/mtf_diffraction.html)
+
+## No.2026.285 —— 生の輝度しきい値は照明ごとに合わせ直すが、kσ と P-tile はそのまま移る
+
+欠陥の形と面積を固定した合成製品像を、照明利得1.35倍、オフセット+0.18、雑音2倍、材質の明るさ+0.18、複合条件で撮り直した。基準像で合わせた生のしきい値は5条件中4条件でIoU 0.98を割り、追加の評価は計49回（基準の1回を含め50回）。中央値と1.4826×MADで零中心・σ単位にしてから切るkσは、基準で2回評価した同じkを全条件へ移して追加0回、移植IoUは0.9832以上。P-tileは真の欠陥面積率を基準像で1回評価し、追加0回、移植IoUは0.9820以上。雑音2倍では両方式とも一部の欠陥画素と背景雑音が重なり、正規化しても情報そのものは戻らない。評価回数は実行時間でなく、IoU 0.98へ達するまで決定的な候補列を真値で採点した回数。
+
+[![生の輝度しきい値は照明ごとに合わせ直すが、kσ と P-tile はそのまま移る](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_threshold_transfer_after_normalization/01_threshold_transfer_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_threshold_transfer_after_normalization/01_threshold_transfer.png)
+
+*↑ **生の輝度しきい値は照明ごとに合わせ直すが、kσ と P-tile はそのまま移る** ―― 欠陥の形と面積を固定した合成製品像を、照明利得1.35倍、オフセット+0.18、雑音2倍、材質の明るさ+0.18、複合条件で撮り直した。基準像で合わせた生のしきい値は5条件中4条件でIoU 0.98を割り、追加の評価は計49回（基準の1回を含め50回）。中央値と1.4826×MADで零中心・σ単位にしてから切るkσは、基準で2回評価した同じkを全条件へ移して追加0回、移植IoUは0.9832以上。P-tileは真の欠陥面積率を基準像で1回評価し、追加0回、移植IoUは0.9820以上。雑音2倍では両方式とも一部の欠陥画素と背景雑音が重なり、正規化しても情報そのものは戻らない。評価回数は実行時間でなく、IoU 0.98へ達するまで決定的な候補列を真値で採点した回数。*
+
+用語: IoU — 二つの領域の共通部分の面積を和集合の面積で割った、領域の重なりを0から1で表す指標。
+
+```
+py -3.11 examples/poc_threshold_transfer_after_normalization.py
+```
+
+ソース: [examples/poc_threshold_transfer_after_normalization.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_threshold_transfer_after_normalization.py)
+
+この回が作った図は全部で **1 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_threshold_transfer_after_normalization)
+
+使用 op(ノートへ): [`image_standardize`](https://furuse.work/ops/2d/gray/image_standardize.html) · [`ptile_threshold`](https://furuse.work/ops/2d/segmentation/ptile_threshold.html) · [`sigma_threshold`](https://furuse.work/ops/2d/segmentation/sigma_threshold.html)
 
 ### 寸法・形状計測ウィング ―― 偏りと散らばりは別々に持つ
 

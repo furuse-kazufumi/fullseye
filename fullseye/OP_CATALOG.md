@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(449 例)
+### 2-D 画像/信号/幾何(450 例)
 
 **fileio**
 - **表・メッシュ・点群を標準形式で受け渡す** — 単位と由来を持つ CSV、属性つき PLY、STL、OBJ、OFF、XYZ、E57 をメモリ上で書いて読み戻し、pandas、plyfile、numpy-stl、trimesh、pye57 でも同じ内容を読めることを自己検査する。 `py -3.11 examples/fileio_roundtrip.py`
@@ -115,6 +115,21 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **視覚計測を支える数学 op(mathops)を計測ワークフローで一巡** — 平面フィット→残差統計→共分散楕円の主軸化→較正曲線の多項式フィット(条件数監視)→補間で逆引き。mathops 16 op を実データ風に通し閉形式 GT と照合。 `py -3.11 examples/math_metrology.py`
 - **複素解析 op(mathops tier2)を閉形式の真値と突き合わせる** — 偏角原理で零点数、コーシー積分で内部値復元、等角性・正則性判定を点列として持つ閉曲線から numpy 演算で答える。 `py -3.11 examples/math_complex.py`
 
+**segmentation**
+- **先に正規化すると、しきい値を別の照明・材質へ移せる** — 同じ欠陥を照明利得・オフセット・雑音・材質の明るさを変えて撮り、生の輝度しきい値と、頑健標準化後の kσ・P-tile を比較する。基準画像で合わせたつまみの移植 IoU と、IoU 0.98 に戻すまでの追加評価回数を全条件で数える。 `py -3.11 examples/poc_threshold_transfer_after_normalization.py`
+- **グラフ・階層・閾値のセグメンテーション —— 最大フロー = 最小カット、ultrametric、つまみを回すと粗から細へ** — グラフ・階層・閾値のセグメンテーション 16 op(graph cut・α-expansion・SRM・成分木の属性開放・準平坦領域・階層分水嶺と UCM・SNIC・quick shift・三角法・isodata・Kittler・Kapur)を定理(最大フロー = 最小カット、E ≤ 2c E*、ultrametric 等)と第 2 実装の門で確かめ、真値つき世界で掃引して採点する。 `py -3.11 examples/poc_graph_hierarchy_segmentation.py`
+- **動的輪郭とレベルセット —— 輪郭が縮み、凹みに入り、エッジで止まるまでを閉形式で確かめる** — 動的輪郭とレベルセット 10 op(snake・GVF・Chan–Vese・形態学的 CV・測地的 AC・再初期化・DRLSE・曲率流)を、閉形式と第 2 実装の門で確かめ、真値つきの合成世界で segeval により採点する。U 字の凹部に古典の snake は入れず GVF は入る、照明の勾配では大域の Chan–Vese が負け局所の手法が勝つ。 `py -3.11 examples/poc_active_contours.py`
+- **接した 2 つの球を 3-D 分水嶺で割る —— 連結成分では 1 個、距離変換シードでは体積の等しい 2 個** — 台帳 opssegmentation の watershed3d(distance_peaks / watershed_vol / separate_touching)を fullseye.ledger から呼び、鏡映対称に置いた接する 2 球が連結成分では融合して 1 個、分水嶺では 2 個に割れて体積が厳密に等しいこと、前景をちょうど覆うこと、半径の違う球では大きい方のラベルが大きいことを確かめる。 `py -3.11 examples/watershed3d_tour.py`
+- **HALCON の Segmentation 章の 9 op を一巡する —— 差の検査・特徴空間の分類・領域成長・マーカー付き分水嶺** — segmentation.py に実装されていながら台帳に載っていなかった 9 op(check_difference / class_2dim_sup・unsup / learn_ndim_norm・class_ndim_norm / classify_image_class_lut / expand_gray / regiongrowing_n / watersheds_marker)を fullseye.ledger から順に呼び、合成画像で各 op の答えを数えて確かめる(マーカー付き分水嶺は尾根で割れる)。 `py -3.11 examples/halcon_segmentation_tour.py`
+- **12 通りの自動しきい値に同じ絵を見せる —— 割れてよい数と、割れては困る向き** — 値が 2 種類しかない板(明部ちょうど 400 px)を大域 10 種・局所 4 種の自動しきい値に見せ、大域が全部 400 px で一致することを assert。局所は数が外れてよいが向きは同じであることを確かめる。向きが逆だと面積が 400 から3,696(9.2 倍)になり例外も警告も出ないところまで見せる。実際に SimpleITK 由来の 3 op が補集合を返していたのをこの形で見つけた。 `py -3.11 examples/threshold_family_agreement.py`
+- **細胞の計数と分割(計数が合っていて分割が全部外れる点がある)** — 既知の位置・大きさ・重なりで細胞を配置して真値を握る。★**偏り +0.3 個(0.4 %)なのに分割誤り 13.3 件**という点が実在する(過分割 +1 と過統合 -1 が相殺する)。★**過分割は重なりに反応しない** —— 密度を 5 段振っても過分割の列はほぼ一定で、過分割は種の撒き方が、過統合は重なりが決める別原因。★「最適な h は密度で動く」は基準を書かないと真偽が決まらない(偏り基準では1.1→0.0 と動き、1対1 基準では 0.4 で動かない)。縁の規約だけで計数が 13 % 動く。 `py -3.11 examples/poc_cell_counting.py`
+- **密集した泡を数える ―― 重なりが深くて決まらないときは、個数ではなく区間を返す** — 距離変換の山の突出度(0 次元パーシステンス)で重なった泡を割り、決まらなければ区間で返す新 op `blob_count_interval`。等しい 2 円の相対突出度は閉形式 1 − sqrt(1 − (1 − o)²) と 1.6 px 以内、割れなくなる重なり率は予言の幅に入り、自信をもった誤りは面積でも見えない重なり率 0.86〜0.90 から先だけ。BBBC005(CC0)の小さい物体で個数の相対誤差 0.34 %(連結成分 9.4 %)、大きい物体は 300 枚中 286 枚で数を返さず誤り 0。水電解の泡(PEMWE、CC BY 4.0)の形を並べた半合成で自信をもった誤り 2/65、ALCON2009 型の採点(重心が泡の矩形に入るか)は決まった塊で 0.95。★形の許しを孤立した泡の 95 % に合わせると誤りが 3 % → 19 % に増える矛盾を掃引で示す。 `py -3.11 examples/poc_dense_bubble_count.py`
+- **成長のタイムラプスを時空間の連結成分として測る(合体はいつ起きたか)** — ★ゼロ点(フレーム独立の計数)は思ったより強く、塊の数が減るフレームは真の合体時刻の1 コマ以内に出る。壊れるのは数ではなく**その先** ——「どれとどれが」「合体か消失か」「同時に 2 組か」。★★**空間の離散化は合体を早める**(予想が外れた: 画素は面積を持つので円が半画素ぶん太り、まだ接していないのに繋がる。-1.16 / -0.04 フレーム)。一方フレーム格子への丸めは必ず遅らせる(+0.17 / +0.94)—— **逆向きの 2 つが混ざる**。 `py -3.11 examples/poc_timelapse_growth.py`
+- **植生被覆率(被覆率が当たっていて画素が全部外れる、が実際に起きる)** — 合成群落なので被覆率も画素の帰属も真値が既知。発芽期・湿った土でゼロ点の被覆率誤差は **-0.2 pp(ほぼ完璧)なのに適合率も再現率も 0.000** —— 植生と答えた画素数だけが偶然一致していた。混合画素が 100% になると二値手法は生育段階で誤差の向きが逆転する(発芽期 +32〜+46 pp / 繁茂期 -14〜-36 pp)。 `py -3.11 examples/poc_vegetation_cover.py`
+- **水田の雑草はどれだけあるか ―― 色と肌理だけで雑草の画素を分け、被度を宣言した境で 4 段階にする(学習器なし、実データは雑草イネの UAV 画像)** — 新 op 5 本(`cropweed`、台帳 `opssegmentation` の `plant` / `classify`): `plant_color_index`(ExG・ExR・ExGR・CIVE・NGRDI・VEG、暗い画素は値を作らない)/ `superpixel_color_texture_features`(領域ごとの色と肌理の 10 特徴、向きの揃い)/ `fisher_lda_fit`・`fisher_lda_score`(2 クラスの Fisher 判別、閉形式)/ `cover_ratio_grade`(被度を評価前に宣言した境 5 / 25 / 50 % で 4 段階)。合成の水田(雑草の割合を分位点で厳密に置く)で κ 0.876、作物と雑草の色を入れ替えると被度の順位相関 −0.999(判定は色で決まる)。★実データ WeedyRice-RGBMS(UAV の RGB と雑草イネの注釈 734 組、CC BY 4.0、repo に入れない): val で格子を選び(SNIC 超画素より良い)、test 148 枚で段階の一致 0.574(多数派だけ 0.345)・κ 0.424 [0.313, 0.520]・並べ替え p 0.0005・被度の相関 0.826・IoU 0.397(ばらまき 0.189)。R と G を入れ替えると κ −0.023。撮影日を丸ごと外すと季節の違う 1 日は日の中の相関 0.14 —— 付属の分割の数字は見た飛行の別のコマの成績。コンテストの画像は使っておらず、数字はコンテストの得点と比べられない。学習器 0、門 16 件(CI は合成の 10 件)。 `py -3.11 examples/poc_weed_rice_ratio.py`
+- **MRI バイアス場と組織面積(GM と WM は逆向きに壊れ、足すと隠れる)** — 楕円殻の脳ファントムで 3 組織の真値面積を握り、乗算場と Rician 雑音を掛けて 3 クラス大津で測る。★★振幅 30 % で **GM +20.2 % / WM -7.7 % なのに GM+WM は +0.0 %**(脳実質体積は両方間違っても動かない)。★雑音を止めると符号が反転(GM -11.8 %)し、崖は幾何予測 30 % に対し実測 17.5 %。★★log I をそのまま平滑する補正は**場が無くても GM +81.8 %** 壊す(解剖が場に見える)が、分割残差の Wells 型反復なら 40 % でも +1.8 %。周波数の崖は基底で決まり(多項式 32 / ガウス 16 / 格子 B スプライン 8 px)、4 px では理想補正だけが残る。SNR 15 で場なしでも GM +8.5 %(裾の予測 +6.3 %)。 `py -3.11 examples/poc_mri_bias_field.py`
+- **葉の病斑面積率(等級は色の軸より葉マスクと縁の定義で決まる)** — 閉形式の葉と既知面積の病斑に土・照明むら・白飛び・影を重ねた合成葉。緑の固定しきい値は土だけで **+65.2 pt**、射影 G で葉を切り a* で病斑を切ると標準場面で -0.8 pt。★白飛びの鏡面反射は a* に**偽陽性しか出さない**(20 % で +12.6 pt、偽陰性 0.0 ―― 予想した符号の逆転は起きない)、白を足しても動かない色相なら +2.0 pt。★★縁のぼけ幅 4 px では境界を 25 %/75 % 線のどちらに置くかだけで **±3.5 pt** 動き(Steiner の式が 0.4 pt 以内で予測)、等級境界 ±3 pt の 40 枚は土の上では 19〜35 枚が誤等級、黒布 + 明るさ葉マスク + 色相固定なら 8 枚。 `py -3.11 examples/poc_leaf_disease_area.py`
+
 **terrain**
 - **地形を測る(傾斜・水の流れ・日当たりを閉形式と突き合わせる)** — 平面・円錐・ガウス丘という解析曲面で傾斜と曲率を検算し、離散化の誤差と式の誤りを2 次収束で区別する。欠測(水面)の扱いで集水量がどう変わるかを 3 通り並べ、日当たりを向き別に出す。**この PoC が天空率の 18 倍の遅さを暴いた**。 `py -3.11 examples/poc_dem_terrain.py`
 - **地心座標と地球の丸み(測地⇄ECEF・地心格子・曲率落ち・緯度で変わるセル寸法)** — 赤道・極・楕円体方程式・法線移動で ECEF を検算し、3700 点の往復誤差を高さ別に印字する(楕円体面 2e-9 m、20 km で 4e-6 m —— docstring の 1e-7 m は地表付近の値)。地心緯度と測地緯度の差 0.19 度、曲率落ちの表、Web メルカトル分解能、等角度格子の東西傾斜が北緯 60 度で素朴計算だと半分になることを閉形式と突き合わせる。 `py -3.11 examples/dem_geodesy_tour.py`
@@ -211,20 +226,6 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **文字はどこにあるか、を学習なしで —— 描いた文字の矩形を真値にストローク幅の検出器を採点する** — textregion 3 op(Stroke Width Transform、Epshtein 2010)を、自分でフォント描画した文字(インク画素が真値)で採点する。恒等式: 矩形ストローク w=3,7 で SWT = w(全画素)、2 倍拡大で中央値 5 → 10。Latin size ≥ 32 でインク再現率 80〜90 %、CJK 60〜79 %、精度 ≈ 50 %(矩形は字の余白を含む)、文字の大きさ 6 段 × 雑音 4 段で「どこから落ちるか」を表にする。認識器は載せない。 `py -3.11 examples/poc_text_region_truth.py`
 - **配線行列は「次数だけの偶然」より何倍構造を持つか(3 つの門を同じ物差しで)** — コネクトーム / 血管網 / 配管図を隣接行列として、次数・相互辺・有向 3 サイクルを次数保存のヌルとの比で測る。素の個数は規模で決まって比べられないが、比なら門を跨げる。真値は整数の恒等式(Σ入 = Σ出 = |E|)・第 2 実装(3 サイクルの総当たり)・各標本の次数列保存・恒等ペアの Jaccard = 1。実データ無しでも合成配線で恒等式が通る。 `py -3.11 examples/graphinv_three_phyla.py`
 - **公開経路の無かった道具 18 本を一巡する —— 3-D の NCC・サブピクセルの端・帯域通過・法線の積分・二視点の幾何・ピラミッド・回転対称** — 棚卸し(2026-10-02)で fullseye のどこからも呼べなかった 18 本を fs.<名前> から呼び、答えの決まる入力で確かめる: 切り出しの位置で NCC = 1、x.5 の端は放物線補間で厳密、純正弦波の利得 = マスクの値、周期面は Frankot–Chellappa で 1e-15、雑音なしの三角測量、本質行列の特異値 (σ, σ, 0)、ピラミッドの大きさ、4 回対称の点群は次数 2・4 で 0。 `py -3.11 examples/hidden_ops_tour.py`
-
-**segmentation**
-- **グラフ・階層・閾値のセグメンテーション —— 最大フロー = 最小カット、ultrametric、つまみを回すと粗から細へ** — グラフ・階層・閾値のセグメンテーション 16 op(graph cut・α-expansion・SRM・成分木の属性開放・準平坦領域・階層分水嶺と UCM・SNIC・quick shift・三角法・isodata・Kittler・Kapur)を定理(最大フロー = 最小カット、E ≤ 2c E*、ultrametric 等)と第 2 実装の門で確かめ、真値つき世界で掃引して採点する。 `py -3.11 examples/poc_graph_hierarchy_segmentation.py`
-- **動的輪郭とレベルセット —— 輪郭が縮み、凹みに入り、エッジで止まるまでを閉形式で確かめる** — 動的輪郭とレベルセット 10 op(snake・GVF・Chan–Vese・形態学的 CV・測地的 AC・再初期化・DRLSE・曲率流)を、閉形式と第 2 実装の門で確かめ、真値つきの合成世界で segeval により採点する。U 字の凹部に古典の snake は入れず GVF は入る、照明の勾配では大域の Chan–Vese が負け局所の手法が勝つ。 `py -3.11 examples/poc_active_contours.py`
-- **接した 2 つの球を 3-D 分水嶺で割る —— 連結成分では 1 個、距離変換シードでは体積の等しい 2 個** — 台帳 opssegmentation の watershed3d(distance_peaks / watershed_vol / separate_touching)を fullseye.ledger から呼び、鏡映対称に置いた接する 2 球が連結成分では融合して 1 個、分水嶺では 2 個に割れて体積が厳密に等しいこと、前景をちょうど覆うこと、半径の違う球では大きい方のラベルが大きいことを確かめる。 `py -3.11 examples/watershed3d_tour.py`
-- **HALCON の Segmentation 章の 9 op を一巡する —— 差の検査・特徴空間の分類・領域成長・マーカー付き分水嶺** — segmentation.py に実装されていながら台帳に載っていなかった 9 op(check_difference / class_2dim_sup・unsup / learn_ndim_norm・class_ndim_norm / classify_image_class_lut / expand_gray / regiongrowing_n / watersheds_marker)を fullseye.ledger から順に呼び、合成画像で各 op の答えを数えて確かめる(マーカー付き分水嶺は尾根で割れる)。 `py -3.11 examples/halcon_segmentation_tour.py`
-- **12 通りの自動しきい値に同じ絵を見せる —— 割れてよい数と、割れては困る向き** — 値が 2 種類しかない板(明部ちょうど 400 px)を大域 10 種・局所 4 種の自動しきい値に見せ、大域が全部 400 px で一致することを assert。局所は数が外れてよいが向きは同じであることを確かめる。向きが逆だと面積が 400 から3,696(9.2 倍)になり例外も警告も出ないところまで見せる。実際に SimpleITK 由来の 3 op が補集合を返していたのをこの形で見つけた。 `py -3.11 examples/threshold_family_agreement.py`
-- **細胞の計数と分割(計数が合っていて分割が全部外れる点がある)** — 既知の位置・大きさ・重なりで細胞を配置して真値を握る。★**偏り +0.3 個(0.4 %)なのに分割誤り 13.3 件**という点が実在する(過分割 +1 と過統合 -1 が相殺する)。★**過分割は重なりに反応しない** —— 密度を 5 段振っても過分割の列はほぼ一定で、過分割は種の撒き方が、過統合は重なりが決める別原因。★「最適な h は密度で動く」は基準を書かないと真偽が決まらない(偏り基準では1.1→0.0 と動き、1対1 基準では 0.4 で動かない)。縁の規約だけで計数が 13 % 動く。 `py -3.11 examples/poc_cell_counting.py`
-- **密集した泡を数える ―― 重なりが深くて決まらないときは、個数ではなく区間を返す** — 距離変換の山の突出度(0 次元パーシステンス)で重なった泡を割り、決まらなければ区間で返す新 op `blob_count_interval`。等しい 2 円の相対突出度は閉形式 1 − sqrt(1 − (1 − o)²) と 1.6 px 以内、割れなくなる重なり率は予言の幅に入り、自信をもった誤りは面積でも見えない重なり率 0.86〜0.90 から先だけ。BBBC005(CC0)の小さい物体で個数の相対誤差 0.34 %(連結成分 9.4 %)、大きい物体は 300 枚中 286 枚で数を返さず誤り 0。水電解の泡(PEMWE、CC BY 4.0)の形を並べた半合成で自信をもった誤り 2/65、ALCON2009 型の採点(重心が泡の矩形に入るか)は決まった塊で 0.95。★形の許しを孤立した泡の 95 % に合わせると誤りが 3 % → 19 % に増える矛盾を掃引で示す。 `py -3.11 examples/poc_dense_bubble_count.py`
-- **成長のタイムラプスを時空間の連結成分として測る(合体はいつ起きたか)** — ★ゼロ点(フレーム独立の計数)は思ったより強く、塊の数が減るフレームは真の合体時刻の1 コマ以内に出る。壊れるのは数ではなく**その先** ——「どれとどれが」「合体か消失か」「同時に 2 組か」。★★**空間の離散化は合体を早める**(予想が外れた: 画素は面積を持つので円が半画素ぶん太り、まだ接していないのに繋がる。-1.16 / -0.04 フレーム)。一方フレーム格子への丸めは必ず遅らせる(+0.17 / +0.94)—— **逆向きの 2 つが混ざる**。 `py -3.11 examples/poc_timelapse_growth.py`
-- **植生被覆率(被覆率が当たっていて画素が全部外れる、が実際に起きる)** — 合成群落なので被覆率も画素の帰属も真値が既知。発芽期・湿った土でゼロ点の被覆率誤差は **-0.2 pp(ほぼ完璧)なのに適合率も再現率も 0.000** —— 植生と答えた画素数だけが偶然一致していた。混合画素が 100% になると二値手法は生育段階で誤差の向きが逆転する(発芽期 +32〜+46 pp / 繁茂期 -14〜-36 pp)。 `py -3.11 examples/poc_vegetation_cover.py`
-- **水田の雑草はどれだけあるか ―― 色と肌理だけで雑草の画素を分け、被度を宣言した境で 4 段階にする(学習器なし、実データは雑草イネの UAV 画像)** — 新 op 5 本(`cropweed`、台帳 `opssegmentation` の `plant` / `classify`): `plant_color_index`(ExG・ExR・ExGR・CIVE・NGRDI・VEG、暗い画素は値を作らない)/ `superpixel_color_texture_features`(領域ごとの色と肌理の 10 特徴、向きの揃い)/ `fisher_lda_fit`・`fisher_lda_score`(2 クラスの Fisher 判別、閉形式)/ `cover_ratio_grade`(被度を評価前に宣言した境 5 / 25 / 50 % で 4 段階)。合成の水田(雑草の割合を分位点で厳密に置く)で κ 0.876、作物と雑草の色を入れ替えると被度の順位相関 −0.999(判定は色で決まる)。★実データ WeedyRice-RGBMS(UAV の RGB と雑草イネの注釈 734 組、CC BY 4.0、repo に入れない): val で格子を選び(SNIC 超画素より良い)、test 148 枚で段階の一致 0.574(多数派だけ 0.345)・κ 0.424 [0.313, 0.520]・並べ替え p 0.0005・被度の相関 0.826・IoU 0.397(ばらまき 0.189)。R と G を入れ替えると κ −0.023。撮影日を丸ごと外すと季節の違う 1 日は日の中の相関 0.14 —— 付属の分割の数字は見た飛行の別のコマの成績。コンテストの画像は使っておらず、数字はコンテストの得点と比べられない。学習器 0、門 16 件(CI は合成の 10 件)。 `py -3.11 examples/poc_weed_rice_ratio.py`
-- **MRI バイアス場と組織面積(GM と WM は逆向きに壊れ、足すと隠れる)** — 楕円殻の脳ファントムで 3 組織の真値面積を握り、乗算場と Rician 雑音を掛けて 3 クラス大津で測る。★★振幅 30 % で **GM +20.2 % / WM -7.7 % なのに GM+WM は +0.0 %**(脳実質体積は両方間違っても動かない)。★雑音を止めると符号が反転(GM -11.8 %)し、崖は幾何予測 30 % に対し実測 17.5 %。★★log I をそのまま平滑する補正は**場が無くても GM +81.8 %** 壊す(解剖が場に見える)が、分割残差の Wells 型反復なら 40 % でも +1.8 %。周波数の崖は基底で決まり(多項式 32 / ガウス 16 / 格子 B スプライン 8 px)、4 px では理想補正だけが残る。SNR 15 で場なしでも GM +8.5 %(裾の予測 +6.3 %)。 `py -3.11 examples/poc_mri_bias_field.py`
-- **葉の病斑面積率(等級は色の軸より葉マスクと縁の定義で決まる)** — 閉形式の葉と既知面積の病斑に土・照明むら・白飛び・影を重ねた合成葉。緑の固定しきい値は土だけで **+65.2 pt**、射影 G で葉を切り a* で病斑を切ると標準場面で -0.8 pt。★白飛びの鏡面反射は a* に**偽陽性しか出さない**(20 % で +12.6 pt、偽陰性 0.0 ―― 予想した符号の逆転は起きない)、白を足しても動かない色相なら +2.0 pt。★★縁のぼけ幅 4 px では境界を 25 %/75 % 線のどちらに置くかだけで **±3.5 pt** 動き(Steiner の式が 0.4 pt 以内で予測)、等級境界 ±3 pt の 40 枚は土の上では 19〜35 枚が誤等級、黒布 + 明るさ葉マスク + 色相固定なら 8 枚。 `py -3.11 examples/poc_leaf_disease_area.py`
 
 **workflow**
 - **op の返り値(型付き)を Markdown で読める形にし、JSON を埋め込んで戻す** — table / points は本物の GFM 表、image / region は 1 行要約(画素は描かない)。json_block で厳密な JSON を ```json フェンスに包み、extract_json で Markdown 文書から fullseye 封筒だけを bit 一致で回収。report は『読める』と『機械で戻せる』を with_json で 1 文書に両立。異種フェンスは無視し未知 sort は断る。 `py -3.11 examples/typed_results_markdown.py`
@@ -796,11 +797,11 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Operators by family(族 → カテゴリ、全 op)
 
-_計 3629 ops / 56 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
+_計 3635 ops / 56 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
 
-族の一覧: **2d** 959 · **3d** 376 · **fit** 3 · **math** 114 · **optics** 483 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 41 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 717 · **tomography** 32 · **volcolor** 11 · **reprconv** 42 · **fileio** 14 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 3 · **calib** 21 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 16 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
+族の一覧: **2d** 962 · **3d** 376 · **fit** 3 · **math** 114 · **optics** 483 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 41 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 717 · **tomography** 32 · **volcolor** 11 · **reprconv** 42 · **fileio** 14 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 3 · **calib** 21 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 16 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 62
 
-### 2d(959 ops / 49 categories)
+### 2d(962 ops / 49 categories)
 
 1 画像を取り 1 画像/領域/輪郭/特徴を返すパイプライン op(`ops.REGISTRY`)と、複数画像を取る n-ary op(`imgops_nary`)。`in → out` のデータ種で連鎖を組む。HALCON 別名は用途の手掛かり。
 
@@ -1149,7 +1150,7 @@ _計 3629 ops / 56 families。並びとノートの在り処は `docs/ops/INDEX.
 - `zoom_image_size` (halcon: `zoom_image_size`) `image → image` — 目標サイズ(高さ ``H*(0.5+a)``、幅 ``W*(0.5+b)``)へリサンプルする ズーム。``zoom_image_factor`` が倍率を 2 つ取るのに対し、こちらは**サイズ** そのものを縦横独立に指定する ―― HALCON の意味論としては別物。ただし このパイプラインの ``image`` は「入力と同じキャンバスサイズで返る」契約 なので、リサンプル結果は元の解像度のキャンバス左上に置き、余白は 0、 はみ出す分は切り捨てる(実際に画像が縮小/拡大されたことは見た目で分かる が、配列の shape 自体は変わらない)。HALCON の ``zoom_image_size`` （Zoom an image to a given size.）に相当。 · 例: `gallery2d_geometry`
 - `zoom_region` (halcon: `zoom_region`) `region → region` — 領域を等方（縦横同倍率）にズームする。倍率 ``s = 0.7+0.6a``（0.7〜1.3 倍）で中心基準に拡大縮小し、境界外は鏡映（reflect）で埋めたのち ``_rebinarise`` で 0.5 しきい値により二値領域に戻す。b は未使用。 · 例: `gallery2d_geometry`
 
-#### 2d / gray(48)
+#### 2d / gray(49)
 - `banding_map` `image → image` — 階調の**段差(バンディング)が見えている場所**を返す。``a`` がビット数、``b`` が窓。 · 例: `gallery2d_gray_arith`
 - `bit_not` (halcon: `bit_not`) `image → image` — 階調の反転（ネガポジ反転）。実装は ``1 - x``（[0,1] の連続値としての反転）で、a, b は未使用。 · 例: `gallery2d_gray_arith`
 - `clahe` `image → image` — Contrast-Limited Adaptive Histogram Equalization (tiled, bilinearly blended). · 例: `gallery2d_gray_arith`, `poc_dehazing`
@@ -1167,6 +1168,7 @@ _計 3629 ops / 56 families。並びとノートの在り処は `docs/ops/INDEX.
 - `gamma` (halcon: `pow_image`) `image → image` — ガンマ補正（べき乗変換）。HALCON の ``pow_image``（Raise an image to a power.）に相当。 · 例: `gallery2d_gray_arith`, `poc_itof_multifreq`, `poc_simcal_thin_film`
 - `gamma_image` (halcon: `gamma_image`) `image → image` — ガンマ補正 ``x ** (0.3 + 2.5*a)``。``a`` が 0 に近いほど指数は 0.3 に 近づき暗部を持ち上げ、``a`` が 1 に近いほど指数は 2.8 に近づき暗部を潰して コントラストを強める。HALCON の ``gamma_image``（Perform a gamma encoding or decoding of an image.）の代役。 · 例: `gallery2d_gray_arith`
 - `illuminate` (halcon: `illuminate`) `image → image` — アンシャープマスク型の局所コントラスト強調。``sm`` = ガウシアンぼかし (半径 ``3+12*a``)を引いた差分 ``x - sm`` を元画像に足し戻すことで、 低周波の照明ムラを残しつつ局所的なエッジ・テクスチャを持ち上げる。HALCON の ``illuminate``（Illuminate image.）の代役。 · 例: `gallery2d_gray_arith`, `poc_document_scan`, `poc_matrix_code_reading`
+- `image_standardize` `image → image` — 画像を z-score・頑健 MAD・百分位のいずれかで零中心に標準化する。 · 例: `poc_threshold_transfer_after_normalization`
 - `invert` (halcon: `invert_image`) `image → image` — 階調反転（ネガポジ反転）。HALCON の ``invert_image``（Invert an image.）に相当。 · 例: `gallery2d_gray_arith`, `genspark_external_review`, `poc_tacscalib_sphere_lut`
 - `invert_image` (halcon: `invert_image`) `image → image` — 階調を反転する ``1.0 - x``(ネガポジ反転)。HALCON の ``invert_image`` （Invert an image.）にそのまま対応する、近似ではなく厳密に等価な演算。 · 例: `gallery2d_gray_arith`, `poc_metal_grain_size`
 - `it_bit_lshift` (halcon: `bit_lshift`) `image → image` — bit_lshift: 8-bit quantise, left-shift every pixel by round(a*7), mask to 8 bits (wrap-around, as HALCON does), and map back to [0,1]. ``b`` ignored. · 例: `gallery2d_gray_arith`
@@ -1512,7 +1514,7 @@ _計 3629 ops / 56 families。並びとノートの在り処は `docs/ops/INDEX.
 - `sg_slic_superpixels` `image → region` — SLIC 法によるスーパーピクセル過分割の境界格子を返す（``skimage.segmentation.slic``、HALCON に対応オペレータなし）。 · 例: `gallery2d_segmentation`
 - `sg_watershed_gradient` `image → region` — 勾配画像の h-minima マーカーからのウォーターシェッド分割の境界を返す（``skimage``、HALCON に対応オペレータなし）。 · 例: `gallery2d_segmentation`, `poc_segmentation_gauntlet`
 
-#### 2d / segmentation(54)
+#### 2d / segmentation(56)
 - `adaptive_gauss_thresh` (halcon: `local_threshold`) `image → region` — ガウシアン平滑化した局所平均を基準にした適応的しきい値処理。HALCON の ``local_threshold``（Segment an image using local thresholding.）に相当。 · 例: `gallery2d_segmentation`, `poc_matrix_code_reading`
 - `auto_threshold` (halcon: `auto_threshold`) `image → region` — 実装は ``binary_threshold`` と同一(Otsu の判別分析法による自動 しきい値化)。HALCON の ``auto_threshold``（Segment an image using thresholds determined from its histogram.）は本来ヒストグラムの複数の谷 から**複数のしきい値**(多クラス分割)を決める演算子だが、この代役では 単一の Otsu しきい値による二値化に単純化している(近似の限界)。 · 例: `gallery2d_segmentation`, `poc_battery_electrode_breathing`, `poc_bump_coplanarity`, `threshold_family_agreement`
 - `bin_threshold` (halcon: `bin_threshold`) `image → region` — 大津の判別分析法（Otsu's method）による自動しきい値二値化。``binary_threshold``/``auto_threshold`` と同じ ``_sh_threshold`` の ``otsu`` 分岐を共有し、a, b は未使用。しきい値より明るい画素を前景(1)とする。scikit-image が無い環境では同じ 256 ビンの Otsu を numpy の双子(``numpy_twins.threshold_otsu``)で計算する(bit 一致。2026-10-25 までは画像平均値をしきい値とする別の答えに落ちていた)。 · 例: `gallery2d_segmentation`, `poc_metal_grain_size`
@@ -1535,9 +1537,11 @@ _計 3629 ops / 56 families。並びとノートの在り処は `docs/ops/INDEX.
 - `nonmax_suppression_amp` (halcon: `nonmax_suppression_amp`) `image → region` — 極大点（ローカルマキシマム）を抽出する非極大値抑制。窓内最大値と一致し、かつ閾値 ``0.3+0.4b`` を超える画素だけを前景として残す。a が窓サイズを 3/5/7/9 に振る。 · 例: `gallery2d_segmentation`
 - `otsu` (halcon: `binary_threshold`) `image → region` — 大津の判別分析法（Otsu's method）による自動しきい値処理。HALCON の ``binary_threshold``（Segment an image using binary thresholding.）に相当。 · 例: `ct_inspection`, `degenerate_inputs`, `example_inner_diameter_mm`, `find_ops_by_meaning`, `gallery2d_segmentation`, `genspark_external_review`, `line_handshake`, `poc_bone_trabecular_thickness`, `poc_colocalization_crosstalk`, `poc_dimensional_inspection`, `poc_document_scan`, `poc_fresco_craquelure`, `poc_matrix_code_reading`, `poc_metal_grain_size`, `poc_real_coin_metrology`, `poc_segmentation_gauntlet`, `poc_solar_el_inspection`, `poc_vegetation_cover`, `poc_water_inspection_images`, `quickstart`, `segment_and_classify`, `threshold_family_agreement`, `typed_results_json`
 - `pouring` (halcon: `pouring`) `image → region` — 分水嶺法（watershed）による領域分割の境界抽出。勾配画像（Sobel 振幅）を地形とみなし、暗い領域（``x < 0.2+0.3a``）を種（マーカー）として分水嶺を計算、``skimage.segmentation.find_boundaries`` で境界を前景として返す。b は未使用。 · 例: `gallery2d_segmentation`
+- `ptile_threshold` `image → feature` — 面積率で決める P-tile しきい値を feature として返す。 · 例: `poc_threshold_transfer_after_normalization`
 - `regiongrowing` (halcon: `regiongrowing`) `image → region` — 領域成長の簡易近似。まず高いしきい値(``x > 0.5+0.3*a``)でシード (種)領域を作り、それを ``1+4*b`` 回だけ二値膨張して広げる ―― 真の領域成長 (隣接画素との類似度を逐次判定しながら広げる)ではなく、しきい値+膨張という 軽量な代用になっている(近似の限界)。HALCON の ``regiongrowing`` （Segment an image using region growing.）の代役。 · 例: `gallery2d_segmentation`
 - `regiongrowing_mean` (halcon: `regiongrowing_mean`) `image → region` — 実装は ``regiongrowing`` と同一(しきい値によるシード生成+膨張)。 HALCON の ``regiongrowing_mean``（Perform a region growing using mean gray values.）は本来、各領域の平均輝度との近さを基準に成長させる演算子だが、 この代役では平均輝度による判定を行わず ``regiongrowing`` と同じ処理を 返す(近似の限界)。 · 例: `gallery2d_segmentation`
 - `segment_image_mser` (halcon: `segment_image_mser`) `image → region` — MSER(Maximally Stable Extremal Regions、最大安定極値領域)検出 (``cv2.MSER_create``)。しきい値を連続的に変化させても形が安定して残る 領域を検出し、その境界線を返す(文字・ロゴなど照明変化に頑健な領域検出に 使われる)。HALCON の ``segment_image_mser``（Segment image using Maximally Stable Extremal Regions (MSER).）に相当。 · 例: `gallery2d_segmentation`
+- `sigma_threshold` `image → region` — 零中心・σ単位の画像を ``k = 2 + 3*a`` で二値化する。 · 例: `poc_threshold_transfer_after_normalization`
 - `sk_canny` (halcon: `edges_image`) `image → region` — Canny エッジ検出(領域版)。ガウス平滑化 → 勾配計算 → 非極大抑制 → ヒステリシスしきい値、という古典的な多段パイプラインでエッジ画素を求め、真偽値の領域として返す。 · 例: `find_ops_by_meaning`, `gallery2d_segmentation`, `genspark_external_review`
 - `sk_chan_vese` `image → region` — Chan-Vese セグメンテーション。レベルセット(等位集合)を輝度の分散が領域内で最小になるように反復して動かす能動輪郭モデルで、エッジがはっきりしない対象でも領域を検出できる。 · 例: `gallery2d_segmentation`, `poc_active_contours`, `poc_segmentation_gauntlet`
 - `sk_felzenszwalb` `image → region` — Felzenszwalb のグラフベース領域分割。画素をノードとする最小全域木クラスタリングで、明確な境界が無くても画像を過分割(オーバーセグメンテーション)する高速な手法。ここでは分割結果の境界線を領域として返す。 · 例: `gallery2d_segmentation`, `poc_segmentation_gauntlet`
@@ -5516,7 +5520,7 @@ _計 3629 ops / 56 families。並びとノートの在り処は `docs/ops/INDEX.
 - `attention_scores` `tokens × tokens → attnmap` — 生の注意スコア QKᵀ/√d → attnmap (T, S)。 · 例: `poc_attention_identities`
 - `attention_weights` `attnmap → attnmap` — 行ごとの softmax(マスクつき)→ attnmap。**行和は 1、mask 位置は厳密に 0**。 · 例: `poc_attention_identities`
 
-### segmentation(59 ops / 11 categories)
+### segmentation(62 ops / 11 categories)
 
 #### segmentation / classify(7)
 - `class_2dim_sup` `image2d × image2d × mask → mask` — 2 チャネル特徴空間で ref_region の分布に入る画素を分類(教師つき)(class_2dim_sup)。 · 例: `halcon_segmentation_tour`
@@ -5575,7 +5579,10 @@ _計 3629 ops / 56 families。並びとノートの在り処は `docs/ops/INDEX.
 - `seg_score_card` `labels2d × labels2d → table` — 全部の物差しを 1 枚に: Dice・Jaccard(マスク)、VI・split・merge、Rand・ARI(``segcompare``)、境界 F(τ)、 Hausdorff・HD95・ASSD(境界が無ければ NaN)、過分割・未分割、分裂・融合・欠落・偽・一致、個数。 · 例: `poc_active_contours`, `poc_graph_hierarchy_segmentation`, `poc_segmentation_gauntlet`
 - `seg_under_over_segmentation` `labels2d × labels2d → table` — 過分割・未分割の数を、分割表の多数決の多重度で数える(Levine & Nazif 流: 領域の数で)。 · 例: `poc_graph_hierarchy_segmentation`
 
-#### segmentation / threshold(4)
+#### segmentation / threshold(7)
+- `image_standardize` `image2d → image2d` — 画像全体を z-score・頑健 MAD・百分位のいずれかで零中心に標準化する。 · 例: `poc_threshold_transfer_after_normalization`
+- `ptile_threshold` `image2d → scalar` — P-tile 法で面積率 *p* を明または暗側に置くグレー値しきい値を返す。 · 例: `poc_threshold_transfer_after_normalization`
+- `sigma_threshold` `image2d → mask` — 標準化画像を *k* σで二値化し、必要なら先に頑健標準化する。 · 例: `poc_threshold_transfer_after_normalization`
 - `threshold_isodata` `image2d → table` — isodata(Ridler–Calvard 1978): t ← (μ_≤t + μ_>t)/2 を **画素の値の上で** 分割が変わらなくなるまで反復(初期値 = 平均)。 · 例: `poc_graph_hierarchy_segmentation`
 - `threshold_kapur` `image2d → table` — 最大エントロピー閾値(Kapur–Sahoo–Wong 1985): H(t) = −Σ_(i ≤ t) (p_i/P1) ln(p_i/P1) − Σ_(i > t) (p_i/P2) ln(p_i/P2) を最大にするビン t(両側とも確率が正のビンだけ)。返す: ``threshold`` = そのビンの上端、``mask``(ビンの番号 > t)、 ``bin``、``entropy``(H、除いたビンは nan)。 · 例: `poc_graph_hierarchy_segmentation`
 - `threshold_kittler` `image2d → table` — 最小誤差閾値(Kittler–Illingworth 1986): 各ビン t で低い側(ビン ≤ t)と高い側に分け、 J(t) = 1 + 2(P1 ln σ1 + P2 ln σ2) − 2(P1 ln P1 + P2 ln P2) を最小にする(σ は各側のビンの中心の標準偏差。どちらかの側の σ が 0 のビンは除く)。返す: ``threshold`` = そのビンの上端(mask はビンの番号 > t で決める = 端の値も矛盾なし)、 ``mask``、``bin``、``criterion``(J、除いたビンは nan)。 · 例: `poc_graph_hierarchy_segmentation`

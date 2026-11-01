@@ -81,10 +81,11 @@ import segcontour
 import seggraph
 import watershed3d
 import cropweed
+import normalized_threshold
 
 _MOD = {"segmentation": segmentation, "segeval": segeval, "segworld": segworld,
         "segcontour": segcontour, "seggraph": seggraph, "watershed3d": watershed3d,
-        "cropweed": cropweed}
+        "cropweed": cropweed, "normalized_threshold": normalized_threshold}
 
 # カテゴリ → [(op 名, module, [入力種別], 出力種別)]
 _CATALOG = {
@@ -177,6 +178,10 @@ _CATALOG = {
         ("threshold_isodata", "seggraph", ["image2d"], "table"),
         ("threshold_kittler", "seggraph", ["image2d"], "table"),
         ("threshold_kapur", "seggraph", ["image2d"], "table"),
+        # 生の輝度ではなく、面積率・正規化後の尺度・σで調整する 3 本(#196)。
+        ("ptile_threshold", "normalized_threshold", ["image2d"], "scalar"),
+        ("image_standardize", "normalized_threshold", ["image2d"], "image2d"),
+        ("sigma_threshold", "normalized_threshold", ["image2d"], "mask"),
     ],
     # 作物と雑草 —— 植物の色指標・超画素ごとの色と肌理・被度の段階(cropweed、2026-10-18)。
     #   入口は既存の rgbimage(と labels2d)、被度は 1-D の signal。返りは全部 dict → table。

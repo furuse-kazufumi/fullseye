@@ -1,0 +1,77 @@
+{
+  "title": "正規化してから、正規化後の単位でしきい値を決める調整カード",
+  "cards": [
+    {
+      "id": "known_bright_area_ptile",
+      "situation": "明るい欠陥の面積率は仕様や良品調査から分かるが、照明の利得とオフセットが変わる",
+      "normalization": "画像内の順位（経験累積分布）へ写す",
+      "knob": "ptile_threshold の明側面積率 p",
+      "typical": "p は推測したグレー値でなく、期待する明欠陥の面積率を使う（0 < p < 1）",
+      "ops": ["ptile_threshold"],
+      "reference": "Doyle, Operations Useful for Similarity-Invariant Pattern Recognition, JACM 9(2), 1962, 259-267"
+    },
+    {
+      "id": "known_dark_area_ptile",
+      "situation": "暗い穴・欠けの占有率は分かるが、材質ごとの基準輝度が違う",
+      "normalization": "画像内の順位（経験累積分布）へ写す",
+      "knob": "ptile_threshold の暗側面積率 p",
+      "typical": "p は期待する暗欠陥の面積率（0 < p < 1）。p=0 と p=1 はしきい値を定義できない",
+      "ops": ["ptile_threshold"],
+      "reference": "Doyle, Operations Useful for Similarity-Invariant Pattern Recognition, JACM 9(2), 1962, 259-267"
+    },
+    {
+      "id": "gaussian_noise_zscore",
+      "situation": "背景雑音がおおむね正規分布で、製品や照明ごとに平均と利得が変わる",
+      "normalization": "image_standardize(method='zscore') で平均 0・母標準偏差 1 にする",
+      "knob": "sigma_threshold の k（標準偏差単位）",
+      "typical": "探索の起点は 2〜5 σ。片側誤検出率は 0.5 erfc(k/sqrt(2)) で確認する",
+      "ops": ["image_standardize", "sigma_threshold"],
+      "reference": "NIST/SEMATECH e-Handbook of Statistical Methods, Normal Distribution; Fullseye sigma_threshold docstring"
+    },
+    {
+      "id": "sparse_outliers_robust_sigma",
+      "situation": "欠陥そのものが平均と標準偏差を引っ張るため、良品背景の尺度を普通の z-score で測れない",
+      "normalization": "image_standardize(method='robust') で中央値 0、1.4826×MAD を 1 にする",
+      "knob": "sigma_threshold の k（頑健 σ 単位）",
+      "typical": "探索の起点は 2〜5 σ。MAD=0 は単位が無いため拒否する",
+      "ops": ["image_standardize", "sigma_threshold"],
+      "reference": "Hampel, JASA 69(346), 1974; Rousseeuw and Croux, JASA 88(424), 1993"
+    },
+    {
+      "id": "smooth_background_then_sigma",
+      "situation": "緩やかな照明むらの上に、構造要素より小さい明欠陥が乗る",
+      "normalization": "tophat で背景を平らにし、残差を image_standardize(method='robust') で零中心・頑健 σ 単位にする",
+      "knob": "tophat の構造要素幅と、sigma_threshold の k",
+      "typical": "構造要素は欠陥より大きく、背景変化より小さくする。k の探索起点は 2〜5 σ",
+      "ops": ["tophat", "image_standardize", "sigma_threshold"],
+      "reference": "Fullseye docs/ops/2d/morphology/tophat.md; Hampel, JASA 69(346), 1974"
+    },
+    {
+      "id": "local_text_niblack",
+      "situation": "照明が局所的に変わり、文字や細線を局所背景から分けたい",
+      "normalization": "局所平均と局所標準偏差で画素ごとの基準を作る",
+      "knob": "Niblack の局所標準偏差係数 k と窓幅（Fullseye の sk_niblack は k を実装既定に固定し、窓 3〜15 px を調整）",
+      "typical": "窓は対象線幅より十分大きくする。固定 k を変える必要がある場合は固定値を隠さない実装を使う",
+      "ops": ["sk_niblack"],
+      "reference": "Niblack, An Introduction to Digital Image Processing, Prentice-Hall, 1986; Fullseye sk_niblack op note"
+    },
+    {
+      "id": "local_document_sauvola",
+      "situation": "文書・刻印で背景の明るさと局所コントラストが場所ごとに変わる",
+      "normalization": "局所平均と、動的範囲で正規化した局所標準偏差を使う",
+      "knob": "Sauvola の k・動的範囲 R・窓幅（Fullseye の sk_sauvola は k と R を実装既定に固定し、窓 3〜15 px を調整）",
+      "typical": "原論文の文書画像では k=0.5、R=128。入力の単位が論文と違う場合は R をそのまま移さない",
+      "ops": ["sk_sauvola"],
+      "reference": "Sauvola and Pietikäinen, Adaptive document image binarization, Pattern Recognition 33, 2000, 225-236"
+    },
+    {
+      "id": "unknown_fraction_bimodal_otsu",
+      "situation": "前景率を事前に決められないが、ヒストグラムを背景と対象の 2 クラスで説明できる",
+      "normalization": "クラス間分散を全分散に対して最大化する判別基準を使う",
+      "knob": "Otsu はグレー値しきい値を自動選択するため、正規化後の手調整つまみは無い",
+      "typical": "2 峰性が崩れる場合は値を足して調整せず、P-tile・局所法・σ法へ切り替える",
+      "ops": ["otsu", "sk_otsu", "cv_otsu"],
+      "reference": "Otsu, A Threshold Selection Method from Gray-Level Histograms, IEEE TSMC 9(1), 1979, 62-66"
+    }
+  ]
+}

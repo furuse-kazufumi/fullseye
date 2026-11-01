@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3623,
- "n_notes": 3629,
+ "n_ops": 3626,
+ "n_notes": 3635,
  "notes": {
   "vol_dilate": [
    {
@@ -3455,6 +3455,24 @@
     "out": "image",
     "halcon": "illuminate",
     "path": "docs/ops/2d/gray/illuminate.md"
+   }
+  ],
+  "image_standardize": [
+   {
+    "op": "image_standardize",
+    "dim": "2d",
+    "category": "gray",
+    "in": "image",
+    "out": "image",
+    "path": "docs/ops/2d/gray/image_standardize.md"
+   },
+   {
+    "op": "image_standardize",
+    "dim": "segmentation",
+    "category": "threshold",
+    "in": "image2d",
+    "out": "image2d",
+    "path": "docs/ops/segmentation/threshold/image_standardize.md"
    }
   ],
   "invert": [
@@ -7048,6 +7066,24 @@
     "path": "docs/ops/2d/segmentation/pouring.md"
    }
   ],
+  "ptile_threshold": [
+   {
+    "op": "ptile_threshold",
+    "dim": "2d",
+    "category": "segmentation",
+    "in": "image",
+    "out": "feature",
+    "path": "docs/ops/2d/segmentation/ptile_threshold.md"
+   },
+   {
+    "op": "ptile_threshold",
+    "dim": "segmentation",
+    "category": "threshold",
+    "in": "image2d",
+    "out": "scalar",
+    "path": "docs/ops/segmentation/threshold/ptile_threshold.md"
+   }
+  ],
   "regiongrowing": [
    {
     "op": "regiongrowing",
@@ -7079,6 +7115,24 @@
     "out": "region",
     "halcon": "segment_image_mser",
     "path": "docs/ops/2d/segmentation/segment_image_mser.md"
+   }
+  ],
+  "sigma_threshold": [
+   {
+    "op": "sigma_threshold",
+    "dim": "2d",
+    "category": "segmentation",
+    "in": "image",
+    "out": "region",
+    "path": "docs/ops/2d/segmentation/sigma_threshold.md"
+   },
+   {
+    "op": "sigma_threshold",
+    "dim": "segmentation",
+    "category": "threshold",
+    "in": "image2d",
+    "out": "mask",
+    "path": "docs/ops/segmentation/threshold/sigma_threshold.md"
    }
   ],
   "sk_canny": [

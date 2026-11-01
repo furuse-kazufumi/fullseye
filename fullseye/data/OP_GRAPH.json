@@ -53,10 +53,10 @@
     "reason": "docs/op_knob.json measured no output effect"
   },
   "execution_summary": {
-    "executable": 3417,
+    "executable": 3420,
     "reasons": {
       "python_signature": 2458,
-      "registry": 959
+      "registry": 962
     },
     "not_executable_reasons": {
       "python_callable_not_found": 14,
@@ -358,9 +358,9 @@
   },
   "counts": {
     "nodes": 101,
-    "edges": 3626,
+    "edges": 3629,
     "conversion_pairs": 395,
-    "conversion_edge_incidence": 2343
+    "conversion_edge_incidence": 2345
   },
   "nodes": [
     {
@@ -620,7 +620,7 @@
       "sort": "feature",
       "container": "structured_value",
       "size_hint": "input-dependent",
-      "produced_by": 122,
+      "produced_by": 123,
       "consumed_by": 1,
       "generator": false,
       "type_check": false,
@@ -752,8 +752,8 @@
       "sort": "image",
       "container": "dense_array",
       "size_hint": "input-dependent",
-      "produced_by": 721,
-      "consumed_by": 1046,
+      "produced_by": 722,
+      "consumed_by": 1049,
       "generator": true,
       "type_check": true,
       "choose_when": "undocumented",
@@ -1082,7 +1082,7 @@
       "sort": "region",
       "container": "sparse_set",
       "size_hint": "input-dependent",
-      "produced_by": 186,
+      "produced_by": 187,
       "consumed_by": 159,
       "generator": true,
       "type_check": true,
@@ -184609,6 +184609,207 @@
       ],
       "verified_executable": false,
       "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00055"
+    },
+    {
+      "op": "ptile_threshold",
+      "inputs": [
+        "image"
+      ],
+      "output": "feature",
+      "category": "segmentation",
+      "family": null,
+      "family_candidate": "thresholding",
+      "family_candidate_source": "heuristic_regex",
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00055"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00055"
+        }
+      ],
+      "parameters": {
+        "a": {
+          "used": false,
+          "source": "unmeasured",
+          "effect": 0.0,
+          "kind": "unused"
+        },
+        "b": {
+          "used": false,
+          "source": "unmeasured",
+          "effect": 0.0,
+          "kind": "unused"
+        }
+      },
+      "executor": {
+        "kind": "registry",
+        "alias": "ptile_threshold",
+        "module": "backend_safe",
+        "callable": "_safe(_ptile_threshold)"
+      },
+      "runtime_target": {
+        "module": "backend_safe",
+        "callable": "_safe(_ptile_threshold)"
+      },
+      "verified_executable": true,
+      "verification": {
+        "source": "tools/gen_op_facets.py::_verified_registry_ops",
+        "status": "ok",
+        "checks": [
+          "executed",
+          "typed",
+          "shape",
+          "finite",
+          "temporary_cwd",
+          "filesystem_unchanged",
+          "random_state_unchanged",
+          "under_2_seconds"
+        ]
+      },
+      "bundle_semantics": "unknown",
+      "source_ref": "S00055"
+    },
+    {
+      "op": "image_standardize",
+      "inputs": [
+        "image"
+      ],
+      "output": "image",
+      "category": "segmentation",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00055"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00055"
+        }
+      ],
+      "parameters": {
+        "a": {
+          "used": false,
+          "source": "unmeasured",
+          "effect": 0.0,
+          "kind": "unused"
+        },
+        "b": {
+          "used": false,
+          "source": "unmeasured",
+          "effect": 0.0,
+          "kind": "unused"
+        }
+      },
+      "executor": {
+        "kind": "registry",
+        "alias": "image_standardize",
+        "module": "backend_safe",
+        "callable": "_safe(_image_standardize)"
+      },
+      "runtime_target": {
+        "module": "backend_safe",
+        "callable": "_safe(_image_standardize)"
+      },
+      "verified_executable": true,
+      "verification": {
+        "source": "tools/gen_op_facets.py::_verified_registry_ops",
+        "status": "ok",
+        "checks": [
+          "executed",
+          "typed",
+          "shape",
+          "finite",
+          "temporary_cwd",
+          "filesystem_unchanged",
+          "random_state_unchanged",
+          "under_2_seconds"
+        ]
+      },
+      "bundle_semantics": "unknown",
+      "source_ref": "S00055"
+    },
+    {
+      "op": "sigma_threshold",
+      "inputs": [
+        "image"
+      ],
+      "output": "region",
+      "category": "segmentation",
+      "family": null,
+      "family_candidate": "thresholding",
+      "family_candidate_source": "heuristic_regex",
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00055"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00055"
+        }
+      ],
+      "parameters": {
+        "a": {
+          "used": false,
+          "source": "unmeasured",
+          "effect": 0.0,
+          "kind": "unused"
+        },
+        "b": {
+          "used": false,
+          "source": "unmeasured",
+          "effect": 0.0,
+          "kind": "unused"
+        }
+      },
+      "executor": {
+        "kind": "registry",
+        "alias": "sigma_threshold",
+        "module": "backend_safe",
+        "callable": "_safe(_sigma_threshold)"
+      },
+      "runtime_target": {
+        "module": "backend_safe",
+        "callable": "_safe(_sigma_threshold)"
+      },
+      "verified_executable": true,
+      "verification": {
+        "source": "tools/gen_op_facets.py::_verified_registry_ops",
+        "status": "ok",
+        "checks": [
+          "executed",
+          "typed",
+          "shape",
+          "finite",
+          "temporary_cwd",
+          "filesystem_unchanged",
+          "random_state_unchanged",
+          "under_2_seconds"
+        ]
+      },
       "bundle_semantics": "unknown",
       "source_ref": "S00055"
     },
