@@ -60,20 +60,27 @@ def ptile_threshold(image, p: float = 0.01, polarity: str = "bright") -> float:
     if polarity not in _POLARITIES:
         raise ValueError("ptile_threshold: polarity must be 'bright' or 'dark'")
     values = np.sort(x, axis=None)
-    count = int(np.ceil(float(p) * values.size))
+    # ceil(p*N) can equal N even though p < 1 (for example p=.999 on a 4x4
+    # image).  A split outside the last histogram bin has no second endpoint.
+    # Keep both sides non-empty; a singleton has no boundary and its sole grey
+    # value is the only finite threshold consistent with a constant histogram.
+    if values.size == 1:
+        return float(values[0])
+    count = min(values.size - 1, max(1, int(np.ceil(float(p) * values.size))))
     split = values.size - count if polarity == "bright" else count
     lower, upper = float(values[split - 1]), float(values[split])
     return lower + 0.5 * (upper - lower)
 
 
-def image_standardize(image, method: str = "zscore", p_lo: float = 1.0,
-                      p_hi: float = 99.0) -> np.ndarray:
+def image_standardize_raw(image, method: str = "zscore", p_lo: float = 1.0,
+                          p_hi: float = 99.0) -> np.ndarray:
     """画像全体を z-score・頑健 MAD・百分位のいずれかで零中心に標準化する。
 
     ``zscore`` は ``(x - mean) / population_std``。``robust`` は
     ``(x - median) / (1.4826 * MAD)`` で、正規分布の標準偏差と尺度を合わせる。
     ``percentile`` は *p_lo* / *p_hi* 分位点の中点を 0、両者を -1 / +1 に写す。
-    出力は常に ``float64`` であり、入力のクリップはしない。
+    出力は常に ``float64`` の生の尺度単位であり、入力のクリップはしない。この関数は
+    σ単位を必要とする数値処理向けで、``image`` sort の ``[0,1]`` 契約には登録しない。
 
     Parameters
     ----------
@@ -91,13 +98,8 @@ def image_standardize(image, method: str = "zscore", p_lo: float = 1.0,
         零中心の ``float64`` 画像。z-score は平均 0・母分散 1、robust は中央値 0・
         補正 MAD 1、percentile は指定分位点の中点 0。
 
-    Raises
-    ------
-    ValueError
-        標準偏差、``1.4826 * MAD``、または百分位幅が 0 の画像。定数画像を黙って
-        0 除算せず、正規化後の単位が定義できないことを理由つきで拒否する。
-
-    **空入力と尺度 0 の入力は、標準化後の単位を定義できないため拒否する。**
+    **空入力は尺度を推定できないため拒否する。定数入力は全 0 を返す（理由: 偏差が
+    なく、0 除算を避けながら零中心という意味を保つ唯一の有限な退化値だから）。**
 
     References
     ----------
@@ -106,28 +108,58 @@ def image_standardize(image, method: str = "zscore", p_lo: float = 1.0,
     P. J. Rousseeuw and C. Croux, "Alternatives to the Median Absolute
     Deviation," *Journal of the American Statistical Association*, 88(424), 1993.
     """
-    x = _finite_image(image, "image_standardize")
+    x = _finite_image(image, "image_standardize_raw")
     if method not in _STANDARDIZE_METHODS:
-        raise ValueError("image_standardize: method must be 'zscore', 'robust', or 'percentile'")
+        raise ValueError("image_standardize_raw: method must be 'zscore', 'robust', or 'percentile'")
     if method == "zscore":
         center = float(np.mean(x))
         scale = float(np.std(x))
-        scale_name = "standard deviation"
     elif method == "robust":
         center = float(np.median(x))
         scale = 1.4826 * float(np.median(np.abs(x - center)))
-        scale_name = "1.4826 * MAD"
     else:
         if (not np.isfinite(p_lo) or not np.isfinite(p_hi)
                 or not 0.0 <= float(p_lo) < float(p_hi) <= 100.0):
-            raise ValueError("image_standardize: percentiles must satisfy 0 <= p_lo < p_hi <= 100")
+            raise ValueError("image_standardize_raw: percentiles must satisfy 0 <= p_lo < p_hi <= 100")
         lo, hi = np.percentile(x, [float(p_lo), float(p_hi)])
         center = float(lo + 0.5 * (hi - lo))
         scale = float(0.5 * (hi - lo))
-        scale_name = "percentile half-width"
     if not np.isfinite(scale) or scale <= 0.0:
-        raise ValueError(f"image_standardize: {scale_name} is zero; normalized units are undefined")
+        return np.zeros_like(x, dtype=np.float64)
     return (x - center) / scale
+
+
+def image_standardize(image, method: str = "zscore", p_lo: float = 1.0,
+                      p_hi: float = 99.0, clip_sigma: float = 3.0) -> np.ndarray:
+    """画像を標準化し、± ``clip_sigma`` の尺度を ``[0,1]`` へ写す。
+
+    :func:`image_standardize_raw` の零中心の結果を ``[-clip_sigma,
+    +clip_sigma]`` でクリップし、0 を 0.5 とする強度画像へ線形変換する。標準化は本来
+    σ単位の実数を返すが、Fullseye の ``image`` sort は ``[0,1]`` が契約なので既定の
+    公開 op はこの符号付き強度表現を使う。生の σ 単位が必要なら、非 image-sort の
+    :func:`image_standardize_raw` を使う。
+
+    Parameters
+    ----------
+    image, method, p_lo, p_hi
+        :func:`image_standardize_raw` と同じ。
+    clip_sigma : float
+        ``[0,1]`` の両端へ写す正の有限な尺度幅。既定の 3 は -3σ / +3σ を 0 / 1
+        に対応させる。
+
+    Returns
+    -------
+    numpy.ndarray
+        ``[0,1]`` 内の ``float64`` 画像。
+
+    **空入力は尺度を推定できないため拒否する。定数入力は全 0.5 を返す（理由: raw
+    標準化の偏差 0 を、符号付き強度表現の中立点へ写すため）。**
+    """
+    if not np.isfinite(clip_sigma) or float(clip_sigma) <= 0.0:
+        raise ValueError("image_standardize: clip_sigma must be a positive finite number")
+    raw = image_standardize_raw(image, method=method, p_lo=p_lo, p_hi=p_hi)
+    width = float(clip_sigma)
+    return np.clip(0.5 + raw / (2.0 * width), 0.0, 1.0)
 
 
 def sigma_threshold(image, k: float = 3.0, polarity: str = "bright",
@@ -171,7 +203,7 @@ def sigma_threshold(image, k: float = 3.0, polarity: str = "bright",
     if standardization not in ("none", "robust"):
         raise ValueError("sigma_threshold: standardization must be 'none' or 'robust'")
     if standardization == "robust":
-        x = image_standardize(x, method="robust")
+        x = image_standardize_raw(x, method="robust")
     if polarity == "bright":
         return x > float(k)
     if polarity == "dark":
@@ -179,4 +211,4 @@ def sigma_threshold(image, k: float = 3.0, polarity: str = "bright",
     return np.abs(x) > float(k)
 
 
-__all__ = ["ptile_threshold", "image_standardize", "sigma_threshold"]
+__all__ = ["ptile_threshold", "image_standardize", "image_standardize_raw", "sigma_threshold"]

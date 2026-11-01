@@ -1408,32 +1408,36 @@ def _ptile_threshold(v, a, b):
 
 
 def _image_standardize(v, a, b):
-    """画像を z-score・頑健 MAD・百分位のいずれかで零中心に標準化する。
+    """画像を標準化し、符号付き偏差を ``[0,1]`` の強度画像へ写す。
 
-``a`` の 3 帯が ``zscore`` / ``robust`` / ``percentile``。百分位方式では ``b`` を
-片側の切り落とし率 0.5〜10 % に写し、対応する上下分位点を -1 / +1 にする。
-出力は clip しない float64。MAD=0 など尺度を定義できない入力は拒否する。
+``a`` の 3 帯が ``zscore`` / ``robust`` / ``percentile``。``b`` はクリップ幅を
+1〜6 尺度に写し、``-幅`` / ``+幅`` を 0 / 1、零偏差を 0.5 にする。百分位方式は
+1 / 99 % を使う。生の σ 単位は ``normalized_threshold.image_standardize_raw`` を使う。
+image sort が ``[0,1]`` を要求するため、登録 op は生の標準化値を返さない。
 
-**空入力と尺度 0 の入力は、標準化後の単位を定義できないため拒否する。**
+**空入力は尺度を推定できないため拒否する。定数入力は全 0.5 を返す（理由: 偏差 0
+を符号付き強度表現の中立点へ写すため）。**
 """
     which = min(2, int(float(np.clip(a, 0.0, 1.0)) * 3.0))
     method = ("zscore", "robust", "percentile")[which]
-    tail = 0.5 + 9.5 * float(np.clip(b, 0.0, 1.0))
-    return _normalized_threshold.image_standardize(v, method=method, p_lo=tail, p_hi=100.0 - tail)
+    clip_sigma = 1.0 + 5.0 * float(np.clip(b, 0.0, 1.0))
+    return _normalized_threshold.image_standardize(
+        v, method=method, p_lo=1.0, p_hi=99.0, clip_sigma=clip_sigma)
 
 
 def _sigma_threshold(v, a, b):
-    """零中心・σ単位の画像を ``k = 2 + 3*a`` で二値化する。
+    """画像を頑健標準化し、``k = 2 + 3*a`` σで二値化する。
 
-``b`` の 3 帯が明側 ``x>k`` / 暗側 ``x<-k`` / 両側 ``|x|>k``。この 2-D
-レジストリ版は入力が標準化済みであることを前提とし、生画像からなら先に
-``image_standardize`` をつなぐ。名前付き API は内部で頑健標準化する選択肢も持つ。
+``b`` の 3 帯が明側 ``x>k`` / 暗側 ``x<-k`` / 両側 ``|x|>k``。``image`` sort
+の入力は ``[0,1]`` 強度なので、この 2-D レジストリ版は中央値と 1.4826×MAD で
+内部標準化してから比較する。名前付き API は既に σ 単位の入力も直接扱える。
 
 **空入力は σ単位を検査できないため拒否し、空 region へ黙って落とさない。**
 """
     k = 2.0 + 3.0 * float(np.clip(a, 0.0, 1.0))
     polarity = ("bright", "dark", "both")[min(2, int(float(np.clip(b, 0.0, 1.0)) * 3.0))]
-    return _normalized_threshold.sigma_threshold(v, k=k, polarity=polarity).astype(np.float64)
+    return _normalized_threshold.sigma_threshold(
+        v, k=k, polarity=polarity, standardization="robust").astype(np.float64)
 
 
 def _otsu(v, a, b):

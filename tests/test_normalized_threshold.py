@@ -7,7 +7,7 @@ import numpy as np
 import pytest
 
 import normalized_threshold as N
-import opssegmentation as O
+import ops
 from fullseye.mcp.catalog import Catalog
 from fullseye.mcp.server import call_tool
 from fullseye.opsearch import plan, search_ops
@@ -30,9 +30,24 @@ def test_ptile_fails_closed_when_the_cdf_has_no_two_sides(p):
         N.ptile_threshold(np.arange(9).reshape(3, 3), p)
 
 
+@pytest.mark.parametrize("shape", [(4, 4), (1, 1)])
+@pytest.mark.parametrize("polarity", ["bright", "dark"])
+def test_ptile_small_images_keep_the_histogram_boundary_in_bounds(shape, polarity):
+    image = np.arange(np.prod(shape), dtype=np.float64).reshape(shape)
+    threshold = N.ptile_threshold(image, 0.999, polarity)
+    assert np.isfinite(threshold)
+
+
+@pytest.mark.parametrize("value", [0.0, 7.0])
+@pytest.mark.parametrize("polarity", ["bright", "dark"])
+def test_ptile_constant_images_return_the_only_grey_value(value, polarity):
+    image = np.full((4, 4), value)
+    assert N.ptile_threshold(image, 0.999, polarity) == value
+
+
 def test_standardize_zscore_has_zero_mean_and_unit_population_variance():
     image = np.array([[1.0, 2.0, 4.0], [8.0, 16.0, 32.0]])
-    z = N.image_standardize(image, "zscore")
+    z = N.image_standardize_raw(image, "zscore")
     assert z.dtype == np.float64
     assert float(np.mean(z)) == pytest.approx(0.0, abs=2e-16)
     assert float(np.var(z)) == pytest.approx(1.0, abs=5e-16)
@@ -41,19 +56,31 @@ def test_standardize_zscore_has_zero_mean_and_unit_population_variance():
 def test_only_robust_scale_stays_fixed_when_one_outlier_is_mixed_in():
     clean = np.array([[-2.0, -1.0, 0.0, 1.0, 2.0]])
     contaminated = np.array([[-2.0, -1.0, 0.0, 1.0, 200.0]])
-    robust_clean = N.image_standardize(clean, "robust")
-    robust_bad = N.image_standardize(contaminated, "robust")
+    robust_clean = N.image_standardize_raw(clean, "robust")
+    robust_bad = N.image_standardize_raw(contaminated, "robust")
     # 中央の 4 点は中央値 0・MAD 1 のままなので、1 bit も動かない。
     assert np.array_equal(robust_clean[0, :4], robust_bad[0, :4])
-    ordinary_clean = N.image_standardize(clean, "zscore")
-    ordinary_bad = N.image_standardize(contaminated, "zscore")
+    ordinary_clean = N.image_standardize_raw(clean, "zscore")
+    ordinary_bad = N.image_standardize_raw(contaminated, "zscore")
     assert np.max(np.abs(ordinary_clean[0, :4] - ordinary_bad[0, :4])) > 1.0
 
 
 @pytest.mark.parametrize("method", ["zscore", "robust", "percentile"])
-def test_standardize_rejects_a_constant_image_instead_of_dividing_by_zero(method):
-    with pytest.raises(ValueError, match=r"zero; normalized units are undefined"):
-        N.image_standardize(np.full((4, 5), 7.0), method)
+def test_standardize_constant_image_has_documented_finite_degenerate_values(method):
+    image = np.full((4, 5), 7.0)
+    assert np.array_equal(N.image_standardize_raw(image, method), np.zeros_like(image))
+    assert np.array_equal(N.image_standardize(image, method), np.full_like(image, 0.5))
+
+
+@pytest.mark.parametrize("method", ["zscore", "robust", "percentile"])
+def test_image_standardize_maps_the_requested_raw_sigma_interval_to_unit_range(method):
+    image = np.arange(25, dtype=np.float64).reshape(5, 5)
+    out = N.image_standardize(image, method, clip_sigma=2.0)
+    assert out.dtype == np.float64
+    assert float(out.min()) >= 0.0
+    assert float(out.max()) <= 1.0
+    raw = N.image_standardize_raw(image, method)
+    np.testing.assert_allclose(out, np.clip(0.5 + raw / 4.0, 0.0, 1.0))
 
 
 @pytest.mark.parametrize("k", [2.0, 2.5, 3.0])
@@ -75,13 +102,15 @@ def test_sigma_threshold_finds_known_signed_defects_and_ledger_reaches_all_three
     assert np.argwhere(N.sigma_threshold(z, 3.0, "bright")).tolist() == [[2, 3]]
     assert np.argwhere(N.sigma_threshold(z, 3.0, "dark")).tolist() == [[6, 7]]
     assert sorted(map(tuple, np.argwhere(N.sigma_threshold(z, 3.0, "both")))) == [(2, 3), (6, 7)]
-    for name in N.__all__:
-        assert name in O.list_ops("threshold")
-        assert callable(O.get(name))
+    for name in ("ptile_threshold", "image_standardize", "sigma_threshold"):
+        assert name in ops.RT
+        assert callable(ops.RT[name])
+    assert "image_standardize_raw" not in ops.RT
 
 
-@pytest.mark.parametrize("fn", [N.ptile_threshold, N.image_standardize, N.sigma_threshold])
-def test_all_three_ops_refuse_empty_input_with_the_documented_reason(fn):
+@pytest.mark.parametrize(
+    "fn", [N.ptile_threshold, N.image_standardize, N.image_standardize_raw, N.sigma_threshold])
+def test_public_standardization_and_threshold_functions_refuse_empty_input(fn):
     with pytest.raises(ValueError, match="empty input"):
         fn(np.empty((0, 4)))
 
@@ -89,12 +118,20 @@ def test_all_three_ops_refuse_empty_input_with_the_documented_reason(fn):
 def test_all_three_ops_are_reachable_from_search_and_the_apply_facade():
     import fullseye as fs
 
-    indexed = {row["name"] for row in search_ops("P-tile robust standardize sigma threshold", k=30)["ops"]}
-    assert {"ptile_threshold", "image_standardize", "sigma_threshold"} <= indexed
+    queries = {
+        "ptile_threshold": "P-tile area fraction threshold",
+        "image_standardize": "standardize image",
+        "sigma_threshold": "robust sigma threshold binarize image",
+    }
+    for name, query in queries.items():
+        indexed = {row["name"] for row in search_ops(query, k=10)["ops"]}
+        assert name in indexed
     assert fs.find_op("ptile_threshold").out_sort == "feature"
     assert fs.find_op("image_standardize").out_sort == "image"
     assert fs.find_op("sigma_threshold").out_sort == "region"
-    assert all(callable(getattr(fs.ledger, name)) for name in N.__all__)
+    assert all(callable(getattr(fs.op, name)) for name in
+               ("ptile_threshold", "image_standardize", "sigma_threshold"))
+    assert callable(N.image_standardize_raw)
 
 
 def test_find_ops_and_plan_return_sourced_tuning_cards_without_an_llm():
