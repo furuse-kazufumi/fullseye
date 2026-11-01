@@ -974,7 +974,7 @@
   {
    "id": "poc_interferometry_step",
    "category": "optics",
-   "media": "03_surface_z_scan.mp4",
+   "media": "09_csi_scan_explained.mp4",
    "motion": true,
    "label": {
     "ja": "白色干渉の段差",
@@ -1022,8 +1022,8 @@
   {
    "id": "poc_polarization_specular",
    "category": "optics",
-   "media": "01_raw_polarizer_mosaic.png",
-   "motion": false,
+   "media": "08_analyzer_sweep_explained.mp4",
+   "motion": true,
    "label": {
     "ja": "偏光で鏡面除去",
     "en": "Polarization",
@@ -15788,9 +15788,9 @@
   {
    "id": "poc_interferometry_step",
    "group": "wing_metrology",
-   "media": "03_surface_z_scan.mp4",
+   "media": "09_csi_scan_explained.mp4",
    "motion": true,
-   "thumb_src": "03_surface_z_scan.gif",
+   "thumb_src": "09_csi_scan_explained.gif",
    "label": {
     "ja": "白色干渉の段差",
     "en": "White-light steps",
@@ -17539,9 +17539,9 @@
   {
    "id": "poc_polarization_specular",
    "group": "wing_color",
-   "media": "01_raw_polarizer_mosaic.png",
-   "motion": false,
-   "thumb_src": "01_raw_polarizer_mosaic_720.jpg",
+   "media": "08_analyzer_sweep_explained.mp4",
+   "motion": true,
+   "thumb_src": "08_analyzer_sweep_explained.gif",
    "label": {
     "ja": "偏光で鏡面除去",
     "en": "Polarization",

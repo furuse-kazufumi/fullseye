@@ -178,6 +178,178 @@ def fig_surface_csi():
                     caption="48 raw uint8 coherence-scan frames; the localized envelope sweeps over the tilted step.")
     return r
 
+
+def fig_csi_scan_explained():
+    """入口動画: 縞の包絡線が現れる z と表面高さの対応を 1 画面で示す。"""
+    if not figs.enabled():
+        return None
+    from PIL import Image, ImageDraw
+    import annotate as AN
+    import fullseye as fs
+
+    r = surface_csi_measurement(size=512, n_planes=48, seed=22)
+    z = np.asarray(r["z_um"], dtype=np.float64)
+    truth = np.asarray(r["truth_um"], dtype=np.float64)
+    height = np.asarray(r["height_um"], dtype=np.float64)
+    stack = np.asarray(r["stack"], dtype=np.float64)
+    lo, hi = float(np.nanmin(truth)), float(np.nanmax(truth))
+    y, x1, x2 = 256, 200, 312
+
+    # P1/P2 は傾いた同一面上にある。段差だけを測るため、真値の各側から求めた
+    # 面内 x 勾配を同じ実行の height/truth の双方から差し引く。
+    xx = np.arange(truth.shape[1], dtype=np.float64)
+    left = (xx < truth.shape[1] // 2) & np.isfinite(height[y])
+    right = (xx >= truth.shape[1] // 2) & np.isfinite(height[y])
+    slope_meas = 0.5 * (np.polyfit(xx[left], height[y, left], 1)[0]
+                        + np.polyfit(xx[right], height[y, right], 1)[0])
+    slope_truth = 0.5 * (np.polyfit(xx[xx < truth.shape[1] // 2],
+                                   truth[y, xx < truth.shape[1] // 2], 1)[0]
+                         + np.polyfit(xx[xx >= truth.shape[1] // 2],
+                                      truth[y, xx >= truth.shape[1] // 2], 1)[0])
+    step_meas = float(height[y, x2] - height[y, x1] - slope_meas * (x2 - x1))
+    step_truth = float(truth[y, x2] - truth[y, x1] - slope_truth * (x2 - x1))
+    step_err_nm = (step_meas - step_truth) * 1000.0
+    assert abs(step_err_nm) <= 20.0
+
+    # 最終コマでは、有効な高さ画素がすべて着色される。
+    passed_last = np.isfinite(height) & (truth <= z[-1] - 0.3)
+    assert int(np.count_nonzero(passed_last)) == int(np.count_nonzero(np.isfinite(height)))
+
+    def resize_bilinear(a, size):
+        q = np.clip(np.asarray(a, dtype=np.float64), 0.0, 1.0)
+        im = Image.fromarray(np.rint(q * 255.0).astype(np.uint8), mode="L")
+        return np.asarray(im.resize(size, Image.Resampling.BILINEAR), dtype=np.uint8)
+
+    def rgb8(a):
+        q = np.clip(np.asarray(a, dtype=np.float64), 0.0, 1.0)
+        return np.rint(q * 255.0).astype(np.uint8)
+
+    def put_text(im, text, xy, size=22, anchor="lt", fill=(245, 245, 245),
+                 plate=None, pad=3):
+        # AN.measure_text は描画より先に全ラベルを実測する。縮小を許さず、22 px 未満にしない。
+        m = AN.measure_text(text, font_size=size, min_font_size=size, wrap=False)
+        w, h = m["width"], m["height"]
+        ax, ay = anchor
+        x0 = int(xy[0] - (w if ax == "r" else w // 2 if ax == "c" else 0))
+        y0 = int(xy[1] - (h if ay == "b" else h // 2 if ay == "m" else 0))
+        if x0 - pad < 0 or y0 - pad < 0 or x0 + w + pad > im.width or y0 + h + pad > im.height:
+            raise ValueError("text overflow: %r at %r, rect=(%d,%d,%d,%d), canvas=%r" %
+                             (text, xy, x0, y0, w, h, im.size))
+        d = ImageDraw.Draw(im)
+        if plate is not None:
+            d.rectangle((x0 - pad, y0 - pad, x0 + w + pad, y0 + h + pad), fill=plate)
+        for i, line in enumerate(m["lines"]):
+            d.text((x0, y0 + i * m["line_height"]), line, font=m["font"], fill=fill)
+
+    def paste_gray(im, a, box):
+        q = resize_bilinear(a, (box[2], box[3]))
+        im.paste(Image.fromarray(np.repeat(q[..., None], 3, axis=2)), (box[0], box[1]))
+
+    def paste_turbo(im, a, valid, box):
+        q = np.nan_to_num(a, nan=lo)
+        col = rgb8(fs.colorize_depth(q, name="turbo", vmin=lo, vmax=hi))
+        dark = np.full_like(col, 36)
+        col = np.where(valid[..., None], col, dark)
+        rim = Image.fromarray(col).resize((box[2], box[3]), Image.Resampling.BILINEAR)
+        im.paste(rim, (box[0], box[1]))
+
+    def graph(im, k):
+        d = ImageDraw.Draw(im)
+        rect = (990, 145, 1244, 397)
+        d.rectangle(rect, outline=(185, 190, 200), width=1)
+        x0, y0, x3, y3 = rect
+        xp = lambda v: x0 + (float(v) - z[0]) / (z[-1] - z[0]) * (x3 - x0)
+        yp = lambda v: y3 - float(v) * (y3 - y0)
+        for tv in (0.0, 1.0, 2.0, 3.0, 3.8):
+            px = int(round(xp(tv))); d.line((px, y3, px, y3 + 5), fill=(185, 190, 200))
+            put_text(im, "%.1f" % tv, (px, y3 + 8), anchor="ct")
+        for tv in (0.0, 0.5, 1.0):
+            py = int(round(yp(tv))); d.line((x0 - 5, py, x0, py), fill=(185, 190, 200))
+            put_text(im, "%.1f" % tv, (x0 - 8, py), anchor="rm")
+        cols = ((75, 175, 255), (255, 155, 45))
+        for px0, col in zip((x1, x2), cols):
+            pts = [(int(round(xp(zz))), int(round(yp(v))))
+                   for zz, v in zip(z, stack[:, y, px0])]
+            d.line(pts, fill=col, width=2)
+            for p in pts:
+                d.ellipse((p[0] - 2, p[1] - 2, p[0] + 2, p[1] + 2), fill=col)
+        for hv, col in zip((height[y, x1], height[y, x2]), cols):
+            px = int(round(xp(hv))); d.line((px, y0, px, y3), fill=col, width=2)
+        cur = int(round(xp(z[k]))); d.line((cur, y0, cur, y3), fill=(255, 238, 80), width=2)
+        put_text(im, "2画素の信号対 z", (950, 62), size=24)
+        put_text(im, "強度", (950, 104))
+        put_text(im, "z [µm]", ((x0 + x3) // 2, 438), anchor="ct")
+        put_text(im, "P1 高さ %.3f µm\nP2 高さ %.3f µm" %
+                 (height[y, x1], height[y, x2]), (950, 475), size=22)
+        put_text(im, "段差(傾斜補正) %.3f µm\n真値 %.3f µm" %
+                 (step_meas, step_truth), (950, 552), size=22)
+        put_text(im, "差 %+.0f nm" % step_err_nm, (950, 640), size=24,
+                 fill=(255, 220, 90))
+
+    accumulated = np.zeros_like(truth)
+    frames = []
+    for k in range(len(z)):
+        # コマごとに新しい 1280×720 画布を作る。
+        im = Image.new("RGB", (1280, 720), (18, 21, 28))
+        d = ImageDraw.Draw(im)
+        d.rectangle((0, 0, 1279, 55), fill=(31, 38, 51))
+        put_text(im, "白色干渉(コヒーレンス走査)で段差を測る —— 縞が出る高さが表面の高さ",
+                 (14, 10), size=24)
+        put_text(im, "z = %.2f µm(%d/48)" % (z[k], k + 1), (1265, 10), size=24, anchor="rt")
+
+        paste_gray(im, stack[k], (20, 70, 560, 560))
+
+        # P1/P2 の位置を左パネルに印す(右の信号図と同じ色)。無印だと読者が画素を探せない。
+
+        sx, sy = 560 / stack.shape[2], 560 / stack.shape[1]
+
+        for px0, col, lab in zip((x1, x2), ((75, 175, 255), (255, 155, 45)), ('P1', 'P2')):
+
+            cx, cy = int(round(20 + px0 * sx)), int(round(70 + y * sy))
+
+            d.ellipse((cx - 7, cy - 7, cx + 7, cy + 7), outline=col, width=3)
+
+            put_text(im, lab, (cx + 10, cy - 14), fill=col)
+        mask = np.abs(truth - z[k]) < 0.02
+        edge = mask & ~(np.roll(mask, 1, 0) & np.roll(mask, -1, 0)
+                        & np.roll(mask, 1, 1) & np.roll(mask, -1, 1))
+        ey, ex = np.nonzero(edge)
+        pts = [(20 + int(round(v * 559 / 511)), 70 + int(round(u * 559 / 511)))
+               for u, v in zip(ey, ex)]
+        ImageDraw.Draw(im).point(pts, fill=(255, 235, 40))
+        put_text(im, "黄 = 真値が今の z。縞のコントラストが立つ場所と一致",
+                 (20, 639), size=22)
+
+        accumulated = np.maximum(accumulated, np.abs(stack[k] - 0.5))
+        put_text(im, "ここまでの最大変調", (610, 70), size=24)
+        paste_gray(im, accumulated / 0.5, (610, 104, 300, 266))
+
+        put_text(im, "ここまでに決まった高さ", (610, 400), size=24)
+        passed = np.isfinite(height) & (truth <= z[k] - 0.3)
+        paste_turbo(im, height, passed, (610, 434, 260, 256))
+        bar = np.linspace(hi, lo, 256)[:, None]
+        bar_rgb = rgb8(fs.colorize_depth(bar, name="turbo", vmin=lo, vmax=hi))
+        im.paste(Image.fromarray(np.repeat(bar_rgb, 18, axis=1)), (878, 434))
+        put_text(im, "%.2f" % hi, (872, 434), anchor="rt")
+        put_text(im, "µm", (887, 550), anchor="cm")
+        put_text(im, "%.2f" % lo, (872, 675), anchor="rb")
+        put_text(im, "通過 = 真値 ≤ z − 0.3 µm", (610, 636), size=22,
+                 plate=(18, 21, 28))
+
+        graph(im, k)
+        # 22 px の日本語フォントは実測 39 px 高なので、指定の下帯から上へ 10 px だけ張り出す。
+        ImageDraw.Draw(im).rectangle((0, 680, 1279, 719), fill=(31, 38, 51))
+        put_text(im, "Fullseye: CSI stack→contrast→height(gaussian)。粗い円板は変調が落ち、品質下位8 %はNaN(黒)。",
+                 (12, 679), size=22, pad=0)
+        frames.append(np.asarray(im, dtype=np.uint8))
+
+    figs.save_video("csi_scan_explained", frames, fps=12.0, gif_every=2, gif_width=640,
+                    caption="白色干渉の48面走査で、縞のコントラストが立つ高さと表面高さが一致する様子を示す。"
+                            "傾斜を除いた段差は測定 %.3f µm、真値 %.3f µm、差 %+.0f nm。"
+                            % (step_meas, step_truth, step_err_nm))
+    return {"step_measured_um": step_meas, "step_truth_um": step_truth,
+            "step_error_nm": step_err_nm, "finite_height_pixels": int(np.count_nonzero(np.isfinite(height)))}
+
 # 包絡線幅は設計から取る(設計値と前方モデルを一致させておく。
 # ここを手打ちの定数にすると「設計を無視した数字」になってしまう)
 DESIGN = I.csi_design(wavelength_um=LAM, bandwidth_um=DLAM, z_range_um=Z_RANGE,
@@ -656,6 +828,7 @@ def main():
     # 動画は既存の図の**最後**に書く(番号が後ろの図のファイル名をずらさないように)。
     if figs.enabled():
         fig_step_sweep_video()
+        fig_csi_scan_explained()
     if figs.errors():
         print("図の書き出しで失敗:", "; ".join(figs.errors()))
 
