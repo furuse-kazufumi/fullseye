@@ -36,7 +36,9 @@ def test_both_sweeps_change_3d_colour_and_depth():
         assert a[key]["shape_mode"] == "residual"
     assert a["distance"]["zero_error_profile_rms_um"] < 0.3
     assert a["distance_original"]["shape_mode"] == "original"
-    assert all(c["ok"] for tab in spec["tabs"] for c in tab["checks"])
+    checks = [c for tab in spec["tabs"] for c in tab["checks"]]
+    assert checks, "検算欄が 0 件では受け入れ検査にならない"
+    assert all(c["ok"] for c in checks)
 
 
 def test_relief_paper_panels_height_exports_and_quality_gate():

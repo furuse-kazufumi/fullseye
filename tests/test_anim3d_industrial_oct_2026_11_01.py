@@ -37,7 +37,9 @@ def test_sweeps_move_colour_and_keep_thickness_closed_form():
     assert np.allclose(bias, [0.9, 1.9], atol=1e-12)
     assert a["index"]["axial_exaggeration"] == 8.0
     assert np.max(np.abs(a["index"]["interface_peak_offsets"])) <= 2
-    assert all(c["ok"] for tab in spec["tabs"] for c in tab["checks"])
+    checks = [c for tab in spec["tabs"] for c in tab["checks"]]
+    assert checks, "検算欄が 0 件では受け入れ検査にならない"
+    assert all(c["ok"] for c in checks)
 
 
 def test_paper_panels_exports_and_quality_gate():
