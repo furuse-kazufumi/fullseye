@@ -45,6 +45,7 @@ import numpy as np
 _REPO_ROOT = Path(__file__).resolve().parents[1]
 if str(_REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(_REPO_ROOT))
+import examplefig as figs  # noqa: E402
 
 # --- 新規 op(この事例の検証対象)-------------------------------------------
 from hull3d import min_enclosing_sphere  # noqa: E402
@@ -197,11 +198,10 @@ def render_png(path: Path, box_pts, obb_d, ab_min, ab_max, hull_verts, hull_face
         return False
 
     # 日本語フォントを選ぶ(無ければ既定のまま=英字は出る)。tofu(□)回避。
-    have = {f.name for f in fm.fontManager.ttflist}
-    for cand in ("Yu Gothic", "Meiryo", "MS Gothic", "Noto Sans JP", "Malgun Gothic"):
-        if cand in have:
-            plt.rcParams["font.family"] = cand
-            break
+    font_path = figs._japanese_font_path(fail_closed=False)
+    if font_path is not None:
+        fm.fontManager.addfont(str(font_path))
+        plt.rcParams["font.family"] = fm.FontProperties(fname=str(font_path)).get_name()
     plt.rcParams["axes.unicode_minus"] = False
 
     fig = plt.figure(figsize=(16.5, 5.4))

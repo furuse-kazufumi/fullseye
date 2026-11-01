@@ -72,5 +72,27 @@
    560,
    3
   ]
+ },
+ {
+  "file": "07_window_explained.gif",
+  "name": "window_explained",
+  "caption": "冷却像と TSR の 25 秒窓・4 秒窓の深さ地図を同じ計算で並べる。深さ 0.5 mm・直径 2 mm の誤差は +612 % から -9 % に縮む。",
+  "shape": [
+   270,
+   480,
+   3
+  ],
+  "animated": true,
+  "frames": 24,
+  "frames_written": 24,
+  "fps": 6.0,
+  "video": "07_window_explained.mp4",
+  "video_frames": 48,
+  "video_fps": 12.0,
+  "video_shape": [
+   720,
+   1280,
+   3
+  ]
  }
 ]

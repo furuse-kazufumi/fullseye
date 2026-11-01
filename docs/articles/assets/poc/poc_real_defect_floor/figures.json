@@ -22,5 +22,27 @@
   "frames": 18,
   "frames_written": 18,
   "fps": 6.0
+ },
+ {
+  "file": "03_defect_floor_explained.gif",
+  "name": "defect_floor_explained",
+  "caption": "同じ欠陥を実写 brick と残差 σ を揃えた合成の地へ仕込み、整合フィルタの応答が 99.99 % 閾値を越えるまでを示す。検出限界は brick 0.475、合成 0.137、閾値は 0.836 / 0.275。",
+  "shape": [
+   270,
+   480,
+   3
+  ],
+  "animated": true,
+  "frames": 36,
+  "frames_written": 36,
+  "fps": 6.0,
+  "video": "03_defect_floor_explained.mp4",
+  "video_frames": 36,
+  "video_fps": 6.0,
+  "video_shape": [
+   720,
+   1280,
+   3
+  ]
  }
 ]
