@@ -29,6 +29,7 @@
 | MODEL | `.model` | `printpath.read_3mf` | — | `read_3mf` | stdlib / core | `tests/test_ledger_probe_fresh_cwd.py`<br>`tests/test_optdraw.py`<br>+2 | — |
 | MOV | `.mov` | — | `video.write_video` | — | optional: PIL, imageio | `tests/test_anomaly_patch.py`<br>`tests/test_astrostack_median.py`<br>+12 | — |
 | MP4 | `.mp4` | — | `video.write_video` | — | optional: PIL, imageio | `tests/test_docs_index_reachable.py`<br>`tests/test_examplefig_gif.py`<br>+7 | — |
+| MRC | `.mrc` | `fileio.em_mrc_read` | `fileio.em_mrc_write` | `em_mrc_read`<br>`em_mrc_write` | stdlib / core | `tests/test_fileio_scientific.py` | `mrcfile` |
 | NHDR | `.nhdr` | `volio.read_volume` | `volio.write_volume` | — | optional: SimpleITK, tifffile | `tests/test_public_api.py`<br>`tests/test_volio.py` | — |
 | NIfTI | `.nii` | `volio.read_volume` | `volio.write_volume` | — | optional: SimpleITK, tifffile | `tests/test_public_api.py`<br>`tests/test_volio.py` | — |
 | NII.GZ | `.nii.gz` | `volio.read_volume` | `volio.write_volume` | — | optional: SimpleITK, tifffile | `tests/test_public_api.py`<br>`tests/test_volio.py` | — |
@@ -59,6 +60,6 @@
 
 ## 集計
 
-形式（拡張子） **51**、読みあり **40**、書きあり **42**、読み書き対 **31**、公開 op あり **15**、テストあり **51**、独立の読み手による検証あり **7**。
+形式（拡張子） **52**、読みあり **41**、書きあり **43**、読み書き対 **32**、公開 op あり **16**、テストあり **52**、独立の読み手による検証あり **8**。
 
 集計値も上表から生成しており、文書内に別の手書き件数は持たない。

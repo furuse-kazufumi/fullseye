@@ -31,6 +31,10 @@ _CATALOG = {
         ("astro_fits_write", ["any"], "any"),
         ("astro_fits_read", ["any"], "any"),
     ],
+    "mrc": [
+        ("em_mrc_write", ["any"], "any"),
+        ("em_mrc_read", ["any"], "any"),
+    ],
 }
 
 

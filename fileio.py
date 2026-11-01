@@ -31,6 +31,7 @@ __all__ = [
     "points_write_xyz", "points_read_xyz",
     "e57_write", "e57_read",
     "astro_fits_write", "astro_fits_read",
+    "em_mrc_write", "em_mrc_read",
 ]
 
 _CSV_META_REQUIRED = ("source", "generated_at", "coordinate_meaning")
@@ -46,6 +47,8 @@ _FITS_WCS_KEYS = (
     "PC3_1", "PC3_2", "PC3_3", "CD1_1", "CD1_2", "CD1_3",
     "CD2_1", "CD2_2", "CD2_3", "CD3_1", "CD3_2", "CD3_3",
 )
+_MRC_MODE_DTYPES = {0: np.dtype("i1"), 1: np.dtype("i2"),
+                    2: np.dtype("f4"), 6: np.dtype("u2")}
 
 
 def _csv_columns(table, op: str) -> dict[str, np.ndarray]:
@@ -879,3 +882,125 @@ def astro_fits_read(data):
     wcs = {key: values[key] for key in _FITS_WCS_KEYS if key in values}
     return array, {"format": "FITS", "bitpix": int(bitpix), "bzero": bzero,
                    "bscale": bscale, "wcs": wcs}
+
+
+def _mrc_vector(meta, key: str, unit_key: str, op: str, *, positive=False):
+    if key not in meta or unit_key not in meta:
+        raise ValueError(f"{op}: meta must contain {key!r} and explicit {unit_key!r}='angstrom'")
+    unit = str(meta[unit_key]).strip().lower()
+    if unit not in ("angstrom", "ångström", "å"):
+        raise ValueError(f"{op}: {unit_key} must be 'angstrom' (MRC2014 length unit), got {meta[unit_key]!r}")
+    values = np.asarray(meta[key], dtype=np.float64)
+    if values.shape != (3,) or not np.all(np.isfinite(values)):
+        raise ValueError(f"{op}: meta[{key!r}] must be three finite x/y/z values in angstrom")
+    if positive and np.any(values <= 0):
+        raise ValueError(f"{op}: meta[{key!r}] voxel sizes must all be positive")
+    return values
+
+
+def em_mrc_write(volume, *, meta):
+    """2-D/3-D 電顕データを MRC2014/CCP4 の ``bytes`` にする。
+
+    mode 0/1/2/6(``int8/int16/float32/uint16``)を扱う。``meta`` は
+    ``voxel_size`` / ``origin`` の x,y,z と、それぞれの単位キー
+    ``voxel_unit='angstrom'`` / ``origin_unit='angstrom'`` を必須とする。
+    呼び出し例: ``em_mrc_write(vol, meta={"voxel_size": [1,1,2],
+    "voxel_unit": "angstrom", "origin": [0,0,0], "origin_unit": "angstrom"})``。
+    """
+    op = "em_mrc_write"
+    array = np.asarray(volume)
+    if array.ndim not in (2, 3) or array.size == 0:
+        raise ValueError(f"{op}: data must be a non-empty 2-D image or 3-D volume, got {array.shape!r}")
+    if array.ndim == 3 and array.shape[0] == 1:
+        raise ValueError(f"{op}: a depth-1 3-D array is ambiguous in MRC; pass its 2-D slice explicitly")
+    mode_by_dtype = {dtype: mode for mode, dtype in _MRC_MODE_DTYPES.items()}
+    native_dtype = array.dtype.newbyteorder("=")
+    if native_dtype not in mode_by_dtype:
+        raise ValueError(f"{op}: unsupported dtype {array.dtype}; mode 0/1/2/6 require int8/int16/float32/uint16")
+    if not isinstance(meta, Mapping):
+        raise ValueError(f"{op}: meta must be a mapping")
+    unknown = set(meta) - {"voxel_size", "voxel_unit", "origin", "origin_unit"}
+    if unknown:
+        raise ValueError(f"{op}: unsupported metadata key(s): {', '.join(sorted(map(str, unknown)))}")
+    voxel = _mrc_vector(meta, "voxel_size", "voxel_unit", op, positive=True)
+    origin = _mrc_vector(meta, "origin", "origin_unit", op)
+    mode = mode_by_dtype[native_dtype]
+    nz, ny, nx = ((1,) + array.shape) if array.ndim == 2 else array.shape
+    mx, my, mz = nx, ny, nz
+    header = bytearray(1024)
+    struct.pack_into("<10i", header, 0, nx, ny, nz, mode, 0, 0, 0, mx, my, mz)
+    struct.pack_into("<6f", header, 40, *(voxel * [mx, my, mz]), 90.0, 90.0, 90.0)
+    struct.pack_into("<3i", header, 64, 1, 2, 3)
+    finite = array[np.isfinite(array)] if np.issubdtype(array.dtype, np.floating) else array.reshape(-1)
+    if finite.size:
+        dmin, dmax, dmean = float(finite.min()), float(finite.max()), float(finite.mean())
+        rms = float(np.sqrt(np.mean((finite.astype(np.float64) - dmean) ** 2)))
+    else:
+        dmin = dmax = dmean = rms = float("nan")
+    struct.pack_into("<3f", header, 76, dmin, dmax, dmean)
+    struct.pack_into("<2i", header, 88, 0, 0)
+    struct.pack_into("<3f", header, 196, *origin)
+    header[208:212] = b"MAP "
+    header[212:216] = bytes((0x44, 0x41, 0, 0))
+    struct.pack_into("<f", header, 216, rms)
+    struct.pack_into("<i", header, 220, 1)
+    label = b"Fullseye in-memory MRC2014 writer"
+    header[224:224 + len(label)] = label
+    stored = np.asarray(array, dtype=native_dtype.newbyteorder("<"))
+    return bytes(header) + stored.tobytes(order="C")
+
+
+def em_mrc_read(data):
+    """MRC2014/CCP4 の mode 0/1/2/6 を ``(image_or_volume, meta)`` として読む。
+
+    ``meta`` は Å 単位を明示した ``voxel_size`` / ``origin`` を返す。非標準軸順、
+    extended header、切れたデータ、shape と mode の不一致は名指しで拒否する。
+    呼び出し例: ``volume, meta = em_mrc_read(payload)``。
+    """
+    op = "em_mrc_read"
+    raw = _file_bytes(data, op)
+    if len(raw) < 1024:
+        raise ValueError(f"{op}: MRC header is truncated ({len(raw)} bytes; need 1024)")
+    if raw[208:212] != b"MAP ":
+        raise ValueError(f"{op}: header MAP signature is missing")
+    stamp = raw[212:216]
+    if stamp[:2] in (b"DA", b"DD"):
+        endian = "<"
+    elif stamp[:2] == b"\x11\x11":
+        endian = ">"
+    else:
+        raise ValueError(f"{op}: unsupported machine stamp {stamp.hex()}")
+    nx, ny, nz, mode = struct.unpack_from(endian + "4i", raw, 0)
+    if any(v <= 0 for v in (nx, ny, nz)):
+        raise ValueError(f"{op}: nx/ny/nz must be positive, got {(nx, ny, nz)!r}")
+    if mode not in _MRC_MODE_DTYPES:
+        raise ValueError(f"{op}: unsupported MRC mode {mode}; expected 0/1/2/6")
+    mx, my, mz = struct.unpack_from(endian + "3i", raw, 28)
+    if any(v <= 0 for v in (mx, my, mz)):
+        raise ValueError(f"{op}: mx/my/mz sampling counts must be positive, got {(mx, my, mz)!r}")
+    mapc, mapr, maps = struct.unpack_from(endian + "3i", raw, 64)
+    if (mapc, mapr, maps) != (1, 2, 3):
+        raise ValueError(f"{op}: unsupported axis mapping MAPC/MAPR/MAPS={(mapc, mapr, maps)!r}; expected (1, 2, 3)")
+    nsymbt = struct.unpack_from(endian + "i", raw, 92)[0]
+    if nsymbt != 0:
+        raise ValueError(f"{op}: extended header NSYMBT={nsymbt} is unsupported")
+    dtype = _MRC_MODE_DTYPES[mode].newbyteorder(endian)
+    count = nx * ny * nz
+    expected = 1024 + count * dtype.itemsize
+    if len(raw) != expected:
+        relation = "truncated" if len(raw) < expected else "has trailing bytes"
+        raise ValueError(f"{op}: mode {mode} data declares {count} voxels ({expected} total bytes) but input {relation}: {len(raw)} bytes")
+    array = np.frombuffer(raw, dtype=dtype, count=count, offset=1024).reshape((nz, ny, nx)).copy()
+    if array.dtype.itemsize > 1:
+        array = array.astype(array.dtype.newbyteorder("="), copy=False)
+    cella = np.asarray(struct.unpack_from(endian + "3f", raw, 40), dtype=np.float64)
+    voxel = cella / np.asarray([mx, my, mz], dtype=np.float64)
+    if not np.all(np.isfinite(voxel)) or np.any(voxel <= 0):
+        raise ValueError(f"{op}: cell dimensions imply invalid voxel size {voxel.tolist()!r} angstrom")
+    origin = np.asarray(struct.unpack_from(endian + "3f", raw, 196), dtype=np.float64)
+    if not np.all(np.isfinite(origin)):
+        raise ValueError(f"{op}: origin contains NaN/Inf")
+    result = array[0] if nz == 1 else array
+    return result, {"format": "MRC2014", "mode": int(mode),
+                    "voxel_size": voxel, "voxel_unit": "angstrom",
+                    "origin": origin, "origin_unit": "angstrom"}

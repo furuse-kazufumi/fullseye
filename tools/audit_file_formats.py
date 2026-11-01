@@ -54,6 +54,7 @@ _VERIFY_READERS = {
     ".stl": ("stl", "trimesh"), ".obj": ("trimesh",), ".off": ("trimesh",),
     ".e57": ("pye57",), ".xlsx": ("openpyxl",), ".dxf": ("ezdxf",),
     ".fits": ("astropy",),
+    ".mrc": ("mrcfile",),
 }
 _NAME_EXTS = {ext[1:]: ext for ext in FORMAT_NAMES if "." not in ext[1:]}
 

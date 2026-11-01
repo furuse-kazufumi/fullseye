@@ -1273,6 +1273,9 @@ def _fileio_builders():
     fits_image = np.arange(20, dtype=np.float32).reshape(4, 5)
     fits_header = {"CTYPE1": "RA---TAN", "CTYPE2": "DEC--TAN", "CUNIT1": "deg",
                    "CUNIT2": "deg"}
+    mrc_volume = np.arange(24, dtype=np.float32).reshape(2, 3, 4)
+    mrc_meta = {"voxel_size": [1, 1, 2], "voxel_unit": "angstrom",
+                "origin": [0, 0, 0], "origin_unit": "angstrom"}
 
     def csv_payload():
         return fileio.table_write_csv(csv_table, units=units, meta=meta)
@@ -1294,6 +1297,8 @@ def _fileio_builders():
         "e57_read": lambda pool, rng: ([fileio.e57_write(e57_table)], {}),
         "astro_fits_write": lambda pool, rng: ([fits_image], {"header": fits_header}),
         "astro_fits_read": lambda pool, rng: ([fileio.astro_fits_write(fits_image, header=fits_header)], {}),
+        "em_mrc_write": lambda pool, rng: ([mrc_volume], {"meta": mrc_meta}),
+        "em_mrc_read": lambda pool, rng: ([fileio.em_mrc_write(mrc_volume, meta=mrc_meta)], {}),
     }
 
 
