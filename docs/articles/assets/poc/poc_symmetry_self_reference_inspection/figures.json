@@ -14,8 +14,8 @@
   "name": "center_tradeoff",
   "caption": "片側欠けではエッジ対中心 0.231 px、面積重心 3.171 px。欠け無しでは重心 0.041 px がエッジ対 0.305 px より精密。",
   "shape": [
-   128,
-   309,
+   256,
+   614,
    3
   ],
   "csv": "02_center_tradeoff.csv",
@@ -24,7 +24,7 @@
  {
   "file": "03_rotational_order_noise.png",
   "name": "rotational_order_noise",
-  "caption": "n=2 は blur 6 px・noise 0.114 で低下（1未満 22 格子）；n=3 は blur 6 px・noise 0.114 で低下（1未満 22 格子）；n=4 は blur 6 px・noise 0.114 で低下（1未満 22 格子）；n=6 は blur 5 px・noise 0.000 で低下（1未満 27 格子）。",
+  "caption": "n=2 は blur 6 px・noise 0.114 で低下（1未満 22 格子）；n=3 は blur 6 px・noise 0.114 で低下（1未満 22 格子）；n=4 は blur 6 px・noise 0.114 で低下（1未満 22 格子）；n=6 は blur 5 px・noise 0.000 で低下（1未満 27 格子）。この垂直な壁は、op の正規化 RMS 差が上限 score_threshold=0.18 を雑音で越えると n=1 を返すためで、この掃引では blur は壁の位置を動かさない。",
   "shape": [
    735,
    1094,
@@ -36,8 +36,8 @@
   "name": "symmetry_score_monotone",
   "caption": "noise 0.010 では振幅 3.16 から検出；noise 0.025 では振幅 5.47 から検出；noise 0.050 では振幅 8.23 から検出。",
   "shape": [
-   360,
-   780,
+   720,
+   1550,
    3
   ]
  }

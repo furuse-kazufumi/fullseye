@@ -104,6 +104,7 @@ def main():
     noises = np.linspace(0.0, 0.2, 8)
     blurs = np.linspace(0.0, 6.0, 7)
     seeds = range(5)
+    score_threshold = 0.18
     accuracy_maps = []
     rotation_metrics = []
     for order in orders:
@@ -116,7 +117,7 @@ def main():
                     trial_seed = 100000 * order + 1000 * blur_index + 10 * noise_index + seed
                     out = fs.rotational_symmetry(
                         rotor(order, float(noise), float(blur), trial_seed),
-                        max_order=8, score_threshold=0.18)
+                        max_order=8, score_threshold=score_threshold)
                     correct += int(out["order"] == order)
                 rates[blur_index, noise_index] = correct / len(seeds)
         accuracy_maps.append(rates)
@@ -130,10 +131,15 @@ def main():
         order, blur, noise, failed = metric
         return f"n={order} は blur {blur:.0f} px・noise {noise:.3f} で低下（1未満 {failed} 格子）"
 
-    printed_rotation_caption = "；".join(rotation_line(m) for m in rotation_metrics) + "。"
-    rotation_caption = "；".join(rotation_line(m) for m in rotation_metrics) + "。"
+    rotation_wall = (
+        f"この垂直な壁は、op の正規化 RMS 差が上限 score_threshold={score_threshold:.2f} "
+        "を雑音で越えると n=1 を返すためで、この掃引では blur は壁の位置を動かさない。")
+    printed_rotation_caption = (
+        "；".join(rotation_line(m) for m in rotation_metrics) + "。" + rotation_wall)
+    rotation_caption = (
+        "；".join(rotation_line(m) for m in rotation_metrics) + "。" + rotation_wall)
     print(printed_rotation_caption)
-    panels = [figs.render_heatmap(
+    panels = [figs._render_heatmap(
         rates, noises, blurs, xlabel="横: noise σ", ylabel="縦: blur σ [px]",
         vrange=(0.0, 1.0), boundary=rates == 1.0, colorbar_unit="正答率")
         for rates in accuracy_maps]

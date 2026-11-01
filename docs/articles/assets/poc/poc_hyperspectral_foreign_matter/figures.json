@@ -14,8 +14,8 @@
   "name": "real_vs_model_band_depth",
   "caption": "実線: 実データの PP / PET / PE の画素の平均(連続体除去)。破線: この PoC の材料表(吸収帯 + Kubelka–Munk)。谷の位置は合い、深さと幅は合わない(模型の強さは推定)。物理モデルだけをライブラリにした 3 種の再現率 0.628、別撮影の基準試料 0.878。出典: E. Arbash ら, Polymers Hyperspectral Imaging, RODARE (HZDR), doi:10.14278/rodare.3390, CC BY 4.0。改変: 試験ヘッダの fwhm を 360 帯に切り詰め、1100〜2400 nm を切り出し、連続体除去。",
   "shape": [
-   400,
-   760,
+   800,
+   1520,
    3
   ]
  },
@@ -24,8 +24,8 @@
   "name": "real_polymer_confusion",
   "caption": "出典: E. Arbash ら, Polymers Hyperspectral Imaging, RODARE (HZDR), doi:10.14278/rodare.3390, CC BY 4.0。改変: 試験ヘッダの fwhm を 360 帯に切り詰め、1100〜2400 nm を切り出し、連続体除去。",
   "shape": [
-   224,
-   507,
+   448,
+   1012,
    3
   ],
   "csv": "03_real_polymer_confusion.csv",
@@ -46,8 +46,8 @@
   "name": "real_pork_roc",
   "caption": "度合 = 陰性(肉・脂・ベルト)のライブラリへの最小角 − 異物のライブラリへの最小角。出典: V. G. Ghimpeteanu, H. Rajani, J. Quintana, R. Garcia, A Hyperspectral Image Dataset for Identifying Foreign Objects on Pork Belly, Zenodo, doi:10.5281/zenodo.17242553, CC BY 4.0。改変: val の 20x16 パッチを ファイル名の位置へ並べ直した(画像の一部)。",
   "shape": [
-   520,
-   520,
+   1040,
+   1040,
    3
   ]
  },
@@ -56,8 +56,8 @@
   "name": "real_pork_confusion",
   "caption": "出典: V. G. Ghimpeteanu, H. Rajani, J. Quintana, R. Garcia, A Hyperspectral Image Dataset for Identifying Foreign Objects on Pork Belly, Zenodo, doi:10.5281/zenodo.17242553, CC BY 4.0。改変: val の 20x16 パッチを ファイル名の位置へ並べ直した(画像の一部)。",
   "shape": [
-   392,
-   957,
+   784,
+   1912,
    3
   ],
   "csv": "06_real_pork_confusion.csv",
@@ -88,8 +88,8 @@
   "name": "spectra_and_sensors",
   "caption": "仁は脂質の C-H(1210 / 1730 / 2310 nm)と水(1450 / 1940 nm)、殻・木片はセルロースの O-H(1490 / 2100 nm)、樹脂は鋭い C-H の谷。標準の InGaAs は 1.7 µm で切れ、樹脂の主な谷(1.7 µm の 1 次倍音と 2.3 µm の結合音)は拡張品でないと見えない。帯の幅と強さは推定(材料表の注)。",
   "shape": [
-   420,
-   915,
+   840,
+   1824,
    3
   ]
  },
@@ -98,8 +98,8 @@
   "name": "roc_rgb_vs_hyperspectral",
   "caption": "異物の度合 = 仁の平均との角(RGB は色の角、ハイパースペクトルはスペクトルの角)。境界の混合画素を除く。黒い樹脂は RGB でも見えるので除いた(同色の異物だけ)。",
   "shape": [
-   520,
-   520,
+   1040,
+   1040,
    3
   ]
  },
@@ -108,8 +108,8 @@
   "name": "confusion_food_tray",
   "caption": "行 = 真値、列 = 判定。ライブラリは別の種(シード)の訓練用トレイのクラス平均。",
   "shape": [
-   248,
-   572,
+   496,
+   1142,
    3
   ],
   "csv": "11_confusion_food_tray.csv",
@@ -120,8 +120,8 @@
   "name": "fisher_ratio_by_band",
   "caption": "選んだ帯域(前向き選択の順): 標準 1070, 1500, 1190, 1230, 1390, 1200 nm / 拡張 1070, 2100, 1700, 1770, 1720, 1190 nm。",
   "shape": [
-   360,
-   560,
+   720,
+   1120,
    3
   ]
  },
@@ -130,8 +130,8 @@
   "name": "accuracy_vs_band_count",
   "caption": "Fisher 比 + 前向き選択で選んだ k 帯域の log 反射率に線形判別(LDA)。殻と木片は「植物片」にまとめ、ベルト・仁・植物片・PE・PP・黒の再現率を平均。破線は全帯域の SAM。",
   "shape": [
-   360,
-   560,
+   720,
+   1120,
    3
   ]
  },
@@ -140,8 +140,8 @@
   "name": "failure_wet_and_drift",
   "caption": "閾値は訓練用トレイの仁の 99.5 % 点(3.11°)で固定。濡れは水の 1.45 µm 帯が仁のスペクトルを動かす。ランプのずれは平場補正の分母のずれ —— 白板を取り直せば戻る(0.4 %)。",
   "shape": [
-   360,
-   560,
+   720,
+   1120,
    3
   ]
  },
@@ -150,8 +150,8 @@
   "name": "failure_photons",
   "caption": "露光 = 画素の長さ 0.5 mm / 搬送速度。点は左から 1500 m/s、800 m/s、400 m/s、200 m/s、100 m/s、20 m/s、2 m/s(右端が 2 m/s)。",
   "shape": [
-   360,
-   560,
+   720,
+   1120,
    3
   ]
  },
@@ -160,8 +160,8 @@
   "name": "black_plastic_spectra",
   "caption": "白い PP と PE は 8.6° 離れる。カーボンブラック 2 wt % では 0.21° に縮み、1 画素の雑音の角 0.44° に埋もれる —— 黒い樹脂を NIR で選別できない業界の既知の限界(中赤外・ラマン・LIBS が代替)。",
   "shape": [
-   360,
-   711,
+   720,
+   1410,
    3
   ]
  },
@@ -170,8 +170,8 @@
   "name": "black_plastic_loading",
   "caption": "拡張 InGaAs、2 m/s。角が雑音の線を下回った所(1.0 wt %)から、PP と PE を 1 画素では分けられない。画素を N 個平均すれば雑音の角は 1/√N で下がる —— 原理の壁は帯の形そのものが消える高い wt % の側。",
   "shape": [
-   360,
-   560,
+   720,
+   1120,
    3
   ]
  },

@@ -793,7 +793,19 @@ def _overlay(g, rows_list, colors, step=1):
 
 
 def _scale(a, sy, sx):
-    return np.repeat(np.repeat(a, sy, axis=0), sx, axis=1)
+    """表示用の拡大。画素の四角を複製せず、双三次補間する。"""
+    if sy == 1 and sx == 1:
+        return a
+    from PIL import Image
+
+    src = np.asarray(a)
+    h, w = src.shape[:2]
+    if src.ndim == 2:
+        return np.asarray(Image.fromarray(src.astype(np.float32), mode="F").resize(
+            (w * sx, h * sy), Image.Resampling.BICUBIC))
+    rgb8 = np.clip(np.rint(src * 255.0), 0, 255).astype(np.uint8)
+    return np.asarray(Image.fromarray(rgb8).resize(
+        (w * sx, h * sy), Image.Resampling.BICUBIC)).astype(float) / 255.0
 
 
 def make_figures(design, real, film, proc, art, lim, bs):
@@ -812,7 +824,7 @@ def make_figures(design, real, film, proc, art, lim, bs):
         panels.append(_scale(rgb, 1, 4))
         t1 = real["mapping"].get(k)
         caps.append("見本 %s(%s)%s" % (k, FILE_COLOUR[k], " → 表の %s" % t1 if t1 else "・着色層の下は見えない"))
-    figs.save_grid("real_paint_bscans", panels, captions=caps, ncols=1,
+    figs.save_grid("real_paint_bscans", panels, captions=caps, ncols=2,
                    title="実測の自動車塗装 5 枚: 表面(赤)・透明層の下の面(緑)・着色層の下の面(青)",
                    caption="生の干渉スペクトル(CC BY 4.0、Liverpool Research Data Catalogue 126)を Fullseye の op だけで "
                            "k 線形化・FFT し、界面を動的計画法で辿った。横 1 mm(100 本)、縦は表面の 40 µm 上から光路 260 µm。白の見本は"

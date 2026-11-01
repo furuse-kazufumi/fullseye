@@ -194,14 +194,16 @@ def validate(d: dict) -> list[str]:
     full("viewers.h", vw["h"])
     full("viewers.intro", vw["intro"])
     for it in vw["items"]:
-        full("viewers.%s.title" % it["id"], it["title"])
-        full("viewers.%s.line" % it["id"], it["line"])
+        for field in ("title", "line"):
+            missing = [l for l in ("ja", "en") if not str(it[field].get(l, "")).strip()]
+            if missing:
+                bad.append("viewers.%s.%s: 必須の訳が無い言語 %s" % (it["id"], field, missing))
         if not (BASE / "viewers" / (it["id"] + ".html")).is_file():
             bad.append("viewers.%s: ビューアが無い (docs/view2026/viewers/%s.html) —— "
                        "py -3.11 tools/build_view2026_viewers.py" % (it["id"], it["id"]))
         ref = Counter(_NUM.findall(vw["intro"]["ja"] + " " + it["line"]["ja"]))
         for l in langs[1:]:
-            got = Counter(_NUM.findall(vw["intro"][l] + " " + it["line"][l]))
+            got = Counter(_NUM.findall(vw["intro"][l] + " " + it["line"].get(l, it["line"]["en"])))
             if got != ref:
                 bad.append("viewers.%s [%s]: 数の並びが日本語と違う(日本語のみ %s / %s のみ %s)" % (
                     it["id"], l, sorted((ref - got).elements()), l, sorted((got - ref).elements())))
@@ -245,6 +247,8 @@ def validate(d: dict) -> list[str]:
             if src is None or src.get("numbers_source") != e["numbers_source"]:
                 bad.append("%s: 台帳の numbers_source と一致しない —— build_view2026_featured_batch.py を再実行すること" % pid)
             else:
+                if "ops" in e and src.get("ops") != e["ops"]:
+                    bad.append("%s: 台帳の ops と一致しない —— build_view2026_featured_batch.py を再実行すること" % pid)
                 for l in langs:
                     expected = src["caption_ja" if l == "ja" else "caption_en"]
                     got = e["see"][l] + e["num"][l]
@@ -395,7 +399,9 @@ def build(d: dict, lang: str) -> str:
     vw = d["viewers"]
     out += ["## " + vw["h"][lang], "", vw["intro"][lang], ""]
     for it in vw["items"]:
-        out.append("- **[%s](%sviewers/%s.html?lang=%s)**: %s" % (it["title"][lang], up, it["id"], lang, it["line"][lang]))
+        title = it["title"].get(lang, it["title"]["en"])
+        line = it["line"].get(lang, it["line"]["en"])
+        out.append("- **[%s](%sviewers/%s.html?lang=%s)**: %s" % (title, up, it["id"], lang, line))
     out.append("")
 
     # 1. 見どころ
@@ -477,6 +483,9 @@ def build(d: dict, lang: str) -> str:
             out.append("- [%s](%s) (%s): %s" % (
                 e["label"][lang], media(e), kind, e["lead"][lang]))
             out.append("  %s%s%s" % (e["see"][lang], num, link + youtube))
+            if lang in ("ja", "en") and e.get("ops"):
+                label = "使った Fullseye の op" if lang == "ja" else "Fullseye ops used"
+                out.append("  %s: %s" % (label, " · ".join("`%s`" % op for op in e["ops"])))
             source_exhibit = glossary_ledger.get(e["id"])
             term_line = glossary_line(source_exhibit, lang, glossary) if source_exhibit else ""
             if term_line:
