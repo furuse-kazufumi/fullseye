@@ -17,7 +17,9 @@
 作例の build スクリプトは **書き換えない**。作例は文字列を ``fs.viewer_text(ja, en)`` の 2 言語で書くので、
 その ``main()`` を走らせ、``fs.write_viewer`` に渡った仕様(spec)を横取りする(作例自身の検査はそのまま走る)。
 仕様の中の ja/en だけの文字列の辞書をすべて見つけ、翻訳表から zh / tw / ko / de / hi / fr を埋めて
-8 言語の仕様にし、``write_viewer(..., lang=LANGS, detect_lang=True)`` で書く
+通常は 8 言語の仕様にし、``write_viewer(..., lang=LANGS, detect_lang=True)`` で書く。
+作例が ``ANIM3D_I18N_LANGS = ("ja", "en")`` を明示した場合だけ、翻訳表を要求せず ja/en の仕様をそのまま書く
+(既存作例は従来どおり 8 言語)。
 (``?lang=xx`` が最優先、無ければブラウザの言語)。
 
 横取りの間、``write_viewer`` は **要求されたパスに書かない**(一時フォルダに同じ名前で書いてそのパスを返す)。
@@ -77,6 +79,10 @@ EXAMPLE_DIRS = ("examples", "examples_3d")
 #: 作例の外で探す生成器: ``tools/build_*.py``(題材の動く 3-D、``main(argv)`` を持ち write_viewer で書く)。
 BUILDER_DIR, BUILDER_PREFIX = "tools", "build_"
 RASTER_REFERENCE_FONT = "meiryo.ttc"
+# Portable comparison may absorb a few relief-PNG values that cross one
+# quantizer boundary through platform libm differences.  A broad or systematic
+# change is still a changed page, so the allowance is page-wide and small.
+MAX_PORTABLE_QUANTIZED_DRIFT = 8
 
 #: 数値トークン: 整数・小数・指数 + 直後(空白 0〜1 個)の単位。符号は付けない(「2-10 cm」の - は範囲)。
 #: 英字・_ に続く数字(``anim3d``・``uint16`` のような名前の一部)は数えない(コード片の門が見る)。
@@ -300,6 +306,13 @@ def capture_specs(script: Path, argv: list[str] | None = None, quiet: bool = Tru
             if not hasattr(mod, "main"):
                 raise RuntimeError("%s に main() が無い" % script.name)
             rc = mod.main(list(argv or []))
+            requested = getattr(mod, "ANIM3D_I18N_LANGS", None)
+            if requested is not None:
+                requested = tuple(requested)
+                if requested != ("ja", "en"):
+                    raise ValueError("ANIM3D_I18N_LANGS は ('ja', 'en') だけ指定できる: %r" % (requested,))
+                for spec in got:
+                    spec["_anim3d_i18n_langs"] = list(requested)
     except SystemExit as exc:
         rc = exc.code
     except Exception:
@@ -332,12 +345,29 @@ def pick_spec(specs: list[dict], viewer_id: str | None) -> dict:
     return specs[0]
 
 
+def requested_languages(spec: dict) -> tuple[dict, tuple[str, ...]]:
+    """Return a clean spec and its explicitly requested publication languages."""
+    clean = copy.deepcopy(spec)
+    langs = tuple(clean.pop("_anim3d_i18n_langs", LANGS))
+    if langs not in (tuple(LANGS), ("ja", "en")):
+        raise ValueError("公開言語は 8 言語または ja/en だけ: %r" % (langs,))
+    return clean, langs
+
+
+def prepare(spec: dict, table: dict) -> tuple[dict, tuple[str, ...]]:
+    """Apply the translation gate only when the source requests all eight languages."""
+    clean, langs = requested_languages(spec)
+    if langs == ("ja", "en"):
+        return clean, langs
+    return translate(clean, table), langs
+
+
 def build(example: str, out: str | os.PathLike, table: dict | None = None, viewer_id: str | None = None,
           argv: list[str] | None = None) -> str:
-    """作例を走らせ、門を通し、8 言語(?lang → ブラウザの言語)の HTML を ``out`` に書く。"""
+    """作例を走らせ、門を通し、要求言語(?lang → ブラウザの言語)の HTML を ``out`` に書く。"""
     spec = pick_spec(capture_specs(example_script(example), argv), viewer_id)
-    spec8 = translate(spec, table if table is not None else load_table(example))
-    return pv.write_viewer(spec8, out, list(LANGS), detect_lang=True)
+    ready, langs = prepare(spec, table if table is not None else load_table(example))
+    return pv.write_viewer(ready, out, list(langs), detect_lang=True)
 
 
 # --------------------------------------------------------------------------- commit 済みページの門
@@ -519,7 +549,17 @@ def compare_pages_portable(committed: str, rebuilt: str) -> list[str]:
         return {pane["frames"] for tab in data.get("tabs", []) if isinstance(tab, dict) and tab.get("kind") == "anim3d"
                 for pane in tab.get("panes", []) if isinstance(pane, dict) and isinstance(pane.get("frames"), str)}
 
+    def relief_png_keys(data):
+        # These PNG samples are q8 displacement values, not font-dependent
+        # pictures.  Their lo/hi live beside the array reference on the body.
+        return {body["val"] for tab in data.get("tabs", []) if isinstance(tab, dict) and tab.get("kind") == "anim3d"
+                for body in tab.get("bodies", []) if isinstance(body, dict)
+                and isinstance(body.get("relief_png"), dict) and isinstance(body.get("val"), str)}
+
     ar, br = raster_keys(a), raster_keys(b)
+    aq, bq = relief_png_keys(a), relief_png_keys(b)
+    quantized_drift = 0
+    quantized_drift_first = None
     for index in range(min(len(aa), len(ba))):
         key = "K%d" % index
         if key not in aa or key not in ba:
@@ -539,7 +579,11 @@ def compare_pages_portable(committed: str, rebuilt: str) -> list[str]:
             elif x.get("t") == "png" and len(x.get("png", [])) != len(y.get("png", [])):
                 diffs.append("%s: PNG count differs" % label)
             continue
-        payload_fields = {"b64", "lo", "hi"} if x.get("t") in ("q8", "q16") else {"b64"}
+        if (key in aq) != (key in bq):
+            diffs.append("%s: quantized relief PNG role differs" % label)
+            continue
+        payload_fields = ({"b64", "lo", "hi"} if x.get("t") in ("q8", "q16") else
+                          {"png"} if x.get("t") == "png" else {"b64"})
         _compare_json({k: v for k, v in x.items() if k not in payload_fields},
                       {k: v for k, v in y.items() if k not in payload_fields}, "$.arrays." + key, diffs)
         try:
@@ -548,10 +592,26 @@ def compare_pages_portable(committed: str, rebuilt: str) -> list[str]:
             range_a = float(np.ptp(finite_a)) if finite_a.size else 0.0
             range_b = float(np.ptp(finite_b)) if finite_b.size else 0.0
             scale = max(1.0, range_a, range_b)
-            tolerance = np.full(av.shape, 1e-6 * scale)
-            if x.get("t") in ("q8", "q16"):
+            base_tolerance = np.full(av.shape, 1e-6 * scale)
+            tolerance = base_tolerance.copy()
+            if key in aq:
+                # PNG decoding yields integer q8 samples, so the tolerance is
+                # expressed in those same samples (not in a 0..1 value unit).
+                base_tolerance.fill(0.0)
+                tolerance.fill(1.0)
+            elif x.get("t") in ("q8", "q16"):
                 step = np.maximum(np.abs(pv._quant_step(x)), np.abs(pv._quant_step(y)))
                 tolerance += step.reshape((1,) * (av.ndim - 1) + (-1,)) if step.size > 1 else float(step[0])
+            if key in aq:
+                base_close = np.isclose(av, bv, rtol=0, atol=base_tolerance, equal_nan=True)
+                accepted = np.isclose(av, bv, rtol=0, atol=tolerance, equal_nan=True)
+                drift = ~base_close & accepted
+                count = int(np.count_nonzero(drift))
+                if count:
+                    quantized_drift += count
+                    if quantized_drift_first is None:
+                        pos = tuple(map(int, np.argwhere(drift)[0]))
+                        quantized_drift_first = "%s%s" % (label, pos)
             bad = ~np.isclose(av, bv, rtol=0, atol=tolerance, equal_nan=True)
             for pos in np.argwhere(bad)[:max(0, 8 - len(diffs))]:
                 idx = tuple(map(int, pos))
@@ -559,6 +619,9 @@ def compare_pages_portable(committed: str, rebuilt: str) -> list[str]:
                              (label, idx, av[idx], bv[idx], abs(float(av[idx]) - float(bv[idx])), float(tolerance[idx])))
         except Exception as exc:
             diffs.append("%s: cannot decode (%s)" % (label, exc))
+    if quantized_drift > MAX_PORTABLE_QUANTIZED_DRIFT:
+        diffs.append("quantized arrays differ by one step at %d values (limit %d; first %s)" %
+                     (quantized_drift, MAX_PORTABLE_QUANTIZED_DRIFT, quantized_drift_first))
     return diffs[:8]
 
 
@@ -710,16 +773,19 @@ def main(argv: list[str] | None = None) -> int:
             else:
                 print(js)
             return 0
-        _, unused = audit(spec, table)
-        for u in unused:
-            print("警告: 使われていない訳 %r" % u, file=sys.stderr)
-        spec8 = translate(spec, table)
-        n = len({d["en"] for _, d in iter_texts(spec8)})
+        clean, langs = requested_languages(spec)
+        if langs == tuple(LANGS):
+            _, unused = audit(clean, table)
+            for u in unused:
+                print("警告: 使われていない訳 %r" % u, file=sys.stderr)
+        ready, langs = prepare(spec, table)
+        n = len({d["en"] for _, d in iter_texts(ready)})
+        lang_label = "8 言語" if len(langs) == 8 else "ja/en"
         if a.check:
-            print("ok: %s の文字列 %d 本が 8 言語そろい、数値・コード片も en と一致" % (ex, n))
+            print("ok: %s の文字列 %d 本、%s の門を通過" % (ex, n, lang_label))
             return 0
-        path = pv.write_viewer(spec8, a.out, list(LANGS), detect_lang=True)
-        print("wrote %s (%.2f MB, 8 言語, 文字列 %d 本)" % (path, os.path.getsize(path) / 1e6, n))
+        path = pv.write_viewer(ready, a.out, list(langs), detect_lang=True)
+        print("wrote %s (%.2f MB, %s, 文字列 %d 本)" % (path, os.path.getsize(path) / 1e6, lang_label, n))
         return 0
     except GateError as exc:
         print(str(exc), file=sys.stderr)

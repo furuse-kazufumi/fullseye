@@ -4618,7 +4618,7 @@ _計 3629 ops / 56 families。並びとノートの在り処は `docs/ops/INDEX.
 
 #### annotate / shape(4)
 - `arc` `image2d → image2d` — 円弧。角度は**画面の x 軸から時計回り**(row が下向きだから)で度。 · 例: `annotate_gallery`, `poc_optics_drawings`, `poc_plenoptic_camera`, `poc_polish_wipe_measure`, `poc_weld_radiograph_porosity`
-- `ellipse` `image2d → image2d` — 楕円(``angle_deg`` で回転、``fill=True`` で塗り)。 · 例: `annotate_gallery`, `poc_dimensional_inspection`, `poc_driving_crossing`, `poc_driving_lateral`, `poc_driving_pass`, `poc_dual_energy_xray`, `poc_machine_condition_fusion`, `poc_peg_insertion_tactile`, `poc_public_camera_heading_real`
+- `ellipse` `image2d → image2d` — 楕円(``angle_deg`` で回転、``fill=True`` で塗り)。 · 例: `annotate_gallery`, `poc_dimensional_inspection`, `poc_driving_crossing`, `poc_driving_lateral`, `poc_driving_pass`, `poc_dual_energy_xray`, `poc_machine_condition_fusion`, `poc_peg_insertion_tactile`, `poc_public_camera_heading_real`, `poc_real_tless_6dof`
 - `filled_polygon` `image2d × pairs → image2d` — 多角形の塗り(偶奇規則の交差判定 ―― :mod:`imagedraw` は輪郭のみ)。 · 例: `annotate_gallery`, `poc_driving_decisions`
 - `rounded_rect` `image2d → image2d` — 角丸の矩形(``fill=True`` で塗り)。下敷きや囲みに使う。 · 例: `annotate_gallery`, `poc_machine_condition_fusion`
 

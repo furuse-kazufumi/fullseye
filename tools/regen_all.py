@@ -335,6 +335,14 @@ EXCLUDED = {
                                      "(翻訳表 tools/anim3d_i18n_tables/build_shwfs_anim3d.json)。門は tests/test_anim3d_shwfs_2026_10_27.py。"),
     "tools/build_photoelastic_anim3d.py": ("光弾性の動く 3-D 教材。anim3d_i18n の翻訳表を通して生成し、"
                                              "tests/test_anim3d_photoelastic_2026_10_27.py で門にする。"),
+    "tools/build_industrial_oct_anim3d.py": ("工業用 OCT の実測塗装 B スキャンを動かす ja/en の 3-D 教材。"
+                                                "`py -3.11 tools/anim3d_i18n.py --build build_industrial_oct_anim3d "
+                                                "--out docs/view2026/viewers/industrial_oct_anim3d.html` で手動生成し、"
+                                                "tests/test_anim3d_industrial_oct_2026_11_01.py で門にする。"),
+    "tools/build_phase_measuring_deflectometry_anim3d.py": ("位相シフト偏向計測で塗装面の微小凹みを動かす ja/en の 3-D 教材。"
+                                                            "`py -3.11 tools/anim3d_i18n.py --build build_phase_measuring_deflectometry_anim3d "
+                                                            "--out docs/view2026/viewers/phase_measuring_deflectometry_anim3d.html` で手動生成し、"
+                                                            "tests/test_anim3d_phase_measuring_deflectometry_2026_11_01.py で門にする。"),
     "tools/build_bore_anim3d.py": ("ボアスコープのリレー結像とファイバ束の動く 3-D 教材(docs/view2026/anim3d/borescope_anim3d.html)。"
                                     "`py -3.11 tools/anim3d_i18n.py --build build_bore_anim3d --out docs/view2026/anim3d/borescope_anim3d.html` で書く"
                                     "(翻訳表 tools/anim3d_i18n_tables/build_bore_anim3d.json)。門は tests/test_anim3d_bore_2026_10_26.py。"),
@@ -577,6 +585,9 @@ EXCLUDED = {
 #: だから**釣れたものは全部ここに名前と理由を書いて外す**(印は緩めない)。
 _OUT_REASON = "出力は out/(gitignore)で、コミット物を書かない。"
 NOT_A_GENERATOR = {
+    # ---- 2026-11-01: ViEW2026 の目玉 14 本の受け取り検査(生成物を書かない) ----
+    "tools/check_view2026_figure_scale.py": "検査。図が最近傍拡大でなく描画倍率どおりかを数えて表にする(repo の生成物は書かない)。",
+    "tools/make_view2026_before_after.py": "検査用の比較画像を repo の外(--output)へ書く。受け取りで目視するためだけに手で回す。",
     # ---- 2026-10-30: ViEW2026 の正本 docs/view2026/exhibits.json を編集する道具(生成物ではなく入力を書く) ----
     "tools/build_view2026_featured_batch.py": "入力の編集。台帳 poc_captions.json から注目 80 本を exhibits.json(正本)へ書き込む。台帳が変わったら手で回して commit する(逐語一致の門が回し忘れを止める)。",
     "tools/register_view2026_sweep_viewers.py": "入力の編集。引数掃引ビューアの案内文を exhibits.json(正本)の viewers に登録する。登録を変えたときだけ手で回す。",

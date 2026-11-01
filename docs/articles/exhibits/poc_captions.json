@@ -493,7 +493,25 @@
    "caption_en": "An analytic machined part carries a known local dent, a bow and a wear band, all applied as exact displacements along the surface normal, and the scan is synthesized with a known pose, noise and one-sided occlusion. After alignment the signed deviation and the out-of-tolerance area show that the local dent is diluted by only 3.7 %, while a 121 um dent appears at the centre of the part where the truth is just 1.2 um (closed form predicts -120 um). What survives depends on how much the defect resembles the six rigid-body degrees of freedom; along the edges the nearest neighbour jumps to the adjacent face, producing 66.5 mm^2 of false out-of-tolerance area even in a defect-free control.",
    "run": "py -3.11 examples/poc_cad_scan_deviation.py",
    "lead_ja": "点群を設計形状へ合わせてから検査すると、位置合わせが欠陥を吸収したり別の場所へ移したりする。へこみや反りを既知量で入れた部品を合わせ、欠陥のない対照にも66.5平方mmの公差外領域が出る条件を測った。図では、剛体運動に似た偏差は薄まり、稜線では対応先が隣面へ飛んで偽のへこみが現れる。",
-   "lead_en": "Aligning a scan to its design can absorb a defect or move it elsewhere. Known dents and warps were added to a part; even the defect-free control produced 66.5 square mm of false rejected area. Rigid-like deviations shrink, while nearest points jump across edges and create a fictitious dent."
+   "lead_en": "Aligning a scan to its design can absorb a defect or move it elsewhere. Known dents and warps were added to a part; even the defect-free control produced 66.5 square mm of false rejected area. Rigid-like deviations shrink, while nearest points jump across edges and create a fictitious dent.",
+   "ops": [
+    "box_sdf",
+    "chamfer_distance",
+    "color_bar",
+    "esdf",
+    "estimate_normals",
+    "estimate_oriented_normals",
+    "face_areas",
+    "gicp",
+    "hausdorff_distance",
+    "icp_point2plane",
+    "icp_point2point_3d",
+    "query_distance",
+    "register_fpfh",
+    "sphere_sdf",
+    "text_box",
+    "voxel_grid_downsample"
+   ]
   },
   {
    "id": "poc_camera_calibration",
@@ -1159,7 +1177,17 @@
    "caption_en": "The closed-form stress field of a diametrally loaded disc (4.2441 MPa at the centre, fringe order 2.380) turned into polariscope images by the Mueller-matrix (4-by-4 polarization-transfer matrix) ops and read back to stress. The op-built polariscope matches the textbook formula to 2.2e-16 across 125 cases. Phase wraps in the 84.2 % of pixels above fringe order 0.5, and unwrapping breaks first not where stress is highest but at the isotropic point, where modulation vanishes.",
    "run": "py -3.11 examples/poc_photoelasticity.py",
    "lead_ja": "透明な樹脂に力を加えて偏光を通すと、内部の応力が縞として見える。円板を押しつぶした応力場を偏光像にし、縞次数が 0.5 を超えて位相が巻いた画素から応力を戻した。戻しが最初に失敗するのは、応力の大きい所ではなく縞の変調が落ちる等方点だった。",
-   "lead_en": "Viewed through polarisers, a loaded transparent plastic shows its internal stress as fringes. Stress in a squeezed disc was recovered from polarisation images, including pixels where the fringe order exceeds 0.5 and the phase wraps. Recovery fails first at isotropic points where fringe contrast drops."
+   "lead_en": "Viewed through polarisers, a loaded transparent plastic shows its internal stress as fringes. Stress in a squeezed disc was recovered from polarisation images, including pixels where the fringe order exceeds 0.5 and the phase wraps. Recovery fails first at isotropic points where fringe contrast drops.",
+   "ops": [
+    "axes_frame",
+    "axes_transform",
+    "mueller_apply",
+    "mueller_element",
+    "plot_series",
+    "text_box",
+    "ticks",
+    "unwrap_phase_2d"
+   ]
   },
   {
    "id": "poc_pigment_unmixing",
@@ -1945,7 +1973,24 @@
    "caption_en": "A radiograph drawn in closed form with Beer–Lambert (exponential absorption law): 10 mm plate, arc-shaped reinforcement, spherical pores, plus scatter, unsharpness and film grain. The fixed-threshold baseline counts the weld toe as pores (124 blobs, total area 15.19 mm² against 7.93 true). The detection cliff is predictable from CNR = 16.12·d²: Rose's CNR = 4 misses (0.50 mm), while the prediction that includes smoothing and the 3 px minimum area gives 0.58 mm against 0.57 mm measured. The 9 px window cap of the background-estimation op (rectangular opening) becomes a cliff: detection drops below 50 % from 2.0 mm and reaches 0 % at 2.5 mm — choosing the op chooses the measuring range. Scatter at SPR = 1 shrinks the volumetric diameter by (1+SPR)^(-1/3): -22.6 % measured against -20.6 % predicted. Images misgraded by one class: 90 % for the baseline, 23 % with the volumetric diameter.",
    "run": "py -3.11 examples/poc_weld_radiograph_porosity.py",
    "lead_ja": "溶接の X 線透過像で気孔を数え損なうと、溶接の等級を間違える。固定しきい値は余盛の縁まで気孔と数え、塊を 124 個も出した。背景を推定してから検出すると本物の気孔に絞れ、等級を誤る画像が大きく減った。",
-   "lead_en": "Miscounting pores in a weld radiograph leads to the wrong weld grade. A fixed cut-off also counts the edge of the weld cap and reports 124 blobs. Estimating the background before detection keeps only real pores, and far fewer images are graded wrongly."
+   "lead_en": "Miscounting pores in a weld radiograph leads to the wrong weld grade. A fixed cut-off also counts the edge of the weld cap and reports 124 blobs. Estimating the background before detection keeps only real pores, and far fewer images are graded wrongly.",
+   "ops": [
+    "blob_features",
+    "blob_label",
+    "blob_overlay",
+    "blob_select",
+    "estimate_noise",
+    "gauss_image",
+    "gen_measure_rectangle2",
+    "gray_opening_rect",
+    "identity",
+    "log_image",
+    "measure_pairs",
+    "measure_pos",
+    "median_rect",
+    "sk_rolling_ball",
+    "xsitk_grayscale_grindpeak"
+   ]
   },
   {
    "id": "poc_white_balance",
@@ -3484,7 +3529,35 @@
    "caption_en": "The lead chapter measures the paper's raw telecentric images (Stark et al., Sci. Rep. 15, 28690, 2025, CC BY 4.0) with Fullseye's metrology ops and checks them against the paper: a family of ellipses sharing one centre and shape, fitted to the eight rings of an alignment plate (1 mm spacing) tilted by 29.5°, gives 252.13 ± 0.04 px/mm along the major axis, +0.05 % from the paper's K1 = 252.0 px/mm (the paper's own K1 and K2 spread by ±0.25 %, so the match is not read as finer than that). The telecentric signature: the centres of the concentric rings on the tilted plate do not drift with r² (β = 0.0035 ± 0.0034 px/mm², where a 25 mm entocentric lens would give 1.40 and move the outer centre by 101 px), so the entrance pupil lies beyond 10.5 m. Fitting a free ellipse to each ring instead fails on the outer rings whose arcs are shadowed down to 36–180°. A 3D-printed resin sphere (nominal radius 2.5 mm) is not a usable reference: its outline radius moves 8 % with the threshold. The synthetic chapters that follow sweep the failure conditions. Die bonding and connector-pin inspection measure features at different heights in one image. An ordinary (entocentric) lens magnifies nearer faces more, so the same dimension reads differently above and below a step; a telecentric lens puts the stop at a focal point so the chief rays run parallel to the axis. Seven new ops (`telecentric`, category `telecentric` of `opsoptics`): the same BK7-class singlet (f = 100 mm) with only the stop moved (entocentric, object-side and bi-telecentric), the real chief ray found by aiming at the stop itself so it works with the entrance pupil at infinity (where `raytrace.chief_ray` stops), magnification versus height, the error across a step, defocus blur, vignetting and a pinhole camera at the entrance pupil for `render3d`. Moving the object 5 mm closer on a fixed image plane changes the magnification by +6.9 % for a 25 mm machine-vision lens at 75 mm, +1.7 % for the 100 mm entocentric lens and −0.013 % for the telecentric ones; the real rays agree with L/(L − Δz) to 7e-5, and refocusing does not help (m = −f/(s − f) moves by +2.6 %). Rendered through the three lenses, a 5 mm pin top reads 6.9 % too large with the short lens (closed form to 7e-4) and its reading moves 8.6 % over a 6 mm stroke; 2,053 pixels of the bore wall show and only 0.948 of the hole bottom is visible (circle-overlap closed form 0.949), while the bi-telecentric view sees the whole bottom and no wall. The parts are rendered with real material appearance (a brushed aluminium fixture plate, a gold-plated pin, a black moulded package with tinned leads; machining marks and metal colours from complex refractive indices, a clear-coat resin, shadows and ambient occlusion), and under coaxial, dome and low-angle ring lighting a circle metrology model applied to the rendered image reads the pin top within 0.33 % of the closed form, +8.3 to 8.4 % across a 6 mm stroke for the short lens and within ±0.16 % for the bi-telecentric one; at a coarser 47 µm per pixel the low-angle ring reading drifts by 2 % because the dark-field edge is weak. What remains: the singlet's pupil spherical aberration leaves 0.05° at 8 mm field (growing as h³) and 3 % distortion for the object-side design (0.005 % bi-telecentric); a stop shift moves the entrance pupil to −f²/δ as Newton's equation says (0.04 % at 0.5 mm field, 11.8 % more at 8 mm); a residual 0.1° shifts a point 9.2 µm across a 5 mm step (closed form 8.7 µm). The front lens sets the field: the 50 % point at 11.6 mm falls 0.8 mm short of the paraxial overlap because pupil aberration shifts and widens the bundle. The blur slope matches |m|·NA/√2 within 0.5 %, and NA 0.033 (the smallest that resolves 22 µm) caps the depth of field at 0.68 mm. A second implementation, the open-source optiland, gives the same chief-ray image height to 9e-8 mm (with the same index from a public glass catalogue, so it checks the tracing and aiming code). Nothing learned, nothing calibrated, 29 gates.",
    "run": "py -3.11 examples/poc_telecentric_metrology.py",
    "lead_ja": "段差のある部品を一枚の画像で測ると、普通のレンズでは近い面ほど大きく写り、寸法が違って読まれる。論文で公開されたテレセントリックレンズの実画像を測り、倍率が論文の値と 0.05 % の差で一致した。合成の章では、物体の高さが変わってもテレセントリックでは倍率がほとんど動かない。",
-   "lead_en": "Measured in one image, a stepped part looks larger where it is nearer, so an ordinary lens misreads its dimensions. On the published real images from a telecentric lens, the magnification matched the paper within 0.05 %. In the synthetic chapter, telecentric magnification barely moves with object height."
+   "lead_en": "Measured in one image, a stepped part looks larger where it is nearer, so an ordinary lens misreads its dimensions. On the published real images from a telecentric lens, the magnification matched the paper within 0.05 %. In the synthetic chapter, telecentric magnification barely moves with object height.",
+   "ops": [
+    "add_metrology_object_circle_measure",
+    "annotate_scale_bar",
+    "apply_metrology_model",
+    "blast_normals",
+    "cast_shadow",
+    "chief_ray",
+    "chief_ray_angle",
+    "clearcoat_shade",
+    "create_metrology_model",
+    "defocus_spot_vs_depth",
+    "finish_shade",
+    "gen_measure_rectangle2",
+    "glass_catalog",
+    "lens_equivalent_pinhole",
+    "lens_system",
+    "magnification_vs_depth",
+    "measure_pos",
+    "metal_mirror_rgb",
+    "micro_normals",
+    "paraxial_trace",
+    "telecentric_lens",
+    "telecentricity_error",
+    "text_box",
+    "tonemap_reinhard",
+    "trace_rays",
+    "vignetting_vs_field"
+   ]
   },
   {
    "id": "poc_phase_measuring_deflectometry",
@@ -3498,7 +3571,21 @@
    "caption_en": "A dent a few micrometres deep in a glossy surface (a painted car panel, a cover glass) is all but invisible in a lit photograph, because a mirror only shows the light. Put a screen in front of the surface, show phase-shifted fringes and photograph their mirror image: a tilt of 1e-3 rad moves the reflected point 0.6 mm on a screen 30 cm away. Six new ops (`deflectometry`, category `deflectometry` of `opsspecular`): the rig, the screen pattern, the forward render (height field to fringe mirror image, with a diffuse fraction, scatter, the back reflection of glass, aperture-integrated focus and noise), phase to normals (via `match3d.normal_from_reflection`), slope to curvature (one derivative, no integration) and the closed-form sensitivity. On a painted panel with 3 µm and 1 µm dents, 0.8 µm waviness and 0.12 µm polishing marks the photograph's defect signal peaks at 0.00066 (0.17 of one 8-bit step) while the curvature map shows the dents at SNR 110 and 57, and the integrated depth is within 0.5 % of the truth. Phase noise matches sqrt(2/N) sigma/b at 1.00 and slope noise is 0.67 of sigma_u/(2d), the sqrt(4/9) of bilinear resampling. Where it breaks: lifting the part by 0.3 mm adds the apparent tilt dz sin(theta)/d (to 0.1 %) and a 388 m bowl while the dent depth moves 0.7 %; a 2 % screen-distance error makes dents 2.3 % shallower; a 1 µm dent survives a diffuse fraction of 0.85 and fringe orders start to jump at 0.9; on uncoated cover glass the back-surface light is bent the other way by the dent's wedge, so the slope sensitivity shrinks to the closed-form 0.246 (measured 0.246) and dents look a quarter as deep; with an 8 mm aperture, focusing on the surface leaves 0.60 of the fringe amplitude and focusing on the screen leaves 0.52 of the depth. Nothing learned, nothing calibrated, 22 gates.",
    "run": "py -3.11 examples/poc_phase_measuring_deflectometry.py",
    "lead_ja": "光沢のある塗装面のごく浅い凹みは、照明を当てた写真ではまず見えない。面の前の画面に縞を映し、その鏡像のゆがみから曲率を求めると、深さ 3 µm の凹みがはっきり浮かんだ。写真ではほぼ一様な面に、縞の鏡像からだけ凹みが現れる。",
-   "lead_en": "A very shallow dent in glossy paint is practically invisible in an ordinary photograph. Projecting fringes on a screen in front of the surface and reading how their mirror image bends gives curvature, and a dent 3 µm deep stands out clearly. The flat-looking photo sits next to curvature maps in which the dents appear."
+   "lead_en": "A very shallow dent in glossy paint is practically invisible in an ordinary photograph. Projecting fringes on a screen in front of the surface and reading how their mirror image bends gives curvature, and a dent 3 µm deep stands out clearly. The flat-looking photo sits next to curvature maps in which the dents appear.",
+   "ops": [
+    "absolute_phase",
+    "deflectometry_phase_to_slope",
+    "deflectometry_render",
+    "deflectometry_rig",
+    "deflectometry_screen_pattern",
+    "deflectometry_sensitivity",
+    "fresnel_dielectric",
+    "integrate",
+    "sfp_height",
+    "slope_to_curvature",
+    "text_box",
+    "wrapped_phase"
+   ]
   },
   {
    "id": "poc_tdi_linescan",
@@ -3554,7 +3641,24 @@
    "caption_en": "Optical coherence tomography sees the layer stack of paints, conformal coatings, adhesive layers and multilayer films, and voids and delaminations inside them, without cutting. Thirteen new ops (`octscan`, category `oct` of `opsoptics`): closed-form design numbers before measuring, interferogram simulators driven by the material table, k-linearisation, dispersion compensation and estimation, A- and B-scans, layer thickness through the group index (refusing layers that cannot be separated), boundary tracing, surface flattening and an entry point for raw spectra. Real data: public raw spectra of automotive paint panels (CC BY 4.0) processed with Fullseye ops alone give clear-coat thicknesses within 1.5 µm of the paper's OCT and 3.6 µm of the microscope, base coats within 2.3 µm of the microscope for three of four panels (one is 7.6 µm off and unresolved), a refusal under the white base coat, and an autocorrelation ghost lying flat at the clear coat's optical thickness. Synthetic: thickness through the group index within 0.04 µm of the truth, SNR, roll-off and dispersion broadening matching the closed forms, refusal below 1.4 point-spread widths, a coating-thickness map and void/delamination detection.",
    "run": "py -3.11 examples/poc_industrial_oct.py",
    "lead_ja": "塗装や多層フィルムの層の厚さを、切らずに奥行き方向から見たい。公開されている自動車塗装の生の干渉スペクトルから透明層の厚さを求め、論文の OCT の値と 1.5 µm 以内で一致した。分離できない薄い層には値を出さず、測れないと返す。",
-   "lead_en": "We want to see the layers of paint and multilayer film in depth without cutting them. Clear-coat thicknesses computed from public raw interference spectra of automotive paint agree with the paper's OCT values within 1.5 µm. Layers too thin to separate are reported as unmeasurable instead of guessed."
+   "lead_en": "We want to see the layers of paint and multilayer film in depth without cutting them. Clear-coat thicknesses computed from public raw interference spectra of automotive paint agree with the paper's OCT values within 1.5 µm. Layers too thin to separate are reported as unmeasurable instead of guessed.",
+   "ops": [
+    "glass",
+    "material_optical_constants",
+    "oct_ascan",
+    "oct_bscan",
+    "oct_bscan_boundaries",
+    "oct_bscan_flatten",
+    "oct_bscan_simulate",
+    "oct_design",
+    "oct_dispersion_broadening",
+    "oct_dispersion_compensate",
+    "oct_dispersion_estimate",
+    "oct_from_spectra",
+    "oct_interferogram",
+    "oct_k_linearize",
+    "oct_layer_thickness"
+   ]
   },
   {
    "id": "poc_thin_film_reflectometry",
@@ -3568,7 +3672,19 @@
    "caption_en": "Five ops (`filmoptics`, category `film` of `opsoptics`) measure the thickness of SiO₂ on silicon from the interference fringes of its reflectance; films and substrates are keys of the material table. The core is scoring on other people's measured data (both CC BY 4.0). In the microspectroscopy of Schwarz et al. (2024) the measured reflectance of bare silicon agrees with the table's silicon to 0.4 % (median); a normal-incidence fit gives 92.9 nm against the 98.5 nm reference (−5.7 %), and choosing the NA by the residual (0.5) gives 95.8 nm (−2.7 %); the coverage of the measurement spot is read back over 11 spectra with a mean error of 0.6 points. From the real colour micrograph of the same sample, a white balance on the bare silicon alone gives a per-pixel thickness map with a median of 87.4 nm (−11 %, camera sensitivities unknown). With the low-cost spectrometers of Sánchez-Arriaga et al. (2023) the 476.3 nm standard is within 2 % in all five spectra; the 198.7 nm standard reads a median of 6.6 % thick, and in one spectrum the best candidate is 51 nm while the right value is the second candidate. The FFT method flags the 98 nm film as unreliable (closed-form limit 554 nm). Synthetic chapters: Airy agreement 3e-15, fringe count within one, FFT limit 538 nm closed form versus 525 nm measured, closed-form biases for wrong index, angle and NA, 59 % hue agreement with the published colour chart in the first three orders (a weak gate), and a modelled wafer (radial comet to the edge, edge bead, off-centre rings, each tied to the literature or labelled a model) mapped within 0.17 nm RMS by a 31-band camera while 14 % of RGB pixels keep several candidates. Nothing learned, 37 gates.",
    "run": "py -3.11 examples/poc_thin_film_reflectometry.py",
    "lead_ja": "シリコン上の酸化膜の厚さは、反射スペクトルに出る干渉の縞から読み取れる。他の研究者が公開した実測データで採点し、裸のシリコンの実測反射率は材料表と 0.4 % の差に収まった。薄すぎる膜では、縞を数える方法が自ら信頼できないと判定する。",
-   "lead_en": "Oxide thickness on silicon can be read from interference fringes in reflected light. Scored on data published by other researchers, the measured reflectance of bare silicon matched the material table to 0.4 %. On films that are too thin, the fringe-counting method flags its own result as unreliable."
+   "lead_en": "Oxide thickness on silicon can be read from interference fringes in reflected light. Scored on data published by other researchers, the measured reflectance of bare silicon matched the material table to 0.4 %. On films that are too thin, the fringe-counting method flags its own result as unreliable.",
+   "ops": [
+    "annotate_colorbar",
+    "blackbody_spectrum",
+    "film_color",
+    "film_thickness_fft",
+    "film_thickness_fit",
+    "film_thickness_map",
+    "multilayer_reflectance",
+    "spectrum",
+    "text_box",
+    "thinning"
+   ]
   },
   {
    "id": "poc_chromatic_confocal",
@@ -3596,7 +3712,19 @@
    "caption_en": "Two public hyperspectral datasets (both CC BY 4.0; fetched and cached, not committed) are classified with Fullseye's ops (read_envi, spec_continuum_removal, spec_angle_mapper, spec_band_selection_fisher) and scored against their own labels. Shredded plastics, six classes (RODARE 3390, a 400–2500 nm spectral camera): continuum removal + SAM reaches a mean class recall of 0.816 (0.439 on raw reflectance — dark flakes lose to additive baselines). A library from a separate scan of reference samples separates PP / PET / PE at 0.878; this PoC's material-table physics alone gives 0.628 (chance 0.333). Black plastic reflects 0.03 with a C-H trough one sixth as deep. The test header still carried 450 fwhm values for 360 bands and the fail-closed reader refused it; the wavelength labels were verified on the polymer troughs and only fwhm was fixed in a copy. Foreign objects on pork belly, ten classes (Zenodo 17242553, an InGaAs line-scan spectral camera): split by capture, 656k test pixels; SAM gives AUC 0.92 with 10 % false alarms, LDA on all 184 bands detects 0.92 at 1.1 % false alarms, six Fisher bands give 2.1 % and three give 23 % — three bands sufficed in simulation but not on real data. The simulation (material absorption bands, Kubelka–Munk, halogen × fused-silica lens × InGaAs; eight new ops) covers the failure modes: colour-matched foreign matter at RGB AUC 0.48, kernels at 12 % moisture 98 % rejected, a 200 K lamp drift after the white reference 49 %, and carbon black at 1 wt % burying PP vs PE in single-pixel noise. The gap between simulated 1.000 and real 0.82–0.92 is the size of the inverse crime. Parameters were checked against primary sources (USGS spectra, papers, datasheets): PE band strengths cut 2–3x, PET's two deepest bands added, and the table's water k switched to Segelstein 1981.",
    "run": "py -3.11 examples/poc_hyperspectral_foreign_matter.py",
    "lead_ja": "肉や仁と同じ色の異物は、カラーカメラでは見分けられない。公開の実画像を分光画像として分類すると、豚バラの上の異物を誤警報 1.1 % で検出できた。帯域を減らすと誤警報が増え、合成データでは足りた条件が実データでは足りなかった。",
-   "lead_en": "Foreign matter the same colour as meat or kernels cannot be told apart by a colour camera. Classifying public real images as spectral data detected debris on pork belly with 1.1 % false alarms. With fewer bands the false alarms grew, so a band set that sufficed on synthetic data did not suffice on real data."
+   "lead_en": "Foreign matter the same colour as meat or kernels cannot be told apart by a colour camera. Classifying public real images as spectral data detected debris on pork belly with 1.1 % false alarms. With fewer bands the false alarms grew, so a band set that sufficed on synthetic data did not suffice on real data.",
+   "ops": [
+    "carbon_black_absorption",
+    "hyperspectral_band_weights",
+    "hyperspectral_capture",
+    "ingaas_photodiode_qe",
+    "kubelka_munk_reflectance",
+    "material_nir_absorption",
+    "median",
+    "nir_model_info",
+    "spectral_reflectance_from_material",
+    "text_box"
+   ]
   },
   {
    "id": "poc_optics_drawings",
@@ -3637,7 +3765,19 @@
    "caption_en": "An SEM image is not a photograph of the surface: it is a tally of what comes out of the interaction volume of primary electrons scattering inside the solid. Eight new ops (`sem_electron_mc`, `sem_yield_curve`, `sem_se_universal_curve`, `sem_line_profile`, `sem_cd_measure`, `sem_image`, `sem_charging_series`, `sem_se_escape_fraction`) and the material-table op `material_electron_properties` build a Monte Carlo that tracks electrons one by one (Joy's single scattering, Browning's 1994 Mott fit for elastic scattering, the Joy-Luo stopping power), and every stage is scored against outside measurements. The backscatter coefficient for 7 elements (C to Au) at 5/10/20/30 keV falls inside the measured bands of Joy's database plus or minus 0.04; switching back to screened Rutherford fails for W and Au. The maximum penetration is 0.83 to 1.04 of the Kanaya-Okayama range and the depth grows as E^1.75 (Si) and E^1.52 (Au) against 1.67. The shape of the secondary-electron yield matches the Lin and Joy 2005 universal curve within RMS 0.076 for C to Ag, with Emax within -4 to +7 % of their table (not fitted); W and Au have heavier tails (SE2 dominates, unresolved). The user's guess that W on Si is invisible in SE but stands out in backscatter Z contrast holds only for flush W at 1 kV (SE +5 %, BSE +96 %); at 5 kV SE shows it too (+80 %) because the SE2 made by exiting backscattered electrons carries Z. W buried 150 nm deep shows +3 % at 1 kV even in backscatter and +154 % at 20 kV (information depth). For CD-SEM, a PMMA line (40 nm at the base) with an 88 degree sidewall measures 39.1 nm at 1 kV and 39.9 nm at 20 kV by threshold: low voltage measures high on the sidewall (0.33), high voltage at the foot (0.03); at 80 degrees the difference is small and reversed, so this is no general rule. A vertical sidewall reads wide at every voltage (+0.3 to +1.0 nm). Charging: at 0.5 kV (eta + delta > 1) the insulator charges positive, darkens and stops at the potential that solves eta + delta F(V*) = 1 by an independent bisection (to 2e-15 V); at 20 kV it keeps charging negative and brightens (phenomenological). A defect found on the way is kept on record: free paths were drawn in the starting material and walked straight through material boundaries, so a 0.01 nm Si cap changed W's eta from 0.425 to 0.329 (now truncated at the boundary, with a regression gate). No real-image chapter yet: no CC BY CD-SEM images with ground-truth line widths were found.",
    "run": "py -3.11 examples/poc_virtual_sem_kv_cd_bse.py",
    "lead_ja": "SEM の像は表面の写真ではなく、固体の中で散乱した電子のうち外へ出てきたものの集計である。電子を一つずつ追う模型を組み、反射電子の量を 7 元素の実測データベースと照合した。同じ線でも加速電圧を変えると、側壁のどの高さを線幅として測っているかが変わる。",
-   "lead_en": "An SEM image is not a photo of the surface but a tally of electrons escaping after scattering inside the solid. A model that tracks each electron was checked against measured backscatter data for 7 elements. On the same line, the beam energy decides which sidewall height is read as the linewidth."
+   "lead_en": "An SEM image is not a photo of the surface but a tally of electrons escaping after scattering inside the solid. A model that tracks each electron was checked against measured backscatter data for 7 elements. On the same line, the beam energy decides which sidewall height is read as the linewidth.",
+   "ops": [
+    "material_electron_properties",
+    "sem_cd_measure",
+    "sem_charging_series",
+    "sem_electron_mc",
+    "sem_image",
+    "sem_line_profile",
+    "sem_se_escape_fraction",
+    "sem_se_universal_curve",
+    "sem_yield_curve",
+    "threshold"
+   ]
   },
   {
    "id": "poc_tem_ctf_thon_rings",
@@ -3651,7 +3791,20 @@
    "caption_en": "A TEM turns the phase of electrons that pass a thin specimen into intensity through the spherical aberration Cs and the defocus Δf. The transfer, CTF = −sin(χ + arcsin w), flips sign with spatial frequency and draws its zeros as concentric Thon rings in the power spectrum. Eleven new ops (`temsim`, category `tem` of `opsoptics`): electron wavelength, Scherzer defocus, 2-D and 1-D CTF, projected potential, amorphous film, weak-phase image, multislice, power spectrum, CTF estimation and correction. Imaging reuses `coherent_image` with the pupil e^{iχ}, electron scattering factors come from the X-ray factors of `pxrd` via Mott–Bethe, `lomb_scargle` seeds the ring period from samples uneven in k², and `phase_correlation_fft` aligns frames. Wavelengths match the published values to five digits (1.9687 pm at 300 kV; 13.7 % longer without relativity), CTF zeros match the closed form to 1.7e-12 1/Å, the first zero at Scherzer focus is 0.6580 Cs^¼ λ^¾, and a sinusoidal phase grating diffracts as J_n(φ₀)² to 1.6e-13. The mean inner potential of Si is 13.83 V against the neutral-atom 13.71 V (above the measured 12.48 V by the bonding share); Cu's f_e(0) is 10.5 % low, a limit of the X-ray fit. The image best resembles the projected potential at 900 Å, within 7 % of Scherzer's 842 Å, and fine detail reverses at exact focus (correlation −0.30). Four synthetic micrographs give Δf within 13 Å and astigmatism within 50 Å and 5.2°, with jackknife errors that cover the misses; noise only, too low a dose, near-focus and a fit trapped in a wrong valley with only nine tiles are all refused. A 2 % pixel-size error scales Δf by 1.039 (closed form 1.0404). Ten drifting frames lose their rings when summed (fit resolution 15.6 Å) and regain them when aligned (5.3 Å). Phase flipping raises the correlation with the potential from 0.09 to 0.84, Wiener to 0.87, and a 10 % defocus error drops it to 0.10. On three real micrographs (EMPIAR-10028, CC0) the estimate agrees with the authors' CTFFIND3 values to −55, +65 and −0.5 Å (within 0.2 %). Nothing learned, nothing calibrated, 36 gates.",
    "run": "py -3.11 examples/poc_tem_ctf_thon_rings.py",
    "lead_ja": "透過電子顕微鏡の像は、焦点の外し方によって細部の明暗が反転する。この結像を組み立て、公開の実写 3 枚から焦点外れを推定すると、著者の解析ソフトの値とほぼ一致した。焦点を振ると、パワースペクトルの同心円が動き、正焦点の近くで細部が反転する。",
-   "lead_en": "In a transmission electron microscope, defocus decides whether fine detail looks bright or dark. Estimating defocus from 3 public real micrographs closely matched the authors' own software. Sweeping focus moves the concentric Thon rings and flips detail near true focus."
+   "lead_en": "In a transmission electron microscope, defocus decides whether fine detail looks bright or dark. Estimating defocus from 3 public real micrographs closely matched the authors' own software. Sweeping focus moves the concentric Thon rings and flips detail near true focus.",
+   "ops": [
+    "tem_amorphous_film",
+    "tem_ctf",
+    "tem_ctf_correct",
+    "tem_ctf_estimate",
+    "tem_ctf_profile",
+    "tem_image_weak_phase",
+    "tem_multislice",
+    "tem_power_spectrum",
+    "tem_projected_potential",
+    "tem_scherzer",
+    "tem_wavelength"
+   ]
   },
   {
    "id": "poc_simcal_thin_film",
@@ -3721,7 +3874,23 @@
    "caption_en": "A single X-ray transmission image of food measures one number per pixel, L = -ln(I/I0), so a thick piece of meat and a thin hard foreign body cannot be told apart. A detector that counts photons in two energy windows can: the shape of mu(E) differs by material, so thickness and material separate in every pixel (the Alvarez and Macovski 1976 basis decomposition). Fourteen new ops (`spectral_xray` in `opstomography`): the X-ray columns of the material table (`material_xray_attenuation` and three more, a subset of NIST SRD 126 plus a mixture rule) and ten `dualxray` ops (tube spectrum, beam quality, detector channels, projection, basis decomposition, CRLB, R value, effective Z, discrimination error rate). mu/rho matches the NIST published values (Cu at 8 keV 52.55; across the K edge 38.4 to 278.4), and the tube model's half-value layers agree with the eight IEC 61267 qualities to within 5.8 % (the model was shaped on a public spectrum calculator (MIT); the IEC values were not used to fit it). On a meat tray 25 to 60 mm thick the bone-and-glass step is 0.9 times the meat unevenness, one threshold flags 86 % of the meat, and even the high band shows two false lumps at the edge of a meat overlap, whereas the Al image from a lean-meat plus Al decomposition has 0 false lumps. A confounded pair of thick PE and thin Al gives d' = 0 in one window; the two-window error rate Phi(-d'/2) agrees with Monte Carlo to 0.004, and the Al thickness below which they cannot be separated (5 % error) is 0.125 mm in closed form and 0.126 mm measured, 0.364 mm under 40 mm of meat. The decomposition noise reaches 0.995 and 0.997 times the Cramer-Rao bound. How it breaks: decomposing without knowing 25 % charge sharing turns meat into Al, and a monochromatic approximation biases Al by -1.5 mm under 6 cm of meat; the apparent Z of a buried foreign body also moves with density (PVC at 13.9 reads as 18.7). Learning 0, calibration 0, 21 gates.",
    "run": "py -3.11 examples/poc_dual_energy_xray.py",
    "lead_ja": "食品の X 線検査の透過像では、厚い肉と薄い硬い異物を区別できない。光子のエネルギーを 2 つの窓で数え分けて厚みと材質に分けると、肉の重なりが作った偽の異物が消えた。分けられなくなるアルミの厚さも、閉形式の予測どおりに現れた。",
-   "lead_en": "In a food X-ray image, thick meat and a thin hard fragment can look the same. Counting photons in 2 energy windows and separating thickness from material removed false fragments made by overlapping meat. The thinnest aluminium that can still be told apart matched the closed-form prediction."
+   "lead_en": "In a food X-ray image, thick meat and a thin hard fragment can look the same. Counting photons in 2 energy windows and separating thickness from material removed false fragments made by overlapping meat. The thinnest aluminium that can still be told apart matched the closed-form prediction.",
+   "ops": [
+    "basis_decomposition_crlb",
+    "basis_material_decompose",
+    "dual_energy_separability",
+    "dual_kvp_channels",
+    "ellipse",
+    "material_effective_z",
+    "material_from_sellmeier",
+    "material_xray_attenuation",
+    "material_xray_constants",
+    "photon_counting_channels",
+    "reflect",
+    "xray_beam_quality",
+    "xray_channel_projection",
+    "xray_tube_spectrum"
+   ]
   },
   {
    "id": "poc_simcal_pixel_shift",
@@ -3763,7 +3932,16 @@
    "caption_en": "Normalised cross-correlation (NCC) compares brightness values, so it is fragile when part of the template is occluded, saturated by a highlight or darkened on one side. Four matchers that compare the direction of brightness change as codes (orientation code matching, increment sign correlation, the selective correlation coefficient and the Radial Reach Filter, re-implemented from the published equations) are added as six codematch ops and scored on 40 templates of 32 x 32 cut from five public CC0 photographs. Half the hits are lost at 10 % occlusion for NCC, 36 % for SCC, 63 % for ISC and 67 % for OCM; at 6 %, 10 %, 44 % and 53 % saturated highlight. All four are weak to rotation (7-9 degrees). SCC selects only pixels whose codes agree, which inflates correlation at unrelated positions (selection bias); taken literally it broke before NCC, and a floor at the uncorrelated usage rate plus 4 sigma fixes it. On 11 flat sky templates NCC misses 10 with correlation around 0.82, while the code matchers refuse or answer correctly (no wrong answer). Gates: a brute-force second implementation, the existing NCC, invariance to monotone maps, commutation with rot90 (broken by a probe that swaps the cyclic difference for the absolute one) and a closed-form model of the values at the true position (|z| <= 3.6 over 1,080 trials).",
    "run": "py -3.11 examples/poc_code_matching_breakdown.py",
    "lead_ja": "テンプレート照合でよく使う正規化相互相関は、対象の一部が隠れたり光沢で白く飛んだりすると外れやすい。明るさの変化の向きを符号にして比べる照合を加え、公開の実写から切ったテンプレート 40 枚で撹乱を強めていった。符号で比べる照合は隠れに強いが、回転にはどの方法も弱かった。",
-   "lead_en": "Normalised cross-correlation, the usual template matcher, fails when part of the target is hidden or glare washes it out. Matchers comparing the sign of brightness changes were tested on 40 templates from public real photos. They withstand occlusion far better, yet every method stays weak to rotation."
+   "lead_en": "Normalised cross-correlation, the usual template matcher, fails when part of the target is hidden or glare washes it out. Matchers comparing the sign of brightness changes were tested on 40 templates from public real photos. They withstand occlusion far better, yet every method stays weak to rotation.",
+   "ops": [
+    "isc_match",
+    "ncc_locate",
+    "ocm_match",
+    "radial_reach_filter",
+    "reflect",
+    "scc_match",
+    "text_box"
+   ]
   },
   {
    "id": "poc_good_sample_variation_model",
@@ -3777,7 +3955,18 @@
    "caption_en": "The inspection classic, learning every pixel's usual value and spread from many good samples and flagging what leaves the band, as an op family whose band width is derived from a declared per-pixel false-alarm rate instead of being set by hand (five new varmodel_* ops plus four method-independent anomeval metrics). For normal good samples a new pixel's deviation follows a t prediction interval, so the band width is closed-form. False-alarm rates counted on synthetic good samples fall inside the binomial 4-sigma band for per-pixel std, one pooled variance, empirical-Bayes shrinkage (Smyth 2004) and median/MAD, and the pooled variance fails when the noise differs per pixel. With five good samples the std band is 9.4 sigma wide (the t4 tail); shrinkage brings it to 5.0 and lifts the detection of 5-sigma flaws from 0.13 to 0.52. A good set shifted by 1-2 px is refused; forced through, the band on edges grows 22-fold and misses every edge flaw, and registering by a 1/20-px Fourier shift brings it back to 1.07. With three of twenty \"good\" samples carrying the same flaw, std misses the real flaw there (0.00) while median/MAD finds it (0.98). On the public VisA pcb1 data (CC BY 4.0, 200 test images) the registered band reaches pixel AUROC 0.808 and AUPRO 0.678 against 0.705 and 0.460 unregistered; golden comparison scores a higher pixel AUROC (0.826) but a lower AUPRO (0.519). The declared 1e-3 false-alarm rate is not kept on real images (3.8 %), and recalibrating on held-out good images only reaches 2.4 %: a difference between the training and test captures remains that a translation cannot remove. A stochastic texture (DAGM 2007, CC BY 4.0) has no structure in its mean image, its alignment is reported as unobservable and detection is at chance (pixel AUROC 0.465): where the method works and where it does not, both in numbers.",
    "run": "py -3.11 examples/poc_good_sample_variation_model.py",
    "lead_ja": "良品を何枚も撮り、画素ごとのいつものばらつきから外れた所を欠陥とするのは、外観検査の古典的な方法である。誤検出率を先に宣言して帯の幅を決めるようにし、公開の実画像 200 枚で採点した。位置合わせの有無が良品の枚数より効く一方、宣言した誤検出率は実画像では守られなかった。",
-   "lead_en": "A classic inspection learns the usual per-pixel variation from good parts and flags what falls outside. Here the band is set by a false-alarm rate declared in advance and scored on 200 public real images. Alignment mattered more than the number of good parts, and the declared rate was not kept."
+   "lead_en": "A classic inspection learns the usual per-pixel variation from good parts and flags what falls outside. Here the band is set by a false-alarm rate declared in advance and scored on 200 public real images. Alignment mattered more than the number of good parts, and the declared rate was not kept.",
+   "ops": [
+    "anomaly_image_auroc",
+    "anomaly_pixel_auroc",
+    "anomaly_pro",
+    "anomaly_region_overlap",
+    "dc_rpca_sparse",
+    "varmodel_alignment",
+    "varmodel_calibrate",
+    "varmodel_fit",
+    "varmodel_score"
+   ]
   },
   {
    "id": "poc_patch_anomaly",
@@ -4043,7 +4232,16 @@
    "caption_en": "Keep the wide field of a low-magnification objective, take a set of images under LED illumination from many angles, stitch them in frequency space and recover a 20x-equivalent resolution and the phase by iterative phase retrieval. Six new ops (`fourierptycho`, category `fpm` of `opsoptics`): closed-form design numbers before measuring (synthetic NA, cut-off period, pupil overlap, LED count, sampling, LEDs on the bright-/dark-field boundary), a USAF target, a capture simulator (noise, aberrations, LED misalignment, reflective heights), an entry point for measured data, a reconstruction with joint pupil recovery and LED position correction that returns its convergence history, stop reason and synthetic NA and refuses unless it converges, and an element-by-element USAF read-out. With a 4x / NA 0.1 objective and 13 x 13 LEDs (synthetic NA 0.424) one image resolves G7 E4 (5.53 um; closed form 5.32 um) and FP resolves G9 E5 (1.22 um; closed form 1.25 um), the same element as a 20x / NA 0.40 coherent image. Phase within 0.13 rad rms of the band-limited truth; reflective 20-40 nm steps within 4.0 nm rms. Lowering the pupil overlap from 64 % to 7 %, 43 % and above converge while 32 % and below are refused, bracketing the published 35 % minimum; the residual alone cannot tell (18 % overlap has a smaller residual than 64 %). Pupil aberrations of 0.12 waves rms are recovered to 0.005 waves and an LED array offset of (0.6, -0.4) mm, 1 deg and 1.5 mm is read back as (0.62, -0.36) mm, 0.93 deg and 1.25 mm. Flipping the sign of k yields the phase-conjugate image with the same residual. On public FP data of a USAF target (not shipped; run only when present) FP resolves G9 E3 (1.55 um) against the closed-form 1.60 um from the published set-up; a single raw image resolves G7 E3. Nothing learned, nothing calibrated, 33 gates.",
    "run": "py -3.11 examples/poc_fourier_ptychography.py",
    "lead_ja": "低倍率の対物レンズは視野が広い代わりに、細かいところが見えない。照明の角度を変えて撮った像を周波数空間でつなぎ直すと、低倍率の視野のまま 20 倍の像と同じ細かさまで分解した。照明の重なりが足りず収束しない条件では、答えを出さずに拒否する。",
-   "lead_en": "A low-magnification objective sees a wide field but misses fine detail. Combining images lit from different angles in frequency space resolved detail as fine as a 20x image over the same wide field. When the illumination overlap is too small to converge, no answer is returned."
+   "lead_en": "A low-magnification objective sees a wide field but misses fine detail. Combining images lit from different angles in frequency space resolved detail as fine as a 20x image over the same wide field. When the illumination overlap is too small to converge, no answer is returned.",
+   "ops": [
+    "coherent_image",
+    "fp_capture",
+    "fp_design",
+    "fp_element_contrast",
+    "fp_reconstruct",
+    "fp_stack_from_images",
+    "fp_usaf_target"
+   ]
   },
   {
    "id": "poc_braid_homotopy_classes",

@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 637 of 1571. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 636 of 1571. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel.py`
@@ -267,15 +267,15 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `examplefig.py`
 
-- **L148** _(ja)_ — 書いた図の sha256 -> 名前。★同じ中身の図が 2 枚出たら台帳に積む
-- **L220** — ★`colorize_depth` returns **float [0,1]**. Receiving it with `np.asarray(..., np.uint8)` truncates every 0.x to 0 and turns it pitch black (hit on 2026-09-06).
-- **L378** — ★Do not drop the body of the example. It is a pity that the figure does not appear, but the numbers must be shown.
-- **L417** — ★Do not just hand off to :func:`_to_rgb8` here. That passes (H,W) to `colorize_depth`, but **inside it each frame is normalized individually**, so a frame that is all 0 and a frame that is all 1 come out the same colour (caught by a test on 2026-09-09). Only by passing the value range explicitly does the scale become a single one.
-- **L482** — ★Pillow **folds a frame identical to the previous one into a single frame** (that time is added to the previous frame's display time, so the speed of motion does not change). We count after writing and, if it differs from the number passed, record **both** in the ledger —— so as not to silently pass off "a 72-frame GIF" whose content is 40 frames.
-- **L650** — ★2026-09-08: when the panel is small the title does not fit, and ``annotate_figure_grid`` (correctly) refuses, so **one figure was silently disappearing**. A 29×19 core grid or a 24×24 reduced map appears routinely in PoCs, yet the error says "shorten the title" —— the actual fix is "enlarge the panel". Two people fell into the same hole independently (there is a case where one scene figure on the signboard disappeared), so instead of making each caller write the enlargement, we do a nearest-neighbour enlargement once here. We use nearest neighbour so as **not to create values** by enlarging (interpolation would create intermediate values that do not exist on the figure, and the pseudo-colour would lie).
-- **L767** _(ja)_ — ★2026-10-03: 下の余白を 16 px 広げた。軸名の帯(左下)が x 軸の目盛りの数字に重なって 「0.5」や「20」を隠していた(transforms_tour の図で踏んだ。全部の save_plot に効く)。
-- **L779** _(ja)_ — ★2026-10-21: 棒を 1 本ずつ別の系列にした図(色を棒ごとに変えるため)は、系列の中に x が 1 つしか なく plot_series が間隔を知れないので、棒が描画域の 70 % の幅になり隣と重なった(製造公差 PoC の 歩留まりの対比図で目視)。棒の x を**全系列**から集め、その最小間隔(棒が 1 本しかなければ目盛りの 間隔)を画素に直して、1 点の系列にだけ bar_width として渡す。複数点の系列は従来どおり自分の間隔。
-- **L811** _(ja)_ — ★2026-10-03: 凡例は**データを最も隠さない隅**に置く(MATLAB の legend('best'))。右上固定だと 減衰の遅い応答の山が凡例の下に隠れた。点の数で象限を選ぶ最初の版も、Runge の端の山を 半分隠した —— 隠れるのは「点」でなく「線の画素」なので、各隅に凡例を試しに描き、 その矩形の下にあるデータの画素(背景でも格子でもない画素)を数えて最少の隅を選ぶ。
+- **L168** _(ja)_ — 書いた図の sha256 -> 名前。★同じ中身の図が 2 枚出たら台帳に積む
+- **L240** — ★`colorize_depth` returns **float [0,1]**. Receiving it with `np.asarray(..., np.uint8)` truncates every 0.x to 0 and turns it pitch black (hit on 2026-09-06).
+- **L398** — ★Do not drop the body of the example. It is a pity that the figure does not appear, but the numbers must be shown.
+- **L437** — ★Do not just hand off to :func:`_to_rgb8` here. That passes (H,W) to `colorize_depth`, but **inside it each frame is normalized individually**, so a frame that is all 0 and a frame that is all 1 come out the same colour (caught by a test on 2026-09-09). Only by passing the value range explicitly does the scale become a single one.
+- **L502** — ★Pillow **folds a frame identical to the previous one into a single frame** (that time is added to the previous frame's display time, so the speed of motion does not change). We count after writing and, if it differs from the number passed, record **both** in the ledger —— so as not to silently pass off "a 72-frame GIF" whose content is 40 frames.
+- **L670** _(ja)_ — ★2026-09-08: パネルが小さいと題が入らず、``annotate_figure_grid`` が (正しく)拒否して**図が 1 枚黙って消えていた**。29×19 の core 格子や 24×24 の縮小マップは PoC で普通に出るのに、エラーは 「題を短くしろ」と言う —— 実際の直し方は「パネルを大きくしろ」。 2 人の担当が独立に同じ穴に落ちた(看板の scene 図が 1 枚消えた例あり)ので、 呼び手ごとに拡大を書かせず、ここで 1 度だけ補間する。入力が十分大きければ 1 倍のままなので実データの解像度を保つ。拡大が必要な小画像だけは、発表図で 画素の四角を増やす最近傍を避け、双三次補間する。
+- **L804** _(ja)_ — ★2026-10-03: 下の余白を 16 px 広げた。軸名の帯(左下)が x 軸の目盛りの数字に重なって 「0.5」や「20」を隠していた(transforms_tour の図で踏んだ。全部の save_plot に効く)。
+- **L817** _(ja)_ — ★2026-10-21: 棒を 1 本ずつ別の系列にした図(色を棒ごとに変えるため)は、系列の中に x が 1 つしか なく plot_series が間隔を知れないので、棒が描画域の 70 % の幅になり隣と重なった(製造公差 PoC の 歩留まりの対比図で目視)。棒の x を**全系列**から集め、その最小間隔(棒が 1 本しかなければ目盛りの 間隔)を画素に直して、1 点の系列にだけ bar_width として渡す。複数点の系列は従来どおり自分の間隔。
+- **L849** _(ja)_ — ★2026-10-03: 凡例は**データを最も隠さない隅**に置く(MATLAB の legend('best'))。右上固定だと 減衰の遅い応答の山が凡例の下に隠れた。点の数で象限を選ぶ最初の版も、Runge の端の山を 半分隠した —— 隠れるのは「点」でなく「線の画素」なので、各隅に凡例を試しに描き、 その矩形の下にあるデータの画素(背景でも格子でもない画素)を数えて最少の隅を選ぶ。
 
 ## `examples/acoustic_condition_monitoring.py`
 
@@ -708,7 +708,7 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `examples/poc_good_sample_variation_model.py`
 
-- **L286** _(ja)_ — ★地の模様が弱いと、汚れた 3 枚の傷が位相相関の山を引っ張り、0.65 px の「ずれ」として拒否された (実測。拒否は正しい振る舞い —— 汚れた良品は位置合わせも汚す)。ここは帯の比較なので模様を強くする。
+- **L297** _(ja)_ — ★地の模様が弱いと、汚れた 3 枚の傷が位相相関の山を引っ張り、0.65 px の「ずれ」として拒否された (実測。拒否は正しい振る舞い —— 汚れた良品は位置合わせも汚す)。ここは帯の比較なので模様を強くする。
 
 ## `examples/poc_granular_heap_repose.py`
 
@@ -2711,7 +2711,7 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `tools/build_view2026_featured_batch.py`
 
-- **L103** _(ja)_ — ★2026-10-30: 「出来れば全 PoC を載せたい」。初版は 80 本で切っていた。台帳の PoC は手書きの見どころか この一括のどちらかに必ず載る —— 載らない PoC があれば理由(図が無い・数が無い・分類の無い翼)ごと止める。
+- **L113** _(ja)_ — ★2026-10-30: 「出来れば全 PoC を載せたい」。初版は 80 本で切っていた。台帳の PoC は手書きの見どころか この一括のどちらかに必ず載る —— 載らない PoC があれば理由(図が無い・数が無い・分類の無い翼)ごと止める。
 
 ## `tools/chain_fuzz.py`
 
@@ -2903,14 +2903,14 @@ This repository records *why* things are the way they are in **comments in the s
 ## `tools/gen_wingpoc_gallery.py`
 
 - **L52** _(ja)_ — 総合案内。★既存の Qiita 枠がこのファイルを指しているので、名前を変えない ―― 外部リンク・LGTM・ストックはこの URL に付いている。館の入口に充てるのが筋。
-- **L150** _(ja)_ — 1 展示に出す静止画の追加枚数。★2 枚固定をやめる(2026-09-24)
-- **L405** _(ja)_ — ★見出しは**収蔵番号**。順路番号(何番目か)は出さない —— 展示を 1 つ挟むだけで 以降が全部ずれ、記事を分けるたびに番号が動くため(2026-09-25)。
-- **L433** _(ja)_ — ★追加の静止画。説明は 1 文に切る(枚数を増やすのが目的で、詳しい 説明は主図と 2 枚目が持っている)。2026-09-24 に 2 枚固定をやめた。
-- **L459** _(ja)_ — ★展示に載るのは 1 本あたり 2 枚ほど。PoC は中央値 6 枚・最大 25 枚 作っているので、**残りへの道**を必ず出す(2026-09-24、ユーザー指摘 「生成した数百枚はどこにあるのか記事からは分からない」)。
-- **L484** _(ja)_ — ★解説板の「この部屋の {n} 点」は**生成で埋める**。手書きの数は腐る ―― 10 翼中 9 翼が展示 53 点の頃の数を名乗ったままだった(産業検査は 10 と 書いて実際 27、2026-09-25)。例外は出ず、門も赤くならない。 `.format` は使わない(解説板に別の波括弧が在ると壊れるため)。
-- **L533** _(ja)_ — 棟の目次。★展示数は毎回数えて出す(手で書くと必ず古くなる)。
-- **L539** _(ja)_ — 目次に出す短い翼名。★区切りは ` / ` —— 翼名そのものに「・」が入るので (寸法・形状計測 / 医用・生物 / 色・分離)、「・」で繋ぐと境目が読めなくなる。
-- **L645** _(ja)_ — ★`external` の部(手書きの数学記事)は描かない。`index` は案内なので上で出した。
+- **L159** _(ja)_ — 1 展示に出す静止画の追加枚数。★2 枚固定をやめる(2026-09-24)
+- **L432** _(ja)_ — ★見出しは**収蔵番号**。順路番号(何番目か)は出さない —— 展示を 1 つ挟むだけで 以降が全部ずれ、記事を分けるたびに番号が動くため(2026-09-25)。
+- **L460** _(ja)_ — ★追加の静止画。説明は 1 文に切る(枚数を増やすのが目的で、詳しい 説明は主図と 2 枚目が持っている)。2026-09-24 に 2 枚固定をやめた。
+- **L486** _(ja)_ — ★展示に載るのは 1 本あたり 2 枚ほど。PoC は中央値 6 枚・最大 25 枚 作っているので、**残りへの道**を必ず出す(2026-09-24、ユーザー指摘 「生成した数百枚はどこにあるのか記事からは分からない」)。
+- **L511** _(ja)_ — ★解説板の「この部屋の {n} 点」は**生成で埋める**。手書きの数は腐る ―― 10 翼中 9 翼が展示 53 点の頃の数を名乗ったままだった(産業検査は 10 と 書いて実際 27、2026-09-25)。例外は出ず、門も赤くならない。 `.format` は使わない(解説板に別の波括弧が在ると壊れるため)。
+- **L560** _(ja)_ — 棟の目次。★展示数は毎回数えて出す(手で書くと必ず古くなる)。
+- **L566** _(ja)_ — 目次に出す短い翼名。★区切りは ` / ` —— 翼名そのものに「・」が入るので (寸法・形状計測 / 医用・生物 / 色・分離)、「・」で繋ぐと境目が読めなくなる。
+- **L672** _(ja)_ — ★`external` の部(手書きの数学記事)は描かない。`index` は案内なので上で出した。
 
 ## `tools/gen_wingstudio_gallery.py`
 
@@ -2978,9 +2978,9 @@ This repository records *why* things are the way they are in **comments in the s
 - **L100** — ★2026-10-15: it had no `--md` and **wrote nothing** (it only printed a summary to stdout). docs/CONVERSION_MATRIX.md went stale at the 2026-09-02 values ("59 types / 164 conversion pairs"), and since --check cannot see "a stage that writes nothing" as drift, it passed for six weeks. Now `trace_problems()` rejects a stage that does not even touch its declared outputs.
 - **L108** _(ja)_ — ★2026-10-15: 13 番目から最後の方へ下げた。docmap が docs/*.md の**題**を読むので、 題を持つ生成物(OPERATORS / REFERENCES / EXAMPLES / EXAMPLES_3D / SENSOR_PLAYBOOK / CONVERSION_MATRIX / DESIGN_NOTES*)を書く 7 段すべてより後でなければならない —— 以前はその 7 段より前にあり、題が変わると 2 回回さないと揃わなかった。 文献層の本体はコーパスが要る(EXCLUDED)が、「op ノート N 本」の件数は docs/ops を数えれば直せる。 docs/ops を書く opdocs の後、題を読む docmap(gen_docs_index_ops)の前。
 - **L308** — * ★ And dangerous: an article right after generation writes images with **relative paths**. The published version has them changed to absolute URLs on `raw.githubusercontent.com` (with a relative path Qiita does not show images —— memory `feedback_qiita_svg_path_and_cache`). Running only the generator rolls those absolute URLs back by 42 lines. **If you run it, carry it all the way through the article's publishing steps.** Write exclusions **by file name**. Summarizing them in prose ("the 10 of wing*_gallery") cannot be matched by machine, and the `unclassified()` below stops working.
-- **L675** _(ja)_ — ★2026-10-07: 印も探す場所も狭すぎた。初版は ``open(..,"w")`` / ``write_text`` / ``savefig`` / ``json.dump`` だけを ``tools/*.py``(直下のみ)で探していたので、 * **repo 直下の生成器が 1 本も見えなかった** —— ``samples.py``(docs/EXAMPLES.md が 「67-op」のまま)、``references.py``(「153 operators」)、``dispositions.py``、 ``lib_coverage.py``(885 op のまま)、``honest_summary.py`` …。``imgevolve.py`` と ``catalog.py`` だけが手で足されていた —— 手で足す方式は、足し忘れを拾えない。 * **画像の書き手が 1 本も釣れなかった** —— PIL の ``.save``、imageio の ``mimwrite``、``write_bytes``、Fullseye 自身の ``write_video`` / ``save_gif`` …。 ``gen_banner`` の PNG は「731 2-D + 265 3-D」と書いたまま古びている。 * ``tools/impl2/`` など**下の階層**も見ていなかった(docs/op_*.json の台帳)。 印を広げれば門・デモ・ライブラリも釣れる。それは構わない —— **釣れたものは全部 上の表に理由つきで載せる**(印は緩めない)。
-- **L690** _(ja)_ — ★2026-10-25: まだ狭かった。``pv.write_viewer(`` / ``fs.write_viewer(`` で HTML を書く生成器 (``tools/build_view2026_viewers.py``、題材の枝の ``tools/build_*_anim3d.py``)がどの表にも 載っていなかった。同じ洗い出しで ``open(.., "wb")``(``"w"`` しか見ていなかった)と ``shutil.copy*`` / ``copytree`` / ``move`` も足した。印ごとに「その印でしか釣れない実在の 生成器」を ``tests/test_regen_all.py`` が要求する(印を消せば落ちる)。
-- **L738** — ★A generated artifact outside `tools/`. Walking `tools/*.py` can never find it, and in fact `docs/OP_INDEX.json` was being missed.
+- **L686** _(ja)_ — ★2026-10-07: 印も探す場所も狭すぎた。初版は ``open(..,"w")`` / ``write_text`` / ``savefig`` / ``json.dump`` だけを ``tools/*.py``(直下のみ)で探していたので、 * **repo 直下の生成器が 1 本も見えなかった** —— ``samples.py``(docs/EXAMPLES.md が 「67-op」のまま)、``references.py``(「153 operators」)、``dispositions.py``、 ``lib_coverage.py``(885 op のまま)、``honest_summary.py`` …。``imgevolve.py`` と ``catalog.py`` だけが手で足されていた —— 手で足す方式は、足し忘れを拾えない。 * **画像の書き手が 1 本も釣れなかった** —— PIL の ``.save``、imageio の ``mimwrite``、``write_bytes``、Fullseye 自身の ``write_video`` / ``save_gif`` …。 ``gen_banner`` の PNG は「731 2-D + 265 3-D」と書いたまま古びている。 * ``tools/impl2/`` など**下の階層**も見ていなかった(docs/op_*.json の台帳)。 印を広げれば門・デモ・ライブラリも釣れる。それは構わない —— **釣れたものは全部 上の表に理由つきで載せる**(印は緩めない)。
+- **L701** _(ja)_ — ★2026-10-25: まだ狭かった。``pv.write_viewer(`` / ``fs.write_viewer(`` で HTML を書く生成器 (``tools/build_view2026_viewers.py``、題材の枝の ``tools/build_*_anim3d.py``)がどの表にも 載っていなかった。同じ洗い出しで ``open(.., "wb")``(``"w"`` しか見ていなかった)と ``shutil.copy*`` / ``copytree`` / ``move`` も足した。印ごとに「その印でしか釣れない実在の 生成器」を ``tests/test_regen_all.py`` が要求する(印を消せば落ちる)。
+- **L749** — ★A generated artifact outside `tools/`. Walking `tools/*.py` can never find it, and in fact `docs/OP_INDEX.json` was being missed.
 
 ## `torch_lazy.py`
 
