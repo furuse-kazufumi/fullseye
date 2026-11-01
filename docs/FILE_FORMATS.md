@@ -13,6 +13,7 @@
 | DICOM | `.dcm` | `volio.read_volume` | `volio.write_volume` | — | optional: SimpleITK, tifffile | `tests/test_public_api.py`<br>`tests/test_volio.py` | — |
 | DICOM | `.dicom` | `volio.read_volume` | `volio.write_volume` | — | optional: SimpleITK, tifffile | `tests/test_public_api.py`<br>`tests/test_volio.py` | — |
 | ASTM E57 | `.e57` | `fileio.e57_read` | `fileio.e57_write` | `e57_read`<br>`e57_write` | optional: pye57 | `tests/test_audit_file_formats.py`<br>`tests/test_fileio_e57.py` | `pye57` |
+| FITS | `.fits` | `fileio.astro_fits_read` | `fileio.astro_fits_write` | `astro_fits_read`<br>`astro_fits_write` | stdlib / core | `tests/test_fileio_scientific.py`<br>`tests/test_kendama_combo.py` | `astropy` |
 | GIF | `.gif` | — | `examplefig.save_gif`<br>`projmap.save_gif`<br>`videocube.video_write_gif` | `video_write_gif` | optional: PIL, fullseye, mujoco | `tests/test_docs_index_reachable.py`<br>`tests/test_examplefig_gif.py`<br>+9 | — |
 | glTF | `.gltf` | `meshio_opt.read_gltf`<br>`meshio_opt.read_gltf_merged` | — | — | stdlib / core | `tests/test_mesh.py`<br>`tests/test_meshio_opt.py`<br>+1 | — |
 | Radiance HDR | `.hdr` | `volio.read_volume` | `specops.write_envi`<br>`volio.write_volume` | — | optional: SimpleITK, tifffile | `tests/test_public_api.py`<br>`tests/test_specops.py`<br>+2 | — |
@@ -58,6 +59,6 @@
 
 ## 集計
 
-形式（拡張子） **50**、読みあり **39**、書きあり **41**、読み書き対 **30**、公開 op あり **14**、テストあり **50**、独立の読み手による検証あり **6**。
+形式（拡張子） **51**、読みあり **40**、書きあり **42**、読み書き対 **31**、公開 op あり **15**、テストあり **51**、独立の読み手による検証あり **7**。
 
 集計値も上表から生成しており、文書内に別の手書き件数は持たない。

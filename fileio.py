@@ -30,11 +30,22 @@ __all__ = [
     "mesh_write_obj", "mesh_read_obj", "mesh_write_off", "mesh_read_off",
     "points_write_xyz", "points_read_xyz",
     "e57_write", "e57_read",
+    "astro_fits_write", "astro_fits_read",
 ]
 
 _CSV_META_REQUIRED = ("source", "generated_at", "coordinate_meaning")
 _MAX_CSV_CHARS = 256 * 1024 * 1024
 _E57_WRITE_LOCK = threading.Lock()
+_FITS_BLOCK = 2880
+_FITS_WCS_KEYS = (
+    "WCSAXES", "RADESYS", "EQUINOX", "LONPOLE", "LATPOLE",
+    "CTYPE1", "CTYPE2", "CTYPE3", "CUNIT1", "CUNIT2", "CUNIT3",
+    "CRPIX1", "CRPIX2", "CRPIX3", "CRVAL1", "CRVAL2", "CRVAL3",
+    "CDELT1", "CDELT2", "CDELT3", "CROTA1", "CROTA2", "CROTA3",
+    "PC1_1", "PC1_2", "PC1_3", "PC2_1", "PC2_2", "PC2_3",
+    "PC3_1", "PC3_2", "PC3_3", "CD1_1", "CD1_2", "CD1_3",
+    "CD2_1", "CD2_2", "CD2_3", "CD3_1", "CD3_2", "CD3_3",
+)
 
 
 def _csv_columns(table, op: str) -> dict[str, np.ndarray]:
@@ -666,3 +677,205 @@ def e57_read(data):
             os.remove(path)
         except FileNotFoundError:
             pass
+
+
+# ---------------------------------------------------------------------------
+# Scientific images and volumes.  FITS and MRC are encoded here so the core
+# stays dependency-light; optional reference readers are used only by tests.
+# ---------------------------------------------------------------------------
+def _fits_value(text: str, keyword: str):
+    value = text.rstrip()
+    if value.startswith("'"):
+        chars, index = [], 1
+        while index < len(value):
+            if value[index] == "'":
+                if index + 1 < len(value) and value[index + 1] == "'":
+                    chars.append("'")
+                    index += 2
+                    continue
+                return "".join(chars).rstrip()
+            chars.append(value[index])
+            index += 1
+        raise ValueError(f"astro_fits_read: unterminated string in header key {keyword}")
+    token = value.split("/", 1)[0].strip()
+    if token in ("T", "F"):
+        return token == "T"
+    if not token:
+        raise ValueError(f"astro_fits_read: header key {keyword} has no value")
+    try:
+        return float(token.replace("D", "E")) if any(c in token for c in ".EDed") else int(token)
+    except ValueError as exc:
+        raise ValueError(f"astro_fits_read: unsupported value {token!r} for header key {keyword}") from exc
+
+
+def _fits_card(keyword: str, value) -> bytes:
+    if not isinstance(keyword, str) or not keyword or len(keyword) > 8 or not keyword.isascii():
+        raise ValueError(f"astro_fits_write: FITS keyword must be 1..8 ASCII characters, got {keyword!r}")
+    key = keyword.upper()
+    if isinstance(value, (bool, np.bool_)):
+        field = ("T" if bool(value) else "F").rjust(20)
+    elif isinstance(value, (int, np.integer)):
+        field = str(int(value)).rjust(20)
+    elif isinstance(value, (float, np.floating)):
+        if not math.isfinite(float(value)):
+            raise ValueError(f"astro_fits_write: header key {key} must be finite")
+        field = ("%.15G" % float(value)).rjust(20)
+    elif isinstance(value, str):
+        if not value.isascii() or any(c in value for c in "\r\n"):
+            raise ValueError(f"astro_fits_write: header key {key} must contain one-line ASCII text")
+        field = "'" + value.replace("'", "''") + "'"
+    else:
+        raise ValueError(f"astro_fits_write: unsupported value type for header key {key}: {type(value).__name__}")
+    card = f"{key:<8}= {field}"
+    if len(card) > 80:
+        raise ValueError(f"astro_fits_write: header value for {key} does not fit one FITS card")
+    return card.ljust(80).encode("ascii")
+
+
+def _fits_storage(image):
+    array = np.asarray(image)
+    if array.ndim not in (2, 3):
+        raise ValueError(f"astro_fits_write: primary image must be 2-D or 3-D, got shape {array.shape!r}")
+    if array.size == 0:
+        raise ValueError("astro_fits_write: primary image must not be empty")
+    dtype = array.dtype
+    bzero, bscale = 0, 1
+    if dtype == np.dtype("uint8"):
+        bitpix, stored = 8, array.astype(">u1", copy=False)
+    elif dtype == np.dtype("int16"):
+        bitpix, stored = 16, array.astype(">i2", copy=False)
+    elif dtype == np.dtype("uint16"):
+        bitpix, bzero = 16, 1 << 15
+        stored = (array.astype(np.int64) - bzero).astype(">i2")
+    elif dtype == np.dtype("int32"):
+        bitpix, stored = 32, array.astype(">i4", copy=False)
+    elif dtype == np.dtype("uint32"):
+        bitpix, bzero = 32, 1 << 31
+        stored = (array.astype(np.int64) - bzero).astype(">i4")
+    elif dtype == np.dtype("int64"):
+        bitpix, stored = 64, array.astype(">i8", copy=False)
+    elif dtype == np.dtype("float32"):
+        bitpix, stored = -32, array.astype(">f4", copy=False)
+    elif dtype == np.dtype("float64"):
+        bitpix, stored = -64, array.astype(">f8", copy=False)
+    else:
+        raise ValueError(f"astro_fits_write: unsupported dtype {dtype}; use uint8/uint16/uint32, int16/int32/int64, float32/float64")
+    return array, stored, bitpix, bzero, bscale
+
+
+def astro_fits_write(image, *, header):
+    """2-D/3-D 天文画像と基本 WCS を primary-HDU FITS の ``bytes`` にする。
+
+    ``header`` は FITS の基本 WCS キー(``CTYPE*``, ``CRPIX*``, ``CRVAL*``,
+    ``CDELT*``, ``PC*_*``, ``CD*_*``, ``CUNIT*`` など)だけを持つ辞書。構造キーは
+    配列から作り、uint16/uint32 は標準の BZERO 規約で保存する。呼び出し例:
+    ``payload = astro_fits_write(image, header={"CTYPE1": "RA---TAN"})``。
+    """
+    array, stored, bitpix, bzero, bscale = _fits_storage(image)
+    if not isinstance(header, Mapping):
+        raise ValueError("astro_fits_write: header must be a mapping of basic WCS keys")
+    raw_header = header.get("wcs", header) if set(header) >= {"wcs"} else header
+    if not isinstance(raw_header, Mapping):
+        raise ValueError("astro_fits_write: header['wcs'] must be a mapping")
+    wcs = {}
+    for key, value in raw_header.items():
+        upper = str(key).upper()
+        if upper not in _FITS_WCS_KEYS:
+            raise ValueError(f"astro_fits_write: unsupported header key {key!r}; only basic WCS keys are accepted")
+        if upper in wcs:
+            raise ValueError(f"astro_fits_write: duplicate WCS key {upper}")
+        wcs[upper] = value
+    cards = [_fits_card("SIMPLE", True), _fits_card("BITPIX", bitpix),
+             _fits_card("NAXIS", array.ndim)]
+    cards.extend(_fits_card(f"NAXIS{axis}", size)
+                 for axis, size in enumerate(reversed(array.shape), 1))
+    if bzero:
+        cards.extend((_fits_card("BZERO", bzero), _fits_card("BSCALE", bscale)))
+    cards.extend(_fits_card(key, wcs[key]) for key in sorted(wcs))
+    cards.append(b"END".ljust(80, b" "))
+    header_bytes = b"".join(cards)
+    header_bytes += b" " * (-len(header_bytes) % _FITS_BLOCK)
+    body = stored.tobytes(order="C")
+    body += b"\0" * (-len(body) % _FITS_BLOCK)
+    return header_bytes + body
+
+
+def astro_fits_read(data):
+    """primary HDU の 2-D/3-D FITS を ``(image_or_volume, meta)`` として読む。
+
+    ``meta`` は ``bitpix``、``bzero``、``bscale`` と基本 WCS の ``wcs`` 辞書を持つ。
+    切れたブロック、random groups、BLANK、次元・BITPIX・データ長の不一致は名指しで拒否する。
+    呼び出し例: ``image, meta = astro_fits_read(payload)``。
+    """
+    op = "astro_fits_read"
+    raw = _file_bytes(data, op, ascii_only=False)
+    if len(raw) < _FITS_BLOCK or len(raw) % _FITS_BLOCK:
+        raise ValueError(f"{op}: FITS length {len(raw)} is not a whole 2880-byte block")
+    values, end_offset = {}, None
+    for offset in range(0, len(raw), 80):
+        card = raw[offset:offset + 80]
+        try:
+            text = card.decode("ascii")
+        except UnicodeDecodeError as exc:
+            raise ValueError(f"{op}: non-ASCII header card at byte {offset}") from exc
+        keyword = text[:8].strip()
+        if keyword == "END":
+            end_offset = offset + 80
+            break
+        if not keyword:
+            continue
+        if text[8:10] != "= ":
+            if keyword in ("COMMENT", "HISTORY"):
+                continue
+            raise ValueError(f"{op}: unsupported non-value header card {keyword}")
+        if keyword in values:
+            raise ValueError(f"{op}: duplicate header key {keyword}")
+        values[keyword] = _fits_value(text[10:], keyword)
+    if end_offset is None:
+        raise ValueError(f"{op}: primary header has no END card")
+    if values.get("SIMPLE") is not True:
+        raise ValueError(f"{op}: SIMPLE must be T in a primary FITS HDU")
+    bitpix = values.get("BITPIX")
+    dtype_by_bitpix = {8: np.dtype(">u1"), 16: np.dtype(">i2"), 32: np.dtype(">i4"),
+                       64: np.dtype(">i8"), -32: np.dtype(">f4"), -64: np.dtype(">f8")}
+    if bitpix not in dtype_by_bitpix:
+        raise ValueError(f"{op}: unsupported BITPIX {bitpix!r}; expected 8/16/32/64/-32/-64")
+    naxis = values.get("NAXIS")
+    if naxis not in (2, 3):
+        raise ValueError(f"{op}: primary image NAXIS must be 2 or 3, got {naxis!r}")
+    if values.get("GROUPS", False) or values.get("PCOUNT", 0) != 0 or values.get("GCOUNT", 1) != 1:
+        raise ValueError(f"{op}: random-groups FITS is unsupported")
+    if "BLANK" in values:
+        raise ValueError(f"{op}: integer BLANK pixels are unsupported; convert them to a float image with NaN")
+    dims = []
+    for axis in range(1, naxis + 1):
+        size = values.get(f"NAXIS{axis}")
+        if not isinstance(size, int) or size <= 0:
+            raise ValueError(f"{op}: NAXIS{axis} must be a positive integer, got {size!r}")
+        dims.append(size)
+    header_size = (end_offset + _FITS_BLOCK - 1) // _FITS_BLOCK * _FITS_BLOCK
+    count = math.prod(dims)
+    byte_count = count * dtype_by_bitpix[bitpix].itemsize
+    padded_end = header_size + ((byte_count + _FITS_BLOCK - 1) // _FITS_BLOCK * _FITS_BLOCK)
+    if len(raw) < padded_end:
+        raise ValueError(f"{op}: primary data declares {byte_count} bytes but input is truncated by {padded_end - len(raw)} bytes")
+    if len(raw) != padded_end:
+        raise ValueError(f"{op}: trailing HDU or {len(raw) - padded_end} unexplained bytes are unsupported")
+    array = np.frombuffer(raw, dtype=dtype_by_bitpix[bitpix], count=count,
+                          offset=header_size).reshape(tuple(reversed(dims))).copy()
+    if array.dtype.itemsize > 1:
+        array = array.astype(array.dtype.newbyteorder("="), copy=False)
+    bzero, bscale = values.get("BZERO", 0), values.get("BSCALE", 1)
+    if not isinstance(bzero, (int, float)) or not isinstance(bscale, (int, float)) or bscale == 0:
+        raise ValueError(f"{op}: BZERO/BSCALE must be finite numeric values and BSCALE must be nonzero")
+    if not math.isfinite(float(bzero)) or not math.isfinite(float(bscale)):
+        raise ValueError(f"{op}: BZERO/BSCALE must be finite")
+    if bitpix == 16 and bzero == 1 << 15 and bscale == 1:
+        array = (array.astype(np.int32) + (1 << 15)).astype(np.uint16)
+    elif bitpix == 32 and bzero == 1 << 31 and bscale == 1:
+        array = (array.astype(np.int64) + (1 << 31)).astype(np.uint32)
+    elif bzero != 0 or bscale != 1:
+        array = array.astype(np.float64) * float(bscale) + float(bzero)
+    wcs = {key: values[key] for key in _FITS_WCS_KEYS if key in values}
+    return array, {"format": "FITS", "bitpix": int(bitpix), "bzero": bzero,
+                   "bscale": bscale, "wcs": wcs}

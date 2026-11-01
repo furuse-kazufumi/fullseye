@@ -1270,6 +1270,9 @@ def _fileio_builders():
     e57_table = {"points": points, "intensity": np.linspace(0.1, 0.9, len(points)),
                  "colors": np.tile([128, 64, 255], (len(points), 1)),
                  "pose": {"rotation": [1, 0, 0, 0], "translation": [1, 2, 3]}}
+    fits_image = np.arange(20, dtype=np.float32).reshape(4, 5)
+    fits_header = {"CTYPE1": "RA---TAN", "CTYPE2": "DEC--TAN", "CUNIT1": "deg",
+                   "CUNIT2": "deg"}
 
     def csv_payload():
         return fileio.table_write_csv(csv_table, units=units, meta=meta)
@@ -1289,6 +1292,8 @@ def _fileio_builders():
         "points_read_xyz": lambda pool, rng: ([fileio.points_write_xyz(points)], {}),
         "e57_write": lambda pool, rng: ([e57_table], {}),
         "e57_read": lambda pool, rng: ([fileio.e57_write(e57_table)], {}),
+        "astro_fits_write": lambda pool, rng: ([fits_image], {"header": fits_header}),
+        "astro_fits_read": lambda pool, rng: ([fileio.astro_fits_write(fits_image, header=fits_header)], {}),
     }
 
 

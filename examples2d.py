@@ -38,6 +38,9 @@ DIR = os.path.join(_ROOT, "examples")
 # id -> metadata. `name`/`summary` are plain-language (what real problem it solves);
 # `task` groups the gallery; `data` is the provenance. Every id maps to examples/<id>.py.
 EXAMPLES = [
+    {"id": "fileio_scientific_roundtrip", "task": "fileio", "data": "synthetic",
+     "name": "科学画像・体積を標準形式で受け渡す",
+     "summary": "FITS の画像と WCS をメモリ上で書いて読み戻し、配列と単位つきメタデータが一致することを自己検査する。"},
     {"id": "fileio_roundtrip", "task": "fileio", "data": "synthetic",
      "name": "表・メッシュ・点群を標準形式で受け渡す",
      "summary": "単位と由来を持つ CSV、属性つき PLY、STL、OBJ、OFF、XYZ、E57 をメモリ上で書いて読み戻し、"

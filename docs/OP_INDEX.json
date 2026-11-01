@@ -1,8 +1,8 @@
 {
- "n_ops": 3623,
+ "n_ops": 3625,
  "tiers": {
   "color": 12,
-  "ledger": 2664,
+  "ledger": 2666,
   "nary": 17,
   "registry": 930
  },
@@ -1721,6 +1721,32 @@
    "dim": "math",
    "in_sorts": [
     "matrix"
+   ]
+  },
+  {
+   "name": "astro_fits_read",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "any",
+   "category": "fits",
+   "tier": "ledger",
+   "ledger": "opsfileio",
+   "dim": "fileio",
+   "in_sorts": [
+    "any"
+   ]
+  },
+  {
+   "name": "astro_fits_write",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "any",
+   "category": "fits",
+   "tier": "ledger",
+   "ledger": "opsfileio",
+   "dim": "fileio",
+   "in_sorts": [
+    "any"
    ]
   },
   {

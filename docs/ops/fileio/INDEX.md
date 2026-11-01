@@ -1,4 +1,4 @@
-# FILEIO operator help — 14 ops in 4 categories
+# FILEIO operator help — 16 ops in 5 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/fileio/<category>/<op>.md` を走査。
 
@@ -7,6 +7,10 @@
 ### e57 (2)
 
 [e57_read](e57/e57_read.md) · [e57_write](e57/e57_write.md)
+
+### fits (2)
+
+[astro_fits_read](fits/astro_fits_read.md) · [astro_fits_write](fits/astro_fits_write.md)
 
 ### mesh (8)
 

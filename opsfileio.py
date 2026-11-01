@@ -27,6 +27,10 @@ _CATALOG = {
         ("e57_write", ["table"], "any"),
         ("e57_read", ["any"], "table"),
     ],
+    "fits": [
+        ("astro_fits_write", ["any"], "any"),
+        ("astro_fits_read", ["any"], "any"),
+    ],
 }
 
 

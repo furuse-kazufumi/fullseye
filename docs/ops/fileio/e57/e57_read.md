@@ -34,7 +34,7 @@ ASTM E57 の ``bytes`` を読み、座標・強度・色・pose の点群 ``tabl
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 
-[table_write_csv](../table/table_write_csv.md) · [mesh_write_ply](../mesh/mesh_write_ply.md) · [mesh_read_ply](../mesh/mesh_read_ply.md) · [mesh_read_stl](../mesh/mesh_read_stl.md) · [e57_write](e57_write.md)
+[table_write_csv](../table/table_write_csv.md) · [mesh_write_ply](../mesh/mesh_write_ply.md) · [mesh_read_ply](../mesh/mesh_read_ply.md) · [mesh_read_stl](../mesh/mesh_read_stl.md) · [e57_write](e57_write.md) · [astro_fits_write](../fits/astro_fits_write.md) · [astro_fits_read](../fits/astro_fits_read.md)
 
 ## 同カテゴリ(`e57`)
 
