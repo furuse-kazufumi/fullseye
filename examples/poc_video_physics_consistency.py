@@ -48,6 +48,7 @@ import ballistics as B  # noqa: E402
 import drivettc as TTC  # noqa: E402
 import imgforensics as IF  # noqa: E402
 import annotate as AN  # noqa: E402
+from fullseye.evaluation import GateAdapter, GateStyle  # noqa: E402
 
 T0 = time.time()
 FPS = 30
@@ -61,12 +62,13 @@ IMG_W, IMG_H, F_PX = 960, 540, 600.0
 CAM = np.array([18.0, -45.0, 6.0])
 JITTER_PX = 0.3
 MIN_DELTA = 10.0                     # ΔAIC の「決定的」の慣用(op は閾値を同梱しない。呼び手 = この PoC が決める)
-OK = []
+_GATE = GateAdapter(
+    style=GateStyle(indent="  ", pass_word="PASS", fail_word="FAIL", detail_prefix=" ", always_detail_prefix=True)
+)
 
 
 def gate(name, cond, detail=""):
-    OK.append(bool(cond))
-    print("  [%s] %s %s" % ("PASS" if cond else "FAIL", name, detail))
+    _GATE(name, cond, detail)
 
 
 def car_params():
@@ -445,11 +447,11 @@ def main() -> int:
 
     if figs.errors():
         print("図の書き出しで失敗:", "; ".join(figs.errors()))
-        OK.append(False)
     print("画面の縁に触れて引き直した発射: %d 本(縁に触れた bbox は切り詰められているので使わない)" % CLIPPED[0])
     print("所要 %.1f 秒" % (time.time() - T0))
-    print("PASS" if all(OK) else "FAIL")
-    return 0 if all(OK) else 1
+    passed = not _GATE.failures and not figs.errors()
+    print("PASS" if passed else "FAIL")
+    return 0 if passed else 1
 
 
 if __name__ == "__main__":
