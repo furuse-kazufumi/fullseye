@@ -42,6 +42,7 @@
 """
 from __future__ import annotations
 
+import os
 import sys
 import time
 from pathlib import Path
@@ -449,6 +450,21 @@ def section3_depth_table(masks, d_hat):
     print("     冷え方が板厚のそれに近づくため。誤差は必ず**過大側**に出る。")
 
 
+WINDOW_COLS = [(d, dia) for d in DEPTHS_MM for dia in (2.0, 4.0)]
+
+
+def window_depth_estimates(ts, cube, masks, windows):
+    """4 節と展示動画が共用する、時間窓ごとの深さ地図と小欠陥 8 個の誤差。"""
+    maps, errors = {}, {}
+    for tmax in windows:
+        k = int(np.searchsorted(ts, tmax))
+        dh, _ = tsr_depth(ts[:k], cube[:k])
+        maps[float(tmax)] = dh
+        errors[float(tmax)] = [100 * (1e3 * float(np.median(dh[masks[(d, dia)]])) / d - 1)
+                               for d, dia in WINDOW_COLS]
+    return maps, errors
+
+
 def section4_aspect(depth_map, ts, masks, d_hat, cube, sound):
     print()
     print("=" * 78)
@@ -517,19 +533,11 @@ def section4_aspect(depth_map, ts, masks, d_hat, cube, sound):
     print()
     print("  【検証】窓の終わりが効いているなら、窓を切り詰めれば直るはず。")
     print()
-    cols = [(d, dia) for d in DEPTHS_MM for dia in (2.0, 4.0)]
-    print("  %8s | %s" % ("窓 s", "  ".join("%5.1f/%-4.1f" % c for c in cols)))
+    print("  %8s | %s" % ("窓 s", "  ".join("%5.1f/%-4.1f" % c for c in WINDOW_COLS)))
     print("  " + "-" * 76)
-    win_err = {}
+    _win_maps, win_err = window_depth_estimates(ts, cube, masks, [1.0, 2.0, 4.0, T_END])
     for tmax in [1.0, 2.0, 4.0, T_END]:
-        k = int(np.searchsorted(ts, tmax))
-        dh, _ = tsr_depth(ts[:k], cube[:k])
-        cells, vals = [], []
-        for d, dia in cols:
-            e = 1e3 * float(np.median(dh[masks[(d, dia)]]))
-            vals.append(100 * (e / d - 1))
-            cells.append("%+8.0f%% " % vals[-1])
-        win_err[tmax] = vals
+        cells = ["%+8.0f%% " % v for v in win_err[tmax]]
         print("  %8.1f | %s" % (tmax, "".join(cells)))
     print()
     # ★この PoC のいちばん重い所見を固定する ——「縦横比の限界」は物理ではなく
@@ -561,6 +569,197 @@ def section4_aspect(depth_map, ts, masks, d_hat, cube, sound):
     print("     取り、t* の数倍で窓を切り直して当て直す。op にするならこれを")
     print("     内側に入れるべきで、固定窓を既定にしてはいけない。")
     return win_err
+
+
+WINDOW_SHOWCASE_SIZE = (1280, 720)
+
+
+def _window_font(size=22, bold=False):
+    from PIL import ImageFont
+
+    names = ([r"C:\Windows\Fonts\YuGothB.ttc", r"C:\Windows\Fonts\meiryob.ttc"]
+             if bold else
+             [r"C:\Windows\Fonts\YuGothM.ttc", r"C:\Windows\Fonts\meiryo.ttc",
+              "/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc"])
+    for name in names:
+        if Path(name).is_file():
+            return ImageFont.truetype(name, size)
+    raise RuntimeError("showcase 用の日本語フォントが見つからない")
+
+
+def _window_text(draw, xy, text, box, *, size=22, fill=(238, 242, 246), bold=False):
+    """全テキストを描画前に実測し、はみ出しを許さない。"""
+    font = _window_font(size, bold)
+    bb = draw.multiline_textbbox(xy, text, font=font, spacing=4)
+    assert bb[0] >= box[0] and bb[1] >= box[1] and bb[2] <= box[2] and bb[3] <= box[3], \
+        (text, bb, box)
+    draw.multiline_text(xy, text, font=font, fill=fill, spacing=4)
+
+
+def _window_depth_rgb(depth_mm):
+    x = np.asarray(fs.apply_cmap(depth_mm, "turbo", vmin=0.5, vmax=4.0))[..., :3]
+    return np.rint(255 * np.clip(x, 0.0, 1.0)).astype(np.uint8)
+
+
+def _window_audit(frames):
+    root = os.environ.get("FULLSEYE_AUDIT_DIR", "").strip()
+    if not root:
+        return
+    from PIL import Image
+
+    out = Path(root) / "poc_thermography_ndt"
+    out.mkdir(parents=True, exist_ok=True)
+    for fn, i in (("f000.png", 0), ("f_mid.png", len(frames) // 2),
+                  ("f_end.png", len(frames) - 1)):
+        Image.fromarray(frames[i]).save(out / fn)
+    ids = np.linspace(0, len(frames) - 1, 12).round().astype(int)
+    contact = Image.new("RGB", (1280, 540), (10, 15, 22))
+    for n, i in enumerate(ids):
+        thumb = Image.fromarray(frames[i]).resize((320, 180), Image.Resampling.LANCZOS)
+        contact.paste(thumb, ((n % 4) * 320, (n // 4) * 180))
+    contact.save(out / "contact.png")
+
+
+def _window_curve_peak(ts, curve, tmax):
+    k = int(np.searchsorted(ts, tmax))
+    d, _ = tsr_depth(ts[:k], curve[:k, None, None])
+    return float(d[0, 0] ** 2 / (np.pi * ALPHA))
+
+
+def save_window_explained(depth_map, ts, cube, masks, section4_errors):
+    """冷却像、2 つの TSR 時間窓、真値、3 本の冷却曲線を結ぶ 48 コマ。"""
+    if not figs.enabled():
+        return None
+    from PIL import Image, ImageDraw
+
+    maps, errors = window_depth_estimates(ts, cube, masks, [4.0, T_END])
+    for tmax in (4.0, T_END):
+        assert np.allclose(errors[tmax], section4_errors[tmax], rtol=0, atol=1e-12), \
+            (tmax, errors[tmax], section4_errors[tmax])
+        # 同じ共通関数をもう一度呼んでも地図が 1 bit も動かないことを門にする。
+        again, _ = window_depth_estimates(ts, cube, masks, [tmax])
+        assert np.array_equal(maps[tmax], again[tmax]), tmax
+
+    err25, err4 = float(errors[T_END][0]), float(errors[4.0][0])
+    # この 2 値は画面へ手書きせず、ここで計算した値を丸めて描く。
+    assert abs(err25 - 612.0) < 1.0 and abs(err4 + 9.0) < 1.0, (err25, err4)
+
+    cam_ts, cam_cube = camera_cube(depth_map)
+    ids = np.linspace(0, len(cam_ts) - 1, 48).round().astype(int)
+    curves = [cam_cube[:, 10, 10], cam_cube[:, 20, 20], cam_cube[:, 140, 140]]
+    curve_labels = ["健全部", "0.5 mm・2 mm", "2.0 mm・16 mm"]
+    curve_colors = [(220, 225, 232), (245, 137, 62), (72, 170, 232)]
+    peaks = [[_window_curve_peak(cam_ts, c, w) for w in (T_END, 4.0)] for c in curves]
+    lts = np.log(cam_ts)
+    lys = [np.log(np.maximum(c, 1e-9)) for c in curves]
+    ymin = min(float(y.min()) for y in lys)
+    ymax = max(float(y.max()) for y in lys)
+    truth = depth_map * 1e3
+    map_arrays = (maps[T_END] * 1e3, maps[4.0] * 1e3, truth)
+    map_titles = ("窓25 s\nの深さ", "窓4 s\nの深さ", "真値")
+    map_errors = (err25, err4, None)
+
+    frames = []
+    for frame_no, idx in enumerate(ids):
+        im = Image.new("RGB", WINDOW_SHOWCASE_SIZE, (10, 15, 22))
+        d = ImageDraw.Draw(im)
+        d.rectangle((0, 0, 1279, 55), fill=(25, 35, 48))
+        d.rectangle((0, 690, 1279, 719), fill=(25, 35, 48))
+        _window_text(d, (18, 10), "熱画像で剥離の深さを測る —— 当てはめる時間窓で答えが変わる",
+                     (0, 0, 1000, 56), size=25, bold=True)
+        _window_text(d, (1070, 12), "t = %.2f s(%d/48)" % (cam_ts[idx], frame_no + 1),
+                     (1040, 0, 1276, 56), size=22)
+
+        # 左: 560 px の枠内に、ラベル余白 48 px + 512 px の冷却像。
+        d.rectangle((20, 70, 579, 629), fill=(18, 25, 34), outline=(83, 96, 111))
+        thermal = Image.fromarray(_thermal_display(cam_cube[idx], 512)).convert("RGB")
+        im.paste(thermal, (68, 118))
+        _window_text(d, (72, 71), "直径 2 mm", (68, 70, 196, 118), size=22)
+        _window_text(d, (202, 71), "4 mm", (196, 70, 324, 118), size=22)
+        _window_text(d, (330, 71), "8 mm", (324, 70, 452, 118), size=22)
+        _window_text(d, (454, 71), "16 mm", (452, 70, 580, 118), size=22)
+        for row, depth in enumerate(DEPTHS_MM):
+            _window_text(d, (22, 139 + row * 128), "深さ\n%.1f\nmm" % depth,
+                         (20, 118 + row * 128, 68, 246 + row * 128), size=22)
+        if frame_no < 6:
+            scale = 512.0 / NPIX
+            cell = NPIX // 4
+            for row, _depth in enumerate(DEPTHS_MM):
+                for col, dia in enumerate(DIAMS_MM):
+                    cy, cx = cell * row + cell // 2, cell * col + cell // 2
+                    rr = 0.5 * dia * 1e-3 / PX * scale
+                    px, py = 68 + (cx + .5) * scale, 118 + (cy + .5) * scale
+                    d.ellipse((px - rr, py - rr, px + rr, py + rr),
+                              outline=(255, 255, 255), width=1)
+
+        # 中央: 190 x 190 の深さ地図を 3 枚、固定 0.5〜4.0 mm で描く。
+        for n, (arr, title, error) in enumerate(zip(map_arrays, map_titles, map_errors)):
+            y = 70 + n * 200
+            panel = Image.fromarray(_window_depth_rgb(arr)).resize((190, 190), Image.Resampling.BILINEAR)
+            im.paste(panel, (610, y))
+            d.rectangle((609, y - 1, 800, y + 190), outline=(220, 225, 232), width=1)
+            # 固定尺度の色バー。文字は地図の外だけに置く。
+            grad = np.linspace(1, 0, 190)[:, None]
+            bar = np.asarray(fs.apply_cmap(grad, "turbo", vmin=0.0, vmax=1.0))[..., :3]
+            bar = np.repeat(np.rint(255 * bar).astype(np.uint8), 14, axis=1)
+            im.paste(Image.fromarray(bar), (805, y))
+            _window_text(d, (822, y), "4.0", (820, y, 868, y + 30), size=22)
+            _window_text(d, (822, y + 164), "0.5", (820, y + 160, 868, y + 190), size=22)
+            _window_text(d, (872, y + 8), title, (870, y, 948, y + 75), size=22, bold=True)
+            if error is not None:
+                _window_text(d, (872, y + 90), "誤差\n%+.0f %%" % error,
+                             (870, y + 82, 948, y + 160), size=22,
+                             fill=(245, 137, 62) if n == 0 else (72, 202, 143))
+            else:
+                _window_text(d, (872, y + 90), "0.5〜\n3.0 mm",
+                             (870, y + 82, 948, y + 160), size=22)
+
+        # 右: ln T 対 ln t。25 s 全域を薄い帯、4 s までを濃い帯にする。
+        d.rectangle((950, 70, 1259, 689), fill=(18, 25, 34), outline=(83, 96, 111))
+        _window_text(d, (968, 77), "ln T 対 ln t", (950, 70, 1260, 108), size=24, bold=True)
+        _window_text(d, (960, 108), "濃い帯: 窓4 s / 薄い帯: 窓25 s",
+                     (950, 105, 1260, 140), size=22)
+        x0, y0, x1, y1 = 992, 148, 1245, 493
+        d.rectangle((x0, y0, x1, y1), fill=(38, 45, 55))
+        x4 = x0 + (np.log(4.0) - lts[0]) / (lts[-1] - lts[0]) * (x1 - x0)
+        d.rectangle((x0, y0, x4, y1), fill=(51, 62, 76))
+        d.line((x0, y1, x1, y1), fill=(190, 199, 210), width=2)
+        d.line((x0, y0, x0, y1), fill=(190, 199, 210), width=2)
+        xp = lambda t: x0 + (np.log(t) - lts[0]) / (lts[-1] - lts[0]) * (x1 - x0)
+        yp = lambda v: y1 - (v - ymin) / (ymax - ymin) * (y1 - y0)
+        for c, ly, color, pp in zip(curves, lys, curve_colors, peaks):
+            pts = [(xp(t), yp(v)) for t, v in zip(cam_ts, ly)]
+            d.line(pts, fill=color, width=3)
+            for mark_no, tp in enumerate(pp):
+                val = float(np.interp(tp, cam_ts, ly))
+                xx, yy = xp(tp), yp(val)
+                if mark_no == 0:
+                    d.ellipse((xx - 5, yy - 5, xx + 5, yy + 5), outline=color, width=2)
+                else:
+                    d.ellipse((xx - 5, yy - 5, xx + 5, yy + 5), fill=color)
+        cursor = xp(cam_ts[idx])
+        d.line((cursor, y0, cursor, y1), fill=(255, 255, 255), width=2)
+        _window_text(d, (1080, 497), "ln t", (950, 493, 1260, 528), size=22)
+        legend_y = 530
+        for n, (label, color) in enumerate(zip(curve_labels, curve_colors)):
+            yy = legend_y + n * 32
+            d.line((968, yy + 12, 995, yy + 12), fill=color, width=4)
+            _window_text(d, (1004, yy), label, (1000, yy, 1254, yy + 30), size=22)
+        _window_text(d, (968, 632), "d = √(π α t*)", (950, 625, 1260, 660), size=22, bold=True)
+        _window_text(d, (968, 660), "α = 4.2e-7 m²/s", (950, 655, 1260, 688), size=22)
+
+        _window_text(d, (8, 692),
+                     "Fullseye: TSR(ln Tをln tの多項式で当てはめ、2階微分の山t*から深さ)。窓を切るのは物理でなく当てはめの都合。",
+                     (0, 690, 1280, 720), size=22)
+        frames.append(np.asarray(im))
+
+    caption = ("冷却像と TSR の 25 秒窓・4 秒窓の深さ地図を同じ計算で並べる。"
+               "深さ 0.5 mm・直径 2 mm の誤差は %+.0f %% から %+.0f %% に縮む。"
+               % (err25, err4))
+    figs.save_video("window_explained", frames, fps=12.0, gif_every=2,
+                    caption=caption)
+    _window_audit(frames)
+    return {"errors": (err25, err4), "frames": len(frames)}
 
 
 def _cnr(mp, masks, sound):
@@ -789,6 +988,7 @@ def main():
     assert 1.8 <= thermal_gate["peak_time_depth_exponent"] <= 2.2
     assert abs(thermal_gate["diffusivity_time_ratio"] - 0.5) <= 0.05
     win_err = section4_aspect(depth_map, ts, masks, d_hat, cube, sound)
+    save_window_explained(depth_map, ts, cube, masks, win_err)
     section5_methods(ts, cube, masks, sound)
     section6_noise(depth_map, masks)
     section7_illumination(depth_map, masks, sound)
