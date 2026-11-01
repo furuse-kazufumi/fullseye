@@ -45,6 +45,17 @@ def test_relief_packs_rgb_as_colour_and_val_only_as_normal_displacement():
     assert body["relief"]["size"] * 1.0 == np.sqrt(2)/4  # ×1: 外接半径の 1/4
 
 
+def test_relief_png_rounds_a_platform_drifted_half_step_deterministically():
+    spec = _spec()
+    spec["tabs"][0]["bodies"][0]["val"] = np.array(
+        [0.0, 229.49999999999997 / 255.0, 1.0, 0.25]
+    )
+    data = pv._pack_spec(spec, ["ja", "en"])
+    body = data["tabs"][0]["bodies"][0]
+    decoded = pv._decode_array(data["arrays"][body["val"]]).ravel()
+    assert decoded[1] == 230
+
+
 def test_relief_is_opt_in_so_existing_public_viewers_keep_their_generated_page():
     html = pv._build_html(_spec(relief=False), ["ja", "en"])
     assert "id=\"relief\"" not in html
