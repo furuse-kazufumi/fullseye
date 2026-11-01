@@ -14,8 +14,8 @@
   "name": "group9_zoom",
   "caption": "G9(周期 1.95〜1.06 µm)を 3 倍に拡大。FP は E5(1.22 µm)まで 3 本の棒が分かれる。",
   "shape": [
-   121,
-   1804,
+   343,
+   608,
    3
   ]
  },
@@ -24,8 +24,8 @@
   "name": "element_modulation",
   "caption": "",
   "shape": [
-   360,
-   721,
+   720,
+   1432,
    3
   ]
  },
@@ -44,8 +44,8 @@
   "name": "overlap_vs_convergence",
   "caption": "",
   "shape": [
-   360,
-   560,
+   720,
+   1120,
    3
   ]
  },
@@ -54,8 +54,8 @@
   "name": "overlap_table",
   "caption": "",
   "shape": [
-   224,
-   726,
+   448,
+   1447,
    3
   ],
   "csv": "06_overlap_table.csv",
@@ -106,8 +106,8 @@
   "name": "residual_history",
   "caption": "",
   "shape": [
-   360,
-   560,
+   720,
+   1120,
    3
   ]
  }
