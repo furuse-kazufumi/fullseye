@@ -376,7 +376,7 @@ def _figures_line(poc_id: str, lang: str) -> str:
     if os.path.isdir(d):
         n = len([f for f in os.listdir(d)
                  if f.lower().endswith((".png", ".gif"))
-                 and not f.endswith("_720.jpg")])
+                 and not f.endswith("_720.jpg") and not f.startswith("story.")])
     url = ("https://github.com/furuse-kazufumi/fullseye/tree/master/"
            "docs/articles/assets/poc/" + poc_id)
     if lang == "ja":

@@ -77,6 +77,7 @@ CHAIN = [
     (["tools/gen_wingpoc_gallery.py"], "PoC 展示館(総合案内 + 棟、ja/en)"),
     (["tools/gen_examples_readme.py"], "examples/README.md"),
     (["tools/gen_oss_landscape.py"], "既存 OSS の地図(docs/literature/oss_landscape.json → OSS_LANDSCAPE.md)"),
+    (["tools/gen_view2026_story_gifs.py"], "ViEW2026 の 2-D 展示を流れで見せる story GIF と台帳"),
     (["tools/gen_view2026_pages.py"], "docs/view2026/**/index.md(論文の QR の行き先、正本は exhibits.json)"),
     # gen_maturity の後(maturity.json を読む)、索引の後(docs/OP_INDEX.json と照合する)。
     # README*.md は gen_docs_index_ops も書くが、マーカーが別なので互いの中身には触れない
@@ -165,6 +166,7 @@ OUTPUTS = {
                                      "docs/articles/assets/poc/_hero_montage.jpg"],
     "tools/gen_examples_readme.py": ["examples/README.md"],
     "tools/gen_oss_landscape.py": ["docs/literature/OSS_LANDSCAPE.md"],
+    "tools/gen_view2026_story_gifs.py": ["docs/view2026/story_gifs.json"],
     "tools/gen_view2026_pages.py": ["docs/view2026/index.md", "docs/view2026/*/index.md"],
     "tools/gen_trust_block.py": ["README.md", "docs/README.md", "docs/README.*.md",
                                  "docs/OP_COUNT_HISTORY.md"],
@@ -223,6 +225,11 @@ MAY_OUTPUTS = {
             ("幅 720 px の JPEG サムネ。元の図(PNG)より古いか無いときだけ書く(_thumb)ので、"
              "図を初めて載せた回・差し替えた回にしか書き込みが起きない。"),
     },
+    "tools/gen_view2026_story_gifs.py": {
+        "docs/articles/assets/poc/*/story.*.gif":
+            ("対象と色差・容量の門を通った 2-D 展示だけに作る日英 story GIF。入力の図と選択が"
+             "変わらなければ source_sha256 を照合して書き直さない。"),
+    },
 }
 
 
@@ -235,7 +242,9 @@ READS = {
     "tools/gen_capabilities_index.py": ["docs/OP_INDEX.json"],
     "tools/gen_wingpoc_gallery.py": ["docs/articles/exhibits/exhibit_numbers.json",
                                       "docs/articles/exhibits/glossary.json"],
-    "tools/gen_view2026_pages.py": ["docs/articles/exhibits/glossary.json"],
+    "tools/gen_view2026_story_gifs.py": ["docs/articles/assets/poc/*_720.jpg"],
+    "tools/gen_view2026_pages.py": ["docs/articles/exhibits/glossary.json",
+                                      "docs/view2026/story_gifs.json"],
     "tools/gen_trust_block.py": ["docs/OP_INDEX.json", "docs/maturity.json",
                                  "docs/README.md", "docs/README.*.md"],
     "tools/gen_design_notes.py": ["auto_specs_data.py"],
@@ -844,7 +853,7 @@ def table_problems() -> list:
             probs.append("READS に鎖に無い段: %s" % s)
     for s, pats in READS.items():
         for rp in pats:
-            if not any(_overlap(rp, wp) for w, wps in OUTPUTS.items() if w != s for wp in wps):
+            if not any(_overlap(rp, wp) for w in scripts if w != s for wp in _all_outputs(w)):
                 probs.append("%s の READS %r は、どの(他の)段の出力でもない" % (s, rp))
     for s, pats in OUTPUTS.items():
         if not pats:
