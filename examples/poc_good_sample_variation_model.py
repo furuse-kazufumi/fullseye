@@ -109,6 +109,17 @@ RECORDED = {"lines": [
 #: DAGM 2007 の章の記録値(同日、FULLSEYE_DAGM_DATA ありで実行)。
 RECORDED_DAGM = '位置合わせ observable=False、帯の幅 = 画像全体のばらつきの 0.93 倍、画素 AUROC 0.465、画像 AUROC 0.566(試験 300 枚・不良 34、楕円の弱い注釈)'
 
+#: 上の実行記録から図に使う AUPRO だけを機械可読にしたもの。VisA 本体が無い環境でも、
+#: 公開済みの実行結果のグラフを描画倍率どおりに再生成するために使う。
+RECORDED_AUPRO = {
+    "std": [0.645, 0.675, 0.682],
+    "moderated": [0.663, 0.678, 0.683],
+    "mad": [0.578, 0.665, 0.667],
+    "合わせない帯(n=20)": [0.460, 0.460],
+    "ゴールデン比較(n=20)": [0.519, 0.519],
+    "RPCA(1 枚ずつ)": [0.607, 0.607],
+}
+
 ok_all = []
 
 
@@ -367,6 +378,24 @@ def _metrics(Z, EX, mask, normal):
             "regions_detected": ro["detected_fraction"], "regions_hit": ro["hit_any"]}
 
 
+def _save_visa_metrics_recorded():
+    """2026-10-18 の実行記録から、実データ章のグラフを再描画する。"""
+    figs.save_plot("visa_metrics_vs_n",
+                   [(sp, [5, 20, 80], RECORDED_AUPRO[sp])
+                    for sp in ("std", "moderated", "mad")]
+                   + [(lab, [5, 80], RECORDED_AUPRO[lab]) for lab in
+                      ("合わせない帯(n=20)", "ゴールデン比較(n=20)", "RPCA(1 枚ずつ)")],
+                   styles=[None, None, None, "dashed", "dashed", "dashed"],
+                   colors=["emphasis", "right", "neutral", "wrong", "reference", "neutral"],
+                   xlabel="良品の枚数 n", ylabel="AUPRO(FPR ≤ 0.3)",
+                   title="VisA %s: 良品の枚数と AUPRO(破線 = 比べる相手)" % VISA_CLASS,
+                   source=VISA_SOURCE,
+                   caption="VisA %s の試験 200 枚(CC BY 4.0)。良品 5 / 20 / 80 枚で学んだ変動モデルの AUPRO(実線)と、"
+                           "同じ物差しで測った比べる相手(破線: 位置合わせしない帯・ゴールデン比較・RPCA)。"
+                           "20 枚で頭打ちになり、位置合わせの有無の差(0.68 対 0.46)が枚数の差より大きい。"
+                           % VISA_CLASS)
+
+
 def stage5_real():
     print("\n5) 公開実データ(VisA %s、CC BY 4.0、灰色・1/%d 縮小)" % (VISA_CLASS, DOWN))
     if not DATA or not os.path.isfile(os.path.join(DATA, "split_csv", "1cls.csv")):
@@ -375,6 +404,7 @@ def stage5_real():
             print("   記録値(2026-10-18):")
             for line in RECORDED["lines"]:
                 print("     " + line)
+            _save_visa_metrics_recorded()
         return None
     t0 = time.perf_counter()
     train, test, mask, normal = _visa(DATA)
