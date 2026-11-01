@@ -93,12 +93,50 @@ def test_gifs_match_sources_durations_colour_and_capacity():
                 assert 0 <= x <= 720 - w and 0 <= y <= 720 - h
                 assert _mad(source, frame.crop((x, y, x + w, y + h))) <= LEDGER["color_mad_limit"]
                 if i:
-                    assert w * h / (G.WIDTH * G.CONTENT_HEIGHT) >= LEDGER["min_content_fraction"]
+                    # 題または左右両端の文字を守る contain は、細帯回避より意味保存を優先する。
+                    if "contain_reason" not in meta:
+                        assert w * h / (G.WIDTH * G.CONTENT_HEIGHT) >= LEDGER["min_content_fraction"]
                     with Image.open(G.ASSETS / pid / meta["file"]) as original:
                         ratio = original.width / original.height
-                        if ratio < G.MIN_ASPECT or ratio > G.MAX_ASPECT:
-                            assert "crop" in meta
+                        if "crop" in meta:
+                            assert ratio <= G.MIN_ASPECT or ratio >= G.MAX_ASPECT
+                        if G.PREVIOUS_MAX_ASPECT < ratio <= G.MAX_ASPECT:
+                            assert "crop" not in meta
+                        if G.MIN_ASPECT <= ratio < G.PREVIOUS_MIN_ASPECT:
+                            assert "crop" not in meta
             assert max(variant["color_mad"]) <= LEDGER["color_mad_limit"]
+
+
+def test_all_ledger_crops_are_reserved_for_aspect_ratios_at_least_2_4_or_at_most_0_42():
+    crops = []
+    for item in LEDGER["entries"].values():
+        if item["status"] != "gif":
+            continue
+        crops.extend(frame for frame in item["variants"]["ja"]["frames"] if "crop" in frame)
+    assert crops
+    assert all(frame["source_aspect"] >= G.MAX_ASPECT or
+               frame["source_aspect"] <= G.MIN_ASPECT for frame in crops)
+
+
+def test_the_thirty_text_only_crops_stay_excluded():
+    excluded = [frame for item in LEDGER["entries"].values()
+                for frame in item.get("excluded_frames", [])
+                if frame["reason"] == "crop_text_only"]
+    assert len(excluded) == 30
+
+
+def test_the_three_reported_graph_and_table_frames_are_contained_whole():
+    expected = {
+        "poc_industrial_oct": {"14_lateral_vs_dof.png"},
+        "poc_hyperspectral_foreign_matter": {
+            "02_real_vs_model_band_depth.png", "03_real_polymer_confusion.png"},
+    }
+    for pid, files in expected.items():
+        frames = {frame["file"]: frame for frame in
+                  LEDGER["entries"][pid]["variants"]["ja"]["frames"]}
+        for file in files:
+            assert frames[file]["contain_reason"] == "aspect_within_2_4"
+            assert "crop" not in frames[file]
 
 
 def test_first_frame_matches_the_saved_thumbnail_at_320_pixels():

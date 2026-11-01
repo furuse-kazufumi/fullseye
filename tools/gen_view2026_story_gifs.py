@@ -62,8 +62,14 @@ MAX_FRAMES = 6
 COLOR_MAD_LIMIT = 6.0
 FIRST_MS = 2500
 OTHER_MS = 1600
-MIN_ASPECT = 0.60
-MAX_ASPECT = 1.67
+MIN_ASPECT = 0.42
+MAX_ASPECT = 2.40
+# 表・数表だけの図については、第3版で除外した30図を閾値変更後も復活させない。
+PREVIOUS_MIN_ASPECT = 0.60
+PREVIOUS_MAX_ASPECT = 1.67
+END_BAND_FRACTION = 0.15
+TITLE_BAND_FRACTION = 0.12
+HIGH_FREQUENCY_THRESHOLD = 64
 MIN_LAPLACIAN_DENSITY = 0.0005
 MIN_CONTENT_FRACTION = 0.36
 RASTER = {".png", ".jpg", ".jpeg", ".webp", ".bmp", ".tif", ".tiff"}
@@ -161,31 +167,91 @@ def _prepared_image(path: Path, crop: list[int] | tuple[int, int, int, int] | No
         return im.copy()
 
 
-def _dense_crop(im: Image.Image) -> tuple[list[int] | None, float]:
-    """極端比率の図から、絶対値 Laplacian の総和が最大になる窓を選ぶ。"""
-    gray = np.asarray(im.convert("L"), dtype=np.int16)
-    h, w = gray.shape
-    lap = np.zeros((h, w), dtype=np.int32)
+def _laplacian(gray: np.ndarray) -> np.ndarray:
+    """4近傍 Laplacian の絶対値。外周は文字判定にも使わないので0にする。"""
+    lap = np.zeros(gray.shape, dtype=np.int32)
     lap[1:-1, 1:-1] = np.abs(
         4 * gray[1:-1, 1:-1] - gray[:-2, 1:-1] - gray[2:, 1:-1]
         - gray[1:-1, :-2] - gray[1:-1, 2:]
     )
+    return lap
+
+
+def _has_text_like_detail(gray: np.ndarray, minimum_tiles: int = 3) -> bool:
+    """一様な背景上に並ぶ、文字らしい小さく疎な高周波の塊を見る。"""
+    if min(gray.shape, default=0) < 3:
+        return False
+    strong = _laplacian(gray) >= HIGH_FREQUENCY_THRESHOLD
+    # 画像解像度に比例した小区画で見る。文字は同色の地に疎な字画が並ぶ。
+    # 写真の粒・物体の輪郭は、地が一様でないか、小区画が列を作らない。
+    tile = max(6, min(gray.shape) // 24)
+    height = (strong.shape[0] // tile) * tile
+    width = (strong.shape[1] // tile) * tile
+    if height == 0 or width == 0:
+        return False
+    shape = (height // tile, tile, width // tile, tile)
+    counts = strong[:height, :width].reshape(shape).sum(axis=(1, 3))
+    samples = gray[:height, :width].reshape(shape).transpose(0, 2, 1, 3)
+    median = np.median(samples, axis=(2, 3), keepdims=True)
+    uniform_background = (np.abs(samples - median) <= 12).mean(axis=(2, 3)) >= 0.65
+    small_blobs = ((counts >= 2) & (counts <= max(3, tile * tile // 2)) &
+                   uniform_background)
+    if int(small_blobs.sum()) < minimum_tiles:
+        return False
+    # 3字画以上が近接して横書きまたは縦書きの列を作ることを要求する。
+    for line in small_blobs:
+        if len(line) >= 3 and np.convolve(line, np.ones(min(5, len(line)), dtype=int),
+                                          mode="valid").max(initial=0) >= 3:
+            return True
+    for line in small_blobs.T:
+        if len(line) >= 3 and np.convolve(line, np.ones(min(5, len(line)), dtype=int),
+                                          mode="valid").max(initial=0) >= 3:
+            return True
+    return False
+
+
+def _dense_crop(im: Image.Image) -> tuple[list[int] | None, float, str | None]:
+    """極端比率の図から、題と端の文字を守った内容量最大の窓を選ぶ。"""
+    gray = np.asarray(im.convert("L"), dtype=np.int16)
+    h, w = gray.shape
+    lap = _laplacian(gray)
     if w / h > MAX_ASPECT:
         crop_w = min(w, max(1, int(MAX_ASPECT * h)))
         scores = np.convolve(lap.sum(axis=0, dtype=np.int64),
                              np.ones(crop_w, dtype=np.int64), mode="valid")
-        x, y, crop_h = int(np.argmax(scores)), 0, h
+        band = max(1, round(END_BAND_FRACTION * w))
+        title_h = max(1, round(TITLE_BAND_FRACTION * h))
+        protect_left = _has_text_like_detail(gray[title_h:, :band])
+        protect_right = _has_text_like_detail(gray[title_h:, w - band:])
+        if protect_left and protect_right:
+            return None, 0.0, "protected_both_edges"
+        x = 0 if protect_left else w - crop_w if protect_right else int(np.argmax(scores))
+        y, crop_h = 0, h
         score = int(scores[x])
     elif w / h < MIN_ASPECT:
         crop_h = min(h, max(1, int(w / MIN_ASPECT)))
         scores = np.convolve(lap.sum(axis=1, dtype=np.int64),
                              np.ones(crop_h, dtype=np.int64), mode="valid")
-        x, y, crop_w = 0, int(np.argmax(scores)), w
+        band = max(1, round(END_BAND_FRACTION * h))
+        protect_top = _has_text_like_detail(gray[:band, :])
+        protect_bottom = _has_text_like_detail(gray[h - band:, :])
+        if protect_top and protect_bottom:
+            return None, 0.0, "protected_both_edges"
+        y = 0 if protect_top else h - crop_h if protect_bottom else int(np.argmax(scores))
+        x, crop_w = 0, w
         score = int(scores[y])
     else:
-        return None, 0.0
+        return None, 0.0, None
+    # 全高を残す横長図でも、内容量だけで左右を選ぶと中央の題が丸ごと窓外に
+    # なることがある。縦長図では上端を切り得るので同じ検査がそのまま効く。
+    title_h = max(1, round(TITLE_BAND_FRACTION * h))
+    source_has_title = _has_text_like_detail(gray[:title_h, :], minimum_tiles=24)
+    crop_has_title = y < title_h and _has_text_like_detail(
+        gray[y:min(y + crop_h, title_h), x:x + crop_w], minimum_tiles=24)
+    if source_has_title and not crop_has_title:
+        return None, 0.0, "title_band_missing"
     density = score / (1020.0 * crop_w * crop_h)
-    return [x, y, crop_w, crop_h], density
+    return [x, y, crop_w, crop_h], density, None
 
 
 def _text_only_name(row: dict) -> bool:
@@ -213,8 +279,12 @@ def _plan_rows(pid: str, rows: list[dict]) -> tuple[list[dict], list[dict]]:
         candidate = dict(row)
         with Image.open(ASSETS / pid / row["file"]) as source:
             ratio = source.width / source.height
-            crop, density = _dense_crop(source) if ratio < MIN_ASPECT or ratio > MAX_ASPECT else (None, 0.0)
-        if crop is not None and _text_only_name(row):
+            if ratio < MIN_ASPECT or ratio > MAX_ASPECT:
+                crop, density, contain_reason = _dense_crop(source)
+            else:
+                crop, density, contain_reason = None, 0.0, None
+        was_previous_crop = ratio < PREVIOUS_MIN_ASPECT or ratio > PREVIOUS_MAX_ASPECT
+        if was_previous_crop and _text_only_name(row):
             excluded.append({"file": row["file"], "reason": "crop_text_only",
                              "source_aspect": round(ratio, 6)})
             continue
@@ -227,6 +297,9 @@ def _plan_rows(pid: str, rows: list[dict]) -> tuple[list[dict], list[dict]]:
             candidate["crop"] = crop
             candidate["source_aspect"] = round(ratio, 6)
             candidate["laplacian_density"] = round(density, 8)
+        elif was_previous_crop:
+            candidate["contain_reason"] = contain_reason or "aspect_within_2_4"
+            candidate["source_aspect"] = round(ratio, 6)
         planned.append(candidate)
     return planned, excluded
 
@@ -286,6 +359,8 @@ def _render(rows: list[dict], folder: Path) -> tuple[list[Image.Image], list[dic
         if row.get("crop") is not None:
             item.update(crop=row["crop"], source_aspect=row["source_aspect"],
                         laplacian_density=row["laplacian_density"])
+        elif row.get("contain_reason"):
+            item.update(contain_reason=row["contain_reason"], source_aspect=row["source_aspect"])
         if row.get("_thumbnail"):
             item["thumbnail"] = row["_thumbnail"]
         meta.append(item)
@@ -325,7 +400,7 @@ def _content_mads(decoded: list[Image.Image], meta: list[dict], folder: Path) ->
     return out
 
 
-def _digest(rows: list[dict], folder: Path, lang: str, version: str = "story-v8-rendered-thumb") -> str:
+def _digest(rows: list[dict], folder: Path, lang: str, version: str = "story-v9-protected-crop") -> str:
     h = hashlib.sha256()
     h.update((lang + "|" + version + "|" + json.dumps(rows, ensure_ascii=False, sort_keys=True)).encode("utf-8"))
     for row in rows:
@@ -452,6 +527,8 @@ def main() -> int:
               "other_duration_ms": OTHER_MS, "target_count": len(targets),
               "crop_aspect_range": [MIN_ASPECT, MAX_ASPECT],
               "crop_metric": "maximum summed absolute 4-neighbour Laplacian",
+              "crop_end_text_protection_fraction": END_BAND_FRACTION,
+              "crop_title_band_fraction": TITLE_BAND_FRACTION,
               "min_laplacian_density": MIN_LAPLACIAN_DENSITY,
               "min_content_fraction": MIN_CONTENT_FRACTION,
               "manual_thumbnail_spec_count": len(THUMB_SPEC), "entries": entries}
