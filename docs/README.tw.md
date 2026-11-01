@@ -60,8 +60,8 @@
 | 階段 | 含義 | 能力 |
 |---|---|---|
 | `research-prototype` | 已實作,但測試或可執行的範例尚未齊全 | 0 |
-| `verified-synthetic` | 已用合成真值自動驗證 | 78 |
-| `validated-public-real-data` | 使用公開實測資料的範例在檢查中實際執行 | 20 |
+| `verified-synthetic` | 已用合成真值自動驗證 | 79 |
+| `validated-public-real-data` | 使用公開實測資料的範例在檢查中實際執行 | 19 |
 | `validated-hardware` | 已在實機上驗證(僅在接受外部報告時) | 0 |
 
 450 個範例中,檢查實際執行的有 450 個。

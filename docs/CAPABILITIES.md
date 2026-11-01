@@ -332,7 +332,7 @@ X 線(や可視光)の透過像は「どれだけ吸われたか」しか写し�
 
 実寸校正: 点群の座標系の単位(m / mm)を揃える。センサの測距雑音 σ を先に測り、PV は σ√(2 ln N) の床と比べて読む。
 
-動く例: `geometry_metrology`, `poc_bump_coplanarity`, `poc_scan_to_bim_asbuilt`, `poc_real_tless_6dof`
+動く例: `geometry_metrology`, `poc_bump_coplanarity`, `poc_scan_to_bim_asbuilt`
 
 ### [どの大きさなら見つかるか(検出確率 POD と a90/95、MIL-HDBK-1823A)](capabilities/probability-of-detection.md)
 

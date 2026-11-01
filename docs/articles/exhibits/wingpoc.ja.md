@@ -6332,25 +6332,25 @@ py -3.11 examples/poc_panorama_drift.py
 
 ## No.2026.285 —— 実機 RGB-D の産業部品を PPF で 6 自由度照合する
 
-BOP T-LESS(CC BY 4.0)の PrimeSense 実測 2 場面・10 対象を、深度→点群→法線→RANSAC 平面除去→クラスタ→PPF+ICP と通し、対称性を含む MSSD/MSPD/ADD-S で採点した。PoC subset は AR_MSSD 0.290 / AR_MSPD 0.320 で、公式全 test の Drost-CVPR10-3D-Only 0.478/0.480、Vidal-Sensors18 0.575/0.574 に負けた。同じモデル・姿勢の理想深度は 0.880/0.880 なので、合成から実機で 0.590/0.560 落ちる。ICP 無しは MSSD 0.280、符号未整理の法線は 0.200。MSSD>0.2d の失敗 6/10 の内訳は、接触クラスタ 1、可視率<0.8 が 2、薄い部品 2、深度欠損>1% が 1、対称部品 4(重複)。
+BOP T-LESS(CC BY 4.0)のBOP19 test_primesense全20場面から先頭画像を1枚ずつ決定的に選び、可視率0.5以上の132対象を深度→点群→法線→RANSAC平面除去→クラスタ→PPF+ICPと通した。AR_MSSD 0.162 / AR_MSPD 0.185で、前回2場面・10対象の0.290/0.320より下がり、公式全testのDrost 0.478/0.480、Vidal 0.575/0.574に負けた。クラスタ分割なしで平面除去後の場面全体へ投票すると0.064/0.054まで悪化した。理想深度は0.827/0.802なので、実機化で0.664/0.617落ちる。ICP無しは0.170/0.152、符号未整理の法線は0.142/0.167。MSSD>0.2dの失敗115/132の重複内訳は、結合クラスタ34、可視率0.8未満9、薄い部品23、深度欠損1%超38、対称部品108。所要39.77秒、0.301秒/対象。
 
 [![実機 RGB-D の産業部品を PPF で 6 自由度照合する](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/01_pose_overlay_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/01_pose_overlay.png)
 
-*↑ **実機 RGB-D の産業部品を PPF で 6 自由度照合する** ―― BOP T-LESS(CC BY 4.0)の PrimeSense 実測 2 場面・10 対象を、深度→点群→法線→RANSAC 平面除去→クラスタ→PPF+ICP と通し、対称性を含む MSSD/MSPD/ADD-S で採点した。PoC subset は AR_MSSD 0.290 / AR_MSPD 0.320 で、公式全 test の Drost-CVPR10-3D-Only 0.478/0.480、Vidal-Sensors18 0.575/0.574 に負けた。同じモデル・姿勢の理想深度は 0.880/0.880 なので、合成から実機で 0.590/0.560 落ちる。ICP 無しは MSSD 0.280、符号未整理の法線は 0.200。MSSD>0.2d の失敗 6/10 の内訳は、接触クラスタ 1、可視率<0.8 が 2、薄い部品 2、深度欠損>1% が 1、対称部品 4(重複)。*
+*↑ **実機 RGB-D の産業部品を PPF で 6 自由度照合する** ―― BOP T-LESS(CC BY 4.0)のBOP19 test_primesense全20場面から先頭画像を1枚ずつ決定的に選び、可視率0.5以上の132対象を深度→点群→法線→RANSAC平面除去→クラスタ→PPF+ICPと通した。AR_MSSD 0.162 / AR_MSPD 0.185で、前回2場面・10対象の0.290/0.320より下がり、公式全testのDrost 0.478/0.480、Vidal 0.575/0.574に負けた。クラスタ分割なしで平面除去後の場面全体へ投票すると0.064/0.054まで悪化した。理想深度は0.827/0.802なので、実機化で0.664/0.617落ちる。ICP無しは0.170/0.152、符号未整理の法線は0.142/0.167。MSSD>0.2dの失敗115/132の重複内訳は、結合クラスタ34、可視率0.8未満9、薄い部品23、深度欠損1%超38、対称部品108。所要39.77秒、0.301秒/対象。*
 
-用語: ICP — 二つの点群で最近点対応と剛体変換の推定を交互に繰り返し、位置合わせする方法。
+用語: RANSAC — 標本から小さな部分集合を反復抽出してモデルを当て、許容誤差内の点が最も多いモデルを選ぶ外れ値に強い推定法。; ICP — 二つの点群で最近点対応と剛体変換の推定を交互に繰り返し、位置合わせする方法。
 
-[![欠測 3678 px、孤立飛び候補 0 px。 BOP T-LESS, CC BY 4.0。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/02_rgb_depth_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/02_rgb_depth.png)
+[![欠測 1164 px、孤立飛び候補 0 px。 BOP T-LESS, CC BY 4.0。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/02_rgb_depth_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/02_rgb_depth.png)
 
-*↑ 測定の図 ―― 欠測 3678 px、孤立飛び候補 0 px。 BOP T-LESS, CC BY 4.0。*
+*↑ 測定の図 ―― 欠測 1164 px、孤立飛び候補 0 px。 BOP T-LESS, CC BY 4.0。*
 
-[![0.05d..0.50d の 10 閾値平均。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/03_mssd_by_object_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/03_mssd_by_object.png)
+[![20場面の標本を obj_id ごとに平均。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/03_mssd_by_object_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/03_mssd_by_object.png)
 
-*↑ 0.05d..0.50d の 10 閾値平均。*
+*↑ 20場面の標本を obj_id ごとに平均。*
 
-[![理想 z-buffer 深度と PrimeSense 深度を同じ PPF+ICP で採点。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/04_synthetic_vs_real_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/04_synthetic_vs_real.png)
+[![左群=理想 z-buffer 深度 0.827/0.802、右群=PrimeSense 深度 0.162/0.185。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/04_synthetic_vs_real_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/04_synthetic_vs_real.png)
 
-*↑ 理想 z-buffer 深度と PrimeSense 深度を同じ PPF+ICP で採点。*
+*↑ 左群=理想 z-buffer 深度 0.827/0.802、右群=PrimeSense 深度 0.162/0.185。*
 
 [![橙=推定、青=真値。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/05_failure_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/05_failure.png)
 
@@ -6364,7 +6364,7 @@ py -3.11 examples/poc_real_tless_6dof.py
 
 この回が作った図は全部で **5 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_real_tless_6dof)
 
-使用 op(ノートへ): [`depth_to_points`](https://furuse.work/ops/3d/transform/depth_to_points.html) · [`estimate_normals`](https://furuse.work/ops/3d/curvature/estimate_normals.html) · [`project_points`](https://furuse.work/ops/3d/render/project_points.html) · [`render_point_depth`](https://furuse.work/ops/3d/render/render_point_depth.html)
+使用 op(ノートへ): [`depth_to_points`](https://furuse.work/ops/3d/transform/depth_to_points.html) · [`estimate_normals`](https://furuse.work/ops/3d/curvature/estimate_normals.html) · [`project_points`](https://furuse.work/ops/3d/render/project_points.html) · [`render_point_depth`](https://furuse.work/ops/3d/render/render_point_depth.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html)
 
 ## No.2026.108 —— 実写のステレオ写真で測る ―― 合成では出ない 3 つの躓き
 

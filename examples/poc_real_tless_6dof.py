@@ -3,11 +3,16 @@
 
 PrimeSense Carmine 1.09 で撮影された T-LESS の BOP19 test subset を、Fullseye
 の既存 op だけで ``depth_to_points -> estimate_normals -> fit_plane_ransac ->
-euclidean_clusters -> ppf_model/surface_match`` と通し、公開真値で採点する。
-scene 1/image 157(4 個が分離)と scene 8/image 263(6 個、接触・遮蔽あり)を固定し、
+euclidean_clusters -> ppf_model/surface_match`` と通し、公開真値で採点する。BOP19
+test_primesense の全20場面から、各場面で画像IDが最小の1枚を決定的に選ぶ。
 ``scene_gt_info.json`` の ``visib_fract < 0.5`` は「見えている面が半分未満」として
-除外する。この固定 subset は公式 leaderboard 全体と同じ標本ではないため、表では
-必ず ``PoC subset`` と明記する。
+除外し、残る全対象を採点する。この20画像 subset は公開 leaderboard の全画像と
+同じ標本ではないため、表では必ず ``PoC 20-scene subset`` と明記する。
+
+クラスタ分割への依存を切り分けるため、主経路に加えて、RANSAC 平面除去後の場面
+点群全体へクラスタ分割せず ``surface_match`` する対照群も同じ対象で採点する。
+2026-11-01 の Python 3.11 実行では全体39.77秒、132対象、1対象0.301秒。
+クラスタ分割なしの追加 ``surface_match`` は計3.29秒（0.025秒/対象）だった。
 
 姿勢誤差(Hodaň et al., BOP Challenge 2020)を自前で計算する。モデル点集合 ``V``、
 推定姿勢 ``P_e=(R_e,t_e)``、真値 ``P_g``、物体の対称変換集合 ``S`` に対して::
@@ -62,7 +67,7 @@ from match3d import render_point_depth                            # noqa: E402
 
 DATA_ENV = "FULLSEYE_TLESS_DATA"
 DEFAULT_DATA = Path("C:/dev/data/realdata/tless")
-SCENES = ((1, 157, "分離"), (8, 263, "接触・遮蔽"))
+SCENE_IDS = tuple(range(1, 21))
 VISIBILITY_MIN = 0.50
 ROI = (70, 435, 65, 575)       # marker frame/background only; no GT boxes
 DEPTH_RANGE_MM = (500.0, 1200.0)
@@ -79,17 +84,20 @@ LEADERBOARD = {
 # 2026-11-01, Python 3.11, archives pinned by tools/fetch_tless.py.
 # Updated only from the stdout of this script, never from a caption or hand calculation.
 RECORDED = {
-    "instances": 10,
-    "scenes": 2,
-    "ar_mssd": 0.290,
-    "ar_mspd": 0.320,
-    "synthetic_ar_mssd": 0.880,
-    "synthetic_ar_mspd": 0.880,
-    "no_icp_ar_mssd": 0.280,
-    "raw_normals_ar_mssd": 0.200,
-    "scene_1_depth_missing_px": 3678,
-    "scene_8_depth_missing_px": 3204,
-    "mssd_failure_gt_0_2d": 6,
+    "instances": 132,
+    "scenes": 20,
+    "ar_mssd": 0.162,
+    "ar_mspd": 0.185,
+    "synthetic_ar_mssd": 0.827,
+    "synthetic_ar_mspd": 0.802,
+    "no_icp_ar_mssd": 0.170,
+    "raw_normals_ar_mssd": 0.142,
+    "no_cluster_ar_mssd": 0.064,
+    "no_cluster_ar_mspd": 0.054,
+    "elapsed_seconds": 39.77,
+    "seconds_per_instance": 0.301,
+    "no_cluster_added_seconds": 3.29,
+    "mssd_failure_gt_0_2d": 115,
 }
 
 
@@ -259,6 +267,22 @@ def load_scene(root: Path, scene_id: int, image_id: int, label: str):
             "K": K, "scale": scale, "rgb": rgb, "raw": raw, "gt": gt, "info": info}
 
 
+def first_bop19_scene_specs(root: Path):
+    """抽出済みBOP19 subsetの各場面から最小画像IDを1枚だけ選ぶ。"""
+    specs = []
+    for scene_id in SCENE_IDS:
+        scene = root / "test_primesense" / f"{scene_id:06d}"
+        camera = _json(scene / "scene_camera.json")
+        try:
+            image_ids = sorted(int(key) for key in camera)
+        except (TypeError, ValueError) as exc:
+            raise ValueError(f"scene {scene_id}: image ID が整数でない") from exc
+        if not image_ids:
+            raise ValueError(f"scene {scene_id}: BOP19 image が無い")
+        specs.append((scene_id, image_ids[0], "各場面のBOP19先頭画像"))
+    return specs
+
+
 def prepare_scene(record):
     raw = record["raw"]
     depth = raw.astype(np.float64) * record["scale"]
@@ -288,10 +312,14 @@ def prepare_scene(record):
         sample = points[np.linspace(0, len(points) - 1,
                                     min(500, len(points)), dtype=np.int64)]
         boxes.append(fs.obb(sample))
+    whole = fs.voxel_downsample(objects, voxel=6.0)
+    whole_normals = fs.estimate_normals(whole, k=12, viewpoint=np.zeros(3))
+    whole, whole_normals = _cap(whole, whole_normals, SCENE_POINTS)
     return {**record, "depth": valid_depth, "zeros": zeros, "flying": flying,
             "dense_count": len(dense), "cloud_count": len(cloud), "plane": plane,
             "ground_count": int(ground.sum()), "objects": objects,
-            "clusters": clusters, "centroids": centroids, "boxes": boxes}
+            "clusters": clusters, "centroids": centroids, "boxes": boxes,
+            "whole_points": whole, "whole_normals": whole_normals}
 
 
 def _match_one(root, scene, instance, cluster_index, model_info, *, seed):
@@ -305,12 +333,18 @@ def _match_one(root, scene, instance, cluster_index, model_info, *, seed):
     scene_points, oriented = _cap(cluster, oriented, SCENE_POINTS)
     raw_normals = fs.estimate_normals(scene_points, k=12)
     descriptor = fs.ppf_model(model, model_normals, angle_bins=24)
+    match_start = time.perf_counter()
     main = fs.surface_match(descriptor, scene_points, oriented, ref_fraction=0.25,
                             topk=8, refine=True, seed=seed)
+    cluster_match_seconds = time.perf_counter() - match_start
     no_icp = fs.surface_match(descriptor, scene_points, oriented, ref_fraction=0.25,
                               topk=8, refine=False, seed=seed)
     raw_normal = fs.surface_match(descriptor, scene_points, raw_normals, ref_fraction=0.25,
                                   topk=8, refine=True, seed=seed)
+    match_start = time.perf_counter()
+    no_cluster = fs.surface_match(descriptor, scene["whole_points"], scene["whole_normals"],
+                                  ref_fraction=0.25, topk=8, refine=True, seed=seed)
+    no_cluster_match_seconds = time.perf_counter() - match_start
     R_gt = np.asarray(instance["cam_R_m2c"], np.float64).reshape(3, 3)
     t_gt = np.asarray(instance["cam_t_m2c"], np.float64)
     eval_points, _ = _ply_vertices_normals(root / "models_cad" / f"obj_{obj_id:06d}.ply")
@@ -322,6 +356,7 @@ def _match_one(root, scene, instance, cluster_index, model_info, *, seed):
     metrics = score(main)
     metrics_no_icp = score(no_icp)
     metrics_raw_normal = score(raw_normal)
+    metrics_no_cluster = score(no_cluster)
 
     # Ideal point-depth projection: same camera/pose/model, no sensor noise or missing returns.
     synth_depth = render_point_depth(model_full, scene["K"], scene["raw"].shape,
@@ -335,13 +370,17 @@ def _match_one(root, scene, instance, cluster_index, model_info, *, seed):
     synth_metrics = score(synth_pose)
     return {"pose": main, "metrics": metrics, "no_icp": metrics_no_icp,
             "raw_normal": metrics_raw_normal, "synth": synth_metrics,
+            "no_cluster": metrics_no_cluster,
+            "cluster_match_seconds": cluster_match_seconds,
+            "no_cluster_match_seconds": no_cluster_match_seconds,
             "eval_points": eval_points, "R_gt": R_gt, "t_gt": t_gt,
             "model_points": model_full}
 
 
 def run_real(root: Path):
     model_infos = _json(root / "models_reconst" / "models_info.json")
-    scenes = [prepare_scene(load_scene(root, *spec)) for spec in SCENES]
+    scenes = [prepare_scene(load_scene(root, *spec))
+              for spec in first_bop19_scene_specs(root)]
     rows = []
     seed = 0
     for scene in scenes:
@@ -366,10 +405,12 @@ def run_real(root: Path):
             missing = float(np.mean(scene["raw"][visible_mask] == 0)) if visible_mask.any() else 1.0
             size = model_infos[str(obj_id)]
             thin = float(size["size_z"]) / float(size["diameter"]) < 0.45
+            symmetric = len(symmetry_transforms(model_infos[str(obj_id)])) > 1
             row = {"scene": scene["scene"], "image": scene["image"], "condition": scene["label"],
                    "obj_id": obj_id, "visibility": visibility, "cluster": cluster_index,
                    "cluster_distance": float(distances[cluster_index]), "missing": missing,
-                   "thin": thin, "diameter": float(size["diameter"]), **result}
+                   "thin": thin, "symmetric": symmetric,
+                   "diameter": float(size["diameter"]), **result}
             rows.append(row)
             seed += 1
         counts = np.bincount(assigned, minlength=len(scene["clusters"]))
@@ -395,6 +436,53 @@ def _overlay(scene, rows):
     return image
 
 
+def _metric_rows(rows, field):
+    return [{**row[field], "diameter": row["diameter"]} for row in rows]
+
+
+def _groups(rows, field):
+    return {value: [row for row in rows if row[field] == value]
+            for value in sorted({row[field] for row in rows})}
+
+
+def _failure_rows(rows):
+    return [row for row in rows if row["metrics"]["mssd"] > 0.20 * row["diameter"]]
+
+
+def _failure_breakdown(rows):
+    failures = _failure_rows(rows)
+    return {
+        "fail_total": len(failures),
+        "cluster_merged": sum(row["merged"] for row in failures),
+        "occluded_vis_lt_0.8": sum(row["visibility"] < 0.8 for row in failures),
+        "thin_z_over_d_lt_0.45": sum(row["thin"] for row in failures),
+        "depth_missing_gt_1pct": sum(row["missing"] > 0.01 for row in failures),
+        "symmetric": sum(row["symmetric"] for row in failures),
+    }
+
+
+def _save_labeled_bars(name, series, labels, *, xlabel, ylabel, title, caption,
+                       size, xlim, ylim=(0.0, 1.0), font_size=9):
+    """examplefig の棒グラフへ、同じ値から作ったラベルを棒上に置く。"""
+    image = figs.render_plot(series, xlabel=xlabel, ylabel=ylabel, title=title,
+                             size=size, xlim=xlim, ylim=ylim,
+                             kinds=["bar"] * len(series),
+                             colors=["right", "emphasis", "wrong", "neutral"][:len(series)])
+    width, height = size
+    rect = (72, 44, width - 96, height - 108)
+    # render_plot は明示 ylim にも上下6%の余白を足す。
+    pad = 0.06 * (ylim[1] - ylim[0])
+    ylo, yhi = ylim[0] - pad, ylim[1] + pad
+    for (_, xs, ys), texts in zip(series, labels):
+        for x, y, value in zip(np.asarray(xs), np.asarray(ys), texts):
+            px = rect[0] + (float(x) - xlim[0]) / (xlim[1] - xlim[0]) * rect[2]
+            py = rect[1] + (yhi - float(y)) / (yhi - ylo) * rect[3] - 3
+            image = np.asarray(fs.text_box(image, str(value), (px, py), anchor="cb",
+                                           font_size=font_size, min_font_size=7,
+                                           pad=1, box_alpha=0.82, border=0))
+    figs.save(name, image, caption)
+
+
 def make_figures(scenes, rows, ar_real, ar_synth):
     if not figs.enabled():
         return
@@ -402,7 +490,8 @@ def make_figures(scenes, rows, ar_real, ar_synth):
     overlay = _overlay(scenes[0], rows)
     figs.save_grid("pose_overlay", [overlay],
                    ["推定=橙 / 公開真値=青"], title="T-LESS 実機深度の 6 自由度姿勢",
-                   ncols=1, caption="scene 1/image 157。PPF+ICP の推定モデル(橙)と BOP 真値(青)。",
+                   ncols=1, caption="scene %d/image %d。PPF+ICP の推定モデル(橙)と BOP 真値(青)。"
+                   % (scenes[0]["scene"], scenes[0]["image"]),
                    )
     depth = scenes[0]["depth"]
     figs.save_grid("rgb_depth", [scenes[0]["rgb"], np.nan_to_num(depth)],
@@ -411,25 +500,38 @@ def make_figures(scenes, rows, ar_real, ar_synth):
                    vrange=[None, (650, 950)],
                    caption=f"欠測 {scenes[0]['zeros']} px、孤立飛び候補 {scenes[0]['flying']} px。"
                            " BOP T-LESS, CC BY 4.0。")
-    labels = np.arange(len(rows), dtype=float)
-    recalls = [float(np.mean([row["metrics"]["mssd"] <= f * row["diameter"]
-                              for f in np.arange(0.05, 0.51, 0.05)])) for row in rows]
-    figs.save_plot("mssd_by_object", [("MSSD recall", labels, recalls)],
-                   xlabel="対象 index(scene/object は表を参照)", ylabel="recall",
-                   title="対象ごとの MSSD recall", kinds=["bar"], ylim=(0, 1.05),
-                   caption="0.05d..0.50d の 10 閾値平均。接触クラスタで落ちる。")
-    figs.save_plot("synthetic_vs_real",
-                   [("合成", [0], [ar_synth[0]]), ("実機", [1], [ar_real[0]])],
-                   xlabel="0=理想深度 / 1=実機深度", ylabel="AR_MSSD",
-                   title="同じモデル・同じ姿勢: 合成から実機で落ちる量",
-                   kinds=["bar", "bar"], colors=["right", "wrong"], ylim=(0, 1.0),
-                   caption="理想 z-buffer 深度と PrimeSense 深度を同じ PPF+ICP で採点。")
+    object_groups = _groups(rows, "obj_id")
+    obj_ids = np.asarray(list(object_groups), dtype=float)
+    obj_mssd = np.asarray([average_recall(_metric_rows(group, "metrics"))[0]
+                           for group in object_groups.values()])
+    obj_counts = [f"{value:.2f} n={len(group)}"
+                  for value, group in zip(obj_mssd, object_groups.values())]
+    _save_labeled_bars(
+        "mssd_by_object", [("AR_MSSD", obj_ids, obj_mssd)], [obj_counts],
+        xlabel="obj_id", ylabel="AR_MSSD", title="対象別の平均 MSSD recall（棒上は値と件数）",
+        size=(960, 440), xlim=(float(obj_ids.min()) - 0.8, float(obj_ids.max()) + 0.8),
+        caption="20場面の標本を obj_id ごとに平均。棒上は AR_MSSD と対象件数 n。",
+        font_size=8)
+    compare_series = [
+        ("合成 MSSD", [0.0], [ar_synth[0]]),
+        ("合成 MSPD", [1.0], [ar_synth[1]]),
+        ("実機 MSSD", [3.0], [ar_real[0]]),
+        ("実機 MSPD", [4.0], [ar_real[1]]),
+    ]
+    _save_labeled_bars(
+        "synthetic_vs_real", compare_series,
+        [[f"{values[0]:.3f}"] for _, _, values in compare_series],
+        xlabel="合成（左2本） / 実機（右2本）", ylabel="平均 recall",
+        title="同じモデル・姿勢: 合成 / 実機 × MSSD / MSPD",
+        size=(640, 400), xlim=(-0.8, 4.8),
+        caption=("左群=理想 z-buffer 深度 %.3f/%.3f、右群=PrimeSense 深度 %.3f/%.3f。"
+                 "順に AR_MSSD/AR_MSPD。" % (*ar_synth, *ar_real)))
     worst = max(rows, key=lambda row: row["metrics"]["mssd"] / row["diameter"])
     scene = next(item for item in scenes if item["scene"] == worst["scene"])
     fail = _overlay(scene, [worst])
     figs.save_grid("failure", [fail],
                    [f"scene {worst['scene']} / obj {worst['obj_id']} / vis {worst['visibility']:.2f}"],
-                   title="失敗例: 接触・遮蔽でクラスタが対象と一致しない", ncols=1,
+                    title="失敗例: MSSD が 0.2d を超えた対象", ncols=1,
                    caption="橙=推定、青=真値。MSSD %.1f mm、cluster merged=%s。"
                            % (worst["metrics"]["mssd"], worst["merged"]))
 
@@ -449,14 +551,16 @@ def main() -> None:
         return
     start = time.perf_counter()
     scenes, rows = run_real(root)
-    metrics = [{**row["metrics"], "diameter": row["diameter"]} for row in rows]
-    no_icp = [{**row["no_icp"], "diameter": row["diameter"]} for row in rows]
-    raw_normals = [{**row["raw_normal"], "diameter": row["diameter"]} for row in rows]
-    synth = [{**row["synth"], "diameter": row["diameter"]} for row in rows]
+    metrics = _metric_rows(rows, "metrics")
+    no_icp = _metric_rows(rows, "no_icp")
+    raw_normals = _metric_rows(rows, "raw_normal")
+    synth = _metric_rows(rows, "synth")
+    no_cluster = _metric_rows(rows, "no_cluster")
     ar_real = average_recall(metrics)
     ar_no_icp = average_recall(no_icp)
     ar_raw = average_recall(raw_normals)
     ar_synth = average_recall(synth)
+    ar_no_cluster = average_recall(no_cluster)
 
     print("BOP T-LESS (CC BY 4.0) 実機 6DoF PoC")
     print("  source https://bop.felk.cvut.cz/datasets/ / Hodaň et al. WACV 2017")
@@ -472,38 +576,45 @@ def main() -> None:
               [np.round(2.0 * np.asarray(box["extents"]), 1).tolist()
                for box in scene["boxes"]])
 
-    print("\n対象ごとの対称性考慮誤差")
-    print(" scene obj vis cluster merged MSSD[mm] MSPD[px] ADD-S[mm] R[deg] t[mm]")
-    for row in rows:
-        m = row["metrics"]
-        print(" %5d %3d %.3f %7d %6s %8.2f %8.2f %9.2f %6.1f %5.1f"
-              % (row["scene"], row["obj_id"], row["visibility"], row["cluster"],
-                 str(row["merged"]), m["mssd"], m["mspd"], m["add_s"],
-                 m["rot_deg"], m["trans_mm"]))
+    print("\n対象別集計（失敗内訳は MSSD > 0.2d、重複カテゴリ）")
+    print(" obj   n AR_MSSD AR_MSPD fail merged occ thin missing sym")
+    for obj_id, group in _groups(rows, "obj_id").items():
+        ar = average_recall(_metric_rows(group, "metrics"))
+        failure = _failure_breakdown(group)
+        print(" %3d %3d   %.3f   %.3f %4d %6d %3d %4d %7d %3d"
+              % (obj_id, len(group), ar[0], ar[1], failure["fail_total"],
+                 failure["cluster_merged"], failure["occluded_vis_lt_0.8"],
+                 failure["thin_z_over_d_lt_0.45"], failure["depth_missing_gt_1pct"],
+                 failure["symmetric"]))
+
+    print("\n場面別集計")
+    print(" scene image   n cluster AR_MSSD AR_MSPD fail")
+    for scene_id, group in _groups(rows, "scene").items():
+        scene = next(value for value in scenes if value["scene"] == scene_id)
+        ar = average_recall(_metric_rows(group, "metrics"))
+        print(" %5d %5d %3d %7d   %.3f   %.3f %4d"
+              % (scene_id, scene["image"], len(group), len(scene["clusters"]),
+                 ar[0], ar[1], len(_failure_rows(group))))
 
     print("\n公開 leaderboard と同じ MSSD/MSPD 閾値の平均 recall")
     print(" method                         official AR  AR_MSSD  AR_MSPD")
-    print(" Fullseye PPF+ICP (PoC subset)       n/a      %.3f    %.3f" % ar_real)
+    print(" Fullseye cluster PPF+ICP (20 scenes) n/a      %.3f    %.3f" % ar_real)
+    print(" Fullseye scene PPF+ICP (no cluster)  n/a      %.3f    %.3f" % ar_no_cluster)
+    print(" Fullseye PPF+ICP (previous 10)       n/a      0.290    0.320")
     for name, score in LEADERBOARD.items():
         print(" %-31s  %.3f      %.3f    %.3f" % (name, score["ar"], score["mssd"], score["mspd"]))
-    print("  注: PoC は10 instance subset、公開値は公式全 test。VSD 未実装なので PoC AR は n/a。")
+    print("  注: PoC は20場面の先頭画像 subset、公開値は公式全 test。VSD 未実装なので PoC AR は n/a。")
 
     print("\n合成 -> 実機 / 切り分け")
     print(" ideal depth      AR_MSSD %.3f / AR_MSPD %.3f" % ar_synth)
     print(" real + ICP       AR_MSSD %.3f / AR_MSPD %.3f" % ar_real)
     print(" real - ICP       AR_MSSD %.3f / AR_MSPD %.3f" % ar_no_icp)
     print(" real raw normals AR_MSSD %.3f / AR_MSPD %.3f" % ar_raw)
+    print(" real no cluster  AR_MSSD %.3f / AR_MSPD %.3f" % ar_no_cluster)
     print(" drop synth->real: MSSD %.3f / MSPD %.3f" % (ar_synth[0] - ar_real[0], ar_synth[1] - ar_real[1]))
 
-    failures = [row for row in rows if row["metrics"]["mssd"] > 0.20 * row["diameter"]]
-    breakdown = {
-        "fail_total": len(failures),
-        "cluster_merged": sum(row["merged"] for row in failures),
-        "occluded_vis_lt_0.8": sum(row["visibility"] < 0.8 for row in failures),
-        "thin_z_over_d_lt_0.45": sum(row["thin"] for row in failures),
-        "depth_missing_gt_1pct": sum(row["missing"] > 0.01 for row in failures),
-        "symmetric": sum(len(symmetry_transforms(_json(root / "models_reconst" / "models_info.json")[str(row["obj_id"])])) > 1 for row in failures),
-    }
+    failures = _failure_rows(rows)
+    breakdown = _failure_breakdown(rows)
     print("\n失敗内訳(MSSD > 0.2d、重複カテゴリ):", json.dumps(breakdown, ensure_ascii=False))
     print("  対象:", [(row["scene"], row["obj_id"], round(row["visibility"], 3),
                        round(row["missing"] * 100, 2), row["merged"]) for row in failures])
@@ -511,7 +622,13 @@ def main() -> None:
     make_figures(scenes, rows, ar_real, ar_synth)
     if figs.errors():
         raise RuntimeError("図の書き出し失敗: " + "; ".join(figs.errors()))
-    print("\n所要 %.2f 秒" % (time.perf_counter() - start))
+    elapsed = time.perf_counter() - start
+    clustered_match = sum(row["cluster_match_seconds"] for row in rows)
+    no_cluster_match = sum(row["no_cluster_match_seconds"] for row in rows)
+    print("\n所要 %.2f 秒 / %d 対象 = %.3f 秒/対象" % (elapsed, len(rows), elapsed / len(rows)))
+    print("surface_match 計時: cluster %.2f 秒 (%.3f/対象) / no cluster %.2f 秒 (%.3f/対象)、差 %+0.2f 秒"
+          % (clustered_match, clustered_match / len(rows), no_cluster_match,
+             no_cluster_match / len(rows), no_cluster_match - clustered_match))
     print("\nPASS")
 
 

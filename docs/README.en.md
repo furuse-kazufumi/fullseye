@@ -60,8 +60,8 @@ The 98 capabilities, split by how they are verified (`docs/maturity.json`, rebui
 | stage | meaning | capabilities |
 |---|---|---|
 | `research-prototype` | implemented; tests or a running example still missing | 0 |
-| `verified-synthetic` | verified automatically against synthetic ground truth | 78 |
-| `validated-public-real-data` | an example on public measured data runs in a gate | 20 |
+| `verified-synthetic` | verified automatically against synthetic ground truth | 79 |
+| `validated-public-real-data` | an example on public measured data runs in a gate | 19 |
 | `validated-hardware` | validated on hardware (only from accepted external reports) | 0 |
 
 Of 450 examples, 450 are actually run by a gate.

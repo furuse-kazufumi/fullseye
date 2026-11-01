@@ -289,7 +289,7 @@ Pipeline: [`statistical_outlier_removal`](ops/3d/preprocess/statistical_outlier_
 
 Alternatives: [`fit_plane3`](ops/3d/geometry/fit_plane3.md), [`plane_segmentation`](ops/3d/segment/plane_segmentation.md), [`radius_outlier_removal`](ops/3d/preprocess/radius_outlier_removal.md), [`estimate_normals`](ops/3d/curvature/estimate_normals.md), [`surface_form_error`](ops/3d/surface_fit/surface_form_error.md)
 
-Runnable: `geometry_metrology`, `poc_bump_coplanarity`, `poc_scan_to_bim_asbuilt`, `poc_real_tless_6dof`
+Runnable: `geometry_metrology`, `poc_bump_coplanarity`, `poc_scan_to_bim_asbuilt`
 
 ### [Which flaw size will you actually find (probability of detection and a90/95, MIL-HDBK-1823A)](capabilities/probability-of-detection.md)
 

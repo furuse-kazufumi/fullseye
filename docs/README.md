@@ -62,8 +62,8 @@
 | 段 | 意味 | 能力 |
 |---|---|---|
 | `research-prototype` | 実装はあるが、試験や走る例が揃っていない | 0 |
-| `verified-synthetic` | 真値を持つ合成データで自動検証 | 78 |
-| `validated-public-real-data` | 公開の実測データを使う例が門で走る | 20 |
+| `verified-synthetic` | 真値を持つ合成データで自動検証 | 79 |
+| `validated-public-real-data` | 公開の実測データを使う例が門で走る | 19 |
 | `validated-hardware` | 実機で検証(外部の報告を受理したときだけ) | 0 |
 
 例 450 本のうち、門が実際に走らせるもの 450 本。
