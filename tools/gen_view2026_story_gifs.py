@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build the short, labelled story GIFs used by the ViEW2026 2-D exhibits.
+"""Build the short story GIFs used by the ViEW2026 2-D exhibits.
 
 Frame selection is deliberately mechanical and reviewable.  The current exhibit media is
 always frame 1 (the cover).  From the remaining raster figures, in ``figures.json`` order,
@@ -10,20 +10,19 @@ the following frames read as scene -> processing -> result -> truth/error -> lim
 PoC with only one or two usable raster figures remains static; three figures are retained
 when that is all the author supplied, rather than duplicating a frame to reach four.
 
-Only two labelled variants are made: Japanese and English.  The other six ViEW languages
-use English.  GIFs are only rewritten when the selected source digest changes, avoiding
-Pillow/font-version byte drift while still making stale inputs regenerate.
+Japanese and English paths are both made for the page contract, although the frames carry
+no generated heading: the source figures already identify themselves.  Progress is shown
+only by bitmap dots.  GIFs are only rewritten when the selected source digest changes,
+avoiding Pillow-version byte drift while still making stale inputs regenerate.
 """
 from __future__ import annotations
 
 import hashlib
 import io
 import json
-import os
-import re
 from pathlib import Path
 
-from PIL import Image, ImageDraw, ImageFont, ImageSequence
+from PIL import Image, ImageSequence
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -33,6 +32,9 @@ EXHIBITS = VIEW / "exhibits.json"
 CAPTIONS = ROOT / "docs" / "articles" / "exhibits" / "poc_captions.json"
 LEDGER = VIEW / "story_gifs.json"
 WIDTH = 720
+HEIGHT = 720
+PROGRESS_HEIGHT = 30
+CONTENT_HEIGHT = HEIGHT - PROGRESS_HEIGHT
 MAX_BYTES = 2_500_000
 MAX_FRAMES = 6
 COLOR_MAD_LIMIT = 6.0
@@ -120,79 +122,47 @@ def _cover_file(exhibit: dict, caption: dict, figures: list[dict], folder: Path)
     return first["file"] if first else None
 
 
-def _first_clause(text: str, fallback: str) -> str:
-    text = " ".join(str(text or "").split())
-    if not text:
-        return fallback
-    bits = re.split(r"(?<=[。！？!?])|(?<=\.)\s+|[；;:：]|——|(?<=.{12})[,、，(（]", text, maxsplit=1)
-    return bits[0].strip().rstrip("。！？!?、，；;") or fallback
-
-
-def _english_name(row: dict) -> str:
-    return str(row.get("name") or Path(row.get("file", "figure")).stem).replace("_", " ").strip().capitalize()
-
-
-def _font(lang: str, size: int):
-    env = os.environ.get("VIEW2026_STORY_FONT")
-    candidates = ([env] if env else []) + ([
-        "C:/Windows/Fonts/meiryo.ttc", "C:/Windows/Fonts/msgothic.ttc",
-        "/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc",
-        "/usr/share/fonts/truetype/noto/NotoSansCJK-Regular.ttc",
-    ] if lang == "ja" else [
-        "C:/Windows/Fonts/arial.ttf", "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
-    ])
-    for name in candidates:
-        if name and Path(name).is_file():
-            return ImageFont.truetype(name, size)
-    return ImageFont.load_default()
-
-
-def _fit_label(draw: ImageDraw.ImageDraw, label: str, lang: str) -> tuple[ImageFont.ImageFont, str]:
-    for size in (20, 18, 16, 14, 12, 10, 9):
-        font = _font(lang, size)
-        if draw.textbbox((0, 0), label, font=font)[2] <= WIDTH - 28:
-            return font, label
-    font = _font(lang, 12)
-    out = label
-    while len(out) > 4 and draw.textbbox((0, 0), out + "…", font=font)[2] > WIDTH - 28:
-        out = out[:-1]
-    return font, out + ("…" if out != label else "")
-
-
 def _prepared_image(path: Path) -> Image.Image:
     with Image.open(path) as im:
         im = im.convert("RGB")
-        if im.width > WIDTH:
-            h = max(1, round(im.height * WIDTH / im.width))
-            im = im.resize((WIDTH, h), Image.Resampling.LANCZOS)
+        scale = min(1.0, WIDTH / im.width, CONTENT_HEIGHT / im.height)
+        if scale < 1.0:
+            size = (max(1, round(im.width * scale)), max(1, round(im.height * scale)))
+            im = im.resize(size, Image.Resampling.LANCZOS)
         return im.copy()
 
 
-def _render(rows: list[dict], folder: Path, lang: str) -> tuple[list[Image.Image], list[dict]]:
+def _progress_dot(filled: bool, size: int = 11) -> Image.Image:
+    """Return a tiny deterministic bitmap circle without invoking a text/drawing API."""
+    centre = (size - 1) / 2
+    outer2 = centre * centre
+    inner2 = (centre - 2) * (centre - 2)
+    dark, white = (35, 42, 55), (255, 255, 255)
+    pixels = []
+    for y in range(size):
+        for x in range(size):
+            radius2 = (x - centre) ** 2 + (y - centre) ** 2
+            pixels.append(dark if radius2 <= outer2 and (filled or radius2 >= inner2) else white)
+    dot = Image.new("RGB", (size, size), white)
+    dot.putdata(pixels)
+    return dot
+
+
+def _render(rows: list[dict], folder: Path) -> tuple[list[Image.Image], list[dict]]:
     pictures = [_prepared_image(folder / r["file"]) for r in rows]
-    top, bottom = 46, 34
-    content_h = max(im.height for im in pictures)
     frames, meta = [], []
     for i, (row, picture) in enumerate(zip(rows, pictures)):
-        canvas = Image.new("RGB", (WIDTH, top + content_h + bottom), "white")
-        x, y = (WIDTH - picture.width) // 2, top + (content_h - picture.height) // 2
+        canvas = Image.new("RGB", (WIDTH, HEIGHT), "white")
+        x, y = (WIDTH - picture.width) // 2, (CONTENT_HEIGHT - picture.height) // 2
         canvas.paste(picture, (x, y))
-        draw = ImageDraw.Draw(canvas)
-        fallback = _english_name(row)
-        label = _first_clause(row.get("caption", ""), fallback) if lang == "ja" else fallback
-        label = "(%s) %s" % (chr(97 + i), label)
-        font, shown = _fit_label(draw, label, lang)
-        draw.rectangle((0, 0, WIDTH, top - 1), fill=(255, 255, 255))
-        draw.text((12, (top - draw.textbbox((0, 0), shown, font=font)[3]) // 2), shown,
-                  fill=(20, 24, 32), font=font)
-        dots = "●" * (i + 1) + "○" * (len(rows) - i - 1)
-        dot_font = _font("ja", 18)
-        box = draw.textbbox((0, 0), dots, font=dot_font)
-        draw.text(((WIDTH - (box[2] - box[0])) // 2, top + content_h + 5), dots,
-                  fill=(35, 42, 55), font=dot_font)
+        dot_size, gap = 11, 7
+        strip_width = len(rows) * dot_size + (len(rows) - 1) * gap
+        dot_x = (WIDTH - strip_width) // 2
+        dot_y = CONTENT_HEIGHT + (PROGRESS_HEIGHT - dot_size) // 2
+        for j in range(len(rows)):
+            canvas.paste(_progress_dot(j <= i, dot_size), (dot_x + j * (dot_size + gap), dot_y))
         frames.append(canvas)
-        meta.append({"file": row["file"], "label": label, "shown_label": shown,
-                     "content_box": [x, y, picture.width, picture.height]})
+        meta.append({"file": row["file"], "content_box": [x, y, picture.width, picture.height]})
     return frames, meta
 
 
@@ -226,7 +196,7 @@ def _content_mads(decoded: list[Image.Image], meta: list[dict], folder: Path) ->
     return out
 
 
-def _digest(rows: list[dict], folder: Path, lang: str, version: str = "story-v3") -> str:
+def _digest(rows: list[dict], folder: Path, lang: str, version: str = "story-v4-square") -> str:
     h = hashlib.sha256()
     h.update((lang + "|" + version + "|" + json.dumps(rows, ensure_ascii=False, sort_keys=True)).encode("utf-8"))
     for row in rows:
@@ -237,26 +207,23 @@ def _digest(rows: list[dict], folder: Path, lang: str, version: str = "story-v3"
 def _write_gif(path: Path, rows: list[dict], folder: Path, lang: str,
                old: dict | None) -> tuple[dict | None, str | None]:
     digest = _digest(rows, folder, lang)
-    legacy = _digest(rows, folder, lang, "story-v2")
-    expected = [("(%s) %s" % (chr(97 + i), _first_clause(r.get("caption", ""), _english_name(r))))
-                if lang == "ja" else ("(%s) %s" % (chr(97 + i), _english_name(r)))
-                for i, r in enumerate(rows)]
-    if (old and old.get("source_sha256") in (digest, legacy) and path.is_file() and
-            [x.get("label") for x in old.get("frames", [])] == expected and
-            all(x.get("shown_label") == x.get("label") for x in old.get("frames", []))):
+    if (old and old.get("source_sha256") == digest and path.is_file() and
+            [x.get("file") for x in old.get("frames", [])] == [x["file"] for x in rows] and
+            all("label" not in x and "shown_label" not in x for x in old.get("frames", []))):
         decoded = _decoded(path.read_bytes())
-        diffs = _content_mads(decoded, old["frames"], folder)
-        if max(diffs, default=0.0) > COLOR_MAD_LIMIT:
-            return None, "color_mad_over_%.1f" % COLOR_MAD_LIMIT
-        old = dict(old); old.update(source_sha256=digest,
-                                    color_mad=[round(x, 4) for x in diffs],
-                                    max_color_mad=round(max(diffs, default=0.0), 4))
-        return old, None
-    frames, meta = _render(rows, folder, lang)
+        if len(decoded) == len(rows) and all(x.size == (WIDTH, HEIGHT) for x in decoded):
+            diffs = _content_mads(decoded, old["frames"], folder)
+            if max(diffs, default=0.0) > COLOR_MAD_LIMIT:
+                return None, "color_mad_over_%.1f" % COLOR_MAD_LIMIT
+            old = dict(old); old.update(source_sha256=digest,
+                                        color_mad=[round(x, 4) for x in diffs],
+                                        max_color_mad=round(max(diffs, default=0.0), 4))
+            return old, None
+    frames, meta = _render(rows, folder)
     blob = _encode(frames)
     while len(blob) > MAX_BYTES and len(rows) > 3:
         rows = rows[:-1]
-        frames, meta = _render(rows, folder, lang)
+        frames, meta = _render(rows, folder)
         blob = _encode(frames)
         digest = _digest(rows, folder, lang)
     if len(blob) > MAX_BYTES:
@@ -302,7 +269,8 @@ def main() -> int:
             entries[pid] = {**base, "reason": "two_or_fewer_raster_figures", "usable_figures": len(selected)}; continue
         if not selected:
             entries[pid] = {**base, "reason": "representative_not_a_static_figure"}; continue
-        item = {**base, "selected": [x["file"] for x in selected], "variants": {}}
+        item = {**base, "selected": [x["file"] for x in selected],
+                "excluded_frames": [], "variants": {}}
         failed = None
         for lang in ("ja", "en"):
             path = folder / ("story.%s.gif" % lang)
@@ -328,7 +296,7 @@ def main() -> int:
                              "en": cap.get("lead_en") or cap.get("title_en") or exhibit["label"]["en"]})
         entries[pid] = item
     ledger = {"_": "Generated by tools/gen_view2026_story_gifs.py; do not edit.",
-              "schema": 1, "width": WIDTH, "max_bytes": MAX_BYTES,
+              "schema": 2, "width": WIDTH, "height": HEIGHT, "max_bytes": MAX_BYTES,
               "color_metric": "mean absolute RGB channel difference inside the source-image content box",
               "color_mad_limit": COLOR_MAD_LIMIT, "first_duration_ms": FIRST_MS,
               "other_duration_ms": OTHER_MS, "target_count": len(targets), "entries": entries}

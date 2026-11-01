@@ -1,5 +1,5 @@
 # Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0.
-"""ViEW2026 story GIF の表紙・順序・色・容量・静止フォールバックの門。"""
+"""ViEW2026 story GIF の正方形・表紙・順序・色・容量・静止フォールバックの門。"""
 from __future__ import annotations
 
 import importlib.util
@@ -49,13 +49,14 @@ def test_every_static_target_has_an_explicit_reason():
                v["reason"].startswith("color_mad_over_") for v in static.values())
 
 
-def test_gifs_match_sources_labels_durations_colour_and_capacity():
+def test_gifs_match_sources_durations_colour_and_capacity():
+    assert LEDGER["width"] == LEDGER["height"] == 720
     for pid, item in LEDGER["entries"].items():
         if item["status"] != "gif":
             continue
-        figures = {x["file"]: x for x in _figures(pid)}
         assert item["selected"][0] == item["cover"]
         assert len(item["selected"]) == len(set(item["selected"]))
+        assert item["excluded_frames"] == []
         source_pictures = []
         for name in item["selected"]:
             picture = G._prepared_image(G.ASSETS / pid / name)
@@ -74,17 +75,28 @@ def test_gifs_match_sources_labels_durations_colour_and_capacity():
             assert len(frames) == variant["frame_count"] == len(variant["frames"])
             assert durations == variant["durations_ms"]
             assert durations[0] == 2500 and all(x == 1600 for x in durations[1:])
-            assert all(f.width == 720 and len(f.getcolors(maxcolors=257) or []) <= 256 for f in frames)
-            for i, (frame, meta) in enumerate(zip(frames, variant["frames"])):
-                row = figures[meta["file"]]
-                fallback = G._english_name(row)
-                expected = G._first_clause(row.get("caption", ""), fallback) if lang == "ja" else fallback
-                assert meta["label"] == "(%s) %s" % (chr(97 + i), expected)
+            assert all(f.size == (720, 720) and
+                       len(f.getcolors(maxcolors=257) or []) <= 256 for f in frames)
+            progress_ink = [sum(pixel != (255, 255, 255) for pixel in
+                                frame.crop((0, G.CONTENT_HEIGHT, 720, 720)).get_flattened_data())
+                            for frame in frames]
+            assert progress_ink == sorted(progress_ink)
+            assert len(set(progress_ink)) == len(frames)
+            for frame, meta in zip(frames, variant["frames"]):
+                assert "label" not in meta and "shown_label" not in meta
                 x, y, w, h = meta["content_box"]
                 source = G._prepared_image(G.ASSETS / pid / meta["file"])
                 assert source.size == (w, h)
+                assert 0 <= x <= 720 - w and 0 <= y <= G.CONTENT_HEIGHT - h
                 assert _mad(source, frame.crop((x, y, x + w, y + h))) <= LEDGER["color_mad_limit"]
             assert max(variant["color_mad"]) <= LEDGER["color_mad_limit"]
+
+
+def test_generator_has_no_text_drawing_calls():
+    source = (ROOT / "tools/gen_view2026_story_gifs.py").read_text(encoding="utf-8")
+    assert "ImageDraw" not in source
+    assert "ImageFont" not in source
+    assert ".text(" not in source
 
 
 def test_pages_use_english_outside_japanese_and_stop_for_reduced_motion():
