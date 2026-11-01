@@ -198,7 +198,7 @@ def render_png(path: Path, box_pts, obb_d, ab_min, ab_max, hull_verts, hull_face
         return False
 
     # 日本語フォントを選ぶ(無ければ既定のまま=英字は出る)。tofu(□)回避。
-    font_path = figs.japanese_font_path(fail_closed=False)
+    font_path = figs._japanese_font_path(fail_closed=False)
     if font_path is not None:
         fm.fontManager.addfont(str(font_path))
         plt.rcParams["font.family"] = fm.FontProperties(fname=str(font_path)).get_name()

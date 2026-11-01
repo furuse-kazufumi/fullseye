@@ -148,7 +148,7 @@ def _use_jp_font(fm, plt) -> bool:
 
     見つからなければ False を返し、呼び出し側は英語ラベルへ退避する(tofu 回避)。
     """
-    path = figs.japanese_font_path(fail_closed=False)
+    path = figs._japanese_font_path(fail_closed=False)
     if path is None:
         return False
     fm.fontManager.addfont(str(path))

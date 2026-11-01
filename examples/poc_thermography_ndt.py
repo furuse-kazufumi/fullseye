@@ -577,7 +577,7 @@ WINDOW_SHOWCASE_SIZE = (1280, 720)
 def _window_font(size=22, bold=False):
     from PIL import ImageFont
 
-    return ImageFont.truetype(figs.japanese_font_path(bold=bold), size)
+    return ImageFont.truetype(figs._japanese_font_path(bold=bold), size)
 
 
 def _window_text(draw, xy, text, box, *, size=22, fill=(238, 242, 246), bold=False):

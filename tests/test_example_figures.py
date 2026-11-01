@@ -65,18 +65,18 @@ def test_japanese_font_path_keeps_weight_separate_and_reports_every_path(tmp_pat
                         {False: (regular,), True: (bold,)})
     monkeypatch.setattr(examplefig, "_JAPANESE_FONT_FAMILIES", ())
 
-    assert examplefig.japanese_font_path() == regular
-    assert examplefig.japanese_font_path(bold=True) == bold
+    assert examplefig._japanese_font_path() == regular
+    assert examplefig._japanese_font_path(bold=True) == bold
 
     missing_regular = tmp_path / "missing-regular.ttc"
     missing_bold = tmp_path / "missing-bold.ttc"
     monkeypatch.setattr(examplefig, "_JAPANESE_FONT_PATHS",
                         {False: (missing_regular,), True: (missing_bold,)})
     with pytest.raises(RuntimeError, match="探したパス") as exc:
-        examplefig.japanese_font_path(bold=True)
+        examplefig._japanese_font_path(bold=True)
     assert str(missing_bold) in str(exc.value)
     assert str(missing_regular) not in str(exc.value)
-    assert examplefig.japanese_font_path(bold=True, fail_closed=False) is None
+    assert examplefig._japanese_font_path(bold=True, fail_closed=False) is None
 
 
 def test_depth_kind_appends_turbo_colourbar(tmp_path, monkeypatch):

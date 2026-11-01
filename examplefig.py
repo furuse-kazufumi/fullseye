@@ -153,7 +153,7 @@ def enabled() -> bool:
     return target_dir() is not None
 
 
-def japanese_font_path(*, bold: bool = False, fail_closed: bool = True) -> Path | None:
+def _japanese_font_path(*, bold: bool = False, fail_closed: bool = True) -> Path | None:
     """日本語フォントのファイルを固定順で探す。
 
     ``bold`` は通常体と太字体を混ぜない。既知の Windows/Linux/macOS パスを先に

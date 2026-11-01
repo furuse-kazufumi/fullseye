@@ -327,7 +327,7 @@ def _showcase_font(size=22, bold=False):
     """日本語を 22 px 以上で描くフォントを fail-closed で選ぶ。"""
     from PIL import ImageFont
 
-    return ImageFont.truetype(figs.japanese_font_path(bold=bold), size)
+    return ImageFont.truetype(figs._japanese_font_path(bold=bold), size)
 
 
 def _showcase_text(draw, xy, text, box, *, size=22, fill=(238, 242, 246), bold=False):

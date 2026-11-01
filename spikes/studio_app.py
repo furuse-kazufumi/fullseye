@@ -39,7 +39,7 @@ import viewer3d as _v3d  # noqa: E402  (Open3D 連携: 点群/6D pose の対話 
 import fullseye as fs  # noqa: E402
 
 # 日本語フォント(既定 DejaVu Sans は CJK 無し)。
-_jp_path = figs.japanese_font_path(fail_closed=False)
+_jp_path = figs._japanese_font_path(fail_closed=False)
 if _jp_path is not None:
     font_manager.fontManager.addfont(str(_jp_path))
     matplotlib.rcParams["font.family"] = font_manager.FontProperties(fname=str(_jp_path)).get_name()
