@@ -71,7 +71,7 @@ MAX_WIDTH_TRACKS_PER_IMAGE = 160
 PROFILE_STEP_PX = 8.0
 PROFILE_SAMPLE_PX = 0.25
 PROFILE_HALF_LENGTH_PX = 80.0
-SOURCE = realdata.sem_metal_layer_credit()
+SOURCE = fs.sem_metal_layer_credit()
 
 # 実データを走らせた後、stdout の ``RECORDED_JSON`` と同じ値へ固定する。
 RECORDED = {
@@ -841,6 +841,14 @@ def _print_recorded():
     print("記録値(RECORDED): " + json.dumps(RECORDED, ensure_ascii=False, sort_keys=True))
 
 
+def _finish():
+    errors = figs.errors()
+    if errors:
+        print("図の書き出しで失敗:", "; ".join(errors))
+        raise SystemExit(1)
+    print("\nPASS")
+
+
 def main() -> None:
     t0 = time.perf_counter()
     synthetic = synthetic_width_gate()
@@ -850,20 +858,23 @@ def main() -> None:
            synthetic["skeleton_px"]))
     if os.environ.get("CI") and not os.environ.get("FULLSEYE_SEM_METAL_DATA"):
         _print_recorded()
+        _finish()
         return
     try:
-        root = realdata.sem_metal_layer_root(required=False)
+        root = fs.sem_metal_layer_root(required=False)
     except realdata.RealDataError as exc:
         print("実データ配置を拒否: %s" % exc)
         _print_recorded()
+        _finish()
         return
     if root is None:
         _print_recorded()
+        _finish()
         return
     reduced = os.environ.get("FULLSEYE_POC_BUDGET", "").lower() == "reduced"
     limit = None if "--all" in sys.argv else (2 if reduced else MAX_IMAGES)
     width_limit = 40 if reduced else MAX_WIDTH_TRACKS_PER_IMAGE
-    pairs = realdata.sem_metal_layer_pairs(limit=limit)
+    pairs = fs.sem_metal_layer_pairs(limit=limit)
     print("実データ: %s" % SOURCE)
     print("原本 dataset.zip SHA-256: %s" % realdata.SEM_METAL_SHA256)
     print("展開先: %s" % root)
@@ -1103,6 +1114,7 @@ def main() -> None:
     assert summary[threshold_best]["pred_profile_skeleton_delta_px"] <= 1.0 + 1e-9
     assert tp <= min(tp + fp, tp + fn)
     print("完了: %.1f s" % (time.perf_counter() - t0))
+    _finish()
 
 
 if __name__ == "__main__":

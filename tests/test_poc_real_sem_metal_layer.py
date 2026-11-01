@@ -143,3 +143,13 @@ def test_ci_does_not_download_and_prints_recorded(tmp_path):
     assert run.returncode == 0, run.stderr
     assert "6.4 GB を取得しない" in run.stdout
     assert "RECORDED" in run.stdout
+    assert "PASS" in run.stdout
+
+
+def test_figure_failure_is_nonzero_in_recorded_path(monkeypatch):
+    monkeypatch.setenv("CI", "1")
+    monkeypatch.delenv("FULLSEYE_SEM_METAL_DATA", raising=False)
+    monkeypatch.setattr(poc.figs, "errors", lambda: ["write failed"])
+    with pytest.raises(SystemExit) as exc:
+        poc.main()
+    assert exc.value.code == 1
