@@ -588,6 +588,7 @@ NOT_A_GENERATOR = {
     "tools/probe_studio_web/compare_outputs.py": "探針の照合。2 つの実行の出力を ULP で比べ、結果は引数の出力先へ。--ops-json で studio_lite/ops_subset.json(実測の台帳)を書くが、それは手で回して commit する(node + Pyodide が要り CI では作れない)。",
     "tools/probe_studio_web/build_proof.py": ("探針の証明ページを --out(repo の外)に組む(Pyodide 本体の複製 + repo 内モジュールの zip)。"
                                                "dist は repo に入れない。"),
+    "tools/fetch_sem_metal_layer.py": "取得器(実データ Metal-layer SEM 6.4 GB を repo の外のキャッシュへ落とし SHA-256 を照合する)。生成物は無く、CI では回さない。",
     "tools/check_fallback_parity.py": "門の実測(min 構成 = cv2/skimage/PIL なしで op が別の答えを返さないか、full と ULP 照合)。出力は一時 dir か --out の指定先で、repo の生成物は無い。",
     "tools/algo_gate.py": "門(algo 層の合否を出す)。出力は out/ へ。", "tools/mutation_probe.py": "門の実測。出力は指定先、一時変更は復元。",
     "gsviewer.py": "ライブラリ + CLI(fs.gs_viewer_html / gs_catalog_html)。呼び出し側が指定した出力先へ 1 つの HTML を書く道具で、repo の生成物ではない(公開ページの生成器は tools/build_gsplat_pages.py)。",
