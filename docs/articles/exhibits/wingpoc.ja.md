@@ -6332,11 +6332,11 @@ py -3.11 examples/poc_panorama_drift.py
 
 ## No.2026.285 —— 実機 RGB-D の産業部品を PPF で 6 自由度照合する
 
-BOP T-LESS(CC BY 4.0)のBOP19 test_primesense全20場面から先頭画像を1枚ずつ決定的に選び、可視率0.5以上の132対象を深度→点群→法線→RANSAC平面除去→クラスタ→PPF+ICPと通した。AR_MSSD 0.162 / AR_MSPD 0.185で、前回2場面・10対象の0.290/0.320より下がり、公式全testのDrost 0.478/0.480、Vidal 0.575/0.574に負けた。クラスタ分割なしで平面除去後の場面全体へ投票すると0.064/0.054まで悪化した。理想深度は0.827/0.802なので、実機化で0.664/0.617落ちる。ICP無しは0.170/0.152、符号未整理の法線は0.142/0.167。MSSD>0.2dの失敗115/132の重複内訳は、結合クラスタ34、可視率0.8未満9、薄い部品23、深度欠損1%超38、対称部品108。所要39.77秒、0.301秒/対象。
+BOP T-LESS(CC BY 4.0)のBOP19 test_primesense全20場面から先頭画像を1枚ずつ決定的に選び、可視率0.5以上の132対象を深度→点群→法線→RANSAC平面除去→クラスタ→PPF+ICPと通した。旧180/160点・6 mmの0.162/0.185に対し、密度、ref_fraction、angle_bins、ICP反復を11設定で掃引し、10秒/対象以内でAR_MSSD最大の1000/1000点・2 mm・ref 0.25・24ビン・ICP 100反復を採用した。主経路8.291秒/対象でAR_MSSD 0.197 / AR_MSPD 0.220となり、粗い間引きが成績を抑えていたが、公式全testのDrost 0.478/0.480、Vidal 0.575/0.574にはなお届かない。2000点は2時間で未完走、54.6秒/対象以上。クラスタなしは0.111/0.113、理想深度は0.985/0.985、ICPなしは0.346/0.338、符号未整理の法線は0.132/0.161。MSSD>0.2dの失敗109/132の重複内訳は、結合クラスタ34、可視率0.8未満8、薄い部品21、深度欠損1%超36、対称部品103。
 
 [![実機 RGB-D の産業部品を PPF で 6 自由度照合する](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/01_pose_overlay_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/01_pose_overlay.png)
 
-*↑ **実機 RGB-D の産業部品を PPF で 6 自由度照合する** ―― BOP T-LESS(CC BY 4.0)のBOP19 test_primesense全20場面から先頭画像を1枚ずつ決定的に選び、可視率0.5以上の132対象を深度→点群→法線→RANSAC平面除去→クラスタ→PPF+ICPと通した。AR_MSSD 0.162 / AR_MSPD 0.185で、前回2場面・10対象の0.290/0.320より下がり、公式全testのDrost 0.478/0.480、Vidal 0.575/0.574に負けた。クラスタ分割なしで平面除去後の場面全体へ投票すると0.064/0.054まで悪化した。理想深度は0.827/0.802なので、実機化で0.664/0.617落ちる。ICP無しは0.170/0.152、符号未整理の法線は0.142/0.167。MSSD>0.2dの失敗115/132の重複内訳は、結合クラスタ34、可視率0.8未満9、薄い部品23、深度欠損1%超38、対称部品108。所要39.77秒、0.301秒/対象。*
+*↑ **実機 RGB-D の産業部品を PPF で 6 自由度照合する** ―― BOP T-LESS(CC BY 4.0)のBOP19 test_primesense全20場面から先頭画像を1枚ずつ決定的に選び、可視率0.5以上の132対象を深度→点群→法線→RANSAC平面除去→クラスタ→PPF+ICPと通した。旧180/160点・6 mmの0.162/0.185に対し、密度、ref_fraction、angle_bins、ICP反復を11設定で掃引し、10秒/対象以内でAR_MSSD最大の1000/1000点・2 mm・ref 0.25・24ビン・ICP 100反復を採用した。主経路8.291秒/対象でAR_MSSD 0.197 / AR_MSPD 0.220となり、粗い間引きが成績を抑えていたが、公式全testのDrost 0.478/0.480、Vidal 0.575/0.574にはなお届かない。2000点は2時間で未完走、54.6秒/対象以上。クラスタなしは0.111/0.113、理想深度は0.985/0.985、ICPなしは0.346/0.338、符号未整理の法線は0.132/0.161。MSSD>0.2dの失敗109/132の重複内訳は、結合クラスタ34、可視率0.8未満8、薄い部品21、深度欠損1%超36、対称部品103。*
 
 用語: RANSAC — 標本から小さな部分集合を反復抽出してモデルを当て、許容誤差内の点が最も多いモデルを選ぶ外れ値に強い推定法。; ICP — 二つの点群で最近点対応と剛体変換の推定を交互に繰り返し、位置合わせする方法。
 
@@ -6348,13 +6348,17 @@ BOP T-LESS(CC BY 4.0)のBOP19 test_primesense全20場面から先頭画像を1�
 
 *↑ 20場面の標本を obj_id ごとに平均。*
 
-[![左群=理想 z-buffer 深度 0.827/0.802、右群=PrimeSense 深度 0.162/0.185。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/04_synthetic_vs_real_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/04_synthetic_vs_real.png)
+[![合成 MSSD 0.985 / 合成 MSPD 0.985 / 実機 MSSD 0.197 / 実機 MSPD 0.220。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/04_synthetic_vs_real_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/04_synthetic_vs_real.png)
 
-*↑ 左群=理想 z-buffer 深度 0.827/0.802、右群=PrimeSense 深度 0.162/0.185。*
+*↑ 合成 MSSD 0.985 / 合成 MSPD 0.985 / 実機 MSSD 0.197 / 実機 MSPD 0.220。*
 
 [![橙=推定、青=真値。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/05_failure_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/05_failure.png)
 
 *↑ 橙=推定、青=真値。*
+
+[![180/160、500/500、1000/1000は132対象の完走値。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/06_density_vs_ar_time_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/06_density_vs_ar_time.png)
+
+*↑ 180/160、500/500、1000/1000は132対象の完走値。*
 
 ```
 py -3.11 examples/poc_real_tless_6dof.py
@@ -6362,9 +6366,9 @@ py -3.11 examples/poc_real_tless_6dof.py
 
 ソース: [examples/poc_real_tless_6dof.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_tless_6dof.py)
 
-この回が作った図は全部で **5 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_real_tless_6dof)
+この回が作った図は全部で **6 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_real_tless_6dof)
 
-使用 op(ノートへ): [`depth_to_points`](https://furuse.work/ops/3d/transform/depth_to_points.html) · [`estimate_normals`](https://furuse.work/ops/3d/curvature/estimate_normals.html) · [`project_points`](https://furuse.work/ops/3d/render/project_points.html) · [`render_point_depth`](https://furuse.work/ops/3d/render/render_point_depth.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html)
+使用 op(ノートへ): [`axes_frame`](https://furuse.work/ops/annotate/plot/axes_frame.html) · [`axes_transform`](https://furuse.work/ops/annotate/plot/axes_transform.html) · [`data_to_pixel`](https://furuse.work/ops/annotate/plot/data_to_pixel.html) · [`depth_to_points`](https://furuse.work/ops/3d/transform/depth_to_points.html) · [`estimate_normals`](https://furuse.work/ops/3d/curvature/estimate_normals.html) · [`grid_lines`](https://furuse.work/ops/annotate/plot/grid_lines.html) · [`legend_box`](https://furuse.work/ops/annotate/furniture/legend_box.html) · [`plot_series`](https://furuse.work/ops/annotate/plot/plot_series.html) · [`project_points`](https://furuse.work/ops/3d/render/project_points.html) · [`render_point_depth`](https://furuse.work/ops/3d/render/render_point_depth.html) · [`rmse`](https://furuse.work/ops/imgmetrics/fidelity/rmse.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`ticks`](https://furuse.work/ops/annotate/plot/ticks.html)
 
 ## No.2026.108 —— 実写のステレオ写真で測る ―― 合成では出ない 3 つの躓き
 

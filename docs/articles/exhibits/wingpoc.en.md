@@ -6336,13 +6336,13 @@ Ops used (notes): [`axes_frame`](https://furuse.work/ops/annotate/plot/axes_fram
 
 ## No.2026.285 —— Six-DoF PPF Matching of Industrial Parts in Real RGB-D Data
 
-One deterministically selected first image from each of all 20 BOP19 test_primesense scenes in BOP T-LESS (CC BY 4.0) gives 132 instances at visibility 0.5 or above. The depth, point-cloud, oriented-normal, RANSAC table-removal, clustering, PPF and ICP path reaches AR_MSSD 0.162 and AR_MSPD 0.185, below the previous two-scene, ten-instance result of 0.290/0.320 and the official full-test Drost scores of 0.478/0.480 and Vidal scores of 0.575/0.574. Matching the entire plane-removed scene without clustering falls to 0.064/0.054. Ideal depth reaches 0.827/0.802, making the synthetic-to-real drops 0.664/0.617. Removing ICP gives 0.170/0.152 and leaving normals unoriented gives 0.142/0.167. Of 132 instances, 115 exceed MSSD 0.2d; overlapping causes are 34 merged-cluster cases, nine below 0.8 visibility, 23 thin parts, 38 above one-percent missing depth, and 108 symmetric parts. Runtime is 39.77 seconds, or 0.301 seconds per instance.
+One deterministically selected first image from each of all 20 BOP19 test_primesense scenes in BOP T-LESS (CC BY 4.0) gives 132 instances at visibility 0.5 or above. Sweeping density, reference fraction, angular bins and ICP iterations across eleven settings improves the old 180/160-point, 6 mm result of 0.162/0.185; the best AR_MSSD within ten seconds per instance uses 1000/1000 points, 2 mm voxels, reference fraction 0.25, 24 bins and 100 ICP iterations. Its primary path takes 8.291 seconds per instance and reaches AR_MSSD 0.197 and AR_MSPD 0.220, still below the official full-test Drost scores of 0.478/0.480 and Vidal scores of 0.575/0.574. The 2000-point run did not finish in two hours and exceeded 54.6 seconds per instance. Matching without clustering gives 0.111/0.113, ideal depth gives 0.985/0.985, removing ICP gives 0.346/0.338, and leaving normals unoriented gives 0.132/0.161. Of 132 instances, 109 exceed MSSD 0.2d; overlapping causes are 34 merged-cluster cases, eight below 0.8 visibility, 21 thin parts, 36 above one-percent missing depth, and 103 symmetric parts.
 
 [![Six-DoF PPF Matching of Industrial Parts in Real RGB-D Data](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/01_pose_overlay_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/01_pose_overlay.png)
 
-*↑ **Six-DoF PPF Matching of Industrial Parts in Real RGB-D Data** ―― One deterministically selected first image from each of all 20 BOP19 test_primesense scenes in BOP T-LESS (CC BY 4.0) gives 132 instances at visibility 0.5 or above. The depth, point-cloud, oriented-normal, RANSAC table-removal, clustering, PPF and ICP path reaches AR_MSSD 0.162 and AR_MSPD 0.185, below the previous two-scene, ten-instance result of 0.290/0.320 and the official full-test Drost scores of 0.478/0.480 and Vidal scores of 0.575/0.574. Matching the entire plane-removed scene without clustering falls to 0.064/0.054. Ideal depth reaches 0.827/0.802, making the synthetic-to-real drops 0.664/0.617. Removing ICP gives 0.170/0.152 and leaving normals unoriented gives 0.142/0.167. Of 132 instances, 115 exceed MSSD 0.2d; overlapping causes are 34 merged-cluster cases, nine below 0.8 visibility, 23 thin parts, 38 above one-percent missing depth, and 108 symmetric parts. Runtime is 39.77 seconds, or 0.301 seconds per instance.*
+*↑ **Six-DoF PPF Matching of Industrial Parts in Real RGB-D Data** ―― One deterministically selected first image from each of all 20 BOP19 test_primesense scenes in BOP T-LESS (CC BY 4.0) gives 132 instances at visibility 0.5 or above. Sweeping density, reference fraction, angular bins and ICP iterations across eleven settings improves the old 180/160-point, 6 mm result of 0.162/0.185; the best AR_MSSD within ten seconds per instance uses 1000/1000 points, 2 mm voxels, reference fraction 0.25, 24 bins and 100 ICP iterations. Its primary path takes 8.291 seconds per instance and reaches AR_MSSD 0.197 and AR_MSPD 0.220, still below the official full-test Drost scores of 0.478/0.480 and Vidal scores of 0.575/0.574. The 2000-point run did not finish in two hours and exceeded 54.6 seconds per instance. Matching without clustering gives 0.111/0.113, ideal depth gives 0.985/0.985, removing ICP gives 0.346/0.338, and leaving normals unoriented gives 0.132/0.161. Of 132 instances, 109 exceed MSSD 0.2d; overlapping causes are 34 merged-cluster cases, eight below 0.8 visibility, 21 thin parts, 36 above one-percent missing depth, and 103 symmetric parts.*
 
-Terms: RANSAC — A robust estimator that repeatedly fits a model to small random subsets and selects the model supported by the most inliers within a tolerance.; ICP — A registration method that alternates nearest-point correspondence with rigid-transform estimation between two point clouds.
+Terms: ICP — A registration method that alternates nearest-point correspondence with rigid-transform estimation between two point clouds.
 
 [![欠測 1164 px、孤立飛び候補 0 px。 BOP T-LESS, CC BY 4.0。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/02_rgb_depth_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/02_rgb_depth.png)
 
@@ -6352,13 +6352,17 @@ Terms: RANSAC — A robust estimator that repeatedly fits a model to small rando
 
 *↑ 20場面の標本を obj_id ごとに平均。*
 
-[![左群=理想 z-buffer 深度 0.827/0.802、右群=PrimeSense 深度 0.162/0.185。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/04_synthetic_vs_real_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/04_synthetic_vs_real.png)
+[![合成 MSSD 0.985 / 合成 MSPD 0.985 / 実機 MSSD 0.197 / 実機 MSPD 0.220。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/04_synthetic_vs_real_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/04_synthetic_vs_real.png)
 
-*↑ 左群=理想 z-buffer 深度 0.827/0.802、右群=PrimeSense 深度 0.162/0.185。*
+*↑ 合成 MSSD 0.985 / 合成 MSPD 0.985 / 実機 MSSD 0.197 / 実機 MSPD 0.220。*
 
 [![橙=推定、青=真値。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/05_failure_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/05_failure.png)
 
 *↑ 橙=推定、青=真値。*
+
+[![180/160、500/500、1000/1000は132対象の完走値。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/06_density_vs_ar_time_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/06_density_vs_ar_time.png)
+
+*↑ 180/160、500/500、1000/1000は132対象の完走値。*
 
 ```
 py -3.11 examples/poc_real_tless_6dof.py
@@ -6366,9 +6370,9 @@ py -3.11 examples/poc_real_tless_6dof.py
 
 Source: [examples/poc_real_tless_6dof.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_tless_6dof.py)
 
-This run produced **5 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_real_tless_6dof)
+This run produced **6 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_real_tless_6dof)
 
-Ops used (notes): [`depth_to_points`](https://furuse.work/ops/3d/transform/depth_to_points.html) · [`estimate_normals`](https://furuse.work/ops/3d/curvature/estimate_normals.html) · [`project_points`](https://furuse.work/ops/3d/render/project_points.html) · [`render_point_depth`](https://furuse.work/ops/3d/render/render_point_depth.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html)
+Ops used (notes): [`axes_frame`](https://furuse.work/ops/annotate/plot/axes_frame.html) · [`axes_transform`](https://furuse.work/ops/annotate/plot/axes_transform.html) · [`data_to_pixel`](https://furuse.work/ops/annotate/plot/data_to_pixel.html) · [`depth_to_points`](https://furuse.work/ops/3d/transform/depth_to_points.html) · [`estimate_normals`](https://furuse.work/ops/3d/curvature/estimate_normals.html) · [`grid_lines`](https://furuse.work/ops/annotate/plot/grid_lines.html) · [`legend_box`](https://furuse.work/ops/annotate/furniture/legend_box.html) · [`plot_series`](https://furuse.work/ops/annotate/plot/plot_series.html) · [`project_points`](https://furuse.work/ops/3d/render/project_points.html) · [`render_point_depth`](https://furuse.work/ops/3d/render/render_point_depth.html) · [`rmse`](https://furuse.work/ops/imgmetrics/fidelity/rmse.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`ticks`](https://furuse.work/ops/annotate/plot/ticks.html)
 
 ## No.2026.108 —— Measuring on a Real Stereo Photograph — Three Stumbles Synthesis Never Produces
 

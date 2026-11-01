@@ -4,7 +4,7 @@ dim: imgmetrics
 category: fidelity
 in: image2d × image2d
 out: scalar
-examples: [grasp_pose, image_quality_metrics, poc_ct_fidelity, poc_datacenter_thermal_field, poc_polarization_specular, poc_structure_4d_deterioration]
+examples: [grasp_pose, image_quality_metrics, poc_ct_fidelity, poc_datacenter_thermal_field, poc_polarization_specular, poc_real_tless_6dof, poc_structure_4d_deterioration]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.8.1  # fullseye lib version this note was generated for
@@ -45,6 +45,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - [poc_ct_fidelity](../../../../examples/poc_ct_fidelity.py) — `py -3.11 examples/poc_ct_fidelity.py`
 - [poc_datacenter_thermal_field](../../../../examples/poc_datacenter_thermal_field.py) — `py -3.11 examples/poc_datacenter_thermal_field.py`
 - [poc_polarization_specular](../../../../examples/poc_polarization_specular.py) — `py -3.11 examples/poc_polarization_specular.py`
+- [poc_real_tless_6dof](../../../../examples/poc_real_tless_6dof.py) — `py -3.11 examples/poc_real_tless_6dof.py`
 - [poc_structure_4d_deterioration](../../../../examples/poc_structure_4d_deterioration.py) — `py -3.11 examples/poc_structure_4d_deterioration.py`
 
 ## 型が繋がる次の op(`scalar` を入力に取れる)

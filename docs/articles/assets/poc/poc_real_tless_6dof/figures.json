@@ -32,20 +32,30 @@
  {
   "file": "04_synthetic_vs_real.png",
   "name": "synthetic_vs_real",
-  "caption": "左群=理想 z-buffer 深度 0.827/0.802、右群=PrimeSense 深度 0.162/0.185。順に AR_MSSD/AR_MSPD。",
+  "caption": "合成 MSSD 0.985 / 合成 MSPD 0.985 / 実機 MSSD 0.197 / 実機 MSPD 0.220。",
   "shape": [
-   400,
-   640,
+   420,
+   720,
    3
   ]
  },
  {
   "file": "05_failure.png",
   "name": "failure",
-  "caption": "橙=推定、青=真値。MSSD 241.7 mm、cluster merged=True。",
+  "caption": "橙=推定、青=真値。MSSD 176.2 mm、cluster merged=True。",
   "shape": [
    633,
    740,
+   3
+  ]
+ },
+ {
+  "file": "06_density_vs_ar_time.png",
+  "name": "density_vs_ar_time",
+  "caption": "180/160、500/500、1000/1000は132対象の完走値。2000/2000は2時間で未完走のため54.6秒/対象以上、ARは未記録。",
+  "shape": [
+   430,
+   760,
    3
   ]
  }

@@ -11,8 +11,10 @@ test_primesense の全20場面から、各場面で画像IDが最小の1枚を�
 
 クラスタ分割への依存を切り分けるため、主経路に加えて、RANSAC 平面除去後の場面
 点群全体へクラスタ分割せず ``surface_match`` する対照群も同じ対象で採点する。
-2026-11-01 の Python 3.11 実行では全体39.77秒、132対象、1対象0.301秒。
-クラスタ分割なしの追加 ``surface_match`` は計3.29秒（0.025秒/対象）だった。
+180/160点から2000/2000点まで密度を掃引し、1対象10秒以内で AR_MSSD 最大だった
+1000/1000点、voxel 2 mm、ref_fraction 0.25、angle_bins 24、ICP 100反復を採用した。
+主経路は8.291秒/対象、AR_MSSD 0.197 / AR_MSPD 0.220。旧180/160点の
+0.162/0.185は間引き条件を明記して比較表に残す。
 
 姿勢誤差(Hodaň et al., BOP Challenge 2020)を自前で計算する。モデル点集合 ``V``、
 推定姿勢 ``P_e=(R_e,t_e)``、真値 ``P_g``、物体の対称変換集合 ``S`` に対して::
@@ -49,6 +51,7 @@ CI にデータが無いときはダウンロードせず、実行記録 ``RECOR
 """
 from __future__ import annotations
 
+from dataclasses import dataclass
 import json
 import os
 from pathlib import Path
@@ -66,6 +69,7 @@ from match3d import render_point_depth                            # noqa: E402
 
 
 DATA_ENV = "FULLSEYE_TLESS_DATA"
+SWEEP_ENV = "FULLSEYE_TLESS_SWEEP"
 DEFAULT_DATA = Path("C:/dev/data/realdata/tless")
 SCENE_IDS = tuple(range(1, 21))
 VISIBILITY_MIN = 0.50
@@ -73,8 +77,52 @@ ROI = (70, 435, 65, 575)       # marker frame/background only; no GT boxes
 DEPTH_RANGE_MM = (500.0, 1200.0)
 VOXEL_MM = 4.0
 CLUSTER_TOL_MM = 8.0
-MODEL_POINTS = 180
-SCENE_POINTS = 160
+MODEL_POINTS = 1000
+SCENE_POINTS = 1000
+
+
+@dataclass(frozen=True)
+class MatchConfig:
+    """PPF の密度・投票・後段 ICP だけを一組にした掃引設定。"""
+
+    name: str
+    model_points: int
+    scene_points: int
+    voxel_mm: float
+    ref_fraction: float = 0.25
+    angle_bins: int = 24
+    icp_passes: int = 1
+
+
+SPARSE_CONFIG = MatchConfig("density_180_160_v6", 180, 160, 6.0)
+ADOPTED_CONFIG = MatchConfig("adopted_1000_1000_v2_icp100", 1000, 1000, 2.0,
+                             ref_fraction=0.25, angle_bins=24, icp_passes=2)
+SWEEP_CONFIGS = {
+    config.name: config for config in (
+        SPARSE_CONFIG,
+        MatchConfig("density_500_500_v3", 500, 500, 3.0),
+        MatchConfig("density_1000_1000_v2", 1000, 1000, 2.0),
+        MatchConfig("density_2000_2000_v2", 2000, 2000, 2.0),
+        MatchConfig("ref_0_5", 1000, 1000, 2.0, ref_fraction=0.5),
+        MatchConfig("ref_1_0", 1000, 1000, 2.0, ref_fraction=1.0),
+        MatchConfig("angle_30", 1000, 1000, 2.0, angle_bins=30),
+        MatchConfig("icp_100", 1000, 1000, 2.0, icp_passes=2),
+    )
+}
+DEFAULT_CONFIG = ADOPTED_CONFIG
+
+# 2026-11-01, Python 3.11。各値は _run_sweep_setting の stdout から転記。
+# 2000 点は全体2時間でも完走せず、再試行も scene 1 の4対象で31分超だった。
+DENSITY_SWEEP = (
+    {"model": 180, "scene": 160, "voxel": 6.0, "ar_mssd": 0.1621212121,
+     "ar_mspd": 0.1848484848, "seconds": 0.2539355720},
+    {"model": 500, "scene": 500, "voxel": 3.0, "ar_mssd": 0.1803030303,
+     "ar_mspd": 0.2128787879, "seconds": 1.4225707318},
+    {"model": 1000, "scene": 1000, "voxel": 2.0, "ar_mssd": 0.1962121212,
+     "ar_mspd": 0.2166666667, "seconds": 8.3804363826},
+    {"model": 2000, "scene": 2000, "voxel": 2.0, "ar_mssd": None,
+     "ar_mspd": None, "seconds": 54.6},
+)
 
 LEADERBOARD = {
     "Drost-CVPR10-3D-Only": {"ar": 0.444, "mssd": 0.478, "mspd": 0.480},
@@ -86,18 +134,25 @@ LEADERBOARD = {
 RECORDED = {
     "instances": 132,
     "scenes": 20,
-    "ar_mssd": 0.162,
-    "ar_mspd": 0.185,
-    "synthetic_ar_mssd": 0.827,
-    "synthetic_ar_mspd": 0.802,
-    "no_icp_ar_mssd": 0.170,
-    "raw_normals_ar_mssd": 0.142,
-    "no_cluster_ar_mssd": 0.064,
-    "no_cluster_ar_mspd": 0.054,
-    "elapsed_seconds": 39.77,
-    "seconds_per_instance": 0.301,
-    "no_cluster_added_seconds": 3.29,
-    "mssd_failure_gt_0_2d": 115,
+    "model_points": 1000,
+    "scene_points": 1000,
+    "voxel_mm": 2.0,
+    "ref_fraction": 0.25,
+    "angle_bins": 24,
+    "icp_iterations": 100,
+    "ar_mssd": 0.197,
+    "ar_mspd": 0.220,
+    "synthetic_ar_mssd": 0.985,
+    "synthetic_ar_mspd": 0.985,
+    "no_icp_ar_mssd": 0.346,
+    "no_icp_ar_mspd": 0.338,
+    "raw_normals_ar_mssd": 0.132,
+    "raw_normals_ar_mspd": 0.161,
+    "no_cluster_ar_mssd": 0.111,
+    "no_cluster_ar_mspd": 0.113,
+    "primary_seconds_per_instance": 8.291,
+    "diagnostic_elapsed_seconds": 7189.2,
+    "mssd_failure_gt_0_2d": 109,
 }
 
 
@@ -283,7 +338,7 @@ def first_bop19_scene_specs(root: Path):
     return specs
 
 
-def prepare_scene(record):
+def prepare_scene(record, config: MatchConfig = DEFAULT_CONFIG):
     raw = record["raw"]
     depth = raw.astype(np.float64) * record["scale"]
     zeros = int((raw == 0).sum())
@@ -295,7 +350,9 @@ def prepare_scene(record):
     work[~mask] = np.nan
     work[(work < DEPTH_RANGE_MM[0]) | (work > DEPTH_RANGE_MM[1])] = np.nan
     dense = fs.depth_to_points(work, record["K"])
-    cloud = fs.voxel_downsample(dense, voxel=VOXEL_MM)
+    # 旧 180/160 条件は前回と同じ 4 mm の平面・cluster 入力を保つ。照合 voxel
+    # が 3/2 mm の条件だけ、その密度を失わないよう前処理側も同じ幅まで細かくする。
+    cloud = fs.voxel_downsample(dense, voxel=min(VOXEL_MM, config.voxel_mm))
     plane, ground = fs.fit_plane_ransac(cloud, thresh=4.0, iters=300, seed=0)
     if plane[2] < 0:
         plane = -plane
@@ -312,9 +369,9 @@ def prepare_scene(record):
         sample = points[np.linspace(0, len(points) - 1,
                                     min(500, len(points)), dtype=np.int64)]
         boxes.append(fs.obb(sample))
-    whole = fs.voxel_downsample(objects, voxel=6.0)
+    whole = fs.voxel_downsample(objects, voxel=config.voxel_mm)
     whole_normals = fs.estimate_normals(whole, k=12, viewpoint=np.zeros(3))
-    whole, whole_normals = _cap(whole, whole_normals, SCENE_POINTS)
+    whole, whole_normals = _cap(whole, whole_normals, config.scene_points)
     return {**record, "depth": valid_depth, "zeros": zeros, "flying": flying,
             "dense_count": len(dense), "cloud_count": len(cloud), "plane": plane,
             "ground_count": int(ground.sum()), "objects": objects,
@@ -322,29 +379,32 @@ def prepare_scene(record):
             "whole_points": whole, "whole_normals": whole_normals}
 
 
-def _match_one(root, scene, instance, cluster_index, model_info, *, seed):
+def _finish_icp(pose, model, scene_points, config: MatchConfig):
+    """surface_match の50反復後へ、採用設定なら同じICPをもう50反復つなぐ。"""
+    if config.icp_passes == 1:
+        return pose
+    from registration import icp
+    R, t, _aligned, rmse = icp(model, scene_points, init=(pose["R"], pose["t"]),
+                               trim=0.2, max_iter=50)
+    return {**pose, "R": R, "t": t, "rmse": float(rmse)}
+
+
+def _match_one(root, scene, instance, cluster_index, model_info, *, seed,
+               config: MatchConfig = DEFAULT_CONFIG, diagnostics: bool = True):
     obj_id = int(instance["obj_id"])
     model_full, normal_full = _ply_vertices_normals(
         root / "models_reconst" / f"obj_{obj_id:06d}.ply")
-    model, model_normals = _cap(model_full, normal_full, MODEL_POINTS)
+    model, model_normals = _cap(model_full, normal_full, config.model_points)
     cluster = scene["objects"][scene["clusters"][cluster_index]]
-    cluster = fs.voxel_downsample(cluster, voxel=6.0)
+    cluster = fs.voxel_downsample(cluster, voxel=config.voxel_mm)
     oriented = fs.estimate_normals(cluster, k=12, viewpoint=np.zeros(3))
-    scene_points, oriented = _cap(cluster, oriented, SCENE_POINTS)
-    raw_normals = fs.estimate_normals(scene_points, k=12)
-    descriptor = fs.ppf_model(model, model_normals, angle_bins=24)
+    scene_points, oriented = _cap(cluster, oriented, config.scene_points)
     match_start = time.perf_counter()
-    main = fs.surface_match(descriptor, scene_points, oriented, ref_fraction=0.25,
+    descriptor = fs.ppf_model(model, model_normals, angle_bins=config.angle_bins)
+    main = fs.surface_match(descriptor, scene_points, oriented, ref_fraction=config.ref_fraction,
                             topk=8, refine=True, seed=seed)
+    main = _finish_icp(main, model, scene_points, config)
     cluster_match_seconds = time.perf_counter() - match_start
-    no_icp = fs.surface_match(descriptor, scene_points, oriented, ref_fraction=0.25,
-                              topk=8, refine=False, seed=seed)
-    raw_normal = fs.surface_match(descriptor, scene_points, raw_normals, ref_fraction=0.25,
-                                  topk=8, refine=True, seed=seed)
-    match_start = time.perf_counter()
-    no_cluster = fs.surface_match(descriptor, scene["whole_points"], scene["whole_normals"],
-                                  ref_fraction=0.25, topk=8, refine=True, seed=seed)
-    no_cluster_match_seconds = time.perf_counter() - match_start
     R_gt = np.asarray(instance["cam_R_m2c"], np.float64).reshape(3, 3)
     t_gt = np.asarray(instance["cam_t_m2c"], np.float64)
     eval_points, _ = _ply_vertices_normals(root / "models_cad" / f"obj_{obj_id:06d}.ply")
@@ -354,6 +414,27 @@ def _match_one(root, scene, instance, cluster_index, model_info, *, seed):
     def score(pose):
         return pose_metrics(eval_points, pose["R"], pose["t"], R_gt, t_gt, scene["K"], syms)
     metrics = score(main)
+    basic = {"pose": main, "metrics": metrics,
+             "cluster_match_seconds": cluster_match_seconds,
+             "eval_points": eval_points, "R_gt": R_gt, "t_gt": t_gt,
+             "model_points": model_full}
+    if not diagnostics:
+        return basic
+
+    raw_normals = fs.estimate_normals(scene_points, k=12)
+    no_icp = fs.surface_match(descriptor, scene_points, oriented,
+                              ref_fraction=config.ref_fraction,
+                              topk=8, refine=False, seed=seed)
+    raw_normal = fs.surface_match(descriptor, scene_points, raw_normals,
+                                  ref_fraction=config.ref_fraction,
+                                  topk=8, refine=True, seed=seed)
+    raw_normal = _finish_icp(raw_normal, model, scene_points, config)
+    match_start = time.perf_counter()
+    no_cluster = fs.surface_match(descriptor, scene["whole_points"], scene["whole_normals"],
+                                  ref_fraction=config.ref_fraction,
+                                  topk=8, refine=True, seed=seed)
+    no_cluster = _finish_icp(no_cluster, model, scene["whole_points"], config)
+    no_cluster_match_seconds = time.perf_counter() - match_start
     metrics_no_icp = score(no_icp)
     metrics_raw_normal = score(raw_normal)
     metrics_no_cluster = score(no_cluster)
@@ -362,24 +443,23 @@ def _match_one(root, scene, instance, cluster_index, model_info, *, seed):
     synth_depth = render_point_depth(model_full, scene["K"], scene["raw"].shape,
                                      R=R_gt, t=t_gt)
     synth_points = fs.depth_to_points(synth_depth, scene["K"])
-    synth_points = fs.voxel_downsample(synth_points, voxel=6.0)
+    synth_points = fs.voxel_downsample(synth_points, voxel=config.voxel_mm)
     synth_normals = fs.estimate_normals(synth_points, k=12, viewpoint=np.zeros(3))
-    synth_points, synth_normals = _cap(synth_points, synth_normals, SCENE_POINTS)
+    synth_points, synth_normals = _cap(synth_points, synth_normals, config.scene_points)
     synth_pose = fs.surface_match(descriptor, synth_points, synth_normals,
-                                  ref_fraction=0.25, topk=8, refine=True, seed=seed)
+                                  ref_fraction=config.ref_fraction, topk=8,
+                                  refine=True, seed=seed)
+    synth_pose = _finish_icp(synth_pose, model, synth_points, config)
     synth_metrics = score(synth_pose)
-    return {"pose": main, "metrics": metrics, "no_icp": metrics_no_icp,
+    return {**basic, "no_icp": metrics_no_icp,
             "raw_normal": metrics_raw_normal, "synth": synth_metrics,
             "no_cluster": metrics_no_cluster,
-            "cluster_match_seconds": cluster_match_seconds,
-            "no_cluster_match_seconds": no_cluster_match_seconds,
-            "eval_points": eval_points, "R_gt": R_gt, "t_gt": t_gt,
-            "model_points": model_full}
+            "no_cluster_match_seconds": no_cluster_match_seconds}
 
 
-def run_real(root: Path):
+def run_real(root: Path, config: MatchConfig = DEFAULT_CONFIG, *, diagnostics: bool = True):
     model_infos = _json(root / "models_reconst" / "models_info.json")
-    scenes = [prepare_scene(load_scene(root, *spec))
+    scenes = [prepare_scene(load_scene(root, *spec), config)
               for spec in first_bop19_scene_specs(root)]
     rows = []
     seed = 0
@@ -399,7 +479,8 @@ def run_real(root: Path):
             assigned.append(cluster_index)
             obj_id = int(instance["obj_id"])
             result = _match_one(root, scene, instance, cluster_index,
-                                model_infos[str(obj_id)], seed=seed)
+                                model_infos[str(obj_id)], seed=seed, config=config,
+                                diagnostics=diagnostics)
             mask_path = scene["dir"] / "mask_visib" / f"{scene['image']:06d}_{index:06d}.png"
             visible_mask = np.asarray(Image.open(mask_path)) > 0
             missing = float(np.mean(scene["raw"][visible_mask] == 0)) if visible_mask.any() else 1.0
@@ -483,6 +564,77 @@ def _save_labeled_bars(name, series, labels, *, xlabel, ylabel, title, caption,
     figs.save(name, image, caption)
 
 
+def _save_metric_comparison(ar_real, ar_synth):
+    """図04を数値目盛りでなく4つの指標名を横軸にして保存する。"""
+    values = np.asarray([ar_synth[0], ar_synth[1], ar_real[0], ar_real[1]])
+    labels = ["合成 MSSD", "合成 MSPD", "実機 MSSD", "実機 MSPD"]
+    width, height = 720, 420
+    rect = (72, 44, width - 96, height - 118)
+    image = np.ones((height, width, 3), np.float64)
+    axes = fs.axes_transform(rect, (-0.6, 3.6), (-0.06, 1.06))
+    yticks = np.arange(0.0, 1.01, 0.2)
+    image = np.asarray(fs.grid_lines(image, axes, xticks=[], yticks=yticks, alpha=0.25))
+    image = np.asarray(fs.axes_frame(image, axes, width=1))
+    image = np.asarray(fs.ticks(image, axes, xticks=[], yticks=yticks,
+                                tick_len=5, font_size=10))
+    for index, (label, value, color) in enumerate(zip(
+            labels, values, ("right", "emphasis", "wrong", "neutral"))):
+        image = np.asarray(fs.plot_series(image, axes, [index], [value], kind="bar",
+                                          color=color, bar_width=0.16))
+        px, py = fs.data_to_pixel(axes, index, value)
+        image = np.asarray(fs.text_box(image, f"{value:.3f}", (px, py - 3),
+                                       anchor="cb", font_size=9, pad=1,
+                                       box_alpha=0.82, border=0))
+        image = np.asarray(fs.text_box(image, label, (px, rect[1] + rect[3] + 10),
+                                       anchor="ct", font_size=10, pad=1,
+                                       box_alpha=0.0, border=0))
+    image = np.asarray(fs.text_box(image, "同じモデル・姿勢: 合成 / 実機 × MSSD / MSPD",
+                                   (10, 8), anchor="lt", font_size=13))
+    image = np.asarray(fs.text_box(image, "平均 recall", (10, height - 10),
+                                   anchor="lb", font_size=11))
+    figs.save("synthetic_vs_real", image,
+              "合成 MSSD %.3f / 合成 MSPD %.3f / 実機 MSSD %.3f / 実機 MSPD %.3f。"
+              % (*ar_synth, *ar_real))
+
+
+def _save_density_sweep():
+    """図06: scene点数に対するAR_MSSDと秒/対象（2000点は時間下限）。"""
+    width, height = 760, 430
+    rect = (78, 46, width - 170, height - 116)
+    image = np.ones((height, width, 3), np.float64)
+    x = np.asarray([row["scene"] for row in DENSITY_SWEEP], np.float64)
+    ar = np.asarray([np.nan if row["ar_mssd"] is None else row["ar_mssd"]
+                     for row in DENSITY_SWEEP], np.float64)
+    seconds = np.asarray([row["seconds"] for row in DENSITY_SWEEP], np.float64)
+    left = fs.axes_transform(rect, (100.0, 2100.0), (0.15, 0.205))
+    right = fs.axes_transform(rect, (100.0, 2100.0), (0.0, 60.0))
+    xticks = x
+    yticks = np.arange(0.15, 0.201, 0.01)
+    image = np.asarray(fs.grid_lines(image, left, xticks=xticks, yticks=yticks, alpha=0.25))
+    image = np.asarray(fs.axes_frame(image, left, width=1))
+    image = np.asarray(fs.ticks(image, left, xticks=xticks, yticks=yticks,
+                                tick_len=5, font_size=9, label_fmt="{:g}"))
+    image = np.asarray(fs.plot_series(image, left, x[:3], ar[:3], kind="line",
+                                      color="right", width=2, marker_size=4))
+    image = np.asarray(fs.plot_series(image, right, x, seconds, kind="line",
+                                      color="wrong", width=2, marker_size=4))
+    for value in (0.0, 15.0, 30.0, 45.0, 60.0):
+        px, py = fs.data_to_pixel(right, 2100.0, value)
+        image = np.asarray(fs.text_box(image, f"{value:g}", (px + 8, py),
+                                       anchor="lm", font_size=9, pad=1,
+                                       box_alpha=0.0, border=0))
+    image = np.asarray(fs.text_box(image, "密度 vs AR と時間", (10, 8),
+                                   anchor="lt", font_size=13))
+    image = np.asarray(fs.text_box(image, "scene 点数   |   左: AR_MSSD   |   右: 秒/対象",
+                                   (10, height - 10), anchor="lb", font_size=11))
+    image = np.asarray(fs.legend_box(
+        image, [("right", "AR_MSSD"), ("wrong", "秒/対象（2000点は下限）")],
+        (rect[0] + 8, rect[1] + 8), anchor="lt", markers=True, font_size=10))
+    figs.save("density_vs_ar_time", image,
+              "180/160、500/500、1000/1000は132対象の完走値。"
+              "2000/2000は2時間で未完走のため54.6秒/対象以上、ARは未記録。")
+
+
 def make_figures(scenes, rows, ar_real, ar_synth):
     if not figs.enabled():
         return
@@ -512,20 +664,7 @@ def make_figures(scenes, rows, ar_real, ar_synth):
         size=(960, 440), xlim=(float(obj_ids.min()) - 0.8, float(obj_ids.max()) + 0.8),
         caption="20場面の標本を obj_id ごとに平均。棒上は AR_MSSD と対象件数 n。",
         font_size=8)
-    compare_series = [
-        ("合成 MSSD", [0.0], [ar_synth[0]]),
-        ("合成 MSPD", [1.0], [ar_synth[1]]),
-        ("実機 MSSD", [3.0], [ar_real[0]]),
-        ("実機 MSPD", [4.0], [ar_real[1]]),
-    ]
-    _save_labeled_bars(
-        "synthetic_vs_real", compare_series,
-        [[f"{values[0]:.3f}"] for _, _, values in compare_series],
-        xlabel="合成（左2本） / 実機（右2本）", ylabel="平均 recall",
-        title="同じモデル・姿勢: 合成 / 実機 × MSSD / MSPD",
-        size=(640, 400), xlim=(-0.8, 4.8),
-        caption=("左群=理想 z-buffer 深度 %.3f/%.3f、右群=PrimeSense 深度 %.3f/%.3f。"
-                 "順に AR_MSSD/AR_MSPD。" % (*ar_synth, *ar_real)))
+    _save_metric_comparison(ar_real, ar_synth)
     worst = max(rows, key=lambda row: row["metrics"]["mssd"] / row["diameter"])
     scene = next(item for item in scenes if item["scene"] == worst["scene"])
     fail = _overlay(scene, [worst])
@@ -534,6 +673,7 @@ def make_figures(scenes, rows, ar_real, ar_synth):
                     title="失敗例: MSSD が 0.2d を超えた対象", ncols=1,
                    caption="橙=推定、青=真値。MSSD %.1f mm、cluster merged=%s。"
                            % (worst["metrics"]["mssd"], worst["merged"]))
+    _save_density_sweep()
 
 
 def _print_recorded():
@@ -543,14 +683,48 @@ def _print_recorded():
     print("\nPASS")
 
 
+def _run_sweep_setting(root: Path, config: MatchConfig) -> None:
+    """単一設定を固定 subset 全体で採点し、手計算を挟まない JSON を出す。"""
+    start = time.perf_counter()
+    scenes, rows = run_real(root, config, diagnostics=False)
+    elapsed = time.perf_counter() - start
+    ar_mssd, ar_mspd = average_recall(_metric_rows(rows, "metrics"))
+    result = {
+        "setting": config.name,
+        "model_points": config.model_points,
+        "scene_points": config.scene_points,
+        "voxel_mm": config.voxel_mm,
+        "ref_fraction": config.ref_fraction,
+        "angle_bins": config.angle_bins,
+        "icp_iterations": 50 * config.icp_passes,
+        "scenes": len(scenes),
+        "instances": len(rows),
+        "ar_mssd": ar_mssd,
+        "ar_mspd": ar_mspd,
+        "elapsed_seconds": elapsed,
+        "seconds_per_instance": elapsed / len(rows),
+        "ppf_seconds_per_instance": (
+            sum(row["cluster_match_seconds"] for row in rows) / len(rows)),
+    }
+    print("SWEEP_RESULT " + json.dumps(result, ensure_ascii=False, sort_keys=True))
+    print("\nPASS")
+
+
 def main() -> None:
     root = Path(os.environ.get(DATA_ENV, DEFAULT_DATA))
     required = (root / "test_primesense", root / "models_reconst" / "models_info.json")
     if not all(path.exists() for path in required):
         _print_recorded()
         return
+    sweep_name = os.environ.get(SWEEP_ENV, "").strip()
+    if sweep_name:
+        if sweep_name not in SWEEP_CONFIGS:
+            raise ValueError("未知の掃引設定 %r（%s）" %
+                             (sweep_name, ", ".join(sorted(SWEEP_CONFIGS))))
+        _run_sweep_setting(root, SWEEP_CONFIGS[sweep_name])
+        return
     start = time.perf_counter()
-    scenes, rows = run_real(root)
+    scenes, rows = run_real(root, DEFAULT_CONFIG)
     metrics = _metric_rows(rows, "metrics")
     no_icp = _metric_rows(rows, "no_icp")
     raw_normals = _metric_rows(rows, "raw_normal")
@@ -564,6 +738,10 @@ def main() -> None:
 
     print("BOP T-LESS (CC BY 4.0) 実機 6DoF PoC")
     print("  source https://bop.felk.cvut.cz/datasets/ / Hodaň et al. WACV 2017")
+    print("  setting model/scene %d/%d, voxel %.1f mm, ref %.2f, angle %d, ICP %d"
+          % (DEFAULT_CONFIG.model_points, DEFAULT_CONFIG.scene_points,
+             DEFAULT_CONFIG.voxel_mm, DEFAULT_CONFIG.ref_fraction,
+             DEFAULT_CONFIG.angle_bins, 50 * DEFAULT_CONFIG.icp_passes))
     for scene in scenes:
         eligible = sum(float(x["visib_fract"]) >= VISIBILITY_MIN for x in scene["info"])
         print("  scene %d image %d (%s): depth 欠測 %d / 飛び候補 %d px、"
