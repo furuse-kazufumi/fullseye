@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 611 von 1571. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 611 von 1572. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `accel.py`
@@ -2853,6 +2853,10 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `tools/gen_view2026_pages.py`
 
 - **L205** _(ja)_ — ★2026-10-30: 2 つの展示の日本語が 10/27 から「???…」のまま載っていた(× と − も全言語で ? に)。 文字コードの往復で失われた文字は ? か U+FFFD になる。どちらも訳として通さない。
+
+## `tools/gen_view2026_story_gifs.py`
+
+- **L425** _(ja)_ — ★キャッシュ命中時は台帳の数値を書き換えない。color_mad は commit 済み GIF を復号して 元図を再標本化した差で、Pillow の版が違う CI では 4 桁目が動き、台帳だけが drift した (PR #227、2026-11-01: 手元は差ゼロ、CI は story_gifs.json だけ食い違う)。 ここでは限度を越えていないことだけ確かめ、数値は描画した機械の値を保つ。
 
 ## `tools/gen_wing2d_gallery.py`
 
