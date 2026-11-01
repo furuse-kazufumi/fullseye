@@ -420,7 +420,7 @@ DOC_GROUPS = [
         "KNOWN_ISSUES.md", "STATUS.md", "ACCURACY_BENCH.md", "BENCH_VS_OPENCV.md",
         "PARITY_CROSSBACKEND.md", "CHAIN_FUZZ.md", "PROVENANCE.md", "OP_COUNT_HISTORY.md",
         "REFERENCES.md", "AUDIT_2026_08_12.md", "RELEASE_CHECKLIST.md",
-        "I18N.md", "VALIDATION_CONTRIBUTING.md"]),
+        "I18N.md", "VALIDATION_CONTRIBUTING.md", "POC_QUALITY_CRITERIA.md"]),
     ("perf", "性能・GPU", "Performance and GPU", [
         "GPU_ACCEL_PLAN.md", "GPU_OPTIMIZATION_PATTERNS.md",
         "design/FAST_TWINS.md", "design/PERF_MEMORY_VIDEO_SURVEY.md"]),
