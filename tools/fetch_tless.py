@@ -2,7 +2,7 @@
 """Download the minimal BOP T-LESS data used by ``poc_real_tless_6dof``.
 
 The dataset is kept outside the repository.  By default it is stored in
-``C:/dev/data/realdata/tless``; set ``FULLSEYE_TLESS_DATA`` to use another
+``~/fullseye_data/tless``; set ``FULLSEYE_TLESS_DATA`` to use another
 directory.  Every archive is checked against the SHA-256 advertised for the
 corresponding LFS object in the official ``bop-benchmark/tless`` repository.
 
@@ -31,7 +31,7 @@ import zipfile
 
 
 BASE_URL = "https://huggingface.co/datasets/bop-benchmark/tless/resolve/main"
-DEFAULT_DIR = Path("C:/dev/data/realdata/tless")
+DEFAULT_DIR = Path(os.environ.get("FULLSEYE_TLESS_DATA") or (Path.home() / "fullseye_data" / "tless"))
 ARCHIVES = {
     "tless_base.zip": {
         "bytes": 49_597,

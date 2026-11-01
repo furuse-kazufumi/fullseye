@@ -39,7 +39,7 @@ test_primesense の全20場面から、各場面で画像IDが最小の1枚を�
 T-LESS は CC BY 4.0。一次配布ページ https://bop.felk.cvut.cz/datasets/ の
 T-LESS 欄に ``license: CC BY 4.0`` と明記される。取得は
 ``py -3.11 tools/fetch_tless.py``。データは repo 外に置き、既定は
-``C:/dev/data/realdata/tless``、``FULLSEYE_TLESS_DATA`` で上書きできる。
+ホーム直下の ``fullseye_data/tless``、``FULLSEYE_TLESS_DATA`` で上書きできる。
 
 引用: Hodaň et al., "T-LESS: An RGB-D Dataset for 6D Pose Estimation of
 Texture-less Objects", WACV 2017, https://doi.org/10.1109/WACV.2017.8 。
@@ -70,7 +70,7 @@ from match3d import render_point_depth                            # noqa: E402
 
 DATA_ENV = "FULLSEYE_TLESS_DATA"
 SWEEP_ENV = "FULLSEYE_TLESS_SWEEP"
-DEFAULT_DATA = Path("C:/dev/data/realdata/tless")
+DEFAULT_DATA = Path.home() / "fullseye_data" / "tless"   # 手元の絶対パスは書かない(環境変数で受ける)
 SCENE_IDS = tuple(range(1, 21))
 VISIBILITY_MIN = 0.50
 ROI = (70, 435, 65, 575)       # marker frame/background only; no GT boxes
