@@ -97,7 +97,10 @@ _OLD_ORDER = [
     "tools/gen_wingpoc_gallery.py", "tools/gen_examples_readme.py",
     "tools/gen_oss_landscape.py", "tools/gen_view2026_pages.py", "tools/gen_trust_block.py",
     "tools/gen_literature_counts.py", "tools/gen_docs_index_ops.py", "tools/gen_examples3d_doc.py",
-    "tools/gen_sensor_playbook.py", "imgevolve.py", "tools/audit_file_formats.py", "tools/halcon_compat_profile.py", "catalog.py", "dispositions.py", "references.py", "samples.py",
+    "tools/gen_sensor_playbook.py", "imgevolve.py",
+    # 2026-11-02: GPU tier 台帳と HALCON OpenCL 対応行列(索引の直後に置く段。旧順序では docs 索引が先に読む)
+    "tools/gpu_tier_rules.py", "tools/gen_halcon_opencl_parity.py",
+    "tools/audit_file_formats.py", "tools/halcon_compat_profile.py", "catalog.py", "dispositions.py", "references.py", "samples.py",
     "tools/gen_mcp_data.py", "tools/gen_recipe_index.py", "tools/gen_recipe_retrieval_report.py", "tools/gen_rag_benchmark_report.py", "tools/conversion_matrix.py", "tools/gen_design_notes.py",
     "tools/gen_op_facets.py", "tools/measure_mcp_context.py",
     "tools/gen_doc_counts.py",
@@ -135,7 +138,8 @@ def test_the_order_gate_catches_the_old_order():
             ("tools/gen_rag_benchmark_report.py", "tools/gen_op_facets.py"),
     } | {("tools/gen_docs_index_ops.py", w) for w in (
         "tools/gen_examples3d_doc.py", "tools/gen_sensor_playbook.py", "catalog.py",
-        "references.py", "samples.py", "tools/conversion_matrix.py", "tools/gen_design_notes.py")}
+        "references.py", "samples.py", "tools/conversion_matrix.py", "tools/gen_design_notes.py",
+        "tools/gpu_tier_rules.py", "tools/gen_halcon_opencl_parity.py")}
     assert got == expect, "逆順の検出が食い違う: 余分 %s / 見落とし %s" % (
         sorted(got - expect), sorted(expect - got))
 

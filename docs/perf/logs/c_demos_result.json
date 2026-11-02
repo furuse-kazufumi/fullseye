@@ -1,0 +1,210 @@
+{
+ "generated_by": "scratchpad c_demos.py (loco, RTX 5090)",
+ "device": "NVIDIA GeForce RTX 5090",
+ "torch": "2.11.0+cu128",
+ "measure_start": "2026-11-02T13:17:20",
+ "measure_end": "2026-11-02T13:19:55",
+ "elapsed_s": 154.9,
+ "unreal_editor_present": "none(計測開始時に確認)",
+ "gpu_lock_acquired": "yes(gpu_in_use.lock)",
+ "parity_small_interior": {
+  "bilateral": 3.1758944163406966e-07,
+  "anisotropic_diffusion": 2.6841605327287965e-07,
+  "vol_gaussian": 2.7630378118814747e-07
+ },
+ "cpu_cap_s": 90.0,
+ "demos": [
+  {
+   "op": "vol_gaussian",
+   "core": "vol_gaussian",
+   "family": "volume",
+   "use_case": "CT/多孔質/NDT 体積の分離可能ガウス平滑(分離可能 conv は CPU でも軽い: 比較の基準線)",
+   "sizes": [
+    {
+     "dim": "64^3",
+     "N": 1,
+     "cpu_s": 0.0034891999093815684,
+     "cpu_note": "measured(単発)",
+     "gpu_s": 0.001921399962157011,
+     "gpu_note": "measured",
+     "vram_gb": 0.0,
+     "speedup_x": 1.8
+    },
+    {
+     "dim": "128^3",
+     "N": 1,
+     "cpu_s": 0.04031449998728931,
+     "cpu_note": "measured(単発)",
+     "gpu_s": 0.00831770000513643,
+     "gpu_note": "measured",
+     "vram_gb": 0.03,
+     "speedup_x": 4.8
+    },
+    {
+     "dim": "256^3",
+     "N": 1,
+     "cpu_s": 0.4017358999699354,
+     "cpu_note": "measured(単発)",
+     "gpu_s": 0.07145030004903674,
+     "gpu_note": "measured",
+     "vram_gb": 0.21,
+     "speedup_x": 5.6
+    },
+    {
+     "dim": "512^3",
+     "N": 1,
+     "cpu_s": 4.703683199943043,
+     "cpu_note": "measured(単発)",
+     "gpu_s": 0.5856105999555439,
+     "gpu_note": "measured",
+     "vram_gb": 1.63,
+     "speedup_x": 8.0
+    }
+   ]
+  },
+  {
+   "op": "vol_median",
+   "core": "vol_median",
+   "family": "volume",
+   "use_case": "CT/多孔質/NDT 体積の 3x3x3 メディアン(27 近傍の順位統計: CPU は寸法の 3 乗で伸びる)",
+   "sizes": [
+    {
+     "dim": "64^3",
+     "N": 1,
+     "cpu_s": 0.07605679996777326,
+     "cpu_note": "measured(単発)",
+     "gpu_s": 0.0025629999581724405,
+     "gpu_note": "measured",
+     "vram_gb": 0.03,
+     "speedup_x": 29.7
+    },
+    {
+     "dim": "128^3",
+     "N": 1,
+     "cpu_s": 0.5830262000672519,
+     "cpu_note": "measured(単発)",
+     "gpu_s": 0.01598040002863854,
+     "gpu_note": "measured",
+     "vram_gb": 0.27,
+     "speedup_x": 36.5
+    },
+    {
+     "dim": "256^3",
+     "N": 1,
+     "cpu_s": 4.645132299978286,
+     "cpu_note": "measured(単発)",
+     "gpu_s": 0.10751629993319511,
+     "gpu_note": "measured",
+     "vram_gb": 2.15,
+     "speedup_x": 43.2
+    },
+    {
+     "dim": "512^3",
+     "N": 1,
+     "cpu_s": 37.3154068000149,
+     "cpu_note": "measured(単発)",
+     "gpu_s": 0.8052820999873802,
+     "gpu_note": "measured",
+     "vram_gb": 17.19,
+     "speedup_x": 46.3
+    }
+   ]
+  },
+  {
+   "op": "bilateral",
+   "core": "bilateral",
+   "family": "bilateral",
+   "use_case": "高解像ライン走査の表面/布検査(5x5x25 シフト反復で計算重)",
+   "sizes": [
+    {
+     "dim": "512x512",
+     "N": 200,
+     "cpu_s": 27.883520000614226,
+     "cpu_note": "measured(単発 0.139s x N=200)",
+     "gpu_s": 0.18345770006999373,
+     "gpu_note": "measured(N=200)",
+     "vram_gb": 1.47,
+     "speedup_x": 152.0
+    },
+    {
+     "dim": "2048x2048",
+     "N": 50,
+     "cpu_s": 104.65490500209853,
+     "cpu_note": "measured(単発 2.093s x N=50)",
+     "gpu_s": 0.7546179000055417,
+     "gpu_note": "measured(N=50)",
+     "vram_gb": 5.87,
+     "speedup_x": 138.7
+    },
+    {
+     "dim": "4096x4096",
+     "N": 20,
+     "cpu_s": 157.83634199993685,
+     "cpu_note": "measured(単発 7.892s x N=20)",
+     "gpu_s": 1.100061200093478,
+     "gpu_note": "measured(N=20)",
+     "vram_gb": 7.99,
+     "speedup_x": 143.5
+    },
+    {
+     "dim": "8192x8192",
+     "N": 5,
+     "cpu_s": 149.12539849989116,
+     "cpu_note": "measured(単発 29.825s x N=5)",
+     "gpu_s": 1.0793841999256983,
+     "gpu_note": "measured(N=5)",
+     "vram_gb": 7.52,
+     "speedup_x": 138.2
+    }
+   ]
+  },
+  {
+   "op": "anisotropic_diffusion",
+   "core": "anisotropic_diffusion",
+   "family": "anisotropic_diffusion",
+   "use_case": "欠陥検査フレーム列のエッジ保存ノイズ抑制(Perona–Malik 反復 PDE、全画素 x 反復の指数計算)",
+   "sizes": [
+    {
+     "dim": "512x512",
+     "N": 200,
+     "cpu_s": 21.645520022138953,
+     "cpu_note": "measured(単発 0.108s x N=200)",
+     "gpu_s": 0.15098550007678568,
+     "gpu_note": "measured(N=200)",
+     "vram_gb": 1.89,
+     "speedup_x": 143.4
+    },
+    {
+     "dim": "2048x2048",
+     "N": 50,
+     "cpu_s": 88.53900500107557,
+     "cpu_note": "measured(単発 1.771s x N=50)",
+     "gpu_s": 0.6230209999484941,
+     "gpu_note": "measured(N=50)",
+     "vram_gb": 7.55,
+     "speedup_x": 142.1
+    },
+    {
+     "dim": "4096x4096",
+     "N": 20,
+     "cpu_s": 142.5493559986353,
+     "cpu_note": "measured(単発 7.127s x N=20)",
+     "gpu_s": 1.026438600034453,
+     "gpu_note": "measured(N=20)",
+     "vram_gb": 10.27,
+     "speedup_x": 138.9
+    },
+    {
+     "dim": "8192x8192",
+     "N": 5,
+     "cpu_s": 148.65018100012094,
+     "cpu_note": "measured(単発 29.730s x N=5)",
+     "gpu_s": 1.0111525999382138,
+     "gpu_note": "measured(N=5)",
+     "vram_gb": 9.66,
+     "speedup_x": 147.0
+    }
+   ]
+  }
+ ]
+}

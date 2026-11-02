@@ -1,0 +1,50 @@
+{
+ "corner_response": {
+  "interior_max": 1.0991105890978403e-06,
+  "faithful": true,
+  "family": "edges/feature",
+  "expect": "compute-heavy"
+ },
+ "anisotropic_diffusion": {
+  "interior_max": 3.4795849046531657e-07,
+  "faithful": true,
+  "family": "smoothing(iterative)",
+  "expect": "compute-heavy"
+ },
+ "bandpass_image": {
+  "interior_max": 1.8479708274732332e-07,
+  "faithful": true,
+  "family": "frequency",
+  "expect": "compute-heavy(FFT)"
+ },
+ "binomial_filter": {
+  "interior_max": 1.0069857570016438e-07,
+  "faithful": true,
+  "family": "smoothing",
+  "expect": "separable(cheap)"
+ },
+ "dc_local_contrast_norm": {
+  "interior_max": 1.4603137969970703e-06,
+  "faithful": true,
+  "family": "decomposition",
+  "expect": "box-filter"
+ },
+ "abs_image": {
+  "interior_max": 2.9783323363119507e-08,
+  "faithful": true,
+  "family": "arithmetic",
+  "expect": "pointwise(memory-bound)"
+ },
+ "cos_image": {
+  "interior_max": 2.600536921359975e-07,
+  "faithful": true,
+  "family": "arithmetic",
+  "expect": "pointwise(memory-bound)"
+ },
+ "companding_mu_law": {
+  "interior_max": 1.4158098193828295e-07,
+  "faithful": true,
+  "family": "gray",
+  "expect": "pointwise(memory-bound)"
+ }
+}

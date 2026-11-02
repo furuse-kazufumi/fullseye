@@ -1,0 +1,81 @@
+{
+  "_doc": "GPU-required operator roster (正本). gpu_tier='required' is assigned by name from this list; every name here must be a real operator in the registry/ledger (tools/gpu_tier_rules.py and its gate check existence). 'required' = GPU is practically mandatory: on CPU the realistic size is infeasible (minutes-to-hours or OOM). Grouped by the reason it is GPU-bound. Edit this file by hand; the tier rules and GPU_TIERS.md are generated from it.",
+  "generated": false,
+  "required": {
+    "photon_transport_raytrace_gi": [
+      "render_optscene_gi",
+      "render_transport",
+      "transport_matrix_radiosity",
+      "render_optscene"
+    ],
+    "gaussian_splatting_3dgs": [
+      "gs_render",
+      "gs_render_fn",
+      "gs_from_world",
+      "gs_update"
+    ],
+    "ct_iterative_reconstruction": [
+      "sart_reconstruct",
+      "tm_sart_reconstruct",
+      "filtered_backprojection",
+      "fbp_volume",
+      "tm_fbp_reconstruct",
+      "backproject_sinogram",
+      "radon_volume",
+      "radon_transform",
+      "tm_radon_forward"
+    ],
+    "dense_stereo_plane_sweep": [
+      "plane_sweep_depth",
+      "photometric_stereo",
+      "photometric_stereo_robust"
+    ],
+    "large_pointcloud_occupancy_icp_ppf": [
+      "occupancy_grid",
+      "icp_point2point_3d",
+      "icp_point2plane",
+      "gicp",
+      "register_fpfh",
+      "register_cpd_rigid",
+      "points_to_voxel",
+      "voxel_grid_downsample",
+      "fuse_to_voxel"
+    ],
+    "physarum_slime_solver": [
+      "physarum_transport_image",
+      "graph_physarum_transport",
+      "physarum_route",
+      "graph_physarum_path"
+    ],
+    "parallel_evaluation_sweep": [
+      "robust_gaussian_surface",
+      "robust_spline_profile",
+      "focus_sweep_surface_video",
+      "solid_angle_sweep"
+    ],
+    "large_kernel_nonlocal": [
+      "sk_nlm",
+      "cv_nlmeans",
+      "bilateral",
+      "bilateral_filter",
+      "cv_bilateral",
+      "joint_bilateral",
+      "temporal_bilateral"
+    ],
+    "dense_optical_flow_piv": [
+      "scene_flow_lk",
+      "optical_flow_magnitude_stream",
+      "piv_cross_correlate",
+      "piv_multipass",
+      "piv_ensemble_correlate"
+    ]
+  },
+  "candidates_not_implemented": {
+    "_doc": "GPU-bound algorithms named in the brief that have NO matching operator in the registry yet. Kept here as a separate table (not scored) so the roster above stays all-real.",
+    "names": [
+      "sgm_semi_global_matching",
+      "ptychography_reconstruct",
+      "deconvolution_3d_richardson_lucy"
+    ]
+  }
+}

@@ -59,6 +59,9 @@ CHAIN = [
     #   (統合作業で `imgevolve.py index` を手で先に回して回避していた)。順序は
     #   下の OUTPUTS / READS から `order_violations()` が検査する。
     (["imgevolve.py", "index"], "docs/OP_INDEX.json(レジストリの機械可読索引)"),
+    # ★索引の直後(docs/OP_INDEX.json を読む)。GPU tier と HALCON OpenCL 対応行列。
+    (["tools/gpu_tier_rules.py"], "docs/perf/GPU_TIERS.md(全 op の GPU tier 4 段分類)"),
+    (["tools/gen_halcon_opencl_parity.py"], "docs/perf/HALCON_OPENCL_PARITY.md + json(HALCON OpenCL 84 op 対応行列)"),
     (["tools/audit_file_formats.py"], "docs/FILE_FORMATS.md(実装・op・テストから生成するファイル形式棚卸し)"),
     (["tools/halcon_compat_profile.py", "--manifest"],
      "HALCON 互換プロファイル + 比較試験 manifest + HALCON_PARITY の H15 節"),
@@ -145,6 +148,9 @@ CHAIN = [
 OUTPUTS = {
     "gen_auto_specs_data.py": ["auto_specs_data.py"],
     "imgevolve.py": ["docs/OP_INDEX.json"],
+    "tools/gpu_tier_rules.py": ["docs/perf/GPU_TIERS.md"],
+    "tools/gen_halcon_opencl_parity.py": ["docs/perf/HALCON_OPENCL_PARITY.md",
+                                          "docs/perf/halcon_opencl_parity.json"],
     "tools/audit_file_formats.py": ["docs/FILE_FORMATS.md"],
     "tools/halcon_compat_profile.py": ["docs/halcon_compat_profile.json",
                                         "docs/halcon_comparison_manifest.json",
@@ -230,6 +236,8 @@ MAY_OUTPUTS = {
 #: 2026-10-15 に audit hook の実測(全 23 段)から起こした。
 READS = {
     "imgevolve.py": ["fullseye/data/OP_INDEX.json", "fullseye/data/op_knob.json"],
+    "tools/gpu_tier_rules.py": ["docs/OP_INDEX.json"],
+    "tools/gen_halcon_opencl_parity.py": ["docs/OP_INDEX.json"],
     "tools/audit_file_formats.py": ["auto_specs_data.py", "docs/OP_INDEX.json"],
     "tools/halcon_compat_profile.py": ["docs/OP_INDEX.json"],
     "tools/gen_capabilities_index.py": ["docs/OP_INDEX.json"],
@@ -248,6 +256,7 @@ READS = {
         "docs/EXAMPLES_3D.md", "docs/SENSOR_PLAYBOOK.md", "docs/OPERATORS.md",
         "docs/REFERENCES.md", "docs/EXAMPLES.md", "docs/CONVERSION_MATRIX.md",
         "docs/HALCON_PARITY.md",
+        "docs/perf/GPU_TIERS.md", "docs/perf/HALCON_OPENCL_PARITY.md",   # docmap が題を読む(2026-11-02)
         "docs/DESIGN_NOTES.md", "docs/DESIGN_NOTES.*.md",
         "docs/AI_RAG_GUIDE.md", "docs/AI_RAG_GUIDE.*.md",
         "docs/view2026/index.md", "docs/view2026/*/index.md"],

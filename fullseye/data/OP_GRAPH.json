@@ -45,7 +45,15 @@
     "lightfield": "grid<image>",
     "volume": "stack3<image>"
   },
-  "lifted_map_edges": [],
+  "lifted_map_edges": [
+    {
+      "op": "map::companding_mu_law",
+      "base_op": "companding_mu_law",
+      "input": "seq<image>",
+      "output": "seq<image>",
+      "kind": "map"
+    }
+  ],
   "parameter_summary": {
     "measured_ops": 570,
     "a_unused": 147,
@@ -59,6 +67,7 @@
       "registry": 959
     },
     "not_executable_reasons": {
+      "map_executor_not_implemented": 1,
       "python_callable_not_found": 14,
       "python_signature_has_fewer_inputs_than_graph": 1,
       "unknown_input_or_output_sort": 194
@@ -354,11 +363,15 @@
       "kind": "docstring",
       "value": "algo.py",
       "detail": "mergesort"
+    },
+    "S00060": {
+      "kind": "derived_map",
+      "value": "companding_mu_law"
     }
   },
   "counts": {
     "nodes": 101,
-    "edges": 3626,
+    "edges": 3627,
     "conversion_pairs": 395,
     "conversion_edge_incidence": 2343
   },
@@ -27597,7 +27610,7 @@
       "consumes_input": true,
       "executable": true,
       "compute": {
-        "structure": "unknown",
+        "structure": "elementwise",
         "intensity": "memory_or_unknown",
         "source_ref": "S00004"
       },
@@ -27657,7 +27670,7 @@
           "under_2_seconds"
         ]
       },
-      "bundle_semantics": "unknown",
+      "bundle_semantics": "elementwise",
       "source_ref": "S00004"
     },
     {
@@ -253273,6 +253286,31 @@
       "not_executable_in_mcp": "not_verified",
       "bundle_semantics": "unknown",
       "source_ref": "S00059"
+    },
+    {
+      "op": "map::companding_mu_law",
+      "inputs": [
+        "seq<image>"
+      ],
+      "output": "seq<image>",
+      "category": "map",
+      "family": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "bundle_semantics": "elementwise",
+      "executable": false,
+      "verified_executable": false,
+      "executable_reason": "map_executor_not_implemented",
+      "not_executable_in_mcp": "not_verified",
+      "compute": {
+        "structure": "elementwise",
+        "intensity": "derived",
+        "source_ref": "S00060"
+      },
+      "implementations": [],
+      "parameters": {},
+      "source_ref": "S00060",
+      "population_extension_reason": "grounded elementwise lifting"
     }
   ],
   "diagnostics": {
