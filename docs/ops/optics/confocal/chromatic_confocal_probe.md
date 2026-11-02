@@ -14,7 +14,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 # chromatic_confocal_probe — OPTICS `confocal` op
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
-- **呼び出し**: `import fullseye as fs; fs.ledger.chromatic_confocal_probe(surfaces=None, stop: 'int' = 0, wl_min_nm: 'float' = 450.0, wl_max_nm: 'float' = 700.0, n_points: 'int' = 26) -> 'dict'` (実装を直接呼ぶなら `import chromconf; chromconf.chromatic_confocal_probe(surfaces=None, stop: 'int' = 0, wl_min_nm: 'float' = 450.0, wl_max_nm: 'float' = 700.0, n_points: 'int' = 26) -> 'dict'`、台帳から引くなら `opsoptics.get("chromatic_confocal_probe")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.chromatic_confocal_probe(surfaces=None, stop: 'int' = 0, wl_min_nm: 'float' = 450.0, wl_max_nm: 'float' = 700.0, n_points: 'int' = 26, device=None) -> 'dict'` (実装を直接呼ぶなら `import chromconf; chromconf.chromatic_confocal_probe(surfaces=None, stop: 'int' = 0, wl_min_nm: 'float' = 450.0, wl_max_nm: 'float' = 700.0, n_points: 'int' = 26, device=None) -> 'dict'`、台帳から引くなら `opsoptics.get("chromatic_confocal_probe")`)
 - **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
@@ -37,6 +37,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 最終面から)/ ``origin_mm``(z = 0 の位置、最終面から)/ ``beam_radius_mm`` / ``surfaces``。
 
 wl_min_nm / wl_max_nm / n_points: 較正する帯域と点数(4〜1024、等間隔)。
+device: ``None`` は波長ごとのループ、``"auto"`` / ``"cpu"`` / ``"cuda"`` は波長の軸を ``lens_gpu`` で一括に計算する(torch が要る。応答のピークの読み取りは numpy のまま)。
 
 **Raises** ``ValueError``: 処方の誤り(raytrace がそのまま名指しする)、帯域が硝材の表の外、
 縁の光線のけられ・全反射、焦点が無い(発散系)、**較正表が波長に対して単調でない**(同じ位置に

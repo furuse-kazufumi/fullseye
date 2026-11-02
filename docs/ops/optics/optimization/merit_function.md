@@ -14,7 +14,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 # merit_function — OPTICS `optimization` op
 
 - **データ種**: `table` → `table`
-- **呼び出し**: `import fullseye as fs; fs.ledger.merit_function(system, fields=None, wavelengths=None, rings=4, efl_target=None, efl_weight=None, field_weights=None, pupil_fill=0.98)` (実装を直接呼ぶなら `import lensopt; lensopt.merit_function(system, fields=None, wavelengths=None, rings=4, efl_target=None, efl_weight=None, field_weights=None, pupil_fill=0.98)`、台帳から引くなら `opsoptics.get("merit_function")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.merit_function(system, fields=None, wavelengths=None, rings=4, efl_target=None, efl_weight=None, field_weights=None, pupil_fill=0.98, device=None)` (実装を直接呼ぶなら `import lensopt; lensopt.merit_function(system, fields=None, wavelengths=None, rings=4, efl_target=None, efl_weight=None, field_weights=None, pupil_fill=0.98, device=None)`、台帳から引くなら `opsoptics.get("merit_function")`)
 - **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
@@ -28,6 +28,9 @@ from the chief ray (mm) over a hexapolar pupil of *rings* rings at each of
 efl_target)/efl_target`` when a target is given. Returns ``merit``,
 ``rms_spot`` (RMS over all rays, mm), ``rms_by_field``, ``efl``,
 ``rays_lost`` and the residual count.
+
+*device*: ``None`` (the default) is the per-ray-bundle path; ``"auto"`` / ``"cpu"`` / ``"cuda"`` evaluates
+the same residuals as one tensor (``lens_gpu``), which needs torch.
 
 ## ファミリ共通の入力契約(fail-closed)
 

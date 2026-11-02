@@ -43215,6 +43215,14 @@
           "range": "undocumented",
           "unit": "undocumented",
           "default": 0.98
+        },
+        {
+          "name": "device",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
         }
       ],
       "verified_executable": false,
@@ -43313,6 +43321,14 @@
           "range": "undocumented",
           "unit": "undocumented",
           "default": 0.98
+        },
+        {
+          "name": "device",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
         }
       ],
       "verified_executable": false,
@@ -52434,6 +52450,14 @@
           "range": "undocumented",
           "unit": "undocumented",
           "default": 26
+        },
+        {
+          "name": "device",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
         }
       ],
       "verified_executable": false,
@@ -55296,6 +55320,14 @@
           "range": "undocumented",
           "unit": "undocumented",
           "default": 0.001
+        },
+        {
+          "name": "device",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
         }
       ],
       "verified_executable": false,

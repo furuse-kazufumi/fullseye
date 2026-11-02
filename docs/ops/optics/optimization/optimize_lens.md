@@ -14,7 +14,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 # optimize_lens — OPTICS `optimization` op
 
 - **データ種**: `table` → `table`
-- **呼び出し**: `import fullseye as fs; fs.ledger.optimize_lens(system, variables=None, fields=None, wavelengths=None, rings=4, efl_target=None, efl_weight=None, field_weights=None, iterations=30, damping=0.001, tolerance=1e-07, min_thickness=0.5, max_thickness=None, min_radius=1.0, pupil_fill=0.98)` (実装を直接呼ぶなら `import lensopt; lensopt.optimize_lens(system, variables=None, fields=None, wavelengths=None, rings=4, efl_target=None, efl_weight=None, field_weights=None, iterations=30, damping=0.001, tolerance=1e-07, min_thickness=0.5, max_thickness=None, min_radius=1.0, pupil_fill=0.98)`、台帳から引くなら `opsoptics.get("optimize_lens")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.optimize_lens(system, variables=None, fields=None, wavelengths=None, rings=4, efl_target=None, efl_weight=None, field_weights=None, iterations=30, damping=0.001, tolerance=1e-07, min_thickness=0.5, max_thickness=None, min_radius=1.0, pupil_fill=0.98, device=None)` (実装を直接呼ぶなら `import lensopt; lensopt.optimize_lens(system, variables=None, fields=None, wavelengths=None, rings=4, efl_target=None, efl_weight=None, field_weights=None, iterations=30, damping=0.001, tolerance=1e-07, min_thickness=0.5, max_thickness=None, min_radius=1.0, pupil_fill=0.98, device=None)`、台帳から引くなら `opsoptics.get("optimize_lens")`)
 - **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
@@ -33,12 +33,17 @@ Each iteration builds the Jacobian by forward differences, solves
 ``(JᵀJ + λ diag(JᵀJ)) δ = −Jᵀr`` and accepts the step only if the merit
 falls (then λ /= 3; otherwise λ ×= 4 and retried, up to 6 times); a step
 that yields an invalid prescription counts as a failure. Stops when the
-relative merit change is below *tolerance* twice in a row (``converged``,
+relative merit change is below *tolerance* twice in a row, or once with no
+further step able to lower the merit (the rounding floor) (``converged``,
 ``status="converged"``), when two iterations in a row accept no step or λ
-blows past 1e8 (``status="stalled"``, ``converged=False``), or after
+blows past 1e8 before that (``status="stalled"``, ``converged=False``), or after
 *iterations* (``status="iterations"``). Thickness is clamped to
 ``[min_thickness, max_thickness]`` and ``|R| >= min_radius`` — the start
 included, so the returned system always obeys the bounds.
+
+*device*: ``None`` (the default) evaluates one ray bundle at a time; ``"auto"`` / ``"cpu"`` / ``"cuda"``
+evaluates all the Jacobian's columns as one tensor through ``lens_gpu`` (same residuals; torch needed).
+The accepted steps agree with the default path to rounding of the finite differences.
 
 Returns ``{"system": optimised prescription, "merit_initial",
 "merit_final", "rms_initial", "rms_final", "efl_initial", "efl_final",
