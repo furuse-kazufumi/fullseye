@@ -188,6 +188,18 @@ def render(rows, tol, min_ratio, method, hand=frozenset()):
         over = sum(1 for r in adopted if r["name"] in hand)
         L += ["", "採用 %d 件のうち %d 件は手書きの GPU 経路(`accel` 系)も持つ。新しく GPU で"
               "走るようになったのは %d 件。" % (len(adopted), over, len(adopted) - over)]
+        x = sum(1 for r in rows if r["name"] in hand)
+        L += ["", "### GPU 対応率への数え方(分母 %d 件 = required + suitable)" % len(rows), "",
+              "| 経路 | 件数 |", "|---|---:|",
+              "| 手書き経路(`accel` / `accel_vol` / `accel_match`) | %d |" % x,
+              "| 許可リスト経由(機械的 GPU 化。`fullseye/data/gpu_auto_allow.json`) | %d |"
+              % len(adopted),
+              "| うち手書きと重複 | %d |" % over,
+              "| 合算(重複を 1 回と数える) | %d |" % (x + len(adopted) - over),
+              "", "注記: 許可リスト経由の %d 件は**既定では有効でない**。明示の GPU 指定か許可リスト"
+              "を使ったときだけ GPU で走る。手書き経路とは数字を混ぜず、必ず上の内訳で示す。"
+              "採用の門(内部差 < %.0e・転送込み %.1f 倍以上・出力定数は不採用)は変えていない。"
+              % (len(adopted), tol, min_ratio)]
         ver = [r for r in rows if r["verified"] is not None]
         if ver:
             L += ["", "実寸の比較は間引いた標本で行ったので、倍率の上位と無作為標本の %d 件は全画素で"

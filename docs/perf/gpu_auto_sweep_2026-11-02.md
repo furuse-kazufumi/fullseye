@@ -14,14 +14,15 @@ CuPy 13.6.0 + PyTorch 2.11.0+cu128 を同じプロセスで使い(DLPack の往�
 - 入力は構造のある合成画像(`op_probe` の円・矩形・斜めエッジ、チャープ信号など)を先頭に置く。出力が定数の op は一致と数えない(判定不能)。
 - 倍率: 実寸(画像 2048²、体積 256³、信号 2²⁰、行列 1024²)で 1 回あたりの時間の比。GPU 側は転送 → 計算 → 転送(`.get()` が同期)を含み、CuPy のカーネルコンパイルは準備運転で除く。CPU 2 回、GPU 最大 3 回の最小値。バッチの融合は無い(1 枚ずつ)ので、N 枚の倍率も同じ値になる。CPU の基準線は他の作業と同時に測ったので、倍率 3 以上の op は1 本ずつ測り直し、速い方の時間を使った(倍率が低く出る向き)。GPU の時間も他の作業と同時に測ることがある。実寸の比較は出力を間引いた標本で行う。
 - 採用: 一致かつ 5.0 倍以上、かつ Python 行数が入力に比例しない。
+- CPU の基準線はこのリポジトリの実装そのもので、多くは 1 スレッドで走る。`FULLSEYE_FAST` の cv2 版やタイル分割の並列は使っていないので、最速の CPU 実装との比ではない。
 - Python ループ律速: 入力を 2 倍にしたときの増分が 0.05 行/要素 以上(2048² で 20 万行)。固定形の入力は 1000 要素以上に限り 1 回の 行数/要素数 ≥ 0.5。
 
 ## 全件の分類
 
 | 分類 | 件数 |
 |---|---:|
-| 採用(一致 + 転送込み 5 倍以上) | 515 |
-| 一致したが遅い(5 倍未満) | 474 |
+| 採用(一致 + 転送込み 5 倍以上) | 503 |
+| 一致したが遅い(5 倍未満) | 486 |
 | 一致したが実寸の入力を作れない(固定形の入力) | 438 |
 | 不一致 | 47 |
 | 判定不能(出力が定数) | 145 |
@@ -63,19 +64,17 @@ CuPy 13.6.0 + PyTorch 2.11.0+cu128 を同じプロセスで使い(DLPack の往�
 | `dolp_to_zenith` | shape_from_polarization | 2048×2048 | 50.29 s | 200 ms | 251.0 | 3.6e-16 | 0 |
 | `ph_mean_curvature_motion` | physics | 2048×2048 | 28.19 s | 113 ms | 250.6 | 0.0e+00 | 0 |
 | `bump_normals_fbm` | terrain | 2048×2048×3 | 36.30 s | 147 ms | 246.4 | 0.0e+00 | 1 |
-| `dc_texture_residual` | decomposition | 2048×2048 | 25.65 s | 107 ms | 239.6 | 0.0e+00 | 0 |
 | `curvature_flow` | contour | 2048×2048 | 20.93 s | 89 ms | 234.6 | 3.6e-12 | 0 |
 | `alife_curvature_flow` | artificial-life | 2048×2048 | 13.94 s | 60 ms | 233.0 | 0.0e+00 | 0 |
 | `ph_coherence_enhancing_diffusion` | physics | 2048×2048 | 26.24 s | 113 ms | 232.7 | 0.0e+00 | 0 |
 | `dc_structure_texture` | decomposition | 2048×2048 | 29.37 s | 128 ms | 229.7 | 0.0e+00 | 0 |
+| `dc_texture_residual` | decomposition | 2048×2048 | 23.50 s | 107 ms | 219.5 | 0.0e+00 | 0 |
 | `alife_gray_scott` | artificial-life | 2048×2048 | 8.10 s | 37 ms | 218.0 | 0.0e+00 | 0 |
 | `riesz_displacement_series` | motion | 8×512×512 | 3.17 s | 15 ms | 204.8 | 1.9e-13 | 0 |
 | `alife_turing` | artificial-life | 2048×2048 | 6.87 s | 38 ms | 179.4 | 0.0e+00 | 0 |
 | `esdf` | occupancy | 256×256×256 | 10.98 s | 61 ms | 179.3 | 0.0e+00 | 0 |
-| `riesz_motion_magnify` | motion | 8×512×512 | 3.79 s | 21 ms | 179.2 | 1.3e-12 | 0 |
 | `vol_frangi` | feature | 256×256×256 | 33.92 s | 191 ms | 177.6 | 8.0e-15 | 0 |
 | `ridge_readout` | reservoir | 1024×1024 | 2.84 s | 16 ms | 173.3 | 9.0e-16 | 0 |
-| `sensor_fingerprint` | sensor | 2048×2048 | 5.83 s | 35 ms | 165.0 | 5.3e-13 | 0 |
 | `level_set_reinit` | contour | 2048×2048 | 18.30 s | 113 ms | 161.5 | 2.3e-17 | 0 |
 | `displacement_series` | measure | 8×512×512 | 7.19 s | 45 ms | 159.6 | 4.8e-14 | 0 |
 | `iv_backproject_superres` | restoration | 2048×2048 | 4.18 s | 27 ms | 154.0 | 2.9e-16 | 0 |
@@ -106,22 +105,23 @@ CuPy 13.6.0 + PyTorch 2.11.0+cu128 を同じプロセスで使い(DLPack の往�
 | `macro_denoise` | macro | 2048×2048 | 7.19 s | 75 ms | 96.3 | 2.3e-16 | 0 |
 | `motion_magnify` | magnify | 8×512×512 | 6.01 s | 63 ms | 94.7 | 4.5e-12 | 0 |
 | `percentile` | rank | 2048×2048 | 1.98 s | 21 ms | 93.9 | 0.0e+00 | 0 |
-| `median_rect` | rank | 2048×2048 | 1.36 s | 15 ms | 89.3 | 0.0e+00 | 0 |
 | `retardation_unwrap_multiwavelength` | photoelastic | 2048×2048 | 14.21 s | 163 ms | 87.4 | 1.3e-16 | 0 |
 | `vol_local_maxima` | feature | 256×256×256 | 1.23 s | 14 ms | 87.3 | 0.0e+00 | 0 |
+| `sensor_fingerprint` | sensor | 2048×2048 | 3.01 s | 35 ms | 85.2 | 5.3e-13 | 0 |
 | `fp_capture` | fpm | 2048×2048 | 148.86 s | 1.76 s | 84.5 | 1.6e-16 | 338 |
 | `phase_displacement` | measure | 8×512×512 | 3.87 s | 46 ms | 83.3 | 3.9e-10 | 0 |
 | `tac_height_from_shading` | tactile | 2048×2048 | 1.59 s | 20 ms | 81.3 | 2.4e-15 | 0 |
 | `macro_binarize` | macro | 2048×2048 | 5.06 s | 63 ms | 80.7 | 9.2e-16 | 0 |
 | `patch_features` | anomaly_patch | 2048×2048 | 7.65 s | 95 ms | 80.7 | 3.6e-13 | 0 |
 | `riesz_displacement` | motion | 8×512×512 | 2.09 s | 26 ms | 79.8 | 2.0e-11 | 0 |
-| `radial_periodogram` | terrain | 2048×2048 | 724 ms | 9 ms | 79.6 | 2.6e-08 | 0 |
 | `median_weighted` | rank | 2048×2048 | 1.36 s | 17 ms | 79.6 | 0.0e+00 | 0 |
 | `vx_warp_affine` | geometry | 2048×2048 | 767 ms | 10 ms | 79.5 | 0.0e+00 | 0 |
 | `median_separate` | rank | 2048×2048 | 1.43 s | 18 ms | 79.1 | 0.0e+00 | 0 |
 | `surface_psd` | measure | 2048×2048 | 467 ms | 6 ms | 78.7 | 1.3e-15 | 0 |
+| `median_rect` | rank | 2048×2048 | 1.20 s | 15 ms | 78.5 | 0.0e+00 | 0 |
 | `median` | rank | 2048×2048 | 1.32 s | 17 ms | 77.9 | 0.0e+00 | 0 |
 | `punch_pressure` | tactorque | 1024×1024 | 568 ms | 7 ms | 77.9 | 0.0e+00 | 0 |
+| `riesz_motion_magnify` | motion | 8×512×512 | 1.63 s | 21 ms | 77.3 | 1.3e-12 | 0 |
 | `fbm_height` | terrain | 2048×2048 | 3.22 s | 43 ms | 75.3 | 3.1e-16 | 0 |
 | `dc_retinex` | decomposition | 2048×2048 | 7.21 s | 97 ms | 74.2 | 1.3e-15 | 0 |
 | `bootstrap_std_error` | texture | 2048×2048 | 80.33 s | 1.09 s | 73.6 | 3.5e-16 | 2 |
@@ -138,21 +138,14 @@ CuPy 13.6.0 + PyTorch 2.11.0+cu128 を同じプロセスで使い(DLPack の往�
 | `alife_lenia` | artificial-life | 2048×2048 | 2.81 s | 44 ms | 63.5 | 4.3e-15 | 0 |
 | `bilateral` | smoothing | 2048×2048 | 2.32 s | 37 ms | 63.0 | 0.0e+00 | 0 |
 | `dual_rank` | rank | 2048×2048 | 1.54 s | 25 ms | 62.3 | 0.0e+00 | 0 |
-| `eliminate_sp` | rank | 2048×2048 | 802 ms | 13 ms | 61.3 | 6.9e-15 | 0 |
 | `tf_gradient_domain_reintegrate` | filtering | 2048×2048 | 840 ms | 14 ms | 59.4 | 6.5e-14 | 0 |
 | `hatch_field` | npr | 2048×2048 | 1.40 s | 24 ms | 59.0 | 8.4e-11 | 0 |
 | `filled_polygon` | shape | 2048×2048 | 1.42 s | 24 ms | 58.3 | 0.0e+00 | 0 |
 | `vol_hessian_blobness` | feature | 256×256×256 | 6.08 s | 106 ms | 57.5 | 8.8e-14 | 0 |
-| `warp_by_plane` | plane_sweep_stereo | 2048×2048 | 755 ms | 13 ms | 57.0 | 5.9e-17 | 0 |
-| `edges_sub_pix` | contour | 2048×2048 | 869 ms | 16 ms | 55.5 | 1.3e-12 | 0 |
 | `cplx_poly_eval` | complex | 1048576 | 1.17 s | 21 ms | 55.2 | 1.5e-14 | 0 |
-| `vol_median` | 3d | 256×256×256 | 2.45 s | 46 ms | 53.4 | 0.0e+00 | 0 |
 | `dem_flow_direction` | hydrology | 2048×2048 | 482 ms | 9 ms | 52.4 | 0.0e+00 | 0 |
 | `psf_to_mtf` | imaging | 2048×2048 | 437 ms | 8 ms | 51.8 | 5.2e-06 | 0 |
-| `dem_geodetic_slope` | geodesy | 2048×2048 | 766 ms | 15 ms | 50.8 | 1.5e-16 | 0 |
-| `blob_distance` | split | 2048×2048 | 562 ms | 11 ms | 50.3 | 0.0e+00 | 0 |
 | `winkler_polish_run` | polish | 2048×2048 | 8.62 s | 171 ms | 50.3 | 7.2e-16 | 0 |
-| `hx_gen_rectangle2` | halcon_ext | 2048×2048 | 570 ms | 12 ms | 49.5 | 0.0e+00 | 0 |
 | `xsp_wiener` | smoothing | 2048×2048 | 624 ms | 13 ms | 48.3 | 3.5e-15 | 0 |
 | `strain_from_displacement` | solid | 2048×2048 | 1.54 s | 32 ms | 48.2 | 1.1e-10 | 0 |
 | `azimuthal_integrate` | pxrd | 2048×2048 | 3.28 s | 74 ms | 44.3 | 2.5e-15 | 0 |
@@ -164,18 +157,16 @@ CuPy 13.6.0 + PyTorch 2.11.0+cu128 を同じプロセスで使い(DLPack の往�
 | `mtf_tangential_sagittal` | imaging | 2048×2048 | 209 ms | 5 ms | 40.8 | 2.5e-20 | 0 |
 | `dist_transform` | region | 2048×2048 | 461 ms | 11 ms | 40.7 | 0.0e+00 | 0 |
 | `zero_crossing` | segmentation | 2048×2048 | 531 ms | 13 ms | 39.9 | 0.0e+00 | 0 |
-| `vx_warp_perspective` | geometry | 2048×2048 | 1.37 s | 34 ms | 39.8 | 0.0e+00 | 0 |
 | `joint_bilateral` | depth_denoise | 2048×2048 | 27.46 s | 703 ms | 39.1 | 4.3e-16 | 0 |
-| `iv_unsharp_deblur` | restoration | 2048×2048 | 626 ms | 16 ms | 38.8 | 9.2e-16 | 0 |
 | `coherent_image` | coherent | 2048×2048 | 954 ms | 25 ms | 38.7 | 1.0e-15 | 0 |
 | `sg_kmeans_intensity` | segment | 2048×2048 | 3.99 s | 105 ms | 38.1 | 0.0e+00 | 0 |
-| `iv_wiener_deconv_spatial` | restoration | 2048×2048 | 629 ms | 17 ms | 37.7 | 5.5e-16 | 0 |
 | `fft_image_inv` | frequency | 2048×2048 | 492 ms | 13 ms | 37.6 | 3.6e-11 | 0 |
 | `robinson_dir` | edges | 2048×2048 | 589 ms | 16 ms | 36.8 | 0.0e+00 | 0 |
 | `dem_slope` | surface | 2048×2048 | 456 ms | 12 ms | 36.8 | 1.1e-16 | 0 |
 | `kirsch_amp` | edges | 2048×2048 | 585 ms | 16 ms | 36.7 | 5.1e-15 | 0 |
 | `annotate_dimension` | paper | 2048×2048 | 1.95 s | 53 ms | 36.6 | 0.0e+00 | 0 |
 | `correlation_score` | score | 256×256×256 | 3.40 s | 93 ms | 36.4 | 5.8e-16 | 0 |
+| `vol_median` | 3d | 256×256×256 | 1.65 s | 46 ms | 36.0 | 0.0e+00 | 0 |
 | `photometric_residual` | photometric | 2048×2048 | 1.20 s | 34 ms | 35.7 | 1.9e-16 | 0 |
 | `video_interpolate_flow` | time | 8×512×512 | 6.85 s | 196 ms | 35.0 | 0.0e+00 | 0 |
 | `temporal_bilateral` | denoise | 8×512×512 | 404 ms | 12 ms | 34.7 | 0.0e+00 | 0 |
@@ -185,20 +176,21 @@ CuPy 13.6.0 + PyTorch 2.11.0+cu128 を同じプロセスで使い(DLPack の往�
 | `corner_response` | edges | 2048×2048 | 513 ms | 15 ms | 34.2 | 1.5e-15 | 0 |
 | `kuwahara` | smoothing | 2048×2048 | 510 ms | 15 ms | 34.2 | 1.4e-14 | 0 |
 | `radial_reach_filter` | change | 2048×2048 | 11.33 s | 332 ms | 34.2 | 0.0e+00 | 0 |
+| `radial_periodogram` | terrain | 2048×2048 | 302 ms | 9 ms | 33.2 | 2.6e-08 | 0 |
 | `hankel_image` | transform | 2048×2048 | 279 ms | 8 ms | 33.1 | 4.4e-15 | 0 |
-| `potential_flow_cylinder` | swarmflow | 1048576 | 5.92 s | 179 ms | 33.0 | 3.5e-16 | 0 |
 | `quat_correlate` | match | 2048×2048×4 | 3.18 s | 96 ms | 33.0 | 1.9e-15 | 0 |
 | `vx_phase` | gradient | 2048×2048 | 111 ms | 3 ms | 32.9 | 0.0e+00 | 0 |
 | `perlin2` | terrain | 2048×2048 | 1.58 s | 48 ms | 32.8 | 0.0e+00 | 1 |
 | `edge_transition_width` | edges | 2048×2048 | 494 ms | 15 ms | 32.8 | 2.7e-16 | 0 |
+| `iv_wiener_deconv_spatial` | restoration | 2048×2048 | 548 ms | 17 ms | 32.8 | 5.5e-16 | 0 |
 | `tac_shear_field` | tactile | 2048×2048 | 671 ms | 21 ms | 32.5 | 2.9e-16 | 0 |
 | `dem_aspect` | surface | 2048×2048 | 406 ms | 13 ms | 32.3 | 1.2e-16 | 0 |
 | `pupil_psf` | wave | 2048×2048 | 5.41 s | 167 ms | 32.3 | 5.5e-16 | 0 |
 | `rounded_rect` | shape | 2048×2048 | 583 ms | 18 ms | 31.8 | 0.0e+00 | 0 |
 | `envelope` | signal | 1048576 | 112 ms | 4 ms | 31.3 | 8.9e-16 | 0 |
 | `tf_rank_transform` | texture | 2048×2048 | 496 ms | 16 ms | 31.0 | 0.0e+00 | 0 |
-| `log_zero_crossings` | edges | 256×256×256 | 2.78 s | 90 ms | 30.7 | 0.0e+00 | 0 |
 | `halftone_screen` | npr | 2048×2048 | 405 ms | 13 ms | 30.1 | 4.4e-16 | 0 |
+| `blob_distance` | split | 2048×2048 | 334 ms | 11 ms | 29.8 | 0.0e+00 | 0 |
 | `bilateral_filter_depth` | depth_denoise | 2048×2048 | 20.57 s | 694 ms | 29.6 | 2.3e-16 | 0 |
 | `gen_gabor` | texture | 2048×2048 | 539 ms | 18 ms | 29.4 | 1.7e-14 | 0 |
 | `affine_trans_image_size` | geometry | 2048×2048 | 455 ms | 16 ms | 29.4 | 2.3e-16 | 0 |
@@ -212,27 +204,24 @@ CuPy 13.6.0 + PyTorch 2.11.0+cu128 を同じプロセスで使い(DLPack の往�
 | `xsp_hilbert_env` | texture | 2048×2048 | 357 ms | 13 ms | 27.4 | 5.2e-16 | 0 |
 | `grating_three_image_retrieve` | grating_interf | 256×256×256 | 1.36 s | 50 ms | 27.4 | 1.5e-14 | 0 |
 | `monotony` | gray | 2048×2048 | 299 ms | 11 ms | 27.4 | 0.0e+00 | 0 |
+| `log_zero_crossings` | edges | 256×256×256 | 2.43 s | 90 ms | 26.9 | 0.0e+00 | 0 |
 | `affine_warp` | geometry | 2048×2048 | 366 ms | 14 ms | 26.9 | 2.3e-16 | 0 |
 | `f2_expand_domain` | gray | 2048×2048 | 422 ms | 16 ms | 26.4 | 0.0e+00 | 0 |
 | `tem_power_spectrum` | tem | 2048×2048 | 763 ms | 29 ms | 26.4 | 1.2e-09 | 0 |
 | `cosmic_ray_reject` | cosmic | 2048×2048 | 1.68 s | 64 ms | 26.1 | 0.0e+00 | 0 |
-| `sprite_blit` | sprite | 2048×2048×4 | 5.16 s | 198 ms | 26.1 | 0.0e+00 | 1 |
 | `deviation_image` | texture | 2048×2048 | 321 ms | 12 ms | 26.0 | 4.0e-07 | 0 |
 | `structure_tensor_orientation` | texture | 2048×2048 | 536 ms | 21 ms | 26.0 | 1.5e-14 | 0 |
-| `warp_tps_image` | morph | 2048×2048 | 3.11 s | 120 ms | 25.9 | 4.9e-10 | 0 |
 | `dem_hillshade` | shading | 2048×2048 | 372 ms | 15 ms | 25.6 | 2.8e-15 | 0 |
 | `dwt_transform` | transform | 2048×2048 | 518 ms | 20 ms | 25.3 | 2.7e-12 | 2 |
 | `vx_sobel3x3` | gradient | 2048×2048 | 189 ms | 7 ms | 25.2 | 0.0e+00 | 0 |
+| `warp_tps_image` | morph | 2048×2048 | 3.03 s | 120 ms | 25.2 | 4.9e-10 | 0 |
 | `flow_from_depth_motion` | ttc | 2048×2048 | 799 ms | 32 ms | 25.1 | 0.0e+00 | 0 |
 | `feat_image_vector` | features | 2048×2048 | 770 ms | 31 ms | 24.7 | 3.1e-16 | 0 |
-| `it_bit_mask` | gray | 2048×2048 | 285 ms | 12 ms | 24.4 | 0.0e+00 | 0 |
 | `cie_xyz_from_wavelength` | appearance | 1048576 | 194 ms | 8 ms | 24.1 | 1.4e-64 | 0 |
 | `render_transport` | light_transport | 24 | 547 ms | 23 ms | 24.0 | 2.4e-15 | 0 |
-| `zoom_inset` | compose | 2048×2048 | 495 ms | 21 ms | 23.9 | 0.0e+00 | 0 |
 | `seg_membrane_response` | response | 2048×2048 | 353 ms | 15 ms | 23.3 | 4.8e-15 | 0 |
 | `iv_richardson_lucy` | restoration | 2048×2048 | 1.41 s | 61 ms | 23.2 | 5.2e-16 | 0 |
 | `tb_temporal_bilateral` | typed | 8×512×512 | 287 ms | 12 ms | 23.1 | 0.0e+00 | 0 |
-| `vol_label_mpr_rgb` | slice | 256×256×256×3 | 1.16 s | 50 ms | 23.0 | 0.0e+00 | 0 |
 | `fraunhofer_pattern` | wave | 2048×2048 | 390 ms | 17 ms | 23.0 | 3.9e-20 | 0 |
 | `arrow` | pointer | 2048×2048 | 359 ms | 16 ms | 22.9 | 0.0e+00 | 0 |
 | `rotate_img` | geometry | 2048×2048 | 394 ms | 17 ms | 22.9 | 2.3e-16 | 0 |
@@ -241,7 +230,6 @@ CuPy 13.6.0 + PyTorch 2.11.0+cu128 を同じプロセスで使い(DLPack の往�
 | `deflectometry_phase_to_slope` | deflectometry | 2048×2048 | 1.28 s | 57 ms | 22.6 | 3.2e-16 | 0 |
 | `tem_multislice` | tem | 2048×2048 | 1.22 s | 55 ms | 22.3 | 2.7e-09 | 0 |
 | `sem_render` | sem | 2048×2048 | 363 ms | 17 ms | 21.6 | 1.5e-12 | 0 |
-| `color_grade` | post | 2048×2048×3 | 1.07 s | 50 ms | 21.5 | 3.1e-16 | 0 |
 | `fresnel_conductor` | interface | 1048576 | 130 ms | 6 ms | 21.2 | 5.5e-15 | 0 |
 | `dem_roughness` | surface | 2048×2048 | 313 ms | 15 ms | 21.0 | 2.4e-16 | 0 |
 | `fft_image` | frequency | 2048×2048 | 254 ms | 12 ms | 21.0 | 1.0e-13 | 0 |
@@ -254,14 +242,12 @@ CuPy 13.6.0 + PyTorch 2.11.0+cu128 を同じプロセスで使い(DLPack の往�
 | `mean_curvature_flow` | smoothing | 2048×2048 | 233 ms | 11 ms | 20.5 | 4.0e-16 | 0 |
 | `dyn_threshold` | segmentation | 2048×2048 | 299 ms | 15 ms | 20.3 | 0.0e+00 | 0 |
 | `dc_local_contrast_norm` | decomposition | 2048×2048 | 349 ms | 17 ms | 20.2 | 8.3e-13 | 0 |
-| `mandelbrot_interior` | complex | 2048×2048 | 179 ms | 9 ms | 19.8 | 0.0e+00 | 0 |
+| `iv_unsharp_deblur` | restoration | 2048×2048 | 319 ms | 16 ms | 19.8 | 9.2e-16 | 0 |
 | `affine_trans_image` | geometry | 2048×2048 | 291 ms | 15 ms | 19.7 | 2.3e-16 | 0 |
 | `tb_iqft2` | typed | 2048×2048×4 | 1.09 s | 55 ms | 19.7 | 1.8e-12 | 0 |
 | `distance_transform` | region | 2048×2048 | 296 ms | 15 ms | 19.6 | 0.0e+00 | 0 |
 | `annotate3d_bbox` | annotate3d | 2048×2048 | 897 ms | 46 ms | 19.6 | 0.0e+00 | 0 |
-| `emva_general_relative_qe` | sensorgeneral | 1048576 | 1.28 s | 66 ms | 19.5 | 1.4e-14 | 0 |
 | `sobel_amp` | edges | 2048×2048 | 265 ms | 14 ms | 19.4 | 1.8e-15 | 0 |
-| `carla_label_unmap` | carla | 2048×2048 | 108 ms | 6 ms | 19.4 | 0.0e+00 | 0 |
 | `morph_grad` | morphology | 2048×2048 | 278 ms | 15 ms | 19.0 | 0.0e+00 | 0 |
 | `keypoints_from_image2d` | keypoint | 2048×2048 | 159 ms | 9 ms | 18.6 | 2.8e-13 | 0 |
 | `aug_rolling_shutter` | augmentation | 2048×2048 | 270 ms | 14 ms | 18.6 | 5.6e-17 | 0 |
@@ -279,10 +265,13 @@ CuPy 13.6.0 + PyTorch 2.11.0+cu128 を同じプロセスで使い(DLPack の往�
 | `it_bit_lshift` | gray | 2048×2048 | 222 ms | 13 ms | 17.4 | 0.0e+00 | 0 |
 | `vol_gradient_magnitude` | feature | 256×256×256 | 1.46 s | 84 ms | 17.2 | 8.2e-16 | 0 |
 | `edges_color_sub_pix` | contour | 2048×2048×3 | 789 ms | 46 ms | 17.2 | 0.0e+00 | 0 |
+| `eliminate_sp` | rank | 2048×2048 | 224 ms | 13 ms | 17.1 | 6.9e-15 | 0 |
+| `emva_general_relative_qe` | sensorgeneral | 1048576 | 1.12 s | 66 ms | 17.1 | 1.4e-14 | 0 |
 | `hx_shade_height_field` | halcon_ext | 2048×2048 | 282 ms | 17 ms | 17.1 | 0.0e+00 | 0 |
 | `gabor` | texture | 2048×2048 | 544 ms | 32 ms | 17.1 | 1.7e-14 | 0 |
 | `it_crop_part` | geometry | 2048×2048 | 231 ms | 14 ms | 17.1 | 1.2e-16 | 0 |
 | `emva_bspline_regression` | sensorchar | 1048576 | 979 ms | 58 ms | 17.0 | 8.7e-15 | 0 |
+| `warp_by_plane` | plane_sweep_stereo | 2048×2048 | 224 ms | 13 ms | 16.9 | 5.9e-17 | 0 |
 | `hx_gen_ellipse_sector` | halcon_ext | 2048×2048 | 246 ms | 15 ms | 16.9 | 0.0e+00 | 0 |
 | `vol_fft_lowpass` | frequency | 256×256×256 | 801 ms | 48 ms | 16.8 | 2.3e-16 | 0 |
 | `tf_log_polar` | geometry | 2048×2048 | 252 ms | 15 ms | 16.8 | 2.3e-15 | 0 |
@@ -295,6 +284,7 @@ CuPy 13.6.0 + PyTorch 2.11.0+cu128 を同じプロセスで使い(DLPack の往�
 | `grid_lines` | plot | 2048×2048 | 449 ms | 28 ms | 16.2 | 0.0e+00 | 0 |
 | `tsdf_from_depth` | transform | 2048×2048 | 341 ms | 21 ms | 16.2 | 0.0e+00 | 0 |
 | `gray_opening` | morphology | 2048×2048 | 214 ms | 13 ms | 16.1 | 0.0e+00 | 0 |
+| `hx_gen_rectangle2` | halcon_ext | 2048×2048 | 186 ms | 12 ms | 16.1 | 0.0e+00 | 0 |
 | `carla_depth_decode` | carla | 2048×2048×3 | 178 ms | 11 ms | 16.1 | 0.0e+00 | 0 |
 | `phase_rad` | frequency | 2048×2048 | 220 ms | 14 ms | 16.0 | 2.3e-12 | 0 |
 | `sobel_mag` | edges | 2048×2048 | 211 ms | 13 ms | 16.0 | 1.8e-15 | 0 |
@@ -303,7 +293,6 @@ CuPy 13.6.0 + PyTorch 2.11.0+cu128 を同じプロセスで使い(DLPack の往�
 | `emva_general_sensitivity` | sensorgeneral | 1048576 | 1.91 s | 121 ms | 15.8 | 3.6e-09 | 0 |
 | `photometric_stereo` | photometric | 2048×2048 | 479 ms | 30 ms | 15.8 | 0.0e+00 | 0 |
 | `aug_chromatic` | augmentation | 2048×2048 | 223 ms | 14 ms | 15.8 | 1.7e-16 | 0 |
-| `texture_laws` | texture | 2048×2048 | 238 ms | 15 ms | 15.8 | 2.6e-13 | 0 |
 | `img_to_beatcube` | bridge | 2048×2048 | 169 ms | 11 ms | 15.6 | 1.1e-16 | 2 |
 | `ttc_truth` | ttc | 2048×2048 | 749 ms | 48 ms | 15.6 | 0.0e+00 | 0 |
 | `video_summary_keyframes` | summary | 8×512×512 | 92 ms | 6 ms | 15.5 | 0.0e+00 | 0 |
@@ -312,6 +301,7 @@ CuPy 13.6.0 + PyTorch 2.11.0+cu128 を同じプロセスで使い(DLPack の往�
 | `polarization_demosaic_color` | polarization | 2048×2048 | 1.76 s | 114 ms | 15.4 | 0.0e+00 | 0 |
 | `fft_generic` | frequency | 2048×2048 | 223 ms | 15 ms | 15.3 | 1.0e-13 | 0 |
 | `histogram_match` | matching | 2048×2048 | 1.02 s | 66 ms | 15.3 | 0.0e+00 | 0 |
+| `edges_sub_pix` | contour | 2048×2048 | 240 ms | 16 ms | 15.3 | 1.3e-12 | 0 |
 | `local_std` | texture | 2048×2048 | 194 ms | 13 ms | 15.3 | 4.0e-07 | 0 |
 | `class_ndim_norm` | classify | 2048×2048 | 249 ms | 16 ms | 15.3 | 0.0e+00 | 0 |
 | `removal_depth_from_heights` | polish | 2048×2048 | 499 ms | 33 ms | 15.2 | 1.4e-12 | 0 |
@@ -325,6 +315,7 @@ CuPy 13.6.0 + PyTorch 2.11.0+cu128 を同じプロセスで使い(DLPack の往�
 | `four_f_filter` | wave | 2048×2048 | 690 ms | 47 ms | 14.8 | 4.6e-16 | 0 |
 | `xsp_morph_laplace` | edges | 2048×2048 | 212 ms | 14 ms | 14.7 | 0.0e+00 | 0 |
 | `resample` | signal | 1048576 | 38 ms | 3 ms | 14.7 | 6.1e-16 | 0 |
+| `mandelbrot_interior` | complex | 2048×2048 | 133 ms | 9 ms | 14.6 | 0.0e+00 | 0 |
 | `tb_lf_epi_slope` | typed | 3×3×256×256 | 39 ms | 3 ms | 14.5 | 6.0e-15 | 1 |
 | `robinson_amp` | edges | 2048×2048 | 450 ms | 31 ms | 14.5 | 0.0e+00 | 0 |
 | `cplx_domain_colour` | complex | 2048×2048 | 737 ms | 51 ms | 14.4 | 1.3e-15 | 0 |
@@ -338,6 +329,7 @@ CuPy 13.6.0 + PyTorch 2.11.0+cu128 を同じプロセスで使い(DLPack の往�
 | `perceptual_hash` | hash | 2048×2048 | 64 ms | 5 ms | 13.9 | 0.0e+00 | 1 |
 | `tb_temporal_median_window` | typed | 8×512×512 | 188 ms | 14 ms | 13.9 | 0.0e+00 | 0 |
 | `derivate_gauss` | edges | 2048×2048 | 204 ms | 15 ms | 13.8 | 2.3e-15 | 0 |
+| `dem_geodetic_slope` | geodesy | 2048×2048 | 208 ms | 15 ms | 13.8 | 1.5e-16 | 0 |
 | `f2_bit_slice` | gray | 2048×2048 | 208 ms | 15 ms | 13.8 | 0.0e+00 | 0 |
 | `tonemap_aces` | render | 2048×2048 | 169 ms | 12 ms | 13.8 | 0.0e+00 | 0 |
 | `annotate_orientation` | paper | 2048×2048 | 778 ms | 57 ms | 13.7 | 0.0e+00 | 0 |
@@ -346,17 +338,12 @@ CuPy 13.6.0 + PyTorch 2.11.0+cu128 を同じプロセスで使い(DLPack の往�
 | `class_2dim_unsup` | classify | 2048×2048 | 2.62 s | 193 ms | 13.5 | 0.0e+00 | 1 |
 | `membrane_recover` | tacsim | 2048×2048×3 | 1.45 s | 107 ms | 13.5 | 2.3e-13 | 0 |
 | `edges_color` | edges | 2048×2048×3 | 723 ms | 54 ms | 13.5 | 2.2e-14 | 0 |
-| `gaussian` | smoothing | 2048×2048 | 191 ms | 14 ms | 13.5 | 2.3e-16 | 0 |
 | `clahe` | gray | 2048×2048 | 350 ms | 26 ms | 13.4 | 7.8e-17 | 0 |
-| `dem_geocentric_grid` | geodesy | 2048×2048 | 569 ms | 43 ms | 13.3 | 2.4e-13 | 0 |
 | `gray_range_rect` | rank | 2048×2048 | 190 ms | 14 ms | 13.3 | 0.0e+00 | 0 |
 | `xsp_detrend_flatten` | gray | 2048×2048 | 263 ms | 20 ms | 13.2 | 2.0e-15 | 0 |
-| `iqft2` | fourier | 2048×2048×4 | 890 ms | 68 ms | 13.1 | 1.8e-12 | 0 |
 | `mindlin_traction` | tacslip | 1024×1024 | 61 ms | 5 ms | 13.1 | 1.1e-16 | 0 |
-| `tan_image` | arithmetic | 2048×2048 | 183 ms | 14 ms | 13.1 | 6.9e-17 | 0 |
 | `xsp_gauss_grad_mag` | edges | 2048×2048 | 170 ms | 13 ms | 13.1 | 2.2e-15 | 0 |
 | `power_ln` | frequency | 2048×2048 | 221 ms | 17 ms | 13.1 | 1.0e-13 | 0 |
-| `emva_spectrogram` | sensorchar | 2048×2048 | 478 ms | 37 ms | 13.0 | 1.4e-15 | 0 |
 | `tm_sinogram_denoise` | tomography | 2048×2048 | 177 ms | 14 ms | 12.9 | 2.3e-16 | 0 |
 | `annotate3d_measure` | annotate3d | 2048×2048 | 585 ms | 46 ms | 12.8 | 0.0e+00 | 0 |
 | `power_real` | frequency | 2048×2048 | 190 ms | 15 ms | 12.8 | 9.1e-18 | 0 |
@@ -365,8 +352,6 @@ CuPy 13.6.0 + PyTorch 2.11.0+cu128 を同じプロセスで使い(DLPack の往�
 | `diff_of_gauss` | edges | 2048×2048 | 213 ms | 17 ms | 12.7 | 2.1e-14 | 0 |
 | `gray_bothat` | morphology | 2048×2048 | 167 ms | 13 ms | 12.6 | 0.0e+00 | 0 |
 | `linear_to_srgb` | colorspace | 2048×2048×3 | 541 ms | 43 ms | 12.5 | 1.9e-16 | 0 |
-| `gauss_image` | smoothing | 2048×2048 | 185 ms | 15 ms | 12.5 | 2.3e-16 | 0 |
-| `normal_error_map` | tacscalib | 2048×2048×3 | 601 ms | 48 ms | 12.5 | 1.0e-16 | 0 |
 | `bothat` | morphology | 2048×2048 | 147 ms | 12 ms | 12.4 | 0.0e+00 | 0 |
 | `apply_weighting` | level | 1048576 | 55 ms | 4 ms | 12.3 | 5.3e-15 | 0 |
 | `fresnel_dielectric` | interface | 1048576 | 73 ms | 6 ms | 12.3 | 1.4e-16 | 0 |
@@ -382,29 +367,33 @@ CuPy 13.6.0 + PyTorch 2.11.0+cu128 を同じプロセスで使い(DLPack の往�
 | `running_mean_std` | recursive | 8×512×512 | 53 ms | 4 ms | 11.9 | 0.0e+00 | 0 |
 | `it_crop_rectangle1` | geometry | 2048×2048 | 157 ms | 13 ms | 11.9 | 1.3e-16 | 0 |
 | `aug_cutout` | augmentation | 2048×2048 | 156 ms | 13 ms | 11.7 | 0.0e+00 | 2 |
+| `vol_label_mpr_rgb` | slice | 256×256×256×3 | 586 ms | 50 ms | 11.6 | 0.0e+00 | 0 |
 | `f2_topographic` | edges | 2048×2048 | 741 ms | 64 ms | 11.6 | 0.0e+00 | 0 |
 | `annotate_angle` | paper | 2048×2048 | 570 ms | 49 ms | 11.5 | 0.0e+00 | 0 |
-| `sfp_dolp_model` | shape_from_polarization | 2048×2048 | 196 ms | 17 ms | 11.5 | 7.6e-16 | 0 |
 | `tb_angular_spectrum_propagate` | typed | 2048×2048 | 843 ms | 74 ms | 11.4 | 3.4e-16 | 1 |
 | `chromatic_aberration` | post | 2048×2048×3 | 444 ms | 39 ms | 11.3 | 1.9e-16 | 0 |
+| `texture_laws` | texture | 2048×2048 | 171 ms | 15 ms | 11.3 | 2.6e-13 | 0 |
 | `prewitt_amp` | edges | 2048×2048 | 172 ms | 15 ms | 11.3 | 2.4e-15 | 0 |
 | `sg_region_growing_seeded` | segment | 2048×2048 | 205 ms | 18 ms | 11.3 | 0.0e+00 | 0 |
 | `polariscope_intensity` | photoelastic | 2048×2048 | 155 ms | 14 ms | 11.3 | 1.8e-16 | 0 |
 | `hx_gen_ellipse` | halcon_ext | 2048×2048 | 182 ms | 16 ms | 11.3 | 0.0e+00 | 0 |
+| `vx_warp_perspective` | geometry | 2048×2048 | 385 ms | 34 ms | 11.2 | 0.0e+00 | 0 |
 | `vol_gaussian` | 3d | 256×256×256 | 759 ms | 68 ms | 11.2 | 2.3e-16 | 0 |
+| `it_bit_mask` | gray | 2048×2048 | 131 ms | 12 ms | 11.2 | 0.0e+00 | 0 |
+| `color_grade` | post | 2048×2048×3 | 557 ms | 50 ms | 11.2 | 3.1e-16 | 0 |
 | `thin_film_reflectance` | appearance | 1048576 | 643 ms | 58 ms | 11.1 | 1.0e-12 | 0 |
 | `lines_color` | contour | 2048×2048×3 | 492 ms | 44 ms | 11.1 | 0.0e+00 | 0 |
+| `tan_image` | arithmetic | 2048×2048 | 155 ms | 14 ms | 11.0 | 6.9e-17 | 0 |
 | `prewitt_mag` | edges | 2048×2048 | 164 ms | 15 ms | 11.0 | 2.4e-15 | 0 |
 | `f2_lut_trans` | gray | 2048×2048 | 138 ms | 13 ms | 11.0 | 8.4e-17 | 0 |
 | `terrain_gradient` | terrain | 2048×2048 | 7.38 s | 671 ms | 11.0 | 4.2e-16 | 0 |
-| `crosshair` | pointer | 2048×2048 | 163 ms | 15 ms | 10.9 | 0.0e+00 | 0 |
+| `sfp_dolp_model` | shape_from_polarization | 2048×2048 | 187 ms | 17 ms | 11.0 | 7.6e-16 | 0 |
 | `quat_image_multiply` | algebra | 2048×2048×4 | 673 ms | 62 ms | 10.9 | 0.0e+00 | 0 |
 | `hx_close_edges_length` | halcon_ext | 2048×2048 | 143 ms | 13 ms | 10.9 | 0.0e+00 | 0 |
 | `whiten_by_psd` | matched | 1048576 | 47 ms | 4 ms | 10.9 | 6.0e-16 | 0 |
 | `annotate_legend` | paper | 2048×2048 | 562 ms | 52 ms | 10.8 | 0.0e+00 | 0 |
 | `tem_image_weak_phase` | tem | 2048×2048 | 684 ms | 63 ms | 10.8 | 4.5e-13 | 1 |
 | `hertz_surface_ur` | tacslip | 1024×1024 | 48 ms | 4 ms | 10.8 | 5.1e-16 | 0 |
-| `tb_qft2` | typed | 2048×2048×4 | 765 ms | 71 ms | 10.8 | 7.8e-15 | 0 |
 | `surface_normals` | photometric | 2048×2048 | 281 ms | 26 ms | 10.7 | 0.0e+00 | 0 |
 | `vx_histogram` | pixel | 2048×2048 | 65 ms | 6 ms | 10.7 | 0.0e+00 | 0 |
 | `overlay_mask` | overlay | 2048×2048 | 130 ms | 12 ms | 10.7 | 0.0e+00 | 0 |
@@ -418,20 +407,20 @@ CuPy 13.6.0 + PyTorch 2.11.0+cu128 を同じプロセスで使い(DLPack の往�
 | `specular_coefficient_map` | dichromatic | 2048×2048×3 | 648 ms | 63 ms | 10.2 | 4.9e-16 | 0 |
 | `tb_specular_coefficient_map` | typed | 2048×2048×3 | 648 ms | 65 ms | 10.0 | 4.9e-16 | 0 |
 | `hertz_surface_uz` | tacsim | 1024×1024 | 41 ms | 4 ms | 10.0 | 3.7e-16 | 0 |
+| `iqft2` | fourier | 2048×2048×4 | 673 ms | 68 ms | 9.9 | 1.8e-12 | 0 |
 | `frei_dir` | edges | 2048×2048 | 157 ms | 16 ms | 9.9 | 2.7e-14 | 0 |
 | `arc` | shape | 2048×2048 | 323 ms | 33 ms | 9.8 | 0.0e+00 | 0 |
 | `adaptive_gauss_thresh` | segmentation | 2048×2048 | 145 ms | 15 ms | 9.8 | 0.0e+00 | 0 |
 | `tb_envelope` | typed | 1048576 | 54 ms | 6 ms | 9.7 | 8.7e-16 | 0 |
-| `hx_char_threshold` | halcon_ext | 2048×2048 | 180 ms | 19 ms | 9.7 | 0.0e+00 | 0 |
 | `dots_image` | edges | 2048×2048 | 223 ms | 23 ms | 9.5 | 3.6e-15 | 0 |
 | `marker_detect` | tacslip | 2048×2048 | 510 ms | 54 ms | 9.5 | 3.5e-06 | 1 |
 | `it_change_format` | geometry | 2048×2048 | 111 ms | 12 ms | 9.5 | 0.0e+00 | 0 |
 | `sk_otsu` | segmentation | 2048×2048 | 122 ms | 13 ms | 9.5 | 0.0e+00 | 0 |
 | `it_region_to_bin` | segmentation | 2048×2048 | 139 ms | 15 ms | 9.4 | 0.0e+00 | 0 |
-| `tb_temporal_bandpass` | typed | 8×512×512 | 67 ms | 7 ms | 9.4 | 6.0e-17 | 0 |
 | `tb_temporal_band_power` | typed | 8×512×512 | 45 ms | 5 ms | 9.4 | 2.4e-16 | 0 |
 | `tb_monogenic_orientation` | typed | 2048×2048×4 | 257 ms | 27 ms | 9.4 | 1.2e-16 | 0 |
 | `label_points` | pointer | 2048×2048 | 678 ms | 73 ms | 9.3 | 0.0e+00 | 0 |
+| `dem_geocentric_grid` | geodesy | 2048×2048 | 397 ms | 43 ms | 9.3 | 2.4e-13 | 0 |
 | `frei_amp` | edges | 2048×2048 | 125 ms | 13 ms | 9.2 | 2.2e-15 | 0 |
 | `nonmax_suppression_amp` | segmentation | 2048×2048 | 125 ms | 14 ms | 9.2 | 0.0e+00 | 0 |
 | `hilbert_analytic` | spectral | 1048576 | 127 ms | 14 ms | 9.2 | 6.5e-15 | 0 |
@@ -445,11 +434,11 @@ CuPy 13.6.0 + PyTorch 2.11.0+cu128 を同じプロセスで使い(DLPack の往�
 | `tb_monogenic_amplitude` | typed | 2048×2048×4 | 210 ms | 23 ms | 8.9 | 1.6e-16 | 0 |
 | `blob_overlay` | extract | 2048×2048 | 426 ms | 48 ms | 8.9 | 0.0e+00 | 1 |
 | `local_threshold` | segmentation | 2048×2048 | 113 ms | 13 ms | 8.9 | 0.0e+00 | 0 |
+| `tb_qft2` | typed | 2048×2048×4 | 631 ms | 71 ms | 8.9 | 7.8e-15 | 0 |
 | `classify_image_class_lut` | classify | 2048×2048 | 64 ms | 7 ms | 8.9 | 0.0e+00 | 0 |
 | `vol_dilate` | 3d | 256×256×256 | 417 ms | 47 ms | 8.9 | 0.0e+00 | 0 |
 | `plant_color_index` | plant | 2048×2048×3 | 295 ms | 33 ms | 8.8 | 0.0e+00 | 0 |
 | `annotate_text_path` | paper | 2048×2048 | 176 ms | 20 ms | 8.8 | 0.0e+00 | 6 |
-| `carla_depth_encode` | carla | 2048×2048 | 181 ms | 20 ms | 8.8 | 0.0e+00 | 0 |
 | `hx_gen_circle` | halcon_ext | 2048×2048 | 194 ms | 22 ms | 8.8 | 0.0e+00 | 0 |
 | `xsp_savgol` | smoothing | 2048×2048 | 230 ms | 26 ms | 8.7 | 1.3e-15 | 0 |
 | `hx_fit_surface1` | halcon_ext | 2048×2048 | 452 ms | 52 ms | 8.7 | 8.6e-05 | 0 |
@@ -470,18 +459,16 @@ CuPy 13.6.0 + PyTorch 2.11.0+cu128 を同じプロセスで使い(DLPack の往�
 | `vol_boundary_points` | boundary | 256×256×256 | 133 ms | 16 ms | 8.1 | 0.0e+00 | 0 |
 | `ellipse_pressure_shifted` | tactorque | 1024×1024 | 31 ms | 4 ms | 8.1 | 5.4e-16 | 0 |
 | `tb_resample` | typed | 1048576 | 24 ms | 3 ms | 8.1 | 7.1e-16 | 0 |
+| `potential_flow_cylinder` | swarmflow | 1048576 | 1.43 s | 179 ms | 8.0 | 3.5e-16 | 0 |
 | `aug_barrel` | augmentation | 2048×2048 | 326 ms | 41 ms | 8.0 | 1.2e-16 | 0 |
-| `it_bit_rshift` | gray | 2048×2048 | 111 ms | 14 ms | 7.9 | 0.0e+00 | 0 |
 | `vignette` | post | 2048×2048×3 | 279 ms | 35 ms | 7.9 | 1.9e-16 | 0 |
 | `sk_adjust_log` | gray | 2048×2048 | 106 ms | 13 ms | 7.9 | 1.2e-16 | 0 |
 | `wipe_coverage` | polish | 2048×2048 | 355 ms | 45 ms | 7.9 | 0.0e+00 | 0 |
 | `quantize_lloyd_max` | gray | 2048×2048 | 616 ms | 78 ms | 7.9 | 2.0e-15 | 0 |
-| `eval_poly_surface` | surface_fit | 6 | 330 ms | 42 ms | 7.8 | 1.1e-16 | 0 |
 | `separate_direct_global` | light_transport | 2048×2048 | 556 ms | 72 ms | 7.7 | 0.0e+00 | 0 |
 | `sph_kernel` | swarmflow | 1048576 | 27 ms | 4 ms | 7.7 | 2.4e-16 | 0 |
 | `color_bar` | furniture | 2048×2048 | 427 ms | 56 ms | 7.6 | 0.0e+00 | 0 |
 | `bit_and` | nary | 2048×2048 | 114 ms | 15 ms | 7.6 | 0.0e+00 | 0 |
-| `tonemap_reinhard` | render | 2048×2048 | 94 ms | 12 ms | 7.6 | 0.0e+00 | 0 |
 | `palette_quantize` | post | 2048×2048×3 | 951 ms | 125 ms | 7.6 | 0.0e+00 | 0 |
 | `tem_ctf_correct` | tem | 2048×2048 | 532 ms | 70 ms | 7.6 | 3.4e-16 | 1 |
 | `running_gaussian_background` | background | 8×512×512 | 70 ms | 9 ms | 7.6 | 0.0e+00 | 0 |
@@ -501,8 +488,10 @@ CuPy 13.6.0 + PyTorch 2.11.0+cu128 を同じプロセスで使い(DLPack の往�
 | `fly_tau_from_expansion` | looming | 1048576 | 31 ms | 4 ms | 7.2 | 1.1e-16 | 0 |
 | `anomaly_pro` | anomaly_eval | 4×512×512 | 63 ms | 9 ms | 7.1 | 2.3e-13 | 1 |
 | `unproject_spherical` | lidar_projection | 2048×2048 | 250 ms | 36 ms | 7.0 | 5.5e-17 | 0 |
+| `carla_label_unmap` | carla | 2048×2048 | 39 ms | 6 ms | 7.0 | 0.0e+00 | 0 |
 | `gray_closing_rect` | morphology | 2048×2048 | 136 ms | 19 ms | 7.0 | 0.0e+00 | 0 |
 | `ods_depth_to_disparity` | omni360 | 2048×2048 | 104 ms | 15 ms | 7.0 | 1.1e-16 | 0 |
+| `crosshair` | pointer | 2048×2048 | 104 ms | 15 ms | 7.0 | 0.0e+00 | 0 |
 | `fly_hex_quantize` | sample | 1048576 | 22 ms | 3 ms | 7.0 | 0.0e+00 | 0 |
 | `vx_nonlinear_filter` | filter | 2048×2048 | 63 ms | 9 ms | 6.9 | 0.0e+00 | 0 |
 | `aug_vignette` | augmentation | 2048×2048 | 215 ms | 32 ms | 6.8 | 1.1e-16 | 0 |
@@ -512,23 +501,27 @@ CuPy 13.6.0 + PyTorch 2.11.0+cu128 を同じプロセスで使い(DLPack の往�
 | `mean_box_wh` | smoothing | 2048×2048 | 110 ms | 16 ms | 6.8 | 7.4e-15 | 0 |
 | `temporal_bandpass` | temporal | 8×512×512 | 57 ms | 8 ms | 6.7 | 5.4e-17 | 0 |
 | `it_crop_domain` | domain | 2048×2048 | 100 ms | 15 ms | 6.7 | 0.0e+00 | 0 |
-| `vol_opening_ball` | 3d | 256×256×256 | 401 ms | 61 ms | 6.6 | 0.0e+00 | 0 |
-| `scale_clip` | gray | 2048×2048 | 96 ms | 14 ms | 6.6 | 0.0e+00 | 0 |
 | `tb_specular_diffuse_split` | typed | 2048×2048×3 | 682 ms | 104 ms | 6.6 | 1.7e-15 | 0 |
+| `it_bit_rshift` | gray | 2048×2048 | 91 ms | 14 ms | 6.5 | 0.0e+00 | 0 |
+| `sprite_blit` | sprite | 2048×2048×4 | 1.29 s | 198 ms | 6.5 | 0.0e+00 | 1 |
+| `tb_temporal_bandpass` | typed | 8×512×512 | 46 ms | 7 ms | 6.5 | 6.0e-17 | 0 |
 | `bearing_angle_image` | range_image | 2048×2048 | 59 ms | 9 ms | 6.5 | 0.0e+00 | 0 |
 | `compare_frame` | compose | 2048×2048 | 135 ms | 21 ms | 6.5 | 0.0e+00 | 0 |
 | `sg_normalized_cut_2` | segment | 2048×2048 | 343 ms | 53 ms | 6.5 | 0.0e+00 | 1 |
 | `binary_threshold` | segmentation | 2048×2048 | 85 ms | 13 ms | 6.5 | 0.0e+00 | 0 |
 | `structure_tensor_coherence` | texture | 2048×2048 | 512 ms | 80 ms | 6.4 | 6.7e-14 | 0 |
+| `zoom_inset` | compose | 2048×2048 | 133 ms | 21 ms | 6.4 | 0.0e+00 | 0 |
 | `invert_funct_1d` | function | 1048576 | 37 ms | 6 ms | 6.4 | 0.0e+00 | 0 |
 | `roberts` | edges | 2048×2048 | 137 ms | 22 ms | 6.3 | 1.4e-16 | 0 |
 | `gray_dilation` | morphology | 2048×2048 | 78 ms | 12 ms | 6.3 | 0.0e+00 | 0 |
 | `tb_apply_weighting` | typed | 1048576 | 56 ms | 9 ms | 6.3 | 4.4e-15 | 0 |
+| `eval_poly_surface` | surface_fit | 6 | 265 ms | 42 ms | 6.3 | 1.1e-16 | 0 |
 | `qft2` | fourier | 2048×2048×4 | 697 ms | 112 ms | 6.2 | 7.8e-15 | 0 |
 | `mat_pinv` | linalg | 1024×1024 | 1.99 s | 320 ms | 6.2 | 2.5e-15 | 0 |
 | `wetness` | material | 2048×2048×3 | 267 ms | 43 ms | 6.2 | 0.0e+00 | 0 |
 | `srgb_to_linear` | colorspace | 2048×2048×3 | 468 ms | 76 ms | 6.2 | 6.8e-17 | 0 |
 | `hx_region_to_mean` | halcon_ext | 2048×2048 | 106 ms | 17 ms | 6.2 | 8.4e-15 | 0 |
+| `normal_error_map` | tacscalib | 2048×2048×3 | 294 ms | 48 ms | 6.1 | 1.0e-16 | 0 |
 | `check_difference` | compare | 2048×2048 | 45 ms | 7 ms | 6.1 | 0.0e+00 | 0 |
 | `normal_map_decode` | light | 2048×2048×3 | 251 ms | 42 ms | 6.0 | 0.0e+00 | 0 |
 | `nine_slice` | sprite | 2048×2048×4 | 72 ms | 12 ms | 6.0 | 0.0e+00 | 0 |
@@ -536,7 +529,6 @@ CuPy 13.6.0 + PyTorch 2.11.0+cu128 を同じプロセスで使い(DLPack の往�
 | `vol_gamma` | gray | 256×256×256 | 324 ms | 55 ms | 5.9 | 5.7e-17 | 0 |
 | `hertz_pressure_shifted` | tactorque | 1024×1024 | 21 ms | 4 ms | 5.9 | 1.3e-15 | 0 |
 | `beam_hardening_apply` | artifact | 2048×2048 | 75 ms | 13 ms | 5.9 | 7.4e-19 | 0 |
-| `quantize` | signal | 1048576 | 22 ms | 4 ms | 5.8 | 0.0e+00 | 0 |
 | `monogenic_phase` | riesz | 2048×2048×4 | 177 ms | 31 ms | 5.8 | 8.3e-17 | 0 |
 | `tb_wetness` | typed | 2048×2048×3 | 390 ms | 68 ms | 5.8 | 0.0e+00 | 0 |
 | `morph` | morph | 2048×2048 | 1.78 s | 310 ms | 5.7 | 1.3e-15 | 4 |
@@ -544,13 +536,12 @@ CuPy 13.6.0 + PyTorch 2.11.0+cu128 を同じプロセスで使い(DLPack の往�
 | `dither` | post | 2048×2048 | 76 ms | 13 ms | 5.7 | 0.0e+00 | 2 |
 | `img_to_cimage` | bridge | 2048×2048 | 112 ms | 20 ms | 5.7 | 5.5e-17 | 0 |
 | `annotate3d_scale_bar` | annotate3d | 2048×2048 | 230 ms | 41 ms | 5.7 | 0.0e+00 | 0 |
-| `omni_anaglyph_compose` | omni360 | 2048×2048×3 | 340 ms | 60 ms | 5.7 | 4.9e-16 | 0 |
 | `alpha_composite` | composite | 2048×2048×4 | 1.13 s | 201 ms | 5.6 | 0.0e+00 | 1 |
-| `hue_saturation` | isp | 2048×2048×3 | 281 ms | 50 ms | 5.6 | 3.6e-16 | 0 |
 | `gray_opening_shape` | morphology | 2048×2048 | 81 ms | 14 ms | 5.6 | 0.0e+00 | 0 |
 | `particle_image_d50` | grind | 2048×2048 | 118 ms | 21 ms | 5.6 | 6.4e-15 | 3 |
 | `hx_plane_deviation` | halcon_ext | 2048×2048 | 303 ms | 54 ms | 5.6 | 1.9e-04 | 0 |
 | `simulate_defocus` | smoothing | 2048×2048 | 105 ms | 19 ms | 5.5 | 6.8e-15 | 0 |
+| `vol_opening_ball` | 3d | 256×256×256 | 331 ms | 61 ms | 5.5 | 0.0e+00 | 0 |
 | `scale_bar` | furniture | 2048×2048 | 237 ms | 44 ms | 5.4 | 0.0e+00 | 0 |
 | `sk_yen` | segmentation | 2048×2048 | 75 ms | 14 ms | 5.4 | 0.0e+00 | 0 |
 | `macro_vol_denoise` | macro | 256×256×256 | 637 ms | 119 ms | 5.4 | 1.1e-16 | 0 |
@@ -558,23 +549,34 @@ CuPy 13.6.0 + PyTorch 2.11.0+cu128 を同じプロセスで使い(DLPack の往�
 | `hx_gen_disc_se` | halcon_ext | 2048×2048 | 115 ms | 22 ms | 5.3 | 0.0e+00 | 0 |
 | `gray_erosion_rect` | rank | 2048×2048 | 71 ms | 13 ms | 5.3 | 0.0e+00 | 0 |
 | `ods_disparity_to_depth` | omni360 | 2048×2048 | 69 ms | 13 ms | 5.3 | 0.0e+00 | 0 |
+| `carla_depth_encode` | carla | 2048×2048 | 108 ms | 20 ms | 5.3 | 0.0e+00 | 0 |
 | `punch_surface_uz` | tactorque | 1024×1024 | 21 ms | 4 ms | 5.3 | 1.2e-16 | 0 |
-| `mean_image` | smoothing | 2048×2048 | 64 ms | 12 ms | 5.3 | 6.8e-15 | 0 |
 | `max_filter` | rank | 2048×2048 | 67 ms | 13 ms | 5.3 | 0.0e+00 | 0 |
 | `hx_gen_lowpass` | halcon_ext | 2048×2048 | 58 ms | 11 ms | 5.3 | 0.0e+00 | 0 |
-| `monogenic_signal` | riesz | 2048×2048 | 975 ms | 186 ms | 5.2 | 1.8e-14 | 0 |
 | `lf_disparity_to_depth` | depth | 2048×2048 | 96 ms | 18 ms | 5.2 | 0.0e+00 | 0 |
-| `std_filter` | texture | 2048×2048 | 240 ms | 46 ms | 5.2 | 4.0e-07 | 0 |
+| `hue_saturation` | isp | 2048×2048×3 | 261 ms | 50 ms | 5.2 | 3.6e-16 | 0 |
 | `graycode_decode` | structured_light | 2048×2048 | 191 ms | 37 ms | 5.2 | 0.0e+00 | 0 |
 | `gradient3d` | edges | 256×256×256 | 1.03 s | 199 ms | 5.2 | 2.3e-15 | 0 |
-| `specular_diffuse_split` | dichromatic | 2048×2048×3 | 556 ms | 108 ms | 5.1 | 1.7e-15 | 0 |
+| `emva_spectrogram` | sensorchar | 2048×2048 | 189 ms | 37 ms | 5.2 | 1.4e-15 | 0 |
 | `sigmoid` | gray | 2048×2048 | 63 ms | 12 ms | 5.1 | 2.8e-17 | 0 |
 | `gauss_filter` | smoothing | 2048×2048 | 73 ms | 14 ms | 5.1 | 2.3e-16 | 0 |
-| `xsp_dct` | frequency | 2048×2048 | 377 ms | 74 ms | 5.1 | 1.0e-16 | 1 |
 | `runlength_smear` | morphology | 2048×2048 | 66 ms | 13 ms | 5.1 | 0.0e+00 | 0 |
 | `blend_mode` | composite | 2048×2048×3 | 224 ms | 44 ms | 5.1 | 0.0e+00 | 0 |
 
-倍率の中央値 15.0、最小 5.1、最大 308.8。
+倍率の中央値 14.8、最小 5.1、最大 308.8。
+
+採用 503 件のうち 53 件は手書きの GPU 経路(`accel` 系)も持つ。新しく GPU で走るようになったのは 450 件。
+
+### GPU 対応率への数え方(分母 2127 件 = required + suitable)
+
+| 経路 | 件数 |
+|---|---:|
+| 手書き経路(`accel` / `accel_vol` / `accel_match`) | 85 |
+| 許可リスト経由(機械的 GPU 化。`fullseye/data/gpu_auto_allow.json`) | 503 |
+| うち手書きと重複 | 53 |
+| 合算(重複を 1 回と数える) | 535 |
+
+注記: 許可リスト経由の 503 件は**既定では有効でない**。明示の GPU 指定か許可リストを使ったときだけ GPU で走る。手書き経路とは数字を混ぜず、必ず上の内訳で示す。採用の門(内部差 < 5e-03・転送込み 5.0 倍以上・出力定数は不採用)は変えていない。
 
 ## 一致したが遅い op(倍率の高い順に上位 30)
 
@@ -583,14 +585,13 @@ CuPy 13.6.0 + PyTorch 2.11.0+cu128 を同じプロセスで使い(DLPack の往�
 | `alife_reaction_bz` | artificial-life | 2048×2048 | 3.66 s | 35 ms | 105.52 |
 | `speckle_quality` | solid | 2048×2048 | 927 ms | 10 ms | 94.67 |
 | `canny3d` | edges | 256×256×256 | 3.24 s | 42 ms | 77.27 |
-| `sp_saddle_points_sub_pix` | subpix | 2048×2048 | 549 ms | 8 ms | 66.59 |
+| `sp_saddle_points_sub_pix` | subpix | 2048×2048 | 497 ms | 8 ms | 60.29 |
 | `annotate_invert_visibility` | overlay | 2048×2048 | 407 ms | 7 ms | 56.40 |
 | `hx_estimate_tilt_zc` | halcon_ext | 2048×2048 | 175 ms | 3 ms | 52.81 |
 | `surface_params` | measure | 2048×2048 | 2.79 s | 55 ms | 50.28 |
 | `frame_quality` | quality | 2048×2048 | 489 ms | 10 ms | 48.30 |
 | `tf_census_transform` | texture | 2048×2048 | 631 ms | 14 ms | 44.34 |
 | `occlusion_edges` | range_image | 2048×2048 | 189 ms | 5 ms | 37.80 |
-| `effective_bit_depth` | features | 2048×2048 | 196 ms | 5 ms | 36.30 |
 | `itof_flying_pixel_mask` | itof | 2048×2048 | 733 ms | 20 ms | 35.85 |
 | `tb_equivalent_level` | typed | 1048576 | 82 ms | 3 ms | 31.67 |
 | `phase_correlation_shift` | registration | 2048×2048 | 1.22 s | 39 ms | 31.51 |
@@ -610,6 +611,7 @@ CuPy 13.6.0 + PyTorch 2.11.0+cu128 を同じプロセスで使い(DLPack の往�
 | `hx_cooc_feature` | halcon_ext | 2048×2048 | 142 ms | 7 ms | 19.46 |
 | `sk_sauvola` | segmentation | 2048×2048 | 290 ms | 16 ms | 18.48 |
 | `matcap_shade` | render | 2048×2048×3 | 601 ms | 34 ms | 17.74 |
+| `m1_measure_projection` | measure1d | 2048×2048 | 123 ms | 7 ms | 17.69 |
 
 ## 族別
 
@@ -618,19 +620,19 @@ CuPy 13.6.0 + PyTorch 2.11.0+cu128 を同じプロセスで使い(DLPack の往�
 | typed | 123 | 24 | 54 | 35 | 6 | 1 | 3 | 0 | 0 | 0 |
 | edges | 64 | 27 | 5 | 0 | 6 | 0 | 0 | 19 | 0 | 7 |
 | segmentation | 54 | 12 | 12 | 0 | 0 | 0 | 0 | 28 | 0 | 2 |
-| gray | 52 | 19 | 17 | 0 | 0 | 0 | 0 | 14 | 1 | 1 |
-| smoothing | 50 | 19 | 5 | 0 | 0 | 0 | 1 | 17 | 0 | 8 |
-| halcon_ext | 43 | 14 | 26 | 0 | 3 | 0 | 0 | 0 | 0 | 0 |
+| gray | 52 | 18 | 18 | 0 | 0 | 0 | 0 | 14 | 1 | 1 |
+| smoothing | 50 | 16 | 8 | 0 | 0 | 0 | 1 | 17 | 0 | 8 |
+| halcon_ext | 43 | 13 | 27 | 0 | 3 | 0 | 0 | 0 | 0 | 0 |
 | morphology | 43 | 17 | 9 | 0 | 0 | 0 | 2 | 14 | 1 | 0 |
 | features | 33 | 1 | 7 | 0 | 0 | 2 | 0 | 20 | 0 | 3 |
 | geometry | 32 | 13 | 7 | 1 | 0 | 0 | 1 | 8 | 0 | 2 |
 | transform | 32 | 4 | 8 | 6 | 0 | 0 | 0 | 1 | 4 | 9 |
-| texture | 28 | 14 | 1 | 0 | 0 | 0 | 0 | 13 | 0 | 0 |
-| render | 24 | 3 | 3 | 10 | 1 | 4 | 2 | 0 | 0 | 1 |
+| texture | 28 | 13 | 2 | 0 | 0 | 0 | 0 | 13 | 0 | 0 |
+| render | 24 | 2 | 4 | 10 | 1 | 4 | 2 | 0 | 0 | 1 |
 | function | 23 | 2 | 17 | 0 | 0 | 4 | 0 | 0 | 0 | 0 |
 | rank | 23 | 17 | 1 | 0 | 0 | 0 | 0 | 4 | 0 | 1 |
-| frequency | 22 | 15 | 3 | 0 | 0 | 0 | 0 | 2 | 0 | 2 |
-| omni360 | 22 | 4 | 9 | 5 | 0 | 2 | 0 | 0 | 1 | 1 |
+| frequency | 22 | 14 | 4 | 0 | 0 | 0 | 0 | 2 | 0 | 2 |
+| omni360 | 22 | 3 | 10 | 5 | 0 | 2 | 0 | 0 | 1 | 1 |
 | bridge | 18 | 6 | 7 | 2 | 1 | 0 | 0 | 0 | 2 | 0 |
 | contour | 18 | 5 | 0 | 5 | 0 | 1 | 1 | 5 | 1 | 0 |
 | sensorchar | 17 | 3 | 2 | 3 | 0 | 2 | 0 | 0 | 0 | 7 |
@@ -659,7 +661,7 @@ CuPy 13.6.0 + PyTorch 2.11.0+cu128 を同じプロセスで使い(DLPack の往�
 | graph | 11 | 0 | 0 | 2 | 0 | 0 | 2 | 0 | 7 | 0 |
 | perpetual | 11 | 0 | 0 | 7 | 0 | 0 | 4 | 0 | 0 | 0 |
 | scene | 11 | 0 | 1 | 2 | 0 | 0 | 0 | 0 | 0 | 8 |
-| signal | 11 | 4 | 6 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
+| signal | 11 | 3 | 7 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
 | terrain | 11 | 7 | 0 | 3 | 0 | 1 | 0 | 0 | 0 | 0 |
 | arithmetic | 10 | 1 | 9 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | augmentation | 10 | 7 | 3 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
@@ -737,7 +739,7 @@ CuPy 13.6.0 + PyTorch 2.11.0+cu128 を同じプロセスで使い(DLPack の往�
 | plot | 5 | 1 | 1 | 1 | 0 | 0 | 0 | 0 | 1 | 1 |
 | prepare | 5 | 0 | 2 | 0 | 0 | 0 | 0 | 0 | 3 | 0 |
 | refine | 5 | 0 | 2 | 2 | 0 | 1 | 0 | 0 | 0 | 0 |
-| riesz | 5 | 2 | 3 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| riesz | 5 | 1 | 4 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | scoop | 5 | 1 | 0 | 1 | 0 | 3 | 0 | 0 | 0 | 0 |
 | score | 5 | 1 | 0 | 4 | 0 | 0 | 0 | 0 | 0 | 0 |
 | sem | 5 | 1 | 0 | 2 | 0 | 0 | 1 | 0 | 1 | 0 |
@@ -753,7 +755,7 @@ CuPy 13.6.0 + PyTorch 2.11.0+cu128 を同じプロセスで使い(DLPack の往�
 | coherent | 4 | 1 | 0 | 2 | 0 | 0 | 1 | 0 | 0 | 0 |
 | deflectometry | 4 | 2 | 0 | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
 | depth | 4 | 2 | 0 | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| dichromatic | 4 | 2 | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
+| dichromatic | 4 | 1 | 2 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
 | estimate | 4 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 2 | 2 |
 | finish | 4 | 1 | 1 | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | fit | 4 | 0 | 0 | 4 | 0 | 0 | 0 | 0 | 0 | 0 |
@@ -981,20 +983,20 @@ CuPy 13.6.0 + PyTorch 2.11.0+cu128 を同じプロセスで使い(DLPack の往�
 | 順位 | 族 | 例外+不一致+遅い | 包み | Pyループ |
 |---:|---|---:|---:|---:|
 | 1 | typed | 63 | 0 | 0 |
-| 2 | halcon_ext | 29 | 0 | 0 |
-| 3 | function | 17 | 0 | 0 |
-| 4 | gray | 17 | 14 | 1 |
+| 2 | halcon_ext | 30 | 0 | 0 |
+| 3 | gray | 18 | 14 | 1 |
+| 4 | function | 17 | 0 | 0 |
 | 5 | segmentation | 12 | 28 | 0 |
 | 6 | edges | 11 | 19 | 0 |
 | 7 | morphology | 11 | 14 | 1 |
 | 8 | nary | 11 | 0 | 0 |
-| 9 | omni360 | 9 | 0 | 1 |
+| 9 | omni360 | 10 | 0 | 1 |
 | 10 | arithmetic | 9 | 0 | 0 |
-| 11 | transform | 8 | 1 | 4 |
-| 12 | geometry | 8 | 8 | 0 |
-| 13 | bridge | 8 | 0 | 2 |
-| 14 | 3d | 8 | 0 | 0 |
-| 15 | color | 7 | 3 | 0 |
+| 11 | smoothing | 9 | 17 | 0 |
+| 12 | transform | 8 | 1 | 4 |
+| 13 | signal | 8 | 0 | 0 |
+| 14 | geometry | 8 | 8 | 0 |
+| 15 | bridge | 8 | 0 | 2 |
 
 例外が集中する場所(同じ行で落ちる op の数、上位 15):
 

@@ -1,9 +1,9 @@
 {
 "classes": {
-"adopted": 515,
+"adopted": 503,
 "exception": 62,
 "match_fixed": 438,
-"match_slow": 474,
+"match_slow": 486,
 "mismatch": 47,
 "python_loop": 67,
 "unmeasured": 195,
@@ -728,7 +728,7 @@
 "at": null,
 "class": "match_slow",
 "family": "arithmetic",
-"ratio": 3.8009931251371607,
+"ratio": 2.723846150603073,
 "rel": 1.4731771642475494e-16,
 "why": "ratio"
 },
@@ -1160,7 +1160,7 @@
 "at": null,
 "class": "adopted",
 "family": "split",
-"ratio": 50.31374328003563,
+"ratio": 29.837752185424513,
 "rel": 0.0,
 "why": "ratio"
 },
@@ -1312,7 +1312,7 @@
 "at": null,
 "class": "match_slow",
 "family": "isp",
-"ratio": 3.6284338296220486,
+"ratio": 2.1686396081779558,
 "rel": 0.0,
 "why": "ratio"
 },
@@ -1416,7 +1416,7 @@
 "at": null,
 "class": "adopted",
 "family": "carla",
-"ratio": 8.839613461778054,
+"ratio": 5.291782952967668,
 "rel": 0.0,
 "why": "ratio"
 },
@@ -1440,7 +1440,7 @@
 "at": null,
 "class": "adopted",
 "family": "carla",
-"ratio": 19.388988862509347,
+"ratio": 7.031642806756998,
 "rel": 0.0,
 "why": "ratio"
 },
@@ -1752,7 +1752,7 @@
 "at": null,
 "class": "adopted",
 "family": "post",
-"ratio": 21.458661236252848,
+"ratio": 11.151593533294335,
 "rel": 2.119570379937914e-16,
 "why": "ratio"
 },
@@ -2136,7 +2136,7 @@
 "at": null,
 "class": "adopted",
 "family": "pointer",
-"ratio": 10.934305880700148,
+"ratio": 6.971140825774381,
 "rel": 0.0,
 "why": "ratio"
 },
@@ -2608,7 +2608,7 @@
 "at": null,
 "class": "adopted",
 "family": "decomposition",
-"ratio": 239.61843584939427,
+"ratio": 219.50268843203247,
 "rel": 0.0,
 "why": "ratio"
 },
@@ -2616,7 +2616,7 @@
 "at": null,
 "class": "match_slow",
 "family": "transform",
-"ratio": 4.641953817601572,
+"ratio": 3.5444231908453303,
 "rel": 5.092025259333351e-15,
 "why": "ratio"
 },
@@ -2784,7 +2784,7 @@
 "at": null,
 "class": "adopted",
 "family": "geodesy",
-"ratio": 13.278837543046354,
+"ratio": 9.262316923237307,
 "rel": 6.081175256109179e-17,
 "why": "ratio"
 },
@@ -2792,7 +2792,7 @@
 "at": null,
 "class": "adopted",
 "family": "geodesy",
-"ratio": 50.764008629523,
+"ratio": 13.806363210468517,
 "rel": 8.61593522377622e-17,
 "why": "ratio"
 },
@@ -3440,7 +3440,7 @@
 "at": null,
 "class": "adopted",
 "family": "contour",
-"ratio": 55.49248678114176,
+"ratio": 15.296743181586699,
 "rel": 1.5615034752950703e-15,
 "why": "ratio"
 },
@@ -3464,7 +3464,7 @@
 "at": null,
 "class": "match_slow",
 "family": "features",
-"ratio": 36.304551564897,
+"ratio": 11.24743442545293,
 "rel": 0.0,
 "why": "ratio"
 },
@@ -3488,7 +3488,7 @@
 "at": null,
 "class": "adopted",
 "family": "rank",
-"ratio": 61.262562922035876,
+"ratio": 17.1394134826236,
 "rel": 1.785443407225158e-15,
 "why": "ratio"
 },
@@ -3576,7 +3576,7 @@
 "at": null,
 "class": "adopted",
 "family": "sensorgeneral",
-"ratio": 19.472714142607916,
+"ratio": 17.13859562070201,
 "rel": 8.640199666842768e-15,
 "why": "ratio"
 },
@@ -3672,7 +3672,7 @@
 "at": null,
 "class": "adopted",
 "family": "sensorchar",
-"ratio": 13.013784454827478,
+"ratio": 5.153419543627256,
 "rel": 2.2749017105420067e-16,
 "why": "ratio"
 },
@@ -3928,7 +3928,7 @@
 "at": null,
 "class": "adopted",
 "family": "surface_fit",
-"ratio": 7.786072272399459,
+"ratio": 6.264133930132923,
 "rel": 1.8558868476006472e-16,
 "why": "ratio"
 },
@@ -4838,17 +4838,17 @@
 },
 "gauss_image": {
 "at": null,
-"class": "adopted",
+"class": "match_slow",
 "family": "smoothing",
-"ratio": 12.518624955398785,
+"ratio": 4.081945962707204,
 "rel": 1.156727559222897e-15,
 "why": "ratio"
 },
 "gaussian": {
 "at": null,
-"class": "adopted",
+"class": "match_slow",
 "family": "smoothing",
-"ratio": 13.451594051831448,
+"ratio": 4.311713326606883,
 "rel": 6.83356669906293e-16,
 "why": "ratio"
 },
@@ -5728,15 +5728,15 @@
 "at": null,
 "class": "adopted",
 "family": "isp",
-"ratio": 5.5888635916549365,
+"ratio": 5.193797299816071,
 "rel": 1.4070727594456607e-16,
 "why": "ratio"
 },
 "hx_char_threshold": {
 "at": null,
-"class": "adopted",
+"class": "match_slow",
 "family": "halcon_ext",
-"ratio": 9.676555915193786,
+"ratio": 4.333814130150569,
 "rel": 0.0,
 "why": "ratio"
 },
@@ -5984,7 +5984,7 @@
 "at": null,
 "class": "adopted",
 "family": "halcon_ext",
-"ratio": 49.46582595627262,
+"ratio": 16.131792006707954,
 "rel": 0.0,
 "why": "ratio"
 },
@@ -6512,7 +6512,7 @@
 "at": null,
 "class": "adopted",
 "family": "fourier",
-"ratio": 13.137668989160739,
+"ratio": 9.925786923039935,
 "rel": 1.0247646074539658e-14,
 "why": "ratio"
 },
@@ -6568,7 +6568,7 @@
 "at": null,
 "class": "adopted",
 "family": "gray",
-"ratio": 24.390930398110484,
+"ratio": 11.161103513301223,
 "rel": 0.0,
 "why": "ratio"
 },
@@ -6576,7 +6576,7 @@
 "at": null,
 "class": "adopted",
 "family": "gray",
-"ratio": 7.942807801473748,
+"ratio": 6.505528003170615,
 "rel": 0.0,
 "why": "ratio"
 },
@@ -6696,7 +6696,7 @@
 "at": null,
 "class": "adopted",
 "family": "restoration",
-"ratio": 38.83487603333856,
+"ratio": 19.818885026181633,
 "rel": 8.326672684688674e-16,
 "why": "ratio"
 },
@@ -6704,7 +6704,7 @@
 "at": null,
 "class": "adopted",
 "family": "restoration",
-"ratio": 37.68234779993697,
+"ratio": 32.80722055595397,
 "rel": 6.353014760458189e-16,
 "why": "ratio"
 },
@@ -7344,7 +7344,7 @@
 "at": null,
 "class": "adopted",
 "family": "edges",
-"ratio": 30.729580230609187,
+"ratio": 26.909570370415558,
 "rel": 0.0,
 "why": "ratio"
 },
@@ -7472,7 +7472,7 @@
 "at": null,
 "class": "adopted",
 "family": "complex",
-"ratio": 19.784240810591427,
+"ratio": 14.608215774615012,
 "rel": 0.0,
 "why": "ratio"
 },
@@ -7846,9 +7846,9 @@
 },
 "mean_image": {
 "at": null,
-"class": "adopted",
+"class": "match_slow",
 "family": "smoothing",
-"ratio": 5.27188265981197,
+"ratio": 4.42560116402941,
 "rel": 1.3163216614629494e-15,
 "why": "ratio"
 },
@@ -7912,7 +7912,7 @@
 "at": null,
 "class": "adopted",
 "family": "rank",
-"ratio": 89.27091831740043,
+"ratio": 78.53546193398643,
 "rel": 0.0,
 "why": "ratio"
 },
@@ -8150,9 +8150,9 @@
 },
 "monogenic_signal": {
 "at": null,
-"class": "adopted",
+"class": "match_slow",
 "family": "riesz",
-"ratio": 5.233807795798549,
+"ratio": 4.215411470405671,
 "rel": 2.5193860338098217e-16,
 "why": "ratio"
 },
@@ -8504,7 +8504,7 @@
 "at": null,
 "class": "match_slow",
 "family": "quality",
-"ratio": 15.03321659855939,
+"ratio": 8.77333394239292,
 "rel": 0.0,
 "why": "ratio"
 },
@@ -8520,7 +8520,7 @@
 "at": null,
 "class": "adopted",
 "family": "tacscalib",
-"ratio": 12.506670113179393,
+"ratio": 6.119724617297898,
 "rel": 1.0128414529925568e-16,
 "why": "ratio"
 },
@@ -8576,7 +8576,7 @@
 "at": null,
 "class": "match_slow",
 "family": "calibration",
-"ratio": 6.9924961686633536,
+"ratio": 6.1521476418710375,
 "rel": 3.7236708918688604e-14,
 "why": "ratio"
 },
@@ -8694,9 +8694,9 @@
 },
 "omni_anaglyph_compose": {
 "at": null,
-"class": "adopted",
+"class": "match_slow",
 "family": "omni360",
-"ratio": 5.657363791212926,
+"ratio": 2.3393453974756686,
 "rel": 2.1103434249580092e-16,
 "why": "ratio"
 },
@@ -9320,7 +9320,7 @@
 "at": null,
 "class": "match_slow",
 "family": "counting",
-"ratio": 6.664890709387608,
+"ratio": 4.852895994753195,
 "rel": 2.273844840593992e-16,
 "why": "ratio"
 },
@@ -9816,7 +9816,7 @@
 "at": null,
 "class": "match_slow",
 "family": "polarization",
-"ratio": 4.802380900920148,
+"ratio": 4.604785673059623,
 "rel": 0.0,
 "why": "ratio"
 },
@@ -9920,7 +9920,7 @@
 "at": null,
 "class": "adopted",
 "family": "swarmflow",
-"ratio": 33.0479651666123,
+"ratio": 7.956879795944892,
 "rel": 2.1003748373642623e-16,
 "why": "ratio"
 },
@@ -10318,9 +10318,9 @@
 },
 "quantize": {
 "at": null,
-"class": "adopted",
+"class": "match_slow",
 "family": "signal",
-"ratio": 5.824809970693763,
+"ratio": 4.149951008334441,
 "rel": 0.0,
 "why": "ratio"
 },
@@ -10448,7 +10448,7 @@
 "at": null,
 "class": "adopted",
 "family": "terrain",
-"ratio": 79.63407634704939,
+"ratio": 33.16210996272667,
 "rel": 5.34523406107916e-08,
 "why": "ratio"
 },
@@ -11016,7 +11016,7 @@
 "at": null,
 "class": "adopted",
 "family": "motion",
-"ratio": 179.1936223910592,
+"ratio": 77.31372587253087,
 "rel": 9.785537186887443e-14,
 "why": "ratio"
 },
@@ -11262,9 +11262,9 @@
 },
 "scale_clip": {
 "at": null,
-"class": "adopted",
+"class": "match_slow",
 "family": "gray",
-"ratio": 6.613141030149542,
+"ratio": 2.3041325205903136,
 "rel": 0.0,
 "why": "ratio"
 },
@@ -11472,7 +11472,7 @@
 "at": null,
 "class": "adopted",
 "family": "sensor",
-"ratio": 164.9509976920648,
+"ratio": 85.24094038077047,
 "rel": 6.687557395985993e-15,
 "why": "ratio"
 },
@@ -11504,7 +11504,7 @@
 "at": null,
 "class": "adopted",
 "family": "shape_from_polarization",
-"ratio": 11.514953159485003,
+"ratio": 10.981386367914041,
 "rel": 1.1444575714246008e-16,
 "why": "ratio"
 },
@@ -12320,7 +12320,7 @@
 "at": null,
 "class": "match_slow",
 "family": "subpix",
-"ratio": 6.091148539482467,
+"ratio": 5.206548521640988,
 "rel": 1.4210854715202004e-08,
 "why": "ratio"
 },
@@ -12360,7 +12360,7 @@
 "at": null,
 "class": "match_slow",
 "family": "subpix",
-"ratio": 66.58915830114609,
+"ratio": 60.29050775249227,
 "rel": 7.803789746735521e-15,
 "why": "ratio"
 },
@@ -12502,9 +12502,9 @@
 },
 "specular_diffuse_split": {
 "at": null,
-"class": "adopted",
+"class": "match_slow",
 "family": "dichromatic",
-"ratio": 5.149962335978585,
+"ratio": 4.182237654994253,
 "rel": 4.598725571375474e-16,
 "why": "ratio"
 },
@@ -12584,7 +12584,7 @@
 "at": null,
 "class": "adopted",
 "family": "sprite",
-"ratio": 26.061124639110936,
+"ratio": 6.504315312360129,
 "rel": 0.0,
 "why": "ratio"
 },
@@ -12758,9 +12758,9 @@
 },
 "std_filter": {
 "at": null,
-"class": "adopted",
+"class": "match_slow",
 "family": "texture",
-"ratio": 5.199546146724555,
+"ratio": 3.8769804649273714,
 "rel": 1.8454254392770603e-08,
 "why": "ratio"
 },
@@ -13144,7 +13144,7 @@
 "at": null,
 "class": "adopted",
 "family": "arithmetic",
-"ratio": 13.084097298761892,
+"ratio": 11.048269624034928,
 "rel": 1.114361160358934e-16,
 "why": "ratio"
 },
@@ -13296,7 +13296,7 @@
 "at": null,
 "class": "match_slow",
 "family": "typed",
-"ratio": 3.255585950963083,
+"ratio": 3.090545218625122,
 "rel": 1.5278504788500627e-16,
 "why": "ratio"
 },
@@ -13816,7 +13816,7 @@
 "at": null,
 "class": "adopted",
 "family": "typed",
-"ratio": 10.781222463948199,
+"ratio": 8.90300743805224,
 "rel": 1.5604820754881057e-16,
 "why": "ratio"
 },
@@ -14064,7 +14064,7 @@
 "at": null,
 "class": "adopted",
 "family": "typed",
-"ratio": 9.413320908229085,
+"ratio": 6.501371022208181,
 "rel": 2.337712010351224e-16,
 "why": "ratio"
 },
@@ -14288,7 +14288,7 @@
 "at": null,
 "class": "adopted",
 "family": "texture",
-"ratio": 15.750632995286187,
+"ratio": 11.349472926874865,
 "rel": 1.2556374014244644e-15,
 "why": "ratio"
 },
@@ -14566,9 +14566,9 @@
 },
 "tonemap_reinhard": {
 "at": null,
-"class": "adopted",
+"class": "match_slow",
 "family": "render",
-"ratio": 7.590129066674566,
+"ratio": 3.3781193802085,
 "rel": 0.0,
 "why": "ratio"
 },
@@ -15208,7 +15208,7 @@
 "at": null,
 "class": "adopted",
 "family": "slice",
-"ratio": 22.993488367823744,
+"ratio": 11.64756702523847,
 "rel": 0.0,
 "why": "ratio"
 },
@@ -15272,7 +15272,7 @@
 "at": null,
 "class": "adopted",
 "family": "3d",
-"ratio": 53.39025615666123,
+"ratio": 36.03044915971666,
 "rel": 0.0,
 "why": "ratio"
 },
@@ -15304,7 +15304,7 @@
 "at": null,
 "class": "adopted",
 "family": "3d",
-"ratio": 6.615272386798697,
+"ratio": 5.452043215961167,
 "rel": 0.0,
 "why": "ratio"
 },
@@ -15672,7 +15672,7 @@
 "at": null,
 "class": "adopted",
 "family": "geometry",
-"ratio": 39.826089033430094,
+"ratio": 11.17064578913974,
 "rel": 0.0,
 "why": "ratio"
 },
@@ -15688,7 +15688,7 @@
 "at": null,
 "class": "adopted",
 "family": "plane_sweep_stereo",
-"ratio": 57.03205711834048,
+"ratio": 16.943198539649003,
 "rel": 1.0876137670744024e-16,
 "why": "ratio"
 },
@@ -15704,7 +15704,7 @@
 "at": null,
 "class": "adopted",
 "family": "morph",
-"ratio": 25.874542290316032,
+"ratio": 25.18663922164802,
 "rel": 2.120012062554746e-12,
 "why": "ratio"
 },
@@ -16814,9 +16814,9 @@
 },
 "xsp_dct": {
 "at": null,
-"class": "adopted",
+"class": "match_slow",
 "family": "frequency",
-"ratio": 5.082619849599109,
+"ratio": 2.4097158247321366,
 "rel": 2.285205361220515e-16,
 "why": "ratio"
 },
@@ -17024,7 +17024,7 @@
 "at": null,
 "class": "adopted",
 "family": "compose",
-"ratio": 23.890418560980205,
+"ratio": 6.413057023271177,
 "rel": 0.0,
 "why": "ratio"
 }
