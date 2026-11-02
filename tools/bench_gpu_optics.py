@@ -468,6 +468,52 @@ def mtf_compare(mode):
     return out
 
 
+def small_calls(device):
+    """画像 1 枚を小さく呼ぶ場合と、屈折率の表。GPU が負ける領域を数字で残す。"""
+    import torch
+
+    import lens_gpu as LG
+    import polar_gpu as PG
+    raw = np.random.default_rng(0).random((256, 256))
+    st = np.zeros((256, 256, 4))
+    st[..., 0] = 1.0
+    st[..., 1] = 0.5
+
+    def best(fn, n=6):
+        ts = []
+        for _ in range(n):
+            t0 = time.perf_counter()
+            fn()
+            if device != "cpu":
+                torch.cuda.synchronize()
+            ts.append(time.perf_counter() - t0)
+        return min(ts[1:])
+
+    wl = np.linspace(0.45, 0.70, 301)
+    return {"demosaic_256": best(lambda: PG.polarization_demosaic_batch(raw, device=device).cpu()),
+            "stokes_256": best(lambda: PG.stokes_analyze_batch(torch.as_tensor(st, device=device))["dop"].cpu()),
+            "index_table_8x301": best(lambda: LG.index_table(["N-BK7", "N-SF2", "SILICA", "CAF2", "N-LAK9", "N-SF11", "N-F2", "SAPPHIRE"], wl, device=device).cpu())}
+
+
+def small_numpy():
+    import optics
+    raw = np.random.default_rng(0).random((256, 256))
+    ts = []
+    for _ in range(6):
+        t0 = time.perf_counter()
+        optics.polarization_demosaic(raw)
+        ts.append(time.perf_counter() - t0)
+    wl = np.linspace(0.45, 0.70, 301)
+    t1 = []
+    for _ in range(3):
+        t0 = time.perf_counter()
+        for g in ("N-BK7", "N-SF2", "SILICA", "CAF2", "N-LAK9", "N-SF11", "N-F2", "SAPPHIRE"):
+            for w in wl:
+                RT.refractive_index(g, float(w))
+        t1.append(time.perf_counter() - t0)
+    return {"demosaic_256": min(ts[1:]), "refractive_index_loop_8x301": min(t1)}
+
+
 def float32_errors():
     """float32 の誤差を float64 と比べて測る(同じ入力、CPU の torch)。"""
     import polar_gpu as PG
@@ -499,6 +545,7 @@ def main(argv=None):
     ap.add_argument("--float32-errors", action="store_true")
     ap.add_argument("--parity", choices=("cpu", "cuda"))
     ap.add_argument("--mtf", choices=("numpy", "cpu", "cuda"))
+    ap.add_argument("--small", choices=("numpy", "cpu", "cuda"))
     ap.add_argument("--out", required=True)
     a = ap.parse_args(argv)
     if a.baseline:
@@ -512,6 +559,17 @@ def main(argv=None):
             return 3
         with GpuLock("gpu_optics_%d" % os.getpid()):
             res = {"parity": parity("cuda")}
+    elif a.small == "numpy":
+        res = {"small": small_numpy()}
+    elif a.small == "cpu":
+        res = {"small": small_calls("cpu")}
+    elif a.small == "cuda":
+        why = gpu_busy()
+        if why:
+            print("GPU busy, not started:", why)
+            return 3
+        with GpuLock("gpu_optics_%d" % os.getpid()):
+            res = {"small": small_calls("cuda")}
     elif a.mtf in ("numpy", "cpu"):
         res = {"mtf": mtf_compare(a.mtf)}
     elif a.mtf == "cuda":

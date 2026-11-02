@@ -1603,7 +1603,7 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `lens_gpu.py`
 
-- **L513** _(ja)_ — ★raytrace._intersect_conic は (-B ∓ √D)/(2A) のまま解く。放物面の軸近くでは A ~ 1e-8 まで小さくなり、 小さい方の根が桁落ちして約 7e-9 mm ずれる(60 桁の計算で確認)。ここは安定な形 C/q で解く。
+- **L514** _(ja)_ — ★raytrace._intersect_conic は (-B ∓ √D)/(2A) のまま解く。放物面の軸近くでは A ~ 1e-8 まで小さくなり、 小さい方の根が桁落ちして約 7e-9 mm ずれる(60 桁の計算で確認)。ここは安定な形 C/q で解く。
 
 ## `matappear.py`
 

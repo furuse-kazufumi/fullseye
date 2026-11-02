@@ -43,8 +43,9 @@ __all__ = ["compile_lens", "paraxial_batch", "paraxial_color", "launch_batch", "
            "absorption_array", "gpu_available"]
 
 INF = float("inf")
-#: ``device="auto"`` が GPU を選ぶ仕事量の下限(M × W × R × 面数)。測定は docs/perf の表。
-AUTO_GPU_MIN_RAYS = 2_000_000
+#: ``device="auto"`` が GPU を選ぶ仕事量の下限(M × W × R × 面数)。実測で 23 万は CPU が勝ち、760 万は GPU が
+#: 12 倍勝つので、その間に置く(docs/perf/gpu_optics_2026-11-02.md)。
+AUTO_GPU_MIN_RAYS = 1_000_000
 _NEWTON_ITERS = 40
 
 
@@ -751,7 +752,8 @@ def _chief_offset(lens, field, para):
         qx, qy = tr["x"], tr["y"]
         q0x, q0y = qx[..., 0], qy[..., 0]
         lost = ~(torch.isfinite(q0x) & torch.isfinite(q0y))
-        conv = torch.hypot(q0x, q0y) < 1e-10
+        # ★float32 では 1e-10 mm に届かない(丸めが 1e-5 mm)。届かない判定だと毎回 20 反復して float64 より遅かった
+        conv = torch.hypot(q0x, q0y) < (1e-10 if lens.dtype == torch.float64 else 1e-5)
         lost_fd = ~torch.isfinite(qx[..., 1:]).all(-1) | ~torch.isfinite(qy[..., 1:]).all(-1)
         a = (qx[..., 1] - q0x) / h
         b = (qx[..., 2] - q0x) / h
