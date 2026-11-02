@@ -1,0 +1,105 @@
+{
+ "rows": {
+  "radon_transform": {
+   "desc": "1024² 180 views",
+   "cpu_s": 69.55753130000085
+  },
+  "radon_volume": {
+   "desc": "8 x 512² 180 views",
+   "cpu_s": 167.99102800001856
+  },
+  "backproject_sinogram": {
+   "desc": "1024² 180 views",
+   "cpu_s": 9.561089899973013
+  },
+  "filtered_backprojection": {
+   "desc": "1024² 180 views",
+   "cpu_s": 9.516281999996863
+  },
+  "fbp_volume": {
+   "desc": "8 x 512² 180 views",
+   "cpu_s": 23.430975800030865
+  },
+  "sart_reconstruct": {
+   "desc": "256² 180 views 3 sweeps",
+   "cpu_s": 22.499668200034648
+  },
+  "piv_cross_correlate": {
+   "desc": "2048² win32 ov0.5",
+   "cpu_s": 1.7864385999273509
+  },
+  "piv_multipass": {
+   "desc": "2048² win64/32",
+   "cpu_s": 2.7816248000599444
+  },
+  "piv_ensemble_correlate": {
+   "desc": "16 x 1024² win32",
+   "cpu_s": 1.702994400053285
+  },
+  "plane_sweep_depth": {
+   "desc": "1024² 64 depths win5",
+   "cpu_s": 13.563234300003387
+  },
+  "joint_bilateral": {
+   "desc": "2048² sigma 3",
+   "cpu_s": 70.89228150004055
+  },
+  "temporal_bilateral": {
+   "desc": "60 x 1024² window 5",
+   "cpu_s": 14.383545100106858
+  },
+  "voxel_grid_downsample": {
+   "desc": "1e7 points",
+   "cpu_s": 30.911312900017947
+  },
+  "occupancy_grid": {
+   "desc": "1e7 points 256³",
+   "cpu_s": 1.1977223999565467
+  },
+  "photometric_stereo": {
+   "desc": "12 x 2048²",
+   "cpu_s": 0.5296536000678316
+  },
+  "points_to_voxel": {
+   "desc": "1e7 points 256³",
+   "cpu_s": 1.613671200000681
+  },
+  "scene_flow_lk": {
+   "desc": "128³",
+   "cpu_s": 16.676013399963267
+  }
+ },
+ "unreal_running_at_start": false,
+ "runs": [
+  {
+   "start": "2026-11-02T15:51:53",
+   "end": "2026-11-02T16:00:57",
+   "names": [
+    "backproject_sinogram",
+    "fbp_volume",
+    "filtered_backprojection",
+    "piv_cross_correlate",
+    "piv_ensemble_correlate",
+    "piv_multipass",
+    "plane_sweep_depth",
+    "radon_transform",
+    "radon_volume",
+    "sart_reconstruct"
+   ]
+  },
+  {
+   "start": "2026-11-02T16:02:59",
+   "end": "2026-11-02T16:07:11",
+   "names": [
+    "fbp_volume",
+    "joint_bilateral",
+    "occupancy_grid",
+    "photometric_stereo",
+    "points_to_voxel",
+    "scene_flow_lk",
+    "temporal_bilateral",
+    "voxel_grid_downsample"
+   ]
+  }
+ ]
+}

@@ -441,7 +441,12 @@ def _bind():
 
 CANDIDATES = _bind()
 #: 実寸 >= 5x と parity を実測して採用した op(不採用は CANDIDATES に残すが台帳に載らない)。
-TYPED_ADOPTED = ()
+TYPED_ADOPTED = (
+    "radon_transform", "radon_volume", "backproject_sinogram", "filtered_backprojection", "fbp_volume",
+    "sart_reconstruct", "piv_cross_correlate", "piv_multipass", "piv_ensemble_correlate",
+    "plane_sweep_depth", "joint_bilateral", "temporal_bilateral", "voxel_grid_downsample",
+    "occupancy_grid", "scene_flow_lk",
+)
 #: 台帳の表示名は呼び方そのもの(型付き op は ``fullseye.apply`` を通らない)。
 TYPED_ACCEL = {name: "accel_typed.call('%s')" % name for name in TYPED_ADOPTED}
 

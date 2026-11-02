@@ -184,13 +184,11 @@ def gpu_nary(names, deadline):
         imgs, ker = _nary_inputs(name, 2048, 4)
         full = (imgs * 13)[:50]
         fn = getattr(accel, NARY[name])
+        other = [ker] if ker is not None else [np.roll(x, 3, 0) for x in full]
 
         def run():
             t = accel._to_batch(full, "cuda")
-            if ker is not None:
-                io = [t, accel._to_batch([ker], "cuda")]
-            else:
-                io = [t, accel._to_batch([np.roll(x, 3, 0) for x in full], "cuda")]
+            io = [t, accel._to_batch(other, "cuda")]
             accel._from_batch(fn(io, AB[0], AB[1], "cuda"))
         run()
         rows[name] = {"2048": {"n": 50, "gpu_s": min(_time(run), _time(run))}}
@@ -198,7 +196,7 @@ def gpu_nary(names, deadline):
     return rows
 
 
-def typed_cases():
+def typed_cases(mode, names):
     """実寸の入力。(名前 -> (説明, 呼び出し f(fn)))。入力の用意は時間に含めない(遅延生成して使い回す)。"""
     import plane_sweep as ps
     import tomography as tm
@@ -225,21 +223,17 @@ def typed_cases():
     lights = np.array([[np.cos(a) * .5, np.sin(a) * .5, 1.] for a in np.linspace(0, 6.28, 12, endpoint=False)])
     stack = np.stack([np.clip(_images(1, 2048, i)[0], 0, 1) for i in range(12)])
     bnd = ((-1, 1), (-1, 1), (-1, 1))
-    stack3 = None
     v0 = ndimage.gaussian_filter(rng.random((128, 128, 128)), 1.5) * 4
     v1 = np.roll(v0, 1, 0)
-
-    def sino_stack():
-        nonlocal stack3
-        if stack3 is None:
-            stack3 = tm.radon_volume(vol, ang)
-        return stack3
+    # fbp_volume の入力。時間に含めないよう先に作る(同じ値を torch の核で速く作る。差は rel 2e-8)
+    import accel_typed as T
+    stack3 = T.call_candidate("radon_volume", vol, ang, device="cuda" if mode == "gpu" else "cpu")         if "fbp_volume" in names else None
     return {
         "radon_transform": ("1024² 180 views", lambda f: f(im1k, ang)),
         "radon_volume": ("8 x 512² 180 views", lambda f: f(vol, ang)),
         "backproject_sinogram": ("1024² 180 views", lambda f: f(sino1k, ang, size=1024)),
         "filtered_backprojection": ("1024² 180 views", lambda f: f(sino1k, ang, size=1024)),
-        "fbp_volume": ("8 x 512² 180 views", lambda f: f(sino_stack(), ang)),
+        "fbp_volume": ("8 x 512² 180 views", lambda f: f(stack3, ang)),
         "sart_reconstruct": ("256² 180 views 3 sweeps", lambda f: f(sino256, ang, size=256, n_iter=3)),
         "piv_cross_correlate": ("2048² win32 ov0.5", lambda f: f(A, B, window=32)),
         "piv_multipass": ("2048² win64/32", lambda f: f(A, B)),
@@ -257,7 +251,7 @@ def typed_cases():
 
 def run_typed(mode, names, deadline):
     import accel_typed as T
-    cases = typed_cases()
+    cases = typed_cases(mode, names)
     rows = {}
     for name in names:
         if time.time() > deadline:
@@ -436,8 +430,18 @@ def main(argv=None) -> int:
     else:
         prev["unreal_running_at_start"] = _unreal_alive()
         rows = go()
+    # 他の仕事と計算機を分け合うので、CPU は複数回の**最小**を残す(CPU 側に有利 = 倍率は保守側)。
     for k, v in rows.items():
-        prev["rows"].setdefault(k, {}).update(v)
+        old = prev["rows"].setdefault(k, {})
+        if a.stage == "parity":
+            old.update(v)
+            continue
+        for key, val in v.items():
+            if isinstance(val, dict) and key in old and "cpu_s" in val:
+                val["cpu_s"] = min(val["cpu_s"], old[key].get("cpu_s", val["cpu_s"]))
+            elif key == "cpu_s" and key in old:
+                val = min(val, old[key])
+            old[key] = val
     prev.setdefault("runs", []).append({"start": t0, "end": time.strftime("%Y-%m-%dT%H:%M:%S"), "names": sorted(rows)})
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(prev, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")

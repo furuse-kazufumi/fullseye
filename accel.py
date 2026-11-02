@@ -39,7 +39,14 @@ def _to_batch(imgs, device):
     # float32 で直に積む(最終テンソルは float32 なので float64 中間は純粋な無駄=転送床の主因)。
     # 値は float64→float32 と float32 直変換で同一(単一丸め)なので parity は不変。
     # 色(H,W,3)は (B,3,H,W) へ(第 3 便)。灰色は従来どおり (B,1,H,W)。
-    x = np.stack([np.asarray(i, np.float32) for i in imgs])
+    # ★実測(第 3 便、2048² x50): np.stack + 1 枚ずつの f32 化が 1.4 s で、PCIe 片道 0.3 s より重かった
+    # (一時配列の確保と page fault)。行き先を 1 回だけ確保して流し込むと一時配列が消える。値は同じ。
+    first = np.asarray(imgs[0])
+    x = np.empty((len(imgs),) + first.shape, np.float32)
+    for k, im in enumerate(imgs):
+        if np.shape(im) != first.shape:          # 代入の broadcast で黙って通さない(np.stack と同じく拒む)
+            raise ValueError("batch images must share one shape, got %r and %r" % (first.shape, np.shape(im)))
+        x[k] = im
     x = x[:, None, :, :] if x.ndim == 3 else np.moveaxis(x, 3, 1)
     return torch.as_tensor(x, dtype=torch.float32, device=device)
 
@@ -1273,7 +1280,12 @@ FILL3_KERNELS = {
     "linear_trans_color": (_linear_trans_color, "linear_trans_color"),
     "principal_comp": (_principal_comp, "principal_comp"),
 }
-FILL3_ADOPTED = ()
+#: 実寸 2048² x50 で >= 5.0x かつ parity < 5e-3(docs/perf/gpu_fill3_2026-11-02.md)
+FILL3_ADOPTED = (
+    "tan_image", "f2_lut_trans", "median_rect", "it_crop_part", "it_crop_rectangle1", "texture_laws",
+    "derivate_gauss", "affine_trans_image", "affine_warp", "affine_trans_image_size",
+    "rotate_image", "rotate_img", "zoom_image_factor", "principal_comp",
+)
 ACCEL.update({(n if n not in ACCEL else n + "@twin"): (FILL3_KERNELS[n][0], n, FILL3_KERNELS[n][1])
               for n in FILL3_ADOPTED})
 
@@ -1281,7 +1293,7 @@ NARY_KERNELS = {
     "add_image": _nary_add, "sub_image": _nary_sub, "mult_image": _nary_mult, "div_image": _nary_div,
     "abs_diff_image": _nary_abs_diff, "max_image": _nary_max, "min_image": _nary_min, "convol_image": _nary_convol,
 }
-NARY_ADOPTED = ()
+NARY_ADOPTED = ("convol_image",)
 #: core n-ary 名 -> kernel。``fullseye.apply([x0, x1], name, device=...)`` の GPU 経路。
 NARY_ACCEL = {n: NARY_KERNELS[n] for n in NARY_ADOPTED}
 
