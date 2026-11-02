@@ -67,6 +67,8 @@ _INTERNAL = {
     "halcon_scrape": 9, "honest_summary": 1, "imgevolve": 14, "lib_coverage": 3,
     "param_specs": 10, "parity": 2, "problems": 2, "recipes": 4, "references": 2,
     "report": 1, "robust": 3, "samples": 2, "shapematch_gpu": 3,
+    # GPU 第 4 便: 一括経路。op でなく、raytrace / optics と同じ定義を (M, W, R) で計算する下回りの部品。
+    "polar_gpu": 12,
     # studio 2026-10-03 +10: 結果プレビュー・台帳 op の実行窓・エディタへ繋ぐ部品(GUI の内側)
     # studio 2026-10-19 +4: 妥当性の判定 assess_validity と入力参照 input_reference / resolve_input_ref / file_sha256(GUI の内側の部品。テストが直接呼ぶ)
     # studio_search / studio_errors 2026-10-20: Studio の論理層(Qt 非依存)。UI への配線は次の片。
@@ -256,7 +258,9 @@ def test_pending_exposure_shrinks_when_fixed():
 #   12 op 本体は fs.ledger に載る)。実測 943 → 944。
 # 2026-10-31 opsfileio 台帳(メモリ内 file I/O 14 op): 台帳の内部 API 4 本で実測 944 → 948。
 #   op 自身は fs.ledger から引ける。
-_HIDDEN_FUNCTIONS_TODAY = 948
+# 2026-11-02 GPU 第 4 便: 一括経路 lens_gpu / polar_gpu の下回りの部品(op でなく、raytrace / optics と同じ定義を
+#   (M, W, R) で計算する)。実測 948 → 977。公開 op として載せる判断は次の便。
+_HIDDEN_FUNCTIONS_TODAY = 977
 
 
 def _hidden_total():

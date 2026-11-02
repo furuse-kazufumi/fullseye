@@ -251,14 +251,178 @@ def batch(device):
     return out
 
 
+#: 実寸: 2448 x 2048 の偏光センサ(IMX250MZR 系)8 枚。
+POL_H, POL_W, POL_B = 2048, 2448, 8
+
+
+def _pol_inputs():
+    rng = np.random.default_rng(0)
+    raw = rng.random((POL_B, POL_H, POL_W))
+    y, x = np.mgrid[-0.7:0.7:POL_H * 1j, -0.7:0.7:POL_W * 1j]
+    z = np.sqrt(np.clip(1.0 - x * x - y * y, 1e-6, None))
+    nrm = np.stack([x, y, z], -1)
+    nrm /= np.linalg.norm(nrm, axis=-1, keepdims=True)
+    s0 = 1.0 + rng.random((POL_H, POL_W))
+    k = rng.random((POL_H, POL_W, 3)) - 0.5
+    k = k / np.linalg.norm(k, axis=-1, keepdims=True) * (0.8 * s0)[..., None]
+    stokes = np.concatenate([s0[..., None], k], -1)
+    delta = np.tile(rng.uniform(-6.0, 6.0, (POL_H, POL_W)), (POL_B, 1, 1))
+    theta = rng.uniform(0.0, 180.0, (POL_H, POL_W))
+    return raw, nrm, stokes, delta, theta
+
+
+def polar_numpy():
+    """既存の CPU 実装(numpy / scipy)。stokes_analyze はスカラー API なので Python ループと、同じ式の numpy 場の両方を測る。"""
+    import optics
+    import photoelastic
+    import sfpolar
+    raw, nrm, stokes, delta, theta = _pol_inputs()
+    out = {}
+
+    def t(fn):
+        t0 = time.perf_counter()
+        fn()
+        return time.perf_counter() - t0
+
+    out["demosaic_8"] = t(lambda: [optics.polarization_demosaic(r) for r in raw])
+    out["photoelastic_8"] = t(lambda: [photoelastic.photoelastic_polarization_images(d, theta) for d in delta])
+    out["sfp_render_8"] = t(lambda: [sfpolar.sfp_render(nrm, 1.5, 0.7, 0.3) for _ in range(POL_B)])
+    rho = np.clip(stokes[..., 1] ** 2, 0.0, 1.0)
+    out["dolp_to_zenith_1"] = t(lambda: sfpolar.dolp_to_zenith(rho, 1.5, "specular", out_of_range="clamp"))
+
+    def field():
+        s0, s1, s2, s3 = stokes[..., 0], stokes[..., 1], stokes[..., 2], stokes[..., 3]
+        pol = np.sqrt(s1 * s1 + s2 * s2 + s3 * s3)
+        lin = np.hypot(s1, s2)
+        np.degrees(0.5 * np.arctan2(s2, s1)) % 180.0
+        np.degrees(0.5 * np.arcsin(np.clip(s3 / pol, -1.0, 1.0)))
+        np.minimum(pol / s0, 1.0), np.minimum(lin / s0, 1.0), np.minimum(np.abs(s3) / s0, 1.0)
+
+    out["stokes_analyze_numpy_field_1"] = t(field)
+    t0 = time.perf_counter()
+    flat = stokes.reshape(-1, 4)
+    done = 0
+    for row in flat:
+        optics.stokes_analyze(row)
+        done += 1
+        if done % 1000 == 0 and time.perf_counter() - t0 > CPU_LIMIT_S:
+            break
+    out["stokes_analyze_python_loop"] = {"pixels_asked": len(flat), "pixels_done": done,
+                                         "seconds": time.perf_counter() - t0, "truncated": done < len(flat)}
+
+    def muel():
+        a = optics._mueller_field("retarder", "retarder", theta, 30.0)
+        b = optics.mueller_element("polarizer", 20.0)
+        c = optics.mueller_element("quarter_wave", 45.0)
+        m = c @ a @ b
+        np.einsum("...ij,...j->...i", m, stokes)
+
+    out["mueller_chain_field_1"] = t(muel)
+    return out
+
+
+def polar(device, dtype="float64"):
+    import torch
+
+    import lens_gpu as LG
+    import polar_gpu as PG
+    raw, nrm, stokes, delta, theta = _pol_inputs()
+    ang = theta
+
+    def sync():
+        if device != "cpu":
+            torch.cuda.synchronize()
+
+    def run(fn, n=3):
+        ts = []
+        for _ in range(n):
+            t0 = time.perf_counter()
+            fn()
+            sync()
+            ts.append(time.perf_counter() - t0)
+        return {"first_s": ts[0], "best_s": min(ts[1:])}
+
+    out = {"dtype": dtype, "device": device}
+    out["demosaic_8"] = run(lambda: PG.polarization_demosaic_batch(raw, device=device, dtype=dtype).cpu())
+    out["photoelastic_8"] = run(lambda: PG.photoelastic_images_batch(delta, theta, device=device, dtype=dtype).cpu())
+    out["sfp_render_8"] = run(lambda: PG.sfp_render_batch(np.tile(nrm, (POL_B, 1, 1, 1)), 1.5, 0.7, 0.3, device=device, dtype=dtype).cpu())
+    rho = np.clip(stokes[..., 1] ** 2, 0.0, 1.0)
+    out["dolp_to_zenith_1"] = run(lambda: PG.dolp_to_zenith_batch(rho, 1.5, "specular", device=device, dtype=dtype)["zenith_deg"].cpu())
+    out["stokes_analyze_field_1"] = run(
+        lambda: {k: v.cpu() for k, v in PG.stokes_analyze_batch(torch.as_tensor(stokes, dtype=LG._dtype(dtype), device=device)).items()})
+
+    def muel():
+        a = PG.mueller_element_batch("retarder", ang, 30.0, device=device, dtype=dtype)
+        b = PG.mueller_element_batch("polarizer", 20.0, device=device, dtype=dtype)
+        c = PG.mueller_element_batch("quarter_wave", 45.0, device=device, dtype=dtype)
+        torch.einsum("...ij,...j->...i", PG.chain([b, a, c]),
+                     torch.as_tensor(stokes, dtype=a.dtype, device=device)).cpu()
+
+    out["mueller_chain_field_1"] = run(muel)
+    sys_, field = subjects()["triplet"]
+
+    def pol_rays(m):
+        def f():
+            d = LG.tolerance_draws(RT._freeze_solves(sys_), trials=m, seed=0)
+            ov = {k: d[k] for k in ("R", "t", "offset", "decenter", "tilt")}
+            lens = LG.compile_lens(sys_, np.linspace(0.47, 0.67, 31), device=device, dtype=dtype, overrides=ov)
+            PG.polarized_bundle(lens, field=field, rings=6)["jones"].cpu()
+        return f
+
+    out["polarized_rays_1000x31x127"] = run(pol_rays(1000))
+    out["polarized_rays_1x1x127"] = run(lambda: PG.polarized_bundle(LG.compile_lens(sys_, device=device, dtype=dtype),
+                                                                    field=field, rings=6)["jones"].cpu())
+    if device != "cpu":
+        out["peak_gpu_bytes"] = int(torch.cuda.max_memory_allocated())
+    return out
+
+
+def float32_errors():
+    """float32 の誤差を float64 と比べて測る(同じ入力、CPU の torch)。"""
+    import polar_gpu as PG
+
+    import lens_gpu as LG
+    res = {}
+    for name, (sys_, field) in subjects().items():
+        a = LG.bundle_batch(LG.compile_lens(sys_, [0.48, 0.59, 0.66], device="cpu", dtype="float32"), field=field, rings=6)
+        b = LG.bundle_batch(LG.compile_lens(sys_, [0.48, 0.59, 0.66], device="cpu"), field=field, rings=6)
+        v = (a["valid"] & b["valid"]).numpy()
+        pa = LG.paraxial_batch(LG.compile_lens(sys_, device="cpu", dtype="float32"))["efl"].item()
+        pb = LG.paraxial_batch(LG.compile_lens(sys_, device="cpu"))["efl"].item()
+        res[name] = {"ray_position_mm_max": float(np.abs(a["y"].numpy().astype(float) - b["y"].numpy())[v].max()),
+                     "efl_rel": abs(pa - pb) / abs(pb), "valid_differs": int((a["valid"] != b["valid"]).sum())}
+        ma = LG.tolerance_monte_carlo(sys_, trials=2000, field=field, device="cpu", dtype="float32")
+        mb = LG.tolerance_monte_carlo(sys_, trials=2000, field=field, device="cpu")
+        res[name]["mc_rms_rel_max"] = float(np.nanmax(np.abs(ma["rms_trial"] - mb["rms_trial"]) / mb["rms_trial"]))
+    raw = np.random.default_rng(0).random((1, 256, 256))
+    e = PG.polarization_demosaic_batch(raw, dtype="float32").numpy().astype(float) - PG.polarization_demosaic_batch(raw).numpy()
+    res["demosaic_max_abs_unit_scale"] = float(np.abs(e).max())
+    return res
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--baseline", action="store_true")
     ap.add_argument("--batch", choices=("cpu", "cuda"))
+    ap.add_argument("--polar", choices=("numpy", "cpu", "cuda"))
+    ap.add_argument("--float32-errors", action="store_true")
     ap.add_argument("--out", required=True)
     a = ap.parse_args(argv)
     if a.baseline:
         res = {"baseline": baseline()}
+    elif a.float32_errors:
+        res = {"float32": float32_errors()}
+    elif a.polar == "numpy":
+        res = {"polar": polar_numpy()}
+    elif a.polar == "cuda":
+        why = gpu_busy()
+        if why:
+            print("GPU busy, not started:", why)
+            return 3
+        with GpuLock("gpu_optics_%d" % os.getpid()):
+            res = {"polar64": polar("cuda"), "polar32": polar("cuda", "float32")}
+    elif a.polar == "cpu":
+        res = {"polar64": polar("cpu"), "polar32": polar("cpu", "float32")}
     elif a.batch == "cuda":
         why = gpu_busy()
         if why:
