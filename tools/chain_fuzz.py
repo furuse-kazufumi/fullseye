@@ -490,6 +490,12 @@ def make_generators():
         "sinostack": lambda rng: np.stack(
             [np.abs(np.sin(np.linspace(0, np.pi, 40))[:, None] * np.hanning(48)[None, :]) * 100.0
              + rng.random((40, 48)) for _ in range(3)]),
+        # スキャン方式: 幾何と、その幾何の閉形式の投影(形が幾何と合う組)
+        "ctgeometry": lambda rng: __import__("ctscan").ct_scan_geometry(
+            "cone", n_views=8, n_u=16, n_v=16, vol_shape=(8, 8, 8)),
+        "projstack": lambda rng: __import__("ctscan").ellipsoid_projections(
+            __import__("ctscan").ct_scan_geometry(
+                "cone", n_views=8, n_u=16, n_v=16, vol_shape=(8, 8, 8)), device="cpu"),
         # lab / metrics / transport_plan / phash / fingerprint は実体から作る
         "lab": lambda rng: __import__("imgmetrics").rgb_to_lab(rng.random((24, 32, 3))),
         "metrics": lambda rng: (lambda M, a: M.compare_images(a, np.clip(a + 0.02, 0, 1)))(
@@ -8133,6 +8139,8 @@ TYPE_CHECKS = {
     # 断層: sinogram = (角度, 検出器)、sinostack = その積み重ね
     "sinogram": lambda v: isinstance(v, np.ndarray) and v.ndim == 2,
     "sinostack": lambda v: isinstance(v, np.ndarray) and v.ndim == 3,
+    "projstack": lambda v: isinstance(v, np.ndarray) and v.ndim == 3,
+    "ctgeometry": lambda v: isinstance(v, dict) and v.get("kind") == "ct_geometry",
     # 図注: text は文字列、entries は (ラベル, 色) の並び、axes は変換の辞書
     "text": lambda v: isinstance(v, str),
     "entries": lambda v: isinstance(v, (list, tuple)) and len(v) > 0,
