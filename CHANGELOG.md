@@ -7,6 +7,12 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### 追加 — 光路・波長・偏光の一括計算(GPU 第 4 便)
+
+- 新モジュール `lens_gpu`: 設計案 × 波長 × 光線を 1 つのテンソルで追う。`raytrace` の近軸、実光線、色収差、OPD、公差 MC と、`lensimage` の MTF、`lensrender` の Fresnel + `materials` の内部透過率を同じ定義で計算する。公差 MC は乱数列まで揃え、案ごとに CPU と一致する。
+- 新モジュール `polar_gpu`: 実光線の各面に Fresnel 振幅を掛けて光線ごとの Jones 行列を作る経路と、`optics` / `photoelastic` / `sfpolar` の画素ごとの計算のバッチ版。
+- どちらも公開 op ではなく下回りの部品で、torch が無い環境では `raytrace` / `optics` がそのまま使える。測定は `docs/perf/gpu_optics_2026-11-02.md`。
+
 ### 追加 — 光弾性の族(応力場 → 縞 → 偏光像 → 位相差と主軸)
 
 - 新モジュール `photoelastic`(opsoptics のカテゴリ `photoelastic`、12 op)。単位は SI、位相差は rad・nm・縞次数を並べて返し、mm を m に・nm を m に・表の ×10⁻⁷ MPa⁻¹ を Pa⁻¹ に渡す取り違えは ValueError で拒否する。

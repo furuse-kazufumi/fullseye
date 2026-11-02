@@ -312,7 +312,8 @@ def polar_numpy():
                                          "seconds": time.perf_counter() - t0, "truncated": done < len(flat)}
 
     def muel():
-        a = optics._mueller_field("retarder", "retarder", theta, 30.0)
+        # optics.mueller_element の配列入力は MAX_FIELD_ELEMENTS(2^24 要素)で 5 Mpix を断るので、同じ式の photoelastic の場を使う
+        a = photoelastic._retarder_field(np.full(theta.shape, math.radians(30.0)), np.radians(theta))
         b = optics.mueller_element("polarizer", 20.0)
         c = optics.mueller_element("quarter_wave", 45.0)
         m = c @ a @ b
@@ -434,6 +435,39 @@ def parity(device):
     return out
 
 
+def mtf_compare(mode):
+    """瞳 128²、31 波長の MTF を既存(through_focus_mtf の焦点 1 位置)と一括で比べる。別名は NaN / 例外の数で返す。"""
+    wls = np.linspace(0.47, 0.67, 31)
+    f = [10.0, 30.0, 60.0]
+    out = {}
+    for name, (sys_, field) in subjects().items():
+        if mode == "numpy":
+            import lensimage
+            t0 = time.perf_counter()
+            bad = 0
+            for w in wls:
+                try:
+                    lensimage.through_focus_mtf(sys_, frequency_cpmm=f, defocus_mm=[0.0], field=field,
+                                                wavelength_um=float(w), size=128)
+                except ValueError:
+                    bad += 1
+            out[name] = {"seconds": time.perf_counter() - t0, "aliased": bad}
+        else:
+            import torch
+
+            import lens_gpu as G
+            ts = []
+            for _ in range(3):
+                t0 = time.perf_counter()
+                m = G.mtf_batch(G.compile_lens(sys_, wls, device=mode), field=field, size=128, frequency_cpmm=f)
+                m["tangential"].cpu()
+                if mode != "cpu":
+                    torch.cuda.synchronize()
+                ts.append(time.perf_counter() - t0)
+            out[name] = {"seconds": min(ts[1:]), "first_s": ts[0], "aliased": int(m["aliased"].sum())}
+    return out
+
+
 def float32_errors():
     """float32 の誤差を float64 と比べて測る(同じ入力、CPU の torch)。"""
     import polar_gpu as PG
@@ -464,6 +498,7 @@ def main(argv=None):
     ap.add_argument("--polar", choices=("numpy", "cpu", "cuda"))
     ap.add_argument("--float32-errors", action="store_true")
     ap.add_argument("--parity", choices=("cpu", "cuda"))
+    ap.add_argument("--mtf", choices=("numpy", "cpu", "cuda"))
     ap.add_argument("--out", required=True)
     a = ap.parse_args(argv)
     if a.baseline:
@@ -477,6 +512,15 @@ def main(argv=None):
             return 3
         with GpuLock("gpu_optics_%d" % os.getpid()):
             res = {"parity": parity("cuda")}
+    elif a.mtf in ("numpy", "cpu"):
+        res = {"mtf": mtf_compare(a.mtf)}
+    elif a.mtf == "cuda":
+        why = gpu_busy()
+        if why:
+            print("GPU busy, not started:", why)
+            return 3
+        with GpuLock("gpu_optics_%d" % os.getpid()):
+            res = {"mtf": mtf_compare("cuda")}
     elif a.float32_errors:
         res = {"float32": float32_errors()}
     elif a.polar == "numpy":
