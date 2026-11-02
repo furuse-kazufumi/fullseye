@@ -1,0 +1,2066 @@
+{
+ "generated_by": "tools/gpu_auto_sweep.py report",
+ "min_ratio": 5.0,
+ "ops": {
+  "adaptive_gauss_thresh": {
+   "family": "segmentation",
+   "ratio": 9.79
+  },
+  "affine_trans_image": {
+   "family": "geometry",
+   "ratio": 19.74
+  },
+  "affine_trans_image_size": {
+   "family": "geometry",
+   "ratio": 29.35
+  },
+  "affine_warp": {
+   "family": "geometry",
+   "ratio": 26.89
+  },
+  "alife_curvature_flow": {
+   "family": "artificial-life",
+   "ratio": 233.02
+  },
+  "alife_cyclic_ca": {
+   "family": "artificial-life",
+   "ratio": 111.69
+  },
+  "alife_dla": {
+   "family": "artificial-life",
+   "ratio": 42.35
+  },
+  "alife_gray_scott": {
+   "family": "artificial-life",
+   "ratio": 218.03
+  },
+  "alife_lenia": {
+   "family": "artificial-life",
+   "ratio": 63.52
+  },
+  "alife_life_step": {
+   "family": "artificial-life",
+   "ratio": 123.78
+  },
+  "alife_perona_malik": {
+   "family": "artificial-life",
+   "ratio": 98.08
+  },
+  "alife_sandpile": {
+   "family": "artificial-life",
+   "ratio": 104.21
+  },
+  "alife_turing": {
+   "family": "artificial-life",
+   "ratio": 179.41
+  },
+  "alpha_composite": {
+   "family": "composite",
+   "ratio": 5.62
+  },
+  "angular_spectrum_propagate": {
+   "family": "wave",
+   "ratio": 10.34
+  },
+  "anisotropic_diffusion": {
+   "family": "smoothing",
+   "ratio": 64.26
+  },
+  "annotate3d_arrow": {
+   "family": "annotate3d",
+   "ratio": 14.21
+  },
+  "annotate3d_axes": {
+   "family": "annotate3d",
+   "ratio": 14.93
+  },
+  "annotate3d_bbox": {
+   "family": "annotate3d",
+   "ratio": 19.58
+  },
+  "annotate3d_label": {
+   "family": "annotate3d",
+   "ratio": 17.69
+  },
+  "annotate3d_measure": {
+   "family": "annotate3d",
+   "ratio": 12.83
+  },
+  "annotate3d_scale_bar": {
+   "family": "annotate3d",
+   "ratio": 5.67
+  },
+  "annotate_angle": {
+   "family": "paper",
+   "ratio": 11.54
+  },
+  "annotate_colorbar": {
+   "family": "paper",
+   "ratio": 9.05
+  },
+  "annotate_dimension": {
+   "family": "paper",
+   "ratio": 36.58
+  },
+  "annotate_figure_grid": {
+   "family": "paper",
+   "ratio": 5.34
+  },
+  "annotate_invert": {
+   "family": "overlay",
+   "ratio": 20.97
+  },
+  "annotate_invert_path": {
+   "family": "overlay",
+   "ratio": 34.55
+  },
+  "annotate_leader": {
+   "family": "paper",
+   "ratio": 14.03
+  },
+  "annotate_legend": {
+   "family": "paper",
+   "ratio": 10.83
+  },
+  "annotate_markers": {
+   "family": "paper",
+   "ratio": 8.3
+  },
+  "annotate_orientation": {
+   "family": "paper",
+   "ratio": 13.73
+  },
+  "annotate_text_path": {
+   "family": "paper",
+   "ratio": 8.84
+  },
+  "anomaly_pro": {
+   "family": "anomaly_eval",
+   "ratio": 7.09
+  },
+  "anscombe_inverse": {
+   "family": "transform",
+   "ratio": 7.56
+  },
+  "apply_weighting": {
+   "family": "level",
+   "ratio": 12.35
+  },
+  "arc": {
+   "family": "shape",
+   "ratio": 9.83
+  },
+  "arrow": {
+   "family": "pointer",
+   "ratio": 22.95
+  },
+  "aug_barrel": {
+   "family": "augmentation",
+   "ratio": 7.95
+  },
+  "aug_chromatic": {
+   "family": "augmentation",
+   "ratio": 15.77
+  },
+  "aug_cutout": {
+   "family": "augmentation",
+   "ratio": 11.75
+  },
+  "aug_fixed_pattern": {
+   "family": "augmentation",
+   "ratio": 7.5
+  },
+  "aug_motion_blur": {
+   "family": "augmentation",
+   "ratio": 7.43
+  },
+  "aug_rolling_shutter": {
+   "family": "augmentation",
+   "ratio": 18.63
+  },
+  "aug_vignette": {
+   "family": "augmentation",
+   "ratio": 6.82
+  },
+  "azimuthal_integrate": {
+   "family": "pxrd",
+   "ratio": 44.34
+  },
+  "backproject_sinogram": {
+   "family": "reconstruct",
+   "ratio": 141.01
+  },
+  "banding_map": {
+   "family": "gray",
+   "ratio": 43.17
+  },
+  "bandpass_image": {
+   "family": "frequency",
+   "ratio": 68.01
+  },
+  "beam_hardening_apply": {
+   "family": "artifact",
+   "ratio": 5.88
+  },
+  "bearing_angle_image": {
+   "family": "range_image",
+   "ratio": 6.49
+  },
+  "bilateral": {
+   "family": "smoothing",
+   "ratio": 62.97
+  },
+  "bilateral_filter_depth": {
+   "family": "depth_denoise",
+   "ratio": 29.64
+  },
+  "binary_threshold": {
+   "family": "segmentation",
+   "ratio": 6.45
+  },
+  "binomial_filter": {
+   "family": "smoothing",
+   "ratio": 11.97
+  },
+  "bit_and": {
+   "family": "nary",
+   "ratio": 7.59
+  },
+  "blast_normals": {
+   "family": "finish",
+   "ratio": 9.14
+  },
+  "blend_mode": {
+   "family": "composite",
+   "ratio": 5.06
+  },
+  "blob_distance": {
+   "family": "split",
+   "ratio": 50.31
+  },
+  "blob_overlay": {
+   "family": "extract",
+   "ratio": 8.92
+  },
+  "bloom": {
+   "family": "post",
+   "ratio": 18.54
+  },
+  "bootstrap_std_error": {
+   "family": "texture",
+   "ratio": 73.57
+  },
+  "bothat": {
+   "family": "morphology",
+   "ratio": 12.37
+  },
+  "bump_normals_fbm": {
+   "family": "terrain",
+   "ratio": 246.37
+  },
+  "canny": {
+   "family": "segmentation",
+   "ratio": 15.52
+  },
+  "carla_depth_decode": {
+   "family": "carla",
+   "ratio": 16.11
+  },
+  "carla_depth_encode": {
+   "family": "carla",
+   "ratio": 8.84
+  },
+  "carla_label_unmap": {
+   "family": "carla",
+   "ratio": 19.39
+  },
+  "cepstrum": {
+   "family": "bearing",
+   "ratio": 8.6
+  },
+  "check_difference": {
+   "family": "compare",
+   "ratio": 6.1
+  },
+  "chromatic_aberration": {
+   "family": "post",
+   "ratio": 11.35
+  },
+  "cie_xyz_from_wavelength": {
+   "family": "appearance",
+   "ratio": 24.12
+  },
+  "clahe": {
+   "family": "gray",
+   "ratio": 13.43
+  },
+  "class_2dim_unsup": {
+   "family": "classify",
+   "ratio": 13.55
+  },
+  "class_ndim_norm": {
+   "family": "classify",
+   "ratio": 15.28
+  },
+  "classify_image_class_lut": {
+   "family": "classify",
+   "ratio": 8.88
+  },
+  "closest_point_transform": {
+   "family": "region",
+   "ratio": 14.39
+  },
+  "coherence_enhancing_diff": {
+   "family": "smoothing",
+   "ratio": 133.25
+  },
+  "coherent_image": {
+   "family": "coherent",
+   "ratio": 38.74
+  },
+  "color_bar": {
+   "family": "furniture",
+   "ratio": 7.6
+  },
+  "color_grade": {
+   "family": "post",
+   "ratio": 21.46
+  },
+  "compare_frame": {
+   "family": "compose",
+   "ratio": 6.48
+  },
+  "contact_patch_radius": {
+   "family": "tacdome",
+   "ratio": 16.26
+  },
+  "corner_response": {
+   "family": "edges",
+   "ratio": 34.2
+  },
+  "correlation_score": {
+   "family": "score",
+   "ratio": 36.42
+  },
+  "cosmic_ray_reject": {
+   "family": "cosmic",
+   "ratio": 26.1
+  },
+  "cosmic_ray_reject_stack": {
+   "family": "cosmic",
+   "ratio": 12.1
+  },
+  "coverage_edge_points": {
+   "family": "pegsim",
+   "ratio": 7.25
+  },
+  "cplx_domain_colour": {
+   "family": "complex",
+   "ratio": 14.41
+  },
+  "cplx_poly_eval": {
+   "family": "complex",
+   "ratio": 55.17
+  },
+  "create_funct_1d_pairs": {
+   "family": "function",
+   "ratio": 10.51
+  },
+  "crosshair": {
+   "family": "pointer",
+   "ratio": 10.93
+  },
+  "crossing_gate_state": {
+   "family": "crossing",
+   "ratio": 7.49
+  },
+  "curvature_flow": {
+   "family": "contour",
+   "ratio": 234.6
+  },
+  "cylinder_unwrap": {
+   "family": "curvilinear",
+   "ratio": 18.47
+  },
+  "dc_homomorphic": {
+   "family": "decomposition",
+   "ratio": 66.53
+  },
+  "dc_local_contrast_norm": {
+   "family": "decomposition",
+   "ratio": 20.18
+  },
+  "dc_retinex": {
+   "family": "decomposition",
+   "ratio": 74.17
+  },
+  "dc_structure_texture": {
+   "family": "decomposition",
+   "ratio": 229.73
+  },
+  "dc_texture_residual": {
+   "family": "decomposition",
+   "ratio": 239.62
+  },
+  "deflectometry_phase_to_slope": {
+   "family": "deflectometry",
+   "ratio": 22.59
+  },
+  "deflectometry_render": {
+   "family": "deflectometry",
+   "ratio": 99.1
+  },
+  "deform_ffd": {
+   "family": "deformation",
+   "ratio": 66.15
+  },
+  "deform_tps": {
+   "family": "deformation",
+   "ratio": 12.04
+  },
+  "dem_aspect": {
+   "family": "surface",
+   "ratio": 32.33
+  },
+  "dem_curvature": {
+   "family": "surface",
+   "ratio": 28.2
+  },
+  "dem_flow_direction": {
+   "family": "hydrology",
+   "ratio": 52.39
+  },
+  "dem_geocentric_grid": {
+   "family": "geodesy",
+   "ratio": 13.28
+  },
+  "dem_geodetic_slope": {
+   "family": "geodesy",
+   "ratio": 50.76
+  },
+  "dem_hillshade": {
+   "family": "shading",
+   "ratio": 25.57
+  },
+  "dem_roughness": {
+   "family": "surface",
+   "ratio": 21.0
+  },
+  "dem_slope": {
+   "family": "surface",
+   "ratio": 36.76
+  },
+  "dem_tpi": {
+   "family": "surface",
+   "ratio": 10.25
+  },
+  "derivate_gauss": {
+   "family": "edges",
+   "ratio": 13.82
+  },
+  "deviation_image": {
+   "family": "texture",
+   "ratio": 26.0
+  },
+  "diff_of_gauss": {
+   "family": "edges",
+   "ratio": 12.67
+  },
+  "displacement_series": {
+   "family": "measure",
+   "ratio": 159.65
+  },
+  "dist_transform": {
+   "family": "region",
+   "ratio": 40.66
+  },
+  "distance_ridge": {
+   "family": "medial",
+   "ratio": 22.88
+  },
+  "distance_transform": {
+   "family": "region",
+   "ratio": 19.65
+  },
+  "dither": {
+   "family": "post",
+   "ratio": 5.69
+  },
+  "dog": {
+   "family": "edges",
+   "ratio": 14.84
+  },
+  "dolp_to_zenith": {
+   "family": "shape_from_polarization",
+   "ratio": 251.03
+  },
+  "dots_image": {
+   "family": "edges",
+   "ratio": 9.49
+  },
+  "dual_rank": {
+   "family": "rank",
+   "ratio": 62.31
+  },
+  "dwt_transform": {
+   "family": "transform",
+   "ratio": 25.26
+  },
+  "dyn_threshold": {
+   "family": "segmentation",
+   "ratio": 20.3
+  },
+  "edge_transition_width": {
+   "family": "edges",
+   "ratio": 32.81
+  },
+  "edges_color": {
+   "family": "edges",
+   "ratio": 13.5
+  },
+  "edges_color_sub_pix": {
+   "family": "contour",
+   "ratio": 17.21
+  },
+  "edges_sub_pix": {
+   "family": "contour",
+   "ratio": 55.49
+  },
+  "eliminate_min_max": {
+   "family": "rank",
+   "ratio": 99.24
+  },
+  "eliminate_sp": {
+   "family": "rank",
+   "ratio": 61.26
+  },
+  "ellipse_pressure_shifted": {
+   "family": "tactorque",
+   "ratio": 8.09
+  },
+  "emva_bspline_regression": {
+   "family": "sensorchar",
+   "ratio": 16.97
+  },
+  "emva_general_relative_qe": {
+   "family": "sensorgeneral",
+   "ratio": 19.47
+  },
+  "emva_general_sensitivity": {
+   "family": "sensorgeneral",
+   "ratio": 15.81
+  },
+  "emva_ptc_linearity_check": {
+   "family": "sensorchar",
+   "ratio": 14.99
+  },
+  "emva_spectrogram": {
+   "family": "sensorchar",
+   "ratio": 13.01
+  },
+  "engrave_lines": {
+   "family": "npr",
+   "ratio": 17.38
+  },
+  "ensquared_energy": {
+   "family": "imaging",
+   "ratio": 8.27
+  },
+  "envelope": {
+   "family": "signal",
+   "ratio": 31.31
+  },
+  "equirect_rotate": {
+   "family": "omni360",
+   "ratio": 16.44
+  },
+  "esdf": {
+   "family": "occupancy",
+   "ratio": 179.28
+  },
+  "eval_poly_surface": {
+   "family": "surface_fit",
+   "ratio": 7.79
+  },
+  "expand_gray": {
+   "family": "grow",
+   "ratio": 100.94
+  },
+  "f2_bit_slice": {
+   "family": "gray",
+   "ratio": 13.76
+  },
+  "f2_expand_domain": {
+   "family": "gray",
+   "ratio": 26.44
+  },
+  "f2_gauss_pyramid": {
+   "family": "smoothing",
+   "ratio": 18.23
+  },
+  "f2_lut_trans": {
+   "family": "gray",
+   "ratio": 11.01
+  },
+  "f2_symmetry": {
+   "family": "texture",
+   "ratio": 15.91
+  },
+  "f2_topographic": {
+   "family": "edges",
+   "ratio": 11.64
+  },
+  "fbm_gradient": {
+   "family": "terrain",
+   "ratio": 28.93
+  },
+  "fbm_height": {
+   "family": "terrain",
+   "ratio": 75.31
+  },
+  "feat_image_vector": {
+   "family": "features",
+   "ratio": 24.72
+  },
+  "fft_generic": {
+   "family": "frequency",
+   "ratio": 15.33
+  },
+  "fft_image": {
+   "family": "frequency",
+   "ratio": 20.98
+  },
+  "fft_image_inv": {
+   "family": "frequency",
+   "ratio": 37.63
+  },
+  "filled_polygon": {
+   "family": "shape",
+   "ratio": 58.26
+  },
+  "filtered_backprojection": {
+   "family": "reconstruct",
+   "ratio": 139.44
+  },
+  "flow_from_depth_motion": {
+   "family": "ttc",
+   "ratio": 25.09
+  },
+  "fly_hex_quantize": {
+   "family": "sample",
+   "ratio": 6.97
+  },
+  "fly_tau_from_expansion": {
+   "family": "looming",
+   "ratio": 7.18
+  },
+  "four_f_filter": {
+   "family": "wave",
+   "ratio": 14.83
+  },
+  "fp_capture": {
+   "family": "fpm",
+   "ratio": 84.52
+  },
+  "fraunhofer_pattern": {
+   "family": "wave",
+   "ratio": 22.96
+  },
+  "frei_amp": {
+   "family": "edges",
+   "ratio": 9.25
+  },
+  "frei_dir": {
+   "family": "edges",
+   "ratio": 9.87
+  },
+  "fresnel_conductor": {
+   "family": "interface",
+   "ratio": 21.21
+  },
+  "fresnel_dielectric": {
+   "family": "interface",
+   "ratio": 12.28
+  },
+  "gabor": {
+   "family": "texture",
+   "ratio": 17.08
+  },
+  "gauss_filter": {
+   "family": "smoothing",
+   "ratio": 5.09
+  },
+  "gauss_image": {
+   "family": "smoothing",
+   "ratio": 12.52
+  },
+  "gaussian": {
+   "family": "smoothing",
+   "ratio": 13.45
+  },
+  "gclose": {
+   "family": "morphology",
+   "ratio": 6.77
+  },
+  "gen_gabor": {
+   "family": "texture",
+   "ratio": 29.36
+  },
+  "gmsd_map": {
+   "family": "perceptual",
+   "ratio": 29.04
+  },
+  "gopen": {
+   "family": "morphology",
+   "ratio": 8.57
+  },
+  "gradient3d": {
+   "family": "edges",
+   "ratio": 5.16
+  },
+  "grating_three_image_retrieve": {
+   "family": "grating_interf",
+   "ratio": 27.37
+  },
+  "gray_bothat": {
+   "family": "morphology",
+   "ratio": 12.57
+  },
+  "gray_closing": {
+   "family": "morphology",
+   "ratio": 8.48
+  },
+  "gray_closing_rect": {
+   "family": "morphology",
+   "ratio": 7.0
+  },
+  "gray_closing_shape": {
+   "family": "morphology",
+   "ratio": 12.04
+  },
+  "gray_dilation": {
+   "family": "morphology",
+   "ratio": 6.29
+  },
+  "gray_erosion": {
+   "family": "morphology",
+   "ratio": 8.66
+  },
+  "gray_erosion_rect": {
+   "family": "rank",
+   "ratio": 5.32
+  },
+  "gray_opening": {
+   "family": "morphology",
+   "ratio": 16.15
+  },
+  "gray_opening_rect": {
+   "family": "morphology",
+   "ratio": 16.38
+  },
+  "gray_opening_shape": {
+   "family": "morphology",
+   "ratio": 5.58
+  },
+  "gray_range_rect": {
+   "family": "rank",
+   "ratio": 13.26
+  },
+  "gray_tophat": {
+   "family": "morphology",
+   "ratio": 12.73
+  },
+  "graycode_decode": {
+   "family": "structured_light",
+   "ratio": 5.19
+  },
+  "grid_lines": {
+   "family": "plot",
+   "ratio": 16.18
+  },
+  "halftone_screen": {
+   "family": "npr",
+   "ratio": 30.05
+  },
+  "hankel_image": {
+   "family": "transform",
+   "ratio": 33.11
+  },
+  "hatch_field": {
+   "family": "npr",
+   "ratio": 58.97
+  },
+  "hertz_pressure_shifted": {
+   "family": "tactorque",
+   "ratio": 5.88
+  },
+  "hertz_surface_ur": {
+   "family": "tacslip",
+   "ratio": 10.8
+  },
+  "hertz_surface_uz": {
+   "family": "tacsim",
+   "ratio": 10.03
+  },
+  "highpass": {
+   "family": "frequency",
+   "ratio": 8.27
+  },
+  "highpass_image": {
+   "family": "frequency",
+   "ratio": 34.31
+  },
+  "hilbert_analytic": {
+   "family": "spectral",
+   "ratio": 9.2
+  },
+  "histogram_match": {
+   "family": "matching",
+   "ratio": 15.3
+  },
+  "hue_saturation": {
+   "family": "isp",
+   "ratio": 5.59
+  },
+  "hx_char_threshold": {
+   "family": "halcon_ext",
+   "ratio": 9.68
+  },
+  "hx_close_edges_length": {
+   "family": "halcon_ext",
+   "ratio": 10.9
+  },
+  "hx_fit_surface1": {
+   "family": "halcon_ext",
+   "ratio": 8.69
+  },
+  "hx_gen_circle": {
+   "family": "halcon_ext",
+   "ratio": 8.77
+  },
+  "hx_gen_circle_sector": {
+   "family": "halcon_ext",
+   "ratio": 17.91
+  },
+  "hx_gen_derivative_filter": {
+   "family": "halcon_ext",
+   "ratio": 5.94
+  },
+  "hx_gen_disc_se": {
+   "family": "halcon_ext",
+   "ratio": 5.33
+  },
+  "hx_gen_ellipse": {
+   "family": "halcon_ext",
+   "ratio": 11.26
+  },
+  "hx_gen_ellipse_sector": {
+   "family": "halcon_ext",
+   "ratio": 16.91
+  },
+  "hx_gen_lowpass": {
+   "family": "halcon_ext",
+   "ratio": 5.27
+  },
+  "hx_gen_rectangle2": {
+   "family": "halcon_ext",
+   "ratio": 49.47
+  },
+  "hx_plane_deviation": {
+   "family": "halcon_ext",
+   "ratio": 5.57
+  },
+  "hx_region_to_mean": {
+   "family": "halcon_ext",
+   "ratio": 6.17
+  },
+  "hx_shade_height_field": {
+   "family": "halcon_ext",
+   "ratio": 17.08
+  },
+  "illuminate": {
+   "family": "gray",
+   "ratio": 20.78
+  },
+  "img_to_beatcube": {
+   "family": "bridge",
+   "ratio": 15.6
+  },
+  "img_to_cimage": {
+   "family": "bridge",
+   "ratio": 5.69
+  },
+  "img_to_keypoints": {
+   "family": "bridge",
+   "ratio": 14.26
+  },
+  "img_to_lightfield": {
+   "family": "bridge",
+   "ratio": 7.48
+  },
+  "img_to_monogenic": {
+   "family": "bridge",
+   "ratio": 14.19
+  },
+  "img_to_projection_profile": {
+   "family": "bridge",
+   "ratio": 7.24
+  },
+  "invert_funct_1d": {
+   "family": "function",
+   "ratio": 6.37
+  },
+  "iqft2": {
+   "family": "fourier",
+   "ratio": 13.14
+  },
+  "isotropic_diffusion": {
+   "family": "smoothing",
+   "ratio": 7.45
+  },
+  "it_add_image_border": {
+   "family": "geometry",
+   "ratio": 13.6
+  },
+  "it_bit_lshift": {
+   "family": "gray",
+   "ratio": 17.35
+  },
+  "it_bit_mask": {
+   "family": "gray",
+   "ratio": 24.39
+  },
+  "it_bit_rshift": {
+   "family": "gray",
+   "ratio": 7.94
+  },
+  "it_change_format": {
+   "family": "geometry",
+   "ratio": 9.45
+  },
+  "it_convert_image_type": {
+   "family": "gray",
+   "ratio": 6.81
+  },
+  "it_crop_domain": {
+   "family": "domain",
+   "ratio": 6.67
+  },
+  "it_crop_part": {
+   "family": "geometry",
+   "ratio": 17.08
+  },
+  "it_crop_rectangle1": {
+   "family": "geometry",
+   "ratio": 11.88
+  },
+  "it_region_to_bin": {
+   "family": "segmentation",
+   "ratio": 9.43
+  },
+  "iv_backproject_superres": {
+   "family": "restoration",
+   "ratio": 153.97
+  },
+  "iv_motion_deblur": {
+   "family": "restoration",
+   "ratio": 41.16
+  },
+  "iv_richardson_lucy": {
+   "family": "restoration",
+   "ratio": 23.22
+  },
+  "iv_unsharp_deblur": {
+   "family": "restoration",
+   "ratio": 38.83
+  },
+  "iv_wiener_deconv_spatial": {
+   "family": "restoration",
+   "ratio": 37.68
+  },
+  "joint_bilateral": {
+   "family": "depth_denoise",
+   "ratio": 39.05
+  },
+  "joint_histogram": {
+   "family": "information",
+   "ratio": 12.14
+  },
+  "keypoints_from_image2d": {
+   "family": "keypoint",
+   "ratio": 18.63
+  },
+  "kirsch_amp": {
+   "family": "edges",
+   "ratio": 36.67
+  },
+  "kuwahara": {
+   "family": "smoothing",
+   "ratio": 34.16
+  },
+  "lab_to_rgb": {
+   "family": "colorspace",
+   "ratio": 20.64
+  },
+  "label_points": {
+   "family": "pointer",
+   "ratio": 9.32
+  },
+  "laplace": {
+   "family": "edges",
+   "ratio": 10.54
+  },
+  "level_set_reinit": {
+   "family": "contour",
+   "ratio": 161.53
+  },
+  "lf_disparity_to_depth": {
+   "family": "depth",
+   "ratio": 5.2
+  },
+  "lf_epi_slope": {
+   "family": "depth",
+   "ratio": 12.25
+  },
+  "linear_to_srgb": {
+   "family": "colorspace",
+   "ratio": 12.53
+  },
+  "lines_color": {
+   "family": "contour",
+   "ratio": 11.1
+  },
+  "local_bimodality": {
+   "family": "texture",
+   "ratio": 14.39
+  },
+  "local_max": {
+   "family": "segmentation",
+   "ratio": 8.37
+  },
+  "local_std": {
+   "family": "texture",
+   "ratio": 15.3
+  },
+  "local_thickness": {
+   "family": "morphology",
+   "ratio": 28.04
+  },
+  "local_threshold": {
+   "family": "segmentation",
+   "ratio": 8.91
+  },
+  "log": {
+   "family": "edges",
+   "ratio": 6.76
+  },
+  "log_zero_crossings": {
+   "family": "edges",
+   "ratio": 30.73
+  },
+  "lowpass": {
+   "family": "frequency",
+   "ratio": 14.25
+  },
+  "lucky_select": {
+   "family": "quality",
+   "ratio": 13.73
+  },
+  "macro_binarize": {
+   "family": "macro",
+   "ratio": 80.72
+  },
+  "macro_denoise": {
+   "family": "macro",
+   "ratio": 96.31
+  },
+  "macro_edge": {
+   "family": "macro",
+   "ratio": 119.02
+  },
+  "macro_vol_denoise": {
+   "family": "macro",
+   "ratio": 5.36
+  },
+  "mandelbrot_interior": {
+   "family": "complex",
+   "ratio": 19.78
+  },
+  "marker_detect": {
+   "family": "tacslip",
+   "ratio": 9.48
+  },
+  "mat_pinv": {
+   "family": "linalg",
+   "ratio": 6.23
+  },
+  "max_filter": {
+   "family": "rank",
+   "ratio": 5.27
+  },
+  "mean_box_wh": {
+   "family": "smoothing",
+   "ratio": 6.76
+  },
+  "mean_curvature_flow": {
+   "family": "smoothing",
+   "ratio": 20.47
+  },
+  "mean_image": {
+   "family": "smoothing",
+   "ratio": 5.27
+  },
+  "mean_sp": {
+   "family": "rank",
+   "ratio": 119.38
+  },
+  "medial_axis_points": {
+   "family": "medial",
+   "ratio": 153.33
+  },
+  "median": {
+   "family": "rank",
+   "ratio": 77.93
+  },
+  "median_image": {
+   "family": "rank",
+   "ratio": 66.01
+  },
+  "median_rect": {
+   "family": "rank",
+   "ratio": 89.27
+  },
+  "median_separate": {
+   "family": "rank",
+   "ratio": 79.1
+  },
+  "median_weighted": {
+   "family": "rank",
+   "ratio": 79.59
+  },
+  "membrane_recover": {
+   "family": "tacsim",
+   "ratio": 13.54
+  },
+  "min_filter": {
+   "family": "rank",
+   "ratio": 8.44
+  },
+  "mindlin_traction": {
+   "family": "tacslip",
+   "ratio": 13.12
+  },
+  "monogenic_phase": {
+   "family": "riesz",
+   "ratio": 5.77
+  },
+  "monogenic_signal": {
+   "family": "riesz",
+   "ratio": 5.23
+  },
+  "monotony": {
+   "family": "gray",
+   "ratio": 27.36
+  },
+  "morph": {
+   "family": "morph",
+   "ratio": 5.74
+  },
+  "morph_grad": {
+   "family": "morphology",
+   "ratio": 18.98
+  },
+  "motion_magnify": {
+   "family": "magnify",
+   "ratio": 94.7
+  },
+  "mtf_tangential_sagittal": {
+   "family": "imaging",
+   "ratio": 40.8
+  },
+  "nine_slice": {
+   "family": "sprite",
+   "ratio": 5.96
+  },
+  "nonmax_suppression_amp": {
+   "family": "segmentation",
+   "ratio": 9.22
+  },
+  "normal_error_map": {
+   "family": "tacscalib",
+   "ratio": 12.51
+  },
+  "normal_map_decode": {
+   "family": "light",
+   "ratio": 5.96
+  },
+  "normals_from_depth": {
+   "family": "range_image",
+   "ratio": 22.93
+  },
+  "ods_depth_to_disparity": {
+   "family": "omni360",
+   "ratio": 7.0
+  },
+  "ods_disparity_to_depth": {
+   "family": "omni360",
+   "ratio": 5.31
+  },
+  "omni_anaglyph_compose": {
+   "family": "omni360",
+   "ratio": 5.66
+  },
+  "orientation_code": {
+   "family": "code",
+   "ratio": 66.31
+  },
+  "overlay_labels": {
+   "family": "overlay",
+   "ratio": 12.19
+  },
+  "overlay_mask": {
+   "family": "overlay",
+   "ratio": 10.66
+  },
+  "palette_quantize": {
+   "family": "post",
+   "ratio": 7.59
+  },
+  "particle_image_d50": {
+   "family": "grind",
+   "ratio": 5.57
+  },
+  "patch_features": {
+   "family": "anomaly_patch",
+   "ratio": 80.68
+  },
+  "peg_tip_from_rgbd": {
+   "family": "pegsim",
+   "ratio": 12.69
+  },
+  "percentile": {
+   "family": "rank",
+   "ratio": 93.91
+  },
+  "percentile_level": {
+   "family": "level",
+   "ratio": 15.44
+  },
+  "perceptual_hash": {
+   "family": "hash",
+   "ratio": 13.93
+  },
+  "perlin2": {
+   "family": "terrain",
+   "ratio": 32.85
+  },
+  "ph_coherence_enhancing_diffusion": {
+   "family": "physics",
+   "ratio": 232.66
+  },
+  "ph_heat_flow": {
+   "family": "physics",
+   "ratio": 128.03
+  },
+  "ph_mean_curvature_motion": {
+   "family": "physics",
+   "ratio": 250.6
+  },
+  "ph_perona_malik": {
+   "family": "physics",
+   "ratio": 99.17
+  },
+  "ph_reaction_diffusion": {
+   "family": "physics",
+   "ratio": 271.59
+  },
+  "ph_total_variation_flow": {
+   "family": "physics",
+   "ratio": 143.56
+  },
+  "phase_congruency_pc": {
+   "family": "perceptual",
+   "ratio": 308.78
+  },
+  "phase_displacement": {
+   "family": "measure",
+   "ratio": 83.34
+  },
+  "phase_rad": {
+   "family": "frequency",
+   "ratio": 16.02
+  },
+  "photometric_residual": {
+   "family": "photometric",
+   "ratio": 35.7
+  },
+  "photometric_stereo": {
+   "family": "photometric",
+   "ratio": 15.78
+  },
+  "plane_sweep_depth": {
+   "family": "plane_sweep_stereo",
+   "ratio": 132.47
+  },
+  "plant_color_index": {
+   "family": "plant",
+   "ratio": 8.85
+  },
+  "polariscope_intensity": {
+   "family": "photoelastic",
+   "ratio": 11.27
+  },
+  "polarization_demosaic_color": {
+   "family": "polarization",
+   "ratio": 15.44
+  },
+  "potential_flow_cylinder": {
+   "family": "swarmflow",
+   "ratio": 33.05
+  },
+  "power_byte": {
+   "family": "frequency",
+   "ratio": 20.77
+  },
+  "power_ln": {
+   "family": "frequency",
+   "ratio": 13.06
+  },
+  "power_real": {
+   "family": "frequency",
+   "ratio": 12.76
+  },
+  "prewitt_amp": {
+   "family": "edges",
+   "ratio": 11.34
+  },
+  "prewitt_mag": {
+   "family": "edges",
+   "ratio": 11.03
+  },
+  "psd_welch": {
+   "family": "matched",
+   "ratio": 28.91
+  },
+  "psf_to_mtf": {
+   "family": "imaging",
+   "ratio": 51.77
+  },
+  "punch_pressure": {
+   "family": "tactorque",
+   "ratio": 77.9
+  },
+  "punch_surface_uz": {
+   "family": "tactorque",
+   "ratio": 5.28
+  },
+  "pupil_psf": {
+   "family": "wave",
+   "ratio": 32.32
+  },
+  "qft2": {
+   "family": "fourier",
+   "ratio": 6.23
+  },
+  "quantization_error": {
+   "family": "gray",
+   "ratio": 9.17
+  },
+  "quantize": {
+   "family": "signal",
+   "ratio": 5.82
+  },
+  "quantize_lloyd_max": {
+   "family": "gray",
+   "ratio": 7.85
+  },
+  "quat_correlate": {
+   "family": "match",
+   "ratio": 32.96
+  },
+  "quat_image_multiply": {
+   "family": "algebra",
+   "ratio": 10.93
+  },
+  "radial_periodogram": {
+   "family": "terrain",
+   "ratio": 79.63
+  },
+  "radial_reach_filter": {
+   "family": "change",
+   "ratio": 34.15
+  },
+  "rank_image": {
+   "family": "rank",
+   "ratio": 102.62
+  },
+  "rank_rect": {
+   "family": "rank",
+   "ratio": 69.24
+  },
+  "raw_dead_pixel_correct": {
+   "family": "isp",
+   "ratio": 9.08
+  },
+  "raw_demosaic_bilinear": {
+   "family": "isp",
+   "ratio": 9.01
+  },
+  "removal_depth_from_heights": {
+   "family": "polish",
+   "ratio": 15.24
+  },
+  "render_transport": {
+   "family": "light_transport",
+   "ratio": 24.03
+  },
+  "render_volume_projection": {
+   "family": "render",
+   "ratio": 106.09
+  },
+  "resample": {
+   "family": "signal",
+   "ratio": 14.68
+  },
+  "retardation_unwrap_multiwavelength": {
+   "family": "photoelastic",
+   "ratio": 87.41
+  },
+  "revolution_volume_side": {
+   "family": "scoop",
+   "ratio": 12.1
+  },
+  "rft_generic": {
+   "family": "frequency",
+   "ratio": 16.37
+  },
+  "ridge_readout": {
+   "family": "reservoir",
+   "ratio": 173.31
+  },
+  "riesz_displacement": {
+   "family": "motion",
+   "ratio": 79.77
+  },
+  "riesz_displacement_series": {
+   "family": "motion",
+   "ratio": 204.8
+  },
+  "riesz_motion_magnify": {
+   "family": "motion",
+   "ratio": 179.19
+  },
+  "roberts": {
+   "family": "edges",
+   "ratio": 6.3
+  },
+  "robinson_amp": {
+   "family": "edges",
+   "ratio": 14.5
+  },
+  "robinson_dir": {
+   "family": "edges",
+   "ratio": 36.77
+  },
+  "rotate_image": {
+   "family": "geometry",
+   "ratio": 41.58
+  },
+  "rotate_img": {
+   "family": "geometry",
+   "ratio": 22.95
+  },
+  "rough_transmission": {
+   "family": "surface",
+   "ratio": 20.88
+  },
+  "rounded_rect": {
+   "family": "shape",
+   "ratio": 31.78
+  },
+  "runlength_smear": {
+   "family": "morphology",
+   "ratio": 5.07
+  },
+  "running_gaussian_background": {
+   "family": "background",
+   "ratio": 7.57
+  },
+  "running_mean_std": {
+   "family": "recursive",
+   "ratio": 11.93
+  },
+  "scale_bar": {
+   "family": "furniture",
+   "ratio": 5.44
+  },
+  "scale_clip": {
+   "family": "gray",
+   "ratio": 6.61
+  },
+  "scale_select_std": {
+   "family": "texture",
+   "ratio": 64.68
+  },
+  "sdf_smooth_union": {
+   "family": "sdf_csg",
+   "ratio": 10.38
+  },
+  "seg_membrane_response": {
+   "family": "response",
+   "ratio": 23.26
+  },
+  "sem_render": {
+   "family": "sem",
+   "ratio": 21.61
+  },
+  "sensor_fingerprint": {
+   "family": "sensor",
+   "ratio": 164.95
+  },
+  "separate_direct_global": {
+   "family": "light_transport",
+   "ratio": 7.72
+  },
+  "sfp_dolp_model": {
+   "family": "shape_from_polarization",
+   "ratio": 11.51
+  },
+  "sg_gmm_segment": {
+   "family": "segment",
+   "ratio": 64.57
+  },
+  "sg_kmeans_intensity": {
+   "family": "segment",
+   "ratio": 38.1
+  },
+  "sg_normalized_cut_2": {
+   "family": "segment",
+   "ratio": 6.48
+  },
+  "sg_region_growing_seeded": {
+   "family": "segment",
+   "ratio": 11.31
+  },
+  "sigma_clip_stack": {
+   "family": "stack",
+   "ratio": 111.02
+  },
+  "sigma_image": {
+   "family": "smoothing",
+   "ratio": 16.76
+  },
+  "sigmoid": {
+   "family": "gray",
+   "ratio": 5.11
+  },
+  "simulate_defocus": {
+   "family": "smoothing",
+   "ratio": 5.48
+  },
+  "sk_adjust_log": {
+   "family": "gray",
+   "ratio": 7.86
+  },
+  "sk_li": {
+   "family": "segmentation",
+   "ratio": 15.98
+  },
+  "sk_otsu": {
+   "family": "segmentation",
+   "ratio": 9.45
+  },
+  "sk_yen": {
+   "family": "segmentation",
+   "ratio": 5.37
+  },
+  "slab_transmittance": {
+   "family": "glassbody",
+   "ratio": 27.71
+  },
+  "smooth_image": {
+   "family": "smoothing",
+   "ratio": 7.51
+  },
+  "sobel_amp": {
+   "family": "edges",
+   "ratio": 19.44
+  },
+  "sobel_mag": {
+   "family": "edges",
+   "ratio": 16.0
+  },
+  "spectrum": {
+   "family": "signal",
+   "ratio": 7.43
+  },
+  "specular_coefficient_map": {
+   "family": "dichromatic",
+   "ratio": 10.24
+  },
+  "specular_diffuse_split": {
+   "family": "dichromatic",
+   "ratio": 5.15
+  },
+  "sph_kernel": {
+   "family": "swarmflow",
+   "ratio": 7.69
+  },
+  "sprite_blit": {
+   "family": "sprite",
+   "ratio": 26.06
+  },
+  "srgb_to_linear": {
+   "family": "colorspace",
+   "ratio": 6.18
+  },
+  "std_filter": {
+   "family": "texture",
+   "ratio": 5.2
+  },
+  "strain_from_displacement": {
+   "family": "solid",
+   "ratio": 48.22
+  },
+  "structure_tensor_coherence": {
+   "family": "texture",
+   "ratio": 6.42
+  },
+  "structure_tensor_orientation": {
+   "family": "texture",
+   "ratio": 25.98
+  },
+  "superpixel_color_texture_features": {
+   "family": "plant",
+   "ratio": 10.42
+  },
+  "surface_form_error": {
+   "family": "surface_fit",
+   "ratio": 7.33
+  },
+  "surface_normals": {
+   "family": "photometric",
+   "ratio": 10.72
+  },
+  "surface_psd": {
+   "family": "measure",
+   "ratio": 78.65
+  },
+  "tac_contact_mask": {
+   "family": "tactile",
+   "ratio": 44.01
+  },
+  "tac_height_from_shading": {
+   "family": "tactile",
+   "ratio": 81.32
+  },
+  "tac_pressure_proxy": {
+   "family": "tactile",
+   "ratio": 64.82
+  },
+  "tac_shear_field": {
+   "family": "tactile",
+   "ratio": 32.47
+  },
+  "tan_image": {
+   "family": "arithmetic",
+   "ratio": 13.08
+  },
+  "tb_angular_spectrum_propagate": {
+   "family": "typed",
+   "ratio": 11.4
+  },
+  "tb_apply_weighting": {
+   "family": "typed",
+   "ratio": 6.28
+  },
+  "tb_companding_mu_law": {
+   "family": "typed",
+   "ratio": 14.88
+  },
+  "tb_cx_ifft": {
+   "family": "typed",
+   "ratio": 9.09
+  },
+  "tb_drag_coefficient_sphere": {
+   "family": "typed",
+   "ratio": 14.88
+  },
+  "tb_envelope": {
+   "family": "typed",
+   "ratio": 9.7
+  },
+  "tb_fly_lgmd_eta": {
+   "family": "typed",
+   "ratio": 5.71
+  },
+  "tb_fly_tau_from_expansion": {
+   "family": "typed",
+   "ratio": 8.38
+  },
+  "tb_iqft2": {
+   "family": "typed",
+   "ratio": 19.73
+  },
+  "tb_lf_epi_slope": {
+   "family": "typed",
+   "ratio": 14.54
+  },
+  "tb_monogenic_amplitude": {
+   "family": "typed",
+   "ratio": 8.94
+  },
+  "tb_monogenic_orientation": {
+   "family": "typed",
+   "ratio": 9.36
+  },
+  "tb_monogenic_phase": {
+   "family": "typed",
+   "ratio": 7.35
+  },
+  "tb_qft2": {
+   "family": "typed",
+   "ratio": 10.78
+  },
+  "tb_resample": {
+   "family": "typed",
+   "ratio": 8.06
+  },
+  "tb_running_gaussian_background": {
+   "family": "typed",
+   "ratio": 8.46
+  },
+  "tb_specular_coefficient_map": {
+   "family": "typed",
+   "ratio": 10.03
+  },
+  "tb_specular_diffuse_split": {
+   "family": "typed",
+   "ratio": 6.59
+  },
+  "tb_temporal_band_power": {
+   "family": "typed",
+   "ratio": 9.37
+  },
+  "tb_temporal_bandpass": {
+   "family": "typed",
+   "ratio": 9.41
+  },
+  "tb_temporal_bilateral": {
+   "family": "typed",
+   "ratio": 23.08
+  },
+  "tb_temporal_median_window": {
+   "family": "typed",
+   "ratio": 13.89
+  },
+  "tb_weighting_response": {
+   "family": "typed",
+   "ratio": 17.5
+  },
+  "tb_wetness": {
+   "family": "typed",
+   "ratio": 5.76
+  },
+  "tem_ctf_correct": {
+   "family": "tem",
+   "ratio": 7.58
+  },
+  "tem_image_weak_phase": {
+   "family": "tem",
+   "ratio": 10.82
+  },
+  "tem_multislice": {
+   "family": "tem",
+   "ratio": 22.32
+  },
+  "tem_power_spectrum": {
+   "family": "tem",
+   "ratio": 26.43
+  },
+  "temporal_band_power": {
+   "family": "temporal",
+   "ratio": 12.18
+  },
+  "temporal_bandpass": {
+   "family": "temporal",
+   "ratio": 6.74
+  },
+  "temporal_bilateral": {
+   "family": "denoise",
+   "ratio": 34.7
+  },
+  "temporal_median_window": {
+   "family": "window",
+   "ratio": 16.64
+  },
+  "terrain_gradient": {
+   "family": "terrain",
+   "ratio": 11.01
+  },
+  "terrain_height": {
+   "family": "terrain",
+   "ratio": 9.11
+  },
+  "texture_laws": {
+   "family": "texture",
+   "ratio": 15.75
+  },
+  "tf_gradient_domain_reintegrate": {
+   "family": "filtering",
+   "ratio": 59.42
+  },
+  "tf_log_polar": {
+   "family": "geometry",
+   "ratio": 16.78
+  },
+  "tf_phase_congruency": {
+   "family": "edges",
+   "ratio": 117.64
+  },
+  "tf_rank_transform": {
+   "family": "texture",
+   "ratio": 31.01
+  },
+  "tf_steerable_filter": {
+   "family": "edges",
+   "ratio": 17.6
+  },
+  "thin_film_reflectance": {
+   "family": "appearance",
+   "ratio": 11.15
+  },
+  "tm_sinogram_denoise": {
+   "family": "tomography",
+   "ratio": 12.86
+  },
+  "tonemap_aces": {
+   "family": "render",
+   "ratio": 13.76
+  },
+  "tonemap_reinhard": {
+   "family": "render",
+   "ratio": 7.59
+  },
+  "tophat": {
+   "family": "morphology",
+   "ratio": 18.02
+  },
+  "triangulate_column": {
+   "family": "structured_light",
+   "ratio": 17.6
+  },
+  "trimmed_mean": {
+   "family": "rank",
+   "ratio": 100.71
+  },
+  "tsdf_from_depth": {
+   "family": "transform",
+   "ratio": 16.16
+  },
+  "ttc_from_flow": {
+   "family": "ttc",
+   "ratio": 14.84
+  },
+  "ttc_truth": {
+   "family": "ttc",
+   "ratio": 15.57
+  },
+  "unproject_spherical": {
+   "family": "lidar_projection",
+   "ratio": 7.04
+  },
+  "unsharp": {
+   "family": "smoothing",
+   "ratio": 10.43
+  },
+  "video_interpolate_flow": {
+   "family": "time",
+   "ratio": 34.98
+  },
+  "video_summary_keyframes": {
+   "family": "summary",
+   "ratio": 15.53
+  },
+  "vignette": {
+   "family": "post",
+   "ratio": 7.87
+  },
+  "vol_boundary_points": {
+   "family": "boundary",
+   "ratio": 8.09
+  },
+  "vol_dilate": {
+   "family": "3d",
+   "ratio": 8.85
+  },
+  "vol_distance_transform": {
+   "family": "medial",
+   "ratio": 136.72
+  },
+  "vol_fft_highpass": {
+   "family": "frequency",
+   "ratio": 7.37
+  },
+  "vol_fft_lowpass": {
+   "family": "frequency",
+   "ratio": 16.81
+  },
+  "vol_frangi": {
+   "family": "feature",
+   "ratio": 177.61
+  },
+  "vol_gamma": {
+   "family": "gray",
+   "ratio": 5.91
+  },
+  "vol_gaussian": {
+   "family": "3d",
+   "ratio": 11.17
+  },
+  "vol_gradient_magnitude": {
+   "family": "feature",
+   "ratio": 17.23
+  },
+  "vol_hessian_blobness": {
+   "family": "feature",
+   "ratio": 57.51
+  },
+  "vol_label_mpr_rgb": {
+   "family": "slice",
+   "ratio": 22.99
+  },
+  "vol_local_maxima": {
+   "family": "feature",
+   "ratio": 87.26
+  },
+  "vol_local_std": {
+   "family": "feature",
+   "ratio": 17.46
+  },
+  "vol_median": {
+   "family": "3d",
+   "ratio": 53.39
+  },
+  "vol_opening_ball": {
+   "family": "3d",
+   "ratio": 6.62
+  },
+  "vol_sato": {
+   "family": "feature",
+   "ratio": 100.82
+  },
+  "vx_histogram": {
+   "family": "pixel",
+   "ratio": 10.68
+  },
+  "vx_magnitude": {
+   "family": "gradient",
+   "ratio": 29.28
+  },
+  "vx_nonlinear_filter": {
+   "family": "filter",
+   "ratio": 6.94
+  },
+  "vx_phase": {
+   "family": "gradient",
+   "ratio": 32.89
+  },
+  "vx_sobel3x3": {
+   "family": "gradient",
+   "ratio": 25.23
+  },
+  "vx_warp_affine": {
+   "family": "geometry",
+   "ratio": 79.48
+  },
+  "vx_warp_perspective": {
+   "family": "geometry",
+   "ratio": 39.83
+  },
+  "warp_by_plane": {
+   "family": "plane_sweep_stereo",
+   "ratio": 57.03
+  },
+  "warp_tps_image": {
+   "family": "morph",
+   "ratio": 25.87
+  },
+  "weighting_response": {
+   "family": "level",
+   "ratio": 34.51
+  },
+  "wetness": {
+   "family": "material",
+   "ratio": 6.2
+  },
+  "whiten_by_psd": {
+   "family": "matched",
+   "ratio": 10.87
+  },
+  "winkler_polish_run": {
+   "family": "polish",
+   "ratio": 50.26
+  },
+  "wipe_coverage": {
+   "family": "polish",
+   "ratio": 7.85
+  },
+  "wrapped_phase": {
+   "family": "structured_light",
+   "ratio": 8.36
+  },
+  "xdog": {
+   "family": "edges",
+   "ratio": 20.51
+  },
+  "xsk3_integral_image": {
+   "family": "gray",
+   "ratio": 8.63
+  },
+  "xsp_dct": {
+   "family": "frequency",
+   "ratio": 5.08
+  },
+  "xsp_detrend_flatten": {
+   "family": "gray",
+   "ratio": 13.24
+  },
+  "xsp_gauss_grad_mag": {
+   "family": "edges",
+   "ratio": 13.08
+  },
+  "xsp_hilbert_env": {
+   "family": "texture",
+   "ratio": 27.42
+  },
+  "xsp_morph_laplace": {
+   "family": "edges",
+   "ratio": 14.72
+  },
+  "xsp_savgol": {
+   "family": "smoothing",
+   "ratio": 8.71
+  },
+  "xsp_wiener": {
+   "family": "smoothing",
+   "ratio": 48.34
+  },
+  "xyz_to_lab": {
+   "family": "colorspace",
+   "ratio": 14.85
+  },
+  "zero_crossing": {
+   "family": "segmentation",
+   "ratio": 39.9
+  },
+  "zoom_image_factor": {
+   "family": "geometry",
+   "ratio": 8.68
+  },
+  "zoom_inset": {
+   "family": "compose",
+   "ratio": 23.89
+  }
+ }
+}
