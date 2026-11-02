@@ -226,6 +226,15 @@ def test_unpolarized_transmission_close_to_per_surface_formula():
     assert d[0] < 1e-6
 
 
+def test_ideal_lens_keeps_power_and_stays_transverse():
+    s = RT.lens_system([{"f": 50.0, "t": None, "n": 1.0, "ap": 8.0}], stop=0)
+    b = P.polarized_bundle(LG.compile_lens(s, device="cpu"), field=2.0, rings=4)
+    d = (b["L"], b["M"], b["N"])
+    for E in b["E_out"]:
+        assert float(torch.nan_to_num(P._dot(E, d)).abs().max()) < 1e-12
+    np.testing.assert_allclose(P._dot(b["E_out"][0], b["E_out"][0])[b["valid"]].numpy(), 1.0, atol=1e-12)
+
+
 def test_on_axis_plate_does_not_rotate_polarization():
     s = RT.lens_system([{"R": INF_, "t": 5.0, "n": 1.5, "ap": 10.0}, {"R": INF_, "t": 5.0, "n": 1.0}], stop=0)
     b = P.polarized_bundle(LG.compile_lens(s, device="cpu"), field=0.0, rings=3)

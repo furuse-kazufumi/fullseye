@@ -59,8 +59,42 @@ def two_mirror():
                            {"R": -140.0, "t": 200.0, "n": 1.0, "k": -3.0, "mirror": True}], stop=0)
 
 
+def ideal_infinite():
+    return RT.lens_system([{"f": 50.0, "t": 60.0, "n": 1.0, "ap": 8.0}, {"R": 80.0, "t": 4.0, "n": "N-BK7"},
+                           {"R": INF_, "t": None, "n": 1.0}], stop=0)
+
+
+def ideal_finite():
+    return RT.lens_system([{"f": 50.0, "t": None, "n": 1.0, "ap": 8.0}], stop=0, object_mm=150.0)
+
+
+def astig_surface():
+    return RT.lens_system([{"R": 61.47, "t": 6.0, "n": "N-BK7", "ap": 12.5, "zernike_sag": (2e-4, -1e-4)},
+                           {"R": -44.64, "t": None, "n": 1.0}], stop=0)
+
+
+def afocal_scope():
+    return RT.lens_system([{"f": 100.0, "t": 120.0, "n": 1.0, "ap": 10.0}, {"f": 20.0, "t": 30.0, "n": 1.0}],
+                          stop=0, afocal=True)
+
+
+def aimed_triplet():
+    return RT.with_aiming(triplet(), "stop")
+
+
+def vignetted_triplet():
+    s = RT.set_vignetting(triplet(), fields=[0.0, 10.0, 14.0])
+    return s["system"] if isinstance(s, dict) and "system" in s else s
+
+
 INF_ = float("inf")
 SYSTEMS = {
+    "ideal_infinite": ideal_infinite,
+    "ideal_finite": ideal_finite,
+    "astig_surface": astig_surface,
+    "afocal_scope": afocal_scope,
+    "aimed_triplet": aimed_triplet,
+    "vignetted_triplet": vignetted_triplet,
     "singlet": lambda: RT.example_system("singlet"),
     "catalog_doublet": lambda: RT.example_system("catalog_doublet"),
     "doublet": lambda: RT.example_system("doublet"),
@@ -77,7 +111,8 @@ SYSTEMS = {
 }
 FIELD = {"singlet": 2.0, "catalog_doublet": 1.0, "doublet": 1.0, "asphere": 1.0, "paraboloid": 0.5, "sphere_mirror": 0.5,
          "triplet": 14.0, "asphere_poly": 1.5, "odd_asphere": 1.0, "finite_object": 5.0, "perturbed_surface": 1.0,
-         "curved_image": 1.0, "two_mirror": 0.1}
+         "curved_image": 1.0, "two_mirror": 0.1, "ideal_infinite": 2.0, "ideal_finite": 4.0, "astig_surface": 1.0,
+         "afocal_scope": 0.5, "aimed_triplet": 14.0, "vignetted_triplet": 10.0}
 WL = [RT.WL_F, RT.WL_D, RT.WL_C]
 
 
@@ -258,7 +293,8 @@ def test_real_rays_closed_forms():
     np.testing.assert_allclose(tr["M"][0, 0].numpy(), np.sin(th) / 1.5, rtol=1e-13)
 
 
-@pytest.mark.parametrize("name", ["singlet", "catalog_doublet", "triplet", "asphere_poly"])
+@pytest.mark.parametrize("name", ["singlet", "catalog_doublet", "triplet", "asphere_poly", "ideal_infinite", "ideal_finite",
+                                  "astig_surface", "afocal_scope", "aimed_triplet", "vignetted_triplet"])
 def test_opd_matches_cpu(name):
     s = SYSTEMS[name]()
     px, py, w, v = RT.opd_samples(s, field=FIELD[name], size=33, wavelength_um=RT.WL_F)
@@ -409,20 +445,33 @@ def test_spectral_transmission_counts_lost_rays_as_zero():
     assert float(r["T"][0, 0]) <= float(r["valid_fraction"][0, 0])
 
 
-@pytest.mark.parametrize("bad,msg", [
-    ({"surfaces": [{"f": 50.0, "t": None}], "stop": 0, "ap": 5.0}, "ideal"),
-])
-def test_refuses_ideal_lens(bad, msg):
-    s = RT.lens_system([{"f": 50.0, "t": None, "ap": 5.0}], stop=0)
-    with pytest.raises(ValueError, match=msg):
-        G.compile_lens(s, device="cpu")
+@pytest.mark.parametrize("name,field", [("aimed_triplet", 14.0), ("vignetted_triplet", 10.0), ("curved_image", 1.0)])
+def test_perturbed_keeps_aim_vignetting_and_image_surface(name, field):
+    """_perturbed が系の設定を捨てなくなったこと(CPU)と、一括が案ごとに同じこと。"""
+    s = SYSTEMS[name]()
+    rng = np.random.default_rng(1)
+    tol = {"radius_pct": 0.1, "thickness_mm": 0.01, "index": 0.0, "decenter_mm": 0.0, "tilt_deg": 0.0}
+    q = RT._perturbed(RT._freeze_solves(s), rng, tol)
+    assert q.get("aim") == s.get("aim") and q.get("vignetting") == s.get("vignetting")
+    assert q.get("image_R", INF_) == s.get("image_R", INF_)
+    c = RT.tolerance_analysis(s, tol, trials=12, seed=2, field=field)
+    r = G.tolerance_monte_carlo(s, tol, trials=12, seed=2, field=field, device="cpu")
+    assert r["failed"] == c["failed"]
+    assert abs(r["rms_spot"]["mean"] - c["rms_spot"]["mean"]) < 1e-8
 
 
-def test_refuses_unbatched_paths():
-    s = RT.with_aiming(RT.example_system("catalog_doublet"), "stop")
-    lens = G.compile_lens(s, device="cpu")
-    with pytest.raises(ValueError, match="paraxial aim"):
-        G.bundle_batch(lens, field=1.0)
+def test_failed_marks_what_the_cpu_refuses():
+    """物体側テレセンと、afocal なのに焦点を結ぶ案は failed(全光線無効)で返す。"""
+    s = RT.lens_system([{"f": 100.0, "t": 120.0, "n": 1.0, "ap": 10.0}, {"f": 20.0, "t": 30.0, "n": 1.0}], stop=0, afocal=True)
+    s = dict(s)
+    surf = [dict(x) for x in s["surfaces"]]
+    surf[0]["t"] = 100.0
+    s["surfaces"] = surf
+    b = G.bundle_batch(G.compile_lens(s, device="cpu"), field=0.5, rings=3)
+    assert bool(b["failed"].all()) and not bool(b["valid"].any())
+
+
+def test_bad_arguments_are_refused():
     with pytest.raises(ValueError):
         G.compile_lens(RT.example_system("singlet"), device="nonsense")
     with pytest.raises(ValueError):

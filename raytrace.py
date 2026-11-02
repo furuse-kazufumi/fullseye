@@ -2241,9 +2241,11 @@ def _perturbed(system, rng, tol):
             q["tilt"] = (s["tilt"][0] + rng.uniform(-1, 1) * tol["tilt_deg"],
                          s["tilt"][1] + rng.uniform(-1, 1) * tol["tilt_deg"])
         surf.append(q)
+    # ★2026-11-02: 以前は aim / vignetting / image_R / afocal を捨て、摂動した案だけ別の系を評価していた
     return lens_system(surf, stop=system["stop"], object_mm=system["object_mm"],
                        wavelength_um=system["wavelength_um"], index_object=system["index_object"],
-                       image_mm=system["image_mm"], field=system["field"])
+                       image_mm=system["image_mm"], field=system["field"], aim=system.get("aim", "paraxial"),
+                       vignetting=system.get("vignetting"), **_system_extras(system))
 
 
 def tolerance_analysis(system, tolerances=None, trials=100, seed=0, field=None, rings=6, compensator="auto"):
@@ -2346,7 +2348,9 @@ def tolerance_analysis(system, tolerances=None, trials=100, seed=0, field=None, 
                 try:
                     sys_ = lens_system(surf, stop=system["stop"], object_mm=system["object_mm"],
                                        wavelength_um=system["wavelength_um"], index_object=system["index_object"],
-                                       image_mm=system["image_mm"], field=system["field"])
+                                       image_mm=system["image_mm"], field=system["field"],
+                                       aim=system.get("aim", "paraxial"), vignetting=system.get("vignetting"),
+                                       **_system_extras(system))
                     vals.append(metrics(sys_))
                 except ValueError:
                     vals.append((np.nan, np.nan))

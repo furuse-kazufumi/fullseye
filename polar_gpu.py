@@ -231,7 +231,8 @@ def polarized_bundle(lens, field=None, rings=6, pupil_fill=1.0, image_mm=None, a
             state["E"] = [tuple(c * amp for c in e) for e in state["E"]]
         nu = info["normal"]
         d_out = info["d_out"]
-        s = _cross(d_in, nu)
+        # 理想レンズは法線で曲がらない(高さで曲がる)ので、基底は入射と射出の張る面から取る
+        s = _cross(d_in, d_out) if info.get("ideal") else _cross(d_in, nu)
         sn = torch.sqrt(_dot(s, s))
         # 垂直入射は s / p の区別が無い(t_s = t_p)ので、任意の直交方向でよい
         fb = _transverse_basis(d_in)[0]
@@ -240,6 +241,8 @@ def polarized_bundle(lens, field=None, rings=6, pupil_fill=1.0, image_mm=None, a
         pi = _cross(d_in, s)
         if info["mirror"]:
             ts, tp = -torch.ones_like(sn), torch.ones_like(sn)
+        elif info.get("ideal"):
+            ts, tp = torch.ones_like(sn), torch.ones_like(sn)     # 損失なしの理想レンズ
         else:
             n1, n2, ci, ct = info["n1"], info["n2"], info["cos_i"], info["cos_t"]
             g = torch.sqrt((n2 * ct) / (n1 * ci))                 # 振幅に掛けて |τ|² = T にする

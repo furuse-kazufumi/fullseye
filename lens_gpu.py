@@ -17,9 +17,9 @@
 ``spectral_transmission``      ``lensrender`` の無偏光 Fresnel + ``materials`` の内部透過率
 =============================  =======================================================
 
-**扱わないもの(黙って違う答えを返さず ``ValueError``)**: 理想レンズ面 ``f``、``zernike_sag``、
-``afocal``、ケラレ係数、``aim="stop"``。物体側テレセン(入射瞳が無限遠)はバッチの中で一部の案に
-起きうるので、例外でなく ``failed`` の印で返す。これらは ``raytrace`` を使う。
+理想レンズ面 ``f``、``zernike_sag``、``afocal``、ケラレ係数、``aim="stop"`` も同じ定義で扱う。
+**扱わないもの**: 物体側テレセン(入射瞳が無限遠)。バッチの中で一部の案に起きうるので、例外でなく
+``failed`` の印で返す。``aim="stop"`` が収束しない案も同じ印になる(CPU は ``ValueError``)。
 
 精度: 既定は float64。float32 は ``dtype="float32"`` で選べるが誤差は桁で悪化する
 (実測は ``docs/perf/gpu_optics_2026-11-02.md``)。
@@ -186,6 +186,10 @@ class LensBatch:
     sign: object          # (S + 1,) 進行方向の符号
     alpha: object         # (W, S + 1) 吸収係数 1/µm
     offsets: object       # (M, S) または None
+    f: object             # (S,) 理想レンズの焦点距離(無ければ NaN)
+    ideal: tuple          # 面ごとに理想レンズか
+    astig: object         # (S, 2) zernike_sag の 2 係数
+    has_astig: tuple
 
     @property
     def M(self):
@@ -213,15 +217,12 @@ class LensBatch:
 
 def _check_supported(system):
     RT._check_system(system)
-    system = RT._solved(system)
-    for i, s in enumerate(system["surfaces"]):
-        if s.get("f") is not None:
-            raise ValueError("lens_gpu: surface %d is an ideal lens (f); use raytrace" % i)
-        if "zernike_sag" in s:
-            raise ValueError("lens_gpu: surface %d has zernike_sag; use raytrace" % i)
-    if system.get("afocal"):
-        raise ValueError("lens_gpu: an afocal system is not handled here; use raytrace")
-    return system
+    return RT._solved(system)
+
+
+def _keeps_medium(s):
+    """鏡と理想レンズは媒質を変えない(raytrace は n_after = n_before)。"""
+    return bool(s["mirror"]) or s.get("f") is not None
 
 
 def _index_rows(system, wl, offsets, tens):
@@ -232,7 +233,7 @@ def _index_rows(system, wl, offsets, tens):
     gain = np.zeros((wl.size, S + 1))
     table[:, 0] = system["index_object"]
     for i, s in enumerate(surf):
-        if s["mirror"]:
+        if _keeps_medium(s):
             table[:, i + 1] = table[:, i]
             gain[:, i + 1] = gain[:, i]
         else:
@@ -245,7 +246,7 @@ def _index_rows(system, wl, offsets, tens):
     d = np.array(offsets, dtype=np.float64)
     full = np.zeros((d.shape[0], S + 1))
     for i, s in enumerate(surf):
-        full[:, i + 1] = full[:, i] if s["mirror"] else d[:, i]
+        full[:, i + 1] = full[:, i] if _keeps_medium(s) else d[:, i]
     return n + tens(full)[:, None, :] * tens(gain)[None]
 
 
@@ -253,7 +254,7 @@ def _alpha_rows(system, wl):
     surf = system["surfaces"]
     alpha = np.zeros((wl.size, len(surf) + 1))
     for i, s in enumerate(surf):
-        alpha[:, i + 1] = alpha[:, i] if s["mirror"] else absorption_array(s["n"], wl)
+        alpha[:, i + 1] = alpha[:, i] if _keeps_medium(s) else absorption_array(s["n"], wl)
     return alpha
 
 
@@ -306,10 +307,14 @@ def compile_lens(system, wavelengths=None, device="auto", dtype="float64", overr
                      dec=None if dec is None else tens(dec).expand(M, S, 2),
                      tilt=None if tilt is None else tens(tilt).expand(M, S, 2),
                      asph=tens(asph), a2=tens([s.get("a2", 0.0) for s in surf]), odd=tens(odd),
-                     newton=tuple(bool(s["asph"]) or RT._xtra(s) is not None for s in surf),
+                     newton=tuple(bool(s["asph"]) or RT._xtra(s) is not None or "zernike_sag" in s for s in surf),
                      mirror=tuple(bool(s["mirror"]) for s in surf),
                      n_u=n_u.expand(M, wl.size, S + 1), sign=tens(sign), alpha=tens(_alpha_rows(system, wl)),
-                     offsets=ov.get("offset"))
+                     offsets=ov.get("offset"),
+                     f=tens([float("nan") if s.get("f") is None else s["f"] for s in surf]),
+                     ideal=tuple(s.get("f") is not None for s in surf),
+                     astig=tens([s.get("zernike_sag", (0.0, 0.0)) for s in surf]),
+                     has_astig=tuple("zernike_sag" in s for s in surf))
 
 
 def _at_wavelengths(lens, wavelengths):
@@ -326,14 +331,17 @@ def _at_wavelengths(lens, wavelengths):
 # --------------------------------------------------------------------------- #
 # 近軸
 # --------------------------------------------------------------------------- #
-def _ptrace(c, t, n, y0, u0):
-    """(y, u) の式を (M, W) で。c (M, 1, S)、t (M, W, S)、n (M, W, S + 1)。返り値 (M, W, S) × 2。"""
+def _ptrace(c, t, n, y0, u0, pw=None):
+    """(y, u) の式を (M, W) で。c (M, 1, S)、t (M, W, S)、n (M, W, S + 1)、pw (S,) 理想レンズの屈折力。"""
     ys, us = [], []
     y, u = y0, u0
     for i in range(c.shape[-1]):
         ys.append(y)
         n0, n1 = n[..., i], n[..., i + 1]
-        u = (n0 * u - y * c[..., i] * (n1 - n0)) / n1
+        u = n0 * u - y * c[..., i] * (n1 - n0)
+        if pw is not None and pw[i] != 0:
+            u = u - y * pw[i] * n0.abs()
+        u = u / n1
         us.append(u)
         y = y + t[..., i] * u
     return torch.stack(ys, -1), torch.stack(us, -1)
@@ -352,17 +360,21 @@ def paraxial_batch(lens):
     t = (lens.t[:, None, :] * lens.sign[1:]).expand(M, W, S)
     zero = torch.zeros((M, W), dtype=lens.dtype, device=lens.device)
     one = zero + 1.0
-    y, u = _ptrace(c, t, n, one, zero)
+    pw = torch.nan_to_num(1.0 / lens.f, nan=0.0) if any(lens.ideal) else None
+    y, u = _ptrace(c, t, n, one, zero, pw)
     ul, yl = u[..., -1], y[..., -1]
-    flat = ul.abs() < 1e-15
+    afocal = bool(sysd.get("afocal"))
+    flat = (ul.abs() < 1e-15) | afocal
+    # CPU が ValueError にする「afocal なのに焦点を結ぶ」案は failed の印にする
+    not_collimated = afocal & (ul.abs() > 1e-9 * u.abs().amax(-1).clamp(min=1e-300))
     efl = torch.where(flat, zero + INF, -y[..., 0] / ul)
     bfl = torch.where(flat, zero + INF, -yl / ul)
     # 前側: 系を裏返して逆向きに
     c_r = -torch.flip(c, (-1,))
     n_r = torch.flip(n, (-1,))
     t_r = torch.cat([torch.flip(t, (-1,))[..., 1:], torch.zeros_like(t[..., :1])], -1)
-    y_r, u_r = _ptrace(c_r, t_r, n_r, one, zero)
-    ffl = torch.where(u_r[..., -1].abs() > 1e-15, y_r[..., -1] / u_r[..., -1], zero - INF)
+    y_r, u_r = _ptrace(c_r, t_r, n_r, one, zero, None if pw is None else torch.flip(pw, (0,)))
+    ffl = torch.where((u_r[..., -1].abs() > 1e-15) & (not afocal), y_r[..., -1] / u_r[..., -1], zero - INF)
     pp_front = torch.where(torch.isfinite(efl), ffl + efl, zero - INF)
     stop = sysd["stop"]
     stop_r = lens.ap[stop]
@@ -370,7 +382,7 @@ def paraxial_batch(lens):
     n0 = n[..., 0]
 
     def y_at_stop(y0, u0):
-        return _ptrace(c, t, n, y0, u0)[0][..., stop]
+        return _ptrace(c, t, n, y0, u0, pw)[0][..., stop]
 
     if obj == INF:
         a = y_at_stop(one, zero)
@@ -380,8 +392,8 @@ def paraxial_batch(lens):
         ep_radius = stop_r / a.abs()
         mag = zero
         h = -b / a
-        yc, uc = _ptrace(c, t, n, h, one)
-        ym, um = _ptrace(c, t, n, ep_radius, zero)
+        yc, uc = _ptrace(c, t, n, h, one, pw)
+        ym, um = _ptrace(c, t, n, ep_radius, zero, pw)
         img = bfl
         lagrange = n0 * ep_radius
     else:
@@ -392,8 +404,8 @@ def paraxial_batch(lens):
         ep_pos = torch.where(s_per_H.abs() > 1e-15, -obj - 1.0 / s_per_H, zero - INF)
         s_m = stop_r / a.abs()
         ep_radius = torch.where(torch.isfinite(ep_pos), (s_m * (obj + ep_pos)).abs(), zero + INF)
-        yc, uc = _ptrace(c, t, n, 1.0 + s_per_H * obj, s_per_H)
-        ym, um = _ptrace(c, t, n, s_m * obj, s_m)
+        yc, uc = _ptrace(c, t, n, 1.0 + s_per_H * obj, s_per_H, pw)
+        ym, um = _ptrace(c, t, n, s_m * obj, s_m, pw)
         uml = um[..., -1]
         img = torch.where(uml.abs() > 1e-15, -ym[..., -1] / uml, zero + INF)
         mag = torch.where(torch.isfinite(img), yc[..., -1] + uc[..., -1] * img, zero + INF)
@@ -406,10 +418,13 @@ def paraxial_batch(lens):
     pp_rear = torch.where(torch.isfinite(efl), bfl - efl, zero + INF)
     fno = torch.where((ep_radius == 0) | ~torch.isfinite(efl), zero + INF, efl.abs() / (2.0 * ep_radius))
     na = n[..., -1].abs() * um[..., -1].abs()
-    return {"efl": efl, "bfl": bfl, "ffl": ffl, "pp_front": pp_front, "pp_rear": pp_rear, "image_mm": img,
-            "magnification": mag, "ep_position": ep_pos, "ep_radius": ep_radius, "xp_position": xp_pos,
-            "xp_radius": xp_radius, "fno": fno, "na_image": na, "lagrange": lagrange,
-            "marginal_y": ym, "marginal_u": um, "chief_y": yc, "chief_u": uc, "failed": failed}
+    out = {"efl": efl, "bfl": bfl, "ffl": ffl, "pp_front": pp_front, "pp_rear": pp_rear, "image_mm": img,
+           "magnification": mag, "ep_position": ep_pos, "ep_radius": ep_radius, "xp_position": xp_pos,
+           "xp_radius": xp_radius, "fno": fno, "na_image": na, "lagrange": lagrange,
+           "marginal_y": ym, "marginal_u": um, "chief_y": yc, "chief_u": uc, "failed": failed | not_collimated}
+    if afocal:
+        out["angular_magnification"] = uc[..., -1] * sgn
+    return out
 
 
 def _reference_image(lens):
@@ -419,6 +434,8 @@ def _reference_image(lens):
         return lens.tensor([[sysd["image_mm"]]]).expand(lens.M, 1)
     if not lens.t_none[-1]:
         return lens.t[:, -1:]
+    if sysd.get("afocal"):
+        return torch.zeros((lens.M, 1), dtype=lens.dtype, device=lens.device)   # 射出は平行光: 読むのは角度
     return paraxial_batch(_at_wavelengths(lens, [sysd["wavelength_um"]]))["image_mm"]
 
 
@@ -527,16 +544,25 @@ def _hit_conic(x, y, z, L, Mm, N, c, k):
     return torch.where(c == 0, flat, t)
 
 
-def _hit_asphere(x, y, z, L, Mm, N, c, k, asph, a2, odd, t0):
+def _hit_asphere(x, y, z, L, Mm, N, c, k, asph, a2, odd, t0, astig=None):
     nan = torch.tensor(float("nan"), dtype=x.dtype, device=x.device)
     step_tol, f_tol = (1e-12, 1e-8) if x.dtype == torch.float64 else (1e-5, 1e-3)
     t = torch.where(torch.isfinite(t0), t0, torch.zeros_like(t0))
+
+    def extra(xx, yy):
+        if astig is None:
+            return 0.0, 0.0, 0.0
+        a0, a45, ap = astig
+        return ((a0 * (xx * xx - yy * yy) + 2.0 * a45 * xx * yy) / (ap * ap),
+                (2.0 * a0 * xx + 2.0 * a45 * yy) / (ap * ap), (-2.0 * a0 * yy + 2.0 * a45 * xx) / (ap * ap))
+
     for _ in range(_NEWTON_ITERS):
         xx, yy, zz = x + t * L, y + t * Mm, z + t * N
         r2 = xx * xx + yy * yy
-        F = zz - _sag(r2, c, k, asph, a2, odd)
+        sa, dax, day = extra(xx, yy)
+        F = zz - _sag(r2, c, k, asph, a2, odd) - sa
         s = _dsag(r2, c, k, asph, a2, odd)
-        dF = N - 2.0 * s * (xx * L + yy * Mm)
+        dF = N - 2.0 * s * (xx * L + yy * Mm) - dax * L - day * Mm
         step = F / dF
         step = torch.where(torch.isfinite(step), step, nan)
         t = t - step
@@ -544,7 +570,7 @@ def _hit_asphere(x, y, z, L, Mm, N, c, k, asph, a2, odd, t0):
         if not torch.any(fin) or bool((step[fin].abs() < step_tol).all()):
             break
     xx, yy, zz = x + t * L, y + t * Mm, z + t * N
-    F = zz - _sag(xx * xx + yy * yy, c, k, asph, a2, odd)
+    F = zz - _sag(xx * xx + yy * yy, c, k, asph, a2, odd) - extra(xx, yy)[0]
     ok = torch.isfinite(t) & torch.isfinite(F) & (F.abs() < f_tol)
     return torch.where(ok, t, nan)
 
@@ -556,6 +582,41 @@ def _rot(lens, i):
     cx, sx, cy, sy = torch.cos(a), torch.sin(a), torch.cos(b), torch.sin(b)
     zero = torch.zeros_like(cx)
     return (cy, zero, sy, sx * sy, cx, -sx * cy, -cx * sy, sx, cx * cy)
+
+
+def _norm3(x, y, z):
+    return torch.sqrt(x * x + y * y + z * z)
+
+
+def _ideal_phase(P0, D0, Q, f, n, obj_z=None):
+    """``raytrace._ideal_phase``(理想レンズが足す光路長、局所座標)の (M, W, R) 版。"""
+    x0, y0, z0 = P0
+    L, Mm, N = D0
+    qx_, qy_, qz_ = Q
+    sdir = torch.where(N >= 0.0, 1.0, -1.0).to(N.dtype)
+    ax, ay = L / N.abs(), Mm / N.abs()
+    dn = _norm3(ax, ay, sdir)
+    Fx, Fy, Fz = ax * f, ay * f, sdir * f
+    sg = 1.0 if f > 0 else -1.0
+    plane = n * (sg * _norm3(Fx, Fy, Fz) - (ax * qx_ + ay * qy_ + sdir * qz_) / dn
+                 - sg * _norm3(Fx - qx_, Fy - qy_, Fz - qz_))
+    if obj_z is None:
+        return plane
+    on_obj = (z0 - obj_z).abs() <= 1e-9 * max(1.0, abs(obj_z))
+    s_o = -obj_z
+    dd = s_o - f
+    sph = _norm3(x0, y0, z0) - _norm3(x0 - qx_, y0 - qy_, z0 - qz_)
+    if abs(dd) < 1e-12 * max(1.0, abs(f)):
+        ox, oy = -x0 / s_o, -y0 / s_o
+        dd_n = _norm3(ox, oy, torch.ones_like(ox))
+        sph = sph + (ox * qx_ + oy * qy_ + qz_) / dd_n
+    else:
+        sp = f * s_o / dd
+        m = -sp / s_o
+        Ix, Iy = x0 * m, y0 * m
+        sps = 1.0 if sp > 0 else -1.0
+        sph = sph + sps * (_norm3(Ix, Iy, torch.full_like(Ix, sp)) - _norm3(Ix - qx_, Iy - qy_, sp - qz_))
+    return n * torch.where(on_obj, sph, plane / n)
 
 
 def trace_batch(lens, P, D, image_mm=None, opl=True, points=False, upto=None, visitor=None):
@@ -600,9 +661,14 @@ def trace_batch(lens, P, D, image_mm=None, opl=True, points=False, upto=None, vi
                           xl * r[2] + yl * r[5] + zl * r[8])
             Ll, Ml, Nl = (L * r[0] + Mm * r[3] + N * r[6], L * r[1] + Mm * r[4] + N * r[7],
                           L * r[2] + Mm * r[5] + N * r[8])
-        t = _hit_conic(xl, yl, zl, Ll, Ml, Nl, c, k)
+        ideal = lens.ideal[i]
+        astig = (lens.astig[i, 0], lens.astig[i, 1], lens.ap[i]) if lens.has_astig[i] else None
+        if ideal:                                         # 理想レンズ: 頂点面(z = 0)と交わる
+            t = -zl / Nl
+        else:
+            t = _hit_conic(xl, yl, zl, Ll, Ml, Nl, c, k)
         if lens.newton[i]:
-            t = _hit_asphere(xl, yl, zl, Ll, Ml, Nl, c, k, lens.asph[i], lens.a2[i], lens.odd[i], t)
+            t = _hit_asphere(xl, yl, zl, Ll, Ml, Nl, c, k, lens.asph[i], lens.a2[i], lens.odd[i], t, astig)
         bad = ~torch.isfinite(t) | (t < -1e-9)
         t = t.masked_fill(bad, nan)
         qx, qy, qz = xl + t * Ll, yl + t * Ml, zl + t * Nl
@@ -611,6 +677,10 @@ def trace_batch(lens, P, D, image_mm=None, opl=True, points=False, upto=None, vi
         if lens.newton[i]:
             s = _dsag(qx * qx + qy * qy, c, k, lens.asph[i], lens.a2[i], lens.odd[i])
             gx, gy, gz = -2.0 * s * qx, -2.0 * s * qy, torch.ones_like(qx)
+            if astig is not None:
+                a0, a45, ap_ = astig
+                gx = gx - (2.0 * a0 * qx + 2.0 * a45 * qy) / (ap_ * ap_)
+                gy = gy - (-2.0 * a0 * qy + 2.0 * a45 * qx) / (ap_ * ap_)
         else:
             gx, gy, gz = 2.0 * c * qx, 2.0 * c * qy, 2.0 * c * (1.0 + k) * qz - 2.0
         gn = torch.sqrt(gx * gx + gy * gy + gz * gz)
@@ -623,6 +693,11 @@ def trace_batch(lens, P, D, image_mm=None, opl=True, points=False, upto=None, vi
         if lens.mirror[i]:
             Lo, Mo, No = Ll - 2.0 * dot * gx, Ml - 2.0 * dot * gy, Nl - 2.0 * dot * gz
             dirn = -dirn
+        elif ideal:
+            # 薄肉レンズの法則: 進行方向の傾き q = (Dx, Dy)/|Dz| が q' = q - h/f になる(厳密)
+            f_i = float(lens.f[i])
+            sd = torch.where(Nl >= 0.0, 1.0, -1.0).to(lens.dtype)
+            Lo, Mo, No = Ll / Nl.abs() - qx / f_i, Ml / Nl.abs() - qy / f_i, sd
         else:
             eta = nb / na
             sin2_t = eta * eta * (1.0 - cos_i * cos_i)
@@ -634,6 +709,10 @@ def trace_batch(lens, P, D, image_mm=None, opl=True, points=False, upto=None, vi
         Lo, Mo, No = Lo / dn, Mo / dn, No / dn
         if opl:
             path = path + nb * t.abs()
+            if ideal:
+                oz = -lens.system["object_mm"] if (i == 0 and lens.system["object_mm"] != INF) else None
+                path = path + _ideal_phase((xl, yl, zl), (Ll, Ml, Nl), (qx, qy, qz), float(lens.f[i]), nb, oz)
+        qxl, qyl = qx, qy
         if tilted:
             qx, qy, qz = (qx * r[0] + qy * r[1] + qz * r[2], qx * r[3] + qy * r[4] + qz * r[5],
                           qx * r[6] + qy * r[7] + qz * r[8])
@@ -653,14 +732,16 @@ def trace_batch(lens, P, D, image_mm=None, opl=True, points=False, upto=None, vi
                       gx * r[6] + gy * r[7] + gz * r[8])
             else:
                 ng = (gx, gy, gz)
-            visitor(i, {"t": t, "n1": nb, "n2": na, "cos_i": cos_i, "cos_t": cos_t, "mirror": lens.mirror[i],
+            visitor(i, {"t": t, "n1": nb, "n2": na, "cos_i": cos_i, "cos_t": cos_t, "mirror": lens.mirror[i], "ideal": ideal,
                         "normal": ng, "d_in": (L, Mm, N), "d_out": (Lg, Mg, Ng), "valid": valid})
         x, y, z, L, Mm, N = x_new, y_new, z_new, Lg, Mg, Ng
         if points:
             pts.append(torch.stack((x, y, z), -1))
             dirs.append(torch.stack((L, Mm, N), -1))
         if upto is not None and i == upto:
-            return {"x": x, "y": y, "z": z, "valid": valid}
+            # sx, sy は面の局所座標(raytrace._stop_xy)
+            return {"x": x, "y": y, "z": z, "valid": valid, "sx": qxl.masked_fill(~valid, nan),
+                    "sy": qyl.masked_fill(~valid, nan)}
         if not lens.t_none[i]:
             zv = zv + dirn * lens.t[:, i][:, None, None]
     z_last = zv if lens.t_none[-1] else zv - dirn * lens.t[:, -1][:, None, None]
@@ -774,32 +855,148 @@ def _chief_offset(lens, field, para):
     return px, py
 
 
+def _aim_at_stop(lens, tx, ty, field, para, gx, gy, cx, cy):
+    """``raytrace._aim_at_stop`` の (M, W, R) 版。返り値 ``ux uy failed``(failed は (M, W))。
+
+    光線ごとの減衰 Newton(前進差分の 2x2 ヤコビ行列)。狙いの追跡は半開口を外す。CPU が ValueError にする
+    「許容を超えた光線が 1 本でもある」案は failed の印にする。
+    """
+    stop = lens.system["stop"]
+    ap = lens.ap[stop]
+    free = dataclasses.replace(lens, ap=torch.full_like(lens.ap, INF))
+
+    def stop_xy(ux, uy):
+        P, D, _ = launch_batch(lens, ux, uy, field, para)
+        tr = trace_batch(free, P, D, opl=False, upto=stop)
+        return tr["sx"], tr["sy"]
+
+    def rel_err(ux, uy):
+        sx, sy = stop_xy(ux, uy)
+        return torch.hypot(sx - tx, sy - ty) / ap
+
+    ux, uy = gx.clone(), gy.clone()
+    err = rel_err(ux, uy)
+    bad = ~torch.isfinite(err)
+    if bool(bad.any()):                                   # 追えない出発点は中心へ引き寄せる
+        s = 1.0
+        for _ in range(60):
+            s *= 0.9
+            ux = torch.where(bad, cx + s * (gx - cx), ux)
+            uy = torch.where(bad, cy + s * (gy - cy), uy)
+            e = rel_err(ux, uy)
+            if bool(torch.isfinite(e[bad]).all()):
+                break
+        err = rel_err(ux, uy)
+    h = 1e-6
+    ox = lens.tensor([0.0, h, 0.0])
+    oy = lens.tensor([0.0, 0.0, h])
+    for _ in range(RT._AIM_MAX_ITER):
+        act = ~(err <= RT._AIM_GOAL)
+        if not bool(act.any()):
+            break
+        R = ux.shape[-1]
+        big_x = (ux[..., None] + ox).reshape(ux.shape[:-1] + (3 * R,))
+        big_y = (uy[..., None] + oy).reshape(uy.shape[:-1] + (3 * R,))
+        sx, sy = stop_xy(big_x, big_y)
+        sx = sx.reshape(ux.shape + (3,)) - tx[..., None]
+        sy = sy.reshape(uy.shape + (3,)) - ty[..., None]
+        r0x, r0y = sx[..., 0], sy[..., 0]
+        a, b = (sx[..., 1] - r0x) / h, (sx[..., 2] - r0x) / h
+        c_, d = (sy[..., 1] - r0y) / h, (sy[..., 2] - r0y) / h
+        det = a * d - b * c_
+        stx = -(d * r0x - b * r0y) / det
+        sty = -(-c_ * r0x + a * r0y) / det
+        finite = torch.isfinite(stx) & torch.isfinite(sty)
+        stx = torch.where(finite, stx, torch.zeros_like(stx))
+        sty = torch.where(finite, sty, torch.zeros_like(sty))
+        alpha = torch.ones_like(ux)
+        pend = act.clone()
+        improved = False
+        for _bt in range(14):
+            if not bool(pend.any()):
+                break
+            nx, ny = ux + alpha * stx, uy + alpha * sty
+            en = rel_err(nx, ny)
+            good = pend & torch.isfinite(en) & (en < err)
+            ux = torch.where(good, nx, ux)
+            uy = torch.where(good, ny, uy)
+            err = torch.where(good, en, err)
+            pend = pend & ~good
+            improved = improved or bool(good.any())
+            alpha = torch.where(pend, 0.5 * alpha, alpha)
+        if not improved:
+            break
+    return ux, uy, (~(err <= RT._AIM_TOL)).any(-1)
+
+
+def _launch_aimed(lens, qx, qy, field, para, pupil_fill):
+    """``raytrace._launch_aimed``: 瞳の点 *q* (R,) を絞りの点へ。返り値 ``P D opl0 failed``。"""
+    ap = lens.ap[lens.system["stop"]]
+    shape = (lens.M, lens.W, 1)
+    z1 = torch.zeros(shape, dtype=lens.dtype, device=lens.device)
+    cx, cy, f0 = _aim_at_stop(lens, z1, z1, field, para, z1, z1, z1, z1)
+    Q = (lens.M, lens.W, qx.shape[-1])
+    qx, qy = qx.expand(Q), qy.expand(Q)
+    ux, uy, f1 = _aim_at_stop(lens, qx * ap * pupil_fill, qy * ap * pupil_fill, field, para,
+                              qx * pupil_fill + cx, qy * pupil_fill + cy, cx, cy)
+    P, D, opl0 = launch_batch(lens, ux, uy, field, para)
+    return P, D, opl0, f0 | f1
+
+
+def _exit_angles(tr):
+    az = tr["N"].abs()
+    return (torch.rad2deg(torch.atan2(tr["L"], az)) * 60.0, torch.rad2deg(torch.atan2(tr["M"], az)) * 60.0)
+
+
+_RAY_KEYS = ("x", "y", "z", "L", "M", "N", "xl", "yl", "zl", "valid", "opl", "opl_last", "opl0")
+
+
 def bundle_batch(lens, field=None, rings=8, kind="hexapolar", pupil_fill=1.0, image_mm=None, para=None, px=None,
-                 py=None, opl=False, points=False, visitor=None):
-    """``raytrace.ray_bundle`` の ``aim="paraxial"`` の経路を (M, W, R) で。
+                 py=None, opl=False, points=False, visitor=None, vignette=True):
+    """``raytrace.ray_bundle`` を (M, W, R) で(``aim`` とケラレ係数は系のもの)。
 
     返り値: :func:`trace_batch` の鍵 + ``chief_x`` ``chief_y`` (M, W)、``para``、``failed`` (M, W)
-    (入射瞳が無限遠 / 絞りを結像できない案。その案の光線は全部無効)、``opl0``。
+    (入射瞳が無限遠 / 絞りを結像できない / 狙いが収束しない案。その案の光線は全部無効)、``opl0``。
+    ``afocal`` の系では ``x`` ``y`` は像面の位置でなく射出角(分)。*vignette*: False でケラレの圧縮をしない
+    (:func:`opd_batch` はマスクとして扱う)。
     """
     sysd = lens.system
-    if sysd.get("aim", "paraxial") != "paraxial":
-        raise ValueError("lens_gpu: only the paraxial aim is batched; use raytrace for aim='stop'")
-    if sysd.get("vignetting"):
-        raise ValueError("lens_gpu: vignetting factors are not batched; use raytrace")
     field = sysd["field"] if field is None else RT._finite(field, "field")
     para = paraxial_batch(lens) if para is None else para
     if px is None:
         px, py = RT._pupil_grid(rings, kind)
-    gx, gy = lens.tensor(px), lens.tensor(py)
-    ic = int(np.argmin(np.asarray(px) ** 2 + np.asarray(py) ** 2))
+    px, py = np.asarray(px, float), np.asarray(py, float)
+    ic = int(np.argmin(px * px + py * py))
+    v = RT._vig_at(sysd, field) if vignette else None
+    if v is None:
+        qx, qy = px, py
+    else:
+        qx, qy = RT._vig_forward(px, py, v)
+        qx, qy = np.append(qx, 0.0), np.append(qy, 0.0)    # ケラレのない主光線は最後
+    gx, gy = lens.tensor(qx), lens.tensor(qy)
     failed = para["failed"] | ~torch.isfinite(para["ep_radius"]) | ~torch.isfinite(para["ep_position"])
-    dpx, dpy = _chief_offset(lens, field, para)
-    P, D, opl0 = launch_batch(lens, gx + dpx[..., None], gy + dpy[..., None], field, para, pupil_fill)
+    if sysd.get("aim", "paraxial") == "stop":
+        P, D, opl0, fa = _launch_aimed(lens, gx, gy, field, para, pupil_fill)
+        failed = failed | fa
+    else:
+        dpx, dpy = _chief_offset(lens, field, para)
+        P, D, opl0 = launch_batch(lens, gx + dpx[..., None], gy + dpy[..., None], field, para, pupil_fill)
     tr = trace_batch(lens, P, D, image_mm=image_mm, opl=opl, points=points, visitor=visitor)
+    tr["opl0"] = opl0
     if bool(failed.any()):
         tr["valid"] = tr["valid"] & ~failed[..., None]
-    tr.update({"chief_x": tr["x"][..., ic], "chief_y": tr["y"][..., ic], "chief_index": ic, "para": para,
-               "failed": failed, "opl0": opl0, "field": field, "px": gx, "py": gy})
+    if sysd.get("afocal"):
+        tr["x"], tr["y"] = _exit_angles(tr)
+    if v is None:
+        cx, cy = tr["x"][..., ic], tr["y"][..., ic]
+    else:
+        cx, cy = tr["x"][..., -1], tr["y"][..., -1]
+        tr["chief_rays"] = {k: tr[k][..., -1:] for k in _RAY_KEYS if tr.get(k) is not None}
+        for k in _RAY_KEYS:
+            if tr.get(k) is not None:
+                tr[k] = tr[k][..., :len(px)]
+    tr.update({"chief_x": cx, "chief_y": cy, "chief_index": ic, "para": para, "failed": failed, "field": field,
+               "px": lens.tensor(px), "py": lens.tensor(py)})
     return tr
 
 
@@ -859,11 +1056,31 @@ def opd_batch(lens, field=None, size=64, image_mm=None):
     g = np.linspace(-1.0, 1.0, int(size))
     gx, gy = np.meshgrid(g, g)
     px, py = gx.ravel(), gy.ravel()
-    inside = lens.tensor(px * px + py * py) <= 1.0 + 1e-12
-    pxa, pya = np.append(px, 0.0), np.append(py, 0.0)              # 主光線は最後
+    ins = px * px + py * py <= 1.0 + 1e-12
+    v = RT._vig_at(sysd, field)
+    if v is not None:                                              # ケラレはここではマスク(格子は物理の瞳のまま)
+        x0, y0 = RT._vig_inverse(px, py, v)
+        ins &= x0 * x0 + y0 * y0 <= 1.0 + 1e-12
+    inside = lens.tensor(ins.astype(float)) > 0.5
+    if sysd.get("aim", "paraxial") == "stop":                      # 瞳の外の角は狙えないので中心へ
+        pxa, pya = np.append(np.where(ins, px, 0.0), 0.0), np.append(np.where(ins, py, 0.0), 0.0)
+    else:
+        pxa, pya = np.append(px, 0.0), np.append(py, 0.0)          # 主光線は最後
     para = paraxial_batch(lens)
     img = _reference_image(lens) if image_mm is None else lens.tensor(image_mm)
-    tr = bundle_batch(lens, field=field, px=pxa, py=pya, image_mm=img, para=para, opl=True)
+    tr = bundle_batch(lens, field=field, px=pxa, py=pya, image_mm=img, para=para, opl=True, vignette=False)
+    wl = lens.wl[None, :, None]
+    if sysd.get("afocal"):                                         # 射出は平行光: 基準は平面波
+        pxl, pyl, pzl = tr["xl"], tr["yl"], tr["zl"]
+        dx, dy, dz = tr["L"], tr["M"], tr["N"]
+        cx_, cy_, cz_ = dx[..., -1:], dy[..., -1:], dz[..., -1:]
+        s = (((pxl[..., -1:] - pxl) * cx_ + (pyl[..., -1:] - pyl) * cy_ + (pzl[..., -1:] - pzl) * cz_)
+             / (dx * cx_ + dy * cy_ + dz * cz_))
+        opl_ref = tr["opl_last"] + tr["opl0"] + tr["n_image"] * s
+        valid = tr["valid"] & torch.isfinite(opl_ref)
+        w = ((opl_ref[..., -1:] - opl_ref) / (wl * 1e-3)).masked_fill(~valid, float("nan"))
+        return {"px": px, "py": py, "opd": w[..., :-1], "valid": valid[..., :-1] & inside, "para": para,
+                "degenerate": tr["failed"]}
     Cx, Cy, Cz = tr["x"][..., -1:], tr["y"][..., -1:], tr["z"][..., -1:]
     dirn = torch.where(tr["N"][..., -1:] >= 0, 1.0, -1.0).to(lens.dtype)
     img3 = img[..., None] if img.ndim == 2 else img
@@ -882,7 +1099,6 @@ def opd_batch(lens, field=None, size=64, image_mm=None):
     s = torch.where((z1 - z_xp).abs() <= (z2 - z_xp).abs(), s1, s2)
     opl_ref = tr["opl_last"] + tr["opl0"] + tr["n_image"] * s
     valid = tr["valid"] & ok
-    wl = lens.wl[None, :, None]
     w = (opl_ref[..., -1:] - opl_ref) / (wl * 1e-3)
     w = w.masked_fill(~valid, float("nan"))
     return {"px": px, "py": py, "opd": w[..., :-1], "valid": valid[..., :-1] & inside, "para": para,
@@ -1072,11 +1288,9 @@ def tolerance_monte_carlo(system, tolerances=None, trials=1000, seed=0, field=No
 
     同じ *seed* なら案ごとに同じ摂動を引き、``efl`` と ``rms_spot`` の分布が CPU と一致する。*wavelengths* を
     与えると ``rms_spot_w`` (M, W) も返す(像面は設計波長で決める)。CPU が例外で数えない案は ``failed``。
-    ★CPU の ``_perturbed`` は系の ``image_R`` を捨てるので、曲がった像面の処方はここでは受けない。
+    系の ``aim`` / ケラレ係数 / ``image_R`` は摂動した案にも効く(CPU の ``_perturbed`` も 2026-11-02 に揃えた)。
     """
     system = RT._freeze_solves(_check_supported(system))
-    if system.get("image_R", INF) != INF:
-        raise ValueError("lens_gpu: tolerance_analysis ignores image_R; a curved image surface is refused here")
     if compensator not in ("auto", "back_focus", "none"):
         raise ValueError("compensator must be 'auto', 'back_focus' or 'none', got %r" % (compensator,))
     field = system["field"] if field is None else RT._finite(field, "field")
