@@ -7252,6 +7252,10 @@ def _b_photoel_unwrap(pool, rng):
 
 
 OP_ARG_BUILDERS = {
+    # --- CT のスキャン方式(2026-11-02): 体積・投影の形は幾何(8 view・8^3)と合わせる --- #
+    "ct_forward_project": lambda pool, rng: ([np.ones((8, 8, 8)), pool["ctgeometry"][0]], {}),
+    "os_sart_reconstruct": lambda pool, rng: ([pool["projstack"][0], pool["ctgeometry"][0]],
+                                              {"n_iter": 1, "n_subsets": 4}),
     "fringe_ftp_phase": _b_fringe_ftp,
     "plenoptic_system": _b_plenoptic_system,
     # --- 光弾性(photoelastic、2026-10-23): 単位つきの必須引数を SI の桁で渡す --- #

@@ -425,7 +425,7 @@ def _adjoint(b, projections, geom, views=None):
     batches = _row_batches(geom, n_t, b.sample_budget(BYTES_PER_RAY_SAMPLE))
     planar = bool(geom.get("planar", False))
     n_groups = CPU_THREADS if b.name == "cpu" else 1
-    parts = []
+    parts = [None] * n_groups     # slot g: the sum must not depend on thread finishing order
 
     def one_group(g):
         acc = b.zeros((nz * ny * nx,))
@@ -442,7 +442,7 @@ def _adjoint(b, projections, geom, views=None):
                     ok = (ix >= 0) & (ix < nx) & (iy >= 0) & (iy < ny) & (iz >= 0) & (iz < nz)
                     sel = ((iz[ok] * ny + iy[ok]) * nx + ix[ok])
                     b.add_at(acc, sel, (val * w)[ok])
-        parts.append(acc)
+        parts[g] = acc
 
     _for_each(b, range(n_groups), one_group)
     out = parts[0]

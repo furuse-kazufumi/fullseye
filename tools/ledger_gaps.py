@@ -271,6 +271,10 @@ KNOB_SKIP_SLOW = frozenset({
 KNOB_EXEMPT = {
     ("fit_circle_geometric", "radius_limit_factor"):
         "safety bound: changing it only accepts or rejects a line-like circle fit",
+    ("ct_scan_geometry", "pitch"):
+        "read only by scan='helical'; the probe runs the default circular cone orbit",
+    ("ct_scan_geometry", "tilt_deg"):
+        "read only by the laminography scans; the probe runs the default circular cone orbit",
 }
 
 

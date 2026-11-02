@@ -256,7 +256,10 @@ def test_pending_exposure_shrinks_when_fixed():
 #   12 op 本体は fs.ledger に載る)。実測 943 → 944。
 # 2026-10-31 opsfileio 台帳(メモリ内 file I/O 14 op): 台帳の内部 API 4 本で実測 944 → 948。
 #   op 自身は fs.ledger から引ける。
-_HIDDEN_FUNCTIONS_TODAY = 948
+# 2026-11-02 CT の共通の核 tomography_gpu の内部部品 7 本(forward_project / adjoint_project / voxel_backproject /
+#   filter_rows / parallel_slice_geometry / gpu_memory_peak_bytes / reset_gpu_memory_peak)で実測 948 → 955。利用者は
+#   ctscan の 11 op と tomography の device 引数から使う(核そのものは公開経路に載せない)。
+_HIDDEN_FUNCTIONS_TODAY = 955
 
 
 def _hidden_total():
