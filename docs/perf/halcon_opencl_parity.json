@@ -3,7 +3,7 @@
  "source": "docs/perf/halcon_2605_opencl_ops.json",
  "total": 84,
  "n1_fullseye": 71,
- "n2_gpu": 23,
+ "n2_gpu": 36,
  "n3_missing": 13,
  "rows": [
   {
@@ -102,8 +102,8 @@
     "affine_trans_image",
     "affine_warp"
    ],
-   "gpu_path": false,
-   "note": "Fullseye 対応あり(CPU のみ)"
+   "gpu_path": true,
+   "note": "Fullseye 対応あり(GPU 経路あり)"
   },
   {
    "halcon": "affine_trans_image_size",
@@ -112,8 +112,8 @@
    "fullseye_ops": [
     "affine_trans_image_size"
    ],
-   "gpu_path": false,
-   "note": "Fullseye 対応あり(CPU のみ)"
+   "gpu_path": true,
+   "note": "Fullseye 対応あり(GPU 経路あり)"
   },
   {
    "halcon": "asin_image",
@@ -170,8 +170,8 @@
    "fullseye_ops": [
     "convol_image"
    ],
-   "gpu_path": false,
-   "note": "Fullseye 対応あり(CPU のみ)"
+   "gpu_path": true,
+   "note": "Fullseye 対応あり(GPU 経路あり)"
   },
   {
    "halcon": "cos_image",
@@ -190,8 +190,8 @@
    "fullseye_ops": [
     "derivate_gauss"
    ],
-   "gpu_path": false,
-   "note": "Fullseye 対応あり(CPU のみ)"
+   "gpu_path": true,
+   "note": "Fullseye 対応あり(GPU 経路あり)"
   },
   {
    "halcon": "deviation_image",
@@ -335,8 +335,8 @@
    "fullseye_ops": [
     "f2_lut_trans"
    ],
-   "gpu_path": false,
-   "note": "Fullseye 対応あり(CPU のみ)"
+   "gpu_path": true,
+   "note": "Fullseye 対応あり(GPU 経路あり)"
   },
   {
    "halcon": "map_image",
@@ -389,8 +389,8 @@
    "fullseye_ops": [
     "median_rect"
    ],
-   "gpu_path": false,
-   "note": "Fullseye 対応あり(CPU のみ)"
+   "gpu_path": true,
+   "note": "Fullseye 対応あり(GPU 経路あり)"
   },
   {
    "halcon": "min_image",
@@ -473,8 +473,8 @@
    "fullseye_ops": [
     "principal_comp"
    ],
-   "gpu_path": false,
-   "note": "Fullseye 対応あり(CPU のみ)"
+   "gpu_path": true,
+   "note": "Fullseye 対応あり(GPU 経路あり)"
   },
   {
    "halcon": "projective_trans_image",
@@ -524,8 +524,8 @@
     "rotate_image",
     "rotate_img"
    ],
-   "gpu_path": false,
-   "note": "Fullseye 対応あり(CPU のみ)"
+   "gpu_path": true,
+   "note": "Fullseye 対応あり(GPU 経路あり)"
   },
   {
    "halcon": "scale_image",
@@ -597,8 +597,8 @@
    "fullseye_ops": [
     "tan_image"
    ],
-   "gpu_path": false,
-   "note": "Fullseye 対応あり(CPU のみ)"
+   "gpu_path": true,
+   "note": "Fullseye 対応あり(GPU 経路あり)"
   },
   {
    "halcon": "texture_laws",
@@ -607,8 +607,8 @@
    "fullseye_ops": [
     "texture_laws"
    ],
-   "gpu_path": false,
-   "note": "Fullseye 対応あり(CPU のみ)"
+   "gpu_path": true,
+   "note": "Fullseye 対応あり(GPU 経路あり)"
   },
   {
    "halcon": "trans_from_rgb",
@@ -638,8 +638,8 @@
     "rescale_img",
     "zoom_image_factor"
    ],
-   "gpu_path": false,
-   "note": "Fullseye 対応あり(CPU のみ)"
+   "gpu_path": true,
+   "note": "Fullseye 対応あり(GPU 経路あり)"
   },
   {
    "halcon": "zoom_image_size",
@@ -686,8 +686,8 @@
    "fullseye_ops": [
     "it_crop_part"
    ],
-   "gpu_path": false,
-   "note": "Fullseye 対応あり(CPU のみ)"
+   "gpu_path": true,
+   "note": "Fullseye 対応あり(GPU 経路あり)"
   },
   {
    "halcon": "crop_rectangle1",
@@ -696,8 +696,8 @@
    "fullseye_ops": [
     "it_crop_rectangle1"
    ],
-   "gpu_path": false,
-   "note": "Fullseye 対応あり(CPU のみ)"
+   "gpu_path": true,
+   "note": "Fullseye 対応あり(GPU 経路あり)"
   },
   {
    "halcon": "crop_rectangle2",

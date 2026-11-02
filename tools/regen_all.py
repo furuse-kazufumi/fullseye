@@ -259,7 +259,7 @@ READS = {
         "docs/EXAMPLES_3D.md", "docs/SENSOR_PLAYBOOK.md", "docs/OPERATORS.md",
         "docs/REFERENCES.md", "docs/EXAMPLES.md", "docs/CONVERSION_MATRIX.md",
         "docs/HALCON_PARITY.md",
-        "docs/perf/GPU_TIERS.md", "docs/perf/HALCON_OPENCL_PARITY.md",   # docmap が題を読む(2026-11-02)
+        "docs/perf/GPU_TIERS.md", "docs/perf/HALCON_OPENCL_PARITY.md", "docs/perf/gpu_fill3_2026-11-02.md",   # docmap が題を読む(2026-11-02)
         "docs/DESIGN_NOTES.md", "docs/DESIGN_NOTES.*.md",
         "docs/AI_RAG_GUIDE.md", "docs/AI_RAG_GUIDE.*.md",
         "docs/view2026/index.md", "docs/view2026/*/index.md"],
