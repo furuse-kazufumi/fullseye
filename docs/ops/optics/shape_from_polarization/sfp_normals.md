@@ -4,6 +4,7 @@ dim: optics
 category: shape_from_polarization
 in: polsweep
 out: table
+gpu: なし
 examples: [poc_shape_from_polarization]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `polsweep` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.sfp_normals(sweep, refractive_index=1.5, model='specular', angles_deg=(0.0, 45.0, 90.0, 135.0), violation_tol=0.05, out_of_range='invalid')` (実装を直接呼ぶなら `import sfpolar; sfpolar.sfp_normals(sweep, refractive_index=1.5, model='specular', angles_deg=(0.0, 45.0, 90.0, 135.0), violation_tol=0.05, out_of_range='invalid')`、台帳から引くなら `opsoptics.get("sfp_normals")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

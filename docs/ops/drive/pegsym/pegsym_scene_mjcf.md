@@ -4,6 +4,7 @@ dim: drive
 category: pegsym
 in: matrix × matrix
 out: any
+gpu: なし
 examples: [poc_peg_symmetry_search]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `matrix × matrix` → `any`
 - **呼び出し**: `import fullseye as fs; fs.ledger.pegsym_scene_mjcf(peg_vertices, hole_vertices, chamfer: 'float' = 0.0005, hole_depth: 'float' = 0.02, peg_length: 'float' = 0.04, mu: 'float' = 0.3, k_trans: 'float' = 600.0, k_rot: 'float' = 1.5, k_yaw: 'float' = 0.01, timestep: 'float' = 0.0005, image_size=(480, 480), fovy_deg: 'float' = 40.0, station=(0.1, 0.0), offsamples: 'int' = 4) -> 'str'` (実装を直接呼ぶなら `import pegsym; pegsym.pegsym_scene_mjcf(peg_vertices, hole_vertices, chamfer: 'float' = 0.0005, hole_depth: 'float' = 0.02, peg_length: 'float' = 0.04, mu: 'float' = 0.3, k_trans: 'float' = 600.0, k_rot: 'float' = 1.5, k_yaw: 'float' = 0.01, timestep: 'float' = 0.0005, image_size=(480, 480), fovy_deg: 'float' = 40.0, station=(0.1, 0.0), offsamples: 'int' = 4) -> 'str'`、台帳から引くなら `opsdrive.get("pegsym_scene_mjcf")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

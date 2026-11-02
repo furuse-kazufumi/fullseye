@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">photon_counting_channels — TOMOGRAPHY <code style="color:#22d3bf">spectral_xray</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.photon_counting_channels(spectrum, thresholds_kev=(20.0, 50.0), detector: &#x27;str&#x27; = &#x27;CDTE&#x27;, detector_mm: &#x27;float&#x27; = 2.0, energy_resolution_fwhm_kev: &#x27;float&#x27; = 0.0, charge_sharing: &#x27;float&#x27; = 0.0, upper_kev=None) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import dualxray; dualxray.photon_counting_channels(spectrum, thresholds_kev=(20.0, 50.0), detector: &#x27;str&#x27; = &#x27;CDTE&#x27;, detector_mm: &#x27;float&#x27; = 2.0, energy_resolution_fwhm_kev: &#x27;float&#x27; = 0.0, charge_sharing: &#x27;float&#x27; = 0.0, upper_kev=None) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opstomography.get(&quot;photon_counting_channels&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Energiefenster eines photonenzählenden Detektors → Kanäle (ein Zählereignis pro Photon).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>

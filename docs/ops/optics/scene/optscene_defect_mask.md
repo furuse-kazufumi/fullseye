@@ -4,6 +4,7 @@ dim: optics
 category: scene
 in: table × table
 out: image2d
+gpu: なし
 examples: [studio_raytrace_scene, virtual_machine_vision]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,6 +16,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **データ種**: `table × table` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.optscene_defect_mask(scene, camera, index: 'int' = None) -> 'np.ndarray'` (実装を直接呼ぶなら `import optscene; optscene.optscene_defect_mask(scene, camera, index: 'int' = None) -> 'np.ndarray'`、台帳から引くなら `opsoptics.get("optscene_defect_mask")`)
 - **台帳経由の戻り値**: `fullseye.ledger.optscene_defect_mask(...)` は**宣言 out 型 `image2d` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.optscene_defect_mask.raw(...)`、または `optscene.optscene_defect_mask` を直接呼ぶ。
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -4,6 +4,7 @@ dim: optics
 category: scene
 in: table × table
 out: table
+gpu: なし
 examples: [poc_pocket_interreflection, studio_raytrace_scene]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table × table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.scene_difference(solid: 'dict', cavity: 'dict') -> 'dict'` (実装を直接呼ぶなら `import optscene; optscene.scene_difference(solid: 'dict', cavity: 'dict') -> 'dict'`、台帳から引くなら `opsoptics.get("scene_difference")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

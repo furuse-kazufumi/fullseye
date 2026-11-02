@@ -4,6 +4,7 @@ dim: drive
 category: tactorque
 in: matrix × matrix
 out: table
+gpu: なし
 examples: [poc_knife_tactile_toughness, poc_tactile_dipole_torque]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `matrix × matrix` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.rigid_rotation_fit(pts, u, window=None) -> 'dict'` (実装を直接呼ぶなら `import tactorque; tactorque.rigid_rotation_fit(pts, u, window=None) -> 'dict'`、台帳から引くなら `opsdrive.get("rigid_rotation_fit")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

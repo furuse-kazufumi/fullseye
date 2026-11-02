@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">star_detect — ASTROSTACK <code style="color:#22d3bf">photometry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">keypoints</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.star_detect(image, threshold_sigma=5.0, min_separation=3, max_stars=200, edge_margin=None, centroid_box=None, method=&#x27;mad&#x27;)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import astrostack; astrostack.star_detect(image, threshold_sigma=5.0, min_separation=3, max_stars=200, edge_margin=None, centroid_box=None, method=&#x27;mad&#x27;)</code>、台帳から引くなら <code style="color:#22d3bf">opsastrostack.get(&quot;star_detect&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>星を検出して <code style="color:#22d3bf">(row, col)</code> の重心列を返す。</p>
 <p>背景と雑音を <code style="color:#22d3bf">noise_sigma</code> と同じ頑健推定で出し、<code style="color:#22d3bf">background + threshold_sigma * sigma</code> を超える<b>局所最大</b>を拾う(最大値フィルタとの一致で判定するので、<code style="color:#22d3bf">min_separation</code> 画素以内に 2 つは出ない)。中心はしきい値の画素位置ではなく、<code style="color:#22d3bf">centroid_box</code> (既定 <code style="color:#22d3bf">2*min_separation+1</code>)の窓で<b>背景を引いた強度で重み付けした重心</b> —— これが副画素の位置精度を出す唯一の理由で、連結成分の重心(<code style="color:#22d3bf">detect.segment_objects</code>)は硬いしきい値の分だけ明るさに依存して偏る。</p>

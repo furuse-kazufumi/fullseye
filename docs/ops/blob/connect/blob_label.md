@@ -4,6 +4,7 @@ dim: blob
 category: connect
 in: mask
 out: labels2d
+gpu: なし
 examples: [blob_split_tour, poc_am_thermal_to_ct, poc_bone_trabecular_thickness, poc_bump_coplanarity, poc_dense_bubble_count, poc_em_split_merge_score, poc_fresco_craquelure, poc_gear_tooth_metrology, poc_gravitational_lens_invariants, poc_leaf_disease_area, poc_machine_condition_fusion, poc_metal_grain_size, poc_nuclei_ploidy, poc_particle_sizing, poc_particle_tracking, poc_peg_insertion_tactile, poc_pipe_wall_loss, poc_powder_grinding_ae, poc_print_warpage_risk, poc_pv_thermal_survey, poc_real_coin_metrology, poc_rotation_invariance_audit, poc_sea_ice_concentration, poc_segmentation_gauntlet, poc_sem_wafer_defect_edge_bias, poc_solar_el_inspection, poc_solder_fillet_aoi, poc_timelapse_growth, poc_traffic_counting, poc_vessel_network, poc_weld_radiograph_porosity, poc_wound_area_tracking]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `mask` → `labels2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.blob_label(region: 'Any', connectivity: 'int' = 8) -> 'np.ndarray'` (実装を直接呼ぶなら `import blob2d; blob2d.blob_label(region: 'Any', connectivity: 'int' = 8) -> 'np.ndarray'`、台帳から引くなら `opsblob.get("blob_label")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

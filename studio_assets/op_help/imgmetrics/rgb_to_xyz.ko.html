@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">rgb_to_xyz — IMGMETRICS <code style="color:#22d3bf">colorspace</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">rgbimage</code> → <code style="color:#22d3bf">rgb</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rgb_to_xyz(rgb)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import imgmetrics; imgmetrics.rgb_to_xyz(rgb)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsimgmetrics.get(&quot;rgb_to_xyz&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>sRGB(<code style="color:#22d3bf">(..., 3)</code>)→ CIE XYZ. 전달 함수를 먼저 벗긴 뒤 행렬을 곱합니다.</p>
 <p>절차: <code style="color:#22d3bf">srgb_to_linear</code>로 정수 dtype을 <code style="color:#22d3bf">[0, 1]</code>로 정규화하면서 전달 함수를제거하고(IEC 61966-2-1), 선형 RGB에 sRGB(D65)→XYZ의 3x3 행렬을 곱한다. 흰색 <code style="color:#22d3bf">(1, 1, 1)</code>은 <code style="color:#22d3bf">(0.9505, 1.0, 1.0890)</code>에 사상된다(Y를 1로 정규화한 척도).</p>

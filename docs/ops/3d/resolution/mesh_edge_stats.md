@@ -4,6 +4,7 @@ dim: 3d
 category: resolution
 in: mesh
 out: table
+gpu: なし
 examples: [mesh_resolution_demo]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `mesh` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.mesh_edge_stats(V, F)` (実装を直接呼ぶなら `import meshres; meshres.mesh_edge_stats(V, F)`、台帳から引くなら `ops3d.get("mesh_edge_stats")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

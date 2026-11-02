@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">time_stretch_from_gravity — DRIVE <code style="color:#22d3bf">ball</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">table</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.time_stretch_from_gravity(g_fit: &#x27;float&#x27;, g_ref: &#x27;float&#x27; = 9.81) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import ballistics; ballistics.time_stretch_from_gravity(g_fit: &#x27;float&#x27;, g_ref: &#x27;float&#x27; = 9.81) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;time_stretch_from_gravity&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由拟合得到的重力加速度闭式反算影像的时间拉伸倍率。把时间轴拉伸 k 倍(慢动作或改写帧率)的影像里,轨迹形状不变而 g 看起来是 g/k²,于是 k = √(g_ref / g_fit)。返回 <code style="color:#22d3bf">{&quot;k&quot;, &quot;g_fit&quot;, &quot;g_ref&quot;, &quot;log_k&quot;}</code>(<code style="color:#22d3bf">log_k</code> = ln k 在未篡改时为 0,符号表示变快/变慢;交给 <code style="color:#22d3bf">imgforensics.evidence_quantile</code> 时用 |log_k| 作为&quot;越大越强&quot;的证据)。g_fit ≤ 0、非有限值、g_ref ≤ 0 会引发 ValueError(重力向上或不存在的轨迹无法定义倍率)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

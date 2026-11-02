@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">itof_flying_pixel_mask — OPTICS <code style="color:#22d3bf">itof</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">depth</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.itof_flying_pixel_mask(depth, threshold_m=0.04, rel_threshold=0.0, radius=1, plateau_ratio=0.5, depth_sigma=None, n_sigma=3.0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import itof; itof.itof_flying_pixel_mask(depth, threshold_m=0.04, rel_threshold=0.0, radius=1, plateau_ratio=0.5, depth_sigma=None, n_sigma=3.0)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;itof_flying_pixel_mask&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>depth map → flying pixel (foreground और background के <b>बीच तैरते</b> pixel) का mask <code style="color:#22d3bf">(H, W)</code> (1.0 = तैरता हुआ)।</p>
 <p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>

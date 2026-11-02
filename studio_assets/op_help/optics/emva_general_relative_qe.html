@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">emva_general_relative_qe — OPTICS <code style="color:#22d3bf">sensorgeneral</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.emva_general_relative_qe(mu_p_ref, mu_y_ref, mu_y_dark, mu_y_scan, mu_p_scan, ref_index, n_intervals=8)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import sensorgeneral; sensorgeneral.emva_general_relative_qe(mu_p_ref, mu_y_ref, mu_y_dark, mu_y_scan, mu_p_scan, ref_index, n_intervals=8)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;emva_general_relative_qe&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>基準波長に対する相対量子効率 η(λ)/η(λ_ref)(General 9.4 節、式 73・74)。</p>
 <p>基準波長で測った特性曲線の<b>逆</b>の関係 μ_p = R⁻¹(μ_y − μ_y.dark)を 3 次 B-スプラインで当て(式 73)、波長を振った測定の灰色値 μ_y(λ) を基準波長の光子数に換算する(線形化)。η(λ)/η(λ_ref) = [R⁻¹(μ_y(λ) − μ_y.dark)/μ_p(λ)] / [R⁻¹(μ_y(λ_ref) − μ_y.dark)/μ_p(λ_ref)]。★式 (74) は μ_p(λ)/μ_p(λ_ref) を掛けると印刷されている —— 線形の極限で Linear の式 (82) に戻らないので割る形を使う(モジュールの説明を参照)。印刷どおりの値は <code style="color:#22d3bf">eq74_as_printed</code>。</p>

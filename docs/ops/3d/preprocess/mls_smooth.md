@@ -4,6 +4,7 @@ dim: 3d
 category: preprocess
 in: points
 out: points
+gpu: なし
 examples: [pcl_geodesic]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `points` → `points`
 - **呼び出し**: `import fullseye as fs; fs.ledger.mls_smooth(points, radius: 'float', order: 'int' = 2, chunk: 'int | None' = None, method: 'str' = 'exact')` (実装を直接呼ぶなら `import pcl_filter; pcl_filter.mls_smooth(points, radius: 'float', order: 'int' = 2, chunk: 'int | None' = None, method: 'str' = 'exact')`、台帳から引くなら `ops3d.get("mls_smooth")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

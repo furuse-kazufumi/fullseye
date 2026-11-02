@@ -4,6 +4,7 @@ dim: 3d
 category: superquadric
 in: points
 out: primitive
+gpu: なし
 examples: [superquadric_fit]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `points` → `primitive`
 - **呼び出し**: `import fullseye as fs; fs.ledger.fit_superquadric(points) -> 'dict'` (実装を直接呼ぶなら `import superquadric; superquadric.fit_superquadric(points) -> 'dict'`、台帳から引くなら `ops3d.get("fit_superquadric")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -4,6 +4,7 @@ dim: annotate
 category: overlay
 in: image2d × mask
 out: image2d
+gpu: なし
 examples: [annotate_gallery, poc_kendama, poc_pv_thermal_survey]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d × mask` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.overlay_mask(img, mask, color='wrong', alpha=0.45, outline=0, outline_color=None, scheme='okabe_ito', style=None)` (実装を直接呼ぶなら `import annotate; annotate.overlay_mask(img, mask, color='wrong', alpha=0.45, outline=0, outline_color=None, scheme='okabe_ito', style=None)`、台帳から引くなら `opsannotate.get("overlay_mask")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

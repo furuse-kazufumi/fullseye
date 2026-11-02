@@ -4,6 +4,7 @@ dim: optics
 category: pixelshift
 in: rgbimage × matrix
 out: video
+gpu: なし
 examples: [poc_pixel_shift, poc_simcal_pixel_shift]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `rgbimage × matrix` → `video`
 - **呼び出し**: `import fullseye as fs; fs.ledger.pixel_shift_capture(scene, factor, shifts, pattern='RGGB', fill_factor=1.0, per_frame=False, margin=None)` (実装を直接呼ぶなら `import pixelshift; pixelshift.pixel_shift_capture(scene, factor, shifts, pattern='RGGB', fill_factor=1.0, per_frame=False, margin=None)`、台帳から引くなら `opsoptics.get("pixel_shift_capture")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

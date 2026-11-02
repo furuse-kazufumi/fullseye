@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">plenoptic_capture — OPTICS <code style="color:#22d3bf">plenoptic</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.plenoptic_capture(system, scene, *, pupil_samples=1, wavelengths=None, exposure_s=0.0001, boundary_tolerance_mm=None)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import plenoptic; plenoptic.plenoptic_capture(system, scene, *, pupil_samples=1, wavelengths=None, exposure_s=0.0001, boundary_tolerance_mm=None)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;plenoptic_capture&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>プレノプティック生フレームと白色校正画像を追跡して生成する。</p>
 <p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>

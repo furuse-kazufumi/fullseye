@@ -4,6 +4,7 @@ dim: drive
 category: puck
 in: table × signal
 out: image2d
+gpu: なし
 examples: [poc_air_hockey_intercept]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table × signal` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.puck_render_frame(cam: 'dict', p, *, v=None, exposure: 'float' = 0.0, n_sub: 'int' = 16, noise: 'float' = 0.0, rng=None, puck_value: 'float' = 0.12, table_value: 'float' = 0.92, wall_value: 'float' = 0.55) -> 'np.ndarray'` (実装を直接呼ぶなら `import puck; puck.puck_render_frame(cam: 'dict', p, *, v=None, exposure: 'float' = 0.0, n_sub: 'int' = 16, noise: 'float' = 0.0, rng=None, puck_value: 'float' = 0.12, table_value: 'float' = 0.92, wall_value: 'float' = 0.55) -> 'np.ndarray'`、台帳から引くなら `opsdrive.get("puck_render_frame")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

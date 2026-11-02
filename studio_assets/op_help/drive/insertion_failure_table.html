@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">insertion_failure_table — DRIVE <code style="color:#22d3bf">pegfail</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.insertion_failure_table() -&gt; &#x27;list&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import pegfail; pegfail.insertion_failure_table() -&gt; &#x27;list&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;insertion_failure_table&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>失敗分類表(データ): 各行 = {<code style="color:#22d3bf">cls</code>, <code style="color:#22d3bf">when</code>(欄 → 許す値の集合、<code style="color:#22d3bf">&quot;*&quot;</code> = 何でも), <code style="color:#22d3bf">recovery</code>, <code style="color:#22d3bf">basis</code>}。</p>
 <p>行の根拠(<code style="color:#22d3bf">basis</code>)は Whitney 1982(OCW スライドの頁)か接触形成の幾何。順番に意味は無い —— 署名に当たる行は <b>高々 1 行</b> (<code style="color:#22d3bf">insertion_failure_validate</code> が全ペアで確かめる)。回復プリミティブの語彙は <code style="color:#22d3bf">insertion_recovery_primitive</code>。</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">blob_overlay — BLOB <code style="color:#22d3bf">extract</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d × labels2d</code> → <code style="color:#22d3bf">rgb</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.blob_overlay(image: &#x27;Any&#x27;, labels: &#x27;Any&#x27;, alpha: &#x27;float&#x27; = 0.5, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import blob2d; blob2d.blob_overlay(image: &#x27;Any&#x27;, labels: &#x27;Any&#x27;, alpha: &#x27;float&#x27; = 0.5, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsblob.get(&quot;blob_overlay&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>在原图像上按颜色区分叠加物体，返回 <code style="color:#22d3bf">(H, W, 3)</code> 的 float RGB。</p>
 <p>本族的<b>出口</b>。之所以设置它,是为了不让这个类型变成能生成、能测量却看不到的类型。</p>

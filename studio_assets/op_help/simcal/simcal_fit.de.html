@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">simcal_fit — SIMCAL <code style="color:#22d3bf">fit</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">simmodel</code> → <code style="color:#22d3bf">calresult</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.simcal_fit(model=None, method=&#x27;lm&#x27;, n_starts=16, fix=None, threshold=10.0, allow_undetermined=False, seed=0) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import simcal; simcal.simcal_fit(model=None, method=&#x27;lm&#x27;, n_starts=16, fix=None, threshold=10.0, allow_undetermined=False, seed=0) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opssimcal.get(&quot;simcal_fit&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Passt die freien Regler eines beobachteten simmodel an seine Bilder an (gewichtete kleinste Quadrate) -&gt; <code style="color:#22d3bf">calresult</code>.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>

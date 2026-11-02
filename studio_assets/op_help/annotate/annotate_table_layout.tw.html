@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">annotate_table_layout — ANNOTATE <code style="color:#22d3bf">paper</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">text</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_table_layout(text, xy, anchor=&#x27;lt&#x27;, font_size=13, font_path=None, pad=6, col_gap=None, row_gap=0, align=&#x27;auto&#x27;, header=False, bold=False, italic=False, line_spacing=1.15)</code>(要直接呼叫實作,<code style="color:#22d3bf">import annotate; annotate.annotate_table_layout(text, xy, anchor=&#x27;lt&#x27;, font_size=13, font_path=None, pad=6, col_gap=None, row_gap=0, align=&#x27;auto&#x27;, header=False, bold=False, italic=False, line_spacing=1.15)</code>;從台帳取用則 <code style="color:#22d3bf">opsannotate.get(&quot;annotate_table_layout&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>回傳 table(dict)：將以 Tab 分隔的字串作為<b>表格</b>放置時的欄與列位置。</p>
 <p>列按 <code style="color:#22d3bf">\n</code>、欄按 <code style="color:#22d3bf">\t</code> 切分。欄寬由<b>用指定大小的實際字型逐 1 個儲存格量得的寬度的最大值</b>決定 —— 按字元數計算的話,日文與英數字之間必然出現偏差,所以除了實測沒有其他正確做法。</p>

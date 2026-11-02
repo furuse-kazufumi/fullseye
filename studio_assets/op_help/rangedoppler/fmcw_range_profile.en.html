@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">fmcw_range_profile — RANGEDOPPLER <code style="color:#22d3bf">process</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">beatcube</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fmcw_range_profile(cube, chirp=None, antenna=None, normalize=False)</code> (to call the implementation directly, <code style="color:#22d3bf">import rangedoppler; rangedoppler.fmcw_range_profile(cube, chirp=None, antenna=None, normalize=False)</code>; from the registry, <code style="color:#22d3bf">opsrangedoppler.get(&quot;fmcw_range_profile&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Range-only profile: the fast-time FFT magnitude, averaged over the rest.</p>
 <p>The 1-D marginal of <code style="color:#22d3bf">range_doppler_map</code> — what a static scene needs, and what a single chirp can give. Magnitudes are averaged (never the complex values) over chirps and antennas, so the average is independent of the target&#x27;s velocity and angle: <code style="color:#22d3bf">|FFT|</code> does not rotate with the Doppler phase, only the phase does.</p>

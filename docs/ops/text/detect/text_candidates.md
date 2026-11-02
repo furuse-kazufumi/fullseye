@@ -4,6 +4,7 @@ dim: text
 category: detect
 in: matrix
 out: table
+gpu: なし
 examples: [poc_text_region_truth]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `matrix` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.text_candidates(swt, min_area: 'int' = 8, max_var_ratio: 'float' = 0.5, aspect_range=(0.1, 10.0), max_height: 'int' = 300)` (実装を直接呼ぶなら `import textregion; textregion.text_candidates(swt, min_area: 'int' = 8, max_var_ratio: 'float' = 0.5, aspect_range=(0.1, 10.0), max_height: 'int' = 300)`、台帳から引くなら `opstext.get("text_candidates")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

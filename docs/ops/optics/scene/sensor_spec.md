@@ -4,6 +4,7 @@ dim: optics
 category: scene
 in: 
 out: table
+gpu: なし
 examples: [poc_nir_silicon_transmission, poc_optics_drawings, vision_layout_from_catalog]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.sensor_spec(pixel_um: 'float' = None, resolution=None, quantum_efficiency: 'float' = None, full_well_e: 'float' = None, read_noise_e: 'float' = None, dark_e_per_s: 'float' = 5.0, bit_depth: 'int' = 8, gain_e_per_unit: 'float' = 50000.0, shutter: 'str' = None, model: 'str' = None, qe_curve=None, qe_reference_nm: 'float' = None, si_collection_um: 'float' = 3.0) -> 'dict'` (実装を直接呼ぶなら `import optscene; optscene.sensor_spec(pixel_um: 'float' = None, resolution=None, quantum_efficiency: 'float' = None, full_well_e: 'float' = None, read_noise_e: 'float' = None, dark_e_per_s: 'float' = 5.0, bit_depth: 'int' = 8, gain_e_per_unit: 'float' = 50000.0, shutter: 'str' = None, model: 'str' = None, qe_curve=None, qe_reference_nm: 'float' = None, si_collection_um: 'float' = 3.0) -> 'dict'`、台帳から引くなら `opsoptics.get("sensor_spec")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

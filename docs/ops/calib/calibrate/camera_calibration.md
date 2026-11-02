@@ -4,6 +4,7 @@ dim: calib
 category: calibrate
 in: keypoints
 out: table
+gpu: なし
 examples: [camera_intrinsics_calibration, lens_calibration_loop_demo, poc_camera_calibration]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `keypoints` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.camera_calibration(object_points, image_points_list)` (実装を直接呼ぶなら `import calib; calib.camera_calibration(object_points, image_points_list)`、台帳から引くなら `opscalib.get("camera_calibration")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

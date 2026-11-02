@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">koschmieder — DRIVE <code style="color:#22d3bf">env</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">any × any × scalar × any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.koschmieder(L0, L_h, beta: &#x27;float&#x27;, d)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import driveenv; driveenv.koschmieder(L0, L_h, beta: &#x27;float&#x27;, d)</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;koschmieder&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Koschmieder の法則: 距離 d の物体の見かけの輝度 L = L₀ e^{−βd} + L_h (1 − e^{−βd})(配列可)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

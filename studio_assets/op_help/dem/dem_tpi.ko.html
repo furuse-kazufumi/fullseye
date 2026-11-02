@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">dem_tpi — DEM <code style="color:#22d3bf">surface</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">depth</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_tpi(dem, cell_size=1.0)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import demops; demops.dem_tpi(dem, cell_size=1.0)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdem.get(&quot;dem_tpi&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>지형 위치 지수 TPI —— 자기 셀과 8근방 평균의 차 [m]. 양수는 능선, 음수는 골짜기.</p>
 <p>식: <code style="color:#22d3bf">tpi = z - mean(8 근방의 z)</code>(Weiss의 TPI를 3x3의 최소 근방으로 취한 것). 가장자리는 끝 값을 복제해 채운다. 근방이 1셀 고정이므로, <b>스케일은 <code style="color:#22d3bf">cell_size</code> 1개분으로 고정</b>이며, 더 넓은 능선/계곡을 보고 싶을 때는 먼저 <code style="color:#22d3bf">dem</code>을 거칠게 한다(이 op에 반경 인수는 없다).</p>

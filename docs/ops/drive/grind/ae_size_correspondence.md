@@ -4,6 +4,7 @@ dim: drive
 category: grind
 in: signal × signal
 out: table
+gpu: なし
 examples: [poc_powder_grinding_ae]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal × signal` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.ae_size_correspondence(power, d50, group=None) -> 'dict'` (実装を直接呼ぶなら `import grind; grind.ae_size_correspondence(power, d50, group=None) -> 'dict'`、台帳から引くなら `opsdrive.get("ae_size_correspondence")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

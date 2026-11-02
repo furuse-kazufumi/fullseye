@@ -4,6 +4,7 @@ dim: optics
 category: itof
 in: table
 out: table
+gpu: なし
 examples: [poc_itof_multifreq]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.itof_unwrap_multifreq(phase, frequencies_hz=None, weights=None, max_range_m=None, method='ml')` (実装を直接呼ぶなら `import itof; itof.itof_unwrap_multifreq(phase, frequencies_hz=None, weights=None, max_range_m=None, method='ml')`、台帳から引くなら `opsoptics.get("itof_unwrap_multifreq")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

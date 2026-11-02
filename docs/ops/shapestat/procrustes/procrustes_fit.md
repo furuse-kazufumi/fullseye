@@ -4,6 +4,7 @@ dim: shapestat
 category: procrustes
 in: points × points
 out: matrix
+gpu: なし
 examples: [poc_change_detection_misreg, poc_die_tilt_tsv_overlay, shapestat_landmark_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `points × points` → `matrix`
 - **呼び出し**: `import fullseye as fs; fs.ledger.procrustes_fit(source, target, scaling: 'bool' = True, reflection: 'bool' = False)` (実装を直接呼ぶなら `import shapestats; shapestats.procrustes_fit(source, target, scaling: 'bool' = True, reflection: 'bool' = False)`、台帳から引くなら `opsshapestat.get("procrustes_fit")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

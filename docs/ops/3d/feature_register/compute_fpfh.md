@@ -4,6 +4,7 @@ dim: 3d
 category: feature_register
 in: points × normals
 out: descriptor
+gpu: なし
 examples: [fpfh_correspondence]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `points × normals` → `descriptor`
 - **呼び出し**: `import fullseye as fs; fs.ledger.compute_fpfh(points, normals, k=60, n_bins=11)` (実装を直接呼ぶなら `import feat_fpfh; feat_fpfh.compute_fpfh(points, normals, k=60, n_bins=11)`、台帳から引くなら `ops3d.get("compute_fpfh")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">piv_quiver — PIV <code style="color:#22d3bf">visualise</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">flow2d</code> → <code style="color:#22d3bf">rgb</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_quiver(flow, spacing=None, scale=None, upsample=8, background=None, color=(0.08, 0.08, 0.12), width=1.5)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import pivops; pivops.piv_quiver(flow, spacing=None, scale=None, upsample=8, background=None, color=(0.08, 0.08, 0.12), width=1.5)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opspiv.get(&quot;piv_quiver&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>화살표 그림(MATLAB의 <code style="color:#22d3bf">quiver</code>). 반환은 <code style="color:#22d3bf">(h*upsample, w*upsample, 3)</code>.</p>
 <p><code style="color:#22d3bf">spacing</code> 격자마다 1개, 시점을 격자점에 두고 끝을 <code style="color:#22d3bf">시점 + scale * v</code> 로 긋는다. <code style="color:#22d3bf">scale</code>을 생략하면 <b>가장 긴 화살표가 간격의 0.9배</b>가 된다(MATLAB의자동 배율과 같은 사고방식으로, 이웃 화살표와 겹치지 않는다). <b>배율은 그림마다 바뀌므로</b>, 나란히 비교하는 그림에서는 <code style="color:#22d3bf">scale</code>을 고정한다. 길이가 1 화소에 못 미치는화살표는 그리지 않는다(방향이 없는 점은 표시로 읽힌다).</p>

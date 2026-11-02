@@ -4,6 +4,7 @@ dim: optics
 category: matprop
 in: 
 out: pairs
+gpu: なし
 examples: [poc_fiber_light_guide, poc_material_optical_library, poc_nir_silicon_transmission]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `pairs`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.material_transmittance(material='SI', thickness_mm: 'float' = 0.7, wl_min_nm: 'float' = 900.0, wl_max_nm: 'float' = 1400.0, n_points: 'int' = 101, include_fresnel: 'bool' = True, extra_absorption=None, doping_cm3=None, carrier: 'str' = 'n') -> 'np.ndarray'` (実装を直接呼ぶなら `import materials; materials.material_transmittance(material='SI', thickness_mm: 'float' = 0.7, wl_min_nm: 'float' = 900.0, wl_max_nm: 'float' = 1400.0, n_points: 'int' = 101, include_fresnel: 'bool' = True, extra_absorption=None, doping_cm3=None, carrier: 'str' = 'n') -> 'np.ndarray'`、台帳から引くなら `opsoptics.get("material_transmittance")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

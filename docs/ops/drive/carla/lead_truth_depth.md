@@ -4,6 +4,7 @@ dim: drive
 category: carla
 in: table
 out: scalar
+gpu: なし
 examples: [gallery_drive_carla_bridge, poc_carla_bridge]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `scalar`
 - **呼び出し**: `import fullseye as fs; fs.ledger.lead_truth_depth(scene) -> 'float'` (実装を直接呼ぶなら `import carlabridge; carlabridge.lead_truth_depth(scene) -> 'float'`、台帳から引くなら `opsdrive.get("lead_truth_depth")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tip_force_ratios — DRIVE <code style="color:#22d3bf">pegfail</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">table × signal × signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tip_force_ratios(kp, F, M_tip, e_x) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import pegfail; pegfail.tip_force_ratios(kp, F, M_tip, e_x) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;tip_force_ratios&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>선단 하중 (F⃗, M⃗)을 Whitney 비로 변환합니다: x = F⃗·e_x / F_z, y = M⃗·(e_x × ẑ) / (r F_z), F_z = −F⃗·ẑ(압입 방향이 양수). F_z ≤ 1e-6 N이면 비는 None입니다(나눌 수 없음). <code style="color:#22d3bf">e_x</code>는 수평 단위 벡터입니다(<code style="color:#22d3bf">jamming_force_check</code>의 규약). <b>Raises</b> <code style="color:#22d3bf">ValueError</code>: e_x에 수평 성분이 없음.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

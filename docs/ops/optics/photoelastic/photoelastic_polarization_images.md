@@ -4,6 +4,7 @@ dim: optics
 category: photoelastic
 in: image2d
 out: polsweep
+gpu: なし
 examples: [photoelastic_roundtrip]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d` → `polsweep`
 - **呼び出し**: `import fullseye as fs; fs.ledger.photoelastic_polarization_images(delta_rad, axis_deg=0.0, analyzers='camera4', intensity=1.0)` (実装を直接呼ぶなら `import photoelastic; photoelastic.photoelastic_polarization_images(delta_rad, axis_deg=0.0, analyzers='camera4', intensity=1.0)`、台帳から引くなら `opsoptics.get("photoelastic_polarization_images")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

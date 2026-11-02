@@ -4,6 +4,7 @@ dim: optics
 category: scene
 in: table × table
 out: rgbimage
+gpu: なし
 examples: [studio_raytrace_scene]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table × table` → `rgbimage`
 - **呼び出し**: `import fullseye as fs; fs.ledger.render_studio(scene, camera, depth: 'int' = 3, samples: 'int' = 16, environment=None, supersample: 'int' = 1) -> 'np.ndarray'` (実装を直接呼ぶなら `import optscene; optscene.render_studio(scene, camera, depth: 'int' = 3, samples: 'int' = 16, environment=None, supersample: 'int' = 1) -> 'np.ndarray'`、台帳から引くなら `opsoptics.get("render_studio")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">social_force_step — DRIVE <code style="color:#22d3bf">traffic</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points × points × points</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.social_force_step(pos, vel, goals, *, dt: &#x27;float&#x27;, v0, tau: &#x27;float&#x27;, A: &#x27;float&#x27;, B: &#x27;float&#x27;, radius, walls=None)</code> (to call the implementation directly, <code style="color:#22d3bf">import drivetraffic; drivetraffic.social_force_step(pos, vel, goals, *, dt: &#x27;float&#x27;, v0, tau: &#x27;float&#x27;, A: &#x27;float&#x27;, B: &#x27;float&#x27;, radius, walls=None)</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;social_force_step&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>1 step of the social force model (per unit mass; in the form of Helbing &amp; Molnár 1995 / Helbing, Farkas, Vicsek 2000).</p>
 <p>dv_i/dt = (v0_i e_i − v_i)/τ + Σ_j A exp((r_ij − d_ij)/B) n_ij + Σ_W A exp((r_i − d_iW)/B) n_iW</p>

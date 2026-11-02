@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">principal_moments — 3D <code style="color:#22d3bf">moment_invariant</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">descriptor</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.principal_moments(points) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import moments3d; moments3d.principal_moments(points) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;principal_moments&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>관성 텐서의 고유값(주관성 모멘트, 내림차순, 회전 불변).</p>
 <p>관성 텐서는 대칭이므로 고윳값은 실수이다. 점군을 회전 R 로 돌리면 I → R I Rᵀ 로상사 변환되고, 고윳값은 불변(엄밀)이다. 반환값은 내림차순으로 정렬하므로 좌표계나회전에 의존하지 않고 일치한다.</p>

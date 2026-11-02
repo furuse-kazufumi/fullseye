@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">lockin_walsh_codes — OPTICS <code style="color:#22d3bf">lockin</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">matrix</code> (an op determined by its arguments alone — it takes no image or data input)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lockin_walsh_codes(n_frames, n_codes) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import lockin; lockin.lockin_walsh_codes(n_frames, n_codes) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;lockin_walsh_codes&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Orthogonal zero-mean on/off codes for coded intermittent lighting -&gt; (n_codes, n_frames) matrix of +-1.</p>
 <p>Rows 1..n_codes of the Sylvester-Hadamard matrix (the constant row 0 is left out): every row has mean 0, any two rows have zero inner product, so lights switched by different rows can be told apart (and from a steady background) by correlation (<code style="color:#22d3bf">lockin_separate</code>). A light that is ON where the code is +1 and OFF where it is -1 has the on/off pattern <code style="color:#22d3bf">(1 + code) / 2</code>. <code style="color:#22d3bf">n_frames</code> must be a power of two.</p>

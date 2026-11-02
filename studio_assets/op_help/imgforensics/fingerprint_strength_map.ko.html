@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">fingerprint_strength_map — IMGFORENSICS <code style="color:#22d3bf">sensor</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">fingerprint</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fingerprint_strength_map(fingerprint, block: &#x27;int&#x27; = 16) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import imgforensics; imgforensics.fingerprint_strength_map(fingerprint, block: &#x27;int&#x27; = 16) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsimgforensics.get(&quot;fingerprint_strength_map&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>지문의 <b>블록별 실효 강도</b>(표준편차)를 늘어놓은 지도. <code style="color:#22d3bf">image2d</code>.</p>
 <p>PRNU는 포화된 화소와 새까만 화소에서는 나오지 않는다(곱셈적 결함이므로 신호가 필요하다). 이 지도는 &quot;<b>지문이 어디서 아무것도 말할 수 없는가</b>&quot;를 보기 위한 것이며, 값이 낮은 영역의대조 결과는 약하다. <code style="color:#22d3bf">block</code> 정사각의 비중첩 블록마다의 표준 편차를 원래 <code style="color:#22d3bf">(H, W)</code>로블록 상수로 되돌려 반환한다(가장자리는 가장자리 블록의 값으로 채운다).</p>

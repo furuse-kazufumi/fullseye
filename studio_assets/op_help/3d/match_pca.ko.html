@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">match_pca — 3D <code style="color:#22d3bf">match_pose</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">pose</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.match_pca(pts_scene, pts_model)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import match3d; match3d.match_pca(pts_scene, pts_model)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;match_pca&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>PCA 자세 매칭(구조=point cloud × 기법=주축 정렬).</p>
 <p>두 점군의 주축을 맞추는 대략적인 강체 변환(회전 R + 평행 이동 t)을 반환한다. NCC/위상 상관이 다루지 못하는 <b>회전</b>을 여기서 담당한다(부호의 4가지 모호성은 최소제곱으로 해소. 이 잔차는 두 점군의 점이같은 순서로 대응한다고 전제한 대략적 기준 — 대응이 없는 실측 점군은 ICP 등으로 후단에서 정밀화를). 반환값 (R(3,3), t(3,)).</p>

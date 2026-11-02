@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">sign_image — DRIVE <code style="color:#22d3bf">roadjp</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">rgba</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sign_image(kind: &#x27;str&#x27;, *, size_px: &#x27;int&#x27; = 128, value=None, font_path=None, side: &#x27;float | None&#x27; = None) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import roadjp; roadjp.sign_image(kind: &#x27;str&#x27;, *, size_px: &#x27;int&#x27; = 128, value=None, font_path=None, side: &#x27;float | None&#x27; = None) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;sign_image&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>標識の絵を RGBA float (H, W, 4) ∈ [0,1] で返す(板の外 = alpha 0)。幅 = <code style="color:#22d3bf">size_px</code>、高さは形の比。</p>
 <p>形と色(規格の配色、記号は単純化):</p>

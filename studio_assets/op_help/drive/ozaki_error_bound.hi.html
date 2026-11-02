@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">ozaki_error_bound — DRIVE <code style="color:#22d3bf">ozaki</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">matrix × matrix × scalar</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ozaki_error_bound(A, B, n_slices: &#x27;int&#x27;)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import ozakimm; ozakimm.ozaki_error_bound(A, B, n_slices: &#x27;int&#x27;)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;ozaki_error_bound&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p><code style="color:#22d3bf">matmul_ozaki(A, B, n_slices)</code> (Ozaki-I) की truncation त्रुटि की हर element की गारंटीशुदा ऊपरी सीमा (matrix)।</p>
 <p>काट-छाँट के शेष और त्यागे गए स्लाइस-युग्मों के योग की ऊपरी सीमा; अंतिम float64 संयोजन का पूर्णांकन (लगभग <code style="color:#22d3bf">(s+1) u |A||B|</code>) शामिल नहीं है। गेट में 2.6 लाख से कुछ अधिक तत्वों पर उल्लंघन 0 (PoC और tests)। पुनर्व्यवस्थित योग से गणना होने के कारण, सीमा स्वयं भी आंतरिक क्रम पर निर्भर नहीं करती।</p>

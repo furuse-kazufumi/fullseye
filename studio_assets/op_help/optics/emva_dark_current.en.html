@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">emva_dark_current — OPTICS <code style="color:#22d3bf">sensorchar</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.emva_dark_current(t_exp, mu_y_dark, K, *, var_y_dark=None)</code> (to call the implementation directly, <code style="color:#22d3bf">import sensorchar; sensorchar.emva_dark_current(t_exp, mu_y_dark, K, *, var_y_dark=None)</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;emva_dark_current&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Dark current (Section 7.1): the slope of a straight-line fit of the mean (and variance) of dark images against exposure time.</p>
 <p>μ_I.y [DN/s] = slope of the mean, μ_I.e [e⁻/s] = μ_I.y / K. Passing *var_y_dark* also gives the slope of the variance [DN²/s] / K² (cameras with dark-current correction can only be measured from the variance). The standard requires <b>6 or more points</b> of exposure time, equally spaced.</p>

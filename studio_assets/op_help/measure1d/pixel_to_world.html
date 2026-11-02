@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">pixel_to_world — MEASURE1D <code style="color:#22d3bf">scale</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">measurement</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pixel_to_world(value_px, mm_per_px)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import measuring1d; measuring1d.pixel_to_world(value_px, mm_per_px)</code>、台帳から引くなら <code style="color:#22d3bf">opsmeasure1d.get(&quot;pixel_to_world&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>画素で測った長さ 1 個を実寸 mm にする(<code style="color:#22d3bf">value_px * mm_per_px</code>)。</p>
 <p><code style="color:#22d3bf">mm_per_px</code> は <code style="color:#22d3bf">mm_per_px_from_reference</code> で<b>実測</b>したものを渡す。<code style="color:#22d3bf">value_px</code> は 0 や負でもよい(差分・偏りをそのまま換算できる)が、有限であること。<code style="color:#22d3bf">mm_per_px</code> は有限で正。どちらも違えば <code style="color:#22d3bf">ValueError</code>。返り値は float(<code style="color:#22d3bf">measurement</code> 型)。面積は mm/px を 2 乗して自分で掛ける(この op は長さだけ)。</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">profile_leading_edge_radius — PROFILE <code style="color:#22d3bf">measure</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.profile_leading_edge_radius(contour, frac=0.001, n_fit=24)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import profileops; profileops.profile_leading_edge_radius(contour, frac=0.001, n_fit=24)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsprofile.get(&quot;profile_leading_edge_radius&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>leading-edge त्रिज्या (chord के अनुपात में)। leading edge के पास के point पर वृत्त fit करता है।</p>
 <p><code style="color:#22d3bf">frac</code> बताता है कि leading edge से chord दिशा में कहाँ तक को &quot;leading edge के पास&quot; माना जाए। <b>इस मान से उत्तर बदल जाता है</b> । नाक का सिरा वृत्त है, पर थोड़ा दूर जाने पर वृत्त नहीं रहता, इसलिए window चौड़ा करने पर परिणाम व्यवस्थित रूप से <b>बहुत बड़ा</b> हो जाता है। NACA 4-अंक के closed form <code style="color:#22d3bf">1.1019 * t^2</code> से मिलान किया गया मापन (4001 points से generate किया गया):</p>

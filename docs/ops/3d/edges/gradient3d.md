@@ -4,6 +4,7 @@ dim: 3d
 category: edges
 in: voxel
 out: gradient
+gpu: なし
 examples: [edges_3d]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `voxel` → `gradient`
 - **呼び出し**: `import fullseye as fs; fs.ledger.gradient3d(vol, sigma: 'float' = 1.0)` (実装を直接呼ぶなら `import edges3d; edges3d.gradient3d(vol, sigma: 'float' = 1.0)`、台帳から引くなら `ops3d.get("gradient3d")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

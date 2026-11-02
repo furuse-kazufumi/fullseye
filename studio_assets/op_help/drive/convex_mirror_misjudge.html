@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">convex_mirror_misjudge — DRIVE <code style="color:#22d3bf">pass</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">any × any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.convex_mirror_misjudge(object_distance, speed, radius: &#x27;float&#x27;, *, eye_distance: &#x27;float&#x27;) -&gt; &#x27;Dict[str, object]&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import drivepass; drivepass.convex_mirror_misjudge(object_distance, speed, radius: &#x27;float&#x27;, *, eye_distance: &#x27;float&#x27;) -&gt; &#x27;Dict[str, object]&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;convex_mirror_misjudge&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>凸面鏡に映った車の距離と速さを平面鏡のつもりで読んだときの見誤り(近軸の閉形式、配列可)。場面 S064・S130。</p>
 <p>k = 1 + 2e/R。距離(大きさから): â = k a。速さは読み方で 3 つ:</p>

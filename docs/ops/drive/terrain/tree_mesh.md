@@ -4,6 +4,7 @@ dim: drive
 category: terrain
 in: 
 out: table
+gpu: なし
 examples: [poc_world_terrain]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.tree_mesh(height: 'float' = 6.0, trunk_radius: 'float' = 0.15, crown_radius: 'float' = 1.8, kind: 'str' = 'broadleaf', n: 'int' = 8, color=None) -> 'dict'` (実装を直接呼ぶなら `import driveterrain; driveterrain.tree_mesh(height: 'float' = 6.0, trunk_radius: 'float' = 0.15, crown_radius: 'float' = 1.8, kind: 'str' = 'broadleaf', n: 'int' = 8, color=None) -> 'dict'`、台帳から引くなら `opsdrive.get("tree_mesh")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

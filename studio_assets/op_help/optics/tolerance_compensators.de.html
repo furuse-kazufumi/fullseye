@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tolerance_compensators — OPTICS <code style="color:#22d3bf">tolerancing</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">keine</code> → <code style="color:#22d3bf">table</code> (ein Operator, der allein durch seine Argumente bestimmt ist — er nimmt kein Bild und keine Daten entgegen)</p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tolerance_compensators(variables=&#x27;t1&#x27;, criterion=&#x27;rms_spot&#x27;, bounds=None, iterations=8)</code> (die Implementierung direkt: <code style="color:#22d3bf">import lenstol; lenstol.tolerance_compensators(variables=&#x27;t1&#x27;, criterion=&#x27;rms_spot&#x27;, bounds=None, iterations=8)</code>; aus dem Register: <code style="color:#22d3bf">opsoptics.get(&quot;tolerance_compensators&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Deterministische begrenzte Nachoptimierungsvariablen beschreiben -&gt; dict.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>

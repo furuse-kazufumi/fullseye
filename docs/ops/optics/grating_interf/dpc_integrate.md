@@ -4,6 +4,7 @@ dim: optics
 category: grating_interf
 in: table
 out: table
+gpu: なし
 examples: [grating_interferometry, poc_grating_interferometry]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.dpc_integrate(dpc_rad, pixel_um, distance_mm, analyzer_period_um, wavelength_nm=None, energy_kev=None, axis=1, baseline='left', baseline_px=8, delta=None)` (実装を直接呼ぶなら `import gratinginterf; gratinginterf.dpc_integrate(dpc_rad, pixel_um, distance_mm, analyzer_period_um, wavelength_nm=None, energy_kev=None, axis=1, baseline='left', baseline_px=8, delta=None)`、台帳から引くなら `opsoptics.get("dpc_integrate")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

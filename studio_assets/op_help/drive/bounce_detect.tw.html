@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">bounce_detect — DRIVE <code style="color:#22d3bf">balltrack</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.bounce_detect(t, z, *, min_gap: &#x27;int&#x27; = 2) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import balltrack; balltrack.bounce_detect(t, z, *, min_gap: &#x27;int&#x27; = 2) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;bounce_detect&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>從高度序列 z(t) 中擷取接觸候選：向下速度轉為向上的局部最小(在前後 <code style="color:#22d3bf">min_gap</code> 個樣本中最小)。回傳值 <code style="color:#22d3bf">{&quot;index&quot; (M,), &quot;t&quot; (M,), &quot;z&quot; (M,)}</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

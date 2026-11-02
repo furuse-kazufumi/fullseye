@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">separate_direct_global — OPTICS <code style="color:#22d3bf">light_transport</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">images</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.separate_direct_global(images, fill=0.5, black_level=0.0, scheme=&#x27;shift&#x27;)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import lighttransport; lighttransport.separate_direct_global(images, fill=0.5, black_level=0.0, scheme=&#x27;shift&#x27;)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;separate_direct_global&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>खिसकाए गए उच्च-आवृत्ति पैटर्नों की छवियों से, हर pixel के L_max और L_min द्वारा direct और global (interreflection) घटकों को अलग करना (Nayar आदि 2006, <code style="color:#22d3bf">table</code>)।</p>
 <p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>

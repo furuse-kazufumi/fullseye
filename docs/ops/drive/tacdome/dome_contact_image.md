@@ -4,6 +4,7 @@ dim: drive
 category: tacdome
 in: scalar × scalar
 out: image2d
+gpu: なし
 examples: [poc_tacdome_large_deformation]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `scalar × scalar` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.dome_contact_image(a: 'float', pitch: 'float', n: 'int' = 128, centre=None, fg: 'float' = 1.0, bg: 'float' = 0.12, footprint: 'float | None' = None, outside: 'float' = 0.0, noise: 'float' = 0.0, seed: 'int' = 0, ss: 'int' = 8) -> 'np.ndarray'` (実装を直接呼ぶなら `import tacdome; tacdome.dome_contact_image(a: 'float', pitch: 'float', n: 'int' = 128, centre=None, fg: 'float' = 1.0, bg: 'float' = 0.12, footprint: 'float | None' = None, outside: 'float' = 0.0, noise: 'float' = 0.0, seed: 'int' = 0, ss: 'int' = 8) -> 'np.ndarray'`、台帳から引くなら `opsdrive.get("dome_contact_image")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

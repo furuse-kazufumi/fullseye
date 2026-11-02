@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">talbot_source_visibility — OPTICS <code style="color:#22d3bf">grating_interf</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.talbot_source_visibility(source_width_um, source_distance_mm, distance_mm, analyzer_period_um, profile=&#x27;uniform&#x27;, source_grating_period_um=None, duty=None, n_slits=None, wavelength_nm=None)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import gratinginterf; gratinginterf.talbot_source_visibility(source_width_um, source_distance_mm, distance_mm, analyzer_period_um, profile=&#x27;uniform&#x27;, source_grating_period_um=None, duty=None, n_slits=None, wavelength_nm=None)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;talbot_source_visibility&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>線源の大きさと線源格子(Lau の条件)で、縞の可視度が何倍に落ちるか(閉形式、非干渉の和)。</p>
 <p>線源の 1 点が格子の線に直交する向きに s ずれると、分析格子の上の縞は s·d/L だけ逆向きにずれる(L = 線源から第 1 格子、d = 第 1 格子から分析格子)。互いに干渉しない点の縞を足すので、可視度の倍率は線源の分布のフーリエ変換を周波数 d/(L p2) で読んだ値になる(Pfeiffer ら 2006, Nature Physics 2, 258):</p>

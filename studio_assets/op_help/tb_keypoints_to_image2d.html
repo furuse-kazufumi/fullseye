@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tb_keypoints_to_image2d — 2D <code style="color:#22d3bf">typed</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">keypoints</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_keypoints_to_image2d&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <p>*図なし: 型は届くが、汎用の合成入力では定義域が合わない —— 橋渡しで束縛した raster が 64×64 固定で、128×128 の点は外に落ちる。下の「実行できる例」で使い方を見ること。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>画像座標 <code style="color:#22d3bf">(N,2) = (u, v)</code> → 計数画像 <code style="color:#22d3bf">(H, W)</code>。<code style="color:#22d3bf">keypoints</code> の 2 つ目の出口。</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">aabb — 3D <code style="color:#22d3bf">bounds</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">primitive</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.aabb(points)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import pcseg; pcseg.aabb(points)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;aabb&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>축 평행 경계 상자. <code style="color:#22d3bf">(min (3,), max (3,))</code> 를 돌려줍니다.</p>
 <p>점군의 각 축의 최솟값과 최댓값을 그대로 반환한다(<code style="color:#22d3bf">P.min(0)</code>, <code style="color:#22d3bf">P.max(0)</code>). 반환값은 2 개의 (3,) float64 배열로, 순서대로 <code style="color:#22d3bf">(xmin, ymin, zmin)</code> 과 <code style="color:#22d3bf">(xmax, ymax, zmax)</code>(축의 순서는 입력의 열 순서). 상자의 크기는 <code style="color:#22d3bf">max - min</code>, 중심은 <code style="color:#22d3bf">(min + max) / 2</code>. 단위는 좌표의 단위.</p>

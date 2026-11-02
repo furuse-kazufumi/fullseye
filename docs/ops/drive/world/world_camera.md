@@ -4,6 +4,7 @@ dim: drive
 category: world
 in: table × matrix × matrix
 out: table
+gpu: なし
 examples: [gsplat_trained_product, poc_ball_bounce, poc_driving_crossing, poc_driving_decisions, poc_driving_endless_map, poc_driving_humanoids, poc_driving_japan_town, poc_driving_lateral, poc_driving_longitudinal, poc_driving_pass, poc_driving_school, poc_driving_town, poc_driving_traffic, poc_kendama, poc_table_tennis_bounce, poc_table_tennis_spin, poc_ttc_rss, poc_world_terrain]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table × matrix × matrix` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.world_camera(world: 'dict', pose, K, width: 'int' = 640, height: 'int' = 400, *, light=(0.3, -0.5, 0.8), ambient: 'float' = 0.35, sky=(0.62, 0.75, 0.92), ego=None) -> 'dict'` (実装を直接呼ぶなら `import driveworld; driveworld.world_camera(world: 'dict', pose, K, width: 'int' = 640, height: 'int' = 400, *, light=(0.3, -0.5, 0.8), ambient: 'float' = 0.35, sky=(0.62, 0.75, 0.92), ego=None) -> 'dict'`、台帳から引くなら `opsdrive.get("world_camera")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">vector_to_shift — REPRCONV <code style="color:#22d3bf">algebra</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">vector</code> → <code style="color:#22d3bf">shift</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vector_to_shift(vector)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import reprconv; reprconv.vector_to_shift(vector)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsreprconv.get(&quot;vector_to_shift&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p><code style="color:#22d3bf">vector (3,)</code> → 정수 시프트 <code style="color:#22d3bf">(dz, dy, dx)</code>. <code style="color:#22d3bf">shift_to_vector</code> 의 반대 방향.</p>
 <p><b>비가역</b>(가장 가까운 정수로 반올림한다). 떨어지는 양은 반올림 잔차 그 자체이며, <code style="color:#22d3bf">|v - round(v)| &lt;= 0.5</code>가 각 축의 상계. 정수를 넘긴 왕복만 bit 일치한다.</p>

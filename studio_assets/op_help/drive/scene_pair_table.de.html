@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">scene_pair_table — DRIVE <code style="color:#22d3bf">carla</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.scene_pair_table(scene, *, lead_asset: &#x27;str&#x27; = &#x27;sedan&#x27;, asset_root=None) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import carlabridge; carlabridge.scene_pair_table(scene, *, lead_asset: &#x27;str&#x27; = &#x27;sedan&#x27;, asset_root=None) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;scene_pair_table&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Vertonen und ordnen Sie eine Szenenaufnahme sowohl mit <b>CARLAs Bild</b> als auch mit <b>Ihrem eigenen Weltbild</b> an. Rückgabewert = <code style="color:#22d3bf">{&quot;truth&quot;, &quot;carla&quot;: {...lead_from_third}, &quot;fullseye&quot;: {...}, &quot;carla_error&quot;, &quot;fullseye_error&quot;, &quot;width&quot;, &quot;height&quot;, &quot;view&quot;}</code> (error = Depth_median − wahrer Wert, wahrer Wert ist <code style="color:#22d3bf">lead_truth_ Depth</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

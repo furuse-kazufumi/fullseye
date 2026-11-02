@@ -4,6 +4,7 @@ dim: oned
 category: function
 in: signal
 out: table
+gpu: なし
 examples: [poc_web_roll_periodicity, signal_funct1d]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.local_min_max_funct_1d(y)` (実装を直接呼ぶなら `import funct1d; funct1d.local_min_max_funct_1d(y)`、台帳から引くなら `ops1d.get("local_min_max_funct_1d")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

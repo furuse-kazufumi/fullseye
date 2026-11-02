@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">veiling_glare_index — OPTICS <code style="color:#22d3bf">imaging</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d × image2d × image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.veiling_glare_index(img, dark_mask, bright_mask)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import edgesfr; edgesfr.veiling_glare_index(img, dark_mask, bright_mask)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsoptics.get(&quot;veiling_glare_index&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>미광(베일링 글레어) 지수: 검은 점 중심의 밝기 평균 / 흰 바탕의 밝기 평균(ISO 9358의 사고방식).</p>
 <p>*dark_mask*(필수): 검은 점의 <b>중심부</b> 화소(점 가장자리의 흐림은 포함하지 않는다 —— 가장자리를 포함하면 코어의 흐림까지 미광으로 센다). *bright_mask*(필수): 흰 바탕의 화소. ★검은 점의 크기(와 광원의 넓이)에 따라 답이 바뀐다: 꼬리가 1/(1+(r/r0)²)인 렌즈에서는검은 점의 한 변을 16 → 256 px로 하면 같은 렌즈의 지수가 19.6 % → 4.5 %(<code style="color:#22d3bf">poc_veiling_glare</code> 3절). 점의 크기는 결과와 함께 보고할 것.</p>

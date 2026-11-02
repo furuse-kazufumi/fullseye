@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">emva_dynamic_range — OPTICS <code style="color:#22d3bf">sensorchar</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">keine</code> → <code style="color:#22d3bf">table</code> (ein Operator, der allein durch seine Argumente bestimmt ist — er nimmt kein Bild und keine Daten entgegen)</p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.emva_dynamic_range(mu_p_sat, mu_p_min)</code> (die Implementierung direkt: <code style="color:#22d3bf">import sensorchar; sensorchar.emva_dynamic_range(mu_p_sat, mu_p_min)</code>; aus dem Register: <code style="color:#22d3bf">opsoptics.get(&quot;emva_dynamic_range&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Dynamikbereich DR = μ_p.sat / μ_p.min (Gl. 28) als Verhältnis, in dB (20 log10) und in Bit (log2).</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: einer der Werte nicht positiv / μ_p.sat ≤ μ_p.min.</p>

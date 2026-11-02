@@ -4,6 +4,7 @@ dim: blob
 category: extract
 in: labels2d
 out: mask
+gpu: なし
 examples: [poc_gear_tooth_metrology, poc_particle_sizing]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `labels2d` → `mask`
 - **呼び出し**: `import fullseye as fs; fs.ledger.blob_region(labels: 'Any', index: 'int') -> 'np.ndarray'` (実装を直接呼ぶなら `import blob2d; blob2d.blob_region(labels: 'Any', index: 'int') -> 'np.ndarray'`、台帳から引くなら `opsblob.get("blob_region")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

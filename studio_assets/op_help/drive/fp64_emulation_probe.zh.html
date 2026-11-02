@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">fp64_emulation_probe — DRIVE <code style="color:#22d3bf">ozaki</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">table</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fp64_emulation_probe()</code>(要直接调用实现,<code style="color:#22d3bf">import ozakimm; ozakimm.fp64_emulation_probe()</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;fp64_emulation_probe&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>以表的形式返回 cuBLAS 的 FP64 仿真(CUDA 13.0 Update 2 及以后)在本机上是否可用。</p>
 <p><b>不抛出异常</b>:若没有 GPU、CUDA 或 cuBLAS 13,则返回 <code style="color:#22d3bf">available=False</code> 及原因(不带重依赖,只用 ctypes 打开库并读取版本)。返回:<code style="color:#22d3bf">available</code>(bool)、<code style="color:#22d3bf">rows</code>(每个候选的 <code style="color:#22d3bf">library</code>、<code style="color:#22d3bf">path</code>、<code style="color:#22d3bf">loaded</code>、<code style="color:#22d3bf">cublas_version</code>、<code style="color:#22d3bf">emulation_api</code>(是否存在 <code style="color:#22d3bf">cublasSetEmulationStrategy</code>)、<code style="color:#22d3bf">gpu</code>(能否创建句柄)、<code style="color:#22d3bf">reason</code>)、<code style="color:#22d3bf">how</code>(启用方法)、<code style="color:#22d3bf">note</code>。</p>

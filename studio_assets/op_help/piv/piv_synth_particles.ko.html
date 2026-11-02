@@ -4,6 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_synth_particles(shape, density=0.02, diameter_px=2.5, seed=0, intensity=(0.6, 1.0), background=0.0)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import pivops; pivops.piv_synth_particles(shape, density=0.02, diameter_px=2.5, seed=0, intensity=(0.6, 1.0), background=0.0)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opspiv.get(&quot;piv_synth_particles&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>원장 경유의 반환값</b>: <code style="color:#22d3bf">fullseye.ledger.piv_synth_particles(...)</code> 는 <b>선언된 out 형 <code style="color:#22d3bf">image2d</code> 의 값만</b> 반환합니다(실제 함수는 보조 정보도 반환). 버려진 쪽이 필요하면 <code style="color:#22d3bf">fullseye.ledger.piv_synth_particles.raw(...)</code> 를 쓰거나 <code style="color:#22d3bf">pivops.piv_synth_particles</code> 를 직접 호출하세요.</p>
 <p style="margin:2px 0 2px 12px">• 실제 반환: <code style="color:#22d3bf">(image, positions) -&gt; image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>트레이서 입자를 뿌린 영상 1장을 만든다. 반환값은 <code style="color:#22d3bf">(image, positions)</code>.</p>
 <p>입자는 가우스 휘점(직경 = 1/e^2 폭이 아니라 <b>표준편차의 2배</b>를 <code style="color:#22d3bf">diameter_px</code>라고 부르는 PIV의 관행). 위치는 연속값이므로 서브픽셀의참값을 가진 이미지를 만들 수 있다.</p>

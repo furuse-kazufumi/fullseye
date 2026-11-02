@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">marker_image — DRIVE <code style="color:#22d3bf">tacslip</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">rgb × rgb</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.marker_image(rgb, bg) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import tacslip; tacslip.marker_image(rgb, bg) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;marker_image&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Marker-only image m = 1 − gray/gray_bg ∈ [0, 1] (H, W). bg = an image under the same lighting without markers = corresponds to reference-frame calibration on real hardware. <b>Raises</b> ValueError: the 2 images differ in shape, or are not (H, W, 3).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">oct_bscan_flatten — OPTICS <code style="color:#22d3bf">oct</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.oct_bscan_flatten(bscan, reference_rows, above_um=20.0, below_um=300.0, noise_rows=0.15)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import octscan; octscan.oct_bscan_flatten(bscan, reference_rows, above_um=20.0, below_um=300.0, noise_rows=0.15)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;oct_bscan_flatten&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>B-scan को किसी सतह के अनुसार <b>समतल करना</b> और <b>पार्श्व रूप से औसत किया गया depth profile</b> लौटाना (<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code>)।</p>
 <p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>

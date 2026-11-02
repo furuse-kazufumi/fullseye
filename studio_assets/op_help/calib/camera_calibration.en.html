@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">camera_calibration — CALIB <code style="color:#22d3bf">calibrate</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">keypoints</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.camera_calibration(object_points, image_points_list)</code> (to call the implementation directly, <code style="color:#22d3bf">import calib; calib.camera_calibration(object_points, image_points_list)</code>; from the registry, <code style="color:#22d3bf">opscalib.get(&quot;camera_calibration&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Estimates the intrinsic matrix K from several views of a planar target by Zhang&#x27;s method (camera_calibration).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>

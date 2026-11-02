@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">vision_setup_drawing — OPTICS <code style="color:#22d3bf">drawing</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vision_setup_drawing(layout, view=&#x27;both&#x27;, barrel_diameter_mm=30.0, body_mm=40.0, scale=None, title=None)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import optdraw; optdraw.vision_setup_drawing(layout, view=&#x27;both&#x27;, barrel_diameter_mm=30.0, body_mm=40.0, scale=None, title=None)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;vision_setup_drawing&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>撮像系の設置図(<code style="color:#22d3bf">table</code>、図の dict)—— <code style="color:#22d3bf">optscene.vision_layout</code> から側面図と上面図を描く。</p>
 <p>描くもの: 作業面(z = 0)と部品(<code style="color:#22d3bf">scene</code> があれば箱・円筒・球・板を投影、くり抜きは破線)、カメラ(鏡筒・本体・センサー面。鏡筒の先端 = 主点 = <code style="color:#22d3bf">optscene</code> のピンホール)、光軸(一点鎖線)、視野の錐(センサーの 4 隅の画素の縁から逆投影した 4 本の光線と、作業面の上の視野の四角)、被写界深度の帯(光軸に沿って ±DOF/2)、照明 5 種(ring = 円環と仰角、dome = 半球と天頂の穴、bar = 棒と仰角、coaxial = ハーフミラーと横の光源、backlight = 部品の下の面光源)と光の向きの矢印。寸法: 作動距離 WD・視野の幅(側面図は縦 = センサーの高さ方向、上面図は両方)・ DOF・照明の高さと半径・仰角。諸元の表(倍率・作動 F 値・回折限界・物体側の画素・DOF・律速)を文字で書く。</p>

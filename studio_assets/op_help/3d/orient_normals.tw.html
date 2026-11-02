@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">orient_normals — 3D <code style="color:#22d3bf">normals_orient</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">points × normals</code> → <code style="color:#22d3bf">normals</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.orient_normals(points, normals, k: &#x27;int&#x27; = 20, seed_dir=None) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import normals_orient; normals_orient.orient_normals(points, normals, k: &#x27;int&#x27; = 20, seed_dir=None) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;orient_normals&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用 Hoppe 法把法線定向為<b>全域一致</b>(MST 傳播)。→ (N,3)。</p>
 <p>在 kNN 圖上以權重 <code style="color:#22d3bf">1 - |n_i·n_j|</code>(切平面越一致代價越低)建立最小生成樹, 從種子點開始對樹做 BFS,翻轉與父節點符號相反的子節點,使元件內部一致。種子點在指定 <code style="color:#22d3bf">seed_dir</code> 時為沿該方向最突出的點,未指定時為<b>最外點</b>(離質心最遠)。若圖不連通,則對每個連通元件獨立選取種子點並傳播(元件之間的相對朝向不保證)。</p>

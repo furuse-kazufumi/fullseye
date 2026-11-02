@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">latlon_to_local — DRIVE <code style="color:#22d3bf">japan</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">any × any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.latlon_to_local(lat, lon, origin) -&gt; &#x27;Tuple[np.ndarray, np.ndarray]&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import drivejapan; drivejapan.latlon_to_local(lat, lon, origin) -&gt; &#x27;Tuple[np.ndarray, np.ndarray]&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;latlon_to_local&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>緯度経度 [deg] → 原点 origin = (lat0, lon0) まわりの等距円筒近似の平面座標 (x 東, y 北) [m]。</p>
 <p>x = R cos(lat0) Δλ、y = R Δφ(R = 6378137 m)。1 km 四方で 1e-5 の歪み(cos の変化)なので町 1 つには十分。配列可。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 緯度経度が範囲外・非有限。</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">linear_to_srgb — GFX2D <code style="color:#22d3bf">colorspace</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">rgb</code> → <code style="color:#22d3bf">rgb</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.linear_to_srgb(img)</code> (die Implementierung direkt: <code style="color:#22d3bf">import gfx2d; gfx2d.linear_to_srgb(img)</code>; aus dem Register: <code style="color:#22d3bf">opsgfx2d.get(&quot;linear_to_srgb&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Lineares Licht zurück in die sRGB-Kodierung. Die exakte Umkehrung von <code style="color:#22d3bf">srgb_to_linear</code>.</p>
 <p>Formel (IEC 61966-2-1): <code style="color:#22d3bf">12.92 c</code> für <code style="color:#22d3bf">c &lt;= 0.0031308</code>, sonst <code style="color:#22d3bf">1.055 c^(1/2.4) - 0.055</code>. Unabhängig je Kanal und je Pixel.</p>

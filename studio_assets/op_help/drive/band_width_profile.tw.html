@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">band_width_profile — DRIVE <code style="color:#22d3bf">polish</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image2d × scalar × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.band_width_profile(image, threshold: &#x27;float&#x27;, res: &#x27;float&#x27;, along: &#x27;str&#x27; = &#x27;x&#x27;) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import polish; polish.band_width_profile(image, threshold: &#x27;float&#x27;, res: &#x27;float&#x27;, along: &#x27;str&#x27; = &#x27;x&#x27;) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;band_width_profile&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>對直線單次行程(方向 <code style="color:#22d3bf">along</code>)擦出的帶，在與帶正交的每條線上以次像素精度讀取寬度：以與相鄰像素的線性內插求出首次與最後一次越過門檻的位置，其差 × res 即為寬度。回傳 <code style="color:#22d3bf">widths</code>(逐線，無法讀取的線為 NaN)、<code style="color:#22d3bf">centres</code>(帶中心位置 [m]，圖的座標)、<code style="color:#22d3bf">valid</code>、<code style="color:#22d3bf">median</code>。前提是只有 1 條帶(多條帶時得到最外側之間的寬度)。<b>Raises</b> ValueError：影像檢查、res ≤ 0、along 不是 x / y、門檻值非有限。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

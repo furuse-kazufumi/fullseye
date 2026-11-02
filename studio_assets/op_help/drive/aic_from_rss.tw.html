@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">aic_from_rss — DRIVE <code style="color:#22d3bf">ball</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">無</code> → <code style="color:#22d3bf">scalar</code>(僅由參數決定的運算子 —— 不接受影像或資料輸入)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.aic_from_rss(rss: &#x27;float&#x27;, n: &#x27;int&#x27;, k: &#x27;int&#x27;) -&gt; &#x27;float&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import ballistics; ballistics.aic_from_rss(rss: &#x27;float&#x27;, n: &#x27;int&#x27;, k: &#x27;int&#x27;) -&gt; &#x27;float&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;aic_from_rss&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由最小平方殘差平方和計算赤池資訊量準則:AIC = n ln(RSS/n) + 2k(高斯雜訊,變異數按最大概似估計,常數項略去)。只有對同一資料擬合的模型之間的<b>差</b>才有意義(絕對值依賴尺度與 n)。n ≤ k、RSS ≤ 0、非有限值會引發 ValueError(RSS = 0 時 AIC = −∞,模型選擇的問題不成立)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

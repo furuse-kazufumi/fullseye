@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">moment_axes — 3D <code style="color:#22d3bf">match_pose</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">axes</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.moment_axes(points, weights=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import match3d; match3d.moment_axes(points, weights=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;moment_axes&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>point cloud/weighted points का <b>centroid + principal axes</b> (inertia tensor के eigenvectors)। pose estimation का आधार।</p>
 <p>वापसी मान (केन्द्रक(3,), अक्ष(3,3) कॉलम=मुख्य अक्ष, इग्वल(3,))। आइगेनवैल्यू अवरोही क्रम। रोटेशन सामान्यीकरण के लिए उपयोग किया जाता है।</p>

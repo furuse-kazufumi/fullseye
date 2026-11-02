@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">watersheds_marker — SEGMENTATION <code style="color:#22d3bf">watershed</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image2d × labels2d</code> → <code style="color:#22d3bf">labels2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.watersheds_marker(image, markers)</code> (die Implementierung direkt: <code style="color:#22d3bf">import segmentation; segmentation.watersheds_marker(image, markers)</code>; aus dem Register: <code style="color:#22d3bf">opssegmentation.get(&quot;watersheds_marker&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Markergesteuerte Wasserscheiden-Segmentierung; markers ist ein Integer-Labelbild (0 = nicht zugewiesen) (watersheds_marker).</p>
 <p>Leere Eingabe (<code style="color:#22d3bf">image</code> mit 0 Elementen) löst <code style="color:#22d3bf">ValueError</code> aus.</p>

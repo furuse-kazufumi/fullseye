@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">magnus_lift_coefficient — DRIVE <code style="color:#22d3bf">ball</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.magnus_lift_coefficient(spin_ratio) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import ballistics; ballistics.magnus_lift_coefficient(spin_ratio) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;magnus_lift_coefficient&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Lift coefficient C_L = 1 / (2 + 1/S) from the spin ratio S = rω/|v| (0 as S → 0, 0.5 as S → ∞; an empirical formula widely used in the ball literature).</p>
 <p>Empty input (<code style="color:#22d3bf">spin_ratio</code> with 0 elements) raises <code style="color:#22d3bf">ValueError</code>.</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">fit_sphere_3d — 3D <code style="color:#22d3bf">geometry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">primitive</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fit_sphere_3d(points)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import match3d; match3d.fit_sphere_3d(points)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;fit_sphere_3d&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>점군 → 최소제곱 구(대수 적합). 반환값 (center, radius). 배관/볼 계측용.</p>
 <p><code style="color:#22d3bf">|p|² = 2c·p + (r² − |c|²)</code>를 <code style="color:#22d3bf">[2p, 1]</code>의 선형 최소제곱(<code style="color:#22d3bf">lstsq</code>)으로 푸는 대수적 피팅(기하 거리의 최소화가 아니므로, 구의 일부만 보이거나 잡음이 크면 반지름이 치우친다). <code style="color:#22d3bf">(N,3)</code>에서 4점 미만은 ValueError. <code style="color:#22d3bf">radius</code>는 <code style="color:#22d3bf">sqrt(max(s + |c|², 0))</code>이며 음수는 0으로 clamp. 점이 동일 평면상이거나 공선이면 <code style="color:#22d3bf">lstsq</code>의 최소 노름 해가 조용히 반환된다(검증은 없다. 잔차도 반환하지 않으므로 <code style="color:#22d3bf">|p − c| − r</code>로 확인한다). 기하 거리로 다듬으려면 이 op의 결과를 초깃값으로 하여 비선형 최소제곱, 이상값에는 <code style="color:#22d3bf">ransac_sphere</code>. voxel로부터의 검출은 <code style="color:#22d3bf">hough_sphere_3d</code>.</p>

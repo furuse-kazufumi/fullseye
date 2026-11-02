@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">triangulate_column — 3D <code style="color:#22d3bf">structured_light</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">depth</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.triangulate_column(column, k_cam, k_proj, rot, trans) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import fringe; fringe.triangulate_column(column, k_cam, k_proj, rot, trans) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;triangulate_column&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Trianguliert die Tiefe Z aus der „Projektorspaltennummer“ jedes Kamerapixels (die letzte Stufe des strukturierten Lichts).</p>
 <p>Die Geometrie eines Streifenlichtscanners selbst: ein Kamerapixel (u,v) spannt 1 Sichtstrahl auf, eine Projektorspalten- nummer u_p spannt 1 Ebene auf (die Ebene, die Projektorzentrum und diese Spalte enthält). Der Schnittpunkt von Sichtstrahl und Ebene ist der 3D-Oberflächenpunkt, und sein Z im Kamerasystem ist die Tiefe. Es ist eine <b>geschlossene Formel</b>, daher sind weder Iteration noch Optimierung nötig.</p>

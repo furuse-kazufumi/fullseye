@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">priority_rule — DRIVE <code style="color:#22d3bf">crossing</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.priority_rule(own, cross, *, signalised: &#x27;bool&#x27; = False, wide_ratio: &#x27;float&#x27; = 1.5) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import drivecrossing; drivecrossing.priority_rule(own, cross, *, signalised: &#x27;bool&#x27; = False, wide_ratio: &#x27;float&#x27; = 1.5) -&gt; &#x27;Dict[str, object]&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;priority_rule&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>在无交通管制的交叉口，本车(own)是否应让行交叉道路(cross)上的车辆(第36条第1至3款)。</p>
 <p>own, cross = {&quot;width&quot;: 道路宽度 [m], &quot;priority_sign&quot;: 优先道路的标志, &quot;centre_line&quot;: 中央线、车道一直延伸到交叉口内}。优先道路 = 标志 or 中央线(日本《道路交通法》第 36 条第 2 款的括号内规定)。明显更宽 = 宽度比 ≥ <code style="color:#22d3bf">wide_ratio</code>(<b>假设</b>)。</p>

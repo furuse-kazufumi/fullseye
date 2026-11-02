@@ -4,6 +4,7 @@ dim: optics
 category: confocal
 in: pairs
 out: table
+gpu: なし
 examples: [poc_chromatic_confocal, poc_spectrometer_illumination]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `pairs` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.chromatic_confocal_peaks(spectrum, reference=None, max_peaks: 'int' = 2, mode: 'str' = 'gaussian', min_prominence: 'float' = 0.15, subtract_background: 'bool' = True) -> 'list'` (実装を直接呼ぶなら `import chromconf; chromconf.chromatic_confocal_peaks(spectrum, reference=None, max_peaks: 'int' = 2, mode: 'str' = 'gaussian', min_prominence: 'float' = 0.15, subtract_background: 'bool' = True) -> 'list'`、台帳から引くなら `opsoptics.get("chromatic_confocal_peaks")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

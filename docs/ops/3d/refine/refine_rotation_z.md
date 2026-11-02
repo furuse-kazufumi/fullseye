@@ -4,7 +4,7 @@ dim: 3d
 category: refine
 in: voxel × voxel × angle
 out: angle
-gpu: true
+gpu: なし
 examples: [refinement]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -16,7 +16,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **データ種**: `voxel × voxel × angle` → `angle`
 - **呼び出し**: `import fullseye as fs; fs.ledger.refine_rotation_z(scene, template, init_angle_deg=0.0, device='cpu', iters=40, tol=0.001, max_step_deg=5.0)` (実装を直接呼ぶなら `import match3d; match3d.refine_rotation_z(scene, template, init_angle_deg=0.0, device='cpu', iters=40, tol=0.001, max_step_deg=5.0)`、台帳から引くなら `ops3d.get("refine_rotation_z")`)
 - **台帳経由の戻り値**: `fullseye.ledger.refine_rotation_z(...)` は**宣言 out 型 `angle` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.refine_rotation_z.raw(...)`、または `match3d.refine_rotation_z` を直接呼ぶ。
-- **GPU**: この op は GPU 経路あり(`device="cuda"`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

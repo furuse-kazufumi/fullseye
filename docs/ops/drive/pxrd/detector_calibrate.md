@@ -4,6 +4,7 @@ dim: drive
 category: pxrd
 in: image2d × signal × table
 out: table
+gpu: なし
 examples: [poc_pxrd_phase_peel]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d × signal × table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.detector_calibrate(image, d_spacings, geometry_guess, n_azimuth=180, fit_tilt=True, min_rings=2)` (実装を直接呼ぶなら `import pxrd; pxrd.detector_calibrate(image, d_spacings, geometry_guess, n_azimuth=180, fit_tilt=True, min_rings=2)`、台帳から引くなら `opsdrive.get("detector_calibrate")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

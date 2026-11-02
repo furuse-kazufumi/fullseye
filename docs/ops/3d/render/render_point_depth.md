@@ -4,6 +4,7 @@ dim: 3d
 category: render
 in: points
 out: depth
+gpu: なし
 examples: [sfm_recon]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `points` → `depth`
 - **呼び出し**: `import fullseye as fs; fs.ledger.render_point_depth(points, K, size, R=None, t=None)` (実装を直接呼ぶなら `import match3d; match3d.render_point_depth(points, K, size, R=None, t=None)`、台帳から引くなら `ops3d.get("render_point_depth")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

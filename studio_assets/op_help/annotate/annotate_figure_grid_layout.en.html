@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">annotate_figure_grid_layout — ANNOTATE <code style="color:#22d3bf">paper</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">table</code> (an op determined by its arguments alone — it takes no image or data input)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_figure_grid_layout(shapes, ncols=2, pad=10, caption_h=32, title_h=0, letter_style=&#x27;paren&#x27;)</code> (to call the implementation directly, <code style="color:#22d3bf">import annotate; annotate.annotate_figure_grid_layout(shapes, ncols=2, pad=10, caption_h=32, title_h=0, letter_style=&#x27;paren&#x27;)</code>; from the registry, <code style="color:#22d3bf">opsannotate.get(&quot;annotate_figure_grid_layout&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Returns a table (dict): the typesetting of a multi-panel figure (cell, panel and caption-band rectangles) in closed form.</p>
 <p>The same formulas as <code style="color:#22d3bf">panel_grid</code>: <code style="color:#22d3bf">cw/ch</code> is the largest panel size, <code style="color:#22d3bf">W = 2*pad + ncols*cw + (ncols-1)*pad</code>, <code style="color:#22d3bf">H = title_h + 2*pad + nrows*(ch+caption_h) + (nrows-1)*pad</code>. Panels are not enlarged; they are centred in their cells.</p>

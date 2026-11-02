@@ -4,6 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.robust_spline_profile(z, dx, lambda_c, c=4.4, robust=True, max_iter=None, tol=1e-06)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import roughness; roughness.robust_spline_profile(z, dx, lambda_c, c=4.4, robust=True, max_iter=None, tol=1e-06)</code>、台帳から引くなら <code style="color:#22d3bf">opsroughness.get(&quot;robust_spline_profile&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>台帳経由の戻り値</b>: <code style="color:#22d3bf">fullseye.ledger.robust_spline_profile(...)</code> は<b>宣言 out 型 <code style="color:#22d3bf">signal</code> の値だけ</b>を返す(本体は補助情報も返す)。捨てられた側が要るときは <code style="color:#22d3bf">fullseye.ledger.robust_spline_profile.raw(...)</code>、または <code style="color:#22d3bf">roughness.robust_spline_profile</code> を直接呼ぶ。</p>
 <p style="margin:2px 0 2px 12px">• 本体の返り: <code style="color:#22d3bf">(roughness, mean_line, info)</code></p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>ロバスト・スプラインフィルタ(断面): 外れ値に引きずられない平均線と粗さ。</p>
 <p>平均線 <code style="color:#22d3bf">w</code> を <code style="color:#22d3bf">Σ δ_i (z_i - w_i)² + β Σ (Δ² w)_i²</code> の最小化で求める(2 階差分の罰則つき最小二乗 = 離散の三次平滑化スプライン、Whittaker 1923 / Eilers 2003 / Krystek, Measurement 18 (1996) 9-15)。重み <code style="color:#22d3bf">δ</code> は biweight で反復して更新する。ガウスと違って <b>端に自然境界条件が付く</b> ので、端を削らなくても平均線が端で外へ振れにくい。</p>

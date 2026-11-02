@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">speckle_quality — PIV <code style="color:#22d3bf">solid</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.speckle_quality(img: &#x27;Any&#x27;) -&gt; &#x27;dict[str, float]&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import dic; dic.speckle_quality(img: &#x27;Any&#x27;) -&gt; &#x27;dict[str, float]&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opspiv.get(&quot;speckle_quality&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>以 4 個數字回傳所拍攝的散斑是否適合 DIC。</p>
 <p><code style="color:#22d3bf">pivops</code> 與 <code style="color:#22d3bf">fullseye</code> 中都沒有(<code style="color:#22d3bf">speckle_filter</code> 是 SAR 斑點雜訊的 <b>去除</b>，是另一回事)。用於在拍攝現場判定「這個圖案能否量測」的介面。</p>

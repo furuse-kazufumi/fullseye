@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">catch_plan_staged — DRIVE <code style="color:#22d3bf">kendama</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.catch_plan_staged(kp: &#x27;dict&#x27;, *, v_max: &#x27;float&#x27; = 2.0, a_max: &#x27;float&#x27; = 20.0, g: &#x27;float&#x27; = None, margin: &#x27;float&#x27; = 0.005, absorb_time: &#x27;float&#x27; = None, absorb_depth: &#x27;float&#x27; = 0.02)</code>(要直接呼叫實作,<code style="color:#22d3bf">import kendama; kendama.catch_plan_staged(kp: &#x27;dict&#x27;, *, v_max: &#x27;float&#x27; = 2.0, a_max: &#x27;float&#x27; = 20.0, g: &#x27;float&#x27; = None, margin: &#x27;float&#x27; = 0.005, absorb_time: &#x27;float&#x27; = None, absorb_depth: &#x27;float&#x27; = 0.02)</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;catch_plan_staged&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>明確分階段的接球控制(大皿、小皿、中皿、蠟燭使用同一計畫：皿的朝向取自 kp 中招式的姿態)。回傳 <code style="color:#22d3bf">plan(t, p, v, cup_state) → dict</code>(<code style="color:#22d3bf">kendama_simulate</code> 的 <code style="color:#22d3bf">catch_plan</code>)。</p>
 <p>階段(仿照人的訣竅「用膝蓋往正上方拉起,繩鬆弛後把皿水平運到球的正下方,著地時下降吸收衝擊(不去撈,而是等待)」):</p>

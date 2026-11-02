@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">vx_phase — VX <code style="color:#22d3bf">gradient</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vx_phase(gx, gy, *, mapping)</code> (die Implementierung direkt: <code style="color:#22d3bf">import vxcore; vxcore.vx_phase(gx, gy, *, mapping)</code>; aus dem Register: <code style="color:#22d3bf">opsvx.get(&quot;vx_phase&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Gradientenphase (Abschnitt 3.41): verschiebt ϕ = atan2(gy, gx) in 0 ≤ ϕ &lt; 2π und bildet sie auf 0–255 ab (REQ-0364). Ausgabe U8.</p>
 <p>*mapping* (erforderlich): Die Spezifikation legt die Rundung der Abbildung nicht fest. <code style="color:#22d3bf">&quot;floor&quot;</code> = ⌊ϕ·256/(2π)⌋ (0 ≤ Wert ≤ 255 gilt automatisch), <code style="color:#22d3bf">&quot;round&quot;</code> = ⌊ϕ·256/(2π) + 0.5⌋ mod 256 (knapp unter 2π wird auf 0 umgebrochen). Pixel mit gx = gy = 0 erhalten nach der atan2-Konvention ϕ = 0.</p>

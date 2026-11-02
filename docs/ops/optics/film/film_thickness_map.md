@@ -4,6 +4,7 @@ dim: optics
 category: film
 in: images
 out: table
+gpu: なし
 examples: [poc_thin_film_reflectometry]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `images` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.film_thickness_map(images, wavelengths_nm=(450.0, 500.0, 550.0, 600.0, 650.0, 700.0), film='SIO2', substrate='SI', thickness_min_nm=0.0, thickness_max_nm=1500.0, mode='spectral', under=(), ambiguity_rms=0.01, step_nm=1.0, normalize=False, chunk=4096)` (実装を直接呼ぶなら `import filmoptics; filmoptics.film_thickness_map(images, wavelengths_nm=(450.0, 500.0, 550.0, 600.0, 650.0, 700.0), film='SIO2', substrate='SI', thickness_min_nm=0.0, thickness_max_nm=1500.0, mode='spectral', under=(), ambiguity_rms=0.01, step_nm=1.0, normalize=False, chunk=4096)`、台帳から引くなら `opsoptics.get("film_thickness_map")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

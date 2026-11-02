@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">blob_seeds — BLOB <code style="color:#22d3bf">split</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">labels2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.blob_seeds(distance: &#x27;Any&#x27;, h: &#x27;float&#x27;, connectivity: &#x27;int&#x27; = 8) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import blob2d; blob2d.blob_seeds(distance: &#x27;Any&#x27;, h: &#x27;float&#x27;, connectivity: &#x27;int&#x27; = 8) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsblob.get(&quot;blob_seeds&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>h-Maxima-Saatpunkte. <b><code style="color:#22d3bf">h</code> ist ein Absolutwert in derselben Einheit wie <code style="color:#22d3bf">distance</code></b>.</p>
 <p>Behält nur die &quot;Maxima, die mindestens <code style="color:#22d3bf">h</code> hoch aufragen&quot;, nummeriert ihre Zusammenhangskomponenten und gibt sie zurück. Dient als Saat beim Auftrennen verschmolzener Klumpen.</p>

@@ -4,6 +4,7 @@ dim: conngraph
 category: reservoir
 in: matrix × matrix
 out: matrix
+gpu: なし
 examples: [poc_larval_connectome_reservoir]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `matrix × matrix` → `matrix`
 - **呼び出し**: `import fullseye as fs; fs.ledger.ridge_readout(X: 'Any', Y: 'Any', alpha: 'float' = 0.001) -> 'np.ndarray'` (実装を直接呼ぶなら `import conngraph; conngraph.ridge_readout(X: 'Any', Y: 'Any', alpha: 'float' = 0.001) -> 'np.ndarray'`、台帳から引くなら `opsconngraph.get("ridge_readout")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

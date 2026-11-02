@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">rss_lateral_check — DRIVE <code style="color:#22d3bf">rss</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rss_lateral_check(d_lat: &#x27;float&#x27;, v1: &#x27;float&#x27;, v2: &#x27;float&#x27;, p1: &#x27;dict&#x27;, p2: &#x27;Optional[dict]&#x27; = None) -&gt; &#x27;Dict[str, float]&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import rsssafety; rsssafety.rss_lateral_check(d_lat: &#x27;float&#x27;, v1: &#x27;float&#x27;, v2: &#x27;float&#x27;, p1: &#x27;dict&#x27;, p2: &#x27;Optional[dict]&#x27; = None) -&gt; &#x27;Dict[str, float]&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;rss_lateral_check&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>क्या lateral अंतर d_lat (बाएँ वाहन की दाईं साइड से दाएँ वाहन की बाईं साइड तक, ≥ 0) सुरक्षित है। Returns का रूप <code style="color:#22d3bf">rss_longitudinal_check</code> जैसा ही है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

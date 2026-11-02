@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">measure_with — IMGMETRICS <code style="color:#22d3bf">report</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">metrics × image2d × image2d</code> → <code style="color:#22d3bf">metrics</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.measure_with(report, a, b, ms=False)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import imgmetrics; imgmetrics.measure_with(report, a, b, ms=False)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsimgmetrics.get(&quot;measure_with&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p><b>पिछले माप जैसी बिल्कुल समान शर्तों में</b> एक और जोड़ी मापता है।</p>
 <p>compare_images (अनुबंध सहित) का रिटर्न मान प्राप्त करें और इसे वहां लिखें। रिकॉर्ड किए गए data_range / bins / ncd_levels का उपयोग करके फिर से मापें।</p>

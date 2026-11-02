@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">membrane_render_rgb — DRIVE <code style="color:#22d3bf">tacsim</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">normalmap × matrix</code> → <code style="color:#22d3bf">rgb</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.membrane_render_rgb(normals, lights, albedo: &#x27;float&#x27; = 1.0, ambient: &#x27;float&#x27; = 0.03, noise: &#x27;float&#x27; = 0.0, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import tacsim; tacsim.membrane_render_rgb(normals, lights, albedo: &#x27;float&#x27; = 1.0, ambient: &#x27;float&#x27; = 0.03, noise: &#x27;float&#x27; = 0.0, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;membrane_render_rgb&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>법선장 (H, W, 3) + 광원 (3, 3) → 시촉각 센서풍 RGB (H, W, 3) float. 채널 k = 광원 k의 Lambertian 영상 albedo·(max(N·L_k, 0) + ambient)(<code style="color:#22d3bf">photometric.render_lambertian</code>을 3회, 2번째 구현). <code style="color:#22d3bf">noise</code> &gt; 0이면 정규 난수를 더함.</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: normals 가 (H, W, 3) 이 아님, lights 가 (3, 3) 이 아님, noise &lt; 0.</p>

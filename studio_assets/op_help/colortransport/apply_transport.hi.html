@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">apply_transport — COLORTRANSPORT <code style="color:#22d3bf">plan_use</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">transport_plan × signal</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.apply_transport(plan, target_values)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import colortransport; colortransport.apply_transport(plan, target_values)</code>, registry से लेना हो तो <code style="color:#22d3bf">opscolortransport.get(&quot;apply_transport&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>transport plan से <code style="color:#22d3bf">target_values</code> को मूल point पर वापस खींचता है (barycentric map)।</p>
 <p>हर row (स्रोत) के लिए, ले जाए गए mass से weighted गंतव्य मानों का औसत लौटाता है। यही &quot;<b>plan का उपयोग करके तस्वीर सुधारने</b>&quot; का प्रवेश द्वार है -- अगर plan केवल बनाया जाए और उसका कोई उपयोग न हो,</p>

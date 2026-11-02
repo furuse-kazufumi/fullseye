@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tiled_map — AOI <code style="color:#22d3bf">aggregate</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tiled_map(image, tile=16, stat=&#x27;mean&#x27;, overlap=0, drop_partial=False)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import aoi; aoi.tiled_map(image, tile=16, stat=&#x27;mean&#x27;, overlap=0, drop_partial=False)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsaoi.get(&quot;tiled_map&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>image को tiles में बाँटता है और हर tile की मात्रा से एक छोटा map बनाता है। → dict.</p>
 <p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>

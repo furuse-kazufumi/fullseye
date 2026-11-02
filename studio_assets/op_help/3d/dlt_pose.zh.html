@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">dlt_pose — 3D <code style="color:#22d3bf">pose_estimation</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">points × keypoints</code> → <code style="color:#22d3bf">pose</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dlt_pose(points_3d, points_2d, K)</code>(要直接调用实现,<code style="color:#22d3bf">import pnp3d; pnp3d.dlt_pose(points_3d, points_2d, K)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;dlt_pose&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用 DLT 由 3D-2D 对应恢复相机位姿(K 已知)。→ (R (3,3), t (3,))。至少需要 6 点。</p>
 <p><code style="color:#22d3bf">pnp_pose</code> 的 (R, t) 部分(归一化 DLT + 平面 PnP 分支 + LM 精细化)。也需要重投影 RMS 时使用 <code style="color:#22d3bf">pnp_pose</code>。共面输入(棋盘格等)会自动分配到平面 PnP (旧实现以 fail-closed(失败即拒绝)方式拒绝,但由于能正确求解,所以求解)。</p>

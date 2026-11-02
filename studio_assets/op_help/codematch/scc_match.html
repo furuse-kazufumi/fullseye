@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">scc_match — CODEMATCH <code style="color:#22d3bf">match</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.scc_match(image, template, flat_thresh=0.01, min_valid=32, min_mask_fraction=None, mask_extension=True, z_mask=4.0) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import codematch; codematch.scc_match(image, template, flat_thresh=0.01, min_valid=32, min_mask_fraction=None, mask_extension=True, z_mask=4.0) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opscodematch.get(&quot;scc_match&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>選択的相関係数(SCC)。増分符号の一致する画素だけで正規化相関を取る。</p>
 <p>テンプレートの列を (0,1), (2,3), … の組にし、組ごとに右の画素が左以上かの符号 <code style="color:#22d3bf">b</code> を作る。画像の窓の同じ組の符号 <code style="color:#22d3bf">b&#x27;</code> と一致すれば、その組の 2 画素の基本マスク <code style="color:#22d3bf">c = 1</code>、違えば 0。<code style="color:#22d3bf">r = Σ c (f - f̄)(g - ḡ) / sqrt(Σ c (f - f̄)² · Σ c (g - ḡ)²)</code>、<code style="color:#22d3bf">f̄</code> と <code style="color:#22d3bf">ḡ</code> は窓とテンプレートの<b>全画素</b>の平均。マスクが全部 1 なら NCC と厳密に一致する(列数が奇数なら最後の列は組を作らず、マスク 0)。</p>

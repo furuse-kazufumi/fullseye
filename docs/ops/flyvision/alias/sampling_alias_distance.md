@@ -4,6 +4,7 @@ dim: flyvision
 category: alias
 in: 
 out: table
+gpu: なし
 examples: [poc_zebra_stripes_fly_eye]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.sampling_alias_distance(period_m, pitch_deg, lattice='hex', view_angle_deg=0.0, acceptance_deg=0.0, obliquity='along')` (実装を直接呼ぶなら `import flyvision; flyvision.sampling_alias_distance(period_m, pitch_deg, lattice='hex', view_angle_deg=0.0, acceptance_deg=0.0, obliquity='along')`、台帳から引くなら `opsflyvision.get("sampling_alias_distance")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">humanoid_impostors — DRIVE <code style="color:#22d3bf">humanoid</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.humanoid_impostors(clip: &#x27;dict&#x27;, *, n_yaw: &#x27;int&#x27; = 16, n_phase: &#x27;int&#x27; = 12, res: &#x27;int&#x27; = 128, distance: &#x27;float&#x27; = 30.0, light=(0.3, -0.5, 0.8), ambient: &#x27;float&#x27; = 0.35) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivehumanoid; drivehumanoid.humanoid_impostors(clip: &#x27;dict&#x27;, *, n_yaw: &#x27;int&#x27; = 16, n_phase: &#x27;int&#x27; = 12, res: &#x27;int&#x27; = 128, distance: &#x27;float&#x27; = 30.0, light=(0.3, -0.5, 0.8), ambient: &#x27;float&#x27; = 0.35) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;humanoid_impostors&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>클립(<code style="color:#22d3bf">humanoid_walk_clip</code>)을 <b>방위 n_yaw × 위상 n_phase</b>의 방향에서 미리 그려 둡니다.</p>
 <p>방위 b = 몸에서 본 카메라의 방향 2πb / n_yaw(0 = 정면 +x 에서 본다). 카메라는 몸 높이의 중간 정도 높이에서 수평으로, 거리 <code style="color:#22d3bf">distance</code> 에서 본다(거의 평행 투영). 색은 <code style="color:#22d3bf">driveworld.world_camera</code> 와 같은 Lambert(빛은 카메라계).</p>

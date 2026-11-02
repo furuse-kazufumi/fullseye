@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">specular_coefficient_map — SPECULAR <code style="color:#22d3bf">dichromatic</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">rgbimage</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.specular_coefficient_map(image_rgb, illuminant_rgb=(1.0, 1.0, 1.0), body_rgb=None, max_rank_ratio=0.1, max_negative_frac=0.02)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import specularity; specularity.specular_coefficient_map(image_rgb, illuminant_rgb=(1.0, 1.0, 1.0), body_rgb=None, max_rank_ratio=0.1, max_negative_frac=0.02)</code>、台帳から引くなら <code style="color:#22d3bf">opsspecular.get(&quot;specular_coefficient_map&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>The scalar interface (specular) coefficient of the dichromatic model. → (H, W).</p>
 <p>The same decomposition as <code style="color:#22d3bf">specular_diffuse_split</code>, returning the scalar <code style="color:#22d3bf">m_s(x)</code> instead of the coloured image <code style="color:#22d3bf">m_s(x) * G</code>. That scalar is what an inspection routine thresholds: it is the amount of light the surface reflected *as a mirror does*, in the units of the input radiance, and it is zero wherever the surface behaved as a Lambertian body.</p>

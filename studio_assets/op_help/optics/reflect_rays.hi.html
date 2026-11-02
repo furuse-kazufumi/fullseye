@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">reflect_rays — OPTICS <code style="color:#22d3bf">scene</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.reflect_rays(directions, normals)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import optscene; optscene.reflect_rays(directions, normals)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;reflect_rays&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>specular reflection d − 2(d·n)n। <code style="color:#22d3bf">glassmirror.refract_rays</code> का साथी (reflection वाला पक्ष मौजूद नहीं था)।</p>
 <p>incident दिशाएँ और normals दोनों (..., 3) हैं। normals के orientation (front/back) से स्वतंत्र। unit vectors लौटाता है।</p>

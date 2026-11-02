@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">farthest_point_sampling — 3D <code style="color:#22d3bf">geodesic</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">indices</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.farthest_point_sampling(points: numpy.ndarray, n: int, k: int = 8, start: int = 0) -&gt; numpy.ndarray</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import geodesic3d; geodesic3d.farthest_point_sampling(points: numpy.ndarray, n: int, k: int = 8, start: int = 0) -&gt; numpy.ndarray</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;farthest_point_sampling&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>測地距離での最遠点サンプリング(均等間引き)。→ 選択インデックス列 (n,) int。</p>
 <p><code style="color:#22d3bf">start</code> を最初の代表点にし、「既に選んだ点集合への測地距離が最大の点」を 1 つずつ追加する貪欲法(FPS)。距離は <code style="color:#22d3bf">knn_graph(points, k)</code> の無向 kNN グラフ上の Dijkstra で測り、既選択集合への距離は各代表点の単源距離の要素ごと最小 <code style="color:#22d3bf">mind</code> として保持、代表点を 1 つ足すたびに <code style="color:#22d3bf">mind = min(mind, d_new)</code> で更新する。代表点 1 つにつき Dijkstra 1 回なので計算量は n 回分の単源最短路。乱数は使わず決定的。</p>

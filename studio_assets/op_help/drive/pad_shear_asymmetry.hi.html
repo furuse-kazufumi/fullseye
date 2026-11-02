@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">pad_shear_asymmetry — DRIVE <code style="color:#22d3bf">pegtactile</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pad_shear_asymmetry(qR, qL) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import pegtactile; pegtactile.pad_shear_asymmetry(qR, qL) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;pad_shear_asymmetry&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>2 pads के membrane shear को साझा घटक (= axial बल, F_z/2 की दिशा) और अंतर घटक (= couple, M/(2w)) में बाँटता है: साझा = (q_R + q_L)/2, अंतर = (q_R − q_L)/2। <code style="color:#22d3bf">ratio_v</code> = |अंतर_v| / (|साझा_v| + |अंतर_v|) (0 = एक ही दिशा, 1 = शुद्ध couple), <code style="color:#22d3bf">opposite_v</code> = क्या v घटक का चिह्न बाएँ-दाएँ उलटा है। <b>Raises</b> ValueError: 2 finite घटक नहीं।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">fit_poly_surface — 3D <code style="color:#22d3bf">surface_fit</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d × image2d × image2d</code> → <code style="color:#22d3bf">poly_surface</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fit_poly_surface(x, y, z, degree=2)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import match3d; match3d.fit_poly_surface(x, y, z, degree=2)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;fit_poly_surface&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>산포 (x,y,z) → z=f(x,y) 다항 최소제곱. 반환값 model(coef/powers/degree/rms/pv).</p>
 <p>기저 <code style="color:#22d3bf">{x^i·y^j : i + j &lt;= degree}</code>(항 수 <code style="color:#22d3bf">(degree+1)(degree+2)/2</code>. degree=1이면 3항의 평면, 2이면 6항의 2차 곡면)를 <code style="color:#22d3bf">lstsq</code>로 맞춘다. <code style="color:#22d3bf">x, y, z</code>는 요소 수가 같으면 형태는 상관없다(내부에서 ravel. 격자라면 <code style="color:#22d3bf">np.mgrid</code>의 출력을 그대로). 반환값 dict: <code style="color:#22d3bf">coef</code> (T,) 계수, <code style="color:#22d3bf">powers</code>는 각 계수의 <code style="color:#22d3bf">(i, j)</code>(항 <code style="color:#22d3bf">x**i * y**j</code>), <code style="color:#22d3bf">degree</code>, <code style="color:#22d3bf">rms</code>는 잔차 RMS, <code style="color:#22d3bf">pv</code>는 잔차의 peak-to-valley(max − min). 단위는 z.</p>

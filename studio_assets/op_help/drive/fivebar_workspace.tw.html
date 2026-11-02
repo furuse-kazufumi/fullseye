@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">fivebar_workspace — DRIVE <code style="color:#22d3bf">puck</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fivebar_workspace(link: &#x27;dict&#x27;, *, n: &#x27;int&#x27; = 161, tol: &#x27;float&#x27; = 1e-09) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import puck; puck.fivebar_workspace(link: &#x27;dict&#x27;, *, n: &#x27;int&#x27; = 161, tol: &#x27;float&#x27; = 1e-09) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;fivebar_workspace&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>工作空間：網格各點中 IK 可解且 FK∘IK 在 tol 內回到原處的點(只把在分支 out/forward 上不矛盾的點視為「可達」)。回傳值 <code style="color:#22d3bf">{&quot;xs&quot;,&quot;ys&quot;,&quot;mask&quot;,&quot;area&quot;,&quot;x_max&quot;,&quot;x_min&quot;}</code>(x_max = 可達的最前方 x)。</p>
 <p>空輸入(<code style="color:#22d3bf">link</code> 為空 dict)會引發 <code style="color:#22d3bf">ValueError</code>。</p>

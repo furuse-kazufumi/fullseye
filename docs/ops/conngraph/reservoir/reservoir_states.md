@@ -4,6 +4,7 @@ dim: conngraph
 category: reservoir
 in: conn_graph × matrix
 out: matrix
+gpu: なし
 examples: [poc_malecns_activity_wave, poc_microns_brain_wave]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `conn_graph × matrix` → `matrix`
 - **呼び出し**: `import fullseye as fs; fs.ledger.reservoir_states(W: 'Any', U: 'Any', in_scale: 'float' = 1.0, leak: 'float' = 1.0, nonlinearity: 'str' = 'tanh', seed: 'int' = 0, washout: 'int' = 0, W_in: 'Any' = None) -> 'np.ndarray'` (実装を直接呼ぶなら `import conngraph; conngraph.reservoir_states(W: 'Any', U: 'Any', in_scale: 'float' = 1.0, leak: 'float' = 1.0, nonlinearity: 'str' = 'tanh', seed: 'int' = 0, washout: 'int' = 0, W_in: 'Any' = None) -> 'np.ndarray'`、台帳から引くなら `opsconngraph.get("reservoir_states")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

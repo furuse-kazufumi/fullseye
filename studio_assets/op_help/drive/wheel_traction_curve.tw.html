@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">wheel_traction_curve — DRIVE <code style="color:#22d3bf">roverslip</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">scalar × table × any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.wheel_traction_curve(load, wheel, soil, slips=None) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import roverslip; roverslip.wheel_traction_curve(load, wheel, soil, slips=None) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;wheel_traction_curve&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>保持 1 個車輪的載重 <code style="color:#22d3bf">load</code> [N] 不變時，各滑移率下的沉陷、牽引力與扭矩(牽引力–滑移曲線)。</p>
 <p><code style="color:#22d3bf">slips</code> 的預設值為 0~0.95 的 40 個點。回傳值 <code style="color:#22d3bf">{&quot;slip&quot;, &quot;sinkage&quot;, &quot;DP&quot;, &quot;T&quot;, &quot;DP_over_W&quot;, &quot;efficiency&quot;}</code> (<code style="color:#22d3bf">efficiency</code> = 牽引功率 / 驅動功率 = DP (1 − s) r / T,T ≤ 0 的點為 0)。</p>

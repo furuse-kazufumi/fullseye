@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">trace_rays — OPTICS <code style="color:#22d3bf">scene</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table × points × points</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.trace_rays(scene, origins, directions) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import optscene; optscene.trace_rays(scene, origins, directions) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;trace_rays&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>光線束を撃って最初の交点を返す(レンダラの素になる公開 op)。</p>
 <p>返り値 dict: <code style="color:#22d3bf">t</code> 距離 [mm] (当たらなければ inf)、<code style="color:#22d3bf">index</code> 当たったプリミティブの番号(-1 = 当たらず)、<code style="color:#22d3bf">point</code> 交点 [mm]、<code style="color:#22d3bf">normal</code> 単位法線(当たらなかった行は 0)。当たり判定は fail-closed で、シーンが空なら例外。</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">pod_from_ahat — SPC <code style="color:#22d3bf">pod</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pod_from_ahat(fit, a_dec, level=0.95, n_grid=200, a=None)</code>(要直接呼叫實作,<code style="color:#22d3bf">import pod; pod.pod_from_ahat(fit, a_dec, level=0.95, n_grid=200, a=None)</code>;從台帳取用則 <code style="color:#22d3bf">opsspc.get(&quot;pod_from_ahat&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由 â 對 a 的迴歸與判定閾值 <code style="color:#22d3bf">a_dec</code> 求 POD(a) 曲線及 a50 / a90 / a90/95(<code style="color:#22d3bf">table</code>)。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>

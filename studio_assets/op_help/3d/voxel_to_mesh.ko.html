@@ -3,6 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">mesh</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.voxel_to_mesh(vol, iso=0.5)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import match3d; match3d.voxel_to_mesh(vol, iso=0.5)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;voxel_to_mesh&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>원장 경유의 반환값</b>: <code style="color:#22d3bf">fullseye.ledger.voxel_to_mesh(...)</code> 는 <b>선언된 out 형 <code style="color:#22d3bf">mesh</code> 의 값만</b> 반환합니다(실제 함수는 보조 정보도 반환). 버려진 쪽이 필요하면 <code style="color:#22d3bf">fullseye.ledger.voxel_to_mesh.raw(...)</code> 를 쓰거나 <code style="color:#22d3bf">match3d.voxel_to_mesh</code> 를 직접 호출하세요.</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>voxel → mesh(marching cubes, skimage). 반환값 (verts, faces, normals). voxel→mesh 변환.</p>
 <p><code style="color:#22d3bf">skimage.measure.marching_cubes(vol, level=iso)</code>의 얇은 래퍼(spacing 지정 없음 = 1 voxel 단위). <code style="color:#22d3bf">verts</code> (V,3) float는 <b>voxel index 좌표</b>이며, 열은 입력의 축 순서(<code style="color:#22d3bf">vol</code>이 (D,H,W) 라면 (z,y,x)). <code style="color:#22d3bf">faces</code> (F,3) int는 verts에 대한 index, <code style="color:#22d3bf">normals</code> (V,3)는 skimage가기울기로부터 주는 정점 법선. 4번째 반환값(values)은 버린다.</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">depth_to_points — 3D <code style="color:#22d3bf">transform</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">depth</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.depth_to_points(depth, fx, fy, cx, cy, stride=1)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import match3d; match3d.depth_to_points(depth, fx, fy, cx, cy, stride=1)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;depth_to_points&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>深度マップ(2.5D)→ point cloud(ピンホール逆投影)。depth 行を全手法へ接続。</p>
 <p>画素 (行 v, 列 u) の深度 z から <code style="color:#22d3bf">X = (u − cx)·z/fx</code>、<code style="color:#22d3bf">Y = (v − cy)·z/fy</code>、<code style="color:#22d3bf">Z = z</code> を作る。返り値は <code style="color:#22d3bf">(N,3)</code> float64、列は <b>(X, Y, Z) のカメラ座標</b>(深度と同じ単位)。z が 0 以下の画素は捨てるので N は画素数以下(無効深度は 0 で表す規約)。</p>

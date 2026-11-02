@@ -4,6 +4,7 @@ dim: math
 category: geometry
 in: matrix
 out: table
+gpu: なし
 examples: [geometry_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `matrix` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.nurbs_revolve(profile, weights=None, *, degree: 'int' = 2, knots=None, n=(48, 48)) -> 'dict'` (実装を直接呼ぶなら `import mathgeometry; mathgeometry.nurbs_revolve(profile, weights=None, *, degree: 'int' = 2, knots=None, n=(48, 48)) -> 'dict'`、台帳から引くなら `opsmath.get("nurbs_revolve")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

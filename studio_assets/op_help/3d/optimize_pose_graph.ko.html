@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">optimize_pose_graph — 3D <code style="color:#22d3bf">pose_graph</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">pose</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.optimize_pose_graph(poses_init, edges, fix_first=True, max_iter=200)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import pose_graph; pose_graph.optimize_pose_graph(poses_init, edges, fix_first=True, max_iter=200)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;optimize_pose_graph&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>상대 자세 제약 + 루프 클로저로부터 전역 자세를 최적화. → dict{poses, rmse, cost}.</p>
 <p>poses_init (N,6)=[rvec|t] 의 초기 추정(드리프트 있음)을, edges 의 상대 자세 제약을 만족하도록 최적화한다. fix_first=True 로 선두 노드를 고정해 gauge 를 제거한다.</p>

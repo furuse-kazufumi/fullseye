@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">skeleton_junctions3d — 3D <code style="color:#22d3bf">medial</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">voxel</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.skeleton_junctions3d(vol)</code> (die Implementierung direkt: <code style="color:#22d3bf">import medial; medial.skeleton_junctions3d(vol)</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;skeleton_junctions3d&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Liefert die Knoten eines 3-D-Skeletts (drei oder mehr Skelettvoxel in der 26er-Nachbarschaft) als Voxelmaske.</p>
 <p>Eingaben, die kein Skelett sind (Klumpen mit Innerem), werden vor der Messung mit skeletonize_vol ausgedünnt. 3D-Version von <code style="color:#22d3bf">junctions_skeleton</code> aus 2D. Dient dazu, Blutgefäße, poröse Medien und netzwerkartige Strukturen als Graph darzustellen (Knotenextraktion). Wenn nur die aggregierten Verzweigungsgrade gebraucht werden, liefert topology_signature sie als dict.</p>

@@ -4,6 +4,7 @@ dim: printpath
 category: gcode
 in: text
 out: table
+gpu: なし
 examples: [poc_print_layer_inspection]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `text` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.gcode_read(path: 'str', layer_from: 'str' = 'auto') -> 'dict[str, np.ndarray]'` (実装を直接呼ぶなら `import printpath; printpath.gcode_read(path: 'str', layer_from: 'str' = 'auto') -> 'dict[str, np.ndarray]'`、台帳から引くなら `opsprintpath.get("gcode_read")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

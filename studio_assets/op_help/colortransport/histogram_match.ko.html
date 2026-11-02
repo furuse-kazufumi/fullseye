@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">histogram_match — COLORTRANSPORT <code style="color:#22d3bf">matching</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.histogram_match(src, ref, bins=None, ties=&#x27;average&#x27;)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import colortransport; colortransport.histogram_match(src, ref, bins=None, ties=&#x27;average&#x27;)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opscolortransport.get(&quot;histogram_match&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p><code style="color:#22d3bf">src</code> 의 값 분포를 <code style="color:#22d3bf">ref</code> 에 맞춥니다(1 차원 엄밀 최적수송).</p>
 <p>순위를 유지한 채 참조의 분위점으로 바꿔 넣는다. <code style="color:#22d3bf">bins</code>를 지정하면, 그 단수의누적 분포로 근사한다 -- 빠르지만 <b>엄밀하지 않게 되므로</b>, 기본값은 <code style="color:#22d3bf">None</code> (엄밀)으로 해 두었다.</p>

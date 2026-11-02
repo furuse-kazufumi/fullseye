@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">simcal_observe — SIMCAL <code style="color:#22d3bf">model</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">simmodel × images</code> → <code style="color:#22d3bf">simmodel</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.simcal_observe(model=None, images=None, roi=None, align=False, exposure=None, max_shift=8, split=&#x27;train&#x27;) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import simcal; simcal.simcal_observe(model=None, images=None, roi=None, align=False, exposure=None, max_shift=8, split=&#x27;train&#x27;) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opssimcal.get(&quot;simcal_observe&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>मापी गई images को simmodel से जोड़ता है: alignment, region of interest और exposure normalisation।</p>
 <p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>

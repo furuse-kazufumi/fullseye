@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">solid_angle_render — OPTICS <code style="color:#22d3bf">illumination</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">normalmap × table</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.solid_angle_render(normals, light, view_na=0.1, roughness_deg=0.0, f0=0.9, diffuse_albedo=0.0, n_samples=64, seed=0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import illumdesign; illumdesign.solid_angle_render(normals, light, view_na=0.1, roughness_deg=0.0, f0=0.9, diffuse_albedo=0.0, n_samples=64, seed=0)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;solid_angle_render&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>円錐の照明の下で NA *view_na* のレンズを通して撮った法線マップの画像(<code style="color:#22d3bf">image2d</code>)。</p>
 <p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>

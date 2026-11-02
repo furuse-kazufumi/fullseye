@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">knn_graph — 3D <code style="color:#22d3bf">geodesic</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">graph</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.knn_graph(points: numpy.ndarray, k: int = 8) -&gt; Tuple[numpy.ndarray, numpy.ndarray]</code> (to call the implementation directly, <code style="color:#22d3bf">import geodesic3d; geodesic3d.knn_graph(points: numpy.ndarray, k: int = 8) -&gt; Tuple[numpy.ndarray, numpy.ndarray]</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;knn_graph&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Each point&#x27;s k nearest-neighbour indices and Euclidean distances (excluding itself). → (idx (N,k) int, dist (N,k) float).</p>
 <p>Looks up the k+1 nearest neighbours of each point with <code style="color:#22d3bf">scipy.spatial.cKDTree</code> and returns the k of them excluding the point itself (distance 0). <code style="color:#22d3bf">idx[i, j]</code> is the index of the j-th nearest point to point i, <code style="color:#22d3bf">dist[i, j]</code> its Euclidean distance (in coordinate units), and each row is in ascending order of distance.</p>

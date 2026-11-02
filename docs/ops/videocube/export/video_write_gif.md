@@ -4,6 +4,7 @@ dim: videocube
 category: export
 in: rgbvideo
 out: text
+gpu: なし
 examples: [poc_video_cube]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `rgbvideo` → `text`
 - **呼び出し**: `import fullseye as fs; fs.ledger.video_write_gif(frames, path: 'str', fps: 'float' = 10.0) -> 'str'` (実装を直接呼ぶなら `import videocube; videocube.video_write_gif(frames, path: 'str', fps: 'float' = 10.0) -> 'str'`、台帳から引くなら `opsvideocube.get("video_write_gif")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

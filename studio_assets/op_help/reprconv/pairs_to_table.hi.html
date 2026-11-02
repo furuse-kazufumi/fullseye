@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">pairs_to_table — REPRCONV <code style="color:#22d3bf">pairs</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pairs_to_table(pairs)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import reprconv; reprconv.pairs_to_table(pairs)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsreprconv.get(&quot;pairs_to_table&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>जोड़े <code style="color:#22d3bf">(N,2)</code> → सारांश <code style="color:#22d3bf">table</code>। <b>एक-तरफ़ा</b>।</p>
 <p><code style="color:#22d3bf">x_uniform</code> यह जाँच है कि &quot;column 0 समान अंतराल पर है या नहीं&quot;; जिन pairs के लिए यह False है, उन्हें <code style="color:#22d3bf">pairs_to_signal</code> से गुज़ारने पर x चुपचाप खो जाता है (ऊपर का docstring देखें)। जाँच सबसे बड़े और सबसे छोटे difference के अंतर से होती है, threshold पूरे range के सापेक्ष 1e-9 है।</p>

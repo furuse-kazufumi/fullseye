@@ -4,6 +4,7 @@ dim: 3d
 category: medial
 in: voxel × voxel
 out: measurement
+gpu: なし
 examples: [medial_topology]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `voxel × voxel` → `measurement`
 - **呼び出し**: `import fullseye as fs; fs.ledger.medial_match(vol_a, vol_b, w_topology=0.6, w_radius=0.4, n_bins=12)` (実装を直接呼ぶなら `import medial; medial.medial_match(vol_a, vol_b, w_topology=0.6, w_radius=0.4, n_bins=12)`、台帳から引くなら `ops3d.get("medial_match")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

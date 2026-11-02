@@ -4,6 +4,7 @@ dim: text
 category: layout
 in: table
 out: table
+gpu: なし
 examples: [poc_text_region_truth]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.text_lines(boxes, stroke_width=None, overlap_ratio: 'float' = 0.5, gap_ratio: 'float' = 3.0, width_ratio: 'float' = 3.0)` (実装を直接呼ぶなら `import textregion; textregion.text_lines(boxes, stroke_width=None, overlap_ratio: 'float' = 0.5, gap_ratio: 'float' = 3.0, width_ratio: 'float' = 3.0)`、台帳から引くなら `opstext.get("text_lines")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

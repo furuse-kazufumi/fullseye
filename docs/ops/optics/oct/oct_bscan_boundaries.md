@@ -4,6 +4,7 @@ dim: optics
 category: oct
 in: image2d
 out: table
+gpu: なし
 examples: [poc_industrial_oct]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.oct_bscan_boundaries(image, n_boundaries=2, um_per_px=1.0, n_group=None, min_gap_px=4, max_jump_px=2, jump_penalty=0.0, smooth_sigma=1.0, mode='peak', top_px=None, bottom_px=None, reference_rows=None, offset_px=None)` (実装を直接呼ぶなら `import octscan; octscan.oct_bscan_boundaries(image, n_boundaries=2, um_per_px=1.0, n_group=None, min_gap_px=4, max_jump_px=2, jump_penalty=0.0, smooth_sigma=1.0, mode='peak', top_px=None, bottom_px=None, reference_rows=None, offset_px=None)`、台帳から引くなら `opsoptics.get("oct_bscan_boundaries")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

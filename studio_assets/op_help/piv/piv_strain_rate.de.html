@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">piv_strain_rate — PIV <code style="color:#22d3bf">field</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">flow2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_strain_rate(flow, spacing=1.0)</code> (die Implementierung direkt: <code style="color:#22d3bf">import pivops; pivops.piv_strain_rate(flow, spacing=1.0)</code>; aus dem Register: <code style="color:#22d3bf">opspiv.get(&quot;piv_strain_rate&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Betrag der Verzerrungsrate <code style="color:#22d3bf">sqrt(2 e_ij e_ij)</code>. Bei einer Starrkörperrotation ist er 0.</p>
 <p>Gemessen: Starrkörperrotation 0.0 / gleichförmige Expansion s=0.01 ergibt 0.02 (= 2s) / einfache Scherung g=0.02 ergibt 0.02 (= g). Es ist <b>die Stärke der Verformung mit allein entfernter Rotation</b>; zusammen mit dem Q-Kriterium oder λ_ci betrachtet, trennt es &quot;Wirbel oder Scherung&quot;.</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">polygon_coverage_image — DRIVE <code style="color:#22d3bf">pegsym</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.polygon_coverage_image(vertices_px, size: &#x27;int&#x27; = 160, ss: &#x27;int&#x27; = 8, width: &#x27;int | None&#x27; = None) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import pegsym; pegsym.polygon_coverage_image(vertices_px, size: &#x27;int&#x27; = 160, ss: &#x27;int&#x27; = 8, width: &#x27;int | None&#x27; = None) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;polygon_coverage_image&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Bedeckungsgrad-Bild 0..1 ((size, width); Kantenglättung mit <code style="color:#22d3bf">ss</code> × <code style="color:#22d3bf">ss</code> Unterabtastungen) eines konvexen Polygons (Vertexliste in Pixelkoordinaten (col, row)). Ein Baustein für die Synthese mit Ground Truth. <b>Raises</b> ValueError: nicht konvex, size &lt; 8, ss &lt; 1.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

@@ -4,6 +4,7 @@ dim: oned
 category: function
 in: signal
 out: signal
+gpu: なし
 examples: [poc_cold_chain_excursion, signal_funct1d]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal` → `signal`
 - **呼び出し**: `import fullseye as fs; fs.ledger.sample_funct_1d(y, step=2)` (実装を直接呼ぶなら `import funct1d; funct1d.sample_funct_1d(y, step=2)`、台帳から引くなら `ops1d.get("sample_funct_1d")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

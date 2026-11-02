@@ -4,6 +4,7 @@ dim: 3d
 category: medial
 in: voxel
 out: voxel
+gpu: なし
 examples: [medial_topology, molecule_atom_count, nearest_seed_partition, vessel_metrology]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `voxel` → `voxel`
 - **呼び出し**: `import fullseye as fs; fs.ledger.vol_distance_transform(vol_binary, spacing=None)` (実装を直接呼ぶなら `import volops; volops.vol_distance_transform(vol_binary, spacing=None)`、台帳から引くなら `ops3d.get("vol_distance_transform")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

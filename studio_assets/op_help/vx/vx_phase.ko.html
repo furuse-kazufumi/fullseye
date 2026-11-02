@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">vx_phase — VX <code style="color:#22d3bf">gradient</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vx_phase(gx, gy, *, mapping)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import vxcore; vxcore.vx_phase(gx, gy, *, mapping)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsvx.get(&quot;vx_phase&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>기울기의 위상(3.41절): ϕ = atan2(gy, gx)를 0 ≤ ϕ &lt; 2π로 옮기고 0~255로 사상한다(REQ-0364). 출력 U8.</p>
 <p>*mapping*(필수): 규격은 사상의 반올림을 적어 두지 않았다. <code style="color:#22d3bf">&quot;floor&quot;</code> = ⌊ϕ·256/(2π)⌋(0 ≤ 값 ≤ 255 가 자동으로 성립), <code style="color:#22d3bf">&quot;round&quot;</code> = ⌊ϕ·256/(2π) + 0.5⌋ mod 256(2π 바로 앞은 0 으로 감긴다). gx = gy = 0 인 화소는 atan2 의 약속으로 ϕ = 0.</p>

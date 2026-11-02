@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">annotate_text_path_layout — ANNOTATE <code style="color:#22d3bf">paper</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">text</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_text_path_layout(text, path, font_size=13, font_path=None, spacing=1.0, start=0.0, anchor=&#x27;start&#x27;, offset=0.0, upright=False, line_spacing=1.15)</code>(要直接呼叫實作,<code style="color:#22d3bf">import annotate; annotate.annotate_text_path_layout(text, path, font_size=13, font_path=None, spacing=1.0, start=0.0, anchor=&#x27;start&#x27;, offset=0.0, upright=False, line_spacing=1.15)</code>;從台帳取用則 <code style="color:#22d3bf">opsannotate.get(&quot;annotate_text_path_layout&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>回傳表(dict):沿折線逐字的位置與傾角(按弧長確定)。</p>
 <p>第 i 個字元的中心位於弧長 <code style="color:#22d3bf">s_i = s0 + Σ_{j&lt;i} a_j*spacing + a_i/2</code> 處,傾斜為該位置線段的切線角(螢幕座標,度)。比路徑長的字串會引發 ValueError。</p>

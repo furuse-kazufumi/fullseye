@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">lens_file_read — OPTICS <code style="color:#22d3bf">lensfile</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">table</code> (an op determined by its arguments alone — it takes no image or data input)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lens_file_read(source=None, allow_partial: &#x27;bool&#x27; = False, glass_dir=None) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import lensfile; lensfile.lens_file_read(source=None, allow_partial: &#x27;bool&#x27; = False, glass_dir=None) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;lens_file_read&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Read a <code style="color:#22d3bf">.zmx</code> sequential lens prescription into a Fullseye prescription (<code style="color:#22d3bf">table</code>).</p>
 <p>*source* is a file path, the file&#x27;s text, its bytes, or <code style="color:#22d3bf">None</code> for the bundled example <code style="color:#22d3bf">ZMX_EXAMPLE</code> (a Cooke triplet, f ≈ 50 mm, f/5).</p>

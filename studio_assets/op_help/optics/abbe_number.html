@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">abbe_number — OPTICS <code style="color:#22d3bf">matprop</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.abbe_number(material=&#x27;N-BK7&#x27;) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import materials; materials.abbe_number(material=&#x27;N-BK7&#x27;) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;abbe_number&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>フラウンホーファー線の屈折率と Abbe 数(d 線系・e 線系)、部分分散 P_g,F を返す。</p>
 <p>V_d = (n_d − 1)/(n_F − n_C)、V_e = (n_e − 1)/(n_F&#x27; − n_C&#x27;)、P_g,F = (n_g − n_F)/(n_F − n_C) (g 線 435.8 nm が分散式の区間の外なら <code style="color:#22d3bf">ng</code> / <code style="color:#22d3bf">PgF</code> は <code style="color:#22d3bf">None</code> —— プラスチックの式は 436.8 nm から)。<code style="color:#22d3bf">nd_catalog</code> / <code style="color:#22d3bf">vd_catalog</code> はカタログの公表値(無ければ <code style="color:#22d3bf">None</code>)で、分散式から計算した <code style="color:#22d3bf">nd</code> / <code style="color:#22d3bf">vd</code> との差がテストの門(硝材 46 種で n_d 1e-4・V_d 0.3 以内)。金属のように d 線で k が大きい材料は Abbe 数に意味が無いので ValueError。</p>

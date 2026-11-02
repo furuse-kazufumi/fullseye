@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">curvature_to_table — REPRCONV <code style="color:#22d3bf">curvature</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">curvature</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.curvature_to_table(curvature)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import reprconv; reprconv.curvature_to_table(curvature)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsreprconv.get(&quot;curvature_to_table&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>curvature → distribution का सारांश <code style="color:#22d3bf">table</code>। <b>एक-तरफ़ा</b> (statistic का काम ही जानकारी फेंकना है)।</p>
 <p>(N,) की अकेली curvature और (N,2) की principal curvature जोड़ी, दोनों लेता है -- केवल statistics निकालने के लिए जोड़ी होना ज़रूरी नहीं। <code style="color:#22d3bf">kind</code> में मिला हुआ रूप वापस लिखा जाता है, इसलिए downstream बाद में पहचान सकता है कि &quot;क्या यह जोड़ी थी&quot;।</p>

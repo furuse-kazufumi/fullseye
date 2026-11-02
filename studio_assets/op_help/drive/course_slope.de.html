@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">course_slope — DRIVE <code style="color:#22d3bf">course</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">keine</code> → <code style="color:#22d3bf">table</code> (ein Operator, der allein durch seine Argumente bestimmt ist — er nimmt kein Bild und keine Daten entgegen)</p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.course_slope(width=7.0, height=1.5, grade_gentle=0.08, grade_steep=0.11, top=4.0)</code> (die Implementierung direkt: <code style="color:#22d3bf">import drivecourse; drivecourse.course_slope(width=7.0, height=1.5, grade_gentle=0.08, grade_steep=0.11, top=4.0)</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;course_slope&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Steigungsstrecke: eine rechteckige Straße (entlang der x-Achse), die mit flacher Steigung auf die Höhe <code style="color:#22d3bf">height</code> ansteigt, ein ebenes Gipfelstück <code style="color:#22d3bf">top</code> hat und mit steilem Gefälle abfällt.</p>
 <p>Das Polygon ist ein Rechteck der Breite w × Länge L = height/g_gentle + top + height/g_steep. <code style="color:#22d3bf">profile</code> = Polylinie (s, z) [(0,0), (s1,h), (s1+top,h), (L,0)]; z wird mit <code style="color:#22d3bf">slope_height</code> interpoliert (driveworld hebt die Fahrbahn an).</p>

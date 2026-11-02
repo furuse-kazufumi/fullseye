@@ -4,6 +4,7 @@ dim: segmentation
 category: graph
 in: image2d
 out: table
+gpu: なし
 examples: [poc_graph_hierarchy_segmentation]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.graph_cut_binary(image, *, lam: 'float' = 1.0, mu_bg: 'Optional[float]' = None, mu_fg: 'Optional[float]' = None, contrast_sigma: 'Optional[float]' = None, seeds=None, connectivity: 'int' = 4) -> 'Dict[str, object]'` (実装を直接呼ぶなら `import seggraph; seggraph.graph_cut_binary(image, *, lam: 'float' = 1.0, mu_bg: 'Optional[float]' = None, mu_fg: 'Optional[float]' = None, contrast_sigma: 'Optional[float]' = None, seeds=None, connectivity: 'int' = 4) -> 'Dict[str, object]'`、台帳から引くなら `opssegmentation.get("graph_cut_binary")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

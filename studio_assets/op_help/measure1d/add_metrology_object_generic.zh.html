@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">add_metrology_object_generic — MEASURE1D <code style="color:#22d3bf">model</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">metrologymodel</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.add_metrology_object_generic(model, otype, params, n: &#x27;int&#x27; = 40) -&gt; &#x27;int&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import metrology; metrology.add_metrology_object_generic(model, otype, params, n: &#x27;int&#x27; = 40) -&gt; &#x27;int&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsmeasure1d.get(&quot;add_metrology_object_generic&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>添加通用计量对象(add_metrology_object_generic)。</p>
 <p>以字符串指定形状种类的入口。<code style="color:#22d3bf">otype</code> 与 <code style="color:#22d3bf">params</code> 的组合必须与专用 op</p>

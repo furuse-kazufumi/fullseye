@@ -4,6 +4,7 @@ dim: drive
 category: pegtactile
 in: text
 out: image2d
+gpu: なし
 examples: [poc_peg_insertion_tactile]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `text` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.symmetric_peg_shape(name: 'str', size: 'int' = 160, radius: 'float' = 50.0, angle: 'float' = 0.0, centre=None, ss: 'int' = 8) -> 'np.ndarray'` (実装を直接呼ぶなら `import pegtactile; pegtactile.symmetric_peg_shape(name: 'str', size: 'int' = 160, radius: 'float' = 50.0, angle: 'float' = 0.0, centre=None, ss: 'int' = 8) -> 'np.ndarray'`、台帳から引くなら `opsdrive.get("symmetric_peg_shape")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

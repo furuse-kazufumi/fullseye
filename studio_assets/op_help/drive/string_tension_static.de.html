@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">string_tension_static — DRIVE <code style="color:#22d3bf">diabolo</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">scalar × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.string_tension_static(stick_gap: &#x27;float&#x27;, params: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import diabolo; diabolo.string_tension_static(stick_gap: &#x27;float&#x27;, params: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;string_tension_static&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Stäbe in gleicher Höhe mit Abstand 2c angehalten, Diabolo ruht im tiefsten Punkt: Durchhang b = √(a² − c²), Spannung T = m g a / (2b), Winkel der Schnur zur Horizontalen atan2(b, c). <b>Raises</b> <code style="color:#22d3bf">ValueError</code>: Abstand außerhalb von (0, Schnur).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

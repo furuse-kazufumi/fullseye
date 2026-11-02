@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">carla_depth_encode — DRIVE <code style="color:#22d3bf">carla</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">rgb</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.carla_depth_encode(depth_m) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import carlabridge; carlabridge.carla_depth_encode(depth_m) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;carla_depth_encode&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>image plane से दूरी [m] → CARLA की raw depth image (uint8 (H,W,3))। inf और 1000 m से अधिक अधिकतम मान पर, ऋणात्मक और NaN पर ValueError।</p>
 <p>खाली इनपुट (<code style="color:#22d3bf">depth_m</code> में 0 तत्व) पर <code style="color:#22d3bf">ValueError</code> उठता है।</p>

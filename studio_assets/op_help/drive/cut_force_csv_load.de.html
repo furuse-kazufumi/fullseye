@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">cut_force_csv_load — DRIVE <code style="color:#22d3bf">cutting</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">any × any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cut_force_csv_load(path, license: &#x27;str&#x27;) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import cutting; cutting.cut_force_csv_load(path, license: &#x27;str&#x27;) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;cut_force_csv_load&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Liest die CSV der Klingenkräfte, die eine Finite-Elemente-Schneidsimulation geschrieben hat (Zeile 1 ist <code style="color:#22d3bf">Rcforc</code>, Zeile 2 die Spaltennamen, die Spalten wechseln zwischen Zeit und den 3 Kraftkomponenten).</p>
 <p>Vorgesehen ist der von arXiv:2105.12244 veröffentlichte Datensatz (CC BY-NC 4.0 = nicht-kommerziell). <code style="color:#22d3bf">license</code> muss der Aufrufer <b>unbedingt</b> angeben (damit der Verwendungszweck der Daten im Rückgabewert erhalten bleibt; leer → ValueError). Die Daten kommen nicht ins repo; der Ablageort wird per Umgebungsvariable übergeben.</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">esprit_doa — MATH <code style="color:#22d3bf">spectral</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.esprit_doa(X, n_sources: &#x27;int | None&#x27; = None, *, spacing: &#x27;float&#x27; = 0.5) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import mathspectral; mathspectral.esprit_doa(X, n_sources: &#x27;int | None&#x27; = None, *, spacing: &#x27;float&#x27; = 0.5) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsmath.get(&quot;esprit_doa&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>ESPRIT(Roy &amp; Kailath 1989): 어레이의 &#x27;1소자 이동&#x27; 불변성으로부터 격자를 쓰지 않고 방향을 푼다.</p>
 <p>신호 부분공간 E_s의 위 M−1행과 아래 M−1행을 최소제곱으로 잇는 Φ의 고윳값 λ_k = exp(−2πi d sin θ_k)로부터 θ_k = arcsin(−arg λ_k / (2π d)). 잡음 없음·무상관이면 엄밀(격자의 분해능에 묶이지 않는다). <code style="color:#22d3bf">n_sources=None</code>이면 MDL로 추정한다. 반환값 <code style="color:#22d3bf">{&quot;doa_deg&quot;, &quot;eigenvalues&quot;, &quot;n_sources&quot;, &quot;n_sources_estimated&quot;}</code>.</p>

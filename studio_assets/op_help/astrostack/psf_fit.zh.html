@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">psf_fit — ASTROSTACK <code style="color:#22d3bf">photometry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d × keypoints</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.psf_fit(image, centers, model=&#x27;gaussian&#x27;, box=11, max_iter=200)</code>(要直接调用实现,<code style="color:#22d3bf">import astrostack; astrostack.psf_fit(image, centers, model=&#x27;gaussian&#x27;, box=11, max_iter=200)</code>;从台账取用则 <code style="color:#22d3bf">opsastrostack.get(&quot;psf_fit&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>对星像拟合 PSF,得到中心与 FWHM。</p>
 <p>*model* <code style="color:#22d3bf">&quot;gaussian&quot;</code> 是<b>椭圆</b>高斯 <code style="color:#22d3bf">bkg + amp * exp(-((dr/sr)^2 + (dc/sc)^2)/2)</code> 的 6 参数拟合，圆度(<code style="color:#22d3bf">roundness = min(sr,sc)/max(sr,sc)</code>)作为副产品给出 —— 因跟踪误差或风而拉长的星像会体现在这里。<code style="color:#22d3bf">&quot;moffat&quot;</code> 是圆对称的 <code style="color:#22d3bf">bkg + amp * (1 + r^2/alpha^2)^(-beta)</code>(Moffat 1969)，<code style="color:#22d3bf">beta</code> 也是</p>

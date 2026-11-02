@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">graph_activation_latency — CONNGRAPH <code style="color:#22d3bf">activity</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">labels</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graph_activation_latency(X: &#x27;Any&#x27;, thresh: &#x27;float&#x27; = 0.1) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import conngraph; conngraph.graph_activation_latency(X: &#x27;Any&#x27;, thresh: &#x27;float&#x27; = 0.1) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsconngraph.get(&quot;graph_activation_latency&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Folge (n,) des Schritts (0-basiert), in dem jeder Knoten zum ersten Mal „aufleuchtete“, als Ganzzahlen. Knoten, die nie aufleuchteten, erhalten −1.</p>
 <p><code style="color:#22d3bf">X</code> ist das (T, n) von reservoir_states. &quot;Aufgeleuchtet&quot; = |x| ≥ <b>globales Maximum</b> × thresh (thresh liegt in (0, 1]). Es gibt 1 Skala, nicht eine pro Knoten -- würde man pro Knoten strecken, zählte selbst der Rundungsstaub kaum bewegter Knoten als &quot;aufgeleuchtet&quot;. Ein X aus lauter Nullen ergibt überall −1.</p>

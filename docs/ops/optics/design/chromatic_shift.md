@@ -4,6 +4,7 @@ dim: optics
 category: design
 in: table
 out: table
+gpu: なし
 examples: [lens_optimize_demo, poc_material_optical_library, poc_photograph_through_prescription, poc_zmx_public_verify]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.chromatic_shift(system, wavelengths=(0.48613, 0.58756, 0.65627), field=None, rings=6)` (実装を直接呼ぶなら `import raytrace; raytrace.chromatic_shift(system, wavelengths=(0.48613, 0.58756, 0.65627), field=None, rings=6)`、台帳から引くなら `opsoptics.get("chromatic_shift")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

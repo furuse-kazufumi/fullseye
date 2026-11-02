@@ -4,6 +4,7 @@ dim: optics
 category: imaging
 in: image2d
 out: table
+gpu: なし
 examples: [optical_design_metrics]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.energy_radii(psf, pixel_pitch_um=1.0, fractions=(0.5, 0.8, 0.9), kind='circle', centre='centroid')` (実装を直接呼ぶなら `import optics; optics.energy_radii(psf, pixel_pitch_um=1.0, fractions=(0.5, 0.8, 0.9), kind='circle', centre='centroid')`、台帳から引くなら `opsoptics.get("energy_radii")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

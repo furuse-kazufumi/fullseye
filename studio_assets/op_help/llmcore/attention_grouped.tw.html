@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">attention_grouped — LLMCORE <code style="color:#22d3bf">attend</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">tokens × tokens × tokens</code> → <code style="color:#22d3bf">tokens</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.attention_grouped(query, key, value, n_heads: &#x27;int&#x27;, n_kv_heads: &#x27;int&#x27;, mask=None, window=None) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import llmcore; llmcore.attention_grouped(query, key, value, n_heads: &#x27;int&#x27;, n_kv_heads: &#x27;int&#x27;, mask=None, window=None) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsllmcore.get(&quot;attention_grouped&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把頭分組共享的注意力(GQA)→ tokens。<b>n_kv_heads == n_heads 時與 MHA、== 1 時與 MQA 嚴格一致</b>。</p>
 <p>Ainslie 等 2023。query 分成 <code style="color:#22d3bf">n_heads</code> 個頭,key/value 只有 <code style="color:#22d3bf">n_kv_heads</code> 個頭並被重複使用。兩端<b>嚴格地</b>退化為既有的 2 種(MHA / MQA)(兩者都是 0.0e+00), 所以「取中間」這一主張可以在端點處驗算。</p>

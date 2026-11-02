@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">mor_from_beta — DRIVE <code style="color:#22d3bf">env</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">scalar</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mor_from_beta(beta: &#x27;float&#x27;, contrast: &#x27;float&#x27; = 0.05) -&gt; &#x27;float&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import driveenv; driveenv.mor_from_beta(beta: &#x27;float&#x27;, contrast: &#x27;float&#x27; = 0.05) -&gt; &#x27;float&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;mor_from_beta&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Extinktionskoeffizient β [1/m] → meteorologische Sichtweite = −ln(contrast)/β. Standard 0.05 = meteorologische Sichtweite nach WMO (MOR ≈ 2.996/β), 0.02 = Koschmieder (3.912/β).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

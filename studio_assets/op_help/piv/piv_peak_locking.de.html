@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">piv_peak_locking — PIV <code style="color:#22d3bf">assess</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">flow2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_peak_locking(flow, bins=20)</code> (die Implementierung direkt: <code style="color:#22d3bf">import pivops; pivops.piv_peak_locking(flow, bins=20)</code>; aus dem Register: <code style="color:#22d3bf">opspiv.get(&quot;piv_peak_locking&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Stärke des Peak-Lockings: wie stark die Verteilung der Nachkommaanteile von der Gleichverteilung abweicht.</p>
 <p>Subpixel-Schätzungen tendieren zu echten Verschiebungen, wenn der Bruchteil 0 oder 0,5 ist. Bias (aufgrund des Unterschieds in der Form des Korrelationspeaks und der Form der angepassten Funktion) Systematischer Fehler im Lehrbuch). Wenn der Fluss nicht gleichmäßig ist, sollte der Bruchteil einer gleichmäßigen Verteilung nahe kommen, Messen Sie die Abweichung von dort.</p>

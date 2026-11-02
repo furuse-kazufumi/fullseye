@@ -4,6 +4,7 @@ dim: spc
 category: pod
 in: table × signal
 out: table
+gpu: なし
 examples: [poc_pod_lighting]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table × signal` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.pod_decision_tradeoff(fit, noise, a_dec_grid=None, n_grid=25, level=0.95)` (実装を直接呼ぶなら `import pod; pod.pod_decision_tradeoff(fit, noise, a_dec_grid=None, n_grid=25, level=0.95)`、台帳から引くなら `opsspc.get("pod_decision_tradeoff")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

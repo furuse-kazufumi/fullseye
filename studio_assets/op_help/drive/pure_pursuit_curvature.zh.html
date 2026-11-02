@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">pure_pursuit_curvature — DRIVE <code style="color:#22d3bf">lateral</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pure_pursuit_curvature(pose, path, lookahead, *, start_index=None, window: &#x27;int&#x27; = 40) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import drivelateral; drivelateral.pure_pursuit_curvature(pose, path, lookahead, *, start_index=None, window: &#x27;int&#x27; = 40) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;pure_pursuit_curvature&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>pure pursuit：从后轴中心(<code style="color:#22d3bf">pose</code> = (x, y, ψ)，可为 (N, 3))瞄准路径上前方距离 L_d 处的点的曲率 κ = 2 sin α / L_d。</p>
 <p>路径为折线 (M, 2)。先找最近点,再在线段上用二次方程求出其后首个距离为 L_d 的点(若到达不了路径终点,则瞄准终点,并将 L_d 设为该距离)。<code style="color:#22d3bf">start_index</code> 和 <code style="color:#22d3bf">window</code> 缩小搜索最近点的范围(加快长路径的重复调用。None 则为全体)。</p>

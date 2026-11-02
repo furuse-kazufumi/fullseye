@@ -4,6 +4,7 @@ dim: drive
 category: crossing
 in: table
 out: table
+gpu: なし
 examples: [poc_driving_crossing, poc_driving_town]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.crossing_stop_check(trajectory, *, stop_line: 'float', crossing_start: 'float', crossing_end: 'float', car_length: 'float', look_events: 'Sequence[Tuple[float, str]]' = (), forbidden_intervals: 'Sequence[Tuple[float, float]]' = (), queue_rear: 'Optional[float]' = None, signal_controlled: 'bool' = False, near: 'float' = 2.0, v_stop: 'float' = 0.05, gap: 'float' = 1.0, beyond: 'float' = 0.5, brake_max: 'Optional[float]' = None) -> 'Dict[str, object]'` (実装を直接呼ぶなら `import drivecrossing; drivecrossing.crossing_stop_check(trajectory, *, stop_line: 'float', crossing_start: 'float', crossing_end: 'float', car_length: 'float', look_events: 'Sequence[Tuple[float, str]]' = (), forbidden_intervals: 'Sequence[Tuple[float, float]]' = (), queue_rear: 'Optional[float]' = None, signal_controlled: 'bool' = False, near: 'float' = 2.0, v_stop: 'float' = 0.05, gap: 'float' = 1.0, beyond: 'float' = 0.5, brake_max: 'Optional[float]' = None) -> 'Dict[str, object]'`、台帳から引くなら `opsdrive.get("crossing_stop_check")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

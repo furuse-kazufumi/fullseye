@@ -4,6 +4,7 @@ dim: reprconv
 category: flow
 in: flow_scattered
 out: signal
+gpu: なし
 examples: [representation_conversion, representation_roundtrip]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `flow_scattered` → `signal`
 - **呼び出し**: `import fullseye as fs; fs.ledger.flow_speed(flow)` (実装を直接呼ぶなら `import reprconv; reprconv.flow_speed(flow)`、台帳から引くなら `opsreprconv.get("flow_speed")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

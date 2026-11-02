@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">project_hom_point_hom_mat3d — CALIB <code style="color:#22d3bf">project</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">keypoints</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.project_hom_point_hom_mat3d(points_hom, hom_mat3d)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import calib; calib.project_hom_point_hom_mat3d(points_hom, hom_mat3d)</code>, registry से लेना हो तो <code style="color:#22d3bf">opscalib.get(&quot;project_hom_point_hom_mat3d&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>homogeneous 3-D points (4,) को 3x4/4x4 projection matrix से project करके pixel (row, col) लौटाता है (project_hom_point_hom_mat3d)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>

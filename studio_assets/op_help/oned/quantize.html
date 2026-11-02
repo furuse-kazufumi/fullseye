@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">quantize — ONED <code style="color:#22d3bf">signal</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.quantize(x, bits=8, mode=&#x27;round&#x27;, dither=None, seed=0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import dsp; dsp.quantize(x, bits=8, mode=&#x27;round&#x27;, dither=None, seed=0)</code>、台帳から引くなら <code style="color:#22d3bf">ops1d.get(&quot;quantize&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Scalar quantiser with the error model stated, plus optional dither.</p>
 <p>*bits* sets the number of levels <code style="color:#22d3bf">L = 2**bits</code> over the signal&#x27;s own min..max range. *mode* is <code style="color:#22d3bf">&quot;round&quot;</code> (mid-tread, unbiased) or <code style="color:#22d3bf">&quot;truncate&quot;</code> (floor, the convention PIL&#x27;s posterize and most fixed-point casts use).</p>

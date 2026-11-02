@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">bicycle_model_step — DRIVE <code style="color:#22d3bf">lateral</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.bicycle_model_step(state, steer, speed, params: &#x27;dict&#x27;, dt: &#x27;float&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivelateral; drivelateral.bicycle_model_step(state, steer, speed, params: &#x27;dict&#x27;, dt: &#x27;float&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;bicycle_model_step&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>선형 2륜 등가 모델의 1스텝(고전적 4차 Runge–Kutta, 스텝 동안 δ와 u는 일정).</p>
 <p><code style="color:#22d3bf">state</code>: (..., 5) = (x, y, ψ, v_y, r)(무게중심의 위치 [m], 방향 [rad], 차량 좌표계의 횡속도 [m/s], 요레이트 [rad/s]). <code style="color:#22d3bf">steer</code>: 앞바퀴의 조향각 δ [rad] (state 의 앞쪽 형태로 브로드캐스트). <code style="color:#22d3bf">speed</code>: 전방 속력 u [m/s] (&gt; 0, 브로드캐스트). <code style="color:#22d3bf">params</code> 에는 <code style="color:#22d3bf">inertia</code>(I_z [kg m²])도 필요하다. 반환값: 다음 상태(같은 형태).</p>

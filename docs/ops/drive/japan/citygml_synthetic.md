@@ -4,6 +4,7 @@ dim: drive
 category: japan
 in: 
 out: any
+gpu: なし
 examples: [gallery_drive_city_terrain, poc_driving_japan_town]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `any`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.citygml_synthetic(n: 'int' = 4, *, origin: 'tuple[float, float]' = (35.6716, 139.765), spacing: 'float' = 30.0, size: 'float' = 12.0, heights: 'Sequence[float] | None' = None, ground_z: 'float' = 0.0, omit_measured_height: 'Iterable[int]' = (), use_lod0_footprint: 'bool' = False, ns_building: 'str' = 'http://www.opengis.net/citygml/building/2.0') -> 'str'` (実装を直接呼ぶなら `import driveplateau; driveplateau.citygml_synthetic(n: 'int' = 4, *, origin: 'tuple[float, float]' = (35.6716, 139.765), spacing: 'float' = 30.0, size: 'float' = 12.0, heights: 'Sequence[float] | None' = None, ground_z: 'float' = 0.0, omit_measured_height: 'Iterable[int]' = (), use_lod0_footprint: 'bool' = False, ns_building: 'str' = 'http://www.opengis.net/citygml/building/2.0') -> 'str'`、台帳から引くなら `opsdrive.get("citygml_synthetic")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

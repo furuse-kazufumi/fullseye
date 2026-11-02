@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">deflectometry_phase_to_slope — SPECULAR <code style="color:#22d3bf">deflectometry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">normalmap</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.deflectometry_phase_to_slope(phase_x, phase_y, rig=None, period_mm=10.0, z_ref=0.0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import deflectometry; deflectometry.deflectometry_phase_to_slope(phase_x, phase_y, rig=None, period_mm=10.0, z_ref=0.0)</code>、台帳から引くなら <code style="color:#22d3bf">opsspecular.get(&quot;deflectometry_phase_to_slope&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>画面の絶対位相 2 枚(u 方向・v 方向の縞)→ 面の格子上の法線マップ (H, W, 3)。</p>
 <p><code style="color:#22d3bf">phase_x</code> / <code style="color:#22d3bf">phase_y</code>: カメラの画素ごとの<b>絶対</b>位相 [rad] (次数を確定したもの。<code style="color:#22d3bf">fringe.absolute_phase</code> で粗い縞から決める)。画面の座標は u = φ_x·周期 / 2π、v = φ_y·周期 / 2π (画面の中心が 0)。NaN の画素は無効。</p>

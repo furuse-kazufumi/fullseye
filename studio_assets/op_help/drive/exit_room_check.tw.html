@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">exit_room_check — DRIVE <code style="color:#22d3bf">crossing</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.exit_room_check(queue_rear, far_edge: &#x27;float&#x27;, car_length: &#x27;float&#x27;, *, gap: &#x27;float&#x27; = 1.0, beyond: &#x27;float&#x27; = 0.5)</code>(要直接呼叫實作,<code style="color:#22d3bf">import drivecrossing; drivecrossing.exit_room_check(queue_rear, far_edge: &#x27;float&#x27;, car_length: &#x27;float&#x27;, *, gap: &#x27;float&#x27; = 1.0, beyond: &#x27;float&#x27; = 0.5)</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;exit_room_check&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>平交道(行人穿越道、路口亦同)的對側是否有本車能停下的空間(第50條第2項)。可用陣列。</p>
 <p>若在前車後端 <code style="color:#22d3bf">queue_rear</code> 之後 <code style="color:#22d3bf">gap</code> 處停下,自己的後端 = queue_rear − gap − car_length。若此值不小於 far_edge + beyond 則可以進入。回傳值: <code style="color:#22d3bf">room</code> = queue_rear − far_edge、<code style="color:#22d3bf">need</code> = car_length + gap + beyond、<code style="color:#22d3bf">ok</code>、<code style="color:#22d3bf">rear_if_stopped</code>。沒有前車時 queue_rear = +∞。</p>

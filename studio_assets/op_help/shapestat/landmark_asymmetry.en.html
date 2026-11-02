@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">landmark_asymmetry — SHAPESTAT <code style="color:#22d3bf">symmetry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.landmark_asymmetry(landmarks, pairs=None, plane=None)</code> (to call the implementation directly, <code style="color:#22d3bf">import shapestats; shapestats.landmark_asymmetry(landmarks, pairs=None, plane=None)</code>; from the registry, <code style="color:#22d3bf">opsshapestat.get(&quot;landmark_asymmetry&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p><b>Signed</b> asymmetry for each left/right pair. → <code style="color:#22d3bf">(M,)</code>.</p>
 <p>For each pair, one point is mirrored across the plane and compared with the other, and the difference along the plane normal is returned. The sign is &quot;positive if the right is outside&quot; (<code style="color:#22d3bf">mirror_plane_from_pairs</code> orients the normal that way). <b>It is not collapsed into an absolute value</b> -- which side, left or right, protrudes means different things in clinical practice and in inspection.</p>

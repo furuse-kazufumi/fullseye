@@ -4,6 +4,7 @@ dim: drive
 category: tacsim
 in: rgb × matrix × scalar
 out: table
+gpu: なし
 examples: [poc_peg_insertion_tactile, poc_tacsim_elastic_membrane]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `rgb × matrix × scalar` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.membrane_recover(rgb, lights, pitch: 'float', ambient: 'float' = 0.0, albedo: 'float' = 1.0) -> 'dict'` (実装を直接呼ぶなら `import tacsim; tacsim.membrane_recover(rgb, lights, pitch: 'float', ambient: 'float' = 0.0, albedo: 'float' = 1.0) -> 'dict'`、台帳から引くなら `opsdrive.get("membrane_recover")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

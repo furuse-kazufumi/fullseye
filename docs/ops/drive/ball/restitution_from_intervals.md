@@ -4,6 +4,7 @@ dim: drive
 category: ball
 in: signal
 out: table
+gpu: なし
 examples: [poc_ball_bounce]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.restitution_from_intervals(contact_times) -> 'dict'` (実装を直接呼ぶなら `import ballistics; ballistics.restitution_from_intervals(contact_times) -> 'dict'`、台帳から引くなら `opsdrive.get("restitution_from_intervals")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">gmsd — IMGMETRICS <code style="color:#22d3bf">perceptual</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gmsd(ref, dist, data_range: &#x27;float&#x27; = 255.0, c: &#x27;float&#x27; = 170.0) -&gt; &#x27;float&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import iqafsim; iqafsim.gmsd(ref, dist, data_range: &#x27;float&#x27; = 255.0, c: &#x27;float&#x27; = 170.0) -&gt; &#x27;float&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsimgmetrics.get(&quot;gmsd&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>GMSD = GMS 地図の標準偏差(N−1、原実装の <code style="color:#22d3bf">std2</code>、論文 式 5)。0 = 同一、大きいほど劣化(<b>lower is better</b> —— MOS との順位相関は負で、公表表は |ρ| を載せる: TID2013 全体 |SROCC| 0.8038、二次資料 0.8044)。入力 (H, W) か (H, W, 3)(3-ch は Y)。<code style="color:#22d3bf">iqatid.tid2013_evaluate(root, gmsd, luma=&quot;rgb&quot;)</code>。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: <code style="color:#22d3bf">gmsd_map</code> と同じ、地図が 1 画素(分散が定義されない)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>

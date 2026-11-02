@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">procrustes_fit — SHAPESTAT <code style="color:#22d3bf">procrustes</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.procrustes_fit(source, target, scaling: &#x27;bool&#x27; = True, reflection: &#x27;bool&#x27; = False)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import shapestats; shapestats.procrustes_fit(source, target, scaling: &#x27;bool&#x27; = True, reflection: &#x27;bool&#x27; = False)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsshapestat.get(&quot;procrustes_fit&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>*source* को *target* पर बैठाने वाला similarity transform। → <code style="color:#22d3bf">(4, 4)</code> homogeneous matrix।</p>
 <p><b>यह मानकर चलता है कि points का क्रम एक-दूसरे से मेल खाता है</b> (i-वें points एक ही anatomical position पर हैं)। बिना correspondence वाले point sets पर कोई exception नहीं उठता और एक अर्थहीन transform लौटता है -- correspondence है या नहीं, यह इस function से नहीं दिखता। correspondence न हो तो ICP परिवार (<code style="color:#22d3bf">registration</code>) इस्तेमाल करें।</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">emva_spatial_nonuniformity — OPTICS <code style="color:#22d3bf">sensorchar</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">volume × volume</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.emva_spatial_nonuniformity(dark_stack, bright_stack, K, highpass=None)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import sensorchar; sensorchar.emva_spatial_nonuniformity(dark_stack, bright_stack, K, highpass=None)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsoptics.get(&quot;emva_spatial_nonuniformity&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>DSNU와 PRNU(식 33~42·65~67).</p>
 <p>*dark_stack*, *bright_stack*: 같은 노출로 찍은 L장(<code style="color:#22d3bf">(L, M, N)</code>, L ≥ 2). bright는 포화의 약 50 %에서 찍는다. 평균 영상의 공간 분산에서 시간 잡음의 잔여분 σ²_y/L을 빼고(식 36), 열·행·화소로 나누어(식 42), DSNU1288 = s_y.dark / K [e⁻] (식 66), PRNU1288 = √(s²_y.50 − s²_y.dark)/(μ_y.50 − μ_y.dark)(식 67, 비).</p>

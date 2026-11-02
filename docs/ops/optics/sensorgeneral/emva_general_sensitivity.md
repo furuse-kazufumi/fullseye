@@ -4,6 +4,7 @@ dim: optics
 category: sensorgeneral
 in: signal × signal × signal
 out: table
+gpu: なし
 examples: [poc_emva1288_in_camera_processing]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal × signal × signal` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.emva_general_sensitivity(mu_p, mu_y, var_y, mu_y_dark, var_y_dark, mu_p_sat, n_intervals=8)` (実装を直接呼ぶなら `import sensorgeneral; sensorgeneral.emva_general_sensitivity(mu_p, mu_y, var_y, mu_y_dark, var_y_dark, mu_p_sat, n_intervals=8)`、台帳から引くなら `opsoptics.get("emva_general_sensitivity")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

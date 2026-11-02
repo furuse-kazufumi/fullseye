@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">hertz_surface_ur — DRIVE <code style="color:#22d3bf">tacslip</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">matrix × scalar × scalar × scalar × scalar</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.hertz_surface_ur(r, a: &#x27;float&#x27;, p0: &#x27;float&#x27;, G: &#x27;float&#x27;, nu: &#x27;float&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import tacslip; tacslip.hertz_surface_ur(r, a: &#x27;float&#x27;, p0: &#x27;float&#x27;, G: &#x27;float&#x27;, nu: &#x27;float&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;hertz_surface_ur&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>법선 하중(Hertz 압력 p0√(1−r²/a²))이 만드는 반공간 표면의 <b>반경 방향</b> 변위 ūr [m] (Johnson 1985 식 3.41b를 E = 2G(1+ν)로 다시 씀). 음 = 중심 방향. 안쪽 −(1−2ν)p0a²/(6Gr)[1 − (1−r²/a²)^{3/2}], 바깥쪽 −(1−2ν)p0a²/(6Gr)(= 점하중 −(1−2ν)P/(4πGr)), r → 0에서 0. 최대는 가장자리가 아니라 r ≈ 0.93a(ūr(a)의 1.022배). ūr(a)/δ = 2(1−2ν)/(3π(1−ν))(ν 0.48에서 1.6 %, ν 0.3에서 12 %) — 거의 비압축성인 겔에서는 법선 하중으로 마커가 거의 움직이지 않음. <b>Raises</b> ValueError: a, p0, G ≤ 0.</p>
 <p>빈 입력(<code style="color:#22d3bf">r</code> 이(가) 0 개 요소)은 <code style="color:#22d3bf">ValueError</code> 를 발생시킨다.</p>

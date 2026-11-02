@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">assign_hungarian — MATH <code style="color:#22d3bf">estimation</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.assign_hungarian(cost, *, maximize: &#x27;bool&#x27; = False) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import mathestimation; mathestimation.assign_hungarian(cost, *, maximize: &#x27;bool&#x27; = False) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsmath.get(&quot;assign_hungarian&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>求解代价矩阵 (n, m) 的指派问题(Kuhn 1955 / Munkres 1957 的匈牙利算法，scipy 的实现)。</p>
 <p>将行与列 1 对 1 匹配，使所选代价之和最小(<code style="color:#22d3bf">maximize=True</code> 时最大)。n != m 时较短的一侧全部被匹配。返回值 <code style="color:#22d3bf">{&quot;rows&quot;, &quot;cols&quot;, &quot;total&quot;, &quot;pairs&quot;}</code>。门禁：在小矩阵上与全排列穷举一致。</p>

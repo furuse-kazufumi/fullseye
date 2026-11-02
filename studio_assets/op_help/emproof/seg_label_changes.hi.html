@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">seg_label_changes — EMPROOF <code style="color:#22d3bf">inject</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">labels2d × labels2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.seg_label_changes(before, after, min_pixels: &#x27;int&#x27; = 1, ignore_zero: &#x27;bool&#x27; = True) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import emproof; emproof.seg_label_changes(before, after, min_pixels: &#x27;int&#x27; = 1, ignore_zero: &#x27;bool&#x27; = True) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsemproof.get(&quot;seg_label_changes&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>2 label image के अंतर को <b>merge और split के जोड़ों</b> के रूप में लौटाता है (calibration से पहले और बाद, या डाली गई त्रुटियों का उत्तर से मिलान)।</p>
 <p><code style="color:#22d3bf">before</code> का label b और <code style="color:#22d3bf">after</code> का label a जिन जोड़ों में कम से कम <code style="color:#22d3bf">min_pixels</code> समान pixels साझा करते हैं, उन्हें गिना जाता है;</p>

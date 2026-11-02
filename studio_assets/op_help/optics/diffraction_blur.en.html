@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">diffraction_blur — OPTICS <code style="color:#22d3bf">scene</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">rgbimage × table</code> → <code style="color:#22d3bf">rgbimage</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.diffraction_blur(image, camera, f_number: &#x27;float&#x27; = 5.6, wavelength_nm: &#x27;float&#x27; = 550.0) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import optscene; optscene.diffraction_blur(image, camera, f_number: &#x27;float&#x27; = 5.6, wavelength_nm: &#x27;float&#x27; = 550.0) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;diffraction_blur&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Apply the <b>diffraction blur</b> set by the aperture (the Airy disc approximated by a Gaussian).</p>
 <p>An image made with geometrical optics alone shows more detail than the real machine. Stopping down deepens the depth of field, but diffraction smears the detail ―― if you set the aperture without watching this tug-of-war, defects that were visible in simulation vanish on the real machine.</p>

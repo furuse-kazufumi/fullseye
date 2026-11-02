@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">course_parallel_parking — DRIVE <code style="color:#22d3bf">course</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.course_parallel_parking(car_length=4.5, car_width=1.8, extra=3.0, road_width=7.0, approach=5.0, side=&#x27;left&#x27;)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import drivecourse; drivecourse.course_parallel_parking(car_length=4.5, car_width=1.8, extra=3.0, road_width=7.0, approach=5.0, side=&#x27;left&#x27;)</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;course_parallel_parking&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>縦列駐車: 幅 <code style="color:#22d3bf">road_width</code> の道路(x ∈ [0, 2·approach + bay_length])の路側に、長さ car_length + extra (既定 7.5 m)× 幅 car_width の車室。<b>法令に数値なし(通達の別添は図)</b> —— 既定は慣行値。</p>
 <p>左側通行に合わせ <code style="color:#22d3bf">side=&quot;left&quot;</code>(+y)が既定、<code style="color:#22d3bf">&quot;right&quot;</code> で鏡映。<code style="color:#22d3bf">bay</code> = (x0, x1, y0, y1)。面積 = 道路 + 車室(すみ切りなし)。</p>

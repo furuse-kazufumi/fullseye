@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">osm_parse — DRIVE <code style="color:#22d3bf">japan</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.osm_parse(source, *, origin=None) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import drivejapan; drivejapan.osm_parse(source, *, origin=None) -&gt; &#x27;Dict[str, object]&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;osm_parse&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>读取 OSM XML(字符串或文件路径)，把节点转换到局部平面坐标 [m]。</p>
 <p>返回值 <code style="color:#22d3bf">{&quot;origin&quot;: (lat0, lon0), &quot;nodes&quot;: {id: {&quot;xy&quot;: (x, y), &quot;lat&quot;, &quot;lon&quot;, &quot;tags&quot;: {}}}, &quot;ways&quot;: [{&quot;id&quot;, &quot;nodes&quot;: [id], &quot;tags&quot;: {}}], &quot;bbox&quot;: (xmin, xmax, ymin, ymax)(</code>&lt;bounds&gt;<code style="color:#22d3bf"> があればそれ、無ければ節点の範囲), &quot;n_nodes&quot;, &quot;n_ways&quot;}</code>。origin 为 None 时取 <code style="color:#22d3bf">&lt;bounds&gt;</code> 的中心(若无则取节点的平均)。<code style="color:#22d3bf">&lt;nd ref&gt;</code> 指向未知节点的 way 会丢弃该节点(件数记入 <code style="color:#22d3bf">n_dangling</code>)。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 不是 XML、不是 <code style="color:#22d3bf">&lt;osm&gt;</code>、一个节点都没有。</p>

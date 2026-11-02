@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">mesh_read_obj — FILEIO <code style="color:#22d3bf">mesh</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">text</code> → <code style="color:#22d3bf">mesh</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mesh_read_obj(data)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import fileio; fileio.mesh_read_obj(data)</code>、台帳から引くなら <code style="color:#22d3bf">opsfileio.get(&quot;mesh_read_obj&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Wavefront OBJ の <code style="color:#22d3bf">v</code> / <code style="color:#22d3bf">f</code>(<code style="color:#22d3bf">v//vn</code> を含む)を読み、三角形 <code style="color:#22d3bf">mesh</code> を返す。</p>
 <p><code style="color:#22d3bf">vn</code> は構文として許すが mesh sort は幾何だけなので返さない。<code style="color:#22d3bf">mtllib</code> / <code style="color:#22d3bf">usemtl</code> と material は読まず、形状に影響させない。呼び出し例: <code style="color:#22d3bf">mesh = mesh_read_obj(obj_text)</code>。</p>

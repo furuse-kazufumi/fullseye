@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">curvature_flow — SEGMENTATION <code style="color:#22d3bf">contour</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">mask</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.curvature_flow(phi, *, t_end: &#x27;float&#x27; = 50.0, dt: &#x27;float&#x27; = 0.2, eta: &#x27;float&#x27; = 1e-08, record_every: &#x27;int&#x27; = 0) -&gt; &#x27;Dict[str, object]&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import segcontour; segcontour.curvature_flow(phi, *, t_end: &#x27;float&#x27; = 50.0, dt: &#x27;float&#x27; = 0.2, eta: &#x27;float&#x27; = 1e-08, record_every: &#x27;int&#x27; = 0) -&gt; &#x27;Dict[str, object]&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opssegmentation.get(&quot;curvature_flow&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>평균 곡률 흐름(곡선 단축 흐름)의 레벨셋 형태 φ_t = |∇φ| div(∇φ/|∇φ|)(φ &lt; 0이 내부, 볼록한 곳부터 줄어든다)(curvature_flow).</p>
 <p>양적 중심 차분: φ_t = (φ_xx φ_y² − 2 φ_x φ_y φ_xy + φ_yy φ_x²) / (φ_x² + φ_y² + η), 스텝 dt ≤ 0.25(안정 조건). <code style="color:#22d3bf">phi</code> = φ 또는 bool 마스크(부호 있는 거리로 변환). 면적은 각 스텝에서 <code style="color:#22d3bf">clip(0.5 − φ/|∇φ|, 0, 1)</code>의 합.</p>

@@ -4,6 +4,7 @@ dim: spc
 category: anomaly_eval
 in: signal × signal
 out: table
+gpu: なし
 examples: []
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal × signal` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.anomaly_image_f1_max(scores, labels)` (実装を直接呼ぶなら `import anomeval; anomeval.anomaly_image_f1_max(scores, labels)`、台帳から引くなら `opsspc.get("anomaly_image_f1_max")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

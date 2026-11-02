@@ -3,7 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">voxel × voxel</code> → <code style="color:#22d3bf">position</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.match_chamfer_3d(scene, template, device=&#x27;cpu&#x27;, thr=0.3, edt=&#x27;scipy&#x27;)</code>(要直接调用实现,<code style="color:#22d3bf">import match3d; match3d.match_chamfer_3d(scene, template, device=&#x27;cpu&#x27;, thr=0.3, edt=&#x27;scipy&#x27;)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;match_chamfer_3d&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>经台账调用的返回值</b>: <code style="color:#22d3bf">fullseye.ledger.match_chamfer_3d(...)</code> 只返回<b>声明的 out 类型 <code style="color:#22d3bf">position</code> 的值</b>(底层函数还会返回辅助信息)。需要被丢弃的部分时,使用 <code style="color:#22d3bf">fullseye.ledger.match_chamfer_3d.raw(...)</code>,或直接调用 <code style="color:#22d3bf">match3d.match_chamfer_3d</code>。</p>
-<p style="margin:2px 0 2px 12px">• <b>GPU</b>:该算子有 GPU 路径(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>chamfer / 距离场匹配(对部分可见与遮挡稳健)。voxel × chamfer 列。</p>
 <p>将模板的边缘点放置在场景边缘的 EDT 上（每个体素到最近边缘的距离）。最小化距离之和。得分(pos)=Σ_{模板边缘}DT_scene(pos+边缘)/n。 <b>越低匹配越好</b>。即使某些边缘点缺失，它也能工作（比 NCC 更能抵抗遮挡）。相关性 (conv3d) 始终是 GPU。距离场为 edt=&quot;scipy&quot;（CPU，默认）或 edt=&quot;jfa&quot;（<code style="color:#22d3bf">edt_jfa</code>，所有 GPU，无 CPU 往返，与 scipy 完全匹配）。返回值[倒角距离，d，h，w]。</p>

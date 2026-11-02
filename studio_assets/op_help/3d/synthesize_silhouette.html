@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">synthesize_silhouette — 3D <code style="color:#22d3bf">space_carving</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.synthesize_silhouette(points, K, R, t, size: &#x27;Tuple[int, int]&#x27;, *, fill: &#x27;bool&#x27; = True, dilate: &#x27;int&#x27; = 1) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import visualhull; visualhull.synthesize_silhouette(points, K, R, t, size: &#x27;Tuple[int, int]&#x27;, *, fill: &#x27;bool&#x27; = True, dilate: &#x27;int&#x27; = 1) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;synthesize_silhouette&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>3-D 点群を (K,R,t) カメラへ射影し占有画素 True のシルエット(H,W bool)を返す。</p>
 <p>GT 生成用。<code style="color:#22d3bf">points</code> (N,3) を <code style="color:#22d3bf">X_cam = R X + t</code> で射影し、depth&gt;0 かつ画像内に落ちた画素を True にする。疎な点群では射影像に穴が空くため、既定で穴埋め(<code style="color:#22d3bf">fill</code>, scipy.ndimage.binary_fill_holes)して中身の詰まった前景マスクにする。さらに <code style="color:#22d3bf">dilate</code> 画素だけ膨張させ「pixel が少しでも物体に触れれば前景」という被覆(coverage)意味のシルエットにする — これが visual hull の recall(物体 voxel を取りこぼさない)を離散化誤差の下でも保証するための保守側の丸め。</p>

@@ -3,6 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table × table</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.optscene_mask(scene, camera, index: &#x27;int&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import optscene; optscene.optscene_mask(scene, camera, index: &#x27;int&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;optscene_mask&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>Ledger के ज़रिए return value</b>: <code style="color:#22d3bf">fullseye.ledger.optscene_mask(...)</code> <b>केवल घोषित out type <code style="color:#22d3bf">image2d</code> का value</b> लौटाता है (मूल function सहायक जानकारी भी लौटाता है)। जो हिस्सा छोड़ दिया गया है उसकी ज़रूरत हो तो <code style="color:#22d3bf">fullseye.ledger.optscene_mask.raw(...)</code> का उपयोग करें, या <code style="color:#22d3bf">optscene.optscene_mask</code> को सीधे call करें।</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>उन pixels का <b>ground truth mask</b> (H, W) bool जहाँ <code style="color:#22d3bf">index</code> नंबर का primitive दिखता है।</p>
 <p>pixel-सटीक (कोई anti-aliasing नहीं)। detection परिणामों के विरुद्ध IoU सीधे मापा जा सकता है।</p>

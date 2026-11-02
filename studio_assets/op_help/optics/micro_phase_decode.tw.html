@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">micro_phase_decode — OPTICS <code style="color:#22d3bf">light_transport</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">images</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.micro_phase_decode(images, periods=(14.0, 15.0, 16.0), n_shifts=4)</code>(要直接呼叫實作,<code style="color:#22d3bf">import lighttransport; lighttransport.micro_phase_decode(images, periods=(14.0, 15.0, 16.0), n_shifts=4)</code>;從台帳取用則 <code style="color:#22d3bf">opsoptics.get(&quot;micro_phase_decode&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把窄頻高頻條紋組(微相移,Gupta &amp; Nayar 2012)解碼為絕對投影機座標,用前兩個週期的拍頻確定條紋級次(<code style="color:#22d3bf">table</code>)。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>

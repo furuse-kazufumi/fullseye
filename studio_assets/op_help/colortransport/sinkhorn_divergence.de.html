@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">sinkhorn_divergence — COLORTRANSPORT <code style="color:#22d3bf">transport</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">signal × signal × matrix</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sinkhorn_divergence(a, b, cost, cost_aa=None, cost_bb=None, reg=0.05, **kw)</code> (die Implementierung direkt: <code style="color:#22d3bf">import colortransport; colortransport.sinkhorn_divergence(a, b, cost, cost_aa=None, cost_bb=None, reg=0.05, **kw)</code>; aus dem Register: <code style="color:#22d3bf">opscolortransport.get(&quot;sinkhorn_divergence&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Die <b>entzerrte</b> Sinkhorn-Distanz (Genevay, Peyré &amp; Cuturi, AISTATS 2018).</p>
 <p><code style="color:#22d3bf">S(a,b) - (S(a,a) + S(b,b)) / 2</code>. <code style="color:#22d3bf">sinkhorn_distance</code> ist durch die Regularisierung systematisch nach oben verzerrt, und <b>der &quot;Abstand&quot; zu sich selbst ist nicht 0</b> (gemessen bei reg=0.2 über 0.05). Zieht man dieselbe Verzerrung über den Abstand zu sich selbst ab, hebt sie sich auf, und <b>der Wert gegenüber sich selbst kehrt zu 0 zurück</b> -- genau das, was TRIZ Gegengewicht nennt (Aufheben durch Gegenwirkung).</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">image_entropy — IMGMETRICS <code style="color:#22d3bf">information</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.image_entropy(a, bins=64, data_range=None)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import imgmetrics; imgmetrics.image_entropy(a, bins=64, data_range=None)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsimgmetrics.get(&quot;image_entropy&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>이미지 한 장의 섀넌 엔트로피 [bit].</p>
 <p><code style="color:#22d3bf">mutual_information</code>과 <b>같은 빈 분할</b>로 내므로, <code style="color:#22d3bf">mutual_information(a, a) == image_entropy(a)</code>가 엄밀히 성립한다(테스트로 고정). 기존의 <code style="color:#22d3bf">entropy_gray</code> / <code style="color:#22d3bf">entropy_image</code>(backends)는다른 빈 분할이므로 값이 일치하지 않는다 -- 이쪽은 결합 분포와 정합하는 쪽.</p>

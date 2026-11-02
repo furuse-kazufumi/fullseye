@@ -4,6 +4,7 @@ dim: optics
 category: appearance
 in: signal
 out: vector
+gpu: なし
 examples: [appearance_structural_colour, poc_material_optical_library, poc_pigment_unmixing, poc_simcal_thin_film, poc_white_balance]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal` → `vector`
 - **呼び出し**: `import fullseye as fs; fs.ledger.spectrum_to_srgb(nm, reflectance, illuminant=None) -> 'np.ndarray'` (実装を直接呼ぶなら `import matappear; matappear.spectrum_to_srgb(nm, reflectance, illuminant=None) -> 'np.ndarray'`、台帳から引くなら `opsoptics.get("spectrum_to_srgb")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

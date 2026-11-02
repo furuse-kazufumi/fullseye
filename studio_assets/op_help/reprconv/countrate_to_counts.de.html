@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">countrate_to_counts — REPRCONV <code style="color:#22d3bf">algebra</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">countrate</code> → <code style="color:#22d3bf">counts</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.countrate_to_counts(countrate, gate_s=0.001)</code> (die Implementierung direkt: <code style="color:#22d3bf">import reprconv; reprconv.countrate_to_counts(countrate, gate_s=0.001)</code>; aus dem Register: <code style="color:#22d3bf">opsreprconv.get(&quot;countrate_to_counts&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Zählrate <code style="color:#22d3bf">[Hz]</code> → <code style="color:#22d3bf">counts</code>. Der Ausgang aus <code style="color:#22d3bf">countrate</code> (<b>invertierbar</b>).</p>
 <p><b>Die Einheit ist der gesamte Inhalt der Umrechnung</b>: <code style="color:#22d3bf">[1/s] * [s] = [1]</code>. <code style="color:#22d3bf">gate_s</code> ist das Integrationsfenster in Sekunden, Standard 1 ms. <code style="color:#22d3bf">counts</code> ist der Typ für &quot;Photonenzahl pro Zeit-Bin&quot;; lässt man eine Ratenfolge sich einfach counts nennen, <b>läuft sie stillschweigend mit um 7 Größenordnungen verschobenem Betrag durch</b> (<code style="color:#22d3bf">TYPE_CHECKS</code> prüft beide nur als &quot;nicht-negativ, 1-D&quot;).</p>

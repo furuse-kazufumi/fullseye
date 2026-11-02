@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">flow_from_depth_motion — DRIVE <code style="color:#22d3bf">ttc</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d × matrix × matrix</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.flow_from_depth_motion(depth, K, T_rel) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import drivettc; drivettc.flow_from_depth_motion(depth, K, T_rel) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;flow_from_depth_motion&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由深度图像与刚体运动得到<b>真实光流</b>：<code style="color:#22d3bf">{&quot;u&quot;, &quot;v&quot;, &quot;valid&quot;, &quot;depth1&quot;}</code>(各为 (H, W))。</p>
 <p>把像素的 3-D 点用 <code style="color:#22d3bf">T_rel</code> 移动后重投影,<code style="color:#22d3bf">u = col₁ − col₀</code>、<code style="color:#22d3bf">v = row₁ − row₀</code>。移动后跑到相机背后的点和没有深度的像素为 <code style="color:#22d3bf">valid = False</code>(u, v 为 NaN)。<code style="color:#22d3bf">depth1</code> 是移动后的深度。用于给光流估计器打分的真值(与估计器相同的约定: (x, y) → (x + u, y + v))。</p>

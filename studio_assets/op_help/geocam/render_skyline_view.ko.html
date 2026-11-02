@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">render_skyline_view — GEOCAM <code style="color:#22d3bf">skyline</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.render_skyline_view(sky_table, K, shape, yaw_deg, pitch_deg, roll_deg)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import geocam; geocam.render_skyline_view(sky_table, K, shape, yaw_deg, pitch_deg, roll_deg)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsgeocam.get(&quot;render_skyline_view&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>스카이라인 table과 자세로부터 그 방향의 카메라가 보는 <b>하늘 마스크</b>(H, W)를 그린다 → image2d(0/1).</p>
 <p>각 화소의 광선을 월드로 돌려, 그 방위의 스카이라인 앙각보다 위면 하늘(1), 아래면 지형(0). 합성 사진 만들기(PoC)와, 추정한 자세를 사진에 겹쳐 눈으로 확인하는 그림에 쓴다. <code style="color:#22d3bf">camera_orientation_from_skyline</code> 의 예측과 같은 기하이므로, <b>그리고 → 뽑고 → 맞추는</b> 왕복이 닫힌다(테스트의 참값).</p>

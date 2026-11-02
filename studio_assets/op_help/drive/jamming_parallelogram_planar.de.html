@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">jamming_parallelogram_planar — DRIVE <code style="color:#22d3bf">pegfail</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.jamming_parallelogram_planar(kp, depth: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import pegfail; pegfail.jamming_parallelogram_planar(kp, depth: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;jamming_parallelogram_planar&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Leitet das Jamming-Parallelogramm <b>aus der ebenen Statik des Zweipunktkontakts her</b> (ein 2. Weg, abgeglichen mit den Eckpunkten von pegsim.jamming_diagram = den Werten aus OCW p.34).</p>
 <p>In der Ebene (x nach rechts, z nach oben) berührt der Rand der Spitze die Wand auf der −x-Seite in der Tiefe l (Normalkraft f₁ ≥ 0, Richtung +x), und der Rand der Öffnung auf der +x-Seite berührt den Schaft (f₂ ≥ 0, Richtung −x). Bei Coulomb-Reibung, bei der beide Punkte nach unten gleiten (μf nach oben), lautet das Gleichgewicht von (F_x, F_z nach unten positiv, M gegen den Uhrzeigersinn positiv) an der Spitze</p>

@@ -4,6 +4,7 @@ dim: piv
 category: estimate
 in: image2d × image2d × flow2d
 out: flow2d
+gpu: なし
 examples: [piv_field_analysis_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -16,6 +17,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **呼び出し**: `import fullseye as fs; fs.ledger.piv_deform_pass(a, b, flow, info, window=32, overlap=0.5, peak='gauss3', window_func='hann', order=3)` (実装を直接呼ぶなら `import pivops; pivops.piv_deform_pass(a, b, flow, info, window=32, overlap=0.5, peak='gauss3', window_func='hann', order=3)`、台帳から引くなら `opspiv.get("piv_deform_pass")`)
 - **台帳経由の戻り値**: `fullseye.ledger.piv_deform_pass(...)` は**宣言 out 型 `flow2d` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.piv_deform_pass.raw(...)`、または `pivops.piv_deform_pass` を直接呼ぶ。
   - 本体の返り: `(flow, info) -> flow2d`
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

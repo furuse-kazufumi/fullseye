@@ -4,6 +4,7 @@ dim: piv
 category: field
 in: flow2d
 out: image2d
+gpu: なし
 examples: [piv_field_analysis_tour, poc_what_a_picture_cannot_check]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `flow2d` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.piv_flow_magnitude(flow)` (実装を直接呼ぶなら `import pivops; pivops.piv_flow_magnitude(flow)`、台帳から引くなら `opspiv.get("piv_flow_magnitude")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -4,6 +4,7 @@ dim: oned
 category: signal
 in: signal
 out: measurement
+gpu: なし
 examples: [lens_design_demo, lightfield_depth, poc_battery_electrode_breathing, poc_bilateral_asymmetry, poc_bump_coplanarity, poc_cad_scan_deviation, poc_calipers_under_illusion, poc_camera_calibration, poc_dimensional_inspection, poc_exoplanet_transit, poc_fabric_defect, poc_focus_stacking, poc_fourier_ptychography, poc_lens_solves_afocal, poc_panorama_drift, poc_print_registration, poc_river_surface_velocity, poc_screw_thread_metrology, poc_solar_limb_darkening, poc_strain_history, poc_surface_roughness, poc_symmetry_restoration, poc_table_tennis_bounce, poc_tacscalib_sphere_lut, poc_tacsim_elastic_membrane, poc_tacsim_marker_shear, poc_thermal_radiometry, profile_shape_inspection]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal` → `measurement`
 - **呼び出し**: `import fullseye as fs; fs.ledger.rms(x, frame=None, hop=None)` (実装を直接呼ぶなら `import dsp; dsp.rms(x, frame=None, hop=None)`、台帳から引くなら `ops1d.get("rms")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

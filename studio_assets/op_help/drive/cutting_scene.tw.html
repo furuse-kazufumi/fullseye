@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">cutting_scene — DRIVE <code style="color:#22d3bf">cutting</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cutting_scene(kind: &#x27;str&#x27; = &#x27;face&#x27;, px_per_mm: &#x27;float | None&#x27; = None, **overrides) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import cutting; cutting.cutting_scene(kind: &#x27;str&#x27; = &#x27;face&#x27;, px_per_mm: &#x27;float | None&#x27; = None, **overrides) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;cutting_scene&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>合成場景的參數(dict)。<code style="color:#22d3bf">kind=&quot;face&quot;</code> = 正面影像(相機沿刀刃面的法線方向)，<code style="color:#22d3bf">&quot;edge&quot;</code> = 沿刃口方向的影像。</p>
 <p>正面影像: 刀刃比食材長,在食材左右可看到刃尖的直線。食材寬度內被食材遮住。鍵為 <code style="color:#22d3bf">food_xc</code> / <code style="color:#22d3bf">food_w</code> / <code style="color:#22d3bf">food_h</code>(食材的中心、寬度、高度),<code style="color:#22d3bf">blade_len</code> / <code style="color:#22d3bf">blade_h</code> / <code style="color:#22d3bf">tip_slant</code>(刃尖的長度、刀刃的高度、前端的斜角部)。</p>

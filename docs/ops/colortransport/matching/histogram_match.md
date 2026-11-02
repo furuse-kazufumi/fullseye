@@ -4,6 +4,7 @@ dim: colortransport
 category: matching
 in: image2d × image2d
 out: image2d
+gpu: なし
 examples: [color_transport, poc_change_detection_misreg]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d × image2d` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.histogram_match(src, ref, bins=None, ties='average')` (実装を直接呼ぶなら `import colortransport; colortransport.histogram_match(src, ref, bins=None, ties='average')`、台帳から引くなら `opscolortransport.get("histogram_match")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">ray_plane_range — DRIVE <code style="color:#22d3bf">lidar</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ray_plane_range(origin, dirs, plane) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import lidarsim; lidarsim.ray_plane_range(origin, dirs, plane) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;ray_plane_range&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>原点 <code style="color:#22d3bf">origin</code> から方向 <code style="color:#22d3bf">dirs (...,3)</code> のレイが平面 <code style="color:#22d3bf">ax+by+cz+d=0</code> に当たるまでの距離。</p>
 <p>閉形式 <code style="color:#22d3bf">t = −(n·O + d)/(n·D)</code>、距離は <code style="color:#22d3bf">t·‖D‖</code>。前方(t &gt; 0)に当たらない・平行なら <code style="color:#22d3bf">inf</code>。法線がゼロなら <code style="color:#22d3bf">ValueError</code>。</p>

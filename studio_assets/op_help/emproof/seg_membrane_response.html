@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">seg_membrane_response — EMPROOF <code style="color:#22d3bf">response</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.seg_membrane_response(image, sigma: &#x27;float&#x27; = 1.5, normalize: &#x27;bool&#x27; = True) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import emproof; emproof.seg_membrane_response(image, sigma: &#x27;float&#x27; = 1.5, normalize: &#x27;bool&#x27; = True) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsemproof.get(&quot;seg_membrane_response&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>EM 断面の<b>暗い線</b>(細胞膜)の応答 [0, ∞)。ガウス平滑した Hessian の固有値 λ1 ≥ λ2 から <code style="color:#22d3bf">max(λ1 − |λ2|, 0)</code> (Steger の線検出の閉形式、σ² で尺度正規化)。</p>
 <p>暗い線の上では横断方向の 2 階微分が大きく正(λ1)、線に沿う方向は 0(λ2)なので λ1 − |λ2| が立つ。暗い<b>塊</b>(ミトコンドリア内部・シナプス小胞)は λ1 ≈ λ2 &gt; 0 で打ち消し合って 0 に近い ―― 膜だけを拾う。<code style="color:#22d3bf">normalize=True</code> で断面の 99.5 percentile を 1 にする(<code style="color:#22d3bf">seg_*</code> の閾値はその尺度で書く)。scikit-image があるならレジストリの <code style="color:#22d3bf">sk_frangi</code>(<code style="color:#22d3bf">fs.apply(img, &quot;sk_frangi&quot;, a=0.5, b=0.5)</code>)も同じ席に使える(試作はそちらで AUC を測った)。</p>

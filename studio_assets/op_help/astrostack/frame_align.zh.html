@@ -4,6 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.frame_align(reference, frame, model=&#x27;similarity&#x27;, threshold_sigma=5.0, max_stars=60, tolerance_px=2.0, max_shift_px=None, ransac_iters=500, seed=0, min_inliers=3)</code>(要直接调用实现,<code style="color:#22d3bf">import astrostack; astrostack.frame_align(reference, frame, model=&#x27;similarity&#x27;, threshold_sigma=5.0, max_stars=60, tolerance_px=2.0, max_shift_px=None, ransac_iters=500, seed=0, min_inliers=3)</code>;从台账取用则 <code style="color:#22d3bf">opsastrostack.get(&quot;frame_align&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>经台账调用的返回值</b>: <code style="color:#22d3bf">fullseye.ledger.frame_align(...)</code> 只返回<b>声明的 out 类型 <code style="color:#22d3bf">matrix</code> 的值</b>(底层函数还会返回辅助信息)。需要被丢弃的部分时,使用 <code style="color:#22d3bf">fullseye.ledger.frame_align.raw(...)</code>,或直接调用 <code style="color:#22d3bf">astrostack.frame_align</code>。</p>
 <p style="margin:2px 0 2px 12px">• 底层返回: <code style="color:#22d3bf">(matrix, info) -&gt; matrix</code></p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由恒星对应估计 <code style="color:#22d3bf">frame</code> → <code style="color:#22d3bf">reference</code> 的 2-D 变换。</p>
 <p>流程分 3 步，<b>各步估计的主体都是现有 op</b>：</p>

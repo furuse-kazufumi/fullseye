@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">contact_patch_radius — DRIVE <code style="color:#22d3bf">tacdome</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.contact_patch_radius(img, pitch: &#x27;float&#x27;, ring_px: &#x27;float&#x27; = 4.0) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import tacdome; tacdome.contact_patch_radius(img, pitch: &#x27;float&#x27;, ring_px: &#x27;float&#x27; = 4.0) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;contact_patch_radius&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Reads the contact radius from a contact image (of the <code style="color:#22d3bf">dome_contact_image</code> type). Uses the edge down to subpixel level via a linear sum of coverage (area method).</p>
 <p style="margin:2px 0 2px 12px">1) A rough disc with threshold (1 % point + 99.9 % point)/2 → centroid and radius r_t. 2) fg = median of the inside r &lt; r_t − <code style="color:#22d3bf">ring_px</code>, bg = median of the outer ring</p>

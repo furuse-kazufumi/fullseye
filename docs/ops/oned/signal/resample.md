@@ -4,6 +4,7 @@ dim: oned
 category: signal
 in: signal
 out: signal
+gpu: なし
 examples: [poc_driving_school]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -16,6 +17,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **呼び出し**: `import fullseye as fs; fs.ledger.resample(x, rate, new_rate)` (実装を直接呼ぶなら `import dsp; dsp.resample(x, rate, new_rate)`、台帳から引くなら `ops1d.get("resample")`)
 - **台帳経由の戻り値**: `fullseye.ledger.resample(...)` は**宣言 out 型 `signal` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.resample.raw(...)`、または `dsp.resample` を直接呼ぶ。
   - 本体の返り: `(signal, new_rate)`
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">town_chain — DRIVE <code style="color:#22d3bf">town</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.town_chain(elements, *, start=(0.0, 0.0, 0.0), overlap: &#x27;float&#x27; = 0.05) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import drivetown; drivetown.town_chain(elements, *, start=(0.0, 0.0, 0.0), overlap: &#x27;float&#x27; = 0.05) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;town_chain&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Platziert die Elemente, indem sie der Reihe nach verkettet werden: Die Starrkörper-Platzierung, die den entry von Element k+1 auf den exit von Element k (<code style="color:#22d3bf">overlap</code> davor) ausrichtet, wird in geschlossener Form bestimmt und an <code style="color:#22d3bf">drivecourse.course_layout</code> übergeben.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">lifetime_fit — PHOTON <code style="color:#22d3bf">lifetime</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">counts</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lifetime_fit(decay, bin_ps=100.0, background=None, min_counts=1.0, start_bin=None)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import photoncount; photoncount.lifetime_fit(decay, bin_ps=100.0, background=None, min_counts=1.0, start_bin=None)</code>、台帳から引くなら <code style="color:#22d3bf">opsphoton.get(&quot;lifetime_fit&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Mono-exponential fluorescence lifetime from a TCSPC decay histogram.</p>
 <p>Fits <code style="color:#22d3bf">I(t) = A*exp(-t/tau) + b</code> by a <b>Poisson-weighted log-linear least squares</b>: the background is removed, the logarithm of the remaining counts is linear in <code style="color:#22d3bf">t</code> with slope <code style="color:#22d3bf">-1/tau</code>, and each bin is weighted by its own counts because <code style="color:#22d3bf">var(ln N) ~ 1/N</code> — which is exactly the Poisson error bar <code style="color:#22d3bf">photon_uncertainty</code> reports.</p>

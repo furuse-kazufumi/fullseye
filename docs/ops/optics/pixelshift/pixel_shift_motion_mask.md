@@ -4,6 +4,7 @@ dim: optics
 category: pixelshift
 in: video × matrix
 out: image2d
+gpu: なし
 examples: [poc_pixel_shift]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `video × matrix` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.pixel_shift_motion_mask(frames, shifts, pattern='RGGB', scale=1, threshold=4.0, noise_sigma=0.0)` (実装を直接呼ぶなら `import pixelshift; pixelshift.pixel_shift_motion_mask(frames, shifts, pattern='RGGB', scale=1, threshold=4.0, noise_sigma=0.0)`、台帳から引くなら `opsoptics.get("pixel_shift_motion_mask")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

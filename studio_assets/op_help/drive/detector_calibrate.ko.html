@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">detector_calibrate — DRIVE <code style="color:#22d3bf">pxrd</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d × signal × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.detector_calibrate(image, d_spacings, geometry_guess, n_azimuth=180, fit_tilt=True, min_rings=2)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import pxrd; pxrd.detector_calibrate(image, d_spacings, geometry_guess, n_azimuth=180, fit_tilt=True, min_rings=2)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;detector_calibrate&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>알려진 표준(Si 등)의 링으로부터 검출기의 중심·거리·기울기를 캘리브레이션합니다.</p>
 <p>d_spacings &#x27;&#x27;는 표준 면 간격 [Å]의 list (강한 순서가 아니어도 좋다),geometry_guess &#x27;&#x27;</p>

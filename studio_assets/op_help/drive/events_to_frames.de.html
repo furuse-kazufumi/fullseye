@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">events_to_frames — DRIVE <code style="color:#22d3bf">motion_io</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">voxel</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.events_to_frames(events: &#x27;dict&#x27;, n_frames: &#x27;int&#x27; = 32, shape=None) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import motionio; motionio.events_to_frames(events: &#x27;dict&#x27;, n_frames: &#x27;int&#x27; = 32, shape=None) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;events_to_frames&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Teilt die Ereignisse zeitlich gleichmäßig in n_frames auf und summiert die Polaritäten pro Pixel zu Frames (T, H, W) (ON = +1, OFF = −1).</p>
 <p>Die Summe der Polaritäten aller Ereignisse stimmt mit der Gesamtsumme der Frames überein (mit dem Standard-<code style="color:#22d3bf">shape</code> werden keine Ereignisse verworfen; wird <code style="color:#22d3bf">shape</code> explizit angegeben, werden Ereignisse außerhalb davon verworfen, und die Summen weichen um diesen Anteil ab).</p>

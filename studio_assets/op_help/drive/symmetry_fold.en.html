@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">symmetry_fold — DRIVE <code style="color:#22d3bf">pegsym</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">scalar × scalar</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.symmetry_fold(angle: &#x27;float&#x27;, n: &#x27;int&#x27;) -&gt; &#x27;float&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import pegsym; pegsym.symmetry_fold(angle: &#x27;float&#x27;, n: &#x27;int&#x27;) -&gt; &#x27;float&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;symmetry_fold&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Folds an angle into the representative (−π/n, π/n] of the n-fold symmetry quotient SO(2)/C_n ((−π, π] for n = 1, 0 for n = 0 = circle). The group identity symmetry_fold(α + 2πk/n, n) = symmetry_fold(α, n) is the gate. <b>Raises</b> ValueError: n &lt; 0, angle not finite.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

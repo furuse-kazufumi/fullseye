@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">lens_image_surface — OPTICS <code style="color:#22d3bf">lenssolve</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lens_image_surface(system=None, R=inf, k: &#x27;float&#x27; = 0.0) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import lenssolve; lenssolve.lens_image_surface(system=None, R=inf, k: &#x27;float&#x27; = 0.0) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;lens_image_surface&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>像面を曲面にした処方を返す: 光線はこの面と交わり、スポット・OPD・MTF はこの面で測る(<code style="color:#22d3bf">table</code>)。</p>
 <p>*R* is the radius of the image surface (mm; <code style="color:#22d3bf">inf</code> flat; positive: centre of curvature to the right, in the direction the light travels) or the string <code style="color:#22d3bf">&quot;petzval&quot;</code> for <code style="color:#22d3bf">lens_petzval_radius</code>; *k* its conic constant. The paraxial image (its position on the axis, its height) does not depend on it. A flat <code style="color:#22d3bf">R</code> with <code style="color:#22d3bf">k != 0</code> is refused.</p>

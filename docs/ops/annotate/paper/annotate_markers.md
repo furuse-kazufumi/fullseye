@@ -4,6 +4,7 @@ dim: annotate
 category: paper
 in: image2d
 out: image2d
+gpu: なし
 examples: [paper_figure]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.annotate_markers(img, points, labels=None, start=1, radius=9.0, color='emphasis', text_color=None, font_size=11, scheme='okabe_ito', font_path=None, min_contrast=2.0)` (実装を直接呼ぶなら `import annotate; annotate.annotate_markers(img, points, labels=None, start=1, radius=9.0, color='emphasis', text_color=None, font_size=11, scheme='okabe_ito', font_path=None, min_contrast=2.0)`、台帳から引くなら `opsannotate.get("annotate_markers")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -4,6 +4,7 @@ dim: drive
 category: granular
 in: image2d × scalar
 out: table
+gpu: なし
 examples: [poc_granular_heap_repose]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d × scalar` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.repose_angle_heightmap(hm, pitch: 'float', *, ground=None, min_rel_height: 'float' = 0.1, max_rel_height: 'float' = 0.9, bin_deg: 'float' = 0.25, method: 'str' = 'horn', smooth_cells: 'int' = 1) -> 'dict'` (実装を直接呼ぶなら `import granular; granular.repose_angle_heightmap(hm, pitch: 'float', *, ground=None, min_rel_height: 'float' = 0.1, max_rel_height: 'float' = 0.9, bin_deg: 'float' = 0.25, method: 'str' = 'horn', smooth_cells: 'int' = 1) -> 'dict'`、台帳から引くなら `opsdrive.get("repose_angle_heightmap")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

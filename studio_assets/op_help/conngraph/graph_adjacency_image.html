@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">graph_adjacency_image — CONNGRAPH <code style="color:#22d3bf">view</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">conn_graph</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graph_adjacency_image(W: &#x27;Any&#x27;, order: &#x27;str&#x27; = &#x27;none&#x27;, log: &#x27;bool&#x27; = True) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import conngraph; conngraph.graph_adjacency_image(W: &#x27;Any&#x27;, order: &#x27;str&#x27; = &#x27;none&#x27;, log: &#x27;bool&#x27; = True) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsconngraph.get(&quot;graph_adjacency_image&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>隣接行列を [0, 1] の画像 (n, n) にする。order = none / degree(総次数の降順)/ component(成分順)。</p>
 <p>値は |W| を(log なら log1p してから)最大値で割る。全零なら全零の画像。</p>

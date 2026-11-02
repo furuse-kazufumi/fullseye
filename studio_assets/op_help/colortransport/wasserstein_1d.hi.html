@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">wasserstein_1d — COLORTRANSPORT <code style="color:#22d3bf">transport</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.wasserstein_1d(u_values, v_values, p=1, u_weights=None, v_weights=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import colortransport; colortransport.wasserstein_1d(u_values, v_values, p=1, u_weights=None, v_weights=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">opscolortransport.get(&quot;wasserstein_1d&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>1-D p-Wasserstein दूरी। <b>exact हल</b>।</p>
 <p>1 आयाम में optimal transport का closed form होता है: cumulative distribution के inverse functions के बीच की <code style="color:#22d3bf">L^p</code> दूरी -- न iteration चाहिए न approximation। brute-force assignment problem (<code style="color:#22d3bf">scipy.optimize.linear_sum_assignment</code>) से ठीक मेल खाना test से fix किया गया है।</p>

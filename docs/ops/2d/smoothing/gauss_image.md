@@ -5,6 +5,7 @@ category: smoothing
 in: image
 out: image
 halcon: gauss_image
+gpu: あり(gauss_image)
 examples: [gallery2d_smoothing_rank, poc_colocalization_crosstalk, poc_moire_screen, poc_prnu_camera_fingerprint, poc_weld_radiograph_porosity]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -16,6 +17,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **データ種**: `image` → `image`
 - **呼び出し**: `fullseye.apply(img, "gauss_image", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 - **HALCON 相当**: `gauss_image`(意味・パラメータは HALCON リファレンスが参考になる)
+- **GPU**: あり(`gauss_image`、`device="cuda"` で高速経路)
 
 ![gauss_image: input → output](../../_fig/gauss_image.png)
 

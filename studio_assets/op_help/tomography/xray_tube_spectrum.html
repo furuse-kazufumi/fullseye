@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">xray_tube_spectrum — TOMOGRAPHY <code style="color:#22d3bf">spectral_xray</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">pairs</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.xray_tube_spectrum(kvp: &#x27;float&#x27; = 80.0, anode: &#x27;str&#x27; = &#x27;W&#x27;, takeoff_deg: &#x27;float&#x27; = 12.0, filtration=((&#x27;AL&#x27;, 2.5),), e_min_kev: &#x27;float&#x27; = 5.0, de_kev: &#x27;float&#x27; = 0.5, characteristic: &#x27;bool&#x27; = True, self_absorption: &#x27;bool&#x27; = True) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import dualxray; dualxray.xray_tube_spectrum(kvp: &#x27;float&#x27; = 80.0, anode: &#x27;str&#x27; = &#x27;W&#x27;, takeoff_deg: &#x27;float&#x27; = 12.0, filtration=((&#x27;AL&#x27;, 2.5),), e_min_kev: &#x27;float&#x27; = 5.0, de_kev: &#x27;float&#x27; = 0.5, characteristic: &#x27;bool&#x27; = True, self_absorption: &#x27;bool&#x27; = True) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opstomography.get(&quot;xray_tube_spectrum&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>X 線管の光子スペクトルを <code style="color:#22d3bf">pairs</code>(E [keV], 光子数 / keV)で返す(Σ φ ΔE = 1 に正規化)。</p>
 <p>模型(厚い陽極):</p>

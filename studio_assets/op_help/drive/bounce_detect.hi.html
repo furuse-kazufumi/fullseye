@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">bounce_detect — DRIVE <code style="color:#22d3bf">balltrack</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.bounce_detect(t, z, *, min_gap: &#x27;int&#x27; = 2) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import balltrack; balltrack.bounce_detect(t, z, *, min_gap: &#x27;int&#x27; = 2) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;bounce_detect&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>ऊँचाई के क्रम z(t) से contact के candidates निकालता है: local minima जहाँ नीचे की ओर velocity ऊपर की ओर बदलती है (आगे-पीछे <code style="color:#22d3bf">min_gap</code> samples में न्यूनतम)। return value <code style="color:#22d3bf">{&quot;index&quot; (M,), &quot;t&quot; (M,), &quot;z&quot; (M,)}</code>।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

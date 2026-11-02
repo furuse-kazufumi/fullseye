@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">lattice_moire_peak — FLYVISION <code style="color:#22d3bf">alias</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">signal × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lattice_moire_peak(signal, lattice, fmax_cycles_per_deg=0.0, n_freq=48, window=&#x27;hann&#x27;)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import flyvision; flyvision.lattice_moire_peak(signal, lattice, fmax_cycles_per_deg=0.0, n_freq=48, window=&#x27;hann&#x27;)</code>、台帳から引くなら <code style="color:#22d3bf">opsflyvision.get(&quot;lattice_moire_peak&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>標本化した信号の最強の低周波成分がどれだけ鋭いか —— 格子が解像できない模様から作るモアレの尖り。</p>
 <p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>

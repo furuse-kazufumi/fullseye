@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">stream_areal_density — DRIVE <code style="color:#22d3bf">scoop</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d × scalar</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.stream_areal_density(coverage, radius_px: &#x27;float&#x27;, *, c_max: &#x27;float&#x27; = 0.95, mode: &#x27;str&#x27; = &#x27;raise&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import scoop; scoop.stream_areal_density(coverage, radius_px: &#x27;float&#x27;, *, c_max: &#x27;float&#x27; = 0.95, mode: &#x27;str&#x27; = &#x27;raise&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;stream_areal_density&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由覆盖率按 Boolean 模型反解颗粒中心的面密度 [个 / px²]：<code style="color:#22d3bf">n = −ln(1 − c) / (π r²)</code>。</p>
 <p>独立放置的半径为 <code style="color:#22d3bf">r</code> 的圆盘之并的覆盖率为 <code style="color:#22d3bf">c = 1 − exp(−n π r²)</code>(不漏计重叠)。朴素的 <code style="color:#22d3bf">c / (π r²)</code> 在 c = 0.8 时少计近 2 倍(PoC 的门)。c 接近 1 时逆运算发散(厚的流挡住后面看不见):</p>

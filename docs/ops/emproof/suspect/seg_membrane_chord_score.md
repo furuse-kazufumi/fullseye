@@ -4,6 +4,7 @@ dim: emproof
 category: suspect
 in: labels2d × image2d
 out: table
+gpu: なし
 examples: [poc_em_second_opinion]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `labels2d × image2d` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.seg_membrane_chord_score(labels, membrane, tau: 'float' = 0.2, band: 'int' = 4, min_area: 'int' = 1500, min_segment: 'int' = 20, normalize: 'bool' = True, ignore_zero: 'bool' = True, max_points: 'int' = 400, min_hole: 'int' = 4) -> 'dict'` (実装を直接呼ぶなら `import emproof; emproof.seg_membrane_chord_score(labels, membrane, tau: 'float' = 0.2, band: 'int' = 4, min_area: 'int' = 1500, min_segment: 'int' = 20, normalize: 'bool' = True, ignore_zero: 'bool' = True, max_points: 'int' = 400, min_hole: 'int' = 4) -> 'dict'`、台帳から引くなら `opsemproof.get("seg_membrane_chord_score")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

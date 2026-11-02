@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">wavelet_filters — MATH <code style="color:#22d3bf">transform</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">table</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.wavelet_filters(order: &#x27;int&#x27; = 2) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import mathtransforms; mathtransforms.wavelet_filters(order: &#x27;int&#x27; = 2) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsmath.get(&quot;wavelet_filters&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>Daubechies 정규직교 웨이블릿 dbN의 필터를 교과서의 구성(스펙트럼 분해)으로 만든다.</p>
 <p>|H(ω)|² = cos^{2N}(ω/2)·P(sin²(ω/2)), P(y) = Σ_{k&lt;N} C(N−1+k, k) y^k(Daubechies 1988). P의 근에서 단위원안쪽의 영점을 골라 (1 + z⁻¹)^N과 곱한다. 표를 베끼지 않으므로 자릿수 손실의 전사 실수가 없다(게이트가 값을 확인한다).</p>

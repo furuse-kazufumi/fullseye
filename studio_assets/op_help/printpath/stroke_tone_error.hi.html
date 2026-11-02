@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">stroke_tone_error — PRINTPATH <code style="color:#22d3bf">stroke</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d × pairs</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.stroke_tone_error(image, points, pen_width=1.0, blur_sigma=3.0, gamma=1.0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import printpath; printpath.stroke_tone_error(image, points, pen_width=1.0, blur_sigma=3.0, gamma=1.0)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsprintpath.get(&quot;stroke_tone_error&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>line खींचने से बना <b>tone</b> लक्ष्य से कितना अलग है। → <code style="color:#22d3bf">table</code></p>
 <p>★यही single-stroke drawing का <b>असली objective function</b> है। &quot;तस्वीर जैसा दिखता है&quot; को इंसानी आँख पर छोड़ने के बजाय, pen width से बनाकर, आँख के scale पर blur करके, target darkness से तुलना करके संख्या लौटाई जाती है।</p>

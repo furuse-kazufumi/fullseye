@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">comminution_law_fit — DRIVE <code style="color:#22d3bf">grind</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.comminution_law_fit(t, d, law: &#x27;str&#x27; = &#x27;all&#x27;) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import grind; grind.comminution_law_fit(t, d, law: &#x27;str&#x27; = &#x27;all&#x27;) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;comminution_law_fit&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Passt ein Zerkleinerungsgesetz an den zeitlichen Verlauf der Partikelgröße <code style="color:#22d3bf">d(t)</code> an (Annahme Energie ∝ <code style="color:#22d3bf">t</code>, siehe Modulkopf). Der Fehler wird in <b>log(Durchmesser)</b> gemessen.</p>
 <p><code style="color:#22d3bf">t</code>: Netto-Mahldauer (anstelle der Energie, ≥ 0), <code style="color:#22d3bf">d</code>: repräsentative Größe zu diesem Zeitpunkt [µm] (z. B. D50). Unabhängige Versuche dürfen mehrfach zum selben <code style="color:#22d3bf">t</code> aufgeführt werden.</p>

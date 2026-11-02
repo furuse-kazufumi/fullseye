@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">mesh_area — 3D <code style="color:#22d3bf">mesh_process</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">mesh</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mesh_area(mesh) -&gt; &#x27;float&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import mesh_props; mesh_props.mesh_area(mesh) -&gt; &#x27;float&#x27;</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;mesh_area&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Die <b>Oberfläche</b> eines Dreiecksnetzes (die Summe aller Dreiecksflächen). → float.</p>
 <p>Fläche = Σ 0.5·|cross(v1−v0, v2−v0)|. Statt einer naiven Näherung, die die Eckenzahl mit einer Konstante multipliziert, summiert es die tatsächlichen Flächengrößen auf und folgt daher korrekt dem Maßstab und der Form des Meshs.</p>

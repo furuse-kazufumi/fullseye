@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">increment_sign — CODEMATCH <code style="color:#22d3bf">code</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.increment_sign(image, axis=&#x27;h&#x27;)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import codematch; codematch.increment_sign(image, axis=&#x27;h&#x27;)</code>、台帳から引くなら <code style="color:#22d3bf">opscodematch.get(&quot;increment_sign&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>隣の画素との増分の符号 <code style="color:#22d3bf">b = [I(次) &gt;= I(今)]</code>(1 / 0 の uint8)。</p>
 <p><code style="color:#22d3bf">axis=&quot;h&quot;</code>(既定)は行に沿って右隣と比べ、形は <code style="color:#22d3bf">(H, W-1)</code>。<code style="color:#22d3bf">axis=&quot;v&quot;</code> は下隣と比べ、形は <code style="color:#22d3bf">(H-1, W)</code>。等しい画素の組は 1(論文の <code style="color:#22d3bf">&gt;=</code> の規約)。狭義単調増加の明るさの変換 <code style="color:#22d3bf">g</code> では <code style="color:#22d3bf">increment_sign(g(I)) == increment_sign(I)</code> が厳密に成り立つ(ISC の不変性の芯)。</p>

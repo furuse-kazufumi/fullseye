@@ -4,6 +4,7 @@ dim: 3d
 category: mesh_process
 in: mesh
 out: measurement
+gpu: なし
 examples: [dl_mesh_curvature, mesh_props, minimal_surfaces]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `mesh` → `measurement`
 - **呼び出し**: `import fullseye as fs; fs.ledger.mesh_area(mesh) -> 'float'` (実装を直接呼ぶなら `import mesh_props; mesh_props.mesh_area(mesh) -> 'float'`、台帳から引くなら `ops3d.get("mesh_area")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

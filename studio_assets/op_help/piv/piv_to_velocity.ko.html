@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">piv_to_velocity — PIV <code style="color:#22d3bf">field</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">flow2d</code> → <code style="color:#22d3bf">flow2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_to_velocity(flow, pixel_size_m, dt_s)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import pivops; pivops.piv_to_velocity(flow, pixel_size_m, dt_s)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opspiv.get(&quot;piv_to_velocity&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>픽셀/프레임 → m/s. <b>둘 다 필수 인수</b>(기본값을 두지 않는다).</p>
 <p>단위의 혼동은 예외를 내지 않고 자릿수를 바꾸므로, 기본값을 두면 사고가 기본이된다 —— <code style="color:#22d3bf">demops</code>의 <code style="color:#22d3bf">cell_size</code>와 같은 판단.</p>

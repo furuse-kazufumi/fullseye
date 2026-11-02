@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">position_to_points — REPRCONV <code style="color:#22d3bf">keypoint</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">position</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.position_to_points(position)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import reprconv; reprconv.position_to_points(position)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsreprconv.get(&quot;position_to_points&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>position <code style="color:#22d3bf">(z, y, x)</code> → 1 point वाला point set <code style="color:#22d3bf">(1, 3)</code>। <code style="color:#22d3bf">position</code> से निकास (<b>उलटने योग्य</b>)।</p>
 <p><code style="color:#22d3bf">position</code> <code style="color:#22d3bf">volregion.vol_rle_centroid</code> आदि से लौटने वाला 3-tuple है, और उसका क्रम <b>(z, y, x)</b> है (<code style="color:#22d3bf">vol_rle_centroid</code> का docstring इसे स्पष्ट रूप से बताता है)। voxel से बने point cloud का भी यही क्रम होता है, इसलिए इसे सीधे 1 row वाले point cloud में बदला जा सकता है।</p>

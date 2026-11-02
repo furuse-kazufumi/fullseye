@@ -4,6 +4,7 @@ dim: oned
 category: function
 in: signal × signal
 out: table
+gpu: なし
 examples: [signal_funct1d]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal × signal` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.match_funct_1d_trans(y1, y2)` (実装を直接呼ぶなら `import funct1d; funct1d.match_funct_1d_trans(y1, y2)`、台帳から引くなら `ops1d.get("match_funct_1d_trans")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

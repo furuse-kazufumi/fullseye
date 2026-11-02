@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">homotopy_class_compare — DRIVE <code style="color:#22d3bf">braidpath</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">any × any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.homotopy_class_compare(traj_a, traj_b, obstacles=None, angle=0.1, jitter=&#x27;auto&#x27;, tol=1e-09)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import braidpath; braidpath.homotopy_class_compare(traj_a, traj_b, obstacles=None, angle=0.1, jitter=&#x27;auto&#x27;, tol=1e-09)</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;homotopy_class_compare&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>始点と終点が同じ 2 つの経路族(複数エージェントの計画)が、同じホモトピー類か。</p>
 <p>衝突せずに(エージェント同士も障害物の点とも重ならずに)始点と終点を止めたまま連続に変形できる ⇔ 組紐が等しい。</p>

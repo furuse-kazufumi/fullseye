@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">normals_to_egi — REPRCONV <code style="color:#22d3bf">direction</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">normals</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.normals_to_egi(normals, n_az=36, n_el=18)</code>(要直接调用实现,<code style="color:#22d3bf">import reprconv; reprconv.normals_to_egi(normals, n_az=36, n_el=18)</code>;从台账取用则 <code style="color:#22d3bf">opsreprconv.get(&quot;normals_to_egi&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>法线 <code style="color:#22d3bf">(N,3)</code> → 扩展高斯像 <code style="color:#22d3bf">(n_el, n_az)</code> 的 <code style="color:#22d3bf">image2d</code>。</p>
 <p>方向的 2-D 直方图(Horn, *Extended Gaussian Images*, Proc. IEEE 72(12) 1984)。是&quot;哪个朝向的面有多少&quot;的地图,在平面占主导的物体上会在 1 个 bin 中立起峰。<b>不可逆</b> —— 舍弃 bin 宽度程度的方向分辨率。</p>

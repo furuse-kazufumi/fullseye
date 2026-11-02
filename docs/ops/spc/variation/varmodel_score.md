@@ -4,6 +4,7 @@ dim: spc
 category: variation
 in: image2d × table
 out: table
+gpu: なし
 examples: [poc_good_sample_variation_model, poc_patch_anomaly]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d × table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.varmodel_score(image, model, mask=None, align='check')` (実装を直接呼ぶなら `import varmodel; varmodel.varmodel_score(image, model, mask=None, align='check')`、台帳から引くなら `opsspc.get("varmodel_score")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

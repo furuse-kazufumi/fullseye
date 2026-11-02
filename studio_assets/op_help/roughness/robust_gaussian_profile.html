@@ -4,6 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.robust_gaussian_profile(z, dx, lambda_c, c=4.4, order=1, robust=True, truncate=1.0, max_iter=None, tol=1e-06)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import roughness; roughness.robust_gaussian_profile(z, dx, lambda_c, c=4.4, order=1, robust=True, truncate=1.0, max_iter=None, tol=1e-06)</code>、台帳から引くなら <code style="color:#22d3bf">opsroughness.get(&quot;robust_gaussian_profile&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>台帳経由の戻り値</b>: <code style="color:#22d3bf">fullseye.ledger.robust_gaussian_profile(...)</code> は<b>宣言 out 型 <code style="color:#22d3bf">signal</code> の値だけ</b>を返す(本体は補助情報も返す)。捨てられた側が要るときは <code style="color:#22d3bf">fullseye.ledger.robust_gaussian_profile.raw(...)</code>、または <code style="color:#22d3bf">roughness.robust_gaussian_profile</code> を直接呼ぶ。</p>
 <p style="margin:2px 0 2px 12px">• 本体の返り: <code style="color:#22d3bf">(roughness, mean_line, info)</code></p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>ロバスト・ガウシアン回帰フィルタ(断面): 外れ値・傷に引きずられない平均線と粗さ。</p>
 <p>ガウス重みの局所回帰(次数 <code style="color:#22d3bf">order</code>)に Tukey の biweight を掛けて反復する。普通のガウスフィルタは深い溝や突起にそのまま引きずられ、平均線が傷の側へ凹む。この op は傷の部分の重みを下げる(<code style="color:#22d3bf">|r| ≥ c·median|r|</code> で 0)ので、平均線は傷を無視する。</p>

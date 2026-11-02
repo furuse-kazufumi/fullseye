@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">dem_tpi — DEM <code style="color:#22d3bf">surface</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">depth</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_tpi(dem, cell_size=1.0)</code> (die Implementierung direkt: <code style="color:#22d3bf">import demops; demops.dem_tpi(dem, cell_size=1.0)</code>; aus dem Register: <code style="color:#22d3bf">opsdem.get(&quot;dem_tpi&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Topographic Position Index TPI — Differenz zwischen der Zelle selbst und dem Mittelwert ihrer 8 Nachbarn [m]. Positiv bedeutet Rücken, negativ Tal.</p>
 <p>Formel: <code style="color:#22d3bf">tpi = z - mean(z der 8 Nachbarn)</code> (Weiss&#x27; TPI mit der minimalen 3x3-Nachbarschaft). Ränder werden durch Kopieren der Randwerte aufgefüllt. Da die Nachbarschaft fest 1 Zelle ist, <b>ist der Maßstab fest auf 1 <code style="color:#22d3bf">cell_size</code></b>; um breitere Rücken/Täler zu sehen, zuerst <code style="color:#22d3bf">dem</code> vergröbern (dieser op hat kein Radius-Argument).</p>

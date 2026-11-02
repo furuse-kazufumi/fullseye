@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">ingaas_photodiode_qe — OPTICS <code style="color:#22d3bf">spectral</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">keine</code> → <code style="color:#22d3bf">pairs</code> (ein Operator, der allein durch seine Argumente bestimmt ist — er nimmt kein Bild und keine Daten entgegen)</p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ingaas_photodiode_qe(cutoff_nm=1700.0, absorber_um=3.0, window_cutoff_nm=920.0, window_um=1.0, front_reflectance=0.03, urbach_mev=8.0, wl_min_nm=800.0, wl_max_nm=2600.0, n_points=361)</code> (die Implementierung direkt: <code style="color:#22d3bf">import spectralrad; spectralrad.ingaas_photodiode_qe(cutoff_nm=1700.0, absorber_um=3.0, window_cutoff_nm=920.0, window_um=1.0, front_reflectance=0.03, urbach_mev=8.0, wl_min_nm=800.0, wl_max_nm=2600.0, n_points=361)</code>; aus dem Register: <code style="color:#22d3bf">opsoptics.get(&quot;ingaas_photodiode_qe&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Externe Quanteneffizienz (Elektronen pro Photon) einer InGaAs-Photodiode aus den direkten Absorptionskanten von Absorber und Fenster.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>

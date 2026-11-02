@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">project — 3D <code style="color:#22d3bf">bundle_adjust</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">keypoints</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.project(points, rvec, t, K)</code>(要直接呼叫實作,<code style="color:#22d3bf">import bundle3d; bundle3d.project(points, rvec, t, K)</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;project&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用相機 (rvec,t,K) 把 3D 點 (n,3) 投影到 2D (n,2)(透視除法)。</p>
 <p>對所有點一併計算 <code style="color:#22d3bf">X_cam = R(rvec) @ X + t</code>、<code style="color:#22d3bf">x = K @ X_cam</code>、<code style="color:#22d3bf">uv = x[:2] / x[2]</code> (與 <code style="color:#22d3bf">project_points</code> 慣例相同)。<code style="color:#22d3bf">rvec</code> 是旋轉向量(軸 × 角 [rad],scipy 的 <code style="color:#22d3bf">Rotation.from_rotvec</code>),<code style="color:#22d3bf">t</code> 是 (3,) 平移,<code style="color:#22d3bf">K</code> 是 (3,3) 內部矩陣。回傳值為 (n,2) float, 第 0 行是 u(橫向、行方向),第 1 行是 v(縱向、列方向),單位依循 K,為像素。</p>

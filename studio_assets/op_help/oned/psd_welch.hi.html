@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">psd_welch — ONED <code style="color:#22d3bf">matched</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">pairs</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.psd_welch(x, rate: &#x27;float&#x27; = 4096.0, segment_s: &#x27;float | None&#x27; = None, *, overlap: &#x27;float&#x27; = 0.5, window: &#x27;str&#x27; = &#x27;hann&#x27;, average: &#x27;str&#x27; = &#x27;mean&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import gwsearch; gwsearch.psd_welch(x, rate: &#x27;float&#x27; = 4096.0, segment_s: &#x27;float | None&#x27; = None, *, overlap: &#x27;float&#x27; = 0.5, window: &#x27;str&#x27; = &#x27;hann&#x27;, average: &#x27;str&#x27; = &#x27;mean&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">ops1d.get(&quot;psd_welch&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Welch विधि का one-sided PSD, pairs (frequency [Hz], S [1/Hz]) के रूप में।</p>
 <p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>

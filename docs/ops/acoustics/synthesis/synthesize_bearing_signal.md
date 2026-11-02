@@ -4,6 +4,7 @@ dim: acoustics
 category: synthesis
 in: 
 out: signal
+gpu: なし
 examples: [acoustic_condition_monitoring, poc_bearing_diagnosis, poc_machine_condition_fusion]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `signal`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.synthesize_bearing_signal(rate=25600.0, duration=1.0, carrier_hz=3000.0, defect_hz=107.0, modulation=0.5, mode='am', damping=0.05, noise_sigma=0.0, seed=None)` (実装を直接呼ぶなら `import acoustics; acoustics.synthesize_bearing_signal(rate=25600.0, duration=1.0, carrier_hz=3000.0, defect_hz=107.0, modulation=0.5, mode='am', damping=0.05, noise_sigma=0.0, seed=None)`、台帳から引くなら `opsacoustics.get("synthesize_bearing_signal")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

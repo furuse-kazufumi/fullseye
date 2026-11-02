@@ -4,6 +4,7 @@ dim: optics
 category: polarization
 in: cimage × jones
 out: jones
+gpu: なし
 examples: [optics_imaging]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `cimage × jones` → `jones`
 - **呼び出し**: `import fullseye as fs; fs.ledger.jones_apply(jones, state)` (実装を直接呼ぶなら `import optics; optics.jones_apply(jones, state)`、台帳から引くなら `opsoptics.get("jones_apply")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

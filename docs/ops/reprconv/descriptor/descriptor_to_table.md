@@ -4,6 +4,7 @@ dim: reprconv
 category: descriptor
 in: descriptor
 out: table
+gpu: なし
 examples: [representation_conversion]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `descriptor` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.descriptor_to_table(descriptor)` (実装を直接呼ぶなら `import reprconv; reprconv.descriptor_to_table(descriptor)`、台帳から引くなら `opsreprconv.get("descriptor_to_table")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

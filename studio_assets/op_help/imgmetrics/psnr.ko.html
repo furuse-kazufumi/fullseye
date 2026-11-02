@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">psnr — IMGMETRICS <code style="color:#22d3bf">fidelity</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.psnr(a, b, data_range=None)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import imgmetrics; imgmetrics.psnr(a, b, data_range=None)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsimgmetrics.get(&quot;psnr&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>두 영상의 최대 신호 대 잡음비(PSNR, 단위 dB)를 반환한다.</p>
 <p>완전히 일치하는 2장에서는 <b><code style="color:#22d3bf">inf</code></b>를 반환한다(0 나눗셈을 말없이 피하기 위해작은 값을 더하거나 하지 않는다 -- 그것은 &quot;매우 좋은 일치&quot;를 유한한 수치로 둔갑시켜, 평균을 냈을 때 거짓이 된다).</p>

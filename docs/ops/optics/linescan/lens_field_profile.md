@@ -4,6 +4,7 @@ dim: optics
 category: linescan
 in: table
 out: table
+gpu: なし
 examples: [poc_tdi_linescan]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.lens_field_profile(system=None, image_heights_mm=None, frequencies_lp_mm=(10.0, 20.0, 35.0), grid=96, wavelength_um=None)` (実装を直接呼ぶなら `import linescan; linescan.lens_field_profile(system=None, image_heights_mm=None, frequencies_lp_mm=(10.0, 20.0, 35.0), grid=96, wavelength_um=None)`、台帳から引くなら `opsoptics.get("lens_field_profile")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

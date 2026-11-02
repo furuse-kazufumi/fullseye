@@ -4,6 +4,7 @@ dim: generative
 category: sem
 in: image2d
 out: video
+gpu: なし
 examples: [poc_virtual_sem_kv_cd_bse]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d` → `video`
 - **呼び出し**: `import fullseye as fs; fs.ledger.sem_charging_series(height, material_map=None, *, materials=('PMMA',), substrate='SI', energy_kev: 'float' = 1.0, pixel_nm: 'float' = 2.0, beam_sigma_nm: 'float' = 1.0, electrons_per_pixel: 'int' = 30, detector: 'str' = 'inlens', frames: 'int' = 12, layer_bottom_nm=0.0, volts_per_electron: 'float' = 0.05, leak_frames: 'float' = 0.0, spread_px: 'float' = 1.0, phi_ev: 'float' = 2.0, gain=None, seed: 'int' = 0, return_potential: 'bool' = False)` (実装を直接呼ぶなら `import sem; sem.sem_charging_series(height, material_map=None, *, materials=('PMMA',), substrate='SI', energy_kev: 'float' = 1.0, pixel_nm: 'float' = 2.0, beam_sigma_nm: 'float' = 1.0, electrons_per_pixel: 'int' = 30, detector: 'str' = 'inlens', frames: 'int' = 12, layer_bottom_nm=0.0, volts_per_electron: 'float' = 0.05, leak_frames: 'float' = 0.0, spread_px: 'float' = 1.0, phi_ev: 'float' = 2.0, gain=None, seed: 'int' = 0, return_potential: 'bool' = False)`、台帳から引くなら `opsgenerative.get("sem_charging_series")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

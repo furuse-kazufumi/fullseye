@@ -4,6 +4,7 @@ dim: graph
 category: tree
 in: table × signal
 out: table
+gpu: なし
 examples: [poc_skeleton_run_length_vs_voi]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table × signal` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.tree_run_length(tree, labels, background=0, zero_labels=None)` (実装を直接呼ぶなら `import treemorph; treemorph.tree_run_length(tree, labels, background=0, zero_labels=None)`、台帳から引くなら `opsgraph.get("tree_run_length")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

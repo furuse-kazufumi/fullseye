@@ -2,7 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">scene_flow_lk — 3D <code style="color:#22d3bf">motion</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">voxel × voxel</code> → <code style="color:#22d3bf">flow_dense</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.scene_flow_lk(vol0, vol1, device=&#x27;cpu&#x27;, win=3, levels=3, iters=3, reg=0.001)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import match3d; match3d.scene_flow_lk(vol0, vol1, device=&#x27;cpu&#x27;, win=3, levels=3, iters=3, reg=0.001)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;scene_flow_lk&quot;)</code>)</p>
-<p style="margin:2px 0 2px 12px">• <b>GPU</b>: この op は GPU 経路あり(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Lucas-Kanade scene flow(2D optical flow の 3D 版)。voxel ごとの運動場 d=(dz,dy,dx)。</p>
 <p>テンプレ照合と違い <b>密な運動/変形</b>を推定する。明るさ一定 ∇I·d + I_t = 0 を窓内最小二乗で per-voxel に解く(3x3 構造テンソル A=Σ∇I∇Iᵀ, b=-Σ∇I·I_t を窓和 conv3d で)。pyramid + warp の coarse-to-fine で大変位に対応(各 level で I1 を現 flow で戻し残差を反復補正=Gauss-Newton)。vol1(x) ≈ vol0(x - d)。返り値 flow (3,D,H,W)。並進・拡大(発散)・回転(渦)場を捉える。</p>

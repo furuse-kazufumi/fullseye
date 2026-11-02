@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">anomaly_image_f1_max — SPC <code style="color:#22d3bf">anomaly_eval</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.anomaly_image_f1_max(scores, labels)</code> (to call the implementation directly, <code style="color:#22d3bf">import anomeval; anomeval.anomaly_image_f1_max(scores, labels)</code>; from the registry, <code style="color:#22d3bf">opsspc.get(&quot;anomaly_image_f1_max&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Best image-level F1 over all thresholds from one anomaly score per image and a good/defective label (<code style="color:#22d3bf">table</code>).</p>
 <p><code style="color:#22d3bf">scores</code> is a 1-D array (higher = more anomalous), <code style="color:#22d3bf">labels</code> the same length with 1 / True = defective; an image is predicted defective when its score is &gt;= the threshold. Exact at every distinct score; the highest threshold wins a tie. Returns <code style="color:#22d3bf">f1</code>, <code style="color:#22d3bf">threshold</code>, <code style="color:#22d3bf">precision</code>, <code style="color:#22d3bf">recall</code>, <code style="color:#22d3bf">n_pos</code> and <code style="color:#22d3bf">n_neg</code> (images).</p>

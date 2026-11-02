@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">hole_centre_from_rgbd — DRIVE <code style="color:#22d3bf">pegsim</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">rgb × image2d × matrix</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.hole_centre_from_rgbd(rgb, depth, K, peg_mask=None, radius: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import pegsim; pegsim.hole_centre_from_rgbd(rgb, depth, K, peg_mask=None, radius: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;hole_centre_from_rgbd&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>손목 RGB-D 1장으로부터 구멍(어두운 원판)의 중심을 3-D(카메라 좌표)로: 판의 평면을 depth로 피팅하고, 안티에일리어싱 가장자리를 평면으로 들어 올려, 평면 안에서 원을 피팅(<code style="color:#22d3bf">measure.fit_circle</code>).</p>
 <p>영상면의 타원 맞춤(<code style="color:#22d3bf">measure.fit_ellipse</code>)도 참고로 반환하지만, 원근에서는 타원의 중심 ≠ 원 중심의 투영(시작품에서 최대 1.9 px 의치우침)이므로 3-D 에서 맞춘다. <code style="color:#22d3bf">radius</code> 에 지그 도면의 값(모따기의 외경 R + W)을 넘기면 <code style="color:#22d3bf">circle_fit_known_radius</code> 로 중심만을푼다 —— 페그를 낮게 들어 가장자리의 절반 가까이를 가리는 자세(ε = −3 mm, 높이 4 mm)에서는 자유 맞춤의 0.18 px 가 기지 반경으로 0.05 px 가 된다.</p>

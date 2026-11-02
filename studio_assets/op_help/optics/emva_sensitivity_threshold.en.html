@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">emva_sensitivity_threshold — OPTICS <code style="color:#22d3bf">sensorchar</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">table</code> (an op determined by its arguments alone — it takes no image or data input)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.emva_sensitivity_threshold(eta, sigma_d, K, *, sigma_q2=0.08333333333333333)</code> (to call the implementation directly, <code style="color:#22d3bf">import sensorchar; sensorchar.emva_sensitivity_threshold(eta, sigma_d, K, *, sigma_q2=0.08333333333333333)</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;emva_sensitivity_threshold&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Absolute sensitivity threshold (the exposure at which SNR = 1, Eqs. 26, 27).</p>
 <p>μ_p.min = (1/η)(√(σ²_d + σ²_q/K² + 1/4) + 1/2), μ_e.min = η μ_p.min. ★As long as quantization noise is present, μ_e.min is larger than σ_d. Returns <code style="color:#22d3bf">{&quot;mu_p_min&quot;, &quot;mu_e_min&quot;}</code>.</p>

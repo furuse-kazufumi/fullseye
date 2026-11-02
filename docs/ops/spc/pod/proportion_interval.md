@@ -4,6 +4,7 @@ dim: spc
 category: pod
 in: 
 out: table
+gpu: なし
 examples: [proportion_interval_audit]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.proportion_interval(k, n, *, confidence=0.95, sides='two', method='clopper_pearson')` (実装を直接呼ぶなら `import pod; pod.proportion_interval(k, n, *, confidence=0.95, sides='two', method='clopper_pearson')`、台帳から引くなら `opsspc.get("proportion_interval")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

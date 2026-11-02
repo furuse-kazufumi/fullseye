@@ -4,6 +4,7 @@ dim: conngraph
 category: activity
 in: matrix
 out: labels
+gpu: なし
 examples: [poc_malecns_activity_wave]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `matrix` → `labels`
 - **呼び出し**: `import fullseye as fs; fs.ledger.graph_activation_latency(X: 'Any', thresh: 'float' = 0.1) -> 'np.ndarray'` (実装を直接呼ぶなら `import conngraph; conngraph.graph_activation_latency(X: 'Any', thresh: 'float' = 0.1) -> 'np.ndarray'`、台帳から引くなら `opsconngraph.get("graph_activation_latency")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

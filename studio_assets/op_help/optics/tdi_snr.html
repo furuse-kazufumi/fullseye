@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tdi_snr — OPTICS <code style="color:#22d3bf">linescan</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tdi_snr(photons_per_stage=200.0, stages=(1, 2, 4, 8, 16, 32, 64, 128), eta=0.6, sigma_d=20.0, K=0.1, architecture=&#x27;charge&#x27;, sigma_q2=0.08333333333333333)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import linescan; linescan.tdi_snr(photons_per_stage=200.0, stages=(1, 2, 4, 8, 16, 32, 64, 128), eta=0.6, sigma_d=20.0, K=0.1, architecture=&#x27;charge&#x27;, sigma_q2=0.08333333333333333)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;tdi_snr&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>TDI の段数 N ごとの SNR(<code style="color:#22d3bf">table</code>)—— EMVA 1288 の線形模型を段数倍して。</p>
 <p>1 段あたりの平均光子数 μ_p(*photons_per_stage*)、量子効率 η、暗時雑音 σ_d [e⁻]、システムゲイン K [DN/e⁻]、量子化雑音の分散 σ_q² [DN²] は <code style="color:#22d3bf">sensorchar.emva_snr_curve</code> と同じ意味。</p>

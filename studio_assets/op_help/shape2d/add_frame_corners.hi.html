@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">add_frame_corners — SHAPE2D <code style="color:#22d3bf">morph</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">pairs</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.add_frame_corners(pts, shape)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import imagemorph; imagemorph.add_frame_corners(pts, shape)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsshape2d.get(&quot;add_frame_corners&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>point set में image के चारों कोने (+ किनारों के मध्यबिंदु) fixed point के रूप में जोड़ता है।</p>
 <p>warp का triangulation पूरी image को ढके और convex hull के बाहर बनने वाले छेद रोके, इसके लिए यह मानक उपाय है। src/dst दोनों में एक ही क्रम से जोड़ने पर चारों कोने &quot;न हिलने वाले corresponding points&quot; का काम करते हैं।</p>

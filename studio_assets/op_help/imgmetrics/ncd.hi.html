@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">ncd — IMGMETRICS <code style="color:#22d3bf">compression</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ncd(a, b, compressor=&#x27;lzma&#x27;, levels=None, data_range=None, symmetric=True)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import imgmetrics; imgmetrics.ncd(a, b, compressor=&#x27;lzma&#x27;, levels=None, data_range=None, symmetric=True)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsimgmetrics.get(&quot;ncd&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>normalised compression distance (Li, Chen, Li, Ma &amp; Vitányi, IEEE TIT 50(12), 2004)।</p>
 <p><code style="color:#22d3bf">NCD(x,y) = (C(xy) - min(C(x),C(y))) / max(C(x),C(y))</code>। समान input पर यह 0 के क़रीब और असंबंधित पर 1 के क़रीब जाता है -- लेकिन <b>असली compressor आदर्श Kolmogorov complexity नहीं है</b>, इसलिए समान input पर भी ठीक 0 नहीं आता (header के कारण एक offset रहता है)। उस offset का मापा गया मान tests में दर्ज है।</p>

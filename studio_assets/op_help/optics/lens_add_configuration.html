@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">lens_add_configuration — OPTICS <code style="color:#22d3bf">lensconfig</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lens_add_configuration(system, surfaces=None, system_fields=None, name=None) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import lensconfig; lensconfig.lens_add_configuration(system, surfaces=None, system_fields=None, name=None) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;lens_add_configuration&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Return a copy of *system* with one more configuration appended (<code style="color:#22d3bf">table</code>).</p>
 <p>*surfaces* is <code style="color:#22d3bf">{index: {field: value}}</code>, *system_fields* <code style="color:#22d3bf">{field: value}</code>; both are checked with the same rules as the resolution (a bad entry is a <code style="color:#22d3bf">ValueError</code> and nothing is added). The input is not modified.</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">long_simulate — DRIVE <code style="color:#22d3bf">long</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">scalar × scalar × any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.long_simulate(s0: &#x27;float&#x27;, v0: &#x27;float&#x27;, command: &#x27;Callable&#x27;, road=None, t_end: &#x27;float&#x27; = 30.0, dt: &#x27;float&#x27; = 0.01, params: &#x27;Optional[dict]&#x27; = None, t_breaks: &#x27;Sequence[float]&#x27; = (), t0: &#x27;float&#x27; = 0.0) -&gt; &#x27;Dict[str, object]&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivelong; drivelong.long_simulate(s0: &#x27;float&#x27;, v0: &#x27;float&#x27;, command: &#x27;Callable&#x27;, road=None, t_end: &#x27;float&#x27; = 30.0, dt: &#x27;float&#x27; = 0.01, params: &#x27;Optional[dict]&#x27; = None, t_breaks: &#x27;Sequence[float]&#x27; = (), t0: &#x27;float&#x27; = 0.0) -&gt; &#x27;Dict[str, object]&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;long_simulate&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>종방향 운동 방정식을 RK4로 적분합니다(사건 시각에서 스텝을 끊음. 모듈의 docstring 참조).</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>

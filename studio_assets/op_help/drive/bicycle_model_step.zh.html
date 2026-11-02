@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">bicycle_model_step — DRIVE <code style="color:#22d3bf">lateral</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.bicycle_model_step(state, steer, speed, params: &#x27;dict&#x27;, dt: &#x27;float&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import drivelateral; drivelateral.bicycle_model_step(state, steer, speed, params: &#x27;dict&#x27;, dt: &#x27;float&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;bicycle_model_step&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>线性 2 轮等效模型的 1 步(经典 4 阶 Runge–Kutta，步内 δ 与 u 恒定)。</p>
 <p><code style="color:#22d3bf">state</code>: (..., 5) = (x, y, ψ, v_y, r)(质心位置 [m]、朝向 [rad]、车体坐标系横向速度 [m/s]、横摆角速度 [rad/s])。<code style="color:#22d3bf">steer</code>: 前轮转向角 δ [rad] (广播到 state 的前导形状)。<code style="color:#22d3bf">speed</code>: 前向速度 u [m/s] (&gt; 0,广播)。<code style="color:#22d3bf">params</code> 中还需要 <code style="color:#22d3bf">inertia</code>(I_z [kg m²])。返回值: 下一状态(相同形状)。</p>

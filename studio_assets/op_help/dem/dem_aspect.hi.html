@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">dem_aspect — DEM <code style="color:#22d3bf">surface</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">depth</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_aspect(dem, cell_size, method=&#x27;horn&#x27;, flat_tol=1e-12)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import demops; demops.dem_aspect(dem, cell_size, method=&#x27;horn&#x27;, flat_tol=1e-12)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdem.get(&quot;dem_aspect&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>slope aspect [degree]। <b>उत्तर 0 degree, पूर्व की ओर बढ़ता</b>। समतल cell को <code style="color:#22d3bf">ASPECT_FLAT</code> मिलता है।</p>
 <p>समतल cells को 0 के रूप में नहीं लौटाया जाता क्योंकि 0 का अर्थ &quot;उत्तर की ओर मुख वाली slope&quot; होगा —— अलग न पहचाना जा सकने वाला मान लौटाना बिना error उठाए गलत होने का पाठ्यपुस्तकीय उदाहरण है।</p>

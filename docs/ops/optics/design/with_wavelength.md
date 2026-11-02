@@ -4,6 +4,7 @@ dim: optics
 category: design
 in: table
 out: table
+gpu: なし
 examples: [anim3d_lens_aberrations, poc_chromatic_confocal, poc_lens_file_roundtrip, poc_lens_global_search, poc_lens_merit_operands, poc_material_optical_library, poc_photograph_through_prescription]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.with_wavelength(system, wavelength_um=0.48613)` (実装を直接呼ぶなら `import raytrace; raytrace.with_wavelength(system, wavelength_um=0.48613)`、台帳から引くなら `opsoptics.get("with_wavelength")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">table_px_to_mm — MEASURE1D <code style="color:#22d3bf">scale</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.table_px_to_mm(table, mm_per_px, keys=(&#x27;width&#x27;, &#x27;radius&#x27;, &#x27;dist&#x27;, &#x27;rms&#x27;, &#x27;ra&#x27;, &#x27;rb&#x27;, &#x27;l1&#x27;, &#x27;l2&#x27;))</code>(要直接调用实现,<code style="color:#22d3bf">import measuring1d; measuring1d.table_px_to_mm(table, mm_per_px, keys=(&#x27;width&#x27;, &#x27;radius&#x27;, &#x27;dist&#x27;, &#x27;rms&#x27;, &#x27;ra&#x27;, &#x27;rb&#x27;, &#x27;l1&#x27;, &#x27;l2&#x27;))</code>;从台账取用则 <code style="color:#22d3bf">opsmeasure1d.get(&quot;table_px_to_mm&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>给测量结果表(<code style="color:#22d3bf">measure_pairs</code> / <code style="color:#22d3bf">apply_metrology_model</code> 的返回值)添加 mm 列。</p>
 <p>对 <code style="color:#22d3bf">keys</code> 中的每个数值列 <code style="color:#22d3bf">k</code> <b>追加</b> <code style="color:#22d3bf">k_mm = k * mm_per_px</code>(保留 px 列。删除会切断来历)。<code style="color:#22d3bf">apply_metrology_model</code> 的每行在 <code style="color:#22d3bf">params</code> dict 中持有 <code style="color:#22d3bf">radius</code> / <code style="color:#22d3bf">l1</code> …,这里也会换算。输入为 list[dict] 或单个 dict。返回<b>浅拷贝</b>,不修改输入。</p>

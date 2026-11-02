@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">impact_params — DRIVE <code style="color:#22d3bf">ball</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">table</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.impact_params(e=0.9, mu: &#x27;float&#x27; = 0.25) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import ballistics; ballistics.impact_params(e=0.9, mu: &#x27;float&#x27; = 0.25) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;impact_params&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>टक्कर की table: normal coefficient of restitution e ∈ [0, 1] (एक संख्या, या |v_n| → e function: टक्कर की गति के साथ घटने वाले मापों से मेल के लिए), Coulomb friction coefficient μ ≥ 0।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

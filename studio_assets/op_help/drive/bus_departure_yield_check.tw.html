@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">bus_departure_yield_check — DRIVE <code style="color:#22d3bf">decide</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.bus_departure_yield_check(trajectory, *, t_signal: &#x27;float&#x27;, bus_rear_x: &#x27;float&#x27;, merge_time: &#x27;float&#x27; = 4.0, reaction: &#x27;float&#x27; = 1.0, sudden_decel: &#x27;float&#x27; = 3.0, standoff: &#x27;float&#x27; = 2.0) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import drivedecide; drivedecide.bus_departure_yield_check(trajectory, *, t_signal: &#x27;float&#x27;, bus_rear_x: &#x27;float&#x27;, merge_time: &#x27;float&#x27; = 4.0, reaction: &#x27;float&#x27; = 1.0, sudden_decel: &#x27;float&#x27; = 3.0, standoff: &#x27;float&#x27; = 2.0) -&gt; &#x27;Dict[str, object]&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;bus_departure_yield_check&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>評分後方本車是否妨礙了已打燈示意從公車站起步的公車變換車道(道路交通法第31條之2)。</p>
 <p><code style="color:#22d3bf">trajectory</code>: <code style="color:#22d3bf">{&quot;t&quot;, &quot;x&quot;, &quot;v&quot;}</code>(本車前端的位置,公車駛入的車道)。公車後端為 <code style="color:#22d3bf">bus_rear_x</code> (從打方向燈起 <code style="color:#22d3bf">merge_time</code> 秒內視為停止中 / 緩慢起步中)。</p>

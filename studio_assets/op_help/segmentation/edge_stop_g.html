@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">edge_stop_g — SEGMENTATION <code style="color:#22d3bf">contour</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.edge_stop_g(image, *, sigma: &#x27;float&#x27; = 1.0, k: &#x27;float&#x27; = 1.0) -&gt; &#x27;Dict[str, object]&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import segcontour; segcontour.edge_stop_g(image, *, sigma: &#x27;float&#x27; = 1.0, k: &#x27;float&#x27; = 1.0) -&gt; &#x27;Dict[str, object]&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opssegmentation.get(&quot;edge_stop_g&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>エッジ停止関数 g = 1 / (1 + |∇(G_σ * I)|² / k²)(Caselles–Kimmel–Sapiro 1997 の p = 2 の形)。</p>
 <p><code style="color:#22d3bf">sigma</code> = ガウスの標準偏差(0 なら平滑化なしの中心差分)、<code style="color:#22d3bf">k</code> = 勾配の尺度(k = 1 で g = 1/(1 + |∇G_σ*I|²))。</p>

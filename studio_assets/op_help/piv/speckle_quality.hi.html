@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">speckle_quality — PIV <code style="color:#22d3bf">solid</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.speckle_quality(img: &#x27;Any&#x27;) -&gt; &#x27;dict[str, float]&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import dic; dic.speckle_quality(img: &#x27;Any&#x27;) -&gt; &#x27;dict[str, float]&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opspiv.get(&quot;speckle_quality&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>ली गई speckle DIC के लिए उपयुक्त है या नहीं, यह 4 संख्याओं में लौटाता है।</p>
 <p>न <code style="color:#22d3bf">pivops</code> में है न <code style="color:#22d3bf">fullseye</code> में (<code style="color:#22d3bf">speckle_filter</code> SAR speckle-noise का <b>निष्कासन</b> है, अलग चीज़)। capture के दौरान मौके पर ही यह आँकने का entry point कि &quot;क्या यह pattern मापा जा सकता है&quot;।</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tile_uniform — DRIVE <code style="color:#22d3bf">inf</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">scalar</code> (an op determined by its arguments alone — it takes no image or data input)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tile_uniform(i: &#x27;int&#x27;, j: &#x27;int&#x27;, seed: &#x27;int&#x27;, salt: &#x27;int&#x27; = 0) -&gt; &#x27;float&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import driveinf; driveinf.tile_uniform(i: &#x27;int&#x27;, j: &#x27;int&#x27;, seed: &#x27;int&#x27;, salt: &#x27;int&#x27; = 0) -&gt; &#x27;float&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;tile_uniform&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Maps the upper 53 bits of <code style="color:#22d3bf">tile_hash</code> to a uniform real number in [0, 1) (exactly representable in double precision).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">voxel_grid_downsample — 3D <code style="color:#22d3bf">preprocess</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.voxel_grid_downsample(points, voxel_size: &#x27;float&#x27;)</code> (die Implementierung direkt: <code style="color:#22d3bf">import pcl_filter; pcl_filter.voxel_grid_downsample(points, voxel_size: &#x27;float&#x27;)</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;voxel_grid_downsample&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Dünnt eine Punktmenge auf einem Gitter der Kantenlänge voxel_size aus und fasst jede Zelle zu einem Schwerpunktpunkt zusammen (deterministisch).</p>
 <p>Teilt den Raum in würfelförmige Zellen der Seitenlänge <code style="color:#22d3bf">voxel_size</code> und repräsentiert die in dieselbe Zelle fallenden Punkte durch ihren Schwerpunkt als 1 Punkt. Das Standardverfahren, um Dichteunterschiede auszugleichen und den Rechenaufwand nachgelagerter Schritte (ICP, Merkmale) über die Punktzahl zu begrenzen. Die Ausgabereihenfolge ist die lexikographische Reihenfolge der Voxelkoordinaten (gleiche Eingabe ergibt stets gleiche Ausgabe = deterministisch).</p>

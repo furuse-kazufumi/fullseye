@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">basis_decomposition_crlb — TOMOGRAPHY <code style="color:#22d3bf">spectral_xray</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">keine</code> → <code style="color:#22d3bf">table</code> (ein Operator, der allein durch seine Argumente bestimmt ist — er nimmt kein Bild und keine Daten entgegen)</p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.basis_decomposition_crlb(thickness_cm=(5.0, 0.0), basis=(&#x27;WATER&#x27;, &#x27;AL&#x27;), channels=None, photons_per_pixel: &#x27;float&#x27; = 100000.0) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import dualxray; dualxray.basis_decomposition_crlb(thickness_cm=(5.0, 0.0), basis=(&#x27;WATER&#x27;, &#x27;AL&#x27;), channels=None, photons_per_pixel: &#x27;float&#x27; = 100000.0) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opstomography.get(&quot;basis_decomposition_crlb&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Gibt in geschlossener Form die untere Schranke (Cramér–Rao) der Varianz der Zerlegung bei den Basisdicken b zurück.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>

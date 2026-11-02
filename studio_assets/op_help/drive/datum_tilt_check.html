@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">datum_tilt_check — DRIVE <code style="color:#22d3bf">granular</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.datum_tilt_check(result, warn_deg: &#x27;float&#x27; = 1.0) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import granular; granular.datum_tilt_check(result, warn_deg: &#x27;float&#x27; = 1.0) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;datum_tilt_check&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p><code style="color:#22d3bf">repose_angle_silhouette</code> の返り(左右の斜面角と地面の傾き)から <b>基準面が傾いていないか</b> を判定する。</p>
 <p>平らでない地面(datum)の傾き β は安息角に足し算される(既存の体積 PoC と同じ罠)。せん断型(<code style="color:#22d3bf">z&#x27; = z + x tan β</code>) なら左右の斜面は <code style="color:#22d3bf">atan(tan φ ± tan β)</code>、カメラのロール(回転型)なら <code style="color:#22d3bf">φ ± β</code> —— <b>どちらも左右差 ≈ 2β</b> なので、左右差が <code style="color:#22d3bf">warn_deg</code> を超えたら警報。2 つの模型は 1 次で違う(β = 5 度・φ = 30 度で左の斜面が 33.62 対 35.00 度、実測)ので、両方の補正値を返し、どちらを使うかは地面の由来(高さ図の datum か、カメラの傾きか)で決める:</p>

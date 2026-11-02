@@ -4,6 +4,7 @@ dim: drive
 category: inf
 in: table
 out: scalar
+gpu: なし
 examples: [poc_driving_endless_map]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `scalar`
 - **呼び出し**: `import fullseye as fs; fs.ledger.tile_edge_crossing(i: 'int', j: 'int', side: 'str', tp: 'dict')` (実装を直接呼ぶなら `import driveinf; driveinf.tile_edge_crossing(i: 'int', j: 'int', side: 'str', tp: 'dict')`、台帳から引くなら `opsdrive.get("tile_edge_crossing")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

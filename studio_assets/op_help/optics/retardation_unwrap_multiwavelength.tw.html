@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">retardation_unwrap_multiwavelength — OPTICS <code style="color:#22d3bf">photoelastic</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">images</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.retardation_unwrap_multiwavelength(deltas_rad, wavelengths_nm, max_retardation_nm, folded=True)</code>(要直接呼叫實作,<code style="color:#22d3bf">import photoelastic; photoelastic.retardation_unwrap_multiwavelength(deltas_rad, wavelengths_nm, max_retardation_nm, folded=True)</code>;從台帳取用則 <code style="color:#22d3bf">opsoptics.get(&quot;retardation_unwrap_multiwavelength&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由多個波長的折疊相位延遲決定絕對相位延遲(nm)(假定無色散)→ dict。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">ultrametric_contour_map — SEGMENTATION <code style="color:#22d3bf">graph</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ultrametric_contour_map(image, *, mask=None, connectivity: &#x27;int&#x27; = 4, distance_matrix: &#x27;bool&#x27; = False) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import seggraph; seggraph.ultrametric_contour_map(image, *, mask=None, connectivity: &#x27;int&#x27; = 4, distance_matrix: &#x27;bool&#x27; = False) -&gt; &#x27;Dict[str, object]&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opssegmentation.get(&quot;ultrametric_contour_map&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>dynamics 階層的超度量輪廓圖（UCM）：相鄰像素 p、q 的值 =「p 與 q 成為同一區域的最小閾值」（ultrametric_contour_map）。</p>
 <p>盆地內部的邊為 0,盆地邊界上的邊為第 2 次 Kruskal(把盆地的樹依 saliency 升冪合併)中 2 個盆地相遇的高度。</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">companding_mu_law — ONED <code style="color:#22d3bf">signal</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.companding_mu_law(x, mu=255.0, bits=8)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import dsp; dsp.companding_mu_law(x, mu=255.0, bits=8)</code>、台帳から引くなら <code style="color:#22d3bf">ops1d.get(&quot;companding_mu_law&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>mu-law companding — the G.711 curve, used here on any 1-D signal.</p>
 <p>Compress with <code style="color:#22d3bf">F(v) = sign(v) * ln(1 + mu|v|) / ln(1 + mu)</code> on the signal scaled to <code style="color:#22d3bf">[-1, 1]</code>, quantise uniformly, expand back. The steps end up fine near zero and coarse near full scale, which is the right allocation when the interesting part of the signal is small compared with its peaks — speech, vibration, anything with a large crest factor.</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">camera_orientation_from_sun — GEOCAM <code style="color:#22d3bf">sun</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">keypoints × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.camera_orientation_from_sun(sun_pixels, unix_times, lat_deg, lon_deg, K)</code> (to call the implementation directly, <code style="color:#22d3bf">import geocam; geocam.camera_orientation_from_sun(sun_pixels, unix_times, lat_deg, lon_deg, K)</code>; from the registry, <code style="color:#22d3bf">opsgeocam.get(&quot;camera_orientation_from_sun&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Time-stamped pixel positions of the sun, ≥ 2 points → camera (yaw, pitch, roll) (SVD solution of Wahba&#x27;s problem = Kabsch).</p>
 <p>For each observation, pixel → camera coordinate ray d_c(from K), time → global sun direction s_w(<code style="color:#22d3bf">sun_position</code>, Use an elevation angle with <b>refraction included</b>: the camera sees the apparent sun). <code style="color:#22d3bf">R = argmin Σ |R d_c − s_w|²</code> Solve it in closed form using SVD (Kabsch 1976 / Markley 1988) and decompose it into <code style="color:#22d3bf">(yaw, pitch, roll)</code>.</p>

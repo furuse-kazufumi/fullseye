@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">seg_hausdorff — SEGMENTATION <code style="color:#22d3bf">score</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">labels2d × labels2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.seg_hausdorff(labels_pred, labels_true, *, percentile: &#x27;float&#x27; = 95.0) -&gt; &#x27;Dict[str, float]&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import segeval; segeval.seg_hausdorff(labels_pred, labels_true, *, percentile: &#x27;float&#x27; = 95.0) -&gt; &#x27;Dict[str, float]&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opssegmentation.get(&quot;seg_hausdorff&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>boundary pixel के समूहों के बीच Hausdorff दूरी = max(max prediction→truth, max truth→prediction), और उसका <code style="color:#22d3bf">percentile</code> रूप (जैसे HD95)।</p>
 <p>boundary <code style="color:#22d3bf">_boundary</code> की convention के अनुसार। किसी भी एक की boundary ख़ाली हो (1 रंग की image) तो मापने को कुछ नहीं, इसलिए ValueError।</p>

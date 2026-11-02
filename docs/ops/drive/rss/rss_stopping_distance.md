@@ -4,6 +4,7 @@ dim: drive
 category: rss
 in: 
 out: scalar
+gpu: なし
 examples: [poc_driving_longitudinal]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `scalar`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.rss_stopping_distance(v: 'float', rho: 'float', accel: 'float', brake: 'float', v_max: 'Optional[float]' = None, direction: 'float' = 1.0) -> 'float'` (実装を直接呼ぶなら `import rsssafety; rsssafety.rss_stopping_distance(v: 'float', rho: 'float', accel: 'float', brake: 'float', v_max: 'Optional[float]' = None, direction: 'float' = 1.0) -> 'float'`、台帳から引くなら `opsdrive.get("rss_stopping_distance")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

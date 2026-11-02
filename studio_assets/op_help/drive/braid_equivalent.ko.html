@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">braid_equivalent — DRIVE <code style="color:#22d3bf">braidpath</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">signal × signal × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.braid_equivalent(word_a, word_b, n_strands, method=&#x27;dynnikov&#x27;)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import braidpath; braidpath.braid_equivalent(word_a, word_b, n_strands, method=&#x27;dynnikov&#x27;)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;braid_equivalent&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>두 브레이드 단어가 같은 브레이드인지(관계식만으로 서로 옮겨 갈 수 있는지).</p>
 <p>method: <code style="color:#22d3bf">&quot;dynnikov&quot;</code>(좌표를 비교, 빠름) / <code style="color:#22d3bf">&quot;handle&quot;</code>(a b⁻¹ 를 핸들 축약하여 비었는지) / <code style="color:#22d3bf">&quot;artin&quot;</code>(자유군의 상을비교) / <code style="color:#22d3bf">&quot;all&quot;</code>(세 가지 모두 계산하고, 어긋나면 RuntimeError —— 구현의 검사).</p>

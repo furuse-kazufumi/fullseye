@@ -4,6 +4,7 @@ dim: 3d
 category: boundary
 in: voxel
 out: points
+gpu: なし
 examples: [roi_domain_boundary]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `voxel` → `points`
 - **呼び出し**: `import fullseye as fs; fs.ledger.vol_boundary_points(vol_binary, spacing=None, connectivity=6, origin=(0, 0, 0))` (実装を直接呼ぶなら `import volops; volops.vol_boundary_points(vol_binary, spacing=None, connectivity=6, origin=(0, 0, 0))`、台帳から引くなら `ops3d.get("vol_boundary_points")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

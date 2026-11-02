@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">flight_fit — DRIVE <code style="color:#22d3bf">ball</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">signal × points × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.flight_fit(t, p, omega, bp: &#x27;dict&#x27;, *, iters: &#x27;int&#x27; = 12, dt: &#x27;float&#x27; = 0.001) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import ballistics; ballistics.flight_fit(t, p, omega, bp: &#x27;dict&#x27;, *, iters: &#x27;int&#x27; = 12, dt: &#x27;float&#x27; = 0.001) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;flight_fit&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>以 <b>初始状态 (p₀, v₀) 的 6 个参数</b>，用 Gauss–Newton(有限差分雅可比)将含阻力 + 马格努斯(ω 已知)的运动方程拟合到观测 (t_i, p_i)(不含弹跳的区间)。抛物线拟合会把阻力、马格努斯吸收进 g 与 v₀，使预测偏弯 —— 本函数相当于先行者的“带空气动力模型的追踪”。返回值 <code style="color:#22d3bf">{&quot;p0&quot;, &quot;v0&quot;, &quot;rms&quot;, &quot;iters&quot;, &quot;t0&quot;}</code>(p₀、v₀ 为 t = t[0] 时的状态)。输入真值轨迹时可在 1e-9 内还原(门禁)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

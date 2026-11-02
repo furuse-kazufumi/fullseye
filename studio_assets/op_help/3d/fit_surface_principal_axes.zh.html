@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">fit_surface_principal_axes — 3D <code style="color:#22d3bf">geometry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fit_surface_principal_axes(points, degree: &#x27;int&#x27; = 2, *, isotropy_ratio: &#x27;float&#x27; = 0.95) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import measure3d; measure3d.fit_surface_principal_axes(points, degree: &#x27;int&#x27; = 2, *, isotropy_ratio: &#x27;float&#x27; = 0.95) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;fit_surface_principal_axes&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>将倾斜翘曲面旋转到 PCA 轴后拟合多项式 z&#x27;=f(x&#x27;,y&#x27;)。</p>
 <p>两个最大 PCA 轴张成局部 x/y，最小轴定义 z。拟合不超过指定总次数的全部单项式，并返回中心、轴、幂、系数、拟合点、重心法向和几何 RMS；拒绝平面内各向同性点云。</p>

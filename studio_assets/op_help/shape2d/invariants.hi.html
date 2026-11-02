@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">invariants — SHAPE2D <code style="color:#22d3bf">descriptor</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">efdmodel</code> → <code style="color:#22d3bf">pairs</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.invariants(model, scale_invariant=True)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import fourierdesc; fourierdesc.invariants(model, scale_invariant=True)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsshape2d.get(&quot;invariants&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>rotation, translation, आरंभ बिंदु और (वैकल्पिक रूप से) scale के प्रति invariant shape descriptor ((N,2))।</p>
 <p>हर harmonic के ellipse के (major axis, minor axis) = singular values की सूची। इसमें DC नहीं है, इसलिए यह translation से invariant है, singular values होने से spatial rotation और start-point shift से invariant है, और 1 ले harmonic के major axis से भाग देने पर scale से भी invariant। shape matching (<code style="color:#22d3bf">descriptor_distance</code>) का आधार।</p>

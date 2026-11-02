@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">reprojection_error — 3D <code style="color:#22d3bf">pose_estimation</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points × keypoints</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.reprojection_error(points_3d, points_2d, K, R, t)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import pnp3d; pnp3d.reprojection_error(points_3d, points_2d, K, R, t)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;reprojection_error&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>reprojection error (RMS pixels)। pose कितना fit बैठता है इसका मूल्यांकन। → scalar।</p>
 <p>Raises ValueError: points_2d (N,2) न हो / points की संख्या मेल न खाए / non-finite।</p>

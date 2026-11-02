@@ -3,6 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">images</code> → <code style="color:#22d3bf">indices</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lucky_select(frames, keep_fraction=0.3, min_keep=1, **quality_kw)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import astrostack; astrostack.lucky_select(frames, keep_fraction=0.3, min_keep=1, **quality_kw)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsastrostack.get(&quot;lucky_select&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>원장 경유의 반환값</b>: <code style="color:#22d3bf">fullseye.ledger.lucky_select(...)</code> 는 <b>선언된 out 형 <code style="color:#22d3bf">indices</code> 의 값만</b> 반환합니다(실제 함수는 보조 정보도 반환). 버려진 쪽이 필요하면 <code style="color:#22d3bf">fullseye.ledger.lucky_select.raw(...)</code> 를 쓰거나 <code style="color:#22d3bf">astrostack.lucky_select</code> 를 직접 호출하세요.</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>품질 점수 상위 <code style="color:#22d3bf">keep_fraction</code> 만 취합니다 —— 럭키 이미징의 선별.</p>
 <p>채택 장수는 <code style="color:#22d3bf">max(min_keep, ceil(keep_fraction * N))</code>. <b>반드시 1장은 남기므로</b>, <code style="color:#22d3bf">keep_fraction</code>을 아무리 작게 해도 비지 않는다(빈 합성을후단에 넘기는 쪽이 사고가 크다). 정렬은 점수의 내림차순이며, 동점은 원래 순서를 유지하는안정 정렬 —— 같은 입력이면 같은 순서가 반환된다.</p>

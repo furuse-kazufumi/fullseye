@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">mapf_ecbs — DRIVE <code style="color:#22d3bf">agv</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mapf_ecbs(grid, starts, goals, w=1.2, max_nodes=50000, horizon=None)</code>(要直接调用实现,<code style="color:#22d3bf">import agvfleet; agvfleet.mapf_ecbs(grid, starts, goals, w=1.2, max_nodes=50000, horizon=None)</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;mapf_ecbs&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>上层采用焦点搜索的 CBS(与 ECBS 上层的思路相同，Barer 等 2014)。总代价在<b>最优的 w 倍以内</b>。</p>
 <p>开放节点中最小的总成本 <code style="color:#22d3bf">LB</code> 不大于最优值(最优解位于某个节点之下)。因此在 <code style="color:#22d3bf">コスト ≤ w · LB</code> 的节点(焦点集)中展开<b>冲突最少</b>的那个。返回的计划满足 <code style="color:#22d3bf">cost ≤ w · LB ≤ w · 最適</code>(门)。返回值是 <code style="color:#22d3bf">mapf_cbs</code> 的 dict 加上 <code style="color:#22d3bf">lower_bound</code> 与 <code style="color:#22d3bf">w</code>。在狭窄通道中,最优的 CBS 会逐一检查所有等长的让行组合而停滞,此处通过偏向冲突较少的一侧来摆脱。</p>

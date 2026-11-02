@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">plane_from_3points — 3D <code style="color:#22d3bf">geometry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">primitive</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.plane_from_3points(a, b, c)</code>(要直接呼叫實作,<code style="color:#22d3bf">import match3d; match3d.plane_from_3points(a, b, c)</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;plane_from_3points&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>3 點 → 平面(通過點, 單位法線)。三個座標即可確定平面(2D/3D 通用)。</p>
 <p>回傳值 <code style="color:#22d3bf">(a, n)</code>: <code style="color:#22d3bf">a</code> 為第 1 個點,<code style="color:#22d3bf">n</code> 為 <code style="color:#22d3bf">n = (b−a)×(c−a)</code> 單位化後的結果(方向為 a→b→c 的右手螺旋)。參數為數值的 2 或 3 維向量(其他情況或維度混用則 ValueError)。3 點共線時 <code style="color:#22d3bf">n</code> 以零向量原樣回傳(不拋例外)。傳入 2 維點時 <code style="color:#22d3bf">np.cross</code> 回傳純量(帶正負號面積的 2 倍),因此 <code style="color:#22d3bf">n</code> 不是向量而是 ±1 的純量。在 2-D 中需要直線的法線時,請將 <code style="color:#22d3bf">line_from_2points</code> 的方向旋轉 90° 後使用。</p>

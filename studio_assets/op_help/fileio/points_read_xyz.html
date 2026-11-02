@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">points_read_xyz — FILEIO <code style="color:#22d3bf">points</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">text</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.points_read_xyz(data)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import fileio; fileio.points_read_xyz(data)</code>、台帳から引くなら <code style="color:#22d3bf">opsfileio.get(&quot;points_read_xyz&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>空白区切りの XYZ テキストを読み、<code style="color:#22d3bf">(N,3)</code> の <code style="color:#22d3bf">points</code> を返す。</p>
 <p>色列は受け付けるが points sort では返さない。列数不一致・非有限値は拒否する。呼び出し例:</p>

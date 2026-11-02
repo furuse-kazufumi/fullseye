@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">evidence_quantile — IMGFORENSICS <code style="color:#22d3bf">calibration</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">measurement × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.evidence_quantile(measurement, null, higher_is_stronger=True)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import imgforensics; imgforensics.evidence_quantile(measurement, null, higher_is_stronger=True)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsimgforensics.get(&quot;evidence_quantile&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>증거량이 깨끗한 분포의 <b>어디쯤에 앉는지</b>. 판정은 돌려주지 않습니다.</p>
 <p><code style="color:#22d3bf">null_distribution</code>의 출력을 소비하는 쪽. 반환하는 것은 &quot;깨끗한 쌍의 몇 %보다바깥쪽인가&quot;이지, &quot;변조되어 있다&quot;가 아니다 ―― 바깥쪽에 앉는 것은그 조건에서 <b>드물다</b>는 것밖에 의미하지 않는다(드문 깨끗한 화상은 존재한다).</p>

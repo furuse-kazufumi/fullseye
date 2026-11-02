@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">material_effective_z — TOMOGRAPHY <code style="color:#22d3bf">spectral_xray</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.material_effective_z(material=&#x27;WATER&#x27;, exponent: &#x27;float&#x27; = 2.94, density_g_cm3=None) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import materials; materials.material_effective_z(material=&#x27;WATER&#x27;, exponent: &#x27;float&#x27; = 2.94, density_g_cm3=None) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opstomography.get(&quot;material_effective_z&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>組成から実効原子番号(Mayneord / Spiers の冪の式)と電子密度を返す。</p>
 <p>Z_eff = (Σ aᵢ Zᵢ^p)^(1/p)、aᵢ = wᵢ (Z/A)ᵢ / Σ wⱼ (Z/A)ⱼ は<b>電子の割合</b>、p = 2.94 は光電効果の断面積の Z 依存(≈ Z^3.94/原子 → Z^2.94/電子)から来る慣用の指数。水は 7.42(公表値)。電子密度 ρₑ = ρ N_A Σ wᵢ Zᵢ/Aᵢ [電子/cm³] と、水に対する比も返す。デュアルエナジーの像から推定する実効 Z(<code style="color:#22d3bf">dualxray.effective_z_map</code>)は、この「組成の Z_eff」と同じものではない(光電効果の比で定義した Z は、スペクトルの位置で値が数 % 動く)—— その差を PoC で数える。</p>

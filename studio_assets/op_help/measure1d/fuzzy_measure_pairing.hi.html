@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">fuzzy_measure_pairing — MEASURE1D <code style="color:#22d3bf">caliper</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d × measurehandle</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fuzzy_measure_pairing(image, measure, sigma=1.0, threshold=0.1, pair_size=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import measuring1d; measuring1d.fuzzy_measure_pairing(image, measure, sigma=1.0, threshold=0.1, pair_size=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsmeasure1d.get(&quot;fuzzy_measure_pairing&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>fuzzy मापदंड (अपेक्षित चौड़ाई pair_size) से सबसे अच्छा मेल खाने वाला edge जोड़ा चुनता है (fuzzy_measure_pairing)।</p>
 <p>प्रक्रिया: <code style="color:#22d3bf">measure_pairs(image, measure, sigma, threshold)</code> से अलग polarity वाले पास-पास के edges के जोड़े लिए जाते हैं, हर जोड़े पर <code style="color:#22d3bf">fuzzy_score = exp(-((width - pair_size) / (0.5 pair_size))^2)</code> लगाकर <b>score के घटते क्रम में sort किया जाता है</b>। ठीक अपेक्षित चौड़ाई पर 1, चौड़ाई <code style="color:#22d3bf">±0.5 pair_size</code> हटने पर <code style="color:#22d3bf">e^-1</code> ≈ 0.37। पहला element सबसे अच्छा मेल खाने वाला जोड़ा है।</p>

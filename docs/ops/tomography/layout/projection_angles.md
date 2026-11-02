@@ -4,6 +4,7 @@ dim: tomography
 category: layout
 in: 
 out: signal
+gpu: なし
 examples: [ct_reconstruction, poc_battery_ct_degradation, poc_ct_fidelity, tomography_reconstruct]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `signal`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.projection_angles(n_angles=180, span_deg=180.0, scheme='uniform', start_deg=0.0)` (実装を直接呼ぶなら `import tomography; tomography.projection_angles(n_angles=180, span_deg=180.0, scheme='uniform', start_deg=0.0)`、台帳から引くなら `opstomography.get("projection_angles")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

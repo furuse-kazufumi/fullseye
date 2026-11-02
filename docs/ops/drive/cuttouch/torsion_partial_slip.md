@@ -4,6 +4,7 @@ dim: drive
 category: cuttouch
 in: scalar × scalar × table
 out: table
+gpu: なし
 examples: [poc_knife_tactile_toughness, poc_tactile_dipole_torque]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `scalar × scalar × table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.torsion_partial_slip(M: 'float', P: 'float', pad: 'dict | None' = None, ctx=None, field: 'bool' = False, na: 'int' = 64, from_no_slip_read: 'bool' = False, contact: 'dict | None' = None) -> 'dict'` (実装を直接呼ぶなら `import cuttouch; cuttouch.torsion_partial_slip(M: 'float', P: 'float', pad: 'dict | None' = None, ctx=None, field: 'bool' = False, na: 'int' = 64, from_no_slip_read: 'bool' = False, contact: 'dict | None' = None) -> 'dict'`、台帳から引くなら `opsdrive.get("torsion_partial_slip")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

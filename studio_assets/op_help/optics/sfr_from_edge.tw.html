@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">sfr_from_edge — OPTICS <code style="color:#22d3bf">imaging</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">pairs</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sfr_from_edge(esf, window, *, correction, ends=1.0, apodize=&#x27;none&#x27;)</code>(要直接呼叫實作,<code style="color:#22d3bf">import edgesfr; edgesfr.sfr_from_edge(esf, window, *, correction, ends=1.0, apodize=&#x27;none&#x27;)</code>;從台帳取用則 <code style="color:#22d3bf">opsoptics.get(&quot;sfr_from_edge&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由 ESF 求出 SFR(由邊緣量得的 MTF)。</p>
 <p>*esf* 為 <code style="color:#22d3bf">edge_spread</code> 的回傳值(字典)，或 1 px 步長的 1-D 陣列(視為 <code style="color:#22d3bf">oversample</code> = 1)。從邊緣中心(差分絕對值的最大處)擷取 ±*window* px，以兩端 *ends* px 的平均作為黑/白基準進行正規化，以前向差分得到 LSF，再將傅立葉轉換的絕對值除以 DC。</p>

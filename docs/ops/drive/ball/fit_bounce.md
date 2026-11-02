@@ -4,6 +4,7 @@ dim: drive
 category: ball
 in: table
 out: table
+gpu: なし
 examples: [gallery_drive_ballistics]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.fit_bounce(v_in, omega_in, v_out, omega_out, normal, bp: 'dict') -> 'dict'` (実装を直接呼ぶなら `import ballistics; ballistics.fit_bounce(v_in, omega_in, v_out, omega_out, normal, bp: 'dict') -> 'dict'`、台帳から引くなら `opsdrive.get("fit_bounce")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

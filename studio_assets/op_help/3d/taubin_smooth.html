@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">taubin_smooth — 3D <code style="color:#22d3bf">mesh_process</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">mesh</code> → <code style="color:#22d3bf">mesh</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.taubin_smooth(mesh: &#x27;Sequence&#x27;, iters: &#x27;int&#x27; = 10, lam: &#x27;float&#x27; = 0.33, mu: &#x27;float&#x27; = -0.34) -&gt; &#x27;Mesh&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import mesh_smooth; mesh_smooth.taubin_smooth(mesh: &#x27;Sequence&#x27;, iters: &#x27;int&#x27; = 10, lam: &#x27;float&#x27; = 0.33, mu: &#x27;float&#x27; = -0.34) -&gt; &#x27;Mesh&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;taubin_smooth&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Taubin λ|μ フィルタによる <b>非収縮</b> 平滑化。→ (verts, faces)。</p>
 <p>各反復で「正の <code style="color:#22d3bf">lam</code> で寄せる段」→「負の <code style="color:#22d3bf">mu</code> で押し戻す段」を続けて掛ける。<code style="color:#22d3bf">|mu| &gt; lam</code> とすることで低周波(全体形状)を通し高周波(ノイズ)だけを減衰させる帯域通過フィルタになり、Laplacian の収縮アーティファクトを打ち消す(球の平均半径がほぼ保たれる)。既定 <code style="color:#22d3bf">lam=0.33, mu=-0.34</code> は Taubin (1995) の推奨に近い。</p>

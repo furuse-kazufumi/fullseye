@@ -4,6 +4,7 @@ dim: math
 category: complex
 in: 
 out: image2d
+gpu: なし
 examples: [poc_complex_plane_fields]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `image2d`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.cplx_escape_time(kind='mandelbrot', param=0j, centre=0j, half_width=2.0, shape=(256, 256), max_iter=64, escape_radius=2.0)` (実装を直接呼ぶなら `import mathops; mathops.cplx_escape_time(kind='mandelbrot', param=0j, centre=0j, half_width=2.0, shape=(256, 256), max_iter=64, escape_radius=2.0)`、台帳から引くなら `opsmath.get("cplx_escape_time")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

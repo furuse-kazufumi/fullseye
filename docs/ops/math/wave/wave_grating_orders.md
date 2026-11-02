@@ -4,6 +4,7 @@ dim: math
 category: wave
 in: 
 out: table
+gpu: なし
 examples: [poc_beats_fringes_and_screens, poc_spectrometer_illumination]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.wave_grating_orders(pitch_um=1.6, wavelength_nm=550.0, sin_in=0.0, orders=(-2, -1, 1, 2))` (実装を直接呼ぶなら `import mathops; mathops.wave_grating_orders(pitch_um=1.6, wavelength_nm=550.0, sin_in=0.0, orders=(-2, -1, 1, 2))`、台帳から引くなら `opsmath.get("wave_grating_orders")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

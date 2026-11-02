@@ -4,6 +4,7 @@ dim: optics
 category: omni360
 in: image2d × image2d
 out: measurement
+gpu: なし
 examples: [omni360_roundtrip, poc_omni360_inspection]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d × image2d` → `measurement`
 - **呼び出し**: `import fullseye as fs; fs.ledger.ws_psnr(a, b, data_range=1.0)` (実装を直接呼ぶなら `import omni360; omni360.ws_psnr(a, b, data_range=1.0)`、台帳から引くなら `opsoptics.get("ws_psnr")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

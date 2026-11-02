@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">sinkhorn — COLORTRANSPORT <code style="color:#22d3bf">transport</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal × signal × matrix</code> → <code style="color:#22d3bf">transport_plan</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sinkhorn(a, b, cost, reg=0.05, n_iter=2000, tol=1e-09)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import colortransport; colortransport.sinkhorn(a, b, cost, reg=0.05, n_iter=2000, tol=1e-09)</code>, registry से लेना हो तो <code style="color:#22d3bf">opscolortransport.get(&quot;sinkhorn&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>entropy regularisation वाले optimal transport का plan (Cuturi, NIPS 2013)।</p>
 <p><b>यह exact solution नहीं है।</b> <code style="color:#22d3bf">reg</code> छोटा करने पर यह exact solution के क़रीब आता है, लेकिन साथ ही numerically अस्थिर हो जाता है (exponentials underflow होते हैं)। <code style="color:#22d3bf">reg</code> घटाने से exact solution से अंतर घटता है, यह बात भी test से fix की गई है।</p>

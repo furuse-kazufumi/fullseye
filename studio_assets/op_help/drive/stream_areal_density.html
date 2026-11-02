@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">stream_areal_density — DRIVE <code style="color:#22d3bf">scoop</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d × scalar</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.stream_areal_density(coverage, radius_px: &#x27;float&#x27;, *, c_max: &#x27;float&#x27; = 0.95, mode: &#x27;str&#x27; = &#x27;raise&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import scoop; scoop.stream_areal_density(coverage, radius_px: &#x27;float&#x27;, *, c_max: &#x27;float&#x27; = 0.95, mode: &#x27;str&#x27; = &#x27;raise&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;stream_areal_density&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>被覆率から粒の中心の面密度 [個 / px²] を Boolean 模型で逆に解く <code style="color:#22d3bf">n = −ln(1 − c) / (π r²)</code>。</p>
 <p>独立に置いた半径 <code style="color:#22d3bf">r</code> の円板の和の被覆率は <code style="color:#22d3bf">c = 1 − exp(−n π r²)</code>(重なりを数え落とさない)。素朴な <code style="color:#22d3bf">c / (π r²)</code> は c = 0.8 で 2 倍近く数え落とす(PoC の門)。c が 1 に近いと逆は発散する(厚い流れは向こうが</p>

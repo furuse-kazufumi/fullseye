@@ -4,6 +4,7 @@ dim: optics
 category: watervision
 in: image2d
 out: table
+gpu: なし
 examples: [poc_water_inspection_images]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.fill_level_from_image(image, pixel_pitch_um, method='edge') -> 'dict'` (実装を直接呼ぶなら `import watervision; watervision.fill_level_from_image(image, pixel_pitch_um, method='edge') -> 'dict'`、台帳から引くなら `opsoptics.get("fill_level_from_image")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -4,6 +4,7 @@ dim: 3d
 category: metrics
 in: pose × pose
 out: table
+gpu: なし
 examples: [itokawa_self_register]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,6 +16,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **データ種**: `pose × pose` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.pose_error(R_est, t_est, R_gt, t_gt)` (実装を直接呼ぶなら `import metrics3d; metrics3d.pose_error(R_est, t_est, R_gt, t_gt)`、台帳から引くなら `ops3d.get("pose_error")`)
 - **台帳経由の戻り値**: `fullseye.ledger.pose_error(...)` は**宣言 out 型 `table` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.pose_error.raw(...)`、または `metrics3d.pose_error` を直接呼ぶ。
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

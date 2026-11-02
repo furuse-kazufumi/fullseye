@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">spectral_slope — DRIVE <code style="color:#22d3bf">terrain</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.spectral_slope(field, dx: &#x27;float&#x27;, f_lo: &#x27;float&#x27;, f_hi: &#x27;float&#x27;, n_bins: &#x27;int&#x27; = 48) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import driveterrain; driveterrain.spectral_slope(field, dx: &#x27;float&#x27;, f_lo: &#x27;float&#x27;, f_hi: &#x27;float&#x27;, n_bins: &#x27;int&#x27; = 48) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;spectral_slope&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>radial periodogram पर log–log सीधी रेखा का fit: <code style="color:#22d3bf">{&quot;beta&quot;, &quot;intercept&quot;, &quot;n&quot;}</code> (power ∝ f^{−beta})।</p>
 <p>प्रमेय: fBm सतह (H) के लिए β = 2H + 2 (Saupe 1988)।</p>

@@ -4,6 +4,7 @@ dim: 3d
 category: surface
 in: points
 out: mesh
+gpu: なし
 examples: [minimal_surfaces]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `points` → `mesh`
 - **呼び出し**: `import fullseye as fs; fs.ledger.curve3d_tube_mesh(points, radius=0.1, segments=12, closed=False)` (実装を直接呼ぶなら `import render3d; render3d.curve3d_tube_mesh(points, radius=0.1, segments=12, closed=False)`、台帳から引くなら `ops3d.get("curve3d_tube_mesh")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

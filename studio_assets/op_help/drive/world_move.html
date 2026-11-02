@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">world_move — DRIVE <code style="color:#22d3bf">world</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.world_move(world: &#x27;dict&#x27;, i: &#x27;int&#x27;, x: &#x27;float&#x27;, y: &#x27;float&#x27;, yaw: &#x27;float&#x27;, z: &#x27;float&#x27; = 0.0) -&gt; &#x27;None&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import driveworld; driveworld.world_move(world: &#x27;dict&#x27;, i: &#x27;int&#x27;, x: &#x27;float&#x27;, y: &#x27;float&#x27;, yaw: &#x27;float&#x27;, z: &#x27;float&#x27; = 0.0) -&gt; &#x27;None&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;world_move&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>物体 i(資産で置いたもの)を新しい姿勢 (x, y, yaw) へ動かす(頂点だけ書き換える。面・ラベル・色は不変)。</p>
 <p>対向車を 1 コマずつ進める(15 巡目の TTC)ための op。資産でない物体(縁石・路面・信号機)は <code style="color:#22d3bf">ValueError</code>。</p>

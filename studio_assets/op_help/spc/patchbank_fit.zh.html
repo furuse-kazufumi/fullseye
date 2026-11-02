@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">patchbank_fit — SPC <code style="color:#22d3bf">anomaly_patch</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">video</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.patchbank_fit(stack, patch=8, stride=4, scales=(1.0, 2.0, 4.0), groups=(&#x27;gradient&#x27;, &#x27;gabor&#x27;, &#x27;lbp&#x27;), n_orient=4, coreset=0.1, proj_dim=32, position_weight=0.0, seed=0)</code>(要直接调用实现,<code style="color:#22d3bf">import anomaly_patch; anomaly_patch.patchbank_fit(stack, patch=8, stride=4, scales=(1.0, 2.0, 4.0), groups=(&#x27;gradient&#x27;, &#x27;gabor&#x27;, &#x27;lbp&#x27;), n_orient=4, coreset=0.1, proj_dim=32, position_weight=0.0, seed=0)</code>;从台账取用则 <code style="color:#22d3bf">opsspc.get(&quot;patchbank_fit&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>建立良品图块特征的记忆库,并用贪心 k 中心覆盖进行稀疏化(<code style="color:#22d3bf">table</code>)。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>

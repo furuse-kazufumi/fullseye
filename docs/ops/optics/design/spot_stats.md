@@ -4,6 +4,7 @@ dim: optics
 category: design
 in: table
 out: table
+gpu: なし
 examples: [anim3d_lens_aberrations, lens_design_demo, lens_optimize_demo, optical_design_metrics, poc_lens_solves_afocal, poc_photograph_through_prescription, poc_zmx_public_verify]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.spot_stats(system, field=None, rings=8, wavelength_um=None, image_mm=None, pupil_fill=1.0, aim=None, vignetting=None)` (実装を直接呼ぶなら `import raytrace; raytrace.spot_stats(system, field=None, rings=8, wavelength_um=None, image_mm=None, pupil_fill=1.0, aim=None, vignetting=None)`、台帳から引くなら `opsoptics.get("spot_stats")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -4,6 +4,7 @@ dim: drive
 category: terrain
 in: points × matrix
 out: scalar
+gpu: なし
 examples: [poc_world_terrain]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `points × matrix` → `scalar`
 - **呼び出し**: `import fullseye as fs; fs.ledger.mesh_signed_volume(V, F) -> 'float'` (実装を直接呼ぶなら `import driveterrain; driveterrain.mesh_signed_volume(V, F) -> 'float'`、台帳から引くなら `opsdrive.get("mesh_signed_volume")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

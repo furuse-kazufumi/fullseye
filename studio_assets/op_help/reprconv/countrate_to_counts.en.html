@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">countrate_to_counts — REPRCONV <code style="color:#22d3bf">algebra</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">countrate</code> → <code style="color:#22d3bf">counts</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.countrate_to_counts(countrate, gate_s=0.001)</code> (to call the implementation directly, <code style="color:#22d3bf">import reprconv; reprconv.countrate_to_counts(countrate, gate_s=0.001)</code>; from the registry, <code style="color:#22d3bf">opsreprconv.get(&quot;countrate_to_counts&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Count rate <code style="color:#22d3bf">[Hz]</code> → <code style="color:#22d3bf">counts</code>. The exit from <code style="color:#22d3bf">countrate</code> (<b>invertible</b>).</p>
 <p><b>The unit is the entire content of the conversion</b>: <code style="color:#22d3bf">[1/s] * [s] = [1]</code>. <code style="color:#22d3bf">gate_s</code> is the integration window in seconds, default 1 ms. <code style="color:#22d3bf">counts</code> is the type for &quot;photon count per time bin&quot;, so if a rate series is simply allowed to call itself counts, <b>it passes silently with the magnitude off by 7 orders</b> (<code style="color:#22d3bf">TYPE_CHECKS</code> checks both only as &quot;non-negative 1-D&quot;).</p>

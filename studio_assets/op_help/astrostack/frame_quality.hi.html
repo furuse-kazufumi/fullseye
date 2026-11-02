@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">frame_quality — ASTROSTACK <code style="color:#22d3bf">quality</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.frame_quality(image, threshold_sigma=5.0, max_stars=25, min_separation=3, psf_box=11, n_score_stars=5)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import astrostack; astrostack.frame_quality(image, threshold_sigma=5.0, max_stars=25, min_separation=3, psf_box=11, n_score_stars=5)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsastrostack.get(&quot;frame_quality&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>1 frame की quality गिनता है — sharpness, FWHM, background, गोलाई, और चयन के लिए score।</p>
 <p>ऐतिहासिक रूप से, lucky imaging का चयन मानदंड <b>&quot;एक reference तारे की peak intensity&quot;</b> है (Law, Mackay &amp; Baldwin, *Lucky imaging: high angular resolution imaging in the visible from the ground*, A&amp;A 446, 739 (2006)) —— किसी क्षण वायुमंडल जितना बेहतर होता है, उतना ही समान कुल flux कम pixels में इकट्ठा होता है, इसलिए <code style="color:#22d3bf">peak / total flux</code> बढ़ता है। यहाँ भी वही अपनाया गया है, tracking elongation को अस्वीकार करने के लिए roundness से गुणा करके::</p>

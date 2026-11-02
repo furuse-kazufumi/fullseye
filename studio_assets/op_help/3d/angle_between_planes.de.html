@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">angle_between_planes — 3D <code style="color:#22d3bf">geometry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">primitive</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.angle_between_planes(n1, n2)</code> (die Implementierung direkt: <code style="color:#22d3bf">import match3d; match3d.angle_between_planes(n1, n2)</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;angle_between_planes&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Der Diederwinkel zwischen zwei Ebenen (Normalen n1, n2; in Grad).</p>
 <p>Gibt den Winkel zwischen den Normalen <code style="color:#22d3bf">arccos(|n̂1·n̂2|)</code> in Grad zurück (float). Da der Betrag genommen wird, ist es die spitze Seite in <b>[0, 90]</b> (unabhängig von der Orientierung der Normalen; wird die stumpfe Seite benötigt, <code style="color:#22d3bf">180 −</code>). 0 = parallel, 90 = orthogonal. <code style="color:#22d3bf">n1</code>, <code style="color:#22d3bf">n2</code> sind numerische 2- oder 3-Vektoren (Länge beliebig); gemischte Dimensionen lösen ValueError aus. Ein Nullvektor liefert 90.</p>

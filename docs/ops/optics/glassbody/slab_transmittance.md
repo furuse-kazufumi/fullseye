@@ -4,6 +4,7 @@ dim: optics
 category: glassbody
 in: signal
 out: signal
+gpu: なし
 examples: [glass_and_mirror_optics, machined_metal_and_materials]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal` → `signal`
 - **呼び出し**: `import fullseye as fs; fs.ledger.slab_transmittance(cos_i, n1=1.0, n2=1.5, thickness_mm=3.0, sigma_per_mm=0.0) -> 'np.ndarray'` (実装を直接呼ぶなら `import glassmirror; glassmirror.slab_transmittance(cos_i, n1=1.0, n2=1.5, thickness_mm=3.0, sigma_per_mm=0.0) -> 'np.ndarray'`、台帳から引くなら `opsoptics.get("slab_transmittance")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

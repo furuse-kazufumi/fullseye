@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">parabola_fit_g — DRIVE <code style="color:#22d3bf">kendama</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">table</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.parabola_fit_g(t, P, *, g: &#x27;float&#x27; = 9.81, t_ref: &#x27;float&#x27; = None) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import kendama; kendama.parabola_fit_g(t, P, *, g: &#x27;float&#x27; = 9.81, t_ref: &#x27;float&#x27; = None) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;parabola_fit_g&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>중력 g(−z)를 기지로 한 포물선 p(t) = p_r + v_r (t − t_ref) − ½ g (t − t_ref)² ẑ를 최소제곱으로 피팅합니다(미지수 6 = 위치와 속도).</p>
 <p><code style="color:#22d3bf">t</code> (N,), <code style="color:#22d3bf">P</code> (N, 3)(NaN 행은 건너뛴다). <code style="color:#22d3bf">t_ref</code> 기본값 = 사용한 마지막 시각(= 그 순간의 상태를 반환). 각 축은 [1, t − t_ref] 의 선형 최소제곱(z 는 ½ g (t − t_ref)² 를 더한 뒤). 반환값 <code style="color:#22d3bf">{&quot;p&quot;, &quot;v&quot;, &quot;t_ref&quot;, &quot;rms&quot; (残差の RMS [m]), &quot;n&quot;}</code>. 유효한 점이 2 미만·시각이 모두 같음·g ≤ 0 은 ValueError. 진공의 정확한 표본이면 (p, v) 를 반올림 오차 수준으로 되돌린다(게이트).</p>

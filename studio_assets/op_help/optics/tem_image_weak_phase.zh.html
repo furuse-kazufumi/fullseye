@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tem_image_weak_phase — OPTICS <code style="color:#22d3bf">tem</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tem_image_weak_phase(potential, pixel_A=1.0, kv=300.0, cs_mm=2.7, defocus_A=10000.0, astig_A=0.0, astig_angle_deg=None, amplitude_contrast=0.07, phase_shift_deg=0.0, alpha_mrad=0.0, focal_spread_A=0.0, aperture_A_inv=None, mode=&#x27;linear&#x27;, dose_e_per_A2=None, seed=0)</code>(要直接调用实现,<code style="color:#22d3bf">import temsim; temsim.tem_image_weak_phase(potential, pixel_A=1.0, kv=300.0, cs_mm=2.7, defocus_A=10000.0, astig_A=0.0, astig_angle_deg=None, amplitude_contrast=0.07, phase_shift_deg=0.0, alpha_mrad=0.0, focal_spread_A=0.0, aperture_A_inv=None, mode=&#x27;linear&#x27;, dose_e_per_A2=None, seed=0)</code>;从台账取用则 <code style="color:#22d3bf">opsoptics.get(&quot;tem_image_weak_phase&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由投影势 v_z(V Å)生成 TEM 明场像(平均为 1 的强度,<code style="color:#22d3bf">image2d</code>)。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>

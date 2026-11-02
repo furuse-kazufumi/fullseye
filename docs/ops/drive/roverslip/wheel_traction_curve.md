@@ -4,6 +4,7 @@ dim: drive
 category: roverslip
 in: scalar × table × any
 out: table
+gpu: なし
 examples: [poc_rover_slip_risk_path]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `scalar × table × any` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.wheel_traction_curve(load, wheel, soil, slips=None) -> 'dict'` (実装を直接呼ぶなら `import roverslip; roverslip.wheel_traction_curve(load, wheel, soil, slips=None) -> 'dict'`、台帳から引くなら `opsdrive.get("wheel_traction_curve")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">profile_sides — PROFILE <code style="color:#22d3bf">measure</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.profile_sides(contour, n=101, normalise=True)</code> (die Implementierung direkt: <code style="color:#22d3bf">import profileops; profileops.profile_sides(contour, n=101, normalise=True)</code>; aus dem Register: <code style="color:#22d3bf">opsprofile.get(&quot;profile_sides&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Extrahiert Ober- und Unterseite als Funktionen der Sehnenkoordinate. Rückgabe: dict.</p>
 <p>Teilt die Sehne in <code style="color:#22d3bf">n</code> gleiche Teile und nimmt an jeder Position per linearer Interpolation die oberen und unteren Schnittpunkte mit der Kontur.</p>

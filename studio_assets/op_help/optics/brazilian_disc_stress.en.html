@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">brazilian_disc_stress — OPTICS <code style="color:#22d3bf">photoelastic</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">table</code> (an op determined by its arguments alone — it takes no image or data input)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.brazilian_disc_stress(radius_m=0.025, thickness_m=0.006, load_n=500.0, size=129, x=None, y=None)</code> (to call the implementation directly, <code style="color:#22d3bf">import photoelastic; photoelastic.brazilian_disc_stress(radius_m=0.025, thickness_m=0.006, load_n=500.0, size=129, x=None, y=None)</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;brazilian_disc_stress&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Closed-form plane stress σx, σy, τxy of a diametrically compressed disc (Brazilian disc) → dict.</p>
 <p>Diametrically compressed disc, point loads <code style="color:#22d3bf">load_n</code> [N] at <code style="color:#22d3bf">(0, ±R)</code> acting along the y axis, plane stress (Hondros / Frocht)::</p>

@@ -4,6 +4,7 @@ dim: specular
 category: photometric
 in: images
 out: normalmap
+gpu: なし
 examples: [poc_shape_from_polarization, specular_photometric]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,6 +16,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **データ種**: `images` → `normalmap`
 - **呼び出し**: `import fullseye as fs; fs.ledger.photometric_stereo_robust(images, lights, method='ransac', threshold=0.05, max_subsets=512, normalize=True, seed=0, min_inliers=3, *, chunk=None)` (実装を直接呼ぶなら `import specularity; specularity.photometric_stereo_robust(images, lights, method='ransac', threshold=0.05, max_subsets=512, normalize=True, seed=0, min_inliers=3, *, chunk=None)`、台帳から引くなら `opsspecular.get("photometric_stereo_robust")`)
 - **台帳経由の戻り値**: `fullseye.ledger.photometric_stereo_robust(...)` は**宣言 out 型 `normalmap` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.photometric_stereo_robust.raw(...)`、または `specularity.photometric_stereo_robust` を直接呼ぶ。
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -4,6 +4,7 @@ dim: 3d
 category: edges
 in: voxel
 out: voxel
+gpu: なし
 examples: [edges_3d]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `voxel` → `voxel`
 - **呼び出し**: `import fullseye as fs; fs.ledger.log_zero_crossings(vol, sigma: 'float' = 1.5, rel_thresh: 'float' = 0.001) -> 'np.ndarray'` (実装を直接呼ぶなら `import edges3d; edges3d.log_zero_crossings(vol, sigma: 'float' = 1.5, rel_thresh: 'float' = 0.001) -> 'np.ndarray'`、台帳から引くなら `ops3d.get("log_zero_crossings")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

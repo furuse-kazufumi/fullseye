@@ -4,6 +4,7 @@ dim: drive
 category: diabolo
 in: table
 out: any
+gpu: なし
 examples: [poc_diabolo_model_and_vision]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `any`
 - **呼び出し**: `import fullseye as fs; fs.ledger.diabolo_scene_mjcf(params: 'dict', *, timestep: 'float' = 0.00025, solref=(0.0005, 1.0), wrap_axle: 'bool' = False) -> 'str'` (実装を直接呼ぶなら `import diabolo; diabolo.diabolo_scene_mjcf(params: 'dict', *, timestep: 'float' = 0.00025, solref=(0.0005, 1.0), wrap_axle: 'bool' = False) -> 'str'`、台帳から引くなら `opsdrive.get("diabolo_scene_mjcf")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

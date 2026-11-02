@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">oct_from_spectra — OPTICS <code style="color:#22d3bf">oct</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">matrix × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.oct_from_spectra(spectra, wavelength_nm, reference_spectrum=None, dark=None, center_nm=None, bandwidth_nm=None, x_um=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import octscan; octscan.oct_from_spectra(spectra, wavelength_nm, reference_spectrum=None, dark=None, center_nm=None, bandwidth_nm=None, x_um=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;oct_from_spectra&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>instrument द्वारा रिकॉर्ड किए गए raw spectra को इस family के ops द्वारा पढ़ी जाने वाली table में बदलना (<code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">table</code>), असली उपकरण और सार्वजनिक data का प्रवेश द्वार।</p>
 <p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>

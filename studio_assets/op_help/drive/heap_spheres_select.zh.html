@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">heap_spheres_select — DRIVE <code style="color:#22d3bf">granular</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">matrix × scalar × scalar × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.heap_spheres_select(pos, radius: &#x27;float&#x27;, floor_height: &#x27;float&#x27;, bin_radius: &#x27;float&#x27;, keep_min: &#x27;float&#x27; = 0.5) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import granular; granular.heap_spheres_select(pos, radius: &#x27;float&#x27;, floor_height: &#x27;float&#x27;, bin_radius: &#x27;float&#x27;, keep_min: &#x27;float&#x27; = 0.5) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;heap_spheres_select&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>只选出属于料堆的球：位于料仓底板以下(<code style="color:#22d3bf">z &lt; floor_height − r</code>)且在料仓半径 3 倍以内。残留在料仓中的球(平底的滞留层)与滚走的球不属于料堆。返回：<code style="color:#22d3bf">pos</code>(选出的中心)、<code style="color:#22d3bf">n_in_bin</code>、<code style="color:#22d3bf">n_runaway</code>、<code style="color:#22d3bf">radius_95</code>(料堆半径的估计)。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>：剩余少于 <code style="color:#22d3bf">keep_min</code>(未形成料堆 —— 避免在光滑台面上 1,200 个中有 600 个逃逸时仍默默测量)。</p>
 <p>空输入(<code style="color:#22d3bf">pos</code> 为 0 个元素)会引发 ValueError。</p>

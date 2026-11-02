@@ -4,6 +4,7 @@ dim: drive
 category: roverslip
 in: any
 out: table
+gpu: なし
 examples: [poc_rover_slip_risk_path]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `any` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.ground_shift_track(frames, pixel_size: 'float' = 1.0) -> 'dict'` (実装を直接呼ぶなら `import roverslip; roverslip.ground_shift_track(frames, pixel_size: 'float' = 1.0) -> 'dict'`、台帳から引くなら `opsdrive.get("ground_shift_track")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

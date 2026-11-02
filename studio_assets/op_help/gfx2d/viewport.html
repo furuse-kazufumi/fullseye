@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">viewport — GFX2D <code style="color:#22d3bf">camera</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">rgb</code> → <code style="color:#22d3bf">rgb</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.viewport(img, x, y, width, height, scale=1.0, interp=&#x27;bilinear&#x27;)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import gfx2d; gfx2d.viewport(img, x, y, width, height, scale=1.0, interp=&#x27;bilinear&#x27;)</code>、台帳から引くなら <code style="color:#22d3bf">opsgfx2d.get(&quot;viewport&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Crop the rectangle at <code style="color:#22d3bf">(x, y, width, height)</code> and resample it by <code style="color:#22d3bf">scale</code>.</p>
 <p>Accepts <code style="color:#22d3bf">rgb</code> or <code style="color:#22d3bf">rgba</code> (straight alpha; the crop is a copy, so no premultiplication is involved) and returns the same channel count.</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">gs_update — DRIVE <code style="color:#22d3bf">gsplat</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">table × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gs_update(gs: &#x27;dict&#x27;, world: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import gsplatnp; gsplatnp.gs_update(gs: &#x27;dict&#x27;, world: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;gs_update&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>월드의 <b>현재</b> 정점으로부터 가우시안의 중심·방향을 다시 계산합니다(제자리에서 수정하고 같은 dict를 반환).</p>
 <p>μ = Σ_k bary_k · V [F [face, k]] + R · offset_local, R = 평면의 로컬 좌표 [t1 t2 n]. <code style="color:#22d3bf">gs [&quot;face&quot;]</code>가 가리키는면현재 세계에 없으면 ValueError. 끝에 면이 추가되어도 기존 면 번호가 유효하면 갱신할 수 있다. 강체로 움직인 물체의 가우시안은 같은 강체 변환으로 움직인다(문).</p>

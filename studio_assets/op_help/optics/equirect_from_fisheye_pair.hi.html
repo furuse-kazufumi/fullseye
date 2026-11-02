@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">equirect_from_fisheye_pair — OPTICS <code style="color:#22d3bf">omni360</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">images</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.equirect_from_fisheye_pair(images, rotations, out_shape, model=&#x27;equidistant&#x27;, f_px=None, centres=None, fov_deg=190, feather_deg=8)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import omni360; omni360.equirect_from_fisheye_pair(images, rotations, out_shape, model=&#x27;equidistant&#x27;, f_px=None, centres=None, fov_deg=190, feather_deg=8)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;equirect_from_fisheye_pair&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>दो अंशांकित मत्स्यनेत्र चित्र जोड़कर अतिव्यापन, जोड़ त्रुटि और अंध क्षेत्र बताता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पूरी family का input contract (fail-closed)</h3>

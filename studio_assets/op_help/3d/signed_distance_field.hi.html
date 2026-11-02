@@ -2,7 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">signed_distance_field — 3D <code style="color:#22d3bf">transform</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">sdf</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.signed_distance_field(vol, device=&#x27;cpu&#x27;, iso=0.5)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import match3d; match3d.signed_distance_field(vol, device=&#x27;cpu&#x27;, iso=0.5)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;signed_distance_field&quot;)</code>)</p>
-<p style="margin:2px 0 2px 12px">• <b>GPU</b>: इस op का GPU path है (<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>occupancy/density voxel → signed distance field SDF (अंदर&lt;0, बाहर&gt;0)। edt_jfa को दोनों तरफ़ लागू करता है।</p>
 <p>SDF matching के लिए बेहतरीन representation है (smooth, gradient = normal, 0 isosurface = surface)। इसे inside/outside की Euclidean distance के अंतर से बनाया जाता है। GPU native। voxel↔SDF↔occupancy आपस में बदले जा सकते हैं।</p>

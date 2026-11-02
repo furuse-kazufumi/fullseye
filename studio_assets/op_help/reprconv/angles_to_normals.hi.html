@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">angles_to_normals — REPRCONV <code style="color:#22d3bf">direction</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">normals</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.angles_to_normals(pairs)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import reprconv; reprconv.angles_to_normals(pairs)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsreprconv.get(&quot;angles_to_normals&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>azimuth/elevation जोड़े <code style="color:#22d3bf">(N,2)</code> <b>[degree]</b> → unit normal <code style="color:#22d3bf">(N,3)</code>। <code style="color:#22d3bf">pairs</code> से निकास।</p>
 <p><code style="color:#22d3bf">normals_to_angles</code> का सटीक inverse (unit length पर normalise करने के अर्थ में)। [-90, 90] के बाहर की elevation अस्वीकार की जाती है -- 100 degree की elevation &quot;उलटी ओर की 80 degree&quot; में मुड़कर <b>विश्वसनीय दिखते हुए ग़लत</b> हो जाती है, इसलिए उसे चुपचाप स्वीकार नहीं किया जाता।</p>

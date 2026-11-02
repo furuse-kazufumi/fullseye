@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">vol_colorize_labels — VOLCOLOR <code style="color:#22d3bf">colorize</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">labels</code> → <code style="color:#22d3bf">rgbvolume</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_colorize_labels(labels, seed: &#x27;int&#x27; = 0, background=(0.0, 0.0, 0.0))</code> (to call the implementation directly, <code style="color:#22d3bf">import volcolor; volcolor.vol_colorize_labels(labels, seed: &#x27;int&#x27; = 0, background=(0.0, 0.0, 0.0))</code>; from the registry, <code style="color:#22d3bf">opsvolcolor.get(&quot;vol_colorize_labels&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>3-D label volume -&gt; an RGB volume, <code style="color:#22d3bf">(D, H, W, 3)</code> float64.</p>
 <p>The entry point for &quot;<b>colour first, then slice</b>&quot; rather than &quot;slice first, then colour&quot;. The colour of label <code style="color:#22d3bf">k</code> is exactly row <code style="color:#22d3bf">k</code> of <code style="color:#22d3bf">vol_label_palette</code>, and it <b>matches byte for byte</b> the result of calling <code style="color:#22d3bf">imgio.colorize_labels(labels, seed)</code> on the same array (pinned by <code style="color:#22d3bf">tests/test_volcolor.py</code>).</p>

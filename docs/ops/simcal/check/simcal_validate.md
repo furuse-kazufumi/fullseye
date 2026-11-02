@@ -4,6 +4,7 @@ dim: simcal
 category: check
 in: calresult × simmodel
 out: calresult
+gpu: なし
 examples: [poc_pocket_interreflection, poc_simcal_pixel_shift, poc_simcal_telecentric, poc_simcal_thin_film, simcal_checks_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `calresult × simmodel` → `calresult`
 - **呼び出し**: `import fullseye as fs; fs.ledger.simcal_validate(result=None, holdout=None, locked=None, tau=None, dims=None, n_boot=200, alpha=0.001, seed=0) -> 'dict'` (実装を直接呼ぶなら `import simcalcheck; simcalcheck.simcal_validate(result=None, holdout=None, locked=None, tau=None, dims=None, n_boot=200, alpha=0.001, seed=0) -> 'dict'`、台帳から引くなら `opssimcal.get("simcal_validate")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tps_fit — 3D <code style="color:#22d3bf">deform</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">deformation</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tps_fit(src_ctrl, dst_ctrl, lam=0.0)</code> (die Implementierung direkt: <code style="color:#22d3bf">import deform3d; deform3d.tps_fit(src_ctrl, dst_ctrl, lam=0.0)</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;tps_fit&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Passt einen 3-D-Thin-Plate-Spline aus Kontrollpunktkorrespondenzen an.</p>
 <p>Bestimmt die TPS-Koeffizienten, die die beweglichen Kontrollpunkte <code style="color:#22d3bf">src_ctrl</code> auf die festen <code style="color:#22d3bf">dst_ctrl</code> abbilden, indem das Sattelpunktsystem per kleinster Quadrate (<code style="color:#22d3bf">numpy.linalg.lstsq</code>) gelöst wird. Bei λ=0 wird an den Kontrollpunkten exakt interpoliert (<code style="color:#22d3bf">tps_warp(model, src_ctrl) == dst_ctrl</code>), bei λ&gt;0 geglättet.</p>

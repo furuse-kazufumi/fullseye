@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">msa_attribute_agreement — SPC <code style="color:#22d3bf">msa</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.msa_attribute_agreement(table, appraiser=&#x27;appraiser&#x27;, part=&#x27;part&#x27;, rating=&#x27;rating&#x27;)</code> (die Implementierung direkt: <code style="color:#22d3bf">import spc; spc.msa_attribute_agreement(table, appraiser=&#x27;appraiser&#x27;, part=&#x27;part&#x27;, rating=&#x27;rating&#x27;)</code>; aus dem Register: <code style="color:#22d3bf">opsspc.get(&quot;msa_attribute_agreement&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Übereinstimmung der Prüfer bei attributiver (io/nio) Prüfung (<code style="color:#22d3bf">table</code>).</p>
 <p>Aus einer Tabelle, in der mehrere Prüfer dieselben Teile beurteilt haben, liefert es <b>Cohens Kappa für jedes Prüferpaar</b>, das gesamte <b>Fleiss-Kappa</b> und die rohe Übereinstimmungsrate.</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">residue_fault_locate — RESIDUE <code style="color:#22d3bf">robust</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">matrix × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.residue_fault_locate(residues, periods, weights=None, lo=0.0, hi=None, tol=0.05) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import residue; residue.residue_fault_locate(residues, periods, weights=None, lo=0.0, hi=None, tol=0.05) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsresidue.get(&quot;residue_fault_locate&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>どの帯域が壊れているか(冗長剰余数系)-&gt; <code style="color:#22d3bf">dict</code>。</p>
 <p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>

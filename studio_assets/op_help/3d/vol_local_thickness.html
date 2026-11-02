@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">vol_local_thickness — 3D <code style="color:#22d3bf">feature</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">voxel</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_local_thickness(vol_binary, spacing=None, max_radius=None)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import volops; volops.vol_local_thickness(vol_binary, spacing=None, max_radius=None)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;vol_local_thickness&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Local thickness map: the diameter of the largest ball that covers each voxel.</p>
 <p>For every foreground voxel this is <code style="color:#22d3bf">max{ 2r : the voxel lies inside some ball of radius r that fits entirely in the foreground }</code> — the classical granulometric size, and the quantity trabecular-bone and industrial-CT work calls *local thickness* (a pore&#x27;s local thickness is its diameter; a wall&#x27;s is its thickness).  Computed from the exact distance transform: take the voxels whose distance is at least <code style="color:#22d3bf">r</code> as ball centres and paint the balls they cover, largest radius first.</p>

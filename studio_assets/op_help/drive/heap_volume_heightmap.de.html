@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">heap_volume_heightmap — DRIVE <code style="color:#22d3bf">granular</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image2d × scalar</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.heap_volume_heightmap(hm, pitch: &#x27;float&#x27;, ground=None) -&gt; &#x27;float&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import granular; granular.heap_volume_heightmap(hm, pitch: &#x27;float&#x27;, ground=None) -&gt; &#x27;float&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;heap_volume_heightmap&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Haufenvolumen aus einer Höhenkarte <code style="color:#22d3bf">Σ (z − z_ground) pitch²</code> [m³]. <code style="color:#22d3bf">ground</code> ist die Bodenhöhe mit derselben Form (None = 0). Negative Höhen (unter dem Boden) werden auf 0 abgeschnitten — Löcher werden nicht vom Haufen abgezogen. <b>Raises</b> <code style="color:#22d3bf">ValueError</code>: Form, pitch.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

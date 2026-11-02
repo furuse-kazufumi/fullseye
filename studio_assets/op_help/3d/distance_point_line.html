@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">distance_point_line — 3D <code style="color:#22d3bf">geometry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">points × primitive</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.distance_point_line(p, line_pt, d)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import match3d; match3d.distance_point_line(p, line_pt, d)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;distance_point_line&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>点から直線(通過点と方向)までの垂直距離を返す(2-D / 3-D 共通)。</p>
 <p><code style="color:#22d3bf">w = p − line_pt</code> の、方向 <code style="color:#22d3bf">d̂</code> に直交する成分の長さ <code style="color:#22d3bf">|w − (w·d̂)d̂|</code> を float で返す(<code style="color:#22d3bf">d</code> は内部で単位化。2-D/3-D 共通)。<code style="color:#22d3bf">p</code>, <code style="color:#22d3bf">line_pt</code>, <code style="color:#22d3bf">d</code> は数値の 2 または 3 ベクトル、次元の混在は ValueError。<code style="color:#22d3bf">d</code> が零ベクトルなら <code style="color:#22d3bf">|w|</code> がそのまま返る。単位は入力座標の単位。</p>

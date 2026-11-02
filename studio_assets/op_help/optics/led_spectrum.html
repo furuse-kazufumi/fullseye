@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">led_spectrum — OPTICS <code style="color:#22d3bf">spectral</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">pairs</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.led_spectrum(peak_nm=1050.0, fwhm_nm=50.0, wl_min_nm=800.0, wl_max_nm=1300.0, n_points=251, model=&#x27;ohno&#x27;)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import spectralrad; spectralrad.led_spectrum(peak_nm=1050.0, fwhm_nm=50.0, wl_min_nm=800.0, wl_max_nm=1300.0, n_points=251, model=&#x27;ohno&#x27;)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;led_spectrum&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>LED の相対分光分布(ピークで 1)。</p>
 <p>model: &quot;ohno&quot;(Ohno 2005: s = (g + 2g⁵)/3、g = exp(−((λ − λ₀)/Δ)²)。裾が Gauss より太く実測の LED に近い)/ &quot;gaussian&quot;。どちらも <b>半値全幅が fwhm_nm になるよう Δ を解いて</b>決める(Ohno の式の Δ をそのまま FWHM と読むと 15 % ほど狭くなる)。</p>

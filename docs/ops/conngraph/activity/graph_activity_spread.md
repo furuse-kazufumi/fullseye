@@ -4,6 +4,7 @@ dim: conngraph
 category: activity
 in: matrix × points × labels
 out: table
+gpu: なし
 examples: [poc_malecns_activity_wave, poc_microns_brain_wave]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `matrix × points × labels` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.graph_activity_spread(X: 'Any', P: 'Any', source: 'Any', thresh: 'float' = 0.1) -> 'dict[str, np.ndarray]'` (実装を直接呼ぶなら `import conngraph; conngraph.graph_activity_spread(X: 'Any', P: 'Any', source: 'Any', thresh: 'float' = 0.1) -> 'dict[str, np.ndarray]'`、台帳から引くなら `opsconngraph.get("graph_activity_spread")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

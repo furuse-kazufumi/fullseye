@@ -4,6 +4,7 @@ dim: spc
 category: uncertainty
 in: table
 out: table
+gpu: なし
 examples: [poc_measurement_system_analysis]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.gum_monte_carlo(table, u='u', sensitivity='sensitivity', n=200000, seed=0, level=0.95, correlation=None, distribution=None, value=None, power=None, stream=False)` (実装を直接呼ぶなら `import spc; spc.gum_monte_carlo(table, u='u', sensitivity='sensitivity', n=200000, seed=0, level=0.95, correlation=None, distribution=None, value=None, power=None, stream=False)`、台帳から引くなら `opsspc.get("gum_monte_carlo")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

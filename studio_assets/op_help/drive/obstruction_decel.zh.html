@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">obstruction_decel — DRIVE <code style="color:#22d3bf">crossing</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.obstruction_decel(dist, speed, t_free, *, sudden: &#x27;float&#x27; = 2.0) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import drivecrossing; drivecrossing.obstruction_decel(dist, speed, t_free, *, sudden: &#x27;float&#x27; = 2.0) -&gt; &#x27;Dict[str, object]&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;obstruction_decel&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>交叉道路上的车辆(到区域距离 dist，速度 speed)为了不在 t_free 之前进入区域所需的恒定减速度(闭式，可用数组)。</p>
 <p>T = t_free。若 speed·T ≤ dist 则为 0(不减速也来得及)。若 T ≤ 2 dist / speed 则为 2(speed·T − dist)/T², 更晚则为 speed² / (2 dist)(在区域前停下)。<code style="color:#22d3bf">obstructs</code> = 减速度 &gt; <code style="color:#22d3bf">sudden</code>(<b>假设</b> 2.0 m/s², 日本道路交通法第 2 条第 22 项&quot;必须突然改变速度或方向&quot;)。dist ≤ 0(已在区域内)且 T &gt; 0 时为 ∞。</p>

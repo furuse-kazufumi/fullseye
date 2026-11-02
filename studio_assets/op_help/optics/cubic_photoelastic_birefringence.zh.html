@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">cubic_photoelastic_birefringence — OPTICS <code style="color:#22d3bf">photoelastic</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d × image2d × image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cubic_photoelastic_birefringence(sxx, syy, txy, pi11_minus_pi12, pi44, refractive_index, crystal_angle_deg=0.0)</code>(要直接调用实现,<code style="color:#22d3bf">import photoelastic; photoelastic.cubic_photoelastic_birefringence(sxx, syy, txy, pi11_minus_pi12, pi44, refractive_index, crystal_angle_deg=0.0)</code>;从台账取用则 <code style="color:#22d3bf">opsoptics.get(&quot;cubic_photoelastic_birefringence&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>立方晶体 {100} 面(如 Si 晶圆)的应力双折射 Δn 与慢轴 → dict。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>

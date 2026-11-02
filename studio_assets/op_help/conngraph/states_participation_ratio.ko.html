@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">states_participation_ratio — CONNGRAPH <code style="color:#22d3bf">dimension</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.states_participation_ratio(X: &#x27;Any&#x27;) -&gt; &#x27;float&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import conngraph; conngraph.states_participation_ratio(X: &#x27;Any&#x27;) -&gt; &#x27;float&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsconngraph.get(&quot;states_participation_ratio&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>상태 열 <code style="color:#22d3bf">X</code> (N, n)의 <b>실효 차원</b> = participation ratio <code style="color:#22d3bf">PR = (Σλ)² / Σλ²</code>(λ는 공분산의 고유값, Gao et al. 2017). 모든 열이 독립이고 분산이 같으면 n, 1개의 방향에 놓여 있으면 1.</p>
 <p>표본 수 N 에 의존하므로(N 이 작으면 PR ≤ N 에서 포화), 비교할 때는 N 을 맞춘다. 상수(분산 0)이면 0.</p>

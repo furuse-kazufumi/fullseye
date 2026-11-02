@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">watershed_vol — SEGMENTATION <code style="color:#22d3bf">watershed3d</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">labels</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.watershed_vol(binary, markers: &#x27;Optional[np.ndarray]&#x27; = None, min_distance: &#x27;float&#x27; = 1.0, method: &#x27;str&#x27; = &#x27;auto&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import watershed3d; watershed3d.watershed_vol(binary, markers: &#x27;Optional[np.ndarray]&#x27; = None, min_distance: &#x27;float&#x27; = 1.0, method: &#x27;str&#x27; = &#x27;auto&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opssegmentation.get(&quot;watershed_vol&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>거리 변환 시드의 분수령으로 3D 전경을 물체별 라벨로 분할한다(공개 op의 얇은 합성).</p>
 <p>연결 성분에서는 1개로 융합되는 <b>접촉/약간의 겹침</b>을 나누는 것이 목적. EDT는 <code style="color:#22d3bf">volops.vol_distance_transform</code>, skimage 분수령은 <code style="color:#22d3bf">volops.vol_watershed</code>에위임하고, 이 모듈은 (A) skimage 부재 시의 순수 scipy 폴백과 시드 자동 생성의글루만 더한다. <code style="color:#22d3bf">markers</code>를 생략하면 거리 변환의 국소 극대(<code style="color:#22d3bf">min_distance</code> NMS)를자동 시드로 한다.</p>

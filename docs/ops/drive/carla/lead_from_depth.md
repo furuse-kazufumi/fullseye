@@ -4,6 +4,7 @@ dim: drive
 category: carla
 in: image2d × image2d × matrix
 out: table
+gpu: なし
 examples: [gallery_drive_carla_bridge]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d × image2d × matrix` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.lead_from_depth(depth, label, K, cam_height: 'float', *, pitch: 'float' = 0.0, band: 'float' = 0.5, car_label: 'int' = 2) -> 'dict'` (実装を直接呼ぶなら `import carlabridge; carlabridge.lead_from_depth(depth, label, K, cam_height: 'float', *, pitch: 'float' = 0.0, band: 'float' = 0.5, car_label: 'int' = 2) -> 'dict'`、台帳から引くなら `opsdrive.get("lead_from_depth")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

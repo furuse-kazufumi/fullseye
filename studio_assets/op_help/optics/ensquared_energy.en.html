@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">ensquared_energy — OPTICS <code style="color:#22d3bf">imaging</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">pairs</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ensquared_energy(psf, pixel_pitch_um=1.0, samples=64, max_half_width_um=None, centre=&#x27;centroid&#x27;)</code> (to call the implementation directly, <code style="color:#22d3bf">import optics; optics.ensquared_energy(psf, pixel_pitch_um=1.0, samples=64, max_half_width_um=None, centre=&#x27;centroid&#x27;)</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;ensquared_energy&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Ensquared energy of a point-spread function: the fraction of the energy inside a square of half-width w.</p>
 <p>The detector-pixel version of encircled energy: how much of the spot falls inside a square pixel (side <code style="color:#22d3bf">2 w</code>) centred on it. The square is axis-aligned with the array and centred like <code style="color:#22d3bf">encircled_energy</code> (same *centre* options). The edge pixels are weighted by the exact overlap, so the curve is exact for a PSF that is constant across each pixel.</p>

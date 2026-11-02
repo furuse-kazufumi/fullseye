@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">lf_disparity_to_depth — LIGHTFIELD <code style="color:#22d3bf">depth</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">depth</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lf_disparity_to_depth(slope, focal_px=1000.0, baseline=1.0, *, far_depth=None, min_slope=1e-06)</code> (to call the implementation directly, <code style="color:#22d3bf">import lightfield; lightfield.lf_disparity_to_depth(slope, focal_px=1000.0, baseline=1.0, *, far_depth=None, min_slope=1e-06)</code>; from the registry, <code style="color:#22d3bf">opslightfield.get(&quot;lf_disparity_to_depth&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Slope (px per angular step) -&gt; metric depth, the camera-array model.</p>
 <p>For a rectified array of viewpoints spaced *baseline* apart with focal length *focal_px* expressed <b>in pixels of the sub-aperture image</b>, a point at distance <code style="color:#22d3bf">Z</code> shifts by <code style="color:#22d3bf">|s| = focal_px * baseline / Z</code> pixels per step. Inverting: <code style="color:#22d3bf">Z = focal_px * baseline / |s|</code>, returned in whatever length unit *baseline* was given in (mm in, mm out).</p>

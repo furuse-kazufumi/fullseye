@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">gcode_extrusion_volume — PRINTPATH <code style="color:#22d3bf">gcode</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gcode_extrusion_volume(table: &#x27;Any&#x27;, filament_mm: &#x27;float&#x27; = 1.75) -&gt; &#x27;float&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import printpath; printpath.gcode_extrusion_volume(table: &#x27;Any&#x27;, filament_mm: &#x27;float&#x27; = 1.75) -&gt; &#x27;float&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsprintpath.get(&quot;gcode_extrusion_volume&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>extrude की गई filament का volume [mm³] = Σe × π (d / 2)² (<code style="color:#22d3bf">measurement</code>)। भार = density × volume (PLA ≈ 1.24 g/cm³)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>

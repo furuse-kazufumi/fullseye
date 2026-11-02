@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">residue_fault_locate — RESIDUE <code style="color:#22d3bf">robust</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">matrix × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.residue_fault_locate(residues, periods, weights=None, lo=0.0, hi=None, tol=0.05) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import residue; residue.residue_fault_locate(residues, periods, weights=None, lo=0.0, hi=None, tol=0.05) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsresidue.get(&quot;residue_fault_locate&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>哪个频带损坏了？（冗余剩余数系统）-&gt; <code style="color:#22d3bf">dict</code>。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">inflate — 3D <code style="color:#22d3bf">occupancy</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">voxel</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.inflate(occupancy, radius, voxel_size=1.0)</code>(要直接呼叫實作,<code style="color:#22d3bf">import occupancy; occupancy.inflate(occupancy, radius, voxel_size=1.0)</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;inflate&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把障礙膨脹 <code style="color:#22d3bf">radius</code>(世界單位)後的佔據柵格 bool(即 ESDF&lt;=radius 視為佔據)。</p>
 <p>planner 的安全餘量:若點機器人在膨脹網格上避免碰撞,則半徑為 radius 的實際機器人能與障礙物保持間隔(configuration-space obstacle)。ESDF 在外部是正的最近佔據距離,因此 <code style="color:#22d3bf">ESDF&lt;=radius</code> 捕捉「佔據(負)∪ 距障礙物 radius 以內的空閒」。增大 radius 時佔據單調增加(下游測試的 GT)。</p>

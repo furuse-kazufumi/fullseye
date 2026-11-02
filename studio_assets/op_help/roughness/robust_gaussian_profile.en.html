@@ -4,6 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.robust_gaussian_profile(z, dx, lambda_c, c=4.4, order=1, robust=True, truncate=1.0, max_iter=None, tol=1e-06)</code> (to call the implementation directly, <code style="color:#22d3bf">import roughness; roughness.robust_gaussian_profile(z, dx, lambda_c, c=4.4, order=1, robust=True, truncate=1.0, max_iter=None, tol=1e-06)</code>; from the registry, <code style="color:#22d3bf">opsroughness.get(&quot;robust_gaussian_profile&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>Return value through the ledger</b>: <code style="color:#22d3bf">fullseye.ledger.robust_gaussian_profile(...)</code> returns <b>only the declared out type <code style="color:#22d3bf">signal</code></b> (the underlying function also returns auxiliary values). When you need what was dropped, use <code style="color:#22d3bf">fullseye.ledger.robust_gaussian_profile.raw(...)</code> or call <code style="color:#22d3bf">roughness.robust_gaussian_profile</code> directly.</p>
 <p style="margin:2px 0 2px 12px">• Underlying return: <code style="color:#22d3bf">(roughness, mean_line, info)</code></p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Robust Gaussian regression filter (profile): a mean line and roughness that outliers and scratches cannot drag.</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>

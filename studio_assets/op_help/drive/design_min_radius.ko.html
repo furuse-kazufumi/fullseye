@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">design_min_radius — DRIVE <code style="color:#22d3bf">lateral</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.design_min_radius(design_speed_kmh, *, side_friction: &#x27;float&#x27;, superelevation: &#x27;float&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivelateral; drivelateral.design_min_radius(design_speed_kmh, *, side_friction: &#x27;float&#x27;, superelevation: &#x27;float&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;design_min_radius&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>도로구조령 해설 (3)식의 최소 곡선 반경 R = V² / (127 (i + f)) [m] (V는 km/h).</p>
 <p style="margin:2px 0 2px 12px">(2) 식에서 분모의 i f 를 떨어뜨리고(i f ≪ 1), 3.6² g ≈ 127 로 한 설계의 식. 엄밀한 상한 속도는 <code style="color:#22d3bf">curve_speed_limit</code>.</p>

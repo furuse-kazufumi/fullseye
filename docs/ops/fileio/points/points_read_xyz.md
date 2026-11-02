@@ -4,6 +4,7 @@ dim: fileio
 category: points
 in: text
 out: points
+gpu: なし
 examples: [fileio_roundtrip]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `text` → `points`
 - **呼び出し**: `import fullseye as fs; fs.ledger.points_read_xyz(data)` (実装を直接呼ぶなら `import fileio; fileio.points_read_xyz(data)`、台帳から引くなら `opsfileio.get("points_read_xyz")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

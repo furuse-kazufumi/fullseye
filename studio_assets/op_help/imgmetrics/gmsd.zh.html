@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">gmsd — IMGMETRICS <code style="color:#22d3bf">perceptual</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gmsd(ref, dist, data_range: &#x27;float&#x27; = 255.0, c: &#x27;float&#x27; = 170.0) -&gt; &#x27;float&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import iqafsim; iqafsim.gmsd(ref, dist, data_range: &#x27;float&#x27; = 255.0, c: &#x27;float&#x27; = 170.0) -&gt; &#x27;float&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsimgmetrics.get(&quot;gmsd&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>GMSD = GMS 图的标准差(N−1，原实现的 <code style="color:#22d3bf">std2</code>，论文式 5)。0 = 相同，越大表示劣化越严重(<b>越低越好</b> —— 与 MOS 的秩相关为负，公开表格给出的是 |ρ|：TID2013 整体 |SROCC| 0.8038，二手资料 0.8044)。输入为 (H, W) 或 (H, W, 3)(3 通道时取 Y)。<code style="color:#22d3bf">iqatid.tid2013_evaluate(root, gmsd, luma=&quot;rgb&quot;)</code>。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>：与 <code style="color:#22d3bf">gmsd_map</code> 相同，或图只有 1 个像素(方差无定义)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>

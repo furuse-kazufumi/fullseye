@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">spheres_render_shaded — DRIVE <code style="color:#22d3bf">granular</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">matrix × scalar × scalar × scalar × scalar</code> → <code style="color:#22d3bf">rgb</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.spheres_render_shaded(pos, radius: &#x27;float&#x27;, pitch: &#x27;float&#x27;, extent: &#x27;float&#x27;, height: &#x27;float&#x27;, light=(-0.4, -0.6, 0.7)) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import granular; granular.spheres_render_shaded(pos, radius: &#x27;float&#x27;, pitch: &#x27;float&#x27;, extent: &#x27;float&#x27;, height: &#x27;float&#x27;, light=(-0.4, -0.6, 0.7)) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;spheres_render_shaded&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Zeichnet die seitliche Orthografieprojektion schattiert (numpy-z-Buffer, Lambert). Für GIFs. Rückgabe <code style="color:#22d3bf">(rows, cols, 3)</code> [0, 1].</p>
 <p>Leere Eingabe (<code style="color:#22d3bf">pos</code> mit 0 Elementen) löst <code style="color:#22d3bf">ValueError</code> aus.</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">angle_3points — 3D <code style="color:#22d3bf">geometry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.angle_3points(a, b, c)</code>(要直接调用实现,<code style="color:#22d3bf">import match3d; match3d.angle_3points(a, b, c)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;angle_3points&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>三点所成角(顶点 b,度)。∠ABC。</p>
 <p>以度返回 <code style="color:#22d3bf">arccos(û·v̂)</code>(<code style="color:#22d3bf">u = a − b</code>, <code style="color:#22d3bf">v = c − b</code>)(float)。值在 <b>[0, 180]</b> 内,没有符号(即使在 2-D 中也不区分旋转方向)。参数为数值的 2 或 3 维向量,维度混用则 ValueError。<code style="color:#22d3bf">a == b</code> 或 <code style="color:#22d3bf">c == b</code> 时,与零向量的内积为 0,返回 90(不抛异常)。内积会 clip 到 [−1,1],因此不会因数值误差而变成 NaN。</p>

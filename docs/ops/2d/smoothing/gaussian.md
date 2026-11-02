@@ -5,6 +5,7 @@ category: smoothing
 in: image
 out: image
 halcon: gauss_filter
+gpu: あり(gauss_filter)
 examples: [coherence_scanning, color_transport, ct_inspection, degenerate_inputs, example_inner_diameter_mm, gallery2d_smoothing_rank, genspark_external_review, inspection_workflow, mcp_usability, perf_pointcloud_descriptors, photon_timeresolved, poc_bone_trabecular_thickness, poc_chromatic_confocal, poc_dtof_ranging, poc_flybrain_pointcloud, poc_interferometry_step, poc_itof_multifreq, poc_leaf_disease_area, poc_nir_silicon_transmission, poc_nuclei_ploidy, poc_simcal_telecentric, poc_simcal_thin_film, poc_solar_el_inspection, poc_solar_limb_darkening, poc_star_astrometry, poc_wound_area_tracking, quickstart, typed_results_json, video_streaming]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -16,6 +17,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **データ種**: `image` → `image`
 - **呼び出し**: `fullseye.apply(img, "gaussian", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 - **HALCON 相当**: `gauss_filter`(意味・パラメータは HALCON リファレンスが参考になる)
+- **GPU**: あり(`gauss_filter`、`device="cuda"` で高速経路)
 
 ![gaussian: input → output](../../_fig/gaussian.png)
 

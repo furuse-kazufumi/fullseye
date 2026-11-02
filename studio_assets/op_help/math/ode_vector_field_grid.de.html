@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">ode_vector_field_grid — MATH <code style="color:#22d3bf">dynsys</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">keine</code> → <code style="color:#22d3bf">flow2d</code> (ein Operator, der allein durch seine Argumente bestimmt ist — er nimmt kein Bild und keine Daten entgegen)</p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ode_vector_field_grid(system=&#x27;rossler&#x27;, params=None, bounds=(-10.0, 10.0, -10.0, 10.0), shape=(64, 64), plane=&#x27;xy&#x27;, offset=0.0)</code> (die Implementierung direkt: <code style="color:#22d3bf">import mathops; mathops.ode_vector_field_grid(system=&#x27;rossler&#x27;, params=None, bounds=(-10.0, 10.0, -10.0, 10.0), shape=(64, 64), plane=&#x27;xy&#x27;, offset=0.0)</code>; aus dem Register: <code style="color:#22d3bf">opsmath.get(&quot;ode_vector_field_grid&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Tastet ein benanntes Feld auf einem Gitter ab — ein <code style="color:#22d3bf">flow2d</code>, das die vorhandenen Betrachter annehmen.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>

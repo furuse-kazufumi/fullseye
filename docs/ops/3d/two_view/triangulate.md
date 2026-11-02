@@ -4,6 +4,7 @@ dim: 3d
 category: two_view
 in: image2d × image2d
 out: points
+gpu: なし
 examples: [sfm_recon]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d × image2d` → `points`
 - **呼び出し**: `import fullseye as fs; fs.ledger.triangulate(pts1, pts2, P1, P2)` (実装を直接呼ぶなら `import twoview; twoview.triangulate(pts1, pts2, P1, P2)`、台帳から引くなら `ops3d.get("triangulate")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

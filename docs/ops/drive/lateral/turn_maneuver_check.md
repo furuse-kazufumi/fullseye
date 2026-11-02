@@ -4,6 +4,7 @@ dim: drive
 category: lateral
 in: table
 out: table
+gpu: なし
 examples: [poc_driving_lateral]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.turn_maneuver_check(trajectory: 'dict', *, kind: 'str', x_entry: 'float', edge_y: 'float', center_y: 'float' = 0.0, corner_center=None, corner_radius: 'float' = 0.0, intersection_center=None, approach: 'float' = 30.0, keep_tol: 'float' = 0.5, side_tol: 'float' = 1.5, inside_tol: 'float' = 3.0, jokou: 'float' = 2.7777777777777777, clearance: 'float' = 0.0) -> 'Dict[str, object]'` (実装を直接呼ぶなら `import drivelateral; drivelateral.turn_maneuver_check(trajectory: 'dict', *, kind: 'str', x_entry: 'float', edge_y: 'float', center_y: 'float' = 0.0, corner_center=None, corner_radius: 'float' = 0.0, intersection_center=None, approach: 'float' = 30.0, keep_tol: 'float' = 0.5, side_tol: 'float' = 1.5, inside_tol: 'float' = 3.0, jokou: 'float' = 2.7777777777777777, clearance: 'float' = 0.0) -> 'Dict[str, object]'`、台帳から引くなら `opsdrive.get("turn_maneuver_check")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

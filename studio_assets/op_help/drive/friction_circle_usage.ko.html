@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">friction_circle_usage — DRIVE <code style="color:#22d3bf">lateral</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.friction_circle_usage(ax, ay, *, mu: &#x27;float&#x27;, g: &#x27;float&#x27; = 9.81) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivelateral; drivelateral.friction_circle_usage(ax, ay, *, mu: &#x27;float&#x27;, g: &#x27;float&#x27; = 9.81) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;friction_circle_usage&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>마찰원 사용률 √(a_x² + a_y²) / (μ g)(1을 넘으면 마찰원 밖 = 타이어가 노면에서 받을 수 있는 힘을 초과).</p>
 <p><code style="color:#22d3bf">ax</code>, <code style="color:#22d3bf">ay</code>: 종·횡 가속도 [m/s²] (같은 형상, 또는 브로드캐스트 가능한 형상). <code style="color:#22d3bf">mu</code>: 노면과 타이어의 마찰 계수(&gt; 0).</p>

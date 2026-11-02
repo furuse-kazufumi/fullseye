@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">slice_thickness_profile — DRIVE <code style="color:#22d3bf">cutting</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">rgb × scalar × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.slice_thickness_profile(image, px_per_mm: &#x27;float&#x27;, board_row: &#x27;float&#x27;, z_band=None, win: &#x27;int&#x27; = 4) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import cutting; cutting.slice_thickness_profile(image, px_per_mm: &#x27;float&#x27;, board_row: &#x27;float&#x27;, z_band=None, win: &#x27;int&#x27; = 4) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;slice_thickness_profile&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>在沿刃口方向的影像中，逐列求出「食材端面」與「刀刃平面」的次像素位置，差 = 切片厚度(mm)。</p>
 <p>將每個像素 <b>線性分解</b> 為 3 種顏色(背景、食材、刀刃)的比例(彩度 R − B 與亮度 2 個通道 + 和 = 1)。背景比例在端面處 1 → 0 下降,是純粹的階躍;刀刃比例在刀面處 0 → 1 上升,也是純粹的階躍,因此各視窗內的和即為邊緣位置(覆蓋率法)。模糊不會改變比例之和,因此只要將視窗依模糊估計(端面階躍的 2 階矩 σ)擴大到 ±(3σ + 1) px 就不會有偏差。即使切片比視窗薄,兩個階躍是不同的比例,也不會相互干擾。參考顏色按列在局部取得(跟隨照明的左右梯度)。刀刃的判定使用「刀刃亮度位於背景與食材之間何處」的比值,不依賴於亮度倍率(gain)。</p>

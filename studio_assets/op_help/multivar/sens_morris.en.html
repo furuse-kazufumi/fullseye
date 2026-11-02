@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">sens_morris — MULTIVAR <code style="color:#22d3bf">sensitivity</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">design × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sens_morris(design=None, y=None, negligible=0.05) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import sensitivity; sensitivity.sens_morris(design=None, y=None, negligible=0.05) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsmultivar.get(&quot;sens_morris&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Morris elementary effects -&gt; mu, mu*, sigma per factor (Morris 1991; mu* Campolongo et al. 2007).</p>
 <p><code style="color:#22d3bf">design</code> must come from <code style="color:#22d3bf">doe_morris</code> (its trajectory bookkeeping is used) and <code style="color:#22d3bf">y</code> holds the model output for its rows in order. For trajectory t and step s that moves factor i by ±delta: <code style="color:#22d3bf">EE_i = (y_s - y_{s-1}) / (±delta)</code> in unit-cube units, and also per natural unit of the factor (<code style="color:#22d3bf">ee_natural</code>; on a log-scale factor the step is in log10 units).</p>

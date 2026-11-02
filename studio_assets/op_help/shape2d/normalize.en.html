@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">normalize — SHAPE2D <code style="color:#22d3bf">descriptor</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">efdmodel</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.normalize(model, size_invariant=True)</code> (to call the implementation directly, <code style="color:#22d3bf">import fourierdesc; fourierdesc.normalize(model, size_invariant=True)</code>; from the registry, <code style="color:#22d3bf">opsshape2d.get(&quot;normalize&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Converts EFD coefficients into the coefficients of the &quot;canonical pose&quot; (aligned with respect to the 1st harmonic).</p>
 <p>Kuhl–Giardina canonicalisation: (1) remove the arbitrariness of the <b>start point</b> using the phase of the 1st harmonic, (2) rotate the long axis of the 1st ellipse onto the reference axis to align the <b>orientation</b>, (3) divide by the long-axis length of the 1st harmonic to align the <b>size</b>. Intended for &quot;canonical-pose reconstruction&quot;, such as overlaying or averaging several shapes.</p>

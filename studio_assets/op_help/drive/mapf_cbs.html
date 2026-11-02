@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">mapf_cbs — DRIVE <code style="color:#22d3bf">agv</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mapf_cbs(grid, starts, goals, max_nodes=20000, horizon=None)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import agvfleet; agvfleet.mapf_cbs(grid, starts, goals, max_nodes=20000, horizon=None)</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;mapf_cbs&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Conflict-Based Search(Sharon, Stern, Felner, Sturtevant 2015)。総コストが最適な衝突なしの計画。</p>
 <p>上段は「衝突を 1 つ選び、2 台のどちらかに制約を足す」二分木の最良優先探索、下段は 1 台の時空間 A*。返りは dict: <code style="color:#22d3bf">paths</code>(各車両のマスの列)、<code style="color:#22d3bf">cost</code>(sum of costs)、<code style="color:#22d3bf">nodes</code>(展開した節の数)、<code style="color:#22d3bf">solved</code>。節の上限に達したら <code style="color:#22d3bf">solved=False</code>(<b>黙って最適でない解を返さない</b>)。</p>

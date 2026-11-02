@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">homotopy_class_compare — DRIVE <code style="color:#22d3bf">braidpath</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">any × any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.homotopy_class_compare(traj_a, traj_b, obstacles=None, angle=0.1, jitter=&#x27;auto&#x27;, tol=1e-09)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import braidpath; braidpath.homotopy_class_compare(traj_a, traj_b, obstacles=None, angle=0.1, jitter=&#x27;auto&#x27;, tol=1e-09)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;homotopy_class_compare&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>समान start और end points वाले दो path families (multi-agent plans) एक ही homotopy class में हैं या नहीं।</p>
 <p>टकराव के बिना (न एजेंट आपस में, न बाधा बिंदुओं से ओवरलैप हों) आरंभ और अंत बिंदुओं को स्थिर रखते हुए निरंतर रूप से विकृत किया जा सके ⇔ ब्रेड बराबर हैं।</p>

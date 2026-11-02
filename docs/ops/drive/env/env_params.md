@@ -4,6 +4,7 @@ dim: drive
 category: env
 in: 
 out: table
+gpu: なし
 examples: [poc_driving_weather]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.env_params(when=None, lat: 'float' = 35.6581, lon: 'float' = 139.7414, *, sun=None, cloud: 'float' = 0.0, fog_mor: 'Optional[float]' = None, rain: 'float' = 0.0, headlamps: 'str' = 'off', north_yaw: 'float' = 90.0, lamp_luminance: 'float' = 10000.0, exposure: 'Optional[float]' = None, max_gain: 'float' = 1.0, glare_model: 'str' = 'stiles_holladay', fog_layer: 'float' = 100.0, seed: 'int' = 0) -> 'Dict[str, object]'` (実装を直接呼ぶなら `import driveenv; driveenv.env_params(when=None, lat: 'float' = 35.6581, lon: 'float' = 139.7414, *, sun=None, cloud: 'float' = 0.0, fog_mor: 'Optional[float]' = None, rain: 'float' = 0.0, headlamps: 'str' = 'off', north_yaw: 'float' = 90.0, lamp_luminance: 'float' = 10000.0, exposure: 'Optional[float]' = None, max_gain: 'float' = 1.0, glare_model: 'str' = 'stiles_holladay', fog_layer: 'float' = 100.0, seed: 'int' = 0) -> 'Dict[str, object]'`、台帳から引くなら `opsdrive.get("env_params")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

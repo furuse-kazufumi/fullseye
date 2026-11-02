@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">contour_fourier_truncation_energy — SHAPE2D <code style="color:#22d3bf">descriptor</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.contour_fourier_truncation_energy(spectrum, orders=None)</code> (die Implementierung direkt: <code style="color:#22d3bf">import fourierdesc; fourierdesc.contour_fourier_truncation_energy(spectrum, orders=None)</code>; aus dem Register: <code style="color:#22d3bf">opsshape2d.get(&quot;contour_fourier_truncation_energy&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Der <b>vorhergesagte</b> Fehler je Abbruchordnung (<code style="color:#22d3bf">table</code>) — Parsevals exakte Formel.</p>
 <p>Für die bei Ordnung <code style="color:#22d3bf">K</code> abgeschnittene Rekonstruktion <code style="color:#22d3bf">z^K</code> ist der mittlere quadratische Fehler über die Abtastwerte <b>exakt gleich</b> <code style="color:#22d3bf">mean|z - z^K|^2 = Σ_{|k| &gt; K} |c_k|^2</code>. Daher lässt sich vorab sagen, &quot;wie viele Terme es bis auf wie viele Pixel ähnlich machen&quot;, ohne die Rekonstruktion auch nur 1-mal auszuführen.</p>

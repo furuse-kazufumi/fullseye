@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">varmodel_band_k — SPC <code style="color:#22d3bf">variation</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.varmodel_band_k(n=20, far=0.001, spread=&#x27;std&#x27;, df_prior=None)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import varmodel; varmodel.varmodel_band_k(n=20, far=0.001, spread=&#x27;std&#x27;, df_prior=None)</code>、台帳から引くなら <code style="color:#22d3bf">opsspc.get(&quot;varmodel_band_k&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>宣言した画素あたりの両側誤検出率に対する許容帯の半幅 <code style="color:#22d3bf">k</code>(ばらつきの単位、<code style="color:#22d3bf">table</code>)。</p>
 <p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>

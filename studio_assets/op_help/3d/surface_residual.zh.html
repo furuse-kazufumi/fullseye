@@ -4,6 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.surface_residual(x, y, z, tck)</code>(要直接调用实现,<code style="color:#22d3bf">import bspline_surf; bspline_surf.surface_residual(x, y, z, tck)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;surface_residual&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>经台账调用的返回值</b>: <code style="color:#22d3bf">fullseye.ledger.surface_residual(...)</code> 只返回<b>声明的 out 类型 <code style="color:#22d3bf">measurement</code> 的值</b>(底层函数还会返回辅助信息)。需要被丢弃的部分时,使用 <code style="color:#22d3bf">fullseye.ledger.surface_residual.raw(...)</code>,或直接调用 <code style="color:#22d3bf">bspline_surf.surface_residual</code>。</p>
 <p style="margin:2px 0 2px 12px">• 底层返回: <code style="color:#22d3bf">{&quot;rms&quot;,&quot;max&quot;,&quot;pv&quot;} → pv float</code></p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>返回散布数据与曲面 tck 的残差统计(形状误差=相对拟合的偏离)。</p>
 <p>在各样本位置求曲面高度,测量与观测 z 之差的 RMS / 最大绝对值 / PV (peak-to-valley = 最大 - 最小)。在检测中,这是相对自由曲面的偏差量(凹痕、波纹度、缺料)的定量指标。</p>

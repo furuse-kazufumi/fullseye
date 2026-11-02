@@ -4,6 +4,7 @@ dim: 3d
 category: transform
 in: depth
 out: points
+gpu: なし
 examples: [structured_light_scan, transforms_repr]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `depth` → `points`
 - **呼び出し**: `import fullseye as fs; fs.ledger.depth_to_points(depth, fx, fy, cx, cy, stride=1)` (実装を直接呼ぶなら `import match3d; match3d.depth_to_points(depth, fx, fy, cx, cy, stride=1)`、台帳から引くなら `ops3d.get("depth_to_points")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

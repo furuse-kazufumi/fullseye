@@ -4,6 +4,7 @@ dim: quat
 category: algebra
 in: qimage × qimage
 out: qimage
+gpu: なし
 examples: [quaternion_monogenic]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `qimage × qimage` → `qimage`
 - **呼び出し**: `import fullseye as fs; fs.ledger.quat_image_multiply(qimage, other, side) -> 'np.ndarray'` (実装を直接呼ぶなら `import quatimage; quatimage.quat_image_multiply(qimage, other, side) -> 'np.ndarray'`、台帳から引くなら `opsquat.get("quat_image_multiply")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -4,6 +4,7 @@ dim: 3d
 category: regionprops
 in: voxel
 out: labels
+gpu: なし
 examples: [region_props_3d, watershed3d]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -16,6 +17,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **呼び出し**: `import fullseye as fs; fs.ledger.label_components(vol, connectivity: 'int' = 26)` (実装を直接呼ぶなら `import regionprops3d; regionprops3d.label_components(vol, connectivity: 'int' = 26)`、台帳から引くなら `ops3d.get("label_components")`)
 - **台帳経由の戻り値**: `fullseye.ledger.label_components(...)` は**宣言 out 型 `labels` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.label_components.raw(...)`、または `regionprops3d.label_components` を直接呼ぶ。
   - 本体の返り: `(labels, n) → labels`
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

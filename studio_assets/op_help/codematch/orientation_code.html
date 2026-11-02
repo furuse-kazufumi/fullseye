@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">orientation_code — CODEMATCH <code style="color:#22d3bf">code</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.orientation_code(image, n_codes=16, grad_thresh=0.05)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import codematch; codematch.orientation_code(image, n_codes=16, grad_thresh=0.05)</code>、台帳から引くなら <code style="color:#22d3bf">opscodematch.get(&quot;orientation_code&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>勾配の向きを <code style="color:#22d3bf">n_codes</code> 段に量子化した方向符号の画像(OCM の符号化)。</p>
 <p><code style="color:#22d3bf">θ = atan2(∂I/∂行, ∂I/∂列)</code> を [0, 2π) に取り(Sobel、縁は最近傍で延長)、<code style="color:#22d3bf">floor(θ / (2π/N))</code> を符号 0..N-1 にする。<code style="color:#22d3bf">|∂I/∂列| + |∂I/∂行| &lt;= grad_thresh</code> の画素は無効符号 <code style="color:#22d3bf">N</code>(雑音しか無い所の向きは信用しない)。</p>

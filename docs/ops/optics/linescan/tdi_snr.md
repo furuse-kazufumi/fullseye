@@ -4,6 +4,7 @@ dim: optics
 category: linescan
 in: 
 out: table
+gpu: なし
 examples: [poc_tdi_linescan]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.tdi_snr(photons_per_stage=200.0, stages=(1, 2, 4, 8, 16, 32, 64, 128), eta=0.6, sigma_d=20.0, K=0.1, architecture='charge', sigma_q2=0.08333333333333333)` (実装を直接呼ぶなら `import linescan; linescan.tdi_snr(photons_per_stage=200.0, stages=(1, 2, 4, 8, 16, 32, 64, 128), eta=0.6, sigma_d=20.0, K=0.1, architecture='charge', sigma_q2=0.08333333333333333)`、台帳から引くなら `opsoptics.get("tdi_snr")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

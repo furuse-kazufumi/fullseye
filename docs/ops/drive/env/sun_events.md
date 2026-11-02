@@ -4,6 +4,7 @@ dim: drive
 category: env
 in: scalar × scalar × scalar × scalar × scalar
 out: table
+gpu: なし
 examples: [poc_driving_weather]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `scalar × scalar × scalar × scalar × scalar` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.sun_events(year: 'int', month: 'int', day: 'int', lat: 'float', lon: 'float', tz_hours: 'float' = 9.0, *, h0: 'float' = -0.8333) -> 'Dict[str, object]'` (実装を直接呼ぶなら `import driveenv; driveenv.sun_events(year: 'int', month: 'int', day: 'int', lat: 'float', lon: 'float', tz_hours: 'float' = 9.0, *, h0: 'float' = -0.8333) -> 'Dict[str, object]'`、台帳から引くなら `opsdrive.get("sun_events")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

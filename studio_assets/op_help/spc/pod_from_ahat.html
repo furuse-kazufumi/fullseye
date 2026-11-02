@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">pod_from_ahat — SPC <code style="color:#22d3bf">pod</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pod_from_ahat(fit, a_dec, level=0.95, n_grid=200, a=None)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import pod; pod.pod_from_ahat(fit, a_dec, level=0.95, n_grid=200, a=None)</code>、台帳から引くなら <code style="color:#22d3bf">opsspc.get(&quot;pod_from_ahat&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>â vs a の回帰と判定閾値 <code style="color:#22d3bf">a_dec</code> から POD(a) 曲線と a50 / a90 / a90/95(<code style="color:#22d3bf">table</code>)。</p>
 <p>判定は <code style="color:#22d3bf">â &gt; a_dec</code> で「検出」。回帰 <code style="color:#22d3bf">y = β0 + β1 x + ε</code> のもとで <code style="color:#22d3bf">POD(x) = Φ((x − μ)/σ_pod)</code>、<code style="color:#22d3bf">μ = (y_dec − β0)/β1</code>、<code style="color:#22d3bf">σ_pod = σ/β1</code> (MIL-HDBK-1823A G.3.4.3。<code style="color:#22d3bf">y_dec</code> は <code style="color:#22d3bf">a_dec</code> を回帰の y 座標へ写したもの)。<code style="color:#22d3bf">a50 = μ</code>、<code style="color:#22d3bf">a90 = μ + z_0.9 σ_pod</code>(<code style="color:#22d3bf">z_0.9 = 1.281552</code>)を元の単位へ戻す。</p>

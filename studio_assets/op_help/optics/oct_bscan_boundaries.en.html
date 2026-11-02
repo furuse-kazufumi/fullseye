@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">oct_bscan_boundaries — OPTICS <code style="color:#22d3bf">oct</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.oct_bscan_boundaries(image, n_boundaries=2, um_per_px=1.0, n_group=None, min_gap_px=4, max_jump_px=2, jump_penalty=0.0, smooth_sigma=1.0, mode=&#x27;peak&#x27;, top_px=None, bottom_px=None, reference_rows=None, offset_px=None)</code> (to call the implementation directly, <code style="color:#22d3bf">import octscan; octscan.oct_bscan_boundaries(image, n_boundaries=2, um_per_px=1.0, n_group=None, min_gap_px=4, max_jump_px=2, jump_penalty=0.0, smooth_sigma=1.0, mode=&#x27;peak&#x27;, top_px=None, bottom_px=None, reference_rows=None, offset_px=None)</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;oct_bscan_boundaries&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Trace interfaces laterally across a B-scan <b>image</b> (<code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code>). Also works on an instrument&#x27;s output figure.</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>

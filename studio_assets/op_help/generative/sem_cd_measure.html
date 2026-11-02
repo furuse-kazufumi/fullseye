@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">sem_cd_measure — GENERATIVE <code style="color:#22d3bf">sem</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sem_cd_measure(profile, *, method: &#x27;str&#x27; = &#x27;threshold&#x27;, threshold: &#x27;float&#x27; = 0.5, smooth_nm: &#x27;float&#x27; = 0.0) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import sem; sem.sem_cd_measure(profile, *, method: &#x27;str&#x27; = &#x27;threshold&#x27;, threshold: &#x27;float&#x27; = 0.5, smooth_nm: &#x27;float&#x27; = 0.0) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsgenerative.get(&quot;sem_cd_measure&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>線プロファイル(<code style="color:#22d3bf">pairs</code>: x と信号)から線幅を出す(CD-SEM の 2 方式)。</p>
 <p>1 本の線の左右の縁は、それぞれ明るい山(縁の効果)になる。各山の<b>外側の斜面</b>で:</p>

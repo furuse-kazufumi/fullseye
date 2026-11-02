@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">project_hom_point_hom_mat3d — CALIB <code style="color:#22d3bf">project</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">keypoints</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.project_hom_point_hom_mat3d(points_hom, hom_mat3d)</code>(要直接呼叫實作,<code style="color:#22d3bf">import calib; calib.project_hom_point_hom_mat3d(points_hom, hom_mat3d)</code>;從台帳取用則 <code style="color:#22d3bf">opscalib.get(&quot;project_hom_point_hom_mat3d&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用 3x4/4x4 投影矩陣投影齊次 3D 點 (4,)，回傳像素 (row, col)(project_hom_point_hom_mat3d)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>

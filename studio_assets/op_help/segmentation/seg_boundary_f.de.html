@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">seg_boundary_f — SEGMENTATION <code style="color:#22d3bf">score</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">labels2d × labels2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.seg_boundary_f(labels_pred, labels_true, *, tau: &#x27;float&#x27; = 2.0) -&gt; &#x27;Dict[str, object]&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import segeval; segeval.seg_boundary_f(labels_pred, labels_true, *, tau: &#x27;float&#x27; = 2.0) -&gt; &#x27;Dict[str, object]&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opssegmentation.get(&quot;seg_boundary_f&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Grenz-F-Maß bei Toleranz tau: Precision = Anteil der vorhergesagten Grenzpixel innerhalb von tau zu einer echten Grenze, Recall umgekehrt (seg_boundary_f).</p>
 <p>F = 2PR/(P+R). Ränder folgen der Konvention von <code style="color:#22d3bf">_boundary</code> (Risse zwischen Labels, 1 Pixel breit), hängen also weder von Labelnummern noch von der Hintergrundunterscheidung ab (nur die Form der Partition zählt). Abstand per Distanztransformation (euklidisch, Pixelmitten). τ = 0 heißt Pixelübereinstimmung. Sind beide Ränder leer (beide 1 Farbe), gilt P = R = F = 1; ist nur einer leer, 0.</p>

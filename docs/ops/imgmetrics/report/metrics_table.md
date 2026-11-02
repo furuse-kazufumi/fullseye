@@ -4,6 +4,7 @@ dim: imgmetrics
 category: report
 in: metrics
 out: table
+gpu: なし
 examples: [image_quality_metrics]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `metrics` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.metrics_table(report, order=None)` (実装を直接呼ぶなら `import imgmetrics; imgmetrics.metrics_table(report, order=None)`、台帳から引くなら `opsimgmetrics.get("metrics_table")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

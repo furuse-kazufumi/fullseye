@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">latlon_to_local — DRIVE <code style="color:#22d3bf">japan</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">any × any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.latlon_to_local(lat, lon, origin) -&gt; &#x27;Tuple[np.ndarray, np.ndarray]&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import drivejapan; drivejapan.latlon_to_local(lat, lon, origin) -&gt; &#x27;Tuple[np.ndarray, np.ndarray]&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;latlon_to_local&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Breite/Länge [deg] → ebene Koordinaten (x Ost, y Nord) [m] in äquirektangulärer Näherung um den Ursprung origin = (lat0, lon0).</p>
 <p>x = R cos(lat0) Δλ, y = R Δφ (R = 6378137 m). Verzerrung von 1e-5 auf 1 km im Quadrat (Änderung des cos), für eine Stadt also ausreichend. Arrays erlaubt. <b>Raises</b> <code style="color:#22d3bf">ValueError</code>: Breite/Länge außerhalb des Bereichs oder nicht endlich.</p>

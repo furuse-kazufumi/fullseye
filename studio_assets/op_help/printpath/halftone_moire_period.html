@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">halftone_moire_period — PRINTPATH <code style="color:#22d3bf">npr</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.halftone_moire_period(lpi_a=60.0, angle_a_deg=45.0, lpi_b=60.0, angle_b_deg=75.0, pixel_um=25.4)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import printpath; printpath.halftone_moire_period(lpi_a=60.0, angle_a_deg=45.0, lpi_b=60.0, angle_b_deg=75.0, pixel_um=25.4)</code>、台帳から引くなら <code style="color:#22d3bf">opsprintpath.get(&quot;halftone_moire_period&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>The beat between two halftone screens — period and direction, in closed form.</p>
 <p>Each screen is a frequency <b>vector</b> <code style="color:#22d3bf">f (cos t, sin t)</code>; where two screens overlap the visible moiré is the difference vector, so its period is <code style="color:#22d3bf">1 / |f_a - f_b|</code> and its direction is that of the difference. For equal rulings the magnitude reduces to <code style="color:#22d3bf">2 f sin(dt / 2)</code>, which is why the beat period grows without bound as the angle difference goes to zero — two plates at nearly the same angle give a huge, very visible moiré.</p>

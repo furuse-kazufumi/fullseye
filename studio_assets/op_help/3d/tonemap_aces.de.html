@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tonemap_aces — 3D <code style="color:#22d3bf">render</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tonemap_aces(hdr, exposure: &#x27;float&#x27; = 1.0) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import render_tonemap; render_tonemap.tonemap_aces(hdr, exposure: &#x27;float&#x27; = 1.0) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;tonemap_aces&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Komprimiert HDR mit der ACES-Filmic-Näherung (Narkowicz 2015) in <code style="color:#22d3bf">[0, 1]</code>-LDR. → float64.</p>
 <p>Wendet <code style="color:#22d3bf">f(x) = x(a x + b) / (x(c x + d) + e)</code> auf <code style="color:#22d3bf">x = hdr * exposure</code> an. Eine filmartige S-Kurve, die die Schatten anhebt und die Glanzlichter sanft abrollt, und so den in der Videoproduktion üblichen &quot;Look&quot; erzeugt. Im Bereich <code style="color:#22d3bf">x &lt; ~7.24</code> streng monoton steigend mit Ausgabe &lt; 1 (darüber sättigt es bei 1 und wird geclippt). Farbe <code style="color:#22d3bf">(H, W, C)</code> wird pro Kanal unabhängig abgebildet.</p>

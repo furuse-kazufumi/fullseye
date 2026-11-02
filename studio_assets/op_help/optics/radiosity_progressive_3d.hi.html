@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">radiosity_progressive_3d — OPTICS <code style="color:#22d3bf">radiosity</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.radiosity_progressive_3d(patches, emission, form_factors=None, albedo=None, tol=1e-06, max_shots=None, n_quad=3)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import radiosity3d; radiosity3d.radiosity_progressive_3d(patches, emission, form_factors=None, albedo=None, tol=1e-06, max_shots=None, n_quad=3)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;radiosity_progressive_3d&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>3-D patch समूह पर progressive-refinement radiosity (Cohen et al. 1988, shooting, समी. 7–8), अभिसरण के प्रमाण सहित।</p>
 <p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>

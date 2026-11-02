@@ -4,6 +4,7 @@ dim: drive
 category: tacslip
 in: scalar × scalar
 out: matrix
+gpu: なし
 examples: [gallery_drive_soil_tactile, poc_tacsim_marker_shear, poc_tactile_dipole_torque]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `scalar × scalar` → `matrix`
 - **呼び出し**: `import fullseye as fs; fs.ledger.membrane_markers(n: 'int', pitch_px: 'float', ox: 'float' = 0.3, oy: 'float' = 0.6) -> 'np.ndarray'` (実装を直接呼ぶなら `import tacslip; tacslip.membrane_markers(n: 'int', pitch_px: 'float', ox: 'float' = 0.3, oy: 'float' = 0.6) -> 'np.ndarray'`、台帳から引くなら `opsdrive.get("membrane_markers")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">anomaly_region_overlap — SPC <code style="color:#22d3bf">anomaly_eval</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">video × video</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.anomaly_region_overlap(predicted, masks, min_overlap=0.5)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import anomeval; anomeval.anomaly_region_overlap(predicted, masks, min_overlap=0.5)</code>、台帳から引くなら <code style="color:#22d3bf">opsspc.get(&quot;anomaly_region_overlap&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>1 つの動作点での 2 値の欠陥予測と真値の領域ごとの重なり(<code style="color:#22d3bf">table</code>)。</p>
 <p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>

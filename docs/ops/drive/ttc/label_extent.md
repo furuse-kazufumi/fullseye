@@ -4,6 +4,7 @@ dim: drive
 category: ttc
 in: labels2d
 out: table
+gpu: なし
 examples: [poc_ttc_rss, poc_video_physics_consistency]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `labels2d` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.label_extent(label, value: 'int') -> 'dict'` (実装を直接呼ぶなら `import drivettc; drivettc.label_extent(label, value: 'int') -> 'dict'`、台帳から引くなら `opsdrive.get("label_extent")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">string_set — DRIVE <code style="color:#22d3bf">kendamaworld</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.string_set(world: &#x27;dict&#x27;, i: &#x27;int&#x27;, p_ball, p_cup) -&gt; &#x27;None&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import kendamaworld; kendamaworld.string_set(world: &#x27;dict&#x27;, i: &#x27;int&#x27;, p_ball, p_cup) -&gt; &#x27;None&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;string_set&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Moves both ends of string i to (p_ball, p_cup) (rewrites only the vertices). ValueError for an object that is not a string.</p>
 <p>Empty input (<code style="color:#22d3bf">world</code> an empty dict) raises <code style="color:#22d3bf">ValueError</code>.</p>

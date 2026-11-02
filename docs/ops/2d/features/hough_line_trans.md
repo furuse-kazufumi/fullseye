@@ -5,6 +5,7 @@ category: features
 in: image
 out: image
 halcon: hough_line_trans
+gpu: なし
 examples: [gallery2d_features]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -16,6 +17,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **データ種**: `image` → `image`
 - **呼び出し**: `fullseye.apply(img, "hough_line_trans", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 - **HALCON 相当**: `hough_line_trans`(意味・パラメータは HALCON リファレンスが参考になる)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ![hough_line_trans: input → output](../../_fig/hough_line_trans.png)
 

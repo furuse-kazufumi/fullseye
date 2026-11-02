@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">vol_hessian_blobness — 3D <code style="color:#22d3bf">feature</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">voxel</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_hessian_blobness(vol, scale, black_ridges=False)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import volops; volops.vol_hessian_blobness(vol, scale, black_ridges=False)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;vol_hessian_blobness&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Blob-like (spherical) response from the Hessian eigenvalues at one *scale*.</p>
 <p>A bright blob has all three eigenvalues negative and comparable in magnitude; the response is the geometric mean of their magnitudes, <code style="color:#22d3bf">(|l1| |l2| |l3|)**(1/3)</code>, gated to voxels where the three share the sign of a blob of the requested polarity (all negative for bright, all positive for dark). Normalised to <code style="color:#22d3bf">[0, 1]</code>. Complements the line filters — a Frangi-style <code style="color:#22d3bf">Rb</code> term rejects blobs, this one keeps them. Reference: the second-order (Hessian) blob measure, cf. Frangi et al. 1998 / Lindeberg scale-space blobs.</p>

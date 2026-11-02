@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">annotate_outline — ANNOTATE <code style="color:#22d3bf">paper</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d × mask</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_outline(img, mask, label=None, color=&#x27;emphasis&#x27;, width=1.5, alpha=1.0, dash=None, font_size=12, label_offset=(0, 0), box_alpha=0.6, text_color=None, scheme=&#x27;okabe_ito&#x27;, font_path=None, layout=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import annotate; annotate.annotate_outline(img, mask, label=None, color=&#x27;emphasis&#x27;, width=1.5, alpha=1.0, dash=None, font_size=12, label_offset=(0, 0), box_alpha=0.6, text_color=None, scheme=&#x27;okabe_ito&#x27;, font_path=None, layout=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsannotate.get(&quot;annotate_outline&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>image (image2d) लौटाता है: mask की outline को (AA वाली) बंद polyline से बनाता है, और centroid पर text रखता है।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>

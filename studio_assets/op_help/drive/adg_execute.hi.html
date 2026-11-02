@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">adg_execute — DRIVE <code style="color:#22d3bf">agv</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.adg_execute(adg, delay_prob=0.3, seed=0, max_steps=10000)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import agvfleet; agvfleet.adg_execute(adg, delay_prob=0.3, seed=0, max_steps=10000)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;adg_execute&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>ADG के अनुसार execute करता है। हर समय पर हर वाहन probability <code style="color:#22d3bf">delay_prob</code> से रुकता है (फिसलना, लोग, loading में देरी)।</p>
 <p>केवल वे वाहन 1 खाना आगे बढ़ते हैं जिनकी अगली क्रिया की सभी निर्भरताएँ पूरी हो चुकी हैं। रिटर्न एक dict है: <code style="color:#22d3bf">trajectories</code> (वास्तविक स्थितियों का क्रम), <code style="color:#22d3bf">makespan</code>, <code style="color:#22d3bf">collisions</code> (एक ही खाना / आमने-सामने अदला-बदली), <code style="color:#22d3bf">deadlock</code> (कोई आगे नहीं बढ़ सकता और कार्य अपूर्ण), <code style="color:#22d3bf">finished</code>।</p>

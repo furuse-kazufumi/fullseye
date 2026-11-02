@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">convex_mirror_image — DRIVE <code style="color:#22d3bf">pass</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.convex_mirror_image(object_distance, radius: &#x27;float&#x27;, *, eye_distance: &#x27;float&#x27;, object_size: &#x27;float&#x27; = 1.0) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import drivepass; drivepass.convex_mirror_image(object_distance, radius: &#x27;float&#x27;, *, eye_distance: &#x27;float&#x27;, object_size: &#x27;float&#x27; = 1.0) -&gt; &#x27;Dict[str, object]&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;convex_mirror_image&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>凸面鏡的虛像(近軸，可用陣列)。場景 S064、S130。</p>
 <p>1/a + 1/b = 2/R(b 為鏡子另一側的虛像)→ b = aR/(2a + R),倍率 m = R/(2a + R)。眼睛距鏡子 e(<code style="color:#22d3bf">eye_distance</code>)時, 像的視大小 θ = 2 atan(m h /(2(e + b))),近軸下為 m h/(e + b) = h/(e + k a),k = 1 + 2e/R。<code style="color:#22d3bf">flat_equivalent_distance</code> = 看起來同樣大小的平面鏡距離 k a(看起來較遠的量)。</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">vol_nearest_seed_vector — 3D <code style="color:#22d3bf">medial</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">flow_dense</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_nearest_seed_vector(vol_binary, spacing=None)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import volops; volops.vol_nearest_seed_vector(vol_binary, spacing=None)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;vol_nearest_seed_vector&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p><b>각 voxel에서 가장 가까운 seed voxel까지의 변위 벡터</b> <code style="color:#22d3bf">(3, D, H, W)</code>(<code style="color:#22d3bf">flow_dense</code>, 성분 dz, dy, dx [voxel]).</p>
 <p>seed = 0이 아닌 voxel(<code style="color:#22d3bf">&gt; 0.5</code>로 이진화). seed 위에서는 0. <code style="color:#22d3bf">vol_distance_transform</code>이 반환하는 것은 거리의 <b>값</b>뿐이어서, &quot;어느 voxel이 가장 가까운가&quot;는 사라진다 —— 골격으로부터의 반지름(표면 → 골격의 변위), 막까지의 두께, ESDF의 기울기, 라벨의 보로노이 분할에는 이 <b>방향</b>이 필요하다(2026-09-21, 커넥톰 기반의 구멍). <code style="color:#22d3bf">spacing</code> <code style="color:#22d3bf">(sz, sy, sx)</code>를 넘기면최근접 판정은 물리 거리로 한다(반환하는 변위는 voxel 단위 그대로 —— <code style="color:#22d3bf">|v * spacing|</code>가 물리 거리).</p>

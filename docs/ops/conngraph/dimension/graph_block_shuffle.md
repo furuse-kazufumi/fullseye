@@ -4,6 +4,7 @@ dim: conngraph
 category: dimension
 in: conn_graph × labels
 out: conn_graph
+gpu: なし
 examples: [poc_connectome_motor_bottleneck]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `conn_graph × labels` → `conn_graph`
 - **呼び出し**: `import fullseye as fs; fs.ledger.graph_block_shuffle(W: 'Any', labels: 'Any', seed: 'int' = 0) -> 'np.ndarray'` (実装を直接呼ぶなら `import conngraph; conngraph.graph_block_shuffle(W: 'Any', labels: 'Any', seed: 'int' = 0) -> 'np.ndarray'`、台帳から引くなら `opsconngraph.get("graph_block_shuffle")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

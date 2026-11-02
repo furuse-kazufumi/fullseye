@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">pairs_to_signal — REPRCONV <code style="color:#22d3bf">pairs</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pairs_to_signal(pairs)</code>(要直接调用实现,<code style="color:#22d3bf">import reprconv; reprconv.pairs_to_signal(pairs)</code>;从台账取用则 <code style="color:#22d3bf">opsreprconv.get(&quot;pairs_to_signal&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>对 <code style="color:#22d3bf">(N,2)</code> → 因变量的 <code style="color:#22d3bf">signal (N,)</code>。<code style="color:#22d3bf">pairs</code> 的第二个出口。</p>
 <p>只取出列 1(y)。<code style="color:#22d3bf">funct_1d_to_pairs</code> 返回把 (x, y) 并排的(N,2),这相当于它的反方向 —— <b>只要 x 是等间隔的</b>, <code style="color:#22d3bf">signal -&gt; pairs -&gt; signal</code> 就按位一致。传入 x 不等间隔的对时, <b>x 的信息会默默丢失</b>(<code style="color:#22d3bf">signal</code> 是以下标等间隔为前提的类型)。</p>

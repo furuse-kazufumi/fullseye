@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">food_cut_width — DRIVE <code style="color:#22d3bf">cutting</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">scalar × scalar × scalar × scalar</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.food_cut_width(theta_deg: &#x27;float&#x27;, edge_z_at_xc: &#x27;float&#x27;, food_w: &#x27;float&#x27;, food_top: &#x27;float&#x27;) -&gt; &#x27;float&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import cutting; cutting.food_cut_width(theta_deg: &#x27;float&#x27;, edge_z_at_xc: &#x27;float&#x27;, food_w: &#x27;float&#x27;, food_top: &#x27;float&#x27;) -&gt; &#x27;float&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;food_cut_width&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>刃口直線(在食材中央的高度 <code style="color:#22d3bf">edge_z_at_xc</code>，傾角 θ)位於食材上表面以下的 x 長度 = 正在切割的寬度(mm，閉合式)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

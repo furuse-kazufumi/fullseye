@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">curve_locality — MATH <code style="color:#22d3bf">construct</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.curve_locality(points, gaps=(1, 2, 4, 8, 16, 32))</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import mathops; mathops.curve_locality(points, gaps=(1, 2, 4, 8, 16, 32))</code>、台帳から引くなら <code style="color:#22d3bf">opsmath.get(&quot;curve_locality&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>曲線に沿って番号差 k の 2 点は、平面上でどれだけ離れているか。</p>
 <p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>

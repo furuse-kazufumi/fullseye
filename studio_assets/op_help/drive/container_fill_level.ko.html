@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">container_fill_level — DRIVE <code style="color:#22d3bf">granular</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.container_fill_level(side, *, threshold: &#x27;float&#x27; = 0.5) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import granular; granular.container_fill_level(side, *, threshold: &#x27;float&#x27; = 0.5) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;container_fill_level&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>용기 안쪽의 측면 영상(분체 피복률, 용기 내부 치수 = 영상)에서 충전율과 분체면의 기울기를 읽습니다.</p>
 <p>충전율 = 열별 분체면(임계값 교차, 부화소)의 평균 / 행 수. 분체면 → <code style="color:#22d3bf">fit_line</code> → <code style="color:#22d3bf">surface_tilt_deg</code>(오른쪽이 높을수록 양)와 <code style="color:#22d3bf">surface_rms</code>(평면으로부터의 어긋남 [px]). <b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 빔(임계값 이상의 화소가 없음)/ 가득 차서 분체면이 보이지 않음(최상행이 분체).</p>

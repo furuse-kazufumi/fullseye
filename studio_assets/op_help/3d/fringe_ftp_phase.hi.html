@@ -3,6 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">depth</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fringe_ftp_phase(image, carrier_axis=&#x27;x&#x27;, carrier_period=None, bandwidth=0.35, k=1.0, min_modulation=None, return_info=False)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import fringe; fringe.fringe_ftp_phase(image, carrier_axis=&#x27;x&#x27;, carrier_period=None, bandwidth=0.35, k=1.0, min_modulation=None, return_info=False)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;fringe_ftp_phase&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>Ledger के ज़रिए return value</b>: <code style="color:#22d3bf">fullseye.ledger.fringe_ftp_phase(...)</code> <b>केवल घोषित out type <code style="color:#22d3bf">depth</code> का value</b> लौटाता है (मूल function सहायक जानकारी भी लौटाता है)। जो हिस्सा छोड़ दिया गया है उसकी ज़रूरत हो तो <code style="color:#22d3bf">fullseye.ledger.fringe_ftp_phase.raw(...)</code> का उपयोग करें, या <code style="color:#22d3bf">fringe.fringe_ftp_phase</code> को सीधे call करें।</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Takeda Fourier-transform profilometry से एक fringe छवि से height/phase पुनर्प्राप्त करता है।</p>
 <p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>

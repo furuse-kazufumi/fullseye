@@ -2,7 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">match_sh_descriptor — 3D <code style="color:#22d3bf">describe</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">voxel × voxel</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.match_sh_descriptor(a, b, L=8, nradii=12, device=&#x27;cpu&#x27;)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import match3d; match3d.match_sh_descriptor(a, b, L=8, nradii=12, device=&#x27;cpu&#x27;)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;match_sh_descriptor&quot;)</code>)</p>
-<p style="margin:2px 0 2px 12px">• <b>GPU</b>: इस op का GPU path है (<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>दो SH descriptors के बीच cosine similarity (rotation-invariant shape matching)। 1 के जितना पास, shape उतनी समान। voxel × SH column।</p>
 <p><code style="color:#22d3bf">sh_descriptor(a, L, nradii)</code> और <code style="color:#22d3bf">sh_descriptor(b, L, nradii)</code> को flatten करके L2 normalise करता है और inner product को float के रूप में लौटाता है। band energy non-negative है, इसलिए मान <b>[0, 1]</b> में है (ऋणात्मक नहीं होता)। किसी एक descriptor के पूरे 0 होने पर (खाली volume) 0।</p>

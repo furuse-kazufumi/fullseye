@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">homotopy_class_compare — DRIVE <code style="color:#22d3bf">braidpath</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">any × any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.homotopy_class_compare(traj_a, traj_b, obstacles=None, angle=0.1, jitter=&#x27;auto&#x27;, tol=1e-09)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import braidpath; braidpath.homotopy_class_compare(traj_a, traj_b, obstacles=None, angle=0.1, jitter=&#x27;auto&#x27;, tol=1e-09)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;homotopy_class_compare&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>시작점과 끝점이 같은 두 경로족(복수 에이전트의 계획)이 같은 호모토피 류인지.</p>
 <p>충돌 없이(에이전트끼리도, 장애물 점과도 겹치지 않고) 시작점과 끝점을 고정한 채 연속적으로 변형할 수 있음 ⇔ 브레이드가 같음.</p>

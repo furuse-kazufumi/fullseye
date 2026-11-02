@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tid2013_metric_values — IMGMETRICS <code style="color:#22d3bf">iqa</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">any × any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tid2013_metric_values(root, metric: &#x27;str&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import iqatid; iqatid.tid2013_metric_values(root, metric: &#x27;str&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsimgmetrics.get(&quot;tid2013_metric_values&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>将作者的计算值 <code style="color:#22d3bf">metrics_values/&lt;metric&gt;.txt</code>(不区分大小写，3000 行，无名称)以 (3000,) float 返回。 行的顺序与 <code style="color:#22d3bf">tid2013_index</code> 的 <code style="color:#22d3bf">names</code> 相同。<code style="color:#22d3bf">metric</code> 为 <code style="color:#22d3bf">tid2013_published</code> 的键(psnr / psnrc / ssim / mssim …)。 <b>Raises</b> <code style="color:#22d3bf">ValueError</code>：文件不存在、行数 ≠ 3000、非数值。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>

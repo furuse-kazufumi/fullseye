@@ -4,6 +4,7 @@ dim: drive
 category: commonroad
 in: 
 out: any
+gpu: なし
 examples: [poc_driving_commonroad]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `any`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.cr_synthetic(kind: 'str' = 'tjunction', *, dt: 'float' = 0.1, speed_limit: 'float' = 13.89, v0: 'float' = 8.0) -> 'str'` (実装を直接呼ぶなら `import drivecommonroad; drivecommonroad.cr_synthetic(kind: 'str' = 'tjunction', *, dt: 'float' = 0.1, speed_limit: 'float' = 13.89, v0: 'float' = 8.0) -> 'str'`、台帳から引くなら `opsdrive.get("cr_synthetic")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

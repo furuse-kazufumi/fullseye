@@ -4,6 +4,7 @@ dim: blob
 category: split
 in: labels2d × labels2d × image2d
 out: labels2d
+gpu: なし
 examples: [blob_split_tour, poc_dense_bubble_count]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `labels2d × labels2d × image2d` → `labels2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.blob_split(labels: 'Any', seeds: 'Any', distance: 'Any') -> 'np.ndarray'` (実装を直接呼ぶなら `import blob2d; blob2d.blob_split(labels: 'Any', seeds: 'Any', distance: 'Any') -> 'np.ndarray'`、台帳から引くなら `opsblob.get("blob_split")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

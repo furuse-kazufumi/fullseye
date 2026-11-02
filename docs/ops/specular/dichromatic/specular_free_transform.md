@@ -4,6 +4,7 @@ dim: specular
 category: dichromatic
 in: rgbimage
 out: rgbimage
+gpu: なし
 examples: [poc_leaf_disease_area, specular_photometric]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `rgbimage` → `rgbimage`
 - **呼び出し**: `import fullseye as fs; fs.ledger.specular_free_transform(image_rgb, illuminant_rgb=(1.0, 1.0, 1.0))` (実装を直接呼ぶなら `import specularity; specularity.specular_free_transform(image_rgb, illuminant_rgb=(1.0, 1.0, 1.0))`、台帳から引くなら `opsspecular.get("specular_free_transform")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

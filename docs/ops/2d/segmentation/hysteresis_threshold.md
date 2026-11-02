@@ -5,6 +5,7 @@ category: segmentation
 in: image
 out: region
 halcon: hysteresis_threshold
+gpu: なし
 examples: [gallery2d_segmentation, poc_fresco_craquelure, poc_solar_el_inspection]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -16,6 +17,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **データ種**: `image` → `region`
 - **呼び出し**: `fullseye.apply(img, "hysteresis_threshold", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 - **HALCON 相当**: `hysteresis_threshold`(意味・パラメータは HALCON リファレンスが参考になる)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ![hysteresis_threshold: input → output](../../_fig/hysteresis_threshold.png)
 

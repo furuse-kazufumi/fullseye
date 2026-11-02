@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">camera_rig — DRIVE <code style="color:#22d3bf">ballworld</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.camera_rig(tp: &#x27;dict&#x27; = None, *, n: &#x27;int&#x27; = 2, distance: &#x27;float&#x27; = 2.2, height: &#x27;float&#x27; = 1.7, fov_deg: &#x27;float&#x27; = 55.0, width: &#x27;int&#x27; = 1280, height_px: &#x27;int&#x27; = 1024) -&gt; &#x27;list&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import ballworld; ballworld.camera_rig(tp: &#x27;dict&#x27; = None, *, n: &#x27;int&#x27; = 2, distance: &#x27;float&#x27; = 2.2, height: &#x27;float&#x27; = 1.7, fov_deg: &#x27;float&#x27; = 55.0, width: &#x27;int&#x27; = 1280, height_px: &#x27;int&#x27; = 1024) -&gt; &#x27;list&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;camera_rig&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>平台周围的摄像机（n = 2：两端对角线上方，n = 4：4 个角）。返回<code style="color:#22d3bf">[{&quot;pose&quot;, &quot;K&quot;, &quot;eye&quot;, &quot;width&quot;, &quot;height&quot;}, …]</code>，全部看着平台的中心。</p>
 <p>空输入(<code style="color:#22d3bf">tp</code> 为空 dict)会引发 <code style="color:#22d3bf">ValueError</code>。</p>

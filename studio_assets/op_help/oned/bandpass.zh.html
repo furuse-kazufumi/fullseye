@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">bandpass — ONED <code style="color:#22d3bf">signal</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.bandpass(x, rate, low, high, order=4)</code>(要直接调用实现,<code style="color:#22d3bf">import dsp; dsp.bandpass(x, rate, low, high, order=4)</code>;从台账取用则 <code style="color:#22d3bf">ops1d.get(&quot;bandpass&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>*low* 与 *high* Hz 之间的巴特沃斯带通。两端都必须在 <code style="color:#22d3bf">(0, rate/2)</code> 之内；长度约定与 <code style="color:#22d3bf">lowpass</code> 相同。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

@@ -4,6 +4,7 @@ dim: drive
 category: world
 in: table
 out: any
+gpu: なし
 examples: [poc_driving_crossing, poc_driving_decisions, poc_driving_lateral, poc_ttc_rss, poc_world_terrain]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `any`
 - **呼び出し**: `import fullseye as fs; fs.ledger.world_move(world: 'dict', i: 'int', x: 'float', y: 'float', yaw: 'float', z: 'float' = 0.0) -> 'None'` (実装を直接呼ぶなら `import driveworld; driveworld.world_move(world: 'dict', i: 'int', x: 'float', y: 'float', yaw: 'float', z: 'float' = 0.0) -> 'None'`、台帳から引くなら `opsdrive.get("world_move")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

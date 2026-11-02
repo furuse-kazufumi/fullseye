@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">container_fill_level — DRIVE <code style="color:#22d3bf">granular</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.container_fill_level(side, *, threshold: &#x27;float&#x27; = 0.5) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import granular; granular.container_fill_level(side, *, threshold: &#x27;float&#x27; = 0.5) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;container_fill_level&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Liest Füllgrad und Neigung der Pulveroberfläche aus einem Seitenbild des Behälterinneren (Pulverbedeckung, Behälterinnenmaß = Bild).</p>
 <p>Füllgrad = Mittelwert der Pulveroberfläche je Spalte (Schwellendurchgang, subpixelgenau) / Anzahl Zeilen. Pulveroberfläche → <code style="color:#22d3bf">fit_line</code> → <code style="color:#22d3bf">surface_tilt_deg</code> (positiv, je höher rechts) und <code style="color:#22d3bf">surface_rms</code> (Abweichung von der Ebene [px]). <b>Raises</b> <code style="color:#22d3bf">ValueError</code>: leer (keine Pixel über der Schwelle) / voll, Pulveroberfläche nicht sichtbar (oberste Zeile ist Pulver).</p>

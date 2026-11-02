@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">solid_angle_boundaries — OPTICS <code style="color:#22d3bf">illumination</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.solid_angle_boundaries(light, view_na=0.1)</code> (to call the implementation directly, <code style="color:#22d3bf">import illumdesign; illumdesign.solid_angle_boundaries(light, view_na=0.1)</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;solid_angle_boundaries&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Closed-form slope thresholds of a smooth specular facet (<code style="color:#22d3bf">table</code>).</p>
 <p>Illumination cone half-angle α, axis tilt ψ (from *light*); observation half-angle β = asin *view_na*. A facet tilted by θ in the plane of the cone tilt moves the mirrored cone axis to <code style="color:#22d3bf">d = |2θ − ψ|</code> from the camera axis. Returned:</p>

@@ -4,6 +4,7 @@ dim: drive
 category: pegsim
 in: rgb × image2d × matrix
 out: table
+gpu: なし
 examples: [gallery_drive_peg]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `rgb × image2d × matrix` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.hole_centre_from_rgbd(rgb, depth, K, peg_mask=None, radius: 'float | None' = None) -> 'dict'` (実装を直接呼ぶなら `import pegsim; pegsim.hole_centre_from_rgbd(rgb, depth, K, peg_mask=None, radius: 'float | None' = None) -> 'dict'`、台帳から引くなら `opsdrive.get("hole_centre_from_rgbd")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -4,6 +4,7 @@ dim: drive
 category: world
 in: table
 out: table
+gpu: なし
 examples: [gallery_drive_japan_roads, gallery_drive_world_objects, poc_driving_longitudinal, poc_driving_school, poc_driving_weather, poc_ttc_rss, poc_world_terrain]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.world_build(course, *, props=(), kerb_height: 'float' = 0.15, kerb_width: 'float' = 0.3, lines: 'bool' = True, ground_margin: 'float' = 8.0, ground_step: 'float' = 4.0, joint_step: 'float' = 0.5, asset_root=None) -> 'dict'` (実装を直接呼ぶなら `import driveworld; driveworld.world_build(course, *, props=(), kerb_height: 'float' = 0.15, kerb_width: 'float' = 0.3, lines: 'bool' = True, ground_margin: 'float' = 8.0, ground_step: 'float' = 4.0, joint_step: 'float' = 0.5, asset_root=None) -> 'dict'`、台帳から引くなら `opsdrive.get("world_build")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

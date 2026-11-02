@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">distance_line_line — 3D <code style="color:#22d3bf">geometry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">primitive</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.distance_line_line(p1, d1, p2, d2)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import match3d; match3d.distance_line_line(p1, d1, p2, d2)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;distance_line_line&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>2 直線間距離(ねじれの位置=skew も可)。平行なら点-線距離に退避。</p>
 <p>★これは<b>無限直線</b>の距離。手足・ロボットのリンク・配管のような<b>有限線分</b>に使うと、離れているのに 0 が返ることがある(実測: (0,0,0)-(1,0,0) と(5,0,0)-(6,0,0) で 0.0、真値 4.0)。線分どうしは <code style="color:#22d3bf">distance_segment_segment</code> を使うこと —— 安全距離の判定でここを取り違えると <b>危険を過小評価する</b>側に外れる。</p>

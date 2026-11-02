@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">sellmeier — OPTICS <code style="color:#22d3bf">design</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sellmeier(B1, B2, B3, C1, C2, C3, name=&#x27;custom&#x27;)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import raytrace; raytrace.sellmeier(B1, B2, B3, C1, C2, C3, name=&#x27;custom&#x27;)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;sellmeier&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>A dispersive medium from three-term Sellmeier constants (<code style="color:#22d3bf">table</code>).</p>
 <p><code style="color:#22d3bf">n²(λ) − 1 = B1 λ²/(λ² − C1) + B2 λ²/(λ² − C2) + B3 λ²/(λ² − C3)</code> with λ in µm (the form every glass maker publishes). Returns <code style="color:#22d3bf">{&quot;name&quot;, &quot;sellmeier&quot;, &quot;nd&quot;, &quot;vd&quot;, &quot;offset&quot;}</code> — *nd* / *vd* are <b>evaluated</b> from the curve, so they can be checked against the data sheet. <code style="color:#22d3bf">offset</code> (0) is an additive index shift used by <code style="color:#22d3bf">tolerance_analysis</code> for melt-to-melt variation.</p>

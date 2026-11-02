@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">optscene_instances — OPTICS <code style="color:#22d3bf">scene</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.optscene_instances(scene, camera, min_area_px: &#x27;int&#x27; = 1) -&gt; &#x27;list&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import optscene; optscene.optscene_instances(scene, camera, min_area_px: &#x27;int&#x27; = 1) -&gt; &#x27;list&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;optscene_instances&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>दोषों (defects) को <b>हर instance के हिसाब से</b> लौटाता है (class, pixel mask, bounding box, क्षेत्रफल)।</p>
 <p>केवल 1 संयुक्त mask से अलग-अलग individuals अलग नहीं होते, इसलिए यह detection या counting की training के लिए अनुपयोगी है। connected components से बाँटा जाता है; <code style="color:#22d3bf">min_area_px</code> से छोटे हटा दिए जाते हैं (1 pixel के कण गिने नहीं जाते)।</p>

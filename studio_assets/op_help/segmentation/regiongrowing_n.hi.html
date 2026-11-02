@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">regiongrowing_n — SEGMENTATION <code style="color:#22d3bf">grow</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">images</code> → <code style="color:#22d3bf">labels2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.regiongrowing_n(feature_images, tol=0.05, min_size=1)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import segmentation; segmentation.regiongrowing_n(feature_images, tol=0.05, min_size=1)</code>, registry से लेना हो तो <code style="color:#22d3bf">opssegmentation.get(&quot;regiongrowing_n&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>multi-channel feature की समानता से पूरी image का segmentation (regiongrowing_n)। label image लौटाता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>

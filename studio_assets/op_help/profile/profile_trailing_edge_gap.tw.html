@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">profile_trailing_edge_gap — PROFILE <code style="color:#22d3bf">measure</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.profile_trailing_edge_gap(contour, n=201)</code>(要直接呼叫實作,<code style="color:#22d3bf">import profileops; profileops.profile_trailing_edge_gap(contour, n=201)</code>;從台帳取用則 <code style="color:#22d3bf">opsprofile.get(&quot;profile_trailing_edge_gap&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>後緣開口(與弦長之比)。上表面與下表面後緣端點之間的距離。</p>
 <p>NACA 4 位數翼型的預設係數(-0.1015)使後緣<b>稍微張開</b>，因此結果不為 0 才是正確的。若用閉合係數(-0.1036)，則接近 0。</p>

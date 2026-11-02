@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">hash_distance — IMGFORENSICS <code style="color:#22d3bf">hash</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">phash × phash</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.hash_distance(hash1, hash2) -&gt; &#x27;int&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import imgforensics; imgforensics.hash_distance(hash1, hash2) -&gt; &#x27;int&#x27;</code>; from the registry, <code style="color:#22d3bf">opsimgforensics.get(&quot;hash_distance&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Hamming distance between two perceptual hashes (the number of differing bits).</p>
 <p>It <b>checks dtype and length and fails closed</b>. If a float 1-D array were accepted and counted with <code style="color:#22d3bf">!=</code>, almost certainly &quot;all bits differ&quot; = the maximum distance would come out, a *plausible* value —— but that is a type mix-up, not a difference between images.</p>

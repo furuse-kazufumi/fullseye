@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">exponential_foreground — VIDEOSTREAM <code style="color:#22d3bf">recursive</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">video</code> → <code style="color:#22d3bf">video</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.exponential_foreground(video, alpha: &#x27;float&#x27; = 0.05, threshold: &#x27;float&#x27; = 0.1) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import videostream; videostream.exponential_foreground(video, alpha: &#x27;float&#x27; = 0.05, threshold: &#x27;float&#x27; = 0.1) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsvideostream.get(&quot;exponential_foreground&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>前景掩码 <code style="color:#22d3bf">|frame − 指数背景| &gt; threshold</code> → 0/1 <code style="color:#22d3bf">(T, H, W)</code>(<code style="color:#22d3bf">video</code>)。</p>
 <p>运行与 <code style="color:#22d3bf">exponential_background</code> 相同的指数移动平均 <code style="color:#22d3bf">bg += α (frame - bg)</code>, 在每一帧把与<b>更新后的</b> <code style="color:#22d3bf">bg</code> 之差 <code style="color:#22d3bf">|frame - bg| &gt; threshold</code> 置为 1。第一帧用于初始化 <code style="color:#22d3bf">bg</code>，差为 0，因此 <code style="color:#22d3bf">t = 0</code> 全部像素为 0。</p>

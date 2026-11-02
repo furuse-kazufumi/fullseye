@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">iss_keypoints — 3D <code style="color:#22d3bf">feature_register</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">indices</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.iss_keypoints(points, radius, nms_radius=None, gamma21=0.99, gamma32=0.99, max_kp=400, min_neighbors=8)</code>(要直接调用实现,<code style="color:#22d3bf">import feat_shot; feat_shot.iss_keypoints(points, radius, nms_radius=None, gamma21=0.99, gamma32=0.99, max_kp=400, min_neighbors=8)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;iss_keypoints&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>ISS(Intrinsic Shape Signatures,相当于 3D Harris)关键点检测。</p>
 <p>以局部协方差的最小特征值 λ3 作为 saliency,只把特征值 distinct(方向 well-defined)的点作为候选,并用 NMS 稀疏地选取。旋转不变。返回值=点 index 数组。</p>

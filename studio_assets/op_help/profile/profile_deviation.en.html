@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">profile_deviation — PROFILE <code style="color:#22d3bf">compare</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">pairs × pairs</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.profile_deviation(measured, reference, n=200, align=&#x27;chord&#x27;, oversample=8)</code> (to call the implementation directly, <code style="color:#22d3bf">import profileops; profileops.profile_deviation(measured, reference, n=200, align=&#x27;chord&#x27;, oversample=8)</code>; from the registry, <code style="color:#22d3bf">opsprofile.get(&quot;profile_deviation&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>The <b>signed deviation along the normal</b> from the design shape. Returns a dict.</p>
 <p>Positive means &quot;the thick side (outward)&quot;, negative &quot;the thin side&quot;. The outward normal of the design contour is the reference.</p>

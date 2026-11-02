@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">annotate_outline_layout — ANNOTATE <code style="color:#22d3bf">paper</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">mask</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_outline_layout(mask)</code> (to call the implementation directly, <code style="color:#22d3bf">import annotate; annotate.annotate_outline_layout(mask)</code>; from the registry, <code style="color:#22d3bf">opsannotate.get(&quot;annotate_outline_layout&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Returns a table (dict): the boundary loops of a binary mask (closed polygons along pixel edges) and its centroid.</p>
 <p>Contours come from <code style="color:#22d3bf">contours_xld._trace_mask_boundaries</code> (outer + holes, per component). The polygon area matches the mask&#x27;s pixel count exactly.</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">energy_radii — OPTICS <code style="color:#22d3bf">imaging</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.energy_radii(psf, pixel_pitch_um=1.0, fractions=(0.5, 0.8, 0.9), kind=&#x27;circle&#x27;, centre=&#x27;centroid&#x27;)</code>(要直接呼叫實作,<code style="color:#22d3bf">import optics; optics.energy_radii(psf, pixel_pitch_um=1.0, fractions=(0.5, 0.8, 0.9), kind=&#x27;circle&#x27;, centre=&#x27;centroid&#x27;)</code>;從台帳取用則 <code style="color:#22d3bf">opsoptics.get(&quot;energy_radii&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>包含點擴散函數(PSF)指定能量比例的半徑(<code style="color:#22d3bf">table</code>)。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>

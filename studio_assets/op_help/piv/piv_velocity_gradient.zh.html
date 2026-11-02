@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">piv_velocity_gradient — PIV <code style="color:#22d3bf">field</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">flow2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_velocity_gradient(flow, spacing=1.0)</code>(要直接调用实现,<code style="color:#22d3bf">import pivops; pivops.piv_velocity_gradient(flow, spacing=1.0)</code>;从台账取用则 <code style="color:#22d3bf">opspiv.get(&quot;piv_velocity_gradient&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>一并返回速度梯度张量的各分量及由其导出的量。</p>
 <p>涡量、散度、Q 判据、旋涡强度、应变率<b>全都由同样的 4 个导数</b> 得出，因此汇总在这里，免得把梯度重算 4 次。各个 op (<code style="color:#22d3bf">piv_vorticity</code> 等)也可单独使用，但需要多个时请用这个。</p>

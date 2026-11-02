@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">vx_table_lookup — VX <code style="color:#22d3bf">pixel</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d × signal</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vx_table_lookup(image, table, *, offset=0)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import vxcore; vxcore.vx_table_lookup(image, table, *, offset=0)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsvx.get(&quot;vx_table_lookup&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>표 참조(3.47절): 출력 = table[화소값 + offset] (REQ-0421). U8과 S16을 받는다(REQ-0422). 출력의 dtype은 표의 dtype.</p>
 <p>*offset*: S16 의 표는 음의 화소값을 찾기 위해 중앙을 0 으로 둔다(VX_LUT_OFFSET, 전형적으로 32768). U8 은 0. ★표 바깥을 찾는 화소가 있으면 멈춘다(조용히 끝으로 붙이지 않는다).</p>

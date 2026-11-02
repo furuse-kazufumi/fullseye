@@ -4,6 +4,7 @@ dim: tomography
 category: spectral_xray
 in: images
 out: images
+gpu: なし
 examples: [poc_dual_energy_xray]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,6 +16,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **データ種**: `images` → `images`
 - **呼び出し**: `import fullseye as fs; fs.ledger.xray_channel_projection(thickness, materials_list=('MUSCLE_ICRU44',), channels=None, photons_per_pixel: 'float' = 100000.0, noise: 'bool' = True, seed: 'int' = 0) -> 'np.ndarray'` (実装を直接呼ぶなら `import dualxray; dualxray.xray_channel_projection(thickness, materials_list=('MUSCLE_ICRU44',), channels=None, photons_per_pixel: 'float' = 100000.0, noise: 'bool' = True, seed: 'int' = 0) -> 'np.ndarray'`、台帳から引くなら `opstomography.get("xray_channel_projection")`)
 - **台帳経由の戻り値**: `fullseye.ledger.xray_channel_projection(...)` は**宣言 out 型 `images` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.xray_channel_projection.raw(...)`、または `dualxray.xray_channel_projection` を直接呼ぶ。
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

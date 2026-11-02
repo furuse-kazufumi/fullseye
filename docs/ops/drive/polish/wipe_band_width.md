@@ -4,6 +4,7 @@ dim: drive
 category: polish
 in: scalar × scalar × scalar × scalar
 out: table
+gpu: なし
 examples: [poc_polish_wipe_measure]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `scalar × scalar × scalar × scalar` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.wipe_band_width(force: 'float', radius: 'float', k_p: 'float', coat: 'float', kind: 'str' = 'flat', estar=None) -> 'dict'` (実装を直接呼ぶなら `import polish; polish.wipe_band_width(force: 'float', radius: 'float', k_p: 'float', coat: 'float', kind: 'str' = 'flat', estar=None) -> 'dict'`、台帳から引くなら `opsdrive.get("wipe_band_width")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

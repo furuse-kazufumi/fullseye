@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">pixel_to_world — MEASURE1D <code style="color:#22d3bf">scale</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">measurement</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pixel_to_world(value_px, mm_per_px)</code>(要直接呼叫實作,<code style="color:#22d3bf">import measuring1d; measuring1d.pixel_to_world(value_px, mm_per_px)</code>;從台帳取用則 <code style="color:#22d3bf">opsmeasure1d.get(&quot;pixel_to_world&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把以像素量得的一個長度換算為實際尺寸 mm(<code style="color:#22d3bf">value_px * mm_per_px</code>)。</p>
 <p><code style="color:#22d3bf">mm_per_px</code> 應傳入用 <code style="color:#22d3bf">mm_per_px_from_reference</code> <b>實測</b>的值。<code style="color:#22d3bf">value_px</code> 可以為 0 或負數(差值、偏差可直接換算),但必須有限;<code style="color:#22d3bf">mm_per_px</code> 須為有限正數。否則 <code style="color:#22d3bf">ValueError</code>。回傳 float(<code style="color:#22d3bf">measurement</code> 型)。面積請自行乘以 mm/px 的平方(本 op 只處理長度)。</p>

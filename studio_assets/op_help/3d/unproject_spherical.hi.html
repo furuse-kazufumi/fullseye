@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">unproject_spherical — 3D <code style="color:#22d3bf">lidar_projection</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.unproject_spherical(range_img, v_fov=(-25.0, 15.0)) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import spherical_proj; spherical_proj.unproject_spherical(range_img, v_fov=(-25.0, 15.0)) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;unproject_spherical&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>spherical range image → 3D points (M, 3)। केवल range&gt;0 वाले cells को bin-centre angle पर back-project करता है।</p>
 <p><code style="color:#22d3bf">project_spherical</code> का inverse। row/column से bin <b>center</b> का (elevation, azimuth) वापस निकालता है, और संग्रहीत range को slant distance मानकर spherical → Cartesian coordinates में लौटाता है। खाली (सब 0) हो तो (0, 3) लौटाता है।</p>

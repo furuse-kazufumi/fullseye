@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">mls_smooth — 3D <code style="color:#22d3bf">preprocess</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mls_smooth(points, radius: &#x27;float&#x27;, order: &#x27;int&#x27; = 2, chunk: &#x27;int | None&#x27; = None, method: &#x27;str&#x27; = &#x27;exact&#x27;)</code>(要直接呼叫實作,<code style="color:#22d3bf">import pcl_filter; pcl_filter.mls_smooth(points, radius: &#x27;float&#x27;, order: &#x27;int&#x27; = 2, chunk: &#x27;int | None&#x27; = None, method: &#x27;str&#x27; = &#x27;exact&#x27;)</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;mls_smooth&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把每個點投影到局部多項式曲面上以去噪(Moving Least Squares 平滑)。</p>
 <p>對每個點收集半徑 <code style="color:#22d3bf">radius</code> 內的鄰域,以加權 PCA 估計局部平面(法線 n 與切平面的 2 個軸),對鄰域的「切平面上座標 (u,v) → 法線方向高度 h」以高斯加權最小平方擬合 order 次的多項式曲面。關注點自身對應局部座標的原點 (0,0), 因此沿法線方向移動擬合曲面在 (0,0) 處的高度(= 常數項), 投影到曲面上。能在保持面形狀的同時只平滑感測器雜訊。</p>

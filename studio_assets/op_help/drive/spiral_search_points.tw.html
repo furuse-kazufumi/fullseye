@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">spiral_search_points — DRIVE <code style="color:#22d3bf">pegsym</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">scalar × scalar × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.spiral_search_points(pitch: &#x27;float&#x27;, step: &#x27;float&#x27;, r_max: &#x27;float&#x27;, centre=(0.0, 0.0)) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import pegsym; pegsym.spiral_search_points(pitch: &#x27;float&#x27;, step: &#x27;float&#x27;, r_max: &#x27;float&#x27;, centre=(0.0, 0.0)) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;spiral_search_points&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>走滑搜尋點：阿基米德螺旋線 r = p φ/(2π) 在每個弧長<code style="color:#22d3bf">step</code> [m]（從中心）到半徑<code style="color:#22d3bf">r_max</code> 處。相鄰匝之間的間距=“節距”。如果倒角要捕獲的半徑為c，則相鄰匝之間的最差距離<code style="color:#22d3bf">sqrt((pitch/2)^2 + (step/2)^2)</code>小於或等於c，則可以覆蓋倒角。將此值作為“worst_gap”傳回。返回“points”(N, 2)、“worst_gap”、“n”。 <b>引發</b> ValueError：pitch·step·r_max ≤ 0，點數超過200,000。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

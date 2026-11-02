@@ -4,6 +4,7 @@ dim: imgmetrics
 category: perceptual
 in: image2d × image2d
 out: image2d
+gpu: なし
 examples: [poc_iqa_fsim_gmsd_vif]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d × image2d` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.gmsd_map(ref, dist, data_range: 'float' = 255.0, c: 'float' = 170.0, down_step: 'int' = 2) -> 'np.ndarray'` (実装を直接呼ぶなら `import iqafsim; iqafsim.gmsd_map(ref, dist, data_range: 'float' = 255.0, c: 'float' = 170.0, down_step: 'int' = 2) -> 'np.ndarray'`、台帳から引くなら `opsimgmetrics.get("gmsd_map")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

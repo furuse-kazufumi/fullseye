@@ -4,6 +4,7 @@ dim: 3d
 category: geodesic
 in: mesh
 out: signal
+gpu: なし
 examples: [pcl_geodesic]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `mesh` → `signal`
 - **呼び出し**: `import fullseye as fs; fs.ledger.geodesic_mesh(vertices: numpy.ndarray, faces: numpy.ndarray, source: int) -> numpy.ndarray` (実装を直接呼ぶなら `import geodesic3d; geodesic3d.geodesic_mesh(vertices: numpy.ndarray, faces: numpy.ndarray, source: int) -> numpy.ndarray`、台帳から引くなら `ops3d.get("geodesic_mesh")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

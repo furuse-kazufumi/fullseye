@@ -4,6 +4,7 @@ dim: drive
 category: diabolo
 in: signal × signal × scalar × scalar
 out: table
+gpu: なし
 examples: [poc_diabolo_model_and_vision]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal × signal × scalar × scalar` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.diabolo_spin_from_markers(phases, smears, dt: 'float', exposure: 'float', *, use_smear: 'bool' = True) -> 'dict'` (実装を直接呼ぶなら `import diabolo; diabolo.diabolo_spin_from_markers(phases, smears, dt: 'float', exposure: 'float', *, use_smear: 'bool' = True) -> 'dict'`、台帳から引くなら `opsdrive.get("diabolo_spin_from_markers")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

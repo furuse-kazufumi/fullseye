@@ -4,6 +4,7 @@ dim: drive
 category: pegfail
 in: table
 out: table
+gpu: なし
 examples: [poc_peg_failure_recovery]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.insertion_failure_validate(table=None) -> 'dict'` (実装を直接呼ぶなら `import pegfail; pegfail.insertion_failure_validate(table=None) -> 'dict'`、台帳から引くなら `opsdrive.get("insertion_failure_validate")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

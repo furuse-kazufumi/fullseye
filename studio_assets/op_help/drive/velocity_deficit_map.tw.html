@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">velocity_deficit_map — DRIVE <code style="color:#22d3bf">swarmflow</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.velocity_deficit_map(field, speed=None) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import swarmflow; swarmflow.velocity_deficit_map(field, speed=None) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;velocity_deficit_map&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>速度場 → 相對自由流的虧損 1 − u/U、橫向偏擺 v/U、速率虧損 1 − |v|/U。U 由使用者給定，或取上游端 15 % 處 u 的中位數。</p>
 <p>Returns:</p>

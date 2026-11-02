@@ -4,6 +4,7 @@ dim: drive
 category: diabolo
 in: rgb × table × table × table
 out: table
+gpu: なし
 examples: [poc_diabolo_model_and_vision]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `rgb × table × table × table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.diabolo_marker_phase(img, cam: 'dict', params: 'dict', pose: 'dict', *, nbins: 'int' = 720, widths=None) -> 'dict'` (実装を直接呼ぶなら `import diabolo; diabolo.diabolo_marker_phase(img, cam: 'dict', params: 'dict', pose: 'dict', *, nbins: 'int' = 720, widths=None) -> 'dict'`、台帳から引くなら `opsdrive.get("diabolo_marker_phase")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

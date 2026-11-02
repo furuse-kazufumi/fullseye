@@ -4,6 +4,7 @@ dim: astrostack
 category: cosmic
 in: images
 out: images
+gpu: なし
 examples: [astro_stacking]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -16,6 +17,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **呼び出し**: `import fullseye as fs; fs.ledger.cosmic_ray_reject_stack(frames, kappa=5.0, min_frames=3, read_sigma=None, gain=1.0)` (実装を直接呼ぶなら `import astrostack; astrostack.cosmic_ray_reject_stack(frames, kappa=5.0, min_frames=3, read_sigma=None, gain=1.0)`、台帳から引くなら `opsastrostack.get("cosmic_ray_reject_stack")`)
 - **台帳経由の戻り値**: `fullseye.ledger.cosmic_ray_reject_stack(...)` は**宣言 out 型 `images` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.cosmic_ray_reject_stack.raw(...)`、または `astrostack.cosmic_ray_reject_stack` を直接呼ぶ。
   - 本体の返り: `(cleaned, masks) -> images`
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

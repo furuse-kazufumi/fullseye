@@ -4,6 +4,7 @@ dim: imgforensics
 category: sensor
 in: image2d × fingerprint
 out: table
+gpu: なし
 examples: [image_forensics_audit, poc_prnu_camera_fingerprint]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d × fingerprint` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.fingerprint_correlate(image, fingerprint, denoiser: 'str' = 'wiener', sigma: 'float' = 0.02, exclude: 'int' = 11) -> 'dict'` (実装を直接呼ぶなら `import imgforensics; imgforensics.fingerprint_correlate(image, fingerprint, denoiser: 'str' = 'wiener', sigma: 'float' = 0.02, exclude: 'int' = 11) -> 'dict'`、台帳から引くなら `opsimgforensics.get("fingerprint_correlate")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

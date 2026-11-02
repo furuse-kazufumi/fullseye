@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">trials_for_all_success — SPC <code style="color:#22d3bf">pod</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">scalar</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.trials_for_all_success(p_min, *, confidence=0.95)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import pod; pod.trials_for_all_success(p_min, *, confidence=0.95)</code>、台帳から引くなら <code style="color:#22d3bf">opsspc.get(&quot;trials_for_all_success&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>全数成功で <code style="color:#22d3bf">p &gt;= p_min</code> を片側 <code style="color:#22d3bf">confidence</code> で示す最小試行数(<code style="color:#22d3bf">scalar</code>)。</p>
 <p>返り値は整数で、Clopper--Pearson の全数成功時の閉形式 <code style="color:#22d3bf">(1-confidence)**(1/n) &gt;= p_min</code> に基づく。たとえば POD &gt;= 0.90 を 95 % 信頼で示すには 29/29 が必要である。誤警報率 <code style="color:#22d3bf">p &lt;= p_max</code> を 0 件で示す件数は <code style="color:#22d3bf">trials_for_all_success(1-p_max, confidence=...)</code> と同じ。</p>

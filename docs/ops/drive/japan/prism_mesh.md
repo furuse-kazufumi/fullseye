@@ -4,6 +4,7 @@ dim: drive
 category: japan
 in: any
 out: any
+gpu: なし
 examples: [poc_print_layer_inspection]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `any` → `any`
 - **呼び出し**: `import fullseye as fs; fs.ledger.prism_mesh(footprint: 'np.ndarray | Sequence[Sequence[float]]', height: 'float', *, base_z: 'float' = 0.0) -> 'tuple[np.ndarray, np.ndarray, np.ndarray]'` (実装を直接呼ぶなら `import driveplateau; driveplateau.prism_mesh(footprint: 'np.ndarray | Sequence[Sequence[float]]', height: 'float', *, base_z: 'float' = 0.0) -> 'tuple[np.ndarray, np.ndarray, np.ndarray]'`、台帳から引くなら `opsdrive.get("prism_mesh")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

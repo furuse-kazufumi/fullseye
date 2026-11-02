@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">boussinesq_surface_displacement — DRIVE <code style="color:#22d3bf">tactorque</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">matrix × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.boussinesq_surface_displacement(p, kern: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import tactorque; tactorque.boussinesq_surface_displacement(p, kern: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;boussinesq_surface_displacement&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>normal pressure p (n, n) [Pa] → surface displacement <code style="color:#22d3bf">ux</code>, <code style="color:#22d3bf">uy</code> (kernel में <code style="color:#22d3bf">Kz</code> हो तो <code style="color:#22d3bf">uz</code>, धँसना धनात्मक) (n, n) [m]। 2n तक zero-padded linear convolution। <b>Raises</b> ValueError: p (n, n) नहीं है, kern <code style="color:#22d3bf">boussinesq_kernel</code> की table नहीं है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

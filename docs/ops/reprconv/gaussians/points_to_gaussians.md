@@ -4,6 +4,7 @@ dim: reprconv
 category: gaussians
 in: points
 out: gaussians
+gpu: なし
 examples: [representation_roundtrip]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `points` → `gaussians`
 - **呼び出し**: `import fullseye as fs; fs.ledger.points_to_gaussians(points, k=6, scale=1.0)` (実装を直接呼ぶなら `import reprconv; reprconv.points_to_gaussians(points, k=6, scale=1.0)`、台帳から引くなら `opsreprconv.get("points_to_gaussians")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

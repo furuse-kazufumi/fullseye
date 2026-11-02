@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">watermark_embed — IMGFORENSICS <code style="color:#22d3bf">watermark</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d × phash</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.watermark_embed(image, bits, strength: &#x27;float&#x27; = 0.1, wavelet: &#x27;str&#x27; = &#x27;haar&#x27;, level: &#x27;int&#x27; = 1) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import imgforensics; imgforensics.watermark_embed(image, bits, strength: &#x27;float&#x27; = 0.1, wavelet: &#x27;str&#x27; = &#x27;haar&#x27;, level: &#x27;int&#x27; = 1) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsimgforensics.get(&quot;watermark_embed&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>DWT-DCT <b>数字水印</b>嵌入。返回含水印图像 <code style="color:#22d3bf">(H, W)</code>。<code style="color:#22d3bf">image2d</code>。</p>
 <p>把 1 级 DWT(默认 haar)的 LL 子频带切成 8x8，以各块正交 DCT-II 的 <b>中频带系数对</b> <code style="color:#22d3bf">(3,1)</code> 与 <code style="color:#22d3bf">(1,3)</code> 的大小关系表示 1 位(Hsu &amp; Wu 1999 的中频带系数对法)。差小于 <code style="color:#22d3bf">strength</code> 时，<b>对称地</b>移动两者直到差达到 <code style="color:#22d3bf">strength</code>(只移动一方会使块的能量偏斜)。提取时不需要原图像(盲)。</p>

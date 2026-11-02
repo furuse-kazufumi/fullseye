@@ -4,6 +4,7 @@ dim: drive
 category: polish
 in: image2d × scalar
 out: image2d
+gpu: なし
 examples: [poc_polish_wipe_measure]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d × scalar` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.coat_thickness_from_image(image, coat: 'float', optical_depth: 'float' = 1.3862943611198906, bare: 'float' = 0.85) -> 'np.ndarray'` (実装を直接呼ぶなら `import polish; polish.coat_thickness_from_image(image, coat: 'float', optical_depth: 'float' = 1.3862943611198906, bare: 'float' = 0.85) -> 'np.ndarray'`、台帳から引くなら `opsdrive.get("coat_thickness_from_image")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

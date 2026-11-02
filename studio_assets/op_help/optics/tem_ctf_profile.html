@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tem_ctf_profile — OPTICS <code style="color:#22d3bf">tem</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tem_ctf_profile(k_max=0.5, n_points=1000, kv=300.0, cs_mm=2.7, defocus_A=10000.0, amplitude_contrast=0.07, phase_shift_deg=0.0, alpha_mrad=0.0, focal_spread_A=0.0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import temsim; temsim.tem_ctf_profile(k_max=0.5, n_points=1000, kv=300.0, cs_mm=2.7, defocus_A=10000.0, amplitude_contrast=0.07, phase_shift_deg=0.0, alpha_mrad=0.0, focal_spread_A=0.0)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;tem_ctf_profile&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>1-D の動径の CTF 曲線(包絡つき)と零点の表。</p>
 <p>返り値: <code style="color:#22d3bf">k</code>(Å⁻¹、0〜k_max)/ <code style="color:#22d3bf">ctf</code>(包絡なし)/ <code style="color:#22d3bf">ctf_env</code>(E_s E_t 込み)/ <code style="color:#22d3bf">envelope_spatial</code> / <code style="color:#22d3bf">envelope_temporal</code> / <code style="color:#22d3bf">zeros_A_inv</code>(閉形式の零点、χ + arcsin w = nπ を解いた k)/ <code style="color:#22d3bf">information_limit_A</code> (時間包絡が e⁻² になる周波数の逆数、焦点の広がりが 0 なら None)。非点収差の無い動径(Δf 一定)。</p>

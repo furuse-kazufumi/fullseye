@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">idm_equilibrium_gap — DRIVE <code style="color:#22d3bf">traffic</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.idm_equilibrium_gap(v, *, v0: &#x27;float&#x27;, T: &#x27;float&#x27;, s0: &#x27;float&#x27;, delta: &#x27;float&#x27; = 4.0)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivetraffic; drivetraffic.idm_equilibrium_gap(v, *, v0: &#x27;float&#x27;, T: &#x27;float&#x27;, s0: &#x27;float&#x27;, delta: &#x27;float&#x27; = 4.0)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;idm_equilibrium_gap&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>IDM의 평형 차간 거리 s_e(v) = (s0 + v T) / sqrt(1 − (v/v0)^δ)(0 ≤ v &lt; v0).</p>
 <p>Δv = 0 에서 <code style="color:#22d3bf">idm_accel</code> = 0 으로 두고 푼 것(s* = s0 + vT). v → v0 에서 발산한다(희망 속도에서는 차간이 필요 없다 = 앞이 무한히 멀다). a, b 에 의존하지 않는다.</p>

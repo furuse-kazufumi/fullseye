@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">perpetual_truchet — GENERATIVE <code style="color:#22d3bf">perpetual</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">rgb</code> (an op determined by its arguments alone — it takes no image or data input)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.perpetual_truchet(cols: &#x27;int&#x27; = 16, rows: &#x27;int&#x27; = 12, cell: &#x27;int&#x27; = 34, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import perpetual; perpetual.perpetual_truchet(cols: &#x27;int&#x27; = 16, rows: &#x27;int&#x27; = 12, cell: &#x27;int&#x27; = 34, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsgenerative.get(&quot;perpetual_truchet&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Truchet tiles — just randomizing the orientation of 2 quarter-circle arcs yields an unbroken network of curves.</p>
 <p>Invariant: arc endpoints <b>always fall at edge midpoints</b>, so however neighbours combine, the connection never breaks.</p>

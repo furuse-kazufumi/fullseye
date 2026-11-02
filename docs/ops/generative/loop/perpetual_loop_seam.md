@@ -4,6 +4,7 @@ dim: generative
 category: loop
 in: rgbvideo
 out: table
+gpu: なし
 examples: [poc_endless_zoom_and_turning_solids, poc_illusions_and_perpetual_drawing, poc_periodic_video_boundary]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `rgbvideo` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.perpetual_loop_seam(video: 'np.ndarray') -> 'dict'` (実装を直接呼ぶなら `import perpetual; perpetual.perpetual_loop_seam(video: 'np.ndarray') -> 'dict'`、台帳から引くなら `opsgenerative.get("perpetual_loop_seam")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

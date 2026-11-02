@@ -4,6 +4,7 @@ dim: drive
 category: cutting
 in: table × scalar
 out: any
+gpu: なし
 examples: [poc_food_cutting_measure]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table × scalar` → `any`
 - **呼び出し**: `import fullseye as fs; fs.ledger.cutting_wrist_mjcf(scene=None, theta_deg: 'float' = 4.0, k_n_per_mm: 'float' = 4.0, damping: 'float' = 25.0, mass: 'float' = 0.15) -> 'str'` (実装を直接呼ぶなら `import cutting; cutting.cutting_wrist_mjcf(scene=None, theta_deg: 'float' = 4.0, k_n_per_mm: 'float' = 4.0, damping: 'float' = 25.0, mass: 'float' = 0.15) -> 'str'`、台帳から引くなら `opsdrive.get("cutting_wrist_mjcf")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

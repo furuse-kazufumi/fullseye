@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">pixel_shift_merge — OPTICS <code style="color:#22d3bf">pixelshift</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">video × matrix</code> → <code style="color:#22d3bf">rgbimage</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pixel_shift_merge(frames, shifts, pattern=&#x27;RGGB&#x27;, scale=1, motion_threshold=0.0, noise_sigma=0.0)</code> (die Implementierung direkt: <code style="color:#22d3bf">import pixelshift; pixelshift.pixel_shift_merge(frames, shifts, pattern=&#x27;RGGB&#x27;, scale=1, motion_threshold=0.0, noise_sigma=0.0)</code>; aus dem Register: <code style="color:#22d3bf">opsoptics.get(&quot;pixel_shift_merge&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Pixel-Shift-Bilder mit den <b>nominalen</b> Verschiebungen auf das Raster einsortieren und zusammenführen. Keine Interpolation (nur der Mittelwert der Abtastwerte je Rasterpunkt).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>

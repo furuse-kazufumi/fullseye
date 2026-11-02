@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">nice_ticks — ANNOTATE <code style="color:#22d3bf">plot</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">signal</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.nice_ticks(lo, hi, n=5, scale=&#x27;linear&#x27;)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import annotate; annotate.nice_ticks(lo, hi, n=5, scale=&#x27;linear&#x27;)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsannotate.get(&quot;nice_ticks&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>[lo, hi] को ढकने वाले &quot;गोल&quot; tick मान (1/2/5 × 10^k, <b>closed form</b>)।</p>
 <p>सिरे <b>शामिल किए जाते हैं</b> (यदि <code style="color:#22d3bf">lo</code> या <code style="color:#22d3bf">hi</code> ठीक tick पर पड़े, तो वह हमेशा दिखता है)। floating-point rounding से 1 सिरा छूट जाने वाली off-by-one से बचने के लिए, जाँच में <code style="color:#22d3bf">step*1e-9</code> की tolerance इस्तेमाल होती है।</p>

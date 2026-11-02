@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">register_cpd_rigid — 3D <code style="color:#22d3bf">deform</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">pose</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.register_cpd_rigid(src, dst, iters=50, w=0.0, tol=1e-08)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import deform3d; deform3d.register_cpd_rigid(src, dst, iters=50, w=0.0, tol=1e-08)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;register_cpd_rigid&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Coherent Point Drift(CPD)剛体版で回転+並進を EM 推定する。</p>
 <p><code style="color:#22d3bf">src</code>(移動側 Y, M点)を <code style="color:#22d3bf">dst</code>(固定側 X, N点)へ剛体変換で合わせる。CPD は dst を、src を中心に置いた等方ガウス混合の重心と見なし、E ステップで軟対応(posterior)を、M ステップで最尤の剛体変換と分散を更新する。ICP と違い対応をハードに決めないため、初期ずれ・部分的外れ値に頑健。スケールは 1 固定(純剛体)。</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">triangulate_column — 3D <code style="color:#22d3bf">structured_light</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">depth</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.triangulate_column(column, k_cam, k_proj, rot, trans) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import fringe; fringe.triangulate_column(column, k_cam, k_proj, rot, trans) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;triangulate_column&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>हर camera pixel के &quot;projector column number&quot; से depth Z को triangulate करता है (structured light का अंतिम stage)।</p>
 <p>structured-light scanner की geometry ख़ुद: camera pixel (u,v) 1 line of sight बनाता है, और projector का column number u_p 1 plane बनाता है (projector center और उस column वाला plane)। line of sight और plane का intersection surface का 3D point है, और उसका camera-frame Z ही depth है। यह <b>closed form</b> है, इसलिए न iteration चाहिए न optimisation।</p>

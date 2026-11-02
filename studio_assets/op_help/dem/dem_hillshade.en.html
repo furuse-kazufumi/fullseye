@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">dem_hillshade — DEM <code style="color:#22d3bf">shading</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">depth</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_hillshade(dem, cell_size, azimuth_deg=315.0, altitude_deg=45.0, z_factor=1.0, method=&#x27;horn&#x27;)</code> (to call the implementation directly, <code style="color:#22d3bf">import demops; demops.dem_hillshade(dem, cell_size, azimuth_deg=315.0, altitude_deg=45.0, z_factor=1.0, method=&#x27;horn&#x27;)</code>; from the registry, <code style="color:#22d3bf">opsdem.get(&quot;dem_hillshade&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Hillshade [0,1]. <code style="color:#22d3bf">azimuth_deg</code> is the azimuth of the light source (north 0 degrees, increasing towards east).</p>
 <p>It is Lambert&#x27;s cosine law as is, and <b>occlusion is not considered</b> (the portion shadowed by a ridge in front of the cell is not included). If cast shadows are needed, combine with <code style="color:#22d3bf">dem_horizon_angle</code> —— assuming &quot;the hillshade contains shadows&quot; is the classic misconception.</p>

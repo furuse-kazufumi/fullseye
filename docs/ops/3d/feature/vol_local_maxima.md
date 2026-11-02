@@ -4,6 +4,7 @@ dim: 3d
 category: feature
 in: voxel
 out: points
+gpu: なし
 examples: [molecule_atom_count, vessel_metrology]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `voxel` → `points`
 - **呼び出し**: `import fullseye as fs; fs.ledger.vol_local_maxima(vol, min_distance, threshold=None)` (実装を直接呼ぶなら `import volops; volops.vol_local_maxima(vol, min_distance, threshold=None)`、台帳から引くなら `ops3d.get("vol_local_maxima")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

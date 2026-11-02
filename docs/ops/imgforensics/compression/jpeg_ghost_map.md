@@ -4,6 +4,7 @@ dim: imgforensics
 category: compression
 in: image2d
 out: images
+gpu: なし
 examples: [image_forensics_audit, poc_forensics_roc]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d` → `images`
 - **呼び出し**: `import fullseye as fs; fs.ledger.jpeg_ghost_map(image, qualities=None, block: 'int' = 16) -> 'list'` (実装を直接呼ぶなら `import imgforensics; imgforensics.jpeg_ghost_map(image, qualities=None, block: 'int' = 16) -> 'list'`、台帳から引くなら `opsimgforensics.get("jpeg_ghost_map")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">create_metrology_model — MEASURE1D <code style="color:#22d3bf">model</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">metrologymodel</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.create_metrology_model() -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import metrology; metrology.create_metrology_model() -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsmeasure1d.get(&quot;create_metrology_model&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>खाली metrology model बनाता है (create_metrology_model)।</p>
 <p>return value <code style="color:#22d3bf">{&quot;objects&quot;: []}</code> की dict है (<code style="color:#22d3bf">metrologymodel</code> type)। इस पर <code style="color:#22d3bf">add_metrology_object_line_measure</code> / <code style="color:#22d3bf">..._circle_measure</code> / <code style="color:#22d3bf">..._rectangle2_measure</code> / <code style="color:#22d3bf">..._ellipse_measure</code> / <code style="color:#22d3bf">..._generic</code> से reference shapes जमा करके, <code style="color:#22d3bf">apply_metrology_model(model, image)</code> से एक साथ माप लिया जाता है।</p>

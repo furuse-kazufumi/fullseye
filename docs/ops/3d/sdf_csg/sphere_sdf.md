@@ -4,6 +4,7 @@ dim: 3d
 category: sdf_csg
 in: coordgrid
 out: sdf
+gpu: なし
 examples: [annotate3d_figure, gear_metrology, molecule_atom_count, procedural_hand, render_beauty, sdf_csg, sfm_recon]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `coordgrid` → `sdf`
 - **呼び出し**: `import fullseye as fs; fs.ledger.sphere_sdf(grid, center, R)` (実装を直接呼ぶなら `import sdf_ops; sdf_ops.sphere_sdf(grid, center, R)`、台帳から引くなら `ops3d.get("sphere_sdf")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

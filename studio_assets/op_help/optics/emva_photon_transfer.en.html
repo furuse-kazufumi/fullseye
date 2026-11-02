@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">emva_photon_transfer — OPTICS <code style="color:#22d3bf">sensorchar</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.emva_photon_transfer(mu_y, var_y, mu_y_dark, var_y_dark, mu_y_sat)</code> (to call the implementation directly, <code style="color:#22d3bf">import sensorchar; sensorchar.emva_photon_transfer(mu_y, var_y, mu_y_dark, var_y_dark, mu_y_sat)</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;emva_photon_transfer&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Derives the system gain K and the dark noise σ_d from the photon transfer curve (Eqs. 50, 53, 54).</p>
 <p>*mu_y*, *var_y*: mean and temporal variance per exposure step (<code style="color:#22d3bf">mu</code> and <code style="color:#22d3bf">var_temporal</code> of <code style="color:#22d3bf">emva_pair_statistics</code>). *mu_y_dark*, *var_y_dark*: the same quantities for dark images. *mu_y_sat*: mean at saturation (measured at the exposure where 0.1–0.2 % of the pixels reach the maximum value).</p>

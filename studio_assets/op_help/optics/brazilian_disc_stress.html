@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">brazilian_disc_stress — OPTICS <code style="color:#22d3bf">photoelastic</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.brazilian_disc_stress(radius_m=0.025, thickness_m=0.006, load_n=500.0, size=129, x=None, y=None)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import photoelastic; photoelastic.brazilian_disc_stress(radius_m=0.025, thickness_m=0.006, load_n=500.0, size=129, x=None, y=None)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;brazilian_disc_stress&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>直径方向に圧縮された円板(Brazilian disc)の平面応力 σx, σy, τxy の閉形式 → dict。</p>
 <p>Diametrically compressed disc, point loads <code style="color:#22d3bf">load_n</code> [N] at <code style="color:#22d3bf">(0, ±R)</code> acting along the y axis, plane stress (Hondros / Frocht)::</p>

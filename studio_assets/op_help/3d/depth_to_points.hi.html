@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">depth_to_points — 3D <code style="color:#22d3bf">transform</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">depth</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.depth_to_points(depth, fx, fy, cx, cy, stride=1)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import match3d; match3d.depth_to_points(depth, fx, fy, cx, cy, stride=1)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;depth_to_points&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>depth map (2.5D) → point cloud (pinhole back-projection)। depth row को सभी methods से जोड़ता है।</p>
 <p>Pixel (row v, column u) की depth z से <code style="color:#22d3bf">X = (u − cx)·z/fx</code>, <code style="color:#22d3bf">Y = (v − cy)·z/fy</code>, <code style="color:#22d3bf">Z = z</code> बनाए जाते हैं। Return value <code style="color:#22d3bf">(N,3)</code> float64 है, columns <b>(X, Y, Z) camera coordinates</b> हैं (depth वाली ही इकाई)। जिन pixel में z 0 या उससे कम हो उन्हें हटा दिया जाता है, इसलिए N pixel की संख्या से ज़्यादा नहीं होता (नियम: invalid depth को 0 से दिखाया जाता है)।</p>

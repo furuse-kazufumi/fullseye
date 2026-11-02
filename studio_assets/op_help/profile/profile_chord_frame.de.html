@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">profile_chord_frame — PROFILE <code style="color:#22d3bf">frame</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.profile_chord_frame(contour)</code> (die Implementierung direkt: <code style="color:#22d3bf">import profileops; profileops.profile_chord_frame(contour)</code>; aus dem Register: <code style="color:#22d3bf">opsprofile.get(&quot;profile_chord_frame&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Bestimmt die Sehne (die 2 am weitesten voneinander entfernten Punkte). Rückgabe: dict.</p>
 <p>Gemäß der Profilkonvention werden <b>die 2 am weitesten voneinander entfernten Punkte</b> als Vorder- und Hinterkante genommen. Welcher die Vorderkante ist, entscheidet <b>die Seite mit der größeren lokalen Dicke (girth)</b>; die Krümmung wird nicht verwendet, weil sie eine scharfe Hinterkante als Vorderkante fehlklassifiziert.</p>

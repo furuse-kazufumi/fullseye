@@ -4,6 +4,7 @@ dim: drive
 category: puck
 in: table
 out: any
+gpu: なし
 examples: [poc_air_hockey_intercept]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `any`
 - **呼び出し**: `import fullseye as fs; fs.ledger.puck_scene_mjcf(table: 'dict', *, cam_height: 'float' = 1.5, fovy: 'float' = 50.0, offwidth: 'int' = 1024, offheight: 'int' = 768) -> 'str'` (実装を直接呼ぶなら `import puck; puck.puck_scene_mjcf(table: 'dict', *, cam_height: 'float' = 1.5, fovy: 'float' = 50.0, offwidth: 'int' = 1024, offheight: 'int' = 768) -> 'str'`、台帳から引くなら `opsdrive.get("puck_scene_mjcf")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

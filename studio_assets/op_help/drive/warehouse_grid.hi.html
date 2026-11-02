@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">warehouse_grid — DRIVE <code style="color:#22d3bf">agv</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">any</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.warehouse_grid(n_rack_rows=3, n_rack_cols=4, rack_len=4, aisle=1, margin=2)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import agvfleet; agvfleet.warehouse_grid(n_rack_rows=3, n_rack_cols=4, rack_len=4, aisle=1, margin=2)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;warehouse_grid&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>shelves की rows और गलियारों से बना warehouse grid (True = चलने योग्य)।</p>
 <p>एक शेल्फ 1 पंक्ति x <code style="color:#22d3bf">रैक_लेन</code> वर्गों का एक क्षैतिज ब्लॉक है, जो ऊपर, नीचे, बाएँ और दाएँ पर <code style="color:#22d3bf">गलियारे</code> चौड़ाई के गलियारों से घिरा हुआ है। परिधि के चारों ओर <code style="color:#22d3bf">मार्जिन</code> चौकोर रनिंग ज़ोन (स्टेशन के सामने) रखें। रिटर्न <code style="color:#22d3bf">(ग्रिड, जानकारी)</code> है, जहां जानकारी में रैक, <code style="color:#22d3bf">रैक&#x27;&#x27; और ग्रिड के </code>आकार&#x27;&#x27; की एक सूची है।</p>

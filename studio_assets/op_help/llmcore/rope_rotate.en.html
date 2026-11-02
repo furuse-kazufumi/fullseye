@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">rope_rotate — LLMCORE <code style="color:#22d3bf">prepare</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">tokens</code> → <code style="color:#22d3bf">tokens</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rope_rotate(tokens, positions=None, base: &#x27;float&#x27; = 10000.0) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import llmcore; llmcore.rope_rotate(tokens, positions=None, base: &#x27;float&#x27; = 10000.0) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsllmcore.get(&quot;rope_rotate&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Rotary position encoding (RoPE) → tokens. <b>Being a rotation, it preserves the norm</b>.</p>
 <p>Su et al. 2021. Each even/odd pair (x₂ᵢ, x₂ᵢ₊₁) is rotated by the angle <code style="color:#22d3bf">pos · base**(−2i/d)</code>. It is a direct sum of plane rotations, so <code style="color:#22d3bf">‖RoPE(x)‖ == ‖x‖</code> holds <b>exactly</b> (measured 8.9e-16), and the inner product of 2 rotated vectors is determined <b>only by the difference in position</b> (shifting the absolute position 40 ways gives a spread of 8.9e-15) — the claim &quot;relative position is embedded in the inner product&quot; becomes the cross-check as it stands.</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">dem_ecef_to_geodetic — DEM <code style="color:#22d3bf">geodesy</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_ecef_to_geodetic(xyz)</code> (to call the implementation directly, <code style="color:#22d3bf">import demops; demops.dem_ecef_to_geodetic(xyz)</code>; from the registry, <code style="color:#22d3bf">opsdem.get(&quot;dem_ecef_to_geodetic&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>ECEF → geodetic coordinates. Returns <code style="color:#22d3bf">(..., 3)</code> holding <code style="color:#22d3bf">(latitude[deg], longitude[deg], height[m])</code>.</p>
 <p>A method close to the closed form of Bowring (1976). The round-trip (geodetic→ECEF→geodetic) error <b>shifts by more than an order of magnitude depending on where it is sampled</b>, so it is stated with ranges (re-measured 2026-09-08. Previously this read &quot;latitude/longitude under 1e-12 degrees, height under 1e-7 m&quot;, but ★with 4000 points at latitude ±85 degrees and height -500 to 9000 m that was already exceeded at <b>max 6.4e-12 degrees / 8.5e-07 m</b> —— it had been confused with the median 2.6e-13 degrees / 3.3e-08 m):</p>

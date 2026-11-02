@@ -4,6 +4,7 @@ dim: 3d
 category: deform
 in: deformation × points
 out: points
+gpu: なし
 examples: [nonrigid_deform]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `deformation × points` → `points`
 - **呼び出し**: `import fullseye as fs; fs.ledger.tps_warp(model, points)` (実装を直接呼ぶなら `import deform3d; deform3d.tps_warp(model, points)`、台帳から引くなら `ops3d.get("tps_warp")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">insertion_grid_summary — DRIVE <code style="color:#22d3bf">pegsim</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.insertion_grid_summary(rows) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import pegsim; pegsim.insertion_grid_summary(rows) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;insertion_grid_summary&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>성공률 격자를 집계: 행 = {eps_mm, tilt_deg, correct, success}의 열로부터 보정 있음/없음 × ε₀ × θ₀의 성공률 표와, &quot;보정 없이 모두 성공하는 최대 ε₀&quot;, &quot;보정 있음의 성공 수 / 총수&quot;.</p>
 <p>반환: <code style="color:#22d3bf">eps_mm</code>, <code style="color:#22d3bf">tilt_deg</code>(축), <code style="color:#22d3bf">rate</code>: {False: (n_eps, n_tilt) 배열, True: 동일}, <code style="color:#22d3bf">n_runs</code>, <code style="color:#22d3bf">max_eps_all_ok</code>:</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">plan_conflicts — DRIVE <code style="color:#22d3bf">agv</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.plan_conflicts(paths)</code> (die Implementierung direkt: <code style="color:#22d3bf">import agvfleet; agvfleet.plan_conflicts(paths)</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;plan_conflicts&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Liste der Konflikte: gleiche Zelle zur gleichen Zeit (vertex), Aneinander-Vorbeifahren (edge), Folgen (follow).</p>
 <p>Rückgabe ist <code style="color:#22d3bf">[(種類, i, j, 時刻, マス)]</code>. Ein angekommenes Fahrzeug wird so gezählt, als bliebe es an Ort und Stelle. follow bedeutet „wenn i zum Zeitpunkt t in Zelle v <b>eintritt</b>, war j zu t-1 in v und hat v zu t verlassen“ (i ≠ j).</p>

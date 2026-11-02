@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">signed_surface_distance — SHAPESTAT <code style="color:#22d3bf">deviation</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.signed_surface_distance(query, surface, surface_normals=None, k: &#x27;int&#x27; = 1)</code>(要直接调用实现,<code style="color:#22d3bf">import shapestats; shapestats.signed_surface_distance(query, surface, surface_normals=None, k: &#x27;int&#x27; = 1)</code>;从台账取用则 <code style="color:#22d3bf">opsshapestat.get(&quot;signed_surface_distance&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>查询点到曲面的<b>带符号</b>距离。→ <code style="color:#22d3bf">(N,)</code>。</p>
 <p>符号由面的法线决定(外侧为正)。1-D 轮廓有 <code style="color:#22d3bf">profileops.profile_deviation</code>，而 3-D 却没有相应的东西 —— 这是 2026-09-06 PoC 暴露出的漏洞。</p>

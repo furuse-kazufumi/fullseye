@@ -3,6 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">primitive</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.distance_segment_segment(p0, p1, q0, q1)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import match3d; match3d.distance_segment_segment(p0, p1, q0, q1)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;distance_segment_segment&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>원장 경유의 반환값</b>: <code style="color:#22d3bf">fullseye.ledger.distance_segment_segment(...)</code> 는 <b>선언된 out 형 <code style="color:#22d3bf">measurement</code> 의 값만</b> 반환합니다(실제 함수는 보조 정보도 반환). 버려진 쪽이 필요하면 <code style="color:#22d3bf">fullseye.ledger.distance_segment_segment.raw(...)</code> 를 쓰거나 <code style="color:#22d3bf">match3d.distance_segment_segment</code> 를 직접 호출하세요.</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p><b>유한 선분</b>끼리의 최단 거리와 그 최근접점의 쌍. → <code style="color:#22d3bf">(distance, cp, cq)</code>.</p>
 <p><code style="color:#22d3bf">distance_line_line</code>은 <b>무한 직선</b> 사이의 거리이므로, 떨어져 있는 2개 선분에 0을 반환할 수있다(실측: (0,0,0)-(1,0,0)과 (5,0,0)-(6,0,0)에 대해 0.0, 참값은 4.0). 팔다리, 로봇 링크, 배관, 공구는 모두 <b>유한</b>하므로, 안전 거리나 간섭 판정에무한 직선 버전을 사용하면 <b>위험을 과소평가한다</b>(<code style="color:#22d3bf">poc_safety_clearance</code>의 실측에서는같은 2개에 대해 87.6 %의 과소평가).</p>

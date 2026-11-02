@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">estimate_alpha — 3D <code style="color:#22d3bf">reconstruct</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.estimate_alpha(points)</code>(要直接调用实现,<code style="color:#22d3bf">import recon3d; recon3d.estimate_alpha(points)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;estimate_alpha&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由点群的尺度给出推荐 alpha(基于最近邻距离的中位数)。</p>
 <p>求各点最近邻距离的中位数 <code style="color:#22d3bf">m</code>,返回 <code style="color:#22d3bf">alpha = 1/(2m)</code>,使半径阈值 1/alpha ≈ 2m(允许到相邻间距的约 2 倍为止)。这样既能保留表面附近性状良好的四面体, 又能切掉被大幅拉长的四面体(= 凹陷、外侧)。重复点的最近邻为 0,因此只使用正距离。</p>

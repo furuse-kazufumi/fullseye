@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">cr_collision — DRIVE <code style="color:#22d3bf">commonroad</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cr_collision(scene, run, *, margin: &#x27;float&#x27; = 0.0, lanelets: &#x27;str&#x27; = &#x27;all&#x27;) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import drivecommonroad; drivecommonroad.cr_collision(scene, run, *, margin: &#x27;float&#x27; = 0.0, lanelets: &#x27;str&#x27; = &#x27;all&#x27;) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;cr_collision&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Collision with obstacles (rectangle-vs-rectangle SAT, per time_step) and road boundary (whether the vehicle&#x27;s 4 corners lie inside the union of the lanelet polygons).</p>
 <p><code style="color:#22d3bf">lanelets=&quot;all&quot;</code> (default) uses all lanelets of the scene (the same scope as the grader&#x27;s boundary_collision); <code style="color:#22d3bf">&quot;route&quot;</code> uses only the route&#x27;s lanelets. <code style="color:#22d3bf">margin</code> is the distance (m) by which the obstacles&#x27; SAT is inflated.</p>

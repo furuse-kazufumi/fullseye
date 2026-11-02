@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tilted_plate_shift — OPTICS <code style="color:#22d3bf">noncoaxial</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tilted_plate_shift(thickness_mm=5.0, glass=&#x27;BK7&#x27;, tilt_deg=30.0, wavelength_um=0.58756)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import raytrace3d; raytrace3d.tilted_plate_shift(thickness_mm=5.0, glass=&#x27;BK7&#x27;, tilt_deg=30.0, wavelength_um=0.58756)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;tilted_plate_shift&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>θ だけ傾けた平行平板: 横ずれ・焦点ずれ・非点隔差(<code style="color:#22d3bf">table</code>、閉形式)。</p>
 <p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>

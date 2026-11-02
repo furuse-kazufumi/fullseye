@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">lowpass — ONED <code style="color:#22d3bf">signal</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lowpass(x, rate, cutoff, order=4)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import dsp; dsp.lowpass(x, rate, cutoff, order=4)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops1d.get(&quot;lowpass&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Butterworth low-pass (scipy, zero-phase filtfilt)। *cutoff* <code style="color:#22d3bf">(0, rate/2)</code> के अंदर होना चाहिए; Nyquist से बाहर का cutoff signal को आगे जाने देने के बजाय error देता है। zero-phase filtfilt के लिए बहुत छोटा signal भी error देता है (message में ठीक न्यूनतम लंबाई बताई जाती है), बजाय इसके कि वह चुपचाप बिना filter हुए लौट आए।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

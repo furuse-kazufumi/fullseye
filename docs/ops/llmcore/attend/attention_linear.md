@@ -4,6 +4,7 @@ dim: llmcore
 category: attend
 in: tokens × tokens × tokens
 out: tokens
+gpu: なし
 examples: [poc_attention_identities]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `tokens × tokens × tokens` → `tokens`
 - **呼び出し**: `import fullseye as fs; fs.ledger.attention_linear(query, key, value, causal: 'bool' = False) -> 'np.ndarray'` (実装を直接呼ぶなら `import llmcore; llmcore.attention_linear(query, key, value, causal: 'bool' = False) -> 'np.ndarray'`、台帳から引くなら `opsllmcore.get("attention_linear")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

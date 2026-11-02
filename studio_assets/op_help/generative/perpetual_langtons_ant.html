@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">perpetual_langtons_ant — GENERATIVE <code style="color:#22d3bf">perpetual</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">rgb</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.perpetual_langtons_ant(steps: &#x27;int&#x27; = 12000, size: &#x27;int&#x27; = 301) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import perpetual; perpetual.perpetual_langtons_ant(steps: &#x27;int&#x27; = 12000, size: &#x27;int&#x27; = 301) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsgenerative.get(&quot;perpetual_langtons_ant&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>ラングトンの蟻 ―― 2 つの規則だけで、1 万歩後に「高速道路」を作り続ける。</p>
 <p>不変量: 高速道路に入ったあとは <b>周期 104 で同じ斜めの変位(縦横とも大きさ 2)を繰り返す</b>。向きの符号は回転の規約で変わる —— この実装の盤では (行, 列) = (+2, −2)。</p>

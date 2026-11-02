@@ -4,6 +4,7 @@ dim: drive
 category: polish
 in: scalar × scalar × scalar × scalar
 out: table
+gpu: なし
 examples: [poc_polish_wipe_measure]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `scalar × scalar × scalar × scalar` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.raster_wipe_area(radius: 'float', length: 'float', pitch: 'float', n_strokes: 'int', centre=(0.0, 0.0), step=None) -> 'dict'` (実装を直接呼ぶなら `import polish; polish.raster_wipe_area(radius: 'float', length: 'float', pitch: 'float', n_strokes: 'int', centre=(0.0, 0.0), step=None) -> 'dict'`、台帳から引くなら `opsdrive.get("raster_wipe_area")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

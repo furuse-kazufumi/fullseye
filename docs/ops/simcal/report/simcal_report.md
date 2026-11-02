@@ -4,6 +4,7 @@ dim: simcal
 category: report
 in: calresult
 out: table
+gpu: なし
 examples: [poc_simcal_thin_film, simcal_checks_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `calresult` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.simcal_report(result=None) -> 'dict'` (実装を直接呼ぶなら `import simcalcheck; simcalcheck.simcal_report(result=None) -> 'dict'`、台帳から引くなら `opssimcal.get("simcal_report")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

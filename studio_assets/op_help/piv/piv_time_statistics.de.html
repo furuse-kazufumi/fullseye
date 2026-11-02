@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">piv_time_statistics — PIV <code style="color:#22d3bf">assess</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">images</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_time_statistics(images, window=32, overlap=0.5, **kw)</code> (die Implementierung direkt: <code style="color:#22d3bf">import pivops; pivops.piv_time_statistics(images, window=32, overlap=0.5, **kw)</code>; aus dem Register: <code style="color:#22d3bf">opspiv.get(&quot;piv_time_statistics&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Bildfolge → zeitlicher Mittelwert, RMS der Schwankungen und Reynolds-Spannungen.</p>
 <p>Für jedes aufeinanderfolgende Paar wird die Verschiebung gemessen und eine Statistik über die Zeit gebildet. Diese 3 sind der Ausgangspunkt zur Beschreibung von Turbulenz; Vorzeichen und Größe von <code style="color:#22d3bf">u&#x27;v&#x27;</code> sind der Impulstransport selbst.</p>

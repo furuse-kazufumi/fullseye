@@ -4,6 +4,7 @@ dim: reprconv
 category: algebra
 in: counts
 out: countrate
+gpu: なし
 examples: [representation_roundtrip]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `counts` → `countrate`
 - **呼び出し**: `import fullseye as fs; fs.ledger.counts_to_countrate(counts, gate_s=0.001)` (実装を直接呼ぶなら `import reprconv; reprconv.counts_to_countrate(counts, gate_s=0.001)`、台帳から引くなら `opsreprconv.get("counts_to_countrate")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

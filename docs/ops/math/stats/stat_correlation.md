@@ -4,6 +4,7 @@ dim: math
 category: stats
 in: matrix
 out: matrix
+gpu: なし
 examples: [math_metrology, poc_colocalization_crosstalk, poc_ct_fidelity, poc_machine_condition_fusion, poc_thermal_radiometry]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `matrix` → `matrix`
 - **呼び出し**: `import fullseye as fs; fs.ledger.stat_correlation(x)` (実装を直接呼ぶなら `import mathops; mathops.stat_correlation(x)`、台帳から引くなら `opsmath.get("stat_correlation")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

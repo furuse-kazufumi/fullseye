@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">gs_update — DRIVE <code style="color:#22d3bf">gsplat</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gs_update(gs: &#x27;dict&#x27;, world: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import gsplatnp; gsplatnp.gs_update(gs: &#x27;dict&#x27;, world: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;gs_update&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Recomputes the Gaussian centers and orientations from the world&#x27;s <b>current</b> vertices (in place; returns the same dict).</p>
 <p>μ = Σ_k bary_k · V[F[face, k]] + R · offset_local, R = local coordinates of the face [t1 t2 n]. The face pointed to by <code style="color:#22d3bf">gs[&quot;face&quot;]</code> ValueError if it does not exist in the current world. Even if a surface is added at the end, it can be updated if the existing surface number is valid. The Gaussian of an object moved by a rigid body moves with the same rigid body transformation (gate).</p>

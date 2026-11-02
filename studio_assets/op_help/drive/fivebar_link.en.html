@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">fivebar_link — DRIVE <code style="color:#22d3bf">puck</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">table</code> (an op determined by its arguments alone — it takes no image or data input)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fivebar_link(*, d: &#x27;float&#x27; = 0.3, l1: &#x27;float&#x27; = 0.25, l2: &#x27;float&#x27; = 0.35, base=(-1.05, 0.0)) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import puck; puck.fivebar_link(*, d: &#x27;float&#x27; = 0.3, l1: &#x27;float&#x27; = 0.25, l2: &#x27;float&#x27; = 0.35, base=(-1.05, 0.0)) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;fivebar_link&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Planar 5-bar linkage (the tips of 2 arms of 2 links each joined at 1 point): bases A₁ = base + (0, −d/2), A₂ = base + (0, +d/2), proximal l₁, distal l₂, forward = +x. The numbers are <b>assumed</b> (the dimensions of the IROS 2024 hardware have not been read in the original). Return value: dict (<code style="color:#22d3bf">table</code> sort).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

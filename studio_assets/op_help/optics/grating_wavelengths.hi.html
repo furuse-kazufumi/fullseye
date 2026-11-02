@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">grating_wavelengths — OPTICS <code style="color:#22d3bf">appearance</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">vector</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.grating_wavelengths(pitch_um, sin_in, sin_out, orders=(1, 2, 3)) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import matappear; matappear.grating_wavelengths(pitch_um, sin_in, sin_out, orders=(1, 2, 3)) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;grating_wavelengths&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>diffraction grating के समीकरण d(sinθ_out − sinθ_in) = mλ को λ के लिए हल करता है।</p>
 <p>pitch_um: groove spacing d [µm]। CD के लिए 1.6, DVD के लिए 0.74 (प्रकाशित मानक मान)। sin_in / sin_out: grating के साथ incident / outgoing दिशा के in-plane घटक का sin (array अनुमत, broadcast)।</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">course_slope — DRIVE <code style="color:#22d3bf">course</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">table</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.course_slope(width=7.0, height=1.5, grade_gentle=0.08, grade_steep=0.11, top=4.0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import drivecourse; drivecourse.course_slope(width=7.0, height=1.5, grade_gentle=0.08, grade_steep=0.11, top=4.0)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;course_slope&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>slope course: x axis के साथ एक आयताकार सड़क जो हल्की ढलान से ऊँचाई <code style="color:#22d3bf">height</code> तक चढ़ती है, ऊपर समतल भाग <code style="color:#22d3bf">top</code> है, और तीखी ढलान से उतरती है।</p>
 <p>बहुभुज चौड़ाई w × लंबाई L = height/g_gentle + top + height/g_steep का आयत है। <code style="color:#22d3bf">profile</code> = (s, z) की टूटी रेखा [(0,0), (s1,h), (s1+top,h), (L,0)], z <code style="color:#22d3bf">slope_height</code> से अंतर्वेशित होता है (driveworld सड़क-सतह को ऊपर उठाता है)।</p>

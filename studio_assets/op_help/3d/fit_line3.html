@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">fit_line3 — 3D <code style="color:#22d3bf">geometry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">primitive</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fit_line3(points) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import measure3d; measure3d.fit_line3(points) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;fit_line3&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Total-least-squares 3-D line fit to <code style="color:#22d3bf">(depth, row, col)</code> points.</p>
 <p>The line is the largest principal axis through the centroid (orthogonal regression, isotropic in all three axes). Returns the centroid <code style="color:#22d3bf">center</code> (with <code style="color:#22d3bf">cd/cr/cc</code>), a unit <code style="color:#22d3bf">direction</code> (depth, row, col), and the RMS orthogonal residual. Raises <code style="color:#22d3bf">ValueError</code> on &lt; 2 points or a coincident cluster with no defined direction.</p>

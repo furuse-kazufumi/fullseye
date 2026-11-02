@@ -4,6 +4,7 @@ dim: optics
 category: itof
 in: table
 out: table
+gpu: なし
 examples: [poc_itof_multifreq]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.itof_phase_amplitude(samples, frequencies_hz=None, phase_offsets_rad=None, read_noise_e=None)` (実装を直接呼ぶなら `import itof; itof.itof_phase_amplitude(samples, frequencies_hz=None, phase_offsets_rad=None, read_noise_e=None)`、台帳から引くなら `opsoptics.get("itof_phase_amplitude")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

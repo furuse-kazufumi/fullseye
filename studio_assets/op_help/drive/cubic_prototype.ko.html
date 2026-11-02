@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">cubic_prototype — DRIVE <code style="color:#22d3bf">pxrd</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">any × scalar × any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cubic_prototype(kind, a, species, b_iso=0.5, name=None)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import pxrd; pxrd.cubic_prototype(kind, a, species, b_iso=0.5, name=None)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;cubic_prototype&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>입방정 원형(<code style="color:#22d3bf">sc</code>·<code style="color:#22d3bf">bcc</code>·<code style="color:#22d3bf">fcc</code>·<code style="color:#22d3bf">diamond</code>·<code style="color:#22d3bf">rocksalt</code>·<code style="color:#22d3bf">cscl</code>·<code style="color:#22d3bf">zincblende</code>·<code style="color:#22d3bf">fluorite</code>)으로부터 상을 만듭니다.</p>
 <p>CIF 가 없을 때의 상 만드는 법(교과서의 좌표만). <code style="color:#22d3bf">species</code> 는 부격자별 산란체 이름의 list(rocksalt 는 <code style="color:#22d3bf">[&quot;Na&quot;, &quot;Cl&quot;]</code>, fluorite 는 <code style="color:#22d3bf">[&quot;Ca&quot;, &quot;F&quot;]</code> 의 순서 = 양이온, 음이온). <code style="color:#22d3bf">a</code> [Å], <code style="color:#22d3bf">b_iso</code> [Å²] 는 모든 원자 공통.</p>

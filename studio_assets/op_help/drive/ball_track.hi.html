@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">ball_track — DRIVE <code style="color:#22d3bf">balltrack</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ball_track(detections, *, max_jump: &#x27;float&#x27; = 40.0, min_score: &#x27;float&#x27; = 0.0) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import balltrack; balltrack.ball_track(detections, *, max_jump: &#x27;float&#x27; = 40.0, min_score: &#x27;float&#x27; = 0.0) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;ball_track&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>हर frame की candidate lists <code style="color:#22d3bf">detections[k] = ball_detect(frame_k)</code> को 1 trajectory में जोड़ता है (constant-velocity prediction के सबसे पास वाला candidate, <code style="color:#22d3bf">max_jump</code> px के भीतर)।</p>
 <p>रिटर्न मान <code style="color:#22d3bf">{&quot;frame&quot; (N,), &quot;col&quot; (N,), &quot;row&quot; (N,), &quot;radius&quot; (N,), &quot;found&quot; (K,) bool}</code> (जिन फ़्रेमों में नहीं मिला वे छोड़ दिए जाते हैं)।</p>

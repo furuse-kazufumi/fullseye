@@ -4,6 +4,7 @@ dim: drive
 category: tactorque
 in: matrix × matrix × scalar × scalar × scalar × scalar × scalar
 out: table
+gpu: なし
 examples: [poc_tactile_dipole_torque]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `matrix × matrix × scalar × scalar × scalar × scalar × scalar` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.dipole_torque_resolution(pts, u, sigma_px: 'float', pitch: 'float', coef: 'float', area: 'float', radius: 'float', trials: 'int' = 100, window=None, seed: 'int' = 0, form: 'str' = 'divergence', method: 'str' = 'monte_carlo') -> 'dict'` (実装を直接呼ぶなら `import tactorque; tactorque.dipole_torque_resolution(pts, u, sigma_px: 'float', pitch: 'float', coef: 'float', area: 'float', radius: 'float', trials: 'int' = 100, window=None, seed: 'int' = 0, form: 'str' = 'divergence', method: 'str' = 'monte_carlo') -> 'dict'`、台帳から引くなら `opsdrive.get("dipole_torque_resolution")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

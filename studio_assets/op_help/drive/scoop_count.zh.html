@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">scoop_count — DRIVE <code style="color:#22d3bf">scoop</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">scalar × scalar × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.scoop_count(volume: &#x27;float&#x27;, radius: &#x27;float&#x27;, packing: &#x27;float&#x27;, *, density: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import scoop; scoop.scoop_count(volume: &#x27;float&#x27;, radius: &#x27;float&#x27;, packing: &#x27;float&#x27;, *, density: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;scoop_count&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由体积和填充率求颗粒数 <code style="color:#22d3bf">N = V ν / ((4/3) π r³)</code>(给出 <code style="color:#22d3bf">density</code> 时还求质量 <code style="color:#22d3bf">N m_p</code> 和堆积密度 <code style="color:#22d3bf">ν ρ_p</code>)。</p>
 <p><code style="color:#22d3bf">packing</code> ν 是 <b>校准值</b>(用相同的颗粒、相同的测量方式,从一次已知数量的测量中取 <code style="color:#22d3bf">N v_p / V_img</code>):侧面轮廓是颗粒外侧的包络,因此 ν 会比堆积率本身小(包含了包络部分的体积)。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>:体积 &lt; 0、半径 ≤ 0、ν 在 (0, 1] 之外。</p>

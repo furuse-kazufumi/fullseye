@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">hertz_force — DRIVE <code style="color:#22d3bf">tacsim</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">scalar × scalar</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.hertz_force(R: &#x27;float&#x27;, Estar: &#x27;float&#x27;, a: &#x27;float | None&#x27; = None, delta: &#x27;float | None&#x27; = None) -&gt; &#x27;float&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import tacsim; tacsim.hertz_force(R: &#x27;float&#x27;, Estar: &#x27;float&#x27;, a: &#x27;float | None&#x27; = None, delta: &#x27;float | None&#x27; = None) -&gt; &#x27;float&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;hertz_force&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Hertzsche Umkehrung: Last F aus entweder dem Kontaktradius a oder der Eindrückung δ. F = 4E*a³/(3R) = (4/3) E* √R δ^{3/2}.</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: sowohl a als auch δ (oder keines von beiden), ein Wert ≤ 0.</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">watershed_vol — SEGMENTATION <code style="color:#22d3bf">watershed3d</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">labels</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.watershed_vol(binary, markers: &#x27;Optional[np.ndarray]&#x27; = None, min_distance: &#x27;float&#x27; = 1.0, method: &#x27;str&#x27; = &#x27;auto&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import watershed3d; watershed3d.watershed_vol(binary, markers: &#x27;Optional[np.ndarray]&#x27; = None, min_distance: &#x27;float&#x27; = 1.0, method: &#x27;str&#x27; = &#x27;auto&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opssegmentation.get(&quot;watershed_vol&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>以距離轉換為種子的分水嶺把 3D 前景分割為每個物體的標籤(公開 op 的輕量組合)。</p>
 <p>目的是把連通元件會融合為 1 個的<b>接觸/輕微重疊</b>分開。EDT 委派給 <code style="color:#22d3bf">volops.vol_distance_transform</code>,skimage 分水嶺委派給 <code style="color:#22d3bf">volops.vol_watershed</code>, 本模組只添加 (A) skimage 不存在時的純 scipy 備援,以及種子點自動生成的黏合程式碼。省略 <code style="color:#22d3bf">markers</code> 時把距離轉換的局部極大(<code style="color:#22d3bf">min_distance</code> NMS) 作為自動種子點。</p>

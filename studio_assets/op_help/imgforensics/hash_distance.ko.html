@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">hash_distance — IMGFORENSICS <code style="color:#22d3bf">hash</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">phash × phash</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.hash_distance(hash1, hash2) -&gt; &#x27;int&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import imgforensics; imgforensics.hash_distance(hash1, hash2) -&gt; &#x27;int&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsimgforensics.get(&quot;hash_distance&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>두 지각 해시의 해밍 거리(다른 비트 수).</p>
 <p><b>dtype과 길이를 검사해 fail-closed(실패 시 거부)</b> 한다. float의 1-D를 받아 <code style="color:#22d3bf">!=</code>로 세면, 거의 확실하게 &quot;모든 비트가 다르다&quot; = 최대 거리라는 *그럴듯한* 값이 나온다 —— 그것은 형의 혼동이지 화상의 차이가 아니다.</p>

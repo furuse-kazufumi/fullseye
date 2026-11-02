@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">surface_divergence_closed_form — DRIVE <code style="color:#22d3bf">tactorque</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">matrix × scalar × scalar</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.surface_divergence_closed_form(p, G: &#x27;float&#x27;, nu: &#x27;float&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import tactorque; tactorque.surface_divergence_closed_form(p, G: &#x27;float&#x27;, nu: &#x27;float&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;surface_divergence_closed_form&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Closed form of the divergence of the tangential surface displacement of a half-space, ∇·ū = −(1−2ν) p/(2G) (derived in this module from the Boussinesq point load ū_r = −(1−2ν)P/(4πGr) and, in 2-D, ∇·(r̂/r) = 2πδ²). Gate comparing it with the numerical divergence of the convolution (0.2 % for r &lt; 0.8a, measured). <b>Raises</b> ValueError: G ≤ 0.</p>
 <p>Empty input (<code style="color:#22d3bf">p</code> with 0 elements) raises <code style="color:#22d3bf">ValueError</code>.</p>

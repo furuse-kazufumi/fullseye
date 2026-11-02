@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">world_texture_regions — SEGMENTATION <code style="color:#22d3bf">world</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">table</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.world_texture_regions(seed: &#x27;int&#x27; = 0, *, size=(192, 192), n_regions: &#x27;int&#x27; = 3, mean: &#x27;float&#x27; = 0.5, noise: &#x27;float&#x27; = 0.03) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import segworld; segworld.world_texture_regions(seed: &#x27;int&#x27; = 0, *, size=(192, 192), n_regions: &#x27;int&#x27; = 3, mean: &#x27;float&#x27; = 0.5, noise: &#x27;float&#x27; = 0.03) -&gt; &#x27;Dict[str, object]&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opssegmentation.get(&quot;world_texture_regions&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>2-4 个区域的世界：均值相同、仅方差与周期不同（阈值切不开）（world_texture_regions）。</p>
 <p>区域 = 彼此分开的种子点的最近邻(Voronoi)。纹样依次为: 细噪声(σ = noise)、粗噪声(σ = 4 noise)、条纹(周期 P₁、方向 θ₁, 振幅 0.2)+ 噪声、条纹(周期 P₂、方向 θ₂)+ 噪声。全部为零均值,加到 <code style="color:#22d3bf">mean</code> 上(裁剪在 ±0.45 处对称 = 保持均值)。</p>

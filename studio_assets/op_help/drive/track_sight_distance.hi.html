@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">track_sight_distance — DRIVE <code style="color:#22d3bf">crossing</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.track_sight_distance(v_train, clear_time, *, margin: &#x27;float&#x27; = 0.0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import drivecrossing; drivecrossing.track_sight_distance(v_train, clear_time, *, margin: &#x27;float&#x27; = 0.0)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;track_sight_distance&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>पूरा पार करने से पहले train न पहुँचे, इसके लिए track पर दिखनी आवश्यक दूरी = v_train · (clear_time + margin)।</p>
 <p>दृश्य दूरी इतनी या अधिक हो तो अदृश्य ट्रेन पूरी तरह पार करने से पहले क्रॉसिंग तक नहीं पहुँचती (आगमन समय = दूरी / गति &gt; पूरी तरह पार करने का समय)। ऐरे स्वीकार्य।</p>

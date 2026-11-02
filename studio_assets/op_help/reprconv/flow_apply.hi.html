@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">flow_apply — REPRCONV <code style="color:#22d3bf">flow</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points × flow_scattered</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.flow_apply(points, flow)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import reprconv; reprconv.flow_apply(points, flow)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsreprconv.get(&quot;flow_apply&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>point set <code style="color:#22d3bf">(N,3)</code> में scattered flow <code style="color:#22d3bf">(N,3)</code> जोड़ता है → <code style="color:#22d3bf">points</code>। <code style="color:#22d3bf">flow</code> का उपभोग करने वाला पक्ष।</p>
 <p>चूँकि <code style="color:#22d3bf">estimate_flow(a, b)</code> &quot;a के हर point से b में उसके nearest neighbour तक का displacement&quot; लौटाता है, <code style="color:#22d3bf">flow_apply(a, estimate_flow(a, b))</code> <b>b के उन points पर जाता है जिन्हें a से nearest neighbour के रूप में चुना गया</b>। round trip तभी सटीक होता है जब correspondence bijection हो; अन्यथा &quot;a के 2 points b के एक ही point पर पड़ते हैं&quot; उतना shape सिकुड़ जाता है -- <code style="color:#22d3bf">selftest</code> इस residual को संख्या में दिखाता है।</p>

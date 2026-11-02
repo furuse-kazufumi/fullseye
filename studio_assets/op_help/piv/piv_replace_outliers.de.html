@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">piv_replace_outliers — PIV <code style="color:#22d3bf">validate</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">flow2d × mask</code> → <code style="color:#22d3bf">flow2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_replace_outliers(flow, mask, method=&#x27;median&#x27;)</code> (die Implementierung direkt: <code style="color:#22d3bf">import pivops; pivops.piv_replace_outliers(flow, mask, method=&#x27;median&#x27;)</code>; aus dem Register: <code style="color:#22d3bf">opspiv.get(&quot;piv_replace_outliers&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Füllt Ausreißer aus der Nachbarschaft auf. Mit <code style="color:#22d3bf">method=&quot;nan&quot;</code> werden sie <b>nicht aufgefüllt, sondern als fehlend markiert</b>.</p>
 <p>Der Preis des Auffüllens ist, dass aufgefüllte Stellen nicht mehr von gemessenen unterscheidbar sind; daher wird vorausgesetzt, dass der Aufrufer als <code style="color:#22d3bf">mask</code> festhält, wo aufgefüllt wurde (dieses op gibt mask nicht zurück —— es ist ja etwas, das als Eingabe empfangen wurde).</p>

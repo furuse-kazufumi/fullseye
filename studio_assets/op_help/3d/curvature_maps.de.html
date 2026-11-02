@@ -2,7 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">curvature_maps — 3D <code style="color:#22d3bf">feature</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">curvature</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.curvature_maps(vol, device=&#x27;cpu&#x27;, mc=0.000625)</code> (die Implementierung direkt: <code style="color:#22d3bf">import match3d; match3d.curvature_maps(vol, device=&#x27;cpu&#x27;, mc=0.000625)</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;curvature_maps&quot;)</code>)</p>
-<p style="margin:2px 0 2px 12px">• <b>GPU</b>: Dieser Operator hat einen GPU-Pfad (<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Hauptkrümmungen eines Level-Sets → Formindex S (Koenderink) und Gekrümmtheit. Geschlossene Form (Kindlmann 2003).</p>
 <p><b>Linie→Fläche-Hebung</b> der 2D-Konturkrümmung (1 Skalar): Eine Fläche hat 2 Hauptkrümmungen κ1,κ2. mean = (κ1+κ2)/2 = (|g|²trH − gᵀHg)/|g|³, Gauss K = κ1κ2 = gᵀadj(H)g/|g|⁴ (g=∇, H=Hessian). S=(2/π)atan2(κ1+κ2, κ1−κ2) ∈[-1,1] ist <b>ein gegenüber Intensität und Rotation invarianter lokaler Flächentyp</b> (cup−1/rut/saddle0/ ridge+.5/cap+1). Mit der Konvention nach außen zeigender Normalen gilt: heller konvexer Blob = cap(+1). Rückgabewert (S, curvedness, mask, |g|), alles torch.</p>

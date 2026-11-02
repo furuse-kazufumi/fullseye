@@ -4,6 +4,7 @@ dim: optics
 category: grating_interf
 in: 
 out: table
+gpu: なし
 examples: [grating_interferometry, poc_grating_interferometry]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.talbot_source_visibility(source_width_um, source_distance_mm, distance_mm, analyzer_period_um, profile='uniform', source_grating_period_um=None, duty=None, n_slits=None, wavelength_nm=None)` (実装を直接呼ぶなら `import gratinginterf; gratinginterf.talbot_source_visibility(source_width_um, source_distance_mm, distance_mm, analyzer_period_um, profile='uniform', source_grating_period_um=None, duty=None, n_slits=None, wavelength_nm=None)`、台帳から引くなら `opsoptics.get("talbot_source_visibility")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

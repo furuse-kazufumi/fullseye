@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">cylinder_sdf — 3D <code style="color:#22d3bf">sdf_csg</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">coordgrid</code> → <code style="color:#22d3bf">sdf</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cylinder_sdf(grid, center, axis, radius, height)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import sdf_ops; sdf_ops.cylinder_sdf(grid, center, axis, radius, height)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;cylinder_sdf&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>유한 길이 원기둥(양 끝이 평평한 뚜껑)의 <b>엄밀한</b> 부호 거리장(안쪽 음, 바깥쪽 양).</p>
 <p>축 방향 거리 <code style="color:#22d3bf">t</code> 와 축으로부터의 반지름 <code style="color:#22d3bf">r</code> 로 나누어 <code style="color:#22d3bf">q = (r - radius, |t| - height/2)</code> 로 두고 <code style="color:#22d3bf">outside = ‖max(q, 0)‖</code>, <code style="color:#22d3bf">inside = min(max(q), 0)</code>, <code style="color:#22d3bf">sdf = outside + inside</code>. 이것은 <code style="color:#22d3bf">box_sdf</code> 와 같은 Quilez 식 구성을 &quot;(반지름, 축)의 2-D 단면&quot;에 적용한 것으로, 측면, 뚜껑, 모서리(테두리) 어느 것에 대해서도 참인 유클리드 거리가 된다.</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tree_from_swc — GRAPH <code style="color:#22d3bf">tree</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">text</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tree_from_swc(swc)</code> (to call the implementation directly, <code style="color:#22d3bf">import treemorph; treemorph.tree_from_swc(swc)</code>; from the registry, <code style="color:#22d3bf">opsgraph.get(&quot;tree_from_swc&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Parse an SWC text (or a path to a <code style="color:#22d3bf">.swc</code> file) into a checked tree table.</p>
 <p>Returns a dict with <code style="color:#22d3bf">id</code> (n,), <code style="color:#22d3bf">type</code> (n,), <code style="color:#22d3bf">xyz</code> (n, 3), <code style="color:#22d3bf">radius</code> (n,), <code style="color:#22d3bf">parent_index</code> (n,; -1 for the root, otherwise the row of the parent) and <code style="color:#22d3bf">root</code> (row of the root). Rows keep the file order. Comment lines (<code style="color:#22d3bf">#</code>) and blank lines are skipped.</p>

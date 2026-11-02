@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">register_image — AOI <code style="color:#22d3bf">geometric</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.register_image(reference, moving, upsample=20, method=&#x27;phase&#x27;, window=&#x27;hann&#x27;, max_shift=None, ambiguity_ratio=0.8, residual_tolerance=0.25)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import aoi; aoi.register_image(reference, moving, upsample=20, method=&#x27;phase&#x27;, window=&#x27;hann&#x27;, max_shift=None, ambiguity_ratio=0.8, residual_tolerance=0.25)</code>、台帳から引くなら <code style="color:#22d3bf">opsaoi.get(&quot;register_image&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>検査画像を基準画像へ合わせる平行移動を、合っていないと分かる量つきで返す。→ dict。</p>
 <p>相関面(既定は位相相関)の山を整数画素で見つけ、その近傍を上標本 DFT で <code style="color:#22d3bf">1/upsample</code> 画素まで詰める。返りは dict 1 つで、<b>並進だけでなく「その答えがどれくらい当てになるか」を必ず一緒に返す</b>。</p>

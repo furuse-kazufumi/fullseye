@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">scatter_offroad — DRIVE <code style="color:#22d3bf">terrain</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.scatter_offroad(course, bounds, n: &#x27;int&#x27; = 60, r_min: &#x27;float&#x27; = 4.0, margin: &#x27;float&#x27; = 3.0, seed: &#x27;int&#x27; = 0, max_tries: &#x27;int&#x27; = 20000) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import driveterrain; driveterrain.scatter_offroad(course, bounds, n: &#x27;int&#x27; = 60, r_min: &#x27;float&#x27; = 4.0, margin: &#x27;float&#x27; = 3.0, seed: &#x27;int&#x27; = 0, max_tries: &#x27;int&#x27; = 20000) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;scatter_offroad&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>도로 밖에 물체를 흩뿌립니다(dart throwing): 각 점은 코스에서 <code style="color:#22d3bf">margin</code> 이상, 서로 <code style="color:#22d3bf">r_min</code> 이상 떨어집니다.</p>
 <p>반환값 (n&#x27;, 3) = (x, y, yaw). <code style="color:#22d3bf">max_tries</code> 내에 n 에 도달하지 못하면 있는 만큼 반환한다(n&#x27; ≤ n).</p>

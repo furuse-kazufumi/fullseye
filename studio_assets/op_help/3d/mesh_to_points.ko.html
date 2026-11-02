@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">mesh_to_points — 3D <code style="color:#22d3bf">transform</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">mesh</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mesh_to_points(vertices, faces, samples=20000, seed=0)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import match3d; match3d.mesh_to_points(vertices, faces, samples=20000, seed=0)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;mesh_to_points&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>mesh(정점+면) → 표면 점군(면적 가중 균일 샘플링). mesh→point cloud 변환.</p>
 <p>절차: 삼각형 <code style="color:#22d3bf">tri = vertices[faces]</code>의 면적 <code style="color:#22d3bf">0.5·|(b−a)×(c−a)|</code>을 확률로 삼아 <code style="color:#22d3bf">samples</code> 개의 면을 복원 추출하고, 각 면에서 <code style="color:#22d3bf">u, v ~ U(0,1)</code>, <code style="color:#22d3bf">u + v &gt; 1</code>이면 <code style="color:#22d3bf">(1−u, 1−v)</code>로 접어 되돌린다(균일 barycentric). 점 <code style="color:#22d3bf">= a + u(b−a) + v(c−a)</code>. <code style="color:#22d3bf">seed</code>로 <code style="color:#22d3bf">default_rng</code>를 고정하므로같은 인자면 같은 점군.</p>

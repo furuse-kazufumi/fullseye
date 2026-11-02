@@ -4,6 +4,7 @@ dim: drive
 category: lidar
 in: 
 out: table
+gpu: なし
 examples: [poc_driving_school]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.lidar_spec(n_beams: 'int' = 32, v_fov_deg=(-25.0, 15.0), azimuth_res_deg: 'float' = 0.2, range_max: 'float' = 60.0, range_min: 'float' = 0.5, noise_std: 'float' = 0.0) -> 'dict'` (実装を直接呼ぶなら `import lidarsim; lidarsim.lidar_spec(n_beams: 'int' = 32, v_fov_deg=(-25.0, 15.0), azimuth_res_deg: 'float' = 0.2, range_max: 'float' = 60.0, range_min: 'float' = 0.5, noise_std: 'float' = 0.0) -> 'dict'`、台帳から引くなら `opsdrive.get("lidar_spec")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

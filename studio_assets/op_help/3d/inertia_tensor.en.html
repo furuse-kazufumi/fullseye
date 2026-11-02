@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">inertia_tensor — 3D <code style="color:#22d3bf">moment_invariant</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.inertia_tensor(points) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import moments3d; moments3d.inertia_tensor(points) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;inertia_tensor&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>The inertia tensor (3,3) of a point set (from the central second moments; uniform mass, total mass 1).</p>
 <p>I_xx = mean(y²+z²), I_yy = mean(x²+z²), I_zz = mean(x²+y²), I_xy = -mean(xy), I_xz = -mean(xz), I_yz = -mean(yz). Using the covariance C, this is equivalent to I = tr(C)·E₃ − C (E₃ is the identity matrix). Symmetric and positive semi-definite. Translation invariant because of centroid centring.</p>

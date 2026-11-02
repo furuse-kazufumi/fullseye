@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">env_render — DRIVE <code style="color:#22d3bf">env</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table × matrix × matrix</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.env_render(world: &#x27;dict&#x27;, pose, K, width: &#x27;int&#x27; = 640, height: &#x27;int&#x27; = 400, env: &#x27;Optional[dict]&#x27; = None, *, ego=None, ego_pose=None, shadows: &#x27;bool&#x27; = True, shadow_cache: &#x27;Optional[dict]&#x27; = None, shadow_res: &#x27;int&#x27; = 1024) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import driveenv; driveenv.env_render(world: &#x27;dict&#x27;, pose, K, width: &#x27;int&#x27; = 640, height: &#x27;int&#x27; = 400, env: &#x27;Optional[dict]&#x27; = None, *, ego=None, ego_pose=None, shadows: &#x27;bool&#x27; = True, shadow_cache: &#x27;Optional[dict]&#x27; = None, shadow_res: &#x27;int&#x27; = 1024) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;env_render&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>太陽・空・影・灯火・前照灯・霧・雨・まぶしさを物理の単位で描く。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>

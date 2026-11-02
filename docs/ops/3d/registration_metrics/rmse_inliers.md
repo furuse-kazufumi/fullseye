@@ -4,6 +4,7 @@ dim: 3d
 category: registration_metrics
 in: points × points
 out: measurement
+gpu: なし
 examples: [reg_eval]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -16,6 +17,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **呼び出し**: `import fullseye as fs; fs.ledger.rmse_inliers(source, target, transform, thresh: 'float')` (実装を直接呼ぶなら `import registration_eval; registration_eval.rmse_inliers(source, target, transform, thresh: 'float')`、台帳から引くなら `ops3d.get("rmse_inliers")`)
 - **台帳経由の戻り値**: `fullseye.ledger.rmse_inliers(...)` は**宣言 out 型 `measurement` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.rmse_inliers.raw(...)`、または `registration_eval.rmse_inliers` を直接呼ぶ。
   - 本体の返り: `(rmse, n_inliers) → rmse`
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

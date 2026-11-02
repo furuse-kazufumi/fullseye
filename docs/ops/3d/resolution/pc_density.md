@@ -4,6 +4,7 @@ dim: 3d
 category: resolution
 in: points
 out: table
+gpu: なし
 examples: [mesh_resolution_demo]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `points` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.pc_density(points, k=8)` (実装を直接呼ぶなら `import meshres; meshres.pc_density(points, k=8)`、台帳から引くなら `ops3d.get("pc_density")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

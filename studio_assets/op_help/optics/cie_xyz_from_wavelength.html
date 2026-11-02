@@ -3,6 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cie_xyz_from_wavelength(nm) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import matappear; matappear.cie_xyz_from_wavelength(nm) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;cie_xyz_from_wavelength&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>台帳経由の戻り値</b>: <code style="color:#22d3bf">fullseye.ledger.cie_xyz_from_wavelength(...)</code> は<b>宣言 out 型 <code style="color:#22d3bf">points</code> の値だけ</b>を返す(本体は補助情報も返す)。捨てられた側が要るときは <code style="color:#22d3bf">fullseye.ledger.cie_xyz_from_wavelength.raw(...)</code>、または <code style="color:#22d3bf">matappear.cie_xyz_from_wavelength</code> を直接呼ぶ。</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>波長 [nm] → CIE 1931 2° 等色関数 (x̄, ȳ, z̄)。入力形状 + 末尾 3 の配列を返す。</p>
 <p>Wyman, Sloan &amp; Shirley (JCGT 2013) の多ローブ Gauss 近似。表引きより粗いが、可視域全体で表の値に対し最大誤差 ~1% で、<b>補間も外挿も要らない</b>(閉じた式なので任意の波長格子でそのまま評価できる)。可視域の外は自然に 0 へ落ちる。</p>

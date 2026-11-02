@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">fp_stack_from_images — OPTICS <code style="color:#22d3bf">fpm</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">volume × signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fp_stack_from_images(images, na_x, na_y, wavelength_um, na_obj, pixel_um, values=&#x27;intensity&#x27;, exposure=None, led_xyz_mm=None)</code>(要直接调用实现,<code style="color:#22d3bf">import fourierptycho; fourierptycho.fp_stack_from_images(images, na_x, na_y, wavelength_um, na_obj, pixel_um, values=&#x27;intensity&#x27;, exposure=None, led_xyz_mm=None)</code>;从台账取用则 <code style="color:#22d3bf">opsoptics.get(&quot;fp_stack_from_images&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把装置或公开数据的一组图像转换为本族的表(<code style="color:#22d3bf">table</code>,kind=&quot;fp_stack&quot;)。</p>
 <p><code style="color:#22d3bf">images</code> 为 (K, n, n) 的正方形图像(若 <code style="color:#22d3bf">values=&quot;amplitude&quot;</code> 则为振幅,平方后转为强度)。<code style="color:#22d3bf">na_x</code> / <code style="color:#22d3bf">na_y</code> 是每个 LED 照明的方向余弦 sinθx、sinθy(<b>本族的符号约定</b>:与 <code style="color:#22d3bf">fp_capture</code> 相同,取 LED 位置的 x/r、y/r 为 +,当 u_ℓ = (na_x, na_y)/λ 时,光瞳以物体频谱的 −u_ℓ 为中心裁出(I = |F⁻¹{P(u)·O(u − u_ℓ)}|²)。在 LED 位于试样下方、光从 LED 射向试样的装置中,物理上的横向波数可能是 −x/r)。</p>

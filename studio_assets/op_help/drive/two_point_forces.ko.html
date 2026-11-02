@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">two_point_forces — DRIVE <code style="color:#22d3bf">pegtactile</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">table × signal × signal × signal × signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.two_point_forces(kp, F, M_g, g, tip, axis, mu_grid=None) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import pegtactile; pegtactile.two_point_forces(kp, F, M_g, g, tip, axis, mu_grid=None) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;two_point_forces&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>2점 접촉(Whitney)의 렌치를 2개의 접촉력과 벽 마찰 μ로 분해합니다(평면, 두 점이 아래로 미끄러지는 Coulomb 가정).</p>
 <p>기울기 면(축의 수평 성분 e)에서 선단의 가장자리는 −e 쪽 벽(법선 = 수평, 마찰 = 위쪽), 몸통은 +e 쪽 가장 좁은 부분의 가장자리(법선 = 축에 수직, 마찰 = 축을 따라 위쪽)에 닿는다. 각 μ 에서 (f_n1, f_n2) 는 3 식(F_e, F_z, M)의 최소제곱해이며, 잔차가 최소인 μ 를 포물선으로 좁힌다(기본 격자 0~1.5, 301 점). 반환 <code style="color:#22d3bf">mu</code>/<code style="color:#22d3bf">fn_tip</code>/<code style="color:#22d3bf">fn_mouth</code>/<code style="color:#22d3bf">resid</code>(N)/<code style="color:#22d3bf">p_tip</code>/<code style="color:#22d3bf">p_mouth</code>. <b>Raises</b> ValueError: 축이 너무 수직이어서 기울기 면이 정해지지 않음, 벡터가 유한한 3 성분이 아님, μ 격자가 3 점 미만.</p>

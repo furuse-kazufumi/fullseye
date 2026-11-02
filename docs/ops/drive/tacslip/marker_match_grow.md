@@ -4,6 +4,7 @@ dim: drive
 category: tacslip
 in: matrix × matrix × scalar
 out: table
+gpu: なし
 examples: [gallery_drive_soil_tactile]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `matrix × matrix × scalar` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.marker_match_grow(p0, p1, pitch_px: 'float', seed_tol: 'float' = 0.25, tols=(0.2, 0.3, 0.45), nb_r: 'float' = 1.6, border: 'float' = 2.0, max_iter: 'int' = 80) -> 'dict'` (実装を直接呼ぶなら `import tacslip; tacslip.marker_match_grow(p0, p1, pitch_px: 'float', seed_tol: 'float' = 0.25, tols=(0.2, 0.3, 0.45), nb_r: 'float' = 1.6, border: 'float' = 2.0, max_iter: 'int' = 80) -> 'dict'`、台帳から引くなら `opsdrive.get("marker_match_grow")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

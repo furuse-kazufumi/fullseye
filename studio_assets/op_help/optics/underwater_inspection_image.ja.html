@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">underwater_inspection_image — OPTICS <code style="color:#22d3bf">watervision</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">rgbimage × image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.underwater_inspection_image(scene_albedo, distance_map_m, water_type, light=&#x27;camera&#x27;, lamp_power=1.0, camera_distance_m=None, depth_m=2.0, exposure_photons=10000.0, fov_deg=60.0, beam_exponent=6.0) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import watervision; watervision.underwater_inspection_image(scene_albedo, distance_map_m, water_type, light=&#x27;camera&#x27;, lamp_power=1.0, camera_distance_m=None, depth_m=2.0, exposure_photons=10000.0, fov_deg=60.0, beam_exponent=6.0) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;underwater_inspection_image&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>船体や配管の検査画像: カメラの位置のランプが水を通して壁を照らす -&gt; dict(画像、画素ごとの SNR)。</p>
 <p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">mesh_write_ply — FILEIO <code style="color:#22d3bf">mesh</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mesh_write_ply(table, *, binary)</code> (die Implementierung direkt: <code style="color:#22d3bf">import fileio; fileio.mesh_write_ply(table, *, binary)</code>; aus dem Register: <code style="color:#22d3bf">opsfileio.get(&quot;mesh_write_ply&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Schreibt Vertices, Flächen, Farben, Normalen und beliebige Skalarattribute als ASCII- oder Little-Endian-PLY (<code style="color:#22d3bf">text</code> / <code style="color:#22d3bf">bytes</code>).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>

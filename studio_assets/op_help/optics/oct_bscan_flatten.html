@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">oct_bscan_flatten — OPTICS <code style="color:#22d3bf">oct</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.oct_bscan_flatten(bscan, reference_rows, above_um=20.0, below_um=300.0, noise_rows=0.15)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import octscan; octscan.oct_bscan_flatten(bscan, reference_rows, above_um=20.0, below_um=300.0, noise_rows=0.15)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;oct_bscan_flatten&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>B スキャンを面(表面など)に沿って<b>平らに並べ直し、横に平均した深さの断面</b>を返す(<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code>)。</p>
 <p>各列を <code style="color:#22d3bf">reference_rows</code>(<code style="color:#22d3bf">oct_bscan_boundaries</code> の行)が同じ行に来るようにずらし、パワー(|A|²)を横に平均して振幅に戻す(√平均)。粒状のスペックルに埋もれた界面のピークが立つ(Dong ら 2016 の層の平均の深さ断面と同じ考え方)。面の傾きに従わないもの —— 層の光学厚の深さに水平に出る<b>自己相関の幽霊</b> —— は平らにした座標で傾いてぼける(消えはしない)。</p>

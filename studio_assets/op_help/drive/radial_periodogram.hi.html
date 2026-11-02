@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">radial_periodogram — DRIVE <code style="color:#22d3bf">terrain</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.radial_periodogram(field, dx: &#x27;float&#x27;, n_bins: &#x27;int&#x27; = 48) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import driveterrain; driveterrain.radial_periodogram(field, dx: &#x27;float&#x27;, n_bins: &#x27;int&#x27; = 48) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;radial_periodogram&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>grid पर height field (H, W) के periodogram का radial दिशा में औसत लेता है: <code style="color:#22d3bf">{&quot;f&quot;, &quot;power&quot;, &quot;count&quot;}</code> (f cycles/m में)।</p>
 <p>यह औसत है, वलय पर समाकलन नहीं (समाकलन करने पर f से एक बार गुणा होकर ढलान बदल जाता)। DC को बाहर रखा जाता है।</p>

@@ -4,7 +4,7 @@ dim: 3d
 category: motion
 in: voxel × voxel
 out: flow_dense
-gpu: true
+gpu: なし
 examples: [motion_scene]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `voxel × voxel` → `flow_dense`
 - **呼び出し**: `import fullseye as fs; fs.ledger.scene_flow_lk(vol0, vol1, device='cpu', win=3, levels=3, iters=3, reg=0.001)` (実装を直接呼ぶなら `import match3d; match3d.scene_flow_lk(vol0, vol1, device='cpu', win=3, levels=3, iters=3, reg=0.001)`、台帳から引くなら `ops3d.get("scene_flow_lk")`)
-- **GPU**: この op は GPU 経路あり(`device="cuda"`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

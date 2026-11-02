@@ -4,6 +4,7 @@ dim: segmentation
 category: world
 in: points
 out: table
+gpu: なし
 examples: [gallery_seg_measures]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `points` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.voronoi_cells(seeds, size) -> 'Dict[str, object]'` (実装を直接呼ぶなら `import segworld; segworld.voronoi_cells(seeds, size) -> 'Dict[str, object]'`、台帳から引くなら `opssegmentation.get("voronoi_cells")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

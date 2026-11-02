@@ -4,6 +4,7 @@ dim: 3d
 category: registration_metrics
 in: points × points
 out: measurement
+gpu: なし
 examples: [reg_eval]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `points × points` → `measurement`
 - **呼び出し**: `import fullseye as fs; fs.ledger.registration_recall(source, target, gt_transform, est_transform, thresh: 'float', *, corr_thresh: 'float | None' = None) -> 'float'` (実装を直接呼ぶなら `import registration_eval; registration_eval.registration_recall(source, target, gt_transform, est_transform, thresh: 'float', *, corr_thresh: 'float | None' = None) -> 'float'`、台帳から引くなら `ops3d.get("registration_recall")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

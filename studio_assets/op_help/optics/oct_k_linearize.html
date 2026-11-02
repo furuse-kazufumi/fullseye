@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">oct_k_linearize — OPTICS <code style="color:#22d3bf">oct</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.oct_k_linearize(interferogram, method=&#x27;cubic&#x27;, n_out=None, k_calibration=None)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import octscan; octscan.oct_k_linearize(interferogram, method=&#x27;cubic&#x27;, n_out=None, k_calibration=None)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;oct_k_linearize&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>干渉スペクトルを <b>k 等間隔</b>に並べ直す(<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code>)。</p>
 <p>分光器の画素は λ で等間隔、波長掃引の標本は時間で等間隔 —— どちらも k(= 2π/λ)では等間隔でなく、そのまま FFT すると<b>深いほどピークが広がる</b>(深さに比例する chirp)。<code style="color:#22d3bf">method</code>: &quot;cubic&quot;(3 次スプライン、既定)/ &quot;linear&quot;(線形補間 —— 深いところで副ピークと roll-off の悪化が出る)/ &quot;none&quot;(並べ直さずに k を等間隔と<b>仮定する</b>だけ。比較用 —— 何が壊れるかを見るため)。<code style="color:#22d3bf">k_calibration</code> を渡すと表の <code style="color:#22d3bf">k_rad_per_um</code> の代わりにそれを各標本の k とみなす(波長掃引の k クロック・分光器の較正の誤り)。</p>

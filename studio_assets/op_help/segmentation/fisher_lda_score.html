@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">fisher_lda_score — SEGMENTATION <code style="color:#22d3bf">classify</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table × matrix</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fisher_lda_score(model, X) -&gt; &#x27;Dict[str, object]&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import cropweed; cropweed.fisher_lda_score(model, X) -&gt; &#x27;Dict[str, object]&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opssegmentation.get(&quot;fisher_lda_score&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p><code style="color:#22d3bf">fisher_lda_fit</code> の学習済みの判別で特徴を採点する(score &gt; 0 をクラス 1 とする)。</p>
 <p><code style="color:#22d3bf">model</code> は <code style="color:#22d3bf">fisher_lda_fit</code> の返り、<code style="color:#22d3bf">X</code> は (N, D) の特徴(dict の <code style="color:#22d3bf">X</code> も可)。標準化は学習時の</p>

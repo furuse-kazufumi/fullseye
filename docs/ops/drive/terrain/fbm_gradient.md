@@ -4,6 +4,7 @@ dim: drive
 category: terrain
 in: image2d × image2d × table
 out: any
+gpu: なし
 examples: [poc_world_terrain]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d × image2d × table` → `any`
 - **呼び出し**: `import fullseye as fs; fs.ledger.fbm_gradient(x, y, p: 'dict')` (実装を直接呼ぶなら `import driveterrain; driveterrain.fbm_gradient(x, y, p: 'dict')`、台帳から引くなら `opsdrive.get("fbm_gradient")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

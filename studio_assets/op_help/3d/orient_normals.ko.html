@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">orient_normals — 3D <code style="color:#22d3bf">normals_orient</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">points × normals</code> → <code style="color:#22d3bf">normals</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.orient_normals(points, normals, k: &#x27;int&#x27; = 20, seed_dir=None) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import normals_orient; normals_orient.orient_normals(points, normals, k: &#x27;int&#x27; = 20, seed_dir=None) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;orient_normals&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>Hoppe 법으로 법선을 <b>전역 일관</b>하게 방향 지음(MST 전파). → (N,3).</p>
 <p>kNN 그래프 위에 가중치 <code style="color:#22d3bf">1 - |n_i·n_j|</code>(접평면이 맞을수록 저렴)의 최소 전역 트리를 만들고, 시드에서 트리를 BFS 하면서 부모와 부호가 반대인 자식을 반전시켜 성분을 내부 일관되게 한다. 시드는 <code style="color:#22d3bf">seed_dir</code> 지정 시에는 그 방향으로 가장 돌출한 점, 미지정 시에는 <b>최외곽 점</b>(무게중심에서 가장 먼 점). 그래프가 분단되어 있으면 연결 성분마다 독립적으로 시드를 잡아 전파한다(성분 간의 상대 방향은 보장하지 않음).</p>

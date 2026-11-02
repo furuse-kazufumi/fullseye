@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">perpetual_elementary_ca — GENERATIVE <code style="color:#22d3bf">perpetual</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">rgb</code> (an op determined by its arguments alone — it takes no image or data input)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.perpetual_elementary_ca(rule: &#x27;int&#x27; = 90, width: &#x27;int&#x27; = 401, rows: &#x27;int&#x27; = 200, seed: &#x27;int&#x27; = -1, cell: &#x27;int&#x27; = 2) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import perpetual; perpetual.perpetual_elementary_ca(rule: &#x27;int&#x27; = 90, width: &#x27;int&#x27; = 401, rows: &#x27;int&#x27; = 200, seed: &#x27;int&#x27; = -1, cell: &#x27;int&#x27; = 2) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsgenerative.get(&quot;perpetual_elementary_ca&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Elementary cellular automaton (Wolfram&#x27;s 256 rules), extended endlessly from top to bottom.</p>
 <p><code style="color:#22d3bf">seed &lt; 0</code> starts from <b>a single central cell (1 point)</b> (rule 90 gives Sierpinski, rule 30 pseudo-randomness, rule 110 universal computation).</p>

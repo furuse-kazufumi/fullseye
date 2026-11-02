@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">telecentric_lens — OPTICS <code style="color:#22d3bf">telecentric</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.telecentric_lens(kind=&#x27;object&#x27;, focal_mm=100.0, magnification=-0.5, na_object=0.01, front_aperture_mm=12.5, stop_shift_mm=0.0, glass=&#x27;N-BK7&#x27;, wavelength_um=0.58756)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import telecentric; telecentric.telecentric_lens(kind=&#x27;object&#x27;, focal_mm=100.0, magnification=-0.5, na_object=0.01, front_aperture_mm=12.5, stop_shift_mm=0.0, glass=&#x27;N-BK7&#x27;, wavelength_um=0.58756)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;telecentric_lens&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>同じ単レンズで、絞りの位置だけを変えた 3 種の撮像レンズの処方(<code style="color:#22d3bf">raytrace.lens_system</code> の table)。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">kind=&quot;entocentric&quot;</code> —— 通常のレンズ。絞りをレンズの直後(1 mm)に置く。入射瞳はレンズの位置にあり、主光線は物体から入射瞳へ向かって傾く(近い物ほど大きく写る)。</p>

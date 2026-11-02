@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">sinkhorn_divergence — COLORTRANSPORT <code style="color:#22d3bf">transport</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">signal × signal × matrix</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sinkhorn_divergence(a, b, cost, cost_aa=None, cost_bb=None, reg=0.05, **kw)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import colortransport; colortransport.sinkhorn_divergence(a, b, cost, cost_aa=None, cost_bb=None, reg=0.05, **kw)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opscolortransport.get(&quot;sinkhorn_divergence&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p><b>편향을 없앤</b> Sinkhorn 거리(Genevay, Peyré &amp; Cuturi, AISTATS 2018).</p>
 <p><code style="color:#22d3bf">S(a,b) - (S(a,a) + S(b,b)) / 2</code>. <code style="color:#22d3bf">sinkhorn_distance</code>는 정칙화만큼계통적으로 위로 치우치며, <b>자기 자신과의 &quot;거리&quot;가 0이 되지 않는다</b>(실측 reg=0.2에서 0.05 초과). 같은 치우침을 자기 자신과의 거리에서 빼면 상쇄되어, <b>자기 자신과의 값이 0으로 돌아온다</b> -- TRIZ에서 말하는 균형(반작용으로 상쇄) 그 자체.</p>

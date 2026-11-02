@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tid2013_published — IMGMETRICS <code style="color:#22d3bf">iqa</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">table</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tid2013_published() -&gt; &#x27;Dict[str, Tuple[float, float]]&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import iqatid; iqatid.tid2013_published() -&gt; &#x27;Dict[str, Tuple[float, float]]&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsimgmetrics.get(&quot;tid2013_published&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>공표된 순위 상관표 {metric: (SROCC, KROCC)}(14개).</p>
 <p>출처: https://www.ponomarenko.info/tid2013.htm(Last changed 2015-03-23)의 &quot;Ranking of compared metrics in accordance with Spearman / Kendall correlation with MOS&quot;, 배포물 readme의 TABLE III / IV와 동일. 키는 배포물 <code style="color:#22d3bf">metrics_values/&lt;키&gt;.txt</code>의파일 이름(소문자). <b>동봉된 작성자 값과 mos.txt로부터, Spearman = 평균 순위, Kendall = τ_b로 14개 모두 3자리 일치</b> (|차| ≤ 0.0005 / 0.00044, 2026-10-04). 페이지 첫머리의 &quot;PSNR … is 0.69&quot;와 사용 예의 &quot;FSIMc Full : 0.666&quot;은 표와 어긋난다(전자는 TID2008의 잔재, 후자는 τ_a 0.66626과 일치 -- 둘 다 추측)이므로 게이트에는 쓰지 않는다.</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">large_deformation_inverse — DRIVE <code style="color:#22d3bf">tacdome</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">scalar × scalar × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.large_deformation_inverse(a: &#x27;float&#x27;, L: &#x27;float&#x27;, lin: &#x27;dict&#x27;, reading: &#x27;str&#x27; = &#x27;derived&#x27;, tol: &#x27;float&#x27; = 1e-14) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import tacdome; tacdome.large_deformation_inverse(a: &#x27;float&#x27;, L: &#x27;float&#x27;, lin: &#x27;dict&#x27;, reading: &#x27;str&#x27; = &#x27;derived&#x27;, tol: &#x27;float&#x27; = 1e-14) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;large_deformation_inverse&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Reads indentation and force backward from a measured contact radius a (solving Eq. 4 for d, then the force from Eq. 2). The core of the sensor readout.</p>
 <p>For a flat punch, the closed form d = 1 − (a0/a)². Otherwise a(d) = (a/a_L)(d)·D·(dL)^{1/p} is monotonically increasing in d, so bisection (relative <code style="color:#22d3bf">tol</code>).</p>

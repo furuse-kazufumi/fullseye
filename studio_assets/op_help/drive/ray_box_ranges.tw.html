@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">ray_box_ranges — DRIVE <code style="color:#22d3bf">lidar</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ray_box_ranges(origin, dirs, box) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import lidarsim; lidarsim.ray_box_ranges(origin, dirs, box) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;ray_box_ranges&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>從原點 <code style="color:#22d3bf">origin</code> 沿方向 <code style="color:#22d3bf">dirs (...,3)</code> 的射線進入軸對齊盒為止的距離(slab 法)。</p>
 <p><code style="color:#22d3bf">box = (xmin, ymin, zmin, xmax, ymax, zmax)</code>。未命中為 <code style="color:#22d3bf">inf</code>。若原點在箱內,則為到前方首個命中的面(出口)的距離。距離為 <code style="color:#22d3bf">t·‖D‖</code>。不滿足 <code style="color:#22d3bf">min &lt; max</code> 的箱引發 <code style="color:#22d3bf">ValueError</code>。</p>

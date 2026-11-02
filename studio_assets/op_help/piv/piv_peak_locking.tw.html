@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">piv_peak_locking — PIV <code style="color:#22d3bf">assess</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">flow2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_peak_locking(flow, bins=20)</code>(要直接呼叫實作,<code style="color:#22d3bf">import pivops; pivops.piv_peak_locking(flow, bins=20)</code>;從台帳取用則 <code style="color:#22d3bf">opspiv.get(&quot;piv_peak_locking&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>峰值鎖定的強度：小數部分的分布偏離均勻分布的程度。</p>
 <p>當小數部分為 0 或 0.5 時，子像素估計值傾向於真實位移。偏差（由於相關峰值的形狀和擬合函數的形狀不同）教科書系統錯誤）。 如果流量不均勻，小數部分應接近均勻分佈，測量與那裡的偏差。</p>

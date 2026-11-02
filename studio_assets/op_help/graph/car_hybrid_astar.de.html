@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">car_hybrid_astar — GRAPH <code style="color:#22d3bf">path</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image2d × matrix</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.car_hybrid_astar(occupancy, poses, radius=1.0, cell=1.0, step=None, n_theta=72, allow_reverse=True, footprint=None, clearance=0.0, reverse_penalty=0.0, switch_penalty=0.0, steer_penalty=0.0, shot_every=None, max_expansions=200000, return_tree=False, method=&#x27;exact&#x27;)</code> (die Implementierung direkt: <code style="color:#22d3bf">import carpath; carpath.car_hybrid_astar(occupancy, poses, radius=1.0, cell=1.0, step=None, n_theta=72, allow_reverse=True, footprint=None, clearance=0.0, reverse_penalty=0.0, switch_penalty=0.0, steer_penalty=0.0, shot_every=None, max_expansions=200000, return_tree=False, method=&#x27;exact&#x27;)</code>; aus dem Register: <code style="color:#22d3bf">opsgraph.get(&quot;car_hybrid_astar&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Hybrid A* (Dolgov, Thrun, Montemerlo und Diebel 2010): der Pfad eines Autos durch ein Belegungsraster.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>

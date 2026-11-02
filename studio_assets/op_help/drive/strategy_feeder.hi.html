@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">strategy_feeder — DRIVE <code style="color:#22d3bf">racket</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.strategy_feeder(side: &#x27;int&#x27;, ctx: &#x27;dict&#x27;, rng, step: &#x27;float&#x27; = 0.06) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import racket; racket.strategy_feeder(side: &#x27;int&#x27;, ctx: &#x27;dict&#x27;, rng, step: &#x27;float&#x27; = 0.06) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;strategy_feeder&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>पिछली बार के पास पर थोड़ी खिसकी हुई जगह पर गेंद लौटाता है (प्रतिद्वंद्वी के लिए आसान गेंद): अपने पिछले लक्ष्य को ±step के uniform random से खिसकाता है और court के अंदर (किनारे से 12 cm) रखता है। उड़ान समय धीमा 0.42 s।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

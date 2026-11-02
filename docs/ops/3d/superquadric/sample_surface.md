@@ -4,6 +4,7 @@ dim: 3d
 category: superquadric
 in: vector
 out: points
+gpu: なし
 examples: [mesh_lod_download, superquadric_fit]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `vector` → `points`
 - **呼び出し**: `import fullseye as fs; fs.ledger.sample_surface(a, eps, n_u: 'int' = 40, n_v: 'int' = 40, R=None, t=None) -> 'np.ndarray'` (実装を直接呼ぶなら `import superquadric; superquadric.sample_surface(a, eps, n_u: 'int' = 40, n_v: 'int' = 40, R=None, t=None) -> 'np.ndarray'`、台帳から引くなら `ops3d.get("sample_surface")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">lens_field_profile — OPTICS <code style="color:#22d3bf">linescan</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lens_field_profile(system=None, image_heights_mm=None, frequencies_lp_mm=(10.0, 20.0, 35.0), grid=96, wavelength_um=None)</code>(要直接调用实现,<code style="color:#22d3bf">import linescan; linescan.lens_field_profile(system=None, image_heights_mm=None, frequencies_lp_mm=(10.0, 20.0, 35.0), grid=96, wavelength_um=None)</code>;从台账取用则 <code style="color:#22d3bf">opsoptics.get(&quot;lens_field_profile&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用光线追迹求每个像高的<b>相对照度</b>和 <b>MTF</b>(<code style="color:#22d3bf">table</code>,物体在有限距离 —— 线扫描的用法)。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>

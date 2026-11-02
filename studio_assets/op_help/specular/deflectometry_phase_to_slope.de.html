@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">deflectometry_phase_to_slope — SPECULAR <code style="color:#22d3bf">deflectometry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">normalmap</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.deflectometry_phase_to_slope(phase_x, phase_y, rig=None, period_mm=10.0, z_ref=0.0)</code> (die Implementierung direkt: <code style="color:#22d3bf">import deflectometry; deflectometry.deflectometry_phase_to_slope(phase_x, phase_y, rig=None, period_mm=10.0, z_ref=0.0)</code>; aus dem Register: <code style="color:#22d3bf">opsspecular.get(&quot;deflectometry_phase_to_slope&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Zwei absolute Bildschirmphasen (Streifen entlang u und v) → eine Normalenkarte (H, W, 3) auf dem Flächenraster.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>

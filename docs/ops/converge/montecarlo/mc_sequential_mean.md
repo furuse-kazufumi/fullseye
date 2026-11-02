@@ -4,6 +4,7 @@ dim: converge
 category: montecarlo
 in: 
 out: table
+gpu: なし
 examples: []
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.mc_sequential_mean(sampler='pi', tol=0.01, rel_tol=0.0, confidence=0.95, batch=4096, max_samples=4000000, seed=0, on_fail='raise', history_stride=1) -> 'dict'` (実装を直接呼ぶなら `import converge; converge.mc_sequential_mean(sampler='pi', tol=0.01, rel_tol=0.0, confidence=0.95, batch=4096, max_samples=4000000, seed=0, on_fail='raise', history_stride=1) -> 'dict'`、台帳から引くなら `opsconverge.get("mc_sequential_mean")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

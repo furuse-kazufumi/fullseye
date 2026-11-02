@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">piv_q_criterion — PIV <code style="color:#22d3bf">field</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">flow2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_q_criterion(flow, spacing=1.0)</code> (die Implementierung direkt: <code style="color:#22d3bf">import pivops; pivops.piv_q_criterion(flow, spacing=1.0)</code>; aus dem Register: <code style="color:#22d3bf">opspiv.get(&quot;piv_q_criterion&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Q-Kriterium <code style="color:#22d3bf">-tr(J^2)/2</code>. Es ist positiv, wo <b>die Rotation die Verzerrung übersteigt</b>.</p>
 <p>Betrachtet man nur die Wirbelstärke, leuchten auch Scherschichten auf (der wandnahe Bereich einer laminaren Strömung sieht wie ein Wirbel aus); zur Wirbelextraktion daher dieses verwenden. Geschlossene Form (gemessen mit direkt vorgegebenen analytischen Feldern):</p>

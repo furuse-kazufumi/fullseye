@@ -4,6 +4,7 @@ dim: gfx2d
 category: colorspace
 in: rgb
 out: rgb
+gpu: なし
 examples: [gfx2d_scene, poc_leaf_disease_area]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `rgb` → `rgb`
 - **呼び出し**: `import fullseye as fs; fs.ledger.srgb_to_linear(img)` (実装を直接呼ぶなら `import gfx2d; gfx2d.srgb_to_linear(img)`、台帳から引くなら `opsgfx2d.get("srgb_to_linear")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

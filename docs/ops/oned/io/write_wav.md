@@ -4,6 +4,7 @@ dim: oned
 category: io
 in: signal
 out: file
+gpu: なし
 examples: [genspark_external_review]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal` → `file`
 - **呼び出し**: `import fullseye as fs; fs.ledger.write_wav(path, x, rate=44100)` (実装を直接呼ぶなら `import dsp; dsp.write_wav(path, x, rate=44100)`、台帳から引くなら `ops1d.get("write_wav")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

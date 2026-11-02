@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">catch_plan_staged — DRIVE <code style="color:#22d3bf">kendama</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.catch_plan_staged(kp: &#x27;dict&#x27;, *, v_max: &#x27;float&#x27; = 2.0, a_max: &#x27;float&#x27; = 20.0, g: &#x27;float&#x27; = None, margin: &#x27;float&#x27; = 0.005, absorb_time: &#x27;float&#x27; = None, absorb_depth: &#x27;float&#x27; = 0.02)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import kendama; kendama.catch_plan_staged(kp: &#x27;dict&#x27;, *, v_max: &#x27;float&#x27; = 2.0, a_max: &#x27;float&#x27; = 20.0, g: &#x27;float&#x27; = None, margin: &#x27;float&#x27; = 0.005, absorb_time: &#x27;float&#x27; = None, absorb_depth: &#x27;float&#x27; = 0.02)</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;catch_plan_staged&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>段階を明示した捕球の制御(大皿・小皿・中皿・ろうそくに同じ計画を使う: 皿の向きは kp の技の姿勢から)。返り値は <code style="color:#22d3bf">plan(t, p, v, cup_state) → dict</code>(<code style="color:#22d3bf">kendama_simulate</code> の <code style="color:#22d3bf">catch_plan</code>)。</p>
 <p>段階(人のコツ「膝で真上に引き上げ、糸が弛んでから皿を玉の真下へ水平に運び、着地で下げて衝撃を吸う(すくいに行かず待つ)」を写す):</p>

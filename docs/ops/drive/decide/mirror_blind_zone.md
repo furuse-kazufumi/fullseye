@@ -4,6 +4,7 @@ dim: drive
 category: decide
 in: 
 out: table
+gpu: なし
 examples: [poc_driving_decisions]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.mirror_blind_zone(eye_xy, mirror_center_xy, mirror_normal_xy, mirror_width, *, mirror_radius=inf, direct_limit_deg: 'float' = 100.0, roi=(-15.0, -2.0, 0.9, 4.4)) -> 'Dict[str, object]'` (実装を直接呼ぶなら `import drivedecide; drivedecide.mirror_blind_zone(eye_xy, mirror_center_xy, mirror_normal_xy, mirror_width, *, mirror_radius=inf, direct_limit_deg: 'float' = 100.0, roi=(-15.0, -2.0, 0.9, 4.4)) -> 'Dict[str, object]'`、台帳から引くなら `opsdrive.get("mirror_blind_zone")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

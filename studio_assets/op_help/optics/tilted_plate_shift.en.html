@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tilted_plate_shift — OPTICS <code style="color:#22d3bf">noncoaxial</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">table</code> (an op determined by its arguments alone — it takes no image or data input)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tilted_plate_shift(thickness_mm=5.0, glass=&#x27;BK7&#x27;, tilt_deg=30.0, wavelength_um=0.58756)</code> (to call the implementation directly, <code style="color:#22d3bf">import raytrace3d; raytrace3d.tilted_plate_shift(thickness_mm=5.0, glass=&#x27;BK7&#x27;, tilt_deg=30.0, wavelength_um=0.58756)</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;tilted_plate_shift&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Plane-parallel plate tilted by θ: lateral shift, focus shifts and astigmatism (<code style="color:#22d3bf">table</code>, closed form).</p>
 <p>With <code style="color:#22d3bf">n</code> the plate index, <code style="color:#22d3bf">cos θ&#x27; = √(n² − sin²θ)/n</code> and the path in glass <code style="color:#22d3bf">L = t/cos θ&#x27;</code>:</p>

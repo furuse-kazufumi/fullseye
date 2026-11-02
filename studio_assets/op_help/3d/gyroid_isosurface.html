@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">gyroid_isosurface — 3D <code style="color:#22d3bf">surface</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">mesh</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gyroid_isosurface(shape=(64, 64, 64), level=0.0, periods=1.0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import render3d; render3d.gyroid_isosurface(shape=(64, 64, 64), level=0.0, periods=1.0)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;gyroid_isosurface&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>The gyroid — a triply periodic surface from its nodal approximation.</p>
 <p>Samples <code style="color:#22d3bf">sin x cos y + sin y cos z + sin z cos x</code> over <code style="color:#22d3bf">periods</code> unit cells and extracts the level set. At <code style="color:#22d3bf">level = 0</code> the field is <b>odd under the body-centred inversion</b>, so the two sides have exactly equal volume — a symmetry fact, independent of the meshing, that the existing <code style="color:#22d3bf">mesh_volume</code> can be pointed at.</p>

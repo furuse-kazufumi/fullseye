@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">dem_height_frame_residual — DEM <code style="color:#22d3bf">geodesy</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">signal × signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_height_frame_residual(h_ellipsoidal_m, h_orthometric_m, geoid_height_m, tol_m=0.1)</code>(要直接调用实现,<code style="color:#22d3bf">import demops; demops.dem_height_frame_residual(h_ellipsoidal_m, h_orthometric_m, geoid_height_m, tol_m=0.1)</code>;从台账取用则 <code style="color:#22d3bf">opsdem.get(&quot;dem_height_frame_residual&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p><code style="color:#22d3bf">h - H - N</code> 的残差 —— <b>不让高度混淆悄无声息地通过</b>的检测器(<code style="color:#22d3bf">table</code>)。</p>
 <p>椭球高、正高(标高)、大地水准面高由 1 个恒等式联系(<code style="color:#22d3bf">h = H + N</code>)。在 3 者齐备的点上测量其残差，就能以数值显示<b>某一个是用另一基准、另一模型或另一版本制作的</b>。测量成果之间残差在 cm 级以内，若把椭球高直接当作标高使用，残差会固定在 <code style="color:#22d3bf">-N</code>(日本附近为 −30~−40 m) 上。</p>

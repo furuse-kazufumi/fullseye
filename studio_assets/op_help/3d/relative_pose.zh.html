@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">relative_pose — 3D <code style="color:#22d3bf">pose_graph</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">pose × pose</code> → <code style="color:#22d3bf">pose</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.relative_pose(pose_i, pose_j)</code>(要直接调用实现,<code style="color:#22d3bf">import pose_graph; pose_graph.relative_pose(pose_i, pose_j)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;relative_pose&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>T_i⁻¹ ∘ T_j = i←j 的相对位姿。pose_* = [rvec|t] (6,)。→ (rvec_ij (3,), t_ij (3,))。</p>
 <p>位姿约定为 world←body(<code style="color:#22d3bf">p_world = R p_body + t</code>)。将 <code style="color:#22d3bf">T_i⁻¹ = (R_iᵀ, -R_iᵀ t_i)</code> 与 <code style="color:#22d3bf">T_j</code> 合成,求出 <code style="color:#22d3bf">R_ij = R_iᵀ R_j</code>、<code style="color:#22d3bf">t_ij = R_iᵀ (t_j - t_i)</code>,旋转转回旋转向量(轴 × 角 [rad],scipy 的 <code style="color:#22d3bf">as_rotvec</code>)后返回。这是“从帧 i 看到的帧 j 的位姿”, 若按此约定生成传给 <code style="color:#22d3bf">optimize_pose_graph</code> 的边 <code style="color:#22d3bf">(i, j, rvec_ij, t_ij)</code> 的测量值,即可直接保持一致(也用于从 GT 位姿生成合成边)。</p>

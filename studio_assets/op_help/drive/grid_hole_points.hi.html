@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">grid_hole_points — DRIVE <code style="color:#22d3bf">braidpath</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.grid_hole_points(grid) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import braidpath; braidpath.grid_hole_points(grid) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;grid_hole_points&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Grid के हर hole (border को न छूने वाला blocked cells का connected component) के लिए 1 प्रतिनिधि point: centroid के सबसे निकट blocked cell का केंद्र [x, y]।</p>
 <p>Border को छूने वाले blocked हिस्से बाहरी दुनिया से जुड़े होते हैं, इसलिए hole नहीं बनते (path classes नहीं बढ़ाते)। 4-connectivity (movement के समान)।</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">deflectometry_render — SPECULAR <code style="color:#22d3bf">deflectometry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">images</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.deflectometry_render(height, rig=None, period_mm=10.0, n_steps=4, direction=&#x27;x&#x27;, kind=&#x27;fringe&#x27;, slope_x=None, slope_y=None, diffuse_fraction=0.0, scatter_rad=0.0, back_thickness_mm=None, refractive_index=1.52, focus=&#x27;surface&#x27;, aperture_samples=None, noise_sigma=0.0, bits=None, seed=0)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import deflectometry; deflectometry.deflectometry_render(height, rig=None, period_mm=10.0, n_steps=4, direction=&#x27;x&#x27;, kind=&#x27;fringe&#x27;, slope_x=None, slope_y=None, diffuse_fraction=0.0, scatter_rad=0.0, back_thickness_mm=None, refractive_index=1.52, focus=&#x27;surface&#x27;, aperture_samples=None, noise_sigma=0.0, bits=None, seed=0)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsspecular.get(&quot;deflectometry_render&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>높이 장 → 카메라가 찍는 &#x27;화면의 거울상&#x27;(순방향 시뮬레이션). → 이미지 목록(각 (H, W), [0, 1]).</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>

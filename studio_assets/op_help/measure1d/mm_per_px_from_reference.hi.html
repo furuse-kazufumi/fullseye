@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">mm_per_px_from_reference — MEASURE1D <code style="color:#22d3bf">scale</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">measurement</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mm_per_px_from_reference(measured_px, known_mm)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import measuring1d; measuring1d.mm_per_px_from_reference(measured_px, known_mm)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsmeasure1d.get(&quot;mm_per_px_from_reference&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>ज्ञात माप वाले target (scale bar, reference hole, gauge) से pixel pitch mm/px निकालता है (calibration)।</p>
 <p><code style="color:#22d3bf">mm_per_px = known_mm / measured_px</code>। <code style="color:#22d3bf">measured_px</code> में वही value दें जो उसी optics और उसी working distance पर <b>इसी family के op ने सच में मापी</b> हो (<code style="color:#22d3bf">measure_pairs</code> का <code style="color:#22d3bf">width</code>, <code style="color:#22d3bf">apply_metrology_model</code> के <code style="color:#22d3bf">radius</code> का दोगुना आदि)। drawing value या nominal magnification से रखने पर working distance 10 % हटे तो हर माप 10 % हट जाता है।</p>

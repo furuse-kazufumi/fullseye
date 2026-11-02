@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">camera_orientation_from_sun — GEOCAM <code style="color:#22d3bf">sun</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">keypoints × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.camera_orientation_from_sun(sun_pixels, unix_times, lat_deg, lon_deg, K)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import geocam; geocam.camera_orientation_from_sun(sun_pixels, unix_times, lat_deg, lon_deg, K)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsgeocam.get(&quot;camera_orientation_from_sun&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>시각이 붙은 태양의 화소 위치 ≥ 2점 → 카메라의 (yaw, pitch, roll)(Wahba 문제의 SVD 해 = Kabsch).</p>
 <p>각 관측에서 픽셀 → 카메라 좌표의 광선 d_c (K에서), 시간 → 세계의 태양 방향 s_w (sun_position, 굴절 포함의 앙각을 사용한다: 카메라가 보는 것은 겉보기 태양). &quot;R = argmin Σ | R d_c - s_w | ²&quot; SVD에서 닫힌 형식으로 풀어 (Kabsch 1976 / Markley 1988),(yaw, pitch, roll)로 분해한다.</p>

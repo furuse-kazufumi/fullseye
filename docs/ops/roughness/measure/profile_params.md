@@ -4,6 +4,7 @@ dim: roughness
 category: measure
 in: signal
 out: table
+gpu: なし
 examples: [poc_food_cutting_measure, poc_surface_roughness]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.profile_params(p, dx=1.0, n_sampling=5)` (実装を直接呼ぶなら `import roughness; roughness.profile_params(p, dx=1.0, n_sampling=5)`、台帳から引くなら `opsroughness.get("profile_params")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

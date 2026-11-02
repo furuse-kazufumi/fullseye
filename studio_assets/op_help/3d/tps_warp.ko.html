@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tps_warp — 3D <code style="color:#22d3bf">deform</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">deformation × points</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tps_warp(model, points)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import deform3d; deform3d.tps_warp(model, points)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;tps_warp&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p><code style="color:#22d3bf">tps_fit</code>으로 적합한 박판 스플라인(TPS) 변형을 점군에 적용한다.</p>
 <p>f(x) = [1,x,y,z]·a + Σ_i w_i·U(‖x − p_i‖)를 평가한다.</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">legal_stop_intervals — DRIVE <code style="color:#22d3bf">crossing</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.legal_stop_intervals(merged, road_start: &#x27;float&#x27;, road_end: &#x27;float&#x27;, car_length: &#x27;float&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivecrossing; drivecrossing.legal_stop_intervals(merged, road_start: &#x27;float&#x27;, road_end: &#x27;float&#x27;, car_length: &#x27;float&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;legal_stop_intervals&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>주정차 금지 구간(병합된 (k, 2))을 피해 차체 [rear, rear + car_length]가 통째로 들어가는 <b>후단 위치</b>의 구간 (m, 2).</p>
 <p>구간 끝 정확히(거리가 정확히 5 m 등)는 금지 쪽에 포함하므로(「이내」), 차체가 끝에 닿기만 하면 허용한다(닫힌 구간의 여집합의 폐포).</p>

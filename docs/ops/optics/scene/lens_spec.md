@@ -4,6 +4,7 @@ dim: optics
 category: scene
 in: 
 out: table
+gpu: なし
 examples: [poc_nir_silicon_transmission, poc_optics_drawings, vision_layout_from_catalog]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.lens_spec(focal_mm: 'float' = None, f_number: 'float' = None, na: 'float' = None, working_distance_mm: 'float' = 200.0, coc_um: 'float' = None, telecentric: 'bool' = False, transmission: 'float' = 0.9, model: 'str' = None, maker: 'str' = None, image_circle_mm: 'float' = None, transmission_curve=None) -> 'dict'` (実装を直接呼ぶなら `import optscene; optscene.lens_spec(focal_mm: 'float' = None, f_number: 'float' = None, na: 'float' = None, working_distance_mm: 'float' = 200.0, coc_um: 'float' = None, telecentric: 'bool' = False, transmission: 'float' = 0.9, model: 'str' = None, maker: 'str' = None, image_circle_mm: 'float' = None, transmission_curve=None) -> 'dict'`、台帳から引くなら `opsoptics.get("lens_spec")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

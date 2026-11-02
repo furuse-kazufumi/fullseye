@@ -5,6 +5,7 @@ category: barcode
 in: image
 out: feature
 halcon: find_bar_code
+gpu: なし
 examples: [gallery2d_physics_alife_3d, poc_barcode_1d]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -16,6 +17,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **データ種**: `image` → `feature`
 - **呼び出し**: `fullseye.apply(img, "decode_barcode", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 - **HALCON 相当**: `find_bar_code`(意味・パラメータは HALCON リファレンスが参考になる)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ![decode_barcode: input → output](../../_fig/decode_barcode.png)
 

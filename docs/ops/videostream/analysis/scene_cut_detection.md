@@ -4,6 +4,7 @@ dim: videostream
 category: analysis
 in: video
 out: table
+gpu: なし
 examples: [video_streaming]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `video` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.scene_cut_detection(video, bins: 'int' = 64, threshold: 'float' = 0.3) -> 'dict'` (実装を直接呼ぶなら `import videostream; videostream.scene_cut_detection(video, bins: 'int' = 64, threshold: 'float' = 0.3) -> 'dict'`、台帳から引くなら `opsvideostream.get("scene_cut_detection")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

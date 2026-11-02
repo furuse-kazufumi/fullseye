@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">vol_rle_volume — 3D <code style="color:#22d3bf">rle_region</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">rle_region</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_rle_volume(region) -&gt; &#x27;int&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import volregion; volregion.vol_rle_volume(region) -&gt; &#x27;int&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;vol_rle_volume&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>region का voxel count, runs पर गणना (decode के बिना)।</p>
 <p>मापने पर dense mask का योग करने से ~300x तेज़।</p>

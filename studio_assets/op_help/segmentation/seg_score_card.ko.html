@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">seg_score_card — SEGMENTATION <code style="color:#22d3bf">score</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">labels2d × labels2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.seg_score_card(labels_pred, labels_true, *, background: &#x27;int&#x27; = 0, tau: &#x27;float&#x27; = 2.0, min_overlap: &#x27;float&#x27; = 0.5) -&gt; &#x27;Dict[str, float]&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import segeval; segeval.seg_score_card(labels_pred, labels_true, *, background: &#x27;int&#x27; = 0, tau: &#x27;float&#x27; = 2.0, min_overlap: &#x27;float&#x27; = 0.5) -&gt; &#x27;Dict[str, float]&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opssegmentation.get(&quot;seg_score_card&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>모든 척도를 한 장에: Dice/Jaccard, VI/split/merge, Rand/ARI, 경계 F, Hausdorff/HD95/ASSD, 과/미분할, 분열/융합/누락/오검/일치와 개수(seg_score_card).</p>
 <p><code style="color:#22d3bf">segcompare</code>에는 a = 참, b = 예측으로 넘긴다(split = 예측이 참을 자른 양, merge = 예측이 참을 붙인 양). 값은 float 또는 int의 평평한 dict(표에 그대로 나열된다).</p>

@@ -4,6 +4,7 @@ dim: drive
 category: pxrd
 in: table × scalar
 out: table
+gpu: なし
 examples: [poc_pxrd_phase_peel]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table × scalar` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.powder_reflections(phase, wavelength, two_theta_max=90.0, lorentz='powder', lattice_scale=1.0, include_extinct=False, rel_cutoff=1e-10)` (実装を直接呼ぶなら `import pxrd; pxrd.powder_reflections(phase, wavelength, two_theta_max=90.0, lorentz='powder', lattice_scale=1.0, include_extinct=False, rel_cutoff=1e-10)`、台帳から引くなら `opsdrive.get("powder_reflections")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

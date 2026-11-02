@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">camera_orientation_from_skyline — GEOCAM <code style="color:#22d3bf">orientation</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">signal × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.camera_orientation_from_skyline(skyline_rows, K, sky_table, yaw_step_deg=1.0, pitch_range=(-15.0, 15.0), roll_range=(-10.0, 10.0), coarse_step_deg=2.5)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import geocam; geocam.camera_orientation_from_skyline(skyline_rows, K, sky_table, yaw_step_deg=1.0, pitch_range=(-15.0, 15.0), roll_range=(-10.0, 10.0), coarse_step_deg=2.5)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsgeocam.get(&quot;camera_orientation_from_skyline&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>사진의 스카이라인(열마다의 행)과 DEM의 스카이라인으로부터 (yaw, pitch, roll)을 결정한다 → table.</p>
 <p>사진의 경계 화소 (u, v) 를 카메라 광선으로 하고, 임시 자세로 월드로 돌리면, 각 열은 (방위, 앙각) 의 점이 된다. 그 앙각과, DEM 의 스카이라인을 그 방위에서 찾은 앙각의 차의 RMS 가 자세의 비용. yaw 를 <code style="color:#22d3bf">yaw_step_deg</code> 스텝으로 한 바퀴, pitch·roll 을 <code style="color:#22d3bf">coarse_step_deg</code> 스텝으로 격자 탐색하고, 최소의 점에서 Nelder–Mead 로 연속값으로 좁힌다(scipy). Baatz 등 2012 의 스카이라인 대조를, 위치 기지· 1 대의 카메라로 좁힌 형태.</p>

@@ -4,6 +4,7 @@ dim: drive
 category: kendamaworld
 in: table
 out: scalar
+gpu: なし
 examples: [gallery_drive_world_objects]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `scalar`
 - **呼び出し**: `import fullseye as fs; fs.ledger.add_string(world: 'dict', p_ball, p_cup, *, radius: 'float' = 0.0015, color=(0.18, 0.18, 0.2), name: 'str' = 'string') -> 'int'` (実装を直接呼ぶなら `import kendamaworld; kendamaworld.add_string(world: 'dict', p_ball, p_cup, *, radius: 'float' = 0.0015, color=(0.18, 0.18, 0.2), name: 'str' = 'string') -> 'int'`、台帳から引くなら `opsdrive.get("add_string")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

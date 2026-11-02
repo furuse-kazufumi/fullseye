@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">homotopy_shortest_paths — DRIVE <code style="color:#22d3bf">braidpath</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d × any × any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.homotopy_shortest_paths(grid, start, goal, k=4, obstacles=None, angle=0.1, max_states=400000, max_cost=None)</code>(要直接调用实现,<code style="color:#22d3bf">import braidpath; braidpath.homotopy_shortest_paths(grid, start, goal, k=4, obstacles=None, angle=0.1, max_states=400000, max_cost=None)</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;homotopy_shortest_paths&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>在网格(True = 可通行,4 邻域)上,按从短到长给出从 start 到 goal 的、同伦类各不相同的 k 条最短路径。</p>
 <p>状态 = (单元格, 辫的 Dynnikov 坐标)。把障碍物点当作不动的股,每走 1 步就追加交叉字母并更新坐标(坐标是类的完全不变量,因此相同的 (单元格, 坐标) 只展开 1 次)。Dijkstra 将这个“按类提升”的网格按费用顺序展开,因此以新坐标到达 goal 的顺序,就是各类最短路径从短到长的顺序。</p>

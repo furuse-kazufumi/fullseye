@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">resample_uniform — 3D <code style="color:#22d3bf">curve</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.resample_uniform(curve, n)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import curve3d; curve3d.resample_uniform(curve, n)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;resample_uniform&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>호 길이로 등간격 n 점으로 재표본화(선형 보간). → (n,3).</p>
 <p><code style="color:#22d3bf">arc_length</code>의 누적 호 길이를 파라미터로 <code style="color:#22d3bf">np.linspace(0, total, n)</code>의 위치를취하고, x·y·z를 독립적으로 <code style="color:#22d3bf">np.interp</code>로 선형 보간한다. 출력은 float64의 (n,3). 시작점과 끝점은 입력의 처음·끝과 일치하고, 중간점은 꺾은선 위에 놓인다(원래 점을 지난다고는 할 수 없다).</p>

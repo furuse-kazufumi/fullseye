@@ -4,6 +4,7 @@ dim: drive
 category: pegfail
 in: signal
 out: table
+gpu: なし
 examples: [poc_peg_failure_recovery]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.insertion_stall_detect(depth, window: 'int' = 30, min_advance: 'float' = 5e-05, arm_advance: 'float' = 0.0005) -> 'dict'` (実装を直接呼ぶなら `import pegfail; pegfail.insertion_stall_detect(depth, window: 'int' = 30, min_advance: 'float' = 5e-05, arm_advance: 'float' = 0.0005) -> 'dict'`、台帳から引くなら `opsdrive.get("insertion_stall_detect")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

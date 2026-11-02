@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">piv_q_criterion — PIV <code style="color:#22d3bf">field</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">flow2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_q_criterion(flow, spacing=1.0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import pivops; pivops.piv_q_criterion(flow, spacing=1.0)</code>, registry से लेना हो तो <code style="color:#22d3bf">opspiv.get(&quot;piv_q_criterion&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Q criterion <code style="color:#22d3bf">-tr(J^2)/2</code>। जहाँ <b>rotation strain से अधिक होता है</b> वहाँ यह धनात्मक होता है।</p>
 <p>केवल vorticity देखने पर shear layers भी चमक उठती हैं (laminar flow का दीवार के पास वाला region vortex जैसा दिखता है), इसलिए vortices निकालने के लिए इसे इस्तेमाल करें। Closed form (analytic fields सीधे देकर measured):</p>

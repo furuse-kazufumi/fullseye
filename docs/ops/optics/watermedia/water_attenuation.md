@@ -4,6 +4,7 @@ dim: optics
 category: watermedia
 in: 
 out: table
+gpu: なし
 examples: [poc_geodetic_height_frames, poc_water_inspection_images, poc_water_transparent_media]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.water_attenuation(wavelength_um, water_type='pure', depth_m=None) -> 'dict'` (実装を直接呼ぶなら `import watermedia; watermedia.water_attenuation(wavelength_um, water_type='pure', depth_m=None) -> 'dict'`、台帳から引くなら `opsoptics.get("water_attenuation")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

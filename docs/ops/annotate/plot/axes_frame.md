@@ -4,6 +4,7 @@ dim: annotate
 category: plot
 in: image2d × axes
 out: image2d
+gpu: なし
 examples: [annotate_gallery, annotate_paper_tour, poc_beam_modal_video, poc_camera_calibration, poc_camera_shake_deblur, poc_crack_width_timeseries, poc_dehazing, poc_dic_strain, poc_driving_decisions, poc_driving_traffic, poc_focus_stacking, poc_interferometry_step, poc_measurement_system_analysis, poc_moire_alignment, poc_motion_magnification, poc_panorama_drift, poc_particle_tracking, poc_photoelasticity, poc_pxrd_phase_peel, poc_registration_basin, poc_river_surface_velocity, poc_simcal_thin_film, poc_strain_history, poc_structure_4d_deterioration, poc_superresolution_limits, poc_template_tracking, poc_timelapse_growth, poc_traffic_counting, poc_wound_area_tracking, poc_xyt_event_surface]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d × axes` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.axes_frame(img, axes, color='neutral', width=1, box=True, scheme='okabe_ito', style=None)` (実装を直接呼ぶなら `import annotate; annotate.axes_frame(img, axes, color='neutral', width=1, box=True, scheme='okabe_ito', style=None)`、台帳から引くなら `opsannotate.get("axes_frame")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

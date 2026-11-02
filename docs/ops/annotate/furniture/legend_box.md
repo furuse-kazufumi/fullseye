@@ -4,6 +4,7 @@ dim: annotate
 category: furniture
 in: image2d × entries
 out: image2d
+gpu: なし
 examples: [annotate_gallery, poc_driving_decisions, poc_measurement_system_analysis, poc_moire_alignment, poc_pxrd_phase_peel]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d × entries` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.legend_box(img, entries, xy, anchor='lt', swatch=14, row_gap=4, pad=8, font_size=13, box_color=None, box_alpha=0.72, markers=False, scheme='okabe_ito', font_path=None, min_font_size=9, style=None, border=1, border_color='neutral')` (実装を直接呼ぶなら `import annotate; annotate.legend_box(img, entries, xy, anchor='lt', swatch=14, row_gap=4, pad=8, font_size=13, box_color=None, box_alpha=0.72, markers=False, scheme='okabe_ito', font_path=None, min_font_size=9, style=None, border=1, border_color='neutral')`、台帳から引くなら `opsannotate.get("legend_box")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">seg_object_counts_match — SEGMENTATION <code style="color:#22d3bf">score</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">labels2d × labels2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.seg_object_counts_match(labels_pred, labels_true, *, background: &#x27;int&#x27; = 0, min_overlap: &#x27;float&#x27; = 0.5) -&gt; &#x27;Dict[str, object]&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import segeval; segeval.seg_object_counts_match(labels_pred, labels_true, *, background: &#x27;int&#x27; = 0, min_overlap: &#x27;float&#x27; = 0.5) -&gt; &#x27;Dict[str, object]&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opssegmentation.get(&quot;seg_object_counts_match&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Objektzahl-Übereinstimmung: zählt split / merged / missed / false / matched aus den Graden eines „hauptsächlich überlappenden“ bipartiten Graphen (seg_object_counts_match).</p>
 <p>Bedingung für eine Kante zwischen wahr i und Vorhersage j (beide kein Hintergrund) = Überlappung n_ij ≥ <code style="color:#22d3bf">min_overlap</code> × min(|i|, |j|) (das kleinere liegt überwiegend im anderen). Mit wahrem Grad d_i und vorhergesagtem Grad e_j:</p>

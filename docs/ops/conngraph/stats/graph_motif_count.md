@@ -4,6 +4,7 @@ dim: conngraph
 category: stats
 in: conn_graph
 out: measurement
+gpu: なし
 examples: [gallery_conngraph_closed_forms]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `conn_graph` → `measurement`
 - **呼び出し**: `import fullseye as fs; fs.ledger.graph_motif_count(W: 'Any', motif: 'str' = 'ffl') -> 'float'` (実装を直接呼ぶなら `import conngraph; conngraph.graph_motif_count(W: 'Any', motif: 'str' = 'ffl') -> 'float'`、台帳から引くなら `opsconngraph.get("graph_motif_count")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

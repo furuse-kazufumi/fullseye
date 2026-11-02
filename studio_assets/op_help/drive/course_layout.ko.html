@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">course_layout — DRIVE <code style="color:#22d3bf">course</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">table × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.course_layout(elements, placements)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivecourse; drivecourse.course_layout(elements, placements)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;course_layout&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>여러 요소를 강체 운동 <code style="color:#22d3bf">(x, y, yaw)</code>로 배치하여 1개의 dict로 만듭니다.</p>
 <p>각 요소의 polygon / centerline / rails / stop_lines 는 점으로서, entry / exit / signal_poses 는 자세로서(yaw 도 회전시킨다) 변환한다. <code style="color:#22d3bf">profile</code>(언덕길의 (s, z))은 요소의 국소 호 길이이므로 그대로. 반환값은 <code style="color:#22d3bf">{&quot;kind&quot;: &quot;layout&quot;, &quot;elements&quot;: [変換済み要素(各々 &quot;placement&quot; を持つ)], &quot;polygon&quot;: None, &quot;bounds&quot;: (xmin, xmax, ymin, ymax), &quot;placements&quot;: [...]}</code>. 내외 판정은 요소의 합(<code style="color:#22d3bf">course_contains</code> / <code style="color:#22d3bf">course_occupancy</code>). 요소의 겹침은 합으로 다룬다.</p>

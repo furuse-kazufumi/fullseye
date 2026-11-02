@@ -4,6 +4,7 @@ dim: math
 category: interp_poly
 in: points × signal × points
 out: table
+gpu: なし
 examples: [poc_datacenter_thermal_field, poc_multibeam_bathymetry, poc_stockpile_volume]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `points × signal × points` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.interp_scattered(points, values, query, method='linear', fill_value=nan, rescale=False, neighbors=None)` (実装を直接呼ぶなら `import mathops; mathops.interp_scattered(points, values, query, method='linear', fill_value=nan, rescale=False, neighbors=None)`、台帳から引くなら `opsmath.get("interp_scattered")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

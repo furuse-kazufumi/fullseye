@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">svg_entities — OPTICS <code style="color:#22d3bf">drawing</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">text</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.svg_entities(text)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import optdraw; optdraw.svg_entities(text)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;svg_entities&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>SVG(<code style="color:#22d3bf">drawing_svg</code> が書く形: <code style="color:#22d3bf">line</code> / <code style="color:#22d3bf">polyline</code> / <code style="color:#22d3bf">polygon</code> / <code style="color:#22d3bf">circle</code> / <code style="color:#22d3bf">path</code> の M…A… と M…L… / <code style="color:#22d3bf">text</code>)を図の要素に読み戻す(<code style="color:#22d3bf">table</code>)。y の符号を戻して図のモデルの向き(y 上)にする。</p>
 <p>返り値: <code style="color:#22d3bf">{&quot;entities&quot;, &quot;scale&quot;, &quot;view_box&quot;}</code>。層は祖先の <code style="color:#22d3bf">&lt;g data-layer&gt;</code>、意味の印は <code style="color:#22d3bf">data-tag</code>。★DOCTYPE・実体参照の宣言を含む入力は ValueError(XML の実体展開の攻撃を入口で止める)。<code style="color:#22d3bf">transform</code> は文字の <code style="color:#22d3bf">rotate</code> だけを解釈し、ほかの変換を持つ要素は ValueError(座標を黙って取り違えない)。</p>

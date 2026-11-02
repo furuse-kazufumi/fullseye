@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">roundabout_signal_check — DRIVE <code style="color:#22d3bf">pass</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.roundabout_signal_check(progress, left_on, *, arm_angles: &#x27;Sequence[float]&#x27;, entry: &#x27;int&#x27;, exit: &#x27;int&#x27;, right_on=None, tol: &#x27;float&#x27; = 0.05) -&gt; &#x27;Dict[str, object]&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivepass; drivepass.roundabout_signal_check(progress, left_on, *, arm_angles: &#x27;Sequence[float]&#x27;, entry: &#x27;int&#x27;, exit: &#x27;int&#x27;, right_on=None, tol: &#x27;float&#x27; = 0.05) -&gt; &#x27;Dict[str, object]&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;roundabout_signal_check&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>회전교차로 안의 신호를 채점(제53조 제2·4항, 교칙 5-5-1(2)). 장면 S069.</p>
 <p><code style="color:#22d3bf">progress</code> = 입구에서 시계 방향으로 나아간 각 [rad], 단조 비감소, 샘플별, <code style="color:#22d3bf">left_on</code> / <code style="color:#22d3bf">right_on</code> = 신호의 상태(bool).</p>

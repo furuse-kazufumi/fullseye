@@ -4,7 +4,7 @@ dim: 3d
 category: feature
 in: voxel
 out: curvature
-gpu: true
+gpu: なし
 examples: [diff_features]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `voxel` → `curvature`
 - **呼び出し**: `import fullseye as fs; fs.ledger.curvature_maps(vol, device='cpu', mc=0.000625)` (実装を直接呼ぶなら `import match3d; match3d.curvature_maps(vol, device='cpu', mc=0.000625)`、台帳から引くなら `ops3d.get("curvature_maps")`)
-- **GPU**: この op は GPU 経路あり(`device="cuda"`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

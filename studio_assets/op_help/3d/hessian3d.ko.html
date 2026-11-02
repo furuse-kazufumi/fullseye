@@ -2,7 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">hessian3d — 3D <code style="color:#22d3bf">feature</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">hessian</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.hessian3d(vol, device=&#x27;cpu&#x27;)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import match3d; match3d.hessian3d(vol, device=&#x27;cpu&#x27;)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;hessian3d&quot;)</code>)</p>
-<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 이 연산자는 GPU 경로가 있습니다(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>3D Hessian 의 6 독립 성분 (fzz,fyy,fxx,fzy,fzx,fyx). 분리형 conv3d(2 계/1 계×평활).</p>
 <p>커널: 2계 [1,−2,1] (이득 1), 1계 [−0.5,0,0.5] (이득 1), 나머지 축은 [1,2,1]/4의 평활(이득 1). 대각 성분은 &quot;그 축의 2계 × 다른 2축의 평활&quot;, 교차 성분은 &quot;2축의 1계 × 나머지 축의평활&quot;. <b>단위는 1/voxel²의 참값</b>(<code style="color:#22d3bf">sobel3d</code>의 32배 이득과는 다르다). 끝은 replicate. 반환값은 <b>torch tensor 6개의 list</b>, 각각 <code style="color:#22d3bf">(D,H,W)</code> float32, <code style="color:#22d3bf">device</code> 위, 순서는(zz, yy, xx, zy, zx, yx)(축 0=z, 1=y, 2=x). numpy가 필요하면 <code style="color:#22d3bf">.cpu().numpy()</code>. 입력은 numpy 상당(float32로 변환).</p>

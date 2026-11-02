@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">material_catalog — OPTICS <code style="color:#22d3bf">material</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">table</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.material_catalog() -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import surfacelib; surfacelib.material_catalog() -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;material_catalog&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>material name → default parameters (diffuse roughness / clear coat की strength और roughness / कपड़े की किनारी चमक)।</p>
 <p>मापे गए भौतिक गुण नहीं, बल्कि दिखावट के लिए design मान। महत्वपूर्ण बात क्रम है (clear coat: paper &lt; plastic &lt; ceramic &lt; car paint / diffuse roughness: concrete &gt; paper &gt; plastic)।</p>

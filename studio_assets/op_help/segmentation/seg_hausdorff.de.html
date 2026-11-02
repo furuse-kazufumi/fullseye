@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">seg_hausdorff — SEGMENTATION <code style="color:#22d3bf">score</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">labels2d × labels2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.seg_hausdorff(labels_pred, labels_true, *, percentile: &#x27;float&#x27; = 95.0) -&gt; &#x27;Dict[str, float]&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import segeval; segeval.seg_hausdorff(labels_pred, labels_true, *, percentile: &#x27;float&#x27; = 95.0) -&gt; &#x27;Dict[str, float]&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opssegmentation.get(&quot;seg_hausdorff&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Hausdorff-Abstand zwischen den beiden Grenzpixelmengen, mit einer Perzentil-Variante wie HD95 (seg_hausdorff).</p>
 <p>Ränder folgen der Konvention von <code style="color:#22d3bf">_boundary</code>. Ist einer der Ränder leer (Bild mit 1 Farbe), gibt es nichts zu messen, daher ValueError.</p>

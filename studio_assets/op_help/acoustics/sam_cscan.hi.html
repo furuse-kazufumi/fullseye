@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">sam_cscan — ACOUSTICS <code style="color:#22d3bf">ultrasonic</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">labels2d × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sam_cscan(bond_map, stacks, pixel_size=2e-06, f0=150000000.0, bandwidth=0.6, f_number=3.0, water_path=0.001, gate_interface=1, half_width=None, k_res=1.02, noise_rms=0.0, seed=0, n_reverb=40, psf_nodes=32)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import ultrasound; ultrasound.sam_cscan(bond_map, stacks, pixel_size=2e-06, f0=150000000.0, bandwidth=0.6, f_number=3.0, water_path=0.001, gate_interface=1, half_width=None, k_res=1.02, noise_rms=0.0, seed=0, n_reverb=40, psf_nodes=32)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsacoustics.get(&quot;sam_cscan&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>2-D bond map का focused-transducer C-scan: हर आवृत्ति पर Gaussian पार्श्व PSF, सीमा पर time gate, आयाम, phase, in-phase (चिह्नित) और signed-peak चित्र (<code style="color:#22d3bf">table</code>)।</p>
 <p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>

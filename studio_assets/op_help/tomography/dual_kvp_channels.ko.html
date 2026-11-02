@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">dual_kvp_channels — TOMOGRAPHY <code style="color:#22d3bf">spectral_xray</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">pairs × pairs</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dual_kvp_channels(spectrum_low, spectrum_high, detector: &#x27;str&#x27; = &#x27;CSI&#x27;, detector_mm: &#x27;float&#x27; = 0.6) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import dualxray; dualxray.dual_kvp_channels(spectrum_low, spectrum_high, detector: &#x27;str&#x27; = &#x27;CSI&#x27;, detector_mm: &#x27;float&#x27; = 0.6) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opstomography.get(&quot;dual_kvp_channels&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>두 관전압으로 찍는 에너지 적분형(신틸레이터) 검출기의 2채널.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>

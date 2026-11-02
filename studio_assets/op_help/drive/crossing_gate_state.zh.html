@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">crossing_gate_state — DRIVE <code style="color:#22d3bf">crossing</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.crossing_gate_state(t, *, t_warning: &#x27;float&#x27;, t_lower_start: &#x27;float&#x27;, lower_duration: &#x27;float&#x27;, t_clear: &#x27;float&#x27;, raise_duration: &#x27;float&#x27;) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import drivecrossing; drivecrossing.crossing_gate_state(t, *, t_warning: &#x27;float&#x27;, t_lower_start: &#x27;float&#x27;, lower_duration: &#x27;float&#x27;, t_clear: &#x27;float&#x27;, raise_duration: &#x27;float&#x27;) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;crossing_gate_state&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>在时刻 t(数组)上评估铁路道口的状态机(道口报警器 + 栏杆)。</p>
 <p>状态: 0 idle(无报警、栏杆抬起)、1 warning(报警中、栏杆抬起)、2 lowering(下降中)、3 closed(遮断中)、4 raising(列车通过后报警停止,栏杆上升中)。报警灯在 1〜3 时点亮(解释标准 5(5)&quot;通过后停止报警&quot;)。栏杆角度 [rad]: 上 π/2 → 下 0。下降、上升为余弦平滑形状(<b>假设</b>: 没有实机下降曲线的资料)。<code style="color:#22d3bf">entry_forbidden</code> = 1〜4(第 33 条第 2 款。包含上升中是偏保守的解释)。</p>

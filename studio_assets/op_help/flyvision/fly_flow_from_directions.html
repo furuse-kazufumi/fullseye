@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">fly_flow_from_directions — FLYVISION <code style="color:#22d3bf">direction</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">matrix × table</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fly_flow_from_directions(responses, lattice)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import flyvision; flyvision.fly_flow_from_directions(responses, lattice)</code>、台帳から引くなら <code style="color:#22d3bf">opsflyvision.get(&quot;fly_flow_from_directions&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Six directional responses per ommatidium in, one local flow vector out.</p>
 <p>The lobula plate does not keep six numbers per point of the visual field; it keeps the direction and strength of the motion there, split over four layers of opposite preference. This op is that reduction, done as the vector sum on the tangent plane that makes opposite hexagonal directions cancel exactly::</p>

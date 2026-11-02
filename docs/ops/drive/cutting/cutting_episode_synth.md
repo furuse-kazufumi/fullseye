@@ -4,6 +4,7 @@ dim: drive
 category: cutting
 in: 
 out: table
+gpu: なし
 examples: [poc_food_cutting_measure, poc_knife_tactile_toughness]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.cutting_episode_synth(R: 'float' = 400.0, theta_deg: 'float' = 4.0, vx: 'float' = 6.0, vz: 'float' = 4.0, k_wrist: 'float' = 4.0, dt: 'float' = 0.1, n_frames: 'int' = 40, heel_x0: 'float' = 12.0, edge_start: 'float' = 27.0, scene=None) -> 'dict'` (実装を直接呼ぶなら `import cutting; cutting.cutting_episode_synth(R: 'float' = 400.0, theta_deg: 'float' = 4.0, vx: 'float' = 6.0, vz: 'float' = 4.0, k_wrist: 'float' = 4.0, dt: 'float' = 0.1, n_frames: 'int' = 40, heel_x0: 'float' = 12.0, edge_start: 'float' = 27.0, scene=None) -> 'dict'`、台帳から引くなら `opsdrive.get("cutting_episode_synth")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

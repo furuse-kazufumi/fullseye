@@ -5,6 +5,7 @@ category: contour
 in: contour
 out: contour
 halcon: close_contours_xld
+gpu: なし
 examples: [gallery2d_contour_measure]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -16,6 +17,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **データ種**: `contour` → `contour`
 - **呼び出し**: `fullseye.apply(img, "close_contours_xld", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 - **HALCON 相当**: `close_contours_xld`(意味・パラメータは HALCON リファレンスが参考になる)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ![close_contours_xld: input → output](../../_fig/close_contours_xld.png)
 

@@ -4,6 +4,7 @@ dim: math
 category: numerics
 in: signal × signal
 out: table
+gpu: なし
 examples: [numerics_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal × signal` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.integrate_hamiltonian(q0, p0, dt: 'float' = 0.05, n_steps: 'int' = 1000, *, system: 'str' = 'harmonic', method: 'str' = 'verlet', **params) -> 'dict'` (実装を直接呼ぶなら `import mathnumerics; mathnumerics.integrate_hamiltonian(q0, p0, dt: 'float' = 0.05, n_steps: 'int' = 1000, *, system: 'str' = 'harmonic', method: 'str' = 'verlet', **params) -> 'dict'`、台帳から引くなら `opsmath.get("integrate_hamiltonian")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

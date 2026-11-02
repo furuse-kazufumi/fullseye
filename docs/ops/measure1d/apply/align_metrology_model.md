@@ -4,6 +4,7 @@ dim: measure1d
 category: apply
 in: metrologymodel
 out: metrologymodel
+gpu: なし
 examples: [poc_dimensional_inspection]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `metrologymodel` → `metrologymodel`
 - **呼び出し**: `import fullseye as fs; fs.ledger.align_metrology_model(model, drow=0.0, dcol=0.0) -> 'dict'` (実装を直接呼ぶなら `import metrology; metrology.align_metrology_model(model, drow=0.0, dcol=0.0) -> 'dict'`、台帳から引くなら `opsmeasure1d.get("align_metrology_model")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

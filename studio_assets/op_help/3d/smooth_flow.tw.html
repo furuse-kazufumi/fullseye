@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">smooth_flow — 3D <code style="color:#22d3bf">scene_flow3d</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">flow_scattered</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.smooth_flow(pts0, pts1, k: &#x27;int&#x27; = 10, n_iter: &#x27;int&#x27; = 5, method: &#x27;str&#x27; = &#x27;exact&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import scene_flow3d; scene_flow3d.smooth_flow(pts0, pts1, k: &#x27;int&#x27; = 10, n_iter: &#x27;int&#x27; = 5, method: &#x27;str&#x27; = &#x27;exact&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;smooth_flow&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>回傳把最近鄰流用鄰域平均局部平滑後的正則化流 (N, 3)。</p>
 <p>將 <code style="color:#22d3bf">nearest_neighbor_flow</code> 的原始流(因來自最近鄰對應而帶雜訊) 在 <code style="color:#22d3bf">pts0</code> 空間的 k 近鄰拓撲(包含自身,僅建構 1 次)上反覆平均。在抑制零平均雜訊的同時大致保留平滑的位移場(Jacobi 迭代 = 流場的拉普拉斯平滑)。線性場在對稱鄰域下無偏,有曲率的場會略微收縮(honest 的平滑偏差)。</p>

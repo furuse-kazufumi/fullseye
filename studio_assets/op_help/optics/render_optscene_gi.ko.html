@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">render_optscene_gi — OPTICS <code style="color:#22d3bf">radiosity</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">table × table × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.render_optscene_gi(scene, camera, lights, bounces=None, patch_mm=2.0, outer_mm=None, tol=1e-06, n_quad=3, supersample=1, study_bounces=8, study_tol=0.01)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import radiosity3d; radiosity3d.render_optscene_gi(scene, camera, lights, bounces=None, patch_mm=2.0, outer_mm=None, tol=1e-06, n_quad=3, supersample=1, study_bounces=8, study_tol=0.01)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsoptics.get(&quot;render_optscene_gi&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>상호 반사를 포함한 검사용 렌더링: <code style="color:#22d3bf">render_optscene</code>의 측광에 Lambert 패치 사이의 n회 반사(또는 수렴 해)를 더한다.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">essential_8point — 3D <code style="color:#22d3bf">two_view</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.essential_8point(pts1, pts2, K1, K2=None)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import twoview; twoview.essential_8point(pts1, pts2, K1, K2=None)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;essential_8point&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>대응점 + K 로부터 본질 행렬 E 를 바로. → E (3,3).</p>
 <p>절차: <code style="color:#22d3bf">fundamental_8point(pts1, pts2)</code>로 F를 추정하고, <code style="color:#22d3bf">E = K2ᵀ F K1</code>을 만든 뒤 SVD로 특이값을 (1, 1, 0)으로 바꾼다(본질 행렬의 성질. 결과의 Frobenius 노름은 √2로 고정된다).</p>

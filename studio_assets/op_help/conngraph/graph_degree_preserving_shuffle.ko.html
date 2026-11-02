@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">graph_degree_preserving_shuffle — CONNGRAPH <code style="color:#22d3bf">construct</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">conn_graph</code> → <code style="color:#22d3bf">conn_graph</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graph_degree_preserving_shuffle(W: &#x27;Any&#x27;, n_swaps: &#x27;int | None&#x27; = None, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import conngraph; conngraph.graph_degree_preserving_shuffle(W: &#x27;Any&#x27;, n_swaps: &#x27;int | None&#x27; = None, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsconngraph.get(&quot;graph_degree_preserving_shuffle&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>차수 보존 셔플(귀무 모델): 각 노드의 입차수·출차수와 가중치의 다중집합을 유지한 채 에지를 다시 연결한다.</p>
 <p>유향 double-edge swap(Maslov &amp; Sneppen 2002): 변 (a→b, w1) 과 (c→d, w2) 를(a→d, w1) 과 (c→b, w2) 로 바꾼다. 자기 결합이나 중복 변을 만드는 조는 버린다. <code style="color:#22d3bf">n_swaps</code> 의 기본값은 10 × 변의 수. <b>이진 구조의 차수</b>를 보존한다(가중치는 변에 붙어이동하므로 strength 는 바뀔 수 있다). 대각(자기 결합)은 움직이지 않고 그대로 남긴다. 변이 2 개 미만이면 복제를 반환한다.</p>

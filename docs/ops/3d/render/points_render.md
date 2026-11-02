@@ -4,6 +4,7 @@ dim: 3d
 category: render
 in: points
 out: rgbimage
+gpu: なし
 examples: [points_render_basics]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `points` → `rgbimage`
 - **呼び出し**: `import fullseye as fs; fs.ledger.points_render(points, colors=None, size=(256, 256), K=None, R=None, t=None, projection='orthographic', radius_px=1.5, footprint='gaussian', composite='over', opacity=1.0, depth_cue=0.0, background=(0.0, 0.0, 0.0), margin=0.05)` (実装を直接呼ぶなら `import render3d; render3d.points_render(points, colors=None, size=(256, 256), K=None, R=None, t=None, projection='orthographic', radius_px=1.5, footprint='gaussian', composite='over', opacity=1.0, depth_cue=0.0, background=(0.0, 0.0, 0.0), margin=0.05)`、台帳から引くなら `ops3d.get("points_render")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

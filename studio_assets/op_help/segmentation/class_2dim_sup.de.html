@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">class_2dim_sup — SEGMENTATION <code style="color:#22d3bf">classify</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image2d × image2d × mask</code> → <code style="color:#22d3bf">mask</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.class_2dim_sup(image1, image2, ref_region)</code> (die Implementierung direkt: <code style="color:#22d3bf">import segmentation; segmentation.class_2dim_sup(image1, image2, ref_region)</code>; aus dem Register: <code style="color:#22d3bf">opssegmentation.get(&quot;class_2dim_sup&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Überwachte Klassifikation im 2-Kanal-Merkmalsraum: Pixel innerhalb der Verteilung von ref_region (class_2dim_sup).</p>
 <p>Leere Eingabe (<code style="color:#22d3bf">image1</code> mit 0 Elementen) löst ValueError aus.</p>

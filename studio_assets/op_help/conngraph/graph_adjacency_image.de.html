@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">graph_adjacency_image — CONNGRAPH <code style="color:#22d3bf">view</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">conn_graph</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graph_adjacency_image(W: &#x27;Any&#x27;, order: &#x27;str&#x27; = &#x27;none&#x27;, log: &#x27;bool&#x27; = True) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import conngraph; conngraph.graph_adjacency_image(W: &#x27;Any&#x27;, order: &#x27;str&#x27; = &#x27;none&#x27;, log: &#x27;bool&#x27; = True) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsconngraph.get(&quot;graph_adjacency_image&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Wandelt die Adjazenzmatrix in ein Bild (n, n) in [0, 1] um. order = none / degree (absteigender Gesamtgrad) / component (Komponentenreihenfolge).</p>
 <p>Der Wert ist |W| (bei log zuvor log1p) geteilt durch sein Maximum. Ist alles null, ein Bild aus lauter Nullen.</p>

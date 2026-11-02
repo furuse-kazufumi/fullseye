@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">annotate_inset_layout — ANNOTATE <code style="color:#22d3bf">paper</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">table</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_inset_layout(shape, src_rect, corner=&#x27;rt&#x27;, factor=None, margin=10, max_fraction=0.4)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import annotate; annotate.annotate_inset_layout(shape, src_rect, corner=&#x27;rt&#x27;, factor=None, margin=10, max_fraction=0.4)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsannotate.get(&quot;annotate_inset_layout&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>table (dict) लौटाता है: बड़े किए inset की जगह और magnification closed form में तय करता है।</p>
 <p><code style="color:#22d3bf">factor=None</code> होने पर &quot;चौड़ाई और ऊँचाई दोनों image के <code style="color:#22d3bf">max_fraction</code> से अधिक न हों&quot; शर्त में सबसे बड़ा पूर्णांक magnification। जिस कोने में inset मूल box पर चढ़ जाए वह ValueError है (वह अपने ही स्रोत को छिपा देगा)।</p>

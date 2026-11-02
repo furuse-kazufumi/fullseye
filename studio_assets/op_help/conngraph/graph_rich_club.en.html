@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">graph_rich_club — CONNGRAPH <code style="color:#22d3bf">stats</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">conn_graph</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graph_rich_club(W: &#x27;Any&#x27;, k: &#x27;int&#x27;) -&gt; &#x27;float&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import conngraph; conngraph.graph_rich_club(W: &#x27;Any&#x27;, k: &#x27;int&#x27;) -&gt; &#x27;float&#x27;</code>; from the registry, <code style="color:#22d3bf">opsconngraph.get(&quot;graph_rich_club&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Rich-club coefficient φ(k): the directed density of the subgraph spanned by nodes with total degree (in+out, binary) &gt; k.</p>
 <p>φ = number of edges / (r (r − 1)), r = number of qualifying nodes. 0 if r &lt; 2 (does not return NaN).</p>

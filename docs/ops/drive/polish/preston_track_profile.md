@@ -4,6 +4,7 @@ dim: drive
 category: polish
 in: signal × scalar × scalar × scalar
 out: signal
+gpu: なし
 examples: [poc_polish_wipe_measure]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal × scalar × scalar × scalar` → `signal`
 - **呼び出し**: `import fullseye as fs; fs.ledger.preston_track_profile(y, force: 'float', radius: 'float', k_p: 'float', kind: 'str' = 'flat', spin: 'float' = 0.0, speed=None, estar=None) -> 'np.ndarray'` (実装を直接呼ぶなら `import polish; polish.preston_track_profile(y, force: 'float', radius: 'float', k_p: 'float', kind: 'str' = 'flat', spin: 'float' = 0.0, speed=None, estar=None) -> 'np.ndarray'`、台帳から引くなら `opsdrive.get("preston_track_profile")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

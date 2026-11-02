@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">threshold_triangle — SEGMENTATION <code style="color:#22d3bf">threshold</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.threshold_triangle(image, *, nbins: &#x27;int&#x27; = 256) -&gt; &#x27;Dict[str, object]&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import seggraph; seggraph.threshold_triangle(image, *, nbins: &#x27;int&#x27; = 256) -&gt; &#x27;Dict[str, object]&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opssegmentation.get(&quot;threshold_triangle&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>삼각법(Zack–Rogers–Latt 1977): 정점 (b_p, h_p)과 긴 꼬리 쪽 끝 빈 (b_e, 0)을 잇는 선에서, 그 사이 빈 (b, h_b)까지의 부호 있는 수직 거리가 최대인 빈을 임계값으로 한다(선의 아래쪽이 양). 반환: <code style="color:#22d3bf">threshold</code>(그 빈의 중심), <code style="color:#22d3bf">mask</code> = image &gt; threshold, <code style="color:#22d3bf">bin</code>, <code style="color:#22d3bf">distance</code>(빈마다의 거리, 범위 밖은 nan). 끝점의 높이 0과 꼬리 쪽 선택은 skimage / ImageJ와 같은 규약(원전은 확인 필요)(threshold_triangle).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">warp_by_plane — 3D <code style="color:#22d3bf">plane_sweep_stereo</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.warp_by_plane(img: &#x27;np.ndarray&#x27;, H: &#x27;np.ndarray&#x27;, order: &#x27;int&#x27; = 1, cval: &#x27;float&#x27; = nan) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import plane_sweep; plane_sweep.warp_by_plane(img: &#x27;np.ndarray&#x27;, H: &#x27;np.ndarray&#x27;, order: &#x27;int&#x27; = 1, cval: &#x27;float&#x27; = nan) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;warp_by_plane&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>homography H से img को inverse warp करता है। → out[y,x] = img(H·(x,y,1)) (bilinear)।</p>
 <p>H output (ref) pixel → input (src) pixel का mapping है। field of view के बाहर cval (default NaN)।</p>

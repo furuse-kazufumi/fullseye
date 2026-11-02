@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tid2013_metric_values — IMGMETRICS <code style="color:#22d3bf">iqa</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">any × any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tid2013_metric_values(root, metric: &#x27;str&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import iqatid; iqatid.tid2013_metric_values(root, metric: &#x27;str&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsimgmetrics.get(&quot;tid2013_metric_values&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>लेखकों के गणना किए मान <code style="color:#22d3bf">metrics_values/&lt;metric&gt;.txt</code> (case-insensitive, 3000 line, नाम नहीं) को (3000,) float के रूप में लौटाता है। line का क्रम <code style="color:#22d3bf">tid2013_index</code> के <code style="color:#22d3bf">names</code> जैसा ही है। <code style="color:#22d3bf">metric</code> <code style="color:#22d3bf">tid2013_published</code> की key है (psnr / psnrc / ssim / mssim …)। <b>Raises</b> <code style="color:#22d3bf">ValueError</code>: file नहीं है, line संख्या ≠ 3000, गैर-संख्यात्मक।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>

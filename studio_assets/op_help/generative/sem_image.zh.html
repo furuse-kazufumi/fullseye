@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">sem_image — GENERATIVE <code style="color:#22d3bf">sem</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sem_image(height, material_map=None, *, materials=(&#x27;SI&#x27;,), substrate=&#x27;SI&#x27;, energy_kev: &#x27;float&#x27; = 5.0, pixel_nm: &#x27;float&#x27; = 2.0, beam_sigma_nm: &#x27;float&#x27; = 1.0, electrons_per_pixel: &#x27;int&#x27; = 30, detector: &#x27;str&#x27; = &#x27;inlens&#x27;, layer_bottom_nm=0.0, buried=None, gain=None, seed: &#x27;int&#x27; = 0, return_signals: &#x27;bool&#x27; = False)</code>(要直接调用实现,<code style="color:#22d3bf">import sem; sem.sem_image(height, material_map=None, *, materials=(&#x27;SI&#x27;,), substrate=&#x27;SI&#x27;, energy_kev: &#x27;float&#x27; = 5.0, pixel_nm: &#x27;float&#x27; = 2.0, beam_sigma_nm: &#x27;float&#x27; = 1.0, electrons_per_pixel: &#x27;int&#x27; = 30, detector: &#x27;str&#x27; = &#x27;inlens&#x27;, layer_bottom_nm=0.0, buried=None, gain=None, seed: &#x27;int&#x27; = 0, return_signals: &#x27;bool&#x27; = False)</code>;从台账取用则 <code style="color:#22d3bf">opsgenerative.get(&quot;sem_image&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由高度场与材料图生成 SEM 像:向每个像素发射电子(直接蒙特卡罗)。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>

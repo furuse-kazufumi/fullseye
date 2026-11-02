@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">high_frequency_patterns — OPTICS <code style="color:#22d3bf">light_transport</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">images</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.high_frequency_patterns(shape=(1, 256), period=8, kind=&#x27;stripes&#x27;, fill=0.5, n_shifts=None, complement=False)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import lighttransport; lighttransport.high_frequency_patterns(shape=(1, 256), period=8, kind=&#x27;stripes&#x27;, fill=0.5, n_shifts=None, complement=False)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;high_frequency_patterns&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>खिसकाए गए उच्च-आवृत्ति projector पैटर्न: fill ratio α वाली binary धारियाँ, checkerboard, या phase-shifted sinusoids (एक या कई periods) (<code style="color:#22d3bf">images</code>)।</p>
 <p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>

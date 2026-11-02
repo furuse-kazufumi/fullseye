@@ -4,6 +4,7 @@ dim: oned
 category: function
 in: signal × signal
 out: measurement
+gpu: なし
 examples: [signal_funct1d]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal × signal` → `measurement`
 - **呼び出し**: `import fullseye as fs; fs.ledger.distance_funct_1d(y1, y2, mode='max') -> 'float'` (実装を直接呼ぶなら `import funct1d; funct1d.distance_funct_1d(y1, y2, mode='max') -> 'float'`、台帳から引くなら `ops1d.get("distance_funct_1d")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

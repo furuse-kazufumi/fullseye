@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">dynnikov_act — DRIVE <code style="color:#22d3bf">braidpath</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">any × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dynnikov_act(coords, word)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import braidpath; braidpath.dynnikov_act(coords, word)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;dynnikov_act&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>임의의 Dynnikov 좌표 (a; b)(정수든 실수든 가능 —— 식은 구간별 선형)에 브레이드 단어를 작용시킨다.</p>
 <p><code style="color:#22d3bf">coords</code> 는 dict(<code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code>) 또는 길이 2(n − 1) 의 열(앞 절반 a, 뒤 절반 b). 가닥 수는 n = len(a) + 1. 관계식 σᵢσᵢ₊₁σᵢ = σᵢ₊₁σᵢσᵢ₊₁, σᵢσⱼ = σⱼσᵢ, σᵢσᵢ⁻¹ = 1 은 <b>어떤 (a; b) 에서도 항등적으로</b> 성립한다(게이트 1 에서 난수 실수 좌표로).</p>

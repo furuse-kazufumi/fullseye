@@ -4,6 +4,7 @@ dim: optics
 category: lensrender
 in: 
 out: table
+gpu: なし
 examples: [poc_dehazing]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.scene_radiance(ray_origins=None, ray_dirs=None, scene=None, wavelengths_um=None, illuminant=None) -> 'dict'` (実装を直接呼ぶなら `import lensrender; lensrender.scene_radiance(ray_origins=None, ray_dirs=None, scene=None, wavelengths_um=None, illuminant=None) -> 'dict'`、台帳から引くなら `opsoptics.get("scene_radiance")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">jamming_parallelogram_planar — DRIVE <code style="color:#22d3bf">pegfail</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.jamming_parallelogram_planar(kp, depth: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import pegfail; pegfail.jamming_parallelogram_planar(kp, depth: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;jamming_parallelogram_planar&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>かじりの平行四辺形を <b>二点接触の平面静力学から導く</b>(pegsim.jamming_diagram の頂点 = OCW p.34 の値と突き合わせる第 2 経路)。</p>
 <p>平面(x 右、z 上)で、先端の縁が −x 側の壁に深さ l で触れ(法線力 f₁ ≥ 0、+x 向き)、+x 側の口の縁が胴に触れる(f₂ ≥ 0、−x 向き)。両点が下へ滑る Coulomb 摩擦(上向き μf)で、先端に加える (F_x, F_z 下向き正, M 反時計回り正) の釣り合いは</p>

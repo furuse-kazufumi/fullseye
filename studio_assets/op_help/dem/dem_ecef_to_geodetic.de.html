@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">dem_ecef_to_geodetic — DEM <code style="color:#22d3bf">geodesy</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_ecef_to_geodetic(xyz)</code> (die Implementierung direkt: <code style="color:#22d3bf">import demops; demops.dem_ecef_to_geodetic(xyz)</code>; aus dem Register: <code style="color:#22d3bf">opsdem.get(&quot;dem_ecef_to_geodetic&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>ECEF → geodätische Koordinaten. Rückgabe ist <code style="color:#22d3bf">(..., 3)</code> mit <code style="color:#22d3bf">(Breite[Grad], Länge[Grad], Höhe[m])</code>.</p>
 <p>Ein Verfahren nahe der geschlossenen Form von Bowring (1976). Der Hin-und-zurück-Fehler (geodätisch→ECEF→geodätisch) <b>verschiebt sich je nach Stichprobenort um mehr als eine Größenordnung</b>, daher wird er mit Bereichen angegeben (neu gemessen 2026-09-08. Früher stand hier &quot;Breite/Länge unter 1e-12 Grad, Höhe unter 1e-7 m&quot;, aber ★bei 4000 Punkten mit Breite ±85 Grad und Höhe -500 bis 9000 m war das bereits mit <b>maximal 6.4e-12 Grad / 8.5e-07 m</b> überschritten —— verwechselt mit dem Median 2.6e-13 Grad / 3.3e-08 m):</p>

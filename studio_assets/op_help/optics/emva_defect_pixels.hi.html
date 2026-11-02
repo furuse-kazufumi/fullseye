@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">emva_defect_pixels — OPTICS <code style="color:#22d3bf">sensorchar</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.emva_defect_pixels(avg_image, L, threshold)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import sensorchar; sensorchar.emva_defect_pixels(avg_image, L, threshold)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;emva_defect_pixels&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>defect pixels का characterization (खंड 8.8): logarithmic histogram (समीकरण 73 से 75) और accumulated histogram (समीकरण 77), threshold पार करने वाले pixels की संख्या।</p>
 <p>*avg_image*: L images का mean image (averaging से temporal noise हटाया गया)। *L*: average की गई images की संख्या (bin width को 1/L का पूर्णांक गुणज बनाती है)। *threshold* (आवश्यक) [DN]: वे pixels गिनता है जिनका mean से absolute deviation इस मान से <b>अधिक</b> है (उपयोग का &quot;stop band&quot;)।</p>

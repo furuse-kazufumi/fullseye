@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">principal_moments — 3D <code style="color:#22d3bf">moment_invariant</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">descriptor</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.principal_moments(points) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import moments3d; moments3d.principal_moments(points) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;principal_moments&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>inertia tensor के eigenvalues (principal moments of inertia, घटते क्रम में sort, rotation invariant)।</p>
 <p>inertia tensor symmetric है, इसलिए eigenvalues real हैं। point cloud को rotation R से घुमाने पर I → R I Rᵀ similarity transform होता है, और eigenvalues invariant (ठीक-ठीक) रहते हैं। return value घटते क्रम में होती है, इसलिए coordinate system या rotation से स्वतंत्र रूप से मेल खाती है।</p>

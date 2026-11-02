@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">blob_select_largest — BLOB <code style="color:#22d3bf">select</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">labels2d</code> → <code style="color:#22d3bf">labels2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.blob_select_largest(labels: &#x27;Any&#x27;, count: &#x27;int&#x27; = 1) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import blob2d; blob2d.blob_select_largest(labels: &#x27;Any&#x27;, count: &#x27;int&#x27; = 1) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsblob.get(&quot;blob_select_largest&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>면적이 큰 순서로 <code style="color:#22d3bf">count</code>개만 남긴다(<b>번호는 면적의 내림차순으로 다시 매긴다</b>).</p>
 <p>같은 면적이 나란히 있으면 원래 번호가 작은 쪽을 앞에 둔다(실행할 때마다 순서가바뀌지 않도록 <code style="color:#22d3bf">argsort</code> 를 안정 정렬로 고정해 두었다). <code style="color:#22d3bf">count</code> 가물체 수보다 많아도 <b>있는 만큼</b> 반환한다(부족한 것을 예외로 삼지 않는다 —— &quot;상위 3 개&quot;를 요청했는데 2 개밖에 없는 것은 이상이 아니다).</p>

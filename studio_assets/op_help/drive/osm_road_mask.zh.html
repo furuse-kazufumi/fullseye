@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">osm_road_mask — DRIVE <code style="color:#22d3bf">japan</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.osm_road_mask(graph: &#x27;dict&#x27;, *, step: &#x27;float&#x27; = 0.5, margin: &#x27;float&#x27; = 6.0, bbox=None) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import drivejapan; drivejapan.osm_road_mask(graph: &#x27;dict&#x27;, *, step: &#x27;float&#x27; = 0.5, margin: &#x27;float&#x27; = 6.0, bbox=None) -&gt; &#x27;Dict[str, object]&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;osm_road_mask&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>将边画成带宽度的线段(端部为圆)得到的<b>道路并集</b>二值(2 值)图像。</p>
 <p>像素 (r, c) 的中心 = (xmin + (c + ½) step, ymin + (r + ½) step),行沿 y 增大的方向(数学坐标。显示时上下翻转)。返回值 <code style="color:#22d3bf">{&quot;mask&quot;: (H, W) bool, &quot;xmin&quot;, &quot;ymin&quot;, &quot;step&quot;, &quot;shape&quot;, &quot;area_m2&quot;: 画素数 × step²}</code>。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: step ≤ 0、图像超过 4e7 像素(把 step 调粗)。</p>

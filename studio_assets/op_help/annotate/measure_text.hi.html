@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">measure_text — ANNOTATE <code style="color:#22d3bf">text</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">text</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.measure_text(text, font_size=14, font_path=None, max_width=None, min_font_size=9, line_spacing=1.15, wrap=True, bold=False, italic=False)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import annotate; annotate.measure_text(text, font_size=14, font_path=None, max_width=None, min_font_size=9, line_spacing=1.15, wrap=True, bold=False, italic=False)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsannotate.get(&quot;measure_text&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>text को <b>बनाने से पहले</b> मापता है। न समाए तो wrap करता है या छोटा करता है, फिर भी न हो तो exception।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>

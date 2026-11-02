@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">rgb_to_lab — IMGMETRICS <code style="color:#22d3bf">colorspace</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">rgbimage</code> → <code style="color:#22d3bf">lab</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rgb_to_lab(rgb, white=(0.95047, 1.0, 1.08883))</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import imgmetrics; imgmetrics.rgb_to_lab(rgb, white=(0.95047, 1.0, 1.08883))</code>, registry से लेना हो तो <code style="color:#22d3bf">opsimgmetrics.get(&quot;rgb_to_lab&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>sRGB → CIE L*a*b* (D65)। ΔE मापने से पहले का चरण।</p>
 <p><code style="color:#22d3bf">xyz_to_lab(rgb_to_xyz(rgb), white)</code> का संयोजन। जाँच और विफलता की शर्तें उन्हीं 2 के अनुसार हैं:</p>

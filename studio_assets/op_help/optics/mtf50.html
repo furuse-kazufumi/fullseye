@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">mtf50 — OPTICS <code style="color:#22d3bf">imaging</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mtf50(sfr)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import edgesfr; edgesfr.mtf50(sfr)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;mtf50&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>SFR(pairs: 周波数, 値)が 0.5 を<b>最初に</b>切る周波数(直線補間)。0.5 を切らなければ <code style="color:#22d3bf">ValueError</code> (「測れる範囲の上まで 0.5 以上」を最大値として黙って返さない)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">ファミリ共通の入力契約(fail-closed)</h3>

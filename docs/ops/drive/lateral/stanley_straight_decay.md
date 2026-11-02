@@ -4,6 +4,7 @@ dim: drive
 category: lateral
 in: 
 out: signal
+gpu: なし
 examples: [gallery_drive_lateral_env]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `signal`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.stanley_straight_decay(e0: 'float', t, *, gain: 'float', speed: 'float', softening: 'float' = 0.0) -> 'np.ndarray'` (実装を直接呼ぶなら `import drivelateral; drivelateral.stanley_straight_decay(e0: 'float', t, *, gain: 'float', speed: 'float', softening: 'float' = 0.0) -> 'np.ndarray'`、台帳から引くなら `opsdrive.get("stanley_straight_decay")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

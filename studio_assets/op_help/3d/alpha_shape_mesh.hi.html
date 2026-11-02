@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">alpha_shape_mesh — 3D <code style="color:#22d3bf">reconstruct</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">mesh</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.alpha_shape_mesh(points, alpha)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import recon3d; recon3d.alpha_shape_mesh(points, alpha)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;alpha_shape_mesh&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>alpha shapes से <b>surface triangle mesh</b> (point cloud → (vertices, faces))।</p>
 <p><code style="color:#22d3bf">alpha_shape_boundary</code> वाले ही boundary triangles को, केवल उपयोग हुए vertices में दोबारा pack किए mesh के रूप में लौटाता है। voxel के बिना सीधे point cloud से फैलाई गई surface। concavities / holes को बनाए रख पाना marching cubes परिवार से इसका अंतर है।</p>

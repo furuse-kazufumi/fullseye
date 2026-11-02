@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">string_tension_static — DRIVE <code style="color:#22d3bf">diabolo</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">scalar × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.string_tension_static(stick_gap: &#x27;float&#x27;, params: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import diabolo; diabolo.string_tension_static(stick_gap: &#x27;float&#x27;, params: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;string_tension_static&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>छड़ियाँ समान ऊँचाई पर अंतराल 2c पर रुकी हैं, diabolo सबसे निचले बिंदु पर स्थिर: झोल b = √(a² − c²), tension T = m g a / (2b), डोरी का क्षैतिज से कोण atan2(b, c)। <b>Raises</b> <code style="color:#22d3bf">ValueError</code>: अंतराल (0, डोरी) से बाहर।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

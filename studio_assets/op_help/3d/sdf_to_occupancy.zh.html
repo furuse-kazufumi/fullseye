@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">sdf_to_occupancy — 3D <code style="color:#22d3bf">transform</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">sdf</code> → <code style="color:#22d3bf">voxel</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sdf_to_occupancy(sdf, iso=0.0)</code>(要直接调用实现,<code style="color:#22d3bf">import match3d; match3d.sdf_to_occupancy(sdf, iso=0.0)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;sdf_to_occupancy&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>SDF → occupancy voxel(小于等于 iso=内侧=1)。从 SDF 回到 voxel。</p>
 <p>仅为 <code style="color:#22d3bf">(sdf &lt;= iso).astype(float64)</code> 的 op。按 <code style="color:#22d3bf">signed_distance_field</code> 的约定(内侧 &lt;0), <code style="color:#22d3bf">iso=0.0</code> 时内侧=1、外侧=0。<b>包含等号</b>,所以恰好等于 <code style="color:#22d3bf">iso</code> 的 voxel 归入内侧。<code style="color:#22d3bf">iso</code> 为正时得到向外膨胀 <code style="color:#22d3bf">iso</code> 个 voxel 的占据,为负时得到收缩的占据(若 SDF 是真实距离,则等同于各向同性 dilation/erosion)。对 <code style="color:#22d3bf">tsdf_from_depth</code> 的输出(表面前方 +、后方 −、未观测 +1)也可用同样的 <code style="color:#22d3bf">iso=0.0</code>,但未观测区域会落在 0 一侧(外)。不限输入形状,返回同形状的 float64(0.0 / 1.0)。NaN 比较为假,因此变为 0 (无警告)。</p>

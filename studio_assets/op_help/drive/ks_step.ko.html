@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">ks_step — DRIVE <code style="color:#22d3bf">commonroad</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">any × any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ks_step(state, u, dt: &#x27;float&#x27;, params=None) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivecommonroad; drivecommonroad.ks_step(state, u, dt: &#x27;float&#x27;, params=None) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;ks_step&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>운동학 단일 트랙(KS) 모델을 구간 일정 입력 u = (δ̇, a)로 RK4를 써서 dt만큼 진행합니다. 기준점 = 뒤차축 중심.</p>
 <p>state = (x_rear, y_rear, δ, v, ψ). 식: ẋ = v cos ψ, ẏ = v sin ψ, δ̇ = u₀, v̇ = u₁, ψ̇ = v / l_wb · tan δ (commonroad-vehicle-models <code style="color:#22d3bf">vehicle_dynamics_ks</code>, 입력의 포화 <code style="color:#22d3bf">steering_constraints</code> / <code style="color:#22d3bf">acceleration_constraints</code> 도 동일).</p>

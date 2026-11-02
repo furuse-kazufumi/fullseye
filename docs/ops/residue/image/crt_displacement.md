@@ -4,6 +4,7 @@ dim: residue
 category: image
 in: image2d × image2d
 out: table
+gpu: なし
 examples: [poc_residue_crt]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d × image2d` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.crt_displacement(image0, image1, periods=(5.0, 7.0, 9.0, 11.0, 13.0, 16.0), sigma_px=40.0, max_disp=40.0, axis='x', refine=2) -> 'dict'` (実装を直接呼ぶなら `import residue; residue.crt_displacement(image0, image1, periods=(5.0, 7.0, 9.0, 11.0, 13.0, 16.0), sigma_px=40.0, max_disp=40.0, axis='x', refine=2) -> 'dict'`、台帳から引くなら `opsresidue.get("crt_displacement")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

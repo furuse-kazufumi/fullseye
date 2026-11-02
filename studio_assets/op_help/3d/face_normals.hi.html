@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">face_normals — 3D <code style="color:#22d3bf">mesh_process</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">mesh</code> → <code style="color:#22d3bf">normals</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.face_normals(mesh) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import mesh_props; mesh_props.face_normals(mesh) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;face_normals&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>triangle mesh के <b>face normals</b> (हर triangle का unit normal vector)। → (M,3)।</p>
 <p>normal = normalise किया गया cross(v1−v0, v2−v0)। दिशा <b>faces के winding order (winding)</b> से एकरूप ढंग से तय होती है (PCA जैसी sign की अनिश्चितता नहीं)। closed mesh को बाहर की ओर winding से बनाएँ तो सभी normals बाहर की ओर होते हैं।</p>

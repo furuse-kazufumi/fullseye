@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">points_render — 3D <code style="color:#22d3bf">render</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">rgbimage</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.points_render(points, colors=None, size=(256, 256), K=None, R=None, t=None, projection=&#x27;orthographic&#x27;, radius_px=1.5, footprint=&#x27;gaussian&#x27;, composite=&#x27;over&#x27;, opacity=1.0, depth_cue=0.0, background=(0.0, 0.0, 0.0), margin=0.05)</code> (to call the implementation directly, <code style="color:#22d3bf">import render3d; render3d.points_render(points, colors=None, size=(256, 256), K=None, R=None, t=None, projection=&#x27;orthographic&#x27;, radius_px=1.5, footprint=&#x27;gaussian&#x27;, composite=&#x27;over&#x27;, opacity=1.0, depth_cue=0.0, background=(0.0, 0.0, 0.0), margin=0.05)</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;points_render&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Render an (N, 3) point cloud to an RGB image (H, W, 3): anti-aliased splats, depth-sorted, deterministic.</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>

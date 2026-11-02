@@ -4,6 +4,7 @@ dim: drive
 category: pegtactile
 in: table × signal × signal × signal × signal × signal
 out: table
+gpu: なし
 examples: [poc_peg_insertion_tactile]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table × signal × signal × signal × signal × signal` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.two_point_forces(kp, F, M_g, g, tip, axis, mu_grid=None) -> 'dict'` (実装を直接呼ぶなら `import pegtactile; pegtactile.two_point_forces(kp, F, M_g, g, tip, axis, mu_grid=None) -> 'dict'`、台帳から引くなら `opsdrive.get("two_point_forces")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

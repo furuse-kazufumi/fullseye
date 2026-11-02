@@ -4,6 +4,7 @@ dim: emproof
 category: evaluate
 in: signal × signal × signal × signal
 out: table
+gpu: なし
 examples: [poc_em_second_opinion]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal × signal × signal × signal` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.holdout_threshold(train_pos, train_neg, test_pos, test_neg, target_fpr: 'float' = 0.05) -> 'dict'` (実装を直接呼ぶなら `import emproof; emproof.holdout_threshold(train_pos, train_neg, test_pos, test_neg, target_fpr: 'float' = 0.05) -> 'dict'`、台帳から引くなら `opsemproof.get("holdout_threshold")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

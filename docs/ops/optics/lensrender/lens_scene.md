@@ -4,6 +4,7 @@ dim: optics
 category: lensrender
 in: 
 out: table
+gpu: なし
 examples: [plenoptic_capture_pipeline, poc_photograph_through_prescription, poc_plenoptic_camera]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.lens_scene(objects=None, lights=None, sources=None, background=0.0, ambient=None, shadows=True) -> 'dict'` (実装を直接呼ぶなら `import lensrender; lensrender.lens_scene(objects=None, lights=None, sources=None, background=0.0, ambient=None, shadows=True) -> 'dict'`、台帳から引くなら `opsoptics.get("lens_scene")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

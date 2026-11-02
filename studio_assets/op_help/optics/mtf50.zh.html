@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">mtf50 — OPTICS <code style="color:#22d3bf">imaging</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mtf50(sfr)</code>(要直接调用实现,<code style="color:#22d3bf">import edgesfr; edgesfr.mtf50(sfr)</code>;从台账取用则 <code style="color:#22d3bf">opsoptics.get(&quot;mtf50&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>SFR(pairs：频率，值)<b>首次</b>低于 0.5 时的频率(线性插值)。若从未低于 0.5，则 <code style="color:#22d3bf">ValueError</code> (不会把“直到可测范围上限都在 0.5 以上”默默当作最大值返回)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>

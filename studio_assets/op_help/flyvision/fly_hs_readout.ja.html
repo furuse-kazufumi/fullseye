@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">fly_hs_readout — FLYVISION <code style="color:#22d3bf">integrate</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">matrix × table</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fly_hs_readout(responses, lattice, n_pref, el_min_deg=0.0, rectify=True)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import flyvision; flyvision.fly_hs_readout(responses, lattice, n_pref, el_min_deg=0.0, rectify=True)</code>、台帳から引くなら <code style="color:#22d3bf">opsflyvision.get(&quot;fly_hs_readout&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>水平系の広視野読み出し —— 上半視野での好み方向 対 反対方向の opponent 和。</p>
 <p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>

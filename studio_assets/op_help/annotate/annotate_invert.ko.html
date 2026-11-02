@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">annotate_invert — ANNOTATE <code style="color:#22d3bf">overlay</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d × mask</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_invert(img, mask, draw=&#x27;fill&#x27;, width=1.5, mode=&#x27;complement&#x27;, alpha=1.0, bits=128, min_contrast=1.5, on_invisible=&#x27;warn&#x27;)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import annotate; annotate.annotate_invert(img, mask, draw=&#x27;fill&#x27;, width=1.5, mode=&#x27;complement&#x27;, alpha=1.0, bits=128, min_contrast=1.5, on_invisible=&#x27;warn&#x27;)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsannotate.get(&quot;annotate_invert&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>영역(region)을 <b>반전색</b>으로 칠한다/테두리를 그린다.</p>
 <p>&quot;바탕이 밝은지 어두운지 알 수 없으니, 어느 쪽이든 보이는 색으로 그리고 싶다&quot;는때의 고전적인 수법. 칠할 색을 정하지 않아도 되는 대신, <b>중간조에서 사라지므로</b> <code style="color:#22d3bf">annotate_invert_visibility</code>의 측정을 내부에서 반드시 거친다.</p>

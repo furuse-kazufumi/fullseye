@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">convex_mirror_image — DRIVE <code style="color:#22d3bf">pass</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.convex_mirror_image(object_distance, radius: &#x27;float&#x27;, *, eye_distance: &#x27;float&#x27;, object_size: &#x27;float&#x27; = 1.0) -&gt; &#x27;Dict[str, object]&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivepass; drivepass.convex_mirror_image(object_distance, radius: &#x27;float&#x27;, *, eye_distance: &#x27;float&#x27;, object_size: &#x27;float&#x27; = 1.0) -&gt; &#x27;Dict[str, object]&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;convex_mirror_image&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>볼록거울의 허상(근축, 배열 가능). 장면 S064·S130.</p>
 <p>1/a + 1/b = 2/R(b 는 거울 너머의 허상)→ b = aR/(2a + R), 배율 m = R/(2a + R). 눈이 거울로부터 e(<code style="color:#22d3bf">eye_distance</code>)일 때상의 겉보기 크기 θ = 2 atan(m h /(2(e + b))), 근축에서는 m h/(e + b) = h/(e + k a), k = 1 + 2e/R. <code style="color:#22d3bf">flat_equivalent_distance</code> = 같은 크기로 보이는 평면경의 거리 k a(멀리 보이는 양).</p>

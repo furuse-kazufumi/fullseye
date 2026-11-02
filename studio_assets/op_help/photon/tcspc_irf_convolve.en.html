@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tcspc_irf_convolve — PHOTON <code style="color:#22d3bf">tcspc</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">counts</code> → <code style="color:#22d3bf">counts</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tcspc_irf_convolve(hist, bin_ps=100.0, irf_fwhm_ps=200.0, truncate=4.0)</code> (to call the implementation directly, <code style="color:#22d3bf">import photoncount; photoncount.tcspc_irf_convolve(hist, bin_ps=100.0, irf_fwhm_ps=200.0, truncate=4.0)</code>; from the registry, <code style="color:#22d3bf">opsphoton.get(&quot;tcspc_irf_convolve&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Blur an arrival-time histogram by the instrument response (timing jitter).</p>
 <p>The temporal analogue of a PSF convolution: a detector&#x27;s timing uncertainty (SPAD jitter + TDC quantisation + laser pulse width) smears every arrival time by the instrument response function, here a Gaussian of full width at half maximum *irf_fwhm_ps*. The kernel is the <b>exact bin integral</b> of that Gaussian (erf differences), normalised to sum 1, truncated at <code style="color:#22d3bf">+-truncate*sigma</code> and forced to odd length so the convolution is centred.</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">cr_drive_sweep — DRIVE <code style="color:#22d3bf">commonroad</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cr_drive_sweep(scene, pp_index: &#x27;int&#x27; = 0, *, grid=None, margin: &#x27;float&#x27; = 0.15, **kwargs) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import drivecommonroad; drivecommonroad.cr_drive_sweep(scene, pp_index: &#x27;int&#x27; = 0, *, grid=None, margin: &#x27;float&#x27; = 0.15, **kwargs) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;cr_drive_sweep&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>ルールベースの gap acceptance: 運転手の母数の格子を穏やかな順に試し、<b>最初に全部の門を通った走行</b> を返す。</p>
 <p>門 = ゴール到達 ∧ <code style="color:#22d3bf">cr_feasible</code> ∧ <code style="color:#22d3bf">cr_collision</code> で障害物なし(<code style="color:#22d3bf">margin</code> だけ膨らませた判定)∧ 道路境界なし。<code style="color:#22d3bf">grid</code> は <code style="color:#22d3bf">{&quot;a_lat&quot;: (...), &quot;lookahead&quot;: (...), &quot;k_v&quot;: (...), &quot;v_cruise&quot;: (...)}</code> 形式(既定 = a_lat 2.5→10、lookahead 5/8、k_v 0.6/1.0、v_cruise None)。他の kwargs は <code style="color:#22d3bf">cr_drive</code> へ。</p>

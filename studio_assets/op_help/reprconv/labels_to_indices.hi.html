@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">labels_to_indices — REPRCONV <code style="color:#22d3bf">index</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">labels</code> → <code style="color:#22d3bf">indices</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.labels_to_indices(labels)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import reprconv; reprconv.labels_to_indices(labels)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsreprconv.get(&quot;labels_to_indices&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p><code style="color:#22d3bf">labels</code> → non-background के index <code style="color:#22d3bf">(N,)</code>। <code style="color:#22d3bf">indices_to_labels</code> की उल्टी दिशा।</p>
 <p>2-D या उससे अधिक की label image भी लेता है -- उस स्थिति में index <b><code style="color:#22d3bf">labels.ravel()</code> में index</b> (C order) होते हैं। <code style="color:#22d3bf">np.unravel_index</code> से इन्हें coordinate में वापस बदला जा सकता है, पर <b>वापस बदलने के लिए मूल shape चाहिए</b>, इसलिए यह दिशा <code style="color:#22d3bf">shape</code> को छोड़ देती है (irreversible)।</p>

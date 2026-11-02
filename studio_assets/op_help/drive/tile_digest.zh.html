@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tile_digest — DRIVE <code style="color:#22d3bf">inf</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tile_digest(mesh: &#x27;dict&#x27;) -&gt; &#x27;str&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import driveinf; driveinf.tile_digest(mesh: &#x27;dict&#x27;) -&gt; &#x27;str&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;tile_digest&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>区块网格(mesh)的指纹(SHA-256，基于顶点、面、标签、颜色的字节序列)。用于重建按位一致的门禁。</p>
 <p>空输入(<code style="color:#22d3bf">mesh</code> 为空 dict)会引发 <code style="color:#22d3bf">ValueError</code>。</p>

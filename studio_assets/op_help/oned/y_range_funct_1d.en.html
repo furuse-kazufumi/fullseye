@@ -3,6 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">pairs</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.y_range_funct_1d(y)</code> (to call the implementation directly, <code style="color:#22d3bf">import funct1d; funct1d.y_range_funct_1d(y)</code>; from the registry, <code style="color:#22d3bf">ops1d.get(&quot;y_range_funct_1d&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>Return value through the ledger</b>: <code style="color:#22d3bf">fullseye.ledger.y_range_funct_1d(...)</code> returns <b>only the declared out type <code style="color:#22d3bf">pairs</code></b> (the underlying function also returns auxiliary values). When you need what was dropped, use <code style="color:#22d3bf">fullseye.ledger.y_range_funct_1d.raw(...)</code> or call <code style="color:#22d3bf">funct1d.y_range_funct_1d</code> directly.</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>The value range <code style="color:#22d3bf">(min(y), max(y))</code> (HALCON <code style="color:#22d3bf">y_range_funct_1d</code>).</p>
 <p>:param y: 1-D function, at least 1 sample. :raises ValueError: non-1-D / NaN / Inf input, or empty input.</p>

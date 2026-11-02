@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">hertzian_tangential_inner — DRIVE <code style="color:#22d3bf">tacslip</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">matrix × matrix × scalar × scalar × scalar × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.hertzian_tangential_inner(x, y, q0: &#x27;float&#x27;, a: &#x27;float&#x27;, G: &#x27;float&#x27;, nu: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import tacslip; tacslip.hertzian_tangential_inner(x, y, q0: &#x27;float&#x27;, a: &#x27;float&#x27;, G: &#x27;float&#x27;, nu: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;hertzian_tangential_inner&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>Hertz형 접선 트랙션 q0√(1−r²/a²)이 원 안 r ≤ a에 만드는 표면 변위의 닫힌 식(Johnson 1985 식 3.91). <code style="color:#22d3bf">ux</code> = (πq0/32Ga)[4(2−ν)a² − (4−3ν)x² − (4−ν)y²], <code style="color:#22d3bf">uy</code> = (πq0/32Ga)·2νxy [m]. 원 밖에서는 성립하지 않음(그곳은 컨볼루션으로). <b>Raises</b> ValueError: a, G ≤ 0, x와 y의 형태가 다름.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

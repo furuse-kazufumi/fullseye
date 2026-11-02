@@ -4,6 +4,7 @@ dim: cadmap
 category: project
 in: mesh × points
 out: table
+gpu: なし
 examples: [defect_to_cad]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `mesh × points` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.cad_surface_to_pixel(mesh, points, K=None, R=None, t=None, image_size=None, cull_backfaces=True, depth_tol=1e-06, strict=False)` (実装を直接呼ぶなら `import cadmap; cadmap.cad_surface_to_pixel(mesh, points, K=None, R=None, t=None, image_size=None, cull_backfaces=True, depth_tol=1e-06, strict=False)`、台帳から引くなら `opscadmap.get("cad_surface_to_pixel")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

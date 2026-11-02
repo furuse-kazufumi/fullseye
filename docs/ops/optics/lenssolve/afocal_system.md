@@ -4,6 +4,7 @@ dim: optics
 category: lenssolve
 in: table
 out: table
+gpu: なし
 examples: [poc_lens_solves_afocal]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.afocal_system(system=None, f1: 'float' = 100.0, f2: 'float' = 25.0, ap: 'float' = 10.0) -> 'dict'` (実装を直接呼ぶなら `import lenssolve; lenssolve.afocal_system(system=None, f1: 'float' = 100.0, f2: 'float' = 25.0, ap: 'float' = 10.0) -> 'dict'`、台帳から引くなら `opsoptics.get("afocal_system")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

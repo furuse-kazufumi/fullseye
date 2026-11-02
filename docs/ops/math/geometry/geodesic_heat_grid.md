@@ -4,6 +4,7 @@ dim: math
 category: geometry
 in: image2d
 out: table
+gpu: なし
 examples: [geometry_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.geodesic_heat_grid(mask, source=None, *, spacing=1.0, t: 'float | None' = None) -> 'dict'` (実装を直接呼ぶなら `import mathgeometry; mathgeometry.geodesic_heat_grid(mask, source=None, *, spacing=1.0, t: 'float | None' = None) -> 'dict'`、台帳から引くなら `opsmath.get("geodesic_heat_grid")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

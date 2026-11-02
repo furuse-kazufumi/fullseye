@@ -4,6 +4,7 @@ dim: interferometry
 category: design
 in: 
 out: table
+gpu: なし
 examples: [coherence_scanning, poc_interferometry_step]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.csi_design(wavelength_um=0.6, bandwidth_um=0.1, z_range_um=12.0, width_px=640, height_px=480, min_visibility=0.3, step_divisor=8.0)` (実装を直接呼ぶなら `import interferometry; interferometry.csi_design(wavelength_um=0.6, bandwidth_um=0.1, z_range_um=12.0, width_px=640, height_px=480, min_visibility=0.3, step_divisor=8.0)`、台帳から引くなら `opsinterferometry.get("csi_design")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

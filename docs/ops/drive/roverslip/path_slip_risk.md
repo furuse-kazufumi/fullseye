@@ -4,6 +4,7 @@ dim: drive
 category: roverslip
 in: matrix × image2d × scalar × table
 out: table
+gpu: なし
 examples: [poc_rover_slip_risk_path]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `matrix × image2d × scalar × table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.path_slip_risk(path, dtm, cell: 'float', model, alpha: 'float' = 0.9, speed: 'float' = 0.05, s_max: 'float' = 0.9) -> 'dict'` (実装を直接呼ぶなら `import roverslip; roverslip.path_slip_risk(path, dtm, cell: 'float', model, alpha: 'float' = 0.9, speed: 'float' = 0.05, s_max: 'float' = 0.9) -> 'dict'`、台帳から引くなら `opsdrive.get("path_slip_risk")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

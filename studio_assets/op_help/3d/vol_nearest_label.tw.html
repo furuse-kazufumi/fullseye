@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">vol_nearest_label — 3D <code style="color:#22d3bf">medial</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">voxel</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_nearest_label(vol_labels, spacing=None)</code>(要直接呼叫實作,<code style="color:#22d3bf">import volops; volops.vol_nearest_label(vol_labels, spacing=None)</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;vol_nearest_label&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把<b>最近的非零標籤</b>分配給零 voxel 的標籤體積 <code style="color:#22d3bf">(D, H, W)</code>(標籤的 Voronoi 分割，<code style="color:#22d3bf">voxel</code>)。</p>
 <p>輸入為整數標籤(<code style="color:#22d3bf">vol_label</code> / <code style="color:#22d3bf">vol_rle_components</code> 的輸出，0 = 未指派)。每個 0 voxel 依物理距離(<code style="color:#22d3bf">spacing</code>) 取得最近的非零 voxel 的標籤，非零 voxel 維持不變。用於從 EM 的分割片段或骨架的分支標籤中切出「該分支所支配的體積」(各分支的體積、壁厚)。非整數標籤會被拒絕(不會四捨五入成別的標籤)，連 1 個非零都沒有時拋出 ValueError。回傳 int64。</p>

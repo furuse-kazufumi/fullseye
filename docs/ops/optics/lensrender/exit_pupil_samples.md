@@ -4,6 +4,7 @@ dim: optics
 category: lensrender
 in: table
 out: table
+gpu: なし
 examples: [poc_photograph_through_prescription]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.exit_pupil_samples(system, n=64, pattern='hexapolar', wavelength_um=None) -> 'dict'` (実装を直接呼ぶなら `import lensrender; lensrender.exit_pupil_samples(system, n=64, pattern='hexapolar', wavelength_um=None) -> 'dict'`、台帳から引くなら `opsoptics.get("exit_pupil_samples")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

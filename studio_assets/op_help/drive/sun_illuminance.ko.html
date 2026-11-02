@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">sun_illuminance — DRIVE <code style="color:#22d3bf">env</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sun_illuminance(elevation: &#x27;float&#x27;, cloud: &#x27;float&#x27; = 0.0) -&gt; &#x27;Dict[str, float]&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import driveenv; driveenv.sun_illuminance(elevation: &#x27;float&#x27;, cloud: &#x27;float&#x27; = 0.0) -&gt; &#x27;Dict[str, float]&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;sun_illuminance&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>맑은 하늘(운량 <code style="color:#22d3bf">cloud</code> ∈ [0, 1])의 태양 조도 [lx]: <code style="color:#22d3bf">direct_normal</code>(태양을 정면으로 마주한 면)·<code style="color:#22d3bf">diffuse</code>(수평면의 산란)·<code style="color:#22d3bf">air_mass</code>.</p>
 <p>직달 = 1361 W/m² × 0.7^{AM^0.678}(Meinel) × 105 lm/W × (1 − cloud), AM = Kasten &amp; Young 1989 1 / (sin h + 0.50572 (h + 6.07995°)^{−1.6364}). 산란 = 박명 표(고도 ≤ 0) / 400 + 16000 sin h(고도 &gt; 0)에구름으로 (1 + 0.5 cloud) 를 곱한다 —— 가정(모듈의 docstring).</p>

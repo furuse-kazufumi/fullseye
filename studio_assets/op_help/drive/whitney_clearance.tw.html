@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">whitney_clearance — DRIVE <code style="color:#22d3bf">pegsim</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.whitney_clearance(kp=None) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import pegsim; pegsim.whitney_clearance(kp=None) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;whitney_clearance&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>Whitney 的無因次間隙(clearance)及由此決定的臨界值：c = (D − d)/D、c_r = R − r、θ_m = √(2c)、倒角的容許偏移、楔住角。</p>
 <p>回傳: <code style="color:#22d3bf">c</code>(clearance ratio,OCW p.11)、<code style="color:#22d3bf">c_r</code>(半徑 clearance)、<code style="color:#22d3bf">theta_m</code>(小角度的 θ_m = √(2c),p.9)、<code style="color:#22d3bf">theta_m_exact</code> (arccos(d/D): 水平截面橢圓的長半徑 r/cos θ 達到 R 的角 —— √(2c) 是它的 2 階近似)、<code style="color:#22d3bf">eps_chamfer_max</code> (W + c_r: 倒角無需修正即可挽救的初始橫向偏移,推導所得)、<code style="color:#22d3bf">theta_wedge</code>(c/μ: 兩點接觸開始時若傾斜超過此值, 可能發生楔住,p.28。μ = 0 時為 inf)。</p>

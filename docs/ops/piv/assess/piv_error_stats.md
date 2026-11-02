@@ -4,6 +4,7 @@ dim: piv
 category: assess
 in: flow2d × flow2d
 out: table
+gpu: なし
 examples: [piv_field_analysis_tour, piv_flow_from_particles, poc_river_surface_velocity, poc_strain_history]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `flow2d × flow2d` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.piv_error_stats(flow, truth, trim=1)` (実装を直接呼ぶなら `import pivops; pivops.piv_error_stats(flow, truth, trim=1)`、台帳から引くなら `opspiv.get("piv_error_stats")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

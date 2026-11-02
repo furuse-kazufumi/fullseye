@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">diabolo_spin_from_markers — DRIVE <code style="color:#22d3bf">diabolo</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">signal × signal × scalar × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.diabolo_spin_from_markers(phases, smears, dt: &#x27;float&#x27;, exposure: &#x27;float&#x27;, *, use_smear: &#x27;bool&#x27; = True) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import diabolo; diabolo.diabolo_spin_from_markers(phases, smears, dt: &#x27;float&#x27;, exposure: &#x27;float&#x27;, *, use_smear: &#x27;bool&#x27; = True) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;diabolo_spin_from_markers&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>프레임별 위상 ψ_k(mod 2π)와 블러의 호 폭 → 회전 속도 ω, 단위 rad/s(축 주위, 오른나사).</p>
 <p>이웃 프레임의 차이를 (−π, π] 로 감싸면 |ω| dt &lt; π 까지만 읽을 수 있다(나이퀴스트에서 접힘, 바퀴 착시). <code style="color:#22d3bf">use_smear</code> 이면호의 폭 / 노출 = |ω| 의 대략값으로 2π k 의 가지를 고른다(접히지 않는 대략값 × 접히는 정밀값). 가지 간격 2π/dt 에 대해 호 폭의오차가 절반보다 작다는 것을 전제로 한다. 반환 <code style="color:#22d3bf">{&quot;omega&quot;, &quot;omega_wrapped&quot;, &quot;omega_smear&quot;, &quot;branch&quot;}</code>. <b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 위상이 2 프레임 미만, 길이가 다름, dt ≤ 0, 노출 &lt; 0, 유한하지 않은 값.</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">angle_3points — 3D <code style="color:#22d3bf">geometry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.angle_3points(a, b, c)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import match3d; match3d.angle_3points(a, b, c)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;angle_3points&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>세 점이 이루는 각(꼭짓점 b, 도). ∠ABC.</p>
 <p><code style="color:#22d3bf">arccos(û·v̂)</code>(<code style="color:#22d3bf">u = a − b</code>, <code style="color:#22d3bf">v = c − b</code>)를 도로 반환한다(float). 값은 <b>[0, 180]</b>이며 부호는없다(2-D에서도 회전 방향은 구별하지 않는다). 인수는 수치의 2 또는 3 벡터, 차원 혼재는 ValueError. <code style="color:#22d3bf">a == b</code>나 <code style="color:#22d3bf">c == b</code>이면 영벡터와의 내적 0으로 90이 반환된다(예외는 나지 않는다). 내적은 [−1,1]로 clip하므로 수치 오차로 NaN이 되지 않는다.</p>

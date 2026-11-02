@@ -4,6 +4,7 @@ dim: drive
 category: tacslip
 in: text × text
 out: table
+gpu: なし
 examples: [poc_tacsim_marker_shear, poc_tactile_dipole_torque]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `text × text` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.fem_nodes_load(dirpath: 'str', name: 'str') -> 'dict'` (実装を直接呼ぶなら `import tacslip; tacslip.fem_nodes_load(dirpath: 'str', name: 'str') -> 'dict'`、台帳から引くなら `opsdrive.get("fem_nodes_load")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

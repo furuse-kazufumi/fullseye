@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">dynnikov_coordinates — DRIVE <code style="color:#22d3bf">braidpath</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dynnikov_coordinates(word, n_strands)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import braidpath; braidpath.dynnikov_coordinates(word, n_strands)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;dynnikov_coordinates&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>मानक curve diagram E = (0, …, 0; −1, …, −1) पर braid की action से प्राप्त Dynnikov coordinates (integers, overflow नहीं)।</p>
 <p>n strands में दाएँ छोर पर 1 अतिरिक्त puncture जोड़कर बने n + 1 punctures वाले disk पर लिया जाता है (a और b दोनों की लंबाई n − 1)। यह action faithful है, इसलिए <b>coordinates बराबर ⇔ वही braid</b>। हर letter पर केवल constant संख्या में जोड़-घटाव और max / min, इसलिए समय word की लंबाई के समानुपाती है (handle reduction या free group की images के विपरीत कुछ नहीं फूलता —— केवल संख्याएँ बड़ी होती हैं, और Python के integers overflow नहीं होते)।</p>

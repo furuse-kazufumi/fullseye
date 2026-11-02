@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">graph_degree_table — CONNGRAPH <code style="color:#22d3bf">stats</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">conn_graph</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graph_degree_table(W: &#x27;Any&#x27;) -&gt; &#x27;dict[str, np.ndarray]&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import conngraph; conngraph.graph_degree_table(W: &#x27;Any&#x27;) -&gt; &#x27;dict[str, np.ndarray]&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsconngraph.get(&quot;graph_degree_table&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>हर node के in_degree / out_degree (binary) और in_strength / out_strength (weight का योग) की table।</p>
 <p>degree <code style="color:#22d3bf">W != 0</code> वाली entries की गिनती है (diagonal छोड़कर), strength weights का योग है (diagonal छोड़कर)। return value column name → लंबाई n का array वाला dict है (इस repo का <code style="color:#22d3bf">table</code>)।</p>

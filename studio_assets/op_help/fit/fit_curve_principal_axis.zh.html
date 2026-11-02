@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">fit_curve_principal_axis — FIT <code style="color:#22d3bf">fit</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">keypoints</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fit_curve_principal_axis(points, degree: &#x27;int&#x27; = 2, *, isotropy_ratio: &#x27;float&#x27; = 0.95) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import measure; measure.fit_curve_principal_axis(points, degree: &#x27;int&#x27; = 2, *, isotropy_ratio: &#x27;float&#x27; = 0.95) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsfit.get(&quot;fit_curve_principal_axis&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>将倾斜曲边旋转到主轴后拟合多项式 y&#x27;=f(x&#x27;)。</p>
 <p>先用 PCA 定义稳定的局部坐标，再进行多项式最小二乘。返回角度、重心、系数、坐标轴、局部点、拟合点和几何 RMS；拒绝各向同性点云。</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">chamfer_capture — DRIVE <code style="color:#22d3bf">pegsim</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.chamfer_capture(kp, eps0: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import pegsim; pegsim.chamfer_capture(kp, eps0: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;chamfer_capture&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Ob die Fase einen anfänglichen Querversatz ε₀ [m] ohne Korrektur auffangen kann: |ε₀| ≤ W + c_r (Bedingung dafür, dass die Kante der Spitze auf der Fasenfläche aufsetzt; hergeleitet).</p>
 <p>Rückgabe: <code style="color:#22d3bf">captured</code>, <code style="color:#22d3bf">eps_max</code> = W + c_r, <code style="color:#22d3bf">margin</code> = eps_max − |ε₀|. Mit den Standardmaßen 1.2 mm. Bei einer Neigung θ₀ verschiebt sich die Projektion der Spitzenkante, doch bei θ₀ ≤ 3° ist das vernachlässigbar (Grundlage: im Prototyp-Raster scheiterten ε₀ = 2, 3 mm ohne Korrektur).</p>

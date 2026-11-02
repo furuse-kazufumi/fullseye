@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">image_points_to_world_plane — CALIB <code style="color:#22d3bf">plane</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">keypoints</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.image_points_to_world_plane(cam_par, pose, image_points, scale=1.0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import calib; calib.image_points_to_world_plane(cam_par, pose, image_points, scale=1.0)</code>, registry से लेना हो तो <code style="color:#22d3bf">opscalib.get(&quot;image_points_to_world_plane&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>camera के intrinsics/extrinsics से pixels को world plane z=0 पर back-project करता है (image_points_to_world_plane)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">mesh_euler_characteristic — MATH <code style="color:#22d3bf">geometry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">mesh</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mesh_euler_characteristic(vertices, faces=None) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import mathgeometry; mathgeometry.mesh_euler_characteristic(vertices, faces=None) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsmath.get(&quot;mesh_euler_characteristic&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>三角网格的 V − E + F，以及若为闭合可定向曲面时的亏格 g = (2 − χ)/2。</p>
 <p>不计入未被使用的顶点(防止悬空顶点使 χ 偏移)。边界边(只属于 1 个面的边)与非流形边(3 个以上)也一并返回 —— 有边界时 χ = 2 − 2g − b(b = 边界环的数量)，亏格为 <code style="color:#22d3bf">None</code>。</p>

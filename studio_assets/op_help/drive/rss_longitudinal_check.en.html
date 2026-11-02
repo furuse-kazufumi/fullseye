@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">rss_longitudinal_check — DRIVE <code style="color:#22d3bf">rss</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rss_longitudinal_check(d: &#x27;float&#x27;, v_rear: &#x27;float&#x27;, v_front: &#x27;float&#x27;, p: &#x27;dict&#x27;, p_front: &#x27;Optional[dict]&#x27; = None) -&gt; &#x27;Dict[str, float]&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import rsssafety; rsssafety.rss_longitudinal_check(d: &#x27;float&#x27;, v_rear: &#x27;float&#x27;, v_front: &#x27;float&#x27;, p: &#x27;dict&#x27;, p_front: &#x27;Optional[dict]&#x27; = None) -&gt; &#x27;Dict[str, float]&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;rss_longitudinal_check&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Whether the same-direction longitudinal gap d (front of the following vehicle to rear of the lead vehicle, ≥ 0) is safe.</p>
 <p>Returns <code style="color:#22d3bf">{&quot;safe_distance&quot;, &quot;dangerous&quot; (d ≤ safe_distance), &quot;margin&quot; (d − safe_distance)}</code>。</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">puck_pixel_to_world — DRIVE <code style="color:#22d3bf">puck</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table × matrix</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.puck_pixel_to_world(cam: &#x27;dict&#x27;, colrow) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import puck; puck.puck_pixel_to_world(cam: &#x27;dict&#x27;, colrow) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;puck_pixel_to_world&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>像素 (col, row) (N,2) → world (N,2)(将逆矩阵传给 <code style="color:#22d3bf">calib.image_to_world_plane</code>)。</p>
 <p>空输入(<code style="color:#22d3bf">cam</code> 为空 dict)会引发 <code style="color:#22d3bf">ValueError</code>。</p>

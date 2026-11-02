@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">principal_moments — 3D <code style="color:#22d3bf">moment_invariant</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">descriptor</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.principal_moments(points) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import moments3d; moments3d.principal_moments(points) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;principal_moments&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>慣性張量的特徵值(主慣性矩,降冪排列,旋轉不變)。</p>
 <p>慣性張量是對稱的,因此特徵值為實數。將點雲以旋轉 R 旋轉時,I → R I Rᵀ 做相似變換,特徵值不變(嚴格)。回傳值按降冪排列,因此與座標系和旋轉無關地一致。</p>

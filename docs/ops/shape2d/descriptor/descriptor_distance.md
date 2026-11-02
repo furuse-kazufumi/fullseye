@@ -4,6 +4,7 @@ dim: shape2d
 category: descriptor
 in: efdmodel × efdmodel
 out: measurement
+gpu: なし
 examples: [contour_fourier, shape2d_morph_descriptor_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `efdmodel × efdmodel` → `measurement`
 - **呼び出し**: `import fullseye as fs; fs.ledger.descriptor_distance(m1, m2, n_harmonics=None, scale_invariant=True)` (実装を直接呼ぶなら `import fourierdesc; fourierdesc.descriptor_distance(m1, m2, n_harmonics=None, scale_invariant=True)`、台帳から引くなら `opsshape2d.get("descriptor_distance")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

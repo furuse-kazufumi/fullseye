@@ -4,6 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.surface_filter(z, dx, lambda_c=None, lambda_s=None, kind=&#x27;gaussian&#x27;, end_effect=&#x27;reject&#x27;, dy=None)</code>(要直接调用实现,<code style="color:#22d3bf">import roughness; roughness.surface_filter(z, dx, lambda_c=None, lambda_s=None, kind=&#x27;gaussian&#x27;, end_effect=&#x27;reject&#x27;, dy=None)</code>;从台账取用则 <code style="color:#22d3bf">opsroughness.get(&quot;surface_filter&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>经台账调用的返回值</b>: <code style="color:#22d3bf">fullseye.ledger.surface_filter(...)</code> 只返回<b>声明的 out 类型 <code style="color:#22d3bf">depth</code> 的值</b>(底层函数还会返回辅助信息)。需要被丢弃的部分时,使用 <code style="color:#22d3bf">fullseye.ledger.surface_filter.raw(...)</code>,或直接调用 <code style="color:#22d3bf">roughness.surface_filter</code>。</p>
 <p style="margin:2px 0 2px 12px">• 底层返回: <code style="color:#22d3bf">(roughness, waviness)</code></p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>将高度场分解为粗糙度和波纹度(ISO 16610-21 的高斯滤波器)。</p>
 <p>返回值为 <code style="color:#22d3bf">(roughness, waviness)</code>。<code style="color:#22d3bf">roughness</code> 是比 λc 短的成分，<code style="color:#22d3bf">waviness</code> 是长的成分；只要不是 <code style="color:#22d3bf">end_effect=&quot;reject&quot;</code>，<code style="color:#22d3bf">roughness + waviness</code> 就与输入（施加 λs 之后的原始形状）严格一致。</p>

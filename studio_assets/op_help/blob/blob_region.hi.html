@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">blob_region — BLOB <code style="color:#22d3bf">extract</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">labels2d</code> → <code style="color:#22d3bf">mask</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.blob_region(labels: &#x27;Any&#x27;, index: &#x27;int&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import blob2d; blob2d.blob_region(labels: &#x27;Any&#x27;, index: &#x27;int&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsblob.get(&quot;blob_region&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>1 object को binary region (bool) के रूप में निकालता है। <code style="color:#22d3bf">index</code> <b>1 से शुरू</b> होता है।</p>
 <p>केवल <code style="color:#22d3bf">labels == index</code> लौटाने वाला selection op। नंबर <code style="color:#22d3bf">blob_label</code> द्वारा दिए गए 1..n के क्रमागत नंबर हैं, और 0 background है।</p>

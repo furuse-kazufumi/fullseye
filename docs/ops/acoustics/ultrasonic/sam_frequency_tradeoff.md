@@ -4,6 +4,7 @@ dim: acoustics
 category: ultrasonic
 in: table
 out: table
+gpu: なし
 examples: [poc_sam_hybrid_bonding_voids]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.sam_frequency_tradeoff(stack, void_diameter, water_path=0.001, f_number=3.0, interface=None, k_res=1.02, f_min=1000000.0, f_max=5000000000.0, n_grid=600, bandwidth=0.6, n_sigma_gate=5.0)` (実装を直接呼ぶなら `import ultrasound; ultrasound.sam_frequency_tradeoff(stack, void_diameter, water_path=0.001, f_number=3.0, interface=None, k_res=1.02, f_min=1000000.0, f_max=5000000000.0, n_grid=600, bandwidth=0.6, n_sigma_gate=5.0)`、台帳から引くなら `opsacoustics.get("sam_frequency_tradeoff")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

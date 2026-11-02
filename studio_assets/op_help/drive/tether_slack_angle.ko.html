@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tether_slack_angle — DRIVE <code style="color:#22d3bf">kendama</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">any</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tether_slack_angle(theta0: &#x27;float&#x27;, L: &#x27;float&#x27;, g: &#x27;float&#x27; = 9.81)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import kendama; kendama.tether_slack_angle(theta0: &#x27;float&#x27;, L: &#x27;float&#x27;, g: &#x27;float&#x27; = 9.81)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;tether_slack_angle&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>최저점에서 속도 v₀ = √(2gL(1 − cos θ₀))를 가진 공(막대라면 θ₀에서 멈추는 에너지)의 끈이 느슨해지는 각 θ_s(바로 아래로부터).</p>
 <p>유도: v² = 2gL(cos θ − cos θ₀), T = m(v²/L + g cos θ) = m g (3 cos θ − 2 cos θ₀) = 0 → <b>cos θ_s = (2/3) cos θ₀</b>. 위쪽 절반(cos θ_s &lt; 0)에 도달하는 것은 cos θ₀ &lt; 0 ⇔ θ₀ &gt; π/2 일 때뿐. θ₀ ≤ π/2 이면 장력은 θ₀ 에서 m g cos θ₀ ≥ 0 까지 내려갈뿐 느슨해지지 않는다 → None. θ₀ = π(정점에 딱 닿는 에너지)에서 θ_s = arccos(−2/3) = 131.8°. θ₀ ∈ (0, π] 이외는 ValueError. θ₀ &gt; π/2 의 공을 정지 상태에서 놓으면 처음부터 느슨해지므로(장력 m g cos θ₀ &lt; 0), θ₀ 는 맨 아래에서의 속도로 준다.</p>

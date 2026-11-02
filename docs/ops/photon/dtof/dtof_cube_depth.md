@@ -4,6 +4,7 @@ dim: photon
 category: dtof
 in: histcube
 out: depth
+gpu: なし
 examples: [photon_timeresolved, poc_dtof_ranging, poc_itof_multifreq, poc_tof_camera]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `histcube` → `depth`
 - **呼び出し**: `import fullseye as fs; fs.ledger.dtof_cube_depth(cube, bin_ps=100.0, mode='peak', offset_ps=0.0, min_counts=1.0, empty_value=0.0, subtract_background=False)` (実装を直接呼ぶなら `import photoncount; photoncount.dtof_cube_depth(cube, bin_ps=100.0, mode='peak', offset_ps=0.0, min_counts=1.0, empty_value=0.0, subtract_background=False)`、台帳から引くなら `opsphoton.get("dtof_cube_depth")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

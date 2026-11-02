@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">plan_conflicts — DRIVE <code style="color:#22d3bf">agv</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.plan_conflicts(paths)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import agvfleet; agvfleet.plan_conflicts(paths)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;plan_conflicts&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>충돌 목록: 같은 시각에 같은 칸(vertex)·엇갈림(edge)·추종(follow).</p>
 <p>반환은 <code style="color:#22d3bf">[(種類, i, j, 時刻, マス)]</code>. 도착한 차량은 그 자리에 계속 머무는 것으로 센다. follow 는 &quot;i 가 시각 t 에 칸 v 에 <b>들어갔을</b> 때, j 가 t-1 에 v 에 있었고 t 에는 v 에서 나갔다&quot;(i ≠ j).</p>

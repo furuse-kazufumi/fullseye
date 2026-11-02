@@ -4,6 +4,7 @@ dim: printpath
 category: stroke
 in: image2d
 out: pairs
+gpu: なし
 examples: [poc_one_stroke_epicycles]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d` → `pairs`
 - **呼び出し**: `import fullseye as fs; fs.ledger.stipple_points_from_image(image, n_points, iterations=30, gamma=1.0, floor=0.02, seed=0, metric='euclidean')` (実装を直接呼ぶなら `import printpath; printpath.stipple_points_from_image(image, n_points, iterations=30, gamma=1.0, floor=0.02, seed=0, metric='euclidean')`、台帳から引くなら `opsprintpath.get("stipple_points_from_image")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -4,6 +4,7 @@ dim: drive
 category: pegsym
 in: image2d × matrix × matrix × signal
 out: image2d
+gpu: なし
 examples: [poc_peg_symmetry_search]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d × matrix × matrix × signal` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.plane_topview(image, K, R, t, z: 'float' = 0.0, centre=(0.0, 0.0), extent: 'float' = 0.02, res: 'float' = 5e-05, fill: 'float' = 0.0) -> 'np.ndarray'` (実装を直接呼ぶなら `import pegsym; pegsym.plane_topview(image, K, R, t, z: 'float' = 0.0, centre=(0.0, 0.0), extent: 'float' = 0.02, res: 'float' = 5e-05, fill: 'float' = 0.0) -> 'np.ndarray'`、台帳から引くなら `opsdrive.get("plane_topview")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

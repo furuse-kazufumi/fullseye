@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">plenoptic_decode — OPTICS <code style="color:#22d3bf">plenoptic</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d × table</code> → <code style="color:#22d3bf">lightfield</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.plenoptic_decode(raw, calibration, *, angular=(5, 5))</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import plenoptic; plenoptic.plenoptic_decode(raw, calibration, *, angular=(5, 5))</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;plenoptic_decode&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Rectify a calibrated raw frame and return <code style="color:#22d3bf">L[v,u,y,x]</code>.</p>
 <p>The result is the repository&#x27;s existing <code style="color:#22d3bf">lightfield</code> type: a plain <code style="color:#22d3bf">(V,U,H,W)</code> array that composes directly with light-field operators.</p>

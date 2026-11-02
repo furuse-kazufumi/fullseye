@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">membrane_markers — DRIVE <code style="color:#22d3bf">tacslip</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">scalar × scalar</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.membrane_markers(n: &#x27;int&#x27;, pitch_px: &#x27;float&#x27;, ox: &#x27;float&#x27; = 0.3, oy: &#x27;float&#x27; = 0.6) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import tacslip; tacslip.membrane_markers(n: &#x27;int&#x27;, pitch_px: &#x27;float&#x27;, ox: &#x27;float&#x27; = 0.3, oy: &#x27;float&#x27; = 0.6) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;membrane_markers&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Regelmäßiges Gitter von Markierungsmittelpunkten (N, 2) = (x, y) [px], verteilt über ein Sichtfeld von n×n Pixeln (Abstand pitch_px, Subpixel-Phase (ox, oy)). Auch außerhalb des Sichtfelds wird genau 1 zusätzlicher Ring verteilt (für durch Verschiebung hereinkommende Markierungen). <b>Raises</b> ValueError: n &lt; 8, pitch_px &lt; 2.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

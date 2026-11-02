@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">perpetual_langtons_ant — GENERATIVE <code style="color:#22d3bf">perpetual</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">rgb</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.perpetual_langtons_ant(steps: &#x27;int&#x27; = 12000, size: &#x27;int&#x27; = 301) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import perpetual; perpetual.perpetual_langtons_ant(steps: &#x27;int&#x27; = 12000, size: &#x27;int&#x27; = 301) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsgenerative.get(&quot;perpetual_langtons_ant&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Langton&#x27;s ant — केवल 2 नियमों से, 10,000 step के बाद &quot;highway&quot; बनाता रहता है।</p>
 <p>invariant: highway में पहुँचने के बाद यह <b>period 104 के साथ वही तिरछा विस्थापन (ऊर्ध्व और क्षैतिज दोनों में परिमाण 2) दोहराती है</b>। दिशा का चिह्न rotation की convention पर निर्भर है —— इस implementation के grid पर यह (row, col) = (+2, −2) है।</p>

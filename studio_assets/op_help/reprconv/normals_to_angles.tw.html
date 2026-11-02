@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">normals_to_angles — REPRCONV <code style="color:#22d3bf">direction</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">normals</code> → <code style="color:#22d3bf">pairs</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.normals_to_angles(normals)</code>(要直接呼叫實作,<code style="color:#22d3bf">import reprconv; reprconv.normals_to_angles(normals)</code>;從台帳取用則 <code style="color:#22d3bf">opsreprconv.get(&quot;normals_to_angles&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>法線 <code style="color:#22d3bf">(N,3)</code> → 方位・仰角對 <code style="color:#22d3bf">(N,2)</code> <b>[度]</b>。<code style="color:#22d3bf">normals</code> 的出口。</p>
 <p>以 <code style="color:#22d3bf">az = atan2(c1, c0)</code> 為軸0-軸1 平面內的方位角,<code style="color:#22d3bf">el = asin(c2/|v|)</code> 為從軸2 起的仰角。<b>不用 x/y/z 而用「軸0/1/2」來定義</b>,是因為本 repo 中(z,y,x) 順序的點雲與 (x,y,z) 順序的點雲同時存在 —— 若以名稱來寫,含義就會隨傳入的陣列屬於哪種流派而改變。</p>

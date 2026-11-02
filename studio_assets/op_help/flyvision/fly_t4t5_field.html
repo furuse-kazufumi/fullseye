@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">fly_t4t5_field — FLYVISION <code style="color:#22d3bf">direction</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">matrix × table</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fly_t4t5_field(movie, lattice, dt_s, tau_s=0.25, k_e=5.0, k_d=5.0, k_s=10.0, dc=1.0, model=&#x27;three_arm&#x27;, tau_hr_s=0.05, reduce=&#x27;mean&#x27;)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import flyvision; flyvision.fly_t4t5_field(movie, lattice, dt_s, tau_s=0.25, k_e=5.0, k_d=5.0, k_s=10.0, dc=1.0, model=&#x27;three_arm&#x27;, tau_hr_s=0.05, reduce=&#x27;mean&#x27;)</code>、台帳から引くなら <code style="color:#22d3bf">opsflyvision.get(&quot;fly_t4t5_field&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Direction-selective response over the whole eye, in the six hexagonal directions.</p>
 <p>T4 (ON) and T5 (OFF) are the first direction-selective cells in the fly, and two mechanisms make them so: *preferred-direction enhancement*, which is the Hassenstein-Reichardt multiplication, and *null-direction suppression*, which is the Barlow-Levick division. Haag et al. measured both in one cell and wrote them as three arms reading three adjacent columns — an enhancing arm E one column *before* the centre, the direct arm D, and a suppressing arm S one column *after* it::</p>

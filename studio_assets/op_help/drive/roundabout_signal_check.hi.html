@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">roundabout_signal_check — DRIVE <code style="color:#22d3bf">pass</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.roundabout_signal_check(progress, left_on, *, arm_angles: &#x27;Sequence[float]&#x27;, entry: &#x27;int&#x27;, exit: &#x27;int&#x27;, right_on=None, tol: &#x27;float&#x27; = 0.05) -&gt; &#x27;Dict[str, object]&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import drivepass; drivepass.roundabout_signal_check(progress, left_on, *, arm_angles: &#x27;Sequence[float]&#x27;, entry: &#x27;int&#x27;, exit: &#x27;int&#x27;, right_on=None, tol: &#x27;float&#x27; = 0.05) -&gt; &#x27;Dict[str, object]&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;roundabout_signal_check&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>roundabout के अंदर संकेतों की scoring करता है (धारा 53(2) और (4), Kyosoku 5-5-1(2))। दृश्य S069।</p>
 <p><code style="color:#22d3bf">progress</code> = प्रवेश से दक्षिणावर्त तय किया गया कोण [rad], एकदिष्ट अ-ह्रासमान, प्रति नमूना; <code style="color:#22d3bf">left_on</code> / <code style="color:#22d3bf">right_on</code> = संकेतक की अवस्था (bool)।</p>

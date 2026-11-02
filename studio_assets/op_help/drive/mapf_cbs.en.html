@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">mapf_cbs — DRIVE <code style="color:#22d3bf">agv</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mapf_cbs(grid, starts, goals, max_nodes=20000, horizon=None)</code> (to call the implementation directly, <code style="color:#22d3bf">import agvfleet; agvfleet.mapf_cbs(grid, starts, goals, max_nodes=20000, horizon=None)</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;mapf_cbs&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Conflict-Based Search (Sharon, Stern, Felner, Sturtevant 2015). A collision-free plan with optimal sum of costs.</p>
 <p>The upper level is a best-first search over a binary tree that &quot;picks one conflict and adds a constraint to one of the two vehicles&quot;; the lower level is a single-vehicle space-time A*. Returns a dict: <code style="color:#22d3bf">paths</code> (sequence of cells for each vehicle), <code style="color:#22d3bf">cost</code> (sum of costs), <code style="color:#22d3bf">nodes</code> (number of expanded nodes), <code style="color:#22d3bf">solved</code>. When the node limit is reached, <code style="color:#22d3bf">solved=False</code> (<b>it does not silently return a non-optimal solution</b>).</p>

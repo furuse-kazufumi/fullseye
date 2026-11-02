@@ -4,6 +4,7 @@ dim: flyvision
 category: looming
 in: signal
 out: signal
+gpu: なし
 examples: [poc_fly_vision, poc_zebra_stripes_fly_eye]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal` → `signal`
 - **呼び出し**: `import fullseye as fs; fs.ledger.fly_tau_from_expansion(theta_signal, dt_s, shape='sphere')` (実装を直接呼ぶなら `import flyvision; flyvision.fly_tau_from_expansion(theta_signal, dt_s, shape='sphere')`、台帳から引くなら `opsflyvision.get("fly_tau_from_expansion")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

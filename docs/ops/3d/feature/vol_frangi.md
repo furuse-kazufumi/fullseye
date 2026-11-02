@@ -4,6 +4,7 @@ dim: 3d
 category: feature
 in: voxel
 out: voxel
+gpu: なし
 examples: [vessel_metrology, volume_downsampling]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `voxel` → `voxel`
 - **呼び出し**: `import fullseye as fs; fs.ledger.vol_frangi(vol, scales=(1, 2, 3), alpha=0.5, beta=0.5, c=None, black_ridges=False)` (実装を直接呼ぶなら `import volops; volops.vol_frangi(vol, scales=(1, 2, 3), alpha=0.5, beta=0.5, c=None, black_ridges=False)`、台帳から引くなら `ops3d.get("vol_frangi")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

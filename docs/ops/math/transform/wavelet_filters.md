@@ -4,6 +4,7 @@ dim: math
 category: transform
 in: 
 out: table
+gpu: なし
 examples: [gallery_math_numerics_filters]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.wavelet_filters(order: 'int' = 2) -> 'dict'` (実装を直接呼ぶなら `import mathtransforms; mathtransforms.wavelet_filters(order: 'int' = 2) -> 'dict'`、台帳から引くなら `opsmath.get("wavelet_filters")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

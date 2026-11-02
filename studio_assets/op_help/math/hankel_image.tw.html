@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">hankel_image — MATH <code style="color:#22d3bf">transform</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.hankel_image(image, *, center=None, spacing: &#x27;float&#x27; = 1.0, n: &#x27;int&#x27; = 256, r_max: &#x27;float | None&#x27; = None, memory_budget: &#x27;int | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import mathtransforms; mathtransforms.hankel_image(image, *, center=None, spacing: &#x27;float&#x27; = 1.0, n: &#x27;int&#x27; = 256, r_max: &#x27;float | None&#x27; = None, memory_budget: &#x27;int | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsmath.get(&quot;hankel_image&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>以徑向 Hankel 轉換求軸對稱影像的二維傅立葉轉換。<code style="color:#22d3bf">memory_budget</code> 選擇實測差在 1e-10 內的省記憶體路徑。</p>
 <p>將影像依到中心的距離分成 1 像素寬的環並取平均(徑向分布)，再送入 <code style="color:#22d3bf">hankel_transform</code>(0 階)。若軸對稱，2 維轉換只需<b>1 個積分</b>(依環平均，雜訊也降為 1/√(環的像素數))，並以數值回傳偏離軸對稱的程度(<code style="color:#22d3bf">asymmetry</code>)。頻率步長與 2-D FFT 相同，約為 1/(2·半徑)，不會更細。</p>

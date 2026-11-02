@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">course_layout — DRIVE <code style="color:#22d3bf">course</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">table × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.course_layout(elements, placements)</code>(要直接呼叫實作,<code style="color:#22d3bf">import drivecourse; drivecourse.course_layout(elements, placements)</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;course_layout&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>以剛體運動 <code style="color:#22d3bf">(x, y, yaw)</code> 放置多個要素，合成 1 個 dict。</p>
 <p>各要素的 polygon / centerline / rails / stop_lines 視為點,entry / exit / signal_poses 視為姿態(yaw 也一起旋轉)進行轉換。<code style="color:#22d3bf">profile</code>(坡道的 (s, z))是要素的局部弧長,因此維持原樣。回傳值為 <code style="color:#22d3bf">{&quot;kind&quot;: &quot;layout&quot;, &quot;elements&quot;: [変換済み要素(各々 &quot;placement&quot; を持つ)], &quot;polygon&quot;: None, &quot;bounds&quot;: (xmin, xmax, ymin, ymax), &quot;placements&quot;: [...]}</code>。內外判定為要素的聯集(<code style="color:#22d3bf">course_contains</code> / <code style="color:#22d3bf">course_occupancy</code>)。要素的重疊以聯集處理。</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">oct_dispersion_estimate — OPTICS <code style="color:#22d3bf">oct</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.oct_dispersion_estimate(interferogram, method=&#x27;sharpness&#x27;, a2_range=(-2000.0, 2000.0), a3_range=None, z_range_um=None, dc=&#x27;reference&#x27;, n_grid=81)</code>(要直接调用实现,<code style="color:#22d3bf">import octscan; octscan.oct_dispersion_estimate(interferogram, method=&#x27;sharpness&#x27;, a2_range=(-2000.0, 2000.0), a3_range=None, z_range_um=None, dc=&#x27;reference&#x27;, n_grid=81)</code>;从台账取用则 <code style="color:#22d3bf">opsoptics.get(&quot;oct_dispersion_estimate&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>从测得的光谱估计色散补偿系数 a2、a3(<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code>)。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>

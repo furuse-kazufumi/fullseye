@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">fit_bounce — DRIVE <code style="color:#22d3bf">ball</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fit_bounce(v_in, omega_in, v_out, omega_out, normal, bp: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import ballistics; ballistics.fit_bounce(v_in, omega_in, v_out, omega_out, normal, bp: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;fit_bounce&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>바운드 전후의 (v, ω)로부터 (e, μ)를 닫힌 식으로 복원합니다(동정). e = −v_n&#x27;/v_n. 접선 충격량 J_t = m(v_t&#x27; − v_t)의 크기와 J_n = m(v_n&#x27; − v_n)의 비가 μ입니다 — 계속 미끄러지는 영역이면 등호, 도중에 구름으로 바뀐(grip) 영역이면 <b>하계</b>(μ ≥ |J_t|/J_n). 어느 쪽인지는 바운드 후 접촉점의 미끄럼 속도가 0인지(grip)로 알 수 있습니다. 반환값 <code style="color:#22d3bf">{&quot;e&quot;, &quot;mu&quot;, &quot;mu_is_lower_bound&quot;, &quot;regime&quot;, &quot;J_n&quot;, &quot;J_t&quot;}</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

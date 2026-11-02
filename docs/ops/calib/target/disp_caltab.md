@@ -4,6 +4,7 @@ dim: calib
 category: target
 in: table
 out: image2d
+gpu: なし
 examples: []
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.disp_caltab(caltab)` (実装を直接呼ぶなら `import caltab; caltab.disp_caltab(caltab)`、台帳から引くなら `opscalib.get("disp_caltab")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

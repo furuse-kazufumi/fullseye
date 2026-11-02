@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">diabolo_throw_catch_truth — DRIVE <code style="color:#22d3bf">diabolo</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">signal × signal × matrix × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.diabolo_throw_catch_truth(p0, v0, sticks, params: &#x27;dict&#x27;, *, t_min: &#x27;float&#x27; = 0.0, t_max: &#x27;float&#x27; = 5.0, n_grid: &#x27;int&#x27; = 2001) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import diabolo; diabolo.diabolo_throw_catch_truth(p0, v0, sticks, params: &#x27;dict&#x27;, *, t_min: &#x27;float&#x27; = 0.0, t_max: &#x27;float&#x27; = 5.0, n_grid: &#x27;int&#x27; = 2001) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;diabolo_throw_catch_truth&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>놓은 상태 (p0, v0)에서의 포물선(닫힌 식)이 정점을 지난 뒤, 받는 스틱 <code style="color:#22d3bf">sticks</code>(고정된 (2, 3))에 대해 &quot;스틱을 잇는 면보다 아래 그리고 s &lt; c_F&quot;에 들어가는 최초 시각(논문의 FLYING → ON_STRING 조건 + 면 규칙. 끈의 팽팽함은 호출자가 확인).</p>
 <p>정점 t_apex = v_z/g, 높이 v_z²/(2g) 도 반환한다. 근은 <code style="color:#22d3bf">n_grid</code> 점 격자에서 부호 변화를 찾고 이분법(80 회)으로 좁힌다. 받기가없으면 t_catch = NaN. <b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 형태, t_max ≤ t_min, n_grid &lt; 3.</p>

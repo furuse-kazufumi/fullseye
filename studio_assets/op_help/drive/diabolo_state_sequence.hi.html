@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">diabolo_state_sequence — DRIVE <code style="color:#22d3bf">diabolo</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">matrix × any × table</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.diabolo_state_sequence(X, sticks, params: &#x27;dict&#x27;, *, flying_rule: &#x27;str&#x27; = &#x27;paper&#x27;, mode0: &#x27;str&#x27; = &#x27;on_string&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import diabolo; diabolo.diabolo_state_sequence(X, sticks, params: &#x27;dict&#x27;, *, flying_rule: &#x27;str&#x27; = &#x27;paper&#x27;, mode0: &#x27;str&#x27; = &#x27;on_string&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;diabolo_state_sequence&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>position series X (N, 3) और छड़ियों (N, 2, 3) से केवल पेपर के state transitions चलाता है (देखी गई trajectories के वर्गीकरण के लिए, dynamics हल नहीं करता)। non-finite rows पिछली state रखती हैं (tracker से छूटे frames)। return (N,) state नाम। <b>Raises</b> <code style="color:#22d3bf">ValueError</code>: shape, लंबाई, spelling।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

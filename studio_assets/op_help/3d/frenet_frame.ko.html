@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">frenet_frame — 3D <code style="color:#22d3bf">curve</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">frame</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.frenet_frame(curve)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import curve3d; curve3d.frenet_frame(curve)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;frenet_frame&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>각 점의 프레네 표구(접선 T, 주법선 N, 종법선 B). → (T, N, B) 각 (Npts,3) 단위 벡터.</p>
 <p>순서가 있는 점열 (N,3)을 index 파라미터로 <code style="color:#22d3bf">np.gradient</code>(내부는 중심 차분, 양 끝은한쪽 차분)하여 r&#x27;, r&#x27;&#x27;를 구하고,</p>

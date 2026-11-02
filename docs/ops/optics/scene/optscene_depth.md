@@ -4,6 +4,7 @@ dim: optics
 category: scene
 in: table × table
 out: image2d
+gpu: なし
 examples: [virtual_machine_vision]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table × table` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.optscene_depth(scene, camera, supersample: 'int' = 1) -> 'np.ndarray'` (実装を直接呼ぶなら `import optscene; optscene.optscene_depth(scene, camera, supersample: 'int' = 1) -> 'np.ndarray'`、台帳から引くなら `opsoptics.get("optscene_depth")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

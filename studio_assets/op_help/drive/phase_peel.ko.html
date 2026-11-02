@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">phase_peel — DRIVE <code style="color:#22d3bf">pxrd</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">signal × signal × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.phase_peel(two_theta, intensity, dictionary, max_phases=None, min_gain=0.05, min_fraction=0.005, background_order=4, sigma=None)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import pxrd; pxrd.phase_peel(two_theta, intensity, dictionary, max_phases=None, min_gain=0.05, min_fraction=0.005, background_order=4, sigma=None)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;phase_peel&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>혼합물에서 상을 1개씩 벗겨 냅니다(탐욕적 전진 선택).</p>
 <p>단계 0 은 배경만. 각 단계에서 아직 선택하지 않은 상을 하나씩 더해 <code style="color:#22d3bf">phase_fractions</code> 로 맞추고, <code style="color:#22d3bf">rwp</code> 가 가장 많이 내려가는상을 고른다. <code style="color:#22d3bf">rwp</code> 의 상대적 하강 폭이 <code style="color:#22d3bf">min_gain</code> 미만이거나, 고른 상의 중량 분율이 <code style="color:#22d3bf">min_fraction</code> 미만이면 멈춘다. 모든 상을 한 번에 맞추는 <code style="color:#22d3bf">phase_fractions</code> 와 달리, &quot;어떤 순서로, 얼마나 설명이 진행되었는가&quot;가 남는다(그림의 소재).</p>

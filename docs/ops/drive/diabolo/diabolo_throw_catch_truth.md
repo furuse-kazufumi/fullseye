@@ -4,6 +4,7 @@ dim: drive
 category: diabolo
 in: signal × signal × matrix × table
 out: table
+gpu: なし
 examples: [poc_diabolo_model_and_vision]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal × signal × matrix × table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.diabolo_throw_catch_truth(p0, v0, sticks, params: 'dict', *, t_min: 'float' = 0.0, t_max: 'float' = 5.0, n_grid: 'int' = 2001) -> 'dict'` (実装を直接呼ぶなら `import diabolo; diabolo.diabolo_throw_catch_truth(p0, v0, sticks, params: 'dict', *, t_min: 'float' = 0.0, t_max: 'float' = 5.0, n_grid: 'int' = 2001) -> 'dict'`、台帳から引くなら `opsdrive.get("diabolo_throw_catch_truth")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

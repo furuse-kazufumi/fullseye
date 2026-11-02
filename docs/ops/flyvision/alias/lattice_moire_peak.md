@@ -4,6 +4,7 @@ dim: flyvision
 category: alias
 in: signal × table
 out: table
+gpu: なし
 examples: [poc_moire_screen, poc_print_registration, poc_zebra_stripes_fly_eye]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal × table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.lattice_moire_peak(signal, lattice, fmax_cycles_per_deg=0.0, n_freq=48, window='hann')` (実装を直接呼ぶなら `import flyvision; flyvision.lattice_moire_peak(signal, lattice, fmax_cycles_per_deg=0.0, n_freq=48, window='hann')`、台帳から引くなら `opsflyvision.get("lattice_moire_peak")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

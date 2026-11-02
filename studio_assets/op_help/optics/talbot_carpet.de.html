@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">talbot_carpet — OPTICS <code style="color:#22d3bf">grating_interf</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">keine</code> → <code style="color:#22d3bf">table</code> (ein Operator, der allein durch seine Argumente bestimmt ist — er nimmt kein Bild und keine Daten entgegen)</p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.talbot_carpet(period_um=4.0, wavelength_nm=None, energy_kev=None, grating=&#x27;pi&#x27;, duty=0.5, z_max_mm=None, n_z=241, n_x=128, n_periods=2, n_harmonics=63, model=&#x27;exact&#x27;)</code> (die Implementierung direkt: <code style="color:#22d3bf">import gratinginterf; gratinginterf.talbot_carpet(period_um=4.0, wavelength_nm=None, energy_kev=None, grating=&#x27;pi&#x27;, duty=0.5, z_max_mm=None, n_z=241, n_x=128, n_periods=2, n_harmonics=63, model=&#x27;exact&#x27;)</code>; aus dem Register: <code style="color:#22d3bf">opsoptics.get(&quot;talbot_carpet&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Talbot-Teppich: die Intensität I(x, z) hinter einem binären Gitter (π-Phase, π/2-Phase oder Absorption) in geschlossener Form als Summe über Beugungsordnungen.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>

@@ -4,6 +4,7 @@ dim: drive
 category: ttc
 in: image2d × image2d
 out: table
+gpu: なし
 examples: [poc_world_terrain]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d × image2d` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.foe_from_flow(u, v, mask=None, *, min_speed: 'float' = 0.3, max_speed: 'float' = inf, iters: 'int' = 5, angle_scale: 'float' = 0.05) -> 'dict'` (実装を直接呼ぶなら `import drivettc; drivettc.foe_from_flow(u, v, mask=None, *, min_speed: 'float' = 0.3, max_speed: 'float' = inf, iters: 'int' = 5, angle_scale: 'float' = 0.05) -> 'dict'`、台帳から引くなら `opsdrive.get("foe_from_flow")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">piv_sample_at_windows — PIV <code style="color:#22d3bf">assess</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">flow2d</code> → <code style="color:#22d3bf">flow2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_sample_at_windows(field, info)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import pivops; pivops.piv_sample_at_windows(field, info)</code>, registry से लेना हो तो <code style="color:#22d3bf">opspiv.get(&quot;piv_sample_at_windows&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>हर pixel वाले field <code style="color:#22d3bf">(2, H, W)</code> को window केंद्रों के grid पर उतारता है (nearest neighbor)।</p>
 <p>ground truth pixel resolution पर बनाया जाता है, लेकिन PIV आउटपुट window grid पर होता है। <b>तुलना से पहले, इसे उसी grid पर लाना होगा</b>, और लाने का तरीका (nearest neighbour या window mean) error को बदल देता है। यहाँ nearest neighbour है —— window mean के साथ, gradients वाले fields में इसे PIV की अपनी smoothing से अलग करना असंभव हो जाता है।</p>

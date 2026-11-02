@@ -4,7 +4,7 @@ dim: 3d
 category: refine
 in: voxel × voxel × position
 out: table
-gpu: true
+gpu: なし
 examples: [refinement]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `voxel × voxel × position` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.refine_lm(scene, template, init_pos, device='cpu', iters=50, scale=True, gain=False, lam0=0.001, tol=1e-08)` (実装を直接呼ぶなら `import match3d; match3d.refine_lm(scene, template, init_pos, device='cpu', iters=50, scale=True, gain=False, lam0=0.001, tol=1e-08)`、台帳から引くなら `ops3d.get("refine_lm")`)
-- **GPU**: この op は GPU 経路あり(`device="cuda"`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

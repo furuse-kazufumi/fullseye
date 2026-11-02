@@ -4,6 +4,7 @@ dim: lightfield
 category: views
 in: lightfield
 out: image2d
+gpu: なし
 examples: [lightfield_depth]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `lightfield` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.lf_center_view(lf, mode='average')` (実装を直接呼ぶなら `import lightfield; lightfield.lf_center_view(lf, mode='average')`、台帳から引くなら `opslightfield.get("lf_center_view")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

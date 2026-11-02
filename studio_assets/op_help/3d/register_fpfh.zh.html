@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">register_fpfh — 3D <code style="color:#22d3bf">feature_register</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">pose</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.register_fpfh(src, dst, src_normals=None, dst_normals=None, voxel_size=None, normal_k=16, feature_k=60, n_bins=11, ransac_iters=8000, inlier_thr=None, edge_sim=0.9, mutual=True, ratio=0.95, seed=0, device=&#x27;cpu&#x27;)</code>(要直接调用实现,<code style="color:#22d3bf">import feat_fpfh; feat_fpfh.register_fpfh(src, dst, src_normals=None, dst_normals=None, voxel_size=None, normal_k=16, feature_k=60, n_bins=11, ransac_iters=8000, inlier_thr=None, edge_sim=0.9, mutual=True, ratio=0.95, seed=0, device=&#x27;cpu&#x27;)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;register_fpfh&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用 FPFH 描述子 + RANSAC 做 <b>无需初值</b> 的刚体配准 (R,t)。</p>
 <p>稀疏特征匹配的 3D 版本，相当于 2D Harris/SIFT。两种云都由 FPFH 描述符表示，使用描述符空间中的最近邻创建对应关系（相互最近邻+按 Lowe 比率过滤），并使用 RANSAC 来解决对异常值稳健的刚体姿势。与紧密匹配（NCC/Hough）和PCA不同，大旋转（50-70°）其价值在于，即使+平移+部分重叠，也无需初始估计即可确定姿势。得到的(R,t)即为ICP的初始值（粗略初始化）收紧表面精度（ICP 约定 dst ≈ src @ R.T + t）。</p>

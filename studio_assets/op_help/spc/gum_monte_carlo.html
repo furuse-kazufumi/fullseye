@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">gum_monte_carlo — SPC <code style="color:#22d3bf">uncertainty</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gum_monte_carlo(table, u=&#x27;u&#x27;, sensitivity=&#x27;sensitivity&#x27;, n=200000, seed=0, level=0.95, correlation=None, distribution=None, value=None, power=None, stream=False)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import spc; spc.gum_monte_carlo(table, u=&#x27;u&#x27;, sensitivity=&#x27;sensitivity&#x27;, n=200000, seed=0, level=0.95, correlation=None, distribution=None, value=None, power=None, stream=False)</code>、台帳から引くなら <code style="color:#22d3bf">opsspc.get(&quot;gum_monte_carlo&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>GUM 補遺 1(JCGM 101)のモンテカルロ伝播(<code style="color:#22d3bf">table</code>)。</p>
 <p>各入力量を分布から引いて <code style="color:#22d3bf">y = sum_i c_i x_i</code> を作り、標本から標準不確かさと最短の包含区間を返す。既定は正規分布で、*distribution* に列名を渡すと <code style="color:#22d3bf">gum_standard_uncertainty</code> と同じ形の名前(rectangular / triangular / ...)を成分ごとに指定できる(半幅ではなく<b>標準不確かさ</b>を持つ分布を作る)。</p>

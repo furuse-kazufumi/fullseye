@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">euclidean_cluster — 3D <code style="color:#22d3bf">segment</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">labels</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.euclidean_cluster(points, tol: &#x27;float&#x27;, min_size: &#x27;int&#x27; = 10) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import segment3d; segment3d.euclidean_cluster(points, tol: &#x27;float&#x27;, min_size: &#x27;int&#x27; = 10) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;euclidean_cluster&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>按半径 tol 的邻接图连通成分做距离聚类(−1=噪声)。</p>
 <p>把彼此在 <code style="color:#22d3bf">tol</code> 以内的点(传递地)归入同一聚类。空间上分离的物体成为不同聚类(用于去除地面后分离“哪一团是可抓取的物体”)。连通分量中小于 <code style="color:#22d3bf">min_size</code> 的作为噪声,记为 -1。标签按聚类大小降序为 0,1,2,... (确定性)。</p>

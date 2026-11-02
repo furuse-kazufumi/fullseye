@@ -4,6 +4,7 @@ dim: optics
 category: scene
 in: table × table × table
 out: table
+gpu: なし
 examples: [poc_nir_silicon_transmission, poc_optics_drawings, vision_layout_from_catalog]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table × table × table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.vision_layout(sensor: 'dict', lens: 'dict', lights, scene=None, tilt_deg: 'float' = 0.0, azimuth_deg: 'float' = 0.0, look_at_mm=(0.0, 0.0, 0.0)) -> 'dict'` (実装を直接呼ぶなら `import optscene; optscene.vision_layout(sensor: 'dict', lens: 'dict', lights, scene=None, tilt_deg: 'float' = 0.0, azimuth_deg: 'float' = 0.0, look_at_mm=(0.0, 0.0, 0.0)) -> 'dict'`、台帳から引くなら `opsoptics.get("vision_layout")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

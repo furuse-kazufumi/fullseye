@@ -4,6 +4,7 @@ dim: drive
 category: pegtactile
 in: matrix
 out: table
+gpu: なし
 examples: [poc_peg_insertion_tactile]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `matrix` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.symmetry_order_contour(contour, K: 'int' = 24, rel: 'float' = 0.01) -> 'dict'` (実装を直接呼ぶなら `import pegtactile; pegtactile.symmetry_order_contour(contour, K: 'int' = 24, rel: 'float' = 0.01) -> 'dict'`、台帳から引くなら `opsdrive.get("symmetry_order_contour")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

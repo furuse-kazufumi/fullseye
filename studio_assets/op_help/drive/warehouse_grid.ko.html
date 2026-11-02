@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">warehouse_grid — DRIVE <code style="color:#22d3bf">agv</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">any</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.warehouse_grid(n_rack_rows=3, n_rack_cols=4, rack_len=4, aisle=1, margin=2)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import agvfleet; agvfleet.warehouse_grid(n_rack_rows=3, n_rack_cols=4, rack_len=4, aisle=1, margin=2)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;warehouse_grid&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>선반 열과 통로로 이루어진 창고 격자(True = 주행 가능).</p>
 <p>선반은 가로 1 행 × &quot;rack_len&quot;매스의 블록으로, 상하 좌우를 폭 &quot;aisle&quot;의 통로가 둘러싼다. 외주에 &quot;margin&quot; 매스의 주행대(역 앞)를 둔다. 반환은<code style="color:#22d3bf">(grid, info)</code>, info 는 선반의 매스의 목록 <code style="color:#22d3bf">racks</code> 와 격자의 <code style="color:#22d3bf">shape</code>를 가진다.</p>

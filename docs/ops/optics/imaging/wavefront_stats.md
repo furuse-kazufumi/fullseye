@@ -4,6 +4,7 @@ dim: optics
 category: imaging
 in: table
 out: table
+gpu: なし
 examples: [optics_imaging, poc_zernike_aberrations]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.wavefront_stats(coeffs, radial=128, angular=192)` (実装を直接呼ぶなら `import optics; optics.wavefront_stats(coeffs, radial=128, angular=192)`、台帳から引くなら `opsoptics.get("wavefront_stats")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">driver_style — DRIVE <code style="color:#22d3bf">traffic</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">table</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.driver_style(kind: &#x27;str&#x27;, seed: &#x27;Optional[int]&#x27; = None) -&gt; &#x27;Dict[str, float]&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import drivetraffic; drivetraffic.driver_style(kind: &#x27;str&#x27;, seed: &#x27;Optional[int]&#x27; = None) -&gt; &#x27;Dict[str, float]&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;driver_style&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>返回 3 种驾驶风格(&quot;careful&quot; / &quot;normal&quot; / &quot;sloppy&quot;)的参数。<b>所有值均为假定</b>(无出处)。</p>
 <p>键: IDM 的 <code style="color:#22d3bf">v0, T, a, b, s0, delta</code>、<code style="color:#22d3bf">reaction_delay</code> [s]、横向摆动(OU 过程)的 <code style="color:#22d3bf">wobble_theta</code> [1/s] 和 <code style="color:#22d3bf">wobble_sigma</code> [m/√s] (稳态标准差 σ/sqrt(2θ) = 0.05 / 0.11 / 0.28 m)、<code style="color:#22d3bf">speed_noise</code>(期望速度的相对波动)、<code style="color:#22d3bf">length</code> 4.5 m(假设)、<code style="color:#22d3bf">kind</code>。返回值可直接作为 1 辆车传给 <code style="color:#22d3bf">idm_platoon_simulate</code>。</p>

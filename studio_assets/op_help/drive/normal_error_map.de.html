@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">normal_error_map — DRIVE <code style="color:#22d3bf">tacscalib</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">normalmap × normalmap</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.normal_error_map(n_a, n_b) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import tacscalib; tacscalib.normal_error_map(n_a, n_b) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;normal_error_map&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Pixelweiser Winkel [Grad] zwischen 2 Normalenfeldern = atan2(|a × b|, a · b) (ohne Normierung — die Länge kürzt sich im Verhältnis von atan2). acos(a · b) wird nicht verwendet, da es bei nahezu gleichen Einheitsvektoren eine Rundungsuntergrenze hat (es liefert 1e-4° statt 1e-7°). <b>Raises</b> <code style="color:#22d3bf">ValueError</code>: Formen verschieden / letzte Achse ist nicht 3.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

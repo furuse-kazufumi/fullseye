@@ -4,6 +4,7 @@ dim: drive
 category: carla
 in: matrix
 out: any
+gpu: なし
 examples: [poc_carla_bridge]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `matrix` → `any`
 - **呼び出し**: `import fullseye as fs; fs.ledger.carla_rotation_angles(R) -> 'tuple'` (実装を直接呼ぶなら `import carlabridge; carlabridge.carla_rotation_angles(R) -> 'tuple'`、台帳から引くなら `opsdrive.get("carla_rotation_angles")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

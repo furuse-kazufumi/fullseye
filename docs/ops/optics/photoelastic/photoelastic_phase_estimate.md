@@ -4,6 +4,7 @@ dim: optics
 category: photoelastic
 in: polsweep
 out: table
+gpu: なし
 examples: [photoelastic_roundtrip]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `polsweep` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.photoelastic_phase_estimate(images, analyzers='camera4', min_modulation=0.01, sum_tolerance=0.05)` (実装を直接呼ぶなら `import photoelastic; photoelastic.photoelastic_phase_estimate(images, analyzers='camera4', min_modulation=0.01, sum_tolerance=0.05)`、台帳から引くなら `opsoptics.get("photoelastic_phase_estimate")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -4,6 +4,7 @@ dim: drive
 category: agv
 in: image2d
 out: image2d
+gpu: なし
 examples: [gallery_drive_city_terrain, poc_braid_homotopy_classes]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.grid_distances(grid, goal)` (実装を直接呼ぶなら `import agvfleet; agvfleet.grid_distances(grid, goal)`、台帳から引くなら `opsdrive.get("grid_distances")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

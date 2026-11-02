@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tile_stream — DRIVE <code style="color:#22d3bf">inf</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tile_stream(cache: &#x27;dict&#x27;, i: &#x27;int&#x27;, j: &#x27;int&#x27;, tp: &#x27;dict&#x27;, radius: &#x27;int&#x27; = 1, step: &#x27;float&#x27; = 10.0) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import driveinf; driveinf.tile_stream(cache: &#x27;dict&#x27;, i: &#x27;int&#x27;, j: &#x27;int&#x27;, tp: &#x27;dict&#x27;, radius: &#x27;int&#x27; = 1, step: &#x27;float&#x27; = 10.0) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;tile_stream&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>保持车辆所在区块 (i, j) 周围的 (2·radius + 1)² 个区块，丢弃移出范围的区块(原地修改 <code style="color:#22d3bf">cache</code>)。返回值 <code style="color:#22d3bf">{&quot;loaded&quot;: [(i, j)], &quot;evicted&quot;: [(i, j)], &quot;n&quot;: 持有的区块数}</code>。</p>
 <p>空输入（<code style="color:#22d3bf">cache</code> 为空字典）返回在 <code style="color:#22d3bf">loaded</code> 中列出所有目标图块的结果（原因：所有图块起初均未缓存）。</p>

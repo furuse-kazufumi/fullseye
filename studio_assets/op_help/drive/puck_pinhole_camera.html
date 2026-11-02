@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">puck_pinhole_camera — DRIVE <code style="color:#22d3bf">puck</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table × scalar × scalar × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.puck_pinhole_camera(table: &#x27;dict&#x27;, height: &#x27;float&#x27;, fovy_deg: &#x27;float&#x27;, shape) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import puck; puck.puck_pinhole_camera(table: &#x27;dict&#x27;, height: &#x27;float&#x27;, fovy_deg: &#x27;float&#x27;, shape) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;puck_pinhole_camera&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>真上の針穴カメラ(位置 (0, 0, h)、−z を見る、up = +y、MuJoCo のカメラ規約)をホモグラフィに: col = W/2 + f x/h、row = H/2 − f y/h、f = (H/2)/tan(fovy/2)。パック上面の高さ(≈ 0.02 m)は無視(視差 h に対して 1 % 強、残差は門で測る)。<code style="color:#22d3bf">shape</code> = (H, W)。返り値は <code style="color:#22d3bf">puck_camera</code> と同じ形。</p>
 <p>空の入力(<code style="color:#22d3bf">table</code> が空の dict)は ValueError。</p>

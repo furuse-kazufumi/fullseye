@@ -4,6 +4,7 @@ dim: drive
 category: cutting
 in: signal × signal × scalar
 out: table
+gpu: なし
 examples: [poc_food_cutting_measure]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal × signal × scalar` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.cut_force_fit(F_n, w_eff_mm, xi: 'float', min_w_mm: 'float' = 2.0) -> 'dict'` (実装を直接呼ぶなら `import cutting; cutting.cut_force_fit(F_n, w_eff_mm, xi: 'float', min_w_mm: 'float' = 2.0) -> 'dict'`、台帳から引くなら `opsdrive.get("cut_force_fit")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

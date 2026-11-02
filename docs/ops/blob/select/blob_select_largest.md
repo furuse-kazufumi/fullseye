@@ -4,6 +4,7 @@ dim: blob
 category: select
 in: labels2d
 out: labels2d
+gpu: なし
 examples: [poc_am_thermal_to_ct, poc_gear_tooth_metrology, poc_solder_fillet_aoi, poc_wound_area_tracking]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `labels2d` → `labels2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.blob_select_largest(labels: 'Any', count: 'int' = 1) -> 'np.ndarray'` (実装を直接呼ぶなら `import blob2d; blob2d.blob_select_largest(labels: 'Any', count: 'int' = 1) -> 'np.ndarray'`、台帳から引くなら `opsblob.get("blob_select_largest")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

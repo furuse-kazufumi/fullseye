@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">crosswalk_overtake_check — DRIVE <code style="color:#22d3bf">crossing</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.crosswalk_overtake_check(ego, others, *, crosswalk_start: &#x27;float&#x27;, crosswalk_end: &#x27;float&#x27;, zone: &#x27;float&#x27; = 30.0, v_moving: &#x27;float&#x27; = 0.5) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import drivecrossing; drivecrossing.crosswalk_overtake_check(ego, others, *, crosswalk_start: &#x27;float&#x27;, crosswalk_end: &#x27;float&#x27;, zone: &#x27;float&#x27; = 30.0, v_moving: &#x27;float&#x27; = 0.5) -&gt; &#x27;Dict[str, object]&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;crosswalk_overtake_check&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>在人行横道等及其前方 <code style="color:#22d3bf">zone</code> m 范围内，是否超到了前方行驶车辆的前面(第38条第3款)。</p>
 <p>ego, others[i] = {&quot;t&quot;, &quot;x&quot;[, &quot;v&quot;], &quot;kind&quot;}(x = 前端)。将自己的前端从后方越过他车前端的瞬间(线性插值) 视为&quot;驶到前方&quot;,若此时自己前端的位置在 [crosswalk_start − zone, crosswalk_end] 内,且对方正在行进(速度 &gt; <code style="color:#22d3bf">v_moving</code>,<b>假设</b>)并且不是特定小型原动机自行车等(<code style="color:#22d3bf">EXEMPT_KINDS</code>),则为违规。</p>

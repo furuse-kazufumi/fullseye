@@ -4,6 +4,7 @@ dim: optics
 category: radiosity
 in: table × signal
 out: table
+gpu: なし
 examples: [poc_pocket_interreflection]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table × signal` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.radiosity_progressive_3d(patches, emission, form_factors=None, albedo=None, tol=1e-06, max_shots=None, n_quad=3)` (実装を直接呼ぶなら `import radiosity3d; radiosity3d.radiosity_progressive_3d(patches, emission, form_factors=None, albedo=None, tol=1e-06, max_shots=None, n_quad=3)`、台帳から引くなら `opsoptics.get("radiosity_progressive_3d")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

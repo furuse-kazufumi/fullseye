@@ -4,6 +4,7 @@ dim: optics
 category: scene
 in: table × table × table
 out: table
+gpu: なし
 examples: [virtual_machine_vision]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table × table × table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.inspection_dataset(scene, camera, lights, n: 'int' = 8, seed: 'int' = 0, exposure_ms: 'float' = 10.0, bit_depth: 'int' = 8, jitter_mm: 'float' = 0.0, tilt_jitter_deg: 'float' = 0.0, intensity_jitter: 'float' = 0.0, depth: 'int' = 1, defects: 'dict' = None, supersample: 'int' = 1, adaptive: 'bool' = False, light_samples: 'int' = None, environment=None, environment_gain: 'float' = 1.0) -> 'list'` (実装を直接呼ぶなら `import optscene; optscene.inspection_dataset(scene, camera, lights, n: 'int' = 8, seed: 'int' = 0, exposure_ms: 'float' = 10.0, bit_depth: 'int' = 8, jitter_mm: 'float' = 0.0, tilt_jitter_deg: 'float' = 0.0, intensity_jitter: 'float' = 0.0, depth: 'int' = 1, defects: 'dict' = None, supersample: 'int' = 1, adaptive: 'bool' = False, light_samples: 'int' = None, environment=None, environment_gain: 'float' = 1.0) -> 'list'`、台帳から引くなら `opsoptics.get("inspection_dataset")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">volume_downsample — 3D <code style="color:#22d3bf">preprocess</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">voxel</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.volume_downsample(vol, factor, mode=&#x27;mean&#x27;)</code> (die Implementierung direkt: <code style="color:#22d3bf">import volops; volops.volume_downsample(vol, factor, mode=&#x27;mean&#x27;)</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;volume_downsample&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Block-Pooling eines <code style="color:#22d3bf">(D, H, W)</code>-Volumens um einen ganzzahligen *factor* je Achse (Datenreduktion).</p>
 <p>Große CT- / Laminographie- / Simulationsvolumen müssen vor den schwereren 3-D-Operatoren ausgedünnt werden (Frangi/Sato sind auf ~256**3 Voxel begrenzt, siehe <code style="color:#22d3bf">MAX_EIGEN_VOXELS</code>). Dies ist das Volumen-Gegenstück zum Punktwolken- <code style="color:#22d3bf">voxel_grid_downsample</code> und zum Mesh-<code style="color:#22d3bf">decimate_qem</code> -- das dritte Bein von Fullseyes *Ausdünnungs*-Familie (decimation), eines pro 3-D-Datensorte.</p>

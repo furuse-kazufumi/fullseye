@@ -4,6 +4,7 @@ dim: 3d
 category: plane_sweep_stereo
 in: image2d × image2d
 out: depth
+gpu: なし
 examples: [plane_sweep_depth]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d × image2d` → `depth`
 - **呼び出し**: `import fullseye as fs; fs.ledger.plane_sweep_depth(img_ref: 'np.ndarray', img_src: 'np.ndarray', K: 'np.ndarray', R: 'np.ndarray', t: 'np.ndarray', depth_candidates, window: 'int' = 1, normal=(0.0, 0.0, 1.0)) -> 'np.ndarray'` (実装を直接呼ぶなら `import plane_sweep; plane_sweep.plane_sweep_depth(img_ref: 'np.ndarray', img_src: 'np.ndarray', K: 'np.ndarray', R: 'np.ndarray', t: 'np.ndarray', depth_candidates, window: 'int' = 1, normal=(0.0, 0.0, 1.0)) -> 'np.ndarray'`、台帳から引くなら `ops3d.get("plane_sweep_depth")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

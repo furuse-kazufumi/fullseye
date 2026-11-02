@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">bekker_wheel_sinkage — DRIVE <code style="color:#22d3bf">roverslip</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">scalar × table × any</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.bekker_wheel_sinkage(load, wheel, soil, form: &#x27;str&#x27; = &#x27;classic&#x27;) -&gt; &#x27;float&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import roverslip; roverslip.bekker_wheel_sinkage(load, wheel, soil, form: &#x27;str&#x27; = &#x27;classic&#x27;) -&gt; &#x27;float&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;bekker_wheel_sinkage&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>Bekker의 강성 차륜 침하 근사식 [m]. 접지를 포물선 <code style="color:#22d3bf">z(x) = z₀ − x²/D</code>로 근사하고, 전단은 넣지 않습니다.</p>
 <p>load 는 1륜의 수직 하중 [N], D = 2r, k = k_c/b + k_φ. 하중은 &quot;W = b k sqrt (D) z₀^(n+1/2) · I(n)&quot;, I(n) = ∫₀¹ (1 - t²)ⁿ dt. form = &quot;classic&quot;: Bekker 교과서 수식 z = [3W / ((3 - n) b k sqrt(D))]^(2/(2n+1)). 이것은 &quot;(1 - t²) ⁿ ≈ 1 - n t²&quot;로 놓은 &quot;I (n) ≈ (3 - n) / 3&quot;에서 n = 1에서만 엄격작은 견적, 따라서 침전을 약 17 % 깊게 배출). form = &quot;parabolic&quot;: 같은 포물선 그대로 I(n) = √π Γ(n+1) / (2 Γ(n + 3/2))&#x27;&#x27;를 엄격하게 사용한다. 작은 침하(z ≪ D)로 wheel_sinkage 의 수치 적분(후측의 접지 없음, τ = 0)에 수렴한다.</p>

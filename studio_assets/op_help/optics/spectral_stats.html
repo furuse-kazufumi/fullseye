@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">spectral_stats — OPTICS <code style="color:#22d3bf">spectral</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.spectral_stats(spectrum)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import spectralrad; spectralrad.spectral_stats(spectrum)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;spectral_stats&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>曲線の要約: ピーク波長と値、重心波長、半値全幅(線形補間で交点を取る)、積分。</p>
 <p>返り値: dict(peak_nm, peak_value, centroid_nm, fwhm_nm, integral)。半値の交点が曲線の範囲内に無い側があれば fwhm_nm は None(端で切れた山の幅を推測しない)。</p>

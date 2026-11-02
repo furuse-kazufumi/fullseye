@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">course_slope — DRIVE <code style="color:#22d3bf">course</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">table</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.course_slope(width=7.0, height=1.5, grade_gentle=0.08, grade_steep=0.11, top=4.0)</code>(要直接调用实现,<code style="color:#22d3bf">import drivecourse; drivecourse.course_slope(width=7.0, height=1.5, grade_gentle=0.08, grade_steep=0.11, top=4.0)</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;course_slope&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>坡道路线：以缓坡上升到高度 <code style="color:#22d3bf">height</code>、顶部平坦段 <code style="color:#22d3bf">top</code>、再以陡坡下行的矩形道路(沿 x 轴)。</p>
 <p>多边形为宽 w × 长 L = height/g_gentle + top + height/g_steep 的矩形。<code style="color:#22d3bf">profile</code> = (s, z) 折线 [(0,0), (s1,h), (s1+top,h), (L,0)],z 用 <code style="color:#22d3bf">slope_height</code> 插值(driveworld 据此抬高路面)。</p>

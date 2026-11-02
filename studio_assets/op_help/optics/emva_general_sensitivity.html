@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">emva_general_sensitivity — OPTICS <code style="color:#22d3bf">sensorgeneral</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">signal × signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.emva_general_sensitivity(mu_p, mu_y, var_y, mu_y_dark, var_y_dark, mu_p_sat, n_intervals=8)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import sensorgeneral; sensorgeneral.emva_general_sensitivity(mu_p, mu_y, var_y, mu_y_dark, var_y_dark, mu_p_sat, n_intervals=8)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;emva_general_sensitivity&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>特性曲線・入力 SNR・絶対感度しきい値・DR・光子単位の暗雑音(General 2.1〜2.4・6.6〜6.8 節)。</p>
 <p>*mu_p*: 露光段ごとの画素あたりの平均光子数。*mu_y*, *var_y*: 同じ露光の 2 枚から出した平均と時間分散(式 16・18、<code style="color:#22d3bf">sensorchar.emva_pair_statistics</code>)。*mu_y_dark*, *var_y_dark*: 暗画像の同じ量。*mu_p_sat*: 飽和の露光(0.1〜0.2 % の画素が最大値になる露光、6.7 節)。負の μ_p は ValueError、μ_p.sat を超える点は除外する。</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">e57_write — FILEIO <code style="color:#22d3bf">e57</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.e57_write(table)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import fileio; fileio.e57_write(table)</code>、台帳から引くなら <code style="color:#22d3bf">opsfileio.get(&quot;e57_write&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>座標・強度・色・pose を持つ点群 <code style="color:#22d3bf">table</code> を ASTM E57 の <code style="color:#22d3bf">bytes</code> に書く。</p>
 <p><code style="color:#22d3bf">pye57</code> は optional。未導入なら導入コマンドを含む <code style="color:#22d3bf">ImportError</code> で閉じる。</p>

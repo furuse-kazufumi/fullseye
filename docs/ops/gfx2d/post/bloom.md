@@ -4,6 +4,7 @@ dim: gfx2d
 category: post
 in: rgb
 out: rgb
+gpu: なし
 examples: [gfx2d_scene, poc_public_camera_heading_real]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `rgb` → `rgb`
 - **呼び出し**: `import fullseye as fs; fs.ledger.bloom(rgb, threshold=0.8, sigma=4.0, intensity=0.6)` (実装を直接呼ぶなら `import gfx2d; gfx2d.bloom(rgb, threshold=0.8, sigma=4.0, intensity=0.6)`、台帳から引くなら `opsgfx2d.get("bloom")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -4,6 +4,7 @@ dim: drive
 category: crossing
 in: signal
 out: table
+gpu: なし
 examples: [poc_driving_crossing]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.crossing_gate_state(t, *, t_warning: 'float', t_lower_start: 'float', lower_duration: 'float', t_clear: 'float', raise_duration: 'float') -> 'Dict[str, np.ndarray]'` (実装を直接呼ぶなら `import drivecrossing; drivecrossing.crossing_gate_state(t, *, t_warning: 'float', t_lower_start: 'float', lower_duration: 'float', t_clear: 'float', raise_duration: 'float') -> 'Dict[str, np.ndarray]'`、台帳から引くなら `opsdrive.get("crossing_gate_state")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

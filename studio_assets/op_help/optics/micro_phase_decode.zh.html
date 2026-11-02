@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">micro_phase_decode — OPTICS <code style="color:#22d3bf">light_transport</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">images</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.micro_phase_decode(images, periods=(14.0, 15.0, 16.0), n_shifts=4)</code>(要直接调用实现,<code style="color:#22d3bf">import lighttransport; lighttransport.micro_phase_decode(images, periods=(14.0, 15.0, 16.0), n_shifts=4)</code>;从台账取用则 <code style="color:#22d3bf">opsoptics.get(&quot;micro_phase_decode&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把窄带高频条纹组(微相移,Gupta &amp; Nayar 2012)解码为绝对投影仪坐标,用前两个周期的拍频确定条纹级次(<code style="color:#22d3bf">table</code>)。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>

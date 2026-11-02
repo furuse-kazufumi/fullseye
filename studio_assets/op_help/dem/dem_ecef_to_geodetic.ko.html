@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">dem_ecef_to_geodetic — DEM <code style="color:#22d3bf">geodesy</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_ecef_to_geodetic(xyz)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import demops; demops.dem_ecef_to_geodetic(xyz)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdem.get(&quot;dem_ecef_to_geodetic&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>ECEF → 측지 좌표. 반환은 <code style="color:#22d3bf">(..., 3)</code>의 <code style="color:#22d3bf">(위도[도], 경도[도], 높이[m])</code>.</p>
 <p>Bowring (1976)의 닫힌 식에 가까운 해법. 왕복(측지→ECEF→측지)의 오차는 <b>어디를 표본으로 했느냐에 따라 한 자릿수 이상 움직이므로</b>, 범위를 붙여 쓴다(2026-09-08 재측정. 이전에는 &quot;위도, 경도 1e-12도 미만, 높이 1e-7 m 미만&quot;이라고 썼지만, ★이것은 위도 ±85도, 높이 -500~9000 m의 4000점에서 이미 <b>최대 6.4e-12도 / 8.5e-07 m</b>로 넘어 있었다 —— 중앙값 2.6e-13도 / 3.3e-08 m와 혼동하고 있었다):</p>

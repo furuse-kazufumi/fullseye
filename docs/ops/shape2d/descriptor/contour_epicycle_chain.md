@@ -4,6 +4,7 @@ dim: shape2d
 category: descriptor
 in: matrix
 out: pairs
+gpu: なし
 examples: [poc_one_stroke_epicycles]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `matrix` → `pairs`
 - **呼び出し**: `import fullseye as fs; fs.ledger.contour_epicycle_chain(spectrum, phase, order='frequency')` (実装を直接呼ぶなら `import fourierdesc; fourierdesc.contour_epicycle_chain(spectrum, phase, order='frequency')`、台帳から引くなら `opsshape2d.get("contour_epicycle_chain")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

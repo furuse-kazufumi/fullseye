@@ -4,6 +4,7 @@ dim: optics
 category: spectral
 in: 
 out: pairs
+gpu: なし
 examples: [poc_hyperspectral_foreign_matter]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `pairs`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.spectral_reflectance_from_material(material='NUT_KERNEL', particle_um=None, thickness_mm=10.0, background_reflectance=0.05, water_fraction=None, carbon_black_fraction=0.0, internal_reflectance=0.6, wl_min_nm=900.0, wl_max_nm=2500.0, n_points=321)` (実装を直接呼ぶなら `import spectralrad; spectralrad.spectral_reflectance_from_material(material='NUT_KERNEL', particle_um=None, thickness_mm=10.0, background_reflectance=0.05, water_fraction=None, carbon_black_fraction=0.0, internal_reflectance=0.6, wl_min_nm=900.0, wl_max_nm=2500.0, n_points=321)`、台帳から引くなら `opsoptics.get("spectral_reflectance_from_material")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

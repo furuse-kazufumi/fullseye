@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">circle_fit_known_radius — DRIVE <code style="color:#22d3bf">pegsim</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.circle_fit_known_radius(points, r: &#x27;float&#x27;, iters: &#x27;int&#x27; = 30) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import pegsim; pegsim.circle_fit_known_radius(points, r: &#x27;float&#x27;, iters: &#x27;int&#x27; = 30) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;circle_fit_known_radius&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>반경 r이 알려진 원을 2-D 점열 (row, col)에 피팅(중심만 Gauss-Newton으로 풀이. 부분 호에서도 안정).</p>
 <p><code style="color:#22d3bf">measure.fit_circle</code>(대수적, 반경도 미지)과 같은 입출력 규약(<code style="color:#22d3bf">cy</code>·<code style="color:#22d3bf">cx</code>·<code style="color:#22d3bf">rms</code>). 페그의 단면처럼 반경이도면으로 알려진 대상은, 반경을 고정하는 편이 짧은 호에서도 중심이 정해진다(자유로운 맞춤은 호가 짧으면 반경과 중심이 상쇄된다). <b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 점이 2 개 미만, 비유한, r ≤ 0.</p>

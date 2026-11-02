@@ -4,6 +4,7 @@ dim: 3d
 category: restoration
 in: voxel × voxel
 out: voxel
+gpu: なし
 examples: [deconv_fft_restore]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `voxel × voxel` → `voxel`
 - **呼び出し**: `import fullseye as fs; fs.ledger.vol_richardson_lucy(vol, psf, iterations=10, clip_tiny=1e-12)` (実装を直接呼ぶなら `import volrestore; volrestore.vol_richardson_lucy(vol, psf, iterations=10, clip_tiny=1e-12)`、台帳から引くなら `ops3d.get("vol_richardson_lucy")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

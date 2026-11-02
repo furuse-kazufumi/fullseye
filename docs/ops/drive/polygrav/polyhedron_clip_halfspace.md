@@ -4,6 +4,7 @@ dim: drive
 category: polygrav
 in: any × any × any
 out: any
+gpu: なし
 examples: [itokawa_gravity_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `any × any × any` → `any`
 - **呼び出し**: `import fullseye as fs; fs.ledger.polyhedron_clip_halfspace(mesh, point, normal)` (実装を直接呼ぶなら `import polygrav; polygrav.polyhedron_clip_halfspace(mesh, point, normal)`、台帳から引くなら `opsdrive.get("polyhedron_clip_halfspace")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

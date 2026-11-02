@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">emva_quantum_efficiency — OPTICS <code style="color:#22d3bf">sensorchar</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.emva_quantum_efficiency(mu_p, mu_y, mu_y_dark, mu_y_sat, K)</code>(要直接调用实现,<code style="color:#22d3bf">import sensorchar; sensorchar.emva_quantum_efficiency(mu_p, mu_y, mu_y_dark, mu_y_sat, K)</code>;从台账取用则 <code style="color:#22d3bf">opsoptics.get(&quot;emva_quantum_efficiency&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由响应(特性曲线)的斜率求出量子效率 η(式 49、52)。</p>
 <p>*mu_p*：各曝光档每像素的平均光子数(由照度计与曝光时间求得：μ_p = A E t_exp λ/(hc))。R 是把 μ_y − μ_y.dark 对 μ_p 拟合的直线(<b>截距固定为 0</b>)的斜率，η = R/K。使用的点为饱和的 0〜70 %。</p>

@@ -4,6 +4,7 @@ dim: drive
 category: lateral
 in: any
 out: table
+gpu: なし
 examples: [gallery_drive_lateral_env]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `any` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.stanley_steer(front_pose, path, *, gain: 'float', speed, softening: 'float' = 0.0, max_steer: 'float' = inf, start_index=None, window: 'int' = 40) -> 'Dict[str, np.ndarray]'` (実装を直接呼ぶなら `import drivelateral; drivelateral.stanley_steer(front_pose, path, *, gain: 'float', speed, softening: 'float' = 0.0, max_steer: 'float' = inf, start_index=None, window: 'int' = 40) -> 'Dict[str, np.ndarray]'`、台帳から引くなら `opsdrive.get("stanley_steer")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

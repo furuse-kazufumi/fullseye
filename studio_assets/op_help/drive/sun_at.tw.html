@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">sun_at — DRIVE <code style="color:#22d3bf">env</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">any × scalar × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sun_at(when, lat: &#x27;float&#x27;, lon: &#x27;float&#x27;, *, refraction: &#x27;bool&#x27; = True) -&gt; &#x27;Dict[str, float]&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import driveenv; driveenv.sun_at(when, lat: &#x27;float&#x27;, lon: &#x27;float&#x27;, *, refraction: &#x27;bool&#x27; = True) -&gt; &#x27;Dict[str, float]&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;sun_at&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>給定日期時間(帶時區的 datetime 或儒略日)的太陽高度角與方位角。公式直接使用 <code style="color:#22d3bf">geocam.sun_position</code>(NOAA 太陽位置公式 = Meeus &quot;Astronomical Algorithms&quot; 第 25 章的低精度版，NOAA 大氣折射)，另加日期時間的接收方式與日地距離。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>

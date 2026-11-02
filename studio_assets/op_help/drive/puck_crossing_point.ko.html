@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">puck_crossing_point — DRIVE <code style="color:#22d3bf">puck</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">table × scalar</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.puck_crossing_point(pred: &#x27;dict&#x27;, x_line: &#x27;float&#x27;)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import puck; puck.puck_crossing_point(pred: &#x27;dict&#x27;, x_line: &#x27;float&#x27;)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;puck_crossing_point&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>예측 경로가 수비선 x = <code style="color:#22d3bf">x_line</code>을 처음 가로지르는 시각과 위치(닫힌 식: 구간마다 d(τ)·uₓ = 필요 거리를 풂).</p>
 <p>반환값 <code style="color:#22d3bf">{&quot;t&quot;, &quot;p&quot;, &quot;v&quot;, &quot;segment&quot;}</code>, 가로지르지 않으면 <code style="color:#22d3bf">None</code>(fail-closed —— 멈춤·골에 들어감·시간 초과).</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">stereo_parallax_budget — OPTICS <code style="color:#22d3bf">omni360</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">keine</code> → <code style="color:#22d3bf">table</code> (ein Operator, der allein durch seine Argumente bestimmt ist — er nimmt kein Bild und keine Daten entgegen)</p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.stereo_parallax_budget(disparity_px, width_px, viewing_distance_m, screen_width_m, ipd_m)</code> (die Implementierung direkt: <code style="color:#22d3bf">import omni360; omni360.stereo_parallax_budget(disparity_px, width_px, viewing_distance_m, screen_width_m, ipd_m)</code>; aus dem Register: <code style="color:#22d3bf">opsoptics.get(&quot;stereo_parallax_budget&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Meldet physische Parallaxe sowie Ein- und Drei-Prozent-Grenzen der Bildschirmbreite.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">fivebar_workspace — DRIVE <code style="color:#22d3bf">puck</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fivebar_workspace(link: &#x27;dict&#x27;, *, n: &#x27;int&#x27; = 161, tol: &#x27;float&#x27; = 1e-09) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import puck; puck.fivebar_workspace(link: &#x27;dict&#x27;, *, n: &#x27;int&#x27; = 161, tol: &#x27;float&#x27; = 1e-09) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;fivebar_workspace&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>작업 영역: 격자의 각 점에서 IK가 풀리고 FK∘IK가 tol 이내로 돌아오는 곳(가지 out/forward에서 모순되지 않는 곳만 &quot;닿음&quot;으로 봄). 반환값 <code style="color:#22d3bf">{&quot;xs&quot;,&quot;ys&quot;,&quot;mask&quot;,&quot;area&quot;,&quot;x_max&quot;,&quot;x_min&quot;}</code>(x_max = 닿는 가장 앞쪽의 x).</p>
 <p>빈 입력(<code style="color:#22d3bf">link</code> 이(가) 빈 dict)은 <code style="color:#22d3bf">ValueError</code> 를 발생시킨다.</p>

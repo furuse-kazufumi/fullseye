@@ -4,6 +4,7 @@ dim: optics
 category: cavity
 in: 
 out: table
+gpu: なし
 examples: [poc_gw_detector_pseudo_simulation]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.quantum_noise_budget(power_w: 'float' = 5200.0, mirror_mass_kg: 'float' = 40.0, length_m: 'float' = 3994.5, wavelength_nm: 'float' = 1064.0, *, itm_transmittance: 'float' = 0.014, f_min_hz: 'float' = 5.0, f_max_hz: 'float' = 5000.0, n_points: 'int' = 400) -> 'dict'` (実装を直接呼ぶなら `import cavityoptics; cavityoptics.quantum_noise_budget(power_w: 'float' = 5200.0, mirror_mass_kg: 'float' = 40.0, length_m: 'float' = 3994.5, wavelength_nm: 'float' = 1064.0, *, itm_transmittance: 'float' = 0.014, f_min_hz: 'float' = 5.0, f_max_hz: 'float' = 5000.0, n_points: 'int' = 400) -> 'dict'`、台帳から引くなら `opsoptics.get("quantum_noise_budget")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

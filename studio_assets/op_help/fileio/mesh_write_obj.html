@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">mesh_write_obj — FILEIO <code style="color:#22d3bf">mesh</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">mesh</code> → <code style="color:#22d3bf">text</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mesh_write_obj(mesh)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import fileio; fileio.mesh_write_obj(mesh)</code>、台帳から引くなら <code style="color:#22d3bf">opsfileio.get(&quot;mesh_write_obj&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>三角形 mesh を <code style="color:#22d3bf">v</code> / <code style="color:#22d3bf">vn</code> / <code style="color:#22d3bf">f</code> を持つ Wavefront OBJ 文字列に書く(<code style="color:#22d3bf">text</code>)。</p>
 <p>面ごとの法線を <code style="color:#22d3bf">vn</code> として書く。material/texture は書かない。呼び出し例:</p>

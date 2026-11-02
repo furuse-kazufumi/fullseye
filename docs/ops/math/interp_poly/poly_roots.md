@@ -4,6 +4,7 @@ dim: math
 category: interp_poly
 in: signal
 out: roots
+gpu: なし
 examples: [math_metrology]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal` → `roots`
 - **呼び出し**: `import fullseye as fs; fs.ledger.poly_roots(coeffs, real_only=False, imag_tol=1e-09)` (実装を直接呼ぶなら `import mathops; mathops.poly_roots(coeffs, real_only=False, imag_tol=1e-09)`、台帳から引くなら `opsmath.get("poly_roots")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

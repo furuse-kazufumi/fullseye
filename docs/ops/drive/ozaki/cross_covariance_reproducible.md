@@ -4,6 +4,7 @@ dim: drive
 category: ozaki
 in: points × points
 out: matrix
+gpu: なし
 examples: [poc_reproducible_icp]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `points × points` → `matrix`
 - **呼び出し**: `import fullseye as fs; fs.ledger.cross_covariance_reproducible(P, Q, tol: 'float' = 1.1102230246251565e-16)` (実装を直接呼ぶなら `import ozakimm; ozakimm.cross_covariance_reproducible(P, Q, tol: 'float' = 1.1102230246251565e-16)`、台帳から引くなら `opsdrive.get("cross_covariance_reproducible")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

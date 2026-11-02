@@ -4,6 +4,7 @@ dim: acoustics
 category: dual
 in: signal × signal
 out: table
+gpu: なし
 examples: [acoustic_condition_monitoring, poc_zebra_stripes_fly_eye]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal × signal` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.coherence(x, y, rate, win=None, hop=None, window='hann')` (実装を直接呼ぶなら `import acoustics; acoustics.coherence(x, y, rate, win=None, hop=None, window='hann')`、台帳から引くなら `opsacoustics.get("coherence")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

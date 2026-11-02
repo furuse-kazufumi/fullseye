@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">world_thin_structures — SEGMENTATION <code style="color:#22d3bf">world</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.world_thin_structures(seed: &#x27;int&#x27; = 0, *, size=(200, 200), n: &#x27;int&#x27; = 6, widths: &#x27;Sequence[float]&#x27; = (1.0, 2.0, 3.0), noise: &#x27;float&#x27; = 0.03) -&gt; &#x27;Dict[str, object]&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import segworld; segworld.world_thin_structures(seed: &#x27;int&#x27; = 0, *, size=(200, 200), n: &#x27;int&#x27; = 6, widths: &#x27;Sequence[float]&#x27; = (1.0, 2.0, 3.0), noise: &#x27;float&#x27; = 0.03) -&gt; &#x27;Dict[str, object]&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opssegmentation.get(&quot;world_thin_structures&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>幅 1〜3 px の線(直線)とひび(折れ線)の世界。真値 = 中心線と幅。ラベル = 構造の番号(1..n、互いに離す)。</p>
 <p>構造 k は直線(2 点)と折れ線(7 点のランダムウォーク)を交互に、幅は <code style="color:#22d3bf">widths</code> を順に使う。画素は中心線からの距離 ≤ w/2 なら構造。画像 = 明るい背景(0.82 + 緩い勾配)に、幅が細いほど薄い暗線(w = 1: 0.5、2: 0.38、3: 0.26)、縁は距離で反エイリアス、わずかにぼかし + 雑音。</p>

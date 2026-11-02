@@ -4,6 +4,7 @@ dim: drive
 category: tactorque
 in: matrix × matrix × scalar
 out: table
+gpu: なし
 examples: [poc_tactile_dipole_torque]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `matrix × matrix × scalar` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.marker_divergence(pts, u, radius: 'float', min_neighbors: 'int' = 4, k_max: 'int' = 24) -> 'dict'` (実装を直接呼ぶなら `import tactorque; tactorque.marker_divergence(pts, u, radius: 'float', min_neighbors: 'int' = 4, k_max: 'int' = 24) -> 'dict'`、台帳から引くなら `opsdrive.get("marker_divergence")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

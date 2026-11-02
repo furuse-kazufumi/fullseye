@@ -4,6 +4,7 @@ dim: optics
 category: fpm
 in: table
 out: table
+gpu: なし
 examples: [poc_fourier_ptychography]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.fp_reconstruct(stack, upsample=None, n_iter=200, pupil_update=True, pupil_start=2, alpha=1.0, beta=1.0, led_correction=False, led_start=3, stall_tol=0.01, stall_window=10, agree_tol=0.08, starts=2, margin_px=None, intensity_correction=False, pupil_degree=4, on_fail='raise')` (実装を直接呼ぶなら `import fourierptycho; fourierptycho.fp_reconstruct(stack, upsample=None, n_iter=200, pupil_update=True, pupil_start=2, alpha=1.0, beta=1.0, led_correction=False, led_start=3, stall_tol=0.01, stall_window=10, agree_tol=0.08, starts=2, margin_px=None, intensity_correction=False, pupil_degree=4, on_fail='raise')`、台帳から引くなら `opsoptics.get("fp_reconstruct")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

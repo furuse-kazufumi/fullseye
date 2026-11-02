@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">nir_model_info — OPTICS <code style="color:#22d3bf">matprop</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.nir_model_info(material=&#x27;POLYETHYLENE&#x27;) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import materials; materials.nir_model_info(material=&#x27;POLYETHYLENE&#x27;) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;nir_model_info&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p><code style="color:#22d3bf">NIR_BAND_MODELS</code> の 1 材料を、出典の印つきで表にして返す(帯・成分・水・散乱・屈折率)。</p>
 <p>返り値: dict(name, class, bands [(中心, 幅, α, 印)] — 成分を持つ材料は成分ごとに分率を掛けた帯, components, water, scattering_per_mm, reference_um, n_nir, note)。</p>

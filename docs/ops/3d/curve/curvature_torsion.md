@@ -4,6 +4,7 @@ dim: 3d
 category: curve
 in: points
 out: pairs
+gpu: なし
 examples: [space_curve, torus_knot_curve]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -16,6 +17,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **呼び出し**: `import fullseye as fs; fs.ledger.curvature_torsion(curve)` (実装を直接呼ぶなら `import curve3d; curve3d.curvature_torsion(curve)`、台帳から引くなら `ops3d.get("curvature_torsion")`)
 - **台帳経由の戻り値**: `fullseye.ledger.curvature_torsion(...)` は**宣言 out 型 `pairs` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.curvature_torsion.raw(...)`、または `curve3d.curvature_torsion` を直接呼ぶ。
   - 本体の返り: `(kappa,tau) → (N,2) pairs`
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

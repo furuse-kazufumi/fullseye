@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">add_ball — DRIVE <code style="color:#22d3bf">ballworld</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table × table</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.add_ball(world: &#x27;dict&#x27;, mesh: &#x27;dict&#x27;, p, R=None, *, name: &#x27;str&#x27; = &#x27;ball&#x27;) -&gt; &#x27;int&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import ballworld; ballworld.add_ball(world: &#x27;dict&#x27;, mesh: &#x27;dict&#x27;, p, R=None, *, name: &#x27;str&#x27; = &#x27;ball&#x27;) -&gt; &#x27;int&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;add_ball&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>गेंद को pose (p, R) पर world में जोड़ता है। हर face के labels (गेंद 23 / marker 24) वैसे ही रहते हैं। return value = objects में index।</p>
 <p>खाली इनपुट (<code style="color:#22d3bf">world</code> खाली dict) पर <code style="color:#22d3bf">ValueError</code> उठता है।</p>

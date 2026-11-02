@@ -4,6 +4,7 @@ dim: lightfield
 category: depth
 in: lightfield
 out: image2d
+gpu: なし
 examples: [lightfield_depth, plenoptic_decode_pipeline, poc_compound_eye, poc_lightfield_depth, poc_plenoptic_camera]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,6 +16,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **データ種**: `lightfield` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.lf_depth_from_focus(lf, slopes=(-2.0, -1.0, 0.0, 1.0, 2.0), *, window=9, measure='laplacian', subpixel=True, interp='linear', edge='nearest')` (実装を直接呼ぶなら `import lightfield; lightfield.lf_depth_from_focus(lf, slopes=(-2.0, -1.0, 0.0, 1.0, 2.0), *, window=9, measure='laplacian', subpixel=True, interp='linear', edge='nearest')`、台帳から引くなら `opslightfield.get("lf_depth_from_focus")`)
 - **台帳経由の戻り値**: `fullseye.ledger.lf_depth_from_focus(...)` は**宣言 out 型 `image2d` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.lf_depth_from_focus.raw(...)`、または `lightfield.lf_depth_from_focus` を直接呼ぶ。
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -4,6 +4,7 @@ dim: optics
 category: illumination
 in: table
 out: table
+gpu: なし
 examples: [poc_illumination_cone_vs_na]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.solid_angle_boundaries(light, view_na=0.1)` (実装を直接呼ぶなら `import illumdesign; illumdesign.solid_angle_boundaries(light, view_na=0.1)`、台帳から引くなら `opsoptics.get("solid_angle_boundaries")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

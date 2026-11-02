@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">mean_curvature — 3D <code style="color:#22d3bf">curvature</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mean_curvature(points, k=25, normals=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import curvature3d; curvature3d.mean_curvature(points, k=25, normals=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;mean_curvature&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>mean curvature H=(k1+k2)/2। → (N,)। orientation पर निर्भर मात्रा।</p>
 <p>normals (oriented reference normals, (N,3)) न देने पर convex-side heuristic इस्तेमाल होता है (open surface का concave/convex sign अनिश्चित रहता है)। oriented normals देने पर परिणाम global orientation के साथ मेल खाता है और सही sign देता है।</p>

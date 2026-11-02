@@ -4,6 +4,7 @@ dim: drive
 category: tacdome
 in: any × scalar × table
 out: table
+gpu: なし
 examples: [poc_tacdome_large_deformation]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `any × scalar × table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.large_deformation_contact(delta, L: 'float', lin: 'dict', reading: 'str' = 'derived') -> 'dict'` (実装を直接呼ぶなら `import tacdome; tacdome.large_deformation_contact(delta, L: 'float', lin: 'dict', reading: 'str' = 'derived') -> 'dict'`、台帳から引くなら `opsdrive.get("large_deformation_contact")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

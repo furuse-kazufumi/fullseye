@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">drawing_raster — OPTICS <code style="color:#22d3bf">drawing</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">rgbimage</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.drawing_raster(drawing, dpi=150)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import optdraw; optdraw.drawing_raster(drawing, dpi=150)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;drawing_raster&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>図を RGB の画像(uint8、(H, W, 3))にする(<code style="color:#22d3bf">rgbimage</code>)—— matplotlib(任意依存)で、紙の大きさ × *dpi*。</p>
 <p>縮尺どおりの紙の大きさ(<code style="color:#22d3bf">frame</code> × <code style="color:#22d3bf">scale</code>)で描くので、*dpi* = 25.4 なら 1 画素 = 紙の 1 mm。線の太さは層の紙の mm、一点鎖線と破線も層どおり。PNG に保存するなら <code style="color:#22d3bf">imgio</code> か PIL で書く。matplotlib が無ければ ImportError(<code style="color:#22d3bf">pip install matplotlib</code>)。</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">warp_tps_image — SHAPE2D <code style="color:#22d3bf">morph</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d × pairs × pairs</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.warp_tps_image(img, src_pts, dst_pts, lam=0.0, order=1)</code>(要直接调用实现,<code style="color:#22d3bf">import imagemorph; imagemorph.warp_tps_image(img, src_pts, dst_pts, lam=0.0, order=1)</code>;从台账取用则 <code style="color:#22d3bf">opsshape2d.get(&quot;warp_tps_image&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用薄板样条将 img 的 src_pts 移动到 dst_pts 的平滑变形。</p>
 <p>拟合输出坐标 → 输入坐标的逆映射 TPS(dst→src)，在整个输出网格上求值并采样。lam=0 时在控制点上严格对应(特征正确落位),lam&gt;0 时使变形平滑。比分段仿射更平滑，但要付出全部像素×控制点的核求值成本。</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">ocean_spectrum — OPTICS <code style="color:#22d3bf">watermedia</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ocean_spectrum(wind_speed_mps, fetch_m=None, kind=&#x27;pierson_moskowitz&#x27;, omega=None, gamma=3.3) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import watermedia; watermedia.ocean_spectrum(wind_speed_mps, fetch_m=None, kind=&#x27;pierson_moskowitz&#x27;, omega=None, gamma=3.3) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;ocean_spectrum&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>風の海の 1 次元の波のスペクトル S(ω)と、有義波高・ピーク周期 -&gt; dict。</p>
 <p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>

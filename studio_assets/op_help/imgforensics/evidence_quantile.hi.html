@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">evidence_quantile — IMGFORENSICS <code style="color:#22d3bf">calibration</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">measurement × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.evidence_quantile(measurement, null, higher_is_stronger=True)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import imgforensics; imgforensics.evidence_quantile(measurement, null, higher_is_stronger=True)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsimgforensics.get(&quot;evidence_quantile&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>evidence statistic साफ़ distribution में <b>कहाँ बैठता है</b>, यह लौटाता है। निर्णय नहीं लौटाता।</p>
 <p><code style="color:#22d3bf">null_distribution</code> के आउटपुट का उपभोक्ता। यह जो लौटाता है वह &quot;clean pairs के कितने % से बाहर&quot; है, &quot;छेड़छाड़ हुई&quot; नहीं ―― बाहर होने का अर्थ केवल इतना है कि उन शर्तों में यह <b>दुर्लभ</b> है (दुर्लभ clean images भी होती हैं)।</p>

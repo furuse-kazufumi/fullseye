@@ -2,7 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">match_phase_3d — 3D <code style="color:#22d3bf">match_pose</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">voxel × voxel</code> → <code style="color:#22d3bf">shift</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.match_phase_3d(a, b, device=&#x27;cpu&#x27;, window=&#x27;tukey&#x27;, whitening=0.25)</code> (to call the implementation directly, <code style="color:#22d3bf">import match3d; match3d.match_phase_3d(a, b, device=&#x27;cpu&#x27;, window=&#x27;tukey&#x27;, whitening=0.25)</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;match_phase_3d&quot;)</code>)</p>
-<p style="margin:2px 0 2px 12px">• <b>GPU</b>: this op has a GPU path (<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>3-D phase correlation (FFT). Returns the integer shift (dz, dy, dx) that aligns b to a.</p>
 <p>Reddy &amp; Chatterji in 3D. The peak of the inverse FFT of the cross-power spectrum R = A·conj(B) divided by |R|^<code style="color:#22d3bf">whitening</code> = the translation. No template needed, whole volume, O(N log N). Rotation/scale are handled separately (PCA / log-polar).</p>

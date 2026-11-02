@@ -4,6 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.statistical_outlier_removal(points, k: &#x27;int&#x27; = 16, std_ratio: &#x27;float&#x27; = 2.0, chunk: &#x27;int | None&#x27; = None)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import pcl_filter; pcl_filter.statistical_outlier_removal(points, k: &#x27;int&#x27; = 16, std_ratio: &#x27;float&#x27; = 2.0, chunk: &#x27;int | None&#x27; = None)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;statistical_outlier_removal&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>원장 경유의 반환값</b>: <code style="color:#22d3bf">fullseye.ledger.statistical_outlier_removal(...)</code> 는 <b>선언된 out 형 <code style="color:#22d3bf">points</code> 의 값만</b> 반환합니다(실제 함수는 보조 정보도 반환). 버려진 쪽이 필요하면 <code style="color:#22d3bf">fullseye.ledger.statistical_outlier_removal.raw(...)</code> 를 쓰거나 <code style="color:#22d3bf">pcl_filter.statistical_outlier_removal</code> 를 직접 호출하세요.</p>
 <p style="margin:2px 0 2px 12px">• 실제 반환: <code style="color:#22d3bf">(kept, mask)</code></p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>각 점의 k 근방 평균 거리가 전역적으로 벗어나는 점을 제거(통계적 이상치 제거).</p>
 <p>점마다 &quot;가장 가까운 k 개(자기 자신은 제외)까지의 평균 거리&quot;를 재고, 그 전체 점 분포의 <code style="color:#22d3bf">mean + std_ratio*std</code>를 넘는 점을 튄 점으로 간주하여 제거한다. 성긴 튄 점의 청소에유효하며, 조밀한 면 위의 점은 남는다.</p>

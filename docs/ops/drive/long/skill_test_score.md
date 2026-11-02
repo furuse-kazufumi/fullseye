@@ -4,6 +4,7 @@ dim: drive
 category: long
 in: table
 out: table
+gpu: なし
 examples: [gallery_drive_lateral_env, poc_driving_longitudinal, poc_driving_weather]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.skill_test_score(events, venue: 'str' = '場内', thresholds: 'Optional[dict]' = None) -> 'Dict[str, object]'` (実装を直接呼ぶなら `import drivelong; drivelong.skill_test_score(events, venue: 'str' = '場内', thresholds: 'Optional[dict]' = None) -> 'Dict[str, object]'`、台帳から引くなら `opsdrive.get("skill_test_score")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

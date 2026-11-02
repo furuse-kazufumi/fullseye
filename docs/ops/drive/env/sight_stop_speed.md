@@ -4,6 +4,7 @@ dim: drive
 category: env
 in: scalar × scalar × scalar
 out: scalar
+gpu: なし
 examples: [poc_driving_weather]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `scalar × scalar × scalar` → `scalar`
 - **呼び出し**: `import fullseye as fs; fs.ledger.sight_stop_speed(sight: 'float', reaction: 'float', brake: 'float', theta: 'float' = 0.0, c_rr: 'float' = 0.0, k: 'float' = 0.0, g: 'float' = 9.80665) -> 'float'` (実装を直接呼ぶなら `import driveenv; driveenv.sight_stop_speed(sight: 'float', reaction: 'float', brake: 'float', theta: 'float' = 0.0, c_rr: 'float' = 0.0, k: 'float' = 0.0, g: 'float' = 9.80665) -> 'float'`、台帳から引くなら `opsdrive.get("sight_stop_speed")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

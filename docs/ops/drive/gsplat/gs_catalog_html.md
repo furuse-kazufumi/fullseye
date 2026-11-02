@@ -4,6 +4,7 @@ dim: drive
 category: gsplat
 in: table
 out: table
+gpu: なし
 examples: [gsplat_product_viewer]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.gs_catalog_html(items, out_path=None, *, title='3DGS catalogue', lang=('ja', 'en', 'zh', 'tw', 'ko', 'de', 'hi', 'fr'), up=(0.0, 0.0, 1.0), bg: 'str' = 'gray', max_bytes: 'int' = 16777216, unit_mm: 'float' = 1000.0, fov_deg: 'float' = 35.0, thumb_px: 'int' = 256, dims=True, spin: 'bool' = True, spin_deg_per_s: 'float' = 20.0, bake_light=(0.3, -0.5, 0.8), ambient: 'float' = 0.35, max_radius: 'int' = 64, mobile_quality=0.5, mobile_above: 'int' = 300000) -> 'dict'` (実装を直接呼ぶなら `import gsviewer; gsviewer.gs_catalog_html(items, out_path=None, *, title='3DGS catalogue', lang=('ja', 'en', 'zh', 'tw', 'ko', 'de', 'hi', 'fr'), up=(0.0, 0.0, 1.0), bg: 'str' = 'gray', max_bytes: 'int' = 16777216, unit_mm: 'float' = 1000.0, fov_deg: 'float' = 35.0, thumb_px: 'int' = 256, dims=True, spin: 'bool' = True, spin_deg_per_s: 'float' = 20.0, bake_light=(0.3, -0.5, 0.8), ambient: 'float' = 0.35, max_radius: 'int' = 64, mobile_quality=0.5, mobile_above: 'int' = 300000) -> 'dict'`、台帳から引くなら `opsdrive.get("gs_catalog_html")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

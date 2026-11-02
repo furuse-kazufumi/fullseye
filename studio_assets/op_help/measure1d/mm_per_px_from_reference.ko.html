@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">mm_per_px_from_reference — MEASURE1D <code style="color:#22d3bf">scale</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">measurement</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mm_per_px_from_reference(measured_px, known_mm)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import measuring1d; measuring1d.mm_per_px_from_reference(measured_px, known_mm)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsmeasure1d.get(&quot;mm_per_px_from_reference&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>치수를 아는 기준물(스케일 바, 기준 구멍, 게이지)로부터 화소 피치 mm/px 를 구한다(보정).</p>
 <p><code style="color:#22d3bf">mm_per_px = known_mm / measured_px</code>. <code style="color:#22d3bf">measured_px</code> 에는 같은 광학계, 같은 작동 거리에서 <b>이 계열의 op 가 실제로 잰</b> 값(<code style="color:#22d3bf">measure_pairs</code> 의 <code style="color:#22d3bf">width</code>, <code style="color:#22d3bf">apply_metrology_model</code> 의 <code style="color:#22d3bf">radius</code> 의 2 배 등)을 넘긴다. 도면 값이나 공칭 배율로 정하면 작동 거리가 10 % 어긋날 때 모든 치수가 10 % 어긋난다.</p>

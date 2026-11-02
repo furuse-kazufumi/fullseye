@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">curve_speed_limit — DRIVE <code style="color:#22d3bf">lateral</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.curve_speed_limit(radius, *, side_friction: &#x27;float&#x27;, superelevation: &#x27;float&#x27; = 0.0, g: &#x27;float&#x27; = 9.81)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import drivelateral; drivelateral.curve_speed_limit(radius, *, side_friction: &#x27;float&#x27;, superelevation: &#x27;float&#x27; = 0.0, g: &#x27;float&#x27; = 9.81)</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;curve_speed_limit&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>片勾配 i・横すべり摩擦係数 f の曲線(半径 R)で外へ滑らない上限速度 v = √(g R (i + f)/(1 − i f)) [m/s]。</p>
 <p>道路構造令の解説 (2) 式 Z cos α − G sin α ≤ f (Z sin α + G cos α)(Z = G v²/(gR)、i = tan α)を v について解いた厳密な形。i f ≥ 1 なら(どの速さでも外へは滑らない)<code style="color:#22d3bf">inf</code>。<code style="color:#22d3bf">radius</code> は配列でもよい(&gt; 0)。</p>

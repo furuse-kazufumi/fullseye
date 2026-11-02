@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">emva_ptc_linearity_check — OPTICS <code style="color:#22d3bf">sensorchar</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.emva_ptc_linearity_check(mu_y, var_y, mu_y_dark, var_y_dark, mu_y_sat, n_intervals=6, limit=0.03)</code> (die Implementierung direkt: <code style="color:#22d3bf">import sensorchar; sensorchar.emva_ptc_linearity_check(mu_y, var_y, mu_y_dark, var_y_dark, mu_y_sat, n_intervals=6, limit=0.03)</code>; aus dem Register: <code style="color:#22d3bf">opsoptics.get(&quot;emva_ptc_linearity_check&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Ist die Photon-Transfer-Kurve gerade (Abschnitt 6.6, Gl. 51)? Die Prüfung, ob das K des Linear-Modells verwendet werden darf.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>

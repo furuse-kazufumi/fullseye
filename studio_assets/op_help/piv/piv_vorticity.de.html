@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">piv_vorticity — PIV <code style="color:#22d3bf">field</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">flow2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_vorticity(flow, spacing=1.0)</code> (die Implementierung direkt: <code style="color:#22d3bf">import pivops; pivops.piv_vorticity(flow, spacing=1.0)</code>; aus dem Register: <code style="color:#22d3bf">opspiv.get(&quot;piv_vorticity&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Wirbelstärke <code style="color:#22d3bf">d(dx)/dy - d(dy)/dx</code>. <b>Gegen den Uhrzeigersinn ist positiv</b> (Definition in Bildkoordinaten).</p>
 <p>In Bildkoordinaten, in denen die Zeilen nach unten zunehmen, sind oben und unten gegenüber mathematischen xy-Koordinaten vertauscht. Schreibt man dies, ohne das Vorzeichen festzulegen, kehrt sich der Drehsinn von Wirbeln still um; daher ist die Definition im docstring festgeschrieben.</p>

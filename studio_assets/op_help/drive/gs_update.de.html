@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">gs_update — DRIVE <code style="color:#22d3bf">gsplat</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gs_update(gs: &#x27;dict&#x27;, world: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import gsplatnp; gsplatnp.gs_update(gs: &#x27;dict&#x27;, world: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;gs_update&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Berechnet Mittelpunkte und Ausrichtungen der Gaußschen aus den <b>aktuellen</b> Vertices der Welt neu (in place; gibt dasselbe dict zurück).</p>
 <p>μ = Σ_k bary_k · V[F[Gesicht, k]] + R · offset_local, R = lokale Koordinaten der Fläche [t1 t2 n]. Das Gesicht, auf das „gs[&quot;face&quot;] zeigt ValueError, wenn es in der aktuellen Welt nicht existiert. Auch wenn am Ende eine Fläche hinzugefügt wird, kann diese aktualisiert werden, sofern die vorhandene Flächennummer gültig ist. Die Gaußsche Funktion eines von einem starren Körper bewegten Objekts bewegt sich mit derselben Starrkörpertransformation (Gate).</p>

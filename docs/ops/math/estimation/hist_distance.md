@@ -4,6 +4,7 @@ dim: math
 category: estimation
 in: signal × signal
 out: measurement
+gpu: なし
 examples: [gallery_math_stats_linalg]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal × signal` → `measurement`
 - **呼び出し**: `import fullseye as fs; fs.ledger.hist_distance(p, q, metric: 'str' = 'kl', *, eps: 'float' = 1e-12) -> 'float'` (実装を直接呼ぶなら `import mathestimation; mathestimation.hist_distance(p, q, metric: 'str' = 'kl', *, eps: 'float' = 1e-12) -> 'float'`、台帳から引くなら `opsmath.get("hist_distance")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

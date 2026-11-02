@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">mesh_slice_contours — PRINTPATH <code style="color:#22d3bf">slice</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">mesh</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mesh_slice_contours(mesh: &#x27;Any&#x27;, z: &#x27;float&#x27;, tol: &#x27;float&#x27; = 1e-06) -&gt; &#x27;dict[str, np.ndarray]&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import printpath; printpath.mesh_slice_contours(mesh: &#x27;Any&#x27;, z: &#x27;float&#x27;, tol: &#x27;float&#x27; = 1e-06) -&gt; &#x27;dict[str, np.ndarray]&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsprintpath.get(&quot;mesh_slice_contours&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>以平面 <code style="color:#22d3bf">z</code> 切割三角形網格得到的<b>輪廓表</b> <code style="color:#22d3bf">table</code>：欄 <code style="color:#22d3bf">ring</code>(環編號)、<code style="color:#22d3bf">x</code>、<code style="color:#22d3bf">y</code>(mm)。</p>
 <p>将每个三角形与平面的交点形成一条线段，按三角形法线定向（轮廓为逆时针，孔为顺时针），并将端点设置为將它們對接在一起並將它們連接成一個封閉的環（如果不封閉，則連接成開鏈）（經典切片機）。內容物和孔洞可以透過環的標記面積來確定。當頂點正好在平面上時，將其提升<code style="color:#22d3bf">2*tol + 1e-12</code>以避免退化。如果平面不接觸形狀，則出現 ValueError （空層表示“不”）。</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">dem_geocentric_grid — DEM <code style="color:#22d3bf">geodesy</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">depth</code> → <code style="color:#22d3bf">pointmap</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_geocentric_grid(dem, lat0_deg, lon0_deg, cell_size, spherical=False)</code>(要直接呼叫實作,<code style="color:#22d3bf">import demops; demops.dem_geocentric_grid(dem, lat0_deg, lon0_deg, cell_size, spherical=False)</code>;從台帳取用則 <code style="color:#22d3bf">opsdem.get(&quot;dem_geocentric_grid&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>將 DEM 的各格子單元轉換為<b>從地球中心看到的座標</b>。</p>
 <p>把 <code style="color:#22d3bf">(H, W)</code> 的高程網格視為西北角位於 <code style="color:#22d3bf">(lat0_deg, lon0_deg)</code> 的局部平面, 將各單元映射到 ECEF(預設)或<b>地心球座標</b>。</p>

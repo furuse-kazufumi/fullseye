@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">mesh_euler_characteristic — MATH <code style="color:#22d3bf">geometry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">mesh</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mesh_euler_characteristic(vertices, faces=None) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import mathgeometry; mathgeometry.mesh_euler_characteristic(vertices, faces=None) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsmath.get(&quot;mesh_euler_characteristic&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>triangle mesh का V − E + F, और बंद orientable surface के लिए genus g = (2 − χ)/2।</p>
 <p>अनुपयोगी vertices नहीं गिने जाते (तैरते vertices के कारण χ के खिसकने से बचाता है)। Boundary edges (केवल 1 face से जुड़े edges) और non-manifold edges (3 या अधिक faces) भी लौटाए जाते हैं —— boundary होने पर χ = 2 − 2g − b (b = boundary loops की संख्या), और genus <code style="color:#22d3bf">None</code> है।</p>

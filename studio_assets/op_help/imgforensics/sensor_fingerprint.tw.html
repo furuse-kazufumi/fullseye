@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">sensor_fingerprint — IMGFORENSICS <code style="color:#22d3bf">sensor</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">images</code> → <code style="color:#22d3bf">fingerprint</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sensor_fingerprint(images, denoiser: &#x27;str&#x27; = &#x27;wiener&#x27;, sigma: &#x27;float&#x27; = 0.02, zero_mean: &#x27;bool&#x27; = True) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import imgforensics; imgforensics.sensor_fingerprint(images, denoiser: &#x27;str&#x27; = &#x27;wiener&#x27;, sigma: &#x27;float&#x27; = 0.02, zero_mean: &#x27;bool&#x27; = True) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsimgforensics.get(&quot;sensor_fingerprint&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由多影格最大概似估計 <b>PRNU 感測器指紋</b> K(Chen et al. 2008)。</p>
 <p><code style="color:#22d3bf">K = Σ_i W_i I_i / Σ_i I_i²</code>(<code style="color:#22d3bf">W_i = I_i - denoise(I_i)</code>)。在成像模型 <code style="color:#22d3bf">I = I⁰ + I⁰·K + Θ</code> 下，這就是 K 的最大概似估計量 —— 越亮的像素 PRNU 越明顯(因為是乘性缺陷)，所以這是<b>以亮度加權的平均</b>。</p>

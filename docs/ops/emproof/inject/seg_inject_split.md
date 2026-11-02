@@ -4,6 +4,7 @@ dim: emproof
 category: inject
 in: labels2d
 out: labels2d
+gpu: なし
 examples: [poc_em_second_opinion, poc_em_split_merge_score]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `labels2d` → `labels2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.seg_inject_split(labels, n: 'int' = 1, seed: 'int' = 0, min_area: 'int' = 4000, axis: 'str' = 'row', ignore_zero: 'bool' = True) -> 'np.ndarray'` (実装を直接呼ぶなら `import emproof; emproof.seg_inject_split(labels, n: 'int' = 1, seed: 'int' = 0, min_area: 'int' = 4000, axis: 'str' = 'row', ignore_zero: 'bool' = True) -> 'np.ndarray'`、台帳から引くなら `opsemproof.get("seg_inject_split")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

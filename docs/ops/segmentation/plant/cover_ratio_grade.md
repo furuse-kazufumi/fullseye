@@ -4,6 +4,7 @@ dim: segmentation
 category: plant
 in: signal
 out: table
+gpu: なし
 examples: [poc_weed_rice_ratio]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.cover_ratio_grade(fraction, *, edges: 'Sequence[float]' = (0.05, 0.25, 0.5)) -> 'Dict[str, object]'` (実装を直接呼ぶなら `import cropweed; cropweed.cover_ratio_grade(fraction, *, edges: 'Sequence[float]' = (0.05, 0.25, 0.5)) -> 'Dict[str, object]'`、台帳から引くなら `opssegmentation.get("cover_ratio_grade")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

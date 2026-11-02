@@ -5,6 +5,7 @@ category: gray
 in: image
 out: image
 halcon: pow_image
+gpu: あり(gamma_image)
 examples: [gallery2d_gray_arith, poc_itof_multifreq, poc_simcal_thin_film]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -16,6 +17,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **データ種**: `image` → `image`
 - **呼び出し**: `fullseye.apply(img, "gamma", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 - **HALCON 相当**: `pow_image`(意味・パラメータは HALCON リファレンスが参考になる)
+- **GPU**: あり(`gamma_image`、`device="cuda"` で高速経路)
 
 ![gamma: input → output](../../_fig/gamma.png)
 

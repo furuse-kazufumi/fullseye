@@ -4,6 +4,7 @@ dim: calib
 category: target
 in: image2d
 out: keypoints
+gpu: なし
 examples: []
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d` → `keypoints`
 - **呼び出し**: `import fullseye as fs; fs.ledger.find_caltab(image, thresh=0.5)` (実装を直接呼ぶなら `import caltab; caltab.find_caltab(image, thresh=0.5)`、台帳から引くなら `opscalib.get("find_caltab")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

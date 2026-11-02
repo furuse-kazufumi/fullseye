@@ -4,6 +4,7 @@ dim: drive
 category: ballworld
 in: table
 out: table
+gpu: なし
 examples: [poc_ball_bounce, poc_table_tennis_spin]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.camera_rig(tp: 'dict' = None, *, n: 'int' = 2, distance: 'float' = 2.2, height: 'float' = 1.7, fov_deg: 'float' = 55.0, width: 'int' = 1280, height_px: 'int' = 1024) -> 'list'` (実装を直接呼ぶなら `import ballworld; ballworld.camera_rig(tp: 'dict' = None, *, n: 'int' = 2, distance: 'float' = 2.2, height: 'float' = 1.7, fov_deg: 'float' = 55.0, width: 'int' = 1280, height_px: 'int' = 1024) -> 'list'`、台帳から引くなら `opsdrive.get("camera_rig")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

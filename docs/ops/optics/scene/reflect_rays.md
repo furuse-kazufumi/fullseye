@@ -4,6 +4,7 @@ dim: optics
 category: scene
 in: points × points
 out: points
+gpu: なし
 examples: [studio_raytrace_scene]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `points × points` → `points`
 - **呼び出し**: `import fullseye as fs; fs.ledger.reflect_rays(directions, normals)` (実装を直接呼ぶなら `import optscene; optscene.reflect_rays(directions, normals)`、台帳から引くなら `opsoptics.get("reflect_rays")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

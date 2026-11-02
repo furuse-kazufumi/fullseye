@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">sample_surface — 3D <code style="color:#22d3bf">superquadric</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">vector</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sample_surface(a, eps, n_u: &#x27;int&#x27; = 40, n_v: &#x27;int&#x27; = 40, R=None, t=None) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import superquadric; superquadric.sample_surface(a, eps, n_u: &#x27;int&#x27; = 40, n_v: &#x27;int&#x27; = 40, R=None, t=None) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;sample_surface&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Tastet die Oberflächenpunkte einer Superquadrik parametrisch in (eta, omega) ab.</p>
 <p>Vorzeichenbehaftete Potenzen wie <code style="color:#22d3bf">x = a1 * sgn|cos eta|^eps1 * sgn|cos omega|^eps2</code> überdecken alle 8 Oktanten (eta in [-pi/2, pi/2], omega in [-pi, pi]). Die erzeugten Punkte erfüllen <code style="color:#22d3bf">F = 1</code> exakt (weil cos^2+sin^2=1 die Exponenten aufhebt).</p>

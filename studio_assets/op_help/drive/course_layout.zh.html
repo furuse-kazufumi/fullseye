@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">course_layout — DRIVE <code style="color:#22d3bf">course</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.course_layout(elements, placements)</code>(要直接调用实现,<code style="color:#22d3bf">import drivecourse; drivecourse.course_layout(elements, placements)</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;course_layout&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>以刚体运动 <code style="color:#22d3bf">(x, y, yaw)</code> 放置多个要素，合成 1 个 dict。</p>
 <p>各元素的 polygon / centerline / rails / stop_lines 按点变换,entry / exit / signal_poses 按姿态变换(yaw 也旋转)。<code style="color:#22d3bf">profile</code>(坡道的 (s, z))是元素的局部弧长,因此保持不变。返回值为 <code style="color:#22d3bf">{&quot;kind&quot;: &quot;layout&quot;, &quot;elements&quot;: [変換済み要素(各々 &quot;placement&quot; を持つ)], &quot;polygon&quot;: None, &quot;bounds&quot;: (xmin, xmax, ymin, ymax), &quot;placements&quot;: [...]}</code>。内外判定取元素的并集(<code style="color:#22d3bf">course_contains</code> / <code style="color:#22d3bf">course_occupancy</code>)。元素的重叠按并集处理。</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">polyhedron_clip_halfspace — DRIVE <code style="color:#22d3bf">polygrav</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">any × any × any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.polyhedron_clip_halfspace(mesh, point, normal)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import polygrav; polygrav.polyhedron_clip_halfspace(mesh, point, normal)</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;polyhedron_clip_halfspace&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>閉じたメッシュを平面で切り、<code style="color:#22d3bf">(x − point)·normal ≥ 0</code> の側を閉じた立体として返す → (vertices, faces)。</p>
 <p>切り口(平面上の多角形)は <code style="color:#22d3bf">point</code> からの扇の三角形で塞ぐ。切り口が非凸でも、<code style="color:#22d3bf">point</code> が切り口の外でも、扇の三角形は向き付きで重なって打ち消し合うので、面について線形な量(<code style="color:#22d3bf">polyhedron_gravity</code> の重力・ <code style="color:#22d3bf">mesh_volume</code> の体積・重心)はそのまま正しい(見た目の三角形は重なることがある)。辺と平面の交点は辺ごとに 1 回だけ作るので、返りのメッシュは有向辺がちょうど打ち消す(閉じている)。平面の上にちょうど乗る頂点は残す側に数える。</p>

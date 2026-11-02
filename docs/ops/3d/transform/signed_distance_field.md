@@ -4,7 +4,7 @@ dim: 3d
 category: transform
 in: voxel
 out: sdf
-gpu: true
+gpu: なし
 examples: [transforms_repr]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `voxel` → `sdf`
 - **呼び出し**: `import fullseye as fs; fs.ledger.signed_distance_field(vol, device='cpu', iso=0.5)` (実装を直接呼ぶなら `import match3d; match3d.signed_distance_field(vol, device='cpu', iso=0.5)`、台帳から引くなら `ops3d.get("signed_distance_field")`)
-- **GPU**: この op は GPU 経路あり(`device="cuda"`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

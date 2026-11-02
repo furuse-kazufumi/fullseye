@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">physarum_route — GRAPH <code style="color:#22d3bf">flow</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.physarum_route(cost, start=None, end=None, connectivity=4, dt=0.1, max_iters=5000, tol=1e-06, frac=0.5, snapshots=0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import physarum_search; physarum_search.physarum_route(cost, start=None, end=None, connectivity=4, dt=0.1, max_iters=5000, tol=1e-06, frac=0.5, snapshots=0)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsgraph.get(&quot;physarum_route&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>slime mould की tube dynamics से मिला cost image के आर-पार minimum-cost route।</p>
 <p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>

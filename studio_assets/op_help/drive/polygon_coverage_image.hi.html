@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">polygon_coverage_image — DRIVE <code style="color:#22d3bf">pegsym</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.polygon_coverage_image(vertices_px, size: &#x27;int&#x27; = 160, ss: &#x27;int&#x27; = 8, width: &#x27;int | None&#x27; = None) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import pegsym; pegsym.polygon_coverage_image(vertices_px, size: &#x27;int&#x27; = 160, ss: &#x27;int&#x27; = 8, width: &#x27;int | None&#x27; = None) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;polygon_coverage_image&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>convex polygon (pixel coordinate (col, row) में vertex सूची) की coverage image 0..1 ((size, width); anti-aliasing <code style="color:#22d3bf">ss</code> × <code style="color:#22d3bf">ss</code> sub-sample से)। ground truth वाले synthesis का एक हिस्सा। <b>Raises</b> ValueError: convex नहीं है, size &lt; 8, ss &lt; 1।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

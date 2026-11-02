@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">cavity_strain_transfer — OPTICS <code style="color:#22d3bf">cavity</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">pairs</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cavity_strain_transfer(length_m: &#x27;float&#x27; = 3994.5, finesse: &#x27;float&#x27; = 445.0, f_min_hz: &#x27;float&#x27; = 1.0, f_max_hz: &#x27;float&#x27; = 100000.0, n_points: &#x27;int&#x27; = 512) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import cavityoptics; cavityoptics.cavity_strain_transfer(length_m: &#x27;float&#x27; = 3994.5, finesse: &#x27;float&#x27; = 445.0, f_min_hz: &#x27;float&#x27; = 1.0, f_max_hz: &#x27;float&#x27; = 100000.0, n_points: &#x27;int&#x27; = 512) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;cavity_strain_transfer&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>arm cavity का strain h(f) से output phase तक के transfer function का परिमाण |H(f)| (pairs)।</p>
 <p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">contact_state_predict — DRIVE <code style="color:#22d3bf">pegsim</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.contact_state_predict(kp, tip_xyz, axis, tol: &#x27;float&#x27; = 6e-05) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import pegsim; pegsim.contact_state_predict(kp, tip_xyz, axis, tol: &#x27;float&#x27; = 6e-05) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;contact_state_predict&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>真のペグ姿勢(先端中心と軸の向き)から、接触点の数と場所を<b>幾何だけで</b>予測する(接触計算と独立な第 2 実装)。</p>
 <p>先端の縁の円(半径 r、水平投影は e₁ 方向 r・傾き方向 r cos θ の楕円)が穴の最狭部の円 R(面取り帯では高さに応じた円錐の半径)に届けば「tip」、胴の最狭部(z = −W)での水平断面(半径 r と r/cos θ の楕円)が R に届けば「mouth」。胴が面取りの円錐に触れる場所は tan θ &lt; 1 なら必ず最狭部の縁になる(円錐の半径は高さに 1 で増え、断面の中心は tan θ でしか動かない)。</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">obstacle_fit_doublet — DRIVE <code style="color:#22d3bf">swarmflow</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.obstacle_fit_doublet(field, speed=None, upstream_only: &#x27;bool&#x27; = False, exclude_margin: &#x27;float&#x27; = 1.25, min_explained: &#x27;float&#x27; = 0.5, min_radius=None) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import swarmflow; swarmflow.obstacle_fit_doublet(field, speed=None, upstream_only: &#x27;bool&#x27; = False, exclude_margin: &#x27;float&#x27; = 1.25, min_explained: &#x27;float&#x27; = 0.5, min_radius=None) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;obstacle_fit_doublet&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>將圓柱繞流的勢流 u − i v = U (1 − R²/(z − z_c)²) 擬合到速度場(實作 2，2 維非線性最小平方)。</p>
 <p>未知數為 (x_c, y_c, R², U)。起點有 2 個: <code style="color:#22d3bf">stagnation_from_centerline</code>,以及把網格節點作為中心候選的粗搜尋(固定 U 時模型對 R² 是一次的,可用閉式求解)。取可解釋比例較大者。圓的 <code style="color:#22d3bf">exclude_margin</code> 倍以內的網格不使用(因為向網格轉移的核會跨越壁面而把速度平均掉)—— 重新估計並迭代 3 次。<code style="color:#22d3bf">upstream_only</code> 時僅用衝擊點上游(x &lt; x_c − R)的網格擬合(能否「在撞上之前」得知)。</p>

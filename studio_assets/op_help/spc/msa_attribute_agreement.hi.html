@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">msa_attribute_agreement — SPC <code style="color:#22d3bf">msa</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.msa_attribute_agreement(table, appraiser=&#x27;appraiser&#x27;, part=&#x27;part&#x27;, rating=&#x27;rating&#x27;)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import spc; spc.msa_attribute_agreement(table, appraiser=&#x27;appraiser&#x27;, part=&#x27;part&#x27;, rating=&#x27;rating&#x27;)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsspc.get(&quot;msa_attribute_agreement&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>attribute (pass/fail) inspection की agreement की मात्रा (<code style="color:#22d3bf">table</code>)।</p>
 <p>उस table से जिसमें कई inspector ने एक ही part को judge किया है, <b>हर inspector जोड़ी का Cohen kappa</b>, कुल <b>Fleiss kappa</b>, और raw agreement rate लौटाता है।</p>

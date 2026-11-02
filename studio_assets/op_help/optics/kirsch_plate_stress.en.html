@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">kirsch_plate_stress — OPTICS <code style="color:#22d3bf">photoelastic</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">table</code> (an op determined by its arguments alone — it takes no image or data input)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.kirsch_plate_stress(hole_radius_m=0.005, remote_stress_pa=1000000.0, load_angle_deg=0.0, half_width_m=0.02, size=129, x=None, y=None)</code> (to call the implementation directly, <code style="color:#22d3bf">import photoelastic; photoelastic.kirsch_plate_stress(hole_radius_m=0.005, remote_stress_pa=1000000.0, load_angle_deg=0.0, half_width_m=0.02, size=129, x=None, y=None)</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;kirsch_plate_stress&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Closed-form σx, σy, τxy and polar components for an infinite plate with a hole under uniaxial tension (Kirsch solution) → dict.</p>
 <p>Infinite plate with a circular hole of radius <code style="color:#22d3bf">a</code> under a remote uniaxial stress <code style="color:#22d3bf">S</code> along the direction <code style="color:#22d3bf">load_angle_deg</code> (Kirsch 1898). With <code style="color:#22d3bf">θ</code> measured from the load direction::</p>

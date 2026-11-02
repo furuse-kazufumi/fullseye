@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">shift_to_vector — REPRCONV <code style="color:#22d3bf">algebra</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">shift</code> → <code style="color:#22d3bf">vector</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.shift_to_vector(shift)</code> (to call the implementation directly, <code style="color:#22d3bf">import reprconv; reprconv.shift_to_vector(shift)</code>; from the registry, <code style="color:#22d3bf">opsreprconv.get(&quot;shift_to_vector&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>An integer shift <code style="color:#22d3bf">(dz, dy, dx)</code> → a <code style="color:#22d3bf">vector (3,)</code>. The exit from <code style="color:#22d3bf">shift</code> (<b>invertible</b>).</p>
 <p><code style="color:#22d3bf">match_phase_3d</code> returns an integer 3-tuple. Putting it on <code style="color:#22d3bf">vector</code> connects it to the <code style="color:#22d3bf">points</code> vocabulary (an existing <code style="color:#22d3bf">vector -&gt; points</code> op exists).</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">obstruction_decel — DRIVE <code style="color:#22d3bf">crossing</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.obstruction_decel(dist, speed, t_free, *, sudden: &#x27;float&#x27; = 2.0) -&gt; &#x27;Dict[str, object]&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import drivecrossing; drivecrossing.obstruction_decel(dist, speed, t_free, *, sudden: &#x27;float&#x27; = 2.0) -&gt; &#x27;Dict[str, object]&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;obstruction_decel&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>交差道路の車(領域まで dist、速さ speed)が、領域に t_free より前に入らないために要る一定の減速度(閉形式、配列可)。</p>
 <p>T = t_free。speed·T ≤ dist なら 0(減速しなくても間に合う)。T ≤ 2 dist / speed なら 2(speed·T − dist)/T²、それより後なら speed² / (2 dist)(領域の手前で止まる)。<code style="color:#22d3bf">obstructs</code> = 減速度 &gt; <code style="color:#22d3bf">sudden</code>(<b>仮定</b> 2.0 m/s²、2 条 22 号「速度又は方向を急に変更しなければならない」)。dist ≤ 0(もう領域にいる)で T &gt; 0 は ∞。</p>

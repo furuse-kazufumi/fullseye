@@ -4,6 +4,7 @@ dim: math
 category: transform
 in: image2d
 out: voxel
+gpu: なし
 examples: [transforms_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d` → `voxel`
 - **呼び出し**: `import fullseye as fs; fs.ledger.abel_revolve(slice_rows, dr: 'float' = 1.0) -> 'np.ndarray'` (実装を直接呼ぶなら `import mathtransforms; mathtransforms.abel_revolve(slice_rows, dr: 'float' = 1.0) -> 'np.ndarray'`、台帳から引くなら `opsmath.get("abel_revolve")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

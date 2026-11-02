@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">vol_labels_to_meshes — VOLCOLOR <code style="color:#22d3bf">render</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">labels</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_labels_to_meshes(labels, ids=None, spacing=None, seed: &#x27;int&#x27; = 0, level: &#x27;float&#x27; = 0.5, axes: &#x27;str&#x27; = &#x27;xyz&#x27;)</code>(要直接呼叫實作,<code style="color:#22d3bf">import volcolor; volcolor.vol_labels_to_meshes(labels, ids=None, spacing=None, seed: &#x27;int&#x27; = 0, level: &#x27;float&#x27; = 0.5, axes: &#x27;str&#x27; = &#x27;xyz&#x27;)</code>;從台帳取用則 <code style="color:#22d3bf">opsvolcolor.get(&quot;vol_labels_to_meshes&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>對每個成分做 marching cubes,得到<b>一組彩色網格</b>。</p>
 <p>回傳 <code style="color:#22d3bf">list[dict]</code>,各元素為 <code style="color:#22d3bf">{&quot;label&quot;, &quot;vertices&quot; (nv, 3) float64, &quot;faces&quot; (nf, 3) int64, &quot;color&quot; (r, g, b)}</code>。顏色與 <code style="color:#22d3bf">vol_colorize_labels</code> 使用同一調色盤,所以<b>在斷面圖與 3-D 顯示中同一零件呈現同一顏色</b>。</p>

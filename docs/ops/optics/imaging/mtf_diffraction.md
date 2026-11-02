@@ -4,6 +4,7 @@ dim: optics
 category: imaging
 in: 
 out: pairs
+gpu: なし
 examples: [optics_imaging, poc_lens_file_roundtrip, poc_pixel_shift, poc_slanted_edge_sfr_limits, poc_veiling_glare]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `pairs`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.mtf_diffraction(f_number=5.6, wavelength_um=0.55, samples=64)` (実装を直接呼ぶなら `import optics; optics.mtf_diffraction(f_number=5.6, wavelength_um=0.55, samples=64)`、台帳から引くなら `opsoptics.get("mtf_diffraction")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

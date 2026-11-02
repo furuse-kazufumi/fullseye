@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">mosaic_tiles_sites — PRINTPATH <code style="color:#22d3bf">npr</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">pairs</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mosaic_tiles_sites(image, n_tiles=400, iterations=12, seed=0, weighted=True)</code> (to call the implementation directly, <code style="color:#22d3bf">import printpath; printpath.mosaic_tiles_sites(image, n_tiles=400, iterations=12, seed=0, weighted=True)</code>; from the registry, <code style="color:#22d3bf">opsprintpath.get(&quot;mosaic_tiles_sites&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Lloyd&#x27;s iteration on an image — the tile centres of a mosaic.</p>
 <p>Places *n_tiles* sites and moves each to the centroid of the pixels it owns, weighted by local contrast when *weighted* (so detail gets smaller tiles).</p>

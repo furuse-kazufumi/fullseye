@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">isc_match — CODEMATCH <code style="color:#22d3bf">match</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.isc_match(image, template, direction=&#x27;h&#x27;, flat_thresh=0.01, min_valid=32) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import codematch; codematch.isc_match(image, template, direction=&#x27;h&#x27;, flat_thresh=0.01, min_valid=32) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opscodematch.get(&quot;isc_match&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>増分符号相関(ISC)。増分符号が一致する割合が最大の位置を返す。</p>
 <p><code style="color:#22d3bf">r = (1/n) Σ [b_image == b_template]</code>(<code style="color:#22d3bf">n</code> は増分の数)。乱れた位置での期待値は 0.5、同じものなら 1 に近い。<code style="color:#22d3bf">direction=&quot;h&quot;</code> は論文どおり行に沿った増分、<code style="color:#22d3bf">&quot;hv&quot;</code> は縦の増分も足す 2 次元の拡張。</p>

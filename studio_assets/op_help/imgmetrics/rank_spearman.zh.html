@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">rank_spearman — IMGMETRICS <code style="color:#22d3bf">iqa</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">any × any</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rank_spearman(x, y) -&gt; &#x27;float&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import iqatid; iqatid.rank_spearman(x, y) -&gt; &#x27;float&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsimgmetrics.get(&quot;rank_spearman&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>Spearman 秩相关 ρ = 平均秩之间的 Pearson 相关(即使有并列也正确的形式。经典公式 1 − 6Σd²/(n(n²−1)) 仅在无并列时一致)。单调递增为 1，反转为 −1。任一方为常数时为 <code style="color:#22d3bf">nan</code>(秩的方差为 0，相关无定义)。 ±inf 只使用其顺序(不丢弃完全一致时的 PSNR = inf)。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>：长度不一致、少于 2、nan。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>

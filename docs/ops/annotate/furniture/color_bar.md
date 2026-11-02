@@ -4,6 +4,7 @@ dim: annotate
 category: furniture
 in: image2d × lut
 out: image2d
+gpu: なし
 examples: [annotate_gallery, poc_cad_scan_deviation, poc_ct_void_morphology, poc_dem_terrain, poc_interferometry_step, poc_lidar_terrain_change, poc_lightfield_depth, poc_multibeam_bathymetry, poc_pv_thermal_survey, poc_sem_tem_same_particle, poc_simcal_thin_film, poc_stockpile_volume, poc_thermography_ndt]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d × lut` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.color_bar(img, lut, rect, vmin=0.0, vmax=1.0, unit='', label_fmt='{:g}', orientation='vertical', font_size=12, font_path=None, scheme='okabe_ito', border=1, border_color='neutral', text_color=None, style=None)` (実装を直接呼ぶなら `import annotate; annotate.color_bar(img, lut, rect, vmin=0.0, vmax=1.0, unit='', label_fmt='{:g}', orientation='vertical', font_size=12, font_path=None, scheme='okabe_ito', border=1, border_color='neutral', text_color=None, style=None)`、台帳から引くなら `opsannotate.get("color_bar")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

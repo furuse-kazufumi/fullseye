@@ -4,6 +4,7 @@ dim: drive
 category: scoop
 in: image2d × scalar
 out: image2d
+gpu: なし
 examples: [gallery_drive_soil_tactile]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d × scalar` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.stream_areal_density(coverage, radius_px: 'float', *, c_max: 'float' = 0.95, mode: 'str' = 'raise') -> 'np.ndarray'` (実装を直接呼ぶなら `import scoop; scoop.stream_areal_density(coverage, radius_px: 'float', *, c_max: 'float' = 0.95, mode: 'str' = 'raise') -> 'np.ndarray'`、台帳から引くなら `opsdrive.get("stream_areal_density")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

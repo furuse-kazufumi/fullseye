@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tile_hash — DRIVE <code style="color:#22d3bf">inf</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">scalar</code> (an op determined by its arguments alone — it takes no image or data input)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tile_hash(i: &#x27;int&#x27;, j: &#x27;int&#x27;, seed: &#x27;int&#x27;, salt: &#x27;int&#x27; = 0) -&gt; &#x27;int&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import driveinf; driveinf.tile_hash(i: &#x27;int&#x27;, j: &#x27;int&#x27;, seed: &#x27;int&#x27;, salt: &#x27;int&#x27; = 0) -&gt; &#x27;int&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;tile_hash&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Derives a 64-bit integer from the index (i, j) of a tile (or grid point / edge), the world seed and a purpose salt (4 rounds of SplitMix64, integers only). Negative indices are handled too (folded into 64 bits as 2&#x27;s complement). The same input gives the same value on any environment.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

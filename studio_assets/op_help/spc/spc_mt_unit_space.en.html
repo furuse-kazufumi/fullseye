@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">spc_mt_unit_space — SPC <code style="color:#22d3bf">mt</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.spc_mt_unit_space(data)</code> (to call the implementation directly, <code style="color:#22d3bf">import spc; spc.spc_mt_unit_space(data)</code>; from the registry, <code style="color:#22d3bf">opsspc.get(&quot;spc_mt_unit_space&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Build an MT-method unit space from known-good observations.</p>
 <p><code style="color:#22d3bf">data</code> is a 2-D array of shape <code style="color:#22d3bf">(n, p)</code> — <code style="color:#22d3bf">n</code> observations of <code style="color:#22d3bf">p</code> features, <b>all of which must be normal product</b>. The unit space is the triple <code style="color:#22d3bf">(mean, std, inv_corr)</code>: per-feature mean and ddof=1 standard deviation, and the inverse of the correlation matrix of the standardised data. Feed it to <code style="color:#22d3bf">spc_mt_distance</code> to score new observations.</p>

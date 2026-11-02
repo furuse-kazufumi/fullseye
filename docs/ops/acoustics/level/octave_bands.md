@@ -4,6 +4,7 @@ dim: acoustics
 category: level
 in: 
 out: table
+gpu: なし
 examples: [acoustic_condition_monitoring, poc_rail_corrugation]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.octave_bands(fraction=3, f_min=22.0, f_max=22050.0, base=10)` (実装を直接呼ぶなら `import acoustics; acoustics.octave_bands(fraction=3, f_min=22.0, f_max=22050.0, base=10)`、台帳から引くなら `opsacoustics.get("octave_bands")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

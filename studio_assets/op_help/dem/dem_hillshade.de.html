@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">dem_hillshade — DEM <code style="color:#22d3bf">shading</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">depth</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_hillshade(dem, cell_size, azimuth_deg=315.0, altitude_deg=45.0, z_factor=1.0, method=&#x27;horn&#x27;)</code> (die Implementierung direkt: <code style="color:#22d3bf">import demops; demops.dem_hillshade(dem, cell_size, azimuth_deg=315.0, altitude_deg=45.0, z_factor=1.0, method=&#x27;horn&#x27;)</code>; aus dem Register: <code style="color:#22d3bf">opsdem.get(&quot;dem_hillshade&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Schummerung [0,1]. <code style="color:#22d3bf">azimuth_deg</code> ist das Azimut der Lichtquelle (Norden 0 Grad, nach Osten zunehmend).</p>
 <p>Es ist das Lambertsche Kosinusgesetz pur, <b>Verdeckung wird nicht berücksichtigt</b> (der Anteil, der durch einen davorliegenden Rücken beschattet wird, ist nicht enthalten). Werden Schlagschatten gebraucht, mit <code style="color:#22d3bf">dem_horizon_angle</code> kombinieren —— anzunehmen, &quot;die Schummerung enthält Schatten&quot;, ist das klassische Missverständnis.</p>

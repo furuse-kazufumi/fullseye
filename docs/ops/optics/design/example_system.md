@@ -4,6 +4,7 @@ dim: optics
 category: design
 in: 
 out: table
+gpu: なし
 examples: [anim3d_lens_aberrations, lens_calibration_loop_demo, lens_defect_dataset_demo, lens_design_demo, lens_optimize_demo, optimized_lens_tolerance_sensitivity]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.example_system(name='singlet')` (実装を直接呼ぶなら `import raytrace; raytrace.example_system(name='singlet')`、台帳から引くなら `opsoptics.get("example_system")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

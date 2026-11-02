@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">hertz_force — DRIVE <code style="color:#22d3bf">tacsim</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">scalar × scalar</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.hertz_force(R: &#x27;float&#x27;, Estar: &#x27;float&#x27;, a: &#x27;float | None&#x27; = None, delta: &#x27;float | None&#x27; = None) -&gt; &#x27;float&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import tacsim; tacsim.hertz_force(R: &#x27;float&#x27;, Estar: &#x27;float&#x27;, a: &#x27;float | None&#x27; = None, delta: &#x27;float | None&#x27; = None) -&gt; &#x27;float&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;hertz_force&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>Hertz 的反算：由接触半径 a 或压入量 δ 中的任意一个求载荷 F。F = 4E*a³/(3R) = (4/3) E* √R δ^{3/2}。</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>:同时给出 a 与 δ(或都没给)、值 ≤ 0。</p>

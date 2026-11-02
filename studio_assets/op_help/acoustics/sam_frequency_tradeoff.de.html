@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">sam_frequency_tradeoff — ACOUSTICS <code style="color:#22d3bf">ultrasonic</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sam_frequency_tradeoff(stack, void_diameter, water_path=0.001, f_number=3.0, interface=None, k_res=1.02, f_min=1000000.0, f_max=5000000000.0, n_grid=600, bandwidth=0.6, n_sigma_gate=5.0)</code> (die Implementierung direkt: <code style="color:#22d3bf">import ultrasound; ultrasound.sam_frequency_tradeoff(stack, void_diameter, water_path=0.001, f_number=3.0, interface=None, k_res=1.02, f_min=1000000.0, f_max=5000000000.0, n_grid=600, bandwidth=0.6, n_sigma_gate=5.0)</code>; aus dem Register: <code style="color:#22d3bf">opsacoustics.get(&quot;sam_frequency_tradeoff&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Optimale SAM-Frequenz für einen Hohlraum gegebener Größe an einer verborgenen Grenzfläche: laterale Füllung 1 − 2^−(a/w)² (w = k_res·λ_w·F#) gegen Hin-und-Rück-Dämpfung; geschlossene Form, wenn alle Verluste mit f² gehen (<code style="color:#22d3bf">table</code>).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>

@@ -4,6 +4,7 @@ dim: measure1d
 category: model
 in: 
 out: metrologymodel
+gpu: なし
 examples: [example_inner_diameter_mm, poc_calipers_under_illusion, poc_dimensional_inspection, poc_telecentric_metrology]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `metrologymodel`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.create_metrology_model() -> 'dict'` (実装を直接呼ぶなら `import metrology; metrology.create_metrology_model() -> 'dict'`、台帳から引くなら `opsmeasure1d.get("create_metrology_model")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

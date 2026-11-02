@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">pl_diffusion_psf — GENERATIVE <code style="color:#22d3bf">pl</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">image2d</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pl_diffusion_psf(diffusion_length_px: &#x27;float&#x27; = 8.0, size: &#x27;int | None&#x27; = None) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import pl; pl.pl_diffusion_psf(diffusion_length_px: &#x27;float&#x27; = 8.0, size: &#x27;int | None&#x27; = None) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsgenerative.get(&quot;pl_diffusion_psf&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>キャリア拡散の PSF(2 次元のグリーン関数 K₀(r/L)/2πL²、総和 1)を画像で返す。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>

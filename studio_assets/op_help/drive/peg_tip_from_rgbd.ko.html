@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">peg_tip_from_rgbd — DRIVE <code style="color:#22d3bf">pegsim</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">rgb × image2d × matrix</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.peg_tip_from_rgbd(rgb, depth, K, r_peg: &#x27;float&#x27; = 0.005, peg_mask=None) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import pegsim; pegsim.peg_tip_from_rgbd(rgb, depth, K, r_peg: &#x27;float&#x27; = 0.005, peg_mask=None) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;peg_tip_from_rgbd&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>손목 RGB-D 1장으로부터 페그 선단의 중심을 3-D(카메라 좌표)로: 페그 화소 → depth 점군 → PCA 축 → 반경이 알려진 원기둥 피팅, 선단의 축방향 위치는 그림자의 끝(서브픽셀, 피복률)을 투영한 가장자리 원의 끝과 일치시키는 모델로 결정.</p>
 <p>반환: <code style="color:#22d3bf">tip_cam</code>(3,), <code style="color:#22d3bf">axis</code>(선단 → 위, 단위), <code style="color:#22d3bf">rms_cyl</code>, <code style="color:#22d3bf">n_pts</code>, <code style="color:#22d3bf">uv</code>(선단의 투영), <code style="color:#22d3bf">delta_axial</code>.</p>

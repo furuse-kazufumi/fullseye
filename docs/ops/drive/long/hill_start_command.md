@@ -4,6 +4,7 @@ dim: drive
 category: long
 in: scalar × scalar × scalar × scalar
 out: any
+gpu: なし
 examples: [poc_driving_longitudinal]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `scalar × scalar × scalar × scalar` → `any`
 - **呼び出し**: `import fullseye as fs; fs.ledger.hill_start_command(t_release: 'float', tau: 'float', a_drive: 'float', b_hold: 'float', a_creep: 'float' = 0.0, technique: 'str' = 'gap', v_cruise: 'Optional[float]' = None) -> 'Callable'` (実装を直接呼ぶなら `import drivelong; drivelong.hill_start_command(t_release: 'float', tau: 'float', a_drive: 'float', b_hold: 'float', a_creep: 'float' = 0.0, technique: 'str' = 'gap', v_cruise: 'Optional[float]' = None) -> 'Callable'`、台帳から引くなら `opsdrive.get("hill_start_command")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

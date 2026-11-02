@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">contact_state_predict — DRIVE <code style="color:#22d3bf">pegsim</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.contact_state_predict(kp, tip_xyz, axis, tol: &#x27;float&#x27; = 6e-05) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import pegsim; pegsim.contact_state_predict(kp, tip_xyz, axis, tol: &#x27;float&#x27; = 6e-05) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;contact_state_predict&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由真实的销位姿(末端中心与轴向)<b>仅凭几何</b>预测接触点的个数与位置(独立于接触计算的第 2 实现)。</p>
 <p>前端边缘的圆(半径 r,水平投影为 e₁ 方向 r、倾斜方向 r cos θ 的椭圆)若触及孔最窄处的圆 R(在倒角带内为随高度变化的圆锥半径) 则为&quot;tip&quot;;杆身最窄处(z = −W)的水平截面(半径 r 与 r/cos θ 的椭圆)若触及 R 则为&quot;mouth&quot;。杆身接触倒角圆锥的位置在 tan θ &lt; 1 时必定是最窄处的边缘(圆锥半径随高度以 1 的比例增加,而截面中心只以 tan θ 移动)。</p>

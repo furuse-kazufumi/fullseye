@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">profile_camber — PROFILE <code style="color:#22d3bf">measure</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">pairs</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.profile_camber(contour, n=101)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import profileops; profileops.profile_camber(contour, n=101)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsprofile.get(&quot;profile_camber&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>캠버선(윗면과 아랫면의 중앙선). 반환값은 <code style="color:#22d3bf">(n, 2)</code>의 <code style="color:#22d3bf">(x, yc)</code>.</p>
 <p>★<b>정의의 차이를 알고 쓸 것</b>. 여기서 반환하는 것은 &quot;시위 각 위치에서의 윗면·아랫면의 중점&quot; 이며, NACA 가 익형을 <b>만들 때 쓰는</b> 캠버선(두께를 법선 방향으로 얹기 전의중심선)과는 엄밀히는 다른 것입니다. 게다가 시위를 잡는 방법도 다르다 —— 기하적 시위는 &quot;뒷전의 중점에서 가장 먼 점&quot;을 앞전으로 하므로, 캠버가 있는 날개에서는생성 좌표의 원점에서 약간 어긋나고, 시위가 0.1 도 정도 기웁니다.</p>

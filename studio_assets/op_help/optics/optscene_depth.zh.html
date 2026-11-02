@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">optscene_depth — OPTICS <code style="color:#22d3bf">scene</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table × table</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.optscene_depth(scene, camera, supersample: &#x27;int&#x27; = 1) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import optscene; optscene.optscene_depth(scene, camera, supersample: &#x27;int&#x27; = 1) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsoptics.get(&quot;optscene_depth&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>深度的<b>真值</b> (H, W) [mm]。是<b>沿光轴的 z</b>,不是从视点算的斜距。</p>
 <p>深度相机、立体视觉、光切法返回的都是光轴方向的 z，所以与之对齐(若与斜距混用，就会用越靠视场边缘偏差越系统化的真值来评分，而且中心处一致，所以察觉不到)。需要原始的光线距离时请用 trace_rays(...)[&quot;t&quot;]。</p>

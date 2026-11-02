@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">drag_fit — DRIVE <code style="color:#22d3bf">ball</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">signal × points × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.drag_fit(t, p, bp: &#x27;dict&#x27;, *, iters: &#x27;int&#x27; = 20, dt: &#x27;float&#x27; = 0.001) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import ballistics; ballistics.drag_fit(t, p, bp: &#x27;dict&#x27;, *, iters: &#x27;int&#x27; = 20, dt: &#x27;float&#x27; = 0.001) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;drag_fit&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>軌跡 (t_i, p_i) に「重力 + 抗力」の模型を <b>(p₀, v₀, C_d) の 7 パラメータ</b>(平面入力なら 5)で当てる(<code style="color:#22d3bf">thrust_fit</code> の</p>
 <p>推力なし版。<code style="color:#22d3bf">flight_fit</code> は C_d を既知として 6 パラメータ、こちらは C_d も同定する)。返り値の鍵と入口の検査(<code style="color:#22d3bf">dt</code> ≤ 標本間隔、<code style="color:#22d3bf">iters</code> ≥ 1、真空は拒否)は <code style="color:#22d3bf">thrust_fit</code> と同じで、<code style="color:#22d3bf">thrust</code> は零ベクトル。真値の軌跡なら C_d は 1e-4 で戻る(門)。</p>

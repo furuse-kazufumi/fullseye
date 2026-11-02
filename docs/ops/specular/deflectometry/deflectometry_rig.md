@@ -4,6 +4,7 @@ dim: specular
 category: deflectometry
 in: 
 out: table
+gpu: なし
 examples: [poc_phase_measuring_deflectometry]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.deflectometry_rig(incidence_deg=20.0, camera_distance_mm=400.0, screen_distance_mm=300.0, field_mm=40.0, aperture_mm=4.0, screen_size_mm=(520.0, 320.0), screen_pixel_mm=0.27)` (実装を直接呼ぶなら `import deflectometry; deflectometry.deflectometry_rig(incidence_deg=20.0, camera_distance_mm=400.0, screen_distance_mm=300.0, field_mm=40.0, aperture_mm=4.0, screen_size_mm=(520.0, 320.0), screen_pixel_mm=0.27)`、台帳から引くなら `opsspecular.get("deflectometry_rig")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">lens_global_search — OPTICS <code style="color:#22d3bf">lensglobal</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lens_global_search(system=None, variables=None, merit=None, n_starts: &#x27;int&#x27; = 8, seed: &#x27;int&#x27; = 0, spread: &#x27;float&#x27; = 0.5, iterations: &#x27;int&#x27; = 40, duplicate_tolerance: &#x27;float&#x27; = 0.001) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import lensglobal; lensglobal.lens_global_search(system=None, variables=None, merit=None, n_starts: &#x27;int&#x27; = 8, seed: &#x27;int&#x27; = 0, spread: &#x27;float&#x27; = 0.5, iterations: &#x27;int&#x27; = 40, duplicate_tolerance: &#x27;float&#x27; = 0.001) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsoptics.get(&quot;lens_global_search&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用多起点局部优化(lensopt.optimize_lens)收集局部最优解,按 merit 顺序返回(<code style="color:#22d3bf">table</code>)。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>

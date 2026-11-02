@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">pdh_error_signal — OPTICS <code style="color:#22d3bf">cavity</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">無</code> → <code style="color:#22d3bf">pairs</code>(僅由參數決定的運算子 —— 不接受影像或資料輸入)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pdh_error_signal(length_m: &#x27;float&#x27; = 1.0, *, itm_transmittance: &#x27;float&#x27; = 0.01, etm_transmittance: &#x27;float&#x27; = 0.01, mod_freq_hz: &#x27;float&#x27; = 20000000.0, mod_depth: &#x27;float&#x27; = 1.08, power_w: &#x27;float&#x27; = 1.0, span_linewidths: &#x27;float&#x27; = 6.0, n_points: &#x27;int&#x27; = 1201) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import cavityoptics; cavityoptics.pdh_error_signal(length_m: &#x27;float&#x27; = 1.0, *, itm_transmittance: &#x27;float&#x27; = 0.01, etm_transmittance: &#x27;float&#x27; = 0.01, mod_freq_hz: &#x27;float&#x27; = 20000000.0, mod_depth: &#x27;float&#x27; = 1.08, power_w: &#x27;float&#x27; = 1.0, span_linewidths: &#x27;float&#x27; = 6.0, n_points: &#x27;int&#x27; = 1201) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsoptics.get(&quot;pdh_error_signal&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>Pound-Drever-Hall 誤差訊號 ε(δ)，作為失諧 δ [Hz] 的函數（pairs）。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>

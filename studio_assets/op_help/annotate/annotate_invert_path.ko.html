@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">annotate_invert_path — ANNOTATE <code style="color:#22d3bf">overlay</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d × pairs</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_invert_path(img, points, width=1.5, closed=False, dash=None, mode=&#x27;complement&#x27;, alpha=1.0, bits=128, min_contrast=1.5, on_invisible=&#x27;warn&#x27;)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import annotate; annotate.annotate_invert_path(img, points, width=1.5, closed=False, dash=None, mode=&#x27;complement&#x27;, alpha=1.0, bits=128, min_contrast=1.5, on_invisible=&#x27;warn&#x27;)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsannotate.get(&quot;annotate_invert_path&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>꺾은선(line)을 <b>반전색</b>으로 그린다. 안티에일리어싱 포함.</p>
 <p>선은 영역보다 불리하며, 그것이 이 op을 나눈 이유다 —— 굵기 1.5 화소의선은 끝 화소의 피복률이 0.3 정도밖에 안 되므로, <b>반전해도 피복분만큼만움직인다</b>. 중간조 바탕에서는 영역보다 더 먼저 사라진다. 판정은 &quot;피복률 0.5 이상의 화소&quot;로 한다(그 미만은 원래 반투명이므로, 보이지 않더라도그것은 반전 탓이 아니다).</p>

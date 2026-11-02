@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">hist_distance — MATH <code style="color:#22d3bf">estimation</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.hist_distance(p, q, metric: &#x27;str&#x27; = &#x27;kl&#x27;, *, eps: &#x27;float&#x27; = 1e-12) -&gt; &#x27;float&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import mathestimation; mathestimation.hist_distance(p, q, metric: &#x27;str&#x27; = &#x27;kl&#x27;, *, eps: &#x27;float&#x27; = 1e-12) -&gt; &#x27;float&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsmath.get(&quot;hist_distance&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>2 個直方圖(非負，以總和正規化)之間的距離與散度。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;kl&quot;</code> —— Kullback–Leibler D(p‖q) = Σ p log(p/q)(非對稱。q 為 0 而 p 為正時為無限大 → 以 eps 設下限)。</p>

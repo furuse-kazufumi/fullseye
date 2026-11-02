@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">histogram_match — COLORTRANSPORT <code style="color:#22d3bf">matching</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.histogram_match(src, ref, bins=None, ties=&#x27;average&#x27;)</code> (to call the implementation directly, <code style="color:#22d3bf">import colortransport; colortransport.histogram_match(src, ref, bins=None, ties=&#x27;average&#x27;)</code>; from the registry, <code style="color:#22d3bf">opscolortransport.get(&quot;histogram_match&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Match the value distribution of <code style="color:#22d3bf">src</code> to <code style="color:#22d3bf">ref</code> (exact 1-D optimal transport).</p>
 <p>It replaces values with the reference&#x27;s quantiles while preserving rank. Specifying <code style="color:#22d3bf">bins</code> approximates with the cumulative distribution at that many levels -- faster but <b>no longer exact</b>, so the default is <code style="color:#22d3bf">None</code> (exact).</p>

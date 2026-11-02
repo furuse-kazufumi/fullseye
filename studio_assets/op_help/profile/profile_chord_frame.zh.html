@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">profile_chord_frame — PROFILE <code style="color:#22d3bf">frame</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.profile_chord_frame(contour)</code>(要直接调用实现,<code style="color:#22d3bf">import profileops; profileops.profile_chord_frame(contour)</code>;从台账取用则 <code style="color:#22d3bf">opsprofile.get(&quot;profile_chord_frame&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>求弦(相距最远的 2 个点)。返回 dict。</p>
 <p>按照翼型的惯例，把<b>相距最远的 2 点</b>视为前缘和后缘。哪一个是前缘由<b>该点附近厚度（girth）较大的一方</b>；不使用曲率，因为曲率会把尖锐的后缘误判为前缘。</p>

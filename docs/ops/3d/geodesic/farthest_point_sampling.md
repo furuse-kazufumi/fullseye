@@ -4,6 +4,7 @@ dim: 3d
 category: geodesic
 in: points
 out: indices
+gpu: なし
 examples: [geodesic_distance, pointcloud_downsampling]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `points` → `indices`
 - **呼び出し**: `import fullseye as fs; fs.ledger.farthest_point_sampling(points: numpy.ndarray, n: int, k: int = 8, start: int = 0) -> numpy.ndarray` (実装を直接呼ぶなら `import geodesic3d; geodesic3d.farthest_point_sampling(points: numpy.ndarray, n: int, k: int = 8, start: int = 0) -> numpy.ndarray`、台帳から引くなら `ops3d.get("farthest_point_sampling")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

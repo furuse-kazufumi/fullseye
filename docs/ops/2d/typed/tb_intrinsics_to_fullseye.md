@@ -4,6 +4,7 @@ dim: 2d
 category: typed
 in: matrix
 out: matrix
+gpu: なし
 examples: []
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `matrix` → `matrix`
 - **呼び出し**: `fullseye.apply(img, "tb_intrinsics_to_fullseye", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
+- **GPU**: なし(CPU 参照実装のみ)
 
 *図なし: 型は届くが、汎用の合成入力では定義域が合わない —— 3×3 で焦点距離が正の K だけを受け、汎用の合成 matrix は fail-closed で拒否される(op_probe の探針では走る)。下の「実行できる例」で使い方を見ること。*
 

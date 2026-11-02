@@ -3,7 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">voxel × voxel</code> → <code style="color:#22d3bf">position</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.match_shape_3d(vol, template, device=&#x27;cpu&#x27;, mc=0.05, subvoxel=True)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import match3d; match3d.match_shape_3d(vol, template, device=&#x27;cpu&#x27;, mc=0.05, subvoxel=True)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;match_shape_3d&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>원장 경유의 반환값</b>: <code style="color:#22d3bf">fullseye.ledger.match_shape_3d(...)</code> 는 <b>선언된 out 형 <code style="color:#22d3bf">position</code> 의 값만</b> 반환합니다(실제 함수는 보조 정보도 반환). 버려진 쪽이 필요하면 <code style="color:#22d3bf">fullseye.ledger.match_shape_3d.raw(...)</code> 를 쓰거나 <code style="color:#22d3bf">match3d.match_shape_3d</code> 를 직접 호출하세요.</p>
-<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 이 연산자는 GPU 경로가 있습니다(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>3D 형상 기반(기울기 방향) 매칭 = 2D shapematch_gpu 의 voxel 판(「윤곽 매칭」).</p>
 <p>템플릿과 장면의 <b>단위 기울기 벡터의 내적 합</b>(Steger 방식). 강도/대비에 불변이며, 에지/형상으로 일치를 측정한다. score(pos)=Σ&lt;û_scene(pos+dt), û_model(dt)&gt;/n 을 3 성분의 conv3d 로.</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">sensor_diagonal_mm — OPTICS <code style="color:#22d3bf">scene</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sensor_diagonal_mm(sensor: &#x27;dict&#x27;) -&gt; &#x27;float&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import optscene; optscene.sensor_diagonal_mm(sensor: &#x27;dict&#x27;) -&gt; &#x27;float&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsoptics.get(&quot;sensor_diagonal_mm&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>传感器对角线 [mm]。与镜头像圈比较,看<b>能否覆盖</b>。</p>
 <p>公式：<code style="color:#22d3bf">hypot(width * pixel_um, height * pixel_um) / 1000</code>。由有效像素数 × 像素间距求出的实际尺寸，不使用“2/3 型”这样的画幅名(画幅名只是对角线的称呼，同一称呼的实际尺寸也可能不同)。</p>

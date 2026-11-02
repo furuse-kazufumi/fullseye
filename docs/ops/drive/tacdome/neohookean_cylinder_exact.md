@@ -4,6 +4,7 @@ dim: drive
 category: tacdome
 in: signal
 out: table
+gpu: なし
 examples: [poc_tacdome_large_deformation]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.neohookean_cylinder_exact(d, mu: 'float' = 1.0, area: 'float' = 1.0) -> 'dict'` (実装を直接呼ぶなら `import tacdome; tacdome.neohookean_cylinder_exact(d, mu: 'float' = 1.0, area: 'float' = 1.0) -> 'dict'`、台帳から引くなら `opsdrive.get("neohookean_cylinder_exact")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

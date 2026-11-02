@@ -4,6 +4,7 @@ dim: drive
 category: tacscalib
 in: rgb × table × image2d
 out: normalmap
+gpu: なし
 examples: [poc_tacscalib_sphere_lut]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `rgb × table × image2d` → `normalmap`
 - **呼び出し**: `import fullseye as fs; fs.ledger.poly_lut_invert(rgb, poly: 'dict', mask=None, method: 'str' = 'coarse') -> 'np.ndarray'` (実装を直接呼ぶなら `import tacscalib; tacscalib.poly_lut_invert(rgb, poly: 'dict', mask=None, method: 'str' = 'coarse') -> 'np.ndarray'`、台帳から引くなら `opsdrive.get("poly_lut_invert")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

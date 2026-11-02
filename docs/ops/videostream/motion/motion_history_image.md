@@ -4,6 +4,7 @@ dim: videostream
 category: motion
 in: video
 out: video
+gpu: なし
 examples: [video_streaming]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `video` → `video`
 - **呼び出し**: `import fullseye as fs; fs.ledger.motion_history_image(video, tau: 'int' = 15, threshold: 'float' = 0.1) -> 'np.ndarray'` (実装を直接呼ぶなら `import videostream; videostream.motion_history_image(video, tau: 'int' = 15, threshold: 'float' = 0.1) -> 'np.ndarray'`、台帳から引くなら `opsvideostream.get("motion_history_image")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

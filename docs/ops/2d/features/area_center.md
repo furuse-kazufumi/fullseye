@@ -5,6 +5,7 @@ category: features
 in: region
 out: match
 halcon: area_center
+gpu: なし
 examples: [example_inner_diameter_mm, gallery2d_features]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -16,6 +17,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **データ種**: `region` → `match`
 - **呼び出し**: `fullseye.apply(img, "area_center", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 - **HALCON 相当**: `area_center`(意味・パラメータは HALCON リファレンスが参考になる)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ![area_center: input → output](../../_fig/area_center.png)
 

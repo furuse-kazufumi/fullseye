@@ -4,6 +4,7 @@ dim: 3d
 category: feature
 in: voxel
 out: measurement
+gpu: なし
 examples: [ct_porosity_and_fibre_morphometry]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -16,6 +17,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **呼び出し**: `import fullseye as fs; fs.ledger.vol_euler_number(vol_binary, connectivity=26)` (実装を直接呼ぶなら `import volops; volops.vol_euler_number(vol_binary, connectivity=26)`、台帳から引くなら `ops3d.get("vol_euler_number")`)
 - **台帳経由の戻り値**: `fullseye.ledger.vol_euler_number(...)` は**宣言 out 型 `measurement` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.vol_euler_number.raw(...)`、または `volops.vol_euler_number` を直接呼ぶ。
   - 本体の返り: `chi(b0-b1+b2)`
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">photoelastic_phase_estimate — OPTICS <code style="color:#22d3bf">photoelastic</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">polsweep</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.photoelastic_phase_estimate(images, analyzers=&#x27;camera4&#x27;, min_modulation=0.01, sum_tolerance=0.05)</code>(要直接呼叫實作,<code style="color:#22d3bf">import photoelastic; photoelastic.photoelastic_phase_estimate(images, analyzers=&#x27;camera4&#x27;, min_modulation=0.01, sum_tolerance=0.05)</code>;從台帳取用則 <code style="color:#22d3bf">opsoptics.get(&quot;photoelastic_phase_estimate&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由偏振影像以閉式反求相位延遲 δ 與主軸 θ → dict。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>

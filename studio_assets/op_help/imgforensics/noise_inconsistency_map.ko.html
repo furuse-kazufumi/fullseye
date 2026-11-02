@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">noise_inconsistency_map — IMGFORENSICS <code style="color:#22d3bf">noise</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.noise_inconsistency_map(image, block: &#x27;int&#x27; = 16) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import imgforensics; imgforensics.noise_inconsistency_map(image, block: &#x27;int&#x27; = 16) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsimgforensics.get(&quot;noise_inconsistency_map&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>블록별 <b>잡음 표준편차</b>를 늘어놓은 지도. <code style="color:#22d3bf">image2d</code>.</p>
 <p>Immerkær 1996의 3x3 마스크로 고주파 성분을 구하고, <code style="color:#22d3bf">block</code> 정사각의 비중첩 블록마다 <code style="color:#22d3bf">sigma = sqrt(pi/2) / 6 * mean(|conv|)</code>를 내어 블록 상수로 되돌린다. 붙인 영역이 다른 노출·다른 압축률·다른 카메라에서 왔다면, 이 값이주위와 <b>단차</b>가 된다.</p>

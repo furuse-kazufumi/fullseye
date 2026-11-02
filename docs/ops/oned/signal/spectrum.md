@@ -4,6 +4,7 @@ dim: oned
 category: signal
 in: signal
 out: pairs
+gpu: なし
 examples: [acoustic_condition_monitoring, anim3d_lens_aberrations, poc_bearing_diagnosis, poc_gear_tooth_metrology, poc_machine_condition_fusion, poc_pipe_wall_loss, poc_recycling_sorting, poc_thin_film_reflectometry, poc_web_roll_periodicity]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,6 +16,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **データ種**: `signal` → `pairs`
 - **呼び出し**: `import fullseye as fs; fs.ledger.spectrum(x, rate=1.0)` (実装を直接呼ぶなら `import dsp; dsp.spectrum(x, rate=1.0)`、台帳から引くなら `ops1d.get("spectrum")`)
 - **台帳経由の戻り値**: `fullseye.ledger.spectrum(...)` は**宣言 out 型 `pairs` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.spectrum.raw(...)`、または `dsp.spectrum` を直接呼ぶ。
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

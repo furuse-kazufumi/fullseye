@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">perpetual_loop_seam — GENERATIVE <code style="color:#22d3bf">loop</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">rgbvideo</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.perpetual_loop_seam(video: &#x27;np.ndarray&#x27;) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import perpetual; perpetual.perpetual_loop_seam(video: &#x27;np.ndarray&#x27;) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsgenerative.get(&quot;perpetual_loop_seam&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>以數值給出循環影片的<b>接縫</b>(<code style="color:#22d3bf">table</code>)。</p>
 <p><code style="color:#22d3bf">seam</code> = 最後一格 → 第一格的差,<code style="color:#22d3bf">typical</code> = 影格間差的中位數。無接縫的影片中 <code style="color:#22d3bf">ratio = seam / typical</code> <b>接近 1</b>(最後的跨越與其他跨越無法區分)。<b>正確答案是 1 而不是 0</b>,這正是這裡值得細讀之處 —— 0 意味著「運動停止了」。</p>

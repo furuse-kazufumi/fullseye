@@ -4,6 +4,7 @@ dim: flyvision
 category: trajectory
 in: points × signal
 out: table
+gpu: なし
 examples: [poc_zebra_stripes_fly_eye]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `points × signal` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.traj_tau_dot(points, t_s, target=(0.0, 0.0, 0.0), normal=None)` (実装を直接呼ぶなら `import flyvision; flyvision.traj_tau_dot(points, t_s, target=(0.0, 0.0, 0.0), normal=None)`、台帳から引くなら `opsflyvision.get("traj_tau_dot")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

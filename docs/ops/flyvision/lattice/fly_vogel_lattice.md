@@ -4,6 +4,7 @@ dim: flyvision
 category: lattice
 in: 
 out: table
+gpu: なし
 examples: [poc_print_registration, poc_zebra_stripes_fly_eye]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.fly_vogel_lattice(radius=15, dphi_deg=4.63, az0_deg=0.0, el0_deg=0.0, density_power=0.5, angle_deg=np.float64(137.50776405003785))` (実装を直接呼ぶなら `import flyvision; flyvision.fly_vogel_lattice(radius=15, dphi_deg=4.63, az0_deg=0.0, el0_deg=0.0, density_power=0.5, angle_deg=np.float64(137.50776405003785))`、台帳から引くなら `opsflyvision.get("fly_vogel_lattice")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

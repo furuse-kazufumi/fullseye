@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">nurbs_circle — MATH <code style="color:#22d3bf">geometry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">table</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.nurbs_circle(radius: &#x27;float&#x27; = 1.0, center=(0.0, 0.0)) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import mathgeometry; mathgeometry.nurbs_circle(radius: &#x27;float&#x27; = 1.0, center=(0.0, 0.0)) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsmath.get(&quot;nurbs_circle&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>精确表示圆的 2 次 NURBS(Piegl &amp; Tiller 例 7.1：正方形的 4 个角与 4 条边的中点，角点权重为 1/√2)。</p>
 <p>将返回的 <code style="color:#22d3bf">control_points</code>、<code style="color:#22d3bf">weights</code>、<code style="color:#22d3bf">knots</code>、<code style="color:#22d3bf">degree</code> 原样传给 <code style="color:#22d3bf">nurbs_curve</code>，每个点到中心的距离都是 <code style="color:#22d3bf">radius</code>(直到舍入误差)。角上的控制点位于圆外 (√2 − 1)·radius 处，曲线不经过它们。</p>

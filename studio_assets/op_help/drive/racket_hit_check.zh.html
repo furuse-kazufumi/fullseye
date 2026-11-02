@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">racket_hit_check — DRIVE <code style="color:#22d3bf">racket</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.racket_hit_check(p_ball, center, normal, rp: &#x27;dict&#x27;, radius: &#x27;float&#x27;, up=(0.0, 0.0, 1.0)) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import racket; racket.racket_hit_check(p_ball, center, normal, rp: &#x27;dict&#x27;, radius: &#x27;float&#x27;, up=(0.0, 0.0, 1.0)) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;racket_hit_check&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>球心是否在距拍面 <code style="color:#22d3bf">radius</code> 以内，且在拍板框(宽 × 高 + 半径)之内。<code style="color:#22d3bf">{&quot;hit&quot;, &quot;dist&quot;, &quot;u&quot;, &quot;v&quot;}</code>(u = 宽度方向、v = 高度方向相对拍板中心的偏移)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

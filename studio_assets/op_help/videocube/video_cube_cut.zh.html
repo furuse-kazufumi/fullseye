@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">video_cube_cut — VIDEOCUBE <code style="color:#22d3bf">cube</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">video</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.video_cube_cut(video, plane: &#x27;str&#x27; = &#x27;xt&#x27;, position: &#x27;float&#x27; = 0.5) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import videocube; videocube.video_cube_cut(video, plane: &#x27;str&#x27; = &#x27;xt&#x27;, position: &#x27;float&#x27; = 0.5) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsvideocube.get(&quot;video_cube_cut&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>立方体的一张截面(<code style="color:#22d3bf">image2d</code>)。<code style="color:#22d3bf">&quot;xt&quot;</code> = 行 <code style="color:#22d3bf">position</code> 的狭缝扫描 (T, W)，<code style="color:#22d3bf">&quot;yt&quot;</code> = 列的 (T, H)，<code style="color:#22d3bf">&quot;xy&quot;</code> = 时刻 <code style="color:#22d3bf">position</code> 的帧 (H, W)。<code style="color:#22d3bf">position</code> 是 [0, 1] 的比例(位于行、列、时刻的几成处)。</p>
 <p>在 x–t 截面中,向右移动的物体成为向右下倾斜的条纹,静止物体成为竖直的带 —— <b>速度可以读作斜率</b>。</p>

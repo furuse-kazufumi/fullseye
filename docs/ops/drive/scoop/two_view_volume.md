@@ -4,6 +4,7 @@ dim: drive
 category: scoop
 in: image2d × image2d × scalar
 out: table
+gpu: なし
 examples: [poc_powder_scoop_pour]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d × image2d × scalar` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.two_view_volume(side_a, side_b, pitch: 'float', *, threshold: 'float' = 0.5) -> 'dict'` (実装を直接呼ぶなら `import scoop; scoop.two_view_volume(side_a, side_b, pitch: 'float', *, threshold: 'float' = 0.5) -> 'dict'`、台帳から引くなら `opsdrive.get("two_view_volume")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

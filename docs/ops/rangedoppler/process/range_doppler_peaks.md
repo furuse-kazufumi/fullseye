@@ -4,6 +4,7 @@ dim: rangedoppler
 category: process
 in: image2d
 out: table
+gpu: なし
 examples: [fmcw_range_doppler]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.range_doppler_peaks(rdmap, range_bin_m=1.0, velocity_bin_ms=1.0, n_peaks=1, min_fraction=0.1, doppler_shifted=True)` (実装を直接呼ぶなら `import rangedoppler; rangedoppler.range_doppler_peaks(rdmap, range_bin_m=1.0, velocity_bin_ms=1.0, n_peaks=1, min_fraction=0.1, doppler_shifted=True)`、台帳から引くなら `opsrangedoppler.get("range_doppler_peaks")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -4,6 +4,7 @@ dim: drive
 category: tactorque
 in: matrix × matrix × table
 out: matrix
+gpu: なし
 examples: [poc_tactile_dipole_torque]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `matrix × matrix × table` → `matrix`
 - **呼び出し**: `import fullseye as fs; fs.ledger.hertz_pressure_shifted(X, Y, hz: 'dict', d=(0.0, 0.0)) -> 'np.ndarray'` (実装を直接呼ぶなら `import tactorque; tactorque.hertz_pressure_shifted(X, Y, hz: 'dict', d=(0.0, 0.0)) -> 'np.ndarray'`、台帳から引くなら `opsdrive.get("hertz_pressure_shifted")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">diabolo_track — DRIVE <code style="color:#22d3bf">diabolo</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">any × table × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.diabolo_track(frames, cam: &#x27;dict&#x27;, params: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import diabolo; diabolo.diabolo_track(frames, cam: &#x27;dict&#x27;, params: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;diabolo_track&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>frame का क्रम → diabolo का केंद्र (N, 3), axis (N, 3), alarm <code style="color:#22d3bf">ok</code> (N,) और residual (N,)। हर frame के लिए <code style="color:#22d3bf">diabolo_axis_from_image</code> (कोई learning नहीं, पिछले frame पर निर्भर नहीं)। जिन frame का अनुमान नहीं लगाया जा सकता, उन्हें NaN और <code style="color:#22d3bf">ok = False</code> मिलता है। <b>Raises</b> <code style="color:#22d3bf">ValueError</code>: frame का क्रम खाली है या क्रम नहीं है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

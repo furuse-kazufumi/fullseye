@@ -4,6 +4,7 @@ dim: annotate
 category: pointer
 in: image2d × pairs
 out: image2d
+gpu: なし
 examples: [annotate_gallery]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d × pairs` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.label_points(img, points, labels=None, color='reference', font_size=12, pad=3, marker_size=0, scheme='okabe_ito', allow_overlap=False, **text_kw)` (実装を直接呼ぶなら `import annotate; annotate.label_points(img, points, labels=None, color='reference', font_size=12, pad=3, marker_size=0, scheme='okabe_ito', allow_overlap=False, **text_kw)`、台帳から引くなら `opsannotate.get("label_points")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

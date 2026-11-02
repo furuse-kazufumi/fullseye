@@ -4,6 +4,7 @@ dim: math
 category: dynsys
 in: 
 out: pairs
+gpu: なし
 examples: [poc_what_a_picture_cannot_check]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `pairs`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.dynsys_bifurcation_map(kind='logistic', r_lo=2.5, r_hi=4.0, n_r=800, burn_in=300, keep=100, x0=0.5)` (実装を直接呼ぶなら `import mathops; mathops.dynsys_bifurcation_map(kind='logistic', r_lo=2.5, r_hi=4.0, n_r=800, burn_in=300, keep=100, x0=0.5)`、台帳から引くなら `opsmath.get("dynsys_bifurcation_map")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

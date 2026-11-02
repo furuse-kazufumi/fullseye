@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">seg_wiring_variation — EMPROOF <code style="color:#22d3bf">wiring</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">labels2d × labels2d × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.seg_wiring_variation(a, b, synapses, spacing=None, background=0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import segcompare; segcompare.seg_wiring_variation(a, b, synapses, spacing=None, background=0)</code>、台帳から引くなら <code style="color:#22d3bf">opsemproof.get(&quot;seg_wiring_variation&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>候補の分割が正解の配線図をどう壊すかを VOI で測る。シナプスの端で取る split / merge と、接続ごとに束ねた connection_split / connection_merge の 2 水準。</p>
 <p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>

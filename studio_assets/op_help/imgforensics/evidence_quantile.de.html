@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">evidence_quantile — IMGFORENSICS <code style="color:#22d3bf">calibration</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">measurement × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.evidence_quantile(measurement, null, higher_is_stronger=True)</code> (die Implementierung direkt: <code style="color:#22d3bf">import imgforensics; imgforensics.evidence_quantile(measurement, null, higher_is_stronger=True)</code>; aus dem Register: <code style="color:#22d3bf">opsimgforensics.get(&quot;evidence_quantile&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Wo die Beweisstatistik <b>innerhalb</b> der sauberen Verteilung liegt. Sie liefert kein Urteil.</p>
 <p>Der Verbraucher der Ausgabe von <code style="color:#22d3bf">null_distribution</code>. Zurückgegeben wird &quot;außerhalb wie viel % der sauberen Paare&quot;, nicht &quot;manipuliert&quot; ―― außen zu liegen bedeutet nur, unter diesen Bedingungen <b>selten</b> zu sein (seltene saubere Bilder gibt es).</p>

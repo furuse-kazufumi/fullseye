@@ -4,6 +4,7 @@ dim: optics
 category: design
 in: table
 out: table
+gpu: なし
 examples: [anim3d_lens_aberrations, poc_lens_file_roundtrip, poc_lens_merit_operands, poc_lens_solves_afocal, poc_lens_tolerancing, poc_noncoaxial_optics, poc_photograph_through_prescription, poc_zmx_public_verify]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.ray_bundle(system, field=None, rings=8, wavelength_um=None, image_mm=None, kind='hexapolar', pupil_fill=1.0, aim=None, vignetting=None)` (実装を直接呼ぶなら `import raytrace; raytrace.ray_bundle(system, field=None, rings=8, wavelength_um=None, image_mm=None, kind='hexapolar', pupil_fill=1.0, aim=None, vignetting=None)`、台帳から引くなら `opsoptics.get("ray_bundle")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

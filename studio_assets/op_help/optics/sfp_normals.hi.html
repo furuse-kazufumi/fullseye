@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">sfp_normals — OPTICS <code style="color:#22d3bf">shape_from_polarization</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">polsweep</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sfp_normals(sweep, refractive_index=1.5, model=&#x27;specular&#x27;, angles_deg=(0.0, 45.0, 90.0, 135.0), violation_tol=0.05, out_of_range=&#x27;invalid&#x27;)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import sfpolar; sfpolar.sfp_normals(sweep, refractive_index=1.5, model=&#x27;specular&#x27;, angles_deg=(0.0, 45.0, 90.0, 135.0), violation_tol=0.05, out_of_range=&#x27;invalid&#x27;)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;sfp_normals&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>polariser sweep से हर pixel के surface normal के उम्मीदवारों का स्पष्ट समुच्चय — diffuse में 2, specular में 4 (2 zenith × 2 azimuth) (<code style="color:#22d3bf">table</code>)।</p>
 <p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>

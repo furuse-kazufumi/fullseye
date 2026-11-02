@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">course_distance — DRIVE <code style="color:#22d3bf">terrain</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table × points</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.course_distance(course, xy) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import driveterrain; driveterrain.course_distance(course, xy) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;course_distance&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Distance from points (N, 2) to the course (union of drivable polygons), and the unit vector pointing outward from the nearest point.</p>
 <p><code style="color:#22d3bf">{&quot;d&quot; (N,), &quot;nx&quot; (N,), &quot;ny&quot; (N,)}</code>. Inside, d = 0, n = 0. Outside, d is the closed-form point-to-segment distance to the nearest edge, and |∇d| = 1 (eikonal) except on the medial axis (where there are 2 nearest points).</p>

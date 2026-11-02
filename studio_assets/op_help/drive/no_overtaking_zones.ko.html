@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">no_overtaking_zones — DRIVE <code style="color:#22d3bf">pass</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.no_overtaking_zones(features: &#x27;Iterable[dict]&#x27;, *, priority_road: &#x27;bool&#x27; = False, vicinity: &#x27;Optional[dict]&#x27; = None, steep_grade: &#x27;float&#x27; = 0.1, zone: &#x27;float&#x27; = 30.0) -&gt; &#x27;Dict[str, object]&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivepass; drivepass.no_overtaking_zones(features: &#x27;Iterable[dict]&#x27;, *, priority_road: &#x27;bool&#x27; = False, vicinity: &#x27;Optional[dict]&#x27; = None, steep_grade: &#x27;float&#x27; = 0.1, zone: &#x27;float&#x27; = 30.0) -&gt; &#x27;Dict[str, object]&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;no_overtaking_zones&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>도로를 따라 있는 시설로부터 제30조의 추월(을 위한 진로 변경·측방 통과) 금지 구간을 생성. 장면 S081·S009·S130.</p>
 <p>features[i] = {&quot;kind&quot;, &quot;start&quot;, &quot;end&quot;}(점 형태의 시설은 &quot;at&quot;). kind:</p>

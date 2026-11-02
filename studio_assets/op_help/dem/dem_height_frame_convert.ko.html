@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">dem_height_frame_convert — DEM <code style="color:#22d3bf">geodesy</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_height_frame_convert(height_m, geoid_height_m, frm=&#x27;ellipsoidal&#x27;, to=&#x27;orthometric&#x27;)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import demops; demops.dem_height_frame_convert(height_m, geoid_height_m, frm=&#x27;ellipsoidal&#x27;, to=&#x27;orthometric&#x27;)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdem.get(&quot;dem_height_frame_convert&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>높이의 <b>기준</b>을 옮긴다: 타원체고 <code style="color:#22d3bf">h</code> ↔ 표고 <code style="color:#22d3bf">H</code>(<code style="color:#22d3bf">H = h - N</code>). <code style="color:#22d3bf">signal</code>.</p>
 <p>같은 &quot;높이&quot;라는 말로 2개의 별개의 것이 유통되고 있으며, 둘 다 예외를 내지 않고지도에 실린다. 이 op는 <b>어느 쪽에서 어느 쪽으로 옮기는지를 반드시 쓰게 한다</b> —— 기본값은 있지만, <code style="color:#22d3bf">frm</code>과 <code style="color:#22d3bf">to</code>는 docstring이 아니라 코드에 남는다.</p>

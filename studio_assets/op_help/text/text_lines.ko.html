@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">text_lines — TEXT <code style="color:#22d3bf">layout</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.text_lines(boxes, stroke_width=None, overlap_ratio: &#x27;float&#x27; = 0.5, gap_ratio: &#x27;float&#x27; = 3.0, width_ratio: &#x27;float&#x27; = 3.0)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import textregion; textregion.text_lines(boxes, stroke_width=None, overlap_ratio: &#x27;float&#x27; = 0.5, gap_ratio: &#x27;float&#x27; = 3.0, width_ratio: &#x27;float&#x27; = 3.0)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opstext.get(&quot;text_lines&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>문자 후보 상자를 줄로 묶는다(세로로 겹치고, 가로로 가깝고, 스트로크 폭이 비슷한 것).</p>
 <p>★규칙의 근거(2026-09-27 실측): 후보는 획마다의 조각이 되므로(가로 막대와 &#x27;l&#x27; 은 높이가 5 배다르다) &quot;높이가 비슷하다&quot;를 조건으로 하면 3 행이 30〜60 행으로 쪼개졌다. 행의 동일성은 <b>세로겹침</b>(작은 쪽 높이의 <code style="color:#22d3bf">overlap_ratio</code> 이상)으로 판정하고, 가로 간격은 큰 쪽 높이의 <code style="color:#22d3bf">gap_ratio</code> 배 이내, 획 폭은 <code style="color:#22d3bf">width_ratio</code> 배 이내.</p>

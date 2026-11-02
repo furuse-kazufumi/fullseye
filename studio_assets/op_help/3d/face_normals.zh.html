@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">face_normals — 3D <code style="color:#22d3bf">mesh_process</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">mesh</code> → <code style="color:#22d3bf">normals</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.face_normals(mesh) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import mesh_props; mesh_props.face_normals(mesh) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;face_normals&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>三角网格的<b>面法线</b>(每个三角形的单位法向量)。→ (M,3)。</p>
 <p>法线 = 归一化后的 cross(v1−v0, v2−v0)。方向由 <b>faces 的环绕顺序(winding)</b> 一致地决定（不存在 PCA 那样的符号不定）。若以向外的环绕顺序构造闭合网格，则所有法线朝外。</p>

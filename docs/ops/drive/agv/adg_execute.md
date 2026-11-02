@@ -4,6 +4,7 @@ dim: drive
 category: agv
 in: table
 out: table
+gpu: なし
 examples: [poc_agv_fleet]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.adg_execute(adg, delay_prob=0.3, seed=0, max_steps=10000)` (実装を直接呼ぶなら `import agvfleet; agvfleet.adg_execute(adg, delay_prob=0.3, seed=0, max_steps=10000)`、台帳から引くなら `opsdrive.get("adg_execute")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

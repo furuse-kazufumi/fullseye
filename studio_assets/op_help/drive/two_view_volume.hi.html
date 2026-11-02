@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">two_view_volume — DRIVE <code style="color:#22d3bf">scoop</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d × image2d × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.two_view_volume(side_a, side_b, pitch: &#x27;float&#x27;, *, threshold: &#x27;float&#x27; = 0.5) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import scoop; scoop.two_view_volume(side_a, side_b, pitch: &#x27;float&#x27;, *, threshold: &#x27;float&#x27; = 0.5) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;two_view_volume&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>2 लंबवत दिशाओं की side image से volume — हर row की 2 chord <code style="color:#22d3bf">W_a</code> और <code style="color:#22d3bf">W_b</code> को axis मानने वाले ellipse का योग <code style="color:#22d3bf">V = Σ f π (W_a/2)(W_b/2) pitch³</code>।</p>
 <p>अनुप्रस्थ काट दीर्घवृत्त हो (अक्ष-असममित टीला, लंबा ढेर) तो सटीक है; केवल एक दृश्य से घूर्णन-ठोस मानना दीर्घवृत्त की चपटाई के अनुपात जितना गलत होता है (PoC में</p>

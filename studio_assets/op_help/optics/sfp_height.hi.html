@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">sfp_height — OPTICS <code style="color:#22d3bf">shape_from_polarization</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">normalmap</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sfp_height(normals, mask=None, max_zenith_deg=88.0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import sfpolar; sfpolar.sfp_height(normals, mask=None, max_zenith_deg=88.0)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;sfp_height&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>mirror-extended क्षेत्र पर Frankot–Chellappa से normal map को height map में integrate करना, ताकि FFT की periodic सीमा परिणाम को न मोड़े (<code style="color:#22d3bf">image2d</code>)।</p>
 <p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>

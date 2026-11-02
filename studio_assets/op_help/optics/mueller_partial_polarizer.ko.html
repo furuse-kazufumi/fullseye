@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">mueller_partial_polarizer — OPTICS <code style="color:#22d3bf">polarization</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">matrix</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mueller_partial_polarizer(angle_deg=0.0, extinction_ratio=1000.0, transmission=1.0)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import optics; optics.mueller_partial_polarizer(angle_deg=0.0, extinction_ratio=1000.0, transmission=1.0)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsoptics.get(&quot;mueller_partial_polarizer&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>소광비가 유한한 선형 편광자(선형 이색 감쇠기)의 뮐러 행렬. → (4, 4), 각도 장이면 (*shape, 4, 4).</p>
 <p>실제 편광자는 축 방향 편광에 강도 투과율 <code style="color:#22d3bf">T1 = transmission</code> 을, 축에 수직인 편광에 <code style="color:#22d3bf">T2 = T1 / extinction_ratio</code> 를 통과시킵니다. <code style="color:#22d3bf">P = T1 + T2</code>, <code style="color:#22d3bf">D = T1 - T2</code>, <code style="color:#22d3bf">Q = 2 sqrt(T1 T2)</code>, <code style="color:#22d3bf">c = cos 2a</code>, <code style="color:#22d3bf">s = sin 2a</code>(축은 *angle_deg*)로 쓰면 행렬은</p>

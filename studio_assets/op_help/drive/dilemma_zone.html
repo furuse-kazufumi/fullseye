@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">dilemma_zone — DRIVE <code style="color:#22d3bf">decide</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dilemma_zone(v, *, reaction: &#x27;float&#x27;, decel: &#x27;float&#x27;, amber: &#x27;float&#x27;, intersection_width: &#x27;float&#x27;, car_length: &#x27;float&#x27;, accel: &#x27;float&#x27; = 0.0) -&gt; &#x27;Dict[str, object]&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import drivedecide; drivedecide.dilemma_zone(v, *, reaction: &#x27;float&#x27;, decel: &#x27;float&#x27;, amber: &#x27;float&#x27;, intersection_width: &#x27;float&#x27;, car_length: &#x27;float&#x27;, accel: &#x27;float&#x27; = 0.0) -&gt; &#x27;Dict[str, object]&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;dilemma_zone&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>黄信号のジレンマゾーン(Gazis, Herman, Maradudin 1960)。</p>
 <p>速度 <code style="color:#22d3bf">v</code> で停止線の手前 x にいるとき黄が点いた:</p>

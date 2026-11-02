@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">scene_difference — OPTICS <code style="color:#22d3bf">scene</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.scene_difference(solid: &#x27;dict&#x27;, cavity: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import optscene; optscene.scene_difference(solid: &#x27;dict&#x27;, cavity: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsoptics.get(&quot;scene_difference&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>从 <code style="color:#22d3bf">solid</code> 中挖去 <code style="color:#22d3bf">cavity</code>(CSG 差集)。<b>制作中空零件的唯一手段</b>。</p>
 <p>杯子 = 外侧圆柱 − 移到底面以上的内侧圆柱。此外还有垫圈、通孔、沉孔 ―― 实际零件有孔才是常态，只有球是不够的(2026-09-05 用户指出)。</p>

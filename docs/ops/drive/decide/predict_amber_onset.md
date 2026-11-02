@@ -4,6 +4,7 @@ dim: drive
 category: decide
 in: table
 out: table
+gpu: なし
 examples: [poc_driving_decisions]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.predict_amber_onset(observations, *, flash_duration: 'Optional[float]' = None, crossing_length: 'Optional[float]' = None, walk_speed: 'float' = 1.0, ped_red_to_amber: 'float' = 2.0, t_now: 'Optional[float]' = None) -> 'Dict[str, object]'` (実装を直接呼ぶなら `import drivedecide; drivedecide.predict_amber_onset(observations, *, flash_duration: 'Optional[float]' = None, crossing_length: 'Optional[float]' = None, walk_speed: 'float' = 1.0, ped_red_to_amber: 'float' = 2.0, t_now: 'Optional[float]' = None) -> 'Dict[str, object]'`、台帳から引くなら `opsdrive.get("predict_amber_onset")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

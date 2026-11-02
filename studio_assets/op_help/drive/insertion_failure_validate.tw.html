@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">insertion_failure_validate — DRIVE <code style="color:#22d3bf">pegfail</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.insertion_failure_validate(table=None) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import pegfail; pegfail.insertion_failure_validate(table=None) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;insertion_failure_validate&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>驗證表(fail-closed)：欄位詞彙、類別名稱、恢復名稱的拼寫，<b>所有配對的互斥</b>(不存在 2 列可能命中同一簽名 = 沒有在所有欄位上允許集合都相交的列對)，<b>可達性</b>(unknown 以外的所有類別都有 ≥ 1 列)。</p>
 <p>回傳: <code style="color:#22d3bf">n_rows</code>、<code style="color:#22d3bf">classes_covered</code>、<code style="color:#22d3bf">classes_missing</code>、<code style="color:#22d3bf">n_signatures</code>(詞彙的直積的大小)、<code style="color:#22d3bf">n_covered</code>(命中某一列的簽名數)、<code style="color:#22d3bf">coverage</code>、<code style="color:#22d3bf">overlaps</code>(相交的列對 —— 若非空則引發下述 ValueError)。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 拼寫錯誤、相交的列、無法到達的類別。</p>

@@ -4,6 +4,7 @@ dim: optics
 category: sensorchar
 in: 
 out: table
+gpu: なし
 examples: [poc_emva1288_in_camera_processing, poc_emva1288_sensor]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.emva_sensitivity_threshold(eta, sigma_d, K, *, sigma_q2=0.08333333333333333)` (実装を直接呼ぶなら `import sensorchar; sensorchar.emva_sensitivity_threshold(eta, sigma_d, K, *, sigma_q2=0.08333333333333333)`、台帳から引くなら `opsoptics.get("emva_sensitivity_threshold")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

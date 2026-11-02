@@ -4,6 +4,7 @@ dim: 3d
 category: curve
 in: points
 out: points
+gpu: なし
 examples: [bspline_freeform]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `points` → `points`
 - **呼び出し**: `import fullseye as fs; fs.ledger.resample_uniform(curve, n)` (実装を直接呼ぶなら `import curve3d; curve3d.resample_uniform(curve, n)`、台帳から引くなら `ops3d.get("resample_uniform")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

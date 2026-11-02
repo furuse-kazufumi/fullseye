@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">slip_predict — DRIVE <code style="color:#22d3bf">roverslip</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">table × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.slip_predict(model, slopes, level: &#x27;float&#x27; = 0.9) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import roverslip; roverslip.slip_predict(model, slopes, level: &#x27;float&#x27; = 0.9) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;slip_predict&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>슬립률의 예측과 양측 <code style="color:#22d3bf">level</code> 대역. 가우스 과정은 관측의 예측 분포(잠재 분산 + 잡음), 분위수 회귀는 곡선 그 자체.</p>
 <p>반환값 <code style="color:#22d3bf">{&quot;mean&quot;, &quot;std&quot;, &quot;lower&quot;, &quot;upper&quot;, &quot;median&quot;, &quot;level&quot;}</code>(각 (n,)). 분위수 회귀의 <code style="color:#22d3bf">mean</code> 은 적합한분위수의 평균, <code style="color:#22d3bf">std</code> 는 사분위 범위 / 1.349, 띠의 끝은 (1 ± level)/2 의 분위수(적합한 단계에 없으면 ValueError)에, 공형 보정(<code style="color:#22d3bf">slip_quantile_fit</code> 의 <code style="color:#22d3bf">conformal</code>)이 있으면 그 폭을 더한다.</p>

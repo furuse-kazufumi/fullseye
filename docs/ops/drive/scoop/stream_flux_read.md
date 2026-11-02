@@ -4,6 +4,7 @@ dim: drive
 category: scoop
 in: any × scalar × scalar
 out: table
+gpu: なし
 examples: [poc_powder_scoop_pour]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `any × scalar × scalar` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.stream_flux_read(frames, dt: 'float', radius_px: 'float', *, band_rows=None, band_px: 'int' = 9, window: 'int' = 32, particle_mass: 'float | None' = None, c_max: 'float' = 0.95, min_valid: 'float' = 0.3, min_crossings: 'float' = 30.0) -> 'dict'` (実装を直接呼ぶなら `import scoop; scoop.stream_flux_read(frames, dt: 'float', radius_px: 'float', *, band_rows=None, band_px: 'int' = 9, window: 'int' = 32, particle_mass: 'float | None' = None, c_max: 'float' = 0.95, min_valid: 'float' = 0.3, min_crossings: 'float' = 30.0) -> 'dict'`、台帳から引くなら `opsdrive.get("stream_flux_read")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

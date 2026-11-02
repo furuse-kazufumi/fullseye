@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">plan_conflicts — DRIVE <code style="color:#22d3bf">agv</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.plan_conflicts(paths)</code> (to call the implementation directly, <code style="color:#22d3bf">import agvfleet; agvfleet.plan_conflicts(paths)</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;plan_conflicts&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>List of conflicts: same cell at the same time (vertex), passing each other (edge), following (follow).</p>
 <p>Returns <code style="color:#22d3bf">[(種類, i, j, 時刻, マス)]</code>. A vehicle that has arrived is counted as staying where it is. follow means &quot;when i <b>enters</b> cell v at time t, j was in v at t-1 and left v at t&quot; (i ≠ j).</p>

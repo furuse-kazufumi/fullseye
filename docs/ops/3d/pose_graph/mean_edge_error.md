@@ -4,6 +4,7 @@ dim: 3d
 category: pose_graph
 in: pose
 out: measurement
+gpu: なし
 examples: [sfm_recon]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `pose` → `measurement`
 - **呼び出し**: `import fullseye as fs; fs.ledger.mean_edge_error(poses, edges)` (実装を直接呼ぶなら `import pose_graph; pose_graph.mean_edge_error(poses, edges)`、台帳から引くなら `ops3d.get("mean_edge_error")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

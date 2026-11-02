@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">keypoints_from_image2d — REPRCONV <code style="color:#22d3bf">keypoint</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">keypoints</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.keypoints_from_image2d(image2d, threshold=0.0)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import reprconv; reprconv.keypoints_from_image2d(image2d, threshold=0.0)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsreprconv.get(&quot;keypoints_from_image2d&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>계수/응답 이미지 <code style="color:#22d3bf">(H, W)</code> → 이미지 좌표 <code style="color:#22d3bf">(N,2) = (u, v)</code>. 왕복의 돌아오는 길.</p>
 <p><code style="color:#22d3bf">&gt; threshold</code> 인 화소를 8 근방으로 연결 성분으로 나누고, 각 성분의 <b>강도 가중무게중심</b>을 반환한다. 가중을 두는 것은, 서브픽셀 정보가 남아 있는 응답 영상(상관 피크 등)에서 왕복 오차를 양자화 이하로 떨어뜨릴 수 있게 하기 위해서다.</p>

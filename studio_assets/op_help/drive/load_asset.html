@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">load_asset — DRIVE <code style="color:#22d3bf">world</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.load_asset(name: &#x27;str&#x27;, dims=None, *, root=None, paint=None) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import driveworld; driveworld.load_asset(name: &#x27;str&#x27;, dims=None, *, root=None, paint=None) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;load_asset&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>同梱資産をメッシュ dict に: <code style="color:#22d3bf">{&quot;V&quot;, &quot;F&quot;, &quot;color&quot;, &quot;label&quot;, &quot;name&quot;, &quot;dims&quot;}</code>。</p>
 <p>z-up に直し、箱の寸法を <code style="color:#22d3bf">dims</code>(既定 = <code style="color:#22d3bf">ASSETS</code> の実寸)に軸ごとに合わせ、原点を箱の底面中心に置く。未知の名前・寸法 ≤ 0 は ValueError。同じ名前は 1 度だけ読む(キャッシュ)。</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">solid_angle_render — OPTICS <code style="color:#22d3bf">illumination</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">normalmap × table</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.solid_angle_render(normals, light, view_na=0.1, roughness_deg=0.0, f0=0.9, diffuse_albedo=0.0, n_samples=64, seed=0)</code> (die Implementierung direkt: <code style="color:#22d3bf">import illumdesign; illumdesign.solid_angle_render(normals, light, view_na=0.1, roughness_deg=0.0, f0=0.9, diffuse_albedo=0.0, n_samples=64, seed=0)</code>; aus dem Register: <code style="color:#22d3bf">opsoptics.get(&quot;solid_angle_render&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Bild einer Normalenkarte unter einer Kegelbeleuchtung durch ein Objektiv der NA *view_na* (<code style="color:#22d3bf">image2d</code>).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>

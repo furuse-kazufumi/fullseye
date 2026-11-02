@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">anomaly_pixel_auroc — SPC <code style="color:#22d3bf">anomaly_eval</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">video × video</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.anomaly_pixel_auroc(scores, masks)</code> (to call the implementation directly, <code style="color:#22d3bf">import anomeval; anomeval.anomaly_pixel_auroc(scores, masks)</code>; from the registry, <code style="color:#22d3bf">opsspc.get(&quot;anomaly_pixel_auroc&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Pixel-level AUROC of anomaly score maps against ground-truth defect masks (<code style="color:#22d3bf">table</code>).</p>
 <p><code style="color:#22d3bf">scores</code> and <code style="color:#22d3bf">masks</code> are (n, H, W) (or lists / single 2-D maps); higher score = more anomalous. Exact Mann–Whitney statistic with mid-ranks for ties: the probability that a random defect pixel outscores a random good pixel, ties counting 1/2. Returns <code style="color:#22d3bf">auroc</code>, <code style="color:#22d3bf">n_pos</code>, <code style="color:#22d3bf">n_neg</code>.</p>

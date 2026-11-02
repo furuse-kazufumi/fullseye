@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">axes_frame — ANNOTATE <code style="color:#22d3bf">plot</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d × axes</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.axes_frame(img, axes, color=&#x27;neutral&#x27;, width=1, box=True, scheme=&#x27;okabe_ito&#x27;, style=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import annotate; annotate.axes_frame(img, axes, color=&#x27;neutral&#x27;, width=1, box=True, scheme=&#x27;okabe_ito&#x27;, style=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsannotate.get(&quot;axes_frame&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>axis का frame (<code style="color:#22d3bf">box=True</code> से चारों भुजाएँ, False से केवल बाईं और नीचे की 2 भुजाएँ)।</p>
 <p><code style="color:#22d3bf">style</code> को <code style="color:#22d3bf">imagedraw.draw_polyline</code> / <code style="color:#22d3bf">imagedraw.draw_line</code> को सीधे आगे भेजा जाता है।</p>

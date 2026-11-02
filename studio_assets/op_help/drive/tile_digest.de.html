@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tile_digest — DRIVE <code style="color:#22d3bf">inf</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tile_digest(mesh: &#x27;dict&#x27;) -&gt; &#x27;str&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import driveinf; driveinf.tile_digest(mesh: &#x27;dict&#x27;) -&gt; &#x27;str&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;tile_digest&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Fingerabdruck eines Kachel-Meshs (SHA-256 über die Bytes von Vertices, Flächen, Labels und Farben). Wird für das Gate der bitgenauen Neuerzeugung verwendet.</p>
 <p>Leere Eingabe (<code style="color:#22d3bf">mesh</code> ein leeres dict) löst <code style="color:#22d3bf">ValueError</code> aus.</p>

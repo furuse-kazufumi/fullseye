@@ -4,6 +4,7 @@ dim: oned
 category: matched
 in: signal
 out: pairs
+gpu: なし
 examples: [poc_gw_detector_pseudo_simulation]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal` → `pairs`
 - **呼び出し**: `import fullseye as fs; fs.ledger.psd_welch(x, rate: 'float' = 4096.0, segment_s: 'float | None' = None, *, overlap: 'float' = 0.5, window: 'str' = 'hann', average: 'str' = 'mean') -> 'np.ndarray'` (実装を直接呼ぶなら `import gwsearch; gwsearch.psd_welch(x, rate: 'float' = 4096.0, segment_s: 'float | None' = None, *, overlap: 'float' = 0.5, window: 'str' = 'hann', average: 'str' = 'mean') -> 'np.ndarray'`、台帳から引くなら `ops1d.get("psd_welch")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

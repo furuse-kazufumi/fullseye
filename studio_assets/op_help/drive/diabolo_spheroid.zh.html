@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">diabolo_spheroid — DRIVE <code style="color:#22d3bf">diabolo</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">signal × signal × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.diabolo_spheroid(p_left, p_right, string_length: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import diabolo; diabolo.diabolo_spheroid(p_left, p_right, string_length: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;diabolo_spheroid&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>棍端 2 点(焦点)与绳长 → 辅助旋转椭球：a = l/2，c = |x_L − x_R|/2，b = √(a² − c²)(式 1 的正确形式)。</p>
 <p>★原文的 (1b) 为 b = √(a² − |x_L − x_R|/2),是长度与长度平方之差,量纲不一致。代入论文实机尺寸(绳 1.45 m、棒间距 1.10 m)时根号内为负(NaN)。已改写为椭圆恒等式 a² = b² + c² 的形式(公开实现也用平方书写)。原文的值保留在 <code style="color:#22d3bf">b_paper_literal</code> 中。原文前言写作&quot;半长轴 b 和半短轴 a&quot;,名称颠倒(a = l/2 是半长轴),以公式为准。</p>

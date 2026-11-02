@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">jitter — 3D <code style="color:#22d3bf">augment</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.jitter(points, sigma: &#x27;float&#x27;, clip: &#x27;Optional[float]&#x27; = None, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import pcl_augment; pcl_augment.jitter(points, sigma: &#x27;float&#x27;, clip: &#x27;Optional[float]&#x27; = None, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;jitter&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>हर point में isotropic Gaussian noise <code style="color:#22d3bf">N(0, sigma)</code> जोड़ता है (sensor position noise की नकल)।</p>
 <p><code style="color:#22d3bf">sigma</code> world unit में standard deviation है (user द्वारा दिया गया parameter)। <code style="color:#22d3bf">clip</code> देने पर displacement के हर component को <code style="color:#22d3bf">[-clip, clip]</code> तक काटा जाता है (बहुत बड़े displacement को रोकना)। बड़े N पर noise का mean≈0 और standard deviation≈sigma होता है। return value input जैसे ही shape <code style="color:#22d3bf">(N,3)</code> का है।</p>

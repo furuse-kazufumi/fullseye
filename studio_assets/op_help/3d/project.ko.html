@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">project — 3D <code style="color:#22d3bf">bundle_adjust</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">keypoints</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.project(points, rvec, t, K)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import bundle3d; bundle3d.project(points, rvec, t, K)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;project&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>3D 점 (n,3) 을 카메라 (rvec,t,K) 로 2D (n,2) 에 투영(투시 나눗셈).</p>
 <p><code style="color:#22d3bf">X_cam = R(rvec) @ X + t</code>, <code style="color:#22d3bf">x = K @ X_cam</code>, <code style="color:#22d3bf">uv = x[:2] / x[2]</code> 를 모든 점에 대해 한꺼번에 계산한다(<code style="color:#22d3bf">project_points</code> 와 같은 규약). <code style="color:#22d3bf">rvec</code> 는 회전 벡터(축 × 각 [rad], scipy 의 <code style="color:#22d3bf">Rotation.from_rotvec</code>), <code style="color:#22d3bf">t</code> 는 (3,) 병진, <code style="color:#22d3bf">K</code> 는 (3,3) 내부 행렬. 반환값은 (n,2) float 로열 0 이 u(가로·열 방향), 열 1 이 v(세로·행 방향), 단위는 K 를 따르는 픽셀.</p>

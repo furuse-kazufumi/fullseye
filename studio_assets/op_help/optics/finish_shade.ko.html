@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">finish_shade — OPTICS <code style="color:#22d3bf">finish</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">normalmap</code> → <code style="color:#22d3bf">rgbimage</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.finish_shade(normals, kind=&#x27;linear&#x27;, metal=&#x27;al&#x27;, light=(0.3, 0.4, 0.87), view=(0.0, 0.0, 1.0), angle_deg=0.0, center=None, scale=1.0, patchiness=0.0, strength=1.0, seed=0) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import metalfinish; metalfinish.finish_shade(normals, kind=&#x27;linear&#x27;, metal=&#x27;al&#x27;, light=(0.3, 0.4, 0.87), view=(0.0, 0.0, 1.0), angle_deg=0.0, center=None, scale=1.0, patchiness=0.0, strength=1.0, seed=0) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsoptics.get(&quot;finish_shade&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p><b>재질 × 마감</b>으로 금속 면에 음영을 넣습니다 → 선형 sRGB (H, W, 3).</p>
 <p>재질은 복소 굴절률로부터 색을 만들고(<code style="color:#22d3bf">glassmirror.metal_mirror_rgb</code>), 마감은접선장과 이방성 거칠기로부터 미세면의 분포를 만든다(<code style="color:#22d3bf">matappear.ward_anisotropic</code>). 게다가 각도 의존의 Fresnel을 곱하므로, <b>가장자리일수록 밝아진다</b>(금속에서도 일어난다).</p>

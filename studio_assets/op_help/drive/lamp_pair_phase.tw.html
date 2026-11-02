@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">lamp_pair_phase — DRIVE <code style="color:#22d3bf">crossing</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lamp_pair_phase(a, b, fps: &#x27;float&#x27;, *, f_min: &#x27;float&#x27; = 0.0, pad: &#x27;int&#x27; = 8, tol: &#x27;float&#x27; = 0.25) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import drivecrossing; drivecrossing.lamp_pair_phase(a, b, fps: &#x27;float&#x27;, *, f_min: &#x27;float&#x27; = 0.0, pad: &#x27;int&#x27; = 8, tol: &#x27;float&#x27; = 0.25) -&gt; &#x27;Dict[str, object]&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;lamp_pair_phase&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由 2 條亮度時間序列(2 盞燈的像素)，以互頻譜估計共同的閃爍頻率與相位差。</p>
 <p>減去平均值,加 Hann 窗,以 <code style="color:#22d3bf">pad</code> 倍補 0 後做 rFFT。在 |A| + |B| 的峰(<code style="color:#22d3bf">f_min</code> 以上,排除 0 Hz 的裙邊)處將 φ = arg(A_k B̄_k) 折疊到 [0, π]。<code style="color:#22d3bf">delay</code> = φ / (2π f)。<code style="color:#22d3bf">alternating</code> = |φ − π| &lt; tol(交替閃爍)。頻率為 <b>表觀</b> 值(超過 fps/2 的閃爍會折疊)。任一方恆定則為 ValueError。</p>

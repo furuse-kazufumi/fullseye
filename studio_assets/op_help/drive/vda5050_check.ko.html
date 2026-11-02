@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">vda5050_check — DRIVE <code style="color:#22d3bf">agv</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vda5050_check(order)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import agvfleet; agvfleet.vda5050_check(order)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;vda5050_check&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>VDA 5050 order의 <b>구조 규칙</b>을 검사합니다(공식 JSON 스키마와는 별개인 자체 두 번째 구현(독립 구현)).</p>
 <p>규칙: 필수 키 / 노드의 sequenceId 는 0 부터 짝수로 연번, 엣지는 홀수로 연번 / 엣지 수 = 노드 수 − 1 / 각 엣지의 시점/종점이 앞뒤 노드 / released 는 base 의 선두부터 연속(base → horizon 의 1 회 전환만) / 엣지의 released 는 그 종점 노드와 같음. 반환은 위반 문구의 리스트(비어 있음 = 합격).</p>

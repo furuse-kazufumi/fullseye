@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">add_mesh_object — DRIVE <code style="color:#22d3bf">terrain</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table × table</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.add_mesh_object(world: &#x27;dict&#x27;, mesh: &#x27;dict&#x27;, x: &#x27;float&#x27;, y: &#x27;float&#x27;, yaw: &#x27;float&#x27;, *, name: &#x27;str&#x27; = &#x27;&#x27;, z: &#x27;float&#x27; = 0.0) -&gt; &#x27;int&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import driveterrain; driveterrain.add_mesh_object(world: &#x27;dict&#x27;, mesh: &#x27;dict&#x27;, x: &#x27;float&#x27;, y: &#x27;float&#x27;, yaw: &#x27;float&#x27;, *, name: &#x27;str&#x27; = &#x27;&#x27;, z: &#x27;float&#x27; = 0.0) -&gt; &#x27;int&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;add_mesh_object&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Platziert ein prozedurales Mesh (tree_mesh / pedestrian_mesh …, Ursprung = Mitte der Grundfläche) in einer Pose und fügt es der Welt hinzu.</p>
 <p>Erhält dieselben <code style="color:#22d3bf">pose</code>/<code style="color:#22d3bf">dims</code> wie ein Asset und lässt sich daher mit <code style="color:#22d3bf">driveworld.world_move</code> bewegen.</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">attention_grouped — LLMCORE <code style="color:#22d3bf">attend</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">tokens × tokens × tokens</code> → <code style="color:#22d3bf">tokens</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.attention_grouped(query, key, value, n_heads: &#x27;int&#x27;, n_kv_heads: &#x27;int&#x27;, mask=None, window=None) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import llmcore; llmcore.attention_grouped(query, key, value, n_heads: &#x27;int&#x27;, n_kv_heads: &#x27;int&#x27;, mask=None, window=None) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsllmcore.get(&quot;attention_grouped&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Attention that groups heads (GQA) → tokens. <b>Exactly matches MHA when n_kv_heads == n_heads, and MQA when == 1</b>.</p>
 <p>Ainslie et al. 2023. The query is split into <code style="color:#22d3bf">n_heads</code> heads, while key/value hold only <code style="color:#22d3bf">n_kv_heads</code> heads and are reused. Both extremes fall <b>exactly</b> onto the 2 existing schemes (MHA / MQA) (0.0e+00 for both), so the claim &quot;it takes the middle ground&quot; can be cross-checked at the ends.</p>

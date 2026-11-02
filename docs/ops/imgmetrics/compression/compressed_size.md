@@ -4,6 +4,7 @@ dim: imgmetrics
 category: compression
 in: image2d
 out: scalar
+gpu: なし
 examples: [image_quality_metrics]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d` → `scalar`
 - **呼び出し**: `import fullseye as fs; fs.ledger.compressed_size(a, compressor='lzma')` (実装を直接呼ぶなら `import imgmetrics; imgmetrics.compressed_size(a, compressor='lzma')`、台帳から引くなら `opsimgmetrics.get("compressed_size")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

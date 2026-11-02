@@ -4,6 +4,7 @@ dim: drive
 category: racket
 in: table
 out: any
+gpu: なし
 examples: [gallery_drive_kendama_racket]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `any`
 - **呼び出し**: `import fullseye as fs; fs.ledger.racket_move(pos, vel, target, dt: 'float', rp: 'dict') -> 'tuple'` (実装を直接呼ぶなら `import racket; racket.racket_move(pos, vel, target, dt: 'float', rp: 'dict') -> 'tuple'`、台帳から引くなら `opsdrive.get("racket_move")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

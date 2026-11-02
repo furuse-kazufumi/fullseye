@@ -4,6 +4,7 @@ dim: conngraph
 category: stats
 in: conn_graph
 out: measurement
+gpu: なし
 examples: [poc_worm_core_persists]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `conn_graph` → `measurement`
 - **呼び出し**: `import fullseye as fs; fs.ledger.graph_rich_club(W: 'Any', k: 'int') -> 'float'` (実装を直接呼ぶなら `import conngraph; conngraph.graph_rich_club(W: 'Any', k: 'int') -> 'float'`、台帳から引くなら `opsconngraph.get("graph_rich_club")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

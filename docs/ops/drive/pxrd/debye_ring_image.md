@@ -4,6 +4,7 @@ dim: drive
 category: pxrd
 in: any × signal × table
 out: table
+gpu: なし
 examples: [poc_pxrd_phase_peel]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `any × signal × table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.debye_ring_image(phases, weight_fractions, geometry, shape=(512, 512), size=inf, K=0.9, instrumental_fwhm=0.02, counts=20000.0, background=0.03, polarization=0.0, lorentz='powder', supersample=2, lattice_scales=None, seed=0, step=0.002, eta=0.0)` (実装を直接呼ぶなら `import pxrd; pxrd.debye_ring_image(phases, weight_fractions, geometry, shape=(512, 512), size=inf, K=0.9, instrumental_fwhm=0.02, counts=20000.0, background=0.03, polarization=0.0, lorentz='powder', supersample=2, lattice_scales=None, seed=0, step=0.002, eta=0.0)`、台帳から引くなら `opsdrive.get("debye_ring_image")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

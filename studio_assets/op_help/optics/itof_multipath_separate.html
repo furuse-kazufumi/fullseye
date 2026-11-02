@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">itof_multipath_separate — OPTICS <code style="color:#22d3bf">itof</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.itof_multipath_separate(phasors, frequencies_hz=None, n_paths=2, pencil=None)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import itof; itof.itof_multipath_separate(phasors, frequencies_hz=None, n_paths=2, pencil=None)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;itof_multipath_separate&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>等間隔の多周波で測ったフェーザ → 経路ごとの距離と強さ(行列ペンシル)。<code style="color:#22d3bf">table</code> を返す。</p>
 <p>画素に経路 p(距離 d_p、強さ a_p)の光が入ると、周波数 f のフェーザは <code style="color:#22d3bf">m(f) = Σ_p a_p e^{i 4π f d_p / c}</code>。周波数が等間隔 <code style="color:#22d3bf">f_k = f_0 + kΔf</code> なら <code style="color:#22d3bf">m_k = Σ_p α_p z_p^k</code>(<code style="color:#22d3bf">z_p = e^{i 4π Δf d_p / c}</code>、<code style="color:#22d3bf">α_p = a_p e^{i 4π f_0 d_p / c}</code>)という減衰しない指数の和になり、行列ペンシル(Hua &amp; Sarkar 1990)で z_p が閉形式に出る:</p>

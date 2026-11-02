@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">shot_is_legal — DRIVE <code style="color:#22d3bf">racket</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table × table × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.shot_is_legal(p, v, w, bp, ip, tp, x_racket: &#x27;float&#x27;, side: &#x27;int&#x27;, hit_height=(0.05, 0.45)) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import racket; racket.shot_is_legal(p, v, w, bp, ip, tp, x_racket: &#x27;float&#x27;, side: &#x27;int&#x27;, hit_height=(0.05, 0.45)) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;shot_is_legal&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>shot (p, v, ω) को असली physics से पहले से देखकर तय करता है कि क्या वह net पार करता है, प्रतिद्वंद्वी के court पर ठीक 1 बार गिरता है, और प्रतिद्वंद्वी के plane x = ∓x_r पर मारने योग्य ऊँचाई पर पहुँचता है। <code style="color:#22d3bf">{&quot;legal&quot;, &quot;reason&quot;, &quot;p_arrive&quot;, &quot;t_arrive&quot;}</code>।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

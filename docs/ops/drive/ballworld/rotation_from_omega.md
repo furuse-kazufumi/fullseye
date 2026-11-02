@@ -4,6 +4,7 @@ dim: drive
 category: ballworld
 in: 
 out: matrix
+gpu: なし
 examples: [poc_ball_bounce, poc_table_tennis_bounce, poc_table_tennis_spin]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `matrix`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.rotation_from_omega(omega, dt: 'float') -> 'np.ndarray'` (実装を直接呼ぶなら `import ballworld; ballworld.rotation_from_omega(omega, dt: 'float') -> 'np.ndarray'`、台帳から引くなら `opsdrive.get("rotation_from_omega")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tangent_field — OPTICS <code style="color:#22d3bf">finish</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">normalmap</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tangent_field(shape, kind=&#x27;linear&#x27;, angle_deg=0.0, center=None) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import metalfinish; metalfinish.tangent_field(shape, kind=&#x27;linear&#x27;, angle_deg=0.0, center=None) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;tangent_field&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>finish की <b>धारियों की दिशा</b> को (H, W, 3) tangent field के रूप में बनाता है।</p>
 <p>shape: (H, W)। kind: <code style="color:#22d3bf">FINISHES</code> में से एक।</p>

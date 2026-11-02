@@ -4,6 +4,7 @@ dim: drive
 category: ball
 in: table
 out: signal
+gpu: なし
 examples: [poc_ball_bounce]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `signal`
 - **呼び出し**: `import fullseye as fs; fs.ledger.contact_angular_momentum(v, omega, normal, bp: 'dict') -> 'np.ndarray'` (実装を直接呼ぶなら `import ballistics; ballistics.contact_angular_momentum(v, omega, normal, bp: 'dict') -> 'np.ndarray'`、台帳から引くなら `opsdrive.get("contact_angular_momentum")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

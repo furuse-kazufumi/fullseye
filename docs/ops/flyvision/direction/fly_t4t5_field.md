@@ -4,6 +4,7 @@ dim: flyvision
 category: direction
 in: matrix × table
 out: matrix
+gpu: なし
 examples: [poc_fly_optomotor_steering, poc_zebra_stripes_fly_eye]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `matrix × table` → `matrix`
 - **呼び出し**: `import fullseye as fs; fs.ledger.fly_t4t5_field(movie, lattice, dt_s, tau_s=0.25, k_e=5.0, k_d=5.0, k_s=10.0, dc=1.0, model='three_arm', tau_hr_s=0.05, reduce='mean')` (実装を直接呼ぶなら `import flyvision; flyvision.fly_t4t5_field(movie, lattice, dt_s, tau_s=0.25, k_e=5.0, k_d=5.0, k_s=10.0, dc=1.0, model='three_arm', tau_hr_s=0.05, reduce='mean')`、台帳から引くなら `opsflyvision.get("fly_t4t5_field")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

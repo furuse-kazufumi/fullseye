@@ -4,6 +4,7 @@ dim: optics
 category: illumination
 in: normalmap × table
 out: image2d
+gpu: なし
 examples: [poc_illumination_cone_vs_na]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `normalmap × table` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.solid_angle_render(normals, light, view_na=0.1, roughness_deg=0.0, f0=0.9, diffuse_albedo=0.0, n_samples=64, seed=0)` (実装を直接呼ぶなら `import illumdesign; illumdesign.solid_angle_render(normals, light, view_na=0.1, roughness_deg=0.0, f0=0.9, diffuse_albedo=0.0, n_samples=64, seed=0)`、台帳から引くなら `opsoptics.get("solid_angle_render")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

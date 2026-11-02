@@ -4,6 +4,7 @@ dim: optics
 category: spectrometer
 in: 
 out: table
+gpu: なし
 examples: [poc_spectrometer_illumination]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.czerny_turner_design(groove_density_per_mm=1200.0, wavelength_min_nm=500.0, wavelength_max_nm=750.0, incidence_deg=9.0, collimator_f_mm=52.083, detector_length_mm=28.672, collimator_offaxis_deg=6.5, order=1, camera_f_mm=None, n_curve=41)` (実装を直接呼ぶなら `import gratingspec; gratingspec.czerny_turner_design(groove_density_per_mm=1200.0, wavelength_min_nm=500.0, wavelength_max_nm=750.0, incidence_deg=9.0, collimator_f_mm=52.083, detector_length_mm=28.672, collimator_offaxis_deg=6.5, order=1, camera_f_mm=None, n_curve=41)`、台帳から引くなら `opsoptics.get("czerny_turner_design")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

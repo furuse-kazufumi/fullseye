@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">odometry_slip — DRIVE <code style="color:#22d3bf">roverslip</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">any × signal × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.odometry_slip(position, wheel_angle, radius: &#x27;float&#x27;, window: &#x27;int&#x27; = 1) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import roverslip; roverslip.odometry_slip(position, wheel_angle, radius: &#x27;float&#x27;, window: &#x27;int&#x27; = 1) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;odometry_slip&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由視覺里程計的位置序列與車輪累積轉角求實際滑移率 <code style="color:#22d3bf">s = 1 − Δx / (r Δφ)</code>。</p>
 <p><code style="color:#22d3bf">position</code> 為 (T,) 的行駛距離或 (T, 2) 的平面位置 [m],<code style="color:#22d3bf">wheel_angle</code> 為 (T,) 的車輪累計轉角 [rad], <code style="color:#22d3bf">radius</code> = r [m]。按 <code style="color:#22d3bf">window</code> 個樣本的區間彙總相除(短區間會拾取雜訊)。車輪幾乎不轉的區間(<code style="color:#22d3bf">r Δφ</code> 小於整體中位數的 1 %)為 nan。返回值 <code style="color:#22d3bf">{&quot;slip&quot;: (T − window,), &quot;slip_total&quot;: 全区間の 1 個, &quot;distance&quot;: 区間ごとの車体の移動 [m], &quot;wheel_travel&quot;: 区間ごとの r Δφ [m]}</code>。</p>

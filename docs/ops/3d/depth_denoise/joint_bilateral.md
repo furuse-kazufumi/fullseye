@@ -4,6 +4,7 @@ dim: 3d
 category: depth_denoise
 in: depth × image2d
 out: depth
+gpu: なし
 examples: [sensor_seg]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `depth × image2d` → `depth`
 - **呼び出し**: `import fullseye as fs; fs.ledger.joint_bilateral(depth: 'np.ndarray', guide: 'np.ndarray', spatial_sigma: 'float', range_sigma: 'float', *, invalid: 'float | None' = 0.0, truncate: 'float' = 3.0, chunk: 'int | None' = 64) -> 'np.ndarray'` (実装を直接呼ぶなら `import depth_bilateral; depth_bilateral.joint_bilateral(depth: 'np.ndarray', guide: 'np.ndarray', spatial_sigma: 'float', range_sigma: 'float', *, invalid: 'float | None' = 0.0, truncate: 'float' = 3.0, chunk: 'int | None' = 64) -> 'np.ndarray'`、台帳から引くなら `ops3d.get("joint_bilateral")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

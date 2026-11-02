@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">raw_apply_gains — GFX2D <code style="color:#22d3bf">isp</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d × vector</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.raw_apply_gains(raw, gains, pattern=&#x27;RGGB&#x27;)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import gfx2d; gfx2d.raw_apply_gains(raw, gains, pattern=&#x27;RGGB&#x27;)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsgfx2d.get(&quot;raw_apply_gains&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Bayer frame को हर channel के gain (3 मान <code style="color:#22d3bf">R, G, B</code> या 4 मान <code style="color:#22d3bf">R, G1, G2, B</code>) से गुणा करके <code style="color:#22d3bf">[0, 1]</code> पर clip करता है — white balance demosaicing से <b>पहले</b> लागू होता है, जहाँ असली ISP भी इसे करता है (असंतुलित channel को interpolate करने से रंग का झुकाव सभी रंगों में फैल जाता है)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

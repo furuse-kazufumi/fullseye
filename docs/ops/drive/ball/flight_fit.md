@@ -4,6 +4,7 @@ dim: drive
 category: ball
 in: signal × points × table
 out: table
+gpu: なし
 examples: [poc_ball_bounce, poc_table_tennis_bounce]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal × points × table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.flight_fit(t, p, omega, bp: 'dict', *, iters: 'int' = 12, dt: 'float' = 0.001) -> 'dict'` (実装を直接呼ぶなら `import ballistics; ballistics.flight_fit(t, p, omega, bp: 'dict', *, iters: 'int' = 12, dt: 'float' = 0.001) -> 'dict'`、台帳から引くなら `opsdrive.get("flight_fit")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

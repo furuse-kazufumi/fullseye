@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">plane_from_3points — 3D <code style="color:#22d3bf">geometry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">primitive</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.plane_from_3points(a, b, c)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import match3d; match3d.plane_from_3points(a, b, c)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;plane_from_3points&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>3 점 → 평면(통과점, 단위 법선). 3 좌표로 면이 정해집니다(2D/3D 공통).</p>
 <p>반환값 <code style="color:#22d3bf">(a, n)</code>: <code style="color:#22d3bf">a</code>는 1 번째 점, <code style="color:#22d3bf">n</code>은 <code style="color:#22d3bf">n = (b−a)×(c−a)</code>를 단위화한 것(방향은 a→b→c의오른나사). 인수는 수치의 2 또는 3 벡터(그 외·차원 혼재는 ValueError). 3 점이 동일직선 위에 있으면 <code style="color:#22d3bf">n</code>은 영벡터인 채로 반환된다(예외는 나지 않는다). 2 차원의 점을 넘기면 <code style="color:#22d3bf">np.cross</code>가 스칼라(부호 있는 면적의 2 배)를 반환하므로, <code style="color:#22d3bf">n</code>은 벡터가아니라 ±1의 스칼라가 된다. 2-D에서 선의 법선이 필요하면 <code style="color:#22d3bf">line_from_2points</code>의 방향을 90° 돌려서 쓸 것.</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">fringe_multipath_phase_error — OPTICS <code style="color:#22d3bf">light_transport</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fringe_multipath_phase_error(direct_amplitude, direct_phase, global_amplitude, global_phase)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import lighttransport; lighttransport.fringe_multipath_phase_error(direct_amplitude, direct_phase, global_amplitude, global_phase)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;fringe_multipath_phase_error&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>直接の縞のフェーザと大域のフェーザが足されたときに測られる位相 arg(a1 e^{iφ1} + a2 e^{iφ2})、φ1 に対するバイアス、最悪値 asin(a2/a1)(<code style="color:#22d3bf">table</code>)。</p>
 <p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>

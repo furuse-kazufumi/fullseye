@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">separate_direct_global — OPTICS <code style="color:#22d3bf">light_transport</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">images</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.separate_direct_global(images, fill=0.5, black_level=0.0, scheme=&#x27;shift&#x27;)</code>(要直接调用实现,<code style="color:#22d3bf">import lighttransport; lighttransport.separate_direct_global(images, fill=0.5, black_level=0.0, scheme=&#x27;shift&#x27;)</code>;从台账取用则 <code style="color:#22d3bf">opsoptics.get(&quot;separate_direct_global&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由平移高频图案下的图像,用逐像素 L_max 与 L_min 分离直接分量与全局分量(相互反射)(Nayar 等 2006,<code style="color:#22d3bf">table</code>)。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>

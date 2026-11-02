@@ -4,6 +4,7 @@ dim: emproof
 category: response
 in: image2d
 out: image2d
+gpu: なし
 examples: [poc_em_second_opinion, poc_em_split_merge_score]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.seg_membrane_response(image, sigma: 'float' = 1.5, normalize: 'bool' = True) -> 'np.ndarray'` (実装を直接呼ぶなら `import emproof; emproof.seg_membrane_response(image, sigma: 'float' = 1.5, normalize: 'bool' = True) -> 'np.ndarray'`、台帳から引くなら `opsemproof.get("seg_membrane_response")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

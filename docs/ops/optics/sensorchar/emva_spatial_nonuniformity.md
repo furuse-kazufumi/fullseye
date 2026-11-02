@@ -4,6 +4,7 @@ dim: optics
 category: sensorchar
 in: volume × volume
 out: table
+gpu: なし
 examples: [poc_emva1288_in_camera_processing, poc_emva1288_sensor]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `volume × volume` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.emva_spatial_nonuniformity(dark_stack, bright_stack, K, highpass=None)` (実装を直接呼ぶなら `import sensorchar; sensorchar.emva_spatial_nonuniformity(dark_stack, bright_stack, K, highpass=None)`、台帳から引くなら `opsoptics.get("emva_spatial_nonuniformity")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

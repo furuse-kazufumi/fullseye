@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">ttc_from_scale — DRIVE <code style="color:#22d3bf">ttc</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">scalar</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ttc_from_scale(w0: &#x27;float&#x27;, w1: &#x27;float&#x27;, dt: &#x27;float&#x27;) -&gt; &#x27;float&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivettc; drivettc.ttc_from_scale(w0: &#x27;float&#x27;, w1: &#x27;float&#x27;, dt: &#x27;float&#x27;) -&gt; &#x27;float&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;ttc_from_scale&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>겉보기 크기의 변화로부터 τ(초, 첫 프레임 시각 기준): <code style="color:#22d3bf">τ₀ = Δt · w₁ / (w₁ − w₀)</code>.</p>
 <p>상의 폭은 깊이에 반비례하므로(<code style="color:#22d3bf">w ∝ 1/Z</code>) <code style="color:#22d3bf">w₀/w₁ = Z₁/Z₀</code> → <code style="color:#22d3bf">τ₀ = Z₀ Δt / (Z₀ − Z₁) = Δt / (1 − w₀/w₁)</code>. Lee 의 <code style="color:#22d3bf">θ/θ̇</code> 를 전진 차분으로 만든 <code style="color:#22d3bf">Δt · w₀ / (w₁ − w₀)</code> 는 2 번째 프레임의 τ 이며, 정확히 Δt 만큼 작다. 커지지 않으면(<code style="color:#22d3bf">w₁ ≤ w₀</code>) <code style="color:#22d3bf">inf</code>. 폭이 양수가 아니면 <code style="color:#22d3bf">ValueError</code>.</p>

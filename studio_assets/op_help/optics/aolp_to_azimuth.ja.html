@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">aolp_to_azimuth — OPTICS <code style="color:#22d3bf">shape_from_polarization</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.aolp_to_azimuth(aolp_deg, model=&#x27;diffuse&#x27;)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import sfpolar; sfpolar.aolp_to_azimuth(aolp_deg, model=&#x27;diffuse&#x27;)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;aolp_to_azimuth&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>直線偏光の方位角(AoLP)を、面法線の方位角の 2 候補(π の曖昧さ)にする。拡散と鏡面で 90° ずれる(<code style="color:#22d3bf">table</code>)。</p>
 <p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>

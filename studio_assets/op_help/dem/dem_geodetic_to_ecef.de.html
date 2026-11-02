@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">dem_geodetic_to_ecef — DEM <code style="color:#22d3bf">geodesy</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">keine</code> → <code style="color:#22d3bf">points</code> (ein Operator, der allein durch seine Argumente bestimmt ist — er nimmt kein Bild und keine Daten entgegen)</p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_geodetic_to_ecef(lat_deg, lon_deg, height_m=0.0)</code> (die Implementierung direkt: <code style="color:#22d3bf">import demops; demops.dem_geodetic_to_ecef(lat_deg, lon_deg, height_m=0.0)</code>; aus dem Register: <code style="color:#22d3bf">opsdem.get(&quot;dem_geodetic_to_ecef&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Geodätische Koordinaten (Breite, Länge, ellipsoidische Höhe) → <b>erdzentrierte kartesische Koordinaten ECEF</b> [m].</p>
 <p>Ein Rechtssystem mit Ursprung im Erdmittelpunkt, x in Richtung Nullmeridian in der Äquatorebene, y bei 90 Grad östlicher Länge und z zum Nordpol. Der Einstieg, wenn Gelände in &quot;vom Erdmittelpunkt aus gesehenen Koordinaten&quot; behandelt werden soll.</p>

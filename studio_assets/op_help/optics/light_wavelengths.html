@@ -3,6 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">pairs</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.light_wavelengths(light: &#x27;dict&#x27;, samples: &#x27;int&#x27; = 5)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import optscene; optscene.light_wavelengths(light: &#x27;dict&#x27;, samples: &#x27;int&#x27; = 5)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;light_wavelengths&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>台帳経由の戻り値</b>: <code style="color:#22d3bf">fullseye.ledger.light_wavelengths(...)</code> は<b>宣言 out 型 <code style="color:#22d3bf">pairs</code> の値だけ</b>を返す(本体は補助情報も返す)。捨てられた側が要るときは <code style="color:#22d3bf">fullseye.ledger.light_wavelengths.raw(...)</code>、または <code style="color:#22d3bf">optscene.light_wavelengths</code> を直接呼ぶ。</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>光源のスペクトルを、撮像に使う数本の波長と重みに落とす。</p>
 <p>レーザー = 1 本、LED = 狭帯域を数本、ハロゲン = 広帯域を数本。同じ面でも波長で鏡面/散乱の配分が変わるので、広帯域は<b>重ね合わせて</b>撮るのが正しい。</p>

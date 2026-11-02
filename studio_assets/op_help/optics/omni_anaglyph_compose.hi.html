@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">omni_anaglyph_compose — OPTICS <code style="color:#22d3bf">omni360</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">rgbimage × rgbimage</code> → <code style="color:#22d3bf">rgbimage</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.omni_anaglyph_compose(left, right, method=&#x27;dubois&#x27;)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import omni360; omni360.omni_anaglyph_compose(left, right, method=&#x27;dubois&#x27;)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;omni_anaglyph_compose&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>बाएँ और दाएँ चित्र को रंग-फ़िल्टर त्रिविम चित्र में मिलाता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पूरी family का input contract (fail-closed)</h3>

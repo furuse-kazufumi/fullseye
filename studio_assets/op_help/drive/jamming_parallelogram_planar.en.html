@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">jamming_parallelogram_planar — DRIVE <code style="color:#22d3bf">pegfail</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.jamming_parallelogram_planar(kp, depth: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import pegfail; pegfail.jamming_parallelogram_planar(kp, depth: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;jamming_parallelogram_planar&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Derives the jamming parallelogram <b>from the planar statics of two-point contact</b> (a 2nd path checked against the vertices of pegsim.jamming_diagram = the values of OCW p.34).</p>
 <p>In the plane (x right, z up), the tip&#x27;s rim touches the wall on the −x side at depth l (normal force f₁ ≥ 0, toward +x), and the rim of the mouth on the +x side touches the body (f₂ ≥ 0, toward −x). With Coulomb friction in which both points slide downward (μf upward), the equilibrium of (F_x, F_z positive downward, M positive counter-clockwise) applied at the tip is</p>

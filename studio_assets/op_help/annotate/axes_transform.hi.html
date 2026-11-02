@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">axes_transform — ANNOTATE <code style="color:#22d3bf">plot</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">axes</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.axes_transform(rect, xlim, ylim, invert_y=True, xscale=&#x27;linear&#x27;, yscale=&#x27;linear&#x27;)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import annotate; annotate.axes_transform(rect, xlim, ylim, invert_y=True, xscale=&#x27;linear&#x27;, yscale=&#x27;linear&#x27;)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsannotate.get(&quot;axes_transform&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>data coordinate → pixel coordinate का (<b>closed-form</b>) mapping बनाता है।</p>
 <p>image के तथ्य <code style="color:#22d3bf">row नीचे की ओर</code> और graph की परंपरा <code style="color:#22d3bf">y ऊपर की ओर</code> के बीच के अंतर को <b>केवल इसी 1 जगह</b> संभाला जाता है। figure का code इसी dict को साथ लेकर चलता है।</p>

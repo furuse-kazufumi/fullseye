@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">slope_to_curvature — SPECULAR <code style="color:#22d3bf">deflectometry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">normalmap</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.slope_to_curvature(normals, spacing=1.0, kind=&#x27;mean&#x27;, sigma_px=0.0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import deflectometry; deflectometry.slope_to_curvature(normals, spacing=1.0, kind=&#x27;mean&#x27;, sigma_px=0.0)</code>、台帳から引くなら <code style="color:#22d3bf">opsspecular.get(&quot;slope_to_curvature&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>法線マップ (H, W, 3) → 曲率の地図 (H, W)。傾きを 1 回微分するだけで、高さへ積分しない。</p>
 <p>傾き p = ∂z/∂x、q = ∂z/∂y を <code style="color:#22d3bf">photometric.normals_to_gradients</code> で取り、<code style="color:#22d3bf">spacing</code> (格子間隔、例 mm)で中心差分して z_xx = ∂p/∂x、z_yy = ∂q/∂y、z_xy = (∂p/∂y + ∂q/∂x) / 2。<code style="color:#22d3bf">kind</code>:</p>

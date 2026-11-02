@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tid2013_evaluate — IMGMETRICS <code style="color:#22d3bf">iqa</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">any × any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tid2013_evaluate(root, fn: &#x27;Callable[[np.ndarray, np.ndarray], float]&#x27;, *, subset=None, luma: &#x27;str&#x27; = &#x27;limited_u8&#x27;, index: &#x27;Optional[dict]&#x27; = None) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import iqatid; iqatid.tid2013_evaluate(root, fn: &#x27;Callable[[np.ndarray, np.ndarray], float]&#x27;, *, subset=None, luma: &#x27;str&#x27; = &#x27;limited_u8&#x27;, index: &#x27;Optional[dict]&#x27; = None) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsimgmetrics.get(&quot;tid2013_evaluate&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>將自己的指標 <code style="color:#22d3bf">fn(ref, dist) -&gt; float</code> 套用於 TID2013 的影像對，回傳與 MOS 的等級相關。</p>
 <p><code style="color:#22d3bf">luma</code> = <code style="color:#22d3bf">&quot;limited_u8&quot;</code>(傳入作者約定的 Y′ uint8 (H, W),與 psnr.txt / ssim.txt 比較時)/ <code style="color:#22d3bf">&quot;rgb&quot;</code>(把 uint8 (H, W, 3) 原樣傳入,與 psnrc.txt 比較時)。<code style="color:#22d3bf">subset</code> = <code style="color:#22d3bf">None</code>(全部 3000 組)/ 個數(台帳的前 n 個)/ 名稱列表(忽略大小寫, 副檔名可有可無)。參考影像 25 張只讀一次。</p>

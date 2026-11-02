@@ -3,6 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">images</code> → <code style="color:#22d3bf">normalmap</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.photometric_stereo(images, lights, mask=None, normalize=True, *, lit_only=False, lit_thresh=0.001)</code>(要直接调用实现,<code style="color:#22d3bf">import photometric; photometric.photometric_stereo(images, lights, mask=None, normalize=True, *, lit_only=False, lit_thresh=0.001)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;photometric_stereo&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>经台账调用的返回值</b>: <code style="color:#22d3bf">fullseye.ledger.photometric_stereo(...)</code> 只返回<b>声明的 out 类型 <code style="color:#22d3bf">normalmap</code> 的值</b>(底层函数还会返回辅助信息)。需要被丢弃的部分时,使用 <code style="color:#22d3bf">fullseye.ledger.photometric_stereo.raw(...)</code>,或直接调用 <code style="color:#22d3bf">photometric.photometric_stereo</code>。</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>Lambert 光度立体:由已知光源方向的 N 张图恢复法线与反照率。→ (normals HxWx3, albedo HxW)。</p>
 <p>I_n = albedo * max(N·L_n, 0)。在每个像素用最小二乘 g = pinv(L) @ I 求解 g = albedo*N, albedo=|g|, normal=g/|g|。需要 N&gt;=3。albedo~0 或 mask 外的像素 normal=(0,0,1)。normalize=True 时将光源向量归一化为单位方向(与 render_lambertian 相同的约定 = 反照率绝对值能正确得出)。若使用带强度权重的光源,请设 normalize=False,合成侧也统一使用原始向量。</p>

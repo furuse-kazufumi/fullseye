@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">ray_box_ranges — DRIVE <code style="color:#22d3bf">lidar</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ray_box_ranges(origin, dirs, box) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import lidarsim; lidarsim.ray_box_ranges(origin, dirs, box) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;ray_box_ranges&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Abstand, den Strahlen vom Ursprung <code style="color:#22d3bf">origin</code> in Richtung <code style="color:#22d3bf">dirs (...,3)</code> bis zum Eintritt in eine achsenparallele Box zurücklegen (Slab-Methode).</p>
 <p><code style="color:#22d3bf">box = (xmin, ymin, zmin, xmax, ymax, zmax)</code>. Fehlschlag ergibt <code style="color:#22d3bf">inf</code>. Liegt der Ursprung im Quader, der Abstand zur ersten vorne getroffenen Fläche (Austritt). Der Abstand ist <code style="color:#22d3bf">t·‖D‖</code>. Ein Quader ohne <code style="color:#22d3bf">min &lt; max</code> löst <code style="color:#22d3bf">ValueError</code> aus.</p>

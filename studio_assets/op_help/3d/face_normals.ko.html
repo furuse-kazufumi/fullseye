@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">face_normals — 3D <code style="color:#22d3bf">mesh_process</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">mesh</code> → <code style="color:#22d3bf">normals</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.face_normals(mesh) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import mesh_props; mesh_props.face_normals(mesh) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;face_normals&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>삼각형 메시의 <b>면 법선</b>(각 삼각형의 단위 법선 벡터). → (M,3).</p>
 <p>법선 = 정규화한 cross(v1−v0, v2−v0). 방향은 <b>faces 의 감김 순서(winding)</b> 로부터 일관되게정해진다(PCA 같은 부호 미정은 없다). 닫힌 메시를 바깥 방향 감김으로 만들면 모든 법선이 바깥을 향한다.</p>

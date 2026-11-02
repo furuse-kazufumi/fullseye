@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">table_read_csv — FILEIO <code style="color:#22d3bf">table</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">text</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.table_read_csv(text)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import fileio; fileio.table_read_csv(text)</code>、台帳から引くなら <code style="color:#22d3bf">opsfileio.get(&quot;table_read_csv&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p><code style="color:#22d3bf">table_write_csv</code> の単位つき CSV を読み、列・単位・メタデータの <code style="color:#22d3bf">table</code> を返す。</p>
 <p>返り値は <code style="color:#22d3bf">{&quot;columns&quot;: {列名: 1-D 配列}, &quot;units&quot;: {...}, &quot;meta&quot;: {...}}</code>。列名と単位の個数、全データ行の列数、必須メタデータを検査し、途中までの表は返さない。数値列は float64 (空欄は NaN)、数値以外を含む列は文字列配列になる。入力は UTF-8 の <code style="color:#22d3bf">str</code> または <code style="color:#22d3bf">bytes</code>。</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">graph_edges_as_lines — CONNGRAPH <code style="color:#22d3bf">view</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">conn_graph × points</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graph_edges_as_lines(W: &#x27;Any&#x27;, P: &#x27;Any&#x27;, thresh: &#x27;float&#x27; = 0.0) -&gt; &#x27;dict[str, np.ndarray]&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import conngraph; conngraph.graph_edges_as_lines(W: &#x27;Any&#x27;, P: &#x27;Any&#x27;, thresh: &#x27;float&#x27; = 0.0) -&gt; &#x27;dict[str, np.ndarray]&#x27;</code>; from the registry, <code style="color:#22d3bf">opsconngraph.get(&quot;graph_edges_as_lines&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Turns the edges into a table of line segments (the exit for overlaying them on a point cloud in Studio): columns pre / post / x0 y0 z0 / x1 y1 z1 / weight.</p>
 <p><code style="color:#22d3bf">P</code> is the (n, 3) of graph_layout_spectral (or (n, 2), with z = 0 added). |W| &gt; thresh edges only; the diagonal (self-loops) has length 0 and is not emitted.</p>

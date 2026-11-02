@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">fit_circle_3d — 3D <code style="color:#22d3bf">geometry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">primitive</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fit_circle_3d(points)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import match3d; match3d.fit_circle_3d(points)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;fit_circle_3d&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>点群 → 3D 円(平面フィット → 面内で 2D 円フィット)。返り値 (center, radius, normal)。</p>
 <p><code style="color:#22d3bf">fit_plane_3d</code> で面 <code style="color:#22d3bf">(c, n)</code> を取り、面内の正規直交基底 <code style="color:#22d3bf">(e1, e2)</code> に点を射影して 2-D の代数円フィット(<code style="color:#22d3bf">|q|² = 2·cc·q + k</code> の <code style="color:#22d3bf">lstsq</code>)を解き、中心を 3-D に戻す。<code style="color:#22d3bf">(N,3)</code> で 3 点未満は ValueError(3 点なら面は厳密、円は 3 点を通る)。<code style="color:#22d3bf">center</code> は面上の 3-D 点、<code style="color:#22d3bf">radius</code> は float(負の根は 0 に clamp)、<code style="color:#22d3bf">normal</code> は面の単位法線(符号任意)。円弧の一部だけ・面から外れた点が多いと半径が偏る(代数フィットの性質。面内残差は返さない)。</p>

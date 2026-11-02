@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">triangulate_dlt — DRIVE <code style="color:#22d3bf">balltrack</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">matrix × any × any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.triangulate_dlt(uvs, poses, Ks) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import balltrack; balltrack.triangulate_dlt(uvs, poses, Ks) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;triangulate_dlt&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>1 बिंदु का multi-view triangulation (linear DLT, SVD): <code style="color:#22d3bf">uvs</code> (C, 2), <code style="color:#22d3bf">poses</code> (C, 4, 4), <code style="color:#22d3bf">Ks</code> (C, 3, 3)। return value <code style="color:#22d3bf">{&quot;p&quot; (3,), &quot;reproj_rms&quot; px, &quot;n_views&quot;}</code>। NaN वाले views छोड़ दिए जाते हैं। 2 से कम views हों तो ValueError।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

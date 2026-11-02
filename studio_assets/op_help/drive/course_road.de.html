@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">course_road — DRIVE <code style="color:#22d3bf">course</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">keine</code> → <code style="color:#22d3bf">table</code> (ein Operator, der allein durch seine Argumente bestimmt ist — er nimmt kein Bild und keine Daten entgegen)</p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.course_road(length=20.0, width=7.0)</code> (die Implementierung direkt: <code style="color:#22d3bf">import drivecourse; drivecourse.course_road(length=20.0, width=7.0)</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;course_road&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Verbindungsstraße (Teil der Hauptstrecke): eine Gerade der Breite w und Länge L. Element, um den Ausgang einer Aufgabenstrecke zum Rundkurs zurückzuführen oder die Hauptstrecke zu verlängern. Norm (Hauptstrecke): Breite mindestens 7 m, muss mit dem Rundkurs verbunden sein. Fläche = w·L.</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: Länge oder Breite nicht positiv.</p>

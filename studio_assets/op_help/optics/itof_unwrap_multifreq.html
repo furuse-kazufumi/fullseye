@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">itof_unwrap_multifreq — OPTICS <code style="color:#22d3bf">itof</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.itof_unwrap_multifreq(phase, frequencies_hz=None, weights=None, max_range_m=None, method=&#x27;ml&#x27;)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import itof; itof.itof_unwrap_multifreq(phase, frequencies_hz=None, weights=None, max_range_m=None, method=&#x27;ml&#x27;)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;itof_unwrap_multifreq&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>複数の周波数の位相 → 距離(多周波アンラップ)。<code style="color:#22d3bf">table</code> を返す。</p>
 <p>周波数 f_i の位相 φ_i は距離を周期 <code style="color:#22d3bf">p_i = c/(2 f_i)</code> の剰余 <code style="color:#22d3bf">r_i = φ_i p_i / (2π)</code> で教える。周期の最小公倍数 <code style="color:#22d3bf">U = c / (2·gcd f)</code> までが一意(非曖昧距離)。</p>

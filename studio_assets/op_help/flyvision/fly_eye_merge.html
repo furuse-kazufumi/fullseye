@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">fly_eye_merge — FLYVISION <code style="color:#22d3bf">selfmotion</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fly_eye_merge(lattice_a, lattice_b, *more)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import flyvision; flyvision.fly_eye_merge(lattice_a, lattice_b, *more)</code>、台帳から引くなら <code style="color:#22d3bf">opsflyvision.get(&quot;fly_eye_merge&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Several lattices seen as one wide eye — the viewing directions of all of them.</p>
 <p><code style="color:#22d3bf">fly_hex_resample</code> needs a lattice that fits inside one pinhole image, which caps a single patch at well under a hemisphere. A fly is not so</p>

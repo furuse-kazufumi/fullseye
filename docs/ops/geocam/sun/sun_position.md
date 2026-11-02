@@ -4,6 +4,7 @@ dim: geocam
 category: sun
 in: signal
 out: table
+gpu: なし
 examples: [poc_public_camera_heading, poc_public_camera_heading_real]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.sun_position(lat_deg, lon_deg, unix_times)` (実装を直接呼ぶなら `import geocam; geocam.sun_position(lat_deg, lon_deg, unix_times)`、台帳から引くなら `opsgeocam.get("sun_position")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

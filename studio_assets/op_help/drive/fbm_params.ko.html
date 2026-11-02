@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">fbm_params — DRIVE <code style="color:#22d3bf">terrain</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">table</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fbm_params(seed: &#x27;int&#x27; = 0, hurst: &#x27;float&#x27; = 0.8, n_waves: &#x27;int&#x27; = 128, f_min: &#x27;float&#x27; = 0.005, f_max: &#x27;float&#x27; = 0.125, amplitude: &#x27;float&#x27; = 1.0) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import driveterrain; driveterrain.fbm_params(seed: &#x27;int&#x27; = 0, hurst: &#x27;float&#x27; = 0.8, n_waves: &#x27;int&#x27; = 128, f_min: &#x27;float&#x27; = 0.005, f_max: &#x27;float&#x27; = 0.125, amplitude: &#x27;float&#x27; = 1.0) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;fbm_params&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>무작위 위상 사인파의 합으로 fBm 면을 만들기 위한 매개변수 표(Saupe 1988 스펙트럼 합성의 연속판).</p>
 <p>주파수는 [f_min, f_max] 에 로그 균일, 방향은 균일, 위상은 균일, 진폭 ∝ f^{−H}. 로그 균일로 뿌린 파는 2 차원 주파수 면의 밀도가 ∝ f^{−2} 이므로 파워 스펙트럼은 ∝ A(f)² f^{−2} = f^{−(2H+2)}, 즉 β = 2H + E(E = 2). 진폭은 RMS 가 <code style="color:#22d3bf">amplitude</code> 가 되도록 정규화한다.</p>

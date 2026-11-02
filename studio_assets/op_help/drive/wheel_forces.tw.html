@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">wheel_forces — DRIVE <code style="color:#22d3bf">roverslip</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">signal × signal × table × any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.wheel_forces(sinkage, slip, wheel, soil, n_quad: &#x27;int&#x27; = 96) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import roverslip; roverslip.wheel_forces(sinkage, slip, wheel, soil, n_quad: &#x27;int&#x27; = 96) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;wheel_forces&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>在沉陷 z [m] 與滑移率 s 下剛性車輪從土壤受到的力(Wong–Reece 應力分布的數值積分)。</p>
 <p>回傳值 <code style="color:#22d3bf">{&quot;Fz&quot;, &quot;DP&quot;, &quot;T&quot;, &quot;theta_f&quot;, &quot;theta_m&quot;, &quot;theta_r&quot;}</code>: 垂直力 [N]、牽引力(drawbar pull,向前為正)[N]、驅動扭矩 [N·m]、角 [rad]。<code style="color:#22d3bf">sinkage</code>/<code style="color:#22d3bf">slip</code> 為純量或可廣播為相同形狀的陣列(0 ≤ z &lt; r、−1 &lt; s &lt; 1)。</p>

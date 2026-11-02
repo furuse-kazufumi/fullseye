@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">dichromatic_render — SPECULAR <code style="color:#22d3bf">reflectance</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">normalmap</code> → <code style="color:#22d3bf">rgbimage</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dichromatic_render(normals, albedo_rgb=(0.8, 0.55, 0.35), light=(0.3, 0.2, 1.0), illuminant_rgb=(1.0, 1.0, 1.0), view=(0.0, 0.0, 1.0), specular=0.25, model=&#x27;blinn_phong&#x27;, shininess=32.0, roughness=0.3, f0=0.04, ambient=0.0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import specularity; specularity.dichromatic_render(normals, albedo_rgb=(0.8, 0.55, 0.35), light=(0.3, 0.2, 1.0), illuminant_rgb=(1.0, 1.0, 1.0), view=(0.0, 0.0, 1.0), specular=0.25, model=&#x27;blinn_phong&#x27;, shininess=32.0, roughness=0.3, f0=0.04, ambient=0.0)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsspecular.get(&quot;dichromatic_render&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>forward dichromatic model: एक ज्ञात highlight render करता है ताकि separation की उससे जाँच की जा सके। → (H, W, 3)।</p>
 <p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>

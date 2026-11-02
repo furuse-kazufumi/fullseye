@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">lead_from_depth — DRIVE <code style="color:#22d3bf">carla</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d × image2d × matrix</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lead_from_depth(depth, label, K, cam_height: &#x27;float&#x27;, *, pitch: &#x27;float&#x27; = 0.0, band: &#x27;float&#x27; = 0.5, car_label: &#x27;int&#x27; = 2) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import carlabridge; carlabridge.lead_from_depth(depth, label, K, cam_height: &#x27;float&#x27;, *, pitch: &#x27;float&#x27; = 0.0, band: &#x27;float&#x27; = 0.5, car_label: &#x27;int&#x27; = 2) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;lead_from_depth&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>基于规则的前车距离(两个世界使用同一公式): <code style="color:#22d3bf">depth_median</code> = 图像中央带(宽 band × W)内车辆像素深度的中位数(后表面平行于像平面，故恒定)，<code style="color:#22d3bf">row_distance</code> = 由车辆最下行按平坦路面公式(driveenv.road_row_distance)求出的水平距离，<code style="color:#22d3bf">bbox</code> = (top, bottom, left, right)，<code style="color:#22d3bf">n_pixels</code>，<code style="color:#22d3bf">found</code>。无车辆像素时 found = False(距离为 inf)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

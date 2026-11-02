@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">image_entropy — IMGMETRICS <code style="color:#22d3bf">information</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.image_entropy(a, bins=64, data_range=None)</code> (to call the implementation directly, <code style="color:#22d3bf">import imgmetrics; imgmetrics.image_entropy(a, bins=64, data_range=None)</code>; from the registry, <code style="color:#22d3bf">opsimgmetrics.get(&quot;image_entropy&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Shannon entropy of one image [bit].</p>
 <p>It uses <b>the same binning</b> as <code style="color:#22d3bf">mutual_information</code>, so <code style="color:#22d3bf">mutual_information(a, a) == image_entropy(a)</code> holds exactly (pinned by a test). The existing <code style="color:#22d3bf">entropy_gray</code> / <code style="color:#22d3bf">entropy_image</code> (backends) use a different binning, so their values do not match -- this one is the side consistent with the joint distribution.</p>

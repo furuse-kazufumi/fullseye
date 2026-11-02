@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">photoelastic_polarization_images — OPTICS <code style="color:#22d3bf">photoelastic</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">polsweep</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.photoelastic_polarization_images(delta_rad, axis_deg=0.0, analyzers=&#x27;camera4&#x27;, intensity=1.0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import photoelastic; photoelastic.photoelastic_polarization_images(delta_rad, axis_deg=0.0, analyzers=&#x27;camera4&#x27;, intensity=1.0)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;photoelastic_polarization_images&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>円偏光照明の試料を偏光カメラ(0/45/90/135 度)または 6 強度の偏光計で撮った像 → (K, H, W)。</p>
 <p>The specimen (retardance δ, <b>fast</b> axis θ) is lit with right-circular light <code style="color:#22d3bf">S = I(1, 0, 0, 1)</code>; the emerging Stokes vector is computed with a per-pixel Mueller retarder (same convention as <code style="color:#22d3bf">optics.mueller_element</code>, whose angle is the fast axis — for a stress field pass <code style="color:#22d3bf">angle_deg + 90</code>,</p>

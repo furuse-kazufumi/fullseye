@@ -4,6 +4,7 @@ dim: optics
 category: fpm
 in: 
 out: table
+gpu: なし
 examples: [poc_fourier_ptychography]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.fp_usaf_target(groups=(7, 8, 9), elements=(1, 2, 3, 4, 5, 6), pixel_um=0.325, shape=(384, 384), kind='amplitude', bar_value=0.2, background=1.0, phase_rad=1.0, supersample=8, margin_px=6)` (実装を直接呼ぶなら `import fourierptycho; fourierptycho.fp_usaf_target(groups=(7, 8, 9), elements=(1, 2, 3, 4, 5, 6), pixel_um=0.325, shape=(384, 384), kind='amplitude', bar_value=0.2, background=1.0, phase_rad=1.0, supersample=8, margin_px=6)`、台帳から引くなら `opsoptics.get("fp_usaf_target")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -3,7 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">sdf</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.edt_jfa(seed_bool, device=&#x27;cpu&#x27;)</code>(要直接调用实现,<code style="color:#22d3bf">import match3d; match3d.edt_jfa(seed_bool, device=&#x27;cpu&#x27;)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;edt_jfa&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>经台账调用的返回值</b>: <code style="color:#22d3bf">fullseye.ledger.edt_jfa(...)</code> 只返回<b>声明的 out 类型 <code style="color:#22d3bf">sdf</code> 的值</b>(底层函数还会返回辅助信息)。需要被丢弃的部分时,使用 <code style="color:#22d3bf">fullseye.ledger.edt_jfa.raw(...)</code>,或直接调用 <code style="color:#22d3bf">match3d.edt_jfa</code>。</p>
-<p style="margin:2px 0 2px 12px">• <b>GPU</b>:该算子有 GPU 路径(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>3D 欧氏距离变换 = Jump Flooding Algorithm(GPU)。每个体素 → 到最近 seed 的距离。</p>
 <p>实测与 scipy EDT 严格一致(max|err|=0,N≤160,JFA+2)。scipy(C 实现)在 N 较小时更快,但 GPU-JFA 在 N≥96 时反超(RTX5090 实测 96→2.6× / 128→4.7×)。全 voxel 并行, 可常驻 GPU,本质在于让 chamfer 成为无需 CPU 往返的全 GPU 流水线。把末尾的 step=1 做成 2 遍(JFA+2),也消除了大 N 时的近似误差。返回值为距离场 (D,H,W) 的 torch tensor。</p>

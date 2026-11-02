@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">essential_8point — 3D <code style="color:#22d3bf">two_view</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.essential_8point(pts1, pts2, K1, K2=None)</code>(要直接呼叫實作,<code style="color:#22d3bf">import twoview; twoview.essential_8point(pts1, pts2, K1, K2=None)</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;essential_8point&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由對應點 + K 直接求本質矩陣 E。→ E (3,3)。</p>
 <p>步驟：以 <code style="color:#22d3bf">fundamental_8point(pts1, pts2)</code> 估計 F，建構 <code style="color:#22d3bf">E = K2ᵀ F K1</code> 後以 SVD 把奇異值替換為 (1, 1, 0)(本質矩陣的性質。結果的 Frobenius 範數固定為 √2)。</p>

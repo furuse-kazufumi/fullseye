@@ -4,6 +4,7 @@ dim: blob
 category: measure
 in: labels2d
 out: table
+gpu: なし
 examples: [poc_am_thermal_to_ct, poc_bone_trabecular_thickness, poc_bump_coplanarity, poc_dense_bubble_count, poc_fresco_craquelure, poc_gear_tooth_metrology, poc_leaf_disease_area, poc_metal_grain_size, poc_nuclei_ploidy, poc_particle_sizing, poc_particle_tracking, poc_peg_insertion_tactile, poc_print_warpage_risk, poc_pv_thermal_survey, poc_real_coin_metrology, poc_rotation_invariance_audit, poc_sea_ice_concentration, poc_sem_wafer_defect_edge_bias, poc_solar_el_inspection, poc_solder_fillet_aoi, poc_traffic_counting, poc_vessel_network, poc_weld_radiograph_porosity, poc_wound_area_tracking]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `labels2d` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.blob_features(labels: 'Any', spacing: 'float' = 1.0) -> 'dict'` (実装を直接呼ぶなら `import blob2d; blob2d.blob_features(labels: 'Any', spacing: 'float' = 1.0) -> 'dict'`、台帳から引くなら `opsblob.get("blob_features")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

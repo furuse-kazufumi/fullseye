@@ -4,6 +4,7 @@ dim: blob
 category: extract
 in: image2d × labels2d
 out: rgb
+gpu: なし
 examples: [poc_bump_coplanarity, poc_fresco_craquelure, poc_gear_tooth_metrology, poc_leaf_disease_area, poc_metal_grain_size, poc_nuclei_ploidy, poc_particle_sizing, poc_powder_grinding_ae, poc_weld_radiograph_porosity]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d × labels2d` → `rgb`
 - **呼び出し**: `import fullseye as fs; fs.ledger.blob_overlay(image: 'Any', labels: 'Any', alpha: 'float' = 0.5, seed: 'int' = 0) -> 'np.ndarray'` (実装を直接呼ぶなら `import blob2d; blob2d.blob_overlay(image: 'Any', labels: 'Any', alpha: 'float' = 0.5, seed: 'int' = 0) -> 'np.ndarray'`、台帳から引くなら `opsblob.get("blob_overlay")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

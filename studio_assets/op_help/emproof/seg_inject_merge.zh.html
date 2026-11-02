@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">seg_inject_merge — EMPROOF <code style="color:#22d3bf">inject</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">labels2d</code> → <code style="color:#22d3bf">labels2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.seg_inject_merge(labels, n: &#x27;int&#x27; = 1, seed: &#x27;int&#x27; = 0, min_area: &#x27;int&#x27; = 3000, ignore_zero: &#x27;bool&#x27; = True) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import emproof; emproof.seg_inject_merge(labels, n: &#x27;int&#x27; = 1, seed: &#x27;int&#x27; = 0, min_area: &#x27;int&#x27; = 3000, ignore_zero: &#x27;bool&#x27; = True) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsemproof.get(&quot;seg_inject_merge&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>为评估<b>植入融合</b>：选出 <code style="color:#22d3bf">n</code> 组相邻的大标签对，把其中一方的 id 改写为另一方。</p>
 <p>只把不小于 <code style="color:#22d3bf">min_area</code> px 的标签作为候选(小碎片的融合弦太短检测不到,会把评价拉向“无法植入的错误”),用随机数(<code style="color:#22d3bf">seed</code>)选对。同一标签只用 1 次。取不到 <code style="color:#22d3bf">n</code> 对则 ValueError(悄悄以较少数量返回会改变 AUC 的分母)。植入的对可以用 <code style="color:#22d3bf">seg_label_changes(labels, out)[&quot;merge_before&quot;]</code> 取出。</p>

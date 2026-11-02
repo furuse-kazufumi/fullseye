@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">edge_spread — OPTICS <code style="color:#22d3bf">imaging</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.edge_spread(img, roi, *, oversample=4, orientation=&#x27;auto&#x27;)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import edgesfr; edgesfr.edge_spread(img, roi, *, oversample=4, orientation=&#x27;auto&#x27;)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;edge_spread&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>傾いたエッジ(ISO 12233)の ROI から、画素より細かい ESF を作る。</p>
 <p>手順: ROI を「エッジが行を横切る」向きにそろえる(<code style="color:#22d3bf">orientation=&quot;auto&quot;</code> は列方向と行方向の勾配の大きさで決める、<code style="color:#22d3bf">&quot;vertical&quot;</code> = エッジが縦に走る / <code style="color:#22d3bf">&quot;horizontal&quot;</code> = 横に走る)→ 行ごとに 1 階差分の重心でエッジの位置を出す → 位置を行番号に直線で当てる(最小二乗)→ 各画素の中心のエッジからの<b>垂直距離</b> d を出し、幅 1/oversample px の升に振り分けて平均する。</p>

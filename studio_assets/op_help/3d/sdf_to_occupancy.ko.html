@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">sdf_to_occupancy — 3D <code style="color:#22d3bf">transform</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">sdf</code> → <code style="color:#22d3bf">voxel</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sdf_to_occupancy(sdf, iso=0.0)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import match3d; match3d.sdf_to_occupancy(sdf, iso=0.0)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;sdf_to_occupancy&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>SDF → occupancy voxel(iso 이하=안쪽=1). SDF 에서 voxel 로 되돌아가기.</p>
 <p><code style="color:#22d3bf">(sdf &lt;= iso).astype(float64)</code>뿐인 op. <code style="color:#22d3bf">signed_distance_field</code>의 규약(안쪽 &lt;0)이라면 <code style="color:#22d3bf">iso=0.0</code>으로 안쪽=1, 바깥=0. <b>등호를 포함</b>하므로, 정확히 <code style="color:#22d3bf">iso</code>인 voxel은 안쪽에 들어간다. <code style="color:#22d3bf">iso</code>를 양수로 하면 바깥으로 <code style="color:#22d3bf">iso</code> voxel만큼 부푼 점유, 음수로 하면 줄어든 점유가 된다(SDF가 참 거리라면 등방 dilation/erosion과 같다). <code style="color:#22d3bf">tsdf_from_depth</code>의 출력(표면 앞 +· 뒤 −·미관측 +1)에도 같은 <code style="color:#22d3bf">iso=0.0</code>으로 쓸 수 있지만, 미관측 영역은 0 쪽(바깥)이 된다. 입력의 형태는 묻지 않으며, 반환값은 같은 형태의 float64(0.0 / 1.0). NaN은 비교가 거짓이므로 0이 된다(경고 없음).</p>

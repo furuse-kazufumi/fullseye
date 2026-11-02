@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">racket_move — DRIVE <code style="color:#22d3bf">racket</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.racket_move(pos, vel, target, dt: &#x27;float&#x27;, rp: &#x27;dict&#x27;) -&gt; &#x27;tuple&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import racket; racket.racket_move(pos, vel, target, dt: &#x27;float&#x27;, rp: &#x27;dict&#x27;) -&gt; &#x27;tuple&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;racket_move&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>racket को target की ओर ले जाता है (गति और acceleration की सीमाओं के साथ bang-bang: रुकने की दूरी देखकर धीमा होता है)। return value (pos, vel)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

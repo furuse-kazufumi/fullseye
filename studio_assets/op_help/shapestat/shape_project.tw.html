@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">shape_project — SHAPESTAT <code style="color:#22d3bf">model</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">shapemodel × points</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.shape_project(model, shape, align: &#x27;bool&#x27; = True)</code>(要直接呼叫實作,<code style="color:#22d3bf">import shapestats; shapestats.shape_project(model, shape, align: &#x27;bool&#x27; = True)</code>;從台帳取用則 <code style="color:#22d3bf">opsshapestat.get(&quot;shape_project&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>將形狀映射到模型座標(主成分分數)。→ <code style="color:#22d3bf">(k,)</code>。</p>
 <p><code style="color:#22d3bf">align=True</code> 時先用 Procrustes 對齊到平均形狀。不對齊就投影，位置與朝向的差異會漏進分數，<b>同一形狀看起來像另一個個體</b>。</p>

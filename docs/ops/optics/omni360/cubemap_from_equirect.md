@@ -4,6 +4,7 @@ dim: optics
 category: omni360
 in: rgbimage
 out: rgbvideo
+gpu: なし
 examples: [omni360_roundtrip]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `rgbimage` → `rgbvideo`
 - **呼び出し**: `import fullseye as fs; fs.ledger.cubemap_from_equirect(equi, face_size)` (実装を直接呼ぶなら `import omni360; omni360.cubemap_from_equirect(equi, face_size)`、台帳から引くなら `opsoptics.get("cubemap_from_equirect")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

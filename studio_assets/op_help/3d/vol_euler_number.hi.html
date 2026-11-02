@@ -4,6 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_euler_number(vol_binary, connectivity=26)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import volops; volops.vol_euler_number(vol_binary, connectivity=26)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;vol_euler_number&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>Ledger के ज़रिए return value</b>: <code style="color:#22d3bf">fullseye.ledger.vol_euler_number(...)</code> <b>केवल घोषित out type <code style="color:#22d3bf">measurement</code> का value</b> लौटाता है (मूल function सहायक जानकारी भी लौटाता है)। जो हिस्सा छोड़ दिया गया है उसकी ज़रूरत हो तो <code style="color:#22d3bf">fullseye.ledger.vol_euler_number.raw(...)</code> का उपयोग करें, या <code style="color:#22d3bf">volops.vol_euler_number</code> को सीधे call करें।</p>
 <p style="margin:2px 0 2px 12px">• मूल function का return: <code style="color:#22d3bf">chi(b0-b1+b2)</code></p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>binary volume की Euler characteristic, उसके तीन Betti numbers में बाँटी गई।</p>
 <p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>

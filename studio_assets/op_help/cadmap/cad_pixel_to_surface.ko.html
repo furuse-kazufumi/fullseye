@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">cad_pixel_to_surface — CADMAP <code style="color:#22d3bf">raycast</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">mesh × keypoints</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cad_pixel_to_surface(mesh, pixels, K=None, R=None, t=None, cull_backfaces=True, image_size=None, strict=False)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import cadmap; cadmap.cad_pixel_to_surface(mesh, pixels, K=None, R=None, t=None, cull_backfaces=True, image_size=None, strict=False)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opscadmap.get(&quot;cad_pixel_to_surface&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>화소 (N,2) → CAD 면 위의 <code style="color:#22d3bf">(face_id, 무게중심 좌표, 3-D 점)</code>(닫힌 식).</p>
 <p>화소마다 시선을 만들고(<code style="color:#22d3bf">camera.py</code> 규약: 중심은 정수 좌표, <code style="color:#22d3bf">u</code> = 열, <code style="color:#22d3bf">v</code> = 행), Möller-Trumbore로 모든 삼각형과 교차시켜, <b>가장 앞쪽의 적중</b>을취한다. 맞지 않은 화소에는 <code style="color:#22d3bf">face_id = -1</code>을 반환하며, <b>가장 가까운 면으로는 절대반올림하지 않는다</b>(검사에서 &quot;결함이 배경에 있었다&quot;를 &quot;면 17의 결함&quot;으로 둔갑시키지 않기위해). <code style="color:#22d3bf">cull_backfaces=True</code>(기본값)에서는 법선이 카메라를 향하지 않는 면은적중으로 치지 않는다.</p>

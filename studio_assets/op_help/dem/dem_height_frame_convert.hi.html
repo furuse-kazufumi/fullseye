@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">dem_height_frame_convert — DEM <code style="color:#22d3bf">geodesy</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_height_frame_convert(height_m, geoid_height_m, frm=&#x27;ellipsoidal&#x27;, to=&#x27;orthometric&#x27;)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import demops; demops.dem_height_frame_convert(height_m, geoid_height_m, frm=&#x27;ellipsoidal&#x27;, to=&#x27;orthometric&#x27;)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdem.get(&quot;dem_height_frame_convert&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>ऊँचाई का <b>reference</b> बदलता है: ellipsoidal height <code style="color:#22d3bf">h</code> ↔ orthometric height <code style="color:#22d3bf">H</code> (<code style="color:#22d3bf">H = h - N</code>)। <code style="color:#22d3bf">signal</code>।</p>
 <p>&quot;ऊँचाई&quot; एक ही शब्द के तहत 2 अलग-अलग चीज़ें प्रचलित हैं, और दोनों बिना exception उठाए maps पर पहुँच जाती हैं। यह op <b>आपको यह लिखने के लिए बाध्य करता है कि आप किससे किसमें बदल रहे हैं</b> —— डिफ़ॉल्ट मौजूद हैं, लेकिन <code style="color:#22d3bf">frm</code> और <code style="color:#22d3bf">to</code> docstring में नहीं, code में बने रहते हैं।</p>

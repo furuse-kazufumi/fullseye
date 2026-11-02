@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">gum_monte_carlo — SPC <code style="color:#22d3bf">uncertainty</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gum_monte_carlo(table, u=&#x27;u&#x27;, sensitivity=&#x27;sensitivity&#x27;, n=200000, seed=0, level=0.95, correlation=None, distribution=None, value=None, power=None, stream=False)</code>(要直接调用实现,<code style="color:#22d3bf">import spc; spc.gum_monte_carlo(table, u=&#x27;u&#x27;, sensitivity=&#x27;sensitivity&#x27;, n=200000, seed=0, level=0.95, correlation=None, distribution=None, value=None, power=None, stream=False)</code>;从台账取用则 <code style="color:#22d3bf">opsspc.get(&quot;gum_monte_carlo&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>GUM 补充文件 1(JCGM 101)的蒙特卡罗分布传播(<code style="color:#22d3bf">table</code>)。</p>
 <p>从分布中抽取各输入量构成 <code style="color:#22d3bf">y = sum_i c_i x_i</code>,由样本返回标准不确定度与最短包含区间。默认为正态分布;向 *distribution* 传入列名,即可按分量指定与 <code style="color:#22d3bf">gum_standard_uncertainty</code> 同形式的名称(rectangular / triangular / ...) (构造的是具有<b>标准不确定度</b>而非半宽的分布)。</p>

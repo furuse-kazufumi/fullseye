@@ -4,6 +4,7 @@ dim: drive
 category: swarmflow
 in: any × scalar × scalar
 out: table
+gpu: なし
 examples: [poc_swarm_obstacle_from_flow]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `any × scalar × scalar` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.swarm_field_from_tracks(frames, res: 'float', frame_dt: 'float', center=(0.0, 0.0), grid_step=None, h=None, threshold: 'float' = 0.3, max_disp_px=None, min_count: 'int' = 3, outlier_k: 'int' = 12, outlier_threshold: 'float' = 3.0) -> 'dict'` (実装を直接呼ぶなら `import swarmflow; swarmflow.swarm_field_from_tracks(frames, res: 'float', frame_dt: 'float', center=(0.0, 0.0), grid_step=None, h=None, threshold: 'float' = 0.3, max_disp_px=None, min_count: 'int' = 3, outlier_k: 'int' = 12, outlier_threshold: 'float' = 3.0) -> 'dict'`、台帳から引くなら `opsdrive.get("swarm_field_from_tracks")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

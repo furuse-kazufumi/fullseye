@@ -4,6 +4,7 @@ dim: photon
 category: counting
 in: image2d
 out: image2d
+gpu: なし
 examples: [photon_timeresolved, poc_thermal_radiometry]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.photon_uncertainty(counts, relative=False, zero_floor=0.0)` (実装を直接呼ぶなら `import photoncount; photoncount.photon_uncertainty(counts, relative=False, zero_floor=0.0)`、台帳から引くなら `opsphoton.get("photon_uncertainty")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

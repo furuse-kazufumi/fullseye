@@ -4,6 +4,7 @@ dim: drive
 category: gsplat
 in: table
 out: table
+gpu: なし
 examples: [gsplat_product_viewer, poc_kendama]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.gs_from_world(world: 'dict', *, spacing: 'float' = 0.004, max_per_object: 'int' = 20000, pos_noise: 'float' = 0.0, color_noise: 'float' = 0.0, sigma_ratio: 'float' = 1.0, normal_ratio: 'float' = 0.1, opacity: 'float' = 0.99, curv_ratio: 'float' = 0.5, edge_ratio: 'float' = 0.25, seed: 'int' = 0) -> 'dict'` (実装を直接呼ぶなら `import gsplatnp; gsplatnp.gs_from_world(world: 'dict', *, spacing: 'float' = 0.004, max_per_object: 'int' = 20000, pos_noise: 'float' = 0.0, color_noise: 'float' = 0.0, sigma_ratio: 'float' = 1.0, normal_ratio: 'float' = 0.1, opacity: 'float' = 0.99, curv_ratio: 'float' = 0.5, edge_ratio: 'float' = 0.25, seed: 'int' = 0) -> 'dict'`、台帳から引くなら `opsdrive.get("gs_from_world")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

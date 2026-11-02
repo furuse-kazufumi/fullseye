@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">blob_split — BLOB <code style="color:#22d3bf">split</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">labels2d × labels2d × image2d</code> → <code style="color:#22d3bf">labels2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.blob_split(labels: &#x27;Any&#x27;, seeds: &#x27;Any&#x27;, distance: &#x27;Any&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import blob2d; blob2d.blob_split(labels: &#x27;Any&#x27;, seeds: &#x27;Any&#x27;, distance: &#x27;Any&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsblob.get(&quot;blob_split&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>seed से <b>ऊँचे स्थानों के क्रम में</b> region बढ़ाकर जुड़े हुए ढेर को बाँटता है (watershed)।</p>
 <p>सबसे ऊँचे <code style="color:#22d3bf">distance</code> वाले pixels से शुरू करके, हर pixel पास के पहले से ज्ञात label को अपना लेता है (immersion-प्रकार का watershed, distance के घटते क्रम में चलाया गया)। <b>जिन गुच्छों के पास seed नहीं है उन्हें वैसा ही छोड़ा जाता है</b> -- बाँटने का कोई आधार न होने पर उन्हें मिटा देना झूठ होगा।</p>

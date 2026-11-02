@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">perpetual_langtons_ant — GENERATIVE <code style="color:#22d3bf">perpetual</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">rgb</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.perpetual_langtons_ant(steps: &#x27;int&#x27; = 12000, size: &#x27;int&#x27; = 301) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import perpetual; perpetual.perpetual_langtons_ant(steps: &#x27;int&#x27; = 12000, size: &#x27;int&#x27; = 301) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsgenerative.get(&quot;perpetual_langtons_ant&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>랭턴의 개미 — 2개의 규칙만으로 1만 걸음 뒤에 &#x27;고속도로&#x27;를 계속 만든다.</p>
 <p>불변량: 고속도로에 들어선 뒤에는 <b>주기 104로 같은 대각선 변위(세로·가로 모두 크기 2)를 반복한다</b>. 방향의 부호는 회전 규약에 따라 바뀐다 —— 이 구현의 격자에서는 (행, 열) = (+2, −2).</p>

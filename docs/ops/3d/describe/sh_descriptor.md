@@ -4,7 +4,7 @@ dim: 3d
 category: describe
 in: voxel
 out: descriptor
-gpu: true
+gpu: なし
 examples: [sh_descriptor_retrieval, shape_descriptor]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `voxel` → `descriptor`
 - **呼び出し**: `import fullseye as fs; fs.ledger.sh_descriptor(vol, L=8, nradii=12, ntheta=32, nphi=64, device='cpu')` (実装を直接呼ぶなら `import match3d; match3d.sh_descriptor(vol, L=8, nradii=12, ntheta=32, nphi=64, device='cpu')`、台帳から引くなら `ops3d.get("sh_descriptor")`)
-- **GPU**: この op は GPU 経路あり(`device="cuda"`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

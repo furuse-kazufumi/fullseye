@@ -4,6 +4,7 @@ dim: live4d
 category: render
 in: volseq
 out: video
+gpu: なし
 examples: [poc_live4d]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `volseq` → `video`
 - **呼び出し**: `import fullseye as fs; fs.ledger.focus_sweep_height_video(volseq, window: 'int' = 5) -> 'np.ndarray'` (実装を直接呼ぶなら `import live4d; live4d.focus_sweep_height_video(volseq, window: 'int' = 5) -> 'np.ndarray'`、台帳から引くなら `opslive4d.get("focus_sweep_height_video")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

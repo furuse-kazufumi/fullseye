@@ -4,6 +4,7 @@ dim: 3d
 category: surface
 in: 
 out: mesh
+gpu: なし
 examples: [minimal_surfaces]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `mesh`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.minimal_surface_bend(t=0.0, nu=80, nv=120, extent=1.5, scale=1.0)` (実装を直接呼ぶなら `import render3d; render3d.minimal_surface_bend(t=0.0, nu=80, nv=120, extent=1.5, scale=1.0)`、台帳から引くなら `ops3d.get("minimal_surface_bend")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">course_road — DRIVE <code style="color:#22d3bf">course</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">table</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.course_road(length=20.0, width=7.0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import drivecourse; drivecourse.course_road(length=20.0, width=7.0)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;course_road&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>connector road (main course का भाग): चौड़ाई w और लंबाई L का सीधा भाग। task course के निकास को loop course पर वापस लाने या main course को बढ़ाने के लिए element। मानक (main course): चौड़ाई 7 m या अधिक, loop course से जुड़ा होना चाहिए। क्षेत्रफल = w·L।</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: लंबाई / चौड़ाई धनात्मक नहीं।</p>

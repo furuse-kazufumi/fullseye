@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">coherent_image — OPTICS <code style="color:#22d3bf">coherent</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.coherent_image(amplitude, phase=None, cutoff=0.25, pupil=None, defocus_waves=0.0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import coherent; coherent.coherent_image(amplitude, phase=None, cutoff=0.25, pupil=None, defocus_waves=0.0)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;coherent_image&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Coherent image intensity of an amplitude/phase object through a pupil (<code style="color:#22d3bf">image2d</code>).</p>
 <p><code style="color:#22d3bf">|F⁻¹{P · F{A · e^{iφ}}}|²</code> with the circular pupil <code style="color:#22d3bf">P = circ(ρ / cutoff)</code> (<code style="color:#22d3bf">cutoff</code> = coherent cut-off NA·pitch/λ in cycles per pixel, in (0, 0.5]) or a user <code style="color:#22d3bf">pupil</code> (2-D, same shape, DC at the centre, i.e. <code style="color:#22d3bf">np.fft.fftshift</code> order; complex allowed). <code style="color:#22d3bf">defocus_waves</code> multiplies the circular pupil by <code style="color:#22d3bf">exp(i 2π W20 (ρ/ρc)²)</code>. The object is periodic (the FFT wraps at the edges).</p>

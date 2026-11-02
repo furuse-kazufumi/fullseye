@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">face_areas — 3D <code style="color:#22d3bf">mesh_process</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">mesh</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.face_areas(mesh) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import mesh_props; mesh_props.face_areas(mesh) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;face_areas&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>triangle mesh का <b>हर face का area</b> → <code style="color:#22d3bf">(M,)</code>।</p>
 <p>हर face के लिए area = <code style="color:#22d3bf">0.5·|cross(v1−v0, v2−v0)|</code> लौटाता है (<code style="color:#22d3bf">mesh_area</code> इनका योग है)। area को <b>weights</b> के रूप में इस्तेमाल करने के लिए दिया जाता है —— &quot;नीचे की ओर मुड़े faces का area&quot;, &quot;tolerance से बाहर का area&quot; और &quot;curvature का area-weighted mean&quot; सभी ऐसी मात्राएँ हैं जिनके लिए हर face का area चाहिए, और इन्हें योग से नहीं बनाया जा सकता।</p>

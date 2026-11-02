@@ -4,6 +4,7 @@ dim: optics
 category: wave
 in: 
 out: table
+gpu: なし
 examples: [optics_imaging]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.gaussian_beam(waist_um=100.0, wavelength_um=1.064, distance_mm=0.0, n_medium=1.0)` (実装を直接呼ぶなら `import optics; optics.gaussian_beam(waist_um=100.0, wavelength_um=1.064, distance_mm=0.0, n_medium=1.0)`、台帳から引くなら `opsoptics.get("gaussian_beam")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

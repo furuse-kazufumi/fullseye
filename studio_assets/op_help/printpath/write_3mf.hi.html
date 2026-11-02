@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">write_3mf — PRINTPATH <code style="color:#22d3bf">format</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">text × mesh</code> → <code style="color:#22d3bf">text</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.write_3mf(path: &#x27;str&#x27;, mesh: &#x27;Any&#x27;) -&gt; &#x27;str&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import printpath; printpath.write_3mf(path: &#x27;str&#x27;, mesh: &#x27;Any&#x27;) -&gt; &#x27;str&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsprintpath.get(&quot;write_3mf&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>triangle mesh को 3MF (न्यूनतम संरचना: <code style="color:#22d3bf">[Content_Types].xml</code> / <code style="color:#22d3bf">_rels/.rels</code> / <code style="color:#22d3bf">3D/3dmodel.model</code>, इकाई mm) में लिखता है। path (<code style="color:#22d3bf">text</code>) लौटाता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>

@@ -4,6 +4,7 @@ dim: drive
 category: ball
 in: table
 out: table
+gpu: なし
 examples: [poc_video_physics_consistency]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.thrust_ode(p0, v0, thrust, bp: 'dict', t_end: 'float', dt: 'float' = 0.001) -> 'dict'` (実装を直接呼ぶなら `import ballistics; ballistics.thrust_ode(p0, v0, thrust, bp: 'dict', t_end: 'float', dt: 'float' = 0.001) -> 'dict'`、台帳から引くなら `opsdrive.get("thrust_ode")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

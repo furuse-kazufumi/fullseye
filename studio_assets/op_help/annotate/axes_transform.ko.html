@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">axes_transform — ANNOTATE <code style="color:#22d3bf">plot</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">axes</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.axes_transform(rect, xlim, ylim, invert_y=True, xscale=&#x27;linear&#x27;, yscale=&#x27;linear&#x27;)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import annotate; annotate.axes_transform(rect, xlim, ylim, invert_y=True, xscale=&#x27;linear&#x27;, yscale=&#x27;linear&#x27;)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsannotate.get(&quot;axes_transform&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>데이터 좌표 → 화소 좌표의 대응(<b>닫힌 식</b>)을 만듭니다.</p>
 <p><code style="color:#22d3bf">row는 아래 방향</code>이라는 영상의 사실과, <code style="color:#22d3bf">y는 위 방향</code>이라는 그래프 관습의어긋남을 <b>이 1곳에서만</b> 흡수한다. 그림 코드는 이 사전을 들고 다닌다.</p>

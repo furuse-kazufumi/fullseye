@@ -4,6 +4,7 @@ dim: 3d
 category: domain
 in: voxel
 out: voxel
+gpu: なし
 examples: [roi_domain_boundary]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -16,6 +17,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **呼び出し**: `import fullseye as fs; fs.ledger.vol_crop_domain(vol, domain=None, margin=0)` (実装を直接呼ぶなら `import volops; volops.vol_crop_domain(vol, domain=None, margin=0)`、台帳から引くなら `ops3d.get("vol_crop_domain")`)
 - **台帳経由の戻り値**: `fullseye.ledger.vol_crop_domain(...)` は**宣言 out 型 `voxel` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.vol_crop_domain.raw(...)`、または `volops.vol_crop_domain` を直接呼ぶ。
   - 本体の返り: `(part, offset)`
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

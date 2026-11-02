@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">moment_invariants — 3D <code style="color:#22d3bf">moment_invariant</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">descriptor</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.moment_invariants(points) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import moments3d; moments3d.moment_invariants(points) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;moment_invariants&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>对平移+旋转+缩放不变的形状特征向量(Sadjadi–Hall 风格 + 高阶径向分布)。</p>
 <p>★输入是 <b><code style="color:#22d3bf">(N,3)</code> 的点云</b>。想从 2-D <b>区域</b>(图像)得到同类量时, 请不要用本 op,而是使用 HALCON 风格的 <code style="color:#22d3bf">moments_region_2nd_invar</code> / <code style="color:#22d3bf">moments_region_central_invar</code> / <code style="color:#22d3bf">moments_region_3rd_invar</code>(Hu 矩)。名称相似容易混淆,传入 <code style="color:#22d3bf">(H,W)</code> 时会以 &quot;points must be a point cloud of shape (N,3)&quot; 失败(2026-09-09,编写 <code style="color:#22d3bf">poc_rotation_invariance_audit</code> 时实际踩到)。</p>

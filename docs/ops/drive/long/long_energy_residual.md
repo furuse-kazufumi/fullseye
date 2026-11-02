@@ -4,6 +4,7 @@ dim: drive
 category: long
 in: table
 out: any
+gpu: なし
 examples: [poc_driving_longitudinal]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `any`
 - **呼び出し**: `import fullseye as fs; fs.ledger.long_energy_residual(res: 'dict', v0: 'Optional[float]' = None) -> 'np.ndarray'` (実装を直接呼ぶなら `import drivelong; drivelong.long_energy_residual(res: 'dict', v0: 'Optional[float]' = None) -> 'np.ndarray'`、台帳から引くなら `opsdrive.get("long_energy_residual")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -4,6 +4,7 @@ dim: generative
 category: sem
 in: image2d
 out: image2d
+gpu: なし
 examples: [poc_sem_tem_same_particle, poc_sem_wafer_defect_edge_bias, poc_virtual_sem_kv_cd_bse]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.sem_image(height, material_map=None, *, materials=('SI',), substrate='SI', energy_kev: 'float' = 5.0, pixel_nm: 'float' = 2.0, beam_sigma_nm: 'float' = 1.0, electrons_per_pixel: 'int' = 30, detector: 'str' = 'inlens', layer_bottom_nm=0.0, buried=None, gain=None, seed: 'int' = 0, return_signals: 'bool' = False)` (実装を直接呼ぶなら `import sem; sem.sem_image(height, material_map=None, *, materials=('SI',), substrate='SI', energy_kev: 'float' = 5.0, pixel_nm: 'float' = 2.0, beam_sigma_nm: 'float' = 1.0, electrons_per_pixel: 'int' = 30, detector: 'str' = 'inlens', layer_bottom_nm=0.0, buried=None, gain=None, seed: 'int' = 0, return_signals: 'bool' = False)`、台帳から引くなら `opsgenerative.get("sem_image")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

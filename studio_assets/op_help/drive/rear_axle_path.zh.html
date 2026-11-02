@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">rear_axle_path — DRIVE <code style="color:#22d3bf">lateral</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rear_axle_path(front_path, wheelbase: &#x27;float&#x27;, *, rear0=None) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import drivelateral; drivelateral.rear_axle_path(front_path, wheelbase: &#x27;float&#x27;, *, rear0=None) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;rear_axle_path&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由前轴中心的折线轨迹，求无滑动牵引出的后轴中心轨迹(每个区段为精确的追踪曲线)。</p>
 <p>前端沿直线前进 Δ 期间,杆(后 → 前)与直线的夹角 θ 满足 tan(θ/2) = tan(θ₀/2) e^{−Δ/L}(严格)。在折线的每个顶点将其衔接。<code style="color:#22d3bf">rear0</code>: 后轴的初始位置(None 则为沿首段方向向后 L = 笔直)。要求 |前 − 后| = L。</p>

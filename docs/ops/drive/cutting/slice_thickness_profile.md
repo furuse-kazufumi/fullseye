@@ -4,6 +4,7 @@ dim: drive
 category: cutting
 in: rgb × scalar × scalar
 out: table
+gpu: なし
 examples: [poc_food_cutting_measure]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `rgb × scalar × scalar` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.slice_thickness_profile(image, px_per_mm: 'float', board_row: 'float', z_band=None, win: 'int' = 4) -> 'dict'` (実装を直接呼ぶなら `import cutting; cutting.slice_thickness_profile(image, px_per_mm: 'float', board_row: 'float', z_band=None, win: 'int' = 4) -> 'dict'`、台帳から引くなら `opsdrive.get("slice_thickness_profile")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

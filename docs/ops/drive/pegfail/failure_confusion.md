@@ -4,6 +4,7 @@ dim: drive
 category: pegfail
 in: any × any
 out: table
+gpu: なし
 examples: [poc_peg_failure_recovery]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `any × any` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.failure_confusion(true_cls, pred_cls, classes=('nominal', 'chamfer_sliding', 'missed_hole', 'wrong_hole', 'wedging', 'jamming', 'blocked_hole', 'seated', 'unknown')) -> 'dict'` (実装を直接呼ぶなら `import pegfail; pegfail.failure_confusion(true_cls, pred_cls, classes=('nominal', 'chamfer_sliding', 'missed_hole', 'wrong_hole', 'wedging', 'jamming', 'blocked_hole', 'seated', 'unknown')) -> 'dict'`、台帳から引くなら `opsdrive.get("failure_confusion")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

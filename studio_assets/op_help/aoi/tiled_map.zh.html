@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tiled_map — AOI <code style="color:#22d3bf">aggregate</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tiled_map(image, tile=16, stat=&#x27;mean&#x27;, overlap=0, drop_partial=False)</code>(要直接调用实现,<code style="color:#22d3bf">import aoi; aoi.tiled_map(image, tile=16, stat=&#x27;mean&#x27;, overlap=0, drop_partial=False)</code>;从台账取用则 <code style="color:#22d3bf">opsaoi.get(&quot;tiled_map&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>将图像划分为图块，把每个图块的统计量做成一张小地图。→ dict。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>

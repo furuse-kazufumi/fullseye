@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">annotate_invert — ANNOTATE <code style="color:#22d3bf">overlay</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d × mask</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_invert(img, mask, draw=&#x27;fill&#x27;, width=1.5, mode=&#x27;complement&#x27;, alpha=1.0, bits=128, min_contrast=1.5, on_invisible=&#x27;warn&#x27;)</code> (to call the implementation directly, <code style="color:#22d3bf">import annotate; annotate.annotate_invert(img, mask, draw=&#x27;fill&#x27;, width=1.5, mode=&#x27;complement&#x27;, alpha=1.0, bits=128, min_contrast=1.5, on_invisible=&#x27;warn&#x27;)</code>; from the registry, <code style="color:#22d3bf">opsannotate.get(&quot;annotate_invert&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Fills / outlines a region in <b>inverted color</b>.</p>
 <p>The classic trick for when &quot;you do not know whether the ground is light or dark, so you want to draw in a colour visible on either&quot;. It spares you choosing a fill colour, but in exchange it <b>vanishes in mid-tones</b>, so the measurement of <code style="color:#22d3bf">annotate_invert_visibility</code> is always run internally.</p>

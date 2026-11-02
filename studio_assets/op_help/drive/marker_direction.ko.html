@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">marker_direction — DRIVE <code style="color:#22d3bf">balltrack</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">signal</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.marker_direction(marker_uv, center_uv, radius_px, K=None) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import balltrack; balltrack.marker_direction(marker_uv, center_uv, radius_px, K=None) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;marker_direction&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>영상 속 마커의 위치 (col, row) → 구면 위의 방향(카메라 좌표계의 단위 벡터, 앞 반구: x 오른쪽, y 위, z 앞쪽(관찰자 방향)).</p>
 <p><code style="color:#22d3bf">K</code> (3, 3) 를 넘기면 <b>투시로 엄밀하게</b> 푼다: 구의 각반경 α = atan(반경 px / f) 에서 중심까지의 거리(반경 1 로 하여 1/sin α)와중심의 시선을 구하고, 무늬 화소의 시선을 구면과 교차시켜 교점의 법선을 반환한다. ★K 가 없는 형태는 원판을 정사영으로 보고, 중심을 지나는시선을 z 로 하는 계로 답한다 —— 구가 광축에서 벗어나 있으면 계 전체가 돌고, 구가 움직이는 영상에서는 시선의 변화가 그대로 겉보기 회전이 된다(0.6 m 앞을 6 m/s 로 가로지르는 구는 1 ms 에 시선이 0.01 rad 돌아, 1 프레임의 회전 0.15 rad 에 7 % 가 덧붙었다. 2026-09-30, PoC ㉔ 의 근접 카메라). K 가 없으면 종래대로.</p>

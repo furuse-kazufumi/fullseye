@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">patchdist_fit — SPC <code style="color:#22d3bf">anomaly_patch</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">video</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.patchdist_fit(stack, patch=8, stride=4, scales=(1.0, 2.0, 4.0), groups=(&#x27;gradient&#x27;, &#x27;gabor&#x27;, &#x27;lbp&#x27;), n_orient=4, shrinkage=&#x27;auto&#x27;, n_dims=None, seed=0, ridge=1e-06, pool=&#x27;position&#x27;)</code>(要直接呼叫實作,<code style="color:#22d3bf">import anomaly_patch; anomaly_patch.patchdist_fit(stack, patch=8, stride=4, scales=(1.0, 2.0, 4.0), groups=(&#x27;gradient&#x27;, &#x27;gabor&#x27;, &#x27;lbp&#x27;), n_orient=4, shrinkage=&#x27;auto&#x27;, n_dims=None, seed=0, ridge=1e-06, pool=&#x27;position&#x27;)</code>;從台帳取用則 <code style="color:#22d3bf">opsspc.get(&quot;patchdist_fit&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>從良品影像學習每個網格位置上圖塊特徵的常態分佈(宣告收縮估計,共變異數奇異則拒絕)(<code style="color:#22d3bf">table</code>)。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>

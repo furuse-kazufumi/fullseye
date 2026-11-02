@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">farthest_point_sampling — 3D <code style="color:#22d3bf">geodesic</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">indices</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.farthest_point_sampling(points: numpy.ndarray, n: int, k: int = 8, start: int = 0) -&gt; numpy.ndarray</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import geodesic3d; geodesic3d.farthest_point_sampling(points: numpy.ndarray, n: int, k: int = 8, start: int = 0) -&gt; numpy.ndarray</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;farthest_point_sampling&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>측지 거리에서의 최원점 샘플링(균등 솎기). → 선택 인덱스 열 (n,) int.</p>
 <p><code style="color:#22d3bf">start</code> 를 첫 대표점으로 하고, &quot;이미 고른 점 집합까지의 측지 거리가 최대인 점&quot;을 1 개씩 추가하는탐욕법(FPS). 거리는 <code style="color:#22d3bf">knn_graph(points, k)</code> 의 무향 kNN 그래프 위의 Dijkstra 로 재며, 기선택집합까지의 거리는 각 대표점의 단일 시점 거리의 요소별 최소 <code style="color:#22d3bf">mind</code> 로 유지하고, 대표점을 1 개 더할 때마다 <code style="color:#22d3bf">mind = min(mind, d_new)</code> 로 갱신한다. 대표점 1 개당 Dijkstra 1 회이므로 계산량은 n 회분의단일 시점 최단 경로. 난수는 쓰지 않으며 결정적.</p>

@@ -4,6 +4,7 @@ dim: gfx2d
 category: post
 in: 
 out: lut
+gpu: なし
 examples: [genspark_external_review, gfx2d_scene]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `lut`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.color_lut(size=17, gain=(1.0, 1.0, 1.0), lift=(0.0, 0.0, 0.0), gamma=(1.0, 1.0, 1.0), saturation=1.0)` (実装を直接呼ぶなら `import gfx2d; gfx2d.color_lut(size=17, gain=(1.0, 1.0, 1.0), lift=(0.0, 0.0, 0.0), gamma=(1.0, 1.0, 1.0), saturation=1.0)`、台帳から引くなら `opsgfx2d.get("color_lut")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

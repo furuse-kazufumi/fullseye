@@ -4,6 +4,7 @@ dim: 3d
 category: shape_descriptor
 in: points
 out: descriptor
+gpu: なし
 examples: [denoise_evolution, shape_desc_pose, shape_retrieval]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `points` → `descriptor`
 - **呼び出し**: `import fullseye as fs; fs.ledger.describe(points, bins: 'int' = 64, seed: 'int' = 0) -> 'np.ndarray'` (実装を直接呼ぶなら `import descriptors3d; descriptors3d.describe(points, bins: 'int' = 64, seed: 'int' = 0) -> 'np.ndarray'`、台帳から引くなら `ops3d.get("describe")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

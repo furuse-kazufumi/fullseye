@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">piv_streamlines — PIV <code style="color:#22d3bf">visualise</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">flow2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_streamlines(flow, seeds=None, separation=None, step=0.25, max_length=None, min_speed=0.001, test_ratio=0.5)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import pivops; pivops.piv_streamlines(flow, seeds=None, separation=None, step=0.25, max_length=None, min_speed=0.001, test_ratio=0.5)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opspiv.get(&quot;piv_streamlines&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>유선을 RK4로 추적한다(MATLAB의 <code style="color:#22d3bf">stream2</code> / <code style="color:#22d3bf">streamslice</code>에 해당).</p>
 <p><code style="color:#22d3bf">seeds</code>를 생략하면 <b>Jobard–Lefer(1997)의 등간격 배치</b>로 시드를 자동으로 둔다. 유선끼리 <code style="color:#22d3bf">separation</code> 정도의 간격으로 늘어서고, <code style="color:#22d3bf">test_ratio * separation</code> 보다 가까워진 곳에서 잘라낸다. 화살표 그림은 촘촘하게 하면 뭉개지고, 시드를 손으로 두면 공백이남지만, 이 배치는 <b>공백도 겹침도 만들지 않는다</b>(아래 2가지 성질을 게이트로 삼고 있다).</p>

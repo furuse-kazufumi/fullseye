@@ -4,6 +4,7 @@ dim: optics
 category: grating_interf
 in: images × images
 out: table
+gpu: なし
 examples: [grating_interferometry, poc_grating_interferometry]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `images × images` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.grating_three_image_retrieve(sample_stack, reference_stack=None, steps_per_period_sample=None, steps_per_period_reference=None, min_visibility=0.02, distance_mm=None, analyzer_period_um=None, reference_exposure=1.0)` (実装を直接呼ぶなら `import gratinginterf; gratinginterf.grating_three_image_retrieve(sample_stack, reference_stack=None, steps_per_period_sample=None, steps_per_period_reference=None, min_visibility=0.02, distance_mm=None, analyzer_period_um=None, reference_exposure=1.0)`、台帳から引くなら `opsoptics.get("grating_three_image_retrieve")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">moire_phase_to_shift — OPTICS <code style="color:#22d3bf">moire_align</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.moire_phase_to_shift(phase_rad=0.5, phase_ref_rad=0.0, p_mask_um=2.0, p_wafer_um=2.04, moving=&#x27;wafer&#x27;, coarse_shift_nm=None)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import moirealign; moirealign.moire_phase_to_shift(phase_rad=0.5, phase_ref_rad=0.0, p_mask_um=2.0, p_wafer_um=2.04, moving=&#x27;wafer&#x27;, coarse_shift_nm=None)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;moire_phase_to_shift&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>縞の位相の変化 → ずれ δ(nm)。δ = Δφ / (dφ/dδ)、dφ/dδ = ±2π / p_動いた格子。</p>
 <p>ずれは動いた格子のピッチ 1 つ分で折り返す(<code style="color:#22d3bf">ambiguity_nm</code>)。粗いが絶対的なずれ(例: 直接の像の相互相関) coarse_shift_nm を渡すと <code style="color:#22d3bf">fringe.absolute_phase</code> で次数を決め、折り返さない値を返す(粗い値の誤差が ambiguity の半分未満であること)。返り値の <code style="color:#22d3bf">fringe_shift_um</code> は縞が実際に動いた量(= M × δ、符号つき)。</p>

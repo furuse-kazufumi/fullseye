@@ -4,6 +4,7 @@ dim: 3d
 category: pose_estimation
 in: points × keypoints
 out: measurement
+gpu: なし
 examples: [pnp_pose_outliers, pose_estimation]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `points × keypoints` → `measurement`
 - **呼び出し**: `import fullseye as fs; fs.ledger.reprojection_error(points_3d, points_2d, K, R, t)` (実装を直接呼ぶなら `import pnp3d; pnp3d.reprojection_error(points_3d, points_2d, K, R, t)`、台帳から引くなら `ops3d.get("reprojection_error")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

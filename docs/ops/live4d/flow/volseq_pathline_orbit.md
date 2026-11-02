@@ -4,6 +4,7 @@ dim: live4d
 category: flow
 in: volseq
 out: rgbvideo
+gpu: なし
 examples: [poc_live4d]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `volseq` → `rgbvideo`
 - **呼び出し**: `import fullseye as fs; fs.ledger.volseq_pathline_orbit(volseq, n_frames: 'int' = 36, n_seeds: 'int' = 200, pitch: 'float' = 25.0, size: 'int' = 256, yaw_start: 'float' = 0.0, yaw_span: 'float' = 360.0, static_alpha: 'float' = 0.03, win: 'int' = 3, pyr_levels: 'int' = 3, iters: 'int' = 5, reg: 'float' = 0.001, seed: 'int' = 0, trail_sigma: 'float' = 0.7, min_speed: 'float' = 0.1, min_intensity: 'float' = 0.3) -> 'np.ndarray'` (実装を直接呼ぶなら `import live4d; live4d.volseq_pathline_orbit(volseq, n_frames: 'int' = 36, n_seeds: 'int' = 200, pitch: 'float' = 25.0, size: 'int' = 256, yaw_start: 'float' = 0.0, yaw_span: 'float' = 360.0, static_alpha: 'float' = 0.03, win: 'int' = 3, pyr_levels: 'int' = 3, iters: 'int' = 5, reg: 'float' = 0.001, seed: 'int' = 0, trail_sigma: 'float' = 0.7, min_speed: 'float' = 0.1, min_intensity: 'float' = 0.3) -> 'np.ndarray'`、台帳から引くなら `opslive4d.get("volseq_pathline_orbit")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

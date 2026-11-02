@@ -4,6 +4,7 @@ dim: drive
 category: pegtactile
 in: 
 out: table
+gpu: なし
 examples: [gallery_drive_soil_tactile, poc_knife_tactile_toughness, poc_peg_insertion_tactile, poc_tactile_dipole_torque]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.pad_params(R: 'float' = 0.02, E: 'float' = 3000000.0, nu: 'float' = 0.48, mu: 'float' = 1.0, grip: 'float' = 4.0, w: 'float' = 0.005, grasp_below_top: 'float' = 0.008, fov: 'float' = 0.016, n: 'int' = 256, marker_pitch: 'float' = 0.0005, marker_r_px: 'float' = 2.5, dark: 'float' = 0.85, peg_mass: 'float' = 0.04, com_below_top: 'float' = 0.01425) -> 'dict'` (実装を直接呼ぶなら `import pegtactile; pegtactile.pad_params(R: 'float' = 0.02, E: 'float' = 3000000.0, nu: 'float' = 0.48, mu: 'float' = 1.0, grip: 'float' = 4.0, w: 'float' = 0.005, grasp_below_top: 'float' = 0.008, fov: 'float' = 0.016, n: 'int' = 256, marker_pitch: 'float' = 0.0005, marker_r_px: 'float' = 2.5, dark: 'float' = 0.85, peg_mass: 'float' = 0.04, com_below_top: 'float' = 0.01425) -> 'dict'`、台帳から引くなら `opsdrive.get("pad_params")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">aabb — 3D <code style="color:#22d3bf">bounds</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">primitive</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.aabb(points)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import pcseg; pcseg.aabb(points)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;aabb&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>axis-aligned bounding box। <code style="color:#22d3bf">(min (3,), max (3,))</code> लौटाता है।</p>
 <p>point cloud के हर axis का न्यूनतम और अधिकतम मान जैसा है वैसा लौटाता है (<code style="color:#22d3bf">P.min(0)</code>, <code style="color:#22d3bf">P.max(0)</code>)। return value 2 (3,) float64 arrays हैं, क्रम से <code style="color:#22d3bf">(xmin, ymin, zmin)</code> और <code style="color:#22d3bf">(xmax, ymax, zmax)</code> (axes का क्रम input के columns का क्रम है)। box का आकार <code style="color:#22d3bf">max - min</code>, center <code style="color:#22d3bf">(min + max) / 2</code>। unit coordinates की unit है।</p>

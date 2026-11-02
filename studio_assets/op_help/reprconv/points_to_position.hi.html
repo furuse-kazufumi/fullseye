@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">points_to_position — REPRCONV <code style="color:#22d3bf">keypoint</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">position</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.points_to_position(points)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import reprconv; reprconv.points_to_position(points)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsreprconv.get(&quot;points_to_position&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>point set <code style="color:#22d3bf">(N,3)</code> → centroid <code style="color:#22d3bf">(z, y, x)</code>। <b>उलटा नहीं जा सकता</b> (distribution फेंक दिया जाता है)।</p>
 <p>छोड़ी गई मात्रा मापी जा सकती है: centroid के चारों ओर की RMS distance ठीक &quot;1 point में समेटने पर खोया फैलाव&quot; है, और <code style="color:#22d3bf">selftest</code> इसे अंक में देता है। केवल N = 1 होने पर <code style="color:#22d3bf">position_to_points</code> के साथ round trip bit-दर-bit मेल खाता है।</p>

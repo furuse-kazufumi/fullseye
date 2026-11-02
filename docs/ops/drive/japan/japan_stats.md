@@ -4,6 +4,7 @@ dim: drive
 category: japan
 in: table
 out: table
+gpu: なし
 examples: [poc_driving_japan_town]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.japan_stats(graph: 'dict') -> 'Dict[str, object]'` (実装を直接呼ぶなら `import drivejapan; drivejapan.japan_stats(graph: 'dict') -> 'Dict[str, object]'`、台帳から引くなら `opsdrive.get("japan_stats")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

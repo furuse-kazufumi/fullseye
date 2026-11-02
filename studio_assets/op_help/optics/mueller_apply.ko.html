@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">mueller_apply — OPTICS <code style="color:#22d3bf">polarization</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">matrix × stokes</code> → <code style="color:#22d3bf">stokes</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mueller_apply(mueller, stokes)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import optics; optics.mueller_apply(mueller, stokes)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsoptics.get(&quot;mueller_apply&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>스토크스 벡터를 뮐러 행렬에 통과시킵니다: <code style="color:#22d3bf">S&#x27; = M @ S</code>.</p>
 <p>*mueller*는 <code style="color:#22d3bf">(4, 4)</code> 실수 행렬( <code style="color:#22d3bf">mueller_element</code>로 만들거나, 여러 개를 곱한다)이고 *stokes*는 4성분 Stokes 벡터 <code style="color:#22d3bf">[S0, S1, S2, S3]</code>이다.</p>

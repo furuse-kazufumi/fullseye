@@ -4,6 +4,7 @@ dim: 3d
 category: terrain
 in: mesh
 out: signal
+gpu: なし
 examples: [itokawa_regolith_hero]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `mesh` → `signal`
 - **呼び出し**: `import fullseye as fs; fs.ledger.mesh_edge_lengths(V, F, *, per: 'str' = 'vertex') -> 'np.ndarray'` (実装を直接呼ぶなら `import render3d; render3d.mesh_edge_lengths(V, F, *, per: 'str' = 'vertex') -> 'np.ndarray'`、台帳から引くなら `ops3d.get("mesh_edge_lengths")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

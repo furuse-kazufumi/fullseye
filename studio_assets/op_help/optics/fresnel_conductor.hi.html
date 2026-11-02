@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">fresnel_conductor — OPTICS <code style="color:#22d3bf">interface</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fresnel_conductor(cos_i, n, k, polarization=&#x27;unpolarized&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import glassmirror; glassmirror.fresnel_conductor(cos_i, n, k, polarization=&#x27;unpolarized&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;fresnel_conductor&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>metal (complex refractive index n + ik) interface की reflectance। incident तरफ़ vacuum/air माना गया है।</p>
 <p>cos_i: angle of incidence का cos। n / k: real भाग / extinction coefficient (array अनुमत, cos_i के साथ broadcast)।</p>

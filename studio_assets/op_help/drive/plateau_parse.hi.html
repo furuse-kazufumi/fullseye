@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">plateau_parse — DRIVE <code style="color:#22d3bf">japan</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.plateau_parse(source: &#x27;str | Path | bytes&#x27;, *, origin: &#x27;tuple[float, float] | None&#x27; = None, max_buildings: &#x27;int | None&#x27; = None) -&gt; &#x27;dict[str, Any]&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import driveplateau; driveplateau.plateau_parse(source: &#x27;str | Path | bytes&#x27;, *, origin: &#x27;tuple[float, float] | None&#x27; = None, max_buildings: &#x27;int | None&#x27; = None) -&gt; &#x27;dict[str, Any]&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;plateau_parse&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>PLATEAU CityGML से इमारतों के footprint polygons, ऊँचाई और तल की elevation stream रूप में पढ़ता है।</p>
 <p><code style="color:#22d3bf">iterparse</code> से <code style="color:#22d3bf">Building</code> (स्थानीय नाम) की प्रत्येक end घटना पर प्रसंस्करण करता है, और प्रसंस्करण के बाद <code style="color:#22d3bf">elem.clear()</code> से मेमोरी मुक्त करता है (प्रति फ़ाइल कई सौ MB होने पर भी चलने वाला डिज़ाइन)।</p>

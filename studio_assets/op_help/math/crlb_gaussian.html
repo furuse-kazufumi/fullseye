@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">crlb_gaussian — MATH <code style="color:#22d3bf">estimation</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.crlb_gaussian(x, theta, sigma: &#x27;float&#x27; = 1.0, *, model: &#x27;str&#x27; = &#x27;gaussian_peak&#x27;) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import mathestimation; mathestimation.crlb_gaussian(x, theta, sigma: &#x27;float&#x27; = 1.0, *, model: &#x27;str&#x27; = &#x27;gaussian_peak&#x27;) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsmath.get(&quot;crlb_gaussian&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>白色ガウス雑音(標準偏差 sigma)の下での Cramér–Rao 下界。</p>
 <p>y_i = f(x_i; θ) + ε_i、ε ~ N(0, σ²) のとき Fisher 情報行列 I = JᵀJ / σ²(J = ∂f/∂θ、中心差分)、<b>どんな不偏推定量の共分散も I⁻¹ 以上</b>。<code style="color:#22d3bf">std</code> は各パラメータの標準偏差の下限 √diag(I⁻¹)。<code style="color:#22d3bf">model</code>: <code style="color:#22d3bf">constant</code>(c)/ <code style="color:#22d3bf">line</code>(a + bx)/ <code style="color:#22d3bf">gaussian_peak</code>(A, μ, s)/ <code style="color:#22d3bf">exp_decay</code>(A, k)/ <code style="color:#22d3bf">sinusoid</code>(A, f, φ)。</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">rear_axle_path — DRIVE <code style="color:#22d3bf">lateral</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rear_axle_path(front_path, wheelbase: &#x27;float&#x27;, *, rear0=None) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import drivelateral; drivelateral.rear_axle_path(front_path, wheelbase: &#x27;float&#x27;, *, rear0=None) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;rear_axle_path&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Trajectory of the rear-axle center dragged without slip by a polyline trajectory of the front-axle center (an exact pursuit curve per segment).</p>
 <p>While the front advances Δ along a straight line, the angle θ between the bar (rear → front) and the line obeys tan(θ/2) = tan(θ₀/2) e^{−Δ/L} (exact). This is chained at each vertex of the polyline. <code style="color:#22d3bf">rear0</code>: initial position of the rear axle (None means L behind along the direction of the first segment = straight). Requires |front − rear| = L.</p>

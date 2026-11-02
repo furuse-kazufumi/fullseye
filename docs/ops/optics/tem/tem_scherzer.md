@@ -4,6 +4,7 @@ dim: optics
 category: tem
 in: 
 out: table
+gpu: なし
 examples: [poc_tem_ctf_thon_rings]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.tem_scherzer(kv=300.0, cs_mm=2.7)` (実装を直接呼ぶなら `import temsim; temsim.tem_scherzer(kv=300.0, cs_mm=2.7)`、台帳から引くなら `opsoptics.get("tem_scherzer")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

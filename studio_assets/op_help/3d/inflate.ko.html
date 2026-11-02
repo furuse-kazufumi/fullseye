@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">inflate — 3D <code style="color:#22d3bf">occupancy</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">voxel</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.inflate(occupancy, radius, voxel_size=1.0)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import occupancy; occupancy.inflate(occupancy, radius, voxel_size=1.0)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;inflate&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>장애물을 <code style="color:#22d3bf">radius</code>(world 단위) 부풀린 점유 격자 bool(= ESDF&lt;=radius 를 점유로).</p>
 <p>planner 의 안전 마진: 점 로봇이 팽창 격자 위에서 충돌을 회피하면, 반경 radius 의 실제로봇이 장애물로부터 이격을 유지한다(configuration-space obstacle). ESDF 는 바깥에서 양의최근접 점유 거리이므로, <code style="color:#22d3bf">ESDF&lt;=radius</code> 는 &quot;점유(음) ∪ 장애물로부터 radius 이내의 자유&quot;를포착한다. radius 를 늘리면 단조적으로 점유가 늘어난다(하류 테스트의 GT).</p>

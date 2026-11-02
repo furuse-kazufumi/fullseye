@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">matrix_to_descriptor — REPRCONV <code style="color:#22d3bf">descriptor</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">descriptor</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.matrix_to_descriptor(matrix)</code>(要直接调用实现,<code style="color:#22d3bf">import reprconv; reprconv.matrix_to_descriptor(matrix)</code>;从台账取用则 <code style="color:#22d3bf">opsreprconv.get(&quot;matrix_to_descriptor&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p><code style="color:#22d3bf">matrix</code> → 描述子。<code style="color:#22d3bf">descriptor_to_matrix</code> 的逆。</p>
 <p>1 行的矩阵 (1, n) 还原为 (n,)(因为那就是原来的 1-D 描述子)。2 行以上原样保留。<b>这一不对称是有意的</b>,没有它的话, <code style="color:#22d3bf">descriptor -&gt; matrix -&gt; descriptor</code> 的往返会把形状从 (n,) 默默变成(1,n) = 类型谎言本身。</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">ellipse_pressure_shifted — DRIVE <code style="color:#22d3bf">tactorque</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">matrix × matrix × scalar × scalar × scalar</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ellipse_pressure_shifted(X, Y, a: &#x27;float&#x27;, b: &#x27;float&#x27;, P: &#x27;float&#x27;, d=(0.0, 0.0)) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import tactorque; tactorque.ellipse_pressure_shifted(X, Y, a: &#x27;float&#x27;, b: &#x27;float&#x27;, P: &#x27;float&#x27;, d=(0.0, 0.0)) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;ellipse_pressure_shifted&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>अर्ध-अक्ष a (x) और b (y) [m] वाला elliptical Hertz pressure p0 √(1 − x′²/a² − y′²/b²) [Pa], P = 2πab p0/3 (Johnson 1985 समीकरण 4.24), केंद्र d पर खिसकाया हुआ। b ≫ a पर आकार cylindrical (ridge या wedge जैसे) indentation के पास आता है —— shape-invariance का 3rd gate। <b>Raises</b> ValueError: a, b, P ≤ 0, X और Y के shape अलग।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

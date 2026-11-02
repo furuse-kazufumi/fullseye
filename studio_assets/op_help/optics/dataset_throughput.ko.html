@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">dataset_throughput — OPTICS <code style="color:#22d3bf">scene</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dataset_throughput(dataset) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import optscene; optscene.dataset_throughput(dataset) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsoptics.get(&quot;dataset_throughput&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p><code style="color:#22d3bf">inspection_dataset</code> 의 결과 → 생성 처리량의 실측 요약.</p>
 <p>대량 생성이 통상 운용이므로, &quot;이 설정으로 1만 장에 몇 시간 걸리는가&quot;를 추정할 수 있는 형태로반환한다. 반환값 dict: <code style="color:#22d3bf">images</code> / <code style="color:#22d3bf">seconds_total</code> / <code style="color:#22d3bf">seconds_per_image</code> / <code style="color:#22d3bf">images_per_hour</code> / <code style="color:#22d3bf">pixels_per_second</code> / <code style="color:#22d3bf">render_fraction</code>(광선을 쏘는시간의 비율. 나머지는 참값 3장 몫).</p>

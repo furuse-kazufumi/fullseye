@@ -4,6 +4,7 @@ dim: shapestat
 category: synth
 in: points
 out: points
+gpu: なし
 examples: [shapestat_landmark_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `points` → `points`
 - **呼び出し**: `import fullseye as fs; fs.ledger.shape_perturb(shape, amplitude: 'float' = 0.05, mode: 'str' = 'bulge', center=(1.0, 0.0, 0.0), sigma: 'float' = 0.4, seed: 'int' = 0)` (実装を直接呼ぶなら `import shapestats; shapestats.shape_perturb(shape, amplitude: 'float' = 0.05, mode: 'str' = 'bulge', center=(1.0, 0.0, 0.0), sigma: 'float' = 0.4, seed: 'int' = 0)`、台帳から引くなら `opsshapestat.get("shape_perturb")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

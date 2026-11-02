@@ -4,6 +4,7 @@ dim: optics
 category: scene
 in: table × points × points
 out: table
+gpu: なし
 examples: [anim3d_lens_aberrations, poc_chromatic_confocal, poc_lens_file_roundtrip, poc_lens_solves_afocal, poc_noncoaxial_optics, poc_pocket_interreflection, poc_telecentric_metrology, studio_raytrace_scene]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table × points × points` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.trace_rays(scene, origins, directions) -> 'dict'` (実装を直接呼ぶなら `import optscene; optscene.trace_rays(scene, origins, directions) -> 'dict'`、台帳から引くなら `opsoptics.get("trace_rays")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

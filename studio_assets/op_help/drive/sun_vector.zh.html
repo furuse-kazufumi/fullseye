@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">sun_vector — DRIVE <code style="color:#22d3bf">env</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">scalar × scalar</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sun_vector(elevation: &#x27;float&#x27;, azimuth: &#x27;float&#x27;, north_yaw: &#x27;float&#x27; = 90.0) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import driveenv; driveenv.sun_vector(elevation: &#x27;float&#x27;, azimuth: &#x27;float&#x27;, north_yaw: &#x27;float&#x27; = 90.0) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;sun_vector&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>太阳方向的单位向量(世界坐标系，由地面指向太阳)。</p>
 <p><code style="color:#22d3bf">north_yaw</code> = 从世界 +x 逆时针测得的北方方向 [度] (默认 90° = +y 为北,+x 为东)。方位角从北顺时针计。</p>

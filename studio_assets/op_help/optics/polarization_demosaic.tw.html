@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">polarization_demosaic — OPTICS <code style="color:#22d3bf">polarization</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">polsweep</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.polarization_demosaic(raw, layout=((90.0, 45.0), (135.0, 0.0)))</code>(要直接呼叫實作,<code style="color:#22d3bf">import optics; optics.polarization_demosaic(raw, layout=((90.0, 45.0), (135.0, 0.0)))</code>;從台帳取用則 <code style="color:#22d3bf">opsoptics.get(&quot;polarization_demosaic&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>將偏振感測器的馬賽克拆成四張檢偏器影像(0/45/90/135 度)。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>

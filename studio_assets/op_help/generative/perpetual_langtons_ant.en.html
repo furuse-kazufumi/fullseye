@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">perpetual_langtons_ant — GENERATIVE <code style="color:#22d3bf">perpetual</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">rgb</code> (an op determined by its arguments alone — it takes no image or data input)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.perpetual_langtons_ant(steps: &#x27;int&#x27; = 12000, size: &#x27;int&#x27; = 301) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import perpetual; perpetual.perpetual_langtons_ant(steps: &#x27;int&#x27; = 12000, size: &#x27;int&#x27; = 301) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsgenerative.get(&quot;perpetual_langtons_ant&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Langton&#x27;s ant — with just 2 rules, after 10,000 steps it keeps building a &quot;highway&quot;.</p>
 <p>Invariant: once on the highway, it <b>repeats the same diagonal displacement (magnitude 2 both vertically and horizontally) with period 104</b>. The sign of the direction depends on the rotation convention -- on this implementation&#x27;s grid it is (row, col) = (+2, −2).</p>

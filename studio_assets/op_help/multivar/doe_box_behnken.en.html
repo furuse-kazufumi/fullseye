@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">doe_box_behnken — MULTIVAR <code style="color:#22d3bf">plan</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">design</code> (an op determined by its arguments alone — it takes no image or data input)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.doe_box_behnken(factors=3, center=3) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import doe; doe.doe_box_behnken(factors=3, center=3) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsmultivar.get(&quot;doe_box_behnken&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Box-Behnken design (Box &amp; Behnken 1960) for 3, 4 or 5 factors -&gt; <code style="color:#22d3bf">design</code>.</p>
 <p>Three levels per factor and no run at a corner of the cube: for every pair of factors, a 2^2 factorial (±1, ±1) with all other factors at 0, plus <code style="color:#22d3bf">center</code> centre runs — 12, 24 and 40 edge runs for k = 3, 4, 5 (the pair construction of Box &amp; Behnken&#x27;s table for these k). Useful when the extreme corners are unsafe or cannot be set. k = 4 is rotatable. Larger k use incomplete-block constructions that are not reproduced here and are refused.</p>

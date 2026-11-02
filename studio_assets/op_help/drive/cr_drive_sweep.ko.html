@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">cr_drive_sweep — DRIVE <code style="color:#22d3bf">commonroad</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cr_drive_sweep(scene, pp_index: &#x27;int&#x27; = 0, *, grid=None, margin: &#x27;float&#x27; = 0.15, **kwargs) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivecommonroad; drivecommonroad.cr_drive_sweep(scene, pp_index: &#x27;int&#x27; = 0, *, grid=None, margin: &#x27;float&#x27; = 0.15, **kwargs) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;cr_drive_sweep&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>규칙 기반 gap acceptance: 운전자 모수의 격자를 온건한 순서대로 시도하고 <b>처음으로 모든 게이트를 통과한 주행</b>을 반환합니다.</p>
 <p>게이트 = 목표 도달 ∧ <code style="color:#22d3bf">cr_feasible</code> ∧ <code style="color:#22d3bf">cr_collision</code> 에서 장애물 없음(<code style="color:#22d3bf">margin</code> 만큼 부풀린 판정)∧ 도로 경계 없음. <code style="color:#22d3bf">grid</code> 는 <code style="color:#22d3bf">{&quot;a_lat&quot;: (...), &quot;lookahead&quot;: (...), &quot;k_v&quot;: (...), &quot;v_cruise&quot;: (...)}</code> 형식(기본값 = a_lat 2.5→10, lookahead 5/8, k_v 0.6/1.0, v_cruise None). 다른 kwargs 는 <code style="color:#22d3bf">cr_drive</code> 로.</p>

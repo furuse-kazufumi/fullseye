@@ -4,6 +4,7 @@ dim: optics
 category: omni360
 in: 
 out: images
+gpu: なし
 examples: [omni360_roundtrip]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `images`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.ods_render(scene_fn, ipd_m, h, w)` (実装を直接呼ぶなら `import omni360; omni360.ods_render(scene_fn, ipd_m, h, w)`、台帳から引くなら `opsoptics.get("ods_render")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">shape_reconstruct — SHAPESTAT <code style="color:#22d3bf">model</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">shapemodel × signal</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.shape_reconstruct(model, scores)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import shapestats; shapestats.shape_reconstruct(model, scores)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsshapestat.get(&quot;shape_reconstruct&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>점수로부터 형상을 복원한다. → <code style="color:#22d3bf">(N, 3)</code>.</p>
 <p>준 점수가 개수보다 적으면 나머지는 0(= 평균 그대로)으로 취급한다. 많으면 <code style="color:#22d3bf">ValueError</code> —— 말없이 잘라 버리면 &quot;넣었을 모드가 효과가 없다&quot; 라는 추적하기 어려운 형태가 된다.</p>

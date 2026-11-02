@@ -4,6 +4,7 @@ dim: drive
 category: doseunif
 in: any × scalar × scalar
 out: table
+gpu: なし
 examples: [poc_dose_uniformity_from_grinding]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `any × scalar × scalar` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.dose_cv_from_sizes(sizes, dose_mg: 'float', density: 'float', estimator: 'str | None' = None, frame=None, ci: 'float' = 0.9, n_boot: 'int' = 400, seed: 'int' = 0) -> 'dict'` (実装を直接呼ぶなら `import doseunif; doseunif.dose_cv_from_sizes(sizes, dose_mg: 'float', density: 'float', estimator: 'str | None' = None, frame=None, ci: 'float' = 0.9, n_boot: 'int' = 400, seed: 'int' = 0) -> 'dict'`、台帳から引くなら `opsdrive.get("dose_cv_from_sizes")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -4,6 +4,7 @@ dim: math
 category: dynsys
 in: points
 out: measurement
+gpu: なし
 examples: [poc_what_a_picture_cannot_check]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `points` → `measurement`
 - **呼び出し**: `import fullseye as fs; fs.ledger.dynsys_correlation_dimension(points, n_radii=24, r_lo=None, r_hi=None, max_points=4000, seed=0)` (実装を直接呼ぶなら `import mathops; mathops.dynsys_correlation_dimension(points, n_radii=24, r_lo=None, r_hi=None, max_points=4000, seed=0)`、台帳から引くなら `opsmath.get("dynsys_correlation_dimension")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

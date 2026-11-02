@@ -4,6 +4,7 @@ dim: drive
 category: tacslip
 in: scalar × table × scalar × scalar × scalar
 out: table
+gpu: なし
 examples: [poc_tacsim_marker_shear, poc_tactile_dipole_torque]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `scalar × table × scalar × scalar × scalar` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.mindlin_partial_slip(Q: 'float', hz: 'dict', mu: 'float', G: 'float', nu: 'float') -> 'dict'` (実装を直接呼ぶなら `import tacslip; tacslip.mindlin_partial_slip(Q: 'float', hz: 'dict', mu: 'float', G: 'float', nu: 'float') -> 'dict'`、台帳から引くなら `opsdrive.get("mindlin_partial_slip")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

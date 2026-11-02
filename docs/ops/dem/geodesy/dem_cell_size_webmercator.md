@@ -4,6 +4,7 @@ dim: dem
 category: geodesy
 in: 
 out: measurement
+gpu: なし
 examples: [dem_geodesy_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `measurement`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.dem_cell_size_webmercator(zoom, lat_deg)` (実装を直接呼ぶなら `import demops; demops.dem_cell_size_webmercator(zoom, lat_deg)`、台帳から引くなら `opsdem.get("dem_cell_size_webmercator")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

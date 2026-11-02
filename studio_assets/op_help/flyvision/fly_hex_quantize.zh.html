@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">fly_hex_quantize — FLYVISION <code style="color:#22d3bf">sample</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fly_hex_quantize(signal, bits=3, mode=&#x27;log&#x27;, contrast=0.2)</code>(要直接调用实现,<code style="color:#22d3bf">import flyvision; flyvision.fly_hex_quantize(signal, bits=3, mode=&#x27;log&#x27;, contrast=0.2)</code>;从台账取用则 <code style="color:#22d3bf">opsflyvision.get(&quot;fly_hex_quantize&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>以与眼睛相同的方式量化小眼信号：先做对数压缩，再对每个小眼取 n 位(<code style="color:#22d3bf">mode=&quot;onoff&quot;</code> 为 ON / OFF 2 个通道)。</p>
 <p>复眼天生就是量化器:每只眼约 800 个小眼(间隔 4.6°),光感受器对强度作对数压缩并适应平均值, lamina 的 L1 / L2 把相对平均值的偏差分成 ON 和 OFF。本 op 再现这一预算,使下游模型(reservoir、视网膜拓扑对应检验)能够被问到&quot;到底需要多少比特&quot;。</p>

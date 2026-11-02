@@ -4,6 +4,7 @@ dim: geocam
 category: skyline
 in: depth
 out: table
+gpu: なし
 examples: [poc_public_camera_heading]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `depth` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.dem_skyline(dem, cell_size, observer_rc, eye_height=1.5, az_step_deg=1.0, max_distance=None, earth_curvature=True)` (実装を直接呼ぶなら `import geocam; geocam.dem_skyline(dem, cell_size, observer_rc, eye_height=1.5, az_step_deg=1.0, max_distance=None, earth_curvature=True)`、台帳から引くなら `opsgeocam.get("dem_skyline")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

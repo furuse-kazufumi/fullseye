@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">grid_lines — ANNOTATE <code style="color:#22d3bf">plot</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image2d × axes</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.grid_lines(img, axes, xticks=None, yticks=None, color=&#x27;neutral&#x27;, width=1, alpha=0.35, scheme=&#x27;okabe_ito&#x27;, style=None)</code>(要直接呼叫實作,<code style="color:#22d3bf">import annotate; annotate.grid_lines(img, axes, xticks=None, yticks=None, color=&#x27;neutral&#x27;, width=1, alpha=0.35, scheme=&#x27;okabe_ito&#x27;, style=None)</code>;從台帳取用則 <code style="color:#22d3bf">opsannotate.get(&quot;grid_lines&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>網格線。未給出刻度值時由 <code style="color:#22d3bf">nice_ticks</code> 決定。</p>
 <p><code style="color:#22d3bf">alpha</code> 是讓網格淡淡鋪底的權重(使其不搶到資料線前面)。</p>

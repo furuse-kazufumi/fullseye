@@ -4,6 +4,7 @@ dim: drive
 category: kendama
 in: table
 out: table
+gpu: なし
 examples: [poc_kendama]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.catch_success_rate(kp: 'dict', *, n: 'int' = 20, seed: 'int' = 0, noise_pos: 'float' = 0.0, noise_vel: 'float' = 0.0, jitter_pos: 'float' = 0.01, jitter_vel: 'float' = 0.05, lift: 'float' = None, T_lift: 'float' = 0.15, kind: 'str' = 'bang', t_end: 'float' = 1.5, dt: 'float' = 0.001, v_max: 'float' = 2.0, a_max: 'float' = 20.0, v_rel_max: 'float' = 1.0, v_target: 'float' = 0.5, origin=(0.0, 0.0, 0.0), perceiver_factory=None, dodge=(0.0, -0.1, 0.0), clearance: 'bool' = True, keep_runs: 'bool' = False, planner: 'str' = 'staged', contact=None, absorb: 'bool' = True) -> 'dict'` (実装を直接呼ぶなら `import kendama; kendama.catch_success_rate(kp: 'dict', *, n: 'int' = 20, seed: 'int' = 0, noise_pos: 'float' = 0.0, noise_vel: 'float' = 0.0, jitter_pos: 'float' = 0.01, jitter_vel: 'float' = 0.05, lift: 'float' = None, T_lift: 'float' = 0.15, kind: 'str' = 'bang', t_end: 'float' = 1.5, dt: 'float' = 0.001, v_max: 'float' = 2.0, a_max: 'float' = 20.0, v_rel_max: 'float' = 1.0, v_target: 'float' = 0.5, origin=(0.0, 0.0, 0.0), perceiver_factory=None, dodge=(0.0, -0.1, 0.0), clearance: 'bool' = True, keep_runs: 'bool' = False, planner: 'str' = 'staged', contact=None, absorb: 'bool' = True) -> 'dict'`、台帳から引くなら `opsdrive.get("catch_success_rate")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

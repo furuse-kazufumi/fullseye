@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">fivebar_workspace — DRIVE <code style="color:#22d3bf">puck</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fivebar_workspace(link: &#x27;dict&#x27;, *, n: &#x27;int&#x27; = 161, tol: &#x27;float&#x27; = 1e-09) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import puck; puck.fivebar_workspace(link: &#x27;dict&#x27;, *, n: &#x27;int&#x27; = 161, tol: &#x27;float&#x27; = 1e-09) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;fivebar_workspace&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Arbeitsraum: die Gitterpunkte, an denen IK lösbar ist und FK∘IK innerhalb von tol zurückkehrt (nur auf dem Zweig out/forward widerspruchsfreie Punkte gelten als &quot;erreichbar&quot;). Rückgabewert <code style="color:#22d3bf">{&quot;xs&quot;,&quot;ys&quot;,&quot;mask&quot;,&quot;area&quot;,&quot;x_max&quot;,&quot;x_min&quot;}</code> (x_max = das am weitesten vorn erreichbare x).</p>
 <p>Leere Eingabe (<code style="color:#22d3bf">link</code> ein leeres dict) löst <code style="color:#22d3bf">ValueError</code> aus.</p>

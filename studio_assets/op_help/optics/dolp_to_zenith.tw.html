@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">dolp_to_zenith — OPTICS <code style="color:#22d3bf">shape_from_polarization</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dolp_to_zenith(dolp, refractive_index=1.5, model=&#x27;diffuse&#x27;, out_of_range=&#x27;clamp&#x27;)</code>(要直接呼叫實作,<code style="color:#22d3bf">import sfpolar; sfpolar.dolp_to_zenith(dolp, refractive_index=1.5, model=&#x27;diffuse&#x27;, out_of_range=&#x27;clamp&#x27;)</code>;從台帳取用則 <code style="color:#22d3bf">opsoptics.get(&quot;dolp_to_zenith&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由 DoLP 反求產生它的天頂角解集 —— 漫射 1 個解,鏡面在 Brewster 角兩側 2 個解(<code style="color:#22d3bf">table</code>)。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>

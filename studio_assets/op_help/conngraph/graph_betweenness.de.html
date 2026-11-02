@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">graph_betweenness — CONNGRAPH <code style="color:#22d3bf">stats</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">conn_graph</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graph_betweenness(W: &#x27;Any&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import conngraph; conngraph.graph_betweenness(W: &#x27;Any&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsconngraph.get(&quot;graph_betweenness&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Betweenness-Zentralität (Brandes 2001, binär gerichtet, nicht normiert). Ein Array der Länge n mit einem Wert je Knoten.</p>
 <p>Wert von Knoten v = Σ_{s≠v≠t} σ_st(v) / σ_st (Verhältnis der Anzahl kürzester Pfade). Ist die binäre Struktur symmetrisch (alle Kanten wechselseitig), wird sie als ungerichteter Graph behandelt: (s, t) und (t, s) zählen als 1 Paar, geteilt durch 2 -- die Lehrbuchwerte, bei denen das Zentrum eines ungerichteten Sterns (n Knoten) (n−1)(n−2)/2 und die Blätter 0 erhalten. Ist er gerichtet (asymmetrisch), werden geordnete Paare unverändert gezählt.</p>

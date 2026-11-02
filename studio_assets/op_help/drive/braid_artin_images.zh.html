@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">braid_artin_images — DRIVE <code style="color:#22d3bf">braidpath</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">signal × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.braid_artin_images(word, n_strands)</code>(要直接调用实现,<code style="color:#22d3bf">import braidpath; braidpath.braid_artin_images(word, n_strands)</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;braid_artin_images&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>辫的 Artin 表示:自由群 F_n 的生成元 x₁..xₙ 的像(自由约化后的字)。</p>
 <p>σᵢ:xᵢ ↦ xᵢ xᵢ₊₁ xᵢ⁻¹、xᵢ₊₁ ↦ xᵢ,其余不动。字 w = σ_{i1} σ_{i2} … 的像通过从左依次代入得到。该表示是忠实的(Artin 1925),因此 <b>像全部一致 ⇔ 同一辫</b>。这是只用自由约化的严格判定,是与 Dynnikov 坐标独立地确认“相等”的第 2 个实现。像的长度相对于字长可能呈指数增长,因此在 <code style="color:#22d3bf">MAX_WORD</code> 个字母处停止(RuntimeError)。★上限不作为参数:不改变答案的截断会成为“无效的旋钮”(2026-10-23)。空输入(<code style="color:#22d3bf">word</code> 为 0 个元素)返回恒等映射的像(理由:空字是单位元,像就是各 xₖ 本身)。</p>

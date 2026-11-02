@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">course_crank — DRIVE <code style="color:#22d3bf">course</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">table</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.course_crank(width=3.5, between=12.0, entry=4.0, corner_radius=1.0, arc_pts=16)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivecourse; drivecourse.course_crank(width=3.5, between=12.0, entry=4.0, corner_radius=1.0, arc_pts=16)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;course_crank&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>굴절 코스(크랭크, Z 형): 진입 → 좌 90° → B → 우 90° → 진출.</p>
 <p>별표 제3 의 그림(3JH00000217782)의 측정 방식에 맞춘다: 폭 A = w, 굴곡 모서리 사이의 길이 B 는 한쪽 길의 바깥벽에서맞은편 길의 안쪽 벽까지(= 중심선의 굴곡 모서리 간 거리), 출입구부 C 는 횡단하는 띠의 벽에서 출입구까지(중심선에서는 C + w/2), 모서리 깎기 D 는 굴곡 모서리부의 <b>안쪽</b> 모서리(바깥쪽 모서리는 정사각형 그대로). 중심선은(0,0)→(C+w/2, 0)→(C+w/2, B)→(2C+w, B), 길이 L = 2C + w + B. 면적 = w·L + 2r²(1 − π/4) (유도는 모듈 docstring). 규격(보통 면허): A = 3.5, B = 12, C ≥ 4, D = 1 → <code style="color:#22d3bf">params[&quot;regulation&quot;]</code>.</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">braid_equivalent — DRIVE <code style="color:#22d3bf">braidpath</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">signal × signal × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.braid_equivalent(word_a, word_b, n_strands, method=&#x27;dynnikov&#x27;)</code> (die Implementierung direkt: <code style="color:#22d3bf">import braidpath; braidpath.braid_equivalent(word_a, word_b, n_strands, method=&#x27;dynnikov&#x27;)</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;braid_equivalent&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Ob zwei Zopfwörter denselben Zopf darstellen (allein durch die Relationen ineinander überführbar sind).</p>
 <p>method: <code style="color:#22d3bf">&quot;dynnikov&quot;</code> (Koordinaten vergleichen, schnell) / <code style="color:#22d3bf">&quot;handle&quot;</code> (a b⁻¹ per Henkelreduktion reduzieren und auf Leere prüfen) / <code style="color:#22d3bf">&quot;artin&quot;</code> (Bilder in der freien Gruppe vergleichen) / <code style="color:#22d3bf">&quot;all&quot;</code> (alle drei berechnen; bei Abweichung RuntimeError —— Prüfung der Implementierung).</p>

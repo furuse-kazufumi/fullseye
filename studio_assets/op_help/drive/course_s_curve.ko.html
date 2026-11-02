@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">course_s_curve — DRIVE <code style="color:#22d3bf">course</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">table</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.course_s_curve(width=3.5, radius_outer=7.5, arc_fraction=0.375, entry=4.0, arc_pts=48)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivecourse; drivecourse.course_s_curve(width=3.5, radius_outer=7.5, arc_fraction=0.375, entry=4.0, arc_pts=48)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;course_s_curve&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>곡선 코스(S 자): 직선 E → 좌측 호(중심각 2π·f) → 우측 호(동일) → 직선 E.</p>
 <p>외경 R_o = <code style="color:#22d3bf">radius_outer</code>, 내경 R_i = R_o − w, 중심선의 반경 R_c = (R_o + R_i)/2. 2 개의 호는 공통 접선점에서곡률의 방향이 반전한다. 다각형은 중심선의 표본점을 법선 방향으로 ±w/2 옮겨 만든다(호의 표본점은 외원·내원위에 엄밀하게 놓인다). 면적 = 2πf(R_o² − R_i²) + 2Ew. 규격: A = 3.5, B = 7.5, C = 3/8 → <code style="color:#22d3bf">params[&quot;regulation&quot;]</code>.</p>

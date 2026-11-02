@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">vol_label_overlay — VOLCOLOR <code style="color:#22d3bf">colorize</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">voxel × labels</code> → <code style="color:#22d3bf">rgbvolume</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_label_overlay(vol, labels, seed: &#x27;int&#x27; = 0, alpha: &#x27;float&#x27; = 0.5, vmin=None, vmax=None, mode: &#x27;str&#x27; = &#x27;fill&#x27;)</code> (die Implementierung direkt: <code style="color:#22d3bf">import volcolor; volcolor.vol_label_overlay(vol, labels, seed: &#x27;int&#x27; = 0, alpha: &#x27;float&#x27; = 0.5, vmin=None, vmax=None, mode: &#x27;str&#x27; = &#x27;fill&#x27;)</code>; aus dem Register: <code style="color:#22d3bf">opsvolcolor.get(&quot;vol_label_overlay&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Das ursprüngliche Graustufenvolumen mit darübergelegten farbigen Labels, als <code style="color:#22d3bf">(D, H, W, 3)</code>.</p>
 <p>Die Form, die in medizinischer CT / Industrie-CT tatsächlich verwendet wird -- ein &quot;Bild nur mit Segmentierung&quot; zeigt nicht, wo ausgeschnitten wurde, und ein &quot;Bild nur mit dem Original&quot; zeigt nicht, was gemessen wurde.</p>

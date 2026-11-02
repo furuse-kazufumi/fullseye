@@ -4,6 +4,7 @@ dim: shape2d
 category: descriptor
 in: efdmodel
 out: matrix
+gpu: なし
 examples: [piv_flow_from_particles, poc_exoplanet_transit]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `efdmodel` → `matrix`
 - **呼び出し**: `import fullseye as fs; fs.ledger.normalize(model, size_invariant=True)` (実装を直接呼ぶなら `import fourierdesc; fourierdesc.normalize(model, size_invariant=True)`、台帳から引くなら `opsshape2d.get("normalize")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

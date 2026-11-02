@@ -4,6 +4,7 @@ dim: optics
 category: noncoaxial
 in: 
 out: table
+gpu: なし
 examples: [poc_noncoaxial_optics]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.surface_reflectance(n_before=1.0, n_after='BK7', coating=None, wavelength_um=0.58756, angle_deg=0.0)` (実装を直接呼ぶなら `import raytrace3d; raytrace3d.surface_reflectance(n_before=1.0, n_after='BK7', coating=None, wavelength_um=0.58756, angle_deg=0.0)`、台帳から引くなら `opsoptics.get("surface_reflectance")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

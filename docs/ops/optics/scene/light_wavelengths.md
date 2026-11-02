@@ -4,6 +4,7 @@ dim: optics
 category: scene
 in: table
 out: pairs
+gpu: なし
 examples: [vision_layout_from_catalog]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,6 +16,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **データ種**: `table` → `pairs`
 - **呼び出し**: `import fullseye as fs; fs.ledger.light_wavelengths(light: 'dict', samples: 'int' = 5)` (実装を直接呼ぶなら `import optscene; optscene.light_wavelengths(light: 'dict', samples: 'int' = 5)`、台帳から引くなら `opsoptics.get("light_wavelengths")`)
 - **台帳経由の戻り値**: `fullseye.ledger.light_wavelengths(...)` は**宣言 out 型 `pairs` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.light_wavelengths.raw(...)`、または `optscene.light_wavelengths` を直接呼ぶ。
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

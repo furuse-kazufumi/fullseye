@@ -4,6 +4,7 @@ dim: drive
 category: tacscalib
 in: text × scalar × scalar
 out: table
+gpu: なし
 examples: [poc_tacscalib_sphere_lut]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `text × scalar × scalar` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.calib_pack_load(path: 'str', pitch_mm: 'float', ball_radius_mm: 'float') -> 'dict'` (実装を直接呼ぶなら `import tacscalib; tacscalib.calib_pack_load(path: 'str', pitch_mm: 'float', ball_radius_mm: 'float') -> 'dict'`、台帳から引くなら `opsdrive.get("calib_pack_load")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

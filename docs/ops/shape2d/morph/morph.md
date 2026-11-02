@@ -4,6 +4,7 @@ dim: shape2d
 category: morph
 in: image2d × image2d × pairs × pairs
 out: image2d
+gpu: なし
 examples: [image_morph, poc_vanishing_detail_and_morphing_area]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d × image2d × pairs × pairs` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.morph(imgA, imgB, ptsA, ptsB, alpha, method='affine', lam=0.0, with_corners=True)` (実装を直接呼ぶなら `import imagemorph; imagemorph.morph(imgA, imgB, ptsA, ptsB, alpha, method='affine', lam=0.0, with_corners=True)`、台帳から引くなら `opsshape2d.get("morph")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

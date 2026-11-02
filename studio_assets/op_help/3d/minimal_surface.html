@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">minimal_surface — 3D <code style="color:#22d3bf">surface</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">mesh</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.minimal_surface(kind=&#x27;catenoid&#x27;, nu=80, nv=120, extent=1.5, scale=1.0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import render3d; render3d.minimal_surface(kind=&#x27;catenoid&#x27;, nu=80, nv=120, extent=1.5, scale=1.0)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;minimal_surface&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>A classical minimal surface, from its exact parametrisation.</p>
 <p><code style="color:#22d3bf">catenoid</code> <code style="color:#22d3bf">(c cosh(u/c) cos v, c cosh(u/c) sin v, u)</code>, <code style="color:#22d3bf">helicoid</code> <code style="color:#22d3bf">(u cos v, u sin v, c v)</code>, <code style="color:#22d3bf">enneper</code> <code style="color:#22d3bf">(u - u^3/3 + u v^2, v - v^3/3 + v u^2, u^2 - v^2)</code> and <code style="color:#22d3bf">scherk</code> <code style="color:#22d3bf">z = log(cos y / cos x)</code> (the doubly periodic surface, over one cell).</p>

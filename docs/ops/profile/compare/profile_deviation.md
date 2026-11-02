@@ -4,6 +4,7 @@ dim: profile
 category: compare
 in: pairs × pairs
 out: table
+gpu: なし
 examples: [profile_shape_inspection]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `pairs × pairs` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.profile_deviation(measured, reference, n=200, align='chord', oversample=8)` (実装を直接呼ぶなら `import profileops; profileops.profile_deviation(measured, reference, n=200, align='chord', oversample=8)`、台帳から引くなら `opsprofile.get("profile_deviation")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

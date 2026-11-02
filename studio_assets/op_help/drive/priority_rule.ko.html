@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">priority_rule — DRIVE <code style="color:#22d3bf">crossing</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.priority_rule(own, cross, *, signalised: &#x27;bool&#x27; = False, wide_ratio: &#x27;float&#x27; = 1.5) -&gt; &#x27;Dict[str, object]&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivecrossing; drivecrossing.priority_rule(own, cross, *, signalised: &#x27;bool&#x27; = False, wide_ratio: &#x27;float&#x27; = 1.5) -&gt; &#x27;Dict[str, object]&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;priority_rule&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>교통정리가 행해지지 않는 교차로에서 자차(own)가 교차 도로(cross)의 차량에 양보하는지(제36조 제1~3항).</p>
 <p>own, cross = {&quot;width&quot;: 도로 폭 [m], &quot;priority_sign&quot;: 우선 도로 표지, &quot;centre_line&quot;: 교차로 안까지 중앙선·차량 통행대}. 우선 도로 = 표지 or 중앙선(일본 도로교통법 제 36 조 제 2 항의 괄호 안 규정). 명백히 넓음 = 폭의 비 ≥ <code style="color:#22d3bf">wide_ratio</code>(<b>가정</b>).</p>

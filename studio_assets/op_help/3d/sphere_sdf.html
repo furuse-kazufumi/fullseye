@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">sphere_sdf — 3D <code style="color:#22d3bf">sdf_csg</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">coordgrid</code> → <code style="color:#22d3bf">sdf</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sphere_sdf(grid, center, R)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import sdf_ops; sdf_ops.sphere_sdf(grid, center, R)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;sphere_sdf&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>球の符号付き距離場: <code style="color:#22d3bf">|p - center| - R</code>(内側負・外側正)。</p>
 <p><code style="color:#22d3bf">grid</code> は最終軸が 3 の座標配列 (..., 3)(<code style="color:#22d3bf">grid_coords</code> の出力や (N,3) 点群)。<code style="color:#22d3bf">center</code> は長さ3、<code style="color:#22d3bf">R&gt;=0</code> は半径。返り値の shape は <code style="color:#22d3bf">grid.shape[:-1]</code>。厳密な SDF (勾配ノルム 1)。<code style="color:#22d3bf">sdf_offset(sphere_sdf(g,c,R), r) == sphere_sdf(g,c,R+r)</code>。</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">simcal_validate — SIMCAL <code style="color:#22d3bf">check</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">calresult × simmodel</code> → <code style="color:#22d3bf">calresult</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.simcal_validate(result=None, holdout=None, locked=None, tau=None, dims=None, n_boot=200, alpha=0.001, seed=0) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import simcalcheck; simcalcheck.simcal_validate(result=None, holdout=None, locked=None, tau=None, dims=None, n_boot=200, alpha=0.001, seed=0) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opssimcal.get(&quot;simcal_validate&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>取り置いた画像での過適合の門。1 つでも落ちれば較正を拒否する(推定は取り下げる)。</p>
 <p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">gs_render_fn — DRIVE <code style="color:#22d3bf">gsplat</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gs_render_fn(gs: &#x27;dict&#x27;, **render_kw)</code> (to call the implementation directly, <code style="color:#22d3bf">import gsplatnp; gsplatnp.gs_render_fn(gs: &#x27;dict&#x27;, **render_kw)</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;gs_render_fn&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Returns <code style="color:#22d3bf">render_fn(world, cam) → (H, W, 3)</code> (the plug-in point for replacing the rendering of <code style="color:#22d3bf">kendamaworld.camera_perceiver</code>): on each call it re-attaches the Gaussians to the world&#x27;s current vertices with <code style="color:#22d3bf">gs_update</code> and calls <code style="color:#22d3bf">gs_render</code> with <code style="color:#22d3bf">cam</code> (dict: pose, K, width, height). <code style="color:#22d3bf">render_kw</code> is passed through to gs_render unchanged. Has the attributes <code style="color:#22d3bf">n_calls</code> and <code style="color:#22d3bf">n_pairs</code> (cumulative).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

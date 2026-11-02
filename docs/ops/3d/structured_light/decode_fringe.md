@@ -4,6 +4,7 @@ dim: 3d
 category: structured_light
 in: images
 out: depth
+gpu: なし
 examples: [structured_light]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `images` → `depth`
 - **呼び出し**: `import fullseye as fs; fs.ledger.decode_fringe(phase_shift_images, ref_phase=None, k=1.0, mask=None, min_modulation=None, method='general') -> 'np.ndarray'` (実装を直接呼ぶなら `import fringe; fringe.decode_fringe(phase_shift_images, ref_phase=None, k=1.0, mask=None, min_modulation=None, method='general') -> 'np.ndarray'`、台帳から引くなら `ops3d.get("decode_fringe")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

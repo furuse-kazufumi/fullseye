@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tb_keypoints_to_image2d — 2D <code style="color:#22d3bf">typed</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">keypoints</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_keypoints_to_image2d&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <p>*No figure: the type is reachable, but the generic synthetic input is outside this op&#x27;s domain — the raster bound by the bridge is fixed at 64×64, so 128×128 points fall outside it. See the runnable examples below for usage.*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Image coordinates <code style="color:#22d3bf">(N,2) = (u, v)</code> -&gt; a count image <code style="color:#22d3bf">(H, W)</code>. The second exit of <code style="color:#22d3bf">keypoints</code>.</p>

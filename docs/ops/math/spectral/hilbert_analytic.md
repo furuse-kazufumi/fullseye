@@ -4,6 +4,7 @@ dim: math
 category: spectral
 in: signal
 out: table
+gpu: なし
 examples: [spectral_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.hilbert_analytic(x, fs: 'float' = 1.0) -> 'dict'` (実装を直接呼ぶなら `import mathspectral; mathspectral.hilbert_analytic(x, fs: 'float' = 1.0) -> 'dict'`、台帳から引くなら `opsmath.get("hilbert_analytic")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

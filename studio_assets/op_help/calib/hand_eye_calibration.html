@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">hand_eye_calibration — CALIB <code style="color:#22d3bf">calibrate</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">matrix</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.hand_eye_calibration(poses_a, poses_b)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import calib; calib.hand_eye_calibration(poses_a, poses_b)</code>、台帳から引くなら <code style="color:#22d3bf">opscalib.get(&quot;hand_eye_calibration&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>一連の運動対から AX=XB を解き X(4x4)を推定(hand_eye_calibration)。</p>
 <p>fail-closed: 姿勢が 3 未満・組の数が合わない・非有限・相対運動の回転軸が 1 方向にしか散っていない(X の回転が決まらない)ときは <code style="color:#22d3bf">ValueError</code>。</p>

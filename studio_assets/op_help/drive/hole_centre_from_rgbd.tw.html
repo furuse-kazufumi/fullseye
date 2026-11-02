@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">hole_centre_from_rgbd — DRIVE <code style="color:#22d3bf">pegsim</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">rgb × image2d × matrix</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.hole_centre_from_rgbd(rgb, depth, K, peg_mask=None, radius: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import pegsim; pegsim.hole_centre_from_rgbd(rgb, depth, K, peg_mask=None, radius: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;hole_centre_from_rgbd&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>從 1 張腕部 RGB-D 求孔(暗圓盤)的 3-D 中心(相機座標)：以 depth 擬合板平面，將抗鋸齒邊緣提升至平面上，在平面內擬合圓(<code style="color:#22d3bf">measure.fit_circle</code>)。</p>
 <p>也會回傳影像面上的橢圓擬合(<code style="color:#22d3bf">measure.fit_ellipse</code>)作參考,但在透視下橢圓中心 ≠ 圓心的投影(試作中最多 1.9 px 的偏差),所以在 3-D 中擬合。向 <code style="color:#22d3bf">radius</code> 傳入治具圖面的值(倒角外徑 R + W)時,用 <code style="color:#22d3bf">circle_fit_known_radius</code> 只求中心 —— 在銷放低、遮住近一半邊緣的姿勢(ε = −3 mm、高度 4 mm)下,自由擬合的 0.18 px 用已知半徑變為 0.05 px。</p>

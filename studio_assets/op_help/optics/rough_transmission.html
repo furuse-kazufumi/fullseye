@@ -3,6 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">pairs</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rough_transmission(cos_i, roughness=0.3, n1=1.0, n2=1.5)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import surfacelib; surfacelib.rough_transmission(cos_i, roughness=0.3, n1=1.0, n2=1.5)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;rough_transmission&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>台帳経由の戻り値</b>: <code style="color:#22d3bf">fullseye.ledger.rough_transmission(...)</code> は<b>宣言 out 型 <code style="color:#22d3bf">pairs</code> の値だけ</b>を返す(本体は補助情報も返す)。捨てられた側が要るときは <code style="color:#22d3bf">fullseye.ledger.rough_transmission.raw(...)</code>、または <code style="color:#22d3bf">surfacelib.rough_transmission</code> を直接呼ぶ。</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>すりガラスの透過を「直進成分」と「拡散成分」に分ける。</p>
 <p>cos_i: 入射角の cos。roughness: 面の粗さ(0 = 透明、1 = 完全拡散)。n1 / n2: 入射側 / 板の屈折率。数か材料表の名前(例 &quot;N-BK7&quot;、名前なら d 線 587.56 nm の n)。</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">separate_touching — SEGMENTATION <code style="color:#22d3bf">watershed3d</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">labels</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.separate_touching(binary, min_distance: &#x27;float&#x27; = 5.0, method: &#x27;str&#x27; = &#x27;auto&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import watershed3d; watershed3d.separate_touching(binary, min_distance: &#x27;float&#x27; = 5.0, method: &#x27;str&#x27; = &#x27;auto&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opssegmentation.get(&quot;separate_touching&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>genuinely-new (B): 접촉한 물체를 1번 호출로 자동 분리하는 상용 래퍼.</p>
 <p>&quot;여러 물체가 접촉해 1개의 연결 성분으로 융합된&quot; 전형적인 경우를, 거리 변환→극대 NMS 시드화→ 분수령이라는 정형 파이프라인을 접어 1번의 호출로 나눈다(공개 API에서는 3개의 op를 손으로 이어야하는 부분을 상용 경우용으로 1 함수화). 내용은 <code style="color:#22d3bf">watershed_vol(..., markers=None)</code>.</p>

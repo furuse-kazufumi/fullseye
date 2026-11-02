@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">pairs_to_signal — REPRCONV <code style="color:#22d3bf">pairs</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pairs_to_signal(pairs)</code> (die Implementierung direkt: <code style="color:#22d3bf">import reprconv; reprconv.pairs_to_signal(pairs)</code>; aus dem Register: <code style="color:#22d3bf">opsreprconv.get(&quot;pairs_to_signal&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Paare <code style="color:#22d3bf">(N,2)</code> → die abhängige Variable als <code style="color:#22d3bf">signal (N,)</code>. Der zweite Ausgang aus <code style="color:#22d3bf">pairs</code>.</p>
 <p>Entnimmt nur Spalte 1 (y). <code style="color:#22d3bf">funct_1d_to_pairs</code> liefert (N,2) mit (x, y) nebeneinander, dies ist also die Gegenrichtung -- <b>wenn x gleichabständig ist</b>, ist <code style="color:#22d3bf">signal -&gt; pairs -&gt; signal</code> bitidentisch. Paare mit nicht gleichabständigem x durchzureichen <b>verwirft stillschweigend die Information in x</b> (<code style="color:#22d3bf">signal</code> ist ein Typ, der gleichabständige Indizes voraussetzt). Deshalb gibt <code style="color:#22d3bf">pairs_to_table</code> immer <code style="color:#22d3bf">x_uniform</code> mit aus.</p>

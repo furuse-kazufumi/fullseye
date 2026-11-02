@@ -3,6 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">labels</code> → <code style="color:#22d3bf">labels</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_select_labels(labels, props=None, spacing=None, relabel: &#x27;bool&#x27; = False, exclude_border: &#x27;bool&#x27; = False, keep=None, **criteria)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import volcolor; volcolor.vol_select_labels(labels, props=None, spacing=None, relabel: &#x27;bool&#x27; = False, exclude_border: &#x27;bool&#x27; = False, keep=None, **criteria)</code>、台帳から引くなら <code style="color:#22d3bf">opsvolcolor.get(&quot;vol_select_labels&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>台帳経由の戻り値</b>: <code style="color:#22d3bf">fullseye.ledger.vol_select_labels(...)</code> は<b>宣言 out 型 <code style="color:#22d3bf">labels</code> の値だけ</b>を返す(本体は補助情報も返す)。捨てられた側が要るときは <code style="color:#22d3bf">fullseye.ledger.vol_select_labels.raw(...)</code>、または <code style="color:#22d3bf">volcolor.vol_select_labels</code> を直接呼ぶ。</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>3-D の特徴で成分をふるいにかける(2-D のブロブ選別の 3-D 版)。</p>
 <p><code style="color:#22d3bf">(labels_out, kept_ids)</code> を返す。落ちた成分のボクセルは 0(背景)になる。</p>

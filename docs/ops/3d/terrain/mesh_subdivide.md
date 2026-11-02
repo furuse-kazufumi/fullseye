@@ -4,6 +4,7 @@ dim: 3d
 category: terrain
 in: mesh
 out: mesh
+gpu: なし
 examples: [itokawa_regolith_hero]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `mesh` → `mesh`
 - **呼び出し**: `import fullseye as fs; fs.ledger.mesh_subdivide(V, F, *, levels: 'int' = 1, target_edge=None, max_faces: 'int' = 4000000)` (実装を直接呼ぶなら `import render3d; render3d.mesh_subdivide(V, F, *, levels: 'int' = 1, target_edge=None, max_faces: 'int' = 4000000)`、台帳から引くなら `ops3d.get("mesh_subdivide")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

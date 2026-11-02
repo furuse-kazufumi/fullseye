@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">distance_line_line — 3D <code style="color:#22d3bf">geometry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">primitive</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.distance_line_line(p1, d1, p2, d2)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import match3d; match3d.distance_line_line(p1, d1, p2, d2)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;distance_line_line&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>2 lines के बीच दूरी (skew lines भी चलेंगी)। parallel होने पर point-line दूरी पर लौट जाता है।</p>
 <p>★यह <b>अनंत रेखाओं</b> के बीच की दूरी है। हाथ-पैर, robot के link या पाइप जैसे <b>सीमित segment</b> पर इसे लगाने पर, अलग होते हुए भी 0 लौट सकता है (मापा गया: (0,0,0)-(1,0,0) और (5,0,0)-(6,0,0) पर 0.0, ground truth 4.0)। segment के जोड़ों के लिए <code style="color:#22d3bf">distance_segment_segment</code> का उपयोग करें —— safety distance की जाँच में इसे गड़बड़ाने पर परिणाम <b>खतरे को कम आँकने</b> वाली ओर जाता है।</p>

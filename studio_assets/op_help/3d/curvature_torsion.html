@@ -4,6 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.curvature_torsion(curve)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import curve3d; curve3d.curvature_torsion(curve)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;curvature_torsion&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>台帳経由の戻り値</b>: <code style="color:#22d3bf">fullseye.ledger.curvature_torsion(...)</code> は<b>宣言 out 型 <code style="color:#22d3bf">pairs</code> の値だけ</b>を返す(本体は補助情報も返す)。捨てられた側が要るときは <code style="color:#22d3bf">fullseye.ledger.curvature_torsion.raw(...)</code>、または <code style="color:#22d3bf">curve3d.curvature_torsion</code> を直接呼ぶ。</p>
 <p style="margin:2px 0 2px 12px">• 本体の返り: <code style="color:#22d3bf">(kappa,tau) → (N,2) pairs</code></p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>各点の曲率 κ と捩率 τ(再パラメータ化不変な閉形式)。→ (kappa (N,), tau (N,))。</p>
 <p>座標の一様スケール s に対し κ→κ/s, τ→τ/s と正しくスケールする。0 割り防止の epsilon は <b>相対化</b>する: 絶対 1e-12 は cross_norm²(~s⁴)・r1_norm³(~s³)を小座標スケールで支配し、κ/τ を破壊するため、代表スケール L=median‖r&#x27;‖(座標スケール s に線形)で各分母と同次元に正規化した相対 eps を使う。これは曲線を L で正規化してから計算し 1/L で戻すのと厳密に等価。</p>

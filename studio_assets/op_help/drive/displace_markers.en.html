@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">displace_markers — DRIVE <code style="color:#22d3bf">tacslip</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">matrix × matrix × matrix × scalar</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.displace_markers(pts, fx, fy, pitch: &#x27;float&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import tacslip; tacslip.displace_markers(pts, fx, fy, pitch: &#x27;float&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;displace_markers&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Moves marker centers (N, 2) [px] by the displacement field fx, fy (n, n) [m] (the field is bilinearly sampled at the center positions, converted to pixels and added). <b>Raises</b> ValueError: pts is not (N, 2), fx and fy differ in shape, pitch ≤ 0.</p>
 <p>Empty input (<code style="color:#22d3bf">pts</code> with 0 elements) raises <code style="color:#22d3bf">ValueError</code>.</p>

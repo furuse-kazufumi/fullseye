@@ -4,6 +4,7 @@ dim: tomography
 category: spectral_xray
 in: images
 out: images
+gpu: なし
 examples: [poc_dual_energy_xray]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,6 +16,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **データ種**: `images` → `images`
 - **呼び出し**: `import fullseye as fs; fs.ledger.basis_material_decompose(signal, channels=None, basis=('WATER', 'AL'), photons_per_pixel: 'float' = 100000.0, flat=None) -> 'dict'` (実装を直接呼ぶなら `import dualxray; dualxray.basis_material_decompose(signal, channels=None, basis=('WATER', 'AL'), photons_per_pixel: 'float' = 100000.0, flat=None) -> 'dict'`、台帳から引くなら `opstomography.get("basis_material_decompose")`)
 - **台帳経由の戻り値**: `fullseye.ledger.basis_material_decompose(...)` は**宣言 out 型 `images` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.basis_material_decompose.raw(...)`、または `dualxray.basis_material_decompose` を直接呼ぶ。
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

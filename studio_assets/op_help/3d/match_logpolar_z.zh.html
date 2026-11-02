@@ -2,7 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">match_logpolar_z — 3D <code style="color:#22d3bf">match_pose</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">voxel × voxel</code> → <code style="color:#22d3bf">rot_scale</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.match_logpolar_z(a, b, device=&#x27;cpu&#x27;, project=&#x27;mip&#x27;, nt=360, nr=192)</code>(要直接调用实现,<code style="color:#22d3bf">import match3d; match3d.match_logpolar_z(a, b, device=&#x27;cpu&#x27;, project=&#x27;mip&#x27;, nt=360, nr=192)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;match_logpolar_z&quot;)</code>)</p>
-<p style="margin:2px 0 2px 12px">• <b>GPU</b>:该算子有 GPU 路径(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用 log-polar × 相位相关(Fourier-Mellin)恢复 <b>绕 z 旋转 + 各向同性缩放</b>。</p>
 <p>结构=voxel × 方法=Fourier-Mellin。PCA 需要点对应,而它无需模板/对应,是唯一能同时估计旋转(z 轴)与缩放的一列。核心:取 z 投影(MIP)后,z 轴旋转=面内旋转、各向同性缩放=面内缩放,于是可使用成熟的 2D Fourier-Mellin(|FFT|→高频强调→log-polar→ 相位相关)。返回值 (angle_deg, scale)。</p>

@@ -4,6 +4,7 @@ dim: videocube
 category: summary
 in: video
 out: indices
+gpu: なし
 examples: [poc_video_cube]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `video` → `indices`
 - **呼び出し**: `import fullseye as fs; fs.ledger.video_summary_keyframes(video, k: 'int' = 5, min_gap: 'int | None' = None, bins: 'int' = 32) -> 'np.ndarray'` (実装を直接呼ぶなら `import videocube; videocube.video_summary_keyframes(video, k: 'int' = 5, min_gap: 'int | None' = None, bins: 'int' = 32) -> 'np.ndarray'`、台帳から引くなら `opsvideocube.get("video_summary_keyframes")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

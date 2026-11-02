@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">perpetual_reaction_diffusion — GENERATIVE <code style="color:#22d3bf">perpetual</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">rgb</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.perpetual_reaction_diffusion(size: &#x27;int&#x27; = 220, steps: &#x27;int&#x27; = 1600, feed: &#x27;float&#x27; = 0.037, kill: &#x27;float&#x27; = 0.06, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import perpetual; perpetual.perpetual_reaction_diffusion(size: &#x27;int&#x27; = 220, steps: &#x27;int&#x27; = 1600, feed: &#x27;float&#x27; = 0.037, kill: &#x27;float&#x27; = 0.06, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsgenerative.get(&quot;perpetual_reaction_diffusion&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>그레이–스콧 반응 확산 — 무늬가 생겨나고 분열하며 계속 늘어난다.</p>
 <p>불변량: <b>먹이도 죽음도 0(<code style="color:#22d3bf">feed = kill = 0</code>)이면, 총량은 엄밀히 보존된다</b> -- 확산은 재분배이지 생성이 아니기 때문. 수치 해법이 망가져 있으면, 여기가 가장 먼저 무너진다(<code style="color:#22d3bf">perpetual_identities</code>).</p>

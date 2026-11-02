@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">chebyshev_nodes — MATH <code style="color:#22d3bf">numerics</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">signal</code> (an op determined by its arguments alone — it takes no image or data input)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.chebyshev_nodes(n: &#x27;int&#x27;, a: &#x27;float&#x27; = -1.0, b: &#x27;float&#x27; = 1.0, kind: &#x27;int&#x27; = 2) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import mathnumerics; mathnumerics.chebyshev_nodes(n: &#x27;int&#x27;, a: &#x27;float&#x27; = -1.0, b: &#x27;float&#x27; = 1.0, kind: &#x27;int&#x27; = 2) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsmath.get(&quot;chebyshev_nodes&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>n Chebyshev points on the interval [a, b] (in ascending order).</p>
 <p><code style="color:#22d3bf">kind=2</code> (default) gives the Chebyshev–Lobatto points x_k = cos(kπ/(n−1)) including the endpoints; <code style="color:#22d3bf">kind=1</code> gives the Chebyshev–Gauss points cos((2k+1)π/(2n)) excluding the endpoints. They get denser toward the ends and suppress the wild swings of polynomial interpolation (Runge phenomenon).</p>

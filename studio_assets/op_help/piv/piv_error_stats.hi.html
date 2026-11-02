@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">piv_error_stats — PIV <code style="color:#22d3bf">assess</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">flow2d × flow2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_error_stats(flow, truth, trim=1)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import pivops; pivops.piv_error_stats(flow, truth, trim=1)</code>, registry से लेना हो तो <code style="color:#22d3bf">opspiv.get(&quot;piv_error_stats&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>ground truth से अंतर का विवरण। <b>bias और बिखराव को अलग-अलग</b> लौटाता है।</p>
 <p>इनमें से केवल एक को report करने से systematic offset वाला implementation &quot;error 0.3 px&quot; के रूप में पास हो जाता है। Bias (औसत error) और बिखराव (standard deviation) अलग-अलग कारणों की ओर इशारा करते हैं।</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">compute_fpfh — 3D <code style="color:#22d3bf">feature_register</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">points × normals</code> → <code style="color:#22d3bf">descriptor</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.compute_fpfh(points, normals, k=60, n_bins=11)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import feat_fpfh; feat_fpfh.compute_fpfh(points, normals, k=60, n_bins=11)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;compute_fpfh&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>FPFH 기술자 (N, 3*n_bins) 를 계산(Rusu 2009).</p>
 <p style="margin:2px 0 2px 12px">1) SPFH: 각 점 p 와 근방 k 점의 쌍에 대해 (α,φ,θ) 를 구하고, 각 특징을 n_bins 빈으로 히스토그램화.</p>

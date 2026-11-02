@@ -4,6 +4,7 @@ dim: optics
 category: omni360
 in: 
 out: table
+gpu: なし
 examples: [poc_omni360_inspection]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.stereo_parallax_budget(disparity_px, width_px, viewing_distance_m, screen_width_m, ipd_m)` (実装を直接呼ぶなら `import omni360; omni360.stereo_parallax_budget(disparity_px, width_px, viewing_distance_m, screen_width_m, ipd_m)`、台帳から引くなら `opsoptics.get("stereo_parallax_budget")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">alpha_tree — SEGMENTATION <code style="color:#22d3bf">graph</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.alpha_tree(image, alphas: &#x27;Sequence[float]&#x27; = (0.0,), *, connectivity: &#x27;int&#x27; = 4) -&gt; &#x27;Dict[str, object]&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import seggraph; seggraph.alpha_tree(image, alphas: &#x27;Sequence[float]&#x27; = (0.0,), *, connectivity: &#x27;int&#x27; = 4) -&gt; &#x27;Dict[str, object]&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opssegmentation.get(&quot;alpha_tree&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>α-tree: 隣の差を重みにした格子の最小全域木(scipy の Kruskal)を作り、重み ≤ α の木の辺だけで α ごとの分割を出す。</p>
 <p>scipy は重み 0 の辺を「辺が無い」と読むので、重み 0 の辺だけを「正の重みの最小の半分」に置き換えてから木を作る(辺の順序は変わらない = 最小全域木は同じ)。<b>全辺に 1 を足す手は使わない</b>: 0.3 の差が浮動小数で 0.29999999999999993 と 0.30000000000000004 に割れている時、+1 の丸めで 2 つが同点になり、木が重い方を選んで α = 0.3 の切断がずれた(実測、テスト test_quasi_flat_zones_equal_mst_cut)。木の辺の重みは添字から |f_p − f_q| を計算し直す。</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">mapf_prioritized — DRIVE <code style="color:#22d3bf">agv</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mapf_prioritized(grid, starts, goals, order=None, horizon=None)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import agvfleet; agvfleet.mapf_prioritized(grid, starts, goals, order=None, horizon=None)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;mapf_prioritized&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>우선순위 계획: 순서대로 1대씩, 먼저 정해진 차량의 통로(예약표)를 피해 계획합니다.</p>
 <p>빠르지만 <b>불완전</b> —— 해가 있는 문제라도 우선순위에 따라서는(어떤 순서로도) 찾지 못한다(Ma 등 2019). 반환은 dict: <code style="color:#22d3bf">paths</code>(실패하면 None), <code style="color:#22d3bf">cost</code>, <code style="color:#22d3bf">solved</code>, <code style="color:#22d3bf">failed_agent</code>(처음 막힌 차량).</p>

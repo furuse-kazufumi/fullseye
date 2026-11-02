@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">sfp_disambiguate — OPTICS <code style="color:#22d3bf">shape_from_polarization</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">normalmap</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sfp_disambiguate(candidates, prior=&#x27;convex&#x27;, mask=None, center=None, prior_normals=None, coarse_depth=None, brewster_tol=0.02, invalid=&#x27;raise&#x27;)</code>(要直接调用实现,<code style="color:#22d3bf">import sfpolar; sfpolar.sfp_disambiguate(candidates, prior=&#x27;convex&#x27;, mask=None, center=None, prior_normals=None, coarse_depth=None, brewster_tol=0.02, invalid=&#x27;raise&#x27;)</code>;从台账取用则 <code style="color:#22d3bf">opsoptics.get(&quot;sfp_disambiguate&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用明确的先验从 <code style="color:#22d3bf">sfp_normals</code> 的候选中为每个像素选 1 个法线 —— 凸性 + Brewster 脊线分割,或粗略深度/法线(<code style="color:#22d3bf">normalmap</code>)。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>

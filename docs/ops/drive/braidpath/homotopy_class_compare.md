@@ -4,6 +4,7 @@ dim: drive
 category: braidpath
 in: any × any
 out: table
+gpu: なし
 examples: [poc_braid_homotopy_classes]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `any × any` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.homotopy_class_compare(traj_a, traj_b, obstacles=None, angle=0.1, jitter='auto', tol=1e-09)` (実装を直接呼ぶなら `import braidpath; braidpath.homotopy_class_compare(traj_a, traj_b, obstacles=None, angle=0.1, jitter='auto', tol=1e-09)`、台帳から引くなら `opsdrive.get("homotopy_class_compare")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

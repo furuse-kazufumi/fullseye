@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">spoon_tilt_critical — DRIVE <code style="color:#22d3bf">granular</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">scalar × scalar × scalar</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.spoon_tilt_critical(phi_deg: &#x27;float&#x27;, L: &#x27;float&#x27;, h0: &#x27;float&#x27;, lip: &#x27;str&#x27; = &#x27;wall&#x27;) -&gt; &#x27;float&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import granular; granular.spoon_tilt_critical(phi_deg: &#x27;float&#x27;, L: &#x27;float&#x27;, h0: &#x27;float&#x27;, lip: &#x27;str&#x27; = &#x27;wall&#x27;) -&gt; &#x27;float&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;spoon_tilt_critical&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>スプーンから粉がこぼれ始める傾き θ_c [度] (2 次元断面、準静的、壁摩擦なし —— <b>自分の導出</b>)。</p>
 <p>模型: 床の長さ <code style="color:#22d3bf">L</code>(唇から奥壁まで、奥壁は床に垂直)、水平で深さ <code style="color:#22d3bf">h0</code> に平らに盛った粉。唇を下げて床を θ 傾ける。粉の自由表面は水平から φ(安息角)までしか立てないので、唇を通る斜面は<b>床から見て φ − θ</b>。</p>

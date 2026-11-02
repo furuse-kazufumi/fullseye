@@ -4,6 +4,7 @@ dim: drive
 category: decide
 in: 
 out: any
+gpu: なし
 examples: [poc_driving_decisions, poc_driving_pass]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `any`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.mirror_aim_normal(eye, mirror_center, look_dir) -> 'np.ndarray'` (実装を直接呼ぶなら `import drivedecide; drivedecide.mirror_aim_normal(eye, mirror_center, look_dir) -> 'np.ndarray'`、台帳から引くなら `opsdrive.get("mirror_aim_normal")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

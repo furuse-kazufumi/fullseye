@@ -4,6 +4,7 @@ dim: 3d
 category: render
 in: mesh × vector
 out: image2d
+gpu: なし
 examples: [render_beauty, render_shadow]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `mesh × vector` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.cast_shadow(V, F, light, *, pose=None, intrinsics=None, width: 'int' = 256, height: 'int' = 256, directional: 'bool' = True, penumbra: 'float' = 0.0, samples: 'int' = 16, shadow_res: 'int' = 512, bias=None, pcf: 'int' = 0) -> 'np.ndarray'` (実装を直接呼ぶなら `import render_shadow; render_shadow.cast_shadow(V, F, light, *, pose=None, intrinsics=None, width: 'int' = 256, height: 'int' = 256, directional: 'bool' = True, penumbra: 'float' = 0.0, samples: 'int' = 16, shadow_res: 'int' = 512, bias=None, pcf: 'int' = 0) -> 'np.ndarray'`、台帳から引くなら `ops3d.get("cast_shadow")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

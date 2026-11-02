@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">plenoptic_system — OPTICS <code style="color:#22d3bf">plenoptic</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table × table × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.plenoptic_system(main_lens, mla, sensor, *, kind=&#x27;unfocused&#x27;, mla_to_sensor_mm=None, main_to_mla_mm=None)</code>(要直接调用实现,<code style="color:#22d3bf">import plenoptic; plenoptic.plenoptic_system(main_lens, mla, sensor, *, kind=&#x27;unfocused&#x27;, mla_to_sensor_mm=None, main_to_mla_mm=None)</code>;从台账取用则 <code style="color:#22d3bf">opsoptics.get(&quot;plenoptic_system&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>组装主镜头、微透镜阵列和传感器，并报告 F 数匹配。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>

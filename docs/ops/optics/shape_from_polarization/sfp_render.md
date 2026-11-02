@@ -4,6 +4,7 @@ dim: optics
 category: shape_from_polarization
 in: normalmap
 out: polsweep
+gpu: なし
 examples: [poc_shape_from_polarization]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `normalmap` → `polsweep`
 - **呼び出し**: `import fullseye as fs; fs.ledger.sfp_render(normals, refractive_index=1.5, specular_radiance=1.0, diffuse_radiance=0.0, angles_deg=(0.0, 45.0, 90.0, 135.0), mask=None)` (実装を直接呼ぶなら `import sfpolar; sfpolar.sfp_render(normals, refractive_index=1.5, specular_radiance=1.0, diffuse_radiance=0.0, angles_deg=(0.0, 45.0, 90.0, 135.0), mask=None)`、台帳から引くなら `opsoptics.get("sfp_render")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -4,6 +4,7 @@ dim: drive
 category: pegtactile
 in: signal × signal × table
 out: table
+gpu: なし
 examples: [poc_knife_tactile_toughness, poc_peg_insertion_tactile]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal × signal × table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.peg_wrench_to_pad_loads(F_pad, M_pad, pad: 'dict') -> 'dict'` (実装を直接呼ぶなら `import pegtactile; pegtactile.peg_wrench_to_pad_loads(F_pad, M_pad, pad: 'dict') -> 'dict'`、台帳から引くなら `opsdrive.get("peg_wrench_to_pad_loads")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

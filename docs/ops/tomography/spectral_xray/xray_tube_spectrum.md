@@ -4,6 +4,7 @@ dim: tomography
 category: spectral_xray
 in: 
 out: pairs
+gpu: なし
 examples: [poc_dual_energy_xray]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `pairs`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.xray_tube_spectrum(kvp: 'float' = 80.0, anode: 'str' = 'W', takeoff_deg: 'float' = 12.0, filtration=(('AL', 2.5),), e_min_kev: 'float' = 5.0, de_kev: 'float' = 0.5, characteristic: 'bool' = True, self_absorption: 'bool' = True) -> 'np.ndarray'` (実装を直接呼ぶなら `import dualxray; dualxray.xray_tube_spectrum(kvp: 'float' = 80.0, anode: 'str' = 'W', takeoff_deg: 'float' = 12.0, filtration=(('AL', 2.5),), e_min_kev: 'float' = 5.0, de_kev: 'float' = 0.5, characteristic: 'bool' = True, self_absorption: 'bool' = True) -> 'np.ndarray'`、台帳から引くなら `opstomography.get("xray_tube_spectrum")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

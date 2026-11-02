@@ -4,6 +4,7 @@ dim: optics
 category: plenoptic
 in: 
 out: table
+gpu: なし
 examples: [plenoptic_capture_pipeline, poc_plenoptic_camera]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.mla_surface(pitch_mm, radius_mm, n_lenslets=(1, 1), f_number=None, offset_mm=(0, 0), shape='square')` (実装を直接呼ぶなら `import plenoptic; plenoptic.mla_surface(pitch_mm, radius_mm, n_lenslets=(1, 1), f_number=None, offset_mm=(0, 0), shape='square')`、台帳から引くなら `opsoptics.get("mla_surface")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

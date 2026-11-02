@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">alpha_shape_boundary — 3D <code style="color:#22d3bf">reconstruct</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">indices</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.alpha_shape_boundary(points, alpha)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import recon3d; recon3d.alpha_shape_boundary(points, alpha)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;alpha_shape_boundary&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>alpha shapes से <b>boundary point indices</b> लौटाता है (point cloud → boundary points)।</p>
 <p>Delaunay tetrahedralisation के उन tetrahedra के surface triangles (boundary faces) इकट्ठा करता है जिनका circumsphere radius &lt; 1/alpha है, और उनके vertex set को boundary points मानता है। solid (surface + अंदर) point cloud से केवल surface shell के points निकालने के लिए उपयुक्त। alpha बड़ा करने पर अनुमत radius 1/alpha छोटा होता है, और boundary अधिक सटी हुई (बारीकियाँ पकड़ने वाली) बनती है।</p>

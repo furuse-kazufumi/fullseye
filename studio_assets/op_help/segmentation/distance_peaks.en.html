@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">distance_peaks — SEGMENTATION <code style="color:#22d3bf">watershed3d</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">labels</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.distance_peaks(binary, min_distance: &#x27;float&#x27; = 1.0) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import watershed3d; watershed3d.distance_peaks(binary, min_distance: &#x27;float&#x27; = 1.0) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opssegmentation.get(&quot;distance_peaks&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Returns an int marker array of the local maxima of the foreground distance transform, thinned out by <code style="color:#22d3bf">min_distance</code> NMS.</p>
 <p><code style="color:#22d3bf">volops.vol_distance_transform</code> + <code style="color:#22d3bf">volops.vol_local_maxima</code> as a thin composition, plus the post-processing &quot;maximum coordinates → label array (1 seed per 1 object)&quot; (exposes on its own the seed generation that <code style="color:#22d3bf">watershed_vol</code> uses internally = for visualisation and verification).</p>

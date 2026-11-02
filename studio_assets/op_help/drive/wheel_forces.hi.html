@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">wheel_forces — DRIVE <code style="color:#22d3bf">roverslip</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal × signal × table × any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.wheel_forces(sinkage, slip, wheel, soil, n_quad: &#x27;int&#x27; = 96) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import roverslip; roverslip.wheel_forces(sinkage, slip, wheel, soil, n_quad: &#x27;int&#x27; = 96) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;wheel_forces&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>धँसाव z [m] और slip ratio s पर rigid wheel को मिट्टी से मिलने वाले बल (Wong–Reece stress distribution का numerical integration)।</p>
 <p>रिटर्न <code style="color:#22d3bf">{&quot;Fz&quot;, &quot;DP&quot;, &quot;T&quot;, &quot;theta_f&quot;, &quot;theta_m&quot;, &quot;theta_r&quot;}</code>: ऊर्ध्वाधर बल [N], कर्षण बल (drawbar pull, आगे धनात्मक) [N], चालन टॉर्क [N·m], कोण [rad]। <code style="color:#22d3bf">sinkage</code> / <code style="color:#22d3bf">slip</code> अदिश या समान आकार में ब्रॉडकास्ट होने योग्य ऐरे हैं (0 ≤ z &lt; r, −1 &lt; s &lt; 1)।</p>

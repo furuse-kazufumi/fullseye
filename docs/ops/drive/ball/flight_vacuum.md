@@ -4,6 +4,7 @@ dim: drive
 category: ball
 in: signal
 out: points
+gpu: なし
 examples: [gallery_drive_kendama_racket, poc_ball_bounce]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal` → `points`
 - **呼び出し**: `import fullseye as fs; fs.ledger.flight_vacuum(p0, v0, t, g: 'float' = 9.81) -> 'np.ndarray'` (実装を直接呼ぶなら `import ballistics; ballistics.flight_vacuum(p0, v0, t, g: 'float' = 9.81) -> 'np.ndarray'`、台帳から引くなら `opsdrive.get("flight_vacuum")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

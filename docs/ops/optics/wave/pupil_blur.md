@@ -4,6 +4,7 @@ dim: optics
 category: wave
 in: image2d × image2d
 out: image2d
+gpu: なし
 examples: [optics_imaging, poc_nir_silicon_transmission]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d × image2d` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.pupil_blur(image, pupil, defocus_waves=0.0, wavelength_um=0.55, f_number=5.6, pixel_pitch_um=5.0, oversample=4, opd_waves=None)` (実装を直接呼ぶなら `import optics; optics.pupil_blur(image, pupil, defocus_waves=0.0, wavelength_um=0.55, f_number=5.6, pixel_pitch_um=5.0, oversample=4, opd_waves=None)`、台帳から引くなら `opsoptics.get("pupil_blur")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

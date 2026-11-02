@@ -4,6 +4,7 @@ dim: optics
 category: oct
 in: table × signal
 out: table
+gpu: なし
 examples: [poc_industrial_oct]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table × signal` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.oct_bscan_flatten(bscan, reference_rows, above_um=20.0, below_um=300.0, noise_rows=0.15)` (実装を直接呼ぶなら `import octscan; octscan.oct_bscan_flatten(bscan, reference_rows, above_um=20.0, below_um=300.0, noise_rows=0.15)`、台帳から引くなら `opsoptics.get("oct_bscan_flatten")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

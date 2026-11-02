@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">prism_min_deviation_deg — OPTICS <code style="color:#22d3bf">glassbody</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.prism_min_deviation_deg(wavelength_nm=550.0, apex_deg=60.0, glass=&#x27;N-BK7&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import glassmirror; glassmirror.prism_min_deviation_deg(wavelength_nm=550.0, apex_deg=60.0, glass=&#x27;N-BK7&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;prism_min_deviation_deg&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>prism का minimum deviation angle [deg]। <b>असली glass के dispersion</b> से wavelength के साथ बदलता है = इंद्रधनुष दिखने का कारण।</p>
 <p>wavelength_nm: scalar या array [nm]। <b>यह data इनपुट है, इसलिए यह 1st argument है</b></p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">cut_force_fit — DRIVE <code style="color:#22d3bf">cutting</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">signal × signal × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cut_force_fit(F_n, w_eff_mm, xi: &#x27;float&#x27;, min_w_mm: &#x27;float&#x27; = 2.0) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import cutting; cutting.cut_force_fit(F_n, w_eff_mm, xi: &#x27;float&#x27;, min_w_mm: &#x27;float&#x27; = 2.0) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;cut_force_fit&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由切割過程中的力序列 F(N)與正在切割的寬度 w_eff(mm)，以通過原點的最小平方求韌性 R(J/m²)。</p>
 <p>模型: <code style="color:#22d3bf">F = R · w_eff · g(ξ)</code>,g = 1/(1+ξ²)(<code style="color:#22d3bf">cut_force_atkins</code> 的 slice_push,無摩擦)。w_eff &lt; <code style="color:#22d3bf">min_w_mm</code> 的點(剛切入時)不使用。★ 若以同一模型產生合成真值,此擬合就只是管線的檢查,摩擦的部分會被吸入 R (寫在回傳值的 <code style="color:#22d3bf">model</code> 中)。回傳值: <code style="color:#22d3bf">R</code>、<code style="color:#22d3bf">rms_n</code>、<code style="color:#22d3bf">n</code>、<code style="color:#22d3bf">g</code>、<code style="color:#22d3bf">model</code>。</p>

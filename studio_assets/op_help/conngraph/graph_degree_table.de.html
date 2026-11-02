@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">graph_degree_table — CONNGRAPH <code style="color:#22d3bf">stats</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">conn_graph</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graph_degree_table(W: &#x27;Any&#x27;) -&gt; &#x27;dict[str, np.ndarray]&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import conngraph; conngraph.graph_degree_table(W: &#x27;Any&#x27;) -&gt; &#x27;dict[str, np.ndarray]&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsconngraph.get(&quot;graph_degree_table&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Tabelle je Knoten mit in_degree / out_degree (binär) und in_strength / out_strength (Summe der Gewichte).</p>
 <p>Der Grad ist die Anzahl der Einträge mit <code style="color:#22d3bf">W != 0</code> (ohne Diagonale), strength ist die Summe der Gewichte (ohne Diagonale). Rückgabe ist ein dict Spaltenname → Array der Länge n (das <code style="color:#22d3bf">table</code> dieses Repos).</p>

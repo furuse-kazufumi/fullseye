@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">diabolo_dynamics_step — DRIVE <code style="color:#22d3bf">diabolo</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table × matrix × matrix × scalar × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.diabolo_dynamics_step(state: &#x27;dict&#x27;, sticks_prev, sticks_now, dt: &#x27;float&#x27;, params: &#x27;dict&#x27;, *, plane_rule: &#x27;str&#x27; = &#x27;paper&#x27;, rotation: &#x27;str&#x27; = &#x27;paper&#x27;, flying_rule: &#x27;str&#x27; = &#x27;paper&#x27;) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import diabolo; diabolo.diabolo_dynamics_step(state: &#x27;dict&#x27;, sticks_prev, sticks_now, dt: &#x27;float&#x27;, params: &#x27;dict&#x27;, *, plane_rule: &#x27;str&#x27; = &#x27;paper&#x27;, rotation: &#x27;str&#x27; = &#x27;paper&#x27;, flying_rule: &#x27;str&#x27; = &#x27;paper&#x27;) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;diabolo_dynamics_step&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>将论文的解析模型推进 1 步(空竹 = 质点 + 辅助旋转椭球 + 重力)。</p>
 <p><code style="color:#22d3bf">state</code> = <code style="color:#22d3bf">{&quot;x&quot;, &quot;v&quot;, &quot;omega&quot;, &quot;mode&quot;}</code>(mode 为 <code style="color:#22d3bf">DIABOLO_STATES</code>)。棒的组 = matrix (2, 3)。步骤(正文的 1–4):</p>

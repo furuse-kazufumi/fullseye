@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">spheres_render_shaded — DRIVE <code style="color:#22d3bf">granular</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">matrix × scalar × scalar × scalar × scalar</code> → <code style="color:#22d3bf">rgb</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.spheres_render_shaded(pos, radius: &#x27;float&#x27;, pitch: &#x27;float&#x27;, extent: &#x27;float&#x27;, height: &#x27;float&#x27;, light=(-0.4, -0.6, 0.7)) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import granular; granular.spheres_render_shaded(pos, radius: &#x27;float&#x27;, pitch: &#x27;float&#x27;, extent: &#x27;float&#x27;, height: &#x27;float&#x27;, light=(-0.4, -0.6, 0.7)) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;spheres_render_shaded&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>横からの正射影を陰影つきで描く(numpy の z バッファ、Lambert)。GIF 用。返り <code style="color:#22d3bf">(rows, cols, 3)</code> [0, 1]。</p>
 <p>空の入力(<code style="color:#22d3bf">pos</code> が 0 要素)は ValueError。</p>

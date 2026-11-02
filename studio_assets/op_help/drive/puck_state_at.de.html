@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">puck_state_at — DRIVE <code style="color:#22d3bf">puck</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.puck_state_at(pred: &#x27;dict&#x27;, t) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import puck; puck.puck_state_at(pred: &#x27;dict&#x27;, t) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;puck_state_at&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Position und Geschwindigkeit auf dem Pfad von <code style="color:#22d3bf">puck_slide_predict</code> zur Zeit t (Skalar oder (N,)). Nach dem Ende bleibt der Endzustand erhalten (die Position bewegt sich nicht, die Geschwindigkeit ist der Endwert = 0, falls gestoppt). Rückgabewert <code style="color:#22d3bf">{&quot;p&quot; (N,2), &quot;v&quot; (N,2)}</code>.</p>
 <p>Leere Eingabe (<code style="color:#22d3bf">pred</code> ein leeres dict) löst <code style="color:#22d3bf">ValueError</code> aus.</p>

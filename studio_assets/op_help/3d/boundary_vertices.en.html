@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">boundary_vertices — 3D <code style="color:#22d3bf">mesh_process</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">mesh</code> → <code style="color:#22d3bf">indices</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.boundary_vertices(mesh) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import mesh_props; mesh_props.boundary_vertices(mesh) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;boundary_vertices&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p><b>Indices of the vertices</b> lying on open edges (the boundary) → <code style="color:#22d3bf">(K,)</code>.</p>
 <p>Collects and returns the endpoints of the undirected edges <b>used by exactly 1 face only</b> (boundary edges). For a closed manifold this is an empty array -- that is, <code style="color:#22d3bf">len(boundary_vertices(mesh)) == 0</code> serves as <b>the watertightness test</b>. Hole filling, volume computation and curvature all change meaning depending on whether a boundary exists, so look here first.</p>

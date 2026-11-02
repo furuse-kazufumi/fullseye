@@ -2,7 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">match_phase_3d — 3D <code style="color:#22d3bf">match_pose</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">voxel × voxel</code> → <code style="color:#22d3bf">shift</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.match_phase_3d(a, b, device=&#x27;cpu&#x27;, window=&#x27;tukey&#x27;, whitening=0.25)</code>(要直接调用实现,<code style="color:#22d3bf">import match3d; match3d.match_phase_3d(a, b, device=&#x27;cpu&#x27;, window=&#x27;tukey&#x27;, whitening=0.25)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;match_phase_3d&quot;)</code>)</p>
-<p style="margin:2px 0 2px 12px">• <b>GPU</b>:该算子有 GPU 路径(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>3D 相位相关(FFT)。返回把 b 对齐到 a 的整数位移 (dz,dy,dx)。</p>
 <p>Reddy &amp; Chatterji 的 3D 版。将互功率谱 R = A·conj(B) 除以 |R|^<code style="color:#22d3bf">whitening</code> 后做逆 FFT,其峰值 = 平移量。无需模板、作用于整个 volume、O(N log N)。旋转/缩放需另行处理(PCA / log-polar)。</p>

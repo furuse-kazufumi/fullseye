@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">reservoir_from_graph — CONNGRAPH <code style="color:#22d3bf">reservoir</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">conn_graph</code> → <code style="color:#22d3bf">conn_graph</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.reservoir_from_graph(W: &#x27;Any&#x27;, rho: &#x27;float&#x27; = 0.9) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import conngraph; conngraph.reservoir_from_graph(W: &#x27;Any&#x27;, rho: &#x27;float&#x27; = 0.9) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsconngraph.get(&quot;reservoir_from_graph&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>W를 스펙트럼 반경이 rho가 되도록 상수배한 conn_graph(echo state의 전처리). 반경 0은 거부한다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">linescan_lens_example — OPTICS <code style="color:#22d3bf">linescan</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.linescan_lens_example(kind=&#x27;linescan&#x27;)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import linescan; linescan.linescan_lens_example(kind=&#x27;linescan&#x27;)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;linescan_lens_example&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>ラインスキャンの撮像系の模型 2 つ(<code style="color:#22d3bf">raytrace.lens_system</code> の <code style="color:#22d3bf">table</code>)。</p>
 <p>どちらも Cooke の三枚玉(SK16 相当のクラウン / F2 相当のフリント / SK16 相当、絞りは中玉の後ろ)を、57.344 mm(8192 × 7 µm)のセンサで幅 300 mm の web を見る倍率 −0.1911 に合わせて <code style="color:#22d3bf">lensopt.optimize_lens</code> で最適化した処方:</p>

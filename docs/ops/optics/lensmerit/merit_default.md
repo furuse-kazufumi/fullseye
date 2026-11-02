@@ -4,6 +4,7 @@ dim: optics
 category: lensmerit
 in: table
 out: table
+gpu: なし
 examples: [optimized_lens_tolerance_sensitivity, poc_lens_merit_operands]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.merit_default(system=None, kind: 'str' = 'spot', fields=None, wavelengths=None, rings: 'int' = 4, reference: 'str' = 'chief', efl_target=None, efl_weight=None, field_weights=None, wavelength_weights=None, pupil_fill: 'float' = 0.98) -> 'dict'` (実装を直接呼ぶなら `import lensmerit; lensmerit.merit_default(system=None, kind: 'str' = 'spot', fields=None, wavelengths=None, rings: 'int' = 4, reference: 'str' = 'chief', efl_target=None, efl_weight=None, field_weights=None, wavelength_weights=None, pupil_fill: 'float' = 0.98) -> 'dict'`、台帳から引くなら `opsoptics.get("merit_default")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -4,6 +4,7 @@ dim: math
 category: complex
 in: 
 out: cimage
+gpu: なし
 examples: [poc_complex_plane_fields]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `cimage`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.cplx_plane_grid(centre=0j, half_width=2.0, shape=(256, 256))` (実装を直接呼ぶなら `import mathops; mathops.cplx_plane_grid(centre=0j, half_width=2.0, shape=(256, 256))`、台帳から引くなら `opsmath.get("cplx_plane_grid")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

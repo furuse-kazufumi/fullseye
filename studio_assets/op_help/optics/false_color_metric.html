@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">false_color_metric — OPTICS <code style="color:#22d3bf">pixelshift</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">rgbimage</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.false_color_metric(rgb, reference=None, border=0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import pixelshift; pixelshift.false_color_metric(rgb, reference=None, border=0)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;false_color_metric&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>偽色の量: 色差(BT.601 の Cb, Cr)の大きさの統計。</p>
 <p>*reference* が無ければ被写体を<b>無彩色</b>とみなし、各画素の √(Cb² + Cr²) そのものを偽色とする(白黒の配線・織物・網点・解像チャートを撮った場合)。*reference* <code style="color:#22d3bf">(H, W, 3)</code> があれば、その色差との差の大きさを取る(色のある被写体)。*border* 画素ぶん四辺を除いてから数える(端の差し戻しを数えないため)。</p>

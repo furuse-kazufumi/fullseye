@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">braid_reduce — DRIVE <code style="color:#22d3bf">braidpath</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">signal × scalar</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.braid_reduce(word, n_strands)</code> (die Implementierung direkt: <code style="color:#22d3bf">import braidpath; braidpath.braid_reduce(word, n_strands)</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;braid_reduce&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Reduziert ein Zopfwort mit der Henkelreduktion nach Dehornoy. <b>Leeres Wort als Ergebnis ⇔ trivialer Zopf</b> (gleiche Klasse).</p>
 <p>Henkel = σⱼ^e u σⱼ^(−e) (u enthält kein σⱼ^(±1) und kein σⱼ₋₁^(±1)). Jedes σⱼ₊₁^d in u wird durch σⱼ₊₁^(−e) σⱼ^d σⱼ₊₁^e ersetzt, und die beiden äußeren Buchstaben werden gestrichen (es werden nur die Relationen verwendet, der Zopf ändert sich also nicht). Gewählt wird der von links zuerst schließende Henkel —— er enthält keinen anderen Henkel, ist also im Sinne von Dehornoy zulässig, und das Verfahren endet nach endlich vielen Schritten. Das Ergebniswort hat keine Henkel; ist es nicht leer, haben die Buchstaben mit dem kleinsten vorkommenden Index alle dasselbe Vorzeichen (σ-positiv / σ-negativ).</p>

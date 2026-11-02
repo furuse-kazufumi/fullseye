@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">poly_eval — MATH <code style="color:#22d3bf">interp_poly</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.poly_eval(coeffs, x)</code> (to call the implementation directly, <code style="color:#22d3bf">import mathops; mathops.poly_eval(coeffs, x)</code>; from the registry, <code style="color:#22d3bf">opsmath.get(&quot;poly_eval&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Evaluate a polynomial (coefficients highest-power-first) at *x*.</p>
 <p>*coeffs* is the 1-D array <code style="color:#22d3bf">poly_fit</code> returns in <code style="color:#22d3bf">&quot;coeffs&quot;</code> (or any hand-written one, <code style="color:#22d3bf">[c_d, ..., c_1, c_0]</code>); *x* is a finite scalar or 1-D array. A scalar returns a Python float, an array returns float64. Evaluation is by Horner&#x27;s scheme (<code style="color:#22d3bf">np.polyval</code>) — numerically the right way to evaluate, though it cannot repair a badly-conditioned *fit* (see <code style="color:#22d3bf">poly_fit</code>&#x27;s <code style="color:#22d3bf">cond</code>).</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">alpha_shape_boundary — 3D <code style="color:#22d3bf">reconstruct</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">indices</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.alpha_shape_boundary(points, alpha)</code>(要直接调用实现,<code style="color:#22d3bf">import recon3d; recon3d.alpha_shape_boundary(points, alpha)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;alpha_shape_boundary&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用 alpha shapes 给出<b>边界点索引</b>(点群 → 边界点)。</p>
 <p>收集 Delaunay 四面体剖分中外接球半径 &lt; 1/alpha 的四面体的表面三角形(边界面),将其顶点集合作为边界点。适用于从实心(表面 + 内部)点云中只提取表面壳的点。alpha 越大,允许的半径 1/alpha 越小,边界越贴合(能捕捉细节)。</p>

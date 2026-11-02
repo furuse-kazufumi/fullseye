@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">string_tension_from_sag — DRIVE <code style="color:#22d3bf">diabolo</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">signal × signal × signal × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.string_tension_from_sag(p_left, p_right, p_diabolo, mass: &#x27;float&#x27;, *, accel=None, g: &#x27;float&#x27; = 9.81) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import diabolo; diabolo.string_tension_from_sag(p_left, p_right, p_diabolo, mass: &#x27;float&#x27;, *, accel=None, g: &#x27;float&#x27; = 9.81) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;string_tension_from_sag&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由繩的 V 字形(棍端 2 點與軸的位置)求張力(無摩擦滑輪 = 兩側張力相等)。</p>
 <p>T (û_L + û_R) = m (a − g⃗) 的最小平方:T = m (a − g⃗)·n / |n|²,n = û_L + û_R(û 為支點 → 桿的單位向量)。靜止時(accel = None) 等同於 T = m g / (sin α_L + sin α_R)(α = 繩相對水平的角度)。同時回傳殘差(平衡的破壞)—— 若很大,則是「忘記輸入加速度 / 摩擦 / 彈性」的警報。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>:形狀、質量 ≤ 0、支點與桿重合。</p>

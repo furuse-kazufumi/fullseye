@@ -4,6 +4,7 @@ dim: conngraph
 category: construct
 in: synapse_table
 out: conn_graph
+gpu: なし
 examples: [poc_fly_optomotor_steering, poc_microns_brain_wave]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `synapse_table` → `conn_graph`
 - **呼び出し**: `import fullseye as fs; fs.ledger.graph_from_synapses(syn: 'Any', n: 'int | None' = None, sign: 'float' = 1.0) -> 'np.ndarray'` (実装を直接呼ぶなら `import conngraph; conngraph.graph_from_synapses(syn: 'Any', n: 'int | None' = None, sign: 'float' = 1.0) -> 'np.ndarray'`、台帳から引くなら `opsconngraph.get("graph_from_synapses")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

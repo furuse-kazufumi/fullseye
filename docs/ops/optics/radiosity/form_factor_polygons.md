@@ -4,6 +4,7 @@ dim: optics
 category: radiosity
 in: points × points
 out: measurement
+gpu: なし
 examples: [poc_pocket_interreflection]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `points × points` → `measurement`
 - **呼び出し**: `import fullseye as fs; fs.ledger.form_factor_polygons(poly_i, poly_j, n_quad=8, occluders=None)` (実装を直接呼ぶなら `import radiosity3d; radiosity3d.form_factor_polygons(poly_i, poly_j, n_quad=8, occluders=None)`、台帳から引くなら `opsoptics.get("form_factor_polygons")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

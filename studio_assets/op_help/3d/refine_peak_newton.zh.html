@@ -3,7 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">score × position</code> → <code style="color:#22d3bf">position</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.refine_peak_newton(score, idx, device=&#x27;cpu&#x27;, max_iter=12, tol=0.0001)</code>(要直接调用实现,<code style="color:#22d3bf">import match3d; match3d.refine_peak_newton(score, idx, device=&#x27;cpu&#x27;, max_iter=12, tol=0.0001)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;refine_peak_newton&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>经台账调用的返回值</b>: <code style="color:#22d3bf">fullseye.ledger.refine_peak_newton(...)</code> 只返回<b>声明的 out 类型 <code style="color:#22d3bf">position</code> 的值</b>(底层函数还会返回辅助信息)。需要被丢弃的部分时,使用 <code style="color:#22d3bf">fullseye.ledger.refine_peak_newton.raw(...)</code>,或直接调用 <code style="color:#22d3bf">match3d.refine_peak_newton</code>。</p>
-<p style="margin:2px 0 2px 12px">• <b>GPU</b>:该算子有 GPU 路径(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用 3D Newton 把 score/相关体的整数峰精化到亚体素(迭代优化)。</p>
 <p>将粗匹配(整数 NCC / Fourier-Mellin ±3° / Hough ±0.5voxel)返回的整数峰值 idx,向局部 2 次模型 f(x)≈f0+gᵀΔ+½ΔᵀHΔ 的驻点 Δ=-H⁻¹g 迭代更新,使其收敛到连续坐标。与按轴的抛物线亚像素不同,它使用 <b>完整的 3x3 Hessian(含交叉曲率 fzy,fzx,fyx)</b>,因此即使是旋转后的(有交叉曲率的)各向异性峰值,也能消除坐标轴之间的耦合偏差。</p>

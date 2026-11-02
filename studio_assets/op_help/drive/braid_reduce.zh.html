@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">braid_reduce — DRIVE <code style="color:#22d3bf">braidpath</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">signal × scalar</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.braid_reduce(word, n_strands)</code>(要直接调用实现,<code style="color:#22d3bf">import braidpath; braidpath.braid_reduce(word, n_strands)</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;braid_reduce&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用 Dehornoy 柄约化来约化辫字。<b>返回空字 ⇔ 平凡辫</b>(同一类)。</p>
 <p>柄 = σⱼ^e u σⱼ^(−e)(u 中不含 σⱼ^(±1)、σⱼ₋₁^(±1))。将 u 中的 σⱼ₊₁^d 替换为 σⱼ₊₁^(−e) σⱼ^d σⱼ₊₁^e,并删去外侧的 2 个字母(只使用关系式,因此辫不变)。选择从左起最先闭合的柄 —— 其内部不含其他柄, 因此在 Dehornoy 的意义下是允许的,有限次后停止。返回的字不含柄,若非空,则出现的最小下标的字母符号一致(σ 正 / σ 负)。</p>

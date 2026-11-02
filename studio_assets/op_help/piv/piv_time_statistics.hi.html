@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">piv_time_statistics — PIV <code style="color:#22d3bf">assess</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">images</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_time_statistics(images, window=32, overlap=0.5, **kw)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import pivops; pivops.piv_time_statistics(images, window=32, overlap=0.5, **kw)</code>, registry से लेना हो तो <code style="color:#22d3bf">opspiv.get(&quot;piv_time_statistics&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>image क्रम → समय-औसत, उतार-चढ़ाव का RMS और Reynolds stress।</p>
 <p>हर लगातार जोड़े के लिए displacement मापा जाता है, और समय के साथ statistics ली जाती हैं। ये 3 turbulence का वर्णन करने का प्रारंभिक बिंदु हैं; <code style="color:#22d3bf">u&#x27;v&#x27;</code> का चिह्न और आकार स्वयं momentum transport है।</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">annotate_invert_visibility — ANNOTATE <code style="color:#22d3bf">overlay</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d × mask</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_invert_visibility(img, mask, mode=&#x27;complement&#x27;, alpha=1.0, bits=128)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import annotate; annotate.annotate_invert_visibility(img, mask, mode=&#x27;complement&#x27;, alpha=1.0, bits=128)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsannotate.get(&quot;annotate_invert_visibility&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>반전색이 <b>그 바탕 위에서 실제로 보이는지</b>를 그리기 전에 측정한다.</p>
 <p>반전색의 이점은 &quot;바탕색을 몰라도 된다&quot;는 것이지만, 약점은 단 1개이고, 게다가 치명적이다 —— <b>중간조에서는 반전해도 같은 색이 된다</b>. 8bit 그레이의 v=128에 대한 보색은 v=127이며, WCAG의 대비비는 <b>1.014</b> (비 1.0이 &quot;같은 색&quot;. 실측 2026-09-08). 비 1.5를 밑도는 대역은 v ∈ [113, 142]의 30/256 계조 = 전체 계조의 12 %에 이른다.</p>

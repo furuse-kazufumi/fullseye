@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">physarum_route — GRAPH <code style="color:#22d3bf">flow</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.physarum_route(cost, start=None, end=None, connectivity=4, dt=0.1, max_iters=5000, tol=1e-06, frac=0.5, snapshots=0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import physarum_search; physarum_search.physarum_route(cost, start=None, end=None, connectivity=4, dt=0.1, max_iters=5000, tol=1e-06, frac=0.5, snapshots=0)</code>、台帳から引くなら <code style="color:#22d3bf">opsgraph.get(&quot;physarum_route&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>コスト画像の最小コスト経路を粘菌の管の力学で: 隣接画素を長さ (c_u+c_v)/2 の管で結び、route_through_array と同じ量を最小化する。導電度の画像、経路の画素列、経路コスト、途中経過の画像を返す。</p>
 <p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>

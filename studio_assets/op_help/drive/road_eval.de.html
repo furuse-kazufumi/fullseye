@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">road_eval — DRIVE <code style="color:#22d3bf">long</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table × scalar</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.road_eval(road, l: &#x27;float&#x27;) -&gt; &#x27;Tuple[float, float, float]&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import drivelong; drivelong.road_eval(road, l: &#x27;float&#x27;) -&gt; &#x27;Tuple[float, float, float]&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;road_eval&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Wertet das Längsprofil der Straße bei Bogenlänge l aus: (z, sin θ, cos θ). <code style="color:#22d3bf">road</code> = None (eben) / Zahl (konstanter Steigungswinkel θ [rad], z = l sin θ) / das dict von <code style="color:#22d3bf">road_profile</code>. Auf einem Knickpunkt gilt der Wert des folgenden Abschnitts (rechtsstetig).</p>
 <p>Leere Eingabe (<code style="color:#22d3bf">road</code> ein leeres dict) löst <code style="color:#22d3bf">ValueError</code> aus.</p>

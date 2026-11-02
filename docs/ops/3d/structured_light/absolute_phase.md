@@ -4,6 +4,7 @@ dim: 3d
 category: structured_light
 in: image2d × image2d
 out: image2d
+gpu: なし
 examples: [structured_light_scan]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d × image2d` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.absolute_phase(wrapped, coarse) -> 'np.ndarray'` (実装を直接呼ぶなら `import fringe; fringe.absolute_phase(wrapped, coarse) -> 'np.ndarray'`、台帳から引くなら `ops3d.get("absolute_phase")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

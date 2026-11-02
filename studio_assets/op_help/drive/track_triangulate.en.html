@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">track_triangulate — DRIVE <code style="color:#22d3bf">balltrack</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table × any × any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.track_triangulate(tracks, poses, Ks, n_frames: &#x27;int&#x27;) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import balltrack; balltrack.track_triangulate(tracks, poses, Ks, n_frames: &#x27;int&#x27;) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;track_triangulate&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Triangulates the per-camera trajectories (return values of <code style="color:#22d3bf">ball_track</code>) into a 3-D trajectory: <code style="color:#22d3bf">{&quot;frame&quot;, &quot;p&quot; (N, 3), &quot;reproj_rms&quot; (N,)}</code> (only frames seen in 2 or more views).</p>
 <p>Empty input (<code style="color:#22d3bf">tracks</code> with no items) raises <code style="color:#22d3bf">ValueError</code>.</p>

@@ -4,6 +4,7 @@ dim: drive
 category: rss
 in: table
 out: scalar
+gpu: なし
 examples: [poc_ttc_rss]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `scalar`
 - **呼び出し**: `import fullseye as fs; fs.ledger.rss_longitudinal_opposite(v1: 'float', v2: 'float', p1: 'dict', p2: 'Optional[dict]' = None) -> 'float'` (実装を直接呼ぶなら `import rsssafety; rsssafety.rss_longitudinal_opposite(v1: 'float', v2: 'float', p1: 'dict', p2: 'Optional[dict]' = None) -> 'float'`、台帳から引くなら `opsdrive.get("rss_longitudinal_opposite")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

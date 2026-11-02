@@ -4,6 +4,7 @@ dim: math
 category: numerics
 in: table × matrix
 out: signal
+gpu: なし
 examples: [numerics_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table × matrix` → `signal`
 - **呼び出し**: `import fullseye as fs; fs.ledger.chebyshev_eval_nd(coeffs, points, box=None) -> 'np.ndarray'` (実装を直接呼ぶなら `import mathnumerics; mathnumerics.chebyshev_eval_nd(coeffs, points, box=None) -> 'np.ndarray'`、台帳から引くなら `opsmath.get("chebyshev_eval_nd")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

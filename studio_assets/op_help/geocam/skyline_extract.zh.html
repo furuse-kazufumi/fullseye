@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">skyline_extract — GEOCAM <code style="color:#22d3bf">skyline</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.skyline_extract(image, sky_is_bright=True, smooth=1.5, max_jump=3, jump_penalty=0.5)</code>(要直接调用实现,<code style="color:#22d3bf">import geocam; geocam.skyline_extract(image, sky_is_bright=True, smooth=1.5, max_jump=3, jump_penalty=0.5)</code>;从台账取用则 <code style="color:#22d3bf">opsgeocam.get(&quot;skyline_extract&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用动态规划从照片中提取 1 条<b>每列的天空与地形分界所在行</b> → signal (W,)。</p>
 <p>与 Lie、Lin 和 Hsu 2005 的想法相同（*模式识别*：用于导航的鲁棒天际线提取）：垂直方向亮度的变化（如果上方天空明亮，则“I[v−1] − I[v+1]”为正）被认为是“边界相似度”，从下一列跳转不超过“max_jump”行的连续路径中选择成本最低的路径（<code style="color:#22d3bf">jump_penalty</code>× 线跳跃）。即使在云或建筑物的垂直边缘处存在局部强烈的响应，路径连续性留下了真正的山脊线。</p>

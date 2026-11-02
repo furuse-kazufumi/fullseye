@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">braid_equivalent — DRIVE <code style="color:#22d3bf">braidpath</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal × signal × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.braid_equivalent(word_a, word_b, n_strands, method=&#x27;dynnikov&#x27;)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import braidpath; braidpath.braid_equivalent(word_a, word_b, n_strands, method=&#x27;dynnikov&#x27;)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;braid_equivalent&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>क्या दो braid words एक ही braid हैं (केवल relations से एक-दूसरे में बदले जा सकते हैं)।</p>
 <p>method: <code style="color:#22d3bf">&quot;dynnikov&quot;</code> (coordinates की तुलना, तेज़) / <code style="color:#22d3bf">&quot;handle&quot;</code> (a b⁻¹ का handle reduction करके देखना कि खाली है या नहीं) / <code style="color:#22d3bf">&quot;artin&quot;</code> (free group की images की तुलना) / <code style="color:#22d3bf">&quot;all&quot;</code> (तीनों की गणना, असहमति हो तो RuntimeError —— implementation की जाँच)।</p>

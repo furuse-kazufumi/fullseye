@@ -4,6 +4,7 @@ dim: drive
 category: pass
 in: table
 out: table
+gpu: なし
 examples: [poc_driving_pass]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.roundabout_entry_check(entry_theta: 'float', ring_radius: 'float', circulating: 'Sequence[dict]', *, t_clear: 'float', entry_speed: 'float', crawl: 'float' = 2.7777777777777777, sudden: 'float' = 2.0, side_friction: 'Optional[float]' = None) -> 'Dict[str, object]'` (実装を直接呼ぶなら `import drivepass; drivepass.roundabout_entry_check(entry_theta: 'float', ring_radius: 'float', circulating: 'Sequence[dict]', *, t_clear: 'float', entry_speed: 'float', crawl: 'float' = 2.7777777777777777, sudden: 'float' = 2.0, side_friction: 'Optional[float]' = None) -> 'Dict[str, object]'`、台帳から引くなら `opsdrive.get("roundabout_entry_check")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

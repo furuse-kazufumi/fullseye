@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">phong_shade — 3D <code style="color:#22d3bf">render</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">normalmap</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.phong_shade(normals, view=(0.0, 0.0, 1.0), light=(0.0, 0.0, 1.0), ambient: &#x27;float&#x27; = 0.1, diffuse: &#x27;float&#x27; = 0.8, specular: &#x27;float&#x27; = 0.5, shininess: &#x27;float&#x27; = 32.0, clip: &#x27;bool&#x27; = True) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import render_shade; render_shade.phong_shade(normals, view=(0.0, 0.0, 1.0), light=(0.0, 0.0, 1.0), ambient: &#x27;float&#x27; = 0.1, diffuse: &#x27;float&#x27; = 0.8, specular: &#x27;float&#x27; = 0.5, shininess: &#x27;float&#x27; = 32.0, clip: &#x27;bool&#x27; = True) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;phong_shade&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>Phong 반사 모델로 법선 맵에 음영을 넣습니다(환경광 + 확산 + <b>정반사</b>). → <code style="color:#22d3bf">(H, W)</code>.</p>
 <p>각 전경 화소에서 단위 법선 <code style="color:#22d3bf">N</code>에 대해 광원 방향 <code style="color:#22d3bf">L</code>을 <code style="color:#22d3bf">N</code>으로 경면 반사한 이상 반사 방향 <code style="color:#22d3bf">R = 2(N·L)N − L</code>을 구하고, 시선 <code style="color:#22d3bf">V</code>와의 일치로 경면 항을 만든다::</p>

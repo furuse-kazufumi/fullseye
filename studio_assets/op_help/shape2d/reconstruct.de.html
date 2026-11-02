@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">reconstruct — SHAPE2D <code style="color:#22d3bf">descriptor</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">efdmodel</code> → <code style="color:#22d3bf">pairs</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.reconstruct(model, n_points=300, n_harmonics=None)</code> (die Implementierung direkt: <code style="color:#22d3bf">import fourierdesc; fourierdesc.reconstruct(model, n_points=300, n_harmonics=None)</code>; aus dem Register: <code style="color:#22d3bf">opsshape2d.get(&quot;reconstruct&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Rekonstruiert eine Kontur aus EFD-Koeffizienten ((M,2)).</p>
 <p>Ist n_harmonics kleiner als die Zahl der Koeffizienten, wird <b>durch Abschneiden der Harmonischen geglättet</b> (je weniger niedrige Ordnungen bleiben, desto runder).</p>

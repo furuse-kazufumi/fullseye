@@ -4,6 +4,7 @@ dim: optics
 category: illumination
 in: 
 out: pairs
+gpu: なし
 examples: [poc_illumination_cone_vs_na]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `pairs`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.solid_angle_sweep(slope_deg=2.0, view_na=0.1, half_angles_deg=None, tilt_deg=0.0, roughness_deg=0.0, n_samples=2048)` (実装を直接呼ぶなら `import illumdesign; illumdesign.solid_angle_sweep(slope_deg=2.0, view_na=0.1, half_angles_deg=None, tilt_deg=0.0, roughness_deg=0.0, n_samples=2048)`、台帳から引くなら `opsoptics.get("solid_angle_sweep")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

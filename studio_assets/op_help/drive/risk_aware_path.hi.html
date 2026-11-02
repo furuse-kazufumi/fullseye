@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">risk_aware_path — DRIVE <code style="color:#22d3bf">roverslip</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table × any × any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.risk_aware_path(cost_map, start, goal) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import roverslip; roverslip.risk_aware_path(cost_map, start, goal) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;risk_aware_path&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p><code style="color:#22d3bf">cvar_cost_map</code> के edge यात्रा समय पर 8-neighbor Dijkstra (directed edge — चढ़ाई और ढलान में अलग)।</p>
 <p><code style="color:#22d3bf">start</code> और <code style="color:#22d3bf">goal</code> (पंक्ति, स्तंभ) हैं। रिटर्न मान <code style="color:#22d3bf">{&quot;path&quot;: (n, 2) の添字, &quot;cost&quot;: 合計の所要時間 [s] (届かなければ inf), &quot;reached&quot;: bool, &quot;cost_to_come&quot;: (H, W)}</code>। न पहुँचने पर <code style="color:#22d3bf">path</code> खाली होता है।</p>

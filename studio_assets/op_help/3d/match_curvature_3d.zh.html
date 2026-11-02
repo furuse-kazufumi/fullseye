@@ -3,7 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">voxel × voxel</code> → <code style="color:#22d3bf">position</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.match_curvature_3d(scene, template, device=&#x27;cpu&#x27;, mc=0.000625, subvoxel=True)</code>(要直接调用实现,<code style="color:#22d3bf">import match3d; match3d.match_curvature_3d(scene, template, device=&#x27;cpu&#x27;, mc=0.000625, subvoxel=True)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;match_curvature_3d&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>经台账调用的返回值</b>: <code style="color:#22d3bf">fullseye.ledger.match_curvature_3d(...)</code> 只返回<b>声明的 out 类型 <code style="color:#22d3bf">position</code> 的值</b>(底层函数还会返回辅助信息)。需要被丢弃的部分时,使用 <code style="color:#22d3bf">fullseye.ledger.match_curvature_3d.raw(...)</code>,或直接调用 <code style="color:#22d3bf">match3d.match_curvature_3d</code>。</p>
-<p style="margin:2px 0 2px 12px">• <b>GPU</b>:该算子有 GPU 路径(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>曲率(shape index)匹配。voxel × 曲率列(线→面提升的核心)。</p>
 <p>把 scene/template 转换为 <b>以 curvedness 加权的 shape-index 场</b> → 用已有的 3D NCC 定位。由于它以 <b>局部曲面形状</b> 而非强度衡量匹配,即使强度相同也能区分形状不同的对象(球 vs 圆柱/鞍点)。S 具有旋转不变性,因此对旋转也有一定鲁棒性。返回值 [score, d, h, w]。</p>

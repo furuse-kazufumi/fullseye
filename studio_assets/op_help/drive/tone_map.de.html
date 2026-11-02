@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tone_map — DRIVE <code style="color:#22d3bf">env</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">any × scalar</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tone_map(radiance, exposure: &#x27;float&#x27;)</code> (die Implementierung direkt: <code style="color:#22d3bf">import driveenv; driveenv.tone_map(radiance, exposure: &#x27;float&#x27;)</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;tone_map&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Farbtonerhaltende Tonwertkompression für eine HDR-Kamera: m = maximaler Kanal je Pixel × exposure, Anzeige = Leuchtdichte × exposure × (1 + m/4)/(1 + m) — linear für m ≪ 1, der maximale Kanal erreicht bei m = 2 genau 1, hellere Pixel werden so geteilt, dass ihr maximaler Kanal 1 ist (Farbverhältnisse = Chromatizität bleiben unverändert; Leuchten werden durch Sättigung nicht weiß; Annahme: fahrzeugeigene HDR-Kamera).</p>
 <p>Leere Eingabe (<code style="color:#22d3bf">radiance</code> mit 0 Elementen) löst <code style="color:#22d3bf">ValueError</code> aus.</p>

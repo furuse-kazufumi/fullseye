@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">wheel_forces — DRIVE <code style="color:#22d3bf">roverslip</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">signal × signal × table × any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.wheel_forces(sinkage, slip, wheel, soil, n_quad: &#x27;int&#x27; = 96) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import roverslip; roverslip.wheel_forces(sinkage, slip, wheel, soil, n_quad: &#x27;int&#x27; = 96) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;wheel_forces&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Kräfte, die ein starres Rad bei Einsinkung z [m] und Schlupf s vom Boden erfährt (numerische Integration der Spannungsverteilung nach Wong–Reece).</p>
 <p>Rückgabe <code style="color:#22d3bf">{&quot;Fz&quot;, &quot;DP&quot;, &quot;T&quot;, &quot;theta_f&quot;, &quot;theta_m&quot;, &quot;theta_r&quot;}</code>: Vertikalkraft [N], Zugkraft (drawbar pull, vorwärts positiv) [N], Antriebsmoment [N·m], Winkel [rad]. <code style="color:#22d3bf">sinkage</code> / <code style="color:#22d3bf">slip</code> sind Skalare oder auf dieselbe Form broadcastbare Arrays (0 ≤ z &lt; r, −1 &lt; s &lt; 1).</p>

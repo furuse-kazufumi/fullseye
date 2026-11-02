@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">bus_stop_rate — DRIVE <code style="color:#22d3bf">traffic</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.bus_stop_rate(x, *, bus_rear: &#x27;float&#x27;, bus_front: &#x27;float&#x27;, base: &#x27;float&#x27;, peak: &#x27;float&#x27;, spread: &#x27;float&#x27;)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import drivetraffic; drivetraffic.bus_stop_rate(x, *, bus_rear: &#x27;float&#x27;, bus_front: &#x27;float&#x27;, base: &#x27;float&#x27;, peak: &#x27;float&#x27;, spread: &#x27;float&#x27;)</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;bus_stop_rate&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>停車中のバスの前後で高い出現率 λ(x) = base + peak [exp(−½((x − rear)/spread)²) + exp(−½((x − front)/spread)²)] [件/m]。バスの陰(前端の先)と後ろから人が出てくる、という形の例(値は呼び出し側の仮定)。上限は base + 2·peak。</p>
 <p>空の入力(<code style="color:#22d3bf">x</code> が 0 要素)は ValueError。</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">town_rules — DRIVE <code style="color:#22d3bf">town</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">table</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.town_rules(jurisdiction: &#x27;str&#x27; = &#x27;JP&#x27;) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import drivetown; drivetown.town_rules(jurisdiction: &#x27;str&#x27; = &#x27;JP&#x27;) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;town_rules&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>法规包(<code style="color:#22d3bf">RULE_PACKS</code> 的副本)。<code style="color:#22d3bf">{&quot;jurisdiction&quot;, &quot;side&quot;: &quot;left&quot;|&quot;right&quot;, &quot;crossing_stop&quot;: &quot;always&quot;|&quot;when_active&quot;, &quot;intersection_stop&quot;: &quot;signal&quot;, &quot;hold_s&quot;, &quot;look_required&quot;, &quot;look_hold_s&quot;, &quot;sources&quot;: [...], &quot;verified&quot;, &quot;notes&quot;}</code>。</p>
 <p>JP = 左侧通行、铁路道口总是暂停 + 安全确认(日本道路交通法第 33 条第 1 款,已在条文中确认 → verified True)。US = 右侧通行、一般车辆仅在警报期间停车(州法。<b>无一手确认 → verified False</b>)。DE = 右侧通行、依 StVO §19 仅在栏杆/灯光动作时(<b>无一手确认 → verified False</b>)。verified 为 False 的规则在 PoC、报告中不作断定。</p>

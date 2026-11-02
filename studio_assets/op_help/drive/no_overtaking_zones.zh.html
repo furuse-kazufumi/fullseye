@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">no_overtaking_zones — DRIVE <code style="color:#22d3bf">pass</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.no_overtaking_zones(features: &#x27;Iterable[dict]&#x27;, *, priority_road: &#x27;bool&#x27; = False, vicinity: &#x27;Optional[dict]&#x27; = None, steep_grade: &#x27;float&#x27; = 0.1, zone: &#x27;float&#x27; = 30.0) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import drivepass; drivepass.no_overtaking_zones(features: &#x27;Iterable[dict]&#x27;, *, priority_road: &#x27;bool&#x27; = False, vicinity: &#x27;Optional[dict]&#x27; = None, steep_grade: &#x27;float&#x27; = 0.1, zone: &#x27;float&#x27; = 30.0) -&gt; &#x27;Dict[str, object]&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;no_overtaking_zones&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>根据道路沿线设施生成第30条禁止超车(为超车而变更车道、从侧方通过)的区间。场景 S081、S009、S130。</p>
 <p>features[i] = {&quot;kind&quot;, &quot;start&quot;, &quot;end&quot;}(点状设施用 &quot;at&quot;)。kind:</p>

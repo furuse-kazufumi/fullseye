@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">taubin_smooth — 3D <code style="color:#22d3bf">mesh_process</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">mesh</code> → <code style="color:#22d3bf">mesh</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.taubin_smooth(mesh: &#x27;Sequence&#x27;, iters: &#x27;int&#x27; = 10, lam: &#x27;float&#x27; = 0.33, mu: &#x27;float&#x27; = -0.34) -&gt; &#x27;Mesh&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import mesh_smooth; mesh_smooth.taubin_smooth(mesh: &#x27;Sequence&#x27;, iters: &#x27;int&#x27; = 10, lam: &#x27;float&#x27; = 0.33, mu: &#x27;float&#x27; = -0.34) -&gt; &#x27;Mesh&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;taubin_smooth&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>Taubin λ|μ 필터에 의한 <b>비수축</b> 평활화. → (verts, faces).</p>
 <p>각 반복에서 &quot;양의 <code style="color:#22d3bf">lam</code> 으로 당기는 단계&quot; → &quot;음의 <code style="color:#22d3bf">mu</code> 로 되미는 단계&quot;를 연속으로 적용한다. <code style="color:#22d3bf">|mu| &gt; lam</code> 으로 함으로써 저주파(전체 형상)는 통과시키고 고주파(잡음)만 감쇠시키는대역 통과 필터가 되어, Laplacian 의 수축 아티팩트를 상쇄한다(구의 평균 반지름이거의 유지된다). 기본값 <code style="color:#22d3bf">lam=0.33, mu=-0.34</code> 는 Taubin (1995) 의 권장에 가깝다.</p>

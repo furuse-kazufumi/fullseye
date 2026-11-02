@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">vol_label_overlay — VOLCOLOR <code style="color:#22d3bf">colorize</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">voxel × labels</code> → <code style="color:#22d3bf">rgbvolume</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_label_overlay(vol, labels, seed: &#x27;int&#x27; = 0, alpha: &#x27;float&#x27; = 0.5, vmin=None, vmax=None, mode: &#x27;str&#x27; = &#x27;fill&#x27;)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import volcolor; volcolor.vol_label_overlay(vol, labels, seed: &#x27;int&#x27; = 0, alpha: &#x27;float&#x27; = 0.5, vmin=None, vmax=None, mode: &#x27;str&#x27; = &#x27;fill&#x27;)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsvolcolor.get(&quot;vol_label_overlay&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>मूल grey volume पर रंगीन label चढ़ाकर <code style="color:#22d3bf">(D, H, W, 3)</code> लौटाता है।</p>
 <p>medical CT / industrial CT में सच में इस्तेमाल होने वाला रूप -- &quot;केवल segmentation वाली तस्वीर&quot; से पता नहीं चलता कि कहाँ से काटा गया, और &quot;केवल मूल image वाली तस्वीर&quot; से पता नहीं चलता कि क्या मापा गया।</p>

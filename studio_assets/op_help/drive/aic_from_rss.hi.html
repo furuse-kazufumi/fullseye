@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">aic_from_rss — DRIVE <code style="color:#22d3bf">ball</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">scalar</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.aic_from_rss(rss: &#x27;float&#x27;, n: &#x27;int&#x27;, k: &#x27;int&#x27;) -&gt; &#x27;float&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import ballistics; ballistics.aic_from_rss(rss: &#x27;float&#x27;, n: &#x27;int&#x27;, k: &#x27;int&#x27;) -&gt; &#x27;float&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;aic_from_rss&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>least-squares के residual sum of squares से Akaike information criterion: AIC = n ln(RSS/n) + 2k(Gaussian noise, variance maximum likelihood से अनुमानित, constant term हटाया)। केवल एक ही data पर fit किए गए models के बीच का <b>अंतर</b> अर्थपूर्ण है (निरपेक्ष मान scale और n पर निर्भर)। n ≤ k, RSS ≤ 0 और non-finite मानों पर ValueError (RSS = 0 पर AIC = −∞, model-selection का प्रश्न ही नहीं बनता)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

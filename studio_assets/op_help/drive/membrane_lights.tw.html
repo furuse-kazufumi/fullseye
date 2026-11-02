@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">membrane_lights — DRIVE <code style="color:#22d3bf">tacsim</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">scalar</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.membrane_lights(elev_deg: &#x27;float&#x27; = 55.0, azimuths_deg=(90.0, 210.0, 330.0)) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import tacsim; tacsim.membrane_lights(elev_deg: &#x27;float&#x27; = 55.0, azimuths_deg=(90.0, 210.0, 330.0)) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;membrane_lights&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>多方向彩色照明的單位方向向量 (N, 3)(第 k 列為色彩通道 k 的光源，預設為方位角 90/210/330°、仰角 55° 的 3 盞燈)。</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 仰角不在 (0°, 90°] 內、光源少於 3 盞、3 盞光源共面(rank &lt; 3,光度立體無法求解)。</p>

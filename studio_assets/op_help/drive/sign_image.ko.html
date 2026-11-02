@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">sign_image — DRIVE <code style="color:#22d3bf">roadjp</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">rgba</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sign_image(kind: &#x27;str&#x27;, *, size_px: &#x27;int&#x27; = 128, value=None, font_path=None, side: &#x27;float | None&#x27; = None) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import roadjp; roadjp.sign_image(kind: &#x27;str&#x27;, *, size_px: &#x27;int&#x27; = 128, value=None, font_path=None, side: &#x27;float | None&#x27; = None) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;sign_image&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>표지 그림을 RGBA float (H, W, 4) ∈ [0,1]로 반환합니다(판 바깥 = alpha 0). 폭 = <code style="color:#22d3bf">size_px</code>, 높이는 형태의 비율을 따릅니다.</p>
 <p>모양과 색(규격의 배색, 기호는 단순화):</p>

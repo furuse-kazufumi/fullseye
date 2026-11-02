@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">humanoid_clip_mesh — DRIVE <code style="color:#22d3bf">humanoid</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.humanoid_clip_mesh(clip: &#x27;dict&#x27;, distance: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import drivehumanoid; drivehumanoid.humanoid_clip_mesh(clip: &#x27;dict&#x27;, distance: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;humanoid_clip_mesh&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>步行距離 <code style="color:#22d3bf">distance</code> [m] 處的網格(<code style="color:#22d3bf">{&quot;V&quot;,&quot;F&quot;,&quot;color&quot;,&quot;label&quot;,&quot;dims&quot;}</code>，原點 = 腰部正下方，+x = 前方)。</p>
 <p>1 個週期前進 <code style="color:#22d3bf">cycle_length</code>。畫格之間對頂點線性內插(面的組成在所有畫格中相同)。形狀以腰部正下方為原點不變, 因此<b>只要把放置位置前移 <code style="color:#22d3bf">distance</code></b>,支撐腳看起來就停在地面上(畫格的相位已與 <code style="color:#22d3bf">advance</code> 中走過的距離</p>

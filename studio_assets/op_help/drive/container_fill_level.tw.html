@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">container_fill_level — DRIVE <code style="color:#22d3bf">granular</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.container_fill_level(side, *, threshold: &#x27;float&#x27; = 0.5) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import granular; granular.container_fill_level(side, *, threshold: &#x27;float&#x27; = 0.5) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;container_fill_level&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>從容器內部的側視影像(粉體覆蓋率，容器內尺寸 = 影像)讀取填充率與粉面傾斜。</p>
 <p>填充率 = 每行粉面(門檻的交叉,次像素)的平均 / 列數。粉面 → <code style="color:#22d3bf">fit_line</code> → <code style="color:#22d3bf">surface_tilt_deg</code>(右側越高越正)與 <code style="color:#22d3bf">surface_rms</code>(偏離平面的量 [px])。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 空(沒有門檻以上的像素)/ 全滿而看不到粉面(最上列為粉)。</p>

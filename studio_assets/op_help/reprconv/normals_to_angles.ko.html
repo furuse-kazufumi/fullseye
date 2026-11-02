@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">normals_to_angles — REPRCONV <code style="color:#22d3bf">direction</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">normals</code> → <code style="color:#22d3bf">pairs</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.normals_to_angles(normals)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import reprconv; reprconv.normals_to_angles(normals)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsreprconv.get(&quot;normals_to_angles&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>법선 <code style="color:#22d3bf">(N,3)</code> → 방위·고도 쌍 <code style="color:#22d3bf">(N,2)</code> <b>[도]</b>. <code style="color:#22d3bf">normals</code> 의 출구.</p>
 <p><code style="color:#22d3bf">az = atan2(c1, c0)</code> 를 축0-축1 평면 내의 방위, <code style="color:#22d3bf">el = asin(c2/|v|)</code> 를축2 로부터의 앙각으로 한다. <b>x/y/z 가 아니라 &quot;축0/1/2&quot;로 정의하는</b> 것은, 이 repo 에(z,y,x) 순서의 점군과 (x,y,z) 순서의 점군이 둘 다 있기 때문이다 —— 이름으로 쓰면, 넘겨받은배열이 어느 쪽 방식인지에 따라 의미가 바뀌어 버린다.</p>

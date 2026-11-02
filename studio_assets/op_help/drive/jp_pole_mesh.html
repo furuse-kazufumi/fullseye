@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">jp_pole_mesh — DRIVE <code style="color:#22d3bf">japan</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">any</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.jp_pole_mesh(*, height: &#x27;float&#x27; = 10.0, r: &#x27;float&#x27; = 0.17)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import drivejapan; drivejapan.jp_pole_mesh(*, height: &#x27;float&#x27; = 10.0, r: &#x27;float&#x27; = 0.17)</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;jp_pole_mesh&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>日本の電柱(コンクリート柱 + 腕金)の三角形メッシュを作る。</p>
 <p>返り <code style="color:#22d3bf">(V, F, colors)</code>: 頂点 (n, 3) [m]・面 (m, 3)・面ごとの色 (m, 3)(0..1)。柱は半径 <code style="color:#22d3bf">r</code> [m]・高さ <code style="color:#22d3bf">height</code> [m] の円柱(z 上向き、足元が原点)、腕金は頂上の 1 m 下に横向き 1.8 m。</p>

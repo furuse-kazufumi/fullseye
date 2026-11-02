@@ -4,6 +4,7 @@ dim: annotate
 category: compose
 in: image2d × image2d
 out: image2d
+gpu: なし
 examples: [annotate_gallery]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d × image2d` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.compare_frame(left, right, layout='h', labels=None, divider=3, gap=0, divider_color='neutral', background=0.0, label_anchor='lt', label_margin=8, scheme='okabe_ito', **text_kw)` (実装を直接呼ぶなら `import annotate; annotate.compare_frame(left, right, layout='h', labels=None, divider=3, gap=0, divider_color='neutral', background=0.0, label_anchor='lt', label_margin=8, scheme='okabe_ito', **text_kw)`、台帳から引くなら `opsannotate.get("compare_frame")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

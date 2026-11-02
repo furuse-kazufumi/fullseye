@@ -4,6 +4,7 @@ dim: drive
 category: tacscalib
 in: normalmap × normalmap
 out: image2d
+gpu: なし
 examples: [poc_tacscalib_sphere_lut]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `normalmap × normalmap` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.normal_error_map(n_a, n_b) -> 'np.ndarray'` (実装を直接呼ぶなら `import tacscalib; tacscalib.normal_error_map(n_a, n_b) -> 'np.ndarray'`、台帳から引くなら `opsdrive.get("normal_error_map")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

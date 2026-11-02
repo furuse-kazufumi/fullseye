@@ -4,6 +4,7 @@ dim: piv
 category: validate
 in: flow2d × mask
 out: flow2d
+gpu: なし
 examples: [piv_flow_from_particles, poc_river_surface_velocity]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `flow2d × mask` → `flow2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.piv_replace_outliers(flow, mask, method='median')` (実装を直接呼ぶなら `import pivops; pivops.piv_replace_outliers(flow, mask, method='median')`、台帳から引くなら `opspiv.get("piv_replace_outliers")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">four_f_filter — OPTICS <code style="color:#22d3bf">wave</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">cimage × cimage</code> → <code style="color:#22d3bf">cimage</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.four_f_filter(field, transfer, invert=True)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import optics; optics.four_f_filter(field, transfer, invert=True)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;four_f_filter&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>4f 光学プロセッサ: 2 枚のレンズとフーリエ面のフィルタを通した出力。</p>
 <p>入力面 → レンズ 1 → <b>フーリエ面</b>(<code style="color:#22d3bf">transfer</code> を掛ける)→ レンズ 2 → 出力面。スカラ回折の理想 4f 系では出力は</p>

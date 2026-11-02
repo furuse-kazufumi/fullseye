@@ -4,6 +4,7 @@ dim: astrostack
 category: photometry
 in: image2d
 out: keypoints
+gpu: なし
 examples: [astro_stacking, poc_exoplanet_transit, poc_search_sweep_width, poc_star_astrometry]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d` → `keypoints`
 - **呼び出し**: `import fullseye as fs; fs.ledger.star_detect(image, threshold_sigma=5.0, min_separation=3, max_stars=200, edge_margin=None, centroid_box=None, method='mad')` (実装を直接呼ぶなら `import astrostack; astrostack.star_detect(image, threshold_sigma=5.0, min_separation=3, max_stars=200, edge_margin=None, centroid_box=None, method='mad')`、台帳から引くなら `opsastrostack.get("star_detect")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

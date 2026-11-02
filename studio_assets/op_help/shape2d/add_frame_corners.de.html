@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">add_frame_corners — SHAPE2D <code style="color:#22d3bf">morph</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">pairs</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.add_frame_corners(pts, shape)</code> (die Implementierung direkt: <code style="color:#22d3bf">import imagemorph; imagemorph.add_frame_corners(pts, shape)</code>; aus dem Register: <code style="color:#22d3bf">opsshape2d.get(&quot;add_frame_corners&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Fügt der Punktmenge die vier Bildecken (+ die Kantenmittelpunkte) als Fixpunkte hinzu.</p>
 <p>Die Standardmaßnahme, damit die Triangulierung des Warps das ganze Bild abdeckt und Löcher außerhalb der konvexen Hülle verhindert werden. Fügt man sie src/dst beiden in derselben Reihenfolge hinzu, wirken die vier Ecken als &quot;Korrespondenzpunkte, die sich nicht bewegen&quot;.</p>

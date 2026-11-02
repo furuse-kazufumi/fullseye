@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">msa_gauge_rr — SPC <code style="color:#22d3bf">msa</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.msa_gauge_rr(table, part=&#x27;part&#x27;, operator=&#x27;operator&#x27;, value=&#x27;value&#x27;, tolerance=None, pool_interaction=&#x27;auto&#x27;, pool_alpha=0.25)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import spc; spc.msa_gauge_rr(table, part=&#x27;part&#x27;, operator=&#x27;operator&#x27;, value=&#x27;value&#x27;, tolerance=None, pool_interaction=&#x27;auto&#x27;, pool_alpha=0.25)</code>、台帳から引くなら <code style="color:#22d3bf">opsspc.get(&quot;msa_gauge_rr&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>分散分析法によるゲージ R&amp;R(<code style="color:#22d3bf">table</code>)。</p>
 <p>繰り返し性 EV(同じ人が同じ物を測り直したときの散らばり)、再現性 AV(人が変わったときの散らばり。交互作用を含む)、その合成 GRR、部品間 PV、総変動 TV、<code style="color:#22d3bf">%GRR = 100 GRR/TV</code>、区別できる階級数 <code style="color:#22d3bf">ndc = 1.41 PV/GRR</code>。</p>

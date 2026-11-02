@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">flow_speed — REPRCONV <code style="color:#22d3bf">flow</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">flow_scattered</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.flow_speed(flow)</code>(要直接调用实现,<code style="color:#22d3bf">import reprconv; reprconv.flow_speed(flow)</code>;从台账取用则 <code style="color:#22d3bf">opsreprconv.get(&quot;flow_speed&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>散在流 <code style="color:#22d3bf">(N,3)</code> → 速度 <code style="color:#22d3bf">signal (N,)</code>。散在 <code style="color:#22d3bf">flow</code> 的出口。</p>
 <p><b>单向</b>(丢弃方向)。传入稠密流则 fail-closed(失败即拒绝)—— 同一个 <code style="color:#22d3bf">flow</code> 类型名下装着 2 种不同的东西,所以必须让接收方明确选择。</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">shape_explained_variance — SHAPESTAT <code style="color:#22d3bf">model</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">shapemodel</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.shape_explained_variance(model)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import shapestats; shapestats.shape_explained_variance(model)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsshapestat.get(&quot;shape_explained_variance&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>हर principal component का explained variance अनुपात (योग 1)। → <code style="color:#22d3bf">(k,)</code>।</p>
 <p>सूत्र: <code style="color:#22d3bf">variance / total_variance</code>। हर (denominator) <code style="color:#22d3bf">model[&quot;total_variance&quot;]</code> है (<code style="color:#22d3bf">shape_pca</code> द्वारा <b>सभी</b> singular values से निकाला गया कुल variance), न हो तो <code style="color:#22d3bf">variance.sum()</code>।</p>

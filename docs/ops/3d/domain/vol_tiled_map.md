@@ -4,6 +4,7 @@ dim: 3d
 category: domain
 in: voxel
 out: voxel
+gpu: なし
 examples: [rle_region_efficiency]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `voxel` → `voxel`
 - **呼び出し**: `import fullseye as fs; fs.ledger.vol_tiled_map(vol, fn, tile=64, overlap=8)` (実装を直接呼ぶなら `import volops; volops.vol_tiled_map(vol, fn, tile=64, overlap=8)`、台帳から引くなら `ops3d.get("vol_tiled_map")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

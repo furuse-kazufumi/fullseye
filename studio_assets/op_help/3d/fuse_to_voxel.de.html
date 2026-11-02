@@ -4,7 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fuse_to_voxel(items, size=64, bounds=None, device=&#x27;cpu&#x27;, smooth=0.8)</code> (die Implementierung direkt: <code style="color:#22d3bf">import fuse3d; fuse3d.fuse_to_voxel(items, size=64, bounds=None, device=&#x27;cpu&#x27;, smooth=0.8)</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;fuse_to_voxel&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>Rückgabewert über das Register</b>: <code style="color:#22d3bf">fullseye.ledger.fuse_to_voxel(...)</code> liefert <b>nur den Wert des deklarierten Out-Typs <code style="color:#22d3bf">voxel</code></b> (die zugrunde liegende Funktion gibt zusätzlich Hilfsinformationen zurück). Wird das Verworfene gebraucht, nutze <code style="color:#22d3bf">fullseye.ledger.fuse_to_voxel.raw(...)</code> oder rufe <code style="color:#22d3bf">fuse3d.fuse_to_voxel</code> direkt auf.</p>
 <p style="margin:2px 0 2px 12px">• Rückgabe der Funktion: <code style="color:#22d3bf">(voxel, bounds)</code></p>
-<p style="margin:2px 0 2px 12px">• <b>GPU</b>: Dieser Operator hat einen GPU-Pfad (<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Fusioniert mehrere Strukturen in ein gemeinsames Dichte-Voxelvolumen (TRIZ-Integration). items=[(data, kind, params_dict), ...].</p>
 <p>Führt komplementäre Strukturen wie mesh (topology) + points (sample) + depth (Beobachtung) zu 1 Darstellung zusammen. Rückgabewert (voxel, bounds).</p>

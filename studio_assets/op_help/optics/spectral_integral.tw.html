@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">spectral_integral — OPTICS <code style="color:#22d3bf">spectral</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.spectral_integral(spectrum, wl_min_nm=None, wl_max_nm=None)</code>(要直接呼叫實作,<code style="color:#22d3bf">import spectralrad; spectralrad.spectral_integral(spectrum, wl_min_nm=None, wl_max_nm=None)</code>;從台帳取用則 <code style="color:#22d3bf">opsoptics.get(&quot;spectral_integral&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>曲線的波長積分 ∫ s(λ) dλ(梯形法則,λ 以 nm 計)。給定區間時只積其內部(端點線性內插)。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>

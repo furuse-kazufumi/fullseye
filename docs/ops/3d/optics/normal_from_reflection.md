@@ -4,6 +4,7 @@ dim: 3d
 category: optics
 in: vector × vector
 out: vector
+gpu: なし
 examples: [sensor_seg]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `vector × vector` → `vector`
 - **呼び出し**: `import fullseye as fs; fs.ledger.normal_from_reflection(incident, reflected)` (実装を直接呼ぶなら `import match3d; match3d.normal_from_reflection(incident, reflected)`、台帳から引くなら `ops3d.get("normal_from_reflection")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

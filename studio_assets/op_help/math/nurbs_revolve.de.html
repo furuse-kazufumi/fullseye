@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">nurbs_revolve — MATH <code style="color:#22d3bf">geometry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.nurbs_revolve(profile, weights=None, *, degree: &#x27;int&#x27; = 2, knots=None, n=(48, 48)) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import mathgeometry; mathgeometry.nurbs_revolve(profile, weights=None, *, degree: &#x27;int&#x27; = 2, knots=None, n=(48, 48)) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsmath.get(&quot;nurbs_revolve&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Rotationsfläche, die entsteht, wenn eine ebene NURBS-Kurve (r, z) 1 volle Umdrehung um die z-Achse ausführt (Piegl &amp; Tiller §8.5).</p>
 <p>Dreht jeden Kontrollpunkt des Querschnitts mit den 9 Punkten von <code style="color:#22d3bf">nurbs_circle</code> und multipliziert die Gewichte. Ist der Querschnitt ein exakter Kreisbogen, wird auch die entstehende Fläche eine exakte Kugel, ein exakter Torus oder Kegel (Polynomflächen können nur approximieren).</p>

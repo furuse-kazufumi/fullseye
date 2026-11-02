@@ -4,6 +4,7 @@ dim: optics
 category: polarization
 in: matrix × stokes
 out: stokes
+gpu: なし
 examples: [optics_imaging, poc_photoelasticity, polarization_camera_pipeline]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `matrix × stokes` → `stokes`
 - **呼び出し**: `import fullseye as fs; fs.ledger.mueller_apply(mueller, stokes)` (実装を直接呼ぶなら `import optics; optics.mueller_apply(mueller, stokes)`、台帳から引くなら `opsoptics.get("mueller_apply")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

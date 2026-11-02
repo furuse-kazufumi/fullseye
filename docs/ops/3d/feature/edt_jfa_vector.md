@@ -4,7 +4,7 @@ dim: 3d
 category: feature
 in: voxel
 out: flow_dense
-gpu: true
+gpu: なし
 examples: [nearest_seed_partition]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -16,7 +16,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **データ種**: `voxel` → `flow_dense`
 - **呼び出し**: `import fullseye as fs; fs.ledger.edt_jfa_vector(seed_bool, device='cpu')` (実装を直接呼ぶなら `import match3d; match3d.edt_jfa_vector(seed_bool, device='cpu')`、台帳から引くなら `ops3d.get("edt_jfa_vector")`)
 - **台帳経由の戻り値**: `fullseye.ledger.edt_jfa_vector(...)` は**宣言 out 型 `flow_dense` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.edt_jfa_vector.raw(...)`、または `match3d.edt_jfa_vector` を直接呼ぶ。
-- **GPU**: この op は GPU 経路あり(`device="cuda"`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">ransac_cylinder — 3D <code style="color:#22d3bf">robust_fit</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">points × normals</code> → <code style="color:#22d3bf">primitive</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ransac_cylinder(points, normals, thresh, iters=800, seed=0)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import ransac_fit; ransac_fit.ransac_cylinder(points, normals, thresh, iters=800, seed=0)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;ransac_cylinder&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>이상치에 강건한 RANSAC 원기둥 적합(점 법선이 필요).</p>
 <p>원통 표면의 법선은 축에 직교하므로 2 점의 법선의 외적으로 축 방향을 추정 → 축에 직교하는 평면으로모든 점을 투영 → 그 평면 안에서 원을 피팅 → |투영 거리 - r| &lt; <code style="color:#22d3bf">thresh</code>인 inlier를최대화. 최종 inlier에서는 더 강건하게 축을 재추정하고(법선군 SVD의 최소 특이 방향 = 축), 투영 원을 최소제곱 재피팅한다. 법선이 없으면 호출 측에서 estimate한 후 넘긴다.</p>

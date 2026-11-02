@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">warp_piecewise_affine — SHAPE2D <code style="color:#22d3bf">morph</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d × pairs × pairs</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.warp_piecewise_affine(img, src_pts, dst_pts, order=1)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import imagemorph; imagemorph.warp_piecewise_affine(img, src_pts, dst_pts, order=1)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsshape2d.get(&quot;warp_piecewise_affine&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>img의 src_pts에 있는 내용을 dst_pts로 옮기는 구간별 아핀 워프.</p>
 <p>dst_pts 를 Delaunay 삼각형 분할하고, 각 출력 화소가 속한 삼각형의 무게중심 좌표를 구해, 같은 무게중심 좌표로 src_pts 쪽의 대응 삼각형으로 옮겨 역사상 샘플한다. 볼록 껍질의 바깥(삼각형에 속하지 않는 화소)은 항등(원래 위치)으로 샘플하므로, 네 모서리를 대응점에 포함하면(<code style="color:#22d3bf">add_frame_corners</code>) 구멍 없이 영상 전체를 덮을 수 있다.</p>

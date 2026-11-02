@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">piv_error_stats — PIV <code style="color:#22d3bf">assess</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">flow2d × flow2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_error_stats(flow, truth, trim=1)</code>(要直接调用实现,<code style="color:#22d3bf">import pivops; pivops.piv_error_stats(flow, truth, trim=1)</code>;从台账取用则 <code style="color:#22d3bf">opspiv.get(&quot;piv_error_stats&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>与真值之差的分解。<b>将偏差与离散分开</b>返回。</p>
 <p>只给出其中之一，系统性偏移的实现就会以“误差 0.3 px”的身份蒙混过关。偏差(平均误差)和离散(标准差)指向不同的原因。</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">sensor_diagonal_mm — OPTICS <code style="color:#22d3bf">scene</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sensor_diagonal_mm(sensor: &#x27;dict&#x27;) -&gt; &#x27;float&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import optscene; optscene.sensor_diagonal_mm(sensor: &#x27;dict&#x27;) -&gt; &#x27;float&#x27;</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;sensor_diagonal_mm&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>The sensor diagonal [mm]. Compare it with the lens&#x27;s image circle to see <b>whether it is covered</b>.</p>
 <p>Formula: <code style="color:#22d3bf">hypot(width * pixel_um, height * pixel_um) / 1000</code>. A real size from effective pixel count × pixel pitch; format names like &quot;2/3-inch&quot; are not used (a format name is merely a label for the diagonal, and the same label can have different real sizes).</p>

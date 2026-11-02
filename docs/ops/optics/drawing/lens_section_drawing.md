@@ -4,6 +4,7 @@ dim: optics
 category: drawing
 in: table
 out: table
+gpu: なし
 examples: [poc_lens_file_roundtrip, poc_optics_drawings]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.lens_section_drawing(system, fields=None, rays=3, lead_mm=None, edge_margin_pct=5.0, scale=None, profile_points=121, title=None)` (実装を直接呼ぶなら `import optdraw; optdraw.lens_section_drawing(system, fields=None, rays=3, lead_mm=None, edge_margin_pct=5.0, scale=None, profile_points=121, title=None)`、台帳から引くなら `opsoptics.get("lens_section_drawing")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

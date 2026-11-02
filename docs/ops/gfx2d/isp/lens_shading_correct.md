@@ -4,6 +4,7 @@ dim: gfx2d
 category: isp
 in: image2d × image2d
 out: image2d
+gpu: なし
 examples: [poc_tdi_linescan, raw_to_display_isp]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d × image2d` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.lens_shading_correct(raw, gain)` (実装を直接呼ぶなら `import gfx2d; gfx2d.lens_shading_correct(raw, gain)`、台帳から引くなら `opsgfx2d.get("lens_shading_correct")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

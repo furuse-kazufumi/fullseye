@@ -2,7 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">gaussians_to_voxel — 3D <code style="color:#22d3bf">transform</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">voxel</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gaussians_to_voxel(means, scales, opacities, size, bounds, device=&#x27;cpu&#x27;)</code> (to call the implementation directly, <code style="color:#22d3bf">import match3d; match3d.gaussians_to_voxel(means, scales, opacities, size, bounds, device=&#x27;cpu&#x27;)</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;gaussians_to_voxel&quot;)</code>)</p>
-<p style="margin:2px 0 2px 12px">• <b>GPU</b>: this op has a GPU path (<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>3DGS (anisotropic Gaussians) → a density voxel volume. Each Gaussian is placed at its mean with its opacity, then smoothed by the mean scale.</p>
 <p>Approximation (isotropic splat + smoothing): exact anisotropic covariance rasterisation is heavy, so the means are first splatted with opacity weights → gaussian smoothing by the mean scale. Sufficient for coarse alignment in matching.</p>

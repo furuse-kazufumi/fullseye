@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">talbot_carpet — OPTICS <code style="color:#22d3bf">grating_interf</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">table</code> (an op determined by its arguments alone — it takes no image or data input)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.talbot_carpet(period_um=4.0, wavelength_nm=None, energy_kev=None, grating=&#x27;pi&#x27;, duty=0.5, z_max_mm=None, n_z=241, n_x=128, n_periods=2, n_harmonics=63, model=&#x27;exact&#x27;)</code> (to call the implementation directly, <code style="color:#22d3bf">import gratinginterf; gratinginterf.talbot_carpet(period_um=4.0, wavelength_nm=None, energy_kev=None, grating=&#x27;pi&#x27;, duty=0.5, z_max_mm=None, n_z=241, n_x=128, n_periods=2, n_harmonics=63, model=&#x27;exact&#x27;)</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;talbot_carpet&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Talbot carpet: the intensity I(x, z) behind a binary grating (π phase, π/2 phase or absorption) in closed form as a sum over diffraction orders.</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>

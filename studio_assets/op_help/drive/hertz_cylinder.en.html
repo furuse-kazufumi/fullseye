@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">hertz_cylinder — DRIVE <code style="color:#22d3bf">tacsim</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">scalar × scalar × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.hertz_cylinder(F_per_L: &#x27;float&#x27;, R: &#x27;float&#x27;, Estar: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import tacsim; tacsim.hertz_cylinder(F_per_L: &#x27;float&#x27;, R: &#x27;float&#x27;, Estar: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;hertz_cylinder&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Line contact of a cylinder (radius R) pressed onto an elastic half-space with line load F/L (Johnson 1985 §4.2): contact half-width b = √(4(F/L)R/(πE*)), p0 = 2(F/L)/(πb).</p>
 <p>Returns: <code style="color:#22d3bf">b</code>, <code style="color:#22d3bf">p0</code>, <code style="color:#22d3bf">pm</code> = (F/L)/(2b) = (π/4)p0, and the inputs. The 2-D indentation δ is logarithmic and depends on the reference point, so it is not returned. <b>Raises</b> <code style="color:#22d3bf">ValueError</code>: ≤ 0.</p>

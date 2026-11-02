@@ -4,6 +4,7 @@ dim: math
 category: wave
 in: image2d
 out: measurement
+gpu: なし
 examples: [poc_beats_fringes_and_screens]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d` → `measurement`
 - **呼び出し**: `import fullseye as fs; fs.ledger.wave_fringe_period(image, axis=1)` (実装を直接呼ぶなら `import mathops; mathops.wave_fringe_period(image, axis=1)`、台帳から引くなら `opsmath.get("wave_fringe_period")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

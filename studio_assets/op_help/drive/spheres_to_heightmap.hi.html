@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">spheres_to_heightmap — DRIVE <code style="color:#22d3bf">granular</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">matrix × scalar × scalar × scalar</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.spheres_to_heightmap(pos, radius: &#x27;float&#x27;, pitch: &#x27;float&#x27;, extent: &#x27;float&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import granular; granular.spheres_to_heightmap(pos, radius: &#x27;float&#x27;, pitch: &#x27;float&#x27;, extent: &#x27;float&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;spheres_to_heightmap&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>गोलों के केंद्रों <code style="color:#22d3bf">pos (n, 3)</code> [m] और त्रिज्या से ऊपर से देखा heightmap (हर cell में गोले की सतह की अधिकतम ऊँचाई, न हो तो 0)। grid <code style="color:#22d3bf">[-extent, extent]²</code> को <code style="color:#22d3bf">pitch</code> से बाँटता है।</p>
 <p>खाली इनपुट (<code style="color:#22d3bf">pos</code> में 0 तत्व) पर <code style="color:#22d3bf">ValueError</code> उठता है।</p>

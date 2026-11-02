@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">friction_from_single_contact — DRIVE <code style="color:#22d3bf">pegtactile</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">signal × text × any × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.friction_from_single_contact(F, where: &#x27;str&#x27;, c, axis, chamfer: &#x27;bool&#x27; = False) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import pegtactile; pegtactile.friction_from_single_contact(F, where: &#x27;str&#x27;, c, axis, chamfer: &#x27;bool&#x27; = False) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;friction_from_single_contact&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由一点接触滑动期间的接触力求壁面摩擦系数(仅在滑动期间贴在 Coulomb 极限上，粘着时为下限)。末端边缘在壁上(<code style="color:#22d3bf">where=&quot;tip&quot;</code>)时，法向 = 水平(指向孔中心)，摩擦 = 竖直 → μ̂ = |F_z|/|F_水平|。销身在最窄处边缘(<code style="color:#22d3bf">&quot;mouth&quot;</code>)时，法向 = 垂直于轴，摩擦 = 轴向 → μ̂ = |F·a|/|F_⊥|。<code style="color:#22d3bf">chamfer</code> 时位于 45° 倒角面上(法向 = (−r̂, 1)/√2，需要 <code style="color:#22d3bf">c</code> = 接触点)。<code style="color:#22d3bf">&quot;none&quot;</code> 为 None。返回 <code style="color:#22d3bf">mu</code>(可为 None)。<b>Raises</b> ValueError：where 不在词汇表内、F 或 axis 不是有限的 3 个分量、倒角时缺少 c。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

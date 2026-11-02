@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">states_layer_dimension — CONNGRAPH <code style="color:#22d3bf">dimension</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">matrix × labels</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.states_layer_dimension(X: &#x27;Any&#x27;, labels: &#x27;Any&#x27;) -&gt; &#x27;dict[str, np.ndarray]&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import conngraph; conngraph.states_layer_dimension(X: &#x27;Any&#x27;, labels: &#x27;Any&#x27;) -&gt; &#x27;dict[str, np.ndarray]&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsconngraph.get(&quot;states_layer_dimension&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>層ごとの実効次元の表: 列 layer / n / participation_ratio / ratio(= PR / n)。</p>
 <p><code style="color:#22d3bf">X</code> = <code style="color:#22d3bf">graph_layer_propagate</code> の返り (N, n)、<code style="color:#22d3bf">labels</code> = ノードの層 id。「脳 → 首 → 腹髄 → 筋」で次元がどこで落ちるか(動きの量子化)を 1 つの数式で読む。</p>

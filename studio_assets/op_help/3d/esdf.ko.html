@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">esdf — 3D <code style="color:#22d3bf">occupancy</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">sdf</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.esdf(occupancy, voxel_size=1.0)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import occupancy; occupancy.esdf(occupancy, voxel_size=1.0)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;esdf&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>점유 격자 → 유클리드 부호 거리장(ESDF)(밖=+ 최근접 점유까지, 안=− 최근접 자유까지).</p>
 <p><code style="color:#22d3bf">scipy.ndimage.distance_transform_edt</code> 를 자유 쪽(바깥)과 점유 쪽(안)에 따로 적용하고, <code style="color:#22d3bf">d_out - d_in</code> 으로 부호를 붙인다. <code style="color:#22d3bf">voxel_size</code> 는 복셀 변 길이(등방 스칼라 or 이방길이 3. EDT 의 <code style="color:#22d3bf">sampling</code> 에 넘긴다)이며, 반환되는 거리는 world 단위. 전부 자유이면 +inf, 전부 점유이면 -inf(honest: 가장 가까운 반대쪽이 존재하지 않는다). 영교차는 점유/자유 복셀 <b>중심의 중간</b>에떨어지므로, 경계 셀 중심의 |ESDF| 는 약 1 복셀(하류 테스트의 허용 근거).</p>

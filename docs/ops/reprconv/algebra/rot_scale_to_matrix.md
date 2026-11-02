@@ -4,6 +4,7 @@ dim: reprconv
 category: algebra
 in: rot_scale
 out: matrix
+gpu: なし
 examples: [representation_conversion]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `rot_scale` → `matrix`
 - **呼び出し**: `import fullseye as fs; fs.ledger.rot_scale_to_matrix(rot_scale)` (実装を直接呼ぶなら `import reprconv; reprconv.rot_scale_to_matrix(rot_scale)`、台帳から引くなら `opsreprconv.get("rot_scale_to_matrix")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

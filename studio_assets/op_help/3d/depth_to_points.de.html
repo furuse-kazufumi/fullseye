@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">depth_to_points — 3D <code style="color:#22d3bf">transform</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">depth</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.depth_to_points(depth, fx, fy, cx, cy, stride=1)</code> (die Implementierung direkt: <code style="color:#22d3bf">import match3d; match3d.depth_to_points(depth, fx, fy, cx, cy, stride=1)</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;depth_to_points&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Tiefenkarte (2,5-D) → Punktwolke (Lochkamera-Rückprojektion). Sie verbindet die Tiefenzeile mit allen Verfahren.</p>
 <p>Aus der Tiefe z des Pixels (Zeile v, Spalte u) werden <code style="color:#22d3bf">X = (u − cx)·z/fx</code>, <code style="color:#22d3bf">Y = (v − cy)·z/fy</code>, <code style="color:#22d3bf">Z = z</code> gebildet. Rückgabewert <code style="color:#22d3bf">(N,3)</code> float64; die Spalten sind <b>Kamerakoordinaten (X, Y, Z)</b> (gleiche Einheit wie die Tiefe). Pixel mit z von 0 oder kleiner werden verworfen, daher ist N höchstens die Pixelanzahl (Konvention: ungültige Tiefe wird durch 0 dargestellt).</p>

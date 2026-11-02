@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">mesh_read_ply — FILEIO <code style="color:#22d3bf">mesh</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mesh_read_ply(data)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import fileio; fileio.mesh_read_ply(data)</code>、台帳から引くなら <code style="color:#22d3bf">opsfileio.get(&quot;mesh_read_ply&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>ASCII / binary PLY を読み、頂点・面・色・法線・スカラー属性の <code style="color:#22d3bf">table</code> を返す。</p>
 <p>未知の頂点スカラーは <code style="color:#22d3bf">attributes</code> に保つ。未知の要素、面の未知プロパティ、未知の list property は名前を示して拒否する。呼び出し例: <code style="color:#22d3bf">table = mesh_read_ply(ply_bytes)</code>。</p>

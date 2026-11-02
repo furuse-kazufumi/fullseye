@@ -4,6 +4,7 @@ dim: aoi
 category: aggregate
 in: image2d
 out: table
+gpu: なし
 examples: [aoi_frontend_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.tiled_map(image, tile=16, stat='mean', overlap=0, drop_partial=False)` (実装を直接呼ぶなら `import aoi; aoi.tiled_map(image, tile=16, stat='mean', overlap=0, drop_partial=False)`、台帳から引くなら `opsaoi.get("tiled_map")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

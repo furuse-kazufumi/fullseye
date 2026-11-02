@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">jitter — 3D <code style="color:#22d3bf">augment</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.jitter(points, sigma: &#x27;float&#x27;, clip: &#x27;Optional[float]&#x27; = None, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import pcl_augment; pcl_augment.jitter(points, sigma: &#x27;float&#x27;, clip: &#x27;Optional[float]&#x27; = None, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;jitter&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>給每個點加等向性高斯雜訊 <code style="color:#22d3bf">N(0, sigma)</code>(模擬感測器位置雜訊)。</p>
 <p><code style="color:#22d3bf">sigma</code> 是世界單位的標準差(使用者指定參數)。給定 <code style="color:#22d3bf">clip</code> 時, 將各分量的位移截斷到 <code style="color:#22d3bf">[-clip, clip]</code>(抑制離群位移)。N 很大時雜訊的平均≈0、標準差≈sigma。回傳值與輸入形狀相同 <code style="color:#22d3bf">(N,3)</code>。</p>

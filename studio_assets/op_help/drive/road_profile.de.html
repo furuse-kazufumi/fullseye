@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">road_profile — DRIVE <code style="color:#22d3bf">long</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.road_profile(profile_xz, l0: &#x27;float&#x27; = 0.0) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import drivelong; drivelong.road_profile(profile_xz, l0: &#x27;float&#x27; = 0.0) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;road_profile&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Wandelt einen Polygonzug aus horizontalem Abstand und Höhe (x, z) (gleiche Form wie <code style="color:#22d3bf">profile</code> von drivecourse.course_slope) in ein Längsprofil über der <b>Bogenlänge l entlang der Fahrbahnoberfläche</b> um.</p>
 <p>Rückgabe = <code style="color:#22d3bf">{&quot;l&quot; (n,), &quot;x&quot; (n,), &quot;z&quot; (n,), &quot;sin&quot; (n−1,), &quot;cos&quot; (n−1,)}</code>. l ist die Bogenlänge der Knickpunkte ab <code style="color:#22d3bf">l0</code>. Der Steigungswinkel θ_i des Abschnitts i hat sin = Δz/Δl, cos = Δx/Δl (außerhalb beider Enden flach: θ = 0, z ist der Endwert).</p>

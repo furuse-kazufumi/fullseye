@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">pairs_to_signal — REPRCONV <code style="color:#22d3bf">pairs</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pairs_to_signal(pairs)</code> (to call the implementation directly, <code style="color:#22d3bf">import reprconv; reprconv.pairs_to_signal(pairs)</code>; from the registry, <code style="color:#22d3bf">opsreprconv.get(&quot;pairs_to_signal&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Pairs <code style="color:#22d3bf">(N,2)</code> → the dependent variable as a <code style="color:#22d3bf">signal (N,)</code>. The second exit from <code style="color:#22d3bf">pairs</code>.</p>
 <p>Extracts only column 1 (y). <code style="color:#22d3bf">funct_1d_to_pairs</code> returns (N,2) with (x, y) side by side, so this is its reverse direction -- <b>if x is evenly spaced</b>, <code style="color:#22d3bf">signal -&gt; pairs -&gt; signal</code> is bit-identical. Passing pairs whose x is not evenly spaced <b>silently drops the information in x</b> (<code style="color:#22d3bf">signal</code> is a type that assumes evenly spaced indices). That is why <code style="color:#22d3bf">pairs_to_table</code> always outputs <code style="color:#22d3bf">x_uniform</code> alongside.</p>

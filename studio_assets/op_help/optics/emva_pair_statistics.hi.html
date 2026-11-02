@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">emva_pair_statistics — OPTICS <code style="color:#22d3bf">sensorchar</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.emva_pair_statistics(y0, y1)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import sensorchar; sensorchar.emva_pair_statistics(y0, y1)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;emva_pair_statistics&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>एक ही exposure पर ली गई 2 images से mean, temporal variance और spatial variance निकालता है (समीकरण 16, 18, 32)।</p>
 <p><code style="color:#22d3bf">mu</code> = (μ[0] + μ[1]) / 2 (eq. 16), <code style="color:#22d3bf">var_temporal</code> = Σ(y0 − y1)²/(2NM) − (μ[0] − μ[1])²/2 (eq. 18: 2 frame means के अंतर का correction Release 4 में नया है), <code style="color:#22d3bf">var_spatial</code> = Σ y0·y1/(NM) − μ[0]μ[1] (eq. 32, कभी ऋणात्मक न होना दिखाया गया है)।</p>

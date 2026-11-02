@@ -4,6 +4,7 @@ dim: 3d
 category: bounds
 in: points
 out: mesh
+gpu: なし
 examples: [hull_bounds]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `points` → `mesh`
 - **呼び出し**: `import fullseye as fs; fs.ledger.convex_hull(V)` (実装を直接呼ぶなら `import meshrepair; meshrepair.convex_hull(V)`、台帳から引くなら `ops3d.get("convex_hull")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

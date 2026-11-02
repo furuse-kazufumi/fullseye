@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">fit_surface_principal_axes — 3D <code style="color:#22d3bf">geometry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fit_surface_principal_axes(points, degree: &#x27;int&#x27; = 2, *, isotropy_ratio: &#x27;float&#x27; = 0.95) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import measure3d; measure3d.fit_surface_principal_axes(points, degree: &#x27;int&#x27; = 2, *, isotropy_ratio: &#x27;float&#x27; = 0.95) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;fit_surface_principal_axes&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>तिरछी मुड़ी सतह को PCA अक्षों पर घुमाकर बहुपद z&#x27;=f(x&#x27;,y&#x27;) फिट करें।</p>
 <p>दो बड़े PCA अक्ष स्थानीय x/y तल और सबसे छोटा z बनाता है। माँगी कुल घात तक सभी एकपदी फिट होते हैं; केंद्र, अक्ष, घात, गुणांक, फिट बिंदु, केंद्रक अभिलंब और ज्यामितीय RMS लौटते हैं। तल में समदैशिक बादल अस्वीकार होते हैं।</p>

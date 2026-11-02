@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">world_apply_terrain — DRIVE <code style="color:#22d3bf">terrain</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.world_apply_terrain(world: &#x27;dict&#x27;, p: &#x27;dict&#x27;, step: &#x27;float&#x27; = 2.0) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import driveterrain; driveterrain.world_apply_terrain(world: &#x27;dict&#x27;, p: &#x27;dict&#x27;, step: &#x27;float&#x27; = 2.0) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;world_apply_terrain&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>对 world_build 的输出(平坦的世界)施加地形(原地修改，返回同一个 dict)。</p>
 <p>将路面网格(objects[0] &quot;ground&quot;)替换为 terrain_mesh,具有姿态的物体(资产、树、行人)按姿态(x, y) 处的高度作为刚体整体抬升,没有姿态的物体(路缘石、白线、停止线、轨道、坡道)按顶点逐个抬升。记录 <code style="color:#22d3bf">world[&quot;terrain&quot;] = p</code>。</p>

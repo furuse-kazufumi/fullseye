@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">contact_patch_radius — DRIVE <code style="color:#22d3bf">tacdome</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.contact_patch_radius(img, pitch: &#x27;float&#x27;, ring_px: &#x27;float&#x27; = 4.0) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import tacdome; tacdome.contact_patch_radius(img, pitch: &#x27;float&#x27;, ring_px: &#x27;float&#x27; = 4.0) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;contact_patch_radius&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>接触の像(<code style="color:#22d3bf">dome_contact_image</code> の型)から接触半径を読む。被覆率の線形和(面積法)で縁の副画素まで使う。</p>
 <p style="margin:2px 0 2px 12px">1) しきい値 (1 % 点 + 99.9 % 点)/2 で粗い円盤 → 重心と半径 r_t。2) 内側 r &lt; r_t − <code style="color:#22d3bf">ring_px</code> の中央値を fg、外の輪</p>

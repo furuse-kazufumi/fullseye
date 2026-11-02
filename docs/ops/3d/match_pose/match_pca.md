@@ -4,6 +4,7 @@ dim: 3d
 category: match_pose
 in: points × points
 out: pose
+gpu: なし
 examples: [shape_desc_pose]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `points × points` → `pose`
 - **呼び出し**: `import fullseye as fs; fs.ledger.match_pca(pts_scene, pts_model)` (実装を直接呼ぶなら `import match3d; match3d.match_pca(pts_scene, pts_model)`、台帳から引くなら `ops3d.get("match_pca")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

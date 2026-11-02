@@ -4,6 +4,7 @@ dim: 3d
 category: scene_flow3d
 in: points × points
 out: pose
+gpu: なし
 examples: [scene_flow_rigid]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,6 +16,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **データ種**: `points × points` → `pose`
 - **呼び出し**: `import fullseye as fs; fs.ledger.rigid_flow(pts0, pts1, max_iter: 'int' = 20) -> 'dict'` (実装を直接呼ぶなら `import scene_flow3d; scene_flow3d.rigid_flow(pts0, pts1, max_iter: 'int' = 20) -> 'dict'`、台帳から引くなら `ops3d.get("rigid_flow")`)
 - **台帳経由の戻り値**: `fullseye.ledger.rigid_flow(...)` は**宣言 out 型 `pose` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.rigid_flow.raw(...)`、または `scene_flow3d.rigid_flow` を直接呼ぶ。
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

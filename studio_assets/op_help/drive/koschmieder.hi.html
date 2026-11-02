@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">koschmieder — DRIVE <code style="color:#22d3bf">env</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">any × any × scalar × any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.koschmieder(L0, L_h, beta: &#x27;float&#x27;, d)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import driveenv; driveenv.koschmieder(L0, L_h, beta: &#x27;float&#x27;, d)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;koschmieder&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Koschmieder का नियम: दूरी d पर वस्तु की दिखने वाली luminance L = L₀ e^{−βd} + L_h (1 − e^{−βd}) (arrays भी चलते हैं)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

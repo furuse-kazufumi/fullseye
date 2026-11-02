@@ -4,6 +4,7 @@ dim: drive
 category: tactorque
 in: matrix × scalar × scalar
 out: matrix
+gpu: なし
 examples: [poc_tactile_dipole_torque]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `matrix × scalar × scalar` → `matrix`
 - **呼び出し**: `import fullseye as fs; fs.ledger.surface_divergence_closed_form(p, G: 'float', nu: 'float') -> 'np.ndarray'` (実装を直接呼ぶなら `import tactorque; tactorque.surface_divergence_closed_form(p, G: 'float', nu: 'float') -> 'np.ndarray'`、台帳から引くなら `opsdrive.get("surface_divergence_closed_form")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

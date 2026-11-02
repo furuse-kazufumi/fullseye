@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">geodesic_heat_grid — MATH <code style="color:#22d3bf">geometry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.geodesic_heat_grid(mask, source=None, *, spacing=1.0, t: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import mathgeometry; mathgeometry.geodesic_heat_grid(mask, source=None, *, spacing=1.0, t: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsmath.get(&quot;geodesic_heat_grid&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>在 2-D 影像或 3-D 體積資料的網格上，以熱方法求避開障礙物的測地距離(Crane et al. 2013 的網格版)。</p>
 <p><code style="color:#22d3bf">mask</code> 是可通行像素/體素為 True 的 bool 陣列(2-D 或 3-D)，<code style="color:#22d3bf">source</code> 是起點的索引(1 點 <code style="color:#22d3bf">(i, j[, k])</code> 或點的序列。省略時為第一個可通行像素)。<code style="color:#22d3bf">spacing</code> 是各軸的像素大小(純量或逐軸)。</p>

@@ -4,6 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.distance_ridge(vol, min_radius=0.0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import medial; medial.distance_ridge(vol, min_radius=0.0)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;distance_ridge&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>Ledger के ज़रिए return value</b>: <code style="color:#22d3bf">fullseye.ledger.distance_ridge(...)</code> <b>केवल घोषित out type <code style="color:#22d3bf">voxel</code> का value</b> लौटाता है (मूल function सहायक जानकारी भी लौटाता है)। जो हिस्सा छोड़ दिया गया है उसकी ज़रूरत हो तो <code style="color:#22d3bf">fullseye.ledger.distance_ridge.raw(...)</code> का उपयोग करें, या <code style="color:#22d3bf">medial.distance_ridge</code> को सीधे call करें।</p>
 <p style="margin:2px 0 2px 12px">• मूल function का return: <code style="color:#22d3bf">(ridge, dist)</code></p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>EDT के ridge (distance field के local maxima) को medial के रूप में निकालता है। return value (ridge_mask, edt)।</p>
 <p>हर foreground voxel का EDT निकाला जाता है, और <b>26-neighbourhood के local maxima</b> (अपना EDT आसपास के 26 voxel के maximum से कम न हो) को medial माना जाता है। यह मानदंड object की local dimension के अनुसार अपने आप सही dimension देता है:</p>

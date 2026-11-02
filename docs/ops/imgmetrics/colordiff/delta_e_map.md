@@ -4,6 +4,7 @@ dim: imgmetrics
 category: colordiff
 in: rgbimage × rgbimage
 out: image2d
+gpu: なし
 examples: [color_transport, image_quality_metrics, poc_colormap_readability, poc_pigment_unmixing, poc_white_balance]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `rgbimage × rgbimage` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.delta_e_map(rgb1, rgb2, kind='2000', white=(0.95047, 1.0, 1.08883))` (実装を直接呼ぶなら `import imgmetrics; imgmetrics.delta_e_map(rgb1, rgb2, kind='2000', white=(0.95047, 1.0, 1.08883))`、台帳から引くなら `opsimgmetrics.get("delta_e_map")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

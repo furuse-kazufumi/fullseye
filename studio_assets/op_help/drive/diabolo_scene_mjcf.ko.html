@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">diabolo_scene_mjcf — DRIVE <code style="color:#22d3bf">diabolo</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.diabolo_scene_mjcf(params: &#x27;dict&#x27;, *, timestep: &#x27;float&#x27; = 0.00025, solref=(0.0005, 1.0), wrap_axle: &#x27;bool&#x27; = False) -&gt; &#x27;str&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import diabolo; diabolo.diabolo_scene_mjcf(params: &#x27;dict&#x27;, *, timestep: &#x27;float&#x27; = 0.00025, solref=(0.0005, 1.0), wrap_axle: &#x27;bool&#x27; = False) -&gt; &#x27;str&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;diabolo_scene_mjcf&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>두 번째 구현(독립 구현) 장면의 MJCF 문자열(mujoco 불필요): 공간 텐돈 스틱 끝 → 디아볼로 → 스틱 끝, 길이 상한 = 끈(단측 구속 = 늘어났을 때만 당김 = 마찰 없는 도르래의 엄밀 모형과 같은 물리를, 유연한 구속과 암시적 속도 갱신이라는 다른 해법으로 풂). 스틱 끝은 mocap(각 스텝에서 위치를 기록). 디아볼로는 자유 관절의 강체(질량 = 논문 표 I, 관성은 가정. 회전은 끈과 결합하지 않음). <code style="color:#22d3bf">wrap_axle</code> = True이면 축(반지름 r)의 원기둥에 텐돈을 감는 형태(아래쪽을 통과, 미검증). <b>Raises</b> <code style="color:#22d3bf">ValueError</code>: params의 형태, timestep ≤ 0, solref가 2개의 양수가 아님.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

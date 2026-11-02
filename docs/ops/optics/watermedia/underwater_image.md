@@ -4,6 +4,7 @@ dim: optics
 category: watermedia
 in: rgbimage × image2d × image2d
 out: table
+gpu: なし
 examples: [poc_water_transparent_media]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `rgbimage × image2d × image2d` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.underwater_image(image, depth_map_m, distance_map_m, water_type='jerlov_I', wavelengths_um=None, illumination='daylight', backscatter=True, apply_ambient=False, beta_b_ratio=1.0, backscatter_ratio=0.02) -> 'dict'` (実装を直接呼ぶなら `import watermedia; watermedia.underwater_image(image, depth_map_m, distance_map_m, water_type='jerlov_I', wavelengths_um=None, illumination='daylight', backscatter=True, apply_ambient=False, beta_b_ratio=1.0, backscatter_ratio=0.02) -> 'dict'`、台帳から引くなら `opsoptics.get("underwater_image")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

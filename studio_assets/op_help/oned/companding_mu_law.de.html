@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">companding_mu_law — ONED <code style="color:#22d3bf">signal</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.companding_mu_law(x, mu=255.0, bits=8)</code> (die Implementierung direkt: <code style="color:#22d3bf">import dsp; dsp.companding_mu_law(x, mu=255.0, bits=8)</code>; aus dem Register: <code style="color:#22d3bf">ops1d.get(&quot;companding_mu_law&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>mu-law-Kompandierung — die G.711-Kurve, hier auf beliebige 1-D-Signale angewandt.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>

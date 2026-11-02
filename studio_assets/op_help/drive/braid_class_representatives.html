@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">braid_class_representatives — DRIVE <code style="color:#22d3bf">braidpath</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.braid_class_representatives(plans, obstacles=None, costs=None, angle=0.1, jitter=&#x27;auto&#x27;)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import braidpath; braidpath.braid_class_representatives(plans, obstacles=None, costs=None, angle=0.1, jitter=&#x27;auto&#x27;)</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;braid_class_representatives&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>複数の計画(どの計画器の出力でもよい)をホモトピー類に分け、類ごとに費用の最も小さい計画を代表に選ぶ。</p>
 <p>計画は (K, T, 2) の軌道か、格子の経路の列か、計画器の dict(<code style="color:#22d3bf">paths</code>、失敗した <code style="color:#22d3bf">None</code> は飛ばして数える)。全部の計画の始点と終点がそろっている必要がある(類は端を止めた変形の類)。費用は <code style="color:#22d3bf">costs</code> か、なければ軌道の長さの和。</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">rope_rotate — LLMCORE <code style="color:#22d3bf">prepare</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">tokens</code> → <code style="color:#22d3bf">tokens</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rope_rotate(tokens, positions=None, base: &#x27;float&#x27; = 10000.0) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import llmcore; llmcore.rope_rotate(tokens, positions=None, base: &#x27;float&#x27; = 10000.0) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsllmcore.get(&quot;rope_rotate&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>回転による位置符号(RoPE)→ tokens。<b>回転なのでノルムを保つ</b>。</p>
 <p>Su ら 2021。偶奇の対 (x₂ᵢ, x₂ᵢ₊₁) を角度 <code style="color:#22d3bf">pos · base**(−2i/d)</code> だけ回す。平面回転の直和なので <code style="color:#22d3bf">‖RoPE(x)‖ == ‖x‖</code> が<b>厳密に</b>成り立ち(実測 8.9e-16)、しかも回した 2 本の内積は<b>位置の差だけ</b>で決まる(絶対位置を 40 通り動かして幅 8.9e-15) —— 「相対位置を内積に埋める」という主張が、そのまま検算になる。</p>

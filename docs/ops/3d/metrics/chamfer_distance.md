@@ -4,6 +4,7 @@ dim: 3d
 category: metrics
 in: points × points
 out: measurement
+gpu: なし
 examples: [itokawa_pose_canonical, itokawa_shape_match, mesh_lod_download, metrics_eval, poisson_surface_recon]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `points × points` → `measurement`
 - **呼び出し**: `import fullseye as fs; fs.ledger.chamfer_distance(a, b, squared=False)` (実装を直接呼ぶなら `import metrics3d; metrics3d.chamfer_distance(a, b, squared=False)`、台帳から引くなら `ops3d.get("chamfer_distance")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

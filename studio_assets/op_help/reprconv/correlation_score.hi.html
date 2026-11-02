@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">correlation_score — REPRCONV <code style="color:#22d3bf">score</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">voxel × voxel</code> → <code style="color:#22d3bf">score</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.correlation_score(voxel_a, voxel_b)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import reprconv; reprconv.correlation_score(voxel_a, voxel_b)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsreprconv.get(&quot;correlation_score&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>2 <code style="color:#22d3bf">voxel</code> → normalised cross-correlation का <code style="color:#22d3bf">score</code> volume। <b>इस type में आने का एकमात्र रास्ता</b>।</p>
 <p><code style="color:#22d3bf">score</code> वह type है जिसे <code style="color:#22d3bf">refine_peak_newton</code> consume करता है, लेकिन <b>ledger के किसी भी op ने <code style="color:#22d3bf">score</code> नहीं बनाया</b> (measured; generator का seed रखने के बाद ही यहाँ तक पहुँचा गया)। यहाँ FFT से circular cross-correlation लौटाया जाता है:</p>

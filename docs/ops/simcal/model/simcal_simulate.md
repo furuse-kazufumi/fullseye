@@ -4,6 +4,7 @@ dim: simcal
 category: model
 in: simmodel
 out: images
+gpu: なし
 examples: [poc_pocket_interreflection, poc_simcal_pixel_shift, poc_simcal_thin_film, simcal_checks_tour, simcal_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `simmodel` → `images`
 - **呼び出し**: `import fullseye as fs; fs.ledger.simcal_simulate(model=None, theta=None, seed=None) -> 'list'` (実装を直接呼ぶなら `import simcal; simcal.simcal_simulate(model=None, theta=None, seed=None) -> 'list'`、台帳から引くなら `opssimcal.get("simcal_simulate")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

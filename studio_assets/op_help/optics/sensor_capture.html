@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">sensor_capture — OPTICS <code style="color:#22d3bf">scene</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">rgbimage</code> → <code style="color:#22d3bf">rgbimage</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sensor_capture(radiance, exposure_ms: &#x27;float&#x27; = 10.0, gain_e_per_unit: &#x27;float&#x27; = 50000.0, read_noise_e: &#x27;float&#x27; = 2.5, full_well_e: &#x27;float&#x27; = 10000.0, bit_depth: &#x27;int&#x27; = 8, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import optscene; optscene.sensor_capture(radiance, exposure_ms: &#x27;float&#x27; = 10.0, gain_e_per_unit: &#x27;float&#x27; = 50000.0, read_noise_e: &#x27;float&#x27; = 2.5, full_well_e: &#x27;float&#x27; = 10000.0, bit_depth: &#x27;int&#x27; = 8, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;sensor_capture&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>放射輝度 → 実センサの出力(ショット雑音・読み出し雑音・飽和・量子化)。</p>
 <p>光子数 = radiance · exposure_ms · gain_e_per_unit / 1000 を平均とする Poisson。そこへ読み出し雑音(正規)を足し、<code style="color:#22d3bf">full_well_e</code> で<b>飽和</b>させ、<code style="color:#22d3bf">bit_depth</code> で量子化する。飽和は clip であって折り返さない(白飛びは白のまま)。</p>

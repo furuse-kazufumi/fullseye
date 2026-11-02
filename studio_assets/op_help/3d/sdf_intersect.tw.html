@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">sdf_intersect — 3D <code style="color:#22d3bf">sdf_csg</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">sdf × sdf</code> → <code style="color:#22d3bf">sdf</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sdf_intersect(a, b)</code>(要直接呼叫實作,<code style="color:#22d3bf">import sdf_ops; sdf_ops.sdf_intersect(a, b)</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;sdf_intersect&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>兩個 SDF 的交集 A∩B = 逐元素 max(a, b)(只有兩者都在內側才在內側)。</p>
 <p>零等值面是兩個邊界的公共部分。內部和外部通常都不是嚴格的SDF，但可以是距離的下限。</p>

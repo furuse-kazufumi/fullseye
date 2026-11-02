@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">pendulum_period_exact — DRIVE <code style="color:#22d3bf">kendama</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">scalar</code> (an op determined by its arguments alone — it takes no image or data input)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pendulum_period_exact(L: &#x27;float&#x27;, theta0: &#x27;float&#x27;, g: &#x27;float&#x27; = 9.81) -&gt; &#x27;float&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import kendama; kendama.pendulum_period_exact(L: &#x27;float&#x27;, theta0: &#x27;float&#x27;, g: &#x27;float&#x27; = 9.81) -&gt; &#x27;float&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;pendulum_period_exact&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Period 4√(L/g)·K(sin(θ₀/2)) of a pendulum (a rod, or a string within the range where it does not go slack) with amplitude θ₀ ∈ (0, π). As θ₀ → 0 it tends to 2π√(L/g).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

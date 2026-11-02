@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">unproject_spherical — 3D <code style="color:#22d3bf">lidar_projection</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.unproject_spherical(range_img, v_fov=(-25.0, 15.0)) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import spherical_proj; spherical_proj.unproject_spherical(range_img, v_fov=(-25.0, 15.0)) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;unproject_spherical&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>구면 레인지 이미지 → 3D 점 (M, 3). range&gt;0 인 셀만 빈 중심각으로 역투영.</p>
 <p><code style="color:#22d3bf">project_spherical</code>의 역. 행/열로부터 bin <b>중심</b>의 (elevation, azimuth)를 복원하고, 저장된 range를 slant distance로 하여 구면 → 직교 좌표로 되돌린다. 비어 있으면(전부 0) (0, 3)을 반환한다.</p>

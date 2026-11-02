@@ -4,6 +4,7 @@ dim: optics
 category: spectrometer
 in: 
 out: table
+gpu: なし
 examples: [poc_spectrometer_illumination]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.grating_dispersion(groove_density_per_mm=1200.0, wavelength_nm=550.0, incidence_deg=10.0, order=1, focal_length_mm=100.0, illuminated_width_mm=25.0)` (実装を直接呼ぶなら `import gratingspec; gratingspec.grating_dispersion(groove_density_per_mm=1200.0, wavelength_nm=550.0, incidence_deg=10.0, order=1, focal_length_mm=100.0, illuminated_width_mm=25.0)`、台帳から引くなら `opsoptics.get("grating_dispersion")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

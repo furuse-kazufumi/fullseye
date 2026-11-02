@@ -4,6 +4,7 @@ dim: drive
 category: decide
 in: any
 out: any
+gpu: なし
 examples: [poc_driving_crossing, poc_driving_decisions]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `any` → `any`
 - **呼び出し**: `import fullseye as fs; fs.ledger.aliased_frequency(f, fps)` (実装を直接呼ぶなら `import drivedecide; drivedecide.aliased_frequency(f, fps)`、台帳から引くなら `opsdrive.get("aliased_frequency")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

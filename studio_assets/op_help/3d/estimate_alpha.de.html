@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">estimate_alpha — 3D <code style="color:#22d3bf">reconstruct</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.estimate_alpha(points)</code> (die Implementierung direkt: <code style="color:#22d3bf">import recon3d; recon3d.estimate_alpha(points)</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;estimate_alpha&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Liefert ein empfohlenes Alpha aus dem Maßstab der Punktmenge (basierend auf dem Median des Nächste-Nachbar-Abstands).</p>
 <p>Bestimmt den Median <code style="color:#22d3bf">m</code> der Nächster-Nachbar-Abstände aller Punkte und gibt <code style="color:#22d3bf">alpha = 1/(2m)</code> zurück, sodass der Radius-Schwellwert 1/alpha ≈ 2m ist (bis etwa zum 2-fachen des Nachbarabstands zulässig). So bleiben gutartige Tetraeder nahe der Oberfläche erhalten, während stark gestreckte Tetraeder (= Einbuchtungen, außen) abgeschnitten werden. Doppelte Punkte haben den Nächster-Nachbar-Abstand 0, daher werden nur positive Abstände verwendet.</p>

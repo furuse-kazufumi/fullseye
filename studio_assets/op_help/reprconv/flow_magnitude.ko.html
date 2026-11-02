@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">flow_magnitude — REPRCONV <code style="color:#22d3bf">flow</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">flow_dense</code> → <code style="color:#22d3bf">voxel</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.flow_magnitude(flow)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import reprconv; reprconv.flow_magnitude(flow)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsreprconv.get(&quot;flow_magnitude&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>조밀 신 플로 <code style="color:#22d3bf">(3,D,H,W)</code> → 속력 볼륨 <code style="color:#22d3bf">voxel (D,H,W)</code>. <code style="color:#22d3bf">flow</code> 의 출구.</p>
 <p><code style="color:#22d3bf">sqrt(dz^2 + dy^2 + dx^2)</code>. <b>단방향</b>(방향을 버리므로 되돌릴 수 없다). 버린 양은 명시할 수 있다: 3 성분 중 2 자유도만큼의 방향이 사라지고, 남는 것은크기뿐이다. 방향까지 보고 싶을 때는 <code style="color:#22d3bf">flow_to_rgbimage</code>.</p>

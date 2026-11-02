@@ -4,6 +4,7 @@ dim: drive
 category: kendama
 in: table
 out: table
+gpu: なし
 examples: [gallery_drive_kendama_racket]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.kendama_catch_check(kp: 'dict', p_ball, v_ball, cup_center, cup_axis=(0.0, 0.0, 1.0), v_cup=(0.0, 0.0, 0.0), v_rel_max: 'float' = 1.0, window: 'float' = None) -> 'dict'` (実装を直接呼ぶなら `import kendama; kendama.kendama_catch_check(kp: 'dict', p_ball, v_ball, cup_center, cup_axis=(0.0, 0.0, 1.0), v_cup=(0.0, 0.0, 0.0), v_rel_max: 'float' = 1.0, window: 'float' = None) -> 'dict'`、台帳から引くなら `opsdrive.get("kendama_catch_check")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

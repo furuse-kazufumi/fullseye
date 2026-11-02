@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">normal_consistency — 3D <code style="color:#22d3bf">metrics</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">points × normals</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.normal_consistency(points_a, normals_a, points_b, normals_b)</code>(要直接呼叫實作,<code style="color:#22d3bf">import metrics3d; metrics3d.normal_consistency(points_a, normals_a, points_b, normals_b)</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;normal_consistency&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>最近鄰對應下的法線一致度 = mean|cos(na, nb)|(忽略朝向)。→ [0,1]。1=完全一致。</p>
 <p>Raises ValueError：點雲為空或不是 (N,3)/法線與點不是 1 對 1 時。</p>

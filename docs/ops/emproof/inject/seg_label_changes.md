@@ -4,6 +4,7 @@ dim: emproof
 category: inject
 in: labels2d × labels2d
 out: table
+gpu: なし
 examples: [poc_em_second_opinion, poc_em_split_merge_score]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `labels2d × labels2d` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.seg_label_changes(before, after, min_pixels: 'int' = 1, ignore_zero: 'bool' = True) -> 'dict'` (実装を直接呼ぶなら `import emproof; emproof.seg_label_changes(before, after, min_pixels: 'int' = 1, ignore_zero: 'bool' = True) -> 'dict'`、台帳から引くなら `opsemproof.get("seg_label_changes")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

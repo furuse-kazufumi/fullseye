@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">fly_hex_quantize — FLYVISION <code style="color:#22d3bf">sample</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fly_hex_quantize(signal, bits=3, mode=&#x27;log&#x27;, contrast=0.2)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import flyvision; flyvision.fly_hex_quantize(signal, bits=3, mode=&#x27;log&#x27;, contrast=0.2)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsflyvision.get(&quot;fly_hex_quantize&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>낱눈 신호를 눈과 같은 방식으로 양자화한다: 로그 압축한 뒤 낱눈당 n비트(<code style="color:#22d3bf">mode=&quot;onoff&quot;</code>는 ON / OFF의 2채널).</p>
 <p>겹눈은 태생적으로 양자화기다. 한쪽 눈에 약 800 개의 낱눈(간격 4.6°)이 있고, 광수용기는 강도를 로그 압축해 평균에 적응하며, 라미나의 L1 / L2 가 평균으로부터의 편차를 ON 과 OFF 로 나눈다. 이 op 는 그 예산을 재현하여, 하류 모델(reservoir · 망막 부위 대응 검사)에 &quot;정말로 몇 비트가 필요한가&quot;를 물을 수 있게 한다.</p>

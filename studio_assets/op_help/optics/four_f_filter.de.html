@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">four_f_filter — OPTICS <code style="color:#22d3bf">wave</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">cimage × cimage</code> → <code style="color:#22d3bf">cimage</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.four_f_filter(field, transfer, invert=True)</code> (die Implementierung direkt: <code style="color:#22d3bf">import optics; optics.four_f_filter(field, transfer, invert=True)</code>; aus dem Register: <code style="color:#22d3bf">opsoptics.get(&quot;four_f_filter&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Optischer 4f-Prozessor: Ausgabe nach Durchgang durch 2 Linsen und den Filter in der Fourier-Ebene.</p>
 <p>Eingangsebene → Linse 1 → <b>Fourier-Ebene</b> (Multiplikation mit <code style="color:#22d3bf">transfer</code>) → Linse 2 → Ausgangsebene. Im idealen 4f-System der skalaren Beugung ist die Ausgabe</p>

@@ -4,6 +4,7 @@ dim: optics
 category: noncoaxial
 in: table
 out: table
+gpu: なし
 examples: [poc_noncoaxial_optics, poc_photograph_through_prescription]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.ghost_analysis(system, coatings=None, field=None, rings=6, pupil_fill=0.98, pixel_mm=0.005, max_rows=None)` (実装を直接呼ぶなら `import raytrace3d; raytrace3d.ghost_analysis(system, coatings=None, field=None, rings=6, pupil_fill=0.98, pixel_mm=0.005, max_rows=None)`、台帳から引くなら `opsoptics.get("ghost_analysis")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -4,6 +4,7 @@ dim: gfx2d
 category: post
 in: rgb
 out: rgb
+gpu: なし
 examples: [gfx2d_scene]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `rgb` → `rgb`
 - **呼び出し**: `import fullseye as fs; fs.ledger.chromatic_aberration(rgb, strength=0.003, interp='bilinear')` (実装を直接呼ぶなら `import gfx2d; gfx2d.chromatic_aberration(rgb, strength=0.003, interp='bilinear')`、台帳から引くなら `opsgfx2d.get("chromatic_aberration")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">shape_perturb — SHAPESTAT <code style="color:#22d3bf">synth</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.shape_perturb(shape, amplitude: &#x27;float&#x27; = 0.05, mode: &#x27;str&#x27; = &#x27;bulge&#x27;, center=(1.0, 0.0, 0.0), sigma: &#x27;float&#x27; = 0.4, seed: &#x27;int&#x27; = 0)</code>(要直接调用实现,<code style="color:#22d3bf">import shapestats; shapestats.shape_perturb(shape, amplitude: &#x27;float&#x27; = 0.05, mode: &#x27;str&#x27; = &#x27;bulge&#x27;, center=(1.0, 0.0, 0.0), sigma: &#x27;float&#x27; = 0.4, seed: &#x27;int&#x27; = 0)</code>;从台账取用则 <code style="color:#22d3bf">opsshapestat.get(&quot;shape_perturb&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>对形状施加 1 个<b>已知的</b>变形。→ <code style="color:#22d3bf">(N, 3)</code>。</p>
 <p><code style="color:#22d3bf">mode</code>:</p>

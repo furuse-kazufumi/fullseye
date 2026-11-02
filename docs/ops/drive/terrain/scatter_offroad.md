@@ -4,6 +4,7 @@ dim: drive
 category: terrain
 in: table
 out: points
+gpu: なし
 examples: [poc_world_terrain]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `points`
 - **呼び出し**: `import fullseye as fs; fs.ledger.scatter_offroad(course, bounds, n: 'int' = 60, r_min: 'float' = 4.0, margin: 'float' = 3.0, seed: 'int' = 0, max_tries: 'int' = 20000) -> 'np.ndarray'` (実装を直接呼ぶなら `import driveterrain; driveterrain.scatter_offroad(course, bounds, n: 'int' = 60, r_min: 'float' = 4.0, margin: 'float' = 3.0, seed: 'int' = 0, max_tries: 'int' = 20000) -> 'np.ndarray'`、台帳から引くなら `opsdrive.get("scatter_offroad")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

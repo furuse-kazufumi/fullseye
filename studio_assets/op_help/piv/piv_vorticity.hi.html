@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">piv_vorticity — PIV <code style="color:#22d3bf">field</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">flow2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_vorticity(flow, spacing=1.0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import pivops; pivops.piv_vorticity(flow, spacing=1.0)</code>, registry से लेना हो तो <code style="color:#22d3bf">opspiv.get(&quot;piv_vorticity&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>vorticity <code style="color:#22d3bf">d(dx)/dy - d(dy)/dx</code>। <b>वामावर्त धनात्मक है</b> (image coordinate में परिभाषा)।</p>
 <p>Image coordinates में जहाँ rows नीचे की ओर बढ़ती हैं, ऊपर और नीचे गणितीय xy coordinates के मुकाबले उल्टे होते हैं। Sign तय किए बिना इसे लिखने पर vortices के घूमने की दिशा चुपचाप पलट जाती है, इसलिए परिभाषा docstring में तय की गई है।</p>

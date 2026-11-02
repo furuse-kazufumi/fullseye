@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">two_view_volume — DRIVE <code style="color:#22d3bf">scoop</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image2d × image2d × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.two_view_volume(side_a, side_b, pitch: &#x27;float&#x27;, *, threshold: &#x27;float&#x27; = 0.5) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import scoop; scoop.two_view_volume(side_a, side_b, pitch: &#x27;float&#x27;, *, threshold: &#x27;float&#x27; = 0.5) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;two_view_volume&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Volumen aus Seitenbildern in 2 orthogonalen Richtungen — Summe der Ellipsen, deren Achsen die 2 Sehnen <code style="color:#22d3bf">W_a</code> und <code style="color:#22d3bf">W_b</code> jeder Zeile sind, <code style="color:#22d3bf">V = Σ f π (W_a/2)(W_b/2) pitch³</code>.</p>
 <p>Exakt, wenn der Querschnitt eine Ellipse ist (nicht achsensymmetrischer Hügel, längliche Aufschüttung); die Annahme eines Rotationskörpers aus nur einer Ansicht weicht um das Verhältnis der Elliptizität ab (im PoC</p>

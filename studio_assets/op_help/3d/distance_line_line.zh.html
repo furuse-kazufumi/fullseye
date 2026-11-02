@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">distance_line_line — 3D <code style="color:#22d3bf">geometry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">primitive</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.distance_line_line(p1, d1, p2, d2)</code>(要直接调用实现,<code style="color:#22d3bf">import match3d; match3d.distance_line_line(p1, d1, p2, d2)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;distance_line_line&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>两直线间距离(含异面/skew)。平行时退化为点-线距离。</p>
 <p>★这是<b>无限直线</b>之间的距离。用于手脚、机器人连杆、管道之类的<b>有限线段</b>时, 即使相互分离也可能返回 0(实测: (0,0,0)-(1,0,0) 与(5,0,0)-(6,0,0) 得 0.0,真值 4.0)。线段之间请使用 <code style="color:#22d3bf">distance_segment_segment</code> —— 在安全距离判定中弄混这一点, 会偏向<b>低估危险</b>的一侧。</p>

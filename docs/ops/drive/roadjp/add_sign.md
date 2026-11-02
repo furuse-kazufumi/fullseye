@@ -4,6 +4,7 @@ dim: drive
 category: roadjp
 in: table
 out: scalar
+gpu: なし
 examples: [poc_driving_school, poc_world_terrain]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `scalar`
 - **呼び出し**: `import fullseye as fs; fs.ledger.add_sign(world: 'dict', kind: 'str', x: 'float', y: 'float', yaw: 'float', *, value=None, mount_height: 'float | None' = None, pole_radius: 'float' = 0.03, cell: 'int' = 4, size_px: 'int' = 128, font_path=None, side: 'float | None' = None) -> 'int'` (実装を直接呼ぶなら `import roadjp; roadjp.add_sign(world: 'dict', kind: 'str', x: 'float', y: 'float', yaw: 'float', *, value=None, mount_height: 'float | None' = None, pole_radius: 'float' = 0.03, cell: 'int' = 4, size_px: 'int' = 128, font_path=None, side: 'float | None' = None) -> 'int'`、台帳から引くなら `opsdrive.get("add_sign")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

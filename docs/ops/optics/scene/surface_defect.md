@@ -4,6 +4,7 @@ dim: optics
 category: scene
 in: table × image2d
 out: table
+gpu: なし
 examples: [studio_raytrace_scene]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table × image2d` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.surface_defect(primitive: 'dict', field, mask=None, uv_size_mm=(20.0, 20.0), centre_mm=(0.0, 0.0), height_um: 'float' = 0.0, height_field=None, roughness_um: 'float' = 0.6) -> 'dict'` (実装を直接呼ぶなら `import optscene; optscene.surface_defect(primitive: 'dict', field, mask=None, uv_size_mm=(20.0, 20.0), centre_mm=(0.0, 0.0), height_um: 'float' = 0.0, height_field=None, roughness_um: 'float' = 0.6) -> 'dict'`、台帳から引くなら `opsoptics.get("surface_defect")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">stick_radius_modelfree — DRIVE <code style="color:#22d3bf">tacslip</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">matrix × matrix</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.stick_radius_modelfree(pts_c, u_px, rel: &#x27;float&#x27; = 0.08, abs_px: &#x27;float&#x27; = 0.05) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import tacslip; tacslip.stick_radius_modelfree(pts_c, u_px, rel: &#x27;float&#x27; = 0.08, abs_px: &#x27;float&#x27; = 0.05) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;stick_radius_modelfree&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Model-free stick radius: in order of distance from the center, starting from the median δ̂ of the inner 6 points, the radius <code style="color:#22d3bf">c_px</code> of the midpoint between the first point where |ux − δ̂| exceeds rel·|δ̂| + abs_px and the point just before it (resolution = marker spacing). <code style="color:#22d3bf">core_px</code> = δ̂. pts_c are center-relative (M, 2) [px], u_px is (M, 2) [px]. <b>Raises</b> ValueError: fewer than 6 points.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

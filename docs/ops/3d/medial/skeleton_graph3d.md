@@ -4,6 +4,7 @@ dim: 3d
 category: medial
 in: voxel
 out: table
+gpu: なし
 examples: [medial_topology]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `voxel` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.skeleton_graph3d(vol, distance=None, spacing=(1.0, 1.0, 1.0), min_branch_len=0.0)` (実装を直接呼ぶなら `import medial; medial.skeleton_graph3d(vol, distance=None, spacing=(1.0, 1.0, 1.0), min_branch_len=0.0)`、台帳から引くなら `ops3d.get("skeleton_graph3d")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -4,6 +4,7 @@ dim: drive
 category: carla
 in: matrix
 out: any
+gpu: なし
 examples: [gallery_drive_carla_bridge]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `matrix` → `any`
 - **呼び出し**: `import fullseye as fs; fs.ledger.world_pose_to_carla(T) -> 'np.ndarray'` (実装を直接呼ぶなら `import carlabridge; carlabridge.world_pose_to_carla(T) -> 'np.ndarray'`、台帳から引くなら `opsdrive.get("world_pose_to_carla")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

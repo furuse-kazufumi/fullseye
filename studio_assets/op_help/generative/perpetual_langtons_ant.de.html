@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">perpetual_langtons_ant — GENERATIVE <code style="color:#22d3bf">perpetual</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">keine</code> → <code style="color:#22d3bf">rgb</code> (ein Operator, der allein durch seine Argumente bestimmt ist — er nimmt kein Bild und keine Daten entgegen)</p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.perpetual_langtons_ant(steps: &#x27;int&#x27; = 12000, size: &#x27;int&#x27; = 301) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import perpetual; perpetual.perpetual_langtons_ant(steps: &#x27;int&#x27; = 12000, size: &#x27;int&#x27; = 301) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsgenerative.get(&quot;perpetual_langtons_ant&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Langtons Ameise — mit nur 2 Regeln baut sie nach 10.000 Schritten unablässig eine „Autobahn“.</p>
 <p>Invariante: nach Erreichen der Autobahn <b>wiederholt sie mit Periode 104 dieselbe diagonale Verschiebung (Betrag 2 senkrecht wie waagerecht)</b>. Das Vorzeichen der Richtung hängt von der Drehkonvention ab -- auf dem Gitter dieser Implementierung ist es (Zeile, Spalte) = (+2, −2).</p>

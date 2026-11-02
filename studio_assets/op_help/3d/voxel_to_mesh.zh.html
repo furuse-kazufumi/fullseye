@@ -3,6 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">mesh</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.voxel_to_mesh(vol, iso=0.5)</code>(要直接调用实现,<code style="color:#22d3bf">import match3d; match3d.voxel_to_mesh(vol, iso=0.5)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;voxel_to_mesh&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>经台账调用的返回值</b>: <code style="color:#22d3bf">fullseye.ledger.voxel_to_mesh(...)</code> 只返回<b>声明的 out 类型 <code style="color:#22d3bf">mesh</code> 的值</b>(底层函数还会返回辅助信息)。需要被丢弃的部分时,使用 <code style="color:#22d3bf">fullseye.ledger.voxel_to_mesh.raw(...)</code>,或直接调用 <code style="color:#22d3bf">match3d.voxel_to_mesh</code>。</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>voxel → mesh(marching cubes,skimage)。返回 (verts, faces, normals)。voxel→mesh 转换。</p>
 <p><code style="color:#22d3bf">skimage.measure.marching_cubes(vol, level=iso)</code> 的薄封装(不指定 spacing = 以 1 voxel 为单位)。<code style="color:#22d3bf">verts</code> (V,3) float 是 <b>voxel index 坐标</b>,各列为输入的轴顺序(<code style="color:#22d3bf">vol</code> 为 (D,H,W) 时即 (z,y,x))。<code style="color:#22d3bf">faces</code> (F,3) int 是指向 verts 的 index,<code style="color:#22d3bf">normals</code> (V,3) 是 skimage 由梯度给出的顶点法线。第 4 个返回值(values)被丢弃。</p>

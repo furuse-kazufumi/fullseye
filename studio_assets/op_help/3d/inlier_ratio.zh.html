@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">inlier_ratio — 3D <code style="color:#22d3bf">registration_metrics</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.inlier_ratio(source, target, transform, thresh: &#x27;float&#x27;) -&gt; &#x27;float&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import registration_eval; registration_eval.inlier_ratio(source, target, transform, thresh: &#x27;float&#x27;) -&gt; &#x27;float&#x27;</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;inlier_ratio&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>对应集合的内点率 = ‖T·source[i] − target[i]‖ &lt; thresh 的比例。→ [0,1]。</p>
 <p><code style="color:#22d3bf">source</code> 与 <code style="color:#22d3bf">target</code> 是<b>按 index 对应</b>（source[i] 对应 target[i]）的同数量点云（假定为 FPFH 等的 putative correspondence）。对 thresh 单调不减。形状不一致、非 (N,3) 时抛出 ValueError(fail-closed)。</p>

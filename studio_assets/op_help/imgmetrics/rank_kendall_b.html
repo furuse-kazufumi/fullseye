@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">rank_kendall_b — IMGMETRICS <code style="color:#22d3bf">iqa</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">any × any</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rank_kendall_b(x, y, chunk: &#x27;int&#x27; = 512) -&gt; &#x27;float&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import iqatid; iqatid.rank_kendall_b(x, y, chunk: &#x27;int&#x27; = 512) -&gt; &#x27;float&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsimgmetrics.get(&quot;rank_kendall_b&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Kendall の τ_b(同順位補正あり)= (C − D) / sqrt((n0 − n1)(n0 − n2))。</p>
 <p>C / D = 一致 / 不一致の対の数、n0 = n(n−1)/2、n1 / n2 = x 側 / y 側で同順位の対の数。O(n²) を <code style="color:#22d3bf">chunk</code> 行ずつの放送で数える(n = 3000 で 4.5e6 対、数秒)。単調増加で 1、反転で −1。どちらかが定数なら <code style="color:#22d3bf">nan</code>。TID2013 の公表 Kendall は τ_b(14 本が 3 桁一致、τ_a だと 4 本外れる)。±inf は順序だけ使う。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 長さ不一致・2 未満・nan。</p>

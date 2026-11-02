@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">emva_photon_transfer — OPTICS <code style="color:#22d3bf">sensorchar</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.emva_photon_transfer(mu_y, var_y, mu_y_dark, var_y_dark, mu_y_sat)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import sensorchar; sensorchar.emva_photon_transfer(mu_y, var_y, mu_y_dark, var_y_dark, mu_y_sat)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsoptics.get(&quot;emva_photon_transfer&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>photon transfer 곡선으로부터 시스템 게인 K와 암잡음 σ_d를 구한다(식 50·53·54).</p>
 <p>*mu_y*, *var_y*: 노출 단계마다의 평균과 시간 분산(<code style="color:#22d3bf">emva_pair_statistics</code>의 <code style="color:#22d3bf">mu</code>와 <code style="color:#22d3bf">var_temporal</code>). *mu_y_dark*, *var_y_dark*: 암 이미지의 같은 양. *mu_y_sat*: 포화 시의 평균(0.1–0.2 %의 화소가 최댓값이 되는 노출에서 잰다).</p>

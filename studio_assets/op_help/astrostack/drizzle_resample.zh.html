@@ -4,6 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.drizzle_resample(frames, shifts=None, scale=2.0, pixfrac=1.0)</code>(要直接调用实现,<code style="color:#22d3bf">import astrostack; astrostack.drizzle_resample(frames, shifts=None, scale=2.0, pixfrac=1.0)</code>;从台账取用则 <code style="color:#22d3bf">opsastrostack.get(&quot;drizzle_resample&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>经台账调用的返回值</b>: <code style="color:#22d3bf">fullseye.ledger.drizzle_resample(...)</code> 只返回<b>声明的 out 类型 <code style="color:#22d3bf">image2d</code> 的值</b>(底层函数还会返回辅助信息)。需要被丢弃的部分时,使用 <code style="color:#22d3bf">fullseye.ledger.drizzle_resample.raw(...)</code>,或直接调用 <code style="color:#22d3bf">astrostack.drizzle_resample</code>。</p>
 <p style="margin:2px 0 2px 12px">• 底层返回: <code style="color:#22d3bf">(sci, wht) -&gt; image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>Drizzle —— 由若干亚像素错位的帧构建更细的网格(保面积)。</p>
 <p>Fruchter &amp; Hook, *Drizzle: A Method for the Linear Reconstruction of Undersampled Images*, PASP 114, 144 (2002)。把输入像素看作缩小一圈的 “液滴(drop，边长 <code style="color:#22d3bf">pixfrac</code>)”，按其与输出网格像素的<b>重叠面积</b> 成比例地分配通量。由于不做插值，</p>

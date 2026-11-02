@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">normalize — SHAPE2D <code style="color:#22d3bf">descriptor</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">efdmodel</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.normalize(model, size_invariant=True)</code> (die Implementierung direkt: <code style="color:#22d3bf">import fourierdesc; fourierdesc.normalize(model, size_invariant=True)</code>; aus dem Register: <code style="color:#22d3bf">opsshape2d.get(&quot;normalize&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Wandelt EFD-Koeffizienten in die Koeffizienten der &quot;kanonischen Pose&quot; um (ausgerichtet an der 1. Harmonischen).</p>
 <p>Kanonisierung nach Kuhl–Giardina: (1) Beliebigkeit des <b>Startpunkts</b> über die Phase der 1. Harmonischen entfernen, (2) die lange Achse der 1. Ellipse auf die Bezugsachse drehen und so die <b>Orientierung</b> angleichen, (3) durch die Länge der langen Achse der 1. Harmonischen teilen und so die <b>Größe</b> angleichen. Gedacht für &quot;Rekonstruktion in kanonischer Pose&quot;, etwa das Überlagern oder Mitteln mehrerer Formen.</p>

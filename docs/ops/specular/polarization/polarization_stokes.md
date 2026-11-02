@@ -4,6 +4,7 @@ dim: specular
 category: polarization
 in: polsweep
 out: stokes
+gpu: なし
 examples: [perf_polarization_analyze, poc_polarization_specular, polarization_camera_pipeline, specular_photometric]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `polsweep` → `stokes`
 - **呼び出し**: `import fullseye as fs; fs.ledger.polarization_stokes(images, angles_deg=(0.0, 45.0, 90.0, 135.0), max_violation_frac=0.0)` (実装を直接呼ぶなら `import specularity; specularity.polarization_stokes(images, angles_deg=(0.0, 45.0, 90.0, 135.0), max_violation_frac=0.0)`、台帳から引くなら `opsspecular.get("polarization_stokes")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

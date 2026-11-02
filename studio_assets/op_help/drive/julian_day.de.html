@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">julian_day — DRIVE <code style="color:#22d3bf">env</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.julian_day(when) -&gt; &#x27;float&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import driveenv; driveenv.julian_day(when) -&gt; &#x27;float&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;julian_day&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Julianisches Datum (UT). <code style="color:#22d3bf">when</code> = zeitzonenbewusstes datetime (wird nach UTC umgerechnet) oder eine Zahl (direkt als Julianisches Datum).</p>
 <p>Ein naives datetime (ohne tzinfo) wird <b>abgelehnt</b> (Verwechslung von Ortszeit und UTC verschiebt die Sonne um 9 Stunden).</p>

@@ -4,6 +4,7 @@ dim: math
 category: numerics
 in: signal × signal × signal
 out: signal
+gpu: なし
 examples: [numerics_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal × signal × signal` → `signal`
 - **呼び出し**: `import fullseye as fs; fs.ledger.interp_barycentric(xk, yk, x, *, nodes: 'str | None' = None) -> 'np.ndarray'` (実装を直接呼ぶなら `import mathnumerics; mathnumerics.interp_barycentric(xk, yk, x, *, nodes: 'str | None' = None) -> 'np.ndarray'`、台帳から引くなら `opsmath.get("interp_barycentric")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

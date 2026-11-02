@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">erf — MATH <code style="color:#22d3bf">numerics</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.erf(x) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import mathnumerics; mathnumerics.erf(x) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsmath.get(&quot;erf&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Fehlerfunktion erf(x) = (2/√π) ∫_0^x e^{−t²} dt.</p>
 <p>Die kumulierte Normalverteilung und genau die Form einer unscharfen Kante (mit einer Gauß-Funktion gefaltete Stufe): eine durch einen Gauß der Breite σ verwischte Stufe ist ½(1 + erf(x / (σ√2))). Gate: ungerade Funktion, erf(∞) = 1, Ableitung = (2/√π) e^{−x²}, Übereinstimmung mit dem Integral per Gauß-Quadratur.</p>

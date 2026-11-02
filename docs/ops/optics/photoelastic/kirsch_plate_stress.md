@@ -4,6 +4,7 @@ dim: optics
 category: photoelastic
 in: 
 out: table
+gpu: なし
 examples: [photoelastic_roundtrip]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.kirsch_plate_stress(hole_radius_m=0.005, remote_stress_pa=1000000.0, load_angle_deg=0.0, half_width_m=0.02, size=129, x=None, y=None)` (実装を直接呼ぶなら `import photoelastic; photoelastic.kirsch_plate_stress(hole_radius_m=0.005, remote_stress_pa=1000000.0, load_angle_deg=0.0, half_width_m=0.02, size=129, x=None, y=None)`、台帳から引くなら `opsoptics.get("kirsch_plate_stress")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

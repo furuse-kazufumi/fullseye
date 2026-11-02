@@ -1126,6 +1126,21 @@ def _records_uncached():
                 else LEDGER_DIMS[r["dim"]]["registry"] if r["dim"] in LEDGER_DIMS else None)
         if _reg is not None and (_reg, r["name"]) in _hints:
             r["adapter"] = _hints[(_reg, r["name"])]
+    # GPU 可否は実行台帳そのものから導く。手書きのフラグは drift するので使わない。
+    import accel
+    import accel_match
+    import accel_vol
+    gpu_names = {core: name for name, (_fn, core, _hal) in accel.ACCEL.items()}
+    gpu_names.update({core: name for name, (_fn, core) in accel_vol.VOL_ACCEL.items()})
+    gpu_names.update({core: name for core, name in accel_match.MATCH_ACCEL.items()})
+    gpu_seen = set()
+    for rec in recs:
+        accel_name = gpu_names.get(rec["name"])
+        # 同名の上書き登録や別族の同名 op は1本の実装経路を重複計上しない。
+        rec["gpu_accel"] = accel_name if accel_name and rec["name"] not in gpu_seen else None
+        if rec["gpu_accel"]:
+            gpu_seen.add(rec["name"])
+        rec["gpu_status"] = ("あり(%s)" % rec["gpu_accel"] if rec["gpu_accel"] else "なし")
     return recs, idx2d, op_fam, fam_ops
 
 
@@ -1256,8 +1271,7 @@ def _op_md(rec, path, by_name, lang="ja", verbatim_doc=None):
     ]
     if rec["halcon"]:
         fm.append(f"halcon: {rec['halcon']}")
-    if rec.get("gpu"):
-        fm.append("gpu: true")
+    fm.append("gpu: " + rec.get("gpu_status", "なし"))
     fm.append("examples: [" + ", ".join(rec["examples"]) + "]")
     fm.append(f"author: {_AUTHOR}")
     fm.append(f"license: {_LICENSE}")
@@ -1316,8 +1330,11 @@ def _op_md(rec, path, by_name, lang="ja", verbatim_doc=None):
             lines.append(T('  - 本体の返り: `{a0}`', lang).format(a0=rec["adapter"]))
     if rec["halcon"]:
         lines.append(T('- **HALCON 相当**: `{a0}`(意味・パラメータは HALCON リファレンスが参考になる)', lang).format(a0=rec['halcon']))
-    if rec.get("gpu"):
-        lines.append(T("- **GPU**: この op は GPU 経路あり(`device=\"cuda\"`)", lang))
+    # 枠の文は 2 本とも対訳表に載せる(値だけ差し込むと「あり/なし」が全言語で日本語になる)
+    if rec.get("gpu_accel"):
+        lines.append(T("- **GPU**: あり(`{a0}`、`device=\"cuda\"` で高速経路)", lang).format(a0=rec["gpu_accel"]))
+    else:
+        lines.append(T("- **GPU**: なし(CPU 参照実装のみ)", lang))
     if rec.get("override"):
         lines.append(T('- **上書き登録**: この名前は 2 回登録されている(core 実装 + backend の安全ラッパ)。`apply` が実行するのは**後勝ちの安全版**(fail-closed ラッパ)。core 版は backend 不在時のフォールバックとして残る(登録順=Wave0 stable slot は不変、`tests/test_opdocs.py` が上書き集合を pin)。', lang))
     lines.append("")

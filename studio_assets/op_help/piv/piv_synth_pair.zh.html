@@ -4,6 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_synth_pair(shape, displacement, density=0.02, diameter_px=2.5, seed=0, noise_sigma=0.0, intensity=(0.6, 1.0), background=0.0)</code>(要直接调用实现,<code style="color:#22d3bf">import pivops; pivops.piv_synth_pair(shape, displacement, density=0.02, diameter_px=2.5, seed=0, noise_sigma=0.0, intensity=(0.6, 1.0), background=0.0)</code>;从台账取用则 <code style="color:#22d3bf">opspiv.get(&quot;piv_synth_pair&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>经台账调用的返回值</b>: <code style="color:#22d3bf">fullseye.ledger.piv_synth_pair(...)</code> 只返回<b>声明的 out 类型 <code style="color:#22d3bf">image2d</code> 的值</b>(底层函数还会返回辅助信息)。需要被丢弃的部分时,使用 <code style="color:#22d3bf">fullseye.ledger.piv_synth_pair.raw(...)</code>,或直接调用 <code style="color:#22d3bf">pivops.piv_synth_pair</code>。</p>
 <p style="margin:2px 0 2px 12px">• 底层返回: <code style="color:#22d3bf">(a, b, truth) -&gt; image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>生成具有已知位移场的图像对。返回 <code style="color:#22d3bf">(image_a, image_b, truth)</code>。</p>
 <p><b>先移动粒子再绘制第 2 幅</b>(不是用插值扭曲第 1 幅)。若用插值生成，插值的平滑会造出“PIV 容易测准的图”，等于用对自己有利的输入来测量自己的实现。</p>

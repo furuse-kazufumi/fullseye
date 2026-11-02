@@ -4,7 +4,7 @@ dim: 3d
 category: match_pose
 in: voxel × voxel
 out: rot_scale
-gpu: true
+gpu: なし
 examples: [shape_desc_pose]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `voxel × voxel` → `rot_scale`
 - **呼び出し**: `import fullseye as fs; fs.ledger.match_logpolar_z(a, b, device='cpu', project='mip', nt=360, nr=192)` (実装を直接呼ぶなら `import match3d; match3d.match_logpolar_z(a, b, device='cpu', project='mip', nt=360, nr=192)`、台帳から引くなら `ops3d.get("match_logpolar_z")`)
-- **GPU**: この op は GPU 経路あり(`device="cuda"`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

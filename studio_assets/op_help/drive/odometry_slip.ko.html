@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">odometry_slip — DRIVE <code style="color:#22d3bf">roverslip</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">any × signal × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.odometry_slip(position, wheel_angle, radius: &#x27;float&#x27;, window: &#x27;int&#x27; = 1) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import roverslip; roverslip.odometry_slip(position, wheel_angle, radius: &#x27;float&#x27;, window: &#x27;int&#x27; = 1) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;odometry_slip&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>시각 주행거리 측정의 위치 열과 차륜의 누적 회전각으로부터 실제 슬립률 <code style="color:#22d3bf">s = 1 − Δx / (r Δφ)</code>.</p>
 <p><code style="color:#22d3bf">position</code> 은 (T,) 의 진행 거리 또는 (T, 2) 의 평면 위치 [m], <code style="color:#22d3bf">wheel_angle</code> 은 (T,) 의 바퀴 누적 회전각 [rad], <code style="color:#22d3bf">radius</code> = r [m]. <code style="color:#22d3bf">window</code> 개 분량의 구간으로 묶어서 나눈다(짧은 구간은 잡음을 줍는다). 바퀴가 거의 돌지 않는구간(<code style="color:#22d3bf">r Δφ</code> 가 전체 중앙값의 1 % 미만)은 nan. 반환값 <code style="color:#22d3bf">{&quot;slip&quot;: (T − window,), &quot;slip_total&quot;: 全区間の 1 個, &quot;distance&quot;: 区間ごとの車体の移動 [m], &quot;wheel_travel&quot;: 区間ごとの r Δφ [m]}</code>.</p>

@@ -4,6 +4,7 @@ dim: tomography
 category: artifact
 in: sinogram
 out: sinogram
+gpu: なし
 examples: [ct_reconstruction, poc_battery_ct_degradation]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `sinogram` → `sinogram`
 - **呼び出し**: `import fullseye as fs; fs.ledger.ring_artifact_apply(sinogram, gain_sigma=0.02, seed=0, offsets=None)` (実装を直接呼ぶなら `import tomography; tomography.ring_artifact_apply(sinogram, gain_sigma=0.02, seed=0, offsets=None)`、台帳から引くなら `opstomography.get("ring_artifact_apply")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

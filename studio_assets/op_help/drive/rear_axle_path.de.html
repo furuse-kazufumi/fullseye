@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">rear_axle_path — DRIVE <code style="color:#22d3bf">lateral</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rear_axle_path(front_path, wheelbase: &#x27;float&#x27;, *, rear0=None) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import drivelateral; drivelateral.rear_axle_path(front_path, wheelbase: &#x27;float&#x27;, *, rear0=None) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;rear_axle_path&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Trajektorie des Hinterachsmittelpunkts, die ohne Schlupf von der Polygonzug-Trajektorie des Vorderachsmittelpunkts nachgezogen wird (abschnittsweise exakte Verfolgungskurve).</p>
 <p>Während die Front sich entlang einer Geraden um Δ bewegt, gilt für den Winkel θ zwischen Stab (hinten → vorne) und Gerade tan(θ/2) = tan(θ₀/2) e^{−Δ/L} (exakt). Dies wird an jedem Knoten des Polygonzugs verkettet. <code style="color:#22d3bf">rear0</code>: Anfangsposition der Hinterachse (None = um L hinter der Richtung des ersten Segments = gerade). Erfordert |vorne − hinten| = L.</p>

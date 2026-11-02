@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">ray_bundle — OPTICS <code style="color:#22d3bf">design</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ray_bundle(system, field=None, rings=8, wavelength_um=None, image_mm=None, kind=&#x27;hexapolar&#x27;, pupil_fill=1.0, aim=None, vignetting=None)</code>(要直接调用实现,<code style="color:#22d3bf">import raytrace; raytrace.ray_bundle(system, field=None, rings=8, wavelength_um=None, image_mm=None, kind=&#x27;hexapolar&#x27;, pupil_fill=1.0, aim=None, vignetting=None)</code>;从台账取用则 <code style="color:#22d3bf">opsoptics.get(&quot;ray_bundle&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>追迹某一视场充满光瞳的光束;返回原始追迹结果以及 <code style="color:#22d3bf">image_xy</code> (N,2)、<code style="color:#22d3bf">chief_xy</code> (2,)、<code style="color:#22d3bf">pupil</code> (N,2) 归一化坐标和 <code style="color:#22d3bf">opl0</code>(光线起点的光程偏移)。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>

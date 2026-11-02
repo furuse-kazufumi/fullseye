@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">emva_total_snr — OPTICS <code style="color:#22d3bf">sensorchar</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.emva_total_snr(mu_p, eta, sigma_d, K, dsnu_e, prnu, sigma_q2=0.08333333333333333)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import sensorchar; sensorchar.emva_total_snr(mu_p, eta, sigma_d, K, dsnu_e, prnu, sigma_q2=0.08333333333333333)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;emva_total_snr&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>空間の不均一を含めた総合 SNR(8.5 節、式 68・69)。</p>
 <p>SNR_total = η μ_p / √(σ²_d + DSNU²_1288 + σ²_q/K² + η μ_p + PRNU²_1288 (η μ_p)²)(式 69)。*dsnu_e* [e⁻]、*prnu* は <b>比</b>(1 % なら 0.01)。DSNU = PRNU = 0 で式 21 に戻り、明るい側では 1/PRNU に頭打ちになる。返り値 <code style="color:#22d3bf">(n, 4)</code>: 列 = μ_p, SNR(式 21), SNR_total(式 69), SNR_ideal(式 23)。</p>

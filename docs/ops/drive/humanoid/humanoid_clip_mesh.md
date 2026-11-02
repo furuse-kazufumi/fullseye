@@ -4,6 +4,7 @@ dim: drive
 category: humanoid
 in: table
 out: table
+gpu: なし
 examples: [gallery_drive_world_objects, poc_driving_humanoids]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.humanoid_clip_mesh(clip: 'dict', distance: 'float') -> 'dict'` (実装を直接呼ぶなら `import drivehumanoid; drivehumanoid.humanoid_clip_mesh(clip: 'dict', distance: 'float') -> 'dict'`、台帳から引くなら `opsdrive.get("humanoid_clip_mesh")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

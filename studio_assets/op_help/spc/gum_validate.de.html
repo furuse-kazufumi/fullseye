@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">gum_validate — SPC <code style="color:#22d3bf">uncertainty</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gum_validate(guf, mcm, ndig=2)</code> (die Implementierung direkt: <code style="color:#22d3bf">import spc; spc.gum_validate(guf, mcm, ndig=2)</code>; aus dem Register: <code style="color:#22d3bf">opsspc.get(&quot;gum_validate&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Das Ergebnis des Fortpflanzungsgesetzes mit dem Monte-Carlo-Ergebnis <b>validieren</b> (<code style="color:#22d3bf">table</code>).</p>
 <p>*guf* ist die Rückgabe von <code style="color:#22d3bf">gum_expanded</code> (mit <code style="color:#22d3bf">estimate</code> aufgerufen, um ein Intervall zu erzeugen), *mcm* die Rückgabe von <code style="color:#22d3bf">gum_monte_carlo</code>. Das Verfahren folgt Abschnitt 8.1.3 der Norm:</p>

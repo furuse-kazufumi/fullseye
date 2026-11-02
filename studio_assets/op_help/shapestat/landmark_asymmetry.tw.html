@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">landmark_asymmetry — SHAPESTAT <code style="color:#22d3bf">symmetry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.landmark_asymmetry(landmarks, pairs=None, plane=None)</code>(要直接呼叫實作,<code style="color:#22d3bf">import shapestats; shapestats.landmark_asymmetry(landmarks, pairs=None, plane=None)</code>;從台帳取用則 <code style="color:#22d3bf">opsshapestat.get(&quot;landmark_asymmetry&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>每對左右標記點的<b>帶正負號</b>非對稱量。→ <code style="color:#22d3bf">(M,)</code>。</p>
 <p>對每一對，把其中一個對平面做鏡像再與另一個比較，回傳沿平面法線方向的差。正負號為「右側在外則為正」(<code style="color:#22d3bf">mirror_plane_from_pairs</code> 已將法線統一為該方向)。<b>不合併為絕對值</b> —— 左右哪一側突出，在臨床與檢查中意義都不同。</p>

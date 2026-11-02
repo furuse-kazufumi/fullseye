@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">cr_collision — DRIVE <code style="color:#22d3bf">commonroad</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">table × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cr_collision(scene, run, *, margin: &#x27;float&#x27; = 0.0, lanelets: &#x27;str&#x27; = &#x27;all&#x27;) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivecommonroad; drivecommonroad.cr_collision(scene, run, *, margin: &#x27;float&#x27; = 0.0, lanelets: &#x27;str&#x27; = &#x27;all&#x27;) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;cr_collision&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>장애물과의 충돌(사각형 간 SAT, time_step마다)과 도로 경계(차량의 4개 모서리가 lanelet 다각형의 합집합 안에 드는지).</p>
 <p><code style="color:#22d3bf">lanelets=&quot;all&quot;</code>(기본값)은 장면의 모든 lanelet(채점기의 boundary_collision 과 같은 범위), <code style="color:#22d3bf">&quot;route&quot;</code> 는 경로의 lanelet 만. <code style="color:#22d3bf">margin</code> 은 장애물의 SAT 를 부풀리는 거리(m).</p>

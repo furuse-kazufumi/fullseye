@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">holdout_threshold — EMPROOF <code style="color:#22d3bf">evaluate</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">signal × signal × signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.holdout_threshold(train_pos, train_neg, test_pos, test_neg, target_fpr: &#x27;float&#x27; = 0.05) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import emproof; emproof.holdout_threshold(train_pos, train_neg, test_pos, test_neg, target_fpr: &#x27;float&#x27; = 0.05) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsemproof.get(&quot;holdout_threshold&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>임곗값을 <b>훈련 쪽에서 고르고, 평가는 다른 쪽에서</b> 측정한다(score가 높을수록 &#x27;의심스러움&#x27;).</p>
 <p><code style="color:#22d3bf">tau</code> = 훈련 음성 예(심지 않은 성분·쌍)의 위양성률이 <code style="color:#22d3bf">target_fpr</code> 이하가 되는 최소의 임계값(음성 예 점수의 상위 <code style="color:#22d3bf">target_fpr</code> 분위). 반환하는 것은 <code style="color:#22d3bf">tau</code> 와, 훈련·평가 각각의 AUC·TPR·FPR, 건수. 평가 쪽의 숫자만을 주장에 쓴다 ―― 임계값을 고른 쪽에서 잰 TPR 은 반드시 낙관한다(evolve 의 holdout 규율을 op 로 잘라낸 것). AUC 는 Mann–Whitney(동점 0.5).</p>

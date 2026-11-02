@@ -4,6 +4,7 @@ dim: tomography
 category: spectral_xray
 in: pairs
 out: table
+gpu: なし
 examples: [poc_dual_energy_xray]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `pairs` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.xray_beam_quality(spectrum, material: 'str' = 'AL') -> 'dict'` (実装を直接呼ぶなら `import dualxray; dualxray.xray_beam_quality(spectrum, material: 'str' = 'AL') -> 'dict'`、台帳から引くなら `opstomography.get("xray_beam_quality")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

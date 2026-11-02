@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">rotation_window — DRIVE <code style="color:#22d3bf">pegsym</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">scalar × scalar × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rotation_window(n: &#x27;int&#x27;, apothem: &#x27;float&#x27;, clearance: &#x27;float&#x27;, chamfer: &#x27;float&#x27; = 0.0, peg_vertices=None, hole_vertices=None, tol: &#x27;float&#x27; = 1e-10, mu: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import pegsym; pegsym.rotation_window(n: &#x27;int&#x27;, apothem: &#x27;float&#x27;, clearance: &#x27;float&#x27;, chamfer: &#x27;float&#x27; = 0.0, peg_vertices=None, hole_vertices=None, tol: &#x27;float&#x27; = 1e-10, mu: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;rotation_window&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>ペグが穴(面取りがあれば口)に入る回転の窓。正 n 角形の閉形式(導出): 中心を揃えた時、頂点は面の法線から π/n ∓ φ の向きにあり、最も外へ出る頂点の法線方向の長さ a cos(π/n − |φ|) が A + δ(+ W)以下なら入る:</p>
 <p>φ = π/n − arccos(x)、x = (A + δ + W) cos(π/n)/A(x ≥ 1 なら窓は半周期 π/n いっぱい)。</p>

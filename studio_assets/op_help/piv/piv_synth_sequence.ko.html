@@ -4,6 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_synth_sequence(shape, displacement, n_frames=8, density=0.02, diameter_px=2.5, seed=0, noise_sigma=0.0, intensity=(0.6, 1.0), background=0.0, jitter=0.0)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import pivops; pivops.piv_synth_sequence(shape, displacement, n_frames=8, density=0.02, diameter_px=2.5, seed=0, noise_sigma=0.0, intensity=(0.6, 1.0), background=0.0, jitter=0.0)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opspiv.get(&quot;piv_synth_sequence&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>원장 경유의 반환값</b>: <code style="color:#22d3bf">fullseye.ledger.piv_synth_sequence(...)</code> 는 <b>선언된 out 형 <code style="color:#22d3bf">images</code> 의 값만</b> 반환합니다(실제 함수는 보조 정보도 반환). 버려진 쪽이 필요하면 <code style="color:#22d3bf">fullseye.ledger.piv_synth_sequence.raw(...)</code> 를 쓰거나 <code style="color:#22d3bf">pivops.piv_synth_sequence</code> 를 직접 호출하세요.</p>
 <p style="margin:2px 0 2px 12px">• 실제 반환: <code style="color:#22d3bf">(frames, truth) -&gt; images</code></p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>같은 입자를 반복해서 움직인 영상 열. 반환값은 <code style="color:#22d3bf">(frames, truth)</code>.</p>
 <p><code style="color:#22d3bf">piv_synth_pair</code>가 2장인 데 비해, 이쪽은 <b>1개의 흐름을 계속 쫓는열</b>을 만든다. 앙상블 상관과 시간 통계는 이것이 아니면 확인할 수 없다 —— 독립된 쌍을 늘어놓은 것을 열이라고 부르면, 이웃한 2장에 대응 관계가 없어통계가 무의미해진다(실측: 평균 0.73 px에 대해 변동의 RMS가 4.05 px라는, 흐름이 아니라 만드는 방식을 잰 숫자가 나왔다).</p>

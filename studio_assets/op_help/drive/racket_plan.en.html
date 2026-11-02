@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">racket_plan — DRIVE <code style="color:#22d3bf">racket</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.racket_plan(v_in, omega_in, v_out, bp: &#x27;dict&#x27;, rp: &#x27;dict&#x27;, refine: &#x27;int&#x27; = 8) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import racket; racket.racket_plan(v_in, omega_in, v_out, bp: &#x27;dict&#x27;, rp: &#x27;dict&#x27;, refine: &#x27;int&#x27; = 8) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;racket_plan&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Racket normal n and velocity v_r (along the normal) that produce the desired v_out. Starting from the closed form with friction 0 n ∝ v_out − v_in, v_r·n = |Δv|/(1+e) + v_in·n, iterates <code style="color:#22d3bf">refine</code> times with the actual impact (including friction and spin). Return value <code style="color:#22d3bf">{&quot;normal&quot;, &quot;v_racket&quot;, &quot;v_out_actual&quot;, &quot;omega_out&quot;, &quot;residual&quot;}</code>. ValueError if Δv ≈ 0.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

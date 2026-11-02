@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">cr_checker_result — DRIVE <code style="color:#22d3bf">commonroad</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cr_checker_result(path) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import drivecommonroad; drivecommonroad.cr_checker_result(path) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;cr_checker_result&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>WSL पर आधिकारिक checker (tools/check_solution_json.py) द्वारा लिखा JSON पढ़ता है।</p>
 <p>अनिवार्य कुंजियाँ <code style="color:#22d3bf">CHECKER_KEYS</code> (<code style="color:#22d3bf">valid</code> / <code style="color:#22d3bf">goal_reached</code> / <code style="color:#22d3bf">feasible</code> / <code style="color:#22d3bf">obstacle_collision</code> / <code style="color:#22d3bf">boundary_collision</code> bool हैं, <code style="color:#22d3bf">scenario</code> / <code style="color:#22d3bf">solution</code> / <code style="color:#22d3bf">checker_version</code> स्ट्रिंग हैं)। अन्य कुंजियाँ (<code style="color:#22d3bf">details</code> आदि) वैसी ही लौटाई जाती हैं।</p>

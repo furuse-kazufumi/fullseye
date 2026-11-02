@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">piv_line_integral_convolution — PIV <code style="color:#22d3bf">visualise</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">flow2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_line_integral_convolution(flow, length=12, upsample=4, seed=0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import pivops; pivops.piv_line_integral_convolution(flow, length=12, upsample=4, seed=0)</code>、台帳から引くなら <code style="color:#22d3bf">opspiv.get(&quot;piv_line_integral_convolution&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>線積分畳み込み(LIC)—— 流れに沿って白色雑音をぼかした模様の画像。</p>
 <p>ベクトルの矢印は密にすると潰れ、疎にすると構造を見落とす。LIC は<b>画素ごと</b> に流線に沿って雑音を平均するので、密度の選択が要らない。向きの情報は落ちる(前後を区別しない)ので、<b>回転の向きを見たいときは矢印か色相図と併用する</b>。</p>

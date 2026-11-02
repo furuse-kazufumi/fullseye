@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">food_cut_width — DRIVE <code style="color:#22d3bf">cutting</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">scalar × scalar × scalar × scalar</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.food_cut_width(theta_deg: &#x27;float&#x27;, edge_z_at_xc: &#x27;float&#x27;, food_w: &#x27;float&#x27;, food_top: &#x27;float&#x27;) -&gt; &#x27;float&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import cutting; cutting.food_cut_width(theta_deg: &#x27;float&#x27;, edge_z_at_xc: &#x27;float&#x27;, food_w: &#x27;float&#x27;, food_top: &#x27;float&#x27;) -&gt; &#x27;float&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;food_cut_width&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Länge in x, über die die Schneidenlinie (Höhe <code style="color:#22d3bf">edge_z_at_xc</code> in der Mitte des Schnittguts, Neigung θ) unterhalb der Oberseite des Schnittguts liegt = Schnittbreite (mm, geschlossene Form).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

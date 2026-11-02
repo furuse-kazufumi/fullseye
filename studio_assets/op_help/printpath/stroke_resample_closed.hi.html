@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">stroke_resample_closed — PRINTPATH <code style="color:#22d3bf">stroke</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">pairs</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.stroke_resample_closed(points, n_points, allow_shortening=False)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import printpath; printpath.stroke_resample_closed(points, n_points, allow_shortening=False)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsprintpath.get(&quot;stroke_resample_closed&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>बंद line को <b>समान arc length</b> पर फिर से sample करता है। → <code style="color:#22d3bf">pairs</code></p>
 <p>Fourier को देने से पहले का चरण। ★parameterisation के तरीके से coefficients बदलते हैं (measured में अधिकतम 47 गुना), इसलिए यहाँ स्पष्ट रूप से <b>arc length में बराबर दूरी</b> तय किया गया है। arc length की दूरी machine precision तक स्थिर है (measured cv 1e-14)।</p>

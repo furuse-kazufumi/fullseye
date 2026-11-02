@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">moire_differential_shift — OPTICS <code style="color:#22d3bf">moire_align</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">table</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.moire_differential_shift(phase_a=0.3, phase_b=-0.3, phase_ref_a=0.0, phase_ref_b=0.0, p_mask_um=2.0, p_wafer_um=2.04, moving=&#x27;wafer&#x27;)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import moirealign; moirealign.moire_differential_shift(phase_a=0.3, phase_b=-0.3, phase_ref_a=0.0, phase_ref_b=0.0, p_mask_um=2.0, p_wafer_um=2.04, moving=&#x27;wafer&#x27;)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;moire_differential_shift&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>विपरीत pitch अंतर वाले दो जोड़ों (A = (p_m, p_w), B = (p_w, p_m)) से साझा त्रुटियाँ हटाकर विस्थापन पढ़ता है।</p>
 <p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>

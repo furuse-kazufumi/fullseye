@@ -4,6 +4,7 @@ dim: reprconv
 category: keypoint
 in: keypoints
 out: image2d
+gpu: なし
 examples: [representation_roundtrip]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `keypoints` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.keypoints_to_image2d(keypoints, shape=(64, 64))` (実装を直接呼ぶなら `import reprconv; reprconv.keypoints_to_image2d(keypoints, shape=(64, 64))`、台帳から引くなら `opsreprconv.get("keypoints_to_image2d")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

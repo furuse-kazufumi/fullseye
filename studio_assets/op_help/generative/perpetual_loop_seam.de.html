@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">perpetual_loop_seam — GENERATIVE <code style="color:#22d3bf">loop</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">rgbvideo</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.perpetual_loop_seam(video: &#x27;np.ndarray&#x27;) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import perpetual; perpetual.perpetual_loop_seam(video: &#x27;np.ndarray&#x27;) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsgenerative.get(&quot;perpetual_loop_seam&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Gibt die <b>Nahtstelle</b> eines Loop-Videos als Zahlen aus (<code style="color:#22d3bf">table</code>).</p>
 <p><code style="color:#22d3bf">seam</code> = Differenz letzter Frame → erster Frame, <code style="color:#22d3bf">typical</code> = Median der Differenzen zwischen Frames. In einem nahtlosen Video ist <code style="color:#22d3bf">ratio = seam / typical</code> <b>nahe 1</b> (der letzte Übergang ist von den anderen Übergängen nicht zu unterscheiden). Der springende Punkt ist, dass <b>1, nicht 0, richtig ist</b> -- 0 würde bedeuten &quot;die Bewegung steht still&quot;.</p>

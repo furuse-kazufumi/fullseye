@@ -4,6 +4,7 @@ dim: 3d
 category: render
 in: mesh
 out: image2d
+gpu: なし
 examples: [render_ssaa]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `mesh` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.supersample_mesh(V, F, pose=None, intrinsics=None, size=256, ss: 'int' = 3, light=(0.0, 0.0, 1.0), ambient: 'float' = 0.1, shade: 'Optional[Callable[[dict], np.ndarray]]' = None, filter: 'str' = 'box') -> 'np.ndarray'` (実装を直接呼ぶなら `import render_ssaa; render_ssaa.supersample_mesh(V, F, pose=None, intrinsics=None, size=256, ss: 'int' = 3, light=(0.0, 0.0, 1.0), ambient: 'float' = 0.1, shade: 'Optional[Callable[[dict], np.ndarray]]' = None, filter: 'str' = 'box') -> 'np.ndarray'`、台帳から引くなら `ops3d.get("supersample_mesh")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

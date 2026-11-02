@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">edge_stop_g — SEGMENTATION <code style="color:#22d3bf">contour</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.edge_stop_g(image, *, sigma: &#x27;float&#x27; = 1.0, k: &#x27;float&#x27; = 1.0) -&gt; &#x27;Dict[str, object]&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import segcontour; segcontour.edge_stop_g(image, *, sigma: &#x27;float&#x27; = 1.0, k: &#x27;float&#x27; = 1.0) -&gt; &#x27;Dict[str, object]&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opssegmentation.get(&quot;edge_stop_g&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>edge-stopping function g = 1 / (1 + |∇(G_σ * I)|² / k²) (Caselles–Kimmel–Sapiro 1997 का p = 2 वाला रूप)।</p>
 <p><code style="color:#22d3bf">sigma</code> = Gaussian का standard deviation (0 होने पर smoothing के बिना central difference), <code style="color:#22d3bf">k</code> = gradient का scale (k = 1 पर g = 1/(1 + |∇G_σ*I|²))। यह image की value range पर निर्भर है: Li et al. 2010 का वितरित उदाहरण 0-255 वाली image पर k = 1 लेता है, इसलिए [0, 1] वाली image के लिए k = 1/255 वही behaviour देता है।</p>

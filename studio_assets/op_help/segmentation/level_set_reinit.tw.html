@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">level_set_reinit — SEGMENTATION <code style="color:#22d3bf">contour</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">mask</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.level_set_reinit(phi, *, method: &#x27;str&#x27; = &#x27;sussman&#x27;, n_iter: &#x27;int&#x27; = 100, dt: &#x27;float&#x27; = 0.5, band: &#x27;float&#x27; = 3.0) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import segcontour; segcontour.level_set_reinit(phi, *, method: &#x27;str&#x27; = &#x27;sussman&#x27;, n_iter: &#x27;int&#x27; = 100, dt: &#x27;float&#x27; = 0.5, band: &#x27;float&#x27; = 3.0) -&gt; &#x27;Dict[str, object]&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opssegmentation.get(&quot;level_set_reinit&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把 φ（φ &lt; 0 為內側）改寫為同一零等值線的符號距離函數（level_set_reinit）。</p>
 <p><code style="color:#22d3bf">method=&quot;sussman&quot;</code> = 以 Godunov 迎風差分對 φ_τ + S(φ0)(|∇φ| − 1) = 0(Sussman–Smereka–Osher 1994) 迭代 <code style="color:#22d3bf">n_iter</code> 次(步長 <code style="color:#22d3bf">dt</code> ≤ 0.5)。與界面相接的網格點(在 4 鄰域中符號改變)採用 Russo–Smereka 2000 的 subcell fix:</p>

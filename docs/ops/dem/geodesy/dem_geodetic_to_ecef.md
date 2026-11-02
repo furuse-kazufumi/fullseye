@@ -4,6 +4,7 @@ dim: dem
 category: geodesy
 in: 
 out: points
+gpu: なし
 examples: [dem_geodesy_tour, poc_geodetic_benchmarks_real, poc_geodetic_height_frames]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `points`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.dem_geodetic_to_ecef(lat_deg, lon_deg, height_m=0.0)` (実装を直接呼ぶなら `import demops; demops.dem_geodetic_to_ecef(lat_deg, lon_deg, height_m=0.0)`、台帳から引くなら `opsdem.get("dem_geodetic_to_ecef")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">deflectometry_rig — SPECULAR <code style="color:#22d3bf">deflectometry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">table</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.deflectometry_rig(incidence_deg=20.0, camera_distance_mm=400.0, screen_distance_mm=300.0, field_mm=40.0, aperture_mm=4.0, screen_size_mm=(520.0, 320.0), screen_pixel_mm=0.27)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import deflectometry; deflectometry.deflectometry_rig(incidence_deg=20.0, camera_distance_mm=400.0, screen_distance_mm=300.0, field_mm=40.0, aperture_mm=4.0, screen_size_mm=(520.0, 320.0), screen_pixel_mm=0.27)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsspecular.get(&quot;deflectometry_rig&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>deflectometry rig (camera, screen, field of view) की geometry को एक table (dict) में रखना।</p>
 <p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>

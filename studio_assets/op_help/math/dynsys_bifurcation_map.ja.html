@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">dynsys_bifurcation_map — MATH <code style="color:#22d3bf">dynsys</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">pairs</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dynsys_bifurcation_map(kind=&#x27;logistic&#x27;, r_lo=2.5, r_hi=4.0, n_r=800, burn_in=300, keep=100, x0=0.5)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import mathops; mathops.dynsys_bifurcation_map(kind=&#x27;logistic&#x27;, r_lo=2.5, r_hi=4.0, n_r=800, burn_in=300, keep=100, x0=0.5)</code>、台帳から引くなら <code style="color:#22d3bf">opsmath.get(&quot;dynsys_bifurcation_map&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>1 次元写像の軌道図 —— 周期倍分岐を、数えられる点で。</p>
 <p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>

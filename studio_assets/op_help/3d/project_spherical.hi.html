@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">project_spherical — 3D <code style="color:#22d3bf">lidar_projection</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.project_spherical(points, h_res: &#x27;int&#x27; = 1024, v_res: &#x27;int&#x27; = 64, v_fov=(-25.0, 15.0)) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import spherical_proj; spherical_proj.project_spherical(points, h_res: &#x27;int&#x27; = 1024, v_res: &#x27;int&#x27; = 64, v_fov=(-25.0, 15.0)) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;project_spherical&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>rotating LiDAR की spherical range image पर project करता है (v_res, h_res)। खाली cell=0, पास वाले point को प्राथमिकता (न्यूनतम range)।</p>
 <p>हर point को azimuth (column) × elevation (row) bin में डालता है और sensor origin से range (slant distance) लिखता है। v_fov=(v_min,v_max)[degree] के elevation band के बाहर, origin पर (r=0), या non-finite coordinates वाले points छोड़ दिए जाते हैं (honest drop)। खाली हो या सब drop हो जाए तो पूरी तरह शून्य image लौटाता है (= कुछ भी नहीं दिख रहा, honest)।</p>

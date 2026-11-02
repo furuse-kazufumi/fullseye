@@ -4,6 +4,7 @@ dim: drive
 category: grind
 in: any
 out: signal
+gpu: なし
 examples: [poc_powder_grinding_ae]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `any` → `signal`
 - **呼び出し**: `import fullseye as fs; fs.ledger.ae_read_csv(path, header_lines: 'int' = 12, offset: 'float' = 32768.0, full_scale: 'float' = 32768.0) -> 'np.ndarray'` (実装を直接呼ぶなら `import grind; grind.ae_read_csv(path, header_lines: 'int' = 12, offset: 'float' = 32768.0, full_scale: 'float' = 32768.0) -> 'np.ndarray'`、台帳から引くなら `opsdrive.get("ae_read_csv")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

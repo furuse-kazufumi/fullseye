@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">world_grains_voronoi — SEGMENTATION <code style="color:#22d3bf">world</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">table</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.world_grains_voronoi(n: &#x27;int&#x27; = 36, seed: &#x27;int&#x27; = 0, *, size=(192, 192), jitter: &#x27;float&#x27; = 0.8, boundary_width: &#x27;float&#x27; = 1.5, noise: &#x27;float&#x27; = 0.02) -&gt; &#x27;Dict[str, object]&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import segworld; segworld.world_grains_voronoi(n: &#x27;int&#x27; = 36, seed: &#x27;int&#x27; = 0, *, size=(192, 192), jitter: &#x27;float&#x27; = 0.8, boundary_width: &#x27;float&#x27; = 1.5, noise: &#x27;float&#x27; = 0.02) -&gt; &#x27;Dict[str, object]&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opssegmentation.get(&quot;world_grains_voronoi&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>보로노이 결정립 세계: 격자 위 n개의 지터된 씨앗, 레이블 = 가장 가까운 씨앗의 번호(1..n)(world_grains_voronoi).</p>
 <p>영상 = 입자별 밝기(0.4~0.75) × 입계의 어두운 선(폭 <code style="color:#22d3bf">boundary_width</code>, 입계까지 거리의 닫힌 식으로 그림) + 잡음. 배경은 없다(모든 화소가 어느 한 입자에 속함).</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">aperture_photometry — ASTROSTACK <code style="color:#22d3bf">photometry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image2d × keypoints</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.aperture_photometry(image, centers, r_aperture=5.0, r_inner=8.0, r_outer=12.0, read_sigma=0.0, gain=1.0, supersample=8, method=&#x27;exact&#x27;)</code>(要直接呼叫實作,<code style="color:#22d3bf">import astrostack; astrostack.aperture_photometry(image, centers, r_aperture=5.0, r_inner=8.0, r_outer=12.0, read_sigma=0.0, gain=1.0, supersample=8, method=&#x27;exact&#x27;)</code>;從台帳取用則 <code style="color:#22d3bf">opsastrostack.get(&quot;aperture_photometry&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>圓形孔徑 + 環形背景的測光(經典 CCD 測光)。</p>
 <p><code style="color:#22d3bf">method=&quot;patch&quot;</code> 是僅配置孔徑附近區域的省記憶體變體。對於 2048 方形影像、半徑 8.2、8 倍取樣，峰值從 33.6 MB 降至 0.34 MB。由於加總順序改變，具有較大直流分量的影像其最低位元可能不同。預設的 <code style="color:#22d3bf">&quot;exact&quot;</code> 維持原有行為。</p>

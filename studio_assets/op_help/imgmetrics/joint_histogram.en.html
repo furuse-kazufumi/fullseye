@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">joint_histogram — IMGMETRICS <code style="color:#22d3bf">information</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.joint_histogram(a, b, bins=64, data_range=None)</code> (to call the implementation directly, <code style="color:#22d3bf">import imgmetrics; imgmetrics.joint_histogram(a, b, bins=64, data_range=None)</code>; from the registry, <code style="color:#22d3bf">opsimgmetrics.get(&quot;joint_histogram&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Joint histogram of two images (the normalised joint probability).</p>
 <p>The bin width is set from <code style="color:#22d3bf">data_range</code> -- if it were stretched per image by min/max, <b>a uniformly dark picture and a uniformly bright picture would have the same mutual information</b>.</p>

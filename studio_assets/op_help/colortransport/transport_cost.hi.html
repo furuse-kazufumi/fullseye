@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">transport_cost — COLORTRANSPORT <code style="color:#22d3bf">plan_use</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">transport_plan × matrix</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.transport_cost(plan, cost)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import colortransport; colortransport.transport_cost(plan, cost)</code>, registry से लेना हो तो <code style="color:#22d3bf">opscolortransport.get(&quot;transport_cost&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>transport plan की कुल cost <code style="color:#22d3bf">&lt;plan, cost&gt;</code>। <b>plan का उपभोग करने वाला</b> op।</p>
 <p>एक डिज़ाइन एक मैट्रिक्स है जिसका अर्थ है कि पंक्ति और स्तंभ का योग सीमांत वितरण से मेल खाता है, और है इसे <code style="color:#22d3bf">मैट्रिक्स</code> के रूप में मानने से बड़े पैमाने पर संरक्षण चुपचाप टूट जाता है। यह एक योजना के तौर पर निरीक्षण है. (गैर-नकारात्मक/सीमित) और फिर लागत का भुगतान करें। कुल द्रव्यमान की कोई सीमा नहीं है.</p>

@@ -4,6 +4,7 @@ dim: optics
 category: design
 in: 
 out: table
+gpu: なし
 examples: [anim3d_lens_aberrations, lens_calibration_loop_demo, lens_defect_dataset_demo, lens_design_demo, lens_optimize_demo, optical_design_metrics, plenoptic_capture_pipeline, poc_chromatic_confocal, poc_lens_file_roundtrip, poc_lens_global_search, poc_lens_merit_operands, poc_lens_solves_afocal, poc_lens_tolerancing, poc_material_optical_library, poc_noncoaxial_optics, poc_optics_drawings, poc_photograph_through_prescription, poc_plenoptic_camera, poc_tdi_linescan, poc_telecentric_metrology, poc_zoom_configurations]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.lens_system(surfaces=None, stop=None, object_mm=inf, wavelength_um=0.58756, index_object=1.0, image_mm=None, field=None, aim='paraxial', vignetting=None, image_R=inf, image_k=0.0, afocal=False)` (実装を直接呼ぶなら `import raytrace; raytrace.lens_system(surfaces=None, stop=None, object_mm=inf, wavelength_um=0.58756, index_object=1.0, image_mm=None, field=None, aim='paraxial', vignetting=None, image_R=inf, image_k=0.0, afocal=False)`、台帳から引くなら `opsoptics.get("lens_system")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

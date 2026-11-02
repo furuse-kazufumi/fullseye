@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">chamfer_distance — 3D <code style="color:#22d3bf">metrics</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.chamfer_distance(a, b, squared=False)</code> (to call the implementation directly, <code style="color:#22d3bf">import metrics3d; metrics3d.chamfer_distance(a, b, squared=False)</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;chamfer_distance&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>The symmetric Chamfer distance = 0.5*(mean_a min_b + mean_b min_a). → scalar. Smaller is a closer match.</p>
 <p>Raises ValueError: if either is empty or not (N,3) (the mean of an empty set = a silent NaN).</p>

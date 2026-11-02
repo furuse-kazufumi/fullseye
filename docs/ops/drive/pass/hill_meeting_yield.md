@@ -4,6 +4,7 @@ dim: drive
 category: pass
 in: 
 out: table
+gpu: なし
 examples: [gallery_drive_mirrors_crowds]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.hill_meeting_yield(ego_direction: 'str', *, ego_refuge_distance: 'Optional[float]' = None, other_refuge_distance: 'Optional[float]' = None, near: 'float' = 30.0) -> 'Dict[str, object]'` (実装を直接呼ぶなら `import drivepass; drivepass.hill_meeting_yield(ego_direction: 'str', *, ego_refuge_distance: 'Optional[float]' = None, other_refuge_distance: 'Optional[float]' = None, near: 'float' = 30.0) -> 'Dict[str, object]'`、台帳から引くなら `opsdrive.get("hill_meeting_yield")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

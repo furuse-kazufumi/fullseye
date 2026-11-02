@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">piv_line_integral_convolution — PIV <code style="color:#22d3bf">visualise</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">flow2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_line_integral_convolution(flow, length=12, upsample=4, seed=0)</code> (to call the implementation directly, <code style="color:#22d3bf">import pivops; pivops.piv_line_integral_convolution(flow, length=12, upsample=4, seed=0)</code>; from the registry, <code style="color:#22d3bf">opspiv.get(&quot;piv_line_integral_convolution&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Line integral convolution (LIC) — an image whose pattern is white noise blurred along the flow.</p>
 <p>Vector arrows collapse when dense and miss structure when sparse. LIC averages noise along streamlines <b>per pixel</b>, so no choice of density is needed. Direction information is lost (forward and backward are not distinguished), so <b>when you want to see the sense of rotation, combine it with arrows or a hue map</b>.</p>

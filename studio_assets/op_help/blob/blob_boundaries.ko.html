@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">blob_boundaries — BLOB <code style="color:#22d3bf">extract</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">labels2d</code> → <code style="color:#22d3bf">mask</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.blob_boundaries(labels: &#x27;Any&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import blob2d; blob2d.blob_boundaries(labels: &#x27;Any&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsblob.get(&quot;blob_boundaries&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>물체의 윤곽(1픽셀 폭, bool). <b>이웃한 물체 사이의 경계도 남는다</b>.</p>
 <p>안쪽 가장자리(자신과 다른 라벨에 인접한 전경 화소)를 취하므로, 윤곽은 반드시물체의 내부에 있다 —— 바깥쪽을 취하면 이웃 물체의 화소를 윤곽이라고 말하는 셈이 된다.</p>

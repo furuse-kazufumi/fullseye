@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">braid_class_representatives — DRIVE <code style="color:#22d3bf">braidpath</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.braid_class_representatives(plans, obstacles=None, costs=None, angle=0.1, jitter=&#x27;auto&#x27;)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import braidpath; braidpath.braid_class_representatives(plans, obstacles=None, costs=None, angle=0.1, jitter=&#x27;auto&#x27;)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;braid_class_representatives&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>कई plans (किसी भी planner का output) को homotopy classes में बाँटता है और हर class में सबसे कम cost वाले plan को प्रतिनिधि चुनता है।</p>
 <p>Plan या तो (K, T, 2) trajectory है, या grid paths का sequence, या planner का dict (<code style="color:#22d3bf">paths</code>; विफल <code style="color:#22d3bf">None</code> छोड़े जाते हैं और गिने जाते हैं)। सभी plans के start और end points समान होने चाहिए (class स्थिर ends वाले deformations की class है)। Cost <code style="color:#22d3bf">costs</code> है, न हो तो trajectory की लंबाइयों का योग।</p>

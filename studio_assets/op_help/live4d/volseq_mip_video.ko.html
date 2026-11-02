@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">volseq_mip_video — LIVE4D <code style="color:#22d3bf">series</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">volseq</code> → <code style="color:#22d3bf">video</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.volseq_mip_video(volseq, axis: &#x27;int&#x27; = 1) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import live4d; live4d.volseq_mip_video(volseq, axis: &#x27;int&#x27; = 1) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opslive4d.get(&quot;volseq_mip_video&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>체적 시계열을 축 <code style="color:#22d3bf">axis</code>(1 = z, 2 = y, 3 = x)의 최댓값 투영으로 동영상 <code style="color:#22d3bf">(T, H, W)</code>로 접는다(<code style="color:#22d3bf">video</code>).</p>
 <p>접은 뒤에는 <code style="color:#22d3bf">video_spacetime_cube</code> / <code style="color:#22d3bf">video_cube_cut</code> / <code style="color:#22d3bf">motion_magnify</code> 등 2D+t 의 op 를 그대로쓸 수 있다. 최댓값 투영은 &quot;깊이의 어딘가에 있으면 보이는&quot; 투영이므로, 겹침은 잃는다(무엇을 잃었는지는 <code style="color:#22d3bf">volseq_cut_video</code> 의 단면과 비교해 본다).</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">signal_jp_mesh — DRIVE <code style="color:#22d3bf">roadjp</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">table</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.signal_jp_mesh(*, lens: &#x27;float&#x27; = 0.3, n: &#x27;int&#x27; = 3, hood: &#x27;bool&#x27; = True, state: &#x27;str&#x27; = &#x27;off&#x27;) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import roadjp; roadjp.signal_jp_mesh(*, lens: &#x27;float&#x27; = 0.3, n: &#x27;int&#x27; = 3, hood: &#x27;bool&#x27; = True, state: &#x27;str&#x27; = &#x27;off&#x27;) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;signal_jp_mesh&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>横置的车辆用信号灯具(日本式)。原点 = 灯具底面中心，显示面朝向 −x。</p>
 <p>箱体:宽 = n·(lens + 0.10) + 0.05(3 灯、300 mm 时为 1.25 m),高 = lens + 0.13(0.43 m),深 0.30 m,深灰色。透镜 = 半径 lens/2 的圆盘(24 分割),置于前面外侧 5 mm(−x 侧)。排列为从 +y 到 −y 依次为绿、黄、红。朝 −x 的显示面从正面看时 +y 在右侧，因此观看者看到的是从右起绿、黄、红。n = 2 时为黄、红,n = 1 时为黄(单灯闪烁式)。各透镜上方有遮檐(薄箱,长 0.25 m,<code style="color:#22d3bf">hood</code>)。透镜直径为 300 mm(自 2017 年度起标准为 250 mm,两者均在使用中)。</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">knife_edge_track — DRIVE <code style="color:#22d3bf">cutting</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">rgb</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.knife_edge_track(image, board_row: &#x27;float | None&#x27; = None, win: &#x27;int&#x27; = 6, reject_px: &#x27;float&#x27; = 1.0, method: &#x27;str&#x27; = &#x27;coverage&#x27;) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import cutting; cutting.knife_edge_track(image, board_row: &#x27;float | None&#x27; = None, win: &#x27;int&#x27; = 6, reject_px: &#x27;float&#x27; = 1.0, method: &#x27;str&#x27; = &#x27;coverage&#x27;) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;knife_edge_track&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>정면 영상에서 날끝 직선, 칼등, 칼끝을 구합니다(규칙 기반만).</p>
 <p>절차: 휘도의 세로 단차가 「어두움 → 밝음」(칼날 → 벽)이 되는 행을 열마다 줍는다 → 식재료의 열(채도 규칙)과 주변 3 px 를 제외 → 피복률법으로서브픽셀로(창은 흐림의 추정에 맞춰 넓힌다) → 전체 최소제곱 직선(<code style="color:#22d3bf">measure.fit_line</code> 과 같은 정식화) → 잔차 &gt; <code style="color:#22d3bf">reject_px</code> 를 빼고다시 맞춘다. 위쪽 경계(칼등과 칼끝의 사선)도 같이 줍고, 칼등 직선에서 벗어난 오른쪽 연속 부분 = 사선, 날 선과의 교점 = 칼끝. 식재료에 가려진 열(<code style="color:#22d3bf">occluded_cols</code>)의 날은 양쪽에서 맞춘 1 개 직선의 내삽이 된다.</p>

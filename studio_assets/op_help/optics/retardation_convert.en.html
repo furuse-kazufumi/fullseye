@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">retardation_convert — OPTICS <code style="color:#22d3bf">photoelastic</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.retardation_convert(value, from_unit=&#x27;rad&#x27;, to_unit=&#x27;nm&#x27;, wavelength_nm=550.0)</code> (to call the implementation directly, <code style="color:#22d3bf">import photoelastic; photoelastic.retardation_convert(value, from_unit=&#x27;rad&#x27;, to_unit=&#x27;nm&#x27;, wavelength_nm=550.0)</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;retardation_convert&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Unit conversion of a retardation (rad / deg / nm / waves = fringe order).</p>
 <p><code style="color:#22d3bf">2π rad = 360 deg = λ nm = 1 wave</code>. The wavelength is in <b>nanometres</b> here (the name says so) and must lie in [10, 20000] nm.</p>

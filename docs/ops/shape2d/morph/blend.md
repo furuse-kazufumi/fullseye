@@ -4,6 +4,7 @@ dim: shape2d
 category: morph
 in: image2d × image2d
 out: image2d
+gpu: なし
 examples: [image_morph, poc_live4d]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d × image2d` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.blend(a, b, alpha)` (実装を直接呼ぶなら `import imagemorph; imagemorph.blend(a, b, alpha)`、台帳から引くなら `opsshape2d.get("blend")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

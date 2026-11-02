@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">spheroid_closest — DRIVE <code style="color:#22d3bf">diabolo</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">signal × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.spheroid_closest(x, sph: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import diabolo; diabolo.spheroid_closest(x, sph: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;spheroid_closest&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>點 x → 旋轉橢球面上的最近點 <code style="color:#22d3bf">point</code>、帶符號距離 <code style="color:#22d3bf">s</code>(內側 &gt; 0，論文中 s 的定義)、向外的單位法線 <code style="color:#22d3bf">normal</code>(最近點處梯度的方向)。</p>
 <p>最近點使用子午面橢圓上的 Eberly 二分法。★公開實作是從中心沿徑向縮回(並非最近點,對橢球外 5 mm 的點最多相差 2.2 mm),並以 (x/b, y/a, z/b) 近似法線(若用梯度應為平方,在軸以外最多偏 12.2°)。此處按正文的「移動到最近點」並用真實法線來寫。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>:x 不是有限的 3-vector,sph 不是橢球的 dict。</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">carve_look_at — 3D <code style="color:#22d3bf">space_carving</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">vector</code> → <code style="color:#22d3bf">pose</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.carve_look_at(eye, target=(0.0, 0.0, 0.0), up=(0.0, 0.0, 1.0))</code>(要直接调用实现,<code style="color:#22d3bf">import visualhull; visualhull.carve_look_at(eye, target=(0.0, 0.0, 0.0), up=(0.0, 0.0, 1.0))</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;carve_look_at&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>生成可传给 <code style="color:#22d3bf">carve</code> / <code style="color:#22d3bf">synthesize_silhouette</code> 的相机位姿 <code style="color:#22d3bf">(R, t)</code>。</p>
 <p>与 <code style="color:#22d3bf">look_at</code> 实现相同、<b>可从公开层引用的名称</b>。于 2026-09-08 添加 —— 在此之前,空间雕刻所需的正确位姿辅助函数在 <code style="color:#22d3bf">fs.</code> / <code style="color:#22d3bf">fs.op.</code> / <code style="color:#22d3bf">fs.ledger.</code> 的任何地方都引用不到,<code style="color:#22d3bf">fs.op_find(&quot;look&quot;)</code> 也是 0 条。另一方面 <code style="color:#22d3bf">fs.look_at</code> 是 <b>另一个东西</b>(<code style="color:#22d3bf">render3d</code> 的 gluLookAt 版,4x4、<b>−Z 前方</b>),若传入其 <code style="color:#22d3bf">M[:3,:3]</code> 和 <code style="color:#22d3bf">M[:3,3]</code>,所有点都会落到相机后方,<b>不抛异常而返回空轮廓</b>。同名而约定相反,是最悄无声息地出错的组合。</p>

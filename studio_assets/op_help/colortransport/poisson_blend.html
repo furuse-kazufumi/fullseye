@@ -3,6 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d × image2d × mask</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.poisson_blend(src, dst, mask, offset=(0, 0))</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import colortransport; colortransport.poisson_blend(src, dst, mask, offset=(0, 0))</code>、台帳から引くなら <code style="color:#22d3bf">opscolortransport.get(&quot;poisson_blend&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>台帳経由の戻り値</b>: <code style="color:#22d3bf">fullseye.ledger.poisson_blend(...)</code> は<b>宣言 out 型 <code style="color:#22d3bf">image2d</code> の値だけ</b>を返す(本体は補助情報も返す)。捨てられた側が要るときは <code style="color:#22d3bf">fullseye.ledger.poisson_blend.raw(...)</code>、または <code style="color:#22d3bf">colortransport.poisson_blend</code> を直接呼ぶ。</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>勾配場を運ぶ継ぎ目なし合成(Pérez, Gangnet &amp; Blake, SIGGRAPH 2003)。</p>
 <p><code style="color:#22d3bf">mask</code> の内部で <b><code style="color:#22d3bf">src</code> の勾配</b>を保ちつつ、<b>境界で <code style="color:#22d3bf">dst</code> の値</b>に一致する像を解く。よって出力は次の 2 つを<b>構成上</b>満たし、</p>

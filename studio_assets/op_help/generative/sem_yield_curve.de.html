@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">sem_yield_curve — GENERATIVE <code style="color:#22d3bf">sem</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">keine</code> → <code style="color:#22d3bf">table</code> (ein Operator, der allein durch seine Argumente bestimmt ist — er nimmt kein Bild und keine Daten entgegen)</p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sem_yield_curve(material=&#x27;SI&#x27;, energies_kev=None, *, n_electrons: &#x27;int&#x27; = 2000, seed: &#x27;int&#x27; = 0) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import sem; sem.sem_yield_curve(material=&#x27;SI&#x27;, energies_kev=None, *, n_electrons: &#x27;int&#x27; = 2000, seed: &#x27;int&#x27; = 0) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsgenerative.get(&quot;sem_yield_curve&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Beschleunigungsspannung durchfahren, η(E) und δ(E) per Monte Carlo berechnen und die Form von δ mit der universellen Kurve vergleichen.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>

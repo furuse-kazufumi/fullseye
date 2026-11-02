@@ -4,6 +4,7 @@ dim: optics
 category: wave
 in: cimage
 out: cimage
+gpu: なし
 examples: [optics_imaging, poc_grating_interferometry]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `cimage` → `cimage`
 - **呼び出し**: `import fullseye as fs; fs.ledger.angular_spectrum_propagate(field, wavelength_um=0.55, distance_um=100.0, pixel_pitch_um=1.0)` (実装を直接呼ぶなら `import optics; optics.angular_spectrum_propagate(field, wavelength_um=0.55, distance_um=100.0, pixel_pitch_um=1.0)`、台帳から引くなら `opsoptics.get("angular_spectrum_propagate")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

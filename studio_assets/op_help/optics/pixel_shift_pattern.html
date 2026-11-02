@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">pixel_shift_pattern — OPTICS <code style="color:#22d3bf">pixelshift</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">matrix</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pixel_shift_pattern(mode=&#x27;4shot&#x27;, error_px=0.0, cycles=1, seed=0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import pixelshift; pixelshift.pixel_shift_pattern(mode=&#x27;4shot&#x27;, error_px=0.0, cycles=1, seed=0)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;pixel_shift_pattern&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>ピクセルシフトの公称のシフト列 <code style="color:#22d3bf">(N, 2)</code>(dr, dc)[センサ画素]に、アクチュエータの誤差を足して返す。</p>
 <p>*mode*:</p>

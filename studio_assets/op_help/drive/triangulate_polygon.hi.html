@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">triangulate_polygon — DRIVE <code style="color:#22d3bf">japan</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.triangulate_polygon(poly: &#x27;np.ndarray | Sequence[Sequence[float]]&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import driveplateau; driveplateau.triangulate_polygon(poly: &#x27;np.ndarray | Sequence[Sequence[float]]&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;triangulate_polygon&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>simple polygon (convex या concave, self-intersection के बिना) को ear clipping से triangles में बाँटता है।</p>
 <p>लौटाया जाने वाला त्रिभुज इनपुट शीर्ष का सूचकांक है, जहां m संरेख शीर्षों (m-2, 3) को छोड़कर शीर्षों की प्रभावी संख्या है। प्रत्येक त्रिभुज वामावर्त घूमता है (यदि इनपुट दक्षिणावर्त है) (इसे आंतरिक रूप से उलट दिया गया है और मूल शीर्ष संख्या को सबस्क्रिप्ट के रूप में वापस कर दिया गया है।)</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">membrane_render_markers — DRIVE <code style="color:#22d3bf">tacslip</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">rgb × matrix × scalar × scalar</code> → <code style="color:#22d3bf">rgb</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.membrane_render_markers(rgb, pts, r_px: &#x27;float&#x27;, dark: &#x27;float&#x27;, sub: &#x27;int&#x27; = 8) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import tacslip; tacslip.membrane_render_markers(rgb, pts, r_px: &#x27;float&#x27;, dark: &#x27;float&#x27;, sub: &#x27;int&#x27; = 8) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;membrane_render_markers&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>在 RGB (H, W, 3) 上绘制黑色圆盘标记(中心 pts (N, 2) [px]，半径 r_px)：按像素覆盖率 rgb *= 1 − dark·coverage。覆盖率只对圆盘边缘的像素做 sub² 的子采样(内侧 1、外侧 0)。不对图像插值变形，因此真值严格。<b>Raises</b> ValueError：rgb 不是 (H, W, 3)，pts 不是 (N, 2)，r_px ≤ 0，dark 在 [0, 1] 之外。</p>
 <p>空输入(<code style="color:#22d3bf">rgb</code> 为 0 个元素)会引发 <code style="color:#22d3bf">ValueError</code>。</p>

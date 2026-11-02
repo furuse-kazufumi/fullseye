@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">dem_geodetic_to_ecef — DEM <code style="color:#22d3bf">geodesy</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">points</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_geodetic_to_ecef(lat_deg, lon_deg, height_m=0.0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import demops; demops.dem_geodetic_to_ecef(lat_deg, lon_deg, height_m=0.0)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdem.get(&quot;dem_geodetic_to_ecef&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>geodetic coordinate (latitude, longitude, ellipsoidal height) → <b>पृथ्वी-केंद्रित Cartesian coordinate ECEF</b> [m]।</p>
 <p>पृथ्वी के केंद्र पर मूल वाला दाएँ-हाथ का system, जिसमें x भूमध्यरेखीय तल में prime meridian की ओर, y 90 degrees पूर्व देशांतर पर, और z उत्तरी ध्रुव पर है। जब terrain को &quot;पृथ्वी के केंद्र से देखे गए coordinates&quot; में संभालना हो तब का entry point।</p>

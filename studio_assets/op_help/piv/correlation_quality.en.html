@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">correlation_quality — PIV <code style="color:#22d3bf">solid</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d × image2d × flow2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.correlation_quality(ref: &#x27;Any&#x27;, cur: &#x27;Any&#x27;, flow: &#x27;Any&#x27;, info: &#x27;Optional[dict]&#x27; = None, subset: &#x27;int&#x27; = 31) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import dic; dic.correlation_quality(ref: &#x27;Any&#x27;, cur: &#x27;Any&#x27;, flow: &#x27;Any&#x27;, info: &#x27;Optional[dict]&#x27; = None, subset: &#x27;int&#x27; = 31) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opspiv.get(&quot;correlation_quality&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>A ZNCC map that returns, point by point, <b>how well</b> a given displacement field matches.</p>
 <p>Arguments</p>

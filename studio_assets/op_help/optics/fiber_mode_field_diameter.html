@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">fiber_mode_field_diameter — OPTICS <code style="color:#22d3bf">fiber</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fiber_mode_field_diameter(core_radius_um=4.1, v_number=2.2)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import fiberoptics; fiberoptics.fiber_mode_field_diameter(core_radius_um=4.1, v_number=2.2)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;fiber_mode_field_diameter&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>LP01 の場の直径(MFD)[µm] —— 厳密な場に<b>重なりが最大のガウス</b>を当てたときの 1/e² 直径。</p>
 <p>厳密: LP01 の固有値 (u, w) から場 E(r) = J0(ur/a)/J0(u)(r ≤ a)、K0(wr/a)/K0(w)(r &gt; a)を作り、ガウス exp(−r²/w₀²) との重なり |∫E·G r dr|² / (∫E² r dr ∫G² r dr) を最大にする w₀ を黄金分割で探す(MFD = 2w₀)。</p>

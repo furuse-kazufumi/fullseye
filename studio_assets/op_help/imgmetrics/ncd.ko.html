@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">ncd — IMGMETRICS <code style="color:#22d3bf">compression</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ncd(a, b, compressor=&#x27;lzma&#x27;, levels=None, data_range=None, symmetric=True)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import imgmetrics; imgmetrics.ncd(a, b, compressor=&#x27;lzma&#x27;, levels=None, data_range=None, symmetric=True)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsimgmetrics.get(&quot;ncd&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>정규화 압축 거리(Li, Chen, Li, Ma &amp; Vitányi, IEEE TIT 50(12), 2004).</p>
 <p><code style="color:#22d3bf">NCD(x,y) = (C(xy) - min(C(x),C(y))) / max(C(x),C(y))</code>. 같은 것이면 0에 가까워지고, 무관하면 1에 가까워진다 -- 단 <b>실제 압축기는이상적인 Kolmogorov 복잡도가 아니므로</b>, 같은 입력이라도 엄밀히 0이 되지는 않는다(헤더만큼의 덧값이 있다). 그 덧값의 실측값은 테스트에 남겨 두었다.</p>

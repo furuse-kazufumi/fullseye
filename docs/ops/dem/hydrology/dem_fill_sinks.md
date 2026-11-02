@@ -4,6 +4,7 @@ dim: dem
 category: hydrology
 in: depth
 out: depth
+gpu: なし
 examples: [poc_dem_terrain]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `depth` → `depth`
 - **呼び出し**: `import fullseye as fs; fs.ledger.dem_fill_sinks(dem, epsilon=0.0, nodata='error')` (実装を直接呼ぶなら `import demops; demops.dem_fill_sinks(dem, epsilon=0.0, nodata='error')`、台帳から引くなら `opsdem.get("dem_fill_sinks")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

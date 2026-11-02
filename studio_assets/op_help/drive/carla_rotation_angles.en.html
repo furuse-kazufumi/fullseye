@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">carla_rotation_angles — DRIVE <code style="color:#22d3bf">carla</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.carla_rotation_angles(R) -&gt; &#x27;tuple&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import carlabridge; carlabridge.carla_rotation_angles(R) -&gt; &#x27;tuple&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;carla_rotation_angles&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>3×3 (CARLA&#x27;s formula) → (roll, pitch, yaw) [deg]. pitch = asin(R₂₀), yaw = atan2(R₁₀, R₀₀), roll = atan2(−R₂₁, R₂₂). The degenerate case |pitch| = 90° raises ValueError.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">convex_hull — 3D <code style="color:#22d3bf">bounds</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">mesh</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.convex_hull(V)</code> (to call the implementation directly, <code style="color:#22d3bf">import meshrepair; meshrepair.convex_hull(V)</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;convex_hull&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Convex hull of a point set -&gt; <code style="color:#22d3bf">(V, F)</code> with outward-oriented triangles.</p>
 <p>Thin wrapper over <code style="color:#22d3bf">scipy.spatial.ConvexHull</code> (Qhull): interior points are dropped, faces are triangulated, and each triangle is wound so its normal points away from the hull centroid (outward, positive signed volume) — so the result feeds straight into <code style="color:#22d3bf">inertia_tensor</code> or a MuJoCo convex collider. Needs at least 4 non-coplanar points.</p>

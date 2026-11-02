@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">signed_surface_distance — SHAPESTAT <code style="color:#22d3bf">deviation</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.signed_surface_distance(query, surface, surface_normals=None, k: &#x27;int&#x27; = 1)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import shapestats; shapestats.signed_surface_distance(query, surface, surface_normals=None, k: &#x27;int&#x27; = 1)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsshapestat.get(&quot;signed_surface_distance&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>query point से सतह तक <b>sign सहित</b> दूरी। → <code style="color:#22d3bf">(N,)</code>।</p>
 <p>चिह्न surface के normal से तय होता है (बाहर धनात्मक)। 1-D contour के लिए <code style="color:#22d3bf">profileops.profile_deviation</code> है, पर 3-D में उसका समकक्ष नहीं था -- यही वह gap था जो 2026-09-06 को PoC ने उजागर किया।</p>

@@ -4,6 +4,7 @@ dim: optics
 category: design
 in: table
 out: pairs
+gpu: なし
 examples: [lens_design_demo, poc_lens_file_roundtrip]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `pairs`
 - **呼び出し**: `import fullseye as fs; fs.ledger.spot_diagram(system, field=None, rings=8, wavelength_um=None, image_mm=None, aim=None, vignetting=None)` (実装を直接呼ぶなら `import raytrace; raytrace.spot_diagram(system, field=None, rings=8, wavelength_um=None, image_mm=None, aim=None, vignetting=None)`、台帳から引くなら `opsoptics.get("spot_diagram")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

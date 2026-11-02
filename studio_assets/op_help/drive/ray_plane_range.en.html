@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">ray_plane_range — DRIVE <code style="color:#22d3bf">lidar</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ray_plane_range(origin, dirs, plane) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import lidarsim; lidarsim.ray_plane_range(origin, dirs, plane) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;ray_plane_range&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Distance travelled by rays from the origin <code style="color:#22d3bf">origin</code> in directions <code style="color:#22d3bf">dirs (...,3)</code> until they hit the plane <code style="color:#22d3bf">ax+by+cz+d=0</code>.</p>
 <p>Closed form <code style="color:#22d3bf">t = −(n·O + d)/(n·D)</code>, distance is <code style="color:#22d3bf">t·‖D‖</code>. If there is no hit ahead (t &gt; 0) or the ray is parallel, <code style="color:#22d3bf">inf</code>. A zero normal raises <code style="color:#22d3bf">ValueError</code>.</p>

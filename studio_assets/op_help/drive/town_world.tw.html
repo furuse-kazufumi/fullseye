@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">town_world — DRIVE <code style="color:#22d3bf">town</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.town_world(layout, *, props=(), **kwargs) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import drivetown; drivetown.town_world(layout, *, props=(), **kwargs) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;town_world&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p><code style="color:#22d3bf">driveworld.world_build</code> 的薄包裝(<code style="color:#22d3bf">props</code> 及其餘參數原樣傳遞)，把停止線、號誌、平交道位置表作為 <code style="color:#22d3bf">world[&quot;town&quot;]</code> 加入，並在每個平交道要素處放置<b>附柵欄的平交道警報器 2 座、柵桿(升起)、平交道鋪板、列車(在遠處待命)</b>。</p>
 <p><code style="color:#22d3bf">world[&quot;town&quot;] = {&quot;stop_lines&quot;: [(x, y, yaw, kind)], &quot;signals&quot;: [(x, y, yaw, kind)], &quot;crossings&quot;: [(x0, y0, x1, y1, s0, s1)], &quot;gear&quot;: [踏切ごとの設備の索引 dict], &quot;total_length&quot;}</code>(signals 為路口的全部 4 座,yaw = 燈具朝向。stop_lines 為</p>

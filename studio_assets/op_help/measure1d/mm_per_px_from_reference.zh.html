@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">mm_per_px_from_reference — MEASURE1D <code style="color:#22d3bf">scale</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">measurement</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mm_per_px_from_reference(measured_px, known_mm)</code>(要直接调用实现,<code style="color:#22d3bf">import measuring1d; measuring1d.mm_per_px_from_reference(measured_px, known_mm)</code>;从台账取用则 <code style="color:#22d3bf">opsmeasure1d.get(&quot;mm_per_px_from_reference&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由已知尺寸的标准物(比例尺、基准孔、量规)求出像素间距 mm/px(标定)。</p>
 <p><code style="color:#22d3bf">mm_per_px = known_mm / measured_px</code>。<code style="color:#22d3bf">measured_px</code> 应传入在同一光学系统、同一工作距离下<b>由本族 op 实际测得</b>的值(<code style="color:#22d3bf">measure_pairs</code> 的 <code style="color:#22d3bf">width</code>、<code style="color:#22d3bf">apply_metrology_model</code> 的 <code style="color:#22d3bf">radius</code> 的 2 倍等)。若按图纸值或标称倍率设定,工作距离偏差 10 % 时所有尺寸都会偏差 10 %。</p>

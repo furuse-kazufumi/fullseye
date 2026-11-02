@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">fiber_lp_modes — OPTICS <code style="color:#22d3bf">fiber</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fiber_lp_modes(v_number=6.0, max_modes=None)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import fiberoptics; fiberoptics.fiber_lp_modes(v_number=6.0, max_modes=None)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;fiber_lp_modes&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>弱導波のステップ型ファイバの LP_lm モード: 特性方程式を解き、各モードの u・w・規格化伝搬定数 b を返す(<code style="color:#22d3bf">table</code>)。</p>
 <p>u J_{l−1}(u)/J_l(u) = −w K_{l−1}(w)/K_l(w)、u² + w² = V²(Gloge 1971)。l ごとに u の区間を J_l の零点と J_{l−1} の零点(= 遮断)で区切り、符号の変わる区間を二分法で解く(80 回、区間幅の 1e-24 倍)。</p>

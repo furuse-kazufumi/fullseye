@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">dem_slope — DEM <code style="color:#22d3bf">surface</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">depth</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_slope(dem, cell_size, method=&#x27;horn&#x27;, units=&#x27;degrees&#x27;)</code> (die Implementierung direkt: <code style="color:#22d3bf">import demops; demops.dem_slope(dem, cell_size, method=&#x27;horn&#x27;, units=&#x27;degrees&#x27;)</code>; aus dem Register: <code style="color:#22d3bf">opsdem.get(&quot;dem_slope&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Neigungswinkel. <code style="color:#22d3bf">units</code> ist <code style="color:#22d3bf">&quot;degrees&quot;</code> / <code style="color:#22d3bf">&quot;radians&quot;</code> / <code style="color:#22d3bf">&quot;percent&quot;</code>.</p>
 <p>Auf einer Ebene stimmt es mit der geschlossenen Form <code style="color:#22d3bf">atan(|grad|)</code> überein (gemessen 1e-13 oder weniger).</p>

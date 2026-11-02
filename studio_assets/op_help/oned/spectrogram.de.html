@@ -4,6 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.spectrogram(x, rate=1.0, win=256, hop=None)</code> (die Implementierung direkt: <code style="color:#22d3bf">import dsp; dsp.spectrogram(x, rate=1.0, win=256, hop=None)</code>; aus dem Register: <code style="color:#22d3bf">ops1d.get(&quot;spectrogram&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>Rückgabewert über das Register</b>: <code style="color:#22d3bf">fullseye.ledger.spectrogram(...)</code> liefert <b>nur den Wert des deklarierten Out-Typs <code style="color:#22d3bf">image2d</code></b> (die zugrunde liegende Funktion gibt zusätzlich Hilfsinformationen zurück). Wird das Verworfene gebraucht, nutze <code style="color:#22d3bf">fullseye.ledger.spectrogram.raw(...)</code> oder rufe <code style="color:#22d3bf">dsp.spectrogram</code> direkt auf.</p>
 <p style="margin:2px 0 2px 12px">• Rückgabe der Funktion: <code style="color:#22d3bf">(freqs, times, S) — S が本体</code></p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>STFT-Betragsspektrogramm -&gt; <code style="color:#22d3bf">(freqs, times, S)</code> mit <code style="color:#22d3bf">S</code> der Form <code style="color:#22d3bf">(n_freqs, n_frames)</code>. Hann-gefenstert; *hop* ist standardmäßig <code style="color:#22d3bf">win//2</code>.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">pixel_shift_merge — OPTICS <code style="color:#22d3bf">pixelshift</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">video × matrix</code> → <code style="color:#22d3bf">rgbimage</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pixel_shift_merge(frames, shifts, pattern=&#x27;RGGB&#x27;, scale=1, motion_threshold=0.0, noise_sigma=0.0)</code>(要直接调用实现,<code style="color:#22d3bf">import pixelshift; pixelshift.pixel_shift_merge(frames, shifts, pattern=&#x27;RGGB&#x27;, scale=1, motion_threshold=0.0, noise_sigma=0.0)</code>;从台账取用则 <code style="color:#22d3bf">opsoptics.get(&quot;pixel_shift_merge&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用<b>标称</b>位移把像素位移的各帧分配到网格上合成。不插值(只取同一网格点样本的平均)。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>

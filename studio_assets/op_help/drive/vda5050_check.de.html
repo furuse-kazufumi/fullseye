@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">vda5050_check — DRIVE <code style="color:#22d3bf">agv</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vda5050_check(order)</code> (die Implementierung direkt: <code style="color:#22d3bf">import agvfleet; agvfleet.vda5050_check(order)</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;vda5050_check&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Prüft die <b>Strukturregeln</b> einer VDA-5050-order (eigene zweite (unabhängige) Implementierung, getrennt vom offiziellen JSON-Schema).</p>
 <p>Regeln: Pflichtschlüssel / die sequenceIds der Knoten sind fortlaufende gerade Zahlen ab 0, die der Kanten fortlaufende ungerade / Anzahl der Kanten = Anzahl der Knoten − 1 / Start und Ende jeder Kante sind der vorherige und der folgende Knoten / released ist ab dem Anfang von base zusammenhängend (nur ein Wechsel base → horizon) / released einer Kante ist gleich dem ihres Endknotens. Rückgabe ist eine Liste von Verstoßmeldungen (leer = bestanden).</p>

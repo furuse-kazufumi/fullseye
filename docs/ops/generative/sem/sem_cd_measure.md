@@ -4,6 +4,7 @@ dim: generative
 category: sem
 in: pairs
 out: table
+gpu: なし
 examples: [poc_virtual_sem_kv_cd_bse]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `pairs` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.sem_cd_measure(profile, *, method: 'str' = 'threshold', threshold: 'float' = 0.5, smooth_nm: 'float' = 0.0) -> 'dict'` (実装を直接呼ぶなら `import sem; sem.sem_cd_measure(profile, *, method: 'str' = 'threshold', threshold: 'float' = 0.5, smooth_nm: 'float' = 0.0) -> 'dict'`、台帳から引くなら `opsgenerative.get("sem_cd_measure")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

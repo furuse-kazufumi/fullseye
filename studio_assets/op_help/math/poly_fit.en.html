@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">poly_fit — MATH <code style="color:#22d3bf">interp_poly</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.poly_fit(x, y, degree)</code> (to call the implementation directly, <code style="color:#22d3bf">import mathops; mathops.poly_fit(x, y, degree)</code>; from the registry, <code style="color:#22d3bf">opsmath.get(&quot;poly_fit&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Least-squares polynomial fit with its conditioning <b>on the record</b>.</p>
 <p>Fits <code style="color:#22d3bf">y ≈ c[0] x^d + ... + c[d]</code> (coefficients highest-power-first, the <code style="color:#22d3bf">poly_eval</code> / <code style="color:#22d3bf">np.polyval</code> convention) by SVD least squares on the Vandermonde matrix. *degree* must be an integer <code style="color:#22d3bf">&gt;= 0</code> with at least <code style="color:#22d3bf">degree + 1</code> samples (fail-closed: an exactly-determined fit is allowed, an under-determined one is not).</p>

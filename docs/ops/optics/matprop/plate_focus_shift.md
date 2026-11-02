@@ -4,6 +4,7 @@ dim: optics
 category: matprop
 in: 
 out: table
+gpu: なし
 examples: [poc_chromatic_confocal, poc_material_optical_library, poc_nir_silicon_transmission]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.plate_focus_shift(material='SI', thickness_mm: 'float' = 0.775, wavelength_nm: 'float' = 1100.0, numerical_aperture: 'float' = 0.1) -> 'dict'` (実装を直接呼ぶなら `import materials; materials.plate_focus_shift(material='SI', thickness_mm: 'float' = 0.775, wavelength_nm: 'float' = 1100.0, numerical_aperture: 'float' = 0.1) -> 'dict'`、台帳から引くなら `opsoptics.get("plate_focus_shift")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

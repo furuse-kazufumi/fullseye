@@ -4,6 +4,7 @@ dim: optics
 category: photoelastic
 in: image2d
 out: image2d
+gpu: なし
 examples: [photoelastic_roundtrip]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.polariscope_intensity(delta_rad, axis_deg=45.0, setup='plane_dark', polarizer_deg=0.0, intensity=1.0)` (実装を直接呼ぶなら `import photoelastic; photoelastic.polariscope_intensity(delta_rad, axis_deg=45.0, setup='plane_dark', polarizer_deg=0.0, intensity=1.0)`、台帳から引くなら `opsoptics.get("polariscope_intensity")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">hankel_image — MATH <code style="color:#22d3bf">transform</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.hankel_image(image, *, center=None, spacing: &#x27;float&#x27; = 1.0, n: &#x27;int&#x27; = 256, r_max: &#x27;float | None&#x27; = None, memory_budget: &#x27;int | None&#x27; = None) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import mathtransforms; mathtransforms.hankel_image(image, *, center=None, spacing: &#x27;float&#x27; = 1.0, n: &#x27;int&#x27; = 256, r_max: &#x27;float | None&#x27; = None, memory_budget: &#x27;int | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsmath.get(&quot;hankel_image&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>軸対称な画像の2次元フーリエ変換を動径のHankel変換で求める。<code style="color:#22d3bf">memory_budget</code> は実測差1e-10以下の省メモリ経路。</p>
 <p>画像を中心からの距離で 1 画素幅の輪に分けて平均し(動径の分布)、<code style="color:#22d3bf">hankel_transform</code>(0 次)にかける。軸対称なら 2 次元の変換が<b>1 本の積分</b>で済み(輪で平均するので雑音も 1/√(輪の画素数) に減る)、軸対称からどれだけ崩れているか(<code style="color:#22d3bf">asymmetry</code>)を数で返す。周波数の刻みは 2-D FFT と同じく 1/(2·半径) 程度で、細かくはならない。</p>

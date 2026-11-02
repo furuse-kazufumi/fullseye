@@ -4,6 +4,7 @@ dim: optics
 category: radiosity
 in: table × table × table
 out: table
+gpu: なし
 examples: [poc_pocket_interreflection]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table × table × table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.render_optscene_gi(scene, camera, lights, bounces=None, patch_mm=2.0, outer_mm=None, tol=1e-06, n_quad=3, supersample=1, study_bounces=8, study_tol=0.01)` (実装を直接呼ぶなら `import radiosity3d; radiosity3d.render_optscene_gi(scene, camera, lights, bounces=None, patch_mm=2.0, outer_mm=None, tol=1e-06, n_quad=3, supersample=1, study_bounces=8, study_tol=0.01)`、台帳から引くなら `opsoptics.get("render_optscene_gi")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

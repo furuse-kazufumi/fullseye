@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">course_crank — DRIVE <code style="color:#22d3bf">course</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">table</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.course_crank(width=3.5, between=12.0, entry=4.0, corner_radius=1.0, arc_pts=16)</code>(要直接调用实现,<code style="color:#22d3bf">import drivecourse; drivecourse.course_crank(width=3.5, between=12.0, entry=4.0, corner_radius=1.0, arc_pts=16)</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;course_crank&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>曲折路线(曲柄弯，Z 形)：进入 → 左 90° → B → 右 90° → 驶出。</p>
 <p>按别表第三的图(3JH00000217782)的量法: 宽度 A = w,弯角间长度 B 为从一条路的外壁到对面路的内壁(= 中心线的弯角间距离),出入口部 C 为从横穿带的壁到出入口(中心线上为 C + w/2),切角 D 为弯角部 <b>内侧</b> 的角(外侧的角保持方形)。中心线为(0,0)→(C+w/2, 0)→(C+w/2, B)→(2C+w, B),长度 L = 2C + w + B。面积 = w·L + 2r²(1 − π/4) (推导见模块 docstring)。规格(普通驾照): A = 3.5, B = 12, C ≥ 4, D = 1 → <code style="color:#22d3bf">params[&quot;regulation&quot;]</code>。</p>

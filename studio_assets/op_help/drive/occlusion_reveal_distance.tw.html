@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">occlusion_reveal_distance — DRIVE <code style="color:#22d3bf">traffic</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.occlusion_reveal_distance(ego_xy, ego_heading: &#x27;float&#x27;, parked_box, emerge_xy) -&gt; &#x27;float&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import drivetraffic; drivetraffic.occlusion_reveal_distance(ego_xy, ego_heading: &#x27;float&#x27;, parked_box, emerge_xy) -&gt; &#x27;float&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;occlusion_reveal_distance&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>路邊停放車輛(有朝向的盒子)背後的點 <code style="color:#22d3bf">emerge_xy</code> 從本車視點<b>首次可見</b>時的縱向距離。</p>
 <p>自車的眼睛沿 p(s) = ego_xy + s h(h = (cos ψ, sin ψ),s ≥ 0 = 前進量)移動。若視線 = 線段 p(s) → e 不穿過箱體內部則可見。箱體為凸,因此「不可見的 s」構成一個區間,其端點是<b>視線擦過箱體角點</b>處,或路徑穿過箱體邊處。對每個角點 c,把直線 e + λ(c − e) 與路徑的交點 s_c 作為 2×2 聯立方程求解(閉式),按候選 {0, s_c, 路徑與邊的交點} 由小到大檢查是否可見,在第一個可見的 s* 處返回 d = h · (e − p(s*))。</p>

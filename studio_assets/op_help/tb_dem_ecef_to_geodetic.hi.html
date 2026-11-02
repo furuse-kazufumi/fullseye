@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tb_dem_ecef_to_geodetic — 2D <code style="color:#22d3bf">typed</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_dem_ecef_to_geodetic&quot;, a=0.5, b=0.5)</code> (2-D model = एक image + दो scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <p>*कोई figure नहीं: type तो पहुँचता है, पर सामान्य synthetic input इस op के domain में नहीं आता — ECEF को पृथ्वी-सतह के निर्देशांक (केंद्र से ~6.4M m) चाहिए, पर छवि से बने कृत्रिम बिंदु मूलबिंदु के पास होते हैं, ellipsoid के evolute के अंदर गिरते हैं और हमेशा अस्वीकार होते हैं। उपयोग का तरीका नीचे &quot;चलाए जा सकने वाले उदाहरण&quot; में देखें।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>ECEF → geodetic coordinates। <code style="color:#22d3bf">(..., 3)</code> के रूप में <code style="color:#22d3bf">(अक्षांश[डिग्री], देशांतर[डिग्री], ऊँचाई[m])</code> लौटाता है।</p>

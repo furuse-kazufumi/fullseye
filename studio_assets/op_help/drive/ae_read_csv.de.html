@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">ae_read_csv — DRIVE <code style="color:#22d3bf">grind</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ae_read_csv(path, header_lines: &#x27;int&#x27; = 12, offset: &#x27;float&#x27; = 32768.0, full_scale: &#x27;float&#x27; = 32768.0) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import grind; grind.ae_read_csv(path, header_lines: &#x27;int&#x27; = 12, offset: &#x27;float&#x27; = 32768.0, full_scale: &#x27;float&#x27; = 32768.0) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;ae_read_csv&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Wandelt eine rohe AE-CSV-Datei (<code style="color:#22d3bf">header_lines</code> Kopfzeilen + 1 ADC-Abtastwert je 1 Zeile) in ein Spannungssignal [V] um.</p>
 <p>Der ADC der öffentlichen Daten ist 16 bit, ±1 V, Straight Offset Binary (0 → −1 V, 32768 → 0 V, 65535 → +1 V), daher <code style="color:#22d3bf">(raw − offset) / full_scale</code> (wie die Umrechnung im Analysecode). Der Pfad wird nicht im Rückgabewert behalten. Nicht-numerische Zeilen, leer → <code style="color:#22d3bf">ValueError</code>.</p>

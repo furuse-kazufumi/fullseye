@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">contact_radius_fit — DRIVE <code style="color:#22d3bf">tacsim</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">normalmap × matrix × matrix × scalar × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.contact_radius_fit(normals, X, Y, R: &#x27;float&#x27;, pitch: &#x27;float&#x27;, centre_xy=None) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import tacsim; tacsim.contact_radius_fit(normals, X, Y, R: &#x27;float&#x27;, pitch: &#x27;float&#x27;, centre_xy=None) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;contact_radius_fit&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>法線場の<b>半径方向スロープ分布</b>に Hertz のスロープ模型 dh/dr(r; a) を 1 パラメータ a で当てて接触半径を読む。</p>
 <p>模型: 内側 r/R、外側 (2/πR)[r arcsin(a/r) − a √(1 − a²/r²)] (導出、r = a で a/R に連続)。高さの積分を通らないので FFT 積分の振幅減衰・有限窓の遠方場・高さの基準(オフセット)の影響を受けない。a は [0.2, 3] × 粗い初期値の格子で SSE (ビンの個数で重み)を最小化し、放物線で副格子に詰める。<code style="color:#22d3bf">centre_xy</code> は (x, y)[m]、省略なら法線から高さを積分して重心。</p>

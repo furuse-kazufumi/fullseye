@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">covers_sensor — OPTICS <code style="color:#22d3bf">scene</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.covers_sensor(lens: &#x27;dict&#x27;, sensor: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import optscene; optscene.covers_sensor(lens: &#x27;dict&#x27;, sensor: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsoptics.get(&quot;covers_sensor&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Ob das Objektiv den Sensor abdeckt (Bildkreis gegen Diagonale).</p>
 <p>Kann es nicht abdecken, <b>fallen die vier Ecken ins Schwarze</b> (Vignettierung). Ein Katalog-&quot;bis 1 Zoll&quot; usw. drückt dieses Urteil nur über den Formatnamen aus, daher ist der Vergleich realer Maße zuverlässiger ―― besonders bei Zeilensensoren, bei denen die Länge direkt zählt (16k x 7 µm = 115 mm), sodass ein Objektiv für Flächensensoren bei Weitem nicht reicht.</p>

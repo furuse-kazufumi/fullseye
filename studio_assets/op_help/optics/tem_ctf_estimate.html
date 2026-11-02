@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tem_ctf_estimate — OPTICS <code style="color:#22d3bf">tem</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tem_ctf_estimate(image, pixel_A=1.0, kv=300.0, cs_mm=2.7, amplitude_contrast=0.07, phase_shift_deg=0.0, defocus_min_A=3000.0, defocus_max_A=50000.0, k_min=0.03333333333333333, k_max=None, tile=None, overlap=0.5, astigmatism=True, min_rings=3, min_peak_z=8.0, on_fail=&#x27;raise&#x27;)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import temsim; temsim.tem_ctf_estimate(image, pixel_A=1.0, kv=300.0, cs_mm=2.7, amplitude_contrast=0.07, phase_shift_deg=0.0, defocus_min_A=3000.0, defocus_max_A=50000.0, k_min=0.03333333333333333, k_max=None, tile=None, overlap=0.5, astigmatism=True, min_rings=3, min_peak_z=8.0, on_fail=&#x27;raise&#x27;)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;tem_ctf_estimate&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>顕微鏡写真のパワースペクトルの Thon リングから焦点外れ(と非点収差)を推定する(表)。</p>
 <p>手順: (1) タイルの平均のパワースペクトル(<code style="color:#22d3bf">tem_power_spectrum</code> と同じ)→ 振幅スペクトル √PS。</p>

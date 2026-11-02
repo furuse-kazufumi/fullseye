@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">emva_photon_exposure — OPTICS <code style="color:#22d3bf">sensorchar</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.emva_photon_exposure(irradiance, area_um2, t_exp_ms, wavelength_um)</code>(要直接调用实现,<code style="color:#22d3bf">import sensorchar; sensorchar.emva_photon_exposure(irradiance, area_um2, t_exp_ms, wavelength_um)</code>;从台账取用则 <code style="color:#22d3bf">opsoptics.get(&quot;emva_photon_exposure&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由传感器面辐照度求每像素平均光子数 μ_p = A E t_exp/(hc/λ)(式 3),采用标准的便捷单位(式 4)。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>

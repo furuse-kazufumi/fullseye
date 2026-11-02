@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">jpeg_quality_estimate — IMGFORENSICS <code style="color:#22d3bf">compression</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.jpeg_quality_estimate(image, max_step: &#x27;int&#x27; = 64, n_coeff: &#x27;int&#x27; = 21) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import imgforensics; imgforensics.jpeg_quality_estimate(image, max_step: &#x27;int&#x27; = 64, n_coeff: &#x27;int&#x27; = 21) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsimgforensics.get(&quot;jpeg_quality_estimate&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>디코딩된 이미지로부터 <b>양자화 표와 JPEG 품질을 블라인드 추정</b>합니다. <code style="color:#22d3bf">table</code>.</p>
 <p>파일의 DQT를 읽는 대신  픽셀 만 에서 추정합니다. PNG에 다시 저장 / 붙여 넣은 이미지에서 &quot;원본은 JPEG 품질 N이었다&quot; 보인다). 8x8 블록 DCT를 사용하여 각 계수에 대한 빗 간격을 추정합니다. (Fan &amp; de Queiroz 2003), IJG의 공개 스케일링 규칙으로 만든 표준표의 족으로부터가장 적합한 품질을 선택합니다.</p>

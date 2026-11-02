@@ -4,6 +4,7 @@ dim: tomography
 category: volume
 in: sinostack
 out: voxel
+gpu: なし
 examples: [poc_battery_ct_degradation, tomography_reconstruct]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `sinostack` → `voxel`
 - **呼び出し**: `import fullseye as fs; fs.ledger.fbp_volume(stack, angles_deg=None, size=None, filter_name='ramp', cutoff=1.0, span_deg=None)` (実装を直接呼ぶなら `import tomography; tomography.fbp_volume(stack, angles_deg=None, size=None, filter_name='ramp', cutoff=1.0, span_deg=None)`、台帳から引くなら `opstomography.get("fbp_volume")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

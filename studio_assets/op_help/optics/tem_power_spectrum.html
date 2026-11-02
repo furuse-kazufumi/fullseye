@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tem_power_spectrum — OPTICS <code style="color:#22d3bf">tem</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tem_power_spectrum(image, tile=None, overlap=0.5)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import temsim; temsim.tem_power_spectrum(image, tile=None, overlap=0.5)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;tem_power_spectrum&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>タイルに切った periodogram の平均(Welch、Hann 窓)を <code style="color:#22d3bf">fftshift</code> 順の 2-D で返す(<code style="color:#22d3bf">image2d</code>)。</p>
 <p><code style="color:#22d3bf">tile</code> は正方のタイルの辺(既定: 短辺に 3 枚入る 512 か 256、小さい像は短辺の半分以下の 2 の冪)、<code style="color:#22d3bf">overlap</code> はタイルの重なり(0〜0.9)。Thon リングは雑音の多い 1 枚の periodogram では見えにくく、タイルを平均すると見える。</p>

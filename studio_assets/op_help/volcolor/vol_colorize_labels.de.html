@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">vol_colorize_labels — VOLCOLOR <code style="color:#22d3bf">colorize</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">labels</code> → <code style="color:#22d3bf">rgbvolume</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_colorize_labels(labels, seed: &#x27;int&#x27; = 0, background=(0.0, 0.0, 0.0))</code> (die Implementierung direkt: <code style="color:#22d3bf">import volcolor; volcolor.vol_colorize_labels(labels, seed: &#x27;int&#x27; = 0, background=(0.0, 0.0, 0.0))</code>; aus dem Register: <code style="color:#22d3bf">opsvolcolor.get(&quot;vol_colorize_labels&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>3-D-Labelvolumen -&gt; ein RGB-Volumen, <code style="color:#22d3bf">(D, H, W, 3)</code> float64.</p>
 <p>Der Einstieg für &quot;<b>erst färben, dann schneiden</b>&quot; statt &quot;erst schneiden, dann färben&quot;. Die Farbe von Label <code style="color:#22d3bf">k</code> ist genau Zeile <code style="color:#22d3bf">k</code> von <code style="color:#22d3bf">vol_label_palette</code> und <b>stimmt Byte für Byte</b> mit dem Ergebnis von <code style="color:#22d3bf">imgio.colorize_labels(labels, seed)</code> auf demselben Array überein (fixiert durch <code style="color:#22d3bf">tests/test_volcolor.py</code>).</p>

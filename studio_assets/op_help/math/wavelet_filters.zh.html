@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">wavelet_filters — MATH <code style="color:#22d3bf">transform</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">table</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.wavelet_filters(order: &#x27;int&#x27; = 2) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import mathtransforms; mathtransforms.wavelet_filters(order: &#x27;int&#x27; = 2) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsmath.get(&quot;wavelet_filters&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>按教科书的构造方法(谱分解)生成 Daubechies 正交归一小波 dbN 的滤波器。</p>
 <p>|H(ω)|² = cos^{2N}(ω/2)·P(sin²(ω/2))，P(y) = Σ_{k&lt;N} C(N−1+k, k) y^k(Daubechies 1988)。从 P 的根中选出单位圆内侧的零点，与 (1 + z⁻¹)^N 相乘。不抄表，因此没有有效数字丢失的转录错误(由门禁核对数值)。</p>

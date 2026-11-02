@@ -5,6 +5,7 @@ category: matching
 in: image
 out: match
 halcon: find_ncc_model
+gpu: あり(ncc_locate)
 examples: [gallery2d_contour_measure, mcp_usability, poc_code_matching_breakdown, poc_search_sweep_width, poc_template_tracking]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -16,6 +17,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **データ種**: `image` → `match`
 - **呼び出し**: `fullseye.apply(img, "ncc_locate", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 - **HALCON 相当**: `find_ncc_model`(意味・パラメータは HALCON リファレンスが参考になる)
+- **GPU**: あり(`ncc_locate`、`device="cuda"` で高速経路)
 
 ![ncc_locate: input → output](../../_fig/ncc_locate.png)
 

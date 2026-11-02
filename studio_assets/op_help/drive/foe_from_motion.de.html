@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">foe_from_motion — DRIVE <code style="color:#22d3bf">ttc</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">matrix × matrix</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.foe_from_motion(K, T_rel) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import drivettc; drivettc.foe_from_motion(K, T_rel) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;foe_from_motion&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Pixel <code style="color:#22d3bf">(col, row)</code> des Expansionsfokus (FoE): die Projektion der Translation <code style="color:#22d3bf">t</code> der Relativbewegung im Unendlichen.</p>
 <p>Ist die Rotation von <code style="color:#22d3bf">T_rel</code> nicht die Identität, ist der FoE nicht definiert (<code style="color:#22d3bf">ValueError</code>). Ist die Translation in Tiefenrichtung 0 (reines seitliches Gleiten), <code style="color:#22d3bf">(nan, nan)</code>.</p>

@@ -4,6 +4,7 @@ dim: drive
 category: granular
 in: scalar × scalar × scalar × scalar × scalar × scalar
 out: table
+gpu: なし
 examples: [poc_granular_heap_repose]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `scalar × scalar × scalar × scalar × scalar × scalar` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.discharge_synth(D0: 'float', d: 'float', bulk_density: 'float', phi_deg: 'float', pitch: 'float', duration: 'float', n_frames: 'int' = 8, grid: 'int' = 256, C: 'float' = 0.58, k: 'float' = 1.4, noise: 'float' = 0.0, seed: 'int | None' = None) -> 'dict'` (実装を直接呼ぶなら `import granular; granular.discharge_synth(D0: 'float', d: 'float', bulk_density: 'float', phi_deg: 'float', pitch: 'float', duration: 'float', n_frames: 'int' = 8, grid: 'int' = 256, C: 'float' = 0.58, k: 'float' = 1.4, noise: 'float' = 0.0, seed: 'int | None' = None) -> 'dict'`、台帳から引くなら `opsdrive.get("discharge_synth")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

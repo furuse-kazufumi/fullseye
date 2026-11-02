@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">perpetual_harmonograph — GENERATIVE <code style="color:#22d3bf">perpetual</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">rgb</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.perpetual_harmonograph(size: &#x27;int&#x27; = 520, a: &#x27;float&#x27; = 3.0, b: &#x27;float&#x27; = 2.0, phase: &#x27;float&#x27; = 0.35, decay: &#x27;float&#x27; = 0.0018, turns: &#x27;float&#x27; = 36.0) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import perpetual; perpetual.perpetual_harmonograph(size: &#x27;int&#x27; = 520, a: &#x27;float&#x27; = 3.0, b: &#x27;float&#x27; = 2.0, phase: &#x27;float&#x27; = 0.35, decay: &#x27;float&#x27; = 0.0018, turns: &#x27;float&#x27; = 36.0) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsgenerative.get(&quot;perpetual_harmonograph&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>하모노그래프 — 감쇠하는 2개의 진자가 닫히지 않는 곡선을 계속 그린다.</p>
 <p>불변량: 감쇠가 0일 때, 곡선이 닫히는 것은 <b><code style="color:#22d3bf">a/b</code>가 유리수일 때</b>뿐이며, 그때의 주기는 정확히 <code style="color:#22d3bf">2π/gcd</code>.</p>

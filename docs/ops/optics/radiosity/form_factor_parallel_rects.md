@@ -4,6 +4,7 @@ dim: optics
 category: radiosity
 in: 
 out: measurement
+gpu: なし
 examples: [poc_pocket_interreflection]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `measurement`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.form_factor_parallel_rects(a=1.0, b=1.0, c=1.0)` (実装を直接呼ぶなら `import radiosity3d; radiosity3d.form_factor_parallel_rects(a=1.0, b=1.0, c=1.0)`、台帳から引くなら `opsoptics.get("form_factor_parallel_rects")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

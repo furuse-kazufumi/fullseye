@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">attention_grouped — LLMCORE <code style="color:#22d3bf">attend</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">tokens × tokens × tokens</code> → <code style="color:#22d3bf">tokens</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.attention_grouped(query, key, value, n_heads: &#x27;int&#x27;, n_kv_heads: &#x27;int&#x27;, mask=None, window=None) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import llmcore; llmcore.attention_grouped(query, key, value, n_heads: &#x27;int&#x27;, n_kv_heads: &#x27;int&#x27;, mask=None, window=None) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsllmcore.get(&quot;attention_grouped&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>頭を束ねる注意(GQA)→ tokens。<b>n_kv_heads == n_heads で MHA、== 1 で MQA に厳密一致</b>。</p>
 <p>Ainslie ら 2023。query は <code style="color:#22d3bf">n_heads</code> 本に割り、key/value は <code style="color:#22d3bf">n_kv_heads</code> 本しか持たずに使い回す。両端が既存の 2 つ(MHA / MQA)に<b>厳密に</b>落ちる(どちらも 0.0e+00) ので、「中間を取る」という主張が端で検算できる。</p>

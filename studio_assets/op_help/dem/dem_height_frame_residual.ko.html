@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">dem_height_frame_residual — DEM <code style="color:#22d3bf">geodesy</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">signal × signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_height_frame_residual(h_ellipsoidal_m, h_orthometric_m, geoid_height_m, tol_m=0.1)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import demops; demops.dem_height_frame_residual(h_ellipsoidal_m, h_orthometric_m, geoid_height_m, tol_m=0.1)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdem.get(&quot;dem_height_frame_residual&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p><code style="color:#22d3bf">h - H - N</code>의 잔차 —— 높이의 혼동을 <b>조용히 넘어가게 하지 않는</b> 검출기(<code style="color:#22d3bf">table</code>).</p>
 <p>타원체고·표고·지오이드고는 1개의 항등식으로 연결되어 있다(<code style="color:#22d3bf">h = H + N</code>). 3개가 갖춰진 점에서 그 잔차를 재면, <b>어느 하나가 다른 기준·다른 모델·다른 판으로만들어져 있다</b>는 것이 수치로 나온다. 측량 성과끼리라면 잔차는 cm 급에 들어가고, 타원체고를 그대로 표고로 쓰고 있으면 잔차는 <code style="color:#22d3bf">-N</code>(일본 부근에서 −30~−40 m) 에 달라붙는다.</p>

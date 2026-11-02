@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">refract — 3D <code style="color:#22d3bf">optics</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">vector × normals</code> → <code style="color:#22d3bf">normals</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.refract(d, n, eta1=1.0, eta2=1.5)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import match3d; match3d.refract(d, n, eta1=1.0, eta2=1.5)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;refract&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>스넬 굴절(벡터형). d=입사(면을 향함), n=입사 쪽 바깥 법선, 굴절률 eta1→eta2.</p>
 <p>투명체를 통과하는 광선의 굴절을 엄밀하게. 전반사(TIR)면 None. 유리/렌즈/수중의 상 왜곡 계산에. 계약은 단일 벡터. (N,3) 배치도 통과하지만 <b>1 개라도 TIR이면 배치 전체가 None</b> (per-ray 마스크는 하지 않는다). ★<b>배치라면 1 개씩 돌리지 말고</b> <code style="color:#22d3bf">glassmirror.refract_rays</code>를 쓸 것 —— 그쪽은 광선마다 TIR을 판정하여 <code style="color:#22d3bf">(방향, TIR 마스크)</code>를 반환한다(TIR인 광선은 경면 반사로 메운다). 이 함수는 &quot;1 개라도 빠지면 답을 내지 않는&quot; fail-closed 쪽의 입구로 남겨 두었다.</p>

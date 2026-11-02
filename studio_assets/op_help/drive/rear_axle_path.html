@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">rear_axle_path — DRIVE <code style="color:#22d3bf">lateral</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rear_axle_path(front_path, wheelbase: &#x27;float&#x27;, *, rear0=None) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import drivelateral; drivelateral.rear_axle_path(front_path, wheelbase: &#x27;float&#x27;, *, rear0=None) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;rear_axle_path&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>前車軸の中心の折線の軌跡から、すべりなしで引かれる後車軸の中心の軌跡(区間ごとに厳密な追跡曲線)。</p>
 <p>前が直線を Δ 進む間、棒(後 → 前)と直線のなす角 θ は tan(θ/2) = tan(θ₀/2) e^{−Δ/L}(厳密)。折線の頂点ごとにこれを繋ぐ。<code style="color:#22d3bf">rear0</code>: 後車軸の初めの位置(None なら最初の区間の向きに L だけ後ろ = 真っすぐ)。|前 − 後| = L を要求。</p>

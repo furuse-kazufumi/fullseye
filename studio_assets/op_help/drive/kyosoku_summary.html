@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">kyosoku_summary — DRIVE <code style="color:#22d3bf">town</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.kyosoku_summary(path=None) -&gt; &#x27;Dict[str, object]&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import drivetown; drivetown.kyosoku_summary(path=None) -&gt; &#x27;Dict[str, object]&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;kyosoku_summary&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>教則の場面の再現台帳(docs/drive/kyosoku_scenarios.json)を読み、category × status の件数表にする。</p>
 <p><code style="color:#22d3bf">path</code> = None なら repo の <code style="color:#22d3bf">docs/drive/kyosoku_scenarios.json</code>(このモジュールの場所から引く)。返り値 <code style="color:#22d3bf">{&quot;total&quot;, &quot;statuses&quot; (順序つき), &quot;by_status&quot;: {status: n}, &quot;categories&quot;: [...] (件数の多い順), &quot;by_category&quot;: {category: {status: n}}, &quot;table&quot;: [[category, n_reproduced, n_partial, n_pending, n_not_reproducible, total], ...]}</code>。</p>

@@ -4,6 +4,7 @@ dim: 3d
 category: sdf_csg
 in: coordgrid
 out: sdf
+gpu: なし
 examples: [gear_metrology, render_beauty, sdf_csg]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `coordgrid` → `sdf`
 - **呼び出し**: `import fullseye as fs; fs.ledger.box_sdf(grid, center, half_extents)` (実装を直接呼ぶなら `import sdf_ops; sdf_ops.box_sdf(grid, center, half_extents)`、台帳から引くなら `ops3d.get("box_sdf")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

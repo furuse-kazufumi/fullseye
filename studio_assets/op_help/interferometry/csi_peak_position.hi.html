@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">csi_peak_position — INTERFEROMETRY <code style="color:#22d3bf">locate</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">sweep</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.csi_peak_position(signal, z_step_um=0.05, z_start_um=0.0, wavelength_um=0.6, mode=&#x27;gaussian&#x27;, remove_bias=True, min_visibility=0.3, max_edge_envelope=0.05, carrier_tolerance=2.0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import interferometry; interferometry.csi_peak_position(signal, z_step_um=0.05, z_start_um=0.0, wavelength_um=0.6, mode=&#x27;gaussian&#x27;, remove_bias=True, min_visibility=0.3, max_edge_envelope=0.05, carrier_tolerance=2.0)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsinterferometry.get(&quot;csi_peak_position&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>एक z-scan से surface height: coherence envelope peak की स्थिति।</p>
 <p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>

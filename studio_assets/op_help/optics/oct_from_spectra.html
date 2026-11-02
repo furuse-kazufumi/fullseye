@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">oct_from_spectra — OPTICS <code style="color:#22d3bf">oct</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">matrix × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.oct_from_spectra(spectra, wavelength_nm, reference_spectrum=None, dark=None, center_nm=None, bandwidth_nm=None, x_um=None)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import octscan; octscan.oct_from_spectra(spectra, wavelength_nm, reference_spectrum=None, dark=None, center_nm=None, bandwidth_nm=None, x_um=None)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;oct_from_spectra&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>装置が記録した生のスペクトルを、この族の op が読む表にする(<code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">table</code>)。実機・公開データの入口。</p>
 <p><code style="color:#22d3bf">spectra</code>: (N,) の 1 本、または (W, N) の束(行 = A ライン)。<code style="color:#22d3bf">wavelength_nm</code>: (N,) の画素ごとの波長(分光器の較正。等間隔でなくてよい —— <code style="color:#22d3bf">oct_k_linearize</code> が k 等間隔に並べ直す)。<code style="color:#22d3bf">reference_spectrum</code>:</p>

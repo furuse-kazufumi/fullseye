@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">fly_lamina_filter — FLYVISION <code style="color:#22d3bf">lamina</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fly_lamina_filter(movie, dt_s, tau_adapt_s=0.2, tau_lp_s=0.02, mode=&#x27;divisive&#x27;, floor=0.001)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import flyvision; flyvision.fly_lamina_filter(movie, dt_s, tau_adapt_s=0.2, tau_lp_s=0.02, mode=&#x27;divisive&#x27;, floor=0.001)</code>、台帳から引くなら <code style="color:#22d3bf">opsflyvision.get(&quot;fly_lamina_filter&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Photoreceptor adaptation + the lamina&#x27;s band-pass: intensities in, contrast out.</p>
 <p>The first thing the optic lobe does to a picture is throw away its brightness. A photoreceptor adapts to the running mean light level and the large monopolar cells (L1/L2) report the *deviation* from it, so the same scene at dawn and at noon arrives at the motion detectors as the same signal. Two closed-form stages, in that order:</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">illumination_train — OPTICS <code style="color:#22d3bf">illumination</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.illumination_train(kind=&#x27;kohler&#x27;, source_mm=2.0, collector_f_mm=20.0, condenser_f_mm=10.0, field_stop_mm=6.0, aperture_stop_mm=6.0, source_distance_mm=30.0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import illumdesign; illumdesign.illumination_train(kind=&#x27;kohler&#x27;, source_mm=2.0, collector_f_mm=20.0, condenser_f_mm=10.0, field_stop_mm=6.0, aperture_stop_mm=6.0, source_distance_mm=30.0)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;illumination_train&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>A microscope illumination train (<code style="color:#22d3bf">kohler</code> or <code style="color:#22d3bf">critical</code>) laid out paraxially (<code style="color:#22d3bf">table</code>).</p>
 <p>Planes along the axis (thin lenses, distances in mm, z = 0 at the source):</p>

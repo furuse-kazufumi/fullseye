@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">gmsd — IMGMETRICS <code style="color:#22d3bf">perceptual</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gmsd(ref, dist, data_range: &#x27;float&#x27; = 255.0, c: &#x27;float&#x27; = 170.0) -&gt; &#x27;float&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import iqafsim; iqafsim.gmsd(ref, dist, data_range: &#x27;float&#x27; = 255.0, c: &#x27;float&#x27; = 170.0) -&gt; &#x27;float&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsimgmetrics.get(&quot;gmsd&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>GMSD = GMS 맵의 표준편차(N−1, 원 구현의 <code style="color:#22d3bf">std2</code>, 논문 식 5). 0 = 동일, 클수록 열화가 큼(<b>낮을수록 좋음</b> —— MOS와의 순위 상관은 음수이며 공표 표에는 |ρ|가 실린다: TID2013 전체 |SROCC| 0.8038, 2차 자료 0.8044). 입력은 (H, W) 또는 (H, W, 3)(3채널이면 Y). <code style="color:#22d3bf">iqatid.tid2013_evaluate(root, gmsd, luma=&quot;rgb&quot;)</code>. <b>Raises</b> <code style="color:#22d3bf">ValueError</code>: <code style="color:#22d3bf">gmsd_map</code>과 같은 경우, 또는 맵이 1픽셀(분산이 정의되지 않음).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>

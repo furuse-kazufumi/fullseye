@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">plate_mesh_from_image — DRIVE <code style="color:#22d3bf">roadjp</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">rgba</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.plate_mesh_from_image(rgba, width: &#x27;float&#x27;, height: &#x27;float&#x27;, *, cell: &#x27;int&#x27; = 4, thickness: &#x27;float&#x27; = 0.004, back_color=(0.55, 0.55, 0.55), label: &#x27;int&#x27; = 4) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import roadjp; roadjp.plate_mesh_from_image(rgba, width: &#x27;float&#x27;, height: &#x27;float&#x27;, *, cell: &#x27;int&#x27; = 4, thickness: &#x27;float&#x27; = 0.004, back_color=(0.55, 0.55, 0.55), label: &#x27;int&#x27; = 4) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;plate_mesh_from_image&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>RGBA 画像を、面の色を持つ薄い板のメッシュにする。</p>
 <p>画像を <code style="color:#22d3bf">cell × cell</code> 画素の区画に切り、alpha の平均が 0.5 以上の区画だけを面にする(2 三角形)。面の色 = その区画の alpha で重みづけた平均色 <code style="color:#22d3bf">Σ(α·rgb) / Σα</code>。表面の法線 = <b>−x</b>(yaw 0 で +x へ進んで来る車に向く)、裏面は同じ形で <code style="color:#22d3bf">back_color</code>(法線 +x)。原点 = 板の中心、板は y-z 平面(画像の左 = +y、上 = +z)、厚さ <code style="color:#22d3bf">thickness</code> を x の ±半分に振る。使われない頂点は残さない(寸法を頂点から測れるように)。</p>

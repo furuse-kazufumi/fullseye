@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">removal_depth_from_heights — DRIVE <code style="color:#22d3bf">polish</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.removal_depth_from_heights(z_before, z_after, ref_mask=None, frame: &#x27;float&#x27; = 0.1) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import polish; polish.removal_depth_from_heights(z_before, z_after, ref_mask=None, frame: &#x27;float&#x27; = 0.1) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;removal_depth_from_heights&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由抛光前后的高度图(须位于同一网格)求出的去除深度 [高度单位，正 = 被去除]。由于重新装夹会改变抛光后图的倾斜和高度，对差值 z_before − z_after 在“未接触区域”(<code style="color:#22d3bf">ref_mask</code>，未给出时为外周比例 <code style="color:#22d3bf">frame</code> 的边框)上用最小二乘拟合平面并减去。<b>Raises</b> ValueError：形状不同、非 2-D 或非有限，参考像素少于 3，frame 在 (0, 0.5) 之外。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

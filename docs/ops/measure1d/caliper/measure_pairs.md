@@ -4,6 +4,7 @@ dim: measure1d
 category: caliper
 in: image2d × measurehandle
 out: table
+gpu: なし
 examples: [example_scratch_width, poc_calipers_under_illusion, poc_dimensional_inspection, poc_weld_radiograph_porosity]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d × measurehandle` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.measure_pairs(image, measure, sigma=1.0, threshold=0.1)` (実装を直接呼ぶなら `import measuring1d; measuring1d.measure_pairs(image, measure, sigma=1.0, threshold=0.1)`、台帳から引くなら `opsmeasure1d.get("measure_pairs")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

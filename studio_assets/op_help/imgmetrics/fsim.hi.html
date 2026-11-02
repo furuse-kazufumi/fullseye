@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">fsim — IMGMETRICS <code style="color:#22d3bf">perceptual</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fsim(ref, dist, data_range: &#x27;float&#x27; = 255.0) -&gt; &#x27;float&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import iqafsim; iqafsim.fsim(ref, dist, data_range: &#x27;float&#x27; = 255.0) -&gt; &#x27;float&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsimgmetrics.get(&quot;fsim&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>FSIM (केवल luminance, 1 = समान, <b>higher is better</b>)। TID2013 की FSIM.txt से 4 अंकों तक मेल तब होता है जब <b>Y′ limited grayscale image</b> दी जाए (<code style="color:#22d3bf">iqatid.tid2013_evaluate(root, fsim, luma=&quot;limited_u8&quot;)</code>, 3,000 जोड़े, max |अंतर| 5.0e-5)। विवरण <code style="color:#22d3bf">fsim_pair</code>।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">insertion_grid_summary — DRIVE <code style="color:#22d3bf">pegsim</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.insertion_grid_summary(rows) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import pegsim; pegsim.insertion_grid_summary(rows) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;insertion_grid_summary&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>सफलता दर के grid को जोड़ता है: rows {eps_mm, tilt_deg, correct, success} से, सुधार के साथ/बिना × ε₀ × θ₀ की सफलता दर की table, और &quot;बिना सुधार के सब सफल होने वाला सबसे बड़ा ε₀&quot; तथा &quot;सुधार के साथ सफलताएँ / कुल&quot;।</p>
 <p>वापसी: <code style="color:#22d3bf">eps_mm</code>, <code style="color:#22d3bf">tilt_deg</code> (अक्ष), <code style="color:#22d3bf">rate</code>: {False: (n_eps, n_tilt) का array, True: वही}, <code style="color:#22d3bf">n_runs</code>, <code style="color:#22d3bf">max_eps_all_ok</code>:</p>

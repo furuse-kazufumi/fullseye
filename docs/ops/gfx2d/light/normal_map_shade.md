@@ -4,6 +4,7 @@ dim: gfx2d
 category: light
 in: normalmap
 out: rgb
+gpu: なし
 examples: [gfx2d_scene]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `normalmap` → `rgb`
 - **呼び出し**: `import fullseye as fs; fs.ledger.normal_map_shade(normals, light_dir=(0.0, 0.0, 1.0), ambient=0.1, diffuse='reference', specular=0.0, shininess=32.0, view_dir=(0.0, 0.0, 1.0), scheme='okabe_ito')` (実装を直接呼ぶなら `import gfx2d; gfx2d.normal_map_shade(normals, light_dir=(0.0, 0.0, 1.0), ambient=0.1, diffuse='reference', specular=0.0, shininess=32.0, view_dir=(0.0, 0.0, 1.0), scheme='okabe_ito')`、台帳から引くなら `opsgfx2d.get("normal_map_shade")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

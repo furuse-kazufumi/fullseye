@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">distance_peaks — SEGMENTATION <code style="color:#22d3bf">watershed3d</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">labels</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.distance_peaks(binary, min_distance: &#x27;float&#x27; = 1.0) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import watershed3d; watershed3d.distance_peaks(binary, min_distance: &#x27;float&#x27; = 1.0) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opssegmentation.get(&quot;distance_peaks&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>foreground distance transform के local maxima को <code style="color:#22d3bf">min_distance</code> NMS से छाँटकर बना int marker array लौटाता है।</p>
 <p><code style="color:#22d3bf">volops.vol_distance_transform</code> + <code style="color:#22d3bf">volops.vol_local_maxima</code> की पतली composition, और उसमें &quot;maxima coordinates → label array (1 object पर 1 seed)&quot; की post-processing जोड़ी गई है (<code style="color:#22d3bf">watershed_vol</code> जिस seed generation को भीतर इस्तेमाल करता है उसे अलग से उपलब्ध कराता है = visualisation और जाँच के लिए)।</p>

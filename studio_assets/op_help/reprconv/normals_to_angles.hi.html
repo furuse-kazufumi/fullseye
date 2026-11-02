@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">normals_to_angles — REPRCONV <code style="color:#22d3bf">direction</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">normals</code> → <code style="color:#22d3bf">pairs</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.normals_to_angles(normals)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import reprconv; reprconv.normals_to_angles(normals)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsreprconv.get(&quot;normals_to_angles&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>normal <code style="color:#22d3bf">(N,3)</code> → azimuth/elevation जोड़े <code style="color:#22d3bf">(N,2)</code> <b>[degree]</b> में। <code style="color:#22d3bf">normals</code> से निकास।</p>
 <p><code style="color:#22d3bf">az = atan2(c1, c0)</code> को axis0-axis1 plane में azimuth, और <code style="color:#22d3bf">el = asin(c2/|v|)</code> को axis 2 से elevation माना जाता है। <b>x/y/z के बजाय &quot;axis 0/1/2&quot; से परिभाषित किया गया है</b>, क्योंकि इस repo में (z,y,x) क्रम वाले point cloud और (x,y,z) क्रम वाले point cloud दोनों हैं -- नाम से लिखने पर, अर्थ इस पर निर्भर हो जाता कि दिया गया array किस परंपरा का है।</p>

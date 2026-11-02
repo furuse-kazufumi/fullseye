@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">abel_inverse_image — MATH <code style="color:#22d3bf">transform</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.abel_inverse_image(image, dr: &#x27;float&#x27; = 1.0, *, center: &#x27;float | None&#x27; = None, method: &#x27;str&#x27; = &#x27;onion&#x27;) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import mathtransforms; mathtransforms.abel_inverse_image(image, dr: &#x27;float&#x27; = 1.0, *, center: &#x27;float | None&#x27; = None, method: &#x27;str&#x27; = &#x27;onion&#x27;) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsmath.get(&quot;abel_inverse_image&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>軸対称な物体を横から撮った<b>画像</b>(縦 = 対称軸の向き、横 = 軸からの距離)を、行ごとに逆 Abel して断面画像にする。</p>
 <p>炎・プラズマ・噴流の写真は、奥行き方向に足し合わさった投影しか写らない。各行を中心列で左右に分け、2 つの半分を平均してから(左右の非対称を均す)逆 Abel する。<code style="color:#22d3bf">center</code> は対称軸の列(既定 = 明るさの重心、行ごとではなく画像全体で 1 本)。返り値 <code style="color:#22d3bf">{&quot;slice&quot;, &quot;center&quot;, &quot;asymmetry&quot;}</code> —— slice は (H, R+1) の f(z, r)、asymmetry は左右の半分の差の大きさ(0 に近いほど軸対称の仮定が成り立つ)。</p>

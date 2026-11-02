@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">measure_with — IMGMETRICS <code style="color:#22d3bf">report</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">metrics × image2d × image2d</code> → <code style="color:#22d3bf">metrics</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.measure_with(report, a, b, ms=False)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import imgmetrics; imgmetrics.measure_with(report, a, b, ms=False)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsimgmetrics.get(&quot;measure_with&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p><b>직전 측정과 정확히 같은 조건으로</b> 다른 한 쌍을 잽니다.</p>
 <p>: func :compare_images의 반환 값 (contract 포함)을 받고 거기에기록된 data_range / bins / ncd_levels를 그대로 사용해 재측정한다.</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">data_range_of — IMGMETRICS <code style="color:#22d3bf">report</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.data_range_of(*arrays, data_range=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import imgmetrics; imgmetrics.data_range_of(*arrays, data_range=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsimgmetrics.get(&quot;data_range_of&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>pixel मान किस दायरे में हो सकते हैं, यह तय करता है। <b>अनुमान नहीं लगाता</b>।</p>
 <p>integer dtype के लिए यह dtype से ही अद्वितीय रूप से तय होता है। float को तभी 1.0 माना जाता है जब वह <code style="color:#22d3bf">[0, 1]</code> में हो, अन्यथा <code style="color:#22d3bf">data_range</code> स्पष्ट देना आवश्यक है।</p>

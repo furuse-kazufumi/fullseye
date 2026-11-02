@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">glass_map — OPTICS <code style="color:#22d3bf">matprop</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.glass_map(material_class: &#x27;str&#x27; = None) -&gt; &#x27;list&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import materials; materials.glass_map(material_class: &#x27;str&#x27; = None) -&gt; &#x27;list&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;glass_map&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Abbe 図(V_d 対 n_d)の点の列: 可視で透明な材料ごとに name / class / nd / vd / PgF。</p>
 <p>金属など d 線で吸収する材料、F〜C 線をデータが覆わない材料は載せない。<code style="color:#22d3bf">material_class</code> で分類に絞る(None は全部)。返り値は dict の列(<code style="color:#22d3bf">table</code>)。</p>

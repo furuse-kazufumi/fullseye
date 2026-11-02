@@ -4,6 +4,7 @@ dim: optics
 category: scene
 in: rgbimage
 out: rgbimage
+gpu: なし
 examples: [vision_layout_from_catalog]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `rgbimage` → `rgbimage`
 - **呼び出し**: `import fullseye as fs; fs.ledger.sensor_capture(radiance, exposure_ms: 'float' = 10.0, gain_e_per_unit: 'float' = 50000.0, read_noise_e: 'float' = 2.5, full_well_e: 'float' = 10000.0, bit_depth: 'int' = 8, seed: 'int' = 0) -> 'np.ndarray'` (実装を直接呼ぶなら `import optscene; optscene.sensor_capture(radiance, exposure_ms: 'float' = 10.0, gain_e_per_unit: 'float' = 50000.0, read_noise_e: 'float' = 2.5, full_well_e: 'float' = 10000.0, bit_depth: 'int' = 8, seed: 'int' = 0) -> 'np.ndarray'`、台帳から引くなら `opsoptics.get("sensor_capture")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

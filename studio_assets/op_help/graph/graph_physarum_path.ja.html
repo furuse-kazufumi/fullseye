@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">graph_physarum_path — GRAPH <code style="color:#22d3bf">flow</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graph_physarum_path(lengths, source=0, sink=None, dt=0.1, max_iters=5000, tol=1e-06, frac=0.5)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import physarum_search; physarum_search.graph_physarum_path(lengths, source=0, sink=None, dt=0.1, max_iters=5000, tol=1e-06, frac=0.5)</code>、台帳から引くなら <code style="color:#22d3bf">opsgraph.get(&quot;graph_physarum_path&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>粘菌(Tero 2010)の管の力学で重み付きグラフの最短路を解く: 単位流量を流し、各管の導電度を |流量| へ寄せる。最短路が一意なら導電度はその指示関数に収束する(Bonifaci 2012)。導電度・流量の行列、道、道の長さ、流れの長さを返す。</p>
 <p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>

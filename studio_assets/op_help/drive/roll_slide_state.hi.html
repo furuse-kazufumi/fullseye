@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">roll_slide_state — DRIVE <code style="color:#22d3bf">ball</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.roll_slide_state(v_t, omega, normal, bp: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import ballistics; ballistics.roll_slide_state(v_t, omega, normal, bp: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;roll_slide_state&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>plane पर गोला लुढ़क रहा है या फिसल रहा है: contact बिंदु की slip velocity s = v_t − r(ω × n)। <code style="color:#22d3bf">{&quot;slip_speed&quot;, &quot;rolling&quot;}</code> (|s| &lt; 1e-9 हो तो rolling)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

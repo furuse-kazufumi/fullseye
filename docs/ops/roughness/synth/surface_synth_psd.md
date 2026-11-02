@@ -4,6 +4,7 @@ dim: roughness
 category: synth
 in: 
 out: depth
+gpu: なし
 examples: [poc_polish_wipe_measure, poc_surface_roughness]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -16,6 +17,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **呼び出し**: `import fullseye as fs; fs.ledger.surface_synth_psd(n, dx, hurst, lambda_lo, lambda_hi, sq, seed=0)` (実装を直接呼ぶなら `import roughness; roughness.surface_synth_psd(n, dx, hurst, lambda_lo, lambda_hi, sq, seed=0)`、台帳から引くなら `opsroughness.get("surface_synth_psd")`)
 - **台帳経由の戻り値**: `fullseye.ledger.surface_synth_psd(...)` は**宣言 out 型 `depth` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.surface_synth_psd.raw(...)`、または `roughness.surface_synth_psd` を直接呼ぶ。
   - 本体の返り: `(z, sq_analytic)`
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

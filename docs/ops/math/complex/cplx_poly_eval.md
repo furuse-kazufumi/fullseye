@@ -4,6 +4,7 @@ dim: math
 category: complex
 in: signal × cpoints
 out: cpoints
+gpu: なし
 examples: [math_complex]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal × cpoints` → `cpoints`
 - **呼び出し**: `import fullseye as fs; fs.ledger.cplx_poly_eval(coeffs, z)` (実装を直接呼ぶなら `import mathops; mathops.cplx_poly_eval(coeffs, z)`、台帳から引くなら `opsmath.get("cplx_poly_eval")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

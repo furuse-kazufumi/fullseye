@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">string_tension_from_sag — DRIVE <code style="color:#22d3bf">diabolo</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">signal × signal × signal × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.string_tension_from_sag(p_left, p_right, p_diabolo, mass: &#x27;float&#x27;, *, accel=None, g: &#x27;float&#x27; = 9.81) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import diabolo; diabolo.string_tension_from_sag(p_left, p_right, p_diabolo, mass: &#x27;float&#x27;, *, accel=None, g: &#x27;float&#x27; = 9.81) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;string_tension_from_sag&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>糸の V 字(棒の先 2 点と軸の位置)から張力を出す(摩擦のない滑車 = 両側の張力が等しい)。</p>
 <p>T (û_L + û_R) = m (a − g⃗) の最小二乗: T = m (a − g⃗)·n / |n|²、n = û_L + û_R(û は軸 → 棒の単位ベクトル)。静止(accel = None) なら T = m g / (sin α_L + sin α_R)(α = 糸の水平からの角)と同じ。残差(釣り合いの破れ)も返す —— 大きければ「加速度の入れ忘れ / 摩擦 / 弾性」の警報。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 形、質量 ≤ 0、軸が棒と重なる。</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">town_centerline — DRIVE <code style="color:#22d3bf">town</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.town_centerline(layout, step: &#x27;float&#x27; = 0.5) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import drivetown; drivetown.town_centerline(layout, step: &#x27;float&#x27; = 0.5) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;town_centerline&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Tastet die verkettete Mittellinie alle <code style="color:#22d3bf">step</code> Bogenlänge ab → <code style="color:#22d3bf">(N, 4) = (s, x, y, yaw)</code> (der Endpunkt ist stets enthalten).</p>
 <p>Gate: Auf geraden Abschnitten ist der Abstand benachbarter Punkte exakt step, Start = entry des ersten Elements, Ende = exit des letzten Elements.</p>

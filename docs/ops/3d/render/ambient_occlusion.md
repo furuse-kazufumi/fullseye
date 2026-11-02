@@ -4,6 +4,7 @@ dim: 3d
 category: render
 in: mesh
 out: image2d
+gpu: なし
 examples: [render_ao]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `mesh` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.ambient_occlusion(V, F, pose=None, intrinsics=None, width: 'int' = 256, height: 'int' = 256, n_dirs: 'int' = 64, max_dist: 'float | None' = None, k: 'int' = 3, background: 'float' = 1.0, method: 'str' = 'auto') -> 'np.ndarray'` (実装を直接呼ぶなら `import render_ao; render_ao.ambient_occlusion(V, F, pose=None, intrinsics=None, width: 'int' = 256, height: 'int' = 256, n_dirs: 'int' = 64, max_dist: 'float | None' = None, k: 'int' = 3, background: 'float' = 1.0, method: 'str' = 'auto') -> 'np.ndarray'`、台帳から引くなら `ops3d.get("ambient_occlusion")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

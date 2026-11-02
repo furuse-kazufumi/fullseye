@@ -4,6 +4,7 @@ dim: drive
 category: cutting
 in: scalar × scalar × scalar × scalar
 out: scalar
+gpu: なし
 examples: [poc_food_cutting_measure, poc_knife_tactile_toughness]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `scalar × scalar × scalar × scalar` → `scalar`
 - **呼び出し**: `import fullseye as fs; fs.ledger.food_cut_width(theta_deg: 'float', edge_z_at_xc: 'float', food_w: 'float', food_top: 'float') -> 'float'` (実装を直接呼ぶなら `import cutting; cutting.food_cut_width(theta_deg: 'float', edge_z_at_xc: 'float', food_w: 'float', food_top: 'float') -> 'float'`、台帳から引くなら `opsdrive.get("food_cut_width")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

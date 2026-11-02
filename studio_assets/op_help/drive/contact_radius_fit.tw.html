@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">contact_radius_fit — DRIVE <code style="color:#22d3bf">tacsim</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">normalmap × matrix × matrix × scalar × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.contact_radius_fit(normals, X, Y, R: &#x27;float&#x27;, pitch: &#x27;float&#x27;, centre_xy=None) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import tacsim; tacsim.contact_radius_fit(normals, X, Y, R: &#x27;float&#x27;, pitch: &#x27;float&#x27;, centre_xy=None) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;contact_radius_fit&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>將 Hertz 斜率模型 dh/dr(r; a) 以 1 個參數 a 擬合到法線場的<b>徑向斜率分布</b>，讀取接觸半徑。</p>
 <p>模型: 內側 r/R,外側 (2/πR)[r arcsin(a/r) − a √(1 − a²/r²)] (推導,於 r = a 處連續到 a/R)。由於不經過高度積分, 不受 FFT 積分的振幅衰減、有限視窗的遠場、高度基準(偏移)影響。a 在 [0.2, 3] × 粗略初值的格點上最小化 SSE (以 bin 的個數加權),再以拋物線細化到次格點。<code style="color:#22d3bf">centre_xy</code> 為 (x, y)[m],省略時從法線積分高度求重心。</p>

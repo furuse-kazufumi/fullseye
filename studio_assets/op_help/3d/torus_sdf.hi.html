@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">torus_sdf — 3D <code style="color:#22d3bf">sdf_csg</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">coordgrid</code> → <code style="color:#22d3bf">sdf</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.torus_sdf(grid, center, axis, major_radius, minor_radius)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import sdf_ops; sdf_ops.torus_sdf(grid, center, axis, major_radius, minor_radius)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;torus_sdf&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>torus (doughnut) का <b>exact</b> signed distance field (अंदर ऋणात्मक, बाहर धनात्मक)।</p>
 <p><code style="color:#22d3bf">sdf(p) = ‖(r - major_radius, t)‖ - minor_radius</code> (<code style="color:#22d3bf">r</code> axis से radius है, <code style="color:#22d3bf">t</code> axial दूरी)। core line radius <code style="color:#22d3bf">major_radius</code> का circle है और उसके चारों ओर radius <code style="color:#22d3bf">minor_radius</code> की tube लगी है, इसलिए इसे सीधे <b>fillet (अंदरूनी कोने की गोलाई) के analytic रूप</b> में उपयोग कर सकते हैं।</p>

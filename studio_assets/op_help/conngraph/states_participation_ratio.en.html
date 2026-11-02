@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">states_participation_ratio — CONNGRAPH <code style="color:#22d3bf">dimension</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.states_participation_ratio(X: &#x27;Any&#x27;) -&gt; &#x27;float&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import conngraph; conngraph.states_participation_ratio(X: &#x27;Any&#x27;) -&gt; &#x27;float&#x27;</code>; from the registry, <code style="color:#22d3bf">opsconngraph.get(&quot;states_participation_ratio&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p><b>Effective dimension</b> of the state sequence <code style="color:#22d3bf">X</code> (N, n) = participation ratio <code style="color:#22d3bf">PR = (Σλ)² / Σλ²</code> (λ are the eigenvalues of the covariance, Gao et al. 2017). It is n if all columns are independent with equal variance, and 1 if the states lie along 1 direction.</p>
 <p>It depends on the sample count N (when N is small, PR levels off at PR ≤ N), so align N when comparing. 0 for a constant (variance 0).</p>

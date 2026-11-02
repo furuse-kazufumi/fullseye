@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">strategy_attacker — DRIVE <code style="color:#22d3bf">racket</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.strategy_attacker(side: &#x27;int&#x27;, ctx: &#x27;dict&#x27;, rng) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import racket; racket.strategy_attacker(side: &#x27;int&#x27;, ctx: &#x27;dict&#x27;, rng) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;strategy_attacker&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>이기기 위한 타법: 상대 라켓에서 먼 모서리(좌우 끝, 앞뒤를 번갈아)로, 짧은 체공 시간으로. 스핀의 노림도 번갈아 바꿉니다. <code style="color:#22d3bf">ctx</code> = {&quot;opp_pos&quot; (3,), &quot;shot_index&quot;, &quot;tp&quot;}. 반환값 {&quot;target&quot; (x, y), &quot;T&quot;, &quot;spin&quot;}.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

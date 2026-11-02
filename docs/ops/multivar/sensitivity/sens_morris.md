@@ -4,6 +4,7 @@ dim: multivar
 category: sensitivity
 in: design × signal
 out: table
+gpu: なし
 examples: [sensitivity_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `design × signal` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.sens_morris(design=None, y=None, negligible=0.05) -> 'dict'` (実装を直接呼ぶなら `import sensitivity; sensitivity.sens_morris(design=None, y=None, negligible=0.05) -> 'dict'`、台帳から引くなら `opsmultivar.get("sens_morris")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -4,6 +4,7 @@ dim: drive
 category: pxrd
 in: any × table
 out: table
+gpu: なし
 examples: [poc_pxrd_phase_peel]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `any × table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.detector_two_theta(shape, geometry)` (実装を直接呼ぶなら `import pxrd; pxrd.detector_two_theta(shape, geometry)`、台帳から引くなら `opsdrive.get("detector_two_theta")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

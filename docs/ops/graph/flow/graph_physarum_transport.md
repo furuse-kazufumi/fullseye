@@ -4,6 +4,7 @@ dim: graph
 category: flow
 in: matrix × signal
 out: table
+gpu: なし
 examples: [poc_physarum_transport]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `matrix × signal` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.graph_physarum_transport(lengths, supply, dt=0.1, max_iters=5000, tol=1e-06, gap_tol=1e-06)` (実装を直接呼ぶなら `import physarum_search; physarum_search.graph_physarum_transport(lengths, supply, dt=0.1, max_iters=5000, tol=1e-06, gap_tol=1e-06)`、台帳から引くなら `opsgraph.get("graph_physarum_transport")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

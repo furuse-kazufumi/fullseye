@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">emva_photon_transfer — OPTICS <code style="color:#22d3bf">sensorchar</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.emva_photon_transfer(mu_y, var_y, mu_y_dark, var_y_dark, mu_y_sat)</code>(要直接调用实现,<code style="color:#22d3bf">import sensorchar; sensorchar.emva_photon_transfer(mu_y, var_y, mu_y_dark, var_y_dark, mu_y_sat)</code>;从台账取用则 <code style="color:#22d3bf">opsoptics.get(&quot;emva_photon_transfer&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由 photon transfer 曲线求出系统增益 K 与暗噪声 σ_d(式 50、53、54)。</p>
 <p>*mu_y*, *var_y*：各曝光档的平均与时间方差(<code style="color:#22d3bf">emva_pair_statistics</code> 的 <code style="color:#22d3bf">mu</code> 与 <code style="color:#22d3bf">var_temporal</code>)。*mu_y_dark*, *var_y_dark*：暗图像的同一量。*mu_y_sat*：饱和时的平均(在 0.1〜0.2 % 的像素达到最大值的曝光下测量)。</p>

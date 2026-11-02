@@ -4,6 +4,7 @@ dim: drive
 category: roadjp
 in: rgba
 out: table
+gpu: なし
 examples: [gallery_drive_japan_roads]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `rgba` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.plate_mesh_from_image(rgba, width: 'float', height: 'float', *, cell: 'int' = 4, thickness: 'float' = 0.004, back_color=(0.55, 0.55, 0.55), label: 'int' = 4) -> 'dict'` (実装を直接呼ぶなら `import roadjp; roadjp.plate_mesh_from_image(rgba, width: 'float', height: 'float', *, cell: 'int' = 4, thickness: 'float' = 0.004, back_color=(0.55, 0.55, 0.55), label: 'int' = 4) -> 'dict'`、台帳から引くなら `opsdrive.get("plate_mesh_from_image")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

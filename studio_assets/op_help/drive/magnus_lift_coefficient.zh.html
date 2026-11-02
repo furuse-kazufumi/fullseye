@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">magnus_lift_coefficient — DRIVE <code style="color:#22d3bf">ball</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.magnus_lift_coefficient(spin_ratio) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import ballistics; ballistics.magnus_lift_coefficient(spin_ratio) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;magnus_lift_coefficient&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由旋转比 S = rω/|v| 求升力系数 C_L = 1 / (2 + 1/S)(S → 0 时为 0，S → ∞ 时为 0.5；球类文献中广泛使用的经验式)。</p>
 <p>空输入(<code style="color:#22d3bf">spin_ratio</code> 为 0 个元素)会引发 <code style="color:#22d3bf">ValueError</code>。</p>

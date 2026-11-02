@@ -4,6 +4,7 @@ dim: spc
 category: msa
 in: table
 out: table
+gpu: なし
 examples: [poc_measurement_system_analysis, poc_weed_rice_ratio]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.msa_attribute_agreement(table, appraiser='appraiser', part='part', rating='rating')` (実装を直接呼ぶなら `import spc; spc.msa_attribute_agreement(table, appraiser='appraiser', part='part', rating='rating')`、台帳から引くなら `opsspc.get("msa_attribute_agreement")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

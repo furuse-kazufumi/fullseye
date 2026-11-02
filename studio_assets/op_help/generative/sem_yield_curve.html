@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">sem_yield_curve — GENERATIVE <code style="color:#22d3bf">sem</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sem_yield_curve(material=&#x27;SI&#x27;, energies_kev=None, *, n_electrons: &#x27;int&#x27; = 2000, seed: &#x27;int&#x27; = 0) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import sem; sem.sem_yield_curve(material=&#x27;SI&#x27;, energies_kev=None, *, n_electrons: &#x27;int&#x27; = 2000, seed: &#x27;int&#x27; = 0) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsgenerative.get(&quot;sem_yield_curve&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>加速電圧を振って η(E) と δ(E) を MC で出し、δ の形を普遍曲線と比べる。</p>
 <p>δ の山の位置 Emax は、山の周りの 3 点に log E の放物線を当てて求める。<code style="color:#22d3bf">universal</code> は Lin &amp; Joy 2005 の普遍曲線を、この MC の Emax・δmax で戻した値。<code style="color:#22d3bf">shape_rms</code> は E/Emax ∈ [0.25, 8] の点での δ/δmax と普遍曲線の差の RMS。</p>

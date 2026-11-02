@@ -4,6 +4,7 @@ dim: 3d
 category: mesh_process
 in: mesh
 out: mesh
+gpu: なし
 examples: [mesh_decimate, mesh_lod_download, mesh_resolution_demo]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `mesh` → `mesh`
 - **呼び出し**: `import fullseye as fs; fs.ledger.decimate_qem(V, F, target_faces, protect=None)` (実装を直接呼ぶなら `import meshrepair; meshrepair.decimate_qem(V, F, target_faces, protect=None)`、台帳から引くなら `ops3d.get("decimate_qem")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

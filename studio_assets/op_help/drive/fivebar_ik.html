@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">fivebar_ik — DRIVE <code style="color:#22d3bf">puck</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">signal × table</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fivebar_ik(E, link: &#x27;dict&#x27;, *, branch: &#x27;str&#x27; = &#x27;out&#x27;)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import puck; puck.fivebar_ik(E, link: &#x27;dict&#x27;, *, branch: &#x27;str&#x27; = &#x27;out&#x27;)</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;fivebar_ik&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>逆運動学: 先端 E → (q₁, q₂)。腕 i の肘 = 円(Aᵢ, l₁) ∩ 円(E, l₂)、&quot;out&quot; は肘が外側(腕 1 は −y 側、腕 2 は +y 側)、&quot;in&quot; はその逆。届かなければ <code style="color:#22d3bf">None</code>(fail-closed)。FK∘IK = 恒等になる領域が作業域(<code style="color:#22d3bf">fivebar_workspace</code>)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

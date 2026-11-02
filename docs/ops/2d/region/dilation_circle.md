@@ -5,6 +5,7 @@ category: region
 in: region
 out: region
 halcon: dilation_circle
+gpu: あり(dilation_circle)
 examples: [gallery2d_region, poc_focus_stacking]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -16,6 +17,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **データ種**: `region` → `region`
 - **呼び出し**: `fullseye.apply(img, "dilation_circle", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 - **HALCON 相当**: `dilation_circle`(意味・パラメータは HALCON リファレンスが参考になる)
+- **GPU**: あり(`dilation_circle`、`device="cuda"` で高速経路)
 
 ![dilation_circle: input → output](../../_fig/dilation_circle.png)
 

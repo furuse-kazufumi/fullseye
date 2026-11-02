@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">cr_feasible — DRIVE <code style="color:#22d3bf">commonroad</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cr_feasible(run, *, params=None, tol=(0.02, 0.02, 0.03)) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import drivecommonroad; drivecommonroad.cr_feasible(run, *, params=None, tol=(0.02, 0.02, 0.03)) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;cr_feasible&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Kinematic feasibility (a second (independent) implementation of the same idea as the grader&#x27;s <code style="color:#22d3bf">solution_feasible</code>).</p>
 <p>For each transition, <code style="color:#22d3bf">ks_step</code> is run from the recorded u, and it checks whether the next state has |Δx|, |Δy| &lt; tol[0], tol[1], |Δψ| &lt; tol[2], whether u is within limits (δ̇ ∈ [ddelta_min, ddelta_max], |a| ≤ a_max), and the friction circle a² + (v ψ̇)² ≤ a_max² (ψ̇ = v/l_wb tan δ).</p>

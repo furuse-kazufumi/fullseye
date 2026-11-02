@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">fit_plane_3d — 3D <code style="color:#22d3bf">geometry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">primitive</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fit_plane_3d(points)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import match3d; match3d.fit_plane_3d(points)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;fit_plane_3d&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>점군 → 최소제곱 평면(통과점=무게중심, 법선=최소 주축, 잔차 RMS). 반환값 (point, normal, resid).</p>
 <p><code style="color:#22d3bf">(N,3)</code> 점군(열 수가 3이 아니거나 3점 미만이면 ValueError)의 무게중심 <code style="color:#22d3bf">c</code>와 산포 행렬의 최소 고윳값의고유벡터를 법선으로 한다(직교 거리 제곱합을 최소화. <code style="color:#22d3bf">resid = sqrt(λ_min/N)</code> = 면으로부터의 직교거리의 RMS). <code style="color:#22d3bf">normal</code>은 단위 벡터이며 <b>부호는 임의</b>(바깥쪽을 향하게 하려면 시점이나 무게중심과의 관계로반전한다). 3점이면 정확히 지나는 면으로 resid=0(BLAS의 음의 반올림은 0으로 clamp). 점이 직선 형태(2번째 고윳값도 0)이면 법선은 부정. 이상값에 약하다(<code style="color:#22d3bf">ransac_plane</code> / <code style="color:#22d3bf">plane_segmentation</code>으로 먼저 인라이어를 취한다). 3-D 전용.</p>

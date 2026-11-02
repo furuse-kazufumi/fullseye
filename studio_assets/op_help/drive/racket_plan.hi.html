@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">racket_plan — DRIVE <code style="color:#22d3bf">racket</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.racket_plan(v_in, omega_in, v_out, bp: &#x27;dict&#x27;, rp: &#x27;dict&#x27;, refine: &#x27;int&#x27; = 8) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import racket; racket.racket_plan(v_in, omega_in, v_out, bp: &#x27;dict&#x27;, rp: &#x27;dict&#x27;, refine: &#x27;int&#x27; = 8) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;racket_plan&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>इच्छित v_out देने वाले racket का normal n और velocity v_r (normal की दिशा में)। friction 0 वाले closed form n ∝ v_out − v_in, v_r·n = |Δv|/(1+e) + v_in·n को प्रारंभिक मान लेकर, वास्तविक टक्कर (friction और spin सहित) से <code style="color:#22d3bf">refine</code> बार iterate करता है। return value <code style="color:#22d3bf">{&quot;normal&quot;, &quot;v_racket&quot;, &quot;v_out_actual&quot;, &quot;omega_out&quot;, &quot;residual&quot;}</code>। Δv ≈ 0 हो तो ValueError।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

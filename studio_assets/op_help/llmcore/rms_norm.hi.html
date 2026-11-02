@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">rms_norm — LLMCORE <code style="color:#22d3bf">prepare</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">tokens</code> → <code style="color:#22d3bf">tokens</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rms_norm(tokens, eps: &#x27;float&#x27; = 0.0, weight=None) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import llmcore; llmcore.rms_norm(tokens, eps: &#x27;float&#x27; = 0.0, weight=None) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsllmcore.get(&quot;rms_norm&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>RMS normalization → tokens। <b>default (eps=0, weight नहीं) में आउटपुट का RMS बिल्कुल 1 है</b>।</p>
 <p>Zhang और Sennrich 2019। LayerNorm में से mean घटाने वाला चरण हटाया गया रूप है; बचता है केवल &quot;हर row का norm बराबर करना&quot; -- इसलिए <b>RMS का 1 होना ही cross-check है</b> (measured 2.2e-16)। <code style="color:#22d3bf">eps</code> डालने पर यह 1 से हटता है। यही <code style="color:#22d3bf">eps</code> की क़ीमत है।</p>

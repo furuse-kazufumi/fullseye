@@ -4,6 +4,7 @@ dim: optics
 category: noncoaxial
 in: table
 out: image2d
+gpu: なし
 examples: [poc_noncoaxial_optics]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.ghost_image(system, coatings=None, field=None, size=128, extent_mm=None, rings=12, pixel_mm=None, log=True)` (実装を直接呼ぶなら `import raytrace3d; raytrace3d.ghost_image(system, coatings=None, field=None, size=128, extent_mm=None, rings=12, pixel_mm=None, log=True)`、台帳から引くなら `opsoptics.get("ghost_image")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

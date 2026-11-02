@@ -4,6 +4,7 @@ dim: printpath
 category: slice
 in: table
 out: table
+gpu: なし
 examples: [poc_one_stroke_epicycles, poc_print_layer_inspection]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.contours_to_gcode(contours: 'Any', z: 'float', layer: 'int' = 0, layer_mm: 'float' = 0.2, line_width_mm: 'float' = 0.4, filament_mm: 'float' = 1.75, feed_mm_min: 'float' = 1800.0) -> 'dict[str, np.ndarray]'` (実装を直接呼ぶなら `import printpath; printpath.contours_to_gcode(contours: 'Any', z: 'float', layer: 'int' = 0, layer_mm: 'float' = 0.2, line_width_mm: 'float' = 0.4, filament_mm: 'float' = 1.75, feed_mm_min: 'float' = 1800.0) -> 'dict[str, np.ndarray]'`、台帳から引くなら `opsprintpath.get("contours_to_gcode")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">optimize_pose_graph — 3D <code style="color:#22d3bf">pose_graph</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">pose</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.optimize_pose_graph(poses_init, edges, fix_first=True, max_iter=200)</code>(要直接调用实现,<code style="color:#22d3bf">import pose_graph; pose_graph.optimize_pose_graph(poses_init, edges, fix_first=True, max_iter=200)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;optimize_pose_graph&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由相对位姿约束 + 回环闭合优化全局位姿。→ dict{poses, rmse, cost}。</p>
 <p>对 poses_init (N,6)=[rvec|t] 的初始估计(含漂移)进行优化,使其满足 edges 的相对位姿约束。fix_first=True 时固定第一个节点以消除 gauge。</p>

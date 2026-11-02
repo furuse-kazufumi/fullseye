@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">foe_from_motion — DRIVE <code style="color:#22d3bf">ttc</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">matrix × matrix</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.foe_from_motion(K, T_rel) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import drivettc; drivettc.foe_from_motion(K, T_rel) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;foe_from_motion&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Pixel <code style="color:#22d3bf">(col, row)</code> of the focus of expansion (FoE): the projection at infinity of the translation <code style="color:#22d3bf">t</code> of the relative motion.</p>
 <p>If the rotation of <code style="color:#22d3bf">T_rel</code> is not identity, the FoE is undefined (<code style="color:#22d3bf">ValueError</code>). If the translation along the depth direction is 0 (pure sideways sliding), <code style="color:#22d3bf">(nan, nan)</code>.</p>

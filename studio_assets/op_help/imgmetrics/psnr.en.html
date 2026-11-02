@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">psnr — IMGMETRICS <code style="color:#22d3bf">fidelity</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.psnr(a, b, data_range=None)</code> (to call the implementation directly, <code style="color:#22d3bf">import imgmetrics; imgmetrics.psnr(a, b, data_range=None)</code>; from the registry, <code style="color:#22d3bf">opsimgmetrics.get(&quot;psnr&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Returns the peak signal-to-noise ratio (PSNR, in dB) of two images.</p>
 <p>For 2 perfectly identical images it returns <b><code style="color:#22d3bf">inf</code></b> (it does not add a small value to silently avoid division by 0 -- that would turn &quot;a very good match&quot; into a finite number and lie when you take an average).</p>

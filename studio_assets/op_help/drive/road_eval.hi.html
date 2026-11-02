@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">road_eval — DRIVE <code style="color:#22d3bf">long</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table × scalar</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.road_eval(road, l: &#x27;float&#x27;) -&gt; &#x27;Tuple[float, float, float]&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import drivelong; drivelong.road_eval(road, l: &#x27;float&#x27;) -&gt; &#x27;Tuple[float, float, float]&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;road_eval&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>सड़क के longitudinal profile को arc length l पर देखता है: (z, sin θ, cos θ)। <code style="color:#22d3bf">road</code> = None (समतल) / संख्या (स्थिर ढलान कोण θ [rad], z = l sin θ) / <code style="color:#22d3bf">road_profile</code> का dict। मोड़ के बिंदु पर अगले खंड का मान (right-continuous)।</p>
 <p>खाली इनपुट (<code style="color:#22d3bf">road</code> खाली dict) पर <code style="color:#22d3bf">ValueError</code> उठता है।</p>

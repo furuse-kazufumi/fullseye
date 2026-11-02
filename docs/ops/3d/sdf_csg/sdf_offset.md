@@ -4,6 +4,7 @@ dim: 3d
 category: sdf_csg
 in: sdf
 out: sdf
+gpu: なし
 examples: [sfm_recon]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `sdf` → `sdf`
 - **呼び出し**: `import fullseye as fs; fs.ledger.sdf_offset(sdf, r)` (実装を直接呼ぶなら `import sdf_ops; sdf_ops.sdf_offset(sdf, r)`、台帳から引くなら `ops3d.get("sdf_offset")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

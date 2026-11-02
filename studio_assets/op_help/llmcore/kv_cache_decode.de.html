@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">kv_cache_decode — LLMCORE <code style="color:#22d3bf">decode</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">tokens × tokens × tokens</code> → <code style="color:#22d3bf">tokens</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.kv_cache_decode(query_step, key_cache, value_cache, scale=None) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import llmcore; llmcore.kv_cache_decode(query_step, key_cache, value_cache, scale=None) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsllmcore.get(&quot;kv_cache_decode&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Inferenz, die nur um 1 Token voranschreitet (KV Cache) → tokens (1, dv).</p>
 <p>Unter einer kausalen Maske <b>bewegt ein Umschreiben der Zukunft die früheren Ausgaben um nicht einmal 1 Bit</b> (gemessen 0.0e+00), daher kann man die fertigen key/value aufbewahren und nur 1 Zeile berechnen — sequenziell Zeile für Zeile (1 pro Schritt) fortzuschreiten ergibt dasselbe wie die ganze Sequenz auf einmal (relative Abweichung 1.6e-16). Der Aufwand für 1 Schritt ist O(T d), gleich dem Gesamtaufwand O(T² d) verteilt auf T Schritte.</p>

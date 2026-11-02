@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">graph_betweenness — CONNGRAPH <code style="color:#22d3bf">stats</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">conn_graph</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graph_betweenness(W: &#x27;Any&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import conngraph; conngraph.graph_betweenness(W: &#x27;Any&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsconngraph.get(&quot;graph_betweenness&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>中介中心性(Brandes 2001，二值有向，不正規化)。每個節點一個值、長度為 n 的陣列。</p>
 <p>節點 v 的值 = Σ_{s≠v≠t} σ_st(v) / σ_st(最短路徑條數之比)。若二值結構對稱(所有邊都是雙向的),則作為無向圖把 (s, t) 和 (t, s) 記為 1 對並除以 2 —— 即無向星形(n 個)的中心為 (n−1)(n−2)/2、葉為 0 的教科書數值。若為有向(非對稱),則按有序對計數。</p>

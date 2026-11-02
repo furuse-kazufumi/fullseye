@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">principal_curvatures — 3D <code style="color:#22d3bf">curvature</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">curvature</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.principal_curvatures(points, k=25, normals=None, *, method=&#x27;exact&#x27;)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import curvature3d; curvature3d.principal_curvatures(points, k=25, normals=None, *, method=&#x27;exact&#x27;)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;principal_curvatures&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>각 점의 주곡률 (k1&gt;=k2). → (k1 (N,), k2 (N,)).</p>
 <p>normals(방향이 정해진 참조 법선, (N,3)) 미지정 시에는 볼록 측 크기(열린 면의 오목/볼록 부호는 부정). 방향이 정해진 법선을 넘기면 대역 방향에 정합하여 올바른 부호(오목=음, 볼록=양).</p>

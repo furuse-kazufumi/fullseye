@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">project_spherical — 3D <code style="color:#22d3bf">lidar_projection</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.project_spherical(points, h_res: &#x27;int&#x27; = 1024, v_res: &#x27;int&#x27; = 64, v_fov=(-25.0, 15.0)) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import spherical_proj; spherical_proj.project_spherical(points, h_res: &#x27;int&#x27; = 1024, v_res: &#x27;int&#x27; = 64, v_fov=(-25.0, 15.0)) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;project_spherical&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Project into the spherical range image of a spinning LiDAR (v_res, h_res). Empty cells are 0; nearer points win (minimum range).</p>
 <p>Drops each point into an azimuth (column) × elevation (row) bin and writes the range (slant distance) from the sensor origin. Points outside the elevation band v_fov=(v_min,v_max)[deg], at the origin (r=0), or with non-finite coordinates are dropped (honest drop). If empty or everything is dropped, an all-zero image is returned (= nothing is seen, honest).</p>

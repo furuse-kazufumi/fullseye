@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">annotate3d_project — 3D <code style="color:#22d3bf">annotate3d</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate3d_project(points, pose, K, depth=None, shape=None, occlusion_tol=0.01)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import annotate3d; annotate3d.annotate3d_project(points, pose, K, depth=None, shape=None, occlusion_tol=0.01)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;annotate3d_project&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>표(dict)를 돌려줍니다: 3-D 점의 화소 좌표·전방 거리·화면 내/가려짐 판정(<code style="color:#22d3bf">project_anchors</code>).</p>
 <p>그리기를 수반하지 않는 &quot;투영만&quot; 하는 op. annotate3d 의 모든 그리기 op 가 내부에서 쓰는 판정을그대로 표로 반환하므로, 자체 플롯·수치 검증·&quot;이 점이 보이는가&quot;의분기에 쓴다.</p>

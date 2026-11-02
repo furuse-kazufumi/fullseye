@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">cif_read — DRIVE <code style="color:#22d3bf">pxrd</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cif_read(cif, name=None, default_b=0.5)</code>(要直接呼叫實作,<code style="color:#22d3bf">import pxrd; pxrd.cif_read(cif, name=None, default_b=0.5)</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;cif_read&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>讀取 CIF(晶體結構的標準格式)，回傳展開到晶胞內全部原子的「物相」。</p>
 <p><code style="color:#22d3bf">cif</code> 為檔案路徑或 CIF 本文(字串。若含 <code style="color:#22d3bf">data_</code> 或 <code style="color:#22d3bf">_cell_length_a</code> 則視為本文)。</p>

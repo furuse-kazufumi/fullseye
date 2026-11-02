@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">comminution_law_fit — DRIVE <code style="color:#22d3bf">grind</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.comminution_law_fit(t, d, law: &#x27;str&#x27; = &#x27;all&#x27;) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import grind; grind.comminution_law_fit(t, d, law: &#x27;str&#x27; = &#x27;all&#x27;) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;comminution_law_fit&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>對粒徑隨時間的變化 <code style="color:#22d3bf">d(t)</code> 擬合粉碎定律(假定能量 ∝ <code style="color:#22d3bf">t</code>，見模組開頭)。誤差以 <b>log(粒徑)</b> 衡量。</p>
 <p><code style="color:#22d3bf">t</code>: 淨粉碎時間(代替能量,≥ 0),<code style="color:#22d3bf">d</code>: 該時點的代表粒徑 [µm] (D50 等)。獨立試行可在同一個 <code style="color:#22d3bf">t</code> 排列多個。</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">foe_from_motion — DRIVE <code style="color:#22d3bf">ttc</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">matrix × matrix</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.foe_from_motion(K, T_rel) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivettc; drivettc.foe_from_motion(K, T_rel) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;foe_from_motion&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>확장 초점(FoE)의 화소 <code style="color:#22d3bf">(col, row)</code>: 상대 운동의 병진 <code style="color:#22d3bf">t</code>를 무한원에서 투영한 점.</p>
 <p><code style="color:#22d3bf">T_rel</code> 의 회전이 단위가 아니면 FoE 는 정의되지 않는다(<code style="color:#22d3bf">ValueError</code>). 깊이 방향의 병진이 0(순수한 옆미끄럼)이면 <code style="color:#22d3bf">(nan, nan)</code>.</p>

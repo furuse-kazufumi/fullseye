@@ -4,6 +4,7 @@ dim: drive
 category: granular
 in: scalar
 out: table
+gpu: なし
 examples: [poc_granular_heap_repose]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `scalar` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.powder_flowability_class(phi_deg: 'float') -> 'dict'` (実装を直接呼ぶなら `import granular; granular.powder_flowability_class(phi_deg: 'float') -> 'dict'`、台帳から引くなら `opsdrive.get("powder_flowability_class")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

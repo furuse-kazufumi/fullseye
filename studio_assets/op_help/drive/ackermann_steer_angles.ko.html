@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">ackermann_steer_angles — DRIVE <code style="color:#22d3bf">lateral</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ackermann_steer_angles(radius, wheelbase: &#x27;float&#x27;, track: &#x27;float&#x27;) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivelateral; drivelateral.ackermann_steer_angles(radius, wheelbase: &#x27;float&#x27;, track: &#x27;float&#x27;) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;ackermann_steer_angles&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>애커먼의 내외륜 조향각(뒤차축 중심의 선회 반경 R, 휠베이스 L, 윤거 t).</p>
 <p>δ_in = atan(L/(R − t/2)), δ_out = atan(L/(R + t/2)), 2륜 등가 δ = atan(L/R). cot δ_out − cot δ_in = t/L.</p>

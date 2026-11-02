@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">text_candidates — TEXT <code style="color:#22d3bf">detect</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.text_candidates(swt, min_area: &#x27;int&#x27; = 8, max_var_ratio: &#x27;float&#x27; = 0.5, aspect_range=(0.1, 10.0), max_height: &#x27;int&#x27; = 300)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import textregion; textregion.text_candidates(swt, min_area: &#x27;int&#x27; = 8, max_var_ratio: &#x27;float&#x27; = 0.5, aspect_range=(0.1, 10.0), max_height: &#x27;int&#x27; = 300)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opstext.get(&quot;text_candidates&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>SWT의 연결 성분을 문자 후보로 좁힌다(폭의 편차·종횡비·크기).</p>
 <p>Epshtein 2010 §4 의 규칙: 성분 내 획 폭의 분산이 평균에 비해 작다 / 종횡비가 극단적이지 않다 / 너무 크지 않다. <code style="color:#22d3bf">swt</code> 는 <code style="color:#22d3bf">swt_map</code> 의 <code style="color:#22d3bf">swt</code>. 반환 dict: <code style="color:#22d3bf">boxes</code>(N×4 의 [y0, x0, y1, x1], 반열린 구간)/ <code style="color:#22d3bf">labels</code> / <code style="color:#22d3bf">stroke_width</code>(각 성분의 중앙값)/ <code style="color:#22d3bf">n_components</code>(거르기 전의 수).</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">spc_hotelling_t2 — SPC <code style="color:#22d3bf">multivariate</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.spc_hotelling_t2(data, alpha=0.0027, mean=None, cov=None)</code> (to call the implementation directly, <code style="color:#22d3bf">import spc; spc.spc_hotelling_t2(data, alpha=0.0027, mean=None, cov=None)</code>; from the registry, <code style="color:#22d3bf">opsspc.get(&quot;spc_hotelling_t2&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Multivariate SPC by Hotelling&#x27;s T² with an F-distributed control limit.</p>
 <p><code style="color:#22d3bf">data</code> is a 2-D array of shape <code style="color:#22d3bf">(m, p)</code> — <code style="color:#22d3bf">m</code> observations of <code style="color:#22d3bf">p</code> correlated features. With the sample mean vector <code style="color:#22d3bf">mu</code> and covariance <code style="color:#22d3bf">S</code> (unless passed in explicitly), each row&#x27;s statistic is::</p>

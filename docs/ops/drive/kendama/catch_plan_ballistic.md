@@ -4,6 +4,7 @@ dim: drive
 category: kendama
 in: table
 out: any
+gpu: なし
 examples: [gallery_drive_kendama_racket]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `any`
 - **呼び出し**: `import fullseye as fs; fs.ledger.catch_plan_ballistic(kp: 'dict', *, v_max: 'float' = 2.0, a_max: 'float' = 20.0, g: 'float' = None, v_target: 'float' = 0.5, v_rel_max: 'float' = 1.0, n_planes: 'int' = 12, plane_step: 'float' = 0.02, clearance: 'bool' = False, margin: 'float' = 0.002)` (実装を直接呼ぶなら `import kendama; kendama.catch_plan_ballistic(kp: 'dict', *, v_max: 'float' = 2.0, a_max: 'float' = 20.0, g: 'float' = None, v_target: 'float' = 0.5, v_rel_max: 'float' = 1.0, n_planes: 'int' = 12, plane_step: 'float' = 0.02, clearance: 'bool' = False, margin: 'float' = 0.002)`、台帳から引くなら `opsdrive.get("catch_plan_ballistic")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">fivebar_link — DRIVE <code style="color:#22d3bf">puck</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">table</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fivebar_link(*, d: &#x27;float&#x27; = 0.3, l1: &#x27;float&#x27; = 0.25, l2: &#x27;float&#x27; = 0.35, base=(-1.05, 0.0)) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import puck; puck.fivebar_link(*, d: &#x27;float&#x27; = 0.3, l1: &#x27;float&#x27; = 0.25, l2: &#x27;float&#x27; = 0.35, base=(-1.05, 0.0)) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;fivebar_link&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>planar 5-bar linkage (2-2 links वाली 2 arms के सिरे 1 बिंदु पर जुड़े): आधार A₁ = base + (0, −d/2), A₂ = base + (0, +d/2), proximal l₁, distal l₂, आगे = +x। संख्याएँ <b>मान्यता</b> हैं (IROS 2024 के असली hardware के माप मूल स्रोत में पढ़े नहीं गए)। return value dict (<code style="color:#22d3bf">table</code> sort)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

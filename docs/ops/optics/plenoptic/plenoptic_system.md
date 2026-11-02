@@ -4,6 +4,7 @@ dim: optics
 category: plenoptic
 in: table × table × table
 out: table
+gpu: なし
 examples: [plenoptic_capture_pipeline, poc_plenoptic_camera]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table × table × table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.plenoptic_system(main_lens, mla, sensor, *, kind='unfocused', mla_to_sensor_mm=None, main_to_mla_mm=None)` (実装を直接呼ぶなら `import plenoptic; plenoptic.plenoptic_system(main_lens, mla, sensor, *, kind='unfocused', mla_to_sensor_mm=None, main_to_mla_mm=None)`、台帳から引くなら `opsoptics.get("plenoptic_system")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

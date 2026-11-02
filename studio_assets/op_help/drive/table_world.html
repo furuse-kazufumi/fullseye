@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">table_world — DRIVE <code style="color:#22d3bf">ballworld</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.table_world(tp: &#x27;dict&#x27; = None, *, floor: &#x27;bool&#x27; = True, floor_size: &#x27;float&#x27; = 8.0) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import ballworld; ballworld.table_world(tp: &#x27;dict&#x27; = None, *, floor: &#x27;bool&#x27; = True, floor_size: &#x27;float&#x27; = 8.0) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;table_world&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>台(天板 + 白線 + ネット)と床の世界。原点 = 天板の中心、x = 長手(±1.37)、y = 幅(±0.7625)、z 上。天板の上面 z = height。</p>
 <p>空の入力(<code style="color:#22d3bf">tp</code> が空の dict)は ValueError。</p>

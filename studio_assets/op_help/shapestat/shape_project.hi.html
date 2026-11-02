@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">shape_project — SHAPESTAT <code style="color:#22d3bf">model</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">shapemodel × points</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.shape_project(model, shape, align: &#x27;bool&#x27; = True)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import shapestats; shapestats.shape_project(model, shape, align: &#x27;bool&#x27; = True)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsshapestat.get(&quot;shape_project&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>shape को model के coordinate (principal component score) में ले जाता है। → <code style="color:#22d3bf">(k,)</code>।</p>
 <p><code style="color:#22d3bf">align=True</code> होने पर पहले Procrustes से mean shape पर align किया जाता है। align किए बिना project करने पर position और orientation का अंतर scores में रिस जाता है, और <b>एक ही shape अलग individual जैसा दिखता है</b> ।</p>

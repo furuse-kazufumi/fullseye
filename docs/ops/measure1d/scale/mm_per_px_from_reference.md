@@ -4,6 +4,7 @@ dim: measure1d
 category: scale
 in: measurement
 out: measurement
+gpu: なし
 examples: [example_inner_diameter_mm, example_scratch_width]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `measurement` → `measurement`
 - **呼び出し**: `import fullseye as fs; fs.ledger.mm_per_px_from_reference(measured_px, known_mm)` (実装を直接呼ぶなら `import measuring1d; measuring1d.mm_per_px_from_reference(measured_px, known_mm)`、台帳から引くなら `opsmeasure1d.get("mm_per_px_from_reference")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

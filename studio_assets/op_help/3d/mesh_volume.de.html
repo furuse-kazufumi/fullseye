@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">mesh_volume — 3D <code style="color:#22d3bf">mesh_process</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">mesh</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mesh_volume(mesh) -&gt; &#x27;float&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import mesh_props; mesh_props.mesh_volume(mesh) -&gt; &#x27;float&#x27;</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;mesh_volume&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p><b>Vorzeichenbehaftetes Volumen</b>, das ein geschlossenes Dreiecksnetz einschließt → float.</p>
 <p>Nach dem Divergenzsatz (divergence theorem) gilt <code style="color:#22d3bf">V = (1/6)·Σ v0 · (v1 × v2)</code>. Ist der Umlauf der Flächen nach außen gerichtet (rechtshändig), ist das Ergebnis positiv, nach innen negativ -- <b>das Vorzeichen ist selbst die Orientierungsprüfung</b>: Kommt ein negativer Wert zurück, sind die Normalen umgedreht.</p>

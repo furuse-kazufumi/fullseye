@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">large_deformation_inverse — DRIVE <code style="color:#22d3bf">tacdome</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">scalar × scalar × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.large_deformation_inverse(a: &#x27;float&#x27;, L: &#x27;float&#x27;, lin: &#x27;dict&#x27;, reading: &#x27;str&#x27; = &#x27;derived&#x27;, tol: &#x27;float&#x27; = 1e-14) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import tacdome; tacdome.large_deformation_inverse(a: &#x27;float&#x27;, L: &#x27;float&#x27;, lin: &#x27;dict&#x27;, reading: &#x27;str&#x27; = &#x27;derived&#x27;, tol: &#x27;float&#x27; = 1e-14) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;large_deformation_inverse&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>मापी गई contact त्रिज्या a से indentation और बल उल्टा पढ़ता है (समीकरण 4 को d के लिए हल करके, फिर समीकरण 2 से बल)। sensor readout का मुख्य भाग।</p>
 <p>समतल सिरे के लिए बंद रूप d = 1 − (a0/a)²। अन्यथा a(d) = (a/a_L)(d)·D·(dL)^{1/p} d में एकदिष्ट वर्धमान है, इसलिए द्विभाजन विधि (सापेक्ष <code style="color:#22d3bf">tol</code>)।</p>

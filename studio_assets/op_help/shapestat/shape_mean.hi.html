@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">shape_mean — SHAPESTAT <code style="color:#22d3bf">procrustes</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">shapeset</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.shape_mean(shapes, max_iter: &#x27;int&#x27; = 100, tol: &#x27;float&#x27; = 1e-10, scaling: &#x27;bool&#x27; = True, reflection: &#x27;bool&#x27; = False)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import shapestats; shapestats.shape_mean(shapes, max_iter: &#x27;int&#x27; = 100, tol: &#x27;float&#x27; = 1e-10, scaling: &#x27;bool&#x27; = True, reflection: &#x27;bool&#x27; = False)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsshapestat.get(&quot;shape_mean&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>GPA से align करने के बाद औसत shape। → <code style="color:#22d3bf">(N, 3)</code>।</p>
 <p>★ <b>इसे raw mean (<code style="color:#22d3bf">shapes.mean(0)</code>) से न मिलाएँ</b> । position और orientation align किए बिना average करने पर, individuals जितने बिखरे हैं उतना shape सिकुड़ जाता है। पहले align करके फिर average करना ही &quot;mean shape&quot; है।</p>

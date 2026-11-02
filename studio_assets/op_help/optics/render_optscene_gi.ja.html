@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">render_optscene_gi — OPTICS <code style="color:#22d3bf">radiosity</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table × table × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.render_optscene_gi(scene, camera, lights, bounces=None, patch_mm=2.0, outer_mm=None, tol=1e-06, n_quad=3, supersample=1, study_bounces=8, study_tol=0.01)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import radiosity3d; radiosity3d.render_optscene_gi(scene, camera, lights, bounces=None, patch_mm=2.0, outer_mm=None, tol=1e-06, n_quad=3, supersample=1, study_bounces=8, study_tol=0.01)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;render_optscene_gi&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>相互反射つきの検査用の描画: <code style="color:#22d3bf">render_optscene</code> の測光に、Lambert のパッチ間の n 回反射(または収束解)を足す。</p>
 <p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>

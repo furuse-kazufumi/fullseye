@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">julian_day — DRIVE <code style="color:#22d3bf">env</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.julian_day(when) -&gt; &#x27;float&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import driveenv; driveenv.julian_day(when) -&gt; &#x27;float&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;julian_day&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>율리우스일(UT). <code style="color:#22d3bf">when</code> = 시간대가 있는 datetime(UTC로 변환) 또는 수(그대로 율리우스일).</p>
 <p>소박한(tzinfo 가 없는) datetime 은 <b>거부</b>한다(지방시와 UTC 를 혼동하면 태양이 9 시간 어긋난다).</p>

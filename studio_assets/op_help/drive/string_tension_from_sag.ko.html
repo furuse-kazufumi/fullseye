@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">string_tension_from_sag — DRIVE <code style="color:#22d3bf">diabolo</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">signal × signal × signal × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.string_tension_from_sag(p_left, p_right, p_diabolo, mass: &#x27;float&#x27;, *, accel=None, g: &#x27;float&#x27; = 9.81) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import diabolo; diabolo.string_tension_from_sag(p_left, p_right, p_diabolo, mass: &#x27;float&#x27;, *, accel=None, g: &#x27;float&#x27; = 9.81) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;string_tension_from_sag&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>끈의 V자(스틱 끝 2점과 축의 위치)로부터 장력을 구합니다(마찰 없는 도르래 = 양쪽 장력이 같음).</p>
 <p>T (û_L + û_R) = m (a − g⃗) 의 최소제곱: T = m (a − g⃗)·n / |n|², n = û_L + û_R(û 는 축 → 막대의 단위 벡터). 정지(accel = None) 라면 T = m g / (sin α_L + sin α_R)(α = 줄의 수평으로부터의 각)와 같다. 잔차(평형의 깨짐)도 반환한다 —— 크면 &quot;가속도 입력 누락 / 마찰 / 탄성&quot;의 경보. <b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 형상, 질량 ≤ 0, 축이 막대와 겹침.</p>

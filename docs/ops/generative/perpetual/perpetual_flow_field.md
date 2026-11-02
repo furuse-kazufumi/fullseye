@@ -4,6 +4,7 @@ dim: generative
 category: perpetual
 in: 
 out: rgb
+gpu: なし
 examples: [poc_illusions_and_perpetual_drawing]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `rgb`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.perpetual_flow_field(size: 'int' = 520, seed: 'int' = 0, lines: 'int' = 420, steps: 'int' = 150, scale: 'float' = 0.01) -> 'np.ndarray'` (実装を直接呼ぶなら `import perpetual; perpetual.perpetual_flow_field(size: 'int' = 520, seed: 'int' = 0, lines: 'int' = 420, steps: 'int' = 150, scale: 'float' = 0.01) -> 'np.ndarray'`、台帳から引くなら `opsgenerative.get("perpetual_flow_field")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

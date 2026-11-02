@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">normal_consistency — 3D <code style="color:#22d3bf">metrics</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points × normals</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.normal_consistency(points_a, normals_a, points_b, normals_b)</code> (to call the implementation directly, <code style="color:#22d3bf">import metrics3d; metrics3d.normal_consistency(points_a, normals_a, points_b, normals_b)</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;normal_consistency&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Normal agreement over nearest-neighbour correspondences = mean|cos(na, nb)| (orientation ignored). → [0,1]. 1 = perfect agreement.</p>
 <p>Raises ValueError: if a point cloud is empty or not (N,3), or the normals are not 1-to-1 with the points.</p>

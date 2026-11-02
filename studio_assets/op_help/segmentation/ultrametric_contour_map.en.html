@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">ultrametric_contour_map — SEGMENTATION <code style="color:#22d3bf">graph</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ultrametric_contour_map(image, *, mask=None, connectivity: &#x27;int&#x27; = 4, distance_matrix: &#x27;bool&#x27; = False) -&gt; &#x27;Dict[str, object]&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import seggraph; seggraph.ultrametric_contour_map(image, *, mask=None, connectivity: &#x27;int&#x27; = 4, distance_matrix: &#x27;bool&#x27; = False) -&gt; &#x27;Dict[str, object]&#x27;</code>; from the registry, <code style="color:#22d3bf">opssegmentation.get(&quot;ultrametric_contour_map&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Ultrametric contour map (UCM) of the dynamics hierarchy: the value between neighbouring pixels p, q = the smallest threshold at which p and q fall into the same region (ultrametric_contour_map).</p>
 <p>Edges inside a basin are 0; edges on the border between basins get the height at which the 2 basins meet in a 2nd Kruskal (merging the basin tree in ascending order of saliency).</p>

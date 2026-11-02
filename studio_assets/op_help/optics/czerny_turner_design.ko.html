@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">czerny_turner_design — OPTICS <code style="color:#22d3bf">spectrometer</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">table</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.czerny_turner_design(groove_density_per_mm=1200.0, wavelength_min_nm=500.0, wavelength_max_nm=750.0, incidence_deg=9.0, collimator_f_mm=52.083, detector_length_mm=28.672, collimator_offaxis_deg=6.5, order=1, camera_f_mm=None, n_curve=41)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import gratingspec; gratingspec.czerny_turner_design(groove_density_per_mm=1200.0, wavelength_min_nm=500.0, wavelength_max_nm=750.0, incidence_deg=9.0, collimator_f_mm=52.083, detector_length_mm=28.672, collimator_offaxis_deg=6.5, order=1, camera_f_mm=None, n_curve=41)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsoptics.get(&quot;czerny_turner_design&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>Czerny–Turner 분광기(평면 격자 + 오목거울 2장)의 1차 설계: 카메라 초점거리·코마를 없애는 거울 각·파장 사상.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>

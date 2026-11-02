@@ -3,6 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gcc_delay(a, b, rate=1.0, weight=&#x27;phat&#x27;, band=None, interpolate=True)</code>(要直接调用实现,<code style="color:#22d3bf">import acoustics; acoustics.gcc_delay(a, b, rate=1.0, weight=&#x27;phat&#x27;, band=None, interpolate=True)</code>;从台账取用则 <code style="color:#22d3bf">opsacoustics.get(&quot;gcc_delay&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>经台账调用的返回值</b>: <code style="color:#22d3bf">fullseye.ledger.gcc_delay(...)</code> 只返回<b>声明的 out 类型 <code style="color:#22d3bf">measurement</code> 的值</b>(底层函数还会返回辅助信息)。需要被丢弃的部分时,使用 <code style="color:#22d3bf">fullseye.ledger.gcc_delay.raw(...)</code>,或直接调用 <code style="color:#22d3bf">acoustics.gcc_delay</code>。</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用广义互相关(GCC)测量 2 个通道的<b>到达时间差</b>。→ <code style="color:#22d3bf">(delay, table)</code>。</p>
 <p>漏水定位、声源方向、超声壁厚、振动传播 —— 都取决于“同一个源何时到达 2 处” 之差。本 op 以<b>秒</b>(<code style="color:#22d3bf">rate</code> 为默认 1.0 时为采样点)返回该差。要换算成位置，乘以路径长与传播速度(<code style="color:#22d3bf">x = (L - c·delay) / 2</code> 的形式)。</p>

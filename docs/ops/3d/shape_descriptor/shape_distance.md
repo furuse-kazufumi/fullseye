@@ -4,6 +4,7 @@ dim: 3d
 category: shape_descriptor
 in: descriptor × descriptor
 out: measurement
+gpu: なし
 examples: [moment_invariants, shape_desc_pose, shape_retrieval]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `descriptor × descriptor` → `measurement`
 - **呼び出し**: `import fullseye as fs; fs.ledger.shape_distance(desc_a, desc_b, metric: 'str' = 'l1') -> 'float'` (実装を直接呼ぶなら `import descriptors3d; descriptors3d.shape_distance(desc_a, desc_b, metric: 'str' = 'l1') -> 'float'`、台帳から引くなら `ops3d.get("shape_distance")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

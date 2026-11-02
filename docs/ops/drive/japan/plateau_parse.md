@@ -4,6 +4,7 @@ dim: drive
 category: japan
 in: any
 out: table
+gpu: なし
 examples: [gallery_drive_city_terrain, poc_driving_japan_town]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `any` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.plateau_parse(source: 'str | Path | bytes', *, origin: 'tuple[float, float] | None' = None, max_buildings: 'int | None' = None) -> 'dict[str, Any]'` (実装を直接呼ぶなら `import driveplateau; driveplateau.plateau_parse(source: 'str | Path | bytes', *, origin: 'tuple[float, float] | None' = None, max_buildings: 'int | None' = None) -> 'dict[str, Any]'`、台帳から引くなら `opsdrive.get("plateau_parse")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">world_thin_structures — SEGMENTATION <code style="color:#22d3bf">world</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">無</code> → <code style="color:#22d3bf">table</code>(僅由參數決定的運算子 —— 不接受影像或資料輸入)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.world_thin_structures(seed: &#x27;int&#x27; = 0, *, size=(200, 200), n: &#x27;int&#x27; = 6, widths: &#x27;Sequence[float]&#x27; = (1.0, 2.0, 3.0), noise: &#x27;float&#x27; = 0.03) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import segworld; segworld.world_thin_structures(seed: &#x27;int&#x27; = 0, *, size=(200, 200), n: &#x27;int&#x27; = 6, widths: &#x27;Sequence[float]&#x27; = (1.0, 2.0, 3.0), noise: &#x27;float&#x27; = 0.03) -&gt; &#x27;Dict[str, object]&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opssegmentation.get(&quot;world_thin_structures&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>寬 1-3 px 的線（直線）與裂紋（折線）世界；真值 = 中心線與寬度（world_thin_structures）。</p>
 <p>結構 k 交替使用直線(2 點)與折線(7 點的隨機漫步),寬度依序使用 <code style="color:#22d3bf">widths</code>。像素到中心線的距離 ≤ w/2 則屬於結構。影像 = 明亮的背景(0.82 + 平緩的梯度)上,寬度越細越淡的暗線(w = 1: 0.5、2: 0.38、3: 0.26), 邊緣依距離抗鋸齒,輕微模糊 + 雜訊。</p>

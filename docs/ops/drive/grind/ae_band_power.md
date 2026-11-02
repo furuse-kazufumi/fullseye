@@ -4,6 +4,7 @@ dim: drive
 category: grind
 in: signal × scalar
 out: table
+gpu: なし
 examples: [poc_powder_grinding_ae]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal × scalar` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.ae_band_power(x, rate: 'float', f_lo: 'float' = 100000.0, f_hi: 'float' = 1000000.0, start: 'int' = 0, stop: 'int | None' = None, win: 'int' = 4096) -> 'dict'` (実装を直接呼ぶなら `import grind; grind.ae_band_power(x, rate: 'float', f_lo: 'float' = 100000.0, f_hi: 'float' = 1000000.0, start: 'int' = 0, stop: 'int | None' = None, win: 'int' = 4096) -> 'dict'`、台帳から引くなら `opsdrive.get("ae_band_power")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

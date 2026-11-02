@@ -4,6 +4,7 @@ dim: 3d
 category: shape_descriptor
 in: points
 out: descriptor
+gpu: なし
 examples: [shape_desc_pose]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `points` → `descriptor`
 - **呼び出し**: `import fullseye as fs; fs.ledger.a3_distribution(points, bins: 'int' = 64, samples: 'int' = 100000, seed: 'int' = 0) -> 'np.ndarray'` (実装を直接呼ぶなら `import descriptors3d; descriptors3d.a3_distribution(points, bins: 'int' = 64, samples: 'int' = 100000, seed: 'int' = 0) -> 'np.ndarray'`、台帳から引くなら `ops3d.get("a3_distribution")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

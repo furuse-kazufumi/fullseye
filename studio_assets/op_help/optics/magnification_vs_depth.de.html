@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">magnification_vs_depth — OPTICS <code style="color:#22d3bf">telecentric</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">pairs</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.magnification_vs_depth(system, field_mm=5.0, shift_min_mm=-2.0, shift_max_mm=2.0, n_points=21)</code> (die Implementierung direkt: <code style="color:#22d3bf">import telecentric; telecentric.magnification_vs_depth(system, field_mm=5.0, shift_min_mm=-2.0, shift_max_mm=2.0, n_points=21)</code>; aus dem Register: <code style="color:#22d3bf">opsoptics.get(&quot;magnification_vs_depth&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Abbildungsmaßstab m(Δz), wenn sich das Objekt entlang der Achse bewegt (feste Bildebene; Bildhöhe des realen Hauptstrahls durch Objekthöhe).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>

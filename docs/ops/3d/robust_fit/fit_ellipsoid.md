@@ -4,6 +4,7 @@ dim: 3d
 category: robust_fit
 in: points
 out: primitive
+gpu: なし
 examples: [fit_primitives_ext]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `points` → `primitive`
 - **呼び出し**: `import fullseye as fs; fs.ledger.fit_ellipsoid(points, chunk: 'int | None' = None) -> 'dict'` (実装を直接呼ぶなら `import fit_primitives_ext; fit_primitives_ext.fit_ellipsoid(points, chunk: 'int | None' = None) -> 'dict'`、台帳から引くなら `ops3d.get("fit_ellipsoid")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

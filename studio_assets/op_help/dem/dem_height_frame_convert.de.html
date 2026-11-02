@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">dem_height_frame_convert — DEM <code style="color:#22d3bf">geodesy</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_height_frame_convert(height_m, geoid_height_m, frm=&#x27;ellipsoidal&#x27;, to=&#x27;orthometric&#x27;)</code> (die Implementierung direkt: <code style="color:#22d3bf">import demops; demops.dem_height_frame_convert(height_m, geoid_height_m, frm=&#x27;ellipsoidal&#x27;, to=&#x27;orthometric&#x27;)</code>; aus dem Register: <code style="color:#22d3bf">opsdem.get(&quot;dem_height_frame_convert&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Wechselt den <b>Bezug</b> der Höhe: ellipsoidische Höhe <code style="color:#22d3bf">h</code> ↔ orthometrische Höhe <code style="color:#22d3bf">H</code> (<code style="color:#22d3bf">H = h - N</code>). <code style="color:#22d3bf">signal</code>.</p>
 <p>Unter demselben Wort &quot;Höhe&quot; kursieren 2 verschiedene Dinge, und beide landen ohne Exception auf der Karte. Dieser op <b>zwingt dazu, aufzuschreiben, von welcher in welche umgerechnet wird</b> —— es gibt Defaults, aber <code style="color:#22d3bf">frm</code> und <code style="color:#22d3bf">to</code> bleiben im Code stehen, nicht im Docstring.</p>

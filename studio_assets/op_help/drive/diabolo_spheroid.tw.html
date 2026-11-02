@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">diabolo_spheroid — DRIVE <code style="color:#22d3bf">diabolo</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">signal × signal × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.diabolo_spheroid(p_left, p_right, string_length: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import diabolo; diabolo.diabolo_spheroid(p_left, p_right, string_length: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;diabolo_spheroid&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>棍端 2 點(焦點)與繩長 → 輔助旋轉橢球：a = l/2，c = |x_L − x_R|/2，b = √(a² − c²)(式 1 的正確形式)。</p>
 <p>★原文的 (1b) 為 b = √(a² − |x_L − x_R|/2),是長度與長度平方之差,因次不一致。代入論文實機尺寸(繩 1.45 m、棒間距 1.10 m)時根號內為負(NaN)。已改寫為橢圓恆等式 a² = b² + c² 的形式(公開實作也用平方書寫)。原文的值保留在 <code style="color:#22d3bf">b_paper_literal</code> 中。原文前言寫作「半長軸 b 與半短軸 a」,名稱顛倒(a = l/2 是半長軸),以公式為準。</p>

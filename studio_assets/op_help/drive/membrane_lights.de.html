@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">membrane_lights — DRIVE <code style="color:#22d3bf">tacsim</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">scalar</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.membrane_lights(elev_deg: &#x27;float&#x27; = 55.0, azimuths_deg=(90.0, 210.0, 330.0)) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import tacsim; tacsim.membrane_lights(elev_deg: &#x27;float&#x27; = 55.0, azimuths_deg=(90.0, 210.0, 330.0)) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;membrane_lights&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Einheitsrichtungsvektoren (N, 3) farbiger Beleuchtung aus mehreren Richtungen (Zeile k = Lichtquelle des Farbkanals k; Standard sind 3 Leuchten bei Azimut 90/210/330° und Elevation 55°).</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: Elevation außerhalb von (0°, 90°], weniger als 3 Lichtquellen, die 3 Lichtquellen liegen in einer Ebene (rank &lt; 3, photometrisches Stereo nicht lösbar).</p>

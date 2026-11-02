@@ -4,6 +4,7 @@ dim: drive
 category: puck
 in: signal × signal × table × scalar
 out: signal
+gpu: なし
 examples: [poc_air_hockey_intercept]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal × signal × table × scalar` → `signal`
 - **呼び出し**: `import fullseye as fs; fs.ledger.puck_mirror_path(p0, v0, table: 'dict', t_end: 'float') -> 'np.ndarray'` (実装を直接呼ぶなら `import puck; puck.puck_mirror_path(p0, v0, table: 'dict', t_end: 'float') -> 'np.ndarray'`、台帳から引くなら `opsdrive.get("puck_mirror_path")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

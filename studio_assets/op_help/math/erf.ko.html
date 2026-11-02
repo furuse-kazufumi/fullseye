@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">erf — MATH <code style="color:#22d3bf">numerics</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.erf(x) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import mathnumerics; mathnumerics.erf(x) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsmath.get(&quot;erf&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>오차 함수 erf(x) = (2/√π) ∫_0^x e^{−t²} dt.</p>
 <p>정규분포의 누적이며, 흐려진 에지(가우스로 합성곱한 계단)의 형태 그 자체: 폭 σ의 가우스로 흐려진 계단은 ½(1 + erf(x / (σ√2))). 게이트: 홀함수, erf(∞) = 1, 도함수 = (2/√π) e^{−x²}, Gauss 구적에 의한 적분과 일치.</p>

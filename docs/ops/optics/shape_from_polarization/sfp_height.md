@@ -4,6 +4,7 @@ dim: optics
 category: shape_from_polarization
 in: normalmap
 out: image2d
+gpu: なし
 examples: [poc_phase_measuring_deflectometry, poc_shape_from_polarization]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `normalmap` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.sfp_height(normals, mask=None, max_zenith_deg=88.0)` (実装を直接呼ぶなら `import sfpolar; sfpolar.sfp_height(normals, mask=None, max_zenith_deg=88.0)`、台帳から引くなら `opsoptics.get("sfp_height")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

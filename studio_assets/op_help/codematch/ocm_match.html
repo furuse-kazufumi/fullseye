@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">ocm_match — CODEMATCH <code style="color:#22d3bf">match</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ocm_match(image, template, n_codes=16, grad_thresh=0.05, min_valid=32, min_valid_fraction=0.05) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import codematch; codematch.ocm_match(image, template, n_codes=16, grad_thresh=0.05, min_valid=32, min_valid_fraction=0.05) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opscodematch.get(&quot;ocm_match&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>方向符号照合(OCM)。符号の巡回差の平均が最小の位置を返す。</p>
 <p>相違度は画素ごとに <code style="color:#22d3bf">D(m, n)</code>(m = テンプレート側、n = 画像側の符号):</p>

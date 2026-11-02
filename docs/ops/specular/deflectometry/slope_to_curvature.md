@@ -4,6 +4,7 @@ dim: specular
 category: deflectometry
 in: normalmap
 out: image2d
+gpu: なし
 examples: [poc_phase_measuring_deflectometry]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `normalmap` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.slope_to_curvature(normals, spacing=1.0, kind='mean', sigma_px=0.0)` (実装を直接呼ぶなら `import deflectometry; deflectometry.slope_to_curvature(normals, spacing=1.0, kind='mean', sigma_px=0.0)`、台帳から引くなら `opsspecular.get("slope_to_curvature")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

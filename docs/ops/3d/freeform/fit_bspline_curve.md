@@ -4,6 +4,7 @@ dim: 3d
 category: freeform
 in: points
 out: bspline_curve
+gpu: なし
 examples: [bspline_freeform]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `points` → `bspline_curve`
 - **呼び出し**: `import fullseye as fs; fs.ledger.fit_bspline_curve(points, smooth=0.0, k=3, nest=None)` (実装を直接呼ぶなら `import bspline_surf; bspline_surf.fit_bspline_curve(points, smooth=0.0, k=3, nest=None)`、台帳から引くなら `ops3d.get("fit_bspline_curve")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

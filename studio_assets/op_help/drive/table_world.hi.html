@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">table_world — DRIVE <code style="color:#22d3bf">ballworld</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.table_world(tp: &#x27;dict&#x27; = None, *, floor: &#x27;bool&#x27; = True, floor_size: &#x27;float&#x27; = 8.0) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import ballworld; ballworld.table_world(tp: &#x27;dict&#x27; = None, *, floor: &#x27;bool&#x27; = True, floor_size: &#x27;float&#x27; = 8.0) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;table_world&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>table (ऊपरी सतह + सफ़ेद lines + net) और फ़र्श का world। origin = ऊपरी सतह का केंद्र, x = लंबाई (±1.37), y = चौड़ाई (±0.7625), z ऊपर। ऊपरी सतह का top z = height पर है।</p>
 <p>खाली इनपुट (<code style="color:#22d3bf">tp</code> खाली dict) पर <code style="color:#22d3bf">ValueError</code> उठता है।</p>

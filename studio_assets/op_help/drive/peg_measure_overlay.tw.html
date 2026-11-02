@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">peg_measure_overlay — DRIVE <code style="color:#22d3bf">pegsim</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">rgb × matrix × matrix</code> → <code style="color:#22d3bf">rgb</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.peg_measure_overlay(rgb, truth_uv, est_uv, edge_uv=None, size: &#x27;int&#x27; = 12, zoom: &#x27;int&#x27; = 3, crop: &#x27;int&#x27; = 40) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import pegsim; pegsim.peg_measure_overlay(rgb, truth_uv, est_uv, edge_uv=None, size: &#x27;int&#x27; = 12, zoom: &#x27;int&#x27; = 3, crop: &#x27;int&#x27; = 40) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;peg_measure_overlay&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>測量值疊加圖（僅限 numpy）：真實值 = 大綠色十字，估計值 = 小紅色十字，用於圓形擬合的邊緣點 = 黃點（imagedraw）。在右下角，圍繞真實值的重心粘貼“2*crop”像素正方形的放大圖（“crop”是半寬），乘以“zoom”（以直觀地看到子像素的重合度）。</p>
 <p><code style="color:#22d3bf">rgb</code> 為 (H, W, 3) uint8,<code style="color:#22d3bf">truth_uv</code>、<code style="color:#22d3bf">est_uv</code> 為 (N, 2) 的 (u, v)。回傳同樣大小的 uint8。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>:rgb 的形狀不對、沒有點。</p>

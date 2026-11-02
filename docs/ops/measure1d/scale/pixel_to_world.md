@@ -4,6 +4,7 @@ dim: measure1d
 category: scale
 in: measurement
 out: measurement
+gpu: なし
 examples: [example_inner_diameter_mm]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `measurement` → `measurement`
 - **呼び出し**: `import fullseye as fs; fs.ledger.pixel_to_world(value_px, mm_per_px)` (実装を直接呼ぶなら `import measuring1d; measuring1d.pixel_to_world(value_px, mm_per_px)`、台帳から引くなら `opsmeasure1d.get("pixel_to_world")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

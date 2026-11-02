@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">fly_matched_filter — FLYVISION <code style="color:#22d3bf">selfmotion</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fly_matched_filter(lattice, axis=(0.0, 0.0, 1.0), motion=&#x27;rotation&#x27;, depth_m=1.0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import flyvision; flyvision.fly_matched_filter(lattice, axis=(0.0, 0.0, 1.0), motion=&#x27;rotation&#x27;, depth_m=1.0)</code>、台帳から引くなら <code style="color:#22d3bf">opsflyvision.get(&quot;fly_matched_filter&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>The flow field one unit of self-motion writes on the eye — the template a wide-field neuron is matched to.</p>
 <p>Krapp &amp; Hengstenberg measured the local motion sensitivity of single lobula-plate tangential cells across the whole visual field and found a structured vector field, one that looks like the optic flow of a particular rotation of the fly (*Nature* 384:463, 1996). Reading self-motion out of such a cell is then a matched filter (Franz &amp; Krapp, *Biol. Cybern.* 83:185, 2000):</p>

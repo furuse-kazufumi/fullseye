@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">gyroid_solid_mask — 3D <code style="color:#22d3bf">surface</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">voxel</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gyroid_solid_mask(shape=(64, 64, 64), level=0.0, periods=1.0, thickness=0.3)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import render3d; render3d.gyroid_solid_mask(shape=(64, 64, 64), level=0.0, periods=1.0, thickness=0.3)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;gyroid_solid_mask&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>The gyroid as a printable <b>solid</b>: the shell within ±*thickness* of the level set.</p>
 <p>Returns a <code style="color:#22d3bf">volume</code> (float 0/1), so it feeds the existing voxel ops (<code style="color:#22d3bf">vol_label</code> / <code style="color:#22d3bf">skeletonize_vol</code> / <code style="color:#22d3bf">mesh_slice_stack</code>) directly and needs no marching cubes —— this form works on bare numpy, while <code style="color:#22d3bf">gyroid_isosurface</code> needs scikit-image.</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">fly_sky_1f — FLYVISION <code style="color:#22d3bf">stimulus</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">image2d</code> (an op determined by its arguments alone — it takes no image or data input)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fly_sky_1f(width=1024, height=512, band_lo_deg=20.0, band_hi_deg=60.0, amp=0.12, seed=0, edge_deg=5.0)</code> (to call the implementation directly, <code style="color:#22d3bf">import flyvision; flyvision.fly_sky_1f(width=1024, height=512, band_lo_deg=20.0, band_hi_deg=60.0, amp=0.12, seed=0, edge_deg=5.0)</code>; from the registry, <code style="color:#22d3bf">opsflyvision.get(&quot;fly_sky_1f&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Synthetic equirectangular sky panorama with a banded 1/f azimuthal texture.</p>
 <p>An equirectangular image (row = elevation +90 deg down to -90 deg, column = azimuth 0 to 360 deg). Luminance is a vertical backlight gradient (0.62 at the zenith to 0.95 at the nadir) modulated in azimuth by a 1/f texture confined to an elevation band with cosine edges::</p>

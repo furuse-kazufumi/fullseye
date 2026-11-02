@@ -4,6 +4,7 @@ dim: optics
 category: spectral
 in: 
 out: pairs
+gpu: なし
 examples: [poc_hyperspectral_foreign_matter]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `pairs`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.ingaas_photodiode_qe(cutoff_nm=1700.0, absorber_um=3.0, window_cutoff_nm=920.0, window_um=1.0, front_reflectance=0.03, urbach_mev=8.0, wl_min_nm=800.0, wl_max_nm=2600.0, n_points=361)` (実装を直接呼ぶなら `import spectralrad; spectralrad.ingaas_photodiode_qe(cutoff_nm=1700.0, absorber_um=3.0, window_cutoff_nm=920.0, window_um=1.0, front_reflectance=0.03, urbach_mev=8.0, wl_min_nm=800.0, wl_max_nm=2600.0, n_points=361)`、台帳から引くなら `opsoptics.get("ingaas_photodiode_qe")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

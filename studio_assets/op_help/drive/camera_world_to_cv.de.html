@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">camera_world_to_cv — DRIVE <code style="color:#22d3bf">pegsim</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.camera_world_to_cv(cam_xmat, cam_xpos) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import pegsim; pegsim.camera_world_to_cv(cam_xmat, cam_xpos) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;camera_world_to_cv&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Wandelt die MuJoCo-Kamerapose (<code style="color:#22d3bf">d.cam_xmat</code> 3×3 = Kameraachsen in der Welt, <code style="color:#22d3bf">d.cam_xpos</code>) in extrinsische Parameter von OpenCV / Fullseye um: X_cv = R X_w + t, R = diag(1, −1, −1) Rwcᵀ, t = −R p (MuJoCo blickt entlang −Z mit +Y oben, OpenCV hat +Z vorn und +Y unten).</p>
 <p>Rückgabe: <code style="color:#22d3bf">R</code> (3×3), <code style="color:#22d3bf">t</code> (3,), <code style="color:#22d3bf">R_cam_to_world</code> = Rᵀ. Nur numpy (mujoco nicht nötig). <b>Raises</b> <code style="color:#22d3bf">ValueError</code>: falsche Form, R ist keine Rotation.</p>

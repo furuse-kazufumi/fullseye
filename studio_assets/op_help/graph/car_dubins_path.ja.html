@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">car_dubins_path — GRAPH <code style="color:#22d3bf">path</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.car_dubins_path(poses, radius=1.0, step=0.05)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import carpath; carpath.car_dubins_path(poses, radius=1.0, step=0.05)</code>、台帳から引くなら <code style="color:#22d3bf">opsgraph.get(&quot;car_dubins_path&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>前進だけの車(最小回転半径 radius)が姿勢 (x, y, θ) から姿勢 (x&#x27;, y&#x27;, θ&#x27;) へ移る最短路を Dubins(1957)の 6 語(LSL RSR LSR RSL RLR LRL)の閉形式で。各候補は前進積分で終点を検証し、届かない候補は捨てて n_rejected に数える。語・長さ・区間・step 刻みの姿勢列・全候補の長さ・下界(ユークリッド距離)を返す。</p>
 <p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>

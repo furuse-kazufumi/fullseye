@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">insertion_failure_presets — DRIVE <code style="color:#22d3bf">pegfail</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.insertion_failure_presets(kp=None) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import pegfail; pegfail.insertion_failure_presets(kp=None) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;insertion_failure_presets&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>要注入的失败的默认设置(各类别 → <code style="color:#22d3bf">pegfail_episode_run</code> 的参数)。数值来自 Whitney 的边界：missed_hole = ε₀ 2.5 mm(&gt; W + c_r = 1.2 mm)/ wedging = μ 0.8、θ₀ 4.5°(c/μ = 2.76°)/ jamming = θ₀ 3°(低于 7.35°，因此 μ = 0.3 时不会楔住)，末端插入 4 mm 后将滑台的横向目标向倾斜一侧偏移 +3.0 mm 并保持(腕部弹簧 600 N/m → F_x ≤ 1.8 N，铰链距末端 40 mm，因此 M/(rF_z) 越过平行四边形的斜边。实测：−3.0 mm(反侧)时滑入，+1.6 mm 时停住但比值在内侧 = unknown)/ blocked_hole = 深度 6 mm 处有塞子 / wrong_hole = 朝向侧方 26 mm 处的诱饵孔 / nominal = ε₀ 0.5 mm、θ₀ 1.5°。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

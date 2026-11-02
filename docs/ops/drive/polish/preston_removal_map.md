@@ -4,6 +4,7 @@ dim: drive
 category: polish
 in: matrix × scalar × scalar × scalar
 out: image2d
+gpu: なし
 examples: [poc_polish_wipe_measure]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `matrix × scalar × scalar × scalar` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.preston_removal_map(path, force, radius: 'float', k_p: 'float', shape=(128, 128), res: 'float' = 0.0001, kind: 'str' = 'flat', speed=None, times=None, spin: 'float' = 0.0, estar=None, step=None, method: 'str' = 'direct') -> 'np.ndarray'` (実装を直接呼ぶなら `import polish; polish.preston_removal_map(path, force, radius: 'float', k_p: 'float', shape=(128, 128), res: 'float' = 0.0001, kind: 'str' = 'flat', speed=None, times=None, spin: 'float' = 0.0, estar=None, step=None, method: 'str' = 'direct') -> 'np.ndarray'`、台帳から引くなら `opsdrive.get("preston_removal_map")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

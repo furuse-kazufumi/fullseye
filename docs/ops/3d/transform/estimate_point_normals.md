@@ -4,6 +4,7 @@ dim: 3d
 category: transform
 in: points
 out: normals
+gpu: なし
 examples: [fpfh_correspondence]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `points` → `normals`
 - **呼び出し**: `import fullseye as fs; fs.ledger.estimate_point_normals(points, k=16, viewpoint=None)` (実装を直接呼ぶなら `import match3d; match3d.estimate_point_normals(points, k=16, viewpoint=None)`、台帳から引くなら `ops3d.get("estimate_point_normals")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

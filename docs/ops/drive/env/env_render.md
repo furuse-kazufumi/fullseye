@@ -4,6 +4,7 @@ dim: drive
 category: env
 in: table × matrix × matrix
 out: table
+gpu: なし
 examples: [poc_driving_weather]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table × matrix × matrix` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.env_render(world: 'dict', pose, K, width: 'int' = 640, height: 'int' = 400, env: 'Optional[dict]' = None, *, ego=None, ego_pose=None, shadows: 'bool' = True, shadow_cache: 'Optional[dict]' = None, shadow_res: 'int' = 1024) -> 'Dict[str, np.ndarray]'` (実装を直接呼ぶなら `import driveenv; driveenv.env_render(world: 'dict', pose, K, width: 'int' = 640, height: 'int' = 400, env: 'Optional[dict]' = None, *, ego=None, ego_pose=None, shadows: 'bool' = True, shadow_cache: 'Optional[dict]' = None, shadow_res: 'int' = 1024) -> 'Dict[str, np.ndarray]'`、台帳から引くなら `opsdrive.get("env_render")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">awb_gains — GFX2D <code style="color:#22d3bf">isp</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">rgb</code> → <code style="color:#22d3bf">vector</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.awb_gains(rgb, method=&#x27;gray_world&#x27;, percentile=99.0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import gfx2d; gfx2d.awb_gains(rgb, method=&#x27;gray_world&#x27;, percentile=99.0)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsgfx2d.get(&quot;awb_gains&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p><code style="color:#22d3bf">g_G = 1</code> के साथ white-balance gain <code style="color:#22d3bf">(g_R, g_G, g_B)</code> का अनुमान लगाता है।</p>
 <p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>

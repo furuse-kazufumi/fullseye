@@ -4,6 +4,7 @@ dim: optics
 category: illumination
 in: table
 out: table
+gpu: なし
 examples: [illumination_design_demo]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.defect_contrast(light, surface='satin', slopes_deg=(2.0, 5.0, 10.0, 20.0), camera=(0.0, 0.0, 300.0), point=(0.0, 0.0), n_azimuth=12, pigment_albedo_ratio=0.5)` (実装を直接呼ぶなら `import illumdesign; illumdesign.defect_contrast(light, surface='satin', slopes_deg=(2.0, 5.0, 10.0, 20.0), camera=(0.0, 0.0, 300.0), point=(0.0, 0.0), n_azimuth=12, pigment_albedo_ratio=0.5)`、台帳から引くなら `opsoptics.get("defect_contrast")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -4,6 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.surface_psd(z, dx, kind=&#x27;areal&#x27;, dy=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import roughness; roughness.surface_psd(z, dx, kind=&#x27;areal&#x27;, dy=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsroughness.get(&quot;surface_psd&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>Ledger के ज़रिए return value</b>: <code style="color:#22d3bf">fullseye.ledger.surface_psd(...)</code> <b>केवल घोषित out type <code style="color:#22d3bf">pairs</code> का value</b> लौटाता है (मूल function सहायक जानकारी भी लौटाता है)। जो हिस्सा छोड़ दिया गया है उसकी ज़रूरत हो तो <code style="color:#22d3bf">fullseye.ledger.surface_psd.raw(...)</code> का उपयोग करें, या <code style="color:#22d3bf">roughness.surface_psd</code> को सीधे call करें।</p>
 <p style="margin:2px 0 2px 12px">• मूल function का return: <code style="color:#22d3bf">(q, C) -&gt; (N,2)</code></p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>height field का power spectral density। <code style="color:#22d3bf">(q, C)</code> लौटाता है। <b>परिपाटी argument से स्पष्ट की जाती है</b>।</p>
 <p>Arguments</p>

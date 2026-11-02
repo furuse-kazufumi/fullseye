@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">refract — 3D <code style="color:#22d3bf">optics</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">vector × normals</code> → <code style="color:#22d3bf">normals</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.refract(d, n, eta1=1.0, eta2=1.5)</code>(要直接呼叫實作,<code style="color:#22d3bf">import match3d; match3d.refract(d, n, eta1=1.0, eta2=1.5)</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;refract&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>Snell 折射(向量形式)。d=入射(朝向面),n=入射側外法線,折射率 eta1→eta2。</p>
 <p>嚴格計算穿過透明體的光線的彎折。全反射(TIR)時為 None。用於計算玻璃/透鏡/水中的像畸變。約定為單一向量。(N,3) 批次也能通過,但<b>只要有 1 條 TIR,整個批次就是 None</b> (不做 per-ray 遮罩)。★<b>批次時不要逐條 1 根地迴圈</b>,</p>

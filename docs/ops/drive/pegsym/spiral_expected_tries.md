@@ -4,6 +4,7 @@ dim: drive
 category: pegsym
 in: matrix × scalar × scalar
 out: table
+gpu: なし
 examples: [poc_peg_symmetry_search]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `matrix × scalar × scalar` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.spiral_expected_tries(points, capture: 'float', rho: 'float', grid: 'int' = 161) -> 'dict'` (実装を直接呼ぶなら `import pegsym; pegsym.spiral_expected_tries(points, capture: 'float', rho: 'float', grid: 'int' = 161) -> 'dict'`、台帳から引くなら `opsdrive.get("spiral_expected_tries")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

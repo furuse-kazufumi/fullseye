@@ -4,6 +4,7 @@ dim: optics
 category: material
 in: rgbimage × normalmap
 out: rgbimage
+gpu: なし
 examples: [machined_metal_and_materials, poc_telecentric_metrology]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `rgbimage × normalmap` → `rgbimage`
 - **呼び出し**: `import fullseye as fs; fs.ledger.clearcoat_shade(base_rgb, normals, light=(0.3, 0.4, 0.87), view=(0.0, 0.0, 1.0), ior=1.5, coat=1.0, coat_roughness=0.05) -> 'np.ndarray'` (実装を直接呼ぶなら `import surfacelib; surfacelib.clearcoat_shade(base_rgb, normals, light=(0.3, 0.4, 0.87), view=(0.0, 0.0, 1.0), ior=1.5, coat=1.0, coat_roughness=0.05) -> 'np.ndarray'`、台帳から引くなら `opsoptics.get("clearcoat_shade")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

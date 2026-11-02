@@ -4,6 +4,7 @@ dim: astrostack
 category: photometry
 in: image2d × keypoints
 out: table
+gpu: なし
 examples: [astro_stacking, poc_astro_photometry, poc_exoplanet_transit, poc_nuclei_ploidy, poc_real_sky_photometry]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d × keypoints` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.aperture_photometry(image, centers, r_aperture=5.0, r_inner=8.0, r_outer=12.0, read_sigma=0.0, gain=1.0, supersample=8, method='exact')` (実装を直接呼ぶなら `import astrostack; astrostack.aperture_photometry(image, centers, r_aperture=5.0, r_inner=8.0, r_outer=12.0, read_sigma=0.0, gain=1.0, supersample=8, method='exact')`、台帳から引くなら `opsastrostack.get("aperture_photometry")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

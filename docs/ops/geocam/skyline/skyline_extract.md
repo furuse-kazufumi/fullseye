@@ -4,6 +4,7 @@ dim: geocam
 category: skyline
 in: image2d
 out: signal
+gpu: なし
 examples: [poc_public_camera_heading]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d` → `signal`
 - **呼び出し**: `import fullseye as fs; fs.ledger.skyline_extract(image, sky_is_bright=True, smooth=1.5, max_jump=3, jump_penalty=0.5)` (実装を直接呼ぶなら `import geocam; geocam.skyline_extract(image, sky_is_bright=True, smooth=1.5, max_jump=3, jump_penalty=0.5)`、台帳から引くなら `opsgeocam.get("skyline_extract")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

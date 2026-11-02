@@ -5,6 +5,7 @@ category: segmentation
 in: image
 out: region
 halcon: threshold
+gpu: あり(threshold)
 examples: [gallery2d_segmentation, poc_bone_trabecular_thickness, poc_change_detection_misreg, poc_fresco_craquelure, poc_gear_tooth_metrology, poc_metal_grain_size, poc_screw_thread_metrology, poc_tof_camera, poc_traffic_counting, poc_virtual_sem_kv_cd_bse, poc_water_level, tof_realdata, video_streaming]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -16,6 +17,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **データ種**: `image` → `region`
 - **呼び出し**: `fullseye.apply(img, "threshold", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 - **HALCON 相当**: `threshold`(意味・パラメータは HALCON リファレンスが参考になる)
+- **GPU**: あり(`threshold`、`device="cuda"` で高速経路)
 
 ![threshold: input → output](../../_fig/threshold.png)
 

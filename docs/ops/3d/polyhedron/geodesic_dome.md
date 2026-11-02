@@ -4,6 +4,7 @@ dim: 3d
 category: polyhedron
 in: 
 out: mesh
+gpu: なし
 examples: [geodesic_dome]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `mesh`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.geodesic_dome(frequency=3, radius=1.0, hemisphere=False)` (実装を直接呼ぶなら `import render3d; render3d.geodesic_dome(frequency=3, radius=1.0, hemisphere=False)`、台帳から引くなら `ops3d.get("geodesic_dome")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

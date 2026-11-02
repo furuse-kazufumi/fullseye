@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">ellipse_pressure_shifted — DRIVE <code style="color:#22d3bf">tactorque</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">matrix × matrix × scalar × scalar × scalar</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ellipse_pressure_shifted(X, Y, a: &#x27;float&#x27;, b: &#x27;float&#x27;, P: &#x27;float&#x27;, d=(0.0, 0.0)) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import tactorque; tactorque.ellipse_pressure_shifted(X, Y, a: &#x27;float&#x27;, b: &#x27;float&#x27;, P: &#x27;float&#x27;, d=(0.0, 0.0)) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;ellipse_pressure_shifted&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>반축 a(x), b(y) [m]인 타원 Hertz 압력 p0 √(1 − x′²/a² − y′²/b²) [Pa], P = 2πab p0/3(Johnson 1985 식 4.24), 중심을 d로 옮깁니다. b ≫ a에서는 원통(능선·쐐기 모양)의 압입에 가까운 형태 — 형태 불변 게이트의 3번째. <b>Raises</b> ValueError: a, b, P ≤ 0, X와 Y의 형태가 다름.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

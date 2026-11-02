@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">area_opening_attr — SEGMENTATION <code style="color:#22d3bf">graph</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.area_opening_attr(image, threshold: &#x27;float&#x27; = 16.0, *, attribute: &#x27;str&#x27; = &#x27;area&#x27;, connectivity: &#x27;int&#x27; = 4) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import seggraph; seggraph.area_opening_attr(image, threshold: &#x27;float&#x27; = 16.0, *, attribute: &#x27;str&#x27; = &#x27;area&#x27;, connectivity: &#x27;int&#x27; = 4) -&gt; &#x27;Dict[str, object]&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opssegmentation.get(&quot;area_opening_attr&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>属性开运算（Salembier 等 1998）：删除成分树中属性 &lt; <code style="color:#22d3bf">threshold</code> 的节点，并使每个像素取“属性 ≥ 阈值的最近祖先”的值（area_opening_attr）。</p>
 <p><code style="color:#22d3bf">attribute</code> = <code style="color:#22d3bf">&quot;area&quot;</code>(像素数,与 skimage 的 area_opening 相同的&quot;消除面积小于阈值的明亮结构&quot;)或 <code style="color:#22d3bf">&quot;diameter&quot;</code> (外接矩形的长边,skimage 的 diameter_opening)。两者都是 <b>2 值集合的</b> 递增属性,所以结果是代数开运算 = 幂等、反扩张、递增。依赖成分中最大值的&quot;高度&quot;不是集合的属性(与 h-maxima 一样)不具幂等性,因此不收录(实测第 2 次时值发生了变化)。</p>

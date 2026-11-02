@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">comminution_law_fit — DRIVE <code style="color:#22d3bf">grind</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.comminution_law_fit(t, d, law: &#x27;str&#x27; = &#x27;all&#x27;) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import grind; grind.comminution_law_fit(t, d, law: &#x27;str&#x27; = &#x27;all&#x27;) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;comminution_law_fit&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Fits a comminution law to the time course of particle size <code style="color:#22d3bf">d(t)</code> (assuming energy ∝ <code style="color:#22d3bf">t</code>; see the module header). The error is measured in <b>log(diameter)</b>.</p>
 <p><code style="color:#22d3bf">t</code>: net grinding time (in place of energy, ≥ 0), <code style="color:#22d3bf">d</code>: representative size at that time [µm] (D50 etc.). Independent trials may be listed with the same <code style="color:#22d3bf">t</code> multiple times.</p>

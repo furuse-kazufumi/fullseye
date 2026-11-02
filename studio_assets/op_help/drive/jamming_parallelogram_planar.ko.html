@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">jamming_parallelogram_planar — DRIVE <code style="color:#22d3bf">pegfail</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">table × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.jamming_parallelogram_planar(kp, depth: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import pegfail; pegfail.jamming_parallelogram_planar(kp, depth: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;jamming_parallelogram_planar&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>재밍(jamming)의 평행사변형을 <b>2점 접촉의 평면 정역학으로부터 유도합니다</b>(pegsim.jamming_diagram의 정점 = OCW p.34의 값과 대조하는 2번째 경로).</p>
 <p>평면(x 오른쪽, z 위)에서 선단의 가장자리가 깊이 l 에서 −x 쪽 벽에 닿고(법선력 f₁ ≥ 0, +x 방향), +x 쪽 입구 가장자리가 몸통에 닿는다(f₂ ≥ 0, −x 방향). 두 점이 아래로 미끄러지는 Coulomb 마찰(위 방향 μf)에서, 선단에 가하는 (F_x, F_z 아래 방향 양, M 반시계 양) 의 평형은</p>

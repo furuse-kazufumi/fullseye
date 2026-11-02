@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">mapf_prioritized — DRIVE <code style="color:#22d3bf">agv</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mapf_prioritized(grid, starts, goals, order=None, horizon=None)</code> (die Implementierung direkt: <code style="color:#22d3bf">import agvfleet; agvfleet.mapf_prioritized(grid, starts, goals, order=None, horizon=None)</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;mapf_prioritized&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Priorisierte Planung: plant der Reihe nach je 1 Fahrzeug und meidet dabei die Wege bereits festgelegter Fahrzeuge (Reservierungstabelle).</p>
 <p>Schnell, aber <b>unvollständig</b> —— selbst bei lösbaren Problemen kann je nach Prioritätsreihenfolge (bei jeder Reihenfolge) keine Lösung gefunden werden (Ma et al. 2019). Rückgabe ist ein dict: <code style="color:#22d3bf">paths</code> (None bei Fehlschlag), <code style="color:#22d3bf">cost</code>, <code style="color:#22d3bf">solved</code>, <code style="color:#22d3bf">failed_agent</code> (das erste Fahrzeug, das stecken blieb).</p>

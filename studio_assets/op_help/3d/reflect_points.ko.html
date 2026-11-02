@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">reflect_points — 3D <code style="color:#22d3bf">symmetry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.reflect_points(points, plane_point, plane_normal)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import symmetry3d; symmetry3d.reflect_points(points, plane_point, plane_normal)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;reflect_points&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>점군을 평면(점 plane_point·법선 plane_normal)에 대해 반사. → (N,3).</p>
 <p>각 점 p의 평면으로부터의 부호 있는 거리 <code style="color:#22d3bf">d = (p - plane_point) · n</code>(n은 정규화한 법선)을 구하고, <code style="color:#22d3bf">p&#x27; = p - 2 d n</code>을 반환한다(Householder 반사). 평면 위의 점은 움직이지 않고, 평면 양쪽의 점이 서로 바뀐다. 점의 순서는 유지되므로 <code style="color:#22d3bf">p&#x27;[i]</code>는 <code style="color:#22d3bf">p[i]</code>의 거울상이다. 좌표의 단위는 그대로다.</p>

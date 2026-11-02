@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">hertz_force — DRIVE <code style="color:#22d3bf">tacsim</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">scalar × scalar</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.hertz_force(R: &#x27;float&#x27;, Estar: &#x27;float&#x27;, a: &#x27;float | None&#x27; = None, delta: &#x27;float | None&#x27; = None) -&gt; &#x27;float&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import tacsim; tacsim.hertz_force(R: &#x27;float&#x27;, Estar: &#x27;float&#x27;, a: &#x27;float | None&#x27; = None, delta: &#x27;float | None&#x27; = None) -&gt; &#x27;float&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;hertz_force&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Inverse Hertz: load F from either the contact radius a or the indentation δ. F = 4E*a³/(3R) = (4/3) E* √R δ^{3/2}.</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: both a and δ (or neither), a value ≤ 0.</p>

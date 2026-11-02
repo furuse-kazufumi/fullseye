@@ -4,6 +4,7 @@ dim: specular
 category: polarization
 in: polsweep
 out: table
+gpu: なし
 examples: [polarization_camera_pipeline]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `polsweep` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.polarization_stokes_map(images, angles_deg=(0.0, 45.0, 90.0, 135.0), max_violation_frac=0.0)` (実装を直接呼ぶなら `import specularity; specularity.polarization_stokes_map(images, angles_deg=(0.0, 45.0, 90.0, 135.0), max_violation_frac=0.0)`、台帳から引くなら `opsspecular.get("polarization_stokes_map")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

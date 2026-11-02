@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">fsim — IMGMETRICS <code style="color:#22d3bf">perceptual</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fsim(ref, dist, data_range: &#x27;float&#x27; = 255.0) -&gt; &#x27;float&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import iqafsim; iqafsim.fsim(ref, dist, data_range: &#x27;float&#x27; = 255.0) -&gt; &#x27;float&#x27;</code>; from the registry, <code style="color:#22d3bf">opsimgmetrics.get(&quot;fsim&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>FSIM (luminance only, 1 = identical, <b>higher is better</b>). It agrees with TID2013&#x27;s FSIM.txt to 4 digits when given <b>a Y′ limited grayscale image</b> (<code style="color:#22d3bf">iqatid.tid2013_evaluate(root, fsim, luma=&quot;limited_u8&quot;)</code>, 3,000 pairs, max |diff| 5.0e-5). Details: <code style="color:#22d3bf">fsim_pair</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>

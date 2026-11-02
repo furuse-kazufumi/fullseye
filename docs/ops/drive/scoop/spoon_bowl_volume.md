@@ -4,6 +4,7 @@ dim: drive
 category: scoop
 in: scalar × scalar
 out: table
+gpu: なし
 examples: [poc_powder_scoop_pour]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `scalar × scalar` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.spoon_bowl_volume(a: 'float', h: 'float', *, fill_depth: 'float | None' = None, phi_deg: 'float | None' = None) -> 'dict'` (実装を直接呼ぶなら `import scoop; scoop.spoon_bowl_volume(a: 'float', h: 'float', *, fill_depth: 'float | None' = None, phi_deg: 'float | None' = None) -> 'dict'`、台帳から引くなら `opsdrive.get("spoon_bowl_volume")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

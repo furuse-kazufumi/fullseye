@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">lowpass — ONED <code style="color:#22d3bf">signal</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lowpass(x, rate, cutoff, order=4)</code> (die Implementierung direkt: <code style="color:#22d3bf">import dsp; dsp.lowpass(x, rate, cutoff, order=4)</code>; aus dem Register: <code style="color:#22d3bf">ops1d.get(&quot;lowpass&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Butterworth-Tiefpass (scipy, nullphasiges filtfilt). *cutoff* muss innerhalb von <code style="color:#22d3bf">(0, rate/2)</code> liegen; eine Grenzfrequenz außerhalb von Nyquist löst eine Ausnahme aus, statt das Signal durchzureichen. Ein für nullphasiges filtfilt zu kurzes Signal löst ebenfalls eine Ausnahme aus (die Meldung nennt das genaue Minimum), statt stillschweigend ungefiltert zurückzukommen.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

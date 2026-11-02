@@ -4,6 +4,7 @@ dim: generative
 category: sem
 in: 
 out: signal
+gpu: なし
 examples: [poc_virtual_sem_kv_cd_bse]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `signal`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.sem_se_escape_fraction(potential_v=None, *, phi_ev: 'float' = 2.0)` (実装を直接呼ぶなら `import sem; sem.sem_se_escape_fraction(potential_v=None, *, phi_ev: 'float' = 2.0)`、台帳から引くなら `opsgenerative.get("sem_se_escape_fraction")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

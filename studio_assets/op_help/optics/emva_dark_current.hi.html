@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">emva_dark_current — OPTICS <code style="color:#22d3bf">sensorchar</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.emva_dark_current(t_exp, mu_y_dark, K, *, var_y_dark=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import sensorchar; sensorchar.emva_dark_current(t_exp, mu_y_dark, K, *, var_y_dark=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;emva_dark_current&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>dark current (खंड 7.1): dark images के mean (और variance) को exposure time पर सीधी रेखा से fit करने का slope।</p>
 <p>μ_I.y [DN/s] = mean का slope, μ_I.e [e⁻/s] = μ_I.y / K। *var_y_dark* देने पर variance का slope [DN²/s] / K² भी मिलता है (dark-current correction वाले cameras केवल variance से मापे जा सकते हैं)। मानक exposure time के <b>6 या अधिक points</b> माँगता है, समान दूरी पर।</p>

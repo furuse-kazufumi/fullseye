@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">gum_standard_uncertainty — SPC <code style="color:#22d3bf">uncertainty</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gum_standard_uncertainty(table, halfwidth=&#x27;halfwidth&#x27;, distribution=&#x27;distribution&#x27;)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import spc; spc.gum_standard_uncertainty(table, halfwidth=&#x27;halfwidth&#x27;, distribution=&#x27;distribution&#x27;)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsspc.get(&quot;gum_standard_uncertainty&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p><b>분포의 형태</b>로부터 불확도 성분을 표준불확도로 환산 (<code style="color:#22d3bf">table</code>).</p>
 <p>교정 증명서나 규격이 주는 것은 &quot;반폭 a&quot;, &quot;95 % 에서 ±U&quot; 같은 형태이지 표준편차가아니다. 전파 법칙이 먹을 수 있는 것은 표준 불확도뿐이므로 여기서 맞춘다:</p>

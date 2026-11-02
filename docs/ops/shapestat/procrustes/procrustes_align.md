@@ -4,6 +4,7 @@ dim: shapestat
 category: procrustes
 in: points × points
 out: points
+gpu: なし
 examples: [shapestat_landmark_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `points × points` → `points`
 - **呼び出し**: `import fullseye as fs; fs.ledger.procrustes_align(source, target, scaling: 'bool' = True, reflection: 'bool' = False)` (実装を直接呼ぶなら `import shapestats; shapestats.procrustes_align(source, target, scaling: 'bool' = True, reflection: 'bool' = False)`、台帳から引くなら `opsshapestat.get("procrustes_align")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

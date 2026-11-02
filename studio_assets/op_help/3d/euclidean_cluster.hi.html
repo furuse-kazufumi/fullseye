@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">euclidean_cluster — 3D <code style="color:#22d3bf">segment</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">labels</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.euclidean_cluster(points, tol: &#x27;float&#x27;, min_size: &#x27;int&#x27; = 10) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import segment3d; segment3d.euclidean_cluster(points, tol: &#x27;float&#x27;, min_size: &#x27;int&#x27; = 10) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;euclidean_cluster&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>radius tol वाले proximity graph के connected components से distance clustering (-1=noise)।</p>
 <p>एक-दूसरे से <code style="color:#22d3bf">tol</code> के भीतर वाले points को (transitively) एक ही cluster में बाँधता है। स्थान में अलग-अलग objects अलग clusters बनते हैं (ground plane हटाने के बाद &quot;कौन सा blob पकड़ने लायक object है&quot; अलग करने में उपयोगी)। Connected components में से <code style="color:#22d3bf">min_size</code> से छोटे वाले noise हैं, -1। Labels cluster size के घटते क्रम में 0,1,2,... हैं (deterministic)।</p>

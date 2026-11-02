@@ -4,6 +4,7 @@ dim: 3d
 category: robust_fit
 in: points
 out: primitive
+gpu: なし
 examples: [ransac_prim]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `points` → `primitive`
 - **呼び出し**: `import fullseye as fs; fs.ledger.ransac_plane(points, thresh, iters=500, seed=0)` (実装を直接呼ぶなら `import ransac_fit; ransac_fit.ransac_plane(points, thresh, iters=500, seed=0)`、台帳から引くなら `ops3d.get("ransac_plane")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

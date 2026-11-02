@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">plenoptic_mla_calibrate — OPTICS <code style="color:#22d3bf">plenoptic</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.plenoptic_mla_calibrate(white_image, pitch_px_guess, *, max_residual_px=0.25)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import plenoptic; plenoptic.plenoptic_mla_calibrate(white_image, pitch_px_guess, *, max_residual_px=0.25)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;plenoptic_mla_calibrate&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>white image की peaks पर घुमी हुई आयताकार lenslet lattice fit करें।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पूरी family का input contract (fail-closed)</h3>

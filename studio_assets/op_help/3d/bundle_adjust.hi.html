@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">bundle_adjust — 3D <code style="color:#22d3bf">bundle_adjust</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">pose × points</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.bundle_adjust(cameras, points, obs_cam, obs_pt, obs_uv, K, fix_first=True, max_iter=200)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import bundle3d; bundle3d.bundle_adjust(cameras, points, obs_cam, obs_pt, obs_uv, K, fix_first=True, max_iter=200)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;bundle_adjust&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>reprojection error को न्यूनतम करके camera poses और 3D points को एक साथ optimise करता है। → dict{cameras, points, rmse, cost}।</p>
 <p>cameras (nc,6)=[rvec(3)|t(3)] के प्रारंभिक मान, points (m,3) के प्रारंभिक मान, observation obs_cam/obs_pt/obs_uv। fix_first=True पर पहला camera [I|0] के समकक्ष (प्रारंभिक मान जैसा ही) स्थिर रखा जाता है और gauge हटाया जाता है।</p>

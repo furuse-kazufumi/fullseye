@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">mesh_to_points — 3D <code style="color:#22d3bf">transform</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">mesh</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mesh_to_points(vertices, faces, samples=20000, seed=0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import match3d; match3d.mesh_to_points(vertices, faces, samples=20000, seed=0)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;mesh_to_points&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>mesh(頂点+面)→ 表面点群(面積重み一様サンプリング)。mesh→point cloud 変換。</p>
 <p>手順: 三角形 <code style="color:#22d3bf">tri = vertices[faces]</code> の面積 <code style="color:#22d3bf">0.5·|(b−a)×(c−a)|</code> を確率にして <code style="color:#22d3bf">samples</code> 個の面を復元抽出し、各面で <code style="color:#22d3bf">u, v ~ U(0,1)</code>、<code style="color:#22d3bf">u + v &gt; 1</code> なら <code style="color:#22d3bf">(1−u, 1−v)</code> に折り返す(一様 barycentric)。点 <code style="color:#22d3bf">= a + u(b−a) + v(c−a)</code>。<code style="color:#22d3bf">seed</code> で <code style="color:#22d3bf">default_rng</code> を固定するので同じ引数なら同じ点群。</p>

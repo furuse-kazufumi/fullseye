@@ -4,6 +4,7 @@ dim: math
 category: interp_poly
 in: signal × signal
 out: signal
+gpu: なし
 examples: [math_metrology, signal_filter]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal × signal` → `signal`
 - **呼び出し**: `import fullseye as fs; fs.ledger.poly_eval(coeffs, x)` (実装を直接呼ぶなら `import mathops; mathops.poly_eval(coeffs, x)`、台帳から引くなら `opsmath.get("poly_eval")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -4,6 +4,7 @@ dim: 3d
 category: occupancy
 in: voxel
 out: sdf
+gpu: なし
 examples: [occupancy_esdf]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `voxel` → `sdf`
 - **呼び出し**: `import fullseye as fs; fs.ledger.esdf(occupancy, voxel_size=1.0)` (実装を直接呼ぶなら `import occupancy; occupancy.esdf(occupancy, voxel_size=1.0)`、台帳から引くなら `ops3d.get("esdf")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

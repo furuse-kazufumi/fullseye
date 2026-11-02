@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">piv_outlier_mask — PIV <code style="color:#22d3bf">validate</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">flow2d</code> → <code style="color:#22d3bf">mask</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_outlier_mask(flow, threshold=2.0, epsilon=0.1)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import pivops; pivops.piv_outlier_mask(flow, threshold=2.0, epsilon=0.1)</code>、台帳から引くなら <code style="color:#22d3bf">opspiv.get(&quot;piv_outlier_mask&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>正規化中央値検定(Westerweel &amp; Scarano 2005)で外れベクトルを見つける。</p>
 <p>各ベクトルについて、8 近傍の中央値からの残差を<b>近傍残差の中央値</b>で割る。分母に <code style="color:#22d3bf">epsilon</code>(既定 0.1 px、PIV の測定不確かさの目安)を足すのは、一様な場で分母が 0 になって全部が外れ値になるのを防ぐため —— この項が無いと、<b>理想的な入力ほど検定が壊れる</b>。</p>

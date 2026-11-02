@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">car_hybrid_astar — GRAPH <code style="color:#22d3bf">path</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d × matrix</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.car_hybrid_astar(occupancy, poses, radius=1.0, cell=1.0, step=None, n_theta=72, allow_reverse=True, footprint=None, clearance=0.0, reverse_penalty=0.0, switch_penalty=0.0, steer_penalty=0.0, shot_every=None, max_expansions=200000, return_tree=False, method=&#x27;exact&#x27;)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import carpath; carpath.car_hybrid_astar(occupancy, poses, radius=1.0, cell=1.0, step=None, n_theta=72, allow_reverse=True, footprint=None, clearance=0.0, reverse_penalty=0.0, switch_penalty=0.0, steer_penalty=0.0, shot_every=None, max_expansions=200000, return_tree=False, method=&#x27;exact&#x27;)</code>、台帳から引くなら <code style="color:#22d3bf">opsgraph.get(&quot;car_hybrid_astar&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>占有格子(&gt; 0.5 = 障害物)の上で車の道を Hybrid A*(Dolgov ら 2010)で探す: {左・直進・右} × {前進・後退} の運動基本形を離散セル (x, y, θ) で枝刈りしながら A* で繋ぎ、障害物を無視した Reeds–Shepp 長(前進のみなら Dubins 長)を許容ヒューリスティックに、節点から目標へ解析的な一撃を試す。車体の矩形 footprint か余白 clearance、後退・切替・舵の罰則。姿勢列・長さ・費用・下界(RS 長)・区間・展開数を返す。障害物の無い格子では費用 = RS 長。到達不能は ValueError。</p>
 <p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>

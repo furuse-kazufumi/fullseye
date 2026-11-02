@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">aabb — 3D <code style="color:#22d3bf">bounds</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">primitive</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.aabb(points)</code>(要直接呼叫實作,<code style="color:#22d3bf">import pcseg; pcseg.aabb(points)</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;aabb&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>軸對齊包圍盒。回傳 <code style="color:#22d3bf">(min (3,), max (3,))</code>。</p>
 <p>直接回傳點雲各軸的最小值與最大值(<code style="color:#22d3bf">P.min(0)</code>, <code style="color:#22d3bf">P.max(0)</code>)。回傳值為 2 個 (3,) float64 陣列，依序為 <code style="color:#22d3bf">(xmin, ymin, zmin)</code> 與 <code style="color:#22d3bf">(xmax, ymax, zmax)</code>（軸的順序為輸入的行順序）。盒子的大小為 <code style="color:#22d3bf">max - min</code>，中心為 <code style="color:#22d3bf">(min + max) / 2</code>。單位為座標單位。</p>

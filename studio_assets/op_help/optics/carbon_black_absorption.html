@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">carbon_black_absorption — OPTICS <code style="color:#22d3bf">matprop</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">pairs</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.carbon_black_absorption(fraction_by_mass: &#x27;float&#x27; = 0.005, wl_min_nm: &#x27;float&#x27; = 900.0, wl_max_nm: &#x27;float&#x27; = 2500.0, n_points: &#x27;int&#x27; = 321, density_g_cm3: &#x27;float&#x27; = 1.0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import materials; materials.carbon_black_absorption(fraction_by_mass: &#x27;float&#x27; = 0.005, wl_min_nm: &#x27;float&#x27; = 900.0, wl_max_nm: &#x27;float&#x27; = 2500.0, n_points: &#x27;int&#x27; = 321, density_g_cm3: &#x27;float&#x27; = 1.0)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;carbon_black_absorption&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>カーボンブラック(黒い樹脂の顔料)が足す吸収係数 α [1/mm]。</p>
 <p>α = MAC(λ)·ρ·w、MAC(λ) = 7.5 m²/g × (550/λ)^1(Bond &amp; Bergstrom 2006 の黒色炭素の質量吸収断面積と吸収 Ångström 指数)。0.5 wt % の樹脂(ρ ≈ 1 g/cm³)で 1.6 µm に約 13 /mm —— どの樹脂の C-H の帯(1〜5 /mm)より強く、しかも平坦なので、帯の形が見えなくなる(黒い樹脂が NIR で選別できない理由)。</p>

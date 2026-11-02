@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">course_turnaround — DRIVE <code style="color:#22d3bf">course</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">無</code> → <code style="color:#22d3bf">table</code>(僅由參數決定的運算子 —— 不接受影像或資料輸入)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.course_turnaround(width=3.5, bay_width=3.5, depth=5.0, entry=5.0, corner_radius=1.0, arc_pts=16, side=&#x27;left&#x27;)</code>(要直接呼叫實作,<code style="color:#22d3bf">import drivecourse; drivecourse.course_turnaround(width=3.5, bay_width=3.5, depth=5.0, entry=5.0, corner_radius=1.0, arc_pts=16, side=&#x27;left&#x27;)</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;course_turnaround&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>方向變換路線(T 形)：在寬 w 的道路(x ∈ [0, 2E + bay_width])側面中央設車位(沿道路的寬 bay_width，深度 depth)，車位口兩側各有出入口段 E。</p>
 <p>即日本法規別表第三的圖(3JH00000217784)本身: 道路(寬 A)中途以直角接上車庫(寬 B × 深 C),車庫口兩側的道路為出入口部 D,車庫口的 2 個凹頂點為截角 E。圖中車庫在朝上道路的右側,這裡以 <code style="color:#22d3bf">side=&quot;left&quot;</code>(+y)為預設,<code style="color:#22d3bf">&quot;right&quot;</code> 則鏡射。車輛沿道路前進,倒車入庫,再朝來的方向駛出(exit = (0, 0, π);要往反方向駛出時由配置端選擇方向)。centerline 為道路軸 → 車庫軸。面積 = (2E + bay_width)·w + depth·bay_width + 2r²(1 − π/4)。</p>

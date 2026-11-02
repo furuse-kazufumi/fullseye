@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">osm_road_mask — DRIVE <code style="color:#22d3bf">japan</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.osm_road_mask(graph: &#x27;dict&#x27;, *, step: &#x27;float&#x27; = 0.5, margin: &#x27;float&#x27; = 6.0, bbox=None) -&gt; &#x27;Dict[str, object]&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivejapan; drivejapan.osm_road_mask(graph: &#x27;dict&#x27;, *, step: &#x27;float&#x27; = 0.5, margin: &#x27;float&#x27; = 6.0, bbox=None) -&gt; &#x27;Dict[str, object]&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;osm_road_mask&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>에지를 폭이 있는 선분(끝은 둥글게)으로 그린 <b>도로의 합집합</b> 2값 영상.</p>
 <p>픽셀 (r, c) 의 중심 = (xmin + (c + ½) step, ymin + (r + ½) step), 행은 y 가 커지는 방향(수학 좌표. 표시할 때 위아래를 뒤집음). 반환값 <code style="color:#22d3bf">{&quot;mask&quot;: (H, W) bool, &quot;xmin&quot;, &quot;ymin&quot;, &quot;step&quot;, &quot;shape&quot;, &quot;area_m2&quot;: 画素数 × step²}</code>. <b>Raises</b> <code style="color:#22d3bf">ValueError</code>: step ≤ 0, 영상이 4e7 픽셀을 초과(step 을 거칠게).</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">pc_lod_chain — 3D <code style="color:#22d3bf">resolution</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pc_lod_chain(points, spacing, levels=3, seed=0)</code> (die Implementierung direkt: <code style="color:#22d3bf">import meshres; meshres.pc_lod_chain(points, spacing, levels=3, seed=0)</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;pc_lod_chain&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Poisson-Disk-Stufen mit sich verdoppelnden Abständen (<code style="color:#22d3bf">table</code>).</p>
 <p>Level 0 ist die Eingabe; in Level *k* liegen keine zwei Punkte näher beieinander als <code style="color:#22d3bf">spacing × 2^(k−1)</code>. Gibt <code style="color:#22d3bf">levels</code> (Liste von Wolken), <code style="color:#22d3bf">spacings</code>, <code style="color:#22d3bf">counts</code> zurück.</p>

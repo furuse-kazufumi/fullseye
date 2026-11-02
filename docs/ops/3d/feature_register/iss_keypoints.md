@@ -4,6 +4,7 @@ dim: 3d
 category: feature_register
 in: points
 out: indices
+gpu: なし
 examples: [feature_register]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `points` → `indices`
 - **呼び出し**: `import fullseye as fs; fs.ledger.iss_keypoints(points, radius, nms_radius=None, gamma21=0.99, gamma32=0.99, max_kp=400, min_neighbors=8)` (実装を直接呼ぶなら `import feat_shot; feat_shot.iss_keypoints(points, radius, nms_radius=None, gamma21=0.99, gamma32=0.99, max_kp=400, min_neighbors=8)`、台帳から引くなら `ops3d.get("iss_keypoints")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

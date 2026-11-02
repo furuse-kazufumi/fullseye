@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">stereo_parallax_budget — OPTICS <code style="color:#22d3bf">omni360</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">table</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.stereo_parallax_budget(disparity_px, width_px, viewing_distance_m, screen_width_m, ipd_m)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import omni360; omni360.stereo_parallax_budget(disparity_px, width_px, viewing_distance_m, screen_width_m, ipd_m)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;stereo_parallax_budget&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>भौतिक विस्थापन और स्क्रीन चौड़ाई की एक व तीन प्रतिशत सीमाएँ बताता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पूरी family का input contract (fail-closed)</h3>

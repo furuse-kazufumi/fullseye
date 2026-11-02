@@ -4,6 +4,7 @@ dim: reprconv
 category: index
 in: indices
 out: labels
+gpu: なし
 examples: [representation_conversion]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `indices` → `labels`
 - **呼び出し**: `import fullseye as fs; fs.ledger.indices_to_labels(indices)` (実装を直接呼ぶなら `import reprconv; reprconv.indices_to_labels(indices)`、台帳から引くなら `opsreprconv.get("indices_to_labels")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

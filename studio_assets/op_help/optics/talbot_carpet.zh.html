@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">talbot_carpet — OPTICS <code style="color:#22d3bf">grating_interf</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">table</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.talbot_carpet(period_um=4.0, wavelength_nm=None, energy_kev=None, grating=&#x27;pi&#x27;, duty=0.5, z_max_mm=None, n_z=241, n_x=128, n_periods=2, n_harmonics=63, model=&#x27;exact&#x27;)</code>(要直接调用实现,<code style="color:#22d3bf">import gratinginterf; gratinginterf.talbot_carpet(period_um=4.0, wavelength_nm=None, energy_kev=None, grating=&#x27;pi&#x27;, duty=0.5, z_max_mm=None, n_z=241, n_x=128, n_periods=2, n_harmonics=63, model=&#x27;exact&#x27;)</code>;从台账取用则 <code style="color:#22d3bf">opsoptics.get(&quot;talbot_carpet&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>塔尔博特地毯:以衍射级次之和的闭式给出二值光栅(π 相位 / π/2 相位 / 吸收)后方的强度 I(x, z)。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>

@@ -4,6 +4,7 @@ dim: optics
 category: spectrometer
 in: table
 out: table
+gpu: なし
 examples: [poc_spectrometer_illumination]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.spectrometer_slit_image(design, slit_height_mm=2.0, wavelengths_nm=None, n_points=21, rule='vector')` (実装を直接呼ぶなら `import gratingspec; gratingspec.spectrometer_slit_image(design, slit_height_mm=2.0, wavelengths_nm=None, n_points=21, rule='vector')`、台帳から引くなら `opsoptics.get("spectrometer_slit_image")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

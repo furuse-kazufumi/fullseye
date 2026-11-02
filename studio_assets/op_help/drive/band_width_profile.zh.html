@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">band_width_profile — DRIVE <code style="color:#22d3bf">polish</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d × scalar × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.band_width_profile(image, threshold: &#x27;float&#x27;, res: &#x27;float&#x27;, along: &#x27;str&#x27; = &#x27;x&#x27;) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import polish; polish.band_width_profile(image, threshold: &#x27;float&#x27;, res: &#x27;float&#x27;, along: &#x27;str&#x27; = &#x27;x&#x27;) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;band_width_profile&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>对直线单次行程(方向 <code style="color:#22d3bf">along</code>)擦出的带，在与带正交的每条线上以亚像素精度读取宽度：用与相邻像素的线性插值求出首次与最后一次越过阈值的位置，其差 × res 即为宽度。返回 <code style="color:#22d3bf">widths</code>(逐线，无法读取的线为 NaN)、<code style="color:#22d3bf">centres</code>(带中心位置 [m]，图的坐标)、<code style="color:#22d3bf">valid</code>、<code style="color:#22d3bf">median</code>。前提是只有 1 条带(多条带时得到最外侧之间的宽度)。<b>Raises</b> ValueError：图像检查，res ≤ 0，along 不是 x / y，阈值非有限。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

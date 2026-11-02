@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">exit_room_check — DRIVE <code style="color:#22d3bf">crossing</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.exit_room_check(queue_rear, far_edge: &#x27;float&#x27;, car_length: &#x27;float&#x27;, *, gap: &#x27;float&#x27; = 1.0, beyond: &#x27;float&#x27; = 0.5)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivecrossing; drivecrossing.exit_room_check(queue_rear, far_edge: &#x27;float&#x27;, car_length: &#x27;float&#x27;, *, gap: &#x27;float&#x27; = 1.0, beyond: &#x27;float&#x27; = 0.5)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;exit_room_check&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>철도 건널목(횡단보도·교차로도 동일) 건너편에 자차가 정지할 여유가 있는지(제50조 제2항). 배열 가능.</p>
 <p>앞차의 뒤끝 <code style="color:#22d3bf">queue_rear</code> 의 뒤 <code style="color:#22d3bf">gap</code> 에서 멈추면 자기 뒤끝 = queue_rear − gap − car_length. 이것이 far_edge + beyond 이상이면 들어가도 된다. 반환값: <code style="color:#22d3bf">room</code> = queue_rear − far_edge, <code style="color:#22d3bf">need</code> = car_length + gap + beyond, <code style="color:#22d3bf">ok</code>, <code style="color:#22d3bf">rear_if_stopped</code>. 앞차가 없는 경우는 queue_rear = +∞.</p>

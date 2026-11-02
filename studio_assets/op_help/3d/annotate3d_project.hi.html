@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">annotate3d_project — 3D <code style="color:#22d3bf">annotate3d</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate3d_project(points, pose, K, depth=None, shape=None, occlusion_tol=0.01)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import annotate3d; annotate3d.annotate3d_project(points, pose, K, depth=None, shape=None, occlusion_tol=0.01)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;annotate3d_project&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>table (dict) लौटाता है: 3-D points के pixel coordinates, आगे की दूरी, image के अंदर/occluded होने का निर्णय (<code style="color:#22d3bf">project_anchors</code>)।</p>
 <p>drawing के बिना &quot;सिर्फ़ projection&quot; करने वाला op। annotate3d के सभी drawing ops अंदर जो जाँचें करते हैं, उन्हें जैसे-का-तैसा table के रूप में लौटाता है, इसलिए इसे अपने plots, numerical verification और &quot;क्या यह point दिखता है&quot; वाली branching के लिए इस्तेमाल करें।</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">diabolo_camera — DRIVE <code style="color:#22d3bf">diabolo</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">table</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.diabolo_camera(*, position=(1.4, 0.0, 0.75), look_at=(0.0, 0.0, 0.75), shape=(480, 640), fovy_deg: &#x27;float&#x27; = 30.0) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import diabolo; diabolo.diabolo_camera(*, position=(1.4, 0.0, 0.75), look_at=(0.0, 0.0, 0.75), shape=(480, 640), fovy_deg: &#x27;float&#x27; = 30.0) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;diabolo_camera&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>透视相机(默认 = 从前方 1.4 m 处朝 −x 看，世界的 z 朝上)。返回 <code style="color:#22d3bf">{&quot;C&quot;, &quot;R&quot;(行 = 右、下、前), &quot;K&quot;, &quot;shape&quot;, &quot;look_at&quot;}</code>。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>：位置与注视点重合、视线竖直、图像尺寸或视场角不合法。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

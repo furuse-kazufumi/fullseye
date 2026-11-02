@@ -98,13 +98,21 @@
    "de": "- **Division durch null und Verwandtes wird namentlich abgelehnt**: Brennweite 0, Krümmungsradius 0, Brechzahl <= 0, undurchlässige Blende (alles 0, die Normierung wird 0/0), PSF mit Summe <= 0, Stokes-Vektor mit S0 = 0 und ein Objekt im vorderen Brennpunkt (Bild im Unendlichen).",
    "hi": "- **शून्य से भाग और उससे जुड़े मामलों को नाम लेकर अस्वीकार किया जाता है**: focal length 0, radius of curvature 0, refractive index <= 0, पूरी तरह opaque aperture (सब 0, इसलिए normalisation 0/0), ऐसा PSF जिसका योग <= 0 हो, S0 = 0 वाला Stokes vector, और front focal point पर रखा object (image अनंत पर)।"
   },
-  "- **GPU**: この op は GPU 経路あり(`device=\"cuda\"`)": {
-   "en": "- **GPU**: this op has a GPU path (`device=\"cuda\"`)",
-   "zh": "- **GPU**:该算子有 GPU 路径(`device=\"cuda\"`)",
-   "tw": "- **GPU**:該運算子有 GPU 路徑(`device=\"cuda\"`)",
-   "ko": "- **GPU**: 이 연산자는 GPU 경로가 있습니다(`device=\"cuda\"`)",
-   "de": "- **GPU**: Dieser Operator hat einen GPU-Pfad (`device=\"cuda\"`)",
-   "hi": "- **GPU**: इस op का GPU path है (`device=\"cuda\"`)"
+  "- **GPU**: あり(`{a0}`、`device=\"cuda\"` で高速経路)": {
+   "en": "- **GPU**: yes (`{a0}`, fast path with `device=\"cuda\"`)",
+   "zh": "- **GPU**:有(`{a0}`,`device=\"cuda\"` 走快速路径)",
+   "tw": "- **GPU**:有(`{a0}`,`device=\"cuda\"` 走快速路徑)",
+   "ko": "- **GPU**: 있음(`{a0}`, `device=\"cuda\"` 로 고속 경로)",
+   "de": "- **GPU**: ja (`{a0}`, schneller Pfad mit `device=\"cuda\"`)",
+   "hi": "- **GPU**: हाँ (`{a0}`, `device=\"cuda\"` से fast path)"
+  },
+  "- **GPU**: なし(CPU 参照実装のみ)": {
+   "en": "- **GPU**: none (CPU reference implementation only)",
+   "zh": "- **GPU**:无(仅 CPU 参考实现)",
+   "tw": "- **GPU**:無(僅 CPU 參考實作)",
+   "ko": "- **GPU**: 없음(CPU 참조 구현만)",
+   "de": "- **GPU**: nein (nur CPU-Referenzimplementierung)",
+   "hi": "- **GPU**: नहीं (केवल CPU reference implementation)"
   },
   "- **HALCON 相当**: `{a0}`(意味・パラメータは HALCON リファレンスが参考になる)": {
    "en": "- **HALCON equivalent**: `{a0}` (the HALCON reference is a useful guide to its meaning and parameters)",

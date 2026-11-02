@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">risk_aware_path — DRIVE <code style="color:#22d3bf">roverslip</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table × any × any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.risk_aware_path(cost_map, start, goal) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import roverslip; roverslip.risk_aware_path(cost_map, start, goal) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;risk_aware_path&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>8-neighbor Dijkstra (directed edges — uphill and downhill differ) on the edge travel times of <code style="color:#22d3bf">cvar_cost_map</code>.</p>
 <p><code style="color:#22d3bf">start</code> and <code style="color:#22d3bf">goal</code> are (row, column). Returns <code style="color:#22d3bf">{&quot;path&quot;: (n, 2) の添字, &quot;cost&quot;: 合計の所要時間 [s] (届かなければ inf), &quot;reached&quot;: bool, &quot;cost_to_come&quot;: (H, W)}</code>. If unreachable, <code style="color:#22d3bf">path</code> is empty.</p>

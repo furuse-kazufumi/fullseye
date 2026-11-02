@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">coincidence_delay — ONED <code style="color:#22d3bf">matched</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.coincidence_delay(snr_a, snr_b, rate: &#x27;float&#x27; = 4096.0, *, max_delay_s: &#x27;float&#x27; = 0.01) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import gwsearch; gwsearch.coincidence_delay(snr_a, snr_b, rate: &#x27;float&#x27; = 4096.0, *, max_delay_s: &#x27;float&#x27; = 0.01) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">ops1d.get(&quot;coincidence_delay&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Zeitdifferenz (b − a) zwischen den Maxima zweier SNR-Zeitreihen mit Subsample-Genauigkeit.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>

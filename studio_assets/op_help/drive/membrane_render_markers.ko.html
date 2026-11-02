@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">membrane_render_markers — DRIVE <code style="color:#22d3bf">tacslip</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">rgb × matrix × scalar × scalar</code> → <code style="color:#22d3bf">rgb</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.membrane_render_markers(rgb, pts, r_px: &#x27;float&#x27;, dark: &#x27;float&#x27;, sub: &#x27;int&#x27; = 8) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import tacslip; tacslip.membrane_render_markers(rgb, pts, r_px: &#x27;float&#x27;, dark: &#x27;float&#x27;, sub: &#x27;int&#x27; = 8) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;membrane_render_markers&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>RGB (H, W, 3)에 검은 원판 마커(중심 pts (N, 2) [px], 반경 r_px)를 그림: 화소의 피복률로 rgb *= 1 − dark·coverage. 피복률은 원판 가장자리 화소만 sub²의 부표본(안쪽 1·바깥쪽 0). 영상을 보간해 왜곡하지 않으므로 참값이 엄밀. <b>Raises</b> ValueError: rgb가 (H, W, 3)이 아님, pts가 (N, 2)가 아님, r_px ≤ 0, dark가 [0, 1] 밖.</p>
 <p>빈 입력(<code style="color:#22d3bf">rgb</code> 이(가) 0 개 요소)은 <code style="color:#22d3bf">ValueError</code> 를 발생시킨다.</p>

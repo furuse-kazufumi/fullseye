@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">mesh_euler_characteristic — MATH <code style="color:#22d3bf">geometry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">mesh</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mesh_euler_characteristic(vertices, faces=None) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import mathgeometry; mathgeometry.mesh_euler_characteristic(vertices, faces=None) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsmath.get(&quot;mesh_euler_characteristic&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>V − E + F eines Dreiecksnetzes und, bei einer geschlossenen orientierbaren Fläche, das Geschlecht g = (2 − χ)/2.</p>
 <p>Unbenutzte Ecken werden nicht gezählt (verhindert, dass χ durch schwebende Ecken verschoben wird). Randkanten (Kanten, die nur zu 1 Fläche gehören) und nicht-mannigfaltige Kanten (3 oder mehr) werden ebenfalls zurückgegeben —— mit Rand gilt χ = 2 − 2g − b (b = Anzahl der Randschleifen), und das Geschlecht ist <code style="color:#22d3bf">None</code>.</p>

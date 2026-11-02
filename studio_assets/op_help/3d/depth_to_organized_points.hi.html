@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">depth_to_organized_points — 3D <code style="color:#22d3bf">range_image</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">depth</code> → <code style="color:#22d3bf">pointmap</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.depth_to_organized_points(depth, fx=None, fy=None, cx=None, cy=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import range_image; range_image.depth_to_organized_points(depth, fx=None, fy=None, cx=None, cy=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;depth_to_organized_points&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>organized depth image → grid-aligned 3D points (H,W,3)।</p>
 <p>fx,fy देने पर perspective back-projection P=((u-cx)/fx*d, (v-cy)/fy*d, d)। न देने पर orthographic (P=(x,y,depth), grid spacing 1)।</p>

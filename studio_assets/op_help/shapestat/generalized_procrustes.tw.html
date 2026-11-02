@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">generalized_procrustes — SHAPESTAT <code style="color:#22d3bf">procrustes</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">shapeset</code> → <code style="color:#22d3bf">shapeset</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.generalized_procrustes(shapes, max_iter: &#x27;int&#x27; = 100, tol: &#x27;float&#x27; = 1e-10, scaling: &#x27;bool&#x27; = True, reflection: &#x27;bool&#x27; = False)</code>(要直接呼叫實作,<code style="color:#22d3bf">import shapestats; shapestats.generalized_procrustes(shapes, max_iter: &#x27;int&#x27; = 100, tol: &#x27;float&#x27; = 1e-10, scaling: &#x27;bool&#x27; = True, reflection: &#x27;bool&#x27; = False)</code>;從台帳取用則 <code style="color:#22d3bf">opsshapestat.get(&quot;generalized_procrustes&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>廣義 Procrustes 分析(GPA)。將所有個體放入共同的座標框架。→ <code style="color:#22d3bf">(K, N, 3)</code>。</p>
 <p>步驟與教科書一致:以 1 個個體為暫定平均，將所有個體對齊，重新求平均，再把該平均<b>重新對齊到第一個個體</b>以阻止座標框漂移，重複直到收斂。缺少最後這一步，平均每次都會緩慢旋轉，達不到 <code style="color:#22d3bf">tol</code>。</p>

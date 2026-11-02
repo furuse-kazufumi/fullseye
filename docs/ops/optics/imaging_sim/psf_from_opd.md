@@ -4,6 +4,7 @@ dim: optics
 category: imaging_sim
 in: table
 out: image2d
+gpu: なし
 examples: [lens_defect_dataset_demo, optical_design_metrics, poc_zmx_public_verify]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.psf_from_opd(system, field=None, size=None, wavelength_um=None, pixel_pitch_um=None, oversample=4)` (実装を直接呼ぶなら `import lensimage; lensimage.psf_from_opd(system, field=None, size=None, wavelength_um=None, pixel_pitch_um=None, oversample=4)`、台帳から引くなら `opsoptics.get("psf_from_opd")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

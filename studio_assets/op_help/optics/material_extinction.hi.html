@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">material_extinction — OPTICS <code style="color:#22d3bf">matprop</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">pairs</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.material_extinction(material=&#x27;SI&#x27;, wl_min_nm: &#x27;float&#x27; = 400.0, wl_max_nm: &#x27;float&#x27; = 1400.0, n_points: &#x27;int&#x27; = 101) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import materials; materials.material_extinction(material=&#x27;SI&#x27;, wl_min_nm: &#x27;float&#x27; = 400.0, wl_max_nm: &#x27;float&#x27; = 1400.0, n_points: &#x27;int&#x27; = 101) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;material_extinction&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>extinction coefficient की curve k(λ) pairs (λ [nm], k) के रूप में; जहाँ k table नहीं वहाँ 0।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पूरी family का input contract (fail-closed)</h3>

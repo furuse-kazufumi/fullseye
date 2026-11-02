@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">world_materials — DRIVE <code style="color:#22d3bf">terrain</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table × table × matrix × matrix × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.world_materials(world: &#x27;dict&#x27;, view: &#x27;dict&#x27;, pose, K, m: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import driveterrain; driveterrain.world_materials(world: &#x27;dict&#x27;, view: &#x27;dict&#x27;, pose, K, m: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;world_materials&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>对渲染结果 <code style="color:#22d3bf">view</code>(world_camera 的输出，含 &quot;shade&quot;)逐像素施加路面材质。</p>
 <p>路面(标签 0)和地形(10)的像素在世界坐标中重新评估材质: 沥青颗粒(Perlin 8 周期/m)、草的颜色不均、污渍(暗斑,标签仍为 0)、水洼(天空倒影,标签 11)。白线、人行横道(9、12)按磨损率 wear 混入路面颜色(标签不变,保留在真值 &quot;wear&quot; 中)。水洼倒影的强度(0.1~0.9,Perlin 1.5 周期/m)为真值 &quot;refl&quot;。返回值 = <code style="color:#22d3bf">{&quot;color&quot;, &quot;label&quot;, &quot;puddle&quot;, &quot;refl&quot;, &quot;stain&quot;, &quot;wear&quot;, &quot;xyz&quot;}</code>。</p>

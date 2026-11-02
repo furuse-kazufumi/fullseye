@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">silicon_photodiode_qe — OPTICS <code style="color:#22d3bf">spectral</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">無</code> → <code style="color:#22d3bf">pairs</code>(僅由參數決定的運算子 —— 不接受影像或資料輸入)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.silicon_photodiode_qe(collection_depth_um=3.0, dead_layer_um=0.0, front_reflectance=None, wl_min_nm=300.0, wl_max_nm=1200.0, n_points=181)</code>(要直接呼叫實作,<code style="color:#22d3bf">import spectralrad; spectralrad.silicon_photodiode_qe(collection_depth_um=3.0, dead_layer_um=0.0, front_reflectance=None, wl_min_nm=300.0, wl_max_nm=1200.0, n_points=181)</code>;從台帳取用則 <code style="color:#22d3bf">opsoptics.get(&quot;silicon_photodiode_qe&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由 Si 的 n,k 求 Si 光電二極體的外部量子效率(電子/光子)。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>

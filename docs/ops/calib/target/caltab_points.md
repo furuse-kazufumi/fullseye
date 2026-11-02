@@ -4,6 +4,7 @@ dim: calib
 category: target
 in: 
 out: keypoints
+gpu: なし
 examples: []
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `keypoints`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.caltab_points(rows=7, cols=7, spacing=1.0)` (実装を直接呼ぶなら `import caltab; caltab.caltab_points(rows=7, cols=7, spacing=1.0)`、台帳から引くなら `opscalib.get("caltab_points")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">emva_pair_statistics — OPTICS <code style="color:#22d3bf">sensorchar</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.emva_pair_statistics(y0, y1)</code> (die Implementierung direkt: <code style="color:#22d3bf">import sensorchar; sensorchar.emva_pair_statistics(y0, y1)</code>; aus dem Register: <code style="color:#22d3bf">opsoptics.get(&quot;emva_pair_statistics&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Berechnet aus 2 Aufnahmen mit gleicher Belichtung Mittelwert, zeitliche Varianz und räumliche Varianz (Gl. 16, 18, 32).</p>
 <p><code style="color:#22d3bf">mu</code> = (μ[0] + μ[1]) / 2 (Gl. 16), <code style="color:#22d3bf">var_temporal</code> = Σ(y0 − y1)²/(2NM) − (μ[0] − μ[1])²/2 (Gl. 18: die Korrektur für die Differenz der 2 Bildmittelwerte ist neu in Release 4), <code style="color:#22d3bf">var_spatial</code> = Σ y0·y1/(NM) − μ[0]μ[1] (Gl. 32, nachweislich nie negativ).</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">vignetting_vs_field — OPTICS <code style="color:#22d3bf">telecentric</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">pairs</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vignetting_vs_field(system, field_max_mm=None, n_points=41, samples=81)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import telecentric; telecentric.vignetting_vs_field(system, field_max_mm=None, n_points=41, samples=81)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;vignetting_vs_field&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>物高ごとに、像面まで届く光線束の立体角(傾きの面積)を軸上に対する割合で(ケラレ)。</p>
 <p>pairs <code style="color:#22d3bf">(物高 mm, 割合)</code>。物体側テレセンでは主光線が光軸に平行なので、<b>前玉の半口径より外の物は写らない</b> —— 視野の直径は前玉径で決まる(通常のレンズは主光線が光軸へ寄るので前玉より広く見える)。物体側テレセンの</p>

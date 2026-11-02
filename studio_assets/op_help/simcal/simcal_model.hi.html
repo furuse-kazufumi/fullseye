@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">simcal_model — SIMCAL <code style="color:#22d3bf">model</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">simmodel</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.simcal_model(chain=None, knobs=None, scene=None, nuisance=None, noise=None, conditions=None, stochastic=None, label=&#x27;model&#x27;) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import simcal; simcal.simcal_model(chain=None, knobs=None, scene=None, nuisance=None, noise=None, conditions=None, stochastic=None, label=&#x27;model&#x27;) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opssimcal.get(&quot;simcal_model&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p><code style="color:#22d3bf">simmodel</code> बनाता है: ops की forward chain जिसके arguments इकाई व सीमा वाले knobs हैं, साथ में noise model।</p>
 <p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>

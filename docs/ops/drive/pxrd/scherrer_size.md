@@ -4,6 +4,7 @@ dim: drive
 category: pxrd
 in: scalar × scalar × scalar
 out: scalar
+gpu: なし
 examples: [poc_pxrd_phase_peel]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `scalar × scalar × scalar` → `scalar`
 - **呼び出し**: `import fullseye as fs; fs.ledger.scherrer_size(fwhm, two_theta, wavelength, K=0.9, instrumental_fwhm=0.0, combine='gauss')` (実装を直接呼ぶなら `import pxrd; pxrd.scherrer_size(fwhm, two_theta, wavelength, K=0.9, instrumental_fwhm=0.0, combine='gauss')`、台帳から引くなら `opsdrive.get("scherrer_size")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

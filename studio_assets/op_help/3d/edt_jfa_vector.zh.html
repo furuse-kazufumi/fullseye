@@ -3,7 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">flow_dense</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.edt_jfa_vector(seed_bool, device=&#x27;cpu&#x27;)</code>(要直接调用实现,<code style="color:#22d3bf">import match3d; match3d.edt_jfa_vector(seed_bool, device=&#x27;cpu&#x27;)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;edt_jfa_vector&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>经台账调用的返回值</b>: <code style="color:#22d3bf">fullseye.ledger.edt_jfa_vector(...)</code> 只返回<b>声明的 out 类型 <code style="color:#22d3bf">flow_dense</code> 的值</b>(底层函数还会返回辅助信息)。需要被丢弃的部分时,使用 <code style="color:#22d3bf">fullseye.ledger.edt_jfa_vector.raw(...)</code>,或直接调用 <code style="color:#22d3bf">match3d.edt_jfa_vector</code>。</p>
-<p style="margin:2px 0 2px 12px">• <b>GPU</b>:该算子有 GPU 路径(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用 <b>GPU 的 JFA</b> 求每个 voxel 到最近 seed 的位移 <code style="color:#22d3bf">(3, D, H, W)</code>(<code style="color:#22d3bf">flow_dense</code>，dz, dy, dx [voxel])。</p>
 <p><code style="color:#22d3bf">edt_jfa</code> 只返回距离值,但 JFA 内部携带着最近 seed 的坐标 —— 把它原样输出(额外成本几乎为 0)。CPU / scipy 路径为 <code style="color:#22d3bf">vol_nearest_seed_vector</code>(值相同,实测 N≤160 时严格一致)。没有 seed 时 ValueError (<code style="color:#22d3bf">edt_jfa</code> 会饱和为 1e6,但方向不存在「无限远」)。返回 torch float32(经台账时为 numpy)。</p>

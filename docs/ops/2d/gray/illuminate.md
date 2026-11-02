@@ -5,6 +5,7 @@ category: gray
 in: image
 out: image
 halcon: illuminate
+gpu: あり(illuminate)
 examples: [gallery2d_gray_arith, poc_document_scan, poc_matrix_code_reading]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -16,6 +17,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **データ種**: `image` → `image`
 - **呼び出し**: `fullseye.apply(img, "illuminate", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 - **HALCON 相当**: `illuminate`(意味・パラメータは HALCON リファレンスが参考になる)
+- **GPU**: あり(`illuminate`、`device="cuda"` で高速経路)
 
 ![illuminate: input → output](../../_fig/illuminate.png)
 

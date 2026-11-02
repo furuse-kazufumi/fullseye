@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">braid_equivalent — DRIVE <code style="color:#22d3bf">braidpath</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">signal × signal × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.braid_equivalent(word_a, word_b, n_strands, method=&#x27;dynnikov&#x27;)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import braidpath; braidpath.braid_equivalent(word_a, word_b, n_strands, method=&#x27;dynnikov&#x27;)</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;braid_equivalent&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>2 つの組紐語が同じ組紐か(関係式だけで移り合うか)。</p>
 <p>method: <code style="color:#22d3bf">&quot;dynnikov&quot;</code>(座標を比べる、速い)/ <code style="color:#22d3bf">&quot;handle&quot;</code>(a b⁻¹ を取っ手簡約して空か)/ <code style="color:#22d3bf">&quot;artin&quot;</code>(自由群の像を比べる)/ <code style="color:#22d3bf">&quot;all&quot;</code>(3 つとも計算し、食い違えば RuntimeError —— 実装の検査)。</p>

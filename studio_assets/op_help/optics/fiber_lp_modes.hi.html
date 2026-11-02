@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">fiber_lp_modes — OPTICS <code style="color:#22d3bf">fiber</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">table</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fiber_lp_modes(v_number=6.0, max_modes=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import fiberoptics; fiberoptics.fiber_lp_modes(v_number=6.0, max_modes=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;fiber_lp_modes&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>weakly guiding step-index fibre के LP_lm modes: characteristic equation हल करके हर mode के u, w और normalised propagation constant b लौटाता है (<code style="color:#22d3bf">table</code>)।</p>
 <p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>

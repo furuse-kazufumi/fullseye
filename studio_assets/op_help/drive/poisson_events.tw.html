@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">poisson_events — DRIVE <code style="color:#22d3bf">traffic</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.poisson_events(rate_fn: &#x27;Callable&#x27;, x_max: &#x27;float&#x27;, *, rate_max: &#x27;float&#x27;, seed, n_grid: &#x27;int&#x27; = 2001) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import drivetraffic; drivetraffic.poisson_events(rate_fn: &#x27;Callable&#x27;, x_max: &#x27;float&#x27;, *, rate_max: &#x27;float&#x27;, seed, n_grid: &#x27;int&#x27; = 2001) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;poisson_events&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>以 thinning(Lewis &amp; Shedler 1979)在 [0, x_max] 上抽取 1 條非齊次卜瓦松過程樣本(依升序排列的位置陣列)。</p>
 <p>從率為 rate_max 的齊次卜瓦松過程抽取候選,並以機率 λ(x)/rate_max 保留每個候選 x。保留的點構成率為 λ 的非齊次卜瓦松過程 → 件數 N ~ Poisson(Λ),Λ = ∫₀^{x_max} λ(x) dx(門: 多次試驗中平均 = 變異數 = Λ,位置的分布 = λ/Λ)。<code style="color:#22d3bf">rate_fn</code> 是接受 numpy 陣列並回傳同形狀率的函式。<b>抽取之前</b>在 <code style="color:#22d3bf">n_grid</code> 點的等間隔網格上確認 λ ≤ rate_max, 並在抽到的候選處也進行確認。任一處超出即 ValueError(fail-closed。若不遵守上限,thinning 會悄悄少計)。<code style="color:#22d3bf">seed</code> 為 int 或 <code style="color:#22d3bf">np.random.Generator</code>。</p>

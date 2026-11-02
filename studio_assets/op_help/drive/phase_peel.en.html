@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">phase_peel — DRIVE <code style="color:#22d3bf">pxrd</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal × signal × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.phase_peel(two_theta, intensity, dictionary, max_phases=None, min_gain=0.05, min_fraction=0.005, background_order=4, sigma=None)</code> (to call the implementation directly, <code style="color:#22d3bf">import pxrd; pxrd.phase_peel(two_theta, intensity, dictionary, max_phases=None, min_gain=0.05, min_fraction=0.005, background_order=4, sigma=None)</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;phase_peel&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Peels phases off a mixture 1 at a time (greedy forward selection).</p>
 <p>Stage 0 is background only. At each stage, each not-yet-selected phase is added one at a time and fitted with <code style="color:#22d3bf">phase_fractions</code>, and the phase that lowers <code style="color:#22d3bf">rwp</code> the most is chosen. Stop if the relative decrease of <code style="color:#22d3bf">rwp</code> is below <code style="color:#22d3bf">min_gain</code>, or if the weight fraction of the chosen phase is below <code style="color:#22d3bf">min_fraction</code>.</p>

@@ -4,6 +4,7 @@ dim: annotate
 category: paper
 in: images
 out: image2d
+gpu: なし
 examples: [paper_figure, poc_flybrain_pointcloud, poc_itof_multifreq, poc_pixel_shift]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `images` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.annotate_figure_grid(panels, captions=None, ncols=2, pad=10, caption_h=32, letters=True, letter_style='paren', title=None, font_size=14, min_font_size=9, background=1.0, border=1, border_color='neutral', text_color=None, scheme='okabe_ito', font_path=None)` (実装を直接呼ぶなら `import annotate; annotate.annotate_figure_grid(panels, captions=None, ncols=2, pad=10, caption_h=32, letters=True, letter_style='paren', title=None, font_size=14, min_font_size=9, background=1.0, border=1, border_color='neutral', text_color=None, scheme='okabe_ito', font_path=None)`、台帳から引くなら `opsannotate.get("annotate_figure_grid")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

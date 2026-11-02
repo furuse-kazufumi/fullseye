@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tf_bilinear — MATH <code style="color:#22d3bf">transform</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tf_bilinear(num, den, fs: &#x27;float&#x27; = 1.0, *, prewarp_hz: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import mathtransforms; mathtransforms.tf_bilinear(num, den, fs: &#x27;float&#x27; = 1.0, *, prewarp_hz: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsmath.get(&quot;tf_bilinear&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用 Tustin(双线性)变换 s = K (z − 1)/(z + 1) 把连续系统映射为离散系统。</p>
 <p>K = 2·fs(朴素 Tustin)，或给出 <code style="color:#22d3bf">prewarp_hz</code> 时 K = ω₀ / tan(ω₀ / (2 fs)) (在该频率上连续系统与离散系统的响应<b>严格一致</b>。其他频率被 tan 扭曲)。返回值的系数按 z 的降幂排列(<code style="color:#22d3bf">np.polyval(num_z, z)</code>)。稳定的连续系统变为稳定的离散系统(左半平面 → 单位圆内)。</p>

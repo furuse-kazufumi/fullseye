@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">talbot_carpet — OPTICS <code style="color:#22d3bf">grating_interf</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.talbot_carpet(period_um=4.0, wavelength_nm=None, energy_kev=None, grating=&#x27;pi&#x27;, duty=0.5, z_max_mm=None, n_z=241, n_x=128, n_periods=2, n_harmonics=63, model=&#x27;exact&#x27;)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import gratinginterf; gratinginterf.talbot_carpet(period_um=4.0, wavelength_nm=None, energy_kev=None, grating=&#x27;pi&#x27;, duty=0.5, z_max_mm=None, n_z=241, n_x=128, n_periods=2, n_harmonics=63, model=&#x27;exact&#x27;)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;talbot_carpet&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>タルボ絨毯: 2 値の格子(位相 π / 位相 π/2 / 吸収)の後ろの強度 I(x, z) を、回折次数の和で閉形式に出す。</p>
 <p>格子 1 周期の透過 t(x)(線の幅の割合 duty で t_a、残りで t_b)のフーリエ係数 c_n は閉形式 c_n = (t_a − t_b)(1 − e^{−2πi n·duty})/(2πi n)、c_0 = t_a·duty + t_b(1 − duty)。平面波で照らした場は u(x, z) = Σ c_n e^{2πi n x/p} e^{i k_z(n) z}。</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">mv_confounding — MULTIVAR <code style="color:#22d3bf">identifiability</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mv_confounding(S=None, names=None, threshold=10.0, log_params=False, max_subset=None) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import sensitivity; sensitivity.mv_confounding(S=None, names=None, threshold=10.0, log_params=False, max_subset=None) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsmultivar.get(&quot;mv_confounding&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Collinearity index gamma_K (Brun, Reichert &amp; Künsch 2001): which parameters the data can fix.</p>
 <p><code style="color:#22d3bf">S</code> is the sensitivity matrix (observations x parameters): column j = the change of every output per change of parameter j (finite differences of a simulation, or a Jacobian), ideally already scaled to be dimensionless (Brun: s_ij = dtheta_j / sc_i * dy_i/dtheta_j). Each column is normalised to unit length, <code style="color:#22d3bf">s~_j = s_j / ||s_j||</code>, and for a parameter subset K</p>

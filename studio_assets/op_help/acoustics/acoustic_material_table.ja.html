@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">acoustic_material_table — ACOUSTICS <code style="color:#22d3bf">ultrasonic</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.acoustic_material_table()</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import ultrasound; ultrasound.acoustic_material_table()</code>、台帳から引くなら <code style="color:#22d3bf">opsacoustics.get(&quot;acoustic_material_table&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>組み込みの音響材料表: 密度・縦波音速・インピーダンス Z = ρc・減衰 α0·f^n と、値ごとの出典と確かめたかどうかの印(<code style="color:#22d3bf">table</code>)。</p>
 <p>返り: <code style="color:#22d3bf">{&quot;kind&quot;: &quot;acoustic_materials&quot;, &quot;materials&quot;: {name: {rho, c, Z, alpha0, alpha_n, verified, source, uncertainty}}}</code>。<code style="color:#22d3bf">verified</code> が False の材料は代表値の置き場で、<code style="color:#22d3bf">acoustic_layer_stack</code> は <code style="color:#22d3bf">allow_unverified=True</code> が無い限り拒む。</p>

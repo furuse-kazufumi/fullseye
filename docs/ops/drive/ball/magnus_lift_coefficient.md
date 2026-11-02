@@ -4,6 +4,7 @@ dim: drive
 category: ball
 in: signal
 out: signal
+gpu: なし
 examples: [gallery_drive_ballistics]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal` → `signal`
 - **呼び出し**: `import fullseye as fs; fs.ledger.magnus_lift_coefficient(spin_ratio) -> 'np.ndarray'` (実装を直接呼ぶなら `import ballistics; ballistics.magnus_lift_coefficient(spin_ratio) -> 'np.ndarray'`、台帳から引くなら `opsdrive.get("magnus_lift_coefficient")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

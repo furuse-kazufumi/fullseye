@@ -3,7 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">voxel × voxel</code> → <code style="color:#22d3bf">position</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.match_chamfer_3d(scene, template, device=&#x27;cpu&#x27;, thr=0.3, edt=&#x27;scipy&#x27;)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import match3d; match3d.match_chamfer_3d(scene, template, device=&#x27;cpu&#x27;, thr=0.3, edt=&#x27;scipy&#x27;)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;match_chamfer_3d&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>台帳経由の戻り値</b>: <code style="color:#22d3bf">fullseye.ledger.match_chamfer_3d(...)</code> は<b>宣言 out 型 <code style="color:#22d3bf">position</code> の値だけ</b>を返す(本体は補助情報も返す)。捨てられた側が要るときは <code style="color:#22d3bf">fullseye.ledger.match_chamfer_3d.raw(...)</code>、または <code style="color:#22d3bf">match3d.match_chamfer_3d</code> を直接呼ぶ。</p>
-<p style="margin:2px 0 2px 12px">• <b>GPU</b>: この op は GPU 経路あり(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>chamfer / 距離場マッチング(部分・遮蔽に頑健)。voxel × chamfer 列。</p>
 <p>シーンのエッジの EDT(各 voxel から最近エッジまでの距離)に、テンプレのエッジ点を載せて距離和を最小化。score(pos)=Σ_{template edge} DT_scene(pos+edge)/n。<b>低いほど良い一致</b>。エッジ点の一部が欠けても効く(NCC より遮蔽に強い)。相関(conv3d)は常に GPU。距離場は edt=&quot;scipy&quot;(CPU、既定)か edt=&quot;jfa&quot;(<code style="color:#22d3bf">edt_jfa</code>、全 GPU で CPU 往復なし。scipy と厳密一致)。返り値 [chamfer 距離, d, h, w]。</p>

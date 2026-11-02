@@ -4,6 +4,7 @@ dim: drive
 category: terrain
 in: image2d × image2d × table
 out: image2d
+gpu: なし
 examples: [poc_world_terrain]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d × image2d × table` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.terrain_height(x, y, p: 'dict', course=None) -> 'np.ndarray'` (実装を直接呼ぶなら `import driveterrain; driveterrain.terrain_height(x, y, p: 'dict', course=None) -> 'np.ndarray'`、台帳から引くなら `opsdrive.get("terrain_height")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

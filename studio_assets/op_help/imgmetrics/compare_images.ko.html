@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">compare_images — IMGMETRICS <code style="color:#22d3bf">report</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">metrics</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.compare_images(a, b, data_range=None, bins=64, channel_axis=None, ms=False)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import imgmetrics; imgmetrics.compare_images(a, b, data_range=None, bins=64, channel_axis=None, ms=False)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsimgmetrics.get(&quot;compare_images&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>여러 지표를 한 번에 재고, <b>무엇을 어떻게 쟀는지를 값과 함께 돌려줍니다</b>.</p>
 <p>반환값의 <code style="color:#22d3bf">contract</code>에 <code style="color:#22d3bf">data_range</code> / <code style="color:#22d3bf">bins</code> / <code style="color:#22d3bf">crop_border</code> / SSIM의 창을 넣어 둔 것은, 수치만 그림 주석에 옮겨 적어 <b>조건이 사라지는</b> 것을막기 위해서(이 repo에서 실제로 일어난 사고의 유형).</p>

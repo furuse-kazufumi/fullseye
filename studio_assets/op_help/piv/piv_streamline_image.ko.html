@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">piv_streamline_image — PIV <code style="color:#22d3bf">visualise</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">flow2d</code> → <code style="color:#22d3bf">rgb</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_streamline_image(flow, upsample=8, background=None, color=(0.08, 0.08, 0.12), width=1.5, arrows=True, **stream_kw)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import pivops; pivops.piv_streamline_image(flow, upsample=8, background=None, color=(0.08, 0.08, 0.12), width=1.5, arrows=True, **stream_kw)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opspiv.get(&quot;piv_streamline_image&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>유선도(MATLAB의 <code style="color:#22d3bf">streamslice</code>). 반환은 <code style="color:#22d3bf">(h*upsample, w*upsample, 3)</code>.</p>
 <p><code style="color:#22d3bf">piv_streamlines</code>의 등간격 배치로 선을 긋고, 각 선의 호 길이 중간쯤에방향의 화살촉을 1개 둔다(LIC와 달리 <b>앞뒤를 읽을 수 있다</b>). 선의 간격이 고르므로, <b>선의 밀도로는 속력을 나타내지 않는다</b> —— 속력을 보고 싶을 때는 <code style="color:#22d3bf">background</code>에 <code style="color:#22d3bf">piv_flow_magnitude</code>나 색상도를 깐다.</p>

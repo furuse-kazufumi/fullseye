@@ -4,6 +4,7 @@ dim: 3d
 category: metrics
 in: points × points
 out: measurement
+gpu: なし
 examples: [mesh_lod_download, pointcloud_downsampling, poisson_surface_recon]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `points × points` → `measurement`
 - **呼び出し**: `import fullseye as fs; fs.ledger.hausdorff_distance(a, b)` (実装を直接呼ぶなら `import metrics3d; metrics3d.hausdorff_distance(a, b)`、台帳から引くなら `ops3d.get("hausdorff_distance")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

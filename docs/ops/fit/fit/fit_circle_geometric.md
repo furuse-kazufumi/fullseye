@@ -4,6 +4,7 @@ dim: fit
 category: fit
 in: keypoints
 out: table
+gpu: なし
 examples: [fit_ops_from_knowhow]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `keypoints` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.fit_circle_geometric(points, *, max_iterations: 'int' = 100, radius_limit_factor: 'float' = 1000000.0) -> 'dict'` (実装を直接呼ぶなら `import measure; measure.fit_circle_geometric(points, *, max_iterations: 'int' = 100, radius_limit_factor: 'float' = 1000000.0) -> 'dict'`、台帳から引くなら `opsfit.get("fit_circle_geometric")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

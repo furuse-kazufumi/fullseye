@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">flow_speed — REPRCONV <code style="color:#22d3bf">flow</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">flow_scattered</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.flow_speed(flow)</code> (die Implementierung direkt: <code style="color:#22d3bf">import reprconv; reprconv.flow_speed(flow)</code>; aus dem Register: <code style="color:#22d3bf">opsreprconv.get(&quot;flow_speed&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Verstreuter Fluss <code style="color:#22d3bf">(N,3)</code> → ein Geschwindigkeits-<code style="color:#22d3bf">signal (N,)</code>. Der Ausgang aus verstreutem <code style="color:#22d3bf">flow</code>.</p>
 <p><b>Einseitig</b> (die Richtung wird verworfen). Ein dichter Fluss wird fail-closed abgewiesen -- unter demselben Typnamen <code style="color:#22d3bf">flow</code> stecken 2 verschiedene Dinge, daher muss die empfangende Seite immer wählen.</p>

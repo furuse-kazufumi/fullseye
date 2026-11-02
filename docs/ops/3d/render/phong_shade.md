@@ -4,6 +4,7 @@ dim: 3d
 category: render
 in: normalmap
 out: image2d
+gpu: なし
 examples: [render_beauty, render_shade]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `normalmap` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.phong_shade(normals, view=(0.0, 0.0, 1.0), light=(0.0, 0.0, 1.0), ambient: 'float' = 0.1, diffuse: 'float' = 0.8, specular: 'float' = 0.5, shininess: 'float' = 32.0, clip: 'bool' = True) -> 'np.ndarray'` (実装を直接呼ぶなら `import render_shade; render_shade.phong_shade(normals, view=(0.0, 0.0, 1.0), light=(0.0, 0.0, 1.0), ambient: 'float' = 0.1, diffuse: 'float' = 0.8, specular: 'float' = 0.5, shininess: 'float' = 32.0, clip: 'bool' = True) -> 'np.ndarray'`、台帳から引くなら `ops3d.get("phong_shade")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

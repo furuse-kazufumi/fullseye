@@ -4,6 +4,7 @@ dim: drive
 category: pxrd
 in: signal × signal × table
 out: table
+gpu: なし
 examples: [poc_pxrd_phase_peel]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal × signal × table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.phase_peel(two_theta, intensity, dictionary, max_phases=None, min_gain=0.05, min_fraction=0.005, background_order=4, sigma=None)` (実装を直接呼ぶなら `import pxrd; pxrd.phase_peel(two_theta, intensity, dictionary, max_phases=None, min_gain=0.05, min_fraction=0.005, background_order=4, sigma=None)`、台帳から引くなら `opsdrive.get("phase_peel")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

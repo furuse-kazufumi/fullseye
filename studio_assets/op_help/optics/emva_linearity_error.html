@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">emva_linearity_error — OPTICS <code style="color:#22d3bf">sensorchar</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.emva_linearity_error(H, mu_y, mu_y_dark, mu_y_sat)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import sensorchar; sensorchar.emva_linearity_error(H, mu_y, mu_y_dark, mu_y_sat)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;emva_linearity_error&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>直線性の誤差 LE(式 58〜63)。y = μ_y − μ_y.dark を露光 H に<b>相対偏差の重み 1/y²</b>で当て(式 59〜61)、飽和の 5〜95 % の点で相対偏差 δy[i] = 100 (y − (a0 + a1 H))/(a0 + a1 H) [%] の絶対値の平均を LE とする。</p>
 <p>返り値 <code style="color:#22d3bf">{&quot;LE_percent&quot;, &quot;a0&quot;, &quot;a1&quot;, &quot;deviation_percent&quot;, &quot;used&quot;}</code>。</p>

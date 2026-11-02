@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">fp_design — OPTICS <code style="color:#22d3bf">fpm</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fp_design(na_obj=0.1, wavelength_um=0.532, led_pitch_mm=4.0, led_distance_mm=70.0, n_side=13, magnification=4.0, camera_pixel_um=5.2, target_na=None, field_of_view_um=None, boundary_tolerance_na=0.005)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import fourierptycho; fourierptycho.fp_design(na_obj=0.1, wavelength_um=0.532, led_pitch_mm=4.0, led_distance_mm=70.0, n_side=13, magnification=4.0, camera_pixel_um=5.2, target_na=None, field_of_view_um=None, boundary_tolerance_na=0.005)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;fp_design&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>FP の性能を<b>撮る前に</b>閉形式で(<code style="color:#22d3bf">table</code>): 合成 NA・遮断周期・重なり率・LED の数・画素の標本化。</p>
 <p>正方格子(<code style="color:#22d3bf">n_side</code> × <code style="color:#22d3bf">n_side</code>、ピッチ <code style="color:#22d3bf">led_pitch_mm</code>)の LED を試料から <code style="color:#22d3bf">led_distance_mm</code> 下に置き、中心の LED を光軸に合わせた構成。</p>

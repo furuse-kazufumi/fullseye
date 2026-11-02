@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">puck_track — DRIVE <code style="color:#22d3bf">puck</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">any × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.puck_track(frames, cam: &#x27;dict&#x27;, *, max_jump_px: &#x27;float&#x27; = 40.0, **detect_kw) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import puck; puck.puck_track(frames, cam: &#x27;dict&#x27;, *, max_jump_px: &#x27;float&#x27; = 40.0, **detect_kw) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;puck_track&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Frame-Folge → Kandidaten je Frame → <code style="color:#22d3bf">balltrack.ball_track</code> (per Vorhersage mit konstanter Geschwindigkeit verknüpft; Sprünge über <code style="color:#22d3bf">max_jump_px</code> werden verworfen) → world-Koordinaten.</p>
 <p>Rückgabewert <code style="color:#22d3bf">{&quot;frame&quot; (N,), &quot;col&quot;,&quot;row&quot; (N,), &quot;xy&quot; (N,2), &quot;found&quot; (K,) bool}</code>. Bei einem schnellen Puck (Bewegung pro Frame &gt; max_jump_px) reißt die Zuordnung ab und Frames fallen aus —— wie sie abreißt, wird mit einem Gate gemessen.</p>

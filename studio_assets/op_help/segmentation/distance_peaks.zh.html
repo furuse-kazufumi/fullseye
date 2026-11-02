@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">distance_peaks — SEGMENTATION <code style="color:#22d3bf">watershed3d</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">labels</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.distance_peaks(binary, min_distance: &#x27;float&#x27; = 1.0) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import watershed3d; watershed3d.distance_peaks(binary, min_distance: &#x27;float&#x27; = 1.0) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opssegmentation.get(&quot;distance_peaks&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>返回前景距离变换的局部极大值经 <code style="color:#22d3bf">min_distance</code> NMS 稀疏化后的 int 标记数组。</p>
 <p><code style="color:#22d3bf">volops.vol_distance_transform</code> + <code style="color:#22d3bf">volops.vol_local_maxima</code> 的薄组合, 再加上&quot;极大坐标→标签数组(1 物体 1 种子点)&quot;的后处理(把 <code style="color:#22d3bf">watershed_vol</code> 内部使用的种子点生成单独公开 = 用于可视化、验证)。</p>

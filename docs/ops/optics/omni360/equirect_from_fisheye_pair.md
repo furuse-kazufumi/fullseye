@@ -4,6 +4,7 @@ dim: optics
 category: omni360
 in: images
 out: table
+gpu: なし
 examples: [poc_allsky_cloud_cover, poc_omni360_inspection]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `images` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.equirect_from_fisheye_pair(images, rotations, out_shape, model='equidistant', f_px=None, centres=None, fov_deg=190, feather_deg=8)` (実装を直接呼ぶなら `import omni360; omni360.equirect_from_fisheye_pair(images, rotations, out_shape, model='equidistant', f_px=None, centres=None, fov_deg=190, feather_deg=8)`、台帳から引くなら `opsoptics.get("equirect_from_fisheye_pair")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

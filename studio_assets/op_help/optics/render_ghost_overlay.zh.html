@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">render_ghost_overlay — OPTICS <code style="color:#22d3bf">lensrender</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.render_ghost_overlay(system, scene=None, light_xy_mm=None, distance_mm=1000.0, intensity_W_sr_nm=1.0, reflectance=0.04, sensor=None, wavelengths=None, exposure_s=0.0001, rings=10, max_ghosts=6, defocus_mm=0.0, focus_mm=None, base_electrons=None, band_nm=None, illuminant=None) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import lensrender; lensrender.render_ghost_overlay(system, scene=None, light_xy_mm=None, distance_mm=1000.0, intensity_W_sr_nm=1.0, reflectance=0.04, sensor=None, wavelengths=None, exposure_s=0.0001, rings=10, max_ghosts=6, defocus_mm=0.0, focus_mm=None, base_electrons=None, band_nm=None, illuminant=None) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsoptics.get(&quot;render_ghost_overlay&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>明亮点光源的二次反射鬼像,以传感器上的电子数表示 -&gt; 字典。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>

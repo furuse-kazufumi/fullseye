@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">curve_speed_limit — DRIVE <code style="color:#22d3bf">lateral</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.curve_speed_limit(radius, *, side_friction: &#x27;float&#x27;, superelevation: &#x27;float&#x27; = 0.0, g: &#x27;float&#x27; = 9.81)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivelateral; drivelateral.curve_speed_limit(radius, *, side_friction: &#x27;float&#x27;, superelevation: &#x27;float&#x27; = 0.0, g: &#x27;float&#x27; = 9.81)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;curve_speed_limit&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>편경사 i·횡미끄럼 마찰계수 f인 곡선(반경 R)에서 바깥으로 미끄러지지 않는 상한 속도 v = √(g R (i + f)/(1 − i f)) [m/s].</p>
 <p>도로구조령(일본)의 해설 (2) 식 Z cos α − G sin α ≤ f (Z sin α + G cos α)(Z = G v²/(gR), i = tan α)를 v 에 대해 푼엄밀한 형태. i f ≥ 1 이면(어떤 속력에서도 바깥으로 미끄러지지 않는다) <code style="color:#22d3bf">inf</code>. <code style="color:#22d3bf">radius</code> 는 배열이어도 된다(&gt; 0).</p>

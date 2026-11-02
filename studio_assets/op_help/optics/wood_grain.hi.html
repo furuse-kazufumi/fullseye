@@ -3,6 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">image2d</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.wood_grain(shape, ring_px=18.0, angle_deg=15.0, wobble=0.25, seed=0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import surfacelib; surfacelib.wood_grain(shape, ring_px=18.0, angle_deg=15.0, wobble=0.25, seed=0)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;wood_grain&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>Ledger के ज़रिए return value</b>: <code style="color:#22d3bf">fullseye.ledger.wood_grain(...)</code> <b>केवल घोषित out type <code style="color:#22d3bf">image2d</code> का value</b> लौटाता है (मूल function सहायक जानकारी भी लौटाता है)। जो हिस्सा छोड़ दिया गया है उसकी ज़रूरत हो तो <code style="color:#22d3bf">fullseye.ledger.wood_grain.raw(...)</code> का उपयोग करें, या <code style="color:#22d3bf">surfacelib.wood_grain</code> को सीधे call करें।</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>लकड़ी के grain (वार्षिक छल्लों) का <b>रंग modulation</b> और <b>रेशों की दिशा</b> बनाता है।</p>
 <p>shape: (H, W)। ring_px: वार्षिक छल्लों (annual rings) की दूरी [px]। angle_deg: कट की दिशा [deg]।</p>

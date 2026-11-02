@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">emva_photon_exposure — OPTICS <code style="color:#22d3bf">sensorchar</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.emva_photon_exposure(irradiance, area_um2, t_exp_ms, wavelength_um)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import sensorchar; sensorchar.emva_photon_exposure(irradiance, area_um2, t_exp_ms, wavelength_um)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;emva_photon_exposure&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>センサ面の放射照度から画素あたりの平均光子数 μ_p = A E t_exp/(hc/λ)(式 3)を、規格の便利な単位で(式 4)。</p>
 <p>μ_p = c₀ · A[µm²] · t_exp[ms] · λ[µm] · E[µW/cm²]、c₀ = 10⁻²³/(h c) = 50.34(式 4。h・c は 2.1 節に書かれた値)。*irradiance* [µW/cm²] (スカラか 1-D)。ビニングなら A に縦横のビニング係数を、TDI なら t_exp に段数を掛ける(6.4 節)。</p>

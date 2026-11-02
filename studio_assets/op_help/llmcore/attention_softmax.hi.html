@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">attention_softmax — LLMCORE <code style="color:#22d3bf">attend</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">tokens × tokens × tokens</code> → <code style="color:#22d3bf">tokens</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.attention_softmax(query, key, value, mask=None, window=None, scale=None) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import llmcore; llmcore.attention_softmax(query, key, value, mask=None, window=None, scale=None) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsllmcore.get(&quot;attention_softmax&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>एक बार में attention (reference implementation) → tokens। <b>इस family के मिलान का आधार</b>।</p>
 <p>(T, T) score matrix को सच में बनाकर फिर softmax करना, लिखने का सबसे सीधा तरीका। <code style="color:#22d3bf">attention_tiled</code> / <code style="color:#22d3bf">attention_linear</code> / <code style="color:#22d3bf">attention_grouped</code> इससे मेल खाकर अपनी सही होने को दिखाते हैं।</p>

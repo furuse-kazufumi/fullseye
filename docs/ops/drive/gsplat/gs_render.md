@@ -4,6 +4,7 @@ dim: drive
 category: gsplat
 in: table × matrix
 out: table
+gpu: なし
 examples: [poc_kendama]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table × matrix` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.gs_render(gs: 'dict', pose, K, width: 'int', height: 'int', *, light=(0.3, -0.5, 0.8), ambient: 'float' = 0.35, sky=(0.62, 0.75, 0.92), max_radius: 'int' = 64, max_pairs: 'int' = 12000000, antialias: 'bool' = True) -> 'dict'` (実装を直接呼ぶなら `import gsplatnp; gsplatnp.gs_render(gs: 'dict', pose, K, width: 'int', height: 'int', *, light=(0.3, -0.5, 0.8), ambient: 'float' = 0.35, sky=(0.62, 0.75, 0.92), max_radius: 'int' = 64, max_pairs: 'int' = 12000000, antialias: 'bool' = True) -> 'dict'`、台帳から引くなら `opsdrive.get("gs_render")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

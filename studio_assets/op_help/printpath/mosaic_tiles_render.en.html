@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">mosaic_tiles_render — PRINTPATH <code style="color:#22d3bf">npr</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d × pairs</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mosaic_tiles_render(image, sites)</code> (to call the implementation directly, <code style="color:#22d3bf">import printpath; printpath.mosaic_tiles_render(image, sites)</code>; from the registry, <code style="color:#22d3bf">opsprintpath.get(&quot;mosaic_tiles_render&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Paint each Voronoi cell with the <b>mean</b> of the pixels it owns.</p>
 <p>★<b>Why the mean and not something prettier</b>: for a fixed partition the mean is the <code style="color:#22d3bf">L2</code>-optimal constant — no other value lowers the squared error inside the cell. The tile colour is therefore a solution, not a taste, and any alternative can be *shown* to be worse by evaluating the same sum.</p>

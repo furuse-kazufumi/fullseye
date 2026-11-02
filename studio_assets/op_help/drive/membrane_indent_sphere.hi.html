@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">membrane_indent_sphere — DRIVE <code style="color:#22d3bf">tacsim</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.membrane_indent_sphere(hz: &#x27;dict&#x27;, n: &#x27;int&#x27; = 256, fov: &#x27;float&#x27; = 0.016) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import tacsim; tacsim.membrane_indent_sphere(hz: &#x27;dict&#x27;, n: &#x27;int&#x27; = 256, fov: &#x27;float&#x27; = 0.016) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;membrane_indent_sphere&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>गोले के दबाव से gel membrane का height field h(x, y) = −ū_z(r) [m] (<code style="color:#22d3bf">hertz_sphere</code> की table से) और analytic normals।</p>
 <p><code style="color:#22d3bf">n</code> पिक्सेल वर्ग, दृश्य-क्षेत्र <code style="color:#22d3bf">fov</code> [m] (पिक्सेल पिच fov/n)। नॉर्मल ū_z के त्रिज्यीय अवकलज को केंद्रीय अंतर (चरण pitch/4) से लेकर इस रूप में बनते हैं:</p>

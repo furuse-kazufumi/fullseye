@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">scale_y_funct_1d — ONED <code style="color:#22d3bf">function</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.scale_y_funct_1d(y, mult=1.0, add=0.0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import funct1d; funct1d.scale_y_funct_1d(y, mult=1.0, add=0.0)</code>、台帳から引くなら <code style="color:#22d3bf">ops1d.get(&quot;scale_y_funct_1d&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Linear map of the y-values, <code style="color:#22d3bf">mult * y + add</code> (HALCON <code style="color:#22d3bf">scale_y_funct_1d</code>).</p>
 <p>The x-grid is untouched (use <code style="color:#22d3bf">transform_funct_1d</code> to move x too).</p>

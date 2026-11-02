@@ -4,6 +4,7 @@ dim: math
 category: linalg
 in: matrix
 out: table
+gpu: なし
 examples: [math_metrology, poc_thermal_radiometry]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,6 +16,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **データ種**: `matrix` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.mat_eigh(a)` (実装を直接呼ぶなら `import mathops; mathops.mat_eigh(a)`、台帳から引くなら `opsmath.get("mat_eigh")`)
 - **台帳経由の戻り値**: `fullseye.ledger.mat_eigh(...)` は**宣言 out 型 `table` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.mat_eigh.raw(...)`、または `mathops.mat_eigh` を直接呼ぶ。
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">dtof_cube_depth — PHOTON <code style="color:#22d3bf">dtof</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">histcube</code> → <code style="color:#22d3bf">depth</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dtof_cube_depth(cube, bin_ps=100.0, mode=&#x27;peak&#x27;, offset_ps=0.0, min_counts=1.0, empty_value=0.0, subtract_background=False)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import photoncount; photoncount.dtof_cube_depth(cube, bin_ps=100.0, mode=&#x27;peak&#x27;, offset_ps=0.0, min_counts=1.0, empty_value=0.0, subtract_background=False)</code>、台帳から引くなら <code style="color:#22d3bf">opsphoton.get(&quot;dtof_cube_depth&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Depth map from a <code style="color:#22d3bf">(H, W, T)</code> photon histogram cube — the dToF inversion.</p>
 <p>The array version of <code style="color:#22d3bf">dtof_depth</code>, with the same four *mode* estimators and the same <code style="color:#22d3bf">t_flight = t_measured - offset_ps</code> sign convention. The time axis is <b>last</b>: a <code style="color:#22d3bf">(D, H, W)</code> voxel volume passed in here would be read as <code style="color:#22d3bf">W</code> time bins and return a plausible-wrong depth map, so the shape is checked and the error message says exactly that.</p>

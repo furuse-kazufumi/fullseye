@@ -4,6 +4,7 @@ dim: drive
 category: scoop
 in: scalar × scalar × scalar × scalar
 out: table
+gpu: なし
 examples: [poc_powder_scoop_pour]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `scalar × scalar × scalar × scalar` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.scoop_image_limit(a: 'float', pitch: 'float', radius: 'float', bulk_density: 'float', *, h: 'float | None' = None, phi_deg: 'float' = 30.0, edge_px: 'float' = 0.5, grain_frac: 'float' = 0.25, min_a_over_d: 'float' = 5.0, target_mass: 'float | None' = None, rel_tol: 'float' = 0.05) -> 'dict'` (実装を直接呼ぶなら `import scoop; scoop.scoop_image_limit(a: 'float', pitch: 'float', radius: 'float', bulk_density: 'float', *, h: 'float | None' = None, phi_deg: 'float' = 30.0, edge_px: 'float' = 0.5, grain_frac: 'float' = 0.25, min_a_over_d: 'float' = 5.0, target_mass: 'float | None' = None, rel_tol: 'float' = 0.05) -> 'dict'`、台帳から引くなら `opsdrive.get("scoop_image_limit")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -4,6 +4,7 @@ dim: drive
 category: pegsym
 in: matrix × matrix × scalar
 out: table
+gpu: なし
 examples: [poc_peg_symmetry_search]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `matrix × matrix × scalar` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.polygon_two_point_depth(peg_vertices, hole_vertices, theta: 'float', tilt_dir: 'float' = 0.0, depth_max: 'float' = 0.05, tol: 'float' = 1e-10) -> 'dict'` (実装を直接呼ぶなら `import pegsym; pegsym.polygon_two_point_depth(peg_vertices, hole_vertices, theta: 'float', tilt_dir: 'float' = 0.0, depth_max: 'float' = 0.05, tol: 'float' = 1e-10) -> 'dict'`、台帳から引くなら `opsdrive.get("polygon_two_point_depth")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">dose_cv_from_sizes — DRIVE <code style="color:#22d3bf">doseunif</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">any × scalar × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dose_cv_from_sizes(sizes, dose_mg: &#x27;float&#x27;, density: &#x27;float&#x27;, estimator: &#x27;str | None&#x27; = None, frame=None, ci: &#x27;float&#x27; = 0.9, n_boot: &#x27;int&#x27; = 400, seed: &#x27;int&#x27; = 0) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import doseunif; doseunif.dose_cv_from_sizes(sizes, dose_mg: &#x27;float&#x27;, density: &#x27;float&#x27;, estimator: &#x27;str | None&#x27; = None, frame=None, ci: &#x27;float&#x27; = 0.9, n_boot: &#x27;int&#x27; = 400, seed: &#x27;int&#x27; = 0) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;dose_cv_from_sizes&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>मापे गए कण आकार से 1 खुराक की मात्रा का CV (केवल कणों की संख्या का उतार-चढ़ाव, Poisson), और उसका bias और अंतराल।</p>
 <p><code style="color:#22d3bf">sizes</code> के 2 रूप हैं:</p>

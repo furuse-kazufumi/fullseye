@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">diffraction_peaks — DRIVE <code style="color:#22d3bf">pxrd</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.diffraction_peaks(two_theta, intensity, min_snr=6.0, baseline_window=None, max_peaks=200, noise=None)</code>(要直接呼叫實作,<code style="color:#22d3bf">import pxrd; pxrd.diffraction_peaks(two_theta, intensity, min_snr=6.0, baseline_window=None, max_peaks=200, noise=None)</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;diffraction_peaks&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>從 1 維繞射剖面中擷取峰，以高斯 + 直線的局部擬合給出位置、高度、FWHM 與面積。</p>
 <p>步驟: 以視窗 <code style="color:#22d3bf">baseline_window</code> [deg] (預設 = 範圍的 4 %)的滾動最小值 → 滾動平均建立背景,在扣除背景後之值的局部極大中,超過 <code style="color:#22d3bf">min_snr</code> × 雜訊者作為候選(雜訊取間隔 1〜8 差分的 MAD 的最大值。也可向 <code style="color:#22d3bf">noise</code> 傳入</p>

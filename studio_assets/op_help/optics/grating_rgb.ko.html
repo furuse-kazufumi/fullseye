@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">grating_rgb — OPTICS <code style="color:#22d3bf">appearance</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">normalmap</code> → <code style="color:#22d3bf">rgbimage</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.grating_rgb(normals, light=(0.0, 0.0, 1.0), view=(0.0, 0.0, 1.0), tangent=(1.0, 0.0, 0.0), pitch_um=1.6, orders=(1, 2), strength=1.0, width_nm=60.0) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import matappear; matappear.grating_rgb(normals, light=(0.0, 0.0, 1.0), view=(0.0, 0.0, 1.0), tangent=(1.0, 0.0, 0.0), pitch_um=1.6, orders=(1, 2), strength=1.0, width_nm=60.0) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsoptics.get(&quot;grating_rgb&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>법선 맵 + 광원 + 시선 → <b>회절에 의한 무지개색</b> (H, W, 3) 선형 sRGB.</p>
 <p>CD/DVD의 기록 트랙은 등간격의 홈 = 반사형 회절 격자이다. 홈에 직교하는 방향의 &quot;입사와 출사의 sin의 차&quot;가 파장을 고르므로, 면의 방향이 바뀌면 색이 바뀐다.</p>

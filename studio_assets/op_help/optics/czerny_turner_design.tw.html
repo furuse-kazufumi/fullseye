@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">czerny_turner_design — OPTICS <code style="color:#22d3bf">spectrometer</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">無</code> → <code style="color:#22d3bf">table</code>(僅由參數決定的運算子 —— 不接受影像或資料輸入)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.czerny_turner_design(groove_density_per_mm=1200.0, wavelength_min_nm=500.0, wavelength_max_nm=750.0, incidence_deg=9.0, collimator_f_mm=52.083, detector_length_mm=28.672, collimator_offaxis_deg=6.5, order=1, camera_f_mm=None, n_curve=41)</code>(要直接呼叫實作,<code style="color:#22d3bf">import gratingspec; gratingspec.czerny_turner_design(groove_density_per_mm=1200.0, wavelength_min_nm=500.0, wavelength_max_nm=750.0, incidence_deg=9.0, collimator_f_mm=52.083, detector_length_mm=28.672, collimator_offaxis_deg=6.5, order=1, camera_f_mm=None, n_curve=41)</code>;從台帳取用則 <code style="color:#22d3bf">opsoptics.get(&quot;czerny_turner_design&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>Czerny–Turner 光譜儀(平面光柵 + 兩片凹面鏡)的一階設計:相機焦距、消彗差的鏡面角與波長映射。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>

@@ -4,6 +4,7 @@ dim: drive
 category: pegfail
 in: table × scalar
 out: table
+gpu: なし
 examples: [poc_peg_failure_recovery]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table × scalar` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.wedging_risk(kp, theta: 'float', margin_deg: 'float' = 0.5) -> 'dict'` (実装を直接呼ぶなら `import pegfail; pegfail.wedging_risk(kp, theta: 'float', margin_deg: 'float' = 0.5) -> 'dict'`、台帳から引くなら `opsdrive.get("wedging_risk")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

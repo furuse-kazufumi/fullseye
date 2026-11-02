@@ -4,6 +4,7 @@ dim: aoi
 category: geometric
 in: image2d × image2d
 out: table
+gpu: なし
 examples: [aoi_frontend_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d × image2d` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.register_image(reference, moving, upsample=20, method='phase', window='hann', max_shift=None, ambiguity_ratio=0.8, residual_tolerance=0.25)` (実装を直接呼ぶなら `import aoi; aoi.register_image(reference, moving, upsample=20, method='phase', window='hann', max_shift=None, ambiguity_ratio=0.8, residual_tolerance=0.25)`、台帳から引くなら `opsaoi.get("register_image")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

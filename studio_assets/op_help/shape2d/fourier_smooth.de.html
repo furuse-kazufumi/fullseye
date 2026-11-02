@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">fourier_smooth — SHAPE2D <code style="color:#22d3bf">descriptor</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">pairs</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fourier_smooth(points, keep)</code> (die Implementierung direkt: <code style="color:#22d3bf">import fourierdesc; fourierdesc.fourier_smooth(points, keep)</code>; aus dem Register: <code style="color:#22d3bf">opsshape2d.get(&quot;fourier_smooth&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Glättet eine Kontur durch Bandbegrenzung mit einer komplexen FFT.</p>
 <p>Fasst die Kontur als komplexes Signal z(t)=x(t)+i·y(t) auf, wendet eine FFT an, behält nur die <code style="color:#22d3bf">keep</code> niedrigen Frequenzen (und symmetrische Anteile) und transformiert zurück. Je kleiner keep, desto glatter (hohe Frequenzen = Details/Rauschen fallen weg). Ist keep mindestens die Gesamtzahl der Frequenzen, ist es die Identität. Rückgabe ist (N,2) mit derselben Punktzahl wie die Eingabe.</p>

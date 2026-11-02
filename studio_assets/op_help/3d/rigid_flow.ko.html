@@ -3,6 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">pose</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rigid_flow(pts0, pts1, max_iter: &#x27;int&#x27; = 20) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import scene_flow3d; scene_flow3d.rigid_flow(pts0, pts1, max_iter: &#x27;int&#x27; = 20) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;rigid_flow&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>원장 경유의 반환값</b>: <code style="color:#22d3bf">fullseye.ledger.rigid_flow(...)</code> 는 <b>선언된 out 형 <code style="color:#22d3bf">pose</code> 의 값만</b> 반환합니다(실제 함수는 보조 정보도 반환). 버려진 쪽이 필요하면 <code style="color:#22d3bf">fullseye.ledger.rigid_flow.raw(...)</code> 를 쓰거나 <code style="color:#22d3bf">scene_flow3d.rigid_flow</code> 를 직접 호출하세요.</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>pts0 -&gt; pts1 을 설명하는 단일 강체 운동을 최근접 대응 + Kabsch(ICP 풍)로 추정.</p>
 <p>항등 변환에서 출발해, 매 반복마다 현재 자세의 점군에서 <code style="color:#22d3bf">pts1</code> 으로의 최근접 대응을 잡고, <code style="color:#22d3bf">registration.kabsch</code> 로 닫힌 식으로 (R, t) 를 구해 누적한다. 대응 index 가이전 반복과 일치(= 수렴)하거나 <code style="color:#22d3bf">max_iter</code> 에서 정지한다. 수렴 판정은 index 의안정성에만 의존하므로 <b>스케일 불변</b>(절대 epsilon 을 쓰지 않는다).</p>

@@ -4,6 +4,7 @@ dim: volcolor
 category: measure
 in: labels
 out: table
+gpu: なし
 examples: [poc_cold_chain_excursion, voxel_labels_color]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `labels` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.vol_label_shape_stats(labels, spacing=None, shape: 'bool' = True)` (実装を直接呼ぶなら `import volcolor; volcolor.vol_label_shape_stats(labels, spacing=None, shape: 'bool' = True)`、台帳から引くなら `opsvolcolor.get("vol_label_shape_stats")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">plate_focus_shift — OPTICS <code style="color:#22d3bf">matprop</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.plate_focus_shift(material=&#x27;SI&#x27;, thickness_mm: &#x27;float&#x27; = 0.775, wavelength_nm: &#x27;float&#x27; = 1100.0, numerical_aperture: &#x27;float&#x27; = 0.1) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import materials; materials.plate_focus_shift(material=&#x27;SI&#x27;, thickness_mm: &#x27;float&#x27; = 0.775, wavelength_nm: &#x27;float&#x27; = 1100.0, numerical_aperture: &#x27;float&#x27; = 0.1) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;plate_focus_shift&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>平行平板(ウェハ・窓・カバーガラス)を通して見たときの焦点ずれと球面収差を閉じた式で返す。</p>
 <p>近軸の焦点ずれ Δ₀ = t(1 − 1/n)、開口の縁の光線(sinθ = NA)の焦点ずれ Δ(θ) = t(1 − cosθ/√(n² − sin²θ))、縦球面収差 = Δ(θ) − Δ₀ ≈ t sin²θ (1 − 1/n²)/(2n)(平板が足す収差、NA の 2 乗。n = 3.5 の Si ウェハ 775 µm は近軸で ≈ 0.56 mm ずれ、NA 0.1 で ≈ 1.0 µm、NA 0.3 で ≈ 9 µm の縦収差)。<code style="color:#22d3bf">optical_thickness_mm</code> = n t。NA は (0, 1) でなければ ValueError。</p>

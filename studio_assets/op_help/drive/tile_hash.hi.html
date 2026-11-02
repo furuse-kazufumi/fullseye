@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tile_hash — DRIVE <code style="color:#22d3bf">inf</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">scalar</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tile_hash(i: &#x27;int&#x27;, j: &#x27;int&#x27;, seed: &#x27;int&#x27;, salt: &#x27;int&#x27; = 0) -&gt; &#x27;int&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import driveinf; driveinf.tile_hash(i: &#x27;int&#x27;, j: &#x27;int&#x27;, seed: &#x27;int&#x27;, salt: &#x27;int&#x27; = 0) -&gt; &#x27;int&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;tile_hash&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>tile (या grid point / edge) के index (i, j), world के seed और उपयोग के salt से 64-bit integer निकालता है (SplitMix64 के 4 rounds, केवल integers)। ऋणात्मक index भी संभालता है (2 के complement में 64 bits में मोड़कर)। एक ही इनपुट पर environment से स्वतंत्र एक ही मान।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

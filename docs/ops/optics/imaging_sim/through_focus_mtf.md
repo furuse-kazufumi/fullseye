@@ -4,6 +4,7 @@ dim: optics
 category: imaging_sim
 in: table
 out: table
+gpu: なし
 examples: [lensfile_tolerance_worst_mtf, optical_design_metrics]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.through_focus_mtf(system, frequency_cpmm=None, defocus_mm=None, field=None, wavelength_um=None, size=None, tangential_axis='y')` (実装を直接呼ぶなら `import lensimage; lensimage.through_focus_mtf(system, frequency_cpmm=None, defocus_mm=None, field=None, wavelength_um=None, size=None, tangential_axis='y')`、台帳から引くなら `opsoptics.get("through_focus_mtf")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

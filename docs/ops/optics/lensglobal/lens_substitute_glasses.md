@@ -4,6 +4,7 @@ dim: optics
 category: lensglobal
 in: table
 out: table
+gpu: なし
 examples: [poc_lens_global_search]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.lens_substitute_glasses(system=None, catalog=None, k: 'int' = 1, metric: 'str' = 'nd_vd', tolerance: 'float' = 0.05) -> 'dict'` (実装を直接呼ぶなら `import lensglobal; lensglobal.lens_substitute_glasses(system=None, catalog=None, k: 'int' = 1, metric: 'str' = 'nd_vd', tolerance: 'float' = 0.05) -> 'dict'`、台帳から引くなら `opsoptics.get("lens_substitute_glasses")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tid2013_metric_values — IMGMETRICS <code style="color:#22d3bf">iqa</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">any × any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tid2013_metric_values(root, metric: &#x27;str&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import iqatid; iqatid.tid2013_metric_values(root, metric: &#x27;str&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsimgmetrics.get(&quot;tid2013_metric_values&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>作者の計算値 <code style="color:#22d3bf">metrics_values/&lt;metric&gt;.txt</code>(大文字小文字無視、3000 行、名前なし)を (3000,) float で返す。</p>
 <p>行の順は <code style="color:#22d3bf">tid2013_index</code> の <code style="color:#22d3bf">names</code> と同じ。<code style="color:#22d3bf">metric</code> は <code style="color:#22d3bf">tid2013_published</code> の鍵(psnr / psnrc / ssim / mssim …)。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: ファイルが無い、行数 ≠ 3000、非数。</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">material_group_index — OPTICS <code style="color:#22d3bf">fiber</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">pairs</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.material_group_index(material=&#x27;SILICA&#x27;, wl_min_nm=800.0, wl_max_nm=1700.0, n_points=91)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import fiberoptics; fiberoptics.material_group_index(material=&#x27;SILICA&#x27;, wl_min_nm=800.0, wl_max_nm=1700.0, n_points=91)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;material_group_index&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>群屈折率 n_g(λ) = n − λ dn/dλ を <code style="color:#22d3bf">pairs</code>(λ [nm], n_g)で(材料は <code style="color:#22d3bf">materials</code> の名前)。</p>
 <p>パルスや包絡が進む速さは c / n_g。溶融石英は 1.55 µm で ≈ 1.462(屈折率 1.444 より大きい)。表の範囲の端では中心差分の片側が出るので、範囲は表より 0.1 % 内側に取る(外は ValueError)。</p>

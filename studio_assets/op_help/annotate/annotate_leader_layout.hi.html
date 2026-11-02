@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">annotate_leader_layout — ANNOTATE <code style="color:#22d3bf">paper</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">table</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_leader_layout(shape, points, labels=None, font_size=12, pad=4, gap=22, side=&#x27;auto&#x27;, font_path=None, min_font_size=9)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import annotate; annotate.annotate_leader_layout(shape, points, labels=None, font_size=12, pad=4, gap=22, side=&#x27;auto&#x27;, font_path=None, min_font_size=9)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsannotate.get(&quot;annotate_leader_layout&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>table (dict) लौटाता है: leader line की placement (कोहनी, text position, plate का rectangle) closed form में तय करता है।</p>
 <p>हर point के लिए candidate sides को तय क्रम में आज़माता है, और पहला candidate लेता है <b>जिसकी plate image में समाए, किसी दूसरी plate से overlap न करे और किसी दूसरे point को न ढके</b>। कोई candidate काम न करे तो elbow को 1.6 गुना, फिर 2.4 गुना बढ़ाकर फिर कोशिश करता है, फिर भी न हो तो <b>ValueError</b> (चुपचाप overlap नहीं करता)।</p>

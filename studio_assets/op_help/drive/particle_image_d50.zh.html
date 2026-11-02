@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">particle_image_d50 — DRIVE <code style="color:#22d3bf">grind</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.particle_image_d50(image, pitch: &#x27;float&#x27;, basis: &#x27;str&#x27; = &#x27;volume&#x27;, threshold: &#x27;float&#x27; = 0.02, border: &#x27;str&#x27; = &#x27;exclude&#x27;) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import grind; grind.particle_image_d50(image, pitch: &#x27;float&#x27;, basis: &#x27;str&#x27; = &#x27;volume&#x27;, threshold: &#x27;float&#x27; = 0.02, border: &#x27;str&#x27; = &#x27;exclude&#x27;) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;particle_image_d50&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由覆盖率图像中的颗粒求 D10 / D50 / D90 [µm]。面积为 <b>标签内覆盖率之和</b>(计入边缘的部分像素，不会因阈值而变粗)。</p>
 <p><code style="color:#22d3bf">basis</code>:<code style="color:#22d3bf">&quot;volume&quot;</code>(视为球体以 d³ 加权 —— 与激光衍射相同的体积基准)、<code style="color:#22d3bf">&quot;number&quot;</code>(个数基准)。即使是同一图像, 这两者也是不同的分布,体积基准的结果偏大。<code style="color:#22d3bf">border</code>:<code style="color:#22d3bf">&quot;exclude&quot;</code>(舍弃接触边缘的颗粒)/ <code style="color:#22d3bf">&quot;include&quot;</code>。</p>

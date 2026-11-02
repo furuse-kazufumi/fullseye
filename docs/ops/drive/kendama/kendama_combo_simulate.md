@@ -4,6 +4,7 @@ dim: drive
 category: kendama
 in: table
 out: table
+gpu: なし
 examples: [poc_kendama]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.kendama_combo_simulate(kp: 'dict', sequence=('ozara', 'chuzara'), *, n_catch: 'int' = 10, hand0=(0.0, 0.0, 1.0), hand_v0=(0.0, 0.0, 0.0), z_home: 'float' = None, apex_above_cup: 'float' = 0.2, k_match: 'float' = 0.8, v_max: 'float' = 2.5, a_max: 'float' = 20.0, a_toss: 'float' = 20.0, omega_max: 'float' = 30.0, rot_clear: 'float' = 0.15, v_rel_max: 'float' = 1.0, dt: 'float' = 0.001, perceive=None, contact=None, contact_tol: 'float' = 0.0005, controller: 'str' = 'pos_vel', t_max: 'float' = None, g: 'float' = None) -> 'dict'` (実装を直接呼ぶなら `import kendama; kendama.kendama_combo_simulate(kp: 'dict', sequence=('ozara', 'chuzara'), *, n_catch: 'int' = 10, hand0=(0.0, 0.0, 1.0), hand_v0=(0.0, 0.0, 0.0), z_home: 'float' = None, apex_above_cup: 'float' = 0.2, k_match: 'float' = 0.8, v_max: 'float' = 2.5, a_max: 'float' = 20.0, a_toss: 'float' = 20.0, omega_max: 'float' = 30.0, rot_clear: 'float' = 0.15, v_rel_max: 'float' = 1.0, dt: 'float' = 0.001, perceive=None, contact=None, contact_tol: 'float' = 0.0005, controller: 'str' = 'pos_vel', t_max: 'float' = None, g: 'float' = None) -> 'dict'`、台帳から引くなら `opsdrive.get("kendama_combo_simulate")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

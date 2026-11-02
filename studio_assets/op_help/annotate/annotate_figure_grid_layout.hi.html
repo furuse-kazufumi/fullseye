@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">annotate_figure_grid_layout — ANNOTATE <code style="color:#22d3bf">paper</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">table</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_figure_grid_layout(shapes, ncols=2, pad=10, caption_h=32, title_h=0, letter_style=&#x27;paren&#x27;)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import annotate; annotate.annotate_figure_grid_layout(shapes, ncols=2, pad=10, caption_h=32, title_h=0, letter_style=&#x27;paren&#x27;)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsannotate.get(&quot;annotate_figure_grid_layout&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>table (dict) लौटाता है: multi-panel figure का layout (cell, panel और caption पट्टी के rectangle) closed form में।</p>
 <p><code style="color:#22d3bf">panel_grid</code> जैसे ही सूत्र: <code style="color:#22d3bf">cw/ch</code> सबसे बड़े panel का आकार है, <code style="color:#22d3bf">W = 2*pad + ncols*cw + (ncols-1)*pad</code>, <code style="color:#22d3bf">H = title_h + 2*pad + nrows*(ch+caption_h) + (nrows-1)*pad</code>। panels बड़े नहीं किए जाते, cell के बीच में रखे जाते हैं।</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">surface_divergence_closed_form — DRIVE <code style="color:#22d3bf">tactorque</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">matrix × scalar × scalar</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.surface_divergence_closed_form(p, G: &#x27;float&#x27;, nu: &#x27;float&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import tactorque; tactorque.surface_divergence_closed_form(p, G: &#x27;float&#x27;, nu: &#x27;float&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;surface_divergence_closed_form&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Geschlossene Form der Divergenz der tangentialen Oberflächenverschiebung eines Halbraums, ∇·ū = −(1−2ν) p/(2G) (Herleitung in diesem Modul: Boussinesq-Punktlast ū_r = −(1−2ν)P/(4πGr) und in 2-D ∇·(r̂/r) = 2πδ²). Gate, das sie mit der numerischen Divergenz der Faltung vergleicht (0.2 % für r &lt; 0.8a, gemessen). <b>Raises</b> ValueError: G ≤ 0.</p>
 <p>Leere Eingabe (<code style="color:#22d3bf">p</code> mit 0 Elementen) löst <code style="color:#22d3bf">ValueError</code> aus.</p>

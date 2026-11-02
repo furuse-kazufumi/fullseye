@@ -4,6 +4,7 @@ dim: 3d
 category: annotate3d
 in: points
 out: table
+gpu: なし
 examples: [annotate3d_figure]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `points` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.annotate3d_project(points, pose, K, depth=None, shape=None, occlusion_tol=0.01)` (実装を直接呼ぶなら `import annotate3d; annotate3d.annotate3d_project(points, pose, K, depth=None, shape=None, occlusion_tol=0.01)`、台帳から引くなら `ops3d.get("annotate3d_project")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

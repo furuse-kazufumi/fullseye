@@ -4,6 +4,7 @@ dim: optics
 category: lockin
 in: 
 out: table
+gpu: なし
 examples: [poc_lockin_imaging]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.lockin_noise_floor(n_frames, noise_sigma, amplitude, window='rect') -> 'dict'` (実装を直接呼ぶなら `import lockin; lockin.lockin_noise_floor(n_frames, noise_sigma, amplitude, window='rect') -> 'dict'`、台帳から引くなら `opsoptics.get("lockin_noise_floor")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

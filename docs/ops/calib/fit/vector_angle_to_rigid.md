@@ -4,6 +4,7 @@ dim: calib
 category: fit
 in: 
 out: matrix
+gpu: なし
 examples: []
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `matrix`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.vector_angle_to_rigid(row1, col1, angle1, row2, col2, angle2) -> 'np.ndarray'` (実装を直接呼ぶなら `import fit_transform; fit_transform.vector_angle_to_rigid(row1, col1, angle1, row2, col2, angle2) -> 'np.ndarray'`、台帳から引くなら `opscalib.get("vector_angle_to_rigid")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

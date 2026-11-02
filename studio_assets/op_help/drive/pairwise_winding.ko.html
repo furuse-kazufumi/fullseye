@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">pairwise_winding — DRIVE <code style="color:#22d3bf">braidpath</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pairwise_winding(trajectories, obstacles=None)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import braidpath; braidpath.pairwise_winding(trajectories, obstacles=None)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;pairwise_winding&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>가닥 쌍마다의 상대 감김수 [회전] (상대 벡터 편각의 총변화 / 2π). 대칭 행렬, 대각은 0.</p>
 <p>편각의 증분은 atan2(외적, 내적) 으로 구한다(주값 (−π, π]). 1 스텝에 반 회전 이상 돌면 방향이 정해지지 않으므로 멈춘다. 닫힌 형태: 순수 브레이드에서는 두 가닥 사이 교차의 부호 있는 개수를 c 라 하면 2π·W = π c 가 정확히 성립한다(게이트). 감김수는 가환인불변량이므로, 교환자 [A, B] 형태의 브레이드(모든 쌍에서 감김수 0 인데 자명하지 않음)를 구별할 수 없다 —— 그것이 브레이드를 쓰는 이유.</p>

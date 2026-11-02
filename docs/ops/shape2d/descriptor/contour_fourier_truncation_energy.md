@@ -4,6 +4,7 @@ dim: shape2d
 category: descriptor
 in: matrix
 out: table
+gpu: なし
 examples: [poc_one_stroke_epicycles]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `matrix` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.contour_fourier_truncation_energy(spectrum, orders=None)` (実装を直接呼ぶなら `import fourierdesc; fourierdesc.contour_fourier_truncation_energy(spectrum, orders=None)`、台帳から引くなら `opsshape2d.get("contour_fourier_truncation_energy")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

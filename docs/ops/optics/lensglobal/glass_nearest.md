@@ -4,6 +4,7 @@ dim: optics
 category: lensglobal
 in: 
 out: table
+gpu: なし
 examples: [poc_lens_global_search]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.glass_nearest(n_d=1.5168, v_d=64.17, catalog=None, k: 'int' = 1, metric: 'str' = 'nd_vd', p_gf=None) -> 'dict'` (実装を直接呼ぶなら `import lensglobal; lensglobal.glass_nearest(n_d=1.5168, v_d=64.17, catalog=None, k: 'int' = 1, metric: 'str' = 'nd_vd', p_gf=None) -> 'dict'`、台帳から引くなら `opsoptics.get("glass_nearest")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

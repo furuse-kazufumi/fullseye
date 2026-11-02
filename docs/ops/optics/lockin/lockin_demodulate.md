@@ -4,6 +4,7 @@ dim: optics
 category: lockin
 in: video
 out: table
+gpu: なし
 examples: [poc_lockin_imaging]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `video` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.lockin_demodulate(video, f_ref, fps, window='rect') -> 'dict'` (実装を直接呼ぶなら `import lockin; lockin.lockin_demodulate(video, f_ref, fps, window='rect') -> 'dict'`、台帳から引くなら `opsoptics.get("lockin_demodulate")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

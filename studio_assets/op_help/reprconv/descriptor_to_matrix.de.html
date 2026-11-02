@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">descriptor_to_matrix — REPRCONV <code style="color:#22d3bf">descriptor</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">descriptor</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.descriptor_to_matrix(descriptor)</code> (die Implementierung direkt: <code style="color:#22d3bf">import reprconv; reprconv.descriptor_to_matrix(descriptor)</code>; aus dem Register: <code style="color:#22d3bf">opsreprconv.get(&quot;descriptor_to_matrix&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Deskriptor → <code style="color:#22d3bf">matrix</code>. Der Ausgang aus <code style="color:#22d3bf">descriptor</code> (<b>invertierbar</b>).</p>
 <p>Ein 1-D-Deskriptor (n,) wird zur 1-zeiligen Matrix <b>(1, n)</b>. Ein 2-D-Deskriptorbündel (&quot;Punkte x Dimensionen&quot;, wie das (12, 9) von <code style="color:#22d3bf">sh_descriptor</code>) wird unverändert durchgereicht. So lassen sich <code style="color:#22d3bf">mat_svd</code> / <code style="color:#22d3bf">mat_pinv</code> / <code style="color:#22d3bf">mat_cond</code> direkt auf eine Deskriptorbank anwenden -- ein Deskriptor ist im Wesen ein Vektor, ihn an das Matrix-Vokabular zu geben ist ein Wechsel der Verpackung, keine Umformung.</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">itof_unwrap_error_rate — OPTICS <code style="color:#22d3bf">itof</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">無</code> → <code style="color:#22d3bf">table</code>(僅由參數決定的運算子 —— 不接受影像或資料輸入)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.itof_unwrap_error_rate(frequencies_hz=(80000000.0, 100000000.0, 120000000.0), phase_sigma_rad=0.05, max_range_m=None)</code>(要直接呼叫實作,<code style="color:#22d3bf">import itof; itof.itof_unwrap_error_rate(frequencies_hz=(80000000.0, 100000000.0, 120000000.0), phase_sigma_rad=0.05, max_range_m=None)</code>;從台帳取用則 <code style="color:#22d3bf">opsoptics.get(&quot;itof_unwrap_error_rate&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>多頻解包裹(最大概似解碼)判錯週期序號(第幾週)的機率估計。回傳 <code style="color:#22d3bf">table</code>。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>

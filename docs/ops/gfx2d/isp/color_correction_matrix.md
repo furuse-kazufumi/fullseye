@@ -4,6 +4,7 @@ dim: gfx2d
 category: isp
 in: rgb × matrix
 out: rgb
+gpu: なし
 examples: [raw_to_display_isp]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `rgb × matrix` → `rgb`
 - **呼び出し**: `import fullseye as fs; fs.ledger.color_correction_matrix(rgb, ccm, normalize_rows=True)` (実装を直接呼ぶなら `import gfx2d; gfx2d.color_correction_matrix(rgb, ccm, normalize_rows=True)`、台帳から引くなら `opsgfx2d.get("color_correction_matrix")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

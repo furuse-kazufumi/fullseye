@@ -4,6 +4,7 @@ dim: reprconv
 category: pairs
 in: pairs
 out: signal
+gpu: なし
 examples: [representation_conversion, representation_roundtrip]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `pairs` → `signal`
 - **呼び出し**: `import fullseye as fs; fs.ledger.pairs_to_signal(pairs)` (実装を直接呼ぶなら `import reprconv; reprconv.pairs_to_signal(pairs)`、台帳から引くなら `opsreprconv.get("pairs_to_signal")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

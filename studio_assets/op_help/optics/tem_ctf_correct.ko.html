@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tem_ctf_correct — OPTICS <code style="color:#22d3bf">tem</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tem_ctf_correct(image, pixel_A=1.0, kv=300.0, cs_mm=2.7, defocus_A=10000.0, astig_A=None, astig_angle_deg=None, amplitude_contrast=0.07, phase_shift_deg=0.0, method=&#x27;phase_flip&#x27;, snr=None)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import temsim; temsim.tem_ctf_correct(image, pixel_A=1.0, kv=300.0, cs_mm=2.7, defocus_A=10000.0, astig_A=None, astig_angle_deg=None, amplitude_contrast=0.07, phase_shift_deg=0.0, method=&#x27;phase_flip&#x27;, snr=None)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsoptics.get(&quot;tem_ctf_correct&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>CTF 보정(<code style="color:#22d3bf">image2d</code>). <code style="color:#22d3bf">method=&quot;phase_flip&quot;</code>: F⁻¹[ F(I − ⟨I⟩) · sign(CTF) ] (위상 반전, 진폭은 그대로) / <code style="color:#22d3bf">&quot;wiener&quot;</code>: F⁻¹[ F(I − ⟨I⟩) · CTF / (CTF² + 1/snr) ].</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>

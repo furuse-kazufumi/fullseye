@@ -4,6 +4,7 @@ dim: optics
 category: lensfile
 in: table
 out: table
+gpu: なし
 examples: [poc_lens_file_roundtrip, poc_lens_solves_afocal, poc_zoom_configurations]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.lens_file_write(prescription=None, system=None, path=None, encoding: 'str' = 'ascii') -> 'dict'` (実装を直接呼ぶなら `import lensfile; lensfile.lens_file_write(prescription=None, system=None, path=None, encoding: 'str' = 'ascii') -> 'dict'`、台帳から引くなら `opsoptics.get("lens_file_write")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

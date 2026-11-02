@@ -4,6 +4,7 @@ dim: drive
 category: granular
 in: signal × scalar × scalar
 out: signal
+gpu: なし
 examples: [gallery_drive_soil_tactile]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal × scalar × scalar` → `signal`
 - **呼び出し**: `import fullseye as fs; fs.ledger.cone_profile_px(u, H_px: 'float', phi_deg: 'float', toe_round_px: 'float' = 0.0, apex_blunt_px: 'float' = 0.0)` (実装を直接呼ぶなら `import granular; granular.cone_profile_px(u, H_px: 'float', phi_deg: 'float', toe_round_px: 'float' = 0.0, apex_blunt_px: 'float' = 0.0)`、台帳から引くなら `opsdrive.get("cone_profile_px")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

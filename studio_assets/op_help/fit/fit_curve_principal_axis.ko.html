@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">fit_curve_principal_axis — FIT <code style="color:#22d3bf">fit</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">keypoints</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fit_curve_principal_axis(points, degree: &#x27;int&#x27; = 2, *, isotropy_ratio: &#x27;float&#x27; = 0.95) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import measure; measure.fit_curve_principal_axis(points, degree: &#x27;int&#x27; = 2, *, isotropy_ratio: &#x27;float&#x27; = 0.95) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsfit.get(&quot;fit_curve_principal_axis&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>비스듬한 곡선 가장자리를 주축으로 회전한 뒤 다항식 y&#x27;=f(x&#x27;)를 맞춥니다.</p>
 <p>PCA로 안정적인 국소 좌표계를 정한 뒤 다항 최소제곱을 수행합니다. 각도, 중심, 계수, 축, 국소점, 맞춤점과 기하 RMS를 반환하며 등방 점군은 거부합니다.</p>

@@ -4,6 +4,7 @@ dim: fileio
 category: mesh
 in: table
 out: any
+gpu: なし
 examples: [fileio_roundtrip]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `any`
 - **呼び出し**: `import fullseye as fs; fs.ledger.mesh_write_ply(table, *, binary)` (実装を直接呼ぶなら `import fileio; fileio.mesh_write_ply(table, *, binary)`、台帳から引くなら `opsfileio.get("mesh_write_ply")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

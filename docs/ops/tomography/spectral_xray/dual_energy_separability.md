@@ -4,6 +4,7 @@ dim: tomography
 category: spectral_xray
 in: 
 out: table
+gpu: なし
 examples: [poc_dual_energy_xray]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.dual_energy_separability(material_a='POLYETHYLENE', thickness_a_cm: 'float' = 1.0, material_b='AL', thickness_b_cm=None, channels=None, photons_per_pixel: 'float' = 100000.0, background=None, n_pixels: 'int' = 1) -> 'dict'` (実装を直接呼ぶなら `import dualxray; dualxray.dual_energy_separability(material_a='POLYETHYLENE', thickness_a_cm: 'float' = 1.0, material_b='AL', thickness_b_cm=None, channels=None, photons_per_pixel: 'float' = 100000.0, background=None, n_pixels: 'int' = 1) -> 'dict'`、台帳から引くなら `opstomography.get("dual_energy_separability")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

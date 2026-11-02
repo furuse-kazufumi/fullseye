@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">load_asset — DRIVE <code style="color:#22d3bf">world</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">table</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.load_asset(name: &#x27;str&#x27;, dims=None, *, root=None, paint=None) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import driveworld; driveworld.load_asset(name: &#x27;str&#x27;, dims=None, *, root=None, paint=None) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;load_asset&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>将内置资产读成网格(mesh) dict：<code style="color:#22d3bf">{&quot;V&quot;, &quot;F&quot;, &quot;color&quot;, &quot;label&quot;, &quot;name&quot;, &quot;dims&quot;}</code>。</p>
 <p>转换为 z-up,按轴将盒子尺寸对齐到 <code style="color:#22d3bf">dims</code>(默认 = <code style="color:#22d3bf">ASSETS</code> 的实际尺寸),并将原点置于盒子底面中心。未知名称、尺寸 ≤ 0 会引发 <code style="color:#22d3bf">ValueError</code>。同一名称只读取一次(缓存)。</p>

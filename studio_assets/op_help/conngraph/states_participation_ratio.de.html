@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">states_participation_ratio — CONNGRAPH <code style="color:#22d3bf">dimension</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.states_participation_ratio(X: &#x27;Any&#x27;) -&gt; &#x27;float&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import conngraph; conngraph.states_participation_ratio(X: &#x27;Any&#x27;) -&gt; &#x27;float&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsconngraph.get(&quot;states_participation_ratio&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p><b>Effektive Dimension</b> der Zustandsfolge <code style="color:#22d3bf">X</code> (N, n) = Participation Ratio <code style="color:#22d3bf">PR = (Σλ)² / Σλ²</code> (λ sind die Eigenwerte der Kovarianz, Gao et al. 2017). Sie ist n, wenn alle Spalten unabhängig mit gleicher Varianz sind, und 1, wenn die Zustände auf 1 Richtung liegen.</p>
 <p>Es hängt von der Stichprobenzahl N ab (bei kleinem N Sättigung bei PR ≤ N), daher beim Vergleichen N angleichen. 0 bei einer Konstanten (Varianz 0).</p>

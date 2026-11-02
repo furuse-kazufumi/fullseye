@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">min_enclosing_sphere — 3D <code style="color:#22d3bf">bounds</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">primitive</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.min_enclosing_sphere(points, refine_iters: &#x27;int&#x27; = 1000) -&gt; &#x27;Dict[str, object]&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import hull3d; hull3d.min_enclosing_sphere(points, refine_iters: &#x27;int&#x27; = 1000) -&gt; &#x27;Dict[str, object]&#x27;</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;min_enclosing_sphere&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Punktmenge (N,3) → die (näherungsweise) kleinste umschließende Kugel aller Punkte, {center(3), radius}.</p>
 <p>Anders als <code style="color:#22d3bf">fit_sphere_3d</code> (Kugelanpassung) oder <code style="color:#22d3bf">ransac_sphere</code> / <code style="color:#22d3bf">hough_sphere_3d</code> (Kugeldetektion) löst dies <b>die kleinste Kugel, die alle Punkte enthält</b> (minimum enclosing ball, MEB). Ein 2-stufiges Verfahren verkleinert den Radius und hält dabei &quot;alle Punkte enthalten&quot; strikt ein:</p>

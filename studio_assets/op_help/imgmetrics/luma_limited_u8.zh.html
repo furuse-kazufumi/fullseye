@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">luma_limited_u8 — IMGMETRICS <code style="color:#22d3bf">iqa</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.luma_limited_u8(rgb) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import iqatid; iqatid.luma_limited_u8(rgb) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsimgmetrics.get(&quot;luma_limited_u8&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>RGB (H, W, 3) uint8 → Y′ = round(16 + (65.481 R + 128.553 G + 24.966 B) / 255) 的 uint8 (H, W)。</p>
 <p>ITU-R BT.601 的 <b>limited range</b>(studio swing)亮度。黑 (0,0,0) → 16,白 (255,255,255) → 235。与 full range 的 Y = 0.299 R + 0.587 G + 0.114 B(黑 0、白 255)是<b>不同的量</b>,PSNR(保持 peak 255)会低 20 log10(255/219) = 1.321 dB。TID2013 的作者值 psnr.txt(“luminance component”)和 ssim.txt <b>在此约定下 4 位一致</b>(10 组,2026-10-04。若用 full range,PSNR 偏 −1.3 dB、SSIM 最多偏 0.05;不取整则 PSNR 偏 +0.002〜0.07 dB)。网页和 readme 中都没写是哪种亮度,这是通过实测确定的约定。取整为 <code style="color:#22d3bf">np.round</code>(四舍六入五成双)。亮度<b>恰好落在 k.5</b> 的像素,取整方向会随运算顺序而变,可能与作者相差 1 LSB(TID2013 中为参考 I12 的 28 个像素。彩度变化 5 组中作者 = 完全一致,这里为 86.6 dB。用四舍五入或 float32 也对不上)。这只涉及 PSNR 超过 60 dB 的区域,其余 2,995 组都在 0.0005 dB 以内。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>:形状不是 (H, W, 3)、dtype 不是 uint8。</p>

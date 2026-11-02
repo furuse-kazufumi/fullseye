@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">piv_strain_rate — PIV <code style="color:#22d3bf">field</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">flow2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_strain_rate(flow, spacing=1.0)</code>(要直接调用实现,<code style="color:#22d3bf">import pivops; pivops.piv_strain_rate(flow, spacing=1.0)</code>;从台账取用则 <code style="color:#22d3bf">opspiv.get(&quot;piv_strain_rate&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>应变率的大小 <code style="color:#22d3bf">sqrt(2 e_ij e_ij)</code>。刚体旋转时为 0。</p>
 <p>实测：刚体转动 0.0 / 均匀膨胀 s=0.01 时 0.02 (= 2s) / 简单剪切 g=0.02 时 0.02 (= g)。它是<b>只去掉转动后的变形强度</b>，因此与 Q 判据或 λ_ci 一起看，就能分出“是涡还是剪切”。</p>

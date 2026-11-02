@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">annotate_text_path_layout — ANNOTATE <code style="color:#22d3bf">paper</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">text</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_text_path_layout(text, path, font_size=13, font_path=None, spacing=1.0, start=0.0, anchor=&#x27;start&#x27;, offset=0.0, upright=False, line_spacing=1.15)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import annotate; annotate.annotate_text_path_layout(text, path, font_size=13, font_path=None, spacing=1.0, start=0.0, anchor=&#x27;start&#x27;, offset=0.0, upright=False, line_spacing=1.15)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsannotate.get(&quot;annotate_text_path_layout&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>table (dict) लौटाता है: polyline के साथ अक्षरों को 1-1 करके रखने की position और झुकाव (arc length से तय)।</p>
 <p>अक्षर i का केंद्र arc length <code style="color:#22d3bf">s_i = s0 + Σ_{j&lt;i} a_j*spacing + a_i/2</code> पर होता है, और झुकाव उस स्थान पर line segment का tangent angle है (screen coordinates, डिग्री)। path से लंबी string पर ValueError आता है।</p>

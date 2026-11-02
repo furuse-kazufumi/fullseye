@@ -4,6 +4,7 @@ dim: printpath
 category: npr
 in: 
 out: table
+gpu: なし
 examples: [poc_beats_fringes_and_screens, poc_moire_screen, poc_print_registration]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.halftone_moire_period(lpi_a=60.0, angle_a_deg=45.0, lpi_b=60.0, angle_b_deg=75.0, pixel_um=25.4)` (実装を直接呼ぶなら `import printpath; printpath.halftone_moire_period(lpi_a=60.0, angle_a_deg=45.0, lpi_b=60.0, angle_b_deg=75.0, pixel_um=25.4)`、台帳から引くなら `opsprintpath.get("halftone_moire_period")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

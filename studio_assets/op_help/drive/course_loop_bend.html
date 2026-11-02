@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">course_loop_bend — DRIVE <code style="color:#22d3bf">course</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.course_loop_bend(radius=30.0, width=8.0, arc_pts=64)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import drivecourse; drivecourse.course_loop_bend(radius=30.0, width=8.0, arc_pts=64)</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;course_loop_bend&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>周回コースの端の半円(左へ 180° 回る): 進入 (0, 0, 0) → 中心 (0, R) の周りを回って退出 (0, 2R, π)。多角形は外側の弧(半径 R + w/2)と内側の弧(R − w/2)で囲む環の半分。面積 = π R w(閉形式)、弧を折線にした分だけ小さく、arc_pts を増やすと収束する。規格(周回コース): 幅 8 m 以上、おおむね長円形。</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: R ≤ w/2(内側の弧が潰れる)、幅・半径が正でない、arc_pts が不正。</p>

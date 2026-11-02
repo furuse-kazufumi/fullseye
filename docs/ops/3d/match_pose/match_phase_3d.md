@@ -4,7 +4,7 @@ dim: 3d
 category: match_pose
 in: voxel × voxel
 out: shift
-gpu: true
+gpu: なし
 examples: [shape_desc_pose]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `voxel × voxel` → `shift`
 - **呼び出し**: `import fullseye as fs; fs.ledger.match_phase_3d(a, b, device='cpu', window='tukey', whitening=0.25)` (実装を直接呼ぶなら `import match3d; match3d.match_phase_3d(a, b, device='cpu', window='tukey', whitening=0.25)`、台帳から引くなら `ops3d.get("match_phase_3d")`)
-- **GPU**: この op は GPU 経路あり(`device="cuda"`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

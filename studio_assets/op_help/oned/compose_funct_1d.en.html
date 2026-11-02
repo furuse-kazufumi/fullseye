@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">compose_funct_1d — ONED <code style="color:#22d3bf">function</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.compose_funct_1d(y1, y2)</code> (to call the implementation directly, <code style="color:#22d3bf">import funct1d; funct1d.compose_funct_1d(y1, y2)</code>; from the registry, <code style="color:#22d3bf">ops1d.get(&quot;compose_funct_1d&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Composition <code style="color:#22d3bf">y1(y2)</code>: the values of *y2* used as positions into *y1* (HALCON <code style="color:#22d3bf">compose_funct_1d</code>).</p>
 <p>Each <code style="color:#22d3bf">y2[i]</code> is rounded to the nearest integer (<code style="color:#22d3bf">np.round</code>: an exact .5 goes to the even neighbour, so 2.5 -&gt; 2 and 4.5 -&gt; 4) and <b>clamped</b> into <code style="color:#22d3bf">[0, len(y1) - 1]</code>, then <code style="color:#22d3bf">out[i] = y1[that index]</code>. Nearest-neighbour lookup, no interpolation.</p>

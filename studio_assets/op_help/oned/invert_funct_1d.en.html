@@ -3,6 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">pairs</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.invert_funct_1d(y)</code> (to call the implementation directly, <code style="color:#22d3bf">import funct1d; funct1d.invert_funct_1d(y)</code>; from the registry, <code style="color:#22d3bf">ops1d.get(&quot;invert_funct_1d&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>Return value through the ledger</b>: <code style="color:#22d3bf">fullseye.ledger.invert_funct_1d(...)</code> returns <b>only the declared out type <code style="color:#22d3bf">pairs</code></b> (the underlying function also returns auxiliary values). When you need what was dropped, use <code style="color:#22d3bf">fullseye.ledger.invert_funct_1d.raw(...)</code> or call <code style="color:#22d3bf">funct1d.invert_funct_1d</code> directly.</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Swap the roles of x and y: <code style="color:#22d3bf">x = f^-1(y)</code> (HALCON <code style="color:#22d3bf">invert_funct_1d</code>).</p>
 <p>Returns <code style="color:#22d3bf">{&quot;x&quot;: y-values sorted ascending, &quot;y&quot;: their original indices}</code>, i.e. the (y, x) pairs ordered so the new abscissa is monotonic — ready for <code style="color:#22d3bf">numpy.interp</code>-style lookup.</p>

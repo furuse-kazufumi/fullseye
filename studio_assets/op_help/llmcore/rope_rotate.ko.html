@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">rope_rotate — LLMCORE <code style="color:#22d3bf">prepare</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">tokens</code> → <code style="color:#22d3bf">tokens</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rope_rotate(tokens, positions=None, base: &#x27;float&#x27; = 10000.0) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import llmcore; llmcore.rope_rotate(tokens, positions=None, base: &#x27;float&#x27; = 10000.0) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsllmcore.get(&quot;rope_rotate&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>회전에 의한 위치 부호(RoPE) → tokens. <b>회전이므로 노름을 보존한다</b>.</p>
 <p>Su 등 2021. 짝홀의 쌍 (x₂ᵢ, x₂ᵢ₊₁) 을 각도 <code style="color:#22d3bf">pos · base**(−2i/d)</code> 만큼 돌린다. 평면 회전의 직합이므로 <code style="color:#22d3bf">‖RoPE(x)‖ == ‖x‖</code> 가 <b>엄밀하게</b> 성립하고(실측 8.9e-16), 게다가 돌린 2 개의 내적은 <b>위치의 차만으로</b> 정해진다(절대 위치를 40 가지로 움직여 폭 8.9e-15) —— &quot;상대 위치를 내적에 심는다&quot;는 주장이, 그대로 검산이 된다.</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">text_lines — TEXT <code style="color:#22d3bf">layout</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.text_lines(boxes, stroke_width=None, overlap_ratio: &#x27;float&#x27; = 0.5, gap_ratio: &#x27;float&#x27; = 3.0, width_ratio: &#x27;float&#x27; = 3.0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import textregion; textregion.text_lines(boxes, stroke_width=None, overlap_ratio: &#x27;float&#x27; = 0.5, gap_ratio: &#x27;float&#x27; = 3.0, width_ratio: &#x27;float&#x27; = 3.0)</code>、台帳から引くなら <code style="color:#22d3bf">opstext.get(&quot;text_lines&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>文字候補の矩形を行にまとめる(縦に重なり、横に近く、ストローク幅が近いものを繋ぐ)。</p>
 <p>★規則の根拠(2026-09-27 実測): 候補は字画ごとの断片になる(横棒と &#x27;l&#x27; では高さが 5 倍違う)ので「高さが近い」を条件にすると 3 行が 30〜60 行に割れた。行の同一性は<b>縦の重なり</b>(小さい方の高さの <code style="color:#22d3bf">overlap_ratio</code> 以上)で判定し、横の隙間は大きい方の高さの <code style="color:#22d3bf">gap_ratio</code> 倍以内、ストローク幅は <code style="color:#22d3bf">width_ratio</code> 倍以内。</p>

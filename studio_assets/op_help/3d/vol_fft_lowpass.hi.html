@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">vol_fft_lowpass — 3D <code style="color:#22d3bf">frequency</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">voxel</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_fft_lowpass(vol, cutoff, spacing=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import volfreq; volfreq.vol_fft_lowpass(vol, cutoff, spacing=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;vol_fft_lowpass&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Gaussian low-pass: <code style="color:#22d3bf">1/cutoff</code> से मोटी structure रखता है (voxels में, या *spacing* के साथ mm में)।</p>
 <p>बारीक detail धीरे-धीरे attenuate होता है। Transfer function <code style="color:#22d3bf">exp(-f^2 / (2 cutoff^2))</code> — DC level (mean intensity) बिना बदले गुज़रता है। सामान्य उपयोग: illumination/thickness drift निकालना।</p>

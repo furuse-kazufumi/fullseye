@@ -4,6 +4,7 @@ dim: 3d
 category: gicp
 in: points × points
 out: pose
+gpu: なし
 examples: [gicp_register]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,6 +16,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **データ種**: `points × points` → `pose`
 - **呼び出し**: `import fullseye as fs; fs.ledger.gicp(source, target, max_iter: 'int' = 30, k: 'int' = 20, epsilon: 'float' = 0.001, tol: 'float' = 1e-08, init=None, reproducible: 'bool' = False) -> 'dict'` (実装を直接呼ぶなら `import gicp; gicp.gicp(source, target, max_iter: 'int' = 30, k: 'int' = 20, epsilon: 'float' = 0.001, tol: 'float' = 1e-08, init=None, reproducible: 'bool' = False) -> 'dict'`、台帳から引くなら `ops3d.get("gicp")`)
 - **台帳経由の戻り値**: `fullseye.ledger.gicp(...)` は**宣言 out 型 `pose` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.gicp.raw(...)`、または `gicp.gicp` を直接呼ぶ。
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

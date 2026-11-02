@@ -4,6 +4,7 @@ dim: drive
 category: ball
 in: 
 out: table
+gpu: なし
 examples: [gallery_drive_ballistics, gallery_drive_kendama_racket, poc_ball_bounce, poc_table_tennis_bounce, poc_table_tennis_rally_loop, poc_table_tennis_spin]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.impact_params(e=0.9, mu: 'float' = 0.25) -> 'dict'` (実装を直接呼ぶなら `import ballistics; ballistics.impact_params(e=0.9, mu: 'float' = 0.25) -> 'dict'`、台帳から引くなら `opsdrive.get("impact_params")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

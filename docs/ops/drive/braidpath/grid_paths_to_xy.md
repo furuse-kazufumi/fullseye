@@ -4,6 +4,7 @@ dim: drive
 category: braidpath
 in: any
 out: any
+gpu: なし
 examples: [poc_braid_homotopy_classes]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `any` → `any`
 - **呼び出し**: `import fullseye as fs; fs.ledger.grid_paths_to_xy(paths) -> 'np.ndarray'` (実装を直接呼ぶなら `import braidpath; braidpath.grid_paths_to_xy(paths) -> 'np.ndarray'`、台帳から引くなら `opsdrive.get("grid_paths_to_xy")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

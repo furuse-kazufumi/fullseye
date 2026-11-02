@@ -4,6 +4,7 @@ dim: drive
 category: pegsim
 in: table
 out: table
+gpu: なし
 examples: [poc_pegsim_insertion]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.contact_state_predict(kp, tip_xyz, axis, tol: 'float' = 6e-05) -> 'dict'` (実装を直接呼ぶなら `import pegsim; pegsim.contact_state_predict(kp, tip_xyz, axis, tol: 'float' = 6e-05) -> 'dict'`、台帳から引くなら `opsdrive.get("contact_state_predict")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

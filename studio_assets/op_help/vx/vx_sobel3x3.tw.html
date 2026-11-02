@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">vx_sobel3x3 — VX <code style="color:#22d3bf">gradient</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vx_sobel3x3(image, *, border, constant_value=0)</code>(要直接呼叫實作,<code style="color:#22d3bf">import vxcore; vxcore.vx_sobel3x3(image, *, border, constant_value=0)</code>;從台帳取用則 <code style="color:#22d3bf">opsvx.get(&quot;vx_sobel3x3&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>Sobel 3×3(3.46 節)：將 G_x = [[−1,0,1],[−2,0,2],[−1,0,1]]、G_y = [[−1,−2,−1],[0,0,0],[1,2,1]] (REQ-0415)作為相關運算施加。</p>
 <p>*image*: U8。*border*(必要): <code style="color:#22d3bf">&quot;replicate&quot;</code> / <code style="color:#22d3bf">&quot;constant&quot;</code>(以 *constant_value* 填充)/ <code style="color:#22d3bf">&quot;undefined&quot;</code>(邊緣 1 像素依規格未定義 —— 填入 0,並作為 <code style="color:#22d3bf">valid</code> 之外回傳)。</p>

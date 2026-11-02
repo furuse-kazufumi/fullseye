@@ -4,6 +4,7 @@ dim: optics
 category: finish
 in: normalmap
 out: normalmap
+gpu: なし
 examples: [machined_metal_and_materials, poc_illumination_cone_vs_na, poc_telecentric_metrology]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `normalmap` → `normalmap`
 - **呼び出し**: `import fullseye as fs; fs.ledger.blast_normals(normals, grain=0.03, cell_px=3.0, seed=0) -> 'np.ndarray'` (実装を直接呼ぶなら `import metalfinish; metalfinish.blast_normals(normals, grain=0.03, cell_px=3.0, seed=0) -> 'np.ndarray'`、台帳から引くなら `opsoptics.get("blast_normals")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

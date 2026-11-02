@@ -4,6 +4,7 @@ dim: optics
 category: scene
 in: rgbimage × image2d × table
 out: rgbimage
+gpu: なし
 examples: [poc_focus_stacking, virtual_machine_vision]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `rgbimage × image2d × table` → `rgbimage`
 - **呼び出し**: `import fullseye as fs; fs.ledger.defocus_blur(image, depth_mm, camera, f_number: 'float' = 5.6, focus_mm: 'float' = None, layers: 'int' = 7) -> 'np.ndarray'` (実装を直接呼ぶなら `import optscene; optscene.defocus_blur(image, depth_mm, camera, f_number: 'float' = 5.6, focus_mm: 'float' = None, layers: 'int' = 7) -> 'np.ndarray'`、台帳から引くなら `opsoptics.get("defocus_blur")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

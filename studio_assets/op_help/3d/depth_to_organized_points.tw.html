@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">depth_to_organized_points — 3D <code style="color:#22d3bf">range_image</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">depth</code> → <code style="color:#22d3bf">pointmap</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.depth_to_organized_points(depth, fx=None, fy=None, cx=None, cy=None)</code>(要直接呼叫實作,<code style="color:#22d3bf">import range_image; range_image.depth_to_organized_points(depth, fx=None, fy=None, cx=None, cy=None)</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;depth_to_organized_points&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>organized 深度圖 → 網格對齊的 3D 點 (H,W,3)。</p>
 <p>指定 fx,fy 時做透視反投影 P=((u-cx)/fx*d, (v-cy)/fy*d, d)。未指定時為正交(P=(x,y,depth),網格間距 1)。</p>

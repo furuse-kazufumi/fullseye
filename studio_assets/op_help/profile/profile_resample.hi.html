@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">profile_resample — PROFILE <code style="color:#22d3bf">frame</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">pairs</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.profile_resample(contour, n=200, kind=&#x27;arclength&#x27;)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import profileops; profileops.profile_resample(contour, n=200, kind=&#x27;arclength&#x27;)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsprofile.get(&quot;profile_resample&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>contour को बराबर अंतराल पर फिर से sample करता है। <code style="color:#22d3bf">kind</code> केवल <code style="color:#22d3bf">&quot;arclength&quot;</code> (अभी के लिए)।</p>
 <p>अगर points का घनत्व जगह-जगह अलग हो, तो मोटाई और camber का fit घने हिस्से की ओर खिंच जाता है। तुलना की जाने वाली 2 curves को <b>एक ही तरीके से</b> दोबारा sample करके फिर तुलना करें।</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">seg_wiring_exposure — EMPROOF <code style="color:#22d3bf">wiring</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">labels2d × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.seg_wiring_exposure(labels, synapses, spacing=None, background=0, p=0.5)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import segcompare; segcompare.seg_wiring_exposure(labels, synapses, spacing=None, background=0, p=0.5)</code>、台帳から引くなら <code style="color:#22d3bf">opsemproof.get(&quot;seg_wiring_exposure&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>How much wiring each object stakes on staying one piece — from synapse end counts alone.</p>
 <p>Cutting an object whose <code style="color:#22d3bf">s</code> synapse ends (<code style="color:#22d3bf">synapses</code> as in <code style="color:#22d3bf">seg_synapse_partners</code>) fall <code style="color:#22d3bf">s1</code> / <code style="color:#22d3bf">s - s1</code> on the two sides costs exactly <code style="color:#22d3bf">(s / 2n) * H2(s1 / s)</code> bits of ends-level split (<code style="color:#22d3bf">seg_wiring_variation</code>), and a hidden merge of two neurons inside one object costs the same expression as merge. So what an object can cost is fixed by its end count before any geometry is known:</p>

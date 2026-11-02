@@ -4,6 +4,7 @@ dim: drive
 category: doseunif
 in: signal × signal × scalar × scalar
 out: table
+gpu: なし
 examples: [poc_dose_uniformity_from_grinding]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal × signal × scalar × scalar` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.grind_time_for_dose_cv(t, d63, dose_mg: 'float', density: 'float', target_cv: 'float | None' = None, pass_probability: 'float | None' = None, law: 'str' = 'best', k_accept: 'float' = 2.4, limit_av: 'float' = 15.0, n_units: 'int' = 10, ref_range=(98.5, 101.5), n_mc: 'int' = 20000, seed: 'int' = 0) -> 'dict'` (実装を直接呼ぶなら `import doseunif; doseunif.grind_time_for_dose_cv(t, d63, dose_mg: 'float', density: 'float', target_cv: 'float | None' = None, pass_probability: 'float | None' = None, law: 'str' = 'best', k_accept: 'float' = 2.4, limit_av: 'float' = 15.0, n_units: 'int' = 10, ref_range=(98.5, 101.5), n_mc: 'int' = 20000, seed: 'int' = 0) -> 'dict'`、台帳から引くなら `opsdrive.get("grind_time_for_dose_cv")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">stroke_tour_closed — PRINTPATH <code style="color:#22d3bf">stroke</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">pairs</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.stroke_tour_closed(points, start=&#x27;nearest&#x27;, two_opt_rounds=8, order=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import printpath; printpath.stroke_tour_closed(points, start=&#x27;nearest&#x27;, two_opt_rounds=8, order=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsprintpath.get(&quot;stroke_tour_closed&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>point को ऐसे <b>बंद tour</b> में फिर से क्रमित करता है जो हर point से ठीक 1 बार गुज़रकर वापस आता है। → <code style="color:#22d3bf">pairs</code></p>
 <p>लौटता है <code style="color:#22d3bf">(N, 2)</code>: input जैसे ही points, नए क्रम में। यह <b>आख़िरी point से पहले point पर लौटकर</b> बंद होता है (अंत में पहला point दोहराया नहीं जाता)।</p>

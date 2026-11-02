@@ -4,6 +4,7 @@ dim: optics
 category: tolerancing
 in: 
 out: table
+gpu: なし
 examples: [lensfile_tolerance_worst_mtf, optimized_lens_tolerance_sensitivity, poc_lens_tolerancing]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.tolerance_criteria(rms_spot=None, wavefront_rms=None, efl=None, mtf=None, distortion=None, back_focus=None, fields=None, wavelengths=None, rings=6, reference='centroid', psf_size=None)` (実装を直接呼ぶなら `import lenstol; lenstol.tolerance_criteria(rms_spot=None, wavefront_rms=None, efl=None, mtf=None, distortion=None, back_focus=None, fields=None, wavelengths=None, rings=6, reference='centroid', psf_size=None)`、台帳から引くなら `opsoptics.get("tolerance_criteria")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

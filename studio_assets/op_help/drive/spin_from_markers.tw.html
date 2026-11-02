@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">spin_from_markers — DRIVE <code style="color:#22d3bf">balltrack</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.spin_from_markers(dirs0, dirs1, dt: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import balltrack; balltrack.spin_from_markers(dirs0, dirs1, dt: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;spin_from_markers&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由標記方向對(前 (M, 3)、後 (M, 3)，單位向量)求角速度向量 ω [rad/s]。</p>
 <p>M ≥ 2 時用 Kabsch(SVD)擬合旋轉 R,由旋轉角 θ 和軸求 ω = θ/dt·軸(輸入按已知 ω 旋轉的方向,可在 1e-9 內還原 = 門)。M = 1 時回傳 d₀ → d₁ 的最小旋轉(軸 = d₀ × d₁)(&quot;full&quot; = False):繞標記方向的分量原理上無法確定, 幀間旋轉角較大時,作為 ω 正交分量的近似也會失準(標記繞 ω 軸畫小圓,與最小旋轉的大圓不同)。</p>

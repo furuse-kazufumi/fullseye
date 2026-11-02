@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">underwater_image — OPTICS <code style="color:#22d3bf">watermedia</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">rgbimage × image2d × image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.underwater_image(image, depth_map_m, distance_map_m, water_type=&#x27;jerlov_I&#x27;, wavelengths_um=None, illumination=&#x27;daylight&#x27;, backscatter=True, apply_ambient=False, beta_b_ratio=1.0, backscatter_ratio=0.02) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import watermedia; watermedia.underwater_image(image, depth_map_m, distance_map_m, water_type=&#x27;jerlov_I&#x27;, wavelengths_um=None, illumination=&#x27;daylight&#x27;, backscatter=True, apply_ambient=False, beta_b_ratio=1.0, backscatter_ratio=0.02) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;underwater_image&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>水を通して記録された場面の画像(改訂版 Jaffe–McGlamery モデル)-&gt; dict。</p>
 <p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>

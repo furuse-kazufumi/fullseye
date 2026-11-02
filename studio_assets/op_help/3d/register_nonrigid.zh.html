@@ -4,6 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.register_nonrigid(src, dst, iters=20, lam=1.0, k_smooth=None)</code>(要直接调用实现,<code style="color:#22d3bf">import deform3d; deform3d.register_nonrigid(src, dst, iters=20, lam=1.0, k_smooth=None)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;register_nonrigid&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>经台账调用的返回值</b>: <code style="color:#22d3bf">fullseye.ledger.register_nonrigid(...)</code> 只返回<b>声明的 out 类型 <code style="color:#22d3bf">points</code> 的值</b>(底层函数还会返回辅助信息)。需要被丢弃的部分时,使用 <code style="color:#22d3bf">fullseye.ledger.register_nonrigid.raw(...)</code>,或直接调用 <code style="color:#22d3bf">deform3d.register_nonrigid</code>。</p>
 <p style="margin:2px 0 2px 12px">• 底层返回: <code style="color:#22d3bf">(warped, info, info)</code></p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用非刚体 ICP 把 <code style="color:#22d3bf">src</code> 靠向 <code style="color:#22d3bf">dst</code>。</p>
 <p>每次迭代都从&quot;当前变形后的 src&quot;向 <code style="color:#22d3bf">dst</code> 重新建立最近邻对应,把这些对应作为控制点对应(控制中心 = 原始 src),带正则化地重新拟合 TPS,并对 src 进行变形。即使对应关系未知,也能恢复平滑的非线性变形。</p>

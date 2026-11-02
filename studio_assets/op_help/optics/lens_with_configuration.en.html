@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">lens_with_configuration — OPTICS <code style="color:#22d3bf">lensconfig</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lens_with_configuration(system=None, k: &#x27;int&#x27; = 0) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import lensconfig; lensconfig.lens_with_configuration(system=None, k: &#x27;int&#x27; = 0) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;lens_with_configuration&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Return configuration k (0-based) of a multi-configuration prescription as a resolved <code style="color:#22d3bf">lens_system</code> (<code style="color:#22d3bf">table</code>).</p>
 <p>Same resolution as <code style="color:#22d3bf">lens_configurations</code> for one configuration. *k* is the position in <code style="color:#22d3bf">system[&quot;configurations&quot;]</code> (configuration 1 of the design program is <code style="color:#22d3bf">k = 0</code>). The base system is untouched. <code style="color:#22d3bf">None</code> uses the two-position example.</p>

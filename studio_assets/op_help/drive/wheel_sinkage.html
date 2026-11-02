@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">wheel_sinkage — DRIVE <code style="color:#22d3bf">roverslip</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">signal × table × any</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.wheel_sinkage(load, wheel, soil, slip=0.0) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import roverslip; roverslip.wheel_sinkage(load, wheel, soil, slip=0.0) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;wheel_sinkage&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>1 輪の垂直荷重 <code style="color:#22d3bf">load</code> [N] を滑り率 <code style="color:#22d3bf">slip</code> で支える沈下 z [m] (F_z(z, s) = load の二分法)。</p>
 <p><code style="color:#22d3bf">load</code>・<code style="color:#22d3bf">slip</code> は放送できる配列。車輪の半径まで沈んでも支えられない荷重は ValueError。</p>

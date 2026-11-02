@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">braid_equivalent — DRIVE <code style="color:#22d3bf">braidpath</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">signal × signal × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.braid_equivalent(word_a, word_b, n_strands, method=&#x27;dynnikov&#x27;)</code>(要直接调用实现,<code style="color:#22d3bf">import braidpath; braidpath.braid_equivalent(word_a, word_b, n_strands, method=&#x27;dynnikov&#x27;)</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;braid_equivalent&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>两个辫字是否为同一辫(能否仅通过关系式互相变换)。</p>
 <p>method:<code style="color:#22d3bf">&quot;dynnikov&quot;</code>(比较坐标,快)/ <code style="color:#22d3bf">&quot;handle&quot;</code>(将 a b⁻¹ 柄约化后看是否为空)/ <code style="color:#22d3bf">&quot;artin&quot;</code>(比较自由群的像)/ <code style="color:#22d3bf">&quot;all&quot;</code>(三者都计算,不一致则 RuntimeError —— 实现的检查)。</p>

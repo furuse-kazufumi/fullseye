@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">dynnikov_coordinates — DRIVE <code style="color:#22d3bf">braidpath</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">signal × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dynnikov_coordinates(word, n_strands)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import braidpath; braidpath.dynnikov_coordinates(word, n_strands)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;dynnikov_coordinates&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>표준 곡선도 E = (0, …, 0; −1, …, −1) 에 브레이드를 작용시킨 Dynnikov 좌표(정수, 넘치지 않음).</p>
 <p>n 가닥에 오른쪽 끝의 구멍 1 개를 더한 n + 1 개 구멍의 원판에서 취한다(a, b 모두 길이 n − 1). 이 작용은 충실하므로 <b>좌표가 같음 ⇔ 같은 브레이드</b>. 1 문자당 상수 번의 가감산과 max / min 뿐이어서, 단어 길이에 비례하는 시간으로 끝난다(핸들 축약이나 자유군의 상과 달리 부풀지 않는다 —— 수가 커질 뿐이며, Python 의 정수는 넘치지 않는다).</p>

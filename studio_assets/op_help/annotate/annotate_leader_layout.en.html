@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">annotate_leader_layout — ANNOTATE <code style="color:#22d3bf">paper</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">table</code> (an op determined by its arguments alone — it takes no image or data input)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_leader_layout(shape, points, labels=None, font_size=12, pad=4, gap=22, side=&#x27;auto&#x27;, font_path=None, min_font_size=9)</code> (to call the implementation directly, <code style="color:#22d3bf">import annotate; annotate.annotate_leader_layout(shape, points, labels=None, font_size=12, pad=4, gap=22, side=&#x27;auto&#x27;, font_path=None, min_font_size=9)</code>; from the registry, <code style="color:#22d3bf">opsannotate.get(&quot;annotate_leader_layout&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Returns a table (dict): the placement of leader lines (elbow, text position, plate rectangle) in closed form.</p>
 <p>For each point the candidate sides are tried in a fixed order, and the first candidate <b>whose plate fits in the image, overlaps no other plate and covers no other point</b> is taken. If no candidate works, the elbow is extended 1.6x, then 2.4x, and retried; if it still fails, <b>ValueError</b> (no silent overlapping).</p>

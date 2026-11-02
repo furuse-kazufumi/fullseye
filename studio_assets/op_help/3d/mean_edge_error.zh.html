@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">mean_edge_error — 3D <code style="color:#22d3bf">pose_graph</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">pose</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mean_edge_error(poses, edges)</code>(要直接调用实现,<code style="color:#22d3bf">import pose_graph; pose_graph.mean_edge_error(poses, edges)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;mean_edge_error&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>边残差的 RMS(位姿图的一致程度)。→ scalar。</p>
 <p>对每条边 <code style="color:#22d3bf">(i, j, rvec_meas, t_meas[, w_rot, w_trans])</code>,将预测相对位姿 <code style="color:#22d3bf">T_i⁻¹ ∘ T_j</code> 与测量值 <code style="color:#22d3bf">(rvec_meas, t_meas)</code> 的偏差 <code style="color:#22d3bf">measured⁻¹ ∘ predicted</code> 转为旋转向量 3 分量 + 平移 3 分量的 6 维残差(分别乘以 <code style="color:#22d3bf">sqrt(w_rot)</code>、<code style="color:#22d3bf">sqrt(w_trans)</code>。省略权重时为 1), 返回所有边、所有分量合在一起的 2 次方平均的平方根。与 <code style="color:#22d3bf">optimize_pose_graph</code> 的返回值 <code style="color:#22d3bf">rmse</code> 是同一个量,用于比较优化前后。</p>

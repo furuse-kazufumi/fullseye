@@ -4,6 +4,7 @@ dim: tomography
 category: spectral_xray
 in: 
 out: pairs
+gpu: なし
 examples: [poc_dual_energy_xray, poc_geodetic_height_frames]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `pairs`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.material_xray_attenuation(material='CU', e_min_kev: 'float' = 10.0, e_max_kev: 'float' = 150.0, n_points: 'int' = 141, quantity: 'str' = 'mu_rho', density_g_cm3=None) -> 'np.ndarray'` (実装を直接呼ぶなら `import materials; materials.material_xray_attenuation(material='CU', e_min_kev: 'float' = 10.0, e_max_kev: 'float' = 150.0, n_points: 'int' = 141, quantity: 'str' = 'mu_rho', density_g_cm3=None) -> 'np.ndarray'`、台帳から引くなら `opstomography.get("material_xray_attenuation")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

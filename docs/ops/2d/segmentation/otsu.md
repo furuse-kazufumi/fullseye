@@ -5,6 +5,7 @@ category: segmentation
 in: image
 out: region
 halcon: binary_threshold
+gpu: あり(otsu)
 examples: [ct_inspection, degenerate_inputs, example_inner_diameter_mm, find_ops_by_meaning, gallery2d_segmentation, genspark_external_review, line_handshake, poc_bone_trabecular_thickness, poc_colocalization_crosstalk, poc_dimensional_inspection, poc_document_scan, poc_fresco_craquelure, poc_matrix_code_reading, poc_metal_grain_size, poc_real_coin_metrology, poc_segmentation_gauntlet, poc_solar_el_inspection, poc_vegetation_cover, poc_water_inspection_images, quickstart, segment_and_classify, threshold_family_agreement, typed_results_json]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -16,6 +17,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **データ種**: `image` → `region`
 - **呼び出し**: `fullseye.apply(img, "otsu", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 - **HALCON 相当**: `binary_threshold`(意味・パラメータは HALCON リファレンスが参考になる)
+- **GPU**: あり(`otsu`、`device="cuda"` で高速経路)
 
 ![otsu: input → output](../../_fig/otsu.png)
 

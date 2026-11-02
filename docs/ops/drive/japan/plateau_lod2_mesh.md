@@ -4,6 +4,7 @@ dim: drive
 category: japan
 in: any
 out: table
+gpu: なし
 examples: [poc_plateau_venue_lod2]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `any` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.plateau_lod2_mesh(source: 'str | Path | bytes', *, origin: 'tuple[float, float, float] | None' = None, ids: 'Iterable[str] | None' = None, bbox_latlon: 'tuple[float, float, float, float] | None' = None, on_bad_polygon: 'str' = 'raise') -> 'dict[str, Any]'` (実装を直接呼ぶなら `import driveplateau; driveplateau.plateau_lod2_mesh(source: 'str | Path | bytes', *, origin: 'tuple[float, float, float] | None' = None, ids: 'Iterable[str] | None' = None, bbox_latlon: 'tuple[float, float, float, float] | None' = None, on_bad_polygon: 'str' = 'raise') -> 'dict[str, Any]'`、台帳から引くなら `opsdrive.get("plateau_lod2_mesh")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

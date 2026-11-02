@@ -4,6 +4,7 @@ dim: imgforensics
 category: copy_move
 in: image2d
 out: table
+gpu: なし
 examples: [image_forensics_audit, poc_forensics_roc]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.copy_move_regions(image, method: 'str' = 'keypoint', min_matches: 'int' = 4, min_offset: 'float' = 16.0, offset_tol: 'float' = 2.0, ratio: 'float' = 0.6, patch: 'int' = 11, block: 'int' = 8, step: 'int' = 1, n_dct: 'int' = 10, min_variance: 'float' = 0.0001, max_feature_dist: 'float' = 0.02, neighbours: 'int' = 2, ransac_thresh: 'float' = 3.0, ransac_iters: 'int' = 300, seed: 'int' = 0) -> 'list'` (実装を直接呼ぶなら `import imgforensics; imgforensics.copy_move_regions(image, method: 'str' = 'keypoint', min_matches: 'int' = 4, min_offset: 'float' = 16.0, offset_tol: 'float' = 2.0, ratio: 'float' = 0.6, patch: 'int' = 11, block: 'int' = 8, step: 'int' = 1, n_dct: 'int' = 10, min_variance: 'float' = 0.0001, max_feature_dist: 'float' = 0.02, neighbours: 'int' = 2, ransac_thresh: 'float' = 3.0, ransac_iters: 'int' = 300, seed: 'int' = 0) -> 'list'`、台帳から引くなら `opsimgforensics.get("copy_move_regions")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

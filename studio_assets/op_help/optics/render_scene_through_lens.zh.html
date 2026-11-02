@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">render_scene_through_lens — OPTICS <code style="color:#22d3bf">lensrender</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.render_scene_through_lens(system, scene=None, sensor=None, pupil_samples=64, wavelengths=None, exposure_s=0.0001, illuminant=None, seed=0, defocus_mm=0.0, oversample=1, pupil_pattern=&#x27;halton&#x27;, pupil_uv=None, pupil_jitter=True, focus_mm=None, add_noise=True, output=&#x27;float&#x27;, band_nm=None, source_rings=24) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import lensrender; lensrender.render_scene_through_lens(system, scene=None, sensor=None, pupil_samples=64, wavelengths=None, exposure_s=0.0001, illuminant=None, seed=0, defocus_mm=0.0, oversample=1, pupil_pattern=&#x27;halton&#x27;, pupil_uv=None, pupil_jitter=True, focus_mm=None, add_noise=True, output=&#x27;float&#x27;, band_nm=None, source_rings=24) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsoptics.get(&quot;render_scene_through_lens&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>透过处方 *system* 的镜头拍摄 <code style="color:#22d3bf">lens_scene</code>:从传感器一侧的光线追迹 -&gt; 字典。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>

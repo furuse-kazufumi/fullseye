@@ -4,6 +4,7 @@ dim: 3d
 category: rle_region
 in: voxel
 out: rle_region
+gpu: なし
 examples: [rle_region_efficiency]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `voxel` → `rle_region`
 - **呼び出し**: `import fullseye as fs; fs.ledger.vol_rle_components(vol_binary, connectivity=26)` (実装を直接呼ぶなら `import volregion; volregion.vol_rle_components(vol_binary, connectivity=26)`、台帳から引くなら `ops3d.get("vol_rle_components")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

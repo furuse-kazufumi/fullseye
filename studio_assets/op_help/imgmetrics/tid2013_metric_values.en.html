@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tid2013_metric_values — IMGMETRICS <code style="color:#22d3bf">iqa</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">any × any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tid2013_metric_values(root, metric: &#x27;str&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import iqatid; iqatid.tid2013_metric_values(root, metric: &#x27;str&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsimgmetrics.get(&quot;tid2013_metric_values&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Returns the authors&#x27; computed values <code style="color:#22d3bf">metrics_values/&lt;metric&gt;.txt</code> (case-insensitive, 3000 lines, no names) as a (3000,) float. The line order is the same as <code style="color:#22d3bf">names</code> of <code style="color:#22d3bf">tid2013_index</code>. <code style="color:#22d3bf">metric</code> is a key of <code style="color:#22d3bf">tid2013_published</code> (psnr / psnrc / ssim / mssim …). <b>Raises</b> <code style="color:#22d3bf">ValueError</code>: file missing, line count ≠ 3000, non-numeric.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>

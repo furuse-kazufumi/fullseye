@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">rms_norm — LLMCORE <code style="color:#22d3bf">prepare</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">tokens</code> → <code style="color:#22d3bf">tokens</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rms_norm(tokens, eps: &#x27;float&#x27; = 0.0, weight=None) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import llmcore; llmcore.rms_norm(tokens, eps: &#x27;float&#x27; = 0.0, weight=None) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsllmcore.get(&quot;rms_norm&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>RMS-Normierung → tokens. <b>Mit den Voreinstellungen (eps=0, ohne weight) ist der RMS der Ausgabe exakt 1</b>.</p>
 <p>Zhang und Sennrich 2019. LayerNorm ohne die Stufe, die den Mittelwert abzieht; übrig bleibt nur &quot;die Norm jeder Zeile angleichen&quot; -- daher <b>dient es als Gegenprobe, dass der RMS 1 wird</b> (gemessen 2.2e-16). Fügt man <code style="color:#22d3bf">eps</code> hinzu, weicht er von 1 ab. Das ist der Preis von <code style="color:#22d3bf">eps</code>.</p>

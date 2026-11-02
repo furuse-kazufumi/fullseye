@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">metrics_table — IMGMETRICS <code style="color:#22d3bf">report</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">metrics</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.metrics_table(report, order=None)</code> (die Implementierung direkt: <code style="color:#22d3bf">import imgmetrics; imgmetrics.metrics_table(report, order=None)</code>; aus dem Register: <code style="color:#22d3bf">opsimgmetrics.get(&quot;metrics_table&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Macht aus einem Bericht eine <code style="color:#22d3bf">(Name, Wert)</code>-Tabelle — die Zeilen mit den Messbedingungen stehen <b>immer mit dabei</b>.</p>
 <p>Der Kern dieser Operation besteht darin, es unmöglich zu machen, Tabellen nur mit numerischen Werten zu erstellen. „Vertrag“. Jedes Element befindet sich in derselben Tabelle wie „Bedingung: &lt;Name&gt;“.</p>

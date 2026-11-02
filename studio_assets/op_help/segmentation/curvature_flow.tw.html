@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">curvature_flow — SEGMENTATION <code style="color:#22d3bf">contour</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">mask</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.curvature_flow(phi, *, t_end: &#x27;float&#x27; = 50.0, dt: &#x27;float&#x27; = 0.2, eta: &#x27;float&#x27; = 1e-08, record_every: &#x27;int&#x27; = 0) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import segcontour; segcontour.curvature_flow(phi, *, t_end: &#x27;float&#x27; = 50.0, dt: &#x27;float&#x27; = 0.2, eta: &#x27;float&#x27; = 1e-08, record_every: &#x27;int&#x27; = 0) -&gt; &#x27;Dict[str, object]&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opssegmentation.get(&quot;curvature_flow&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>平均曲率流（曲線縮短流）的水平集形式 φ_t = |∇φ| div(∇φ/|∇φ|)（φ &lt; 0 為內側，從凸處開始收縮）（curvature_flow）。</p>
 <p>顯式中心差分: φ_t = (φ_xx φ_y² − 2 φ_x φ_y φ_xy + φ_yy φ_x²) / (φ_x² + φ_y² + η),步長 dt ≤ 0.25(穩定條件)。<code style="color:#22d3bf">phi</code> = φ 或 bool 遮罩(轉換為符號距離)。每一步的面積是 <code style="color:#22d3bf">clip(0.5 − φ/|∇φ|, 0, 1)</code> 的和。</p>

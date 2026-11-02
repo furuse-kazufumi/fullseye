@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">sph_kernel — DRIVE <code style="color:#22d3bf">swarmflow</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">signal × scalar</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sph_kernel(r, h: &#x27;float&#x27;, dim: &#x27;int&#x27; = 2, derivative: &#x27;bool&#x27; = False) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import swarmflow; swarmflow.sph_kernel(r, h: &#x27;float&#x27;, dim: &#x27;int&#x27; = 2, derivative: &#x27;bool&#x27; = False) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;sph_kernel&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>3차 스플라인 커널 W(r, h)(M4, 지지 반경 2h). <code style="color:#22d3bf">derivative=True</code>이면 dW/dr(r 방향의 미분, 0 이하).</p>
 <p>W = σ_d [1 − 1.5 q² + 0.75 q³] (0 ≤ q &lt; 1), σ_d · 0.25 (2 − q)³(1 ≤ q &lt; 2), 0(q ≥ 2), q = r/h. σ_1 = 2/(3h), σ_2 = 10/(7π h²), σ_3 = 1/(π h³). 이 상수로 ∫ W dV = 1(항등식. 게이트로 수치 구적과 대조).</p>

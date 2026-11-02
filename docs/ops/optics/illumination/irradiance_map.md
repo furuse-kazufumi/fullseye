@@ -4,6 +4,7 @@ dim: optics
 category: illumination
 in: table
 out: image2d
+gpu: なし
 examples: [illumination_design_demo]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.irradiance_map(light, size_mm=(50.0, 50.0), shape=(128, 128), height=None, z_mm=0.0, facing='up')` (実装を直接呼ぶなら `import illumdesign; illumdesign.irradiance_map(light, size_mm=(50.0, 50.0), shape=(128, 128), height=None, z_mm=0.0, facing='up')`、台帳から引くなら `opsoptics.get("irradiance_map")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

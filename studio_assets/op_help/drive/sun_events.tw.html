@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">sun_events — DRIVE <code style="color:#22d3bf">env</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">scalar × scalar × scalar × scalar × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sun_events(year: &#x27;int&#x27;, month: &#x27;int&#x27;, day: &#x27;int&#x27;, lat: &#x27;float&#x27;, lon: &#x27;float&#x27;, tz_hours: &#x27;float&#x27; = 9.0, *, h0: &#x27;float&#x27; = -0.8333) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import driveenv; driveenv.sun_events(year: &#x27;int&#x27;, month: &#x27;int&#x27;, day: &#x27;int&#x27;, lat: &#x27;float&#x27;, lon: &#x27;float&#x27;, tz_hours: &#x27;float&#x27; = 9.0, *, h0: &#x27;float&#x27; = -0.8333) -&gt; &#x27;Dict[str, object]&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;sun_events&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>當日(當地曆日)的日出、正午(中天)、日落時刻，以及日出日落的方位角與中天高度。</p>
 <p>日落=太陽中心的<b>幾何</b>高度為「h0」（預設−0.8333°=大氣差34′+視半徑16′，頂部接觸地平線）是時候穿越了。 <code style="color:#22d3bf">h0=&quot;naoj&quot;</code> 是日本國家天文台星曆計算室的定義（太陽上側為視平線，水平大氣差為35&#x27;8&#x27;&#x27;，視半徑為從遠處看）。南中 = 時角 0。兩者皆解 sun_at 求時間（二分法，間隔寬度小於 1e-7 天 ≈ 最多 0.009 秒）。</p>

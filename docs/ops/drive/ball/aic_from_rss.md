@@ -4,6 +4,7 @@ dim: drive
 category: ball
 in: 
 out: scalar
+gpu: なし
 examples: [poc_video_physics_consistency]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `scalar`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.aic_from_rss(rss: 'float', n: 'int', k: 'int') -> 'float'` (実装を直接呼ぶなら `import ballistics; ballistics.aic_from_rss(rss: 'float', n: 'int', k: 'int') -> 'float'`、台帳から引くなら `opsdrive.get("aic_from_rss")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

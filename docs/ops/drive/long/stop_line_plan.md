@@ -4,6 +4,7 @@ dim: drive
 category: long
 in: scalar × scalar
 out: table
+gpu: なし
 examples: [poc_driving_longitudinal, poc_driving_weather]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `scalar × scalar` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.stop_line_plan(v: 'float', dist_to_line: 'float', theta: 'float' = 0.0, params: 'Optional[dict]' = None, t0: 'float' = 0.0, margin: 'float' = 0.5, A1: 'float' = 1.5, A2: 'float' = 2.5, split: 'float' = 0.5) -> 'Dict[str, object]'` (実装を直接呼ぶなら `import drivelong; drivelong.stop_line_plan(v: 'float', dist_to_line: 'float', theta: 'float' = 0.0, params: 'Optional[dict]' = None, t0: 'float' = 0.0, margin: 'float' = 0.5, A1: 'float' = 1.5, A2: 'float' = 2.5, split: 'float' = 0.5) -> 'Dict[str, object]'`、台帳から引くなら `opsdrive.get("stop_line_plan")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

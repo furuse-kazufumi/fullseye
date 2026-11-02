@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">rank_data — IMGMETRICS <code style="color:#22d3bf">iqa</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rank_data(x) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import iqatid; iqatid.rank_data(x) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsimgmetrics.get(&quot;rank_data&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>平均順位(1 始まり)。同順位は同じ値の順位の平均(scipy.stats.rankdata の &#x27;average&#x27; と同じ定義)。</p>
 <p>例: [10, 20, 20, 30] → [1, 2.5, 2.5, 4]。±inf は最大 / 最小の順位(互いに同順位)。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 長さ 2 未満・nan。</p>

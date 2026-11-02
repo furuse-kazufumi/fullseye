@@ -4,6 +4,7 @@ dim: reprconv
 category: algebra
 in: angle
 out: matrix
+gpu: なし
 examples: [representation_roundtrip]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `angle` → `matrix`
 - **呼び出し**: `import fullseye as fs; fs.ledger.angle_to_matrix(angle)` (実装を直接呼ぶなら `import reprconv; reprconv.angle_to_matrix(angle)`、台帳から引くなら `opsreprconv.get("angle_to_matrix")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

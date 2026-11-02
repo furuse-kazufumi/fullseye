@@ -4,6 +4,7 @@ dim: acoustics
 category: ultrasonic
 in: labels2d × table
 out: table
+gpu: なし
 examples: [poc_sam_hybrid_bonding_voids]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `labels2d × table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.sam_cscan(bond_map, stacks, pixel_size=2e-06, f0=150000000.0, bandwidth=0.6, f_number=3.0, water_path=0.001, gate_interface=1, half_width=None, k_res=1.02, noise_rms=0.0, seed=0, n_reverb=40, psf_nodes=32)` (実装を直接呼ぶなら `import ultrasound; ultrasound.sam_cscan(bond_map, stacks, pixel_size=2e-06, f0=150000000.0, bandwidth=0.6, f_number=3.0, water_path=0.001, gate_interface=1, half_width=None, k_res=1.02, noise_rms=0.0, seed=0, n_reverb=40, psf_nodes=32)`、台帳から引くなら `opsacoustics.get("sam_cscan")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

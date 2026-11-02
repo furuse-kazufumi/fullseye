@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">iterate_fixed_point — CONVERGE <code style="color:#22d3bf">iterate</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.iterate_fixed_point(g=&#x27;cos&#x27;, x0=None, method=&#x27;anderson&#x27;, tol=1e-10, rtol=0.0, max_iter=500, m=5, on_fail=&#x27;raise&#x27;, keep_iterates=False) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import converge; converge.iterate_fixed_point(g=&#x27;cos&#x27;, x0=None, method=&#x27;anderson&#x27;, tol=1e-10, rtol=0.0, max_iter=500, m=5, on_fail=&#x27;raise&#x27;, keep_iterates=False) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsconverge.get(&quot;iterate_fixed_point&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>x = g(x) を不動点反復(素の反復 / Aitken / Anderson)で解き、収束しなければ値を返さずに拒否する。</p>
 <p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>

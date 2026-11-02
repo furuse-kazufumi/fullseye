@@ -4,6 +4,7 @@ dim: optics
 category: light_transport
 in: images
 out: table
+gpu: なし
 examples: [poc_interreflection_fringe_error]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `images` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.micro_phase_decode(images, periods=(14.0, 15.0, 16.0), n_shifts=4)` (実装を直接呼ぶなら `import lighttransport; lighttransport.micro_phase_decode(images, periods=(14.0, 15.0, 16.0), n_shifts=4)`、台帳から引くなら `opsoptics.get("micro_phase_decode")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

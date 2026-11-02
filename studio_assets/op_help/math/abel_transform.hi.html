@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">abel_transform — MATH <code style="color:#22d3bf">transform</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.abel_transform(f, dr: &#x27;float&#x27; = 1.0, *, n_quad: &#x27;int&#x27; = 64) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import mathtransforms; mathtransforms.abel_transform(f, dr: &#x27;float&#x27; = 1.0, *, n_quad: &#x27;int&#x27; = 64) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsmath.get(&quot;abel_transform&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>axisymmetric distribution f(r) (r = 0, dr, 2dr, … पर samples) को projection A(y) पर map करता है (forward Abel transform)।</p>
 <p>A(y) = 2 ∫_y^R f(r) r / √(r² − y²) dr। r = √(y² + u²) रखने पर A(y) = 2 ∫_0^{√(R²−y²)} f(√(y²+u²)) du मिलता है, और y = r पर singularity गायब हो जाती है (integrand smooth है)। f को cubic spline से interpolate किया जाता है, और u पर integral <code style="color:#22d3bf">n_quad</code> points वाला Gauss–Legendre उपयोग करता है। R के बाहर f = 0 माना जाता है।</p>

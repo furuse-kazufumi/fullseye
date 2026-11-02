@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">sight_triangle_distance — DRIVE <code style="color:#22d3bf">crossing</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">scalar</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sight_triangle_distance(eye_offset: &#x27;float&#x27;, eye_distance: &#x27;float&#x27;, corner_offset: &#x27;float&#x27;, corner_distance: &#x27;float&#x27;) -&gt; &#x27;float&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivecrossing; drivecrossing.sight_triangle_distance(eye_offset: &#x27;float&#x27;, eye_distance: &#x27;float&#x27;, corner_offset: &#x27;float&#x27;, corner_distance: &#x27;float&#x27;) -&gt; &#x27;float&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;sight_triangle_distance&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>모퉁이에 건물이 있을 때 선로 위에서 어디까지 보이는지(시거 삼각형).</p>
 <p>선로 = x 축(y = 0), 도로 중심 = x = 0. 눈 = (eye_offset, −eye_distance), 건물의 모서리 = (corner_offset, −corner_distance), 건물은 x ≥ corner_offset 이고 y ≤ −corner_distance 인 영역을 차지한다(모서리 너머 쪽, corner_offset &gt; eye_offset). 반환값 = 보이는 선로 위의 가장 먼 점의 x(도로 중심부터). corner_distance ≥ eye_distance(건물이 눈보다 선로 쪽으로튀어나와 있지 않음)이면 가리지 않으므로 ∞. 왼쪽은 x 를 반전하여 같은 식을 쓴다.</p>

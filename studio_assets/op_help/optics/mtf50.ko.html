@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">mtf50 — OPTICS <code style="color:#22d3bf">imaging</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mtf50(sfr)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import edgesfr; edgesfr.mtf50(sfr)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsoptics.get(&quot;mtf50&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>SFR(pairs: 주파수, 값)이 0.5를 <b>처음으로</b> 밑도는 주파수(선형 보간). 0.5를 밑돌지 않으면 <code style="color:#22d3bf">ValueError</code> (&quot;측정 가능한 범위의 위까지 0.5 이상&quot;을 최댓값으로 조용히 반환하지 않는다).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>

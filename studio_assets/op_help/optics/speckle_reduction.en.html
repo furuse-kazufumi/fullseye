@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">speckle_reduction — OPTICS <code style="color:#22d3bf">coherent</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">table</code> (an op determined by its arguments alone — it takes no image or data input)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.speckle_reduction(n_patterns=1, polarizations=1, cutoff=None)</code> (to call the implementation directly, <code style="color:#22d3bf">import coherent; coherent.speckle_reduction(n_patterns=1, polarizations=1, cutoff=None)</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;speckle_reduction&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Predicted speckle contrast after reduction (<code style="color:#22d3bf">table</code>).</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n_patterns</code> independent patterns (angle / wavelength / time diversity, a moving part) and <code style="color:#22d3bf">polarizations</code> (1 or 2): <code style="color:#22d3bf">C = 1/√(N·pol)</code> (Goodman §5).</p>

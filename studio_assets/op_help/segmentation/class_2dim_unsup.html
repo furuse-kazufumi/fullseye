@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">class_2dim_unsup — SEGMENTATION <code style="color:#22d3bf">classify</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">labels2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.class_2dim_unsup(image1, image2, n_clusters=3, iters=20)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import segmentation; segmentation.class_2dim_unsup(image1, image2, n_clusters=3, iters=20)</code>、台帳から引くなら <code style="color:#22d3bf">opssegmentation.get(&quot;class_2dim_unsup&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>2 チャネル特徴空間を k-means で教師なし分類(class_2dim_unsup)。ラベル画像を返す。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>

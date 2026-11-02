@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">quasi_flat_zones — SEGMENTATION <code style="color:#22d3bf">graph</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.quasi_flat_zones(image, alpha: &#x27;float&#x27; = 0.05, *, connectivity: &#x27;int&#x27; = 4) -&gt; &#x27;Dict[str, object]&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import seggraph; seggraph.quasi_flat_zones(image, alpha: &#x27;float&#x27; = 0.05, *, connectivity: &#x27;int&#x27; = 4) -&gt; &#x27;Dict[str, object]&#x27;</code>; from the registry, <code style="color:#22d3bf">opssegmentation.get(&quot;quasi_flat_zones&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>α-quasi-flat zones (Soille 2008): the connected components joined only by neighbour edges with |f_p − f_q| ≤ α. Returns: <code style="color:#22d3bf">labels</code> (1..k), <code style="color:#22d3bf">n_zones</code> (quasi_flat_zones).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>

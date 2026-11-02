@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">label_extent — DRIVE <code style="color:#22d3bf">ttc</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">labels2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.label_extent(label, value: &#x27;int&#x27;) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import drivettc; drivettc.label_extent(label, value: &#x27;int&#x27;) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;label_extent&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>ラベル像の中で値 <code style="color:#22d3bf">value</code> の画素の箱: <code style="color:#22d3bf">{&quot;col0&quot;, &quot;col1&quot;, &quot;row0&quot;, &quot;row1&quot;, &quot;width&quot;, &quot;height&quot;, &quot;n&quot;}</code>。</p>
 <p>幅・高さは画素数(<code style="color:#22d3bf">col1 − col0 + 1</code>)。無ければ全部 0。<code style="color:#22d3bf">ttc_from_scale</code> の入力(完全な検出器の代役)。</p>

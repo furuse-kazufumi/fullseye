@@ -4,6 +4,7 @@ dim: interferometry
 category: simulate
 in: 
 out: sweep
+gpu: なし
 examples: [coherence_scanning]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `sweep`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.chromatic_confocal_simulate(surface_um=0.0, wavelength_start_nm=500.0, wavelength_step_nm=0.5, n_bins=401, dispersion_um_per_nm=0.2, reference_wavelength_nm=600.0, peak_fwhm_nm=4.0, peak_counts=1000.0, background=10.0, noise=0.0, seed=0)` (実装を直接呼ぶなら `import interferometry; interferometry.chromatic_confocal_simulate(surface_um=0.0, wavelength_start_nm=500.0, wavelength_step_nm=0.5, n_bins=401, dispersion_um_per_nm=0.2, reference_wavelength_nm=600.0, peak_fwhm_nm=4.0, peak_counts=1000.0, background=10.0, noise=0.0, seed=0)`、台帳から引くなら `opsinterferometry.get("chromatic_confocal_simulate")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

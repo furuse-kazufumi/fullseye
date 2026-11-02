@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">edge_spread — OPTICS <code style="color:#22d3bf">imaging</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.edge_spread(img, roi, *, oversample=4, orientation=&#x27;auto&#x27;)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import edgesfr; edgesfr.edge_spread(img, roi, *, oversample=4, orientation=&#x27;auto&#x27;)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsoptics.get(&quot;edge_spread&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>기울어진 에지(ISO 12233)의 ROI로부터 화소보다 세밀한 ESF를 만든다.</p>
 <p>절차: ROI를 &quot;가장자리가 행을 가로지르는&quot; 방향으로 맞춘다(<code style="color:#22d3bf">orientation=&quot;auto&quot;</code>는 열 방향과 행 방향 기울기의 크기로 정한다, <code style="color:#22d3bf">&quot;vertical&quot;</code> = 가장자리가 세로로 달린다 / <code style="color:#22d3bf">&quot;horizontal&quot;</code> = 가로로 달린다)→ 행마다 1계 차분의 무게중심으로 가장자리 위치를 구한다 → 위치를 행 번호에 직선으로 맞춘다(최소제곱)→ 각 화소 중심의 가장자리로부터의 <b>수직 거리</b> d를 구하고, 폭 1/oversample px의 빈에나누어 넣어 평균한다.</p>

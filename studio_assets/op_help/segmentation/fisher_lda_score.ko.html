@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">fisher_lda_score — SEGMENTATION <code style="color:#22d3bf">classify</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">table × matrix</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fisher_lda_score(model, X) -&gt; &#x27;Dict[str, object]&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import cropweed; cropweed.fisher_lda_score(model, X) -&gt; &#x27;Dict[str, object]&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opssegmentation.get(&quot;fisher_lda_score&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p><code style="color:#22d3bf">fisher_lda_fit</code>로 학습한 판별로 특징을 채점한다(score &gt; 0이면 클래스 1).</p>
 <p><code style="color:#22d3bf">model</code>은 <code style="color:#22d3bf">fisher_lda_fit</code>의 반환, <code style="color:#22d3bf">X</code>는 (N, D) 특징(dict의 <code style="color:#22d3bf">X</code>도 가능). 표준화는 학습 때의평균과 척도를 쓴다. 반환: <code style="color:#22d3bf">score</code>(N)·<code style="color:#22d3bf">label</code>(0/1. <b>score가 정확히 0이면 클래스 0</b>, 선언한 규칙)· <code style="color:#22d3bf">margin</code>(|score| / ‖w‖ = 표준화 공간에서 경계까지의 거리)·<code style="color:#22d3bf">n1</code>(클래스 1로 판정한 수). 빈 입력·열 수 불일치·비유한 값·학습된 판별이 아닌 <code style="color:#22d3bf">model</code>은 <code style="color:#22d3bf">ValueError</code>로 거부한다.</p>

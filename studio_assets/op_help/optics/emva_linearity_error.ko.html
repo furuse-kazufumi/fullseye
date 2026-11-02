@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">emva_linearity_error — OPTICS <code style="color:#22d3bf">sensorchar</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.emva_linearity_error(H, mu_y, mu_y_dark, mu_y_sat)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import sensorchar; sensorchar.emva_linearity_error(H, mu_y, mu_y_dark, mu_y_sat)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsoptics.get(&quot;emva_linearity_error&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>직선성 오차 LE(식 58~63). y = μ_y − μ_y.dark를 노출 H에 <b>상대 편차의 가중치 1/y²</b>로 피팅하고(식 59~61), 포화의 5~95 % 점에서 상대 편차 δy[i] = 100 (y − (a0 + a1 H))/(a0 + a1 H) [%]의 절댓값의 평균을 LE로 한다.</p>
 <p>반환값 <code style="color:#22d3bf">{&quot;LE_percent&quot;, &quot;a0&quot;, &quot;a1&quot;, &quot;deviation_percent&quot;, &quot;used&quot;}</code>.</p>

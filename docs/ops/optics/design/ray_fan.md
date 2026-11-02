@@ -4,6 +4,7 @@ dim: optics
 category: design
 in: table
 out: pairs
+gpu: なし
 examples: [anim3d_lens_aberrations, lens_design_demo]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `pairs`
 - **呼び出し**: `import fullseye as fs; fs.ledger.ray_fan(system, field=None, n=21, axis='y', wavelength_um=None, image_mm=None, aim=None, vignetting=None)` (実装を直接呼ぶなら `import raytrace; raytrace.ray_fan(system, field=None, n=21, axis='y', wavelength_um=None, image_mm=None, aim=None, vignetting=None)`、台帳から引くなら `opsoptics.get("ray_fan")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

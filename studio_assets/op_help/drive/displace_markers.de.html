@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">displace_markers — DRIVE <code style="color:#22d3bf">tacslip</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">matrix × matrix × matrix × scalar</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.displace_markers(pts, fx, fy, pitch: &#x27;float&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import tacslip; tacslip.displace_markers(pts, fx, fy, pitch: &#x27;float&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;displace_markers&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Verschiebt Markierungsmittelpunkte (N, 2) [px] mit dem Verschiebungsfeld fx, fy (n, n) [m] (das Feld wird an den Mittelpunkten bilinear abgetastet, in Pixel umgerechnet und addiert). <b>Raises</b> ValueError: pts ist nicht (N, 2), fx und fy haben unterschiedliche Formen, pitch ≤ 0.</p>
 <p>Leere Eingabe (<code style="color:#22d3bf">pts</code> mit 0 Elementen) löst <code style="color:#22d3bf">ValueError</code> aus.</p>

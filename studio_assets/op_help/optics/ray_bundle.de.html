@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">ray_bundle — OPTICS <code style="color:#22d3bf">design</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ray_bundle(system, field=None, rings=8, wavelength_um=None, image_mm=None, kind=&#x27;hexapolar&#x27;, pupil_fill=1.0, aim=None, vignetting=None)</code> (die Implementierung direkt: <code style="color:#22d3bf">import raytrace; raytrace.ray_bundle(system, field=None, rings=8, wavelength_um=None, image_mm=None, kind=&#x27;hexapolar&#x27;, pupil_fill=1.0, aim=None, vignetting=None)</code>; aus dem Register: <code style="color:#22d3bf">opsoptics.get(&quot;ray_bundle&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Verfolgt ein pupillenfüllendes Bündel eines Feldes; liefert die Rohdaten plus <code style="color:#22d3bf">image_xy</code> (N,2), <code style="color:#22d3bf">chief_xy</code> (2,), <code style="color:#22d3bf">pupil</code> (N,2) normierte Koordinaten und <code style="color:#22d3bf">opl0</code> (Startwerte der optischen Weglänge).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>

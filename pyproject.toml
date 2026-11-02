@@ -416,6 +416,7 @@ testpaths = ["tests"]
 # レジストリや台帳をモジュール大域に持つので、順序依存が出た瞬間に
 # 本題と無関係な赤が出る。専用ジョブで意図的に走らせて、出た漏れを潰す。
 addopts = "-p no:randomly"
+markers = ["gpu: requires a CUDA-capable torch runtime and is skipped on CPU CI"]
 
 [tool.ruff]
 # 静的解析は**様式を揃えるためではなく、実害のあるバグを止めるために**入れている。

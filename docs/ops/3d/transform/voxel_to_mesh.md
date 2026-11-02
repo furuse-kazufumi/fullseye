@@ -4,6 +4,7 @@ dim: 3d
 category: transform
 in: voxel
 out: mesh
+gpu: なし
 examples: [mesh_smooth]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,6 +16,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **データ種**: `voxel` → `mesh`
 - **呼び出し**: `import fullseye as fs; fs.ledger.voxel_to_mesh(vol, iso=0.5)` (実装を直接呼ぶなら `import match3d; match3d.voxel_to_mesh(vol, iso=0.5)`、台帳から引くなら `ops3d.get("voxel_to_mesh")`)
 - **台帳経由の戻り値**: `fullseye.ledger.voxel_to_mesh(...)` は**宣言 out 型 `mesh` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.voxel_to_mesh.raw(...)`、または `match3d.voxel_to_mesh` を直接呼ぶ。
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

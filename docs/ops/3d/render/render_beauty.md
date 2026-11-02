@@ -4,6 +4,7 @@ dim: 3d
 category: render
 in: mesh
 out: rgbimage
+gpu: なし
 examples: [anatomical_hand, render_beauty]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `mesh` → `rgbimage`
 - **呼び出し**: `import fullseye as fs; fs.ledger.render_beauty(V, F, *, pose=None, intrinsics=None, size: 'int' = 512, ss: 'int' = 2, light: 'Sequence[float]' = (0.3, 0.4, 1.0), albedo: 'Sequence[float]' = (0.8, 0.8, 0.85), material: 'str' = 'plastic', matcap=None, ambient: 'float' = 0.12, ao: 'bool' = True, ground_shadow: 'bool' = True, tonemap: 'str' = 'reinhard', background: 'Sequence[float]' = (0.1, 0.11, 0.13), exposure: 'float' = 1.0, shininess: 'Optional[float]' = None, ao_samples: 'int' = 32, shadow_res: 'int' = 512, penumbra: 'float' = 2.5, shadow_samples: 'int' = 12, shadow_pcf: 'int' = 1, brdf: 'str' = 'phong', brdf_params=None, shadow_method: 'str' = 'map', sun_angular_diameter_deg: 'float' = 0.0, self_illumination: 'float' = 0.0, albedo_variation: 'float' = 0.0, albedo_scale=None, seed: 'int' = 0, smooth_normals: 'bool' = False, bump=None, vertex_normals=None, vertex_albedo=None, surface: 'str' = 'none', surface_params=None) -> 'np.ndarray'` (実装を直接呼ぶなら `import render_beauty; render_beauty.render_beauty(V, F, *, pose=None, intrinsics=None, size: 'int' = 512, ss: 'int' = 2, light: 'Sequence[float]' = (0.3, 0.4, 1.0), albedo: 'Sequence[float]' = (0.8, 0.8, 0.85), material: 'str' = 'plastic', matcap=None, ambient: 'float' = 0.12, ao: 'bool' = True, ground_shadow: 'bool' = True, tonemap: 'str' = 'reinhard', background: 'Sequence[float]' = (0.1, 0.11, 0.13), exposure: 'float' = 1.0, shininess: 'Optional[float]' = None, ao_samples: 'int' = 32, shadow_res: 'int' = 512, penumbra: 'float' = 2.5, shadow_samples: 'int' = 12, shadow_pcf: 'int' = 1, brdf: 'str' = 'phong', brdf_params=None, shadow_method: 'str' = 'map', sun_angular_diameter_deg: 'float' = 0.0, self_illumination: 'float' = 0.0, albedo_variation: 'float' = 0.0, albedo_scale=None, seed: 'int' = 0, smooth_normals: 'bool' = False, bump=None, vertex_normals=None, vertex_albedo=None, surface: 'str' = 'none', surface_params=None) -> 'np.ndarray'`、台帳から引くなら `ops3d.get("render_beauty")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

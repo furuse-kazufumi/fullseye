@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">bump_normals_fbm — 3D <code style="color:#22d3bf">terrain</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">normalmap × pointmap</code> → <code style="color:#22d3bf">normalmap</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.bump_normals_fbm(normals, positions, wavelengths=(0.002, 0.001), amplitudes=(0.0002, 0.00012), *, seed: &#x27;int&#x27; = 0, rotation=None, step=None, local_edge=None, nyquist: &#x27;float&#x27; = 2.0, fade: &#x27;float&#x27; = 1.0) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import render3d; render3d.bump_normals_fbm(normals, positions, wavelengths=(0.002, 0.001), amplitudes=(0.0002, 0.00012), *, seed: &#x27;int&#x27; = 0, rotation=None, step=None, local_edge=None, nyquist: &#x27;float&#x27; = 2.0, fade: &#x27;float&#x27; = 1.0) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;bump_normals_fbm&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>seeded multi-octave height field के *gradient* से normal map को perturb करता है।</p>
 <p>यह sub-facet relief है जिसे geometry displace नहीं कर सकती → unit normals <code style="color:#22d3bf">(H, W, 3)</code>।</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">zoom_inset — ANNOTATE <code style="color:#22d3bf">compose</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.zoom_inset(img, src_rect, dst_xy, factor=3, color=&#x27;emphasis&#x27;, width=2, connect=True, scheme=&#x27;okabe_ito&#x27;, style=None)</code>(要直接调用实现,<code style="color:#22d3bf">import annotate; annotate.zoom_inset(img, src_rect, dst_xy, factor=3, color=&#x27;emphasis&#x27;, width=2, connect=True, scheme=&#x27;okabe_ito&#x27;, style=None)</code>;从台账取用则 <code style="color:#22d3bf">opsannotate.get(&quot;zoom_inset&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>放大嵌入图 —— 在原图上加<b>框</b>与<b>引出线</b>。</p>
 <p>放大采用 <code style="color:#22d3bf">np.repeat</code> 的<b>最近邻</b>(整数倍)。不做插值,是为了保证放大图是“原像素本身”(若做平滑,看起来就像产生了原本没有的结构)。</p>

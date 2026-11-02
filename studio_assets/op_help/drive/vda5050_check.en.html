@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">vda5050_check — DRIVE <code style="color:#22d3bf">agv</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vda5050_check(order)</code> (to call the implementation directly, <code style="color:#22d3bf">import agvfleet; agvfleet.vda5050_check(order)</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;vda5050_check&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Checks the <b>structural rules</b> of a VDA 5050 order (our own second (independent) implementation, separate from the official JSON schema).</p>
 <p>Rules: required keys / node sequenceIds are consecutive even numbers from 0, edges consecutive odd numbers / number of edges = number of nodes − 1 / each edge&#x27;s start and end are the preceding and following nodes / released is contiguous from the start of base (only one switch from base → horizon) / an edge&#x27;s released equals that of its end node. Returns a list of violation messages (empty = pass).</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">triangulate — 3D <code style="color:#22d3bf">two_view</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.triangulate(pts1, pts2, P1, P2)</code>(要直接呼叫實作,<code style="color:#22d3bf">import twoview; twoview.triangulate(pts1, pts2, P1, P2)</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;triangulate&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>DLT 三角化:兩視圖的對應點 + 投影矩陣 → 3D 點。→ (N,3)。</p>
 <p><b>無窮遠點以 <code style="color:#22d3bf">NaN</code> 回傳</b>(不回傳 <code style="color:#22d3bf">±inf</code>)。齊次座標的第 4 分量為 0 = 2 條視線平行，該對應不決定任何有限的 3-D 點。以前直接相除得到 <code style="color:#22d3bf">±inf</code>，但那樣下游的 cheirality 判定 <code style="color:#22d3bf">depth &gt; 0</code> 會 <b>把 <code style="color:#22d3bf">inf</code> 當作「相機前方」計數</b>(<code style="color:#22d3bf">inf &gt; 0</code> 為 <code style="color:#22d3bf">True</code>)。<code style="color:#22d3bf">recover_pose</code> 從 4 個 (R, t) 候選中選前方點最多的，因此無窮遠點若有投票權，候選選擇就會悄悄被扭曲。若為 <code style="color:#22d3bf">NaN</code>，比較結果為 <code style="color:#22d3bf">False</code>，就不會被計數(2026-09-02，chain_fuzz 觸及時發現)。</p>

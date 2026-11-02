@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">grid_hole_points — DRIVE <code style="color:#22d3bf">braidpath</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.grid_hole_points(grid) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import braidpath; braidpath.grid_hole_points(grid) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;grid_hole_points&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>격자의 구멍(외곽에 닿지 않는, 막힌 칸의 연결 성분)마다 대표 점을 1 개: 무게중심에 가장 가까운 막힌 칸의 중심 [x, y].</p>
 <p>외곽에 닿는 막힌 영역은 바깥 세계와 이어져 있으므로 구멍이 되지 않는다(경로의 류를 늘리지 않는다). 4 연결(이동과 같음).</p>

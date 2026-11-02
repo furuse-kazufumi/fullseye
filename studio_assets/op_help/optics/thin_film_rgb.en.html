@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">thin_film_rgb — OPTICS <code style="color:#22d3bf">appearance</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">normalmap</code> → <code style="color:#22d3bf">rgbimage</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.thin_film_rgb(normals, view=(0.0, 0.0, 1.0), thickness_nm=350.0, n_film=1.33, n_sub=1.0, strength=1.0, light=None, nm=None, illuminant=None, polarization=&#x27;unpolarized&#x27;, n_out=1.0, under_layers=()) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import matappear; matappear.thin_film_rgb(normals, view=(0.0, 0.0, 1.0), thickness_nm=350.0, n_film=1.33, n_sub=1.0, strength=1.0, light=None, nm=None, illuminant=None, polarization=&#x27;unpolarized&#x27;, n_out=1.0, under_layers=()) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;thin_film_rgb&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Normal map + view → the <b>colour of thin-film interference</b>, (H, W, 3) in linear sRGB.</p>
 <p>The more the surface is tilted away from the line of sight, the longer the optical path inside the film, and the colour shifts toward shorter wavelengths ―― this is why the colours of soap bubbles and heat-tinted titanium change at the rims.</p>

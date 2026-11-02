@@ -4,6 +4,7 @@ dim: optics
 category: scene
 in: 
 out: text
+gpu: なし
 examples: [vision_layout_from_catalog]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `text`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.register_light(maker: 'str', model: 'str', kind: 'str' = 'ring', radius_mm: 'float' = 60.0, height_mm: 'float' = 100.0, size_mm: 'float' = 25.0, source: 'str' = 'led', wavelength_nm: 'float' = 630.0, bandwidth_nm: 'float' = 25.0, oem_of: 'str' = None) -> 'str'` (実装を直接呼ぶなら `import optscene; optscene.register_light(maker: 'str', model: 'str', kind: 'str' = 'ring', radius_mm: 'float' = 60.0, height_mm: 'float' = 100.0, size_mm: 'float' = 25.0, source: 'str' = 'led', wavelength_nm: 'float' = 630.0, bandwidth_nm: 'float' = 25.0, oem_of: 'str' = None) -> 'str'`、台帳から引くなら `opsoptics.get("register_light")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

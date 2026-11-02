@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">se3_exp — MATH <code style="color:#22d3bf">estimation</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.se3_exp(xi) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import mathestimation; mathestimation.se3_exp(xi) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsmath.get(&quot;se3_exp&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Exponential map of SE(3): 6-dimensional twist ξ = (v, ω) (translational velocity v, rotation vector ω) → 4×4 rigid-body transform.</p>
 <p>Closed form (Rodrigues + left Jacobian): R = I + sinθ/θ ω̂ + (1−cosθ)/θ² ω̂², t = V v, V = I + (1−cosθ)/θ² ω̂ + (θ−sinθ)/θ³ ω̂². θ → 0 by series. Gate: agrees with mat_expm of the 4×4 generator.</p>

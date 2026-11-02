@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">integrate_funct_1d — ONED <code style="color:#22d3bf">function</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.integrate_funct_1d(y)</code> (to call the implementation directly, <code style="color:#22d3bf">import funct1d; funct1d.integrate_funct_1d(y)</code>; from the registry, <code style="color:#22d3bf">ops1d.get(&quot;integrate_funct_1d&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Cumulative integral by the trapezoidal rule (HALCON <code style="color:#22d3bf">integrate_funct_1d</code>).</p>
 <p><code style="color:#22d3bf">out[i]</code> is the integral of *y* from x=0 to x=i in <b>y-units times samples</b> (multiply by the physical sample spacing <code style="color:#22d3bf">dt</code> yourself); <code style="color:#22d3bf">out[0]</code> is always 0. For smooth signals <code style="color:#22d3bf">integrate_funct_1d(derivate_funct_1d(y)) ~= y - y[0]</code> to second order.</p>

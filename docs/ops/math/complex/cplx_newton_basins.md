@@ -4,6 +4,7 @@ dim: math
 category: complex
 in: signal
 out: labels2d
+gpu: なし
 examples: [poc_complex_plane_fields]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal` → `labels2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.cplx_newton_basins(coeffs, centre=0j, half_width=2.0, shape=(256, 256), max_iter=64, tol=1e-10)` (実装を直接呼ぶなら `import mathops; mathops.cplx_newton_basins(coeffs, centre=0j, half_width=2.0, shape=(256, 256), max_iter=64, tol=1e-10)`、台帳から引くなら `opsmath.get("cplx_newton_basins")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

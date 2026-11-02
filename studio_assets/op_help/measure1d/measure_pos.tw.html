@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">measure_pos — MEASURE1D <code style="color:#22d3bf">caliper</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image2d × measurehandle</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.measure_pos(image, measure, sigma=1.0, threshold=0.1, transition=&#x27;all&#x27;)</code>(要直接呼叫實作,<code style="color:#22d3bf">import measuring1d; measuring1d.measure_pos(image, measure, sigma=1.0, threshold=0.1, transition=&#x27;all&#x27;)</code>;從台帳取用則 <code style="color:#22d3bf">opsmeasure1d.get(&quot;measure_pos&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>擷取量測線上的邊緣位置(次像素)與振幅(measure_pos)。</p>
 <p>各邊緣: <code style="color:#22d3bf">pos</code>(取樣 index，矩形為距起點的 px)/ <code style="color:#22d3bf">dist</code>(距起點的距離 [px])/ <code style="color:#22d3bf">row</code>, <code style="color:#22d3bf">col</code> / <code style="color:#22d3bf">amplitude</code>(帶正負號的灰階差)/ <code style="color:#22d3bf">polarity</code> (&quot;positive&quot; = 沿量測方向變亮)。<code style="color:#22d3bf">threshold</code> 是 |amplitude| 的下限，<code style="color:#22d3bf">transition</code> 為 &quot;all&quot; / &quot;positive&quot; / &quot;negative&quot;。</p>

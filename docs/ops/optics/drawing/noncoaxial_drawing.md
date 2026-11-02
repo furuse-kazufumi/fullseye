@@ -4,6 +4,7 @@ dim: optics
 category: drawing
 in: table
 out: table
+gpu: なし
 examples: [poc_noncoaxial_optics]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.noncoaxial_drawing(system, fields=None, rays=3, view='yz', scale=None, title=None, profile_points=61, rotate_deg=0, overlays=None)` (実装を直接呼ぶなら `import optdraw; optdraw.noncoaxial_drawing(system, fields=None, rays=3, view='yz', scale=None, title=None, profile_points=61, rotate_deg=0, overlays=None)`、台帳から引くなら `opsoptics.get("noncoaxial_drawing")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

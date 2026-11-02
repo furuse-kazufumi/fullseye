@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">design_min_radius — DRIVE <code style="color:#22d3bf">lateral</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.design_min_radius(design_speed_kmh, *, side_friction: &#x27;float&#x27;, superelevation: &#x27;float&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import drivelateral; drivelateral.design_min_radius(design_speed_kmh, *, side_friction: &#x27;float&#x27;, superelevation: &#x27;float&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;design_min_radius&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Road Structure Ordinance की व्याख्या के समीकरण (3) से न्यूनतम curve त्रिज्या R = V² / (127 (i + f)) [m] (V km/h में)।</p>
 <p>सूत्र (2) से हर के i f को हटाकर (i f ≪ 1) और 3.6² g ≈ 127 रखकर बना डिज़ाइन-सूत्र। सटीक ऊपरी गति-सीमा <code style="color:#22d3bf">curve_speed_limit</code> है।</p>

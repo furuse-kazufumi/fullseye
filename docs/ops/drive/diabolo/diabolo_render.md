@@ -4,6 +4,7 @@ dim: drive
 category: diabolo
 in: table × table
 out: rgb
+gpu: なし
 examples: [poc_diabolo_model_and_vision]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table × table` → `rgb`
 - **呼び出し**: `import fullseye as fs; fs.ledger.diabolo_render(cam: 'dict', params: 'dict', *, center=None, axis=None, phase: 'float' = 0.0, omega: 'float' = 0.0, exposure: 'float' = 0.0, n_sub: 'int' = 8, sticks=None, ss: 'int' = 4, noise: 'float' = 0.0, blur_sigma: 'float' = 0.0, seed: 'int' = 0, background=None) -> 'np.ndarray'` (実装を直接呼ぶなら `import diabolo; diabolo.diabolo_render(cam: 'dict', params: 'dict', *, center=None, axis=None, phase: 'float' = 0.0, omega: 'float' = 0.0, exposure: 'float' = 0.0, n_sub: 'int' = 8, sticks=None, ss: 'int' = 4, noise: 'float' = 0.0, blur_sigma: 'float' = 0.0, seed: 'int' = 0, background=None) -> 'np.ndarray'`、台帳から引くなら `opsdrive.get("diabolo_render")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

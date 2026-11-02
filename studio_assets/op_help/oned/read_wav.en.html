@@ -4,6 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.read_wav(path)</code> (to call the implementation directly, <code style="color:#22d3bf">import dsp; dsp.read_wav(path)</code>; from the registry, <code style="color:#22d3bf">ops1d.get(&quot;read_wav&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>Return value through the ledger</b>: <code style="color:#22d3bf">fullseye.ledger.read_wav(...)</code> returns <b>only the declared out type <code style="color:#22d3bf">signal</code></b> (the underlying function also returns auxiliary values). When you need what was dropped, use <code style="color:#22d3bf">fullseye.ledger.read_wav.raw(...)</code> or call <code style="color:#22d3bf">dsp.read_wav</code> directly.</p>
 <p style="margin:2px 0 2px 12px">• Underlying return: <code style="color:#22d3bf">(x, rate)</code></p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Read a WAV file (stdlib) -&gt; <code style="color:#22d3bf">(x float64 [-1,1], rate)</code>. Multi-channel is averaged to mono. Handles 8/16/32-bit PCM.</p>
 <p>Empty input (<code style="color:#22d3bf">path</code> an empty string) raises <code style="color:#22d3bf">ValueError</code>.</p>

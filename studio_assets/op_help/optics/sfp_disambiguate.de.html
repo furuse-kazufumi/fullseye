@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">sfp_disambiguate — OPTICS <code style="color:#22d3bf">shape_from_polarization</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">normalmap</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sfp_disambiguate(candidates, prior=&#x27;convex&#x27;, mask=None, center=None, prior_normals=None, coarse_depth=None, brewster_tol=0.02, invalid=&#x27;raise&#x27;)</code> (die Implementierung direkt: <code style="color:#22d3bf">import sfpolar; sfpolar.sfp_disambiguate(candidates, prior=&#x27;convex&#x27;, mask=None, center=None, prior_normals=None, coarse_depth=None, brewster_tol=0.02, invalid=&#x27;raise&#x27;)</code>; aus dem Register: <code style="color:#22d3bf">opsoptics.get(&quot;sfp_disambiguate&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Wählt je Pixel eine Normale aus den Kandidaten von <code style="color:#22d3bf">sfp_normals</code> mit einem angegebenen Vorwissen — Konvexität mit Brewster-Kamm-Segmentierung oder eine grobe Tiefe/Normalenkarte (<code style="color:#22d3bf">normalmap</code>).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>

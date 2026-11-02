@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">scene_pair_table — DRIVE <code style="color:#22d3bf">carla</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.scene_pair_table(scene, *, lead_asset: &#x27;str&#x27; = &#x27;sedan&#x27;, asset_root=None) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import carlabridge; carlabridge.scene_pair_table(scene, *, lead_asset: &#x27;str&#x27; = &#x27;sedan&#x27;, asset_root=None) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;scene_pair_table&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>1개의 장면 기록을 <b>CARLA의 동상</b>과 <b>자전의 세계의 동상</b>의 양쪽에서 채점해 늘어놓는다. 반환값 = <code style="color:#22d3bf">{&quot;truth&quot;, &quot;carla&quot;: {...lead_from_depth}, &quot;fullseye&quot;: {...}, &quot;carla_error&quot;, &quot;fullseye_error&quot;, &quot;width&quot;, &quot;height&quot;, &quot;view&quot;}</code> (오차 = depth_median − true, true :</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

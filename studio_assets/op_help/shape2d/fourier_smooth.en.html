@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">fourier_smooth — SHAPE2D <code style="color:#22d3bf">descriptor</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">pairs</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fourier_smooth(points, keep)</code> (to call the implementation directly, <code style="color:#22d3bf">import fourierdesc; fourierdesc.fourier_smooth(points, keep)</code>; from the registry, <code style="color:#22d3bf">opsshape2d.get(&quot;fourier_smooth&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Smooths a contour by band-limiting it with a complex FFT.</p>
 <p>Treats the contour as the complex signal z(t)=x(t)+i·y(t), applies an FFT, keeps only the <code style="color:#22d3bf">keep</code> low frequencies (and their symmetric components), and transforms back. The smaller keep is, the smoother (high frequencies = detail/noise are dropped). If keep is at least the total number of frequencies, it is the identity. Returns (N,2) with the same number of points as the input.</p>

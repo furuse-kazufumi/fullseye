@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">estimate_flow — 3D <code style="color:#22d3bf">motion_segment</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">flow_scattered</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.estimate_flow(pts0, pts1) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import motion_seg3d; motion_seg3d.estimate_flow(pts0, pts1) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;estimate_flow&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>pts0 각 점에서 pts1 의 최근접까지의 3-D 변위 벡터장 (N, 3)(최근접 플로).</p>
 <p><code style="color:#22d3bf">pts0</code>의 각 점 p에 대해 <code style="color:#22d3bf">pts1</code> 중의 최근접 q를 cKDTree로 구하고, 변위 <code style="color:#22d3bf">q - p</code> 를 반환한다. 요소 수는 N != M이어도 된다. 변위가 국소 점 간격보다 충분히 작은 소운동에서만 &quot;점 i의진짜 대응처&quot;를 맞힌다(honest한 최근접의 한계). segment_rigid_motions가 inlier 판정에쓰는 <b>관측 흐름</b>을 제공한다.</p>

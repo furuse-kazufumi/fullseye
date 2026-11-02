@@ -4,6 +4,7 @@ dim: drive
 category: inf
 in: 
 out: table
+gpu: なし
 examples: [poc_driving_endless_map]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.tile_params(tile: 'float' = 200.0, cells: 'int' = 8, relief: 'float' = 6.0, road_width: 'float' = 7.0, flat: 'float' = 18.0, blend: 'float' = 20.0, p_road: 'float' = 0.85, jitter: 'float' = 0.25, seed: 'int' = 20261001) -> 'dict'` (実装を直接呼ぶなら `import driveinf; driveinf.tile_params(tile: 'float' = 200.0, cells: 'int' = 8, relief: 'float' = 6.0, road_width: 'float' = 7.0, flat: 'float' = 18.0, blend: 'float' = 20.0, p_road: 'float' = 0.85, jitter: 'float' = 0.25, seed: 'int' = 20261001) -> 'dict'`、台帳から引くなら `opsdrive.get("tile_params")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

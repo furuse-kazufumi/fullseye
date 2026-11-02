@@ -4,6 +4,7 @@ dim: printpath
 category: stroke
 in: pairs
 out: pairs
+gpu: なし
 examples: [poc_one_stroke_epicycles]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `pairs` → `pairs`
 - **呼び出し**: `import fullseye as fs; fs.ledger.stroke_resample_closed(points, n_points, allow_shortening=False)` (実装を直接呼ぶなら `import printpath; printpath.stroke_resample_closed(points, n_points, allow_shortening=False)`、台帳から引くなら `opsprintpath.get("stroke_resample_closed")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -3,6 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">lightfield</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lf_epi_slope(lf, *, window=9, min_energy=1e-10)</code> (to call the implementation directly, <code style="color:#22d3bf">import lightfield; lightfield.lf_epi_slope(lf, *, window=9, min_energy=1e-10)</code>; from the registry, <code style="color:#22d3bf">opslightfield.get(&quot;lf_epi_slope&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>Return value through the ledger</b>: <code style="color:#22d3bf">fullseye.ledger.lf_epi_slope(...)</code> returns <b>only the declared out type <code style="color:#22d3bf">image2d</code></b> (the underlying function also returns auxiliary values). When you need what was dropped, use <code style="color:#22d3bf">fullseye.ledger.lf_epi_slope.raw(...)</code> or call <code style="color:#22d3bf">lightfield.lf_epi_slope</code> directly.</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Per-pixel slope from the <b>EPI line orientation</b> (structure tensor, one pass).</p>
 <p>A scene point traces a straight line in the epipolar-plane image (<code style="color:#22d3bf">lf_epi</code>), so along that line the intensity is constant:</p>

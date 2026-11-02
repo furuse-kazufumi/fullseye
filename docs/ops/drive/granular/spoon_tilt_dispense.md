@@ -4,6 +4,7 @@ dim: drive
 category: granular
 in: scalar × scalar × scalar × scalar
 out: table
+gpu: なし
 examples: [poc_granular_heap_repose]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `scalar × scalar × scalar × scalar` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.spoon_tilt_dispense(theta_deg: 'float', phi_deg: 'float', L: 'float', h0: 'float', h_wall: 'float | None' = None, lip: 'str' = 'wall') -> 'dict'` (実装を直接呼ぶなら `import granular; granular.spoon_tilt_dispense(theta_deg: 'float', phi_deg: 'float', L: 'float', h0: 'float', h_wall: 'float | None' = None, lip: 'str' = 'wall') -> 'dict'`、台帳から引くなら `opsdrive.get("spoon_tilt_dispense")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

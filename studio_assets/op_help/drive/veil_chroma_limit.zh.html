@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">veil_chroma_limit — DRIVE <code style="color:#22d3bf">env</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">any × scalar</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.veil_chroma_limit(color, luminance: &#x27;float&#x27;, tol: &#x27;float&#x27; = 0.15) -&gt; &#x27;float&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import driveenv; driveenv.veil_chroma_limit(color, luminance: &#x27;float&#x27;, tol: &#x27;float&#x27; = 0.15) -&gt; &#x27;float&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;veil_chroma_limit&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>对颜色 <code style="color:#22d3bf">color</code>(RGB 比)、亮度 <code style="color:#22d3bf">luminance</code> 的灯光叠加白光 W(光幕、雾的大气光)时，色度距离 |(c L + W·1)/|c L + W·1| − c/|c||(与 balltrack.ball_detect 的 chroma 相同的量)达到 <code style="color:#22d3bf">tol</code> 的 W* [cd/m²]。</p>
 <p>距离随 W 单调增加(W → ∞ 时渐近于与灰色 (1,1,1)/√3 的距离)。若渐近值 ≤ tol,则为 <code style="color:#22d3bf">inf</code>(无论加多少白颜色都可辨读)。二分法,相对 1e-12。用途: 逆光阈值 θ* = √(10 E_glare / W*)(Stiles–Holladay)、雾中颜色可辨读的距离 d* = ln(1 + W*/L_h)/β(灯光 c L e^{−βd} + 大气光 L_h (1 − e^{−βd}) 的色度与 c L + L_h (e^{βd} − 1)·1 相同)。</p>

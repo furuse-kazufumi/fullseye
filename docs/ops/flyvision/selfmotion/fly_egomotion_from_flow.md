@@ -4,6 +4,7 @@ dim: flyvision
 category: selfmotion
 in: matrix × table
 out: table
+gpu: なし
 examples: [poc_fly_optomotor_steering]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `matrix × table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.fly_egomotion_from_flow(flow, lattice, axes=None, weights=None)` (実装を直接呼ぶなら `import flyvision; flyvision.fly_egomotion_from_flow(flow, lattice, axes=None, weights=None)`、台帳から引くなら `opsflyvision.get("fly_egomotion_from_flow")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

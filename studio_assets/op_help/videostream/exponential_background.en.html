@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">exponential_background — VIDEOSTREAM <code style="color:#22d3bf">recursive</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">video</code> → <code style="color:#22d3bf">video</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.exponential_background(video, alpha: &#x27;float&#x27; = 0.05) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import videostream; videostream.exponential_background(video, alpha: &#x27;float&#x27; = 0.05) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsvideostream.get(&quot;exponential_background&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Recursive background <code style="color:#22d3bf">bg ← (1−α)·bg + α·frame</code> per frame → <code style="color:#22d3bf">(T, H, W)</code> (<code style="color:#22d3bf">video</code>).</p>
 <p>An exponential moving average that initialises <code style="color:#22d3bf">bg</code> with the first frame and then repeats <code style="color:#22d3bf">bg += α (frame - bg)</code> per pixel. The state is just 1 background (no window). The output for frame <code style="color:#22d3bf">t</code> is a copy of <code style="color:#22d3bf">bg</code> at that moment, and <code style="color:#22d3bf">t = 0</code> is the first input frame itself.</p>

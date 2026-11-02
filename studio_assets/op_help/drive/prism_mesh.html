@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">prism_mesh — DRIVE <code style="color:#22d3bf">japan</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.prism_mesh(footprint: &#x27;np.ndarray | Sequence[Sequence[float]]&#x27;, height: &#x27;float&#x27;, *, base_z: &#x27;float&#x27; = 0.0) -&gt; &#x27;tuple[np.ndarray, np.ndarray, np.ndarray]&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import driveplateau; driveplateau.prism_mesh(footprint: &#x27;np.ndarray | Sequence[Sequence[float]]&#x27;, height: &#x27;float&#x27;, *, base_z: &#x27;float&#x27; = 0.0) -&gt; &#x27;tuple[np.ndarray, np.ndarray, np.ndarray]&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;prism_mesh&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>足元多角形を高さ <code style="color:#22d3bf">height</code> の柱に押し出す(底面なし)。</p>
 <p>頂点の並びは <code style="color:#22d3bf">V[0:k]</code> が底の環、<code style="color:#22d3bf">V[k:2k]</code> が天井の環(同じ順)。側面は辺ごとに四角形 2 三角形、屋根は耳切りの三角形。外向き法線になる向きで返す。</p>

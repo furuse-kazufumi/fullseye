@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">dynnikov_coordinates — DRIVE <code style="color:#22d3bf">braidpath</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">signal × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dynnikov_coordinates(word, n_strands)</code> (die Implementierung direkt: <code style="color:#22d3bf">import braidpath; braidpath.dynnikov_coordinates(word, n_strands)</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;dynnikov_coordinates&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Dynnikov-Koordinaten des auf das Standard-Kurvendiagramm E = (0, …, 0; −1, …, −1) wirkenden Zopfes (ganzzahlig, kein Überlauf).</p>
 <p>Berechnet auf der Kreisscheibe mit n + 1 Punktierungen: den n Strängen plus einer zusätzlichen Punktierung am rechten Ende (a und b haben beide die Länge n − 1). Diese Wirkung ist treu, daher gilt <b>Koordinaten gleich ⇔ derselbe Zopf</b>. Pro Buchstabe nur eine konstante Anzahl von Additionen/Subtraktionen und max / min, also Laufzeit proportional zur Wortlänge (anders als bei Henkelreduktion oder Bildern in der freien Gruppe bläht sich nichts auf —— die Zahlen werden nur größer, und Python-Ganzzahlen laufen nicht über).</p>

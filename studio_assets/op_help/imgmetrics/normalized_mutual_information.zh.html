@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">normalized_mutual_information — IMGMETRICS <code style="color:#22d3bf">information</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.normalized_mutual_information(a, b, bins=64, data_range=None)</code>(要直接调用实现,<code style="color:#22d3bf">import imgmetrics; imgmetrics.normalized_mutual_information(a, b, bins=64, data_range=None)</code>;从台账取用则 <code style="color:#22d3bf">opsimgmetrics.get(&quot;normalized_mutual_information&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>归一化互信息 2*I(A;B) / (H(A) + H(B))。同一张图为 1.0。</p>
 <p>两个边缘熵都为 0(两幅都是均匀的图)时,<b>上限为 0,所以比值无法定义</b> —— 不为避免除以 0 而返回 0 或 1,而是 <code style="color:#22d3bf">ValueError</code>。</p>

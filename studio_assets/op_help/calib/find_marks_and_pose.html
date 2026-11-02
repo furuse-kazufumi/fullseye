@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">find_marks_and_pose — CALIB <code style="color:#22d3bf">calibrate</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.find_marks_and_pose(image, cam_par, caltab, thresh=0.5, max_reproj_rms=3.0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import caltab; caltab.find_marks_and_pose(image, cam_par, caltab, thresh=0.5, max_reproj_rms=3.0)</code>、台帳から引くなら <code style="color:#22d3bf">opscalib.get(&quot;find_marks_and_pose&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>マーク検出 + 校正板の姿勢推定(平面ホモグラフィ → pose)(find_marks_and_pose)。</p>
 <p>対応づけは行優先ソートではなく <b>ホモグラフィ誘導</b>: 検出マークと理想格子の 4 隅(row±col の極値)から初期 H を作り、理想点を投影して最近傍マークを 1 対 1 に割り当て、全対応で H を再推定(2 反復)。板の面内回転が ±45° 未満なら傾き(rx, ry)の大きさに関係なく正しく対応する(2026-09-02 以前は少しの傾きで行が交錯し、深度が数百 mm ずれても無警告だった)。</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">particle_image_synth — DRIVE <code style="color:#22d3bf">grind</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">scalar × scalar × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.particle_image_synth(n: &#x27;int&#x27; = 60, d_med: &#x27;float&#x27; = 12.0, sigma_ln: &#x27;float&#x27; = 0.35, shape=(256, 256), pitch: &#x27;float&#x27; = 1.0, seed: &#x27;int&#x27; = 0, gap: &#x27;float&#x27; = 3.0, supersample: &#x27;int&#x27; = 4) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import grind; grind.particle_image_synth(n: &#x27;int&#x27; = 60, d_med: &#x27;float&#x27; = 12.0, sigma_ln: &#x27;float&#x27; = 0.35, shape=(256, 256), pitch: &#x27;float&#x27; = 1.0, seed: &#x27;int&#x27; = 0, gap: &#x27;float&#x27; = 3.0, supersample: &#x27;int&#x27; = 4) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;particle_image_synth&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>撒布互不重叠圆盘(颗粒投影)的覆盖率图像及真值(直径 [µm] 为对数正态，<code style="color:#22d3bf">pitch</code> µm/px)。</p>
 <p>圆盘之间至少相隔 <code style="color:#22d3bf">gap</code> px(融合是另一个问题,由 poc_particle_sizing 处理)。默认 3 px:若为 2 px,两侧的部分像素会斜向相邻,在 8 连通标记下 2 个变成 1 个(12 张中 4 张,体积基准的 D50 最大偏差 8.5 %)。边缘用 <code style="color:#22d3bf">supersample</code> 抗锯齿。</p>

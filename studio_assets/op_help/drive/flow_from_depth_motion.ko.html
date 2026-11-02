@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">flow_from_depth_motion — DRIVE <code style="color:#22d3bf">ttc</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d × matrix × matrix</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.flow_from_depth_motion(depth, K, T_rel) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivettc; drivettc.flow_from_depth_motion(depth, K, T_rel) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;flow_from_depth_motion&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>깊이 영상과 강체 운동으로부터 <b>참 광류</b>: <code style="color:#22d3bf">{&quot;u&quot;, &quot;v&quot;, &quot;valid&quot;, &quot;depth1&quot;}</code>(각각 (H, W)).</p>
 <p>화소의 3-D 점을 <code style="color:#22d3bf">T_rel</code> 로 움직여 재투영하고, <code style="color:#22d3bf">u = col₁ − col₀</code>, <code style="color:#22d3bf">v = row₁ − row₀</code>. 움직인 뒤카메라 뒤로 가는 점이나 깊이가 없는 화소는 <code style="color:#22d3bf">valid = False</code>(u, v 는 NaN). <code style="color:#22d3bf">depth1</code> 은 움직인 뒤의 깊이. 광학 흐름 추정기의 채점에 쓰는 참값(추정기와 같은 규약: (x, y) → (x + u, y + v)).</p>

@@ -337,6 +337,10 @@ def describe(kind: str, name: str, budget_tokens: int = 800) -> dict:
         r = sort_guide(_sort(name))
     elif kind == "op":
         edge = next((e for e in _graph()["edges"] if e["op"] == name), None)
+        if edge is not None:
+            indexed = next((row for row in load_index()["rows"] if row.get("n") == name), None)
+            edge = dict(edge)
+            edge["gpu"] = (indexed or {}).get("gpu", "なし")
         r = {"found": edge is not None, "op": edge, "param_space": param_space(name, {}) if edge else None}
     elif kind == "family":
         fam = next((f for f in _load_json(PKG_FAMILIES)["families"] if f["name"] == name), None)

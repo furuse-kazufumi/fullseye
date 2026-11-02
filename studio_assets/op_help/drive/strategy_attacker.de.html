@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">strategy_attacker — DRIVE <code style="color:#22d3bf">racket</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.strategy_attacker(side: &#x27;int&#x27;, ctx: &#x27;dict&#x27;, rng) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import racket; racket.strategy_attacker(side: &#x27;int&#x27;, ctx: &#x27;dict&#x27;, rng) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;strategy_attacker&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Schlagwahl zum Gewinnen: in die vom gegnerischen Schläger entfernte Ecke (linker/rechter Rand, abwechselnd kurz und lang), mit kurzer Flugzeit. Auch das Spin-Ziel wechselt ab. <code style="color:#22d3bf">ctx</code> = {&quot;opp_pos&quot; (3,), &quot;shot_index&quot;, &quot;tp&quot;}. Rückgabewert {&quot;target&quot; (x, y), &quot;T&quot;, &quot;spin&quot;}.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">pairs_to_image2d — REPRCONV <code style="color:#22d3bf">pairs</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pairs_to_image2d(pairs, shape=(64, 64))</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import reprconv; reprconv.pairs_to_image2d(pairs, shape=(64, 64))</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsreprconv.get(&quot;pairs_to_image2d&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>쌍 <code style="color:#22d3bf">(N,2)</code> → 산점 밀도 이미지 <code style="color:#22d3bf">(H, W)</code>. <code style="color:#22d3bf">pairs</code> 의 세 번째 출구.</p>
 <p>열 0을 행 방향, 열 1을 열 방향으로 각각의 최소-최대로 정규화하여 bin에 떨어뜨린다(2-D 히스토그램). 위상도·상관도로 보기 위한 것이며, <b>비가역</b> (bin 폭만큼의 양자화 + 정규화로 절댓값의 스케일을 버린다). 버린 스케일을 되돌릴 수 있도록 <code style="color:#22d3bf">extent</code>를... 반환하지 않는다 —— 반환하면 <code style="color:#22d3bf">image2d</code>가아니게 된다. 필요하면 <code style="color:#22d3bf">pairs_to_table</code>의 <code style="color:#22d3bf">x_min</code> 등을 사용한다.</p>

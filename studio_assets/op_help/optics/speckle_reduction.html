@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">speckle_reduction — OPTICS <code style="color:#22d3bf">coherent</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.speckle_reduction(n_patterns=1, polarizations=1, cutoff=None)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import coherent; coherent.speckle_reduction(n_patterns=1, polarizations=1, cutoff=None)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;speckle_reduction&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Predicted speckle contrast after reduction (<code style="color:#22d3bf">table</code>).</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n_patterns</code> independent patterns (angle / wavelength / time diversity, a moving part) and <code style="color:#22d3bf">polarizations</code> (1 or 2): <code style="color:#22d3bf">C = 1/√(N·pol)</code> (Goodman §5).</p>

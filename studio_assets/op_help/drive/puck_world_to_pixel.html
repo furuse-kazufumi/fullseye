@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">puck_world_to_pixel — DRIVE <code style="color:#22d3bf">puck</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table × matrix</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.puck_world_to_pixel(cam: &#x27;dict&#x27;, xy) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import puck; puck.puck_world_to_pixel(cam: &#x27;dict&#x27;, xy) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;puck_world_to_pixel&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>world (N,2) → 画素 (col, row) (N,2)(<code style="color:#22d3bf">calib.image_to_world_plane</code> に H を渡す)。</p>
 <p>空の入力(<code style="color:#22d3bf">cam</code> が空の dict)は ValueError。</p>

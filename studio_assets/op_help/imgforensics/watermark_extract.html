@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">watermark_extract — IMGFORENSICS <code style="color:#22d3bf">watermark</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">phash</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.watermark_extract(image, n_bits: &#x27;int&#x27;, wavelet: &#x27;str&#x27; = &#x27;haar&#x27;, level: &#x27;int&#x27; = 1) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import imgforensics; imgforensics.watermark_extract(image, n_bits: &#x27;int&#x27;, wavelet: &#x27;str&#x27; = &#x27;haar&#x27;, level: &#x27;int&#x27; = 1) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsimgforensics.get(&quot;watermark_extract&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>透かしの <b>ブラインド抽出</b>。bool の 1-D(<code style="color:#22d3bf">phash</code> 語彙)を返す。</p>
 <p>同じ DWT / ブロック分割で中帯域係数の対の大小を読むだけ。原画像も鍵も要らない —— これは <b>秘匿ではなく完全性の印</b>であり、鍵が無いので <b>誰でも消せるし誰でも書ける</b>。所有権の主張には使えない。</p>

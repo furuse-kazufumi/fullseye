@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">dynsys_lyapunov_spectrum — MATH <code style="color:#22d3bf">dynsys</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">signal</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dynsys_lyapunov_spectrum(system=&#x27;lorenz&#x27;, params=None, x0=None, t_end=200.0, dt=0.005, burn_in=20.0)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import mathops; mathops.dynsys_lyapunov_spectrum(system=&#x27;lorenz&#x27;, params=None, x0=None, t_end=200.0, dt=0.005, burn_in=20.0)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsmath.get(&quot;dynsys_lyapunov_spectrum&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>접선 흐름 + QR 로 구하는 랴푸노프 스펙트럼 —— 그리고 답을 맞춰 볼 수 있는 합。</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>

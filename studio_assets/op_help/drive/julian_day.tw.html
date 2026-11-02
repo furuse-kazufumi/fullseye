@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">julian_day — DRIVE <code style="color:#22d3bf">env</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.julian_day(when) -&gt; &#x27;float&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import driveenv; driveenv.julian_day(when) -&gt; &#x27;float&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;julian_day&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>儒略日(UT)。<code style="color:#22d3bf">when</code> = 帶時區的 datetime(轉換為 UTC)，或數值(直接作為儒略日)。</p>
 <p>樸素的(沒有 tzinfo 的)datetime 會被 <b>拒絕</b>(若混淆地方時與 UTC,太陽會偏差 9 小時)。</p>

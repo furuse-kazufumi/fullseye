@@ -4,6 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.spectrogram(x, rate=1.0, win=256, hop=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import dsp; dsp.spectrogram(x, rate=1.0, win=256, hop=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops1d.get(&quot;spectrogram&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>Ledger के ज़रिए return value</b>: <code style="color:#22d3bf">fullseye.ledger.spectrogram(...)</code> <b>केवल घोषित out type <code style="color:#22d3bf">image2d</code> का value</b> लौटाता है (मूल function सहायक जानकारी भी लौटाता है)। जो हिस्सा छोड़ दिया गया है उसकी ज़रूरत हो तो <code style="color:#22d3bf">fullseye.ledger.spectrogram.raw(...)</code> का उपयोग करें, या <code style="color:#22d3bf">dsp.spectrogram</code> को सीधे call करें।</p>
 <p style="margin:2px 0 2px 12px">• मूल function का return: <code style="color:#22d3bf">(freqs, times, S) — S が本体</code></p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>STFT magnitude spectrogram -&gt; <code style="color:#22d3bf">(freqs, times, S)</code>, जहाँ <code style="color:#22d3bf">S</code> का shape <code style="color:#22d3bf">(n_freqs, n_frames)</code> है। Hann window वाला; *hop* का default <code style="color:#22d3bf">win//2</code> है।</p>
 <p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">sun_vector — DRIVE <code style="color:#22d3bf">env</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">scalar × scalar</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sun_vector(elevation: &#x27;float&#x27;, azimuth: &#x27;float&#x27;, north_yaw: &#x27;float&#x27; = 90.0) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import driveenv; driveenv.sun_vector(elevation: &#x27;float&#x27;, azimuth: &#x27;float&#x27;, north_yaw: &#x27;float&#x27; = 90.0) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;sun_vector&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>태양 방향의 단위 벡터(월드 좌표계, 지면에서 태양을 향함).</p>
 <p><code style="color:#22d3bf">north_yaw</code> = 세계의 +x 에서 반시계 방향으로 잰 북쪽 방향 [도] (기본 90° = +y 가 북, +x 가 동). 방위는 북에서 시계 방향.</p>

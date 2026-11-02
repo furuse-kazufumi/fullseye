@@ -5,6 +5,7 @@ category: smoothing
 in: image
 out: image
 halcon: gauss_filter
+gpu: あり(gauss_filter@twin)
 examples: [gallery2d_smoothing_rank, poc_cell_counting, poc_document_scan, poc_focus_stacking, poc_gear_tooth_metrology, poc_pv_thermal_survey, poc_sea_ice_concentration, poc_search_sweep_width, poc_solar_limb_darkening, poc_vanishing_detail_and_morphing_area, poc_vessel_network, poc_white_balance]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -16,6 +17,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **データ種**: `image` → `image`
 - **呼び出し**: `fullseye.apply(img, "gauss_filter", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 - **HALCON 相当**: `gauss_filter`(意味・パラメータは HALCON リファレンスが参考になる)
+- **GPU**: あり(`gauss_filter@twin`、`device="cuda"` で高速経路)
 
 ![gauss_filter: input → output](../../_fig/gauss_filter.png)
 

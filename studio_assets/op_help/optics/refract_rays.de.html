@@ -3,6 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.refract_rays(directions, normals, n1=1.0, n2=1.5)</code> (die Implementierung direkt: <code style="color:#22d3bf">import glassmirror; glassmirror.refract_rays(directions, normals, n1=1.0, n2=1.5)</code>; aus dem Register: <code style="color:#22d3bf">opsoptics.get(&quot;refract_rays&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>Rückgabewert über das Register</b>: <code style="color:#22d3bf">fullseye.ledger.refract_rays(...)</code> liefert <b>nur den Wert des deklarierten Out-Typs <code style="color:#22d3bf">points</code></b> (die zugrunde liegende Funktion gibt zusätzlich Hilfsinformationen zurück). Wird das Verworfene gebraucht, nutze <code style="color:#22d3bf">fullseye.ledger.refract_rays.raw(...)</code> oder rufe <code style="color:#22d3bf">glassmirror.refract_rays</code> direkt auf.</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Die Vektorform der Snellius-Brechung. <b>Totalreflexion wird pro Strahl entschieden</b>; liefert (Richtung, TIR-Maske).</p>
 <p>directions: (..., 3) Einfallsrichtungen (zur Fläche hin). normals: (..., 3) nach außen zeigende Normalen auf der Einfallsseite. n1 / n2: Brechungsindex der Einfalls- / Transmissionsseite.</p>

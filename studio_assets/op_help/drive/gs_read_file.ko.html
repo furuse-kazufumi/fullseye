@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">gs_read_file — DRIVE <code style="color:#22d3bf">gsplat</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">table</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gs_read_file(path, *, min_opacity: &#x27;float&#x27; = 0.0) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import gsplatnp; gsplatnp.gs_read_file(path, *, min_opacity: &#x27;float&#x27; = 0.0) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;gs_read_file&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>3D Gaussian Splatting 파일을 읽고, 가우스의 중심·색·불투명도·크기·방향을 반환합니다.</p>
 <p>지원: <b>INRIA 형식의 .ply</b>(x, y, z, f_dc_0..2, opacity(logit), scale_0..2(log), rot_0..3(wxyz). <code style="color:#22d3bf">gsplat_train_native</code> 의 출력도 이것)와 <b>.splat</b>(1 개 32 바이트: 위치 3×f32, 크기 3×f32, RGBA 4×u8, 회전 4×u8(wxyz, (q·128)+128)).</p>

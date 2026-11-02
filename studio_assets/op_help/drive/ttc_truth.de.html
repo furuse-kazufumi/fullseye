@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">ttc_truth — DRIVE <code style="color:#22d3bf">ttc</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image2d × matrix × matrix</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ttc_truth(depth, K, T_rel, dt: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import drivettc; drivettc.ttc_truth(depth, K, T_rel, dt: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;ttc_truth&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Pixelweises <b>wahres τ</b> (Sekunden, zum Zeitpunkt des ersten Frames) und Annäherungsgeschwindigkeit: <code style="color:#22d3bf">{&quot;tau&quot;, &quot;closing_speed&quot;, &quot;depth1&quot;, &quot;valid&quot;}</code>.</p>
 <p><code style="color:#22d3bf">τ₀ = Z₀ · Δt / (Z₀ − Z₁)</code> (Lees <code style="color:#22d3bf">Z / (−Ż)</code> von 1976 als Differenz zweier Bilder; bei konstanter Geschwindigkeit exakt). Pixel, die sich nicht nähern (<code style="color:#22d3bf">Z₁ ≥ Z₀</code>), erhalten <code style="color:#22d3bf">inf</code>. <code style="color:#22d3bf">closing_speed = (Z₀ − Z₁) / Δt</code> (m/s, positiv = Annäherung).</p>

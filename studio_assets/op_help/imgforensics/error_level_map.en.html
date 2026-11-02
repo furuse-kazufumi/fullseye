@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">error_level_map — IMGFORENSICS <code style="color:#22d3bf">compression</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.error_level_map(image, quality: &#x27;int&#x27; = 90, normalize: &#x27;bool&#x27; = True) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import imgforensics; imgforensics.error_level_map(image, quality: &#x27;int&#x27; = 90, normalize: &#x27;bool&#x27; = True) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsimgforensics.get(&quot;error_level_map&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>ELA (error-level analysis). A map of the <b>difference after re-compressing</b> at a given quality. <code style="color:#22d3bf">image2d</code>.</p>
 <p>Krawetz 2007. JPEG quantizes per 8x8 block, so <b>a region that has been compressed once</b> shows little error when recompressed at the same quality, whereas <b>a region pasted / drawn in afterwards</b> leaves a large error; that is the idea it is based on.</p>

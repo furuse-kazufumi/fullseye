@@ -4,6 +4,7 @@ dim: drive
 category: swarmflow
 in: matrix × any × scalar
 out: image2d
+gpu: なし
 examples: [poc_swarm_obstacle_from_flow]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `matrix × any × scalar` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.swarm_render_overhead(points, shape, res: 'float', center=(0.0, 0.0), diameter_px: 'float' = 3.0, intensity: 'float' = 1.0, background: 'float' = 0.0) -> 'np.ndarray'` (実装を直接呼ぶなら `import swarmflow; swarmflow.swarm_render_overhead(points, shape, res: 'float', center=(0.0, 0.0), diameter_px: 'float' = 3.0, intensity: 'float' = 1.0, background: 'float' = 0.0) -> 'np.ndarray'`、台帳から引くなら `opsdrive.get("swarm_render_overhead")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

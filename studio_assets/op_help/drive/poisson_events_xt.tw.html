@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">poisson_events_xt — DRIVE <code style="color:#22d3bf">traffic</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.poisson_events_xt(rate_fn: &#x27;Callable&#x27;, x_max: &#x27;float&#x27;, t_max: &#x27;float&#x27;, *, rate_max: &#x27;float&#x27;, seed, n_grid=(201, 201)) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import drivetraffic; drivetraffic.poisson_events_xt(rate_fn: &#x27;Callable&#x27;, x_max: &#x27;float&#x27;, t_max: &#x27;float&#x27;, *, rate_max: &#x27;float&#x27;, seed, n_grid=(201, 201)) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;poisson_events_xt&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>以 thinning 在 [0, x_max] × [0, t_max] 上抽取 1 條時空非齊次卜瓦松過程樣本(速率 λ(x, t) [次/(m·s)])。</p>
 <p>用於像停靠中的公車那樣,出現率同時依賴於位置與時刻的情況(λ(x, t) = bus_stop_rate(x) · [t &lt; 發車] + base)。以機率 λ/rate_max 保留率為 rate_max 的均勻候選(件數 ~ Poisson(rate_max · x_max · t_max),位置、時刻均勻)。件數 ~ Poisson(Λ),Λ = ∫∫λ dx dt。<code style="color:#22d3bf">rate_fn(x, t)</code> 是接受 2 個同形狀陣列並回傳率的函式。<b>抽取之前</b>在 <code style="color:#22d3bf">n_grid = (nx, nt)</code> 的網格上確認 λ ≤ rate_max,並在候選處也進行確認(超出則 ValueError)。</p>

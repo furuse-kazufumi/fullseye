@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">mapf_ecbs — DRIVE <code style="color:#22d3bf">agv</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mapf_ecbs(grid, starts, goals, w=1.2, max_nodes=50000, horizon=None)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import agvfleet; agvfleet.mapf_ecbs(grid, starts, goals, w=1.2, max_nodes=50000, horizon=None)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;mapf_ecbs&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>상위 단계를 초점 탐색으로 한 CBS(ECBS 상위 단계와 같은 발상, Barer 외 2014). 총비용이 <b>최적의 w배 이내</b>.</p>
 <p>열린 노드 중 최소 총비용 <code style="color:#22d3bf">LB</code> 는 최적값 이하(최적해는 어느 노드 아래에 있다). 그래서 <code style="color:#22d3bf">コスト ≤ w · LB</code> 인 노드(초점) 중에서 <b>충돌이 적은</b> 것을 전개한다. 반환하는 계획은 <code style="color:#22d3bf">cost ≤ w · LB ≤ w · 最適</code>(게이트). 반환은 <code style="color:#22d3bf">mapf_cbs</code> 의 dict 에 <code style="color:#22d3bf">lower_bound</code> 와 <code style="color:#22d3bf">w</code> 를 더한 것. 좁은 통로에서 최적의 CBS 가 같은 길이의 양보 조합을 모두 조사하다 멈추는 것을, 충돌이 적은 쪽으로 기울여 빠져나간다.</p>

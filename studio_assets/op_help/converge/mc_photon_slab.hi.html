@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">mc_photon_slab — CONVERGE <code style="color:#22d3bf">montecarlo</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">table</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mc_photon_slab(layers=None, n_above=1.0, n_below=1.0, n_photons=100000, tol=None, confidence=0.95, batch=50000, seed=1, w_threshold=0.0001, roulette_m=10) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import mcphoton; mcphoton.mc_photon_slab(layers=None, n_above=1.0, n_below=1.0, n_photons=100000, tol=None, confidence=0.95, batch=50000, seed=1, w_threshold=0.0001, roulette_m=10) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsconverge.get(&quot;mc_photon_slab&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>MCML-type Monte Carlo से layered turbid slab का diffuse reflectance, total transmittance और absorption, confidence intervals के साथ।</p>
 <p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>

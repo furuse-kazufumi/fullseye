@@ -4,6 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.surface_form_remove(z, dx, order=1, method=&#x27;ls&#x27;, thresh=None, dy=None, iters=200, seed=0)</code>(要直接呼叫實作,<code style="color:#22d3bf">import roughness; roughness.surface_form_remove(z, dx, order=1, method=&#x27;ls&#x27;, thresh=None, dy=None, iters=200, seed=0)</code>;從台帳取用則 <code style="color:#22d3bf">opsroughness.get(&quot;surface_form_remove&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>經台帳呼叫的回傳值</b>: <code style="color:#22d3bf">fullseye.ledger.surface_form_remove(...)</code> 只回傳<b>宣告的 out 型別 <code style="color:#22d3bf">depth</code> 的值</b>(底層函式還會回傳輔助資訊)。需要被捨棄的部分時,請用 <code style="color:#22d3bf">fullseye.ledger.surface_form_remove.raw(...)</code>,或直接呼叫 <code style="color:#22d3bf">roughness.surface_form_remove</code>。</p>
 <p style="margin:2px 0 2px 12px">• 底層回傳: <code style="color:#22d3bf">(residual, coeffs)</code></p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>直接在網格上去除平面 / 二次曲面。回傳 <code style="color:#22d3bf">(residual, coeffs)</code>。</p>
 <p>參數</p>

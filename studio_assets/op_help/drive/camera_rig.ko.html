@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">camera_rig — DRIVE <code style="color:#22d3bf">ballworld</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.camera_rig(tp: &#x27;dict&#x27; = None, *, n: &#x27;int&#x27; = 2, distance: &#x27;float&#x27; = 2.2, height: &#x27;float&#x27; = 1.7, fov_deg: &#x27;float&#x27; = 55.0, width: &#x27;int&#x27; = 1280, height_px: &#x27;int&#x27; = 1024) -&gt; &#x27;list&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import ballworld; ballworld.camera_rig(tp: &#x27;dict&#x27; = None, *, n: &#x27;int&#x27; = 2, distance: &#x27;float&#x27; = 2.2, height: &#x27;float&#x27; = 1.7, fov_deg: &#x27;float&#x27; = 55.0, width: &#x27;int&#x27; = 1280, height_px: &#x27;int&#x27; = 1024) -&gt; &#x27;list&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;camera_rig&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>받침대를 둘러싸는 카메라(n = 2: 양쪽 끝의 대각선 위, n = 4: 4 모서리). 반환값 <code style="color:#22d3bf">[{&quot;pose&quot;, &quot;K&quot;, &quot;eye&quot;, &quot;width&quot;, &quot;height&quot;}, …]</code>, 전부가 받침대의 중심을 본다.</p>
 <p>빈 입력(<code style="color:#22d3bf">tp</code> 이(가) 빈 dict)은 <code style="color:#22d3bf">ValueError</code> 를 발생시킨다.</p>

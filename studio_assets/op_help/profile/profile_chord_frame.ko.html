@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">profile_chord_frame — PROFILE <code style="color:#22d3bf">frame</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.profile_chord_frame(contour)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import profileops; profileops.profile_chord_frame(contour)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsprofile.get(&quot;profile_chord_frame&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>시위(가장 멀리 떨어진 2점)를 찾는다. 반환값은 dict.</p>
 <p>익형의 관례대로 <b>가장 멀리 떨어진 2 점</b>을 앞전·뒷전으로 간주한다. 어느 쪽이 앞전인지는 <b>그 점 근방의 두께(girth)가 큰 쪽</b>; 곡률은 뾰족한 뒷전을 앞전으로 오분류하므로 사용하지 않는다.</p>

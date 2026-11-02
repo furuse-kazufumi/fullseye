@@ -4,6 +4,7 @@ dim: drive
 category: env
 in: scalar × scalar
 out: any
+gpu: なし
 examples: [poc_driving_weather]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `scalar × scalar` → `any`
 - **呼び出し**: `import fullseye as fs; fs.ledger.sun_vector(elevation: 'float', azimuth: 'float', north_yaw: 'float' = 90.0) -> 'np.ndarray'` (実装を直接呼ぶなら `import driveenv; driveenv.sun_vector(elevation: 'float', azimuth: 'float', north_yaw: 'float' = 90.0) -> 'np.ndarray'`、台帳から引くなら `opsdrive.get("sun_vector")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

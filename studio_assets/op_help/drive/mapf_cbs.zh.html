@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">mapf_cbs — DRIVE <code style="color:#22d3bf">agv</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mapf_cbs(grid, starts, goals, max_nodes=20000, horizon=None)</code>(要直接调用实现,<code style="color:#22d3bf">import agvfleet; agvfleet.mapf_cbs(grid, starts, goals, max_nodes=20000, horizon=None)</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;mapf_cbs&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>Conflict-Based Search(Sharon, Stern, Felner, Sturtevant 2015)。总代价最优的无冲突计划。</p>
 <p>上层是&quot;选出一个冲突,对两辆车中的一辆加约束&quot;的二叉树最佳优先搜索,下层是单车的时空 A*。返回 dict:<code style="color:#22d3bf">paths</code>(各车辆的格子序列)、<code style="color:#22d3bf">cost</code>(sum of costs)、<code style="color:#22d3bf">nodes</code>(展开的节点数)、<code style="color:#22d3bf">solved</code>。达到节点上限时 <code style="color:#22d3bf">solved=False</code>(<b>不会默默返回非最优解</b>)。</p>

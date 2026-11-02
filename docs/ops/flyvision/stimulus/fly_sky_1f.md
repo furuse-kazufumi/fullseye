@@ -4,6 +4,7 @@ dim: flyvision
 category: stimulus
 in: 
 out: image2d
+gpu: なし
 examples: [poc_fly_optomotor_steering, poc_fly_vision]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `image2d`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.fly_sky_1f(width=1024, height=512, band_lo_deg=20.0, band_hi_deg=60.0, amp=0.12, seed=0, edge_deg=5.0)` (実装を直接呼ぶなら `import flyvision; flyvision.fly_sky_1f(width=1024, height=512, band_lo_deg=20.0, band_hi_deg=60.0, amp=0.12, seed=0, edge_deg=5.0)`、台帳から引くなら `opsflyvision.get("fly_sky_1f")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">jpeg_quality_estimate — IMGFORENSICS <code style="color:#22d3bf">compression</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.jpeg_quality_estimate(image, max_step: &#x27;int&#x27; = 64, n_coeff: &#x27;int&#x27; = 21) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import imgforensics; imgforensics.jpeg_quality_estimate(image, max_step: &#x27;int&#x27; = 64, n_coeff: &#x27;int&#x27; = 21) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsimgforensics.get(&quot;jpeg_quality_estimate&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由已解碼影像<b>盲估量化表與 JPEG 品質</b>。<code style="color:#22d3bf">table</code>。</p>
 <p>不要讀取檔案的 DQT，而是僅根據 <b>像素</b> 來估計它（這就是重點，即使影像被重新儲存/貼上為 PNG，也會顯示「原始 JPEG 品質 N」。可見）。採用 8x8 塊 DCT 並估計每個係數的梳間距(Fan &amp; de Queiroz 2003)，來自使用 IJG 的公共縮放規則建立的一系列標準表。選擇最適合您的品質。</p>

@@ -3,6 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">axes × signal × signal</code> → <code style="color:#22d3bf">pairs</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.data_to_pixel(axes, x, y)</code>(要直接调用实现,<code style="color:#22d3bf">import annotate; annotate.data_to_pixel(axes, x, y)</code>;从台账取用则 <code style="color:#22d3bf">opsannotate.get(&quot;data_to_pixel&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>经台账调用的返回值</b>: <code style="color:#22d3bf">fullseye.ledger.data_to_pixel(...)</code> 只返回<b>声明的 out 类型 <code style="color:#22d3bf">pairs</code> 的值</b>(底层函数还会返回辅助信息)。需要被丢弃的部分时,使用 <code style="color:#22d3bf">fullseye.ledger.data_to_pixel.raw(...)</code>,或直接调用 <code style="color:#22d3bf">annotate.data_to_pixel</code>。</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用 <code style="color:#22d3bf">axes_transform</code> 的映射把数据点映到像素 <code style="color:#22d3bf">(x, y)</code>。</p>
 <p><b>不裁剪(clip)</b> —— <code style="color:#22d3bf">np.clip(v, lo, hi)</code> 在 <code style="color:#22d3bf">lo &gt; hi</code>(反转轴) 时会悄悄返回 <code style="color:#22d3bf">hi</code>,得到所有点都贴在边缘的“似是而非的谎言图” (本 repo 的生成器实际上就被骗过一次)。拒绝超出范围的值是 <code style="color:#22d3bf">plot_series</code> 的 <code style="color:#22d3bf">clip=True</code> 的工作,在那里会作为<b>异常</b>处理。</p>

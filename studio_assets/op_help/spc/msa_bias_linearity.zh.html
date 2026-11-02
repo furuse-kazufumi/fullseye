@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">msa_bias_linearity — SPC <code style="color:#22d3bf">msa</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.msa_bias_linearity(table, reference=&#x27;reference&#x27;, measured=&#x27;measured&#x27;)</code>(要直接调用实现,<code style="color:#22d3bf">import spc; spc.msa_bias_linearity(table, reference=&#x27;reference&#x27;, measured=&#x27;measured&#x27;)</code>;从台账取用则 <code style="color:#22d3bf">opsspc.get(&quot;msa_bias_linearity&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>相对于参考值的偏倚,以及该偏倚随参考值的变化(线性)(<code style="color:#22d3bf">table</code>)。</p>
 <p>将偏差 <code style="color:#22d3bf">bias = measured - reference</code> 对基准值作回归(<code style="color:#22d3bf">bias = intercept + slope * reference</code>)。斜率不为 0 时,测量系统 <b>在测量范围的不同位置偏移不同的量</b> = 线性问题。</p>

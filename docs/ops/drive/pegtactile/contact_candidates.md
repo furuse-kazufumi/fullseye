@@ -4,6 +4,7 @@ dim: drive
 category: pegtactile
 in: table × signal × signal
 out: table
+gpu: なし
 examples: [gallery_drive_peg]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table × signal × signal` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.contact_candidates(kp, tip, axis, n_az: 'int' = 144, tol: 'float' = 8e-05) -> 'dict'` (実装を直接呼ぶなら `import pegtactile; pegtactile.contact_candidates(kp, tip, axis, n_az: 'int' = 144, tol: 'float' = 8e-05) -> 'dict'`、台帳から引くなら `opsdrive.get("contact_candidates")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

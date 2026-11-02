@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">string_mesh — DRIVE <code style="color:#22d3bf">kendamaworld</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">any</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.string_mesh(p_ball, p_cup, radius: &#x27;float&#x27; = 0.0015)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import kendamaworld; kendamaworld.string_mesh(p_ball, p_cup, radius: &#x27;float&#x27; = 0.0015)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;string_mesh&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>2점(공의 실 구멍 p_ball과 사라도의 실 구멍 p_cup)을 잇는 가는 각기둥(4면 + 양 끝, 8정점 12면, 바깥 방향). 단면은 한 변 2·radius의 정사각형. 두 점이 일치하면 ValueError.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

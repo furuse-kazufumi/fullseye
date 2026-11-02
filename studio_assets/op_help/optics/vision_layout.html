@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">vision_layout — OPTICS <code style="color:#22d3bf">scene</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table × table × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vision_layout(sensor: &#x27;dict&#x27;, lens: &#x27;dict&#x27;, lights, scene=None, tilt_deg: &#x27;float&#x27; = 0.0, azimuth_deg: &#x27;float&#x27; = 0.0, look_at_mm=(0.0, 0.0, 0.0)) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import optscene; optscene.vision_layout(sensor: &#x27;dict&#x27;, lens: &#x27;dict&#x27;, lights, scene=None, tilt_deg: &#x27;float&#x27; = 0.0, azimuth_deg: &#x27;float&#x27; = 0.0, look_at_mm=(0.0, 0.0, 0.0)) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;vision_layout&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>センサー・レンズ・照明・シーンを束ね、<b>導出量を閉じた式で</b>返す。</p>
 <p>返り値 dict: <code style="color:#22d3bf">camera</code>(<code style="color:#22d3bf">optical_camera</code> と同じ規約)/ <code style="color:#22d3bf">sensor</code> / <code style="color:#22d3bf">lens</code> / <code style="color:#22d3bf">lights</code> / <code style="color:#22d3bf">scene</code> / <code style="color:#22d3bf">budget</code>(<code style="color:#22d3bf">optical_budget</code>)。</p>

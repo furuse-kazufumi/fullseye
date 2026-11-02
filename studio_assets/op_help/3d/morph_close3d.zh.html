@@ -2,7 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">morph_close3d — 3D <code style="color:#22d3bf">morphology</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">voxel</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.morph_close3d(vol, r=1, device=&#x27;cpu&#x27;, se=&#x27;cube&#x27;)</code>(要直接调用实现,<code style="color:#22d3bf">import match3d; match3d.morph_close3d(vol, r=1, device=&#x27;cpu&#x27;, se=&#x27;cube&#x27;)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;morph_close3d&quot;)</code>)</p>
-<p style="margin:2px 0 2px 12px">• <b>GPU</b>:该算子有 GPU 路径(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>3D closing = dilation → erosion。填补小于 SE 的<b>暗结构(缝隙・空腔)</b>。</p>
 <p><code style="color:#22d3bf">morph_erode3d(morph_dilate3d(vol, r, ...), r, ...)</code>。输出不小于输入(<code style="color:#22d3bf">close &gt;= vol</code>), 比 SE(边长 <code style="color:#22d3bf">2r+1</code> 的 cube 或半径 r 的 ball)小的暗孔、裂纹、面间隙会被周围的亮度填满,大的暗区域保留(幂等)。边界外在 dilation 中按 −∞、在 erosion 中按 +∞ 处理, 因此边缘不会被擅自填满。<code style="color:#22d3bf">se</code> 为 &quot;cube&quot;/&quot;ball&quot;(其他为 ValueError),<code style="color:#22d3bf">device</code> 仅在 cube+torch 时有效。返回值为 <code style="color:#22d3bf">(D,H,W)</code> float32 numpy。</p>

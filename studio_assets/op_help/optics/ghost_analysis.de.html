@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">ghost_analysis — OPTICS <code style="color:#22d3bf">noncoaxial</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ghost_analysis(system, coatings=None, field=None, rings=6, pupil_fill=0.98, pixel_mm=0.005, max_rows=None)</code> (die Implementierung direkt: <code style="color:#22d3bf">import raytrace3d; raytrace3d.ghost_analysis(system, coatings=None, field=None, rings=6, pupil_fill=0.98, pixel_mm=0.005, max_rows=None)</code>; aus dem Register: <code style="color:#22d3bf">opsoptics.get(&quot;ghost_analysis&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Zweifach reflektierte Geisterbilder aller Flächenpaare (<code style="color:#22d3bf">table</code>): Fokus, Größe auf dem Sensor, relative Intensität.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>

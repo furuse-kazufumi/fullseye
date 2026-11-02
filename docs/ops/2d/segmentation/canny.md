@@ -5,6 +5,7 @@ category: segmentation
 in: image
 out: region
 halcon: edges_image
+gpu: あり(canny)
 examples: [gallery2d_segmentation, poc_real_coin_metrology, poc_water_inspection_images]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -16,6 +17,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **データ種**: `image` → `region`
 - **呼び出し**: `fullseye.apply(img, "canny", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 - **HALCON 相当**: `edges_image`(意味・パラメータは HALCON リファレンスが参考になる)
+- **GPU**: あり(`canny`、`device="cuda"` で高速経路)
 
 ![canny: input → output](../../_fig/canny.png)
 

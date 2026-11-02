@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">line_from_2points — 3D <code style="color:#22d3bf">geometry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">primitive</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.line_from_2points(a, b)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import match3d; match3d.line_from_2points(a, b)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;line_from_2points&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>2 points → line (उस पर एक point, unit direction)। 2 coordinates से line तय होती है (2D/3D दोनों में)।</p>
 <p>लौटाता है <code style="color:#22d3bf">(a, u)</code>: <code style="color:#22d3bf">a</code> इनपुट का पहला (1) point है (float array), <code style="color:#22d3bf">u = (b − a)/|b − a|</code>। arguments संख्यात्मक 2 या 3 vector हैं (अन्य कुछ या आयामों का मिश्रण ValueError देता है)। <code style="color:#22d3bf">a == b</code> होने पर दिशा zero vector ही लौटती है (exception नहीं आता; caller की ओर <code style="color:#22d3bf">|u| &gt; 0</code> जाँचें)। निर्देशांकों का क्रम मायने नहीं रखता (इनपुट के क्रम में ही लौटता है), इसलिए (x,y,z) हो या (z,y,x), बस एक-सा होना चाहिए।</p>

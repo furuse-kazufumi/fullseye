@@ -4,6 +4,7 @@ dim: drive
 category: decide
 in: signal
 out: table
+gpu: なし
 examples: [poc_driving_crossing, poc_driving_decisions]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.flash_frequency(intensity_series, fps, *, f_min: 'float' = 0.0, pad: 'int' = 8) -> 'Dict[str, float]'` (実装を直接呼ぶなら `import drivedecide; drivedecide.flash_frequency(intensity_series, fps, *, f_min: 'float' = 0.0, pad: 'int' = 8) -> 'Dict[str, float]'`、台帳から引くなら `opsdrive.get("flash_frequency")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

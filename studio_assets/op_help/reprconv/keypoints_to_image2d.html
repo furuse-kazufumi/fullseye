@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">keypoints_to_image2d — REPRCONV <code style="color:#22d3bf">keypoint</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">keypoints</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.keypoints_to_image2d(keypoints, shape=(64, 64))</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import reprconv; reprconv.keypoints_to_image2d(keypoints, shape=(64, 64))</code>、台帳から引くなら <code style="color:#22d3bf">opsreprconv.get(&quot;keypoints_to_image2d&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>画像座標 <code style="color:#22d3bf">(N,2) = (u, v)</code> → 計数画像 <code style="color:#22d3bf">(H, W)</code>。<code style="color:#22d3bf">keypoints</code> の 2 つ目の出口。</p>
 <p><code style="color:#22d3bf">round(v)</code> を行、<code style="color:#22d3bf">round(u)</code> を列として 1 ずつ加算する。<b>画素格子への量子化が損失</b>で、<code style="color:#22d3bf">keypoints_from_image2d</code> と往復すると位置が最大 0.5 画素ずれる(よく離れた 225 点での実測: <b>軸あたり</b> RMS 0.2835 px = 一様量子化の理論値 1/sqrt(12) = 0.2887 と一致。2-D 距離では sqrt(2) 倍の 0.4009 px で、理論 sqrt(2/12) = 0.4082)。</p>

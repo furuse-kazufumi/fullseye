@@ -3,6 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">images</code> → <code style="color:#22d3bf">depth</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.depth_from_focus(images, focus_positions=None)</code> (to call the implementation directly, <code style="color:#22d3bf">import ops3d; ops3d.depth_from_focus(images, focus_positions=None)</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;depth_from_focus&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>Return value through the ledger</b>: <code style="color:#22d3bf">fullseye.ledger.depth_from_focus(...)</code> returns <b>only the declared out type <code style="color:#22d3bf">depth</code></b> (the underlying function also returns auxiliary values). When you need what was dropped, use <code style="color:#22d3bf">fullseye.ledger.depth_from_focus.raw(...)</code> or call <code style="color:#22d3bf">ops3d.depth_from_focus</code> directly.</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Estimate height/depth from differently focused images as the best-focus position at each pixel.</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>

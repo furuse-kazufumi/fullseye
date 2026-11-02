@@ -4,6 +4,7 @@ dim: drive
 category: kendama
 in: 
 out: table
+gpu: なし
 examples: [gallery_drive_kendama_racket, gallery_drive_world_objects, poc_kendama]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.kendama_params(preset: 'str' = 'jka_16_2', *, trick: 'str' = 'ozara', ball_radius: 'float' = None, mass: 'float' = 0.075, string: 'float' = 0.39, cup_radius_big: 'float' = None, cup_depth: 'float' = None, ken_length: 'float' = None, width: 'float' = None, rho: 'float' = 1.2, cd=0.4, cup_offset=None, tie_offset=None, cup_axis=None, g: 'float' = 9.81) -> 'dict'` (実装を直接呼ぶなら `import kendama; kendama.kendama_params(preset: 'str' = 'jka_16_2', *, trick: 'str' = 'ozara', ball_radius: 'float' = None, mass: 'float' = 0.075, string: 'float' = 0.39, cup_radius_big: 'float' = None, cup_depth: 'float' = None, ken_length: 'float' = None, width: 'float' = None, rho: 'float' = 1.2, cd=0.4, cup_offset=None, tie_offset=None, cup_axis=None, g: 'float' = 9.81) -> 'dict'`、台帳から引くなら `opsdrive.get("kendama_params")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

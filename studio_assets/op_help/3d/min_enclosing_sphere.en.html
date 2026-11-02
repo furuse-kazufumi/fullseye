@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">min_enclosing_sphere — 3D <code style="color:#22d3bf">bounds</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">primitive</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.min_enclosing_sphere(points, refine_iters: &#x27;int&#x27; = 1000) -&gt; &#x27;Dict[str, object]&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import hull3d; hull3d.min_enclosing_sphere(points, refine_iters: &#x27;int&#x27; = 1000) -&gt; &#x27;Dict[str, object]&#x27;</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;min_enclosing_sphere&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Point set (N,3) → the (approximate) minimum enclosing sphere containing every point, {center(3), radius}.</p>
 <p>Unlike <code style="color:#22d3bf">fit_sphere_3d</code> (sphere fitting) or <code style="color:#22d3bf">ransac_sphere</code> / <code style="color:#22d3bf">hough_sphere_3d</code> (sphere detection), this solves for <b>the smallest sphere containing all points</b> (minimum enclosing ball, MEB). A 2-stage scheme tightens the radius while strictly keeping &quot;all points enclosed&quot;:</p>

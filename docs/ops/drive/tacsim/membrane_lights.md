@@ -4,6 +4,7 @@ dim: drive
 category: tacsim
 in: scalar
 out: matrix
+gpu: なし
 examples: [poc_tacsim_elastic_membrane, poc_tacsim_marker_shear, poc_tactile_dipole_torque]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `scalar` → `matrix`
 - **呼び出し**: `import fullseye as fs; fs.ledger.membrane_lights(elev_deg: 'float' = 55.0, azimuths_deg=(90.0, 210.0, 330.0)) -> 'np.ndarray'` (実装を直接呼ぶなら `import tacsim; tacsim.membrane_lights(elev_deg: 'float' = 55.0, azimuths_deg=(90.0, 210.0, 330.0)) -> 'np.ndarray'`、台帳から引くなら `opsdrive.get("membrane_lights")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

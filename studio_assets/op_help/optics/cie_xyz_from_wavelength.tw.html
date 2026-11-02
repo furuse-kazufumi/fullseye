@@ -3,6 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cie_xyz_from_wavelength(nm) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import matappear; matappear.cie_xyz_from_wavelength(nm) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsoptics.get(&quot;cie_xyz_from_wavelength&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>經台帳呼叫的回傳值</b>: <code style="color:#22d3bf">fullseye.ledger.cie_xyz_from_wavelength(...)</code> 只回傳<b>宣告的 out 型別 <code style="color:#22d3bf">points</code> 的值</b>(底層函式還會回傳輔助資訊)。需要被捨棄的部分時,請用 <code style="color:#22d3bf">fullseye.ledger.cie_xyz_from_wavelength.raw(...)</code>,或直接呼叫 <code style="color:#22d3bf">matappear.cie_xyz_from_wavelength</code>。</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>波長 [nm] → CIE 1931 2° 配色函數 (x̄, ȳ, z̄)。回傳輸入形狀加末尾 3 的陣列。</p>
 <p>Wyman, Sloan &amp; Shirley (JCGT 2013) 的多瓣 Gauss 近似。比查表粗略，但在整個可見區內相對表值的最大誤差約 ~1%，<b>既不需要內插也不需要外插</b>(由於是封閉公式，可在任意波長網格上直接求值)。可見區之外自然降為 0。</p>

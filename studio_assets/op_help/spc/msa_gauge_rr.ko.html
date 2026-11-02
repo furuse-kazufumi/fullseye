@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">msa_gauge_rr — SPC <code style="color:#22d3bf">msa</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.msa_gauge_rr(table, part=&#x27;part&#x27;, operator=&#x27;operator&#x27;, value=&#x27;value&#x27;, tolerance=None, pool_interaction=&#x27;auto&#x27;, pool_alpha=0.25)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import spc; spc.msa_gauge_rr(table, part=&#x27;part&#x27;, operator=&#x27;operator&#x27;, value=&#x27;value&#x27;, tolerance=None, pool_interaction=&#x27;auto&#x27;, pool_alpha=0.25)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsspc.get(&quot;msa_gauge_rr&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>분산분석법에 의한 게이지 반복성·재현성(R&amp;R) (<code style="color:#22d3bf">table</code>).</p>
 <p>반복성 EV(같은 사람이 같은 물건을 다시 측정했을 때의 흩어짐), 재현성 AV(사람이바뀌었을 때의 흩어짐. 교호작용 포함), 그 합성 GRR, 부품 간 PV, 총변동 TV, <code style="color:#22d3bf">%GRR = 100 GRR/TV</code>, 구별 가능한 계급 수 <code style="color:#22d3bf">ndc = 1.41 PV/GRR</code>.</p>

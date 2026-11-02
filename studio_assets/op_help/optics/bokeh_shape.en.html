@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">bokeh_shape — OPTICS <code style="color:#22d3bf">lensrender</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.bokeh_shape(system, field_xy_mm=None, defocus_mm=0.5, pupil_samples=512, object_mm=None, wavelength_um=None, grid=64) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import lensrender; lensrender.bokeh_shape(system, field_xy_mm=None, defocus_mm=0.5, pupil_samples=512, object_mm=None, wavelength_um=None, grid=64) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;bokeh_shape&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>The out-of-focus footprint of a point source - the intersection of the pupil images, the cat&#x27;s eye -&gt; dict.</p>
 <p>The point sits at *field_xy_mm* in the object plane at *object_mm* (a height in mm; for an object at infinity a pair of angles in degrees;</p>

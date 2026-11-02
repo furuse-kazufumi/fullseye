@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">emva_noise_whiteness — OPTICS <code style="color:#22d3bf">sensorchar</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.emva_noise_whiteness(y0, y1, y2=None, z_limit=5.0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import sensorchar; sensorchar.emva_noise_whiteness(y0, y1, y2=None, z_limit=5.0)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;emva_noise_whiteness&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>時間雑音は画素間で独立か(Linear 1.2 節の前提 3)、続けて撮った画像の間で独立か(Linear・General の前提 3)。</p>
 <p>★規格は前提を書く(「前処理がこの条件を壊すなら Release 4 Linear は使えない。典型は debayer・雑音除去・輪郭強調」)が、<b>確かめ方の数は定義していない</b>。ここの数はこの族の検査で、規格の数ではない。同じ露光の 2 枚の差 d = y0 − y1(固定パターンが消え、時間雑音だけが残る)の隣の画素との相関 ρ_h = ⟨d[m][n] d[m][n+1]⟩/⟨d²⟩、ρ_v(縦)、斜め ρ_d(2 方向の平均)。白い雑音では 0 で、標準偏差は約 1/√n なので z = ρ √n を返す。2 × 2 にまとめた和の分散比 VR = var(和)/(4 var(d)) = 1 + ρ_h + ρ_v + ρ_d は、平滑化(雑音除去)で 1 を越え、輪郭強調で 1 を割る。*y2*(3 枚目、y1 の次の画像)を渡すと、var(y0 − y2)/var(y0 − y1) − 1 = 1 枚おきの画像の相関 ρ_t を返す(1 次の再帰の時間フィルタ y_t = α x_t + (1 − α) y_{t−1} なら ρ_t = 1 − α。独立なら 0、z は √n/√3 で割る近似)。</p>

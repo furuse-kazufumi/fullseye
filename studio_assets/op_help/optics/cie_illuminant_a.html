@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">cie_illuminant_a — OPTICS <code style="color:#22d3bf">spectral</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">pairs</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cie_illuminant_a(wl_min_nm=300.0, wl_max_nm=830.0, n_points=107)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import spectralrad; spectralrad.cie_illuminant_a(wl_min_nm=300.0, wl_max_nm=830.0, n_points=107)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;cie_illuminant_a&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>CIE 標準イルミナント A の相対分光分布(CIE 15:2004 の定義式、560 nm で 100)。</p>
 <p>S_A(λ) = 100 (560/λ)⁵ · (exp(c₂/(2848·560e-9)) − 1)/(exp(c₂/(2848·λ)) − 1)、c₂ = 1.435e-2 m·K。タングステン電球の基準光源。定義が式なので、表の値はこの式の値そのもの(外部の真値になる)。</p>

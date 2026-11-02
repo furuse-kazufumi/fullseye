@@ -4,6 +4,7 @@ dim: acoustics
 category: level
 in: signal
 out: signal
+gpu: なし
 examples: [acoustic_condition_monitoring]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal` → `signal`
 - **呼び出し**: `import fullseye as fs; fs.ledger.apply_weighting(x, rate, kind='A')` (実装を直接呼ぶなら `import acoustics; acoustics.apply_weighting(x, rate, kind='A')`、台帳から引くなら `opsacoustics.get("apply_weighting")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

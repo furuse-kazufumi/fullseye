@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">illusion_ground_truth — GENERATIVE <code style="color:#22d3bf">illusion</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">table</code> (an op determined by its arguments alone — it takes no image or data input)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.illusion_ground_truth(name: &#x27;str&#x27; = &#x27;&#x27;) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import illusion; illusion.illusion_ground_truth(name: &#x27;str&#x27; = &#x27;&#x27;) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsgenerative.get(&quot;illusion_ground_truth&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Returns, as a table, the <b>exact invariants</b> that the illusions preserve (empty <code style="color:#22d3bf">name</code> gives all of them).</p>
 <p>★This is the core of the family. Hand out just the figure and it ends with &quot;how pretty&quot;, but <b>when the ground truth comes out together with the figure</b>, you can score the side that measures. Every <code style="color:#22d3bf">value</code> in the return value is &quot;the value it should be&quot;, not a measured value (measuring is the caller&#x27;s job).</p>

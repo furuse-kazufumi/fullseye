@@ -4,6 +4,7 @@ dim: optics
 category: finish
 in: normalmap
 out: rgbimage
+gpu: なし
 examples: [machined_metal_and_materials, poc_telecentric_metrology]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `normalmap` → `rgbimage`
 - **呼び出し**: `import fullseye as fs; fs.ledger.finish_shade(normals, kind='linear', metal='al', light=(0.3, 0.4, 0.87), view=(0.0, 0.0, 1.0), angle_deg=0.0, center=None, scale=1.0, patchiness=0.0, strength=1.0, seed=0) -> 'np.ndarray'` (実装を直接呼ぶなら `import metalfinish; metalfinish.finish_shade(normals, kind='linear', metal='al', light=(0.3, 0.4, 0.87), view=(0.0, 0.0, 1.0), angle_deg=0.0, center=None, scale=1.0, patchiness=0.0, strength=1.0, seed=0) -> 'np.ndarray'`、台帳から引くなら `opsoptics.get("finish_shade")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

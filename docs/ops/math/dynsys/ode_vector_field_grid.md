@@ -4,6 +4,7 @@ dim: math
 category: dynsys
 in: 
 out: flow2d
+gpu: なし
 examples: [poc_what_a_picture_cannot_check]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `flow2d`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.ode_vector_field_grid(system='rossler', params=None, bounds=(-10.0, 10.0, -10.0, 10.0), shape=(64, 64), plane='xy', offset=0.0)` (実装を直接呼ぶなら `import mathops; mathops.ode_vector_field_grid(system='rossler', params=None, bounds=(-10.0, 10.0, -10.0, 10.0), shape=(64, 64), plane='xy', offset=0.0)`、台帳から引くなら `opsmath.get("ode_vector_field_grid")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">vx_remap — VX <code style="color:#22d3bf">geometry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image2d × matrix × matrix</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vx_remap(image, map_x, map_y, *, interpolation, border, constant_value=0)</code>(要直接呼叫實作,<code style="color:#22d3bf">import vxcore; vxcore.vx_remap(image, map_x, map_y, *, interpolation, border, constant_value=0)</code>;從台帳取用則 <code style="color:#22d3bf">opsvx.get(&quot;vx_remap&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>remap(3.44 節)：輸出 (x, y) = 輸入 (map_x[y, x], map_y[y, x])(REQ-0392)。表的形狀與輸出相同，座標以輸入像素中心為整數。</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 不是 U8 的 2-D / map_x 與 map_y 不是同形狀的 2-D 實數 / interpolation、border 不在清單中。</p>

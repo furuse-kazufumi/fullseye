@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">sign_mesh — DRIVE <code style="color:#22d3bf">roadjp</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">table</code> (an op determined by its arguments alone — it takes no image or data input)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sign_mesh(kind: &#x27;str&#x27;, *, value=None, cell: &#x27;int&#x27; = 4, size_px: &#x27;int&#x27; = 128, font_path=None, side: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import roadjp; roadjp.sign_mesh(kind: &#x27;str&#x27;, *, value=None, cell: &#x27;int&#x27; = 4, size_px: &#x27;int&#x27; = 128, font_path=None, side: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;sign_mesh&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p><code style="color:#22d3bf">sign_image</code> + <code style="color:#22d3bf">sign_params</code> + <code style="color:#22d3bf">plate_mesh_from_image</code>. Adds <code style="color:#22d3bf">width</code>, <code style="color:#22d3bf">height</code> and <code style="color:#22d3bf">params</code> to the return value.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

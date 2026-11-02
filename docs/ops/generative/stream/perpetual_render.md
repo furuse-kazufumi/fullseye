@@ -4,6 +4,7 @@ dim: generative
 category: stream
 in: table
 out: rgb
+gpu: なし
 examples: [poc_illusions_and_perpetual_drawing]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `rgb`
 - **呼び出し**: `import fullseye as fs; fs.ledger.perpetual_render(state: 'dict', cell: 'int' = 2) -> 'np.ndarray'` (実装を直接呼ぶなら `import perpetual; perpetual.perpetual_render(state: 'dict', cell: 'int' = 2) -> 'np.ndarray'`、台帳から引くなら `opsgenerative.get("perpetual_render")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

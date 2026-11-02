@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">normals_to_egi — REPRCONV <code style="color:#22d3bf">direction</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">normals</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.normals_to_egi(normals, n_az=36, n_el=18)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import reprconv; reprconv.normals_to_egi(normals, n_az=36, n_el=18)</code>、台帳から引くなら <code style="color:#22d3bf">opsreprconv.get(&quot;normals_to_egi&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>法線 <code style="color:#22d3bf">(N,3)</code> → 拡張ガウス像 <code style="color:#22d3bf">(n_el, n_az)</code> の <code style="color:#22d3bf">image2d</code>。</p>
 <p>方向の 2-D ヒストグラム(Horn, *Extended Gaussian Images*, Proc. IEEE 72(12) 1984)。「どの向きの面がどれだけあるか」の地図で、平面が支配的な物体では 1 つの bin に山が立つ。<b>不可逆</b> —— bin 幅ぶんの方向解像度を捨てる。</p>

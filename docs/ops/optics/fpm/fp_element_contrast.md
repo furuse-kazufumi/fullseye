@@ -4,6 +4,7 @@ dim: optics
 category: fpm
 in: image2d × table
 out: table
+gpu: なし
 examples: [poc_fourier_ptychography]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d × table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.fp_element_contrast(image, elements, min_modulation=0.1, polarity='auto')` (実装を直接呼ぶなら `import fourierptycho; fourierptycho.fp_element_contrast(image, elements, min_modulation=0.1, polarity='auto')`、台帳から引くなら `opsoptics.get("fp_element_contrast")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

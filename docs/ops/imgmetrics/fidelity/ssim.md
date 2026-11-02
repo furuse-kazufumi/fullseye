@@ -4,6 +4,7 @@ dim: imgmetrics
 category: fidelity
 in: image2d × image2d
 out: scalar
+gpu: なし
 examples: [image_quality_metrics, poc_camera_shake_deblur, poc_ct_fidelity, poc_dehazing, poc_iqa_tid2013, poc_superresolution_limits]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d × image2d` → `scalar`
 - **呼び出し**: `import fullseye as fs; fs.ledger.ssim(a, b, data_range=None, win_size=11, sigma=1.5, K1=0.01, K2=0.03, channel_axis=None, crop_border=True)` (実装を直接呼ぶなら `import imgmetrics; imgmetrics.ssim(a, b, data_range=None, win_size=11, sigma=1.5, K1=0.01, K2=0.03, channel_axis=None, crop_border=True)`、台帳から引くなら `opsimgmetrics.get("ssim")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

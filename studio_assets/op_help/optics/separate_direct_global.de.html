@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">separate_direct_global — OPTICS <code style="color:#22d3bf">light_transport</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">images</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.separate_direct_global(images, fill=0.5, black_level=0.0, scheme=&#x27;shift&#x27;)</code> (die Implementierung direkt: <code style="color:#22d3bf">import lighttransport; lighttransport.separate_direct_global(images, fill=0.5, black_level=0.0, scheme=&#x27;shift&#x27;)</code>; aus dem Register: <code style="color:#22d3bf">opsoptics.get(&quot;separate_direct_global&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Trennt direkte und globale Anteile (Interreflexion) aus Bildern unter verschobenen hochfrequenten Mustern anhand von L_max und L_min je Pixel (Nayar et al. 2006, <code style="color:#22d3bf">table</code>).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>

@@ -4,6 +4,7 @@ dim: 3d
 category: resolution
 in: points
 out: points
+gpu: なし
 examples: [mesh_resolution_demo]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `points` → `points`
 - **呼び出し**: `import fullseye as fs; fs.ledger.pc_poisson_disk(points, radius, seed=0)` (実装を直接呼ぶなら `import meshres; meshres.pc_poisson_disk(points, radius, seed=0)`、台帳から引くなら `ops3d.get("pc_poisson_disk")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

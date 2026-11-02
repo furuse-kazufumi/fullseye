@@ -4,6 +4,7 @@ dim: generative
 category: sem
 in: 
 out: table
+gpu: なし
 examples: [poc_sem_tem_same_particle, poc_virtual_sem_kv_cd_bse]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.sem_electron_mc(material='SI', energy_kev: 'float' = 10.0, *, tol: 'float' = 0.01, batch: 'int' = 1000, max_electrons: 'int' = 20000, seed: 'int' = 0, n_tracks: 'int' = 0, depth_bins: 'int' = 60, tilt_deg: 'float' = 0.0) -> 'dict'` (実装を直接呼ぶなら `import sem; sem.sem_electron_mc(material='SI', energy_kev: 'float' = 10.0, *, tol: 'float' = 0.01, batch: 'int' = 1000, max_electrons: 'int' = 20000, seed: 'int' = 0, n_tracks: 'int' = 0, depth_bins: 'int' = 60, tilt_deg: 'float' = 0.0) -> 'dict'`、台帳から引くなら `opsgenerative.get("sem_electron_mc")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

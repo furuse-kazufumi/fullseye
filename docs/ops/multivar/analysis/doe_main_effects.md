@@ -4,6 +4,7 @@ dim: multivar
 category: analysis
 in: design × signal
 out: table
+gpu: なし
 examples: [multivar_inspection_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `design × signal` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.doe_main_effects(design=None, y=None, goal='larger') -> 'dict'` (実装を直接呼ぶなら `import multivar; multivar.doe_main_effects(design=None, y=None, goal='larger') -> 'dict'`、台帳から引くなら `opsmultivar.get("doe_main_effects")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

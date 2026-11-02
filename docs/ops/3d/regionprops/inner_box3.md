@@ -4,6 +4,7 @@ dim: 3d
 category: regionprops
 in: voxel
 out: primitive
+gpu: なし
 examples: [inner_box_inspection]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `voxel` → `primitive`
 - **呼び出し**: `import fullseye as fs; fs.ledger.inner_box3(vol) -> 'dict'` (実装を直接呼ぶなら `import regionprops3d; regionprops3d.inner_box3(vol) -> 'dict'`、台帳から引くなら `ops3d.get("inner_box3")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

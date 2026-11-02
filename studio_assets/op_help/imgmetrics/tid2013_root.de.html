@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tid2013_root — IMGMETRICS <code style="color:#22d3bf">iqa</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">keine</code> → <code style="color:#22d3bf">any</code> (ein Operator, der allein durch seine Argumente bestimmt ist — er nimmt kein Bild und keine Daten entgegen)</p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tid2013_root(root=None) -&gt; &#x27;Optional[Path]&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import iqatid; iqatid.tid2013_root(root=None) -&gt; &#x27;Optional[Path]&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsimgmetrics.get(&quot;tid2013_root&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Ort, an den die Distribution entpackt wurde. Fehlt <code style="color:#22d3bf">root</code>, die Umgebungsvariable <code style="color:#22d3bf">FULLSEYE_TID2013_DATA</code>. Fehlt beides oder fehlt <code style="color:#22d3bf">mos_with_names.txt</code>, <code style="color:#22d3bf">None</code> (der Aufrufer überspringt (skip) — die Daten liegen nicht im Repo).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>

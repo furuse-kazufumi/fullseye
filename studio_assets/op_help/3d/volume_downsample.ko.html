@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">volume_downsample — 3D <code style="color:#22d3bf">preprocess</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">voxel</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.volume_downsample(vol, factor, mode=&#x27;mean&#x27;)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import volops; volops.volume_downsample(vol, factor, mode=&#x27;mean&#x27;)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;volume_downsample&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p><code style="color:#22d3bf">(D, H, W)</code> 볼륨을 축별 정수 *factor* 로 블록 풀링(데이터 솎아내기).</p>
 <p>대형 CT / 라미노그래피 / 시뮬레이션 볼륨은더 무거운 3-D 연산자에 앞서 솎아내야 한다(Frangi/Sato는 ~256**3 복셀이 상한, <code style="color:#22d3bf">MAX_EIGEN_VOXELS</code> 참조). 이것은 점군의 <code style="color:#22d3bf">voxel_grid_downsample</code>과 메시의 <code style="color:#22d3bf">decimate_qem</code>에 대응하는 볼륨판이다 — Fullseye *솎아내기*(decimation) 계열의 세 번째 다리로, 3-D 데이터 sort마다 하나씩이다.</p>

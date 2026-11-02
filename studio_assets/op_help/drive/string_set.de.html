@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">string_set — DRIVE <code style="color:#22d3bf">kendamaworld</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.string_set(world: &#x27;dict&#x27;, i: &#x27;int&#x27;, p_ball, p_cup) -&gt; &#x27;None&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import kendamaworld; kendamaworld.string_set(world: &#x27;dict&#x27;, i: &#x27;int&#x27;, p_ball, p_cup) -&gt; &#x27;None&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;string_set&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Setzt beide Enden der Schnur i auf (p_ball, p_cup) (überschreibt nur die Vertices). ValueError für ein Objekt, das keine Schnur ist.</p>
 <p>Leere Eingabe (<code style="color:#22d3bf">world</code> ein leeres dict) löst <code style="color:#22d3bf">ValueError</code> aus.</p>

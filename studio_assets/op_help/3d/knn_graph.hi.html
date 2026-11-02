@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">knn_graph — 3D <code style="color:#22d3bf">geodesic</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">graph</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.knn_graph(points: numpy.ndarray, k: int = 8) -&gt; Tuple[numpy.ndarray, numpy.ndarray]</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import geodesic3d; geodesic3d.knn_graph(points: numpy.ndarray, k: int = 8) -&gt; Tuple[numpy.ndarray, numpy.ndarray]</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;knn_graph&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>हर point के k nearest-neighbour indices और Euclid distances (खुद को छोड़कर)। → (idx (N,k) int, dist (N,k) float)।</p>
 <p><code style="color:#22d3bf">scipy.spatial.cKDTree</code> से हर point के k+1 nearest neighbours ढूँढता है, और ख़ुद point (दूरी 0) को छोड़कर k लौटाता है। <code style="color:#22d3bf">idx[i, j]</code> point i से j-वें सबसे निकट point का index है, <code style="color:#22d3bf">dist[i, j]</code> उसकी Euclid दूरी (coordinates की इकाई में), और हर row दूरी के बढ़ते क्रम में है।</p>

@@ -4,6 +4,7 @@ dim: shape2d
 category: morph
 in: image2d × pairs × pairs
 out: image2d
+gpu: なし
 examples: [shape2d_morph_descriptor_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d × pairs × pairs` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.warp_piecewise_affine(img, src_pts, dst_pts, order=1)` (実装を直接呼ぶなら `import imagemorph; imagemorph.warp_piecewise_affine(img, src_pts, dst_pts, order=1)`、台帳から引くなら `opsshape2d.get("warp_piecewise_affine")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">mueller_partial_polarizer — OPTICS <code style="color:#22d3bf">polarization</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">matrix</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mueller_partial_polarizer(angle_deg=0.0, extinction_ratio=1000.0, transmission=1.0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import optics; optics.mueller_partial_polarizer(angle_deg=0.0, extinction_ratio=1000.0, transmission=1.0)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;mueller_partial_polarizer&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>消光比が有限の直線偏光子(直線ダイアテニュエータ)の Mueller 行列。→ (4, 4)、角度の場なら (*shape, 4, 4)。</p>
 <p>実在の偏光子は、軸に沿った偏光に強度透過率 <code style="color:#22d3bf">T1 = transmission</code> を、軸に直交する偏光に <code style="color:#22d3bf">T2 = T1 / extinction_ratio</code> を通す。<code style="color:#22d3bf">P = T1 + T2</code>、<code style="color:#22d3bf">D = T1 - T2</code>、<code style="color:#22d3bf">Q = 2 sqrt(T1 T2)</code>、<code style="color:#22d3bf">c = cos 2a</code>、<code style="color:#22d3bf">s = sin 2a</code>(軸は *angle_deg*)と書くと、行列は</p>

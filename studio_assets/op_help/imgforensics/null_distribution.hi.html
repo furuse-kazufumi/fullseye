@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">null_distribution — IMGFORENSICS <code style="color:#22d3bf">calibration</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.null_distribution(values)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import imgforensics; imgforensics.null_distribution(values)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsimgforensics.get(&quot;null_distribution&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>जिन sample के बारे में पता है कि उनमें <b>छेड़छाड़ नहीं हुई</b>, उनसे evidence statistic का null distribution बनाता है।</p>
 <p>यह family लगातार कोई verdict नहीं लौटाती। यह सही है, लेकिन जैसा अभी है, उपयोगकर्ता को <code style="color:#22d3bf">PCE 1832</code> जैसी एक संख्या थमा दी जाती है और उसके पास <b>उसे समझने का कोई साधन नहीं</b> है। फिर भी threshold साथ में देना झूठ होगा ―― अलगाव का बिंदु images की संख्या, resolution, compression ratio और subject के साथ बदलता है, इसलिए यह ऐसा मान नहीं है जिसे shipping के समय तय किया जा सके।</p>

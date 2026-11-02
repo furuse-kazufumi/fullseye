@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">lateral_offset — DRIVE <code style="color:#22d3bf">lateral</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lateral_offset(points, path, *, start_index=None, window: &#x27;int&#x27; = 40) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivelateral; drivelateral.lateral_offset(points, path, *, start_index=None, window: &#x27;int&#x27; = 40) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;lateral_offset&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>꺾은선 경로를 따른 점의 호의 길이 s와 횡방향 편차 n(진행 방향 왼쪽이 양). 가장 가까운 구간으로의 사영.</p>
 <p><code style="color:#22d3bf">start_index</code>(점마다, 또는 하나)를 주면 그 구간 앞뒤 <code style="color:#22d3bf">window</code> 구간만 조사한다(반복 호출을 빠르게 한다. 창 밖에 진짜 최근접이 있으면 틀리므로, 점이 조금씩 움직일 때 쓴다). None 이면 전체 구간을 조사한다.</p>

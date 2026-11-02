@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">vol_label_mpr_rgb — VOLCOLOR <code style="color:#22d3bf">slice</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">rgbvolume</code> → <code style="color:#22d3bf">rgbimage</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_label_mpr_rgb(rgbvol, center=None, gap: &#x27;int&#x27; = 4, background=(0.05, 0.05, 0.07))</code>(要直接呼叫實作,<code style="color:#22d3bf">import volcolor; volcolor.vol_label_mpr_rgb(rgbvol, center=None, gap: &#x27;int&#x27; = 4, background=(0.05, 0.05, 0.07))</code>;從台帳取用則 <code style="color:#22d3bf">opsvolcolor.get(&quot;vol_label_mpr_rgb&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把彩色體的三個正交斷面排成<b>一張 RGB 圖</b>。</p>
 <p>從左起依序為 axial <code style="color:#22d3bf">(H, W)</code> / coronal <code style="color:#22d3bf">(D, W)</code> / sagittal <code style="color:#22d3bf">(D, H)</code>。*center* 為 <code style="color:#22d3bf">(z, y, x)</code> 的交點(預設為各軸的中央)。面板高度以 *background* 向最大值作下方填補,中間留出 *gap* 像素的間隙。</p>

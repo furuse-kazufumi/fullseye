@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">track_triangulate — DRIVE <code style="color:#22d3bf">balltrack</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table × any × any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.track_triangulate(tracks, poses, Ks, n_frames: &#x27;int&#x27;) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import balltrack; balltrack.track_triangulate(tracks, poses, Ks, n_frames: &#x27;int&#x27;) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;track_triangulate&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Trianguliert die Trajektorien je Kamera (Rückgabewerte von <code style="color:#22d3bf">ball_track</code>) zu einer 3-D-Trajektorie: <code style="color:#22d3bf">{&quot;frame&quot;, &quot;p&quot; (N, 3), &quot;reproj_rms&quot; (N,)}</code> (nur Frames, die in 2 oder mehr Ansichten sichtbar sind).</p>
 <p>Leere Eingabe (<code style="color:#22d3bf">tracks</code> ohne Einträge) löst <code style="color:#22d3bf">ValueError</code> aus.</p>

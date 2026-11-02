@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">pairs_to_table — REPRCONV <code style="color:#22d3bf">pairs</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pairs_to_table(pairs)</code> (die Implementierung direkt: <code style="color:#22d3bf">import reprconv; reprconv.pairs_to_table(pairs)</code>; aus dem Register: <code style="color:#22d3bf">opsreprconv.get(&quot;pairs_to_table&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Paare <code style="color:#22d3bf">(N,2)</code> → eine zusammenfassende <code style="color:#22d3bf">table</code>. <b>Einwegs.</b></p>
 <p><code style="color:#22d3bf">x_uniform</code> ist der Test &quot;ist Spalte 0 äquidistant&quot;; Paare, bei denen er False ist, verlieren beim Durchlauf durch <code style="color:#22d3bf">pairs_to_signal</code> stillschweigend x (siehe Docstring oben). Getestet wird über den Abstand zwischen größter und kleinster Differenz, Schwellwert 1e-9 relativ zur Gesamtspanne.</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">geodesic_heat_grid — MATH <code style="color:#22d3bf">geometry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.geodesic_heat_grid(mask, source=None, *, spacing=1.0, t: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import mathgeometry; mathgeometry.geodesic_heat_grid(mask, source=None, *, spacing=1.0, t: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsmath.get(&quot;geodesic_heat_grid&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>2-D image या 3-D volume के grid पर, obstacles से बचते हुए geodesic distance heat method से निकालता है (Crane et al. 2013 का grid संस्करण)।</p>
 <p><code style="color:#22d3bf">mask</code> एक bool array (2-D या 3-D) है जहाँ पार करने योग्य pixels/voxels True हैं; <code style="color:#22d3bf">source</code> start point का index है (1 point <code style="color:#22d3bf">(i, j[, k])</code> या points की list; छोड़ने पर पहला पार करने योग्य pixel)। <code style="color:#22d3bf">spacing</code> हर axis पर pixel का आकार है (scalar या हर axis के लिए)।</p>

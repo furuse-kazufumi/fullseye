@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">annotate_invert_visibility — ANNOTATE <code style="color:#22d3bf">overlay</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d × mask</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_invert_visibility(img, mask, mode=&#x27;complement&#x27;, alpha=1.0, bits=128)</code>(要直接调用实现,<code style="color:#22d3bf">import annotate; annotate.annotate_invert_visibility(img, mask, mode=&#x27;complement&#x27;, alpha=1.0, bits=128)</code>;从台账取用则 <code style="color:#22d3bf">opsannotate.get(&quot;annotate_invert_visibility&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>在绘制之前测量反色<b>在该底色上是否真的看得见</b>。</p>
 <p>反色的优点是“不需要知道底色”,但弱点只有 1 个, 而且是致命的 —— <b>在中间调上,反转后仍是同样的颜色</b>。8bit 灰度 v=128 的补色是 v=127,WCAG 对比度为 <b>1.014</b> (比值 1.0 即“同一颜色”。实测 2026-09-08)。比值低于 1.5 的区段覆盖 v ∈ [113, 142] 共 30/256 个灰阶 = 全部灰阶的 12 %。</p>

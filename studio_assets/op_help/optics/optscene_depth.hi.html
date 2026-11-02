@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">optscene_depth — OPTICS <code style="color:#22d3bf">scene</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table × table</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.optscene_depth(scene, camera, supersample: &#x27;int&#x27; = 1) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import optscene; optscene.optscene_depth(scene, camera, supersample: &#x27;int&#x27; = 1) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;optscene_depth&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>depth का <b>ground truth</b> (H, W) [mm]। यह <b>optical axis की दिशा में z</b> है, viewpoint से slant distance नहीं।</p>
 <p>depth cameras, stereo और light sectioning सभी optical axis के साथ z लौटाते हैं, इसलिए यह उसी से मेल खाता है (slant range मिलाने का अर्थ होता ऐसे ground truth से तुलना करना जो field of view के किनारों की ओर व्यवस्थित रूप से हटा हुआ है, और चूँकि केंद्र पर यह मेल खाता है, आपको पता भी नहीं चलता)। raw ray दूरी चाहिए तो trace_rays(...)[&quot;t&quot;] का उपयोग करें।</p>

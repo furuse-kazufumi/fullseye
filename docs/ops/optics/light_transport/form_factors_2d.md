@@ -4,6 +4,7 @@ dim: optics
 category: light_transport
 in: table
 out: matrix
+gpu: なし
 examples: [poc_interreflection_fringe_error, poc_itof_multifreq]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `matrix`
 - **呼び出し**: `import fullseye as fs; fs.ledger.form_factors_2d(profile)` (実装を直接呼ぶなら `import lighttransport; lighttransport.form_factors_2d(profile)`、台帳から引くなら `opsoptics.get("form_factors_2d")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

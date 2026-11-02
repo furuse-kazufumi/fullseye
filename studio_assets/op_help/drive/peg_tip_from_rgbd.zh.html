@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">peg_tip_from_rgbd — DRIVE <code style="color:#22d3bf">pegsim</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">rgb × image2d × matrix</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.peg_tip_from_rgbd(rgb, depth, K, r_peg: &#x27;float&#x27; = 0.005, peg_mask=None) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import pegsim; pegsim.peg_tip_from_rgbd(rgb, depth, K, r_peg: &#x27;float&#x27; = 0.005, peg_mask=None) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;peg_tip_from_rgbd&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>从 1 帧腕部 RGB-D 求销末端中心的 3-D 坐标(相机坐标)：销的像素 → depth 点云 → PCA 轴 → 已知半径圆柱拟合；末端在轴向上的位置由一个模型确定，该模型使阴影的端部(亚像素、覆盖率)与投影边缘圆的端部一致。</p>
 <p>返回: <code style="color:#22d3bf">tip_cam</code>(3,)、<code style="color:#22d3bf">axis</code>(尖端 → 上方,单位向量)、<code style="color:#22d3bf">rms_cyl</code>、<code style="color:#22d3bf">n_pts</code>、<code style="color:#22d3bf">uv</code>(尖端的投影)、<code style="color:#22d3bf">delta_axial</code>。</p>

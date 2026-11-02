@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">ghost_analysis — OPTICS <code style="color:#22d3bf">noncoaxial</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ghost_analysis(system, coatings=None, field=None, rings=6, pupil_fill=0.98, pixel_mm=0.005, max_rows=None)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import raytrace3d; raytrace3d.ghost_analysis(system, coatings=None, field=None, rings=6, pupil_fill=0.98, pixel_mm=0.005, max_rows=None)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;ghost_analysis&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Two-reflection ghosts of every surface pair (<code style="color:#22d3bf">table</code>): focus, size on the sensor and relative intensity.</p>
 <p>For surface records <code style="color:#22d3bf">i &lt; j</code> (refracting surfaces and beamsplitters; nominal mirrors only as the parts of the path they already are), the light runs to *j*, reflects, crosses *j−1 … i+1* backwards, reflects at *i* and runs on to the image plane — <code style="color:#22d3bf">N(N−1)/2</code> paths. The nominal bundle (same launch as the image) is traced along each path with real rays. Per ghost:</p>

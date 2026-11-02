@@ -4,6 +4,7 @@ dim: 3d
 category: medial
 in: voxel
 out: flow_dense
+gpu: なし
 examples: [nearest_seed_partition]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `voxel` → `flow_dense`
 - **呼び出し**: `import fullseye as fs; fs.ledger.vol_nearest_seed_vector(vol_binary, spacing=None)` (実装を直接呼ぶなら `import volops; volops.vol_nearest_seed_vector(vol_binary, spacing=None)`、台帳から引くなら `ops3d.get("vol_nearest_seed_vector")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

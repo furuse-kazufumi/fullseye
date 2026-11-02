@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">blob_select — BLOB <code style="color:#22d3bf">select</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">labels2d</code> → <code style="color:#22d3bf">labels2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.blob_select(labels: &#x27;Any&#x27;, feature: &#x27;str&#x27;, vmin: &#x27;Optional[float]&#x27; = None, vmax: &#x27;Optional[float]&#x27; = None, spacing: &#x27;float&#x27; = 1.0) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import blob2d; blob2d.blob_select(labels: &#x27;Any&#x27;, feature: &#x27;str&#x27;, vmin: &#x27;Optional[float]&#x27; = None, vmax: &#x27;Optional[float]&#x27; = None, spacing: &#x27;float&#x27; = 1.0) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsblob.get(&quot;blob_select&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Keeps only the objects whose feature value lies in <code style="color:#22d3bf">[vmin, vmax]</code> (<b>the numbers are reassigned starting from 1</b>).</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>

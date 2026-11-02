@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">force_from_wrist_displacement — DRIVE <code style="color:#22d3bf">cutting</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">signal × signal × scalar</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.force_from_wrist_displacement(z_meas_mm, z_cmd_mm, k_n_per_mm: &#x27;float&#x27;)</code> (die Implementierung direkt: <code style="color:#22d3bf">import cutting; cutting.force_from_wrist_displacement(z_meas_mm, z_cmd_mm, k_n_per_mm: &#x27;float&#x27;)</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;force_from_wrist_displacement&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Bei nachgiebigem Handgelenk (vertikale Feder k, N/mm) ist die Druckkraft F = k (z_meas − z_cmd): Der Betrag, um den die Klinge über dem Sollwert bleibt, ist die Kraft (Array in N).</p>
 <p>Quasistatische Näherung: Trägheit und Dämpfung des Handgelenks sind nicht enthalten. Wird ein Handgelenk mit Dämpfung c mit Geschwindigkeit v abgesenkt, geht c·v in die in der Luft genommene Tara ein, und es fällt nur weg, solange die Klinge vom Lebensmittel aufgehalten wird —— die Fehlerobergrenze ist c·v (im --full des PoC mit der Zwangskraft von MuJoCo verglichen).</p>

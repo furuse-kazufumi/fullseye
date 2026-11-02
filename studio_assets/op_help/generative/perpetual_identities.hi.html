@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">perpetual_identities — GENERATIVE <code style="color:#22d3bf">perpetual</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">table</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.perpetual_identities(which: &#x27;str&#x27; = &#x27;&#x27;) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import perpetual; perpetual.perpetual_identities(which: &#x27;str&#x27; = &#x27;&#x27;) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsgenerative.get(&quot;perpetual_identities&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>हर system को जिन <b>exact दावों</b> को पूरा करना चाहिए, उन्हें मापे गए मानों के साथ लौटाता है (<code style="color:#22d3bf">table</code>)।</p>
 <p>★इस family का मूल। &quot;अनंत बहती तस्वीर&quot; को रूप देखकर score नहीं किया जा सकता, इसलिए <b>तस्वीर से स्वतंत्र रूप से सही रहने वाले सूत्र</b> उसी op से निकाले जाते हैं। <code style="color:#22d3bf">residual</code> उस मात्रा का मापा गया मान है जो 0 होनी चाहिए।</p>

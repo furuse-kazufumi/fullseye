@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">noncoaxial_drawing — OPTICS <code style="color:#22d3bf">drawing</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.noncoaxial_drawing(system, fields=None, rays=3, view=&#x27;yz&#x27;, scale=None, title=None, profile_points=61, rotate_deg=0, overlays=None)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import optdraw; optdraw.noncoaxial_drawing(system, fields=None, rays=3, view=&#x27;yz&#x27;, scale=None, title=None, profile_points=61, rotate_deg=0, overlays=None)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;noncoaxial_drawing&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>折り返した系の断面図・設置図(<code style="color:#22d3bf">table</code>、図の dict)—— <code style="color:#22d3bf">raytrace3d</code> の系の面・鏡・半透鏡・像面・光線を、大域の座標で子午面に投影して描く。</p>
 <p>*system* は <code style="color:#22d3bf">raytrace3d.noncoaxial_system</code> の系(<code style="color:#22d3bf">raytrace.lens_system</code> の処方も受ける)。*view* は投影面:</p>

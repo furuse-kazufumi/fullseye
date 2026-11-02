@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">adg_execute — DRIVE <code style="color:#22d3bf">agv</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.adg_execute(adg, delay_prob=0.3, seed=0, max_steps=10000)</code>(要直接调用实现,<code style="color:#22d3bf">import agvfleet; agvfleet.adg_execute(adg, delay_prob=0.3, seed=0, max_steps=10000)</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;adg_execute&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>按 ADG 执行。每个时刻，每辆车以概率 <code style="color:#22d3bf">delay_prob</code> 停下(打滑、人员、装卸延误)。</p>
 <p>只有下一动作的依赖全部完成的车辆才前进 1 格。返回 dict: <code style="color:#22d3bf">trajectories</code>(实际位置序列)、<code style="color:#22d3bf">makespan</code>、<code style="color:#22d3bf">collisions</code>(同一格子、对向交错)、<code style="color:#22d3bf">deadlock</code>(谁都无法前进且未完成)、<code style="color:#22d3bf">finished</code>。</p>

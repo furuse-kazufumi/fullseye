@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">hertz_small_strain_error — DRIVE <code style="color:#22d3bf">tacdome</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">signal × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.hertz_small_strain_error(d, p: &#x27;float&#x27;, reading: &#x27;str&#x27; = &#x27;derived&#x27;) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import tacdome; tacdome.hertz_small_strain_error(d, p: &#x27;float&#x27;, reading: &#x27;str&#x27; = &#x27;derived&#x27;) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;hertz_small_strain_error&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>將小變形線性解(Hertz)用於大變形時的誤差 [%] (僅由 d 決定，與 L、尺寸、彈性模數無關)。</p>
 <p><code style="color:#22d3bf">force_from_delta</code> = 1/κₙ − 1(由壓入量讀力),<code style="color:#22d3bf">radius_from_delta</code> = 1/(a/a_L) − 1,<code style="color:#22d3bf">force_from_radius</code> = (a/a_L)^{p+1}/κₙ − 1(由接觸半徑讀力 = 視觸覺感測器的讀法,平頭為 nan),<code style="color:#22d3bf">force_universal</code> = 用普適形式 (1 − k d)⁻¹ 讀出的力的誤差 κ_universal/κₙ − 1(k·d ≥ 1 為 nan)。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>:d 在 [0, 1) 之外、p 超出範圍。</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">sdf_intersect — 3D <code style="color:#22d3bf">sdf_csg</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">sdf × sdf</code> → <code style="color:#22d3bf">sdf</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sdf_intersect(a, b)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import sdf_ops; sdf_ops.sdf_intersect(a, b)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;sdf_intersect&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>2 SDFs का intersection A∩B = element-wise max(a, b) (केवल दोनों के अंदर होने पर अंदर)।</p>
 <p>शून्य समसतह दोनों सीमाओं का सामान्य भाग है। अंदर और बाहर दोनों आम तौर पर सख्त एसडीएफ नहीं हैं, लेकिन दूरी की निचली सीमाएं हो सकती हैं।</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">skeleton_branches3d — 3D <code style="color:#22d3bf">medial</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">voxel</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.skeleton_branches3d(vol, min_length=0)</code> (die Implementierung direkt: <code style="color:#22d3bf">import medial; medial.skeleton_branches3d(vol, min_length=0)</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;skeleton_branches3d&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Zerschneidet ein 3-D-Skelett an seinen Knoten in Äste (Segmente). Die 3-D-Version des 2-D-<code style="color:#22d3bf">r2_split_skeleton_lines</code>.</p>
 <p>Was nach Entfernen der Verzweigungspunkt-Voxel übrig bleibt, sind die Äste. Bei min_length &gt; 0 werden Fragmente entfernt, deren 26-Zusammenhangskomponente weniger Voxel als diesen Wert hat.</p>

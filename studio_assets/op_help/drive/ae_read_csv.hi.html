@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">ae_read_csv — DRIVE <code style="color:#22d3bf">grind</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ae_read_csv(path, header_lines: &#x27;int&#x27; = 12, offset: &#x27;float&#x27; = 32768.0, full_scale: &#x27;float&#x27; = 32768.0) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import grind; grind.ae_read_csv(path, header_lines: &#x27;int&#x27; = 12, offset: &#x27;float&#x27; = 32768.0, full_scale: &#x27;float&#x27; = 32768.0) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;ae_read_csv&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>AE की raw CSV (header की <code style="color:#22d3bf">header_lines</code> row + 1 row में 1 sample का ADC मान) को voltage [V] के signal में बदलता है।</p>
 <p>सार्वजनिक डेटा का ADC 16 bit, ±1 V, स्ट्रेट ऑफ़सेट बाइनरी है (0 → −1 V, 32768 → 0 V, 65535 → +1 V), इसलिए <code style="color:#22d3bf">(raw − offset) / full_scale</code> (विश्लेषण कोड के रूपांतरण के समान)। पथ रिटर्न मान में नहीं रखा जाता। गैर-संख्यात्मक पंक्ति / खाली → <code style="color:#22d3bf">ValueError</code>।</p>

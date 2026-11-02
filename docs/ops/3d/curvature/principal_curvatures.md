@@ -4,6 +4,7 @@ dim: 3d
 category: curvature
 in: points
 out: curvature
+gpu: なし
 examples: [curvature_grasp, itokawa_curvature, minimal_surfaces]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `points` → `curvature`
 - **呼び出し**: `import fullseye as fs; fs.ledger.principal_curvatures(points, k=25, normals=None, *, method='exact')` (実装を直接呼ぶなら `import curvature3d; curvature3d.principal_curvatures(points, k=25, normals=None, *, method='exact')`、台帳から引くなら `ops3d.get("principal_curvatures")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

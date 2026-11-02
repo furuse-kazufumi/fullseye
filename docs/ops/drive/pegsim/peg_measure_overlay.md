@@ -4,6 +4,7 @@ dim: drive
 category: pegsim
 in: rgb × matrix × matrix
 out: rgb
+gpu: なし
 examples: [poc_pegsim_insertion]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `rgb × matrix × matrix` → `rgb`
 - **呼び出し**: `import fullseye as fs; fs.ledger.peg_measure_overlay(rgb, truth_uv, est_uv, edge_uv=None, size: 'int' = 12, zoom: 'int' = 3, crop: 'int' = 40) -> 'np.ndarray'` (実装を直接呼ぶなら `import pegsim; pegsim.peg_measure_overlay(rgb, truth_uv, est_uv, edge_uv=None, size: 'int' = 12, zoom: 'int' = 3, crop: 'int' = 40) -> 'np.ndarray'`、台帳から引くなら `opsdrive.get("peg_measure_overlay")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

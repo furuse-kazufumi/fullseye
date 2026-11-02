@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">add_frame_corners — SHAPE2D <code style="color:#22d3bf">morph</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">pairs</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.add_frame_corners(pts, shape)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import imagemorph; imagemorph.add_frame_corners(pts, shape)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsshape2d.get(&quot;add_frame_corners&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>점 집합에 영상의 네 모서리(+변의 중점)를 고정점으로 추가한다.</p>
 <p>워프의 삼각형 분할이 영상 전체를 덮어, 볼록 껍질 바깥에 생기는 구멍을 막기 위한 정석 처치. src/dst 양쪽에 같은 순서로 더하면, 네 모서리는 &quot;움직이지 않는 대응점&quot;으로 작동한다.</p>

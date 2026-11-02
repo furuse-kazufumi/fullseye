@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">perpetual_chaos_game — GENERATIVE <code style="color:#22d3bf">perpetual</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">keine</code> → <code style="color:#22d3bf">rgb</code> (ein Operator, der allein durch seine Argumente bestimmt ist — er nimmt kein Bild und keine Daten entgegen)</p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.perpetual_chaos_game(points: &#x27;int&#x27; = 400000, size: &#x27;int&#x27; = 520, seed: &#x27;int&#x27; = 0, vertices: &#x27;int&#x27; = 3, ratio: &#x27;float&#x27; = 0.5, sub: &#x27;int&#x27; = 2) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import perpetual; perpetual.perpetual_chaos_game(points: &#x27;int&#x27; = 400000, size: &#x27;int&#x27; = 520, seed: &#x27;int&#x27; = 0, vertices: &#x27;int&#x27; = 3, ratio: &#x27;float&#x27; = 0.5, sub: &#x27;int&#x27; = 2) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsgenerative.get(&quot;perpetual_chaos_game&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Chaosspiel — allein durch Würfeln und jeweils halbes Annähern entsteht das Sierpiński-Dreieck.</p>
 <p>Invariante: die Box-Counting-Dimension des Attraktors mit 3 Ecken und Verhältnis 1/2 ist <b>log3/log2 = 1.5850</b>.</p>

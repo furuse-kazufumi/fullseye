@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">brdf_lommel_seeliger — 3D <code style="color:#22d3bf">render</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">normalmap</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.brdf_lommel_seeliger(normals, light=(0.0, 0.0, 1.0), view=(0.0, 0.0, 1.0), w: &#x27;float&#x27; = 0.42) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import render_shade; render_shade.brdf_lommel_seeliger(normals, light=(0.0, 0.0, 1.0), view=(0.0, 0.0, 1.0), w: &#x27;float&#x27; = 0.42) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;brdf_lommel_seeliger&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Lommel-Seeliger reflectance law (किनारे तक उजला regolith) से normal map को shade करता है और I/F <code style="color:#22d3bf">(H, W)</code> लौटाता है।</p>
 <p>Lambert (<code style="color:#22d3bf">phong_shade</code> का diffuse term) किनारे पर (μ→0) 0 हो जाता है, लेकिन Lommel-Seeliger μ0/(μ0+μ) है, इसलिए किनारे पर भी μ0 जितना चमकीला रहता है, और asteroid व चाँद जैसा &quot;सपाट disc&quot; दिखता है। <code style="color:#22d3bf">w</code> = single-scattering albedo। fail-closed (normal का shape, w की range)।</p>

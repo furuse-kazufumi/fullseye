@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tps_fit — 3D <code style="color:#22d3bf">deform</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">deformation</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tps_fit(src_ctrl, dst_ctrl, lam=0.0)</code> (to call the implementation directly, <code style="color:#22d3bf">import deform3d; deform3d.tps_fit(src_ctrl, dst_ctrl, lam=0.0)</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;tps_fit&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Fit a 3-D thin-plate spline from control-point correspondences.</p>
 <p>Computes the TPS coefficients that map the moving control points <code style="color:#22d3bf">src_ctrl</code> onto the fixed <code style="color:#22d3bf">dst_ctrl</code> by solving the saddle-point system by least squares (<code style="color:#22d3bf">numpy.linalg.lstsq</code>). With λ=0 it interpolates exactly at the control points (<code style="color:#22d3bf">tps_warp(model, src_ctrl) == dst_ctrl</code>); with λ&gt;0 it smooths.</p>

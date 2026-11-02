@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">chief_ray_angle — OPTICS <code style="color:#22d3bf">telecentric</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.chief_ray_angle(system, field_mm=5.0, object_shift_mm=0.0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import telecentric; telecentric.chief_ray_angle(system, field_mm=5.0, object_shift_mm=0.0)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;chief_ray_angle&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>物高 *field_mm* の点から絞りの中心を通る実の主光線: 物体側の傾き(= テレセン度)と像の位置。</p>
 <p>入射瞳を経由せず、<b>絞りの面で光線の高さが 0 になる打ち出しの傾き</b>を Newton 法で探す(口径を外した複製で狙い、最後に口径つきで追って蹴られを判定する)。だから入射瞳が無限遠(物体側テレセン)でも物体の裏(ハイパーセントリック)でも同じ式で動く。*object_shift_mm* は物体をレンズへ近づける量(正 = 高い面)。</p>

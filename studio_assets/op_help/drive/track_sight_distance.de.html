@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">track_sight_distance — DRIVE <code style="color:#22d3bf">crossing</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.track_sight_distance(v_train, clear_time, *, margin: &#x27;float&#x27; = 0.0)</code> (die Implementierung direkt: <code style="color:#22d3bf">import drivecrossing; drivecrossing.track_sight_distance(v_train, clear_time, *, margin: &#x27;float&#x27; = 0.0)</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;track_sight_distance&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Strecke auf dem Gleis, die sichtbar sein muss, damit vor dem vollständigen Überqueren kein Zug eintrifft = v_train · (clear_time + margin).</p>
 <p>Ist die Sichtweite mindestens so groß, erreicht ein nicht sichtbarer Zug den Bahnübergang nicht, bevor das Überqueren abgeschlossen ist (Ankunftszeit = Entfernung / Geschwindigkeit &gt; Zeit zum vollständigen Überqueren). Arrays möglich.</p>

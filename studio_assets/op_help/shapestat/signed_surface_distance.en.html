@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">signed_surface_distance — SHAPESTAT <code style="color:#22d3bf">deviation</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.signed_surface_distance(query, surface, surface_normals=None, k: &#x27;int&#x27; = 1)</code> (to call the implementation directly, <code style="color:#22d3bf">import shapestats; shapestats.signed_surface_distance(query, surface, surface_normals=None, k: &#x27;int&#x27; = 1)</code>; from the registry, <code style="color:#22d3bf">opsshapestat.get(&quot;signed_surface_distance&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p><b>Signed</b> distance from the query points to the surface. → <code style="color:#22d3bf">(N,)</code>.</p>
 <p>The sign is determined from the surface normal (outside is positive). For 1-D contours there is <code style="color:#22d3bf">profileops.profile_deviation</code>, but there was no 3-D equivalent -- that was the gap the PoC exposed on 2026-09-06.</p>

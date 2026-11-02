@@ -4,6 +4,7 @@ dim: dem
 category: visibility
 in: depth
 out: image2d
+gpu: なし
 examples: [dem_terrain_analysis_tour, poc_stockpile_volume]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `depth` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.dem_viewshed(dem, cell_size, observer_rc, observer_height_m=1.7, target_height_m=0.0, max_distance_m=None)` (実装を直接呼ぶなら `import demops; demops.dem_viewshed(dem, cell_size, observer_rc, observer_height_m=1.7, target_height_m=0.0, max_distance_m=None)`、台帳から引くなら `opsdem.get("dem_viewshed")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

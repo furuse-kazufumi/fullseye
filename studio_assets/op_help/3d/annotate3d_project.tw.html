@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">annotate3d_project — 3D <code style="color:#22d3bf">annotate3d</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate3d_project(points, pose, K, depth=None, shape=None, occlusion_tol=0.01)</code>(要直接呼叫實作,<code style="color:#22d3bf">import annotate3d; annotate3d.annotate3d_project(points, pose, K, depth=None, shape=None, occlusion_tol=0.01)</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;annotate3d_project&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>回傳表(dict):3-D 點的像素座標、前向距離,以及在畫面內/被遮蔽的判定(<code style="color:#22d3bf">project_anchors</code>)。</p>
 <p>不伴隨繪製的「僅投影」op。把 annotate3d 的全部繪製 op 在內部使用的判定原樣作為表格回傳，用於自己的繪圖、數值驗證、「這個點是否可見」的分支。</p>

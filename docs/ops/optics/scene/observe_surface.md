@@ -4,6 +4,7 @@ dim: optics
 category: scene
 in: 
 out: table
+gpu: なし
 examples: [vision_layout_from_catalog]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.observe_surface(material: 'str' = 'al', finish: 'str' = 'hairline', pitch_um: 'float' = 90.0, depth_um: 'float' = 1.0, roughness_um: 'float' = 0.08, focal_mm: 'float' = 25.0, working_distance_mm: 'float' = 200.0, f_number: 'float' = None, na: 'float' = None, pixel_um: 'float' = 3.45, resolution=(256, 256), wavelength_nm: 'float' = 550.0, illumination: 'str' = 'coaxial', tilt_deg: 'float' = 0.0, source_size_mm: 'float' = 40.0, supersample: 'int' = 2, exposure: 'str' = 'auto', defects: 'dict' = None, seed: 'int' = 0) -> 'dict'` (実装を直接呼ぶなら `import optscene; optscene.observe_surface(material: 'str' = 'al', finish: 'str' = 'hairline', pitch_um: 'float' = 90.0, depth_um: 'float' = 1.0, roughness_um: 'float' = 0.08, focal_mm: 'float' = 25.0, working_distance_mm: 'float' = 200.0, f_number: 'float' = None, na: 'float' = None, pixel_um: 'float' = 3.45, resolution=(256, 256), wavelength_nm: 'float' = 550.0, illumination: 'str' = 'coaxial', tilt_deg: 'float' = 0.0, source_size_mm: 'float' = 40.0, supersample: 'int' = 2, exposure: 'str' = 'auto', defects: 'dict' = None, seed: 'int' = 0) -> 'dict'`、台帳から引くなら `opsoptics.get("observe_surface")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -4,6 +4,7 @@ dim: optics
 category: lensfile
 in: 
 out: table
+gpu: なし
 examples: [lensfile_tolerance_worst_mtf, optical_design_metrics, poc_lens_file_roundtrip, poc_lens_solves_afocal, poc_zmx_public_verify, poc_zoom_configurations]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.lens_file_read(source=None, allow_partial: 'bool' = False, glass_dir=None) -> 'dict'` (実装を直接呼ぶなら `import lensfile; lensfile.lens_file_read(source=None, allow_partial: 'bool' = False, glass_dir=None) -> 'dict'`、台帳から引くなら `opsoptics.get("lens_file_read")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">convex_mirror_misjudge — DRIVE <code style="color:#22d3bf">pass</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">any × any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.convex_mirror_misjudge(object_distance, speed, radius: &#x27;float&#x27;, *, eye_distance: &#x27;float&#x27;) -&gt; &#x27;Dict[str, object]&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import drivepass; drivepass.convex_mirror_misjudge(object_distance, speed, radius: &#x27;float&#x27;, *, eye_distance: &#x27;float&#x27;) -&gt; &#x27;Dict[str, object]&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;convex_mirror_misjudge&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>convex दर्पण में दिखी car की दूरी और गति को समतल दर्पण मानकर पढ़ने पर होने वाली गलत आकलन (paraxial closed form, arrays भी चलते हैं)। दृश्य S064, S130।</p>
 <p>k = 1 + 2e/R। दूरी (आकार से): â = k a। गति पढ़ने के तरीक़े के अनुसार 3 हैं:</p>

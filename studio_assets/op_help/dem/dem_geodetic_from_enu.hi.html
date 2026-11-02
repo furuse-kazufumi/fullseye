@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">dem_geodetic_from_enu — DEM <code style="color:#22d3bf">geodesy</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_geodetic_from_enu(enu, lat0_deg, lon0_deg, h0_m)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import demops; demops.dem_geodetic_from_enu(enu, lat0_deg, lon0_deg, h0_m)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdem.get(&quot;dem_geodetic_from_enu&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>local ENU → geodetic coordinate (<code style="color:#22d3bf">dem_enu_from_geodetic</code> का उल्टा)। <code style="color:#22d3bf">points</code>।</p>
 <p>Args:</p>

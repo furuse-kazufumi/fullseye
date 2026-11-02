@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">ula_snapshots — MATH <code style="color:#22d3bf">spectral</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ula_snapshots(angles_deg=(10.0, 16.0), n_elements: &#x27;int&#x27; = 8, n_snapshots: &#x27;int&#x27; = 200, *, spacing: &#x27;float&#x27; = 0.5, snr_db: &#x27;float | None&#x27; = None, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import mathspectral; mathspectral.ula_snapshots(angles_deg=(10.0, 16.0), n_elements: &#x27;int&#x27; = 8, n_snapshots: &#x27;int&#x27; = 200, *, spacing: &#x27;float&#x27; = 0.5, snr_db: &#x27;float | None&#x27; = None, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsmath.get(&quot;ula_snapshots&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Generates the complex snapshots (M, K) received by a uniform linear array (an input whose direction-of-arrival answer is known in advance).</p>
 <p>An independent complex Gaussian signal per source (uncorrelated). If <code style="color:#22d3bf">snr_db</code> is given, white noise is added per element (None = no noise).</p>

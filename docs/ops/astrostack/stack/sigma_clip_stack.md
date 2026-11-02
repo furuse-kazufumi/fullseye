@@ -4,6 +4,7 @@ dim: astrostack
 category: stack
 in: images
 out: image2d
+gpu: なし
 examples: [astro_stacking, poc_astro_photometry, poc_exoplanet_transit, poc_river_surface_velocity]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -16,6 +17,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **呼び出し**: `import fullseye as fs; fs.ledger.sigma_clip_stack(frames, mode='sigma_clip', kappa=3.0, iters=5, center='median', scale='mad')` (実装を直接呼ぶなら `import astrostack; astrostack.sigma_clip_stack(frames, mode='sigma_clip', kappa=3.0, iters=5, center='median', scale='mad')`、台帳から引くなら `opsastrostack.get("sigma_clip_stack")`)
 - **台帳経由の戻り値**: `fullseye.ledger.sigma_clip_stack(...)` は**宣言 out 型 `image2d` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.sigma_clip_stack.raw(...)`、または `astrostack.sigma_clip_stack` を直接呼ぶ。
   - 本体の返り: `(stack, accepted) -> image2d`
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

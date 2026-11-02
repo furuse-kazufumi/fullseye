@@ -4,6 +4,7 @@ dim: drive
 category: puck
 in: table
 out: table
+gpu: なし
 examples: [gallery_drive_ballistics, poc_air_hockey_intercept]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.puck_camera(table: 'dict', *, px_per_m: 'float' = 200.0, margin: 'float' = 0.06) -> 'dict'` (実装を直接呼ぶなら `import puck; puck.puck_camera(table: 'dict', *, px_per_m: 'float' = 200.0, margin: 'float' = 0.06) -> 'dict'`、台帳から引くなら `opsdrive.get("puck_camera")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

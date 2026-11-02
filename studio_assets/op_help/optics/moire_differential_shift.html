@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">moire_differential_shift — OPTICS <code style="color:#22d3bf">moire_align</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.moire_differential_shift(phase_a=0.3, phase_b=-0.3, phase_ref_a=0.0, phase_ref_b=0.0, p_mask_um=2.0, p_wafer_um=2.04, moving=&#x27;wafer&#x27;)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import moirealign; moirealign.moire_differential_shift(phase_a=0.3, phase_b=-0.3, phase_ref_a=0.0, phase_ref_b=0.0, p_mask_um=2.0, p_wafer_um=2.04, moving=&#x27;wafer&#x27;)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;moire_differential_shift&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>逆向きのピッチ差の 2 対(A = (p_m, p_w)、B = (p_w, p_m))から、共通の誤差を消したずれを読む。</p>
 <p>ずれ δ では 2 つの縞が<b>逆向き</b>に動き(dφ_A/dδ と dφ_B/dδ の符号が逆)、マーク全体がカメラに対して s 動くと <b>同じ向き</b>に同じ量(−2π|f|s)動く。だから</p>

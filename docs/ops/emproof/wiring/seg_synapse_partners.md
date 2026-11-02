@@ -4,6 +4,7 @@ dim: emproof
 category: wiring
 in: labels2d × table
 out: table
+gpu: なし
 examples: [poc_em_wiring_errors]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `labels2d × table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.seg_synapse_partners(labels, synapses, spacing=None, background=0)` (実装を直接呼ぶなら `import segcompare; segcompare.seg_synapse_partners(labels, synapses, spacing=None, background=0)`、台帳から引くなら `opsemproof.get("seg_synapse_partners")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

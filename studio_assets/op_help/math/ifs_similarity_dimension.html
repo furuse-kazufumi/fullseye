@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">ifs_similarity_dimension — MATH <code style="color:#22d3bf">construct</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">measurement</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ifs_similarity_dimension(preset=&#x27;sierpinski&#x27;, maps=None, tol=1e-13)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import mathops; mathops.ifs_similarity_dimension(preset=&#x27;sierpinski&#x27;, maps=None, tol=1e-13)</code>、台帳から引くなら <code style="color:#22d3bf">opsmath.get(&quot;ifs_similarity_dimension&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Moran&#x27;s equation <code style="color:#22d3bf">sum(r_i**d) = 1</code> solved for <code style="color:#22d3bf">d</code> — from the maps alone.</p>
 <p>The similarity dimension of a self-similar set, computed <b>before</b> anything is drawn. Valid when the pieces overlap only on a set of measure zero (the open set condition); affine maps that are not similarities (the fern) have no single ratio, so this raises rather than returning a number that looks right (measured: the fern&#x27;s four maps have singular-value ratios from 0.16 to 0.85, so no <code style="color:#22d3bf">r_i</code> exists).</p>

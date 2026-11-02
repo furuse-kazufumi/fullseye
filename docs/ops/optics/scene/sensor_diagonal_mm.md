@@ -4,6 +4,7 @@ dim: optics
 category: scene
 in: table
 out: measurement
+gpu: なし
 examples: [vision_layout_from_catalog]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `measurement`
 - **呼び出し**: `import fullseye as fs; fs.ledger.sensor_diagonal_mm(sensor: 'dict') -> 'float'` (実装を直接呼ぶなら `import optscene; optscene.sensor_diagonal_mm(sensor: 'dict') -> 'float'`、台帳から引くなら `opsoptics.get("sensor_diagonal_mm")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

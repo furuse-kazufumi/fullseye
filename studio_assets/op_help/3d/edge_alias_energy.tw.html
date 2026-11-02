@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">edge_alias_energy — 3D <code style="color:#22d3bf">render</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.edge_alias_energy(img) -&gt; &#x27;float&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import render_ssaa; render_ssaa.edge_alias_energy(img) -&gt; &#x27;float&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;edge_alias_energy&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>邊緣的鋸齒能量 = 拉普拉斯的 RMS(越小越平滑)。</p>
 <p>光柵化的混疊呈現為階梯狀的尖銳轉角(高的 2 階導數)。拉普拉斯會強調高頻,因此其均方根(RMS)能單調地捕捉邊界的階梯程度 —— 經 SSAA 使邊緣變為平滑的梯度後,拉普拉斯的高頻能量會減少(low-pass 衰減高頻, 而拉普拉斯放大高頻,因此邊緣越平滑,本量越小)。</p>

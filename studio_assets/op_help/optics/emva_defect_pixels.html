@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">emva_defect_pixels — OPTICS <code style="color:#22d3bf">sensorchar</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.emva_defect_pixels(avg_image, L, threshold)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import sensorchar; sensorchar.emva_defect_pixels(avg_image, L, threshold)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;emva_defect_pixels&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>欠陥画素の特徴づけ(8.8 節): 対数ヒストグラム(式 73〜75)と積算ヒストグラム(式 77)、しきい値を越える画素の数。</p>
 <p>*avg_image*: L 枚の平均画像(時間雑音を平均で消したもの)。*L*: 平均した枚数(ビン幅を 1/L の整数倍にする)。*threshold*(必須)[DN]: 平均からの絶対偏差がこれを<b>越える</b>画素を数える(用途の「止め帯」)。</p>

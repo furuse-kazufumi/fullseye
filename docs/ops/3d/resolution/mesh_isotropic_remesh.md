@@ -4,6 +4,7 @@ dim: 3d
 category: resolution
 in: mesh
 out: mesh
+gpu: なし
 examples: [mesh_resolution_demo]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `mesh` → `mesh`
 - **呼び出し**: `import fullseye as fs; fs.ledger.mesh_isotropic_remesh(V, F, target_edge, iterations=5, project=True, relax=0.5)` (実装を直接呼ぶなら `import meshres; meshres.mesh_isotropic_remesh(V, F, target_edge, iterations=5, project=True, relax=0.5)`、台帳から引くなら `ops3d.get("mesh_isotropic_remesh")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

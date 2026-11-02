@@ -4,6 +4,7 @@ dim: optics
 category: watermedia
 in: 
 out: table
+gpu: なし
 examples: [poc_water_inspection_images, poc_water_transparent_media]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.ocean_height_field(size, extent_m, wind_speed_mps, wind_dir_deg, t=0.0, seed=0, kind='pierson_moskowitz', directional='cos2', choppiness=0.0, depth_m=None, spreading_s=10.0, fetch_m=None, single_mode=None) -> 'dict'` (実装を直接呼ぶなら `import watermedia; watermedia.ocean_height_field(size, extent_m, wind_speed_mps, wind_dir_deg, t=0.0, seed=0, kind='pierson_moskowitz', directional='cos2', choppiness=0.0, depth_m=None, spreading_s=10.0, fetch_m=None, single_mode=None) -> 'dict'`、台帳から引くなら `opsoptics.get("ocean_height_field")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

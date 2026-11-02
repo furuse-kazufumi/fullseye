@@ -4,6 +4,7 @@ dim: graph
 category: population
 in: matrix × matrix
 out: table
+gpu: なし
 examples: [poc_worm_synapses_vs_neurites]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `matrix × matrix` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.graph_strength_growth(a, b, hub_fraction=0.1)` (実装を直接呼ぶなら `import graphinv; graphinv.graph_strength_growth(a, b, hub_fraction=0.1)`、台帳から引くなら `opsgraph.get("graph_strength_growth")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

@@ -4,6 +4,7 @@ dim: optics
 category: optimization
 in: table
 out: table
+gpu: なし
 examples: [lens_optimize_demo, poc_lens_file_roundtrip]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.optimize_lens(system, variables=None, fields=None, wavelengths=None, rings=4, efl_target=None, efl_weight=None, field_weights=None, iterations=30, damping=0.001, tolerance=1e-07, min_thickness=0.5, max_thickness=None, min_radius=1.0, pupil_fill=0.98)` (実装を直接呼ぶなら `import lensopt; lensopt.optimize_lens(system, variables=None, fields=None, wavelengths=None, rings=4, efl_target=None, efl_weight=None, field_weights=None, iterations=30, damping=0.001, tolerance=1e-07, min_thickness=0.5, max_thickness=None, min_radius=1.0, pupil_fill=0.98)`、台帳から引くなら `opsoptics.get("optimize_lens")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

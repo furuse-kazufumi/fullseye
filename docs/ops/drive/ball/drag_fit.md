@@ -4,6 +4,7 @@ dim: drive
 category: ball
 in: signal × points × table
 out: table
+gpu: なし
 examples: [poc_video_physics_consistency]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal × points × table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.drag_fit(t, p, bp: 'dict', *, iters: 'int' = 20, dt: 'float' = 0.001) -> 'dict'` (実装を直接呼ぶなら `import ballistics; ballistics.drag_fit(t, p, bp: 'dict', *, iters: 'int' = 20, dt: 'float' = 0.001) -> 'dict'`、台帳から引くなら `opsdrive.get("drag_fit")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

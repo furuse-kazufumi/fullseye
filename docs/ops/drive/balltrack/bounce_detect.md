@@ -4,6 +4,7 @@ dim: drive
 category: balltrack
 in: signal × signal
 out: table
+gpu: なし
 examples: [poc_ball_bounce, poc_table_tennis_bounce, poc_table_tennis_spin]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal × signal` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.bounce_detect(t, z, *, min_gap: 'int' = 2) -> 'dict'` (実装を直接呼ぶなら `import balltrack; balltrack.bounce_detect(t, z, *, min_gap: 'int' = 2) -> 'dict'`、台帳から引くなら `opsdrive.get("bounce_detect")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

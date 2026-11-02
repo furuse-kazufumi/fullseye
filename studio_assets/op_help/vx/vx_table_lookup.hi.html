@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">vx_table_lookup — VX <code style="color:#22d3bf">pixel</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d × signal</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vx_table_lookup(image, table, *, offset=0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import vxcore; vxcore.vx_table_lookup(image, table, *, offset=0)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsvx.get(&quot;vx_table_lookup&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>table lookup (section 3.47): आउटपुट = table[pixel मान + offset] (REQ-0421)। U8 और S16 स्वीकार करता है (REQ-0422)। आउटपुट का dtype table का dtype है।</p>
 <p>*offset*: S16 table negative pixel value को look up करने के लिए बीच में 0 रखती है (VX_LUT_OFFSET, आम तौर पर 32768)। U8 के लिए 0। ★ अगर कोई pixel table के बाहर look up करे तो रुक जाता है (चुपचाप किनारे पर clamp नहीं करता)।</p>

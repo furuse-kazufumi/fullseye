@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">coherence — ACOUSTICS <code style="color:#22d3bf">dual</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.coherence(x, y, rate, win=None, hop=None, window=&#x27;hann&#x27;)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import acoustics; acoustics.coherence(x, y, rate, win=None, hop=None, window=&#x27;hann&#x27;)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsacoustics.get(&quot;coherence&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>ordinary coherence: <code style="color:#22d3bf">y</code> का कितना भाग <code style="color:#22d3bf">x</code> से linearly समझाया जाता है।</p>
 <p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>

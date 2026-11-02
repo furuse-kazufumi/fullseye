@@ -4,6 +4,7 @@ dim: 3d
 category: terrain
 in: mesh
 out: mesh
+gpu: なし
 examples: [itokawa_regolith_hero]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `mesh` → `mesh`
 - **呼び出し**: `import fullseye as fs; fs.ledger.mesh_scatter_boulders(V, F, *, density: 'float', d_min: 'float', d_max=None, exponent: 'float' = 3.1, seed: 'int' = 0, region_weights=None, aspect=(1.0, 0.7, 0.5), embed: 'float' = 0.35, subdiv: 'int' = 1, shape: 'str' = 'ellipsoid', orientation: 'str' = 'normal', burial=(0.3, 0.6), max_count=None, hull_points=None, return_info: 'bool' = False)` (実装を直接呼ぶなら `import render3d; render3d.mesh_scatter_boulders(V, F, *, density: 'float', d_min: 'float', d_max=None, exponent: 'float' = 3.1, seed: 'int' = 0, region_weights=None, aspect=(1.0, 0.7, 0.5), embed: 'float' = 0.35, subdiv: 'int' = 1, shape: 'str' = 'ellipsoid', orientation: 'str' = 'normal', burial=(0.3, 0.6), max_count=None, hull_points=None, return_info: 'bool' = False)`、台帳から引くなら `ops3d.get("mesh_scatter_boulders")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

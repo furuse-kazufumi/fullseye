@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">pure_pursuit_curvature — DRIVE <code style="color:#22d3bf">lateral</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pure_pursuit_curvature(pose, path, lookahead, *, start_index=None, window: &#x27;int&#x27; = 40) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import drivelateral; drivelateral.pure_pursuit_curvature(pose, path, lookahead, *, start_index=None, window: &#x27;int&#x27; = 40) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;pure_pursuit_curvature&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>pure pursuit: 後車軸の中心(<code style="color:#22d3bf">pose</code> = (x, y, ψ)、(N, 3) 可)から経路の上で距離 L_d 先の点を狙う曲率 κ = 2 sin α / L_d。</p>
 <p>経路は折線(M, 2)。最も近い点を探し、そこから先で初めて距離が L_d になる点を区間の上で 2 次方程式で求める(経路の終わりまで届かなければ終点を狙い、L_d をその距離にする)。<code style="color:#22d3bf">start_index</code> と <code style="color:#22d3bf">window</code> で最も近い点を探す範囲を絞る(長い経路の繰り返しを速くする。None なら全体)。</p>

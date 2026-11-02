@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">piv_flow_magnitude — PIV <code style="color:#22d3bf">field</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">flow2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_flow_magnitude(flow)</code> (die Implementierung direkt: <code style="color:#22d3bf">import pivops; pivops.piv_flow_magnitude(flow)</code>; aus dem Register: <code style="color:#22d3bf">opspiv.get(&quot;piv_flow_magnitude&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p><code style="color:#22d3bf">sqrt(dy^2 + dx^2)</code>. Eine <b>Einweg</b>-Umrechnung, die die Richtung verwirft.</p>
 <p>2-D-Version von <code style="color:#22d3bf">reprconv.flow_magnitude</code>. Jene ist auf <code style="color:#22d3bf">(3, D, H, W)</code> beschränkt, und hierher übergeben wird sie anhand der Form abgewiesen (das ist der Grund, warum die Typen getrennt sind).</p>

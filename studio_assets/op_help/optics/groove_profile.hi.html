@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">groove_profile — OPTICS <code style="color:#22d3bf">light_transport</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">table</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.groove_profile(kind=&#x27;vgroove&#x27;, n_patches=240, width=1.0, angle_deg=None, floor_frac=None, vertices=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import lighttransport; lighttransport.groove_profile(kind=&#x27;vgroove&#x27;, n_patches=240, width=1.0, angle_deg=None, floor_frac=None, vertices=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;groove_profile&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>अवतल अनुप्रस्थ-काट (V-groove, वृत्ताकार trough, fillet या कोई भी अवतल polyline) को patches में बाँटना, हर patch कैमरे का एक pixel स्तंभ (<code style="color:#22d3bf">table</code>)।</p>
 <p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>

@@ -4,6 +4,7 @@ dim: 3d
 category: transform
 in: voxel × points × mesh × depth × gaussians
 out: points
+gpu: なし
 examples: [transforms_repr]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `voxel × points × mesh × depth × gaussians` → `points`
 - **呼び出し**: `import fullseye as fs; fs.ledger.to_points(data, kind, samples=20000, **kw)` (実装を直接呼ぶなら `import fuse3d; fuse3d.to_points(data, kind, samples=20000, **kw)`、台帳から引くなら `ops3d.get("to_points")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

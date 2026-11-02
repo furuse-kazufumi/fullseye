@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">fly_egomotion_from_flow — FLYVISION <code style="color:#22d3bf">selfmotion</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">matrix × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fly_egomotion_from_flow(flow, lattice, axes=None, weights=None)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import flyvision; flyvision.fly_egomotion_from_flow(flow, lattice, axes=None, weights=None)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsflyvision.get(&quot;fly_egomotion_from_flow&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>흐름장(flow field)에서 최소제곱으로 눈의 회전을 구한다 —— 그리고 눈 자체의 형태가 해의 조건을 얼마나 나쁘게 만드는지도.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>

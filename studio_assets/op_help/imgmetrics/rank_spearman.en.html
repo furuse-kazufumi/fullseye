@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">rank_spearman — IMGMETRICS <code style="color:#22d3bf">iqa</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">any × any</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rank_spearman(x, y) -&gt; &#x27;float&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import iqatid; iqatid.rank_spearman(x, y) -&gt; &#x27;float&#x27;</code>; from the registry, <code style="color:#22d3bf">opsimgmetrics.get(&quot;rank_spearman&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Spearman&#x27;s rank correlation ρ = Pearson correlation between average ranks (the form that is correct even with ties; the classical formula 1 − 6Σd²/(n(n²−1)) agrees only when there are no ties). 1 for monotonically increasing, −1 for reversed. If either is constant, <code style="color:#22d3bf">nan</code> (rank variance is 0; correlation is undefined). ±inf contributes only its order (a perfect-match PSNR = inf is not dropped). <b>Raises</b> <code style="color:#22d3bf">ValueError</code>: length mismatch, fewer than 2, nan.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">perpetual_ifs_attractor — GENERATIVE <code style="color:#22d3bf">perpetual</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">rgb</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.perpetual_ifs_attractor(points: &#x27;int&#x27; = 300000, size: &#x27;int&#x27; = 560, seed: &#x27;int&#x27; = 0, sub: &#x27;int&#x27; = 2) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import perpetual; perpetual.perpetual_ifs_attractor(points: &#x27;int&#x27; = 300000, size: &#x27;int&#x27; = 560, seed: &#x27;int&#x27; = 0, sub: &#x27;int&#x27; = 2) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsgenerative.get(&quot;perpetual_ifs_attractor&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>iterated function system का attractor (Barnsley fern) — केवल 4 सूत्रों को अनंत तक दोहराना।</p>
 <p>invariant: attractor <b>4 maps के images के union के बराबर है</b> (self-similarity की परिभाषा ही यही है)।</p>

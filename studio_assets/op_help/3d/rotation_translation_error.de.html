@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">rotation_translation_error — 3D <code style="color:#22d3bf">registration_metrics</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">pose × pose</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rotation_translation_error(gt, est)</code> (die Implementierung direkt: <code style="color:#22d3bf">import registration_eval; registration_eval.rotation_translation_error(gt, est)</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;rotation_translation_error&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Der relative Rotationsfehler (geodätischer Winkel [Grad], RRE) und der relative Translationsfehler (RTE) zwischen zwei 4×4-Transformationen.</p>
 <p>RRE = Winkel(gt_R^T · est_R) = atan2(|axial(dR − dRᵀ)|/2, (tr−1)/2) in Grad. Bei einer Rotationsdifferenz um den Winkel θ um eine beliebige Achse ist RRE=θ. RTE = ‖gt_t − est_t‖. → (rre_deg, rte). Nicht 4×4 ergibt ValueError (fail-closed).</p>

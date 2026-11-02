@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">particle_size_synth — DRIVE <code style="color:#22d3bf">grind</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">scalar × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.particle_size_synth(d50: &#x27;float&#x27;, sigma_ln: &#x27;float&#x27;, edges=None) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import grind; grind.particle_size_synth(d50: &#x27;float&#x27;, sigma_ln: &#x27;float&#x27;, edges=None) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;particle_size_synth&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>将对数正态的 <b>体积</b> 分布分配到与仪器相同区间的粒度分布(附真值)。</p>
 <p>体积累积 <code style="color:#22d3bf">F(x) = Φ((ln x − ln d50) / σ)</code>。省略 <code style="color:#22d3bf">edges</code> 时使用公开数据所用仪器的 74 个端点(比 1.13616)。</p>

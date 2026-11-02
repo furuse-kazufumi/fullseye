@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">darkfield_scatter_relation — OPTICS <code style="color:#22d3bf">grating_interf</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.darkfield_scatter_relation(darkfield=None, sigma_urad=None, distance_mm=23.2, analyzer_period_um=2.0, thickness_mm=None, wavelength_nm=None)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import gratinginterf; gratinginterf.darkfield_scatter_relation(darkfield=None, sigma_urad=None, distance_mm=23.2, analyzer_period_um=2.0, thickness_mm=None, wavelength_nm=None)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;darkfield_scatter_relation&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>暗視野 D(可視度の比)と、散乱角の分布の広がり σ の換算(ガウス散乱の公表式)。</p>
 <p>散乱角の分布がガウス(標準偏差 σ、格子の線に直交する向きの成分)なら、縞の可視度は D = exp(−2π² σ² d²/p2²)(Strobl 2014, Sci. Rep. 4, 7243 の式 7 をガウスで積分した形 = Bech ら 2010, Phys. Med. Biol. 55, 5529 の線拡散係数の式)。d は試料(第 1 格子)から分析格子までの距離、p2 は分析格子の周期。逆に σ = (p2/(π d √2))·√(−ln D)。</p>

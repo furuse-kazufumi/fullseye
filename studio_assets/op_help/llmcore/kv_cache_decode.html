@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">kv_cache_decode — LLMCORE <code style="color:#22d3bf">decode</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">tokens × tokens × tokens</code> → <code style="color:#22d3bf">tokens</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.kv_cache_decode(query_step, key_cache, value_cache, scale=None) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import llmcore; llmcore.kv_cache_decode(query_step, key_cache, value_cache, scale=None) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsllmcore.get(&quot;kv_cache_decode&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>1 トークン分だけ進める推論(KV Cache)→ tokens (1, dv)。</p>
 <p>因果マスクの下では<b>未来を書き換えても前の出力が 1 ビットも動かない</b>(実測 0.0e+00) ので、済んだ key/value を取っておいて 1 行だけ計算すればよい —— 逐次に 1 行ずつ進めた結果は、全系列を一括で通した結果と一致する(相対差 1.6e-16)。計算量は 1 歩あたり O(T d) で、一括の O(T² d) を T 歩に割ったものに等しい。</p>

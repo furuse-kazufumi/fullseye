@@ -4,6 +4,7 @@ dim: measure1d
 category: caliper
 in: 
 out: measurehandle
+gpu: なし
 examples: [poc_dimensional_inspection]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `measurehandle`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.gen_measure_arc(center_row, center_col, radius, angle_start, angle_extent, width, shape)` (実装を直接呼ぶなら `import measuring1d; measuring1d.gen_measure_arc(center_row, center_col, radius, angle_start, angle_extent, width, shape)`、台帳から引くなら `opsmeasure1d.get("gen_measure_arc")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

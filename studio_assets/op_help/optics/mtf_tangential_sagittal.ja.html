@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">mtf_tangential_sagittal — OPTICS <code style="color:#22d3bf">imaging</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mtf_tangential_sagittal(psf, pixel_pitch_um=1.0, tangential_axis=&#x27;y&#x27;)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import optics; optics.mtf_tangential_sagittal(psf, pixel_pitch_um=1.0, tangential_axis=&#x27;y&#x27;)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;mtf_tangential_sagittal&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>点像分布関数(PSF)の 2 次元変換から、子午(タンジェンシャル)と球欠(サジタル)の MTF を別々に出す(<code style="color:#22d3bf">table</code>)。</p>
 <p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">assign_hungarian — MATH <code style="color:#22d3bf">estimation</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.assign_hungarian(cost, *, maximize: &#x27;bool&#x27; = False) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import mathestimation; mathestimation.assign_hungarian(cost, *, maximize: &#x27;bool&#x27; = False) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsmath.get(&quot;assign_hungarian&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>cost matrix (n, m) की assignment problem हल करता है (Kuhn 1955 / Munkres 1957 का Hungarian method, scipy implementation)।</p>
 <p>rows और columns को 1-से-1 मिलाता है और चुनी गई costs का योग न्यूनतम करता है (<code style="color:#22d3bf">maximize=True</code> से अधिकतम)। यदि n != m, तो छोटी तरफ़ का हर element match होता है। <code style="color:#22d3bf">{&quot;rows&quot;, &quot;cols&quot;, &quot;total&quot;, &quot;pairs&quot;}</code> लौटाता है। Gate: छोटे matrices पर यह सभी permutations के brute force से मेल खाता है।</p>

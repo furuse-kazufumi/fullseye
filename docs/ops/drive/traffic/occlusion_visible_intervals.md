@@ -4,6 +4,7 @@ dim: drive
 category: traffic
 in: any
 out: any
+gpu: なし
 examples: [poc_driving_traffic]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `any` → `any`
 - **呼び出し**: `import fullseye as fs; fs.ledger.occlusion_visible_intervals(ego_xy, ego_heading: 'float', parked_box, emerge_xy, s_max: 'float') -> 'list'` (実装を直接呼ぶなら `import drivetraffic; drivetraffic.occlusion_visible_intervals(ego_xy, ego_heading: 'float', parked_box, emerge_xy, s_max: 'float') -> 'list'`、台帳から引くなら `opsdrive.get("occlusion_visible_intervals")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

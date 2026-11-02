@@ -4,6 +4,7 @@ dim: acoustics
 category: dual
 in: signal × signal
 out: measurement
+gpu: なし
 examples: [acoustic_condition_monitoring]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,6 +16,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **データ種**: `signal × signal` → `measurement`
 - **呼び出し**: `import fullseye as fs; fs.ledger.gcc_delay(a, b, rate=1.0, weight='phat', band=None, interpolate=True)` (実装を直接呼ぶなら `import acoustics; acoustics.gcc_delay(a, b, rate=1.0, weight='phat', band=None, interpolate=True)`、台帳から引くなら `opsacoustics.get("gcc_delay")`)
 - **台帳経由の戻り値**: `fullseye.ledger.gcc_delay(...)` は**宣言 out 型 `measurement` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.gcc_delay.raw(...)`、または `acoustics.gcc_delay` を直接呼ぶ。
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

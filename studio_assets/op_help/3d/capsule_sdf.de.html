@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">capsule_sdf — 3D <code style="color:#22d3bf">sdf_csg</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">coordgrid</code> → <code style="color:#22d3bf">sdf</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.capsule_sdf(grid, a, b, radius)</code> (die Implementierung direkt: <code style="color:#22d3bf">import sdf_ops; sdf_ops.capsule_sdf(grid, a, b, radius)</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;capsule_sdf&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p><b>Exaktes</b> vorzeichenbehaftetes Distanzfeld einer Kapsel, die durch Aufdicken der Strecke <code style="color:#22d3bf">a</code>–<code style="color:#22d3bf">b</code> um den Radius <code style="color:#22d3bf">radius</code> entsteht.</p>
 <p><code style="color:#22d3bf">sdf(p) = ‖p - (a + clamp(((p-a)·(b-a))/‖b-a‖², 0, 1)·(b-a))‖ - radius</code>. Es ist genau der kürzeste Abstand zu einer Strecke, daher <b>im ganzen Raum Gradientennorm 1</b> (anders als beim Zylinder sind die Enden rund, es gibt also keine Ecken und es ist exakt). Geeignet zur Näherung von Rippen, Rohrleitungen, Knochen, Drähten und dem Sweep-Volumen eines Werkzeugs.</p>

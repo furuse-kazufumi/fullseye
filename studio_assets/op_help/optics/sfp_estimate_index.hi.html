@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">sfp_estimate_index — OPTICS <code style="color:#22d3bf">shape_from_polarization</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sfp_estimate_index(dolp, zenith_deg, model=&#x27;specular&#x27;, mask=None, n_bounds=(1.05, 3.0))</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import sfpolar; sfpolar.sfp_estimate_index(dolp, zenith_deg, model=&#x27;specular&#x27;, mask=None, n_bounds=(1.05, 3.0))</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;sfp_estimate_index&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>ज्ञात zenith angles पर देखे गए DoLP से refractive index का अनुमान — Fresnel वक्र का least-squares fit, और specular में DoLP अधिकतम पर <code style="color:#22d3bf">n = tan(theta_B)</code> (<code style="color:#22d3bf">table</code>)।</p>
 <p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>

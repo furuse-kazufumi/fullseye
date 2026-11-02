@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">knife_edge_track — DRIVE <code style="color:#22d3bf">cutting</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">rgb</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.knife_edge_track(image, board_row: &#x27;float | None&#x27; = None, win: &#x27;int&#x27; = 6, reject_px: &#x27;float&#x27; = 1.0, method: &#x27;str&#x27; = &#x27;coverage&#x27;) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import cutting; cutting.knife_edge_track(image, board_row: &#x27;float | None&#x27; = None, win: &#x27;int&#x27; = 6, reject_px: &#x27;float&#x27; = 1.0, method: &#x27;str&#x27; = &#x27;coverage&#x27;) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;knife_edge_track&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>從正面影像求出刃口直線、刀背與刀尖(僅基於規則)。</p>
 <p>步驟: 逐欄拾取亮度縱向台階為「暗 → 明」(刀 → 壁)的列 → 去除食材的欄(飽和度規則)及其周邊 3 px → 以覆蓋率法細化到次像素(窗口依模糊的估計放寬)→ 全最小平方直線(與 <code style="color:#22d3bf">measure.fit_line</code> 相同的公式)→ 去除殘差 &gt; <code style="color:#22d3bf">reject_px</code> 的點後重新擬合。上側邊界(刀背與刀尖的斜線)也同樣拾取,偏離刀背直線的右側連續部分 = 斜線,與刃口線的交點 = 刀尖。被食材遮擋的欄(<code style="color:#22d3bf">occluded_cols</code>)的刃口,為從兩側擬合的一條直線的內插。</p>

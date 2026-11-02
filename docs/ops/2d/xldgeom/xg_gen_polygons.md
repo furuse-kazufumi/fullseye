@@ -5,6 +5,7 @@ category: xldgeom
 in: contour
 out: contour
 halcon: gen_polygons_xld
+gpu: なし
 examples: [gallery2d_geometry]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -16,6 +17,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **データ種**: `contour` → `contour`
 - **呼び出し**: `fullseye.apply(img, "xg_gen_polygons", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 - **HALCON 相当**: `gen_polygons_xld`(意味・パラメータは HALCON リファレンスが参考になる)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ![xg_gen_polygons: input → output](../../_fig/xg_gen_polygons.png)
 
