@@ -298,6 +298,27 @@
    ]
   },
   {
+   "id": "ct-scan-modes",
+   "title": "コーンビーム・ヘリカル・ラミノグラフィを 1 つの幾何で再構成する(工業用 CT)",
+   "title_en": "Reconstruct cone-beam, helical and laminography scans on one geometry (industrial CT)",
+   "category": "形にする",
+   "note": "docs/capabilities/ct-scan-modes.md",
+   "status": "verified-synthetic",
+   "ops_total": 5,
+   "ops_named_in_tests": 5,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "ct_scan_modes",
+     "data": "synthetic",
+     "gate": "tests/test_example_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
    "id": "dual-energy-xray-material-discrimination",
    "title": "X 線の 2 つのエネルギーで厚みと材質を分ける(デュアルエナジー / フォトンカウンティング: スペクトル → 窓 → 基底分解 → 実効 Z)",
    "title_en": "Separate thickness from material with two X-ray energies (dual-energy and photon-counting X-ray: spectrum, energy windows, basis decomposition, effective Z)",
@@ -2451,9 +2472,9 @@
   }
  ],
  "example_execution": {
-  "examples2d_total": 450,
+  "examples2d_total": 451,
   "run_by_the_poc_gate": 283,
-  "run_by_the_example_gate": 167,
+  "run_by_the_example_gate": 168,
   "not_run_by_any_gate": 0,
   "gates": [
    "tests/test_poc_scripts_run.py",

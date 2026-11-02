@@ -353,7 +353,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## यह क्या कर सकता है
 
-97 विषय, हर एक के साथ explanation page (उपयोग और सीमाएँ) और चलने वाले examples।
+98 विषय, हर एक के साथ explanation page (उपयोग और सीमाएँ) और चलने वाले examples।
 
 <div class="vl" markdown="1">
 
@@ -445,6 +445,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 **Reconstruct और correct करना**
 
+- एक ही ज्यामिति पर cone-beam, helical और laminography स्कैन का पुनर्निर्माण (औद्योगिक CT): [explanation](../../capabilities/ct-scan-modes.md) _(ja)_ · examples [ct_scan_modes](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/ct_scan_modes.py)
 - पूरी image में lens distortion ठीक करना (barrel, pincushion, tangential): [explanation](../../capabilities/lens-distortion-correction.md) _(ja)_ · examples [lens_undistort](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/lens_undistort.py)
 - Projections से slices का reconstruction (CT): [explanation](../../capabilities/tomography-reconstruction.md) _(ja)_ · examples [poc_ct_fidelity](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_ct_fidelity.py) · [poc_ct_void_morphology](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_ct_void_morphology.py)
 - Silhouettes से solid तराशना (visual hull): [explanation](../../capabilities/visual-hull-from-silhouettes.md) _(ja)_ · examples [space_carving](https://github.com/furuse-kazufumi/fullseye/blob/master/examples_3d/space_carving.py) · [poc_livestock_body_volume](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_livestock_body_volume.py)
@@ -480,7 +481,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 </div>
 
-[PoC के अलावा 175 usage examples की सूची](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
+[PoC के अलावा 176 usage examples की सूची](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
 
 ## सब कुछ देखें
 

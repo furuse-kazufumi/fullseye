@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">backproject_sinogram — TOMOGRAPHY <code style="color:#22d3bf">reconstruct</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">sinogram</code> → <code style="color:#22d3bf">image2d</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.backproject_sinogram(sinogram, angles_deg=None, size=None, span_deg=None)</code>(要直接呼叫實作,<code style="color:#22d3bf">import tomography; tomography.backproject_sinogram(sinogram, angles_deg=None, size=None, span_deg=None)</code>;從台帳取用則 <code style="color:#22d3bf">opstomography.get(&quot;backproject_sinogram&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.backproject_sinogram(sinogram, angles_deg=None, size=None, span_deg=None, device=&#x27;cpu&#x27;)</code>(要直接呼叫實作,<code style="color:#22d3bf">import tomography; tomography.backproject_sinogram(sinogram, angles_deg=None, size=None, span_deg=None, device=&#x27;cpu&#x27;)</code>;從台帳取用則 <code style="color:#22d3bf">opstomography.get(&quot;backproject_sinogram&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p><b>未濾波</b>的樸素反投影 —— 模糊的基線。</p>
@@ -14,6 +14,8 @@
 <p>rounded down to an odd number.</p>
 <p>:param span_deg: angular range used for the <code style="color:#22d3bf">d(theta)</code> weight; <code style="color:#22d3bf">None</code> -&gt;</p>
 <p>inferred from *angles_deg* (or 180 for the default scan).</p>
+<p>:param device: <code style="color:#22d3bf">&quot;cpu&quot;</code> (default) stays on this float64 route. <code style="color:#22d3bf">&quot;auto&quot;</code> or</p>
+<p><code style="color:#22d3bf">&quot;cuda&quot;</code> hands the call to <code style="color:#22d3bf">tomography_gpu</code>, single precision on a GPU.</p>
 <p>:returns: <code style="color:#22d3bf">(size, size)</code> float64 image. :raises ValueError: as <code style="color:#22d3bf">filtered_backprojection</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>

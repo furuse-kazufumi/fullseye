@@ -7,6 +7,15 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### 追加 — CT のスキャン方式を 1 つの幾何で(コーンビーム FDK・ヘリカル・ラミノグラフィ・反復法)と GPU 経路
+
+- 新モジュール `ctscan`(opstomography のカテゴリ `ct_scan`、11 op)と `tomography_gpu`(共通の核)。幾何は `ct_scan_geometry` の dict 1 つで、線源・検出器中心・検出器の u/v 軸を view ごとに持つ。投影(レイ駆動)、その厳密な転置、ボクセル駆動の逆投影の 3 つの核だけを全方式で共有し、方式が足すのは軌道と重みだけ。
+- 再構成式のある方式は `fdk_reconstruct`: コーンビーム(Feldkamp, Davis & Kress 1984)、ファンビーム(等間隔・等角)、ショートスキャン(Parker 1982)、検出器オフセット(Wang 2002)、ヘリカル(検出器行の窓をボクセルごとに正規化する近似。Katsevich の厳密解ではない)、ラミノグラフィ(平行ビームは Myagotin ら 2013 の sin(傾き) の重み、コーンは同じ重みの近似)。
+- 式の無い方式は `sirt_reconstruct`、`os_sart_reconstruct`(Wang & Jiang 2004)、`tv_reconstruct`(Chambolle & Pock 2011、Sidky ら 2012)。トモシンセシス、少数ビュー、制限角はこちら。`ct_dual_energy_reconstruct` は投影領域で 2 物質に分けてから再構成する(Alvarez & Macovski 1976)。
+- 真値は `ellipsoid_projections`(楕円体の弦の長さの閉形式)と `shepp_logan_3d`。`<Ax, y> = <x, A^T y>` は全方式で 1e-12 未満。
+- 新しい sort: `projstack`(ビュー, V, U)と `ctgeometry`。`sinostack` と軸の順序が違い、取り違えると例外でなく有限の像が返るので分けた。
+- 既存の `radon_transform` / `backproject_sinogram` / `filtered_backprojection` / `sart_reconstruct` / `radon_volume` / `fbp_volume` に `device` を追加。既定の `"cpu"` は従来と同じ float64 の経路で、`"auto"` / `"cuda"` は `tomography_gpu` の単精度の経路へ渡す。VRAM を超える寸法は view とスライスに分割する。測定は `docs/perf/gpu_ct_2026-11-02.md`。
+
 ### 追加 — 光弾性の族(応力場 → 縞 → 偏光像 → 位相差と主軸)
 
 - 新モジュール `photoelastic`(opsoptics のカテゴリ `photoelastic`、12 op)。単位は SI、位相差は rad・nm・縞次数を並べて返し、mm を m に・nm を m に・表の ×10⁻⁷ MPa⁻¹ を Pa⁻¹ に渡す取り違えは ValueError で拒否する。

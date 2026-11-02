@@ -55,16 +55,16 @@ Not measured: plausible but wrong values (distance from ground truth), speed, OS
 
 ### Verification stage
 
-The 97 capabilities, split by how they are verified (`docs/maturity.json`, rebuilt by `tools/gen_maturity.py` from the current tree (pyproject version 0.8.1); stage definitions in [MATURITY.md](MATURITY.md)).
+The 98 capabilities, split by how they are verified (`docs/maturity.json`, rebuilt by `tools/gen_maturity.py` from the current tree (pyproject version 0.8.1); stage definitions in [MATURITY.md](MATURITY.md)).
 
 | stage | meaning | capabilities |
 |---|---|---|
 | `research-prototype` | implemented; tests or a running example still missing | 0 |
-| `verified-synthetic` | verified automatically against synthetic ground truth | 79 |
+| `verified-synthetic` | verified automatically against synthetic ground truth | 80 |
 | `validated-public-real-data` | an example on public measured data runs in a gate | 18 |
 | `validated-hardware` | validated on hardware (only from accepted external reports) | 0 |
 
-Of 450 examples, 450 are actually run by a gate.
+Of 451 examples, 451 are actually run by a gate.
 
 ### Operator counts by version
 
@@ -140,11 +140,11 @@ Every one carries a closed-form or synthetic ground truth and a null model. Fail
 
 ## Find an operator
 
-**3,629 per-operator notes** (call form, type contract, HALCON counterpart, references, provenance) and **69 family guides**. Entry points by dimension:
+**3,640 per-operator notes** (call form, type contract, HALCON counterpart, references, provenance) and **69 family guides**. Entry points by dimension:
 
-**Measured coverage**: evolvable ops 942/942, typed ledger 2652/2664, one-line facade `fullseye.<name>` 724/1514 — **the facade is only half covered** (the rest are helpers, classes and re-exported modules).
+**Measured coverage**: evolvable ops 942/942, typed ledger 2663/2675, one-line facade `fullseye.<name>` 735/1527 — **the facade is only half covered** (the rest are helpers, classes and re-exported modules).
 
-**Measured substance**: of 3629 notes, **3595** link at least one runnable example (34 have none) and **3428** have a usage section of 120+ characters (201 are a one-line summary). The structure (call form, types, ops that chain next) is present in all 3629.
+**Measured substance**: of 3640 notes, **3605** link at least one runnable example (35 have none) and **3439** have a usage section of 120+ characters (201 are a one-line summary). The structure (call form, types, ops that chain next) is present in all 3640.
 
 | dimension | ops | entry |
 |---|---:|---|
@@ -157,11 +157,11 @@ Every one carries a closed-form or synthetic ground truth and a null model. Fail
 | `annotate` | 51 | [INDEX](ops/annotate/INDEX.md) · [guide](ops/annotate/guides/figure_annotation.md) |
 | `oned` | 49 | [INDEX](ops/oned/INDEX.md) |
 | `gfx2d` | 44 | [INDEX](ops/gfx2d/INDEX.md) |
+| `tomography` | 43 | [INDEX](ops/tomography/INDEX.md) |
 | `generative` | 42 | [INDEX](ops/generative/INDEX.md) · [guide](ops/generative/guides/generative_art.md) |
 | `imgmetrics` | 42 | [INDEX](ops/imgmetrics/INDEX.md) · [guide](ops/imgmetrics/guides/image_difference_metrics.md) |
 | `reprconv` | 42 | [INDEX](ops/reprconv/INDEX.md) |
 | `spc` | 41 | [INDEX](ops/spc/INDEX.md) |
-| `tomography` | 32 | [INDEX](ops/tomography/INDEX.md) |
 | `piv` | 29 | [INDEX](ops/piv/INDEX.md) · [guide](ops/piv/guides/piv_displacement.md) |
 | `conngraph` | 28 | [INDEX](ops/conngraph/INDEX.md) · [guide](ops/conngraph/guides/conngraph.md) |
 | `acoustics` | 27 | [INDEX](ops/acoustics/INDEX.md) · [guide](ops/acoustics/guides/acoustic_condition_monitoring.md) |
@@ -301,9 +301,9 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 <!-- docmap:start -->
 
-## Document map — all 305
+## Document map — all 306
 
-The complete map, so that **no document is unreachable from this index** (the 3,629 per-op notes and 69 family guides under `docs/ops/` are reached from the operator section above; articles from [articles/](articles/README.md)). One unreachable file fails `tests/test_docs_index_reachable.py`. **Most bodies are in Japanese.**
+The complete map, so that **no document is unreachable from this index** (the 3,640 per-op notes and 69 family guides under `docs/ops/` are reached from the operator section above; articles from [articles/](articles/README.md)). One unreachable file fails `tests/test_docs_index_reachable.py`. **Most bodies are in Japanese.**
 
 **Getting started**(12)
 
@@ -444,7 +444,7 @@ The complete map, so that **no document is unreachable from this index** (the 3,
 | [`ARTICLE_GPU_SHAPEMATCH.md`](ARTICLE_GPU_SHAPEMATCH.md) | 記事材料: 形状マッチングを GPU に載せる —— 勾配方向スコアの conv2d 定式化 _(ja)_ |
 | [`FULLSEYE_OP_ARTICLE_SPEC.md`](FULLSEYE_OP_ARTICLE_SPEC.md) | Fullseye op カタログ画像・専用記事 仕様書(第 2 陣企画書) _(ja)_ |
 
-**Other**(221)
+**Other**(222)
 
 | document | what it covers |
 |---|---|
@@ -533,6 +533,7 @@ The complete map, so that **no document is unreachable from this index** (the 3,
 | [`capabilities/compound-eye-aliasing-and-ttc.md`](capabilities/compound-eye-aliasing-and-ttc.md) | id: compound-eye-aliasing-and-ttc |
 | [`capabilities/convergent-forward-models.md`](capabilities/convergent-forward-models.md) | id: convergent-forward-models |
 | [`capabilities/crop-weed-cover-grade.md`](capabilities/crop-weed-cover-grade.md) | id: crop-weed-cover-grade |
+| [`capabilities/ct-scan-modes.md`](capabilities/ct-scan-modes.md) | id: ct-scan-modes |
 | [`capabilities/dual-energy-xray-material-discrimination.md`](capabilities/dual-energy-xray-material-discrimination.md) | id: dual-energy-xray-material-discrimination |
 | [`capabilities/emva1288-camera-datasheets.md`](capabilities/emva1288-camera-datasheets.md) | id: emva1288-camera-datasheets |
 | [`capabilities/estimate-lens-distortion.md`](capabilities/estimate-lens-distortion.md) | id: estimate-lens-distortion |

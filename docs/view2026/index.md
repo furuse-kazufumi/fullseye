@@ -368,7 +368,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## できること
 
-97 件。それぞれ説明のページ(使い方と限界)と、走る例へのリンクです。
+98 件。それぞれ説明のページ(使い方と限界)と、走る例へのリンクです。
 
 <div class="vl" markdown="1">
 
@@ -460,6 +460,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 **形にする**
 
+- コーンビーム・ヘリカル・ラミノグラフィを 1 つの幾何で再構成する(工業用 CT): [説明](../capabilities/ct-scan-modes.md) · 例 [ct_scan_modes](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/ct_scan_modes.py)
 - レンズの歪みを画像ごと補正する(たる型・糸巻き型・接線): [説明](../capabilities/lens-distortion-correction.md) · 例 [lens_undistort](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/lens_undistort.py)
 - 投影から断面を再構成する(CT): [説明](../capabilities/tomography-reconstruction.md) · 例 [poc_ct_fidelity](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_ct_fidelity.py) · [poc_ct_void_morphology](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_ct_void_morphology.py)
 - シルエットから立体を彫り出す(視体積交差): [説明](../capabilities/visual-hull-from-silhouettes.md) · 例 [space_carving](https://github.com/furuse-kazufumi/fullseye/blob/master/examples_3d/space_carving.py) · [poc_livestock_body_volume](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_livestock_body_volume.py)
@@ -495,7 +496,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 </div>
 
-[PoC 以外の使用例 175 本の一覧](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
+[PoC 以外の使用例 176 本の一覧](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
 
 ## ぜんぶ見る
 

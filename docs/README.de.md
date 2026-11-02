@@ -55,16 +55,16 @@ Nicht gemessen: plausible, aber falsche Werte (Abstand zur Grundwahrheit), Gesch
 
 ### Verifikationsstufe
 
-Die 97 Fähigkeiten, aufgeteilt nach Art der Prüfung (`docs/maturity.json`, von `tools/gen_maturity.py` aus dem aktuellen Stand (pyproject-Version 0.8.1) erzeugt; Stufen erklärt in [MATURITY.md](MATURITY.md)).
+Die 98 Fähigkeiten, aufgeteilt nach Art der Prüfung (`docs/maturity.json`, von `tools/gen_maturity.py` aus dem aktuellen Stand (pyproject-Version 0.8.1) erzeugt; Stufen erklärt in [MATURITY.md](MATURITY.md)).
 
 | Stufe | Bedeutung | Fähigkeiten |
 |---|---|---|
 | `research-prototype` | implementiert; Tests oder ein laufendes Beispiel fehlen noch | 0 |
-| `verified-synthetic` | automatisch gegen synthetische Grundwahrheit geprüft | 79 |
+| `verified-synthetic` | automatisch gegen synthetische Grundwahrheit geprüft | 80 |
 | `validated-public-real-data` | ein Beispiel mit öffentlichen Messdaten läuft in einem Gate | 18 |
 | `validated-hardware` | an Hardware validiert (nur über angenommene externe Berichte) | 0 |
 
-Von 450 Beispielen werden 450 tatsächlich von einem Gate ausgeführt.
+Von 451 Beispielen werden 451 tatsächlich von einem Gate ausgeführt.
 
 ### Operatorzahlen pro Version
 
@@ -140,11 +140,11 @@ Jede hat eine geschlossene oder synthetische Grundwahrheit und ein Nullmodell. F
 
 ## Einen Operator finden
 
-**3,629 Operator-Notizen** (Aufrufform, Typvertrag, HALCON-Pendant, Literatur, Provenienz) und **69 Familien-Leitfäden**. Einstiegspunkte nach Dimension:
+**3,640 Operator-Notizen** (Aufrufform, Typvertrag, HALCON-Pendant, Literatur, Provenienz) und **69 Familien-Leitfäden**. Einstiegspunkte nach Dimension:
 
-**Gemessene Abdeckung**: evolvierbare Ops 942/942, typisiertes Ledger 2652/2664, Fassade `fullseye.<name>` 724/1514 — **die Fassade ist erst zur Hälfte abgedeckt**.
+**Gemessene Abdeckung**: evolvierbare Ops 942/942, typisiertes Ledger 2663/2675, Fassade `fullseye.<name>` 735/1527 — **die Fassade ist erst zur Hälfte abgedeckt**.
 
-**Gemessener Inhalt**: von 3629 Notizen verweisen **3595** auf mindestens ein lauffähiges Beispiel (34 ohne), **3428** haben einen Nutzungsabschnitt ab 120 Zeichen (201 nur eine Zeile). Die Struktur (Aufrufform, Typen, anschließbare Ops) haben alle 3629.
+**Gemessener Inhalt**: von 3640 Notizen verweisen **3605** auf mindestens ein lauffähiges Beispiel (35 ohne), **3439** haben einen Nutzungsabschnitt ab 120 Zeichen (201 nur eine Zeile). Die Struktur (Aufrufform, Typen, anschließbare Ops) haben alle 3640.
 
 | Dimension | Ops | Einstieg |
 |---|---:|---|
@@ -157,11 +157,11 @@ Jede hat eine geschlossene oder synthetische Grundwahrheit und ein Nullmodell. F
 | `annotate` | 51 | [INDEX](ops/annotate/INDEX.md) · [guide](ops/annotate/guides/figure_annotation.md) |
 | `oned` | 49 | [INDEX](ops/oned/INDEX.md) |
 | `gfx2d` | 44 | [INDEX](ops/gfx2d/INDEX.md) |
+| `tomography` | 43 | [INDEX](ops/tomography/INDEX.md) |
 | `generative` | 42 | [INDEX](ops/generative/INDEX.md) · [guide](ops/generative/guides/generative_art.md) |
 | `imgmetrics` | 42 | [INDEX](ops/imgmetrics/INDEX.md) · [guide](ops/imgmetrics/guides/image_difference_metrics.md) |
 | `reprconv` | 42 | [INDEX](ops/reprconv/INDEX.md) |
 | `spc` | 41 | [INDEX](ops/spc/INDEX.md) |
-| `tomography` | 32 | [INDEX](ops/tomography/INDEX.md) |
 | `piv` | 29 | [INDEX](ops/piv/INDEX.md) · [guide](ops/piv/guides/piv_displacement.md) |
 | `conngraph` | 28 | [INDEX](ops/conngraph/INDEX.md) · [guide](ops/conngraph/guides/conngraph.md) |
 | `acoustics` | 27 | [INDEX](ops/acoustics/INDEX.md) · [guide](ops/acoustics/guides/acoustic_condition_monitoring.md) |
@@ -301,9 +301,9 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 <!-- docmap:start -->
 
-## Dokumentkarte — alle 305
+## Dokumentkarte — alle 306
 
-Die vollständige Karte, damit **kein Dokument vom Index aus unerreichbar ist** (die 3,629 Operator-Notizen und 69 Familien-Leitfäden unter `docs/ops/` über den Operator-Abschnitt oben; Artikel über [articles/](articles/README.md)). **Die Texte sind überwiegend japanisch.**
+Die vollständige Karte, damit **kein Dokument vom Index aus unerreichbar ist** (die 3,640 Operator-Notizen und 69 Familien-Leitfäden unter `docs/ops/` über den Operator-Abschnitt oben; Artikel über [articles/](articles/README.md)). **Die Texte sind überwiegend japanisch.**
 
 **Getting started**(12)
 
@@ -444,7 +444,7 @@ Die vollständige Karte, damit **kein Dokument vom Index aus unerreichbar ist** 
 | [`ARTICLE_GPU_SHAPEMATCH.md`](ARTICLE_GPU_SHAPEMATCH.md) | 記事材料: 形状マッチングを GPU に載せる —— 勾配方向スコアの conv2d 定式化 _(ja)_ |
 | [`FULLSEYE_OP_ARTICLE_SPEC.md`](FULLSEYE_OP_ARTICLE_SPEC.md) | Fullseye op カタログ画像・専用記事 仕様書(第 2 陣企画書) _(ja)_ |
 
-**Other**(221)
+**Other**(222)
 
 | Dokument | Inhalt |
 |---|---|
@@ -533,6 +533,7 @@ Die vollständige Karte, damit **kein Dokument vom Index aus unerreichbar ist** 
 | [`capabilities/compound-eye-aliasing-and-ttc.md`](capabilities/compound-eye-aliasing-and-ttc.md) | id: compound-eye-aliasing-and-ttc |
 | [`capabilities/convergent-forward-models.md`](capabilities/convergent-forward-models.md) | id: convergent-forward-models |
 | [`capabilities/crop-weed-cover-grade.md`](capabilities/crop-weed-cover-grade.md) | id: crop-weed-cover-grade |
+| [`capabilities/ct-scan-modes.md`](capabilities/ct-scan-modes.md) | id: ct-scan-modes |
 | [`capabilities/dual-energy-xray-material-discrimination.md`](capabilities/dual-energy-xray-material-discrimination.md) | id: dual-energy-xray-material-discrimination |
 | [`capabilities/emva1288-camera-datasheets.md`](capabilities/emva1288-camera-datasheets.md) | id: emva1288-camera-datasheets |
 | [`capabilities/estimate-lens-distortion.md`](capabilities/estimate-lens-distortion.md) | id: estimate-lens-distortion |

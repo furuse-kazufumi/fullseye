@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3623,
- "n_notes": 3629,
+ "n_ops": 3634,
+ "n_notes": 3640,
  "notes": {
   "vol_dilate": [
    {
@@ -35644,6 +35644,113 @@
     "in": "sinogram",
     "out": "sinogram",
     "path": "docs/ops/tomography/artifact/ring_artifact_remove.md"
+   }
+  ],
+  "ct_adjoint_project": [
+   {
+    "op": "ct_adjoint_project",
+    "dim": "tomography",
+    "category": "ct_scan",
+    "in": "projstack × ctgeometry",
+    "out": "voxel",
+    "path": "docs/ops/tomography/ct_scan/ct_adjoint_project.md"
+   }
+  ],
+  "ct_dual_energy_reconstruct": [
+   {
+    "op": "ct_dual_energy_reconstruct",
+    "dim": "tomography",
+    "category": "ct_scan",
+    "in": "projstack × projstack × ctgeometry",
+    "out": "table",
+    "path": "docs/ops/tomography/ct_scan/ct_dual_energy_reconstruct.md"
+   }
+  ],
+  "ct_forward_project": [
+   {
+    "op": "ct_forward_project",
+    "dim": "tomography",
+    "category": "ct_scan",
+    "in": "voxel × ctgeometry",
+    "out": "projstack",
+    "path": "docs/ops/tomography/ct_scan/ct_forward_project.md"
+   }
+  ],
+  "ct_scan_geometry": [
+   {
+    "op": "ct_scan_geometry",
+    "dim": "tomography",
+    "category": "ct_scan",
+    "out": "ctgeometry",
+    "path": "docs/ops/tomography/ct_scan/ct_scan_geometry.md"
+   }
+  ],
+  "ellipsoid_phantom": [
+   {
+    "op": "ellipsoid_phantom",
+    "dim": "tomography",
+    "category": "ct_scan",
+    "out": "voxel",
+    "path": "docs/ops/tomography/ct_scan/ellipsoid_phantom.md"
+   }
+  ],
+  "ellipsoid_projections": [
+   {
+    "op": "ellipsoid_projections",
+    "dim": "tomography",
+    "category": "ct_scan",
+    "in": "ctgeometry",
+    "out": "projstack",
+    "path": "docs/ops/tomography/ct_scan/ellipsoid_projections.md"
+   }
+  ],
+  "fdk_reconstruct": [
+   {
+    "op": "fdk_reconstruct",
+    "dim": "tomography",
+    "category": "ct_scan",
+    "in": "projstack × ctgeometry",
+    "out": "voxel",
+    "path": "docs/ops/tomography/ct_scan/fdk_reconstruct.md"
+   }
+  ],
+  "os_sart_reconstruct": [
+   {
+    "op": "os_sart_reconstruct",
+    "dim": "tomography",
+    "category": "ct_scan",
+    "in": "projstack × ctgeometry",
+    "out": "voxel",
+    "path": "docs/ops/tomography/ct_scan/os_sart_reconstruct.md"
+   }
+  ],
+  "shepp_logan_3d": [
+   {
+    "op": "shepp_logan_3d",
+    "dim": "tomography",
+    "category": "ct_scan",
+    "out": "voxel",
+    "path": "docs/ops/tomography/ct_scan/shepp_logan_3d.md"
+   }
+  ],
+  "sirt_reconstruct": [
+   {
+    "op": "sirt_reconstruct",
+    "dim": "tomography",
+    "category": "ct_scan",
+    "in": "projstack × ctgeometry",
+    "out": "voxel",
+    "path": "docs/ops/tomography/ct_scan/sirt_reconstruct.md"
+   }
+  ],
+  "tv_reconstruct": [
+   {
+    "op": "tv_reconstruct",
+    "dim": "tomography",
+    "category": "ct_scan",
+    "in": "projstack × ctgeometry",
+    "out": "voxel",
+    "path": "docs/ops/tomography/ct_scan/tv_reconstruct.md"
    }
   ],
   "ellipse_phantom": [

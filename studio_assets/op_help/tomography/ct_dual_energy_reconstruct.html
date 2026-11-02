@@ -1,0 +1,26 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">ct_dual_energy_reconstruct — TOMOGRAPHY <code style="color:#22d3bf">ct_scan</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">projstack × projstack × ctgeometry</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ct_dual_energy_reconstruct(proj_low, proj_high, geometry, mu_low=(1.0, 0.4), mu_high=(0.6, 0.3), method=&#x27;fdk&#x27;, device=&#x27;auto&#x27;, **options)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import ctscan; ctscan.ct_dual_energy_reconstruct(proj_low, proj_high, geometry, mu_low=(1.0, 0.4), mu_high=(0.6, 0.3), method=&#x27;fdk&#x27;, device=&#x27;auto&#x27;, **options)</code>、台帳から引くなら <code style="color:#22d3bf">opstomography.get(&quot;ct_dual_energy_reconstruct&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>Two scans of one geometry to two basis-material volumes.</p>
+<p>At each detector sample the two line integrals are two linear equations in the two material path lengths, <code style="color:#22d3bf">L = M t</code> (Alvarez &amp; Macovski 1976). The system is solved in the projection domain, where beam hardening has not yet been smeared across the volume, and each material is reconstructed on its own. *mu_low* and *mu_high* are effective attenuation coefficients; for a polychromatic beam, call <code style="color:#22d3bf">dualxray.basis_material_decompose</code> per view first and reconstruct its output.</p>
+<p>The noise of the two path lengths grows with the condition number of <code style="color:#22d3bf">M</code>, which is returned.</p>
+<p>:param proj_low: <code style="color:#22d3bf">(view, V, U)</code> line integrals of the low-energy scan. :param proj_high: the high-energy scan, same shape. :param geometry: dict from <code style="color:#22d3bf">ct_scan_geometry</code>. :param mu_low: attenuation of the two basis materials at the low energy. :param mu_high: attenuation of the two basis materials at the high energy. :param method: <code style="color:#22d3bf">&quot;fdk&quot;</code>, <code style="color:#22d3bf">&quot;sirt&quot;</code>, <code style="color:#22d3bf">&quot;os_sart&quot;</code> or <code style="color:#22d3bf">&quot;tv&quot;</code>. :param device: <code style="color:#22d3bf">&quot;auto&quot;</code>, <code style="color:#22d3bf">&quot;cpu&quot;</code> or <code style="color:#22d3bf">&quot;cuda&quot;</code>. :param options: passed to the reconstruction. :returns: dict with <code style="color:#22d3bf">basis_0</code> and <code style="color:#22d3bf">basis_1</code> (path-length densities, volumes),</p>
+<p>and <code style="color:#22d3bf">condition</code>.</p>
+<p>:raises ValueError: on mismatched shapes or a singular matrix. Empty input</p>
+<p>(<code style="color:#22d3bf">proj_low</code> with 0 elements) raises <code style="color:#22d3bf">ValueError</code>.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• (まだありません)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">ct_scan</code>)</h3>
+<p><a style="color:#22d3bf" href="optomography:ct_scan_geometry">ct_scan_geometry</a> · <a style="color:#22d3bf" href="optomography:shepp_logan_3d">shepp_logan_3d</a> · <a style="color:#22d3bf" href="optomography:ellipsoid_phantom">ellipsoid_phantom</a> · <a style="color:#22d3bf" href="optomography:ellipsoid_projections">ellipsoid_projections</a> · <a style="color:#22d3bf" href="optomography:ct_forward_project">ct_forward_project</a> · <a style="color:#22d3bf" href="optomography:ct_adjoint_project">ct_adjoint_project</a> · <a style="color:#22d3bf" href="optomography:fdk_reconstruct">fdk_reconstruct</a> · <a style="color:#22d3bf" href="optomography:sirt_reconstruct">sirt_reconstruct</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: ctscan.py — TOMOGRAPHY operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

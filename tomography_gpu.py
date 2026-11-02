@@ -133,9 +133,6 @@ class _Numpy:
     def fits(self, n_bytes):
         return True
 
-    def view_angles(self, a):
-        return a
-
     def rfft(self, a, n):
         return np.fft.rfft(a, n=n, axis=-1)
 
@@ -656,18 +653,18 @@ def _filter_rows(b, stack, kind, cutoff, d_gamma):
     while n_pad < 2 * nu:
         n_pad <<= 1
     h = b.asarray(_filter_spectrum(n_pad, kind, cutoff, d_gamma))
-    bytes_per_row = 3 * n_pad * 8
+    bytes_per_row = 3 * n_pad * 4
     n_rows = int(np.prod(stack.shape[:-1]))
     head = stack.reshape(-1, nu)
     if b.fits(n_rows * bytes_per_row):
         spec = b.rfft(b.asarray(head), n_pad) * h
         return b.irfft(spec, n_pad)[..., :nu].reshape(stack.shape)
     per = max(1, int(b.sample_budget(bytes_per_row)))
-    parts = []
+    out = np.empty((n_rows, nu), dtype=head.dtype)
     for r in range(0, n_rows, per):
         spec = b.rfft(b.asarray(head[r:r + per]), n_pad) * h
-        parts.append(b.host(b.irfft(spec, n_pad)[..., :nu]))
-    return np.concatenate(parts, axis=0).reshape(stack.shape)
+        out[r:r + per] = b.host(b.irfft(spec, n_pad)[..., :nu])
+    return out.reshape(stack.shape)
 
 
 # --------------------------------------------------------------------------- #

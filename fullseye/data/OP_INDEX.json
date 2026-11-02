@@ -1,8 +1,8 @@
 {
- "n_ops": 3623,
+ "n_ops": 3634,
  "tiers": {
   "color": 12,
-  "ledger": 2664,
+  "ledger": 2675,
   "nary": 17,
   "registry": 930
  },
@@ -24,6 +24,7 @@
   "counts",
   "cpoints",
   "cscalar",
+  "ctgeometry",
   "curvature",
   "deformation",
   "depth",
@@ -73,6 +74,7 @@
   "position",
   "positions",
   "primitive",
+  "projstack",
   "qimage",
   "region",
   "rgb",
@@ -5594,6 +5596,60 @@
    ]
   },
   {
+   "name": "ct_adjoint_project",
+   "halcon": "",
+   "in_sort": "projstack",
+   "out_sort": "voxel",
+   "category": "ct_scan",
+   "tier": "ledger",
+   "ledger": "opstomography",
+   "dim": "tomography",
+   "in_sorts": [
+    "projstack",
+    "ctgeometry"
+   ]
+  },
+  {
+   "name": "ct_dual_energy_reconstruct",
+   "halcon": "",
+   "in_sort": "projstack",
+   "out_sort": "table",
+   "category": "ct_scan",
+   "tier": "ledger",
+   "ledger": "opstomography",
+   "dim": "tomography",
+   "in_sorts": [
+    "projstack",
+    "projstack",
+    "ctgeometry"
+   ]
+  },
+  {
+   "name": "ct_forward_project",
+   "halcon": "",
+   "in_sort": "voxel",
+   "out_sort": "projstack",
+   "category": "ct_scan",
+   "tier": "ledger",
+   "ledger": "opstomography",
+   "dim": "tomography",
+   "in_sorts": [
+    "voxel",
+    "ctgeometry"
+   ]
+  },
+  {
+   "name": "ct_scan_geometry",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "ctgeometry",
+   "category": "ct_scan",
+   "tier": "ledger",
+   "ledger": "opstomography",
+   "dim": "tomography",
+   "in_sorts": []
+  },
+  {
    "name": "cubemap_from_equirect",
    "halcon": "",
    "in_sort": "rgbimage",
@@ -8060,6 +8116,30 @@
    "in_sorts": []
   },
   {
+   "name": "ellipsoid_phantom",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "voxel",
+   "category": "ct_scan",
+   "tier": "ledger",
+   "ledger": "opstomography",
+   "dim": "tomography",
+   "in_sorts": []
+  },
+  {
+   "name": "ellipsoid_projections",
+   "halcon": "",
+   "in_sort": "ctgeometry",
+   "out_sort": "projstack",
+   "category": "ct_scan",
+   "tier": "ledger",
+   "ledger": "opstomography",
+   "dim": "tomography",
+   "in_sorts": [
+    "ctgeometry"
+   ]
+  },
+  {
    "name": "elliptic_fourier",
    "halcon": "",
    "in_sort": "pairs",
@@ -9127,6 +9207,20 @@
    "dim": "tomography",
    "in_sorts": [
     "sinostack"
+   ]
+  },
+  {
+   "name": "fdk_reconstruct",
+   "halcon": "",
+   "in_sort": "projstack",
+   "out_sort": "voxel",
+   "category": "ct_scan",
+   "tier": "ledger",
+   "ledger": "opstomography",
+   "dim": "tomography",
+   "in_sorts": [
+    "projstack",
+    "ctgeometry"
    ]
   },
   {
@@ -19962,6 +20056,20 @@
    ]
   },
   {
+   "name": "os_sart_reconstruct",
+   "halcon": "",
+   "in_sort": "projstack",
+   "out_sort": "voxel",
+   "category": "ct_scan",
+   "tier": "ledger",
+   "ledger": "opstomography",
+   "dim": "tomography",
+   "in_sorts": [
+    "projstack",
+    "ctgeometry"
+   ]
+  },
+  {
    "name": "osm_parse",
    "halcon": "",
    "in_sort": "any",
@@ -27573,6 +27681,17 @@
    ]
   },
   {
+   "name": "shepp_logan_3d",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "voxel",
+   "category": "ct_scan",
+   "tier": "ledger",
+   "ledger": "opstomography",
+   "dim": "tomography",
+   "in_sorts": []
+  },
+  {
    "name": "shift_to_vector",
    "halcon": "",
    "in_sort": "shift",
@@ -28029,6 +28148,20 @@
    "ledger": "opsdrive",
    "dim": "drive",
    "in_sorts": []
+  },
+  {
+   "name": "sirt_reconstruct",
+   "halcon": "",
+   "in_sort": "projstack",
+   "out_sort": "voxel",
+   "category": "ct_scan",
+   "tier": "ledger",
+   "ledger": "opstomography",
+   "dim": "tomography",
+   "in_sorts": [
+    "projstack",
+    "ctgeometry"
+   ]
   },
   {
    "name": "skeleton_branches3d",
@@ -32472,6 +32605,20 @@
    "dim": "drive",
    "in_sorts": [
     "table"
+   ]
+  },
+  {
+   "name": "tv_reconstruct",
+   "halcon": "",
+   "in_sort": "projstack",
+   "out_sort": "voxel",
+   "category": "ct_scan",
+   "tier": "ledger",
+   "ledger": "opstomography",
+   "dim": "tomography",
+   "in_sorts": [
+    "projstack",
+    "ctgeometry"
    ]
   },
   {

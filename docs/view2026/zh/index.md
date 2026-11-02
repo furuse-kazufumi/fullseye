@@ -353,7 +353,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 能做什么
 
-共 97 项,每项都有说明页(用法与限制)和可运行的示例。
+共 98 项,每项都有说明页(用法与限制)和可运行的示例。
 
 <div class="vl" markdown="1">
 
@@ -445,6 +445,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 **重建与校正**
 
+- 用同一几何描述重建锥束、螺旋和分层扫描(工业 CT): [说明](../../capabilities/ct-scan-modes.md) _(ja)_ · 示例 [ct_scan_modes](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/ct_scan_modes.py)
 - 对整幅图像校正镜头畸变(桶形、枕形、切向): [说明](../../capabilities/lens-distortion-correction.md) _(ja)_ · 示例 [lens_undistort](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/lens_undistort.py)
 - 从投影重建断面(CT): [说明](../../capabilities/tomography-reconstruction.md) _(ja)_ · 示例 [poc_ct_fidelity](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_ct_fidelity.py) · [poc_ct_void_morphology](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_ct_void_morphology.py)
 - 从剪影雕出立体(视觉外壳): [说明](../../capabilities/visual-hull-from-silhouettes.md) _(ja)_ · 示例 [space_carving](https://github.com/furuse-kazufumi/fullseye/blob/master/examples_3d/space_carving.py) · [poc_livestock_body_volume](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_livestock_body_volume.py)
@@ -480,7 +481,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 </div>
 
-[其他 175 个使用示例(非 PoC)的列表](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
+[其他 176 个使用示例(非 PoC)的列表](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
 
 ## 全部看
 

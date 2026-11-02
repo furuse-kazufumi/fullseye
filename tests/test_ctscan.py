@@ -76,6 +76,36 @@ def test_fdk_recovers_the_phantom_on_every_scan(name, kwargs, limit, truth):
     assert abs(float(rec[inner].mean()) - float(truth[inner].mean())) < 0.05
 
 
+@pytest.mark.parametrize("detector", ["flat", "arc"])
+def test_fan_beam_recovers_the_slice(detector, flat_truth):
+    geom = ctscan.ct_scan_geometry("fan", n_views=240, n_u=192, n_v=1, vol_shape=(1, 96, 96),
+                                   detector=detector)
+    rec = ctscan.fdk_reconstruct(ctscan.ellipsoid_projections(geom, device="cpu"), geom, device="cpu")
+    assert rmse(rec, flat_truth) < 0.09
+    assert rmse(rec, flat_truth) < 0.3 * rmse(flat_truth, flat_truth.mean())
+
+
+def test_splitting_the_work_does_not_change_the_answer(monkeypatch):
+    """VRAM に載らない寸法の経路(分割)を、numpy の核で強制して通す。"""
+    geom = ctscan.ct_scan_geometry("cone", n_views=20, n_u=40, n_v=40, vol_shape=20)
+    proj = ctscan.ellipsoid_projections(geom, device="cpu")
+    whole = ctscan.fdk_reconstruct(proj, geom, device="cpu")
+    fp = ctscan.ct_forward_project(whole, geom, device="cpu")
+    adj = ctscan.ct_adjoint_project(fp, geom, device="cpu")
+    monkeypatch.setattr(tomography_gpu, "CPU_BATCH_SAMPLES", 2000)
+    monkeypatch.setattr(tomography_gpu._Numpy, "fits", lambda self, n: False)
+    assert np.max(np.abs(ctscan.fdk_reconstruct(proj, geom, device="cpu") - whole)) < 1e-12
+    assert np.max(np.abs(ctscan.ct_forward_project(whole, geom, device="cpu") - fp)) < 1e-12
+    assert np.max(np.abs(ctscan.ct_adjoint_project(fp, geom, device="cpu") - adj)) < 1e-9
+
+
+def test_rays_that_miss_the_volume_are_exactly_zero():
+    geom = ctscan.ct_scan_geometry("cone", n_views=4, n_u=128, n_v=128, vol_shape=8)
+    fp = ctscan.ct_forward_project(np.ones((8, 8, 8)), geom, device="cpu")
+    assert fp[:, 0, 0].max() == 0.0
+    assert fp[:, 64, 64].min() > 7.0
+
+
 @pytest.mark.parametrize("name,kwargs", [
     ("cone", dict(scan="cone", n_views=12, n_u=24, n_v=24, vol_shape=12)),
     ("cone_arc", dict(scan="cone", n_views=12, n_u=24, n_v=24, vol_shape=12, detector="arc")),

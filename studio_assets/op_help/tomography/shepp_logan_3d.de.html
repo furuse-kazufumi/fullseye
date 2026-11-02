@@ -1,0 +1,23 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">shepp_logan_3d — TOMOGRAPHY <code style="color:#22d3bf">ct_scan</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">keine</code> → <code style="color:#22d3bf">voxel</code> (ein Operator, der allein durch seine Argumente bestimmt ist — er nimmt kein Bild und keine Daten entgegen)</p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.shepp_logan_3d(size=128, supersample=2)</code> (die Implementierung direkt: <code style="color:#22d3bf">import ctscan; ctscan.shepp_logan_3d(size=128, supersample=2)</code>; aus dem Register: <code style="color:#22d3bf">opstomography.get(&quot;shepp_logan_3d&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>Das modifizierte 3-D-Shepp-Logan-Kopfphantom auf einem <code style="color:#22d3bf">size</code>-Würfel.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>The in-plane ellipses are those of <code style="color:#22d3bf">tomography.SHEPP_LOGAN</code>, with extents along z, so a CT reconstruction has an exact volume to be measured against, and <code style="color:#22d3bf">ellipsoid_projections</code> has the exact data for it.</p>
+<p>:param size: edge of the cube, <code style="color:#22d3bf">2 .. 1024</code>; or <code style="color:#22d3bf">(Z, Y, X)</code>. :param supersample: anti-alias factor per axis, <code style="color:#22d3bf">1 .. 4</code>. :returns: float64 volume spanning <code style="color:#22d3bf">[0, 1]</code>. :raises ValueError: on an oversized grid.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:ct_scan_modes">ct_scan_modes</a> — <code style="color:#22d3bf">py -3.11 examples/ct_scan_modes.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">voxel</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="optomography:radon_volume">radon_volume</a> · <a style="color:#22d3bf" href="optomography:ct_forward_project">ct_forward_project</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">ct_scan</code>)</h3>
+<p><a style="color:#22d3bf" href="optomography:ct_scan_geometry">ct_scan_geometry</a> · <a style="color:#22d3bf" href="optomography:ellipsoid_phantom">ellipsoid_phantom</a> · <a style="color:#22d3bf" href="optomography:ellipsoid_projections">ellipsoid_projections</a> · <a style="color:#22d3bf" href="optomography:ct_forward_project">ct_forward_project</a> · <a style="color:#22d3bf" href="optomography:ct_adjoint_project">ct_adjoint_project</a> · <a style="color:#22d3bf" href="optomography:fdk_reconstruct">fdk_reconstruct</a> · <a style="color:#22d3bf" href="optomography:sirt_reconstruct">sirt_reconstruct</a> · <a style="color:#22d3bf" href="optomography:os_sart_reconstruct">os_sart_reconstruct</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: ctscan.py — TOMOGRAPHY Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

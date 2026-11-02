@@ -300,13 +300,11 @@ def ct_scan_geometry(scan="cone", n_views=360, n_u=256, n_v=256, vol_shape=(256,
                           + 360.0 * n_turns * np.arange(n_views) / n_views)
         steps = np.full(n_views, 2.0 * np.pi * n_turns / n_views)
         z = feed * (beta - beta.mean()) / (2.0 * np.pi)
-        tilt = None
         arc_val = 360.0 * n_turns
         geom.update({"pitch": float(pitch), "turns": n_turns})
     else:
         beta, steps, arc_val = _orbit(angles_deg, arc, start_deg, n_views, op)
         z = np.zeros_like(beta)
-        tilt = None
     n = beta.size
     cb, sb = np.cos(beta), np.sin(beta)
     zero = np.zeros(n)
@@ -319,7 +317,7 @@ def ct_scan_geometry(scan="cone", n_views=360, n_u=256, n_v=256, vol_shape=(256,
             raise ValueError("%s: tilt_deg must be at most 90, got %g" % (op, tilt_deg))
         down = np.array([0.0, 0.0, -1.0])
         ray = np.sin(tilt) * normal + np.cos(tilt) * down
-        v = np.cos(tilt) * normal - np.cos(tilt) * 0.0 * down + np.sin(tilt) * (-down)
+        v = np.cos(tilt) * normal - np.sin(tilt) * down
         normal = ray
         geom["tilt_deg"] = float(tilt_deg)
     if kind == "tomosynthesis":
@@ -632,7 +630,7 @@ def _redundancy(geom, allow_incomplete, op):
     offset = geom.get("offset_u", 0.0)
     if full:
         if offset != 0.0:
-            return np.tile(2.0 * _displaced(gamma, np.sign(offset)) * 0.5, (n, 1)), "displaced"
+            return np.tile(_displaced(gamma, np.sign(offset)), (n, 1)), "displaced"
         return np.full((n, nu), 0.5), "full"
     if offset != 0.0:
         raise ValueError("%s: an offset detector needs a full 360-degree orbit, got %g"
@@ -888,7 +886,7 @@ def _grad_t(b, parts, shape):
     return out
 
 
-def _operator_norm(b, geom, n=12):
+def _operator_norm(b, geom, n=8):
     """``||A||`` by power iteration from a fixed start."""
     rng = np.random.default_rng(0)
     x = b.asarray(rng.standard_normal(tuple(geom["vol_shape"])))
@@ -938,7 +936,7 @@ def tv_reconstruct(projections, geometry, tv_weight=3e-4, n_iter=200, initial=No
     norm_g = (4.0 * n_axes) ** 0.5
     nu = norm_a / norm_g
     lip = (norm_a * norm_a + (nu * norm_g) ** 2) ** 0.5
-    sigma = tau = 0.99 / lip
+    sigma = tau = 0.9 / lip
     bound = weight * norm_a * norm_a / nu
     y = b.zeros(p.shape)
     z = [b.zeros(shape) for _ in range(n_axes)]

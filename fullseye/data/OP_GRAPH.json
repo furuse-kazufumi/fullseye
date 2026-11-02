@@ -53,9 +53,9 @@
     "reason": "docs/op_knob.json measured no output effect"
   },
   "execution_summary": {
-    "executable": 3417,
+    "executable": 3428,
     "reasons": {
-      "python_signature": 2458,
+      "python_signature": 2469,
       "registry": 959
     },
     "not_executable_reasons": {
@@ -357,10 +357,10 @@
     }
   },
   "counts": {
-    "nodes": 101,
-    "edges": 3626,
-    "conversion_pairs": 395,
-    "conversion_edge_incidence": 2343
+    "nodes": 103,
+    "edges": 3637,
+    "conversion_pairs": 401,
+    "conversion_edge_incidence": 2359
   },
   "nodes": [
     {
@@ -535,6 +535,17 @@
       "produced_by": 3,
       "consumed_by": 1,
       "generator": false,
+      "type_check": true,
+      "choose_when": "undocumented",
+      "source": "chain_fuzz catalog"
+    },
+    {
+      "sort": "ctgeometry",
+      "container": "structured_value",
+      "size_hint": "input-dependent",
+      "produced_by": 1,
+      "consumed_by": 8,
+      "generator": true,
       "type_check": true,
       "choose_when": "undocumented",
       "source": "chain_fuzz catalog"
@@ -1068,6 +1079,17 @@
       "source": "chain_fuzz catalog"
     },
     {
+      "sort": "projstack",
+      "container": "structured_value",
+      "size_hint": "input-dependent",
+      "produced_by": 2,
+      "consumed_by": 7,
+      "generator": true,
+      "type_check": true,
+      "choose_when": "undocumented",
+      "source": "chain_fuzz catalog"
+    },
+    {
       "sort": "qimage",
       "container": "dense_array",
       "size_hint": "input-dependent",
@@ -1368,7 +1390,7 @@
       "sort": "table",
       "container": "sequence",
       "size_hint": "input-dependent",
-      "produced_by": 1166,
+      "produced_by": 1167,
       "consumed_by": 547,
       "generator": true,
       "type_check": true,
@@ -1456,8 +1478,8 @@
       "sort": "voxel",
       "container": "dense_array",
       "size_hint": "input-dependent",
-      "produced_by": 63,
-      "consumed_by": 123,
+      "produced_by": 70,
+      "consumed_by": 124,
       "generator": true,
       "type_check": true,
       "choose_when": "undocumented",
@@ -145582,6 +145604,14 @@
           "range": "undocumented",
           "unit": "undocumented",
           "default": 1
+        },
+        {
+          "name": "device",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": "cpu"
         }
       ],
       "verified_executable": false,
@@ -145647,6 +145677,14 @@
           "range": "undocumented",
           "unit": "undocumented",
           "default": null
+        },
+        {
+          "name": "device",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": "cpu"
         }
       ],
       "verified_executable": false,
@@ -145736,6 +145774,14 @@
           "range": "undocumented",
           "unit": "undocumented",
           "default": "filtered_backprojection"
+        },
+        {
+          "name": "device",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": "cpu"
         }
       ],
       "verified_executable": false,
@@ -145825,6 +145871,14 @@
           "range": "undocumented",
           "unit": "undocumented",
           "default": true
+        },
+        {
+          "name": "device",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": "cpu"
         }
       ],
       "verified_executable": false,
@@ -146329,6 +146383,14 @@
           "range": "undocumented",
           "unit": "undocumented",
           "default": 1
+        },
+        {
+          "name": "device",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": "cpu"
         }
       ],
       "verified_executable": false,
@@ -146410,6 +146472,918 @@
           "range": "undocumented",
           "unit": "undocumented",
           "default": null
+        },
+        {
+          "name": "device",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": "cpu"
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00030"
+    },
+    {
+      "op": "ct_scan_geometry",
+      "inputs": [],
+      "output": "ctgeometry",
+      "category": "tomography",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "source",
+      "consumes_input": false,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00030"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00030"
+        }
+      ],
+      "runtime_target": {
+        "module": "ctscan",
+        "callable": "ct_scan_geometry"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "ctscan",
+        "callable": "ct_scan_geometry"
+      },
+      "parameter_schema": [
+        {
+          "name": "scan",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": "cone"
+        },
+        {
+          "name": "n_views",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 360
+        },
+        {
+          "name": "n_u",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 256
+        },
+        {
+          "name": "n_v",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 256
+        },
+        {
+          "name": "vol_shape",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": [
+            256,
+            256,
+            256
+          ]
+        },
+        {
+          "name": "voxel",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 1.0
+        },
+        {
+          "name": "du",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
+        },
+        {
+          "name": "dv",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
+        },
+        {
+          "name": "dso",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
+        },
+        {
+          "name": "dsd",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
+        },
+        {
+          "name": "detector",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": "flat"
+        },
+        {
+          "name": "arc_deg",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
+        },
+        {
+          "name": "start_deg",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.0
+        },
+        {
+          "name": "angles_deg",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
+        },
+        {
+          "name": "offset_u",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.0
+        },
+        {
+          "name": "pitch",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 1.0
+        },
+        {
+          "name": "turns",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
+        },
+        {
+          "name": "tilt_deg",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 30.0
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00030"
+    },
+    {
+      "op": "shepp_logan_3d",
+      "inputs": [],
+      "output": "voxel",
+      "category": "tomography",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "source",
+      "consumes_input": false,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00030"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00030"
+        }
+      ],
+      "runtime_target": {
+        "module": "ctscan",
+        "callable": "shepp_logan_3d"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "ctscan",
+        "callable": "shepp_logan_3d"
+      },
+      "parameter_schema": [
+        {
+          "name": "size",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 128
+        },
+        {
+          "name": "supersample",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 2
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00030"
+    },
+    {
+      "op": "ellipsoid_phantom",
+      "inputs": [],
+      "output": "voxel",
+      "category": "tomography",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "source",
+      "consumes_input": false,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00030"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00030"
+        }
+      ],
+      "runtime_target": {
+        "module": "ctscan",
+        "callable": "ellipsoid_phantom"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "ctscan",
+        "callable": "ellipsoid_phantom"
+      },
+      "parameter_schema": [
+        {
+          "name": "shape",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": [
+            128,
+            128,
+            128
+          ]
+        },
+        {
+          "name": "ellipsoids",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
+        },
+        {
+          "name": "supersample",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 2
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00030"
+    },
+    {
+      "op": "ellipsoid_projections",
+      "inputs": [
+        "ctgeometry"
+      ],
+      "output": "projstack",
+      "category": "tomography",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00030"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00030"
+        }
+      ],
+      "runtime_target": {
+        "module": "ctscan",
+        "callable": "ellipsoid_projections"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "ctscan",
+        "callable": "ellipsoid_projections"
+      },
+      "parameter_schema": [
+        {
+          "name": "ellipsoids",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
+        },
+        {
+          "name": "device",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": "auto"
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00030"
+    },
+    {
+      "op": "ct_forward_project",
+      "inputs": [
+        "voxel",
+        "ctgeometry"
+      ],
+      "output": "projstack",
+      "category": "tomography",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00030"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00030"
+        }
+      ],
+      "runtime_target": {
+        "module": "ctscan",
+        "callable": "ct_forward_project"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "ctscan",
+        "callable": "ct_forward_project"
+      },
+      "parameter_schema": [
+        {
+          "name": "device",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": "auto"
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00030"
+    },
+    {
+      "op": "ct_adjoint_project",
+      "inputs": [
+        "projstack",
+        "ctgeometry"
+      ],
+      "output": "voxel",
+      "category": "tomography",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00030"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00030"
+        }
+      ],
+      "runtime_target": {
+        "module": "ctscan",
+        "callable": "ct_adjoint_project"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "ctscan",
+        "callable": "ct_adjoint_project"
+      },
+      "parameter_schema": [
+        {
+          "name": "device",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": "auto"
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00030"
+    },
+    {
+      "op": "fdk_reconstruct",
+      "inputs": [
+        "projstack",
+        "ctgeometry"
+      ],
+      "output": "voxel",
+      "category": "tomography",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00030"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00030"
+        }
+      ],
+      "runtime_target": {
+        "module": "ctscan",
+        "callable": "fdk_reconstruct"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "ctscan",
+        "callable": "fdk_reconstruct"
+      },
+      "parameter_schema": [
+        {
+          "name": "filter_name",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": "ramp"
+        },
+        {
+          "name": "cutoff",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 1.0
+        },
+        {
+          "name": "device",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": "auto"
+        },
+        {
+          "name": "allow_incomplete",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": false
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00030"
+    },
+    {
+      "op": "sirt_reconstruct",
+      "inputs": [
+        "projstack",
+        "ctgeometry"
+      ],
+      "output": "voxel",
+      "category": "tomography",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00030"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00030"
+        }
+      ],
+      "runtime_target": {
+        "module": "ctscan",
+        "callable": "sirt_reconstruct"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "ctscan",
+        "callable": "sirt_reconstruct"
+      },
+      "parameter_schema": [
+        {
+          "name": "n_iter",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 50
+        },
+        {
+          "name": "relaxation",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 1.0
+        },
+        {
+          "name": "initial",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
+        },
+        {
+          "name": "nonnegative",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": true
+        },
+        {
+          "name": "device",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": "auto"
+        },
+        {
+          "name": "on_iter",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00030"
+    },
+    {
+      "op": "os_sart_reconstruct",
+      "inputs": [
+        "projstack",
+        "ctgeometry"
+      ],
+      "output": "voxel",
+      "category": "tomography",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00030"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00030"
+        }
+      ],
+      "runtime_target": {
+        "module": "ctscan",
+        "callable": "os_sart_reconstruct"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "ctscan",
+        "callable": "os_sart_reconstruct"
+      },
+      "parameter_schema": [
+        {
+          "name": "n_iter",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 10
+        },
+        {
+          "name": "n_subsets",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 16
+        },
+        {
+          "name": "relaxation",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.8
+        },
+        {
+          "name": "initial",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
+        },
+        {
+          "name": "nonnegative",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": true
+        },
+        {
+          "name": "device",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": "auto"
+        },
+        {
+          "name": "on_iter",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00030"
+    },
+    {
+      "op": "tv_reconstruct",
+      "inputs": [
+        "projstack",
+        "ctgeometry"
+      ],
+      "output": "voxel",
+      "category": "tomography",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00030"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00030"
+        }
+      ],
+      "runtime_target": {
+        "module": "ctscan",
+        "callable": "tv_reconstruct"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "ctscan",
+        "callable": "tv_reconstruct"
+      },
+      "parameter_schema": [
+        {
+          "name": "tv_weight",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.0003
+        },
+        {
+          "name": "n_iter",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 200
+        },
+        {
+          "name": "initial",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
+        },
+        {
+          "name": "nonnegative",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": true
+        },
+        {
+          "name": "device",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": "auto"
+        },
+        {
+          "name": "on_iter",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00030"
+    },
+    {
+      "op": "ct_dual_energy_reconstruct",
+      "inputs": [
+        "projstack",
+        "projstack",
+        "ctgeometry"
+      ],
+      "output": "table",
+      "category": "tomography",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00030"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00030"
+        }
+      ],
+      "input_roles": [
+        "proj_low",
+        "proj_high",
+        "geometry"
+      ],
+      "runtime_target": {
+        "module": "ctscan",
+        "callable": "ct_dual_energy_reconstruct"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "ctscan",
+        "callable": "ct_dual_energy_reconstruct"
+      },
+      "parameter_schema": [
+        {
+          "name": "mu_low",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": [
+            1.0,
+            0.4
+          ]
+        },
+        {
+          "name": "mu_high",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": [
+            0.6,
+            0.3
+          ]
+        },
+        {
+          "name": "method",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": "fdk"
+        },
+        {
+          "name": "device",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": "auto"
         }
       ],
       "verified_executable": false,

@@ -57,16 +57,16 @@
 
 ### 検証の段
 
-能力 97 件を、何で確かめたかで分けた数(`docs/maturity.json`。いまのツリー(pyproject の版 0.8.1)から `tools/gen_maturity.py` が作る。段の定義は [MATURITY.md](MATURITY.md))。
+能力 98 件を、何で確かめたかで分けた数(`docs/maturity.json`。いまのツリー(pyproject の版 0.8.1)から `tools/gen_maturity.py` が作る。段の定義は [MATURITY.md](MATURITY.md))。
 
 | 段 | 意味 | 能力 |
 |---|---|---|
 | `research-prototype` | 実装はあるが、試験や走る例が揃っていない | 0 |
-| `verified-synthetic` | 真値を持つ合成データで自動検証 | 79 |
+| `verified-synthetic` | 真値を持つ合成データで自動検証 | 80 |
 | `validated-public-real-data` | 公開の実測データを使う例が門で走る | 18 |
 | `validated-hardware` | 実機で検証(外部の報告を受理したときだけ) | 0 |
 
-例 450 本のうち、門が実際に走らせるもの 450 本。
+例 451 本のうち、門が実際に走らせるもの 451 本。
 
 ### 版ごとの op の数
 
@@ -142,11 +142,11 @@
 
 ## オペレータを探す
 
-**3,629 本の op ノート**(呼び出し方・型の契約・HALCON 対応・文献・来歴)と **69 本の族ガイド**があります。次元ごとの入口:
+**3,640 本の op ノート**(呼び出し方・型の契約・HALCON 対応・文献・来歴)と **69 本の族ガイド**があります。次元ごとの入口:
 
-**網羅の実測**: 進化 op 942/942、型つき台帳 2652/2664、1 行ファサード `fullseye.<名前>` 724/1514。**ファサード側はまだ半分**(残りは補助関数・クラス・再輸出モジュール)。
+**網羅の実測**: 進化 op 942/942、型つき台帳 2663/2675、1 行ファサード `fullseye.<名前>` 735/1527。**ファサード側はまだ半分**(残りは補助関数・クラス・再輸出モジュール)。
 
-**ノートの中身の実測**: 3629 本のうち、実行できる例が付いているのは **3595 本**(34 本は例ゼロ)、使い方の説明が 120 字以上あるのは **3428 本**(201 本は 1 行の要約だけ)。構造(呼び出し・型・次に繋がる op)は 3629 本すべてにある。
+**ノートの中身の実測**: 3640 本のうち、実行できる例が付いているのは **3605 本**(35 本は例ゼロ)、使い方の説明が 120 字以上あるのは **3439 本**(201 本は 1 行の要約だけ)。構造(呼び出し・型・次に繋がる op)は 3640 本すべてにある。
 
 | 次元 | op 数 | 入口 |
 |---|---:|---|
@@ -159,11 +159,11 @@
 | `annotate` — 図注(軸・凡例・注記) | 51 | [INDEX](ops/annotate/INDEX.md) · [ガイド](ops/annotate/guides/figure_annotation.md) |
 | `oned` | 49 | [INDEX](ops/oned/INDEX.md) |
 | `gfx2d` — 描画 | 44 | [INDEX](ops/gfx2d/INDEX.md) |
+| `tomography` — 断層 | 43 | [INDEX](ops/tomography/INDEX.md) |
 | `generative` | 42 | [INDEX](ops/generative/INDEX.md) · [ガイド](ops/generative/guides/generative_art.md) |
 | `imgmetrics` — 画質の指標 | 42 | [INDEX](ops/imgmetrics/INDEX.md) · [ガイド](ops/imgmetrics/guides/image_difference_metrics.md) |
 | `reprconv` — 表現の橋渡し(型と型のあいだ) | 42 | [INDEX](ops/reprconv/INDEX.md) |
 | `spc` | 41 | [INDEX](ops/spc/INDEX.md) |
-| `tomography` — 断層 | 32 | [INDEX](ops/tomography/INDEX.md) |
 | `piv` — 粒子画像流速測定 + DIC | 29 | [INDEX](ops/piv/INDEX.md) · [ガイド](ops/piv/guides/piv_displacement.md) |
 | `conngraph` | 28 | [INDEX](ops/conngraph/INDEX.md) · [ガイド](ops/conngraph/guides/conngraph.md) |
 | `acoustics` — 音響 | 27 | [INDEX](ops/acoustics/INDEX.md) · [ガイド](ops/acoustics/guides/acoustic_condition_monitoring.md) |
@@ -303,9 +303,9 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 <!-- docmap:start -->
 
-## ドキュメント地図 — 全 305 本
+## ドキュメント地図 — 全 306 本
 
-**索引から 1 本も辿れない文書を作らない**ための全体地図です(`docs/ops/` の op ノート 3,629 本と族ガイド 69 本は上の「オペレータを探す」から、記事は [articles/](articles/README.md) から辿れます)。到達できない文書が 1 本でもあれば `tests/test_docs_index_reachable.py` が落ちます。**本文はほとんどが日本語**です。
+**索引から 1 本も辿れない文書を作らない**ための全体地図です(`docs/ops/` の op ノート 3,640 本と族ガイド 69 本は上の「オペレータを探す」から、記事は [articles/](articles/README.md) から辿れます)。到達できない文書が 1 本でもあれば `tests/test_docs_index_reachable.py` が落ちます。**本文はほとんどが日本語**です。
 
 **はじめに・使い方**(12)
 
@@ -446,7 +446,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`ARTICLE_GPU_SHAPEMATCH.md`](ARTICLE_GPU_SHAPEMATCH.md) | 記事材料: 形状マッチングを GPU に載せる —— 勾配方向スコアの conv2d 定式化 |
 | [`FULLSEYE_OP_ARTICLE_SPEC.md`](FULLSEYE_OP_ARTICLE_SPEC.md) | Fullseye op カタログ画像・専用記事 仕様書(第 2 陣企画書) |
 
-**そのほか**(221)
+**そのほか**(222)
 
 | 文書 | 内容 |
 |---|---|
@@ -535,6 +535,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`capabilities/compound-eye-aliasing-and-ttc.md`](capabilities/compound-eye-aliasing-and-ttc.md) | id: compound-eye-aliasing-and-ttc |
 | [`capabilities/convergent-forward-models.md`](capabilities/convergent-forward-models.md) | id: convergent-forward-models |
 | [`capabilities/crop-weed-cover-grade.md`](capabilities/crop-weed-cover-grade.md) | id: crop-weed-cover-grade |
+| [`capabilities/ct-scan-modes.md`](capabilities/ct-scan-modes.md) | id: ct-scan-modes |
 | [`capabilities/dual-energy-xray-material-discrimination.md`](capabilities/dual-energy-xray-material-discrimination.md) | id: dual-energy-xray-material-discrimination |
 | [`capabilities/emva1288-camera-datasheets.md`](capabilities/emva1288-camera-datasheets.md) | id: emva1288-camera-datasheets |
 | [`capabilities/estimate-lens-distortion.md`](capabilities/estimate-lens-distortion.md) | id: estimate-lens-distortion |

@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(450 例)
+### 2-D 画像/信号/幾何(451 例)
 
 **workflow**
 - **MCPで物理量・登録見本・検証済みpipeline案を明示して使う** — 外部資産なしの合成画像で、名前つき物理量による平滑化、明示的な登録見本ハンドルによる位置決め、候補が一意なときだけ返す検証済みpipeline案を実行し、結果を自己検査する。 `py -3.11 examples/mcp_usability.py`
@@ -512,6 +512,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 **tomography_3d**
 - **CT で 1 本の試料をスキャンし、寸法 mm と欠陥の数まで出す** — 楕円ファントムの閉形式サイノグラム→FBP 再構成→外径測定→空洞計数。真値(30.00 mm / 1 個)との誤差を印字し断定する。 `py -3.11 examples/ct_reconstruction.py`
+- **コーン・ヘリカル・ラミノグラフィ・ファン……1 つの幾何の記述で全方式を再構成する** — ct_scan_geometry の引数だけで方式を切り替え、同じ投影・逆投影の核で再構成して、閉形式の投影からの誤差と随伴性を方式ごとに印字する。 `py -3.11 examples/ct_scan_modes.py`
 - **投影からボクセルと体積 mm³ まで一本で閉じる(tomography 族)** — サイノグラムから再構成した後は既存の 3-D op(窓/ラベル/境界/メッシュ/領域統計)をそのまま呼び、既知体積と照合。 `py -3.11 examples/tomography_reconstruct.py`
 - **X 線 CT / ラミノグラフィ検査: スライス毎に内部空洞を見つけて測る** — 合成円柱ボリューム(空洞 2 つ)をスライス毎に denoise→材料分割→空洞抽出→計測。--laminography で限られた角度の軸方向ぼけを模す(テンプレート、数値を印字)。 `py -3.11 examples/ct_inspection.py`
 - **ボクセルのラベル色分け(volcolor)で CT の粒子を数えて見せる** — vol_label/vol_region_props の結果を色付けし、「切ってから色を付ける」と「色を付けてから切る」の差を数値に出す。 `py -3.11 examples/voxel_labels_color.py`
@@ -797,9 +798,9 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Operators by family(族 → カテゴリ、全 op)
 
-_計 3629 ops / 56 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
+_計 3640 ops / 56 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
 
-族の一覧: **2d** 959 · **3d** 376 · **fit** 3 · **math** 114 · **optics** 483 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 41 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 717 · **tomography** 32 · **volcolor** 11 · **reprconv** 42 · **fileio** 14 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 3 · **calib** 21 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 16 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
+族の一覧: **2d** 959 · **3d** 376 · **fit** 3 · **math** 114 · **optics** 483 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 41 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 717 · **tomography** 43 · **volcolor** 11 · **reprconv** 42 · **fileio** 14 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 3 · **calib** 21 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 16 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
 
 ### 2d(959 ops / 49 categories)
 
@@ -4380,7 +4381,7 @@ _計 3629 ops / 56 families。並びとノートの在り処は `docs/ops/INDEX.
 - `world_camera` `table × matrix × matrix → table` GPU: なし — 世界をカメラで撮る: ``{"color" (H,W,3), "label" (H,W) int(−1 = 空), "depth" (H,W), "face" (H,W), "shade" (H,W)}``。 · 例: `gsplat_trained_product`, `poc_ball_bounce`, `poc_driving_crossing`, `poc_driving_decisions`, `poc_driving_endless_map`, `poc_driving_humanoids`, `poc_driving_japan_town`, `poc_driving_lateral`, `poc_driving_longitudinal`, `poc_driving_pass`, `poc_driving_school`, `poc_driving_town`, `poc_driving_traffic`, `poc_kendama`, `poc_table_tennis_bounce`, `poc_table_tennis_spin`, `poc_ttc_rss`, `poc_world_terrain`
 - `world_move` `table → any` GPU: なし — 物体 i(資産で置いたもの)を新しい姿勢 (x, y, yaw) へ動かす(頂点だけ書き換える。面・ラベル・色は不変)。 · 例: `poc_driving_crossing`, `poc_driving_decisions`, `poc_driving_lateral`, `poc_ttc_rss`, `poc_world_terrain`
 
-### tomography(32 ops / 7 categories)
+### tomography(43 ops / 8 categories)
 
 #### tomography / artifact(5)
 - `beam_hardening_apply` `sinogram → sinogram` GPU: なし — Turn a monochromatic sinogram into a **polychromatic** one — cupping. · 例: `ct_reconstruction`, `poc_battery_ct_degradation`
@@ -4388,6 +4389,19 @@ _計 3629 ops / 56 families。並びとノートの在り処は `docs/ops/INDEX.
 - `metal_trace_interpolate` `sinogram → sinogram` GPU: なし — Linear-interpolation metal artefact reduction (LI-MAR). · 例: `ct_reconstruction`
 - `ring_artifact_apply` `sinogram → sinogram` GPU: なし — Give the detector a per-bin gain error — the source of ring artefacts. · 例: `ct_reconstruction`, `poc_battery_ct_degradation`
 - `ring_artifact_remove` `sinogram → sinogram` GPU: なし — Remove per-detector-bin offsets by flattening the angle-averaged profile. · 例: `ct_reconstruction`
+
+#### tomography / ct_scan(11)
+- `ct_adjoint_project` `projstack × ctgeometry → voxel` GPU: なし — The exact transpose ``A^T`` of :func:`ct_forward_project`. · 例: `ct_scan_modes`
+- `ct_dual_energy_reconstruct` `projstack × projstack × ctgeometry → table` GPU: なし — Two scans of one geometry to two basis-material volumes.
+- `ct_forward_project` `voxel × ctgeometry → projstack` GPU: なし — Project a volume along every ray of *geometry*: the discrete operator ``A``. · 例: `ct_scan_modes`
+- `ct_scan_geometry` `入力なし → ctgeometry` GPU: なし — Describe one CT scan: per view, where the source and the detector are. · 例: `ct_scan_modes`
+- `ellipsoid_phantom` `入力なし → voxel` GPU: なし — Rasterise a sum of uniform ellipsoids onto a ``(Z, Y, X)`` grid. · 例: `ct_scan_modes`
+- `ellipsoid_projections` `ctgeometry → projstack` GPU: なし — Exact line integrals of a sum of ellipsoids, for any scan in this family. · 例: `ct_scan_modes`
+- `fdk_reconstruct` `projstack × ctgeometry → voxel` GPU: なし — Filtered back-projection for every scan with a formula: FDK and its relatives. · 例: `ct_scan_modes`
+- `os_sart_reconstruct` `projstack × ctgeometry → voxel` GPU: なし — OS-SART: the SIRT update applied to one ordered subset of views at a time. · 例: `ct_scan_modes`
+- `shepp_logan_3d` `入力なし → voxel` GPU: なし — The modified 3-D Shepp-Logan head phantom on a ``size``-cube. · 例: `ct_scan_modes`
+- `sirt_reconstruct` `projstack × ctgeometry → voxel` GPU: なし — SIRT: every view at once, ``x <- x + lam C A^T R (p - A x)``. · 例: `ct_scan_modes`
+- `tv_reconstruct` `projstack × ctgeometry → voxel` GPU: なし — Total-variation reconstruction by the Chambolle-Pock primal-dual method. · 例: `ct_scan_modes`
 
 #### tomography / forward(3)
 - `ellipse_phantom` `入力なし → image2d` GPU: なし — Rasterise a sum of uniform ellipses onto a *size* x *size* slice. · 例: `ct_reconstruction`, `poc_ct_fidelity`, `tomography_reconstruct`
@@ -4893,7 +4907,7 @@ _計 3629 ops / 56 families。並びとノートの在り処は `docs/ops/INDEX.
 - `ms_ssim` `image2d × image2d → scalar` GPU: なし — 多尺度 SSIM(Wang, Simoncelli & Bovik, Asilomar Conf. 2003)。 · 例: `image_quality_metrics`
 - `mse` `image2d × image2d → scalar` GPU: なし — 平均二乗誤差。``data_range`` に依らない生の量。 · 例: `image_quality_metrics`
 - `psnr` `image2d × image2d → scalar` GPU: なし — 2 枚の画像のピーク信号対雑音比(PSNR、単位 dB)を返す。 · 例: `image_quality_metrics`, `poc_camera_shake_deblur`, `poc_dehazing`, `poc_focus_stacking`, `poc_iqa_tid2013`, `poc_pixel_shift`, `poc_real_deblur_honesty`, `poc_superresolution_limits`
-- `rmse` `image2d × image2d → scalar` GPU: なし — 平均二乗誤差の平方根(画素値と同じ単位)。 · 例: `grasp_pose`, `image_quality_metrics`, `poc_ct_fidelity`, `poc_datacenter_thermal_field`, `poc_polarization_specular`, `poc_structure_4d_deterioration`
+- `rmse` `image2d × image2d → scalar` GPU: なし — 平均二乗誤差の平方根(画素値と同じ単位)。 · 例: `ct_scan_modes`, `grasp_pose`, `image_quality_metrics`, `poc_ct_fidelity`, `poc_datacenter_thermal_field`, `poc_polarization_specular`, `poc_structure_4d_deterioration`
 - `ssim` `image2d × image2d → scalar` GPU: なし — 構造的類似度(Wang, Bovik, Sheikh & Simoncelli, IEEE TIP 13(4), 2004)。 · 例: `image_quality_metrics`, `poc_camera_shake_deblur`, `poc_ct_fidelity`, `poc_dehazing`, `poc_iqa_tid2013`, `poc_superresolution_limits`
 - `ssim_map` `image2d × image2d → image2d` GPU: なし — SSIM の**マップ**(平均を取る前)。どこが似ていないかを絵で見るため。 · 例: `image_quality_metrics`, `poc_iqa_tid2013`
 

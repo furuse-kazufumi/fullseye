@@ -1,0 +1,25 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">sirt_reconstruct — TOMOGRAPHY <code style="color:#22d3bf">ct_scan</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">projstack × ctgeometry</code> → <code style="color:#22d3bf">voxel</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sirt_reconstruct(projections, geometry, n_iter=50, relaxation=1.0, initial=None, nonnegative=True, device=&#x27;auto&#x27;, on_iter=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import ctscan; ctscan.sirt_reconstruct(projections, geometry, n_iter=50, relaxation=1.0, initial=None, nonnegative=True, device=&#x27;auto&#x27;, on_iter=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">opstomography.get(&quot;sirt_reconstruct&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>SIRT: सभी व्यू एक साथ, <code style="color:#22d3bf">x &lt;- x + lam C A^T R (p - A x)</code>।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p><code style="color:#22d3bf">R</code> and <code style="color:#22d3bf">C</code> are the inverse row and column sums of <code style="color:#22d3bf">A</code>. With the matched pair of this family it minimises a weighted least-squares error, and it needs no formula, so it is the route for tomosynthesis, few views and limited angle.</p>
+<p>:param projections: <code style="color:#22d3bf">(view, V, U)</code> line integrals. :param geometry: dict from <code style="color:#22d3bf">ct_scan_geometry</code>. :param n_iter: iterations, <code style="color:#22d3bf">1 .. 5000</code>. :param relaxation: step <code style="color:#22d3bf">lam</code>, <code style="color:#22d3bf">(0, 2)</code>. :param initial: starting volume; <code style="color:#22d3bf">None</code> gives zeros. :param nonnegative: clip to <code style="color:#22d3bf">&gt;= 0</code> after each iteration. :param device: <code style="color:#22d3bf">&quot;auto&quot;</code>, <code style="color:#22d3bf">&quot;cpu&quot;</code> or <code style="color:#22d3bf">&quot;cuda&quot;</code>. :param on_iter: optional <code style="color:#22d3bf">on_iter(iteration, volume)</code> for a convergence curve. :returns: <code style="color:#22d3bf">(Z, Y, X)</code> float volume. :raises ValueError: on a shape that disagrees with the geometry or a relaxation</p>
+<p>outside <code style="color:#22d3bf">(0, 2)</code>. Empty input (<code style="color:#22d3bf">projections</code> with 0 elements) raises</p>
+<p><code style="color:#22d3bf">ValueError</code>.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:ct_scan_modes">ct_scan_modes</a> — <code style="color:#22d3bf">py -3.11 examples/ct_scan_modes.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">voxel</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="optomography:radon_volume">radon_volume</a> · <a style="color:#22d3bf" href="optomography:ct_forward_project">ct_forward_project</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">ct_scan</code>)</h3>
+<p><a style="color:#22d3bf" href="optomography:ct_scan_geometry">ct_scan_geometry</a> · <a style="color:#22d3bf" href="optomography:shepp_logan_3d">shepp_logan_3d</a> · <a style="color:#22d3bf" href="optomography:ellipsoid_phantom">ellipsoid_phantom</a> · <a style="color:#22d3bf" href="optomography:ellipsoid_projections">ellipsoid_projections</a> · <a style="color:#22d3bf" href="optomography:ct_forward_project">ct_forward_project</a> · <a style="color:#22d3bf" href="optomography:ct_adjoint_project">ct_adjoint_project</a> · <a style="color:#22d3bf" href="optomography:fdk_reconstruct">fdk_reconstruct</a> · <a style="color:#22d3bf" href="optomography:os_sart_reconstruct">os_sart_reconstruct</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: ctscan.py — TOMOGRAPHY operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

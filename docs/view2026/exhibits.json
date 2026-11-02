@@ -20145,6 +20145,14 @@
     "hi": "Theorems तस्वीरों के रूप में (Apollonian, Ford, geodesic dome, phyllotaxis, IFS, space-filling curves)",
     "fr": "Des figures où un théorème fait barrière (Apollonius, Ford, dôme géodésique, phyllotaxie, IFS, courbes remplissant l'espace)"
    },
+   "ct-scan-modes": {
+    "zh": "用同一几何描述重建锥束、螺旋和分层扫描(工业 CT)",
+    "tw": "以同一幾何描述重建錐束、螺旋與分層掃描(工業 CT)",
+    "ko": "하나의 기하로 콘빔·헬리컬·라미노그래피 재구성(산업용 CT)",
+    "de": "Kegelstrahl-, Helix- und Laminographie-Scans auf einer Geometrie rekonstruieren (Industrie-CT)",
+    "hi": "एक ही ज्यामिति पर cone-beam, helical और laminography स्कैन का पुनर्निर्माण (औद्योगिक CT)",
+    "fr": "Reconstruire les balayages coniques, hélicoïdaux et de laminographie sur une seule géométrie (CT industrielle)"
+   },
    "tomography-reconstruction": {
     "zh": "从投影重建断面(CT)",
     "tw": "從投影重建斷面(CT)",

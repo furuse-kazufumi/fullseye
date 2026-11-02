@@ -1,0 +1,25 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">os_sart_reconstruct — TOMOGRAPHY <code style="color:#22d3bf">ct_scan</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">projstack × ctgeometry</code> → <code style="color:#22d3bf">voxel</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.os_sart_reconstruct(projections, geometry, n_iter=10, n_subsets=16, relaxation=0.8, initial=None, nonnegative=True, device=&#x27;auto&#x27;, on_iter=None)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import ctscan; ctscan.os_sart_reconstruct(projections, geometry, n_iter=10, n_subsets=16, relaxation=0.8, initial=None, nonnegative=True, device=&#x27;auto&#x27;, on_iter=None)</code>、台帳から引くなら <code style="color:#22d3bf">opstomography.get(&quot;os_sart_reconstruct&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>OS-SART: SIRT の更新を順序付きのビュー部分集合ごとに適用する。</p>
+<p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>
+<p>One iteration passes over all subsets, so it costs about one SIRT iteration and moves about *n_subsets* times as far early on. With inconsistent data it settles into a limit cycle rather than a point.</p>
+<p>:param projections: <code style="color:#22d3bf">(view, V, U)</code> line integrals. :param geometry: dict from <code style="color:#22d3bf">ct_scan_geometry</code>. :param n_iter: passes over all subsets, <code style="color:#22d3bf">1 .. 5000</code>. :param n_subsets: subsets, <code style="color:#22d3bf">1 .. n_views</code>. :param relaxation: step <code style="color:#22d3bf">lam</code>, <code style="color:#22d3bf">(0, 2)</code>. :param initial: starting volume; <code style="color:#22d3bf">None</code> gives zeros. :param nonnegative: clip to <code style="color:#22d3bf">&gt;= 0</code> after each subset. :param device: <code style="color:#22d3bf">&quot;auto&quot;</code>, <code style="color:#22d3bf">&quot;cpu&quot;</code> or <code style="color:#22d3bf">&quot;cuda&quot;</code>. :param on_iter: optional <code style="color:#22d3bf">on_iter(iteration, volume)</code>. :returns: <code style="color:#22d3bf">(Z, Y, X)</code> float volume. :raises ValueError: on a shape that disagrees with the geometry, a relaxation</p>
+<p>outside <code style="color:#22d3bf">(0, 2)</code>, or more subsets than views. Empty input (<code style="color:#22d3bf">projections</code></p>
+<p>with 0 elements) raises <code style="color:#22d3bf">ValueError</code>.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:ct_scan_modes">ct_scan_modes</a> — <code style="color:#22d3bf">py -3.11 examples/ct_scan_modes.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">voxel</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="optomography:radon_volume">radon_volume</a> · <a style="color:#22d3bf" href="optomography:ct_forward_project">ct_forward_project</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">ct_scan</code>)</h3>
+<p><a style="color:#22d3bf" href="optomography:ct_scan_geometry">ct_scan_geometry</a> · <a style="color:#22d3bf" href="optomography:shepp_logan_3d">shepp_logan_3d</a> · <a style="color:#22d3bf" href="optomography:ellipsoid_phantom">ellipsoid_phantom</a> · <a style="color:#22d3bf" href="optomography:ellipsoid_projections">ellipsoid_projections</a> · <a style="color:#22d3bf" href="optomography:ct_forward_project">ct_forward_project</a> · <a style="color:#22d3bf" href="optomography:ct_adjoint_project">ct_adjoint_project</a> · <a style="color:#22d3bf" href="optomography:fdk_reconstruct">fdk_reconstruct</a> · <a style="color:#22d3bf" href="optomography:sirt_reconstruct">sirt_reconstruct</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: ctscan.py — TOMOGRAPHY operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

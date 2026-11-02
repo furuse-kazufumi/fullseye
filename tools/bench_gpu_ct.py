@@ -5,7 +5,8 @@
     <venv>/python tools/bench_gpu_ct.py gpu_parallel        同じ寸法の GPU 経路と parity
     <venv>/python tools/bench_gpu_ct.py fdk 512 720         コーンビーム FDK の実寸の実演
     <venv>/python tools/bench_gpu_ct.py iter 256 180        反復法の収束曲線
-    <venv>/python tools/bench_gpu_ct.py gates 256           全方式の画質と CPU 一致
+    <venv>/python tools/bench_gpu_ct.py gates 96            全方式の画質
+    <venv>/python tools/bench_gpu_ct.py parity              GPU と CPU の一致
 
 ★測り方。GPU の時間は入力の転送から結果が host に戻るまでで、`torch.cuda.synchronize()`
 を挟む(op が host へ戻す時点で同期する)。CPU は 1 件 90 秒で打ち切り、外挿しない。打ち切りは
@@ -270,17 +271,21 @@ def stage_fdk(n, views):
     save("fdk_%d_%d" % (n, views), row)
 
 
-def stage_iter(n, views):
+def stage_iter(n, views, only=None):
+    """反復法の収束曲線。*only* = 0 SIRT, 1 OS-SART, 2 TV だけ(1 回 10 分の枠に収める)。"""
     import torch
-    geom = ctscan.ct_scan_geometry("cone", n_views=views, n_u=2 * n, n_v=2 * n, vol_shape=n)
+    geom = ctscan.ct_scan_geometry("cone", n_views=views, n_u=3 * n // 2, n_v=3 * n // 2,
+                                   vol_shape=n, du=2.0, dv=2.0)
     proj = ctscan.ellipsoid_projections(geom, device="cuda").astype(np.float32)
     truth = ctscan.shepp_logan_3d(n, supersample=1)
-    result = {"size": n, "views": views, "host": host_info()}
+    result = load().get("iter_%d_%d" % (n, views), {"size": n, "views": views, "host": host_info()})
     fbp = ctscan.fdk_reconstruct(proj, geom, device="cuda")
     result["fdk_rmse"] = rmse(fbp, truth)
     routes = [("sirt", ctscan.sirt_reconstruct, {"n_iter": 25}),
               ("os_sart", ctscan.os_sart_reconstruct, {"n_iter": 5, "n_subsets": 12}),
               ("tv", ctscan.tv_reconstruct, {"n_iter": 25})]
+    if only is not None:
+        routes = [routes[only]]
     for name, fn, kw in routes:
         curve = []
         G.reset_gpu_memory_peak()
@@ -342,11 +347,70 @@ def stage_gates(n):
         save("gates_%d" % n, {"size": n, "rows": rows, "host": host_info()})
 
 
+def stage_parity():
+    """GPU と CPU の一致。CPU が 90 秒に収まらない寸法は view を間引いて補間の定義を比べる。"""
+    rows = []
+
+    def add(name, cpu, gpu):
+        a, g = np.asarray(cpu(), np.float64), np.asarray(gpu(), np.float64)
+        diff = np.abs(a - g)
+        rows.append({"case": name, "parity_max": float(diff.max()),
+                     "parity_rms": float(np.sqrt(np.mean(diff ** 2))),
+                     "reference_peak": float(np.abs(a).max()), "reference_std": float(a.std())})
+        print(rows[-1], flush=True)
+        save("parity", {"rows": rows, "host": host_info()})
+
+    for n in (1024, 2048):
+        img = _image(n)
+        ang = _angles(8)
+        add("radon_transform %d, 8 views" % n, lambda: T.radon_transform(img, ang),
+            lambda: G.radon_transform(img, ang, device="cuda"))
+    vol = _volume(64).astype(np.float64)
+    ang = _angles(90)
+    add("radon_volume 64, 90 views", lambda: T.radon_volume(vol, ang),
+        lambda: G.radon_volume(vol, ang, device="cuda"))
+    for name, kw in (("cone", dict(scan="cone", n_views=180, n_u=192, n_v=192, vol_shape=128, du=2.0,
+                                   dv=2.0)),
+                     ("helical", dict(scan="helical", n_views=360, n_u=128, n_v=32, vol_shape=64,
+                                      pitch=0.5)),
+                     ("laminography", dict(scan="laminography", n_views=120, n_u=128, n_v=128,
+                                           vol_shape=64, du=1.0, dv=1.0)),
+                     ("fan_arc", dict(scan="fan", n_views=360, n_u=256, n_v=1, vol_shape=(1, 128, 128),
+                                      detector="arc"))):
+        geom = ctscan.ct_scan_geometry(**kw)
+        add("ellipsoid_projections " + name, lambda: ctscan.ellipsoid_projections(geom, device="cpu"),
+            lambda: ctscan.ellipsoid_projections(geom, device="cuda"))
+        proj = ctscan.ellipsoid_projections(geom, device="cpu")
+        add("fdk " + name, lambda: ctscan.fdk_reconstruct(proj, geom, device="cpu"),
+            lambda: ctscan.fdk_reconstruct(proj, geom, device="cuda"))
+    geom = ctscan.ct_scan_geometry("cone", n_views=60, n_u=64, n_v=64, vol_shape=32)
+    proj = ctscan.ellipsoid_projections(geom, device="cpu")
+    add("forward cone 32", lambda: ctscan.ct_forward_project(ctscan.shepp_logan_3d(32), geom, device="cpu"),
+        lambda: ctscan.ct_forward_project(ctscan.shepp_logan_3d(32), geom, device="cuda"))
+    add("sirt cone 32, 5 iterations", lambda: ctscan.sirt_reconstruct(proj, geom, n_iter=5, device="cpu"),
+        lambda: ctscan.sirt_reconstruct(proj, geom, n_iter=5, device="cuda"))
+    add("os_sart cone 32, 2 passes",
+        lambda: ctscan.os_sart_reconstruct(proj, geom, n_iter=2, n_subsets=6, device="cpu"),
+        lambda: ctscan.os_sart_reconstruct(proj, geom, n_iter=2, n_subsets=6, device="cuda"))
+    add("tv cone 32, 5 iterations", lambda: ctscan.tv_reconstruct(proj, geom, n_iter=5, device="cpu"),
+        lambda: ctscan.tv_reconstruct(proj, geom, n_iter=5, device="cuda"))
+    rng = np.random.default_rng(0)
+    x = rng.random(geom["vol_shape"])
+    y = rng.random((60, 64, 64))
+    gaps = {}
+    for label, double in (("float32", False), ("float64", True)):
+        lhs = float(np.sum(np.asarray(G.forward_project(x, geom, device="cuda", double=double), np.float64) * y))
+        rhs = float(np.sum(x * np.asarray(G.adjoint_project(y, geom, device="cuda", double=double), np.float64)))
+        gaps[label] = abs(lhs - rhs) / abs(lhs)
+    print(gaps, flush=True)
+    save("adjoint_gap_gpu", gaps)
+
+
 def main():
     stage = sys.argv[1]
     args = [int(a) for a in sys.argv[2:]]
     {"cpu": stage_cpu, "gpu_parallel": stage_gpu_parallel, "fdk": stage_fdk, "iter": stage_iter,
-     "gates": stage_gates}[stage](*args)
+     "gates": stage_gates, "parity": stage_parity}[stage](*args)
 
 
 if __name__ == "__main__":

@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">sart_reconstruct — TOMOGRAPHY <code style="color:#22d3bf">reconstruct</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">sinogram</code> → <code style="color:#22d3bf">image2d</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sart_reconstruct(sinogram, angles_deg=None, size=None, n_iter=10, relaxation=0.3, initial=None, nonnegative=True)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import tomography; tomography.sart_reconstruct(sinogram, angles_deg=None, size=None, n_iter=10, relaxation=0.3, initial=None, nonnegative=True)</code>、台帳から引くなら <code style="color:#22d3bf">opstomography.get(&quot;sart_reconstruct&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sart_reconstruct(sinogram, angles_deg=None, size=None, n_iter=10, relaxation=0.3, initial=None, nonnegative=True, device=&#x27;cpu&#x27;)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import tomography; tomography.sart_reconstruct(sinogram, angles_deg=None, size=None, n_iter=10, relaxation=0.3, initial=None, nonnegative=True, device=&#x27;cpu&#x27;)</code>、台帳から引くなら <code style="color:#22d3bf">opstomography.get(&quot;sart_reconstruct&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>SART — simultaneous algebraic reconstruction, one angle at a time.</p>
@@ -20,7 +20,9 @@
 <p>so at 180 views the constraint alone is worth 1.7x, and it is the *only* reason SART leads FBP there at all (FBP scores 0.0250, between the two).</p>
 <p>:param sinogram: <code style="color:#22d3bf">(n_angles, n_detectors)</code>, rows = angles. :param angles_deg: view angles; <code style="color:#22d3bf">None</code> -&gt; uniform <code style="color:#22d3bf">[0, 180)</code>. :param size: output side; <code style="color:#22d3bf">None</code> -&gt; the inscribed square. :param n_iter: sweeps over the full angle set, <code style="color:#22d3bf">1 .. 500</code>. :param relaxation: step size <code style="color:#22d3bf">lambda</code>, <code style="color:#22d3bf">(0, 2)</code>. Over 1 the iteration can</p>
 <p>oscillate; over 2 it provably diverges, and is refused.</p>
-<p>:param initial: starting estimate, <code style="color:#22d3bf">(size, size)</code>; <code style="color:#22d3bf">None</code> -&gt; zeros. :param nonnegative: clip to <code style="color:#22d3bf">&gt;= 0</code> after each sweep. :returns: <code style="color:#22d3bf">(size, size)</code> float64 image. :raises ValueError: as <code style="color:#22d3bf">filtered_backprojection</code>, plus a relaxation</p>
+<p>:param initial: starting estimate, <code style="color:#22d3bf">(size, size)</code>; <code style="color:#22d3bf">None</code> -&gt; zeros. :param nonnegative: clip to <code style="color:#22d3bf">&gt;= 0</code> after each sweep. :param device: <code style="color:#22d3bf">&quot;cpu&quot;</code> (default) stays on this float64 route. <code style="color:#22d3bf">&quot;auto&quot;</code> or</p>
+<p><code style="color:#22d3bf">&quot;cuda&quot;</code> hands the call to <code style="color:#22d3bf">tomography_gpu</code>, single precision on a GPU.</p>
+<p>:returns: <code style="color:#22d3bf">(size, size)</code> float64 image. :raises ValueError: as <code style="color:#22d3bf">filtered_backprojection</code>, plus a relaxation</p>
 <p>outside <code style="color:#22d3bf">(0, 2)</code> and an *initial* whose shape is not <code style="color:#22d3bf">(size, size)</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
