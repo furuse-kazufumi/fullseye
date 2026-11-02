@@ -27,6 +27,12 @@ _CATALOG = {
         ("e57_write", ["table"], "any"),
         ("e57_read", ["any"], "table"),
     ],
+    "archive": [
+        ("archive_probe", ["any"], "text"),
+        ("archive_list", ["any"], "table"),
+        ("archive_extract", ["any", "text"], "any"),
+        ("archive_create", ["any", "text"], "any"),
+    ],
 }
 
 

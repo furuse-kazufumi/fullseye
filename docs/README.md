@@ -66,7 +66,7 @@
 | `validated-public-real-data` | 公開の実測データを使う例が門で走る | 18 |
 | `validated-hardware` | 実機で検証(外部の報告を受理したときだけ) | 0 |
 
-例 450 本のうち、門が実際に走らせるもの 450 本。
+例 451 本のうち、門が実際に走らせるもの 451 本。
 
 ### 版ごとの op の数
 
@@ -142,11 +142,11 @@
 
 ## オペレータを探す
 
-**3,629 本の op ノート**(呼び出し方・型の契約・HALCON 対応・文献・来歴)と **69 本の族ガイド**があります。次元ごとの入口:
+**3,633 本の op ノート**(呼び出し方・型の契約・HALCON 対応・文献・来歴)と **69 本の族ガイド**があります。次元ごとの入口:
 
-**網羅の実測**: 進化 op 942/942、型つき台帳 2652/2664、1 行ファサード `fullseye.<名前>` 724/1514。**ファサード側はまだ半分**(残りは補助関数・クラス・再輸出モジュール)。
+**網羅の実測**: 進化 op 942/942、型つき台帳 2652/2664、1 行ファサード `fullseye.<名前>` 728/1518。**ファサード側はまだ半分**(残りは補助関数・クラス・再輸出モジュール)。
 
-**ノートの中身の実測**: 3629 本のうち、実行できる例が付いているのは **3595 本**(34 本は例ゼロ)、使い方の説明が 120 字以上あるのは **3428 本**(201 本は 1 行の要約だけ)。構造(呼び出し・型・次に繋がる op)は 3629 本すべてにある。
+**ノートの中身の実測**: 3633 本のうち、実行できる例が付いているのは **3599 本**(34 本は例ゼロ)、使い方の説明が 120 字以上あるのは **3432 本**(201 本は 1 行の要約だけ)。構造(呼び出し・型・次に繋がる op)は 3633 本すべてにある。
 
 | 次元 | op 数 | 入口 |
 |---|---:|---|
@@ -174,6 +174,7 @@
 | `graph` | 20 | [INDEX](ops/graph/INDEX.md) |
 | `specular` — 鏡面分離 | 20 | [INDEX](ops/specular/INDEX.md) · [ガイド](ops/specular/guides/specular_photometric.md) |
 | `quat` — 四元数・単元信号 | 19 | [INDEX](ops/quat/INDEX.md) · [ガイド](ops/quat/guides/quaternion_monogenic.md) |
+| `fileio` | 18 | [INDEX](ops/fileio/INDEX.md) |
 | `multivar` | 18 | [INDEX](ops/multivar/INDEX.md) · [ガイド](ops/multivar/guides/design_of_experiments.md) |
 | `lightfield` — ライトフィールド | 17 | [INDEX](ops/lightfield/INDEX.md) · [ガイド](ops/lightfield/guides/lightfield_depth.md) |
 | `measure1d` — サブピクセル計測 | 17 | [INDEX](ops/measure1d/INDEX.md) · [ガイド](ops/measure1d/guides/subpixel_measuring.md) |
@@ -184,7 +185,6 @@
 | `videostream` — 動画ストリーム | 16 | [INDEX](ops/videostream/INDEX.md) · [ガイド](ops/videostream/guides/video_streaming.md) |
 | `astrostack` — 天体スタック | 14 | [INDEX](ops/astrostack/INDEX.md) |
 | `emproof` | 14 | [INDEX](ops/emproof/INDEX.md) · [ガイド](ops/emproof/guides/emproof.md) |
-| `fileio` | 14 | [INDEX](ops/fileio/INDEX.md) |
 | `live4d` | 14 | [INDEX](ops/live4d/INDEX.md) · [ガイド](ops/live4d/guides/live4d.md) |
 | `profile` — 断面形状 | 12 | [INDEX](ops/profile/INDEX.md) · [ガイド](ops/profile/guides/profile_metrology.md) |
 | `blob` — 2-D の連結成分解析 | 11 | [INDEX](ops/blob/INDEX.md) · [ガイド](ops/blob/guides/blob_analysis.md) |
@@ -305,7 +305,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 ## ドキュメント地図 — 全 305 本
 
-**索引から 1 本も辿れない文書を作らない**ための全体地図です(`docs/ops/` の op ノート 3,629 本と族ガイド 69 本は上の「オペレータを探す」から、記事は [articles/](articles/README.md) から辿れます)。到達できない文書が 1 本でもあれば `tests/test_docs_index_reachable.py` が落ちます。**本文はほとんどが日本語**です。
+**索引から 1 本も辿れない文書を作らない**ための全体地図です(`docs/ops/` の op ノート 3,633 本と族ガイド 69 本は上の「オペレータを探す」から、記事は [articles/](articles/README.md) から辿れます)。到達できない文書が 1 本でもあれば `tests/test_docs_index_reachable.py` が落ちます。**本文はほとんどが日本語**です。
 
 **はじめに・使い方**(12)
 

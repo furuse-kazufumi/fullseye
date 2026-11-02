@@ -49,7 +49,7 @@
 | STL | `.stl` | `fileio.mesh_read_stl`<br>`mesh.read_mesh`<br>`mesh.read_points` | `fileio.mesh_write_stl`<br>`mesh.write_mesh` | `mesh_read_stl`<br>`mesh_write_stl` | stdlib / core | `tests/test_audit_file_formats.py`<br>`tests/test_fileio_mesh.py`<br>+5 | `stl`<br>`trimesh` |
 | TIFF | `.tif` | `raster.read_depth`<br>`raster.read_raster`<br>`volio.read_volume` | `imgio.save`<br>`volio.write_volume` | — | optional: PIL, SimpleITK, cv2, imageio, tifffile | `tests/test_acquire.py`<br>`tests/test_acquire_contract.py`<br>+62 | — |
 | TIFF | `.tiff` | `raster.read_depth`<br>`raster.read_raster`<br>`volio.read_volume` | `imgio.save`<br>`volio.write_volume` | — | optional: PIL, SimpleITK, cv2, imageio, tifffile | `tests/test_acquire.py`<br>`tests/test_acquire_contract.py`<br>+62 | — |
-| Text/XYZ | `.txt` | `mesh.read_points` | `mesh.write_points` | — | stdlib / core | `tests/test_acquire_contract.py`<br>`tests/test_anim3d_i18n_builders_2026_10_25.py`<br>+18 | — |
+| Text/XYZ | `.txt` | `mesh.read_points` | `mesh.write_points` | — | stdlib / core | `tests/test_acquire_contract.py`<br>`tests/test_anim3d_i18n_builders_2026_10_25.py`<br>+19 | — |
 | VOL | `.vol` | `volio.read_volume` | `volio.write_volume` | — | optional: SimpleITK, tifffile | `tests/test_docstring_audit_wave1_2026_10_22.py`<br>`tests/test_fileio_mesh.py`<br>+23 | — |
 | WAV | `.wav` | `dsp.read_wav` | `dsp.write_wav` | `read_wav`<br>`write_wav` | stdlib / core | `tests/test_chain_type_contracts.py`<br>`tests/test_docstring_audit_wave1_2026_10_22.py`<br>+17 | — |
 | WebM video | `.webm` | — | `video.write_video` | — | optional: PIL, imageio | `tests/test_gen_visionlab_video.py`<br>`tests/test_perf_batch20_2026_10_20.py`<br>+2 | — |

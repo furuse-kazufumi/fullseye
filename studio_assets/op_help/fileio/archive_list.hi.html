@@ -1,0 +1,21 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">archive_list — FILEIO <code style="color:#22d3bf">archive</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.archive_list(data_or_path)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import fileio; fileio.archive_list(data_or_path)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsfileio.get(&quot;archive_list&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>archive members के नाम, expanded और compressed sizes, modification times तथा directory flags सूचीबद्ध करता है।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p><code style="color:#22d3bf">bytes</code> または path を受け、行は <code style="color:#22d3bf">name/size/compressed_size/modified/is_dir</code> を持つ。zip と tar 系は標準ライブラリ、7z/rar は 7-Zip が見つかる場合だけ扱う。7-Zip 不在や壊れた書庫では空一覧にせず例外にする。Example: <code style="color:#22d3bf">rows = archive_list(zip_bytes)</code>.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:archive_roundtrip">archive_roundtrip</a> — <code style="color:#22d3bf">py -3.11 examples/archive_roundtrip.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opfileio:table_write_csv">table_write_csv</a> · <a style="color:#22d3bf" href="opfileio:mesh_write_ply">mesh_write_ply</a> · <a style="color:#22d3bf" href="opfileio:mesh_read_ply">mesh_read_ply</a> · <a style="color:#22d3bf" href="opfileio:mesh_read_stl">mesh_read_stl</a> · <a style="color:#22d3bf" href="opfileio:e57_write">e57_write</a> · <a style="color:#22d3bf" href="opfileio:e57_read">e57_read</a> · <a style="color:#22d3bf" href="opfileio:archive_probe">archive_probe</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">archive</code>)</h3>
+<p><a style="color:#22d3bf" href="opfileio:archive_probe">archive_probe</a> · <a style="color:#22d3bf" href="opfileio:archive_extract">archive_extract</a> · <a style="color:#22d3bf" href="opfileio:archive_create">archive_create</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: fileio.py — FILEIO operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

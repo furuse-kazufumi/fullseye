@@ -1274,7 +1274,29 @@ def _fileio_builders():
     def csv_payload():
         return fileio.table_write_csv(csv_table, units=units, meta=meta)
 
+    def archive_payload():
+        return fileio.archive_create({"probe.txt": b"fullseye archive probe\n"}, "zip")
+
+    class FreshArchiveDestination:
+        """A fresh path for each deep-copied contract call.
+
+        ``archive_extract`` correctly refuses a non-empty destination.  The
+        contract probe calls every op twice, so each copied argument must point
+        at a different missing path while preserving the same relative-name
+        result. 契約検査の各呼び出しを、別々の未作成出力先へ隔離する。
+        """
+
+        def __deepcopy__(self, memo):
+            return type(self)()
+
+        def __fspath__(self):
+            return os.path.join(tempfile.mkdtemp(prefix="fullseye-ledger-archive-"), "out")
+
     return {
+        "archive_probe": lambda pool, rng: ([archive_payload()], {}),
+        "archive_list": lambda pool, rng: ([archive_payload()], {}),
+        "archive_extract": lambda pool, rng: ([archive_payload(), FreshArchiveDestination()], {}),
+        "archive_create": lambda pool, rng: ([{"probe.txt": b"fullseye archive probe\n"}, "zip"], {}),
         "table_write_csv": lambda pool, rng: ([csv_table], {"units": units, "meta": meta}),
         "table_read_csv": lambda pool, rng: ([csv_payload()], {}),
         "mesh_write_ply": lambda pool, rng: ([ply_table], {"binary": False}),

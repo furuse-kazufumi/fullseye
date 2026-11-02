@@ -1,4 +1,4 @@
-{"generated_by": "tools/gen_mcp_data.py", "probe": "CPU, a=b=0.5, representative input", "n_ops": 3629, "ops": [
+{"generated_by": "tools/gen_mcp_data.py", "probe": "CPU, a=b=0.5, representative input", "n_ops": 3633, "ops": [
 {"name":"a3_distribution","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"aabb","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"abbe_number","status":"not_in_registry","reason":"not executable by fullseye.apply"},
@@ -136,6 +136,10 @@
 {"name":"apply_weighting","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"arc","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"arc_length","status":"not_in_registry","reason":"not executable by fullseye.apply"},
+{"name":"archive_create","status":"not_in_registry","reason":"not executable by fullseye.apply"},
+{"name":"archive_extract","status":"not_in_registry","reason":"not executable by fullseye.apply"},
+{"name":"archive_list","status":"not_in_registry","reason":"not executable by fullseye.apply"},
+{"name":"archive_probe","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"area_center","status":"ok","in_sort":"region","out_sort":"match","probe_input":"op_probe.sample_input('region', structured=True)"},
 {"name":"area_center_xld","status":"ok","in_sort":"contour","out_sort":"match","probe_input":"op_probe.sample_input('contour', structured=True)"},
 {"name":"area_frac","status":"ok","in_sort":"region","out_sort":"feature","probe_input":"op_probe.sample_input('region', structured=True)"},

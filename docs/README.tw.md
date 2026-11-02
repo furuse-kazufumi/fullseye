@@ -64,7 +64,7 @@
 | `validated-public-real-data` | 使用公開實測資料的範例在檢查中實際執行 | 18 |
 | `validated-hardware` | 已在實機上驗證(僅在接受外部報告時) | 0 |
 
-450 個範例中,檢查實際執行的有 450 個。
+451 個範例中,檢查實際執行的有 451 個。
 
 ### 各版本的運算子數
 
@@ -140,11 +140,11 @@
 
 ## 尋找運算子
 
-共有 **3,629 篇運算子說明**(呼叫方式、型別契約、HALCON 對應、參考文獻、來源)與 **69 篇族群指南**。依維度的入口:
+共有 **3,633 篇運算子說明**(呼叫方式、型別契約、HALCON 對應、參考文獻、來源)與 **69 篇族群指南**。依維度的入口:
 
-**實測涵蓋**: 演化運算子 942/942、型別台帳 2652/2664、單行門面 `fullseye.<名稱>` 724/1514 —— **門面側僅涵蓋一半**。
+**實測涵蓋**: 演化運算子 942/942、型別台帳 2652/2664、單行門面 `fullseye.<名稱>` 728/1518 —— **門面側僅涵蓋一半**。
 
-**內容實測**: 3629 篇中，附有可執行範例的 **3595** 篇(34 篇沒有)，用法說明 120 字以上的 **3428** 篇(201 篇僅一行)。結構(呼叫形式、型別、可銜接運算子)3629 篇全有。
+**內容實測**: 3633 篇中，附有可執行範例的 **3599** 篇(34 篇沒有)，用法說明 120 字以上的 **3432** 篇(201 篇僅一行)。結構(呼叫形式、型別、可銜接運算子)3633 篇全有。
 
 | 維度 | 運算子數 | 入口 |
 |---|---:|---|
@@ -172,6 +172,7 @@
 | `graph` | 20 | [INDEX](ops/graph/INDEX.md) |
 | `specular` | 20 | [INDEX](ops/specular/INDEX.md) · [guide](ops/specular/guides/specular_photometric.md) |
 | `quat` | 19 | [INDEX](ops/quat/INDEX.md) · [guide](ops/quat/guides/quaternion_monogenic.md) |
+| `fileio` | 18 | [INDEX](ops/fileio/INDEX.md) |
 | `multivar` | 18 | [INDEX](ops/multivar/INDEX.md) · [guide](ops/multivar/guides/design_of_experiments.md) |
 | `lightfield` | 17 | [INDEX](ops/lightfield/INDEX.md) · [guide](ops/lightfield/guides/lightfield_depth.md) |
 | `measure1d` | 17 | [INDEX](ops/measure1d/INDEX.md) · [guide](ops/measure1d/guides/subpixel_measuring.md) |
@@ -182,7 +183,6 @@
 | `videostream` | 16 | [INDEX](ops/videostream/INDEX.md) · [guide](ops/videostream/guides/video_streaming.md) |
 | `astrostack` | 14 | [INDEX](ops/astrostack/INDEX.md) |
 | `emproof` | 14 | [INDEX](ops/emproof/INDEX.md) · [guide](ops/emproof/guides/emproof.md) |
-| `fileio` | 14 | [INDEX](ops/fileio/INDEX.md) |
 | `live4d` | 14 | [INDEX](ops/live4d/INDEX.md) · [guide](ops/live4d/guides/live4d.md) |
 | `profile` | 12 | [INDEX](ops/profile/INDEX.md) · [guide](ops/profile/guides/profile_metrology.md) |
 | `blob` | 11 | [INDEX](ops/blob/INDEX.md) · [guide](ops/blob/guides/blob_analysis.md) |
@@ -303,7 +303,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 ## 文件地圖 — 共 305 篇
 
-完整地圖，確保**沒有任何文件無法從索引到達**(`docs/ops/` 下的 3,629 篇運算子說明與 69 篇族群指南從上面的「尋找運算子」進入; 文章見 [articles/](articles/README.md))。**內文多為日文。**
+完整地圖，確保**沒有任何文件無法從索引到達**(`docs/ops/` 下的 3,633 篇運算子說明與 69 篇族群指南從上面的「尋找運算子」進入; 文章見 [articles/](articles/README.md))。**內文多為日文。**
 
 **Getting started**(12)
 

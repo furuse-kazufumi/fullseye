@@ -10,19 +10,31 @@ from __future__ import annotations
 
 import csv
 import datetime as _datetime
+import bz2
+import contextlib
+import gzip
 import hashlib
 import io
+import lzma
 import math
 import os
+import pathlib
+import shutil
+import stat
 import struct
+import subprocess
+import tarfile
 import tempfile
 import threading
 import types
 import uuid
+import zipfile
+import zlib
 from collections.abc import Mapping
 
 import numpy as np
 import mesh as _mesh
+import _archive_tarxz
 
 __all__ = [
     "table_write_csv", "table_read_csv",
@@ -30,11 +42,15 @@ __all__ = [
     "mesh_write_obj", "mesh_read_obj", "mesh_write_off", "mesh_read_off",
     "points_write_xyz", "points_read_xyz",
     "e57_write", "e57_read",
+    "archive_probe", "archive_list", "archive_extract", "archive_create",
 ]
 
 _CSV_META_REQUIRED = ("source", "generated_at", "coordinate_meaning")
 _MAX_CSV_CHARS = 256 * 1024 * 1024
 _E57_WRITE_LOCK = threading.Lock()
+_ARCHIVE_MAX_TOTAL_BYTES = 2 * 1024**3
+_ARCHIVE_MAX_MEMBERS = 100_000
+_ARCHIVE_MAX_RATIO = 1000
 
 
 def _csv_columns(table, op: str) -> dict[str, np.ndarray]:
@@ -666,3 +682,601 @@ def e57_read(data):
             os.remove(path)
         except FileNotFoundError:
             pass
+
+
+# ---------------------------------------------------------------------------
+# Archives.  The safety model and deterministic tar writer are promoted from
+# helpstore.py; the bounded streaming copy comes from sample_data.py.
+# 書庫。安全モデルと決定的 tar は helpstore.py、実読込量の門は sample_data.py を基にする。
+# ---------------------------------------------------------------------------
+_ARCHIVE_FORMATS = {"zip", "tar", "tar.gz", "tar.bz2", "tar.xz", "7z", "rar"}
+_WINDOWS_DEVICES = {"CON", "PRN", "AUX", "NUL",
+                    *(f"COM{i}" for i in range(1, 10)), *(f"LPT{i}" for i in range(1, 10))}
+
+
+def _archive_source(data_or_path, op):
+    if isinstance(data_or_path, (str, os.PathLike)):
+        path = os.path.abspath(os.fspath(data_or_path))
+        if not os.path.isfile(path):
+            raise ValueError(f"{op}: archive path is not a regular file: {path!r}")
+        return path
+    if isinstance(data_or_path, (bytes, bytearray, memoryview)):
+        raw = bytes(data_or_path)
+        if not raw:
+            raise ValueError(f"{op}: archive input is empty")
+        return raw
+    raise ValueError(f"{op}: expected archive bytes or a file path, got {type(data_or_path).__name__}")
+
+
+@contextlib.contextmanager
+def _archive_stream(source):
+    if isinstance(source, str):
+        with open(source, "rb") as stream:
+            yield stream
+    else:
+        yield io.BytesIO(source)
+
+
+def _archive_format(source, op):
+    with _archive_stream(source) as stream:
+        head = stream.read(600)
+    if head.startswith((b"PK\x03\x04", b"PK\x05\x06", b"PK\x07\x08")):
+        return "zip"
+    if head.startswith(b"7z\xbc\xaf\x27\x1c"):
+        return "7z"
+    if head.startswith((b"Rar!\x1a\x07\x00", b"Rar!\x1a\x07\x01\x00")):
+        return "rar"
+    compressed = ("tar.gz" if head.startswith(b"\x1f\x8b") else
+                  "tar.bz2" if head.startswith(b"BZh") else
+                  "tar.xz" if head.startswith(b"\xfd7zXZ\x00") else "tar")
+    try:
+        with _archive_stream(source) as stream, tarfile.open(fileobj=stream, mode="r:*"):
+            return compressed
+    except (tarfile.TarError, OSError, EOFError) as exc:
+        raise ValueError(f"{op}: unsupported or corrupt archive (magic number was not recognised)") from exc
+
+
+def archive_probe(data_or_path):
+    """書庫のマジックナンバーを検査し、形式名を返す。 / Probe archive magic and return its format name.
+
+    入力は ``bytes`` または既存ファイルの path。返り値は ``zip/tar/tar.gz/tar.bz2/tar.xz/7z/rar``
+    のいずれかで、拡張子だけでは判定しない。未知・切断・圧縮tarでないgzip等は明示して拒否する。
+    Example: ``fmt = archive_probe(payload)``.
+    """
+    return _archive_format(_archive_source(data_or_path, "archive_probe"), "archive_probe")
+
+
+def _sevenzip_executable():
+    override = os.environ.get("FULLSEYE_7Z")
+    if override is not None:
+        if override.strip().lower() in {"", "0", "none", "off", "disabled"}:
+            return None
+        candidate = os.path.abspath(os.path.expandvars(os.path.expanduser(override)))
+        return candidate if os.path.isfile(candidate) else shutil.which(override)
+    program_files = os.environ.get("ProgramFiles")
+    fixed = os.path.join(program_files, "7-Zip", "7z.exe") if program_files else None
+    return fixed if fixed and os.path.isfile(fixed) else shutil.which("7z")
+
+
+def _require_sevenzip(op):
+    executable = _sevenzip_executable()
+    if executable is None:
+        raise ImportError(f"{op}: 7-Zip is not installed; install 7z.exe or set FULLSEYE_7Z to its path")
+    return executable
+
+
+@contextlib.contextmanager
+def _sevenzip_source(source, fmt):
+    if isinstance(source, str):
+        yield source
+        return
+    suffix = ".7z" if fmt == "7z" else ".rar"
+    handle = tempfile.NamedTemporaryFile(suffix=suffix, delete=False)
+    path = handle.name
+    try:
+        handle.write(source)
+        handle.close()
+        yield path
+    finally:
+        try:
+            handle.close()
+        except Exception:  # pragma: no cover - already closed on the normal path
+            pass
+        try:
+            os.remove(path)
+        except FileNotFoundError:
+            pass
+
+
+def _iso_timestamp(value):
+    if value is None:
+        return None
+    if isinstance(value, tuple):
+        return "%04d-%02d-%02dT%02d:%02d:%02d" % value[:6]
+    try:
+        return _datetime.datetime.fromtimestamp(float(value), tz=_datetime.timezone.utc).isoformat().replace("+00:00", "Z")
+    except (OverflowError, OSError, ValueError):
+        return None
+
+
+def _sevenzip_list(source, fmt, op):
+    exe = _require_sevenzip(op)
+    with _sevenzip_source(source, fmt) as path:
+        result = subprocess.run([exe, "l", "-slt", "-ba", "-sccUTF-8", path],
+                                stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                                text=True, encoding="utf-8", errors="replace", check=False)
+    if result.returncode:
+        detail = (result.stderr or result.stdout).strip().splitlines()
+        raise ValueError(f"{op}: 7-Zip rejected the archive: {detail[-1] if detail else 'unknown error'}")
+    blocks, current = [], {}
+    for line in result.stdout.splitlines() + [""]:
+        if not line.strip():
+            if current:
+                blocks.append(current)
+                current = {}
+            continue
+        key, sep, value = line.partition(" = ")
+        if sep:
+            current[key.strip()] = value.strip()
+    rows = []
+    for block in blocks:
+        if "Path" not in block:
+            continue
+        attrs = block.get("Attributes", "")
+        size_text, packed_text = block.get("Size", "0"), block.get("Packed Size", "")
+        try:
+            size = int(size_text or 0)
+            packed = int(packed_text) if packed_text else None
+        except ValueError as exc:
+            raise ValueError(f"{op}: 7-Zip returned non-integer sizes for {block['Path']!r}") from exc
+        rows.append({"name": block["Path"].replace("\\", "/"), "size": size,
+                     "compressed_size": packed, "modified": block.get("Modified") or None,
+                     "is_dir": attrs.startswith("D"), "_link": bool(block.get("Symbolic Link") or block.get("Hard Link")),
+                     "_raw": block})
+    if not rows:
+        raise ValueError(f"{op}: 7-Zip found no archive members")
+    return rows
+
+
+def _standard_list(source, fmt, op):
+    rows = []
+    if fmt == "zip":
+        try:
+            with _archive_stream(source) as stream, zipfile.ZipFile(stream) as archive:
+                for member in archive.infolist():
+                    mode = (member.external_attr >> 16) & 0xFFFF
+                    rows.append({"name": member.filename.replace("\\", "/"), "size": member.file_size,
+                                 "compressed_size": member.compress_size,
+                                 "modified": _iso_timestamp(member.date_time), "is_dir": member.is_dir(),
+                                 "_link": stat.S_ISLNK(mode), "_raw": member})
+        except (zipfile.BadZipFile, OSError, EOFError) as exc:
+            raise ValueError(f"{op}: corrupt ZIP archive: {exc}") from exc
+        return rows
+    try:
+        with _archive_stream(source) as stream, tarfile.open(fileobj=stream, mode="r:*") as archive:
+            for member in archive.getmembers():
+                rows.append({"name": member.name.replace("\\", "/"), "size": member.size,
+                             "compressed_size": member.size if fmt == "tar" else None,
+                             "modified": _iso_timestamp(member.mtime), "is_dir": member.isdir(),
+                             "_link": member.issym() or member.islnk(), "_raw": member,
+                             "_regular": member.isfile() or member.isdir()})
+    except (tarfile.TarError, OSError, EOFError) as exc:
+        raise ValueError(f"{op}: corrupt TAR archive: {exc}") from exc
+    return rows
+
+
+def _archive_rows(source, fmt, op):
+    return _sevenzip_list(source, fmt, op) if fmt in {"7z", "rar"} else _standard_list(source, fmt, op)
+
+
+def archive_list(data_or_path):
+    """書庫を読み、名前・展開後/圧縮後サイズ・更新時刻・directoryフラグの一覧を返す。 / List archive metadata.
+
+    ``bytes`` または path を受け、行は ``name/size/compressed_size/modified/is_dir`` を持つ。
+    zip と tar 系は標準ライブラリ、7z/rar は 7-Zip が見つかる場合だけ扱う。7-Zip 不在や
+    壊れた書庫では空一覧にせず例外にする。Example: ``rows = archive_list(zip_bytes)``.
+    """
+    op = "archive_list"
+    source = _archive_source(data_or_path, op)
+    fmt = _archive_format(source, op)
+    rows = _archive_rows(source, fmt, op)
+    return [{key: row[key] for key in ("name", "size", "compressed_size", "modified", "is_dir")}
+            for row in sorted(rows, key=lambda row: row["name"])]
+
+
+def _safe_archive_name(name, op):
+    if not isinstance(name, str) or not name or "\x00" in name:
+        raise ValueError(f"{op}: archive member name must be a non-empty string")
+    raw = name.replace("\\", "/")
+    if raw.startswith(("/", "//")) or pathlib.PureWindowsPath(raw).drive:
+        raise ValueError(f"{op}: unsafe absolute or drive-qualified member path {name!r}")
+    parts = [part for part in raw.split("/") if part not in {"", "."}]
+    if not parts or ".." in parts:
+        raise ValueError(f"{op}: unsafe parent traversal in member path {name!r}")
+    for part in parts:
+        stem = part.rstrip(" .").split(".", 1)[0].upper()
+        if ":" in part or part.endswith((" ", ".")) or stem in _WINDOWS_DEVICES:
+            raise ValueError(f"{op}: unsafe Windows member path component {part!r}")
+    return "/".join(parts)
+
+
+def _checked_entries(rows, members, max_total_bytes, max_members, op):
+    if isinstance(max_total_bytes, bool) or not isinstance(max_total_bytes, int) or max_total_bytes <= 0:
+        raise ValueError(f"{op}: max_total_bytes must be a positive integer")
+    if isinstance(max_members, bool) or not isinstance(max_members, int) or max_members <= 0:
+        raise ValueError(f"{op}: max_members must be a positive integer")
+    by_name, folded = {}, {}
+    for row in rows:
+        safe = _safe_archive_name(row["name"], op)
+        key = safe.casefold()
+        if safe in by_name or key in folded:
+            raise ValueError(f"{op}: duplicate or case-colliding member path {safe!r}")
+        if row.get("_link"):
+            raise ValueError(f"{op}: symbolic and hard links are forbidden ({row['name']!r})")
+        if row.get("_regular") is False:
+            raise ValueError(f"{op}: only regular files and directories are allowed ({row['name']!r})")
+        copied = dict(row)
+        copied["_safe"] = safe
+        by_name[safe] = copied
+        folded[key] = safe
+    if members is None:
+        selected = list(by_name.values())
+    else:
+        if isinstance(members, (str, bytes)):
+            raise ValueError(f"{op}: members must be a sequence of member names or None")
+        requested = [_safe_archive_name(name, op) for name in members]
+        missing = [name for name in requested if name not in by_name]
+        if missing:
+            raise ValueError(f"{op}: requested member is absent: {missing[0]!r}")
+        selected = [by_name[name] for name in requested]
+    if len(selected) > max_members:
+        raise ValueError(f"{op}: archive has {len(selected)} selected members; limit is {max_members}")
+    total = sum(row["size"] for row in selected if not row["is_dir"])
+    if total > max_total_bytes:
+        raise ValueError(f"{op}: declared extracted size {total} exceeds {max_total_bytes}-byte limit")
+    for row in selected:
+        packed = row.get("compressed_size")
+        if not row["is_dir"] and packed is not None and row["size"] > _ARCHIVE_MAX_RATIO * packed:
+            raise ValueError(f"{op}: member {row['name']!r} exceeds the 1:{_ARCHIVE_MAX_RATIO} compression-ratio limit")
+    files = {row["_safe"] for row in selected if not row["is_dir"]}
+    for name in files:
+        parent = pathlib.PurePosixPath(name).parent
+        while str(parent) != ".":
+            if str(parent) in files:
+                raise ValueError(f"{op}: file member {str(parent)!r} is also a parent directory")
+            parent = parent.parent
+    return sorted(selected, key=lambda row: (row["_safe"].count("/"), row["_safe"]))
+
+
+def _ratio_compressor(fmt):
+    if fmt == "tar.gz":
+        return zlib.compressobj(level=9, wbits=31)
+    if fmt == "tar.bz2":
+        return bz2.BZ2Compressor(9)
+    if fmt == "tar.xz":
+        # This compressor only measures whether one expanded member exceeds
+        # the 1:1000 gate; preset 0 still rejects highly repetitive bombs while
+        # avoiding preset-9-extreme's roughly 700 MiB encoder allocation per
+        # member. 展開用の比率検査では圧縮率よりも安全な省メモリ性を優先する。
+        return lzma.LZMACompressor(format=lzma.FORMAT_XZ, preset=0)
+    return None
+
+
+def _copy_archive_member(src, target, row, fmt, total, max_total_bytes, op):
+    written, packed, compressor = 0, 0, _ratio_compressor(fmt)
+    with open(target, "xb") as dst:
+        while True:
+            chunk = src.read(1 << 20)
+            if not chunk:
+                break
+            written += len(chunk)
+            total += len(chunk)
+            if written > row["size"] or total > max_total_bytes:
+                raise ValueError(f"{op}: extracted data exceeded a declared size or the {max_total_bytes}-byte limit")
+            if compressor is not None:
+                packed += len(compressor.compress(chunk))
+            dst.write(chunk)
+    if written != row["size"]:
+        raise ValueError(f"{op}: member {row['name']!r} yielded {written} bytes; expected {row['size']}")
+    if compressor is not None:
+        packed += len(compressor.flush())
+        if written > _ARCHIVE_MAX_RATIO * packed:
+            raise ValueError(f"{op}: member {row['name']!r} exceeds the 1:{_ARCHIVE_MAX_RATIO} compression-ratio limit")
+    return total
+
+
+def _extract_standard(source, fmt, entries, stage, max_total_bytes, op):
+    total = 0
+    if fmt == "zip":
+        with _archive_stream(source) as stream, zipfile.ZipFile(stream) as archive:
+            for row in entries:
+                target = os.path.join(stage, *row["_safe"].split("/"))
+                if row["is_dir"]:
+                    os.makedirs(target, exist_ok=True)
+                    continue
+                os.makedirs(os.path.dirname(target), exist_ok=True)
+                with archive.open(row["_raw"], "r") as src:
+                    total = _copy_archive_member(src, target, row, fmt, total, max_total_bytes, op)
+        return
+    with _archive_stream(source) as stream, tarfile.open(fileobj=stream, mode="r:*") as archive:
+        for row in entries:
+            target = os.path.join(stage, *row["_safe"].split("/"))
+            if row["is_dir"]:
+                os.makedirs(target, exist_ok=True)
+                continue
+            os.makedirs(os.path.dirname(target), exist_ok=True)
+            src = archive.extractfile(row["_raw"])
+            if src is None:
+                raise ValueError(f"{op}: cannot read member {row['name']!r}")
+            with src:
+                total = _copy_archive_member(src, target, row, fmt, total, max_total_bytes, op)
+
+
+def _extract_sevenzip(source, fmt, entries, stage, max_total_bytes, op):
+    exe, total = _require_sevenzip(op), 0
+    with _sevenzip_source(source, fmt) as archive_path:
+        for row in entries:
+            target = os.path.join(stage, *row["_safe"].split("/"))
+            if row["is_dir"]:
+                os.makedirs(target, exist_ok=True)
+                continue
+            if row.get("compressed_size") is None:
+                raise ValueError(f"{op}: 7-Zip did not report a per-member compressed size for {row['name']!r}")
+            os.makedirs(os.path.dirname(target), exist_ok=True)
+            with tempfile.TemporaryFile() as errors:
+                proc = subprocess.Popen([exe, "x", "-so", "-y", "-spd", "-sccUTF-8", archive_path, "--", row["name"]],
+                                        stdout=subprocess.PIPE, stderr=errors)
+                try:
+                    total = _copy_archive_member(proc.stdout, target, row, fmt, total, max_total_bytes, op)
+                except Exception:
+                    proc.kill()
+                    proc.wait()
+                    raise
+                finally:
+                    if proc.stdout is not None:
+                        proc.stdout.close()
+                code = proc.wait()
+                if code:
+                    errors.seek(0)
+                    detail = errors.read().decode("utf-8", "replace").strip().splitlines()
+                    raise ValueError(f"{op}: 7-Zip failed to extract {row['name']!r}: {detail[-1] if detail else 'unknown error'}")
+
+
+def archive_extract(data_or_path, dest, *, members=None,
+                    max_total_bytes=_ARCHIVE_MAX_TOTAL_BYTES, max_members=_ARCHIVE_MAX_MEMBERS):
+    """書庫を空の ``dest`` へ安全に展開し、相対path一覧を返す。 / Safely extract into an empty destination.
+
+    zip-slip(絶対path・``..``・drive文字)、link、特殊ファイル、重複名、10万件超、既定2 GiB超、
+    1:1000超の圧縮率を拒否する。``dest`` は存在しないか空の実directoryに限り、検証済みの
+    一時directoryを最後に置換するため失敗時に半端な出力を残さない。
+    Example: ``paths = archive_extract(payload, out_dir, members=["data/a.bin"])``.
+    """
+    op = "archive_extract"
+    source = _archive_source(data_or_path, op)
+    fmt = _archive_format(source, op)
+    rows = _archive_rows(source, fmt, op)
+    entries = _checked_entries(rows, members, max_total_bytes, max_members, op)
+    dest_path = pathlib.Path(os.fspath(dest)).absolute()
+    if dest_path.is_symlink() or (dest_path.exists() and not dest_path.is_dir()):
+        raise ValueError(f"{op}: destination must be a missing or empty real directory: {str(dest_path)!r}")
+    if dest_path.exists() and any(dest_path.iterdir()):
+        raise ValueError(f"{op}: destination directory is not empty: {str(dest_path)!r}")
+    dest_path.parent.mkdir(parents=True, exist_ok=True)
+    stage = pathlib.Path(tempfile.mkdtemp(prefix=".fullseye-archive-", dir=dest_path.parent))
+    try:
+        if fmt in {"7z", "rar"}:
+            _extract_sevenzip(source, fmt, entries, str(stage), max_total_bytes, op)
+        else:
+            _extract_standard(source, fmt, entries, str(stage), max_total_bytes, op)
+        if dest_path.exists():
+            dest_path.rmdir()
+        os.replace(stage, dest_path)
+    except Exception:
+        shutil.rmtree(stage, ignore_errors=True)
+        raise
+    return [row["_safe"] for row in entries]
+
+
+def _archive_items(paths_or_items, root, deterministic, op):
+    now = int(_datetime.datetime.now(tz=_datetime.timezone.utc).timestamp())
+    if isinstance(paths_or_items, Mapping):
+        raw_items = list(paths_or_items.items())
+    elif (isinstance(paths_or_items, (list, tuple)) and paths_or_items
+          and all(isinstance(item, (list, tuple)) and len(item) == 2 for item in paths_or_items)):
+        raw_items = list(paths_or_items)
+    else:
+        raw_items = None
+    entries = []
+    if raw_items is not None:
+        if not raw_items:
+            raise ValueError(f"{op}: paths_or_items must not be empty")
+        if root is not None:
+            raise ValueError(f"{op}: root is only valid for filesystem paths")
+        for name, value in raw_items:
+            safe = _safe_archive_name(name, op)
+            if not isinstance(value, (bytes, bytearray, memoryview, str)):
+                raise ValueError(f"{op}: item {name!r} must contain bytes or UTF-8 text")
+            data = value.encode("utf-8") if isinstance(value, str) else bytes(value)
+            entries.append({"name": safe, "data": data, "size": len(data), "is_dir": False,
+                            "mtime": 0 if deterministic else now})
+    else:
+        values = [paths_or_items] if isinstance(paths_or_items, (str, os.PathLike)) else list(paths_or_items)
+        if not values:
+            raise ValueError(f"{op}: paths_or_items must not be empty")
+        raw_paths = [pathlib.Path(os.fspath(value)).absolute() for value in values]
+        if any(path.is_symlink() for path in raw_paths):
+            raise ValueError(f"{op}: symbolic links are forbidden")
+        if any(not path.exists() for path in raw_paths):
+            missing = next(path for path in raw_paths if not path.exists())
+            raise ValueError(f"{op}: input path does not exist: {str(missing)!r}")
+        if root is None:
+            root_path = pathlib.Path(os.path.commonpath([str(path.parent) for path in raw_paths])).resolve()
+        else:
+            root_path = pathlib.Path(os.fspath(root)).absolute()
+            if root_path.is_symlink() or not root_path.is_dir():
+                raise ValueError(f"{op}: root must be an existing real directory")
+            root_path = root_path.resolve()
+        for raw_path in raw_paths:
+            resolved = raw_path.resolve()
+            try:
+                resolved.relative_to(root_path)
+            except ValueError as exc:
+                raise ValueError(f"{op}: path {str(raw_path)!r} is outside root {str(root_path)!r}") from exc
+            visit = [raw_path]
+            while visit:
+                path = visit.pop()
+                if path.is_symlink():
+                    raise ValueError(f"{op}: symbolic links are forbidden: {str(path)!r}")
+                safe = _safe_archive_name(path.resolve().relative_to(root_path).as_posix(), op)
+                info = path.stat()
+                if path.is_dir():
+                    entries.append({"name": safe, "size": 0, "is_dir": True,
+                                    "mtime": 0 if deterministic else int(info.st_mtime)})
+                    visit.extend(sorted(path.iterdir(), key=lambda child: child.name, reverse=True))
+                elif path.is_file():
+                    entries.append({"name": safe, "path": str(path), "size": info.st_size, "is_dir": False,
+                                    "mtime": 0 if deterministic else int(info.st_mtime)})
+                else:
+                    raise ValueError(f"{op}: only regular files and directories are allowed: {str(path)!r}")
+    names = [entry["name"] for entry in entries]
+    if len(names) != len(set(names)) or len({name.casefold() for name in names}) != len(names):
+        raise ValueError(f"{op}: duplicate or case-colliding archive names")
+    total = sum(entry["size"] for entry in entries if not entry["is_dir"])
+    if total > _ARCHIVE_MAX_TOTAL_BYTES:
+        raise ValueError(f"{op}: input size {total} exceeds {_ARCHIVE_MAX_TOTAL_BYTES}-byte limit")
+    return sorted(entries, key=lambda entry: entry["name"])
+
+
+@contextlib.contextmanager
+def _entry_stream(entry):
+    if "data" in entry:
+        yield io.BytesIO(entry["data"])
+    else:
+        with open(entry["path"], "rb") as stream:
+            yield stream
+
+
+def _zip_datetime(entry, deterministic):
+    if deterministic:
+        return (1980, 1, 1, 0, 0, 0)
+    dt = _datetime.datetime.fromtimestamp(entry["mtime"])
+    year = min(2107, max(1980, dt.year))
+    return (year, dt.month, dt.day, dt.hour, dt.minute, dt.second - dt.second % 2)
+
+
+def _create_zip(entries, level, deterministic):
+    out = io.BytesIO()
+    with zipfile.ZipFile(out, "w", compression=zipfile.ZIP_DEFLATED,
+                         compresslevel=level, strict_timestamps=True) as archive:
+        for entry in entries:
+            name = entry["name"] + ("/" if entry["is_dir"] and not entry["name"].endswith("/") else "")
+            info = zipfile.ZipInfo(name, _zip_datetime(entry, deterministic))
+            info.compress_type = zipfile.ZIP_DEFLATED
+            info.create_system = 3
+            info.external_attr = ((0o40755 if entry["is_dir"] else 0o100644) << 16) | (0x10 if entry["is_dir"] else 0)
+            if entry["is_dir"]:
+                archive.writestr(info, b"")
+            else:
+                with archive.open(info, "w", force_zip64=True) as dst, _entry_stream(entry) as src:
+                    shutil.copyfileobj(src, dst, length=1 << 20)
+    return out.getvalue()
+
+
+def _tar_stream(fmt, out, level, deterministic):
+    if fmt == "tar":
+        return contextlib.nullcontext(out)
+    if fmt == "tar.gz":
+        return gzip.GzipFile(filename="", mode="wb", fileobj=out, compresslevel=level,
+                             mtime=0 if deterministic else None)
+    if fmt == "tar.xz":
+        return lzma.LZMAFile(out, "wb", format=lzma.FORMAT_XZ,
+                             preset=level | (lzma.PRESET_EXTREME if level == 9 else 0))
+    raise ValueError(f"archive_create: creation of {fmt!r} is unsupported")
+
+
+def _create_tar(entries, fmt, level, deterministic):
+    out = io.BytesIO()
+    with _tar_stream(fmt, out, level, deterministic) as compressed:
+        with tarfile.open(fileobj=compressed, mode="w", format=tarfile.USTAR_FORMAT) as archive:
+            for entry in entries:
+                info = tarfile.TarInfo(entry["name"] + ("/" if entry["is_dir"] else ""))
+                info.size = 0 if entry["is_dir"] else entry["size"]
+                info.type = tarfile.DIRTYPE if entry["is_dir"] else tarfile.REGTYPE
+                info.mtime = entry["mtime"]
+                info.mode = 0o755 if entry["is_dir"] else 0o644
+                info.uid = info.gid = 0
+                info.uname = info.gname = ""
+                if entry["is_dir"]:
+                    archive.addfile(info)
+                else:
+                    with _entry_stream(entry) as src:
+                        archive.addfile(info, src)
+    return out.getvalue()
+
+
+def _create_7z(entries, level, deterministic):
+    exe = _require_sevenzip("archive_create")
+    with tempfile.TemporaryDirectory(prefix="fullseye-7z-input-") as stage, tempfile.TemporaryDirectory(prefix="fullseye-7z-output-") as outdir:
+        names = []
+        for entry in entries:
+            target = os.path.join(stage, *entry["name"].split("/"))
+            names.append(entry["name"].replace("/", os.sep))
+            if entry["is_dir"]:
+                os.makedirs(target, exist_ok=True)
+            else:
+                os.makedirs(os.path.dirname(target), exist_ok=True)
+                with open(target, "xb") as dst, _entry_stream(entry) as src:
+                    shutil.copyfileobj(src, dst, length=1 << 20)
+            if deterministic:
+                os.utime(target, (315532800, 315532800))
+        listfile = os.path.join(outdir, "members.txt")
+        with open(listfile, "w", encoding="utf-8", newline="\n") as stream:
+            stream.write("\n".join(names) + "\n")
+        archive_path = os.path.join(outdir, "archive.7z")
+        # Non-solid output preserves a measurable compressed size per member;
+        # solid archives cannot satisfy the mandatory per-member ratio gate.
+        # 非solidなら各memberの圧縮後サイズを測れ、1:1000の門を検査できる。
+        command = [exe, "a", "-t7z", f"-mx={level}", "-ms=off", "-mmt=off", "-spd", "-scsUTF-8"]
+        if deterministic:
+            command += ["-mtc=off", "-mta=off", "-mtm=off"]
+        command += [archive_path, "@" + listfile]
+        result = subprocess.run(command, cwd=stage, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                                text=True, encoding="utf-8", errors="replace", check=False)
+        if result.returncode:
+            detail = (result.stderr or result.stdout).strip().splitlines()
+            raise ValueError(f"archive_create: 7-Zip failed: {detail[-1] if detail else 'unknown error'}")
+        with open(archive_path, "rb") as stream:
+            return stream.read()
+
+
+def archive_create(paths_or_items, fmt, *, root=None, level=None, deterministic=True):
+    """pathまたは名前つき内容から決定的な書庫 ``bytes`` を作る。 / Create deterministic archive bytes.
+
+    ``paths_or_items`` は path(列)または ``{relative_name: bytes_or_text}``。fmt は
+    ``zip/tar/tar.gz/tar.xz/7z``、rar作成は非対応として拒否する。同じ入力は名前順・固定時刻・
+    固定属性で同じbytesになり、root外path・link・2 GiB超を拒否する。
+    Example: ``payload = archive_create({"a.txt": b"A"}, "zip", deterministic=True)``.
+    """
+    op = "archive_create"
+    fmt = str(fmt).lower().replace("tgz", "tar.gz").replace("txz", "tar.xz")
+    if fmt == "rar":
+        raise ValueError(f"{op}: RAR creation is unsupported because RAR is a proprietary format")
+    if fmt not in _ARCHIVE_FORMATS - {"rar", "tar.bz2"}:
+        raise ValueError(f"{op}: fmt must be zip, tar, tar.gz, tar.xz, or 7z; got {fmt!r}")
+    if not isinstance(deterministic, bool):
+        raise ValueError(f"{op}: deterministic must be bool")
+    if level is None:
+        level = 9
+    if isinstance(level, bool) or not isinstance(level, int) or not 0 <= level <= 9:
+        raise ValueError(f"{op}: level must be an integer from 0 through 9")
+    if fmt == "tar" and level != 9:
+        raise ValueError(f"{op}: level has no meaning for uncompressed tar; leave it as None")
+    if fmt == "tar.xz":
+        return _archive_tarxz._create(paths_or_items, root=root, level=level,
+                                      deterministic=deterministic, op=op)
+    entries = _archive_items(paths_or_items, root, deterministic, op)
+    if fmt == "zip":
+        return _create_zip(entries, level, deterministic)
+    if fmt == "7z":
+        return _create_7z(entries, level, deterministic)
+    return _create_tar(entries, fmt, level, deterministic)
