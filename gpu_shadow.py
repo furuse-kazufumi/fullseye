@@ -34,6 +34,7 @@ The default path never imports this file.  ``fullseye.gpu_run`` style callers go
 """
 from __future__ import annotations
 
+import ast
 import builtins
 import collections
 import importlib
@@ -46,7 +47,7 @@ import types
 import numpy as _np
 
 __all__ = ["ShadowImporter", "Stats", "get_shadow", "to_gpu", "to_cpu", "available",
-           "allowed_ops", "shadow_fn", "run_allowed", "apply", "GpuAutoError"]
+           "allowed_ops", "resident_ops", "shadow_fn", "run_allowed", "apply", "GpuAutoError"]
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 ALLOW_PATH = os.path.join(ROOT, "fullseye", "data", "gpu_auto_allow.json")
@@ -127,6 +128,18 @@ def _is_gpu(x) -> bool:
     return type(x).__module__.startswith("cupy") and hasattr(x, "get") and hasattr(x, "shape")
 
 
+def _rebuild_tuple(x, vals):
+    """Same tuple type with new leaves.  Result classes with keyword-only extras
+    (``scipy.stats.kstest``'s ``statistic_location``) cannot be rebuilt from ``_fields``
+    alone: fall back to a plain namedtuple of the same field names."""
+    if not hasattr(x, "_fields"):
+        return tuple(vals)
+    try:
+        return type(x)(*vals)
+    except TypeError:
+        return collections.namedtuple(type(x).__name__, x._fields)(*vals)
+
+
 def to_gpu(x):
     """numpy leaves -> CuPy, through list / tuple / dict.  Non-numeric leaves stay."""
     if isinstance(x, _np.ndarray):
@@ -138,7 +151,7 @@ def to_gpu(x):
         return [to_gpu(v) for v in x]
     if isinstance(x, tuple):
         vals = [to_gpu(v) for v in x]
-        return type(x)(*vals) if hasattr(x, "_fields") else tuple(vals)
+        return _rebuild_tuple(x, vals)
     if isinstance(x, dict):
         return type(x)((k, to_gpu(v)) for k, v in x.items()) if type(x) is not dict \
             else {k: to_gpu(v) for k, v in x.items()}
@@ -156,7 +169,7 @@ def to_cpu(x):
         return [to_cpu(v) for v in x]
     if isinstance(x, tuple):
         vals = [to_cpu(v) for v in x]
-        return type(x)(*vals) if hasattr(x, "_fields") else tuple(vals)
+        return _rebuild_tuple(x, vals)
     if isinstance(x, dict):
         return {k: to_cpu(v) for k, v in x.items()}
     if isinstance(x, types.FunctionType):
@@ -236,6 +249,12 @@ _NO_TRANSFER = {"issubdtype", "iterable", "promote_types", "finfo", "iinfo", "er
 _RETRY_ON = (TypeError, NotImplementedError, ImportError, AttributeError)
 
 
+def _retryable(e) -> bool:
+    """An error that says "CuPy has no such argument / dtype", not "your data is wrong"."""
+    return isinstance(e, _RETRY_ON) or (isinstance(e, ValueError)
+                                        and "Unsupported dtype" in str(e))
+
+
 def _coerce_seq(args):
     """Turn a leading list / tuple into one array, as numpy does implicitly."""
     cp = _cupy()
@@ -261,12 +280,16 @@ def _gpu_call(gfn, cfn, label):
         STATS.gpu_calls += 1
         try:
             return gfn(*a, **k)
-        except _RETRY_ON as first:
+        except (TypeError, NotImplementedError, ImportError, AttributeError, ValueError) as first:
+            if not _retryable(first):
+                raise
             try:
                 a2 = _coerce_seq(a)
                 k2 = dict(zip(k, _coerce_seq(list(k.values()))))
                 return gfn(*a2, **k2)
-            except _RETRY_ON:
+            except (TypeError, NotImplementedError, ImportError, AttributeError, ValueError) as e2:
+                if not _retryable(e2):
+                    raise
                 if cfn is None:
                     raise first from None
             return _cpu_call(cfn, label)(*a, **k)
@@ -291,6 +314,73 @@ class _Ufunc:
         if g is _MISSING:
             return _cpu_call(c, "%s.%s" % (self._l, name)) if callable(c) else c
         return _gpu_call(g, c, "%s.%s" % (self._l, name)) if callable(g) else g
+
+
+def _arr(v):
+    """A tuple / list of numbers (possibly 0-d CuPy arrays) as one CuPy array."""
+    cp = _cupy()
+    if isinstance(v, (tuple, list)):
+        return cp.stack([_arr(e) for e in v])
+    return cp.asarray(v)
+
+
+def _rhs(target, v):
+    """``gpu_array[i] = (a, b)``: CuPy refuses a tuple / list on the right of ``[]=``."""
+    if isinstance(v, (tuple, list)) and _is_gpu(target):
+        try:
+            return _arr(v)
+        except Exception:  # noqa: BLE001 - 配列にならない右辺はそのまま(元の例外に任せる)
+            return v
+    return v
+
+
+def _initial(obj, meth, initial, *a, **k):
+    """``x.max(initial=v)`` / ``min`` / ``sum``: CuPy's reductions have no ``initial``."""
+    r = getattr(obj, meth)(*a, **k)
+    cp = _cupy() if _is_gpu(obj) or _is_gpu(r) else _np
+    if meth == "max":
+        return cp.maximum(r, initial)
+    if meth == "min":
+        return cp.minimum(r, initial)
+    return r + initial
+
+
+class _Rewrite(ast.NodeTransformer):
+    """Source rewrites that make unchanged numpy idioms legal on CuPy arrays."""
+
+    def visit_Assign(self, node):
+        self.generic_visit(node)
+        if len(node.targets) == 1 and isinstance(node.targets[0], ast.Subscript)                 and isinstance(node.targets[0].value, ast.Name):
+            call = ast.Call(func=ast.Name("__gs_rhs__", ast.Load()),
+                            args=[ast.Name(node.targets[0].value.id, ast.Load()), node.value],
+                            keywords=[])
+            node.value = ast.copy_location(call, node.value)
+        return node
+
+    def visit_Call(self, node):
+        self.generic_visit(node)
+        f = node.func
+        if isinstance(f, ast.Attribute) and f.attr in ("max", "min", "sum")                 and any(k.arg == "initial" for k in node.keywords):
+            init = next(k.value for k in node.keywords if k.arg == "initial")
+            rest = [k for k in node.keywords if k.arg != "initial"]
+            call = ast.Call(func=ast.Name("__gs_initial__", ast.Load()),
+                            args=[f.value, ast.Constant(f.attr), init] + node.args,
+                            keywords=rest)
+            return ast.copy_location(call, node)
+        return node
+
+
+def _shadow_code(loader, name):
+    """Compiled code of module *name* with the :class:`_Rewrite` applied (bytecode if no source)."""
+    try:
+        src = loader.get_source(name)
+        path = loader.get_filename(name)
+    except Exception:  # noqa: BLE001 - ソースが取れなければ従来どおりバイトコード
+        src = None
+    if not src:
+        return loader.get_code(name)
+    tree = ast.fix_missing_locations(_Rewrite().visit(ast.parse(src, path)))
+    return compile(tree, path, "exec")
 
 
 def _round(x, *n):
@@ -426,6 +516,21 @@ class _NumpyNamespace(_Namespace):
                     return cfn2(*a, **k)
                 return full(*a, **k)
             return scalar_safe
+        if name == "repeat":
+            def repeat(a, repeats, *args, **k):
+                if _is_gpu(repeats):
+                    repeats = repeats.get()
+                return _gpu_call(cp.repeat, _np.repeat, "numpy.repeat")(a, repeats, *args, **k)
+            return repeat
+        if name == "full":
+            def full(shape, fill, *args, **k):
+                if isinstance(fill, _np.ndarray) and fill.ndim or _is_gpu(fill) and fill.ndim:
+                    r = cp.broadcast_to(cp.asarray(fill), shape if isinstance(shape, tuple)
+                                        else (shape,)).copy()
+                    return r.astype(args[0]) if args else (r.astype(k["dtype"]) if "dtype" in k
+                                                           else r)
+                return _gpu_call(cp.full, _np.full, "numpy.full")(shape, fill, *args, **k)
+            return full
         if name in ("asarray", "array", "asanyarray"):
             gfn = getattr(cp, name)
             cfn = getattr(_np, name)
@@ -461,6 +566,8 @@ class ShadowImporter:
         self.builtins = dict(vars(builtins))
         self.builtins["__import__"] = self._import
         self.builtins["round"] = _round
+        self.builtins["__gs_rhs__"] = _rhs
+        self.builtins["__gs_initial__"] = _initial
         self._ndarray = None
         self._importlib = _ImportlibProxy(self)
 
@@ -516,7 +623,7 @@ class ShadowImporter:
                 return mod
             real = importlib.import_module(name)     # dataclasses / NamedTuple が本物を引く
             spec = importlib.util.find_spec(name)
-            code = spec.loader.get_code(name)
+            code = _shadow_code(spec.loader, name)
             mod = types.ModuleType(name, getattr(real, "__doc__", None))
             mod.__dict__.update(__file__=spec.origin, __spec__=spec, __package__="",
                                 __loader__=spec.loader, __builtins__=self.builtins)
@@ -631,6 +738,19 @@ def allowed_ops() -> dict:
     try:
         with open(ALLOW_PATH, encoding="utf-8") as f:
             return dict(json.load(f).get("ops", {}))
+    except FileNotFoundError:
+        return {}
+
+
+def resident_ops() -> dict:
+    """``{op: row}`` adopted only for a chain that keeps data on the GPU (not single calls).
+
+    単独 1 回呼びでは 5 倍に届かず、入力と出力を GPU に置いたままの連続処理で届いた op。
+    :func:`run_allowed` はこの表を見ない(単独呼びの許可と混ぜない)。
+    """
+    try:
+        with open(ALLOW_PATH, encoding="utf-8") as f:
+            return dict(json.load(f).get("resident_ops", {}))
     except FileNotFoundError:
         return {}
 

@@ -21,35 +21,35 @@ CuPy 13.6.0 + PyTorch 2.11.0+cu128 を同じプロセスで使い(DLPack の往�
 
 | 分類 | 件数 |
 |---|---:|
-| 採用(一致 + 転送込み 5 倍以上) | 503 |
-| 一致したが遅い(5 倍未満) | 486 |
-| 一致したが実寸の入力を作れない(固定形の入力) | 438 |
+| 採用(一致 + 転送込み 5 倍以上) | 508 |
+| 常駐前提で採用(単独 1 回は 5 倍未満、GPU に載せたままの連続処理で 5 倍以上) | 46 |
+| 一致したが遅い(5 倍未満) | 442 |
+| 一致したが実寸の入力を作れない(固定形の入力) | 444 |
 | 不一致 | 47 |
 | 判定不能(出力が定数) | 145 |
-| 例外(CuPy 側の不足・型の混在) | 62 |
+| 例外(CuPy 側の不足・型の混在) | 48 |
 | 包み(cv2 / skimage / PIL が本体) | 184 |
 | Python ループが律速 | 67 |
-| 測れなかった | 195 |
+| 測れなかった | 196 |
 | **合計** | **2127** |
 
 例外と未計測の理由の内訳:
 
 | 分類 | 理由 | 件数 |
 |---|---|---:|
-| exception | value_error | 14 |
-| exception | numpy_cupy_mix | 13 |
-| exception | type_error | 13 |
+| exception | value_error | 13 |
+| exception | type_error | 10 |
 | exception | implicit_numpy | 9 |
 | exception | gpu_timeout | 7 |
+| exception | numpy_cupy_mix | 5 |
 | exception | unhashable_array | 4 |
-| exception | gpu_crash | 2 |
 | mismatch | rel | 37 |
 | mismatch | at_real_size | 9 |
 | mismatch | value at .pairs[2] | 1 |
 | unmeasured | cpu_exception | 102 |
 | unmeasured | no_backend | 47 |
 | unmeasured | no_probe | 35 |
-| unmeasured | cpu_over_limit_at_real_size | 9 |
+| unmeasured | cpu_over_limit_at_real_size | 10 |
 | unmeasured | timeout | 2 |
 | wrapper | skimage | 108 |
 | wrapper | cv2 | 60 |
@@ -212,6 +212,7 @@ CuPy 13.6.0 + PyTorch 2.11.0+cu128 を同じプロセスで使い(DLPack の往�
 | `deviation_image` | texture | 2048×2048 | 321 ms | 12 ms | 26.0 | 4.0e-07 | 0 |
 | `structure_tensor_orientation` | texture | 2048×2048 | 536 ms | 21 ms | 26.0 | 1.5e-14 | 0 |
 | `dem_hillshade` | shading | 2048×2048 | 372 ms | 15 ms | 25.6 | 2.8e-15 | 0 |
+| `speckle_statistics` | coherent | 2048×2048 | 202 ms | 8 ms | 25.3 | 8.2e-15 | 2 |
 | `dwt_transform` | transform | 2048×2048 | 518 ms | 20 ms | 25.3 | 2.7e-12 | 2 |
 | `vx_sobel3x3` | gradient | 2048×2048 | 189 ms | 7 ms | 25.2 | 0.0e+00 | 0 |
 | `warp_tps_image` | morph | 2048×2048 | 3.03 s | 120 ms | 25.2 | 4.9e-10 | 0 |
@@ -253,6 +254,7 @@ CuPy 13.6.0 + PyTorch 2.11.0+cu128 を同じプロセスで使い(DLPack の往�
 | `aug_rolling_shutter` | augmentation | 2048×2048 | 270 ms | 14 ms | 18.6 | 5.6e-17 | 0 |
 | `bloom` | post | 2048×2048×3 | 729 ms | 39 ms | 18.5 | 9.7e-17 | 0 |
 | `cylinder_unwrap` | curvilinear | 256×256×256 | 277 ms | 15 ms | 18.5 | 0.0e+00 | 0 |
+| `peg_measure_overlay` | pegsim | 2048×2048×3 | 242 ms | 13 ms | 18.3 | 0.0e+00 | 0 |
 | `f2_gauss_pyramid` | smoothing | 2048×2048 | 318 ms | 17 ms | 18.2 | 2.3e-16 | 0 |
 | `tophat` | morphology | 2048×2048 | 243 ms | 14 ms | 18.0 | 0.0e+00 | 0 |
 | `hx_gen_circle_sector` | halcon_ext | 2048×2048 | 281 ms | 16 ms | 17.9 | 0.0e+00 | 0 |
@@ -272,6 +274,7 @@ CuPy 13.6.0 + PyTorch 2.11.0+cu128 を同じプロセスで使い(DLPack の往�
 | `it_crop_part` | geometry | 2048×2048 | 231 ms | 14 ms | 17.1 | 1.2e-16 | 0 |
 | `emva_bspline_regression` | sensorchar | 1048576 | 979 ms | 58 ms | 17.0 | 8.7e-15 | 0 |
 | `warp_by_plane` | plane_sweep_stereo | 2048×2048 | 224 ms | 13 ms | 16.9 | 5.9e-17 | 0 |
+| `varmodel_alignment` | variation | 8×512×512 | 2.26 s | 134 ms | 16.9 | 1.0e-06 | 126 |
 | `hx_gen_ellipse_sector` | halcon_ext | 2048×2048 | 246 ms | 15 ms | 16.9 | 0.0e+00 | 0 |
 | `vol_fft_lowpass` | frequency | 256×256×256 | 801 ms | 48 ms | 16.8 | 2.3e-16 | 0 |
 | `tf_log_polar` | geometry | 2048×2048 | 252 ms | 15 ms | 16.8 | 2.3e-15 | 0 |
@@ -282,6 +285,7 @@ CuPy 13.6.0 + PyTorch 2.11.0+cu128 を同じプロセスで使い(DLPack の往�
 | `rft_generic` | frequency | 2048×2048 | 205 ms | 13 ms | 16.4 | 9.1e-18 | 0 |
 | `contact_patch_radius` | tacdome | 2048×2048 | 134 ms | 8 ms | 16.3 | 4.4e-16 | 0 |
 | `grid_lines` | plot | 2048×2048 | 449 ms | 28 ms | 16.2 | 0.0e+00 | 0 |
+| `varmodel_fit` | variation | 8×512×512 | 2.14 s | 133 ms | 16.2 | 4.1e-07 | 123 |
 | `tsdf_from_depth` | transform | 2048×2048 | 341 ms | 21 ms | 16.2 | 0.0e+00 | 0 |
 | `gray_opening` | morphology | 2048×2048 | 214 ms | 13 ms | 16.1 | 0.0e+00 | 0 |
 | `hx_gen_rectangle2` | halcon_ext | 2048×2048 | 186 ms | 12 ms | 16.1 | 0.0e+00 | 0 |
@@ -354,6 +358,7 @@ CuPy 13.6.0 + PyTorch 2.11.0+cu128 を同じプロセスで使い(DLPack の往�
 | `linear_to_srgb` | colorspace | 2048×2048×3 | 541 ms | 43 ms | 12.5 | 1.9e-16 | 0 |
 | `bothat` | morphology | 2048×2048 | 147 ms | 12 ms | 12.4 | 0.0e+00 | 0 |
 | `apply_weighting` | level | 1048576 | 55 ms | 4 ms | 12.3 | 5.3e-15 | 0 |
+| `micro_phase_decode` | light_transport | 2048×2048 | 807 ms | 66 ms | 12.3 | 5.4e-16 | 1 |
 | `fresnel_dielectric` | interface | 1048576 | 73 ms | 6 ms | 12.3 | 1.4e-16 | 0 |
 | `lf_epi_slope` | depth | 3×3×256×256 | 41 ms | 3 ms | 12.3 | 6.0e-15 | 1 |
 | `overlay_labels` | overlay | 2048×2048 | 213 ms | 17 ms | 12.2 | 0.0e+00 | 0 |
@@ -563,20 +568,20 @@ CuPy 13.6.0 + PyTorch 2.11.0+cu128 を同じプロセスで使い(DLPack の往�
 | `runlength_smear` | morphology | 2048×2048 | 66 ms | 13 ms | 5.1 | 0.0e+00 | 0 |
 | `blend_mode` | composite | 2048×2048×3 | 224 ms | 44 ms | 5.1 | 0.0e+00 | 0 |
 
-倍率の中央値 14.8、最小 5.1、最大 308.8。
+倍率の中央値 14.9、最小 5.1、最大 308.8。
 
-採用 503 件のうち 53 件は手書きの GPU 経路(`accel` 系)も持つ。新しく GPU で走るようになったのは 450 件。
+採用 508 件のうち 53 件は手書きの GPU 経路(`accel` 系)も持つ。新しく GPU で走るようになったのは 455 件。
 
 ### GPU 対応率への数え方(分母 2127 件 = required + suitable)
 
 | 経路 | 件数 |
 |---|---:|
 | 手書き経路(`accel` / `accel_vol` / `accel_match`) | 85 |
-| 許可リスト経由(機械的 GPU 化。`fullseye/data/gpu_auto_allow.json`) | 503 |
+| 許可リスト経由(機械的 GPU 化。`fullseye/data/gpu_auto_allow.json`) | 508 |
 | うち手書きと重複 | 53 |
-| 合算(重複を 1 回と数える) | 535 |
+| 合算(重複を 1 回と数える) | 540 |
 
-注記: 許可リスト経由の 503 件は**既定では有効でない**。明示の GPU 指定か許可リストを使ったときだけ GPU で走る。手書き経路とは数字を混ぜず、必ず上の内訳で示す。採用の門(内部差 < 5e-03・転送込み 5.0 倍以上・出力定数は不採用)は変えていない。
+注記: 許可リスト経由の 508 件は**既定では有効でない**。明示の GPU 指定か許可リストを使ったときだけ GPU で走る。手書き経路とは数字を混ぜず、必ず上の内訳で示す。採用の門(内部差 < 5e-03・転送込み 5.0 倍以上・出力定数は不採用)は変えていない。
 
 ## 一致したが遅い op(倍率の高い順に上位 30)
 
@@ -613,46 +618,175 @@ CuPy 13.6.0 + PyTorch 2.11.0+cu128 を同じプロセスで使い(DLPack の往�
 | `matcap_shade` | render | 2048×2048×3 | 601 ms | 34 ms | 17.74 |
 | `m1_measure_projection` | measure1d | 2048×2048 | 123 ms | 7 ms | 17.69 |
 
+## 追加掃引: 前 → 後
+
+修正層(`gpu_shadow.py`、道 1)と常駐の連続処理(道 2)を足す前後の件数。分母 2127 件は変えていない。
+
+| 分類 | 前 | 後 | 差 |
+|---|---:|---:|---:|
+| 採用(一致 + 転送込み 5 倍以上) | 503 | 508 | +5 |
+| 常駐前提で採用(単独 1 回は 5 倍未満、GPU に載せたままの連続処理で 5 倍以上) | 0 | 46 | +46 |
+| 一致したが遅い(5 倍未満) | 486 | 442 | -44 |
+| 一致したが実寸の入力を作れない(固定形の入力) | 438 | 444 | +6 |
+| 不一致 | 47 | 47 | +0 |
+| 判定不能(出力が定数) | 145 | 145 | +0 |
+| 例外(CuPy 側の不足・型の混在) | 62 | 48 | -14 |
+| 包み(cv2 / skimage / PIL が本体) | 184 | 184 | +0 |
+| Python ループが律速 | 67 | 67 | +0 |
+| 測れなかった | 195 | 196 | +1 |
+
+採用の増分は道 1 が 5 件(単独 1 回呼び)、道 2 が 46 件(常駐前提・別枠)。常駐前提の採用は単独 1 回呼びの採用と混ぜて数えない。
+
+### 道 1: 原因別の結果
+
+| 原因 | 前の件数 | 直した(一致になった) | うち実寸で採用 | 直せない | 直せない理由 |
+|---|---:|---:|---:|---:|---|
+| wrapper_skimage | 108 | 0 | 0 | 108 | 本体が skimage(ネイティブ)。CuPy 配列を受け付けない。CPU へ渡して戻すだけの差し替えは GPU 化ではない |
+| wrapper_cv2 | 60 | 0 | 0 | 60 | 本体が OpenCV(ネイティブ)。同上 |
+| wrapper_PIL | 16 | 0 | 0 | 16 | 本体が PIL(ネイティブ)。同上 |
+| value_error | 14 | 1 | 1 | 13 | 疎グラフ(csgraph)・疎行列の解法・縮退入力・自作クラスの型比較。CuPy 側に同等が無いか、入力の問題 |
+| numpy_cupy_mix | 13 | 8 | 3 | 5 | CuPy が受け付けない型の混在(「直した」以外の残り) |
+| type_error | 13 | 3 | 1 | 10 | 0 次元 CuPy 配列を Python の添字・辞書キー・スライスに使う箇所、SuperLU の LU.solve(CPU 専用)など。対応には op 側の書換えが要る |
+| implicit_numpy | 9 | 0 | 0 | 9 | 疎行列・グラフ・skimage 経由で本物の numpy が CuPy 配列を受け取る。疎行列/グラフ(CPU アルゴリズム)は GPU に載せても転送が増えるだけ |
+| gpu_timeout | 7 | 2 | 0 | 5 | 90 秒で終わらない(小さなカーネルを大量に発行する Python ループ律速) |
+| unhashable_array | 4 | 0 | 0 | 4 | 配列を set / dict のキーに使う Python ループ(GPU 化の対象でない) |
+| gpu_crash | 2 | 0 | 0 | 2 | プロセスが落ちる |
+
+直した op と実寸の倍率:
+
+| op | 原因 | 結果 | 倍率(単独) |
+|---|---|---|---:|
+| `car_hybrid_astar` | numpy_cupy_mix | match_slow | — |
+| `fit_spin` | gpu_timeout | match_fixed | — |
+| `micro_phase_decode` | value_error | adopted | 12.32 |
+| `peg_measure_overlay` | numpy_cupy_mix | adopted | 18.30 |
+| `perpetual_render` | numpy_cupy_mix | match_fixed | — |
+| `plenoptic_mla_calibrate` | numpy_cupy_mix | match_fixed | — |
+| `register_fpfh` | gpu_timeout | match_fixed | — |
+| `sem_image` | type_error | unmeasured | — |
+| `sign_image` | numpy_cupy_mix | match_fixed | — |
+| `speckle_statistics` | type_error | adopted | 25.29 |
+| `stat_ks_test` | type_error | match_slow | 0.95 |
+| `synth_frame_series` | numpy_cupy_mix | match_fixed | — |
+| `varmodel_alignment` | numpy_cupy_mix | adopted | 16.92 |
+| `varmodel_fit` | numpy_cupy_mix | adopted | 16.16 |
+
+直した修正(`gpu_shadow.py`。numpy / scipy を呼ぶ側のソースは書き換えない):
+
+- `a[i] = (x, y)` のようにタプル・リストを CuPy 配列へ代入する形を、読み込み時の AST 書換えで配列に包む(CuPy は右辺のタプルを受け付けない)。
+- `x.max(initial=v)` / `min` / `sum` の `initial` を `maximum` / `minimum` / 加算に置く。
+- `np.repeat` の `repeats` が CuPy 配列のとき CPU の整数列にして渡す。
+- `np.full(shape, ndarray)` を broadcast に置く。
+- object dtype を CuPy が拒否した呼び出しは CPU に退避して数える。
+- `scipy.stats.kstest` の結果のようにキーワード専用の追加項目を持つ namedtuple を、同名の namedtuple で組み直す。
+
+### 道 2: 常駐前提の連続処理
+
+単独 1 回呼びで 3.5〜5 倍だった op を、入力を GPU に先に 8 個ぶん置き、計算を続け、出力を 1 回だけ戻して測り直した。1 回あたりの時間 = (往路の転送 + 計算の総和 + 復路の転送) / 8。計算は 1 回ごとに `Stream.synchronize()` の後に時計を読む。CPU に退避した呼び出しがある op は常駐前提にならないので採用から除く。
+
+測った 55 件のうち、常駐前提で採用 46 件、CPU 退避ありで除外 4 件、5 倍未満 5 件、不一致 0 件。
+
+「単独(再)」は常駐の測定と同じ場で単独 1 回呼びも測り直した倍率。先の測定より高い op が多く、先の単独の値は他の負荷で遅く出ていた可能性がある。採用の判定は先の測定のまま動かしていない(測り直しの値で採用に格上げしない)。
+
+| op | 族 | 単独 | 単独(再) | 常駐 | 計算のみ | CPU 退避 | 判定 |
+|---|---|---:|---:|---:|---:|---:|---|
+| `tac_surface_normal` | tactile | 4.85 | 27.34 | 55.7 | 103.3 | 0 | adopted_resident |
+| `laplace_of_gauss` | edges | 4.31 | 16.12 | 40.2 | 114.3 | 0 | adopted_resident |
+| `synthesize_fringes` | structured_light | 4.73 | 8.10 | 34.1 | 103.5 | 0 | adopted_resident |
+| `grating_stepping_simulate` | grating_interf | 4.75 | 6.42 | 23.9 | 48.3 | 0 | adopted_resident |
+| `roberts_mag` | edges | 4.21 | 9.36 | 23.9 | 73.5 | 0 | adopted_resident |
+| `aolp_to_azimuth` | shape_from_polarization | 4.49 | 6.42 | 21.9 | 75.2 | 0 | adopted_resident |
+| `polarization_render` | polarization | 4.80 | 6.20 | 21.0 | 62.6 | 0 | adopted_resident |
+| `surface_filter` | prepare | 4.71 | 5.95 | 20.9 | 74.9 | 0 | adopted_resident |
+| `dither_ordered` | gray | 4.62 | 9.55 | 18.5 | 61.8 | 16 | match_slow |
+| `anscombe_transform` | transform | 4.26 | 6.54 | 17.4 | 65.4 | 0 | adopted_resident |
+| `pow_image` | gray | 4.44 | 6.92 | 17.2 | 51.4 | 0 | adopted_resident |
+| `hx_close_edges` | halcon_ext | 4.72 | 6.21 | 16.2 | 52.4 | 0 | adopted_resident |
+| `sin_image` | arithmetic | 4.82 | 5.69 | 15.9 | 64.9 | 0 | adopted_resident |
+| `edge_points` | edges | 3.69 | 3.89 | 14.6 | 45.5 | 0 | adopted_resident |
+| `auto_threshold` | segmentation | 3.81 | 6.04 | 14.5 | 33.6 | 0 | adopted_resident |
+| `gerode` | morphology | 4.99 | 7.67 | 14.2 | 86.2 | 0 | adopted_resident |
+| `quantize_uniform` | gray | 4.01 | 5.01 | 13.5 | 59.0 | 0 | adopted_resident |
+| `exp_image` | arithmetic | 4.33 | 4.98 | 13.1 | 58.0 | 0 | adopted_resident |
+| `vol_erode` | 3d | 4.73 | 8.42 | 12.9 | 92.2 | 0 | adopted_resident |
+| `hx_disparity_to_xyz` | halcon_ext | 4.53 | 5.59 | 12.8 | 44.7 | 0 | adopted_resident |
+| `linear_trans_color` | color | 3.68 | 4.59 | 12.5 | 38.5 | 0 | adopted_resident |
+| `premultiply` | composite | 3.86 | 4.54 | 12.4 | 48.9 | 0 | adopted_resident |
+| `hx_fill_interlace` | halcon_ext | 4.00 | 4.37 | 11.8 | 46.4 | 0 | adopted_resident |
+| `light_mask` | light | 3.54 | 5.18 | 11.4 | 67.6 | 0 | adopted_resident |
+| `vol_equalize` | gray | 3.81 | 5.21 | 11.1 | 35.2 | 0 | adopted_resident |
+| `equ_histo_image` | gray | 4.85 | 5.34 | 10.9 | 33.6 | 0 | adopted_resident |
+| `img_to_rgb` | bridge | 4.35 | 8.91 | 10.4 | 16.1 | 0 | adopted_resident |
+| `tb_exponential_background` | typed | 3.95 | 5.67 | 10.2 | 18.9 | 0 | adopted_resident |
+| `hertzian_tangential_inner` | tacslip | 3.87 | 3.84 | 10.2 | 47.7 | 0 | adopted_resident |
+| `otsu` | segmentation | 4.10 | 4.57 | 10.1 | 23.7 | 0 | adopted_resident |
+| `asin_image` | arithmetic | 3.80 | 3.60 | 9.8 | 38.4 | 0 | adopted_resident |
+| `photon_uncertainty` | counting | 3.65 | 4.00 | 9.8 | 30.5 | 0 | adopted_resident |
+| `atan_image` | arithmetic | 4.88 | 5.73 | 9.6 | 64.0 | 0 | adopted_resident |
+| `log_image` | arithmetic | 4.45 | 3.34 | 9.5 | 38.7 | 0 | adopted_resident |
+| `legend_box` | furniture | 4.17 | 8.50 | 9.3 | 10.0 | 0 | adopted_resident |
+| `tb_quantize` | typed | 3.94 | 4.94 | 8.6 | 19.1 | 0 | adopted_resident |
+| `equ_histo_image_rect` | gray | 4.88 | 4.88 | 8.4 | 12.6 | 0 | adopted_resident |
+| `flow_magnitude` | flow | 3.60 | 6.50 | 8.3 | 87.0 | 0 | adopted_resident |
+| `underwater_image` | watermedia | 3.78 | 3.59 | 7.9 | 14.3 | 48 | match_slow |
+| `min_image` | nary | 3.62 | 3.58 | 7.9 | 60.1 | 0 | adopted_resident |
+| `morph_sequence` | morph | 4.36 | 7.66 | 7.8 | 7.8 | 224 | match_slow |
+| `tb_magnus_lift_coefficient` | typed | 4.61 | 5.11 | 7.1 | 11.9 | 0 | adopted_resident |
+| `dct_transform` | transform | 4.64 | 6.11 | 6.7 | 7.2 | 8 | match_slow |
+| `tb_cx_log_magnitude` | typed | 4.49 | 5.80 | 6.6 | 58.6 | 0 | adopted_resident |
+| `stat_zscore` | stats | 4.56 | 4.86 | 6.5 | 15.8 | 0 | adopted_resident |
+| `volume_downsample` | preprocess | 3.77 | 4.47 | 6.4 | 71.5 | 0 | adopted_resident |
+| `coat_thickness_from_image` | polish | 5.00 | 3.37 | 6.4 | 16.9 | 0 | adopted_resident |
+| `hx_gen_highpass` | halcon_ext | 3.57 | 3.46 | 6.3 | 20.0 | 0 | adopted_resident |
+| `curvature_maps` | feature | 4.72 | 6.08 | 5.8 | 5.9 | 0 | adopted_resident |
+| `compose_funct_1d` | function | 4.40 | 2.98 | 5.4 | 26.4 | 0 | adopted_resident |
+| `gdilate` | morphology | 4.98 | 4.55 | 4.1 | 13.0 | 0 | match_slow |
+| `dem_height_frame_residual` | geodesy | 4.37 | 5.17 | 3.4 | 4.5 | 0 | match_slow |
+| `graph_activation_latency` | activity | 3.88 | 4.59 | 3.2 | 6.2 | 0 | match_slow |
+| `brightness_contrast` | isp | 3.63 | 2.47 | 2.4 | 6.1 | 0 | match_slow |
+| `xsp_dct_denoise` | smoothing | 3.74 | 1.77 | 1.9 | 1.9 | 16 | match_slow |
+
+
 ## 族別
 
 | 族 | 全 | 採用 | 遅い | 固定形 | 不一致 | 判定不能 | 例外 | 包み | Pyループ | 未計測 |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| typed | 123 | 24 | 54 | 35 | 6 | 1 | 3 | 0 | 0 | 0 |
-| edges | 64 | 27 | 5 | 0 | 6 | 0 | 0 | 19 | 0 | 7 |
-| segmentation | 54 | 12 | 12 | 0 | 0 | 0 | 0 | 28 | 0 | 2 |
-| gray | 52 | 18 | 18 | 0 | 0 | 0 | 0 | 14 | 1 | 1 |
+| typed | 123 | 24 | 50 | 35 | 6 | 1 | 3 | 0 | 0 | 0 |
+| edges | 64 | 27 | 2 | 0 | 6 | 0 | 0 | 19 | 0 | 7 |
+| segmentation | 54 | 12 | 10 | 0 | 0 | 0 | 0 | 28 | 0 | 2 |
+| gray | 52 | 18 | 13 | 0 | 0 | 0 | 0 | 14 | 1 | 1 |
 | smoothing | 50 | 16 | 8 | 0 | 0 | 0 | 1 | 17 | 0 | 8 |
-| halcon_ext | 43 | 13 | 27 | 0 | 3 | 0 | 0 | 0 | 0 | 0 |
-| morphology | 43 | 17 | 9 | 0 | 0 | 0 | 2 | 14 | 1 | 0 |
+| halcon_ext | 43 | 13 | 23 | 0 | 3 | 0 | 0 | 0 | 0 | 0 |
+| morphology | 43 | 17 | 8 | 0 | 0 | 0 | 2 | 14 | 1 | 0 |
 | features | 33 | 1 | 7 | 0 | 0 | 2 | 0 | 20 | 0 | 3 |
 | geometry | 32 | 13 | 7 | 1 | 0 | 0 | 1 | 8 | 0 | 2 |
-| transform | 32 | 4 | 8 | 6 | 0 | 0 | 0 | 1 | 4 | 9 |
+| transform | 32 | 4 | 7 | 6 | 0 | 0 | 0 | 1 | 4 | 9 |
 | texture | 28 | 13 | 2 | 0 | 0 | 0 | 0 | 13 | 0 | 0 |
 | render | 24 | 2 | 4 | 10 | 1 | 4 | 2 | 0 | 0 | 1 |
-| function | 23 | 2 | 17 | 0 | 0 | 4 | 0 | 0 | 0 | 0 |
+| function | 23 | 2 | 16 | 0 | 0 | 4 | 0 | 0 | 0 | 0 |
 | rank | 23 | 17 | 1 | 0 | 0 | 0 | 0 | 4 | 0 | 1 |
 | frequency | 22 | 14 | 4 | 0 | 0 | 0 | 0 | 2 | 0 | 2 |
 | omni360 | 22 | 3 | 10 | 5 | 0 | 2 | 0 | 0 | 1 | 1 |
-| bridge | 18 | 6 | 7 | 2 | 1 | 0 | 0 | 0 | 2 | 0 |
+| bridge | 18 | 6 | 6 | 2 | 1 | 0 | 0 | 0 | 2 | 0 |
 | contour | 18 | 5 | 0 | 5 | 0 | 1 | 1 | 5 | 1 | 0 |
 | sensorchar | 17 | 3 | 2 | 3 | 0 | 2 | 0 | 0 | 0 | 7 |
-| polarization | 16 | 1 | 2 | 11 | 0 | 0 | 0 | 0 | 0 | 2 |
+| polarization | 16 | 1 | 1 | 11 | 0 | 0 | 0 | 0 | 0 | 2 |
 | tactorque | 16 | 4 | 2 | 9 | 0 | 1 | 0 | 0 | 0 | 0 |
 | carla | 15 | 3 | 1 | 9 | 0 | 2 | 0 | 0 | 0 | 0 |
-| feature | 15 | 6 | 5 | 3 | 0 | 0 | 0 | 1 | 0 | 0 |
+| feature | 15 | 6 | 4 | 3 | 0 | 0 | 0 | 1 | 0 | 0 |
 | paper | 15 | 9 | 3 | 0 | 0 | 0 | 0 | 0 | 2 | 1 |
-| ball | 14 | 0 | 0 | 11 | 0 | 2 | 1 | 0 | 0 | 0 |
+| ball | 14 | 0 | 0 | 12 | 0 | 2 | 0 | 0 | 0 | 0 |
 | extra | 14 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 14 |
 | restoration | 14 | 5 | 1 | 1 | 0 | 0 | 0 | 6 | 1 | 0 |
 | medial | 13 | 3 | 1 | 0 | 1 | 0 | 0 | 6 | 0 | 2 |
-| nary | 13 | 1 | 11 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
+| nary | 13 | 1 | 10 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
 | puck | 13 | 0 | 0 | 11 | 0 | 2 | 0 | 0 | 0 | 0 |
 | surface | 13 | 6 | 0 | 7 | 0 | 0 | 0 | 0 | 0 | 0 |
-| tacslip | 13 | 3 | 3 | 3 | 2 | 2 | 0 | 0 | 0 | 0 |
-| 3d | 12 | 4 | 8 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| tacslip | 13 | 3 | 2 | 3 | 2 | 2 | 0 | 0 | 0 | 0 |
+| 3d | 12 | 4 | 7 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | artificial-life | 12 | 9 | 2 | 0 | 0 | 0 | 0 | 0 | 1 | 0 |
-| estimation | 12 | 0 | 0 | 2 | 0 | 3 | 1 | 0 | 0 | 6 |
-| flow | 12 | 0 | 3 | 5 | 0 | 2 | 2 | 0 | 0 | 0 |
+| estimation | 12 | 0 | 1 | 2 | 0 | 3 | 0 | 0 | 0 | 6 |
+| flow | 12 | 0 | 2 | 5 | 0 | 2 | 2 | 0 | 0 | 0 |
 | illusion | 12 | 0 | 0 | 12 | 0 | 0 | 0 | 0 | 0 | 0 |
 | isp | 12 | 3 | 7 | 0 | 0 | 0 | 0 | 0 | 0 | 2 |
 | sdf_csg | 12 | 1 | 4 | 7 | 0 | 0 | 0 | 0 | 0 | 0 |
@@ -663,26 +797,26 @@ CuPy 13.6.0 + PyTorch 2.11.0+cu128 を同じプロセスで使い(DLPack の往�
 | scene | 11 | 0 | 1 | 2 | 0 | 0 | 0 | 0 | 0 | 8 |
 | signal | 11 | 3 | 7 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
 | terrain | 11 | 7 | 0 | 3 | 0 | 1 | 0 | 0 | 0 | 0 |
-| arithmetic | 10 | 1 | 9 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| arithmetic | 10 | 1 | 4 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | augmentation | 10 | 7 | 3 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| color | 10 | 0 | 6 | 0 | 1 | 0 | 0 | 3 | 0 | 0 |
+| color | 10 | 0 | 5 | 0 | 1 | 0 | 0 | 3 | 0 | 0 |
 | diabolo | 10 | 0 | 0 | 7 | 0 | 3 | 0 | 0 | 0 | 0 |
 | linalg | 10 | 1 | 0 | 5 | 3 | 0 | 0 | 0 | 0 | 1 |
-| polish | 10 | 3 | 2 | 3 | 0 | 1 | 0 | 0 | 1 | 0 |
+| polish | 10 | 3 | 1 | 3 | 0 | 1 | 0 | 0 | 1 | 0 |
 | complex | 9 | 3 | 1 | 5 | 0 | 0 | 0 | 0 | 0 | 0 |
 | numerics | 9 | 0 | 5 | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
 | pegsym | 9 | 0 | 1 | 3 | 0 | 3 | 0 | 2 | 0 | 0 |
 | photoelastic | 9 | 2 | 6 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
 | roverslip | 9 | 0 | 2 | 6 | 0 | 0 | 0 | 0 | 0 | 1 |
-| structured_light | 9 | 3 | 2 | 0 | 0 | 0 | 1 | 3 | 0 | 0 |
+| structured_light | 9 | 3 | 1 | 0 | 0 | 0 | 1 | 3 | 0 | 0 |
 | tacsim | 9 | 2 | 2 | 2 | 1 | 2 | 0 | 0 | 0 | 0 |
 | algebra | 8 | 1 | 2 | 3 | 0 | 2 | 0 | 0 | 0 | 0 |
 | cutting | 8 | 0 | 1 | 4 | 0 | 3 | 0 | 0 | 0 | 0 |
 | field | 8 | 0 | 0 | 8 | 0 | 0 | 0 | 0 | 0 | 0 |
 | motion | 8 | 3 | 3 | 0 | 0 | 0 | 0 | 0 | 1 | 1 |
 | segment | 8 | 4 | 0 | 0 | 0 | 0 | 0 | 4 | 0 | 0 |
-| shape_from_polarization | 8 | 2 | 1 | 3 | 0 | 1 | 0 | 0 | 1 | 0 |
-| synth | 8 | 0 | 0 | 6 | 0 | 0 | 1 | 0 | 0 | 1 |
+| shape_from_polarization | 8 | 2 | 0 | 3 | 0 | 1 | 0 | 0 | 1 | 0 |
+| synth | 8 | 0 | 0 | 7 | 0 | 0 | 0 | 0 | 0 | 1 |
 | tem | 8 | 4 | 0 | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
 | anomaly_eval | 7 | 1 | 1 | 0 | 0 | 4 | 0 | 0 | 1 | 0 |
 | braidpath | 7 | 0 | 0 | 1 | 0 | 3 | 1 | 0 | 2 | 0 |
@@ -690,26 +824,26 @@ CuPy 13.6.0 + PyTorch 2.11.0+cu128 を同じプロセスで使い(DLPack の往�
 | domain | 7 | 1 | 5 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
 | imaging | 7 | 3 | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 3 |
 | lockin | 7 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 7 |
-| pegsim | 7 | 2 | 0 | 1 | 0 | 1 | 3 | 0 | 0 | 0 |
+| pegsim | 7 | 3 | 0 | 1 | 0 | 1 | 2 | 0 | 0 | 0 |
 | pegtactile | 7 | 0 | 1 | 3 | 0 | 3 | 0 | 0 | 0 | 0 |
 | perceptual | 7 | 2 | 0 | 0 | 0 | 5 | 0 | 0 | 0 | 0 |
 | photometric | 7 | 3 | 0 | 0 | 1 | 3 | 0 | 0 | 0 | 0 |
 | post | 7 | 6 | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | spectral | 7 | 1 | 0 | 1 | 3 | 0 | 1 | 0 | 0 | 1 |
-| stats | 7 | 0 | 3 | 4 | 0 | 0 | 0 | 0 | 0 | 0 |
+| stats | 7 | 0 | 2 | 4 | 0 | 0 | 0 | 0 | 0 | 0 |
 | tacdome | 7 | 1 | 0 | 6 | 0 | 0 | 0 | 0 | 0 | 0 |
 | tacscalib | 7 | 1 | 3 | 3 | 0 | 0 | 0 | 0 | 0 | 0 |
 | annotate3d | 6 | 6 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | appearance | 6 | 2 | 1 | 0 | 0 | 2 | 0 | 0 | 0 | 1 |
 | classify | 6 | 3 | 1 | 2 | 0 | 0 | 0 | 0 | 0 | 0 |
 | colorspace | 6 | 4 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 2 |
-| composite | 6 | 2 | 3 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
+| composite | 6 | 2 | 2 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
 | compression | 6 | 0 | 1 | 0 | 0 | 1 | 0 | 2 | 0 | 2 |
 | curvature | 6 | 0 | 0 | 3 | 0 | 0 | 0 | 0 | 0 | 3 |
 | descriptor | 6 | 0 | 0 | 4 | 0 | 0 | 0 | 0 | 0 | 2 |
 | fidelity | 6 | 0 | 0 | 0 | 0 | 5 | 0 | 0 | 0 | 1 |
 | grind | 6 | 1 | 1 | 2 | 0 | 2 | 0 | 0 | 0 | 0 |
-| light_transport | 6 | 2 | 0 | 3 | 0 | 0 | 1 | 0 | 0 | 0 |
+| light_transport | 6 | 3 | 0 | 3 | 0 | 0 | 0 | 0 | 0 | 0 |
 | matched | 6 | 2 | 3 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
 | physics | 6 | 6 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | pxrd | 6 | 1 | 0 | 2 | 1 | 0 | 1 | 0 | 1 | 0 |
@@ -726,7 +860,7 @@ CuPy 13.6.0 + PyTorch 2.11.0+cu128 を同じプロセスで使い(DLPack の往�
 | information | 5 | 1 | 3 | 0 | 0 | 1 | 0 | 0 | 0 | 0 |
 | interp_poly | 5 | 0 | 3 | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | level | 5 | 3 | 1 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
-| light | 5 | 1 | 2 | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
+| light | 5 | 1 | 1 | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | match_localize | 5 | 0 | 0 | 0 | 0 | 1 | 4 | 0 | 0 | 0 |
 | matching | 5 | 1 | 0 | 1 | 0 | 2 | 0 | 0 | 0 | 1 |
 | material | 5 | 1 | 0 | 0 | 0 | 3 | 0 | 0 | 0 | 1 |
@@ -737,22 +871,22 @@ CuPy 13.6.0 + PyTorch 2.11.0+cu128 を同じプロセスで使い(DLPack の往�
 | overlay | 5 | 4 | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | pixelshift | 5 | 0 | 0 | 1 | 0 | 1 | 0 | 0 | 0 | 3 |
 | plot | 5 | 1 | 1 | 1 | 0 | 0 | 0 | 0 | 1 | 1 |
-| prepare | 5 | 0 | 2 | 0 | 0 | 0 | 0 | 0 | 3 | 0 |
+| prepare | 5 | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 3 | 0 |
 | refine | 5 | 0 | 2 | 2 | 0 | 1 | 0 | 0 | 0 | 0 |
 | riesz | 5 | 1 | 4 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | scoop | 5 | 1 | 0 | 1 | 0 | 3 | 0 | 0 | 0 | 0 |
 | score | 5 | 1 | 0 | 4 | 0 | 0 | 0 | 0 | 0 | 0 |
-| sem | 5 | 1 | 0 | 2 | 0 | 0 | 1 | 0 | 1 | 0 |
+| sem | 5 | 1 | 0 | 2 | 0 | 0 | 0 | 0 | 1 | 1 |
 | sprite | 5 | 2 | 1 | 2 | 0 | 0 | 0 | 0 | 0 | 0 |
 | swarmflow | 5 | 2 | 1 | 2 | 0 | 0 | 0 | 0 | 0 | 0 |
-| tactile | 5 | 4 | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| tactile | 5 | 4 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | tomography | 5 | 1 | 0 | 0 | 0 | 0 | 0 | 4 | 0 | 0 |
 | transport | 5 | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 1 | 3 |
 | two_view | 5 | 0 | 0 | 0 | 2 | 2 | 0 | 0 | 0 | 1 |
 | visualise | 5 | 0 | 0 | 3 | 0 | 0 | 2 | 0 | 0 | 0 |
 | watervision | 5 | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 4 |
 | assess | 4 | 0 | 0 | 2 | 0 | 1 | 0 | 0 | 1 | 0 |
-| coherent | 4 | 1 | 0 | 2 | 0 | 0 | 1 | 0 | 0 | 0 |
+| coherent | 4 | 2 | 0 | 2 | 0 | 0 | 0 | 0 | 0 | 0 |
 | deflectometry | 4 | 2 | 0 | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
 | depth | 4 | 2 | 0 | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | dichromatic | 4 | 1 | 2 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -787,7 +921,7 @@ CuPy 13.6.0 + PyTorch 2.11.0+cu128 を同じプロセスで使い(DLPack の往�
 | colordiff | 3 | 0 | 0 | 0 | 0 | 2 | 0 | 0 | 0 | 1 |
 | compose | 3 | 2 | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | convert | 3 | 0 | 3 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| counting | 3 | 0 | 3 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| counting | 3 | 0 | 2 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | curvilinear | 3 | 1 | 1 | 0 | 0 | 0 | 1 | 0 | 0 | 0 |
 | decide | 3 | 0 | 0 | 0 | 0 | 2 | 1 | 0 | 0 | 0 |
 | decode | 3 | 0 | 3 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
@@ -801,12 +935,12 @@ CuPy 13.6.0 + PyTorch 2.11.0+cu128 を同じプロセスで使い(DLPack の往�
 | forward | 3 | 0 | 0 | 2 | 0 | 0 | 0 | 0 | 0 | 1 |
 | fpm | 3 | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 2 |
 | freeform | 3 | 0 | 0 | 1 | 0 | 0 | 2 | 0 | 0 | 0 |
-| furniture | 3 | 2 | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| furniture | 3 | 2 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | geom_transform | 3 | 0 | 2 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
 | geometric | 3 | 0 | 0 | 1 | 0 | 2 | 0 | 0 | 0 | 0 |
 | glassbody | 3 | 1 | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
 | gradient | 3 | 3 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| grating_interf | 3 | 1 | 1 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
+| grating_interf | 3 | 1 | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
 | io | 3 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 3 |
 | lidar_projection | 3 | 1 | 0 | 2 | 0 | 0 | 0 | 0 | 0 | 0 |
 | looming | 3 | 1 | 1 | 0 | 0 | 1 | 0 | 0 | 0 | 0 |
@@ -815,10 +949,10 @@ CuPy 13.6.0 + PyTorch 2.11.0+cu128 を同じプロセスで使い(DLPack の往�
 | mt | 3 | 0 | 0 | 2 | 0 | 1 | 0 | 0 | 0 | 0 |
 | noise | 3 | 0 | 3 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | oct | 3 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 | 2 |
-| path | 3 | 0 | 0 | 2 | 0 | 0 | 1 | 0 | 0 | 0 |
+| path | 3 | 0 | 1 | 2 | 0 | 0 | 0 | 0 | 0 | 0 |
 | photometry | 3 | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 1 | 1 |
 | plant | 3 | 2 | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
-| plenoptic | 3 | 0 | 0 | 0 | 0 | 2 | 1 | 0 | 0 | 0 |
+| plenoptic | 3 | 0 | 0 | 1 | 0 | 2 | 0 | 0 | 0 | 0 |
 | probe | 3 | 0 | 3 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | quality | 3 | 1 | 2 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | reconstruct | 3 | 2 | 0 | 0 | 0 | 0 | 0 | 0 | 1 | 0 |
@@ -838,7 +972,7 @@ CuPy 13.6.0 + PyTorch 2.11.0+cu128 を同じプロセスで使い(DLPack の往�
 | time | 3 | 1 | 0 | 2 | 0 | 0 | 0 | 0 | 0 | 0 |
 | traffic | 3 | 0 | 0 | 1 | 0 | 1 | 1 | 0 | 0 | 0 |
 | tsdf_fusion | 3 | 0 | 0 | 1 | 0 | 1 | 0 | 0 | 0 | 1 |
-| variation | 3 | 0 | 0 | 1 | 0 | 0 | 2 | 0 | 0 | 0 |
+| variation | 3 | 2 | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
 | visibility | 3 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 3 | 0 |
 | watermark | 3 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 3 |
 | watershed3d | 3 | 0 | 0 | 0 | 1 | 0 | 0 | 2 | 0 | 0 |
@@ -861,7 +995,7 @@ CuPy 13.6.0 + PyTorch 2.11.0+cu128 を同じプロセスで使い(DLPack の往�
 | describe | 2 | 0 | 0 | 0 | 0 | 0 | 2 | 0 | 0 | 0 |
 | dtof | 2 | 0 | 0 | 2 | 0 | 0 | 0 | 0 | 0 | 0 |
 | dynsys | 2 | 0 | 0 | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
-| feature_register | 2 | 0 | 1 | 0 | 0 | 0 | 1 | 0 | 0 | 0 |
+| feature_register | 2 | 0 | 1 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
 | fourier | 2 | 2 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | gaussians | 2 | 0 | 0 | 2 | 0 | 0 | 0 | 0 | 0 | 0 |
 | geodesic | 2 | 0 | 0 | 0 | 0 | 0 | 2 | 0 | 0 | 0 |
@@ -884,10 +1018,10 @@ CuPy 13.6.0 + PyTorch 2.11.0+cu128 を同じプロセスで使い(DLPack の往�
 | pl | 2 | 0 | 0 | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | plan_use | 2 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 2 |
 | plane_sweep_stereo | 2 | 2 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| preprocess | 2 | 0 | 1 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
+| preprocess | 2 | 0 | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
 | radiosity | 2 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 2 |
 | report | 2 | 0 | 1 | 0 | 0 | 1 | 0 | 0 | 0 | 0 |
-| roadjp | 2 | 0 | 0 | 0 | 0 | 0 | 1 | 0 | 1 | 0 |
+| roadjp | 2 | 0 | 0 | 1 | 0 | 0 | 0 | 0 | 1 | 0 |
 | robust | 2 | 0 | 0 | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | sample | 2 | 1 | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
 | selfmotion | 2 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 2 |
@@ -963,7 +1097,7 @@ CuPy 13.6.0 + PyTorch 2.11.0+cu128 を同じプロセスで使い(DLPack の往�
 | self-similarity | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
 | shading | 1 | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | stopping | 1 | 0 | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
-| stream | 1 | 0 | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 |
+| stream | 1 | 0 | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
 | summary | 1 | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | superquadric | 1 | 0 | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
 | suppress | 1 | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
@@ -982,21 +1116,21 @@ CuPy 13.6.0 + PyTorch 2.11.0+cu128 を同じプロセスで使い(DLPack の往�
 
 | 順位 | 族 | 例外+不一致+遅い | 包み | Pyループ |
 |---:|---|---:|---:|---:|
-| 1 | typed | 63 | 0 | 0 |
-| 2 | halcon_ext | 30 | 0 | 0 |
-| 3 | gray | 18 | 14 | 1 |
-| 4 | function | 17 | 0 | 0 |
-| 5 | segmentation | 12 | 28 | 0 |
-| 6 | edges | 11 | 19 | 0 |
-| 7 | morphology | 11 | 14 | 1 |
-| 8 | nary | 11 | 0 | 0 |
-| 9 | omni360 | 10 | 0 | 1 |
-| 10 | arithmetic | 9 | 0 | 0 |
-| 11 | smoothing | 9 | 17 | 0 |
-| 12 | transform | 8 | 1 | 4 |
-| 13 | signal | 8 | 0 | 0 |
-| 14 | geometry | 8 | 8 | 0 |
-| 15 | bridge | 8 | 0 | 2 |
+| 1 | typed | 59 | 0 | 0 |
+| 2 | halcon_ext | 26 | 0 | 0 |
+| 3 | function | 16 | 0 | 0 |
+| 4 | gray | 13 | 14 | 1 |
+| 5 | omni360 | 10 | 0 | 1 |
+| 6 | morphology | 10 | 14 | 1 |
+| 7 | nary | 10 | 0 | 0 |
+| 8 | segmentation | 10 | 28 | 0 |
+| 9 | smoothing | 9 | 17 | 0 |
+| 10 | edges | 8 | 19 | 0 |
+| 11 | signal | 8 | 0 | 0 |
+| 12 | geometry | 8 | 8 | 0 |
+| 13 | features | 7 | 20 | 0 |
+| 14 | transform | 7 | 1 | 4 |
+| 15 | render | 7 | 0 | 0 |
 
 例外が集中する場所(同じ行で落ちる op の数、上位 15):
 
@@ -1010,10 +1144,10 @@ CuPy 13.6.0 + PyTorch 2.11.0+cu128 を同じプロセスで使い(DLPack の往�
 | `accel_match.py:127` | 2 |
 | `match3d.py:1209` | 2 |
 | `render_shadow.py:418` | 2 |
-| `varmodel.py:239` | 2 |
 | `seggraph.py:727` | 1 |
-| `carpath.py:693` | 1 |
 | `pxrd.py:1207` | 1 |
 | `reconstruction.py:220` | 1 |
 | `drivedecide.py:969` | 1 |
 | `astrostack.py:1535` | 1 |
+| `match3d.py:3282` | 1 |
+| `mathgeometry.py:256` | 1 |

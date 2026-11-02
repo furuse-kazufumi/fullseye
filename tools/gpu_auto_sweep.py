@@ -31,6 +31,7 @@ import collections
 import copy
 import json
 import math
+import pickle
 import os
 import random
 import re
@@ -84,7 +85,7 @@ def load_targets() -> list:
     return [r for r in rows if r.get("gpu_tier") in ("required", "suitable")]
 
 
-def read_rows(stage: str) -> dict:
+def read_rows(stage: str, max_gen: int = None) -> dict:
     """段の全行を op 名で引く。子プロセスごとのファイルを更新順に重ねる(後勝ち)。
 
     Windows の追記は原子的でないので、並列の子が 1 つのファイルへ書くと行が壊れる
@@ -96,6 +97,8 @@ def read_rows(stage: str) -> dict:
             for line in f:
                 try:
                     r = json.loads(line)
+                    if max_gen is not None and r.get("gen", 0) > max_gen:
+                        continue          # 修正層より前の状態を再現する(前→後の比較用)
                     out[r["name"]] = r
                 except (ValueError, KeyError):
                     pass              # 途中で殺された行
@@ -717,7 +720,7 @@ def stage_scale(env, name: str, G, shadow_cat, base: dict) -> dict:
         return dict(row, status="transfer_bound", nbytes=nbytes)
     gfn = shadow_cat(name)
     with (OUT / "thin" / (name + ".pkl")).open("rb") as f:
-        c = pickle.load(f)
+        c = load_thin(f)
     import cupy
     # 準備運転: CuPy のカーネルコンパイルを測定に混ぜない
     try:
@@ -749,6 +752,95 @@ def stage_scale(env, name: str, G, shadow_cat, base: dict) -> dict:
                 nonconst=r.get("nonconst"), stats=stats)
 
 
+class _ThinUnpickler(pickle.Unpickler):
+    """numpy 2 で書いた間引き出力を numpy 1.x(loco)でも読む(``numpy._core`` → ``numpy.core``)."""
+
+    def find_class(self, module, name):
+        if module.startswith("numpy._core"):
+            try:
+                return super().find_class(module, name)
+            except ModuleNotFoundError:
+                module = module.replace("numpy._core", "numpy.core", 1)
+        return super().find_class(module, name)
+
+
+def load_thin(f):
+    return _ThinUnpickler(f).load()
+
+
+#: 常駐の連続処理の長さ。転送(往路 1 回 + 復路 1 回)をこの回数で割る。
+CHAIN = 8
+#: 常駐で測り直す倍率の帯。下限は「転送を消せば届きうる」線。
+RESIDENT_LO = 3.5
+
+
+def stage_resident(env, name: str, G, shadow_cat, base: dict, scale_row: dict) -> dict:
+    """単独 1 回呼びで 3.5〜5 倍だった op を、GPU に載せたままの連続処理で測り直す。
+
+    入力は ``CHAIN`` 個ぶん先に GPU へ置く(往路 1 回)。計算を ``CHAIN`` 回続け、最後に 1 回だけ
+    ``.get()`` で戻す(復路 1 回)。1 回あたりの時間 = (往路 + 計算の総和 + 復路) / CHAIN。
+    すべて ``Stream.synchronize()`` の後に時計を読む。結果は ``adopted_resident`` であり、
+    単独 1 回呼びの採用とは別に数える。
+    """
+    import cupy
+    np = env.np
+    row = {"name": name, "stage": "resident", "kind": env.kind(name),
+           "shape": base.get("shape"), "elems": base.get("elems"), "t_cpu": base.get("t_cpu"),
+           "ratio_single": scale_row.get("ratio"), "chain": CHAIN}
+    args, kw = env.probes(name)[0]
+    sargs, skw = scale_args(env, name, args, kw, real_size)
+    gfn = shadow_cat(name)
+    with (OUT / "thin" / (name + ".pkl")).open("rb") as f:
+        c = load_thin(f)
+    sync = cupy.cuda.get_current_stream().synchronize
+    try:
+        G.to_cpu(gfn(*G.to_gpu(copy.deepcopy(args)), **G.to_gpu(copy.deepcopy(kw))))  # 準備運転
+        host = [copy.deepcopy((sargs, skw)) for _ in range(CHAIN)]
+        sync()
+        G.STATS.reset()
+        t0 = time.perf_counter()
+        dev = [G.to_gpu(h) for h in host]
+        sync()
+        t_in = time.perf_counter() - t0
+        outs, t_comp = [], 0.0
+        for a, k in dev:
+            _seed(np)
+            t0 = time.perf_counter()
+            outs.append(gfn(*a, **k))
+            sync()
+            t_comp += time.perf_counter() - t0
+        t0 = time.perf_counter()
+        g = G.to_cpu(outs[0])
+        t_out_one = time.perf_counter() - t0
+        sync()
+    except Exception as e:  # noqa: BLE001
+        return dict(row, status="gpu_exception_at_scale", reason=classify_exc(e),
+                    err=str(e)[:220], **where_failed(e))
+    stats = G.STATS.as_dict()
+    del outs, dev
+    # 同じ場で単独 1 回呼びも測り直す(先の測定が他の負荷で遅く出ていないかを見る)
+    t_single = []
+    for _ in range(3):
+        a, k = copy.deepcopy(sargs), copy.deepcopy(skw)
+        _seed(np)
+        sync()
+        t0 = time.perf_counter()
+        G.to_cpu(gfn(*G.to_gpu(a), **G.to_gpu(k)))
+        sync()
+        t_single.append(time.perf_counter() - t0)
+    cupy.get_default_memory_pool().free_all_blocks()
+    r = compare(c, thin(g, np), np)
+    t_res = (t_in + t_comp + t_out_one) / CHAIN
+    tc = base["t_cpu"]
+    row["ratio_single_now"] = tc / min(t_single) if min(t_single) > 0 else None
+    row["t_single_now"] = min(t_single)
+    return dict(row, status="measured" if r["ok"] else "mismatch_at_scale", t_gpu=t_res,
+                t_in=t_in, t_compute=t_comp / CHAIN, t_out=t_out_one,
+                ratio=tc / t_res if t_res > 0 else None,
+                ratio_compute_only=tc / (t_comp / CHAIN) if t_comp > 0 else None,
+                rel=r.get("rel"), why=r.get("why"), nonconst=r.get("nonconst"), stats=stats)
+
+
 def worker(a) -> int:
     """names ファイルの op を順に処理する。各 op の前に ``START name`` を書く。"""
     os.environ.setdefault("IMGEVOLVE_STRICT_BACKENDS", "1")
@@ -762,8 +854,9 @@ def worker(a) -> int:
     out = Path(a.out)
     env = Env()
     G, shadow_cat = None, None
-    bases = read_rows("scale_cpu") if a.stage in ("scale", "scale_cpu") else {}
-    if a.stage in ("parity", "scale"):
+    bases = read_rows("scale_cpu") if a.stage in ("scale", "scale_cpu", "resident") else {}
+    scal = read_rows("scale") if a.stage == "resident" else {}
+    if a.stage in ("parity", "scale", "resident"):
         G, sh = _gpu_env()
         ops_s = sh.load("ops")
         nary_s = {o.name: o.fn for o in sh.load("imgops_nary").build_nary()}
@@ -790,6 +883,8 @@ def worker(a) -> int:
                 if prev is not None and row.get("t_cpu") is not None:
                     row["t_cpu"] = min(prev, row["t_cpu"])   # 速い方 = 倍率が低く出る方を残す
                     row["rechecked"] = True
+            elif a.stage == "resident":
+                row = stage_resident(env, name, G, shadow_cat, bases[name], scal[name])
             else:
                 row = stage_scale(env, name, G, shadow_cat, bases[name])
         except Exception as e:  # noqa: BLE001
@@ -998,6 +1093,11 @@ def targets_for(stage) -> list:
         cpu = read_rows("cpu")
         return [n for n in all_names if par.get(n, {}).get("status") == "match"
                 and n not in done and not is_python_loop(cpu.get(n, {}))]
+    if stage == "resident":
+        sca = read_rows("scale")
+        return [n for n in all_names
+                if sca.get(n, {}).get("status") == "measured" and sca[n].get("nonconst")
+                and RESIDENT_LO <= (sca[n].get("ratio") or 0.0) < MIN_RATIO and n not in done]
     if stage == "scale":
         base = read_rows("scale_cpu")
         return [n for n in all_names if base.get(n, {}).get("status") == "measured"
@@ -1078,7 +1178,7 @@ def run_gpu_stage(stage, a) -> int:
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("cmd", choices=["cpu", "parity", "scale_cpu", "scale", "report", "_worker",
+    ap.add_argument("cmd", choices=["cpu", "parity", "scale_cpu", "scale", "resident", "report", "_worker",
                                     "status"])
     ap.add_argument("--stage")
     ap.add_argument("--names")
@@ -1115,7 +1215,7 @@ def main(argv=None) -> int:
         print("%s stage: %d ops" % (a.cmd, len(names)), flush=True)
         drive(a.cmd, names, a)
         return 0
-    if a.cmd in ("parity", "scale"):
+    if a.cmd in ("parity", "scale", "resident"):
         return run_gpu_stage(a.cmd, a)
     if a.cmd == "status":
         import gpu_auto_report as R

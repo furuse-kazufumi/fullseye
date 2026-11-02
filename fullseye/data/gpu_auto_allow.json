@@ -1,6 +1,7 @@
 {
  "generated_by": "tools/gpu_auto_sweep.py report",
  "min_ratio": 5.0,
+ "note": "ops = single-call adoption; resident_ops = adopted only when inputs and outputs stay on the GPU across a chain (never mixed with ops).",
  "ops": {
   "adaptive_gauss_thresh": {
    "family": "segmentation",
@@ -1407,6 +1408,11 @@
    "hand_written_gpu": false,
    "ratio": 13.54
   },
+  "micro_phase_decode": {
+   "family": "light_transport",
+   "hand_written_gpu": false,
+   "ratio": 12.32
+  },
   "min_filter": {
    "family": "rank",
    "hand_written_gpu": true,
@@ -1511,6 +1517,11 @@
    "family": "anomaly_patch",
    "hand_written_gpu": false,
    "ratio": 80.68
+  },
+  "peg_measure_overlay": {
+   "family": "pegsim",
+   "hand_written_gpu": false,
+   "ratio": 18.3
   },
   "peg_tip_from_rgbd": {
    "family": "pegsim",
@@ -1947,6 +1958,11 @@
    "hand_written_gpu": true,
    "ratio": 16.0
   },
+  "speckle_statistics": {
+   "family": "coherent",
+   "hand_written_gpu": false,
+   "ratio": 25.29
+  },
   "spectrum": {
    "family": "signal",
    "hand_written_gpu": false,
@@ -2287,6 +2303,16 @@
    "hand_written_gpu": true,
    "ratio": 10.43
   },
+  "varmodel_alignment": {
+   "family": "variation",
+   "hand_written_gpu": false,
+   "ratio": 16.92
+  },
+  "varmodel_fit": {
+   "family": "variation",
+   "hand_written_gpu": false,
+   "ratio": 16.16
+  },
   "video_interpolate_flow": {
    "family": "time",
    "hand_written_gpu": false,
@@ -2516,6 +2542,284 @@
    "family": "compose",
    "hand_written_gpu": false,
    "ratio": 6.41
+  }
+ },
+ "resident_ops": {
+  "anscombe_transform": {
+   "chain": 8,
+   "family": "transform",
+   "ratio_resident": 17.379,
+   "ratio_single": 4.262
+  },
+  "aolp_to_azimuth": {
+   "chain": 8,
+   "family": "shape_from_polarization",
+   "ratio_resident": 21.857,
+   "ratio_single": 4.495
+  },
+  "asin_image": {
+   "chain": 8,
+   "family": "arithmetic",
+   "ratio_resident": 9.849,
+   "ratio_single": 2.724
+  },
+  "atan_image": {
+   "chain": 8,
+   "family": "arithmetic",
+   "ratio_resident": 9.587,
+   "ratio_single": 4.879
+  },
+  "auto_threshold": {
+   "chain": 8,
+   "family": "segmentation",
+   "ratio_resident": 14.513,
+   "ratio_single": 3.809
+  },
+  "coat_thickness_from_image": {
+   "chain": 8,
+   "family": "polish",
+   "ratio_resident": 6.389,
+   "ratio_single": 4.998
+  },
+  "compose_funct_1d": {
+   "chain": 8,
+   "family": "function",
+   "ratio_resident": 5.365,
+   "ratio_single": 3.702
+  },
+  "curvature_maps": {
+   "chain": 8,
+   "family": "feature",
+   "ratio_resident": 5.822,
+   "ratio_single": 4.721
+  },
+  "edge_points": {
+   "chain": 8,
+   "family": "edges",
+   "ratio_resident": 14.619,
+   "ratio_single": 3.694
+  },
+  "equ_histo_image": {
+   "chain": 8,
+   "family": "gray",
+   "ratio_resident": 10.889,
+   "ratio_single": 4.848
+  },
+  "equ_histo_image_rect": {
+   "chain": 8,
+   "family": "gray",
+   "ratio_resident": 8.381,
+   "ratio_single": 3.75
+  },
+  "exp_image": {
+   "chain": 8,
+   "family": "arithmetic",
+   "ratio_resident": 13.128,
+   "ratio_single": 4.335
+  },
+  "flow_magnitude": {
+   "chain": 8,
+   "family": "flow",
+   "ratio_resident": 8.299,
+   "ratio_single": 3.599
+  },
+  "gerode": {
+   "chain": 8,
+   "family": "morphology",
+   "ratio_resident": 14.169,
+   "ratio_single": 4.986
+  },
+  "grating_stepping_simulate": {
+   "chain": 8,
+   "family": "grating_interf",
+   "ratio_resident": 23.904,
+   "ratio_single": 4.749
+  },
+  "hertzian_tangential_inner": {
+   "chain": 8,
+   "family": "tacslip",
+   "ratio_resident": 10.209,
+   "ratio_single": 3.164
+  },
+  "hx_close_edges": {
+   "chain": 8,
+   "family": "halcon_ext",
+   "ratio_resident": 16.168,
+   "ratio_single": 4.538
+  },
+  "hx_disparity_to_xyz": {
+   "chain": 8,
+   "family": "halcon_ext",
+   "ratio_resident": 12.82,
+   "ratio_single": 4.535
+  },
+  "hx_fill_interlace": {
+   "chain": 8,
+   "family": "halcon_ext",
+   "ratio_resident": 11.76,
+   "ratio_single": 3.509
+  },
+  "hx_gen_highpass": {
+   "chain": 8,
+   "family": "halcon_ext",
+   "ratio_resident": 6.349,
+   "ratio_single": 3.565
+  },
+  "img_to_rgb": {
+   "chain": 8,
+   "family": "bridge",
+   "ratio_resident": 10.424,
+   "ratio_single": 4.352
+  },
+  "laplace_of_gauss": {
+   "chain": 8,
+   "family": "edges",
+   "ratio_resident": 40.235,
+   "ratio_single": 4.313
+  },
+  "legend_box": {
+   "chain": 8,
+   "family": "furniture",
+   "ratio_resident": 9.272,
+   "ratio_single": 4.172
+  },
+  "light_mask": {
+   "chain": 8,
+   "family": "light",
+   "ratio_resident": 11.439,
+   "ratio_single": 3.541
+  },
+  "linear_trans_color": {
+   "chain": 8,
+   "family": "color",
+   "ratio_resident": 12.46,
+   "ratio_single": 3.678
+  },
+  "log_image": {
+   "chain": 8,
+   "family": "arithmetic",
+   "ratio_resident": 9.455,
+   "ratio_single": 2.846
+  },
+  "min_image": {
+   "chain": 8,
+   "family": "nary",
+   "ratio_resident": 7.907,
+   "ratio_single": 3.454
+  },
+  "otsu": {
+   "chain": 8,
+   "family": "segmentation",
+   "ratio_resident": 10.126,
+   "ratio_single": 4.103
+  },
+  "photon_uncertainty": {
+   "chain": 8,
+   "family": "counting",
+   "ratio_resident": 9.772,
+   "ratio_single": 2.165
+  },
+  "polarization_render": {
+   "chain": 8,
+   "family": "polarization",
+   "ratio_resident": 20.985,
+   "ratio_single": 4.605
+  },
+  "pow_image": {
+   "chain": 8,
+   "family": "gray",
+   "ratio_resident": 17.201,
+   "ratio_single": 4.065
+  },
+  "premultiply": {
+   "chain": 8,
+   "family": "composite",
+   "ratio_resident": 12.373,
+   "ratio_single": 3.856
+  },
+  "quantize_uniform": {
+   "chain": 8,
+   "family": "gray",
+   "ratio_resident": 13.459,
+   "ratio_single": 3.865
+  },
+  "roberts_mag": {
+   "chain": 8,
+   "family": "edges",
+   "ratio_resident": 23.867,
+   "ratio_single": 4.209
+  },
+  "sin_image": {
+   "chain": 8,
+   "family": "arithmetic",
+   "ratio_resident": 15.868,
+   "ratio_single": 4.818
+  },
+  "stat_zscore": {
+   "chain": 8,
+   "family": "stats",
+   "ratio_resident": 6.468,
+   "ratio_single": 4.562
+  },
+  "surface_filter": {
+   "chain": 8,
+   "family": "prepare",
+   "ratio_resident": 20.851,
+   "ratio_single": 4.705
+  },
+  "synthesize_fringes": {
+   "chain": 8,
+   "family": "structured_light",
+   "ratio_resident": 34.084,
+   "ratio_single": 4.731
+  },
+  "tac_surface_normal": {
+   "chain": 8,
+   "family": "tactile",
+   "ratio_resident": 55.731,
+   "ratio_single": 4.853
+  },
+  "tb_cx_log_magnitude": {
+   "chain": 8,
+   "family": "typed",
+   "ratio_resident": 6.597,
+   "ratio_single": 4.495
+  },
+  "tb_exponential_background": {
+   "chain": 8,
+   "family": "typed",
+   "ratio_resident": 10.24,
+   "ratio_single": 3.952
+  },
+  "tb_magnus_lift_coefficient": {
+   "chain": 8,
+   "family": "typed",
+   "ratio_resident": 7.086,
+   "ratio_single": 4.225
+  },
+  "tb_quantize": {
+   "chain": 8,
+   "family": "typed",
+   "ratio_resident": 8.598,
+   "ratio_single": 3.94
+  },
+  "vol_equalize": {
+   "chain": 8,
+   "family": "gray",
+   "ratio_resident": 11.129,
+   "ratio_single": 3.811
+  },
+  "vol_erode": {
+   "chain": 8,
+   "family": "3d",
+   "ratio_resident": 12.852,
+   "ratio_single": 4.728
+  },
+  "volume_downsample": {
+   "chain": 8,
+   "family": "preprocess",
+   "ratio_resident": 6.393,
+   "ratio_single": 3.773
   }
  }
 }

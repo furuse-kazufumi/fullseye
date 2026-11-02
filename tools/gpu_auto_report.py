@@ -14,6 +14,7 @@ from pathlib import Path
 
 #: 分類の表示順と見出し。
 CLASSES = (("adopted", "採用(一致 + 転送込み 5 倍以上)"),
+           ("adopted_resident", "常駐前提で採用(単独 1 回は 5 倍未満、GPU に載せたままの連続処理で 5 倍以上)"),
            ("match_slow", "一致したが遅い(5 倍未満)"),
            ("match_fixed", "一致したが実寸の入力を作れない(固定形の入力)"),
            ("mismatch", "不一致"),
@@ -82,10 +83,13 @@ def classify(c, p, s, is_python_loop, min_ratio):
     return "unmeasured", "scale_" + str(st)
 
 
-def classes(out, targets, is_python_loop, min_ratio):
+def classes(out, targets, is_python_loop, min_ratio, max_gen=None):
+    """``max_gen`` を渡すと、その世代までの行だけで数える(修正層・常駐の前の状態)。"""
     import gpu_auto_sweep as S
-    cpu, par, sca = S.read_rows("cpu"), S.read_rows("parity"), S.read_rows("scale")
+    cpu, par = S.read_rows("cpu"), S.read_rows("parity", max_gen)
+    sca = S.read_rows("scale", max_gen)
     base = S.read_rows("scale_cpu")
+    res = S.read_rows("resident") if max_gen is None else {}
     vf = S.OUT / "verify.json"
     verify = json.loads(vf.read_text(encoding="utf-8")) if vf.exists() else {}
     rows = []
@@ -97,11 +101,16 @@ def classes(out, targets, is_python_loop, min_ratio):
             s = dict(s, t_cpu=base[n]["t_cpu"], ratio=base[n]["t_cpu"] / s["t_gpu"])
         cl, why = classify(c, p, s, is_python_loop, min_ratio)
         v = verify.get(n)
+        rz = res.get(n)
+        if cl == "match_slow" and why == "ratio" and rz and rz.get("status") == "measured" \
+                and rz.get("nonconst") and (rz.get("ratio") or 0) >= min_ratio \
+                and not (rz.get("stats") or {}).get("n_cpu_fallback"):
+            cl, why = "adopted_resident", "chain_%d" % rz.get("chain", 0)
         if cl == "adopted" and v is not None and not v["ok"]:
             cl, why = "mismatch", "at_full_resolution"
         rows.append({"name": n, "family": t.get("category") or "?", "tier": t.get("gpu_tier"),
                      "class": cl, "why": why, "c": c or {}, "p": p or {}, "s": s or {},
-                     "verified": None if v is None else bool(v["ok"])})
+                     "verified": None if v is None else bool(v["ok"]), "r": rz or {}})
     return rows
 
 
@@ -136,7 +145,88 @@ def hand_written() -> set:
     return names
 
 
-def render(rows, tol, min_ratio, method, hand=frozenset()):
+#: 直せなかった原因ごとの理由(表に出す)。
+UNFIXABLE = {
+    "wrapper_skimage": "本体が skimage(ネイティブ)。CuPy 配列を受け付けない。CPU へ渡して戻すだけの"
+                       "差し替えは GPU 化ではない",
+    "wrapper_cv2": "本体が OpenCV(ネイティブ)。同上",
+    "wrapper_PIL": "本体が PIL(ネイティブ)。同上",
+    "implicit_numpy": "疎行列・グラフ・skimage 経由で本物の numpy が CuPy 配列を受け取る。"
+                      "疎行列/グラフ(CPU アルゴリズム)は GPU に載せても転送が増えるだけ",
+    "value_error": "疎グラフ(csgraph)・疎行列の解法・縮退入力・自作クラスの型比較。"
+                   "CuPy 側に同等が無いか、入力の問題",
+    "type_error": "0 次元 CuPy 配列を Python の添字・辞書キー・スライスに使う箇所、"
+                  "SuperLU の LU.solve(CPU 専用)など。対応には op 側の書換えが要る",
+    "numpy_cupy_mix": "CuPy が受け付けない型の混在(「直した」以外の残り)",
+    "unhashable_array": "配列を set / dict のキーに使う Python ループ(GPU 化の対象でない)",
+    "missing_attr": "CuPy に無い属性",
+    "gpu_timeout": "90 秒で終わらない(小さなカーネルを大量に発行する Python ループ律速)",
+    "gpu_crash": "プロセスが落ちる",
+}
+
+
+def _extra_sections(rows, ex) -> list:
+    """道 1(修正層)と道 2(常駐)の前→後。``ex`` は ``report`` が作る。"""
+    if not ex:
+        return []
+    old, cnt = ex["old"], collections.Counter(r["class"] for r in rows)
+    L = ["", "## 追加掃引: 前 → 後", "",
+         "修正層(`gpu_shadow.py`、道 1)と常駐の連続処理(道 2)を足す前後の件数。分母 %d 件は"
+         "変えていない。" % len(rows), "",
+         "| 分類 | 前 | 後 | 差 |", "|---|---:|---:|---:|"]
+    for k, title in CLASSES:
+        L.append("| %s | %d | %d | %+d |" % (title, old.get(k, 0), cnt.get(k, 0),
+                                              cnt.get(k, 0) - old.get(k, 0)))
+    L += ["", "採用の増分は道 1 が %d 件(単独 1 回呼び)、道 2 が %d 件(常駐前提・別枠)。"
+          "常駐前提の採用は単独 1 回呼びの採用と混ぜて数えない。" % (ex["gain1"], ex["gain2"])]
+    L += ["", "### 道 1: 原因別の結果", "",
+          "| 原因 | 前の件数 | 直した(一致になった) | うち実寸で採用 | 直せない | 直せない理由 |",
+          "|---|---:|---:|---:|---:|---|"]
+    for reason, d in sorted(ex["by_reason"].items(), key=lambda kv: -kv[1]["n"]):
+        L.append("| %s | %d | %d | %d | %d | %s |"
+                 % (reason, d["n"], d["fixed"], d["adopted"], d["n"] - d["fixed"],
+                    UNFIXABLE.get(reason, "—")))
+    if ex["fixed_names"]:
+        L += ["", "直した op と実寸の倍率:", "",
+              "| op | 原因 | 結果 | 倍率(単独) |", "|---|---|---|---:|"]
+        for n, reason, cl, ratio in ex["fixed_names"]:
+            L.append("| `%s` | %s | %s | %s |" % (n, reason, cl, "—" if ratio is None
+                                                 else "%.2f" % ratio))
+    L += ["", "直した修正(`gpu_shadow.py`。numpy / scipy を呼ぶ側のソースは書き換えない):", "",
+          "- `a[i] = (x, y)` のようにタプル・リストを CuPy 配列へ代入する形を、読み込み時の AST 書換えで"
+          "配列に包む(CuPy は右辺のタプルを受け付けない)。",
+          "- `x.max(initial=v)` / `min` / `sum` の `initial` を `maximum` / `minimum` / 加算に置く。",
+          "- `np.repeat` の `repeats` が CuPy 配列のとき CPU の整数列にして渡す。",
+          "- `np.full(shape, ndarray)` を broadcast に置く。",
+          "- object dtype を CuPy が拒否した呼び出しは CPU に退避して数える。",
+          "- `scipy.stats.kstest` の結果のようにキーワード専用の追加項目を持つ namedtuple を、"
+          "同名の namedtuple で組み直す。"]
+    L += ["", "### 道 2: 常駐前提の連続処理", "",
+          "単独 1 回呼びで 3.5〜5 倍だった op を、入力を GPU に先に %d 個ぶん置き、計算を続け、"
+          "出力を 1 回だけ戻して測り直した。1 回あたりの時間 = (往路の転送 + 計算の総和 + 復路の"
+          "転送) / %d。計算は 1 回ごとに `Stream.synchronize()` の後に時計を読む。CPU に退避した"
+          "呼び出しがある op は常駐前提にならないので採用から除く。" % (ex["chain"], ex["chain"]),
+          "", "測った %d 件のうち、常駐前提で採用 %d 件、CPU 退避ありで除外 %d 件、5 倍未満 %d 件、"
+          "不一致 %d 件。" % (ex["n_res"], cnt.get("adopted_resident", 0), ex["res_fb"],
+                            ex["res_slow"], ex["res_mm"]),
+          "", "「単独(再)」は常駐の測定と同じ場で単独 1 回呼びも測り直した倍率。先の測定より高い op が"
+          "多く、先の単独の値は他の負荷で遅く出ていた可能性がある。採用の判定は先の測定のまま"
+          "動かしていない(測り直しの値で採用に格上げしない)。", "",
+          "| op | 族 | 単独 | 単独(再) | 常駐 | 計算のみ | CPU 退避 | 判定 |",
+          "|---|---|---:|---:|---:|---:|---:|---|"]
+    for r in sorted((r for r in rows if r["r"].get("status") == "measured"),
+                    key=lambda r: -(r["r"].get("ratio") or 0)):
+        z = r["r"]
+        L.append("| `%s` | %s | %.2f | %.2f | %.1f | %.1f | %d | %s |"
+                 % (r["name"], r["family"], z.get("ratio_single") or 0,
+                    z.get("ratio_single_now") or 0, z.get("ratio") or 0,
+                    z.get("ratio_compute_only") or 0,
+                    (z.get("stats") or {}).get("n_cpu_fallback", 0), r["class"]))
+    L.append("")
+    return L
+
+
+def render(rows, tol, min_ratio, method, hand=frozenset(), extra=None):
     total = len(rows)
     cnt = collections.Counter(r["class"] for r in rows)
     L = ["# 機械的 GPU 化の掃引 (2026-11-02)", "",
@@ -217,6 +307,7 @@ def render(rows, tol, min_ratio, method, hand=frozenset()):
             L.append("| `%s` | %s | %s | %s | %s | %.2f |"
                      % (r["name"], r["family"], _shape(s), _fmt_t(s.get("t_cpu")),
                         _fmt_t(s.get("t_gpu")), s.get("ratio") or 0))
+    L += _extra_sections(rows, extra or {})
     L += ["", "## 族別", "",
           "| 族 | 全 | 採用 | 遅い | 固定形 | 不一致 | 判定不能 | 例外 | 包み | Pyループ | 未計測 |",
           "|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|"]
@@ -259,12 +350,39 @@ METHOD = (
 
 def report(out, targets, root, is_python_loop, tol, min_ratio) -> int:
     rows = classes(out, targets, is_python_loop, min_ratio)
+    import gpu_auto_sweep as S
+    oldrows = classes(out, targets, is_python_loop, min_ratio, max_gen=1)
+    oldc = collections.Counter(r["class"] for r in oldrows)
+    newc = collections.Counter(r["class"] for r in rows)
+    byname = {r["name"]: r for r in rows}
+    by_reason, fixed_names = {}, []
+    for o in oldrows:
+        if o["class"] not in ("exception", "wrapper"):
+            continue
+        reason = o["why"] if o["class"] == "exception" else "wrapper_" + str(o["why"])
+        d = by_reason.setdefault(reason, {"n": 0, "fixed": 0, "adopted": 0})
+        d["n"] += 1
+        nw = byname[o["name"]]
+        if nw["class"] not in ("exception", "wrapper") and nw["p"].get("status") == "match":
+            d["fixed"] += 1
+            fixed_names.append((o["name"], reason, nw["class"], nw["s"].get("ratio")))
+        if nw["class"] == "adopted":
+            d["adopted"] += 1
+    res = S.read_rows("resident")
+    meas = [r for r in rows if r["r"].get("status") == "measured"]
+    extra = {"old": oldc, "by_reason": by_reason, "fixed_names": sorted(fixed_names),
+             "gain1": newc["adopted"] - oldc["adopted"], "gain2": newc["adopted_resident"],
+             "chain": S.CHAIN, "n_res": len(res),
+             "res_fb": sum(1 for r in meas if (r["r"].get("stats") or {}).get("n_cpu_fallback")
+                           and (r["r"].get("ratio") or 0) >= min_ratio),
+             "res_slow": sum(1 for r in meas if (r["r"].get("ratio") or 0) < min_ratio),
+             "res_mm": sum(1 for r in res.values() if r.get("status") == "mismatch_at_scale")}
     perf = Path(root) / "docs" / "perf"
     import cupy
     import torch
     hand = hand_written()
     text = render(rows, tol, min_ratio, METHOD.format(cupy=cupy.__version__,
-                                                      torch=torch.__version__), hand)
+                                                      torch=torch.__version__), hand, extra)
     (perf / "gpu_auto_sweep_2026-11-02.md").write_text(text, encoding="utf-8")
     summary = {"n": len(rows), "classes": dict(collections.Counter(r["class"] for r in rows)),
                "ops": {r["name"]: {"family": r["family"], "class": r["class"], "why": r["why"],
@@ -275,7 +393,13 @@ def report(out, targets, root, is_python_loop, tol, min_ratio) -> int:
     allow = {"generated_by": "tools/gpu_auto_sweep.py report", "min_ratio": min_ratio,
              "ops": {r["name"]: {"ratio": round(r["s"]["ratio"], 2), "family": r["family"],
                                  "hand_written_gpu": r["name"] in hand}
-                     for r in rows if r["class"] == "adopted"}}
+                     for r in rows if r["class"] == "adopted"},
+             "resident_ops": {r["name"]: {"ratio_resident": round(r["r"]["ratio"], 3),
+                                          "ratio_single": round(r["s"].get("ratio") or 0, 3),
+                                          "chain": r["r"].get("chain"), "family": r["family"]}
+                              for r in rows if r["class"] == "adopted_resident"},
+             "note": "ops = single-call adoption; resident_ops = adopted only when inputs and "
+                     "outputs stay on the GPU across a chain (never mixed with ops)."}
     (Path(root) / "fullseye" / "data" / "gpu_auto_allow.json").write_text(
         json.dumps(allow, ensure_ascii=False, indent=1, sort_keys=True) + "\n", encoding="utf-8")
     print(summary["classes"])

@@ -1,12 +1,13 @@
 {
 "classes": {
-"adopted": 503,
-"exception": 62,
-"match_fixed": 438,
-"match_slow": 486,
+"adopted": 508,
+"adopted_resident": 46,
+"exception": 48,
+"match_fixed": 444,
+"match_slow": 442,
 "mismatch": 47,
 "python_loop": 67,
-"unmeasured": 195,
+"unmeasured": 196,
 "vacuous": 145,
 "wrapper": 184
 },
@@ -646,11 +647,11 @@
 },
 "anscombe_transform": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "transform",
 "ratio": 4.261508853995376,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "antialias": {
 "at": null,
@@ -662,11 +663,11 @@
 },
 "aolp_to_azimuth": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "shape_from_polarization",
 "ratio": 4.494770967497697,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "aperture_photometry": {
 "at": null,
@@ -726,11 +727,11 @@
 },
 "asin_image": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "arithmetic",
 "ratio": 2.723846150603073,
 "rel": 1.4731771642475494e-16,
-"why": "ratio"
+"why": "chain_8"
 },
 "assign_hungarian": {
 "at": null,
@@ -742,11 +743,11 @@
 },
 "atan_image": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "arithmetic",
 "ratio": 4.8792558119767255,
 "rel": 2.0854819370401248e-16,
-"why": "ratio"
+"why": "chain_8"
 },
 "attention_apply": {
 "at": null,
@@ -809,7 +810,7 @@
 "class": "match_slow",
 "family": "augmentation",
 "ratio": 1.5810484199962067,
-"rel": 2.402555543593284e-16,
+"rel": 0.0,
 "why": "ratio"
 },
 "aug_motion_blur": {
@@ -854,11 +855,11 @@
 },
 "auto_threshold": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "segmentation",
 "ratio": 3.809245013856336,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "awb_gains": {
 "at": null,
@@ -881,7 +882,7 @@
 "class": "adopted",
 "family": "pxrd",
 "ratio": 44.33505704541206,
-"rel": 7.902621620836741e-16,
+"rel": 9.65875975880046e-16,
 "why": "ratio"
 },
 "background_flatten": {
@@ -1381,12 +1382,12 @@
 "why": "fixed_input"
 },
 "car_hybrid_astar": {
-"at": "carpath.py:693",
-"class": "exception",
+"at": null,
+"class": "match_slow",
 "family": "path",
 "ratio": null,
-"rel": null,
-"why": "numpy_cupy_mix"
+"rel": 0.0,
+"why": "transfer_bound"
 },
 "car_reeds_shepp_path": {
 "at": null,
@@ -1694,11 +1695,11 @@
 },
 "coat_thickness_from_image": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "polish",
 "ratio": 4.997759294299966,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "coherence": {
 "at": null,
@@ -1814,11 +1815,11 @@
 },
 "compose_funct_1d": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "function",
 "ratio": 3.7015562459986446,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "compressed_size": {
 "at": null,
@@ -2238,11 +2239,11 @@
 },
 "curvature_maps": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "feature",
 "ratio": 4.720871568254013,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "curvature_to_shape_index": {
 "at": null,
@@ -3382,11 +3383,11 @@
 },
 "edge_points": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "edges",
 "ratio": 3.693670295721448,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "edge_spread": {
 "at": null,
@@ -3766,19 +3767,19 @@
 },
 "equ_histo_image": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "gray",
 "ratio": 4.847737452974869,
 "rel": 1.5416790313020495e-17,
-"why": "ratio"
+"why": "chain_8"
 },
 "equ_histo_image_rect": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "gray",
 "ratio": 3.7495430176875066,
 "rel": 8.72786023168594e-17,
-"why": "ratio"
+"why": "chain_8"
 },
 "equalize": {
 "at": null,
@@ -3942,11 +3943,11 @@
 },
 "exp_image": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "arithmetic",
 "ratio": 4.334862087857981,
 "rel": 3.1605100009470694e-16,
-"why": "ratio"
+"why": "chain_8"
 },
 "expand_gray": {
 "at": null,
@@ -4294,11 +4295,11 @@
 },
 "fit_spin": {
 "at": null,
-"class": "exception",
+"class": "match_fixed",
 "family": "ball",
 "ratio": null,
-"rel": null,
-"why": "gpu_timeout"
+"rel": 4.793141242475285e-06,
+"why": "fixed_input"
 },
 "fit_zernike": {
 "at": "match3d.py:3282",
@@ -4374,11 +4375,11 @@
 },
 "flow_magnitude": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "flow",
 "ratio": 3.5987599444182865,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "flow_speed": {
 "at": null,
@@ -4809,7 +4810,7 @@
 "class": "adopted",
 "family": "texture",
 "ratio": 17.081897342755095,
-"rel": 6.515874378084441e-16,
+"rel": 4.442837841844403e-16,
 "why": "ratio"
 },
 "gamma": {
@@ -4921,7 +4922,7 @@
 "class": "adopted",
 "family": "texture",
 "ratio": 29.355518910796768,
-"rel": 6.515874378084441e-16,
+"rel": 5.655181944601154e-16,
 "why": "ratio"
 },
 "geodesic_distances": {
@@ -4950,11 +4951,11 @@
 },
 "gerode": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "morphology",
 "ratio": 4.986066901921779,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "get_pair_funct_1d": {
 "at": null,
@@ -5153,7 +5154,7 @@
 "class": "match_fixed",
 "family": "flow",
 "ratio": null,
-"rel": 9.323583434439996e-11,
+"rel": 6.315975874943223e-11,
 "why": "input_refused_at_real_size"
 },
 "graph_rich_club_curve": {
@@ -5185,7 +5186,7 @@
 "class": "match_fixed",
 "family": "tactorque",
 "ratio": null,
-"rel": 6.444848653258925e-12,
+"rel": 4.5350831885185505e-12,
 "why": "input_refused_at_real_size"
 },
 "grating_rgb": {
@@ -5206,11 +5207,11 @@
 },
 "grating_stepping_simulate": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "grating_interf",
 "ratio": 4.748934842652114,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "grating_three_image_retrieve": {
 "at": null,
@@ -5465,7 +5466,7 @@
 "class": "adopted",
 "family": "npr",
 "ratio": 30.05315168014086,
-"rel": 3.1086244689504383e-15,
+"rel": 4.440892098500626e-16,
 "why": "ratio"
 },
 "hand_eye_calibration": {
@@ -5574,11 +5575,11 @@
 },
 "hertzian_tangential_inner": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "tacslip",
 "ratio": 3.163960361610415,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "hessian3d": {
 "at": null,
@@ -5742,11 +5743,11 @@
 },
 "hx_close_edges": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "halcon_ext",
 "ratio": 4.538393395264974,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "hx_close_edges_length": {
 "at": null,
@@ -5774,11 +5775,11 @@
 },
 "hx_disparity_to_xyz": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "halcon_ext",
 "ratio": 4.5349774469536,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "hx_estimate_al_am": {
 "at": null,
@@ -5822,11 +5823,11 @@
 },
 "hx_fill_interlace": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "halcon_ext",
 "ratio": 3.5089023316768397,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "hx_fit_surface1": {
 "at": null,
@@ -5958,11 +5959,11 @@
 },
 "hx_gen_highpass": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "halcon_ext",
 "ratio": 3.5654643725785164,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "hx_gen_image_proto": {
 "at": null,
@@ -6065,7 +6066,7 @@
 "class": "adopted",
 "family": "halcon_ext",
 "ratio": 6.17259649130991,
-"rel": 2.3411606448582427e-16,
+"rel": 4.3933445041433555e-16,
 "why": "ratio"
 },
 "hx_shade_height_field": {
@@ -6073,7 +6074,7 @@
 "class": "adopted",
 "family": "halcon_ext",
 "ratio": 17.083217765301104,
-"rel": 3.6199199198294514e-16,
+"rel": 0.0,
 "why": "ratio"
 },
 "hyperspectral_band_weights": {
@@ -6169,7 +6170,7 @@
 "class": "match_fixed",
 "family": "illusion",
 "ratio": null,
-"rel": 3.9968028886505635e-15,
+"rel": 2.6645352591003757e-15,
 "why": "fixed_input"
 },
 "illusion_fraser_spiral": {
@@ -6177,7 +6178,7 @@
 "class": "match_fixed",
 "family": "illusion",
 "ratio": null,
-"rel": 6.139533326177116e-14,
+"rel": 8.881784197001252e-16,
 "why": "fixed_input"
 },
 "illusion_hermann_grid": {
@@ -6326,11 +6327,11 @@
 },
 "img_to_rgb": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "bridge",
 "ratio": 4.351709246775419,
 "rel": 7.5816688711191e-17,
-"why": "ratio"
+"why": "chain_8"
 },
 "img_to_signal": {
 "at": null,
@@ -6785,7 +6786,7 @@
 "class": "adopted",
 "family": "keypoint",
 "ratio": 18.63377386026923,
-"rel": 2.0497352298921597e-13,
+"rel": 1.6654098742873797e-13,
 "why": "ratio"
 },
 "keypoints_to_image2d": {
@@ -6886,11 +6887,11 @@
 },
 "laplace_of_gauss": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "edges",
 "ratio": 4.312747110984405,
 "rel": 3.5327084378360786e-16,
-"why": "ratio"
+"why": "chain_8"
 },
 "largedef_correction": {
 "at": null,
@@ -6982,11 +6983,11 @@
 },
 "legend_box": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "furniture",
 "ratio": 4.171859680421349,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "lens_shading_correct": {
 "at": null,
@@ -7142,11 +7143,11 @@
 },
 "light_mask": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "light",
 "ratio": 3.541357902073484,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "lights_fit_from_sphere": {
 "at": null,
@@ -7166,11 +7167,11 @@
 },
 "linear_trans_color": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "color",
 "ratio": 3.678084003047471,
-"rel": 5.002774302502105e-16,
-"why": "ratio"
+"rel": 3.335182868334737e-16,
+"why": "chain_8"
 },
 "lines_color": {
 "at": null,
@@ -7334,11 +7335,11 @@
 },
 "log_image": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "arithmetic",
 "ratio": 2.8455025213408565,
 "rel": 2.1587411736215163e-16,
-"why": "ratio"
+"why": "chain_8"
 },
 "log_zero_crossings": {
 "at": null,
@@ -7433,7 +7434,7 @@
 "class": "adopted",
 "family": "macro",
 "ratio": 80.71784303845142,
-"rel": 1.3612506273053029e-15,
+"rel": 1.1713086793092142e-15,
 "why": "ratio"
 },
 "macro_denoise": {
@@ -8045,12 +8046,12 @@
 "why": "ratio"
 },
 "micro_phase_decode": {
-"at": "lighttransport.py:752",
-"class": "exception",
+"at": null,
+"class": "adopted",
 "family": "light_transport",
-"ratio": null,
-"rel": null,
-"why": "value_error"
+"ratio": 12.316163581001682,
+"rel": 1.521440324837932e-16,
+"why": "ratio"
 },
 "min_filter": {
 "at": null,
@@ -8062,11 +8063,11 @@
 },
 "min_image": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "nary",
 "ratio": 3.4539442574953436,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "min_max_gray": {
 "at": null,
@@ -8265,7 +8266,7 @@
 "class": "match_slow",
 "family": "npr",
 "ratio": 1.504839514245152,
-"rel": 7.884375465843562e-16,
+"rel": 1.051250062112475e-15,
 "why": "ratio"
 },
 "mosaic_tiles_sites": {
@@ -8273,7 +8274,7 @@
 "class": "match_slow",
 "family": "npr",
 "ratio": 1.066849042989357,
-"rel": 2.871648478669625e-16,
+"rel": 2.879143538530192e-16,
 "why": "ratio"
 },
 "motion_energy_image": {
@@ -8297,7 +8298,7 @@
 "class": "adopted",
 "family": "magnify",
 "ratio": 94.6985216758526,
-"rel": 3.764255710045379e-14,
+"rel": 3.783267102520356e-14,
 "why": "ratio"
 },
 "moving_average_window": {
@@ -8774,11 +8775,11 @@
 },
 "otsu": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "segmentation",
 "ratio": 4.103077151049626,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "ou_estimate": {
 "at": null,
@@ -8957,12 +8958,12 @@
 "why": "ratio"
 },
 "peg_measure_overlay": {
-"at": "pegsim.py:1168",
-"class": "exception",
+"at": null,
+"class": "adopted",
 "family": "pegsim",
-"ratio": null,
-"rel": null,
-"why": "numpy_cupy_mix"
+"ratio": 18.29640481189287,
+"rel": 0.0,
+"why": "ratio"
 },
 "peg_offset_from_rgbd": {
 "at": "measure.py:228",
@@ -9033,7 +9034,7 @@
 "class": "match_fixed",
 "family": "perpetual",
 "ratio": null,
-"rel": 3.1966318570659595e-14,
+"rel": 1.431008915969394e-14,
 "why": "fixed_input"
 },
 "perpetual_chaos_game": {
@@ -9042,7 +9043,7 @@
 "family": "perpetual",
 "ratio": null,
 "rel": null,
-"why": "gpu_crash"
+"why": "gpu_timeout"
 },
 "perpetual_elementary_ca": {
 "at": null,
@@ -9066,7 +9067,7 @@
 "family": "perpetual",
 "ratio": null,
 "rel": null,
-"why": "gpu_crash"
+"why": "gpu_timeout"
 },
 "perpetual_ifs_attractor": {
 "at": "perpetual.py:557",
@@ -9117,12 +9118,12 @@
 "why": "fixed_input"
 },
 "perpetual_render": {
-"at": "perpetual.py:839",
-"class": "exception",
+"at": null,
+"class": "match_fixed",
 "family": "stream",
 "ratio": null,
-"rel": null,
-"why": "numpy_cupy_mix"
+"rel": 0.0,
+"why": "fixed_input"
 },
 "perpetual_ten_print": {
 "at": null,
@@ -9326,11 +9327,11 @@
 },
 "photon_uncertainty": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "counting",
 "ratio": 2.1650299047143027,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "physarum_route": {
 "at": "physarum_search.py:308",
@@ -9653,12 +9654,12 @@
 "why": "constant_output"
 },
 "plenoptic_mla_calibrate": {
-"at": "plenoptic.py:267",
-"class": "exception",
+"at": null,
+"class": "match_fixed",
 "family": "plenoptic",
 "ratio": null,
-"rel": null,
-"why": "numpy_cupy_mix"
+"rel": 1.0553163103612382e-09,
+"why": "input_refused_at_real_size"
 },
 "plenoptic_refocus_depth": {
 "at": null,
@@ -9814,11 +9815,11 @@
 },
 "polarization_render": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "polarization",
 "ratio": 4.604785673059623,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "polarization_separate": {
 "at": null,
@@ -9942,11 +9943,11 @@
 },
 "pow_image": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "gray",
 "ratio": 4.065137638701258,
 "rel": 6.433826557015297e-17,
-"why": "ratio"
+"why": "chain_8"
 },
 "power_byte": {
 "at": null,
@@ -9974,11 +9975,11 @@
 },
 "premultiply": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "composite",
 "ratio": 3.85574410571673,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "pressure_first_moment": {
 "at": null,
@@ -10177,7 +10178,7 @@
 "class": "adopted",
 "family": "imaging",
 "ratio": 51.774094635163415,
-"rel": 1.1820761039900273e-16,
+"rel": 2.955190259975068e-16,
 "why": "ratio"
 },
 "psnr": {
@@ -10329,16 +10330,16 @@
 "class": "adopted",
 "family": "gray",
 "ratio": 7.85123666544913,
-"rel": 2.293413126966261e-16,
+"rel": 1.7264292140598824e-16,
 "why": "ratio"
 },
 "quantize_uniform": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "gray",
 "ratio": 3.8653531684249876,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "quasi_flat_zones": {
 "at": null,
@@ -10449,7 +10450,7 @@
 "class": "adopted",
 "family": "terrain",
 "ratio": 33.16210996272667,
-"rel": 5.34523406107916e-08,
+"rel": 5.34523406752132e-08,
 "why": "ratio"
 },
 "radial_reach_filter": {
@@ -10465,7 +10466,7 @@
 "class": "unmeasured",
 "family": "forward",
 "ratio": null,
-"rel": 3.1207923451799235e-16,
+"rel": 3.467547050199915e-16,
 "why": "cpu_over_limit_at_real_size"
 },
 "radon_volume": {
@@ -10662,11 +10663,11 @@
 },
 "register_fpfh": {
 "at": null,
-"class": "exception",
+"class": "match_fixed",
 "family": "feature_register",
 "ratio": null,
-"rel": null,
-"why": "gpu_timeout"
+"rel": 7.105427357601002e-09,
+"why": "fixed_input"
 },
 "register_image": {
 "at": null,
@@ -11086,11 +11087,11 @@
 },
 "roberts_mag": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "edges",
 "ratio": 4.209497513372724,
 "rel": 2.0555320667499141e-16,
-"why": "ratio"
+"why": "chain_8"
 },
 "robinson_amp": {
 "at": null,
@@ -11429,12 +11430,12 @@
 "why": "lines_scale_with_input"
 },
 "sem_image": {
-"at": "semsim.py:639",
-"class": "exception",
+"at": null,
+"class": "unmeasured",
 "family": "sem",
 "ratio": null,
-"rel": null,
-"why": "type_error"
+"rel": 1.3042427163631137e-13,
+"why": "cpu_over_limit_at_real_size"
 },
 "sem_render": {
 "at": null,
@@ -11685,12 +11686,12 @@
 "why": "ratio"
 },
 "sign_image": {
-"at": "roadjp.py:263",
-"class": "exception",
+"at": null,
+"class": "match_fixed",
 "family": "roadjp",
 "ratio": null,
-"rel": null,
-"why": "numpy_cupy_mix"
+"rel": 0.0,
+"why": "fixed_input"
 },
 "signal_features": {
 "at": null,
@@ -11750,11 +11751,11 @@
 },
 "sin_image": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "arithmetic",
 "ratio": 4.817972270339602,
 "rel": 9.573263149549879e-17,
-"why": "ratio"
+"why": "chain_8"
 },
 "sinkhorn": {
 "at": null,
@@ -12321,7 +12322,7 @@
 "class": "match_slow",
 "family": "subpix",
 "ratio": 5.206548521640988,
-"rel": 1.4210854715202004e-08,
+"rel": 7.768934100018028e-14,
 "why": "ratio"
 },
 "sp_local_max_sub_pix": {
@@ -12441,16 +12442,16 @@
 "class": "match_slow",
 "family": "solid",
 "ratio": 94.67154956039174,
-"rel": 1.7810143547336943e-16,
+"rel": 2.156982880595733e-16,
 "why": "ratio"
 },
 "speckle_statistics": {
-"at": "coherent.py:376",
-"class": "exception",
+"at": null,
+"class": "adopted",
 "family": "coherent",
-"ratio": null,
-"rel": null,
-"why": "type_error"
+"ratio": 25.28862751001646,
+"rel": 1.747733611912489e-16,
+"why": "ratio"
 },
 "spectral_kurtosis": {
 "at": null,
@@ -12521,7 +12522,7 @@
 "class": "match_fixed",
 "family": "swarmflow",
 "ratio": null,
-"rel": 3.827758741198866e-16,
+"rel": 4.59331048943864e-16,
 "why": "fixed_input"
 },
 "sph_kernel": {
@@ -12701,12 +12702,12 @@
 "why": "ratio"
 },
 "stat_ks_test": {
-"at": "mathestimation.py:159",
-"class": "exception",
+"at": null,
+"class": "match_slow",
 "family": "estimation",
-"ratio": null,
-"rel": null,
-"why": "type_error"
+"ratio": 0.9490283782529263,
+"rel": 0.0,
+"why": "ratio"
 },
 "stat_ttest_paired": {
 "at": null,
@@ -12726,11 +12727,11 @@
 },
 "stat_zscore": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "stats",
 "ratio": 4.561927177643081,
 "rel": 2.926936311549566e-17,
-"why": "ratio"
+"why": "chain_8"
 },
 "states_layer_dimension": {
 "at": null,
@@ -12817,7 +12818,7 @@
 "class": "match_slow",
 "family": "stroke",
 "ratio": 1.1058819594901388,
-"rel": 5.227880894861463e-16,
+"rel": 4.18230471588917e-16,
 "why": "ratio"
 },
 "stokes_analyze": {
@@ -12929,7 +12930,7 @@
 "class": "adopted",
 "family": "plant",
 "ratio": 10.423191009623862,
-"rel": 2.9428046168007384e-16,
+"rel": 3.9237394890676513e-16,
 "why": "ratio"
 },
 "supersample_mesh": {
@@ -12950,11 +12951,11 @@
 },
 "surface_filter": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "prepare",
 "ratio": 4.70542420852841,
 "rel": 2.580452193096408e-15,
-"why": "ratio"
+"why": "chain_8"
 },
 "surface_form_error": {
 "at": null,
@@ -12993,7 +12994,7 @@
 "class": "adopted",
 "family": "measure",
 "ratio": 78.65433611123329,
-"rel": 1.6974716007855476e-16,
+"rel": 2.4878587024502493e-16,
 "why": "ratio"
 },
 "surface_residual": {
@@ -13045,12 +13046,12 @@
 "why": "constant_output"
 },
 "synth_frame_series": {
-"at": "astrostack.py:714",
-"class": "exception",
+"at": null,
+"class": "match_fixed",
 "family": "synth",
 "ratio": null,
-"rel": null,
-"why": "numpy_cupy_mix"
+"rel": 2.4476393110947093e-16,
+"why": "fixed_input"
 },
 "synth_starfield": {
 "at": null,
@@ -13070,11 +13071,11 @@
 },
 "synthesize_fringes": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "structured_light",
 "ratio": 4.730932893967306,
 "rel": 5.747846165541877e-17,
-"why": "ratio"
+"why": "chain_8"
 },
 "synthesize_silhouette": {
 "at": null,
@@ -13126,11 +13127,11 @@
 },
 "tac_surface_normal": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "tactile",
 "ratio": 4.8527711797754,
 "rel": 2.060681486422584e-15,
-"why": "ratio"
+"why": "chain_8"
 },
 "tactile_dipole_moment": {
 "at": null,
@@ -13278,11 +13279,11 @@
 },
 "tb_cx_log_magnitude": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "typed",
 "ratio": 4.494668857706613,
 "rel": 3.4286446541457254e-16,
-"why": "ratio"
+"why": "chain_8"
 },
 "tb_cx_magnitude": {
 "at": null,
@@ -13382,11 +13383,11 @@
 },
 "tb_exponential_background": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "typed",
 "ratio": 3.952230661584211,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "tb_exponential_foreground": {
 "at": null,
@@ -13638,11 +13639,11 @@
 },
 "tb_magnus_lift_coefficient": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "typed",
 "ratio": 4.225468449186657,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "tb_mat_cond": {
 "at": null,
@@ -13822,11 +13823,11 @@
 },
 "tb_quantize": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "typed",
 "ratio": 3.9396020318502774,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "tb_quat_color_filter": {
 "at": null,
@@ -14105,7 +14106,7 @@
 "class": "match_slow",
 "family": "typed",
 "ratio": null,
-"rel": 6.693885048749917e-15,
+"rel": 5.033909522547821e-15,
 "why": "transfer_bound"
 },
 "tb_weighting_response": {
@@ -14153,7 +14154,7 @@
 "class": "match_fixed",
 "family": "tem",
 "ratio": null,
-"rel": 7.290422702605424e-16,
+"rel": 7.776450882779119e-16,
 "why": "fixed_input"
 },
 "tem_ctf": {
@@ -14345,7 +14346,7 @@
 "class": "adopted",
 "family": "edges",
 "ratio": 117.63917051717782,
-"rel": 1.3447883213928935e-15,
+"rel": 1.4792671535321829e-15,
 "why": "ratio"
 },
 "tf_poles_zeros": {
@@ -14821,20 +14822,20 @@
 "why": "ratio"
 },
 "varmodel_alignment": {
-"at": "varmodel.py:239",
-"class": "exception",
+"at": null,
+"class": "adopted",
 "family": "variation",
-"ratio": null,
-"rel": null,
-"why": "numpy_cupy_mix"
+"ratio": 16.918161976948433,
+"rel": 7.111389696902104e-07,
+"why": "ratio"
 },
 "varmodel_fit": {
-"at": "varmodel.py:239",
-"class": "exception",
+"at": null,
+"class": "adopted",
 "family": "variation",
-"ratio": null,
-"rel": null,
-"why": "numpy_cupy_mix"
+"ratio": 16.163745011199047,
+"rel": 4.899203305627943e-07,
+"why": "ratio"
 },
 "varmodel_score": {
 "at": null,
@@ -15070,19 +15071,19 @@
 },
 "vol_equalize": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "gray",
 "ratio": 3.811303997111837,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "vol_erode": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "3d",
 "ratio": 4.728242086372989,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "vol_erosion_ball": {
 "at": null,
@@ -15257,7 +15258,7 @@
 "class": "adopted",
 "family": "feature",
 "ratio": 17.45622248490524,
-"rel": 2.2672618743484605e-14,
+"rel": 8.571922455272356e-15,
 "why": "ratio"
 },
 "vol_local_thickness": {
@@ -15369,7 +15370,7 @@
 "class": "match_slow",
 "family": "restoration",
 "ratio": null,
-"rel": 2.4931413121532853e-16,
+"rel": 1.8698559841149637e-16,
 "why": "gpu_over_limit_at_real_size"
 },
 "vol_rle_components": {
@@ -15558,11 +15559,11 @@
 },
 "volume_downsample": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "preprocess",
 "ratio": 3.772972211879871,
 "rel": 5.624462458572785e-17,
-"why": "ratio"
+"why": "chain_8"
 },
 "voxel_grid_downsample": {
 "at": null,

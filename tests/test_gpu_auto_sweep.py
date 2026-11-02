@@ -214,3 +214,41 @@ def test_missing_twin_runs_on_the_cpu_and_is_counted():
     d, _i = tree.query(G.to_gpu(np.zeros((2, 3))))
     assert G._is_gpu(d)
     assert sum(G.STATS.cpu_calls.values()) >= 2
+
+
+# ---- the fix layer (road 1) and the resident list (road 2) ----------------------- #
+def _run_rewritten(src, **env):
+    import ast
+    tree = ast.fix_missing_locations(G._Rewrite().visit(ast.parse(src)))
+    import builtins
+    ns = {"__builtins__": dict(vars(builtins), __gs_rhs__=G._rhs, __gs_initial__=G._initial),
+          **env}
+    exec(compile(tree, "<t>", "exec"), ns)  # noqa: S102 - 自分で書いたテスト用の断片
+    return ns
+
+
+def test_rewrite_leaves_cpu_semantics_alone():
+    ns = _run_rewritten("import numpy as np\n"
+                        "a = np.zeros((2, 2)); a[0] = (1.0, 2.0)\n"
+                        "l = [0, 0]; l[1] = (3, 4)\n"
+                        "m = np.array([1, 5, 2]).max(initial=9)\n")
+    assert ns["a"][0].tolist() == [1.0, 2.0]
+    assert ns["l"][1] == (3, 4)           # a Python list target is not turned into an array
+    assert ns["m"] == 9
+
+
+@needs_gpu
+def test_tuple_assignment_and_initial_work_on_cupy_arrays():
+    import cupy as cp
+    ns = _run_rewritten("a = cp.zeros((2, 2)); a[0] = (1.0, 2.0)\n"
+                        "m = cp.asarray([1, 5, 2]).max(initial=9)\n", cp=cp)
+    assert ns["a"][0].get().tolist() == [1.0, 2.0]
+    assert int(ns["m"]) == 9
+
+
+def test_resident_ops_are_never_mixed_into_the_single_call_list():
+    res = ALLOW.get("resident_ops", {})
+    assert not (set(res) & set(ALLOW["ops"]))
+    assert all(v["ratio_resident"] >= ALLOW["min_ratio"] and v["ratio_single"] < ALLOW["min_ratio"]
+               for v in res.values())
+    assert "resident_ops" not in G.allowed_ops()
