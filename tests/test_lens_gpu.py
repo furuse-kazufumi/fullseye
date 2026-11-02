@@ -11,7 +11,10 @@ import pytest
 
 torch = pytest.importorskip("torch")
 
+import chromconf  # noqa: E402
 import lens_gpu as G  # noqa: E402
+import lensglobal as LG_  # noqa: E402
+import lensopt as LO  # noqa: E402
 import lensfile  # noqa: E402
 import lensimage  # noqa: E402
 import lensrender  # noqa: E402
@@ -492,6 +495,125 @@ def test_auto_device_keeps_a_small_call_on_the_cpu():
     """1 回だけ小さく呼ぶと GPU は負ける(docs/perf)。auto は小さい仕事を GPU へ送らない。"""
     assert G._device("auto", 127).startswith("cpu")
     assert str(G.compile_lens(RT.example_system("singlet"), device="auto").device) == "cpu"
+
+
+def test_compile_many_matches_one_by_one():
+    s0 = asphere_poly()
+    surf = [dict(x) for x in s0["surfaces"]]
+    surf[0]["k"], surf[0]["asph"], surf[1]["R"] = -0.7, (2e-6, -1e-9), -110.0
+    s1 = RT.lens_system(surf, stop=0)
+    lens = G.compile_many([s0, s1], [RT.WL_F, RT.WL_C], device="cpu")
+    a = G.bundle_batch(lens, field=1.5, rings=4)
+    for m, s in enumerate((s0, s1)):
+        b = G.bundle_batch(G.compile_lens(s, [RT.WL_F, RT.WL_C], device="cpu"), field=1.5, rings=4)
+        assert torch.equal(a["valid"][m], b["valid"][0])
+        v = a["valid"][m].numpy()
+        assert np.abs(a["y"][m].numpy()[v] - b["y"][0].numpy()[v]).max() < 1e-12
+    other = RT.example_system("singlet")
+    with pytest.raises(ValueError, match="structure"):
+        G.compile_many([s0, other], device="cpu")
+
+
+def test_merit_function_device_matches_default():
+    s = triplet()
+    kw = dict(fields=[0.0, 10.0, 14.0], wavelengths=WL, rings=4, efl_target=50.0, field_weights=[1.0, 1.0, 0.5])
+    a = LO.merit_function(s, **kw)
+    b = LO.merit_function(s, device="cpu", **kw)
+    assert abs(a["merit"] - b["merit"]) < 1e-9 * a["merit"]
+    assert a["rays_lost"] == b["rays_lost"] and a["n_residuals"] == b["n_residuals"]
+    for f in a["rms_by_field"]:
+        assert abs(a["rms_by_field"][f] - b["rms_by_field"][f]) < 1e-10
+
+
+@pytest.mark.parametrize("variables", [["R0", "R1"], ["R0", "R1", "k1"], ["R0", "t0", "A4_0"]])
+def test_optimize_lens_device_matches_default(variables):
+    s = asphere_poly()
+    kw = dict(variables=variables, wavelengths=[RT.WL_F, RT.WL_D, RT.WL_C], rings=3, efl_target=60.0, iterations=8)
+    a = LO.optimize_lens(s, **kw)
+    b = LO.optimize_lens(s, device="cpu", **kw)
+    assert a["iterations"] == b["iterations"] and a["status"] == b["status"]
+    assert abs(a["merit_final"] - b["merit_final"]) < 1e-6 * a["merit_final"]
+    for p, q in zip(a["variables"], b["variables"]):
+        assert abs(p["final"] - q["final"]) < 1e-5 * max(1.0, abs(p["final"]))
+
+
+def test_global_search_device_matches_default():
+    s = RT.example_system("singlet")
+    kw = dict(variables=["c0", "c1"], merit={"efl_target": 100.0, "rings": 3}, n_starts=3, seed=1, iterations=6)
+    a = LG_.lens_global_search(s, **kw)
+    b = LG_.lens_global_search(s, device="cpu", **kw)
+    assert [r["start"] for r in a["optima"]] == [r["start"] for r in b["optima"]]
+    for p, q in zip(a["optima"], b["optima"]):
+        assert abs(p["merit"] - q["merit"]) < 1e-6 * p["merit"]
+
+
+def test_chromatic_confocal_probe_device_matches_default():
+    a = chromconf.chromatic_confocal_probe(n_points=9)
+    b = chromconf.chromatic_confocal_probe(n_points=9, device="cpu")
+    np.testing.assert_allclose(a["paraxial_um"], b["paraxial_um"], atol=1e-8)
+    np.testing.assert_allclose(a["lsa_um"], b["lsa_um"], atol=1e-6)
+    np.testing.assert_allclose(a["calibration_um"], b["calibration_um"], atol=1e-6)
+
+
+def test_run_split_halves_on_out_of_memory_and_keeps_the_answer():
+    """OOM を偽装: 大きい区間で落ちても、半分にして同じ答えへ。GPU でなくても分岐は試せる。"""
+    hits = []
+
+    def boom(a, b, dev):
+        hits.append((a, b, dev))
+        if b - a > 10 and str(dev).startswith("cuda"):
+            raise torch.cuda.OutOfMemoryError("simulated")
+        if str(dev).startswith("cuda") and b - a == 1 and a >= 39:
+            raise torch.cuda.OutOfMemoryError("simulated")
+
+    orig_device, empty = G._free_items, torch.cuda.empty_cache
+    G._free_items, torch.cuda.empty_cache = (lambda d, b, r: 40), (lambda: None)
+    try:
+        st = G.run_split("cuda:fake", 40, 1.0, boom)
+    finally:
+        G._free_items, torch.cuda.empty_cache = orig_device, empty
+    assert st["oom_retries"] >= 2
+    covered = sorted((a, b) for a, b, d in hits if not (b - a > 10 and str(d).startswith("cuda"))
+                     and not (str(d).startswith("cuda") and b - a == 1 and a >= 39))
+    assert covered[0][0] == 0 and covered[-1][1] == 40
+    assert st["smallest_chunk"] >= 1
+
+
+def test_run_split_falls_back_to_cpu_when_one_item_does_not_fit():
+    seen = []
+
+    def boom(a, b, dev):
+        if str(dev).startswith("cuda"):
+            raise torch.cuda.OutOfMemoryError("simulated")
+        seen.append((a, b, dev))
+
+    orig, empty = G._free_items, torch.cuda.empty_cache
+    G._free_items, torch.cuda.empty_cache = (lambda d, b, r: 1), (lambda: None)
+    try:
+        st = G.run_split("cuda:fake", 3, 1.0, boom)
+    finally:
+        G._free_items, torch.cuda.empty_cache = orig, empty
+    assert st["fell_back_to_cpu"] and seen and seen[-1][1] == 3
+
+
+def test_run_split_does_not_swallow_a_real_error():
+    with pytest.raises(RuntimeError, match="not memory"):
+        G.run_split("cpu", 3, 1.0, lambda a, b, d: (_ for _ in ()).throw(RuntimeError("not memory")))
+
+
+def test_bytes_per_ray_covers_the_measured_peak():
+    """実測 1 光線 1357 byte(triplet の実演 1)を下回る見積もりに戻さない。"""
+    assert G.bytes_per_ray(6) >= 1357
+    assert G.bytes_per_ray(6, aimed=True) >= 3 * 1357
+
+
+def test_chromatic_sweep_splits_without_changing_the_answer():
+    s = triplet()
+    wl = np.linspace(0.47, 0.67, 25)
+    a = G.chromatic_batch(G.compile_lens(s, wl, device="cpu"), field=14.0, rings=4)
+    b = G.chromatic_sweep(s, wl, field=14.0, rings=4, device="cpu", chunk=4)
+    np.testing.assert_allclose(b["rms_spot"], a["rms_spot"][0].numpy(), atol=1e-13)
+    assert b["split"]["chunks"] == 7
 
 
 @skip_gpu

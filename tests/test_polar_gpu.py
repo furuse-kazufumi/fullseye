@@ -38,6 +38,46 @@ def test_mueller_elements_match_and_are_physical(kind):
         assert c["physical"] and c["passive"]
 
 
+def test_mueller_chain_apply_matches_field_and_handles_what_optics_refuses():
+    th = np.random.default_rng(0).uniform(0.0, 180.0, (32, 48))
+    st = np.zeros((32, 48, 4))
+    st[..., 0], st[..., 1] = 1.0, 0.5
+    els = [("polarizer", 20.0), ("retarder", th, 30.0), ("quarter_wave", 45.0)]
+    got = P.mueller_chain_apply(els, st, device="cpu", chunk=7)
+    m = optics.mueller_element("quarter_wave", 45.0) @ optics.mueller_element("retarder", th, 30.0) @ optics.mueller_element("polarizer", 20.0)
+    np.testing.assert_allclose(got, optics.mueller_apply(m, st), atol=1e-13)
+    # 5 Mpix: optics の配列入力は上限で断る(安全弁なので変えない)、一括の経路は行に分けて通す
+    H, W = 2048, 2448
+    big = np.zeros((H, W, 4))
+    big[..., 0] = 1.0
+    ang = np.full((H, W), 30.0)
+    with pytest.raises(ValueError, match="MAX_FIELD_ELEMENTS"):
+        optics.mueller_element("retarder", ang, 90.0)
+    out = P.mueller_chain_apply([("polarizer", ang)], big, device="cpu", chunk=512)
+    np.testing.assert_allclose(out[0, 0, 0], 0.5, atol=1e-14)
+    np.testing.assert_allclose(out[-1, -1, 1], 0.5 * math.cos(math.radians(60.0)), atol=1e-14)
+
+
+def test_mueller_chain_apply_fails_closed():
+    st = np.zeros((4, 4, 4))
+    st[..., 0] = 1.0
+    with pytest.raises(ValueError, match="no elements"):
+        P.mueller_chain_apply([], st, device="cpu")
+    bad = st.copy()
+    bad[0, 0, 1] = 2.0
+    with pytest.raises(ValueError, match="unphysical"):
+        P.mueller_chain_apply([("polarizer", 0.0)], bad, device="cpu")
+    with pytest.raises(ValueError, match="non-finite"):
+        P.mueller_chain_apply([("polarizer", np.full((4, 4), np.nan))], st, device="cpu")
+    orig = P.MAX_BATCH_ELEMENTS
+    P.MAX_BATCH_ELEMENTS = 100
+    try:
+        with pytest.raises(ValueError, match="MAX_BATCH_ELEMENTS"):
+            P.mueller_chain_apply([("polarizer", 0.0)], st, device="cpu")
+    finally:
+        P.MAX_BATCH_ELEMENTS = orig
+
+
 def test_chain_and_apply_match_cpu_and_malus():
     th = np.linspace(0.0, 180.0, 37)
     pol0 = P.mueller_element_batch("polarizer", 0.0)

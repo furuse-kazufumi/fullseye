@@ -514,6 +514,78 @@ def small_numpy():
     return {"demosaic_256": min(ts[1:]), "refractive_index_loop_8x301": min(t1)}
 
 
+def wired(device):
+    """lensopt / lensglobal / chromconf の device 経路。*device* が "none" なら既定の経路。"""
+    import chromconf
+    import lensglobal
+    import lensopt
+    dev = None if device == "none" else device
+
+    def t(fn, n=2):
+        ts, r = [], None
+        for _ in range(n):
+            t0 = time.perf_counter()
+            r = fn()
+            ts.append(time.perf_counter() - t0)
+        return {"best_s": min(ts), "first_s": ts[0]}, r
+
+    sys_, _ = subjects()["triplet"]
+    out = {}
+    wls = [float(w) for w in np.linspace(0.47, 0.67, 31)]
+    small = dict(fields=[0.0, 10.0, 14.0], wavelengths=[RT.WL_F, RT.WL_D, RT.WL_C], rings=4, efl_target=50.0)
+    large = dict(fields=[0.0, 5.0, 10.0, 12.0, 14.0], wavelengths=wls, rings=12, efl_target=50.0)
+    vs = ["R0", "R1", "R2", "R3", "R4", "R5"]
+    out["merit_small"], r = t(lambda: lensopt.merit_function(sys_, device=dev, **small))
+    out["merit_small"]["merit"] = r["merit"]
+    out["merit_large"], r = t(lambda: lensopt.merit_function(sys_, device=dev, **large))
+    out["merit_large"]["merit"] = r["merit"]
+    out["optimize_small_3it"], r = t(lambda: lensopt.optimize_lens(sys_, variables=vs, iterations=3, device=dev, **small))
+    out["optimize_small_3it"]["merit"] = r["merit_final"]
+    out["optimize_large_3it"], r = t(lambda: lensopt.optimize_lens(sys_, variables=vs, iterations=3, device=dev, **large), 1)
+    out["optimize_large_3it"]["merit"] = r["merit_final"]
+    mk = {"fields": large["fields"], "wavelengths": wls, "rings": 12, "efl_target": 50.0}
+    out["global_3starts_2it"], r = t(lambda: lensglobal.lens_global_search(sys_, vs, mk, n_starts=3, seed=1, spread=0.02, iterations=2, device=dev), 1)
+    out["global_3starts_2it"]["merit"] = r["best"]["merit"]
+    out["chromconf_probe_1024"], r = t(lambda: chromconf.chromatic_confocal_probe(n_points=1024, device=dev))
+    out["chromconf_probe_1024"]["range_um"] = r["range_um"]
+    return out
+
+
+def vram_guard():
+    """他のプロセスが VRAM を占めている状態を自分の確保で再現し、落ちないこと・答えが同じことを見る。"""
+    import torch
+
+    import lens_gpu as G
+    sys_, field = subjects()["triplet"]
+    res = {}
+    ref = G.tolerance_monte_carlo(sys_, trials=2000, field=field, rings=12, wavelengths=DEMO_MC_WL, device="cpu")
+    total = torch.cuda.mem_get_info()[1]
+    res["total_gb"] = total / 1e9
+
+    def go(label, trials=2000):
+        torch.cuda.reset_peak_memory_stats()
+        t0 = time.perf_counter()
+        r = G.tolerance_monte_carlo(sys_, trials=trials, field=field, rings=12, wavelengths=DEMO_MC_WL, device="cuda")
+        dt = time.perf_counter() - t0
+        res[label] = {"seconds": dt, "split": r["split"], "peak_gb": torch.cuda.max_memory_allocated() / 1e9,
+                      "free_gb_at_end": torch.cuda.mem_get_info()[0] / 1e9,
+                      "max_rms_diff_from_cpu": float(np.nanmax(np.abs(r["rms_trial"] - ref["rms_trial"][:trials])))}
+
+    go("no_ballast")
+    for frac, label in ((0.8, "ballast_80pct"), (0.97, "ballast_97pct")):
+        free = torch.cuda.mem_get_info()[0]
+        b = torch.zeros(int(frac * free), dtype=torch.uint8, device="cuda")
+        b[::4096] = 1
+        go(label)
+        del b
+        torch.cuda.empty_cache()
+    torch.cuda.set_per_process_memory_fraction(0.04)
+    go("real_oom_process_limit_4pct")
+    torch.cuda.set_per_process_memory_fraction(1.0)
+    torch.cuda.empty_cache()
+    return res
+
+
 def float32_errors():
     """float32 の誤差を float64 と比べて測る(同じ入力、CPU の torch)。"""
     import polar_gpu as PG
@@ -546,6 +618,8 @@ def main(argv=None):
     ap.add_argument("--parity", choices=("cpu", "cuda"))
     ap.add_argument("--mtf", choices=("numpy", "cpu", "cuda"))
     ap.add_argument("--small", choices=("numpy", "cpu", "cuda"))
+    ap.add_argument("--wired", choices=("none", "cpu", "cuda"))
+    ap.add_argument("--vram", action="store_true")
     ap.add_argument("--out", required=True)
     a = ap.parse_args(argv)
     if a.baseline:
@@ -559,6 +633,15 @@ def main(argv=None):
             return 3
         with GpuLock("gpu_optics_%d" % os.getpid()):
             res = {"parity": parity("cuda")}
+    elif a.wired in ("none", "cpu"):
+        res = {"wired": wired(a.wired)}
+    elif a.wired == "cuda" or a.vram:
+        why = gpu_busy()
+        if why:
+            print("GPU busy, not started:", why)
+            return 3
+        with GpuLock("gpu_optics_%d" % os.getpid()):
+            res = {"wired": wired("cuda")} if a.wired else {"vram": vram_guard()}
     elif a.small == "numpy":
         res = {"small": small_numpy()}
     elif a.small == "cpu":

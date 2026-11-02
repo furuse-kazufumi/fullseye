@@ -37,7 +37,7 @@ import numpy as np
 import lens_gpu as LG
 from torch_lazy import F, torch
 
-__all__ = ["polarized_bundle", "jones_to_mueller", "jones_element_batch", "mueller_element_batch", "chain",
+__all__ = ["mueller_chain_apply", "polarized_bundle", "jones_to_mueller", "jones_element_batch", "mueller_element_batch", "chain",
            "stokes_from_jones_batch", "mueller_apply_batch", "stokes_analyze_batch", "polarization_demosaic_batch",
            "photoelastic_images_batch", "sfp_render_batch", "dolp_to_zenith_batch"]
 
@@ -151,6 +151,55 @@ def mueller_apply_batch(mueller, stokes):
     out = torch.einsum("...ij,...j->...i", mueller, stokes)
     if not bool(torch.isfinite(out).all()):
         raise ValueError("mueller_apply_batch: the result overflowed")
+    return out
+
+
+#: :func:`mueller_chain_apply` の出力の数の上限(2^32 個 = 34 GB)。``optics.MAX_FIELD_ELEMENTS``(2^24)は FFT の
+#: 一時配列を含む CPU の経路の安全弁で、桁を打ち間違えた入力がマシンのメモリを食い潰さないためのもの。ここも同じ目的で
+#: 上限を置くが、行ごとに分割して流すので 1 枚の場の実寸(5 Mpix は 8000 万個)は通る。
+MAX_BATCH_ELEMENTS = 1 << 32
+
+
+def mueller_chain_apply(elements, stokes, device="auto", dtype="float64", chunk=None):
+    """画素ごとの素子の列を場に通す: ``S' = M_n ... M_1 S``(返り値は numpy ``(H, W, 4)``)。
+
+    *elements* は光の順に ``(kind, angle_deg, retardance_deg)``(角は数か ``(H, W)``)、*stokes* は ``(H, W, 4)``。
+    ``optics.mueller_apply`` と同じ行列と同じ入力の検査(1 画素でも非物理なら全体を拒否)で、``optics.mueller_element``
+    の ``MAX_FIELD_ELEMENTS`` で断られる大きさも、行に分けて空きメモリに収めて計算する。
+
+    **Raises** ``ValueError``: 形が合わない、非有限、非物理の Stokes、出力が :data:`MAX_BATCH_ELEMENTS` を超える。
+    """
+    st = np.asarray(stokes, dtype=np.float64)
+    if st.ndim != 3 or st.shape[2] != 4:
+        raise ValueError("mueller_chain_apply: stokes must be (H, W, 4), got %r" % (st.shape,))
+    if not np.isfinite(st).all():
+        raise ValueError("mueller_chain_apply: stokes contains non-finite values")
+    H, W = st.shape[:2]
+    if H * W * 16 * max(1, len(elements)) > MAX_BATCH_ELEMENTS:
+        raise ValueError("mueller_chain_apply: %d x %d x %d elements is over the %d cap (polar_gpu.MAX_BATCH_ELEMENTS)"
+                         % (H, W, len(elements), MAX_BATCH_ELEMENTS))
+    if not elements:
+        raise ValueError("mueller_chain_apply: no elements")
+    fields = []
+    for el in elements:
+        kind, ang = el[0], np.asarray(el[1], dtype=np.float64)
+        ret = np.asarray(el[2] if len(el) > 2 else 90.0, dtype=np.float64)
+        for v, name in ((ang, "angle_deg"), (ret, "retardance_deg")):
+            if v.ndim not in (0, 2) or (v.ndim == 2 and v.shape != (H, W)):
+                raise ValueError("mueller_chain_apply: %s must be a number or (H, W), got %r" % (name, v.shape))
+            if not np.isfinite(v).all():
+                raise ValueError("mueller_chain_apply: %s contains non-finite values" % name)
+        fields.append((kind, ang, ret))
+    out = np.zeros_like(st)
+    dev = LG._device(device, H * W * 16 * len(elements))
+
+    def one(a, b, device_now):
+        ms = [mueller_element_batch(kind, ang[a:b] if ang.ndim else ang, ret[a:b] if ret.ndim else ret,
+                                    device=device_now, dtype=dtype) for kind, ang, ret in fields]
+        s = torch.as_tensor(st[a:b], dtype=ms[0].dtype, device=device_now)
+        out[a:b] = mueller_apply_batch(chain(ms), s).detach().cpu().numpy()
+
+    LG.run_split(dev, H, W * 8.0 * (16.0 * (len(elements) + 2) + 8.0), one, chunk=chunk)
     return out
 
 

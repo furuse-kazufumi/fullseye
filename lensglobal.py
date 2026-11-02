@@ -229,7 +229,8 @@ def _check_merit(merit, op):
 
 
 def lens_global_search(system=None, variables=None, merit=None, n_starts: int = 8, seed: int = 0,
-                       spread: float = 0.5, iterations: int = 40, duplicate_tolerance: float = 1e-3) -> dict:
+                       spread: float = 0.5, iterations: int = 40, duplicate_tolerance: float = 1e-3,
+                       device=None) -> dict:
     """多始点の局所最適化(lensopt.optimize_lens)で局所解を集め、merit 順に返す(``table``)。
 
     Start 0 is *system* as given; starts 1 .. *n_starts*-1 move every variable to ``x (1 + spread u)``
@@ -247,6 +248,7 @@ def lens_global_search(system=None, variables=None, merit=None, n_starts: int = 
     where ``duplicate_of`` is the ``start`` of an earlier (better) optimum with the same variables
     (every variable within *duplicate_tolerance* relative, floor 1e-9) or None. ``basins`` lists the
     distinct optima with the number of starts that reached each. Deterministic for a given seed.
+    *device* is handed to ``lensopt.optimize_lens`` (``None`` = its default path).
 
     Example::
 
@@ -300,7 +302,8 @@ def lens_global_search(system=None, variables=None, merit=None, n_starts: int = 
                 try:
                     start = LO._rebuild(system, x, varlist, bounds)
                     m = LO.merit_function(start, **{k: mk[k] for k in ("fields", "wavelengths", "rings", "efl_target",
-                                                                       "efl_weight", "field_weights", "pupil_fill") if k in mk})
+                                                                       "efl_weight", "field_weights", "pupil_fill") if k in mk},
+                                         device=device)
                     if math.isfinite(m["merit"]):
                         break
                     start = None
@@ -308,7 +311,7 @@ def lens_global_search(system=None, variables=None, merit=None, n_starts: int = 
                     start = None
             if start is None:
                 raise ValueError("%s: start %d: no valid perturbed prescription in 25 draws (reduce spread)" % (op, s))
-        r = LO.optimize_lens(start, variables=[_spec(v) for v in varlist], iterations=int(iterations), **mk)
+        r = LO.optimize_lens(start, variables=[_spec(v) for v in varlist], iterations=int(iterations), device=device, **mk)
         vals = np.array([LO._get(r["system"], v) for v in varlist], dtype=np.float64)
         results.append({"start": s, "merit": r["merit_final"], "start_merit": r["merit_initial"],
                         "rms_spot": r["rms_final"], "efl": r["efl_final"], "system": r["system"],

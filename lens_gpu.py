@@ -37,7 +37,7 @@ import numpy as np
 import raytrace as RT
 from torch_lazy import HAS_TORCH, torch
 
-__all__ = ["compile_lens", "paraxial_batch", "paraxial_color", "launch_batch", "trace_batch", "bundle_batch",
+__all__ = ["compile_lens", "compile_many", "run_split", "marginal_focus", "chromatic_sweep", "paraxial_batch", "paraxial_color", "launch_batch", "trace_batch", "bundle_batch",
            "spot_stats_batch", "chromatic_batch", "opd_batch", "mtf_batch", "tolerance_draws",
            "tolerance_monte_carlo", "spectral_transmission", "index_array", "index_table",
            "absorption_array", "gpu_available"]
@@ -46,6 +46,8 @@ INF = float("inf")
 #: ``device="auto"`` が GPU を選ぶ仕事量の下限(M × W × R × 面数)。実測で 23 万は CPU が勝ち、760 万は GPU が
 #: 12 倍勝つので、その間に置く(docs/perf/gpu_optics_2026-11-02.md)。
 AUTO_GPU_MIN_RAYS = 1_000_000
+#: CPU で 1 回に積むメモリの目安(キャッシュから溢れて遅くならない大きさ)。
+CPU_CHUNK_BYTES = 1 << 30
 _NEWTON_ITERS = 40
 
 
@@ -214,6 +216,15 @@ class LensBatch:
     def tensor(self, a):
         return torch.as_tensor(a, dtype=self.dtype, device=self.device)
 
+    def k_at(self, i):
+        """面 i の円錐定数(全案で共通ならスカラー、案ごとなら (M, 1, 1))。"""
+        return self.k[i] if self.k.ndim == 1 else self.k[:, i][:, None, None]
+
+    def asph_at(self, i):
+        """面 i の非球面係数の列(各要素はスカラーか (M, 1, 1))。"""
+        a = self.asph
+        return [a[i, j] for j in range(a.shape[1])] if a.ndim == 2 else [a[:, i, j][:, None, None] for j in range(a.shape[2])]
+
 
 def _check_supported(system):
     RT._check_system(system)
@@ -315,6 +326,38 @@ def compile_lens(system, wavelengths=None, device="auto", dtype="float64", overr
                      ideal=tuple(s.get("f") is not None for s in surf),
                      astig=tens([s.get("zernike_sag", (0.0, 0.0)) for s in surf]),
                      has_astig=tuple("zernike_sag" in s for s in surf))
+
+
+def compile_many(systems, wavelengths=None, device="auto", dtype="float64"):
+    """構造が同じ処方の列(面数・絞り・鏡・半開口・媒質が同じ)を 1 つの :class:`LensBatch` にする。
+
+    ``R`` ``t`` ``k`` ``asph`` は案ごとに違ってよい(``lensopt`` の変数)。Jacobian の列を一括で評価する口。
+    """
+    solved = [_check_supported(s) for s in systems]
+    if not solved:
+        raise ValueError("compile_many: no systems")
+    s0 = solved[0]
+    surf0 = s0["surfaces"]
+    S = len(surf0)
+    for q in solved[1:]:
+        surf = q["surfaces"]
+        same = (len(surf) == S and q["stop"] == s0["stop"] and q["object_mm"] == s0["object_mm"]
+                and all(a["mirror"] == b["mirror"] and a["ap"] == b["ap"] and a.get("f") == b.get("f")
+                        and repr(a["n"]) == repr(b["n"]) and (a["t"] is None) == (b["t"] is None) for a, b in zip(surf0, surf)))
+        if not same:
+            raise ValueError("compile_many: the systems differ in structure (surfaces, stop, mirrors, apertures or media)")
+    M = len(solved)
+    R = np.array([[s["R"] for s in q["surfaces"]] for q in solved], float)
+    t = np.array([[0.0 if s["t"] is None else s["t"] for s in q["surfaces"]] for q in solved], float)
+    k = np.array([[s["k"] for s in q["surfaces"]] for q in solved], float)
+    A = max(1, max(len(s["asph"]) for q in solved for s in q["surfaces"]))
+    asph = np.zeros((M, S, A))
+    for m, q in enumerate(solved):
+        for i, s in enumerate(q["surfaces"]):
+            asph[m, i, :len(s["asph"])] = s["asph"]
+    lens = compile_lens(s0, wavelengths, device=device, dtype=dtype, overrides={"R": R, "t": t})
+    return dataclasses.replace(lens, k=lens.tensor(k), asph=lens.tensor(asph), newton=tuple(
+        any(bool(q["surfaces"][i]["asph"]) for q in solved) or lens.newton[i] for i in range(S)))
 
 
 def _at_wavelengths(lens, wavelengths):
@@ -472,9 +515,9 @@ def _sag(r2, c, k, asph, a2, odd):
     root = torch.sqrt(1.0 - (1.0 + k) * c * c * r2)
     z = c * r2 / (1.0 + root)
     p = r2 * r2
-    for j in range(asph.shape[0]):
-        if asph[j] != 0:
-            z = z + asph[j] * p
+    for a in asph:
+        if torch.any(a != 0):
+            z = z + a * p
         p = p * r2
     z = z + a2 * r2
     if torch.any(odd != 0):
@@ -492,9 +535,9 @@ def _dsag(r2, c, k, asph, a2, odd):
     s = torch.where(c == 0, torch.zeros_like(s), s)
     p = r2
     m = 2.0
-    for j in range(asph.shape[0]):
-        if asph[j] != 0:
-            s = s + asph[j] * m * p
+    for a in asph:
+        if torch.any(a != 0):
+            s = s + a * m * p
         p = p * r2
         m += 1.0
     s = s + a2
@@ -646,7 +689,8 @@ def trace_batch(lens, P, D, image_mm=None, opl=True, points=False, upto=None, vi
         nb = lens.n_u[..., i:i + 1]
         na = lens.n_u[..., i + 1:i + 2]
         c = lens.c[:, None, i:i + 1]
-        k = lens.k[i]
+        k = lens.k_at(i)
+        asph_i = lens.asph_at(i)
         dx = None if lens.dec is None else lens.dec[:, i, 0][:, None, None]
         dy = None if lens.dec is None else lens.dec[:, i, 1][:, None, None]
         moved = dx is not None and bool(torch.any(dx != 0) or torch.any(dy != 0))
@@ -668,14 +712,14 @@ def trace_batch(lens, P, D, image_mm=None, opl=True, points=False, upto=None, vi
         else:
             t = _hit_conic(xl, yl, zl, Ll, Ml, Nl, c, k)
         if lens.newton[i]:
-            t = _hit_asphere(xl, yl, zl, Ll, Ml, Nl, c, k, lens.asph[i], lens.a2[i], lens.odd[i], t, astig)
+            t = _hit_asphere(xl, yl, zl, Ll, Ml, Nl, c, k, asph_i, lens.a2[i], lens.odd[i], t, astig)
         bad = ~torch.isfinite(t) | (t < -1e-9)
         t = t.masked_fill(bad, nan)
         qx, qy, qz = xl + t * Ll, yl + t * Ml, zl + t * Nl
         if math.isfinite(float(lens.ap[i])):
             bad = bad | (torch.sqrt(qx * qx + qy * qy) > lens.ap[i] * (1.0 + 1e-12))
         if lens.newton[i]:
-            s = _dsag(qx * qx + qy * qy, c, k, lens.asph[i], lens.a2[i], lens.odd[i])
+            s = _dsag(qx * qx + qy * qy, c, k, asph_i, lens.a2[i], lens.odd[i])
             gx, gy, gz = -2.0 * s * qx, -2.0 * s * qy, torch.ones_like(qx)
             if astig is not None:
                 a0, a45, ap_ = astig
@@ -1274,12 +1318,60 @@ def tolerance_draws(system, tolerances=None, trials=1000, seed=0):
     return {"R": R, "t": t, "offset": off, "decenter": dec, "tilt": tilt, "rejected": rejected, "tolerances": tol}
 
 
-def _auto_chunk(device, rays_per_design):
-    """1 回に積む設計案の数。GPU は空きメモリから(CARLA 等と共存するので 1/2 まで)、CPU は固定の光線数。"""
+def bytes_per_ray(n_surfaces, aimed=False):
+    """1 光線が追跡中に占めるメモリの見積もり [byte]。
+
+    ★実測で較正した(2026-11-02): triplet(6 面)の実演 1 のピークは 1 光線 1357 byte で、最初の見積もり
+    384 byte は 3.5 倍過小だった。余裕を 1.4 倍取り ``8 (60 + 30 S)``。``aim="stop"`` は 3 倍の光線を積むので 4 倍。
+    """
+    return 8.0 * (60.0 + 30.0 * int(n_surfaces)) * (4.0 if aimed else 1.0)
+
+
+def _is_oom(e):
+    return isinstance(e, torch.cuda.OutOfMemoryError) or (isinstance(e, RuntimeError) and "out of memory" in str(e).lower())
+
+
+def _free_items(device, bytes_per_item, reserve):
     if str(device).startswith("cuda"):
         free = torch.cuda.mem_get_info(torch.device(device))[0]
-        return max(1, int(0.5 * free / (rays_per_design * 8 * 48)))
-    return max(1, int(2_000_000 / rays_per_design))
+        return max(1, int(reserve * free / bytes_per_item))
+    return max(1, int(CPU_CHUNK_BYTES / bytes_per_item))
+
+
+def run_split(device, n, bytes_per_item, fn, chunk=None, reserve=0.5):
+    """*n* 個の仕事を空きメモリに合わせて分けて ``fn(a, b, device)`` に渡す。返り値は統計の dict。
+
+    GPU の空きは**分割のたびに読み直す**(CARLA など別のプロセスが途中で増やすため)。空きの *reserve* までしか
+    使わない。それでも OOM なら分割を半分にして同じ区間をやり直し、1 個でも入らなければ残りを CPU で続ける
+    (落とさない。遅くなったことは ``fell_back_to_cpu`` に残す)。*fn* は区間の結果を自分で書き込むこと。
+    """
+    n = int(n)
+    a = 0
+    cap = n if chunk is None else max(1, int(chunk))
+    stats = {"chunks": 0, "oom_retries": 0, "fell_back_to_cpu": False, "smallest_chunk": n}
+    dev = device
+    while a < n:
+        k = max(1, min(cap, n - a, _free_items(dev, bytes_per_item, reserve)))
+        try:
+            fn(a, a + k, dev)
+        except (RuntimeError, MemoryError) as e:
+            if isinstance(e, RuntimeError) and not _is_oom(e):
+                raise
+            if not str(dev).startswith("cuda"):
+                raise
+            torch.cuda.empty_cache()
+            stats["oom_retries"] += 1
+            if k == 1:
+                dev = "cpu"
+                stats["fell_back_to_cpu"] = True
+                cap = n
+            else:
+                cap = max(1, k // 2)
+            continue
+        a += k
+        stats["chunks"] += 1
+        stats["smallest_chunk"] = min(stats["smallest_chunk"], k)
+    return stats
 
 
 def tolerance_monte_carlo(system, tolerances=None, trials=1000, seed=0, field=None, rings=6, compensator="auto",
@@ -1310,21 +1402,24 @@ def tolerance_monte_carlo(system, tolerances=None, trials=1000, seed=0, field=No
     else:
         used = compensator
     trials = int(trials)
-    chunk = _auto_chunk(dev, R * len(wls)) if chunk is None else int(chunk)
     efl = np.full(trials, np.nan)
     rms = np.full((trials, len(wls)), np.nan)
     failed = d["rejected"].copy()
-    for a in range(0, trials, chunk):
-        ov = {k: d[k][a:a + chunk] for k in ("R", "t", "offset", "decenter", "tilt")}
-        lens = compile_lens(system, wls, device=dev, dtype=dtype, overrides=ov)
+
+    def one(a, b_, device_now):
+        ov = {k: d[k][a:b_] for k in ("R", "t", "offset", "decenter", "tilt")}
+        lens = compile_lens(system, wls, device=device_now, dtype=dtype, overrides=ov)
         p = paraxial_batch(lens)
         img = p["image_mm"][:, :1] if used == "back_focus" else lens.tensor([[img_nom]]).expand(lens.M, 1)
         b = bundle_batch(lens, field=field, rings=rings, pupil_fill=pupil_fill, image_mm=img, para=p)
         st = spot_stats_batch(b)
-        efl[a:a + chunk] = p["efl"][:, 0].detach().cpu().numpy()
-        rms[a:a + chunk] = st["rms_radius"].detach().cpu().numpy()
-        bad = (b["failed"].any(1) | (st["n_rays"][:, 0] == 0)).detach().cpu().numpy()
-        failed[a:a + chunk] |= bad
+        efl[a:b_] = p["efl"][:, 0].detach().cpu().numpy()
+        rms[a:b_] = st["rms_radius"].detach().cpu().numpy()
+        failed[a:b_] |= (b["failed"].any(1) | (st["n_rays"][:, 0] == 0)).detach().cpu().numpy()
+
+    aimed = system.get("aim", "paraxial") == "stop"
+    per_design = R * len(wls) * bytes_per_ray(len(system["surfaces"]), aimed)
+    split = run_split(dev, trials, per_design, one, chunk=chunk)
     ok = ~failed
 
     def dist(v):
@@ -1336,4 +1431,37 @@ def tolerance_monte_carlo(system, tolerances=None, trials=1000, seed=0, field=No
     return {"efl": dist(efl[ok]), "rms_spot": dist(rms[ok, 0]), "efl_trial": efl, "rms_trial": rms[:, 0],
             "rms_spot_w": rms[:, 1:] if len(wls) > 1 else None, "failed_trial": failed, "failed": int(failed.sum()),
             "trials": trials, "seed": int(seed), "compensator": used, "tolerances": d["tolerances"], "device": dev,
-            "chunk": chunk, "rays_per_design": R, "wavelengths_um": wls}
+            "chunk": split["smallest_chunk"], "split": split, "rays_per_design": R, "wavelengths_um": wls}
+
+
+def marginal_focus(lens, h):
+    """``chromconf._marginal_focus`` の (M, W) 版: 高さ *h* の平行光線が光軸と交わる位置。無効な案は NaN。"""
+    z0 = torch.zeros((lens.M, lens.W, 1), dtype=lens.dtype, device=lens.device)
+    tr = trace_batch(lens, (z0, z0 + float(h), z0 - 1.0), (z0, z0, z0 + 1.0), image_mm=[[50.0]], opl=False)
+    zl = lens.t[:, :-1].sum(-1)[:, None, None]
+    f = tr["zl"] + (-tr["yl"] / tr["M"]) * tr["N"] - zl
+    bad = ~tr["valid"] | (tr["M"].abs() < 1e-15)
+    return f.masked_fill(bad, float("nan"))[..., 0]
+
+
+def chromatic_sweep(system, wavelengths, field=None, rings=6, device="auto", dtype="float64", chunk=None):
+    """:func:`chromatic_batch` を波長軸で分割して回す(波長が多くても VRAM に収める)。返り値は numpy (W,)。"""
+    system = _check_supported(system)
+    wl = _wl_array(wavelengths)
+    R = len(RT._pupil_grid(rings)[0])
+    S = len(system["surfaces"])
+    dev = _device(device, wl.size * R * S)
+    keys = ("efl", "bfl", "chief_height", "rms_spot", "n_rays")
+    out = {k: np.zeros(wl.size) for k in keys}
+    ref = compile_lens(system, device="cpu")
+    img = float(_chromatic_image(ref)[0, 0])
+
+    def one(a, b_, device_now):
+        c = chromatic_batch(compile_lens(system, wl[a:b_], device=device_now, dtype=dtype), field=field, rings=rings, image_mm=img)
+        for k in keys:
+            out[k][a:b_] = c[k][0].detach().cpu().numpy()
+
+    split = run_split(dev, wl.size, R * bytes_per_ray(S, system.get("aim", "paraxial") == "stop"), one, chunk=chunk)
+    out.update({"wavelength_um": wl, "axial_color": out["bfl"][0] - out["bfl"][-1],
+                "lateral_color": out["chief_height"][0] - out["chief_height"][-1], "split": split, "device": dev})
+    return out
