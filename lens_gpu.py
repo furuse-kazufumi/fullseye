@@ -264,15 +264,16 @@ def compile_lens(system, wavelengths=None, device="auto", dtype="float64", overr
     """
     system = _check_supported(system)
     wl = _wl_array(system["wavelength_um"] if wavelengths is None else wavelengths)
-    dev = _device(device)
     dt = _dtype(dtype)
+    surf = system["surfaces"]
+    S = len(surf)
+    ov = overrides or {}
+    n_designs = max((len(v) for v in ov.values()), default=1)
+    dev = _device(device, n_designs * wl.size * S * 127)        # 光線数は未定なので hexapolar 6 輪を見積もりに使う
 
     def tens(a):
         return torch.as_tensor(np.asarray(a, dtype=np.float64), dtype=dt, device=dev)
 
-    surf = system["surfaces"]
-    S = len(surf)
-    ov = overrides or {}
     R = np.array([[s["R"] for s in surf]], float) if "R" not in ov else np.asarray(ov["R"], float)
     with np.errstate(divide="ignore"):
         c = np.where(np.isinf(R), 0.0, 1.0 / R)

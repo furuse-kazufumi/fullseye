@@ -127,6 +127,20 @@ def test_real_rays_match_trace_rays(name):
         assert np.isnan(got[~v][:, -1, :]).all()
 
 
+def test_gate_detects_a_wrong_lens():
+    """負の対照: 近軸の差が厳密に 0 に出るのは式が同じだからで、門が盲目だからではない。"""
+    s = triplet()
+    lens = G.compile_lens(s, device="cpu")
+    lens.c_par = lens.c_par * (1.0 + 1e-9)
+    lens.c = lens.c * (1.0 + 1e-9)
+    q = RT.paraxial_trace(s)
+    assert rel(G.paraxial_batch(lens)["efl"][0, 0], q["efl"]) > 1e-10
+    b = G.bundle_batch(lens, field=14.0, rings=6)
+    c = RT.ray_bundle(s, field=14.0, rings=6)
+    v = b["valid"][0, 0].numpy() & c["valid"]
+    assert np.abs(b["y"][0, 0].numpy()[v] - c["image_xy"][v, 1]).max() > 1e-9
+
+
 def test_conic_root_beats_cpu_on_a_paraboloid():
     """50 桁の 10 進で解いた交点と比べる: lens_gpu は 1e-11 mm 以内、CPU はそれより悪い(隠さず固定する)。"""
     from decimal import Decimal as Dd, getcontext
@@ -428,6 +442,12 @@ def test_float32_error_is_bounded_and_reported():
     v = (a["valid"] & b["valid"]).numpy()
     e = np.abs(a["y"].numpy().astype(float) - b["y"].numpy())[v].max()
     assert 1e-9 < e < 1e-3
+
+
+def test_auto_device_keeps_a_small_call_on_the_cpu():
+    """1 回だけ小さく呼ぶと GPU は負ける(docs/perf)。auto は小さい仕事を GPU へ送らない。"""
+    assert G._device("auto", 127).startswith("cpu")
+    assert str(G.compile_lens(RT.example_system("singlet"), device="auto").device) == "cpu"
 
 
 @skip_gpu

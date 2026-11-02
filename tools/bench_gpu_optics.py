@@ -28,7 +28,8 @@ import lensfile  # noqa: E402
 import raytrace as RT  # noqa: E402
 
 CPU_LIMIT_S = 90.0
-LOCK = os.environ.get("FULLSEYE_GPU_LOCK", os.path.join("C:" + os.sep, "dev", "tools", "gpu_in_use.lock"))
+#: GPU の取り合いを防ぐロック。worktree の 2 つ上の tools/ に置く運用(環境変数で上書きできる)。
+LOCK = os.environ.get("FULLSEYE_GPU_LOCK") or os.path.normpath(os.path.join(ROOT, "..", "..", "tools", "gpu_in_use.lock"))
 
 
 #: 実演 1: 公差 MC(設計 × 波長 × 光線)。実演 2: 波長を細かく振った色収差とスポットの曲線。
@@ -377,6 +378,62 @@ def polar(device, dtype="float64"):
     return out
 
 
+def parity(device):
+    """既存の CPU 実装との一致を実測して表にする(テストの題材をそのまま使う)。"""
+    import torch
+
+    sys.path.insert(0, os.path.join(ROOT, "tests"))
+    import test_lens_gpu as T
+
+    import lens_gpu as G
+    keys = T.SCALARS
+    wl = [RT.WL_F, RT.WL_D, RT.WL_C]
+    out = {}
+    for name in sorted(T.SYSTEMS):
+        s = T.SYSTEMS[name]()
+        fld = T.FIELD[name]
+        p = G.paraxial_batch(G.compile_lens(s, wl, device=device))
+        rel = 0.0
+        for w, x in enumerate(wl):
+            q = RT.paraxial_trace(RT.with_wavelength(s, x))
+            rel = max(rel, max(T.rel(p[k][0, w], q[k]) for k in keys))
+        cpu = RT.ray_bundle(s, field=fld, rings=8, wavelength_um=RT.WL_C)
+        P0, D0 = cpu["points"][:, 0, :], cpu["dirs"][:, 0, :]
+        ref = RT.trace_rays(s, P0, D0, wavelength_um=RT.WL_C)
+        lens = G.compile_lens(s, [RT.WL_C], device=device)
+        tr = G.trace_batch(lens, tuple(torch.as_tensor(P0[:, j], device=lens.device)[None, None] for j in range(3)),
+                           tuple(torch.as_tensor(D0[:, j], device=lens.device)[None, None] for j in range(3)), points=True)
+        v = tr["valid"][0, 0].cpu().numpy()
+        got = tr["points"][0, 0].cpu().numpy()
+        mism = int((v != ref["valid"]).sum())
+        both = v & ref["valid"]
+        dpos = float(np.abs(got[both][:, -1, :] - ref["points"][both][:, -1, :]).max())
+        dopl = float(np.abs(tr["opl"][0, 0].cpu().numpy()[both] - ref["opl"][both]).max())
+        b = G.bundle_batch(G.compile_lens(s, device=device), field=fld, rings=6, pupil_fill=0.99)
+        st = G.spot_stats_batch(b)
+        c = RT.spot_stats(s, field=fld, rings=6, pupil_fill=0.99)
+        out[name] = {"paraxial_rel_max": rel, "rays": len(v), "valid_rays": int(v.sum()), "valid_mismatch": mism,
+                     "position_mm_max": dpos, "opl_mm_max": dopl,
+                     "spot_rms_mm_diff": abs(float(st["rms_radius"][0, 0]) - c["rms_radius"])}
+    for name, fld in (("catalog_doublet", 1.0), ("triplet", 14.0)):
+        s = T.SYSTEMS[name]()
+        sysf = RT._freeze_solves(s)
+        tol = {"radius_pct": 0.5, "thickness_mm": 0.05, "index": 0.001, "decenter_mm": 0.02, "tilt_deg": 0.05}
+        rng = np.random.default_rng(3)
+        img = sysf["surfaces"][-1]["t"]
+        e, r = [], []
+        for _ in range(1000):
+            q = RT._perturbed(sysf, rng, tol)
+            pp = RT.paraxial_trace(q)
+            sp = RT.spot_stats(q, field=fld, rings=6, pupil_fill=0.99, image_mm=pp["image_mm"] if img is None else img)
+            e.append(pp["efl"])
+            r.append(sp["rms_radius"])
+        m = G.tolerance_monte_carlo(s, trials=1000, seed=3, field=fld, device=device)
+        out["mc_" + name] = {"trials": 1000, "efl_rel_max": float(np.max(np.abs(m["efl_trial"] - e) / np.abs(e))),
+                             "rms_mm_max": float(np.max(np.abs(m["rms_trial"] - r))), "failed": m["failed"]}
+    return out
+
+
 def float32_errors():
     """float32 の誤差を float64 と比べて測る(同じ入力、CPU の torch)。"""
     import polar_gpu as PG
@@ -406,10 +463,20 @@ def main(argv=None):
     ap.add_argument("--batch", choices=("cpu", "cuda"))
     ap.add_argument("--polar", choices=("numpy", "cpu", "cuda"))
     ap.add_argument("--float32-errors", action="store_true")
+    ap.add_argument("--parity", choices=("cpu", "cuda"))
     ap.add_argument("--out", required=True)
     a = ap.parse_args(argv)
     if a.baseline:
         res = {"baseline": baseline()}
+    elif a.parity == "cpu":
+        res = {"parity": parity("cpu")}
+    elif a.parity == "cuda":
+        why = gpu_busy()
+        if why:
+            print("GPU busy, not started:", why)
+            return 3
+        with GpuLock("gpu_optics_%d" % os.getpid()):
+            res = {"parity": parity("cuda")}
     elif a.float32_errors:
         res = {"float32": float32_errors()}
     elif a.polar == "numpy":
