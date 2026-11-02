@@ -113,7 +113,7 @@ def _entry_stream(entry):
             yield stream
 
 
-def create(paths_or_items, *, root=None, level=9, deterministic=True, op="archive_create"):
+def _create(paths_or_items, *, root=None, level=9, deterministic=True, op="archive_create"):
     """Create deterministic tar.xz bytes / 決定的な tar.xz bytes を作る。"""
     entries = _items(paths_or_items, root, deterministic, op)
     out = io.BytesIO()

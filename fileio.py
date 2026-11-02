@@ -753,8 +753,9 @@ def _sevenzip_executable():
             return None
         candidate = os.path.abspath(os.path.expandvars(os.path.expanduser(override)))
         return candidate if os.path.isfile(candidate) else shutil.which(override)
-    fixed = r"C:\Program Files\7-Zip\7z.exe"
-    return fixed if os.path.isfile(fixed) else shutil.which("7z")
+    program_files = os.environ.get("ProgramFiles")
+    fixed = os.path.join(program_files, "7-Zip", "7z.exe") if program_files else None
+    return fixed if fixed and os.path.isfile(fixed) else shutil.which("7z")
 
 
 def _require_sevenzip(op):
@@ -1271,8 +1272,8 @@ def archive_create(paths_or_items, fmt, *, root=None, level=None, deterministic=
     if fmt == "tar" and level != 9:
         raise ValueError(f"{op}: level has no meaning for uncompressed tar; leave it as None")
     if fmt == "tar.xz":
-        return _archive_tarxz.create(paths_or_items, root=root, level=level,
-                                     deterministic=deterministic, op=op)
+        return _archive_tarxz._create(paths_or_items, root=root, level=level,
+                                      deterministic=deterministic, op=op)
     entries = _archive_items(paths_or_items, root, deterministic, op)
     if fmt == "zip":
         return _create_zip(entries, level, deterministic)

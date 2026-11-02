@@ -125,7 +125,7 @@ def pack_archive(src_dir=HELP_DIR, dst=ARCHIVE):
     # sdist builds run before NumPy (and therefore fileio) is installable.
     # NumPy 導入前の sdist 構築でも、fileio と同じ正本 writer を使う。
     import _archive_tarxz
-    blob = _archive_tarxz.create(paths, root=src_dir, deterministic=True)
+    blob = _archive_tarxz._create(paths, root=src_dir, deterministic=True)
     os.makedirs(os.path.dirname(os.path.abspath(dst)), exist_ok=True)
     with open(dst, "wb") as f:
         f.write(blob)
