@@ -264,9 +264,10 @@ def optimize_lens(system, variables=None, fields=None, wavelengths=None, rings=4
     ``(JᵀJ + λ diag(JᵀJ)) δ = −Jᵀr`` and accepts the step only if the merit
     falls (then λ /= 3; otherwise λ ×= 4 and retried, up to 6 times); a step
     that yields an invalid prescription counts as a failure. Stops when the
-    relative merit change is below *tolerance* twice in a row (``converged``,
+    relative merit change is below *tolerance* twice in a row, or once with no
+    further step able to lower the merit (the rounding floor) (``converged``,
     ``status="converged"``), when two iterations in a row accept no step or λ
-    blows past 1e8 (``status="stalled"``, ``converged=False``), or after
+    blows past 1e8 before that (``status="stalled"``, ``converged=False``), or after
     *iterations* (``status="iterations"``). Thickness is clamped to
     ``[min_thickness, max_thickness]`` and ``|R| >= min_radius`` — the start
     included, so the returned system always obeys the bounds.
@@ -396,7 +397,15 @@ def optimize_lens(system, variables=None, fields=None, wavelengths=None, rings=4
         if not accepted:
             rejected += 1
             if lam > 1e8 or rejected >= 2:
-                status = "stalled"                               # no acceptable step: not convergence
+                # ★2026-11-02: 相対改善が許容未満まで来たあとは、merit が丸めの床に当たって次の手が棄却される。
+                #   以前はこれも stalled にしていて、converged / stalled が最下位ビットの丸めで入れ替わった
+                #   (_intersect_conic の安定化で 1e-15 mm 動いただけで test_lensopt の判定が反転)。
+                #   許容未満の改善を見たあとで下げる手が尽きたなら収束、そうでなければ stalled。
+                if small_count >= 1:
+                    converged = True
+                    status = "converged"
+                else:
+                    status = "stalled"                           # no acceptable step: not convergence
                 break
         if small_count >= 2:
             converged = True

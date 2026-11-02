@@ -79,9 +79,6 @@ FIELD = {"singlet": 2.0, "catalog_doublet": 1.0, "doublet": 1.0, "asphere": 1.0,
          "triplet": 14.0, "asphere_poly": 1.5, "odd_asphere": 1.0, "finite_object": 5.0, "perturbed_surface": 1.0,
          "curved_image": 1.0, "two_mirror": 0.1}
 WL = [RT.WL_F, RT.WL_D, RT.WL_C]
-#: 放物面(k = -1)の軸近くでは CPU の 2 次方程式の解が桁落ちする(test_conic_root_beats_cpu_on_a_paraboloid)。
-#: 差は lens_gpu の誤差でなく CPU の丸めなので、この処方だけ門を実測の桁に合わせる。
-POSITION_TOL = {"two_mirror": 5e-8, "paraboloid": 5e-8}
 
 
 def rel(a, b):
@@ -120,10 +117,9 @@ def test_real_rays_match_trace_rays(name):
         np.testing.assert_array_equal(v, ref["valid"])
         assert v.any()
         got = tr["points"][0, 0].numpy()
-        tol = POSITION_TOL.get(name, 1e-9)
-        assert np.nanmax(np.abs(got[v][:, -1, :] - ref["points"][v][:, -1, :])) < tol
-        assert np.nanmax(np.abs(tr["dirs"][0, 0].numpy()[v] - ref["dirs"][v])) < tol
-        assert np.nanmax(np.abs(tr["opl"][0, 0].numpy()[v] - ref["opl"][v])) < max(tol, 1e-8)
+        assert np.nanmax(np.abs(got[v][:, -1, :] - ref["points"][v][:, -1, :])) < 1e-9
+        assert np.nanmax(np.abs(tr["dirs"][0, 0].numpy()[v] - ref["dirs"][v])) < 1e-11
+        assert np.nanmax(np.abs(tr["opl"][0, 0].numpy()[v] - ref["opl"][v])) < 1e-8
         assert np.isnan(got[~v][:, -1, :]).all()
 
 
@@ -141,8 +137,8 @@ def test_gate_detects_a_wrong_lens():
     assert np.abs(b["y"][0, 0].numpy()[v] - c["image_xy"][v, 1]).max() > 1e-9
 
 
-def test_conic_root_beats_cpu_on_a_paraboloid():
-    """50 桁の 10 進で解いた交点と比べる: lens_gpu は 1e-11 mm 以内、CPU はそれより悪い(隠さず固定する)。"""
+def test_conic_root_is_exact_on_a_paraboloid():
+    """50 桁の 10 進で解いた交点と比べる: lens_gpu も raytrace も 1e-11 mm 以内(修正前の raytrace は 7e-9 ずれた)。"""
     from decimal import Decimal as Dd, getcontext
     getcontext().prec = 50
     s = RT.lens_system([{"R": -400.0, "t": None, "n": 1.0, "k": -1.0, "ap": 40.0, "mirror": True}], stop=0)
@@ -163,7 +159,7 @@ def test_conic_root_beats_cpu_on_a_paraboloid():
                      lens.c[:, None, :1], lens.k[0])
     mine = float(t[0, 0, 0])
     assert abs(Dd(mine) - exact) < Dd("1e-11")
-    assert abs(Dd(cpu_t) - exact) > Dd("1e-10")
+    assert abs(Dd(cpu_t) - exact) < Dd("1e-11")
 
 
 def test_tir_and_vignetting_masks_mean_the_same():
@@ -188,10 +184,9 @@ def test_bundle_and_spot_match(name):
     st = G.spot_stats_batch(b)
     c = RT.spot_stats(s, field=FIELD[name], rings=6, pupil_fill=0.99)
     assert int(st["n_rays"][0, 0]) == c["n_rays"]
-    tol = POSITION_TOL.get(name, 1e-9)
-    assert abs(float(st["rms_radius"][0, 0]) - c["rms_radius"]) < tol
-    assert abs(float(st["geo_radius"][0, 0]) - c["geo_radius"]) < tol
-    assert abs(float(b["chief_y"][0, 0]) - c["chief_y"]) < tol
+    assert abs(float(st["rms_radius"][0, 0]) - c["rms_radius"]) < 1e-9
+    assert abs(float(st["geo_radius"][0, 0]) - c["geo_radius"]) < 1e-9
+    assert abs(float(b["chief_y"][0, 0]) - c["chief_y"]) < 1e-9
 
 
 @pytest.mark.parametrize("name", ["singlet", "catalog_doublet", "triplet", "asphere_poly", "perturbed_surface"])

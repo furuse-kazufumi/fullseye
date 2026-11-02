@@ -918,10 +918,16 @@ def _intersect_conic(P, D, c, k):
     ok = disc >= 0
     sq = np.sqrt(np.where(ok, disc, 0.0))
     lin = np.abs(A) < 1e-14
+    # ★2026-11-02(GPU 第 4 便の照合で発覚): 以前は (-B ∓ √D)/(2A) のまま解いていた。放物面(k = -1)の軸近くでは
+    #   A が 1e-8 まで小さくなり、小さい方の根が桁落ちして交点が 7e-9 mm ずれた(60 桁の計算と比較)。
+    #   q = -(B + sign(B) √D)/2 として、大きい根を q/A、小さい根を C/q で解く。
+    q = -0.5 * (B + np.where(B >= 0.0, sq, -sq))
     with np.errstate(divide="ignore", invalid="ignore"):
         t_lin = -C / B
-        t1 = (-B - sq) / (2.0 * A)
-        t2 = (-B + sq) / (2.0 * A)
+        big = q / A
+        small = np.where(q != 0.0, C / q, 0.0)
+        t1 = np.where(B >= 0.0, big, small)
+        t2 = np.where(B >= 0.0, small, big)
     # ★2026-10-18(lensfile の第 2 実装との照合で発覚): 以前は「|t| の小さい方」を選んでいた。光線が前の面から
     #   出て、球の z 範囲の中から始まる(R < 0 の面が長い空気間隔の後にある望遠型など)と、後ろ側の球面
     #   (t < 0)を拾い、全光線が「けられ」に化けていた(R = −14.5 の面の 26 mm 手前から y = 3 の光線が NaN)。

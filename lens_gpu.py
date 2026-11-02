@@ -512,10 +512,9 @@ def _hit_conic(x, y, z, L, Mm, N, c, k):
     sq = torch.sqrt(torch.where(ok, disc, torch.zeros_like(disc)))
     lin = A.abs() < 1e-14
     t_lin = -C / B
-    # ★raytrace._intersect_conic は (-B ∓ √D)/(2A) のまま解く。放物面の軸近くでは A ~ 1e-8 まで小さくなり、
-    #   小さい方の根が桁落ちして約 7e-9 mm ずれる(60 桁の計算で確認)。ここは安定な形 C/q で解く。
+    # raytrace._intersect_conic と同じ安定な形(小さい根を C/q で解く)
     q = -0.5 * (B + torch.where(B >= 0, sq, -sq))
-    big = q / (2.0 * A) * 2.0
+    big = q / A
     small = torch.where(q != 0, C / q, torch.zeros_like(q))
     t1 = torch.where(B >= 0, big, small)
     t2 = torch.where(B >= 0, small, big)
