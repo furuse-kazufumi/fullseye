@@ -22,6 +22,8 @@ References (public literature — reimplemented, not derived from any product):
 from __future__ import annotations
 
 import numpy as np
+
+import accel_seam
 from scipy import ndimage
 
 __all__ = ["occupancy_grid_2d", "inflate_obstacles", "clearance_map",
@@ -245,6 +247,9 @@ def occupancy_grid(points, bounds, res, *, chunk=262144):
     chunk = int(chunk)
     if chunk <= 0:
         raise ValueError("chunk must be positive")
+    gpu = accel_seam.kernel("occupancy.grid")
+    if gpu is not None:
+        return gpu(P, lo, span, r)
     for start in range(0, len(P), chunk):
         frac = (P[start:start + chunk] - lo) / span
         inb = np.all((frac >= 0.0) & (frac <= 1.0), axis=1)

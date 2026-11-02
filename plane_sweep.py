@@ -27,6 +27,8 @@ GT 検証 = 合成テクスチャ平面(既知深度)を 2 視点でレンダ �
 from __future__ import annotations
 
 import numpy as np
+
+import accel_seam
 from scipy import ndimage
 
 __all__ = ["plane_homography", "warp_by_plane", "cost_volume", "plane_sweep_depth"]
@@ -179,6 +181,19 @@ def plane_sweep_depth(img_ref: np.ndarray, img_src: np.ndarray, K: np.ndarray,
     ``depth_to_points`` で点群化できる。
     """
     depths = np.asarray(depth_candidates, dtype=float).ravel()
+    gpu = accel_seam.kernel("plane_sweep.depth")
+    if gpu is not None:
+        vol = cost_volume(img_ref[:2, :2], img_src[:2, :2], K, R, t, depths, window=1,
+                          normal=normal)          # 入力検証だけを core に通す(本計算は下の核)
+        del vol
+        Hs = [plane_homography(K, R, t, d, normal=normal) for d in depths]
+        idx, some = gpu(np.asarray(img_ref, float), np.asarray(img_src, float), Hs, depths,
+                        int(window), np.inf)
+        depth = depths[idx]
+        if not some.all():
+            depth = depth.astype(float)
+            depth[~some] = np.nan
+        return depth
     vol = cost_volume(img_ref, img_src, K, R, t, depths, window=window, normal=normal)
     idx = np.argmin(vol, axis=0)
     depth = depths[idx]

@@ -209,6 +209,8 @@ from __future__ import annotations
 
 import numpy as np
 
+import accel_seam
+
 __all__ = [
     "projection_angles", "ellipse_phantom", "ellipse_sinogram",
     "radon_transform", "sinogram_design",
@@ -592,6 +594,9 @@ def _project(img: np.ndarray, angles_rad: np.ndarray, n_det: int,
     the phantom's own anti-aliased edge, not the quadrature, which is why the
     default is 1 and not something four times slower for nothing.
     """
+    gpu = accel_seam.kernel("tomography.project")
+    if gpu is not None:
+        return gpu(img, angles_rad, n_det, oversample)
     h, w = img.shape
     cx = (w - 1) / 2.0
     cy = (h - 1) / 2.0
@@ -613,6 +618,9 @@ def _project(img: np.ndarray, angles_rad: np.ndarray, n_det: int,
 def _backproject(sino: np.ndarray, angles_rad: np.ndarray, size: int) -> np.ndarray:
     """Un-normalised back-projection: smear every projection back along its rays
     and sum. The caller supplies the ``d(theta)`` weight."""
+    gpu = accel_seam.kernel("tomography.backproject")
+    if gpu is not None:
+        return gpu(sino, angles_rad, size)
     n_det = sino.shape[1]
     c = (size - 1) / 2.0
     grid = np.arange(size, dtype=np.float64) - c
@@ -762,6 +770,9 @@ def _filter_projections(sino: np.ndarray, kind: str, cutoff: float) -> np.ndarra
     while n_pad < 2 * n_det:
         n_pad <<= 1
     h = _ramp_filter(n_pad, kind, cutoff)
+    gpu = accel_seam.kernel("tomography.filter")
+    if gpu is not None:
+        return gpu(sino, h, n_pad)
     padded = np.zeros((sino.shape[0], n_pad), dtype=np.float64)
     padded[:, :n_det] = sino
     out = np.fft.irfft(np.fft.rfft(padded, axis=1) * h[None, :], n=n_pad, axis=1)
@@ -1439,6 +1450,9 @@ def sart_reconstruct(sinogram, angles_deg=None, size=None, n_iter=10,
     ones_img = np.ones((sz, sz), dtype=np.float64)
     ones_sino = np.ones((1, n_det), dtype=np.float64)
     eps = 1e-9
+    gpu = accel_seam.kernel("tomography.sart")
+    if gpu is not None:
+        return gpu(x, sino, rad, sz, n_det, n_it, lam, bool(nonnegative), eps)
     project_geometry = [_project_geometry((sz, sz), a, n_det) for a in rad]
     backproject_geometry = [_backproject_geometry(a, sz, n_det) for a in rad]
     row_sums = np.stack([_project_from_geometry(ones_img, g)
