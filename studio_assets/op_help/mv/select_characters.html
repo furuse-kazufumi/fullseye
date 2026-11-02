@@ -1,0 +1,31 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">select_characters — MV <code style="color:#22d3bf">text</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">labels2d</code> → <code style="color:#22d3bf">labels2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.select_characters(labels, min_height_ratio=0.5, max_height_ratio=1.5, max_width_ratio=2.0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import mvtext; mvtext.select_characters(labels, min_height_ratio=0.5, max_height_ratio=1.5, max_width_ratio=2.0)</code>、台帳から引くなら <code style="color:#22d3bf">opsmv.get(&quot;select_characters&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>HALCON 相当</b>: <code style="color:#22d3bf">select_characters</code>(意味・パラメータは HALCON リファレンスが参考になる)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>字のラベル画像から、高さと幅が中央値から外れた塊を落として左から振り直す。</p>
+<p>高さと幅の中央値に対する比で判定する。塊が 1 つも無いと全 0 を返す(理由: 字が無い)。空の入力(<code style="color:#22d3bf">labels</code> が 0 要素)は ValueError。</p>
+<p>Args:</p>
+<p>labels: <code style="color:#22d3bf">segment_characters</code> のラベル画像。</p>
+<p>min_height_ratio: 高さの下限(中央値に対する比)。</p>
+<p>max_height_ratio: 高さの上限(中央値に対する比)。</p>
+<p>max_width_ratio: 幅の上限(中央値に対する比)。</p>
+<p>Returns:</p>
+<p><code style="color:#22d3bf">labels</code> と同じ形の整数ラベル画像。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemv:machine_vision_classics">machine_vision_classics ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:machine_vision_tour">machine_vision_tour</a> — <code style="color:#22d3bf">py -3.11 examples/machine_vision_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">labels2d</code> を入力に取れる)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">text</code>)</h3>
+<p><a style="color:#22d3bf" href="opmv:text_line_orientation">text_line_orientation</a> · <a style="color:#22d3bf" href="opmv:text_line_slant">text_line_slant</a> · <a style="color:#22d3bf" href="opmv:segment_characters">segment_characters</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: mvtext.py — MV operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -235,12 +235,6 @@ def harmonic_interpolation(image, region):
     return im
 
 
-def map_image(image, lut_map):
-    """LUT (map) を画素に適用(map_image)。map は長さ N の 1D 配列。"""
-    im = _img(image); lut = _img(lut_map); N = len(lut)
-    idx = np.clip((im * (N - 1)).round().astype(int), 0, N - 1)
-    return lut[idx]
-
 
 def vector_field_length(vfield_row, vfield_col):
     """ベクトル場の各点の大きさ(vector_field_length)。"""

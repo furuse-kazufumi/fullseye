@@ -4,6 +4,7 @@ dim: segmentation
 category: grow
 in: image2d × mask
 out: mask
+halcon: expand_gray
 gpu: なし
 examples: [halcon_segmentation_tour]
 author: Kazufumi Furuse
@@ -15,6 +16,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d × mask` → `mask`
 - **呼び出し**: `import fullseye as fs; fs.ledger.expand_gray(image, seed_region, tol=0.05)` (実装を直接呼ぶなら `import segmentation; segmentation.expand_gray(image, seed_region, tol=0.05)`、台帳から引くなら `opssegmentation.get("expand_gray")`)
+- **HALCON 相当**: `expand_gray`(意味・パラメータは HALCON リファレンスが参考になる)
 - **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方

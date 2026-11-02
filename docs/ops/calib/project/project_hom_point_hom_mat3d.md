@@ -4,6 +4,7 @@ dim: calib
 category: project
 in: matrix
 out: keypoints
+halcon: project_hom_point_hom_mat3d
 gpu: なし
 examples: []
 author: Kazufumi Furuse
@@ -15,6 +16,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `matrix` → `keypoints`
 - **呼び出し**: `import fullseye as fs; fs.ledger.project_hom_point_hom_mat3d(points_hom, hom_mat3d)` (実装を直接呼ぶなら `import calib; calib.project_hom_point_hom_mat3d(points_hom, hom_mat3d)`、台帳から引くなら `opscalib.get("project_hom_point_hom_mat3d")`)
+- **HALCON 相当**: `project_hom_point_hom_mat3d`(意味・パラメータは HALCON リファレンスが参考になる)
 - **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方

@@ -733,7 +733,7 @@ def _registry_adapters():
                  "opsimgforensics", "opsastrostack", "opsdem", "opspiv",
                  "opsprofile", "opsshapestat", "opsshape2d", "opsroughness",
                  "opsmeasure1d", "opsblob", "opsflyvision", "opsspc",
-                 "opsgraph", "opstext", "opsvx", "opsdrive", "opsresidue", "opsmultivar", "opssimcal", "opsconverge", "opscodematch", "opsaoi", "opscalib", "opsgenerative",
+                 "opsgraph", "opstext", "opsvx", "opsdrive", "opsresidue", "opsmultivar", "opssimcal", "opsconverge", "opscodematch", "opsaoi", "opscalib", "opsmv", "opsgenerative",
                  "opssegmentation"):
         try:
             d.update(getattr(__import__(_mod), "RESULT_ADAPTERS", {}))
@@ -963,6 +963,12 @@ def catalog():
     for n, m in opscalib.OPSCALIB.items():
         if m["func"] is not None:
             ops.append((n, "calib", list(m["in"]), m["out"], m["func"]))
+    # 工業用ビジョンの定番の演算(opsmv 台帳、2026-11-02)。**新語なし**: 背景モデルと分類器は
+    # table(鍵つき dict)で、族の外に消費者がいない。領域は bool の mask で返す。
+    import opsmv
+    for n, m in opsmv.OPSMV.items():
+        if m["func"] is not None:
+            ops.append((n, "mv", list(m["in"]), m["out"], m["func"]))
     # 絵を作る側(opsgenerative 台帳)。**新しい型語彙を 1 つも作らない**判断:
     # 30 op の返りは既存の rgb((H,W,3))/ rgbvideo((T,H,W,3))/ table に収まる。
     # 「錯視画像」という型を作らないのが要点で、作った絵に既存の 2,147 op が

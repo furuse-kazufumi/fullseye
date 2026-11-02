@@ -4,6 +4,7 @@ dim: 3d
 category: structured_light
 in: images
 out: depth
+halcon: depth_from_focus
 gpu: なし
 examples: [ftp_and_focus_depth]
 author: Kazufumi Furuse
@@ -16,6 +17,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **データ種**: `images` → `depth`
 - **呼び出し**: `import fullseye as fs; fs.ledger.depth_from_focus(images, focus_positions=None)` (実装を直接呼ぶなら `import ops3d; ops3d.depth_from_focus(images, focus_positions=None)`、台帳から引くなら `ops3d.get("depth_from_focus")`)
 - **台帳経由の戻り値**: `fullseye.ledger.depth_from_focus(...)` は**宣言 out 型 `depth` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.depth_from_focus.raw(...)`、または `ops3d.depth_from_focus` を直接呼ぶ。
+- **HALCON 相当**: `depth_from_focus`(意味・パラメータは HALCON リファレンスが参考になる)
 - **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方

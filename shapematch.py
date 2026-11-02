@@ -702,8 +702,34 @@ def find_shape_models(model, image, min_score=0.5, step=2, max_matches=10,
 
 
 def find_ncc_models(model, image, min_score=0.5, max_matches=10, min_distance=5):
-    """NCCモデルの複数検出。``min_distance``を共通検索核へ渡す旧入口。"""
+    """1 つまたは複数の NCC モデルを 1 枚の画像から探す(find_ncc_models)。
+
+    ``model`` がモデルのリストなら全モデルを探し、各一致に ``model``(リストの添字)を付けて
+    スコアの順に並べ、``min_distance`` より近い一致は強い方だけ残す。一致が無いと ``matches`` が
+    空で ``num`` が 0 を返す(理由: 見つからないのは正常な結果)。
+    空の入力(``model`` のリストが 0 要素)は ValueError。
+
+    ``model`` が 1 つのときは ``min_distance`` を共通検索核へ渡す旧入口のまま。
+    """
     from matching import find_ncc_model
+    if isinstance(model, (list, tuple)):
+        if len(model) == 0:
+            raise ValueError("find_ncc_models: model list is empty — pass at least one model")
+        found = []
+        for index, single in enumerate(model):
+            result = find_ncc_model(single, image, min_score, num_matches=max_matches,
+                                    min_distance=min_distance)
+            if result["found"]:
+                found.extend(dict(m, model=index) for m in result["matches"])
+        found.sort(key=lambda m: -float(m["score"]))
+        kept = []
+        for m in found:
+            if all((m["row"] - k["row"]) ** 2 + (m["col"] - k["col"]) ** 2 >= min_distance ** 2
+                   for k in kept):
+                kept.append(m)
+            if len(kept) >= int(max_matches):
+                break
+        return {"matches": kept, "num": len(kept)}
     result = find_ncc_model(model, image, min_score, num_matches=max_matches,
                             min_distance=min_distance)
     matches = result["matches"] if result["found"] else []

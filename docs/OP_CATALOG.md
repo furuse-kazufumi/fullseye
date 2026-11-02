@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(450 例)
+### 2-D 画像/信号/幾何(451 例)
 
 **workflow**
 - **MCPで物理量・登録見本・検証済みpipeline案を明示して使う** — 外部資産なしの合成画像で、名前つき物理量による平滑化、明示的な登録見本ハンドルによる位置決め、候補が一意なときだけ返す検証済みpipeline案を実行し、結果を自己検査する。 `py -3.11 examples/mcp_usability.py`
@@ -302,6 +302,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 **calibration**
 - **本来まっすぐな線群から歪み係数を推定する(plumb-line 法)** — undistort_image の上流 —— 係数を『測る』側。まっすぐな線を歪ませた点列だけからestimate_distortion が k1,k2(必要なら p1,p2)を回収し、推定係数をそのままundistort_image に渡すと弓なりが直る。チェッカーボードの対応点は不要、線がまっすぐと分かればよい(Discorpy 流)。中心=主点は固定。雑音では素直に劣化する(過信しない章あり)。来歴=Brown 1971 / Devernay-Faugeras 2001 / Discorpy。 `py -3.11 examples/estimate_lens_distortion.py`
 - **カメラ校正の再投影誤差は何を保証しないか** — 内部パラメータと姿勢を自分で決めて推定し返す。板の傾きだけを変えると**再投影 RMS は比 1.00 倍のまま fx の誤差が 281 倍**(0.026 % 対 7.33 %)。区別できるのは sigma_fx(129 倍)。傾き 0 度の退化配置は閉形式が拒否するが非線形最適化は正常な再投影誤差とともに 25 % 外れた答えを返す。 `py -3.11 examples/poc_camera_calibration.py`
+- **工業用ビジョンの定番 47 op を答えの分かる入力で 1 周する** — ステレオの視差と距離、平面の正面図、除算モデルの歪み、複数 NCC、円の像からの 3-D 姿勢、Golay の組と肥厚、SKIZ、カルマンの定常ゲイン、画素ごとの背景推定、GMM と k-NN、語の照合、文字行の傾きを、真値を決めた合成データに掛ける。各段を閉形式か独立の計算と比べ、合わなければ exit 1。族をまたいで視差 → 点群、校正の写像 → map_image、点列 → gen_nurbs_interp → nurbs_curve とつなぐ。来歴は各 op の docstring。 `py -3.11 examples/machine_vision_tour.py`
 - **平面ターゲットの多視点から内部行列 K を推定する(Zhang 法)** — fs.camera_calibration を facade から呼ぶ最小例。傾けた 6 視点で K を厳密回収し(fx,fy,cx,cy 誤差 < 1)、orientation_rank_ratio で配置の良し悪しを見る。板を傾けない正面平行は退化して fail-closed、視点 3 未満も拒否。回収した K はestimate_distortion / undistort_image / PnP に渡せる。来歴=Zhang 2000。 `py -3.11 examples/camera_intrinsics_calibration.py`
 - **ハエの視葉だけで進路を立て直す(ラミナから操舵まで、学習なしで)** — 複眼と閉じた式の回路しか積まない機体が、外乱のなかで進路を保つ。ラミナ(順応 + 帯域通過)→ ON/OFF → T4/T5 の 6 方向 → 局所フロー → 整合フィルタへの線形当てはめ → 6 ニューロンの操舵回路(コンダクタンス)。三腕モデルは論文の 2 柱刺激で 24.96 / 0.820 を返し、「増強と抑制は相補的」は比の積の恒等式として機械精度で成立。縞ドラムでは相関 0.976、自然な 1/f では 0.897 で、必要な較正利得は景色の種類で 3.0 倍ちがう。視野 80° の 1 つの眼は 12 枚中 4 枚で回転の符号を誤るが、250° に束ねると 0 枚。閉ループの進路の流れは 51° → 33°(真値のジャイロは 23°)。 `py -3.11 examples/poc_fly_optomotor_steering.py`
 - **公共カメラはどこを向いているか・実写編(807 局の道路カメラで太陽を探し、日没 1 本から向きを決めて道路で検算する)** — Fintraffic 天候カメラ(CC BY 4.0、鍵なし)807 局 × 24 h の実写。見た目の門は文字・標識・白い車を太陽と言い(24/24 誤検出)、太陽は切れたブルーム、空は上 1/3 —— そこで足した 2 op(sun_bloom_fit = 切れていない縁に円を当てる / camera_orientation_from_sun_candidates = 時刻どおりに動く 1 本を RANSAC + 道路カメラの事前知識で選び f も探索)で、追えた日没 1 本(E18 Hamina、メタデータの向き UNKNOWN)から yaw 267.9°。同じ姿勢で車線の消失点を世界方位にすると OSM の路線方位と 2.5° 差。1 枚抜きで yaw 1.3°・roll 10°・f 2 %(弱い自由度は隠さない)。生画像は commit せず集計だけ。 `py -3.11 examples/poc_public_camera_heading_real.py`
@@ -797,9 +798,9 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Operators by family(族 → カテゴリ、全 op)
 
-_計 3629 ops / 56 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
+_計 3676 ops / 57 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
 
-族の一覧: **2d** 959 · **3d** 376 · **fit** 3 · **math** 114 · **optics** 483 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 41 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 717 · **tomography** 32 · **volcolor** 11 · **reprconv** 42 · **fileio** 14 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 3 · **calib** 21 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 16 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
+族の一覧: **2d** 959 · **3d** 376 · **fit** 3 · **math** 114 · **optics** 483 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 41 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 717 · **tomography** 32 · **volcolor** 11 · **reprconv** 42 · **fileio** 14 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 3 · **calib** 21 · **mv** 47 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 16 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
 
 ### 2d(959 ops / 49 categories)
 
@@ -2009,7 +2010,7 @@ _計 3629 ops / 56 families。並びとノートの在り処は `docs/ops/INDEX.
 - `angle_between_planes` `primitive → measurement` GPU: なし — 2 平面の二面角(法線 n1,n2、度)。 · 例: `geometry_metrology`
 - `angle_line_plane` `primitive → measurement` GPU: なし — 直線(方向 d)と平面(法線 n)のなす角(度)。 · 例: `geometry_metrology`
 - `distance_line_line` `primitive → measurement` GPU: なし — 2 直線間距離(ねじれの位置=skew も可)。平行なら点-線距離に退避。 · 例: `geometry_metrology`
-- `distance_point_line` `points × primitive → measurement` GPU: なし — 点から直線(通過点と方向)までの垂直距離を返す(2-D / 3-D 共通)。 · 例: `geometry_metrology`
+- `distance_point_line` (halcon: `distance_point_line`) `points × primitive → measurement` GPU: なし — 点から直線(通過点と方向)までの垂直距離を返す(2-D / 3-D 共通)。 · 例: `geometry_metrology`
 - `distance_point_plane` `points × primitive → measurement` GPU: なし — 点から平面までの距離を返す(符号なし、入力座標と同じ単位)。 · 例: `geometry_metrology`
 - `distance_segment_segment` `primitive → measurement` GPU: なし — **有限線分**どうしの最短距離と、その最近接点の対。→ ``(distance, cp, cq)``。 · 例: `geometry_metrology`
 - `fit_box3` `points → primitive` GPU: なし — Oriented box fit by PCA (fast, noise-tolerant; the same construction as ``pcseg.obb``). · 例: `oriented_bounding_box`
@@ -2138,7 +2139,7 @@ _計 3629 ops / 56 families。並びとノートの在り処は `docs/ops/INDEX.
 
 #### 3d / photometric(4)
 - `integrate_normals` `normalmap → image2d` GPU: なし — 法線場 → 高さ場 z を Frankot-Chellappa 積分。→ z HxW(定数分の自由度あり・平均0基準)。 · 例: `photometric_stereo`
-- `photometric_stereo` `images → normalmap` GPU: なし — Lambertian フォトメトリックステレオ: 既知光源方向の N 枚から法線とアルベドを復元。→ (normals HxWx3, albedo HxW)。 · 例: `photometric_stereo`
+- `photometric_stereo` (halcon: `photometric_stereo`) `images → normalmap` GPU: なし — Lambertian フォトメトリックステレオ: 既知光源方向の N 枚から法線とアルベドを復元。→ (normals HxWx3, albedo HxW)。 · 例: `photometric_stereo`
 - `render_lambertian` `normalmap → image2d` GPU: なし — 法線 + アルベド + 光源方向 → Lambertian 画像(検査サンプル生成 / GT 検証 / 逆レンダの順方向)。→ HxW。 · 例: `photometric_stereo`, `render_shade`
 - `surface_normals` `image2d → normalmap` GPU: なし — 高さ場 z(HxW)→ 単位法線 (H,W,3)。n ∝ (-dz/dx, -dz/dy, 1)。深度→法線の順変換。 · 例: `photometric_stereo`
 
@@ -2309,7 +2310,7 @@ _計 3629 ops / 56 families。並びとノートの在り処は `docs/ops/INDEX.
 #### 3d / structured_light(9)
 - `absolute_phase` `image2d × image2d → image2d` GPU: なし — 巻き込み位相を、粗いが絶対的な位相推定で「次数確定」して絶対位相にする。 · 例: `structured_light_scan`
 - `decode_fringe` `images → depth` GPU: なし — 位相シフト画像列を一括復号: wrapped → unwrap →(参照減算で)高さ。 · 例: `structured_light`
-- `depth_from_focus` `images → depth` GPU: なし — 焦点を変えた画像から高さ・深さを画素ごとの最良合焦位置として推定する。 · 例: `ftp_and_focus_depth`
+- `depth_from_focus` (halcon: `depth_from_focus`) `images → depth` GPU: なし — 焦点を変えた画像から高さ・深さを画素ごとの最良合焦位置として推定する。 · 例: `ftp_and_focus_depth`
 - `fringe_ftp_phase` `image2d → depth` GPU: なし — 縞 1 枚から高さ・位相を Takeda の Fourier transform profilometry で復元する。 · 例: `ftp_and_focus_depth`
 - `graycode_decode` `images → image2d` GPU: なし — Gray code ビット画像列 → 整数フリンジ次数マップ(絶対次数)。 · 例: `graycode_structured_light`, `structured_light_scan`
 - `synthesize_fringes` `image2d → images` GPU: なし — 既知の height map から N-step 位相シフト縞画像列を合成する(テスト/サンプル生成用)。 · 例: `ftp_and_focus_depth`, `structured_light`
@@ -2451,7 +2452,7 @@ _計 3629 ops / 56 families。並びとノートの在り処は `docs/ops/INDEX.
 - `mesh_euler_characteristic` `mesh → table` GPU: なし — 三角形メッシュの V − E + F と、閉じた向き付け可能な曲面なら種数 g = (2 − χ)/2。 · 例: `geometry_tour`
 - `mesh_torus` `入力なし → mesh` GPU: なし — トーラス(ドーナツ)の閉じた三角形メッシュ (vertices, faces)。大きい半径 R・管の半径 r(R > r > 0)。 · 例: `geometry_tour`
 - `nurbs_circle` `入力なし → table` GPU: なし — 円を厳密に表す 2 次 NURBS(Piegl & Tiller 例 7.1: 正方形の 4 隅と 4 辺の中点、隅の重みは 1/√2)。 · 例: `geometry_tour`
-- `nurbs_curve` `matrix → table` GPU: なし — NURBS 曲線を評価する(重みつき・制御点は一般に通らない)。 · 例: `geometry_tour`
+- `nurbs_curve` (halcon: `gen_contour_nurbs_xld`) `matrix → table` GPU: なし — NURBS 曲線を評価する(重みつき・制御点は一般に通らない)。 · 例: `geometry_tour`, `machine_vision_tour`
 - `nurbs_revolve` `matrix → table` GPU: なし — 平面の NURBS 曲線 (r, z) を z 軸のまわりに 1 周回した回転面(Piegl & Tiller §8.5)。 · 例: `geometry_tour`
 - `nurbs_surface` `入力なし → table` GPU: なし — NURBS 曲面(テンソル積)を評価する。 · 例: `gallery_math_numerics_filters`
 
@@ -3464,7 +3465,7 @@ _計 3629 ops / 56 families。並びとノートの在り処は `docs/ops/INDEX.
 - `varmodel_alignment` `video → table` GPU: なし — Translation offset of every good sample against the typical position of the stack, and the margin to the tolerance (``table``). · 例: `poc_good_sample_variation_model`
 - `varmodel_band_k` `入力なし → table` GPU: なし — Half-width ``k`` (in spread units) of the tolerance band for a declared two-sided per-pixel false-alarm rate (``table``).
 - `varmodel_calibrate` `table × video → table` GPU: なし — Re-derive the band half-width ``k`` from held-out good images, for data that break the normal assumption (``table``). · 例: `poc_good_sample_variation_model`
-- `varmodel_fit` `video → table` GPU: なし — Learn a per-pixel variation model (centre, spread, band half-width k) from a stack of good samples (``table``). · 例: `poc_good_sample_variation_model`, `poc_patch_anomaly`
+- `varmodel_fit` (halcon: `train_variation_model`) `video → table` GPU: なし — Learn a per-pixel variation model (centre, spread, band half-width k) from a stack of good samples (``table``). · 例: `poc_good_sample_variation_model`, `poc_patch_anomaly`
 - `varmodel_score` `image2d × table → table` GPU: なし — Score one image against a ``varmodel_fit`` model: z map in sigmas, out-of-band map and a per-region explanation (``table``). · 例: `poc_good_sample_variation_model`, `poc_patch_anomaly`
 
 ### graph(20 ops / 9 categories)
@@ -4786,35 +4787,104 @@ _計 3629 ops / 56 families。並びとノートの在り処は `docs/ops/INDEX.
 ### calib(21 ops / 5 categories)
 
 #### calib / calibrate(3)
-- `camera_calibration` `keypoints → table` GPU: なし — Zhang 法で平面ターゲット多視点から内部行列 K を推定(camera_calibration)。 · 例: `camera_intrinsics_calibration`, `lens_calibration_loop_demo`, `poc_camera_calibration`
-- `find_marks_and_pose` `image2d → table` GPU: なし — マーク検出 + 校正板の姿勢推定(平面ホモグラフィ → pose)(find_marks_and_pose)。
-- `hand_eye_calibration` `入力なし → matrix` GPU: なし — 一連の運動対から AX=XB を解き X(4x4)を推定(hand_eye_calibration)。
+- `camera_calibration` (halcon: `camera_calibration`) `keypoints → table` GPU: なし — Zhang 法で平面ターゲット多視点から内部行列 K を推定(camera_calibration)。 · 例: `camera_intrinsics_calibration`, `lens_calibration_loop_demo`, `poc_camera_calibration`
+- `find_marks_and_pose` (halcon: `find_marks_and_pose`) `image2d → table` GPU: なし — マーク検出 + 校正板の姿勢推定(平面ホモグラフィ → pose)(find_marks_and_pose)。
+- `hand_eye_calibration` (halcon: `hand_eye_calibration`) `入力なし → matrix` GPU: なし — 一連の運動対から AX=XB を解き X(4x4)を推定(hand_eye_calibration)。
 
 #### calib / fit(4)
-- `hom_vector_to_proj_hom_mat2d` `keypoints → matrix` GPU: なし — 4 点以上の対応から射影変換(homography, DLT)3x3 を求める(hom_vector_to_proj_hom_mat2d)。 · 例: `poc_panorama_drift`, `poc_wound_area_tracking`
-- `vector_angle_to_rigid` `入力なし → matrix` GPU: なし — 1 組の (点, 角度) から 2D 剛体変換を求める(vector_angle_to_rigid)。
-- `vector_to_rigid` `keypoints → matrix` GPU: なし — 対応点から 2D 剛体変換(回転+並進、Kabsch)を求める(vector_to_rigid)。
-- `vector_to_similarity` `keypoints → matrix` GPU: なし — 対応点から 2D 相似変換(回転+スケール+並進、Umeyama)を求める(vector_to_similarity)。 · 例: `poc_document_scan`, `poc_star_astrometry`
+- `hom_vector_to_proj_hom_mat2d` (halcon: `hom_vector_to_proj_hom_mat2d`) `keypoints → matrix` GPU: なし — 4 点以上の対応から射影変換(homography, DLT)3x3 を求める(hom_vector_to_proj_hom_mat2d)。 · 例: `poc_panorama_drift`, `poc_wound_area_tracking`
+- `vector_angle_to_rigid` (halcon: `vector_angle_to_rigid`) `入力なし → matrix` GPU: なし — 1 組の (点, 角度) から 2D 剛体変換を求める(vector_angle_to_rigid)。
+- `vector_to_rigid` (halcon: `vector_to_rigid`) `keypoints → matrix` GPU: なし — 対応点から 2D 剛体変換(回転+並進、Kabsch)を求める(vector_to_rigid)。
+- `vector_to_similarity` (halcon: `vector_to_similarity`) `keypoints → matrix` GPU: なし — 対応点から 2D 相似変換(回転+スケール+並進、Umeyama)を求める(vector_to_similarity)。 · 例: `poc_document_scan`, `poc_star_astrometry`
 
 #### calib / plane(5)
-- `contour_to_world_plane_xld` `table → table` GPU: なし — XLD 輪郭(dict {cs:[Nx2]})を world 平面へ写す(contour_to_world_plane_xld)。 · 例: `poc_wound_area_tracking`
-- `gen_image_to_world_plane_map` `入力なし → table` GPU: なし — 画像→ワールド平面(z=0)の写像テーブルを生成(gen_image_to_world_plane_map)。
-- `gen_radial_distortion_map` `入力なし → table` GPU: なし — 半径歪みの逆マップ(row_map, col_map)を生成(gen_radial_distortion_map)。
-- `image_points_to_world_plane` `table → keypoints` GPU: なし — カメラ内部/外部から画素を world 平面 z=0 へ逆投影(image_points_to_world_plane)。
+- `contour_to_world_plane_xld` (halcon: `contour_to_world_plane_xld`) `table → table` GPU: なし — XLD 輪郭(dict {cs:[Nx2]})を world 平面へ写す(contour_to_world_plane_xld)。 · 例: `poc_wound_area_tracking`
+- `gen_image_to_world_plane_map` (halcon: `gen_image_to_world_plane_map`) `入力なし → table` GPU: なし — 画像→ワールド平面(z=0)の写像テーブルを生成(gen_image_to_world_plane_map)。
+- `gen_radial_distortion_map` (halcon: `gen_radial_distortion_map`) `入力なし → table` GPU: なし — 半径歪みの逆マップ(row_map, col_map)を生成(gen_radial_distortion_map)。
+- `image_points_to_world_plane` (halcon: `image_points_to_world_plane`) `table → keypoints` GPU: なし — カメラ内部/外部から画素を world 平面 z=0 へ逆投影(image_points_to_world_plane)。
 - `image_to_world_plane` `keypoints → keypoints` GPU: なし — 画像点を平面ホモグラフィで world 平面(z=0)へ写す(image_to_world_plane)。 · 例: `poc_document_scan`, `poc_matrix_code_reading`, `poc_wound_area_tracking`
 
 #### calib / project(3)
-- `project_3d_point` `points → keypoints` GPU: なし — 3D 点をカメラへ透視投影し画素 (row, col) を返す(project_3d_point)。
-- `project_hom_point_hom_mat3d` `matrix → keypoints` GPU: なし — 同次 3D 点 (4,) を 3x4/4x4 射影行列で投影し画素 (row, col) を返す(project_hom_point_hom_mat3d)。
-- `project_point_hom_mat3d` `points → keypoints` GPU: なし — 4x4 or 3x4 射影行列 P=K[R|t] で 3D 点を投影し画素 (row, col) を返す(project_point_hom_mat3d)。
+- `project_3d_point` (halcon: `project_3d_point`) `points → keypoints` GPU: なし — 3D 点をカメラへ透視投影し画素 (row, col) を返す(project_3d_point)。
+- `project_hom_point_hom_mat3d` (halcon: `project_hom_point_hom_mat3d`) `matrix → keypoints` GPU: なし — 同次 3D 点 (4,) を 3x4/4x4 射影行列で投影し画素 (row, col) を返す(project_hom_point_hom_mat3d)。
+- `project_point_hom_mat3d` (halcon: `project_point_hom_mat3d`) `points → keypoints` GPU: なし — 4x4 or 3x4 射影行列 P=K[R|t] で 3D 点を投影し画素 (row, col) を返す(project_point_hom_mat3d)。
 
 #### calib / target(6)
-- `caltab_points` `入力なし → keypoints` GPU: なし — 校正板の理想マーク座標(ワールド, mm; 原点=最初のマーク)を (y, x) で返す(caltab_points)。
-- `create_caltab` `入力なし → table` GPU: なし — 校正板の記述(理想点、板中心が原点)を作る(create_caltab)。
-- `disp_caltab` `table → image2d` GPU: なし — 校正板画像を返す(表示用)(disp_caltab)。
-- `find_caltab` `image2d → keypoints` GPU: なし — 画像から校正板の円マーク中心を検出(連結成分の重心)(find_caltab)。
-- `gen_caltab` `入力なし → table` GPU: なし — 円マーク格子の校正板画像を生成(gen_caltab)。
-- `sim_caltab` `table → table` GPU: なし — 校正板を指定カメラ姿勢で投影した画像をシミュレート(sim_caltab)。
+- `caltab_points` (halcon: `caltab_points`) `入力なし → keypoints` GPU: なし — 校正板の理想マーク座標(ワールド, mm; 原点=最初のマーク)を (y, x) で返す(caltab_points)。
+- `create_caltab` (halcon: `create_caltab`) `入力なし → table` GPU: なし — 校正板の記述(理想点、板中心が原点)を作る(create_caltab)。
+- `disp_caltab` (halcon: `disp_caltab`) `table → image2d` GPU: なし — 校正板画像を返す(表示用)(disp_caltab)。
+- `find_caltab` (halcon: `find_caltab`) `image2d → keypoints` GPU: なし — 画像から校正板の円マーク中心を検出(連結成分の重心)(find_caltab)。
+- `gen_caltab` (halcon: `gen_caltab`) `入力なし → table` GPU: なし — 円マーク格子の校正板画像を生成(gen_caltab)。
+- `sim_caltab` (halcon: `sim_caltab`) `table → table` GPU: なし — 校正板を指定カメラ姿勢で投影した画像をシミュレート(sim_caltab)。
+
+### mv(47 ops / 10 categories)
+
+#### mv / classify(12)
+- `classify_class_gmm` (halcon: `classify_class_gmm`) `table × matrix → table` GPU: なし — 混合正規分布のモデルで事後確率が最大のクラスを行ごとに返す。 · 例: `machine_vision_tour`
+- `classify_class_knn` (halcon: `classify_class_knn`) `table × matrix → table` GPU: なし — k 近傍の多数決でクラスを行ごとに返す(同票は距離の和が小さいクラス)。 · 例: `machine_vision_tour`
+- `classify_class_mlp` (halcon: `classify_class_mlp`) `table × matrix → table` GPU: なし — ``train_class_mlp`` の多層パーセプトロンで特徴の行を分類する。 · 例: `machine_vision_tour`
+- `classify_class_svm` (halcon: `classify_class_svm`) `table × matrix → table` GPU: なし — ``train_class_svm`` の線形 SVM で特徴の行を分類する(one-vs-rest の最大マージン)。 · 例: `machine_vision_tour`
+- `create_lexicon` (halcon: `create_lexicon`) `入力なし → table` GPU: なし — 照合に使う語の一覧を作る(重複を除き、順を固定する)。 · 例: `machine_vision_tour`
+- `evaluate_class_gmm` (halcon: `evaluate_class_gmm`) `table × matrix → table` GPU: なし — 各クラスの事後確率と、モデル全体の対数密度を行ごとに返す。 · 例: `machine_vision_tour`
+- `lookup_lexicon` (halcon: `lookup_lexicon`) `table → scalar` GPU: なし — 語が一覧にあるかを完全一致で調べ、あれば 1.0、無ければ 0.0 を返す。 · 例: `machine_vision_tour`
+- `suggest_lexicon` (halcon: `suggest_lexicon`) `table → table` GPU: なし — 編集距離が最小の語と、その距離を返す(同距離は一覧の順で最初の語)。 · 例: `machine_vision_tour`
+- `train_class_gmm` (halcon: `train_class_gmm`) `matrix → table` GPU: なし — クラスごとに混合正規分布を EM で学習する。 · 例: `machine_vision_tour`
+- `train_class_knn` (halcon: `train_class_knn`) `matrix → table` GPU: なし — k-NN の分類器を作る(特徴を標準化して保持する)。 · 例: `machine_vision_tour`
+- `train_class_mlp` (halcon: `train_class_mlp`) `matrix → table` GPU: なし — MLP 分類器を学習(train_class_mlp)。 · 例: `machine_vision_tour`
+- `train_class_svm` (halcon: `train_class_svm`) `matrix → table` GPU: なし — 線形 SVM(hinge 損失, one-vs-rest)を学習(train_class_svm)。 · 例: `machine_vision_tour`
+
+#### mv / curve(1)
+- `gen_nurbs_interp` (halcon: `gen_nurbs_interp`) `keypoints → table` GPU: なし — 点列を全部通る非有理 B スプラインの制御点を求める(大域補間)。 · 例: `machine_vision_tour`
+
+#### mv / detect(3)
+- `create_ncc_model` (halcon: `create_ncc_model`) `image2d → table` GPU: なし — NCC モデル(=正規化テンプレート)を準備(create_ncc_model)。 · 例: `machine_vision_tour`
+- `find_ncc_models` (halcon: `find_ncc_models`) `table × image2d → table` GPU: なし — 1 つまたは複数の NCC モデルを 1 枚の画像から探す(find_ncc_models)。 · 例: `machine_vision_tour`
+- `points_lepetit` (halcon: `points_lepetit`) `image2d → keypoints` GPU: なし — 円周上の向かい合う 2 点の比較で注目点を検出する(Lepetit と Fua の点検出)。 · 例: `machine_vision_tour`
+
+#### mv / gray(5)
+- `area_center_gray` (halcon: `area_center_gray`) `image2d → table` GPU: なし — 灰色値を重みとした質量と重心 ``(row, col)`` を返す(area_center_gray)。 · 例: `machine_vision_tour`
+- `atan2_image` (halcon: `atan2_image`) `image2d × image2d → image2d` GPU: なし — 2 枚の画像の画素ごとの ``atan2(image1, image2)`` をラジアンで返す(atan2_image)。 · 例: `machine_vision_tour`
+- `get_grayval_contour_xld` (halcon: `get_grayval_contour_xld`) `image2d × keypoints → signal` GPU: なし — 輪郭の点列に沿って灰色値を補間で読み、1 本の信号にする。 · 例: `machine_vision_tour`
+- `gray_histo` (halcon: `gray_histo`) `image2d → table` GPU: なし — 灰色値のヒストグラムを絶対度数と相対度数で返す(gray_histo)。 · 例: `machine_vision_tour`
+- `gray_projections` (halcon: `gray_projections`) `image2d → table` GPU: なし — 灰色値の行ごとと列ごとの平均を返す(gray_projections)。 · 例: `machine_vision_tour`
+
+#### mv / morphology(9)
+- `golay_elements` (halcon: `golay_elements`) `入力なし → table` GPU: なし — Golay の文字の 3x3 構造要素組(ヒット、ミス)を 45 度刻みの回転つきで作る。 · 例: `machine_vision_tour`
+- `hit_or_miss_golay` (halcon: `hit_or_miss_golay`) `mask → mask` GPU: なし — Golay の文字 1 つでヒットオアミス変換を掛ける(一致した中心の画素を返す)。 · 例: `machine_vision_tour`
+- `hit_or_miss_seq` (halcon: `hit_or_miss_seq`) `mask → mask` GPU: なし — Golay の文字の 8 回転すべてのヒットオアミスの和を返す。 · 例: `machine_vision_tour`
+- `morph_hat` (halcon: `morph_hat`) `mask × mask → mask` GPU: なし — 開放で消えた画素と閉鎖で増えた画素の和を返す(白黒のトップハットの和)。 · 例: `machine_vision_tour`
+- `morph_skiz` (halcon: `morph_skiz`) `mask → mask` GPU: なし — 領域の連結成分の影響圏の境界(SKIZ)をユークリッド距離で求める。 · 例: `machine_vision_tour`
+- `opening_seg` (halcon: `opening_seg`) `mask × mask → labels2d` GPU: なし — くびれで繋がった物体を収縮で切り離し、元の領域の中で広げ直してラベルにする。 · 例: `machine_vision_tour`
+- `thickening_golay` (halcon: `thickening_golay`) `mask → mask` GPU: なし — Golay の文字 1 つで肥厚を掛ける。 · 例: `machine_vision_tour`
+- `thickening_hit_miss` (halcon: `thickening`) `mask × mask × mask → mask` GPU: なし — 任意の構造要素組で肥厚を掛ける(``A ∪ HMT(A)`` を ``iterations`` 回)。 · 例: `machine_vision_tour`
+- `thickening_seq` (halcon: `thickening_seq`) `mask → mask` GPU: なし — Golay の文字の回転を順に掛ける肥厚を、変化が止まるまで続ける。 · 例: `machine_vision_tour`
+
+#### mv / pose(1)
+- `get_circle_pose` (halcon: `get_circle_pose`) `keypoints → table` GPU: なし — 既知の半径の円の像(楕円の点列)から、円の中心と法線をカメラ座標で求める。 · 例: `machine_vision_tour`
+
+#### mv / resample(4)
+- `change_radial_distortion_image` (halcon: `change_radial_distortion_image`) `image2d × table × table → image2d` GPU: なし — 除算モデルの歪みを持つカメラの画像を、別の歪み・内部パラメータの画像へ描き直す。 · 例: `machine_vision_tour`
+- `crop_rectangle2` (halcon: `crop_rectangle2`) `image2d → image2d` GPU: なし — 回転矩形の内側を線形補間で読み、軸に沿った画像として切り出す(crop_rectangle2)。 · 例: `machine_vision_tour`
+- `map_image` (halcon: `map_image`) `image2d × table → image2d` GPU: なし — 逆写像表を画像へ適用して再標本化する(出力の画素ごとに入力の座標を読む)。 · 例: `machine_vision_tour`
+- `rectify_to_world_plane` (halcon: `image_to_world_plane`) `image2d × table × matrix → image2d` GPU: なし — 画像をワールド平面 z=0 の正面図へ平行化する(1 画素 = ``scale`` のワールド単位)。 · 例: `machine_vision_tour`
+
+#### mv / stereo(3)
+- `binocular_disparity_ms` (halcon: `binocular_disparity_ms`) `image2d × image2d → table` GPU: なし — 平行化ステレオの視差を半大域マッチングで求め、左右一致で検査して小数へ補間する。 · 例: `machine_vision_tour`
+- `binocular_distance_ms` (halcon: `binocular_distance_ms`) `image2d × image2d → table` GPU: なし — 平行化ステレオの距離画像を求める(``Z = focal * baseline / (disparity + doffs)``)。 · 例: `machine_vision_tour`
+- `reconstruct_surface_stereo` (halcon: `reconstruct_surface_stereo`) `image2d → points` GPU: なし — 視差画像の有効な画素を 3-D の点へ写す(reconstruct_surface_stereo)。 · 例: `machine_vision_tour`
+
+#### mv / text(4)
+- `segment_characters` (halcon: `segment_characters`) `image2d → labels2d` GPU: なし — 文字行の画像を、字ごとの列の塊へ切り分けたラベル画像にする。 · 例: `machine_vision_tour`
+- `select_characters` (halcon: `select_characters`) `labels2d → labels2d` GPU: なし — 字のラベル画像から、高さと幅が中央値から外れた塊を落として左から振り直す。 · 例: `machine_vision_tour`
+- `text_line_orientation` (halcon: `text_line_orientation`) `image2d → scalar` GPU: なし — 文字行の傾きを射影の鋭さの最大で求める(度)。 · 例: `machine_vision_tour`
+- `text_line_slant` (halcon: `text_line_slant`) `image2d → scalar` GPU: なし — 水平な文字行の字の斜体角を、列の射影の鋭さの最大で求める(度)。 · 例: `machine_vision_tour`
+
+#### mv / tracking(5)
+- `create_bg_esti` (halcon: `create_bg_esti`) `image2d → table` GPU: なし — 最初の画像から画素ごとのカルマン背景モデルを作る。 · 例: `machine_vision_tour`
+- `filter_kalman` (halcon: `filter_kalman`) `入力なし → table` GPU: なし — 線形カルマンフィルタの予測と更新を 1 周期ぶん計算する。 · 例: `machine_vision_tour`
+- `give_bg_esti` (halcon: `give_bg_esti`) `table → image2d` GPU: なし — モデルの現在の背景の画像を返す(コピー)。 · 例: `machine_vision_tour`
+- `run_bg_esti` (halcon: `run_bg_esti`) `table × image2d → table` GPU: なし — 画像 1 枚で背景を更新し、前景の領域を返す。 · 例: `machine_vision_tour`
+- `update_bg_esti` (halcon: `update_bg_esti`) `table × image2d × mask → table` GPU: なし — 指定した領域の画素だけ、画像で背景を更新する(領域の外は分散も動かない)。 · 例: `machine_vision_tour`
 
 ### generative(42 ops / 6 categories)
 
@@ -4937,29 +5007,29 @@ _計 3629 ops / 56 families。並びとノートの在り処は `docs/ops/INDEX.
 プロファイル/信号の 1-D op。源流は 2-D の measure1d・3-D の probe・音声/センサー系列(dsp)— 取り出した (x, y) 列を funct1d/dsp で加工して測る。
 
 #### oned / function(23)
-- `abs_funct_1d` `signal → signal` GPU: なし — Absolute value of the y-values (HALCON ``abs_funct_1d``). · 例: `signal_funct1d`
-- `compose_funct_1d` `signal × signal → signal` GPU: なし — Composition ``y1(y2)``: the values of *y2* used as positions into *y1* (HALCON ``compose_funct_1d``). · 例: `gallery_oned_audio_funct`
-- `create_funct_1d_array` `signal → signal` GPU: なし — A 1-D function from equidistant samples (HALCON ``create_funct_1d_array``). · 例: `signal_funct1d`
-- `create_funct_1d_pairs` `signal × signal → signal` GPU: なし — A 1-D function from arbitrary ``(x, y)`` pairs, resampled to an equidistant grid (HALCON ``create_funct_1d_pairs``). · 例: `poc_veiling_glare`
-- `derivate_funct_1d` `signal → signal` GPU: なし — First derivative by central differences (HALCON ``derivate_funct_1d``). · 例: `poc_tree_ring_dendro`, `poc_veiling_glare`, `signal_funct1d`
-- `distance_funct_1d` `signal × signal → measurement` GPU: なし — Distance between two functions on the same grid (HALCON ``distance_funct_1d``). · 例: `signal_funct1d`
-- `funct_1d_to_pairs` `signal → pairs` GPU: なし — The function as explicit ``(x, y)`` pairs (HALCON ``funct_1d_to_pairs``). · 例: `signal_funct1d`
-- `get_pair_funct_1d` `signal → pairs` GPU: なし — The ``(x, y)`` pair at *index* (HALCON ``get_pair_funct_1d``). · 例: `signal_funct1d`
-- `get_y_value_funct_1d` `signal → measurement` GPU: なし — The y-value at (fractional) position *x* (HALCON ``get_y_value_funct_1d``). · 例: `poc_veiling_glare`, `signal_funct1d`
-- `integrate_funct_1d` `signal → signal` GPU: なし — Cumulative integral by the trapezoidal rule (HALCON ``integrate_funct_1d``). · 例: `poc_cold_chain_excursion`, `poc_search_sweep_width`, `signal_funct1d`
-- `invert_funct_1d` `signal → pairs` GPU: なし — Swap the roles of x and y: ``x = f^-1(y)`` (HALCON ``invert_funct_1d``). · 例: `poc_veiling_glare`
-- `local_min_max_funct_1d` `signal → table` GPU: なし — Indices of strict local maxima / minima (HALCON ``local_min_max_funct_1d``). · 例: `poc_web_roll_periodicity`, `signal_funct1d`
-- `match_funct_1d_trans` `signal × signal → table` GPU: なし — Best integer translation between two functions by correlation (HALCON ``match_funct_1d_trans``, translation only). · 例: `signal_funct1d`
-- `negate_funct_1d` `signal → signal` GPU: なし — Sign-flipped y-values (HALCON ``negate_funct_1d``). · 例: `gallery_oned_audio_funct`, `gallery_spectrum_signal_bridge`
-- `num_points_funct_1d` `signal → measurement` GPU: なし — Number of samples (HALCON ``num_points_funct_1d``). · 例: `signal_funct1d`
-- `sample_funct_1d` `signal → signal` GPU: なし — Every *step*-th sample (HALCON ``sample_funct_1d``). · 例: `poc_cold_chain_excursion`, `signal_funct1d`
-- `scale_y_funct_1d` `signal → signal` GPU: なし — Linear map of the y-values, ``mult * y + add`` (HALCON ``scale_y_funct_1d``). · 例: `signal_funct1d`
-- `smooth_funct_1d_gauss` `signal → signal` GPU: なし — Gaussian smoothing of a 1-D function (HALCON ``smooth_funct_1d_gauss``). · 例: `poc_fiber_orientation`, `poc_tree_ring_dendro`, `poc_web_roll_periodicity`, `signal_funct1d`
-- `smooth_funct_1d_mean` `signal → signal` GPU: なし — Iterated moving-average smoothing (HALCON ``smooth_funct_1d_mean``). · 例: `poc_weld_bead_profile`, `signal_funct1d`
-- `transform_funct_1d` `signal → pairs` GPU: なし — Independent affine transform of x and y (HALCON ``transform_funct_1d``). · 例: `gallery_oned_audio_funct`
-- `x_range_funct_1d` `signal → pairs` GPU: なし — The x-domain ``(0.0, n - 1.0)`` (HALCON ``x_range_funct_1d``). · 例: `signal_funct1d`
-- `y_range_funct_1d` `signal → pairs` GPU: なし — The value range ``(min(y), max(y))`` (HALCON ``y_range_funct_1d``). · 例: `signal_funct1d`
-- `zero_crossings_funct_1d` `signal → indices` GPU: なし — Indices where the function changes sign (HALCON ``zero_crossings_funct_1d``). · 例: `signal_funct1d`
+- `abs_funct_1d` (halcon: `abs_funct_1d`) `signal → signal` GPU: なし — Absolute value of the y-values (HALCON ``abs_funct_1d``). · 例: `signal_funct1d`
+- `compose_funct_1d` (halcon: `compose_funct_1d`) `signal × signal → signal` GPU: なし — Composition ``y1(y2)``: the values of *y2* used as positions into *y1* (HALCON ``compose_funct_1d``). · 例: `gallery_oned_audio_funct`
+- `create_funct_1d_array` (halcon: `create_funct_1d_array`) `signal → signal` GPU: なし — A 1-D function from equidistant samples (HALCON ``create_funct_1d_array``). · 例: `signal_funct1d`
+- `create_funct_1d_pairs` (halcon: `create_funct_1d_pairs`) `signal × signal → signal` GPU: なし — A 1-D function from arbitrary ``(x, y)`` pairs, resampled to an equidistant grid (HALCON ``create_funct_1d_pairs``). · 例: `poc_veiling_glare`
+- `derivate_funct_1d` (halcon: `derivate_funct_1d`) `signal → signal` GPU: なし — First derivative by central differences (HALCON ``derivate_funct_1d``). · 例: `poc_tree_ring_dendro`, `poc_veiling_glare`, `signal_funct1d`
+- `distance_funct_1d` (halcon: `distance_funct_1d`) `signal × signal → measurement` GPU: なし — Distance between two functions on the same grid (HALCON ``distance_funct_1d``). · 例: `signal_funct1d`
+- `funct_1d_to_pairs` (halcon: `funct_1d_to_pairs`) `signal → pairs` GPU: なし — The function as explicit ``(x, y)`` pairs (HALCON ``funct_1d_to_pairs``). · 例: `signal_funct1d`
+- `get_pair_funct_1d` (halcon: `get_pair_funct_1d`) `signal → pairs` GPU: なし — The ``(x, y)`` pair at *index* (HALCON ``get_pair_funct_1d``). · 例: `signal_funct1d`
+- `get_y_value_funct_1d` (halcon: `get_y_value_funct_1d`) `signal → measurement` GPU: なし — The y-value at (fractional) position *x* (HALCON ``get_y_value_funct_1d``). · 例: `poc_veiling_glare`, `signal_funct1d`
+- `integrate_funct_1d` (halcon: `integrate_funct_1d`) `signal → signal` GPU: なし — Cumulative integral by the trapezoidal rule (HALCON ``integrate_funct_1d``). · 例: `poc_cold_chain_excursion`, `poc_search_sweep_width`, `signal_funct1d`
+- `invert_funct_1d` (halcon: `invert_funct_1d`) `signal → pairs` GPU: なし — Swap the roles of x and y: ``x = f^-1(y)`` (HALCON ``invert_funct_1d``). · 例: `poc_veiling_glare`
+- `local_min_max_funct_1d` (halcon: `local_min_max_funct_1d`) `signal → table` GPU: なし — Indices of strict local maxima / minima (HALCON ``local_min_max_funct_1d``). · 例: `poc_web_roll_periodicity`, `signal_funct1d`
+- `match_funct_1d_trans` (halcon: `match_funct_1d_trans`) `signal × signal → table` GPU: なし — Best integer translation between two functions by correlation (HALCON ``match_funct_1d_trans``, translation only). · 例: `signal_funct1d`
+- `negate_funct_1d` (halcon: `negate_funct_1d`) `signal → signal` GPU: なし — Sign-flipped y-values (HALCON ``negate_funct_1d``). · 例: `gallery_oned_audio_funct`, `gallery_spectrum_signal_bridge`
+- `num_points_funct_1d` (halcon: `num_points_funct_1d`) `signal → measurement` GPU: なし — Number of samples (HALCON ``num_points_funct_1d``). · 例: `signal_funct1d`
+- `sample_funct_1d` (halcon: `sample_funct_1d`) `signal → signal` GPU: なし — Every *step*-th sample (HALCON ``sample_funct_1d``). · 例: `poc_cold_chain_excursion`, `signal_funct1d`
+- `scale_y_funct_1d` (halcon: `scale_y_funct_1d`) `signal → signal` GPU: なし — Linear map of the y-values, ``mult * y + add`` (HALCON ``scale_y_funct_1d``). · 例: `signal_funct1d`
+- `smooth_funct_1d_gauss` (halcon: `smooth_funct_1d_gauss`) `signal → signal` GPU: なし — Gaussian smoothing of a 1-D function (HALCON ``smooth_funct_1d_gauss``). · 例: `poc_fiber_orientation`, `poc_tree_ring_dendro`, `poc_web_roll_periodicity`, `signal_funct1d`
+- `smooth_funct_1d_mean` (halcon: `smooth_funct_1d_mean`) `signal → signal` GPU: なし — Iterated moving-average smoothing (HALCON ``smooth_funct_1d_mean``). · 例: `poc_weld_bead_profile`, `signal_funct1d`
+- `transform_funct_1d` (halcon: `transform_funct_1d`) `signal → pairs` GPU: なし — Independent affine transform of x and y (HALCON ``transform_funct_1d``). · 例: `gallery_oned_audio_funct`
+- `x_range_funct_1d` (halcon: `x_range_funct_1d`) `signal → pairs` GPU: なし — The x-domain ``(0.0, n - 1.0)`` (HALCON ``x_range_funct_1d``). · 例: `signal_funct1d`
+- `y_range_funct_1d` (halcon: `y_range_funct_1d`) `signal → pairs` GPU: なし — The value range ``(min(y), max(y))`` (HALCON ``y_range_funct_1d``). · 例: `signal_funct1d`
+- `zero_crossings_funct_1d` (halcon: `zero_crossings_funct_1d`) `signal → indices` GPU: なし — Indices where the function changes sign (HALCON ``zero_crossings_funct_1d``). · 例: `signal_funct1d`
 
 #### oned / io(3)
 - `read_audio` `file → signal` GPU: なし — Read any audio format -> ``(x, rate)``. Uses ``soundfile`` if available (mp3/flac/ogg/…), else falls back to the stdlib WAV reader. · 例: `gallery_oned_audio_funct`
@@ -5161,24 +5231,24 @@ _計 3629 ops / 56 families。並びとノートの在り処は `docs/ops/INDEX.
 ### measure1d(17 ops / 4 categories)
 
 #### measure1d / apply(2)
-- `align_metrology_model` `metrologymodel → metrologymodel` GPU: なし — 計測モデルの全オブジェクトを平行移動して整列(align_metrology_model)。 · 例: `poc_dimensional_inspection`
-- `apply_metrology_model` `metrologymodel × image2d → table` GPU: なし — 各計測オブジェクトの参照形状の法線に沿ってサブピクセルエッジを測り、形状を 再フィットして結果を返す(apply_metrology_model)。 · 例: `example_inner_diameter_mm`, `poc_calipers_under_illusion`, `poc_dimensional_inspection`, `poc_telecentric_metrology`
+- `align_metrology_model` (halcon: `align_metrology_model`) `metrologymodel → metrologymodel` GPU: なし — 計測モデルの全オブジェクトを平行移動して整列(align_metrology_model)。 · 例: `poc_dimensional_inspection`
+- `apply_metrology_model` (halcon: `apply_metrology_model`) `metrologymodel × image2d → table` GPU: なし — 各計測オブジェクトの参照形状の法線に沿ってサブピクセルエッジを測り、形状を 再フィットして結果を返す(apply_metrology_model)。 · 例: `example_inner_diameter_mm`, `poc_calipers_under_illusion`, `poc_dimensional_inspection`, `poc_telecentric_metrology`
 
 #### measure1d / caliper(6)
-- `fuzzy_measure_pairing` `image2d × measurehandle → table` GPU: なし — ファジィ基準(想定幅 pair_size)に最も合うエッジ対を選ぶ(fuzzy_measure_pairing)。 · 例: `poc_calipers_under_illusion`, `poc_dimensional_inspection`
-- `gen_measure_arc` `入力なし → measurehandle` GPU: なし — 測定弧(円周方向に ≈1 px 間隔でプロファイルを取る)を定義(gen_measure_arc)。 サンプル数 n = round(|angle_extent|*radius)+1、``spacing`` = 弧長/(n-1)。 · 例: `poc_dimensional_inspection`
-- `gen_measure_rectangle2` `入力なし → measurehandle` GPU: なし — 回転測定矩形(長軸 ``phi`` 方向に 1 px 間隔でプロファイルを取る)を定義 (gen_measure_rectangle2)。サンプル数 n = max(2, round(2*length1)+1)、始点は 中心から -(n-1)/2 px の位置。``length2`` は幅方向の平均化幅 [px]。 · 例: `example_scratch_width`, `poc_barcode_1d`, `poc_battery_electrode_breathing`, `poc_calipers_under_illusion`, `poc_dimensional_inspection`, `poc_screw_thread_metrology`, `poc_solar_limb_darkening`, `poc_telecentric_metrology`, `poc_tree_ring_dendro`, `poc_water_level`, `poc_weld_bead_profile`, `poc_weld_radiograph_porosity`
-- `measure_pairs` `image2d × measurehandle → table` GPU: なし — 立ち上がり/立ち下がりエッジのペア(構造の幅)を抽出(measure_pairs)。 ``first``/``second`` = 各エッジの ``pos``、``width`` = 幅 [px]、 ``first_point``/``second_point`` = (row, col)。 · 例: `example_scratch_width`, `poc_calipers_under_illusion`, `poc_dimensional_inspection`, `poc_weld_radiograph_porosity`
-- `measure_pos` `image2d × measurehandle → table` GPU: なし — 測定線上のエッジ位置(サブピクセル)と振幅を抽出(measure_pos)。 · 例: `poc_barcode_1d`, `poc_battery_electrode_breathing`, `poc_calipers_under_illusion`, `poc_dimensional_inspection`, `poc_screw_thread_metrology`, `poc_solar_limb_darkening`, `poc_telecentric_metrology`, `poc_tree_ring_dendro`, `poc_water_level`, `poc_weld_bead_profile`, `poc_weld_radiograph_porosity`
-- `translate_measure` `measurehandle → measurehandle` GPU: なし — 測定オブジェクトを平行移動(translate_measure)。 · 例: `poc_dimensional_inspection`
+- `fuzzy_measure_pairing` (halcon: `fuzzy_measure_pairing`) `image2d × measurehandle → table` GPU: なし — ファジィ基準(想定幅 pair_size)に最も合うエッジ対を選ぶ(fuzzy_measure_pairing)。 · 例: `poc_calipers_under_illusion`, `poc_dimensional_inspection`
+- `gen_measure_arc` (halcon: `gen_measure_arc`) `入力なし → measurehandle` GPU: なし — 測定弧(円周方向に ≈1 px 間隔でプロファイルを取る)を定義(gen_measure_arc)。 サンプル数 n = round(|angle_extent|*radius)+1、``spacing`` = 弧長/(n-1)。 · 例: `poc_dimensional_inspection`
+- `gen_measure_rectangle2` (halcon: `gen_measure_rectangle2`) `入力なし → measurehandle` GPU: なし — 回転測定矩形(長軸 ``phi`` 方向に 1 px 間隔でプロファイルを取る)を定義 (gen_measure_rectangle2)。サンプル数 n = max(2, round(2*length1)+1)、始点は 中心から -(n-1)/2 px の位置。``length2`` は幅方向の平均化幅 [px]。 · 例: `example_scratch_width`, `poc_barcode_1d`, `poc_battery_electrode_breathing`, `poc_calipers_under_illusion`, `poc_dimensional_inspection`, `poc_screw_thread_metrology`, `poc_solar_limb_darkening`, `poc_telecentric_metrology`, `poc_tree_ring_dendro`, `poc_water_level`, `poc_weld_bead_profile`, `poc_weld_radiograph_porosity`
+- `measure_pairs` (halcon: `measure_pairs`) `image2d × measurehandle → table` GPU: なし — 立ち上がり/立ち下がりエッジのペア(構造の幅)を抽出(measure_pairs)。 ``first``/``second`` = 各エッジの ``pos``、``width`` = 幅 [px]、 ``first_point``/``second_point`` = (row, col)。 · 例: `example_scratch_width`, `poc_calipers_under_illusion`, `poc_dimensional_inspection`, `poc_weld_radiograph_porosity`
+- `measure_pos` (halcon: `measure_pos`) `image2d × measurehandle → table` GPU: なし — 測定線上のエッジ位置(サブピクセル)と振幅を抽出(measure_pos)。 · 例: `poc_barcode_1d`, `poc_battery_electrode_breathing`, `poc_calipers_under_illusion`, `poc_dimensional_inspection`, `poc_screw_thread_metrology`, `poc_solar_limb_darkening`, `poc_telecentric_metrology`, `poc_tree_ring_dendro`, `poc_water_level`, `poc_weld_bead_profile`, `poc_weld_radiograph_porosity`
+- `translate_measure` (halcon: `translate_measure`) `measurehandle → measurehandle` GPU: なし — 測定オブジェクトを平行移動(translate_measure)。 · 例: `poc_dimensional_inspection`
 
 #### measure1d / model(6)
-- `add_metrology_object_circle_measure` `metrologymodel → scalar` GPU: なし — 円計測オブジェクトを追加(add_metrology_object_circle_measure)。 · 例: `example_inner_diameter_mm`, `poc_calipers_under_illusion`, `poc_dimensional_inspection`, `poc_telecentric_metrology`
-- `add_metrology_object_ellipse_measure` `metrologymodel → scalar` GPU: なし — 楕円計測オブジェクトを追加(add_metrology_object_ellipse_measure)。 ``phi`` = ``ra`` 軸の向き(col 軸から、ラジアン)。 · 例: `poc_dimensional_inspection`
-- `add_metrology_object_generic` `metrologymodel → scalar` GPU: なし — 汎用計測オブジェクトを追加(add_metrology_object_generic)。 · 例: `poc_dimensional_inspection`
-- `add_metrology_object_line_measure` `metrologymodel → scalar` GPU: なし — 直線計測オブジェクトを追加(add_metrology_object_line_measure)。index を返す。 · 例: `poc_calipers_under_illusion`, `poc_dimensional_inspection`
-- `add_metrology_object_rectangle2_measure` `metrologymodel → scalar` GPU: なし — 矩形計測オブジェクトを追加(add_metrology_object_rectangle2_measure)。 ``phi`` = ``l1`` 辺の向き(col 軸から、ラジアン)、``l1``/``l2`` = 半辺長。 · 例: `poc_dimensional_inspection`
-- `create_metrology_model` `入力なし → metrologymodel` GPU: なし — 空の計測モデルを作る(create_metrology_model)。 · 例: `example_inner_diameter_mm`, `poc_calipers_under_illusion`, `poc_dimensional_inspection`, `poc_telecentric_metrology`
+- `add_metrology_object_circle_measure` (halcon: `add_metrology_object_circle_measure`) `metrologymodel → scalar` GPU: なし — 円計測オブジェクトを追加(add_metrology_object_circle_measure)。 · 例: `example_inner_diameter_mm`, `poc_calipers_under_illusion`, `poc_dimensional_inspection`, `poc_telecentric_metrology`
+- `add_metrology_object_ellipse_measure` (halcon: `add_metrology_object_ellipse_measure`) `metrologymodel → scalar` GPU: なし — 楕円計測オブジェクトを追加(add_metrology_object_ellipse_measure)。 ``phi`` = ``ra`` 軸の向き(col 軸から、ラジアン)。 · 例: `poc_dimensional_inspection`
+- `add_metrology_object_generic` (halcon: `add_metrology_object_generic`) `metrologymodel → scalar` GPU: なし — 汎用計測オブジェクトを追加(add_metrology_object_generic)。 · 例: `poc_dimensional_inspection`
+- `add_metrology_object_line_measure` (halcon: `add_metrology_object_line_measure`) `metrologymodel → scalar` GPU: なし — 直線計測オブジェクトを追加(add_metrology_object_line_measure)。index を返す。 · 例: `poc_calipers_under_illusion`, `poc_dimensional_inspection`
+- `add_metrology_object_rectangle2_measure` (halcon: `add_metrology_object_rectangle2_measure`) `metrologymodel → scalar` GPU: なし — 矩形計測オブジェクトを追加(add_metrology_object_rectangle2_measure)。 ``phi`` = ``l1`` 辺の向き(col 軸から、ラジアン)、``l1``/``l2`` = 半辺長。 · 例: `poc_dimensional_inspection`
+- `create_metrology_model` (halcon: `create_metrology_model`) `入力なし → metrologymodel` GPU: なし — 空の計測モデルを作る(create_metrology_model)。 · 例: `example_inner_diameter_mm`, `poc_calipers_under_illusion`, `poc_dimensional_inspection`, `poc_telecentric_metrology`
 
 #### measure1d / scale(3)
 - `mm_per_px_from_reference` `measurement → measurement` GPU: なし — 既知寸法の的(スケールバー・基準穴・ゲージ)から画素ピッチ mm/px を出す(校正)。 · 例: `example_inner_diameter_mm`, `example_scratch_width`
@@ -5520,16 +5590,16 @@ _計 3629 ops / 56 families。並びとノートの在り処は `docs/ops/INDEX.
 ### segmentation(59 ops / 11 categories)
 
 #### segmentation / classify(7)
-- `class_2dim_sup` `image2d × image2d × mask → mask` GPU: なし — 2 チャネル特徴空間で ref_region の分布に入る画素を分類(教師つき)(class_2dim_sup)。 · 例: `halcon_segmentation_tour`
-- `class_2dim_unsup` `image2d × image2d → labels2d` GPU: なし — 2 チャネル特徴空間を k-means で教師なし分類(class_2dim_unsup)。ラベル画像を返す。 · 例: `halcon_segmentation_tour`
-- `class_ndim_norm` `images × table → mask` GPU: なし — ND 特徴画像を学習済み正規分布クラスで分類(Mahalanobis 距離 < thresh)(class_ndim_norm)。 feature_images: (H,W,D) or D 枚の 2D。 · 例: `halcon_segmentation_tour`
-- `classify_image_class_lut` `image2d × signal → labels2d` GPU: なし — グレー LUT による画素分類(閾値/ラベル LUT)(classify_image_class_lut)。 · 例: `halcon_segmentation_tour`
+- `class_2dim_sup` (halcon: `class_2dim_sup`) `image2d × image2d × mask → mask` GPU: なし — 2 チャネル特徴空間で ref_region の分布に入る画素を分類(教師つき)(class_2dim_sup)。 · 例: `halcon_segmentation_tour`
+- `class_2dim_unsup` (halcon: `class_2dim_unsup`) `image2d × image2d → labels2d` GPU: なし — 2 チャネル特徴空間を k-means で教師なし分類(class_2dim_unsup)。ラベル画像を返す。 · 例: `halcon_segmentation_tour`
+- `class_ndim_norm` (halcon: `class_ndim_norm`) `images × table → mask` GPU: なし — ND 特徴画像を学習済み正規分布クラスで分類(Mahalanobis 距離 < thresh)(class_ndim_norm)。 feature_images: (H,W,D) or D 枚の 2D。 · 例: `halcon_segmentation_tour`
+- `classify_image_class_lut` (halcon: `classify_image_class_lut`) `image2d × signal → labels2d` GPU: なし — グレー LUT による画素分類(閾値/ラベル LUT)(classify_image_class_lut)。 · 例: `halcon_segmentation_tour`
 - `fisher_lda_fit` `matrix × signal → table` GPU: なし — 2 クラスの Fisher 線形判別を学習する(閉形式。反復なし)。 · 例: `poc_weed_rice_ratio`
 - `fisher_lda_score` `table × matrix → table` GPU: なし — ``fisher_lda_fit`` の学習済みの判別で特徴を採点する(score > 0 をクラス 1 とする)。 · 例: `poc_weed_rice_ratio`
-- `learn_ndim_norm` `matrix → table` GPU: なし — 特徴ベクトル群から正規分布クラス(平均・共分散)を学習(learn_ndim_norm)。 · 例: `halcon_segmentation_tour`
+- `learn_ndim_norm` (halcon: `learn_ndim_norm`) `matrix → table` GPU: なし — 特徴ベクトル群から正規分布クラス(平均・共分散)を学習(learn_ndim_norm)。 · 例: `halcon_segmentation_tour`
 
 #### segmentation / compare(1)
-- `check_difference` `image2d × image2d → mask` GPU: なし — 基準画像との差が tol を超える画素を領域として返す(check_difference)。 · 例: `halcon_segmentation_tour`
+- `check_difference` (halcon: `check_difference`) `image2d × image2d → mask` GPU: なし — 基準画像との差が tol を超える画素を領域として返す(check_difference)。 · 例: `halcon_segmentation_tour`
 
 #### segmentation / contour(10)
 - `chan_vese_energy` `image2d × mask → table` GPU: なし — Chan–Vese 2001 のエネルギー F = μ Length + ν Area(inside) + λ1 ∫_in |I − c1|² + λ2 ∫_out |I − c2|²(2 相)。 · 例: `gallery_seg_measures`
@@ -5558,8 +5628,8 @@ _計 3629 ops / 56 families。並びとノートの在り処は `docs/ops/INDEX.
 - `ultrametric_contour_map` `image2d → table` GPU: なし — dynamics の階層の ultrametric contour map(UCM): 隣り合う画素 p, q の値 = 「p と q が同じ領域になる最小の閾値」。 · 例: `poc_graph_hierarchy_segmentation`
 
 #### segmentation / grow(2)
-- `expand_gray` `image2d × mask → mask` GPU: なし — seed から gray 類似(|Δ|<tol)で領域を膨張(expand_gray)。 · 例: `halcon_segmentation_tour`
-- `regiongrowing_n` `images → labels2d` GPU: なし — 多チャネル特徴の類似性で画像全体を領域分割(regiongrowing_n)。ラベル画像を返す。 · 例: `halcon_segmentation_tour`
+- `expand_gray` (halcon: `expand_gray`) `image2d × mask → mask` GPU: なし — seed から gray 類似(|Δ|<tol)で領域を膨張(expand_gray)。 · 例: `halcon_segmentation_tour`
+- `regiongrowing_n` (halcon: `regiongrowing_n`) `images → labels2d` GPU: なし — 多チャネル特徴の類似性で画像全体を領域分割(regiongrowing_n)。ラベル画像を返す。 · 例: `halcon_segmentation_tour`
 
 #### segmentation / plant(3)
 - `cover_ratio_grade` `signal → table` GPU: なし — 被度(面積の割合 0..1)を、**宣言した境** ``edges`` で段階 0..len(edges) に分ける。 · 例: `poc_weed_rice_ratio`
@@ -5583,7 +5653,7 @@ _計 3629 ops / 56 families。並びとノートの在り処は `docs/ops/INDEX.
 - `threshold_triangle` `image2d → table` GPU: なし — 三角法(Zack–Rogers–Latt 1977): 山頂 (b_p, h_p) と、裾の長い側の端のビン (b_e, 0) を結ぶ線から、間のビンの (b, h_b) までの符号つき垂直距離が最大のビンを閾値にする(線の下側を正)。返す: ``threshold``(そのビンの中心)、 ``mask`` = image > threshold、``bin``、``distance``(各ビンの距離、範囲外は nan)。端点の高さ 0・裾の側の選び方は skimage / ImageJ と同じ規約(原典は要確認)。 · 例: `poc_graph_hierarchy_segmentation`
 
 #### segmentation / watershed(1)
-- `watersheds_marker` `image2d × labels2d → labels2d` GPU: なし — マーカー制御 watershed 分割(watersheds_marker)。markers: int ラベル画像(0=未割当)。 · 例: `halcon_segmentation_tour`, `poc_sem_tem_same_particle`
+- `watersheds_marker` (halcon: `watersheds_marker`) `image2d × labels2d → labels2d` GPU: なし — マーカー制御 watershed 分割(watersheds_marker)。markers: int ラベル画像(0=未割当)。 · 例: `halcon_segmentation_tour`, `poc_sem_tem_same_particle`
 
 #### segmentation / watershed3d(3)
 - `distance_peaks` `voxel → labels` GPU: なし — 前景距離変換の局所極大を ``min_distance`` NMS で間引いた int マーカ配列を返す。 · 例: `watershed3d_tour`

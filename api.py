@@ -3228,6 +3228,7 @@ def ledger_rows() -> list[dict]:
 
     taken = {r["name"] for r in _rows()}
     rows, seen = [], set(taken)
+    halcon = opassist.ledger_halcon_map()
     for mod_name, table in opassist._LEDGERS:
         mod = importlib.import_module(mod_name)
         entries = getattr(mod, table)
@@ -3239,7 +3240,7 @@ def ledger_rows() -> list[dict]:
                 continue
             seen.add(name)
             ins = list(info.get("in") or [])
-            rows.append({"name": name, "halcon": "", "in_sort": ins[0] if ins else None,
+            rows.append({"name": name, "halcon": halcon.get(name, ""), "in_sort": ins[0] if ins else None,
                          "out_sort": info.get("out"), "category": info.get("category"),
                          "tier": "ledger", "ledger": mod_name, "dim": dim,
                          "in_sorts": ins})

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">find_marks_and_pose — CALIB <code style="color:#22d3bf">calibrate</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.find_marks_and_pose(image, cam_par, caltab, thresh=0.5, max_reproj_rms=3.0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import caltab; caltab.find_marks_and_pose(image, cam_par, caltab, thresh=0.5, max_reproj_rms=3.0)</code>、台帳から引くなら <code style="color:#22d3bf">opscalib.get(&quot;find_marks_and_pose&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>HALCON 相当</b>: <code style="color:#22d3bf">find_marks_and_pose</code>(意味・パラメータは HALCON リファレンスが参考になる)</p>
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>マーク検出 + 校正板の姿勢推定(平面ホモグラフィ → pose)(find_marks_and_pose)。</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">measure_pairs — MEASURE1D <code style="color:#22d3bf">caliper</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d × measurehandle</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.measure_pairs(image, measure, sigma=1.0, threshold=0.1)</code> (to call the implementation directly, <code style="color:#22d3bf">import measuring1d; measuring1d.measure_pairs(image, measure, sigma=1.0, threshold=0.1)</code>; from the registry, <code style="color:#22d3bf">opsmeasure1d.get(&quot;measure_pairs&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">measure_pairs</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Extracts pairs of rising/falling edges (the width of a structure) (measure_pairs). <code style="color:#22d3bf">first</code>/<code style="color:#22d3bf">second</code> = <code style="color:#22d3bf">pos</code> of each edge, <code style="color:#22d3bf">width</code> = width [px], <code style="color:#22d3bf">first_point</code>/<code style="color:#22d3bf">second_point</code> = (row, col).</p>

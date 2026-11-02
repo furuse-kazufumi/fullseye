@@ -4,6 +4,7 @@ dim: spc
 category: variation
 in: video
 out: table
+halcon: train_variation_model
 gpu: なし
 examples: [poc_good_sample_variation_model, poc_patch_anomaly]
 author: Kazufumi Furuse
@@ -15,6 +16,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `video` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.varmodel_fit(stack, spread='moderated', far=0.001, align='check', max_misalign_px=0.5, spread_floor=0.0, mask=None, *, chunk=262144)` (実装を直接呼ぶなら `import varmodel; varmodel.varmodel_fit(stack, spread='moderated', far=0.001, align='check', max_misalign_px=0.5, spread_floor=0.0, mask=None, *, chunk=262144)`、台帳から引くなら `opsspc.get("varmodel_fit")`)
+- **HALCON 相当**: `train_variation_model`(意味・パラメータは HALCON リファレンスが参考になる)
 - **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方

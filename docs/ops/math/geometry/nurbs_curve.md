@@ -4,8 +4,9 @@ dim: math
 category: geometry
 in: matrix
 out: table
+halcon: gen_contour_nurbs_xld
 gpu: なし
-examples: [geometry_tour]
+examples: [geometry_tour, machine_vision_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.8.1  # fullseye lib version this note was generated for
@@ -15,6 +16,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `matrix` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.nurbs_curve(control_points, weights=None, *, degree: 'int' = 3, knots=None, n: 'int' = 200) -> 'dict'` (実装を直接呼ぶなら `import mathgeometry; mathgeometry.nurbs_curve(control_points, weights=None, *, degree: 'int' = 3, knots=None, n: 'int' = 200) -> 'dict'`、台帳から引くなら `opsmath.get("nurbs_curve")`)
+- **HALCON 相当**: `gen_contour_nurbs_xld`(意味・パラメータは HALCON リファレンスが参考になる)
 - **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
@@ -58,6 +60,7 @@ mathops の全 op は入力を検証してから計算する(黙って通さな�
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [geometry_tour](../../../../examples/geometry_tour.py) — `py -3.11 examples/geometry_tour.py`
+- [machine_vision_tour](../../../../examples/machine_vision_tour.py) — `py -3.11 examples/machine_vision_tour.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 

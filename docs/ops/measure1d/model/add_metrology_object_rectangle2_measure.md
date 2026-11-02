@@ -4,6 +4,7 @@ dim: measure1d
 category: model
 in: metrologymodel
 out: scalar
+halcon: add_metrology_object_rectangle2_measure
 gpu: なし
 examples: [poc_dimensional_inspection]
 author: Kazufumi Furuse
@@ -15,6 +16,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `metrologymodel` → `scalar`
 - **呼び出し**: `import fullseye as fs; fs.ledger.add_metrology_object_rectangle2_measure(model, row, col, phi, l1, l2, n: 'int' = 40) -> 'int'` (実装を直接呼ぶなら `import metrology; metrology.add_metrology_object_rectangle2_measure(model, row, col, phi, l1, l2, n: 'int' = 40) -> 'int'`、台帳から引くなら `opsmeasure1d.get("add_metrology_object_rectangle2_measure")`)
+- **HALCON 相当**: `add_metrology_object_rectangle2_measure`(意味・パラメータは HALCON リファレンスが参考になる)
 - **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方

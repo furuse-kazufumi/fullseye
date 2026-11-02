@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3623,
- "n_notes": 3629,
+ "n_ops": 3670,
+ "n_notes": 3676,
  "notes": {
   "vol_dilate": [
    {
@@ -11152,6 +11152,7 @@
     "category": "geometry",
     "in": "points × primitive",
     "out": "measurement",
+    "halcon": "distance_point_line",
     "path": "docs/ops/3d/geometry/distance_point_line.md"
    }
   ],
@@ -12122,6 +12123,7 @@
     "category": "photometric",
     "in": "images",
     "out": "normalmap",
+    "halcon": "photometric_stereo",
     "path": "docs/ops/3d/photometric/photometric_stereo.md"
    }
   ],
@@ -13390,6 +13392,7 @@
     "category": "structured_light",
     "in": "images",
     "out": "depth",
+    "halcon": "depth_from_focus",
     "path": "docs/ops/3d/structured_light/depth_from_focus.md"
    }
   ],
@@ -14997,6 +15000,7 @@
     "category": "calibrate",
     "in": "keypoints",
     "out": "table",
+    "halcon": "camera_calibration",
     "path": "docs/ops/calib/calibrate/camera_calibration.md"
    }
   ],
@@ -15007,6 +15011,7 @@
     "category": "calibrate",
     "in": "image2d",
     "out": "table",
+    "halcon": "find_marks_and_pose",
     "path": "docs/ops/calib/calibrate/find_marks_and_pose.md"
    }
   ],
@@ -15016,6 +15021,7 @@
     "dim": "calib",
     "category": "calibrate",
     "out": "matrix",
+    "halcon": "hand_eye_calibration",
     "path": "docs/ops/calib/calibrate/hand_eye_calibration.md"
    }
   ],
@@ -15026,6 +15032,7 @@
     "category": "fit",
     "in": "keypoints",
     "out": "matrix",
+    "halcon": "hom_vector_to_proj_hom_mat2d",
     "path": "docs/ops/calib/fit/hom_vector_to_proj_hom_mat2d.md"
    }
   ],
@@ -15035,6 +15042,7 @@
     "dim": "calib",
     "category": "fit",
     "out": "matrix",
+    "halcon": "vector_angle_to_rigid",
     "path": "docs/ops/calib/fit/vector_angle_to_rigid.md"
    }
   ],
@@ -15045,6 +15053,7 @@
     "category": "fit",
     "in": "keypoints",
     "out": "matrix",
+    "halcon": "vector_to_rigid",
     "path": "docs/ops/calib/fit/vector_to_rigid.md"
    }
   ],
@@ -15055,6 +15064,7 @@
     "category": "fit",
     "in": "keypoints",
     "out": "matrix",
+    "halcon": "vector_to_similarity",
     "path": "docs/ops/calib/fit/vector_to_similarity.md"
    }
   ],
@@ -15065,6 +15075,7 @@
     "category": "plane",
     "in": "table",
     "out": "table",
+    "halcon": "contour_to_world_plane_xld",
     "path": "docs/ops/calib/plane/contour_to_world_plane_xld.md"
    }
   ],
@@ -15074,6 +15085,7 @@
     "dim": "calib",
     "category": "plane",
     "out": "table",
+    "halcon": "gen_image_to_world_plane_map",
     "path": "docs/ops/calib/plane/gen_image_to_world_plane_map.md"
    }
   ],
@@ -15083,6 +15095,7 @@
     "dim": "calib",
     "category": "plane",
     "out": "table",
+    "halcon": "gen_radial_distortion_map",
     "path": "docs/ops/calib/plane/gen_radial_distortion_map.md"
    }
   ],
@@ -15093,6 +15106,7 @@
     "category": "plane",
     "in": "table",
     "out": "keypoints",
+    "halcon": "image_points_to_world_plane",
     "path": "docs/ops/calib/plane/image_points_to_world_plane.md"
    }
   ],
@@ -15113,6 +15127,7 @@
     "category": "project",
     "in": "points",
     "out": "keypoints",
+    "halcon": "project_3d_point",
     "path": "docs/ops/calib/project/project_3d_point.md"
    }
   ],
@@ -15123,6 +15138,7 @@
     "category": "project",
     "in": "matrix",
     "out": "keypoints",
+    "halcon": "project_hom_point_hom_mat3d",
     "path": "docs/ops/calib/project/project_hom_point_hom_mat3d.md"
    }
   ],
@@ -15133,6 +15149,7 @@
     "category": "project",
     "in": "points",
     "out": "keypoints",
+    "halcon": "project_point_hom_mat3d",
     "path": "docs/ops/calib/project/project_point_hom_mat3d.md"
    }
   ],
@@ -15142,6 +15159,7 @@
     "dim": "calib",
     "category": "target",
     "out": "keypoints",
+    "halcon": "caltab_points",
     "path": "docs/ops/calib/target/caltab_points.md"
    }
   ],
@@ -15151,6 +15169,7 @@
     "dim": "calib",
     "category": "target",
     "out": "table",
+    "halcon": "create_caltab",
     "path": "docs/ops/calib/target/create_caltab.md"
    }
   ],
@@ -15161,6 +15180,7 @@
     "category": "target",
     "in": "table",
     "out": "image2d",
+    "halcon": "disp_caltab",
     "path": "docs/ops/calib/target/disp_caltab.md"
    }
   ],
@@ -15171,6 +15191,7 @@
     "category": "target",
     "in": "image2d",
     "out": "keypoints",
+    "halcon": "find_caltab",
     "path": "docs/ops/calib/target/find_caltab.md"
    }
   ],
@@ -15180,6 +15201,7 @@
     "dim": "calib",
     "category": "target",
     "out": "table",
+    "halcon": "gen_caltab",
     "path": "docs/ops/calib/target/gen_caltab.md"
    }
   ],
@@ -15190,6 +15212,7 @@
     "category": "target",
     "in": "table",
     "out": "table",
+    "halcon": "sim_caltab",
     "path": "docs/ops/calib/target/sim_caltab.md"
    }
   ],
@@ -26198,6 +26221,7 @@
     "category": "geometry",
     "in": "matrix",
     "out": "table",
+    "halcon": "gen_contour_nurbs_xld",
     "path": "docs/ops/math/geometry/nurbs_curve.md"
    }
   ],
@@ -26818,6 +26842,7 @@
     "category": "apply",
     "in": "metrologymodel",
     "out": "metrologymodel",
+    "halcon": "align_metrology_model",
     "path": "docs/ops/measure1d/apply/align_metrology_model.md"
    }
   ],
@@ -26828,6 +26853,7 @@
     "category": "apply",
     "in": "metrologymodel × image2d",
     "out": "table",
+    "halcon": "apply_metrology_model",
     "path": "docs/ops/measure1d/apply/apply_metrology_model.md"
    }
   ],
@@ -26838,6 +26864,7 @@
     "category": "caliper",
     "in": "image2d × measurehandle",
     "out": "table",
+    "halcon": "fuzzy_measure_pairing",
     "path": "docs/ops/measure1d/caliper/fuzzy_measure_pairing.md"
    }
   ],
@@ -26847,6 +26874,7 @@
     "dim": "measure1d",
     "category": "caliper",
     "out": "measurehandle",
+    "halcon": "gen_measure_arc",
     "path": "docs/ops/measure1d/caliper/gen_measure_arc.md"
    }
   ],
@@ -26856,6 +26884,7 @@
     "dim": "measure1d",
     "category": "caliper",
     "out": "measurehandle",
+    "halcon": "gen_measure_rectangle2",
     "path": "docs/ops/measure1d/caliper/gen_measure_rectangle2.md"
    }
   ],
@@ -26866,6 +26895,7 @@
     "category": "caliper",
     "in": "image2d × measurehandle",
     "out": "table",
+    "halcon": "measure_pairs",
     "path": "docs/ops/measure1d/caliper/measure_pairs.md"
    }
   ],
@@ -26876,6 +26906,7 @@
     "category": "caliper",
     "in": "image2d × measurehandle",
     "out": "table",
+    "halcon": "measure_pos",
     "path": "docs/ops/measure1d/caliper/measure_pos.md"
    }
   ],
@@ -26886,6 +26917,7 @@
     "category": "caliper",
     "in": "measurehandle",
     "out": "measurehandle",
+    "halcon": "translate_measure",
     "path": "docs/ops/measure1d/caliper/translate_measure.md"
    }
   ],
@@ -26896,6 +26928,7 @@
     "category": "model",
     "in": "metrologymodel",
     "out": "scalar",
+    "halcon": "add_metrology_object_circle_measure",
     "path": "docs/ops/measure1d/model/add_metrology_object_circle_measure.md"
    }
   ],
@@ -26906,6 +26939,7 @@
     "category": "model",
     "in": "metrologymodel",
     "out": "scalar",
+    "halcon": "add_metrology_object_ellipse_measure",
     "path": "docs/ops/measure1d/model/add_metrology_object_ellipse_measure.md"
    }
   ],
@@ -26916,6 +26950,7 @@
     "category": "model",
     "in": "metrologymodel",
     "out": "scalar",
+    "halcon": "add_metrology_object_generic",
     "path": "docs/ops/measure1d/model/add_metrology_object_generic.md"
    }
   ],
@@ -26926,6 +26961,7 @@
     "category": "model",
     "in": "metrologymodel",
     "out": "scalar",
+    "halcon": "add_metrology_object_line_measure",
     "path": "docs/ops/measure1d/model/add_metrology_object_line_measure.md"
    }
   ],
@@ -26936,6 +26972,7 @@
     "category": "model",
     "in": "metrologymodel",
     "out": "scalar",
+    "halcon": "add_metrology_object_rectangle2_measure",
     "path": "docs/ops/measure1d/model/add_metrology_object_rectangle2_measure.md"
    }
   ],
@@ -26945,6 +26982,7 @@
     "dim": "measure1d",
     "category": "model",
     "out": "metrologymodel",
+    "halcon": "create_metrology_model",
     "path": "docs/ops/measure1d/model/create_metrology_model.md"
    }
   ],
@@ -27240,6 +27278,520 @@
     "path": "docs/ops/multivar/sensitivity/sens_sobol.md"
    }
   ],
+  "classify_class_gmm": [
+   {
+    "op": "classify_class_gmm",
+    "dim": "mv",
+    "category": "classify",
+    "in": "table × matrix",
+    "out": "table",
+    "halcon": "classify_class_gmm",
+    "path": "docs/ops/mv/classify/classify_class_gmm.md"
+   }
+  ],
+  "classify_class_knn": [
+   {
+    "op": "classify_class_knn",
+    "dim": "mv",
+    "category": "classify",
+    "in": "table × matrix",
+    "out": "table",
+    "halcon": "classify_class_knn",
+    "path": "docs/ops/mv/classify/classify_class_knn.md"
+   }
+  ],
+  "classify_class_mlp": [
+   {
+    "op": "classify_class_mlp",
+    "dim": "mv",
+    "category": "classify",
+    "in": "table × matrix",
+    "out": "table",
+    "halcon": "classify_class_mlp",
+    "path": "docs/ops/mv/classify/classify_class_mlp.md"
+   }
+  ],
+  "classify_class_svm": [
+   {
+    "op": "classify_class_svm",
+    "dim": "mv",
+    "category": "classify",
+    "in": "table × matrix",
+    "out": "table",
+    "halcon": "classify_class_svm",
+    "path": "docs/ops/mv/classify/classify_class_svm.md"
+   }
+  ],
+  "create_lexicon": [
+   {
+    "op": "create_lexicon",
+    "dim": "mv",
+    "category": "classify",
+    "out": "table",
+    "halcon": "create_lexicon",
+    "path": "docs/ops/mv/classify/create_lexicon.md"
+   }
+  ],
+  "evaluate_class_gmm": [
+   {
+    "op": "evaluate_class_gmm",
+    "dim": "mv",
+    "category": "classify",
+    "in": "table × matrix",
+    "out": "table",
+    "halcon": "evaluate_class_gmm",
+    "path": "docs/ops/mv/classify/evaluate_class_gmm.md"
+   }
+  ],
+  "lookup_lexicon": [
+   {
+    "op": "lookup_lexicon",
+    "dim": "mv",
+    "category": "classify",
+    "in": "table",
+    "out": "scalar",
+    "halcon": "lookup_lexicon",
+    "path": "docs/ops/mv/classify/lookup_lexicon.md"
+   }
+  ],
+  "suggest_lexicon": [
+   {
+    "op": "suggest_lexicon",
+    "dim": "mv",
+    "category": "classify",
+    "in": "table",
+    "out": "table",
+    "halcon": "suggest_lexicon",
+    "path": "docs/ops/mv/classify/suggest_lexicon.md"
+   }
+  ],
+  "train_class_gmm": [
+   {
+    "op": "train_class_gmm",
+    "dim": "mv",
+    "category": "classify",
+    "in": "matrix",
+    "out": "table",
+    "halcon": "train_class_gmm",
+    "path": "docs/ops/mv/classify/train_class_gmm.md"
+   }
+  ],
+  "train_class_knn": [
+   {
+    "op": "train_class_knn",
+    "dim": "mv",
+    "category": "classify",
+    "in": "matrix",
+    "out": "table",
+    "halcon": "train_class_knn",
+    "path": "docs/ops/mv/classify/train_class_knn.md"
+   }
+  ],
+  "train_class_mlp": [
+   {
+    "op": "train_class_mlp",
+    "dim": "mv",
+    "category": "classify",
+    "in": "matrix",
+    "out": "table",
+    "halcon": "train_class_mlp",
+    "path": "docs/ops/mv/classify/train_class_mlp.md"
+   }
+  ],
+  "train_class_svm": [
+   {
+    "op": "train_class_svm",
+    "dim": "mv",
+    "category": "classify",
+    "in": "matrix",
+    "out": "table",
+    "halcon": "train_class_svm",
+    "path": "docs/ops/mv/classify/train_class_svm.md"
+   }
+  ],
+  "gen_nurbs_interp": [
+   {
+    "op": "gen_nurbs_interp",
+    "dim": "mv",
+    "category": "curve",
+    "in": "keypoints",
+    "out": "table",
+    "halcon": "gen_nurbs_interp",
+    "path": "docs/ops/mv/curve/gen_nurbs_interp.md"
+   }
+  ],
+  "create_ncc_model": [
+   {
+    "op": "create_ncc_model",
+    "dim": "mv",
+    "category": "detect",
+    "in": "image2d",
+    "out": "table",
+    "halcon": "create_ncc_model",
+    "path": "docs/ops/mv/detect/create_ncc_model.md"
+   }
+  ],
+  "find_ncc_models": [
+   {
+    "op": "find_ncc_models",
+    "dim": "mv",
+    "category": "detect",
+    "in": "table × image2d",
+    "out": "table",
+    "halcon": "find_ncc_models",
+    "path": "docs/ops/mv/detect/find_ncc_models.md"
+   }
+  ],
+  "points_lepetit": [
+   {
+    "op": "points_lepetit",
+    "dim": "mv",
+    "category": "detect",
+    "in": "image2d",
+    "out": "keypoints",
+    "halcon": "points_lepetit",
+    "path": "docs/ops/mv/detect/points_lepetit.md"
+   }
+  ],
+  "area_center_gray": [
+   {
+    "op": "area_center_gray",
+    "dim": "mv",
+    "category": "gray",
+    "in": "image2d",
+    "out": "table",
+    "halcon": "area_center_gray",
+    "path": "docs/ops/mv/gray/area_center_gray.md"
+   }
+  ],
+  "atan2_image": [
+   {
+    "op": "atan2_image",
+    "dim": "mv",
+    "category": "gray",
+    "in": "image2d × image2d",
+    "out": "image2d",
+    "halcon": "atan2_image",
+    "path": "docs/ops/mv/gray/atan2_image.md"
+   }
+  ],
+  "get_grayval_contour_xld": [
+   {
+    "op": "get_grayval_contour_xld",
+    "dim": "mv",
+    "category": "gray",
+    "in": "image2d × keypoints",
+    "out": "signal",
+    "halcon": "get_grayval_contour_xld",
+    "path": "docs/ops/mv/gray/get_grayval_contour_xld.md"
+   }
+  ],
+  "gray_histo": [
+   {
+    "op": "gray_histo",
+    "dim": "mv",
+    "category": "gray",
+    "in": "image2d",
+    "out": "table",
+    "halcon": "gray_histo",
+    "path": "docs/ops/mv/gray/gray_histo.md"
+   }
+  ],
+  "gray_projections": [
+   {
+    "op": "gray_projections",
+    "dim": "mv",
+    "category": "gray",
+    "in": "image2d",
+    "out": "table",
+    "halcon": "gray_projections",
+    "path": "docs/ops/mv/gray/gray_projections.md"
+   }
+  ],
+  "golay_elements": [
+   {
+    "op": "golay_elements",
+    "dim": "mv",
+    "category": "morphology",
+    "out": "table",
+    "halcon": "golay_elements",
+    "path": "docs/ops/mv/morphology/golay_elements.md"
+   }
+  ],
+  "hit_or_miss_golay": [
+   {
+    "op": "hit_or_miss_golay",
+    "dim": "mv",
+    "category": "morphology",
+    "in": "mask",
+    "out": "mask",
+    "halcon": "hit_or_miss_golay",
+    "path": "docs/ops/mv/morphology/hit_or_miss_golay.md"
+   }
+  ],
+  "hit_or_miss_seq": [
+   {
+    "op": "hit_or_miss_seq",
+    "dim": "mv",
+    "category": "morphology",
+    "in": "mask",
+    "out": "mask",
+    "halcon": "hit_or_miss_seq",
+    "path": "docs/ops/mv/morphology/hit_or_miss_seq.md"
+   }
+  ],
+  "morph_hat": [
+   {
+    "op": "morph_hat",
+    "dim": "mv",
+    "category": "morphology",
+    "in": "mask × mask",
+    "out": "mask",
+    "halcon": "morph_hat",
+    "path": "docs/ops/mv/morphology/morph_hat.md"
+   }
+  ],
+  "morph_skiz": [
+   {
+    "op": "morph_skiz",
+    "dim": "mv",
+    "category": "morphology",
+    "in": "mask",
+    "out": "mask",
+    "halcon": "morph_skiz",
+    "path": "docs/ops/mv/morphology/morph_skiz.md"
+   }
+  ],
+  "opening_seg": [
+   {
+    "op": "opening_seg",
+    "dim": "mv",
+    "category": "morphology",
+    "in": "mask × mask",
+    "out": "labels2d",
+    "halcon": "opening_seg",
+    "path": "docs/ops/mv/morphology/opening_seg.md"
+   }
+  ],
+  "thickening_golay": [
+   {
+    "op": "thickening_golay",
+    "dim": "mv",
+    "category": "morphology",
+    "in": "mask",
+    "out": "mask",
+    "halcon": "thickening_golay",
+    "path": "docs/ops/mv/morphology/thickening_golay.md"
+   }
+  ],
+  "thickening_hit_miss": [
+   {
+    "op": "thickening_hit_miss",
+    "dim": "mv",
+    "category": "morphology",
+    "in": "mask × mask × mask",
+    "out": "mask",
+    "halcon": "thickening",
+    "path": "docs/ops/mv/morphology/thickening_hit_miss.md"
+   }
+  ],
+  "thickening_seq": [
+   {
+    "op": "thickening_seq",
+    "dim": "mv",
+    "category": "morphology",
+    "in": "mask",
+    "out": "mask",
+    "halcon": "thickening_seq",
+    "path": "docs/ops/mv/morphology/thickening_seq.md"
+   }
+  ],
+  "get_circle_pose": [
+   {
+    "op": "get_circle_pose",
+    "dim": "mv",
+    "category": "pose",
+    "in": "keypoints",
+    "out": "table",
+    "halcon": "get_circle_pose",
+    "path": "docs/ops/mv/pose/get_circle_pose.md"
+   }
+  ],
+  "change_radial_distortion_image": [
+   {
+    "op": "change_radial_distortion_image",
+    "dim": "mv",
+    "category": "resample",
+    "in": "image2d × table × table",
+    "out": "image2d",
+    "halcon": "change_radial_distortion_image",
+    "path": "docs/ops/mv/resample/change_radial_distortion_image.md"
+   }
+  ],
+  "crop_rectangle2": [
+   {
+    "op": "crop_rectangle2",
+    "dim": "mv",
+    "category": "resample",
+    "in": "image2d",
+    "out": "image2d",
+    "halcon": "crop_rectangle2",
+    "path": "docs/ops/mv/resample/crop_rectangle2.md"
+   }
+  ],
+  "map_image": [
+   {
+    "op": "map_image",
+    "dim": "mv",
+    "category": "resample",
+    "in": "image2d × table",
+    "out": "image2d",
+    "halcon": "map_image",
+    "path": "docs/ops/mv/resample/map_image.md"
+   }
+  ],
+  "rectify_to_world_plane": [
+   {
+    "op": "rectify_to_world_plane",
+    "dim": "mv",
+    "category": "resample",
+    "in": "image2d × table × matrix",
+    "out": "image2d",
+    "halcon": "image_to_world_plane",
+    "path": "docs/ops/mv/resample/rectify_to_world_plane.md"
+   }
+  ],
+  "binocular_disparity_ms": [
+   {
+    "op": "binocular_disparity_ms",
+    "dim": "mv",
+    "category": "stereo",
+    "in": "image2d × image2d",
+    "out": "table",
+    "halcon": "binocular_disparity_ms",
+    "path": "docs/ops/mv/stereo/binocular_disparity_ms.md"
+   }
+  ],
+  "binocular_distance_ms": [
+   {
+    "op": "binocular_distance_ms",
+    "dim": "mv",
+    "category": "stereo",
+    "in": "image2d × image2d",
+    "out": "table",
+    "halcon": "binocular_distance_ms",
+    "path": "docs/ops/mv/stereo/binocular_distance_ms.md"
+   }
+  ],
+  "reconstruct_surface_stereo": [
+   {
+    "op": "reconstruct_surface_stereo",
+    "dim": "mv",
+    "category": "stereo",
+    "in": "image2d",
+    "out": "points",
+    "halcon": "reconstruct_surface_stereo",
+    "path": "docs/ops/mv/stereo/reconstruct_surface_stereo.md"
+   }
+  ],
+  "segment_characters": [
+   {
+    "op": "segment_characters",
+    "dim": "mv",
+    "category": "text",
+    "in": "image2d",
+    "out": "labels2d",
+    "halcon": "segment_characters",
+    "path": "docs/ops/mv/text/segment_characters.md"
+   }
+  ],
+  "select_characters": [
+   {
+    "op": "select_characters",
+    "dim": "mv",
+    "category": "text",
+    "in": "labels2d",
+    "out": "labels2d",
+    "halcon": "select_characters",
+    "path": "docs/ops/mv/text/select_characters.md"
+   }
+  ],
+  "text_line_orientation": [
+   {
+    "op": "text_line_orientation",
+    "dim": "mv",
+    "category": "text",
+    "in": "image2d",
+    "out": "scalar",
+    "halcon": "text_line_orientation",
+    "path": "docs/ops/mv/text/text_line_orientation.md"
+   }
+  ],
+  "text_line_slant": [
+   {
+    "op": "text_line_slant",
+    "dim": "mv",
+    "category": "text",
+    "in": "image2d",
+    "out": "scalar",
+    "halcon": "text_line_slant",
+    "path": "docs/ops/mv/text/text_line_slant.md"
+   }
+  ],
+  "create_bg_esti": [
+   {
+    "op": "create_bg_esti",
+    "dim": "mv",
+    "category": "tracking",
+    "in": "image2d",
+    "out": "table",
+    "halcon": "create_bg_esti",
+    "path": "docs/ops/mv/tracking/create_bg_esti.md"
+   }
+  ],
+  "filter_kalman": [
+   {
+    "op": "filter_kalman",
+    "dim": "mv",
+    "category": "tracking",
+    "out": "table",
+    "halcon": "filter_kalman",
+    "path": "docs/ops/mv/tracking/filter_kalman.md"
+   }
+  ],
+  "give_bg_esti": [
+   {
+    "op": "give_bg_esti",
+    "dim": "mv",
+    "category": "tracking",
+    "in": "table",
+    "out": "image2d",
+    "halcon": "give_bg_esti",
+    "path": "docs/ops/mv/tracking/give_bg_esti.md"
+   }
+  ],
+  "run_bg_esti": [
+   {
+    "op": "run_bg_esti",
+    "dim": "mv",
+    "category": "tracking",
+    "in": "table × image2d",
+    "out": "table",
+    "halcon": "run_bg_esti",
+    "path": "docs/ops/mv/tracking/run_bg_esti.md"
+   }
+  ],
+  "update_bg_esti": [
+   {
+    "op": "update_bg_esti",
+    "dim": "mv",
+    "category": "tracking",
+    "in": "table × image2d × mask",
+    "out": "table",
+    "halcon": "update_bg_esti",
+    "path": "docs/ops/mv/tracking/update_bg_esti.md"
+   }
+  ],
   "abs_funct_1d": [
    {
     "op": "abs_funct_1d",
@@ -27247,6 +27799,7 @@
     "category": "function",
     "in": "signal",
     "out": "signal",
+    "halcon": "abs_funct_1d",
     "path": "docs/ops/oned/function/abs_funct_1d.md"
    }
   ],
@@ -27257,6 +27810,7 @@
     "category": "function",
     "in": "signal × signal",
     "out": "signal",
+    "halcon": "compose_funct_1d",
     "path": "docs/ops/oned/function/compose_funct_1d.md"
    }
   ],
@@ -27267,6 +27821,7 @@
     "category": "function",
     "in": "signal",
     "out": "signal",
+    "halcon": "create_funct_1d_array",
     "path": "docs/ops/oned/function/create_funct_1d_array.md"
    }
   ],
@@ -27277,6 +27832,7 @@
     "category": "function",
     "in": "signal × signal",
     "out": "signal",
+    "halcon": "create_funct_1d_pairs",
     "path": "docs/ops/oned/function/create_funct_1d_pairs.md"
    }
   ],
@@ -27287,6 +27843,7 @@
     "category": "function",
     "in": "signal",
     "out": "signal",
+    "halcon": "derivate_funct_1d",
     "path": "docs/ops/oned/function/derivate_funct_1d.md"
    }
   ],
@@ -27297,6 +27854,7 @@
     "category": "function",
     "in": "signal × signal",
     "out": "measurement",
+    "halcon": "distance_funct_1d",
     "path": "docs/ops/oned/function/distance_funct_1d.md"
    }
   ],
@@ -27307,6 +27865,7 @@
     "category": "function",
     "in": "signal",
     "out": "pairs",
+    "halcon": "funct_1d_to_pairs",
     "path": "docs/ops/oned/function/funct_1d_to_pairs.md"
    }
   ],
@@ -27317,6 +27876,7 @@
     "category": "function",
     "in": "signal",
     "out": "pairs",
+    "halcon": "get_pair_funct_1d",
     "path": "docs/ops/oned/function/get_pair_funct_1d.md"
    }
   ],
@@ -27327,6 +27887,7 @@
     "category": "function",
     "in": "signal",
     "out": "measurement",
+    "halcon": "get_y_value_funct_1d",
     "path": "docs/ops/oned/function/get_y_value_funct_1d.md"
    }
   ],
@@ -27337,6 +27898,7 @@
     "category": "function",
     "in": "signal",
     "out": "signal",
+    "halcon": "integrate_funct_1d",
     "path": "docs/ops/oned/function/integrate_funct_1d.md"
    }
   ],
@@ -27347,6 +27909,7 @@
     "category": "function",
     "in": "signal",
     "out": "pairs",
+    "halcon": "invert_funct_1d",
     "path": "docs/ops/oned/function/invert_funct_1d.md"
    }
   ],
@@ -27357,6 +27920,7 @@
     "category": "function",
     "in": "signal",
     "out": "table",
+    "halcon": "local_min_max_funct_1d",
     "path": "docs/ops/oned/function/local_min_max_funct_1d.md"
    }
   ],
@@ -27367,6 +27931,7 @@
     "category": "function",
     "in": "signal × signal",
     "out": "table",
+    "halcon": "match_funct_1d_trans",
     "path": "docs/ops/oned/function/match_funct_1d_trans.md"
    }
   ],
@@ -27377,6 +27942,7 @@
     "category": "function",
     "in": "signal",
     "out": "signal",
+    "halcon": "negate_funct_1d",
     "path": "docs/ops/oned/function/negate_funct_1d.md"
    }
   ],
@@ -27387,6 +27953,7 @@
     "category": "function",
     "in": "signal",
     "out": "measurement",
+    "halcon": "num_points_funct_1d",
     "path": "docs/ops/oned/function/num_points_funct_1d.md"
    }
   ],
@@ -27397,6 +27964,7 @@
     "category": "function",
     "in": "signal",
     "out": "signal",
+    "halcon": "sample_funct_1d",
     "path": "docs/ops/oned/function/sample_funct_1d.md"
    }
   ],
@@ -27407,6 +27975,7 @@
     "category": "function",
     "in": "signal",
     "out": "signal",
+    "halcon": "scale_y_funct_1d",
     "path": "docs/ops/oned/function/scale_y_funct_1d.md"
    }
   ],
@@ -27417,6 +27986,7 @@
     "category": "function",
     "in": "signal",
     "out": "signal",
+    "halcon": "smooth_funct_1d_gauss",
     "path": "docs/ops/oned/function/smooth_funct_1d_gauss.md"
    }
   ],
@@ -27427,6 +27997,7 @@
     "category": "function",
     "in": "signal",
     "out": "signal",
+    "halcon": "smooth_funct_1d_mean",
     "path": "docs/ops/oned/function/smooth_funct_1d_mean.md"
    }
   ],
@@ -27437,6 +28008,7 @@
     "category": "function",
     "in": "signal",
     "out": "pairs",
+    "halcon": "transform_funct_1d",
     "path": "docs/ops/oned/function/transform_funct_1d.md"
    }
   ],
@@ -27447,6 +28019,7 @@
     "category": "function",
     "in": "signal",
     "out": "pairs",
+    "halcon": "x_range_funct_1d",
     "path": "docs/ops/oned/function/x_range_funct_1d.md"
    }
   ],
@@ -27457,6 +28030,7 @@
     "category": "function",
     "in": "signal",
     "out": "pairs",
+    "halcon": "y_range_funct_1d",
     "path": "docs/ops/oned/function/y_range_funct_1d.md"
    }
   ],
@@ -27467,6 +28041,7 @@
     "category": "function",
     "in": "signal",
     "out": "indices",
+    "halcon": "zero_crossings_funct_1d",
     "path": "docs/ops/oned/function/zero_crossings_funct_1d.md"
    }
   ],
@@ -33968,6 +34543,7 @@
     "category": "classify",
     "in": "image2d × image2d × mask",
     "out": "mask",
+    "halcon": "class_2dim_sup",
     "path": "docs/ops/segmentation/classify/class_2dim_sup.md"
    }
   ],
@@ -33978,6 +34554,7 @@
     "category": "classify",
     "in": "image2d × image2d",
     "out": "labels2d",
+    "halcon": "class_2dim_unsup",
     "path": "docs/ops/segmentation/classify/class_2dim_unsup.md"
    }
   ],
@@ -33988,6 +34565,7 @@
     "category": "classify",
     "in": "images × table",
     "out": "mask",
+    "halcon": "class_ndim_norm",
     "path": "docs/ops/segmentation/classify/class_ndim_norm.md"
    }
   ],
@@ -33998,6 +34576,7 @@
     "category": "classify",
     "in": "image2d × signal",
     "out": "labels2d",
+    "halcon": "classify_image_class_lut",
     "path": "docs/ops/segmentation/classify/classify_image_class_lut.md"
    }
   ],
@@ -34028,6 +34607,7 @@
     "category": "classify",
     "in": "matrix",
     "out": "table",
+    "halcon": "learn_ndim_norm",
     "path": "docs/ops/segmentation/classify/learn_ndim_norm.md"
    }
   ],
@@ -34038,6 +34618,7 @@
     "category": "compare",
     "in": "image2d × image2d",
     "out": "mask",
+    "halcon": "check_difference",
     "path": "docs/ops/segmentation/compare/check_difference.md"
    }
   ],
@@ -34268,6 +34849,7 @@
     "category": "grow",
     "in": "image2d × mask",
     "out": "mask",
+    "halcon": "expand_gray",
     "path": "docs/ops/segmentation/grow/expand_gray.md"
    }
   ],
@@ -34278,6 +34860,7 @@
     "category": "grow",
     "in": "images",
     "out": "labels2d",
+    "halcon": "regiongrowing_n",
     "path": "docs/ops/segmentation/grow/regiongrowing_n.md"
    }
   ],
@@ -34438,6 +35021,7 @@
     "category": "watershed",
     "in": "image2d × labels2d",
     "out": "labels2d",
+    "halcon": "watersheds_marker",
     "path": "docs/ops/segmentation/watershed/watersheds_marker.md"
    }
   ],
@@ -35356,6 +35940,7 @@
     "category": "variation",
     "in": "video",
     "out": "table",
+    "halcon": "train_variation_model",
     "path": "docs/ops/spc/variation/varmodel_fit.md"
    }
   ],

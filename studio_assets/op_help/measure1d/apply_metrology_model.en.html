@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">apply_metrology_model — MEASURE1D <code style="color:#22d3bf">apply</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">metrologymodel × image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.apply_metrology_model(model, image, measure_length=6.0, sigma=1.0, threshold=0.05) -&gt; &#x27;list&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import metrology; metrology.apply_metrology_model(model, image, measure_length=6.0, sigma=1.0, threshold=0.05) -&gt; &#x27;list&#x27;</code>; from the registry, <code style="color:#22d3bf">opsmeasure1d.get(&quot;apply_metrology_model&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">apply_metrology_model</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Measures subpixel edges along the normals of each metrology object&#x27;s reference shape, refits the shape and returns the result (apply_metrology_model).</p>

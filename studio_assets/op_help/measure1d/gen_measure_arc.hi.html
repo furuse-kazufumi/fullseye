@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">gen_measure_arc — MEASURE1D <code style="color:#22d3bf">caliper</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">measurehandle</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gen_measure_arc(center_row, center_col, radius, angle_start, angle_extent, width, shape)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import measuring1d; measuring1d.gen_measure_arc(center_row, center_col, radius, angle_start, angle_extent, width, shape)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsmeasure1d.get(&quot;gen_measure_arc&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>HALCON समकक्ष</b>: <code style="color:#22d3bf">gen_measure_arc</code> (अर्थ और parameters समझने के लिए HALCON reference उपयोगी है)</p>
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>measurement arc परिभाषित करता है (profile को परिधि की दिशा में ≈1 px अंतराल पर लिया जाता है) (gen_measure_arc)। sample संख्या n = round(|angle_extent|*radius)+1, <code style="color:#22d3bf">spacing</code> = arc length/(n-1)।</p>

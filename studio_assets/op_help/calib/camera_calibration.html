@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">camera_calibration — CALIB <code style="color:#22d3bf">calibrate</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">keypoints</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.camera_calibration(object_points, image_points_list)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import calib; calib.camera_calibration(object_points, image_points_list)</code>、台帳から引くなら <code style="color:#22d3bf">opscalib.get(&quot;camera_calibration&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>HALCON 相当</b>: <code style="color:#22d3bf">camera_calibration</code>(意味・パラメータは HALCON リファレンスが参考になる)</p>
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Zhang 法で平面ターゲット多視点から内部行列 K を推定(camera_calibration)。</p>

@@ -135,6 +135,9 @@ LEDGER_DIMS = {
     # 新しい型語彙は作らない(points / pose / matrix / table / contour / image2d)。
     "calib": {"registry": "opscalib", "table": "OPSCALIB",
               "module": "calib", "family": "camera_calibration"},
+    # 2026-11-02: 工業用ビジョンの定番の演算。新語なし。
+    "mv": {"registry": "opsmv", "table": "OPSMV",
+           "module": "mvimage", "family": "machine_vision_classics"},
     "generative": {"registry": "opsgenerative", "table": "OPSGENERATIVE",
                    "module": "perpetual", "family": "generative_art"},
     "imgmetrics": {"registry": "opsimgmetrics", "table": "OPSIMGMETRICS",
@@ -929,6 +932,17 @@ def _defuse_pseudolinks(doc: str) -> str:
 _RECORDS_CACHE = None
 
 
+_HALCON_LEDGER_CACHE = {}
+
+
+def _halcon_ledger():
+    """台帳 op の ``halcon`` 欄の正本(``opassist.ledger_halcon_map``)を 1 度だけ読む。"""
+    if not _HALCON_LEDGER_CACHE:
+        import opassist
+        _HALCON_LEDGER_CACHE.update(opassist.ledger_halcon_map())
+    return _HALCON_LEDGER_CACHE
+
+
 def _records_cache_clear():
     """`_records()` の記憶を捨てる(ノートを書き換えた後に呼ぶ)。"""
     global _RECORDS_CACHE
@@ -1036,7 +1050,8 @@ def _records_uncached():
             recs.append({
                 "dim": "3d", "name": name, "category": info["category"],
                 "in": ins, "out": info["out"],
-                "halcon": "", "doc": _defuse_pseudolinks(_fdoc or (info.get("doc") or "").strip()),
+                "halcon": _halcon_ledger().get(name, ""),
+                "doc": _defuse_pseudolinks(_fdoc or (info.get("doc") or "").strip()),
                 "module": info.get("module", "ops3d"), "sig": sig,
                 "examples": sorted(idx3d.get(name, [])),
                 "family": None, "gpu": bool(info.get("gpu")),
@@ -1074,7 +1089,8 @@ def _records_uncached():
                     "in": ins, "out": info["out"],
                     # cleandoc: function docstrings carry the 4-space continuation
                     # indent, which Markdown would misread as a code block.
-                    "halcon": "", "doc": _defuse_pseudolinks(inspect.cleandoc(doc).strip() if doc else ""),
+                    "halcon": _halcon_ledger().get(name, ""),
+                    "doc": _defuse_pseudolinks(inspect.cleandoc(doc).strip() if doc else ""),
                     "module": info.get("module", _meta["module"]), "sig": sig,
                     "examples": sorted(idx.get(name, [])),
                     # one usage guide per ledger family, named after the coverage

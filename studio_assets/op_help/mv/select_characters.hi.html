@@ -1,0 +1,32 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">select_characters — MV <code style="color:#22d3bf">text</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">labels2d</code> → <code style="color:#22d3bf">labels2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.select_characters(labels, min_height_ratio=0.5, max_height_ratio=1.5, max_width_ratio=2.0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import mvtext; mvtext.select_characters(labels, min_height_ratio=0.5, max_height_ratio=1.5, max_width_ratio=2.0)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsmv.get(&quot;select_characters&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>HALCON समकक्ष</b>: <code style="color:#22d3bf">select_characters</code> (अर्थ और parameters समझने के लिए HALCON reference उपयोगी है)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>अक्षर लेबल छवि से माध्यिका से हटकर ऊँचाई या चौड़ाई वाले ब्लॉब हटाकर बाएँ से फिर क्रमांकित करता है।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>高さと幅の中央値に対する比で判定する。塊が 1 つも無いと全 0 を返す(理由: 字が無い)。空の入力(<code style="color:#22d3bf">labels</code> が 0 要素)は ValueError。</p>
+<p>Args:</p>
+<p>labels: <code style="color:#22d3bf">segment_characters</code> のラベル画像。</p>
+<p>min_height_ratio: 高さの下限(中央値に対する比)。</p>
+<p>max_height_ratio: 高さの上限(中央値に対する比)。</p>
+<p>max_width_ratio: 幅の上限(中央値に対する比)。</p>
+<p>Returns:</p>
+<p><code style="color:#22d3bf">labels</code> と同じ形の整数ラベル画像。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemv:machine_vision_classics">machine_vision_classics family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:machine_vision_tour">machine_vision_tour</a> — <code style="color:#22d3bf">py -3.11 examples/machine_vision_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">labels2d</code> को input के रूप में लेते हैं)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">text</code>)</h3>
+<p><a style="color:#22d3bf" href="opmv:text_line_orientation">text_line_orientation</a> · <a style="color:#22d3bf" href="opmv:text_line_slant">text_line_slant</a> · <a style="color:#22d3bf" href="opmv:segment_characters">segment_characters</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: mvtext.py — MV operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

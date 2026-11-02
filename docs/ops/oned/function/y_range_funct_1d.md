@@ -4,6 +4,7 @@ dim: oned
 category: function
 in: signal
 out: pairs
+halcon: y_range_funct_1d
 gpu: なし
 examples: [signal_funct1d]
 author: Kazufumi Furuse
@@ -16,6 +17,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **データ種**: `signal` → `pairs`
 - **呼び出し**: `import fullseye as fs; fs.ledger.y_range_funct_1d(y)` (実装を直接呼ぶなら `import funct1d; funct1d.y_range_funct_1d(y)`、台帳から引くなら `ops1d.get("y_range_funct_1d")`)
 - **台帳経由の戻り値**: `fullseye.ledger.y_range_funct_1d(...)` は**宣言 out 型 `pairs` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.y_range_funct_1d.raw(...)`、または `funct1d.y_range_funct_1d` を直接呼ぶ。
+- **HALCON 相当**: `y_range_funct_1d`(意味・パラメータは HALCON リファレンスが参考になる)
 - **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方

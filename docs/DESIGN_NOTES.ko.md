@@ -67,8 +67,8 @@
 - **L2856** _(ja)_ — ★ただし第 2 入力がマスク(畳み込みの核)の op は形が違って当然 —— 3×3 のマスクを 画像と同じ大きさに埋めないと呼べない、では入口として壊れている(2026-10-12、例の 付与で発見)。核を取る op だけ名指しで外す。
 - **L3167** _(ja)_ — ★2026-09-20(GenSpark 第 15・16 報 N67): 4 op の入口の関門(ops.NATIVE_CRASHES_ON_DEGENERATE)は 効いているのに、その事実は ops.py の中にしか無く、registry を使う側からは見えなかった。 行に載せる(None = 関門なし。理由の文がそのまま値)。
 - **L3171** _(ja)_ — ★2026-09-20(GenSpark 第 20 報 N84): 同じ HALCON 別名を複数の op が名乗る(cv_ / sk_ の移植と コアの実装)。どれが走るかは find_op の規則(完全一致 → name == halcon → _ALIAS_CANONICAL)で 決まっていて曖昧ではないが、その事実が行に無かった。halcon_peers = 同じ別名を名乗る他の op。
-- **L3292** _(ja)_ — ★2026-09-20(GenSpark 第 24 報 N95): 綴り違いの sort が黙って 0 行だった(「該当なし」と区別できない)。
-- **L3302** _(ja)_ — ★台帳には**入力ゼロ**の op(カタログを返すだけ)が在り ``in_sort`` が None になる。 生の None を並べ替えの鍵に混ぜると TypeError で落ちる —— レジストリと n-ary だけ だった頃は None が現れなかったので、この鍵は 2026-09-25 まで壊れずに済んでいた。
+- **L3293** _(ja)_ — ★2026-09-20(GenSpark 第 24 報 N95): 綴り違いの sort が黙って 0 行だった(「該当なし」と区別できない)。
+- **L3303** _(ja)_ — ★台帳には**入力ゼロ**の op(カタログを返すだけ)が在り ``in_sort`` が None になる。 生の None を並べ替えの鍵に混ぜると TypeError で落ちる —— レジストリと n-ary だけ だった頃は None が現れなかったので、この鍵は 2026-09-25 まで壊れずに済んでいた。
 
 ## `astrostack.py`
 
@@ -1707,27 +1707,27 @@
 ## `opassist.py`
 
 - **L56** _(ja)_ — ★2026-10-23: カメラ校正(calib / caltab / fit_transform、21 op)。実装は 2026-08 から あり試験も 30 本超あったのに、台帳が無いので op ノートが 1 枚も無く、fs.ledger / OP_INDEX.json / op_find("caltab") のどこからも引けなかった(fs.<名前> は 21 中 1)。 新語なし(points / pose / matrix / table / contour / image2d)。
-- **L77** — ★2026-09-08: ops1d(dsp 16 + funct1d 23)는 등록되어 있는데도, docs 에도 op_run / op_assist / op_find 에도 나오지 않았다 -- '등록했다'와 '조회할 수 있다'는 다르다. opdocs 에 추가했더니, 이 문이 조회할 수 없는 쪽을 울렸다.
-- **L318** — ★설계(2026-09-04, 사용자 '여러 컨테이너 타입을 다룰 수 있는 편이 좋지만, 통일감도 중요합니다'): 처음에는 `kind` 에 "seq" 나 "matrix" 를 섞고 있었다 -- 즉 **값의 타입**(수치인지 정수인지 선택지인지)과 **용기의 형태**(1 개인지 벡터인지 행렬인지)가 한 칸에서 경합하고 있었다. UI 에서 보면 'int 의 3 벡터'를 표현할 수 없고, 행렬만 구조가 `seq` 키 아래에 있는 등, 취급이 제각각이다. 이곳을 직교화하여, `kind` 는 값 타입만, 용기는 항상 `container` 에 넣는 형태로 통일했다. 스칼라도 예외로 하지 않으므로(`{"form": "scalar", "shape": ()}`), UI 는 분기를 하나로 쓸 수 있다.
-- **L452** — ★최장 일치. 짧은 순으로 보면 `sigma_per_mm` 이 `_mm` 에 걸려 "mm" 가 된다(실제로는 1/mm). 단위를 틀리면 UI 의 숫자가 조용히 다른 것이 된다.
-- **L535** _(ja)_ — ★2026-09-20(GenSpark 第 15 報 N71): ``write_wav(path, x, rate)`` は in=["signal"] なので、 第 1 引数の ``path`` に signal が割り当てられ、``op_run("write_wav")`` が配列をファイル名として 開こうとしていた。パス名の引数は、宣言 sort が "file" のときだけデータ(読む側)で、 それ以外は書き先のパラメータ —— データ型は次の引数へ送る。
-- **L568** — ★여기가 요점: **기본값이 tuple 로 주어지지 않은** 인자가 있다. `center=None`(생략 가능한 (row,col)), 필수인 `trans`(3 벡터), `k_cam`(3x3 행렬)... 기본값만 보면 '숫자 1 개'로 보여, UI 가 spin box 를 하나만 내놓아 파탄한다. 이름으로 구조를 보완한다.
-- **L782** _(ja)_ — ★一様乱数の行列にしない —— 成分・モジュラリティ・rich club は構造が無いと 「どのノブでも同じ数」になり、押して動いても意味のある絵にならない。
-- **L786** _(ja)_ — llmcore(2026-09-24): ★一様乱数にしない —— どの行も似た向きになり、 注意の重みが全行ほぼ一様になって「押しても何も起きない」種になる。 滑らかな画像を 8x8 パッチに切ると、近い場所が近い向きを向く。
-- **L802** — ★실측으로 판명: `prism_min_deviation_deg` 의 파장 입력에 0..1 의 범용 signal 을 넘기면 '파장은 양의 값'으로 걸려, **샘플이 움직이지 않는 op** 가 되어 있었다. 단위를 알면, 그 양으로서 타당한 범위를 씨앗으로 삼는 편이 '누르면 움직인다'에 가깝다.
-- **L995** — 일본어(CJK)의 연이음. ★``_WORD_RE`` 는 ``[a-z0-9]+`` 이므로, 일본어 쿼리는 **단어를 하나도 얻지 못한다**(일본어 입력에 대해 ``_WORD_RE.findall(...) == []``). 어간 단계가 죽고, 부분 일치는 공백째 포함한 문자열을 찾으므로, **일본어의 다단어 쿼리는 구조적으로 반드시 0 건**이었다 -- docstring 의 대부분이 일본어이고 6 개 언어로 배포하는 제품에서. 2026-09-08 에 `poc_search_sweep_width` 가 밟아 판명(``op_find`` 으로 '점 검출' / '스팟 검출' / '작은 표적'의 일본어 쿼리가 모두 0 건이었고, 서브픽셀 무게중심 점표적 검출은 ``star_detect`` 밖에 없는데 일본어에서 도달할 수 없었다).
-- **L1048** — 어간 일치로 간주하는 공통 접두사의 길이. ★4 로 하면 "median"/"medial" 이나 "contrast"/"contour" 가 이어져 버리고, 5 로 자르면 "correlation"/"correlate"(8)·"segmentation"/"segment"(7)·"rotation"/"rotate"(5)·"gaussian"/"gauss"(5) 는 잡히고 위의 2 쌍은 잡지 않는다.
-- **L1058** — 공통 접두사 **뒤에 허용하는 어미**. ★접두사 길이만으로 판정하면 "median"/"medial" 이 이어진다(공통 "media" 가 5 글자 있다). 어미가 굴절 어미다운지를 보면, "correlation"/"correlate"(ion / e)는 통과하고, "median"/"medial"(n / l)과 "corner"/"cornea"(r / a)는 떨어진다.
-- **L1154** — ★바닥. 없으면 "zzz-nothing-matches" 가 `histogram_match` 를 반환한다("matches" 가 `match_*` 에 어간 일치하기 때문). 맞은 단어의 가중치가 쿼리 전체의 15 % 에 못 미치면 '맞지 않음'으로 간주한다. 실측: "digital image correlation" 은 0.19(통과), "zzz-nothing-matches" 는 0.10(탈락).
-- **L1294** _(ja)_ — ★欧文の段(2026-10-15): 欧文のクエリは 1 行目の doc までしか見ておらず、引数の説明にだけ 出る語が 0 件だった —— "orthometric"(標高)は dem_height_frame_convert の frm / to にしか 書かれておらず、op_find("ortho") は名前に ortho を含む doe_orthogonal_array(直交表)しか 返さなかった。docstring 全文の部分一致を、どの段より低い点(12)で最後に拾う。
-- **L1335** _(ja)_ — ★2026-09-19(GenSpark N2): ``fullseye.apply([x, y], "add_image")`` で**動く**のに、 ``op_names()`` にも ``op_find()`` にも載っていなかった(op_names は 1 入力のレジストリだけ、 op_find は台帳 + レジストリだけを見ていた)。呼べるものは探せなければならない。
-- **L1364** _(ja)_ — ★2026-10-18(外部レビュー 0.6.0 の一次検証): op_find("sgm") が 0 件で、外部 AI は「SGM は無い」と結論した。 実際には ``fullseye.disparity_sgm``(Hirschmüller の SGM、census の費用 + 経路集約)が 0.1 系から在り、 ``fullseye.stereo`` の族ごと**ファサードにだけ**在る —— 台帳・2-D レジストリ・n-ary のどれにも載らないので、 探す側からは見えなかった([[feedback_search_all_tiers_before_declaring_a_gap]] と同じ型)。 名前と docstring の 1 行目で、他の層より 1 点低く拾う(同名なら op 表の行が勝つ)。
-- **L1392** _(ja)_ — ★2026-09-20: 何で当たったかを ``match`` に(exact = 名前の完全一致 / name = 名前の部分一致 / stem = 語幹 /
-- **L1463** _(ja)_ — ★2026-09-20(GenSpark 第 55 報 N200): op_run(img, "gaussian") が `unhashable type: 'numpy.ndarray'`、 op_run("gaussian", img) が「not in any ledger」で終わり、registry op は apply で走ることを言わなかった。
-- **L1483** _(ja)_ — ★2026-09-20(GenSpark 第 20 報 N87): 種を作れない型(mesh / lab / matrix …)は None のまま 関数に渡り、IndexError / AttributeError / AxisError が利用者に届いていた(11 op)。 呼ばずに、どの入力を渡せばよいかを言う。
-- **L1496** _(ja)_ — ★2026-09-20(N71): データ引数が署名の先頭に無い op(write_wav(path, x))は名前で渡す —— 位置で渡すと 配列が path に入る。データ引数の名前は param_spec が知っている。
-- **L1506** _(ja)_ — ★2026-09-20(GenSpark 第 34 報 N122、再現): 入力を一部だけ渡すと(blend_mode(base) で top 無し)Python の生の 「missing 1 required positional argument」が届いていた。0 個のときは上で種を作って言うのに、1 個以上のときは 検査が無かった。必須のデータ引数が位置でも名前でも来ていなければ、期待する形を 1 文で言う。
-- **L1524** _(ja)_ — ★2026-09-20(N87): 自動の数値サンプル(1.0)が座標や行列を要する引数に合わないと、op の中の IndexError がそのまま利用者に届いていた(scene_box の center_mm 等)。自動値が原因なら言う。
+- **L80** — ★2026-09-08: ops1d(dsp 16 + funct1d 23)는 등록되어 있는데도, docs 에도 op_run / op_assist / op_find 에도 나오지 않았다 -- '등록했다'와 '조회할 수 있다'는 다르다. opdocs 에 추가했더니, 이 문이 조회할 수 없는 쪽을 울렸다.
+- **L336** — ★설계(2026-09-04, 사용자 '여러 컨테이너 타입을 다룰 수 있는 편이 좋지만, 통일감도 중요합니다'): 처음에는 `kind` 에 "seq" 나 "matrix" 를 섞고 있었다 -- 즉 **값의 타입**(수치인지 정수인지 선택지인지)과 **용기의 형태**(1 개인지 벡터인지 행렬인지)가 한 칸에서 경합하고 있었다. UI 에서 보면 'int 의 3 벡터'를 표현할 수 없고, 행렬만 구조가 `seq` 키 아래에 있는 등, 취급이 제각각이다. 이곳을 직교화하여, `kind` 는 값 타입만, 용기는 항상 `container` 에 넣는 형태로 통일했다. 스칼라도 예외로 하지 않으므로(`{"form": "scalar", "shape": ()}`), UI 는 분기를 하나로 쓸 수 있다.
+- **L470** — ★최장 일치. 짧은 순으로 보면 `sigma_per_mm` 이 `_mm` 에 걸려 "mm" 가 된다(실제로는 1/mm). 단위를 틀리면 UI 의 숫자가 조용히 다른 것이 된다.
+- **L553** _(ja)_ — ★2026-09-20(GenSpark 第 15 報 N71): ``write_wav(path, x, rate)`` は in=["signal"] なので、 第 1 引数の ``path`` に signal が割り当てられ、``op_run("write_wav")`` が配列をファイル名として 開こうとしていた。パス名の引数は、宣言 sort が "file" のときだけデータ(読む側)で、 それ以外は書き先のパラメータ —— データ型は次の引数へ送る。
+- **L586** — ★여기가 요점: **기본값이 tuple 로 주어지지 않은** 인자가 있다. `center=None`(생략 가능한 (row,col)), 필수인 `trans`(3 벡터), `k_cam`(3x3 행렬)... 기본값만 보면 '숫자 1 개'로 보여, UI 가 spin box 를 하나만 내놓아 파탄한다. 이름으로 구조를 보완한다.
+- **L800** _(ja)_ — ★一様乱数の行列にしない —— 成分・モジュラリティ・rich club は構造が無いと 「どのノブでも同じ数」になり、押して動いても意味のある絵にならない。
+- **L804** _(ja)_ — llmcore(2026-09-24): ★一様乱数にしない —— どの行も似た向きになり、 注意の重みが全行ほぼ一様になって「押しても何も起きない」種になる。 滑らかな画像を 8x8 パッチに切ると、近い場所が近い向きを向く。
+- **L820** — ★실측으로 판명: `prism_min_deviation_deg` 의 파장 입력에 0..1 의 범용 signal 을 넘기면 '파장은 양의 값'으로 걸려, **샘플이 움직이지 않는 op** 가 되어 있었다. 단위를 알면, 그 양으로서 타당한 범위를 씨앗으로 삼는 편이 '누르면 움직인다'에 가깝다.
+- **L1013** — 일본어(CJK)의 연이음. ★``_WORD_RE`` 는 ``[a-z0-9]+`` 이므로, 일본어 쿼리는 **단어를 하나도 얻지 못한다**(일본어 입력에 대해 ``_WORD_RE.findall(...) == []``). 어간 단계가 죽고, 부분 일치는 공백째 포함한 문자열을 찾으므로, **일본어의 다단어 쿼리는 구조적으로 반드시 0 건**이었다 -- docstring 의 대부분이 일본어이고 6 개 언어로 배포하는 제품에서. 2026-09-08 에 `poc_search_sweep_width` 가 밟아 판명(``op_find`` 으로 '점 검출' / '스팟 검출' / '작은 표적'의 일본어 쿼리가 모두 0 건이었고, 서브픽셀 무게중심 점표적 검출은 ``star_detect`` 밖에 없는데 일본어에서 도달할 수 없었다).
+- **L1066** — 어간 일치로 간주하는 공통 접두사의 길이. ★4 로 하면 "median"/"medial" 이나 "contrast"/"contour" 가 이어져 버리고, 5 로 자르면 "correlation"/"correlate"(8)·"segmentation"/"segment"(7)·"rotation"/"rotate"(5)·"gaussian"/"gauss"(5) 는 잡히고 위의 2 쌍은 잡지 않는다.
+- **L1076** — 공통 접두사 **뒤에 허용하는 어미**. ★접두사 길이만으로 판정하면 "median"/"medial" 이 이어진다(공통 "media" 가 5 글자 있다). 어미가 굴절 어미다운지를 보면, "correlation"/"correlate"(ion / e)는 통과하고, "median"/"medial"(n / l)과 "corner"/"cornea"(r / a)는 떨어진다.
+- **L1172** — ★바닥. 없으면 "zzz-nothing-matches" 가 `histogram_match` 를 반환한다("matches" 가 `match_*` 에 어간 일치하기 때문). 맞은 단어의 가중치가 쿼리 전체의 15 % 에 못 미치면 '맞지 않음'으로 간주한다. 실측: "digital image correlation" 은 0.19(통과), "zzz-nothing-matches" 는 0.10(탈락).
+- **L1312** _(ja)_ — ★欧文の段(2026-10-15): 欧文のクエリは 1 行目の doc までしか見ておらず、引数の説明にだけ 出る語が 0 件だった —— "orthometric"(標高)は dem_height_frame_convert の frm / to にしか 書かれておらず、op_find("ortho") は名前に ortho を含む doe_orthogonal_array(直交表)しか 返さなかった。docstring 全文の部分一致を、どの段より低い点(12)で最後に拾う。
+- **L1353** _(ja)_ — ★2026-09-19(GenSpark N2): ``fullseye.apply([x, y], "add_image")`` で**動く**のに、 ``op_names()`` にも ``op_find()`` にも載っていなかった(op_names は 1 入力のレジストリだけ、 op_find は台帳 + レジストリだけを見ていた)。呼べるものは探せなければならない。
+- **L1382** _(ja)_ — ★2026-10-18(外部レビュー 0.6.0 の一次検証): op_find("sgm") が 0 件で、外部 AI は「SGM は無い」と結論した。 実際には ``fullseye.disparity_sgm``(Hirschmüller の SGM、census の費用 + 経路集約)が 0.1 系から在り、 ``fullseye.stereo`` の族ごと**ファサードにだけ**在る —— 台帳・2-D レジストリ・n-ary のどれにも載らないので、 探す側からは見えなかった([[feedback_search_all_tiers_before_declaring_a_gap]] と同じ型)。 名前と docstring の 1 行目で、他の層より 1 点低く拾う(同名なら op 表の行が勝つ)。
+- **L1410** _(ja)_ — ★2026-09-20: 何で当たったかを ``match`` に(exact = 名前の完全一致 / name = 名前の部分一致 / stem = 語幹 /
+- **L1481** _(ja)_ — ★2026-09-20(GenSpark 第 55 報 N200): op_run(img, "gaussian") が `unhashable type: 'numpy.ndarray'`、 op_run("gaussian", img) が「not in any ledger」で終わり、registry op は apply で走ることを言わなかった。
+- **L1501** _(ja)_ — ★2026-09-20(GenSpark 第 20 報 N87): 種を作れない型(mesh / lab / matrix …)は None のまま 関数に渡り、IndexError / AttributeError / AxisError が利用者に届いていた(11 op)。 呼ばずに、どの入力を渡せばよいかを言う。
+- **L1514** _(ja)_ — ★2026-09-20(N71): データ引数が署名の先頭に無い op(write_wav(path, x))は名前で渡す —— 位置で渡すと 配列が path に入る。データ引数の名前は param_spec が知っている。
+- **L1524** _(ja)_ — ★2026-09-20(GenSpark 第 34 報 N122、再現): 入力を一部だけ渡すと(blend_mode(base) で top 無し)Python の生の 「missing 1 required positional argument」が届いていた。0 個のときは上で種を作って言うのに、1 個以上のときは 検査が無かった。必須のデータ引数が位置でも名前でも来ていなければ、期待する形を 1 文で言う。
+- **L1542** _(ja)_ — ★2026-09-20(N87): 自動の数値サンプル(1.0)が座標や行列を要する引数に合わないと、op の中の IndexError がそのまま利用者に届いていた(scene_box の center_mm 等)。自動値が原因なら言う。
 
 ## `ops.py`
 
@@ -2725,21 +2725,21 @@
 - **L1298** _(ja)_ — ★単位空間は渡さない(渡すなら 3 つ全部)。渡さない形は「データ自身から 作る」訓練時の呼び方で、ファザーが最も広く回せる。
 - **L6930** _(ja)_ — ★2026-10-18: 窓 3 つ + 厚さ 0 から始まる勾配。窓の番号(low / high)のノブは窓が 3 つないと どの値も同じ 2 窓を指し、min_log(素通しに近い画素を拒否する下限)は L が 0.01〜0.04 の画素が 無いと効かない —— 効く入力を渡す(効かないノブを台帳に載せない)。 窓は 120 kV で 20 / 40 / 60 keV(隣り合う狭い窓 20〜35 / 35〜55 では Cr と Mn の R が逆転し、 effective_z_map が単調でないとして拒否する —— それは op の正しい拒否で、ノブの検査にならない)。
 - **L7140** _(ja)_ — ★obs2 の 2 点目は台車 0 の終点から (−0.15, 1.0) ずらした所: 射影の角 0.1 → 0.2 rad で終点と点の順が入れ替わり、 組紐語が変わる(角が「効かないノブ」に見えない入力。類が同じかは角に依らない —— それは門が別に見る)。
-- **L8120** _(ja)_ — ★2026-10-11: file = 書き出したファイルのパス(write_wav の返り、read_wav の入力)。 述語が無いあいだ、write_wav が None を返しても誰も気づかなかった。
-- **L8242** — ★2026-09-02 까지 ``lambda v: True`` 였다 = **술어가 「있다」고 세어지는 만큼, 없는 것보다 나쁘다**(점검 스크립트도 「술어 있음」으로 세어 버린다). 실측으로 None / 42 / 문자열 / dict 까지 통과시켰다. 정본은 소비 측 6 op(reprconv 의 pairs_to_signal / pairs_to_image2d / pairs_to_table / angles_to_normals / shape_index_to_curvature / polar_to_cscalar)를 **전부 실행하여** 정했다: 6 op 모두 위의 2 형만 받고, 그 외는 "pairs: must be (N, 2) or a 2-tuple of equal-length 1-D arrays" 로 명시적 fail-closed 가 된다(실측). **(2,N) 는 받지 않으므로**, 2-tuple 을 np.stack 으로 (2,N) 으로 눌러버리던 adapter 3 건은 axis=1 로 고쳤다. 길이가 다른 2 개(histogram 의 counts/edges)도 「쌍」이 아니므로 걸러낸다.
-- **L8374** — ★「정확히 2 요소」는 pose(`len >= 2` 로 info 를 허용)와 **의도적으로 다르다**. 실측 2026-09-02: mesh 를 1 인자로 받는 기존 consumer 4 건(face_normals / vertex_normals / mesh_area / vertex_curvature)은 3-tuple 에 대해 "mesh must be a 2-element tuple (vertices, faces)" 를 내보내고, cadmap 의 `_mesh` 와 render3d._mesh_arrays 도 2 요소만 받는다. 즉 **이 repo 의 mesh sort 정본은 2-tuple** 이며, 여분의 요소는 「정보가 많은」것이 아니라 하류가 전멸하는 타입의 거짓말이 된다. 유일한 예외였던 `voxel_to_mesh`((v, f, n) 을 반환)는 ops3d.RESULT_ADAPTERS 에서 정본의 배열을 꺼내도록 했다(gicp / vol_label 과 같은 취급).
-- **L8583** _(ja)_ — ★2026-10-11: ``system`` キーに最適化後の処方(同じ object_mm = inf)
-- **L8585** _(ja)_ — ★2026-10-15: 絞りと像面の前の面は平面(R = inf、lens_system の規約どおり)
-- **L8587** _(ja)_ — ★2026-10-15: 図の values に処方の平面の R = inf と、無焦点の EFL / BFL = inf、 分散の無い媒質の ν_d = inf を写す(lens_system の規約どおり)
-- **L8590** _(ja)_ — ★2026-10-15: 非共軸の系(raytrace3d)は面の R = inf・物体の inf を記録に持ち、 ゴーストの表・光線の束は「届かない光線 = NaN」(trace_rays と同じ規約)、 図の values にも平面の R = inf を写す。opd_samples は瞳の外 = NaN、 with_wavelength は処方(object_mm = inf)をそのまま返す。
-- **L8597** _(ja)_ — ★2026-10-19: 照準 / ケラレ係数を設定した処方もそのまま返す(R = inf、object_mm = inf)
-- **L8599** _(ja)_ — ★2026-10-18: .zmx から読んだ処方(lensfile)は lens_system そのもの(物体が無限遠 なら object_mm = inf、平面の R = inf、ファイル側の面の表の DISZ = INFINITY)
-- **L8602** _(ja)_ — ★2026-10-19: 構成ごとに解決した処方も lens_system そのもの(R = inf、object_mm = inf)
-- **L8604** _(ja)_ — ★2026-10-19: 硝材置換・大域探索は処方(R = inf)を入れ子で返す
-- **L8606** _(ja)_ — ★2026-10-19: 最適化後の処方(R = inf)を返す
-- **L8608** _(ja)_ — ★2026-10-20: 解を解いた・解を外した・afocal の・像面を曲げた処方(R = inf、object_mm = inf)と、 その解の一覧(R = inf の行)を返す
-- **L8631** _(ja)_ — ★2026-10-11(tests/test_ledger_contracts.py が初めて全台帳 op を呼んで挙げた分のうち、 **docstring が非有限を名指ししている**もの)。どれも「無い・測れない・届かない」を 0 で埋めず nan / inf で言う設計で、実際に非有限だった欄と docstring の欄が一致する ことを 1 本ずつ確かめた。docstring に書かれていない非有限(world_camera の depth の inf など)は**載せていない** —— 台帳の負債(docs/LEDGER_CONTRACT_DEBT.json)に残る。
-- **L8755** _(ja)_ — ★2026-10-07: プロセスごとに分ける。固定名だと xdist の別ワーカーが同じ捨て場を共有し、片方の テストが「中身を消してから、何か落ちたことを確かめる」間に相手が消す/書く(Windows では開いている ファイルの unlink が PermissionError)。
+- **L8320** _(ja)_ — ★2026-10-11: file = 書き出したファイルのパス(write_wav の返り、read_wav の入力)。 述語が無いあいだ、write_wav が None を返しても誰も気づかなかった。
+- **L8442** — ★2026-09-02 까지 ``lambda v: True`` 였다 = **술어가 「있다」고 세어지는 만큼, 없는 것보다 나쁘다**(점검 스크립트도 「술어 있음」으로 세어 버린다). 실측으로 None / 42 / 문자열 / dict 까지 통과시켰다. 정본은 소비 측 6 op(reprconv 의 pairs_to_signal / pairs_to_image2d / pairs_to_table / angles_to_normals / shape_index_to_curvature / polar_to_cscalar)를 **전부 실행하여** 정했다: 6 op 모두 위의 2 형만 받고, 그 외는 "pairs: must be (N, 2) or a 2-tuple of equal-length 1-D arrays" 로 명시적 fail-closed 가 된다(실측). **(2,N) 는 받지 않으므로**, 2-tuple 을 np.stack 으로 (2,N) 으로 눌러버리던 adapter 3 건은 axis=1 로 고쳤다. 길이가 다른 2 개(histogram 의 counts/edges)도 「쌍」이 아니므로 걸러낸다.
+- **L8574** — ★「정확히 2 요소」는 pose(`len >= 2` 로 info 를 허용)와 **의도적으로 다르다**. 실측 2026-09-02: mesh 를 1 인자로 받는 기존 consumer 4 건(face_normals / vertex_normals / mesh_area / vertex_curvature)은 3-tuple 에 대해 "mesh must be a 2-element tuple (vertices, faces)" 를 내보내고, cadmap 의 `_mesh` 와 render3d._mesh_arrays 도 2 요소만 받는다. 즉 **이 repo 의 mesh sort 정본은 2-tuple** 이며, 여분의 요소는 「정보가 많은」것이 아니라 하류가 전멸하는 타입의 거짓말이 된다. 유일한 예외였던 `voxel_to_mesh`((v, f, n) 을 반환)는 ops3d.RESULT_ADAPTERS 에서 정본의 배열을 꺼내도록 했다(gicp / vol_label 과 같은 취급).
+- **L8783** _(ja)_ — ★2026-10-11: ``system`` キーに最適化後の処方(同じ object_mm = inf)
+- **L8785** _(ja)_ — ★2026-10-15: 絞りと像面の前の面は平面(R = inf、lens_system の規約どおり)
+- **L8787** _(ja)_ — ★2026-10-15: 図の values に処方の平面の R = inf と、無焦点の EFL / BFL = inf、 分散の無い媒質の ν_d = inf を写す(lens_system の規約どおり)
+- **L8790** _(ja)_ — ★2026-10-15: 非共軸の系(raytrace3d)は面の R = inf・物体の inf を記録に持ち、 ゴーストの表・光線の束は「届かない光線 = NaN」(trace_rays と同じ規約)、 図の values にも平面の R = inf を写す。opd_samples は瞳の外 = NaN、 with_wavelength は処方(object_mm = inf)をそのまま返す。
+- **L8797** _(ja)_ — ★2026-10-19: 照準 / ケラレ係数を設定した処方もそのまま返す(R = inf、object_mm = inf)
+- **L8799** _(ja)_ — ★2026-10-18: .zmx から読んだ処方(lensfile)は lens_system そのもの(物体が無限遠 なら object_mm = inf、平面の R = inf、ファイル側の面の表の DISZ = INFINITY)
+- **L8802** _(ja)_ — ★2026-10-19: 構成ごとに解決した処方も lens_system そのもの(R = inf、object_mm = inf)
+- **L8804** _(ja)_ — ★2026-10-19: 硝材置換・大域探索は処方(R = inf)を入れ子で返す
+- **L8806** _(ja)_ — ★2026-10-19: 最適化後の処方(R = inf)を返す
+- **L8808** _(ja)_ — ★2026-10-20: 解を解いた・解を外した・afocal の・像面を曲げた処方(R = inf、object_mm = inf)と、 その解の一覧(R = inf の行)を返す
+- **L8831** _(ja)_ — ★2026-10-11(tests/test_ledger_contracts.py が初めて全台帳 op を呼んで挙げた分のうち、 **docstring が非有限を名指ししている**もの)。どれも「無い・測れない・届かない」を 0 で埋めず nan / inf で言う設計で、実際に非有限だった欄と docstring の欄が一致する ことを 1 本ずつ確かめた。docstring に書かれていない非有限(world_camera の depth の inf など)は**載せていない** —— 台帳の負債(docs/LEDGER_CONTRACT_DEBT.json)に残る。
+- **L8957** _(ja)_ — ★2026-10-07: プロセスごとに分ける。固定名だと xdist の別ワーカーが同じ捨て場を共有し、片方の テストが「中身を消してから、何か落ちたことを確かめる」間に相手が消す/書く(Windows では開いている ファイルの unlink が PermissionError)。
 
 ## `tools/chain_mine.py`
 
@@ -2935,21 +2935,21 @@
 
 ## `tools/opdocs.py`
 
-- **L142** — ★2026-09-08: ops1d(dsp 16 + funct1d 23)는 등록되어 있는데도 **docs/ops 에 노트가 한 장도 없었다** —— OP_CATALOG 에는 나오는데 op 별 노트(형 계약, 함정, 관련 op)가 없어서 RAG 코퍼스에서 통째로 빠져 있었다. `poc_web_roll_periodicity` 가 dsp 에 2 개를 추가했을 때 알아챘다.
-- **L919** _(ja)_ — ★2026-09-23 の実測: 1 回 7〜11 秒かかるこの関数を、`gen_docs_index_ops` が 6 言語 x 3 ブロックで 18 回呼んでおり、`test_the_generated_blocks_are_current` だけで **129 秒**使っていた(スイート 2,301 秒の 5.6 %)。答えは `ops.REGISTRY` と `docs/` から決まり、1 プロセスの中で動かない。 前提は「同じプロセスの中では台帳とノートが変わらない」。生成器は `regen_all.py` が**別プロセスで**呼ぶので跨がない。プロセス内でノートを 書き換えてから読み直す側は `_records_cache_clear()` を呼ぶこと (呼ばないと古い答えが返る —— 黙って古い値を返すのが一番たちが悪いので、 ここに明記しておく)。
-- **L981** — ★n-ary(다입력) 계층. 2026-09-09 까지 **17 개 오퍼레이터가 노트를 한 장도 갖고 있지 않았다**(`add_image`, `sub_image`, `bit_and`, `reduce_domain`, `union2` …). `OP_INDEX.json` 에는 tier=`nary` 로 실리지만 `docs/ops/` 에 노트가 없어 **RAG 코퍼스에서는 영영 찾을 수 없었다**. 놓친 이유는 분명하다: 여기서 `ops.REGISTRY` 만 훑었고, `ops.REGISTRY`(899)와 2-D 노트 수(899)가 일치하므로 레지스트리 쪽에서 세면 「누락 없음」으로 보인다. 계층을 가로질러 세어야 비로소 드러난다.
-- **L1023** — ★2026-09-07: ``OPS3D[...]["doc"]`` 는 등록 시 **docstring 의 첫 줄만** 잘라낸 것(ops3d._build). 노트의 "사용법"에 그것을 쓰면 구현이 몇 단락을 써도 한 줄로 둔갑한다 —— "사용법이 한 줄인 op 494 개"의 3-D 부분은 이 잘림이 원인이었다(docstring 자체는 긴 op 이 다수). 대장 dim 과 마찬가지로 함수의 docstring 을 통째로 읽는다.
-- **L1046** — ★ 다리 놓기 op(``tb_<name>``)는 대장의 ``<name>`` 과 구현이 동일하며, 예는 대장명으로 쓰인다. 2026-09-06 까지 147 개가 "예 제로"였지만, 그것은 **같은 구현을 호출하는 예가 다른 이름으로 존재하는** 것을 세지 않았을 뿐이다. 대장 쪽 예를 상속하고, 노트에는 "원래 op 의 예"라고 명기한다(거짓이 되지 않도록).
-- **L1104** _(ja)_ — ★2026-10-12: 2-D の例索引(``op_example_index._op_names_2d``)は ``ops.REGISTRY`` から identity と 橋渡し op(category ``typed``)を外し、n-ary 層(``imgops_nary``)はそもそも数えない。そのため この 3 種のノートは、examples/ に ``fullseye.apply([x1, x2], "add_image")`` や ``fullseye.apply(F, "tb_cx_ifft")`` と**名指しで呼ぶ例があっても**「(まだありません)」のままだった (n-ary 17 本・identity・元 op の例を継承できない tb_cx_* 7 本)。カバレッジの門の母集団は変えず、 ノートの案内だけ同じ呼び出し検出(``_index_for``)で名前を直接引く。
-- **L1296** — ★n-ary 오퍼레이터는 `fullseye.apply` 로 호출할 수 없다 — 그것은 이미지 1 장 모델이다. 여기에 1 장짜리 호출 형태를 적으면 **노트가 거짓말을 한다**. 이 노트의 유일한 일이 「어떻게 부르는가」이므로, 동작하지 않는 호출 형태는 없느니만 못하다. 공개 경로는 `fullseye.FullseyeGraph`.
-- **L1315** — ★2026-09-07: **공개 경로를 먼저 쓴다**. 여기는 구현 모듈의 직접 import 만 쓰여 있어서 사용자가 실제로 쓰는 `fullseye.ledger.<이름>` 이 나와 있지 않았다(2-D 이외의 1,244 op 전부). PoC 가 반복해서 "fs.<이름> 에 없다"고 보고한 것은 이름이 없는 것이 아니라 **입구가 쓰여 있지 않다는** 문제였다.
-- **L1769** — ★ 입구는 6 개 언어로 낸다(2026-09-09). 잎(Studio 의 op 도움말)은 6 개 언어 10,191 페이지가 있는데도 **거기로 이끄는 색인이 일본어뿐**이었다 —— 번역은 있는데 다다를 수 없다는 형태의 결락. 틀의 문구는 `T()` 에 싣기 때문에 대역의 구멍은 기존의 문(test_chrome_translation_table_has_no_holes)이 본다.
-- **L1809** _(ja)_ — ★2026-10-15: 族の名前だけでは中身が分からない。`drive`(694)は研磨(polish)・粉末 X 線回折 (pxrd)・触覚(tac*)・peg-in-hole を抱え、`optics` は材料表(matprop)・ファイバ(fiber)・ センサーの特性(sensorchar)を抱える —— 族名で選ぶ読み手は、それらを開かずに「無い」と言う。 入口でカテゴリ名を全部見せる(名前は識別子なので訳さない。各カテゴリはその族の INDEX の節)。
-- **L1820** _(ja)_ — ★2026-09-15: 用途から引く索引(docs/CAPABILITIES.md)へ**ここから**送る。文書だけを 渡した AI が 1 回目に見つけられなかったのは、この目次にも AI_RAG_GUIDE にも 導線が無かったから。
-- **L1829** — ★ 여기는 오랫동안 `2d/guides/` 만 가리키고 있어서 광학·PIV·단층촬영 등 30 패밀리의 가이드로 독자를 한 번도 보내지 않았다(2026-09-09 수정).
-- **L1987** _(ja)_ — コードスパン。★``…``(RST / docstring の二重バッククォート)を `…` より**先に**試す。 2026-10-07 まで `([^`]+)` だけで、``p`` measures … ``p`` が「`` の 2 文字目と次の `` の 1 文字目」で組まれ、コードと散文が**反転して**表示されていた(英語版 3,153 枚中 約 2,800 枚)。前に付いた RST ロール(:func:`x` など)は飲み込み、対象名だけをコードで出す (733 枚で ``:func:`` が生で見えていた)。
-- **L2156** _(ja)_ — ★置き換えは描画時と同じ退避記号で(空白にすると ``**raises `ValueError`**`` の閉じの 直前が空白になって太字の組が外れず、英字にすると ``**name**`(a)``` の閉じの直後が 英字になって外れない —— どちらも「閉じていない」と誤判定して次の箇条書きを飲み込んだ)。
-- **L2858** _(ja)_ — ★2026-09-20: 生成を終えたあと、インタプリタの終了処理(fullseye が引き込む mediapipe の shutdown dispatcher)で 30〜60 分固まり、regen_all の連鎖がその間止まった(2 度実測、CPU 0)。 出力は全部書き終えているので、flush してから os._exit で確定させる。
+- **L145** — ★2026-09-08: ops1d(dsp 16 + funct1d 23)는 등록되어 있는데도 **docs/ops 에 노트가 한 장도 없었다** —— OP_CATALOG 에는 나오는데 op 별 노트(형 계약, 함정, 관련 op)가 없어서 RAG 코퍼스에서 통째로 빠져 있었다. `poc_web_roll_periodicity` 가 dsp 에 2 개를 추가했을 때 알아챘다.
+- **L922** _(ja)_ — ★2026-09-23 の実測: 1 回 7〜11 秒かかるこの関数を、`gen_docs_index_ops` が 6 言語 x 3 ブロックで 18 回呼んでおり、`test_the_generated_blocks_are_current` だけで **129 秒**使っていた(スイート 2,301 秒の 5.6 %)。答えは `ops.REGISTRY` と `docs/` から決まり、1 プロセスの中で動かない。 前提は「同じプロセスの中では台帳とノートが変わらない」。生成器は `regen_all.py` が**別プロセスで**呼ぶので跨がない。プロセス内でノートを 書き換えてから読み直す側は `_records_cache_clear()` を呼ぶこと (呼ばないと古い答えが返る —— 黙って古い値を返すのが一番たちが悪いので、 ここに明記しておく)。
+- **L995** — ★n-ary(다입력) 계층. 2026-09-09 까지 **17 개 오퍼레이터가 노트를 한 장도 갖고 있지 않았다**(`add_image`, `sub_image`, `bit_and`, `reduce_domain`, `union2` …). `OP_INDEX.json` 에는 tier=`nary` 로 실리지만 `docs/ops/` 에 노트가 없어 **RAG 코퍼스에서는 영영 찾을 수 없었다**. 놓친 이유는 분명하다: 여기서 `ops.REGISTRY` 만 훑었고, `ops.REGISTRY`(899)와 2-D 노트 수(899)가 일치하므로 레지스트리 쪽에서 세면 「누락 없음」으로 보인다. 계층을 가로질러 세어야 비로소 드러난다.
+- **L1037** — ★2026-09-07: ``OPS3D[...]["doc"]`` 는 등록 시 **docstring 의 첫 줄만** 잘라낸 것(ops3d._build). 노트의 "사용법"에 그것을 쓰면 구현이 몇 단락을 써도 한 줄로 둔갑한다 —— "사용법이 한 줄인 op 494 개"의 3-D 부분은 이 잘림이 원인이었다(docstring 자체는 긴 op 이 다수). 대장 dim 과 마찬가지로 함수의 docstring 을 통째로 읽는다.
+- **L1061** — ★ 다리 놓기 op(``tb_<name>``)는 대장의 ``<name>`` 과 구현이 동일하며, 예는 대장명으로 쓰인다. 2026-09-06 까지 147 개가 "예 제로"였지만, 그것은 **같은 구현을 호출하는 예가 다른 이름으로 존재하는** 것을 세지 않았을 뿐이다. 대장 쪽 예를 상속하고, 노트에는 "원래 op 의 예"라고 명기한다(거짓이 되지 않도록).
+- **L1120** _(ja)_ — ★2026-10-12: 2-D の例索引(``op_example_index._op_names_2d``)は ``ops.REGISTRY`` から identity と 橋渡し op(category ``typed``)を外し、n-ary 層(``imgops_nary``)はそもそも数えない。そのため この 3 種のノートは、examples/ に ``fullseye.apply([x1, x2], "add_image")`` や ``fullseye.apply(F, "tb_cx_ifft")`` と**名指しで呼ぶ例があっても**「(まだありません)」のままだった (n-ary 17 本・identity・元 op の例を継承できない tb_cx_* 7 本)。カバレッジの門の母集団は変えず、 ノートの案内だけ同じ呼び出し検出(``_index_for``)で名前を直接引く。
+- **L1312** — ★n-ary 오퍼레이터는 `fullseye.apply` 로 호출할 수 없다 — 그것은 이미지 1 장 모델이다. 여기에 1 장짜리 호출 형태를 적으면 **노트가 거짓말을 한다**. 이 노트의 유일한 일이 「어떻게 부르는가」이므로, 동작하지 않는 호출 형태는 없느니만 못하다. 공개 경로는 `fullseye.FullseyeGraph`.
+- **L1331** — ★2026-09-07: **공개 경로를 먼저 쓴다**. 여기는 구현 모듈의 직접 import 만 쓰여 있어서 사용자가 실제로 쓰는 `fullseye.ledger.<이름>` 이 나와 있지 않았다(2-D 이외의 1,244 op 전부). PoC 가 반복해서 "fs.<이름> 에 없다"고 보고한 것은 이름이 없는 것이 아니라 **입구가 쓰여 있지 않다는** 문제였다.
+- **L1785** — ★ 입구는 6 개 언어로 낸다(2026-09-09). 잎(Studio 의 op 도움말)은 6 개 언어 10,191 페이지가 있는데도 **거기로 이끄는 색인이 일본어뿐**이었다 —— 번역은 있는데 다다를 수 없다는 형태의 결락. 틀의 문구는 `T()` 에 싣기 때문에 대역의 구멍은 기존의 문(test_chrome_translation_table_has_no_holes)이 본다.
+- **L1825** _(ja)_ — ★2026-10-15: 族の名前だけでは中身が分からない。`drive`(694)は研磨(polish)・粉末 X 線回折 (pxrd)・触覚(tac*)・peg-in-hole を抱え、`optics` は材料表(matprop)・ファイバ(fiber)・ センサーの特性(sensorchar)を抱える —— 族名で選ぶ読み手は、それらを開かずに「無い」と言う。 入口でカテゴリ名を全部見せる(名前は識別子なので訳さない。各カテゴリはその族の INDEX の節)。
+- **L1836** _(ja)_ — ★2026-09-15: 用途から引く索引(docs/CAPABILITIES.md)へ**ここから**送る。文書だけを 渡した AI が 1 回目に見つけられなかったのは、この目次にも AI_RAG_GUIDE にも 導線が無かったから。
+- **L1845** — ★ 여기는 오랫동안 `2d/guides/` 만 가리키고 있어서 광학·PIV·단층촬영 등 30 패밀리의 가이드로 독자를 한 번도 보내지 않았다(2026-09-09 수정).
+- **L2003** _(ja)_ — コードスパン。★``…``(RST / docstring の二重バッククォート)を `…` より**先に**試す。 2026-10-07 まで `([^`]+)` だけで、``p`` measures … ``p`` が「`` の 2 文字目と次の `` の 1 文字目」で組まれ、コードと散文が**反転して**表示されていた(英語版 3,153 枚中 約 2,800 枚)。前に付いた RST ロール(:func:`x` など)は飲み込み、対象名だけをコードで出す (733 枚で ``:func:`` が生で見えていた)。
+- **L2172** _(ja)_ — ★置き換えは描画時と同じ退避記号で(空白にすると ``**raises `ValueError`**`` の閉じの 直前が空白になって太字の組が外れず、英字にすると ``**name**`(a)``` の閉じの直後が 英字になって外れない —— どちらも「閉じていない」と誤判定して次の箇条書きを飲み込んだ)。
+- **L2874** _(ja)_ — ★2026-09-20: 生成を終えたあと、インタプリタの終了処理(fullseye が引き込む mediapipe の shutdown dispatcher)で 30〜60 分固まり、regen_all の連鎖がその間止まった(2 度実測、CPU 0)。 出力は全部書き終えているので、flush してから os._exit で確定させる。
 
 ## `tools/preflight.py`
 
@@ -2972,15 +2972,15 @@
 - **L49** _(ja)_ — ★最上流。`auto_specs_data.py` は backends_auto が registry を組む入力(wheel 同梱の data/auto_specs/*.json の複製)なので、registry を読む下流すべてより先に回す。 2026-10-07 まで `tools/` の外にあって鎖にも表にも無かった(差分は無かったが、 spec を足して回し忘れても誰も気づけなかった)。
 - **L54** — ★`tools/` 밖에 있는 유일한 생성물. 그래서 놓쳤다 — 생성기를 `tools/*.py` 에서 찾는 한, 이것은 영원히 발견되지 않는다.
 - **L56** — ★2026-10-15: 16번째에서 2번째로 올렸다. 입력은 registry 뿐(다른 단계의 생성물을 읽지 않음)인데, gen_capabilities_index 와 gen_trust_block 이 이 파일을 **먼저** 읽고 있었다 — op 를 추가하는 병합에서 인덱스를 본선 쪽으로 취하면 오래된 인덱스에 새 op 가 없어 멈춘다(통합 작업에서는 `imgevolve.py index` 를 손으로 먼저 돌려 우회했다). 순서는 아래 OUTPUTS / READS 로부터 `order_violations()` 가 검사한다.
-- **L73** _(ja)_ — ★展示館より**先**に回す —— 生成器は見出しに収蔵番号を出すので、 未発行の展示が 1 つでもあると BuildError で止まる。
-- **L88** _(ja)_ — ★これも `tools/` の外。2026-09-20 まで鎖に無く、docs/OPERATORS.md が 885 op / 47 分類(2026-09-06 の値)のまま置き去りだった(GenSpark 第 53 報と ユーザー指摘)。生成器が鎖に無い生成物は、必ず古びる。
-- **L92** _(ja)_ — ★2026-10-07: 以下 3 本も `tools/` の外にあり、列挙が `tools/*.py` しか見ていなかったので 鎖にも表にも無かった。どれも registry とコミット済みの入力だけから決まり、2 回 回してバイト一致・各 3 秒(実測)。置き去りの実例: EXAMPLES.md は「67-op」、REFERENCES.md は「153 operators」、 OP_DISPOSITION.json は implemented 324(実際 405)のままだった。
-- **L100** — ★2026-10-15: `--md` 가 없어 **아무것도 쓰지 않았다**(요약을 표준 출력에 낼 뿐). docs/CONVERSION_MATRIX.md 는 2026-09-02 의 "타입 59 / 변환 쌍 164" 그대로 낡았고, --check 는 "쓰지 않는 단계"를 drift 로 볼 수 없어 6주 동안 통과했다. 이제 `trace_problems()` 가 "선언한 출력에 손도 대지 않는 단계"를 거부한다.
-- **L108** _(ja)_ — ★2026-10-15: 13 番目から最後の方へ下げた。docmap が docs/*.md の**題**を読むので、 題を持つ生成物(OPERATORS / REFERENCES / EXAMPLES / EXAMPLES_3D / SENSOR_PLAYBOOK / CONVERSION_MATRIX / DESIGN_NOTES*)を書く 7 段すべてより後でなければならない —— 以前はその 7 段より前にあり、題が変わると 2 回回さないと揃わなかった。 文献層の本体はコーパスが要る(EXCLUDED)が、「op ノート N 本」の件数は docs/ops を数えれば直せる。 docs/ops を書く opdocs の後、題を読む docmap(gen_docs_index_ops)の前。
-- **L308** — * ★그리고 위험: 생성 직후의 기사는 이미지를 **상대 경로**로 쓴다. 공개판은 `raw.githubusercontent.com` 의 절대 URL 로 고친 것(Qiita 는 상대 경로면 이미지가 나오지 않는다 —— memory `feedback_qiita_svg_path_and_cache`). 생성기만 돌리면 그 절대 URL 이 42 줄만큼 되돌아간다. **돌릴 거면 기사의 공개 절차까지 통째로 할 것.** 제외는 **파일명으로** 쓴다. 산문으로 정리하면("wing*_gallery 의 10 개") 기계로 대조할 수 없어 아래의 `unclassified()` 가 작동하지 않는다.
-- **L689** _(ja)_ — ★2026-10-07: 印も探す場所も狭すぎた。初版は ``open(..,"w")`` / ``write_text`` / ``savefig`` / ``json.dump`` だけを ``tools/*.py``(直下のみ)で探していたので、 * **repo 直下の生成器が 1 本も見えなかった** —— ``samples.py``(docs/EXAMPLES.md が 「67-op」のまま)、``references.py``(「153 operators」)、``dispositions.py``、 ``lib_coverage.py``(885 op のまま)、``honest_summary.py`` …。``imgevolve.py`` と ``catalog.py`` だけが手で足されていた —— 手で足す方式は、足し忘れを拾えない。 * **画像の書き手が 1 本も釣れなかった** —— PIL の ``.save``、imageio の ``mimwrite``、``write_bytes``、Fullseye 自身の ``write_video`` / ``save_gif`` …。 ``gen_banner`` の PNG は「731 2-D + 265 3-D」と書いたまま古びている。 * ``tools/impl2/`` など**下の階層**も見ていなかった(docs/op_*.json の台帳)。 印を広げれば門・デモ・ライブラリも釣れる。それは構わない —— **釣れたものは全部 上の表に理由つきで載せる**(印は緩めない)。
-- **L704** _(ja)_ — ★2026-10-25: まだ狭かった。``pv.write_viewer(`` / ``fs.write_viewer(`` で HTML を書く生成器 (``tools/build_view2026_viewers.py``、題材の枝の ``tools/build_*_anim3d.py``)がどの表にも 載っていなかった。同じ洗い出しで ``open(.., "wb")``(``"w"`` しか見ていなかった)と ``shutil.copy*`` / ``copytree`` / ``move`` も足した。印ごとに「その印でしか釣れない実在の 生成器」を ``tests/test_regen_all.py`` が要求する(印を消せば落ちる)。
-- **L752** — ★`tools/` 밖에 있는 생성물. `tools/*.py` 만 훑어서는 결코 찾을 수 없는 위치에 있었고, 실제로 `docs/OP_INDEX.json` 을 놓치고 있었다.
+- **L75** _(ja)_ — ★展示館より**先**に回す —— 生成器は見出しに収蔵番号を出すので、 未発行の展示が 1 つでもあると BuildError で止まる。
+- **L90** _(ja)_ — ★これも `tools/` の外。2026-09-20 まで鎖に無く、docs/OPERATORS.md が 885 op / 47 分類(2026-09-06 の値)のまま置き去りだった(GenSpark 第 53 報と ユーザー指摘)。生成器が鎖に無い生成物は、必ず古びる。
+- **L94** _(ja)_ — ★2026-10-07: 以下 3 本も `tools/` の外にあり、列挙が `tools/*.py` しか見ていなかったので 鎖にも表にも無かった。どれも registry とコミット済みの入力だけから決まり、2 回 回してバイト一致・各 3 秒(実測)。置き去りの実例: EXAMPLES.md は「67-op」、REFERENCES.md は「153 operators」、 OP_DISPOSITION.json は implemented 324(実際 405)のままだった。
+- **L102** — ★2026-10-15: `--md` 가 없어 **아무것도 쓰지 않았다**(요약을 표준 출력에 낼 뿐). docs/CONVERSION_MATRIX.md 는 2026-09-02 의 "타입 59 / 변환 쌍 164" 그대로 낡았고, --check 는 "쓰지 않는 단계"를 drift 로 볼 수 없어 6주 동안 통과했다. 이제 `trace_problems()` 가 "선언한 출력에 손도 대지 않는 단계"를 거부한다.
+- **L110** _(ja)_ — ★2026-10-15: 13 番目から最後の方へ下げた。docmap が docs/*.md の**題**を読むので、 題を持つ生成物(OPERATORS / REFERENCES / EXAMPLES / EXAMPLES_3D / SENSOR_PLAYBOOK / CONVERSION_MATRIX / DESIGN_NOTES*)を書く 7 段すべてより後でなければならない —— 以前はその 7 段より前にあり、題が変わると 2 回回さないと揃わなかった。 文献層の本体はコーパスが要る(EXCLUDED)が、「op ノート N 本」の件数は docs/ops を数えれば直せる。 docs/ops を書く opdocs の後、題を読む docmap(gen_docs_index_ops)の前。
+- **L312** — * ★그리고 위험: 생성 직후의 기사는 이미지를 **상대 경로**로 쓴다. 공개판은 `raw.githubusercontent.com` 의 절대 URL 로 고친 것(Qiita 는 상대 경로면 이미지가 나오지 않는다 —— memory `feedback_qiita_svg_path_and_cache`). 생성기만 돌리면 그 절대 URL 이 42 줄만큼 되돌아간다. **돌릴 거면 기사의 공개 절차까지 통째로 할 것.** 제외는 **파일명으로** 쓴다. 산문으로 정리하면("wing*_gallery 의 10 개") 기계로 대조할 수 없어 아래의 `unclassified()` 가 작동하지 않는다.
+- **L693** _(ja)_ — ★2026-10-07: 印も探す場所も狭すぎた。初版は ``open(..,"w")`` / ``write_text`` / ``savefig`` / ``json.dump`` だけを ``tools/*.py``(直下のみ)で探していたので、 * **repo 直下の生成器が 1 本も見えなかった** —— ``samples.py``(docs/EXAMPLES.md が 「67-op」のまま)、``references.py``(「153 operators」)、``dispositions.py``、 ``lib_coverage.py``(885 op のまま)、``honest_summary.py`` …。``imgevolve.py`` と ``catalog.py`` だけが手で足されていた —— 手で足す方式は、足し忘れを拾えない。 * **画像の書き手が 1 本も釣れなかった** —— PIL の ``.save``、imageio の ``mimwrite``、``write_bytes``、Fullseye 自身の ``write_video`` / ``save_gif`` …。 ``gen_banner`` の PNG は「731 2-D + 265 3-D」と書いたまま古びている。 * ``tools/impl2/`` など**下の階層**も見ていなかった(docs/op_*.json の台帳)。 印を広げれば門・デモ・ライブラリも釣れる。それは構わない —— **釣れたものは全部 上の表に理由つきで載せる**(印は緩めない)。
+- **L708** _(ja)_ — ★2026-10-25: まだ狭かった。``pv.write_viewer(`` / ``fs.write_viewer(`` で HTML を書く生成器 (``tools/build_view2026_viewers.py``、題材の枝の ``tools/build_*_anim3d.py``)がどの表にも 載っていなかった。同じ洗い出しで ``open(.., "wb")``(``"w"`` しか見ていなかった)と ``shutil.copy*`` / ``copytree`` / ``move`` も足した。印ごとに「その印でしか釣れない実在の 生成器」を ``tests/test_regen_all.py`` が要求する(印を消せば落ちる)。
+- **L756** — ★`tools/` 밖에 있는 생성물. `tools/*.py` 만 훑어서는 결코 찾을 수 없는 위치에 있었고, 실제로 `docs/OP_INDEX.json` 을 놓치고 있었다.
 
 ## `torch_lazy.py`
 

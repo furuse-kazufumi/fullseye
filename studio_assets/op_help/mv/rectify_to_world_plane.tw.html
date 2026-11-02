@@ -1,0 +1,37 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">rectify_to_world_plane — MV <code style="color:#22d3bf">resample</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image2d × table × matrix</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rectify_to_world_plane(image, cam_par, pose, width, height, scale, origin=(0.0, 0.0), fill=0.0)</code>(要直接呼叫實作,<code style="color:#22d3bf">import mvimage; mvimage.rectify_to_world_plane(image, cam_par, pose, width, height, scale, origin=(0.0, 0.0), fill=0.0)</code>;從台帳取用則 <code style="color:#22d3bf">opsmv.get(&quot;rectify_to_world_plane&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">image_to_world_plane</code>(其含義與參數可參考 HALCON 手冊)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>把影像校正為世界平面 z=0 的正視圖（1 像素 = <code style="color:#22d3bf">scale</code> 世界單位）。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>世界の点 <code style="color:#22d3bf">(x, y, 0)</code> を <code style="color:#22d3bf">pose</code>(ワールド → カメラの 4x4)で写し、ピンホール投影と除算モデルの歪み(<code style="color:#22d3bf">cam_par</code> に <code style="color:#22d3bf">kappa</code> があるとき)を通して入力の座標を求める。出力の行は y、列は x に沿う。<code style="color:#22d3bf">origin</code> は出力の (0, 0) に当たる世界の <code style="color:#22d3bf">(x, y)</code>。カメラの後ろへ落ちる画素は <code style="color:#22d3bf">fill</code>。空の入力(<code style="color:#22d3bf">image</code> が 0 要素)は ValueError。</p>
+<p>Args:</p>
+<p>image: (H, W) の画像。</p>
+<p>cam_par: <code style="color:#22d3bf">fx</code> / <code style="color:#22d3bf">fy</code> / <code style="color:#22d3bf">cx</code> / <code style="color:#22d3bf">cy</code>(と任意で <code style="color:#22d3bf">kappa</code>)の dict。</p>
+<p>pose: 4x4 の同次変換(ワールド → カメラ)。</p>
+<p>width: 出力の列数。</p>
+<p>height: 出力の行数。</p>
+<p>scale: 1 画素あたりのワールド単位(&gt; 0)。</p>
+<p>origin: 出力の左上の画素が指す世界の <code style="color:#22d3bf">(x, y)</code>。</p>
+<p>fill: 入力の外とカメラの後ろの画素の値。</p>
+<p>Returns:</p>
+<p>(height, width) の float 画像。</p>
+<p>出典: R. Hartley and A. Zisserman, Multiple View Geometry, 2nd ed., ch. 2 (平面の射影変換)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemv:machine_vision_classics">machine_vision_classics 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:machine_vision_tour">machine_vision_tour</a> — <code style="color:#22d3bf">py -3.11 examples/machine_vision_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">image2d</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="opmv:binocular_disparity_ms">binocular_disparity_ms</a> · <a style="color:#22d3bf" href="opmv:binocular_distance_ms">binocular_distance_ms</a> · <a style="color:#22d3bf" href="opmv:reconstruct_surface_stereo">reconstruct_surface_stereo</a> · <a style="color:#22d3bf" href="opmv:map_image">map_image</a> · <a style="color:#22d3bf" href="opmv:change_radial_distortion_image">change_radial_distortion_image</a> · <a style="color:#22d3bf" href="opmv:crop_rectangle2">crop_rectangle2</a> · <a style="color:#22d3bf" href="opmv:atan2_image">atan2_image</a> · <a style="color:#22d3bf" href="opmv:area_center_gray">area_center_gray</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">resample</code>)</h3>
+<p><a style="color:#22d3bf" href="opmv:map_image">map_image</a> · <a style="color:#22d3bf" href="opmv:change_radial_distortion_image">change_radial_distortion_image</a> · <a style="color:#22d3bf" href="opmv:crop_rectangle2">crop_rectangle2</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: mvimage.py — MV 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,0 +1,30 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">segment_characters — MV <code style="color:#22d3bf">text</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">labels2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.segment_characters(image, min_area=4, max_gap=1)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import mvtext; mvtext.segment_characters(image, min_area=4, max_gap=1)</code>、台帳から引くなら <code style="color:#22d3bf">opsmv.get(&quot;segment_characters&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>HALCON 相当</b>: <code style="color:#22d3bf">segment_characters</code>(意味・パラメータは HALCON リファレンスが参考になる)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>文字行の画像を、字ごとの列の塊へ切り分けたラベル画像にする。</p>
+<p>連結成分を列の範囲で束ね、列の隙間が <code style="color:#22d3bf">max_gap</code> 以下の成分は同じ字にする(<code style="color:#22d3bf">i</code> の点や <code style="color:#22d3bf">=</code> のように上下へ分かれた字を 1 字に数えるため)。<code style="color:#22d3bf">min_area</code> 未満の成分は雑音として捨てる。ラベルは左から順。インクが無い画像は全 0 を返す(理由: 字が無い)。空の入力(<code style="color:#22d3bf">image</code> が 0 要素)は ValueError。</p>
+<p>Args:</p>
+<p>image: 灰色画像か bool の領域 (H, W)。</p>
+<p>min_area: 残す連結成分の最小の画素数(&gt;= 1)。</p>
+<p>max_gap: 同じ字と見なす列の隙間(&gt;= 0)。隙間が負(重なり)の成分は必ず束ねる。</p>
+<p>Returns:</p>
+<p><code style="color:#22d3bf">image</code> と同じ形の整数ラベル画像(背景 0、字 1..n)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemv:machine_vision_classics">machine_vision_classics ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:machine_vision_tour">machine_vision_tour</a> — <code style="color:#22d3bf">py -3.11 examples/machine_vision_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">labels2d</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opmv:select_characters">select_characters</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">text</code>)</h3>
+<p><a style="color:#22d3bf" href="opmv:text_line_orientation">text_line_orientation</a> · <a style="color:#22d3bf" href="opmv:text_line_slant">text_line_slant</a> · <a style="color:#22d3bf" href="opmv:select_characters">select_characters</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: mvtext.py — MV operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,0 +1,32 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">get_circle_pose — MV <code style="color:#22d3bf">pose</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">keypoints</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.get_circle_pose(contour, radius, cam_par)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import mvstereo; mvstereo.get_circle_pose(contour, radius, cam_par)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsmv.get(&quot;get_circle_pose&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>HALCON समकक्ष</b>: <code style="color:#22d3bf">get_circle_pose</code> (अर्थ और parameters समझने के लिए HALCON reference उपयोगी है)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>ज्ञात त्रिज्या वाले वृत्त की छवि (दीर्घवृत्त) से कैमरा निर्देशांक में केंद्र और अभिलंब निकालता है।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>点列に円錐曲線を当てはめ、視線の錐の固有分解から 3-D の円を閉形式で求める。解は鏡像の 2 つで、1 枚の像からは区別できないので両方を、再投影の誤差つきで返す。正面視では 2 解が重なる。歪みは扱わない(歪みのある点列は先に戻す)。空の入力(<code style="color:#22d3bf">contour</code> が 0 要素)は ValueError。</p>
+<p>Args:</p>
+<p>contour: (N, 2) の <code style="color:#22d3bf">(row, col)</code>(N &gt;= 5)。</p>
+<p>radius: 円の半径(&gt; 0)。返す中心の単位がこの単位になる。</p>
+<p>cam_par: <code style="color:#22d3bf">fx</code> / <code style="color:#22d3bf">fy</code> / <code style="color:#22d3bf">cx</code> / <code style="color:#22d3bf">cy</code> の dict。</p>
+<p>Returns:</p>
+<p><code style="color:#22d3bf">center</code> (2, 3)、<code style="color:#22d3bf">normal</code> (2, 3)(カメラへ向く単位ベクトル)、<code style="color:#22d3bf">rms_px</code> (2,) の dict。</p>
+<p>出典: Y. C. Shiu and S. Ahmad, IEEE Trans. Robot. Autom. 5(1), 16-29 (1989); Q. Chen, H. Wu, T. Wada, Proc. ECCV 2004, LNCS 3021, 302-315。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemv:machine_vision_classics">machine_vision_classics family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:machine_vision_tour">machine_vision_tour</a> — <code style="color:#22d3bf">py -3.11 examples/machine_vision_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opmv:map_image">map_image</a> · <a style="color:#22d3bf" href="opmv:rectify_to_world_plane">rectify_to_world_plane</a> · <a style="color:#22d3bf" href="opmv:change_radial_distortion_image">change_radial_distortion_image</a> · <a style="color:#22d3bf" href="opmv:find_ncc_models">find_ncc_models</a> · <a style="color:#22d3bf" href="opmv:run_bg_esti">run_bg_esti</a> · <a style="color:#22d3bf" href="opmv:give_bg_esti">give_bg_esti</a> · <a style="color:#22d3bf" href="opmv:update_bg_esti">update_bg_esti</a> · <a style="color:#22d3bf" href="opmv:classify_class_gmm">classify_class_gmm</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">pose</code>)</h3>
+<p>—</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: mvstereo.py — MV operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

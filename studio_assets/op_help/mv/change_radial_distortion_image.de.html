@@ -1,0 +1,33 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">change_radial_distortion_image — MV <code style="color:#22d3bf">resample</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image2d × table × table</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.change_radial_distortion_image(image, cam_in, cam_out, fill=0.0)</code> (die Implementierung direkt: <code style="color:#22d3bf">import mvimage; mvimage.change_radial_distortion_image(image, cam_in, cam_out, fill=0.0)</code>; aus dem Register: <code style="color:#22d3bf">opsmv.get(&quot;change_radial_distortion_image&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">change_radial_distortion_image</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>Zeichnet ein Bild einer Divisionsmodell-Kamera in eine andere Verzeichnung und Intrinsik um.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p><code style="color:#22d3bf">cam_out</code> の画素を歪み除去 → 正規化座標 → <code style="color:#22d3bf">cam_in</code> の焦点距離 → <code style="color:#22d3bf">cam_in</code> の歪みの順に写して読む。<code style="color:#22d3bf">kappa</code> の単位は 1/画素^2 で、主点からの画素座標に掛かる。<code style="color:#22d3bf">cam_out</code> の <code style="color:#22d3bf">kappa</code> を 0 にすると歪み除去になる。空の入力(<code style="color:#22d3bf">image</code> が 0 要素)は ValueError。</p>
+<p>Args:</p>
+<p>image: (H, W) の画像。</p>
+<p>cam_in: 入力のカメラ(<code style="color:#22d3bf">fx</code> / <code style="color:#22d3bf">fy</code> / <code style="color:#22d3bf">cx</code> / <code style="color:#22d3bf">cy</code> / <code style="color:#22d3bf">kappa</code>)。</p>
+<p>cam_out: 出力のカメラ(同じ鍵)。</p>
+<p>fill: 入力の外の画素の値。</p>
+<p>Returns:</p>
+<p>入力と同じ形の float 画像。</p>
+<p>出典: R. Lenz and D. Fritsch, ISPRS J. Photogramm. Remote Sens. 45(2), 90-110 (1990)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemv:machine_vision_classics">Leitfaden zur Familie machine_vision_classics</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:machine_vision_tour">machine_vision_tour</a> — <code style="color:#22d3bf">py -3.11 examples/machine_vision_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">image2d</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opmv:binocular_disparity_ms">binocular_disparity_ms</a> · <a style="color:#22d3bf" href="opmv:binocular_distance_ms">binocular_distance_ms</a> · <a style="color:#22d3bf" href="opmv:reconstruct_surface_stereo">reconstruct_surface_stereo</a> · <a style="color:#22d3bf" href="opmv:map_image">map_image</a> · <a style="color:#22d3bf" href="opmv:rectify_to_world_plane">rectify_to_world_plane</a> · <a style="color:#22d3bf" href="opmv:crop_rectangle2">crop_rectangle2</a> · <a style="color:#22d3bf" href="opmv:atan2_image">atan2_image</a> · <a style="color:#22d3bf" href="opmv:area_center_gray">area_center_gray</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">resample</code>)</h3>
+<p><a style="color:#22d3bf" href="opmv:map_image">map_image</a> · <a style="color:#22d3bf" href="opmv:rectify_to_world_plane">rectify_to_world_plane</a> · <a style="color:#22d3bf" href="opmv:crop_rectangle2">crop_rectangle2</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: mvimage.py — MV Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

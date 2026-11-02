@@ -4,6 +4,7 @@ dim: segmentation
 category: classify
 in: image2d × image2d × mask
 out: mask
+halcon: class_2dim_sup
 gpu: なし
 examples: [halcon_segmentation_tour]
 author: Kazufumi Furuse
@@ -15,6 +16,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d × image2d × mask` → `mask`
 - **呼び出し**: `import fullseye as fs; fs.ledger.class_2dim_sup(image1, image2, ref_region)` (実装を直接呼ぶなら `import segmentation; segmentation.class_2dim_sup(image1, image2, ref_region)`、台帳から引くなら `opssegmentation.get("class_2dim_sup")`)
+- **HALCON 相当**: `class_2dim_sup`(意味・パラメータは HALCON リファレンスが参考になる)
 - **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方

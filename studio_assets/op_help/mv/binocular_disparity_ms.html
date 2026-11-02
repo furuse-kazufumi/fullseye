@@ -1,0 +1,37 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">binocular_disparity_ms — MV <code style="color:#22d3bf">stereo</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.binocular_disparity_ms(left, right, max_disp=32, window=5, P1=5.0, P2=50.0, paths=4, lr_tolerance=1.0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import mvstereo; mvstereo.binocular_disparity_ms(left, right, max_disp=32, window=5, P1=5.0, P2=50.0, paths=4, lr_tolerance=1.0)</code>、台帳から引くなら <code style="color:#22d3bf">opsmv.get(&quot;binocular_disparity_ms&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>HALCON 相当</b>: <code style="color:#22d3bf">binocular_disparity_ms</code>(意味・パラメータは HALCON リファレンスが参考になる)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>平行化ステレオの視差を半大域マッチングで求め、左右一致で検査して小数へ補間する。</p>
+<p>左基準と右基準の視差を <code style="color:#22d3bf">stereo.disparity_sgm</code> で 1 回ずつ計算し、対応点で <code style="color:#22d3bf">lr_tolerance</code> より食い違う画素と参照できない左端の列を無効にする。残りの画素は SAD の 3 点放物線で小数の視差へ補間する。無効の画素は <code style="color:#22d3bf">disparity</code> が NaN になる。空の入力(<code style="color:#22d3bf">left</code> が 0 要素)は ValueError。</p>
+<p>Args:</p>
+<p>left: 左の画像 (H, W)。視差はこの画像を基準にする。</p>
+<p>right: 右の画像 (H, W)。</p>
+<p>max_disp: 探す視差の上限(画素、&gt;= 1)。</p>
+<p>window: census と SAD の窓(奇数)。</p>
+<p>P1: 視差 1 の段差の罰則。</p>
+<p>P2: 視差 2 以上の段差の罰則。</p>
+<p>paths: 集約の方向数(2 / 4)。</p>
+<p>lr_tolerance: 左右一致の許容差(画素)。</p>
+<p>Returns:</p>
+<p><code style="color:#22d3bf">disparity</code>(float、無効は NaN)、<code style="color:#22d3bf">valid</code>(bool)、<code style="color:#22d3bf">score</code>(0..1、大きいほど</p>
+<p>コストの谷が深い)を持つ dict。</p>
+<p>出典: H. Hirschmüller, IEEE Trans. PAMI 30(2), 328-341 (2008), doi:10.1109/TPAMI.2007.1166。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemv:machine_vision_classics">machine_vision_classics ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:machine_vision_tour">machine_vision_tour</a> — <code style="color:#22d3bf">py -3.11 examples/machine_vision_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opmv:map_image">map_image</a> · <a style="color:#22d3bf" href="opmv:rectify_to_world_plane">rectify_to_world_plane</a> · <a style="color:#22d3bf" href="opmv:change_radial_distortion_image">change_radial_distortion_image</a> · <a style="color:#22d3bf" href="opmv:find_ncc_models">find_ncc_models</a> · <a style="color:#22d3bf" href="opmv:run_bg_esti">run_bg_esti</a> · <a style="color:#22d3bf" href="opmv:give_bg_esti">give_bg_esti</a> · <a style="color:#22d3bf" href="opmv:update_bg_esti">update_bg_esti</a> · <a style="color:#22d3bf" href="opmv:classify_class_gmm">classify_class_gmm</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">stereo</code>)</h3>
+<p><a style="color:#22d3bf" href="opmv:binocular_distance_ms">binocular_distance_ms</a> · <a style="color:#22d3bf" href="opmv:reconstruct_surface_stereo">reconstruct_surface_stereo</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: mvstereo.py — MV operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

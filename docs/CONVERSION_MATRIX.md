@@ -4,7 +4,7 @@
 手で編集しない。
 
 ```
-型 95 / 変換ペア 395 / 変換を行う op のべ 2343
+型 95 / 変換ペア 396 / 変換を行う op のべ 2383
 生成器のある型 68 / 出力型に述語のある型 94
 
 ■ 袋小路 (4) ― 産めるのに、そこから他の型へ出られない
@@ -17,7 +17,7 @@
 
 ■ 構造的に到達不能 (0) ― 不動点で閉じても届かない
 
-■ 専用ビルダで到達している op (365) ― 型プールだけでは届かない
+■ 専用ビルダで到達している op (386) ― 型プールだけでは届かない
    acoustic_interface_coefficients
    adg_build
    adg_execute
@@ -45,8 +45,13 @@
    catch_success_rate
    cerruti_surface_displacement
    chamfer_capture
+   change_radial_distortion_image
    check_sequence_score
    class_2dim_sup
+   classify_class_gmm
+   classify_class_knn
+   classify_class_mlp
+   classify_class_svm
    coat_image
    coat_thickness_from_image
    coherent_image
@@ -65,6 +70,7 @@
    cr_drive_sweep
    cr_feasible
    cr_route
+   crop_rectangle2
    crossing_stop_check
    crosswalk_overtake_check
    crosswalk_stopped_vehicle_check
@@ -90,9 +96,11 @@
    emva_photon_exposure
    env_render
    equirect_rotate
+   evaluate_class_gmm
    expand_gray
    fbm_height
    fem_vs_halfspace
+   find_ncc_models
    fisher_lda_score
    fit_aero
    fit_bounce
@@ -132,6 +140,8 @@
    hertz_surface_ur
    hertz_surface_uz
    hill_hold_brake_min
+   hit_or_miss_golay
+   hit_or_miss_seq
    humanoid_clip_mesh
    humanoid_impostors
    image_to_world_plane
@@ -176,6 +186,7 @@
    legend_box
    lidar_scan
    magnus_lift_coefficient
+   map_image
    mat_solve
    matmul_ozaki
    matmul_reproducible
@@ -196,6 +207,8 @@
    mindlin_partial_slip
    mindlin_traction
    mor_from_beta
+   morph_hat
+   morph_skiz
    msa_anova_table
    msa_attribute_agreement
    msa_bias_linearity
@@ -267,6 +280,7 @@
    racket_impact
    racket_plan
    rally_simulate
+   rectify_to_world_plane
    relative_motion
    removal_depth_from_heights
    render_through_lens
@@ -282,6 +296,7 @@
    rss_worst_case_gap
    rss_worst_case_gap_lateral
    rss_worst_case_gap_opposite
+   run_bg_esti
    sam_cscan
    sam_frequency_tradeoff
    scale_bar
@@ -291,6 +306,7 @@
    seg_synapse_partners
    seg_wiring_exposure
    seg_wiring_variation
+   select_characters
    sfp_dolp_model
    shot_is_legal
    sight_stop_speed
@@ -314,6 +330,7 @@
    stream_areal_density
    striker_plan
    string_tension_static
+   suggest_lexicon
    surface_divergence_closed_form
    swing_up_apex
    symmetry_fold
@@ -322,6 +339,9 @@
    terrain_mesh
    text_box
    text_lines
+   thickening_golay
+   thickening_hit_miss
+   thickening_seq
    thrust_fit
    thrust_ode
    ticks
@@ -348,6 +368,7 @@
    turn_maneuver_check
    two_point_forces
    unexplained_peaks
+   update_bg_esti
    varmodel_calibrate
    varmodel_score
    vda5050_check
@@ -390,7 +411,7 @@
 ■ 出力型に述語が無い変換 op (0) ― 何を返しても TYPEMISS にならない
    対象の型: なし
 
-■ 片道の変換 (197) ― A→B はあるが B→A が無い(戻せないのが正しい場合も多い)
+■ 片道の変換 (198) ― A→B はあるが B→A が無い(戻せないのが正しい場合も多い)
    any              → pose              register_cross, register_cross
    any              → rgb               cutting_edge_render
    any              → voxel             fuse_to_voxel
@@ -438,7 +459,7 @@
    flow_dense       → rgbimage          flow_to_rgbimage
    flow_scattered   → signal            flow_speed
    gaussians        → voxel             gaussians_to_voxel
-   image2d          → labels2d          blob_seeds, blob_split, class_2dim_unsup
+   image2d          → labels2d          segment_characters, blob_seeds, blob_split
    image2d          → measurement       surface_form_error, edge_alias_energy, surface_residual
    image2d          → metrics           compare_images, compare_images, measure_with
    image2d          → pose              recover_pose, recover_pose
@@ -453,6 +474,7 @@
    jones            → stokes            stokes_from_jones
    keypoints        → measurement       reprojection_error
    keypoints        → pose              dlt_pose, pnp_ransac
+   keypoints        → signal            get_grayval_contour_xld
    lab              → image2d           delta_e_2000, delta_e_2000, delta_e_76
    labels           → image2d           overlay_labels
    labels           → measurement       graph_modularity
@@ -624,18 +646,18 @@
 | **graph** |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
 | **hessian** |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
 | **histcube** |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | 1 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
-| **image2d** |  | 5 |  |  |  |  | 3 |  | 3 |  |  |  |  |  |  |  |  | 6 |  |  |  |  |  | 6 |  |  |  |  |  |  |  |  |  | 6 |  |  | 4 |  |  | 6 | 2 |  | 5 | 10 |  | 12 |  | 4 |  | 5 |  | 6 | 2 |  | 3 | 4 | 3 | 2 |  |  |  | 2 | 3 |  |  | 1 |  | 1 |  |  |  | 28 |  |  |  |  |  | 4 |  | 1 |  |  |  |  |  | 179 |  |  |  |  | 3 |  |  | 1 |  |
+| **image2d** |  | 5 |  |  |  |  | 3 |  | 3 |  |  |  |  |  |  |  |  | 6 |  |  |  |  |  | 6 |  |  |  |  |  |  |  |  |  | 6 |  |  | 5 |  |  | 7 | 2 |  | 5 | 10 |  | 12 |  | 4 |  | 5 |  | 6 | 2 |  | 4 | 4 | 3 | 2 |  |  |  | 2 | 3 |  |  | 1 |  | 1 |  |  |  | 30 |  |  |  |  |  | 5 |  | 1 |  |  |  |  |  | 191 |  |  |  |  | 3 |  |  | 1 |  |
 | **images** |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | 2 |  |  |  |  | 1 | 1 |  |  |  |  |  |  |  |  | 9 |  | 1 |  |  |  |  | 1 |  |  | 1 |  |  |  |  |  |  | 2 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | 1 |  |  |  |  |  |  | 12 |  |  |  |  |  |  |  | 2 |  |
 | **indices** |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | 1 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | 1 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | 1 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
 | **jones** |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | 1 |  |  |  |  |  |  |  |  |  |  |  |  |
-| **keypoints** |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | 1 |  |  |  |  |  |  |  |  |  |  | 3 |  | 1 |  |  |  |  |  |  |  |  | 1 |  |  | 2 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | 8 |  |  |  |  |  |  |  |  |  |
+| **keypoints** |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | 1 |  |  |  |  |  |  |  |  |  |  | 3 |  | 1 |  |  |  |  |  |  |  |  | 1 |  |  | 2 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | 1 |  |  |  |  |  |  |  | 10 |  |  |  |  |  |  |  |  |  |
 | **lab** |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | 4 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | 1 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
 | **labels** |  |  |  |  |  |  |  |  |  | 1 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | 1 |  | 1 |  |  |  |  |  |  |  |  | 1 |  | 1 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | 1 |  | 2 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | 7 |  |  |  | 1 |  |  |  |  |  |
 | **labels2d** |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | 2 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | 1 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | 38 |  |  |  |  |  |  |  |  |  |
 | **lightfield** |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | 9 | 2 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | 2 |  |  |  |  |  |  |  |  |  |
 | **lut** |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | 1 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | 1 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
-| **mask** |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | 1 |  |  |  |  |  |  |  |  | 5 |  |  |  |  |  |  | 1 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | 10 |  |  |  |  |  |  |  |  |  |
-| **matrix** | 1 | 7 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | 1 | 1 |  |  |  |  |  |  |  |  |  |  |  |  | 13 |  |  |  | 1 |  | 1 |  |  |  | 1 |  |  | 3 |  |  |  |  |  | 1 |  |  |  |  |  |  |  |  |  |  | 6 |  |  | 2 | 1 |  |  |  | 1 | 6 |  |  |  |  |  | 6 |  |  |  |  | 1 |  |  | 137 |  |  | 1 |  | 1 |  |  |  |  |
+| **mask** |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | 1 |  |  |  |  |  |  |  |  | 5 |  |  |  |  |  |  | 3 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | 11 |  |  |  |  |  |  |  |  |  |
+| **matrix** | 1 | 7 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | 1 | 1 |  |  |  |  |  |  |  |  |  |  |  |  | 14 |  |  |  | 1 |  | 1 |  |  |  | 1 |  |  | 3 |  |  |  |  |  | 1 |  |  |  |  |  |  |  |  |  |  | 6 |  |  | 2 | 1 |  |  |  | 1 | 6 |  |  |  |  |  | 6 |  |  |  |  | 1 |  |  | 146 |  |  | 1 |  | 1 |  |  |  |  |
 | **measurehandle** |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | 3 |  |  |  |  |  |  |  |  |  |
 | **measurement** |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | 1 |  |  |  |  |  |  |  | 1 |  |
 | **mesh** |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | 1 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | 4 |  | 2 |  |  |  |  |  |  |  |  | 1 |  | 2 |  |  |  |  | 2 |  |  |  | 3 |  |  |  |  |  |  |  |  |  |  | 2 |  |  |  |  |  |  |  |  |  |  |  | 4 |  |  |  |  |  |  |  | 14 | 1 |  |  |  |  |  |  | 2 |  |
@@ -677,7 +699,7 @@
 | **stokes** |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | 1 |  |  |  |  |  |  |  |  |  |
 | **sweep** |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | 2 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | 1 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
 | **synapse_table** |  |  |  |  |  |  |  |  |  | 1 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
-| **table** |  | 34 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | 23 | 1 |  |  | 1 |  |  |  | 1 |  | 1 | 11 |  | 4 |  |  |  | 3 |  | 11 |  |  | 2 |  |  |  |  |  |  |  | 6 | 2 |  | 8 |  |  |  |  |  | 21 |  |  |  |  |  | 12 |  |  |  |  |  |  |  |  | 5 |  |  |  |  |  |  | 1 |  |
+| **table** |  | 34 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | 28 | 1 |  |  | 1 |  |  |  | 1 |  | 1 | 11 |  | 4 |  |  |  | 3 |  | 11 |  |  | 2 |  |  |  |  |  |  |  | 6 | 2 |  | 8 |  |  |  |  |  | 22 |  |  |  |  |  | 12 |  |  |  |  |  |  |  |  | 5 |  |  |  |  |  |  | 1 |  |
 | **text** |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | 6 |  |  |  |  |  |  |  |  |  |  |  |  |  | 1 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | 15 |  |  |  |  |  |  |  |  |  |
 | **tokens** |  |  | 2 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
 | **transport_plan** |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | 1 |  |  |  |  |  | 1 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |

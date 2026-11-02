@@ -12,6 +12,19 @@ def _img(a):
     return np.asarray(a, dtype=np.float64)
 
 
+def _checked(image, region, op):
+    """台帳の入口の検査: 空・非 2-D・非有限・形の違う領域は ValueError。"""
+    im = _img(image)
+    if im.size == 0:
+        raise ValueError("%s: image is empty — pass at least one pixel" % op)
+    if im.ndim != 2 or not np.isfinite(im).all():
+        raise ValueError("%s: image must be a finite 2-D array" % op)
+    if region is not None and np.shape(region) != im.shape:
+        raise ValueError("%s: region shape %r differs from the image %r"
+                         % (op, np.shape(region), im.shape))
+    return im
+
+
 def _mask(region, shape):
     if region is None:
         return np.ones(shape, bool)
@@ -19,8 +32,12 @@ def _mask(region, shape):
 
 
 def area_center_gray(image, region=None):
-    """グレー値を重みとした面積(質量)と重心 (row,col)(area_center_gray)。"""
-    im = _img(image); m = _mask(region, im.shape)
+    """灰色値を重みとした質量と重心 ``(row, col)`` を返す(area_center_gray)。
+
+    ``region`` を渡すとその画素だけを数える。質量が 0 なら ``area`` が 0.0 で重心は原点を返す
+    (理由: 重みが無いと重心が定義できない)。空の入力(``image`` が 0 要素)は ValueError。
+    """
+    im = _checked(image, region, "area_center_gray"); m = _mask(region, im.shape)
     g = np.where(m, im, 0.0)
     total = g.sum()
     rr, cc = np.mgrid[0:im.shape[0], 0:im.shape[1]]
@@ -61,9 +78,17 @@ def elliptic_axis_gray(image, region=None):
 
 
 def gray_histo(image, region=None, bins=256):
-    """グレーヒストグラム(絶対度数と相対度数)(gray_histo)。"""
-    im = _img(image); m = _mask(region, im.shape)
+    """灰色値のヒストグラムを絶対度数と相対度数で返す(gray_histo)。
+
+    範囲は ``[0, 1]`` に固定する。範囲の外の画素があると ValueError(``np.histogram`` は外の値を
+    黙って捨て、8 bit の画像を渡すとほぼ空の表が返るため)。
+    空の入力(``image`` が 0 要素)は ValueError。
+    """
+    im = _checked(image, region, "gray_histo"); m = _mask(region, im.shape)
     vals = im[m]
+    if vals.size and (vals.min() < 0.0 or vals.max() > 1.0):
+        raise ValueError("gray_histo: gray values must lie in [0, 1], got %.6g .. %.6g"
+                         % (vals.min(), vals.max()))
     hist, edges = np.histogram(vals, bins=int(bins), range=(0.0, 1.0))
     rel = hist / max(1, hist.sum())
     return {"absolute": hist, "relative": rel, "edges": edges}
@@ -87,10 +112,16 @@ def gray_features(image, region=None):
 
 
 def gray_projections(image, region=None):
-    """行方向/列方向のグレー投影(gray_projections)。"""
-    im = _img(image); m = _mask(region, im.shape)
+    """灰色値の行ごとと列ごとの平均を返す(gray_projections)。
+
+    ``horizontal`` は長さ H(各行の平均)、``vertical`` は長さ W(各列の平均)。``region`` の
+    画素だけで平均し、領域の画素が 1 つも無い行と列は 0.0 を返す(理由: 平均する画素が無い)。
+    空の入力(``image`` が 0 要素)は ValueError。
+    """
+    im = _checked(image, region, "gray_projections"); m = _mask(region, im.shape)
     g = np.where(m, im, 0.0)
-    return {"horizontal": g.sum(axis=1), "vertical": g.sum(axis=0)}
+    return {"horizontal": g.sum(axis=1) / np.maximum(m.sum(axis=1), 1),
+            "vertical": g.sum(axis=0) / np.maximum(m.sum(axis=0), 1)}
 
 
 def histo_2dim(image1, image2, region=None, bins=64):

@@ -4,6 +4,7 @@ dim: oned
 category: function
 in: signal × signal
 out: table
+halcon: match_funct_1d_trans
 gpu: なし
 examples: [signal_funct1d]
 author: Kazufumi Furuse
@@ -15,6 +16,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal × signal` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.match_funct_1d_trans(y1, y2)` (実装を直接呼ぶなら `import funct1d; funct1d.match_funct_1d_trans(y1, y2)`、台帳から引くなら `ops1d.get("match_funct_1d_trans")`)
+- **HALCON 相当**: `match_funct_1d_trans`(意味・パラメータは HALCON リファレンスが参考になる)
 - **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方

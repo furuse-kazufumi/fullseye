@@ -4,6 +4,7 @@ dim: calib
 category: target
 in: 
 out: table
+halcon: create_caltab
 gpu: なし
 examples: []
 author: Kazufumi Furuse
@@ -15,6 +16,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.create_caltab(rows=7, cols=7, spacing=1.0)` (実装を直接呼ぶなら `import caltab; caltab.create_caltab(rows=7, cols=7, spacing=1.0)`、台帳から引くなら `opscalib.get("create_caltab")`)
+- **HALCON 相当**: `create_caltab`(意味・パラメータは HALCON リファレンスが参考になる)
 - **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方

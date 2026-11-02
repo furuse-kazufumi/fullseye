@@ -4,6 +4,7 @@ dim: measure1d
 category: caliper
 in: image2d × measurehandle
 out: table
+halcon: fuzzy_measure_pairing
 gpu: なし
 examples: [poc_calipers_under_illusion, poc_dimensional_inspection]
 author: Kazufumi Furuse
@@ -15,6 +16,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d × measurehandle` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.fuzzy_measure_pairing(image, measure, sigma=1.0, threshold=0.1, pair_size=None)` (実装を直接呼ぶなら `import measuring1d; measuring1d.fuzzy_measure_pairing(image, measure, sigma=1.0, threshold=0.1, pair_size=None)`、台帳から引くなら `opsmeasure1d.get("fuzzy_measure_pairing")`)
+- **HALCON 相当**: `fuzzy_measure_pairing`(意味・パラメータは HALCON リファレンスが参考になる)
 - **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方

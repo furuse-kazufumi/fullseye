@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "fullseye"
 version = "0.8.1"
-description = "Numpy-native operator library for vision, 3-D and measurement (3,623 typed ops in the machine-readable index: imaging, point clouds, optics, tomography, metrology) with an evolutionary pipeline designer and honest holdout gating"
+description = "Numpy-native operator library for vision, 3-D and measurement (3,670 typed ops in the machine-readable index: imaging, point clouds, optics, tomography, metrology) with an evolutionary pipeline designer and honest holdout gating"
 readme = "README.md"
 requires-python = ">=3.11"
 license = { text = "Apache-2.0" }
@@ -256,6 +256,9 @@ py-modules = [
   # calib / caltab / fit_transform は前から同梱されていたが、台帳が無いため op ノートも
   # OP_INDEX.json の行も無く、fs.op_find("caltab") が 0 件だった。
   "opscalib",
+  # opsmv: 工業用ビジョンの定番の演算の台帳(2026-11-02)。ステレオ・幾何の再標本化・古典形態学・
+  # カルマン背景・分類器の入口・文字行。実体は mvimage / mvstereo / mvmorph / mvtrack / mvclass / mvtext。
+  "opsmv", "mvimage", "mvstereo", "mvmorph", "mvtrack", "mvclass", "mvtext",
   "recipes", "measure", "studio", "studio_search", "studio_errors", "studio_roundtrip", "studio_batch", "studio_display", "studio_layout", "studio_result", "sample_images", "sample_data", "accuracy_bench",
   "evolve", "problems", "baseline", "robust",
   "verify_auto", "honest_summary", "dispositions", "catalog", "report",
@@ -327,7 +330,7 @@ py-modules = [
               # Canonical facade / disposition data (unified.py + dispositions.py
               # read these; the root-level data/ dir is only a dev-cache fallback
               # and never ships).
-              "data/halcon_facade_map.json", "data/halcon_stubs.json",
+              "data/halcon_facade_map.json", "data/halcon_ledger_map.json", "data/halcon_stubs.json",
               "data/halcon_graph.json",
               # MCP サーバ(fullseye.mcp)が wheel から読むカタログ: 索引の複製と
               # ノートの frontmatter(tools/gen_mcp_data.py が書く)。0.1.11 は docs/ を

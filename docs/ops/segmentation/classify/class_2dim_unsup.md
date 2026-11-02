@@ -4,6 +4,7 @@ dim: segmentation
 category: classify
 in: image2d × image2d
 out: labels2d
+halcon: class_2dim_unsup
 gpu: なし
 examples: [halcon_segmentation_tour]
 author: Kazufumi Furuse
@@ -15,6 +16,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d × image2d` → `labels2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.class_2dim_unsup(image1, image2, n_clusters=3, iters=20)` (実装を直接呼ぶなら `import segmentation; segmentation.class_2dim_unsup(image1, image2, n_clusters=3, iters=20)`、台帳から引くなら `opssegmentation.get("class_2dim_unsup")`)
+- **HALCON 相当**: `class_2dim_unsup`(意味・パラメータは HALCON リファレンスが参考になる)
 - **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方

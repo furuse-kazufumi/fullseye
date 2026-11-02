@@ -7,13 +7,13 @@ anything not returning the declared sort — 1 gate-failing auto op(s) are
 excluded here, not counted).
 
 ## Headline
-- **981 / 2313 distinct real HALCON operators implemented (42.4%)**
-  = 981 evolvable registry ops (of which 17 are also reachable through the
+- **1032 / 2313 distinct real HALCON operators implemented (44.6%)**
+  = 1032 evolvable registry ops (of which 17 are also reachable through the
   n-ary capability tier — a subset, not an addition; 0 n-ary-only).
 - dangling registry `Op.halcon` (fake names): **0** (fail-closed).
 
 ## Evolvable registry (single-image pipeline, coverage-counted)
-- registry ops: 942 ; distinct real HALCON ops covered: **982**
+- registry ops: 942 ; distinct real HALCON ops covered: **1033**
 - auto-generated ops passing the functional gate: 226 / 227
 - auto ops counted in coverage but FAILING the gate: 1 ['abs_image']
 
@@ -37,7 +37,7 @@ excluded here, not counted).
 | profile | ops |
 |---|---:|
 | contract_verified | 2 |
-| functional_analogue | 510 |
-| unknown | 0 |
+| functional_analogue | 612 |
+| unknown | 16 |
 
 Unknown is never promoted to PASS.

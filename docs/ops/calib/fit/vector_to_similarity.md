@@ -4,6 +4,7 @@ dim: calib
 category: fit
 in: keypoints
 out: matrix
+halcon: vector_to_similarity
 gpu: なし
 examples: [poc_document_scan, poc_star_astrometry]
 author: Kazufumi Furuse
@@ -15,6 +16,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `keypoints` → `matrix`
 - **呼び出し**: `import fullseye as fs; fs.ledger.vector_to_similarity(src, dst) -> 'np.ndarray'` (実装を直接呼ぶなら `import fit_transform; fit_transform.vector_to_similarity(src, dst) -> 'np.ndarray'`、台帳から引くなら `opscalib.get("vector_to_similarity")`)
+- **HALCON 相当**: `vector_to_similarity`(意味・パラメータは HALCON リファレンスが参考になる)
 - **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
