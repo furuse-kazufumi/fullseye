@@ -1,0 +1,28 @@
+{"device": "cpu", "op": "sk_tv", "family": "iterative", "side": 64, "n": 1, "status": "ok", "wall_s": 0.0005689000245183706, "min_s": 0.0004897000035271049, "proc_s": 0.0, "reps": 7, "at": "2026-11-02T15:50:11"}
+{"device": "cpu", "op": "sk_tv", "family": "iterative", "side": 64, "n": 4, "status": "ok", "wall_s": 0.0058723000111058354, "min_s": 0.005478499922901392, "proc_s": 0.0, "reps": 7, "at": "2026-11-02T15:50:11"}
+{"device": "cpu", "op": "sk_tv", "family": "iterative", "side": 64, "n": 16, "status": "ok", "wall_s": 0.025626500020734966, "min_s": 0.022213999996893108, "proc_s": 0.015625, "reps": 7, "at": "2026-11-02T15:50:11"}
+{"device": "cpu", "op": "sk_tv", "family": "iterative", "side": 64, "n": 100, "status": "ok", "wall_s": 0.16009099991060793, "min_s": 0.15618570009246469, "proc_s": 0.15625, "reps": 7, "at": "2026-11-02T15:50:12"}
+{"device": "cpu", "op": "sk_tv", "family": "iterative", "side": 128, "n": 1, "status": "ok", "wall_s": 0.0022396999411284924, "min_s": 0.002177600050345063, "proc_s": 0.0, "reps": 7, "at": "2026-11-02T15:50:12"}
+{"device": "cpu", "op": "sk_tv", "family": "iterative", "side": 128, "n": 4, "status": "ok", "wall_s": 0.009936199989169836, "min_s": 0.009519200073555112, "proc_s": 0.015625, "reps": 7, "at": "2026-11-02T15:50:12"}
+{"device": "cpu", "op": "sk_tv", "family": "iterative", "side": 128, "n": 16, "status": "ok", "wall_s": 0.04216479999013245, "min_s": 0.03703530004713684, "proc_s": 0.046875, "reps": 7, "at": "2026-11-02T15:50:12"}
+{"device": "cpu", "op": "sk_tv", "family": "iterative", "side": 128, "n": 100, "status": "ok", "wall_s": 0.2818082000594586, "min_s": 0.272120299981907, "proc_s": 0.265625, "reps": 7, "at": "2026-11-02T15:50:14"}
+{"device": "cpu", "op": "sk_tv", "family": "iterative", "side": 256, "n": 1, "status": "ok", "wall_s": 0.04773689992725849, "min_s": 0.0448585000121966, "proc_s": 0.046875, "reps": 7, "at": "2026-11-02T15:50:15"}
+{"device": "cpu", "op": "sk_tv", "family": "iterative", "side": 256, "n": 4, "status": "ok", "wall_s": 0.19601680000778288, "min_s": 0.17843770002946258, "proc_s": 0.1875, "reps": 7, "at": "2026-11-02T15:50:16"}
+{"device": "cpu", "op": "sk_tv", "family": "iterative", "side": 256, "n": 16, "status": "ok", "wall_s": 0.7464531000005081, "min_s": 0.7296553000342101, "proc_s": 0.71875, "reps": 5, "at": "2026-11-02T15:50:20"}
+{"device": "cpu", "op": "sk_tv", "family": "iterative", "side": 256, "n": 100, "status": "ok", "wall_s": 4.6766580999828875, "min_s": 4.673669599927962, "proc_s": 4.53125, "reps": 5, "at": "2026-11-02T15:50:43"}
+{"device": "cpu", "op": "sk_tv", "family": "iterative", "side": 512, "n": 1, "status": "ok", "wall_s": 0.41439920000266284, "min_s": 0.38713950000237674, "proc_s": 0.390625, "reps": 7, "at": "2026-11-02T15:50:46"}
+{"device": "cpu", "op": "sk_tv", "family": "iterative", "side": 512, "n": 4, "status": "ok", "wall_s": 1.4513683000113815, "min_s": 1.4266017000190914, "proc_s": 1.390625, "reps": 5, "at": "2026-11-02T15:50:54"}
+{"device": "cpu", "op": "sk_tv", "family": "iterative", "side": 512, "n": 16, "status": "ok", "wall_s": 6.030744699994102, "min_s": 5.865458899992518, "proc_s": 5.84375, "reps": 3, "at": "2026-11-02T15:51:12"}
+{"device": "cpu", "op": "sk_tv", "family": "iterative", "side": 512, "n": 100, "status": "ok", "wall_s": 37.798323899914976, "min_s": 36.5850546999136, "proc_s": 36.421875, "reps": 2, "at": "2026-11-02T15:52:27"}
+{"device": "cpu", "op": "sk_tv", "family": "iterative", "side": 1024, "n": 1, "status": "ok", "wall_s": 1.5923911000136286, "min_s": 1.5788209999445826, "proc_s": 1.546875, "reps": 5, "at": "2026-11-02T15:52:36"}
+{"device": "cpu", "op": "sk_tv", "family": "iterative", "side": 1024, "n": 4, "status": "ok", "wall_s": 6.6500557999825105, "min_s": 6.4755957999732345, "proc_s": 6.296875, "reps": 3, "at": "2026-11-02T15:52:56"}
+{"device": "cpu", "op": "sk_tv", "family": "iterative", "side": 1024, "n": 16, "status": "ok", "wall_s": 26.5077340999851, "min_s": 24.924984099925496, "proc_s": 25.59375, "reps": 3, "at": "2026-11-02T15:54:14"}
+{"device": "cpu", "op": "sk_tv", "family": "iterative", "side": 1024, "n": 100, "status": "cutoff", "note": "1 枚の実測 1.6 s から 90 s 超が確実なので実行しなかった", "at": "2026-11-02T15:54:14"}
+{"device": "cpu", "op": "sk_tv", "family": "iterative", "side": 2048, "n": 1, "status": "ok", "wall_s": 11.852515900041908, "min_s": 8.837669999920763, "proc_s": 8.84375, "reps": 3, "at": "2026-11-02T15:54:51"}
+{"device": "cpu", "op": "sk_tv", "family": "iterative", "side": 2048, "n": 4, "status": "ok", "wall_s": 47.02458705002209, "min_s": 42.331246400019154, "proc_s": 39.0390625, "reps": 2, "at": "2026-11-02T15:56:25"}
+{"device": "cpu", "op": "sk_tv", "family": "iterative", "side": 2048, "n": 16, "status": "cutoff", "note": "1 枚の実測 11.9 s から 90 s 超が確実なので実行しなかった", "at": "2026-11-02T15:56:25"}
+{"device": "cpu", "op": "sk_tv", "family": "iterative", "side": 2048, "n": 100, "status": "cutoff", "note": "1 枚の実測 11.9 s から 90 s 超が確実なので実行しなかった", "at": "2026-11-02T15:56:25"}
+{"device": "cpu", "op": "sk_tv", "family": "iterative", "side": 4096, "n": 1, "status": "ok", "wall_s": 47.33034405001672, "min_s": 46.019265300012194, "proc_s": 46.46875, "reps": 2, "at": "2026-11-02T15:58:19"}
+{"device": "cpu", "op": "sk_tv", "family": "iterative", "side": 4096, "n": 4, "status": "cutoff", "note": "1 枚の実測 47.3 s から 90 s 超が確実なので実行しなかった", "at": "2026-11-02T15:58:19"}
+{"device": "cpu", "op": "sk_tv", "family": "iterative", "side": 4096, "n": 16, "status": "cutoff", "note": "1 枚の実測 47.3 s から 90 s 超が確実なので実行しなかった", "at": "2026-11-02T15:58:19"}
+{"device": "cpu", "op": "sk_tv", "family": "iterative", "side": 4096, "n": 100, "status": "cutoff", "note": "1 枚の実測 47.3 s から 90 s 超が確実なので実行しなかった", "at": "2026-11-02T15:58:19"}

@@ -1300,7 +1300,7 @@ def _apply(a: dict, cat: Catalog, store: HandleStore, *,
     if named:
         rec["named_params"] = named
     import fullseye
-    resolved_device = fullseye.resolve_device(a.get("device", "auto"))
+    resolved_device = fullseye.resolve_device(a.get("device", "auto"), stages=(op.name,), shape=np.shape(arr))
     effective = resolved_device if resolved_device != "cuda" or fullseye.cuda_available() else "cpu"
     rec["acceleration"] = {"requested": a.get("device", "auto"), "device": effective,
                            "approximate": effective == "cuda"}
@@ -1434,14 +1434,19 @@ def _pipeline_dag(a: dict, cat: Catalog, store: HandleStore, *, max_structured_b
                     if edge["op"] in {"ncc_locate", "shape_locate"}:
                         runtime_ops.set_match_template(template_value)
                     try:
-                        if device == "cuda" and len(args) == 1:
+                        # 段ごとに転送するので、規則も段ごとに通す(auto のときだけ CPU に残ることがある)
+                        stage_device=(fullseye.resolve_device(a.get("device", "auto"), stages=(edge["op"],),
+                                                              shape=np.shape(incoming))
+                                      if device == "cuda" and len(args) == 1 else device)
+                        if stage_device == "cuda" and len(args) == 1:
                             out=fullseye.apply(incoming, edge["op"], float(normalized_spec["a"]),
-                                               float(normalized_spec["b"]), device=device,
+                                               float(normalized_spec["b"]), device=stage_device,
                                                on_error="raise")
                         else:
                             out=registered.fn(incoming,float(normalized_spec["a"]),
                                               float(normalized_spec["b"]))
-                        if gpu_effective and parity_check and len(args) == 1 and isinstance(out, np.ndarray):
+                        if gpu_effective and stage_device == "cuda" and parity_check and len(args) == 1 \
+                                and isinstance(out, np.ndarray):
                             cpu=fullseye.apply(incoming,edge["op"],float(normalized_spec["a"]),
                                                float(normalized_spec["b"]),device="cpu",on_error="raise")
                             if isinstance(cpu,np.ndarray) and cpu.shape == out.shape:

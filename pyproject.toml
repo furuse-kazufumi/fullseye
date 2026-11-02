@@ -143,6 +143,8 @@ py-modules = [
   # accel_match / match3d / feat_* — it MUST ship or those modules ImportError
   # on a pip install (it keeps `import torch`, ~700 ms, off every start-up).
   "api", "param_specs", "ops", "backend_safe", "torch_lazy", "fileio", "opsfileio",
+  # device_policy: device="auto" の規則(表は fullseye/data/DEVICE_RULES.json)。api が import する。
+  "device_policy",
   # ★2026-10-25: numpy_twins は backends_auto / backends_filters2 / backends_regions2 が import する
   #   (scikit-image の無い環境の双子)。py-modules に無いと wheel から落ちて 3 backend ごと消える。
   "numpy_twins",
@@ -339,7 +341,9 @@ py-modules = [
               # 意味で op を引く検索の索引(6 言語の要約。fullseye.opsearch / fullseye-rag search、2026-10-07)
               "data/OP_SEARCH.json", "data/OP_CARDS.json", "data/OP_PROBE.json", "data/RECIPE_INDEX.json",
               "data/OP_GRAPH.json", "data/OP_FAMILIES.json", "data/OP_DEVICE.json", "data/OP_SORTS.json",
-              "data/OP_SHAPES.json", "data/OP_PATTERNS.json", "data/SYSTEM_PARAMS.json"]
+              "data/OP_SHAPES.json", "data/OP_PATTERNS.json", "data/SYSTEM_PARAMS.json",
+              # device="auto" の実測の表(device_policy が読む。tools/gen_device_rules.py が生ログから作る)
+              "data/DEVICE_RULES.json"]
 # Studio runtime assets shipped inside the `studio_assets` package so an installed
 # wheel has localisation, per-operator help, and the bundled sample images (the
 # Studio degrades to English-only / no-help / no-samples without them).

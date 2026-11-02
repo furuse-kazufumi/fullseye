@@ -2022,13 +2022,18 @@ _GPU_OPEN: set = set()
 _TORCH_IMPORT_FAILURE: str | None = None     # torch が import できない理由(一度だけ試す)
 
 
-def resolve_device(device: str = "auto") -> str:
+def resolve_device(device: str = "auto", *, stages=None, shape=None, n: int = 1) -> str:
     """実行 device を解決する / Resolve ``auto`` and ``FULLSEYE_DEVICE``.
 
     明示した引数より ``FULLSEYE_DEVICE`` を優先する。``auto`` は CUDA が使えれば ``cuda``、無ければ
     ``cpu``。``cuda`` の明示はそのまま返す: CUDA の無い機械では op ごとに N117 の説明つきで
     台帳に記録して CPU で続き(既定)、``on_error="raise"`` ではその説明つき ``RuntimeError`` になる
     (入口で拒まない = 2026-09-20 の契約 ``tests/test_release_0_2_1_gates_2026_09_20.py``)。
+
+    ``auto`` に仕事の中身 (*stages* = op 名の列、*shape* = 1 枚の形、*n* = 枚数)を渡すと、CUDA が在っても
+    転送込みで GPU が CPU に勝たない大きさは ``cpu`` を返す(実測の表 ``fullseye/data/DEVICE_RULES.json``、
+    :mod:`device_policy`)。``FULLSEYE_DEVICE`` と明示の ``cpu`` / ``cuda`` はこの規則より優先する。
+    :func:`apply` と :func:`run_pipeline` の ``device="auto"`` はこれを通る。
     """
     requested = os.environ.get("FULLSEYE_DEVICE", device).strip().lower()
     if requested not in ("auto", "cpu", "cuda"):
@@ -2037,7 +2042,28 @@ def resolve_device(device: str = "auto") -> str:
         return "cpu"
     if requested == "cuda":
         return "cuda"
-    return "cuda" if cuda_available() else "cpu"
+    if not cuda_available():
+        return "cpu"
+    if stages is None or shape is None:
+        return "cuda"
+    return _route_auto(stages, shape, n)
+
+
+def _route_auto(stages, shape, n: int) -> str:
+    """CUDA が在る機械の ``auto``: 実測の規則で装置を決める(op の別名は正式名へ寄せてから表を引く)。"""
+    import device_policy
+    found = [find_op(name) if isinstance(name, str) else None for name in stages]
+    names = [op.name if op is not None else name for op, name in zip(found, stages)]
+    return device_policy.route(names, shape, n, accelerated=_gpu_op_names())
+
+
+def _gpu_op_names() -> frozenset:
+    """GPU 経路を持つ core op 名(2-D + 体積 + 照合)。"""
+    try:
+        import accel_bridge as bridge
+    except ImportError:
+        return frozenset()
+    return frozenset(bridge._C2A) | frozenset(bridge._C2VA) | frozenset(bridge._C2M)
 
 
 def cuda_available() -> bool:
@@ -2641,7 +2667,8 @@ def apply(image, name: str, a: float = 0.5, b: float = 0.5, coerce: bool = True,
     ``on_error="raise"``. It used to be handed to the op unchanged, which produced a
     uint8/float16/all-ones result with no exception — see :func:`_contract_dtype`.
 
-    ``device`` (default ``"auto"`` = CUDA when available, else CPU; ``FULLSEYE_DEVICE``
+    ``device`` (default ``"auto"`` = CUDA when available and worth the transfer for this op
+    and image size, else CPU, see :func:`resolve_device`; ``FULLSEYE_DEVICE``
     overrides): ``"cuda"`` runs accel-enabled ops on the GPU; on a host without CUDA the op
     runs on the CPU and the reason is recorded in the fallback ledger (``on_error="raise"`` raises it).
     torch/accel *absent* falls back to CPU silently (documented); a kernel that
@@ -2686,7 +2713,7 @@ def apply(image, name: str, a: float = 0.5, b: float = 0.5, coerce: bool = True,
     hatch; the answer is then whatever the implementation does with NaN).
     """
     policy = _policy(on_error)
-    device = resolve_device(device)
+    device = resolve_device(device, stages=(name,), shape=getattr(image, "shape", None))
     if template is None:
         return _apply_impl(image, name, a, b, coerce, device, policy, fast, allow_nonfinite)
     prev = _ops._MATCH_CTX.get("template")
@@ -3091,7 +3118,8 @@ def run_pipeline(image, stages: Iterable, a: float = 0.5, b: float = 0.5,
     themselves, so re-coercing mid-chain would only strip gray levels a stage may
     still want (see :func:`_coerce_input`).
 
-    ``device`` (default ``"auto"`` = CUDA when available, else CPU; ``FULLSEYE_DEVICE``
+    ``device`` (default ``"auto"`` = CUDA when available and worth the transfer for this chain
+    and image size, else CPU, see :func:`resolve_device`; ``FULLSEYE_DEVICE``
     overrides): ``"cuda"`` (or any non-cpu) runs the chain on the
     ``accel_bridge`` resident pipeline (unsupported ops fall back to CPU inside the
     bridge; consecutive accel ops share one transfer). torch/GPU *absent* silently
@@ -3113,8 +3141,10 @@ def run_pipeline(image, stages: Iterable, a: float = 0.5, b: float = 0.5,
     recorded, or refused under ``on_error="raise"``). See :func:`_check_chain_sorts`.
     """
     policy = _policy(on_error)
-    device = resolve_device(device)
+    requested, device = device, resolve_device(device)      # 値の検査はここ(段の検査より先)
     image, norm, ops_ = _prepare_pipeline(image, stages, a, b, policy)
+    if device != "cpu" and norm:
+        device = resolve_device(requested, stages=[s[0] for s in norm], shape=getattr(image, "shape", None))
 
     if isinstance(image, PrecisionUnion) and device != "cpu":
         image = image.to_dense()      # the lazy union path is CPU-only; the GPU bridge needs a dense array

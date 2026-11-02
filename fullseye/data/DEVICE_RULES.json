@@ -1,0 +1,391 @@
+{
+ "basis": "docs/perf/gpu_crossover_2026-11-02.md",
+ "batch": {
+  "nonseparable": {
+   "1": 0,
+   "100": 0,
+   "16": 0,
+   "4": 0
+  },
+  "point": {
+   "1": 4225,
+   "100": 0,
+   "16": 0,
+   "4": 4225
+  },
+  "separable": {
+   "1": 16641,
+   "100": 0,
+   "16": 0,
+   "4": 4225
+  }
+ },
+ "floor_s": 5e-05,
+ "ops": {
+  "adaptive_gauss_thresh": {
+   "family": "separable",
+   "min_pixels": 16641
+  },
+  "bilateral": {
+   "family": "nonseparable",
+   "min_pixels": 16641
+  },
+  "bit_not": {
+   "family": "point",
+   "min_pixels": 263169
+  },
+  "bothat": {
+   "family": "morphology",
+   "min_pixels": 0
+  },
+  "canny": {
+   "family": "iterative",
+   "min_pixels": 66049
+  },
+  "cv_sharpen": {
+   "family": "separable",
+   "min_pixels": 263169
+  },
+  "deviation_image": {
+   "family": "nonseparable",
+   "min_pixels": 66049
+  },
+  "diff_of_gauss": {
+   "family": "separable",
+   "min_pixels": 16641
+  },
+  "dilation_circle": {
+   "family": "morphology",
+   "min_pixels": 263169
+  },
+  "dilation_rectangle1": {
+   "family": "morphology",
+   "min_pixels": 16641
+  },
+  "dilation_seq": {
+   "family": "morphology",
+   "min_pixels": 263169
+  },
+  "dog": {
+   "family": "separable",
+   "min_pixels": 66049
+  },
+  "dual_rank": {
+   "family": "nonseparable",
+   "min_pixels": 0
+  },
+  "dyn_threshold": {
+   "family": "separable",
+   "min_pixels": 66049
+  },
+  "eliminate_min_max": {
+   "family": "nonseparable",
+   "min_pixels": 0
+  },
+  "equ_histo_image": {
+   "family": "iterative",
+   "min_pixels": 16641
+  },
+  "equalize": {
+   "family": "iterative",
+   "min_pixels": 16641
+  },
+  "erosion_circle": {
+   "family": "morphology",
+   "min_pixels": 263169
+  },
+  "erosion_golay": {
+   "family": "morphology",
+   "min_pixels": 263169
+  },
+  "erosion_seq": {
+   "family": "morphology",
+   "min_pixels": 263169
+  },
+  "fill_holes": {
+   "family": "iterative",
+   "min_pixels": 4198401
+  },
+  "fill_up": {
+   "family": "iterative",
+   "min_pixels": 4198401
+  },
+  "gamma": {
+   "family": "point",
+   "min_pixels": 16641
+  },
+  "gauss_filter": {
+   "family": "separable",
+   "min_pixels": 263169
+  },
+  "gauss_image": {
+   "family": "separable",
+   "min_pixels": 66049
+  },
+  "gaussian": {
+   "family": "separable",
+   "min_pixels": 263169
+  },
+  "gclose": {
+   "family": "morphology",
+   "min_pixels": 0
+  },
+  "gdilate": {
+   "family": "morphology",
+   "min_pixels": 16641
+  },
+  "gerode": {
+   "family": "morphology",
+   "min_pixels": 16641
+  },
+  "gopen": {
+   "family": "morphology",
+   "min_pixels": 0
+  },
+  "grad_dir": {
+   "family": "separable",
+   "min_pixels": 16641
+  },
+  "gray_bothat": {
+   "family": "morphology",
+   "min_pixels": 16641
+  },
+  "gray_closing": {
+   "family": "morphology",
+   "min_pixels": 0
+  },
+  "gray_closing_rect": {
+   "family": "morphology",
+   "min_pixels": 0
+  },
+  "gray_dilation": {
+   "family": "morphology",
+   "min_pixels": 16641
+  },
+  "gray_dilation_rect": {
+   "family": "morphology",
+   "min_pixels": 0
+  },
+  "gray_erosion": {
+   "family": "morphology",
+   "min_pixels": 16641
+  },
+  "gray_erosion_rect": {
+   "family": "morphology",
+   "min_pixels": 16641
+  },
+  "gray_opening": {
+   "family": "morphology",
+   "min_pixels": 0
+  },
+  "gray_opening_rect": {
+   "family": "morphology",
+   "min_pixels": 0
+  },
+  "gray_range_rect": {
+   "family": "morphology",
+   "min_pixels": 0
+  },
+  "gray_tophat": {
+   "family": "morphology",
+   "min_pixels": 0
+  },
+  "highpass": {
+   "family": "frequency",
+   "min_pixels": 16641
+  },
+  "illuminate": {
+   "family": "separable",
+   "min_pixels": 16641
+  },
+  "invert": {
+   "family": "point",
+   "min_pixels": 16785409
+  },
+  "invert_image": {
+   "family": "point",
+   "min_pixels": 263169
+  },
+  "invert_region": {
+   "family": "point",
+   "min_pixels": 263169
+  },
+  "laplace": {
+   "family": "nonseparable",
+   "min_pixels": 66049
+  },
+  "local_max": {
+   "family": "nonseparable",
+   "min_pixels": 16641
+  },
+  "local_threshold": {
+   "family": "separable",
+   "min_pixels": 16641
+  },
+  "lowpass": {
+   "family": "frequency",
+   "min_pixels": 16641
+  },
+  "max_filter": {
+   "family": "morphology",
+   "min_pixels": 0
+  },
+  "mean_box": {
+   "family": "separable",
+   "min_pixels": 263169
+  },
+  "mean_image": {
+   "family": "separable",
+   "min_pixels": 263169
+  },
+  "median": {
+   "family": "nonseparable",
+   "min_pixels": 0
+  },
+  "median_image": {
+   "family": "nonseparable",
+   "min_pixels": 0
+  },
+  "median_separate": {
+   "family": "nonseparable",
+   "min_pixels": 0
+  },
+  "median_weighted": {
+   "family": "nonseparable",
+   "min_pixels": 0
+  },
+  "min_filter": {
+   "family": "morphology",
+   "min_pixels": 16641
+  },
+  "morph_grad": {
+   "family": "morphology",
+   "min_pixels": 0
+  },
+  "nonmax_suppression_amp": {
+   "family": "nonseparable",
+   "min_pixels": 16641
+  },
+  "opening_circle": {
+   "family": "morphology",
+   "min_pixels": 16641
+  },
+  "opening_golay": {
+   "family": "morphology",
+   "min_pixels": 16641
+  },
+  "otsu": {
+   "family": "iterative",
+   "min_pixels": 66049
+  },
+  "percentile": {
+   "family": "nonseparable",
+   "min_pixels": 0
+  },
+  "prewitt_amp": {
+   "family": "separable",
+   "min_pixels": 66049
+  },
+  "prewitt_mag": {
+   "family": "separable",
+   "min_pixels": 66049
+  },
+  "projective_trans_image": {
+   "family": "geometry",
+   "min_pixels": 263169
+  },
+  "projective_trans_image_size": {
+   "family": "geometry",
+   "min_pixels": 263169
+  },
+  "projective_trans_region": {
+   "family": "geometry",
+   "min_pixels": 66049
+  },
+  "r2_union1": {
+   "family": "point",
+   "min_pixels": 16641
+  },
+  "rank_image": {
+   "family": "nonseparable",
+   "min_pixels": 0
+  },
+  "rank_rect": {
+   "family": "nonseparable",
+   "min_pixels": 0
+  },
+  "reg_dilate": {
+   "family": "morphology",
+   "min_pixels": 263169
+  },
+  "reg_erode": {
+   "family": "morphology",
+   "min_pixels": 263169
+  },
+  "remove_noise_region": {
+   "family": "morphology",
+   "min_pixels": 16641
+  },
+  "roberts": {
+   "family": "separable",
+   "min_pixels": 66049
+  },
+  "roberts_mag": {
+   "family": "separable",
+   "min_pixels": 66049
+  },
+  "scale_clip": {
+   "family": "point",
+   "min_pixels": 1050625
+  },
+  "scale_image": {
+   "family": "point",
+   "min_pixels": 263169
+  },
+  "sigmoid": {
+   "family": "point",
+   "min_pixels": 66049
+  },
+  "simulate_defocus": {
+   "family": "separable",
+   "min_pixels": 263169
+  },
+  "sk_tv": {
+   "family": "iterative",
+   "min_pixels": 16641
+  },
+  "sobel_amp": {
+   "family": "separable",
+   "min_pixels": 66049
+  },
+  "sobel_dir": {
+   "family": "separable",
+   "min_pixels": 16641
+  },
+  "sobel_mag": {
+   "family": "separable",
+   "min_pixels": 66049
+  },
+  "std_filter": {
+   "family": "nonseparable",
+   "min_pixels": 66049
+  },
+  "threshold": {
+   "family": "point",
+   "min_pixels": 1050625
+  },
+  "tophat": {
+   "family": "morphology",
+   "min_pixels": 16641
+  },
+  "unsharp": {
+   "family": "separable",
+   "min_pixels": 66049
+  }
+ },
+ "pipeline": {
+  "min_pixels": 0
+ },
+ "schema": 1,
+ "tolerance": 0.1
+}
