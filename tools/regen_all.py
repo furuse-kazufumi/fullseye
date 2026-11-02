@@ -62,6 +62,7 @@ CHAIN = [
     # ★索引の直後(docs/OP_INDEX.json を読む)。GPU tier と HALCON OpenCL 対応行列。
     (["tools/gpu_tier_rules.py"], "docs/perf/GPU_TIERS.md(全 op の GPU tier 4 段分類)"),
     (["tools/gen_halcon_opencl_parity.py"], "docs/perf/HALCON_OPENCL_PARITY.md + json(HALCON OpenCL 84 op 対応行列)"),
+    (["tools/gen_gpu_fill3_report.py"], "docs/perf/gpu_fill3_2026-11-02.md + json(GPU 第 3 便の採否、実測ログから)"),
     (["tools/audit_file_formats.py"], "docs/FILE_FORMATS.md(実装・op・テストから生成するファイル形式棚卸し)"),
     (["tools/halcon_compat_profile.py", "--manifest"],
      "HALCON 互換プロファイル + 比較試験 manifest + HALCON_PARITY の H15 節"),
@@ -151,6 +152,7 @@ OUTPUTS = {
     "tools/gpu_tier_rules.py": ["docs/perf/GPU_TIERS.md"],
     "tools/gen_halcon_opencl_parity.py": ["docs/perf/HALCON_OPENCL_PARITY.md",
                                           "docs/perf/halcon_opencl_parity.json"],
+    "tools/gen_gpu_fill3_report.py": ["docs/perf/gpu_fill3_2026-11-02.md", "docs/perf/gpu_fill3_decisions.json"],
     "tools/audit_file_formats.py": ["docs/FILE_FORMATS.md"],
     "tools/halcon_compat_profile.py": ["docs/halcon_compat_profile.json",
                                         "docs/halcon_comparison_manifest.json",
@@ -238,6 +240,7 @@ READS = {
     "imgevolve.py": ["fullseye/data/OP_INDEX.json", "fullseye/data/op_knob.json"],
     "tools/gpu_tier_rules.py": ["docs/OP_INDEX.json"],
     "tools/gen_halcon_opencl_parity.py": ["docs/OP_INDEX.json"],
+    "tools/gen_gpu_fill3_report.py": ["docs/perf/GPU_TIERS.md", "docs/perf/halcon_opencl_parity.json"],
     "tools/audit_file_formats.py": ["auto_specs_data.py", "docs/OP_INDEX.json"],
     "tools/halcon_compat_profile.py": ["docs/OP_INDEX.json"],
     "tools/gen_capabilities_index.py": ["docs/OP_INDEX.json"],

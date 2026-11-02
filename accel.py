@@ -1246,6 +1246,51 @@ for _rname, _fn, _hal in _TWIN_ALIASES:
     ACCEL[_key] = (_fn, _rname, _hal)
 del _rname, _fn, _hal, _key
 
+# ── GPU 第 3 便の候補表(core 名 -> (kernel, HALCON 名))。ACCEL に入るのは FILL3_ADOPTED だけ。
+#    採否は tools/gen_gpu_fill3_report.py が実測ログから判定し、この表と食い違うと門が落ちる。
+FILL3_KERNELS = {
+    "abs_image": (_abs_image, "abs_image"), "acos_image": (_acos_image, "acos_image"),
+    "asin_image": (_asin_image, "asin_image"), "atan_image": (_atan_image, "atan_image"),
+    "exp_image": (_exp_image, "exp_image"), "log_image": (_log_image, "log_image"),
+    "sin_image": (_sin_image, "sin_image"), "sqrt_image": (_sqrt_image, "sqrt_image"),
+    "tan_image": (_tan_image, "tan_image"), "gamma_image": (_gamma_image, "gamma_image"),
+    "f2_lut_trans": (_lut_trans, "lut_trans"), "median_rect": (_median_rect, "median_rect"),
+    "mirror_image": (_mirror_image, "mirror_image"),
+    "it_convert_image_type": (_convert_image_type, "convert_image_type"),
+    "it_crop_domain": (_crop_domain, "crop_domain"), "it_crop_part": (_crop_part, "crop_part"),
+    "it_crop_rectangle1": (_crop_rectangle1, "crop_rectangle1"),
+    "gray_erosion_shape": (_gray_erosion_shape, "gray_erosion_shape"),
+    "gray_dilation_shape": (_gray_dilation_shape, "gray_dilation_shape"),
+    "gray_opening_shape": (_gray_opening_shape, "gray_opening_shape"),
+    "gray_closing_shape": (_gray_closing_shape, "gray_closing_shape"),
+    "texture_laws": (_texture_laws, "texture_laws"), "derivate_gauss": (_derivate_gauss, "derivate_gauss"),
+    "affine_trans_image": (_affine_warp, "affine_trans_image"), "affine_warp": (_affine_warp, "affine_trans_image"),
+    "affine_trans_image_size": (_affine_warp, "affine_trans_image_size"),
+    "rotate_image": (_rotate_image, "rotate_image"), "rotate_img": (_rotate_image, "rotate_image"),
+    "zoom_image_factor": (_zoom_factor, "zoom_image_factor"), "rescale_img": (_rescale_img, "zoom_image_factor"),
+    "zoom_image_size": (_zoom_size, "zoom_image_size"),
+    "rgb1_to_gray": (_rgb_to_gray, "rgb1_to_gray"), "rgb3_to_gray": (_rgb_to_gray, "rgb3_to_gray"),
+    "linear_trans_color": (_linear_trans_color, "linear_trans_color"),
+    "principal_comp": (_principal_comp, "principal_comp"),
+}
+FILL3_ADOPTED = ()
+ACCEL.update({(n if n not in ACCEL else n + "@twin"): (FILL3_KERNELS[n][0], n, FILL3_KERNELS[n][1])
+              for n in FILL3_ADOPTED})
+
+NARY_KERNELS = {
+    "add_image": _nary_add, "sub_image": _nary_sub, "mult_image": _nary_mult, "div_image": _nary_div,
+    "abs_diff_image": _nary_abs_diff, "max_image": _nary_max, "min_image": _nary_min, "convol_image": _nary_convol,
+}
+NARY_ADOPTED = ()
+#: core n-ary 名 -> kernel。``fullseye.apply([x0, x1], name, device=...)`` の GPU 経路。
+NARY_ACCEL = {n: NARY_KERNELS[n] for n in NARY_ADOPTED}
+
+
+def run_nary(name, inputs, a=0.5, b=0.4, device="cpu"):
+    """n-ary op を 1 組の入力で走らせる。第 2 入力は形が違ってよい(convol_image の核)。"""
+    io = [_to_batch([x], device) for x in inputs]
+    return _from_batch(NARY_ACCEL[name](io, a, b, device).clamp(0, 1))[0]
+
 
 def run_batch(name, imgs, a=0.5, b=0.4, device="cpu"):
     """Run one accel op over a batch of images; returns a list of 2-D arrays."""

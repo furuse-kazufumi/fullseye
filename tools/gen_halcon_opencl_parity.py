@@ -37,11 +37,12 @@ def _accel_maps():
     sys.path.insert(0, str(ROOT))
     import accel
     import accel_match
+    import accel_typed
     import accel_vol
     halcon_gpu = {h for _n, (_f, _c, h) in accel.ACCEL.items() if h}
     core_gpu = {c for _n, (_f, c, _h) in accel.ACCEL.items()}
     core_gpu |= {c for _n, (_f, c) in accel_vol.VOL_ACCEL.items()}
-    core_gpu |= set(accel_match.MATCH_ACCEL)
+    core_gpu |= set(accel_match.MATCH_ACCEL) | set(accel.NARY_ACCEL) | set(accel_typed.TYPED_ACCEL)
     return halcon_gpu, core_gpu
 
 

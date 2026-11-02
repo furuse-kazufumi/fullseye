@@ -442,7 +442,8 @@ def _bind():
 CANDIDATES = _bind()
 #: 実寸 >= 5x と parity を実測して採用した op(不採用は CANDIDATES に残すが台帳に載らない)。
 TYPED_ADOPTED = ()
-TYPED_ACCEL = {name: name for name in TYPED_ADOPTED}
+#: 台帳の表示名は呼び方そのもの(型付き op は ``fullseye.apply`` を通らない)。
+TYPED_ACCEL = {name: "accel_typed.call('%s')" % name for name in TYPED_ADOPTED}
 
 
 def call(name, *args, device="cuda", **kwargs):

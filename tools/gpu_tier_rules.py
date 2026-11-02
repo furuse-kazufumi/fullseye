@@ -206,10 +206,13 @@ def _attach_gpu_accel(ops) -> None:
     sys.path.insert(0, str(ROOT))
     import accel
     import accel_match
+    import accel_typed
     import accel_vol
     gpu_names = {core: name for name, (_fn, core, _hal) in accel.ACCEL.items()}
     gpu_names.update({core: name for name, (_fn, core) in accel_vol.VOL_ACCEL.items()})
     gpu_names.update({core: name for core, name in accel_match.MATCH_ACCEL.items()})
+    gpu_names.update({core: core for core in accel.NARY_ACCEL})
+    gpu_names.update(accel_typed.TYPED_ACCEL)
     seen: set = set()
     for o in ops:
         nm = gpu_names.get(o["name"])

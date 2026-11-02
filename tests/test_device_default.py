@@ -47,11 +47,13 @@ def test_gpu_ledger_count_matches_accelerator_registries():
     """台帳側と実装側を別経路で数え、GPU行の欠落を拒否する。"""
     import accel
     import accel_match
+    import accel_typed
     import accel_vol
     from tools import opdocs
     records = opdocs._records()[0]
     ledger_count = sum(bool(row.get("gpu_accel")) for row in records)
-    implementation_count = len(accel.ACCEL) + len(accel_vol.VOL_ACCEL) + len(accel_match.MATCH_ACCEL)
+    implementation_count = (len(accel.ACCEL) + len(accel_vol.VOL_ACCEL) + len(accel_match.MATCH_ACCEL)
+                            + len(accel.NARY_ACCEL) + len(accel_typed.TYPED_ACCEL))
     assert ledger_count == implementation_count
 
 
