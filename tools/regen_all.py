@@ -326,6 +326,8 @@ _IMAGE_REASON = ("画像・動画の書き手。PNG/GIF のバイトは Pillow �
 _SPIKE_REASON = ("スパイク(実験)の記録。spikes/out_gallery/ の図は当時の証跡として凍結してあり、"
                  "再描画(matplotlib / GUI)はバイトが変わる。")
 EXCLUDED = {
+    "tools/profile_ops.py": ("PoC を op 呼び出し単位で計る実測の計測器(時間×頻度)。数字は機械と負荷で変わるので "
+                             "手で回し、docs/perf/op_time_ranking_<date>.json を日付つきで commit する(2026-11-02)。"),
     "tools/measure_op_families.py": ("CPU timing and peak memory are machine-dependent raw measurements; run manually, "
                                       "then commit docs/ops/families_timing.json with environment metadata."),
     "tools/measure_device_crossover.py": ("GPU timing is machine-dependent and must be run manually only after "

@@ -75,10 +75,13 @@ operator names, sort mismatches, out-of-range knobs and unknown arguments are al
 explicitly — nothing is coerced to "the nearest thing".
 
 Every tool that runs operators accepts `device` (`auto` = CUDA when the host has it,
-otherwise CPU; `FULLSEYE_DEVICE` overrides; `cuda` on a CPU-only host is refused with the
-reason). On CUDA the result carries `acceleration` with `approximate: true` and the GPU/CPU
+otherwise CPU; `FULLSEYE_DEVICE` overrides; `cuda` on a CPU-only host runs on the CPU with the
+reason recorded per op, as before). The result carries `acceleration` (`requested`, effective
+`device`, `approximate: true` only when it really ran on CUDA) and the GPU/CPU
 segment plan; pass `parity_check: true` to also run the CPU reference and record
 `max_abs_diff_vs_cpu` (doubles the work, so it is opt-in).
+The `minimal` tool profile advertises `fullseye_pipeline` without `device` / `parity_check`
+(they are still accepted; the minimal profile stays under its 1,500-token budget).
 
 It runs from the wheel (0.2.0+). The catalog's sources of truth are `docs/OP_INDEX.json`
 and the front matter of `docs/ops/**/*.md`, which are not inside the package; so

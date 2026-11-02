@@ -19,12 +19,18 @@ def test_environment_overrides_argument(monkeypatch):
     assert api.resolve_device("cuda") == "cpu"
 
 
-def test_explicit_cuda_fails_closed_without_cuda(monkeypatch):
+def test_explicit_cuda_is_not_refused_at_the_entrance(monkeypatch):
+    """N117(2026-09-20)の契約: CUDA の無い機械での device="cuda" は入口で拒まず、op ごとに
+    説明つきで台帳に記録して CPU で続く。raise 方針ではその説明つきの RuntimeError。"""
     import torch
     monkeypatch.delenv("FULLSEYE_DEVICE", raising=False)
     monkeypatch.setattr(torch.cuda, "is_available", lambda: False)
-    with pytest.raises(RuntimeError, match="CUDA is not available"):
-        api.apply(np.zeros((8, 8)), "identity", device="cuda")
+    assert api.resolve_device("cuda") == "cuda"
+    assert api.cuda_available() is False
+    api.reset_gpu()
+    with pytest.raises(RuntimeError, match="CUDA is not available here"):
+        api.apply(np.random.default_rng(1).random((16, 16)), "gaussian", device="cuda", on_error="raise")
+    api.reset_gpu()
 
 
 def test_auto_cpu_is_bit_identical(monkeypatch):

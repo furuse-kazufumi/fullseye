@@ -9,6 +9,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import platform
 import runpy
 import sys
 import time
@@ -79,8 +80,9 @@ def main() -> int:
                      "calls": value["calls"], "mean_ms": 1000 * total_s / value["calls"],
                      "total_s": total_s})
     rows.sort(key=lambda row: (-row["total_s"], row["op"]))
-    payload = {"generated_by": "tools/profile_ops.py", "python": sys.executable,
-               "cwd": os.getcwd(), "runs": runs, "ops": rows}
+    # 公開 docs にローカルの絶対パスを書かない(tests/test_docs_no_local_paths.py)。版だけ残す。
+    payload = {"generated_by": "tools/profile_ops.py", "python": platform.python_version(),
+               "runs": runs, "ops": rows}
     Path(args.out).parent.mkdir(parents=True, exist_ok=True)
     Path(args.out).write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     md_path = Path(args.out).with_suffix(".md")

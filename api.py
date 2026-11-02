@@ -2025,14 +2025,23 @@ _TORCH_IMPORT_FAILURE: str | None = None     # torch が import できない理�
 def resolve_device(device: str = "auto") -> str:
     """実行 device を解決する / Resolve ``auto`` and ``FULLSEYE_DEVICE``.
 
-    明示した引数より ``FULLSEYE_DEVICE`` を優先する。CUDA を明示して利用できない場合は
-    CPU へ黙って落とさず、入口で理由つき ``RuntimeError`` にする。
+    明示した引数より ``FULLSEYE_DEVICE`` を優先する。``auto`` は CUDA が使えれば ``cuda``、無ければ
+    ``cpu``。``cuda`` の明示はそのまま返す: CUDA の無い機械では op ごとに N117 の説明つきで
+    台帳に記録して CPU で続き(既定)、``on_error="raise"`` ではその説明つき ``RuntimeError`` になる
+    (入口で拒まない = 2026-09-20 の契約 ``tests/test_release_0_2_1_gates_2026_09_20.py``)。
     """
     requested = os.environ.get("FULLSEYE_DEVICE", device).strip().lower()
     if requested not in ("auto", "cpu", "cuda"):
         raise ValueError("device must be 'auto', 'cpu', or 'cuda'; got %r" % requested)
     if requested == "cpu":
         return "cpu"
+    if requested == "cuda":
+        return "cuda"
+    return "cuda" if cuda_available() else "cpu"
+
+
+def cuda_available() -> bool:
+    """CUDA が本当に使えるか(torch が無い機械では False、失敗は一度だけ試す)。"""
     global _TORCH_IMPORT_FAILURE
     if _TORCH_IMPORT_FAILURE is not None:
         available, why = False, _TORCH_IMPORT_FAILURE
@@ -2044,9 +2053,8 @@ def resolve_device(device: str = "auto") -> str:
         except Exception as exc:  # noqa: BLE001 - an absent/broken optional torch is a CPU-only host
             available = False
             why = _TORCH_IMPORT_FAILURE = "torch could not be imported: %s: %s" % (type(exc).__name__, str(exc)[:120])
-    if requested == "cuda" and not available:
-        raise RuntimeError("device='cuda' requested but CUDA is not available here (%s)" % why)
-    return "cuda" if available else "cpu"
+    del why
+    return available
 
 
 def reset_gpu() -> list:
@@ -2634,8 +2642,8 @@ def apply(image, name: str, a: float = 0.5, b: float = 0.5, coerce: bool = True,
     uint8/float16/all-ones result with no exception — see :func:`_contract_dtype`.
 
     ``device`` (default ``"auto"`` = CUDA when available, else CPU; ``FULLSEYE_DEVICE``
-    overrides): ``"cuda"`` runs accel-enabled ops on the GPU and is refused with the reason
-    when the host has no CUDA.
+    overrides): ``"cuda"`` runs accel-enabled ops on the GPU; on a host without CUDA the op
+    runs on the CPU and the reason is recorded in the fallback ledger (``on_error="raise"`` raises it).
     torch/accel *absent* falls back to CPU silently (documented); a kernel that
     FAILS is recorded in the fallback ledger and raises under ``on_error="raise"``.
 

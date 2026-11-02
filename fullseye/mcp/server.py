@@ -256,7 +256,7 @@ TOOLS: dict[str, dict] = {
                            "op台帳で公開された名前つき物理量(例: sigma_px/window_px/radius_px)"},
                 "allow_degraded": {"type": "boolean"},
                 "device": {"type":"string","enum":["auto","cpu","cuda"]},
-                "parity_check": {"type":"boolean","description":"device=cuda の時だけ有効。CPU 参照も走らせて max_abs_diff_vs_cpu を記録する(所要時間は 2 倍)"},
+                "parity_check": {"type":"boolean"},
                 "vision": _VISION,
             },
             "required": ["handle", "op"],
@@ -287,7 +287,7 @@ TOOLS: dict[str, dict] = {
                 "outputs": {"type":"array","items":{"type":"string"}},
                 "vision": _VISION,
                 "device": {"type":"string","enum":["auto","cpu","cuda"]},
-                "parity_check": {"type":"boolean","description":"device=cuda の時だけ有効。CPU 参照も走らせて max_abs_diff_vs_cpu を記録する(所要時間は 2 倍)"},
+                "parity_check": {"type":"boolean"},
                 "stages": {
                     "type": "array", "minItems": 1, "maxItems": 64,
                     "items": {
@@ -1301,9 +1301,11 @@ def _apply(a: dict, cat: Catalog, store: HandleStore, *,
         rec["named_params"] = named
     import fullseye
     resolved_device = fullseye.resolve_device(a.get("device", "auto"))
-    rec["acceleration"] = {"device": resolved_device, "approximate": resolved_device == "cuda"}
+    effective = resolved_device if resolved_device != "cuda" or fullseye.cuda_available() else "cpu"
+    rec["acceleration"] = {"requested": a.get("device", "auto"), "device": effective,
+                           "approximate": effective == "cuda"}
     # CPU 参照との照合は求められた時だけ(既定で毎回 2 回走らせると GPU の意味が無い)
-    if resolved_device == "cuda" and bool(a.get("parity_check", False)) and isinstance(out, np.ndarray):
+    if effective == "cuda" and bool(a.get("parity_check", False)) and isinstance(out, np.ndarray):
         cpu = fullseye.apply(arr, op.name, ka, kb, device="cpu", on_error="raise")
         if isinstance(cpu, np.ndarray) and cpu.shape == out.shape:
             rec["acceleration"]["max_abs_diff_vs_cpu"] = float(
@@ -1331,6 +1333,7 @@ def _pipeline_dag(a: dict, cat: Catalog, store: HandleStore, *, max_structured_b
     edges={e["op"]:e for e in _graph()["edges"]}
     policy=_execution_policy()
     device=fullseye.resolve_device(a.get("device", "auto"))
+    gpu_effective=(device == "cuda" and fullseye.cuda_available())
     parity_check=bool(a.get("parity_check", False))
     explicit=bool(a.get("bindings") or a.get("outputs") or any("inputs" in s or "params" in s for s in a["stages"]))
     start_sort=store.get(a["handle"])[0]["sort"] if a.get("handle") else None
@@ -1438,7 +1441,7 @@ def _pipeline_dag(a: dict, cat: Catalog, store: HandleStore, *, max_structured_b
                         else:
                             out=registered.fn(incoming,float(normalized_spec["a"]),
                                               float(normalized_spec["b"]))
-                        if device == "cuda" and parity_check and len(args) == 1 and isinstance(out, np.ndarray):
+                        if gpu_effective and parity_check and len(args) == 1 and isinstance(out, np.ndarray):
                             cpu=fullseye.apply(incoming,edge["op"],float(normalized_spec["a"]),
                                                float(normalized_spec["b"]),device="cpu",on_error="raise")
                             if isinstance(cpu,np.ndarray) and cpu.shape == out.shape:
@@ -1520,9 +1523,10 @@ def _pipeline_dag(a: dict, cat: Catalog, store: HandleStore, *, max_structured_b
         acceleration=accel_bridge.coverage(linear_specs)
     except Exception:  # noqa: BLE001 - metadata must not change execution outcome
         acceleration={"n_gpu_segments":0,"segments":[],"n_transfers":0}
-    acceleration["device"] = device
+    acceleration["requested"] = a.get("device", "auto")
+    acceleration["device"] = "cuda" if gpu_effective else "cpu"
     acceleration["n_transfers"] = (2 * acceleration.get("n_gpu_segments", 0)
-                                     if device == "cuda" else 0)
+                                     if gpu_effective else 0)
     result={"completed":sum(r.get("status")=="ok" for r in records),"failed":sum(r.get("status")=="failed" for r in records),
             "stopped_at":first_failed,"strict":True,"stages":visible_records,"outputs":output_rows,
             "intermediate_bytes":intermediate_bytes,"intermediate_byte_limit":intermediate_limit,
@@ -1692,10 +1696,27 @@ def _profile_tool_names(profile: str) -> set[str]:
         return set(TOOLS)
     raise ArgError("unknown MCP tool profile: %r" % profile)
 
+# minimal プロファイルの広告スキーマから隠す上級引数(受け付けは常に可。full では見せる)。
+# 2026-11-02: device / parity_check を足した分で minimal が 1,500 トークンの予算を超えたため。
+MINIMAL_HIDDEN_ARGS: dict[str, tuple[str, ...]] = {"fullseye_pipeline": ("device", "parity_check")}
+
+
+def _advertised_schema(name: str, profile: str) -> dict:
+    schema = TOOLS[name]["inputSchema"]
+    hidden = MINIMAL_HIDDEN_ARGS.get(name, ()) if profile == "minimal" else ()
+    if not hidden:
+        return schema
+    import copy
+    schema = copy.deepcopy(schema)
+    for k in hidden:
+        schema.get("properties", {}).pop(k, None)
+    return schema
+
+
 def handle_tools_list(params: dict) -> dict:
     profile = params.get("profile") or os.environ.get("FULLSEYE_MCP_PROFILE", "full")
     names = _profile_tool_names(profile)
-    rows = [{"name": n, "description": TOOLS[n]["description"], "inputSchema": TOOLS[n]["inputSchema"]}
+    rows = [{"name": n, "description": TOOLS[n]["description"], "inputSchema": _advertised_schema(n, profile)}
             for n in sorted(names)]
     return {"tools": rows, "profile": profile,
             "estimated_tokens": math.ceil(len(json.dumps(rows, ensure_ascii=False)) / 4)}
