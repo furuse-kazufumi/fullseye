@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 611 von 1572. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 611 von 1573. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `accel.py`
@@ -1603,7 +1603,8 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `lens_gpu.py`
 
-- **L514** _(ja)_ — ★raytrace._intersect_conic は (-B ∓ √D)/(2A) のまま解く。放物面の軸近くでは A ~ 1e-8 まで小さくなり、 小さい方の根が桁落ちして約 7e-9 mm ずれる(60 桁の計算で確認)。ここは安定な形 C/q で解く。
+- **L515** _(ja)_ — ★raytrace._intersect_conic は (-B ∓ √D)/(2A) のまま解く。放物面の軸近くでは A ~ 1e-8 まで小さくなり、 小さい方の根が桁落ちして約 7e-9 mm ずれる(60 桁の計算で確認)。ここは安定な形 C/q で解く。
+- **L755** _(ja)_ — ★float32 では 1e-10 mm に届かない(丸めが 1e-5 mm)。届かない判定だと毎回 20 反復して float64 より遅かった
 
 ## `matappear.py`
 

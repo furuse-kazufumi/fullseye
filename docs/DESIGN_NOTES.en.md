@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 636 of 1572. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 636 of 1573. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel.py`
@@ -1603,7 +1603,8 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `lens_gpu.py`
 
-- **L514** _(ja)_ — ★raytrace._intersect_conic は (-B ∓ √D)/(2A) のまま解く。放物面の軸近くでは A ~ 1e-8 まで小さくなり、 小さい方の根が桁落ちして約 7e-9 mm ずれる(60 桁の計算で確認)。ここは安定な形 C/q で解く。
+- **L515** _(ja)_ — ★raytrace._intersect_conic は (-B ∓ √D)/(2A) のまま解く。放物面の軸近くでは A ~ 1e-8 まで小さくなり、 小さい方の根が桁落ちして約 7e-9 mm ずれる(60 桁の計算で確認)。ここは安定な形 C/q で解く。
+- **L755** _(ja)_ — ★float32 では 1e-10 mm に届かない(丸めが 1e-5 mm)。届かない判定だと毎回 20 反復して float64 より遅かった
 
 ## `matappear.py`
 
