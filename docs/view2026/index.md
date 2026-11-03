@@ -572,6 +572,7 @@ PoC 284 本と、ロボットの例 5 本。グループを開くとサムネイ
 <a href="../articles/assets/poc/poc_wavefront_aberration_limits/01_aberration_limits.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_wavefront_aberration_limits.jpg" alt="収差の形で変わる Maréchal 近似の限界" width="200" height="200"><span>収差の形で変わる Maréchal 近似の限界</span></a>
 <a href="../articles/assets/poc/poc_mueller_dofp_observability/01_observability.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_mueller_dofp_observability.jpg" alt="4 方位偏光カメラに見えない Mueller 行列の 7 次元" width="200" height="200"><span>4 方位偏光カメラに見えない Mueller 行列の 7 次元</span></a>
 <a href="../articles/assets/poc/poc_slanted_edge_sfr_limits/01_sfr_limits.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_slanted_edge_sfr_limits.jpg" alt="斜めエッジ SFR はガンマで MTF50 を誤る" width="200" height="200"><span>斜めエッジ SFR はガンマで MTF50 を誤る</span></a>
+<a href="../articles/assets/poc/poc_threshold_transfer_after_normalization/01_threshold_transfer.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_threshold_transfer_after_normalization.jpg" alt="生の輝度しきい値は照明ごとに合わせ直すが、kσ と P-tile はそのまま移る" width="200" height="200"><span>生の輝度しきい値は照明ごとに合わせ直すが、kσ と P-tile はそのまま移る</span></a>
 </div>
 </details>
 

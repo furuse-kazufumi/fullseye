@@ -1374,6 +1374,34 @@ py -3.11 examples/poc_slanted_edge_sfr_limits.py
 
 使用 op(ノートへ): [`mtf_diffraction`](https://furuse.work/ops/optics/imaging/mtf_diffraction.html)
 
+## No.2026.285 —— 生の輝度しきい値は照明ごとに合わせ直すが、kσ と P-tile はそのまま移る
+
+欠陥の形と面積を固定した合成製品像を、照明利得1.35倍、オフセット+0.18、雑音2倍、材質の明るさ+0.18、複合条件で撮り直した。基準像で合わせた生のしきい値は移送先5条件すべてでIoU 0.98を割り、追加の評価は計49回（基準の1回を含め50回）。中央値と1.4826×MADで零中心・σ単位にしてから切るkσは、基準で2回評価した同じkを全条件へ移して追加0回、移植IoUは0.9832以上。P-tileは真の欠陥面積率を基準像で1回評価し、追加0回、移植IoUは0.9820以上。雑音2倍では両方式とも一部の欠陥画素と背景雑音が重なり、正規化しても情報そのものは戻らない。評価回数は実行時間でなく、IoU 0.98へ達するまで決定的な候補列を真値で採点した回数。
+
+[![生の輝度しきい値は照明ごとに合わせ直すが、kσ と P-tile はそのまま移る](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_threshold_transfer_after_normalization/01_threshold_transfer_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_threshold_transfer_after_normalization/01_threshold_transfer.png)
+
+*↑ **生の輝度しきい値は照明ごとに合わせ直すが、kσ と P-tile はそのまま移る** ―― 欠陥の形と面積を固定した合成製品像を、照明利得1.35倍、オフセット+0.18、雑音2倍、材質の明るさ+0.18、複合条件で撮り直した。基準像で合わせた生のしきい値は移送先5条件すべてでIoU 0.98を割り、追加の評価は計49回（基準の1回を含め50回）。中央値と1.4826×MADで零中心・σ単位にしてから切るkσは、基準で2回評価した同じkを全条件へ移して追加0回、移植IoUは0.9832以上。P-tileは真の欠陥面積率を基準像で1回評価し、追加0回、移植IoUは0.9820以上。雑音2倍では両方式とも一部の欠陥画素と背景雑音が重なり、正規化しても情報そのものは戻らない。評価回数は実行時間でなく、IoU 0.98へ達するまで決定的な候補列を真値で採点した回数。*
+
+用語: IoU — 二つの領域の共通部分の面積を和集合の面積で割った、領域の重なりを0から1で表す指標。
+
+[![基準像で選んだ値を各条件へそのまま移した結果。棒上の数値はIoU。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_threshold_transfer_after_normalization/02_transfer_iou_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_threshold_transfer_after_normalization/02_transfer_iou.png)
+
+*↑ 測定の図 ―― 基準像で選んだ値を各条件へそのまま移した結果。棒上の数値はIoU。*
+
+[![基準像で選んだ値を各条件へそのまま移した結果。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_threshold_transfer_after_normalization/03_tuning_evaluations_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_threshold_transfer_after_normalization/03_tuning_evaluations.png)
+
+*↑ 基準像で選んだ値を各条件へそのまま移した結果。*
+
+```
+py -3.11 examples/poc_threshold_transfer_after_normalization.py
+```
+
+ソース: [examples/poc_threshold_transfer_after_normalization.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_threshold_transfer_after_normalization.py)
+
+この回が作った図は全部で **3 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_threshold_transfer_after_normalization)
+
+使用 op(ノートへ): [`axes_transform`](https://furuse.work/ops/annotate/plot/axes_transform.html) · [`ptile_threshold`](https://furuse.work/ops/2d/segmentation/ptile_threshold.html) · [`sigma_threshold`](https://furuse.work/ops/2d/segmentation/sigma_threshold.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html)
+
 ### 寸法・形状計測ウィング ―― 偏りと散らばりは別々に持つ
 
 「この部品の幅は 50.50 画素だ」と言い切るには、偏り(いつも同じ向きにずれる分)と散らばり(撮るたびに変わる分)を別々に出す必要があります。合否は偏りで決まり、繰り返し精度は散らばりで決まる。1 つの「誤差」にまとめた瞬間、どちらの対策を打つべきかが分からなくなります。

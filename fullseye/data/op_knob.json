@@ -3148,6 +3148,28 @@
   "status": "determined"
  },
  {
+  "op": "image_standardize",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.3571327355004188,
+  "b_used": true,
+  "a_effect_per_image": [
+   0.107995,
+   0.164632,
+   1.178265,
+   0.093003,
+   0.23261
+  ],
+  "a_effect": 1.1782654425703867,
+  "a_kind": "discrete",
+  "breakpoints": [
+   0.33,
+   0.67
+  ],
+  "breakpoint_resolution": 0.02,
+  "status": "determined"
+ },
+ {
   "op": "invert",
   "steps": 51,
   "n_probe_images": 5,
@@ -6242,10 +6264,10 @@
    0.094974,
    0.039341,
    0.013823,
-   0.001795,
+   0.001794,
    0.049781
   ],
-  "a_effect": 0.09497404098510742,
+  "a_effect": 0.09497402608394623,
   "a_kind": "continuous",
   "breakpoints": [],
   "status": "determined"
@@ -6368,10 +6390,10 @@
    0.969109,
    0.702889,
    1.591172,
-   1e-06,
-   0.88205
+   0.0,
+   0.882049
   ],
-  "a_effect": 1.5911715147548176,
+  "a_effect": 1.5911715700557416,
   "a_kind": "discrete",
   "breakpoints": [
    0.25,
@@ -8701,6 +8723,29 @@
   "a_effect": 37.0,
   "a_kind": "continuous",
   "breakpoints": [],
+  "status": "determined"
+ },
+ {
+  "op": "sigma_threshold",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 1.0,
+  "b_used": true,
+  "a_effect_per_image": [
+   0.0,
+   3.0,
+   0.0,
+   0.0,
+   0.0
+  ],
+  "a_effect": 3.0,
+  "a_kind": "discrete",
+  "breakpoints": [
+   0.01,
+   0.03,
+   0.05
+  ],
+  "breakpoint_resolution": 0.02,
   "status": "determined"
  },
  {

@@ -1,0 +1,29 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">ptile_threshold — 2D <code style="color:#22d3bf">segmentation</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">feature</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;ptile_threshold&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
+<p><img src="fig/ptile_threshold.png" alt="ptile_threshold: input → output"></p>
+<p>*圖為在 128×128 合成輸入上實際執行的輸出。左為輸入，右為輸出。點雲以俯視散點顯示(亮度 = z)，一維序列為折線，體資料為沿 z 的最大值投影，影片為中間影格，複數影像為振幅；無法成像的回傳值直接顯示數值。*</p>
+<p><b>掃描旋鈕 a</b>(0.1 / 0.5 / 0.9，另一旋鈕取預設):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/ptile_threshold.a.jpg">ptile_threshold: 旋鈕 a 掃描</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
+<p>*旋鈕 b 不改變輸出(實測: 0.1 / 0.5 / 0.9 相同)。*</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>將按面積比例選擇的 P-tile 閾值作為特徵回傳。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p><code style="color:#22d3bf">a</code> を <code style="color:#22d3bf">p = 0.001 + 0.998*a</code>（CDF の端を除く面積率）、<code style="color:#22d3bf">b &lt; 0.5</code> を明側、それ以外を暗側に写す。Doyle (1962) の順位統計であり、値域の利得・オフセットをつまみにしない。詳細な <code style="color:#22d3bf">p</code> と極性を名前付きで渡す公開 API は <code style="color:#22d3bf">fullseye.ledger.ptile_threshold</code>。</p>
+<p><b>空入力は分布を持たないため拒否し、しきい値を捏造しない。</b></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">在 Studio 中試試</h3>
+<p>下面的程式已確認可以執行(與圖相同的輸入)。在 Studio 說明中，此區塊會變成按鈕，可當場載入並執行。</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">ptile_threshold 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:ptile_threshold%200.50%200.50">▸ 載入此管線</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:ptile_threshold%200.50%200.50">載入並執行</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_threshold_transfer_after_normalization">poc_threshold_transfer_after_normalization</a> — <code style="color:#22d3bf">py -3.11 examples/poc_threshold_transfer_after_normalization.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">feature</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:feature_to_img">feature_to_img</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">segmentation</code>)</h3>
+<p><a style="color:#22d3bf" href="op:threshold">threshold</a> · <a style="color:#22d3bf" href="op:sigma_threshold">sigma_threshold</a> · <a style="color:#22d3bf" href="op:otsu">otsu</a> · <a style="color:#22d3bf" href="op:canny">canny</a> · <a style="color:#22d3bf" href="op:adaptive_gauss_thresh">adaptive_gauss_thresh</a> · <a style="color:#22d3bf" href="op:sk_otsu">sk_otsu</a> · <a style="color:#22d3bf" href="op:sk_li">sk_li</a> · <a style="color:#22d3bf" href="op:sk_yen">sk_yen</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: ops.py — 2D 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

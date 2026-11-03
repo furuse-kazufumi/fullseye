@@ -557,6 +557,7 @@ PoC 284 个,另有机器人示例 5 个。展开分组即可加载缩略图。
 <a href="../../articles/assets/poc/poc_wavefront_aberration_limits/01_aberration_limits.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_wavefront_aberration_limits.jpg" alt="Maréchal 近似的失效点随像差形状而变" width="200" height="200"><span>Maréchal 近似的失效点随像差形状而变</span></a>
 <a href="../../articles/assets/poc/poc_mueller_dofp_observability/01_observability.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_mueller_dofp_observability.jpg" alt="四方位偏振相机看不到的 Mueller 矩阵 7 个维度" width="200" height="200"><span>四方位偏振相机看不到的 Mueller 矩阵 7 个维度</span></a>
 <a href="../../articles/assets/poc/poc_slanted_edge_sfr_limits/01_sfr_limits.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_slanted_edge_sfr_limits.jpg" alt="斜边 SFR 因伽马而误判 MTF50" width="200" height="200"><span>斜边 SFR 因伽马而误判 MTF50</span></a>
+<a href="../../articles/assets/poc/poc_threshold_transfer_after_normalization/01_threshold_transfer.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_threshold_transfer_after_normalization.jpg" alt="Raw grey-level thresholds need retuning across lighting, while k-sigma and P-tile transfer" width="200" height="200"><span>Raw grey-level thresholds need retuning across lighting, while k-sigma and P-tile transfer</span></a>
 </div>
 </details>
 

@@ -1,5 +1,5 @@
 {
- "generated_for": 942,
+ "generated_for": 945,
  "ops": {
   "abs_image": {
    "color_ok": true,
@@ -7194,6 +7194,30 @@
    "pseudocolor": false,
    "status": "ok"
   },
+  "image_standardize": {
+   "color_ok": true,
+   "extra": {
+    "a": "image_standardize.a.jpg",
+    "b": "image_standardize.b.jpg",
+    "inputs": "image_standardize.inputs.jpg"
+   },
+   "fig": "image_standardize.png",
+   "inputs": [
+    "scene",
+    "photo",
+    "coins",
+    "beans",
+    "label",
+    "part",
+    "pcb",
+    "color"
+   ],
+   "knob_dead": [],
+   "out_kind": "ndarray",
+   "program": "image_standardize 0.50 0.50",
+   "pseudocolor": false,
+   "status": "ok"
+  },
   "img_to_beatcube": {
    "color_ok": true,
    "extra": {
@@ -10225,6 +10249,19 @@
    "pseudocolor": false,
    "status": "ok"
   },
+  "ptile_threshold": {
+   "extra": {
+    "a": "ptile_threshold.a.jpg"
+   },
+   "fig": "ptile_threshold.png",
+   "knob_dead": [
+    "b"
+   ],
+   "out_kind": "float",
+   "program": "ptile_threshold 0.50 0.50",
+   "pseudocolor": false,
+   "status": "ok"
+  },
   "quantization_error": {
    "color_ok": true,
    "extra": {
@@ -11937,6 +11974,31 @@
    "knob_dead": [],
    "out_kind": "ndarray",
    "program": "sigma_image 0.35 0.50",
+   "pseudocolor": false,
+   "status": "ok"
+  },
+  "sigma_threshold": {
+   "color_ok": true,
+   "extra": {
+    "inputs": "sigma_threshold.inputs.jpg"
+   },
+   "fig": "sigma_threshold.png",
+   "inputs": [
+    "scene",
+    "photo",
+    "coins",
+    "beans",
+    "label",
+    "part",
+    "pcb",
+    "color"
+   ],
+   "knob_dead": [
+    "a",
+    "b"
+   ],
+   "out_kind": "ndarray",
+   "program": "sigma_threshold 0.50 0.50",
    "pseudocolor": false,
    "status": "ok"
   },
@@ -22067,10 +22129,10 @@
   "domain": 4,
   "empty": 1,
   "failed": 0,
-  "ok": 937,
+  "ok": 940,
   "unreachable": 0,
   "with_chain": 382,
   "with_gif": 40,
-  "with_sweep": 586
+  "with_sweep": 588
  }
 }
