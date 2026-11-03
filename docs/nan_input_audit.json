@@ -2,8 +2,8 @@
   "header": {
     "command": "py -3.11 tools/audit_nan_inputs.py",
     "timeout_seconds": 20.0,
-    "elapsed_seconds": 1561.059,
-    "registry_entries": 945
+    "elapsed_seconds": 1566.062,
+    "registry_entries": 947
   },
   "summary": {
     "families": {
@@ -15,7 +15,7 @@
       "counts": 9,
       "feature": 1,
       "image": 558,
-      "keypoints": 2,
+      "keypoints": 4,
       "lightfield": 8,
       "matrix": 7,
       "points": 58,
@@ -30,7 +30,7 @@
       "nan": {
         "raises_fsvalueerror": 0,
         "raises_other": 37,
-        "propagates_nan": 300,
+        "propagates_nan": 302,
         "silent_finite": 282,
         "silent_identical": 258,
         "timeout": 0,
@@ -40,7 +40,7 @@
       "inf": {
         "raises_fsvalueerror": 0,
         "raises_other": 30,
-        "propagates_nan": 225,
+        "propagates_nan": 227,
         "silent_finite": 392,
         "silent_identical": 230,
         "timeout": 0,
@@ -2942,13 +2942,13 @@
     "contaminated": true,
     "wrapper": {
       "refusal": "raised_FsValueError",
-      "applicable": 878,
+      "applicable": 880,
       "counts": {
         "nan": {
-          "raised_FsValueError": 878
+          "raised_FsValueError": 880
         },
         "inf": {
-          "raised_FsValueError": 878
+          "raised_FsValueError": 880
         }
       },
       "passthrough": []
@@ -25472,6 +25472,58 @@
         "baseline": 1.531737,
         "nan": 0.000461,
         "inf": 0.000191
+      }
+    },
+    {
+      "name": "tb_keypoints_rowcol_to_uv",
+      "category": "typed",
+      "in_sort": "keypoints",
+      "out_sort": "keypoints",
+      "module": "backends_typed",
+      "nan_outcome": "propagates_nan",
+      "inf_outcome": "propagates_nan",
+      "exceptions": {},
+      "wrapper_behaviour": {
+        "nan": "raised_FsValueError",
+        "inf": "raised_FsValueError"
+      },
+      "warnings": {
+        "baseline": [
+          "FullseyeFallbackWarning: fullseye: 'tb_keypoints_rowcol_to_uv' degraded to a fallback (op; ValueError: keypoints: must be (N, 2) or a 2-tuple of equal-length 1-D arrays; got (48, 3)). Further fallbacks of this op are counted silently - see "
+        ],
+        "nan": [],
+        "inf": []
+      },
+      "elapsed": {
+        "baseline": 1.539754,
+        "nan": 0.000352,
+        "inf": 0.000298
+      }
+    },
+    {
+      "name": "tb_keypoints_uv_to_rowcol",
+      "category": "typed",
+      "in_sort": "keypoints",
+      "out_sort": "keypoints",
+      "module": "backends_typed",
+      "nan_outcome": "propagates_nan",
+      "inf_outcome": "propagates_nan",
+      "exceptions": {},
+      "wrapper_behaviour": {
+        "nan": "raised_FsValueError",
+        "inf": "raised_FsValueError"
+      },
+      "warnings": {
+        "baseline": [
+          "FullseyeFallbackWarning: fullseye: 'tb_keypoints_uv_to_rowcol' degraded to a fallback (op; ValueError: keypoints: must be (N, 2) or a 2-tuple of equal-length 1-D arrays; got (48, 3)). Further fallbacks of this op are counted silently - see "
+        ],
+        "nan": [],
+        "inf": []
+      },
+      "elapsed": {
+        "baseline": 1.533068,
+        "nan": 0.000282,
+        "inf": 0.000149
       }
     },
     {
