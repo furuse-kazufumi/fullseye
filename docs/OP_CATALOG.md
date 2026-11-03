@@ -845,7 +845,7 @@ _計 3758 ops / 59 families。並びとノートの在り処は `docs/ops/INDEX.
 - `acos_image` (halcon: `acos_image`) `image → image` GPU: なし — ``arccos(x) / π`` で [0,1] を [0,1] に写す逆余弦 LUT。``asin_image`` を 反転させた形(単調減少)で、x=0 で最大(1)、x=1 で最小(0)になる。HALCON の ``acos_image``（Calculate the arccosine of an image.）の代役。 · 例: `gallery2d_gray_arith`
 - `asin_image` (halcon: `asin_image`) `image → image` GPU: なし — ``arcsin(x) / (π/2)`` で [0,1] を [0,1] に写す逆正弦 LUT。x=0 近傍と x=1 近傍で傾きが急峻になり(定義域端で導関数が発散する)、中間階調を圧縮して 両端のコントラストを強調する効果を持つ。HALCON の ``asin_image`` （Calculate the arcsine of an image.）の代役。 · 例: `gallery2d_gray_arith`
 - `atan_image` (halcon: `atan_image`) `image → image` GPU: なし — ``arctan(x) / (π/2)`` で [0,1] を [0,1] に写す逆正接 LUT。中心付近 (x≈0.5)で傾きが最大、両端に近づくほど傾きが緩やかになる ―― ``asin_image`` とは逆に**両端でなく中間のコントラストを強調する**S字カーブ。HALCON の ``atan_image``（Calculate the arctangent of an image.）の代役。 · 例: `gallery2d_gray_arith`
-- `cos_image` (halcon: `cos_image`) `image → image` GPU: なし — ``(cos(2πx) + 1) / 2`` による周期 LUT。``sin_image`` と位相が π/2 ずれた 版で、x=0 で最大(1)、x=0.5 で最小(0)に達してから再び上がる。HALCON の ``cos_image``（Calculate the cosine of an image.）の代役。 · 例: `gallery2d_gray_arith`
+- `cos_image` (halcon: `cos_image`) `image → image` GPU: あり(cos_image) — ``(cos(2πx) + 1) / 2`` による周期 LUT。``sin_image`` と位相が π/2 ずれた 版で、x=0 で最大(1)、x=0.5 で最小(0)に達してから再び上がる。HALCON の ``cos_image``（Calculate the cosine of an image.）の代役。 · 例: `gallery2d_gray_arith`
 - `exp_image` (halcon: `exp_image`) `image → image` GPU: なし — ``(exp(x) - 1) / (e - 1)`` という指数写像で [0,1] を [0,1] に写す(x=1 で ちょうど 1 になるよう正規化してある)。低い階調を圧縮し明部を強調する コントラスト強調で、``log_image`` とは逆向きのカーブ。HALCON の ``exp_image``（Calculate the exponentiation of an image.）の代役。 · 例: `gallery2d_gray_arith`
 - `log_image` (halcon: `log_image`) `image → image` GPU: なし — ``log1p(x) / log(2)`` で [0,1] を [0,1] に写す対数圧縮(x=1 で 1 になる 正規化つき)。明部を圧縮し暗部のディテールを持ち上げる、``exp_image`` と逆の トーンカーブ。HALCON の ``log_image``（Calculate the logarithm of an image.） の代役。 · 例: `gallery2d_gray_arith`, `poc_weld_radiograph_porosity`
 - `sin_image` (halcon: `sin_image`) `image → image` GPU: なし — ``(sin(2πx) + 1) / 2`` で階調を正弦波状に折り返す周期 LUT。x=0 と x=1 で 0.5 に戻り、x=0.25/0.75 付近で 0/1 に達する ―― 単調増加ではなく**同じ出力を 複数の入力階調が共有する**非可逆変換になる。HALCON の ``sin_image`` （Calculate the sine of an image.）の代役。 · 例: `gallery2d_gray_arith`
@@ -948,7 +948,7 @@ _計 3758 ops / 59 families。並びとノートの在り処は `docs/ops/INDEX.
 
 #### 2d / decomposition(7)
 - `dc_homomorphic` `image → image` GPU: なし — Homomorphic filter: high-emphasis of log(I) in the Fourier domain -> [0,1]. · 例: `gallery2d_texture_freq`, `poc_document_scan`, `poc_mri_bias_field`
-- `dc_local_contrast_norm` `image → image` GPU: なし — Local contrast normalisation: (I - mean_w) / (std_w + eps), centred at 0.5. · 例: `gallery2d_texture_freq`
+- `dc_local_contrast_norm` `image → image` GPU: あり(dc_local_contrast_norm) — Local contrast normalisation: (I - mean_w) / (std_w + eps), centred at 0.5. · 例: `gallery2d_texture_freq`
 - `dc_retinex` `image → image` GPU: なし — Single-scale retinex reflectance: log(I) - log(Gauss_sigma(I)) -> [0,1]. · 例: `gallery2d_texture_freq`, `poc_bone_trabecular_thickness`
 - `dc_rpca_lowrank` `image → image` GPU: なし — Robust-PCA low-rank (background) part. · 例: `blas_thread_budget`, `gallery2d_texture_freq`
 - `dc_rpca_sparse` `image → image` GPU: なし — Robust-PCA sparse (defect / anomaly) residual = input - low-rank, at 0.5. · 例: `gallery2d_texture_freq`, `poc_good_sample_variation_model`
@@ -965,7 +965,7 @@ _計 3758 ops / 59 families。並びとノートの在り処は `docs/ops/INDEX.
 - `it_full_domain` `image → image` GPU: なし — full_domain: expand the domain of the image to the full rectangle. A plain numpy array already carries a full domain, so this is the identity -- the genuine, correct behaviour of full_domain for such images. ``a``/``b`` ignored. · 例: `gallery2d_gray_arith`
 
 #### 2d / edges(59)
-- `corner_response` (halcon: `points_harris`) `image → image` GPU: なし — Harris コーナー検出の応答値（コーナーらしさ）を画像として返す。HALCON の ``points_harris``（Detect points of interest using the Harris operator.）に相当。 · 例: `gallery2d_edges`, `poc_document_scan`, `poc_matrix_code_reading`
+- `corner_response` (halcon: `points_harris`) `image → image` GPU: あり(corner_response) — Harris コーナー検出の応答値（コーナーらしさ）を画像として返す。HALCON の ``points_harris``（Detect points of interest using the Harris operator.）に相当。 · 例: `gallery2d_edges`, `poc_document_scan`, `poc_matrix_code_reading`
 - `cv_corner_harris` (halcon: `points_harris`) `image → image` GPU: なし — Harris コーナー応答(OpenCV 実装)。sk_corner_harris と同じ Harris の考え方だが、勾配計算・平滑化のブロックサイズなどを固定パラメータで計算するOpenCV 版。 · 例: `gallery2d_edges`
 - `cv_laplacian` (halcon: `laplace`) `image → image` GPU: なし — ラプラシアンフィルタ(OpenCV 実装)。2 階微分による等方的なエッジ/ブロブ検出で、輪郭のみならず孤立点にも強く反応する(ノイズにも敏感)。 · 例: `gallery2d_edges`
 - `cv_min_eigen` (halcon: `points_harris`) `image → image` GPU: なし — 最小固有値によるコーナー強度(Shi-Tomasi 系、OpenCV 実装)。勾配の構造テンソルの 2 つの固有値のうち小さい方を返す —— Harris のような重み付け(k 依存)が無く、より直接的に「良い特徴点」らしさを測る指標(cv_good_features の内部でも使われる基準と同種)。 · 例: `gallery2d_edges`
@@ -1120,7 +1120,7 @@ _計 3758 ops / 59 families。並びとノートの在り処は `docs/ops/INDEX.
 - `tf_gradient_domain_reintegrate` `image → image` GPU: なし — gradient_domain_reintegrate: threshold the gradient, then Poisson-reintegrate. · 例: `gallery2d_smoothing_rank`
 
 #### 2d / frequency(19)
-- `bandpass_image` (halcon: `bandpass_image`) `image → image` GPU: なし — 周波数領域で指定した帯域だけを通すバンドパスフィルタ(低域と高域を 遮断)、逆 FFT で実空間に戻す。``highpass_image`` と同様に零平均の符号つき 応答なので ``signed01`` で [0,1] に写像する。HALCON の ``bandpass_image`` （Edge extraction using bandpass filters.）に相当。 · 例: `gallery2d_texture_freq`
+- `bandpass_image` (halcon: `bandpass_image`) `image → image` GPU: あり(bandpass_image) — 周波数領域で指定した帯域だけを通すバンドパスフィルタ(低域と高域を 遮断)、逆 FFT で実空間に戻す。``highpass_image`` と同様に零平均の符号つき 応答なので ``signed01`` で [0,1] に写像する。HALCON の ``bandpass_image`` （Edge extraction using bandpass filters.）に相当。 · 例: `gallery2d_texture_freq`
 - `fft_generic` (halcon: `fft_generic`) `image → image` GPU: なし — 画像のフーリエ変換の振幅スペクトルを対数圧縮して返す（``log1p(|F|)`` を最大値で正規化）。中心が低周波、周辺が高周波成分に対応する（``fftshift`` 済み）。a, b は未使用。 · 例: `gallery2d_texture_freq`
 - `fft_image` (halcon: `fft_image`) `image → image` GPU: なし — 2 次元 FFT のパワースペクトルを ``log1p(|F|)`` で圧縮し正規化した画像。 低周波(直流)成分が中心にくるよう ``fftshift`` 済み。周期的なノイズや テクスチャの空間周波数を可視化するのに使う。HALCON の ``fft_image`` （Compute the fast Fourier transform of an image.）に相当。 · 例: `degenerate_inputs`, `gallery2d_texture_freq`, `poc_moire_screen`
 - `fft_image_inv` (halcon: `fft_image_inv`) `image → image` GPU: なし — 入力画像をそのまま周波数領域の配列とみなして逆 FFT を掛け、実部を ``signed01`` で [0,1] に写す(0.5 がゼロ)。本来 HALCON の ``fft_image_inv``（Compute the inverse fast Fourier transform of an image.）は ``fft_image`` が作った複素スペクトル(実部・虚部の組)を戻す 演算だが、この代役はグレー画像 1 枚しか扱えないパイプライン契約のため、 画素値をそのまま(虚部 0 の)複素配列として逆変換する近似になっている (``fft_image`` の出力をそのまま渡しても意味的な往復にはならない点に注意)。 · 例: `gallery2d_texture_freq`
@@ -1175,7 +1175,7 @@ _計 3758 ops / 59 families。並びとノートの在り処は `docs/ops/INDEX.
 - `banding_map` `image → image` GPU: なし — 階調の**段差(バンディング)が見えている場所**を返す。``a`` がビット数、``b`` が窓。 · 例: `gallery2d_gray_arith`
 - `bit_not` (halcon: `bit_not`) `image → image` GPU: あり(bit_not) — 階調の反転（ネガポジ反転）。実装は ``1 - x``（[0,1] の連続値としての反転）で、a, b は未使用。 · 例: `gallery2d_gray_arith`
 - `clahe` `image → image` GPU: なし — Contrast-Limited Adaptive Histogram Equalization (tiled, bilinearly blended). · 例: `gallery2d_gray_arith`, `poc_dehazing`
-- `companding_mu_law` `image → image` GPU: なし — μ 則の圧伸(compand = compress + expand)。``a`` が μ、``b`` がビット数。 · 例: `gallery2d_gray_arith`
+- `companding_mu_law` `image → image` GPU: あり(companding_mu_law) — μ 則の圧伸(compand = compress + expand)。``a`` が μ、``b`` がビット数。 · 例: `gallery2d_gray_arith`
 - `cv_clahe` `image → image` GPU: なし — CLAHE(コントラスト制限付き適応ヒストグラム均等化、OpenCV 実装)。sk_adapthist と同じ考え方の局所コントラスト強調だが、OpenCV の実装・タイル分割方式を使う。 · 例: `gallery2d_gray_arith`
 - `cv_trunc` (halcon: `scale_image`) `image → image` GPU: なし — 階調の上側切り詰め(THRESH_TRUNC、OpenCV 実装)。指定値より明るい画素はすべてその値に丸め、それ以下の画素はそのまま —— ハイライトだけを潰す階調操作(暗部には触れない)。 · 例: `gallery2d_gray_arith`
 - `dither_floyd_steinberg` `image → image` GPU: なし — 誤差拡散ディザ(Floyd–Steinberg)。``a`` がビット数 1〜8、``b`` は未使用。 · 例: `gallery2d_gray_arith`
@@ -1597,10 +1597,10 @@ _計 3758 ops / 59 families。並びとノートの在り処は `docs/ops/INDEX.
 - `xmh_selfmatch` `image → image` GPU: なし — 自己相似マップ(``mahotas.template_match`` による自己テンプレートマッチング)。画像中心から切り出した小さなパッチを画像全体に対してテンプレートマッチングし、パッチに似た場所ほど 1 に近い値になるよう正規化して返す。 · 例: `gallery2d_features`
 
 #### 2d / smoothing(50)
-- `anisotropic_diffusion` (halcon: `anisotropic_diffusion`) `image → image` GPU: なし — Perona-Malik 型の異方性拡散。上下左右 4 方向の画素差にガウス型の 伝導度関数 ``exp(-(Δ/K)^2)`` を掛けて反復的に加算する ―― 差が閾値 K より 大きい(=エッジ)方向には拡散させず、小さい(=平坦)方向だけ滑らかにする エッジ保存平滑化。HALCON の ``anisotropic_diffusion``（Perform an anisotropic diffusion of an image.）に相当。 · 例: `gallery2d_smoothing_rank`
+- `anisotropic_diffusion` (halcon: `anisotropic_diffusion`) `image → image` GPU: あり(anisotropic_diffusion) — Perona-Malik 型の異方性拡散。上下左右 4 方向の画素差にガウス型の 伝導度関数 ``exp(-(Δ/K)^2)`` を掛けて反復的に加算する ―― 差が閾値 K より 大きい(=エッジ)方向には拡散させず、小さい(=平坦)方向だけ滑らかにする エッジ保存平滑化。HALCON の ``anisotropic_diffusion``（Perform an anisotropic diffusion of an image.）に相当。 · 例: `gallery2d_smoothing_rank`
 - `bilateral` (halcon: `bilateral_filter`) `image → image` GPU: あり(bilateral) — エッジ保存平滑化（bilateral filter）。HALCON の ``bilateral_filter``（bilateral filtering of an image.）に相当。 · 例: `gallery2d_smoothing_rank`, `quickstart`
 - `bilateral_filter` (halcon: `bilateral_filter`) `image → image` GPU: なし — OpenCV のバイラテラルフィルタ(``cv2.bilateralFilter``)。近傍画素を 空間距離と輝度差の両方で重み付けして平均する、エッジを保ったまま平滑化する 定番手法。HALCON の ``bilateral_filter``（bilateral filtering of an image.）に相当。 · 例: `gallery2d_smoothing_rank`
-- `binomial_filter` (halcon: `binomial_filter`) `image → image` GPU: なし — 二項係数(パスカルの三角形)を重みとする分離型平滑化フィルタ。 ``ndimage.correlate1d`` を縦・横に順に掛けることでガウシアンを離散二項核で 近似する ―― HALCON の ``binomial_filter``（Smooth an image using the binomial filter.）が使う核と同じ発想の実装。 · 例: `gallery2d_smoothing_rank`
+- `binomial_filter` (halcon: `binomial_filter`) `image → image` GPU: あり(binomial_filter) — 二項係数(パスカルの三角形)を重みとする分離型平滑化フィルタ。 ``ndimage.correlate1d`` を縦・横に順に掛けることでガウシアンを離散二項核で 近似する ―― HALCON の ``binomial_filter``（Smooth an image using the binomial filter.）が使う核と同じ発想の実装。 · 例: `gallery2d_smoothing_rank`
 - `coherence_enhancing_diff` (halcon: `coherence_enhancing_diff`) `image → image` GPU: なし — 実装は ``anisotropic_diffusion`` と同一(``kind: "anisotropic"``)。 本来の coherence-enhancing diffusion は構造テンソルの固有ベクトルに沿って 拡散方向を制御する(線状構造をつなげる)手法だが、この代役ではその構造 テンソル計算を行わず、単純な Perona-Malik 異方性拡散で代用している (近似の限界 ―― 線状構造の連結効果は再現されない)。HALCON の ``coherence_enhancing_diff``（Perform a coherence enhancing diffusion of an image.）の代役。 · 例: `gallery2d_smoothing_rank`
 - `cv_bilateral` (halcon: `bilateral_filter`) `image → image` GPU: なし — バイラテラルフィルタ(OpenCV 実装)。空間的な近さと輝度値の近さの両方を重みにしたガウス的平滑化で、エッジ(輝度差の大きい境界)をぼかさずに平坦部だけを滑らかにする。 · 例: `gallery2d_smoothing_rank`
 - `cv_box` (halcon: `mean_image`) `image → image` GPU: なし — 単純平均化フィルタ(box filter、OpenCV 実装)。正方形近傍内の単純平均を取るだけの最も基本的な平滑化 —— ガウス平滑化より計算は軽いが、リング状のアーティファクトが出やすい。 · 例: `gallery2d_smoothing_rank`

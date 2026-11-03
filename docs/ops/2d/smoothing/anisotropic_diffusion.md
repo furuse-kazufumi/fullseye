@@ -5,7 +5,7 @@ category: smoothing
 in: image
 out: image
 halcon: anisotropic_diffusion
-gpu: なし
+gpu: あり(anisotropic_diffusion)
 examples: [gallery2d_smoothing_rank]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -17,7 +17,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 - **データ種**: `image` → `image`
 - **呼び出し**: `fullseye.apply(img, "anisotropic_diffusion", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 - **HALCON 相当**: `anisotropic_diffusion`(意味・パラメータは HALCON リファレンスが参考になる)
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: あり(`anisotropic_diffusion`、`device="cuda"` で高速経路)
 
 ![anisotropic_diffusion: input → output](../../_fig/anisotropic_diffusion.png)
 

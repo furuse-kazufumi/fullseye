@@ -624,6 +624,90 @@ def _projective_region(t, a, b, dev):
     return (_projective_warp(t, a, b, dev) > 0.5).float()
 
 
+# ── GPU 第 2 便 D'(2026-11-02): 穴埋め 7 op。全件 parity 内部差 < 2e-6(torch CPU で実測)、
+#    loco(RTX 5090)の実寸 bench(転送込み、2048² x50)で CPU 登録経路に対し 8〜144x。
+#    採否基準 = 実寸で >= 5x(docs/perf/gpu_fill_2026-11-02.md)。abs_image(3.1x、転送床)は登録しない。
+_SOBEL_X = np.array([[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]], np.float32)
+_SOBEL_Y = np.array([[-1, -2, -1], [0, 0, 0], [1, 2, 1]], np.float32)
+
+
+def _corner_response(t, a, b, dev):
+    """core _corner_response(Harris 応答)の逐語移植: ndimage.sobel(= 3x3 sobel、symmetric)→
+    構造テンソル 3 成分を gaussian(σ=0.5+2a)→ det − 0.04·tr² → _signed01。"""
+    gx = _conv(t, _SOBEL_X, dev)
+    gy = _conv(t, _SOBEL_Y, dev)
+    k = _gauss_kernel(0.5 + 2.0 * a, dev)
+    axx = _sep_conv_sym(gx * gx, k)
+    ayy = _sep_conv_sym(gy * gy, k)
+    axy = _sep_conv_sym(gx * gy, k)
+    return _signed01_b(axx * ayy - axy * axy - 0.04 * (axx + ayy) ** 2)
+
+
+def _aniso_diffusion(t, a, b, dev):
+    """core anisotropic(Perona–Malik、np.roll = 周期境界)の逐語移植。K=0.05+0.25b、
+    反復 2+int(8a)、刻み 0.2。反復 x 全画素の指数計算で計算重 = GPU が効く型(実測 144x)。"""
+    K = 0.05 + 0.25 * b
+    y = t.clone()
+    for _ in range(2 + int(a * 8)):
+        dn = torch.roll(y, -1, 2) - y
+        ds = torch.roll(y, 1, 2) - y
+        de = torch.roll(y, -1, 3) - y
+        dw = torch.roll(y, 1, 3) - y
+        y = y + 0.2 * (torch.exp(-(dn / K) ** 2) * dn + torch.exp(-(ds / K) ** 2) * ds
+                       + torch.exp(-(de / K) ** 2) * de + torch.exp(-(dw / K) ** 2) * dw)
+    return y.clamp(0, 1)
+
+
+def _bandpass(t, a, b, dev):
+    """core bandpass: lo=0.02+0.15a < |f| < hi=0.2+0.3b の環状マスク → ifft 実部 → signed01。"""
+    lo, hi = 0.02 + 0.15 * a, 0.2 + 0.3 * b
+    H, W = t.shape[2], t.shape[3]
+    fy = torch.fft.fftfreq(H, device=t.device)
+    fx = torch.fft.fftfreq(W, device=t.device)
+    rad = torch.sqrt(fy[:, None] ** 2 + fx[None, :] ** 2)
+    Ft = torch.fft.fft2(t)
+    mask = ((rad > lo) & (rad < hi)).to(Ft.dtype)
+    return _signed01_b(torch.fft.ifft2(Ft * mask).real)
+
+
+def _binomial(t, a, b, dev):
+    """core binomial: (1+x)^(n−1) の係数(n=_k(a))を正規化した分離可能 correlate(symmetric)。"""
+    n = _k(a)
+    w = np.array((np.poly1d([1, 1]) ** (n - 1)).coeffs, np.float32)
+    w = w / w.sum()
+    return _sep_conv_sym(t, torch.as_tensor(w, dtype=torch.float32, device=dev))
+
+
+def _box_sym(t, w, dev):
+    ker = torch.ones(1, 1, w, w, device=dev) / (w * w)
+    r = w // 2
+    return F.conv2d(_pad_sym(_pad_sym(t, r, 3), r, 2), ker)
+
+
+def _local_contrast_norm(t, a, b, dev):
+    """core dc_local_contrast_norm: 窓 w=_win(a)(3..15 奇数)の (I−μ)/(σ+floor)、0.5 中心、0.25 倍。"""
+    w = int(round(3 + a * 12))
+    w = w + 1 if w % 2 == 0 else w
+    w = max(3, min(15, w))
+    mu = _box_sym(t, w, dev)
+    var = _box_sym(t * t, w, dev) - mu * mu
+    sd = torch.sqrt(var.clamp_min(0.0))
+    return (0.5 + 0.25 * ((t - mu) / (sd + (0.02 + 0.18 * b)))).clamp(0, 1)
+
+
+def _cos_image(t, a, b, dev):
+    return (torch.cos(2 * np.pi * t.clamp(0, 1)) + 1.0) / 2.0
+
+
+def _companding_mu_law(t, a, b, dev):
+    """core _companding_mu_law: μ=1+254a 対数圧縮 → 2^(1+round(7b)) 段に量子化 → 伸張。"""
+    x = t.clamp(0, 1)
+    mu = 1.0 + 254.0 * float(np.clip(a, 0.0, 1.0))
+    q = float((1 << (1 + int(round(float(np.clip(b, 0.0, 1.0)) * 7)))) - 1)
+    y = torch.round(torch.log1p(mu * x) / np.log1p(mu) * q) / q
+    return (torch.expm1(y * np.log1p(mu)) / mu).clamp(0, 1)
+
+
 # accel op name -> (fn, the CORE registry op NAME it reproduces, its HALCON name)
 ACCEL = {
     "gauss_filter": (_gaussian, "gaussian", "gauss_filter"),
@@ -693,6 +777,14 @@ ACCEL = {
     "fill_up": (_fill_holes_bin, "fill_up", "fill_up"),
     # bilateral(25 シフト反復 = 計算重で GPU 向き)
     "bilateral": (_bilateral, "bilateral", "bilateral_filter"),
+    # GPU 第 2 便 D'(2026-11-02): 実寸 bench で >= 5x の 7 op(docs/perf/gpu_fill_2026-11-02.md)
+    "corner_response": (_corner_response, "corner_response", "points_harris"),
+    "anisotropic_diffusion": (_aniso_diffusion, "anisotropic_diffusion", "anisotropic_diffusion"),
+    "bandpass_image": (_bandpass, "bandpass_image", "bandpass_image"),
+    "binomial_filter": (_binomial, "binomial_filter", "binomial_filter"),
+    "dc_local_contrast_norm": (_local_contrast_norm, "dc_local_contrast_norm", ""),
+    "cos_image": (_cos_image, "cos_image", "cos_image"),
+    "companding_mu_law": (_companding_mu_law, "companding_mu_law", ""),
 }
 
 
