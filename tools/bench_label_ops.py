@@ -1,7 +1,7 @@
 # Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
 """領域の解析の族(``accel_label``)を CPU の op と比べる: 一致・出力が定数でない・倍率(転送込み / 常駐)。
 
-    C:/dev/venvs/loco/Scripts/python.exe tools/bench_label_ops.py measure   # GPU(ロックを取る、1 回 9.5 分まで)
+    FULLSEYE_GPU_LOCK=<共有ロックのパス> <GPU の venv の python> tools/bench_label_ops.py measure   # GPU(1 回 9.5 分まで)
     py -3.11 tools/gen_gpu_routes.py                                        # ログ -> fullseye/data/GPU_ACCEL_USE.json
 
 台帳はこのファイルの :func:`build` が決め、書くのは ``tools/gen_gpu_routes.py``(regen_all の鎖)。
@@ -39,7 +39,8 @@ import numpy as np
 
 ROOT = Path(__file__).resolve().parents[1]
 LOG = ROOT / "docs" / "perf" / "logs" / "label" / "label_ops.jsonl"
-LOCK = Path("C:/dev/tools/gpu_in_use.lock")
+#: 共有 GPU のロックのパス。環境変数 FULLSEYE_GPU_LOCK(``tools/bench_gpu_crossover.py`` と同じ)。未指定なら測らない。
+LOCK_ENV = "FULLSEYE_GPU_LOCK"
 SIDES = (512, 1024, 2048)
 KNOBS = ((0.5, 0.5), (0.1, 0.9), (0.9, 0.2))
 GATE_SIDE = 2048
@@ -104,8 +105,17 @@ def _median(fn, sync, reps: int) -> float:
     return float(np.median(ws))
 
 
+def _lock_path() -> Path:
+    """共有ロックのパス(``FULLSEYE_GPU_LOCK``)。無ければ fail-closed で止める(ロックなしに GPU を使わない)。"""
+    raw = os.environ.get(LOCK_ENV, "").strip()
+    if not raw:
+        raise SystemExit("%s が無い: 共有ロックを指定せずに GPU を使わない" % LOCK_ENV)
+    return Path(raw)
+
+
 def _acquire(owner: str):
     import subprocess
+    LOCK = _lock_path()
     if "unrealeditor" in subprocess.run(["tasklist"], capture_output=True, text=True,
                                         errors="replace").stdout.lower():
         raise SystemExit("UnrealEditor is running: the GPU is not used")
@@ -158,7 +168,7 @@ def cmd_measure(ns) -> int:
                 for fname, f in fx.items():
                     if (core, fname, side) in done:
                         continue
-                    if time.time() - t_start > LIMIT_S - 60:
+                    if time.time() - t_start > LIMIT_S - 150:      # 1 点に 1 分以上かかる op がある
                         print("window used up; run again to continue")
                         return 0
                     ok = True

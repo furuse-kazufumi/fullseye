@@ -40,6 +40,13 @@ except Exception:  # pragma: no cover
 
 #: 1 回のラベル付けの反復の上限(超えたら RuntimeError = GPU の失敗として記録され CPU で続く)。
 MAX_ITERS = 100_000
+#: 前半の 1 反復あたりのポインタの飛び越しの回数(同期しない固定回数)。
+JUMPS = 3
+#: 前半: 収束の判定(装置との同期)を挟むまでの反復の数。判定は 3 回(1 + 2 + 4 = 7 反復)。
+#: 2026-11-03: 反復ごと + 飛び越しごとに ``torch.equal`` で同期していた版(後半と同じ)は一辺 128 で 3.5〜4.5 ms、
+#: 前半の形だけにした版は 2048 の渦巻き(深い木)で 15 ms(旧 5.6 ms)。前半で収まらない入力だけ後半へ
+#: 渡すと、測った 9 点(3 入力 x 3 辺)の全部で両者の速い方とほぼ同じ(実測は docs/perf/logs/label の 2 回目)。
+PHASE1_BLOCKS = (1, 2, 4)
 
 
 # ---- ラベル付け -------------------------------------------------------------------------------
@@ -75,19 +82,42 @@ def label(mask, conn: int = 4):
     if fidx.numel() == 0:
         return L, fidx
     Lf = L.view(-1)
-    for _ in range(MAX_ITERS):
-        prev = Lf[fidx].clone()
+
+    def step():
+        cur = Lf[fidx]
         m = _neighbour_min(L, conn, N).reshape(-1)[fidx]
         # 根への吊り下げ: 今のラベル(同じ成分の画素)の値を、近傍の最小値まで下げる
-        Lf.scatter_reduce_(0, prev, m, reduce="amin")
+        Lf.scatter_reduce_(0, cur, m, reduce="amin")
         Lf[fidx] = torch.minimum(Lf[fidx], m)
-        # ポインタの飛び越し(ラベルのラベルを引く)を落ち着くまで
+        # ポインタの飛び越し(ラベルのラベルを引く)を固定回数。同期しない
+        for _ in range(JUMPS):
+            Lf[fidx] = Lf[Lf[fidx]]
+
+    # 収束 = 1 反復で何も変わらない(近傍の最小値が自分以上 = 成分の上で一定、かつ飛び越しが止まる)。
+    # 前半: 飛び越しは固定回数、判定は PHASE1_BLOCKS の区切りでだけ(浅い木はここで終わる)。
+    done = 0
+    for block in PHASE1_BLOCKS:
+        for _ in range(block - 1):
+            step()
+        prev = Lf[fidx].clone()
+        step()
+        done += block
+        if torch.equal(Lf[fidx], prev):
+            return L, fidx
+    # 後半: 深い木(渦巻きのような長い成分)。飛び越しを落ち着くまで回し、反復ごとに判定する。
+    while done < MAX_ITERS:
+        prev = Lf[fidx].clone()
+        cur = Lf[fidx]
+        m = _neighbour_min(L, conn, N).reshape(-1)[fidx]
+        Lf.scatter_reduce_(0, cur, m, reduce="amin")
+        Lf[fidx] = torch.minimum(Lf[fidx], m)
         while True:
             cur = Lf[fidx]
             nxt = Lf[cur]
             if torch.equal(nxt, cur):
                 break
             Lf[fidx] = nxt
+        done += 1
         if torch.equal(Lf[fidx], prev):
             return L, fidx
     raise RuntimeError("accel_label.label did not converge in %d iterations" % MAX_ITERS)
@@ -468,6 +498,260 @@ def _largest_crop_feature(core):
     fn.__name__ = "_largest_crop"
     return fn
 
+# ---- 最大の成分の形の特徴を GPU の上で(2026-11-03 第 2 便) ---------------------------------------
+# 最初の版は最大の成分を切り出して op 自身の CPU の式へ渡していた。最大の成分が画像の大半を占める入力
+# (spiral / blobs)では CPU の式が全体と同じ重さになり 0.67〜0.91 倍で不採用だった。ここでは重い部分
+# (収縮・輪郭の画素・モーメントの和・穴の数え上げ)を GPU で行い、**最後の式だけ** CPU の同じ関数に通す:
+#
+# * 整数で決まる量(面積・外接矩形・境界画素の数・周囲長の符号のヒストグラム・穴の面積)は GPU で数えて
+#   完全一致。周囲長はヒストグラム(50 本)と重みの内積を CPU で skimage と同じ式で取る(bit 一致)。
+# * 重心から輪郭画素までの距離(circularity / roundness)は輪郭画素の座標(行優先)を戻し、CPU と同じ
+#   numpy の式で距離・最大・平均・標準偏差を取る(bit 一致)。
+# * モーメント(7 種と、regionprops の向き・軸長)は float64 の行列積で中心モーメントまでを GPU で求め、
+#   正規化・Hu・慣性テンソル・固有値は skimage の関数そのものに通す。和の順序だけが違う(相対 1e-12 程度)。
+#
+# skimage の無い環境(numpy の双子で答える CPU)では CPU の op をそのまま呼ぶ。
+
+
+def _skimage():
+    import backends_auto
+    return backends_auto._HAS_SK
+
+
+def _erode4(x):
+    """``ndimage.binary_erosion(x)``(十字の構造要素、``border_value=0``)。x = (B,H,W) bool。"""
+    P = F.pad(x.to(torch.uint8), (1, 1, 1, 1), value=0).bool()
+    return x & P[:, :-2, 1:-1] & P[:, 2:, 1:-1] & P[:, 1:-1, :-2] & P[:, 1:-1, 2:]
+
+
+def _largest_mask(t):
+    """``(big, has)``: 1 枚ごとの最大の 4 連結成分のマスク (B,H,W) と、成分があるか (B,) の np.bool_。"""
+    m = _bin_t(t)
+    B, H, W = m.shape
+    N = B * H * W
+    L, fidx = label(m, 4)
+    if fidx.numel() == 0:
+        return torch.zeros_like(m), np.zeros(B, bool)
+    big = _largest_roots(L, fidx, N, H * W, B)
+    has = (big >= 0)
+    mask = (L == big.view(B, 1, 1)) & has.view(B, 1, 1)
+    return mask, has.cpu().numpy()
+
+
+def _empty_value(core, H, W, a, b):
+    return _cpu_op(core)(np.zeros((H, W)), a, b)
+
+
+def _gpu_feature(core, per_image):
+    """``per_image(big_i, i) -> 値`` を成分のある枚に当て、無い枚は CPU の op の空の答え。"""
+    def fn(t, a, b, dev):
+        if not _skimage():
+            return _per_image_cpu(core, t, a, b)
+        big, has = _largest_mask(t)
+        B, H, W = big.shape
+        return [per_image(big[i], a, b) if has[i] else _empty_value(core, H, W, a, b) for i in range(B)]
+    fn.__name__ = "_gpu_feature"
+    return fn
+
+
+def _bbox(big_i):
+    rows = torch.nonzero(big_i.any(dim=1)).squeeze(1)
+    cols = torch.nonzero(big_i.any(dim=0)).squeeze(1)
+    return int(rows[0]), int(rows[-1]), int(cols[0]), int(cols[-1])
+
+
+def _area(big_i) -> int:
+    return int(big_i.sum())
+
+
+def _contour_coords(big_i):
+    """``_contour_pixels`` の画素の (行, 列)(行優先の順、np.int64)。"""
+    c = big_i & ~_erode4(big_i[None])[0]
+    yx = torch.nonzero(c).cpu().numpy()
+    return yx[:, 0], yx[:, 1]
+
+
+def _all_coords(big_i):
+    yx = torch.nonzero(big_i).cpu().numpy()
+    return yx[:, 0], yx[:, 1]
+
+
+def _centre_distances_gpu(big_i):
+    """``backends_auto._centre_distances`` と同じ値(重心は整数の和から、距離は numpy で)。"""
+    area = _area(big_i)
+    if area <= 0:
+        return None, 0.0
+    H, W = big_i.shape
+    ys = torch.arange(H, device=big_i.device, dtype=torch.int64)
+    xs = torch.arange(W, device=big_i.device, dtype=torch.int64)
+    bi = big_i.to(torch.int64)
+    sy = int((bi.sum(dim=1) * ys).sum())
+    sx = int((bi.sum(dim=0) * xs).sum())
+    cy, cx = float(np.float64(sy) / np.float64(area)), float(np.float64(sx) / np.float64(area))
+    by, bx = _contour_coords(big_i)
+    if by.size == 0:
+        by, bx = _all_coords(big_i)
+    return np.hypot(by - cy, bx - cx), float(area)
+
+
+def _circularity(big_i, a, b):
+    import backends_auto as A
+    d, F_ = _centre_distances_gpu(big_i)
+    return np.float64(A._halcon_circularity(d, F_))
+
+
+def _roundness(big_i, a, b):
+    import backends_auto as A
+    d, _F = _centre_distances_gpu(big_i)
+    return np.float64(A._halcon_roundness(d))
+
+
+_PERIM_WEIGHTS: list = []
+
+
+def _perimeter_weights():
+    if not _PERIM_WEIGHTS:
+        import math
+        w = np.zeros(50, dtype=np.float64)
+        w[[5, 7, 15, 17, 25, 27]] = 1
+        w[[21, 33]] = math.sqrt(2)
+        w[[13, 23]] = (1 + math.sqrt(2)) / 2
+        _PERIM_WEIGHTS.append(w)
+    return _PERIM_WEIGHTS[0]
+
+
+def _perimeter(big_i) -> float:
+    """``skimage.measure.perimeter(big, 4)``: 境界画素の 3x3 の符号([[10,2,10],[2,1,2],[10,2,10]])の
+    ヒストグラム(GPU、整数)と重みの内積(CPU、skimage と同じ式)。"""
+    border = (big_i & ~_erode4(big_i[None])[0]).to(torch.int64)
+    P = F.pad(border[None, None].float(), (1, 1, 1, 1), value=0)[0, 0].to(torch.int64)
+    code = (P[1:-1, 1:-1] + 2 * (P[:-2, 1:-1] + P[2:, 1:-1] + P[1:-1, :-2] + P[1:-1, 2:])
+            + 10 * (P[:-2, :-2] + P[:-2, 2:] + P[2:, :-2] + P[2:, 2:]))
+    hist = torch.bincount(code.reshape(-1), minlength=50).cpu().numpy()
+    return hist @ _perimeter_weights()
+
+
+def _contlength(big_i, a, b):
+    return np.float64(_perimeter(big_i) or 1.0)
+
+
+def _compactness(big_i, a, b):
+    import backends_auto as A
+    per = _perimeter(big_i) or 1.0
+    return np.float64(A._halcon_compactness(per, float(_area(big_i))))
+
+
+def _classify_shape(big_i, a, b):
+    """``ops.classify_shape``: ``min(1, 4π面積/境界画素数²)``(境界 = 成分 - 十字の収縮、整数)。"""
+    area = float(_area(big_i))
+    per = float((big_i & ~_erode4(big_i[None])[0]).sum())
+    return np.float64(min(1.0, 4 * np.pi * area / (per * per)) if per > 0 else 0.0)
+
+
+def _height_width_ratio(big_i, a, b):
+    r0, r1, c0, c1 = _bbox(big_i)
+    return np.float64((r1 + 1 - r0) / max(c1 + 1 - c0, 1))
+
+
+def _area_holes(big_i, a, b):
+    """``(area_filled - area) / max(area_filled, 1)``。穴 = 補集合の 8 連結成分で画像の縁に触れないもの(regionprops の image_filled は 3x3 の構造要素)
+    (外接矩形の切り出しの縁に触れる背景は、矩形の外の背景を通って画像の縁に繋がるので同じ)。"""
+    H, W = big_i.shape
+    bg = ~big_i
+    L, fidx = label(bg[None], 8)
+    N = H * W
+    edge = torch.zeros((H, W), dtype=torch.bool, device=big_i.device)
+    edge[0, :] = True
+    edge[-1, :] = True
+    edge[:, 0] = True
+    edge[:, -1] = True
+    outside = torch.zeros(N + 1, dtype=torch.bool, device=big_i.device)
+    outside[L[0][edge & bg]] = True
+    holes = int((bg & ~outside[L[0]]).sum())
+    area = _area(big_i)
+    filled = area + holes
+    return np.float64((filled - area) / max(filled, 1))
+
+
+def _moments_raw_central(img64, center=None):
+    """skimage ``moments_central(image, center, order=3)`` を float64 の行列積で(2-D)。center=None は
+    生のモーメントから重心(skimage と同じ)。"""
+    H, W = img64.shape
+    dev = img64.device
+    r = torch.arange(H, device=dev, dtype=torch.float64)
+    c = torch.arange(W, device=dev, dtype=torch.float64)
+    p = torch.arange(4, device=dev, dtype=torch.float64)
+    if center is None:
+        M = (r[:, None] ** p[None, :]).T @ img64 @ (c[:, None] ** p[None, :])
+        M = M.cpu().numpy()
+        center = (M[1, 0] / M[0, 0], M[0, 1] / M[0, 0])
+    pr = (r - float(center[0]))[:, None] ** p[None, :]
+    pc = (c - float(center[1]))[:, None] ** p[None, :]
+    return (pr.T @ img64 @ pc).cpu().numpy()
+
+
+def _moment_feature(metric):
+    def per_image(big_i, a, b):
+        import backends_auto as A
+        mu = _moments_raw_central(big_i.to(torch.float64))
+        nu = A._moments_normalized(mu)
+        hu = A._moments_hu(nu)
+        table = {"moment2": abs(nu[2, 0] + nu[0, 2]), "moment3": abs(nu[3, 0] + nu[0, 3]),
+                 "moment_central": abs(nu[2, 0] + nu[1, 1] + nu[0, 2]),
+                 "hu1": abs(hu[0]), "hu2": abs(hu[1]), "hu3": abs(hu[2]), "hu4": abs(hu[3])}
+        return np.float64(float(table[metric]))
+    return per_image
+
+
+class _Props:
+    """regionprops の向き・軸長・面積だけを、外接矩形の局所座標のモーメント(GPU)から作る。"""
+
+    def __init__(self, big_i):
+        from skimage import measure as skm
+        r0, r1, c0, c1 = _bbox(big_i)
+        crop = big_i[r0:r1 + 1, c0:c1 + 1].to(torch.float64)
+        self.area = float(_area(big_i))
+        mu = _moments_raw_central(crop)          # 局所座標・重心は生のモーメントから(regionprops と同じ)
+        T = skm.inertia_tensor(np.zeros((2, 2)), mu, spacing=(1.0, 1.0))
+        ev = skm.inertia_tensor_eigvals(np.zeros((2, 2)), mu=mu, T=T)
+        self.inertia_tensor = T
+        self.axis_major_length = 4 * np.sqrt(ev[0])
+        self.axis_minor_length = 4 * np.sqrt(ev[-1])
+        a_, b_, _b, c_ = T.flat
+        if a_ - c_ == 0:
+            self.orientation = np.pi / 4.0 if b_ < 0 else -np.pi / 4.0
+        else:
+            self.orientation = 0.5 * np.arctan2(-2 * b_, c_ - a_)
+
+
+def _orientation(big_i, a, b):
+    pr = _Props(big_i)
+    return np.float64((pr.orientation + np.pi / 2) / np.pi)
+
+
+def _eccentricity(big_i, a, b):
+    import backends_auto as A
+    pr = _Props(big_i)
+    return A._halcon_eccentricity(pr.axis_major_length / 2.0, pr.axis_minor_length / 2.0, pr.area)
+
+
+def _elliptic_axis(big_i, a, b):
+    import backends_auto as A
+    return A._ellipse_axes(_Props(big_i))
+
+
+#: GPU の上で計算する形の特徴(残り 3 op は凸包・最大弦・モーメント矩形の重ね合わせで、CPU の式のまま)。
+GPU_SHAPE_FEATURES = {
+    "circularity": _circularity, "roundness": _roundness, "contlength": _contlength,
+    "compactness": _compactness, "classify_shape": _classify_shape, "height_width_ratio": _height_width_ratio,
+    "area_holes": _area_holes, "orientation_region": _orientation, "eccentricity": _eccentricity,
+    "elliptic_axis": _elliptic_axis,
+    "moments_region_2nd": _moment_feature("moment2"), "moments_region_3rd": _moment_feature("moment3"),
+    "moments_region_central": _moment_feature("moment_central"),
+    "moments_region_2nd_invar": _moment_feature("hu1"), "moments_region_central_invar": _moment_feature("hu2"),
+    "moments_region_2nd_rel_invar": _moment_feature("hu3"), "moments_region_3rd_invar": _moment_feature("hu4"),
+}
+
 
 #: 最大の成分だけを読む形の特徴(``_largest_label`` の後の式が平行移動で変わらないもの)。
 LARGEST_CROP_OPS = (
@@ -500,21 +784,26 @@ def table() -> dict:
         "lbl_area_frac": (_area_frac, "area_frac", "area_center"),
     }
     for core in LARGEST_CROP_OPS:
-        rows["lbl_" + core] = (_largest_crop_feature(core), core, core)
+        if core in GPU_SHAPE_FEATURES:
+            rows["lbl_" + core] = (_gpu_feature(core, GPU_SHAPE_FEATURES[core]), core, core)
+        else:
+            rows["lbl_" + core] = (_largest_crop_feature(core), core, core)
     return rows
 
 
-#: 実測の門を通って ``accel.ACCEL`` に載る core op(2026-11-03、RTX 5090、``tools/bench_label_ops.py``)。
-#: ``fullseye/data/GPU_ACCEL_USE.json`` の ``use`` が立った op と同じ集合であることを門が見る
-#: (``tests/test_accel_label.py``)。単独 5 倍以上 = ``single``: ``select_shape`` / ``r2_sort_region`` /
-#: ``r3_background_seg`` / ``r3_select_region_point``。常駐で 1 倍以上 = ``pipeline``: 残り 13。
-#: 最大の成分の形の特徴 20 op(:data:`LARGEST_CROP_OPS`)は全点で一致したが、最大の成分が画像の大半を
-#: 占める入力(``spiral`` / ``blobs``)では切り出した後の CPU の式が CPU の全体と同じ重さになり、
-#: 常駐でも 0.67〜0.91 倍で不採用(台帳の ``rejected``)。
+#: 実測の門を通って ``accel.ACCEL`` に載る core op(RTX 5090、``tools/bench_label_ops.py``、2 回目の測定 =
+#: ラベル付けの同期を減らし、形の特徴を GPU の上で計算した版)。``fullseye/data/GPU_ACCEL_USE.json`` の ``use``
+#: が立った op と同じ集合であることを門が見る(``tests/test_accel_label.py``)。37 op のうち 34(単独 11)。
+#: 不採用の 3 op(``convexity`` / ``diameter_region`` / ``rectangularity``)は凸包・最大弦・モーメント矩形の
+#: 重ね合わせを CPU の式のままにしていて、最大の成分が画像の大半を占める入力で常駐でも 1 倍に届かない。
 ADOPTED = frozenset({
-    "select_shape", "r2_sort_region", "r3_background_seg", "r3_select_region_point",
-    "remove_small", "select_largest", "select_shape_std", "sk_clear_border", "sk_remove_holes", "fill_up_shape",
-    "smallest_rectangle1", "count_obj", "connect_and_holes", "cv_cc_count", "blob_count", "area_center", "area_frac",
+    "area_center", "area_frac", "area_holes", "blob_count", "circularity",
+    "classify_shape", "compactness", "connect_and_holes", "contlength", "count_obj",
+    "cv_cc_count", "eccentricity", "elliptic_axis", "fill_up_shape", "height_width_ratio",
+    "moments_region_2nd", "moments_region_2nd_invar", "moments_region_2nd_rel_invar", "moments_region_3rd", "moments_region_3rd_invar",
+    "moments_region_central", "moments_region_central_invar", "orientation_region", "r2_sort_region", "r3_background_seg",
+    "r3_select_region_point", "remove_small", "roundness", "select_largest", "select_shape",
+    "select_shape_std", "sk_clear_border", "sk_remove_holes", "smallest_rectangle1",
 })
 
 

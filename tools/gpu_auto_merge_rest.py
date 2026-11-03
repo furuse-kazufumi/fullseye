@@ -5,7 +5,7 @@
 走らせてから、これを走らせる。何度走らせても同じ結果になる(足した行には ``tier_swept`` を付け、
 再実行時はその行だけを消して作り直す)。
 
-    C:/dev/venvs/loco/Scripts/python.exe tools/gpu_auto_merge_rest.py
+    <GPU の venv の python> tools/gpu_auto_merge_rest.py
 """
 from __future__ import annotations
 

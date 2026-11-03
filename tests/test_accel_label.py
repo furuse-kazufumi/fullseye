@@ -171,15 +171,21 @@ def gpu_box(monkeypatch):
     monkeypatch.setattr(gpu_route, "_CACHE", {"shadow_usable": True})
 
 
+def _cpu_only_image_op():
+    """GPU 経路の無い image -> image の登録簿の op(並びの検査の詰め物)。"""
+    return next(r["name"] for r in api._rows() if r["in_sort"] == r["out_sort"] == "image"
+                and gpu_route.route(r["name"], "pipeline") is None and api.find_op(r["name"]) is not None)
+
+
 def test_chain_only_accel_is_demoted_when_isolated(gpu_box):
     shape = (2048, 2048)
     dec = api.explain_device("auto", stages=("count_obj",), shape=shape)
     assert (dec["device"], dec["reason"]) == ("cpu", "chain_only")
     dec = api.explain_device("auto", stages=("otsu", "count_obj"), shape=shape)
     assert [s["path"] for s in dec["stages"]] == ["accel", "accel"]
-    # 隣が CPU だけの段(sk_rolling_ball は GPU 経路なし)なら孤立
-    dec = api.explain_device("auto", stages=("gaussian", "sk_rolling_ball", "threshold", "remove_small", "blob_count",
-                                             "gaussian"), shape=shape)
+    # 隣が CPU だけの段(GPU 経路の無い image -> image の op)なら孤立
+    dec = api.explain_device("auto", stages=("gaussian", _cpu_only_image_op(), "threshold", "remove_small",
+                                             "blob_count", "gaussian"), shape=shape)
     assert [s["path"] for s in dec["stages"]][:5] == ["accel", "cpu", "accel", "accel", "accel"]
 
 
