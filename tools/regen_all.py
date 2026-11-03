@@ -103,6 +103,10 @@ CHAIN = [
     #   いまは `trace_problems()` が「宣言した出力に触れもしない段」を拒む。
     (["tools/conversion_matrix.py", "--md", "docs/CONVERSION_MATRIX.md"],
      "docs/CONVERSION_MATRIX.md(表現の変換表)"),
+    # 2026-11-03: 索引の後(docs/OP_INDEX.json を読む)、docmap の前(題を持つ生成物)。
+    #   型ごとの役割の台帳 docs/TYPE_ROLES.json(手書き)と突き合わせる。
+    (["tools/type_connectivity.py", "--md", "docs/TYPE_CONNECTIVITY.md"],
+     "docs/TYPE_CONNECTIVITY.md(全型の役割と、入口・終端へのつながり)"),
       (["tools/gen_op_facets.py"], "single op graph and its generated facets"),
     (["tools/gen_design_notes.py"], "設計判断集(ソースの ★ から 6 言語)"),
     # ★2026-10-15: 13 番目から最後の方へ下げた。docmap が docs/*.md の**題**を読むので、
@@ -175,6 +179,7 @@ OUTPUTS = {
     "references.py": ["docs/REFERENCES.md"],
     "samples.py": ["docs/EXAMPLES.md"],
     "tools/conversion_matrix.py": ["docs/CONVERSION_MATRIX.md"],
+    "tools/type_connectivity.py": ["docs/TYPE_CONNECTIVITY.md"],
     "tools/gen_design_notes.py": ["docs/DESIGN_NOTES.md", "docs/DESIGN_NOTES.*.md", "docs/design_notes.json"],
     "tools/gen_docs_index_ops.py": ["docs/README.md", "docs/README.*.md", "docs/articles/README.md"],
     "tools/gen_doc_counts.py": ["docs/README.md", "docs/README.*.md",
@@ -233,6 +238,7 @@ READS = {
     "tools/audit_file_formats.py": ["auto_specs_data.py", "docs/OP_INDEX.json"],
     "tools/halcon_compat_profile.py": ["docs/OP_INDEX.json"],
     "tools/gen_capabilities_index.py": ["docs/OP_INDEX.json"],
+    "tools/type_connectivity.py": ["docs/OP_INDEX.json"],
     "tools/gen_wingpoc_gallery.py": ["docs/articles/exhibits/exhibit_numbers.json",
                                       "docs/articles/exhibits/glossary.json"],
     "tools/gen_view2026_pages.py": ["docs/articles/exhibits/glossary.json"],
@@ -247,6 +253,7 @@ READS = {
         "docs/README.md", "docs/README.*.md", "docs/OP_COUNT_HISTORY.md",
         "docs/EXAMPLES_3D.md", "docs/SENSOR_PLAYBOOK.md", "docs/OPERATORS.md",
         "docs/REFERENCES.md", "docs/EXAMPLES.md", "docs/CONVERSION_MATRIX.md",
+        "docs/TYPE_CONNECTIVITY.md",
         "docs/HALCON_PARITY.md",
         "docs/DESIGN_NOTES.md", "docs/DESIGN_NOTES.*.md",
         "docs/AI_RAG_GUIDE.md", "docs/AI_RAG_GUIDE.*.md",
