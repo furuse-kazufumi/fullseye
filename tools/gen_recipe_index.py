@@ -69,10 +69,7 @@ def build():
     by_name = {r["n"]: r for r in rows}
     out = []
     # 日本語の名前と説明(手書き)。ja の検索文に足し、行にも when_ja として載せる。
-    try:
-        from fullseye.recipebook.notes_ja import NOTES_JA
-    except ImportError:
-        NOTES_JA = {}
+    NOTES_JA = rb.notes_ja()
     lines = _line_numbers(ROOT / "recipes.py")
     for r in recipes.RECIPES:
         sort = "image"; stages = []

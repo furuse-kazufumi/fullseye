@@ -60,7 +60,7 @@ TASK_CLASSES = ("inspection", "measurement", "3d", "optics", "sensing", "preproc
                 "analysis", "simulation", "visualization")
 
 #: 本の並び。足したらここに 1 行(読み込み順 = 索引の並び)。
-BOOKS = ("book_2d", "book_measure", "book_3d", "book_optics", "book_misc")
+BOOKS = ("book_2d", "book_measure", "book_3d", "book_optics", "book_misc", "book_newops", "book_mcp_sensing")
 
 _HERE = os.path.dirname(os.path.abspath(__file__))
 _ROOT = os.path.dirname(os.path.dirname(_HERE))
@@ -68,7 +68,7 @@ _ROOT = os.path.dirname(os.path.dirname(_HERE))
 
 def _load_books():
     from fullseye.recipebook.common import COMMON_SAMPLES
-    recipes, samples, missing, where, failed = [], dict(COMMON_SAMPLES), [], {}, []
+    recipes, samples, missing, where, failed, notes_ja = [], dict(COMMON_SAMPLES), [], {}, [], {}
     # RECIPEBOOK_BOOK=book_3d で 1 冊だけ読む(本を書いている途中、他の本の壊れに巻き込まれないため)。
     only = os.environ.get("RECIPEBOOK_BOOK")
     for mod_name in BOOKS:
@@ -89,14 +89,22 @@ def _load_books():
             samples[k] = fn
         missing.extend(dict(m, book=mod_name) for m in getattr(mod, "MISSING_OPS", ()))
         failed.extend(dict(f, book=mod_name) for f in getattr(mod, "FAILED_ATTEMPTS", ()))
+        for k, v in getattr(mod, "NOTES_JA", {}).items():   # 本ごとの日本語ノート(notes_ja.py と合わせて引く)
+            notes_ja[k] = v
     names = [r["name"] for r in recipes]
     dup = sorted({n for n in names if names.count(n) > 1})
     if dup:
         raise ValueError("duplicate recipe names: %s" % dup)
-    return recipes, samples, missing, where, failed
+    return recipes, samples, missing, where, failed, notes_ja
 
 
-RECIPES, SAMPLES, MISSING_OPS, BOOK_OF, FAILED_ATTEMPTS = _load_books()
+RECIPES, SAMPLES, MISSING_OPS, BOOK_OF, FAILED_ATTEMPTS, _BOOK_NOTES_JA = _load_books()
+
+
+def notes_ja() -> dict:
+    """レシピ名 -> 日本語の名前と説明。notes_ja.py の表に、本ごとの NOTES_JA を重ねる。"""
+    from fullseye.recipebook.notes_ja import NOTES_JA
+    return {**NOTES_JA, **_BOOK_NOTES_JA}
 
 
 def names() -> list:

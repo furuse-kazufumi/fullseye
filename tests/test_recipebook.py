@@ -167,7 +167,7 @@ def test_legacy_recipe_runs_end_to_end(name):
 def test_every_recipe_has_a_japanese_note():
     """ja の検索文は英語の名前・説明と op の要約だけだと、日本語の問いで族の当たりが 10/30 だった
     (2026-11-03 実測、目隠し問い合わせ)。手書きの日本語の名前と説明を全レシピに付ける。"""
-    from fullseye.recipebook.notes_ja import NOTES_JA
+    NOTES_JA = rb.notes_ja()
     want = set(rb.names()) | set(_legacy.names())
     assert set(NOTES_JA) == want, (sorted(want - set(NOTES_JA))[:5], sorted(set(NOTES_JA) - want)[:5])
     short = [k for k, v in NOTES_JA.items() if len(v) < 10 or not any(ord(c) > 0x3000 for c in v)]
