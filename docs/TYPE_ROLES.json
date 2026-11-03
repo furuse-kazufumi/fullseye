@@ -106,6 +106,13 @@
    "why": "複素スカラ。cscalar_to_polar(-> pairs)が出口。",
    "evidence": "reprconv.cscalar_to_polar。"
   },
+  "ctgeometry": {
+   "class": "d",
+   "status": "none",
+   "entry": "ct_scan_geometry() が引数(方式・軌道・検出器の寸法)だけで作る CT の幾何。画像から作るものではない。",
+   "why": "CT のスキャン方式の族(ctscan)の共通の幾何。入口は合成(ct_scan_geometry)が正しい。",
+   "evidence": "OP_INDEX: ct_scan_geometry の in_sorts = []。消費は ct_forward_project / ct_adjoint_project / fdk・sirt・os_sart・tv_reconstruct / ellipsoid_projections / ct_dual_energy_reconstruct(第 8 便、2026-11-04 の統合で行を足した)。"
+  },
   "curvature": {
    "class": "ok",
    "status": "none",
@@ -439,6 +446,12 @@
    "status": "none",
    "why": "当てはめた幾何プリミティブ(平面・球・箱)。産 33 / 受 9。",
    "evidence": "ops3d の geometry / robust_fit。"
+  },
+  "projstack": {
+   "class": "ok",
+   "status": "none",
+   "why": "CT の投影束 (view, V, U)。ct_forward_project / ellipsoid_projections が産み、FDK・反復法の再構成が受けて voxel に戻す。sinostack とは軸の順序が違うので別の型。",
+   "evidence": "OP_INDEX 産 2(ct_forward_project / ellipsoid_projections)/ 受 6(ct_adjoint_project・fdk・sirt・os_sart・tv_reconstruct・ct_dual_energy_reconstruct)。第 8 便、2026-11-04 の統合で行を足した。"
   },
   "qimage": {
    "class": "ok",

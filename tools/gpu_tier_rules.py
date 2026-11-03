@@ -43,6 +43,7 @@ SORT_TIER = {
     "rgbimage": "suitable", "rgbvideo": "suitable", "rgbvolume": "suitable", "video": "suitable",
     "volseq": "suitable", "volume": "suitable", "voxel": "suitable", "depth": "suitable",
     "sdf": "suitable", "zscan": "suitable", "sinogram": "suitable", "sinostack": "suitable",
+    "projstack": "suitable",   # CT の投影束 (view, V, U)(第 8 便、2026-11-04 の統合で分類)
     "lightfield": "suitable", "pointmap": "suitable", "normalmap": "suitable", "histcube": "suitable",
     "mask": "suitable", "signal": "suitable", "matrix": "suitable", "coordgrid": "suitable",
     "flow2d": "suitable", "flow_dense": "suitable", "gradient": "suitable", "hessian": "suitable",
@@ -66,6 +67,7 @@ SORT_TIER = {
     "angle": "none", "design": "none", "file": "none", "lut": "none", "calresult": "none",
     "measurehandle": "none", "metrologymodel": "none", "simmodel": "none", "efdmodel": "none",
     "enum": "none", "phash": "none", "fingerprint": "none",
+    "ctgeometry": "none",      # CT の幾何(view ごとの線源・検出器の dict、第 8 便、2026-11-04 の統合で分類)
 }
 
 

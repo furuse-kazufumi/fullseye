@@ -5,15 +5,14 @@
 数え方: 入力は **全入力**(`in_sorts`)。「入口から届く」は、入口の型(台帳に `entry` がある型)と引数だけで値を作る op から始め、**全入力がそろった op** の出力を足していく不動点。「終端へ届く」は、受ける op をたどって `terminal` の型に行けること。
 
 ```
-型 104(うち any 1) / 入口として数える型 29 / 終端として数える型 13
-分類: a 5 / b 10 / c 6 / d 9 / ok 72
+型 104(うち any 1) / 入口として数える型 30 / 終端として数える型 13
+分類: a 5 / b 10 / c 6 / d 10 / ok 73
 
 全入力で数える(この表の基準):
   行き止まり 0(理由なし 0) / 入口なし 1(理由なし 0)
   入口から届かない 0 / 終端へ届かない 0 / 細い型(産 or 受 <= 2) 50
 参考: 第 1 入力だけ・image から(最初の数え方):
   行き止まり 1 / 入口なし 0 / image から届かない 14 / 細い型 54
-  ! 台帳に行が無い型: ctgeometry, projstack
 ```
 
 ## 分類の意味
@@ -68,7 +67,7 @@
 | `counts` | ok | 13 | 17 |  |  | none | 光子カウント(非負の 1-D)。産 13 / 受 17。countrate との往復は gate 時間つき。 | TYPE_TO_SORT['counts']、opsphoton の族、reprconv.counts_to_countrate。 |
 | `cpoints` | ok | 4 | 8 |  |  | none | 複素平面上の順序つき点列(周回積分用)。産 4 / 受 8。 | opsmath の複素族(cplx_cauchy_value / cplx_contour_integral が受ける)。 |
 | `cscalar` | ok | 3 | 1 |  |  | none | 複素スカラ。cscalar_to_polar(-> pairs)が出口。 | reprconv.cscalar_to_polar。 |
-| `ctgeometry` | **未分類** | 1 | 8 |  |  |  |  |  |
+| `ctgeometry` | d | 1 | 8 | ct_scan_geometry() が引数(方式・軌道・検出器の寸法)だけで作る CT の幾何。画像から作るものではない。 |  | none | CT のスキャン方式の族(ctscan)の共通の幾何。入口は合成(ct_scan_geometry)が正しい。 | OP_INDEX: ct_scan_geometry の in_sorts = []。消費は ct_forward_project / ct_adjoint_project / fdk・sirt・os_sart・tv_reconstruct / ellipsoid_projections / ct_dual_energy_reconstruct(第 8 便、2026-11-04 の統合で行を足した)。 |
 | `curvature` | ok | 4 | 2 |  |  | none | 主曲率。出口は curvature_to_shape_index / curvature_to_table。中身は 3 つの形が同居している(既知、opsreprconv の docstring『実測した既存の型の嘘』)が受け手が両方を読むので、つながりの問題ではない。 | reprconv._principal が 3 形を受ける。 |
 | `deformation` | ok | 1 | 2 |  |  | none | tps_fit の変形 dict。tps_warp と deformation_to_points が受ける。 | reprconv.deformation_to_points。 |
 | `depth` | ok | 17 | 37 | 距離センサ(RealSense / ZED / OAK / Kinect、acquire の unit=m)。 |  | none | 深度画像 [m]。産 16 / 受 37。 | docs/CONNECTIVITY.md の acquire 表(unit = m)。 |
@@ -119,7 +118,7 @@
 | `position` | ok | 12 | 4 |  |  | none | 3-D の 1 点 (z,y,x)。points との往復がある。positions(1-D の事象位置の列)とは別物で、名前が近いだけ。 | reprconv.position_to_points / points_to_position。 |
 | `positions` | b | 1 | 1 |  |  | indices_to_positions(indices, spacing, origin) -> positions を足した(find_peaks -> indices_to_positions -> point_spectrum の鎖)。 | point_spectrum が受ける『事象の位置の列』(欠陥・到着の位置)を作る op が 0(入口なし)。signal と分けてある理由は、等間隔標本と事象位置を取り違えると例外なしに別物のスペクトルが出るため(dsp.point_spectrum の docstring)。 | grep 'positions' を op 名・in/out で引き、産み手 0。近い量は find_peaks(-> indices)と peak_subbin(-> signal)。 |
 | `primitive` | ok | 33 | 9 |  |  | none | 当てはめた幾何プリミティブ(平面・球・箱)。産 33 / 受 9。 | ops3d の geometry / robust_fit。 |
-| `projstack` | **未分類** | 2 | 6 |  |  |  |  |  |
+| `projstack` | ok | 2 | 6 |  |  | none | CT の投影束 (view, V, U)。ct_forward_project / ellipsoid_projections が産み、FDK・反復法の再構成が受けて voxel に戻す。sinostack とは軸の順序が違うので別の型。 | OP_INDEX 産 2(ct_forward_project / ellipsoid_projections)/ 受 6(ct_adjoint_project・fdk・sirt・os_sart・tv_reconstruct・ct_dual_energy_reconstruct)。第 8 便、2026-11-04 の統合で行を足した。 |
 | `qimage` | ok | 19 | 24 |  |  | none | 四元数画像(色の回転・フィルタ)。産 19 / 受 24。 | TYPE_TO_SORT['qimage']、opsquat。 |
 | `region` | ok | 178 | 136 |  |  | none | 2-D レジストリの 0/1 領域。産 177 / 受 136。 | docs/ADDING_OPS.md の Sort contract。 |
 | `rgb` | ok | 58 | 36 | 台帳の描画・合成(gfx2d)の色画像。 | 人が見る色の絵(gfx2d の合成結果・図)。 | none | (H,W,3) の色(符号化を特定しない 3 チャネル)。rgbimage と分けた理由は opsimgmetrics.NEW_SORTS(L* が 32.53 でなく 5.72 と静かに出る実測)。 | opsimgmetrics.NEW_SORTS['rgb']。 |
