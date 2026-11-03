@@ -583,6 +583,35 @@ def _sk_tv(t, a, b, dev):
     return _tv_chambolle(t, weight=0.02 + 0.3 * a)
 
 
+_RB_CACHE: dict = {}
+
+
+def _rolling_ball(t, a, b, dev):
+    """``sk_rolling_ball`` = ``clip(v - skimage.restoration.rolling_ball(v, radius=5+int(20a)), 0, 1)``。
+
+    skimage の背景は**非平坦な収縮 1 回**: ``bg[p] = min_k (v[p+k] + (h_c - h_k))``(``h`` = 球の高さ
+    ``ball_kernel``、窓の外は +inf で埋める)。2026-11-03 に 40x37 の乱数画像・半径 7 で skimage と
+    float64 で差 0 を確かめてから写した。窓の画素ごとに 1 回ずつずらした画像と最小を取る(半径 15 で 709 回)。
+    球の表は skimage の ``ball_kernel`` をそのまま使う(この op は skimage が在るときだけ登録簿に載る)。
+    """
+    from skimage.restoration import ball_kernel
+    r = 5 + int(a * 20)
+    if r not in _RB_CACHE:
+        k = ball_kernel(r, 2)
+        c = np.array(k.shape) // 2
+        fin = np.isfinite(k)
+        d = (k[tuple(c)] - k)[fin]
+        ii, jj = np.nonzero(fin)
+        _RB_CACHE[r] = (int(c[0]), int(c[1]), ii.tolist(), jj.tolist(), d.astype(np.float64).tolist())
+    cy, cx, ii, jj, dd = _RB_CACHE[r]
+    H, W = t.shape[2], t.shape[3]
+    P = F.pad(t, (cx, cx, cy, cy), value=float("inf"))
+    bg = torch.full_like(t, float("inf"))
+    for i, j, dv in zip(ii, jj, dd):
+        torch.minimum(bg, P[:, :, i:i + H, j:j + W] + dv, out=bg)
+    return (t - bg).clamp(0, 1)
+
+
 def _persp_matrix(src, dst):
     """4 点対応から透視変換 3x3(cv2.getPerspectiveTransform 相当、numpy 求解)。"""
     A, rhs = [], []
@@ -693,6 +722,8 @@ ACCEL = {
     "fill_up": (_fill_holes_bin, "fill_up", "fill_up"),
     # bilateral(25 シフト反復 = 計算重で GPU 向き)
     "bilateral": (_bilateral, "bilateral", "bilateral_filter"),
+    # rolling ball(非平坦な収縮、窓の画素数だけずらして最小)。「FA — scratch」の途中の CPU の段だった
+    "sk_rolling_ball": (_rolling_ball, "sk_rolling_ball", ""),
 }
 
 

@@ -28,7 +28,8 @@ def plan(stages, **kw):
     (["gaussian", "otsu", "fill_up", "count_obj"], 0, 1, []),                    # Count — blobs: 全段 GPU
     (["otsu", "sk_clear_border", "count_obj"], 0, 1, []),                        # FA — count holes
     (["gaussian", "otsu", "fill_up", "remove_small"], 0, 1, []),                 # Segment — blob / coin
-    (["gaussian", "sk_rolling_ball", "threshold", "select_shape"], 2, 2, ["sk_rolling_ball"]),
+    (["gaussian", "sk_rolling_ball", "threshold", "select_shape"], 0, 1, []),   # FA — scratch: 全段 GPU
+    (["gaussian", "sk_dog", "threshold", "select_shape"], 2, 2, ["sk_dog"]),      # 途中に GPU 経路の無い段
     (["gaussian", "hx_plane_deviation", "threshold", "select_shape"], 2, 3, []),  # torch -> CuPy -> torch
 ])
 def test_known_recipes_switch_where_expected(stages, n_switches, n_transfers, cpu_ops):
@@ -40,9 +41,9 @@ def test_known_recipes_switch_where_expected(stages, n_switches, n_transfers, cp
 
 
 def test_switch_reasons_name_the_stage_and_the_cause():
-    p = plan(["gaussian", "sk_rolling_ball", "threshold", "select_shape"])
+    p = plan(["gaussian", "sk_dog", "threshold", "select_shape"])
     assert p["switches"] == [
-        {"at": 1, "op": "sk_rolling_ball", "from": "accel", "to": "cpu", "reason": "not_listed"},
+        {"at": 1, "op": "sk_dog", "from": "accel", "to": "cpu", "reason": "not_listed"},
         {"at": 2, "op": "threshold", "from": "cpu", "to": "accel", "reason": None}]
     assert "not_listed" in p["reasons"]
     p = plan(["gaussian", "hx_plane_deviation", "threshold"])
@@ -83,7 +84,7 @@ def test_without_a_gpu_nothing_is_on_the_gpu(monkeypatch):
 
 
 def test_rejected_family_ops_say_why():
-    p = plan(["otsu", "circularity"])
+    p = plan(["otsu", "convexity"])
     assert p["stages"][1]["on"] == "cpu" and p["stages"][1]["reason"] == "not_listed"
     assert p["stages"][1]["detail"] == "accel:slower_than_cpu_even_resident"
 

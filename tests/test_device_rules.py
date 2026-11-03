@@ -181,8 +181,16 @@ def test_before_after_on_the_shipped_table():
     from tools.bench_gpu_crossover import BA_KNOBS, BA_SIDES, sweep_ops
     rows = gen.read_logs("before_after_2.jsonl")
     accelerated = api._gpu_op_names()
+    import gpu_route
+    # 鎖の枠だけの手書き経路(GPU_ACCEL_USE.json の use="pipeline")は、単独の呼び出しを規則表でなく採用の門が
+    # CPU に決める(before も after も同じ CPU の道)。測る点から外し、代わりに単独で CPU になることを決定的に見る。
+    chain_only = {op for op, _kind in sweep_ops() if gpu_route.route(op, "single") is None}
+    assert len(chain_only) >= 13
+    for op in chain_only:
+        assert gpu_route.route(op, "pipeline").kind == "accel", op
     expected = {(op, side, a) for op, _kind in sweep_ops() for side in BA_SIDES for a in BA_KNOBS
-                if device_policy.route([op], (side, side), rules=RULES, accelerated=accelerated) == "cpu"}
+                if op not in chain_only
+                and device_policy.route([op], (side, side), rules=RULES, accelerated=accelerated) == "cpu"}
     measured = {(r["name"], r["side"], r["a"]) for r in rows if r["kind"] == "op"}
     assert len(expected) >= 300
     assert measured == expected

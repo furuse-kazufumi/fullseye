@@ -1,13 +1,13 @@
 # レシピの GPU 経路(生成物)
 
 `tools/gen_gpu_routes.py` が `fullseye.explain_pipeline(stages, (2048, 2048), device="auto", assume_cuda=True)` を既存のレシピ全部(`fullseye/data/RECIPE_INDEX.json`)に当てた表。手で直さない。
-**前** = 領域の解析の族(`accel_label.ADOPTED`、17 op)を経路から外した場合、**後** = 今の経路。
+**前** = 領域の解析の族(`accel_label.ADOPTED`、34 op)を経路から外した場合、**後** = 今の経路。
 `assume_cuda=True` は CUDA・CuPy・空き VRAM のある機械として経路表だけで決める(GPU の無い CI でも同じ表)。
 
 | 2 段以上のレシピ 12 本・37 段 | GPU の段 | 全段 GPU | 切り替わり | 往復の見込み |
 |---|---:|---:|---:|---:|
-| 前 | 28 | 5 | 12 | 16 |
-| 後 | 36 | 11 | 5 | 16 |
+| 前 | 29 | 5 | 10 | 15 |
+| 後 | 37 | 12 | 3 | 15 |
 
 | レシピ | 前: 切替 / 往復 | 後: 切替 / 往復 | 後の段(CPU の段は理由つき) |
 |---|---:|---:|---|
@@ -31,7 +31,7 @@
 | Morphology — gradient | 0 / 1 | 0 / 1 | morph_grad[GPU] |
 | Shape — distance transform | 1 / 2 | 1 / 2 | gaussian[GPU] → otsu[GPU] → distance_transform[GPU] |
 | Spots — local maxima | 0 / 1 | 0 / 1 | gaussian[GPU] → local_max[GPU] |
-| FA — scratch on hairline metal | 3 / 2 | 2 / 2 | gaussian[GPU] → sk_rolling_ball[CPU:not_listed] → threshold[GPU] → select_shape[GPU] |
+| FA — scratch on hairline metal | 1 / 1 | 0 / 1 | gaussian[GPU] → sk_rolling_ball[GPU] → threshold[GPU] → select_shape[GPU] |
 | FA — dent and foreign fibre on resin | 3 / 3 | 2 / 3 | gaussian[GPU] → hx_plane_deviation[GPU] → threshold[GPU] → select_shape[GPU] |
 | FA — engraved lot code (binarize for OCR) | 1 / 1 | 0 / 1 | gaussian[GPU] → otsu[GPU] → select_shape[GPU] |
 | FA — count holes in a back-lit plate | 1 / 1 | 0 / 1 | otsu[GPU] → sk_clear_border[GPU] → count_obj[GPU] |

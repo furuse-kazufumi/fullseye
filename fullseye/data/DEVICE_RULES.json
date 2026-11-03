@@ -62,6 +62,10 @@
    "family": "reduction",
    "min_pixels": 4198401
   },
+  "area_holes": {
+   "family": "label",
+   "min_pixels": 263169
+  },
   "bilateral": {
    "family": "nonseparable",
    "min_pixels": 0
@@ -82,9 +86,25 @@
    "family": "iterative",
    "min_pixels": 16641
   },
+  "circularity": {
+   "family": "label",
+   "min_pixels": 66049
+  },
+  "classify_shape": {
+   "family": "label",
+   "min_pixels": 66049
+  },
+  "compactness": {
+   "family": "label",
+   "min_pixels": 66049
+  },
   "connect_and_holes": {
    "family": "label",
    "min_pixels": 4198401
+  },
+  "contlength": {
+   "family": "label",
+   "min_pixels": 263169
   },
   "count_obj": {
    "family": "label",
@@ -92,7 +112,7 @@
   },
   "cv_cc_count": {
    "family": "label",
-   "min_pixels": 263169
+   "min_pixels": 1050625
   },
   "cv_sharpen": {
    "family": "separable",
@@ -130,9 +150,17 @@
    "family": "separable",
    "min_pixels": 66049
   },
+  "eccentricity": {
+   "family": "label",
+   "min_pixels": 263169
+  },
   "eliminate_min_max": {
    "family": "nonseparable",
    "min_pixels": 0
+  },
+  "elliptic_axis": {
+   "family": "label",
+   "min_pixels": 66049
   },
   "equ_histo_image": {
    "family": "iterative",
@@ -164,7 +192,7 @@
   },
   "fill_up_shape": {
    "family": "label",
-   "min_pixels": 263169
+   "min_pixels": 4198401
   },
   "gamma": {
    "family": "point",
@@ -246,6 +274,10 @@
    "family": "morphology",
    "min_pixels": 0
   },
+  "height_width_ratio": {
+   "family": "label",
+   "min_pixels": 66049
+  },
   "highpass": {
    "family": "frequency",
    "min_pixels": 16641
@@ -314,6 +346,34 @@
    "family": "morphology",
    "min_pixels": 16641
   },
+  "moments_region_2nd": {
+   "family": "label",
+   "min_pixels": 66049
+  },
+  "moments_region_2nd_invar": {
+   "family": "label",
+   "min_pixels": 263169
+  },
+  "moments_region_2nd_rel_invar": {
+   "family": "label",
+   "min_pixels": 66049
+  },
+  "moments_region_3rd": {
+   "family": "label",
+   "min_pixels": 66049
+  },
+  "moments_region_3rd_invar": {
+   "family": "label",
+   "min_pixels": 66049
+  },
+  "moments_region_central": {
+   "family": "label",
+   "min_pixels": 66049
+  },
+  "moments_region_central_invar": {
+   "family": "label",
+   "min_pixels": 66049
+  },
   "morph_grad": {
    "family": "morphology",
    "min_pixels": 0
@@ -329,6 +389,10 @@
   "opening_golay": {
    "family": "morphology",
    "min_pixels": 0
+  },
+  "orientation_region": {
+   "family": "label",
+   "min_pixels": 263169
   },
   "otsu": {
    "family": "iterative",
@@ -406,6 +470,10 @@
    "family": "separable",
    "min_pixels": 66049
   },
+  "roundness": {
+   "family": "label",
+   "min_pixels": 66049
+  },
   "scale_clip": {
    "family": "point",
    "min_pixels": 263169
@@ -420,7 +488,7 @@
   },
   "select_shape": {
    "family": "label",
-   "min_pixels": 263169
+   "min_pixels": 66049
   },
   "select_shape_std": {
    "family": "label",
@@ -436,11 +504,15 @@
   },
   "sk_clear_border": {
    "family": "label",
-   "min_pixels": 263169
+   "min_pixels": 4198401
   },
   "sk_remove_holes": {
    "family": "label",
    "min_pixels": 263169
+  },
+  "sk_rolling_ball": {
+   "family": "nonseparable",
+   "min_pixels": 0
   },
   "sk_tv": {
    "family": "iterative",
@@ -448,7 +520,7 @@
   },
   "smallest_rectangle1": {
    "family": "reduction",
-   "min_pixels": 263169
+   "min_pixels": 4198401
   },
   "sobel_amp": {
    "family": "separable",

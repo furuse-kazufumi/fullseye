@@ -48,6 +48,7 @@ FAMILY_OF_KERNEL = {
     "_background_seg": "label", "_select_region_point": "label", "_fill_up_shape": "label",
     "_sk_remove_holes": "label", "_count8": "label", "_cv_cc_count": "label", "_blob_count": "label",
     "_smallest_rectangle1": "reduction", "_area_center": "reduction", "_area_frac": "reduction",
+    "_gpu_feature": "label", "_rolling_ball": "nonseparable",
 }
 
 

@@ -4,15 +4,32 @@
  "excluded_for_before": [
   "area_center",
   "area_frac",
+  "area_holes",
   "blob_count",
+  "circularity",
+  "classify_shape",
+  "compactness",
   "connect_and_holes",
+  "contlength",
   "count_obj",
   "cv_cc_count",
+  "eccentricity",
+  "elliptic_axis",
   "fill_up_shape",
+  "height_width_ratio",
+  "moments_region_2nd",
+  "moments_region_2nd_invar",
+  "moments_region_2nd_rel_invar",
+  "moments_region_3rd",
+  "moments_region_3rd_invar",
+  "moments_region_central",
+  "moments_region_central_invar",
+  "orientation_region",
   "r2_sort_region",
   "r3_background_seg",
   "r3_select_region_point",
   "remove_small",
+  "roundness",
   "select_largest",
   "select_shape",
   "select_shape_std",
@@ -945,9 +962,9 @@
   },
   {
    "after": {
-    "n_gpu_stages": 3,
-    "n_switches": 2,
-    "n_transfers": 2,
+    "n_gpu_stages": 4,
+    "n_switches": 0,
+    "n_transfers": 1,
     "stages": [
      {
       "on": "gpu",
@@ -956,10 +973,10 @@
       "reason": null
      },
      {
-      "on": "cpu",
+      "on": "gpu",
       "op": "sk_rolling_ball",
-      "path": "cpu",
-      "reason": "not_listed"
+      "path": "accel",
+      "reason": null
      },
      {
       "on": "gpu",
@@ -974,28 +991,13 @@
       "reason": null
      }
     ],
-    "switches": [
-     {
-      "at": 1,
-      "from": "accel",
-      "op": "sk_rolling_ball",
-      "reason": "not_listed",
-      "to": "cpu"
-     },
-     {
-      "at": 2,
-      "from": "cpu",
-      "op": "threshold",
-      "reason": null,
-      "to": "accel"
-     }
-    ],
+    "switches": [],
     "type_breaks": []
    },
    "before": {
-    "n_gpu_stages": 2,
-    "n_switches": 3,
-    "n_transfers": 2,
+    "n_gpu_stages": 3,
+    "n_switches": 1,
+    "n_transfers": 1,
     "stages": [
      {
       "on": "gpu",
@@ -1004,10 +1006,10 @@
       "reason": null
      },
      {
-      "on": "cpu",
+      "on": "gpu",
       "op": "sk_rolling_ball",
-      "path": "cpu",
-      "reason": "not_listed"
+      "path": "accel",
+      "reason": null
      },
      {
       "on": "gpu",
@@ -1023,20 +1025,6 @@
      }
     ],
     "switches": [
-     {
-      "at": 1,
-      "from": "accel",
-      "op": "sk_rolling_ball",
-      "reason": "not_listed",
-      "to": "cpu"
-     },
-     {
-      "at": 2,
-      "from": "cpu",
-      "op": "threshold",
-      "reason": null,
-      "to": "accel"
-     },
      {
       "at": 3,
       "from": "accel",
@@ -1384,20 +1372,20 @@
  ],
  "summary": {
   "after": {
-   "all_gpu_recipes": 11,
-   "gpu_stages": 36,
+   "all_gpu_recipes": 12,
+   "gpu_stages": 37,
    "recipes": 12,
    "stages": 37,
-   "switches": 5,
-   "transfers": 16
+   "switches": 3,
+   "transfers": 15
   },
   "before": {
    "all_gpu_recipes": 5,
-   "gpu_stages": 28,
+   "gpu_stages": 29,
    "recipes": 12,
    "stages": 37,
-   "switches": 12,
-   "transfers": 16
+   "switches": 10,
+   "transfers": 15
   }
  }
 }

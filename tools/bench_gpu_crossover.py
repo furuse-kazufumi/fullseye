@@ -915,7 +915,14 @@ def cmd_before_after(ns) -> int:
         import api
         done = {(r["kind"], r["name"], r["side"], r.get("a")) for r in load(out)}
         accel_names = api._gpu_op_names()
+        import gpu_route
         for op, kind in sweep_ops():
+            if gpu_route.route(op, "single") is None:
+                # 鎖の枠だけの手書き経路は、単独の呼び出しを規則表ではなく採用の門(5 倍)が CPU に決めている。
+                # before(cuda)も after(auto)も同じ CPU の道なので、測っても揺れしか測れない(2026-11-03 に
+                # 292 点を測り、同じ道どうしで 8 点が 10 % を超えて食い違った)。単独で CPU になることは
+                # tests/test_device_rules.py が経路の判定として決定的に見る。
+                continue
             for side in BA_SIDES:
                 if device_policy.route([op], (side, side), accelerated=accel_names) != "cpu":
                     continue
@@ -925,15 +932,12 @@ def cmd_before_after(ns) -> int:
                     if not lease.ok():
                         return True
                     im = pool(kind, side, 1)[0]
-                    # before = 規則の無かったとき: 明示の cuda で kernel を単独で走らせる。鎖の枠だけの手書き経路
-                    # (GPU_ACCEL_USE.json の use="pipeline")は今の apply が単独では GPU に送らないので、
-                    # before の間だけ場面の台帳を外す(after は今の挙動そのまま)。
-                    import gpu_route
-                    gpu_route._CACHE["accel_use"] = {}
-                    try:
-                        before, _ = _sweep_times(op, im, a, "cuda", sync)
-                    finally:
-                        gpu_route._CACHE.pop("accel_use", None)
+                    # before = 規則表の無かったとき(明示の cuda)。鎖の枠だけの手書き経路(use="pipeline")は規則表と
+                    # 関係なく単独では CPU(chain_only)なので before も CPU —— 単独で 5 倍に届かない GPU の勝ちは
+                    # 規則表ではなく採用の門(GPU_ACCEL_USE.json の ratio_single)に記録してある。
+                    # 2026-11-03: いったん before だけ場面の台帳を外して kernel を測ったが、それは規則表でなく
+                    # 5 倍の門を検査することになり(cv_cc_count が 724 で 1.6 倍勝つ)、この表の門の意味から外れた。
+                    before, _ = _sweep_times(op, im, a, "cuda", sync)
                     after, _ = _sweep_times(op, im, a, "auto", sync)
                     if lease.ok():
                         append(out, {"kind": "op", "name": op, "side": side, "a": a, "before_s": before,
