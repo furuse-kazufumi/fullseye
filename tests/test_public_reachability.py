@@ -268,7 +268,9 @@ def test_pending_exposure_shrinks_when_fixed():
 #   (Barcode1DError / QRDecodeError / DMDecodeError、どれも ValueError の子)、symrs の 5 本(内部部品、
 #   _INTERNAL)、symbol_scene(render_symbol の中身)・grade_letter(等級 → 文字)・zxing_available。
 #   実測 948 → 963。33 op 自身は fs.ledger から引ける。
-_HIDDEN_FUNCTIONS_TODAY = 963
+# 2026-11-04 統合(integrate/2026-11-04-families): 上の 3 台帳はどれも 948 から測っていたので、重ねると
+#   948 + 4(opsacceptance)+ 4(opsmatchreg)+ 15(opssymbol)= 971。実測も 971(各ブランチで認めた増分の和で、新しい増分はない)。
+_HIDDEN_FUNCTIONS_TODAY = 971
 
 
 def _hidden_total():
