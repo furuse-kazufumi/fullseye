@@ -56,7 +56,10 @@ TOL = 5e-3
 #: 採用の下限(転送込み)。
 MIN_RATIO = 5.0
 #: 実寸。画像 2048²、体積 256³、信号 2**20。
-REAL = {"grid2": 2048, "grid3": 256, "signal": 1 << 20, "matrix": 1024, "points": 200_000,
+#: 点群は 16,384 点(2**14)。全点対の距離行列(n^2 x 8 byte)を作る op があり、20 万点では 1 個で
+#: 約 320 GB になる。2**14 なら 2.1 GB で、3 並列でも主記憶 128 GB に収まる。点数に比例する
+#: op には GPU に有利な大きさではない(倍率は控えめに出る向き)。2026-11-03。
+REAL = {"grid2": 2048, "grid3": 256, "signal": 1 << 20, "matrix": 1024, "points": 1 << 14,
         "video_xy": 512, "lf_xy": 256}
 #: これらの本体が op の中で呼ばれたら「包み」の候補。
 WATCH = ("cv2", "skimage", "PIL", "sklearn", "pywt", "mahotas", "SimpleITK", "torch", "kornia")
@@ -308,11 +311,50 @@ def _zoom_axes(a, axes, target, np):
     return b.astype(a.dtype) if a.dtype.kind in "biu" or order == 0 else b
 
 
+def _is_point_array(v, np) -> bool:
+    """(n, 2) か (n, 3) の実数の点の並び(n >= 4)。"""
+    return (isinstance(v, np.ndarray) and v.ndim == 2 and v.shape[1] in (2, 3)
+            and v.shape[0] >= 4 and v.dtype.kind in "fiu")
+
+
+def _grow_points(v, target: int, np, jitter: bool):
+    """点の並びを *target* 点へ増やす。元の n 点はそのまま先頭に残す(構造を保つ)。
+
+    足す点は元の点の複製に、外接箱の対角の 1e-3 倍の決まった種のガウス揺らぎを足したもの
+    (同一点の重複で KD 木や RANSAC が退化しないように)。点ごとの属性(法線・重み)は
+    揺らぎなしで同じ順に複製する(``jitter=False``)。
+    """
+    n = v.shape[0]
+    if n >= target:
+        return v
+    reps = int(math.ceil(target / float(n)))
+    big = np.concatenate([v] * reps, axis=0)[:target].astype(np.float64 if v.dtype.kind == "f"
+                                                             else v.dtype, copy=True)
+    if jitter and v.dtype.kind == "f":
+        span = float(np.linalg.norm(np.ptp(v, axis=0))) or 1.0
+        rng = np.random.default_rng(20261103)
+        big[n:] += rng.normal(0.0, 1e-3 * span, size=big[n:].shape)
+    return big
+
+
 def scale_value(v, sort, size_for, seen, np):
     """1 つの葉を拡大する。``seen`` は最初に見た空間形(同じ形の葉を揃えて拡大する)。"""
     if isinstance(v, np.ndarray):
         if v.dtype.kind not in "biufc":
             return v
+        if sort in ("points", "normals") and _is_point_array(v, np):
+            if seen.get("points_n") is None:
+                seen.update(points_n=v.shape[0], points_target=REAL["points"])
+                seen.setdefault("shape", None)
+            if v.shape[0] != seen["points_n"]:
+                return v
+            return _grow_points(v, seen["points_target"], np, jitter=(sort == "points"))
+        if sort is None and seen.get("points_n") is not None and v.ndim >= 1 \
+                and v.shape[0] == seen["points_n"] and v.shape[0] >= 4:
+            # 主入力の点と同じ数の行を持つ配列(点ごとの属性): 揺らぎなしで同じ順に複製
+            return _grow_points(v, seen["points_target"], np, jitter=False) if v.ndim == 2 \
+                else np.concatenate([v] * int(math.ceil(seen["points_target"] / float(v.shape[0]))),
+                                    axis=0)[:seen["points_target"]]
         if sort is None:
             # kwargs 側の配列: 主入力と同じ空間形のものだけ揃える
             if seen.get("shape") is None or v.ndim < len(seen["axes"]):
@@ -351,7 +393,10 @@ def scale_args(env, name, args, kwargs, size_for):
     out = []
     for i, v in enumerate(args):
         s = sorts[i] if i < len(sorts) else None
-        if s == "points" or s in ("table", "mesh", "pose", "measurement"):
+        if s in ("points", "normals"):
+            out.append(scale_value(v, s, size_for, seen, np))
+            continue
+        if s in ("table", "mesh", "pose", "measurement"):
             out.append(v)
             continue
         out.append(scale_value(v, s if s in GRID_SORTS or s in ("signal", "video", "lightfield",
@@ -923,11 +968,38 @@ def unreal_running() -> bool:
         return True               # 確かめられないなら使わない(fail-closed)
 
 
-class GpuLock:
-    """他人のロックは待つ・消さない。自分のロックは必ず消す。"""
+#: ロックを握ってよい最長の時間(規則は 10 分)。超えたら自分のプロセスの木ごと止める。
+GPU_LOCK_MAX_HOLD_S = float(os.environ.get("FULLSEYE_GPU_LOCK_MAX_HOLD_S", "600"))
 
-    def __init__(self, path, owner):
+
+class GpuLock:
+    """他人のロックは待つ・消さない。自分のロックは必ず消す。
+
+    保持中は見張りのスレッドが動き、``GPU_LOCK_MAX_HOLD_S`` を超えたらロックを消してから
+    自分のプロセスの木を止める(2026-11-03: 計測が C の中で固まり、ロックを 74 分握り続けた。
+    op と op の間の保持時間の検査だけでは、固まった計算を止められなかった)。ロックの行には
+    ``pid=<n>`` を書く(外の見張り ``C:/dev/tools/gpu_lock_watchdog.py`` が持ち主を特定できるように)。
+    """
+
+    def __init__(self, path, owner, max_hold: float = None):
         self.path, self.owner, self.held = (Path(path) if path else None), owner, False
+        self.max_hold = GPU_LOCK_MAX_HOLD_S if max_hold is None else float(max_hold)
+        self._stop = None
+
+    def _watch(self, stop) -> None:
+        if stop.wait(self.max_hold):
+            return                                  # 期限内に release された
+        try:
+            if self.path.read_text().startswith(self.owner):
+                self.path.unlink()
+        except OSError:
+            pass
+        sys.stderr.write("GpuLock: held over %.0f s; killing this process tree\n" % self.max_hold)
+        sys.stderr.flush()
+        if os.name == "nt":
+            subprocess.run(["taskkill", "/PID", str(os.getpid()), "/T", "/F"],
+                           capture_output=True)
+        os._exit(75)
 
     def acquire(self, max_wait: float) -> bool:
         if self.path is None:
@@ -944,8 +1016,13 @@ class GpuLock:
                     time.sleep(5)
                     continue
                 with os.fdopen(fd, "w") as f:
-                    f.write("%s %s\n" % (self.owner, time.strftime("%Y-%m-%dT%H:%M:%S")))
+                    f.write("%s %s pid=%d\n" % (self.owner, time.strftime("%Y-%m-%dT%H:%M:%S"),
+                                                 os.getpid()))
                 self.held = True
+                import threading
+                self._stop = threading.Event()
+                threading.Thread(target=self._watch, args=(self._stop,), daemon=True,
+                                 name="gpu-lock-watch").start()
                 return True
             time.sleep(3)
         return False
@@ -959,6 +1036,9 @@ class GpuLock:
             return False
 
     def release(self) -> None:
+        if self._stop is not None:
+            self._stop.set()
+            self._stop = None
         if self.path is not None and self.held:
             try:
                 if self.path.read_text().startswith(self.owner):
@@ -1100,6 +1180,12 @@ def targets_for(stage) -> list:
     if stage == "scale_cpu":
         par = read_rows("parity")
         cpu = read_rows("cpu")
+        if os.environ.get("GPU_SWEEP_REDO_FIXED") == "1":
+            # 拡大の規則を足したあと(2026-11-03 点群): 固定形だった op だけ測り直す(新しい行が勝つ)
+            base = read_rows("scale_cpu")
+            return [n for n in all_names if par.get(n, {}).get("status") == "match"
+                    and base.get(n, {}).get("status") == "fixed_input"
+                    and not is_python_loop(cpu.get(n, {}))]
         return [n for n in all_names if par.get(n, {}).get("status") == "match"
                 and n not in done and not is_python_loop(cpu.get(n, {}))]
     if stage == "resident":

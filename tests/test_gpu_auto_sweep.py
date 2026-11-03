@@ -252,3 +252,35 @@ def test_resident_ops_are_never_mixed_into_the_single_call_list():
     assert all(v["ratio_resident"] >= ALLOW["min_ratio"] and v["ratio_single"] < ALLOW["min_ratio"]
                for v in res.values())
     assert "resident_ops" not in G.allowed_ops()
+
+
+# ---- GPU ロックの上限(2026-11-03: 固まった計測がロックを 74 分握った) ---------------- #
+def test_gpu_lock_kills_its_own_process_when_held_too_long(tmp_path):
+    """保持が上限を超えたら、ロックを消して自分のプロセスの木を止める(GPU は使わない)。"""
+    lk = tmp_path / "lk"
+    code = (
+        "import sys, time; sys.path.insert(0, %r)\n"
+        "import gpu_auto_sweep as S\n"
+        "L = S.GpuLock(%r, 'self_test', max_hold=2)\n"
+        "assert L.acquire(5)\n"
+        "print(open(%r).read().strip(), flush=True)\n"
+        "time.sleep(60)\n"
+        "print('SHOULD NOT REACH', flush=True)\n" % (str(ROOT / "tools"), str(lk), str(lk)))
+    cp = subprocess.run([sys.executable, "-c", code], capture_output=True, text=True, timeout=50)
+    assert "SHOULD NOT REACH" not in cp.stdout
+    assert cp.returncode != 0
+    assert "pid=" in cp.stdout                      # 外の見張りが持ち主を特定できる
+    assert not lk.exists()
+
+
+def test_gpu_lock_released_in_time_does_not_kill(tmp_path):
+    lk = tmp_path / "lk"
+    code = (
+        "import sys, time; sys.path.insert(0, %r)\n"
+        "import gpu_auto_sweep as S\n"
+        "L = S.GpuLock(%r, 'ok_test', max_hold=2)\n"
+        "assert L.acquire(5); time.sleep(0.5); L.release(); time.sleep(3)\n"
+        "print('alive', flush=True)\n" % (str(ROOT / "tools"), str(lk)))
+    cp = subprocess.run([sys.executable, "-c", code], capture_output=True, text=True, timeout=50)
+    assert cp.returncode == 0 and "alive" in cp.stdout
+    assert not lk.exists()
