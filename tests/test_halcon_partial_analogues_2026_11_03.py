@@ -35,6 +35,7 @@ def test_partial_table_is_the_audited_families():
         "apply_texture_inspection_model", "camera_calibration",
         # 第 3 便: 部分対応の探す側と対になる、モデルを作る側
         "create_local_deformable_model", "create_shape_model_3d"}
+    assert len(HC.PARTIAL) >= 16, "部分対応が 0 件では下の表明が空を通す(11/03 時点で 16 件)"
     for name, (ref, does, does_not) in HC.PARTIAL.items():
         assert ref.endswith("." + name) and does.strip() and does_not.strip(), name
 
@@ -65,6 +66,7 @@ def test_shipped_stubs_mark_partial_and_count_honestly():
     stubs = json.loads((ROOT / "fullseye" / "data" / "halcon_stubs.json").read_text(encoding="utf-8"))
     facade = json.loads((ROOT / "fullseye" / "data" / "halcon_facade_map.json").read_text(encoding="utf-8"))
     ops = stubs["operators"]
+    assert len(HC.PARTIAL) >= 16, "部分対応が 0 件では下の表明が空を通す(11/03 時点で 16 件)"
     for name, (ref, does, does_not) in HC.PARTIAL.items():
         assert ops[name]["covered"] is False, name
         assert ops[name]["partial"] == {"does": does, "does_not": does_not}, name
