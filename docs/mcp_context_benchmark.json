@@ -46,8 +46,8 @@
     {
       "task": "locate a part for handling",
       "tool_schema_tokens": 1497,
-      "response_tokens": 247,
-      "total_tokens": 1744,
+      "response_tokens": 304,
+      "total_tokens": 1801,
       "planned": true,
       "expected": "shape_locate",
       "expected_rank": 1,
@@ -70,8 +70,8 @@
     {
       "task": "switch product and detect corners",
       "tool_schema_tokens": 1497,
-      "response_tokens": 428,
-      "total_tokens": 1925,
+      "response_tokens": 437,
+      "total_tokens": 1934,
       "planned": true,
       "expected": "cv_good_features",
       "expected_rank": 1,

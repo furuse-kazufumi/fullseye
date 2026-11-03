@@ -53,7 +53,13 @@ def build() -> dict:
     import fullseye  # noqa: F401
     import recipes
     from fullseye import recipebook as rb
-    index = {r["name"]: r for r in json.loads((ROOT / "fullseye/data/RECIPE_INDEX.json").read_text(encoding="utf-8"))["recipes"]}
+    # RECIPE_INDEX は読まない(docmap の段より前に回すため。runner / 分類は同じ規則でここで決める)。
+    sys.path.insert(0, str(ROOT / "tools"))
+    from gen_recipe_index import LEGACY_TASK_CLASS
+    index = {r["name"]: {"runner": "mcp", "task_class": LEGACY_TASK_CLASS.get(r["task"], "preprocess"), "halcon": None}
+             for r in recipes.RECIPES}
+    index.update({r["name"]: {"runner": "mcp" if rb.is_mcp_runnable(r) else "python",
+                              "task_class": r["task_class"], "halcon": r.get("halcon")} for r in rb.RECIPES})
     snap = json.loads(SNAP.read_text(encoding="utf-8")) if SNAP.exists() else {"routes": {}}
     routes = snap.get("routes", {})
     fam_ops = rb.op_families()

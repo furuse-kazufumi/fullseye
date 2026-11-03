@@ -104,6 +104,10 @@ CHAIN = [
     (["tools/conversion_matrix.py", "--md", "docs/CONVERSION_MATRIX.md"],
      "docs/CONVERSION_MATRIX.md(表現の変換表)"),
       (["tools/gen_op_facets.py"], "single op graph and its generated facets"),
+    # OP_GRAPH(gen_op_facets)の後、docmap(gen_docs_index_ops、文書の題を読む)の前。RECIPE_INDEX は読まない。
+    # GPU の欄は手で撮る snapshot docs/recipe_gpu_routes.json(tools/snapshot_recipe_gpu_routes.py、別 worktree が
+    # 要るので鎖に入れない)だけを読む。
+    (["tools/gen_recipe_coverage.py"], "docs/RECIPE_COVERAGE.md + recipe_coverage.json(族の網羅・型の切れ目・GPU 切替)"),
     (["tools/gen_design_notes.py"], "設計判断集(ソースの ★ から 6 言語)"),
     # ★2026-10-15: 13 番目から最後の方へ下げた。docmap が docs/*.md の**題**を読むので、
     #   題を持つ生成物(OPERATORS / REFERENCES / EXAMPLES / EXAMPLES_3D / SENSOR_PLAYBOOK /
@@ -119,9 +123,6 @@ CHAIN = [
     # 索引と op ノートの後(複製するので)。
     (["tools/gen_mcp_data.py"], "fullseye/data operator search, cards, and probe metadata"),
     (["tools/gen_recipe_index.py"], "existing-example recipe retrieval index and source inventory"),
-    # 索引の後(RECIPE_INDEX の runner / task_class を読む)。GPU の欄は手で撮る snapshot
-    # docs/recipe_gpu_routes.json(tools/snapshot_recipe_gpu_routes.py、別 worktree が要るので鎖に入れない)だけを読む。
-    (["tools/gen_recipe_coverage.py"], "docs/RECIPE_COVERAGE.md + recipe_coverage.json(族の網羅・型の切れ目・GPU 切替)"),
     (["tools/gen_recipe_retrieval_report.py"], "business-language recipe recall report"),
     (["tools/measure_mcp_context.py"], "six-task minimal MCP context benchmark"),
     (["tools/gen_rag_benchmark_report.py"], "RAG recall measurement and synonym-gap report"),
@@ -253,13 +254,13 @@ READS = {
         "docs/REFERENCES.md", "docs/EXAMPLES.md", "docs/CONVERSION_MATRIX.md",
         "docs/HALCON_PARITY.md",
         "docs/DESIGN_NOTES.md", "docs/DESIGN_NOTES.*.md",
-        "docs/AI_RAG_GUIDE.md", "docs/AI_RAG_GUIDE.*.md",
+        "docs/AI_RAG_GUIDE.md", "docs/AI_RAG_GUIDE.*.md", "docs/RECIPE_COVERAGE.md",
         "docs/view2026/index.md", "docs/view2026/*/index.md"],
     "tools/gen_mcp_data.py": ["docs/OP_INDEX.json", "docs/ops/*"],
     "tools/gen_op_facets.py": ["docs/OP_INDEX.json", "docs/ops/families.json",
                                   "docs/ops/families_timing.json"],
-    "tools/gen_recipe_index.py": ["fullseye/data/OP_SEARCH.json"],
-    "tools/gen_recipe_coverage.py": ["fullseye/data/RECIPE_INDEX.json"],
+    "tools/gen_recipe_index.py": ["fullseye/data/OP_SEARCH.json", "fullseye/data/OP_GRAPH.json"],
+    "tools/gen_recipe_coverage.py": ["fullseye/data/OP_GRAPH.json"],
     "tools/gen_recipe_retrieval_report.py": ["fullseye/data/RECIPE_INDEX.json"],
     "tools/measure_mcp_context.py": ["fullseye/data/OP_GRAPH.json", "fullseye/data/OP_SEARCH.json",
                                       "fullseye/data/OP_CARDS.json", "fullseye/data/OP_PROBE.json",
