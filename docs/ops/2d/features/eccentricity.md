@@ -5,7 +5,7 @@ category: features
 in: region
 out: match
 halcon: eccentricity
-gpu: なし
+gpu: 鎖の中だけ(lbl_eccentricity)
 examples: [gallery2d_features, poc_rotation_invariance_audit]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -17,7 +17,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **データ種**: `region` → `match`
 - **呼び出し**: `fullseye.apply(img, "eccentricity", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 - **HALCON 相当**: `eccentricity`(意味・パラメータは HALCON リファレンスが参考になる)
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: 鎖の中だけ(`lbl_eccentricity`)。隣の段も GPU のパイプラインでは GPU に載せたまま走る。単独の呼び出しは `device="cuda"` でも CPU(単独では CPU に勝たないと実測した)
 
 ![eccentricity: input → output](../../_fig/eccentricity.png)
 
