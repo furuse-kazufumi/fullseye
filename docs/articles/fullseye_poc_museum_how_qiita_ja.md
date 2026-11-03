@@ -4,7 +4,7 @@
 
 > **[紙面の計測館 総合案内](https://qiita.com/furuse-kazufumi/items/c1606bcfa2085d204ad6)** の一棟です。ほかの棟・用語・テーゼは案内にあります。
 
-この棟には **99 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
+この棟には **103 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
 
 > 各展示の「使用 op」から、その op のノート(型契約・罠・図・Studio で走るプログラム)へ飛べます: [オペレータ目録](https://furuse.work/OP_CATALOG.html) / [op ノートの索引](https://furuse.work/ops/INDEX.html)。
 
@@ -1634,7 +1634,7 @@ py -3.11 examples/poc_periodic_video_boundary.py
 
 ### 幾何・校正ウィング ―― 残差が小さいことは正しさの証明にならない
 
-カメラ校正の再投影誤差、パノラマの継ぎ目、点群位置合わせの残差。どれも「小さいほど良い」と読まれる数字ですが、この部屋の 20 点はその読み方が成り立たない場面を、真値を握った上で並べています。
+カメラ校正の再投影誤差、パノラマの継ぎ目、点群位置合わせの残差。どれも「小さいほど良い」と読まれる数字ですが、この部屋の 24 点はその読み方が成り立たない場面を、真値を握った上で並べています。
 
 再投影誤差 0.0688〜0.0690 px で焦点距離の誤差が 0.026〜7.334 %。隣の継ぎ目が 0.12 px なのに閉じる 1 本だけ 1.5 px。球や円柱では残差が同じまま姿勢が任意。最小二乗は残差を雑音まで落とすのが仕事で、落ちた先が真値かどうかは別の話です。
 
@@ -2383,6 +2383,102 @@ py -3.11 examples/poc_simcal_thin_film.py
 この回が作った図は全部で **9 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_simcal_thin_film)
 
 使用 op(ノートへ): [`axes_frame`](https://furuse.work/ops/annotate/plot/axes_frame.html) · [`axes_transform`](https://furuse.work/ops/annotate/plot/axes_transform.html) · [`blackbody_spectrum`](https://furuse.work/ops/optics/spectral/blackbody_spectrum.html) · [`color_bar`](https://furuse.work/ops/annotate/furniture/color_bar.html) · [`doe_decode`](https://furuse.work/ops/multivar/coding/doe_decode.html) · [`doe_orthogonal_array`](https://furuse.work/ops/multivar/plan/doe_orthogonal_array.html) · [`gamma`](https://furuse.work/ops/2d/gray/gamma.html) · [`gaussian`](https://furuse.work/ops/2d/smoothing/gaussian.html) · [`multilayer_reflectance`](https://furuse.work/ops/optics/film/multilayer_reflectance.html) · [`mv_confounding`](https://furuse.work/ops/multivar/identifiability/mv_confounding.html) · [`mv_pca`](https://furuse.work/ops/multivar/analysis/mv_pca.html) · [`nice_ticks`](https://furuse.work/ops/annotate/plot/nice_ticks.html) · [`plot_series`](https://furuse.work/ops/annotate/plot/plot_series.html) · [`simcal_discrepancy`](https://furuse.work/ops/simcal/check/simcal_discrepancy.html) · [`simcal_fit`](https://furuse.work/ops/simcal/fit/simcal_fit.html) · [`simcal_identifiability`](https://furuse.work/ops/simcal/check/simcal_identifiability.html) · [`simcal_model`](https://furuse.work/ops/simcal/model/simcal_model.html) · [`simcal_observe`](https://furuse.work/ops/simcal/model/simcal_observe.html) · [`simcal_report`](https://furuse.work/ops/simcal/report/simcal_report.html) · [`simcal_screen`](https://furuse.work/ops/simcal/fit/simcal_screen.html) · [`simcal_simulate`](https://furuse.work/ops/simcal/model/simcal_simulate.html) · [`simcal_uncertainty`](https://furuse.work/ops/simcal/check/simcal_uncertainty.html) · [`simcal_validate`](https://furuse.work/ops/simcal/check/simcal_validate.html) · [`spectrum_to_srgb`](https://furuse.work/ops/optics/appearance/spectrum_to_srgb.html) …(他 2)
+
+## No.2026.290 —— 真値つきのカメラ校正 ―― 再投影 0.044 px でも隅では 0.568 px 誤る
+
+真の K・樽型歪み(k1 = −0.21)・6 姿勢でチェッカー板を描き、角 324 点を find_checkerboard_corners で拾った(描画の真値に rms 0.046 px)。fx の誤差は Zhang の閉形式(K だけ)で 12.89 %、K・歪み・全姿勢を同時に詰める camera_calibration_lm で 0.133 %。共分散の 1σ は 0.85 px で、推定 798.94 はその内に入る。再投影の rms は 0.044 px と小さいが、真値と比べた誤差の地図では中央 0.094 px、隅で最大 0.568 px(500 mm 先で 0.413 mm)になる。共分散を写した不確かさの地図は真値なしで平均 0.225 px。板を中心にしか置いていない 4 枚に次の 1 枚を推薦させると隅を選び、モンテカルロの実際の誤差は 1.41 px(中心に正対 3.13、遠い中心 3.98 px)。隅どうしの順位の差は雑音の内。
+
+[![真値つきのカメラ校正 ―― 再投影 0.044 px でも隅では 0.568 px 誤る](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calibration_truth_map/01_calibration_maps_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calibration_truth_map/01_calibration_maps.png)
+
+*↑ **真値つきのカメラ校正 ―― 再投影 0.044 px でも隅では 0.568 px 誤る** ―― 真の K・樽型歪み(k1 = −0.21)・6 姿勢でチェッカー板を描き、角 324 点を find_checkerboard_corners で拾った(描画の真値に rms 0.046 px)。fx の誤差は Zhang の閉形式(K だけ)で 12.89 %、K・歪み・全姿勢を同時に詰める camera_calibration_lm で 0.133 %。共分散の 1σ は 0.85 px で、推定 798.94 はその内に入る。再投影の rms は 0.044 px と小さいが、真値と比べた誤差の地図では中央 0.094 px、隅で最大 0.568 px(500 mm 先で 0.413 mm)になる。共分散を写した不確かさの地図は真値なしで平均 0.225 px。板を中心にしか置いていない 4 枚に次の 1 枚を推薦させると隅を選び、モンテカルロの実際の誤差は 1.41 px(中心に正対 3.13、遠い中心 3.98 px)。隅どうしの順位の差は雑音の内。*
+
+[![calibration_next_pose prediction vs Monte Carlo error against the truth](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calibration_truth_map/02_calibration_next_pose_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calibration_truth_map/02_calibration_next_pose.png)
+
+*↑ 測定の図 ―― calibration_next_pose prediction vs Monte Carlo error against the truth*
+
+[![6 candidate poses; the linear prediction ranks the far centre worst and the corners best](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calibration_truth_map/03_calibration_next_pose_scatter_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calibration_truth_map/03_calibration_next_pose_scatter.png)
+
+*↑ 6 candidate poses; the linear prediction ranks the far centre worst and the corners best*
+
+```
+py -3.11 examples/poc_calibration_truth_map.py
+```
+
+ソース: [examples/poc_calibration_truth_map.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_calibration_truth_map.py)
+
+この回が作った図は全部で **3 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_calibration_truth_map)
+
+使用 op(ノートへ): [`calibration_error_map`](https://furuse.work/ops/calib/calib_truth/calibration_error_map.html) · [`calibration_next_pose`](https://furuse.work/ops/calib/calib_truth/calibration_next_pose.html) · [`calibration_uncertainty_map`](https://furuse.work/ops/calib/calib_truth/calibration_uncertainty_map.html) · [`camera_calibration`](https://furuse.work/ops/calib/calibrate/camera_calibration.html) · [`camera_calibration_lm`](https://furuse.work/ops/calib/calibrate/camera_calibration_lm.html) · [`checkerboard_points`](https://furuse.work/ops/calib/checkerboard/checkerboard_points.html) · [`find_checkerboard_corners`](https://furuse.work/ops/calib/checkerboard/find_checkerboard_corners.html) · [`project`](https://furuse.work/ops/3d/bundle_adjust/project.html) · [`sim_checkerboard`](https://furuse.work/ops/calib/checkerboard/sim_checkerboard.html)
+
+## No.2026.293 —— 37 度回した部品を SIFT は 0.367 px で見つけ、既存の Harris は 158 px 外す
+
+寸法表から描いた板金部品(穴 4・長穴・面取り・刻印、1 px = 0.1 mm)を回転 37 度・0.85 倍・わずかな遠近・照明 0.8 倍・ぼけ・雑音で散らかった背景に置いた。features_sift → features_match → ransac_homography の 4 隅誤差は 0.367 px、中心は 0.011 mm、回転は 0.062 度。ORB でも 0.733 px。既存の Harris + 正規化パッチ(回転・スケール不変ではない)は照合 5・内れ値 4 で 4 隅誤差 158.0 px と外す。features_accuracy_table で壊れる条件を表にすると、最悪はぼけ σ = 4 の 5.889 px。重なり 80 px の帯に正しい組が 9 つしか無い貼り合わせでは、8 自由度の射影は 4 隅誤差 9.384 px、並進の模型は 0.081 px。並進で貼った絵と真の絵の差は rms 0.0094 で、撮像の雑音 σ = 0.0100 を下回る。
+
+[![37 度回した部品を SIFT は 0.367 px で見つけ、既存の Harris は 158 px 外す](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_part_locate_features/01_part_locate_sift_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_part_locate_features/01_part_locate_sift.png)
+
+*↑ **37 度回した部品を SIFT は 0.367 px で見つけ、既存の Harris は 158 px 外す** ―― 寸法表から描いた板金部品(穴 4・長穴・面取り・刻印、1 px = 0.1 mm)を回転 37 度・0.85 倍・わずかな遠近・照明 0.8 倍・ぼけ・雑音で散らかった背景に置いた。features_sift → features_match → ransac_homography の 4 隅誤差は 0.367 px、中心は 0.011 mm、回転は 0.062 度。ORB でも 0.733 px。既存の Harris + 正規化パッチ(回転・スケール不変ではない)は照合 5・内れ値 4 で 4 隅誤差 158.0 px と外す。features_accuracy_table で壊れる条件を表にすると、最悪はぼけ σ = 4 の 5.889 px。重なり 80 px の帯に正しい組が 9 つしか無い貼り合わせでは、8 自由度の射影は 4 隅誤差 9.384 px、並進の模型は 0.081 px。並進で貼った絵と真の絵の差は rms 0.0094 で、撮像の雑音 σ = 0.0100 を下回る。*
+
+[![測定の図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_part_locate_features/02_part_locate_accuracy_table_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_part_locate_features/02_part_locate_accuracy_table.png)
+
+*↑ 測定の図*
+
+[![80 px overlap, 9 true pairs: corner error per model](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_part_locate_features/03_part_locate_stitch_models_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_part_locate_features/03_part_locate_stitch_models.png)
+
+*↑ 80 px overlap, 9 true pairs: corner error per model*
+
+```
+py -3.11 examples/poc_part_locate_features.py
+```
+
+ソース: [examples/poc_part_locate_features.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_part_locate_features.py)
+
+この回が作った図は全部で **3 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_part_locate_features)
+
+使用 op(ノートへ): [`features_accuracy_table`](https://furuse.work/ops/matchreg/featmatch/features_accuracy_table.html) · [`features_match`](https://furuse.work/ops/matchreg/featmatch/features_match.html) · [`features_orb`](https://furuse.work/ops/matchreg/featmatch/features_orb.html) · [`features_sift`](https://furuse.work/ops/matchreg/featmatch/features_sift.html) · [`identity`](https://furuse.work/ops/2d/misc/identity.html) · [`ransac_homography`](https://furuse.work/ops/matchreg/featmatch/ransac_homography.html)
+
+## No.2026.294 —— 相関 −0.74 の可視と赤外の基板像を、相互情報量は 0.170 px で合わせる
+
+寸法表の基板を、可視の反射率と赤外の放射 εT⁴ + (1−ε)T_amb⁴ の 2 通りに撮った。銅は可視で 0.80 と明るく、赤外では放射率 0.07 で暗い。IC は可視 0.07、赤外では放射率 0.95・352 K で明るい。真の位置での相関係数は −0.7435 で、明るさの対応が単調でない。register_mi(正規化相互情報量、アフィン)は真のアフィンを 4 隅誤差 0.170 px で取り戻した。register_ecc は相関の 2 次近似の分母が −557 になって拒否し、合ったふりをしない。位相相関の aoi.register_image は residual 2.12 で consistent=False。初期のずれごとの MI の成功率(8 方向、4 隅誤差 < 0.5 px)は 2・4 px で 1.000、8 px で 0.875、16 px で 0.625。
+
+[![相関 −0.74 の可視と赤外の基板像を、相互情報量は 0.170 px で合わせる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_multimodal_mi_registration/01_multimodal_mi_pair_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_multimodal_mi_registration/01_multimodal_mi_pair.png)
+
+*↑ **相関 −0.74 の可視と赤外の基板像を、相互情報量は 0.170 px で合わせる** ―― 寸法表の基板を、可視の反射率と赤外の放射 εT⁴ + (1−ε)T_amb⁴ の 2 通りに撮った。銅は可視で 0.80 と明るく、赤外では放射率 0.07 で暗い。IC は可視 0.07、赤外では放射率 0.95・352 K で明るい。真の位置での相関係数は −0.7435 で、明るさの対応が単調でない。register_mi(正規化相互情報量、アフィン)は真のアフィンを 4 隅誤差 0.170 px で取り戻した。register_ecc は相関の 2 次近似の分母が −557 になって拒否し、合ったふりをしない。位相相関の aoi.register_image は residual 2.12 で consistent=False。初期のずれごとの MI の成功率(8 方向、4 隅誤差 < 0.5 px)は 2・4 px で 1.000、8 px で 0.875、16 px で 0.625。*
+
+[![register_mi: success rate per initial offset (8 directions)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_multimodal_mi_registration/02_multimodal_mi_capture_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_multimodal_mi_registration/02_multimodal_mi_capture.png)
+
+*↑ 測定の図 ―― register_mi: success rate per initial offset (8 directions)*
+
+```
+py -3.11 examples/poc_multimodal_mi_registration.py
+```
+
+ソース: [examples/poc_multimodal_mi_registration.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_multimodal_mi_registration.py)
+
+この回が作った図は全部で **2 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_multimodal_mi_registration)
+
+使用 op(ノートへ): [`register_ecc`](https://furuse.work/ops/matchreg/intensityreg/register_ecc.html) · [`register_image`](https://furuse.work/ops/aoi/geometric/register_image.html) · [`register_mi`](https://furuse.work/ops/matchreg/intensityreg/register_mi.html)
+
+## No.2026.295 —— シートの変形を FFD は 0.025 px で追うが、バーコードと余白では場が決まらない
+
+点の格子・文字・格子縞・縦棒だけのバーコード・余白の 5 領域を持つシートに、異物の膨らみ 2 か所と引き伸ばしの既知の場(最大 3.279 px)を掛けた。2 方向の模様の 3 領域での EPE の平均は、register_ffd 0.025 px、既存の demons 0.125 px、アフィンの ECC 1.226 px。開口問題のため、バーコードでは dy の誤差 0.805 px が dx の 0.032 px の 25.2 倍になる。余白の EPE 中央値 1.321 px は、模様のある所の 69.1 倍。波長 24 px の皺では、格子 8 / 12 / 16 px の誤差が 0.062 / 0.329 / 0.505 px と増える。曲げの罰だけだと余白の推定は最大 34.26 px まで暴れる(真の振幅 1.5 px)。membrane_weight = 0.1 で 3.59 px に収まるが、模様のある所の精度と引き換えなので既定は曲げだけのまま。registration_to_flow2d → piv_flow_magnitude の最大は 3.291 px(真値 3.279 px)。
+
+[![シートの変形を FFD は 0.025 px で追うが、バーコードと余白では場が決まらない](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_sheet_deformation_ffd/01_sheet_ffd_error_maps_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_sheet_deformation_ffd/01_sheet_ffd_error_maps.png)
+
+*↑ **シートの変形を FFD は 0.025 px で追うが、バーコードと余白では場が決まらない** ―― 点の格子・文字・格子縞・縦棒だけのバーコード・余白の 5 領域を持つシートに、異物の膨らみ 2 か所と引き伸ばしの既知の場(最大 3.279 px)を掛けた。2 方向の模様の 3 領域での EPE の平均は、register_ffd 0.025 px、既存の demons 0.125 px、アフィンの ECC 1.226 px。開口問題のため、バーコードでは dy の誤差 0.805 px が dx の 0.032 px の 25.2 倍になる。余白の EPE 中央値 1.321 px は、模様のある所の 69.1 倍。波長 24 px の皺では、格子 8 / 12 / 16 px の誤差が 0.062 / 0.329 / 0.505 px と増える。曲げの罰だけだと余白の推定は最大 34.26 px まで暴れる(真の振幅 1.5 px)。membrane_weight = 0.1 で 3.59 px に収まるが、模様のある所の精度と引き換えなので既定は曲げだけのまま。registration_to_flow2d → piv_flow_magnitude の最大は 3.291 px(真値 3.279 px)。*
+
+[![測定の図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_sheet_deformation_ffd/02_sheet_ffd_regions_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_sheet_deformation_ffd/02_sheet_ffd_regions.png)
+
+*↑ 測定の図*
+
+```
+py -3.11 examples/poc_sheet_deformation_ffd.py
+```
+
+ソース: [examples/poc_sheet_deformation_ffd.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_sheet_deformation_ffd.py)
+
+この回が作った図は全部で **2 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_sheet_deformation_ffd)
+
+使用 op(ノートへ): [`median`](https://furuse.work/ops/2d/rank/median.html) · [`piv_flow_magnitude`](https://furuse.work/ops/piv/field/piv_flow_magnitude.html) · [`register_accuracy_map`](https://furuse.work/ops/matchreg/intensityreg/register_accuracy_map.html) · [`register_ffd`](https://furuse.work/ops/matchreg/intensityreg/register_ffd.html) · [`registration_to_flow2d`](https://furuse.work/ops/matchreg/intensityreg/registration_to_flow2d.html)
 
 ### 色・分離ウィング ―― 「効く手法」は無い、あるのは効く条件だけ
 

@@ -1,0 +1,46 @@
+[
+ {
+  "file": "01_acceptance_layout_and_noise.png",
+  "name": "acceptance_layout_and_noise",
+  "caption": "artefact layout (VDI/VDE 2634-2 idea) and the noise each design leaves on the flat",
+  "shape": [
+   532,
+   2296,
+   3
+  ]
+ },
+ {
+  "file": "02_acceptance_sd_per_position.png",
+  "name": "acceptance_sd_per_position",
+  "caption": "SD of the three designs at the 7 ball-bar positions; dashed = +-MPE",
+  "shape": [
+   720,
+   1598,
+   3
+  ]
+ },
+ {
+  "file": "03_acceptance_designs.png",
+  "name": "acceptance_designs",
+  "caption": "worst value over positions; MPE is an illustrative spec",
+  "shape": [
+   304,
+   1124,
+   3
+  ],
+  "csv": "03_acceptance_designs.csv",
+  "tsv": "03_acceptance_designs.tsv"
+ },
+ {
+  "file": "04_acceptance_error_budget.png",
+  "name": "acceptance_error_budget",
+  "caption": "decisive alone: black sphere (rho 0.1)",
+  "shape": [
+   496,
+   965,
+   3
+  ],
+  "csv": "04_acceptance_error_budget.csv",
+  "tsv": "04_acceptance_error_budget.tsv"
+ }
+]

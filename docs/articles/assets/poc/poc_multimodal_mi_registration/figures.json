@@ -1,0 +1,24 @@
+[
+ {
+  "file": "01_multimodal_mi_pair.png",
+  "name": "multimodal_mi_pair",
+  "caption": "NMI affine: corner error 0.170 px; correlation at truth -0.743",
+  "shape": [
+   614,
+   750,
+   3
+  ]
+ },
+ {
+  "file": "02_multimodal_mi_capture.png",
+  "name": "multimodal_mi_capture",
+  "caption": "register_mi: success rate per initial offset (8 directions)",
+  "shape": [
+   352,
+   373,
+   3
+  ],
+  "csv": "02_multimodal_mi_capture.csv",
+  "tsv": "02_multimodal_mi_capture.tsv"
+ }
+]

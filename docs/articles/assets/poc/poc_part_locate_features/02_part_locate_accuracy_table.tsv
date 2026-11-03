@@ -1,0 +1,11 @@
+condition	repeatability	precision	matches	corner_err_px
+identity	1.00	1.00	109	0.000
+rotate_45	0.80	0.92	49	0.715
+scale_0.5	0.73	0.94	52	0.084
+scale_2.0	0.55	0.86	14	3.926
+perspective_high	0.70	0.94	48	0.203
+gain_0.5	0.46	1.00	49	0.000
+blur_2	0.41	0.92	39	0.322
+blur_4	0.10	0.62	16	5.889
+noise_0.05	0.75	0.96	75	0.336
+noise_0.10	0.54	0.92	48	1.012

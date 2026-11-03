@@ -1,0 +1,7 @@
+﻿candidate,predicted px,actual error px (MC 15)
+"centre, frontal",3.64,3.13
+"centre, far (1.1 m)",3.93,3.98
+top-left  <- recommended,1.53,1.41
+bottom-right,1.58,1.52
+top-right,1.53,1.33
+bottom-left,1.58,1.42

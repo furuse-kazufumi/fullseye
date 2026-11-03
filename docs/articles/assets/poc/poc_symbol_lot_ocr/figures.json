@@ -1,0 +1,24 @@
+[
+ {
+  "file": "01_lot_ocr_defocus.png",
+  "name": "lot_ocr_defocus",
+  "caption": "学習の範囲を越えたぼけでは棄却が効かず、誤読が増える。",
+  "shape": [
+   393,
+   340,
+   3
+  ]
+ },
+ {
+  "file": "02_lot_ocr_levels.png",
+  "name": "lot_ocr_levels",
+  "caption": "",
+  "shape": [
+   688,
+   636,
+   3
+  ],
+  "csv": "02_lot_ocr_levels.csv",
+  "tsv": "02_lot_ocr_levels.tsv"
+ }
+]

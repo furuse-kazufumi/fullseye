@@ -93,6 +93,10 @@
    "accessioned": "2026-09-07",
    "no": "2026.058"
   },
+  "poc_calibration_truth_map": {
+   "accessioned": "2026-11-04",
+   "no": "2026.290"
+  },
   "poc_calipers_under_illusion": {
    "accessioned": "2026-09-24",
    "no": "2026.144"
@@ -413,6 +417,10 @@
    "accessioned": "2026-10-14",
    "no": "2026.228"
   },
+  "poc_hdr_glossy_metal_inspection": {
+   "accessioned": "2026-11-04",
+   "no": "2026.292"
+  },
   "poc_hyperspectral_foreign_matter": {
    "accessioned": "2026-10-15",
    "no": "2026.239"
@@ -497,6 +505,10 @@
    "accessioned": "2026-09-07",
    "no": "2026.070"
   },
+  "poc_light_section_step_weld_floor": {
+   "accessioned": "2026-11-04",
+   "no": "2026.291"
+  },
   "poc_lightfield_depth": {
    "accessioned": "2026-09-06",
    "no": "2026.023"
@@ -573,6 +585,10 @@
    "accessioned": "2026-09-08",
    "no": "2026.100"
   },
+  "poc_multimodal_mi_registration": {
+   "accessioned": "2026-11-04",
+   "no": "2026.294"
+  },
   "poc_nir_silicon_transmission": {
    "accessioned": "2026-10-14",
    "no": "2026.230"
@@ -604,6 +620,10 @@
   "poc_panorama_drift": {
    "accessioned": "2026-09-06",
    "no": "2026.028"
+  },
+  "poc_part_locate_features": {
+   "accessioned": "2026-11-04",
+   "no": "2026.293"
   },
   "poc_particle_sizing": {
    "accessioned": "2026-09-06",
@@ -849,6 +869,10 @@
    "accessioned": "2026-10-13",
    "no": "2026.221"
   },
+  "poc_sheet_deformation_ffd": {
+   "accessioned": "2026-11-04",
+   "no": "2026.295"
+  },
   "poc_si_wafer_pl_defect_visibility": {
    "accessioned": "2026-10-13",
    "no": "2026.226"
@@ -928,6 +952,18 @@
   "poc_swc_tree_truth": {
    "accessioned": "2026-09-27",
    "no": "2026.154"
+  },
+  "poc_symbol_lot_ocr": {
+   "accessioned": "2026-11-04",
+   "no": "2026.298"
+  },
+  "poc_symbol_package_1d": {
+   "accessioned": "2026-11-04",
+   "no": "2026.296"
+  },
+  "poc_symbol_part_dpm": {
+   "accessioned": "2026-11-04",
+   "no": "2026.297"
   },
   "poc_symmetry_restoration": {
    "accessioned": "2026-09-07",
@@ -1056,6 +1092,10 @@
   "poc_video_physics_consistency": {
    "accessioned": "2026-10-23",
    "no": "2026.276"
+  },
+  "poc_virtual_acceptance_3d": {
+   "accessioned": "2026-11-04",
+   "no": "2026.289"
   },
   "poc_virtual_sem_kv_cd_bse": {
    "accessioned": "2026-10-15",

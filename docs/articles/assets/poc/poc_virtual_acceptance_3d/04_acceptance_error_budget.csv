@@ -1,0 +1,8 @@
+﻿factor,PF,PS,SD,F,worst / MPE
+(baseline),0.000,-0.000,0.000,0.000,x0.00 on pf
+shot noise,1.996,-0.115,-0.103,2.530,x0.84 on f
+black sphere (rho 0.1),5.941,-0.741,-0.340,2.530,x1.98 on pf
+fx/fy +0.1 %,0.003,-0.034,-0.308,0.032,x0.62 on sd
+range scale +0.05 %,0.000,0.012,0.157,0.000,x0.31 on sd
+multipath 2 %,0.004,0.041,0.385,0.020,x0.77 on sd
+(all together),5.884,-0.714,0.181,2.499,x1.96 on pf

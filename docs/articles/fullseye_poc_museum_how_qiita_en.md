@@ -4,7 +4,7 @@
 
 > One wing of **[A Metrology Museum on Paper — the entrance](https://qiita.com/furuse-kazufumi/items/8a8f23e53b19ee8cdc10)**, where the other wings, the glossary and the thesis live.
 
-**99 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
+**103 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
 
 > The "Ops used" line under each exhibit links to that op's note (type contract, pitfalls, figures, a runnable Studio program): [Operator catalogue](https://furuse.work/OP_CATALOG.html) / [Op notes index](https://furuse.work/ops/INDEX.html).
 
@@ -1634,7 +1634,7 @@ Ops used (notes): [`moving_average_window`](https://furuse.work/ops/videostream/
 
 ### The Geometry and Calibration Wing — A Small Residual Is Not Proof of Correctness
 
-Reprojection error in camera calibration, seam mismatch in a panorama, residual in point-cloud registration: all are read as 'smaller is better'. The 20 exhibits here, with ground truth in hand, show where that reading fails.
+Reprojection error in camera calibration, seam mismatch in a panorama, residual in point-cloud registration: all are read as 'smaller is better'. The 24 exhibits here, with ground truth in hand, show where that reading fails.
 
 Reprojection RMS of 0.0688–0.0690 px alongside focal-length errors of 0.026–7.334 %. Adjacent seams at 0.12 px while the single closing seam opens by 1.5 px. Spheres and cylinders converging to the same residual with an arbitrary pose. Least squares drives the residual down to the noise; whether it lands on the truth is a separate question.
 
@@ -2383,6 +2383,102 @@ Source: [examples/poc_simcal_thin_film.py](https://github.com/furuse-kazufumi/fu
 This run produced **9 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_simcal_thin_film)
 
 Ops used (notes): [`axes_frame`](https://furuse.work/ops/annotate/plot/axes_frame.html) · [`axes_transform`](https://furuse.work/ops/annotate/plot/axes_transform.html) · [`blackbody_spectrum`](https://furuse.work/ops/optics/spectral/blackbody_spectrum.html) · [`color_bar`](https://furuse.work/ops/annotate/furniture/color_bar.html) · [`doe_decode`](https://furuse.work/ops/multivar/coding/doe_decode.html) · [`doe_orthogonal_array`](https://furuse.work/ops/multivar/plan/doe_orthogonal_array.html) · [`gamma`](https://furuse.work/ops/2d/gray/gamma.html) · [`gaussian`](https://furuse.work/ops/2d/smoothing/gaussian.html) · [`multilayer_reflectance`](https://furuse.work/ops/optics/film/multilayer_reflectance.html) · [`mv_confounding`](https://furuse.work/ops/multivar/identifiability/mv_confounding.html) · [`mv_pca`](https://furuse.work/ops/multivar/analysis/mv_pca.html) · [`nice_ticks`](https://furuse.work/ops/annotate/plot/nice_ticks.html) · [`plot_series`](https://furuse.work/ops/annotate/plot/plot_series.html) · [`simcal_discrepancy`](https://furuse.work/ops/simcal/check/simcal_discrepancy.html) · [`simcal_fit`](https://furuse.work/ops/simcal/fit/simcal_fit.html) · [`simcal_identifiability`](https://furuse.work/ops/simcal/check/simcal_identifiability.html) · [`simcal_model`](https://furuse.work/ops/simcal/model/simcal_model.html) · [`simcal_observe`](https://furuse.work/ops/simcal/model/simcal_observe.html) · [`simcal_report`](https://furuse.work/ops/simcal/report/simcal_report.html) · [`simcal_screen`](https://furuse.work/ops/simcal/fit/simcal_screen.html) · [`simcal_simulate`](https://furuse.work/ops/simcal/model/simcal_simulate.html) · [`simcal_uncertainty`](https://furuse.work/ops/simcal/check/simcal_uncertainty.html) · [`simcal_validate`](https://furuse.work/ops/simcal/check/simcal_validate.html) · [`spectrum_to_srgb`](https://furuse.work/ops/optics/appearance/spectrum_to_srgb.html) … (+2)
+
+## No.2026.290 —— Camera Calibration with Ground Truth: 0.044 px Reprojection, Yet 0.568 px Wrong in the Corner
+
+A checkerboard is rendered with a true K, barrel distortion (k1 = −0.21) and six poses; find_checkerboard_corners recovers 324 corners at 0.046 px rms from the rendered truth. The fx error is 12.89 % with Zhang's closed form (K only) and 0.133 % with camera_calibration_lm, which refines K, distortion and every pose together; the covariance gives 1σ = 0.85 px and the estimate of 798.94 lies inside it. Reprojection rms is a small 0.044 px, yet the error map against the truth is 0.094 px in the centre and up to 0.568 px in a corner (0.413 mm at 500 mm). The uncertainty map propagated from the covariance needs no truth and averages 0.225 px. Asked for the next view after four centred ones, the recommender picks a corner; Monte Carlo gives an actual error of 1.41 px, against 3.13 px for a frontal centre view and 3.98 px for a far centre view. The ranking among the corners is within the noise.
+
+[![Camera Calibration with Ground Truth: 0.044 px Reprojection, Yet 0.568 px Wrong in the Corner](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calibration_truth_map/01_calibration_maps_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calibration_truth_map/01_calibration_maps.png)
+
+*↑ **Camera Calibration with Ground Truth: 0.044 px Reprojection, Yet 0.568 px Wrong in the Corner** ―― A checkerboard is rendered with a true K, barrel distortion (k1 = −0.21) and six poses; find_checkerboard_corners recovers 324 corners at 0.046 px rms from the rendered truth. The fx error is 12.89 % with Zhang's closed form (K only) and 0.133 % with camera_calibration_lm, which refines K, distortion and every pose together; the covariance gives 1σ = 0.85 px and the estimate of 798.94 lies inside it. Reprojection rms is a small 0.044 px, yet the error map against the truth is 0.094 px in the centre and up to 0.568 px in a corner (0.413 mm at 500 mm). The uncertainty map propagated from the covariance needs no truth and averages 0.225 px. Asked for the next view after four centred ones, the recommender picks a corner; Monte Carlo gives an actual error of 1.41 px, against 3.13 px for a frontal centre view and 3.98 px for a far centre view. The ranking among the corners is within the noise.*
+
+[![calibration_next_pose prediction vs Monte Carlo error against the truth](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calibration_truth_map/02_calibration_next_pose_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calibration_truth_map/02_calibration_next_pose.png)
+
+*↑ The measurement ―― calibration_next_pose prediction vs Monte Carlo error against the truth (figure labels are in Japanese; the numbers are the same)*
+
+[![6 candidate poses; the linear prediction ranks the far centre worst and the corners best](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calibration_truth_map/03_calibration_next_pose_scatter_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calibration_truth_map/03_calibration_next_pose_scatter.png)
+
+*↑ 6 candidate poses; the linear prediction ranks the far centre worst and the corners best*
+
+```
+py -3.11 examples/poc_calibration_truth_map.py
+```
+
+Source: [examples/poc_calibration_truth_map.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_calibration_truth_map.py)
+
+This run produced **3 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_calibration_truth_map)
+
+Ops used (notes): [`calibration_error_map`](https://furuse.work/ops/calib/calib_truth/calibration_error_map.html) · [`calibration_next_pose`](https://furuse.work/ops/calib/calib_truth/calibration_next_pose.html) · [`calibration_uncertainty_map`](https://furuse.work/ops/calib/calib_truth/calibration_uncertainty_map.html) · [`camera_calibration`](https://furuse.work/ops/calib/calibrate/camera_calibration.html) · [`camera_calibration_lm`](https://furuse.work/ops/calib/calibrate/camera_calibration_lm.html) · [`checkerboard_points`](https://furuse.work/ops/calib/checkerboard/checkerboard_points.html) · [`find_checkerboard_corners`](https://furuse.work/ops/calib/checkerboard/find_checkerboard_corners.html) · [`project`](https://furuse.work/ops/3d/bundle_adjust/project.html) · [`sim_checkerboard`](https://furuse.work/ops/calib/checkerboard/sim_checkerboard.html)
+
+## No.2026.293 —— SIFT Locates a Part Rotated 37 Degrees to 0.367 px; the Existing Harris Matcher Misses by 158 px
+
+A sheet-metal part drawn from a dimension table (four holes, a slot, a chamfer and an engraving; 1 px = 0.1 mm) is placed on a cluttered background rotated by 37 degrees, scaled by 0.85, with slight perspective, 0.8x lighting, blur and noise. features_sift → features_match → ransac_homography gives a four-corner error of 0.367 px, a centre error of 0.011 mm and a rotation error of 0.062 degrees; ORB gives 0.733 px. The existing Harris plus normalised-patch matcher, which is neither rotation- nor scale-invariant, finds 5 matches and 4 inliers and misses by 158.0 px. features_accuracy_table lists where matching breaks; the worst condition is blur σ = 4 at 5.889 px. When stitching two tiles whose only 9 correct pairs lie in an 80 px overlap, an 8-DoF homography has a corner error of 9.384 px while the translation model has 0.081 px, and the mosaic differs from the true image by 0.0094 rms, below the imaging noise σ = 0.0100.
+
+[![SIFT Locates a Part Rotated 37 Degrees to 0.367 px; the Existing Harris Matcher Misses by 158 px](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_part_locate_features/01_part_locate_sift_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_part_locate_features/01_part_locate_sift.png)
+
+*↑ **SIFT Locates a Part Rotated 37 Degrees to 0.367 px; the Existing Harris Matcher Misses by 158 px** ―― A sheet-metal part drawn from a dimension table (four holes, a slot, a chamfer and an engraving; 1 px = 0.1 mm) is placed on a cluttered background rotated by 37 degrees, scaled by 0.85, with slight perspective, 0.8x lighting, blur and noise. features_sift → features_match → ransac_homography gives a four-corner error of 0.367 px, a centre error of 0.011 mm and a rotation error of 0.062 degrees; ORB gives 0.733 px. The existing Harris plus normalised-patch matcher, which is neither rotation- nor scale-invariant, finds 5 matches and 4 inliers and misses by 158.0 px. features_accuracy_table lists where matching breaks; the worst condition is blur σ = 4 at 5.889 px. When stitching two tiles whose only 9 correct pairs lie in an 80 px overlap, an 8-DoF homography has a corner error of 9.384 px while the translation model has 0.081 px, and the mosaic differs from the true image by 0.0094 rms, below the imaging noise σ = 0.0100.*
+
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_part_locate_features/02_part_locate_accuracy_table_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_part_locate_features/02_part_locate_accuracy_table.png)
+
+*↑ The measurement (figure labels are in Japanese; the numbers are the same)*
+
+[![80 px overlap, 9 true pairs: corner error per model](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_part_locate_features/03_part_locate_stitch_models_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_part_locate_features/03_part_locate_stitch_models.png)
+
+*↑ 80 px overlap, 9 true pairs: corner error per model*
+
+```
+py -3.11 examples/poc_part_locate_features.py
+```
+
+Source: [examples/poc_part_locate_features.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_part_locate_features.py)
+
+This run produced **3 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_part_locate_features)
+
+Ops used (notes): [`features_accuracy_table`](https://furuse.work/ops/matchreg/featmatch/features_accuracy_table.html) · [`features_match`](https://furuse.work/ops/matchreg/featmatch/features_match.html) · [`features_orb`](https://furuse.work/ops/matchreg/featmatch/features_orb.html) · [`features_sift`](https://furuse.work/ops/matchreg/featmatch/features_sift.html) · [`identity`](https://furuse.work/ops/2d/misc/identity.html) · [`ransac_homography`](https://furuse.work/ops/matchreg/featmatch/ransac_homography.html)
+
+## No.2026.294 —— Visible and Thermal Board Images Correlate at −0.74; Mutual Information Aligns Them to 0.170 px
+
+A board drawn from a dimension table is imaged twice: as visible reflectance and as thermal emission εT⁴ + (1−ε)T_amb⁴. Copper is bright in the visible (0.80) and dark in the infrared (emissivity 0.07); the IC is dark in the visible (0.07) and bright in the infrared (emissivity 0.95 at 352 K). At the true alignment the correlation coefficient is −0.7435, so brightness does not map monotonically. register_mi (normalised mutual information, affine) recovers the true affine to a four-corner error of 0.170 px. register_ecc refuses because the denominator of its quadratic correlation approximation is −557, rather than reporting a false fit, and the phase-correlation aoi.register_image returns residual 2.12 with consistent=False. The MI success rate by initial offset (eight directions, corner error < 0.5 px) is 1.000 at 2 and 4 px, 0.875 at 8 px and 0.625 at 16 px.
+
+[![Visible and Thermal Board Images Correlate at −0.74; Mutual Information Aligns Them to 0.170 px](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_multimodal_mi_registration/01_multimodal_mi_pair_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_multimodal_mi_registration/01_multimodal_mi_pair.png)
+
+*↑ **Visible and Thermal Board Images Correlate at −0.74; Mutual Information Aligns Them to 0.170 px** ―― A board drawn from a dimension table is imaged twice: as visible reflectance and as thermal emission εT⁴ + (1−ε)T_amb⁴. Copper is bright in the visible (0.80) and dark in the infrared (emissivity 0.07); the IC is dark in the visible (0.07) and bright in the infrared (emissivity 0.95 at 352 K). At the true alignment the correlation coefficient is −0.7435, so brightness does not map monotonically. register_mi (normalised mutual information, affine) recovers the true affine to a four-corner error of 0.170 px. register_ecc refuses because the denominator of its quadratic correlation approximation is −557, rather than reporting a false fit, and the phase-correlation aoi.register_image returns residual 2.12 with consistent=False. The MI success rate by initial offset (eight directions, corner error < 0.5 px) is 1.000 at 2 and 4 px, 0.875 at 8 px and 0.625 at 16 px.*
+
+[![register_mi: success rate per initial offset (8 directions)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_multimodal_mi_registration/02_multimodal_mi_capture_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_multimodal_mi_registration/02_multimodal_mi_capture.png)
+
+*↑ The measurement ―― register_mi: success rate per initial offset (8 directions) (figure labels are in Japanese; the numbers are the same)*
+
+```
+py -3.11 examples/poc_multimodal_mi_registration.py
+```
+
+Source: [examples/poc_multimodal_mi_registration.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_multimodal_mi_registration.py)
+
+This run produced **2 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_multimodal_mi_registration)
+
+Ops used (notes): [`register_ecc`](https://furuse.work/ops/matchreg/intensityreg/register_ecc.html) · [`register_image`](https://furuse.work/ops/aoi/geometric/register_image.html) · [`register_mi`](https://furuse.work/ops/matchreg/intensityreg/register_mi.html)
+
+## No.2026.295 —— FFD Tracks Sheet Deformation to 0.025 px, but Barcodes and Blank Margins Leave the Field Undetermined
+
+A sheet with five regions (a dot grid, text, a crosshatch, a barcode of vertical bars only, and a blank margin) is deformed by a known field of two bumps and a stretch, up to 3.279 px. Over the three regions with two-directional texture, the mean EPE is 0.025 px for register_ffd, 0.125 px for the existing demons and 1.226 px for affine ECC. Because of the aperture problem, the barcode's dy error of 0.805 px is 25.2 times its dx error of 0.032 px, and the margin's median EPE of 1.321 px is 69.1 times that of the textured regions. For a wrinkle of wavelength 24 px, grids of 8, 12 and 16 px give 0.062, 0.329 and 0.505 px. With the bending penalty alone the estimate in the margin swings up to 34.26 px against a true amplitude of 1.5 px; membrane_weight = 0.1 holds it to 3.59 px at the cost of accuracy in the textured regions, so the default stays bending-only. registration_to_flow2d → piv_flow_magnitude gives a maximum of 3.291 px against the true 3.279 px.
+
+[![FFD Tracks Sheet Deformation to 0.025 px, but Barcodes and Blank Margins Leave the Field Undetermined](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_sheet_deformation_ffd/01_sheet_ffd_error_maps_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_sheet_deformation_ffd/01_sheet_ffd_error_maps.png)
+
+*↑ **FFD Tracks Sheet Deformation to 0.025 px, but Barcodes and Blank Margins Leave the Field Undetermined** ―― A sheet with five regions (a dot grid, text, a crosshatch, a barcode of vertical bars only, and a blank margin) is deformed by a known field of two bumps and a stretch, up to 3.279 px. Over the three regions with two-directional texture, the mean EPE is 0.025 px for register_ffd, 0.125 px for the existing demons and 1.226 px for affine ECC. Because of the aperture problem, the barcode's dy error of 0.805 px is 25.2 times its dx error of 0.032 px, and the margin's median EPE of 1.321 px is 69.1 times that of the textured regions. For a wrinkle of wavelength 24 px, grids of 8, 12 and 16 px give 0.062, 0.329 and 0.505 px. With the bending penalty alone the estimate in the margin swings up to 34.26 px against a true amplitude of 1.5 px; membrane_weight = 0.1 holds it to 3.59 px at the cost of accuracy in the textured regions, so the default stays bending-only. registration_to_flow2d → piv_flow_magnitude gives a maximum of 3.291 px against the true 3.279 px.*
+
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_sheet_deformation_ffd/02_sheet_ffd_regions_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_sheet_deformation_ffd/02_sheet_ffd_regions.png)
+
+*↑ The measurement (figure labels are in Japanese; the numbers are the same)*
+
+```
+py -3.11 examples/poc_sheet_deformation_ffd.py
+```
+
+Source: [examples/poc_sheet_deformation_ffd.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_sheet_deformation_ffd.py)
+
+This run produced **2 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_sheet_deformation_ffd)
+
+Ops used (notes): [`median`](https://furuse.work/ops/2d/rank/median.html) · [`piv_flow_magnitude`](https://furuse.work/ops/piv/field/piv_flow_magnitude.html) · [`register_accuracy_map`](https://furuse.work/ops/matchreg/intensityreg/register_accuracy_map.html) · [`register_ffd`](https://furuse.work/ops/matchreg/intensityreg/register_ffd.html) · [`registration_to_flow2d`](https://furuse.work/ops/matchreg/intensityreg/registration_to_flow2d.html)
 
 ### The Colour and Separation Wing — There Is No Method That Works, Only Conditions Under Which One Does
 
