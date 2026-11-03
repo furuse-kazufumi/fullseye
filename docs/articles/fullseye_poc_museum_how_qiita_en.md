@@ -4,7 +4,7 @@
 
 > One wing of **[A Metrology Museum on Paper — the entrance](https://qiita.com/furuse-kazufumi/items/8a8f23e53b19ee8cdc10)**, where the other wings, the glossary and the thesis live.
 
-**98 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
+**99 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
 
 > The "Ops used" line under each exhibit links to that op's note (type contract, pitfalls, figures, a runnable Studio program): [Operator catalogue](https://furuse.work/OP_CATALOG.html) / [Op notes index](https://furuse.work/ops/INDEX.html).
 
@@ -1634,7 +1634,7 @@ Ops used (notes): [`moving_average_window`](https://furuse.work/ops/videostream/
 
 ### The Geometry and Calibration Wing — A Small Residual Is Not Proof of Correctness
 
-Reprojection error in camera calibration, seam mismatch in a panorama, residual in point-cloud registration: all are read as 'smaller is better'. The 19 exhibits here, with ground truth in hand, show where that reading fails.
+Reprojection error in camera calibration, seam mismatch in a panorama, residual in point-cloud registration: all are read as 'smaller is better'. The 20 exhibits here, with ground truth in hand, show where that reading fails.
 
 Reprojection RMS of 0.0688–0.0690 px alongside focal-length errors of 0.026–7.334 %. Adjacent seams at 0.12 px while the single closing seam opens by 1.5 px. Spheres and cylinders converging to the same residual with an arbitrary pose. Least squares drives the residual down to the noise; whether it lands on the truth is a separate question.
 
@@ -1707,6 +1707,46 @@ Source: [examples/poc_panorama_drift.py](https://github.com/furuse-kazufumi/full
 This run produced **5 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_panorama_drift)
 
 Ops used (notes): [`axes_frame`](https://furuse.work/ops/annotate/plot/axes_frame.html) · [`axes_transform`](https://furuse.work/ops/annotate/plot/axes_transform.html) · [`hom_vector_to_proj_hom_mat2d`](https://furuse.work/ops/calib/fit/hom_vector_to_proj_hom_mat2d.html) · [`plot_series`](https://furuse.work/ops/annotate/plot/plot_series.html) · [`pose_error`](https://furuse.work/ops/3d/metrics/pose_error.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`ticks`](https://furuse.work/ops/annotate/plot/ticks.html) · [`warp_by_plane`](https://furuse.work/ops/3d/plane_sweep_stereo/warp_by_plane.html)
+
+## No.2026.285 —— Six-DoF PPF Matching of Industrial Parts in Real RGB-D Data
+
+One deterministically selected first image from each of all 20 BOP19 test_primesense scenes in BOP T-LESS (CC BY 4.0) gives 132 instances at visibility 0.5 or above. Sweeping density, reference fraction, angular bins and ICP iterations across eleven settings improves the old 180/160-point, 6 mm result of 0.162/0.185; the best AR_MSSD within ten seconds per instance uses 1000/1000 points, 2 mm voxels, reference fraction 0.25, 24 bins and 100 ICP iterations. Its primary path takes 8.291 seconds per instance and reaches AR_MSSD 0.197 and AR_MSPD 0.220, still below the official full-test Drost scores of 0.478/0.480 and Vidal scores of 0.575/0.574. The 2000-point run did not finish in two hours and exceeded 54.6 seconds per instance. Matching without clustering gives 0.111/0.113, ideal depth gives 0.985/0.985, removing ICP gives 0.346/0.338, and leaving normals unoriented gives 0.132/0.161. Of 132 instances, 109 exceed MSSD 0.2d; overlapping causes are 34 merged-cluster cases, eight below 0.8 visibility, 21 thin parts, 36 above one-percent missing depth, and 103 symmetric parts.
+
+[![Six-DoF PPF Matching of Industrial Parts in Real RGB-D Data](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/01_pose_overlay_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/01_pose_overlay.png)
+
+*↑ **Six-DoF PPF Matching of Industrial Parts in Real RGB-D Data** ―― One deterministically selected first image from each of all 20 BOP19 test_primesense scenes in BOP T-LESS (CC BY 4.0) gives 132 instances at visibility 0.5 or above. Sweeping density, reference fraction, angular bins and ICP iterations across eleven settings improves the old 180/160-point, 6 mm result of 0.162/0.185; the best AR_MSSD within ten seconds per instance uses 1000/1000 points, 2 mm voxels, reference fraction 0.25, 24 bins and 100 ICP iterations. Its primary path takes 8.291 seconds per instance and reaches AR_MSSD 0.197 and AR_MSPD 0.220, still below the official full-test Drost scores of 0.478/0.480 and Vidal scores of 0.575/0.574. The 2000-point run did not finish in two hours and exceeded 54.6 seconds per instance. Matching without clustering gives 0.111/0.113, ideal depth gives 0.985/0.985, removing ICP gives 0.346/0.338, and leaving normals unoriented gives 0.132/0.161. Of 132 instances, 109 exceed MSSD 0.2d; overlapping causes are 34 merged-cluster cases, eight below 0.8 visibility, 21 thin parts, 36 above one-percent missing depth, and 103 symmetric parts.*
+
+Terms: ICP — A registration method that alternates nearest-point correspondence with rigid-transform estimation between two point clouds.
+
+[![欠測 1164 px、孤立飛び候補 0 px。 BOP T-LESS, CC BY 4.0。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/02_rgb_depth_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/02_rgb_depth.png)
+
+*↑ The measurement ―― 欠測 1164 px、孤立飛び候補 0 px。 BOP T-LESS, CC BY 4.0。 (figure labels are in Japanese; the numbers are the same)*
+
+[![20場面の標本を obj_id ごとに平均。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/03_mssd_by_object_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/03_mssd_by_object.png)
+
+*↑ 20場面の標本を obj_id ごとに平均。*
+
+[![合成 MSSD 0.985 / 合成 MSPD 0.985 / 実機 MSSD 0.197 / 実機 MSPD 0.220。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/04_synthetic_vs_real_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/04_synthetic_vs_real.png)
+
+*↑ 合成 MSSD 0.985 / 合成 MSPD 0.985 / 実機 MSSD 0.197 / 実機 MSPD 0.220。*
+
+[![橙=推定、青=真値。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/05_failure_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/05_failure.png)
+
+*↑ 橙=推定、青=真値。*
+
+[![180/160、500/500、1000/1000は132対象の完走値。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/06_density_vs_ar_time_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/06_density_vs_ar_time.png)
+
+*↑ 180/160、500/500、1000/1000は132対象の完走値。*
+
+```
+py -3.11 examples/poc_real_tless_6dof.py
+```
+
+Source: [examples/poc_real_tless_6dof.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_tless_6dof.py)
+
+This run produced **6 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_real_tless_6dof)
+
+Ops used (notes): [`axes_frame`](https://furuse.work/ops/annotate/plot/axes_frame.html) · [`axes_transform`](https://furuse.work/ops/annotate/plot/axes_transform.html) · [`data_to_pixel`](https://furuse.work/ops/annotate/plot/data_to_pixel.html) · [`depth_to_points`](https://furuse.work/ops/3d/transform/depth_to_points.html) · [`ellipse`](https://furuse.work/ops/annotate/shape/ellipse.html) · [`estimate_normals`](https://furuse.work/ops/3d/curvature/estimate_normals.html) · [`grid_lines`](https://furuse.work/ops/annotate/plot/grid_lines.html) · [`legend_box`](https://furuse.work/ops/annotate/furniture/legend_box.html) · [`plot_series`](https://furuse.work/ops/annotate/plot/plot_series.html) · [`project_points`](https://furuse.work/ops/3d/render/project_points.html) · [`render_point_depth`](https://furuse.work/ops/3d/render/render_point_depth.html) · [`rmse`](https://furuse.work/ops/imgmetrics/fidelity/rmse.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`ticks`](https://furuse.work/ops/annotate/plot/ticks.html)
 
 ## No.2026.108 —— Measuring on a Real Stereo Photograph — Three Stumbles Synthesis Never Produces
 

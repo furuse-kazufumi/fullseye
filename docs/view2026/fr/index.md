@@ -353,7 +353,7 @@ Certaines descriptions de PoC sont en anglais.
 
 ## Ce qu'il permet de faire
 
-97 sujets, chacun avec une page d'explication (utilisation et limites) et des liens vers des exemples exécutables.
+98 sujets, chacun avec une page d'explication (utilisation et limites) et des liens vers des exemples exécutables.
 
 <div class="vl" markdown="1">
 
@@ -370,6 +370,7 @@ Certaines descriptions de PoC sont en anglais.
 - Détecter de petites cibles ponctuelles et en déterminer la position au niveau sous-pixel: [explication](../../capabilities/point-target-detection.md) _(ja)_ · exemples [poc_search_sweep_width](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_search_sweep_width.py) · [poc_astro_photometry](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_astro_photometry.py)
 - Appariement de gabarits robuste à l'éclairage inégal, aux reflets et aux occlusions (comparer le sens de la variation de luminosité comme un code, refuser les gabarits indéterminés): [explication](../../capabilities/robust-code-matching.md) _(ja)_ · exemples [poc_code_matching_breakdown](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_code_matching_breakdown.py)
 - Détecter les vides d'un collage hybride par la phase de l'écho ultrasonore et non par sa luminosité (C-scans au microscope acoustique à balayage, compromis sur la fréquence, POD): [explication](../../capabilities/sam-bond-voids.md) _(ja)_ · exemples [poc_sam_hybrid_bonding_voids](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_sam_hybrid_bonding_voids.py)
+- Localiser une pièce 3D connue dans un nuage de points avec six degrés de liberté: [explication](../../capabilities/six-dof-surface-pose.md) _(ja)_ · exemples [poc_registration_basin](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_registration_basin.py) · [poc_real_tless_6dof](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_tless_6dof.py)
 - Défauts de relief de surface, de la conception de l'éclairage à la détection: [explication](../../capabilities/surface-defects-with-lighting.md) _(ja)_ · exemples [illumination_design_demo](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/illumination_design_demo.py) · [photometric_stereo](https://github.com/furuse-kazufumi/fullseye/blob/master/examples_3d/photometric_stereo.py) · [poc_bump_coplanarity](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_bump_coplanarity.py)
 - Positionnement (suivi de la ligne de mesure par appariement de gabarit): [explication](../../capabilities/template-alignment.md) _(ja)_ · exemples [poc_template_tracking](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_template_tracking.py) · [gallery2d_contour_measure](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/gallery2d_contour_measure.py) · [poc_search_sweep_width](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_search_sweep_width.py)
 
@@ -466,7 +467,7 @@ Certaines descriptions de PoC sont en anglais.
 - Transformer les résultats en figures lisibles par l'humain: [explication](../../capabilities/figures-and-annotation.md) _(ja)_ · exemples [poc_colormap_readability](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_colormap_readability.py) · [poc_dem_terrain](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dem_terrain.py)
 - Transformer les résultats en une page autonome à manipuler (onglets, badges, 3-D, vidéo, langues): [explication](../../capabilities/interactive-poc-viewer.md) _(ja)_ · exemples [interactive_poc_viewer](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/interactive_poc_viewer.py) · [interactive_anim3d_viewer](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/interactive_anim3d_viewer.py)
 - Tracer des lignes et des régions sans connaître la couleur du fond (couleur inversée): [explication](../../capabilities/inverted-colour-overlays.md) _(ja)_ · exemples [annotate_paper_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/annotate_paper_tour.py)
-- Dessiner directement un nuage de points en image couleur (empreintes sous-pixel, composition triée par profondeur, addition conservant la quantité de lumière): [explication](../../capabilities/point-cloud-to-picture.md) _(ja)_ · exemples [points_render_basics](https://github.com/furuse-kazufumi/fullseye/blob/master/examples_3d/points_render_basics.py) · [poc_flybrain_pointcloud](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_flybrain_pointcloud.py)
+- Dessiner directement un nuage de points en image couleur (empreintes sous-pixel, composition triée par profondeur, addition conservant la quantité de lumière): [explication](../../capabilities/point-cloud-to-picture.md) _(ja)_ · exemples [points_render_basics](https://github.com/furuse-kazufumi/fullseye/blob/master/examples_3d/points_render_basics.py) · [poc_flybrain_pointcloud](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_flybrain_pointcloud.py) · [poc_real_tless_6dof](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_tless_6dof.py)
 - Placer du texte et des tableaux à l'endroit souhaité sur une image: [explication](../../capabilities/text-and-tables-on-images.md) _(ja)_ · exemples [annotate_paper_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/annotate_paper_tour.py)
 
 **Dessiner**
@@ -484,7 +485,7 @@ Certaines descriptions de PoC sont en anglais.
 
 ## Tout voir
 
-283 PoC et 5 exemples de robots. Ouvrez un groupe pour afficher ses vignettes.
+284 PoC et 5 exemples de robots. Ouvrez un groupe pour afficher ses vignettes.
 
 <noscript><p><a href="../../GALLERY.en.html">(Sans JavaScript, toutes les figures sont visibles sur la page de la galerie.)</a></p></noscript>
 
@@ -643,7 +644,7 @@ Certaines descriptions de PoC sont en anglais.
 </div>
 </details>
 
-<details class="vall"><summary><b>Géométrie et calibrage</b> (19)</summary>
+<details class="vall"><summary><b>Géométrie et calibrage</b> (20)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_simcal_thin_film/08_real_determined_vs_combinations.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_simcal_thin_film.jpg" alt="Étalonnage d'un modèle de couche mince sur des images réelles (coefficients déterminés et combinaisons indéterminées)" width="200" height="200"><span>Étalonnage d'un modèle de couche mince sur des images réelles (coefficients déterminés et combinaisons indéterminées)</span></a>
 <a href="../../articles/assets/poc/poc_camera_calibration/05_calibration_convergence.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_camera_calibration.jpg" alt="Calibrage de caméra" width="200" height="200"><b>&#9654;</b><span>Calibrage de caméra</span></a>
@@ -664,6 +665,7 @@ Certaines descriptions de PoC sont en anglais.
 <a href="../../articles/assets/poc/poc_reproducible_icp/01_error_staircase_ozaki1.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_reproducible_icp.jpg" alt="ICP reproductible au bit près" width="200" height="200"><span>ICP reproductible au bit près</span></a>
 <a href="../../articles/assets/poc/poc_public_camera_heading/02_yaw_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_public_camera_heading.jpg" alt="Orientation des caméras publiques" width="200" height="200"><b>&#9654;</b><span>Orientation des caméras publiques</span></a>
 <a href="../../articles/assets/poc/poc_public_camera_heading_real/02_sunset_follow.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_public_camera_heading_real.jpg" alt="Orientation de la caméra (prises réelles)" width="200" height="200"><b>&#9654;</b><span>Orientation de la caméra (prises réelles)</span></a>
+<a href="../../articles/assets/poc/poc_real_tless_6dof/01_pose_overlay.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_real_tless_6dof.jpg" alt="Estimer la pose 6-DoF de pièces connues à partir de vrais nuages de profondeur" width="200" height="200"><span>Estimer la pose 6-DoF de pièces connues à partir de vrais nuages de profondeur</span></a>
 </div>
 </details>
 

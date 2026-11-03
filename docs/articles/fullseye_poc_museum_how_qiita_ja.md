@@ -4,7 +4,7 @@
 
 > **[紙面の計測館 総合案内](https://qiita.com/furuse-kazufumi/items/c1606bcfa2085d204ad6)** の一棟です。ほかの棟・用語・テーゼは案内にあります。
 
-この棟には **98 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
+この棟には **99 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
 
 > 各展示の「使用 op」から、その op のノート(型契約・罠・図・Studio で走るプログラム)へ飛べます: [オペレータ目録](https://furuse.work/OP_CATALOG.html) / [op ノートの索引](https://furuse.work/ops/INDEX.html)。
 
@@ -1634,7 +1634,7 @@ py -3.11 examples/poc_periodic_video_boundary.py
 
 ### 幾何・校正ウィング ―― 残差が小さいことは正しさの証明にならない
 
-カメラ校正の再投影誤差、パノラマの継ぎ目、点群位置合わせの残差。どれも「小さいほど良い」と読まれる数字ですが、この部屋の 19 点はその読み方が成り立たない場面を、真値を握った上で並べています。
+カメラ校正の再投影誤差、パノラマの継ぎ目、点群位置合わせの残差。どれも「小さいほど良い」と読まれる数字ですが、この部屋の 20 点はその読み方が成り立たない場面を、真値を握った上で並べています。
 
 再投影誤差 0.0688〜0.0690 px で焦点距離の誤差が 0.026〜7.334 %。隣の継ぎ目が 0.12 px なのに閉じる 1 本だけ 1.5 px。球や円柱では残差が同じまま姿勢が任意。最小二乗は残差を雑音まで落とすのが仕事で、落ちた先が真値かどうかは別の話です。
 
@@ -1707,6 +1707,46 @@ py -3.11 examples/poc_panorama_drift.py
 この回が作った図は全部で **5 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_panorama_drift)
 
 使用 op(ノートへ): [`axes_frame`](https://furuse.work/ops/annotate/plot/axes_frame.html) · [`axes_transform`](https://furuse.work/ops/annotate/plot/axes_transform.html) · [`hom_vector_to_proj_hom_mat2d`](https://furuse.work/ops/calib/fit/hom_vector_to_proj_hom_mat2d.html) · [`plot_series`](https://furuse.work/ops/annotate/plot/plot_series.html) · [`pose_error`](https://furuse.work/ops/3d/metrics/pose_error.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`ticks`](https://furuse.work/ops/annotate/plot/ticks.html) · [`warp_by_plane`](https://furuse.work/ops/3d/plane_sweep_stereo/warp_by_plane.html)
+
+## No.2026.285 —— 実機 RGB-D の産業部品を PPF で 6 自由度照合する
+
+BOP T-LESS(CC BY 4.0)のBOP19 test_primesense全20場面から先頭画像を1枚ずつ決定的に選び、可視率0.5以上の132対象を深度→点群→法線→RANSAC平面除去→クラスタ→PPF+ICPと通した。旧180/160点・6 mmの0.162/0.185に対し、密度、ref_fraction、angle_bins、ICP反復を11設定で掃引し、10秒/対象以内でAR_MSSD最大の1000/1000点・2 mm・ref 0.25・24ビン・ICP 100反復を採用した。主経路8.291秒/対象でAR_MSSD 0.197 / AR_MSPD 0.220となり、粗い間引きが成績を抑えていたが、公式全testのDrost 0.478/0.480、Vidal 0.575/0.574にはなお届かない。2000点は2時間で未完走、54.6秒/対象以上。クラスタなしは0.111/0.113、理想深度は0.985/0.985、ICPなしは0.346/0.338、符号未整理の法線は0.132/0.161。MSSD>0.2dの失敗109/132の重複内訳は、結合クラスタ34、可視率0.8未満8、薄い部品21、深度欠損1%超36、対称部品103。
+
+[![実機 RGB-D の産業部品を PPF で 6 自由度照合する](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/01_pose_overlay_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/01_pose_overlay.png)
+
+*↑ **実機 RGB-D の産業部品を PPF で 6 自由度照合する** ―― BOP T-LESS(CC BY 4.0)のBOP19 test_primesense全20場面から先頭画像を1枚ずつ決定的に選び、可視率0.5以上の132対象を深度→点群→法線→RANSAC平面除去→クラスタ→PPF+ICPと通した。旧180/160点・6 mmの0.162/0.185に対し、密度、ref_fraction、angle_bins、ICP反復を11設定で掃引し、10秒/対象以内でAR_MSSD最大の1000/1000点・2 mm・ref 0.25・24ビン・ICP 100反復を採用した。主経路8.291秒/対象でAR_MSSD 0.197 / AR_MSPD 0.220となり、粗い間引きが成績を抑えていたが、公式全testのDrost 0.478/0.480、Vidal 0.575/0.574にはなお届かない。2000点は2時間で未完走、54.6秒/対象以上。クラスタなしは0.111/0.113、理想深度は0.985/0.985、ICPなしは0.346/0.338、符号未整理の法線は0.132/0.161。MSSD>0.2dの失敗109/132の重複内訳は、結合クラスタ34、可視率0.8未満8、薄い部品21、深度欠損1%超36、対称部品103。*
+
+用語: RANSAC — 標本から小さな部分集合を反復抽出してモデルを当て、許容誤差内の点が最も多いモデルを選ぶ外れ値に強い推定法。; ICP — 二つの点群で最近点対応と剛体変換の推定を交互に繰り返し、位置合わせする方法。
+
+[![欠測 1164 px、孤立飛び候補 0 px。 BOP T-LESS, CC BY 4.0。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/02_rgb_depth_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/02_rgb_depth.png)
+
+*↑ 測定の図 ―― 欠測 1164 px、孤立飛び候補 0 px。 BOP T-LESS, CC BY 4.0。*
+
+[![20場面の標本を obj_id ごとに平均。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/03_mssd_by_object_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/03_mssd_by_object.png)
+
+*↑ 20場面の標本を obj_id ごとに平均。*
+
+[![合成 MSSD 0.985 / 合成 MSPD 0.985 / 実機 MSSD 0.197 / 実機 MSPD 0.220。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/04_synthetic_vs_real_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/04_synthetic_vs_real.png)
+
+*↑ 合成 MSSD 0.985 / 合成 MSPD 0.985 / 実機 MSSD 0.197 / 実機 MSPD 0.220。*
+
+[![橙=推定、青=真値。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/05_failure_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/05_failure.png)
+
+*↑ 橙=推定、青=真値。*
+
+[![180/160、500/500、1000/1000は132対象の完走値。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/06_density_vs_ar_time_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/06_density_vs_ar_time.png)
+
+*↑ 180/160、500/500、1000/1000は132対象の完走値。*
+
+```
+py -3.11 examples/poc_real_tless_6dof.py
+```
+
+ソース: [examples/poc_real_tless_6dof.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_tless_6dof.py)
+
+この回が作った図は全部で **6 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_real_tless_6dof)
+
+使用 op(ノートへ): [`axes_frame`](https://furuse.work/ops/annotate/plot/axes_frame.html) · [`axes_transform`](https://furuse.work/ops/annotate/plot/axes_transform.html) · [`data_to_pixel`](https://furuse.work/ops/annotate/plot/data_to_pixel.html) · [`depth_to_points`](https://furuse.work/ops/3d/transform/depth_to_points.html) · [`ellipse`](https://furuse.work/ops/annotate/shape/ellipse.html) · [`estimate_normals`](https://furuse.work/ops/3d/curvature/estimate_normals.html) · [`grid_lines`](https://furuse.work/ops/annotate/plot/grid_lines.html) · [`legend_box`](https://furuse.work/ops/annotate/furniture/legend_box.html) · [`plot_series`](https://furuse.work/ops/annotate/plot/plot_series.html) · [`project_points`](https://furuse.work/ops/3d/render/project_points.html) · [`render_point_depth`](https://furuse.work/ops/3d/render/render_point_depth.html) · [`rmse`](https://furuse.work/ops/imgmetrics/fidelity/rmse.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`ticks`](https://furuse.work/ops/annotate/plot/ticks.html)
 
 ## No.2026.108 —— 実写のステレオ写真で測る ―― 合成では出ない 3 つの躓き
 

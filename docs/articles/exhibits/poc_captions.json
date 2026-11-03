@@ -1382,6 +1382,27 @@
    "lead_en": ""
   },
   {
+   "id": "poc_real_tless_6dof",
+   "wing": "wing_geometry",
+   "added": "2026-11-01",
+   "numbers_source": "log",
+   "title_ja": "実機 RGB-D の産業部品を PPF で 6 自由度照合する",
+   "title_en": "Six-DoF PPF Matching of Industrial Parts in Real RGB-D Data",
+    "caption_ja": "BOP T-LESS(CC BY 4.0)のBOP19 test_primesense全20場面から先頭画像を1枚ずつ決定的に選び、可視率0.5以上の132対象を深度→点群→法線→RANSAC平面除去→クラスタ→PPF+ICPと通した。旧180/160点・6 mmの0.162/0.185に対し、密度、ref_fraction、angle_bins、ICP反復を11設定で掃引し、10秒/対象以内でAR_MSSD最大の1000/1000点・2 mm・ref 0.25・24ビン・ICP 100反復を採用した。主経路8.291秒/対象でAR_MSSD 0.197 / AR_MSPD 0.220となり、粗い間引きが成績を抑えていたが、公式全testのDrost 0.478/0.480、Vidal 0.575/0.574にはなお届かない。2000点は2時間で未完走、54.6秒/対象以上。クラスタなしは0.111/0.113、理想深度は0.985/0.985、ICPなしは0.346/0.338、符号未整理の法線は0.132/0.161。MSSD>0.2dの失敗109/132の重複内訳は、結合クラスタ34、可視率0.8未満8、薄い部品21、深度欠損1%超36、対称部品103。",
+    "caption_en": "One deterministically selected first image from each of all 20 BOP19 test_primesense scenes in BOP T-LESS (CC BY 4.0) gives 132 instances at visibility 0.5 or above. Sweeping density, reference fraction, angular bins and ICP iterations across eleven settings improves the old 180/160-point, 6 mm result of 0.162/0.185; the best AR_MSSD within ten seconds per instance uses 1000/1000 points, 2 mm voxels, reference fraction 0.25, 24 bins and 100 ICP iterations. Its primary path takes 8.291 seconds per instance and reaches AR_MSSD 0.197 and AR_MSPD 0.220, still below the official full-test Drost scores of 0.478/0.480 and Vidal scores of 0.575/0.574. The 2000-point run did not finish in two hours and exceeded 54.6 seconds per instance. Matching without clustering gives 0.111/0.113, ideal depth gives 0.985/0.985, removing ICP gives 0.346/0.338, and leaving normals unoriented gives 0.132/0.161. Of 132 instances, 109 exceed MSSD 0.2d; overlapping causes are 34 merged-cluster cases, eight below 0.8 visibility, 21 thin parts, 36 above one-percent missing depth, and 103 symmetric parts.",
+   "ops": [
+    "depth_to_points",
+    "estimate_normals",
+    "fit_plane_ransac",
+    "euclidean_clusters",
+    "ppf_model",
+    "surface_match",
+    "icp_point2point_3d"
+   ],
+   "lead_ja": "",
+   "lead_en": ""
+  },
+  {
    "id": "poc_real_stereo_depth",
    "wing": "wing_geometry",
    "added": "2026-09-08",
