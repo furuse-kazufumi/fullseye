@@ -28,7 +28,8 @@ sys.path.insert(0, os.path.join(ROOT, "tools"))
 import fullseye  # noqa: E402,F401  (puts the engine modules on sys.path)
 from fullseye import recipebook as rb  # noqa: E402
 
-FLOOR_RECIPES = 100
+#: 依頼の床は 100 本。実数(2026-11-03: 218)から少し下に置き、黙って減るのを止める。
+FLOOR_RECIPES = 210
 
 # A recipe may opt out of the "output moves with the input" check only with a written reason
 # (e.g. the op returns a pass/fail verdict that is legitimately the same on both variants).
@@ -161,6 +162,16 @@ def test_legacy_recipe_runs_end_to_end(name):
     legacy = {"name": name, "family": "2d", "input_sort": "image",
               "stages": [{"op": op, "a": a, "b": b} for op, a, b in r["stages"]]}
     assert rb.type_cuts(legacy) == 0, (name, rb.connections(legacy))
+
+
+def test_every_recipe_has_a_japanese_note():
+    """ja の検索文は英語の名前・説明と op の要約だけだと、日本語の問いで族の当たりが 10/30 だった
+    (2026-11-03 実測、目隠し問い合わせ)。手書きの日本語の名前と説明を全レシピに付ける。"""
+    from fullseye.recipebook.notes_ja import NOTES_JA
+    want = set(rb.names()) | set(_legacy.names())
+    assert set(NOTES_JA) == want, (sorted(want - set(NOTES_JA))[:5], sorted(set(NOTES_JA) - want)[:5])
+    short = [k for k, v in NOTES_JA.items() if len(v) < 10 or not any(ord(c) > 0x3000 for c in v)]
+    assert not short, short[:5]
 
 
 def test_static_ok_reasons_are_written():

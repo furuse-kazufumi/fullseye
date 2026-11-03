@@ -7,7 +7,7 @@ def test_every_indexed_recipe_validates_for_mcp():
     from fullseye.mcp.server import validate_pipeline
     data=json.loads((ROOT/"fullseye/data/RECIPE_INDEX.json").read_text(encoding="utf-8"))
     cat=Catalog.load()
-    assert len(data["recipes"]) >= 25, "the recipe index shrank (or is empty) — every recipe must stay indexed"
+    assert len(data["recipes"]) >= 240, "the recipe index shrank (or is empty) — every recipe must stay indexed"
     # 2026-11-03: the index also carries recipebook recipes that call ledger ops with real arguments
     # (runner "python"). The MCP gate is unchanged for every recipe marked "mcp"; a recipe marked
     # "python" must really be one MCP cannot run — the label can never hide a pipeline that broke.
@@ -20,7 +20,7 @@ def test_every_indexed_recipe_validates_for_mcp():
         else:
             assert recipe["runner"]=="python", recipe["name"]
             assert not result["valid"], ("labelled python but MCP can run it — label it mcp", recipe["name"])
-    assert n_mcp >= 25, n_mcp
+    assert n_mcp >= 75, n_mcp
 
 def test_find_ops_returns_at_most_two_ready_pipelines():
     from fullseye.mcp.catalog import Catalog

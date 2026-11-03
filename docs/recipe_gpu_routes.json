@@ -1,9 +1,59 @@
 {
- "method": "gpu_route.route(op, 'pipeline') from a read-only GPU worktree appended to sys.path; null = no matching GPU route; ops absent from this table are unmeasured",
- "gpu_route_module": "gpu_route.py",
+ "method": "gpu_route.route(op, 'pipeline'), read-only, from the GPU worktree on its own (gpu_first); null = no matching GPU route; ops absent from this table are unmeasured. repo_first_differs = ops whose answer changes when this repo's tables are on sys.path first.",
  "gpu_worktree_commit": "a3f91eae72f851e870e6a45294ecfc44ded9cb10",
  "n_ops": 388,
- "n_with_route": 83,
+ "n_with_route": 89,
+ "n_with_route_repo_first": 83,
+ "repo_first_differs": {
+  "area_center": {
+   "repo_first": null,
+   "gpu_first": {
+    "kind": "accel",
+    "use": "pipeline",
+    "ratio": null
+   }
+  },
+  "count_obj": {
+   "repo_first": null,
+   "gpu_first": {
+    "kind": "accel",
+    "use": "pipeline",
+    "ratio": null
+   }
+  },
+  "remove_small": {
+   "repo_first": null,
+   "gpu_first": {
+    "kind": "accel",
+    "use": "pipeline",
+    "ratio": null
+   }
+  },
+  "select_largest": {
+   "repo_first": null,
+   "gpu_first": {
+    "kind": "accel",
+    "use": "pipeline",
+    "ratio": null
+   }
+  },
+  "select_shape": {
+   "repo_first": null,
+   "gpu_first": {
+    "kind": "accel",
+    "use": "single",
+    "ratio": null
+   }
+  },
+  "sk_clear_border": {
+   "repo_first": null,
+   "gpu_first": {
+    "kind": "accel",
+    "use": "pipeline",
+    "ratio": null
+   }
+  }
+ },
  "routes": {
   "abs_diff_image": {
    "kind": "shadow",
@@ -32,7 +82,11 @@
    "use": "single",
    "ratio": 12.35
   },
-  "area_center": null,
+  "area_center": {
+   "kind": "accel",
+   "use": "pipeline",
+   "ratio": null
+  },
   "area_center_xld": null,
   "area_holes": null,
   "attention_apply": null,
@@ -105,7 +159,11 @@
    "ratio": 12.1
   },
   "count_contours": null,
-  "count_obj": null,
+  "count_obj": {
+   "kind": "accel",
+   "use": "pipeline",
+   "ratio": null
+  },
   "cplx_argument_principle": null,
   "cplx_contour_circle": null,
   "cplx_poly_eval": {
@@ -469,7 +527,11 @@
   "region_props": null,
   "register_image": null,
   "relative_motion": null,
-  "remove_small": null,
+  "remove_small": {
+   "kind": "accel",
+   "use": "pipeline",
+   "ratio": null
+  },
   "render_skyline_view": null,
   "rgb_to_lab": null,
   "rgb_to_quaternion": null,
@@ -497,8 +559,16 @@
   "seg_dice_jaccard": null,
   "seg_inject_split": null,
   "seg_variation_of_information": null,
-  "select_largest": null,
-  "select_shape": null,
+  "select_largest": {
+   "kind": "accel",
+   "use": "pipeline",
+   "ratio": null
+  },
+  "select_shape": {
+   "kind": "accel",
+   "use": "single",
+   "ratio": null
+  },
   "sem_render": {
    "kind": "shadow",
    "use": "single",
@@ -529,7 +599,11 @@
   "simcal_report": null,
   "sinogram_center_of_rotation": null,
   "sinogram_center_shift": null,
-  "sk_clear_border": null,
+  "sk_clear_border": {
+   "kind": "accel",
+   "use": "pipeline",
+   "ratio": null
+  },
   "sk_corner_harris": null,
   "sk_dog": null,
   "sk_rolling_ball": null,
