@@ -68,8 +68,11 @@ import fringe  # noqa: E402
 import fullseye as fs  # noqa: E402  (台帳の公開経路 fs.ledger を使う)
 import glassmirror  # noqa: E402
 import photometric  # noqa: E402
+from fullseye.evaluation import GateAdapter, GateStyle  # noqa: E402
 
-CHECKS = []
+_CHECKS = GateAdapter(
+    style=GateStyle(indent="  ", pass_word="OK", fail_word="NG", detail_prefix=" ", always_detail_prefix=True)
+)
 
 N = 320                    # 面の格子とカメラの画素(一辺)。視野 40 mm → 0.125 mm / 画素
 PERIOD = 10.0              # 細かい縞の周期 [mm](画面上)
@@ -86,8 +89,7 @@ POLISH = (6.0, -11.0, 0.12e-3, 0.9)        # 研磨ムラ: 中心、振幅 0.12 
 
 
 def check(ok, label, detail=""):
-    CHECKS.append((bool(ok), label, detail))
-    print("  [%s] %s %s" % ("OK" if ok else "NG", label, detail))
+    _CHECKS(label, ok, detail)
 
 
 # --------------------------------------------------------------------------- #
@@ -515,11 +517,11 @@ def main():
             _real_figures(real)
     assert not figs.errors(), figs.errors()
 
-    bad = [ck for ck in CHECKS if not ck[0]]
-    print("\n検査 %d 件中 %d 件 OK(%.1f 秒)" % (len(CHECKS), len(CHECKS) - len(bad), elapsed))
+    bad = _CHECKS.failures
+    print("\n検査 %d 件中 %d 件 OK(%.1f 秒)" % (len(_CHECKS.results), len(_CHECKS.results) - len(bad), elapsed))
     if bad:
-        for _, label, detail in bad:
-            print("  NG:", label, detail)
+        for result in bad:
+            print("  NG:", result.name, result.detail)
         raise SystemExit(1)
     print("PASS")
 

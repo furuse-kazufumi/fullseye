@@ -117,6 +117,7 @@ from scipy.spatial import cKDTree
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import examplefig as figs                                        # noqa: E402
 import fullseye as fs                                            # noqa: E402
+from fullseye.evaluation import save_video as save_evaluation_video  # noqa: E402
 
 # --- 場面の諸元 -------------------------------------------------------------- #
 LX = LY = 60.0             # 調査区画 [m]
@@ -1514,8 +1515,10 @@ def fig_flight(ctrl: dict, mm: dict, tr: dict, W=640, H=360, fps=30.0):
         img = _v_cbar(img, lut, (W - 80, 92, 14, H - 150), -vmax, vmax, "m")
         img = _v_txt(img, "青 = 下がった", (W - 8, 70), anchor="rt", fs=11)
         frames.append(img)
-    figs.save_video("flight", frames, fps=fps, gif_every=4, gif_width=480,
-                    caption="主図(動画、%d × %d・%.0f fps・%.0f 秒): 前半は傾斜 %.0f 度の斜面を北の上空から横切り、時期 1 の点群"
+    save_evaluation_video(
+        "flight", frames, capture_fps=fps, playback_fps=fps, hold_frames=0, gif_stride=4,
+        display_scale=480 / frames[0].shape[1], interpolation="linear",
+        caption="主図(動画、%d × %d・%.0f fps・%.0f 秒): 前半は傾斜 %.0f 度の斜面を北の上空から横切り、時期 1 の点群"
                             "(%.0f pt/m²、樹冠に当たった点 = 緑)を見せる(動画専用の乱数で作った別の標本)。後半は時期 2 の地形の周りを回り、"
                             "色を DoD の鉛直差から M3C2 の法線距離へ塗り替える(同じ尺度 ±%.1f m、青 = 下がった)。崩壊中心の深さは "
                             "DoD %.3f m / M3C2 %.3f m で比 %.3f(sec %.0f 度 = %.3f)。有意な core の M3C2 土量は掘削 %.1f / 堆積 %.1f m³"

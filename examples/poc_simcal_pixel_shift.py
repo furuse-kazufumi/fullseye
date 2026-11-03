@@ -98,6 +98,7 @@ import examplefig as figs  # noqa: E402
 import fullseye as fs  # noqa: E402  公開経路(fs.ledger.<名前>)から呼ぶ
 import pixelshift as PS  # noqa: E402
 from filters_freq import phase_correlation_fft  # noqa: E402
+from fullseye.evaluation import GateAdapter, GateStyle  # noqa: E402
 
 L = fs.ledger
 REDUCED = os.environ.get("FULLSEYE_POC_BUDGET",
@@ -105,6 +106,7 @@ REDUCED = os.environ.get("FULLSEYE_POC_BUDGET",
 
 FAILS: list[str] = []
 GATES: list[str] = []
+_GATE = GateAdapter(style=GateStyle(), all_names=GATES, failed_names=FAILS)
 NUMBERS: dict[str, float] = {}
 #: 門の有意水準(χ² の上側確率)。simcal_validate の既定と同じ。
 ALPHA = 1e-3
@@ -124,10 +126,7 @@ PITCH_UM, WAVE_UM = 4.0, 0.55
 
 
 def gate(name: str, ok: bool, detail: str = "") -> None:
-    print("   [%s] %s%s" % ("ok" if ok else "NG", name, (" — " + detail) if detail else ""))
-    GATES.append(name)
-    if not ok:
-        FAILS.append(name)
+    _GATE(name, ok, detail)
 
 
 def fisher_distance(result, truth):
