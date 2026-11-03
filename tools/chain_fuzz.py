@@ -162,6 +162,27 @@ def _match_vector(rng):
     return np.array([float(h * w), r0 + (h - 1) / 2.0, c0 + (w - 1) / 2.0])
 
 
+def _contour_xld(rng):
+    """``contour`` 型の種: 円を描いた XLD 輪郭の dict(``{"shape", "cs"}``、座標は (row, col))。
+
+    2-D 登録簿の ``threshold_sub_pix`` / ``edges_sub_pix`` の出口と同じ形。型つき台帳の中では
+    ``fit_circle_xld``(W2、2026-11-03)だけが ``contour`` を受け、台帳の側に産む op が無いので、
+    種が無いと到達できない(tests/test_chain_fuzz_minimize.py の不動点の門、2026-11-04 の統合で赤)。
+    半径と中心は真値として閉形式で決まる(円周上の点 + 0.05 px の雑音)。
+
+    ★``_match_vector`` と同じく渡された ``rng`` は**進めない**: 種のプールは 1 本の乱数列から
+    型名の順に引くので、後から足した型が列を消費すると、それより後ろの型の種が全部ずれる。
+    """
+    import hashlib
+    st = repr(rng.bit_generator.state).encode("utf-8")
+    sub = np.random.default_rng(int.from_bytes(hashlib.sha256(b"contour:" + st).digest()[:8], "little"))
+    r = float(sub.uniform(6.0, 14.0))
+    cy, cx = (float(v) for v in sub.uniform(16.0, 32.0, size=2))
+    t = np.linspace(0.0, 2.0 * np.pi, 48, endpoint=False)
+    pts = np.column_stack([cy + r * np.sin(t), cx + r * np.cos(t)]) + 0.05 * sub.standard_normal((48, 2))
+    return {"shape": (48, 48), "cs": [pts]}
+
+
 def _score_volume(rng):
     """ピークを 1 つ持つ異方性ガウスの相関 volume(サブボクセル精緻化の入力)。
 
@@ -439,6 +460,7 @@ def make_generators():
         # match = 2-D 登録簿の結果ベクトル(area_center = 面積・重心の行・列)。台帳側に
         # 産む op が無く、reprconv.match_component(W1)が永久に未到達だった(2026-11-03)
         "match": _match_vector,
+        "contour": _contour_xld,
         # 光子カウント列。既知距離の dToF 復路 + 背景光を Poisson 標本化した
         # もの = 実データと同じ形と統計(実測 shape (256,)、値域 [0, 303])
         "counts": _photon_counts,
