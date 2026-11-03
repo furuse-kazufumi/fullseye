@@ -7266,6 +7266,122 @@ def _b_symmetry_comparison(pool, rng):
     image = images[int(rng.integers(len(images)))]
     model = {"kind": "reflection", "angle_deg": 90.0, "offset_px": 0.0}
     return (image, model), {}
+# --- 光学式 3D センサの仮想受入試験(opsacceptance、2026-11-03)。小さいセンサ(120x160)で速く。 --- #
+#: 族の共通の真値: 既定の配置(400x300x300 mm、z = 800 mm、球 25 mm)を 120x160 の理想センサで撮る。
+_ACC_SENSOR = {"kind": "ideal", "shape": (120, 160), "fx": 225.0, "fy": 225.0}
+_ACC_MPE = {"pf": 0.5, "ps": 0.2, "sd": 0.2, "f": 0.5}
+
+
+def _acc_sphere(seed, center=(0.0, 0.0, 800.0), radius=12.5):
+    rr = np.random.default_rng(seed)
+    u = rr.normal(size=(400, 3))
+    u /= np.linalg.norm(u, axis=1)[:, None]
+    return np.asarray(center, float) + u * (radius + 0.01 * rr.standard_normal((400, 1)))
+
+
+def _b_acc_probe(pool, rng):
+    return (_acc_sphere(1), 25.0), {}
+
+
+def _b_acc_spacing(pool, rng):
+    return (_acc_sphere(2), _acc_sphere(3, (300.0, 0.0, 800.0)), 300.0), {}
+
+
+def _b_acc_flat(pool, rng):
+    x, y = np.meshgrid(np.linspace(-50, 50, 21), np.linspace(-30, 30, 13))
+    z = 900.0 + 0.02 * np.cos(2 * np.pi * x / 40.0) + 0.01 * np.random.default_rng(4).standard_normal(x.shape)
+    return (np.column_stack([x.ravel(), y.ravel(), z.ravel()]),), {}
+
+
+def _b_acc_verdict(pool, rng):
+    return ({"pf": [0.1, 0.3], "ps": [-0.05], "sd": [0.1, -0.25, 0.02], "f": [0.2]}, dict(_ACC_MPE)), {}
+
+
+def _b_acc_scan(pool, rng):
+    import acceptance3d as _a
+    return (dict(_ACC_SENSOR), _a.acceptance_layout()["bars"][0]), {}
+
+
+def _b_acc_virtual(pool, rng):
+    return (dict(_ACC_SENSOR),), {}
+
+
+def _b_acc_budget(pool, rng):
+    return ({**_ACC_SENSOR, "kind": "triangulation"}, {"scale": {"range_scale": 1.001}}, dict(_ACC_MPE)), {}
+
+
+# --- 真値つきのカメラ校正(opscalib の calib_lm、2026-11-03)。小さい板(5x4)と小さい画像(120x160)。 --- #
+_CLM_K = np.array([[200.0, 0.0, 79.5], [0.0, 200.0, 59.5], [0.0, 0.0, 1.0]])
+_CLM_D = np.array([-0.1, 0.01, 0.0, 0.0, 0.0])
+
+
+def _clm_pose(rx, ry, rz, t):
+    import camera as _cam
+    P = np.eye(4)
+    P[:3, :3] = _cam.rodrigues([rx, ry, rz])
+    P[:3, 3] = t
+    return P
+
+
+_CLM_POSES = [(0.3, -0.2, 0.05, (-20, -15, 250)), (-0.25, 0.3, -0.1, (-20, -15, 260)),
+              (0.1, 0.35, 0.2, (-20, -15, 240)), (-0.3, -0.2, 0.0, (-20, -15, 250))]
+
+
+def _clm_views(right=False):
+    import calib_lm as _cl
+    out = []
+    for rx, ry, rz, t in _CLM_POSES:
+        P = _clm_pose(rx, ry, rz, t)
+        if right:
+            Q = _clm_pose(0.0, 0.05, 0.0, (-30.0, 0.0, 0.0))
+            P = Q @ P
+        out.append(_cl.sim_checkerboard((5, 4), 10.0, _CLM_K, _CLM_D, P, (120, 160), supersample=1)["corners"])
+    return out
+
+
+def _clm_cal():
+    import calib_lm as _cl
+    v = _clm_views()
+    rr = np.random.default_rng(7)
+    return _cl.camera_calibration_lm(_cl.checkerboard_points((5, 4), 10.0), [x + rr.normal(0, 0.1, x.shape) for x in v])
+
+
+def _b_clm_points(pool, rng):
+    return ((5, 4), 10.0), {}
+
+
+def _b_clm_sim(pool, rng):
+    return ((5, 4), 10.0, _CLM_K, _CLM_D, _clm_pose(*_CLM_POSES[0][:3], _CLM_POSES[0][3]), (120, 160)), \
+        {"supersample": 2}
+
+
+def _b_clm_find(pool, rng):
+    import calib_lm as _cl
+    P = _clm_pose(*_CLM_POSES[0][:3], _CLM_POSES[0][3])
+    return (_cl.sim_checkerboard((5, 4), 10.0, _CLM_K, _CLM_D, P, (120, 160), supersample=2)["image"], (5, 4)), {}
+
+
+def _b_clm_calibrate(pool, rng):
+    import calib_lm as _cl
+    return (_cl.checkerboard_points((5, 4), 10.0), _clm_views()), {}
+
+
+def _b_clm_stereo(pool, rng):
+    import calib_lm as _cl
+    return (_cl.checkerboard_points((5, 4), 10.0), _clm_views(), _clm_views(right=True)), {}
+
+
+def _b_clm_error_map(pool, rng):
+    return (_clm_cal(), _CLM_K, _CLM_D, (120, 160)), {}
+
+
+def _b_clm_uncertainty(pool, rng):
+    return (_clm_cal(), (120, 160)), {}
+
+
+def _b_clm_next(pool, rng):
+    return (_clm_cal(), [_clm_pose(0.2, 0.2, 0.0, (-20, -15, 250)), _clm_pose(0.0, 0.0, 0.0, (-20, -15, 400))],
+            (120, 160)), {}
 
 
 OP_ARG_BUILDERS = {
@@ -7837,6 +7953,21 @@ OP_ARG_BUILDERS = {
     "vector_to_similarity": _b_calib_fit2d,
     "hom_vector_to_proj_hom_mat2d": _b_calib_fit2d,
     "vector_angle_to_rigid": _b_calib_angle_rigid,
+    "checkerboard_points": _b_clm_points,
+    "sim_checkerboard": _b_clm_sim,
+    "find_checkerboard_corners": _b_clm_find,
+    "camera_calibration_lm": _b_clm_calibrate,
+    "stereo_calibration_lm": _b_clm_stereo,
+    "calibration_error_map": _b_clm_error_map,
+    "calibration_uncertainty_map": _b_clm_uncertainty,
+    "calibration_next_pose": _b_clm_next,
+    "sphere_probing_error": _b_acc_probe,
+    "sphere_spacing_error": _b_acc_spacing,
+    "plane_flatness_error": _b_acc_flat,
+    "acceptance_verdict": _b_acc_verdict,
+    "acceptance_scan": _b_acc_scan,
+    "virtual_acceptance_test": _b_acc_virtual,
+    "acceptance_error_budget": _b_acc_budget,
     "residue_integer_crt": _b_residue_int,
     "residue_crt": _b_residue_real,
     "residue_fault_locate": _b_residue_real,

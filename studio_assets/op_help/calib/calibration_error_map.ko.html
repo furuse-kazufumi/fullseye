@@ -1,0 +1,27 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">calibration_error_map — CALIB <code style="color:#22d3bf">calib_truth</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.calibration_error_map(calibration, K_true, dist_true, image_shape, step=16, depth=None, remove_rotation=True)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import calib_lm; calib_lm.calibration_error_map(calibration, K_true, dist_true, image_shape, step=16, depth=None, remove_rotation=True)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opscalib.get(&quot;calibration_error_map&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
+<p>참 K·왜곡과 추정값을 비교하여 영상의 어디에서 재투영 오차(px)와 3D 오차(mm)가 큰지의 지도를 반환한다(<code style="color:#22d3bf">table</code>).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>Map, over the image, how far the estimated camera misplaces a point compared with the true camera — possible only when the truth is known (a simulated calibration). For each grid pixel p the ray of the TRUE camera through p is reprojected with the ESTIMATED camera; the map is |p̂ − p| in pixels (the error any reprojection-based measurement inherits there). With <code style="color:#22d3bf">depth</code> Z (mm), the 3-D map is the lateral distance between the points the two cameras back-project from p at depth Z.</p>
+<p><code style="color:#22d3bf">remove_rotation</code>(既定 True): 推定のカメラを最もよく合う小さな回転で回してから比べる。主点のずれの大部分はカメラの向きのずれと見分けがつかず、どんな使い方でも外部の姿勢に吸収されるので、残るのが「内部パラメータと歪みでしか直せない」誤差になる。回した角度は <code style="color:#22d3bf">rotation_removed_deg</code>、回す前の地図は <code style="color:#22d3bf">raw_*</code> に残す。閉形式の門(<code style="color:#22d3bf">remove_rotation=False</code>): 推定 = 真値 → 0、cx だけ δ ずれ(歪みなし)→ どこでも δ px、3D は δ·Z/fx。<code style="color:#22d3bf">image_shape</code> (H, W)、<code style="color:#22d3bf">step</code> は格子の間隔(画素)。</p>
+<p>返す <code style="color:#22d3bf">dict</code>: <code style="color:#22d3bf">rows</code>・<code style="color:#22d3bf">cols</code>(格子の中心)、<code style="color:#22d3bf">reproj_error_px</code>(地図)、<code style="color:#22d3bf">dx_px</code>・<code style="color:#22d3bf">dy_px</code>(成分、列・行)、<code style="color:#22d3bf">max_px</code>・<code style="color:#22d3bf">rms_px</code>・<code style="color:#22d3bf">max_at</code>(row, col)、<code style="color:#22d3bf">raw_rms_px</code>・<code style="color:#22d3bf">raw_max_px</code>(回す前)、<code style="color:#22d3bf">rotation_removed_deg</code>、<code style="color:#22d3bf">error_3d_mm</code>・<code style="color:#22d3bf">max_3d_mm</code>(<code style="color:#22d3bf">depth</code> があれば)、<code style="color:#22d3bf">depth</code>。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 校正の表が不正、K が正でない、<code style="color:#22d3bf">image_shape</code>・<code style="color:#22d3bf">step</code>・<code style="color:#22d3bf">depth</code> の範囲外。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidecalib:camera_calibration">camera_calibration 패밀리 가이드</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
+<p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
+<p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
+<p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_calibration_truth_map">poc_calibration_truth_map</a> — <code style="color:#22d3bf">py -3.11 examples/poc_calibration_truth_map.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">table</code> 를 입력으로 받는 것)</h3>
+<p><a style="color:#22d3bf" href="opcalib:image_points_to_world_plane">image_points_to_world_plane</a> · <a style="color:#22d3bf" href="opcalib:contour_to_world_plane_xld">contour_to_world_plane_xld</a> · <a style="color:#22d3bf" href="opcalib:sim_caltab">sim_caltab</a> · <a style="color:#22d3bf" href="opcalib:disp_caltab">disp_caltab</a> · <a style="color:#22d3bf" href="opcalib:calibration_uncertainty_map">calibration_uncertainty_map</a> · <a style="color:#22d3bf" href="opcalib:calibration_next_pose">calibration_next_pose</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">calib_truth</code>)</h3>
+<p><a style="color:#22d3bf" href="opcalib:calibration_uncertainty_map">calibration_uncertainty_map</a> · <a style="color:#22d3bf" href="opcalib:calibration_next_pose">calibration_next_pose</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: calib_lm.py — CALIB 연산자 레지스트리. 이 op 노트는 <code style="color:#22d3bf">tools/opdocs.py md</code> 가 자동 생성합니다(직접 편집하지 마세요).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

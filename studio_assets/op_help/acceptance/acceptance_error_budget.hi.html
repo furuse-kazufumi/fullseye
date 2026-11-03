@@ -1,0 +1,26 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">acceptance_error_budget — ACCEPTANCE <code style="color:#22d3bf">budget</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table × table × table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.acceptance_error_budget(sensor, factors, mpe, layout=None, exclude_fraction=0.003, n_repeat=1, seed=0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import acceptance3d; acceptance3d.acceptance_error_budget(sensor, factors, mpe, layout=None, exclude_fraction=0.003, n_repeat=1, seed=0)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsacceptance.get(&quot;acceptance_error_budget&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>एक समय में एक error source डालकर virtual acceptance test चलाता है और लौटाता है कि कौन सा source verdict तय करता है (<code style="color:#22d3bf">table</code>)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>One-factor-at-a-time error budget of the virtual acceptance test. The baseline is <code style="color:#22d3bf">sensor</code> with every error source switched off (noise off, calibration errors 0, range scale 1, multipath 0, supersample 1). <code style="color:#22d3bf">factors</code> maps a name to the sensor keys that switch that factor on, e.g. <code style="color:#22d3bf">{&quot;noise&quot;: {&quot;noise&quot;: True}, &quot;fx 0.2 %&quot;: {&quot;fx_rel_error&quot;: 0.002}, &quot;multipath&quot;: {&quot;multipath_amplitude&quot;: 0.05}}</code>. Each factor is run alone on the baseline, then all together (&quot;all&quot;). With noise, <code style="color:#22d3bf">n_repeat</code> seeds are run and the worst of the per-run maxima is kept (the verdict must hold for every run).</p>
+<p>返す <code style="color:#22d3bf">dict</code>: <code style="color:#22d3bf">baseline</code>・<code style="color:#22d3bf">all</code>・<code style="color:#22d3bf">factors</code>(名前ごとに <code style="color:#22d3bf">pf</code>・<code style="color:#22d3bf">ps</code>・<code style="color:#22d3bf">sd</code>・<code style="color:#22d3bf">f</code> の最悪値と <code style="color:#22d3bf">verdict</code>)、<code style="color:#22d3bf">decisive</code>(単独で MPE を超えた要因の名前、比の大きい順)、<code style="color:#22d3bf">ranking</code>(全要因の比の大きい順とその量)、<code style="color:#22d3bf">interaction</code>(「all」の比 − 単独の比の最大。正なら要因が重なって初めて落ちる)。基準(全部切った)の評価量は解析解の往復だけなので ≈ 0 になる(門で確かめる)。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: <code style="color:#22d3bf">factors</code> が空・dict でない、未知のセンサの鍵、<code style="color:#22d3bf">n_repeat</code> が 1〜50 の外、<code style="color:#22d3bf">mpe</code> が不正(<code style="color:#22d3bf">acceptance_verdict</code>)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideacceptance:optical_3d_acceptance">optical_3d_acceptance family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_virtual_acceptance_3d">poc_virtual_acceptance_3d</a> — <code style="color:#22d3bf">py -3.11 examples/poc_virtual_acceptance_3d.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opacceptance:acceptance_verdict">acceptance_verdict</a> · <a style="color:#22d3bf" href="opacceptance:acceptance_scan">acceptance_scan</a> · <a style="color:#22d3bf" href="opacceptance:virtual_acceptance_test">virtual_acceptance_test</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">budget</code>)</h3>
+<p>—</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: acceptance3d.py — ACCEPTANCE operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

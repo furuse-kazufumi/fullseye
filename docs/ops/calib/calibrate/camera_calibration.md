@@ -5,7 +5,7 @@ category: calibrate
 in: keypoints
 out: table
 gpu: なし
-examples: [camera_intrinsics_calibration, lens_calibration_loop_demo, poc_camera_calibration]
+examples: [camera_intrinsics_calibration, lens_calibration_loop_demo, poc_calibration_truth_map, poc_camera_calibration]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.9.0  # fullseye lib version this note was generated for
@@ -62,15 +62,16 @@ fail-closed: 視点が 3 未満、すべての視点が正面平行(回転不足
 
 - [camera_intrinsics_calibration](../../../../examples/camera_intrinsics_calibration.py) — `py -3.11 examples/camera_intrinsics_calibration.py`
 - [lens_calibration_loop_demo](../../../../examples/lens_calibration_loop_demo.py) — `py -3.11 examples/lens_calibration_loop_demo.py`
+- [poc_calibration_truth_map](../../../../examples/poc_calibration_truth_map.py) — `py -3.11 examples/poc_calibration_truth_map.py`
 - [poc_camera_calibration](../../../../examples/poc_camera_calibration.py) — `py -3.11 examples/poc_camera_calibration.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 
-[image_points_to_world_plane](../plane/image_points_to_world_plane.md) · [contour_to_world_plane_xld](../plane/contour_to_world_plane_xld.md) · [sim_caltab](../target/sim_caltab.md) · [disp_caltab](../target/disp_caltab.md)
+[image_points_to_world_plane](../plane/image_points_to_world_plane.md) · [contour_to_world_plane_xld](../plane/contour_to_world_plane_xld.md) · [sim_caltab](../target/sim_caltab.md) · [disp_caltab](../target/disp_caltab.md) · [calibration_error_map](../calib_truth/calibration_error_map.md) · [calibration_uncertainty_map](../calib_truth/calibration_uncertainty_map.md) · [calibration_next_pose](../calib_truth/calibration_next_pose.md)
 
 ## 同カテゴリ(`calibrate`)
 
-[find_marks_and_pose](find_marks_and_pose.md) · [hand_eye_calibration](hand_eye_calibration.md)
+[find_marks_and_pose](find_marks_and_pose.md) · [hand_eye_calibration](hand_eye_calibration.md) · [camera_calibration_lm](camera_calibration_lm.md) · [stereo_calibration_lm](stereo_calibration_lm.md)
 
 ---
 *Provenance: calib.py — CALIB operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

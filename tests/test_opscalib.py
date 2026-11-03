@@ -60,8 +60,9 @@ def _pose(rx, ry, rz, t):
 # --------------------------------------------------------------------------- #
 def test_every_registered_op_has_an_implementation():
     assert opscalib.missing() == [], opscalib.missing()
-    assert len(opscalib.OPSCALIB) == 21, len(opscalib.OPSCALIB)
-    assert len(opscalib.categories()) == 5
+    # 2026-11-03: 21 -> 29 / 5 -> 7(calib_lm の 8 op: checkerboard 3・calibrate に 2・calib_truth 3)
+    assert len(opscalib.OPSCALIB) == 29, len(opscalib.OPSCALIB)
+    assert len(opscalib.categories()) == 7
 
 
 def test_every_op_declares_a_doc_and_known_sorts():

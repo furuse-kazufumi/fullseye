@@ -1,0 +1,28 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">calibration_uncertainty_map — CALIB <code style="color:#22d3bf">calib_truth</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.calibration_uncertainty_map(calibration, image_shape, step=16, depth=None, remove_rotation=True)</code>(要直接调用实现,<code style="color:#22d3bf">import calib_lm; calib_lm.calibration_uncertainty_map(calibration, image_shape, step=16, depth=None, remove_rotation=True)</code>;从台账取用则 <code style="color:#22d3bf">opscalib.get(&quot;calibration_uncertainty_map&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>将标定估计的协方差映射到图像上,返回每个像素的预测不确定度(px,给定深度 Z 时为 mm)的分布图(<code style="color:#22d3bf">table</code>)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>Propagate the marginal covariance of the intrinsics and distortion (from <code style="color:#22d3bf">camera_calibration_lm</code>) to every grid pixel: a point fixed in the camera frame that the estimate places at p would be reprojected with a standard deviation <code style="color:#22d3bf">sqrt(trace(J C Jᵀ))</code> (px, radial), J the 2x9 Jacobian of the projection with respect to (fx, fy, cx, cy, k1, k2, p1, p2, k3). Needs no ground truth — this is the map a real calibration can show too; the simulation checks that it is honest (Monte Carlo gate). With <code style="color:#22d3bf">depth</code> Z (mm) the map is also given in mm (std · Z / f, small-angle).</p>
+<p><code style="color:#22d3bf">remove_rotation</code>(既定 True)は <code style="color:#22d3bf">calibration_error_map</code> と同じ意味: カメラの向きのずれと見分けのつかない成分(主点のずれの大部分)を除く。両方を同じ設定で使うと、モンテカルロの誤差の地図と比べられる。★姿勢の不確かさは周辺化で含まれる(9x9 は全変数の共分散からの周辺)。画像の端ほど大きくなるのは、板が写っていない所を歪みの多項式が外挿するから。★線形の予測なので、外挿が大きい所では当たらない:</p>
+<p>6 視点・σ = 0.2 px で k3 まで自由にすると、隅の予測 160 px に対しモンテカルロの実測は 55 px (k1k2p1p2 なら全体の平均で 6.42 / 6.39 px と合う。tests の実測)。</p>
+<p>返す <code style="color:#22d3bf">dict</code>: <code style="color:#22d3bf">rows</code>・<code style="color:#22d3bf">cols</code>、<code style="color:#22d3bf">std_px</code>(地図)、<code style="color:#22d3bf">mean_px</code>・<code style="color:#22d3bf">max_px</code>・<code style="color:#22d3bf">max_at</code>、<code style="color:#22d3bf">std_mm</code>(<code style="color:#22d3bf">depth</code>)。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 共分散が無い・非有限、引数の範囲外。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidecalib:camera_calibration">camera_calibration 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_calibration_truth_map">poc_calibration_truth_map</a> — <code style="color:#22d3bf">py -3.11 examples/poc_calibration_truth_map.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="opcalib:image_points_to_world_plane">image_points_to_world_plane</a> · <a style="color:#22d3bf" href="opcalib:contour_to_world_plane_xld">contour_to_world_plane_xld</a> · <a style="color:#22d3bf" href="opcalib:sim_caltab">sim_caltab</a> · <a style="color:#22d3bf" href="opcalib:disp_caltab">disp_caltab</a> · <a style="color:#22d3bf" href="opcalib:calibration_error_map">calibration_error_map</a> · <a style="color:#22d3bf" href="opcalib:calibration_next_pose">calibration_next_pose</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">calib_truth</code>)</h3>
+<p><a style="color:#22d3bf" href="opcalib:calibration_error_map">calibration_error_map</a> · <a style="color:#22d3bf" href="opcalib:calibration_next_pose">calibration_next_pose</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: calib_lm.py — CALIB 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

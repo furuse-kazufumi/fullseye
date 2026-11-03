@@ -3,7 +3,8 @@
 
 実体は ``calib.py``(投影・Zhang 内部校正・Tsai-Lenz ハンドアイ)、
 ``caltab.py``(校正板の生成・シミュレート・検出・姿勢)、
-``fit_transform.py``(対応点 → 剛体/相似/射影変換)。21 op / 5 カテゴリ。
+``fit_transform.py``(対応点 → 剛体/相似/射影変換)、``calib_lm.py``(チェッカー板・Zhang + 歪みの同時 LM・
+ステレオの同時校正・真値つきの誤差と不確かさの地図・次の 1 枚)。29 op / 7 カテゴリ。
 
 呼び出し例::
 
@@ -50,6 +51,21 @@
 ``pyproject.toml`` の py-modules を途中までしか読めていなかった(配列内コメントの
 ``]`` で非貪欲の正規表現が止まった)。calib / caltab は数えられる機会が無かった。
 
+## 2026-11-03 の追加(calib_lm、8 op): 標準の土台 + Fullseye だけの層
+
+監査(``completeness_audit_2026_11_03`` B)で数えた穴: ``camera_calibration`` は K だけで歪みとの同時最適化が
+無く、チェッカー / ChArUco の検出も無かった。足したもの:
+
+* **checkerboard**(3)—— ``checkerboard_points`` / ``sim_checkerboard``(真値つきの合成、画素を板へ逆に引く
+  描画)/ ``find_checkerboard_corners``(鞍点 + Förstner の勾配直交でサブピクセル、格子の組み立て)。
+* **calibrate** に 2 —— ``camera_calibration_lm``(Zhang の閉形式を初期値に、K・歪み 5 係数・全姿勢を解析的な
+  ヤコビアンの LM で同時に、共分散つき)/ ``stereo_calibration_lm``(左右と相対姿勢を同時に)。
+  既存の ``camera_calibration`` は**置き換えずに並存**(初期値として呼ばれる)。
+* **calib_truth**(3)—— ``calibration_error_map``(真値と比べた誤差の地図)/ ``calibration_uncertainty_map``
+  (共分散を画像へ写した地図、真値なしでも出る)/ ``calibration_next_pose``(次の 1 枚の推薦)。
+
+ChArUco は入れていない(ArUco の符号表の検出が要る。基準マーカーは監査の 14 位で別の便)。
+
 ## 型語彙: **新語をひとつも作らない**
 
 判断の基準はこの repo 共通のもの ——「混ぜたときに例外ではなく、もっともらしく
@@ -95,10 +111,11 @@
    中身が食い違うので、この族にも他の族にも入れていない。
 """
 import calib
+import calib_lm
 import caltab
 import fit_transform
 
-_MOD = {"calib": calib, "caltab": caltab, "fit_transform": fit_transform}
+_MOD = {"calib": calib, "caltab": caltab, "fit_transform": fit_transform, "calib_lm": calib_lm}
 
 # カテゴリ → [(op 名, module, [入力種別], 出力種別)]
 _CATALOG = {
@@ -130,6 +147,21 @@ _CATALOG = {
         ("camera_calibration", "calib", ["keypoints"], "table"),
         ("find_marks_and_pose", "caltab", ["image2d"], "table"),
         ("hand_eye_calibration", "calib", [], "matrix"),
+        # 2026-11-03: K・歪み・全姿勢の同時 LM(共分散つき)と、ステレオの同時校正。
+        ("camera_calibration_lm", "calib_lm", ["keypoints"], "table"),
+        ("stereo_calibration_lm", "calib_lm", ["keypoints"], "table"),
+    ],
+    # チェッカー板 —— 作る(真値つきの合成)・見つける(サブピクセル)。2026-11-03。
+    "checkerboard": [
+        ("checkerboard_points", "calib_lm", [], "keypoints"),
+        ("sim_checkerboard", "calib_lm", [], "table"),
+        ("find_checkerboard_corners", "calib_lm", ["image2d"], "keypoints"),
+    ],
+    # 真値つきの校正 —— Fullseye だけの層(誤差の地図・不確かさの地図・次の 1 枚)。2026-11-03。
+    "calib_truth": [
+        ("calibration_error_map", "calib_lm", ["table"], "table"),
+        ("calibration_uncertainty_map", "calib_lm", ["table"], "table"),
+        ("calibration_next_pose", "calib_lm", ["table"], "table"),
     ],
     # 対応点 → 変換 —— 校正の前後で使う 2-D 変換推定(Kabsch / Umeyama / DLT)。
     "fit": [

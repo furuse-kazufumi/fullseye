@@ -46,7 +46,7 @@ poses_a/poses_b: 4x4 剛体変換のリスト。隣接運動から相対運動�
 
 ## 同カテゴリ(`calibrate`)
 
-[camera_calibration](camera_calibration.md) · [find_marks_and_pose](find_marks_and_pose.md)
+[camera_calibration](camera_calibration.md) · [find_marks_and_pose](find_marks_and_pose.md) · [camera_calibration_lm](camera_calibration_lm.md) · [stereo_calibration_lm](stereo_calibration_lm.md)
 
 ---
 *Provenance: calib.py — CALIB operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

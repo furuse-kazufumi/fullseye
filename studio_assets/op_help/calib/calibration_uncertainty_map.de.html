@@ -1,0 +1,28 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">calibration_uncertainty_map — CALIB <code style="color:#22d3bf">calib_truth</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.calibration_uncertainty_map(calibration, image_shape, step=16, depth=None, remove_rotation=True)</code> (die Implementierung direkt: <code style="color:#22d3bf">import calib_lm; calib_lm.calibration_uncertainty_map(calibration, image_shape, step=16, depth=None, remove_rotation=True)</code>; aus dem Register: <code style="color:#22d3bf">opscalib.get(&quot;calibration_uncertainty_map&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>Bildet die Kovarianz der Kalibrierschätzung auf das Bild ab und gibt die vorhergesagte Unsicherheit jedes Pixels zurück (px, bei Tiefe Z in mm) (<code style="color:#22d3bf">table</code>).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>Propagate the marginal covariance of the intrinsics and distortion (from <code style="color:#22d3bf">camera_calibration_lm</code>) to every grid pixel: a point fixed in the camera frame that the estimate places at p would be reprojected with a standard deviation <code style="color:#22d3bf">sqrt(trace(J C Jᵀ))</code> (px, radial), J the 2x9 Jacobian of the projection with respect to (fx, fy, cx, cy, k1, k2, p1, p2, k3). Needs no ground truth — this is the map a real calibration can show too; the simulation checks that it is honest (Monte Carlo gate). With <code style="color:#22d3bf">depth</code> Z (mm) the map is also given in mm (std · Z / f, small-angle).</p>
+<p><code style="color:#22d3bf">remove_rotation</code>(既定 True)は <code style="color:#22d3bf">calibration_error_map</code> と同じ意味: カメラの向きのずれと見分けのつかない成分(主点のずれの大部分)を除く。両方を同じ設定で使うと、モンテカルロの誤差の地図と比べられる。★姿勢の不確かさは周辺化で含まれる(9x9 は全変数の共分散からの周辺)。画像の端ほど大きくなるのは、板が写っていない所を歪みの多項式が外挿するから。★線形の予測なので、外挿が大きい所では当たらない:</p>
+<p>6 視点・σ = 0.2 px で k3 まで自由にすると、隅の予測 160 px に対しモンテカルロの実測は 55 px (k1k2p1p2 なら全体の平均で 6.42 / 6.39 px と合う。tests の実測)。</p>
+<p>返す <code style="color:#22d3bf">dict</code>: <code style="color:#22d3bf">rows</code>・<code style="color:#22d3bf">cols</code>、<code style="color:#22d3bf">std_px</code>(地図)、<code style="color:#22d3bf">mean_px</code>・<code style="color:#22d3bf">max_px</code>・<code style="color:#22d3bf">max_at</code>、<code style="color:#22d3bf">std_mm</code>(<code style="color:#22d3bf">depth</code>)。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 共分散が無い・非有限、引数の範囲外。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidecalib:camera_calibration">Leitfaden zur Familie camera_calibration</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_calibration_truth_map">poc_calibration_truth_map</a> — <code style="color:#22d3bf">py -3.11 examples/poc_calibration_truth_map.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">table</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opcalib:image_points_to_world_plane">image_points_to_world_plane</a> · <a style="color:#22d3bf" href="opcalib:contour_to_world_plane_xld">contour_to_world_plane_xld</a> · <a style="color:#22d3bf" href="opcalib:sim_caltab">sim_caltab</a> · <a style="color:#22d3bf" href="opcalib:disp_caltab">disp_caltab</a> · <a style="color:#22d3bf" href="opcalib:calibration_error_map">calibration_error_map</a> · <a style="color:#22d3bf" href="opcalib:calibration_next_pose">calibration_next_pose</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">calib_truth</code>)</h3>
+<p><a style="color:#22d3bf" href="opcalib:calibration_error_map">calibration_error_map</a> · <a style="color:#22d3bf" href="opcalib:calibration_next_pose">calibration_next_pose</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: calib_lm.py — CALIB Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

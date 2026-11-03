@@ -32639,6 +32639,150 @@
    "ko": "영상을 강건하게 표준화하고 ``k = 2 + 3*a`` 시그마에서 이진화한다.",
    "de": "Standardisiert ein Bild robust und binarisiert es bei ``k = 2 + 3*a`` Sigma.",
    "hi": "image को robust ढंग से standardize करके ``k = 2 + 3*a`` sigma पर binarize करता है।"
+  },
+  "acceptance/acceptance_layout": {
+   "fp": "1f2f0bc111e1",
+   "en": "Builds the layout of the test artefacts in the measuring volume (1 probing sphere, ball bar in 7 positions, flat in 7 positions) (``table``).",
+   "zh": "在测量体积中生成试验件的布置(1 个探测球、7 个姿态的球杆、7 个姿态的平面)(``table``)。",
+   "tw": "在量測體積中產生試驗件的配置(1 顆探測球、7 個姿態的球桿、7 個姿態的平面)(``table``)。",
+   "ko": "측정 체적 안에 시험체(프로빙 구 1개, 7자세의 볼바, 7자세의 평면) 배치를 만든다(``table``).",
+   "de": "Erzeugt die Anordnung der Prüfkörper im Messvolumen (1 Antastkugel, Kugelstab in 7 Lagen, Ebene in 7 Lagen) (``table``).",
+   "hi": "measuring volume में test artefacts (1 probing sphere, 7 स्थितियों में ball bar, 7 स्थितियों में flat) की layout बनाता है (``table``)।"
+  },
+  "acceptance/sphere_probing_error": {
+   "fp": "eed2cd9f6552",
+   "en": "Computes the probing errors of form PF and size PS from the point cloud of a sphere (``table``).",
+   "zh": "由球的点云计算探测误差的形状 PF 与尺寸 PS(``table``)。",
+   "tw": "由球的點雲計算探測誤差的形狀 PF 與尺寸 PS(``table``)。",
+   "ko": "구의 점군으로부터 프로빙 오차의 형상 PF와 크기 PS를 계산한다(``table``).",
+   "de": "Berechnet die Antastabweichungen Form PF und Größe PS aus der Punktwolke einer Kugel (``table``).",
+   "hi": "एक sphere के point cloud से probing error का form PF और size PS गणना करता है (``table``)।"
+  },
+  "acceptance/sphere_spacing_error": {
+   "fp": "38b00a37aa71",
+   "en": "Computes the sphere-spacing error SD from the point clouds of a ball bar (two spheres) (``table``).",
+   "zh": "由球杆(两个球)的点云计算球间距误差 SD(``table``)。",
+   "tw": "由球桿(兩顆球)的點雲計算球間距誤差 SD(``table``)。",
+   "ko": "볼바(구 2개)의 점군으로부터 구 간격 오차 SD를 계산한다(``table``).",
+   "de": "Berechnet die Kugelabstandsabweichung SD aus den Punktwolken eines Kugelstabs (zwei Kugeln) (``table``).",
+   "hi": "ball bar (दो spheres) के point clouds से sphere-spacing error SD गणना करता है (``table``)।"
+  },
+  "acceptance/plane_flatness_error": {
+   "fp": "1f99db62970c",
+   "en": "Computes the flatness error F (range of signed distances from the least-squares plane) from the point cloud of a flat (``table``).",
+   "zh": "由平面的点云计算平面度误差 F(到最小二乘平面的带符号距离的极差)(``table``)。",
+   "tw": "由平面的點雲計算平面度誤差 F(到最小平方平面的帶符號距離的全距)(``table``)。",
+   "ko": "평면의 점군으로부터 평면도 오차 F(최소제곱 평면으로부터의 부호 있는 거리의 범위)를 계산한다(``table``).",
+   "de": "Berechnet die Ebenheitsabweichung F (Spannweite der vorzeichenbehafteten Abstände zur Ausgleichsebene) aus der Punktwolke einer Ebene (``table``).",
+   "hi": "flat के point cloud से flatness error F (least-squares plane से signed distances की range) गणना करता है (``table``)।"
+  },
+  "acceptance/acceptance_verdict": {
+   "fp": "e86499f6feff",
+   "en": "Compares the table of evaluation quantities with the MPE (maximum permissible error) and returns pass/fail (``table``).",
+   "zh": "将评价量的表与 MPE(最大允许误差)比较并给出合格与否(``table``)。",
+   "tw": "將評價量的表與 MPE(最大允許誤差)比較並給出合格與否(``table``)。",
+   "ko": "평가량의 표를 MPE(최대 허용 오차)와 비교하여 합격 여부를 낸다(``table``).",
+   "de": "Vergleicht die Tabelle der Kenngrößen mit der MPE (Grenzwert der Messabweichung) und gibt bestanden/nicht bestanden zurück (``table``).",
+   "hi": "evaluation quantities की table की MPE (maximum permissible error) से तुलना करके pass/fail देता है (``table``)।"
+  },
+  "acceptance/acceptance_scan": {
+   "fp": "a425ba6cf972",
+   "en": "Scans one test artefact with a simulated sensor and returns its point cloud ``(N, 3)`` (``points``).",
+   "zh": "用仿真传感器拍摄一个试验件并返回其点云 ``(N, 3)``(``points``)。",
+   "tw": "用模擬感測器拍攝一個試驗件並回傳其點雲 ``(N, 3)``(``points``)。",
+   "ko": "시뮬레이션 센서로 시험체 하나를 촬영하여 그 점군 ``(N, 3)``을 반환한다(``points``).",
+   "de": "Erfasst einen Prüfkörper mit einem simulierten Sensor und gibt seine Punktwolke ``(N, 3)`` zurück (``points``).",
+   "hi": "एक simulated sensor से एक test artefact को scan करके उसका point cloud ``(N, 3)`` लौटाता है (``points``)।"
+  },
+  "acceptance/virtual_acceptance_test": {
+   "fp": "203605d99aa0",
+   "en": "Scans every artefact position with a simulated sensor and returns PF, PS, SD, F and the verdict (``table``).",
+   "zh": "用仿真传感器拍摄试验件的全部布置,返回 PF、PS、SD、F 与合格与否(``table``)。",
+   "tw": "用模擬感測器拍攝試驗件的全部配置,回傳 PF、PS、SD、F 與合格與否(``table``)。",
+   "ko": "시뮬레이션 센서로 시험체의 모든 배치를 촬영하여 PF·PS·SD·F와 합격 여부를 반환한다(``table``).",
+   "de": "Erfasst alle Prüfkörperlagen mit einem simulierten Sensor und gibt PF, PS, SD, F und das Urteil zurück (``table``).",
+   "hi": "simulated sensor से artefact की सभी positions scan करके PF, PS, SD, F और verdict लौटाता है (``table``)।"
+  },
+  "acceptance/acceptance_error_budget": {
+   "fp": "725057bdc604",
+   "en": "Runs the virtual acceptance test with one error source at a time and returns which source decides the verdict (``table``).",
+   "zh": "每次只加入一个误差因素运行虚拟验收试验,返回哪个因素决定了合格与否(``table``)。",
+   "tw": "每次只加入一個誤差因素執行虛擬驗收試驗,回傳哪個因素決定了合格與否(``table``)。",
+   "ko": "오차 요인을 하나씩 넣어 가상 인수 시험을 돌리고 어느 요인이 합격 여부를 결정하는지 반환한다(``table``).",
+   "de": "Führt die virtuelle Abnahmeprüfung mit jeweils einer Fehlerquelle durch und gibt zurück, welche Quelle das Urteil bestimmt (``table``).",
+   "hi": "एक समय में एक error source डालकर virtual acceptance test चलाता है और लौटाता है कि कौन सा source verdict तय करता है (``table``)।"
+  },
+  "calib/checkerboard_points": {
+   "fp": "63718c3d80cd",
+   "en": "Returns the board coordinates (x, y) of the inner corners of a checkerboard in row-major order (``keypoints``).",
+   "zh": "按行优先顺序返回棋盘格内角点的板坐标 (x, y)(``keypoints``)。",
+   "tw": "依列優先順序回傳棋盤格內角點的板座標 (x, y)(``keypoints``)。",
+   "ko": "체커보드 내부 코너의 보드 좌표 (x, y)를 행 우선 순서로 반환한다(``keypoints``).",
+   "de": "Gibt die Brettkoordinaten (x, y) der inneren Ecken eines Schachbretts zeilenweise zurück (``keypoints``).",
+   "hi": "checkerboard के भीतरी corners के board coordinates (x, y) row-major क्रम में लौटाता है (``keypoints``)।"
+  },
+  "calib/sim_checkerboard": {
+   "fp": "3cdc6a941544",
+   "en": "Synthesizes a checkerboard image with known K, distortion and pose and returns it with the true pixel of every corner (``table``).",
+   "zh": "用已知的 K、畸变与位姿合成棋盘格图像,并连同各角点的真实像素一起返回(``table``)。",
+   "tw": "用已知的 K、畸變與姿態合成棋盤格影像,並連同各角點的真實像素一起回傳(``table``)。",
+   "ko": "알려진 K·왜곡·자세로 체커보드 영상을 합성하여 각 코너의 참 픽셀과 함께 반환한다(``table``).",
+   "de": "Synthetisiert ein Schachbrettbild mit bekanntem K, Verzeichnung und Pose und gibt es mit dem wahren Pixel jeder Ecke zurück (``table``).",
+   "hi": "ज्ञात K, distortion और pose से checkerboard image बनाकर हर corner के true pixel के साथ लौटाता है (``table``)।"
+  },
+  "calib/find_checkerboard_corners": {
+   "fp": "56857694a6f9",
+   "en": "Detects the inner corners of a checkerboard image to sub-pixel accuracy and returns them in the board's row-major order (``keypoints``).",
+   "zh": "以亚像素精度检测棋盘格图像的内角点,并按板的行优先顺序返回(``keypoints``)。",
+   "tw": "以次像素精度偵測棋盤格影像的內角點,並依板的列優先順序回傳(``keypoints``)。",
+   "ko": "체커보드 영상에서 내부 코너를 서브픽셀로 검출하여 보드의 행 우선 순서로 반환한다(``keypoints``).",
+   "de": "Erkennt die inneren Ecken eines Schachbrettbilds subpixelgenau und gibt sie in der zeilenweisen Reihenfolge des Bretts zurück (``keypoints``).",
+   "hi": "checkerboard image के भीतरी corners को sub-pixel सटीकता से detect करके board के row-major क्रम में लौटाता है (``keypoints``)।"
+  },
+  "calib/camera_calibration_lm": {
+   "fp": "7cc690077c36",
+   "en": "Jointly refines intrinsics, distortion and all poses by LM from Zhang's initial estimate and returns them with their covariance (``table``).",
+   "zh": "从 Zhang 法的初值出发,用 LM 同时优化内参、畸变与全部位姿,并连同协方差一起返回(``table``)。",
+   "tw": "從 Zhang 法的初值出發,用 LM 同時最佳化內參、畸變與全部姿態,並連同共變異數一起回傳(``table``)。",
+   "ko": "Zhang 법의 초기값에서 내부 파라미터·왜곡·모든 자세를 LM으로 동시에 최적화하여 공분산과 함께 반환한다(``table``).",
+   "de": "Optimiert ausgehend von Zhangs Startwert Intrinsik, Verzeichnung und alle Posen gemeinsam per LM und gibt sie mit ihrer Kovarianz zurück (``table``).",
+   "hi": "Zhang विधि के आरंभिक अनुमान से intrinsics, distortion और सभी poses को LM से एक साथ optimize करके covariance सहित लौटाता है (``table``)।"
+  },
+  "calib/stereo_calibration_lm": {
+   "fp": "6bdfbce7888b",
+   "en": "Jointly refines both cameras' intrinsics and distortion, the board poses and the right camera's relative pose (R, T) by LM (``table``).",
+   "zh": "用 LM 同时优化左右相机的内参与畸变、板的位姿以及右相机的相对位姿 (R, T)(``table``)。",
+   "tw": "用 LM 同時最佳化左右相機的內參與畸變、板的姿態以及右相機的相對姿態 (R, T)(``table``)。",
+   "ko": "좌우 카메라의 내부 파라미터·왜곡, 보드 자세, 오른쪽 카메라의 상대 자세 (R, T)를 LM으로 동시에 최적화한다(``table``).",
+   "de": "Optimiert Intrinsik und Verzeichnung beider Kameras, die Brettposen und die relative Pose (R, T) der rechten Kamera gemeinsam per LM (``table``).",
+   "hi": "दोनों cameras के intrinsics और distortion, board poses तथा right camera की relative pose (R, T) को LM से एक साथ optimize करता है (``table``)।"
+  },
+  "calib/calibration_error_map": {
+   "fp": "e335c88477fd",
+   "en": "Compares the true K and distortion with the estimate and returns a map of where in the image the reprojection error (px) and 3-D error (mm) are large (``table``).",
+   "zh": "比较真实的 K、畸变与估计值,返回图像中重投影误差(px)与 3D 误差(mm)较大位置的分布图(``table``)。",
+   "tw": "比較真實的 K、畸變與估計值,回傳影像中重投影誤差(px)與 3D 誤差(mm)較大位置的分布圖(``table``)。",
+   "ko": "참 K·왜곡과 추정값을 비교하여 영상의 어디에서 재투영 오차(px)와 3D 오차(mm)가 큰지의 지도를 반환한다(``table``).",
+   "de": "Vergleicht wahres K und Verzeichnung mit der Schätzung und gibt eine Karte zurück, wo im Bild der Rückprojektionsfehler (px) und der 3-D-Fehler (mm) groß sind (``table``).",
+   "hi": "true K और distortion की estimate से तुलना करके map लौटाता है कि image में कहाँ reprojection error (px) और 3-D error (mm) बड़ा है (``table``)।"
+  },
+  "calib/calibration_uncertainty_map": {
+   "fp": "aea212c51dee",
+   "en": "Maps the covariance of the calibration estimate onto the image and returns the predicted uncertainty of every pixel (px, or mm at depth Z) (``table``).",
+   "zh": "将标定估计的协方差映射到图像上,返回每个像素的预测不确定度(px,给定深度 Z 时为 mm)的分布图(``table``)。",
+   "tw": "將校正估計的共變異數映射到影像上,回傳每個像素的預測不確定度(px,給定深度 Z 時為 mm)的分布圖(``table``)。",
+   "ko": "캘리브레이션 추정의 공분산을 영상 위로 옮겨 각 픽셀의 예측 불확도(px, 깊이 Z이면 mm) 지도를 반환한다(``table``).",
+   "de": "Bildet die Kovarianz der Kalibrierschätzung auf das Bild ab und gibt die vorhergesagte Unsicherheit jedes Pixels zurück (px, bei Tiefe Z in mm) (``table``).",
+   "hi": "calibration estimate की covariance को image पर map करके हर pixel की predicted uncertainty (px, depth Z पर mm) का map लौटाता है (``table``)।"
+  },
+  "calib/calibration_next_pose": {
+   "fp": "17f064fb25af",
+   "en": "Recommends, among candidate board poses, the one view that would reduce the calibration uncertainty (mean over the image) the most (``table``).",
+   "zh": "在候选的板位姿中推荐加入后最能降低标定不确定度(全图平均)的一张(``table``)。",
+   "tw": "在候選的板姿態中推薦加入後最能降低校正不確定度(全圖平均)的一張(``table``)。",
+   "ko": "후보 보드 자세 중 추가하면 캘리브레이션 불확도(영상 전체 평균)를 가장 줄이는 1장을 추천한다(``table``).",
+   "de": "Empfiehlt unter den Kandidatenposen des Bretts die eine Aufnahme, die die Kalibrierunsicherheit (Mittel über das Bild) am stärksten senkt (``table``).",
+   "hi": "candidate board poses में से वह एक view सुझाता है जो जोड़ने पर calibration uncertainty (पूरी image का औसत) को सबसे अधिक घटाए (``table``)।"
   }
  }
 }
