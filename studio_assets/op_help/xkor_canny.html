@@ -16,6 +16,7 @@
 <p>Canny 法によるエッジ（二値領域）検出。<code style="color:#22d3bf">kornia.filters.canny</code> を呼び、返り値のうち二値エッジマップ（<code style="color:#22d3bf">edges</code>）を採用する（勾配強度側は捨てる）。</p>
 <p>a が低いしきい値（<code style="color:#22d3bf">0.1 + 0.3 * a</code>）、b が高いしきい値（<code style="color:#22d3bf">max(低いしきい値 + 1e-3, 0.3 + 0.4 * b)</code>、低い方を必ず上回るよう下駄を履かせている）を振る。出力の sort は <code style="color:#22d3bf">region</code>。</p>
 <p><b>何も写っていないフレーム(実測)</b>: 明るさが一様な画像を入れると、<b>明るさに関係なく空(全画素が背景 0)</b>になる。真っ白でも真っ黒でも同じで、明るさそのものでは何も検出しない。</p>
+<p><b>同じ処理の別実装(実測、<code style="color:#22d3bf">docs/IMPL_DIFFERENTIAL.md</code>)</b>: 同じ入力・同じ a, b での内部の差(振れ幅に対する比。5e-3 未満が一致)は <code style="color:#22d3bf">canny</code> 0.78, <code style="color:#22d3bf">cv_canny</code> 0.51, <code style="color:#22d3bf">sk_canny</code> 0.94。食い違う理由(つまみの写し方・窓・端・量子化・定義の違い)は表に書いてある。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

@@ -68,6 +68,43 @@ minor を上げる理由(CONTRIBUTING.md「Versioning」): Python 3.10 の終了
 
 - 0.8 系では `xkor_hessian` が内側でも最大 0.68、`xkor_clahe` が最大 0.46 ずれた(2026-10-24 の修正の節)。値の約束(golden)は 0.9.0 で取っており、CI も最新版だけを回すので、0.9 未満を入れられる制約は約束と合わなかった。CI の optional backends の行も `kornia>=0.9` に揃えた。門は `tests/test_kornia_version_drift_2026_10_24.py`。
 
+### 追加 — 同じ処理の別実装を互いに突き合わせる門(differential testing、`docs/IMPL_DIFFERENTIAL.md`)
+
+- 語幹が同じで接頭辞(`cv_` `sk_` `xkor_` `xsk*_` `hx_` `xg_` `tb_` …、実装・由来を表す 32 種)だけ違う op を
+  数えると 190 組(`tb_X` と台帳の `X` だけの組 154、実装どうしの組 36 = 55 対)。実装どうしの 55 対を、同じ入力
+  (構造画像・線分の断片・雑音入り・乱数、region・contour)・同じつまみ (a, b) で走らせて内部差を比べた
+  (`tools/impl_differential.py`)。結果: 一致 8 / 近い 3 / 違う 34 / 比較不能(入出力の型が違う)10。
+  違う組は全部、原因を中身で特定して表に書いた(つまみの写し方・窓の形・端・8 bit 量子化・定義の違い・名前だけ同じ
+  別の処理)。「差はつまみの写し方だけ」の見立ては、つまみを揃えた 10 点で確かめた(例: `cv_median` と `median` は
+  窓を揃えると差が 8 bit の 1/255 だけ、`dog` と `xkor_dog` は σ を揃えると定数倍を除いて 4e-6)。
+- 命名整理 第 2 段(1 つの名前 + `impl` 引数)でまとめてよい組は 8(そのまま 4: gaussian・meijering・skeleton・
+  smallest_rectangle1、一部 2: bilateral・median、つまみを揃えれば 2: unsharp・dog)。差がきっかり 0 の 3 組は内訳を
+  書いた(meijering と skeleton は同じ skimage 関数を呼んでいるだけ = 独立でない)。
+- `tb_` の 154 組は、つまみ k = 0 / 3/7 / 1 が台帳の関数の既定の 1/4・1・2 倍に写るかを標本で確かめた(一致 129、
+  入出力の加工つきで標本外 25)。`tb_lowpass` / `tb_highpass` / `tb_local_std` / `tb_companding_mu_law` は
+  同名のレジストリ op が別の関数(段 1 の C2)。
+- 門 `tests/test_impl_differential.py`: 一致した組は**実装どうしをその場で走らせて**一致し続けること、違う組には
+  理由があること(理由の無い食い違い・古い理由・内訳の無い差 0 は赤)、揃えた点が期待の量に収まること。
+  表は `regen_all` の段(実測は optional 依存の版で揺れるので `--measure` で手回し)。op ノートには
+  「同じ処理の別実装(実測)」の行が出る(`tools/opdocs.py`、6 言語の対訳つき)。
+
+### 修正(値が変わる) — `xkor_gaussian` / `xkor_unsharp` の窓が 5x5 固定で σ を打ち切っていた
+
+- 実装どうしの突き合わせ(新しい門 `tools/impl_differential.py`、下の「追加」)で、kornia 版の `xkor_gaussian` が
+  core の `gaussian` / OpenCV の `cv_gaussian`(どちらも σ = 0.3 + 2.7a)と内部で振れ幅の 9 %(a = 0.5)〜28 %(a = 0.75)
+  食い違っていた。原因は窓: `kornia.filters.gaussian_blur2d(x, (5, 5), (σ, σ))` で、σ = 1.65 でも半径 2(1.2σ)で
+  打ち切られ、σ を上げてもぼけが 5x5 の箱に近づくだけだった(docstring は「σ を 0.3〜3.0 に振る」)。
+  `xkor_unsharp`(`kornia.filters.unsharp_mask`、σ = 0.5 + 2b)も同じ 5x5 で同じ欠陥。
+- 窓の半径を `int(4σ + 0.5)`(scipy の `gaussian_filter` の既定 truncate = 4.0)にし、端は numpy の `symmetric`
+  (= scipy の `reflect`、core の `gaussian` の `b <= 0.5`)を自前で足してから kornia に渡す(4x4 の画像でも落ちない)。
+  `xkor_gaussian(v, a)` は `gaussian(v, a, 0.5)` と、`xkor_unsharp(v, ·, b)` は `unsharp(v, 2/3, (0.5 + 2b − 0.5)/1.5)` と、
+  **画像全体で 3e-7**(float32 の丸め)で一致する。`xkor_gaussian` の出口は [0,1] へ clip(重み和の丸めで定数 1 の画像が
+  1 + 1.2e-7 になるため)。
+- **値が変わる**: 両 op のほぼ全出力(窓の大きさと端の両方が変わるため)。端の規約も `reflect`(d c b | a b c d)から
+  `symmetric`(d c b a | a b c d)に変わったので、`docs/op_border.json` ほか実測台帳 5 本の 2 行を測り直した。
+  `tests/test_kornia_version_drift_2026_10_24.py` の golden の 2 行も新しい値にした(旧値はコメントに残した)。
+  既定の数値が変わる変更なので CONTRIBUTING の Versioning では minor(この Unreleased は既に 3.10 の終了で minor)。
+
 ### 追加 — 光弾性の族(応力場 → 縞 → 偏光像 → 位相差と主軸)
 
 - 新モジュール `photoelastic`(opsoptics のカテゴリ `photoelastic`、12 op)。単位は SI、位相差は rad・nm・縞次数を並べて返し、mm を m に・nm を m に・表の ×10⁻⁷ MPa⁻¹ を Pa⁻¹ に渡す取り違えは ValueError で拒否する。

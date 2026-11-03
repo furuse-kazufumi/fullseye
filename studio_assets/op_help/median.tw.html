@@ -18,6 +18,7 @@
 <p><code style="color:#22d3bf">a</code> 將視窗大小在 <code style="color:#22d3bf">3,5,7,9</code>（<code style="color:#22d3bf">_k(a)</code>）之間調整。<code style="color:#22d3bf">b</code> 選擇<b>邊界處理</b>：<code style="color:#22d3bf">b &lt;= 0.5</code> 時為 <code style="color:#22d3bf">reflect</code>（複製邊界像素並折返。scipy 的預設，也是 2026-09-17 之前的行為），之後依序為 <code style="color:#22d3bf">nearest</code> / <code style="color:#22d3bf">constant</code>（以 0 填補）/ <code style="color:#22d3bf">wrap</code>（從另一側捲繞過來）。★<b>視窗為 3 時 <code style="color:#22d3bf">reflect</code> 與 <code style="color:#22d3bf">nearest</code> 在原理上一致</b>（超出範圍只有 1 個像素，複製來源相同）—— 改了邊界處理結果卻不變時，應先懷疑視窗大小（視窗為 9 時 3 種方式結果都不同）。對椒鹽雜訊等離群值穩健，比高斯平滑更容易保留邊緣。</p>
 <p>???? NaN ????scipy ???????? NaN ???????????</p>
 <p><b>旋鈕（實測）</b>：<code style="color:#22d3bf">a</code> 以<b>離散檔位</b>生效，切換點在 a ≈ 0.25、0.49、0.75（以步長 0.02 掃描實測）。</p>
+<p><b>同一處理的其他實作（實測，<code style="color:#22d3bf">docs/IMPL_DIFFERENTIAL.md</code>）</b>：在相同輸入、相同 a、b 下，內部差（相對於值域之比；小於 5e-3 視為一致）為 <code style="color:#22d3bf">cv_median</code> 0.99, <code style="color:#22d3bf">xkor_median</code> 6.5e-08。不一致的原因（旋鈕對應、視窗、邊界、量化、定義不同）寫在表中。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

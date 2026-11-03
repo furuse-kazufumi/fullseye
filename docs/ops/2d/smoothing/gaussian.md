@@ -43,6 +43,8 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 ``a`` が標準偏差 σ を ``0.3〜3.0`` に線形に振る（``σ = 0.3 + 2.7a``）。``b`` が**端の扱い**を選ぶ: ``b <= 0.5`` で ``reflect``(端画素を複製して折り返す。scipy の既定で、2026-09-17 までの挙動)、以降 ``nearest`` / ``constant``(0 で埋める)/ ``wrap``(反対側から巻き取る)。★**σ が 0.375 未満(``a`` が約 0.028 未満)だと ``reflect`` と ``nearest`` が原理的に一致する**(``scipy`` の窓の半径は ``int(4σ + 0.5)`` で、ここでは 1 画素。はみ出しが 1 画素なので複製先が同じ)—— 端の扱いを変えたのに結果が動かないときは、まず σ の小ささを疑うこと(σ = 1 では最大 0.05 程度変わる)。実装は ``scipy.ndimage.gaussian_filter``。ノイズ除去や後段のエッジ検出前のぼかしに使う。σ が大きいほど細部が失われる。
 
+**同じ処理の別実装(実測、`docs/IMPL_DIFFERENTIAL.md`)**: 同じ入力・同じ a, b での内部の差(振れ幅に対する比。5e-3 未満が一致)は `cv_gaussian` 7.3e-05, `xkor_gaussian` 3.8e-07。食い違う理由(つまみの写し方・窓・端・量子化・定義の違い)は表に書いてある。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_smoothing_rank ファミリ ガイド](../guides/gallery2d_smoothing_rank.md)

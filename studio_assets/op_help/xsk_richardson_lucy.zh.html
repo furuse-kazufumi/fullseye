@@ -15,6 +15,7 @@
 <p>Richardson-Lucy 反卷积。假设模糊为 3x3 均值核（box PSF），进行迭代锐化（直接调用 <code style="color:#22d3bf">skimage.restoration.richardson_lucy</code>）。</p>
 <p><code style="color:#22d3bf">a</code> 在 2~17 次范围内调节迭代次数(次数越多锐化越强，但噪声放大和振铃也会增加)。<code style="color:#22d3bf">b</code> 未使用。无论实际模糊量如何，PSF 都假定为固定的 3x3 box，因此对于与真实退化过程不一致的图像，改善有限，甚至可能变差。</p>
 <p><b>空帧（实测）</b>：输入亮度均匀的图像时，<b>无论亮度如何，结果都为空（全部像素为背景 0）</b>。纯白与纯黑表现相同；仅凭亮度检测不到任何东西。</p>
+<p><b>同一处理的其他实现（实测，<code style="color:#22d3bf">docs/IMPL_DIFFERENTIAL.md</code>）</b>：在相同输入、相同 a、b 下，内部差（相对于取值范围之比；小于 5e-3 视为一致）为 <code style="color:#22d3bf">iv_richardson_lucy</code> 0.89。不一致的原因（旋钮映射、窗口、边界、量化、定义不同）写在表中。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

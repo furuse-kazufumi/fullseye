@@ -19,6 +19,7 @@
 <p>★2026-09-02（本次修正）：此前 <code style="color:#22d3bf">b</code> <b>完全不起作用</b>（實測： <code style="color:#22d3bf">max|clahe(x,0.5,0.0) - clahe(x,0.5,1.0)| == 0.0</code> 分毫不差）。CLAHE 的 &quot;C&quot; 是 contrast <b>limited</b> 的 C，clip limit 正是區分 AHE 與 CLAHE 的關鍵所在，因此<b>實作是 AHE 而不是 CLAHE</b> —— 名稱在說謊。這裡實作了 clip limit 並分配給 <code style="color:#22d3bf">b</code>，並選定倍率使 <code style="color:#22d3bf">b=1</code> 成為與舊實作逐位元一致的一端（不發生截斷的上限 = bin 數 256 倍）。</p>
 <p>分塊對影像進行劃分（PARTITION）（邊界用 linspace，因此最後一塊吸收 H % nb / W % nb 的餘數），各塊經 clip limit 限制的 CDF 就是其局部色調映射，每個像素以雙線性權重混合其（最多）4 個最近塊中心的映射 —— 這是標準的 CLAHE 內插（Zuiderveld 1994）。</p>
 <p>2026-08-30：加入內插（KNOWN_ISSUES #4 —— 舊實作對每個塊獨立地平坦化，在塊邊界出現了不連續（肉眼可見的網格））。在塊中心的鄰域內，該塊的 CDF 仍原樣占主導，因此這是與舊實作相同映射族的連續版本。</p>
+<p><b>同一處理的其他實作（實測，<code style="color:#22d3bf">docs/IMPL_DIFFERENTIAL.md</code>）</b>：在相同輸入、相同 a、b 下，內部差（相對於值域之比；小於 5e-3 視為一致）為 <code style="color:#22d3bf">cv_clahe</code> 0.61, <code style="color:#22d3bf">xkor_clahe</code> 0.61。不一致的原因（旋鈕對應、視窗、邊界、量化、定義不同）寫在表中。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

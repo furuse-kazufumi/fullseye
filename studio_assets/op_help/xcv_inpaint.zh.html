@@ -14,6 +14,7 @@
 <p>通过推测缺失区域并进行填补的修复（inpainting）。</p>
 <p>转换为 8bit 后，将极亮(&gt;235)/极暗(&lt;20)的像素视为“缺失”，自动生成掩模，并用 OpenCV 的 Telea 法(基于快速行进法，<code style="color:#22d3bf">cv2.INPAINT_TELEA</code>)从周围填补。是与 <code style="color:#22d3bf">xsk_inpaint</code> (biharmonic 法)思路相同的另一种算法版本。</p>
 <p>使用半径 3 像素的邻域(固定)。<code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。由于阈值固定，原本有意义的高光溢出/暗部死黑像素也可能被填补。</p>
+<p><b>同一处理的其他实现（实测，<code style="color:#22d3bf">docs/IMPL_DIFFERENTIAL.md</code>）</b>：在相同输入、相同 a、b 下，内部差（相对于取值范围之比；小于 5e-3 视为一致）为 <code style="color:#22d3bf">xsk_inpaint</code> 0.75。不一致的原因（旋钮映射、窗口、边界、量化、定义不同）写在表中。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

@@ -14,6 +14,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Globale Schwellenwertbildung nach Otsus Diskriminanzanalyse (OpenCV-Implementierung). Derselbe Algorithmus wie sk_otsu, unterscheidet sich jedoch darin, dass intern vor der Berechnung auf 8 Bit quantisiert wird (Ergebnisse können leicht abweichen).</p>
 <p>Entspricht HALCONs <code style="color:#22d3bf">binary_threshold</code>. Die Implementierung ist das in Wahrheitswerte umgewandelte Ergebnis von <code style="color:#22d3bf">cv2.threshold(_u8(v), 0, 255, THRESH_BINARY+THRESH_OTSU)</code>. a, b werden nicht verwendet.</p>
+<p><b>Andere Implementierungen derselben Operation (gemessen; <code style="color:#22d3bf">docs/IMPL_DIFFERENTIAL.md</code>)</b>: Bei gleichen Eingaben und gleichen a, b beträgt der Unterschied im Inneren (relativ zum Wertebereich; unter 5e-3 gilt als gleich) <code style="color:#22d3bf">otsu</code> 0.007, <code style="color:#22d3bf">sk_otsu</code> 0.012. Warum die abweichenden sich unterscheiden (Knopf-Abbildung, Fenster, Rand, Quantisierung, andere Definition), steht in der Tabelle.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">Leitfaden zur Familie gallery2d_segmentation</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

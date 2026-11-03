@@ -15,6 +15,7 @@
 <p>Felzenszwalb 基於圖的區域分割。以像素為節點進行最小生成樹聚類,是一種即使沒有明確邊界也能對影像進行過度分割(oversegmentation)的高速方法。此處回傳的是分割結果的邊界線區域。</p>
 <p>HALCON 中沒有直接對應的運算子。實作為 <code style="color:#22d3bf">segmentation.find_boundaries(segmentation.felzenszwalb(v, scale=20+200*a, channel_axis=None))</code> —— a 將 scale(觀測尺度。越大，分割塊越少、越大)在 20～220 範圍內調整。sigma(前處理的平滑)、min_size 固定為預設值(0.8, 20)。b 未使用。</p>
 <p><b>空影格（實測）</b>：輸入亮度均勻的影像時，<b>無論亮度為何，結果都為空（全部像素為背景 0）</b>。純白與純黑表現相同；僅憑亮度偵測不到任何東西。</p>
+<p><b>同一處理的其他實作（實測，<code style="color:#22d3bf">docs/IMPL_DIFFERENTIAL.md</code>）</b>：在相同輸入、相同 a、b 下，內部差（相對於值域之比；小於 5e-3 視為一致）為 <code style="color:#22d3bf">sg_felzenszwalb</code> 1。不一致的原因（旋鈕對應、視窗、邊界、量化、定義不同）寫在表中。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

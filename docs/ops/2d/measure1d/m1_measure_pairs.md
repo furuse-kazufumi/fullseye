@@ -37,6 +37,8 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 ``a`` は線の向き（``theta = a*pi``）。エッジ検出は ``m1_measure_pos``と同じ（勾配ピークのサブピクセル検出）で、``b``（0〜1）は最大振幅に対する相対しきい値。しきい値を超えたエッジを順に走査し、極性がrising→falling と並ぶ組を 1 対として数える（feature、整数値）。エッジが 2 本未満なら 0.0。
 
+**同じ語幹の別の op**: `measure_pairs` は入出力の型が違う別の処理で、名前が似ているだけ(`docs/IMPL_DIFFERENTIAL.md`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_contour_measure ファミリ ガイド](../guides/gallery2d_contour_measure.md)

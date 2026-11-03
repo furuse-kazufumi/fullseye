@@ -5382,7 +5382,7 @@
     "status": "determined",
     "constant_in_c": false,
     "out_min": 0.0,
-    "out_max": 0.999999880791,
+    "out_max": 1.0,
     "jumps": []
   },
   {

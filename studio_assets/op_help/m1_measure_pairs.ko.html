@@ -13,6 +13,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>중심을 지나는 캘리퍼 선에서 상승→하강 에지 쌍(밝은 물체의 양 끝)의 개수를 센다(HALCON <code style="color:#22d3bf">measure_pairs</code>에 해당: 사각형/원호에 수직인 직선 에지 쌍을 추출).</p>
 <p><code style="color:#22d3bf">a</code>는 선의 방향(<code style="color:#22d3bf">theta = a*pi</code>). 에지 검출은 <code style="color:#22d3bf">m1_measure_pos</code>와 같고(기울기 피크의 서브픽셀 검출), <code style="color:#22d3bf">b</code>(0~1)는 최대 진폭에 대한 상대 임계값이다. 임계값을 넘은 에지를 차례로 주사하여, 극성이 rising→falling으로 나란한 조를 1쌍으로 센다(feature, 정수값). 에지가 2개 미만이면 0.0.</p>
+<p><b>같은 어간의 다른 op</b>: <code style="color:#22d3bf">measure_pairs</code> 는 입출력 타입이 다른 별개의 처리이며, 이름만 비슷하다(<code style="color:#22d3bf">docs/IMPL_DIFFERENTIAL.md</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">gallery2d_contour_measure 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>

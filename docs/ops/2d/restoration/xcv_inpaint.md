@@ -44,6 +44,8 @@ version: 0.9.0  # fullseye lib version this note was generated for
 固定のため、本来意味のある白飛び/黒つぶれ画素まで埋められてしまう
 場合がある。
 
+**同じ処理の別実装(実測、`docs/IMPL_DIFFERENTIAL.md`)**: 同じ入力・同じ a, b での内部の差(振れ幅に対する比。5e-3 未満が一致)は `xsk_inpaint` 0.75。食い違う理由(つまみの写し方・窓・端・量子化・定義の違い)は表に書いてある。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_smoothing_rank ファミリ ガイド](../guides/gallery2d_smoothing_rank.md)

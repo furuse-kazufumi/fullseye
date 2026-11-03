@@ -45,6 +45,8 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 **端の扱い**: 端の画素を複製する(最近傍)(2026-09-16 に実測して記録)。
 
+**同じ処理の別実装(実測、`docs/IMPL_DIFFERENTIAL.md`)**: 同じ入力・同じ a, b での内部の差(振れ幅に対する比。5e-3 未満が一致)は `cv_bilateral` 0.055, `xkor_bilateral` 2.7e-07。食い違う理由(つまみの写し方・窓・端・量子化・定義の違い)は表に書いてある。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_smoothing_rank ファミリ ガイド](../guides/gallery2d_smoothing_rank.md)

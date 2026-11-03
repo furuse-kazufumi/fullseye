@@ -48,6 +48,8 @@ Eccentricity sqrt(1 - lambda_min/lambda_max) from the point covariance.
 密な部分が重く効く)点は面積ベースの指標と異なる。軸比そのものは
 ``xg_elliptic_axis``、主軸の向きは ``xg_orientation``。
 
+**同じ語幹の別の op**: `eccentricity` は入出力の型が違う別の処理で、名前が似ているだけ(`docs/IMPL_DIFFERENTIAL.md`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_geometry ファミリ ガイド](../guides/gallery2d_geometry.md)

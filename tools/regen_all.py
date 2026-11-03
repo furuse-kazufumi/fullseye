@@ -62,6 +62,11 @@ CHAIN = [
     (["tools/audit_file_formats.py"], "docs/FILE_FORMATS.md(実装・op・テストから生成するファイル形式棚卸し)"),
     (["tools/halcon_compat_profile.py", "--manifest"],
      "HALCON 互換プロファイル + 比較試験 manifest + HALCON_PARITY の H15 節"),
+    # 入力は commit 済みの実測 docs/impl_differential.json と手で書く表 tools/impl_differential_table.py だけ
+    # (実測 `--measure` は optional 依存の版で下の桁が揺れるので手で回す。門は tests/test_impl_differential.py)。
+    # opdocs はノートへ同じ JSON から「同じ処理の別実装」の行を差し込む(この段の出力は読まない)。
+    (["tools/impl_differential.py", "--quiet"],
+     "docs/IMPL_DIFFERENTIAL.md(同じ処理の別実装の突き合わせ表)"),
     (["tools/opdocs.py", "all"],
      "op ノート + SAMPLES + TOC + RAG skill のコーパス地図 + Studio help HTML(6 言語)"),
     (["tools/gen_op_catalog.py"], "1 ページの op カタログ"),
@@ -150,6 +155,7 @@ OUTPUTS = {
     "tools/halcon_compat_profile.py": ["docs/halcon_compat_profile.json",
                                         "docs/halcon_comparison_manifest.json",
                                         "docs/HALCON_PARITY.md"],
+    "tools/impl_differential.py": ["docs/IMPL_DIFFERENTIAL.md"],
     "tools/opdocs.py": ["docs/ops/*", "studio_assets/op_help/*", "docs/i18n/help_coverage.json",
                         "fullseye/skill_template/SKILL.md", "skills/fullseye-ops/SKILL.md"],
     "tools/gen_op_catalog.py": ["docs/OP_CATALOG.md", "fullseye/OP_CATALOG.md"],
@@ -257,7 +263,7 @@ READS = {
         "docs/README.md", "docs/README.*.md", "docs/OP_COUNT_HISTORY.md",
         "docs/EXAMPLES_3D.md", "docs/SENSOR_PLAYBOOK.md", "docs/OPERATORS.md",
         "docs/REFERENCES.md", "docs/EXAMPLES.md", "docs/CONVERSION_MATRIX.md",
-        "docs/HALCON_PARITY.md",
+        "docs/HALCON_PARITY.md", "docs/IMPL_DIFFERENTIAL.md",
         "docs/DESIGN_NOTES.md", "docs/DESIGN_NOTES.*.md",
         "docs/AI_RAG_GUIDE.md", "docs/AI_RAG_GUIDE.*.md",
         "docs/view2026/index.md", "docs/view2026/*/index.md"],

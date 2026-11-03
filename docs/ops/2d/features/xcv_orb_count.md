@@ -40,6 +40,8 @@ OpenCV 版 ORB(Oriented FAST and Rotated BRIEF)キーポイント検出数。
 (上限であり、実際の検出数は画像内容に依存してそれより少なくなる)。
 ``b`` は未使用。
 
+**同じ処理の別実装(実測、`docs/IMPL_DIFFERENTIAL.md`)**: 同じ入力・同じ a, b での内部の差(振れ幅に対する比。5e-3 未満が一致)は `xsk_orb_count` 1。食い違う理由(つまみの写し方・窓・端・量子化・定義の違い)は表に書いてある。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_features ファミリ ガイド](../guides/gallery2d_features.md)

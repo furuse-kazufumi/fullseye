@@ -20,6 +20,7 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 保留高度的一半 <code style="color:#22d3bf">hh = (0.3 + 0.6*a) * H/2</code>(整體的 30%〜90%)。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 保留寬度的一半 <code style="color:#22d3bf">ww = (0.3 + 0.6*b) * W/2</code>(整體的 30%〜90%)。即使 a=b=1,周邊 5% 也會被去掉。</p>
 <p>只是剔除點而不分割,因此繞到矩形外又回來的 contour,剩下的點會彼此相連(跳躍)。若要完全忽略矩形外,在後級用 <code style="color:#22d3bf">hx_split_contours</code>。從影像邊緣指定留白的版本是 <code style="color:#22d3bf">hx_clip_contours</code>, 用 1 個旋鈕做成正方形視窗的版本是 <code style="color:#22d3bf">xg_crop_contours</code>。</p>
+<p><b>同一處理的其他實作（實測，<code style="color:#22d3bf">docs/IMPL_DIFFERENTIAL.md</code>）</b>：在相同輸入、相同 a、b 下，內部差（相對於值域之比；小於 5e-3 視為一致）為 <code style="color:#22d3bf">xg_crop_contours</code> 0.74。不一致的原因（旋鈕對應、視窗、邊界、量化、定義不同）寫在表中。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

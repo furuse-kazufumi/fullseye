@@ -7855,13 +7855,13 @@
    "hi": "DoG (Difference of Gaussians) blob response। ``kornia.feature.dog_response_single`` (न हो तो ``dog_response`` पर fallback) को default parameters से call करता है, absolute value लेकर अधिकतम absolute value से normalise करता है।"
   },
   "2d/xkor_gaussian": {
-   "fp": "1d82bd149152",
-   "en": "Gaussian blur (kornia's GPU-native implementation). Applies ``kornia.filters.gaussian_blur2d`` on a torch tensor with a 5x5 kernel and variable sigma.",
-   "zh": "高斯模糊(kornia 的 GPU 原生实现)。在 torch 张量上以 5x5 核、可变 sigma 应用 ``kornia.filters.gaussian_blur2d``。",
-   "tw": "高斯模糊(kornia 的 GPU 原生實作)。於 torch 張量上以 5x5 核、可變 sigma 套用 ``kornia.filters.gaussian_blur2d``。",
-   "ko": "가우시안 블러(kornia의 GPU 네이티브 구현). torch 텐서 상에서 5x5 커널·가변 시그마로 ``kornia.filters.gaussian_blur2d``를 적용한다.",
-   "de": "Gaußsche Unschärfe (GPU-native Implementierung von kornia). Wendet ``kornia.filters.gaussian_blur2d`` auf einem Torch-Tensor mit einem 5x5-Kernel und variablem Sigma an.",
-   "hi": "Gaussian blur (kornia का GPU native implementation)। torch tensor पर ``kornia.filters.gaussian_blur2d`` को 5x5 kernel और बदलने योग्य sigma से लगाता है।"
+   "fp": "d144b0bf7627",
+   "en": "Gaussian blur (kornia's GPU-native implementation). Applies ``kornia.filters.gaussian_blur2d`` on a torch tensor with a window sized to sigma.",
+   "zh": "高斯模糊(kornia 的 GPU 原生实现)。在 torch 张量上以与 sigma 匹配的窗口应用 ``kornia.filters.gaussian_blur2d``。",
+   "tw": "高斯模糊(kornia 的 GPU 原生實作)。於 torch 張量上以與 sigma 相符的視窗套用 ``kornia.filters.gaussian_blur2d``。",
+   "ko": "가우시안 블러(kornia의 GPU 네이티브 구현). torch 텐서 상에서 시그마에 맞춘 창으로 ``kornia.filters.gaussian_blur2d``를 적용한다.",
+   "de": "Gaußsche Unschärfe (GPU-native Implementierung von kornia). Wendet ``kornia.filters.gaussian_blur2d`` auf einen torch-Tensor mit einem an Sigma angepassten Fenster an.",
+   "hi": "Gaussian blur (kornia का GPU-native implementation)। torch tensor पर sigma के अनुसार window के साथ ``kornia.filters.gaussian_blur2d`` लगाता है।"
   },
   "2d/xkor_gftt": {
    "fp": "ab9fca610380",
@@ -7918,13 +7918,13 @@
    "hi": "Motion blur। ``kornia.filters.motion_blur`` को call करता है।"
   },
   "2d/xkor_unsharp": {
-   "fp": "3b48f49cea4b",
-   "en": "Unsharp mask (sharpening). Calls ``kornia.filters.unsharp_mask`` with a 5x5 kernel.",
-   "zh": "反锐化蒙版(锐化)。以 5x5 核调用 ``kornia.filters.unsharp_mask``。",
-   "tw": "反銳化遮罩(銳化)。以 5x5 核呼叫 ``kornia.filters.unsharp_mask``。",
-   "ko": "언샤프 마스크(선명화). 5x5 커널로 ``kornia.filters.unsharp_mask``를 호출한다.",
-   "de": "Unscharfmaskierung (Schärfezeichnung). Ruft ``kornia.filters.unsharp_mask`` mit einem 5x5-Kernel auf.",
-   "hi": "Unsharp mask (sharpening)। ``kornia.filters.unsharp_mask`` को 5x5 kernel से call करता है।"
+   "fp": "fc63c7cd72fe",
+   "en": "Unsharp mask (sharpening). Calls ``kornia.filters.unsharp_mask`` with a window sized to sigma (``v + (v - G_σ * v)``, strength fixed at 1).",
+   "zh": "反锐化蒙版(锐化)。以与 sigma 匹配的窗口调用 ``kornia.filters.unsharp_mask``(``v + (v - G_σ * v)``,强度固定为 1)。",
+   "tw": "反銳化遮罩(銳化)。以與 sigma 相符的視窗呼叫 ``kornia.filters.unsharp_mask``(``v + (v - G_σ * v)``,強度固定為 1)。",
+   "ko": "언샤프 마스크(선명화). 시그마에 맞춘 창으로 ``kornia.filters.unsharp_mask``를 호출한다(``v + (v - G_σ * v)``, 강도 1 고정).",
+   "de": "Unscharfmaskierung (Schärfezeichnung). Ruft ``kornia.filters.unsharp_mask`` mit einem an Sigma angepassten Fenster auf (``v + (v - G_σ * v)``, Stärke fest 1).",
+   "hi": "Unsharp mask (sharpening)। sigma के अनुसार window से ``kornia.filters.unsharp_mask`` को call करता है (``v + (v - G_σ * v)``, strength 1 पर स्थिर)।"
   },
   "2d/xmh_bernsen": {
    "fp": "38e2430a6993",

@@ -16,6 +16,7 @@
 <p>a 調整截斷限制（<code style="color:#22d3bf">1.0 + 4.0 * a</code>，範圍 1.0~5.0）。值越大對比度提升得越強，但雜訊也越容易被強調。b 未使用。</p>
 <p><b>需要 kornia 0.9 以上</b>。0.8 及更早版本的 <code style="color:#22d3bf">equalize_clahe</code> 與 OpenCV 的 CLAHE 平均相差 0.04~0.17，最大相差 0.46（0.9 修正了直方圖的分箱、被截斷餘量的分配方式、LUT 的取整與分塊內插）。為了不讓數值隨版本悄悄改變，低於 0.9 時會附上理由拒絕。分塊網格明確傳入 8x8。</p>
 <p><b>旋鈕（實測）</b>：將 <code style="color:#22d3bf">a</code> 從 0 掃到 1 <b>輸出不變</b>（以 5 種輸入實測）。</p>
+<p><b>同一處理的其他實作（實測，<code style="color:#22d3bf">docs/IMPL_DIFFERENTIAL.md</code>）</b>：在相同輸入、相同 a、b 下，內部差（相對於值域之比；小於 5e-3 視為一致）為 <code style="color:#22d3bf">clahe</code> 0.61, <code style="color:#22d3bf">cv_clahe</code> 0.087。不一致的原因（旋鈕對應、視窗、邊界、量化、定義不同）寫在表中。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

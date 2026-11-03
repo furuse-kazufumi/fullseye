@@ -39,6 +39,8 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 HALCON に直接対応するものは無い。実装は ``feature.shape_index(v, sigma=0.5+2.0*a)`` の NaN(平坦領域で未定義になる)を 0 に置き換えてから ``signed01``(符号付き応答の 0 を 0.5 に写像し、±最大値を 0/1 に写像する)で ``[0,1]`` へ写した値 —— a は Hessian を計算する際のガウス微分の σ を 0.5〜2.5 に振る。b は未使用。
 
+**同じ語幹の別の op**: `shape_index` は入出力の型が違う別の処理で、名前が似ているだけ(`docs/IMPL_DIFFERENTIAL.md`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_texture_freq ファミリ ガイド](../guides/gallery2d_texture_freq.md)

@@ -17,6 +17,7 @@
 <p>Canny 에지 검출(영역 버전, OpenCV 구현). sk_canny와 같은 알고리즘이지만, OpenCV 버전은 가우시안 평활화의 σ가 아니라 두 개의 임계값을 직접 지정하는 API로 되어 있다.</p>
 <p>HALCON의 <code style="color:#22d3bf">edges_image</code>에 해당한다. 구현은 <code style="color:#22d3bf">cv2.Canny(_u8(v), threshold1=int(50+100*a), threshold2=int(100+150*b))</code>의 결과를 참거짓 값으로 변환한 것 —— a는 하측 임계값(약한 에지의 채택 기준선)을 50~150으로, b는 상측 임계값(강한 에지의 확정 기준선)을 100~250으로 바꾼다. a를 크게, b를 작게 하면 하측이 상측을 웃도는 경우가 있으며, 그때의 동작은 OpenCV의 구현에 의존한다는 점에 주의.</p>
 <p><b>아무것도 찍히지 않은 프레임(실측)</b>: 밝기가 균일한 이미지를 넣으면 <b>밝기와 무관하게 결과가 비어 있다(모든 화소가 배경 0)</b>. 순백이든 순흑이든 같으며, 밝기 자체로는 아무것도 검출하지 않는다.</p>
+<p><b>같은 처리의 다른 구현(실측, <code style="color:#22d3bf">docs/IMPL_DIFFERENTIAL.md</code>)</b>: 같은 입력·같은 a, b에서의 내부 차이(값 범위 대비 비율, 5e-3 미만이면 일치)는 <code style="color:#22d3bf">canny</code> 0.8, <code style="color:#22d3bf">sk_canny</code> 0.94, <code style="color:#22d3bf">xkor_canny</code> 0.51. 어긋나는 이유(노브 매핑·창·가장자리·양자화·정의 차이)는 표에 있다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
