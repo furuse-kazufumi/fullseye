@@ -195,10 +195,56 @@ def nw_bracket_scene(variant: int):
                       "r00": float(R[0, 0]), "r12": float(R[1, 2])}}
 
 
+# ---- 2026-11-04 統合: D1 / D4 / D2 の族(acceptance / matchreg / symbol)に 1 本ずつ ------------------
+def nw_probe_sphere(variant: int):
+    """VDI/VDE 2634-2 の探針の球(呼び径 25 mm)を、半径方向の雑音 σ だけを足した点群で撮る。
+
+    中心は z = 800 mm 付近、400 点。真値: PS(大きさの誤差)= 0、PF(形状の誤差 = 半径の幅)は雑音の
+    幅で決まり σ の数倍以内(上限 8σ)。雑音 0 なら両方 0(閉形式)。
+    """
+    sigma = 0.0 if variant == 0 else 0.02
+    g = rng(variant, 67)
+    u = g.standard_normal((400, 3))
+    u /= np.linalg.norm(u, axis=1)[:, None]
+    centre = np.array([3.0, -2.0, 800.0]) if variant == 0 else np.array([-40.0, 25.0, 760.0])
+    pts = centre + u * (12.5 + sigma * g.standard_normal((400, 1)))
+    return {"value": pts, "aux": {"diameter": 25.0},
+            "truth": {"ps": 0.0, "pf_max": max(8.0 * sigma, 1e-9)}}
+
+
+def nw_shifted_pair(variant: int):
+    """滑らかな模様と、それを既知の (dy, dx) だけずらした像(3 次スプラインの補間)。
+
+    真値: register_ecc(並進)の warp の平行移動 = (dx, dy)(列が先、``warp[0, 2]`` = dx)。
+    """
+    from scipy import ndimage as ndi
+    dy, dx = (2.3, -1.7) if variant == 0 else (-3.1, 0.8)
+    base = ndi.gaussian_filter(rng(variant, 68).random((96, 96)), 3.0)
+    base = (base - base.min()) / np.ptp(base)
+    moving = ndi.shift(base, (dy, dx), order=3, mode="nearest")
+    return {"value": base, "aux": {"moving": moving}, "truth": {"dx": dx, "dy": dy}}
+
+
+def nw_ean13_label(variant: int):
+    """EAN-13(JAN)のラベルを描画したもの(モジュール 4 px、variant 1 は 7 度傾けて雑音を足す)。
+
+    真値 = 符号化した 13 桁(検査数字は encode_barcode1d が付ける)。
+    """
+    import barcode1d
+    import symrender
+    digits = "490123456789" if variant == 0 else "453987654321"
+    sym = barcode1d.encode_barcode1d(digits, "ean13")
+    img = symrender.render_symbol(sym, 4.0, rotate_deg=0.0 if variant == 0 else 7.0)
+    if variant:
+        img = np.clip(img + 0.02 * rng(variant, 69).standard_normal(img.shape), 0.0, 1.0)
+    return {"value": img, "aux": {}, "truth": {"text": sym["text"]}}
+
+
 SAMPLES = {
     "nw_bore": nw_bore, "nw_touching": nw_touching, "nw_two_grey_parts": nw_two_grey_parts,
     "nw_offcentre_ring": nw_offcentre_ring, "nw_grey_spheres": nw_grey_spheres, "nw_mic_pair": nw_mic_pair,
     "nw_feed_marks": nw_feed_marks, "nw_grating": nw_grating, "nw_bracket_scene": nw_bracket_scene,
+    "nw_probe_sphere": nw_probe_sphere, "nw_shifted_pair": nw_shifted_pair, "nw_ean13_label": nw_ean13_label,
 }
 
 
@@ -312,6 +358,37 @@ RECIPES = [
              "0.005, 40 clutter points, shuffled — the bracket has no rotational symmetry, so the pose is unique. "
              "The scene reuses the model's sampling; an independently resampled scene is 1-3 deg off (ICP slides "
              "on the plates of this coarse model), see the sample's docstring."},
+    # ------------------------------------------------ 2026-11-04: acceptance(D1、opsacceptance)
+    {"name": "Accept — probing error of a 3-D sensor on a calibrated sphere (VDI/VDE 2634-2 idea: PF and PS)",
+     "family": "acceptance", "task": "measure", "task_class": "measurement", "halcon": None,
+     "input_sort": "points", "sample": "nw_probe_sphere",
+     "stages": [{"op": "sphere_probing_error", "args": ["$in", "$aux.diameter"]}],
+     "expect": [{"get": ["ps"], "approx": "ps", "atol": 0.01},
+                {"get": ["pf"], "approx": "pf_max", "atol": 0.16}],
+     "note": "acceptance test of an optical 3-D sensor before buying it: fit a sphere to the cloud of the calibrated "
+             "25 mm probing sphere and report the size error PS (fitted − calibrated diameter) and the form error PF "
+             "(range of radial residuals after excluding the worst 0.3 %). A noise-free cloud gives both 0 in closed "
+             "form; radial noise σ = 0.02 mm keeps PS near 0 and PF within a few σ."},
+    # ------------------------------------------------ 2026-11-04: matchreg(D4、opsmatchreg)
+    {"name": "Register — sub-pixel shift between two images by ECC (enhanced correlation coefficient)",
+     "family": "matchreg", "task": "register", "task_class": "measurement", "halcon": "Matching",
+     "input_sort": "image", "sample": "nw_shifted_pair",
+     "stages": [{"op": "register_ecc", "args": ["$in", "$aux.moving"], "kw": {"motion": "translation"}}],
+     "expect": [{"get": ["warp", 0, 2], "approx": "dx", "atol": 0.05},
+                {"get": ["warp", 1, 2], "approx": "dy", "atol": 0.05}],
+     "note": "align a moved image to a reference with the ECC criterion (Evangelidis & Psarakis 2008): the warp's "
+             "translation column is (dx, dy) in px, columns first. The pair is a smooth texture and a cubic-spline "
+             "shift of it by a known sub-pixel amount, so the truth is the shift itself."},
+    # ------------------------------------------------ 2026-11-04: symbol(D2、opssymbol)
+    {"name": "Read — an EAN-13 (JAN) barcode label, including a tilted and noisy one",
+     "family": "symbol", "task": "decode", "task_class": "inspection", "halcon": "Bar Code",
+     "input_sort": "image", "sample": "nw_ean13_label",
+     "stages": [{"op": "read_barcode1d"}],
+     "expect": [{"get": ["text"], "equals": "text"}],
+     "note": "find_bar_code for retail labels: parallel scan lines across the bars at the estimated angle, each "
+             "line decoded on its own and the text accepted only when lines agree (majority vote, so a single "
+             "misread line cannot win). The label is rendered from the encoded symbol, so the truth is the 13 "
+             "digits that were encoded."},
 ]
 
 
@@ -368,4 +445,14 @@ NOTES_JA = {
     "3D — find a known part's 6-DoF pose in a scene cloud (PPF surface matching)":
         "既知の部品の 6 自由度の姿勢を場面の点群から求める — find_surface_pose が点対特徴(PPF)の投票で"
         "初期値なしに姿勢を立て、ICP で詰めて (R, t) を返す(HALCON find_surface_model)。",
+    "Accept — probing error of a 3-D sensor on a calibrated sphere (VDI/VDE 2634-2 idea: PF and PS)":
+        "3D センサの受入試験で、校正済みの球から探針の誤差を測る — sphere_probing_error が点群に球を当て、"
+        "大きさの誤差 PS(当てた直径 − 校正値)と形状の誤差 PF(最悪 0.3 % を除いた半径の残差の幅)を返す。"
+        "雑音 0 なら両方 0(閉形式)。",
+    "Register — sub-pixel shift between two images by ECC (enhanced correlation coefficient)":
+        "2 枚の像のサブピクセルのずれを ECC で測る — register_ecc(並進)の warp の平行移動の列が"
+        "(dx, dy)(列が先)。滑らかな模様を既知の量だけずらした像なので、真値はそのずれ。",
+    "Read — an EAN-13 (JAN) barcode label, including a tilted and noisy one":
+        "EAN-13(JAN)のラベルを読む(傾きと雑音つきも)— read_barcode1d が推定した向きで平行な走査線を"
+        "引き、線ごとに復号して多数決で一致したときだけ文字列を返す。真値は符号化した 13 桁。",
 }
