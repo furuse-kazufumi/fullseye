@@ -1,0 +1,908 @@
+{
+  "label": "master a8b9c1f249 (recipes.py 25 recipes), 2026-11-03",
+  "recipes_in_index": 25,
+  "recipes_mcp": 25,
+  "recall_at_2": 1.0,
+  "queries": [
+    {
+      "query": "remove impulse noise",
+      "expected": "Denoise — median",
+      "top_2": [
+        "FA — scratch on hairline metal",
+        "Denoise — median"
+      ],
+      "hit": true
+    },
+    {
+      "query": "count holes in backlit plate",
+      "expected": "FA — count holes in a back-lit plate",
+      "top_2": [
+        "FA — count holes in a back-lit plate",
+        "Count — blobs"
+      ],
+      "hit": true
+    },
+    {
+      "query": "uneven lighting document",
+      "expected": "Binarize — document (adaptive)",
+      "top_2": [
+        "Binarize — document (adaptive)",
+        "FA — scratch on hairline metal"
+      ],
+      "hit": true
+    },
+    {
+      "query": "detect bright spots",
+      "expected": "Spots — local maxima",
+      "top_2": [
+        "Spots — local maxima",
+        "FA — scratch on hairline metal"
+      ],
+      "hit": true
+    },
+    {
+      "query": "hairline metal scratch",
+      "expected": "FA — scratch on hairline metal",
+      "top_2": [
+        "FA — scratch on hairline metal"
+      ],
+      "hit": true
+    },
+    {
+      "query": "weld x-ray pores",
+      "expected": "FA — weld porosity (X-ray)",
+      "top_2": [
+        "FA — weld porosity (X-ray)",
+        "Spots — local maxima"
+      ],
+      "hit": true
+    }
+  ],
+  "e2e_task_recipe_hit_at_2": 0.2,
+  "e2e_tasks": [
+    {
+      "id": "ge_components_3",
+      "judge": "judge_component_count",
+      "top_2": [
+        "FA — scratch on hairline metal",
+        "FA — count holes in a back-lit plate"
+      ],
+      "hit": true
+    },
+    {
+      "id": "ge_components_5",
+      "judge": "judge_component_count",
+      "top_2": [
+        "Count — blobs",
+        "FA — count holes in a back-lit plate"
+      ],
+      "hit": true
+    },
+    {
+      "id": "ge_fill_fraction",
+      "judge": "judge_region_fraction",
+      "top_2": [
+        "FA — scratch on hairline metal",
+        "FA — count holes in a back-lit plate"
+      ],
+      "hit": true
+    },
+    {
+      "id": "ge_gaussian_noise",
+      "judge": "judge_smoothed_std",
+      "top_2": [
+        "FA — scratch on hairline metal",
+        "Texture — local std"
+      ],
+      "hit": true
+    },
+    {
+      "id": "po_template_xy",
+      "judge": "judge_match_position",
+      "top_2": [
+        "Edge — Sobel + Otsu",
+        "Spots — local maxima"
+      ],
+      "hit": false
+    },
+    {
+      "id": "po_shape_pose",
+      "judge": "judge_match_position",
+      "top_2": [
+        "FA — weld porosity (X-ray)",
+        "Edge — Sobel + Otsu"
+      ],
+      "hit": false
+    },
+    {
+      "id": "po_fixture_corners",
+      "judge": "judge_feature_count",
+      "top_2": [
+        "Keypoints — Harris corners",
+        "FA — scratch on hairline metal"
+      ],
+      "hit": false
+    },
+    {
+      "id": "po_grasp_corners",
+      "judge": "judge_feature_count",
+      "top_2": [
+        "FA — scratch on hairline metal",
+        "Count — blobs"
+      ],
+      "hit": false
+    },
+    {
+      "id": "mv_variant_template",
+      "judge": "judge_match_position",
+      "top_2": [
+        "Edge — Sobel + Otsu",
+        "Spots — local maxima"
+      ],
+      "hit": false
+    },
+    {
+      "id": "mv_variant_shape",
+      "judge": "judge_match_position",
+      "top_2": [
+        "Edge — Sobel + Otsu",
+        "Segment — blob / coin"
+      ],
+      "hit": false
+    },
+    {
+      "id": "mv_common_corners_4",
+      "judge": "judge_feature_count",
+      "top_2": [
+        "Keypoints — Harris corners",
+        "Count — blobs"
+      ],
+      "hit": false
+    },
+    {
+      "id": "mv_common_corners_6",
+      "judge": "judge_feature_count",
+      "top_2": [
+        "FA — count holes in a back-lit plate",
+        "FA — scratch on hairline metal"
+      ],
+      "hit": false
+    },
+    {
+      "id": "sp_dolp_020",
+      "judge": "judge_dolp_mean",
+      "top_2": [
+        "FA — weld porosity (X-ray)",
+        "FA — scratch on hairline metal"
+      ],
+      "hit": false
+    },
+    {
+      "id": "sp_dolp_035",
+      "judge": "judge_dolp_mean",
+      "top_2": [
+        "FA — scratch on hairline metal",
+        "FA — weld porosity (X-ray)"
+      ],
+      "hit": false
+    },
+    {
+      "id": "sp_dolp_050",
+      "judge": "judge_dolp_mean",
+      "top_2": [
+        "FA — scratch on hairline metal",
+        "FA — weld porosity (X-ray)"
+      ],
+      "hit": false
+    },
+    {
+      "id": "sp_dolp_065",
+      "judge": "judge_dolp_mean",
+      "top_2": [
+        "FA — weld porosity (X-ray)",
+        "FA — scratch on hairline metal"
+      ],
+      "hit": false
+    },
+    {
+      "id": "m3_wrapped_ramp_x",
+      "judge": "judge_phase_mean",
+      "top_2": [
+        "FA — scratch on hairline metal",
+        "FA — count holes in a back-lit plate"
+      ],
+      "hit": false
+    },
+    {
+      "id": "m3_wrapped_ramp_y",
+      "judge": "judge_phase_mean",
+      "top_2": [
+        "FA — weld porosity (X-ray)",
+        "Edge — Sobel + Otsu"
+      ],
+      "hit": false
+    },
+    {
+      "id": "m3_depth_ramp_x",
+      "judge": "judge_depth_mean",
+      "top_2": [
+        "FA — scratch on hairline metal",
+        "FA — weld porosity (X-ray)"
+      ],
+      "hit": false
+    },
+    {
+      "id": "m3_depth_ramp_y",
+      "judge": "judge_depth_mean",
+      "top_2": [
+        "FA — scratch on hairline metal",
+        "FA — weld porosity (X-ray)"
+      ],
+      "hit": false
+    }
+  ],
+  "blind_family_hit_at_3": 0.0333,
+  "blind_op_hit_at_3": 0.0,
+  "blind_queries": [
+    {
+      "family": "2d",
+      "query": "Measure the gap between two parallel edges of a stamped part along a scan line, with sub-pixel accuracy",
+      "top_3": [
+        "FA — count holes in a back-lit plate",
+        "Count — blobs",
+        "Shape — distance transform"
+      ],
+      "family_hit": true,
+      "op_hit": false
+    },
+    {
+      "family": "2d",
+      "query": "金属表面のヘアライン状の細いキズを、向きのある模様として強調して見つけたい",
+      "top_3": [
+        "Spots — local maxima",
+        "Count — blobs",
+        "FA — count holes in a back-lit plate"
+      ],
+      "family_hit": true,
+      "op_hit": false
+    },
+    {
+      "family": "3d",
+      "query": "Find the axis and radius of a pipe in a laser-scanned point cloud even with clutter around it",
+      "top_3": [
+        "FA — scratch on hairline metal",
+        "FA — count holes in a back-lit plate",
+        "FA — dent and foreign fibre on resin"
+      ],
+      "family_hit": false,
+      "op_hit": false
+    },
+    {
+      "family": "3d",
+      "query": "点群から床の平面を取り除いて、その上に置かれた球状の部品の中心と半径を求めたい",
+      "top_3": [
+        "FA — scratch on hairline metal",
+        "Edge — Sobel + Otsu",
+        "Blobs — Difference of Gaussians"
+      ],
+      "family_hit": false,
+      "op_hit": false
+    },
+    {
+      "family": "acoustics",
+      "query": "Diagnose an outer-race fault on a motor bearing from an accelerometer vibration recording",
+      "top_3": [
+        "Segment — blob / coin",
+        "FA — count holes in a back-lit plate",
+        "Count — blobs"
+      ],
+      "family_hit": false,
+      "op_hit": false
+    },
+    {
+      "family": "annotate",
+      "query": "検査画像に寸法線とスケールバーと凡例を入れて、報告書に貼れる図にしたい",
+      "top_3": [
+        "FA — scratch on hairline metal",
+        "Binarize — document (adaptive)",
+        "FA — count holes in a back-lit plate"
+      ],
+      "family_hit": false,
+      "op_hit": false
+    },
+    {
+      "family": "aoi",
+      "query": "Correct uneven brightness across circuit-board camera tiles and stitch them into one registered board map",
+      "top_3": [
+        "FA — scratch on hairline metal",
+        "FA — dent and foreign fibre on resin",
+        "Edge — Sobel + Otsu"
+      ],
+      "family_hit": false,
+      "op_hit": false
+    },
+    {
+      "family": "astrostack",
+      "query": "望遠鏡で撮った多数の短時間露光画像を位置合わせし、宇宙線を除去しながら重ね合わせたい",
+      "top_3": [
+        "FA — scratch on hairline metal",
+        "Segment — blob / coin",
+        "Count — blobs"
+      ],
+      "family_hit": false,
+      "op_hit": false
+    },
+    {
+      "family": "blob",
+      "query": "Count pellets on a conveyor image and separate the ones that are stuck together, then measure each one",
+      "top_3": [
+        "FA — count holes in a back-lit plate",
+        "Count — blobs",
+        "FA — dent and foreign fibre on resin"
+      ],
+      "family_hit": false,
+      "op_hit": false
+    },
+    {
+      "family": "cadmap",
+      "query": "カメラ画像で見つけた欠陥の位置を、CADモデルの表面上の座標に対応付けたい",
+      "top_3": [
+        "Edge — Canny",
+        "FA — count holes in a back-lit plate",
+        "FA — scratch on hairline metal"
+      ],
+      "family_hit": false,
+      "op_hit": false
+    },
+    {
+      "family": "calib",
+      "query": "Work out a camera's lens parameters from photos of a dot-grid target plate and convert pixel coordinates to millimetres on the table plane",
+      "top_3": [
+        "FA — dent and foreign fibre on resin",
+        "FA — count holes in a back-lit plate",
+        "Shape — distance transform"
+      ],
+      "family_hit": false,
+      "op_hit": false
+    },
+    {
+      "family": "codematch",
+      "query": "照明の明るさが変わっても安定にテンプレートを探せる、輝度の増減の向きだけを使う照合をしたい",
+      "top_3": [
+        "FA — scratch on hairline metal",
+        "Spots — local maxima",
+        "Blobs — Difference of Gaussians"
+      ],
+      "family_hit": false,
+      "op_hit": false
+    },
+    {
+      "family": "colortransport",
+      "query": "Make images from a second camera match the colour look of the reference camera on the line",
+      "top_3": [
+        "FA — dent and foreign fibre on resin",
+        "FA — scratch on hairline metal",
+        "FA — count holes in a back-lit plate"
+      ],
+      "family_hit": false,
+      "op_hit": false
+    },
+    {
+      "family": "conngraph",
+      "query": "神経回路の接続データから、ハブやモジュール構造などネットワークの統計を出したい",
+      "top_3": [
+        "FA — scratch on hairline metal",
+        "FA — weld porosity (X-ray)",
+        "Keypoints — Harris corners"
+      ],
+      "family_hit": false,
+      "op_hit": false
+    },
+    {
+      "family": "converge",
+      "query": "From results on coarse, medium and fine meshes, estimate the discretisation error band and the observed order of accuracy",
+      "top_3": [
+        "FA — scratch on hairline metal",
+        "FA — dent and foreign fibre on resin",
+        "Edge — Sobel + Otsu"
+      ],
+      "family_hit": false,
+      "op_hit": false
+    },
+    {
+      "family": "dem",
+      "query": "標高データから斜面の傾きと、水の流れる向き・集水量を計算したい",
+      "top_3": [
+        "Keypoints — Harris corners",
+        "FA — scratch on hairline metal",
+        "Binarize — document (adaptive)"
+      ],
+      "family_hit": false,
+      "op_hit": false
+    },
+    {
+      "family": "drive",
+      "query": "Estimate time to collision with the car ahead from dashcam video using how fast it grows in the image",
+      "top_3": [
+        "FA — scratch on hairline metal",
+        "FA — dent and foreign fibre on resin",
+        "FA — count holes in a back-lit plate"
+      ],
+      "family_hit": false,
+      "op_hit": false
+    },
+    {
+      "family": "drive",
+      "query": "倉庫内の複数台の搬送ロボットが互いにぶつからない経路をまとめて計画したい",
+      "top_3": [
+        "Spots — local maxima",
+        "Count — blobs",
+        "Segment — blob / coin"
+      ],
+      "family_hit": false,
+      "op_hit": false
+    },
+    {
+      "family": "emproof",
+      "query": "Score how well an automatic neuron segmentation agrees with the proofread ground truth, counting merges and splits",
+      "top_3": [
+        "FA — count holes in a back-lit plate",
+        "FA — dent and foreign fibre on resin",
+        "Count — blobs"
+      ],
+      "family_hit": false,
+      "op_hit": false
+    },
+    {
+      "family": "fileio",
+      "query": "STLのメッシュとCSVの測定表を読み込み、メッシュをPLYで書き出したい",
+      "top_3": [
+        "Binarize — document (adaptive)",
+        "FA — dent and foreign fibre on resin",
+        "FA — scratch on hairline metal"
+      ],
+      "family_hit": false,
+      "op_hit": false
+    },
+    {
+      "family": "fit",
+      "query": "Fit a circle to edge points that cover only a short arc of a hole and get its centre and radius",
+      "top_3": [
+        "FA — dent and foreign fibre on resin",
+        "FA — scratch on hairline metal",
+        "FA — count holes in a back-lit plate"
+      ],
+      "family_hit": false,
+      "op_hit": false
+    },
+    {
+      "family": "flyvision",
+      "query": "昆虫の目のような仕組みで、こちらへ近づいてくる物体と衝突までの時間を検出したい",
+      "top_3": [
+        "Shape — distance transform",
+        "Blobs — Difference of Gaussians",
+        "Binarize — document (adaptive)"
+      ],
+      "family_hit": false,
+      "op_hit": false
+    },
+    {
+      "family": "generative",
+      "query": "Simulate a scanning electron microscope image of a line pattern and measure the line width from it",
+      "top_3": [
+        "FA — dent and foreign fibre on resin",
+        "FA — count holes in a back-lit plate",
+        "FA — scratch on hairline metal"
+      ],
+      "family_hit": false,
+      "op_hit": false
+    },
+    {
+      "family": "geocam",
+      "query": "屋外カメラの向きを、写っている太陽の位置と撮影日時から推定したい",
+      "top_3": [
+        "FA — scratch on hairline metal",
+        "FA — count holes in a back-lit plate",
+        "FA — dent and foreign fibre on resin"
+      ],
+      "family_hit": false,
+      "op_hit": false
+    },
+    {
+      "family": "gfx2d",
+      "query": "Turn a raw Bayer sensor frame into a white-balanced colour image, fixing dead pixels and black level",
+      "top_3": [
+        "FA — dent and foreign fibre on resin",
+        "Spots — local maxima",
+        "FA — scratch on hairline metal"
+      ],
+      "family_hit": false,
+      "op_hit": false
+    },
+    {
+      "family": "graph",
+      "query": "駐車のような切り返しを含む、車が実際に走れる最短経路を求めたい",
+      "top_3": [
+        "Edge — Sobel + Otsu",
+        "FA — scratch on hairline metal",
+        "FA — weld porosity (X-ray)"
+      ],
+      "family_hit": false,
+      "op_hit": false
+    },
+    {
+      "family": "imgforensics",
+      "query": "Check whether a photo submitted as evidence was edited, e.g. copy-pasted regions or double JPEG compression",
+      "top_3": [
+        "FA — dent and foreign fibre on resin",
+        "FA — scratch on hairline metal",
+        "FA — engraved lot code (binarize for OCR)"
+      ],
+      "family_hit": false,
+      "op_hit": false
+    },
+    {
+      "family": "imgmetrics",
+      "query": "圧縮後の画像の劣化をSSIMやPSNRで数値評価し、色差もあわせて一覧表にしたい",
+      "top_3": [
+        "Binarize — document (adaptive)",
+        "Blobs — Difference of Gaussians",
+        "FA — count holes in a back-lit plate"
+      ],
+      "family_hit": false,
+      "op_hit": false
+    },
+    {
+      "family": "interferometry",
+      "query": "Get a surface height map from a white-light scanning interferometer image stack",
+      "top_3": [
+        "FA — scratch on hairline metal",
+        "FA — count holes in a back-lit plate",
+        "Edge — Sobel + Otsu"
+      ],
+      "family_hit": false,
+      "op_hit": false
+    },
+    {
+      "family": "lightfield",
+      "query": "マイクロレンズアレイ付きカメラの画像から、撮影後にピントを合わせ直したり奥行きを出したりしたい",
+      "top_3": [
+        "FA — count holes in a back-lit plate",
+        "FA — scratch on hairline metal",
+        "Count — blobs"
+      ],
+      "family_hit": false,
+      "op_hit": false
+    },
+    {
+      "family": "live4d",
+      "query": "Turn a time series of 3-D microscopy volumes into a video showing how cells move, with motion trails",
+      "top_3": [
+        "FA — weld porosity (X-ray)",
+        "FA — dent and foreign fibre on resin",
+        "FA — scratch on hairline metal"
+      ],
+      "family_hit": false,
+      "op_hit": false
+    },
+    {
+      "family": "llmcore",
+      "query": "トランスフォーマのアテンション計算を、位置の回転埋め込みや正規化も含めて参照実装で確かめたい",
+      "top_3": [
+        "Keypoints — Harris corners",
+        "Count — blobs",
+        "Edge — Sobel + Otsu"
+      ],
+      "family_hit": false,
+      "op_hit": false
+    },
+    {
+      "family": "math",
+      "query": "Fit a polynomial calibration curve to sensor readings and find where it crosses zero",
+      "top_3": [
+        "FA — dent and foreign fibre on resin",
+        "FA — scratch on hairline metal",
+        "FA — count holes in a back-lit plate"
+      ],
+      "family_hit": false,
+      "op_hit": false
+    },
+    {
+      "family": "measure1d",
+      "query": "円形の穴の縁をキャリパで何本も測って直径を求め、基準寸法からミリに換算したい",
+      "top_3": [
+        "Edge — Sobel + Otsu",
+        "Binarize — document (adaptive)",
+        "FA — scratch on hairline metal"
+      ],
+      "family_hit": false,
+      "op_hit": false
+    },
+    {
+      "family": "motionmag",
+      "query": "Make tiny vibrations of a machine visible in a video and measure how far it actually moves",
+      "top_3": [
+        "FA — count holes in a back-lit plate",
+        "Count — blobs",
+        "FA — dent and foreign fibre on resin"
+      ],
+      "family_hit": false,
+      "op_hit": false
+    },
+    {
+      "family": "multivar",
+      "query": "実験計画法で少ない試行回数の条件表を作り、各因子の主効果を解析したい",
+      "top_3": [
+        "FA — count holes in a back-lit plate",
+        "Spots — local maxima",
+        "Binarize — document (adaptive)"
+      ],
+      "family_hit": false,
+      "op_hit": false
+    },
+    {
+      "family": "oned",
+      "query": "Find peaks and the dominant frequency in a 1-D sensor signal after band-pass filtering it",
+      "top_3": [
+        "FA — dent and foreign fibre on resin",
+        "Texture — Gabor",
+        "FA — weld porosity (X-ray)"
+      ],
+      "family_hit": false,
+      "op_hit": false
+    },
+    {
+      "family": "optics",
+      "query": "偏光カメラの生データから、偏光度や偏光角の画像を作りたい",
+      "top_3": [
+        "FA — scratch on hairline metal",
+        "FA — count holes in a back-lit plate",
+        "Blobs — Difference of Gaussians"
+      ],
+      "family_hit": false,
+      "op_hit": false
+    },
+    {
+      "family": "optics",
+      "query": "Check how much the magnification of my telecentric lens changes over the working distance range",
+      "top_3": [
+        "Shape — distance transform",
+        "FA — count holes in a back-lit plate",
+        "Morphology — gradient"
+      ],
+      "family_hit": false,
+      "op_hit": false
+    },
+    {
+      "family": "photon",
+      "query": "単一光子検出器の到着時間ヒストグラムから、背景を引いて蛍光寿命を推定したい",
+      "top_3": [
+        "Enhance — histogram equalize",
+        "FA — scratch on hairline metal",
+        "Shape — distance transform"
+      ],
+      "family_hit": false,
+      "op_hit": false
+    },
+    {
+      "family": "piv",
+      "query": "Compute the velocity and vorticity field of a water flow from a pair of particle images, removing bad vectors",
+      "top_3": [
+        "FA — dent and foreign fibre on resin",
+        "Edge — Sobel + Otsu",
+        "FA — count holes in a back-lit plate"
+      ],
+      "family_hit": false,
+      "op_hit": false
+    },
+    {
+      "family": "printpath",
+      "query": "3Dプリンタ用にメッシュをスライスしてGコードを出し、造形時間を見積もりたい",
+      "top_3": [
+        "FA — scratch on hairline metal",
+        "Keypoints — Harris corners",
+        "Count — blobs"
+      ],
+      "family_hit": false,
+      "op_hit": false
+    },
+    {
+      "family": "profile",
+      "query": "Measure thickness and leading-edge radius of a turbine blade cross-section and compare it with the nominal shape",
+      "top_3": [
+        "FA — scratch on hairline metal",
+        "FA — count holes in a back-lit plate",
+        "FA — dent and foreign fibre on resin"
+      ],
+      "family_hit": false,
+      "op_hit": false
+    },
+    {
+      "family": "quat",
+      "query": "カラー画像をRGBチャンネルに分けずに一体として扱い、色付きの模様をテンプレートと照合したい",
+      "top_3": [
+        "Keypoints — Harris corners",
+        "FA — count holes in a back-lit plate",
+        "Spots — local maxima"
+      ],
+      "family_hit": false,
+      "op_hit": false
+    },
+    {
+      "family": "rangedoppler",
+      "query": "Find the distance and speed of targets from an FMCW radar beat signal",
+      "top_3": [
+        "Shape — distance transform",
+        "FA — dent and foreign fibre on resin",
+        "FA — count holes in a back-lit plate"
+      ],
+      "family_hit": false,
+      "op_hit": false
+    },
+    {
+      "family": "reprconv",
+      "query": "オプティカルフローの結果を色付き画像で見たい。ついでに各画素の速さも出したい",
+      "top_3": [
+        "Shape — distance transform",
+        "FA — scratch on hairline metal",
+        "Blobs — Difference of Gaussians"
+      ],
+      "family_hit": false,
+      "op_hit": false
+    },
+    {
+      "family": "residue",
+      "query": "Recover a large displacement unambiguously from two wrapped periodic readings taken with different pitches",
+      "top_3": [
+        "Blobs — Difference of Gaussians",
+        "FA — weld porosity (X-ray)",
+        "FA — count holes in a back-lit plate"
+      ],
+      "family_hit": false,
+      "op_hit": false
+    },
+    {
+      "family": "roughness",
+      "query": "表面の形状成分を取り除いてから、算術平均粗さなどの面粗さパラメータを出したい",
+      "top_3": [
+        "FA — scratch on hairline metal",
+        "FA — weld porosity (X-ray)",
+        "FA — dent and foreign fibre on resin"
+      ],
+      "family_hit": false,
+      "op_hit": false
+    },
+    {
+      "family": "segmentation",
+      "query": "Threshold a low-contrast micrograph automatically and score the binary mask against manual labels",
+      "top_3": [
+        "Edge — Sobel + Otsu",
+        "FA — count holes in a back-lit plate",
+        "Count — blobs"
+      ],
+      "family_hit": false,
+      "op_hit": false
+    },
+    {
+      "family": "shape2d",
+      "query": "部品の輪郭形状をフーリエ係数で表して、良品との形の違いを数値化したい",
+      "top_3": [
+        "FA — scratch on hairline metal",
+        "Binarize — document (adaptive)",
+        "Denoise — total variation"
+      ],
+      "family_hit": false,
+      "op_hit": false
+    },
+    {
+      "family": "shapestat",
+      "query": "Align landmark sets from many specimens and build a statistical model of their shape variation",
+      "top_3": [
+        "FA — dent and foreign fibre on resin",
+        "FA — scratch on hairline metal",
+        "Denoise — total variation"
+      ],
+      "family_hit": false,
+      "op_hit": false
+    },
+    {
+      "family": "simcal",
+      "query": "シミュレーションのパラメータを実測データに合わせて同定し、その不確かさも出したい",
+      "top_3": [
+        "FA — scratch on hairline metal",
+        "FA — dent and foreign fibre on resin",
+        "Binarize — document (adaptive)"
+      ],
+      "family_hit": false,
+      "op_hit": false
+    },
+    {
+      "family": "spc",
+      "query": "Run a gauge R&R study and compute process capability (Cpk) for a diameter measurement",
+      "top_3": [
+        "FA — count holes in a back-lit plate",
+        "Count — blobs",
+        "FA — dent and foreign fibre on resin"
+      ],
+      "family_hit": false,
+      "op_hit": false
+    },
+    {
+      "family": "specular",
+      "query": "鏡のような塗装面のうねりを、縞模様の映り込みを使って検査したい",
+      "top_3": [
+        "FA — count holes in a back-lit plate",
+        "Binarize — document (adaptive)",
+        "FA — dent and foreign fibre on resin"
+      ],
+      "family_hit": false,
+      "op_hit": false
+    },
+    {
+      "family": "text",
+      "query": "Locate printed text lines on a product label before running OCR",
+      "top_3": [
+        "FA — engraved lot code (binarize for OCR)",
+        "Binarize — document (adaptive)",
+        "Count — blobs"
+      ],
+      "family_hit": false,
+      "op_hit": false
+    },
+    {
+      "family": "tomography",
+      "query": "CTの投影データから断面を再構成し、回転中心のずれとリング状のアーチファクトも直したい",
+      "top_3": [
+        "FA — scratch on hairline metal",
+        "Edge — Sobel + Otsu",
+        "Binarize — document (adaptive)"
+      ],
+      "family_hit": false,
+      "op_hit": false
+    },
+    {
+      "family": "videocube",
+      "query": "Summarise a long inspection video into a few keyframes and a space-time cube view",
+      "top_3": [
+        "FA — dent and foreign fibre on resin",
+        "FA — count holes in a back-lit plate",
+        "FA — scratch on hairline metal"
+      ],
+      "family_hit": false,
+      "op_hit": false
+    },
+    {
+      "family": "videostream",
+      "query": "固定カメラの映像から背景を差し引いて動く物体だけ取り出したい。照明のちらつきも抑えたい",
+      "top_3": [
+        "FA — scratch on hairline metal",
+        "Blobs — Difference of Gaussians",
+        "Shape — distance transform"
+      ],
+      "family_hit": false,
+      "op_hit": false
+    },
+    {
+      "family": "volcolor",
+      "query": "Colour the labelled regions of a segmented CT volume consistently and show slices with the label overlay",
+      "top_3": [
+        "FA — dent and foreign fibre on resin",
+        "FA — count holes in a back-lit plate",
+        "FA — scratch on hairline metal"
+      ],
+      "family_hit": false,
+      "op_hit": false
+    },
+    {
+      "family": "vx",
+      "query": "組込み向け標準ビジョンAPIと同じ定義で、3x3勾配・勾配強度・非極大抑制を計算したい",
+      "top_3": [
+        "Edge — Canny",
+        "Keypoints — Harris corners",
+        "Count — blobs"
+      ],
+      "family_hit": false,
+      "op_hit": false
+    }
+  ]
+}
