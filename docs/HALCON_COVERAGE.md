@@ -3,12 +3,28 @@
 Source: `https://www.mvtec.com/doc/halcon/2605/en/` (version 2605).
 Ground truth: **2313 operators across 30 top-level chapters** (218 TOC pages), mined by `halcon_scrape.py`.
 
-**imgevolve maps to 982 / 2313 HALCON operators (42.5%)** via `Op.halcon`, from 936 registry ops.
+**imgevolve maps to 973 / 2313 HALCON operators (42.1%)** via `Op.halcon`, from 942 registry ops.
 
 One imgevolve op claims one nearest HALCON operator, so coverage counts
 distinct real operators with an analogue. This number is grounded in the
 scraped reference, not memory; grow it by adding operator families to the
 registry (each new `Op.halcon` that names a real operator lifts coverage).
+
+**9 more HALCON names are partial analogues and are not counted** (the function carries the name but does only part of the operator's job; listed below).
+
+## Partial analogues (named, not counted as covered)
+
+| HALCON operator | Fullseye function | what it does | what it does not do |
+|---|---|---|---|
+| apply_bead_inspection_model | `final_genuine.apply_bead_inspection_model` | flags reference-path points farther than width/2 + tol from the bead mask (distance transform) | does not tell too narrow / too wide / left-right offset / overflow apart; reports only 'missing' |
+| binocular_calibration | `caltab.binocular_calibration` | Zhang calibration of the left and right camera, each on its own | no joint estimation of the relative pose between the two cameras |
+| calibrate_sheet_of_light | `final_genuine.calibrate_sheet_of_light` | one linear pixel-to-height scale fitted to known step heights | no geometric calibration of the light plane, camera and movement axis |
+| create_bead_inspection_model | `final_genuine.create_bead_inspection_model` | stores the reference centre path, the nominal width and a tolerance | no bead appearance model |
+| create_ocv_proj | `final_genuine.create_ocv_proj` | per-pixel mean and standard-deviation template of the training images | no character segmentation or projection model (HALCON OCV) |
+| find_box_3d | `objmodel3d.find_box_3d` | one PCA-oriented bounding box of the whole point cloud | no box search in a scene: no segmentation, no side-length matching, no score |
+| find_deformable_surface_model | `matching3d.find_deformable_surface_model` | rigid point-pair-feature (PPF) surface matching (calls ppf.surface_match) | no deformation: the model is matched as a rigid body |
+| find_planar_uncalib_deformable_model | `shapematch.find_planar_uncalib_deformable_model` | calls find_local_deformable_model (rigid shape match, then optical flow) | no planar perspective / deformation model is estimated |
+| measure_profile_sheet_of_light | `final_genuine.measure_profile_sheet_of_light` | per-column intensity-weighted centroid of the laser line, in pixel rows | no Steger / Gaussian-fit line centre, no light-plane geometry, no 3-D points |
 
 ## Per-chapter coverage (ranked by gap)
 
@@ -21,14 +37,14 @@ registry (each new `Op.halcon` that names a real operator lifts coverage).
 | OCR | 0 | 96 | 96 |
 | Legacy | 16 | 110 | 94 |
 | Deep Learning | 4 | 88 | 84 |
-| Matching | 38 | 96 | 58 |
+| Matching | 37 | 96 | 59 |
 | File | 0 | 53 | 53 |
-| 3D Matching | 15 | 59 | 44 |
-| Inspection | 12 | 55 | 43 |
+| 3D Matching | 13 | 59 | 46 |
+| Inspection | 9 | 55 | 46 |
 | Develop | 0 | 37 | 37 |
+| Calibration | 34 | 68 | 34 |
 | Control | 0 | 34 | 34 |
-| Calibration | 35 | 68 | 33 |
-| 3D Reconstruction | 50 | 76 | 26 |
+| 3D Reconstruction | 48 | 76 | 28 |
 | Identification | 1 | 27 | 26 |
 | Image Source | 0 | 25 | 25 |
 | Image | 88 | 110 | 22 |
@@ -54,10 +70,10 @@ registry (each new `Op.halcon` that names a real operator lifts coverage).
 - **OCR** (0/96): append_ocr_trainf, apply_deep_ocr, clear_lexicon, clear_ocr_class_cnn, clear_ocr_class_knn, clear_ocr_class_mlp, clear_ocr_class_svm, clear_text_model, clear_text_result, concat_ocr_trainf, create_deep_ocr, create_lexicon
 - **Legacy** (16/110): approx_chain, approx_chain_simple, clear_component_model, clear_rectangle, clear_training_components, close_ocr, cluster_model_components, copy_metrology_object, create_component_model, create_ocr_class_box, create_text_model, create_trained_component_model
 - **Deep Learning** (4/88): add_dl_pruning_batch, apply_dl_model, clear_dl_model, create_dl_layer_activation, create_dl_layer_affine_grid, create_dl_layer_anchors, create_dl_layer_batch_normalization, create_dl_layer_box_proposals, create_dl_layer_box_targets, create_dl_layer_class_id_conversion, create_dl_layer_concat, create_dl_layer_convolution
-- **Matching** (38/96): apply_deep_counting_model, clear_deformable_model, clear_descriptor_model, clear_ncc_model, clear_shape_model, create_deep_counting_model, deserialize_deformable_model, deserialize_descriptor_model, deserialize_ncc_model, deserialize_shape_model, get_deep_counting_model_param, get_deformable_model_contours
+- **Matching** (37/96): apply_deep_counting_model, clear_deformable_model, clear_descriptor_model, clear_ncc_model, clear_shape_model, create_deep_counting_model, deserialize_deformable_model, deserialize_descriptor_model, deserialize_ncc_model, deserialize_shape_model, find_planar_uncalib_deformable_model, get_deep_counting_model_param
 - **File** (0/53): close_file, copy_file, delete_file, deserialize_handle, deserialize_image, deserialize_object, deserialize_region, deserialize_tuple, deserialize_xld, file_exists, fnew_line, fread_bytes
-- **3D Matching** (15/59): add_deformable_surface_model_reference_point, add_deformable_surface_model_sample, apply_deep_matching_3d, apply_dl_model, clear_deformable_surface_matching_result, clear_deformable_surface_model, clear_shape_model_3d, clear_surface_matching_result, clear_surface_model, create_deep_matching_3d, deserialize_deformable_surface_model, deserialize_shape_model_3d
-- **Inspection** (12/55): add_texture_inspection_model_image, clear_bead_inspection_model, clear_structured_light_model, clear_texture_inspection_model, clear_texture_inspection_result, clear_train_data_variation_model, clear_variation_model, close_ocv, deserialize_ocv, deserialize_structured_light_model, deserialize_texture_inspection_model, deserialize_variation_model
+- **3D Matching** (13/59): add_deformable_surface_model_reference_point, add_deformable_surface_model_sample, apply_deep_matching_3d, apply_dl_model, clear_deformable_surface_matching_result, clear_deformable_surface_model, clear_shape_model_3d, clear_surface_matching_result, clear_surface_model, create_deep_matching_3d, deserialize_deformable_surface_model, deserialize_shape_model_3d
+- **Inspection** (9/55): add_texture_inspection_model_image, apply_bead_inspection_model, clear_bead_inspection_model, clear_structured_light_model, clear_texture_inspection_model, clear_texture_inspection_result, clear_train_data_variation_model, clear_variation_model, close_ocv, create_bead_inspection_model, create_ocv_proj, deserialize_ocv
 - **Develop** (0/37): dev_clear_obj, dev_clear_window, dev_close_inspect_ctrl, dev_close_tool, dev_close_window, dev_disp_text, dev_display, dev_error_var, dev_get_exception_data, dev_get_preferences, dev_get_system, dev_get_window
 
 ## Version awareness (HALCON's op set changes between releases)

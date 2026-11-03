@@ -328,7 +328,14 @@ def project_shape_model_3d(points, cam_par, pose=None, shape=(256, 256)):
 
 
 def find_box_3d(points, min_size=0.05):
-    """点群から軸並行境界箱(OBB 近似=PCA 箱)を検出(find_box_3d)。"""
+    """[部分対応] 点群**全体**の PCA 向きの境界箱を 1 つ返す(find_box_3d)。
+
+    する: 点群の主成分の向きの箱(中心・軸・辺の長さ・体積)。
+    しない: シーンの中から箱を探さない(切り出し・辺の長さとの照合・スコアが無い)。HALCON 対応の
+    数え方では「部分対応」で、対応済みには数えない(``halcon_coverage.PARTIAL``)。
+
+    [Partial HALCON analogue] One PCA box of the whole cloud; no box search in a scene.
+    """
     p = _pts(points)
     if len(p) < 4:
         return None

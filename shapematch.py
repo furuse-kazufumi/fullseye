@@ -907,7 +907,14 @@ def create_planar_uncalib_deformable_model(template, min_grad=0.1):
 
 
 def find_planar_uncalib_deformable_model(model, image, min_score=0.5):
-    """平面未校正変形モデルの検出(find_planar_uncalib_deformable_model)。"""
+    """[部分対応] ``find_local_deformable_model`` を呼ぶだけ(find_planar_uncalib_deformable_model)。
+
+    する: 剛体の形状照合のあとに光学フローを掛ける(``find_local_deformable_model`` と同じ結果)。
+    しない: 平面の射影(遠近)変形のモデルを推定しない。HALCON 対応の数え方では「部分対応」で、
+    対応済みには数えない(``halcon_coverage.PARTIAL``)。
+
+    [Partial HALCON analogue] Delegates to find_local_deformable_model; no planar perspective model.
+    """
     return find_local_deformable_model(model, image, min_score)
 
 

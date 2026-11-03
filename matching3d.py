@@ -19,7 +19,15 @@ def create_deformable_surface_model(points, normals=None, dist_step=None):
 
 
 def find_deformable_surface_model(model, scene_points, scene_normals=None, min_score=0.2):
-    """変形 surface モデルをシーン点群から検出(PPF + ICP refine)(find_deformable_surface_model)。"""
+    """[部分対応] 剛体の PPF 照合で surface モデルをシーン点群から探す(find_deformable_surface_model)。
+
+    する: ``ppf.surface_match``(点対特徴 PPF の投票 + ICP の精密化)で、モデルを**剛体として**照合する。
+    しない: 変形は扱わない(HALCON の同名 operator は変形した物体を照合する)。変形した物体には剛体の最良の
+    当てはまりが返るだけ。HALCON 対応の数え方では「部分対応」で、対応済みには数えない
+    (``halcon_coverage.PARTIAL``)。
+
+    [Partial HALCON analogue] Rigid PPF surface matching only; deformation is not modelled.
+    """
     from ppf import surface_match
     res = surface_match(model["ppf"], np.asarray(scene_points, float), scene_normals)
     return res
