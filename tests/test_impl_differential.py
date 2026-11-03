@@ -27,11 +27,21 @@ import pytest
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(ROOT, "tools"))
-os.environ.setdefault("FULLSEYE_DEVICE", "cpu")
 
 import impl_differential as D  # noqa: E402
 import impl_differential_table as T  # noqa: E402
 from conftest import requires_backend  # noqa: E402
+
+
+
+@pytest.fixture(autouse=True)
+def _cpu_device(monkeypatch):
+    """突き合わせは CPU で測る。★モジュールの先頭で ``os.environ`` を書くと、収集の時点で
+    プロセス全体の device が cpu に固定され、同じ shard の ``device="cuda"`` を試すテスト
+    (test_fallback_policy の遮断器)が GPU 経路に入らず落ちた(2026-11-04、PR #241 の CI)。
+    このファイルのテストの間だけ効くように monkeypatch で置く。"""
+    monkeypatch.setenv("FULLSEYE_DEVICE", "cpu")
+
 
 DATA = D.load_json()
 PAIRS = {(p["a"], p["b"]): p for p in DATA["pairs"]}
