@@ -37,7 +37,7 @@ py -3.11 -m pip install -e .            # コアのみ（numpy + scipy。全 op 
 | `gpu` | `torch>=2.13`, `kornia>=0.9`, `cupy-cuda12x>=14` (not macOS) | GPU バッチバックエンド（`accel.py`/`bench.py`）、`xkor_*`（kornia）系 |
 | `extra` | `mahotas>=1.4`, `SimpleITK>=2.2` | `xsitk_*`（curvature flow 等）、mahotas 由来（Zernike/pftas 等） |
 | `gui` | `PySide6>=6.5` | **Fullseye Studio**（`studio.py` / `fullseye-studio`） |
-| `all` | 上記 GUI 以外の全部（opencv, skimage, pil, wavelets, gpu, extra） | 全オペレータ・バックエンド |
+| `all` | `opencv-python`, `scikit-image`, `Pillow`, `PyWavelets`, `torch`, `kornia`, `mahotas`, `SimpleITK`, `PySide6`, `imageio`, `imageio-ffmpeg`, `tifffile`（CuPy は入らない。GPU 一式は `fullseye[gpu]`） | 全オペレータ・バックエンド |
 
 使い分けの目安:
 

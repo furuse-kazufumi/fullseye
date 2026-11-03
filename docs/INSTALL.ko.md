@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: 4dcf96f42356 -->
+<!-- i18n-source-sha: f7dcbd5d4722 -->
 # 설치 / 환경 구축 완전 가이드
 
 [日本語](./INSTALL.md) · [English](./INSTALL.en.md) · [简体中文](./INSTALL.zh.md) · [繁體中文](./INSTALL.tw.md) · **한국어** · [Deutsch](./INSTALL.de.md) · [हिन्दी](./INSTALL.hi.md)
@@ -40,7 +40,7 @@ py -3.11 -m pip install -e .            # 코어만(numpy + scipy. 모든 op가 
 | `gpu` | `torch>=2.13`, `kornia>=0.9`, `cupy-cuda12x>=14` (not macOS) | GPU 배치 백엔드(`accel.py`/`bench.py`), `xkor_*`(kornia) 계열 |
 | `extra` | `mahotas>=1.4`, `SimpleITK>=2.2` | `xsitk_*`(curvature flow 등), mahotas 유래(Zernike/pftas 등) |
 | `gui` | `PySide6>=6.5` | **Fullseye Studio**(`studio.py` / `fullseye-studio`) |
-| `all` | 위 항목 중 GUI를 제외한 전부(opencv, skimage, pil, wavelets, gpu, extra) | 모든 오퍼레이터·백엔드 |
+| `all` | `opencv-python`, `scikit-image`, `Pillow`, `PyWavelets`, `torch`, `kornia`, `mahotas`, `SimpleITK`, `PySide6`, `imageio`, `imageio-ffmpeg`, `tifffile`(CuPy 제외. GPU 일체는 `fullseye[gpu]`) | 모든 오퍼레이터·백엔드 |
 
 사용 기준:
 

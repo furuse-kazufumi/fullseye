@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: 4dcf96f42356 -->
+<!-- i18n-source-sha: f7dcbd5d4722 -->
 # 安装 / 环境搭建完全指南
 
 [日本語](./INSTALL.md) · [English](./INSTALL.en.md) · **简体中文** · [繁體中文](./INSTALL.tw.md) · [한국어](./INSTALL.ko.md) · [Deutsch](./INSTALL.de.md) · [हिन्दी](./INSTALL.hi.md)
@@ -40,7 +40,7 @@ py -3.11 -m pip install -e .            # 仅核心（numpy + scipy。所有 op 
 | `gpu` | `torch>=2.13`, `kornia>=0.9`, `cupy-cuda12x>=14` (not macOS) | GPU 批处理后端(`accel.py`/`bench.py`)、`xkor_*`(kornia)系列 |
 | `extra` | `mahotas>=1.4`, `SimpleITK>=2.2` | `xsitk_*`(curvature flow 等)、源自 mahotas(Zernike/pftas 等) |
 | `gui` | `PySide6>=6.5` | **Fullseye Studio**(`studio.py` / `fullseye-studio`) |
-| `all` | 以上除 GUI 外的全部(opencv, skimage, pil, wavelets, gpu, extra) | 全部算子与后端 |
+| `all` | `opencv-python`, `scikit-image`, `Pillow`, `PyWavelets`, `torch`, `kornia`, `mahotas`, `SimpleITK`, `PySide6`, `imageio`, `imageio-ffmpeg`, `tifffile`(不含 CuPy；完整的 GPU 套件请用 `fullseye[gpu]`) | 全部算子与后端 |
 
 使用建议：
 
