@@ -10,9 +10,18 @@ import os
 import numpy as np
 import pytest
 
-os.environ.setdefault("FULLSEYE_DEVICE", "cpu")
 import fullseye as fs  # noqa: E402
 import opassist  # noqa: E402
+
+
+@pytest.fixture(autouse=True)
+def _cpu_device(monkeypatch):
+    """このファイルのテストは CPU で回す。★モジュールの先頭で ``os.environ`` を書くと、収集の時点で
+    プロセス全体の device が cpu に固定され、同じプロセスの ``device="cuda"`` を試すテスト
+    (test_release_0_2_1_gates_2026_09_20 の CUDA 無しの説明、test_fallback_policy の遮断器)が
+    GPU 経路に入らず落ちる(2026-11-04 の統合で再現、#241 と同じ型の不具合)。
+    このファイルのテストの間だけ効くように monkeypatch で置く。"""
+    monkeypatch.setenv("FULLSEYE_DEVICE", "cpu")
 
 
 @pytest.mark.parametrize("mod_name,table", opassist._LEDGERS)
