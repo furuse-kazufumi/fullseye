@@ -1134,14 +1134,85 @@ def _records_uncached():
     gpu_names.update({core: name for name, (_fn, core) in accel_vol.VOL_ACCEL.items()})
     gpu_names.update({core: name for core, name in accel_match.MATCH_ACCEL.items()})
     gpu_seen = set()
+    route_seen = set()
     for rec in recs:
         accel_name = gpu_names.get(rec["name"])
         # 同名の上書き登録や別族の同名 op は1本の実装経路を重複計上しない。
         rec["gpu_accel"] = accel_name if accel_name and rec["name"] not in gpu_seen else None
         if rec["gpu_accel"]:
             gpu_seen.add(rec["name"])
-        rec["gpu_status"] = ("あり(%s)" % rec["gpu_accel"] if rec["gpu_accel"] else "なし")
+        # 経路の種類と場面は gpu_route(apply / run_pipeline / MCP が使う唯一の選び手)から引く。
+        # 2026-11-03: 鎖の中だけの手書き経路(領域の解析の族)まで「device="cuda" で高速経路」と書いていた。
+        first = rec["name"] not in route_seen
+        route_seen.add(rec["name"])
+        rec["gpu_route"] = gpu_route_of(rec["name"]) if first else None
+        rec["gpu_status"] = gpu_status_text(rec["gpu_route"])
     return recs, idx2d, op_fam, fam_ops
+
+
+def gpu_route_of(name: str):
+    """*name* の GPU 経路の要約 ``{kind, use, accel, ratio, min_elements}``(``gpu_route`` と同じ選び方)。無ければ ``None``。
+
+    ``use`` は ``single``(単独の呼び出しでも GPU)/ ``pipeline``(鎖の中だけ: 隣も GPU の段のとき)/
+    ``resident``(許可リストの常駐の鎖の中だけ)。native は op 自身の ``device=`` 引数の経路で、apply からは走らない。
+    """
+    import gpu_route
+    single = gpu_route.route(name, "single")
+    r = single or gpu_route.route(name, "pipeline")
+    if r is None:
+        return None
+    accel = None
+    if r.kind == "accel":
+        import accel as _accel
+        import accel_match
+        import accel_vol
+        accel = ({c: k for k, (_f, c, _h) in _accel.ACCEL.items()}.get(name)
+                 or {c: k for k, (_f, c) in accel_vol.VOL_ACCEL.items()}.get(name)
+                 or dict(accel_match.MATCH_ACCEL).get(name))
+    return {"kind": r.kind, "use": r.use if single is None else "single", "accel": accel,
+            "ratio": r.ratio, "min_elements": r.min_elements}
+
+
+def gpu_status_text(info) -> str:
+    """frontmatter の ``gpu:`` と OP_INDEX の ``gpu`` 欄(日本語の短い語。種類と場面を書き分ける)。"""
+    if not info:
+        return "なし"
+    chain = info["use"] != "single"
+    if info["kind"] == "accel":
+        return ("鎖の中だけ(%s)" if chain else "あり(%s)") % info["accel"]
+    if info["kind"] == "shadow":
+        return "鎖の中だけ(許可リスト)" if chain else "あり(許可リスト)"
+    return "native(device 引数、鎖の中だけ)" if chain else "native(device 引数)"
+
+
+#: ノートの GPU の行(原文が対訳表 docs/i18n/opdocs.json のキー)。
+GPU_LINES = {
+    ("accel", "single"): "- **GPU**: あり(`{a0}`、`device=\"cuda\"` で高速経路)",
+    ("accel", "chain"): ("- **GPU**: 鎖の中だけ(`{a0}`)。隣の段も GPU のパイプラインでは GPU に載せたまま走る。"
+                         "単独の呼び出しは `device=\"cuda\"` でも CPU(単独では CPU に勝たないと実測した)"),
+    ("shadow", "single"): ("- **GPU**: あり(許可リストの機械的 GPU 経路、CuPy)。`device=\"auto\"` は測った大きさ"
+                           "({a0} 画素)以上で GPU を選ぶ"),
+    ("shadow", "chain"): ("- **GPU**: 鎖の中だけ(許可リストの機械的 GPU 経路、CuPy)。隣の段も許可リストのときだけ"
+                          "GPU に載せたまま走る。単独の呼び出しは CPU"),
+    ("native", "single"): ("- **GPU**: op 自身の `device=` 引数(native、実測 {a0} 倍)。`fullseye.apply` / "
+                           "`run_pipeline` からはまだ GPU に送らない —— 実装を直接 `device=\"cuda\"` で呼ぶ"),
+    ("native", "chain"): ("- **GPU**: op 自身の `device=` 引数(native、実測 {a0} 倍で単独の門 5 倍に届かない)。"
+                          "`fullseye.apply` / `run_pipeline` からは GPU に送らない —— 実装を直接 `device=\"cuda\"` で呼ぶ"),
+}
+
+
+def gpu_line(info) -> tuple:
+    """``(原文, 差し込む値)``。経路が無ければ ``None``。"""
+    if not info:
+        return None
+    key = (info["kind"], "single" if info["use"] == "single" else "chain")
+    if info["kind"] == "accel":
+        value = info["accel"]
+    elif info["kind"] == "shadow":
+        value = "{:,}".format(info["min_elements"]) if info.get("min_elements") else "—"
+    else:
+        value = "%g" % info["ratio"] if info.get("ratio") is not None else "—"
+    return GPU_LINES[key], value
 
 
 # ------------------------------------------------------------------ #
@@ -1331,8 +1402,9 @@ def _op_md(rec, path, by_name, lang="ja", verbatim_doc=None):
     if rec["halcon"]:
         lines.append(T('- **HALCON 相当**: `{a0}`(意味・パラメータは HALCON リファレンスが参考になる)', lang).format(a0=rec['halcon']))
     # 枠の文は 2 本とも対訳表に載せる(値だけ差し込むと「あり/なし」が全言語で日本語になる)
-    if rec.get("gpu_accel"):
-        lines.append(T("- **GPU**: あり(`{a0}`、`device=\"cuda\"` で高速経路)", lang).format(a0=rec["gpu_accel"]))
+    gl = gpu_line(rec.get("gpu_route"))
+    if gl is not None:
+        lines.append(T(gl[0], lang).format(a0=gl[1]))
     else:
         lines.append(T("- **GPU**: なし(CPU 参照実装のみ)", lang))
     if rec.get("override"):

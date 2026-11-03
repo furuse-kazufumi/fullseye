@@ -1,12 +1,10 @@
 # Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
-"""GPU 経路の生成物 2 つ / Two GPU-route artefacts, both deterministic from committed inputs.
+"""レシピ全部に経路の検査を当てた表 / The route table over every existing recipe.
 
-1. ``fullseye/data/GPU_ACCEL_USE.json`` —— 領域の解析の族の実測ログ(``docs/perf/logs/label/label_ops.jsonl``、
-   GPU で手で測って commit、``tools/bench_label_ops.py measure``)から、op ごとの採否と場面(``single`` /
-   ``pipeline``)を決める台帳(``tools/bench_label_ops.build``)。``gpu_route`` が読む。
-2. ``docs/perf/pipeline_routes.{json,md}`` —— 既存のレシピ全部(``fullseye/data/RECIPE_INDEX.json``)に
+``docs/perf/pipeline_routes.{json,md}`` —— 既存のレシピ全部(``fullseye/data/RECIPE_INDEX.json``)に
    :func:`fullseye.explain_pipeline` を当てた表(一辺 2048、``device="auto"``、``assume_cuda=True`` = 経路表
    だけで決める)。比較のため、領域の解析の族(``accel_label.ADOPTED``)を経路から外した場合も並べる。
+手書き経路の場面の台帳 ``GPU_ACCEL_USE.json`` は ``tools/gen_accel_use.py``(鎖の先頭近く)が書く。
 
     py -3.11 tools/gen_gpu_routes.py           # 書く
     py -3.11 tools/gen_gpu_routes.py --check   # 差があれば exit 1
@@ -20,7 +18,6 @@ import warnings
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-OUT_USE = ROOT / "fullseye" / "data" / "GPU_ACCEL_USE.json"
 OUT_JSON = ROOT / "docs" / "perf" / "pipeline_routes.json"
 OUT_MD = ROOT / "docs" / "perf" / "pipeline_routes.md"
 SHAPE = (2048, 2048)
@@ -28,12 +25,6 @@ SHAPE = (2048, 2048)
 
 def _dump(obj) -> str:
     return json.dumps(obj, ensure_ascii=False, indent=1, sort_keys=True) + "\n"
-
-
-def accel_use_text() -> str:
-    sys.path.insert(0, str(ROOT))
-    from tools.bench_label_ops import build
-    return _dump(build())
 
 
 def _plan(names):
@@ -112,13 +103,7 @@ def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--check", action="store_true")
     ns = ap.parse_args(argv)
-    use = accel_use_text()
     stale = []
-    if ns.check:
-        if not OUT_USE.exists() or OUT_USE.read_text(encoding="utf-8") != use:
-            stale.append(OUT_USE)
-    else:
-        OUT_USE.write_text(use, encoding="utf-8", newline="\n")
     table = routes_table()
     for path, text in ((OUT_JSON, _dump(table)), (OUT_MD, routes_md(table))):
         if ns.check:
@@ -131,7 +116,7 @@ def main(argv=None) -> int:
         return 1
     if not ns.check:
         s = table["summary"]
-        print("wrote GPU_ACCEL_USE.json + pipeline_routes: before %s / after %s" % (s["before"], s["after"]))
+        print("wrote pipeline_routes: before %s / after %s" % (s["before"], s["after"]))
     return 0
 
 

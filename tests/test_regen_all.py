@@ -90,7 +90,9 @@ def test_classified_entries_still_exist():
 
 #: 2026-10-15 に直す前の並び(回帰の探針)。
 _OLD_ORDER = [
-    "gen_auto_specs_data.py", "tools/opdocs.py", "tools/gen_op_catalog.py",
+    # GPU の台帳 2 段(2026-11-03 に足した)は今の鎖と同じ位置。旧順序の探針は op ノートの逆順を見るためのもの
+    "gen_auto_specs_data.py", "tools/gen_device_rules.py", "tools/gen_accel_use.py",
+    "tools/opdocs.py", "tools/gen_op_catalog.py",
     "tools/gen_capabilities_index.py", "tools/gen_hardening_index.py", "tools/audit_fallbacks.py",
     "tools/gen_maturity.py",
     "tools/gen_exhibit_numbers.py", "tools/gen_exhibit_glossary.py",
@@ -101,7 +103,6 @@ _OLD_ORDER = [
     "tools/gen_mcp_data.py", "tools/gen_recipe_index.py", "tools/gen_recipe_retrieval_report.py", "tools/gen_rag_benchmark_report.py", "tools/conversion_matrix.py", "tools/gen_design_notes.py",
     "tools/gen_op_facets.py", "tools/measure_mcp_context.py",
     "tools/gen_doc_counts.py",
-    "tools/gen_device_rules.py",
     "tools/gen_gpu_routes.py",
 ]
 
