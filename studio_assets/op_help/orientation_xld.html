@@ -11,7 +11,8 @@
 <p><b>段階</b>(前置きの op → この op。左から順):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/orientation_xld.chain.jpg">orientation_xld: 段階の図</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>楕円フィットした輪郭の傾き角(<code style="color:#22d3bf">cv2.fitEllipse</code> の角度を 180° で折り返して [0,1] に正規化)。HALCON の <code style="color:#22d3bf">orientation_xld</code>（Calculate the orientation of contours or polygons.）に相当。</p>
+<p>楕円フィット(<code style="color:#22d3bf">cv2.fitEllipse</code>)した最大の輪郭の<b>主軸の角 θ / 180</b>(θ は列軸から <b>画面上で反時計回り</b>、行は下向き、[0, 180) 度に折り返す)。領域版 <code style="color:#22d3bf">orientation_region</code> と同じ規約(× 180 で度)。HALCON の <code style="color:#22d3bf">orientation_xld</code>（Calculate the orientation of contours or polygons.）は同じ向きの角をラジアンで -π..π に返す(最遠点で向きを決める)ので、ここは 180 度で畳んで [0,1) に正規化した版。</p>
+<p>★2026-11-03 まで <code style="color:#22d3bf">cv2.fitEllipse</code> の角をそのまま使っていて、<b>短軸の、画面上で時計回りの角</b> (= 90 - θ)を返していた(反時計回り 20 度の棒で 0.389 = 70 度、45 度だけ偶然一致)。</p>
 <p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features ファミリ ガイド</a></p>

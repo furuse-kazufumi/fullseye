@@ -1900,8 +1900,10 @@ def call_tool(name: str, args: Any, cat: Catalog, store: HandleStore | None = No
         except ValueError as exc:                          # 空の問い合わせ等は引数違反(-32602)
             raise ArgError(str(exc)) from exc
         from fullseye.recipesearch import find_recipes
+        # ★2026-11-03: 索引に Python で呼ぶレシピ(台帳 op、kw 引数つき)が入った。MCP の pipeline で
+        #   走らないレシピを出すと、組めない手順を勧めることになるので runner="mcp" だけを返す。
         r["recipes"] = find_recipes(a["query"], limit=recipe_limit, lang=a.get("lang"),
-                                      in_sort=a.get("in_sort"), out_sort=a.get("out_sort"))
+                                      in_sort=a.get("in_sort"), out_sort=a.get("out_sort"), runner="mcp")
         r["tuning_cards"] = tuning_cards(a["query"], [row["name"] for row in r["ops"]], limit=3)
         if a.get("detail"):
             text = _format(r)

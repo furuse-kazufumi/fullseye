@@ -114,6 +114,10 @@ CHAIN = [
     (["tools/type_connectivity.py", "--md", "docs/TYPE_CONNECTIVITY.md"],
      "docs/TYPE_CONNECTIVITY.md(全型の役割と、入口・終端へのつながり)"),
       (["tools/gen_op_facets.py"], "single op graph and its generated facets"),
+    # OP_GRAPH(gen_op_facets)の後、docmap(gen_docs_index_ops、文書の題を読む)の前。RECIPE_INDEX は読まない。
+    # GPU の欄は手で撮る snapshot docs/recipe_gpu_routes.json(tools/snapshot_recipe_gpu_routes.py、別 worktree が
+    # 要るので鎖に入れない)だけを読む。
+    (["tools/gen_recipe_coverage.py"], "docs/RECIPE_COVERAGE.md + recipe_coverage.json(族の網羅・型の切れ目・GPU 切替)"),
     (["tools/gen_design_notes.py"], "設計判断集(ソースの ★ から 6 言語)"),
     # ★2026-10-15: 13 番目から最後の方へ下げた。docmap が docs/*.md の**題**を読むので、
     #   題を持つ生成物(OPERATORS / REFERENCES / EXAMPLES / EXAMPLES_3D / SENSOR_PLAYBOOK /
@@ -199,6 +203,7 @@ OUTPUTS = {
     "tools/gen_op_facets.py": ["fullseye/data/OP_GRAPH.json", "fullseye/data/OP_FAMILIES.json",
                                   "fullseye/data/OP_SHAPES.json", "fullseye/data/SYSTEM_PARAMS.json"],
     "tools/gen_recipe_index.py": ["fullseye/data/RECIPE_INDEX.json"],
+    "tools/gen_recipe_coverage.py": ["docs/RECIPE_COVERAGE.md", "docs/recipe_coverage.json"],
     "tools/gen_recipe_retrieval_report.py": ["docs/recipe_retrieval_report.json"],
     "tools/measure_mcp_context.py": ["docs/mcp_context_benchmark.json"],
     "tools/gen_rag_benchmark_report.py": ["docs/rag_synonym_gaps.json"],
@@ -272,12 +277,13 @@ READS = {
         "docs/TYPE_CONNECTIVITY.md",
         "docs/HALCON_PARITY.md", "docs/IMPL_DIFFERENTIAL.md",
         "docs/DESIGN_NOTES.md", "docs/DESIGN_NOTES.*.md",
-        "docs/AI_RAG_GUIDE.md", "docs/AI_RAG_GUIDE.*.md",
+        "docs/AI_RAG_GUIDE.md", "docs/AI_RAG_GUIDE.*.md", "docs/RECIPE_COVERAGE.md",
         "docs/view2026/index.md", "docs/view2026/*/index.md"],
     "tools/gen_mcp_data.py": ["docs/OP_INDEX.json", "docs/ops/*"],
     "tools/gen_op_facets.py": ["docs/OP_INDEX.json", "docs/ops/families.json",
                                   "docs/ops/families_timing.json"],
-    "tools/gen_recipe_index.py": ["fullseye/data/OP_SEARCH.json"],
+    "tools/gen_recipe_index.py": ["fullseye/data/OP_SEARCH.json", "fullseye/data/OP_GRAPH.json"],
+    "tools/gen_recipe_coverage.py": ["fullseye/data/OP_GRAPH.json"],
     "tools/gen_recipe_retrieval_report.py": ["fullseye/data/RECIPE_INDEX.json"],
     "tools/measure_mcp_context.py": ["fullseye/data/OP_GRAPH.json", "fullseye/data/OP_SEARCH.json",
                                       "fullseye/data/OP_CARDS.json", "fullseye/data/OP_PROBE.json",
@@ -350,6 +356,9 @@ _IMAGE_REASON = ("画像・動画の書き手。PNG/GIF のバイトは Pillow �
 _SPIKE_REASON = ("スパイク(実験)の記録。spikes/out_gallery/ の図は当時の証跡として凍結してあり、"
                  "再描画(matplotlib / GUI)はバイトが変わる。")
 EXCLUDED = {
+    "tools/snapshot_recipe_gpu_routes.py": ("レシピの段の op が pipeline 文脈の GPU 経路を持つかの snapshot(docs/recipe_gpu_routes.json)。"
+                                             "gpu_route がまだ本線に無く、GPU の枝の worktree を読み取りで借りるので手で回して commit する"
+                                             "(2026-11-03)。gen_recipe_coverage は snapshot だけを読むので --check は決定的。"),
     "tools/profile_ops.py": ("PoC を op 呼び出し単位で計る実測の計測器(時間×頻度)。数字は機械と負荷で変わるので "
                              "手で回し、docs/perf/op_time_ranking_<date>.json を日付つきで commit する(2026-11-02)。"),
     "tools/measure_op_families.py": ("CPU timing and peak memory are machine-dependent raw measurements; run manually, "

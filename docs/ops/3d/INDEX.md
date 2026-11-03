@@ -1,4 +1,4 @@
-# 3D operator help — 376 ops in 68 categories
+# 3D operator help — 377 ops in 68 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/3d/<category>/<op>.md` を走査。
 
@@ -113,9 +113,9 @@
 
 [match_chamfer_3d](match_localize/match_chamfer_3d.md) · [match_curvature_3d](match_localize/match_curvature_3d.md) · [match_hough_3d](match_localize/match_hough_3d.md) · [match_mip_2d](match_localize/match_mip_2d.md) · [match_points_ncc](match_localize/match_points_ncc.md) · [match_shape_3d](match_localize/match_shape_3d.md)
 
-### match_pose (4)
+### match_pose (5)
 
-[match_logpolar_z](match_pose/match_logpolar_z.md) · [match_pca](match_pose/match_pca.md) · [match_phase_3d](match_pose/match_phase_3d.md) · [moment_axes](match_pose/moment_axes.md)
+[find_surface_pose](match_pose/find_surface_pose.md) · [match_logpolar_z](match_pose/match_logpolar_z.md) · [match_pca](match_pose/match_pca.md) · [match_phase_3d](match_pose/match_phase_3d.md) · [moment_axes](match_pose/moment_axes.md)
 
 ### medial (13)
 

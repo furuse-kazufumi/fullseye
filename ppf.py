@@ -376,12 +376,27 @@ def surface_match(model: dict, scene_points, scene_normals=None,
 def find_surface_pose(model_points, scene_points, model_normals=None,
                       scene_normals=None, dist_step: float = None,
                       angle_bins: int = 30, k_normals: int = 16, **kw) -> dict:
-    """One-shot convenience: build the model descriptor and match it against a scene.
+    """既知の物体(モデル点群)が場面の点群のどこにあるかを、点対特徴(PPF)の投票と ICP で求める(``pose``)。
 
-    Equivalent to :func:`ppf_model` followed by :func:`surface_match`; use the
-    two-step form when matching the same model into many scenes. Returns the same
-    ``{R, t, rmse, votes, inlier_fraction}`` dict — the 6-DoF pose of the model in
-    the scene, ready to drive a grasp."""
+    HALCON ``find_surface_model`` にあたる初期値の要らない 6-DoF 照合(Drost et al., CVPR 2010):
+    :func:`ppf_model` でモデルの点対特徴を表にし、:func:`surface_match` で場面の参照点ごとに
+    投票して上位の仮説を ICP で詰める。同じモデルを多くの場面へ当てるときは 2 段の形を使う。
+    素の関数(``fullseye.find_surface_pose``)は ``{R, t, rmse, votes, inlier_fraction}`` の
+    dict を返し、台帳 ``fullseye.ledger.find_surface_pose`` は ``pose`` の正典 ``(R, t)`` を返す
+    (残りは ``.raw``)。``(R, t)`` はモデルを場面へ写す: ``scene ≈ model @ R.T + t``(点は
+    (N, 3)、単位はそのまま)。法線を渡さなければ ``k_normals`` 近傍で向きつき法線を推定する。
+    ``dist_step`` の既定はモデルの直径の 1/20、``angle_bins`` は角度の分割数。
+
+    ★回転対称な物体(球・円柱・平板)は姿勢が一意に決まらない —— 対称の分だけ別の答えが
+    同じ票を取る。照合が外れたとき(仮説が 1 つも立たない)は ``rmse`` が inf、``votes`` が 0。
+
+    空の入力(``model_points`` が 0 要素)は ``ValueError``。
+    拒否(``ValueError``): 点群が (N, 3) でない、モデル点が 5 個未満、場面の点群が空。
+    """
+    if np.asarray(model_points).size == 0:
+        raise ValueError("find_surface_pose: model_points is empty — pass at least 5 (x, y, z) points")
+    if np.asarray(scene_points).size == 0:
+        raise ValueError("find_surface_pose: scene_points is empty — pass the scene cloud")
     model = ppf_model(model_points, model_normals, dist_step=dist_step,
                       angle_bins=angle_bins, k_normals=k_normals)
     return surface_match(model, scene_points, scene_normals, k_normals=k_normals, **kw)

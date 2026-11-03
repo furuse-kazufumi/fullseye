@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">sun_position — GEOCAM <code style="color:#22d3bf">sun</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">table</code></p>
-<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sun_position(lat_deg, lon_deg, unix_times)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import geocam; geocam.sun_position(lat_deg, lon_deg, unix_times)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsgeocam.get(&quot;sun_position&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sun_position(unix_times, lat_deg, lon_deg)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import opsgeocam; opsgeocam.sun_position(unix_times, lat_deg, lon_deg)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsgeocam.get(&quot;sun_position&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>위도·경도·시각(UNIX 초, UTC) → 태양의 방위·앙각 [도] (NOAA 태양 위치 알고리즘, Meeus 1998의 저정밀 식).</p>
@@ -29,5 +29,5 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">sun</code>)</h3>
 <p><a style="color:#22d3bf" href="opgeocam:sun_pixel_position">sun_pixel_position</a> · <a style="color:#22d3bf" href="opgeocam:camera_orientation_from_sun">camera_orientation_from_sun</a> · <a style="color:#22d3bf" href="opgeocam:sun_bloom_fit">sun_bloom_fit</a> · <a style="color:#22d3bf" href="opgeocam:camera_orientation_from_sun_candidates">camera_orientation_from_sun_candidates</a></p>
 <hr style="border:0;border-top:1px solid #2c313f">
-<p>*Provenance: geocam.py — GEOCAM 연산자 레지스트리. 이 op 노트는 <code style="color:#22d3bf">tools/opdocs.py md</code> 가 자동 생성합니다(직접 편집하지 마세요).*</p>
+<p>*Provenance: opsgeocam.py — GEOCAM 연산자 레지스트리. 이 op 노트는 <code style="color:#22d3bf">tools/opdocs.py md</code> 가 자동 생성합니다(직접 편집하지 마세요).*</p>
 <p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

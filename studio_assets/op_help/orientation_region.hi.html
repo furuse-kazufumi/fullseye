@@ -11,7 +11,7 @@
 <p><b>Stages</b> (पहले आने वाले ops → यह op, बाएँ से क्रम में):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/orientation_region.chain.jpg">orientation_region: stages का figure</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
-<p>Region के principal axis की दिशा (<code style="color:#22d3bf">regionprops</code> का <code style="color:#22d3bf">orientation</code>, [-π/2,π/2] को [0,1] में linear रूप से map किया गया)। Ellipse fit करने पर major axis का झुकाव दर्शाता है। HALCON के <code style="color:#22d3bf">orientation_region</code> (Orientation of a region.) के समकक्ष है।</p>
+<p>क्षेत्र के मुख्य अक्ष की दिशा θ / 180 (θ समतुल्य दीर्घवृत्त के दीर्घ अक्ष का कोण है, स्तंभ अक्ष से <b>स्क्रीन पर वामावर्त</b> मापा गया, पंक्तियाँ नीचे की ओर, [0, 180] डिग्री; 180 से गुणा करने पर डिग्री; <code style="color:#22d3bf">regionprops</code> के <code style="color:#22d3bf">orientation</code> को <code style="color:#22d3bf">(orientation + π/2) / π</code> से मैप करके लागू)। HALCON के <code style="color:#22d3bf">orientation_region</code> (Orientation of a region.) जैसी ही दिशा —— HALCON सबसे दूर के बिंदु से दिशा तय करके -π..π रेडियन देता है, यहाँ 180 डिग्री पर मोड़कर [0,1] में सामान्यीकृत है। <code style="color:#22d3bf">elliptic_axis</code> के Phi (रेडियन) से θ ≡ Phi (mod π) के रूप में मेल खाता है।</p>
 <p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> का उपयोग नहीं होता।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features family guide</a></p>

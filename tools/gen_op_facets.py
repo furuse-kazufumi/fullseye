@@ -50,6 +50,9 @@ VERIFIED_PYTHON = {
     "deflectometry_phase_to_slope", "fringe_ftp_phase", "depth_from_focus",
     "fit_circle_geometric", "fit_curve_principal_axis",
     "phase_correlation_shift", "fit_surface_principal_axes",
+    # 2026-11-03: N 段の位相シフト縞 -> 巻いた位相。MCP e2e(PR #224)の位相 2 課題が期待する op なのに
+    #   検証済みに無く、MCP からは組めなかった。下の試験に実行(真値 0.7 rad)を足して載せる。
+    "wrapped_phase",
 }
 DATA_INPUT_OVERRIDES = {
     "triangulate": [("uv1", "image"), ("uv2", "image"), ("P1", "matrix"), ("P2", "matrix")],
@@ -151,6 +154,26 @@ def _python_functions() -> dict[str, dict]:
 _IO_PARAM_RX = re.compile(
     r"(?:^|_)(?:path|paths|file|files|filename|filepath|dir|directory|folder|url|uri|"
     r"source|destination|target|callback|callable|function|func|writer|reader|stream|socket)(?:$|_)", re.I)
+
+
+def _ledger_functions() -> dict:
+    """台帳(opassist._LEDGERS)の op 名 -> その func の実行先。先に並ぶ台帳が勝つ(fs.ledger と同じ)。"""
+    import importlib
+    import opassist
+    out = {}
+    for mod_name, table in opassist._LEDGERS:
+        try:
+            entries = getattr(importlib.import_module(mod_name), table)
+        except Exception:  # noqa: BLE001 - 任意依存の欠けた台帳は飛ばす(実行先は空のまま)
+            continue
+        for name, entry in entries.items():
+            func = entry.get("func") if isinstance(entry, dict) else None
+            if name not in out and callable(func):
+                try:
+                    out[name] = _runtime_function(func)
+                except RuntimeError:
+                    continue
+    return out
 
 
 def _runtime_function(fn) -> dict:
@@ -430,6 +453,7 @@ def build() -> dict[str, object]:
         produced["sequence"] += 1; consumed["sequence"] += 1
 
     executable_reasons = Counter()
+    ledger_functions = _ledger_functions()
     for edge in edges:
         if edge.get("executable"):
             edge["executor"] = {"kind": "registry", "alias":edge["op"]}
@@ -437,6 +461,16 @@ def build() -> dict[str, object]:
         fn = runtime_functions.get(edge["op"])
         if fn is None and edge["op"] in registry_by_name:
             fn = _runtime_function(registry_by_name[edge["op"]].fn)
+        if fn is None and edge["op"] in ledger_functions:
+            # ★2026-11-03: chain_fuzz の op 表に載らない台帳 op(fileio 14、acoustics の read_wav /
+            #   read_audio / write_wav = 入出力の副作用がある op)は実行先が空で、OP_GRAPH を読む側が
+            #   呼べなかった(レシピの e2e が fs.ledger に迂回して見つけた)。台帳の func を実行先にする。
+            fn = ledger_functions[edge["op"]]
+        if fn is None and edge["op"] in ("quicksort", "heapsort", "mergesort"):
+            # 汎用アルゴリズムの層は関数ではなく生成元(api.run_algo が名前で走らせる)。実行先を書き、
+            # MCP では走らせない理由を残す(executable は False のまま)。
+            edge["runtime_target"] = {"module": "api", "callable": "run_algo", "fixed_args": [edge["op"]]}
+            edge["executable_reason"] = "generic_algorithm_layer_run_by_api.run_algo"
         if fn is not None:
             edge["runtime_target"] = {"module": fn["module"], "callable": fn["callable"]}
             if edge.get("executor",{}).get("kind")=="registry":
@@ -444,7 +478,7 @@ def build() -> dict[str, object]:
         if not edge.get("executable") and edge.get("type_semantics") == "unknown":
             edge["executable_reason"] = "unknown_input_or_output_sort"
         elif not edge.get("executable") and fn is None:
-            edge["executable_reason"] = "python_callable_not_found"
+            edge.setdefault("executable_reason", "python_callable_not_found")
         elif not edge.get("executable") and len(fn["parameters"]) < len(edge["inputs"]):
             edge["executable_reason"] = "python_signature_has_fewer_inputs_than_graph"
         elif not edge.get("executable"):

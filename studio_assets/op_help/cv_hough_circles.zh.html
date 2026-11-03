@@ -10,7 +10,8 @@
 <p>*旋钮 b 不改变输出(实测: 0.1 / 0.5 / 0.9 相同)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>基于霍夫变换的圆检测（单一标量特征，OpenCV 实现）。使用依赖边缘梯度信息的 HOUGH_GRADIENT 方法，以投票方式检测圆心与半径 —— 这里只返回检测到的圆的数量（若为 0 个则返回 0）。</p>
-<p>相当于 HALCON 的 <code style="color:#22d3bf">hough_circles</code>(Detect centers of circles for a specific radius using the Hough transform.)(近似。只返回个数,不返回圆心坐标)。实现为 <code style="color:#22d3bf">cv2.HoughCircles(_u8(v), HOUGH_GRADIENT, dp=1, minDist=10+int(a*20), param1=100, param2=20+int(b*20), minRadius=3, maxRadius=20)</code> —— a 在 10～30 之间调节检测到的圆之间的最小圆心距,b 在 20～40 之间调节圆心检测的投票阈值 param2(越小误检越多)。param1(内部 Canny 高阈值)和半径范围(3～20)是固定的。</p>
+<p>相当于 HALCON 的 <code style="color:#22d3bf">hough_circles</code>(Detect centers of circles for a specific radius using the Hough transform.)(近似:只返回个数,不返回圆心坐标)。实现为 <code style="color:#22d3bf">cv2.HoughCircles(_u8(v), HOUGH_GRADIENT, dp=1, minDist=10+int(a*20), param1=100, param2=20+int(b*20), minRadius=3, maxRadius=20)</code> —— a 把检测到的圆心之间的最小距离设为 10〜30,b 把圆心投票阈值 param2(越小误检越多)设为 20〜40。param1(内部 Canny 高阈值)和半径范围(3〜20)固定。</p>
+<p><b>前提条件:先做平滑</b>(本 op 内部不平滑)。HOUGH_GRADIENT 沿每个像素的梯度方向为圆心投票,噪声使方向分散时票数无法聚集。OpenCV 的说明和示例也都先模糊输入再传入(GaussianBlur / medianBlur)。实测(2026-11-03,96x96,0.3 背景上 0.6 的圆盘,噪声 σ 0.02):不平滑时,无论半径 6〜8 的 3 个圆盘还是半径 18 的 1 个圆盘都是 <b>0 个</b>(直接调用 cv2.HoughCircles 也返回 None)。先施加 <code style="color:#22d3bf">gaussian</code> a=0.5(σ 约 1.65 px)后能正确数出 3 / 4 个。返回 0 时无法区分&quot;没有圆&quot;和&quot;票被分散&quot;,因此对有噪声的图像务必在前面放置平滑。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

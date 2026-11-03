@@ -14,7 +14,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 # rss_worst_case_gap — DRIVE `rss` op
 
 - **データ種**: `table` → `table`
-- **呼び出し**: `import fullseye as fs; fs.ledger.rss_worst_case_gap(d0: 'float', v_rear: 'float', v_front: 'float', p: 'dict', p_front: 'Optional[dict]' = None, dt: 'float' = 0.001, t_max: 'Optional[float]' = None) -> 'Dict[str, object]'` (実装を直接呼ぶなら `import rsssafety; rsssafety.rss_worst_case_gap(d0: 'float', v_rear: 'float', v_front: 'float', p: 'dict', p_front: 'Optional[dict]' = None, dt: 'float' = 0.001, t_max: 'Optional[float]' = None) -> 'Dict[str, object]'`、台帳から引くなら `opsdrive.get("rss_worst_case_gap")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.rss_worst_case_gap(p: 'dict', d0: 'float', v_rear: 'float', v_front: 'float', p_front: 'Optional[dict]' = None, dt: 'float' = 0.001, t_max: 'Optional[float]' = None) -> 'Dict[str, object]'` (実装を直接呼ぶなら `import opsdrive; opsdrive.rss_worst_case_gap(p: 'dict', d0: 'float', v_rear: 'float', v_front: 'float', p_front: 'Optional[dict]' = None, dt: 'float' = 0.001, t_max: 'Optional[float]' = None) -> 'Dict[str, object]'`、台帳から引くなら `opsdrive.get("rss_worst_case_gap")`)
 - **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
@@ -52,6 +52,6 @@ dict : ``t, x_rear, x_front, v_rear, v_front, gap`` (ndarray)、``min_gap, t_min
 [rss_params](rss_params.md) · [rss_stopping_distance](rss_stopping_distance.md) · [rss_longitudinal_same](rss_longitudinal_same.md) · [rss_longitudinal_opposite](rss_longitudinal_opposite.md) · [rss_lateral](rss_lateral.md) · [rss_longitudinal_check](rss_longitudinal_check.md) · [rss_lateral_check](rss_lateral_check.md) · [rss_worst_case_gap_opposite](rss_worst_case_gap_opposite.md)
 
 ---
-*Provenance: rsssafety.py — DRIVE operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*
+*Provenance: opsdrive.py — DRIVE operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*
 
 © 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.

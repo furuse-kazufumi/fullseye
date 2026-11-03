@@ -270,7 +270,12 @@ def test_pending_exposure_shrinks_when_fixed():
 #   実測 948 → 963。33 op 自身は fs.ledger から引ける。
 # 2026-11-04 統合(integrate/2026-11-04-families): 上の 3 台帳はどれも 948 から測っていたので、重ねると
 #   948 + 4(opsacceptance)+ 4(opsmatchreg)+ 15(opssymbol)= 971。実測も 971(各ブランチで認めた増分の和で、新しい増分はない)。
-_HIDDEN_FUNCTIONS_TODAY = 971
+# 2026-11-03 opsfit に台帳の内部 API 4 本(call / get / info / missing。f9743b1301)を足した: 実測 948 → 952。
+#   fs.ledger.fit_circle_geometric / phase_correlation_shift が AttributeError で落ちていた修正で、他の台帳
+#   (opscalib / opsfileio / opsmath / opsshape2d …)も同じ 4 本を公開経路に載せていない。op 自身は fs.ledger から引ける。
+# 2026-11-04 統合に W2(opsfit の 4 本)を重ねた: 948 + 4(opsacceptance)+ 4(opsmatchreg)+ 15(opssymbol)
+#   + 4(opsfit)= 975。実測も 975(各ブランチで認めた増分の和で、新しい増分はない)。
+_HIDDEN_FUNCTIONS_TODAY = 975
 
 
 def _hidden_total():

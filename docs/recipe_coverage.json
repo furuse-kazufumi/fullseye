@@ -1,0 +1,5582 @@
+{
+ "summary": {
+  "recipes": 267,
+  "recipes_py": 25,
+  "recipebook": 242,
+  "multi_stage": 220,
+  "families_total": 56,
+  "families_covered": 56,
+  "families_uncovered": [],
+  "task_class": {
+   "3d": 36,
+   "analysis": 24,
+   "inspection": 59,
+   "measurement": 71,
+   "optics": 8,
+   "preprocess": 38,
+   "sensing": 17,
+   "simulation": 9,
+   "visualization": 5
+  },
+  "halcon_chapters": {
+   "1D Measuring": 7,
+   "2D Metrology": 6,
+   "3D Matching": 8,
+   "3D Object Model": 18,
+   "3D Reconstruction": 14,
+   "Calibration": 4,
+   "Color": 8,
+   "Features": 2,
+   "Filters": 10,
+   "Frequency": 1,
+   "Identification": 1,
+   "Inspection": 4,
+   "Matching": 5,
+   "Morphology": 3,
+   "OCR": 4,
+   "Regions": 19,
+   "Restoration": 2,
+   "Segmentation": 10,
+   "Texture": 3,
+   "Transformations": 7,
+   "XLD": 10
+  },
+  "runner": {
+   "mcp": 89,
+   "python": 178
+  },
+  "truth_gated": 243,
+  "type_cuts_total": 0,
+  "recipes_with_type_cuts": 0,
+  "distinct_ops": 409,
+  "categories_2d_total": 49,
+  "categories_2d_covered": 25,
+  "categories_2d_uncovered": [
+   "arithmetic",
+   "artificial_life",
+   "artistic",
+   "augmentation",
+   "classification",
+   "decomposition",
+   "deformation",
+   "domain",
+   "extra",
+   "filtering",
+   "intensity_transform",
+   "macro",
+   "misc",
+   "morphology_markers",
+   "noise",
+   "physics",
+   "region_morphology",
+   "region_transform",
+   "self_similarity",
+   "tactile",
+   "texture_feature",
+   "texture_shape_feature",
+   "tomography",
+   "transform"
+  ],
+  "gpu": {
+   "snapshot_commit": "a3f91eae72f851e870e6a45294ecfc44ded9cb10",
+   "recipes_measured": 247,
+   "recipes_unmeasured": 20,
+   "recipes_with_gpu_stage": 127,
+   "switches_total": 96,
+   "switch_histogram": {
+    "0": 165,
+    "1": 70,
+    "2": 11,
+    "4": 1
+   }
+  }
+ },
+ "families": [
+  {
+   "family": "2d",
+   "ops": 959,
+   "recipes": 90,
+   "ops_used": 99
+  },
+  {
+   "family": "3d",
+   "ops": 377,
+   "recipes": 25,
+   "ops_used": 35
+  },
+  {
+   "family": "acoustics",
+   "ops": 27,
+   "recipes": 4,
+   "ops_used": 6
+  },
+  {
+   "family": "annotate",
+   "ops": 51,
+   "recipes": 2,
+   "ops_used": 4
+  },
+  {
+   "family": "aoi",
+   "ops": 3,
+   "recipes": 1,
+   "ops_used": 2
+  },
+  {
+   "family": "astrostack",
+   "ops": 14,
+   "recipes": 4,
+   "ops_used": 9
+  },
+  {
+   "family": "blob",
+   "ops": 11,
+   "recipes": 4,
+   "ops_used": 6
+  },
+  {
+   "family": "cadmap",
+   "ops": 4,
+   "recipes": 1,
+   "ops_used": 1
+  },
+  {
+   "family": "calib",
+   "ops": 21,
+   "recipes": 2,
+   "ops_used": 4
+  },
+  {
+   "family": "codematch",
+   "ops": 6,
+   "recipes": 1,
+   "ops_used": 1
+  },
+  {
+   "family": "colortransport",
+   "ops": 11,
+   "recipes": 2,
+   "ops_used": 3
+  },
+  {
+   "family": "conngraph",
+   "ops": 28,
+   "recipes": 2,
+   "ops_used": 4
+  },
+  {
+   "family": "converge",
+   "ops": 6,
+   "recipes": 2,
+   "ops_used": 2
+  },
+  {
+   "family": "dem",
+   "ops": 25,
+   "recipes": 2,
+   "ops_used": 3
+  },
+  {
+   "family": "drive",
+   "ops": 717,
+   "recipes": 7,
+   "ops_used": 11
+  },
+  {
+   "family": "emproof",
+   "ops": 14,
+   "recipes": 1,
+   "ops_used": 2
+  },
+  {
+   "family": "fileio",
+   "ops": 14,
+   "recipes": 2,
+   "ops_used": 4
+  },
+  {
+   "family": "fit",
+   "ops": 3,
+   "recipes": 2,
+   "ops_used": 2
+  },
+  {
+   "family": "flyvision",
+   "ops": 22,
+   "recipes": 3,
+   "ops_used": 6
+  },
+  {
+   "family": "generative",
+   "ops": 42,
+   "recipes": 3,
+   "ops_used": 5
+  },
+  {
+   "family": "geocam",
+   "ops": 9,
+   "recipes": 2,
+   "ops_used": 4
+  },
+  {
+   "family": "gfx2d",
+   "ops": 44,
+   "recipes": 2,
+   "ops_used": 5
+  },
+  {
+   "family": "graph",
+   "ops": 20,
+   "recipes": 2,
+   "ops_used": 2
+  },
+  {
+   "family": "imgforensics",
+   "ops": 16,
+   "recipes": 3,
+   "ops_used": 4
+  },
+  {
+   "family": "imgmetrics",
+   "ops": 42,
+   "recipes": 3,
+   "ops_used": 5
+  },
+  {
+   "family": "interferometry",
+   "ops": 9,
+   "recipes": 3,
+   "ops_used": 6
+  },
+  {
+   "family": "lightfield",
+   "ops": 17,
+   "recipes": 3,
+   "ops_used": 6
+  },
+  {
+   "family": "live4d",
+   "ops": 14,
+   "recipes": 1,
+   "ops_used": 2
+  },
+  {
+   "family": "llmcore",
+   "ops": 10,
+   "recipes": 1,
+   "ops_used": 4
+  },
+  {
+   "family": "math",
+   "ops": 115,
+   "recipes": 5,
+   "ops_used": 9
+  },
+  {
+   "family": "measure1d",
+   "ops": 17,
+   "recipes": 3,
+   "ops_used": 7
+  },
+  {
+   "family": "motionmag",
+   "ops": 9,
+   "recipes": 3,
+   "ops_used": 4
+  },
+  {
+   "family": "multivar",
+   "ops": 18,
+   "recipes": 3,
+   "ops_used": 5
+  },
+  {
+   "family": "oned",
+   "ops": 49,
+   "recipes": 3,
+   "ops_used": 8
+  },
+  {
+   "family": "optics",
+   "ops": 483,
+   "recipes": 14,
+   "ops_used": 37
+  },
+  {
+   "family": "photon",
+   "ops": 17,
+   "recipes": 3,
+   "ops_used": 7
+  },
+  {
+   "family": "piv",
+   "ops": 29,
+   "recipes": 4,
+   "ops_used": 8
+  },
+  {
+   "family": "printpath",
+   "ops": 23,
+   "recipes": 1,
+   "ops_used": 3
+  },
+  {
+   "family": "profile",
+   "ops": 12,
+   "recipes": 2,
+   "ops_used": 5
+  },
+  {
+   "family": "quat",
+   "ops": 19,
+   "recipes": 2,
+   "ops_used": 5
+  },
+  {
+   "family": "rangedoppler",
+   "ops": 8,
+   "recipes": 2,
+   "ops_used": 5
+  },
+  {
+   "family": "reprconv",
+   "ops": 42,
+   "recipes": 2,
+   "ops_used": 2
+  },
+  {
+   "family": "residue",
+   "ops": 5,
+   "recipes": 1,
+   "ops_used": 1
+  },
+  {
+   "family": "roughness",
+   "ops": 9,
+   "recipes": 5,
+   "ops_used": 8
+  },
+  {
+   "family": "segmentation",
+   "ops": 59,
+   "recipes": 4,
+   "ops_used": 4
+  },
+  {
+   "family": "shape2d",
+   "ops": 17,
+   "recipes": 2,
+   "ops_used": 5
+  },
+  {
+   "family": "shapestat",
+   "ops": 16,
+   "recipes": 2,
+   "ops_used": 5
+  },
+  {
+   "family": "simcal",
+   "ops": 10,
+   "recipes": 1,
+   "ops_used": 4
+  },
+  {
+   "family": "spc",
+   "ops": 41,
+   "recipes": 4,
+   "ops_used": 6
+  },
+  {
+   "family": "specular",
+   "ops": 20,
+   "recipes": 6,
+   "ops_used": 6
+  },
+  {
+   "family": "text",
+   "ops": 3,
+   "recipes": 3,
+   "ops_used": 3
+  },
+  {
+   "family": "tomography",
+   "ops": 32,
+   "recipes": 4,
+   "ops_used": 6
+  },
+  {
+   "family": "videocube",
+   "ops": 6,
+   "recipes": 1,
+   "ops_used": 1
+  },
+  {
+   "family": "videostream",
+   "ops": 16,
+   "recipes": 2,
+   "ops_used": 4
+  },
+  {
+   "family": "volcolor",
+   "ops": 11,
+   "recipes": 3,
+   "ops_used": 3
+  },
+  {
+   "family": "vx",
+   "ops": 10,
+   "recipes": 2,
+   "ops_used": 3
+  }
+ ],
+ "recipes": [
+  {
+   "name": "Denoise — bilateral + unsharp",
+   "source": "recipes.py",
+   "family": "2d",
+   "task_class": "preprocess",
+   "halcon": null,
+   "runner": "mcp",
+   "stages": 2,
+   "ops": [
+    "bilateral",
+    "unsharp"
+   ],
+   "type_cuts": 0,
+   "truth_gate": false,
+   "gpu_stages": 2,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Denoise — total variation",
+   "source": "recipes.py",
+   "family": "2d",
+   "task_class": "preprocess",
+   "halcon": null,
+   "runner": "mcp",
+   "stages": 1,
+   "ops": [
+    "sk_tv"
+   ],
+   "type_cuts": 0,
+   "truth_gate": false,
+   "gpu_stages": 1,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Denoise — median",
+   "source": "recipes.py",
+   "family": "2d",
+   "task_class": "preprocess",
+   "halcon": null,
+   "runner": "mcp",
+   "stages": 1,
+   "ops": [
+    "median"
+   ],
+   "type_cuts": 0,
+   "truth_gate": false,
+   "gpu_stages": 1,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Edge — Sobel + Otsu",
+   "source": "recipes.py",
+   "family": "2d",
+   "task_class": "preprocess",
+   "halcon": null,
+   "runner": "mcp",
+   "stages": 3,
+   "ops": [
+    "gaussian",
+    "sobel_amp",
+    "otsu"
+   ],
+   "type_cuts": 0,
+   "truth_gate": false,
+   "gpu_stages": 3,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Edge — Canny",
+   "source": "recipes.py",
+   "family": "2d",
+   "task_class": "preprocess",
+   "halcon": null,
+   "runner": "mcp",
+   "stages": 2,
+   "ops": [
+    "gaussian",
+    "canny"
+   ],
+   "type_cuts": 0,
+   "truth_gate": false,
+   "gpu_stages": 2,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Segment — blob / coin",
+   "source": "recipes.py",
+   "family": "2d",
+   "task_class": "preprocess",
+   "halcon": null,
+   "runner": "mcp",
+   "stages": 4,
+   "ops": [
+    "gaussian",
+    "otsu",
+    "fill_up",
+    "remove_small"
+   ],
+   "type_cuts": 0,
+   "truth_gate": false,
+   "gpu_stages": 4,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Count — blobs",
+   "source": "recipes.py",
+   "family": "2d",
+   "task_class": "measurement",
+   "halcon": null,
+   "runner": "mcp",
+   "stages": 4,
+   "ops": [
+    "gaussian",
+    "otsu",
+    "fill_up",
+    "count_obj"
+   ],
+   "type_cuts": 0,
+   "truth_gate": false,
+   "gpu_stages": 4,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Binarize — document (adaptive)",
+   "source": "recipes.py",
+   "family": "2d",
+   "task_class": "preprocess",
+   "halcon": null,
+   "runner": "mcp",
+   "stages": 1,
+   "ops": [
+    "adaptive_gauss_thresh"
+   ],
+   "type_cuts": 0,
+   "truth_gate": false,
+   "gpu_stages": 1,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Enhance — CLAHE contrast",
+   "source": "recipes.py",
+   "family": "2d",
+   "task_class": "preprocess",
+   "halcon": null,
+   "runner": "mcp",
+   "stages": 1,
+   "ops": [
+    "clahe"
+   ],
+   "type_cuts": 0,
+   "truth_gate": false,
+   "gpu_stages": 1,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Enhance — histogram equalize",
+   "source": "recipes.py",
+   "family": "2d",
+   "task_class": "preprocess",
+   "halcon": null,
+   "runner": "mcp",
+   "stages": 1,
+   "ops": [
+    "equalize"
+   ],
+   "type_cuts": 0,
+   "truth_gate": false,
+   "gpu_stages": 1,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Enhance — gamma",
+   "source": "recipes.py",
+   "family": "2d",
+   "task_class": "preprocess",
+   "halcon": null,
+   "runner": "mcp",
+   "stages": 1,
+   "ops": [
+    "gamma"
+   ],
+   "type_cuts": 0,
+   "truth_gate": false,
+   "gpu_stages": 1,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Sharpen — unsharp mask",
+   "source": "recipes.py",
+   "family": "2d",
+   "task_class": "preprocess",
+   "halcon": null,
+   "runner": "mcp",
+   "stages": 1,
+   "ops": [
+    "unsharp"
+   ],
+   "type_cuts": 0,
+   "truth_gate": false,
+   "gpu_stages": 1,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Sharpen — highpass",
+   "source": "recipes.py",
+   "family": "2d",
+   "task_class": "preprocess",
+   "halcon": null,
+   "runner": "mcp",
+   "stages": 1,
+   "ops": [
+    "highpass"
+   ],
+   "type_cuts": 0,
+   "truth_gate": false,
+   "gpu_stages": 1,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Texture — Gabor",
+   "source": "recipes.py",
+   "family": "2d",
+   "task_class": "analysis",
+   "halcon": null,
+   "runner": "mcp",
+   "stages": 1,
+   "ops": [
+    "gabor"
+   ],
+   "type_cuts": 0,
+   "truth_gate": false,
+   "gpu_stages": 1,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Texture — local std",
+   "source": "recipes.py",
+   "family": "2d",
+   "task_class": "analysis",
+   "halcon": null,
+   "runner": "mcp",
+   "stages": 1,
+   "ops": [
+    "std_filter"
+   ],
+   "type_cuts": 0,
+   "truth_gate": false,
+   "gpu_stages": 1,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Keypoints — Harris corners",
+   "source": "recipes.py",
+   "family": "2d",
+   "task_class": "analysis",
+   "halcon": null,
+   "runner": "mcp",
+   "stages": 1,
+   "ops": [
+    "sk_corner_harris"
+   ],
+   "type_cuts": 0,
+   "truth_gate": false,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Blobs — Difference of Gaussians",
+   "source": "recipes.py",
+   "family": "2d",
+   "task_class": "analysis",
+   "halcon": null,
+   "runner": "mcp",
+   "stages": 1,
+   "ops": [
+    "sk_dog"
+   ],
+   "type_cuts": 0,
+   "truth_gate": false,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Morphology — gradient",
+   "source": "recipes.py",
+   "family": "2d",
+   "task_class": "preprocess",
+   "halcon": null,
+   "runner": "mcp",
+   "stages": 1,
+   "ops": [
+    "morph_grad"
+   ],
+   "type_cuts": 0,
+   "truth_gate": false,
+   "gpu_stages": 1,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Shape — distance transform",
+   "source": "recipes.py",
+   "family": "2d",
+   "task_class": "analysis",
+   "halcon": null,
+   "runner": "mcp",
+   "stages": 3,
+   "ops": [
+    "gaussian",
+    "otsu",
+    "distance_transform"
+   ],
+   "type_cuts": 0,
+   "truth_gate": false,
+   "gpu_stages": 3,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Spots — local maxima",
+   "source": "recipes.py",
+   "family": "2d",
+   "task_class": "analysis",
+   "halcon": null,
+   "runner": "mcp",
+   "stages": 2,
+   "ops": [
+    "gaussian",
+    "local_max"
+   ],
+   "type_cuts": 0,
+   "truth_gate": false,
+   "gpu_stages": 2,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "FA — scratch on hairline metal",
+   "source": "recipes.py",
+   "family": "2d",
+   "task_class": "inspection",
+   "halcon": null,
+   "runner": "mcp",
+   "stages": 4,
+   "ops": [
+    "gaussian",
+    "sk_rolling_ball",
+    "threshold",
+    "select_shape"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 3,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 2
+  },
+  {
+   "name": "FA — dent and foreign fibre on resin",
+   "source": "recipes.py",
+   "family": "2d",
+   "task_class": "inspection",
+   "halcon": null,
+   "runner": "mcp",
+   "stages": 4,
+   "ops": [
+    "gaussian",
+    "hx_plane_deviation",
+    "threshold",
+    "select_shape"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 4,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "FA — engraved lot code (binarize for OCR)",
+   "source": "recipes.py",
+   "family": "2d",
+   "task_class": "inspection",
+   "halcon": null,
+   "runner": "mcp",
+   "stages": 3,
+   "ops": [
+    "gaussian",
+    "otsu",
+    "select_shape"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 3,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "FA — count holes in a back-lit plate",
+   "source": "recipes.py",
+   "family": "2d",
+   "task_class": "measurement",
+   "halcon": null,
+   "runner": "mcp",
+   "stages": 3,
+   "ops": [
+    "otsu",
+    "sk_clear_border",
+    "count_obj"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 3,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "FA — weld porosity (X-ray)",
+   "source": "recipes.py",
+   "family": "2d",
+   "task_class": "inspection",
+   "halcon": null,
+   "runner": "mcp",
+   "stages": 3,
+   "ops": [
+    "gaussian",
+    "local_threshold",
+    "select_shape"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 3,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Measure — diameter of a bright round part",
+   "source": "recipebook",
+   "family": "2d",
+   "task_class": "measurement",
+   "halcon": "Regions",
+   "runner": "mcp",
+   "stages": 4,
+   "ops": [
+    "gaussian",
+    "otsu",
+    "fill_up",
+    "diameter_region"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 3,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 1
+  },
+  {
+   "name": "Inspect — roundness of a punched disk (circularity)",
+   "source": "recipebook",
+   "family": "2d",
+   "task_class": "inspection",
+   "halcon": "Regions",
+   "runner": "mcp",
+   "stages": 3,
+   "ops": [
+    "otsu",
+    "fill_up",
+    "circularity"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 2,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 1
+  },
+  {
+   "name": "Preprocess — remove salt-and-pepper impulses before measuring part area",
+   "source": "recipebook",
+   "family": "2d",
+   "task_class": "preprocess",
+   "halcon": "Filters",
+   "runner": "mcp",
+   "stages": 3,
+   "ops": [
+    "median",
+    "otsu",
+    "area_center"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 3,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Preprocess — denoise a flat field and verify the residual noise level",
+   "source": "recipebook",
+   "family": "2d",
+   "task_class": "preprocess",
+   "halcon": "Filters",
+   "runner": "mcp",
+   "stages": 2,
+   "ops": [
+    "median",
+    "estimate_noise"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 1,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 1
+  },
+  {
+   "name": "Inspect — count parts under strongly uneven illumination (local threshold)",
+   "source": "recipebook",
+   "family": "2d",
+   "task_class": "inspection",
+   "halcon": "Segmentation",
+   "runner": "mcp",
+   "stages": 3,
+   "ops": [
+    "local_threshold",
+    "opening_circle",
+    "count_obj"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 3,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Preprocess — flatten an illumination gradient with a plane fit, then count parts",
+   "source": "recipebook",
+   "family": "2d",
+   "task_class": "preprocess",
+   "halcon": "Segmentation",
+   "runner": "mcp",
+   "stages": 3,
+   "ops": [
+    "hx_plane_deviation",
+    "otsu",
+    "count_obj"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 3,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Inspect — split touching round parts and count them (distance-transform peaks)",
+   "source": "recipebook",
+   "family": "2d",
+   "task_class": "inspection",
+   "halcon": "Segmentation",
+   "runner": "mcp",
+   "stages": 4,
+   "ops": [
+    "otsu",
+    "dist_transform",
+    "xsk2_h_maxima",
+    "count_obj"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 3,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 2
+  },
+  {
+   "name": "Measure — part area with a k-means intensity segmentation",
+   "source": "recipebook",
+   "family": "2d",
+   "task_class": "measurement",
+   "halcon": "Segmentation",
+   "runner": "mcp",
+   "stages": 2,
+   "ops": [
+    "sg_kmeans_intensity",
+    "area_center"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 2,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Measure — part area with hysteresis thresholding",
+   "source": "recipebook",
+   "family": "2d",
+   "task_class": "measurement",
+   "halcon": "Segmentation",
+   "runner": "mcp",
+   "stages": 3,
+   "ops": [
+    "gaussian",
+    "hysteresis_threshold",
+    "area_center"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 2,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 2
+  },
+  {
+   "name": "Measure — hole area fraction of a washer",
+   "source": "recipebook",
+   "family": "2d",
+   "task_class": "measurement",
+   "halcon": "Regions",
+   "runner": "mcp",
+   "stages": 2,
+   "ops": [
+    "otsu",
+    "area_holes"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 1,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 1
+  },
+  {
+   "name": "Inspect — count punched holes in a plate (Euler number)",
+   "source": "recipebook",
+   "family": "2d",
+   "task_class": "inspection",
+   "halcon": "Regions",
+   "runner": "mcp",
+   "stages": 2,
+   "ops": [
+    "otsu",
+    "euler_number"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 1,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 1
+  },
+  {
+   "name": "Measure — orientation angle of an elongated part",
+   "source": "recipebook",
+   "family": "2d",
+   "task_class": "measurement",
+   "halcon": "Regions",
+   "runner": "mcp",
+   "stages": 2,
+   "ops": [
+    "otsu",
+    "orientation_region"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 1,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 1
+  },
+  {
+   "name": "Measure — equivalent-ellipse semi-axes of an oval part",
+   "source": "recipebook",
+   "family": "2d",
+   "task_class": "measurement",
+   "halcon": "Regions",
+   "runner": "mcp",
+   "stages": 2,
+   "ops": [
+    "otsu",
+    "elliptic_axis"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 1,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 1
+  },
+  {
+   "name": "Measure — equivalent-ellipse angle Phi of a turned bar (elliptic_axis)",
+   "source": "recipebook",
+   "family": "2d",
+   "task_class": "measurement",
+   "halcon": "Regions",
+   "runner": "mcp",
+   "stages": 2,
+   "ops": [
+    "otsu",
+    "elliptic_axis"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 1,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 1
+  },
+  {
+   "name": "Measure — anisometry (aspect ratio) of an oval part",
+   "source": "recipebook",
+   "family": "2d",
+   "task_class": "measurement",
+   "halcon": "Regions",
+   "runner": "mcp",
+   "stages": 3,
+   "ops": [
+    "gaussian",
+    "otsu",
+    "eccentricity"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 2,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 1
+  },
+  {
+   "name": "Measure — area and position of the largest part in a cluttered scene",
+   "source": "recipebook",
+   "family": "2d",
+   "task_class": "measurement",
+   "halcon": "Regions",
+   "runner": "mcp",
+   "stages": 3,
+   "ops": [
+    "otsu",
+    "select_largest",
+    "area_center"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 3,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Measure — convex-hull area of a C-shaped part",
+   "source": "recipebook",
+   "family": "2d",
+   "task_class": "measurement",
+   "halcon": "Regions",
+   "runner": "mcp",
+   "stages": 3,
+   "ops": [
+    "otsu",
+    "get_region_convex",
+    "area_center"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 2,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 2
+  },
+  {
+   "name": "Inspect — convexity of a C-shaped clip (gap detection)",
+   "source": "recipebook",
+   "family": "2d",
+   "task_class": "inspection",
+   "halcon": "Regions",
+   "runner": "mcp",
+   "stages": 2,
+   "ops": [
+    "otsu",
+    "convexity"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 1,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 1
+  },
+  {
+   "name": "Measure — length of a thin wire or scratch",
+   "source": "recipebook",
+   "family": "2d",
+   "task_class": "measurement",
+   "halcon": "Regions",
+   "runner": "mcp",
+   "stages": 2,
+   "ops": [
+    "otsu",
+    "diameter_region"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 1,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 1
+  },
+  {
+   "name": "Measure — wall thickness of a bar-shaped part",
+   "source": "recipebook",
+   "family": "2d",
+   "task_class": "measurement",
+   "halcon": "Regions",
+   "runner": "mcp",
+   "stages": 2,
+   "ops": [
+    "otsu",
+    "get_region_thickness"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 1,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 1
+  },
+  {
+   "name": "Inspect — count the arms of a branched part (skeleton end points)",
+   "source": "recipebook",
+   "family": "2d",
+   "task_class": "inspection",
+   "halcon": "Regions",
+   "runner": "mcp",
+   "stages": 5,
+   "ops": [
+    "otsu",
+    "opening_circle",
+    "skeleton",
+    "r2_endpoints_skeleton",
+    "count_obj"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 3,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 2
+  },
+  {
+   "name": "Preprocess — remove dust specks, then count the real parts",
+   "source": "recipebook",
+   "family": "2d",
+   "task_class": "preprocess",
+   "halcon": "Morphology",
+   "runner": "mcp",
+   "stages": 3,
+   "ops": [
+    "otsu",
+    "remove_small",
+    "count_obj"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 3,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Inspect — dark pits on a bright surface (black top-hat)",
+   "source": "recipebook",
+   "family": "2d",
+   "task_class": "inspection",
+   "halcon": "Morphology",
+   "runner": "mcp",
+   "stages": 3,
+   "ops": [
+    "bothat",
+    "threshold",
+    "count_obj"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 3,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Inspect — bright spots on a vignetted background (white top-hat)",
+   "source": "recipebook",
+   "family": "2d",
+   "task_class": "inspection",
+   "halcon": "Morphology",
+   "runner": "mcp",
+   "stages": 3,
+   "ops": [
+    "gray_tophat",
+    "otsu",
+    "count_obj"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 3,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Inspect — count bright round blobs (Laplacian-of-Gaussian detector)",
+   "source": "recipebook",
+   "family": "2d",
+   "task_class": "inspection",
+   "halcon": null,
+   "runner": "mcp",
+   "stages": 2,
+   "ops": [
+    "gaussian",
+    "xsk_blob_log"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 1,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 1
+  },
+  {
+   "name": "Inspect — count circular holes with the Hough circle transform",
+   "source": "recipebook",
+   "family": "2d",
+   "task_class": "inspection",
+   "halcon": "Features",
+   "runner": "mcp",
+   "stages": 2,
+   "ops": [
+    "gaussian",
+    "cv_hough_circles"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 1,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 1
+  },
+  {
+   "name": "Inspect — count corners of rectangular parts",
+   "source": "recipebook",
+   "family": "2d",
+   "task_class": "inspection",
+   "halcon": "Features",
+   "runner": "mcp",
+   "stages": 2,
+   "ops": [
+    "gaussian",
+    "cv_good_features"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 1,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 1
+  },
+  {
+   "name": "Measure — edge column from the gradient projection profile",
+   "source": "recipebook",
+   "family": "2d",
+   "task_class": "measurement",
+   "halcon": "Filters",
+   "runner": "mcp",
+   "stages": 3,
+   "ops": [
+    "gaussian",
+    "sobel_amp",
+    "img_to_projection_profile"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 3,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Measure — edge position on a 1-D grey profile (derivative peak)",
+   "source": "recipebook",
+   "family": "2d",
+   "task_class": "measurement",
+   "halcon": "1D Measuring",
+   "runner": "mcp",
+   "stages": 3,
+   "ops": [
+    "img_to_signal",
+    "tb_smooth_funct_1d_gauss",
+    "tb_derivate_funct_1d"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 2,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 1
+  },
+  {
+   "name": "Measure — sub-pixel edge position along a caliper line",
+   "source": "recipebook",
+   "family": "2d",
+   "task_class": "measurement",
+   "halcon": "1D Measuring",
+   "runner": "mcp",
+   "stages": 2,
+   "ops": [
+    "gaussian",
+    "m1_measure_pos"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 1,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 1
+  },
+  {
+   "name": "Inspect — count bright bars crossed by a caliper (edge pairs)",
+   "source": "recipebook",
+   "family": "2d",
+   "task_class": "inspection",
+   "halcon": "1D Measuring",
+   "runner": "mcp",
+   "stages": 2,
+   "ops": [
+    "gaussian",
+    "m1_measure_pairs"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 1,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 1
+  },
+  {
+   "name": "Measure — count all edges along a caliper line",
+   "source": "recipebook",
+   "family": "2d",
+   "task_class": "measurement",
+   "halcon": "1D Measuring",
+   "runner": "mcp",
+   "stages": 2,
+   "ops": [
+    "m1_measure_pos",
+    "count_contours"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Measure — sub-pixel area of a round part from its iso-contour",
+   "source": "recipebook",
+   "family": "2d",
+   "task_class": "measurement",
+   "halcon": "XLD",
+   "runner": "mcp",
+   "stages": 2,
+   "ops": [
+    "threshold_sub_pix",
+    "area_center_xld"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Measure — maximal diameter of a part from its sub-pixel contour",
+   "source": "recipebook",
+   "family": "2d",
+   "task_class": "measurement",
+   "halcon": "XLD",
+   "runner": "mcp",
+   "stages": 2,
+   "ops": [
+    "threshold_sub_pix",
+    "diameter_xld"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Measure — radius of a round part by an ellipse fit to its sub-pixel edge",
+   "source": "recipebook",
+   "family": "2d",
+   "task_class": "measurement",
+   "halcon": "XLD",
+   "runner": "mcp",
+   "stages": 2,
+   "ops": [
+    "threshold_sub_pix",
+    "elliptic_axis_xld"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Measure — angle of a straight edge by a sub-pixel line fit",
+   "source": "recipebook",
+   "family": "2d",
+   "task_class": "measurement",
+   "halcon": "XLD",
+   "runner": "mcp",
+   "stages": 4,
+   "ops": [
+    "gaussian",
+    "edges_sub_pix",
+    "fit_line_contours",
+    "xg_orientation"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 2,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 1
+  },
+  {
+   "name": "Measure — orientation of a bar from its sub-pixel outline",
+   "source": "recipebook",
+   "family": "2d",
+   "task_class": "measurement",
+   "halcon": "XLD",
+   "runner": "mcp",
+   "stages": 2,
+   "ops": [
+    "threshold_sub_pix",
+    "xg_orientation"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Measure — orientation of a bar from its sub-pixel outline (orientation_xld)",
+   "source": "recipebook",
+   "family": "2d",
+   "task_class": "measurement",
+   "halcon": "XLD",
+   "runner": "mcp",
+   "stages": 2,
+   "ops": [
+    "threshold_sub_pix",
+    "orientation_xld"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": null,
+   "gpu_unmeasured_ops": [
+    "orientation_xld"
+   ],
+   "gpu_switches": null
+  },
+  {
+   "name": "Measure — equivalent-ellipse angle Phi of a bar from its sub-pixel outline (elliptic_axis_xld)",
+   "source": "recipebook",
+   "family": "2d",
+   "task_class": "measurement",
+   "halcon": "XLD",
+   "runner": "mcp",
+   "stages": 2,
+   "ops": [
+    "threshold_sub_pix",
+    "elliptic_axis_xld"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Measure — perimeter of a round part from sub-pixel edges",
+   "source": "recipebook",
+   "family": "2d",
+   "task_class": "measurement",
+   "halcon": "XLD",
+   "runner": "mcp",
+   "stages": 3,
+   "ops": [
+    "gaussian",
+    "edges_sub_pix",
+    "length_xld"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": null,
+   "gpu_unmeasured_ops": [
+    "length_xld"
+   ],
+   "gpu_switches": null
+  },
+  {
+   "name": "Inspect — length of a scratch from its centre line (lines_gauss)",
+   "source": "recipebook",
+   "family": "2d",
+   "task_class": "inspection",
+   "halcon": "XLD",
+   "runner": "mcp",
+   "stages": 2,
+   "ops": [
+    "lines_gauss",
+    "length_xld"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": null,
+   "gpu_unmeasured_ops": [
+    "lines_gauss",
+    "length_xld"
+   ],
+   "gpu_switches": null
+  },
+  {
+   "name": "Measure — sub-pixel centre of a laser spot / fiducial dot",
+   "source": "recipebook",
+   "family": "2d",
+   "task_class": "measurement",
+   "halcon": "Filters",
+   "runner": "mcp",
+   "stages": 2,
+   "ops": [
+    "xsp_savgol",
+    "sp_local_max_sub_pix"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 1,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 1
+  },
+  {
+   "name": "Locate — find a fiducial mark by normalized cross-correlation",
+   "source": "recipebook",
+   "family": "2d",
+   "task_class": "inspection",
+   "halcon": "Matching",
+   "runner": "mcp",
+   "stages": 2,
+   "ops": [
+    "gaussian",
+    "ncc_locate"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 2,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Locate — find a rotated part and its angle (shape-based matching)",
+   "source": "recipebook",
+   "family": "2d",
+   "task_class": "inspection",
+   "halcon": "Matching",
+   "runner": "mcp",
+   "stages": 2,
+   "ops": [
+    "gaussian",
+    "shape_locate"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 1,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 1
+  },
+  {
+   "name": "Inspect — segment a coloured part by saturation (HSV)",
+   "source": "recipebook",
+   "family": "2d",
+   "task_class": "inspection",
+   "halcon": "Color",
+   "runner": "mcp",
+   "stages": 4,
+   "ops": [
+    "trans_from_rgb",
+    "access_channel",
+    "threshold",
+    "area_center"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 2,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 1
+  },
+  {
+   "name": "Inspect — pick a blue part by its colour channel",
+   "source": "recipebook",
+   "family": "2d",
+   "task_class": "inspection",
+   "halcon": "Color",
+   "runner": "mcp",
+   "stages": 3,
+   "ops": [
+    "access_channel",
+    "threshold",
+    "area_center"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 2,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 1
+  },
+  {
+   "name": "Preprocess — rotate an image by a known angle and check the part angle",
+   "source": "recipebook",
+   "family": "2d",
+   "task_class": "preprocess",
+   "halcon": "Transformations",
+   "runner": "mcp",
+   "stages": 3,
+   "ops": [
+    "rotate_img",
+    "otsu",
+    "orientation_region"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 2,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 1
+  },
+  {
+   "name": "Preprocess — zoom about the centre and verify the area scale",
+   "source": "recipebook",
+   "family": "2d",
+   "task_class": "preprocess",
+   "halcon": "Transformations",
+   "runner": "mcp",
+   "stages": 3,
+   "ops": [
+    "zoom_image_factor",
+    "otsu",
+    "area_center"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 3,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Preprocess — mirror an image upside down (row flip)",
+   "source": "recipebook",
+   "family": "2d",
+   "task_class": "preprocess",
+   "halcon": "Transformations",
+   "runner": "mcp",
+   "stages": 3,
+   "ops": [
+    "mirror_image",
+    "otsu",
+    "area_center"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 2,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 1
+  },
+  {
+   "name": "Measure — ring radius by polar unwrapping",
+   "source": "recipebook",
+   "family": "2d",
+   "task_class": "measurement",
+   "halcon": "Transformations",
+   "runner": "mcp",
+   "stages": 2,
+   "ops": [
+    "polar_trans_image",
+    "img_to_projection_profile"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 1,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 1
+  },
+  {
+   "name": "Preprocess — inpaint scratch lines before measuring part area",
+   "source": "recipebook",
+   "family": "2d",
+   "task_class": "preprocess",
+   "halcon": "Restoration",
+   "runner": "mcp",
+   "stages": 3,
+   "ops": [
+    "xcv_inpaint",
+    "otsu",
+    "area_center"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 2,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 1
+  },
+  {
+   "name": "Preprocess — Richardson-Lucy deblur of a defocused part, then measure",
+   "source": "recipebook",
+   "family": "2d",
+   "task_class": "preprocess",
+   "halcon": "Restoration",
+   "runner": "mcp",
+   "stages": 3,
+   "ops": [
+    "iv_richardson_lucy",
+    "otsu",
+    "area_center"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 3,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Preprocess — suppress periodic interference stripes with an FFT low-pass",
+   "source": "recipebook",
+   "family": "2d",
+   "task_class": "preprocess",
+   "halcon": "Frequency",
+   "runner": "mcp",
+   "stages": 3,
+   "ops": [
+    "lowpass",
+    "otsu",
+    "area_center"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 3,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Measure — period of a stripe texture by zero crossings",
+   "source": "recipebook",
+   "family": "2d",
+   "task_class": "measurement",
+   "halcon": "Texture",
+   "runner": "mcp",
+   "stages": 4,
+   "ops": [
+    "img_to_projection_profile",
+    "tb_stat_zscore",
+    "tb_zero_crossings_funct_1d",
+    "tb_num_points_funct_1d"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 2,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 1
+  },
+  {
+   "name": "Measure — direction of a grating or brushed texture (structure tensor)",
+   "source": "recipebook",
+   "family": "2d",
+   "task_class": "measurement",
+   "halcon": "Texture",
+   "runner": "mcp",
+   "stages": 2,
+   "ops": [
+    "gaussian",
+    "structure_tensor_orientation"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 2,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Inspect — length of a dark scratch on brushed metal",
+   "source": "recipebook",
+   "family": "2d",
+   "task_class": "inspection",
+   "halcon": "Inspection",
+   "runner": "mcp",
+   "stages": 4,
+   "ops": [
+    "bothat",
+    "threshold",
+    "select_largest",
+    "diameter_region"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 3,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 1
+  },
+  {
+   "name": "Inspect — dark contamination spots on a woven fabric",
+   "source": "recipebook",
+   "family": "2d",
+   "task_class": "inspection",
+   "halcon": "Inspection",
+   "runner": "mcp",
+   "stages": 4,
+   "ops": [
+    "lowpass",
+    "bothat",
+    "threshold",
+    "count_obj"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 4,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Identify — count the bars of a 1-D barcode",
+   "source": "recipebook",
+   "family": "2d",
+   "task_class": "inspection",
+   "halcon": "Identification",
+   "runner": "mcp",
+   "stages": 2,
+   "ops": [
+    "bilateral",
+    "decode_barcode"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 1,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 1
+  },
+  {
+   "name": "Preprocess — segment dark characters on shaded paper for OCR",
+   "source": "recipebook",
+   "family": "2d",
+   "task_class": "preprocess",
+   "halcon": "OCR",
+   "runner": "mcp",
+   "stages": 2,
+   "ops": [
+    "hx_char_threshold",
+    "count_obj"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 1,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 1
+  },
+  {
+   "name": "Inspect — defects by golden-template difference against a good part",
+   "source": "recipebook",
+   "family": "2d",
+   "task_class": "inspection",
+   "halcon": "Inspection",
+   "runner": "python",
+   "stages": 4,
+   "ops": [
+    "abs_diff_image",
+    "threshold",
+    "opening_circle",
+    "count_obj"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 4,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Preprocess — flat-field correction by dividing by a white reference",
+   "source": "recipebook",
+   "family": "2d",
+   "task_class": "preprocess",
+   "halcon": "Filters",
+   "runner": "python",
+   "stages": 3,
+   "ops": [
+    "div_image",
+    "otsu",
+    "area_center"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 3,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Preprocess — subtract a background frame, then measure the part area",
+   "source": "recipebook",
+   "family": "2d",
+   "task_class": "preprocess",
+   "halcon": "Filters",
+   "runner": "python",
+   "stages": 3,
+   "ops": [
+    "sub_image",
+    "threshold",
+    "area_center"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 3,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Inspect — missing material against the nominal shape (region difference)",
+   "source": "recipebook",
+   "family": "2d",
+   "task_class": "inspection",
+   "halcon": "Regions",
+   "runner": "python",
+   "stages": 3,
+   "ops": [
+    "otsu",
+    "difference",
+    "area_center"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 2,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 2
+  },
+  {
+   "name": "Inspect — count bright particles and their total area",
+   "source": "recipebook",
+   "family": "blob",
+   "task_class": "inspection",
+   "halcon": "Regions",
+   "runner": "python",
+   "stages": 3,
+   "ops": [
+    "otsu",
+    "blob_label",
+    "blob_features"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 2,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 1
+  },
+  {
+   "name": "Inspect — split touching particles with distance-transform seeds",
+   "source": "recipebook",
+   "family": "blob",
+   "task_class": "inspection",
+   "halcon": "Regions",
+   "runner": "python",
+   "stages": 5,
+   "ops": [
+    "otsu",
+    "blob_label",
+    "blob_distance",
+    "blob_seeds",
+    "blob_split"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 3,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 1
+  },
+  {
+   "name": "Inspect — particle count with an honest lower/upper interval",
+   "source": "recipebook",
+   "family": "blob",
+   "task_class": "inspection",
+   "halcon": "Regions",
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "otsu",
+    "blob_count_interval"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 1,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 1
+  },
+  {
+   "name": "Inspect — score a segmentation against the ground-truth mask (Dice / Jaccard)",
+   "source": "recipebook",
+   "family": "segmentation",
+   "task_class": "inspection",
+   "halcon": "Segmentation",
+   "runner": "python",
+   "stages": 3,
+   "ops": [
+    "otsu",
+    "blob_label",
+    "seg_dice_jaccard"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 2,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 1
+  },
+  {
+   "name": "Inspect — separate touching parts with marker-controlled watershed",
+   "source": "recipebook",
+   "family": "segmentation",
+   "task_class": "inspection",
+   "halcon": "Segmentation",
+   "runner": "python",
+   "stages": 5,
+   "ops": [
+    "otsu",
+    "blob_distance",
+    "invert",
+    "blob_seeds",
+    "watersheds_marker"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 3,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 1
+  },
+  {
+   "name": "Preprocess — automatic gray threshold between two intensity classes (ISODATA)",
+   "source": "recipebook",
+   "family": "segmentation",
+   "task_class": "preprocess",
+   "halcon": "Segmentation",
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "gaussian",
+    "threshold_isodata"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 1,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 1
+  },
+  {
+   "name": "Measure — subpixel edge position along a caliper line",
+   "source": "recipebook",
+   "family": "measure1d",
+   "task_class": "measurement",
+   "halcon": "1D Measuring",
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "gen_measure_rectangle2",
+    "measure_pos"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Measure — width of a bright bar in millimetres (edge pair + scale)",
+   "source": "recipebook",
+   "family": "measure1d",
+   "task_class": "measurement",
+   "halcon": "1D Measuring",
+   "runner": "python",
+   "stages": 3,
+   "ops": [
+    "gen_measure_rectangle2",
+    "measure_pairs",
+    "table_px_to_mm"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Measure — hole radius and centre by circle metrology",
+   "source": "recipebook",
+   "family": "measure1d",
+   "task_class": "measurement",
+   "halcon": "2D Metrology",
+   "runner": "python",
+   "stages": 4,
+   "ops": [
+    "create_metrology_model",
+    "add_metrology_object_circle_measure",
+    "apply_metrology_model",
+    "table_px_to_mm"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Preprocess — OpenVX affine warp, then gauge where the edge moved",
+   "source": "recipebook",
+   "family": "vx",
+   "task_class": "preprocess",
+   "halcon": "Transformations",
+   "runner": "python",
+   "stages": 3,
+   "ops": [
+    "vx_warp_affine",
+    "gen_measure_rectangle2",
+    "measure_pos"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 1,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 1
+  },
+  {
+   "name": "Preprocess — OpenVX look-up table, then 16-bin histogram",
+   "source": "recipebook",
+   "family": "vx",
+   "task_class": "preprocess",
+   "halcon": "Filters",
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "vx_table_lookup",
+    "vx_histogram"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 1,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 1
+  },
+  {
+   "name": "Preprocess — raw Bayer ISP: black level, demosaic, gray-world white balance",
+   "source": "recipebook",
+   "family": "gfx2d",
+   "task_class": "preprocess",
+   "halcon": "Color",
+   "runner": "python",
+   "stages": 3,
+   "ops": [
+    "raw_black_level",
+    "raw_demosaic_bilinear",
+    "awb_gains"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 2,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 1
+  },
+  {
+   "name": "Preprocess — lens-shading (vignetting) correction from a flat-field frame",
+   "source": "recipebook",
+   "family": "gfx2d",
+   "task_class": "preprocess",
+   "halcon": "Filters",
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "lens_shading_gain",
+    "lens_shading_correct"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 1,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 1
+  },
+  {
+   "name": "Simulate — rule-90 cellular automaton (Sierpinski) stepped and rendered",
+   "source": "recipebook",
+   "family": "generative",
+   "task_class": "simulation",
+   "halcon": null,
+   "runner": "python",
+   "stages": 3,
+   "ops": [
+    "perpetual_state",
+    "perpetual_step",
+    "perpetual_render"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Simulate — SEM secondary-electron image of a sloped facet",
+   "source": "recipebook",
+   "family": "generative",
+   "task_class": "simulation",
+   "halcon": null,
+   "runner": "python",
+   "stages": 1,
+   "ops": [
+    "sem_render"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 1,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Simulate — photoluminescence carrier-diffusion PSF",
+   "source": "recipebook",
+   "family": "generative",
+   "task_class": "simulation",
+   "halcon": null,
+   "runner": "python",
+   "stages": 1,
+   "ops": [
+    "pl_diffusion_psf"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Visualize — plot a measured series on data axes (data -> pixel mapping)",
+   "source": "recipebook",
+   "family": "annotate",
+   "task_class": "visualization",
+   "halcon": null,
+   "runner": "python",
+   "stages": 3,
+   "ops": [
+    "axes_transform",
+    "data_to_pixel",
+    "plot_series"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 1,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 2
+  },
+  {
+   "name": "Visualize — draw a filled ellipse marker and verify its pixel area",
+   "source": "recipebook",
+   "family": "annotate",
+   "task_class": "visualization",
+   "halcon": null,
+   "runner": "python",
+   "stages": 4,
+   "ops": [
+    "ellipse",
+    "otsu",
+    "blob_label",
+    "blob_features"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 2,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 2
+  },
+  {
+   "name": "Inspect — image fidelity report of a noisy capture (PSNR / RMSE with conditions)",
+   "source": "recipebook",
+   "family": "imgmetrics",
+   "task_class": "inspection",
+   "halcon": null,
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "compare_images",
+    "metrics_table"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Inspect — perceptual colour difference ΔE*ab against a reference colour",
+   "source": "recipebook",
+   "family": "imgmetrics",
+   "task_class": "inspection",
+   "halcon": "Color",
+   "runner": "python",
+   "stages": 3,
+   "ops": [
+    "rgb_to_lab",
+    "rgb_to_lab",
+    "delta_e_76"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Inspect — mutual information of a multimodal pair (inverted contrast)",
+   "source": "recipebook",
+   "family": "imgmetrics",
+   "task_class": "analysis",
+   "halcon": null,
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "invert",
+    "mutual_information"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 1,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 1
+  },
+  {
+   "name": "Inspect — embed and blindly recover an integrity watermark",
+   "source": "recipebook",
+   "family": "imgforensics",
+   "task_class": "inspection",
+   "halcon": null,
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "watermark_embed",
+    "watermark_extract"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Inspect — detect a copy-move forgery and its displacement",
+   "source": "recipebook",
+   "family": "imgforensics",
+   "task_class": "inspection",
+   "halcon": null,
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "gaussian",
+    "copy_move_regions"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 1,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 1
+  },
+  {
+   "name": "Inspect — locate a spliced patch with different sensor noise",
+   "source": "recipebook",
+   "family": "imgforensics",
+   "task_class": "inspection",
+   "halcon": null,
+   "runner": "python",
+   "stages": 4,
+   "ops": [
+    "noise_inconsistency_map",
+    "otsu",
+    "blob_label",
+    "blob_features"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 3,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 1
+  },
+  {
+   "name": "Preprocess — colour transfer of a product photo to a reference look",
+   "source": "recipebook",
+   "family": "colortransport",
+   "task_class": "preprocess",
+   "halcon": "Color",
+   "runner": "python",
+   "stages": 1,
+   "ops": [
+    "color_transfer"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Measure — 1-D optimal transport plan between two sample sets",
+   "source": "recipebook",
+   "family": "colortransport",
+   "task_class": "analysis",
+   "halcon": null,
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "transport_plan_1d",
+    "apply_transport"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Measure — radius of a round part from its contour (elliptic Fourier)",
+   "source": "recipebook",
+   "family": "shape2d",
+   "task_class": "measurement",
+   "halcon": "XLD",
+   "runner": "python",
+   "stages": 3,
+   "ops": [
+    "fourier_smooth",
+    "elliptic_fourier",
+    "invariants"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Preprocess — thin-plate-spline warp from control points, check the part moved",
+   "source": "recipebook",
+   "family": "shape2d",
+   "task_class": "preprocess",
+   "halcon": "Transformations",
+   "runner": "python",
+   "stages": 4,
+   "ops": [
+    "warp_tps_image",
+    "otsu",
+    "blob_label",
+    "blob_features"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 3,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 1
+  },
+  {
+   "name": "Analyze — statistical shape model: variance explained by the first mode",
+   "source": "recipebook",
+   "family": "shapestat",
+   "task_class": "analysis",
+   "halcon": null,
+   "runner": "python",
+   "stages": 3,
+   "ops": [
+    "shape_synth_family",
+    "shape_pca",
+    "shape_explained_variance"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Inspect — form error after best-fit similarity alignment of landmarks",
+   "source": "recipebook",
+   "family": "shapestat",
+   "task_class": "inspection",
+   "halcon": "3D Matching",
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "procrustes_align",
+    "procrustes_distance"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Inspect — airfoil blade profile deviation from the nominal NACA section",
+   "source": "recipebook",
+   "family": "profile",
+   "task_class": "inspection",
+   "halcon": "2D Metrology",
+   "runner": "python",
+   "stages": 3,
+   "ops": [
+    "profile_synth_naca4",
+    "profile_perturb",
+    "profile_deviation"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Measure — airfoil leading-edge radius",
+   "source": "recipebook",
+   "family": "profile",
+   "task_class": "measurement",
+   "halcon": "2D Metrology",
+   "runner": "python",
+   "stages": 3,
+   "ops": [
+    "profile_synth_naca4",
+    "profile_normalise",
+    "profile_leading_edge_radius"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Measure — profile roughness Ra / Rq after a robust Gaussian filter (scratched, curved part)",
+   "source": "recipebook",
+   "family": "roughness",
+   "task_class": "measurement",
+   "halcon": null,
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "robust_gaussian_profile",
+    "profile_params"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Measure — profile roughness Ra / Rq after a robust spline filter",
+   "source": "recipebook",
+   "family": "roughness",
+   "task_class": "measurement",
+   "halcon": null,
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "robust_spline_profile",
+    "profile_params"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Measure — areal roughness Sq: form removal, Gaussian L-filter, ISO 25178 parameters",
+   "source": "recipebook",
+   "family": "roughness",
+   "task_class": "measurement",
+   "halcon": null,
+   "runner": "python",
+   "stages": 3,
+   "ops": [
+    "surface_form_remove",
+    "surface_filter",
+    "surface_params"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 2,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 1
+  },
+  {
+   "name": "Measure — Sq of a synthetic self-affine surface (PSD synthesis + form removal)",
+   "source": "recipebook",
+   "family": "roughness",
+   "task_class": "simulation",
+   "halcon": null,
+   "runner": "python",
+   "stages": 3,
+   "ops": [
+    "surface_synth_psd",
+    "surface_form_remove",
+    "surface_params"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 1,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 2
+  },
+  {
+   "name": "Preprocess — rotate colours about the grey axis (quaternion colour rotation)",
+   "source": "recipebook",
+   "family": "quat",
+   "task_class": "preprocess",
+   "halcon": "Color",
+   "runner": "python",
+   "stages": 3,
+   "ops": [
+    "rgb_to_quaternion",
+    "quat_color_rotate",
+    "quaternion_to_rgb"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 1,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 1
+  },
+  {
+   "name": "Measure — local orientation of a grating with the monogenic signal",
+   "source": "recipebook",
+   "family": "quat",
+   "task_class": "measurement",
+   "halcon": "Texture",
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "monogenic_signal",
+    "monogenic_orientation"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Inspect — locate a part template under an illumination change (orientation codes)",
+   "source": "recipebook",
+   "family": "codematch",
+   "task_class": "inspection",
+   "halcon": "Matching",
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "gaussian",
+    "ocm_match"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 1,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 1
+  },
+  {
+   "name": "Measure — large displacement from multi-wavelength phases (CRT unwrapping)",
+   "source": "recipebook",
+   "family": "residue",
+   "task_class": "measurement",
+   "halcon": null,
+   "runner": "python",
+   "stages": 1,
+   "ops": [
+    "crt_displacement"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Inspect — flat-field correct, then register the frame to the golden image",
+   "source": "recipebook",
+   "family": "aoi",
+   "task_class": "inspection",
+   "halcon": "Matching",
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "flat_field_correct",
+    "register_image"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Inspect — stroke width of printed characters (SWT)",
+   "source": "recipebook",
+   "family": "text",
+   "task_class": "inspection",
+   "halcon": "OCR",
+   "runner": "python",
+   "stages": 1,
+   "ops": [
+    "swt_map"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Inspect — character candidates from a stroke-width field",
+   "source": "recipebook",
+   "family": "text",
+   "task_class": "inspection",
+   "halcon": "OCR",
+   "runner": "python",
+   "stages": 1,
+   "ops": [
+    "text_candidates"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Inspect — group character candidates into text lines",
+   "source": "recipebook",
+   "family": "text",
+   "task_class": "inspection",
+   "halcon": "OCR",
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "text_candidates",
+    "text_lines"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": null,
+   "gpu_unmeasured_ops": [
+    "text_lines"
+   ],
+   "gpu_switches": null
+  },
+  {
+   "name": "3D — radius of a ball from a noisy scan with stray points",
+   "source": "recipebook",
+   "family": "3d",
+   "task_class": "3d",
+   "halcon": "3D Object Model",
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "voxel_grid_downsample",
+    "ransac_sphere"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "3D — ball radius by least squares after statistical outlier removal",
+   "source": "recipebook",
+   "family": "3d",
+   "task_class": "3d",
+   "halcon": "3D Object Model",
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "statistical_outlier_removal",
+    "fit_sphere_3d"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "3D — tilt of a flat face (RANSAC plane) despite clutter",
+   "source": "recipebook",
+   "family": "3d",
+   "task_class": "3d",
+   "halcon": "3D Object Model",
+   "runner": "python",
+   "stages": 1,
+   "ops": [
+    "ransac_plane"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "3D — pipe radius from a cylinder scan (normals + RANSAC cylinder)",
+   "source": "recipebook",
+   "family": "3d",
+   "task_class": "3d",
+   "halcon": "3D Object Model",
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "estimate_point_normals",
+    "ransac_cylinder"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "3D — mean curvature of a ball surface as a summary table",
+   "source": "recipebook",
+   "family": "reprconv",
+   "task_class": "3d",
+   "halcon": "3D Object Model",
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "principal_curvatures",
+    "curvature_to_table"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "3D — centre of a scanned part (centroid position)",
+   "source": "recipebook",
+   "family": "reprconv",
+   "task_class": "3d",
+   "halcon": "3D Object Model",
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "voxel_grid_downsample",
+    "points_to_position"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "3D — enclosed volume of a scanned ball (convex hull mesh)",
+   "source": "recipebook",
+   "family": "3d",
+   "task_class": "3d",
+   "halcon": "3D Object Model",
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "convex_hull",
+    "mesh_volume"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "3D — surface area of a scanned ball (convex hull mesh)",
+   "source": "recipebook",
+   "family": "3d",
+   "task_class": "3d",
+   "halcon": "3D Object Model",
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "convex_hull",
+    "mesh_area"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "3D — align a scan to its reference (ICP rigid transform)",
+   "source": "recipebook",
+   "family": "3d",
+   "task_class": "3d",
+   "halcon": "3D Matching",
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "voxel_grid_downsample",
+    "icp_point2point_3d"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "3D — align a scan to its reference with point-to-plane ICP",
+   "source": "recipebook",
+   "family": "3d",
+   "task_class": "3d",
+   "halcon": "3D Matching",
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "estimate_point_normals",
+    "icp_point2plane"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "3D — register two scans with generalized ICP (plane-to-plane)",
+   "source": "recipebook",
+   "family": "3d",
+   "task_class": "3d",
+   "halcon": "3D Matching",
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "voxel_grid_downsample",
+    "gicp"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "3D — object pose from known 3-D points and their image (PnP)",
+   "source": "recipebook",
+   "family": "3d",
+   "task_class": "3d",
+   "halcon": "3D Matching",
+   "runner": "python",
+   "stages": 1,
+   "ops": [
+    "dlt_pose"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "3D — how far a part sits from its nominal pose (point-to-plane ICP -> pose error)",
+   "source": "recipebook",
+   "family": "3d",
+   "task_class": "3d",
+   "halcon": "3D Matching",
+   "runner": "python",
+   "stages": 3,
+   "ops": [
+    "estimate_point_normals",
+    "icp_point2plane",
+    "pose_error"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": null,
+   "gpu_unmeasured_ops": [
+    "pose_error"
+   ],
+   "gpu_switches": null
+  },
+  {
+   "name": "3D — camera pose deviation from its nominal mounting (PnP -> RRE / RTE)",
+   "source": "recipebook",
+   "family": "3d",
+   "task_class": "3d",
+   "halcon": "3D Matching",
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "dlt_pose",
+    "rotation_translation_error"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": null,
+   "gpu_unmeasured_ops": [
+    "rotation_translation_error"
+   ],
+   "gpu_switches": null
+  },
+  {
+   "name": "3D — plane tilt from a depth camera image",
+   "source": "recipebook",
+   "family": "3d",
+   "task_class": "3d",
+   "halcon": "3D Reconstruction",
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "depth_to_points",
+    "ransac_plane"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "3D — height of a bump by phase-shift structured light",
+   "source": "recipebook",
+   "family": "3d",
+   "task_class": "3d",
+   "halcon": "3D Reconstruction",
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "synthesize_fringes",
+    "decode_fringe"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 1,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 1
+  },
+  {
+   "name": "3D — fuse a depth image into a TSDF volume and read occupancy",
+   "source": "recipebook",
+   "family": "3d",
+   "task_class": "3d",
+   "halcon": "3D Reconstruction",
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "tsdf_from_depth",
+    "sdf_to_occupancy"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 1,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 1
+  },
+  {
+   "name": "3D — depth of a surface from a calibrated stereo pair (plane sweep)",
+   "source": "recipebook",
+   "family": "3d",
+   "task_class": "3d",
+   "halcon": "3D Reconstruction",
+   "runner": "python",
+   "stages": 1,
+   "ops": [
+    "plane_sweep_depth"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "3D — voxel count of an inclusion after removing speckle",
+   "source": "recipebook",
+   "family": "3d",
+   "task_class": "3d",
+   "halcon": "3D Object Model",
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "filter_by_volume",
+    "region_props"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "3D — volume of a CT inclusion from its marching-cubes surface",
+   "source": "recipebook",
+   "family": "3d",
+   "task_class": "3d",
+   "halcon": "3D Object Model",
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "voxel_to_mesh",
+    "mesh_volume"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "3D — surface area of a CT inclusion (marching cubes + Taubin smoothing)",
+   "source": "recipebook",
+   "family": "3d",
+   "task_class": "3d",
+   "halcon": "3D Object Model",
+   "runner": "python",
+   "stages": 3,
+   "ops": [
+    "voxel_to_mesh",
+    "taubin_smooth",
+    "mesh_area"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "3D — label the objects in a CT volume and read their voxel counts",
+   "source": "recipebook",
+   "family": "3d",
+   "task_class": "3d",
+   "halcon": "3D Object Model",
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "vol_label",
+    "vol_region_props"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 1,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 1
+  },
+  {
+   "name": "Inspect — diameter of a dense inclusion along a probe line (CT volume)",
+   "source": "recipebook",
+   "family": "3d",
+   "task_class": "3d",
+   "halcon": "3D Object Model",
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "vol_window_level",
+    "vol_wall_thickness"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 1,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 1
+  },
+  {
+   "name": "DEM — slope of a hillside after filling sinks",
+   "source": "recipebook",
+   "family": "dem",
+   "task_class": "measurement",
+   "halcon": null,
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "dem_fill_sinks",
+    "dem_slope"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 1,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 1
+  },
+  {
+   "name": "DEM — hillshade of a tilted terrain",
+   "source": "recipebook",
+   "family": "dem",
+   "task_class": "visualization",
+   "halcon": null,
+   "runner": "python",
+   "stages": 1,
+   "ops": [
+    "dem_hillshade"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 1,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "CT — reconstruct a disk phantom and measure its area",
+   "source": "recipebook",
+   "family": "tomography",
+   "task_class": "measurement",
+   "halcon": null,
+   "runner": "python",
+   "stages": 3,
+   "ops": [
+    "radon_transform",
+    "filtered_backprojection",
+    "otsu"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 2,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 1
+  },
+  {
+   "name": "CT — find the rotation-axis offset of a scanner",
+   "source": "recipebook",
+   "family": "tomography",
+   "task_class": "measurement",
+   "halcon": null,
+   "runner": "python",
+   "stages": 1,
+   "ops": [
+    "sinogram_center_of_rotation"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "CT — correct an off-centre axis, reconstruct and measure",
+   "source": "recipebook",
+   "family": "tomography",
+   "task_class": "measurement",
+   "halcon": null,
+   "runner": "python",
+   "stages": 3,
+   "ops": [
+    "sinogram_center_shift",
+    "filtered_backprojection",
+    "otsu"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 2,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 1
+  },
+  {
+   "name": "CT — suppress ring artefacts from a bad detector, then measure",
+   "source": "recipebook",
+   "family": "tomography",
+   "task_class": "preprocess",
+   "halcon": null,
+   "runner": "python",
+   "stages": 4,
+   "ops": [
+    "ring_artifact_apply",
+    "ring_artifact_remove",
+    "filtered_backprojection",
+    "otsu"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 2,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 1
+  },
+  {
+   "name": "Calibrate — camera focal length from views of a planar target",
+   "source": "recipebook",
+   "family": "calib",
+   "task_class": "measurement",
+   "halcon": "Calibration",
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "caltab_points",
+    "camera_calibration"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Measure — circle on a plane in millimetres from pixels (homography)",
+   "source": "recipebook",
+   "family": "calib",
+   "task_class": "measurement",
+   "halcon": "Calibration",
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "image_to_world_plane",
+    "fit_circle_geometric"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Measure — image radius of a 3-D ring seen by a camera",
+   "source": "recipebook",
+   "family": "fit",
+   "task_class": "measurement",
+   "halcon": "2D Metrology",
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "project_3d_point",
+    "fit_circle_geometric"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Measure — sub-pixel shift between two images (phase correlation)",
+   "source": "recipebook",
+   "family": "fit",
+   "task_class": "measurement",
+   "halcon": "Matching",
+   "runner": "python",
+   "stages": 1,
+   "ops": [
+    "phase_correlation_shift"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "3D — save a scan as XYZ text, reload it and re-measure the ball",
+   "source": "recipebook",
+   "family": "fileio",
+   "task_class": "3d",
+   "halcon": "3D Object Model",
+   "runner": "python",
+   "stages": 3,
+   "ops": [
+    "points_write_xyz",
+    "points_read_xyz",
+    "ransac_sphere"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "3D — export a part mesh as OBJ, re-import it and check its volume",
+   "source": "recipebook",
+   "family": "fileio",
+   "task_class": "3d",
+   "halcon": "3D Object Model",
+   "runner": "python",
+   "stages": 4,
+   "ops": [
+    "convex_hull",
+    "mesh_write_obj",
+    "mesh_read_obj",
+    "mesh_volume"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Print — filament volume for the equator layer of a scanned ball",
+   "source": "recipebook",
+   "family": "printpath",
+   "task_class": "simulation",
+   "halcon": null,
+   "runner": "python",
+   "stages": 4,
+   "ops": [
+    "convex_hull",
+    "mesh_slice_contours",
+    "contours_to_gcode",
+    "gcode_extrusion_volume"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Inspect — map a camera pixel onto the CAD surface (depth of the hit)",
+   "source": "recipebook",
+   "family": "cadmap",
+   "task_class": "inspection",
+   "halcon": "3D Object Model",
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "convex_hull",
+    "cad_pixel_to_surface"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Sense — horizon line a camera sees from a DEM",
+   "source": "recipebook",
+   "family": "geocam",
+   "task_class": "simulation",
+   "halcon": null,
+   "runner": "python",
+   "stages": 3,
+   "ops": [
+    "dem_skyline",
+    "render_skyline_view",
+    "skyline_extract"
+   ],
+   "type_cuts": 0,
+   "truth_gate": false,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "3D — per-object volume table of a labelled scan",
+   "source": "recipebook",
+   "family": "volcolor",
+   "task_class": "3d",
+   "halcon": "3D Object Model",
+   "runner": "python",
+   "stages": 1,
+   "ops": [
+    "vol_label_shape_stats"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "3D — volume table of the objects found in a grey scan",
+   "source": "recipebook",
+   "family": "volcolor",
+   "task_class": "3d",
+   "halcon": "3D Object Model",
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "vol_label",
+    "vol_label_shape_stats"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 1,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 1
+  },
+  {
+   "name": "3D — colour a labelled volume and cut an RGB slice",
+   "source": "recipebook",
+   "family": "volcolor",
+   "task_class": "visualization",
+   "halcon": null,
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "vol_colorize_labels",
+    "vol_label_slice_rgb"
+   ],
+   "type_cuts": 0,
+   "truth_gate": false,
+   "gpu_stages": 1,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 1
+  },
+  {
+   "name": "Sense — slit-scan (x-t) image of a moving spot",
+   "source": "recipebook",
+   "family": "videocube",
+   "task_class": "analysis",
+   "halcon": null,
+   "runner": "python",
+   "stages": 1,
+   "ops": [
+    "video_cube_cut"
+   ],
+   "type_cuts": 0,
+   "truth_gate": false,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Sense — beating shell: maximum-intensity projection video",
+   "source": "recipebook",
+   "family": "live4d",
+   "task_class": "visualization",
+   "halcon": null,
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "volseq_synth_beating",
+    "volseq_mip_video"
+   ],
+   "type_cuts": 0,
+   "truth_gate": false,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Sense — sun elevation at a site over a day",
+   "source": "recipebook",
+   "family": "geocam",
+   "task_class": "sensing",
+   "halcon": null,
+   "runner": "python",
+   "stages": 1,
+   "ops": [
+    "sun_position"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": null,
+   "gpu_unmeasured_ops": [
+    "sun_position"
+   ],
+   "gpu_switches": null
+  },
+  {
+   "name": "Optics — focal length of a biconvex singlet lens (paraxial EFL / BFL)",
+   "source": "recipebook",
+   "family": "optics",
+   "task_class": "optics",
+   "halcon": null,
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "lens_system",
+    "paraxial_trace"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Optics — optimize a singlet to a target focal length (merit function, damped least squares)",
+   "source": "recipebook",
+   "family": "optics",
+   "task_class": "optics",
+   "halcon": null,
+   "runner": "python",
+   "stages": 3,
+   "ops": [
+    "lens_system",
+    "merit_default",
+    "optimize_lens_operands"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Optics — tolerance sensitivity of a singlet (which radius drives the RMS spot)",
+   "source": "recipebook",
+   "family": "optics",
+   "task_class": "optics",
+   "halcon": null,
+   "runner": "python",
+   "stages": 4,
+   "ops": [
+    "lens_system",
+    "tolerance_table",
+    "tolerance_criteria",
+    "tolerance_sensitivity"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Optics — diffraction-limited MTF50 of an f-number (Airy PSF to MTF)",
+   "source": "recipebook",
+   "family": "optics",
+   "task_class": "optics",
+   "halcon": null,
+   "runner": "python",
+   "stages": 3,
+   "ops": [
+    "airy_pattern",
+    "psf_to_mtf",
+    "mtf50"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 1,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 2
+  },
+  {
+   "name": "Sense — indirect ToF depth with dual-frequency phase unwrapping",
+   "source": "recipebook",
+   "family": "optics",
+   "task_class": "sensing",
+   "halcon": "3D Reconstruction",
+   "runner": "python",
+   "stages": 3,
+   "ops": [
+    "itof_capture",
+    "itof_phase_amplitude",
+    "itof_unwrap_multifreq"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Measure — coating thickness by spectral-domain OCT",
+   "source": "recipebook",
+   "family": "optics",
+   "task_class": "measurement",
+   "halcon": null,
+   "runner": "python",
+   "stages": 3,
+   "ops": [
+    "oct_interferogram",
+    "oct_ascan",
+    "oct_layer_thickness"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Optics — Malus's law through a linear polarizer (Mueller calculus)",
+   "source": "recipebook",
+   "family": "optics",
+   "task_class": "optics",
+   "halcon": null,
+   "runner": "python",
+   "stages": 3,
+   "ops": [
+    "mueller_element",
+    "mueller_apply",
+    "stokes_analyze"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "3D — shape from polarization of a glossy dome (curvature from polarization images)",
+   "source": "recipebook",
+   "family": "optics",
+   "task_class": "3d",
+   "halcon": "3D Reconstruction",
+   "runner": "python",
+   "stages": 4,
+   "ops": [
+    "sfp_render",
+    "sfp_normals",
+    "sfp_disambiguate",
+    "slope_to_curvature"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Optics — object-side telecentric lens: magnification and telecentricity error",
+   "source": "recipebook",
+   "family": "optics",
+   "task_class": "optics",
+   "halcon": "Calibration",
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "telecentric_lens",
+    "telecentricity_error"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Optics — irradiance and uniformity of a point LED over the field (illumination design)",
+   "source": "recipebook",
+   "family": "optics",
+   "task_class": "optics",
+   "halcon": null,
+   "runner": "python",
+   "stages": 3,
+   "ops": [
+    "light_source",
+    "irradiance_map",
+    "illumination_uniformity"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Optics — peak wavelength of a blackbody source (Wien's law, spectral radiometry)",
+   "source": "recipebook",
+   "family": "optics",
+   "task_class": "optics",
+   "halcon": null,
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "blackbody_spectrum",
+    "spectral_stats"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Measure — overlay alignment from a moire mark (nm-scale shift)",
+   "source": "recipebook",
+   "family": "optics",
+   "task_class": "measurement",
+   "halcon": "2D Metrology",
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "moire_overlay_image",
+    "moire_mark_read"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Measure — photoelastic retardance and principal-stress direction (polarization camera)",
+   "source": "recipebook",
+   "family": "optics",
+   "task_class": "measurement",
+   "halcon": null,
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "photoelastic_polarization_images",
+    "photoelastic_phase_estimate"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Measure — height with a chromatic confocal probe (designed lens, calibration table)",
+   "source": "recipebook",
+   "family": "optics",
+   "task_class": "measurement",
+   "halcon": null,
+   "runner": "python",
+   "stages": 4,
+   "ops": [
+    "chromatic_confocal_probe",
+    "chromatic_confocal_spectrum",
+    "chromatic_confocal_peaks",
+    "chromatic_confocal_readout"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Sense — FMCW radar range and velocity of a target (range-Doppler map)",
+   "source": "recipebook",
+   "family": "rangedoppler",
+   "task_class": "sensing",
+   "halcon": null,
+   "runner": "python",
+   "stages": 4,
+   "ops": [
+    "fmcw_beat_simulate",
+    "fmcw_window_apply",
+    "range_doppler_map",
+    "range_doppler_peaks"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Sense — radar direction of arrival with a uniform linear array (beamforming)",
+   "source": "recipebook",
+   "family": "rangedoppler",
+   "task_class": "sensing",
+   "halcon": null,
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "fmcw_beat_simulate",
+    "beamform_doa"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Sense — direct ToF distance from a TCSPC histogram (SPAD lidar pixel)",
+   "source": "recipebook",
+   "family": "photon",
+   "task_class": "sensing",
+   "halcon": null,
+   "runner": "python",
+   "stages": 3,
+   "ops": [
+    "tcspc_simulate",
+    "tcspc_background_subtract",
+    "dtof_depth"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "3D — flash lidar depth map from a SPAD histogram cube",
+   "source": "recipebook",
+   "family": "photon",
+   "task_class": "3d",
+   "halcon": "3D Reconstruction",
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "dtof_cube_simulate",
+    "dtof_cube_depth"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Preprocess — variance-stabilize a photon-limited image (Anscombe transform)",
+   "source": "recipebook",
+   "family": "photon",
+   "task_class": "preprocess",
+   "halcon": "Filters",
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "photon_sample",
+    "anscombe_transform"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 1,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 1
+  },
+  {
+   "name": "Measure — surface height at a pixel by white-light interferometry (CSI peak)",
+   "source": "recipebook",
+   "family": "interferometry",
+   "task_class": "measurement",
+   "halcon": null,
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "csi_signal_simulate",
+    "csi_peak_position"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Measure — tilt of a flat measured by a coherence-scanning interferometer",
+   "source": "recipebook",
+   "family": "interferometry",
+   "task_class": "measurement",
+   "halcon": "3D Reconstruction",
+   "runner": "python",
+   "stages": 3,
+   "ops": [
+    "csi_stack_simulate",
+    "csi_height_map",
+    "dem_slope"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 1,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 1
+  },
+  {
+   "name": "Measure — distance by chromatic confocal sensor (spectral peak to height)",
+   "source": "recipebook",
+   "family": "interferometry",
+   "task_class": "measurement",
+   "halcon": null,
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "chromatic_confocal_simulate",
+    "chromatic_confocal_height"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Sense — detect and photometer stars in a frame (aperture photometry)",
+   "source": "recipebook",
+   "family": "astrostack",
+   "task_class": "sensing",
+   "halcon": null,
+   "runner": "python",
+   "stages": 3,
+   "ops": [
+    "synth_starfield",
+    "star_detect",
+    "aperture_photometry"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Measure — seeing / PSF FWHM of point sources (Gaussian PSF fit)",
+   "source": "recipebook",
+   "family": "astrostack",
+   "task_class": "measurement",
+   "halcon": null,
+   "runner": "python",
+   "stages": 3,
+   "ops": [
+    "synth_starfield",
+    "star_detect",
+    "psf_fit"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Preprocess — stack N frames with sigma clipping (noise drops as 1/sqrt N)",
+   "source": "recipebook",
+   "family": "astrostack",
+   "task_class": "preprocess",
+   "halcon": "Filters",
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "sigma_clip_stack",
+    "noise_sigma"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 1,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 1
+  },
+  {
+   "name": "Preprocess — reveal faint stars: cosmic-ray reject, register and stack dithered frames",
+   "source": "recipebook",
+   "family": "astrostack",
+   "task_class": "preprocess",
+   "halcon": null,
+   "runner": "python",
+   "stages": 5,
+   "ops": [
+    "synth_frame_series",
+    "cosmic_ray_reject_stack",
+    "align_frames",
+    "sigma_clip_stack",
+    "star_detect"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 2,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 4
+  },
+  {
+   "name": "3D — depth of a plane from a plenoptic camera raw image (refocus stack, depth from focus)",
+   "source": "recipebook",
+   "family": "lightfield",
+   "task_class": "3d",
+   "halcon": "3D Reconstruction",
+   "runner": "python",
+   "stages": 3,
+   "ops": [
+    "lf_from_mla",
+    "lf_focal_stack",
+    "depth_from_focus"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "3D — metric depth from a light field (refocus depth from focus, camera-array model)",
+   "source": "recipebook",
+   "family": "lightfield",
+   "task_class": "3d",
+   "halcon": "3D Reconstruction",
+   "runner": "python",
+   "stages": 3,
+   "ops": [
+    "lf_synthesize",
+    "lf_depth_from_focus",
+    "lf_disparity_to_depth"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 1,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 1
+  },
+  {
+   "name": "3D — metric depth from a light field (EPI structure-tensor slope, camera-array model)",
+   "source": "recipebook",
+   "family": "lightfield",
+   "task_class": "3d",
+   "halcon": "3D Reconstruction",
+   "runner": "python",
+   "stages": 3,
+   "ops": [
+    "lf_synthesize",
+    "lf_epi_slope",
+    "lf_disparity_to_depth"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": null,
+   "gpu_unmeasured_ops": [
+    "lf_epi_slope"
+   ],
+   "gpu_switches": null
+  },
+  {
+   "name": "Measure — flow velocity from a PIV image pair (multipass cross-correlation)",
+   "source": "recipebook",
+   "family": "piv",
+   "task_class": "measurement",
+   "halcon": null,
+   "runner": "python",
+   "stages": 3,
+   "ops": [
+    "piv_multipass",
+    "piv_to_velocity",
+    "piv_flow_magnitude"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Measure — mean flow from a PIV image sequence (ensemble correlation)",
+   "source": "recipebook",
+   "family": "piv",
+   "task_class": "measurement",
+   "halcon": null,
+   "runner": "python",
+   "stages": 3,
+   "ops": [
+    "piv_synth_sequence",
+    "piv_ensemble_correlate",
+    "piv_flow_magnitude"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Measure — vorticity of a PIV vector field after outlier replacement",
+   "source": "recipebook",
+   "family": "piv",
+   "task_class": "measurement",
+   "halcon": null,
+   "runner": "python",
+   "stages": 3,
+   "ops": [
+    "piv_outlier_mask",
+    "piv_replace_outliers",
+    "piv_vorticity"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Measure — flow speed in m/s from PIV displacement (pixel size, frame interval)",
+   "source": "recipebook",
+   "family": "piv",
+   "task_class": "measurement",
+   "halcon": null,
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "piv_to_velocity",
+    "piv_flow_magnitude"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Inspect — bearing outer-race defect frequency by envelope spectrum",
+   "source": "recipebook",
+   "family": "acoustics",
+   "task_class": "inspection",
+   "halcon": null,
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "synthesize_bearing_signal",
+    "envelope_spectrum"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Measure — frequency response (gain) of a device from input / output noise (H1)",
+   "source": "recipebook",
+   "family": "acoustics",
+   "task_class": "measurement",
+   "halcon": null,
+   "runner": "python",
+   "stages": 1,
+   "ops": [
+    "transfer_function"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Sense — time difference of arrival between two microphones (GCC-PHAT)",
+   "source": "recipebook",
+   "family": "acoustics",
+   "task_class": "sensing",
+   "halcon": null,
+   "runner": "python",
+   "stages": 1,
+   "ops": [
+    "gcc_delay"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Measure — A-weighted equivalent sound level of a tone",
+   "source": "recipebook",
+   "family": "acoustics",
+   "task_class": "measurement",
+   "halcon": null,
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "apply_weighting",
+    "equivalent_level"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 1,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 1
+  },
+  {
+   "name": "Sense — self-rotation of a compound eye from optic flow (fly motion vision)",
+   "source": "recipebook",
+   "family": "flyvision",
+   "task_class": "sensing",
+   "halcon": null,
+   "runner": "python",
+   "stages": 4,
+   "ops": [
+    "fly_lamina_filter",
+    "fly_t4t5_field",
+    "fly_flow_from_directions",
+    "fly_egomotion_from_flow"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Sense — motion direction from two photoreceptors (Reichardt correlator)",
+   "source": "recipebook",
+   "family": "flyvision",
+   "task_class": "sensing",
+   "halcon": null,
+   "runner": "python",
+   "stages": 1,
+   "ops": [
+    "fly_emd_response"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Sense — time to collision from the looming angle (tau)",
+   "source": "recipebook",
+   "family": "flyvision",
+   "task_class": "sensing",
+   "halcon": null,
+   "runner": "python",
+   "stages": 1,
+   "ops": [
+    "fly_tau_from_expansion"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 1,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Inspect — specular highlight strength of a glossy part (dichromatic model)",
+   "source": "recipebook",
+   "family": "specular",
+   "task_class": "inspection",
+   "halcon": "Color",
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "dichromatic_render",
+    "specular_coefficient_map"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 1,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 1
+  },
+  {
+   "name": "Sense — degree of linear polarization of specular reflection (Fresnel)",
+   "source": "recipebook",
+   "family": "specular",
+   "task_class": "sensing",
+   "halcon": null,
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "sfp_render",
+    "polarization_dolp_map"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "3D — curvature of a matte part by robust photometric stereo",
+   "source": "recipebook",
+   "family": "specular",
+   "task_class": "3d",
+   "halcon": "3D Reconstruction",
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "photometric_stereo_robust",
+    "slope_to_curvature"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Inspect — remove specular glare to read the body colour (dichromatic separation)",
+   "source": "recipebook",
+   "family": "specular",
+   "task_class": "inspection",
+   "halcon": "Color",
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "dichromatic_render",
+    "specular_diffuse_split"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Measure — sub-pixel vibration amplitude from video (phase-based)",
+   "source": "recipebook",
+   "family": "motionmag",
+   "task_class": "measurement",
+   "halcon": null,
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "synthesize_translation",
+    "displacement_series"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 1,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 1
+  },
+  {
+   "name": "Inspect — magnify a small vibration in video (motion magnification)",
+   "source": "recipebook",
+   "family": "motionmag",
+   "task_class": "inspection",
+   "halcon": null,
+   "runner": "python",
+   "stages": 1,
+   "ops": [
+    "motion_magnify"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 1,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Measure — vibration SNR in a frequency band of a video",
+   "source": "recipebook",
+   "family": "motionmag",
+   "task_class": "measurement",
+   "halcon": null,
+   "runner": "python",
+   "stages": 1,
+   "ops": [
+    "band_snr"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Sense — time to collision with a wall from depth and ego motion",
+   "source": "recipebook",
+   "family": "drive",
+   "task_class": "sensing",
+   "halcon": null,
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "relative_motion",
+    "ttc_truth"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 1,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 1
+  },
+  {
+   "name": "Sense — focus of expansion of the ego motion (heading point in the image)",
+   "source": "recipebook",
+   "family": "drive",
+   "task_class": "sensing",
+   "halcon": null,
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "relative_motion",
+    "foe_from_motion"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Measure — RSS minimum safe following distance (responsibility-sensitive safety)",
+   "source": "recipebook",
+   "family": "drive",
+   "task_class": "analysis",
+   "halcon": null,
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "rss_params",
+    "rss_longitudinal_check"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Measure — RSS minimum safe gap behind a braking lead car (rss_params -> rss_longitudinal_same)",
+   "source": "recipebook",
+   "family": "drive",
+   "task_class": "analysis",
+   "halcon": null,
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "rss_params",
+    "rss_longitudinal_same"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": null,
+   "gpu_unmeasured_ops": [
+    "rss_longitudinal_same"
+   ],
+   "gpu_switches": null
+  },
+  {
+   "name": "Analyze — driver lateral wobble (Ornstein-Uhlenbeck mean reversion and noise)",
+   "source": "recipebook",
+   "family": "drive",
+   "task_class": "analysis",
+   "halcon": null,
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "lateral_wobble",
+    "ou_estimate"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Inspect — peg-in-hole clearance ratio and jamming-free tilt (robot assembly)",
+   "source": "recipebook",
+   "family": "drive",
+   "task_class": "analysis",
+   "halcon": null,
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "peg_params",
+    "whitney_clearance"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Sense — direction of arrival of two sources with an antenna array (MUSIC)",
+   "source": "recipebook",
+   "family": "math",
+   "task_class": "sensing",
+   "halcon": null,
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "ula_snapshots",
+    "music_doa"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Analyze — count polynomial roots inside a circle (argument principle)",
+   "source": "recipebook",
+   "family": "math",
+   "task_class": "analysis",
+   "halcon": null,
+   "runner": "python",
+   "stages": 3,
+   "ops": [
+    "cplx_contour_circle",
+    "cplx_poly_eval",
+    "cplx_argument_principle"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 1,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 2
+  },
+  {
+   "name": "Measure — condition number of a measured covariance (anisotropy / ill-conditioning)",
+   "source": "recipebook",
+   "family": "math",
+   "task_class": "analysis",
+   "halcon": null,
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "stat_covariance",
+    "mat_cond"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Measure — principal axes of a scatter (covariance eigen-decomposition)",
+   "source": "recipebook",
+   "family": "math",
+   "task_class": "measurement",
+   "halcon": null,
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "stat_covariance",
+    "mat_eigh"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Sense — dominant vibration frequency after band-pass filtering",
+   "source": "recipebook",
+   "family": "oned",
+   "task_class": "sensing",
+   "halcon": null,
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "bandpass",
+    "signal_features"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Measure — count zero crossings of a smoothed profile (1-D function)",
+   "source": "recipebook",
+   "family": "oned",
+   "task_class": "measurement",
+   "halcon": "1D Measuring",
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "smooth_funct_1d_gauss",
+    "zero_crossings_funct_1d"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 1,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 1
+  },
+  {
+   "name": "Measure — amplitude of a vibration via its Hilbert envelope",
+   "source": "recipebook",
+   "family": "oned",
+   "task_class": "measurement",
+   "halcon": null,
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "envelope",
+    "rms"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 1,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 1
+  },
+  {
+   "name": "Inspect — process capability Cp / Cpk against spec limits",
+   "source": "recipebook",
+   "family": "spc",
+   "task_class": "inspection",
+   "halcon": null,
+   "runner": "python",
+   "stages": 1,
+   "ops": [
+    "spc_capability"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Inspect — X-bar / R control chart of subgrouped parts",
+   "source": "recipebook",
+   "family": "spc",
+   "task_class": "inspection",
+   "halcon": null,
+   "runner": "python",
+   "stages": 1,
+   "ops": [
+    "spc_xbar_r"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Inspect — variation-model defect detection against good samples",
+   "source": "recipebook",
+   "family": "spc",
+   "task_class": "inspection",
+   "halcon": "Inspection",
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "varmodel_fit",
+    "varmodel_score"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 1,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 1
+  },
+  {
+   "name": "Inspect — probability of detection a50 of an NDT method (â vs a)",
+   "source": "recipebook",
+   "family": "spc",
+   "task_class": "inspection",
+   "halcon": null,
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "pod_ahat_fit",
+    "pod_from_ahat"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Analyze — algebraic connectivity of a neuron ring (Laplacian spectrum)",
+   "source": "recipebook",
+   "family": "conngraph",
+   "task_class": "analysis",
+   "halcon": null,
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "graph_from_synapses",
+    "graph_laplacian_spectrum"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Analyze — clusters of a connectome after pruning weak synapses",
+   "source": "recipebook",
+   "family": "conngraph",
+   "task_class": "analysis",
+   "halcon": null,
+   "runner": "python",
+   "stages": 3,
+   "ops": [
+    "graph_from_synapses",
+    "graph_binarize",
+    "graph_components"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Measure — shortest route on a weighted network (slime-mould transport)",
+   "source": "recipebook",
+   "family": "graph",
+   "task_class": "analysis",
+   "halcon": null,
+   "runner": "python",
+   "stages": 1,
+   "ops": [
+    "graph_physarum_path"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Analyze — count directed feedback triangles in a network",
+   "source": "recipebook",
+   "family": "graph",
+   "task_class": "analysis",
+   "halcon": null,
+   "runner": "python",
+   "stages": 1,
+   "ops": [
+    "graph_cycle3"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Analyze — response-surface optimum of a central composite experiment",
+   "source": "recipebook",
+   "family": "multivar",
+   "task_class": "analysis",
+   "halcon": null,
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "doe_central_composite",
+    "rsm_fit"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Analyze — global sensitivity (Sobol' indices) of a model",
+   "source": "recipebook",
+   "family": "multivar",
+   "task_class": "analysis",
+   "halcon": null,
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "doe_saltelli",
+    "sens_sobol"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Analyze — principal components and explained variance of multivariate data",
+   "source": "recipebook",
+   "family": "multivar",
+   "task_class": "analysis",
+   "halcon": null,
+   "runner": "python",
+   "stages": 1,
+   "ops": [
+    "mv_pca"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Inspect — score a segmentation split error (variation of information)",
+   "source": "recipebook",
+   "family": "emproof",
+   "task_class": "inspection",
+   "halcon": null,
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "seg_inject_split",
+    "seg_variation_of_information"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Inspect — detect a scene cut in a noisy video stream",
+   "source": "recipebook",
+   "family": "videostream",
+   "task_class": "inspection",
+   "halcon": null,
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "temporal_bilateral",
+    "scene_cut_detection"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 2,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Inspect — moving object mask in a flickering video (deflicker + background model)",
+   "source": "recipebook",
+   "family": "videostream",
+   "task_class": "inspection",
+   "halcon": null,
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "deflicker",
+    "running_gaussian_foreground"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 1,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 1
+  },
+  {
+   "name": "Calibrate — camera gain from a captured test chart (simulation calibration)",
+   "source": "recipebook",
+   "family": "simcal",
+   "task_class": "simulation",
+   "halcon": "Calibration",
+   "runner": "python",
+   "stages": 4,
+   "ops": [
+    "simcal_model",
+    "simcal_observe",
+    "simcal_fit",
+    "simcal_report"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Analyze — attention as a key-value lookup (RMSNorm → scores → softmax → mix)",
+   "source": "recipebook",
+   "family": "llmcore",
+   "task_class": "analysis",
+   "halcon": null,
+   "runner": "python",
+   "stages": 4,
+   "ops": [
+    "rms_norm",
+    "attention_scores",
+    "attention_weights",
+    "attention_apply"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Measure — observed order of convergence of a grid study (GCI)",
+   "source": "recipebook",
+   "family": "converge",
+   "task_class": "simulation",
+   "halcon": null,
+   "runner": "python",
+   "stages": 1,
+   "ops": [
+    "conv_observed_order"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Measure — fixed point of an iteration with convergence proof (Anderson)",
+   "source": "recipebook",
+   "family": "converge",
+   "task_class": "simulation",
+   "halcon": null,
+   "runner": "python",
+   "stages": 1,
+   "ops": [
+    "iterate_fixed_point"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Measure — bore centre and radius from a sub-pixel contour (circle fit per XLD contour)",
+   "source": "recipebook",
+   "family": "2d",
+   "task_class": "measurement",
+   "halcon": "2D Metrology",
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "threshold_sub_pix",
+    "fit_circle_xld"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": null,
+   "gpu_unmeasured_ops": [
+    "fit_circle_xld"
+   ],
+   "gpu_switches": null
+  },
+  {
+   "name": "Inspect — count touching parts as watershed basins (one label per object)",
+   "source": "recipebook",
+   "family": "segmentation",
+   "task_class": "inspection",
+   "halcon": "Segmentation",
+   "runner": "python",
+   "stages": 4,
+   "ops": [
+    "threshold",
+    "distance_transform",
+    "invert_image",
+    "hierarchical_watershed"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": null,
+   "gpu_unmeasured_ops": [
+    "invert_image",
+    "hierarchical_watershed"
+   ],
+   "gpu_switches": null
+  },
+  {
+   "name": "Segment — marker-controlled watershed inside a mask (two touching parts, background kept out)",
+   "source": "recipebook",
+   "family": "blob",
+   "task_class": "inspection",
+   "halcon": "Segmentation",
+   "runner": "python",
+   "stages": 5,
+   "ops": [
+    "threshold",
+    "blob_label",
+    "sobel_amp",
+    "invert_image",
+    "blob_split"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": null,
+   "gpu_unmeasured_ops": [
+    "invert_image"
+   ],
+   "gpu_switches": null
+  },
+  {
+   "name": "Measure — unwrap an off-centre ring about its centre and read its radius",
+   "source": "recipebook",
+   "family": "3d",
+   "task_class": "measurement",
+   "halcon": "Transformations",
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "polar_unwrap",
+    "img_to_projection_profile"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": null,
+   "gpu_unmeasured_ops": [
+    "polar_unwrap"
+   ],
+   "gpu_switches": null
+  },
+  {
+   "name": "Inspect — count bright and dim inclusions in a grey volume (threshold, then count)",
+   "source": "recipebook",
+   "family": "2d",
+   "task_class": "inspection",
+   "halcon": null,
+   "runner": "mcp",
+   "stages": 2,
+   "ops": [
+    "vol_threshold",
+    "vol_count"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": null,
+   "gpu_unmeasured_ops": [
+    "vol_threshold",
+    "vol_count"
+   ],
+   "gpu_switches": null
+  },
+  {
+   "name": "Sense — bearing of a sound source from a microphone pair (time difference of arrival)",
+   "source": "recipebook",
+   "family": "drive",
+   "task_class": "sensing",
+   "halcon": null,
+   "runner": "python",
+   "stages": 1,
+   "ops": [
+    "tdoa_bearing"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": null,
+   "gpu_unmeasured_ops": [
+    "tdoa_bearing"
+   ],
+   "gpu_switches": null
+  },
+  {
+   "name": "Measure — feed-mark wavelength of a machined surface from its areal PSD peak",
+   "source": "recipebook",
+   "family": "roughness",
+   "task_class": "measurement",
+   "halcon": null,
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "surface_psd",
+    "spectral_stats"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": null,
+   "gpu_unmeasured_ops": [
+    "surface_psd"
+   ],
+   "gpu_switches": null
+  },
+  {
+   "name": "Measure — period and direction of a stripe / grating texture (strongest 2-D FFT peak)",
+   "source": "recipebook",
+   "family": "math",
+   "task_class": "measurement",
+   "halcon": null,
+   "runner": "python",
+   "stages": 1,
+   "ops": [
+    "wave_dominant_frequency"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": null,
+   "gpu_unmeasured_ops": [
+    "wave_dominant_frequency"
+   ],
+   "gpu_switches": null
+  },
+  {
+   "name": "3D — find a known part's 6-DoF pose in a scene cloud (PPF surface matching)",
+   "source": "recipebook",
+   "family": "3d",
+   "task_class": "3d",
+   "halcon": "3D Matching",
+   "runner": "python",
+   "stages": 1,
+   "ops": [
+    "find_surface_pose"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": null,
+   "gpu_unmeasured_ops": [
+    "find_surface_pose"
+   ],
+   "gpu_switches": null
+  },
+  {
+   "name": "Sense — degree of linear polarization map from four analyzer angles (0/45/90/135)",
+   "source": "recipebook",
+   "family": "specular",
+   "task_class": "sensing",
+   "halcon": null,
+   "runner": "mcp",
+   "stages": 1,
+   "ops": [
+    "polarization_dolp_map"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  },
+  {
+   "name": "Inspect — glossy (specular) area from polarization: DoLP map, threshold, area fraction",
+   "source": "recipebook",
+   "family": "specular",
+   "task_class": "inspection",
+   "halcon": "Regions",
+   "runner": "mcp",
+   "stages": 3,
+   "ops": [
+    "polarization_dolp_map",
+    "threshold",
+    "area_frac"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": null,
+   "gpu_unmeasured_ops": [
+    "area_frac"
+   ],
+   "gpu_switches": null
+  },
+  {
+   "name": "Measure — wrapped phase from 4-step phase-shifted fringes",
+   "source": "recipebook",
+   "family": "3d",
+   "task_class": "3d",
+   "halcon": "3D Reconstruction",
+   "runner": "mcp",
+   "stages": 1,
+   "ops": [
+    "wrapped_phase"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": null,
+   "gpu_unmeasured_ops": [
+    "wrapped_phase"
+   ],
+   "gpu_switches": null
+  },
+  {
+   "name": "3D — height map from 4-step phase-shift fringes (decode, unwrap, scale)",
+   "source": "recipebook",
+   "family": "3d",
+   "task_class": "3d",
+   "halcon": "3D Reconstruction",
+   "runner": "mcp",
+   "stages": 1,
+   "ops": [
+    "decode_fringe"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": 0,
+   "gpu_unmeasured_ops": [],
+   "gpu_switches": 0
+  }
+ ],
+ "missing_ops": [
+  {
+   "family": "2d",
+   "need": "circle fit to an XLD contour that returns (row, col, radius) — HALCON fit_circle_contour_xld",
+   "why": "hx_fit_circle_contour returns only the RMS residual and hx_smallest_circle_xld a centroid-centred enclosing radius divided by max(H, W); the radius of a round part had to be read from elliptic_axis_xld (Ra = Rb) instead",
+   "book": "book_2d"
+  },
+  {
+   "family": "2d",
+   "need": "watershed that returns the basins (one region / label per object) — HALCON watersheds 'Basins'",
+   "why": "watersheds, pouring, xcv_watershed_markers and sg_watershed_gradient return only the dam lines; counting their components gives 1-4 for 4 / 6 touching disks, so splitting touching parts stops at the marker step (distance transform + h-maxima) and the split parts cannot be measured one by one",
+   "book": "book_2d"
+  },
+  {
+   "family": "2d",
+   "need": "dominant spatial frequency / period of an image as a feature (strongest non-DC FFT peak: cycles/px and angle)",
+   "why": "fft_image / power_real / power_ln return spectrum images; the max-projection profile's argmax lands on the DC column and tb_find_peaks returns ~30 noise peaks, so no chain reads the grating period from the spectrum (the texture period recipe goes through zero crossings of a profile instead)",
+   "book": "book_2d"
+  },
+  {
+   "family": "2d",
+   "need": "bar-code / 2-D code decoding (symbology + data string) — HALCON find_bar_code / find_data_code_2d",
+   "why": "decode_barcode only counts dark bars on the centre scan line; no op returns the encoded data",
+   "book": "book_2d"
+  },
+  {
+   "family": "2d",
+   "need": "OCR character classification (HALCON do_ocr_single_class_mlp / read text)",
+   "why": "the 2-D family can segment glyphs (hx_char_threshold, sk_sauvola) but nothing classifies them",
+   "book": "book_2d"
+  },
+  {
+   "family": "2d",
+   "need": "polar unwrap about a given centre and radius range — HALCON polar_trans_image_ext with Row/Column/Radius",
+   "why": "polar_trans_image(_ext) always use the image centre and min(H, W)/2; an off-centre ring / bore cannot be unwrapped after locating it with area_center (the ring recipe needs the ring at the image centre)",
+   "book": "book_2d"
+  },
+  {
+   "family": "text",
+   "need": "take the SWT field (matrix) out of swt_map's table, or a text_candidates that accepts swt_map's dict",
+   "why": "swt_map -> table and text_candidates(matrix) do not connect; the detector pipeline swt -> candidates -> lines cannot be chained",
+   "book": "book_measure"
+  },
+  {
+   "family": "vx",
+   "need": "split vx_sobel3x3's {gx, gy} table into two S16 images (or a vx_sobel_magnitude)",
+   "why": "vx_magnitude / vx_phase take two image2d, vx_sobel3x3 returns one table: the OpenVX gradient graph Sobel -> Magnitude -> NonMax cannot be chained",
+   "book": "book_measure"
+  },
+  {
+   "family": "roughness",
+   "need": "dominant wavelength (peak) of surface_psd's (frequency, PSD) pairs",
+   "why": "feed-mark wavelength from an areal PSD needs an argmax-to-frequency read; no op converts the pairs to a scalar",
+   "book": "book_measure"
+  },
+  {
+   "family": "segmentation",
+   "need": "a mask argument (or a masked variant) for watersheds_marker",
+   "why": "the flood assigns background pixels to the nearest marker, so region areas after a watershed split are wrong unless the mask is applied by another op (blob_split does that, but only with distance-map seeds)",
+   "book": "book_measure"
+  },
+  {
+   "family": "3d",
+   "need": "PPF / surface-based matching: find a CAD model's 6-DoF pose in a scene cloud (HALCON find_surface_model)",
+   "why": "no point-pair-feature or surface-model matching op exists in OP_GRAPH or docs/ops (only ICP / GICP / FPFH / SHOT / spin registration)",
+   "book": "book_3d"
+  },
+  {
+   "family": "3d",
+   "need": "threshold a grey voxel volume to a binary voxel volume (voxel -> voxel)",
+   "why": "no explicit volume threshold op; vol_label thresholds implicitly at 0.5 (fixed), and region_props / label_components binarise with astype(bool) (every nonzero voxel is foreground)",
+   "book": "book_3d"
+  },
+  {
+   "family": "reprconv",
+   "need": "keypoints (row, col) <-> (u = col, v = row) swap",
+   "why": "the keypoints sort carries both conventions (calib.project_3d_point returns (row, col); pnp3d.dlt_pose / pnp_ransac expect (u, v)) and no op converts between them",
+   "book": "book_3d"
+  },
+  {
+   "family": "acoustics",
+   "need": "TDOA (s) + microphone spacing -> source bearing angle (deg)",
+   "why": "gcc_delay returns a delay; no op turns delay into a direction of arrival for a mic pair / array",
+   "book": "book_optics"
+  },
+  {
+   "family": "piv",
+   "need": "a pair generator whose ledger form returns both frames (or seq<image> of 2)",
+   "why": "fs.ledger.piv_synth_pair keeps only frame a (declared image), so a pair cannot start a chain; piv_synth_sequence -> piv_ensemble_correlate works, piv_cross_correlate needs a sample-built pair",
+   "book": "book_optics"
+  },
+  {
+   "family": "oned",
+   "need": "spectrum peak picker: pairs (freqs, magnitude) -> measurement (peak frequency in Hz, sub-bin interpolated)",
+   "why": "spectrum returns the typed pairs (freqs, |rfft|) but every peak op (find_peaks, peak_subbin) takes a signal; the FFT-peak chain spectrum -> peak cannot be typed, so the recipe reads peak_freq from signal_features instead (bin-quantised, no sub-bin refinement).",
+   "book": "book_misc"
+  },
+  {
+   "family": "drive",
+   "need": "table field selector (table -> image / signal / scalar, by key)",
+   "why": "dict-returning drive ops cannot feed their natural consumers: flow_from_depth_motion -> {u, v} cannot reach ttc_from_flow(u: image, v: image) or foe_from_flow; label_extent -> {width} cannot reach ttc_from_scale(w0, w1). A generic typed 'get field' op would close all of these.",
+   "book": "book_misc"
+  },
+  {
+   "family": "3d",
+   "need": "voxel -> voxel grey threshold (the ledger twin of the registry's vol_threshold)",
+   "why": "vol_threshold exists (2-D registry, sort 'volume', a = absolute level) and the volume-sorted chain vol_threshold -> vol_count runs; but the ledger's voxel chain (vol_label, regionprops3d, skeletonize_vol) takes 'voxel', and no op turns a grey voxel volume into a binary one at a chosen level, so threshold -> label / measure in 3-D still has a type cut between 'volume' and 'voxel'",
+   "book": "book_newops"
+  }
+ ],
+ "failed_attempts": [
+  {
+   "family": "2d",
+   "recipe": "Inspect — split touching parts with a marker-controlled watershed",
+   "op": "xcv_watershed_markers",
+   "error": "count_obj of its output = 3 / 4 for 4 / 6 touching disks (it returns the dam lines, not basins)",
+   "cause": "type_gap",
+   "book": "book_2d"
+  },
+  {
+   "family": "text",
+   "recipe": "Inspect — detect text: SWT then character candidates",
+   "op": "text_candidates",
+   "error": "swt_map returns table {swt, edges, ...}; text_candidates takes matrix (the swt field)",
+   "cause": "type_gap",
+   "book": "book_measure"
+  },
+  {
+   "family": "vx",
+   "recipe": "Inspect — OpenVX gradient magnitude",
+   "op": "vx_magnitude",
+   "error": "vx_sobel3x3 returns table {gx, gy, valid}; vx_magnitude needs two image2d",
+   "cause": "type_gap",
+   "book": "book_measure"
+  },
+  {
+   "family": "3d",
+   "recipe": "3D — object pose from known 3-D points and their image (PnP)",
+   "op": "project_3d_point -> dlt_pose",
+   "error": "no exception; project_3d_point gives (row, col), dlt_pose reads (u, v) -> mirrored pose t = (-0.565, 0.61, 3.21) instead of (0.1, -0.05, 3.0)",
+   "cause": "type_gap",
+   "book": "book_3d"
+  },
+  {
+   "family": "reprconv",
+   "recipe": "Measure — rotation angle of a part from matched 2-D points",
+   "op": "vector_to_rigid -> matrix_to_angle",
+   "error": "no exception; vector_to_rigid returns a 2-D homogeneous 3x3 [[c,-s,tx],[s,c,ty],[0,0,1]] while matrix_to_angle reads a rotation in axes (1, 2) (atan2(R[2,1], R[1,1])) -> 0.0 deg for a 20 deg rotation; matrix_to_rot_scale raises 'matrix: must be (2, 2); got (3, 3)'",
+   "cause": "type_gap",
+   "book": "book_3d"
+  },
+  {
+   "family": "piv",
+   "recipe": "piv_synth_pair -> piv_cross_correlate",
+   "op": "piv_synth_pair",
+   "error": "fs.ledger.piv_synth_pair returns only frame a (64, 64); frame b and the truth are dropped, so piv_cross_correlate(a, b) has no b in the chain",
+   "cause": "type_gap",
+   "book": "book_optics"
+  },
+  {
+   "family": "optics",
+   "recipe": "thick_lens -> paraxial_trace",
+   "op": "thick_lens",
+   "error": "paraxial_trace: expected the dict returned by lens_system(); thick_lens returns its own EFL table",
+   "cause": "type_gap",
+   "book": "book_optics"
+  },
+  {
+   "family": "flyvision",
+   "recipe": "matrix -> fly_lamina_filter -> fly_t4t5_field(three_arm)",
+   "op": "fly_t4t5_field",
+   "error": "ValueError movie has a negative entry; the default model needs one ON/OFF half (onoff[:, :n]) which a chain cannot slice — used model='hr' instead",
+   "cause": "type_gap",
+   "book": "book_optics"
+  },
+  {
+   "family": "drive",
+   "recipe": "Sense — TTC from optical flow (flow_from_depth_motion -> ttc_from_flow)",
+   "op": "ttc_from_flow",
+   "error": "flow_from_depth_motion outputs table {u, v, valid, depth1}; ttc_from_flow inputs ['image', 'image'] — no op selects a table field as an image. Via the ledger too: fs.ledger.ttc_from_flow(flow_table, dt=0.1) -> TypeError: missing 1 required positional argument: 'v'",
+   "cause": "type_gap",
+   "book": "book_misc"
+  },
+  {
+   "family": "drive",
+   "recipe": "Sense — TTC from apparent size growth (label_extent -> ttc_from_scale)",
+   "op": "ttc_from_scale",
+   "error": "label_extent outputs table {width, height, ...}; ttc_from_scale is declared a generator (inputs []) taking w0, w1 as scalar keywords. Via the ledger: fs.ledger.ttc_from_scale(extent_table, dt=0.1) -> TypeError: missing 1 required positional argument: 'w1'",
+   "cause": "type_gap",
+   "book": "book_misc"
+  },
+  {
+   "family": "oned",
+   "recipe": "Sense — FFT peak frequency (spectrum -> find_peaks -> peak_subbin)",
+   "op": "find_peaks",
+   "error": "spectrum outputs pairs (freqs, magnitude); find_peaks / peak_subbin input 'signal' — type cut at stage 2. Via the ledger: fs.ledger.find_peaks(spectrum(...)) -> ValueError: expected a 1-D signal ..., got shape (129, 2)",
+   "cause": "type_gap",
+   "book": "book_misc"
+  },
+  {
+   "family": "shape2d",
+   "recipe": "contour -> from_xld -> elliptic_fourier (EFD of a sub-pixel contour)",
+   "op": "from_xld",
+   "error": "opsshape2d declares from_xld inputs ['table'], but the function requires the XLD contour dict {'shape', 'cs'} and refuses a table: fs.ledger.from_xld([[1, 2], [3, 4]]) -> ValueError: from_xld: contour must be an XLD contour dict with key 'cs', got list. The registry contour producers (threshold_sub_pix, edges_sub_pix) output 'contour', so contour -> from_xld is a type cut although the call works; the declaration should be ['contour']",
+   "cause": "declaration_lie",
+   "book": "book_newops"
+  }
+ ]
+}

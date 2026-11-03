@@ -14,8 +14,8 @@ version: 0.9.0  # fullseye lib version this note was generated for
 # pose_error — 3D `metrics` op
 
 - **データ種**: `pose × pose` → `table`
-- **呼び出し**: `import fullseye as fs; fs.ledger.pose_error(R_est, t_est, R_gt, t_gt)` (実装を直接呼ぶなら `import metrics3d; metrics3d.pose_error(R_est, t_est, R_gt, t_gt)`、台帳から引くなら `ops3d.get("pose_error")`)
-- **台帳経由の戻り値**: `fullseye.ledger.pose_error(...)` は**宣言 out 型 `table` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.pose_error.raw(...)`、または `metrics3d.pose_error` を直接呼ぶ。
+- **呼び出し**: `import fullseye as fs; fs.ledger.pose_error(pose_est, pose_gt)` (実装を直接呼ぶなら `import ops3d; ops3d.pose_error(pose_est, pose_gt)`、台帳から引くなら `ops3d.get("pose_error")`)
+- **台帳経由の戻り値**: `fullseye.ledger.pose_error(...)` は**宣言 out 型 `table` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.pose_error.raw(...)`、または `ops3d.pose_error` を直接呼ぶ。
 - **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
@@ -65,6 +65,6 @@ version: 0.9.0  # fullseye lib version this note was generated for
 [chamfer_distance](chamfer_distance.md) · [hausdorff_distance](hausdorff_distance.md) · [m3c2_distance](m3c2_distance.md) · [fscore](fscore.md) · [rmse_correspondence](rmse_correspondence.md) · [normal_consistency](normal_consistency.md) · [voxel_iou](voxel_iou.md)
 
 ---
-*Provenance: metrics3d.py — 3D operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*
+*Provenance: ops3d.py — 3D operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*
 
 © 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.

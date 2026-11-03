@@ -111,8 +111,57 @@ import braidpath
 import racket
 import roadjp
 import rsssafety
+import inspect as _inspect
+import sys as _sys
+from functools import wraps as _wraps
 
-_MOD = {"drivecourse": drivecourse, "driveworld": driveworld, "lidarsim": lidarsim, "drivettc": drivettc,
+
+# ★2026-11-03(レシピの e2e が見つけた宣言の嘘): RSS の 8 op は台帳で入力を ``["table"]``(rss_params の表)と
+#   宣言しているのに、素の関数は速さ・間隔が先で表は 3〜4 番目(``rss_longitudinal_same(v_rear, v_front, p)``)。
+#   宣言どおり表を第 1 引数に渡すと ``fs.ledger.rss_longitudinal_same(p, v_rear=20, v_front=15)`` が
+#   ``TypeError: got multiple values for argument 'v_rear'`` で落ち、型で繋ぐ鎖 ``rss_params -> rss_*`` が組めなかった。
+#   素の関数(rsssafety.* と facade)の並びは公開の約束なので変えず、**台帳の入口だけ**を「表が先」の並びにする:
+#   ``(p, v_rear, v_front, p_front=None)`` など(残りの引数の順は素の関数のまま)。``__wrapped__`` で同じ op の
+#   identity を保ち、``__signature__`` で OP_GRAPH の引数表も宣言どおり(表が第 1 スロット)になる。
+#   旧い並び(第 1 引数が速さ・間隔の数)で呼んでいた呼び手(連鎖ファザーの builder など)はそのまま素の関数へ渡す。
+#   第 1 引数が dict のときだけ新しい並びと読む —— 素の関数の第 1 引数はどれも数(速さ・間隔)なので取り違えは
+#   起きない。表を第 1 引数と名前つき引数の両方で渡したら TypeError(fail-closed)。
+def _table_first(fn, table_param):
+    sig = _inspect.signature(fn)
+    params = list(sig.parameters.values())
+    if any(q.kind not in (q.POSITIONAL_OR_KEYWORD, q.KEYWORD_ONLY) for q in params):
+        raise TypeError("_table_first: %s has positional-only / variadic parameters" % fn.__name__)
+    table = sig.parameters[table_param]
+    rest = [q for q in params if q.name != table_param]
+    new_sig = sig.replace(parameters=[table] + rest)
+
+    @_wraps(fn)
+    def ledger_door(*args, **kwargs):
+        if args and isinstance(args[0], dict):
+            if table_param in kwargs:
+                raise TypeError("%s: the parameter table was given both as the first argument and as %r"
+                                % (fn.__name__, table_param))
+            bound = new_sig.bind(*args, **kwargs)
+            return fn(**bound.arguments)
+        return fn(*args, **kwargs)
+
+    ledger_door.__signature__ = new_sig
+    ledger_door.__module__ = __name__
+    ledger_door.__qualname__ = fn.__name__
+    return ledger_door
+
+
+#: 台帳の入口(表が先)にする RSS の op と、表の引数名。
+_RSS_TABLE_FIRST = {
+    "rss_longitudinal_same": "p", "rss_longitudinal_opposite": "p1", "rss_lateral": "p1",
+    "rss_longitudinal_check": "p", "rss_lateral_check": "p1",
+    "rss_worst_case_gap": "p", "rss_worst_case_gap_opposite": "p1", "rss_worst_case_gap_lateral": "p1",
+}
+for _name, _param in _RSS_TABLE_FIRST.items():
+    globals()[_name] = _table_first(getattr(rsssafety, _name), _param)
+del _name, _param
+
+_MOD = {"opsdrive": _sys.modules[__name__], "drivecourse": drivecourse, "driveworld": driveworld, "lidarsim": lidarsim, "drivettc": drivettc,
         "rsssafety": rsssafety, "driveterrain": driveterrain,
         "ballistics": ballistics, "balltrack": balltrack, "ballworld": ballworld, "racket": racket,
         "roadjp": roadjp,
@@ -169,14 +218,15 @@ _CATALOG = {
     "rss": [
         ("rss_params", "rsssafety", [], "table"),
         ("rss_stopping_distance", "rsssafety", [], "scalar"),
-        ("rss_longitudinal_same", "rsssafety", ["table"], "scalar"),
-        ("rss_longitudinal_opposite", "rsssafety", ["table"], "scalar"),
-        ("rss_lateral", "rsssafety", ["table"], "scalar"),
-        ("rss_longitudinal_check", "rsssafety", ["table"], "table"),
-        ("rss_lateral_check", "rsssafety", ["table"], "table"),
-        ("rss_worst_case_gap", "rsssafety", ["table"], "table"),
-        ("rss_worst_case_gap_opposite", "rsssafety", ["table"], "table"),
-        ("rss_worst_case_gap_lateral", "rsssafety", ["table"], "table"),
+        # 以下 8 本の入口は opsdrive の「表が先」の口(_RSS_TABLE_FIRST、上の注記)。計算は rsssafety。
+        ("rss_longitudinal_same", "opsdrive", ["table"], "scalar"),
+        ("rss_longitudinal_opposite", "opsdrive", ["table"], "scalar"),
+        ("rss_lateral", "opsdrive", ["table"], "scalar"),
+        ("rss_longitudinal_check", "opsdrive", ["table"], "table"),
+        ("rss_lateral_check", "opsdrive", ["table"], "table"),
+        ("rss_worst_case_gap", "opsdrive", ["table"], "table"),
+        ("rss_worst_case_gap_opposite", "opsdrive", ["table"], "table"),
+        ("rss_worst_case_gap_lateral", "opsdrive", ["table"], "table"),
     ],
     # 世界を広げる(16 巡目): 閉形式の地形(fBm のスペクトル合成 β = 2H + 2、Perlin の勾配雑音)、コースへの距離場(eikonal)、
     # 世界座標で評価する路面の材質(真値 = ラベル・摩耗率・水溜り・染み)、手続きの木・歩行者・横断歩道(体積・面積の閉形式)。

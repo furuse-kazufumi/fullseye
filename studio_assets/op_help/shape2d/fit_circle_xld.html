@@ -1,0 +1,25 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">fit_circle_xld — SHAPE2D <code style="color:#22d3bf">descriptor</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">contour</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fit_circle_xld(contour, method=&#x27;geometric&#x27;)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import fourierdesc; fourierdesc.fit_circle_xld(contour, method=&#x27;geometric&#x27;)</code>、台帳から引くなら <code style="color:#22d3bf">opsshape2d.get(&quot;fit_circle_xld&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>XLD 輪郭 1 本ごとに円を当てはめ、中心の行・列と半径を返す(<code style="color:#22d3bf">table</code>)。</p>
+<p>HALCON <code style="color:#22d3bf">fit_circle_contour_xld</code> の Row / Column / Radius にあたる。進化 op の <code style="color:#22d3bf">hx_fit_circle_contour</code> は残差(正規化 feature)しか返さないので、輪郭から <b>位置と大きさ</b>を読むのはこちら。座標は XLD と同じ <b>(row, col)</b>、単位は画素。</p>
+<p><code style="color:#22d3bf">method</code> は <code style="color:#22d3bf">&quot;geometric&quot;</code>(既定。点から円までの距離の二乗和を Levenberg--Marquardt で最小化、Chernov &amp; Lesort 2005 = <code style="color:#22d3bf">measure.fit_circle_geometric</code>) か <code style="color:#22d3bf">&quot;algebraic&quot;</code>(Kåsa / Coope の代数的最小二乗 = <code style="color:#22d3bf">measure.fit_circle</code>。短い円弧では半径が小さく偏る)。返す dict の <code style="color:#22d3bf">row</code>・<code style="color:#22d3bf">col</code>・<code style="color:#22d3bf">radius</code>・<code style="color:#22d3bf">rms</code> (点の動径残差の二乗平均平方根)・<code style="color:#22d3bf">n_points</code> は輪郭の並び順の list で、<code style="color:#22d3bf">n_contours</code> が当てた本数、<code style="color:#22d3bf">n_skipped</code> が点が 3 個未満で飛ばした本数、<code style="color:#22d3bf">method</code> が使った方法。</p>
+<p>空の入力(<code style="color:#22d3bf">contour</code> が 0 要素 = 輪郭が 1 本も無い)は <code style="color:#22d3bf">ValueError</code>。拒否(<code style="color:#22d3bf">ValueError</code>): XLD の dict(<code style="color:#22d3bf">{&quot;shape&quot;, &quot;cs&quot;}</code>)でない、未知の <code style="color:#22d3bf">method</code>、点が 3 個以上ある輪郭が 1 本も無い、非有限の座標、点が一直線に並ぶ(円が決まらない)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshape2d:shape_description_2d">shape_description_2d ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:fit_circle_xld_bore">fit_circle_xld_bore</a> — <code style="color:#22d3bf">py -3.11 examples/fit_circle_xld_bore.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opshape2d:from_xld">from_xld</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">descriptor</code>)</h3>
+<p><a style="color:#22d3bf" href="opshape2d:elliptic_fourier">elliptic_fourier</a> · <a style="color:#22d3bf" href="opshape2d:reconstruct">reconstruct</a> · <a style="color:#22d3bf" href="opshape2d:invariants">invariants</a> · <a style="color:#22d3bf" href="opshape2d:normalize">normalize</a> · <a style="color:#22d3bf" href="opshape2d:descriptor_distance">descriptor_distance</a> · <a style="color:#22d3bf" href="opshape2d:fourier_smooth">fourier_smooth</a> · <a style="color:#22d3bf" href="opshape2d:from_xld">from_xld</a> · <a style="color:#22d3bf" href="opshape2d:contour_fourier_complex">contour_fourier_complex</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: fourierdesc.py — SHAPE2D operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

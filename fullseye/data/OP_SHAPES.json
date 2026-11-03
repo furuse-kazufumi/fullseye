@@ -1011,8 +1011,8 @@
       ],
       "shape": "join",
       "derived_from": {
-        "direct_edges": 12,
-        "join_edges": 12,
+        "direct_edges": 13,
+        "join_edges": 13,
         "reduce_edges": 0
       },
       "currently_composable": true,

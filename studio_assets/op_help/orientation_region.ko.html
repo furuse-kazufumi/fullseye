@@ -11,7 +11,7 @@
 <p><b>단계</b>(앞에 오는 op → 이 op, 왼쪽에서 오른쪽으로):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/orientation_region.chain.jpg">orientation_region: 단계</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>영역 주축의 방향(<code style="color:#22d3bf">regionprops</code>의 <code style="color:#22d3bf">orientation</code>, [-π/2,π/2]를 [0,1]로 선형 매핑). 영역을 타원에 피팅했을 때 장축의 기울기를 나타낸다. HALCON의 <code style="color:#22d3bf">orientation_region</code>(Orientation of a region.)에 해당.</p>
+<p>영역 주축의 방향 θ / 180(θ는 등가 타원 장축의 각도로, 열 축에서 <b>화면상 반시계 방향</b>으로 잼, 행은 아래 방향, [0, 180]도; 180을 곱하면 도; <code style="color:#22d3bf">regionprops</code>의 <code style="color:#22d3bf">orientation</code>을 <code style="color:#22d3bf">(orientation + π/2) / π</code>로 사상하여 구현). HALCON <code style="color:#22d3bf">orientation_region</code>(Orientation of a region.)과 같은 방향 —— HALCON은 가장 먼 점으로 방향을 정하고 -π..π 라디안으로 반환하지만, 여기서는 180도로 접어 [0,1]로 정규화한다. <code style="color:#22d3bf">elliptic_axis</code>의 Phi(라디안)와 θ ≡ Phi (mod π)로 일치한다.</p>
 <p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code>는 사용하지 않는다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 패밀리 가이드</a></p>

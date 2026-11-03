@@ -199,6 +199,15 @@ def xg_orientation(v, a, b):
     recover degrees. Line orientation is defined mod 180, so a line at theta and
     theta+180 map to the same value.
 
+    Direction (2026-11-03, stated explicitly): the angle is ``atan2(d_row, d_col)`` in
+    image coordinates with rows pointing DOWN, i.e. it turns **clockwise on screen**.
+    A line turned theta counter-clockwise on screen returns ``(180 - theta) / 180``
+    (a line through (0, 0) and (10, 10) — down-right on screen — returns 0.25). This
+    is the opposite sense to HALCON (``orientation_points_xld`` / ``orientation_xld``
+    / ``orientation_region`` measure counter-clockwise on screen, "mathematically
+    positive"); ``orientation_xld`` and ``orientation_region`` here follow HALCON, so
+    ``xg_orientation = (1 - orientation_xld) mod 1`` on the same contour.
+
     Discontinuity (inherent, documented): a line orientation lives on a circle of
     180 degrees, and this op unrolls it to [0, 1), so the wrap sits at HORIZONTAL —
     a line tilted +0.001 deg returns ~0.0 while -0.001 deg returns ~0.9999. Any

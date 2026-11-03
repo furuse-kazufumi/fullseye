@@ -1,4 +1,4 @@
-# MATH operator help — 114 ops in 12 categories
+# MATH operator help — 115 ops in 12 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/math/<category>/<op>.md` を走査。
 
@@ -57,9 +57,9 @@
 
 [abel_inverse](transform/abel_inverse.md) · [abel_inverse_image](transform/abel_inverse_image.md) · [abel_revolve](transform/abel_revolve.md) · [abel_transform](transform/abel_transform.md) · [dct_transform](transform/dct_transform.md) · [dwt_inverse](transform/dwt_inverse.md) · [dwt_transform](transform/dwt_transform.md) · [hankel_image](transform/hankel_image.md) · [hankel_transform](transform/hankel_transform.md) · [laplace_inverse_talbot](transform/laplace_inverse_talbot.md) · [tf_bilinear](transform/tf_bilinear.md) · [tf_freq_response](transform/tf_freq_response.md) · [tf_impulse_response](transform/tf_impulse_response.md) · [tf_poles_zeros](transform/tf_poles_zeros.md) · [tf_step_response](transform/tf_step_response.md) · [wavelet_filters](transform/wavelet_filters.md)
 
-### wave (6)
+### wave (7)
 
-[wave_fringe_period](wave/wave_fringe_period.md) · [wave_grating_orders](wave/wave_grating_orders.md) · [wave_membrane_mode](wave/wave_membrane_mode.md) · [wave_mode_frequencies](wave/wave_mode_frequencies.md) · [wave_nodal_lines](wave/wave_nodal_lines.md) · [wave_two_slit](wave/wave_two_slit.md)
+[wave_dominant_frequency](wave/wave_dominant_frequency.md) · [wave_fringe_period](wave/wave_fringe_period.md) · [wave_grating_orders](wave/wave_grating_orders.md) · [wave_membrane_mode](wave/wave_membrane_mode.md) · [wave_mode_frequencies](wave/wave_mode_frequencies.md) · [wave_nodal_lines](wave/wave_nodal_lines.md) · [wave_two_slit](wave/wave_two_slit.md)
 
 ---
 © 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.

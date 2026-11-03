@@ -41,6 +41,7 @@ __all__ = [
     "descriptor_distance",
     "fourier_smooth",
     "from_xld",
+    "fit_circle_xld",
     "contour_fourier_complex",
     "contour_epicycle_chain",
     "contour_fourier_truncation_energy",
@@ -70,6 +71,65 @@ def from_xld(contour, i=0):
     if isinstance(i, bool) or not isinstance(i, (int, np.integer)) or not (0 <= int(i) < len(contour["cs"])):
         raise ValueError(f"from_xld: i must be an int in [0, {len(contour['cs'])}), got {i!r}")
     return np.asarray(contour["cs"][i], dtype=np.float64).reshape(-1, 2)
+
+
+#: :func:`fit_circle_xld` が受ける当てはめ方(HALCON ``fit_circle_contour_xld`` の
+#: ``Algorithm`` のうち、外れ値の重みを使わない 2 つ)。
+FIT_CIRCLE_XLD_METHODS = ("geometric", "algebraic")
+
+
+def fit_circle_xld(contour, method="geometric"):
+    """XLD 輪郭 1 本ごとに円を当てはめ、中心の行・列と半径を返す(``table``)。
+
+    HALCON ``fit_circle_contour_xld`` の Row / Column / Radius にあたる。進化 op の
+    ``hx_fit_circle_contour`` は残差(正規化 feature)しか返さないので、輪郭から
+    **位置と大きさ**を読むのはこちら。座標は XLD と同じ **(row, col)**、単位は画素。
+
+    ``method`` は ``"geometric"``(既定。点から円までの距離の二乗和を
+    Levenberg--Marquardt で最小化、Chernov & Lesort 2005 = ``measure.fit_circle_geometric``)
+    か ``"algebraic"``(Kåsa / Coope の代数的最小二乗 = ``measure.fit_circle``。
+    短い円弧では半径が小さく偏る)。返す dict の ``row``・``col``・``radius``・``rms``
+    (点の動径残差の二乗平均平方根)・``n_points`` は輪郭の並び順の list で、
+    ``n_contours`` が当てた本数、``n_skipped`` が点が 3 個未満で飛ばした本数、
+    ``method`` が使った方法。
+
+    空の入力(``contour`` が 0 要素 = 輪郭が 1 本も無い)は ``ValueError``。
+    拒否(``ValueError``): XLD の dict(``{"shape", "cs"}``)でない、未知の ``method``、
+    点が 3 個以上ある輪郭が 1 本も無い、非有限の座標、点が一直線に並ぶ(円が決まらない)。
+    """
+    op = "fit_circle_xld"
+    if not isinstance(contour, dict) or "cs" not in contour:
+        raise ValueError(f"{op}: contour must be an XLD contour dict with key 'cs', "
+                         f"got {type(contour).__name__}")
+    if method not in FIT_CIRCLE_XLD_METHODS:
+        raise ValueError(f"{op}: method must be one of {FIT_CIRCLE_XLD_METHODS}, got {method!r}")
+    cs = list(contour["cs"])
+    if not cs:
+        raise ValueError(f"{op}: contour is empty — pass at least one contour")
+    import measure                                      # 当てはめ本体は measure の 2 関数を共用する
+    fit = measure.fit_circle_geometric if method == "geometric" else measure.fit_circle
+    rows, cols, radii, rms, npts = [], [], [], [], []
+    skipped = 0
+    for c in cs:
+        p = np.asarray(c, dtype=np.float64).reshape(-1, 2)
+        if p.shape[0] < 3:
+            skipped += 1
+            continue
+        if not np.all(np.isfinite(p)):
+            raise ValueError(f"{op}: contour contains non-finite coordinates")
+        try:
+            r = fit(p)
+        except ValueError as exc:
+            raise ValueError(f"{op}: {exc}") from exc
+        rows.append(float(r["cy"]))
+        cols.append(float(r["cx"]))
+        radii.append(float(r["r"]))
+        rms.append(float(r["rms"]))
+        npts.append(int(p.shape[0]))
+    if not radii:
+        raise ValueError(f"{op}: no contour has at least 3 points ({skipped} skipped)")
+    return {"row": rows, "col": cols, "radius": radii, "rms": rms, "n_points": npts,
+            "n_contours": len(radii), "n_skipped": int(skipped), "method": method}
 
 
 # --------------------------------------------------------------------------- #

@@ -1,0 +1,624 @@
+{
+ "method": "Hand-written blind probes. Sources read: docs/ops/INDEX.en.md, a directory walk of docs/ops/<family>/<category>/ listing op note filenames (all categories for 52 families; for the 4 large families 2d/3d/optics/drive only a few categories: 2d measure1d/subpix/contour/texture, 3d robust_fit/match_pose/terrain, optics lensmerit/polarization/telecentric, drive ttc/lateral/agv), and one op note (fit/fit_circle_geometric.md) for format. No recipebook, recipes.py, RECIPE_INDEX.json or gen_recipe* was opened. Each query states a plausible factory/research task in plain words; ops are the author's judgement of core operators, chosen from op names (most notes not opened), so expected op sets are plausible-not-unique. Language alternates en/ja by position (30/30). Every op verified to exist as docs/ops/<family>/*/<op>.md by script.",
+ "queries": [
+  {
+   "family": "2d",
+   "lang": "en",
+   "query": "Measure the gap between two parallel edges of a stamped part along a scan line, with sub-pixel accuracy",
+   "ops": [
+    "m1_measure_pairs",
+    "m1_measure_pos"
+   ]
+  },
+  {
+   "family": "2d",
+   "lang": "ja",
+   "query": "金属表面のヘアライン状の細いキズを、向きのある模様として強調して見つけたい",
+   "ops": [
+    "structure_tensor_coherence",
+    "structure_tensor_orientation",
+    "sk_frangi",
+    "gabor"
+   ]
+  },
+  {
+   "family": "3d",
+   "lang": "en",
+   "query": "Find the axis and radius of a pipe in a laser-scanned point cloud even with clutter around it",
+   "ops": [
+    "ransac_cylinder"
+   ]
+  },
+  {
+   "family": "3d",
+   "lang": "ja",
+   "query": "点群から床の平面を取り除いて、その上に置かれた球状の部品の中心と半径を求めたい",
+   "ops": [
+    "ransac_plane",
+    "ransac_sphere"
+   ]
+  },
+  {
+   "family": "acoustics",
+   "lang": "en",
+   "query": "Diagnose an outer-race fault on a motor bearing from an accelerometer vibration recording",
+   "ops": [
+    "bearing_defect_frequencies",
+    "envelope_spectrum",
+    "spectral_kurtosis"
+   ]
+  },
+  {
+   "family": "annotate",
+   "lang": "ja",
+   "query": "検査画像に寸法線とスケールバーと凡例を入れて、報告書に貼れる図にしたい",
+   "ops": [
+    "annotate_dimension",
+    "annotate_scale_bar",
+    "annotate_legend"
+   ]
+  },
+  {
+   "family": "aoi",
+   "lang": "en",
+   "query": "Correct uneven brightness across circuit-board camera tiles and stitch them into one registered board map",
+   "ops": [
+    "flat_field_correct",
+    "register_image",
+    "tiled_map"
+   ]
+  },
+  {
+   "family": "astrostack",
+   "lang": "ja",
+   "query": "望遠鏡で撮った多数の短時間露光画像を位置合わせし、宇宙線を除去しながら重ね合わせたい",
+   "ops": [
+    "align_frames",
+    "lucky_select",
+    "cosmic_ray_reject_stack",
+    "sigma_clip_stack"
+   ]
+  },
+  {
+   "family": "blob",
+   "lang": "en",
+   "query": "Count pellets on a conveyor image and separate the ones that are stuck together, then measure each one",
+   "ops": [
+    "blob_label",
+    "blob_seeds",
+    "blob_split",
+    "blob_features"
+   ]
+  },
+  {
+   "family": "cadmap",
+   "lang": "ja",
+   "query": "カメラ画像で見つけた欠陥の位置を、CADモデルの表面上の座標に対応付けたい",
+   "ops": [
+    "cad_pixel_to_surface",
+    "cad_defect_to_cad",
+    "cad_visible_faces"
+   ]
+  },
+  {
+   "family": "calib",
+   "lang": "en",
+   "query": "Work out a camera's lens parameters from photos of a dot-grid target plate and convert pixel coordinates to millimetres on the table plane",
+   "ops": [
+    "find_caltab",
+    "camera_calibration",
+    "image_points_to_world_plane"
+   ]
+  },
+  {
+   "family": "codematch",
+   "lang": "ja",
+   "query": "照明の明るさが変わっても安定にテンプレートを探せる、輝度の増減の向きだけを使う照合をしたい",
+   "ops": [
+    "orientation_code",
+    "ocm_match",
+    "increment_sign",
+    "isc_match"
+   ]
+  },
+  {
+   "family": "colortransport",
+   "lang": "en",
+   "query": "Make images from a second camera match the colour look of the reference camera on the line",
+   "ops": [
+    "color_transfer",
+    "histogram_match",
+    "sinkhorn"
+   ]
+  },
+  {
+   "family": "conngraph",
+   "lang": "ja",
+   "query": "神経回路の接続データから、ハブやモジュール構造などネットワークの統計を出したい",
+   "ops": [
+    "graph_from_synapses",
+    "graph_modularity",
+    "graph_rich_club",
+    "graph_betweenness"
+   ]
+  },
+  {
+   "family": "converge",
+   "lang": "en",
+   "query": "From results on coarse, medium and fine meshes, estimate the discretisation error band and the observed order of accuracy",
+   "ops": [
+    "conv_gci",
+    "conv_observed_order"
+   ]
+  },
+  {
+   "family": "dem",
+   "lang": "ja",
+   "query": "標高データから斜面の傾きと、水の流れる向き・集水量を計算したい",
+   "ops": [
+    "dem_slope",
+    "dem_fill_sinks",
+    "dem_flow_direction",
+    "dem_flow_accumulation"
+   ]
+  },
+  {
+   "family": "drive",
+   "lang": "en",
+   "query": "Estimate time to collision with the car ahead from dashcam video using how fast it grows in the image",
+   "ops": [
+    "ttc_from_scale",
+    "ttc_from_flow",
+    "foe_from_flow"
+   ]
+  },
+  {
+   "family": "drive",
+   "lang": "ja",
+   "query": "倉庫内の複数台の搬送ロボットが互いにぶつからない経路をまとめて計画したい",
+   "ops": [
+    "warehouse_grid",
+    "mapf_cbs",
+    "plan_conflicts",
+    "adg_execute"
+   ]
+  },
+  {
+   "family": "emproof",
+   "lang": "en",
+   "query": "Score how well an automatic neuron segmentation agrees with the proofread ground truth, counting merges and splits",
+   "ops": [
+    "seg_variation_of_information",
+    "seg_rand",
+    "seg_contingency"
+   ]
+  },
+  {
+   "family": "fileio",
+   "lang": "ja",
+   "query": "STLのメッシュとCSVの測定表を読み込み、メッシュをPLYで書き出したい",
+   "ops": [
+    "mesh_read_stl",
+    "table_read_csv",
+    "mesh_write_ply"
+   ]
+  },
+  {
+   "family": "fit",
+   "lang": "en",
+   "query": "Fit a circle to edge points that cover only a short arc of a hole and get its centre and radius",
+   "ops": [
+    "fit_circle_geometric"
+   ]
+  },
+  {
+   "family": "flyvision",
+   "lang": "ja",
+   "query": "昆虫の目のような仕組みで、こちらへ近づいてくる物体と衝突までの時間を検出したい",
+   "ops": [
+    "fly_lgmd_eta",
+    "fly_expansion_readout",
+    "fly_tau_from_expansion"
+   ]
+  },
+  {
+   "family": "generative",
+   "lang": "en",
+   "query": "Simulate a scanning electron microscope image of a line pattern and measure the line width from it",
+   "ops": [
+    "sem_image",
+    "sem_line_profile",
+    "sem_cd_measure"
+   ]
+  },
+  {
+   "family": "geocam",
+   "lang": "ja",
+   "query": "屋外カメラの向きを、写っている太陽の位置と撮影日時から推定したい",
+   "ops": [
+    "sun_position",
+    "sun_pixel_position",
+    "camera_orientation_from_sun"
+   ]
+  },
+  {
+   "family": "gfx2d",
+   "lang": "en",
+   "query": "Turn a raw Bayer sensor frame into a white-balanced colour image, fixing dead pixels and black level",
+   "ops": [
+    "raw_black_level",
+    "raw_dead_pixel_correct",
+    "raw_demosaic_bilinear",
+    "awb_gains",
+    "color_correction_matrix"
+   ]
+  },
+  {
+   "family": "graph",
+   "lang": "ja",
+   "query": "駐車のような切り返しを含む、車が実際に走れる最短経路を求めたい",
+   "ops": [
+    "car_reeds_shepp_path",
+    "car_hybrid_astar",
+    "car_dubins_path"
+   ]
+  },
+  {
+   "family": "imgforensics",
+   "lang": "en",
+   "query": "Check whether a photo submitted as evidence was edited, e.g. copy-pasted regions or double JPEG compression",
+   "ops": [
+    "copy_move_regions",
+    "error_level_map",
+    "jpeg_ghost_map",
+    "noise_inconsistency_map"
+   ]
+  },
+  {
+   "family": "imgmetrics",
+   "lang": "ja",
+   "query": "圧縮後の画像の劣化をSSIMやPSNRで数値評価し、色差もあわせて一覧表にしたい",
+   "ops": [
+    "ssim",
+    "psnr",
+    "delta_e_2000",
+    "metrics_table"
+   ]
+  },
+  {
+   "family": "interferometry",
+   "lang": "en",
+   "query": "Get a surface height map from a white-light scanning interferometer image stack",
+   "ops": [
+    "csi_envelope",
+    "csi_peak_position",
+    "csi_height_map"
+   ]
+  },
+  {
+   "family": "lightfield",
+   "lang": "ja",
+   "query": "マイクロレンズアレイ付きカメラの画像から、撮影後にピントを合わせ直したり奥行きを出したりしたい",
+   "ops": [
+    "lf_subaperture",
+    "lf_refocus",
+    "lf_epi_slope",
+    "lf_disparity_to_depth"
+   ]
+  },
+  {
+   "family": "live4d",
+   "lang": "en",
+   "query": "Turn a time series of 3-D microscopy volumes into a video showing how cells move, with motion trails",
+   "ops": [
+    "vol_flow_3d",
+    "volseq_pathline_render",
+    "volseq_mip_video"
+   ]
+  },
+  {
+   "family": "llmcore",
+   "lang": "ja",
+   "query": "トランスフォーマのアテンション計算を、位置の回転埋め込みや正規化も含めて参照実装で確かめたい",
+   "ops": [
+    "rms_norm",
+    "rope_rotate",
+    "attention_softmax",
+    "kv_cache_decode"
+   ]
+  },
+  {
+   "family": "math",
+   "lang": "en",
+   "query": "Fit a polynomial calibration curve to sensor readings and find where it crosses zero",
+   "ops": [
+    "poly_fit",
+    "poly_eval",
+    "poly_roots"
+   ]
+  },
+  {
+   "family": "measure1d",
+   "lang": "ja",
+   "query": "円形の穴の縁をキャリパで何本も測って直径を求め、基準寸法からミリに換算したい",
+   "ops": [
+    "create_metrology_model",
+    "add_metrology_object_circle_measure",
+    "apply_metrology_model",
+    "mm_per_px_from_reference"
+   ]
+  },
+  {
+   "family": "motionmag",
+   "lang": "en",
+   "query": "Make tiny vibrations of a machine visible in a video and measure how far it actually moves",
+   "ops": [
+    "temporal_bandpass",
+    "motion_magnify",
+    "phase_displacement",
+    "displacement_series"
+   ]
+  },
+  {
+   "family": "multivar",
+   "lang": "ja",
+   "query": "実験計画法で少ない試行回数の条件表を作り、各因子の主効果を解析したい",
+   "ops": [
+    "doe_orthogonal_array",
+    "doe_fractional_factorial",
+    "doe_main_effects"
+   ]
+  },
+  {
+   "family": "oned",
+   "lang": "en",
+   "query": "Find peaks and the dominant frequency in a 1-D sensor signal after band-pass filtering it",
+   "ops": [
+    "bandpass",
+    "spectrum",
+    "find_peaks",
+    "peak_subbin"
+   ]
+  },
+  {
+   "family": "optics",
+   "lang": "ja",
+   "query": "偏光カメラの生データから、偏光度や偏光角の画像を作りたい",
+   "ops": [
+    "polarization_demosaic",
+    "stokes_analyze",
+    "mueller_from_intensities"
+   ]
+  },
+  {
+   "family": "optics",
+   "lang": "en",
+   "query": "Check how much the magnification of my telecentric lens changes over the working distance range",
+   "ops": [
+    "magnification_vs_depth",
+    "telecentricity_error",
+    "chief_ray_angle"
+   ]
+  },
+  {
+   "family": "photon",
+   "lang": "ja",
+   "query": "単一光子検出器の到着時間ヒストグラムから、背景を引いて蛍光寿命を推定したい",
+   "ops": [
+    "tcspc_background_subtract",
+    "tcspc_irf_convolve",
+    "lifetime_fit",
+    "lifetime_phasor"
+   ]
+  },
+  {
+   "family": "piv",
+   "lang": "en",
+   "query": "Compute the velocity and vorticity field of a water flow from a pair of particle images, removing bad vectors",
+   "ops": [
+    "piv_multipass",
+    "piv_outlier_mask",
+    "piv_replace_outliers",
+    "piv_vorticity"
+   ]
+  },
+  {
+   "family": "printpath",
+   "lang": "ja",
+   "query": "3Dプリンタ用にメッシュをスライスしてGコードを出し、造形時間を見積もりたい",
+   "ops": [
+    "mesh_slice_contours",
+    "contours_to_gcode",
+    "gcode_write",
+    "gcode_time_estimate"
+   ]
+  },
+  {
+   "family": "profile",
+   "lang": "en",
+   "query": "Measure thickness and leading-edge radius of a turbine blade cross-section and compare it with the nominal shape",
+   "ops": [
+    "profile_thickness",
+    "profile_leading_edge_radius",
+    "profile_align",
+    "profile_deviation"
+   ]
+  },
+  {
+   "family": "quat",
+   "lang": "ja",
+   "query": "カラー画像をRGBチャンネルに分けずに一体として扱い、色付きの模様をテンプレートと照合したい",
+   "ops": [
+    "rgb_to_quaternion",
+    "qft2",
+    "quat_correlate"
+   ]
+  },
+  {
+   "family": "rangedoppler",
+   "lang": "en",
+   "query": "Find the distance and speed of targets from an FMCW radar beat signal",
+   "ops": [
+    "fmcw_window_apply",
+    "fmcw_range_profile",
+    "range_doppler_map",
+    "range_doppler_peaks"
+   ]
+  },
+  {
+   "family": "reprconv",
+   "lang": "ja",
+   "query": "オプティカルフローの結果を色付き画像で見たい。ついでに各画素の速さも出したい",
+   "ops": [
+    "flow_to_rgbimage",
+    "flow_magnitude",
+    "flow_speed"
+   ]
+  },
+  {
+   "family": "residue",
+   "lang": "en",
+   "query": "Recover a large displacement unambiguously from two wrapped periodic readings taken with different pitches",
+   "ops": [
+    "residue_crt",
+    "crt_displacement"
+   ]
+  },
+  {
+   "family": "roughness",
+   "lang": "ja",
+   "query": "表面の形状成分を取り除いてから、算術平均粗さなどの面粗さパラメータを出したい",
+   "ops": [
+    "surface_form_remove",
+    "robust_gaussian_surface",
+    "surface_params",
+    "profile_params"
+   ]
+  },
+  {
+   "family": "segmentation",
+   "lang": "en",
+   "query": "Threshold a low-contrast micrograph automatically and score the binary mask against manual labels",
+   "ops": [
+    "threshold_kittler",
+    "threshold_kapur",
+    "seg_dice_jaccard",
+    "seg_boundary_f"
+   ]
+  },
+  {
+   "family": "shape2d",
+   "lang": "ja",
+   "query": "部品の輪郭形状をフーリエ係数で表して、良品との形の違いを数値化したい",
+   "ops": [
+    "elliptic_fourier",
+    "normalize",
+    "invariants",
+    "descriptor_distance"
+   ]
+  },
+  {
+   "family": "shapestat",
+   "lang": "en",
+   "query": "Align landmark sets from many specimens and build a statistical model of their shape variation",
+   "ops": [
+    "generalized_procrustes",
+    "shape_pca",
+    "shape_explained_variance"
+   ]
+  },
+  {
+   "family": "simcal",
+   "lang": "ja",
+   "query": "シミュレーションのパラメータを実測データに合わせて同定し、その不確かさも出したい",
+   "ops": [
+    "simcal_model",
+    "simcal_fit",
+    "simcal_uncertainty",
+    "simcal_report"
+   ]
+  },
+  {
+   "family": "spc",
+   "lang": "en",
+   "query": "Run a gauge R&R study and compute process capability (Cpk) for a diameter measurement",
+   "ops": [
+    "msa_gauge_rr",
+    "spc_capability",
+    "spc_xbar_r"
+   ]
+  },
+  {
+   "family": "specular",
+   "lang": "ja",
+   "query": "鏡のような塗装面のうねりを、縞模様の映り込みを使って検査したい",
+   "ops": [
+    "deflectometry_screen_pattern",
+    "deflectometry_phase_to_slope",
+    "slope_to_curvature"
+   ]
+  },
+  {
+   "family": "text",
+   "lang": "en",
+   "query": "Locate printed text lines on a product label before running OCR",
+   "ops": [
+    "swt_map",
+    "text_candidates",
+    "text_lines"
+   ]
+  },
+  {
+   "family": "tomography",
+   "lang": "ja",
+   "query": "CTの投影データから断面を再構成し、回転中心のずれとリング状のアーチファクトも直したい",
+   "ops": [
+    "sinogram_center_of_rotation",
+    "ring_artifact_remove",
+    "filtered_backprojection"
+   ]
+  },
+  {
+   "family": "videocube",
+   "lang": "en",
+   "query": "Summarise a long inspection video into a few keyframes and a space-time cube view",
+   "ops": [
+    "video_summary_keyframes",
+    "video_spacetime_cube",
+    "video_cube_cut"
+   ]
+  },
+  {
+   "family": "videostream",
+   "lang": "ja",
+   "query": "固定カメラの映像から背景を差し引いて動く物体だけ取り出したい。照明のちらつきも抑えたい",
+   "ops": [
+    "deflicker",
+    "running_gaussian_background",
+    "running_gaussian_foreground"
+   ]
+  },
+  {
+   "family": "volcolor",
+   "lang": "en",
+   "query": "Colour the labelled regions of a segmented CT volume consistently and show slices with the label overlay",
+   "ops": [
+    "vol_label_palette",
+    "vol_colorize_labels",
+    "vol_label_slice_rgb",
+    "vol_label_overlay"
+   ]
+  },
+  {
+   "family": "vx",
+   "lang": "ja",
+   "query": "組込み向け標準ビジョンAPIと同じ定義で、3x3勾配・勾配強度・非極大抑制を計算したい",
+   "ops": [
+    "vx_sobel3x3",
+    "vx_magnitude",
+    "vx_phase",
+    "vx_nonmax_suppression"
+   ]
+  }
+ ]
+}

@@ -33,7 +33,9 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 ## 使い方
 
-最大の点数を持つ輪郭に楕円を当てはめ(``cv2.fitEllipse``)、``(Ra, Rb, Phi)`` を ``match`` ソートの 3 成分ベクトルで返す —— ``Ra``/``Rb`` は長半径・短半径 [px]、``Phi`` は主軸の角(ラジアン、列軸から反時計回り、-π/2 より大きく π/2 以下)。HALCON の ``elliptic_axis_xld``（Parameters of the equivalent ellipse of contours or polygons.）と同じ 3 値。
+最大の点数を持つ輪郭に楕円を当てはめ(``cv2.fitEllipse``)、``(Ra, Rb, Phi)`` を ``match`` ソートの 3 成分ベクトルで返す —— ``Ra``/``Rb`` は長半径・短半径 [px]、``Phi`` は主軸の角(ラジアン、列軸から**画面上で反時計回り**・行は下向き、-π/2 より大きく π/2 以下)。HALCON の ``elliptic_axis_xld``（Parameters of the equivalent ellipse of contours or polygons.）と同じ 3 値。
+
+★2026-11-03 まで Phi の**符号が逆**だった(``cv2.fitEllipse`` の角は画面上で時計回り。反時計回り 20 度の棒で -0.3505 rad)。
 
 領域版 ``elliptic_axis`` と同じ形。輪郭点への最小二乗当てはめなので、領域の
 モーメントからの値とは一致しない(30x70 の矩形で region (40.41, 17.31, 0.0) 対

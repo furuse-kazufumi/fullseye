@@ -5,7 +5,7 @@ category: wave
 in: image2d
 out: measurement
 gpu: なし
-examples: [poc_beats_fringes_and_screens]
+examples: [poc_beats_fringes_and_screens, wave_dominant_frequency_grating]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.9.0  # fullseye lib version this note was generated for
@@ -59,6 +59,7 @@ mathops の全 op は入力を検証してから計算する(黙って通さな�
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [poc_beats_fringes_and_screens](../../../../examples/poc_beats_fringes_and_screens.py) — `py -3.11 examples/poc_beats_fringes_and_screens.py`
+- [wave_dominant_frequency_grating](../../../../examples/wave_dominant_frequency_grating.py) — `py -3.11 examples/wave_dominant_frequency_grating.py`
 
 ## 型が繋がる次の op(`measurement` を入力に取れる)
 
@@ -66,7 +67,7 @@ mathops の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 同カテゴリ(`wave`)
 
-[wave_membrane_mode](wave_membrane_mode.md) · [wave_mode_frequencies](wave_mode_frequencies.md) · [wave_nodal_lines](wave_nodal_lines.md) · [wave_two_slit](wave_two_slit.md) · [wave_grating_orders](wave_grating_orders.md)
+[wave_membrane_mode](wave_membrane_mode.md) · [wave_mode_frequencies](wave_mode_frequencies.md) · [wave_nodal_lines](wave_nodal_lines.md) · [wave_two_slit](wave_two_slit.md) · [wave_dominant_frequency](wave_dominant_frequency.md) · [wave_grating_orders](wave_grating_orders.md)
 
 ---
 *Provenance: mathops.py — MATH operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*
