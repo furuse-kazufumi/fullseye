@@ -125,6 +125,9 @@ CHAIN = [
     # device="auto" の規則表。入力は GPU の実測ログ(docs/perf/logs/crossover、手で測って commit)と
     # 許可リスト(fullseye/data/gpu_auto_allow.json)と registry。どの段の生成物も読まない。
     (["tools/gen_device_rules.py"], "fullseye/data/DEVICE_RULES.json(device=auto の実測規則と許可リストの道)"),
+    # 領域の解析の族の採否(実測ログ docs/perf/logs/label、手で測って commit)と、レシピ全部に
+    # explain_pipeline を当てた表。規則表(DEVICE_RULES)とレシピの索引を読むので、その 2 段の後。
+    (["tools/gen_gpu_routes.py"], "fullseye/data/GPU_ACCEL_USE.json + docs/perf/pipeline_routes.{json,md}"),
 ]
 
 #: ---- 段の依存表(2026-10-15)------------------------------------------------------
@@ -192,6 +195,8 @@ OUTPUTS = {
     "tools/measure_mcp_context.py": ["docs/mcp_context_benchmark.json"],
     "tools/gen_rag_benchmark_report.py": ["docs/rag_synonym_gaps.json"],
     "tools/gen_device_rules.py": ["fullseye/data/DEVICE_RULES.json"],
+    "tools/gen_gpu_routes.py": ["fullseye/data/GPU_ACCEL_USE.json", "docs/perf/pipeline_routes.json",
+                                "docs/perf/pipeline_routes.md"],
     # 2026-10-23: 手で列挙していて #116 の文献 4 本が漏れ、regen が exit 1(--check は緑)だった。
     #   件数を打ち直す文献ノートの実ファイルと合わせる(OSS_LANDSCAPE.md は gen_oss_landscape.py の生成物、
     #   oss_landscape_notes.md は手書きの注で、どちらもこの段は書かない)。
@@ -272,6 +277,8 @@ READS = {
     "tools/gen_doc_counts.py": ["docs/README.md", "docs/README.*.md"],
     # registry(api)を組むときに op のつまみ表を読む(書く段 gen_mcp_data は鎖の前にある)
     "tools/gen_device_rules.py": ["fullseye/data/op_knob.json"],
+    "tools/gen_gpu_routes.py": ["fullseye/data/DEVICE_RULES.json", "fullseye/data/RECIPE_INDEX.json",
+                                "fullseye/data/op_knob.json"],
 }
 
 #: 順序の例外 —— 読むが、後ろの段が書いてもよいもの。(段, READS のパターン) → 理由。

@@ -1,0 +1,1403 @@
+{
+ "assume_cuda": true,
+ "device": "auto",
+ "excluded_for_before": [
+  "area_center",
+  "area_frac",
+  "blob_count",
+  "connect_and_holes",
+  "count_obj",
+  "cv_cc_count",
+  "fill_up_shape",
+  "r2_sort_region",
+  "r3_background_seg",
+  "r3_select_region_point",
+  "remove_small",
+  "select_largest",
+  "select_shape",
+  "select_shape_std",
+  "sk_clear_border",
+  "sk_remove_holes",
+  "smallest_rectangle1"
+ ],
+ "generated_by": "tools/gen_gpu_routes.py",
+ "recipes": [
+  {
+   "after": {
+    "n_gpu_stages": 2,
+    "n_switches": 0,
+    "n_transfers": 1,
+    "stages": [
+     {
+      "on": "gpu",
+      "op": "bilateral",
+      "path": "accel",
+      "reason": null
+     },
+     {
+      "on": "gpu",
+      "op": "unsharp",
+      "path": "accel",
+      "reason": null
+     }
+    ],
+    "switches": [],
+    "type_breaks": []
+   },
+   "before": {
+    "n_gpu_stages": 2,
+    "n_switches": 0,
+    "n_transfers": 1,
+    "stages": [
+     {
+      "on": "gpu",
+      "op": "bilateral",
+      "path": "accel",
+      "reason": null
+     },
+     {
+      "on": "gpu",
+      "op": "unsharp",
+      "path": "accel",
+      "reason": null
+     }
+    ],
+    "switches": [],
+    "type_breaks": []
+   },
+   "recipe": "Denoise — bilateral + unsharp",
+   "stages": [
+    "bilateral",
+    "unsharp"
+   ]
+  },
+  {
+   "after": {
+    "n_gpu_stages": 1,
+    "n_switches": 0,
+    "n_transfers": 1,
+    "stages": [
+     {
+      "on": "gpu",
+      "op": "sk_tv",
+      "path": "accel",
+      "reason": null
+     }
+    ],
+    "switches": [],
+    "type_breaks": []
+   },
+   "before": {
+    "n_gpu_stages": 1,
+    "n_switches": 0,
+    "n_transfers": 1,
+    "stages": [
+     {
+      "on": "gpu",
+      "op": "sk_tv",
+      "path": "accel",
+      "reason": null
+     }
+    ],
+    "switches": [],
+    "type_breaks": []
+   },
+   "recipe": "Denoise — total variation",
+   "stages": [
+    "sk_tv"
+   ]
+  },
+  {
+   "after": {
+    "n_gpu_stages": 1,
+    "n_switches": 0,
+    "n_transfers": 1,
+    "stages": [
+     {
+      "on": "gpu",
+      "op": "median",
+      "path": "accel",
+      "reason": null
+     }
+    ],
+    "switches": [],
+    "type_breaks": []
+   },
+   "before": {
+    "n_gpu_stages": 1,
+    "n_switches": 0,
+    "n_transfers": 1,
+    "stages": [
+     {
+      "on": "gpu",
+      "op": "median",
+      "path": "accel",
+      "reason": null
+     }
+    ],
+    "switches": [],
+    "type_breaks": []
+   },
+   "recipe": "Denoise — median",
+   "stages": [
+    "median"
+   ]
+  },
+  {
+   "after": {
+    "n_gpu_stages": 3,
+    "n_switches": 0,
+    "n_transfers": 1,
+    "stages": [
+     {
+      "on": "gpu",
+      "op": "gaussian",
+      "path": "accel",
+      "reason": null
+     },
+     {
+      "on": "gpu",
+      "op": "sobel_amp",
+      "path": "accel",
+      "reason": null
+     },
+     {
+      "on": "gpu",
+      "op": "otsu",
+      "path": "accel",
+      "reason": null
+     }
+    ],
+    "switches": [],
+    "type_breaks": []
+   },
+   "before": {
+    "n_gpu_stages": 3,
+    "n_switches": 0,
+    "n_transfers": 1,
+    "stages": [
+     {
+      "on": "gpu",
+      "op": "gaussian",
+      "path": "accel",
+      "reason": null
+     },
+     {
+      "on": "gpu",
+      "op": "sobel_amp",
+      "path": "accel",
+      "reason": null
+     },
+     {
+      "on": "gpu",
+      "op": "otsu",
+      "path": "accel",
+      "reason": null
+     }
+    ],
+    "switches": [],
+    "type_breaks": []
+   },
+   "recipe": "Edge — Sobel + Otsu",
+   "stages": [
+    "gaussian",
+    "sobel_amp",
+    "otsu"
+   ]
+  },
+  {
+   "after": {
+    "n_gpu_stages": 2,
+    "n_switches": 0,
+    "n_transfers": 1,
+    "stages": [
+     {
+      "on": "gpu",
+      "op": "gaussian",
+      "path": "accel",
+      "reason": null
+     },
+     {
+      "on": "gpu",
+      "op": "canny",
+      "path": "accel",
+      "reason": null
+     }
+    ],
+    "switches": [],
+    "type_breaks": []
+   },
+   "before": {
+    "n_gpu_stages": 2,
+    "n_switches": 0,
+    "n_transfers": 1,
+    "stages": [
+     {
+      "on": "gpu",
+      "op": "gaussian",
+      "path": "accel",
+      "reason": null
+     },
+     {
+      "on": "gpu",
+      "op": "canny",
+      "path": "accel",
+      "reason": null
+     }
+    ],
+    "switches": [],
+    "type_breaks": []
+   },
+   "recipe": "Edge — Canny",
+   "stages": [
+    "gaussian",
+    "canny"
+   ]
+  },
+  {
+   "after": {
+    "n_gpu_stages": 4,
+    "n_switches": 0,
+    "n_transfers": 1,
+    "stages": [
+     {
+      "on": "gpu",
+      "op": "gaussian",
+      "path": "accel",
+      "reason": null
+     },
+     {
+      "on": "gpu",
+      "op": "otsu",
+      "path": "accel",
+      "reason": null
+     },
+     {
+      "on": "gpu",
+      "op": "fill_up",
+      "path": "accel",
+      "reason": null
+     },
+     {
+      "on": "gpu",
+      "op": "remove_small",
+      "path": "accel",
+      "reason": null
+     }
+    ],
+    "switches": [],
+    "type_breaks": []
+   },
+   "before": {
+    "n_gpu_stages": 3,
+    "n_switches": 1,
+    "n_transfers": 1,
+    "stages": [
+     {
+      "on": "gpu",
+      "op": "gaussian",
+      "path": "accel",
+      "reason": null
+     },
+     {
+      "on": "gpu",
+      "op": "otsu",
+      "path": "accel",
+      "reason": null
+     },
+     {
+      "on": "gpu",
+      "op": "fill_up",
+      "path": "accel",
+      "reason": null
+     },
+     {
+      "on": "cpu",
+      "op": "remove_small",
+      "path": "cpu",
+      "reason": "not_listed"
+     }
+    ],
+    "switches": [
+     {
+      "at": 3,
+      "from": "accel",
+      "op": "remove_small",
+      "reason": "not_listed",
+      "to": "cpu"
+     }
+    ],
+    "type_breaks": []
+   },
+   "recipe": "Segment — blob / coin",
+   "stages": [
+    "gaussian",
+    "otsu",
+    "fill_up",
+    "remove_small"
+   ]
+  },
+  {
+   "after": {
+    "n_gpu_stages": 4,
+    "n_switches": 0,
+    "n_transfers": 1,
+    "stages": [
+     {
+      "on": "gpu",
+      "op": "gaussian",
+      "path": "accel",
+      "reason": null
+     },
+     {
+      "on": "gpu",
+      "op": "otsu",
+      "path": "accel",
+      "reason": null
+     },
+     {
+      "on": "gpu",
+      "op": "fill_up",
+      "path": "accel",
+      "reason": null
+     },
+     {
+      "on": "gpu",
+      "op": "count_obj",
+      "path": "accel",
+      "reason": null
+     }
+    ],
+    "switches": [],
+    "type_breaks": []
+   },
+   "before": {
+    "n_gpu_stages": 3,
+    "n_switches": 1,
+    "n_transfers": 1,
+    "stages": [
+     {
+      "on": "gpu",
+      "op": "gaussian",
+      "path": "accel",
+      "reason": null
+     },
+     {
+      "on": "gpu",
+      "op": "otsu",
+      "path": "accel",
+      "reason": null
+     },
+     {
+      "on": "gpu",
+      "op": "fill_up",
+      "path": "accel",
+      "reason": null
+     },
+     {
+      "on": "cpu",
+      "op": "count_obj",
+      "path": "cpu",
+      "reason": "not_listed"
+     }
+    ],
+    "switches": [
+     {
+      "at": 3,
+      "from": "accel",
+      "op": "count_obj",
+      "reason": "not_listed",
+      "to": "cpu"
+     }
+    ],
+    "type_breaks": []
+   },
+   "recipe": "Count — blobs",
+   "stages": [
+    "gaussian",
+    "otsu",
+    "fill_up",
+    "count_obj"
+   ]
+  },
+  {
+   "after": {
+    "n_gpu_stages": 1,
+    "n_switches": 0,
+    "n_transfers": 1,
+    "stages": [
+     {
+      "on": "gpu",
+      "op": "adaptive_gauss_thresh",
+      "path": "accel",
+      "reason": null
+     }
+    ],
+    "switches": [],
+    "type_breaks": []
+   },
+   "before": {
+    "n_gpu_stages": 1,
+    "n_switches": 0,
+    "n_transfers": 1,
+    "stages": [
+     {
+      "on": "gpu",
+      "op": "adaptive_gauss_thresh",
+      "path": "accel",
+      "reason": null
+     }
+    ],
+    "switches": [],
+    "type_breaks": []
+   },
+   "recipe": "Binarize — document (adaptive)",
+   "stages": [
+    "adaptive_gauss_thresh"
+   ]
+  },
+  {
+   "after": {
+    "n_gpu_stages": 1,
+    "n_switches": 0,
+    "n_transfers": 1,
+    "stages": [
+     {
+      "on": "gpu",
+      "op": "clahe",
+      "path": "allow_single",
+      "reason": null
+     }
+    ],
+    "switches": [],
+    "type_breaks": []
+   },
+   "before": {
+    "n_gpu_stages": 1,
+    "n_switches": 0,
+    "n_transfers": 1,
+    "stages": [
+     {
+      "on": "gpu",
+      "op": "clahe",
+      "path": "allow_single",
+      "reason": null
+     }
+    ],
+    "switches": [],
+    "type_breaks": []
+   },
+   "recipe": "Enhance — CLAHE contrast",
+   "stages": [
+    "clahe"
+   ]
+  },
+  {
+   "after": {
+    "n_gpu_stages": 1,
+    "n_switches": 0,
+    "n_transfers": 1,
+    "stages": [
+     {
+      "on": "gpu",
+      "op": "equalize",
+      "path": "accel",
+      "reason": null
+     }
+    ],
+    "switches": [],
+    "type_breaks": []
+   },
+   "before": {
+    "n_gpu_stages": 1,
+    "n_switches": 0,
+    "n_transfers": 1,
+    "stages": [
+     {
+      "on": "gpu",
+      "op": "equalize",
+      "path": "accel",
+      "reason": null
+     }
+    ],
+    "switches": [],
+    "type_breaks": []
+   },
+   "recipe": "Enhance — histogram equalize",
+   "stages": [
+    "equalize"
+   ]
+  },
+  {
+   "after": {
+    "n_gpu_stages": 1,
+    "n_switches": 0,
+    "n_transfers": 1,
+    "stages": [
+     {
+      "on": "gpu",
+      "op": "gamma",
+      "path": "accel",
+      "reason": null
+     }
+    ],
+    "switches": [],
+    "type_breaks": []
+   },
+   "before": {
+    "n_gpu_stages": 1,
+    "n_switches": 0,
+    "n_transfers": 1,
+    "stages": [
+     {
+      "on": "gpu",
+      "op": "gamma",
+      "path": "accel",
+      "reason": null
+     }
+    ],
+    "switches": [],
+    "type_breaks": []
+   },
+   "recipe": "Enhance — gamma",
+   "stages": [
+    "gamma"
+   ]
+  },
+  {
+   "after": {
+    "n_gpu_stages": 1,
+    "n_switches": 0,
+    "n_transfers": 1,
+    "stages": [
+     {
+      "on": "gpu",
+      "op": "unsharp",
+      "path": "accel",
+      "reason": null
+     }
+    ],
+    "switches": [],
+    "type_breaks": []
+   },
+   "before": {
+    "n_gpu_stages": 1,
+    "n_switches": 0,
+    "n_transfers": 1,
+    "stages": [
+     {
+      "on": "gpu",
+      "op": "unsharp",
+      "path": "accel",
+      "reason": null
+     }
+    ],
+    "switches": [],
+    "type_breaks": []
+   },
+   "recipe": "Sharpen — unsharp mask",
+   "stages": [
+    "unsharp"
+   ]
+  },
+  {
+   "after": {
+    "n_gpu_stages": 1,
+    "n_switches": 0,
+    "n_transfers": 1,
+    "stages": [
+     {
+      "on": "gpu",
+      "op": "highpass",
+      "path": "accel",
+      "reason": null
+     }
+    ],
+    "switches": [],
+    "type_breaks": []
+   },
+   "before": {
+    "n_gpu_stages": 1,
+    "n_switches": 0,
+    "n_transfers": 1,
+    "stages": [
+     {
+      "on": "gpu",
+      "op": "highpass",
+      "path": "accel",
+      "reason": null
+     }
+    ],
+    "switches": [],
+    "type_breaks": []
+   },
+   "recipe": "Sharpen — highpass",
+   "stages": [
+    "highpass"
+   ]
+  },
+  {
+   "after": {
+    "n_gpu_stages": 1,
+    "n_switches": 0,
+    "n_transfers": 1,
+    "stages": [
+     {
+      "on": "gpu",
+      "op": "gabor",
+      "path": "allow_single",
+      "reason": null
+     }
+    ],
+    "switches": [],
+    "type_breaks": []
+   },
+   "before": {
+    "n_gpu_stages": 1,
+    "n_switches": 0,
+    "n_transfers": 1,
+    "stages": [
+     {
+      "on": "gpu",
+      "op": "gabor",
+      "path": "allow_single",
+      "reason": null
+     }
+    ],
+    "switches": [],
+    "type_breaks": []
+   },
+   "recipe": "Texture — Gabor",
+   "stages": [
+    "gabor"
+   ]
+  },
+  {
+   "after": {
+    "n_gpu_stages": 1,
+    "n_switches": 0,
+    "n_transfers": 1,
+    "stages": [
+     {
+      "on": "gpu",
+      "op": "std_filter",
+      "path": "accel",
+      "reason": null
+     }
+    ],
+    "switches": [],
+    "type_breaks": []
+   },
+   "before": {
+    "n_gpu_stages": 1,
+    "n_switches": 0,
+    "n_transfers": 1,
+    "stages": [
+     {
+      "on": "gpu",
+      "op": "std_filter",
+      "path": "accel",
+      "reason": null
+     }
+    ],
+    "switches": [],
+    "type_breaks": []
+   },
+   "recipe": "Texture — local std",
+   "stages": [
+    "std_filter"
+   ]
+  },
+  {
+   "after": {
+    "n_gpu_stages": 0,
+    "n_switches": 0,
+    "n_transfers": 0,
+    "stages": [
+     {
+      "on": "cpu",
+      "op": "sk_corner_harris",
+      "path": "cpu",
+      "reason": "not_listed"
+     }
+    ],
+    "switches": [],
+    "type_breaks": []
+   },
+   "before": {
+    "n_gpu_stages": 0,
+    "n_switches": 0,
+    "n_transfers": 0,
+    "stages": [
+     {
+      "on": "cpu",
+      "op": "sk_corner_harris",
+      "path": "cpu",
+      "reason": "not_listed"
+     }
+    ],
+    "switches": [],
+    "type_breaks": []
+   },
+   "recipe": "Keypoints — Harris corners",
+   "stages": [
+    "sk_corner_harris"
+   ]
+  },
+  {
+   "after": {
+    "n_gpu_stages": 0,
+    "n_switches": 0,
+    "n_transfers": 0,
+    "stages": [
+     {
+      "on": "cpu",
+      "op": "sk_dog",
+      "path": "cpu",
+      "reason": "not_listed"
+     }
+    ],
+    "switches": [],
+    "type_breaks": []
+   },
+   "before": {
+    "n_gpu_stages": 0,
+    "n_switches": 0,
+    "n_transfers": 0,
+    "stages": [
+     {
+      "on": "cpu",
+      "op": "sk_dog",
+      "path": "cpu",
+      "reason": "not_listed"
+     }
+    ],
+    "switches": [],
+    "type_breaks": []
+   },
+   "recipe": "Blobs — Difference of Gaussians",
+   "stages": [
+    "sk_dog"
+   ]
+  },
+  {
+   "after": {
+    "n_gpu_stages": 1,
+    "n_switches": 0,
+    "n_transfers": 1,
+    "stages": [
+     {
+      "on": "gpu",
+      "op": "morph_grad",
+      "path": "accel",
+      "reason": null
+     }
+    ],
+    "switches": [],
+    "type_breaks": []
+   },
+   "before": {
+    "n_gpu_stages": 1,
+    "n_switches": 0,
+    "n_transfers": 1,
+    "stages": [
+     {
+      "on": "gpu",
+      "op": "morph_grad",
+      "path": "accel",
+      "reason": null
+     }
+    ],
+    "switches": [],
+    "type_breaks": []
+   },
+   "recipe": "Morphology — gradient",
+   "stages": [
+    "morph_grad"
+   ]
+  },
+  {
+   "after": {
+    "n_gpu_stages": 3,
+    "n_switches": 1,
+    "n_transfers": 2,
+    "stages": [
+     {
+      "on": "gpu",
+      "op": "gaussian",
+      "path": "accel",
+      "reason": null
+     },
+     {
+      "on": "gpu",
+      "op": "otsu",
+      "path": "accel",
+      "reason": null
+     },
+     {
+      "on": "gpu",
+      "op": "distance_transform",
+      "path": "allow_single",
+      "reason": null
+     }
+    ],
+    "switches": [
+     {
+      "at": 2,
+      "from": "accel",
+      "op": "distance_transform",
+      "reason": "engine_change",
+      "to": "shadow"
+     }
+    ],
+    "type_breaks": []
+   },
+   "before": {
+    "n_gpu_stages": 3,
+    "n_switches": 1,
+    "n_transfers": 2,
+    "stages": [
+     {
+      "on": "gpu",
+      "op": "gaussian",
+      "path": "accel",
+      "reason": null
+     },
+     {
+      "on": "gpu",
+      "op": "otsu",
+      "path": "accel",
+      "reason": null
+     },
+     {
+      "on": "gpu",
+      "op": "distance_transform",
+      "path": "allow_single",
+      "reason": null
+     }
+    ],
+    "switches": [
+     {
+      "at": 2,
+      "from": "accel",
+      "op": "distance_transform",
+      "reason": "engine_change",
+      "to": "shadow"
+     }
+    ],
+    "type_breaks": []
+   },
+   "recipe": "Shape — distance transform",
+   "stages": [
+    "gaussian",
+    "otsu",
+    "distance_transform"
+   ]
+  },
+  {
+   "after": {
+    "n_gpu_stages": 2,
+    "n_switches": 0,
+    "n_transfers": 1,
+    "stages": [
+     {
+      "on": "gpu",
+      "op": "gaussian",
+      "path": "accel",
+      "reason": null
+     },
+     {
+      "on": "gpu",
+      "op": "local_max",
+      "path": "accel",
+      "reason": null
+     }
+    ],
+    "switches": [],
+    "type_breaks": []
+   },
+   "before": {
+    "n_gpu_stages": 2,
+    "n_switches": 0,
+    "n_transfers": 1,
+    "stages": [
+     {
+      "on": "gpu",
+      "op": "gaussian",
+      "path": "accel",
+      "reason": null
+     },
+     {
+      "on": "gpu",
+      "op": "local_max",
+      "path": "accel",
+      "reason": null
+     }
+    ],
+    "switches": [],
+    "type_breaks": []
+   },
+   "recipe": "Spots — local maxima",
+   "stages": [
+    "gaussian",
+    "local_max"
+   ]
+  },
+  {
+   "after": {
+    "n_gpu_stages": 3,
+    "n_switches": 2,
+    "n_transfers": 2,
+    "stages": [
+     {
+      "on": "gpu",
+      "op": "gaussian",
+      "path": "accel",
+      "reason": null
+     },
+     {
+      "on": "cpu",
+      "op": "sk_rolling_ball",
+      "path": "cpu",
+      "reason": "not_listed"
+     },
+     {
+      "on": "gpu",
+      "op": "threshold",
+      "path": "accel",
+      "reason": null
+     },
+     {
+      "on": "gpu",
+      "op": "select_shape",
+      "path": "accel",
+      "reason": null
+     }
+    ],
+    "switches": [
+     {
+      "at": 1,
+      "from": "accel",
+      "op": "sk_rolling_ball",
+      "reason": "not_listed",
+      "to": "cpu"
+     },
+     {
+      "at": 2,
+      "from": "cpu",
+      "op": "threshold",
+      "reason": null,
+      "to": "accel"
+     }
+    ],
+    "type_breaks": []
+   },
+   "before": {
+    "n_gpu_stages": 2,
+    "n_switches": 3,
+    "n_transfers": 2,
+    "stages": [
+     {
+      "on": "gpu",
+      "op": "gaussian",
+      "path": "accel",
+      "reason": null
+     },
+     {
+      "on": "cpu",
+      "op": "sk_rolling_ball",
+      "path": "cpu",
+      "reason": "not_listed"
+     },
+     {
+      "on": "gpu",
+      "op": "threshold",
+      "path": "accel",
+      "reason": null
+     },
+     {
+      "on": "cpu",
+      "op": "select_shape",
+      "path": "cpu",
+      "reason": "not_listed"
+     }
+    ],
+    "switches": [
+     {
+      "at": 1,
+      "from": "accel",
+      "op": "sk_rolling_ball",
+      "reason": "not_listed",
+      "to": "cpu"
+     },
+     {
+      "at": 2,
+      "from": "cpu",
+      "op": "threshold",
+      "reason": null,
+      "to": "accel"
+     },
+     {
+      "at": 3,
+      "from": "accel",
+      "op": "select_shape",
+      "reason": "not_listed",
+      "to": "cpu"
+     }
+    ],
+    "type_breaks": []
+   },
+   "recipe": "FA — scratch on hairline metal",
+   "stages": [
+    "gaussian",
+    "sk_rolling_ball",
+    "threshold",
+    "select_shape"
+   ]
+  },
+  {
+   "after": {
+    "n_gpu_stages": 4,
+    "n_switches": 2,
+    "n_transfers": 3,
+    "stages": [
+     {
+      "on": "gpu",
+      "op": "gaussian",
+      "path": "accel",
+      "reason": null
+     },
+     {
+      "on": "gpu",
+      "op": "hx_plane_deviation",
+      "path": "allow_single",
+      "reason": null
+     },
+     {
+      "on": "gpu",
+      "op": "threshold",
+      "path": "accel",
+      "reason": null
+     },
+     {
+      "on": "gpu",
+      "op": "select_shape",
+      "path": "accel",
+      "reason": null
+     }
+    ],
+    "switches": [
+     {
+      "at": 1,
+      "from": "accel",
+      "op": "hx_plane_deviation",
+      "reason": "engine_change",
+      "to": "shadow"
+     },
+     {
+      "at": 2,
+      "from": "shadow",
+      "op": "threshold",
+      "reason": "engine_change",
+      "to": "accel"
+     }
+    ],
+    "type_breaks": []
+   },
+   "before": {
+    "n_gpu_stages": 3,
+    "n_switches": 3,
+    "n_transfers": 3,
+    "stages": [
+     {
+      "on": "gpu",
+      "op": "gaussian",
+      "path": "accel",
+      "reason": null
+     },
+     {
+      "on": "gpu",
+      "op": "hx_plane_deviation",
+      "path": "allow_single",
+      "reason": null
+     },
+     {
+      "on": "gpu",
+      "op": "threshold",
+      "path": "accel",
+      "reason": null
+     },
+     {
+      "on": "cpu",
+      "op": "select_shape",
+      "path": "cpu",
+      "reason": "not_listed"
+     }
+    ],
+    "switches": [
+     {
+      "at": 1,
+      "from": "accel",
+      "op": "hx_plane_deviation",
+      "reason": "engine_change",
+      "to": "shadow"
+     },
+     {
+      "at": 2,
+      "from": "shadow",
+      "op": "threshold",
+      "reason": "engine_change",
+      "to": "accel"
+     },
+     {
+      "at": 3,
+      "from": "accel",
+      "op": "select_shape",
+      "reason": "not_listed",
+      "to": "cpu"
+     }
+    ],
+    "type_breaks": []
+   },
+   "recipe": "FA — dent and foreign fibre on resin",
+   "stages": [
+    "gaussian",
+    "hx_plane_deviation",
+    "threshold",
+    "select_shape"
+   ]
+  },
+  {
+   "after": {
+    "n_gpu_stages": 3,
+    "n_switches": 0,
+    "n_transfers": 1,
+    "stages": [
+     {
+      "on": "gpu",
+      "op": "gaussian",
+      "path": "accel",
+      "reason": null
+     },
+     {
+      "on": "gpu",
+      "op": "otsu",
+      "path": "accel",
+      "reason": null
+     },
+     {
+      "on": "gpu",
+      "op": "select_shape",
+      "path": "accel",
+      "reason": null
+     }
+    ],
+    "switches": [],
+    "type_breaks": []
+   },
+   "before": {
+    "n_gpu_stages": 2,
+    "n_switches": 1,
+    "n_transfers": 1,
+    "stages": [
+     {
+      "on": "gpu",
+      "op": "gaussian",
+      "path": "accel",
+      "reason": null
+     },
+     {
+      "on": "gpu",
+      "op": "otsu",
+      "path": "accel",
+      "reason": null
+     },
+     {
+      "on": "cpu",
+      "op": "select_shape",
+      "path": "cpu",
+      "reason": "not_listed"
+     }
+    ],
+    "switches": [
+     {
+      "at": 2,
+      "from": "accel",
+      "op": "select_shape",
+      "reason": "not_listed",
+      "to": "cpu"
+     }
+    ],
+    "type_breaks": []
+   },
+   "recipe": "FA — engraved lot code (binarize for OCR)",
+   "stages": [
+    "gaussian",
+    "otsu",
+    "select_shape"
+   ]
+  },
+  {
+   "after": {
+    "n_gpu_stages": 3,
+    "n_switches": 0,
+    "n_transfers": 1,
+    "stages": [
+     {
+      "on": "gpu",
+      "op": "otsu",
+      "path": "accel",
+      "reason": null
+     },
+     {
+      "on": "gpu",
+      "op": "sk_clear_border",
+      "path": "accel",
+      "reason": null
+     },
+     {
+      "on": "gpu",
+      "op": "count_obj",
+      "path": "accel",
+      "reason": null
+     }
+    ],
+    "switches": [],
+    "type_breaks": []
+   },
+   "before": {
+    "n_gpu_stages": 1,
+    "n_switches": 1,
+    "n_transfers": 1,
+    "stages": [
+     {
+      "on": "gpu",
+      "op": "otsu",
+      "path": "accel",
+      "reason": null
+     },
+     {
+      "on": "cpu",
+      "op": "sk_clear_border",
+      "path": "cpu",
+      "reason": "not_listed"
+     },
+     {
+      "on": "cpu",
+      "op": "count_obj",
+      "path": "cpu",
+      "reason": "not_listed"
+     }
+    ],
+    "switches": [
+     {
+      "at": 1,
+      "from": "accel",
+      "op": "sk_clear_border",
+      "reason": "not_listed",
+      "to": "cpu"
+     }
+    ],
+    "type_breaks": []
+   },
+   "recipe": "FA — count holes in a back-lit plate",
+   "stages": [
+    "otsu",
+    "sk_clear_border",
+    "count_obj"
+   ]
+  },
+  {
+   "after": {
+    "n_gpu_stages": 3,
+    "n_switches": 0,
+    "n_transfers": 1,
+    "stages": [
+     {
+      "on": "gpu",
+      "op": "gaussian",
+      "path": "accel",
+      "reason": null
+     },
+     {
+      "on": "gpu",
+      "op": "local_threshold",
+      "path": "accel",
+      "reason": null
+     },
+     {
+      "on": "gpu",
+      "op": "select_shape",
+      "path": "accel",
+      "reason": null
+     }
+    ],
+    "switches": [],
+    "type_breaks": []
+   },
+   "before": {
+    "n_gpu_stages": 2,
+    "n_switches": 1,
+    "n_transfers": 1,
+    "stages": [
+     {
+      "on": "gpu",
+      "op": "gaussian",
+      "path": "accel",
+      "reason": null
+     },
+     {
+      "on": "gpu",
+      "op": "local_threshold",
+      "path": "accel",
+      "reason": null
+     },
+     {
+      "on": "cpu",
+      "op": "select_shape",
+      "path": "cpu",
+      "reason": "not_listed"
+     }
+    ],
+    "switches": [
+     {
+      "at": 2,
+      "from": "accel",
+      "op": "select_shape",
+      "reason": "not_listed",
+      "to": "cpu"
+     }
+    ],
+    "type_breaks": []
+   },
+   "recipe": "FA — weld porosity (X-ray)",
+   "stages": [
+    "gaussian",
+    "local_threshold",
+    "select_shape"
+   ]
+  }
+ ],
+ "shape": [
+  2048,
+  2048
+ ],
+ "summary": {
+  "after": {
+   "all_gpu_recipes": 11,
+   "gpu_stages": 36,
+   "recipes": 12,
+   "stages": 37,
+   "switches": 5,
+   "transfers": 16
+  },
+  "before": {
+   "all_gpu_recipes": 5,
+   "gpu_stages": 28,
+   "recipes": 12,
+   "stages": 37,
+   "switches": 12,
+   "transfers": 16
+  }
+ }
+}

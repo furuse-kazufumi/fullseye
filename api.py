@@ -2057,8 +2057,12 @@ def explain_device(device: str = "auto", *, stages=None, shape=None, n: int = 1)
     return {k: v for k, v in _decide(device, stages, shape, n).items() if not k.startswith("_")}
 
 
-def _decide(device, stages, shape, n) -> dict:
-    """:func:`resolve_device` と :func:`explain_device` の本体。``_paths`` は段ごとの経路(内部用)。"""
+def _decide(device, stages, shape, n, assume_cuda: bool = False) -> dict:
+    """:func:`resolve_device` と :func:`explain_device` の本体。``_paths`` / ``_reasons`` は段ごとの経路と理由(内部用)。
+
+    *assume_cuda* = CUDA と CuPy が在り、空き VRAM も足りる機械として**経路表だけで**決める
+    (:func:`explain_pipeline` が GPU の無い機械でも段の並びを検査するため)。
+    """
     requested = os.environ.get("FULLSEYE_DEVICE", device).strip().lower()
     if requested not in ("auto", "cpu", "cuda"):
         raise ValueError("device must be 'auto', 'cpu', or 'cuda'; got %r" % requested)
@@ -2072,6 +2076,7 @@ def _decide(device, stages, shape, n) -> dict:
     def finish(resolved, paths):
         dec["resolved"] = resolved
         dec["_paths"] = [p for p, _r in paths]
+        dec["_reasons"] = [r for _p, r in paths]
         on_gpu = [p for p, _r in paths if p != "cpu"]
         dec["device"] = "cuda" if on_gpu and resolved == "cuda" else "cpu"
         kinds = sorted({p for p, _r in paths})
@@ -2087,14 +2092,15 @@ def _decide(device, stages, shape, n) -> dict:
 
     if requested == "cpu":
         return all_cpu("env_cpu" if source == "FULLSEYE_DEVICE" else "requested_cpu")
-    if not cuda_available():
+    if not assume_cuda and not cuda_available():
         # 明示の cuda は入口で拒まない(N117)。計算は CPU で走るので device は cpu
         return all_cpu("no_cuda", resolved="cuda" if requested == "cuda" else "cpu")
     import device_policy
     auto = requested == "auto"
+    vram_ok = (lambda: (True, None, device_policy.min_free_mb())) if assume_cuda else device_policy.vram_ok
     if names is None:
         if auto:
-            ok, free, need = device_policy.vram_ok()
+            ok, free, need = vram_ok()
             dec.update(vram_free_mb=free, vram_min_free_mb=need)
             if not ok:
                 return all_cpu("vram_low")
@@ -2102,8 +2108,9 @@ def _decide(device, stages, shape, n) -> dict:
         return dec
     import gpu_route
     accelerated = gpu_route.accelerated_names()
+    runnable = (lambda r: r is not None and r.kind in ("accel", "shadow")) if assume_cuda else gpu_route.runnable
     paths = device_policy.plan_paths(names, shape if auto else None, route_of=gpu_route.route,
-                                     runnable=gpu_route.runnable, auto=auto)
+                                     runnable=runnable, auto=auto)
     if not auto:
         return finish("cuda", paths)
     shadow_on = any(p.startswith("allow_") for p, _r in paths)
@@ -2112,11 +2119,135 @@ def _decide(device, stages, shape, n) -> dict:
         paths = [("cpu", "crossover") if p == "accel" else (p, r) for p, r in paths]
     if all(p == "cpu" for p, _r in paths):
         return finish("cpu", paths)
-    ok, free, need = device_policy.vram_ok()
+    ok, free, need = vram_ok()
     dec.update(vram_free_mb=free, vram_min_free_mb=need)
     if not ok:
         return all_cpu("vram_low")
     return finish("cuda", paths)
+
+
+def _stage_names(stages) -> list:
+    """段の並び(:func:`run_pipeline` が受ける書き方のどれか)から op 名だけを取り出す。"""
+    if isinstance(stages, str):
+        return [s.strip() for s in stages.split(",") if s.strip()]
+    names = []
+    for s in stages:
+        if isinstance(s, str):
+            names.append(s)
+        elif isinstance(s, dict):
+            names.append(s.get("op", s.get("name")))
+        elif isinstance(s, (list, tuple)) and s:
+            names.append(s[0])
+        else:
+            names.append(getattr(s, "op", s))
+    return names
+
+
+#: :func:`explain_pipeline` の切り替わりの理由の語彙(``reason`` が CPU 側の段の理由、``detail`` は台帳の根拠)。
+SWITCH_REASONS = {
+    "not_listed": "GPU 経路が無い(手書き・許可リスト・native のどれにも無い)",
+    "crossover": "損益分岐: この大きさでは転送込みで GPU が CPU に勝たない(DEVICE_RULES.json)",
+    "below_measured_size": "損益分岐: 倍率を測った大きさ未満(勝つと言えない)",
+    "chain_only": "鎖の枠だけの経路で、隣が GPU の段でない(常駐でしか勝たない)",
+    "native_not_wired": "native 経路は apply / run_pipeline からまだ走らせない",
+    "no_cupy": "許可リストの道を走らせる CuPy が無い",
+    "no_cuda": "CUDA が無い", "vram_low": "空き VRAM が閾値未満", "requested_cpu": "cpu を指定した",
+    "env_cpu": "FULLSEYE_DEVICE=cpu", "engine_change": "GPU の中で道具が替わる(torch と CuPy の間はホストを経由)",
+}
+
+
+def explain_pipeline(stages, shape=None, *, device: str = "auto", n: int = 1, assume_cuda: bool = False) -> dict:
+    """パイプラインを**走らせる前に**検査する / Inspect a pipeline before running it.
+
+    *stages* は :func:`run_pipeline` と同じ書き方(名前の列・``(name, a, b)``・dict・カンマ区切り)。
+    *shape* = 1 枚の形(損益分岐の判定に使う。``None`` なら大きさの判定はしない)。*assume_cuda* =
+    CUDA・CuPy・空き VRAM のある機械として経路表だけで決める(GPU の無い機械で並びを検査する)。
+
+    返り値(JSON にそのまま載る):
+
+    * ``decision`` —— :func:`explain_device` と同じ欄(``requested`` / ``resolved`` / ``device`` / ``path`` /
+      ``reason`` / ``source``、見たなら VRAM)。
+    * ``stages`` —— 段ごとに ``index`` / ``op`` / ``in_sort`` / ``out_sort`` / ``path`` / ``reason`` /
+      ``on``(``gpu`` / ``cpu``)/ ``route``(経路の種類と場面、無ければ ``None``)/ ``detail``(GPU 経路が
+      無い理由の根拠: 台帳で不採用になった理由 ``mismatch`` / ``constant_output`` / ``slower`` 等)。
+    * ``type_breaks`` —— 型の切れ目(前段の ``out_sort`` と次段の ``in_sort`` が合わない・op が無い)。
+      :func:`run_pipeline` は 1 段も走らせずに ``ValueError`` にする並び。
+    * ``segments`` —— 実行の区間(``accel`` = torch の常駐区間 / ``shadow`` = CuPy の区間 / ``cpu``)。
+    * ``switches`` —— 区間の境目ごとに ``at``(段の番号)/ ``op`` / ``from`` / ``to`` / ``reason``
+      (CPU に戻るときはその段の理由、GPU に入るときは ``None``、GPU どうしの乗り換えは ``engine_change``)。
+    * ``n_switches`` / ``n_gpu_stages`` / ``n_cpu_stages`` / ``n_gpu_segments``。
+    * ``n_transfers`` —— :func:`run_pipeline` の見込みの往復回数(GPU の区間ごとに送り 1 回・戻し 1 回 =
+      1 往復)。``n_transfers_per_stage`` —— 段ごとに :func:`apply` を呼ぶとき(MCP の ``fullseye_pipeline``)の
+      往復回数(GPU で走る段ごとに 1 往復)。
+    * ``reasons`` —— 出てきた理由の語の説明(:data:`SWITCH_REASONS`)。
+    """
+    import engine as _engine                     # 型の検査は run_pipeline と同じ規則(_check_chain_sorts)
+    import gpu_route
+    names = _stage_names(stages)
+    found = []
+    for nm in names:
+        op = find_op(nm) if isinstance(nm, str) else None
+        if op is None and isinstance(nm, str):
+            op = _nary_by_name().get(nm)
+        found.append(op)
+    dec = _decide(device, names, shape, n, assume_cuda=assume_cuda) if names else None
+    paths = (dec or {}).get("_paths") or []
+    reasons = (dec or {}).get("_reasons") or [None] * len(paths)
+    on_gpu = bool(dec) and dec.get("device") == "cuda"
+    rows = []
+    breaks = []
+    cur = None
+    for i, nm in enumerate(names):
+        op = found[i]
+        in_sort = getattr(op, "in_sort", None) or (op.in_sorts[0] if op is not None and hasattr(op, "in_sorts") else None)
+        out_sort = getattr(op, "out_sort", None)
+        if op is None:
+            breaks.append({"index": i, "op": nm, "reason": "unknown_op", "expected": None, "got": cur})
+            cur = None
+        else:
+            if cur is not None and not _engine._compatible(cur, in_sort):
+                breaks.append({"index": i, "op": nm, "reason": "sort_mismatch", "expected": in_sort, "got": cur})
+            cur = _engine._thread_sort(cur, op)
+        path = paths[i] if i < len(paths) else "cpu"
+        reason = reasons[i] if i < len(reasons) else None
+        canon = op.name if op is not None else nm
+        r = gpu_route.route(canon, "pipeline" if len(names) > 1 else "single") if isinstance(canon, str) else None
+        stage_on = "gpu" if (on_gpu and path != "cpu") else "cpu"
+        if stage_on == "cpu" and reason is None and dec is not None:
+            reason = dec.get("reason")
+        rows.append({"index": i, "op": nm, "in_sort": in_sort, "out_sort": out_sort, "path": path,
+                     "reason": None if stage_on == "gpu" else reason, "on": stage_on,
+                     "route": {"kind": r.kind, "use": r.use} if r is not None else None,
+                     "detail": gpu_route.rejection(canon) if (r is None and isinstance(canon, str)) else None})
+    segments = []
+    for row in rows:
+        kind = "cpu" if row["on"] == "cpu" else ("shadow" if str(row["path"]).startswith("allow_") else "accel")
+        if segments and segments[-1]["kind"] == kind:
+            segments[-1]["stages"].append(row["op"])
+        else:
+            segments.append({"kind": kind, "on": row["on"], "start": row["index"], "stages": [row["op"]]})
+    switches = []
+    for prev_seg, seg in zip(segments, segments[1:]):
+        row = rows[seg["start"]]
+        if seg["on"] == "cpu":
+            why = row["reason"]
+        elif prev_seg["on"] == "gpu":
+            why = "engine_change"
+        else:
+            why = None
+        switches.append({"at": seg["start"], "op": row["op"], "from": prev_seg["kind"], "to": seg["kind"],
+                         "reason": why})
+    n_gpu_segments = sum(1 for s in segments if s["on"] == "gpu")
+    used = sorted({x for x in [r["reason"] for r in rows] + [s["reason"] for s in switches] if x})
+    decision = None if dec is None else {k: v for k, v in dec.items() if not k.startswith("_") and k != "stages"}
+    return {"decision": decision, "assume_cuda": bool(assume_cuda),
+            "shape": list(shape) if shape is not None else None, "stages": rows, "type_breaks": breaks,
+            "segments": segments, "switches": switches, "n_switches": len(switches),
+            "n_gpu_stages": sum(1 for r in rows if r["on"] == "gpu"),
+            "n_cpu_stages": sum(1 for r in rows if r["on"] == "cpu"),
+            "n_gpu_segments": n_gpu_segments, "n_transfers": n_gpu_segments,
+            "n_transfers_per_stage": sum(1 for r in rows if r["on"] == "gpu"),
+            "reasons": {k: SWITCH_REASONS.get(k, k) for k in used}}
 
 
 _DECISION = __import__("threading").local()

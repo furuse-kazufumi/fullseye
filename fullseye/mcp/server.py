@@ -277,7 +277,9 @@ TOOLS: dict[str, dict] = {
             "op を順に適用する。段ごとに数値統計・判定・劣化台帳を記録し、最終ハンドル(と最後が"
             "計測なら値)を返す。走らせる前に段間の型連鎖(前段の out_sort = 次段の in_sort)を検査し、"
             "破れていれば 1 段も走らせず拒否。strict(既定)では劣化した段で止まり、どこまで走ったかを"
-            "返す。判定が最初に割れた段の入出力対比の小図を自動で付ける。"),
+            "返す。判定が最初に割れた段の入出力対比の小図を自動で付ける。dry_run=true なら走らせず、"
+            "型の切れ目・GPU と CPU の切り替わり(どの段で、なぜ)・転送の回数の見込みだけを返す"
+            "(fullseye.explain_pipeline、structuredContent.plan)。"),
         "inputSchema": {
             "type": "object",
             "properties": {
@@ -288,6 +290,11 @@ TOOLS: dict[str, dict] = {
                 "vision": _VISION,
                 "device": {"type":"string","enum":["auto","cpu","cuda"]},
                 "parity_check": {"type":"boolean"},
+                "dry_run": {"type":"boolean", "description": (
+                    "true なら 1 段も走らせず、経路の検査だけを返す(段ごとの path/reason、型の切れ目、"
+                    "区間、切り替わり、n_transfers)。入力の形は handle の配列から取る")},
+                "assume_cuda": {"type":"boolean", "description": (
+                    "dry_run のとき、GPU の無い機械でも CUDA・CuPy のある機械として経路表だけで決める")},
                 "stages": {
                     "type": "array", "minItems": 1, "maxItems": 64,
                     "items": {
@@ -1348,10 +1355,31 @@ def _pipeline(a: dict, cat: Catalog, store: HandleStore, *,
     return _pipeline_dag(a,cat,store,max_structured_bytes=max_structured_bytes)
 
 
+def _pipeline_dry_run(a: dict, store: HandleStore, max_structured_bytes: int) -> dict:
+    """``dry_run``: 走らせずに経路を検査する(:func:`fullseye.explain_pipeline`)。"""
+    import fullseye
+    shape = None
+    if a.get("handle"):
+        _meta, value = store.get(a["handle"])
+        shape = getattr(np.asarray(value), "shape", None)
+    plan = fullseye.explain_pipeline([s.get("op") for s in a["stages"]], shape, device=a.get("device", "auto"),
+                                     assume_cuda=bool(a.get("assume_cuda", False)))
+    lines = ["dry_run: %d 段 / GPU %d 段 / 切り替わり %d / 往復の見込み %d" % (
+        len(plan["stages"]), plan["n_gpu_stages"], plan["n_switches"], plan["n_transfers"])]
+    for sw in plan["switches"]:
+        lines.append("  段 %d %s: %s -> %s (%s)" % (sw["at"] + 1, sw["op"], sw["from"], sw["to"], sw["reason"]))
+    for br in plan["type_breaks"]:
+        lines.append("  型の切れ目 段 %d %s: %s" % (br["index"] + 1, br["op"], br["reason"]))
+    return tool_result("\n".join(lines), {"dry_run": True, "plan": plan},
+                       max_structured_bytes=max_structured_bytes)
+
+
 def _pipeline_dag(a: dict, cat: Catalog, store: HandleStore, *, max_structured_bytes: int) -> dict:
     """Execute the same reference vocabulary emitted by the planner."""
     import importlib
     import fullseye
+    if a.get("dry_run"):
+        return _pipeline_dry_run(a, store, max_structured_bytes)
     from fullseye.opsearch import _graph
     edges={e["op"]:e for e in _graph()["edges"]}
     policy=_execution_policy()

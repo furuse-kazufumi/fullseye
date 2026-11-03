@@ -102,6 +102,7 @@ _OLD_ORDER = [
     "tools/gen_op_facets.py", "tools/measure_mcp_context.py",
     "tools/gen_doc_counts.py",
     "tools/gen_device_rules.py",
+    "tools/gen_gpu_routes.py",
 ]
 
 

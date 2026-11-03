@@ -9,7 +9,8 @@ GPU の台帳(手書き経路の表、許可リスト、native の実測)を読�
 
 * ``"accel"``  — 手書きの torch 経路(``accel.ACCEL`` / ``accel_vol.VOL_ACCEL`` / ``accel_match.MATCH_ACCEL``)。
   parity の門(内部差 < 5e-3)を通ったものだけが表に載る。場面は ``single``。ただし実測の台帳
-  ``fullseye/data/GPU_ACCEL_USE.json``(領域の解析の族、生成 ``tools/bench_label_ops.py``)で
+  ``fullseye/data/GPU_ACCEL_USE.json``(領域の解析の族。測定 ``tools/bench_label_ops.py``、生成
+  ``tools/gen_gpu_routes.py``)で
   ``use="pipeline"``(単独は 5 倍に届かず、常駐で 1 倍以上)の op は ``pipeline``(隣も GPU の段のときだけ)。
 * ``"native"`` — op の関数自身が ``device=`` 引数を持つ torch 実装(``match3d`` / ``feat_*`` / ``fuse3d``)。
   **実測があり、一致し(``ok``)、CPU より速い(倍率 >= 1)ものだけ**を返す(実測の無い op は返さない =
