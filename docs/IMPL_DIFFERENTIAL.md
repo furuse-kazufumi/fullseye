@@ -10,12 +10,12 @@
 
 | | 件数 |
 |---|---:|
-| 語幹が同じ組(全部) | 190 |
-| うち `tb_X` と台帳の `X` だけの組(同じ関数の別の入口、つまみの写し方の標本だけ見る) | 154 |
+| 語幹が同じ組(全部) | 192 |
+| うち `tb_X` と台帳の `X` だけの組(同じ関数の別の入口、つまみの写し方の標本だけ見る) | 156 |
 | うち実装どうしの組 | 36 |
 | 実装どうしの対(3 実装の組は 3 対、4 実装は 6 対) | 55 |
 
-依頼時の目安は 172 組だったが、その数え方は再現できていない(ここの数え方では 190 = 154 + 36)。`tb_` の 154 組のうち 150 組は `naming_phase2/rename_plan.json` の B と同じで、残り 4 組は台帳の `X` と同名の別の関数がレジストリにある名前の衝突(下の「`tb_` の橋渡しの標本」)。
+依頼時の目安は 172 組だったが、その数え方は再現できていない(ここの数え方では 192 = 156 + 36)。`tb_` の 156 組のうち 150 組は `naming_phase2/rename_plan.json` の B と同じで、残り 4 組は台帳の `X` と同名の別の関数がレジストリにある名前の衝突(下の「`tb_` の橋渡しの標本」)。
 
 ## 比べ方
 
@@ -143,7 +143,7 @@
 
 | 結果 | 件数 |
 |---|---:|
-| 一致 | 129 |
+| 一致 | 131 |
 | 標本外 | 25 |
 
 標本外(入出力の加工つきで独立な検算にならない): `tb_arc_length`、`tb_box_sdf`、`tb_capsule_sdf`、`tb_cutout`、`tb_cylinder_sdf`、`tb_euclidean_cluster`、`tb_lf_depth_from_focus`、`tb_lf_epi_slope`、`tb_normals_to_egi`、`tb_plane_sdf`、`tb_plane_segmentation`、`tb_project_points`、`tb_radius_outlier_removal`、`tb_random_dropout`、`tb_random_rotation`、`tb_random_scale`、`tb_region_growing`、`tb_resample`、`tb_spectrogram`、`tb_specular_diffuse_split`、`tb_sphere_sdf`、`tb_statistical_outlier_removal`、`tb_temporal_band_power`、`tb_temporal_bandpass`、`tb_torus_sdf`。
@@ -171,7 +171,7 @@
 | `sg_` | 分割 第 2 回(backends_segment2) | 7 | `backends_segment2` 7 |
 | `sk_` | scikit-image(backends) | 47 | `backends` 47 |
 | `sp_` | サブピクセル(backends_subpix) | 6 | `backends_subpix` 6 |
-| `tb_` | 型付き台帳の関数の橋渡し(backends_typed) | 161 | `backends_typed` 161 |
+| `tb_` | 型付き台帳の関数の橋渡し(backends_typed) | 163 | `backends_typed` 163 |
 | `tf_` | 変換 第 2 回(backends_transform2) | 12 | `backends_transform2` 7、`ledger` 5 |
 | `tm_` | 断層(backends_tomo) | 5 | `backends_tomo` 5 |
 | `xcv_` | OpenCV 追加(backends_extra) | 8 | `backends_extra` 8 |
