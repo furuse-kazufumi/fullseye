@@ -149,20 +149,35 @@ def _closed_cube(n):
     return np.asarray(out)
 
 
-def _timed_cpu(fn, repeats=5):
-    samples = []
+def _paired_cpu_ratio(fn_new, fn_old, pairs=7):
+    """新/旧の CPU 時間の比を、**交互に測った対**ごとに取り、その中央値を返す。
+
+    ★2026-11-04: 以前は旧を 5 回 → 新を 5 回と**続けて**測り、中央値どうしを比べていた。
+    master の run 41724324673 の py3.14 で 0.203 s / 0.148 s(比 1.37)で落ちた —— 同じ門は
+    それまでの master の run で py3.12 / 3.13 / 3.14 とも通っており、手元の Linux(WSL、4 コアに
+    固定)の 40 回でも比の中央値 0.97・最大 1.02 で一度も 1.10 を超えない(実装は遅くなっていない)。
+    同じ 4 コアに断続的な busy loop を 4 本重ねると、続けて測る形は 40 回中 6 回 1.10 を超えた
+    (最大 2.14)。共有ランナーの負荷が秒単位で変わると、片側の 5 回だけがまとめて遅くなる。
+    交互の対にすると、その揺れは対の両側に同じく掛かり、比では打ち消し合う —— 同じ負荷で
+    40 回中 0 回(最大 1.06)。閾値 1.10 はそのまま。
+    """
+    ratios = []
     value = None
-    for _ in range(repeats):
+    for _ in range(pairs):
         started = time.process_time()
-        value = fn()
-        samples.append(time.process_time() - started)
-    return value, float(np.median(samples))
+        fn_old()
+        old = time.process_time() - started
+        started = time.process_time()
+        value = fn_new()
+        new = time.process_time() - started
+        ratios.append(new / max(old, 1e-9))
+    return value, float(np.median(ratios)), ratios
 
 
 def test_radiosity_384_default_keeps_fast_original_and_force_block_is_exact(monkeypatch):
     patches = R.radiosity_patches(polygons=_closed_cube(8))
     candidates = R._candidates(patches["polygons"], patches["normals"], 1e-12)
-    expected, old_time = _timed_cpu(lambda: _old_ff_matrix(patches, candidates))
+    expected = _old_ff_matrix(patches, candidates)
 
     calls = 0
     original = R._candidates
@@ -173,11 +188,13 @@ def test_radiosity_384_default_keeps_fast_original_and_force_block_is_exact(monk
         return original(*args)
 
     monkeypatch.setattr(R, "_candidates", counted)
-    actual, default_time = _timed_cpu(
-        lambda: R.form_factor_matrix(patches, n_quad=2, symmetric=False, far_ratio=None))
-    assert calls == 5, "384 patches must retain the all-at-once candidate path"
+    actual, ratio, ratios = _paired_cpu_ratio(
+        lambda: R.form_factor_matrix(patches, n_quad=2, symmetric=False, far_ratio=None),
+        lambda: _old_ff_matrix(patches, candidates))
+    assert calls == 7, "384 patches must retain the all-at-once candidate path"
     np.testing.assert_array_equal(actual, expected)
-    assert default_time <= old_time * 1.10
+    assert ratio <= 1.10, "default / original CPU time per interleaved pair: %s" % (
+        ", ".join("%.3f" % r for r in ratios))
 
     calls = 0
     blocked = R.form_factor_matrix(patches, n_quad=2, symmetric=False, far_ratio=None,
