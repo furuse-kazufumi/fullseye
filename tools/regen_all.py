@@ -259,7 +259,8 @@ READS = {
         "docs/HALCON_PARITY.md",
         "docs/DESIGN_NOTES.md", "docs/DESIGN_NOTES.*.md",
         "docs/AI_RAG_GUIDE.md", "docs/AI_RAG_GUIDE.*.md",
-        "docs/view2026/index.md", "docs/view2026/*/index.md"],
+        "docs/view2026/index.md", "docs/view2026/*/index.md",
+        "docs/perf/pipeline_routes.md"],                # 題だけ(ORDER_EXEMPT)
     "tools/gen_mcp_data.py": ["docs/OP_INDEX.json", "docs/ops/*"],
     "tools/gen_op_facets.py": ["docs/OP_INDEX.json", "docs/ops/families.json",
                                   "docs/ops/families_timing.json"],
