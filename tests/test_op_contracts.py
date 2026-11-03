@@ -129,6 +129,10 @@ KNOWN_FALLS_BACK_ON_EDGE: dict = {
         "空の keypoints は表現として無効(明示拒否)"),
     "tb_keypoints_uv_to_points": (BY_DESIGN, frozenset({"empty"}),
         "空の keypoints は表現として無効(明示拒否)"),
+    "tb_keypoints_rowcol_to_uv": (BY_DESIGN, frozenset({"empty"}),
+        "空の keypoints は表現として無効(明示拒否。reprconv._n2 の方針)"),
+    "tb_keypoints_uv_to_rowcol": (BY_DESIGN, frozenset({"empty"}),
+        "空の keypoints は表現として無効(明示拒否。reprconv._n2 の方針)"),
     "tb_landmark_asymmetry": (BY_DESIGN, frozenset({"coincident", "collinear", "single"}),
         "ランドマーク 1 点(偶数・4 点以上が要る、明示拒否)/ 全点一致・全点一直線では中点も左→右の向きも同じ直線上で、正中面が決まらない"
         "(2026-10-07 から明示拒否。以前は雑音で決まる任意の面を返していた)"),

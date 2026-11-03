@@ -8227,6 +8227,8 @@ TYPE_CHECKS = {
     # で落ちる — 第 3 波でプール汚染として実測)
     "measurement": lambda v: isinstance(v, (int, float, np.floating, np.integer)),
     "indices": lambda v: isinstance(v, np.ndarray) and v.ndim == 1,
+    # 2026-11-03: 事象の位置の列(point_spectrum が受ける)。indices_to_positions が産む
+    "positions": lambda v: isinstance(v, np.ndarray) and v.ndim == 1 and v.dtype.kind == "f",
     # coordgrid = ボクセル中心の座標場 (nx,ny,nz,3)。points((N,3))とは**別 sort**:
     # 点群を sphere_sdf に渡すと (N,) が返り、宣言の 3-D 場にならない(型の嘘)。
     "coordgrid": lambda v: isinstance(v, np.ndarray) and v.ndim == 4 and v.shape[3] == 3,

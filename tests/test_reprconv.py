@@ -306,6 +306,12 @@ DECLARED_CHECKS = {
     "flow_dense": lambda v: len(getattr(v, "shape", ())) == 4,
     "flow_scattered": lambda v: len(getattr(v, "shape", ())) == 2,
     "deformation": lambda v: isinstance(v, dict) and "ctrl" in v,
+    # 2026-11-03 型のつながり
+    "conn_graph": lambda v: isinstance(v, np.ndarray) and v.ndim == 2 and v.shape[0] == v.shape[1],
+    "measurement": lambda v: isinstance(v, float),
+    "positions": lambda v: isinstance(v, np.ndarray) and v.ndim == 1 and v.dtype.kind == "f",
+    "synapse_table": lambda v: isinstance(v, np.ndarray) and v.ndim == 2 and v.shape[1] == 3,
+    "jones": lambda v: isinstance(v, np.ndarray) and v.shape == (2,) and v.dtype.kind == "c",
 }
 
 
@@ -364,7 +370,49 @@ def _special_inputs(pool, scattered):
             [np.linspace(-179.0, 179.0, 32), np.linspace(-89.0, 89.0, 32)], 1),),
         "matrix_to_angle": (rc.angle_to_matrix(37.5),),
         "matrix_to_rot_scale": (rc.rot_scale_to_matrix((37.5, 2.0)),),
+        **_connectivity_inputs(pool),
     }
+
+
+def _connectivity_inputs(pool):
+    """2026-11-03 の 20 op。入力は**本物の産み手の返り**(形の約束を産み手と突き合わせる)。"""
+    import curve3d
+    import edges3d
+    import geodesic3d
+    import ops as _ops
+    import range_image
+    vox = pool["voxel"]
+    t = np.linspace(0, 4 * np.pi, 120)
+    helix = np.stack([np.cos(t), np.sin(t), 0.3 * t], 1)
+    reg = np.zeros((20, 20))
+    reg[5:9, 2:12] = 1.0
+    out = {
+        "gradient_magnitude": (edges3d.gradient3d(vox, 1.0),),
+        "gradient_coherence": (edges3d.gradient3d(vox, 1.0),),
+        "frame_axis": (curve3d.frenet_frame(helix),),
+        "knn_graph_to_conn_graph": (geodesic3d.knn_graph(pool["points"], 4),),
+        "pointmap_to_points": (range_image.depth_to_organized_points(1.0 + vox[0]),),
+        "match_component": (_ops.RT["area_center"](reg, 0.5, 0.5),),
+        "indices_to_positions": (np.array([3, 10, 25]),),
+        "synapse_table_from_table": ({"pre": [0, 1], "post": [1, 0]},),
+        "jones_state": (),
+        "tokens_to_matrix": (np.ones((4, 3)),),
+        "table_field_image2d": ({"g": np.ones((3, 4))}, "g"),
+        "table_field_signal": ({"s": np.arange(5.0)}, "s"),
+        "table_field_matrix": ({"g": np.ones((3, 4))}, "g"),
+        "table_field_measurement": ({"w": 2.5}, "w"),
+        "pairs_peak_x": (np.stack([np.arange(9.0), -(np.arange(9.0) - 4.3) ** 2], 1),),
+        "keypoints_rowcol_to_uv": (np.array([[1.0, 2.0], [3.0, 4.0]]),),
+        "keypoints_uv_to_rowcol": (np.array([[1.0, 2.0], [3.0, 4.0]]),),
+        "pose_to_matrix": ((np.eye(3), np.zeros(3)),),
+    }
+    try:                                            # sobel3d / hessian3d は torch を使う
+        import match3d
+        out["hessian_determinant"] = (match3d.hessian3d(vox),)
+        out["hessian_vesselness"] = (match3d.hessian3d(vox),)
+    except ImportError:                             # pragma: no cover
+        pass
+    return out
 
 
 class TestDeclaredTypeMatchesActualReturn:

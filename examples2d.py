@@ -1411,6 +1411,12 @@ EXAMPLES = [
      "name": "表現変換(reprconv)op を往復させて嘘を露見させる",
      "summary": "産む op はあるが食う op が無かった 25 型を消費する reprconv 族を往復させ、"
                 "可逆なものは誤差 0、不可逆なものは何がどれだけ落ちるかを印字する。"},
+    {"id": "type_connectivity_tour", "task": "tomography_3d", "data": "synthetic",
+     "name": "行き止まりだった型と入口の無かった型を、本物の産み手からの鎖で通す",
+     "summary": "gradient / hessian / frame / graph / pointmap / match の出口と positions / "
+                "synapse_table / jones の入口、tokens の出口、table の欄・スペクトルのピーク・keypoints の"
+                "軸・pose の 4x4(reprconv の 20 op)を、既存の産み手の返りから既存の受け手まで通し、"
+                "閉形式の真値 20 項目と比べる。"},
     # -- robot perception templates (copy-and-adapt; synthetic data, CLI --save) -- #
     {"id": "perception_pipeline", "task": "perception_templates", "data": "synthetic",
      "name": "整流ステレオ対→深度→点群→地形高さマップ→通行可能性",

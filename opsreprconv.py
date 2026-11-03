@@ -42,6 +42,18 @@
   入っているかを実測していない。**実測せずに変換を書くのが一番危ない**ので、
   ここは空けたまま報告する。
 
+**2026-11-03 追記(上の判断の見直し)**: ``tools/type_connectivity.py`` で全型を
+数え直し、中身を実測してから ``gradient`` / ``hessian`` / ``frame`` / ``graph`` /
+``pointmap`` に出口を作った(カテゴリ ``derivative`` / ``structure``)。
+``gradient`` を「flow と同じ計算を別名で置くだけ」とした見立ては**形の実測で外れた**:
+``gradient3d`` は ``(gmag, gvec (D,H,W,3))``、``sobel3d`` は利得 32 の torch 3 本で、
+``flow_dense`` の ``(3,D,H,W)`` とはどれも形が違う。受け手は 2 形を見分けて利得を
+そろえる(``reprconv._gradient_field``)。``hessian`` は Frangi / 行列式を
+**与えられた Hessian から**計算する(``vol_frangi`` は体積から自分で作る)ので重複しない。
+``axes`` は中身を実測したら**別物 2 つの同居**(``axes_transform`` = 図の座標変換の
+dict、``moment_axes`` = 重心・主軸・固有値の 3-tuple)で、出口を作る前に型を分けるのが
+筋 —— 新しい型名が要るので設計判断として ``docs/TYPE_CONNECTIVITY.md`` に案を残した。
+
 ## 新しい型語彙を 1 つも作っていない(意図的)
 
 opsphoton の ``histcube``、opsmotionmag の ``video``、opsinterferometry の
@@ -109,6 +121,9 @@ _CATALOG = {
         ("keypoints_from_image2d", "reprconv", ["image2d"], "keypoints"),
         ("position_to_points", "reprconv", ["position"], "points"),
         ("points_to_position", "reprconv", ["points"], "position"),
+        # keypoints 型に同居する 2 つの軸の約束(row, col)/(u, v)のつなぎ(2026-11-03)
+        ("keypoints_rowcol_to_uv", "reprconv", ["keypoints"], "keypoints"),
+        ("keypoints_uv_to_rowcol", "reprconv", ["keypoints"], "keypoints"),
     ],
     # 添字と選択
     "index": [
@@ -158,6 +173,38 @@ _CATALOG = {
         ("countrate_to_counts", "reprconv", ["countrate"], "counts"),
         ("counts_to_countrate", "reprconv", ["counts"], "countrate"),
         ("deformation_to_points", "reprconv", ["deformation"], "points"),
+    ],
+    # 型のつながりを閉じる変換(2026-11-03、tools/type_connectivity.py の数え上げから)。
+    # **新語彙ゼロ**のまま: 受け手の無かった gradient / hessian / frame / graph /
+    # pointmap / match に出口を、作り手の無かった positions / synapse_table に入口を作る。
+    "derivative": [   # 微分の型を一級の入力として受ける(出どころを問わない)
+        ("gradient_magnitude", "reprconv", ["gradient"], "voxel"),
+        ("gradient_coherence", "reprconv", ["gradient"], "voxel"),
+        ("hessian_determinant", "reprconv", ["hessian"], "voxel"),
+        ("hessian_vesselness", "reprconv", ["hessian"], "voxel"),
+    ],
+    "structure": [    # 構造を持つ値 -> 既存の配列語彙
+        ("frame_axis", "reprconv", ["frame"], "normals"),
+        ("knn_graph_to_conn_graph", "reprconv", ["graph"], "conn_graph"),
+        ("pointmap_to_points", "reprconv", ["pointmap"], "points"),
+        ("match_component", "reprconv", ["match"], "measurement"),
+    ],
+    "entry": [        # 作り手の無かった型への入口
+        ("indices_to_positions", "reprconv", ["indices"], "positions"),
+        ("synapse_table_from_table", "reprconv", ["table"], "synapse_table"),
+        ("jones_state", "reprconv", [], "jones"),
+    ],
+    "exit": [         # 終端へ出られなかった型の出口
+        ("tokens_to_matrix", "reprconv", ["tokens"], "matrix"),
+        ("pose_to_matrix", "reprconv", ["pose"], "matrix"),
+        ("pairs_peak_x", "reprconv", ["pairs"], "measurement"),
+    ],
+    # table を返す op の欄を、型を確かめて次の op へ渡す(レシピの網羅で落ちた鎖、2026-11-03)
+    "field": [
+        ("table_field_image2d", "reprconv", ["table"], "image2d"),
+        ("table_field_signal", "reprconv", ["table"], "signal"),
+        ("table_field_matrix", "reprconv", ["table"], "matrix"),
+        ("table_field_measurement", "reprconv", ["table"], "measurement"),
     ],
 }
 
@@ -247,6 +294,43 @@ ROUNDTRIPS = (
      "lost": "bin 幅ぶんの量子化と、正規化で捨てた絶対スケール"},
     {"forward": "deformation_to_points", "backward": None, "kind": "oneway",
      "lost": "TPS の重み w とアフィン項 a"},
+    # 2026-11-03 型のつながり
+    {"forward": "gradient_magnitude", "backward": None, "kind": "oneway",
+     "lost": "勾配の向き 2 自由度(大きさだけ残る)"},
+    {"forward": "gradient_coherence", "backward": None, "kind": "oneway",
+     "lost": "勾配の大きさと向き(近傍で向きがそろう度合いの比だけ残る)"},
+    {"forward": "hessian_determinant", "backward": None, "kind": "oneway",
+     "lost": "固有値 3 つの個々の値と固有ベクトル(積だけ残る)"},
+    {"forward": "hessian_vesselness", "backward": None, "kind": "oneway",
+     "lost": "固有値の符号と大きさの組(管らしさの 1 値だけ残る)"},
+    {"forward": "frame_axis", "backward": None, "kind": "oneway",
+     "lost": "選ばなかった 2 本の軸"},
+    {"forward": "knn_graph_to_conn_graph", "backward": None, "kind": "lossy",
+     "lost": "近傍の順位(行列には重みしか残らない)。symmetric=True では向き"},
+    {"forward": "pointmap_to_points", "backward": None, "kind": "lossy",
+     "lost": "格子の行・列(どの画素の点か)と、捨てた無効画素"},
+    {"forward": "match_component", "backward": None, "kind": "oneway",
+     "lost": "選ばなかった成分"},
+    {"forward": "indices_to_positions", "backward": None, "kind": "oneway",
+     "lost": "なし(spacing と origin が分かれば (x - origin) / spacing で添字に戻る。逆の op は作らない)"},
+    {"forward": "synapse_table_from_table", "backward": None, "kind": "lossy",
+     "lost": "使わなかった列(3 列だけ残る)"},
+    {"forward": "jones_state", "backward": None, "kind": "oneway",
+     "lost": "なし(stokes_from_jones -> stokes_analyze で方位角・楕円率が戻る。逆の op は作らない)"},
+    {"forward": "tokens_to_matrix", "backward": None, "kind": "oneway",
+     "lost": "型の名前だけ(値は bit 一致)。逆向きは軸の順を確かめられないので作らない"},
+    {"forward": "keypoints_rowcol_to_uv", "backward": "keypoints_uv_to_rowcol",
+     "kind": "exact", "tol": 0.0, "note": "列の入れ替え。往復で bit 一致"},
+    {"forward": "keypoints_uv_to_rowcol", "backward": "keypoints_rowcol_to_uv",
+     "kind": "exact", "tol": 0.0, "note": "列の入れ替え。往復で bit 一致"},
+    {"forward": "pose_to_matrix", "backward": None, "kind": "oneway",
+     "lost": "なし(R と t は 4x4 の左上と右列にそのまま残る)"},
+    {"forward": "pairs_peak_x", "backward": None, "kind": "oneway",
+     "lost": "ピーク以外の全部(位置 1 つだけ残る)"},
+    {"forward": "table_field_image2d", "backward": None, "kind": "oneway", "lost": "選ばなかった欄"},
+    {"forward": "table_field_signal", "backward": None, "kind": "oneway", "lost": "選ばなかった欄"},
+    {"forward": "table_field_matrix", "backward": None, "kind": "oneway", "lost": "選ばなかった欄"},
+    {"forward": "table_field_measurement", "backward": None, "kind": "oneway", "lost": "選ばなかった欄"},
 )
 
 
