@@ -4,7 +4,9 @@
 and writes ``docs/recipe_gpu_routes.json``; ``tools/gen_recipe_coverage.py`` reads only that snapshot, so the
 coverage table is deterministic and ``regen_all --check`` does not depend on the other worktree.
 
-    py -3.11 tools/snapshot_recipe_gpu_routes.py --gpu-worktree C:/dev/projects/imgevolve_wt_gpu_cross
+    py -3.11 tools/snapshot_recipe_gpu_routes.py --gpu-worktree <GPU 版の作業木>
+
+``--gpu-worktree`` は gpu_route.py を持つ GPU の枝の作業木(チェックアウト)のフォルダ。
 
 The routes are asked twice, each in its own process:
 

@@ -256,7 +256,10 @@ def test_pending_exposure_shrinks_when_fixed():
 #   12 op 本体は fs.ledger に載る)。実測 943 → 944。
 # 2026-10-31 opsfileio 台帳(メモリ内 file I/O 14 op): 台帳の内部 API 4 本で実測 944 → 948。
 #   op 自身は fs.ledger から引ける。
-_HIDDEN_FUNCTIONS_TODAY = 948
+# 2026-11-03 opsfit に台帳の内部 API 4 本(call / get / info / missing。f9743b1301)を足した: 実測 948 → 952。
+#   fs.ledger.fit_circle_geometric / phase_correlation_shift が AttributeError で落ちていた修正で、他の台帳
+#   (opscalib / opsfileio / opsmath / opsshape2d …)も同じ 4 本を公開経路に載せていない。op 自身は fs.ledger から引ける。
+_HIDDEN_FUNCTIONS_TODAY = 952
 
 
 def _hidden_total():

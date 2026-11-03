@@ -321,7 +321,10 @@ def test_mcp_execution_is_probe_verified_and_runtime_targets_are_exact(tmp_path)
                   "deflectometry_phase_to_slope", "fringe_ftp_phase", "depth_from_focus",
                   "fit_circle_geometric",
                   "fit_curve_principal_axis", "phase_correlation_shift",
-                  "fit_surface_principal_axes"}
+                  "fit_surface_principal_axes",
+                  # 2026-11-03 (64d369d198): wrapped_phase was verified for MCP; this test's own MCP
+                  # round trip above runs it, but the cited set was not extended in that commit.
+                  "wrapped_phase"}
     assert VERIFIED_PYTHON == cited_python
     graph_python={e["op"] for e in verified if e.get("executor",{}).get("kind")=="python"}
     assert graph_python == cited_python
