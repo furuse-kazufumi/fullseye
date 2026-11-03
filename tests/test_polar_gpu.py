@@ -33,6 +33,7 @@ def test_mueller_elements_match_and_are_physical(kind):
     got = P.mueller_element_batch(kind, a, 57.0).numpy()
     ref = np.stack([optics.mueller_element(kind, float(x), 57.0) for x in a])
     np.testing.assert_allclose(got, ref, atol=1e-14)
+    assert len(got) == len(a)
     for m in got:
         c = optics.mueller_checks(m)
         assert c["physical"] and c["passive"]
@@ -119,6 +120,7 @@ def test_stokes_analyze_matches_scalar():
     s = np.array([[1, 1, 0, 0], [1, -1, 0, 0], [1, 0, 1, 0], [1, 0, 0, 1], [1, 0, 0, 0], [2, 1, 0, 0],
                   [1.0, 0.3, -0.4, 0.2], [1.0, 1e-13, 0.0, 8.7e-17], [3.0, -1.0, -1.0, -1.0]], float)
     r = P.stokes_analyze_batch(torch.as_tensor(s))
+    assert len(s) == 9
     for i, row in enumerate(s):
         c = optics.stokes_analyze(row)
         for k in ("intensity", "dop", "dolp", "docp"):
@@ -241,9 +243,11 @@ def test_exit_field_is_transverse_and_mueller_is_physical(name):
     v = b["valid"]
     assert v.any()
     d = (b["L"], b["M"], b["N"])
+    assert len(b["E_out"]) >= 1
     for E in b["E_out"]:
         assert float(torch.nan_to_num(P._dot(E, d)).abs().max()) < 1e-12
     M = P.jones_to_mueller(b["jones"])[v].numpy()
+    assert len(M) >= 1
     idx = np.linspace(0, len(M) - 1, 25).astype(int)
     for m in M[idx]:
         c = optics.mueller_checks(m)
@@ -270,6 +274,7 @@ def test_ideal_lens_keeps_power_and_stays_transverse():
     s = RT.lens_system([{"f": 50.0, "t": None, "n": 1.0, "ap": 8.0}], stop=0)
     b = P.polarized_bundle(LG.compile_lens(s, device="cpu"), field=2.0, rings=4)
     d = (b["L"], b["M"], b["N"])
+    assert len(b["E_out"]) >= 1
     for E in b["E_out"]:
         assert float(torch.nan_to_num(P._dot(E, d)).abs().max()) < 1e-12
     np.testing.assert_allclose(P._dot(b["E_out"][0], b["E_out"][0])[b["valid"]].numpy(), 1.0, atol=1e-12)

@@ -90,6 +90,7 @@ def test_every_gpu_line_has_all_translations():
     import json
     table = json.loads(pathlib.Path(opdocs.I18N_PATH).read_text(encoding="utf-8"))
     langs = [lang for lang in table["languages"] if lang != "ja"]
+    assert len(langs) >= 5
     for src in opdocs.GPU_LINES.values():
         row = table["strings"].get(src)
         assert row is not None, src

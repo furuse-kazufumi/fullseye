@@ -194,6 +194,7 @@ def test_before_after_on_the_shipped_table():
     measured = {(r["name"], r["side"], r["a"]) for r in rows if r["kind"] == "op"}
     assert len(expected) >= 300
     assert measured == expected
+    assert len(rows) >= len(expected)          # 空の rows で下の表明が素通りしない
     for r in rows:
         assert gen.cpu_not_worse(r["after_s"], r["before_s"]), (r["kind"], r["name"], r["side"], r.get("a"))
     assert sum(r["after_s"] for r in rows) < sum(r["before_s"] for r in rows)

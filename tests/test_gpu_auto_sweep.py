@@ -248,6 +248,7 @@ def test_tuple_assignment_and_initial_work_on_cupy_arrays():
 
 def test_resident_ops_are_never_mixed_into_the_single_call_list():
     res = ALLOW.get("resident_ops", {})
+    assert len(res) >= 1                       # 常駐の枠が空なら下の all は素通りする
     assert not (set(res) & set(ALLOW["ops"]))
     assert all(v["ratio_resident"] >= ALLOW["min_ratio"] and v["ratio_single"] < ALLOW["min_ratio"]
                for v in res.values())

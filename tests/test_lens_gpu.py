@@ -233,6 +233,7 @@ def test_chromatic_matches_cpu(name):
     wls = list(np.linspace(0.47, 0.68, 9))
     c = RT.chromatic_shift(s, wavelengths=[float(w) for w in wls], field=FIELD[name], rings=6)
     r = G.chromatic_batch(G.compile_lens(s, wls, device="cpu"), field=FIELD[name], rings=6)
+    assert len(c["per_wavelength"]) == len(wls)
     for w, row in enumerate(c["per_wavelength"]):
         assert rel(r["bfl"][0, w], row["bfl"]) < 1e-10
         assert abs(float(r["chief_height"][0, w]) - row["chief_height"]) < 1e-9
@@ -504,7 +505,9 @@ def test_compile_many_matches_one_by_one():
     s1 = RT.lens_system(surf, stop=0)
     lens = G.compile_many([s0, s1], [RT.WL_F, RT.WL_C], device="cpu")
     a = G.bundle_batch(lens, field=1.5, rings=4)
-    for m, s in enumerate((s0, s1)):
+    designs = (s0, s1)
+    assert len(designs) == 2
+    for m, s in enumerate(designs):
         b = G.bundle_batch(G.compile_lens(s, [RT.WL_F, RT.WL_C], device="cpu"), field=1.5, rings=4)
         assert torch.equal(a["valid"][m], b["valid"][0])
         v = a["valid"][m].numpy()
@@ -521,6 +524,7 @@ def test_merit_function_device_matches_default():
     b = LO.merit_function(s, device="cpu", **kw)
     assert abs(a["merit"] - b["merit"]) < 1e-9 * a["merit"]
     assert a["rays_lost"] == b["rays_lost"] and a["n_residuals"] == b["n_residuals"]
+    assert len(a["rms_by_field"]) == len(kw["fields"])
     for f in a["rms_by_field"]:
         assert abs(a["rms_by_field"][f] - b["rms_by_field"][f]) < 1e-10
 
@@ -533,6 +537,7 @@ def test_optimize_lens_device_matches_default(variables):
     b = LO.optimize_lens(s, device="cpu", **kw)
     assert a["iterations"] == b["iterations"] and a["status"] == b["status"]
     assert abs(a["merit_final"] - b["merit_final"]) < 1e-6 * a["merit_final"]
+    assert len(a["variables"]) == len(b["variables"]) >= 1
     for p, q in zip(a["variables"], b["variables"]):
         assert abs(p["final"] - q["final"]) < 1e-5 * max(1.0, abs(p["final"]))
 
@@ -543,6 +548,7 @@ def test_global_search_device_matches_default():
     a = LG_.lens_global_search(s, **kw)
     b = LG_.lens_global_search(s, device="cpu", **kw)
     assert [r["start"] for r in a["optima"]] == [r["start"] for r in b["optima"]]
+    assert len(a["optima"]) >= 1
     for p, q in zip(a["optima"], b["optima"]):
         assert abs(p["merit"] - q["merit"]) < 1e-6 * p["merit"]
 
