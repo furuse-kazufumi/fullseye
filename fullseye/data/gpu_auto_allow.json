@@ -1645,11 +1645,6 @@
    "hand_written_gpu": false,
    "ratio": 15.78
   },
-  "plane_sweep_depth": {
-   "family": "plane_sweep_stereo",
-   "hand_written_gpu": false,
-   "ratio": 132.47
-  },
   "plant_color_index": {
    "family": "plant",
    "hand_written_gpu": false,

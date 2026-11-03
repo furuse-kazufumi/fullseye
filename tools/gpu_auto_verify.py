@@ -26,6 +26,18 @@ sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "tools"))
 
 
+def pick_all(S):
+    """許可リストの 3 枠(単独・常駐・パイプライン)のうち、まだ全画素照合していない op 全部。"""
+    allow = json.loads((ROOT / "fullseye" / "data" / "gpu_auto_allow.json").read_text("utf-8"))
+    listed = set(allow["ops"]) | set(allow["resident_ops"]) | set(allow.get("pipeline_ops", {}))
+    jf = S.OUT / "verify.json"
+    done = set(json.loads(jf.read_text("utf-8"))) if jf.exists() else set()
+    sca, base = S.read_rows("scale"), S.read_rows("scale_cpu")
+    return [(n, base[n]["t_cpu"]) for n in sorted(sca) if n in listed and n not in done
+            and sca[n].get("status") == "measured" and base.get(n, {}).get("t_cpu")
+            and base[n]["t_cpu"] < 45.0]
+
+
 def pick(S, top, sample):
     """倍率 5 以上の op から上位 *top* 件と残りの無作為 *sample* 件。"""
     sca, base = S.read_rows("scale"), S.read_rows("scale_cpu")
@@ -45,6 +57,7 @@ def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("cmd", choices=["cpu", "gpu"])
+    ap.add_argument("--all", action="store_true", help="every allow-listed op not yet verified")
     ap.add_argument("--top", type=int, default=20)
     ap.add_argument("--sample", type=int, default=20)
     ap.add_argument("--gpu-lock", default=os.environ.get("FULLSEYE_GPU_LOCK"))
@@ -59,7 +72,8 @@ def main() -> int:
     d.mkdir(exist_ok=True)
     os.chdir(S.OUT / "cwd")
     if a.cmd == "cpu":
-        names = pick(S, a.top, a.sample)
+        names = pick_all(S) if a.all else pick(S, a.top, a.sample)
+        print(len(names), "ops", flush=True)
         for n, _tc in names:
             args, kw = env.probes(n)[0]
             sargs, skw = S.scale_args(env, n, args, kw, S.real_size)
@@ -69,6 +83,16 @@ def main() -> int:
                 pickle.dump(c, f, protocol=4)
             print("cpu", n, flush=True)
         return 0
+    # CPU 側を numpy 2 系で作った保存物を、numpy 1 系の loco 環境で読めるよう別名を張る
+    import numpy
+    if not hasattr(numpy, "_core"):
+        import numpy.core as _nc
+        sys.modules.setdefault("numpy._core", _nc)
+        for _m in ("multiarray", "numeric", "_multiarray_umath"):
+            try:
+                sys.modules.setdefault("numpy._core." + _m, __import__("numpy.core." + _m, fromlist=["x"]))
+            except ImportError:
+                pass
     lock = S.GpuLock(a.gpu_lock, "gpu_auto_verify_%d" % os.getpid())
     if not lock.acquire(3000):
         print("GPU busy")

@@ -1,11 +1,11 @@
 {
 "classes": {
-"adopted": 508,
+"adopted": 507,
 "adopted_resident": 120,
 "exception": 48,
 "match_fixed": 444,
 "match_slow": 331,
-"mismatch": 47,
+"mismatch": 48,
 "pipeline": 37,
 "python_loop": 67,
 "unmeasured": 196,
@@ -9616,11 +9616,11 @@
 },
 "plane_sweep_depth": {
 "at": null,
-"class": "adopted",
+"class": "mismatch",
 "family": "plane_sweep_stereo",
 "ratio": 132.46863355679048,
 "rel": 0.0,
-"why": "ratio"
+"why": "at_full_resolution"
 },
 "plane_topview": {
 "at": null,
