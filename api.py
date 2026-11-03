@@ -2032,29 +2032,115 @@ def resolve_device(device: str = "auto", *, stages=None, shape=None, n: int = 1)
 
     ``auto`` に仕事の中身 (*stages* = op 名の列、*shape* = 1 枚の形、*n* = 枚数)を渡すと、CUDA が在っても
     転送込みで GPU が CPU に勝たない大きさは ``cpu`` を返す(実測の表 ``fullseye/data/DEVICE_RULES.json``、
-    :mod:`device_policy`)。``FULLSEYE_DEVICE`` と明示の ``cpu`` / ``cuda`` はこの規則より優先する。
-    :func:`apply` と :func:`run_pipeline` の ``device="auto"`` はこれを通る。
+    :mod:`device_policy`)。GPU 経路の無い op は、許可リスト(``fullseye/data/gpu_auto_allow.json``)に
+    あって倍率を測った大きさ以上なら ``cuda``(:mod:`gpu_shadow` の道)、それ以外は ``cpu``。
+    ``auto`` が ``cuda`` を選ぶ前に空き VRAM を見て、``FULLSEYE_GPU_MIN_FREE_MB``(既定
+    ``device_policy.DEFAULT_MIN_FREE_MB``)未満なら ``cpu``(LLM が同じ GPU を使っている場面)。
+    ``FULLSEYE_DEVICE`` と明示の ``cpu`` / ``cuda`` はこれらの判定より優先する。
+    なぜその装置か(経路と理由)は :func:`explain_device` が返す。
     """
+    return _decide(device, stages, shape, n)["resolved"]
+
+
+def explain_device(device: str = "auto", *, stages=None, shape=None, n: int = 1) -> dict:
+    """装置の選択とその理由 / The device decision, with the path and the reason.
+
+    返り値(JSON にそのまま載る): ``requested``(渡した値)/ ``source``(``argument`` か
+    ``FULLSEYE_DEVICE``)/ ``resolved``(:func:`resolve_device` の値)/ ``device``(実際に計算が走る装置)/
+    ``path``(``accel`` / ``allow_single`` / ``allow_resident`` / ``allow_pipeline`` / ``cpu``、鎖で段ごとに
+    違えば ``mixed``)/ ``reason``(``cpu`` を選んだ理由: ``requested_cpu`` / ``env_cpu`` / ``no_cuda`` /
+    ``vram_low`` / ``crossover`` / ``not_listed`` / ``chain_only`` / ``no_cupy`` / ``below_measured_size``)。
+    2 段以上なら ``stages``(段ごとの ``op`` / ``path`` / ``reason``)。空き VRAM を見たときは
+    ``vram_free_mb`` / ``vram_min_free_mb``。
+    """
+    return {k: v for k, v in _decide(device, stages, shape, n).items() if not k.startswith("_")}
+
+
+_SHADOW_USABLE: list = []      # [bool](CuPy が GPU を見られるか。1 プロセス 1 回だけ確かめる)
+
+
+def _shadow_usable() -> bool:
+    """許可リストの道(:mod:`gpu_shadow`、CuPy)が走るか。CuPy の import は重いので必要になってから。"""
+    if not _SHADOW_USABLE:
+        try:
+            import gpu_shadow
+            ok = bool(gpu_shadow.available())
+        except Exception:  # noqa: BLE001 - CuPy の欠如・壊れは「使えない」
+            ok = False
+        _SHADOW_USABLE.append(ok)
+    return _SHADOW_USABLE[0]
+
+
+def _decide(device, stages, shape, n) -> dict:
+    """:func:`resolve_device` と :func:`explain_device` の本体。``_paths`` は段ごとの経路(内部用)。"""
     requested = os.environ.get("FULLSEYE_DEVICE", device).strip().lower()
     if requested not in ("auto", "cpu", "cuda"):
         raise ValueError("device must be 'auto', 'cpu', or 'cuda'; got %r" % requested)
+    source = "FULLSEYE_DEVICE" if "FULLSEYE_DEVICE" in os.environ else "argument"
+    dec = {"requested": str(device), "source": source}
+    names = None
+    if stages is not None:
+        found = [find_op(name) if isinstance(name, str) else None for name in stages]
+        names = [op.name if op is not None else name for op, name in zip(found, stages)]
+
+    def finish(resolved, paths):
+        dec["resolved"] = resolved
+        dec["_paths"] = [p for p, _r in paths]
+        on_gpu = [p for p, _r in paths if p != "cpu"]
+        dec["device"] = "cuda" if on_gpu and resolved == "cuda" else "cpu"
+        kinds = sorted({p for p, _r in paths})
+        dec["path"] = kinds[0] if len(kinds) == 1 else "mixed"
+        reasons = [r for p, r in paths if r is not None]
+        dec["reason"] = None if dec["device"] == "cuda" else (reasons[0] if reasons else None)
+        if names is not None and len(names) > 1:
+            dec["stages"] = [{"op": nm, "path": p, "reason": r} for nm, (p, r) in zip(names, paths)]
+        return dec
+
+    def all_cpu(reason, resolved="cpu"):
+        return finish(resolved, [("cpu", reason)] * (len(names) if names else 1))
+
     if requested == "cpu":
-        return "cpu"
-    if requested == "cuda":
-        return "cuda"
+        return all_cpu("env_cpu" if source == "FULLSEYE_DEVICE" else "requested_cpu")
     if not cuda_available():
-        return "cpu"
-    if stages is None or shape is None:
-        return "cuda"
-    return _route_auto(stages, shape, n)
-
-
-def _route_auto(stages, shape, n: int) -> str:
-    """CUDA が在る機械の ``auto``: 実測の規則で装置を決める(op の別名は正式名へ寄せてから表を引く)。"""
+        # 明示の cuda は入口で拒まない(N117)。計算は CPU で走るので device は cpu
+        return all_cpu("no_cuda", resolved="cuda" if requested == "cuda" else "cpu")
     import device_policy
-    found = [find_op(name) if isinstance(name, str) else None for name in stages]
-    names = [op.name if op is not None else name for op, name in zip(found, stages)]
-    return device_policy.route(names, shape, n, accelerated=_gpu_op_names())
+    auto = requested == "auto"
+    if names is None:
+        if auto:
+            ok, free, need = device_policy.vram_ok()
+            dec.update(vram_free_mb=free, vram_min_free_mb=need)
+            if not ok:
+                return all_cpu("vram_low")
+        dec.update(resolved="cuda", device="cuda", path=None, reason=None, _paths=None)
+        return dec
+    accelerated = _gpu_op_names()
+    rows = device_policy.shadow_rows()
+    needs_shadow = any(nm not in accelerated and nm in rows for nm in names)
+    paths = device_policy.plan_paths(names, shape if auto else None, accelerated=accelerated, shadow=rows,
+                                     auto=auto, shadow_usable=needs_shadow and _shadow_usable())
+    if not auto:
+        return finish("cuda", paths)
+    shadow_on = any(p.startswith("allow_") for p, _r in paths)
+    if (not shadow_on and any(p == "accel" for p, _r in paths) and shape is not None
+            and device_policy.route(names, shape, n, accelerated=accelerated) == "cpu"):
+        paths = [("cpu", "crossover") if p == "accel" else (p, r) for p, r in paths]
+    if all(p == "cpu" for p, _r in paths):
+        return finish("cpu", paths)
+    ok, free, need = device_policy.vram_ok()
+    dec.update(vram_free_mb=free, vram_min_free_mb=need)
+    if not ok:
+        return all_cpu("vram_low")
+    return finish("cuda", paths)
+
+
+_DECISION = __import__("threading").local()
+
+
+def last_device_decision() -> dict | None:
+    """このスレッドで最後に :func:`apply` / :func:`run_pipeline` が使った装置の選択(:func:`explain_device` の形)。"""
+    dec = getattr(_DECISION, "value", None)
+    return None if dec is None else {k: v for k, v in dec.items() if not k.startswith("_")}
 
 
 def _gpu_op_names() -> frozenset:
@@ -2616,12 +2702,39 @@ def _try_accel(op, v, a, b, device):
     if accel_name is None or (op.name in _GPU_OPEN and not _bs.is_strict()):
         return _NOACCEL                  # breaker open; strict mode retries so "raise" can raise
     try:
+        if str(device) == "cuda" and not cuda_available():
+            # torch が「CUDA なし」と答える機械では kernel を起こさない(N117 の説明で記録して CPU へ)。
+            # 以前は torch の生の例外に任せていたので、torch.cuda.is_available() だけが False の機械
+            # (GPU のある loco で is_available を差し替えた門)では kernel が走ってしまい門が落ちていた。
+            raise RuntimeError("torch.cuda.is_available() is False")
         return accel.run_batch(accel_name, [v], a, b, device)[0]
     except Exception as e:               # noqa: BLE001
         e = _explain_gpu_failure(device, e)
         if _bs.is_strict():
             raise e
         _GPU_OPEN.add(op.name)           # breaker opens: no more GPU attempts until reset_gpu()
+        _bs.record(op.name, e, op.out_sort, source="gpu")
+        return _NOACCEL
+
+
+def _try_shadow(op, v, a, b):
+    """許可リストの GPU 経路(:mod:`gpu_shadow`、CuPy)。``_NOACCEL`` = 走らなかった(CPU で続く)。
+
+    失敗は ``_try_accel`` と同じ扱い: 台帳に ``source="gpu"`` で記録し、op の遮断器を開け、
+    ``on_error="raise"`` では投げ直す。
+    """
+    try:
+        import gpu_shadow
+    except ImportError:
+        return _NOACCEL
+    if op.name in _GPU_OPEN and not _bs.is_strict():
+        return _NOACCEL
+    try:
+        return gpu_shadow.run_allowed(op.name, v, a, b)
+    except Exception as e:               # noqa: BLE001
+        if _bs.is_strict():
+            raise
+        _GPU_OPEN.add(op.name)
         _bs.record(op.name, e, op.out_sort, source="gpu")
         return _NOACCEL
 
@@ -2667,9 +2780,11 @@ def apply(image, name: str, a: float = 0.5, b: float = 0.5, coerce: bool = True,
     ``on_error="raise"``. It used to be handed to the op unchanged, which produced a
     uint8/float16/all-ones result with no exception — see :func:`_contract_dtype`.
 
-    ``device`` (default ``"auto"`` = CUDA when available and worth the transfer for this op
-    and image size, else CPU, see :func:`resolve_device`; ``FULLSEYE_DEVICE``
-    overrides): ``"cuda"`` runs accel-enabled ops on the GPU; on a host without CUDA the op
+    ``device`` (default ``"auto"`` = CUDA when available, worth the transfer for this op
+    and image size, and enough VRAM is free, else CPU, see :func:`resolve_device` and
+    :func:`explain_device`; ``FULLSEYE_DEVICE`` overrides): ``"cuda"`` runs accel-enabled ops
+    on the GPU, and ops on the measured allow-list through :mod:`gpu_shadow` when CuPy is
+    present; on a host without CUDA the op
     runs on the CPU and the reason is recorded in the fallback ledger (``on_error="raise"`` raises it).
     torch/accel *absent* falls back to CPU silently (documented); a kernel that
     FAILS is recorded in the fallback ledger and raises under ``on_error="raise"``.
@@ -2713,13 +2828,16 @@ def apply(image, name: str, a: float = 0.5, b: float = 0.5, coerce: bool = True,
     hatch; the answer is then whatever the implementation does with NaN).
     """
     policy = _policy(on_error)
-    device = resolve_device(device, stages=(name,), shape=getattr(image, "shape", None))
+    decision = _decide(device, (name,), getattr(image, "shape", None), 1)
+    _DECISION.value = decision
+    device = decision["resolved"]
+    shadow = decision.get("path") == "allow_single" and decision["device"] == "cuda"
     if template is None:
-        return _apply_impl(image, name, a, b, coerce, device, policy, fast, allow_nonfinite)
+        return _apply_impl(image, name, a, b, coerce, device, policy, fast, allow_nonfinite, shadow=shadow)
     prev = _ops._MATCH_CTX.get("template")
     _ops.set_match_template(template)
     try:
-        return _apply_impl(image, name, a, b, coerce, device, policy, fast, allow_nonfinite)
+        return _apply_impl(image, name, a, b, coerce, device, policy, fast, allow_nonfinite, shadow=shadow)
     finally:
         _ops.set_match_template(prev)
 
@@ -2840,7 +2958,7 @@ def _refuse_nonfinite(image, name):
         % (name, hit))
 
 
-def _apply_impl(image, name, a, b, coerce, device, policy, fast=None, allow_nonfinite=False):
+def _apply_impl(image, name, a, b, coerce, device, policy, fast=None, allow_nonfinite=False, shadow=False):
     a, b = _check_call_args(image, name, a, b, policy)
     nop = _nary_by_name().get(name) if find_op(name) is None else None
     if not allow_nonfinite and (nop is not None or find_op(name) is not None):
@@ -2931,6 +3049,10 @@ def _apply_impl(image, name, a, b, coerce, device, policy, fast=None, allow_nonf
             res = _try_accel(op, v, a, b, device)
             if res is not _NOACCEL:
                 return res
+            if shadow:                   # 手書きの GPU 経路が無く、許可リストにある op
+                res = _try_shadow(op, v, a, b)
+                if res is not _NOACCEL:
+                    return res
         elif use_fast:
             res = _try_fast(op, v, a, b)
             if res is not _NOACCEL:
@@ -3143,8 +3265,14 @@ def run_pipeline(image, stages: Iterable, a: float = 0.5, b: float = 0.5,
     policy = _policy(on_error)
     requested, device = device, resolve_device(device)      # 値の検査はここ(段の検査より先)
     image, norm, ops_ = _prepare_pipeline(image, stages, a, b, policy)
-    if device != "cpu" and norm:
-        device = resolve_device(requested, stages=[s[0] for s in norm], shape=getattr(image, "shape", None))
+    shadow_paths = None
+    if norm:
+        decision = _decide(requested, [s[0] for s in norm], getattr(image, "shape", None), 1)
+        _DECISION.value = decision
+        if device != "cpu":
+            device = decision["resolved"]
+            if decision["device"] == "cuda" and any(str(p).startswith("allow_") for p in decision["_paths"] or ()):
+                shadow_paths = list(decision["_paths"])
 
     if isinstance(image, PrecisionUnion) and device != "cpu":
         image = image.to_dense()      # the lazy union path is CPU-only; the GPU bridge needs a dense array
@@ -3163,8 +3291,8 @@ def run_pipeline(image, stages: Iterable, a: float = 0.5, b: float = 0.5,
                 with _bs.current_op("run_pipeline[gpu]"):
                     if policy == "raise":
                         with _bs.strict_mode(True):
-                            return _bridge.run(norm, [v0], device=device)[0]
-                    return _bridge.run(norm, [v0], device=device)[0]
+                            return _bridge.run(norm, [v0], device=device, shadow=shadow_paths)[0]
+                    return _bridge.run(norm, [v0], device=device, shadow=shadow_paths)[0]
             except Exception as e:       # noqa: BLE001 - bridge failed: recorded, then the CPU path runs
                 if policy == "raise":
                     raise

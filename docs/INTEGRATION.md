@@ -76,10 +76,22 @@ explicitly — nothing is coerced to "the nearest thing".
 
 Every tool that runs operators accepts `device` (`auto` = CUDA when the host has it,
 otherwise CPU; `FULLSEYE_DEVICE` overrides; `cuda` on a CPU-only host runs on the CPU with the
-reason recorded per op, as before). The result carries `acceleration` (`requested`, effective
-`device`, `approximate: true` only when it really ran on CUDA) and the GPU/CPU
-segment plan; pass `parity_check: true` to also run the CPU reference and record
-`max_abs_diff_vs_cpu` (doubles the work, so it is opt-in).
+reason recorded per op, as before). On a CUDA host `auto` also keeps the work on the CPU when
+the measured crossover table (`fullseye/data/DEVICE_RULES.json`) says the GPU does not win at
+this size, when an op without a hand-written GPU path is not on the measured allow-list
+(`fullseye/data/gpu_auto_allow.json`, run through CuPy) or is smaller than the size it was
+measured at, and when free VRAM is below `FULLSEYE_GPU_MIN_FREE_MB` (default 2048; `0` turns
+the check off) — e.g. a local LLM holding the same GPU. Explicit `cuda` and `FULLSEYE_DEVICE`
+outrank all of these. The result carries `acceleration` (`requested`, effective
+`device`, `approximate: true` only when it really ran on CUDA, plus `path` —
+`accel` / `allow_single` / `allow_resident` / `allow_pipeline` / `cpu` — and `reason` when the
+CPU was chosen: `requested_cpu`, `env_cpu`, `no_cuda`, `vram_low`, `crossover`, `not_listed`,
+`chain_only`, `no_cupy`, `below_measured_size`, `gpu_failed`; `fullseye_pipeline` adds one row
+per stage) and the GPU/CPU segment plan; pass `parity_check: true` to also run the CPU reference
+and record `max_abs_diff_vs_cpu` (doubles the work, so it is opt-in). `fullseye_describe`
+(kind `op`) returns `gpu_paths` — whether the op has a hand-written GPU path, its allow-list
+slot and measured speed-up, and the size from which `auto` picks the GPU — so an agent can
+choose before it runs anything. In Python: `fullseye.explain_device(...)`.
 The `minimal` tool profile advertises `fullseye_pipeline` without `device` / `parity_check`
 (they are still accepted; the minimal profile stays under its 1,500-token budget).
 

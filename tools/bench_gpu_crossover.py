@@ -451,6 +451,10 @@ def cmd_gpu(ns) -> int:
     # 4096^2 x 100 は入力だけで 6.7 GB。畳み込みの中間で VRAM(32 GB)を溢れ、OOM にならずページングで
     # 返らなくなった(gaussian)。点演算の threshold だけ測り、他は測らない(GPU は共有)。
     todo = [p for p in todo if not (p[1] == 4096 and p[2] == 100 and p[0] != "threshold")]
+    # --skip "512x4,...": 体積 512³ x 4 は vol_median で VRAM を溢れて返らなかった(2026-11-03、番犬で停止)。
+    # 同じ寸法の他の体積 op も測らない(1 点で 8 分ロックを握る)。測らなかった点は表に「未測定」と書く。
+    skip = {tuple(int(v) for v in item.split("x")) for item in ns.skip.split(",") if item}
+    todo = [p for p in todo if (p[1], p[2]) not in skip]
     bad = {}
 
     def work(lease) -> bool:
@@ -689,6 +693,54 @@ def cmd_pipe_gpu(ns) -> int:
     return windows(ns, work)
 
 
+RECHECK_SIDES = (128, 256)
+RECHECK_REPS = 15
+
+
+def cmd_pipe_recheck(ns) -> int:
+    """小さい寸法の鎖を、同じプロセスで CPU と GPU を交互に 15 回ずつ測り直す(全パイプライン・全変種)。
+
+    pipe-cpu と pipe-gpu は別のプロセス・別の時刻に 3〜5 回で測った。1〜2 ms の点では 10 % 前後の差が
+    揺れに埋もれるので、規則の採否を分ける寸法(128, 256)だけ全部を測り直す(選んだ点だけではない)。
+    """
+    import torch
+    out = Path(ns.out)
+    sync = torch.cuda.synchronize
+    todo = [(name, v, s) for name, vs in PIPELINES.items() for v in vs for s in RECHECK_SIDES]
+
+    def work(lease) -> bool:
+        done = {(r["pipeline"], r["variant"], r["side"]) for r in load(out)}
+        for name, v, side in todo:
+            if (name, v, side) in done:
+                continue
+            if not lease.ok():
+                return True
+            chain = PIPELINES[name][v]
+            imgs = pool("image", side, 1)
+            _pipe_run(chain, imgs, "cpu")
+            _pipe_run(chain, imgs, "cuda")
+            sync()
+            cpu_w, gpu_w = [], []
+            for _ in range(RECHECK_REPS):
+                t0 = time.perf_counter()
+                _pipe_run(chain, imgs, "cpu")
+                cpu_w.append(time.perf_counter() - t0)
+                t0 = time.perf_counter()
+                _pipe_run(chain, imgs, "cuda")
+                sync()
+                gpu_w.append(time.perf_counter() - t0)
+            if lease.ok():
+                append(out, {"pipeline": name, "variant": v, "side": side, "n": 1, "status": "ok",
+                             "cpu_s": float(np.median(cpu_w)), "gpu_s": float(np.median(gpu_w)),
+                             "cpu_min_s": float(min(cpu_w)), "gpu_min_s": float(min(gpu_w)),
+                             "reps": RECHECK_REPS, "at": stamp()})
+                print(name, v, side, "%.3f ms cpu / %.3f ms gpu" % (np.median(cpu_w) * 1e3, np.median(gpu_w) * 1e3),
+                      flush=True)
+        return False
+
+    return windows(ns, work)
+
+
 # ---- 全 accel op の反証掃引(規則が代表の外で遅くならないかを見る) ------------------
 SWEEP_SIDES = (128, 256, 512, 1024, 2048)
 SWEEP_KNOBS = (0.2, 0.5, 0.9)
@@ -918,6 +970,60 @@ def cmd_before_after(ns) -> int:
     return windows(ns, work)
 
 
+SHADOW_SAMPLE = 12
+
+
+def shadow_sample() -> list:
+    """許可リスト(単独 ``ops``)の登録 op のうち入力が image で 2048² で測ったもの、名前順に等間隔で 12 件。"""
+    import api
+    import device_policy
+    rows = {r["name"]: r for r in api._rows()}
+    accelerated = api._gpu_op_names()
+    names = sorted(op for op, row in device_policy.shadow_rows().items()
+                   if row["list"] == "ops" and row.get("min_elements") == 2048 * 2048 and op in rows
+                   and rows[op]["in_sort"] == "image" and op not in accelerated)
+    step = max(1, len(names) // SHADOW_SAMPLE)
+    return names[::step][:SHADOW_SAMPLE]
+
+
+def cmd_shadow_check(ns) -> int:
+    """許可リストの道の before/after: before = 規則の前(GPU 経路の無い op は CPU)、after = ``device="auto"``。
+
+    一辺 2048(倍率を測った大きさ)と 1024(auto が CPU に残す大きさ)で測る。after の経路は
+    ``api.last_device_decision()`` を記録する(GPU に行ったと言うのは経路が ``allow_single`` のときだけ)。
+    """
+    import torch
+    out = Path(ns.out)
+    sync = torch.cuda.synchronize
+
+    def work(lease) -> bool:
+        import api
+        done = {(r["name"], r["side"]) for r in load(out)}
+        for op in shadow_sample():
+            for side in (2048, 1024):
+                if (op, side) in done:
+                    continue
+                if not lease.ok():
+                    return True
+                im = pool("image", side, 1)[0]
+                try:
+                    before, _ = _sweep_times(op, im, 0.5, "cpu", sync)
+                    after, reps = _sweep_times(op, im, 0.5, "auto", sync)
+                    dec = api.last_device_decision() or {}
+                    rec = {"kind": "shadow", "name": op, "side": side, "before_s": before, "after_s": after,
+                           "path": dec.get("path"), "device": dec.get("device"), "reason": dec.get("reason"),
+                           "reps": reps, "status": "ok", "at": stamp()}
+                except Exception as e:  # noqa: BLE001 - a failing op is a result
+                    rec = {"kind": "shadow", "name": op, "side": side, "status": "failed",
+                           "note": "%s: %s" % (type(e).__name__, str(e)[:160]), "at": stamp()}
+                if lease.ok():
+                    append(out, rec)
+                    print(op, side, rec.get("before_s"), rec.get("after_s"), rec.get("path"), flush=True)
+        return False
+
+    return windows(ns, work)
+
+
 def cmd_env(_ns) -> int:
     import scipy
     import cv2
@@ -933,7 +1039,8 @@ def main(argv=None) -> int:
     for name, fn in (("cpu", cmd_cpu), ("cpu-worker", cmd_cpu_worker), ("gpu", cmd_gpu), ("cold", cmd_cold),
                      ("pipe-cpu", cmd_pipe_cpu), ("pipe-gpu", cmd_pipe_gpu), ("env", cmd_env),
                      ("sweep-cpu", cmd_sweep_cpu), ("sweep-cpu-worker", cmd_sweep_cpu_worker),
-                     ("sweep-gpu", cmd_sweep_gpu), ("before-after", cmd_before_after)):
+                     ("sweep-gpu", cmd_sweep_gpu), ("before-after", cmd_before_after),
+                     ("pipe-recheck", cmd_pipe_recheck), ("shadow-check", cmd_shadow_check)):
         p = sub.add_parser(name)
         p.set_defaults(fn=fn)
         p.add_argument("--out", default="")
@@ -941,6 +1048,7 @@ def main(argv=None) -> int:
         p.add_argument("--ops", default="")
         p.add_argument("--tmp", default="")
         p.add_argument("--reps", type=int, default=5)
+        p.add_argument("--skip", default="", help="測らない (一辺 x 枚数) の点、例 512x4")
         p.add_argument("--window", type=float, default=480.0, help="1 窓の上限 s(ロックの保持)")
         p.add_argument("--yield-s", dest="yield_s", type=float, default=60.0, help="窓の間に譲る s")
         p.add_argument("--poll", type=float, default=30.0)

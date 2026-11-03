@@ -1300,10 +1300,9 @@ def _apply(a: dict, cat: Catalog, store: HandleStore, *,
     if named:
         rec["named_params"] = named
     import fullseye
-    resolved_device = fullseye.resolve_device(a.get("device", "auto"), stages=(op.name,), shape=np.shape(arr))
-    effective = resolved_device if resolved_device != "cuda" or fullseye.cuda_available() else "cpu"
-    rec["acceleration"] = {"requested": a.get("device", "auto"), "device": effective,
-                           "approximate": effective == "cuda"}
+    rec["acceleration"] = _acceleration_record(a.get("device", "auto"), op.name, np.shape(arr),
+                                               rec.get("degraded"))
+    effective = rec["acceleration"]["device"]
     # CPU 参照との照合は求められた時だけ(既定で毎回 2 回走らせると GPU の意味が無い)
     if effective == "cuda" and bool(a.get("parity_check", False)) and isinstance(out, np.ndarray):
         cpu = fullseye.apply(arr, op.name, ka, kb, device="cpu", on_error="raise")
@@ -1320,6 +1319,30 @@ def _apply(a: dict, cat: Catalog, store: HandleStore, *,
     return tool_result(text, rec, links=links, max_structured_bytes=max_structured_bytes)
 
 
+def _acceleration_record(requested, op_name: str, shape, degraded=None) -> dict:
+    """``acceleration`` の中身(MCP の結果)。従来の ``requested`` / ``device`` / ``approximate`` に、
+    ``path``(``accel`` / ``allow_single`` / ``cpu`` …)・``reason``(CPU を選んだ理由)・``resolved`` /
+    ``source`` と、見たときは ``vram_free_mb`` / ``vram_min_free_mb`` を足す(追加のみ)。
+
+    直前の ``fullseye.apply`` が使った選択(:func:`api.last_device_decision`)を優先し、無ければ同じ入力で
+    :func:`api.explain_device` を引く。GPU で走らせて失敗し CPU で続いた記録が台帳にあれば
+    ``device="cpu"`` / ``reason="gpu_failed"`` に直す(選んだ装置でなく、走った装置を返す)。
+    """
+    import api
+    dec = api.last_device_decision()
+    if dec is None or dec.get("requested") != str(requested):
+        dec = api.explain_device(requested, stages=(op_name,), shape=shape)
+    out = {"requested": requested, "device": dec["device"], "approximate": dec["device"] == "cuda",
+           "path": dec.get("path"), "reason": dec.get("reason"), "resolved": dec.get("resolved"),
+           "source": dec.get("source")}
+    for key in ("vram_free_mb", "vram_min_free_mb"):
+        if key in dec:
+            out[key] = dec[key]
+    if out["device"] == "cuda" and any(isinstance(d, dict) and d.get("source") == "gpu" for d in degraded or ()):
+        out.update(device="cpu", approximate=False, path="cpu", reason="gpu_failed")
+    return out
+
+
 def _pipeline(a: dict, cat: Catalog, store: HandleStore, *,
               max_structured_bytes: int = MAX_STRUCTURED_BYTES) -> dict:
     return _pipeline_dag(a,cat,store,max_structured_bytes=max_structured_bytes)
@@ -1332,8 +1355,10 @@ def _pipeline_dag(a: dict, cat: Catalog, store: HandleStore, *, max_structured_b
     from fullseye.opsearch import _graph
     edges={e["op"]:e for e in _graph()["edges"]}
     policy=_execution_policy()
-    device=fullseye.resolve_device(a.get("device", "auto"))
-    gpu_effective=(device == "cuda" and fullseye.cuda_available())
+    pipeline_decision=fullseye.explain_device(a.get("device", "auto"))
+    device=pipeline_decision["resolved"]
+    gpu_effective=pipeline_decision["device"] == "cuda"     # resolved cuda かつ CUDA が在る
+    stage_devices=[]                      # 段ごとの装置・経路・理由(acceleration.stages)
     parity_check=bool(a.get("parity_check", False))
     explicit=bool(a.get("bindings") or a.get("outputs") or any("inputs" in s or "params" in s for s in a["stages"]))
     start_sort=store.get(a["handle"])[0]["sort"] if a.get("handle") else None
@@ -1435,9 +1460,19 @@ def _pipeline_dag(a: dict, cat: Catalog, store: HandleStore, *, max_structured_b
                         runtime_ops.set_match_template(template_value)
                     try:
                         # 段ごとに転送するので、規則も段ごとに通す(auto のときだけ CPU に残ることがある)
-                        stage_device=(fullseye.resolve_device(a.get("device", "auto"), stages=(edge["op"],),
-                                                              shape=np.shape(incoming))
-                                      if device == "cuda" and len(args) == 1 else device)
+                        if device == "cuda" and len(args) == 1:
+                            stage_decision=fullseye.explain_device(a.get("device", "auto"), stages=(edge["op"],),
+                                                                   shape=np.shape(incoming))
+                            stage_device=stage_decision["resolved"]
+                        else:
+                            stage_decision={"device":"cpu","path":"cpu",
+                                            "reason":(pipeline_decision.get("reason") if device != "cuda"
+                                                      else "multi_input")}
+                            stage_device=device if len(args) == 1 else "cpu"
+                        stage_devices.append({"stage":i,"op":edge["op"],
+                                              "device":stage_decision["device"] if stage_device == "cuda" else "cpu",
+                                              "path":stage_decision.get("path") if stage_device == "cuda" else "cpu",
+                                              "reason":stage_decision.get("reason")})
                         if stage_device == "cuda" and len(args) == 1:
                             out=fullseye.apply(incoming, edge["op"], float(normalized_spec["a"]),
                                                float(normalized_spec["b"]), device=stage_device,
@@ -1529,9 +1564,20 @@ def _pipeline_dag(a: dict, cat: Catalog, store: HandleStore, *, max_structured_b
     except Exception:  # noqa: BLE001 - metadata must not change execution outcome
         acceleration={"n_gpu_segments":0,"segments":[],"n_transfers":0}
     acceleration["requested"] = a.get("device", "auto")
-    acceleration["device"] = "cuda" if gpu_effective else "cpu"
-    acceleration["n_transfers"] = (2 * acceleration.get("n_gpu_segments", 0)
-                                     if gpu_effective else 0)
+    on_gpu=[s for s in stage_devices if s["device"] == "cuda"]
+    # MCP の pipeline は段ごとに fullseye.apply を呼ぶ(段の間は host に戻る)。だから転送は GPU で走った
+    # 段ごとに往復 1 回。coverage の n_gpu_segments は常駐で繋いだ場合の値で、ここでは参考。
+    acceleration["device"] = "cuda" if gpu_effective and on_gpu else "cpu"
+    acceleration["n_transfers"] = 2 * len(on_gpu) if gpu_effective else 0
+    paths=sorted({s["path"] for s in stage_devices}) or ["cpu"]
+    acceleration["path"] = paths[0] if len(paths) == 1 else "mixed"
+    acceleration["reason"] = (None if acceleration["device"] == "cuda"
+                              else next((s["reason"] for s in stage_devices if s["reason"]),
+                                        pipeline_decision.get("reason")))
+    acceleration["stages"] = stage_devices
+    for key in ("vram_free_mb", "vram_min_free_mb"):
+        if key in pipeline_decision:
+            acceleration[key] = pipeline_decision[key]
     result={"completed":sum(r.get("status")=="ok" for r in records),"failed":sum(r.get("status")=="failed" for r in records),
             "stopped_at":first_failed,"strict":True,"stages":visible_records,"outputs":output_rows,
             "intermediate_bytes":intermediate_bytes,"intermediate_byte_limit":intermediate_limit,

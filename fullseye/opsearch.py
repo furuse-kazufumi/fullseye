@@ -331,6 +331,20 @@ def plan(have, want: str, direction: str = "forward", pattern: str | None = None
                     search=meta, plans=solutions)
 
 
+def _gpu_paths(name: str, indexed_gpu) -> dict | None:
+    """op の GPU 版の有無・種類・倍率(AI が実行前に CPU / GPU を選ぶため)。
+
+    手書きの GPU 経路の有無は索引の ``gpu`` 欄(``accel`` 表から生成)で判る。torch を import しない。
+    表が読めなければ ``None``(説明そのものは返す)。
+    """
+    try:
+        import device_policy
+        has_accel = str(indexed_gpu or "").startswith("あり")
+        return device_policy.gpu_paths(name, accelerated={name} if has_accel else frozenset())
+    except Exception:  # noqa: BLE001 - 付記の失敗で説明を落とさない
+        return None
+
+
 def describe(kind: str, name: str, budget_tokens: int = 800) -> dict:
     """Describe one sort, op, or family; never dump the complete inventory."""
     if kind == "sort":
@@ -341,6 +355,7 @@ def describe(kind: str, name: str, budget_tokens: int = 800) -> dict:
             indexed = next((row for row in load_index()["rows"] if row.get("n") == name), None)
             edge = dict(edge)
             edge["gpu"] = (indexed or {}).get("gpu", "なし")
+            edge["gpu_paths"] = _gpu_paths(name, edge["gpu"])
         r = {"found": edge is not None, "op": edge, "param_space": param_space(name, {}) if edge else None}
     elif kind == "family":
         fam = next((f for f in _load_json(PKG_FAMILIES)["families"] if f["name"] == name), None)

@@ -36,7 +36,12 @@ def test_table_covers_the_gpu_ops_it_was_measured_on():
     assert sum(r["min_pixels"] > 0 for r in RULES["ops"].values()) >= 50
     assert set(RULES["ops"]) <= api._gpu_op_names()
     assert set(RULES["batch"]) >= {"point", "separable", "nonseparable", "morphology", "frequency", "iterative"}
-    assert RULES["pipeline"]["min_pixels"] > 0
+    # 鎖の規則は「測った全点で試した」記録を持つ。試した点・CPU に回した点が空なら、採否は判断ではない。
+    pipe = RULES["pipeline"]
+    assert pipe["rule"] == "min_stage"
+    assert pipe["measured_points"] >= 80
+    assert pipe["points_on_cpu"] >= 1
+    assert pipe["adopted"] == (not pipe["violations"])
 
 
 def test_no_measured_point_stays_on_the_cpu_where_the_gpu_wins():
@@ -54,14 +59,34 @@ def test_no_measured_point_stays_on_the_cpu_where_the_gpu_wins():
 
 
 def test_no_measured_pipeline_stays_on_the_cpu_where_the_gpu_wins():
-    cpu = {(r["pipeline"], r["variant"], r["side"]): r for r in gen.read_logs("pipe_cpu.jsonl")
-           if r["status"] == "ok" and r["n"] == 1}
-    gpu = {(r["pipeline"], r["variant"], r["side"]): r for r in gen.read_logs("gpipe.jsonl")
-           if r["status"] == "ok" and r["n"] == 1}
-    assert len(gpu) >= 30
-    for key, g in gpu.items():
-        if key[2] ** 2 < RULES["pipeline"]["min_pixels"] and key in cpu:
-            assert gen.cpu_not_worse(cpu[key]["wall_s"], g["wall_s"]), key
+    """★採用条件(鎖): 表が CPU に回す鎖の測定点で、CPU が GPU に負けた点が無い(1 枚・16 枚とも)。"""
+    points = gen.pipeline_points()
+    chains = gen._chains()
+    accelerated = api._gpu_op_names()
+    assert len(points) >= 80
+    for (name, variant, side, n), (cpu_s, gpu_s) in points.items():
+        stages = chains[name][variant]
+        if device_policy.route(stages, (side, side), n, rules=RULES, accelerated=accelerated) == "cpu":
+            assert gen.cpu_not_worse(cpu_s, gpu_s), (name, variant, side, n)
+
+
+def test_rejected_pipeline_rule_names_measured_losses():
+    """不採用の理由は実測の負けでなければならない(ログから数え直す。理由の無い不採用 = 規則の消失を拒む)。"""
+    pipe = RULES["pipeline"]
+    points = gen.pipeline_points()
+    trial = dict(RULES, pipeline={"rule": "min_stage", "adopted": True})
+    accelerated = api._gpu_op_names()
+    for name, variant, side, n, cpu_s, gpu_s in pipe["violations"]:
+        c, g = points[(name, variant, side, n)]
+        assert (round(c, 6), round(g, 6)) == (cpu_s, gpu_s)
+        assert not gen.cpu_not_worse(c, g)
+        stages = gen._chains()[name][variant]
+        assert device_policy.route(stages, (side, side), n, rules=trial, accelerated=accelerated) == "cpu"
+    if not pipe["adopted"]:
+        assert pipe["violations"]
+        # 不採用の表では鎖は GPU のまま(規則の無かったときの挙動)
+        stages = gen._chains()["scratch_surface"]["all"]
+        assert device_policy.route(stages, SMALL, rules=RULES, accelerated=accelerated) == "cuda"
 
 
 def test_small_image_stays_on_cpu_and_large_goes_to_gpu(gpu_box):
@@ -106,8 +131,12 @@ def test_cannot_judge_means_the_previous_behaviour():
 
 
 def test_cpu_only_stage_does_not_block_the_pipeline_rule():
-    op = next(iter(RULES["ops"]))
-    assert device_policy.route([op, "clahe"], SMALL, rules=RULES, accelerated={op}) == "cpu"
+    """GPU 経路の無い段は鎖の判断から外れる(規則が採用されている表で見る。採否は上の門が見る)。"""
+    op = max(RULES["ops"], key=lambda o: RULES["ops"][o]["min_pixels"])
+    adopted = dict(RULES, pipeline={"rule": "min_stage", "adopted": True})
+    assert device_policy.route([op, "clahe"], SMALL, rules=adopted, accelerated={op}) == "cpu"
+    assert device_policy.route([op, "clahe"], SMALL, rules=adopted, accelerated={op, "clahe"}) == "cuda"
+    assert device_policy.route(["clahe", "kirsch_amp"], SMALL, rules=adopted, accelerated={op}) == "cuda"
 
 
 def test_batch_lowers_or_keeps_the_threshold():
@@ -137,3 +166,21 @@ def test_rule_module_and_table_ship_in_the_wheel():
     cfg = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))["tool"]["setuptools"]
     assert "device_policy" in cfg["py-modules"]
     assert "data/DEVICE_RULES.json" in cfg["package-data"]["fullseye"]
+
+
+def test_before_after_on_the_shipped_table():
+    """★採用条件の実測(after < before): 出荷する表で CPU に回る点を、規則なし(cuda)と規則あり(auto)で
+    同じプロセスで測った 2 回目(``before_after_2.jsonl``、表の材料には入れていない)。全点を測り切っていて、
+    揺れの幅(10 % と 50 µs)を超えて遅くなった点が無い。"""
+    from tools.bench_gpu_crossover import BA_KNOBS, BA_SIDES, sweep_ops
+    rows = gen.read_logs("before_after_2.jsonl")
+    accelerated = api._gpu_op_names()
+    expected = {(op, side, a) for op, _kind in sweep_ops() for side in BA_SIDES for a in BA_KNOBS
+                if device_policy.route([op], (side, side), rules=RULES, accelerated=accelerated) == "cpu"}
+    measured = {(r["name"], r["side"], r["a"]) for r in rows if r["kind"] == "op"}
+    assert len(expected) >= 300
+    assert measured == expected
+    for r in rows:
+        assert gen.cpu_not_worse(r["after_s"], r["before_s"]), (r["kind"], r["name"], r["side"], r.get("a"))
+    assert sum(r["after_s"] for r in rows) < sum(r["before_s"] for r in rows)
+    assert {r["kind"] for r in rows} == {"op", "pipeline", "cold"}

@@ -48,7 +48,8 @@ import types
 import numpy as _np
 
 __all__ = ["ShadowImporter", "Stats", "get_shadow", "to_gpu", "to_cpu", "available",
-           "allowed_ops", "resident_ops", "shadow_fn", "run_allowed", "apply", "GpuAutoError"]
+           "allowed_ops", "resident_ops", "pipeline_ops", "shadow_fn", "run_allowed", "run_chain", "apply",
+           "GpuAutoError"]
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 ALLOW_PATH = os.path.join(ROOT, "fullseye", "data", "gpu_auto_allow.json")
@@ -844,6 +845,51 @@ def resident_ops() -> dict:
             return dict(json.load(f).get("resident_ops", {}))
     except FileNotFoundError:
         return {}
+
+
+def pipeline_ops() -> dict:
+    """``{op: row}`` adopted for a resident chain at 1-5x (``pipeline_ops``; never single calls)."""
+    try:
+        with open(ALLOW_PATH, encoding="utf-8") as f:
+            return dict(json.load(f).get("pipeline_ops", {}))
+    except FileNotFoundError:
+        return {}
+
+
+def run_chain(stages, imgs):
+    """Run consecutive allow-listed registry stages on the GPU: one upload and one download per image.
+
+    *stages* = ``ops.Stage`` の列(``op`` / ``a`` / ``b`` / ``sort``)。どれかが許可リスト(``ops`` /
+    ``resident_ops`` / ``pipeline_ops``)の外なら :class:`GpuAutoError`(fail-closed)。段の間の値は
+    CuPy のまま渡し、``ops._apply`` と同じ規則で [0, 1] に切る。numpy の列を返す。
+    連続処理の採用(常駐の倍率)は同じ op を続けた測定なので、異なる op の鎖で同じ倍率は約束しない。
+    """
+    real_ops = importlib.import_module("ops")
+    listed = set(allowed_ops()) | set(resident_ops()) | set(pipeline_ops())
+    missing = [st.op for st in stages if st.op not in listed]
+    if missing:
+        raise GpuAutoError("%r are not on the GPU allow-list (%s)" % (missing, os.path.basename(ALLOW_PATH)))
+    if not available():
+        raise GpuAutoError("no CUDA device visible to CuPy")
+    fns = []
+    for st in stages:
+        fn = shadow_fn(st.op)
+        if fn is None:
+            raise GpuAutoError("%r has no shadow callable" % (st.op,))
+        fns.append(fn)
+    cp = _cupy()
+    out = []
+    for im in imgs:
+        x = to_gpu(_np.asarray(im, _np.float64))
+        for st, fn in zip(stages, fns):
+            if isinstance(x, _np.ndarray):
+                x = to_gpu(x)
+            x = fn(x, st.a, st.b)
+            if _is_gpu(x) and x.ndim in (2, 3) and \
+                    real_ops._effective_out_sort(st) not in real_ops._UNCLIPPED_SORTS:
+                x = cp.clip(x, 0.0, 1.0)
+        out.append(to_cpu(x))
+    return out
 
 
 def run_allowed(name: str, *args, **kwargs):

@@ -122,6 +122,9 @@ CHAIN = [
     (["tools/gen_recipe_retrieval_report.py"], "business-language recipe recall report"),
     (["tools/measure_mcp_context.py"], "six-task minimal MCP context benchmark"),
     (["tools/gen_rag_benchmark_report.py"], "RAG recall measurement and synonym-gap report"),
+    # device="auto" の規則表。入力は GPU の実測ログ(docs/perf/logs/crossover、手で測って commit)と
+    # 許可リスト(fullseye/data/gpu_auto_allow.json)と registry。どの段の生成物も読まない。
+    (["tools/gen_device_rules.py"], "fullseye/data/DEVICE_RULES.json(device=auto の実測規則と許可リストの道)"),
 ]
 
 #: ---- 段の依存表(2026-10-15)------------------------------------------------------
@@ -188,6 +191,7 @@ OUTPUTS = {
     "tools/gen_recipe_retrieval_report.py": ["docs/recipe_retrieval_report.json"],
     "tools/measure_mcp_context.py": ["docs/mcp_context_benchmark.json"],
     "tools/gen_rag_benchmark_report.py": ["docs/rag_synonym_gaps.json"],
+    "tools/gen_device_rules.py": ["fullseye/data/DEVICE_RULES.json"],
     # 2026-10-23: 手で列挙していて #116 の文献 4 本が漏れ、regen が exit 1(--check は緑)だった。
     #   件数を打ち直す文献ノートの実ファイルと合わせる(OSS_LANDSCAPE.md は gen_oss_landscape.py の生成物、
     #   oss_landscape_notes.md は手書きの注で、どちらもこの段は書かない)。
@@ -330,6 +334,16 @@ EXCLUDED = {
                              "手で回し、docs/perf/op_time_ranking_<date>.json を日付つきで commit する(2026-11-02)。"),
     "tools/measure_op_families.py": ("CPU timing and peak memory are machine-dependent raw measurements; run manually, "
                                       "then commit docs/ops/families_timing.json with environment metadata."),
+    "tools/bench_gpu_crossover.py": ("GPU の実測(機械と負荷で値が変わり、共有 GPU のロックの下で手で回す)。生ログを docs/perf/logs/ に "
+            "commit し、表はそのログから決定的に作る生成器(tools/gen_device_rules.py)が書く。"),
+    "tools/gpu_auto_sweep.py": ("機械的 GPU 化の掃引(CuPy と GPU が要り、作業ファイルは out/)。採用の結果は "
+                                "report 段が fullseye/data/gpu_auto_allow.json と docs/perf/gpu_auto_sweep_*.md へ書く。"),
+    "tools/gpu_auto_report.py": ("gpu_auto_sweep の report 段の本体。入力は out/ の掃引ログ(コミットしない)なので、"
+                                 "掃引した機械でだけ回して許可リストと報告を commit する。"),
+    "tools/gpu_auto_merge_rest.py": ("partial/none の掃引(out/、コミットしない)の採用分を許可リストへ足す。"
+                                     "掃引した機械でだけ回す。"),
+    "tools/gpu_auto_method_compare.py": "GPU 化の方式比較の実測(CuPy / torch が要る)。結果は --out の JSON。",
+    "tools/gpu_auto_verify.py": "採用 op の実寸照合(GPU が要る)。作業ファイルは out/。",
     "tools/measure_device_crossover.py": ("GPU timing is machine-dependent and must be run manually only after "
                                            "the script verifies that the GPU is idle; raw timing is not deterministic."),
     "tools/build_shwfs_anim3d.py": ("Shack-Hartmann 波面センサーの動く 3-D 教材(docs/view2026/anim3d/shack_hartmann_anim3d.html)。"

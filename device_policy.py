@@ -11,12 +11,25 @@
 * 表は 1 台の機械の実測である。GPU が弱い機械では境界は大きい側へ動くだけなので、「CPU に残す」判断は
   崩れない。CPU が極端に弱い機械では、小さい画像で GPU の勝ちを取りこぼすことがある。
 
-torch を import しない(表を引くだけ)。
+torch を import しない(表を引くだけ)。空き VRAM を見る :func:`free_vram_mb` だけは、すでに import
+された torch / CuPy に問い合わせる(自分では import しない)。
+
+経路(path)と、CPU を選んだ理由(reason)の語彙 / Vocabulary of the decision:
+
+* path: ``accel``(手書きの torch 経路)/ ``allow_single``(許可リスト ``ops``、単独呼びで 5 倍以上)/
+  ``allow_resident``(``resident_ops``、GPU に載せたままの連続処理で 5 倍以上)/ ``allow_pipeline``
+  (``pipeline_ops``、常駐で 1〜5 倍)/ ``cpu``。
+* reason(``cpu`` のとき): ``requested_cpu`` / ``env_cpu``(``FULLSEYE_DEVICE=cpu``)/ ``no_cuda`` /
+  ``vram_low`` / ``crossover``(転送込みで GPU が勝たない大きさ)/ ``not_listed``(GPU 経路が無く許可
+  リストにも無い)/ ``chain_only``(常駐の枠だけで、単独では採用していない)/ ``no_cupy``(許可リストの
+  道を走らせる CuPy が無い)/ ``below_measured_size``(許可リストの倍率を測った大きさ未満)。
 """
 from __future__ import annotations
 
 import json
 import os
+import sys
+import time
 
 _HERE = os.path.dirname(os.path.abspath(__file__))
 _PATH = os.path.join(_HERE, "fullseye", "data", "DEVICE_RULES.json")
@@ -75,10 +88,168 @@ def route(names, shape, n: int = 1, rules: dict | None = None, accelerated=None)
     if len(names) == 1:
         threshold = _op_threshold(table, names[0], n)
     else:
-        # 2 段以上は転送が 1 回に償却されるので、単 op の表ではなくパイプラインの実測の閾値を使う。
-        unknown = [name for name in names if _op_threshold(table, name, n) is None
-                   and (accelerated is None or name in accelerated)]
-        threshold = None if unknown else table["pipeline"]["min_pixels"]
+        threshold = _chain_threshold(table, names, n, accelerated)
     if threshold is None or px >= threshold:
         return "cuda"
     return "cpu"
+
+
+def _chain_threshold(table: dict, names, n: int, accelerated) -> int | None:
+    """2 段以上の鎖の閾値(``None`` = 判断しない = GPU のまま)。
+
+    規則は「GPU 経路を持つ全段が単独でも CPU に残る大きさなら、鎖も CPU」(``min_stage``)。鎖は転送が
+    1 回に償却されるので単独より GPU 寄りになりうる。だからこの規則は、測った鎖の全点で遅くならなかった
+    ときだけ採用される(表の ``pipeline.adopted``、生成は ``tools/gen_device_rules.py``)。採用されて
+    いない・GPU 経路を持つのに表に無い段がある・GPU 経路を持つ段が無い、のどれかなら判断しない。
+    """
+    rule = table.get("pipeline") or {}
+    if rule.get("rule") != "min_stage" or not rule.get("adopted"):
+        return None
+    gpu_stages = [name for name in names if accelerated is None or name in accelerated]
+    if not gpu_stages:
+        return None
+    limits = [_op_threshold(table, name, n) for name in gpu_stages]
+    if any(t is None for t in limits):
+        return None
+    return min(limits)
+
+
+# ---- 空き VRAM(LLM と同じ GPU を分け合う場面) -------------------------------------------
+#: 既定の閾値 MiB。根拠は docs/perf/gpu_crossover_2026-11-02.md の「VRAM の閾値」: CUDA の文脈
+#: (torch + CuPy)と、一辺 4096 の 1 枚を 1 op 通すときの作業領域の 90 パーセンタイルの和に余裕を足した値。
+DEFAULT_MIN_FREE_MB = 2048
+_VRAM_TTL_S = 1.0
+_VRAM_CACHE: list = []      # [(monotonic, free_mb | None)]
+
+
+def min_free_mb() -> int:
+    """``FULLSEYE_GPU_MIN_FREE_MB``(整数 MiB、0 で判定しない)。読めない値は既定値。"""
+    raw = os.environ.get("FULLSEYE_GPU_MIN_FREE_MB", "").strip()
+    if not raw:
+        return DEFAULT_MIN_FREE_MB
+    try:
+        value = int(float(raw))
+    except ValueError:
+        return DEFAULT_MIN_FREE_MB
+    return value if value >= 0 else DEFAULT_MIN_FREE_MB
+
+
+def _query_free_mb():
+    """空き VRAM(MiB、装置全体 = 他のプロセスの使用分を引いた値)。問い合わせられなければ ``None``。"""
+    torch = sys.modules.get("torch")
+    if torch is not None:
+        try:
+            if torch.cuda.is_available():
+                free, _total = torch.cuda.mem_get_info()
+                return free / 2 ** 20
+        except Exception:  # noqa: BLE001 - 問い合わせの失敗は「判定しない」
+            pass
+    cupy = sys.modules.get("cupy")
+    if cupy is not None:
+        try:
+            free, _total = cupy.cuda.runtime.memGetInfo()
+            return free / 2 ** 20
+        except Exception:  # noqa: BLE001
+            pass
+    return None
+
+
+def free_vram_mb():
+    """空き VRAM(MiB)。1 秒だけ覚えておく(呼ぶたびに装置へ問い合わせない)。"""
+    now = time.monotonic()
+    if _VRAM_CACHE and now - _VRAM_CACHE[0][0] < _VRAM_TTL_S:
+        return _VRAM_CACHE[0][1]
+    value = _query_free_mb()
+    _VRAM_CACHE[:] = [(now, value)]
+    return value
+
+
+def vram_ok():
+    """``(GPU を選んでよいか, 空き MiB | None, 閾値 MiB)``。測れないとき・閾値 0 は判定しない(True)。"""
+    need = min_free_mb()
+    if need <= 0:
+        return True, None, need
+    free = free_vram_mb()
+    if free is None:
+        return True, None, need
+    return free >= need, round(free, 1), need
+
+
+# ---- 許可リストの道(gpu_shadow) ------------------------------------------------------------
+_LIST_PATH = {"ops": "allow_single", "resident_ops": "allow_resident", "pipeline_ops": "allow_pipeline"}
+
+
+def shadow_rows(rules=None) -> dict:
+    """``{op: {"list", "ratio", "min_elements", ...}}``(表の ``shadow``。無ければ空)。"""
+    table = rules if rules is not None else load_rules()
+    if not table:
+        return {}
+    return table.get("shadow", {}).get("ops", {})
+
+
+def _elements(shape):
+    return _pixels(shape)
+
+
+def plan_paths(names, shape, *, accelerated, shadow, auto: bool, shadow_usable: bool) -> list:
+    """段ごとの ``(path, reason)``。GPU を使ってよい装置であることは呼ぶ側が確かめてある。
+
+    * GPU 経路(accel)を持つ段は ``accel``。
+    * 許可リストの段: ``auto`` では入力の要素数が倍率を測った大きさ以上のときだけ(それ未満は測って
+      いない = 勝つと言えない)。明示の ``cuda`` では大きさを問わない。
+    * ``resident_ops`` / ``pipeline_ops`` は隣も許可リストの段のとき(GPU に載せたまま続くとき)だけ。
+      単独の呼び出しや孤立した段は ``chain_only`` で CPU。
+    """
+    names = list(names)
+    elements = _elements(shape) if shape is not None else None
+    out = []
+    for name in names:
+        if name in accelerated:
+            out.append(("accel", None))
+            continue
+        row = shadow.get(name)
+        if row is None:
+            out.append(("cpu", "not_listed"))
+        elif not shadow_usable:
+            out.append(("cpu", "no_cupy"))
+        elif auto and (row.get("min_elements") is None or elements is None or elements < row["min_elements"]):
+            out.append(("cpu", "below_measured_size"))
+        else:
+            out.append((_LIST_PATH.get(row.get("list"), "allow_single"), None))
+    first = list(out)
+    for i, (path, _r) in enumerate(first):
+        if path in ("allow_resident", "allow_pipeline"):
+            left = i > 0 and first[i - 1][0].startswith("allow_")
+            right = i + 1 < len(first) and first[i + 1][0].startswith("allow_")
+            if not (left or right):
+                out[i] = ("cpu", "chain_only")
+    return out
+
+
+def gpu_paths(name: str, rules=None, accelerated=None, allow=None) -> dict:
+    """AI が事前に選ぶための op 1 件の GPU 版の要約(op 説明系のツールが返す)。
+
+    ``accel`` = 手書きの GPU 経路の有無、``allow_list`` = 許可リストの枠(``ops`` / ``resident_ops`` /
+    ``pipeline_ops`` / ``None``)、``ratio`` = その枠の倍率(転送込み、実寸)、``auto_gpu_min_pixels`` =
+    ``device="auto"`` が GPU を選び始める大きさ(手書き経路は損益分岐の表、許可リストは倍率を測った大きさ。
+    ``None`` = auto では選ばない)。
+    """
+    table = rules if rules is not None else load_rules()
+    accelerated = accelerated if accelerated is not None else frozenset()
+    has_accel = name in accelerated
+    row = shadow_rows(table).get(name) if table else None
+    info = {"accel": has_accel, "allow_list": row.get("list") if row else None,
+            "ratio": row.get("ratio") if row else None,
+            "measured_shape": row.get("measured_shape") if row else None}
+    if has_accel:
+        info["kinds"] = ["accel"]
+        info["auto_gpu_min_pixels"] = (_op_threshold(table, name, 1) or 0) if table else 0
+    elif row:
+        info["kinds"] = [_LIST_PATH.get(row.get("list"), "allow_single")]
+        info["auto_gpu_min_pixels"] = row.get("min_elements")
+    else:
+        info["kinds"] = []
+        info["auto_gpu_min_pixels"] = None
+    if row and row.get("ratio_single") is not None:
+        info["ratio_single"] = row["ratio_single"]
+    return info
