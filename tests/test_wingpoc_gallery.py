@@ -352,6 +352,7 @@ def test_museum_has_three_generated_parts_and_a_device_wing(cap):
         "poc_polarization_specular",
         "poc_pv_thermal_survey",
         "poc_pxrd_phase_peel",
+        "poc_real_sem_metal_layer",
         "poc_sem_tem_same_particle",
         "poc_sem_wafer_defect_edge_bias",
         "poc_shape_from_polarization",
