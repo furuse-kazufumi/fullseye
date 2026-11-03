@@ -13,6 +13,7 @@ from __future__ import annotations
 import os
 import random
 import sys
+import zlib
 
 import numpy as np
 import pytest
@@ -71,7 +72,8 @@ def test_tables_are_self_consistent():
 # --------------------------------------------------------------------------- #
 @pytest.mark.parametrize("sym", B.SYMBOLOGIES_1D)
 def test_round_trip_at_any_angle(sym):
-    rng = random.Random(hash(sym) & 0xFFFF)
+    # 種は決まった値に(hash(str) は PYTHONHASHSEED でプロセスごとに変わり、CI で毎回違う入力になった)
+    rng = random.Random(zlib.crc32(sym.encode("ascii")) & 0xFFFF)
     for _ in range(12):
         enc = B.encode_barcode1d(_rand_text(rng, sym), sym)
         img = SR.render_symbol(enc, module_px=rng.choice([2.0, 3.0, 4.5]),
@@ -80,6 +82,21 @@ def test_round_trip_at_any_angle(sym):
         assert r["text"] == enc["text"], (sym, enc["text"], r["text"])
         assert r["symbology"] == sym
         assert not r["conflict"]
+
+
+def test_scan_direction_is_refined_so_lines_do_not_leave_the_symbol():
+    """構造テンソルの向きは 2〜6° ずれ、ずれた走査線が長い ITF の途中で抜けて先頭の 6 桁を
+    読んでいた(CI 赤 2026-11-04、"62138232"・2 px・17.9° で votes に 'itf:621382': 1)。
+    最初のバーの縁から向きを当て直すと、全走査線が同じ文字列を読み、向きの誤差は 0.1° 未満。"""
+    enc = B.encode_barcode1d("62138232", "itf")
+    r = B.read_barcode1d(SR.render_symbol(enc, module_px=2.0, rotate_deg=17.9), ("itf",))
+    assert r["text"] == "62138232" and not r["conflict"]
+    assert r["votes"] == {"itf:62138232": r["n_lines"]}
+    errs = []
+    for ang in np.linspace(-170.0, 170.0, 18):
+        rr = B.read_barcode1d(SR.render_symbol(enc, module_px=2.0, rotate_deg=float(ang)), ("itf",))
+        errs.append(abs((rr["angle_deg"] + ang + 90.0) % 180.0 - 90.0))   # render は逆回り
+    assert len(errs) == 18 and max(errs) < 0.1, max(errs)
 
 
 def test_gs1_128_fnc1_round_trip():
