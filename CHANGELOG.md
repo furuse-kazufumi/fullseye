@@ -18,6 +18,12 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 - 新しい sort: `projstack`(ビュー, V, U)と `ctgeometry`。`sinostack` と軸の順序が違い、取り違えると例外でなく有限の像が返るので分けた。
 - 既存の `radon_transform` / `backproject_sinogram` / `filtered_backprojection` / `sart_reconstruct` / `radon_volume` / `fbp_volume` に `device` を追加。既定の `"cpu"` は従来と同じ float64 の経路で、`"auto"` / `"cuda"` は `tomography_gpu` の単精度の経路へ渡す。VRAM を超える寸法は view とスライスに分割する。測定は `docs/perf/gpu_ct_2026-11-02.md`。
 
+### 追加 — 光路・波長・偏光の一括計算(GPU 第 4 便)
+
+- 新モジュール `lens_gpu`: 設計案 × 波長 × 光線を 1 つのテンソルで追う。`raytrace` の近軸、実光線、色収差、OPD、公差 MC と、`lensimage` の MTF、`lensrender` の Fresnel + `materials` の内部透過率を同じ定義で計算する。公差 MC は乱数列まで揃え、案ごとに CPU と一致する。
+- 新モジュール `polar_gpu`: 実光線の各面に Fresnel 振幅を掛けて光線ごとの Jones 行列を作る経路と、`optics` / `photoelastic` / `sfpolar` の画素ごとの計算のバッチ版。
+- どちらも公開 op ではなく下回りの部品で、torch が無い環境では `raytrace` / `optics` がそのまま使える。測定は `docs/perf/gpu_optics_2026-11-02.md`。
+
 ### 修正 — 完成度監査の段 0(CI・MCP・HALCON の見せ方・導入の文書)
 
 - CI の夜間の order-shuffle: `run: >` の折り畳みでコメント行と `pip install` が 1 行に連結され、Install が丸ごとシェルの
