@@ -7,7 +7,7 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
-版はまだ決めていない(0.9.0 の後に入った 7 本の統合)。
+版はまだ決めていない(0.9.0 の後に入った 8 本の統合)。
 
 ### 修正 — 完成度監査の段 0(CI・MCP・HALCON の見せ方・導入の文書)
 
@@ -144,10 +144,11 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ### 統合(integrate/2026-11-04-families)
 
-- 上の 7 本(段 0・#241・#242・#244・#245・#246・#247)を 1 本にまとめた。新しい PoC 10 本を展示に掛けた
+- 上の 8 本(段 0・#241・#242・#244・#245・#246・#247・W2 のレシピ帳 feat/recipes-coverage-2026-11-03)を 1 本にまとめた。新しい PoC 10 本を展示に掛けた
   (収蔵 2026.289〜2026.298)。
 - 非決定の試験 2 件を決定的にした: `tests/test_mcp_agent_usability.py` の `plan()` の時間切れ(上限を展開数へ)、
   `tests/test_jsonio.py` の乱数の種(`hash` → `zlib.crc32`)。
+- 連鎖ファズに `contour` 型の種(`fit_circle_xld` が台帳の中で到達できなかった。親の乱数列は進めない)。
 
 ## 0.9.0 — 2026-11-03
 
