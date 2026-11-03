@@ -91,6 +91,8 @@ import volfreq
 import volrestore
 # --- 図注(2026-09-03): 3-D アンカーを射影して矢印・引き出し線・寸法を描く ---
 import annotate3d
+# --- PPF 表面照合(2026-11-03): ppf.py は facade(fs.find_surface_pose)にだけ出ていて op ではなかった ---
+import ppf
 
 
 def fringe_ftp_phase(image, carrier_axis="x", carrier_period=None,
@@ -237,7 +239,7 @@ _MOD = {"match3d": match3d, "feat_harris": feat_harris, "feat_spin": feat_spin,
         "render_ssaa": render_ssaa, "render_tonemap": render_tonemap,
         "render_beauty": render_beauty, "render3d": render3d,
         "measure3d": measure3d,
-        "annotate3d": annotate3d}
+        "annotate3d": annotate3d, "ppf": ppf}
 
 # 入出力の「種別」語彙(op 連結の型検査に使う):
 #   voxel / points(N,3) / mesh / depth / sdf / normals(N,3) / gaussians / image2d /
@@ -367,6 +369,10 @@ _CATALOG = {
     "match_pose": [  # 変換パラメータを出す
         ("match_phase_3d", "match3d", ["voxel", "voxel"], "shift", True),
         ("match_pca", "match3d", ["points", "points"], "pose", False),
+        # PPF 投票 + ICP の初期値不要な 6-DoF 照合(HALCON find_surface_model、2026-11-03)。
+        # facade には在ったのに OP_GRAPH にも台帳にも無く、レシピから points -> 姿勢 の鎖が組めなかった
+        # (recipebook book_3d の MISSING_OPS)。返りの dict は adapter で pose の正典 (R, t) にする。
+        ("find_surface_pose", "ppf", ["points", "points"], "pose", False),
         ("moment_axes", "match3d", ["points"], "axes", False),
         ("match_logpolar_z", "match3d", ["voxel", "voxel"], "rot_scale", True),
     ],
@@ -1033,6 +1039,7 @@ RESULT_ADAPTERS = {
     "rotation_translation_error": lambda r: ({"rre_deg": float(r[0]), "rte": float(r[1])}
                                              if isinstance(r, tuple) and len(r) == 2 else r),
     "gicp": lambda r: (r["R"], r["t"]) if isinstance(r, dict) else r,
+    "find_surface_pose": lambda r: (r["R"], r["t"]) if isinstance(r, dict) else r,   # {R, t, rmse, votes, ...}
     "rigid_flow": lambda r: (r["R"], r["t"]) if isinstance(r, dict) else r,
     "vol_label": lambda r: r[0],                    # (labels, n)
     # dict を返す 2 本は、台帳の "measurement" 契約(スカラー)に合わせて代表値を出す。

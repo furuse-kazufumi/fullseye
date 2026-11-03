@@ -66,6 +66,11 @@ _CATALOG = {
         ("descriptor_distance", "fourierdesc", ["efdmodel", "efdmodel"], "measurement"),
         ("fourier_smooth", "fourierdesc", ["pairs"], "pairs"),
         ("from_xld", "fourierdesc", ["table"], "pairs"),
+        # 輪郭 1 本ごとの円の当てはめ(2026-11-03)。HALCON fit_circle_contour_xld の Row/Column/Radius。
+        # 進化 op hx_fit_circle_contour は残差しか返さず、輪郭から位置と半径を読む口が無かった
+        # (recipebook book_2d の MISSING_OPS)。入力は 2-D 登録 op の ``contour``(XLD dict)そのもの
+        # —— threshold_sub_pix / edges_sub_pix / gen_contour_region_xld の出口に型で繋がる。
+        ("fit_circle_xld", "fourierdesc", ["contour"], "table"),
         # 回る振り子の連鎖(2026-09-22)。複素係数は (2K+1, 3) の実行列 = matrix、
         # 連鎖の頂点は pairs、打ち切り誤差の予言は table。新しい sort は作らない。
         ("contour_fourier_complex", "fourierdesc", ["pairs"], "matrix"),

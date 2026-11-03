@@ -232,6 +232,7 @@ def test_opsmath_call_returns_declared_types():
         "wave_nodal_lines": (mode,),
         "wave_two_slit": (550.0, 200.0, 200.0, (16, 512), 5.0),
         "wave_fringe_period": (slit,),
+        "wave_dominant_frequency": (slit,),
         "wave_grating_orders": (1.6, 550.0, 0.0, (-1, 0, 1)),
         "ode_flow_states": ("lorenz", None, None, 4.0, 0.01),
         "ode_vector_field_grid": ("rossler", None, (-8.0, 8.0, -8.0, 8.0), (24, 24)),

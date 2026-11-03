@@ -1222,13 +1222,45 @@ def _knob_builders():
         moved = np.fft.ifftn(fourier_shift(np.fft.fftn(base), (1.37, -2.61))).real
         return [base, moved], {"window": None, "upsample_factor": 8}
 
+    def xld_circles(pool, rng):
+        # 2026-11-03: fit_circle_xld takes the 2-D registry's ``contour`` (XLD dict); no ledger op
+        # declares that sort as output, so the pool never holds one ("no declared producer").
+        # Two noisy circles (one full, one 90-degree arc) and a 2-point fragment that is skipped.
+        t = np.linspace(0.0, 2 * np.pi, 80, endpoint=False)
+        a = np.linspace(0.0, 0.5 * np.pi, 30)
+        full = np.c_[40.0 + 15.0 * np.sin(t), 50.0 + 15.0 * np.cos(t)] + 0.05 * rng.standard_normal((80, 2))
+        arc = np.c_[20.0 + 8.0 * np.sin(a), 20.0 + 8.0 * np.cos(a)] + 0.05 * rng.standard_normal((30, 2))
+        return [{"shape": (96, 96), "cs": [full, arc, np.array([[1.0, 1.0], [2.0, 2.0]])]}], {}
+
+    def bracket_scene(pool, rng):
+        # 2026-11-03: find_surface_pose's angle_bins / k_normals only show when the answer is not
+        # exact anyway: on a scene that is the model itself every setting returns the same pose.
+        # Here the scene is resampled independently on the part's surfaces, with noise, so the
+        # vote resolution and the normal neighbourhood move the refined pose.
+        g = np.linspace(0.0, 1.0, 7)
+        base = np.array([[x * 3.0, y * 2.0, 0.0] for x in g for y in g])
+        wall = np.array([[0.0, y * 2.0, z * 1.5] for y in g for z in g[1:]])
+        th = np.linspace(0.0, 2 * np.pi, 16, endpoint=False)
+        boss = np.array([[2.2 + 0.35 * np.cos(q), 0.6 + 0.35 * np.sin(q), z] for q in th for z in (0.3, 0.6, 0.9)])
+        model = np.vstack([base, wall, boss])
+        n = 300
+        sb = np.c_[rng.uniform(0, 3, 180), rng.uniform(0, 2, 180), np.zeros(180)]
+        sw = np.c_[np.zeros(90), rng.uniform(0, 2, 90), rng.uniform(0, 1.5, 90)]
+        q = rng.uniform(0, 2 * np.pi, n - 270)
+        sc = np.c_[2.2 + 0.35 * np.cos(q), 0.6 + 0.35 * np.sin(q), rng.uniform(0.3, 0.9, n - 270)]
+        c, s_ = np.cos(0.6), np.sin(0.6)
+        R = np.array([[c, -s_, 0.0], [s_, c, 0.0], [0.0, 0.0, 1.0]])
+        scene = np.vstack([sb, sw, sc]) @ R.T + np.array([0.4, -0.2, 0.1]) + 0.01 * rng.standard_normal((n, 3))
+        return [model, scene], {}
+
     return {"refract_rays": oblique, "env_lightbox": sphere_dirs,
             "print_layer_defect_map": layers, "photometric_stereo": ps, "gs_render": gs,
             "slope_to_curvature": bowl_normals, "deflectometry_render": plate,
             "iterate_fixed_point": fixed_point, "mc_sequential_mean": seq_mean,
             "iv_richardson_lucy_until": rl_until, "register_image": ghost_checker,
             "fit_circle_geometric": short_arc,
-            "phase_correlation_shift": subpixel_pair}
+            "phase_correlation_shift": subpixel_pair,
+            "fit_circle_xld": xld_circles, "find_surface_pose": bracket_scene}
 
 
 def _calib_builders():

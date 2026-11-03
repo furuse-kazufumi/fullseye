@@ -387,6 +387,7 @@ from mathops import (  # noqa: E402,F401
     # 波動 —— 膜の固有モード・干渉・回折(2026-09-23)
     wave_membrane_mode, wave_mode_frequencies, wave_nodal_lines,
     wave_two_slit, wave_fringe_period, wave_grating_orders,
+    wave_dominant_frequency,
     # 力学系 —— 積む・断面・指数・分岐(2026-09-23)
     ode_flow_states, ode_vector_field_grid, dynsys_poincare_section,
     dynsys_lyapunov_spectrum, dynsys_bifurcation_map,
@@ -1271,6 +1272,7 @@ __all__ = [
     # 波動と力学系(2026-09-23)
     "wave_membrane_mode", "wave_mode_frequencies", "wave_nodal_lines",
     "wave_two_slit", "wave_fringe_period", "wave_grating_orders",
+    "wave_dominant_frequency",
     "ode_flow_states", "ode_vector_field_grid", "dynsys_poincare_section",
     "dynsys_lyapunov_spectrum", "dynsys_bifurcation_map",
     "dynsys_correlation_dimension",
