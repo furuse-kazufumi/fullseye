@@ -1016,8 +1016,11 @@ class GpuLock:
                     time.sleep(5)
                     continue
                 with os.fdopen(fd, "w") as f:
-                    f.write("%s %s pid=%d\n" % (self.owner, time.strftime("%Y-%m-%dT%H:%M:%S"),
-                                                 os.getpid()))
+                    # 上限を既定(600 s)より延ばすときは max_hold= を書く(外の見張りが 12 分で止めない
+                    # ように。動画の描画など正当に長い仕事向け。見張り側の最長は 6 時間)
+                    extra = (" max_hold=%d" % int(self.max_hold + 60)) if self.max_hold > 600 else ""
+                    f.write("%s %s pid=%d%s\n" % (self.owner, time.strftime("%Y-%m-%dT%H:%M:%S"),
+                                                   os.getpid(), extra))
                 self.held = True
                 import threading
                 self._stop = threading.Event()
