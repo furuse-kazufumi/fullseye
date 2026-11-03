@@ -69,7 +69,10 @@ opencv = ["opencv-python>=4.8.1.78"]
 skimage = ["scikit-image>=0.20"]
 pil = ["Pillow>=13.0"]
 wavelets = ["PyWavelets>=1.4"]
-gpu = ["torch>=2.13", "kornia>=0.7"]
+# ★2026-11-03(完成度監査 段 0-5): CuPy を足した(numpy/scipy の実装を GPU で走らせる経路が使う)。
+#   cupy-cuda12x の wheel は Linux と Windows だけ —— macOS で `[gpu]` ごと入らなくならないよう印で外す。
+#   cuCIM は Windows に wheel が無いので extra に入れない(Linux では `pip install cucim-cu12`、docs/DEVICE_GUIDE.md)。
+gpu = ["torch>=2.13", "kornia>=0.7", "cupy-cuda12x>=14; platform_system != 'Darwin'"]
 # 大域照明つきレンダリング(gi_render)。Mitsuba 3 は BSD-3-Clause、公式 wheel が
 # あるのでビルド不要。**必須にはしない** —— 内蔵ラスタライザだけでも動く設計を保つ。
 gi = ["mitsuba>=3.5"]
