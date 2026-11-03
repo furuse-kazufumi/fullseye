@@ -29,8 +29,8 @@ import numpy as np
 import pod as _pod
 import symrender as _sr
 
-__all__ = ["READERS", "DEGRADATION_FACTORS", "symbol_read", "symbol_read_trials",
-           "symbol_read_pod"]
+__all__ = ["READERS", "DEGRADATION_FACTORS", "OCR_FACTORS", "symbol_read", "symbol_read_trials",
+           "symbol_read_pod", "ocr_read_trials"]
 
 #: 劣化の因子 → (どの段の引数か, 大きいほど悪いか)。
 #: factor -> (stage, worse when larger?)
@@ -287,6 +287,12 @@ def symbol_read_pod(trials_table, *, link="logit", level=0.95):
     :func:`pod.trials_for_all_success` (0.90, ``level``) trials (29 at 95 %), else None.
     ``level50`` / ``level90`` are None in that case.
 
+    ★``monotone`` is False when a more degraded level reads more often than a milder
+    one by more than 3 standard errors (``nonmonotone_z``): the POD models assume
+    monotone degradation, so the fitted numbers are then outside their premise (seen
+    with a reader that cannot read sharp dot-peen marks but reads them once blur merges
+    the dots). The result is still returned, flagged.
+
     Also returns ``per_level`` (level, n, hits, misreads, noreads, read_rate),
     ``misread_total`` / ``decoded_total`` and ``misread_rate_upper`` (one-sided
     Clopper-Pearson upper bound of misreads per decode at ``level``; with zero misreads
@@ -323,12 +329,24 @@ def symbol_read_pod(trials_table, *, link="logit", level=0.95):
         per.append({"level": float(v), "n": n, "hits": int(hit[m].sum()),
                     "misreads": int(mis[m].sum()), "noreads": int(nor[m].sum()),
                     "read_rate": float(hit[m].mean())})
+    # 単調性: 劣化の弱い順に並べて、強い側の読取率が弱い側を 3 σ 超えて上回る組を探す。
+    # POD の当てはめは単調を仮定する —— 破れていればモデルの前提の外(結果に旗を立てる)。
+    # monotonicity: POD models assume reads get rarer as degradation grows.
+    order = sorted(per, key=lambda d: d["level"], reverse=not worse)
+    max_z = 0.0
+    for a_i in range(len(order)):
+        for b_i in range(a_i + 1, len(order)):
+            pa, pb = order[a_i], order[b_i]
+            pbar = (pa["hits"] + pb["hits"]) / float(pa["n"] + pb["n"])
+            se = np.sqrt(max(pbar * (1 - pbar), 1e-9) * (1.0 / pa["n"] + 1.0 / pb["n"]))
+            max_z = max(max_z, (pb["read_rate"] - pa["read_rate"]) / se)
     ndec = int(hit.sum() + mis.sum())
     ci = _pod.proportion_interval(int(mis.sum()), max(ndec, 1), confidence=lv_f, sides="upper") \
         if ndec > 0 else {"upper": 1.0}
     common = {"factor": trials_table["factor"], "worse_when_larger": worse, "per_level": per,
               "misread_total": int(mis.sum()), "decoded_total": ndec,
-              "misread_rate_upper": float(ci["upper"]), "confidence": lv_f}
+              "misread_rate_upper": float(ci["upper"]), "confidence": lv_f,
+              "monotone": bool(max_z <= 3.0), "nonmonotone_z": float(max_z)}
     if hit.sum() == 0 or hit.sum() == hit.size:
         raise ValueError("%s: every capture was %s — a POD needs both reads and failures; "
                          "widen the levels" % (op, "read" if hit.sum() else "unread"))
@@ -369,3 +387,135 @@ def symbol_read_pod(trials_table, *, link="logit", level=0.95):
                 "beyond_data": bool(fit.get("a90_95_beyond_data", False)), "fit": fit,
                 "separation_bracket": None, "trials_needed": None})
     return out
+
+
+# --------------------------------------------------------------------------- #
+# OCR の可読性の POD / legibility POD for classical OCR
+# --------------------------------------------------------------------------- #
+#: OCR の劣化の因子 → (段, 大きいほど悪いか)。
+OCR_FACTORS = {
+    "defocus_px": ("capture", True),
+    "motion_px": ("capture", True),
+    "gauss_px": ("capture", True),
+    "illum_slope": ("capture", True),
+    "vignette": ("capture", True),
+    "read_noise_e": ("capture", True),
+    "full_well_e": ("capture", False),
+    "ink_gain": ("render", True),        # にじみ(ドット径・線幅が (1 + g) 倍)
+    "ink_loss": ("render", True),        # = −ink_gain(かすれ)
+    "char_height_px": ("render", False),
+    "contrast": ("render", False),
+}
+
+
+def ocr_read_trials(text, factor, levels, *, model, font=None, char_height_px=24.0, trials=20,
+                    render=None, capture=None, level_jitter=0.0, refine=False, seed=0):
+    """印字した文字列を劣化量の各水準で ``trials`` 回撮って OCR で読み、1 行 = 1 回の表を返す(``table``)。
+
+    Legibility trials for classical OCR: render ``text`` with the built-in font
+    (``ocrclassic.ocr_render_text``; ``font`` defaults to the model's font), apply the
+    capture chain (:func:`symrender.capture_degrade`, sensor 20000 e / 10 e / 8 bit by
+    default) with the swept ``factor`` (:data:`OCR_FACTORS`), and read the line with
+    ``ocrclassic.ocr_read_line``. Each trial draws a fresh sub-pixel offset of the line
+    and a sensor-noise seed. Outcomes per capture: ``hit`` = the whole string read
+    exactly, ``misread`` = at least one character read as a *different* character
+    (substituted or inserted, per ``ocrclassic.ocr_score``) — the dangerous case, never
+    folded into the read rate —, ``noread`` = otherwise (rejects ``?`` or missing
+    characters only). The table has the same columns as :func:`symbol_read_trials`
+    (plus ``rejected_chars`` / ``substituted_chars``) so :func:`symbol_read_pod` fits it.
+    ``refine`` and ``level_jitter`` work as in :func:`symbol_read_trials`.
+
+    空の入力(``text == ""`` / ``levels`` が 3 未満)は ``ValueError``。
+    拒否(``ValueError``): 未知の ``factor``、``trials`` < 1、水準の重複・非有限、
+    字種の外の文字、``render`` / ``capture`` に掃引中の因子と同じ鍵、``level_jitter`` が
+    [0, 0.5] の外、OCR の模型でない ``model``。
+    """
+    op = "ocr_read_trials"
+    import ocrclassic
+    if not isinstance(text, str) or text == "":
+        raise ValueError("%s: text must be a non-empty string" % op)
+    if factor not in OCR_FACTORS:
+        raise ValueError("%s: factor must be one of %s, got %r" % (op, sorted(OCR_FACTORS), factor))
+    if not isinstance(model, dict) or "features" not in model or "labels" not in model:
+        raise ValueError("%s: model must be the table from ocr_train" % op)
+    lv = _levels(levels, op)
+    if isinstance(trials, bool) or not isinstance(trials, (int, np.integer)) or trials < 1:
+        raise ValueError("%s: trials must be a positive integer, got %r" % (op, trials))
+    jit = float(level_jitter)
+    if not np.isfinite(jit) or not 0.0 <= jit <= 0.5:
+        raise ValueError("%s: level_jitter must lie in [0, 0.5], got %r" % (op, level_jitter))
+    stage, worse_large = OCR_FACTORS[factor]
+    key = {"ink_loss": "ink_gain"}.get(factor, factor)
+    rkw = dict(render or {})
+    ckw = {"full_well_e": 20000.0, "read_noise_e": 10.0, "bits": 8}
+    if key in rkw or (capture and key in capture):
+        raise ValueError("%s: %r is being swept — do not also fix it in render/capture" % (op, factor))
+    ckw.update(capture or {})
+    fnt = font if font is not None else model.get("font", "dot5x7")
+    rkw.setdefault("char_height_px", float(char_height_px))
+    ocrclassic.ocr_render_text(text, font=fnt, **rkw)          # 字種と引数を先に検査する
+    rng = np.random.default_rng(seed)
+    rows = {"level": [], "trial": [], "hit": [], "misread": [], "noread": [], "text": [],
+            "stage": [], "rejected_chars": [], "substituted_chars": []}
+
+    def run(levels_, n_trials, tag):
+        for L in levels_:
+            for t in range(int(n_trials)):
+                r = dict(rkw)
+                c = dict(ckw)
+                La = float(L) * (1.0 + jit * float(rng.standard_normal())) if jit > 0 else float(L)
+                if factor == "ink_loss":
+                    r["ink_gain"] = -La
+                elif factor == "char_height_px":
+                    r[key] = max(La, 6.0)              # 描画の下限(6 px)で揺らぎを切る
+                elif stage == "render":
+                    r[key] = La
+                else:
+                    c[key] = La if factor == "illum_slope" else max(La, 0.0)
+                r["subpixel_offset"] = (float(rng.uniform(0, 1)), float(rng.uniform(0, 1)))
+                c["seed"] = int(rng.integers(0, 2 ** 31 - 1))
+                img = _sr.capture_degrade(ocrclassic.ocr_render_text(text, font=fnt, **r)["image"], **c)
+                got = ocrclassic.ocr_read_line(img, model)["text"]
+                sc = ocrclassic.ocr_score(got, text)
+                hit = got == text
+                # 「?」でない字の挿入 = 読めた字の数 − 正解 − 置換 / non-"?" insertions
+                ins_real = sum(ch != "?" for ch in got) - sc["correct"] - sc["substituted"]
+                mis = (not hit) and (sc["substituted"] > 0 or ins_real > 0)
+                rows["level"].append(float(L))
+                rows["trial"].append(t)
+                rows["hit"].append(int(hit))
+                rows["misread"].append(int(mis))
+                rows["noread"].append(int(not hit and not mis))
+                rows["text"].append(got)
+                rows["stage"].append(tag)
+                rows["rejected_chars"].append(int(sc["rejected"]))
+                rows["substituted_chars"].append(int(sc["substituted"]))
+
+    if not refine:
+        run(lv, trials, "main")
+    else:
+        n_coarse = max(4, int(trials) // 4)
+        run(lv, n_coarse, "coarse")
+        fine = _bracket(np.asarray(rows["level"]), np.asarray(rows["hit"]), lv, worse_large)
+        run(fine, trials, "fine")
+    out = {k: np.asarray(v) for k, v in rows.items() if k != "text"}
+    out["text"] = np.asarray(rows["text"], dtype=object)
+    out.update({"factor": factor, "worse_when_larger": bool(worse_large), "truth": text,
+                "reader": "ocr"})
+    return out
+
+
+def _bracket(lev, hits, lv, worse_large):
+    """粗い掃引から境を挟み、同じ本数の細かい水準を返す(symbol_read_trials と同じ規則)。"""
+    rate = np.array([hits[lev == v].mean() for v in lv])
+    order = lv if worse_large else lv[::-1]
+    rate_o = rate if worse_large else rate[::-1]
+    good = np.flatnonzero(rate_o >= 0.95)
+    bad = np.flatnonzero(rate_o <= 0.05)
+    lo_i = int(good.max()) if good.size else 0
+    hi_c = bad[bad > lo_i]
+    hi_i = int(hi_c.min()) if hi_c.size else order.size - 1
+    if hi_i <= lo_i:
+        hi_i = min(lo_i + 1, order.size - 1)
+    a_, b_ = float(order[lo_i]), float(order[hi_i])
+    return np.linspace(min(a_, b_), max(a_, b_), lv.size)
