@@ -1,6 +1,6 @@
 """中身の薄い HALCON 対応は「対応済み」に数えず「部分対応」として見せる(2026-11-03、ユーザー決定)。
 
-完成度監査 B(``C:/dev/docs/completeness_audit_2026_11_03/B_functional_gaps_vs_oss.md``)が、名前は HALCON の
+完成度監査 B(機能の穴、リポジトリ外の資料)が、名前は HALCON の
 operator に対応しているが中身が一部だけの関数を挙げた(例: ``find_deformable_surface_model`` は剛体の PPF 照合を
 呼ぶだけ)。表は ``halcon_coverage.PARTIAL``。ここで守ること:
 

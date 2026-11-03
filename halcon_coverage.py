@@ -39,7 +39,7 @@ PYAPI_DEFAULT = os.path.join(HERE, "data", "halcon_pyapi.json")
 #: ★2026-11-03(完成度監査 B、ユーザー決定): **名前は HALCON に対応しているが中身が薄い**もの。
 #: 「対応済み」(``covered``)からは外し、「部分対応」(``partial``)として別に数えて見せる。
 #: 中身を足して HALCON の同名 operator の仕事をするようになったら、ここから消す(消すと covered に戻る)。
-#: 根拠: ``C:/dev/docs/completeness_audit_2026_11_03/B_functional_gaps_vs_oss.md`` の
+#: 根拠: リポジトリ外の完成度監査 B(機能の穴)の
 #: 「名前は対応しているが中身が薄いもの」表(関数本体の行数と呼び出しを ast で数えた)。
 #: 値 = (Fullseye の関数, 何をするか, 何をしないか)。英語にしてあるのは生成物(英語の HALCON_COVERAGE.md)にそのまま載せるため。
 PARTIAL = {
