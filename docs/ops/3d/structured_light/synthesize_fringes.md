@@ -8,7 +8,7 @@ gpu: なし
 examples: [ftp_and_focus_depth, structured_light]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.8.1  # fullseye lib version this note was generated for
+version: 0.9.0  # fullseye lib version this note was generated for
 ---
 
 # synthesize_fringes — 3D `structured_light` op

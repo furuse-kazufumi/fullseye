@@ -8,7 +8,7 @@ gpu: なし
 examples: [lightfield_depth, poc_compound_eye]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.8.1  # fullseye lib version this note was generated for
+version: 0.9.0  # fullseye lib version this note was generated for
 ---
 
 # lf_all_in_focus — LIGHTFIELD `depth` op

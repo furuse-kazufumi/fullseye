@@ -8,7 +8,7 @@ gpu: なし
 examples: [anim3d_lens_aberrations, poc_chromatic_confocal, poc_lens_file_roundtrip, poc_lens_global_search, poc_lens_merit_operands, poc_material_optical_library, poc_photograph_through_prescription]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.8.1  # fullseye lib version this note was generated for
+version: 0.9.0  # fullseye lib version this note was generated for
 ---
 
 # with_wavelength — OPTICS `design` op

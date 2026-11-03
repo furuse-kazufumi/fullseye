@@ -8,7 +8,7 @@ gpu: なし
 examples: [poc_optics_drawings, poc_telecentric_metrology]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.8.1  # fullseye lib version this note was generated for
+version: 0.9.0  # fullseye lib version this note was generated for
 ---
 
 # telecentric_lens — OPTICS `telecentric` op

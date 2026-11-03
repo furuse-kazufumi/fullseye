@@ -72,7 +72,7 @@ on plain numpy arrays, so other projects can drop it into a vision pipeline dire
 
 None of these numbers is typed by hand: `tools/gen_trust_block.py` renders them from measurement files in `docs/` (`test_count.json`, `gate_inventory.json`, `maturity.json`, `op_count_history.json`), and `tests/test_trust_block.py` fails if this section drifts from them. Every number carries the version and date it was measured at.
 
-**22,110 regression tests** — included in 0.8.1, commit `e720d52d02`, counted with `pytest --collect-only` on 2026-10-22 with every optional backend installed (without them, tests for the missing backends are not collected and the count is lower).
+**24,302 regression tests** — included in 0.9.0, commit `58b5485748`, counted with `pytest --collect-only` on 2026-11-03 with every optional backend installed (without them, tests for the missing backends are not collected and the count is lower).
 
 ### If you add one operator, what checks it
 
@@ -96,7 +96,7 @@ Not measured: plausible but wrong values (distance from ground truth), speed, OS
 
 ### Verification stage
 
-The 98 capabilities, split by how they are verified (`docs/maturity.json`, rebuilt by `tools/gen_maturity.py` from the current tree (pyproject version 0.8.1); stage definitions in [MATURITY.md](docs/MATURITY.md)).
+The 98 capabilities, split by how they are verified (`docs/maturity.json`, rebuilt by `tools/gen_maturity.py` from the current tree (pyproject version 0.9.0); stage definitions in [MATURITY.md](docs/MATURITY.md)).
 
 | stage | meaning | capabilities |
 |---|---|---|
@@ -122,7 +122,7 @@ Of 456 examples, 456 are actually run by a gate.
 | 0.6.0 | 2026-10-11 | 3,083 | 2,130 | 981 | 218 | 18,109 |
 | 0.7.0 | 2026-10-18 | 3,354 | 2,401 | 982 | 248 | 19,935 |
 | 0.8.0 | 2026-10-22 | 3,529 | 2,572 | 982 | 275 | 22,073 |
-| 0.8.1 | 2026-10-22 | 3,531 | 2,572 | 982 | 275 | 22,110 |
+| 0.9.0 | 2026-11-03 | 3,645 | 2,683 | 982 | 287 | 24,302 |
 
 - The HALCON figure 323 for 0.1.0–0.1.8 is the value recorded at the time; from 0.1.9 it is 979 under a revised count (not 656 new implementations).
 - 0.2.0 is the first version whose index includes the typed ledger: 918 → 1,942 is a change in what is counted, not new implementation (the ledger existed from 0.1.6 but sat outside the index).

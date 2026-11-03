@@ -8,7 +8,7 @@ gpu: なし
 examples: [annotate_gallery, poc_dimensional_inspection, poc_driving_crossing, poc_driving_lateral, poc_driving_pass, poc_dual_energy_xray, poc_interferometry_step, poc_machine_condition_fusion, poc_peg_insertion_tactile, poc_polarization_specular, poc_public_camera_heading_real, poc_real_sem_metal_layer, poc_real_tless_6dof]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.8.1  # fullseye lib version this note was generated for
+version: 0.9.0  # fullseye lib version this note was generated for
 ---
 
 # ellipse — ANNOTATE `shape` op

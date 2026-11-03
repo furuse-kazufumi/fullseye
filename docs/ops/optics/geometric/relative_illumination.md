@@ -8,7 +8,7 @@ gpu: なし
 examples: [optics_imaging, poc_photograph_through_prescription, poc_search_sweep_width, poc_tdi_linescan]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.8.1  # fullseye lib version this note was generated for
+version: 0.9.0  # fullseye lib version this note was generated for
 ---
 
 # relative_illumination — OPTICS `geometric` op

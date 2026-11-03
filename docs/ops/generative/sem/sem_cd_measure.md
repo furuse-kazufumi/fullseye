@@ -8,7 +8,7 @@ gpu: なし
 examples: [poc_real_sem_metal_layer, poc_virtual_sem_kv_cd_bse]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.8.1  # fullseye lib version this note was generated for
+version: 0.9.0  # fullseye lib version this note was generated for
 ---
 
 # sem_cd_measure — GENERATIVE `sem` op

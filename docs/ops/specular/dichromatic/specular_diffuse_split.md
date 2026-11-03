@@ -8,7 +8,7 @@ gpu: なし
 examples: [specular_photometric]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.8.1  # fullseye lib version this note was generated for
+version: 0.9.0  # fullseye lib version this note was generated for
 ---
 
 # specular_diffuse_split — SPECULAR `dichromatic` op
