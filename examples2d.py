@@ -1425,6 +1425,10 @@ EXAMPLES = [
      "name": "CT で 1 本の試料をスキャンし、寸法 mm と欠陥の数まで出す",
      "summary": "楕円ファントムの閉形式サイノグラム→FBP 再構成→外径測定→空洞計数。"
                 "真値(30.00 mm / 1 個)との誤差を印字し断定する。"},
+    {"id": "ct_scan_modes", "task": "tomography_3d", "data": "synthetic",
+     "name": "コーン・ヘリカル・ラミノグラフィ・ファン……1 つの幾何の記述で全方式を再構成する",
+     "summary": "ct_scan_geometry の引数だけで方式を切り替え、同じ投影・逆投影の核で再構成して、"
+                "閉形式の投影からの誤差と随伴性を方式ごとに印字する。"},
     {"id": "tomography_reconstruct", "task": "tomography_3d", "data": "synthetic",
      "name": "投影からボクセルと体積 mm³ まで一本で閉じる(tomography 族)",
      "summary": "サイノグラムから再構成した後は既存の 3-D op(窓/ラベル/境界/メッシュ/領域統計)を"

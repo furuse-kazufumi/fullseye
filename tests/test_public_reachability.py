@@ -92,6 +92,11 @@ _INTERNAL = {
     # ★2026-11-03: Reed-Solomon(GF(256) の表・符号化・復号)は記号の読み取りの族の内部部品。
     #   利用者は qr_* / dm_* / grade_datacode2d の返す訂正語数として使う(体そのものは op にしない)。
     "symrs": 5,
+    # ★2026-11-04(統合 GPU): GPU 第 2・3 便(#240)の計算核の継ぎ目。accel_seam は contextvars で核だけを差し替える
+    #   部品(kernel / use)、accel_typed は型付き op の GPU 経路の入口 call / call_candidate と torch の核 k_*(実測で計 14 本)。
+    #   利用者は各 op の device 引数(既定 cpu)から使い、核そのものは op にしない。第 2・3 便のブランチは
+    #   ここに書いていなかった(統合で門が赤になって分かった)。
+    "accel_seam": 2, "accel_typed": 14,
 }
 
 #: **出すべきなのに出ていない**。ここは減らしていく側の台帳です。
@@ -275,7 +280,13 @@ def test_pending_exposure_shrinks_when_fixed():
 #   (opscalib / opsfileio / opsmath / opsshape2d …)も同じ 4 本を公開経路に載せていない。op 自身は fs.ledger から引ける。
 # 2026-11-04 統合に W2(opsfit の 4 本)を重ねた: 948 + 4(opsacceptance)+ 4(opsmatchreg)+ 15(opssymbol)
 #   + 4(opsfit)= 975。実測も 975(各ブランチで認めた増分の和で、新しい増分はない)。
-_HIDDEN_FUNCTIONS_TODAY = 975
+# 2026-11-02 CT の共通の核 tomography_gpu の内部部品 7 本(forward_project / adjoint_project / voxel_backproject /
+#   filter_rows / parallel_slice_geometry / gpu_memory_peak_bytes / reset_gpu_memory_peak)で実測 948 → 955。利用者は
+#   ctscan の 11 op と tomography の device 引数から使う(核そのものは公開経路に載せない)。
+# 2026-11-04 統合 GPU(integrate/2026-11-04-gpu): 975(上の 4 台帳まで)+ 7(tomography_gpu、CT の第 8 便)
+#   + 17(GPU 第 2・3 便 #240 の内部の核: accel.run_nary、accel_seam.kernel / use、accel_typed.call / call_candidate
+#   と k_* 13 本。利用者は device 引数から使う。★第 2・3 便のブランチはこの上限を書き換えていなかった)= 999。実測も 999。
+_HIDDEN_FUNCTIONS_TODAY = 999
 
 
 def _hidden_total():

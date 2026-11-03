@@ -1005,6 +1005,13 @@ from tomography import (  # noqa: E402,F401
     sinogram_center_of_rotation, sinogram_center_shift,
     radon_volume, fbp_volume,
 )
+import ctscan  # noqa: E402  (cone / helical / laminography / fan scans on one geometry)
+from ctscan import (  # noqa: E402,F401
+    ct_scan_geometry, shepp_logan_3d, ellipsoid_phantom, ellipsoid_projections,
+    ct_forward_project, ct_adjoint_project, fdk_reconstruct, sirt_reconstruct,
+    os_sart_reconstruct, tv_reconstruct, ct_dual_energy_reconstruct,
+)
+import tomography_gpu  # noqa: E402  (the shared CT kernels and the GPU routes)
 # 3-D ラベルの色分け。2-D の colorize_labels しか無かったので、ボリュームを
 # 断面ごとに着色すると**同じ部品の色が断面ごとに変わる**(断面ごとにラベル番号が
 # 振り直されるため。実測: 13 成分中 11 が 32 か所で色が変わる)。ボリュームで
@@ -1512,6 +1519,9 @@ __all__ = [
     "drawlist", "DrawList", "DrawListError", "diff_command_lists", "format_diff", "flush_buffer", "default_text_metrics", "measured_text_metrics", "COMMAND_SPECS", "TEXT_ADVANCE_RATIO",
     "drawstyle", "DrawStyle", "draw_style", "current_style", "set_color", "set_line_width", "set_line_style", "set_draw", "resolve_pattern", "resolve_color", "LINE_STYLES", "DRAW_MODES",
     "imagedraw", "draw_line", "draw_polyline", "draw_circle", "draw_markers", "draw_contour", "new_canvas",
+    "ctscan", "tomography_gpu", "ct_scan_geometry", "shepp_logan_3d", "ellipsoid_phantom",
+    "ellipsoid_projections", "ct_forward_project", "ct_adjoint_project", "fdk_reconstruct",
+    "sirt_reconstruct", "os_sart_reconstruct", "tv_reconstruct", "ct_dual_energy_reconstruct",
     "tomography", "projection_angles", "sinogram_design", "ellipse_phantom",
     "ellipse_sinogram", "radon_transform", "backproject_sinogram",
     "filtered_backprojection", "sart_reconstruct", "beam_hardening_apply",

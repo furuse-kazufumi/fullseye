@@ -657,6 +657,7 @@ NOT_A_GENERATOR = {
     "gsviewer.py": "ライブラリ + CLI(fs.gs_viewer_html / gs_catalog_html)。呼び出し側が指定した出力先へ 1 つの HTML を書く道具で、repo の生成物ではない(公開ページの生成器は tools/build_gsplat_pages.py)。",
     "pocviewer.py": "ライブラリ(fs.write_viewer)。呼び出し側が指定した出力先へ 1 つの HTML を書く道具で、repo の生成物ではない(ビューアの生成器は tools/build_view2026_viewers.py)。",
     "tools/bench_ops.py": "ベンチ。実測値なので回すたびに変わる。",
+    "tools/bench_gpu_ct.py": "CT の CPU/GPU ベンチ(docs/perf/gpu_ct_2026-11-02.json に段ごとに書く実測値。GPU が要り、回すたびに変わる)。",
     "tools/update_fullseye.py": ("安全アップデータ(git pull --ff-only と、導入済みの RAG スキルの更新)。"
                                  "shutil.copytree は利用者の ~/.claude/skills のバックアップで、repo の生成物は書かない。"),
     "tools/bench_realtime.py": "ベンチ(実時間)。",
