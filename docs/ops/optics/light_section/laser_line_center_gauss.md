@@ -8,7 +8,7 @@ gpu: なし
 examples: [poc_light_section_step_weld_floor]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.8.1  # fullseye lib version this note was generated for
+version: 0.9.0  # fullseye lib version this note was generated for
 ---
 
 # laser_line_center_gauss — OPTICS `light_section` op

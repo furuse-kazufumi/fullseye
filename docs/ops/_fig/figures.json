@@ -1,5 +1,5 @@
 {
- "generated_for": 945,
+ "generated_for": 947,
  "ops": {
   "abs_image": {
    "color_ok": true,
@@ -15333,6 +15333,32 @@
    "pseudocolor": false,
    "status": "ok"
   },
+  "tb_keypoints_rowcol_to_uv": {
+   "color_ok": false,
+   "extra": {
+    "chain": "tb_keypoints_rowcol_to_uv.chain.jpg",
+    "inputs": "tb_keypoints_rowcol_to_uv.inputs.jpg"
+   },
+   "fig": "tb_keypoints_rowcol_to_uv.png",
+   "inputs": [
+    "scene",
+    "photo",
+    "coins",
+    "beans",
+    "label",
+    "part",
+    "pcb",
+    "color"
+   ],
+   "knob_dead": [
+    "a",
+    "b"
+   ],
+   "out_kind": "ndarray",
+   "program": "img_to_keypoints 0.50 0.50\ntb_keypoints_rowcol_to_uv 0.50 0.50",
+   "pseudocolor": false,
+   "status": "ok"
+  },
   "tb_keypoints_to_image2d": {
    "in_sort": "keypoints",
    "reason": "橋渡しで束縛した raster が 64×64 固定で、128×128 の点は外に落ちる",
@@ -15361,6 +15387,32 @@
    ],
    "out_kind": "ndarray",
    "program": "img_to_keypoints 0.50 0.50\ntb_keypoints_uv_to_points 0.50 0.50",
+   "pseudocolor": false,
+   "status": "ok"
+  },
+  "tb_keypoints_uv_to_rowcol": {
+   "color_ok": false,
+   "extra": {
+    "chain": "tb_keypoints_uv_to_rowcol.chain.jpg",
+    "inputs": "tb_keypoints_uv_to_rowcol.inputs.jpg"
+   },
+   "fig": "tb_keypoints_uv_to_rowcol.png",
+   "inputs": [
+    "scene",
+    "photo",
+    "coins",
+    "beans",
+    "label",
+    "part",
+    "pcb",
+    "color"
+   ],
+   "knob_dead": [
+    "a",
+    "b"
+   ],
+   "out_kind": "ndarray",
+   "program": "img_to_keypoints 0.50 0.50\ntb_keypoints_uv_to_rowcol 0.50 0.50",
    "pseudocolor": false,
    "status": "ok"
   },
@@ -22129,9 +22181,9 @@
   "domain": 4,
   "empty": 1,
   "failed": 0,
-  "ok": 940,
+  "ok": 942,
   "unreachable": 0,
-  "with_chain": 382,
+  "with_chain": 384,
   "with_gif": 40,
   "with_sweep": 588
  }

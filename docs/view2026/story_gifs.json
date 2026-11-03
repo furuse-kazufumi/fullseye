@@ -8,7 +8,7 @@
   "color_mad_limit": 6.0,
   "first_duration_ms": 2500,
   "other_duration_ms": 1600,
-  "target_count": 193,
+  "target_count": 203,
   "crop_aspect_range": [
     0.42,
     2.4
@@ -33746,6 +33746,700 @@
         "ja": "実 SEM 像。緑=track ラベル、赤=重複除去後の via ラベル。",
         "en": "Measuring Tracks and Vias in a Real IC SEM Image — Does the Virtual-SEM Edge Correction Transfer?"
       }
+    },
+    "poc_virtual_acceptance_3d": {
+      "representative": "01_acceptance_layout_and_noise.png",
+      "status": "gif",
+      "selected": [
+        "01_acceptance_layout_and_noise.png",
+        "02_acceptance_sd_per_position.png",
+        "03_acceptance_designs.png",
+        "04_acceptance_error_budget.png"
+      ],
+      "excluded_frames": [],
+      "variants": {
+        "ja": {
+          "path": "articles/assets/poc/poc_virtual_acceptance_3d/story.ja.gif",
+          "frames": [
+            {
+              "file": "01_acceptance_layout_and_noise.png",
+              "content_box": [
+                0,
+                261,
+                720,
+                167
+              ]
+            },
+            {
+              "file": "02_acceptance_sd_per_position.png",
+              "content_box": [
+                0,
+                183,
+                720,
+                324
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 2.219444
+            },
+            {
+              "file": "03_acceptance_designs.png",
+              "content_box": [
+                0,
+                247,
+                720,
+                195
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 3.697368
+            },
+            {
+              "file": "04_acceptance_error_budget.png",
+              "content_box": [
+                0,
+                160,
+                720,
+                370
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 1.945565
+            }
+          ],
+          "frame_count": 4,
+          "durations_ms": [
+            2500,
+            1600,
+            1600,
+            1600
+          ],
+          "bytes": 138468,
+          "color_mad": [
+            0.4534,
+            0.058,
+            0.0437,
+            0.0357
+          ],
+          "max_color_mad": 0.4534,
+          "source_sha256": "e891c768faf35c9204803bb6ca8691de7c8e87754d05da9c29c56d77c838e3e0"
+        },
+        "en": {
+          "path": "articles/assets/poc/poc_virtual_acceptance_3d/story.en.gif",
+          "frames": [
+            {
+              "file": "01_acceptance_layout_and_noise.png",
+              "content_box": [
+                0,
+                261,
+                720,
+                167
+              ]
+            },
+            {
+              "file": "02_acceptance_sd_per_position.png",
+              "content_box": [
+                0,
+                183,
+                720,
+                324
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 2.219444
+            },
+            {
+              "file": "03_acceptance_designs.png",
+              "content_box": [
+                0,
+                247,
+                720,
+                195
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 3.697368
+            },
+            {
+              "file": "04_acceptance_error_budget.png",
+              "content_box": [
+                0,
+                160,
+                720,
+                370
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 1.945565
+            }
+          ],
+          "frame_count": 4,
+          "durations_ms": [
+            2500,
+            1600,
+            1600,
+            1600
+          ],
+          "bytes": 138468,
+          "color_mad": [
+            0.4534,
+            0.058,
+            0.0437,
+            0.0357
+          ],
+          "max_color_mad": 0.4534,
+          "source_sha256": "21ab4a2eca049e246e85015ee7dd7d3ead1b6ea86a84b88904639fa45166cab5"
+        }
+      },
+      "reason": null,
+      "cover": "01_acceptance_layout_and_noise.png",
+      "still": "articles/assets/poc/poc_virtual_acceptance_3d/01_acceptance_layout_and_noise.png",
+      "alt": {
+        "ja": "artefact layout (VDI/VDE 2634-2 idea) and the noise each design leaves on the flat",
+        "en": "Acceptance-Test an Optical 3-D Sensor Before Buying It: One Black Sphere Fails the Same iToF"
+      }
+    },
+    "poc_calibration_truth_map": {
+      "representative": "01_calibration_maps.png",
+      "status": "gif",
+      "selected": [
+        "01_calibration_maps.png",
+        "02_calibration_next_pose.png",
+        "03_calibration_next_pose_scatter.png"
+      ],
+      "excluded_frames": [],
+      "variants": {
+        "ja": {
+          "path": "articles/assets/poc/poc_calibration_truth_map/story.ja.gif",
+          "frames": [
+            {
+              "file": "01_calibration_maps.png",
+              "content_box": [
+                0,
+                251,
+                720,
+                188
+              ]
+            },
+            {
+              "file": "02_calibration_next_pose.png",
+              "content_box": [
+                0,
+                154,
+                720,
+                382
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 1.883929
+            },
+            {
+              "file": "03_calibration_next_pose_scatter.png",
+              "content_box": [
+                0,
+                113,
+                720,
+                463
+              ]
+            }
+          ],
+          "frame_count": 3,
+          "durations_ms": [
+            2500,
+            1600,
+            1600
+          ],
+          "bytes": 95058,
+          "color_mad": [
+            0.4985,
+            0.0251,
+            0.039
+          ],
+          "max_color_mad": 0.4985,
+          "source_sha256": "d2c83a67e0833bfb1174199c8c0000201099479951738ccc6de3c9b6494e899d"
+        },
+        "en": {
+          "path": "articles/assets/poc/poc_calibration_truth_map/story.en.gif",
+          "frames": [
+            {
+              "file": "01_calibration_maps.png",
+              "content_box": [
+                0,
+                251,
+                720,
+                188
+              ]
+            },
+            {
+              "file": "02_calibration_next_pose.png",
+              "content_box": [
+                0,
+                154,
+                720,
+                382
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 1.883929
+            },
+            {
+              "file": "03_calibration_next_pose_scatter.png",
+              "content_box": [
+                0,
+                113,
+                720,
+                463
+              ]
+            }
+          ],
+          "frame_count": 3,
+          "durations_ms": [
+            2500,
+            1600,
+            1600
+          ],
+          "bytes": 95058,
+          "color_mad": [
+            0.4985,
+            0.0251,
+            0.039
+          ],
+          "max_color_mad": 0.4985,
+          "source_sha256": "f44c8057820c4d1459f33c0442a38c87bf348821f0e7f0a6a033de596303b04c"
+        }
+      },
+      "reason": null,
+      "cover": "01_calibration_maps.png",
+      "still": "articles/assets/poc/poc_calibration_truth_map/01_calibration_maps.png",
+      "alt": {
+        "ja": "camera_calibration_lm on 6 rendered views (k1 = -0.21): where the estimate errs",
+        "en": "Camera Calibration with Ground Truth: 0.044 px Reprojection, Yet 0.568 px Wrong in the Corner"
+      }
+    },
+    "poc_light_section_step_weld_floor": {
+      "representative": "01_height_map.png",
+      "status": "gif",
+      "selected": [
+        "01_height_map.png",
+        "02_line_frame0.png",
+        "03_scan_errors.png",
+        "04_speckled_line.png",
+        "05_floor_vs_aperture.png"
+      ],
+      "excluded_frames": [],
+      "variants": {
+        "ja": {
+          "path": "articles/assets/poc/poc_light_section_step_weld_floor/story.ja.gif",
+          "frames": [
+            {
+              "file": "01_height_map.png",
+              "content_box": [
+                0,
+                217,
+                720,
+                255
+              ]
+            },
+            {
+              "file": "02_line_frame0.png",
+              "content_box": [
+                0,
+                75,
+                720,
+                540
+              ]
+            },
+            {
+              "file": "03_scan_errors.png",
+              "content_box": [
+                0,
+                256,
+                720,
+                177
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 4.078947
+            },
+            {
+              "file": "04_speckled_line.png",
+              "content_box": [
+                0,
+                194,
+                720,
+                301
+              ],
+              "crop": [
+                12,
+                0,
+                153,
+                64
+              ],
+              "source_aspect": 4.0,
+              "laplacian_density": 0.01954967
+            },
+            {
+              "file": "05_floor_vs_aperture.png",
+              "content_box": [
+                0,
+                113,
+                720,
+                463
+              ]
+            }
+          ],
+          "frame_count": 5,
+          "durations_ms": [
+            2500,
+            1600,
+            1600,
+            1600,
+            1600
+          ],
+          "bytes": 784673,
+          "color_mad": [
+            0.3538,
+            0.3638,
+            0.034,
+            1.3069,
+            0.043
+          ],
+          "max_color_mad": 1.3069,
+          "source_sha256": "dee51ef5d547c1e31c6035a49b73aa03c09809268d1b4815e3a0f268d0e31450"
+        },
+        "en": {
+          "path": "articles/assets/poc/poc_light_section_step_weld_floor/story.en.gif",
+          "frames": [
+            {
+              "file": "01_height_map.png",
+              "content_box": [
+                0,
+                217,
+                720,
+                255
+              ]
+            },
+            {
+              "file": "02_line_frame0.png",
+              "content_box": [
+                0,
+                75,
+                720,
+                540
+              ]
+            },
+            {
+              "file": "03_scan_errors.png",
+              "content_box": [
+                0,
+                256,
+                720,
+                177
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 4.078947
+            },
+            {
+              "file": "04_speckled_line.png",
+              "content_box": [
+                0,
+                194,
+                720,
+                301
+              ],
+              "crop": [
+                12,
+                0,
+                153,
+                64
+              ],
+              "source_aspect": 4.0,
+              "laplacian_density": 0.01954967
+            },
+            {
+              "file": "05_floor_vs_aperture.png",
+              "content_box": [
+                0,
+                113,
+                720,
+                463
+              ]
+            }
+          ],
+          "frame_count": 5,
+          "durations_ms": [
+            2500,
+            1600,
+            1600,
+            1600,
+            1600
+          ],
+          "bytes": 784673,
+          "color_mad": [
+            0.3538,
+            0.3638,
+            0.034,
+            1.3069,
+            0.043
+          ],
+          "max_color_mad": 1.3069,
+          "source_sha256": "0489818c55c6ba41fec581de342d15b8128ec4d60b716e1134a65c867050b11a"
+        }
+      },
+      "reason": null,
+      "cover": "01_height_map.png",
+      "still": "articles/assets/poc/poc_light_section_step_weld_floor/01_height_map.png",
+      "alt": {
+        "ja": "高さ地図(フレーム × 列、gauss): 段差 2 mm と高さの変わるビード",
+        "en": "Light-Section Heights Agree to Microns, but the Real Limit Is a 20.7 µm Speckle Floor"
+      }
+    },
+    "poc_hdr_glossy_metal_inspection": {
+      "representative": "02_results.png",
+      "status": "gif",
+      "selected": [
+        "02_results.png",
+        "01_exposures.png",
+        "03_response.png"
+      ],
+      "excluded_frames": [],
+      "variants": {
+        "ja": {
+          "path": "articles/assets/poc/poc_hdr_glossy_metal_inspection/story.ja.gif",
+          "frames": [
+            {
+              "file": "02_results.png",
+              "content_box": [
+                0,
+                0,
+                720,
+                689
+              ]
+            },
+            {
+              "file": "01_exposures.png",
+              "content_box": [
+                0,
+                205,
+                720,
+                279
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 2.581888
+            },
+            {
+              "file": "03_response.png",
+              "content_box": [
+                0,
+                113,
+                720,
+                463
+              ]
+            }
+          ],
+          "frame_count": 3,
+          "durations_ms": [
+            2500,
+            1600,
+            1600
+          ],
+          "bytes": 358928,
+          "color_mad": [
+            0.1881,
+            0.4567,
+            0.0911
+          ],
+          "max_color_mad": 0.4567,
+          "source_sha256": "b9d3f9933f4dbf9b1f7f46c4ad328f416ba30078aa4450fea9004181256f91e7"
+        },
+        "en": {
+          "path": "articles/assets/poc/poc_hdr_glossy_metal_inspection/story.en.gif",
+          "frames": [
+            {
+              "file": "02_results.png",
+              "content_box": [
+                0,
+                0,
+                720,
+                689
+              ]
+            },
+            {
+              "file": "01_exposures.png",
+              "content_box": [
+                0,
+                205,
+                720,
+                279
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 2.581888
+            },
+            {
+              "file": "03_response.png",
+              "content_box": [
+                0,
+                113,
+                720,
+                463
+              ]
+            }
+          ],
+          "frame_count": 3,
+          "durations_ms": [
+            2500,
+            1600,
+            1600
+          ],
+          "bytes": 358928,
+          "color_mad": [
+            0.1881,
+            0.4567,
+            0.0911
+          ],
+          "max_color_mad": 0.4567,
+          "source_sha256": "37778224e3e0f85cbc5c41ae1a7bc0646e99a0cd3e99b4066546cd29ca4125a8"
+        }
+      },
+      "reason": null,
+      "cover": "02_results.png",
+      "still": "articles/assets/poc/poc_hdr_glossy_metal_inspection/02_results.png",
+      "alt": {
+        "ja": "光沢金属の 2 本の傷は露出 1 回では両方見えず、応答を測った HDR で見える",
+        "en": "No Single Exposure Shows Both Scratches on Glossy Metal; HDR with a Measured Response Does"
+      }
+    },
+    "poc_part_locate_features": {
+      "representative": "01_part_locate_sift.png",
+      "status": "gif",
+      "selected": [
+        "01_part_locate_sift.png",
+        "02_part_locate_accuracy_table.png",
+        "03_part_locate_stitch_models.png"
+      ],
+      "excluded_frames": [],
+      "variants": {
+        "ja": {
+          "path": "articles/assets/poc/poc_part_locate_features/story.ja.gif",
+          "frames": [
+            {
+              "file": "01_part_locate_sift.png",
+              "content_box": [
+                0,
+                62,
+                720,
+                566
+              ]
+            },
+            {
+              "file": "02_part_locate_accuracy_table.png",
+              "content_box": [
+                0,
+                95,
+                720,
+                499
+              ]
+            },
+            {
+              "file": "03_part_locate_stitch_models.png",
+              "content_box": [
+                0,
+                31,
+                720,
+                627
+              ]
+            }
+          ],
+          "frame_count": 3,
+          "durations_ms": [
+            2500,
+            1600,
+            1600
+          ],
+          "bytes": 277834,
+          "color_mad": [
+            0.177,
+            0.0286,
+            0.0278
+          ],
+          "max_color_mad": 0.177,
+          "source_sha256": "b5fe62e98dae0f9a5450b61e082e4f101770529586fe8c78bf455592fdb89704"
+        },
+        "en": {
+          "path": "articles/assets/poc/poc_part_locate_features/story.en.gif",
+          "frames": [
+            {
+              "file": "01_part_locate_sift.png",
+              "content_box": [
+                0,
+                62,
+                720,
+                566
+              ]
+            },
+            {
+              "file": "02_part_locate_accuracy_table.png",
+              "content_box": [
+                0,
+                95,
+                720,
+                499
+              ]
+            },
+            {
+              "file": "03_part_locate_stitch_models.png",
+              "content_box": [
+                0,
+                31,
+                720,
+                627
+              ]
+            }
+          ],
+          "frame_count": 3,
+          "durations_ms": [
+            2500,
+            1600,
+            1600
+          ],
+          "bytes": 277834,
+          "color_mad": [
+            0.177,
+            0.0286,
+            0.0278
+          ],
+          "max_color_mad": 0.177,
+          "source_sha256": "5ec64029c984a152c9b6a4e436c9891561dbb856fff7f81e2de96d51da008cf7"
+        }
+      },
+      "reason": null,
+      "cover": "01_part_locate_sift.png",
+      "still": "articles/assets/poc/poc_part_locate_features/01_part_locate_sift.png",
+      "alt": {
+        "ja": "SIFT -> features_match -> ransac_homography: corner error 0.367 px",
+        "en": "SIFT Locates a Part Rotated 37 Degrees to 0.367 px; the Existing Harris Matcher Misses by 158 px"
+      }
+    },
+    "poc_multimodal_mi_registration": {
+      "representative": "01_multimodal_mi_pair.png",
+      "status": "static",
+      "reason": "two_or_fewer_raster_figures",
+      "usable_figures": 2
+    },
+    "poc_sheet_deformation_ffd": {
+      "representative": "01_sheet_ffd_error_maps.png",
+      "status": "static",
+      "reason": "two_or_fewer_raster_figures",
+      "usable_figures": 2
+    },
+    "poc_symbol_package_1d": {
+      "representative": "01_ean13_defocus.png",
+      "status": "static",
+      "reason": "two_or_fewer_raster_figures",
+      "usable_figures": 2
+    },
+    "poc_symbol_part_dpm": {
+      "representative": "01_dpm_datamatrix.png",
+      "status": "static",
+      "reason": "two_or_fewer_raster_figures",
+      "usable_figures": 2
+    },
+    "poc_symbol_lot_ocr": {
+      "representative": "01_lot_ocr_defocus.png",
+      "status": "static",
+      "reason": "two_or_fewer_raster_figures",
+      "usable_figures": 2
     }
   }
 }

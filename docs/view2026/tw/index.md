@@ -483,11 +483,11 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 </div>
 
-[其他 177 個使用範例(非 PoC)的列表](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
+[其他 178 個使用範例(非 PoC)的列表](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
 
 ## 全部看
 
-PoC 287 個,另有機器人範例 5 個。展開分組即可載入縮圖。
+PoC 297 個,另有機器人範例 5 個。展開分組即可載入縮圖。
 
 <noscript><p><a href="../../GALLERY.en.html">(沒有 JavaScript 時,可在圖庫頁面查看全部圖。)</a></p></noscript>
 
@@ -506,7 +506,7 @@ PoC 287 個,另有機器人範例 5 個。展開分組即可載入縮圖。
 </div>
 </details>
 
-<details class="vall"><summary><b>工業檢測</b> (52)</summary>
+<details class="vall"><summary><b>工業檢測</b> (56)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_barcode_1d/01_misread_split.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_barcode_1d/01_misread_split.png"><img src="../../articles/assets/poc/poc_barcode_1d/story.en.gif" alt="Barcode tests must distinguish a wrong value from no value instead of counting returned answers alone. A simple code was degraded in four ways; strict reading gave a 7.3 % misread rate. A permissive reader appears more successful because it always returns digits, but creates far more wrong answers." loading="lazy" width="200" height="200"></picture><span>一維條碼</span></a>
 <a href="../../articles/assets/poc/poc_battery_electrode_tortuosity/01_scene.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_battery_electrode_tortuosity/01_scene.png"><img src="../../articles/assets/poc/poc_battery_electrode_tortuosity/story.en.gif" alt="Electrode tortuosity from CT — the rule of thumb only sees porosity" loading="lazy" width="200" height="200"></picture><span>電極曲折度</span></a>
@@ -560,10 +560,14 @@ PoC 287 個,另有機器人範例 5 個。展開分組即可載入縮圖。
 <a href="../../articles/assets/poc/poc_mueller_dofp_observability/01_observability.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_mueller_dofp_observability.jpg" alt="四方位偏振相機看不到的 Mueller 矩陣 7 個維度" width="200" height="200"><span>四方位偏振相機看不到的 Mueller 矩陣 7 個維度</span></a>
 <a href="../../articles/assets/poc/poc_slanted_edge_sfr_limits/01_sfr_limits.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_slanted_edge_sfr_limits.jpg" alt="斜邊 SFR 因伽瑪而誤判 MTF50" width="200" height="200"><span>斜邊 SFR 因伽瑪而誤判 MTF50</span></a>
 <a href="../../articles/assets/poc/poc_threshold_transfer_after_normalization/01_threshold_transfer.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_threshold_transfer_after_normalization/01_threshold_transfer.png"><img src="../../articles/assets/poc/poc_threshold_transfer_after_normalization/story.en.gif" alt="Raw Grey-Level Thresholds Need Retuning across Lighting, while k-Sigma and P-Tile Transfer" loading="lazy" width="200" height="200"></picture><span>Raw grey-level thresholds need retuning across lighting, while k-sigma and P-tile transfer</span></a>
+<a href="../../articles/assets/poc/poc_hdr_glossy_metal_inspection/02_results.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_hdr_glossy_metal_inspection/02_results.png"><img src="../../articles/assets/poc/poc_hdr_glossy_metal_inspection/story.en.gif" alt="No Single Exposure Shows Both Scratches on Glossy Metal; HDR with a Measured Response Does" loading="lazy" width="200" height="200"></picture><span>單次曝光看不全光澤金屬上的兩道刮痕,量過響應的 HDR 可以</span></a>
+<a href="../../articles/assets/poc/poc_symbol_package_1d/01_ean13_defocus.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_symbol_package_1d.jpg" alt="在 90% 可讀的模糊下,條碼的印刷品質等級為 F" width="200" height="200"><span>在 90% 可讀的模糊下,條碼的印刷品質等級為 F</span></a>
+<a href="../../articles/assets/poc/poc_symbol_part_dpm/01_dpm_datamatrix.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_symbol_part_dpm.jpg" alt="點針刻印的 Data Matrix 要模糊後 zxing-cpp 才能讀出" width="200" height="200"><span>點針刻印的 Data Matrix 要模糊後 zxing-cpp 才能讀出</span></a>
+<a href="../../articles/assets/poc/poc_symbol_lot_ocr/01_lot_ocr_defocus.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_symbol_lot_ocr.jpg" alt="超出訓練範圍的模糊下,批號 OCR 從拒識變為誤讀" width="200" height="200"><span>超出訓練範圍的模糊下,批號 OCR 從拒識變為誤讀</span></a>
 </div>
 </details>
 
-<details class="vall"><summary><b>尺寸與形狀量測</b> (56)</summary>
+<details class="vall"><summary><b>尺寸與形狀量測</b> (58)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_aoi_ct_traceability/01_inspection_and_reconstructed_ct.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_aoi_ct_traceability/01_inspection_and_reconstructed_ct.png"><img src="../../articles/assets/poc/poc_aoi_ct_traceability/story.en.gif" alt="Full visual inspection and sampled CT must assign the same index to each joint. Unequal-sided fiducials fixed this correspondence, then top-ranked candidates caught 19 % of interface-touching voids. Apparent void rankings can agree while most life-limiting parts are missed." loading="lazy" width="200" height="200"></picture><span>AOI 與 CT 對應</span></a>
 <a href="../../articles/assets/poc/poc_asbuilt_wall_deviation/01_scene.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_asbuilt_wall_deviation/01_scene.png"><img src="../../articles/assets/poc/poc_asbuilt_wall_deviation/story.en.gif" alt="Point-cloud dimensions can confuse room heading or furniture with wall position. A room with known tilt and bulges was rotated, while its plane-pair error stayed at +2.24 mm. Bounding boxes grow with heading and sample count; plane fitting jumps to furniture when outliers become the majority." loading="lazy" width="200" height="200"></picture><span>竣工牆面偏差</span></a>
@@ -621,6 +625,8 @@ PoC 287 個,另有機器人範例 5 個。展開分組即可載入縮圖。
 <a href="../../articles/assets/poc/poc_robust_profile_filter/04_scratched_surface.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_robust_profile_filter/04_scratched_surface.png"><img src="../../articles/assets/poc/poc_robust_profile_filter/story.en.gif" alt="Deep Scratches Dent the Mean Line — How Much Contamination Robust Gaussian and Spline Filters Survive" loading="lazy" width="200" height="200"></picture><span>刮痕把平均線壓凹多少,以及穩健濾波的失效點</span></a>
 <a href="../../articles/assets/poc/poc_sem_tem_same_particle/08_tem_focus_sweep.gif"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_sem_tem_same_particle/02_same_specimen_sem_tem.png"><img src="../../articles/assets/poc/poc_sem_tem_same_particle/story.en.gif" alt="Measuring the Same Particles in Scanning and Transmission Images — Which Is Right, 52 nm or 48 nm?" loading="lazy" width="200" height="200"></picture><b>&#9654;</b><span>在掃描像與穿透像中量測同一批粒子</span></a>
 <a href="../../articles/assets/poc/poc_real_sem_metal_layer/01_scene.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_real_sem_metal_layer/01_scene.png"><img src="../../articles/assets/poc/poc_real_sem_metal_layer/story.en.gif" alt="Measuring Tracks and Vias in a Real IC SEM Image — Does the Virtual-SEM Edge Correction Transfer?" loading="lazy" width="200" height="200"></picture><span>真實 SEM 金屬層量測</span></a>
+<a href="../../articles/assets/poc/poc_virtual_acceptance_3d/01_acceptance_layout_and_noise.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_virtual_acceptance_3d/01_acceptance_layout_and_noise.png"><img src="../../articles/assets/poc/poc_virtual_acceptance_3d/story.en.gif" alt="Acceptance-Test an Optical 3-D Sensor Before Buying It: One Black Sphere Fails the Same iToF" loading="lazy" width="200" height="200"></picture><span>購買前先做驗收試驗:同一台 iToF 僅因一顆黑色球就不合格</span></a>
+<a href="../../articles/assets/poc/poc_light_section_step_weld_floor/01_height_map.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_light_section_step_weld_floor/01_height_map.png"><img src="../../articles/assets/poc/poc_light_section_step_weld_floor/story.en.gif" alt="Light-Section Heights Agree to Microns, but the Real Limit Is a 20.7 µm Speckle Floor" loading="lazy" width="200" height="200"></picture><span>光切斷高度精確到微米,但實際極限是 20.7 µm 的散斑底限</span></a>
 </div>
 </details>
 
@@ -649,7 +655,7 @@ PoC 287 個,另有機器人範例 5 個。展開分組即可載入縮圖。
 </div>
 </details>
 
-<details class="vall"><summary><b>幾何與校正</b> (20)</summary>
+<details class="vall"><summary><b>幾何與校正</b> (24)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_simcal_thin_film/08_real_determined_vs_combinations.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_simcal_thin_film/08_real_determined_vs_combinations.png"><img src="../../articles/assets/poc/poc_simcal_thin_film/story.en.gif" alt="Calibrating a Thin-Film Model to Real Images — and Giving No Number to What the Data Do Not Determine" loading="lazy" width="200" height="200"></picture><span>以真實影像校正薄膜模型(可確定的係數與無法確定的組合)</span></a>
 <a href="../../articles/assets/poc/poc_camera_calibration/05_calibration_convergence.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_camera_calibration.jpg" alt="相機校正" width="200" height="200"><b>&#9654;</b><span>相機校正</span></a>
@@ -671,6 +677,10 @@ PoC 287 個,另有機器人範例 5 個。展開分組即可載入縮圖。
 <a href="../../articles/assets/poc/poc_public_camera_heading/02_yaw_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_public_camera_heading.jpg" alt="公共攝影機朝向" width="200" height="200"><b>&#9654;</b><span>公共攝影機朝向</span></a>
 <a href="../../articles/assets/poc/poc_public_camera_heading_real/02_sunset_follow.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_public_camera_heading_real.jpg" alt="攝影機朝向(實拍)" width="200" height="200"><b>&#9654;</b><span>攝影機朝向(實拍)</span></a>
 <a href="../../articles/assets/poc/poc_real_tless_6dof/01_pose_overlay.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_real_tless_6dof/01_pose_overlay.png"><img src="../../articles/assets/poc/poc_real_tless_6dof/story.en.gif" alt="Six-DoF PPF Matching of Industrial Parts in Real RGB-D Data" loading="lazy" width="200" height="200"></picture><span>從真實深度點雲估計已知零件的六自由度姿態</span></a>
+<a href="../../articles/assets/poc/poc_calibration_truth_map/01_calibration_maps.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_calibration_truth_map/01_calibration_maps.png"><img src="../../articles/assets/poc/poc_calibration_truth_map/story.en.gif" alt="Camera Calibration with Ground Truth: 0.044 px Reprojection, Yet 0.568 px Wrong in the Corner" loading="lazy" width="200" height="200"></picture><span>帶真值的相機校正:重投影 0.044 px,角落仍錯 0.568 px</span></a>
+<a href="../../articles/assets/poc/poc_part_locate_features/01_part_locate_sift.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_part_locate_features/01_part_locate_sift.png"><img src="../../articles/assets/poc/poc_part_locate_features/story.en.gif" alt="SIFT Locates a Part Rotated 37 Degrees to 0.367 px; the Existing Harris Matcher Misses by 158 px" loading="lazy" width="200" height="200"></picture><span>SIFT 以 0.367 px 定位旋轉 37 度的零件,原有 Harris 偏差 158 px</span></a>
+<a href="../../articles/assets/poc/poc_multimodal_mi_registration/01_multimodal_mi_pair.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_multimodal_mi_registration.jpg" alt="可見光與紅外電路板影像相關為 −0.74,互資訊仍以 0.170 px 對位" width="200" height="200"><span>可見光與紅外電路板影像相關為 −0.74,互資訊仍以 0.170 px 對位</span></a>
+<a href="../../articles/assets/poc/poc_sheet_deformation_ffd/01_sheet_ffd_error_maps.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_sheet_deformation_ffd.jpg" alt="FFD 以 0.025 px 追蹤薄片變形,但條碼與空白處無法確定位移場" width="200" height="200"><span>FFD 以 0.025 px 追蹤薄片變形,但條碼與空白處無法確定位移場</span></a>
 </div>
 </details>
 

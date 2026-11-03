@@ -8,7 +8,7 @@ gpu: なし
 examples: [poc_symbol_lot_ocr, poc_symbol_package_1d, poc_symbol_part_dpm]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.8.1  # fullseye lib version this note was generated for
+version: 0.9.0  # fullseye lib version this note was generated for
 ---
 
 # capture_degrade — SYMBOL `symbol_capture` op

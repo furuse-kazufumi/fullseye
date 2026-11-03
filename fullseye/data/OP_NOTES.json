@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3645,
- "n_notes": 3651,
+ "n_ops": 3749,
+ "n_notes": 3755,
  "notes": {
   "vol_dilate": [
    {
@@ -13957,6 +13957,85 @@
     "path": "docs/ops/3d/two_view/triangulate.md"
    }
   ],
+  "acceptance_error_budget": [
+   {
+    "op": "acceptance_error_budget",
+    "dim": "acceptance",
+    "category": "budget",
+    "in": "table × table × table",
+    "out": "table",
+    "path": "docs/ops/acceptance/budget/acceptance_error_budget.md"
+   }
+  ],
+  "acceptance_verdict": [
+   {
+    "op": "acceptance_verdict",
+    "dim": "acceptance",
+    "category": "evaluate",
+    "in": "table × table",
+    "out": "table",
+    "path": "docs/ops/acceptance/evaluate/acceptance_verdict.md"
+   }
+  ],
+  "plane_flatness_error": [
+   {
+    "op": "plane_flatness_error",
+    "dim": "acceptance",
+    "category": "evaluate",
+    "in": "points",
+    "out": "table",
+    "path": "docs/ops/acceptance/evaluate/plane_flatness_error.md"
+   }
+  ],
+  "sphere_probing_error": [
+   {
+    "op": "sphere_probing_error",
+    "dim": "acceptance",
+    "category": "evaluate",
+    "in": "points",
+    "out": "table",
+    "path": "docs/ops/acceptance/evaluate/sphere_probing_error.md"
+   }
+  ],
+  "sphere_spacing_error": [
+   {
+    "op": "sphere_spacing_error",
+    "dim": "acceptance",
+    "category": "evaluate",
+    "in": "points × points",
+    "out": "table",
+    "path": "docs/ops/acceptance/evaluate/sphere_spacing_error.md"
+   }
+  ],
+  "acceptance_layout": [
+   {
+    "op": "acceptance_layout",
+    "dim": "acceptance",
+    "category": "layout",
+    "out": "table",
+    "path": "docs/ops/acceptance/layout/acceptance_layout.md"
+   }
+  ],
+  "acceptance_scan": [
+   {
+    "op": "acceptance_scan",
+    "dim": "acceptance",
+    "category": "simulate",
+    "in": "table × table",
+    "out": "points",
+    "path": "docs/ops/acceptance/simulate/acceptance_scan.md"
+   }
+  ],
+  "virtual_acceptance_test": [
+   {
+    "op": "virtual_acceptance_test",
+    "dim": "acceptance",
+    "category": "simulate",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/acceptance/simulate/virtual_acceptance_test.md"
+   }
+  ],
   "bearing_defect_frequencies": [
    {
     "op": "bearing_defect_frequencies",
@@ -15090,6 +15169,36 @@
     "path": "docs/ops/cadmap/visibility/cad_visible_faces.md"
    }
   ],
+  "calibration_error_map": [
+   {
+    "op": "calibration_error_map",
+    "dim": "calib",
+    "category": "calib_truth",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/calib/calib_truth/calibration_error_map.md"
+   }
+  ],
+  "calibration_next_pose": [
+   {
+    "op": "calibration_next_pose",
+    "dim": "calib",
+    "category": "calib_truth",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/calib/calib_truth/calibration_next_pose.md"
+   }
+  ],
+  "calibration_uncertainty_map": [
+   {
+    "op": "calibration_uncertainty_map",
+    "dim": "calib",
+    "category": "calib_truth",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/calib/calib_truth/calibration_uncertainty_map.md"
+   }
+  ],
   "camera_calibration": [
    {
     "op": "camera_calibration",
@@ -15098,6 +15207,16 @@
     "in": "keypoints",
     "out": "table",
     "path": "docs/ops/calib/calibrate/camera_calibration.md"
+   }
+  ],
+  "camera_calibration_lm": [
+   {
+    "op": "camera_calibration_lm",
+    "dim": "calib",
+    "category": "calibrate",
+    "in": "keypoints",
+    "out": "table",
+    "path": "docs/ops/calib/calibrate/camera_calibration_lm.md"
    }
   ],
   "find_marks_and_pose": [
@@ -15117,6 +15236,44 @@
     "category": "calibrate",
     "out": "matrix",
     "path": "docs/ops/calib/calibrate/hand_eye_calibration.md"
+   }
+  ],
+  "stereo_calibration_lm": [
+   {
+    "op": "stereo_calibration_lm",
+    "dim": "calib",
+    "category": "calibrate",
+    "in": "keypoints",
+    "out": "table",
+    "path": "docs/ops/calib/calibrate/stereo_calibration_lm.md"
+   }
+  ],
+  "checkerboard_points": [
+   {
+    "op": "checkerboard_points",
+    "dim": "calib",
+    "category": "checkerboard",
+    "out": "keypoints",
+    "path": "docs/ops/calib/checkerboard/checkerboard_points.md"
+   }
+  ],
+  "find_checkerboard_corners": [
+   {
+    "op": "find_checkerboard_corners",
+    "dim": "calib",
+    "category": "checkerboard",
+    "in": "image2d",
+    "out": "keypoints",
+    "path": "docs/ops/calib/checkerboard/find_checkerboard_corners.md"
+   }
+  ],
+  "sim_checkerboard": [
+   {
+    "op": "sim_checkerboard",
+    "dim": "calib",
+    "category": "checkerboard",
+    "out": "table",
+    "path": "docs/ops/calib/checkerboard/sim_checkerboard.md"
    }
   ],
   "hom_vector_to_proj_hom_mat2d": [
@@ -25938,6 +26095,126 @@
     "path": "docs/ops/llmcore/score/attention_weights.md"
    }
   ],
+  "features_accuracy_table": [
+   {
+    "op": "features_accuracy_table",
+    "dim": "matchreg",
+    "category": "featmatch",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/matchreg/featmatch/features_accuracy_table.md"
+   }
+  ],
+  "features_match": [
+   {
+    "op": "features_match",
+    "dim": "matchreg",
+    "category": "featmatch",
+    "in": "table × table",
+    "out": "table",
+    "path": "docs/ops/matchreg/featmatch/features_match.md"
+   }
+  ],
+  "features_orb": [
+   {
+    "op": "features_orb",
+    "dim": "matchreg",
+    "category": "featmatch",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/matchreg/featmatch/features_orb.md"
+   }
+  ],
+  "features_sift": [
+   {
+    "op": "features_sift",
+    "dim": "matchreg",
+    "category": "featmatch",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/matchreg/featmatch/features_sift.md"
+   }
+  ],
+  "ransac_fundamental": [
+   {
+    "op": "ransac_fundamental",
+    "dim": "matchreg",
+    "category": "featmatch",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/matchreg/featmatch/ransac_fundamental.md"
+   }
+  ],
+  "ransac_homography": [
+   {
+    "op": "ransac_homography",
+    "dim": "matchreg",
+    "category": "featmatch",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/matchreg/featmatch/ransac_homography.md"
+   }
+  ],
+  "register_accuracy_map": [
+   {
+    "op": "register_accuracy_map",
+    "dim": "matchreg",
+    "category": "intensityreg",
+    "in": "image2d × flow2d",
+    "out": "table",
+    "path": "docs/ops/matchreg/intensityreg/register_accuracy_map.md"
+   }
+  ],
+  "register_capture_range": [
+   {
+    "op": "register_capture_range",
+    "dim": "matchreg",
+    "category": "intensityreg",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/matchreg/intensityreg/register_capture_range.md"
+   }
+  ],
+  "register_ecc": [
+   {
+    "op": "register_ecc",
+    "dim": "matchreg",
+    "category": "intensityreg",
+    "in": "image2d × image2d",
+    "out": "table",
+    "path": "docs/ops/matchreg/intensityreg/register_ecc.md"
+   }
+  ],
+  "register_ffd": [
+   {
+    "op": "register_ffd",
+    "dim": "matchreg",
+    "category": "intensityreg",
+    "in": "image2d × image2d",
+    "out": "table",
+    "path": "docs/ops/matchreg/intensityreg/register_ffd.md"
+   }
+  ],
+  "register_mi": [
+   {
+    "op": "register_mi",
+    "dim": "matchreg",
+    "category": "intensityreg",
+    "in": "image2d × image2d",
+    "out": "table",
+    "path": "docs/ops/matchreg/intensityreg/register_mi.md"
+   }
+  ],
+  "registration_to_flow2d": [
+   {
+    "op": "registration_to_flow2d",
+    "dim": "matchreg",
+    "category": "intensityreg",
+    "in": "table",
+    "out": "flow2d",
+    "path": "docs/ops/matchreg/intensityreg/registration_to_flow2d.md"
+   }
+  ],
   "cplx_argument_principle": [
    {
     "op": "cplx_argument_principle",
@@ -28841,6 +29118,84 @@
     "path": "docs/ops/optics/grating_interf/talbot_source_visibility.md"
    }
   ],
+  "camera_response_debevec": [
+   {
+    "op": "camera_response_debevec",
+    "dim": "optics",
+    "category": "hdr",
+    "in": "images",
+    "out": "table",
+    "path": "docs/ops/optics/hdr/camera_response_debevec.md"
+   }
+  ],
+  "camera_response_linear": [
+   {
+    "op": "camera_response_linear",
+    "dim": "optics",
+    "category": "hdr",
+    "out": "table",
+    "path": "docs/ops/optics/hdr/camera_response_linear.md"
+   }
+  ],
+  "camera_response_robertson": [
+   {
+    "op": "camera_response_robertson",
+    "dim": "optics",
+    "category": "hdr",
+    "in": "images",
+    "out": "table",
+    "path": "docs/ops/optics/hdr/camera_response_robertson.md"
+   }
+  ],
+  "exposure_fusion_mertens": [
+   {
+    "op": "exposure_fusion_mertens",
+    "dim": "optics",
+    "category": "hdr",
+    "in": "images",
+    "out": "image2d",
+    "path": "docs/ops/optics/hdr/exposure_fusion_mertens.md"
+   }
+  ],
+  "hdr_dynamic_range": [
+   {
+    "op": "hdr_dynamic_range",
+    "dim": "optics",
+    "category": "hdr",
+    "out": "table",
+    "path": "docs/ops/optics/hdr/hdr_dynamic_range.md"
+   }
+  ],
+  "hdr_exposure_series_simulate": [
+   {
+    "op": "hdr_exposure_series_simulate",
+    "dim": "optics",
+    "category": "hdr",
+    "in": "image2d",
+    "out": "images",
+    "path": "docs/ops/optics/hdr/hdr_exposure_series_simulate.md"
+   }
+  ],
+  "hdr_merge": [
+   {
+    "op": "hdr_merge",
+    "dim": "optics",
+    "category": "hdr",
+    "in": "images",
+    "out": "image2d",
+    "path": "docs/ops/optics/hdr/hdr_merge.md"
+   }
+  ],
+  "hdr_radiance_error": [
+   {
+    "op": "hdr_radiance_error",
+    "dim": "optics",
+    "category": "hdr",
+    "in": "image2d × image2d",
+    "out": "table",
+    "path": "docs/ops/optics/hdr/hdr_radiance_error.md"
+   }
+  ],
   "coaxial_illumination": [
    {
     "op": "coaxial_illumination",
@@ -29599,6 +29954,132 @@
     "in": "table",
     "out": "table",
     "path": "docs/ops/optics/lenssolve/lens_zmx_solves_roundtrip.md"
+   }
+  ],
+  "laser_line_center_centroid": [
+   {
+    "op": "laser_line_center_centroid",
+    "dim": "optics",
+    "category": "light_section",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/optics/light_section/laser_line_center_centroid.md"
+   }
+  ],
+  "laser_line_center_gauss": [
+   {
+    "op": "laser_line_center_gauss",
+    "dim": "optics",
+    "category": "light_section",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/optics/light_section/laser_line_center_gauss.md"
+   }
+  ],
+  "laser_line_center_steger": [
+   {
+    "op": "laser_line_center_steger",
+    "dim": "optics",
+    "category": "light_section",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/optics/light_section/laser_line_center_steger.md"
+   }
+  ],
+  "light_plane_calibrate": [
+   {
+    "op": "light_plane_calibrate",
+    "dim": "optics",
+    "category": "light_section",
+    "in": "table × table × matrix",
+    "out": "table",
+    "path": "docs/ops/optics/light_section/light_plane_calibrate.md"
+   }
+  ],
+  "light_section_floor_sweep": [
+   {
+    "op": "light_section_floor_sweep",
+    "dim": "optics",
+    "category": "light_section",
+    "out": "table",
+    "path": "docs/ops/optics/light_section/light_section_floor_sweep.md"
+   }
+  ],
+  "light_section_height_map": [
+   {
+    "op": "light_section_height_map",
+    "dim": "optics",
+    "category": "light_section",
+    "in": "images × table",
+    "out": "depth",
+    "path": "docs/ops/optics/light_section/light_section_height_map.md"
+   }
+  ],
+  "light_section_profile": [
+   {
+    "op": "light_section_profile",
+    "dim": "optics",
+    "category": "light_section",
+    "in": "table × table",
+    "out": "points",
+    "path": "docs/ops/optics/light_section/light_section_profile.md"
+   }
+  ],
+  "light_section_render": [
+   {
+    "op": "light_section_render",
+    "dim": "optics",
+    "category": "light_section",
+    "in": "table × pairs",
+    "out": "image2d",
+    "path": "docs/ops/optics/light_section/light_section_render.md"
+   }
+  ],
+  "light_section_rig": [
+   {
+    "op": "light_section_rig",
+    "dim": "optics",
+    "category": "light_section",
+    "out": "table",
+    "path": "docs/ops/optics/light_section/light_section_rig.md"
+   }
+  ],
+  "light_section_scan": [
+   {
+    "op": "light_section_scan",
+    "dim": "optics",
+    "category": "light_section",
+    "in": "images × table",
+    "out": "points",
+    "path": "docs/ops/optics/light_section/light_section_scan.md"
+   }
+  ],
+  "light_section_speckle_floor": [
+   {
+    "op": "light_section_speckle_floor",
+    "dim": "optics",
+    "category": "light_section",
+    "out": "table",
+    "path": "docs/ops/optics/light_section/light_section_speckle_floor.md"
+   }
+  ],
+  "light_section_targets": [
+   {
+    "op": "light_section_targets",
+    "dim": "optics",
+    "category": "light_section",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/light_section/light_section_targets.md"
+   }
+  ],
+  "light_section_uncertainty_budget": [
+   {
+    "op": "light_section_uncertainty_budget",
+    "dim": "optics",
+    "category": "light_section",
+    "out": "table",
+    "path": "docs/ops/optics/light_section/light_section_uncertainty_budget.md"
    }
   ],
   "form_factors_2d": [
@@ -36003,6 +36484,328 @@
     "in": "normalmap",
     "out": "rgbimage",
     "path": "docs/ops/specular/reflectance/dichromatic_render.md"
+   }
+  ],
+  "barcode_scan_profiles": [
+   {
+    "op": "barcode_scan_profiles",
+    "dim": "symbol",
+    "category": "barcode1d",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/symbol/barcode1d/barcode_scan_profiles.md"
+   }
+  ],
+  "decode_barcode_profile": [
+   {
+    "op": "decode_barcode_profile",
+    "dim": "symbol",
+    "category": "barcode1d",
+    "in": "signal",
+    "out": "table",
+    "path": "docs/ops/symbol/barcode1d/decode_barcode_profile.md"
+   }
+  ],
+  "ean_check_digit": [
+   {
+    "op": "ean_check_digit",
+    "dim": "symbol",
+    "category": "barcode1d",
+    "out": "scalar",
+    "path": "docs/ops/symbol/barcode1d/ean_check_digit.md"
+   }
+  ],
+  "encode_barcode1d": [
+   {
+    "op": "encode_barcode1d",
+    "dim": "symbol",
+    "category": "barcode1d",
+    "out": "table",
+    "path": "docs/ops/symbol/barcode1d/encode_barcode1d.md"
+   }
+  ],
+  "read_barcode1d": [
+   {
+    "op": "read_barcode1d",
+    "dim": "symbol",
+    "category": "barcode1d",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/symbol/barcode1d/read_barcode1d.md"
+   }
+  ],
+  "dm_decode_modules": [
+   {
+    "op": "dm_decode_modules",
+    "dim": "symbol",
+    "category": "datacode2d",
+    "in": "matrix",
+    "out": "table",
+    "path": "docs/ops/symbol/datacode2d/dm_decode_modules.md"
+   }
+  ],
+  "dm_encode": [
+   {
+    "op": "dm_encode",
+    "dim": "symbol",
+    "category": "datacode2d",
+    "out": "table",
+    "path": "docs/ops/symbol/datacode2d/dm_encode.md"
+   }
+  ],
+  "dm_locate": [
+   {
+    "op": "dm_locate",
+    "dim": "symbol",
+    "category": "datacode2d",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/symbol/datacode2d/dm_locate.md"
+   }
+  ],
+  "dm_read": [
+   {
+    "op": "dm_read",
+    "dim": "symbol",
+    "category": "datacode2d",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/symbol/datacode2d/dm_read.md"
+   }
+  ],
+  "dm_sample": [
+   {
+    "op": "dm_sample",
+    "dim": "symbol",
+    "category": "datacode2d",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/symbol/datacode2d/dm_sample.md"
+   }
+  ],
+  "qr_decode_modules": [
+   {
+    "op": "qr_decode_modules",
+    "dim": "symbol",
+    "category": "datacode2d",
+    "in": "matrix",
+    "out": "table",
+    "path": "docs/ops/symbol/datacode2d/qr_decode_modules.md"
+   }
+  ],
+  "qr_encode": [
+   {
+    "op": "qr_encode",
+    "dim": "symbol",
+    "category": "datacode2d",
+    "out": "table",
+    "path": "docs/ops/symbol/datacode2d/qr_encode.md"
+   }
+  ],
+  "qr_locate": [
+   {
+    "op": "qr_locate",
+    "dim": "symbol",
+    "category": "datacode2d",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/symbol/datacode2d/qr_locate.md"
+   }
+  ],
+  "qr_read": [
+   {
+    "op": "qr_read",
+    "dim": "symbol",
+    "category": "datacode2d",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/symbol/datacode2d/qr_read.md"
+   }
+  ],
+  "qr_sample": [
+   {
+    "op": "qr_sample",
+    "dim": "symbol",
+    "category": "datacode2d",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/symbol/datacode2d/qr_sample.md"
+   }
+  ],
+  "ocr_classify": [
+   {
+    "op": "ocr_classify",
+    "dim": "symbol",
+    "category": "ocr",
+    "in": "matrix × table",
+    "out": "table",
+    "path": "docs/ops/symbol/ocr/ocr_classify.md"
+   }
+  ],
+  "ocr_features": [
+   {
+    "op": "ocr_features",
+    "dim": "symbol",
+    "category": "ocr",
+    "in": "image2d",
+    "out": "signal",
+    "path": "docs/ops/symbol/ocr/ocr_features.md"
+   }
+  ],
+  "ocr_font": [
+   {
+    "op": "ocr_font",
+    "dim": "symbol",
+    "category": "ocr",
+    "out": "table",
+    "path": "docs/ops/symbol/ocr/ocr_font.md"
+   }
+  ],
+  "ocr_read_line": [
+   {
+    "op": "ocr_read_line",
+    "dim": "symbol",
+    "category": "ocr",
+    "in": "image2d × table",
+    "out": "table",
+    "path": "docs/ops/symbol/ocr/ocr_read_line.md"
+   }
+  ],
+  "ocr_read_trials": [
+   {
+    "op": "ocr_read_trials",
+    "dim": "symbol",
+    "category": "ocr",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/symbol/ocr/ocr_read_trials.md"
+   }
+  ],
+  "ocr_render_text": [
+   {
+    "op": "ocr_render_text",
+    "dim": "symbol",
+    "category": "ocr",
+    "out": "table",
+    "path": "docs/ops/symbol/ocr/ocr_render_text.md"
+   }
+  ],
+  "ocr_score": [
+   {
+    "op": "ocr_score",
+    "dim": "symbol",
+    "category": "ocr",
+    "out": "table",
+    "path": "docs/ops/symbol/ocr/ocr_score.md"
+   }
+  ],
+  "ocr_segment_line": [
+   {
+    "op": "ocr_segment_line",
+    "dim": "symbol",
+    "category": "ocr",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/symbol/ocr/ocr_segment_line.md"
+   }
+  ],
+  "ocr_train": [
+   {
+    "op": "ocr_train",
+    "dim": "symbol",
+    "category": "ocr",
+    "out": "table",
+    "path": "docs/ops/symbol/ocr/ocr_train.md"
+   }
+  ],
+  "grade_barcode1d": [
+   {
+    "op": "grade_barcode1d",
+    "dim": "symbol",
+    "category": "print_quality",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/symbol/print_quality/grade_barcode1d.md"
+   }
+  ],
+  "grade_barcode_profile": [
+   {
+    "op": "grade_barcode_profile",
+    "dim": "symbol",
+    "category": "print_quality",
+    "in": "signal",
+    "out": "table",
+    "path": "docs/ops/symbol/print_quality/grade_barcode_profile.md"
+   }
+  ],
+  "grade_datacode2d": [
+   {
+    "op": "grade_datacode2d",
+    "dim": "symbol",
+    "category": "print_quality",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/symbol/print_quality/grade_datacode2d.md"
+   }
+  ],
+  "symbol_read": [
+   {
+    "op": "symbol_read",
+    "dim": "symbol",
+    "category": "read_pod",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/symbol/read_pod/symbol_read.md"
+   }
+  ],
+  "symbol_read_pod": [
+   {
+    "op": "symbol_read_pod",
+    "dim": "symbol",
+    "category": "read_pod",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/symbol/read_pod/symbol_read_pod.md"
+   }
+  ],
+  "symbol_read_trials": [
+   {
+    "op": "symbol_read_trials",
+    "dim": "symbol",
+    "category": "read_pod",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/symbol/read_pod/symbol_read_trials.md"
+   }
+  ],
+  "read_symbols_zxing": [
+   {
+    "op": "read_symbols_zxing",
+    "dim": "symbol",
+    "category": "symbol_bridge",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/symbol/symbol_bridge/read_symbols_zxing.md"
+   }
+  ],
+  "capture_degrade": [
+   {
+    "op": "capture_degrade",
+    "dim": "symbol",
+    "category": "symbol_capture",
+    "in": "image2d",
+    "out": "image2d",
+    "path": "docs/ops/symbol/symbol_capture/capture_degrade.md"
+   }
+  ],
+  "render_symbol": [
+   {
+    "op": "render_symbol",
+    "dim": "symbol",
+    "category": "symbol_capture",
+    "in": "table",
+    "out": "image2d",
+    "path": "docs/ops/symbol/symbol_capture/render_symbol.md"
    }
   ],
   "text_candidates": [

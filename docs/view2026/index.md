@@ -498,11 +498,11 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 </div>
 
-[PoC 以外の使用例 177 本の一覧](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
+[PoC 以外の使用例 178 本の一覧](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
 
 ## ぜんぶ見る
 
-PoC 287 本と、ロボットの例 5 本。グループを開くとサムネイルが出ます。
+PoC 297 本と、ロボットの例 5 本。グループを開くとサムネイルが出ます。
 
 <noscript><p><a href="../GALLERY.html">(JavaScript が無い環境では、ギャラリーのページで全部の図を見られます)</a></p></noscript>
 
@@ -521,7 +521,7 @@ PoC 287 本と、ロボットの例 5 本。グループを開くとサムネイ
 </div>
 </details>
 
-<details class="vall"><summary><b>産業検査</b> (52)</summary>
+<details class="vall"><summary><b>産業検査</b> (56)</summary>
 <div class="vg vs">
 <a href="../articles/assets/poc/poc_barcode_1d/01_misread_split.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_barcode_1d/01_misread_split.png"><img src="../articles/assets/poc/poc_barcode_1d/story.ja.gif" alt="同じ画像・同じ二値化で、run 数を検査するかどうかだけが違う。" loading="lazy" width="200" height="200"></picture><span>1 次元バーコード</span></a>
 <a href="../articles/assets/poc/poc_battery_electrode_tortuosity/01_scene.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_battery_electrode_tortuosity/01_scene.png"><img src="../articles/assets/poc/poc_battery_electrode_tortuosity/story.ja.gif" alt="左と中は同じ球状粒子床の直交する 2 断面。右はカレンダリングで潰した粒子(空隙率はほぼ同じ、屈曲度は 3.7 倍)。" loading="lazy" width="200" height="200"></picture><span>電極の屈曲度</span></a>
@@ -575,10 +575,14 @@ PoC 287 本と、ロボットの例 5 本。グループを開くとサムネイ
 <a href="../articles/assets/poc/poc_mueller_dofp_observability/01_observability.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_mueller_dofp_observability.jpg" alt="4 方位偏光カメラに見えない Mueller 行列の 7 次元" width="200" height="200"><span>4 方位偏光カメラに見えない Mueller 行列の 7 次元</span></a>
 <a href="../articles/assets/poc/poc_slanted_edge_sfr_limits/01_sfr_limits.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_slanted_edge_sfr_limits.jpg" alt="斜めエッジ SFR はガンマで MTF50 を誤る" width="200" height="200"><span>斜めエッジ SFR はガンマで MTF50 を誤る</span></a>
 <a href="../articles/assets/poc/poc_threshold_transfer_after_normalization/01_threshold_transfer.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_threshold_transfer_after_normalization/01_threshold_transfer.png"><img src="../articles/assets/poc/poc_threshold_transfer_after_normalization/story.ja.gif" alt="基準像で決めた同じしきい値を移送した。利得・オフセット・材質変化では生のしきい値の二値像がほぼ白く崩れる一方、頑健標準化後の kσ は真値の輪郭を保つ。" loading="lazy" width="200" height="200"></picture><span>生の輝度しきい値は照明ごとに合わせ直すが、kσ と P-tile はそのまま移る</span></a>
+<a href="../articles/assets/poc/poc_hdr_glossy_metal_inspection/02_results.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_hdr_glossy_metal_inspection/02_results.png"><img src="../articles/assets/poc/poc_hdr_glossy_metal_inspection/story.ja.gif" alt="光沢金属の 2 本の傷は露出 1 回では両方見えず、応答を測った HDR で見える" loading="lazy" width="200" height="200"></picture><span>光沢金属の 2 本の傷は露出 1 回では両方見えず、応答を測った HDR で見える</span></a>
+<a href="../articles/assets/poc/poc_symbol_package_1d/01_ean13_defocus.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_symbol_package_1d.jpg" alt="90 % 読めるぼけでも、バーコードの印字品質は F" width="200" height="200"><span>90 % 読めるぼけでも、バーコードの印字品質は F</span></a>
+<a href="../articles/assets/poc/poc_symbol_part_dpm/01_dpm_datamatrix.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_symbol_part_dpm.jpg" alt="ドットピーンの Data Matrix は、ぼけると zxing-cpp に読めるようになる" width="200" height="200"><span>ドットピーンの Data Matrix は、ぼけると zxing-cpp に読めるようになる</span></a>
+<a href="../articles/assets/poc/poc_symbol_lot_ocr/01_lot_ocr_defocus.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_symbol_lot_ocr.jpg" alt="ロット番号の OCR は、学習の範囲を越えたぼけで棄却でなく誤読に変わる" width="200" height="200"><span>ロット番号の OCR は、学習の範囲を越えたぼけで棄却でなく誤読に変わる</span></a>
 </div>
 </details>
 
-<details class="vall"><summary><b>寸法・形状計測</b> (56)</summary>
+<details class="vall"><summary><b>寸法・形状計測</b> (58)</summary>
 <div class="vg vs">
 <a href="../articles/assets/poc/poc_aoi_ct_traceability/01_inspection_and_reconstructed_ct.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_aoi_ct_traceability/01_inspection_and_reconstructed_ct.png"><img src="../articles/assets/poc/poc_aoi_ct_traceability/story.ja.gif" alt="One populated region in top view and reconstructed attenuation slices. The same central joint is traceable to its internal void; rings and metal streaks arise in projection reconstruction." loading="lazy" width="200" height="200"></picture><span>AOI と CT の対応</span></a>
 <a href="../articles/assets/poc/poc_asbuilt_wall_deviation/01_scene.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_asbuilt_wall_deviation/01_scene.png"><img src="../articles/assets/poc/poc_asbuilt_wall_deviation/story.ja.gif" alt="竣工した壁の歪み" loading="lazy" width="200" height="200"></picture><span>竣工した壁の歪み</span></a>
@@ -636,6 +640,8 @@ PoC 287 本と、ロボットの例 5 本。グループを開くとサムネイ
 <a href="../articles/assets/poc/poc_robust_profile_filter/04_scratched_surface.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_robust_profile_filter/04_scratched_surface.png"><img src="../articles/assets/poc/poc_robust_profile_filter/story.ja.gif" alt="橙 = 負、青 = 正。(b) の線形の粗さは、傷(橙)の脇に青い帯が立つ。平均面が傷の側へ凹んだぶんの偽の山で、傷そのものより広い。(c) のロバストは傷だけが残る。(d) が凹みの形そのもの。" loading="lazy" width="200" height="200"></picture><span>深い傷が平均線を凹ませる量と、ロバスト化の破綻点</span></a>
 <a href="../articles/assets/poc/poc_sem_tem_same_particle/08_tem_focus_sweep.gif"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_sem_tem_same_particle/02_same_specimen_sem_tem.png"><img src="../articles/assets/poc/poc_sem_tem_same_particle/story.ja.gif" alt="Secondary-electron output | threshold and maximum-slope diameters | absolute residual." loading="lazy" width="200" height="200"></picture><b>&#9654;</b><span>同じ粒子を走査像と透過像で測る</span></a>
 <a href="../articles/assets/poc/poc_real_sem_metal_layer/01_scene.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_real_sem_metal_layer/01_scene.png"><img src="../articles/assets/poc/poc_real_sem_metal_layer/story.ja.gif" alt="実 SEM 像。緑=track ラベル、赤=重複除去後の via ラベル。" loading="lazy" width="200" height="200"></picture><span>実SEM金属配線の寸法計測</span></a>
+<a href="../articles/assets/poc/poc_virtual_acceptance_3d/01_acceptance_layout_and_noise.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_virtual_acceptance_3d/01_acceptance_layout_and_noise.png"><img src="../articles/assets/poc/poc_virtual_acceptance_3d/story.ja.gif" alt="artefact layout (VDI/VDE 2634-2 idea) and the noise each design leaves on the flat" loading="lazy" width="200" height="200"></picture><span>買う前に受入試験をかける ―― 同じ iToF でも黒い球 1 つで不合格になる</span></a>
+<a href="../articles/assets/poc/poc_light_section_step_weld_floor/01_height_map.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_light_section_step_weld_floor/01_height_map.png"><img src="../articles/assets/poc/poc_light_section_step_weld_floor/story.ja.gif" alt="高さ地図(フレーム × 列、gauss): 段差 2 mm と高さの変わるビード" loading="lazy" width="200" height="200"></picture><span>光切断の高さは µm で合うが、実機を決めるのはスペックルの床 20.7 µm</span></a>
 </div>
 </details>
 
@@ -664,7 +670,7 @@ PoC 287 本と、ロボットの例 5 本。グループを開くとサムネイ
 </div>
 </details>
 
-<details class="vall"><summary><b>幾何・校正</b> (20)</summary>
+<details class="vall"><summary><b>幾何・校正</b> (24)</summary>
 <div class="vg vs">
 <a href="../articles/assets/poc/poc_simcal_thin_film/08_real_determined_vs_combinations.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_simcal_thin_film/08_real_determined_vs_combinations.png"><img src="../articles/assets/poc/poc_simcal_thin_film/story.ja.gif" alt="Schwarz ら 2024 の顕微鏡写真(Si 上の SiO₂ の縁)を 40 px 角の 52 区画の RGB 平均にし、転送行列 × 黒体の光源 × CIE 1931 → sRGB × 利得 × ガンマ × 周辺減光の 7 本のつまみに合わせた終点を通る切り口(ほかのつまみは終点に固定、色は log10(χ² − 最小 + 1)、暗いほど合う、上が大きい値)。左は各軸 ±8 σ_CRLB(T 5752〜6449 K、周辺減光 -0.149〜-0.018)でも谷が 1 点に閉じる。右は利得 ×1/2〜×2・ガンマ 1.4〜3.2 の全域に谷が溝として伸び、明るさを上げても γ を上げれば同じ画素値に戻る。simcal_fit が値を出したのは T = 6100 K, vig = -0.084 だけで、膜厚・屈折率・分散・利得・ガンマは共線性指数 γ > 10 で「組み合わせ」として数を出さない。出典: Schwarz et al., Adv. Opt. Mater. (2024) doi:10.1002/adom.202402502; data Zenodo 10.5281/zenodo.13753754 (CC BY 4.0). Modified: re-labelled and rounded table / micrograph downsized to 640x360, block means." loading="lazy" width="200" height="200"></picture><span>実画像で薄膜の模型を較正(決まる係数と決まらない組み合わせ)</span></a>
 <a href="../articles/assets/poc/poc_camera_calibration/05_calibration_convergence.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_camera_calibration.jpg" alt="カメラ校正" width="200" height="200"><b>&#9654;</b><span>カメラ校正</span></a>
@@ -686,6 +692,10 @@ PoC 287 本と、ロボットの例 5 本。グループを開くとサムネイ
 <a href="../articles/assets/poc/poc_public_camera_heading/02_yaw_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_public_camera_heading.jpg" alt="公共カメラの向き" width="200" height="200"><b>&#9654;</b><span>公共カメラの向き</span></a>
 <a href="../articles/assets/poc/poc_public_camera_heading_real/02_sunset_follow.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_public_camera_heading_real.jpg" alt="カメラの向き(実写)" width="200" height="200"><b>&#9654;</b><span>カメラの向き(実写)</span></a>
 <a href="../articles/assets/poc/poc_real_tless_6dof/01_pose_overlay.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_real_tless_6dof/01_pose_overlay.png"><img src="../articles/assets/poc/poc_real_tless_6dof/story.ja.gif" alt="scene 1/image 1。PPF+ICP の推定モデル(橙)と BOP 真値(青)。" loading="lazy" width="200" height="200"></picture><span>実深度点群で既知部品の6自由度姿勢を推定する</span></a>
+<a href="../articles/assets/poc/poc_calibration_truth_map/01_calibration_maps.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_calibration_truth_map/01_calibration_maps.png"><img src="../articles/assets/poc/poc_calibration_truth_map/story.ja.gif" alt="camera_calibration_lm on 6 rendered views (k1 = -0.21): where the estimate errs" loading="lazy" width="200" height="200"></picture><span>真値つきのカメラ校正 ―― 再投影 0.044 px でも隅では 0.568 px 誤る</span></a>
+<a href="../articles/assets/poc/poc_part_locate_features/01_part_locate_sift.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_part_locate_features/01_part_locate_sift.png"><img src="../articles/assets/poc/poc_part_locate_features/story.ja.gif" alt="SIFT -> features_match -> ransac_homography: corner error 0.367 px" loading="lazy" width="200" height="200"></picture><span>37 度回した部品を SIFT は 0.367 px で見つけ、既存の Harris は 158 px 外す</span></a>
+<a href="../articles/assets/poc/poc_multimodal_mi_registration/01_multimodal_mi_pair.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_multimodal_mi_registration.jpg" alt="相関 −0.74 の可視と赤外の基板像を、相互情報量は 0.170 px で合わせる" width="200" height="200"><span>相関 −0.74 の可視と赤外の基板像を、相互情報量は 0.170 px で合わせる</span></a>
+<a href="../articles/assets/poc/poc_sheet_deformation_ffd/01_sheet_ffd_error_maps.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_sheet_deformation_ffd.jpg" alt="シートの変形を FFD は 0.025 px で追うが、バーコードと余白では場が決まらない" width="200" height="200"><span>シートの変形を FFD は 0.025 px で追うが、バーコードと余白では場が決まらない</span></a>
 </div>
 </details>
 
