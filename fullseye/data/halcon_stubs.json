@@ -1,7 +1,7 @@
 {
 "version": "2605",
 "n_operators": 2313,
-"n_covered": 968,
+"n_covered": 966,
 "n_with_signature": 2235,
 "signature_source": "mvtec-halcon binding",
 "operators": {
@@ -5075,13 +5075,17 @@
 "Matching"
 ],
 "url": "https://www.mvtec.com/doc/halcon/2605/en/create_local_deformable_model.html",
-"covered": true,
+"covered": false,
 "imgevolve_analogs": [
 "facade:shapematch.create_local_deformable_model"
 ],
 "py_signature": {
 "params": "template: HObject, num_levels: Union[int, str], angle_start: Sequence[float], angle_extent: Sequence[float], angle_step: Union[float, str], scale_rmin: float, scale_rmax: Sequence[float], scale_rstep: Union[float, str], scale_cmin: float, scale_cmax: Sequence[float], scale_cstep: Union[float, str], optimization: MaybeSequence[str], metric: str, contrast: Sequence[Union[int, str]], min_contrast: Un",
 "ret": "-> HHandle"
+},
+"partial": {
+"does": "keeps the template and a rigid shape model of it (create_shape_model)",
+"does_not": "no deformation model (control grid / deformation parameters) is built"
 }
 },
 "create_local_deformable_model_xld": {
@@ -5436,13 +5440,17 @@
 "3D Matching"
 ],
 "url": "https://www.mvtec.com/doc/halcon/2605/en/create_shape_model_3d.html",
-"covered": true,
+"covered": false,
 "imgevolve_analogs": [
 "facade:matching3d.create_shape_model_3d"
 ],
 "py_signature": {
 "params": "object_model_3d: HHandle, cam_param: Sequence[Union[int, float, str]], ref_rot_x: float, ref_rot_y: float, ref_rot_z: float, order_of_rotation: str, longitude_min: float, longitude_max: float, latitude_min: float, latitude_max: float, cam_roll_min: float, cam_roll_max: float, dist_min: float, dist_max: float, min_contrast: int, gen_param_name: MaybeSequence[str], gen_param_value: MaybeSequence[Uni",
 "ret": "-> HHandle"
+},
+"partial": {
+"does": "stores the 3-D points, the camera parameters and the number of views",
+"does_not": "no views are precomputed: no view sphere, no 2-D shape models per view"
 }
 },
 "create_shape_model_xld": {

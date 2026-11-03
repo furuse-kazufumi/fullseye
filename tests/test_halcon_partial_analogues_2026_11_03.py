@@ -32,7 +32,9 @@ def test_partial_table_is_the_audited_families():
         "create_bead_inspection_model", "apply_bead_inspection_model", "find_box_3d", "binocular_calibration",
         # 第 2 便(同日、同じ規則の延長): 監査 B の表の残り
         "find_local_deformable_model", "find_shape_model_3d", "create_texture_inspection_model",
-        "apply_texture_inspection_model", "camera_calibration"}
+        "apply_texture_inspection_model", "camera_calibration",
+        # 第 3 便: 部分対応の探す側と対になる、モデルを作る側
+        "create_local_deformable_model", "create_shape_model_3d"}
     for name, (ref, does, does_not) in HC.PARTIAL.items():
         assert ref.endswith("." + name) and does.strip() and does_not.strip(), name
 

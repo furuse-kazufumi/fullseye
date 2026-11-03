@@ -100,6 +100,15 @@ PARTIAL = {
         "calib.camera_calibration",
         "Zhang closed-form intrinsics K (fx, fy, cx, cy, skew) from >= 3 views of a planar target, fail-closed",
         "no lens distortion and no joint non-linear refinement of K, distortion and extrinsics"),
+    # ---- 第 3 便(2026-11-03): 部分対応の探す側と対になる、モデルを作る側 ----
+    "create_local_deformable_model": (
+        "shapematch.create_local_deformable_model",
+        "keeps the template and a rigid shape model of it (create_shape_model)",
+        "no deformation model (control grid / deformation parameters) is built"),
+    "create_shape_model_3d": (
+        "matching3d.create_shape_model_3d",
+        "stores the 3-D points, the camera parameters and the number of views",
+        "no views are precomputed: no view sphere, no 2-D shape models per view"),
 }
 
 

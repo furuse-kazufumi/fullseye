@@ -7,14 +7,14 @@ anything not returning the declared sort — 1 gate-failing auto op(s) are
 excluded here, not counted).
 
 ## Headline
-- **967 / 2313 distinct real HALCON operators implemented (41.8%)**
-  = 967 evolvable registry ops (of which 17 are also reachable through the
+- **965 / 2313 distinct real HALCON operators implemented (41.7%)**
+  = 965 evolvable registry ops (of which 17 are also reachable through the
   n-ary capability tier — a subset, not an addition; 0 n-ary-only).
 - dangling registry `Op.halcon` (fake names): **0** (fail-closed).
-- partial analogues (the name is claimed but only part of the job is done): **14**, not counted above — apply_bead_inspection_model, apply_texture_inspection_model, binocular_calibration, calibrate_sheet_of_light, camera_calibration, create_bead_inspection_model, create_ocv_proj, create_texture_inspection_model, find_box_3d, find_deformable_surface_model, find_local_deformable_model, find_planar_uncalib_deformable_model, find_shape_model_3d, measure_profile_sheet_of_light (what each does and does not do: docs/HALCON_COVERAGE.md).
+- partial analogues (the name is claimed but only part of the job is done): **16**, not counted above — apply_bead_inspection_model, apply_texture_inspection_model, binocular_calibration, calibrate_sheet_of_light, camera_calibration, create_bead_inspection_model, create_local_deformable_model, create_ocv_proj, create_shape_model_3d, create_texture_inspection_model, find_box_3d, find_deformable_surface_model, find_local_deformable_model, find_planar_uncalib_deformable_model, find_shape_model_3d, measure_profile_sheet_of_light (what each does and does not do: docs/HALCON_COVERAGE.md).
 
 ## Evolvable registry (single-image pipeline, coverage-counted)
-- registry ops: 942 ; distinct real HALCON ops covered: **968**
+- registry ops: 942 ; distinct real HALCON ops covered: **966**
 - auto-generated ops passing the functional gate: 226 / 227
 - auto ops counted in coverage but FAILING the gate: 1 ['abs_image']
 

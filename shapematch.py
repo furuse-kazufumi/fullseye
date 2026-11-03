@@ -874,7 +874,14 @@ def adapt_shape_model_high_noise(template, min_grad=0.25, smooth=2.0):
 
 
 def create_local_deformable_model(template, min_grad=0.1):
-    """局所変形マッチング用モデル(テンプレート保持)(create_local_deformable_model)。"""
+    """[部分対応] テンプレートとその剛体の形状モデルを持つだけ(create_local_deformable_model)。
+
+    する: テンプレートと ``create_shape_model`` の剛体モデルを ``{"template", "shape", "edge"}`` で返す。
+    しない: 変形のモデル(制御格子・変形のパラメータ)は作らない。探す側の ``find_local_deformable_model`` も
+    部分対応。HALCON 対応の数え方では「部分対応」で、対応済みには数えない(``halcon_coverage.PARTIAL``)。
+
+    [Partial HALCON analogue] Template plus a rigid shape model; no deformation model.
+    """
     t = np.asarray(template, float)
     return {"template": t, "shape": t.shape, "edge": create_shape_model(t, min_grad)}
 

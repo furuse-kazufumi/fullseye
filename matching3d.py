@@ -82,7 +82,14 @@ def refine_surface_model_pose_image(model_points, depth_image, focal=500.0, base
 
 # ── 3D shape モデル(シルエット/エッジベース)────────────────────────────────── #
 def create_shape_model_3d(points, cam_par, n_views=8):
-    """3D 点群から複数視点のシルエット shape モデルを作る(create_shape_model_3d)。"""
+    """[部分対応] 3D 点群・カメラのパラメータ・視点の数を入れるだけ(create_shape_model_3d)。
+
+    する: ``{"points", "cam_par", "n_views"}`` を返す。投影は探す側(``find_shape_model_3d``)が毎回行う。
+    しない: 視点を前もって作らない(視点球も、視点ごとの 2-D 形状モデルも無い)。HALCON 対応の数え方では
+    「部分対応」で、対応済みには数えない(``halcon_coverage.PARTIAL``)。
+
+    [Partial HALCON analogue] Stores points, camera and view count only; no precomputed views.
+    """
     return {"points": np.asarray(points, float), "cam_par": cam_par, "n_views": int(n_views)}
 
 
