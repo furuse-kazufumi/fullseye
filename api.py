@@ -214,6 +214,11 @@ from fileio import (  # noqa: E402,F401
     points_write_xyz, points_read_xyz,
     e57_write, e57_read,
     archive_probe, archive_list, archive_extract, archive_create,
+    astro_fits_write, astro_fits_read,
+    em_mrc_write, em_mrc_read,
+    nrrd_write, nrrd_read,
+    nifti_write, nifti_read,
+    ome_tiff_write, ome_tiff_read,
 )
 from meshio_opt import (  # noqa: E402,F401
     read_gltf, read_gltf_merged, read_las, read_pcd, formats_available,
@@ -1181,6 +1186,11 @@ __all__ = [
     "points_write_xyz", "points_read_xyz",
     "e57_write", "e57_read",
     "archive_probe", "archive_list", "archive_extract", "archive_create",
+    "astro_fits_write", "astro_fits_read",
+    "em_mrc_write", "em_mrc_read",
+    "nrrd_write", "nrrd_read",
+    "nifti_write", "nifti_read",
+    "ome_tiff_write", "ome_tiff_read",
     "mesh_to_points", "voxelize", "bounds", "recenter", "normalize_scale",
     "meshio_opt", "read_gltf", "read_gltf_merged", "read_las", "read_pcd", "formats_available",
     "volio", "read_volume", "write_volume", "list_dicom_series", "VolumeMeta",

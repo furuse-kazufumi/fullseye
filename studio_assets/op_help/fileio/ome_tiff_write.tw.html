@@ -1,0 +1,22 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">ome_tiff_write — FILEIO <code style="color:#22d3bf">ome_tiff</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">any</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ome_tiff_write(stack, *, meta)</code>(要直接呼叫實作,<code style="color:#22d3bf">import fileio; fileio.ome_tiff_write(stack, *, meta)</code>;從台帳取用則 <code style="color:#22d3bf">opsfileio.get(&quot;ome_tiff_write&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>將帶物理尺寸與通道名稱的 TCZYX 多維陣列寫成 OME-TIFF <code style="color:#22d3bf">bytes</code>。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p><code style="color:#22d3bf">meta[&#x27;axes&#x27;]</code> は TCZYX の部分列で YX 終端。X/Y(および Z 軸があれば Z)の <code style="color:#22d3bf">physical_size_*</code> と <code style="color:#22d3bf">*_unit</code>、C 軸があれば <code style="color:#22d3bf">channel_names</code> を必須とする。</p>
+<p>呼び出し例: <code style="color:#22d3bf">ome_tiff_write(stack, meta={&quot;axes&quot;: &quot;CZYX&quot;, ...})</code>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:fileio_scientific_roundtrip">fileio_scientific_roundtrip</a> — <code style="color:#22d3bf">py -3.11 examples/fileio_scientific_roundtrip.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">any</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="opfileio:table_write_csv">table_write_csv</a> · <a style="color:#22d3bf" href="opfileio:table_read_csv">table_read_csv</a> · <a style="color:#22d3bf" href="opfileio:mesh_write_ply">mesh_write_ply</a> · <a style="color:#22d3bf" href="opfileio:mesh_read_ply">mesh_read_ply</a> · <a style="color:#22d3bf" href="opfileio:mesh_write_stl">mesh_write_stl</a> · <a style="color:#22d3bf" href="opfileio:mesh_read_stl">mesh_read_stl</a> · <a style="color:#22d3bf" href="opfileio:mesh_write_obj">mesh_write_obj</a> · <a style="color:#22d3bf" href="opfileio:mesh_read_obj">mesh_read_obj</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">ome_tiff</code>)</h3>
+<p><a style="color:#22d3bf" href="opfileio:ome_tiff_read">ome_tiff_read</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: fileio.py — FILEIO 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>
