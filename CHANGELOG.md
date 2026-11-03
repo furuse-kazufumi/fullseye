@@ -7,7 +7,8 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
-版はまだ決めていない(0.9.0 の後に入った 8 本の統合)。
+版はまだ決めていない(0.9.0 の後に入った 8 本の統合と、GPU 一式 7 本の統合)。
+既定の `device` は `"cpu"` のまま(GPU は `device="auto"` / `"cuda"` / `FULLSEYE_DEVICE` で頼んだときだけ)。
 
 ### 追加 — CT のスキャン方式を 1 つの幾何で(コーンビーム FDK・ヘリカル・ラミノグラフィ・反復法)と GPU 経路
 
@@ -40,6 +41,45 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 - `calibration3d.change_radial_distortion_image` を消し、2 つのカメラの間を除算モデルで変換する
   `mvimage.change_radial_distortion_image` に置き換えた。
 - `find_ncc_models` はモデルのリストも受ける。`create_ncc_model` は空のテンプレートを拒む。
+
+### 追加 — GPU 第 2・3 便(#240): GPU tier の台帳・HALCON OpenCL 対応行列・穴埋めの核
+
+- `docs/perf/GPU_TIERS.md`(全 op の GPU tier 4 段、`tools/gpu_tier_rules.py`)と `docs/perf/HALCON_OPENCL_PARITY.md`
+  (HALCON OpenCL 84 op の対応行列、`tools/gen_halcon_opencl_parity.py`)を regen_all の段に。
+- 第 2 便: 実寸の bench で 5 倍以上だった 7 op を `accel` に。第 3 便: HALCON 48 件と required の穴埋め(採用 29 op)、
+  型付き op の計算核だけを差し替える継ぎ目 `accel_seam` と入口 `accel_typed`、n-ary の GPU 経路。
+  採否は `docs/perf/gpu_fill3_2026-11-02.md`(`tools/gen_gpu_fill3_report.py` が実測ログから作る)。
+
+### 追加 — 機械的 GPU 化(`gpu_shadow`、CuPy)と許可リスト
+
+- 既存の numpy / scipy 実装を CuPy 配列で走らせる影の層 `gpu_shadow`。GPU tier の op を掃引し
+  (`tools/gpu_auto_sweep.py`)、転送込みで採用の下限を超え CPU と一致した op だけを許可リスト
+  `fullseye/data/gpu_auto_allow.json` に載せる(全画素の照合で 696 件中 695 一致、plane_sweep_depth は不採用)。
+  CuPy は任意依存で、無い環境では CPU のまま(`tests/test_gpu_shadow_coexist.py`)。
+
+### 追加 — `device="auto"` の実測の損益分岐と GPU 経路の一元化(GPU 第 5 便)
+
+- `device="auto"` は、CUDA があっても実測の損益分岐表(`fullseye/data/DEVICE_RULES.json`)で GPU が勝たない大きさ・
+  許可リストに無い op・空き VRAM が `FULLSEYE_GPU_MIN_FREE_MB`(既定 2048)未満のときは CPU に残る。
+  結果の `acceleration` に経路(`accel` / `allow_single` / `allow_resident` / `allow_pipeline` / `cpu`)と理由を書く。
+- op の GPU 経路を決めるのは `gpu_route.route(op, context)` の 1 か所。`fullseye.explain_device` /
+  `fullseye.explain_pipeline` と MCP の dry_run で、走らせる前に経路が分かる。op ノートの GPU 欄もここから書く。
+- 領域の解析(連結成分のラベル付け + 領域ごとの集計、`accel_label`)と、op 自身が `device` を持つ native 経路 17 op。
+- ★既定は `"cpu"` のまま(第 5 便のブランチは既定を `"auto"` にしていたが、0.9.0 の決定に合わせて統合で戻した)。
+
+### 修正(値が変わる) — 放物面の軸の近くの光線と円錐面の交点(raytrace、第 4 便)
+
+- `_intersect_conic` の根を安定な形(q/A と C/q)にした。k = -1 の軸の近く(A ~ 1e-8)で 7e-9 mm の桁落ちがあった。
+  k != -1 は丸めの差だけ動く(two_mirror で 1.7e-8 mm・1.2e-4 波)。lensopt が丸めで converged / stalled を
+  入れ替えなくなった。統合で測り直した門: レンズの収差の 3-D 教材の「軸上のスポット半径」(無収差の丸めの残り
+  9.2e-12 → 7.6e-12 µm、翻訳表 8 言語)と、レンズ系の 3-D 教材の光線を描く棒の数(449 → 448)。
+
+### 統合(integrate/2026-11-04-gpu)
+
+- GPU 一式 7 本(第 2・3 便 #240・第 8 便 CT・第 4 便 光学・第 6 便 opsmv・機械的 GPU 化・第 5 便)を 1 本にまとめた。
+- ブランチ側で分類・登録が漏れていた道具と部品を、門を緩めずに直した: regen_all の未分類の実測器 8 本を EXCLUDED に
+  理由つきで、公開経路から見えない部品(accel_seam / accel_typed / accel_label)を _INTERNAL に、ループの表明 13 か所に件数の 1 行。
+- HALCON の名前の被覆は 1017 / 2313(第 6 便の 1033 から段 0 の部分対応 16 名を外した値)。
 
 ### 修正 — 完成度監査の段 0(CI・MCP・HALCON の見せ方・導入の文書)
 
