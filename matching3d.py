@@ -87,7 +87,14 @@ def create_shape_model_3d(points, cam_par, n_views=8):
 
 
 def find_shape_model_3d(model, image, min_score=0.5):
-    """3D shape モデルを画像から検出(投影シルエットと相関)(find_shape_model_3d)。"""
+    """[部分対応] 1 軸まわりの回転で投影したシルエットと NCC で 3D shape モデルを探す(find_shape_model_3d)。
+
+    する: ``n_views`` 個の回転(y 軸まわり 0〜π)で投影し、NCC が最大の位置と角度を返す。
+    しない: 視点球の探索・6 自由度の姿勢・エッジによる 3-D 形状照合。HALCON 対応の数え方では
+    「部分対応」で、対応済みには数えない(``halcon_coverage.PARTIAL``)。
+
+    [Partial HALCON analogue] One-axis view sweep with NCC; no view sphere, no full 6-DoF pose.
+    """
     from objmodel3d import project_shape_model_3d
     from matching import _ncc_map
     best = None

@@ -24,12 +24,15 @@ def _hc():
     return HC
 
 
-def test_partial_table_is_the_audited_seven_families():
+def test_partial_table_is_the_audited_families():
     HC = _hc()
     assert set(HC.PARTIAL) == {
         "find_deformable_surface_model", "find_planar_uncalib_deformable_model",
         "measure_profile_sheet_of_light", "calibrate_sheet_of_light", "create_ocv_proj",
-        "create_bead_inspection_model", "apply_bead_inspection_model", "find_box_3d", "binocular_calibration"}
+        "create_bead_inspection_model", "apply_bead_inspection_model", "find_box_3d", "binocular_calibration",
+        # 第 2 便(同日、同じ規則の延長): 監査 B の表の残り
+        "find_local_deformable_model", "find_shape_model_3d", "create_texture_inspection_model",
+        "apply_texture_inspection_model", "camera_calibration"}
     for name, (ref, does, does_not) in HC.PARTIAL.items():
         assert ref.endswith("." + name) and does.strip() and does_not.strip(), name
 

@@ -52,7 +52,15 @@ def apply_bead_inspection_model(model, image, thresh=0.3):
 
 
 def create_texture_inspection_model(reference_images, patch=8):
-    """テクスチャ検査モデル(正常サンプルの局所統計分布)(create_texture_inspection_model)。"""
+    """[部分対応] 正常画像の局所平均と局所分散の 2 特徴の平均と共分散(create_texture_inspection_model)。
+
+    する: ``patch`` の窓で局所平均・局所分散を取り、その 2 次元の分布(平均・共分散)を返す。
+    しない: 多尺度のテクスチャ特徴と学習の段(HALCON の texture inspection model)。近い厚い道具は
+    ``anomaly_patch`` の patchbank / patchdist と ``varmodel``。HALCON 対応の数え方では「部分対応」で、
+    対応済みには数えない(``halcon_coverage.PARTIAL``)。
+
+    [Partial HALCON analogue] Two local features (mean, variance); no multi-scale texture model.
+    """
     from scipy.ndimage import uniform_filter
     feats = []
     for im in reference_images:
@@ -66,7 +74,14 @@ def create_texture_inspection_model(reference_images, patch=8):
 
 
 def apply_texture_inspection_model(model, image, thresh=3.0):
-    """テクスチャ検査モデルで異常(Mahalanobis 距離大)領域を検出(apply_texture_inspection_model)。"""
+    """[部分対応] 局所平均・局所分散の Mahalanobis 距離で異常を出す(apply_texture_inspection_model)。
+
+    する: 2 特徴の Mahalanobis 距離の図と、``thresh`` を超えた画素のマスクを返す。
+    しない: 多尺度のテクスチャ特徴。平均と分散が変わらない模様の乱れは見えない。HALCON 対応の数え方では
+    「部分対応」で、対応済みには数えない(``halcon_coverage.PARTIAL``)。
+
+    [Partial HALCON analogue] Mahalanobis on two local features; no multi-scale texture model.
+    """
     from scipy.ndimage import uniform_filter
     g = _img(image); patch = model["patch"]
     mean = uniform_filter(g, patch); var = uniform_filter(g * g, patch) - mean ** 2

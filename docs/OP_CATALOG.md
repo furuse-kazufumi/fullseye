@@ -4786,7 +4786,7 @@ _計 3629 ops / 56 families。並びとノートの在り処は `docs/ops/INDEX.
 ### calib(21 ops / 5 categories)
 
 #### calib / calibrate(3)
-- `camera_calibration` `keypoints → table` GPU: なし — Zhang 法で平面ターゲット多視点から内部行列 K を推定(camera_calibration)。 · 例: `camera_intrinsics_calibration`, `lens_calibration_loop_demo`, `poc_camera_calibration`
+- `camera_calibration` `keypoints → table` GPU: なし — [部分対応] Zhang 法で平面ターゲット多視点から内部行列 K だけを推定(camera_calibration)。 · 例: `camera_intrinsics_calibration`, `lens_calibration_loop_demo`, `poc_camera_calibration`
 - `find_marks_and_pose` `image2d → table` GPU: なし — マーク検出 + 校正板の姿勢推定(平面ホモグラフィ → pose)(find_marks_and_pose)。
 - `hand_eye_calibration` `入力なし → matrix` GPU: なし — 一連の運動対から AX=XB を解き X(4x4)を推定(hand_eye_calibration)。
 

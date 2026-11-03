@@ -186,8 +186,8 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `calib.py`
 
-- **L274** — ★Am 2026-09-06 haben wir gemessen, dass dieses Gate **bei einer echten Kamera nicht auslöst**. Auf verzerrungsfreien synthetischen Daten funktioniert es wie entworfen (Verhältnis 3.8e-14 bei 0 Grad Neigung, 8.6e-10 bei 0.05 Grad, beide verweigert). Aber mit realistischer Tonnenverzeichnung k1=-0.18 passt das planare Homographie-Modell von vornherein nicht mehr, und das Verhältnis **bleibt unabhängig von der Neigung um 1.9e-06 kleben** (0 Grad 1.916e-06 / 0.05 Grad 1.935e-06 / 0.2 Grad 2.005e-06).
-- **L280** — ★Nur wenn zwei Bedingungen zusammen erfüllt sind: dass **Verzeichnung vorliegt** und dass sich **die Platte zwischen den Blickpunkten seitlich bewegt**. Mit nur einer von beiden klingelt das Gate wie entworfen (die Trennung sind die 3 in tests/test_calib.py). Und eine tatsächliche Kalibriersitzung hat immer beides, da man die Platte von Hand bewegt, während man aufnimmt. Es reicht auch nicht, nur die Schwelle anzuheben —— bei Verzeichnung beträgt der Abstand zwischen voller Entartung 1.92e-06 und 2 Grad Neigung 4.42e-06 nur das 2.3-fache, und es lässt sich keine Trennlinie ziehen. Daher: * die Schwelle unverändert lassen (bei verzeichnungskorrigierten Punkten wirkt sie korrekt) * das Verhältnis selbst als ``orientation_rank_ratio`` **zurückgeben** * das spätere Gate, das tatsächlich stoppt, "neige die Platte" sagen lassen (unten). Statt es zu beheben, geben wir dem Nutzer das Material zur Beurteilung.
+- **L281** — ★Am 2026-09-06 haben wir gemessen, dass dieses Gate **bei einer echten Kamera nicht auslöst**. Auf verzerrungsfreien synthetischen Daten funktioniert es wie entworfen (Verhältnis 3.8e-14 bei 0 Grad Neigung, 8.6e-10 bei 0.05 Grad, beide verweigert). Aber mit realistischer Tonnenverzeichnung k1=-0.18 passt das planare Homographie-Modell von vornherein nicht mehr, und das Verhältnis **bleibt unabhängig von der Neigung um 1.9e-06 kleben** (0 Grad 1.916e-06 / 0.05 Grad 1.935e-06 / 0.2 Grad 2.005e-06).
+- **L287** — ★Nur wenn zwei Bedingungen zusammen erfüllt sind: dass **Verzeichnung vorliegt** und dass sich **die Platte zwischen den Blickpunkten seitlich bewegt**. Mit nur einer von beiden klingelt das Gate wie entworfen (die Trennung sind die 3 in tests/test_calib.py). Und eine tatsächliche Kalibriersitzung hat immer beides, da man die Platte von Hand bewegt, während man aufnimmt. Es reicht auch nicht, nur die Schwelle anzuheben —— bei Verzeichnung beträgt der Abstand zwischen voller Entartung 1.92e-06 und 2 Grad Neigung 4.42e-06 nur das 2.3-fache, und es lässt sich keine Trennlinie ziehen. Daher: * die Schwelle unverändert lassen (bei verzeichnungskorrigierten Punkten wirkt sie korrekt) * das Verhältnis selbst als ``orientation_rank_ratio`` **zurückgeben** * das spätere Gate, das tatsächlich stoppt, "neige die Platte" sagen lassen (unten). Statt es zu beheben, geben wir dem Nutzer das Material zur Beurteilung.
 
 ## `caltab.py`
 
@@ -1562,7 +1562,7 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `halcon_coverage.py`
 
 - **L39** _(ja)_ — ★2026-11-03(完成度監査 B、ユーザー決定): **名前は HALCON に対応しているが中身が薄い**もの。 「対応済み」(``covered``)からは外し、「部分対応」(``partial``)として別に数えて見せる。 中身を足して HALCON の同名 operator の仕事をするようになったら、ここから消す(消すと covered に戻る)。 根拠: ``C:/dev/docs/completeness_audit_2026_11_03/B_functional_gaps_vs_oss.md`` の 「名前は対応しているが中身が薄いもの」表(関数本体の行数と呼び出しを ast で数えた)。 値 = (Fullseye の関数, 何をするか, 何をしないか)。英語にしてあるのは生成物(英語の HALCON_COVERAGE.md)にそのまま載せるため。
-- **L139** _(ja)_ — ★2026-10-06: 正本は同梱の fullseye/data/(c5268029e で移した)。旧来の data/ だけを見ていたため、 facade の 600 本が黙って数えから落ち、HALCON 対応が 982 → 388 と出ていた(例外も警告も無し)。
+- **L160** _(ja)_ — ★2026-10-06: 正本は同梱の fullseye/data/(c5268029e で移した)。旧来の data/ だけを見ていたため、 facade の 600 本が黙って数えから落ち、HALCON 対応が 982 → 388 と出ていた(例外も警告も無し)。
 
 ## `honest_summary.py`
 

@@ -186,8 +186,8 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `calib.py`
 
-- **L274** — ★On 2026-09-06 we measured that this gate **does not fire on a real camera**. On distortion-free synthetic data it works as designed (ratio 3.8e-14 at 0 degrees tilt, 8.6e-10 at 0.05 degrees, both refused). But with realistic barrel distortion k1=-0.18, the planar-homography model no longer fits in the first place, and the ratio **sticks around 1.9e-06 regardless of tilt** (0 degrees 1.916e-06 / 0.05 degrees 1.935e-06 / 0.2 degrees 2.005e-06).
-- **L280** — ★Only when two conditions are met together: that **there is distortion** and that **the board moves sideways between viewpoints**. With either one alone the gate rings as designed (the separation is the 3 in tests/test_calib.py). And an actual calibration session always has both, since you shoot while moving the board by hand. Nor is it enough to just raise the threshold —— with distortion, the gap between full degeneracy 1.92e-06 and 2 degrees tilt 4.42e-06 is only 2.3x, and no dividing line can be drawn. Therefore: * leave the threshold as is (it works correctly for distortion-corrected points) * **return** the ratio itself as ``orientation_rank_ratio`` * let the later gate that actually stops things say "tilt the board" (below). Instead of fixing it, we hand the user the material for judgment.
+- **L281** — ★On 2026-09-06 we measured that this gate **does not fire on a real camera**. On distortion-free synthetic data it works as designed (ratio 3.8e-14 at 0 degrees tilt, 8.6e-10 at 0.05 degrees, both refused). But with realistic barrel distortion k1=-0.18, the planar-homography model no longer fits in the first place, and the ratio **sticks around 1.9e-06 regardless of tilt** (0 degrees 1.916e-06 / 0.05 degrees 1.935e-06 / 0.2 degrees 2.005e-06).
+- **L287** — ★Only when two conditions are met together: that **there is distortion** and that **the board moves sideways between viewpoints**. With either one alone the gate rings as designed (the separation is the 3 in tests/test_calib.py). And an actual calibration session always has both, since you shoot while moving the board by hand. Nor is it enough to just raise the threshold —— with distortion, the gap between full degeneracy 1.92e-06 and 2 degrees tilt 4.42e-06 is only 2.3x, and no dividing line can be drawn. Therefore: * leave the threshold as is (it works correctly for distortion-corrected points) * **return** the ratio itself as ``orientation_rank_ratio`` * let the later gate that actually stops things say "tilt the board" (below). Instead of fixing it, we hand the user the material for judgment.
 
 ## `caltab.py`
 
@@ -1562,7 +1562,7 @@ This repository records *why* things are the way they are in **comments in the s
 ## `halcon_coverage.py`
 
 - **L39** _(ja)_ — ★2026-11-03(完成度監査 B、ユーザー決定): **名前は HALCON に対応しているが中身が薄い**もの。 「対応済み」(``covered``)からは外し、「部分対応」(``partial``)として別に数えて見せる。 中身を足して HALCON の同名 operator の仕事をするようになったら、ここから消す(消すと covered に戻る)。 根拠: ``C:/dev/docs/completeness_audit_2026_11_03/B_functional_gaps_vs_oss.md`` の 「名前は対応しているが中身が薄いもの」表(関数本体の行数と呼び出しを ast で数えた)。 値 = (Fullseye の関数, 何をするか, 何をしないか)。英語にしてあるのは生成物(英語の HALCON_COVERAGE.md)にそのまま載せるため。
-- **L139** _(ja)_ — ★2026-10-06: 正本は同梱の fullseye/data/(c5268029e で移した)。旧来の data/ だけを見ていたため、 facade の 600 本が黙って数えから落ち、HALCON 対応が 982 → 388 と出ていた(例外も警告も無し)。
+- **L160** _(ja)_ — ★2026-10-06: 正本は同梱の fullseye/data/(c5268029e で移した)。旧来の data/ だけを見ていたため、 facade の 600 本が黙って数えから落ち、HALCON 対応が 982 → 388 と出ていた(例外も警告も無し)。
 
 ## `honest_summary.py`
 

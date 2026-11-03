@@ -1,7 +1,7 @@
 {
 "version": "2605",
 "n_operators": 2313,
-"n_covered": 973,
+"n_covered": 968,
 "n_with_signature": 2235,
 "signature_source": "mvtec-halcon binding",
 "operators": {
@@ -923,13 +923,17 @@
 "Inspection"
 ],
 "url": "https://www.mvtec.com/doc/halcon/2605/en/apply_texture_inspection_model.html",
-"covered": true,
+"covered": false,
 "imgevolve_analogs": [
 "facade:final_genuine.apply_texture_inspection_model"
 ],
 "py_signature": {
 "params": "image: HObject, texture_inspection_model: HHandle",
 "ret": "-> Tuple[HObject, HHandle]"
+},
+"partial": {
+"does": "Mahalanobis distance of the two local features, thresholded into a defect mask",
+"does_not": "no multi-scale texture features; defects outside mean/variance changes are not modelled"
 }
 },
 "approx_chain": {
@@ -1646,13 +1650,17 @@
 "Calibration"
 ],
 "url": "https://www.mvtec.com/doc/halcon/2605/en/camera_calibration.html",
-"covered": true,
+"covered": false,
 "imgevolve_analogs": [
 "facade:calib.camera_calibration"
 ],
 "py_signature": {
 "params": "nx: Sequence[Union[float, int]], ny: Sequence[Union[float, int]], nz: Sequence[Union[float, int]], nrow: Sequence[Union[float, int]], ncol: Sequence[Union[float, int]], start_cam_param: Sequence[Union[float, int, str]], nstart_pose: Sequence[Union[float, int]], estimate_params: Sequence[str]",
 "ret": "-> Tuple[Sequence[Union[float, int, str]], Sequence[Union[float, int]], Sequence"
+},
+"partial": {
+"does": "Zhang closed-form intrinsics K (fx, fy, cx, cy, skew) from >= 3 views of a planar target, fail-closed",
+"does_not": "no lens distortion and no joint non-linear refinement of K, distortion and extrinsics"
 }
 },
 "case": {
@@ -5551,13 +5559,17 @@
 "Inspection"
 ],
 "url": "https://www.mvtec.com/doc/halcon/2605/en/create_texture_inspection_model.html",
-"covered": true,
+"covered": false,
 "imgevolve_analogs": [
 "facade:final_genuine.create_texture_inspection_model"
 ],
 "py_signature": {
 "params": "model_type: str",
 "ret": "-> HHandle"
+},
+"partial": {
+"does": "mean and covariance of two local features (patch mean and variance) over good images",
+"does_not": "no multi-scale texture features and no training stage (HALCON's texture inspection model)"
 }
 },
 "create_trained_component_model": {
@@ -9691,13 +9703,17 @@
 "Matching"
 ],
 "url": "https://www.mvtec.com/doc/halcon/2605/en/find_local_deformable_model.html",
-"covered": true,
+"covered": false,
 "imgevolve_analogs": [
 "facade:shapematch.find_local_deformable_model"
 ],
 "py_signature": {
 "params": "image: HObject, model_id: HHandle, angle_start: float, angle_extent: float, scale_rmin: float, scale_rmax: float, scale_cmin: float, scale_cmax: float, min_score: float, num_matches: int, max_overlap: float, num_levels: int, greediness: float, result_type: Sequence[str], gen_param_name: Sequence[str], gen_param_value: Sequence[Union[int, float, str]]",
 "ret": "-> Tuple[HObject, HObject, HObject, Sequence[float], Sequence[float], Sequence[f"
+},
+"partial": {
+"does": "rigid shape match, then a dense optical-flow field on the matched patch",
+"does_not": "no deformation model optimised jointly with the match (HALCON's local deformable matching)"
 }
 },
 "find_marks_and_pose": {
@@ -9852,13 +9868,17 @@
 "3D Matching"
 ],
 "url": "https://www.mvtec.com/doc/halcon/2605/en/find_shape_model_3d.html",
-"covered": true,
+"covered": false,
 "imgevolve_analogs": [
 "facade:matching3d.find_shape_model_3d"
 ],
 "py_signature": {
 "params": "image: HObject, shape_model_3did: HHandle, min_score: float, greediness: float, num_levels: Sequence[int], gen_param_name: Sequence[str], gen_param_value: Sequence[Union[int, float, str]]",
 "ret": "-> Tuple[Sequence[Union[int, float]], Sequence[float], Sequence[float]]"
+},
+"partial": {
+"does": "projects the model for n_views rotations about one axis and keeps the best NCC position",
+"does_not": "no search over a view sphere, no full 6-DoF pose, no edge-based 3-D shape matching"
 }
 },
 "find_shape_models": {

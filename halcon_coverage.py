@@ -79,6 +79,27 @@ PARTIAL = {
         "caltab.binocular_calibration",
         "Zhang calibration of the left and right camera, each on its own",
         "no joint estimation of the relative pose between the two cameras"),
+    # ---- 第 2 便(2026-11-03、同じ規則の延長): 監査 B の表の残り ----
+    "find_local_deformable_model": (
+        "shapematch.find_local_deformable_model",
+        "rigid shape match, then a dense optical-flow field on the matched patch",
+        "no deformation model optimised jointly with the match (HALCON's local deformable matching)"),
+    "find_shape_model_3d": (
+        "matching3d.find_shape_model_3d",
+        "projects the model for n_views rotations about one axis and keeps the best NCC position",
+        "no search over a view sphere, no full 6-DoF pose, no edge-based 3-D shape matching"),
+    "create_texture_inspection_model": (
+        "final_genuine.create_texture_inspection_model",
+        "mean and covariance of two local features (patch mean and variance) over good images",
+        "no multi-scale texture features and no training stage (HALCON's texture inspection model)"),
+    "apply_texture_inspection_model": (
+        "final_genuine.apply_texture_inspection_model",
+        "Mahalanobis distance of the two local features, thresholded into a defect mask",
+        "no multi-scale texture features; defects outside mean/variance changes are not modelled"),
+    "camera_calibration": (
+        "calib.camera_calibration",
+        "Zhang closed-form intrinsics K (fx, fy, cx, cy, skew) from >= 3 views of a planar target, fail-closed",
+        "no lens distortion and no joint non-linear refinement of K, distortion and extrinsics"),
 }
 
 

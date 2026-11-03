@@ -885,8 +885,15 @@ def create_local_deformable_model_xld(contour, min_grad=0.1):
 
 
 def find_local_deformable_model(model, image, min_score=0.5):
-    """剛体位置を粗く合わせた後、オプティカルフローで局所変形を推定
-    (find_local_deformable_model)。変形ベクトル場を返す。"""
+    """[部分対応] 剛体の形状照合のあと、オプティカルフローで局所変形を推定(find_local_deformable_model)。
+    変形ベクトル場を返す。
+
+    する: ``find_shape_model`` で剛体の位置を合わせ、その切り出しとテンプレートの間の密なフローを返す。
+    しない: 変形のモデルを照合と同時に最適化しない(HALCON の local deformable matching の仕事)。
+    HALCON 対応の数え方では「部分対応」で、対応済みには数えない(``halcon_coverage.PARTIAL``)。
+
+    [Partial HALCON analogue] Rigid match plus optical flow; no jointly optimised deformation model.
+    """
     rigid = find_shape_model(model["edge"], image, min_score)
     from filters_flow import optical_flow_mg
     t = model["template"]; H, W = t.shape

@@ -19,7 +19,14 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 ## 使い方
 
-Zhang 法で平面ターゲット多視点から内部行列 K を推定(camera_calibration)。
+[部分対応] Zhang 法で平面ターゲット多視点から内部行列 K だけを推定(camera_calibration)。
+
+する: Zhang の閉形式で K(fx, fy, cx, cy, skew)を求める。視点不足・退化・非有限は ``ValueError``。
+しない: レンズ歪みの推定と、K・歪み・外部パラメータの同時の非線形最適化(HALCON の
+camera_calibration の仕事)。歪みは ``camera.estimate_distortion`` で別に求める。HALCON 対応の
+数え方では「部分対応」で、対応済みには数えない(``halcon_coverage.PARTIAL``)。
+
+[Partial HALCON analogue] Closed-form K only; no distortion, no joint non-linear refinement.
 
 ``object_points``: (N,2) 平面ターゲット座標 **(x, y)**(z=0 平面、ワールド単位)。
 ``image_points_list``: 各視点の (N,2) 画素対応。**(row, col)** — このモジュールの
