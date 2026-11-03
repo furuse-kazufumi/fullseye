@@ -342,6 +342,15 @@ Everything below lives in the repo — start at the guide that matches what you 
 - **Optional heavy dependencies** — a numpy+scipy core always works; richer backends and
   GPU are opt-in.
 
+## Scope
+
+- **Out of scope: deep learning (training).** Fullseye is classical image processing plus
+  physical models; it does not train networks (HALCON's Deep Learning chapter is not a target).
+- **After 1.0, as candidates: OCR and trained classifiers** (HALCON's OCR and Classification
+  chapters). They are not in 1.0.
+- Some HALCON names are only **partial** analogues and are not counted as covered — see the
+  "Partial analogues" table in [docs/HALCON_COVERAGE.md](docs/HALCON_COVERAGE.md).
+
 ## ViEW2026 入口メディアの検証(2026-11-01)
 
 ### `poc_interferometry_step` — `09_csi_scan_explained`
