@@ -32553,6 +32553,78 @@
    "ko": ":func:`table_write_csv`가 만든 단위 포함 CSV를 읽고 열, 단위, 메타데이터가 든 ``table``을 반환한다.",
    "de": "Liest das von :func:`table_write_csv` erzeugte CSV mit Einheiten und gibt eine ``table`` mit Spalten, Einheiten und Metadaten zurück.",
    "hi": ":func:`table_write_csv` से बने इकाई-सहित CSV को पढ़कर columns, units और metadata वाली ``table`` लौटाता है।"
+  },
+  "acceptance/acceptance_layout": {
+   "fp": "1f2f0bc111e1",
+   "en": "Builds the layout of the test artefacts in the measuring volume (1 probing sphere, ball bar in 7 positions, flat in 7 positions) (``table``).",
+   "zh": "在测量体积中生成试验件的布置(1 个探测球、7 个姿态的球杆、7 个姿态的平面)(``table``)。",
+   "tw": "在量測體積中產生試驗件的配置(1 顆探測球、7 個姿態的球桿、7 個姿態的平面)(``table``)。",
+   "ko": "측정 체적 안에 시험체(프로빙 구 1개, 7자세의 볼바, 7자세의 평면) 배치를 만든다(``table``).",
+   "de": "Erzeugt die Anordnung der Prüfkörper im Messvolumen (1 Antastkugel, Kugelstab in 7 Lagen, Ebene in 7 Lagen) (``table``).",
+   "hi": "measuring volume में test artefacts (1 probing sphere, 7 स्थितियों में ball bar, 7 स्थितियों में flat) की layout बनाता है (``table``)।"
+  },
+  "acceptance/sphere_probing_error": {
+   "fp": "eed2cd9f6552",
+   "en": "Computes the probing errors of form PF and size PS from the point cloud of a sphere (``table``).",
+   "zh": "由球的点云计算探测误差的形状 PF 与尺寸 PS(``table``)。",
+   "tw": "由球的點雲計算探測誤差的形狀 PF 與尺寸 PS(``table``)。",
+   "ko": "구의 점군으로부터 프로빙 오차의 형상 PF와 크기 PS를 계산한다(``table``).",
+   "de": "Berechnet die Antastabweichungen Form PF und Größe PS aus der Punktwolke einer Kugel (``table``).",
+   "hi": "एक sphere के point cloud से probing error का form PF और size PS गणना करता है (``table``)।"
+  },
+  "acceptance/sphere_spacing_error": {
+   "fp": "38b00a37aa71",
+   "en": "Computes the sphere-spacing error SD from the point clouds of a ball bar (two spheres) (``table``).",
+   "zh": "由球杆(两个球)的点云计算球间距误差 SD(``table``)。",
+   "tw": "由球桿(兩顆球)的點雲計算球間距誤差 SD(``table``)。",
+   "ko": "볼바(구 2개)의 점군으로부터 구 간격 오차 SD를 계산한다(``table``).",
+   "de": "Berechnet die Kugelabstandsabweichung SD aus den Punktwolken eines Kugelstabs (zwei Kugeln) (``table``).",
+   "hi": "ball bar (दो spheres) के point clouds से sphere-spacing error SD गणना करता है (``table``)।"
+  },
+  "acceptance/plane_flatness_error": {
+   "fp": "1f99db62970c",
+   "en": "Computes the flatness error F (range of signed distances from the least-squares plane) from the point cloud of a flat (``table``).",
+   "zh": "由平面的点云计算平面度误差 F(到最小二乘平面的带符号距离的极差)(``table``)。",
+   "tw": "由平面的點雲計算平面度誤差 F(到最小平方平面的帶符號距離的全距)(``table``)。",
+   "ko": "평면의 점군으로부터 평면도 오차 F(최소제곱 평면으로부터의 부호 있는 거리의 범위)를 계산한다(``table``).",
+   "de": "Berechnet die Ebenheitsabweichung F (Spannweite der vorzeichenbehafteten Abstände zur Ausgleichsebene) aus der Punktwolke einer Ebene (``table``).",
+   "hi": "flat के point cloud से flatness error F (least-squares plane से signed distances की range) गणना करता है (``table``)।"
+  },
+  "acceptance/acceptance_verdict": {
+   "fp": "e86499f6feff",
+   "en": "Compares the table of evaluation quantities with the MPE (maximum permissible error) and returns pass/fail (``table``).",
+   "zh": "将评价量的表与 MPE(最大允许误差)比较并给出合格与否(``table``)。",
+   "tw": "將評價量的表與 MPE(最大允許誤差)比較並給出合格與否(``table``)。",
+   "ko": "평가량의 표를 MPE(최대 허용 오차)와 비교하여 합격 여부를 낸다(``table``).",
+   "de": "Vergleicht die Tabelle der Kenngrößen mit der MPE (Grenzwert der Messabweichung) und gibt bestanden/nicht bestanden zurück (``table``).",
+   "hi": "evaluation quantities की table की MPE (maximum permissible error) से तुलना करके pass/fail देता है (``table``)।"
+  },
+  "acceptance/acceptance_scan": {
+   "fp": "a425ba6cf972",
+   "en": "Scans one test artefact with a simulated sensor and returns its point cloud ``(N, 3)`` (``points``).",
+   "zh": "用仿真传感器拍摄一个试验件并返回其点云 ``(N, 3)``(``points``)。",
+   "tw": "用模擬感測器拍攝一個試驗件並回傳其點雲 ``(N, 3)``(``points``)。",
+   "ko": "시뮬레이션 센서로 시험체 하나를 촬영하여 그 점군 ``(N, 3)``을 반환한다(``points``).",
+   "de": "Erfasst einen Prüfkörper mit einem simulierten Sensor und gibt seine Punktwolke ``(N, 3)`` zurück (``points``).",
+   "hi": "एक simulated sensor से एक test artefact को scan करके उसका point cloud ``(N, 3)`` लौटाता है (``points``)।"
+  },
+  "acceptance/virtual_acceptance_test": {
+   "fp": "203605d99aa0",
+   "en": "Scans every artefact position with a simulated sensor and returns PF, PS, SD, F and the verdict (``table``).",
+   "zh": "用仿真传感器拍摄试验件的全部布置,返回 PF、PS、SD、F 与合格与否(``table``)。",
+   "tw": "用模擬感測器拍攝試驗件的全部配置,回傳 PF、PS、SD、F 與合格與否(``table``)。",
+   "ko": "시뮬레이션 센서로 시험체의 모든 배치를 촬영하여 PF·PS·SD·F와 합격 여부를 반환한다(``table``).",
+   "de": "Erfasst alle Prüfkörperlagen mit einem simulierten Sensor und gibt PF, PS, SD, F und das Urteil zurück (``table``).",
+   "hi": "simulated sensor से artefact की सभी positions scan करके PF, PS, SD, F और verdict लौटाता है (``table``)।"
+  },
+  "acceptance/acceptance_error_budget": {
+   "fp": "725057bdc604",
+   "en": "Runs the virtual acceptance test with one error source at a time and returns which source decides the verdict (``table``).",
+   "zh": "每次只加入一个误差因素运行虚拟验收试验,返回哪个因素决定了合格与否(``table``)。",
+   "tw": "每次只加入一個誤差因素執行虛擬驗收試驗,回傳哪個因素決定了合格與否(``table``)。",
+   "ko": "오차 요인을 하나씩 넣어 가상 인수 시험을 돌리고 어느 요인이 합격 여부를 결정하는지 반환한다(``table``).",
+   "de": "Führt die virtuelle Abnahmeprüfung mit jeweils einer Fehlerquelle durch und gibt zurück, welche Quelle das Urteil bestimmt (``table``).",
+   "hi": "एक समय में एक error source डालकर virtual acceptance test चलाता है और लौटाता है कि कौन सा source verdict तय करता है (``table``)।"
   }
  }
 }

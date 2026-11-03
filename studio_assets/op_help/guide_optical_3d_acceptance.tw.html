@@ -1,0 +1,54 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<p style="color:#f5a524;font-size:11px;margin:0 0 8px 0">本指南僅有日文版(它是人寫的散文,這裡不做機械替換)。</p>
+<h2 style="color:#f5a524;margin:0 0 4px 0">光学式 3D センサの仮想受入試験(買う前に受入試験をかける) — 使い方ガイド</h2>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">この族は何をする道具箱か</h3>
+<p>3D センサを選ぶとき・受け入れるときに現場が使う言葉 —— <b>探針の誤差(形状 PF・寸法 PS)、球間距離の誤差 SD、平面度の誤差 F</b> —— を数える層です。VDI/VDE 2634 Part 2/3 と ISO 10360-13 の <b>考え方に沿って</b>いますが、規格の本文は有償の著作物なので写していません。評価量の定義は、規格を適用した公開文献(Carfagni et al. 2017 / 2019、Eiríksson et al. 2016、Ramm et al. 2025)の記述から取り、出典を各 op の docstring に書いています。<b>「準拠」とは名乗りません</b>。</p>
+<p>8 op / 4 カテゴリ(numpy のみ。台帳は <code style="color:#22d3bf">opsacceptance.py</code>、実体は <code style="color:#22d3bf">acceptance3d.py</code>):</p>
+<p style="margin:2px 0 2px 12px">• <b>layout(1)</b> — <code style="color:#22d3bf">acceptance_layout</code>: 測定体積の中に、探針の球 1 個・ダンベル 7 姿勢(空間対角線 4 + 面の対角線 3)・平面 7 姿勢(正対 1 + 傾き 6)を置く。7 姿勢の向きは <b>Fullseye の約束</b>で、規格の図の写しではありません。</p>
+<p style="margin:2px 0 2px 12px">• <b>evaluate(4)</b> — <code style="color:#22d3bf">sphere_probing_error</code>(PF・PS)/ <code style="color:#22d3bf">sphere_spacing_error</code>(SD)/ <code style="color:#22d3bf">plane_flatness_error</code>(F)/ <code style="color:#22d3bf">acceptance_verdict</code>(MPE と比べた合否と、合否を決めた量)。<b>実機の点群にもシミュレーションの点群にも同じ op</b> を掛けます。</p>
+<p style="margin:2px 0 2px 12px">• <b>simulate(2)</b> — <code style="color:#22d3bf">acceptance_scan</code>(1 つの試験体をシミュレーションのセンサで撮って点群に)/ <code style="color:#22d3bf">virtual_acceptance_test</code>(全配置を撮って全評価量と合否)。</p>
+<p style="margin:2px 0 2px 12px">• <b>budget(1)</b> — <code style="color:#22d3bf">acceptance_error_budget</code>: 誤差の要因を 1 つずつ入れて、<b>どれが合否を決めるか</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Fullseye だけの層 —— 真値が場面の側にある</h3>
+<p>比較相手(HALCON・OpenCV・Open3D・PCL)は球や平面の当てはめを持っていても、受入試験の手順としては束ねていません。この族はさらに、シミュレーションのセンサで「買う前に」受入試験を回します:</p>
+<p>| センサ(<code style="color:#22d3bf">kind</code>) | 中身 | 何で壊れるか |</p>
+<p>|---|---|---|</p>
+<p>| <code style="color:#22d3bf">ideal</code> | 真の視線距離をそのまま | 壊れない(往復の検算) |</p>
+<p>| <code style="color:#22d3bf">triangulation</code> | 奥行きに σ_z = z²σ_d/(f·b)(<code style="color:#22d3bf">z = f·b/d</code> の誤差伝播) | 遠いほど・基線が短いほど |</p>
+<p>| <code style="color:#22d3bf">itof</code> | 既存の <code style="color:#22d3bf">itof_capture</code> → <code style="color:#22d3bf">itof_phase_amplitude</code>(4 位相の生信号) | 暗い試験体(ショット雑音)・縁の混合(フライングピクセル)・多重反射 |</p>
+<p>校正の誤差(<code style="color:#22d3bf">fx_rel_error</code>・<code style="color:#22d3bf">fy_rel_error</code>・<code style="color:#22d3bf">cx_error_px</code>・<code style="color:#22d3bf">cy_error_px</code>・<code style="color:#22d3bf">range_scale</code>・ <code style="color:#22d3bf">range_offset_mm</code>)は逆投影に入ります。真値は場面の解析解(光線と球・平面の交点)なので、<b>雑音も誤差も無いセンサでは全評価量が 0</b> になり、距離の尺度 s は <b>SD = (s − 1)·L</b> で厳密に出ます。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">流れ</h3>
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 圖(原始碼):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart TD
+    LAY[&quot;acceptance_layout&lt;br/&gt;球 1・ダンベル 7・平面 7&quot;]
+    SEN[&quot;table: センサ&lt;br/&gt;kind・雑音・校正の誤差&quot;]
+    LAY --&gt; SCAN[&quot;acceptance_scan&lt;br/&gt;1 つの試験体を撮る&quot;]
+    SEN --&gt; SCAN
+    SCAN --&gt; PTS[&quot;points (N,3)&quot;]
+    REAL[&quot;実機の点群 (N,3)&quot;] --&gt; PE
+    PTS --&gt; PE[&quot;sphere_probing_error / sphere_spacing_error /&lt;br/&gt;plane_flatness_error&quot;]
+    PE --&gt; RES[&quot;table: PF・PS・SD・F&quot;]
+    RES --&gt; VER[&quot;acceptance_verdict&lt;br/&gt;MPE と比べて合否&quot;]
+    LAY --&gt; VAT[&quot;virtual_acceptance_test&lt;br/&gt;全配置を一度に&quot;]
+    SEN --&gt; VAT
+    VAT --&gt; VER
+    SEN --&gt; BUD[&quot;acceptance_error_budget&lt;br/&gt;要因を 1 つずつ&quot;]
+    BUD --&gt; DEC[&quot;decisive: 単独で MPE を超えた要因&quot;]</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">最初の 1 本</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">import fullseye as fs
+
+layout = fs.ledger.acceptance_layout()                    # 400x300x300 mm、z = 800 mm、球 25 mm
+mpe = {&quot;pf&quot;: 3.0, &quot;ps&quot;: 1.0, &quot;sd&quot;: 0.5, &quot;f&quot;: 3.0}         # 仮の仕様(メーカーが決める値)
+r = fs.ledger.virtual_acceptance_test({&quot;kind&quot;: &quot;itof&quot;, &quot;sphere_reflectivity&quot;: 0.1}, layout, mpe)
+print(r[&quot;verdict&quot;][&quot;passed&quot;], r[&quot;verdict&quot;][&quot;decided_by&quot;])  # False pf(黒い球で PF が MPE の約 2 倍)</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">落とし穴(実測に基づく)</h3>
+<p style="margin:2px 0 2px 12px">1. <b>黒い球は iToF の PF を約 3 倍にする。</b> 反射率 1 → 0.1 で球の残差 rms は 0.297 → 0.934 mm (3.15 倍)。ショット雑音の律速なら √10 = 3.16 倍で、物理の見積もりと合います。探針の球の色は「試験の条件」であって、センサの性能ではありません。</p>
+<p style="margin:2px 0 2px 12px">2. <b>縁の混合(フライングピクセル)は PF を壊す。</b> <code style="color:#22d3bf">supersample = 3</code>・雑音なしで、既存の <code style="color:#22d3bf">itof_flying_pixel_mask</code> を外すと PF は 43.7 mm(球の直径より大きい)、入れると 0.025 mm。除外の上限 0.3 % では救えないので、前処理がそのまま受入の結果になります。</p>
+<p style="margin:2px 0 2px 12px">3. <b>要因の単独の寄与は足し算にならない。</b> iToF 案で SD の単独の寄与は fx/fy +0.1 % が −0.308 mm、多重反射 2 % が +0.385 mm、距離の尺度 +0.05 % が +0.157 mm。全部入れると +0.181 mm に打ち消し合います。順位(<code style="color:#22d3bf">ranking</code>)は「どれを先に直すか」の材料で、合計ではありません。</p>
+<p style="margin:2px 0 2px 12px">4. <b>平面度 F は点の数で増える。</b> F は範囲(最大 − 最小)なので、同じ雑音でも点が多いほど大きい(純ガウス雑音で E[F] = σ·d2(N)、<code style="color:#22d3bf">d2(25) = 3.931</code>、<code style="color:#22d3bf">d2(56,784) ≈ 8.5</code>)。MPE を比べるときは点の密度をそろえてください。</p>
+<p style="margin:2px 0 2px 12px">5. <b>最小二乗の平面であって最小領域の平面ではない。</b> 最小領域(Chebyshev)の F は定義から最小二乗の F 以下です。</p>
+<p>くわしい数字は <a style="color:#22d3bf" href="example2d:poc_virtual_acceptance_3d"><code style="color:#22d3bf">examples/poc_virtual_acceptance_3d.py</code></a> が出します(3 つの設計案の合否表と iToF 案の誤差の予算)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">この族に<b>入れなかった</b>もの</h3>
+<p style="margin:2px 0 2px 12px">• 縞を描いて復号する構造化光のセンサ(<code style="color:#22d3bf">fringe.py</code> は 2.5D の高さ図向けで、球の全周を撮る場面にそのままは使えない)。三角測量は雑音則だけで代表させています。</p>
+<p style="margin:2px 0 2px 12px">• 多重反射の幾何(平面と球のあいだの相互反射の経路)。今は「全画素に一様な第 2 経路」の最も粗いモデルです。</p>
+<p style="margin:2px 0 2px 12px">• ISO 10360-13 の長さ測定誤差 E の手順(測定の繰り返しと配置の数)と、VDI/VDE 2634 Part 3 の複数視点の合成。評価量の計算(SD)は同じ op で済むので、手順だけが未実装です。</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0.</p>

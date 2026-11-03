@@ -256,7 +256,9 @@ def test_pending_exposure_shrinks_when_fixed():
 #   12 op 本体は fs.ledger に載る)。実測 943 → 944。
 # 2026-10-31 opsfileio 台帳(メモリ内 file I/O 14 op): 台帳の内部 API 4 本で実測 944 → 948。
 #   op 自身は fs.ledger から引ける。
-_HIDDEN_FUNCTIONS_TODAY = 948
+# 2026-11-03 opsacceptance 台帳(光学式 3D センサの仮想受入試験 8 op): 台帳の内部 API 4 本で実測 948 → 952。
+#   op 自身は fs.ledger から引ける。
+_HIDDEN_FUNCTIONS_TODAY = 952
 
 
 def _hidden_total():

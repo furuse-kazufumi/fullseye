@@ -140,11 +140,11 @@
 
 ## 연산자 찾기
 
-**3,629개의 연산자 노트**(호출 형식, 타입 계약, HALCON 대응, 참고문헌, 출처)와 **69개의 패밀리 가이드**가 있습니다. 차원별 입구:
+**3,637개의 연산자 노트**(호출 형식, 타입 계약, HALCON 대응, 참고문헌, 출처)와 **70개의 패밀리 가이드**가 있습니다. 차원별 입구:
 
-**실측 커버리지**: 진화 연산자 942/942, 타입 台帳 2652/2664, 한 줄 파사드 `fullseye.<이름>` 724/1514 — **파사드는 아직 절반**.
+**실측 커버리지**: 진화 연산자 942/942, 타입 台帳 2660/2672, 한 줄 파사드 `fullseye.<이름>` 724/1514 — **파사드는 아직 절반**.
 
-**내용 실측**: 3629건 중 실행 가능한 예제가 붙은 것은 **3595**건(34건은 없음), 사용법이 120자 이상인 것은 **3428**건(201건은 한 줄 요약). 구조(호출 형식·타입·다음 연산자)는 3629건 모두.
+**내용 실측**: 3637건 중 실행 가능한 예제가 붙은 것은 **3598**건(39건은 없음), 사용법이 120자 이상인 것은 **3436**건(201건은 한 줄 요약). 구조(호출 형식·타입·다음 연산자)는 3637건 모두.
 
 | 차원 | 연산자 수 | 입구 |
 |---|---:|---|
@@ -195,6 +195,7 @@
 | `interferometry` | 9 | [INDEX](ops/interferometry/INDEX.md) · [guide](ops/interferometry/guides/coherence_scanning.md) |
 | `motionmag` | 9 | [INDEX](ops/motionmag/INDEX.md) · [guide](ops/motionmag/guides/motion_magnification.md) |
 | `roughness` | 9 | [INDEX](ops/roughness/INDEX.md) · [guide](ops/roughness/guides/surface_roughness.md) |
+| `acceptance` | 8 | [INDEX](ops/acceptance/INDEX.md) · [guide](ops/acceptance/guides/optical_3d_acceptance.md) |
 | `rangedoppler` | 8 | [INDEX](ops/rangedoppler/INDEX.md) · [guide](ops/rangedoppler/guides/fmcw_range_doppler.md) |
 | `codematch` | 6 | [INDEX](ops/codematch/INDEX.md) · [guide](ops/codematch/guides/robust_code_matching.md) |
 | `converge` | 6 | [INDEX](ops/converge/INDEX.md) · [guide](ops/converge/guides/convergent_computation.md) |
@@ -303,7 +304,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 ## 문서 지도 — 전 305건
 
-**색인에서 닿지 않는 문서를 만들지 않기** 위한 전체 지도입니다(`docs/ops/`의 연산자 노트 3,629건과 패밀리 가이드 69건은 위의 「연산자 찾기」에서, 기사는 [articles/](articles/README.md)에서). **본문은 대부분 일본어입니다.**
+**색인에서 닿지 않는 문서를 만들지 않기** 위한 전체 지도입니다(`docs/ops/`의 연산자 노트 3,637건과 패밀리 가이드 70건은 위의 「연산자 찾기」에서, 기사는 [articles/](articles/README.md)에서). **본문은 대부분 일본어입니다.**
 
 **Getting started**(12)
 

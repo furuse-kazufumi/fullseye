@@ -1,0 +1,26 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">acceptance_verdict — ACCEPTANCE <code style="color:#22d3bf">evaluate</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table × table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.acceptance_verdict(results, mpe)</code> (die Implementierung direkt: <code style="color:#22d3bf">import acceptance3d; acceptance3d.acceptance_verdict(results, mpe)</code>; aus dem Register: <code style="color:#22d3bf">opsacceptance.get(&quot;acceptance_verdict&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>Vergleicht die Tabelle der Kenngrößen mit der MPE (Grenzwert der Messabweichung) und gibt bestanden/nicht bestanden zurück (<code style="color:#22d3bf">table</code>).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>Compare acceptance results with maximum permissible errors. <code style="color:#22d3bf">results</code> holds lists (one value per position) under any of <code style="color:#22d3bf">pf</code>, <code style="color:#22d3bf">ps</code>, <code style="color:#22d3bf">sd</code>, <code style="color:#22d3bf">f</code> (the shape <code style="color:#22d3bf">virtual_acceptance_test</code> returns; measured values may be assembled by hand). <code style="color:#22d3bf">mpe</code> gives a positive limit per quantity. A quantity passes when <code style="color:#22d3bf">max |value| &lt;= mpe</code> (PF and F are non-negative by definition).</p>
+<p>返す <code style="color:#22d3bf">dict</code>: <code style="color:#22d3bf">passed</code>(全体)、<code style="color:#22d3bf">by_quantity</code>(量ごとに <code style="color:#22d3bf">worst</code>・<code style="color:#22d3bf">worst_index</code>・<code style="color:#22d3bf">mpe</code>・<code style="color:#22d3bf">ratio</code>・ <code style="color:#22d3bf">passed</code>)、<code style="color:#22d3bf">decided_by</code>(<code style="color:#22d3bf">ratio</code> が最大の量 = 合否を決めた量)、<code style="color:#22d3bf">max_ratio</code>。★MPE の値は規格ではなく<b>メーカーの仕様</b>が決める(この op は数字を持たない)。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: <code style="color:#22d3bf">results</code>・<code style="color:#22d3bf">mpe</code> が dict でない、共通の量が 1 つも無い、値が空・非有限、MPE が正でない、未知の量の名前。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideacceptance:optical_3d_acceptance">Leitfaden zur Familie optical_3d_acceptance</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• (noch keine)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">table</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opacceptance:acceptance_scan">acceptance_scan</a> · <a style="color:#22d3bf" href="opacceptance:virtual_acceptance_test">virtual_acceptance_test</a> · <a style="color:#22d3bf" href="opacceptance:acceptance_error_budget">acceptance_error_budget</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">evaluate</code>)</h3>
+<p><a style="color:#22d3bf" href="opacceptance:sphere_probing_error">sphere_probing_error</a> · <a style="color:#22d3bf" href="opacceptance:sphere_spacing_error">sphere_spacing_error</a> · <a style="color:#22d3bf" href="opacceptance:plane_flatness_error">plane_flatness_error</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: acceptance3d.py — ACCEPTANCE Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

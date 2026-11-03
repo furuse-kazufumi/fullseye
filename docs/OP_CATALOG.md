@@ -797,9 +797,9 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Operators by family(族 → カテゴリ、全 op)
 
-_計 3629 ops / 56 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
+_計 3637 ops / 57 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
 
-族の一覧: **2d** 959 · **3d** 376 · **fit** 3 · **math** 114 · **optics** 483 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 41 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 717 · **tomography** 32 · **volcolor** 11 · **reprconv** 42 · **fileio** 14 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 3 · **calib** 21 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 16 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
+族の一覧: **2d** 959 · **3d** 376 · **fit** 3 · **math** 114 · **optics** 483 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 41 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 717 · **tomography** 32 · **volcolor** 11 · **reprconv** 42 · **fileio** 14 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 3 · **calib** 21 · **acceptance** 8 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 16 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
 
 ### 2d(959 ops / 49 categories)
 
@@ -4815,6 +4815,24 @@ _計 3629 ops / 56 families。並びとノートの在り処は `docs/ops/INDEX.
 - `find_caltab` `image2d → keypoints` GPU: なし — 画像から校正板の円マーク中心を検出(連結成分の重心)(find_caltab)。
 - `gen_caltab` `入力なし → table` GPU: なし — 円マーク格子の校正板画像を生成(gen_caltab)。
 - `sim_caltab` `table → table` GPU: なし — 校正板を指定カメラ姿勢で投影した画像をシミュレート(sim_caltab)。
+
+### acceptance(8 ops / 4 categories)
+
+#### acceptance / budget(1)
+- `acceptance_error_budget` `table × table × table → table` GPU: なし — 誤差の要因を 1 つずつ入れて仮想受入試験を回し、どの要因が合否を決めるかを返す(``table``)。 · 例: `poc_virtual_acceptance_3d`
+
+#### acceptance / evaluate(4)
+- `acceptance_verdict` `table × table → table` GPU: なし — 評価量の表を MPE(最大許容誤差)と比べて合否を出す(``table``)。
+- `plane_flatness_error` `points → table` GPU: なし — 平面の点群から平面度の誤差 F(最小二乗平面からの符号つき距離の範囲)を計算する(``table``)。
+- `sphere_probing_error` `points → table` GPU: なし — 球の点群から探針の誤差の形状 PF と寸法 PS を計算する(``table``)。
+- `sphere_spacing_error` `points × points → table` GPU: なし — ダンベル(2 球)の点群から球間距離の誤差 SD を計算する(``table``)。
+
+#### acceptance / layout(1)
+- `acceptance_layout` `入力なし → table` GPU: なし — 測定体積の中に試験体(探針の球 1・ダンベル 7 姿勢・平面 7 姿勢)を置く配置を作る(``table``)。 · 例: `poc_virtual_acceptance_3d`
+
+#### acceptance / simulate(2)
+- `acceptance_scan` `table × table → points` GPU: なし — シミュレーションのセンサで 1 つの試験体を撮り、その点群 ``(N, 3)`` を返す(``points``)。
+- `virtual_acceptance_test` `table → table` GPU: なし — シミュレーションのセンサで試験体の全配置を撮り、PF・PS・SD・F と合否を返す(``table``)。 · 例: `poc_virtual_acceptance_3d`
 
 ### generative(42 ops / 6 categories)
 

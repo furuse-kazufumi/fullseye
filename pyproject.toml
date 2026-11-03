@@ -256,6 +256,8 @@ py-modules = [
   # calib / caltab / fit_transform は前から同梱されていたが、台帳が無いため op ノートも
   # OP_INDEX.json の行も無く、fs.op_find("caltab") が 0 件だった。
   "opscalib",
+  # opsacceptance: 光学式 3D センサの(仮想)受入試験の台帳と実体 acceptance3d(2026-11-03)。
+  "acceptance3d", "opsacceptance",
   "recipes", "measure", "studio", "studio_search", "studio_errors", "studio_roundtrip", "studio_batch", "studio_display", "studio_layout", "studio_result", "sample_images", "sample_data", "accuracy_bench",
   "evolve", "problems", "baseline", "robust",
   "verify_auto", "honest_summary", "dispositions", "catalog", "report",

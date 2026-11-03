@@ -7245,6 +7245,50 @@ def _b_photoel_unwrap(pool, rng):
     return (phases, lams, 3000.0), {}
 
 
+# --- 光学式 3D センサの仮想受入試験(opsacceptance、2026-11-03)。小さいセンサ(120x160)で速く。 --- #
+#: 族の共通の真値: 既定の配置(400x300x300 mm、z = 800 mm、球 25 mm)を 120x160 の理想センサで撮る。
+_ACC_SENSOR = {"kind": "ideal", "shape": (120, 160), "fx": 225.0, "fy": 225.0}
+_ACC_MPE = {"pf": 0.5, "ps": 0.2, "sd": 0.2, "f": 0.5}
+
+
+def _acc_sphere(seed, center=(0.0, 0.0, 800.0), radius=12.5):
+    rr = np.random.default_rng(seed)
+    u = rr.normal(size=(400, 3))
+    u /= np.linalg.norm(u, axis=1)[:, None]
+    return np.asarray(center, float) + u * (radius + 0.01 * rr.standard_normal((400, 1)))
+
+
+def _b_acc_probe(pool, rng):
+    return (_acc_sphere(1), 25.0), {}
+
+
+def _b_acc_spacing(pool, rng):
+    return (_acc_sphere(2), _acc_sphere(3, (300.0, 0.0, 800.0)), 300.0), {}
+
+
+def _b_acc_flat(pool, rng):
+    x, y = np.meshgrid(np.linspace(-50, 50, 21), np.linspace(-30, 30, 13))
+    z = 900.0 + 0.02 * np.cos(2 * np.pi * x / 40.0) + 0.01 * np.random.default_rng(4).standard_normal(x.shape)
+    return (np.column_stack([x.ravel(), y.ravel(), z.ravel()]),), {}
+
+
+def _b_acc_verdict(pool, rng):
+    return ({"pf": [0.1, 0.3], "ps": [-0.05], "sd": [0.1, -0.25, 0.02], "f": [0.2]}, dict(_ACC_MPE)), {}
+
+
+def _b_acc_scan(pool, rng):
+    import acceptance3d as _a
+    return (dict(_ACC_SENSOR), _a.acceptance_layout()["bars"][0]), {}
+
+
+def _b_acc_virtual(pool, rng):
+    return (dict(_ACC_SENSOR),), {}
+
+
+def _b_acc_budget(pool, rng):
+    return ({**_ACC_SENSOR, "kind": "triangulation"}, {"scale": {"range_scale": 1.001}}, dict(_ACC_MPE)), {}
+
+
 OP_ARG_BUILDERS = {
     "fringe_ftp_phase": _b_fringe_ftp,
     "plenoptic_system": _b_plenoptic_system,
@@ -7808,6 +7852,13 @@ OP_ARG_BUILDERS = {
     "vector_to_similarity": _b_calib_fit2d,
     "hom_vector_to_proj_hom_mat2d": _b_calib_fit2d,
     "vector_angle_to_rigid": _b_calib_angle_rigid,
+    "sphere_probing_error": _b_acc_probe,
+    "sphere_spacing_error": _b_acc_spacing,
+    "plane_flatness_error": _b_acc_flat,
+    "acceptance_verdict": _b_acc_verdict,
+    "acceptance_scan": _b_acc_scan,
+    "virtual_acceptance_test": _b_acc_virtual,
+    "acceptance_error_budget": _b_acc_budget,
     "residue_integer_crt": _b_residue_int,
     "residue_crt": _b_residue_real,
     "residue_fault_locate": _b_residue_real,

@@ -733,7 +733,7 @@ def _registry_adapters():
                  "opsimgforensics", "opsastrostack", "opsdem", "opspiv",
                  "opsprofile", "opsshapestat", "opsshape2d", "opsroughness",
                  "opsmeasure1d", "opsblob", "opsflyvision", "opsspc",
-                 "opsgraph", "opstext", "opsvx", "opsdrive", "opsresidue", "opsmultivar", "opssimcal", "opsconverge", "opscodematch", "opsaoi", "opscalib", "opsgenerative",
+                 "opsgraph", "opstext", "opsvx", "opsdrive", "opsresidue", "opsmultivar", "opssimcal", "opsconverge", "opscodematch", "opsaoi", "opscalib", "opsacceptance", "opsgenerative",
                  "opssegmentation"):
         try:
             d.update(getattr(__import__(_mod), "RESULT_ADAPTERS", {}))
@@ -963,6 +963,12 @@ def catalog():
     for n, m in opscalib.OPSCALIB.items():
         if m["func"] is not None:
             ops.append((n, "calib", list(m["in"]), m["out"], m["func"]))
+    # 光学式 3D センサの(仮想)受入試験(opsacceptance 台帳、2026-11-03)。**新語なし**: 試験体の点群は
+    # points、配置・センサ・結果・MPE は table。族の外に消費者がいないので語を足しても連鎖は増えない。
+    import opsacceptance
+    for n, m in opsacceptance.OPSACCEPTANCE.items():
+        if m["func"] is not None:
+            ops.append((n, "acceptance", list(m["in"]), m["out"], m["func"]))
     # 絵を作る側(opsgenerative 台帳)。**新しい型語彙を 1 つも作らない**判断:
     # 30 op の返りは既存の rgb((H,W,3))/ rgbvideo((T,H,W,3))/ table に収まる。
     # 「錯視画像」という型を作らないのが要点で、作った絵に既存の 2,147 op が

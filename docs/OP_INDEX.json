@@ -1,8 +1,8 @@
 {
- "n_ops": 3623,
+ "n_ops": 3631,
  "tiers": {
   "color": 12,
-  "ledger": 2664,
+  "ledger": 2672,
   "nary": 17,
   "registry": 930
  },
@@ -394,6 +394,60 @@
    "in_sorts": [
     "image2d",
     "image2d"
+   ]
+  },
+  {
+   "name": "acceptance_error_budget",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "budget",
+   "tier": "ledger",
+   "ledger": "opsacceptance",
+   "dim": "acceptance",
+   "in_sorts": [
+    "table",
+    "table",
+    "table"
+   ]
+  },
+  {
+   "name": "acceptance_layout",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "layout",
+   "tier": "ledger",
+   "ledger": "opsacceptance",
+   "dim": "acceptance",
+   "in_sorts": []
+  },
+  {
+   "name": "acceptance_scan",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "points",
+   "category": "simulate",
+   "tier": "ledger",
+   "ledger": "opsacceptance",
+   "dim": "acceptance",
+   "in_sorts": [
+    "table",
+    "table"
+   ]
+  },
+  {
+   "name": "acceptance_verdict",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "evaluate",
+   "tier": "ledger",
+   "ledger": "opsacceptance",
+   "dim": "acceptance",
+   "in_sorts": [
+    "table",
+    "table"
    ]
   },
   {
@@ -21898,6 +21952,19 @@
    ]
   },
   {
+   "name": "plane_flatness_error",
+   "halcon": "",
+   "in_sort": "points",
+   "out_sort": "table",
+   "category": "evaluate",
+   "tier": "ledger",
+   "ledger": "opsacceptance",
+   "dim": "acceptance",
+   "in_sorts": [
+    "points"
+   ]
+  },
+  {
    "name": "plane_from_3points",
    "halcon": "",
    "in_sort": "points",
@@ -29003,6 +29070,19 @@
    ]
   },
   {
+   "name": "sphere_probing_error",
+   "halcon": "",
+   "in_sort": "points",
+   "out_sort": "table",
+   "category": "evaluate",
+   "tier": "ledger",
+   "ledger": "opsacceptance",
+   "dim": "acceptance",
+   "in_sorts": [
+    "points"
+   ]
+  },
+  {
    "name": "sphere_sdf",
    "halcon": "",
    "in_sort": "coordgrid",
@@ -29013,6 +29093,20 @@
    "dim": "3d",
    "in_sorts": [
     "coordgrid"
+   ]
+  },
+  {
+   "name": "sphere_spacing_error",
+   "halcon": "",
+   "in_sort": "points",
+   "out_sort": "table",
+   "category": "evaluate",
+   "tier": "ledger",
+   "ledger": "opsacceptance",
+   "dim": "acceptance",
+   "in_sorts": [
+    "points",
+    "points"
    ]
   },
   {
@@ -33027,6 +33121,19 @@
    "tier": "ledger",
    "ledger": "opsoptics",
    "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "virtual_acceptance_test",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "simulate",
+   "tier": "ledger",
+   "ledger": "opsacceptance",
+   "dim": "acceptance",
    "in_sorts": [
     "table"
    ]

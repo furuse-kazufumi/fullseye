@@ -1,0 +1,26 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">acceptance_error_budget — ACCEPTANCE <code style="color:#22d3bf">budget</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table × table × table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.acceptance_error_budget(sensor, factors, mpe, layout=None, exclude_fraction=0.003, n_repeat=1, seed=0)</code>(要直接调用实现,<code style="color:#22d3bf">import acceptance3d; acceptance3d.acceptance_error_budget(sensor, factors, mpe, layout=None, exclude_fraction=0.003, n_repeat=1, seed=0)</code>;从台账取用则 <code style="color:#22d3bf">opsacceptance.get(&quot;acceptance_error_budget&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>每次只加入一个误差因素运行虚拟验收试验,返回哪个因素决定了合格与否(<code style="color:#22d3bf">table</code>)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>One-factor-at-a-time error budget of the virtual acceptance test. The baseline is <code style="color:#22d3bf">sensor</code> with every error source switched off (noise off, calibration errors 0, range scale 1, multipath 0, supersample 1). <code style="color:#22d3bf">factors</code> maps a name to the sensor keys that switch that factor on, e.g. <code style="color:#22d3bf">{&quot;noise&quot;: {&quot;noise&quot;: True}, &quot;fx 0.2 %&quot;: {&quot;fx_rel_error&quot;: 0.002}, &quot;multipath&quot;: {&quot;multipath_amplitude&quot;: 0.05}}</code>. Each factor is run alone on the baseline, then all together (&quot;all&quot;). With noise, <code style="color:#22d3bf">n_repeat</code> seeds are run and the worst of the per-run maxima is kept (the verdict must hold for every run).</p>
+<p>返す <code style="color:#22d3bf">dict</code>: <code style="color:#22d3bf">baseline</code>・<code style="color:#22d3bf">all</code>・<code style="color:#22d3bf">factors</code>(名前ごとに <code style="color:#22d3bf">pf</code>・<code style="color:#22d3bf">ps</code>・<code style="color:#22d3bf">sd</code>・<code style="color:#22d3bf">f</code> の最悪値と <code style="color:#22d3bf">verdict</code>)、<code style="color:#22d3bf">decisive</code>(単独で MPE を超えた要因の名前、比の大きい順)、<code style="color:#22d3bf">ranking</code>(全要因の比の大きい順とその量)、<code style="color:#22d3bf">interaction</code>(「all」の比 − 単独の比の最大。正なら要因が重なって初めて落ちる)。基準(全部切った)の評価量は解析解の往復だけなので ≈ 0 になる(門で確かめる)。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: <code style="color:#22d3bf">factors</code> が空・dict でない、未知のセンサの鍵、<code style="color:#22d3bf">n_repeat</code> が 1〜50 の外、<code style="color:#22d3bf">mpe</code> が不正(<code style="color:#22d3bf">acceptance_verdict</code>)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideacceptance:optical_3d_acceptance">optical_3d_acceptance 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_virtual_acceptance_3d">poc_virtual_acceptance_3d</a> — <code style="color:#22d3bf">py -3.11 examples/poc_virtual_acceptance_3d.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="opacceptance:acceptance_verdict">acceptance_verdict</a> · <a style="color:#22d3bf" href="opacceptance:acceptance_scan">acceptance_scan</a> · <a style="color:#22d3bf" href="opacceptance:virtual_acceptance_test">virtual_acceptance_test</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">budget</code>)</h3>
+<p>—</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: acceptance3d.py — ACCEPTANCE 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,0 +1,30 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">acceptance_scan — ACCEPTANCE <code style="color:#22d3bf">simulate</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">table × table</code> → <code style="color:#22d3bf">points</code></p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.acceptance_scan(sensor, artifact, seed=0)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import acceptance3d; acceptance3d.acceptance_scan(sensor, artifact, seed=0)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsacceptance.get(&quot;acceptance_scan&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
+<p>시뮬레이션 센서로 시험체 하나를 촬영하여 그 점군 <code style="color:#22d3bf">(N, 3)</code>을 반환한다(<code style="color:#22d3bf">points</code>).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>Scan one artefact (probe sphere, ball bar or plane from <code style="color:#22d3bf">acceptance_layout</code>) with a simulated sensor and return its points (N, 3) in the sensor frame, mm. For a ball bar the points of both spheres are concatenated in the order a, b (use <code style="color:#22d3bf">virtual_acceptance_test</code> for the split).</p>
+<p>センサ(<code style="color:#22d3bf">sensor</code> の <code style="color:#22d3bf">kind</code>):</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;ideal&quot;</code> —— 真の視線距離をそのまま返す(雑音なし)。往復の検算用。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;triangulation&quot;</code> —— 奥行き z に正規雑音 <code style="color:#22d3bf">σ_z = z²·σ_d / (f·b)</code>(<code style="color:#22d3bf">z = f·b/d</code> の誤差伝播、<code style="color:#22d3bf">disparity_sigma_px</code> = σ_d、<code style="color:#22d3bf">baseline_mm</code> = b)。構造化光・ステレオの雑音則の代表で、縞を描いて復号するわけではない(限界)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;itof&quot;</code> —— 既存の <code style="color:#22d3bf">itof.itof_capture</code> → <code style="color:#22d3bf">itof.itof_phase_amplitude</code> で 4 位相の生信号から距離を出す(ショット雑音・反射率・背景光・<code style="color:#22d3bf">supersample</code> による縁の混合 = フライングピクセル・ <code style="color:#22d3bf">multipath_amplitude</code> の 2 経路の多重反射)。多重反射は「全画素に一様な第 2 経路(余分な経路長 <code style="color:#22d3bf">multipath_extra_mm</code>)」の最も粗いモデル。</p>
+<p>校正の誤差は逆投影に入る: <code style="color:#22d3bf">fx_rel_error</code>・<code style="color:#22d3bf">fy_rel_error</code>(相対)、<code style="color:#22d3bf">cx_error_px</code>・<code style="color:#22d3bf">cy_error_px</code>、距離の尺度 <code style="color:#22d3bf">range_scale</code> とオフセット <code style="color:#22d3bf">range_offset_mm</code>。真値は場面の解析解(光線と球・平面の交点)。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: センサの表に <code style="color:#22d3bf">kind</code> が無い(空の表は既定値で黙って走らせない)・鍵が未知・値が範囲外、試験体が配置の形でない、点が 10 点未満しか写らない。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideacceptance:optical_3d_acceptance">optical_3d_acceptance 패밀리 가이드</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
+<p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
+<p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
+<p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
+<p style="margin:2px 0 2px 12px">• (아직 없음)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">points</code> 를 입력으로 받는 것)</h3>
+<p><a style="color:#22d3bf" href="opacceptance:sphere_probing_error">sphere_probing_error</a> · <a style="color:#22d3bf" href="opacceptance:sphere_spacing_error">sphere_spacing_error</a> · <a style="color:#22d3bf" href="opacceptance:plane_flatness_error">plane_flatness_error</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">simulate</code>)</h3>
+<p><a style="color:#22d3bf" href="opacceptance:virtual_acceptance_test">virtual_acceptance_test</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: acceptance3d.py — ACCEPTANCE 연산자 레지스트리. 이 op 노트는 <code style="color:#22d3bf">tools/opdocs.py md</code> 가 자동 생성합니다(직접 편집하지 마세요).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

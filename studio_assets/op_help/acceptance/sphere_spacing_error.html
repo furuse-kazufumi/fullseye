@@ -1,0 +1,27 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">sphere_spacing_error — ACCEPTANCE <code style="color:#22d3bf">evaluate</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sphere_spacing_error(points_a, points_b, calibrated_distance, exclude_fraction=0.003, fixed_diameter=None)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import acceptance3d; acceptance3d.sphere_spacing_error(points_a, points_b, calibrated_distance, exclude_fraction=0.003, fixed_diameter=None)</code>、台帳から引くなら <code style="color:#22d3bf">opsacceptance.get(&quot;sphere_spacing_error&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>ダンベル(2 球)の点群から球間距離の誤差 SD を計算する(<code style="color:#22d3bf">table</code>)。</p>
+<p>Sphere-spacing error SD of a ball bar: distance of the two fitted sphere centres minus the calibrated distance (signed: positive when measured too long).</p>
+<p>各球は <code style="color:#22d3bf">sphere_probing_error</code> と同じ当てはめ(半径自由、最大偏差の点を除いて当て直し)。<code style="color:#22d3bf">fixed_diameter</code> を与えると半径をその値に固定して中心だけを当てる(文献によっては固定半径で評価する; 既定は自由)。定義は Carfagni et al. 2019 / Eiríksson et al. 2016 の記述による。規格本文の写しではない。Each sphere is fitted as in <code style="color:#22d3bf">sphere_probing_error</code>; <code style="color:#22d3bf">fixed_diameter</code> fixes the radius.</p>
+<p>返す <code style="color:#22d3bf">dict</code>: <code style="color:#22d3bf">sd</code>、<code style="color:#22d3bf">distance</code>、<code style="color:#22d3bf">calibrated_distance</code>、<code style="color:#22d3bf">center_a</code>、<code style="color:#22d3bf">center_b</code>、<code style="color:#22d3bf">diameter_a</code>、<code style="color:#22d3bf">diameter_b</code>、<code style="color:#22d3bf">pf_a</code>、<code style="color:#22d3bf">pf_b</code>、<code style="color:#22d3bf">n_used_a</code>、<code style="color:#22d3bf">n_used_b</code>。</p>
+<p>限界: 尺度の誤差は SD に <code style="color:#22d3bf">(s−1)·L</code> で出る(L が長いほど見える)ので、L は測定体積の対角に近いほどよい。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: どちらかの点群が不正(<code style="color:#22d3bf">sphere_probing_error</code> と同じ条件)、<code style="color:#22d3bf">calibrated_distance</code> が正でない、<code style="color:#22d3bf">fixed_diameter</code> が正でない、2 つの中心が重なる。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideacceptance:optical_3d_acceptance">optical_3d_acceptance ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• (まだありません)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opacceptance:acceptance_verdict">acceptance_verdict</a> · <a style="color:#22d3bf" href="opacceptance:acceptance_scan">acceptance_scan</a> · <a style="color:#22d3bf" href="opacceptance:virtual_acceptance_test">virtual_acceptance_test</a> · <a style="color:#22d3bf" href="opacceptance:acceptance_error_budget">acceptance_error_budget</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">evaluate</code>)</h3>
+<p><a style="color:#22d3bf" href="opacceptance:sphere_probing_error">sphere_probing_error</a> · <a style="color:#22d3bf" href="opacceptance:plane_flatness_error">plane_flatness_error</a> · <a style="color:#22d3bf" href="opacceptance:acceptance_verdict">acceptance_verdict</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: acceptance3d.py — ACCEPTANCE operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

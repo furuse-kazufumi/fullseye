@@ -1,0 +1,26 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">acceptance_verdict — ACCEPTANCE <code style="color:#22d3bf">evaluate</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">table × table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.acceptance_verdict(results, mpe)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import acceptance3d; acceptance3d.acceptance_verdict(results, mpe)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsacceptance.get(&quot;acceptance_verdict&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
+<p>평가량의 표를 MPE(최대 허용 오차)와 비교하여 합격 여부를 낸다(<code style="color:#22d3bf">table</code>).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>Compare acceptance results with maximum permissible errors. <code style="color:#22d3bf">results</code> holds lists (one value per position) under any of <code style="color:#22d3bf">pf</code>, <code style="color:#22d3bf">ps</code>, <code style="color:#22d3bf">sd</code>, <code style="color:#22d3bf">f</code> (the shape <code style="color:#22d3bf">virtual_acceptance_test</code> returns; measured values may be assembled by hand). <code style="color:#22d3bf">mpe</code> gives a positive limit per quantity. A quantity passes when <code style="color:#22d3bf">max |value| &lt;= mpe</code> (PF and F are non-negative by definition).</p>
+<p>返す <code style="color:#22d3bf">dict</code>: <code style="color:#22d3bf">passed</code>(全体)、<code style="color:#22d3bf">by_quantity</code>(量ごとに <code style="color:#22d3bf">worst</code>・<code style="color:#22d3bf">worst_index</code>・<code style="color:#22d3bf">mpe</code>・<code style="color:#22d3bf">ratio</code>・ <code style="color:#22d3bf">passed</code>)、<code style="color:#22d3bf">decided_by</code>(<code style="color:#22d3bf">ratio</code> が最大の量 = 合否を決めた量)、<code style="color:#22d3bf">max_ratio</code>。★MPE の値は規格ではなく<b>メーカーの仕様</b>が決める(この op は数字を持たない)。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: <code style="color:#22d3bf">results</code>・<code style="color:#22d3bf">mpe</code> が dict でない、共通の量が 1 つも無い、値が空・非有限、MPE が正でない、未知の量の名前。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideacceptance:optical_3d_acceptance">optical_3d_acceptance 패밀리 가이드</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
+<p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
+<p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
+<p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
+<p style="margin:2px 0 2px 12px">• (아직 없음)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">table</code> 를 입력으로 받는 것)</h3>
+<p><a style="color:#22d3bf" href="opacceptance:acceptance_scan">acceptance_scan</a> · <a style="color:#22d3bf" href="opacceptance:virtual_acceptance_test">virtual_acceptance_test</a> · <a style="color:#22d3bf" href="opacceptance:acceptance_error_budget">acceptance_error_budget</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">evaluate</code>)</h3>
+<p><a style="color:#22d3bf" href="opacceptance:sphere_probing_error">sphere_probing_error</a> · <a style="color:#22d3bf" href="opacceptance:sphere_spacing_error">sphere_spacing_error</a> · <a style="color:#22d3bf" href="opacceptance:plane_flatness_error">plane_flatness_error</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: acceptance3d.py — ACCEPTANCE 연산자 레지스트리. 이 op 노트는 <code style="color:#22d3bf">tools/opdocs.py md</code> 가 자동 생성합니다(직접 편집하지 마세요).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

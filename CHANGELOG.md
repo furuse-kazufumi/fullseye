@@ -7,6 +7,15 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### 追加 — 光学式 3D センサの仮想受入試験(VDI/VDE 2634 Part 2/3・ISO 10360-13 の考え方、新台帳 opsacceptance、8 op)
+
+- 新モジュール `acceptance3d`(numpy のみ)と台帳 `opsacceptance`(layout / evaluate / simulate / budget)。新しい型の語なし(points / table)。
+  - 評価量(実機の点群にもシミュレーションの点群にも同じ op): `sphere_probing_error`(PF・PS)、`sphere_spacing_error`(SD)、`plane_flatness_error`(F)、`acceptance_verdict`(MPE と比べた合否と、合否を決めた量)。定義は規格を適用した公開文献(Carfagni ら 2017・2019、Eiríksson ら 2016)の記述から取り、規格の本文は写していない。「準拠」とは名乗らない。
+  - 配置 `acceptance_layout`(球 1・ダンベル 7 姿勢・平面 7 姿勢。7 姿勢の向きは Fullseye の約束)。
+  - Fullseye だけの層: `acceptance_scan` / `virtual_acceptance_test`(理想・三角測量の雑音則・既存 `itof_capture` → `itof_phase_amplitude` の 3 種のセンサで試験体を撮る。真値は場面の解析解)、`acceptance_error_budget`(誤差の要因を 1 つずつ入れて、どれが合否を決めるか)。
+- 門 `tests/test_acceptance3d.py`(36 件): 完全な球・平面 → 0、尺度 s → SD = (s − 1)·L と PS = (s − 1)·D が厳密、半径方向の偏り b → PS = 2b、余弦のうねり → F = 2a、純ガウス雑音の PF の平均 = σ·d2(N)(d2(25) = 3.931 の公表値で積分を検算)、幾何の当てはめ = scipy.optimize.least_squares、三角測量の正対平面の残差 = z²σ_d/(f b)(3 % 以内)、iToF の黒い球(反射率 0.1)の残差は √10 倍前後、既存 `itof_flying_pixel_mask` を外すと PF が 43.7 mm に壊れる。
+- 例 `examples/poc_virtual_acceptance_3d.py`: 3 つの設計案の合否表(仮の MPE で三角測量と白い試験体の iToF は合格、黒い球の iToF は PF が MPE の 1.98 倍で不合格)と iToF 案の誤差の予算(単独で MPE を超えたのは黒い球だけ。SD の寄与は符号が逆で打ち消し合う)。
+
 ### 追加 — 光弾性の族(応力場 → 縞 → 偏光像 → 位相差と主軸)
 
 - 新モジュール `photoelastic`(opsoptics のカテゴリ `photoelastic`、12 op)。単位は SI、位相差は rad・nm・縞次数を並べて返し、mm を m に・nm を m に・表の ×10⁻⁷ MPa⁻¹ を Pa⁻¹ に渡す取り違えは ValueError で拒否する。

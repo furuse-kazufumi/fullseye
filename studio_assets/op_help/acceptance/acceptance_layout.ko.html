@@ -1,0 +1,28 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">acceptance_layout — ACCEPTANCE <code style="color:#22d3bf">layout</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">table</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.acceptance_layout(volume_mm=(400.0, 300.0, 300.0), center_mm=(0.0, 0.0, 800.0), sphere_diameter_mm=25.0, bar_length_mm=None, plane_size_mm=(300.0, 150.0), plane_tilt_deg=25.0)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import acceptance3d; acceptance3d.acceptance_layout(volume_mm=(400.0, 300.0, 300.0), center_mm=(0.0, 0.0, 800.0), sphere_diameter_mm=25.0, bar_length_mm=None, plane_size_mm=(300.0, 150.0), plane_tilt_deg=25.0)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsacceptance.get(&quot;acceptance_layout&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
+<p>측정 체적 안에 시험체(프로빙 구 1개, 7자세의 볼바, 7자세의 평면) 배치를 만든다(<code style="color:#22d3bf">table</code>).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>Place the artefacts in the measuring volume: one probing sphere at the centre, a ball bar in 7 orientations and a flat in 7 orientations. Coordinates are the sensor frame (x right, y down, z along the optical axis, mm), the volume a box of <code style="color:#22d3bf">volume_mm</code> centred on <code style="color:#22d3bf">center_mm</code>.</p>
+<p>ダンベルの 7 姿勢 = 空間対角線 4 本 + 面の対角線 3 本(xy・xz・yz)、どれも体積の中心を通る。光軸(z)に平行な姿勢は手前の球が奥の球を隠すので取らない。平面の 7 姿勢 = 正対 1 + x 軸・y 軸まわりに ±<code style="color:#22d3bf">plane_tilt_deg</code> の 4 + 対角の軸まわり ±tilt の 2。★これは <b>Fullseye の約束</b> で、VDI/VDE 2634 の図の写しではない(考え方 = 体積を対角に貫く長さで尺度の誤差を見る、に沿っただけ)。This 7+7 convention is Fullseye&#x27;s own, modelled on the guideline&#x27;s idea (span the volume diagonally so a scale error shows up); it is not a copy of the normative figure.</p>
+<p><code style="color:#22d3bf">bar_length_mm</code> の既定 = 7 方向のうち最も短い「体積を貫く長さ」の 0.8 倍から球の直径を引いた値。</p>
+<p>返す <code style="color:#22d3bf">dict</code>: <code style="color:#22d3bf">kind</code> = <code style="color:#22d3bf">&quot;acceptance_layout&quot;</code>、<code style="color:#22d3bf">volume_mm</code>、<code style="color:#22d3bf">center_mm</code>、<code style="color:#22d3bf">sphere_diameter_mm</code>、<code style="color:#22d3bf">bar_length_mm</code>、<code style="color:#22d3bf">probe</code>(<code style="color:#22d3bf">[{&quot;center&quot;, &quot;diameter&quot;}]</code>)、<code style="color:#22d3bf">bars</code>(7 個の <code style="color:#22d3bf">{&quot;name&quot;, &quot;center_a&quot;, &quot;center_b&quot;, &quot;length&quot;, &quot;diameter&quot;, &quot;direction&quot;}</code>)、<code style="color:#22d3bf">planes</code>(7 個の <code style="color:#22d3bf">{&quot;name&quot;, &quot;center&quot;, &quot;normal&quot;, &quot;u&quot;, &quot;v&quot;, &quot;size&quot;}</code>)。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 寸法が正でない・非有限、<code style="color:#22d3bf">center_mm</code> の z が体積の半分以下(センサの後ろに入る)、球やダンベルや平面が体積からはみ出す、平面の傾きが [0, 60] 度の外。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideacceptance:optical_3d_acceptance">optical_3d_acceptance 패밀리 가이드</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
+<p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
+<p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
+<p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_virtual_acceptance_3d">poc_virtual_acceptance_3d</a> — <code style="color:#22d3bf">py -3.11 examples/poc_virtual_acceptance_3d.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">table</code> 를 입력으로 받는 것)</h3>
+<p><a style="color:#22d3bf" href="opacceptance:acceptance_verdict">acceptance_verdict</a> · <a style="color:#22d3bf" href="opacceptance:acceptance_scan">acceptance_scan</a> · <a style="color:#22d3bf" href="opacceptance:virtual_acceptance_test">virtual_acceptance_test</a> · <a style="color:#22d3bf" href="opacceptance:acceptance_error_budget">acceptance_error_budget</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">layout</code>)</h3>
+<p>—</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: acceptance3d.py — ACCEPTANCE 연산자 레지스트리. 이 op 노트는 <code style="color:#22d3bf">tools/opdocs.py md</code> 가 자동 생성합니다(직접 편집하지 마세요).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

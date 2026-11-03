@@ -1,0 +1,26 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">acceptance_verdict — ACCEPTANCE <code style="color:#22d3bf">evaluate</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table × table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.acceptance_verdict(results, mpe)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import acceptance3d; acceptance3d.acceptance_verdict(results, mpe)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsacceptance.get(&quot;acceptance_verdict&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>evaluation quantities की table की MPE (maximum permissible error) से तुलना करके pass/fail देता है (<code style="color:#22d3bf">table</code>)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>Compare acceptance results with maximum permissible errors. <code style="color:#22d3bf">results</code> holds lists (one value per position) under any of <code style="color:#22d3bf">pf</code>, <code style="color:#22d3bf">ps</code>, <code style="color:#22d3bf">sd</code>, <code style="color:#22d3bf">f</code> (the shape <code style="color:#22d3bf">virtual_acceptance_test</code> returns; measured values may be assembled by hand). <code style="color:#22d3bf">mpe</code> gives a positive limit per quantity. A quantity passes when <code style="color:#22d3bf">max |value| &lt;= mpe</code> (PF and F are non-negative by definition).</p>
+<p>返す <code style="color:#22d3bf">dict</code>: <code style="color:#22d3bf">passed</code>(全体)、<code style="color:#22d3bf">by_quantity</code>(量ごとに <code style="color:#22d3bf">worst</code>・<code style="color:#22d3bf">worst_index</code>・<code style="color:#22d3bf">mpe</code>・<code style="color:#22d3bf">ratio</code>・ <code style="color:#22d3bf">passed</code>)、<code style="color:#22d3bf">decided_by</code>(<code style="color:#22d3bf">ratio</code> が最大の量 = 合否を決めた量)、<code style="color:#22d3bf">max_ratio</code>。★MPE の値は規格ではなく<b>メーカーの仕様</b>が決める(この op は数字を持たない)。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: <code style="color:#22d3bf">results</code>・<code style="color:#22d3bf">mpe</code> が dict でない、共通の量が 1 つも無い、値が空・非有限、MPE が正でない、未知の量の名前。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideacceptance:optical_3d_acceptance">optical_3d_acceptance family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• (अभी कुछ नहीं)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opacceptance:acceptance_scan">acceptance_scan</a> · <a style="color:#22d3bf" href="opacceptance:virtual_acceptance_test">virtual_acceptance_test</a> · <a style="color:#22d3bf" href="opacceptance:acceptance_error_budget">acceptance_error_budget</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">evaluate</code>)</h3>
+<p><a style="color:#22d3bf" href="opacceptance:sphere_probing_error">sphere_probing_error</a> · <a style="color:#22d3bf" href="opacceptance:sphere_spacing_error">sphere_spacing_error</a> · <a style="color:#22d3bf" href="opacceptance:plane_flatness_error">plane_flatness_error</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: acceptance3d.py — ACCEPTANCE operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

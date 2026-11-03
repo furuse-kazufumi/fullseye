@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3623,
- "n_notes": 3629,
+ "n_ops": 3631,
+ "n_notes": 3637,
  "notes": {
   "vol_dilate": [
    {
@@ -13905,6 +13905,85 @@
     "in": "image2d × image2d",
     "out": "points",
     "path": "docs/ops/3d/two_view/triangulate.md"
+   }
+  ],
+  "acceptance_error_budget": [
+   {
+    "op": "acceptance_error_budget",
+    "dim": "acceptance",
+    "category": "budget",
+    "in": "table × table × table",
+    "out": "table",
+    "path": "docs/ops/acceptance/budget/acceptance_error_budget.md"
+   }
+  ],
+  "acceptance_verdict": [
+   {
+    "op": "acceptance_verdict",
+    "dim": "acceptance",
+    "category": "evaluate",
+    "in": "table × table",
+    "out": "table",
+    "path": "docs/ops/acceptance/evaluate/acceptance_verdict.md"
+   }
+  ],
+  "plane_flatness_error": [
+   {
+    "op": "plane_flatness_error",
+    "dim": "acceptance",
+    "category": "evaluate",
+    "in": "points",
+    "out": "table",
+    "path": "docs/ops/acceptance/evaluate/plane_flatness_error.md"
+   }
+  ],
+  "sphere_probing_error": [
+   {
+    "op": "sphere_probing_error",
+    "dim": "acceptance",
+    "category": "evaluate",
+    "in": "points",
+    "out": "table",
+    "path": "docs/ops/acceptance/evaluate/sphere_probing_error.md"
+   }
+  ],
+  "sphere_spacing_error": [
+   {
+    "op": "sphere_spacing_error",
+    "dim": "acceptance",
+    "category": "evaluate",
+    "in": "points × points",
+    "out": "table",
+    "path": "docs/ops/acceptance/evaluate/sphere_spacing_error.md"
+   }
+  ],
+  "acceptance_layout": [
+   {
+    "op": "acceptance_layout",
+    "dim": "acceptance",
+    "category": "layout",
+    "out": "table",
+    "path": "docs/ops/acceptance/layout/acceptance_layout.md"
+   }
+  ],
+  "acceptance_scan": [
+   {
+    "op": "acceptance_scan",
+    "dim": "acceptance",
+    "category": "simulate",
+    "in": "table × table",
+    "out": "points",
+    "path": "docs/ops/acceptance/simulate/acceptance_scan.md"
+   }
+  ],
+  "virtual_acceptance_test": [
+   {
+    "op": "virtual_acceptance_test",
+    "dim": "acceptance",
+    "category": "simulate",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/acceptance/simulate/virtual_acceptance_test.md"
    }
   ],
   "bearing_defect_frequencies": [

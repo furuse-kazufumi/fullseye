@@ -135,6 +135,10 @@ LEDGER_DIMS = {
     # 新しい型語彙は作らない(points / pose / matrix / table / contour / image2d)。
     "calib": {"registry": "opscalib", "table": "OPSCALIB",
               "module": "calib", "family": "camera_calibration"},
+    # 2026-11-03: 光学式 3D センサの(仮想)受入試験。比較相手の誰も op を持たない手順を、実機の点群にも
+    # シミュレーションのセンサにも同じ評価 op で掛ける。新しい型語彙は作らない(points / table)。
+    "acceptance": {"registry": "opsacceptance", "table": "OPSACCEPTANCE",
+                   "module": "acceptance3d", "family": "optical_3d_acceptance"},
     "generative": {"registry": "opsgenerative", "table": "OPSGENERATIVE",
                    "module": "perpetual", "family": "generative_art"},
     "imgmetrics": {"registry": "opsimgmetrics", "table": "OPSIMGMETRICS",
