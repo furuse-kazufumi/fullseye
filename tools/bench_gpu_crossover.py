@@ -294,7 +294,8 @@ class Lease:
 
     def __init__(self, budget_s: float):
         self.path = lock_path()
-        self.tag = "gpu_cross_%d %s" % (os.getpid(), stamp())
+        # 行の形は「持ち主 ISO 時刻 pid=<pid>」(外の見張りが 12 分を超えたロックの持ち主を止めて消す)
+        self.tag = "gpu_cross_%d %s pid=%d" % (os.getpid(), stamp(), os.getpid())
         self.budget_s = budget_s
         self.t0 = 0.0
         self.held = False

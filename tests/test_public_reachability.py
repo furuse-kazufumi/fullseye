@@ -55,6 +55,9 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 #: 数字は不可視な関数の本数で、増減しても意図的なら書き換えてよい。
 _INTERNAL = {
     "accel_bridge": 9, "accel_vol": 3,
+    # 2026-11-03 device="auto" の判断(損益分岐の表・空き VRAM・段ごとの経路)。利用者の入口は
+    # fullseye.explain_device / resolve_device で、この部品は api の内側からだけ呼ぶ。
+    "device_policy": 6,
     "algo_codegen": 4, "algo_difftest": 8, "backends": 4, "backends_auto": 2,
     "backends_color": 3, "backends_cv2b": 1, "backends_dl": 3, "backends_extra": 1,
     "backends_halcon_ext": 1, "backends_kornia": 1, "backends_macro": 1,
@@ -257,7 +260,10 @@ def test_pending_exposure_shrinks_when_fixed():
 # 2026-10-31 opsfileio 台帳(メモリ内 file I/O 14 op): 台帳の内部 API 4 本で実測 944 → 948。
 #   op 自身は fs.ledger から引ける。
 # 2026-11-02 gpu_shadow(機械的 GPU の影の層 10 本)。CuPy は任意依存で、入口は gpu_shadow.apply / run_allowed。実測 948 → 958。
-_HIDDEN_FUNCTIONS_TODAY = 958
+# 2026-11-03 GPU 第 5 便: device_policy(auto の判断 6 本)・gpu_route(GPU 経路を決める唯一の関数と Route 型、
+#   実行の入口の 9 本)・gpu_shadow の鎖の 2 本(pipeline_ops / run_chain)。利用者の入口は fullseye.explain_device
+#   と fullseye_describe の gpu_paths で、部品そのものは公開経路に載せない。実測 958 → 975。
+_HIDDEN_FUNCTIONS_TODAY = 975
 
 
 def _hidden_total():

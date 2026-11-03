@@ -101,6 +101,7 @@ _OLD_ORDER = [
     "tools/gen_mcp_data.py", "tools/gen_recipe_index.py", "tools/gen_recipe_retrieval_report.py", "tools/gen_rag_benchmark_report.py", "tools/conversion_matrix.py", "tools/gen_design_notes.py",
     "tools/gen_op_facets.py", "tools/measure_mcp_context.py",
     "tools/gen_doc_counts.py",
+    "tools/gen_device_rules.py",
 ]
 
 
