@@ -46,8 +46,9 @@ Usage::
     opsaoi.get("register_image")(ref, mov)
 """
 import aoi
+import symmetry2d
 
-_MOD = {"aoi": aoi}
+_MOD = {"aoi": aoi, "symmetry2d": symmetry2d}
 
 # カテゴリ → [(op 名, module, [入力種別], 出力種別)]
 _CATALOG = {
@@ -62,6 +63,14 @@ _CATALOG = {
     # まとめる —— タイルごとの量を小さな地図に(半端なタイルの監査つき)。
     "aggregate": [
         ("tiled_map", "aoi", ["image2d"], "table"),
+    ],
+    # 自己参照の形状・検査。推定 table を差分と score へそのまま繋ぐ。
+    "symmetry": [
+        ("center_from_symmetric_edges", "symmetry2d", ["image2d"], "table"),
+        ("reflection_axis", "symmetry2d", ["image2d"], "table"),
+        ("rotational_symmetry", "symmetry2d", ["image2d"], "table"),
+        ("symmetry_difference_map", "symmetry2d", ["image2d", "table"], "image2d"),
+        ("symmetry_score", "symmetry2d", ["image2d", "table"], "measurement"),
     ],
 }
 

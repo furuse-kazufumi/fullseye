@@ -30,6 +30,7 @@ import pytest
 import normals_orient
 import pointcloud
 import ppf
+import symmetry2d
 
 ANGLES_DEG = (37.0, 90.0, 143.0)
 
@@ -122,3 +123,21 @@ def test_invariant_diameter_falls_back_without_a_hull():
     d0 = ppf._invariant_diameter(line)
     d1 = ppf._invariant_diameter(line @ _rz(57.0).T)
     assert d0 > 0.0 and abs(d0 - d1) < 1e-9
+
+
+@pytest.mark.parametrize("deg", (-31.0, -13.0, 17.0, 39.0))
+def test_2d_reflection_axis_angle_sweep(deg):
+    """The image helper is swept too; one convenient angle cannot prove equivariance."""
+    from scipy.ndimage import gaussian_filter, rotate
+
+    yy, xx = np.indices((129, 129))
+    region = ((np.abs(xx - 64) < (yy - 0.15 * 129) * 0.25) &
+              (yy > 0.15 * 129) & (yy < 0.88 * 129))
+    grey = gaussian_filter(region.astype(float), 1.0)
+    # Rotate greyscale, never the mask; thresholding an already rotated mask
+    # creates angle-dependent stair steps that test the synthesizer instead.
+    moved = rotate(grey, deg, reshape=False, order=3, mode="constant")
+    out = symmetry2d.reflection_axis((moved >= 0.5).astype(float))
+    truth = (90.0 - deg) % 180.0
+    error = (out["angle_deg"] - truth + 90.0) % 180.0 - 90.0
+    assert abs(error) <= 0.1, (deg, truth, out)

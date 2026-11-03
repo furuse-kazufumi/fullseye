@@ -457,6 +457,19 @@
    "lead_en": "A reference plane for left-right asymmetry may be pulled toward a one-sided deformation. A known bulge was added to a symmetric skull; the best-fit plane moved by 2.92 mm. The optimized plane shifts toward the bulge and removes part of the asymmetry that should be reported."
   },
   {
+   "id": "poc_symmetry_self_reference_inspection",
+   "wing": "wing_industrial",
+   "added": "2026-11-01",
+   "numbers_source": "log",
+   "title_ja": "2-D対称性の自己参照検査 ―― 正解画像なしで欠陥だけを残す",
+   "title_en": "Self-referenced 2-D symmetry inspection — isolating a defect without a golden image",
+   "caption_ja": "対称模様と線形照明むらを持つ部品へ非対称欠陥を1個入れ、推定軸で鏡映した自身との差を取った。一次面を除いた差分は欠陥領域で平均0.193、模様・照明領域で1.5e-15。片側を欠いた円板の中心誤差はエッジ対0.231 px、面積重心3.171 pxだが、欠け無しでは重心の方が精密だった。回転次数はn=2,3,4,6と雑音・ぼけ3条件の12/12で正答した。",
+   "caption_en": "A single asymmetric defect was added to a part with symmetric texture and a linear illumination gradient, then the part was subtracted from its own reflection. After removing a fitted plane, mean residual was 0.193 in the defect pair and 1.5e-15 over texture and illumination. For a bitten disc, centre error was 0.231 px from edge pairs versus 3.171 px from the area centroid, while the centroid was more precise without the bite. Rotational orders n=2,3,4,6 were correct in all 12 noise/blur cases.",
+   "run": "py -3.11 examples/poc_symmetry_self_reference_inspection.py",
+   "lead_ja": "対称な部品は、欠陥がなければ自身の鏡像や回転像と一致する。模様と照明むらを消した差分では、欠陥領域の平均が0.193になった。中心推定の頑健さと回転次数の正答率も併せて確かめた。",
+   "lead_en": "A symmetric part agrees with its own reflected or rotated copy when defect-free. After texture and illumination cancellation, mean residual in the defect region was 0.193. Robust centre estimation and rotational-order accuracy were checked as well."
+  },
+  {
    "id": "poc_bone_trabecular_thickness",
    "wing": "wing_bio",
    "added": "2026-09-07",

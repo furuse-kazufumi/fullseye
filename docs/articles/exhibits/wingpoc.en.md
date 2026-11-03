@@ -2,7 +2,7 @@
 
 ### The Industrial Inspection Wing — A Passing Number and a Failing Number Can Coexist
 
-Numbers on an inspection line decide pass or fail, so there is a strong pull toward collapsing them into a single figure. The 40 exhibits in this room show what disappears the moment you do: a pooled ROC that hides one defect class's blind spot in woven fabric, veiling glare that leaves the MTF passing while the black level fails, a barcode decoder that looks better by read rate alone because it never says 'unreadable'.
+Numbers on an inspection line decide pass or fail, so there is a strong pull toward collapsing them into a single figure. The 41 exhibits in this room show what disappears the moment you do: a pooled ROC that hides one defect class's blind spot in woven fabric, veiling glare that leaves the MTF passing while the black level fails, a barcode decoder that looks better by read rate alone because it never says 'unreadable'.
 
 Every ground truth is planted: a closed-form periodic background, the laser-profile h(x), the analytic 1-D heat-conduction solution, closed-form bearing defect frequencies. That is what lets each exhibit measure 'where detection stops working' instead of 'detection worked', without fitting the threshold afterwards.
 
@@ -103,6 +103,36 @@ Source: [examples/poc_bearing_diagnosis.py](https://github.com/furuse-kazufumi/f
 This run produced **3 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_bearing_diagnosis)
 
 Ops used (notes): [`bearing_defect_frequencies`](https://furuse.work/ops/acoustics/bearing/bearing_defect_frequencies.html) · [`envelope_spectrum`](https://furuse.work/ops/acoustics/bearing/envelope_spectrum.html) · [`spectral_kurtosis`](https://furuse.work/ops/acoustics/bearing/spectral_kurtosis.html) · [`spectrum`](https://furuse.work/ops/oned/signal/spectrum.html) · [`synthesize_bearing_signal`](https://furuse.work/ops/acoustics/synthesis/synthesize_bearing_signal.html)
+
+## No.2026.285 —— Self-referenced 2-D symmetry inspection — isolating a defect without a golden image
+
+A symmetric part agrees with its own reflected or rotated copy when defect-free. After texture and illumination cancellation, mean residual in the defect region was 0.193. Robust centre estimation and rotational-order accuracy were checked as well.
+
+[![Self-referenced 2-D symmetry inspection — isolating a defect without a golden image](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symmetry_self_reference_inspection/01_self_reference_defect_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symmetry_self_reference_inspection/01_self_reference_defect.png)
+
+*↑ **Self-referenced 2-D symmetry inspection — isolating a defect without a golden image** ―― A single asymmetric defect was added to a part with symmetric texture and a linear illumination gradient, then the part was subtracted from its own reflection. After removing a fitted plane, mean residual was 0.193 in the defect pair and 1.5e-15 over texture and illumination. For a bitten disc, centre error was 0.231 px from edge pairs versus 3.171 px from the area centroid, while the centroid was more precise without the bite. Rotational orders n=2,3,4,6 were correct in all 12 noise/blur cases.*
+
+[![片側欠けではエッジ対中心 0.231 px、面積重心 3.171 px。欠け無しでは重心 0.041 px がエッジ対 0.305 px より精密。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symmetry_self_reference_inspection/02_center_tradeoff_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symmetry_self_reference_inspection/02_center_tradeoff.png)
+
+*↑ The measurement ―― 片側欠けではエッジ対中心 0.231 px、面積重心 3.171 px。欠け無しでは重心 0.041 px がエッジ対 0.305 px より精密。 (figure labels are in Japanese; the numbers are the same)*
+
+[![n=2 は blur 6 px・noise 0.114 で低下（1未満 22 格子）；n=3 は blur 6 px・noise 0.114 で低下（1未満 22 格子）；n=4 は blur 6 p](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symmetry_self_reference_inspection/03_rotational_order_noise_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symmetry_self_reference_inspection/03_rotational_order_noise.png)
+
+*↑ n=2 は blur 6 px・noise 0.114 で低下（1未満 22 格子）；n=3 は blur 6 px・noise 0.114 で低下（1未満 22 格子）；n=4 は blur 6 px・noise 0.114 で低下（1未満 22 格子）；n=6 は blur 5 px・noise…*
+
+[![noise 0.010 では振幅 3.16 から検出；noise 0.025 では振幅 5.47 から検出；noise 0.050 では振幅 8.23 から検出。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symmetry_self_reference_inspection/04_symmetry_score_monotone_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symmetry_self_reference_inspection/04_symmetry_score_monotone.png)
+
+*↑ noise 0.010 では振幅 3.16 から検出；noise 0.025 では振幅 5.47 から検出；noise 0.050 では振幅 8.23 から検出。*
+
+```
+py -3.11 examples/poc_symmetry_self_reference_inspection.py
+```
+
+Source: [examples/poc_symmetry_self_reference_inspection.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_symmetry_self_reference_inspection.py)
+
+This run produced **4 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_symmetry_self_reference_inspection)
+
+Ops used (notes): [`center_from_symmetric_edges`](https://furuse.work/ops/aoi/symmetry/center_from_symmetric_edges.html) · [`rotational_symmetry`](https://furuse.work/ops/aoi/symmetry/rotational_symmetry.html) · [`symmetry_difference_map`](https://furuse.work/ops/aoi/symmetry/symmetry_difference_map.html) · [`symmetry_score`](https://furuse.work/ops/aoi/symmetry/symmetry_score.html)
 
 ## No.2026.094 —— Bump coplanarity versus substrate warpage — subtract too much and the real defect goes with it
 

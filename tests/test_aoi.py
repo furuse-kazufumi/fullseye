@@ -431,7 +431,10 @@ def test_usage_example_in_the_module_docstring_runs(capsys):
 def test_the_ledger_exposes_all_three_ops():
     """台帳・公開経路の両方から引けること(登録したと引けるは別)。"""
     import opsaoi
-    assert sorted(opsaoi.list_ops()) == ["flat_field_correct", "register_image", "tiled_map"]
+    # 2026-11-01: 対称性の 5 op(#197)が同じ台帳に加わった。3 本が引けることと、台帳の全体が既知の集合であることを両方見る
+    assert sorted(opsaoi.list_ops()) == [
+        "center_from_symmetric_edges", "flat_field_correct", "reflection_axis", "register_image",
+        "rotational_symmetry", "symmetry_difference_map", "symmetry_score", "tiled_map"]
     assert opsaoi.missing() == []
     import fullseye as fs
     for name in ("flat_field_correct", "register_image", "tiled_map"):

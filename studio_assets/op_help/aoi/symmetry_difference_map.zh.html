@@ -1,0 +1,36 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">symmetry_difference_map — AOI <code style="color:#22d3bf">symmetry</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d × table</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.symmetry_difference_map(image, symmetry, exclusion_mask=None, detrend=True)</code>(要直接调用实现,<code style="color:#22d3bf">import symmetry2d; symmetry2d.symmetry_difference_map(image, symmetry, exclusion_mask=None, detrend=True)</code>;从台账取用则 <code style="color:#22d3bf">opsaoi.get(&quot;symmetry_difference_map&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>返回相对于估计反射轴或旋转中心的自参考差分图。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
+<p>image : array-like, shape (H, W)</p>
+<p>検査するグレー画像。</p>
+<p>symmetry : dict</p>
+<p><code style="color:#22d3bf">reflection_axis</code> または <code style="color:#22d3bf">rotational_symmetry</code> の table。</p>
+<p>exclusion_mask : array-like or None, default None</p>
+<p>設計上の非対称を除外する H x W mask。True 部とその変換先をともに 0 にする。</p>
+<p>detrend : bool, default True</p>
+<p>True なら符号付き差から頑健な一次面を引き、線形な照明勾配を抑える。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>numpy.ndarray</p>
+<p><code style="color:#22d3bf">abs(image - transformed_image)</code>。再標本化は線形補間で、最近傍は使わない。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Notes</h4>
+<p>定数入力、モデル種別不明、mask の形不一致は例外。自己参照なので欠陥は元位置と対称位置の対で現れ、軸上の欠陥や同じ欠陥が対称位置にもある場合は消える。一次面の除去は線形照明に限り、急な陰影や飽和は欠陥と区別できない。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideaoi:aoi_frontend">aoi_frontend 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_symmetry_self_reference_inspection">poc_symmetry_self_reference_inspection</a> — <code style="color:#22d3bf">py -3.11 examples/poc_symmetry_self_reference_inspection.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">image2d</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="opaoi:flat_field_correct">flat_field_correct</a> · <a style="color:#22d3bf" href="opaoi:register_image">register_image</a> · <a style="color:#22d3bf" href="opaoi:tiled_map">tiled_map</a> · <a style="color:#22d3bf" href="opaoi:center_from_symmetric_edges">center_from_symmetric_edges</a> · <a style="color:#22d3bf" href="opaoi:reflection_axis">reflection_axis</a> · <a style="color:#22d3bf" href="opaoi:rotational_symmetry">rotational_symmetry</a> · <a style="color:#22d3bf" href="opaoi:symmetry_score">symmetry_score</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">symmetry</code>)</h3>
+<p><a style="color:#22d3bf" href="opaoi:center_from_symmetric_edges">center_from_symmetric_edges</a> · <a style="color:#22d3bf" href="opaoi:reflection_axis">reflection_axis</a> · <a style="color:#22d3bf" href="opaoi:rotational_symmetry">rotational_symmetry</a> · <a style="color:#22d3bf" href="opaoi:symmetry_score">symmetry_score</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: symmetry2d.py — AOI 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

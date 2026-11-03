@@ -275,6 +275,8 @@ KNOB_EXEMPT = {
         "safety bound: changing it only accepts or rejects an archive member count",
     ("archive_extract", "max_total_bytes"):
         "safety bound: changing it only accepts or rejects an expanded byte count",
+    ("center_from_symmetric_edges", "min_span"):
+        "acceptance bound: changing it only admits or rejects short edge pairs",
 }
 
 
