@@ -1,0 +1,42 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">register_accuracy_map — MATCHREG <code style="color:#22d3bf">intensityreg</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image2d × flow2d</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.register_accuracy_map(fixed, true_flow2d, method=&#x27;ffd&#x27;, modality=&#x27;same&#x27;, noise_sigma=0.0, margin=4, seed=0, method_kwargs=None)</code>(要直接呼叫實作,<code style="color:#22d3bf">import intensityreg; intensityreg.register_accuracy_map(fixed, true_flow2d, method=&#x27;ffd&#x27;, modality=&#x27;same&#x27;, noise_sigma=0.0, margin=4, seed=0, method_kwargs=None)</code>;從台帳取用則 <code style="color:#22d3bf">opsmatchreg.get(&quot;register_accuracy_map&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>在以已知形變場合成的影像對上,逐像素回傳估計形變場的誤差(精度圖)。→ table。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p><code style="color:#22d3bf">fixed</code> と真の場 <code style="color:#22d3bf">true_flow2d</code> から <code style="color:#22d3bf">synthesize_moving</code> で moving を作り(3 次スプライン、明るさの写し、雑音)、<code style="color:#22d3bf">method</code> で合わせ、推定の場と真の場の差の長さ(終点誤差 EPE [px])を画素ごとに返す。答えの真値は合成に使った場そのもので、推定側はそれを知らない。</p>
+<p><code style="color:#22d3bf">method</code>: <code style="color:#22d3bf">&quot;ffd&quot;</code> / <code style="color:#22d3bf">&quot;demons&quot;</code>(<code style="color:#22d3bf">deformreg.demons_register</code>、場の向きは同じ)/ <code style="color:#22d3bf">&quot;ecc&quot;</code> / <code style="color:#22d3bf">&quot;mi&quot;</code>(パラメトリック。滑らかな場はアフィンでしか近似できない —— その近似の誤差も地図に出る)/ <code style="color:#22d3bf">&quot;phase&quot;</code>(<code style="color:#22d3bf">aoi.register_image</code>、並進だけ)。</p>
+<p>地図の内訳(どこで壊れるか)として、fixed の勾配の強さの 4 分位ごと・真の変位の大きさの 4 分位ごとの EPE の中央値を <code style="color:#22d3bf">by_texture</code> / <code style="color:#22d3bf">by_magnitude</code> に返す(模様の無い所で場が決まらないことが数で出る)。</p>
+<p>Args:</p>
+<p>fixed: 基準の 2-D 画像。</p>
+<p>true_flow2d: 真の場 <code style="color:#22d3bf">(2,H,W)</code> の <code style="color:#22d3bf">(dy, dx)</code>(結果と同じ向き)。逆写像が一意であること(勾配 &lt; 1)。</p>
+<p>method: <code style="color:#22d3bf">ACCURACY_METHODS</code>。</p>
+<p>modality: <code style="color:#22d3bf">MODALITIES</code>(<code style="color:#22d3bf">&quot;folded&quot;</code> は単調でない明るさ = ECC が効かない組)。</p>
+<p>noise_sigma: moving に足すガウス雑音の σ([0, 1] の尺度)。</p>
+<p>margin: 縁から除く画素数。</p>
+<p>seed: 雑音の種。</p>
+<p>method_kwargs: method へ渡す引数(dict)。</p>
+<p>Returns:</p>
+<p>dict(<code style="color:#22d3bf">kind=&quot;registration_accuracy&quot;</code>)。<code style="color:#22d3bf">error_map</code> (H,W) [px] (集計から外した画素は 0)/</p>
+<p><code style="color:#22d3bf">mask</code>(集計した画素)/ <code style="color:#22d3bf">epe_mean</code> / <code style="color:#22d3bf">epe_median</code> / <code style="color:#22d3bf">epe_p95</code> / <code style="color:#22d3bf">epe_max</code> /</p>
+<p><code style="color:#22d3bf">true_flow2d</code> / <code style="color:#22d3bf">est_flow2d</code> / <code style="color:#22d3bf">moving</code> / <code style="color:#22d3bf">by_texture</code> / <code style="color:#22d3bf">by_magnitude</code> / <code style="color:#22d3bf">method</code> /</p>
+<p><code style="color:#22d3bf">modality</code> / <code style="color:#22d3bf">noise_sigma</code> / <code style="color:#22d3bf">method_info</code>(method の返りの要約)。</p>
+<p>Raises:</p>
+<p>ValueError: 画像・場が不正 / 場の逆写像が一意でない / method・modality が違う / method 自身の拒否。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidematchreg:matching_registration">matching_registration 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_sheet_deformation_ffd">poc_sheet_deformation_ffd</a> — <code style="color:#22d3bf">py -3.11 examples/poc_sheet_deformation_ffd.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="opmatchreg:features_match">features_match</a> · <a style="color:#22d3bf" href="opmatchreg:ransac_homography">ransac_homography</a> · <a style="color:#22d3bf" href="opmatchreg:ransac_fundamental">ransac_fundamental</a> · <a style="color:#22d3bf" href="opmatchreg:registration_to_flow2d">registration_to_flow2d</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">intensityreg</code>)</h3>
+<p><a style="color:#22d3bf" href="opmatchreg:register_ecc">register_ecc</a> · <a style="color:#22d3bf" href="opmatchreg:register_mi">register_mi</a> · <a style="color:#22d3bf" href="opmatchreg:register_ffd">register_ffd</a> · <a style="color:#22d3bf" href="opmatchreg:registration_to_flow2d">registration_to_flow2d</a> · <a style="color:#22d3bf" href="opmatchreg:register_capture_range">register_capture_range</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: intensityreg.py — MATCHREG 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -29,7 +29,7 @@ The same operator system also includes operators that computationally reproduce 
 
 At the core of Fullseye is a design in which visual editing, code generation, execution, evaluation, and AI assistance share a system of operators (ops) with mathematical specifications and typed interfaces. GUI nodes, operations called by generated code, and processing candidates selected by AI are all handled under a common specification. This makes it possible to associate the intent at editing time with the processing at execution time and the evidence used in evaluation.
 
-More than 3,600 operators are currently registered (3,623 as of November 2026). Priority areas include preprocessing, feature and contour extraction, geometric model fitting, calibration, and coordinate transformation. We envisage a platform on which the same processing can be constructed and inspected through both visual editing and code editing.
+More than 3,600 operators are currently registered (3,752 as of November 2026). Priority areas include preprocessing, feature and contour extraction, geometric model fitting, calibration, and coordinate transformation. We envisage a platform on which the same processing can be constructed and inspected through both visual editing and code editing.
 
 | Key requirement | Design approach |
 |---|---|

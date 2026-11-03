@@ -135,6 +135,9 @@ _CATALOG = {
         # 縞間隔 lambda*D/d を**測り返す**側。作った op と測る op を分けないと
         # 「使った式で答え合わせ」になる。
         ("wave_fringe_period", "mathops", ["image2d"], "measurement"),
+        # 2-D の最強の周期を向きつきで(2026-11-03)。縞・網点・格子・テクスチャの周期と向きを
+        # 1 つの表で。wave_fringe_period は 1 軸の周期だけで向きが無い(recipebook book_2d の MISSING_OPS)。
+        ("wave_dominant_frequency", "mathops", ["image2d"], "table"),
         ("wave_grating_orders", "mathops", [], "table"),
     ],
     # ★力学系(2026-09-23)。真値は公表値か閉形式だけ: 線形系は expm(At)x0 が

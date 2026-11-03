@@ -113,6 +113,15 @@ def _own_border(fn, v, r, mode):
     return y[r:y.shape[0] - r, r:y.shape[1] - r]
 
 
+def _gauss_radius(sigma: float) -> int:
+    """ガウシアンの窓の半径。scipy の ``gaussian_filter`` の既定(truncate=4.0)と同じ ``int(4σ + 0.5)``。
+
+    2026-11-03 まで ``xkor_gaussian`` / ``xkor_unsharp`` は 5x5 固定で、σ > 0.5 が窓で打ち切られていた
+    (``tools/impl_differential.py`` が core の ``gaussian`` と突き合わせて見つけた)。
+    """
+    return max(1, int(4.0 * float(sigma) + 0.5))
+
+
 def _zero_border(fn, v, ksize):
     """``fn`` を **外側 0 埋め** の境界で呼ぶ(kornia 0.8 の median / motion の規約)。
 
@@ -216,14 +225,27 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
 
     def _gauss(v, a, b):
         """ガウシアンぼかし（kornia の GPU ネイティブ実装）。torch テンソル上で
-        ``kornia.filters.gaussian_blur2d`` を 5x5 カーネル・シグマ可変で掛ける。
+        ``kornia.filters.gaussian_blur2d`` を、σ に合わせた窓で掛ける。
 
-        a はシグマを 0.3〜3.0 の範囲で振る（``0.3 + 2.7 * a``）。b は未使用。
+        a はシグマを 0.3〜3.0 の範囲で振る（``0.3 + 2.7 * a``、core の ``gaussian`` /
+        ``cv_gaussian`` と同じ写し方）。b は未使用。窓の半径は ``int(4σ + 0.5)``
+        (scipy の ``gaussian_filter`` の既定 truncate=4.0 と同じ)、端は端画素を複製して
+        折り返す(scipy の ``reflect`` = numpy の ``symmetric``、core の ``gaussian`` の
+        ``b <= 0.5`` と同じ)。core の ``gaussian(v, a, 0.5)`` と float32 の丸め(〜1e-7)で一致する
+        (``tools/impl_differential.py``、``tests/test_impl_differential.py``)。
+
+        ★2026-11-03 の修正(値が変わる): それまでは窓が **5x5 固定**で、σ = 1.65(a = 0.5)
+        でも半径 2 = 1.2σ で打ち切られ、σ を上げてもぼけが 5x5 の箱に近づくだけだった
+        (core の ``gaussian`` との内部差は a = 0.5 で振れ幅の 9 %、a = 0.75 で 28 %)。
         CPU 実行では scipy 版と比べて速くはならない（GPU・バッチ実行時に効く
         実装。``IMGEVOLVE_KORNIA_DEVICE=cuda`` で GPU に乗る）。
         """
         s = 0.3 + 2.7 * a
-        return _np(_m()["KF"].gaussian_blur2d(_t(v), (5, 5), (s, s)))
+        r = _gauss_radius(s)
+        k = 2 * r + 1
+        # float32 の重み和の丸めで 1 をわずかに超える(定数 1 の画像で 1 + 1.2e-7)ので、[0,1] 契約へ clip
+        return np.clip(_own_border(lambda x: _m()["KF"].gaussian_blur2d(x, (k, k), (s, s)),
+                                   v, r, "symmetric"), 0, 1)
 
     def _bilateral(v, a, b):
         """バイラテラルフィルタ（エッジ保存平滑化）。``kornia.filters.bilateral_blur``
@@ -248,15 +270,24 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
         return _zero_border(lambda x: _m()["KF"].median_blur(x, (k, k)), v, k)
 
     def _unsharp(v, a, b):
-        """アンシャープマスク（鮮鋭化）。``kornia.filters.unsharp_mask`` を 5x5
-        カーネルで呼ぶ。
+        """アンシャープマスク（鮮鋭化）。``kornia.filters.unsharp_mask`` を、σ に
+        合わせた窓で呼ぶ(``v + (v - G_σ * v)``、強さは 1 倍固定)。
 
-        **a は未使用**、b がぼかしのシグマ（``0.5 + 2.0 * b``、範囲 0.5〜2.5）を
+        **``a`` は未使用**、b がぼかしのシグマ（``0.5 + 2.0 * b``、範囲 0.5〜2.5）を
         振る。元画像から低周波成分（ぼかし版）を引いた差分を強調して足し戻す
-        古典的な鮮鋭化。
+        古典的な鮮鋭化。窓の半径は ``int(4σ + 0.5)``、端は端画素を複製して折り返す
+        (``xkor_gaussian`` と同じ)。core の ``unsharp`` とは**つまみの意味が違う**:
+        core は ``a`` が強さ(``1.5a`` 倍)、``b`` が σ = ``0.5 + 1.5b``。core の
+        ``unsharp(v, 2/3, (s - 0.5)/1.5)`` と、この op の ``b = (s - 0.5)/2`` が同じ処理になる。
+
+        ★2026-11-03 の修正(値が変わる): それまでは窓が **5x5 固定**で、σ = 1.5(b = 0.5)でも
+        半径 2 で打ち切られていた(``xkor_gaussian`` と同じ欠陥)。
         """
         s = 0.5 + 2.0 * b
-        return np.clip(_np(_m()["KF"].unsharp_mask(_t(v), (5, 5), (s, s))), 0, 1)
+        r = _gauss_radius(s)
+        k = 2 * r + 1
+        return np.clip(_own_border(lambda x: _m()["KF"].unsharp_mask(x, (k, k), (s, s)),
+                                   v, r, "symmetric"), 0, 1)
 
     def _motion(v, a, b):
         """モーションブラー。``kornia.filters.motion_blur`` を呼ぶ。

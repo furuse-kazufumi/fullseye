@@ -1,4 +1,4 @@
-# CALIB operator help — 21 ops in 5 categories
+# CALIB operator help — 29 ops in 7 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/calib/<category>/<op>.md` を走査。
 
@@ -8,9 +8,17 @@
 
 ## カテゴリ
 
-### calibrate (3)
+### calib_truth (3)
 
-[camera_calibration](calibrate/camera_calibration.md) · [find_marks_and_pose](calibrate/find_marks_and_pose.md) · [hand_eye_calibration](calibrate/hand_eye_calibration.md)
+[calibration_error_map](calib_truth/calibration_error_map.md) · [calibration_next_pose](calib_truth/calibration_next_pose.md) · [calibration_uncertainty_map](calib_truth/calibration_uncertainty_map.md)
+
+### calibrate (5)
+
+[camera_calibration](calibrate/camera_calibration.md) · [camera_calibration_lm](calibrate/camera_calibration_lm.md) · [find_marks_and_pose](calibrate/find_marks_and_pose.md) · [hand_eye_calibration](calibrate/hand_eye_calibration.md) · [stereo_calibration_lm](calibrate/stereo_calibration_lm.md)
+
+### checkerboard (3)
+
+[checkerboard_points](checkerboard/checkerboard_points.md) · [find_checkerboard_corners](checkerboard/find_checkerboard_corners.md) · [sim_checkerboard](checkerboard/sim_checkerboard.md)
 
 ### fit (4)
 

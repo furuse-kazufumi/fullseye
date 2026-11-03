@@ -1,0 +1,32 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">jones_state — REPRCONV <code style="color:#22d3bf">entry</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">jones</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.jones_state(azimuth_deg=0.0, ellipticity_deg=0.0, amplitude=1.0)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import reprconv; reprconv.jones_state(azimuth_deg=0.0, ellipticity_deg=0.0, amplitude=1.0)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsreprconv.get(&quot;jones_state&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
+<p>편광 방위와 타원율 → Jones 벡터 <code style="color:#22d3bf">jones</code> (Ex, Ey). <code style="color:#22d3bf">jones</code> 형의 입구.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>方位角 ψ = <code style="color:#22d3bf">azimuth_deg</code>、楕円率角 χ = <code style="color:#22d3bf">ellipticity_deg</code>(|χ| &lt;= 45 度)で</p>
+<p>E = A · [cos ψ cos χ + i sin ψ sin χ,  sin ψ cos χ − i cos ψ sin χ]</p>
+<p>を返す。<code style="color:#22d3bf">optics.stokes_from_jones</code> の約束(S3 = 2 Im(Ex·conj(Ey)))のもとで <b>Stokes が (A², A² cos2χ cos2ψ, A² cos2χ sin2ψ, A² sin2χ) になる</b>ように符号を選んである(χ = 0 で直線偏光、χ = +45 度で S3 &gt; 0 の円偏光 = <code style="color:#22d3bf">[1, -i]/√2</code>)。<code style="color:#22d3bf">jones_apply</code> に通す入射光の状態として使う。それまで Jones ベクトルを作る op が無く、<code style="color:#22d3bf">jones_apply</code> の第 2 入力と <code style="color:#22d3bf">stokes_from_jones</code> に何も渡せなかった。</p>
+<p>Args:</p>
+<p>azimuth_deg: 偏光楕円の長軸の向き [度] (+x から +y へ)。有限。</p>
+<p>ellipticity_deg: 楕円率角 [度]、[-45, 45]。</p>
+<p>amplitude: 振幅 A(&gt;= 0、有限)。強度は A²。</p>
+<p>Returns:</p>
+<p>(2,) complex128。</p>
+<p>Raises:</p>
+<p>ValueError: 非有限 / ellipticity が [-45, 45] の外 / amplitude &lt; 0。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
+<p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
+<p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
+<p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:type_connectivity_tour">type_connectivity_tour</a> — <code style="color:#22d3bf">py -3.11 examples/type_connectivity_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">jones</code> 를 입력으로 받는 것)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">entry</code>)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:indices_to_positions">indices_to_positions</a> · <a style="color:#22d3bf" href="opreprconv:synapse_table_from_table">synapse_table_from_table</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: reprconv.py — REPRCONV 연산자 레지스트리. 이 op 노트는 <code style="color:#22d3bf">tools/opdocs.py md</code> 가 자동 생성합니다(직접 편집하지 마세요).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

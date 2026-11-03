@@ -4,13 +4,13 @@
 
 > One wing of **[A Metrology Museum on Paper — the entrance](https://qiita.com/furuse-kazufumi/items/8a8f23e53b19ee8cdc10)**, where the other wings, the glossary and the thesis live.
 
-**135 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
+**141 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
 
 > The "Ops used" line under each exhibit links to that op's note (type contract, pitfalls, figures, a runnable Studio program): [Operator catalogue](https://furuse.work/OP_CATALOG.html) / [Op notes index](https://furuse.work/ops/INDEX.html).
 
 ### The Industrial Inspection Wing — A Passing Number and a Failing Number Can Coexist
 
-Numbers on an inspection line decide pass or fail, so there is a strong pull toward collapsing them into a single figure. The 42 exhibits in this room show what disappears the moment you do: a pooled ROC that hides one defect class's blind spot in woven fabric, veiling glare that leaves the MTF passing while the black level fails, a barcode decoder that looks better by read rate alone because it never says 'unreadable'.
+Numbers on an inspection line decide pass or fail, so there is a strong pull toward collapsing them into a single figure. The 46 exhibits in this room show what disappears the moment you do: a pooled ROC that hides one defect class's blind spot in woven fabric, veiling glare that leaves the MTF passing while the black level fails, a barcode decoder that looks better by read rate alone because it never says 'unreadable'.
 
 Every ground truth is planted: a closed-form periodic background, the laser-profile h(x), the analytic 1-D heat-conduction solution, closed-form bearing defect frequencies. That is what lets each exhibit measure 'where detection stops working' instead of 'detection worked', without fitting the threshold afterwards.
 
@@ -852,7 +852,7 @@ Source: [examples/poc_weld_bead_profile.py](https://github.com/furuse-kazufumi/f
 
 This run produced **4 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_weld_bead_profile)
 
-Ops used (notes): [`gen_measure_rectangle2`](https://furuse.work/ops/measure1d/caliper/gen_measure_rectangle2.html) · [`measure_pos`](https://furuse.work/ops/measure1d/caliper/measure_pos.html) · [`median`](https://furuse.work/ops/2d/rank/median.html) · [`smooth_funct_1d_mean`](https://furuse.work/ops/oned/function/smooth_funct_1d_mean.html)
+Ops used (notes): [`gen_measure_rectangle2`](https://furuse.work/ops/measure1d/caliper/gen_measure_rectangle2.html) · [`laser_line_center_centroid`](https://furuse.work/ops/optics/light_section/laser_line_center_centroid.html) · [`measure_pos`](https://furuse.work/ops/measure1d/caliper/measure_pos.html) · [`median`](https://furuse.work/ops/2d/rank/median.html) · [`smooth_funct_1d_mean`](https://furuse.work/ops/oned/function/smooth_funct_1d_mean.html)
 
 ## No.2026.115 —— Light-section scanning of a weld bead — resolution and occlusion share one knob
 
@@ -1402,11 +1402,105 @@ This run produced **3 figures** in total - [see them all](https://github.com/fur
 
 Ops used (notes): [`axes_transform`](https://furuse.work/ops/annotate/plot/axes_transform.html) · [`ptile_threshold`](https://furuse.work/ops/2d/segmentation/ptile_threshold.html) · [`sigma_threshold`](https://furuse.work/ops/2d/segmentation/sigma_threshold.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html)
 
+## No.2026.292 —— No Single Exposure Shows Both Scratches on Glossy Metal; HDR with a Measured Response Does
+
+A scene with a 299 photons/ms background and a specular band peaking at 313755 photons/ms (a ratio of 1049) is captured by an EMVA 1288 sensor (η 0.6, K 0.1 DN/e⁻, 8 e⁻ dark noise, 8 bits, γ 2.2) at six exposures in steps of four. No single exposure shows both −20 % scratches at CNR ≥ 3; the best background-scratch CNR is 2.93. The Debevec and Robertson responses differ from the true inverse response by 0.115 and 0.072 rms in ln, and the radiance, after fitting one scale factor, has median errors of 11.8 and 9.5 %. HDR with a characterised response and exposure-time weights reaches CNR 4.96 and 3.86, better than any single frame. With hat weights the background scratch drops to 3.54, and with a self-calibrated Debevec response to 2.11, so for inspection the response should be measured per EMVA. Mertens exposure fusion gives 3.31 and 3.92. The simulated dynamic range is 48.6 dB for one frame (closed form 48.4) and 103.6 dB for six (103.6); the 62.5 dB the scene needs is beyond one frame. The scene is a radiance map drawn directly, not rendered from a BRDF.
+
+[![No Single Exposure Shows Both Scratches on Glossy Metal; HDR with a Measured Response Does](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_hdr_glossy_metal_inspection/02_results_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_hdr_glossy_metal_inspection/02_results.png)
+
+*↑ **No Single Exposure Shows Both Scratches on Glossy Metal; HDR with a Measured Response Does** ―― A scene with a 299 photons/ms background and a specular band peaking at 313755 photons/ms (a ratio of 1049) is captured by an EMVA 1288 sensor (η 0.6, K 0.1 DN/e⁻, 8 e⁻ dark noise, 8 bits, γ 2.2) at six exposures in steps of four. No single exposure shows both −20 % scratches at CNR ≥ 3; the best background-scratch CNR is 2.93. The Debevec and Robertson responses differ from the true inverse response by 0.115 and 0.072 rms in ln, and the radiance, after fitting one scale factor, has median errors of 11.8 and 9.5 %. HDR with a characterised response and exposure-time weights reaches CNR 4.96 and 3.86, better than any single frame. With hat weights the background scratch drops to 3.54, and with a self-calibrated Debevec response to 2.11, so for inspection the response should be measured per EMVA. Mertens exposure fusion gives 3.31 and 3.92. The simulated dynamic range is 48.6 dB for one frame (closed form 48.4) and 103.6 dB for six (103.6); the 62.5 dB the scene needs is beyond one frame. The scene is a radiance map drawn directly, not rendered from a BRDF.*
+
+Terms: EMVA 1288 — A standard measurement procedure and set of quantities for sensitivity, noise, saturation, and non-uniformity of machine-vision image sensors.
+
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_hdr_glossy_metal_inspection/01_exposures_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_hdr_glossy_metal_inspection/01_exposures.png)
+
+*↑ The measurement (figure labels are in Japanese; the numbers are the same)*
+
+[![図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_hdr_glossy_metal_inspection/03_response_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_hdr_glossy_metal_inspection/03_response.png)
+
+*↑ この回の図*
+
+```
+py -3.11 examples/poc_hdr_glossy_metal_inspection.py
+```
+
+Source: [examples/poc_hdr_glossy_metal_inspection.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_hdr_glossy_metal_inspection.py)
+
+This run produced **3 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_hdr_glossy_metal_inspection)
+
+Ops used (notes): [`camera_response_debevec`](https://furuse.work/ops/optics/hdr/camera_response_debevec.html) · [`camera_response_linear`](https://furuse.work/ops/optics/hdr/camera_response_linear.html) · [`camera_response_robertson`](https://furuse.work/ops/optics/hdr/camera_response_robertson.html) · [`exposure_fusion_mertens`](https://furuse.work/ops/optics/hdr/exposure_fusion_mertens.html) · [`hdr_dynamic_range`](https://furuse.work/ops/optics/hdr/hdr_dynamic_range.html) · [`hdr_exposure_series_simulate`](https://furuse.work/ops/optics/hdr/hdr_exposure_series_simulate.html) · [`hdr_merge`](https://furuse.work/ops/optics/hdr/hdr_merge.html) · [`hdr_radiance_error`](https://furuse.work/ops/optics/hdr/hdr_radiance_error.html) · [`tonemap_reinhard`](https://furuse.work/ops/3d/render/tonemap_reinhard.html)
+
+## No.2026.296 —— A Barcode Still Read 90 % of the Time at This Blur Grades F for Print Quality
+
+EAN-13, ITF-14 and GS1-128 symbols for packaging are synthesised, imaged at arbitrary angles and read back 8/8 each, and the independent zxing-cpp returns the same strings. Print-quality grades follow the closed form: ink at 0.15 on corrugated board at 0.45 gives SC = 0.300 and grade D, and flexo spread of +0.25 X cuts EAN decodability to 0.512 (grade B) while GS1-128 stays A. The defocus POD for EAN-13 is d90 6.51 px, conservative d90/95 6.43 px and 0 misreads in 266 for Fullseye's reader, and d90 5.13 px with 2 misreads in 120 for zxing-cpp. A symbol captured at the d90 blur (a blur circle 2.2 modules across) grades F with modulation 0.103, so being readable and having a quality margin are separate questions. Re-imaging 1000 symbols around d90 matches the fitted POD curve within 1.6σ at most. The first gate written, re-imaging at d90 reads 0.9, failed at 0.791 because the point estimate was optimistic, so d90/95 is the figure to use.
+
+[![A Barcode Still Read 90 % of the Time at This Blur Grades F for Print Quality](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symbol_package_1d/01_ean13_defocus_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symbol_package_1d/01_ean13_defocus.png)
+
+*↑ **A Barcode Still Read 90 % of the Time at This Blur Grades F for Print Quality** ―― EAN-13, ITF-14 and GS1-128 symbols for packaging are synthesised, imaged at arbitrary angles and read back 8/8 each, and the independent zxing-cpp returns the same strings. Print-quality grades follow the closed form: ink at 0.15 on corrugated board at 0.45 gives SC = 0.300 and grade D, and flexo spread of +0.25 X cuts EAN decodability to 0.512 (grade B) while GS1-128 stays A. The defocus POD for EAN-13 is d90 6.51 px, conservative d90/95 6.43 px and 0 misreads in 266 for Fullseye's reader, and d90 5.13 px with 2 misreads in 120 for zxing-cpp. A symbol captured at the d90 blur (a blur circle 2.2 modules across) grades F with modulation 0.103, so being readable and having a quality margin are separate questions. Re-imaging 1000 symbols around d90 matches the fitted POD curve within 1.6σ at most. The first gate written, re-imaging at d90 reads 0.9, failed at 0.791 because the point estimate was optimistic, so d90/95 is the figure to use.*
+
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symbol_package_1d/02_ean13_pod_levels_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symbol_package_1d/02_ean13_pod_levels.png)
+
+*↑ The measurement (figure labels are in Japanese; the numbers are the same)*
+
+```
+py -3.11 examples/poc_symbol_package_1d.py
+```
+
+Source: [examples/poc_symbol_package_1d.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_symbol_package_1d.py)
+
+This run produced **2 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_symbol_package_1d)
+
+Ops used (notes): [`barcode_scan_profiles`](https://furuse.work/ops/symbol/barcode1d/barcode_scan_profiles.html) · [`capture_degrade`](https://furuse.work/ops/symbol/symbol_capture/capture_degrade.html) · [`decode_barcode_profile`](https://furuse.work/ops/symbol/barcode1d/decode_barcode_profile.html) · [`ean_check_digit`](https://furuse.work/ops/symbol/barcode1d/ean_check_digit.html) · [`encode_barcode1d`](https://furuse.work/ops/symbol/barcode1d/encode_barcode1d.html) · [`grade_barcode1d`](https://furuse.work/ops/symbol/print_quality/grade_barcode1d.html) · [`grade_barcode_profile`](https://furuse.work/ops/symbol/print_quality/grade_barcode_profile.html) · [`read_barcode1d`](https://furuse.work/ops/symbol/barcode1d/read_barcode1d.html) · [`read_symbols_zxing`](https://furuse.work/ops/symbol/symbol_bridge/read_symbols_zxing.html) · [`render_symbol`](https://furuse.work/ops/symbol/symbol_capture/render_symbol.html) · [`symbol_read`](https://furuse.work/ops/symbol/read_pod/symbol_read.html) · [`symbol_read_pod`](https://furuse.work/ops/symbol/read_pod/symbol_read_pod.html) · [`symbol_read_trials`](https://furuse.work/ops/symbol/read_pod/symbol_read_trials.html)
+
+## No.2026.297 —— zxing-cpp Reads a Dot-Peen Data Matrix Only Once It Is Blurred
+
+A dot-peen Data Matrix (16x16) on a metal part and a QR code (1-M) on a label are synthesised. Imaged at arbitrary rotations, Fullseye reads the marked DM 6/6 and the QR 6/6, and reads a crisp dot-peen mark in all 24 directions. zxing-cpp reads the QR and a square-module DM 24/24 but the dot-peen mark 0/24. Print-quality grades follow the closed forms: mark contrast SC = 0.65 − 0.30 = 0.35 gives D with a 0.4 X aperture (0.317 at 0.8 X, where the dot edge enters the aperture), a 15° tilt gives AN 0.0350 (closed form 0.0347), 24° gives 0.0904 (0.0904), and four damaged codewords give UEC 0.333 (0.333). For the square-module mark, d90 is 5.89 px for Fullseye and 5.78 px for zxing-cpp, a ratio of 0.981. For the dot-peen mark, zxing-cpp's read rate rises with blur, 0.14 at 2.0 px and 1.0 at 4.0 px; this breaks the monotonicity a POD assumes, and the op raises monotone = False. On a dim line (4000 e full well), the smallest readable contrast is c90/95 = 0.156.
+
+[![zxing-cpp Reads a Dot-Peen Data Matrix Only Once It Is Blurred](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symbol_part_dpm/01_dpm_datamatrix_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symbol_part_dpm/01_dpm_datamatrix.png)
+
+*↑ **zxing-cpp Reads a Dot-Peen Data Matrix Only Once It Is Blurred** ―― A dot-peen Data Matrix (16x16) on a metal part and a QR code (1-M) on a label are synthesised. Imaged at arbitrary rotations, Fullseye reads the marked DM 6/6 and the QR 6/6, and reads a crisp dot-peen mark in all 24 directions. zxing-cpp reads the QR and a square-module DM 24/24 but the dot-peen mark 0/24. Print-quality grades follow the closed forms: mark contrast SC = 0.65 − 0.30 = 0.35 gives D with a 0.4 X aperture (0.317 at 0.8 X, where the dot edge enters the aperture), a 15° tilt gives AN 0.0350 (closed form 0.0347), 24° gives 0.0904 (0.0904), and four damaged codewords give UEC 0.333 (0.333). For the square-module mark, d90 is 5.89 px for Fullseye and 5.78 px for zxing-cpp, a ratio of 0.981. For the dot-peen mark, zxing-cpp's read rate rises with blur, 0.14 at 2.0 px and 1.0 at 4.0 px; this breaks the monotonicity a POD assumes, and the op raises monotone = False. On a dim line (4000 e full well), the smallest readable contrast is c90/95 = 0.156.*
+
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symbol_part_dpm/02_dpm_pod_levels_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symbol_part_dpm/02_dpm_pod_levels.png)
+
+*↑ The measurement (figure labels are in Japanese; the numbers are the same)*
+
+```
+py -3.11 examples/poc_symbol_part_dpm.py
+```
+
+Source: [examples/poc_symbol_part_dpm.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_symbol_part_dpm.py)
+
+This run produced **2 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_symbol_part_dpm)
+
+Ops used (notes): [`capture_degrade`](https://furuse.work/ops/symbol/symbol_capture/capture_degrade.html) · [`dm_decode_modules`](https://furuse.work/ops/symbol/datacode2d/dm_decode_modules.html) · [`dm_encode`](https://furuse.work/ops/symbol/datacode2d/dm_encode.html) · [`dm_locate`](https://furuse.work/ops/symbol/datacode2d/dm_locate.html) · [`dm_read`](https://furuse.work/ops/symbol/datacode2d/dm_read.html) · [`dm_sample`](https://furuse.work/ops/symbol/datacode2d/dm_sample.html) · [`grade_datacode2d`](https://furuse.work/ops/symbol/print_quality/grade_datacode2d.html) · [`qr_decode_modules`](https://furuse.work/ops/symbol/datacode2d/qr_decode_modules.html) · [`qr_encode`](https://furuse.work/ops/symbol/datacode2d/qr_encode.html) · [`qr_locate`](https://furuse.work/ops/symbol/datacode2d/qr_locate.html) · [`qr_read`](https://furuse.work/ops/symbol/datacode2d/qr_read.html) · [`qr_sample`](https://furuse.work/ops/symbol/datacode2d/qr_sample.html) · [`read_symbols_zxing`](https://furuse.work/ops/symbol/symbol_bridge/read_symbols_zxing.html) · [`render_symbol`](https://furuse.work/ops/symbol/symbol_capture/render_symbol.html) · [`symbol_read_pod`](https://furuse.work/ops/symbol/read_pod/symbol_read_pod.html) · [`symbol_read_trials`](https://furuse.work/ops/symbol/read_pod/symbol_read_trials.html)
+
+## No.2026.298 —— Past the Blur It Was Trained On, Lot-Number OCR Misreads Instead of Rejecting
+
+Five-by-seven dot lot numbers and expiry dates printed by continuous inkjet, and stroke characters printed by thermal transfer, are synthesised and read with classical OCR: k-nearest neighbours on 88 zone-density and projection features, with a rejection threshold set from the training distribution. The character set has 40 symbols and there are 3840 training samples per font. Clean prints are read in full in both fonts, with segmentation boxes at IoU 1.00 against the truth. An out-of-set '#' becomes '?' instead of turning into another character. The legibility POD for a 13-character line is d90 10.70 px and d90/95 10.40 px for dots, and d90 11.62 px for strokes (character height 24 px); the character-height h90 is 9.61 px. Misreads are counted separately: none up to the d90 blur, 18 misread lines against 2 read correctly at a 12.67 px blur, and 6 of 6 lines misread at 16.0 px. A misread lot number points a recall at the wrong batch, so the read rate and the misread rate are not merged into one number.
+
+[![Past the Blur It Was Trained On, Lot-Number OCR Misreads Instead of Rejecting](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symbol_lot_ocr/01_lot_ocr_defocus_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symbol_lot_ocr/01_lot_ocr_defocus.png)
+
+*↑ **Past the Blur It Was Trained On, Lot-Number OCR Misreads Instead of Rejecting** ―― Five-by-seven dot lot numbers and expiry dates printed by continuous inkjet, and stroke characters printed by thermal transfer, are synthesised and read with classical OCR: k-nearest neighbours on 88 zone-density and projection features, with a rejection threshold set from the training distribution. The character set has 40 symbols and there are 3840 training samples per font. Clean prints are read in full in both fonts, with segmentation boxes at IoU 1.00 against the truth. An out-of-set '#' becomes '?' instead of turning into another character. The legibility POD for a 13-character line is d90 10.70 px and d90/95 10.40 px for dots, and d90 11.62 px for strokes (character height 24 px); the character-height h90 is 9.61 px. Misreads are counted separately: none up to the d90 blur, 18 misread lines against 2 read correctly at a 12.67 px blur, and 6 of 6 lines misread at 16.0 px. A misread lot number points a recall at the wrong batch, so the read rate and the misread rate are not merged into one number.*
+
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symbol_lot_ocr/02_lot_ocr_levels_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symbol_lot_ocr/02_lot_ocr_levels.png)
+
+*↑ The measurement (figure labels are in Japanese; the numbers are the same)*
+
+```
+py -3.11 examples/poc_symbol_lot_ocr.py
+```
+
+Source: [examples/poc_symbol_lot_ocr.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_symbol_lot_ocr.py)
+
+This run produced **2 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_symbol_lot_ocr)
+
+Ops used (notes): [`capture_degrade`](https://furuse.work/ops/symbol/symbol_capture/capture_degrade.html) · [`ocr_classify`](https://furuse.work/ops/symbol/ocr/ocr_classify.html) · [`ocr_features`](https://furuse.work/ops/symbol/ocr/ocr_features.html) · [`ocr_font`](https://furuse.work/ops/symbol/ocr/ocr_font.html) · [`ocr_read_line`](https://furuse.work/ops/symbol/ocr/ocr_read_line.html) · [`ocr_read_trials`](https://furuse.work/ops/symbol/ocr/ocr_read_trials.html) · [`ocr_render_text`](https://furuse.work/ops/symbol/ocr/ocr_render_text.html) · [`ocr_score`](https://furuse.work/ops/symbol/ocr/ocr_score.html) · [`ocr_segment_line`](https://furuse.work/ops/symbol/ocr/ocr_segment_line.html) · [`ocr_train`](https://furuse.work/ops/symbol/ocr/ocr_train.html) · [`symbol_read_pod`](https://furuse.work/ops/symbol/read_pod/symbol_read_pod.html)
+
 ### The Dimensional and Shape Metrology Wing — Keep Bias and Scatter Apart
 
 To state that a part is 50.50 pixels wide, you need bias (the part that always shifts the same way) and scatter (the part that changes from shot to shot) as two separate numbers. Pass/fail is decided by bias; repeatability by scatter. Merge them into one 'error' and you no longer know which countermeasure to take.
 
-The 45 exhibits here hold their ground truth in closed form or analytic rendering — a signed-distance-function part, an involute gear, a roughness surface synthesised from a prescribed PSD, a white-light interferometry stack, analytic speckle, Frocht's stress field, a perfectly symmetric synthetic skull — and then score caliper, correlation and phase readings against it.
+The 47 exhibits here hold their ground truth in closed form or analytic rendering — a signed-distance-function part, an involute gear, a roughness surface synthesised from a prescribed PSD, a white-light interferometry stack, analytic speckle, Frocht's stress field, a perfectly symmetric synthetic skull — and then score caliper, correlation and phase readings against it.
 
 The recurring finding is that a number without its definition cannot be compared: crack widths that differ by 0.20 mm between two distance-transform conventions, a D50 that differs by 1.66x between number- and area-weighting, an Sz that never plateaus as the evaluation area grows, an orientation index that moves 5 % depending on whether the truth is counted by fibre or by length. These are not instrument errors; they are questions of what you are comparing against.
 
@@ -3109,6 +3203,70 @@ Source: [examples/poc_lockin_imaging.py](https://github.com/furuse-kazufumi/full
 This run produced **5 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_lockin_imaging)
 
 Ops used (notes): [`lockin_amplitude`](https://furuse.work/ops/optics/lockin/lockin_amplitude.html) · [`lockin_demodulate`](https://furuse.work/ops/optics/lockin/lockin_demodulate.html) · [`lockin_noise_floor`](https://furuse.work/ops/optics/lockin/lockin_noise_floor.html) · [`lockin_phase`](https://furuse.work/ops/optics/lockin/lockin_phase.html) · [`lockin_ring_normals`](https://furuse.work/ops/optics/lockin/lockin_ring_normals.html) · [`lockin_ring_synthesize`](https://furuse.work/ops/optics/lockin/lockin_ring_synthesize.html) · [`lockin_separate`](https://furuse.work/ops/optics/lockin/lockin_separate.html) · [`lockin_thermal_wave`](https://furuse.work/ops/optics/lockin/lockin_thermal_wave.html) · [`lockin_walsh_codes`](https://furuse.work/ops/optics/lockin/lockin_walsh_codes.html)
+
+## No.2026.289 —— Acceptance-Test an Optical 3-D Sensor Before Buying It: One Black Sphere Fails the Same iToF
+
+Following the idea of VDI/VDE 2634 Part 2, one probing sphere, a ball bar in seven positions and a flat in seven positions are imaged by three sensor designs, and PF, PS, SD and F are computed with the same evaluation ops used on real point clouds. A sensor with no noise and no error gives every quantity below 1e-6 mm, and a range scale of 1.0005 gives SD = 0.1572 mm = (s−1)L, as the closed form says. Against an illustrative MPE (PF 3, PS 1, SD 0.5, F 3 mm), triangulation passes with PF 1.505 mm and a 50 MHz iToF passes on white artefacts with PF 1.996 mm, but the same iToF fails on a matte black sphere of reflectance 0.1 with PF 5.941 mm, 1.98 times the MPE. The sphere residual grows from 0.297 to 0.934 mm, a factor of 3.15 that matches the shot-noise factor √10 = 3.16. In the error budget only the black sphere exceeds the MPE on its own. The SD contributions are −0.308 mm for fx/fy +0.1 %, +0.385 mm for 2 % multipath and +0.157 mm for range scale +0.05 %; together they partly cancel to +0.181 mm, so a one-at-a-time ranking does not add up. The standard's text is not reproduced; the evaluation follows its idea.
+
+[![Acceptance-Test an Optical 3-D Sensor Before Buying It: One Black Sphere Fails the Same iToF](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_virtual_acceptance_3d/01_acceptance_layout_and_noise_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_virtual_acceptance_3d/01_acceptance_layout_and_noise.png)
+
+*↑ **Acceptance-Test an Optical 3-D Sensor Before Buying It: One Black Sphere Fails the Same iToF** ―― Following the idea of VDI/VDE 2634 Part 2, one probing sphere, a ball bar in seven positions and a flat in seven positions are imaged by three sensor designs, and PF, PS, SD and F are computed with the same evaluation ops used on real point clouds. A sensor with no noise and no error gives every quantity below 1e-6 mm, and a range scale of 1.0005 gives SD = 0.1572 mm = (s−1)L, as the closed form says. Against an illustrative MPE (PF 3, PS 1, SD 0.5, F 3 mm), triangulation passes with PF 1.505 mm and a 50 MHz iToF passes on white artefacts with PF 1.996 mm, but the same iToF fails on a matte black sphere of reflectance 0.1 with PF 5.941 mm, 1.98 times the MPE. The sphere residual grows from 0.297 to 0.934 mm, a factor of 3.15 that matches the shot-noise factor √10 = 3.16. In the error budget only the black sphere exceeds the MPE on its own. The SD contributions are −0.308 mm for fx/fy +0.1 %, +0.385 mm for 2 % multipath and +0.157 mm for range scale +0.05 %; together they partly cancel to +0.181 mm, so a one-at-a-time ranking does not add up. The standard's text is not reproduced; the evaluation follows its idea.*
+
+[![SD of the three designs at the 7 ball-bar positions; dashed = +-MPE](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_virtual_acceptance_3d/02_acceptance_sd_per_position_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_virtual_acceptance_3d/02_acceptance_sd_per_position.png)
+
+*↑ The measurement ―― SD of the three designs at the 7 ball-bar positions; dashed = +-MPE (figure labels are in Japanese; the numbers are the same)*
+
+[![worst value over positions; MPE is an illustrative spec](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_virtual_acceptance_3d/03_acceptance_designs_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_virtual_acceptance_3d/03_acceptance_designs.png)
+
+*↑ worst value over positions; MPE is an illustrative spec*
+
+[![decisive alone: black sphere (rho 0.1)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_virtual_acceptance_3d/04_acceptance_error_budget_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_virtual_acceptance_3d/04_acceptance_error_budget.png)
+
+*↑ decisive alone: black sphere (rho 0.1)*
+
+```
+py -3.11 examples/poc_virtual_acceptance_3d.py
+```
+
+Source: [examples/poc_virtual_acceptance_3d.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_virtual_acceptance_3d.py)
+
+This run produced **4 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_virtual_acceptance_3d)
+
+Ops used (notes): [`acceptance_error_budget`](https://furuse.work/ops/acceptance/budget/acceptance_error_budget.html) · [`acceptance_layout`](https://furuse.work/ops/acceptance/layout/acceptance_layout.html) · [`acceptance_scan`](https://furuse.work/ops/acceptance/simulate/acceptance_scan.html) · [`virtual_acceptance_test`](https://furuse.work/ops/acceptance/simulate/virtual_acceptance_test.html)
+
+## No.2026.291 —— Light-Section Heights Agree to Microns, but the Real Limit Is a 20.7 µm Speckle Floor
+
+A light plane is fitted to 912 stripe points on 0, 3 and 6 mm gauge blocks with a normal-angle error of 0.00196°. A calibration at a single height is refused; noisy points had slipped past the singular-value check, so a gate was added during the PoC. Scanning a 2.00 mm step and a 1.20 ± 0.10 mm weld bead over 40 frames, the windowed centroid, Gaussian and Steger centres are biased by 0.1–2.0 µm on the step and 0.5–11 µm on the bead, while an unwindowed whole-column centroid is off by −0.666 mm at 1 % noise. The speckle floor is 18.06 µm from a coherent-imaging simulation and 20.69 µm from the Dorsch et al. closed form (ratio 0.873); it falls with aperture at slope −0.988 (closed form −1) and with N independent patterns at slope −0.499 (closed form −0.5). The GUM budget gives u_c = 20.82 µm and U = 40.81 µm (k = 1.96), dominated by speckle. The scan images contain no speckle, so on a real rig this floor sets the lower limit of the error.
+
+[![Light-Section Heights Agree to Microns, but the Real Limit Is a 20.7 µm Speckle Floor](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_light_section_step_weld_floor/01_height_map_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_light_section_step_weld_floor/01_height_map.png)
+
+*↑ **Light-Section Heights Agree to Microns, but the Real Limit Is a 20.7 µm Speckle Floor** ―― A light plane is fitted to 912 stripe points on 0, 3 and 6 mm gauge blocks with a normal-angle error of 0.00196°. A calibration at a single height is refused; noisy points had slipped past the singular-value check, so a gate was added during the PoC. Scanning a 2.00 mm step and a 1.20 ± 0.10 mm weld bead over 40 frames, the windowed centroid, Gaussian and Steger centres are biased by 0.1–2.0 µm on the step and 0.5–11 µm on the bead, while an unwindowed whole-column centroid is off by −0.666 mm at 1 % noise. The speckle floor is 18.06 µm from a coherent-imaging simulation and 20.69 µm from the Dorsch et al. closed form (ratio 0.873); it falls with aperture at slope −0.988 (closed form −1) and with N independent patterns at slope −0.499 (closed form −0.5). The GUM budget gives u_c = 20.82 µm and U = 40.81 µm (k = 1.96), dominated by speckle. The scan images contain no speckle, so on a real rig this floor sets the lower limit of the error.*
+
+[![フレーム 0 の光条(加法雑音 1 %)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_light_section_step_weld_floor/02_line_frame0_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_light_section_step_weld_floor/02_line_frame0.png)
+
+*↑ The measurement ―― フレーム 0 の光条(加法雑音 1 %) (figure labels are in Japanese; the numbers are the same)*
+
+[![図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_light_section_step_weld_floor/03_scan_errors_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_light_section_step_weld_floor/03_scan_errors.png)
+
+*↑ この回の図*
+
+[![スペックルの光条(拡大、sin u = 0.04): 重心は粒で揺れる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_light_section_step_weld_floor/04_speckled_line_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_light_section_step_weld_floor/04_speckled_line.png)
+
+*↑ スペックルの光条(拡大、sin u = 0.04): 重心は粒で揺れる*
+
+[![図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_light_section_step_weld_floor/05_floor_vs_aperture_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_light_section_step_weld_floor/05_floor_vs_aperture.png)
+
+*↑ この回の図*
+
+```
+py -3.11 examples/poc_light_section_step_weld_floor.py
+```
+
+Source: [examples/poc_light_section_step_weld_floor.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_light_section_step_weld_floor.py)
+
+This run produced **5 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_light_section_step_weld_floor)
+
+Ops used (notes): [`gum_expanded`](https://furuse.work/ops/spc/uncertainty/gum_expanded.html) · [`laser_line_center_gauss`](https://furuse.work/ops/optics/light_section/laser_line_center_gauss.html) · [`laser_line_center_steger`](https://furuse.work/ops/optics/light_section/laser_line_center_steger.html) · [`laser_line_coherent`](https://furuse.work/ops/optics/coherent/laser_line_coherent.html) · [`light_plane_calibrate`](https://furuse.work/ops/optics/light_section/light_plane_calibrate.html) · [`light_section_floor_sweep`](https://furuse.work/ops/optics/light_section/light_section_floor_sweep.html) · [`light_section_height_map`](https://furuse.work/ops/optics/light_section/light_section_height_map.html) · [`light_section_profile`](https://furuse.work/ops/optics/light_section/light_section_profile.html) · [`light_section_render`](https://furuse.work/ops/optics/light_section/light_section_render.html) · [`light_section_rig`](https://furuse.work/ops/optics/light_section/light_section_rig.html) · [`light_section_scan`](https://furuse.work/ops/optics/light_section/light_section_scan.html) · [`light_section_speckle_floor`](https://furuse.work/ops/optics/light_section/light_section_speckle_floor.html) · [`light_section_targets`](https://furuse.work/ops/optics/light_section/light_section_targets.html) · [`light_section_uncertainty_budget`](https://furuse.work/ops/optics/light_section/light_section_uncertainty_budget.html)
 
 ### The Medical and Biological Wing — The Count Is Right and the Contents Are Wrong
 

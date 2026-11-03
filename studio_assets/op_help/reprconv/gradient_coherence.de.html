@@ -1,0 +1,31 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">gradient_coherence — REPRCONV <code style="color:#22d3bf">derivative</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">gradient</code> → <code style="color:#22d3bf">voxel</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gradient_coherence(gradient, sigma=1.5, eps=1e-12)</code> (die Implementierung direkt: <code style="color:#22d3bf">import reprconv; reprconv.gradient_coherence(gradient, sigma=1.5, eps=1e-12)</code>; aus dem Register: <code style="color:#22d3bf">opsreprconv.get(&quot;gradient_coherence&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>3-D-Gradient → die <b>Flächenhaftigkeit</b> (Kohärenz) des Strukturtensors <code style="color:#22d3bf">voxel</code>, Wertebereich [0, 1].</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>各 voxel で勾配の外積 <code style="color:#22d3bf">g gᵀ</code> をガウス <code style="color:#22d3bf">sigma</code> で平均した構造テンソル <code style="color:#22d3bf">J</code> を作り、固有値 <code style="color:#22d3bf">μ1 ≥ μ2 ≥ μ3 ≥ 0</code> から <code style="color:#22d3bf">(μ1 − μ2) / (μ1 + μ2 + μ3 + eps)</code> を返す(Westin の線形異方性を構造テンソルに当てたもの。Bigün &amp; Granlund 1987、Westin 2002)。近傍の勾配が 1 方向にそろう(層・板・界面)と 1 に近づき、向きがばらばら(等方的なざらつき・塊)だと 0 に近づく。<b>勾配の大きさには依らない</b>(比なので)。平らで勾配の無い所は分母が <code style="color:#22d3bf">eps</code> だけになり 0 を返す。</p>
+<p><code style="color:#22d3bf">gradient</code> 型を一級の入力として受けるので、勾配の出どころ(<code style="color:#22d3bf">gradient3d</code> / <code style="color:#22d3bf">sobel3d</code> / 外部の微分可能レンダラ)を問わない。</p>
+<p>Args:</p>
+<p>gradient: <code style="color:#22d3bf">gradient3d</code> の <code style="color:#22d3bf">(gmag, gvec)</code> か <code style="color:#22d3bf">sobel3d</code> の <code style="color:#22d3bf">(gz, gy, gx)</code>。</p>
+<p>sigma: 構造テンソルを平均するガウスの標準偏差 [voxel]。&gt; 0。</p>
+<p>eps: 分母の下駄(勾配ゼロの所で 0 を返すため)。&gt; 0。</p>
+<p>Returns:</p>
+<p>(D, H, W) float64、[0, 1]。</p>
+<p>Raises:</p>
+<p>ValueError: 形が違う / 非有限 / sigma &lt;= 0 / eps &lt;= 0。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:type_connectivity_tour">type_connectivity_tour</a> — <code style="color:#22d3bf">py -3.11 examples/type_connectivity_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">voxel</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:correlation_score">correlation_score</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">derivative</code>)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:gradient_magnitude">gradient_magnitude</a> · <a style="color:#22d3bf" href="opreprconv:hessian_determinant">hessian_determinant</a> · <a style="color:#22d3bf" href="opreprconv:hessian_vesselness">hessian_vesselness</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: reprconv.py — REPRCONV Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

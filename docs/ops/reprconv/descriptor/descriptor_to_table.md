@@ -45,7 +45,7 @@ Raises:
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 
-—
+[synapse_table_from_table](../entry/synapse_table_from_table.md) · [table_field_image2d](../field/table_field_image2d.md) · [table_field_signal](../field/table_field_signal.md) · [table_field_matrix](../field/table_field_matrix.md) · [table_field_measurement](../field/table_field_measurement.md)
 
 ## 同カテゴリ(`descriptor`)
 

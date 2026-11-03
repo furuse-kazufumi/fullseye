@@ -33,9 +33,43 @@ Usage:
     opsgeocam.list_ops("skyline")
     opsgeocam.get("dem_skyline")(dem, 30.0, (150, 150))
 """
+import inspect
+import sys
+from functools import wraps
+
+import numpy as np
+
 import geocam
 
-_MOD = {"geocam": geocam}
+
+# ★2026-11-03(レシピの e2e が見つけた宣言の嘘): 台帳は ``sun_position`` の入力を ``signal``(UNIX 秒の 1-D 列)
+#   と宣言しているのに、素の関数は ``(lat_deg, lon_deg, unix_times)`` の並びで、宣言どおり時刻の列を第 1 引数に
+#   渡すと緯度に入り ``TypeError: only 0-dimensional arrays can be converted to Python scalars`` で落ちた。
+#   同じ族の消費側 ``camera_orientation_from_sun(sun_pixels, unix_times, lat, lon, K)`` も時刻を「場所より前」に
+#   置いている。素の関数(``geocam.sun_position`` と facade ``fs.sun_position``)の並びは公開の約束なので変えず、
+#   **台帳の入口だけ**を宣言の並び ``(unix_times, lat_deg, lon_deg)`` にする(``__wrapped__`` で同じ op の
+#   identity を保ち、``__signature__`` で OP_GRAPH の引数表も宣言どおりになる)。
+#   旧い並び ``(lat, lon, unix_times)`` で台帳を呼んでいた呼び手のために、**経度の位置に配列が来た**ときだけ
+#   旧い並びと読む(経度は必ずスカラなので取り違えは起きない)。3 つともスカラなら宣言の並びと読む ——
+#   旧い並びのスカラ呼び出しは時刻が経度に入り ``geocam._check_latlon`` が範囲外として拒む(fail-closed、
+#   黙って違う太陽を返さない)。
+@wraps(geocam.sun_position)
+def sun_position(unix_times, lat_deg, lon_deg):
+    if np.ndim(lon_deg) > 0 and np.ndim(unix_times) == 0 and np.ndim(lat_deg) == 0:
+        # 旧い並び (lat_deg, lon_deg, unix_times) —— 引数名ではなく位置で来た値をそのまま素の関数へ。
+        return geocam.sun_position(unix_times, lat_deg, lon_deg)
+    if np.ndim(lat_deg) > 0 or np.ndim(lon_deg) > 0:
+        raise ValueError("sun_position: lat_deg and lon_deg must be scalars (the site); got shapes %r, %r"
+                         % (np.shape(lat_deg), np.shape(lon_deg)))
+    return geocam.sun_position(lat_deg, lon_deg, unix_times)
+
+
+sun_position.__signature__ = inspect.Signature([
+    inspect.Parameter(n, inspect.Parameter.POSITIONAL_OR_KEYWORD) for n in ("unix_times", "lat_deg", "lon_deg")])
+sun_position.__module__ = __name__
+sun_position.__qualname__ = "sun_position"
+
+_MOD = {"geocam": geocam, "opsgeocam": sys.modules[__name__]}
 
 # --------------------------------------------------------------------------
 # Type vocabulary: no new word is coined (it all fits the existing pool).
@@ -51,7 +85,8 @@ _MOD = {"geocam": geocam}
 # カテゴリ → [(op 名, module, [入力種別], 出力種別)]
 _CATALOG = {
     "sun": [
-        ("sun_position", "geocam", ["signal"], "table"),
+        # 入口は opsgeocam.sun_position(時刻の列が先 = 宣言どおり。上の注記)。計算は geocam.sun_position。
+        ("sun_position", "opsgeocam", ["signal"], "table"),
         ("sun_pixel_position", "geocam", ["image2d"], "keypoints"),
         ("camera_orientation_from_sun", "geocam", ["keypoints", "signal"], "table"),
             # 2026-09-21 実データ(Fintraffic)で足した 2 本: 切れたブルームの円当て / 候補列から動きで太陽を選ぶ

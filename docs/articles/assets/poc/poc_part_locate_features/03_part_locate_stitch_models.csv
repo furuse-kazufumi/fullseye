@@ -1,0 +1,5 @@
+﻿model,corner_err_px
+projective,9.384
+affine,0.849
+similarity,0.836
+translation,0.081

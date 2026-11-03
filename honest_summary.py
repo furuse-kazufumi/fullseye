@@ -96,6 +96,9 @@ def main() -> int:
         "  n-ary capability tier — a subset, not an addition; %d n-ary-only)."
         % (len(nary_names - reg_counted)),
         "- dangling registry `Op.halcon` (fake names): **%d** (fail-closed)." % len(a["dangling"]),
+        "- partial analogues (the name is claimed but only part of the job is done): **%d**, "
+        "not counted above — %s (what each does and does not do: docs/HALCON_COVERAGE.md)."
+        % (len(a["partial"]), ", ".join(a["partial"])),
         "",
         "## Evolvable registry (single-image pipeline, coverage-counted)",
         "- registry ops: %d ; distinct real HALCON ops covered: **%d**"

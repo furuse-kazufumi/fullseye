@@ -46,6 +46,8 @@ version: 0.9.0  # fullseye lib version this note was generated for
 折れ線としての角の数を見たいなら ``hx_split_contours`` で分割してから線分数を数える。点数 2 以下の contour は
 評価から外れる。1 本の contour だけを対象にした同種の指標は ``xg_regress_contours``。
 
+**同じ処理の別実装(実測、`docs/IMPL_DIFFERENTIAL.md`)**: 同じ入力・同じ a, b での内部の差(振れ幅に対する比。5e-3 未満が一致)は `xg_regress_contours` 1。食い違う理由(つまみの写し方・窓・端・量子化・定義の違い)は表に書いてある。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_halcon_ext ファミリ ガイド](../guides/gallery2d_halcon_ext.md)

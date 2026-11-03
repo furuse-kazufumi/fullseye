@@ -15,6 +15,7 @@
 <p>使用維納自適應濾波器（<code style="color:#22d3bf">scipy.signal.wiener</code>）抑制雜訊。</p>
 <p><code style="color:#22d3bf">a</code> 將鄰域視窗大小在奇數 3, 5, 7, 9 中調整（<code style="color:#22d3bf">k = 3 + 2*int(a*3)</code>，a=0 時為 3，a 接近 1 時為 9）。<code style="color:#22d3bf">b</code> 未使用。這是從局部變異數自動估計雜訊變異數的自適應濾波，與以均勻強度平滑的高斯/均值盒濾波不同，越平坦的區域平滑越強，變異數大的（邊緣/紋理多的）區域則容易被保留。由於假定高斯雜訊，不適合椒鹽雜訊。輸出截斷到 [0,1]。</p>
 <p><b>空影格（實測）</b>：輸入亮度均勻的影像時，<b>無論亮度為何，結果都為空（全部像素為背景 0）</b>。純白與純黑表現相同；僅憑亮度偵測不到任何東西。</p>
+<p><b>同一處理的其他實作（實測，<code style="color:#22d3bf">docs/IMPL_DIFFERENTIAL.md</code>）</b>：在相同輸入、相同 a、b 下，內部差（相對於值域之比；小於 5e-3 視為一致）為 <code style="color:#22d3bf">xsk2_wiener</code> 0.7。不一致的原因（旋鈕對應、視窗、邊界、量化、定義不同）寫在表中。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

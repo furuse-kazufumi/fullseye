@@ -1,6 +1,6 @@
 # imgevolve — operator research provenance
 
-Seminal references for the 945 operators (families collapse many variants). The point: a designed pipeline is traceable to the literature, and the RAD image corpus is the mining source for *new* operators.
+Seminal references for the 947 operators (families collapse many variants). The point: a designed pipeline is traceable to the literature, and the RAD image corpus is the mining source for *new* operators.
 
 | op | category | seminal reference |
 |---|---|---|
@@ -911,6 +911,8 @@ Seminal references for the 945 operators (families collapse many variants). The 
 | `tb_keypoints_uv_to_points` | typed | - |
 | `tb_points_zyx_to_keypoints_uv` | typed | - |
 | `tb_keypoints_to_image2d` | typed | - |
+| `tb_keypoints_rowcol_to_uv` | typed | - |
+| `tb_keypoints_uv_to_rowcol` | typed | - |
 | `tb_countrate_to_counts` | typed | - |
 | `tb_counts_to_countrate` | typed | - |
 | `tb_temporal_median_window` | typed | Tukey, J. (1977). Exploratory Data Analysis (running median smoothing). |
@@ -950,7 +952,7 @@ Seminal references for the 945 operators (families collapse many variants). The 
 | `contour_to_img` | bridge | - |
 | `feature_to_img` | bridge | - |
 
-**Provenance coverage: 177/945 operators cite a seminal paper.**
+**Provenance coverage: 177/947 operators cite a seminal paper.**
 
 ## Mining new operators from research (RAD)
 - RAD image / diffusion / deep_learning corpora (thousands of papers) = the source for operators beyond the classics: modern denoisers (BM3D, DnCNN), learned edges (HED), superpixels (SLIC), diffusion priors, foundation segmenters (SAM).

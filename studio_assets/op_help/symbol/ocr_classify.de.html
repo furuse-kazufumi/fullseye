@@ -1,0 +1,36 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">ocr_classify — SYMBOL <code style="color:#22d3bf">ocr</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">matrix × table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ocr_classify(features, model, k=1, blur=None) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import ocrclassic; ocrclassic.ocr_classify(features, model, k=1, blur=None) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opssymbol.get(&quot;ocr_classify&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>Klassifiziert Merkmalsvektoren per k-nächste-Nachbarn und weist nach Abstand und Abstandsverhältnis zurück (<code style="color:#22d3bf">table</code>).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
+<p>features : (d,) か (m, d)、d = FEATURE_LENGTH。</p>
+<p>model : <code style="color:#22d3bf">ocr_train</code> の返り値。</p>
+<p>k : 近傍数(奇数推奨)。多数決、同票は最近傍のクラス。</p>
+<p>blur : 既知(または推定済み)のぼけ σ/字高。与えると、学習のぼけ格子でそれと隣り合う</p>
+<p>格子点までの試料だけを照合に使う(<code style="color:#22d3bf">ocr_read_line</code> は行全体で推定して渡す)。</p>
+<p>Restrict templates to the blur band around <code style="color:#22d3bf">blur</code> (sigma / char height).</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>dict</p>
+<p><code style="color:#22d3bf">labels</code> (list of str、棄却は <code style="color:#22d3bf">&quot;?&quot;</code>), <code style="color:#22d3bf">raw_labels</code>(棄却前の判定),</p>
+<p><code style="color:#22d3bf">distance</code>(判定クラスの最近傍距離。<code style="color:#22d3bf">model[&quot;weights&quot;]</code> で重みづけした対角マハラノビス距離),</p>
+<p><code style="color:#22d3bf">margin</code>(<b>他クラス最近傍距離 / 判定クラス最近傍距離</b>、1 に近いほど境界上), <code style="color:#22d3bf">rejected</code>。</p>
+<p>棄却条件: <code style="color:#22d3bf">distance &gt; reject_distance_by_class[判定字]</code> または <code style="color:#22d3bf">margin &lt; min_margin_ratio</code>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesymbol:symbol_reading">Leitfaden zur Familie symbol_reading</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_symbol_lot_ocr">poc_symbol_lot_ocr</a> — <code style="color:#22d3bf">py -3.11 examples/poc_symbol_lot_ocr.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">table</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opsymbol:render_symbol">render_symbol</a> · <a style="color:#22d3bf" href="opsymbol:symbol_read_trials">symbol_read_trials</a> · <a style="color:#22d3bf" href="opsymbol:symbol_read_pod">symbol_read_pod</a> · <a style="color:#22d3bf" href="opsymbol:ocr_read_line">ocr_read_line</a> · <a style="color:#22d3bf" href="opsymbol:ocr_read_trials">ocr_read_trials</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">ocr</code>)</h3>
+<p><a style="color:#22d3bf" href="opsymbol:ocr_font">ocr_font</a> · <a style="color:#22d3bf" href="opsymbol:ocr_render_text">ocr_render_text</a> · <a style="color:#22d3bf" href="opsymbol:ocr_segment_line">ocr_segment_line</a> · <a style="color:#22d3bf" href="opsymbol:ocr_features">ocr_features</a> · <a style="color:#22d3bf" href="opsymbol:ocr_train">ocr_train</a> · <a style="color:#22d3bf" href="opsymbol:ocr_read_line">ocr_read_line</a> · <a style="color:#22d3bf" href="opsymbol:ocr_score">ocr_score</a> · <a style="color:#22d3bf" href="opsymbol:ocr_read_trials">ocr_read_trials</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: ocrclassic.py — SYMBOL Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

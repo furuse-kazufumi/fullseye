@@ -90,7 +90,8 @@ def test_classified_entries_still_exist():
 
 #: 2026-10-15 に直す前の並び(回帰の探針)。
 _OLD_ORDER = [
-    "gen_auto_specs_data.py", "tools/opdocs.py", "tools/gen_op_catalog.py",
+    # 2026-11-03 に足した段(tools/impl_differential.py)は旧順序の探針の外 —— 先頭に置いて逆順を作らない
+    "gen_auto_specs_data.py", "tools/impl_differential.py", "tools/opdocs.py", "tools/gen_op_catalog.py",
     "tools/gen_capabilities_index.py", "tools/gen_hardening_index.py", "tools/audit_fallbacks.py",
     "tools/gen_maturity.py",
     "tools/gen_exhibit_numbers.py", "tools/gen_exhibit_glossary.py",
@@ -99,9 +100,13 @@ _OLD_ORDER = [
     "tools/gen_view2026_pages.py", "tools/gen_trust_block.py",
     "tools/gen_literature_counts.py", "tools/gen_docs_index_ops.py", "tools/gen_examples3d_doc.py",
     "tools/gen_sensor_playbook.py", "imgevolve.py", "tools/audit_file_formats.py", "tools/halcon_compat_profile.py", "catalog.py", "dispositions.py", "references.py", "samples.py",
-    "tools/gen_mcp_data.py", "tools/gen_recipe_index.py", "tools/gen_recipe_retrieval_report.py", "tools/gen_rag_benchmark_report.py", "tools/conversion_matrix.py", "tools/gen_design_notes.py",
+    "tools/gen_mcp_data.py", "tools/gen_recipe_index.py", "tools/gen_recipe_retrieval_report.py", "tools/gen_rag_benchmark_report.py", "tools/conversion_matrix.py",
+    "tools/type_connectivity.py",   # 2026-11-03 に鎖へ加わった段(索引を読むだけ。探針の逆順は増やさない)
+    "tools/gen_design_notes.py",
     "tools/gen_op_facets.py", "tools/measure_mcp_context.py",
     "tools/gen_doc_counts.py",
+    # 2026-11-03 に足した段。旧順序の探針としては「docs 索引より後ろ」に置く(題を先に読まれる逆順)。
+    "tools/gen_recipe_coverage.py",
 ]
 
 
@@ -134,9 +139,14 @@ def test_the_order_gate_catches_the_old_order():
         # FILE_FORMATS.md は audit_file_formats が書き、docs 索引が文書地図へ載せる。
         ("tools/gen_docs_index_ops.py", "tools/audit_file_formats.py"),
             ("tools/gen_rag_benchmark_report.py", "tools/gen_op_facets.py"),
+        # RECIPE_COVERAGE.md の題を docs 索引が先に読む(2026-11-03 の段)。
+        ("tools/gen_docs_index_ops.py", "tools/gen_recipe_coverage.py"),
+        # 索引はレシピの型を OP_GRAPH で検査する(2026-11-03 に READS へ足した実測の読み)。
+        ("tools/gen_recipe_index.py", "tools/gen_op_facets.py"),
     } | {("tools/gen_docs_index_ops.py", w) for w in (
         "tools/gen_examples3d_doc.py", "tools/gen_sensor_playbook.py", "catalog.py",
-        "references.py", "samples.py", "tools/conversion_matrix.py", "tools/gen_design_notes.py")}
+        "references.py", "samples.py", "tools/conversion_matrix.py", "tools/type_connectivity.py",
+        "tools/gen_design_notes.py")}
     assert got == expect, "逆順の検出が食い違う: 余分 %s / 見落とし %s" % (
         sorted(got - expect), sorted(expect - got))
 

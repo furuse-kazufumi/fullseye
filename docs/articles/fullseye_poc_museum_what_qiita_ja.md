@@ -4,13 +4,13 @@
 
 > **[紙面の計測館 総合案内](https://qiita.com/furuse-kazufumi/items/c1606bcfa2085d204ad6)** の一棟です。ほかの棟・用語・テーゼは案内にあります。
 
-この棟には **135 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
+この棟には **141 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
 
 > 各展示の「使用 op」から、その op のノート(型契約・罠・図・Studio で走るプログラム)へ飛べます: [オペレータ目録](https://furuse.work/OP_CATALOG.html) / [op ノートの索引](https://furuse.work/ops/INDEX.html)。
 
 ### 産業検査ウィング ―― 合格の数字と不合格の数字は両立する
 
-検査ラインの数字は合否に直結するので、1 つの指標に畳みたくなります。この部屋の 42 点は、畳んだ瞬間に消えるものを並べたものです。まとめた ROC が種類別の盲点を隠す織物、MTF が合格のまま黒レベルが不合格になる迷光、読取率だけ見ると寛容なデコーダが良く見えるバーコード。
+検査ラインの数字は合否に直結するので、1 つの指標に畳みたくなります。この部屋の 46 点は、畳んだ瞬間に消えるものを並べたものです。まとめた ROC が種類別の盲点を隠す織物、MTF が合格のまま黒レベルが不合格になる迷光、読取率だけ見ると寛容なデコーダが良く見えるバーコード。
 
 真値はどれも自分で仕込んであります。周期地の閉形式、レーザー断面の h(x)、1 次元熱伝導の解析解、閉形式の欠陥周波数。だから「検出できました」の先にある「どこで検出できなくなるか」を、しきい値を後から合わせずに測れます。
 
@@ -852,7 +852,7 @@ py -3.11 examples/poc_weld_bead_profile.py
 
 この回が作った図は全部で **4 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_weld_bead_profile)
 
-使用 op(ノートへ): [`gen_measure_rectangle2`](https://furuse.work/ops/measure1d/caliper/gen_measure_rectangle2.html) · [`measure_pos`](https://furuse.work/ops/measure1d/caliper/measure_pos.html) · [`median`](https://furuse.work/ops/2d/rank/median.html) · [`smooth_funct_1d_mean`](https://furuse.work/ops/oned/function/smooth_funct_1d_mean.html)
+使用 op(ノートへ): [`gen_measure_rectangle2`](https://furuse.work/ops/measure1d/caliper/gen_measure_rectangle2.html) · [`laser_line_center_centroid`](https://furuse.work/ops/optics/light_section/laser_line_center_centroid.html) · [`measure_pos`](https://furuse.work/ops/measure1d/caliper/measure_pos.html) · [`median`](https://furuse.work/ops/2d/rank/median.html) · [`smooth_funct_1d_mean`](https://furuse.work/ops/oned/function/smooth_funct_1d_mean.html)
 
 ## No.2026.115 —— 光切断で溶接ビードを走査する ―― 分解能と遮蔽は同じノブの表裏
 
@@ -1402,11 +1402,105 @@ py -3.11 examples/poc_threshold_transfer_after_normalization.py
 
 使用 op(ノートへ): [`axes_transform`](https://furuse.work/ops/annotate/plot/axes_transform.html) · [`ptile_threshold`](https://furuse.work/ops/2d/segmentation/ptile_threshold.html) · [`sigma_threshold`](https://furuse.work/ops/2d/segmentation/sigma_threshold.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html)
 
+## No.2026.292 —— 光沢金属の 2 本の傷は露出 1 回では両方見えず、応答を測った HDR で見える
+
+地 299、照明の映り込みの帯の頂 313755 光子/ms(比 1049 倍)の場面を、EMVA 1288 のセンサ(η 0.6・K 0.1 DN/e⁻・暗雑音 8 e⁻・8 ビット・γ 2.2)で 4 倍刻み 6 段の露出に撮った。露出 1 回では 2 本の傷(−20 %)を両方とも CNR ≥ 3 で見られない(地の傷の最良 2.93)。Debevec / Robertson の応答は真の逆応答と ln で rms 0.115 / 0.072、放射輝度は倍率 1 つを当てて中央値 11.8 / 9.5 %。応答を特性化し露出時間の重みで合成した HDR は CNR 4.96 / 3.86 で、1 枚の最良を超える。三角の重みでは地の傷が 3.54、自己校正した Debevec の応答では 2.11 に落ちるので、検査に使うなら応答は EMVA で測っておく。Mertens の露出融合は 3.31 / 3.92。ダイナミックレンジはシミュの実測で 1 枚 48.6 dB(閉形式 48.4)、6 枚 103.6 dB(103.6)。場面に要る 62.5 dB は 1 枚では足りない。場面は放射輝度の地図を直接描いたもので、BRDF からの描画ではない。
+
+[![光沢金属の 2 本の傷は露出 1 回では両方見えず、応答を測った HDR で見える](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_hdr_glossy_metal_inspection/02_results_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_hdr_glossy_metal_inspection/02_results.png)
+
+*↑ **光沢金属の 2 本の傷は露出 1 回では両方見えず、応答を測った HDR で見える** ―― 地 299、照明の映り込みの帯の頂 313755 光子/ms(比 1049 倍)の場面を、EMVA 1288 のセンサ(η 0.6・K 0.1 DN/e⁻・暗雑音 8 e⁻・8 ビット・γ 2.2)で 4 倍刻み 6 段の露出に撮った。露出 1 回では 2 本の傷(−20 %)を両方とも CNR ≥ 3 で見られない(地の傷の最良 2.93)。Debevec / Robertson の応答は真の逆応答と ln で rms 0.115 / 0.072、放射輝度は倍率 1 つを当てて中央値 11.8 / 9.5 %。応答を特性化し露出時間の重みで合成した HDR は CNR 4.96 / 3.86 で、1 枚の最良を超える。三角の重みでは地の傷が 3.54、自己校正した Debevec の応答では 2.11 に落ちるので、検査に使うなら応答は EMVA で測っておく。Mertens の露出融合は 3.31 / 3.92。ダイナミックレンジはシミュの実測で 1 枚 48.6 dB(閉形式 48.4)、6 枚 103.6 dB(103.6)。場面に要る 62.5 dB は 1 枚では足りない。場面は放射輝度の地図を直接描いたもので、BRDF からの描画ではない。*
+
+用語: EMVA 1288 — 産業用画像センサの感度・雑音・飽和・不均一性などを、共通の測定手順と量で表す標準。
+
+[![測定の図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_hdr_glossy_metal_inspection/01_exposures_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_hdr_glossy_metal_inspection/01_exposures.png)
+
+*↑ 測定の図*
+
+[![図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_hdr_glossy_metal_inspection/03_response_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_hdr_glossy_metal_inspection/03_response.png)
+
+*↑ この回の図*
+
+```
+py -3.11 examples/poc_hdr_glossy_metal_inspection.py
+```
+
+ソース: [examples/poc_hdr_glossy_metal_inspection.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_hdr_glossy_metal_inspection.py)
+
+この回が作った図は全部で **3 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_hdr_glossy_metal_inspection)
+
+使用 op(ノートへ): [`camera_response_debevec`](https://furuse.work/ops/optics/hdr/camera_response_debevec.html) · [`camera_response_linear`](https://furuse.work/ops/optics/hdr/camera_response_linear.html) · [`camera_response_robertson`](https://furuse.work/ops/optics/hdr/camera_response_robertson.html) · [`exposure_fusion_mertens`](https://furuse.work/ops/optics/hdr/exposure_fusion_mertens.html) · [`hdr_dynamic_range`](https://furuse.work/ops/optics/hdr/hdr_dynamic_range.html) · [`hdr_exposure_series_simulate`](https://furuse.work/ops/optics/hdr/hdr_exposure_series_simulate.html) · [`hdr_merge`](https://furuse.work/ops/optics/hdr/hdr_merge.html) · [`hdr_radiance_error`](https://furuse.work/ops/optics/hdr/hdr_radiance_error.html) · [`tonemap_reinhard`](https://furuse.work/ops/3d/render/tonemap_reinhard.html)
+
+## No.2026.296 —— 90 % 読めるぼけでも、バーコードの印字品質は F
+
+包装で使う EAN-13・ITF-14・GS1-128 を合成し、任意の角度で撮って読むと 3 種とも 8/8 戻り、独立な zxing-cpp も同じ文字列を返した。印字品質の等級は閉形式どおりで、段ボールの地(0.45)にインク 0.15 なら SC = 0.300 で D、フレキソのにじみ +0.25 X は EAN の復号容易度を 0.512 に削って B、GS1-128 は A のまま。EAN-13 のデフォーカスの POD は、Fullseye の読み取り器で d90 6.51 px・保守側の d90/95 6.43 px・誤読 0/266、zxing-cpp で d90 5.13 px・誤読 2/120。d90 のぼけ(ぼけ円の直径 2.2 モジュール)で撮った記号の等級は F(変調 0.103)で、読めることと品質の余裕は別の問いになる。d90 のまわりを 1000 枚撮り直すと、当てた POD 曲線と最大 1.6σ で合った。最初に書いた門「d90 で撮り直すと 0.9」は点推定が楽観側で 0.791 に落ちたので、使うのは d90/95 にした。
+
+[![90 % 読めるぼけでも、バーコードの印字品質は F](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symbol_package_1d/01_ean13_defocus_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symbol_package_1d/01_ean13_defocus.png)
+
+*↑ **90 % 読めるぼけでも、バーコードの印字品質は F** ―― 包装で使う EAN-13・ITF-14・GS1-128 を合成し、任意の角度で撮って読むと 3 種とも 8/8 戻り、独立な zxing-cpp も同じ文字列を返した。印字品質の等級は閉形式どおりで、段ボールの地(0.45)にインク 0.15 なら SC = 0.300 で D、フレキソのにじみ +0.25 X は EAN の復号容易度を 0.512 に削って B、GS1-128 は A のまま。EAN-13 のデフォーカスの POD は、Fullseye の読み取り器で d90 6.51 px・保守側の d90/95 6.43 px・誤読 0/266、zxing-cpp で d90 5.13 px・誤読 2/120。d90 のぼけ(ぼけ円の直径 2.2 モジュール)で撮った記号の等級は F(変調 0.103)で、読めることと品質の余裕は別の問いになる。d90 のまわりを 1000 枚撮り直すと、当てた POD 曲線と最大 1.6σ で合った。最初に書いた門「d90 で撮り直すと 0.9」は点推定が楽観側で 0.791 に落ちたので、使うのは d90/95 にした。*
+
+[![測定の図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symbol_package_1d/02_ean13_pod_levels_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symbol_package_1d/02_ean13_pod_levels.png)
+
+*↑ 測定の図*
+
+```
+py -3.11 examples/poc_symbol_package_1d.py
+```
+
+ソース: [examples/poc_symbol_package_1d.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_symbol_package_1d.py)
+
+この回が作った図は全部で **2 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_symbol_package_1d)
+
+使用 op(ノートへ): [`barcode_scan_profiles`](https://furuse.work/ops/symbol/barcode1d/barcode_scan_profiles.html) · [`capture_degrade`](https://furuse.work/ops/symbol/symbol_capture/capture_degrade.html) · [`decode_barcode_profile`](https://furuse.work/ops/symbol/barcode1d/decode_barcode_profile.html) · [`ean_check_digit`](https://furuse.work/ops/symbol/barcode1d/ean_check_digit.html) · [`encode_barcode1d`](https://furuse.work/ops/symbol/barcode1d/encode_barcode1d.html) · [`grade_barcode1d`](https://furuse.work/ops/symbol/print_quality/grade_barcode1d.html) · [`grade_barcode_profile`](https://furuse.work/ops/symbol/print_quality/grade_barcode_profile.html) · [`read_barcode1d`](https://furuse.work/ops/symbol/barcode1d/read_barcode1d.html) · [`read_symbols_zxing`](https://furuse.work/ops/symbol/symbol_bridge/read_symbols_zxing.html) · [`render_symbol`](https://furuse.work/ops/symbol/symbol_capture/render_symbol.html) · [`symbol_read`](https://furuse.work/ops/symbol/read_pod/symbol_read.html) · [`symbol_read_pod`](https://furuse.work/ops/symbol/read_pod/symbol_read_pod.html) · [`symbol_read_trials`](https://furuse.work/ops/symbol/read_pod/symbol_read_trials.html)
+
+## No.2026.297 —— ドットピーンの Data Matrix は、ぼけると zxing-cpp に読めるようになる
+
+金属部品のドットピーン刻印の Data Matrix(16x16)と、ラベルの QR(1-M)を合成した。任意の回転で撮ると Fullseye は刻印の DM を 6/6、ラベルの QR を 6/6 読み、くっきりしたドットピーンも 24 方向すべて読む。zxing-cpp は QR と四角いモジュールの DM を 24/24 読むが、ドットピーンは 0/24。印字品質は閉形式どおりで、刻印のコントラスト SC = 0.65 − 0.30 = 0.35 で D(開口 0.4 X。0.8 X では点の縁が入って 0.317)、傾き 15° の AN 0.0350(閉形式 0.0347)、24° で 0.0904(0.0904)、4 語の欠けで UEC 0.333(0.333)。四角い刻印の d90 は Fullseye 5.89 px・zxing-cpp 5.78 px(比 0.981)で一致する。ドットピーンの zxing-cpp の読取率はぼけ 2.0 px で 0.14、4.0 px で 1.0 と、ぼけが増えると上がる。POD の前提(単調)が破れるので、op は monotone = False の旗を立てる。暗いライン(4000 e)で読める最小のコントラストは c90/95 = 0.156。
+
+[![ドットピーンの Data Matrix は、ぼけると zxing-cpp に読めるようになる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symbol_part_dpm/01_dpm_datamatrix_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symbol_part_dpm/01_dpm_datamatrix.png)
+
+*↑ **ドットピーンの Data Matrix は、ぼけると zxing-cpp に読めるようになる** ―― 金属部品のドットピーン刻印の Data Matrix(16x16)と、ラベルの QR(1-M)を合成した。任意の回転で撮ると Fullseye は刻印の DM を 6/6、ラベルの QR を 6/6 読み、くっきりしたドットピーンも 24 方向すべて読む。zxing-cpp は QR と四角いモジュールの DM を 24/24 読むが、ドットピーンは 0/24。印字品質は閉形式どおりで、刻印のコントラスト SC = 0.65 − 0.30 = 0.35 で D(開口 0.4 X。0.8 X では点の縁が入って 0.317)、傾き 15° の AN 0.0350(閉形式 0.0347)、24° で 0.0904(0.0904)、4 語の欠けで UEC 0.333(0.333)。四角い刻印の d90 は Fullseye 5.89 px・zxing-cpp 5.78 px(比 0.981)で一致する。ドットピーンの zxing-cpp の読取率はぼけ 2.0 px で 0.14、4.0 px で 1.0 と、ぼけが増えると上がる。POD の前提(単調)が破れるので、op は monotone = False の旗を立てる。暗いライン(4000 e)で読める最小のコントラストは c90/95 = 0.156。*
+
+[![測定の図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symbol_part_dpm/02_dpm_pod_levels_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symbol_part_dpm/02_dpm_pod_levels.png)
+
+*↑ 測定の図*
+
+```
+py -3.11 examples/poc_symbol_part_dpm.py
+```
+
+ソース: [examples/poc_symbol_part_dpm.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_symbol_part_dpm.py)
+
+この回が作った図は全部で **2 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_symbol_part_dpm)
+
+使用 op(ノートへ): [`capture_degrade`](https://furuse.work/ops/symbol/symbol_capture/capture_degrade.html) · [`dm_decode_modules`](https://furuse.work/ops/symbol/datacode2d/dm_decode_modules.html) · [`dm_encode`](https://furuse.work/ops/symbol/datacode2d/dm_encode.html) · [`dm_locate`](https://furuse.work/ops/symbol/datacode2d/dm_locate.html) · [`dm_read`](https://furuse.work/ops/symbol/datacode2d/dm_read.html) · [`dm_sample`](https://furuse.work/ops/symbol/datacode2d/dm_sample.html) · [`grade_datacode2d`](https://furuse.work/ops/symbol/print_quality/grade_datacode2d.html) · [`qr_decode_modules`](https://furuse.work/ops/symbol/datacode2d/qr_decode_modules.html) · [`qr_encode`](https://furuse.work/ops/symbol/datacode2d/qr_encode.html) · [`qr_locate`](https://furuse.work/ops/symbol/datacode2d/qr_locate.html) · [`qr_read`](https://furuse.work/ops/symbol/datacode2d/qr_read.html) · [`qr_sample`](https://furuse.work/ops/symbol/datacode2d/qr_sample.html) · [`read_symbols_zxing`](https://furuse.work/ops/symbol/symbol_bridge/read_symbols_zxing.html) · [`render_symbol`](https://furuse.work/ops/symbol/symbol_capture/render_symbol.html) · [`symbol_read_pod`](https://furuse.work/ops/symbol/read_pod/symbol_read_pod.html) · [`symbol_read_trials`](https://furuse.work/ops/symbol/read_pod/symbol_read_trials.html)
+
+## No.2026.298 —— ロット番号の OCR は、学習の範囲を越えたぼけで棄却でなく誤読に変わる
+
+包装に CIJ で打つ 5x7 ドットのロット番号・期限と、熱転写の線の文字を合成し、古典の OCR(k 最近傍 + 区画濃度と射影の 88 次元の特徴量、学習の分布から決めた棄却)で読んだ。字種は 40 字、学習の型は書体ごとに 3840 個。きれいな印字は両方の書体で全件読め、切り出しの外接箱は真値と IoU 1.00。字種の外の '#' は '?' になり、別の字に化けない。13 字の行の可読性の POD は、ドットで d90 10.70 px・d90/95 10.40 px、線の書体で d90 11.62 px(字高 24 px)。字高の h90 は 9.61 px。誤読は別に数えた。d90 までのぼけでは誤読 0 行、直径 12.67 px では読めた 2 行に対して誤読 18 行、16.0 px では 6/6 行が誤読になる。ロット番号の誤読は回収の範囲を取り違える事故になるので、読めた率と誤読率を 1 つにしない。
+
+[![ロット番号の OCR は、学習の範囲を越えたぼけで棄却でなく誤読に変わる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symbol_lot_ocr/01_lot_ocr_defocus_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symbol_lot_ocr/01_lot_ocr_defocus.png)
+
+*↑ **ロット番号の OCR は、学習の範囲を越えたぼけで棄却でなく誤読に変わる** ―― 包装に CIJ で打つ 5x7 ドットのロット番号・期限と、熱転写の線の文字を合成し、古典の OCR(k 最近傍 + 区画濃度と射影の 88 次元の特徴量、学習の分布から決めた棄却)で読んだ。字種は 40 字、学習の型は書体ごとに 3840 個。きれいな印字は両方の書体で全件読め、切り出しの外接箱は真値と IoU 1.00。字種の外の '#' は '?' になり、別の字に化けない。13 字の行の可読性の POD は、ドットで d90 10.70 px・d90/95 10.40 px、線の書体で d90 11.62 px(字高 24 px)。字高の h90 は 9.61 px。誤読は別に数えた。d90 までのぼけでは誤読 0 行、直径 12.67 px では読めた 2 行に対して誤読 18 行、16.0 px では 6/6 行が誤読になる。ロット番号の誤読は回収の範囲を取り違える事故になるので、読めた率と誤読率を 1 つにしない。*
+
+[![測定の図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symbol_lot_ocr/02_lot_ocr_levels_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symbol_lot_ocr/02_lot_ocr_levels.png)
+
+*↑ 測定の図*
+
+```
+py -3.11 examples/poc_symbol_lot_ocr.py
+```
+
+ソース: [examples/poc_symbol_lot_ocr.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_symbol_lot_ocr.py)
+
+この回が作った図は全部で **2 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_symbol_lot_ocr)
+
+使用 op(ノートへ): [`capture_degrade`](https://furuse.work/ops/symbol/symbol_capture/capture_degrade.html) · [`ocr_classify`](https://furuse.work/ops/symbol/ocr/ocr_classify.html) · [`ocr_features`](https://furuse.work/ops/symbol/ocr/ocr_features.html) · [`ocr_font`](https://furuse.work/ops/symbol/ocr/ocr_font.html) · [`ocr_read_line`](https://furuse.work/ops/symbol/ocr/ocr_read_line.html) · [`ocr_read_trials`](https://furuse.work/ops/symbol/ocr/ocr_read_trials.html) · [`ocr_render_text`](https://furuse.work/ops/symbol/ocr/ocr_render_text.html) · [`ocr_score`](https://furuse.work/ops/symbol/ocr/ocr_score.html) · [`ocr_segment_line`](https://furuse.work/ops/symbol/ocr/ocr_segment_line.html) · [`ocr_train`](https://furuse.work/ops/symbol/ocr/ocr_train.html) · [`symbol_read_pod`](https://furuse.work/ops/symbol/read_pod/symbol_read_pod.html)
+
 ### 寸法・形状計測ウィング ―― 偏りと散らばりは別々に持つ
 
 「この部品の幅は 50.50 画素だ」と言い切るには、偏り(いつも同じ向きにずれる分)と散らばり(撮るたびに変わる分)を別々に出す必要があります。合否は偏りで決まり、繰り返し精度は散らばりで決まる。1 つの「誤差」にまとめた瞬間、どちらの対策を打つべきかが分からなくなります。
 
-この部屋の 45 点は、符号つき距離関数の部品、インボリュート歯形、指定 PSD の粗さ面、白色干渉のスタック、解析スペックル、Frocht の応力場、対称な合成頭蓋と、いずれも閉形式か解析描画で真値を握った上で、キャリパーや相関や位相の読みを採点しています。
+この部屋の 47 点は、符号つき距離関数の部品、インボリュート歯形、指定 PSD の粗さ面、白色干渉のスタック、解析スペックル、Frocht の応力場、対称な合成頭蓋と、いずれも閉形式か解析描画で真値を握った上で、キャリパーや相関や位相の読みを採点しています。
 
 共通して出てきたのは「定義を書かない数字は比較できない」ということです。距離変換の 2 通りの規約で 0.20 mm 違うひび割れ幅、個数基準と面積基準で 1.66 倍違う D50、評価領域を広げると頭打ちにならない Sz、本数基準か長さ基準かで 5 % 動く配向度。測定器の誤差ではなく、比べる相手の問題として現れます。
 
@@ -3107,6 +3201,70 @@ py -3.11 examples/poc_lockin_imaging.py
 この回が作った図は全部で **5 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_lockin_imaging)
 
 使用 op(ノートへ): [`lockin_amplitude`](https://furuse.work/ops/optics/lockin/lockin_amplitude.html) · [`lockin_demodulate`](https://furuse.work/ops/optics/lockin/lockin_demodulate.html) · [`lockin_noise_floor`](https://furuse.work/ops/optics/lockin/lockin_noise_floor.html) · [`lockin_phase`](https://furuse.work/ops/optics/lockin/lockin_phase.html) · [`lockin_ring_normals`](https://furuse.work/ops/optics/lockin/lockin_ring_normals.html) · [`lockin_ring_synthesize`](https://furuse.work/ops/optics/lockin/lockin_ring_synthesize.html) · [`lockin_separate`](https://furuse.work/ops/optics/lockin/lockin_separate.html) · [`lockin_thermal_wave`](https://furuse.work/ops/optics/lockin/lockin_thermal_wave.html) · [`lockin_walsh_codes`](https://furuse.work/ops/optics/lockin/lockin_walsh_codes.html)
+
+## No.2026.289 —— 買う前に受入試験をかける ―― 同じ iToF でも黒い球 1 つで不合格になる
+
+VDI/VDE 2634 Part 2 の考え方に沿い、探針の球 1・ダンベル 7 姿勢・平面 7 姿勢を 3 つの設計案のセンサで撮り、実機の点群と同じ評価 op で PF・PS・SD・F を数えた。雑音も誤差も無いセンサは全評価量 1e-6 mm 未満、距離の尺度 1.0005 で SD = 0.1572 mm = (s−1)L と閉形式どおり。仮の MPE(PF 3・PS 1・SD 0.5・F 3 mm)に対し、三角測量は PF 1.505 mm、白い試験体の iToF 50 MHz は PF 1.996 mm で合格、反射率 0.1 の黒い球では PF 5.941 mm(MPE の 1.98 倍)で不合格。球の残差 0.297 → 0.934 mm(3.15 倍)は、ショット雑音の √10 = 3.16 倍と合う。誤差の予算で単独で MPE を超えたのは黒い球だけ。SD の寄与は fx/fy +0.1 % が −0.308、多重反射 2 % が +0.385、距離の尺度 +0.05 % が +0.157 mm で、全部入れると +0.181 mm に打ち消し合う。1 つずつの順位は足し算にならない。規格の本文は写さず、考え方に沿った評価にとどめた。
+
+[![買う前に受入試験をかける ―― 同じ iToF でも黒い球 1 つで不合格になる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_virtual_acceptance_3d/01_acceptance_layout_and_noise_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_virtual_acceptance_3d/01_acceptance_layout_and_noise.png)
+
+*↑ **買う前に受入試験をかける ―― 同じ iToF でも黒い球 1 つで不合格になる** ―― VDI/VDE 2634 Part 2 の考え方に沿い、探針の球 1・ダンベル 7 姿勢・平面 7 姿勢を 3 つの設計案のセンサで撮り、実機の点群と同じ評価 op で PF・PS・SD・F を数えた。雑音も誤差も無いセンサは全評価量 1e-6 mm 未満、距離の尺度 1.0005 で SD = 0.1572 mm = (s−1)L と閉形式どおり。仮の MPE(PF 3・PS 1・SD 0.5・F 3 mm)に対し、三角測量は PF 1.505 mm、白い試験体の iToF 50 MHz は PF 1.996 mm で合格、反射率 0.1 の黒い球では PF 5.941 mm(MPE の 1.98 倍)で不合格。球の残差 0.297 → 0.934 mm(3.15 倍)は、ショット雑音の √10 = 3.16 倍と合う。誤差の予算で単独で MPE を超えたのは黒い球だけ。SD の寄与は fx/fy +0.1 % が −0.308、多重反射 2 % が +0.385、距離の尺度 +0.05 % が +0.157 mm で、全部入れると +0.181 mm に打ち消し合う。1 つずつの順位は足し算にならない。規格の本文は写さず、考え方に沿った評価にとどめた。*
+
+[![SD of the three designs at the 7 ball-bar positions; dashed = +-MPE](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_virtual_acceptance_3d/02_acceptance_sd_per_position_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_virtual_acceptance_3d/02_acceptance_sd_per_position.png)
+
+*↑ 測定の図 ―― SD of the three designs at the 7 ball-bar positions; dashed = +-MPE*
+
+[![worst value over positions; MPE is an illustrative spec](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_virtual_acceptance_3d/03_acceptance_designs_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_virtual_acceptance_3d/03_acceptance_designs.png)
+
+*↑ worst value over positions; MPE is an illustrative spec*
+
+[![decisive alone: black sphere (rho 0.1)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_virtual_acceptance_3d/04_acceptance_error_budget_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_virtual_acceptance_3d/04_acceptance_error_budget.png)
+
+*↑ decisive alone: black sphere (rho 0.1)*
+
+```
+py -3.11 examples/poc_virtual_acceptance_3d.py
+```
+
+ソース: [examples/poc_virtual_acceptance_3d.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_virtual_acceptance_3d.py)
+
+この回が作った図は全部で **4 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_virtual_acceptance_3d)
+
+使用 op(ノートへ): [`acceptance_error_budget`](https://furuse.work/ops/acceptance/budget/acceptance_error_budget.html) · [`acceptance_layout`](https://furuse.work/ops/acceptance/layout/acceptance_layout.html) · [`acceptance_scan`](https://furuse.work/ops/acceptance/simulate/acceptance_scan.html) · [`virtual_acceptance_test`](https://furuse.work/ops/acceptance/simulate/virtual_acceptance_test.html)
+
+## No.2026.291 —— 光切断の高さは µm で合うが、実機を決めるのはスペックルの床 20.7 µm
+
+ゲージブロック 0/3/6 mm の光条 912 点から光面を当て、法線の角度の誤差は 0.00196°。高さ 1 つだけの校正は拒む(雑音つきの点が特異値の判定をすり抜けたので、PoC の途中で門を足した)。段差 2.00 mm と溶接ビード 1.20 ± 0.10 mm を 40 フレーム走査すると、窓つき重心・ガウス・Steger の偏りは段差で 0.1〜2.0 µm、ビードで 0.5〜11 µm。窓なしで列全体の重心を取ると雑音 1 % で −0.666 mm ずれる。スペックルの床は、コヒーレント結像のシミュで 18.06 µm、Dorsch らの閉形式で 20.69 µm(比 0.873)。床は開口に対して傾き −0.988(閉形式 −1)、独立なパターン N 枚に対して傾き −0.499(閉形式 −0.5)で下がる。GUM の予算では合成 u_c = 20.82 µm、拡張 U = 40.81 µm(k = 1.96)で、支配的な成分はスペックル。走査の画像にはスペックルを入れていないので、実機の誤差の下限はこの床が決める。
+
+[![光切断の高さは µm で合うが、実機を決めるのはスペックルの床 20.7 µm](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_light_section_step_weld_floor/01_height_map_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_light_section_step_weld_floor/01_height_map.png)
+
+*↑ **光切断の高さは µm で合うが、実機を決めるのはスペックルの床 20.7 µm** ―― ゲージブロック 0/3/6 mm の光条 912 点から光面を当て、法線の角度の誤差は 0.00196°。高さ 1 つだけの校正は拒む(雑音つきの点が特異値の判定をすり抜けたので、PoC の途中で門を足した)。段差 2.00 mm と溶接ビード 1.20 ± 0.10 mm を 40 フレーム走査すると、窓つき重心・ガウス・Steger の偏りは段差で 0.1〜2.0 µm、ビードで 0.5〜11 µm。窓なしで列全体の重心を取ると雑音 1 % で −0.666 mm ずれる。スペックルの床は、コヒーレント結像のシミュで 18.06 µm、Dorsch らの閉形式で 20.69 µm(比 0.873)。床は開口に対して傾き −0.988(閉形式 −1)、独立なパターン N 枚に対して傾き −0.499(閉形式 −0.5)で下がる。GUM の予算では合成 u_c = 20.82 µm、拡張 U = 40.81 µm(k = 1.96)で、支配的な成分はスペックル。走査の画像にはスペックルを入れていないので、実機の誤差の下限はこの床が決める。*
+
+[![フレーム 0 の光条(加法雑音 1 %)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_light_section_step_weld_floor/02_line_frame0_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_light_section_step_weld_floor/02_line_frame0.png)
+
+*↑ 測定の図 ―― フレーム 0 の光条(加法雑音 1 %)*
+
+[![図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_light_section_step_weld_floor/03_scan_errors_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_light_section_step_weld_floor/03_scan_errors.png)
+
+*↑ この回の図*
+
+[![スペックルの光条(拡大、sin u = 0.04): 重心は粒で揺れる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_light_section_step_weld_floor/04_speckled_line_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_light_section_step_weld_floor/04_speckled_line.png)
+
+*↑ スペックルの光条(拡大、sin u = 0.04): 重心は粒で揺れる*
+
+[![図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_light_section_step_weld_floor/05_floor_vs_aperture_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_light_section_step_weld_floor/05_floor_vs_aperture.png)
+
+*↑ この回の図*
+
+```
+py -3.11 examples/poc_light_section_step_weld_floor.py
+```
+
+ソース: [examples/poc_light_section_step_weld_floor.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_light_section_step_weld_floor.py)
+
+この回が作った図は全部で **5 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_light_section_step_weld_floor)
+
+使用 op(ノートへ): [`gum_expanded`](https://furuse.work/ops/spc/uncertainty/gum_expanded.html) · [`laser_line_center_gauss`](https://furuse.work/ops/optics/light_section/laser_line_center_gauss.html) · [`laser_line_center_steger`](https://furuse.work/ops/optics/light_section/laser_line_center_steger.html) · [`laser_line_coherent`](https://furuse.work/ops/optics/coherent/laser_line_coherent.html) · [`light_plane_calibrate`](https://furuse.work/ops/optics/light_section/light_plane_calibrate.html) · [`light_section_floor_sweep`](https://furuse.work/ops/optics/light_section/light_section_floor_sweep.html) · [`light_section_height_map`](https://furuse.work/ops/optics/light_section/light_section_height_map.html) · [`light_section_profile`](https://furuse.work/ops/optics/light_section/light_section_profile.html) · [`light_section_render`](https://furuse.work/ops/optics/light_section/light_section_render.html) · [`light_section_rig`](https://furuse.work/ops/optics/light_section/light_section_rig.html) · [`light_section_scan`](https://furuse.work/ops/optics/light_section/light_section_scan.html) · [`light_section_speckle_floor`](https://furuse.work/ops/optics/light_section/light_section_speckle_floor.html) · [`light_section_targets`](https://furuse.work/ops/optics/light_section/light_section_targets.html) · [`light_section_uncertainty_budget`](https://furuse.work/ops/optics/light_section/light_section_uncertainty_budget.html)
 
 ### 医用・生物ウィング ―― 個数が合っていて中身が外れている
 

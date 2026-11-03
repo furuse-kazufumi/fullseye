@@ -5,14 +5,14 @@
   "overall": {
     "search_recall_at_10": 0.6375,
     "plan_recall_at_10": 0.7875,
-    "executable_plan_recall_at_10": 0.6
+    "executable_plan_recall_at_10": 0.6625
   },
   "categories": {
     "fast_3d": {
       "n_queries": 8,
       "search_recall_at_10": 0.8125,
       "plan_recall_at_10": 0.9375,
-      "executable_plan_recall_at_10": 0.25
+      "executable_plan_recall_at_10": 0.5625
     },
     "general": {
       "n_queries": 8,
@@ -316,7 +316,7 @@
       "query": "位相シフト縞画像からラップ位相を計算する",
       "search_recall_at_10": 1.0,
       "plan_recall_at_10": 1.0,
-      "executable_plan_recall_at_10": 0.0,
+      "executable_plan_recall_at_10": 1.0,
       "missed_by_search": [],
       "missed_by_plan": []
     },
@@ -346,7 +346,7 @@
       "query": "compute wrapped phase from phase-shift fringe images",
       "search_recall_at_10": 1.0,
       "plan_recall_at_10": 1.0,
-      "executable_plan_recall_at_10": 0.0,
+      "executable_plan_recall_at_10": 1.0,
       "missed_by_search": [],
       "missed_by_plan": []
     },
@@ -366,7 +366,7 @@
       "query": "구조광 프린지에서 높이 복원",
       "search_recall_at_10": 0.5,
       "plan_recall_at_10": 0.5,
-      "executable_plan_recall_at_10": 1.0,
+      "executable_plan_recall_at_10": 0.5,
       "missed_by_search": [
         "decode_fringe"
       ],
@@ -380,7 +380,7 @@
       "query": "gewickelte Phase aus Phasenschiebebildern berechnen",
       "search_recall_at_10": 1.0,
       "plan_recall_at_10": 1.0,
-      "executable_plan_recall_at_10": 0.0,
+      "executable_plan_recall_at_10": 1.0,
       "missed_by_search": [],
       "missed_by_plan": []
     },

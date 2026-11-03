@@ -15,6 +15,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Gibt eine Region zurück, die mit der achsenparallelen Begrenzungsbox (axis-aligned bounding box) der Region gefüllt ist. a und b werden nicht verwendet. Ist die Region leer, werden lauter Nullen zurückgegeben.</p>
 <p>Implementierung, die HALCONs <code style="color:#22d3bf">smallest_rectangle1</code> (Operation, die das kleinste achsenparallele umschließende Rechteck bestimmt) entspricht (nicht zu verwechseln mit <code style="color:#22d3bf">smallest_rectangle2</code>, dem kleinsten umschließenden Rechteck mit erlaubter Drehung).</p>
+<p><b>Andere Implementierungen derselben Operation (gemessen; <code style="color:#22d3bf">docs/IMPL_DIFFERENTIAL.md</code>)</b>: Bei gleichen Eingaben und gleichen a, b beträgt der Unterschied im Inneren (relativ zum Wertebereich; unter 5e-3 gilt als gleich) <code style="color:#22d3bf">r2_smallest_rectangle1</code> 0. Warum die abweichenden sich unterscheiden (Knopf-Abbildung, Fenster, Rand, Quantisierung, andere Definition), steht in der Tabelle.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">Leitfaden zur Familie gallery2d_region</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

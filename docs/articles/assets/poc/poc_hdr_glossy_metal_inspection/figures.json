@@ -1,0 +1,32 @@
+[
+ {
+  "file": "01_exposures.png",
+  "name": "exposures",
+  "caption": "",
+  "shape": [
+   519,
+   1340,
+   3
+  ]
+ },
+ {
+  "file": "02_results.png",
+  "name": "results",
+  "caption": "",
+  "shape": [
+   519,
+   542,
+   3
+  ]
+ },
+ {
+  "file": "03_response.png",
+  "name": "response",
+  "caption": "",
+  "shape": [
+   720,
+   1120,
+   3
+  ]
+ }
+]

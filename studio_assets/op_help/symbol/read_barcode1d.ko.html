@@ -1,0 +1,27 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">read_barcode1d — SYMBOL <code style="color:#22d3bf">barcode1d</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.read_barcode1d(image, symbologies=None, *, angle_deg=None, n_lines=10, itf_min_length=6, min_agree=2)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import barcode1d; barcode1d.read_barcode1d(image, symbologies=None, *, angle_deg=None, n_lines=10, itf_min_length=6, min_agree=2)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opssymbol.get(&quot;read_barcode1d&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
+<p>영상에서 1차원 바코드를 읽는다(<code style="color:#22d3bf">table</code>).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>Read a 1-D symbol from a 2-D reflectance image at any in-plane angle: sample <code style="color:#22d3bf">n_lines</code> scan lines across the bars (<code style="color:#22d3bf">barcode_scan_profiles</code>), decode each (<code style="color:#22d3bf">decode_barcode_profile</code>) and take the majority text. Returns <code style="color:#22d3bf">text</code>, <code style="color:#22d3bf">symbology</code>, <code style="color:#22d3bf">n_lines</code>, <code style="color:#22d3bf">n_decoded</code> (lines that decoded), <code style="color:#22d3bf">n_agree</code> (lines agreeing with the majority), <code style="color:#22d3bf">votes</code> (text -&gt; count), <code style="color:#22d3bf">line_results</code> (one dict or None per line), <code style="color:#22d3bf">angle_deg</code>, <code style="color:#22d3bf">x_dim_px</code>.</p>
+<p>★2 本以上の走査線が<b>違う</b>文字列で復号したときは多数決の結果に <code style="color:#22d3bf">conflict = True</code> を立てる(誤読の兆候。検査では読み取り不能と同じに扱うべき)。多数の文字列に同意した走査線が <code style="color:#22d3bf">min_agree</code>(既定 2)本に満たなければ読み取り不能とする —— 1 本だけの偶然の一致(ぼけた断片が検査数字を通る)を返さない。Two or more lines decoding to different strings sets <code style="color:#22d3bf">conflict = True</code>; fewer than <code style="color:#22d3bf">min_agree</code> lines agreeing on the majority text is a no-read.</p>
+<p>向きを与えないときは 2 回読む: 構造テンソルの向きで 1 回、多数の文字列を読んだ走査線の最初のバーの縁(バーに平行な直線に乗る)から当て直した向きでもう 1 回(多数の票が減らないときだけ採る)。With <code style="color:#22d3bf">angle_deg=None</code> the scan direction is refined from the leading edges of the majority lines and the symbol is read again.</p>
+<p>空の入力は <code style="color:#22d3bf">ValueError</code>。拒否(<code style="color:#22d3bf">ValueError</code>): 2-D でない、非有限、未知の体系名。1 本も読めなければ <code style="color:#22d3bf">Barcode1DError</code>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesymbol:symbol_reading">symbol_reading 패밀리 가이드</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
+<p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
+<p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
+<p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_symbol_package_1d">poc_symbol_package_1d</a> — <code style="color:#22d3bf">py -3.11 examples/poc_symbol_package_1d.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">table</code> 를 입력으로 받는 것)</h3>
+<p><a style="color:#22d3bf" href="opsymbol:render_symbol">render_symbol</a> · <a style="color:#22d3bf" href="opsymbol:symbol_read_trials">symbol_read_trials</a> · <a style="color:#22d3bf" href="opsymbol:symbol_read_pod">symbol_read_pod</a> · <a style="color:#22d3bf" href="opsymbol:ocr_classify">ocr_classify</a> · <a style="color:#22d3bf" href="opsymbol:ocr_read_line">ocr_read_line</a> · <a style="color:#22d3bf" href="opsymbol:ocr_read_trials">ocr_read_trials</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">barcode1d</code>)</h3>
+<p><a style="color:#22d3bf" href="opsymbol:encode_barcode1d">encode_barcode1d</a> · <a style="color:#22d3bf" href="opsymbol:ean_check_digit">ean_check_digit</a> · <a style="color:#22d3bf" href="opsymbol:barcode_scan_profiles">barcode_scan_profiles</a> · <a style="color:#22d3bf" href="opsymbol:decode_barcode_profile">decode_barcode_profile</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: barcode1d.py — SYMBOL 연산자 레지스트리. 이 op 노트는 <code style="color:#22d3bf">tools/opdocs.py md</code> 가 자동 생성합니다(직접 편집하지 마세요).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

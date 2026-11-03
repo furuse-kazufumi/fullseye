@@ -13,10 +13,12 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/edges_sub_pix.inputs.jpg">edges_sub_pix: 다른 입력 이미지</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>서브픽셀 정밀도의 에지 점 추출. 기울기와 그 법선 방향(<code style="color:#22d3bf">gradient_normals</code>)을 구하고, 임계값(<code style="color:#22d3bf">0.15+0.5*a</code>)을 넘는 픽셀을 연결 성분화한 후, 포물선 피팅으로 각 점을 서브픽셀 위치로 정밀화한다(<code style="color:#22d3bf">subpixel_refine_edges</code>, <code style="color:#22d3bf">ops</code> 쪽 동명 op와 공유하는 구현 -- 2026-09-02 수정으로 진정한 의미의 서브픽셀이 되었다. 이전 구현은 정수 픽셀 좌표를 그대로 반환했다). HALCON의 <code style="color:#22d3bf">edges_sub_pix</code>(Extract sub-pixel precise edges using Deriche, Lanser, Shen, or Canny filters.)에 해당.</p>
-<p><code style="color:#22d3bf">a</code>가 에지 강도의 임계값을 바꾼다. <code style="color:#22d3bf">b</code>는 사용하지 않는다.</p>
-<p>??:</p>
-<p>FsValueError: ???? NaN / inf? ???? ??.</p>
+<p>서브픽셀 정밀도의 에지 윤곽 추출. 그래디언트와 그 법선 방향(<code style="color:#22d3bf">gradient_normals</code>)을 구하고, 비최대 억제(Canny와 같이 법선 방향 양옆보다 강한 화소만)로 1화소 폭으로 가늘게 한 뒤, 임계값(<code style="color:#22d3bf">0.15+0.5*a</code>, 최대 그래디언트로 정규화한 강도)을 넘는 화소를 <b>곡선을 따라 정렬한 윤곽</b>으로 잇고(분기점에서 다른 윤곽으로 나누며, 닫힌 에지는 시작점에서 닫음), 포물선 피팅으로 각 점을 법선 방향으로 서브픽셀 위치까지 정밀화한다(<code style="color:#22d3bf">subpixel_refine_edges</code>, <code style="color:#22d3bf">ops</code> 쪽 동명 op와 공유하는 구현 —— 2026-09-02 수정으로 진정한 서브픽셀이 됨. 이전 구현은 정수 화소 좌표를 그대로 반환). HALCON의 <code style="color:#22d3bf">edges_sub_pix</code>(Extract sub-pixel precise edges using Deriche, Lanser, Shen, or Canny filters.)에 해당.</p>
+<p>윤곽마다 점은 <b>곡선을 따라 정렬</b>되어 있으므로(이웃한 점 사이 약 1 px) <code style="color:#22d3bf">length_xld</code>는 에지의 길이를, <code style="color:#22d3bf">area_center_xld</code> / <code style="color:#22d3bf">circularity_xld</code>는 닫힌 에지가 둘러싼 모양을 잴 수 있다(r = 18 px 원판에서 length_xld 약 113 px = 2πr).</p>
+<p>★2026-11-03까지는 임계값을 넘은 폭 2〜3 px <b>띠</b>의 화소를 <b>래스터 순서</b> 그대로 하나의 윤곽으로 만들었다 —— 같은 원판에서 length_xld가 2508 px(점이 행마다 왕복). 점의 순서와 무관한 양(직선 피팅 <code style="color:#22d3bf">fit_line_contour_xld</code> 등)은 이전 값과 가깝다.</p>
+<p><code style="color:#22d3bf">a</code>가 에지 강도 임계값을 바꾼다. <code style="color:#22d3bf">b</code>는 사용하지 않는다.</p>
+<p>Raises:</p>
+<p>FsValueError: NaN / inf를 포함한 영상.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">gallery2d_contour_measure 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

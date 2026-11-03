@@ -15,6 +15,7 @@
 <p>Richardson-Lucy deconvolution। Blur को 3x3 mean kernel (box PSF) मानकर बार-बार sharpen करता है (skimage.restoration.richardson_lucy को सीधे call करता है)।</p>
 <p><code style="color:#22d3bf">a</code> number of iterations को 2-17 की range में बदलता है (iterations जितने अधिक, sharpening उतनी तेज़, पर noise का बढ़ना और ringing भी बढ़ते हैं)। <code style="color:#22d3bf">b</code> उपयोग नहीं होता। PSF वास्तविक blur की मात्रा की परवाह किए बिना स्थिर 3x3 box मानता है, इसलिए वास्तविक degradation प्रक्रिया से मेल न खाने वाली images में सुधार सीमित होता है, या परिणाम और खराब भी हो सकता है।</p>
 <p><b>खाली frame (मापा गया)</b>: एक समान brightness वाली image देने पर <b>brightness चाहे जो हो, परिणाम खाली होता है (सभी pixels background 0)</b>। पूरी सफ़ेद हो या पूरी काली, एक जैसा व्यवहार होता है; केवल brightness से कुछ detect नहीं होता।</p>
+<p><b>उसी operation के दूसरे implementation (मापा गया; <code style="color:#22d3bf">docs/IMPL_DIFFERENTIAL.md</code>)</b>: एक ही input और एक ही a, b पर भीतरी अंतर (value range के अनुपात में; 5e-3 से कम = मेल) <code style="color:#22d3bf">iv_richardson_lucy</code> 0.89 है। जो मेल नहीं खाते उनका कारण (knob mapping, window, border, quantisation, अलग परिभाषा) table में लिखा है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

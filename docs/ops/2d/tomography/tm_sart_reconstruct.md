@@ -48,6 +48,8 @@ back-projection) loop. Output refit to HxW.
 
 **何も写っていないフレーム(実測)**: 明るさが一様な画像を入れると、**明るさに関係なく空(全画素が背景 0)**になる。真っ白でも真っ黒でも同じで、明るさそのものでは何も検出しない。
 
+**同じ語幹の別の op**: `sart_reconstruct` は入出力の型が違う別の処理で、名前が似ているだけ(`docs/IMPL_DIFFERENTIAL.md`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_physics_alife_3d ファミリ ガイド](../guides/gallery2d_physics_alife_3d.md)

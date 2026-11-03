@@ -1,0 +1,24 @@
+[
+ {
+  "file": "01_dpm_datamatrix.png",
+  "name": "dpm_datamatrix",
+  "caption": "くっきりした点は zxing-cpp が読まず、ぼけると読む(非単調)。",
+  "shape": [
+   343,
+   530,
+   3
+  ]
+ },
+ {
+  "file": "02_dpm_pod_levels.png",
+  "name": "dpm_pod_levels",
+  "caption": "",
+  "shape": [
+   2320,
+   790,
+   3
+  ],
+  "csv": "02_dpm_pod_levels.csv",
+  "tsv": "02_dpm_pod_levels.tsv"
+ }
+]

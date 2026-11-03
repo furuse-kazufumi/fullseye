@@ -55,7 +55,7 @@ plain 相関 + rho-Hann 窓 + 放物線サブピクセルを用いる。
 
 ## 同カテゴリ(`match_pose`)
 
-[match_phase_3d](match_phase_3d.md) · [match_pca](match_pca.md) · [moment_axes](moment_axes.md)
+[match_phase_3d](match_phase_3d.md) · [match_pca](match_pca.md) · [find_surface_pose](find_surface_pose.md) · [moment_axes](moment_axes.md)
 
 ---
 *Provenance: match3d.py — 3D operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

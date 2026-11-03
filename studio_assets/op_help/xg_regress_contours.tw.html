@@ -13,6 +13,7 @@
 <p>全最小平方直線殘差 RMS = sqrt(共變異數較小的特徵值)。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>The perpendicular (orthogonal-regression) residual variance of a point set equals its smallest covariance eigenvalue; its square root is the RMS perpendicular distance to the best-fit line.</p>
+<p><b>同一處理的其他實作（實測，<code style="color:#22d3bf">docs/IMPL_DIFFERENTIAL.md</code>）</b>：在相同輸入、相同 a、b 下，內部差（相對於值域之比；小於 5e-3 視為一致）為 <code style="color:#22d3bf">hx_regress_contours</code> 1。不一致的原因（旋鈕對應、視窗、邊界、量化、定義不同）寫在表中。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

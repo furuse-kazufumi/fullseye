@@ -1,0 +1,48 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">ocr_train — SYMBOL <code style="color:#22d3bf">ocr</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">table</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ocr_train(font=&#x27;dot5x7&#x27;, char_height_px=(16, 20, 26, 34), variants=None, seed=0, neighbour=&#x27;random&#x27;) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import ocrclassic; ocrclassic.ocr_train(font=&#x27;dot5x7&#x27;, char_height_px=(16, 20, 26, 34), variants=None, seed=0, neighbour=&#x27;random&#x27;) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opssymbol.get(&quot;ocr_train&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>font को nuisance variations के साथ render करके templates (features + labels) और rejection thresholds इकट्ठा करता है (<code style="color:#22d3bf">table</code>)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>Render every character under a small deterministic set of nuisance variations and collect feature templates for k-NN.</p>
+<p>各試料は「乱数(seed 固定)で選んだ隣字 + 字 + 隣字」の 3 字行として描き、撹乱(字高・にじみ・ぼけ・小数ずれ)をかけてから、<b>読み取りと同じ規則</b>で中央の字を切る: 字間の中点(真値)に最も近い列射影の極小を切れ目とし(読みの切れ目候補と同じ規則)、その間の字の画素(ink &gt;= 0.5)の外接箱から、重心中心・送り幅の窓で特徴量を取る。隣字を固定(例 <code style="color:#22d3bf">&quot;H&quot;</code>)にすると、読みの場で隣に来る字のにじみが学習に無く、ぼけ 0.1h で正解率が 2 割落ちた(実測)ので乱数にしている。切れなかった試料(字の画素が無い)は真値の箱で代替し、件数を <code style="color:#22d3bf">n_fallback</code> に残す。</p>
+<p>Each sample is a 3-glyph line (seeded random neighbours + glyph + neighbour); the middle glyph is cut with the same rule as reading (profile minima nearest to the true gap midpoints) and featurised with the centroid-centred pitch-wide window. A fixed neighbour lost ~20 % accuracy at blur 0.1 h (measured), hence random neighbours.</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
+<p>font : 書体名か書体辞書。</p>
+<p>char_height_px : 字高の組(各 8..256)。既定 (16, 20, 26, 34)。</p>
+<p>variants : <code style="color:#22d3bf">{&quot;ink_gain&quot;: tuple, &quot;blur&quot;: tuple (σ / 字高), &quot;subpixel&quot;: bool, &quot;noise&quot;: float}</code>。</p>
+<p>None で既定(にじみ 3 x ぼけ 8 [0..0.14h, 0.02h 刻み] x 字高 4 = 1 字 96 試料、</p>
+<p>40 字で 3840 試料)。</p>
+<p>seed : 小数ずらし・隣字・雑音の乱数種(決定的)。</p>
+<p>neighbour : <code style="color:#22d3bf">&quot;random&quot;</code>(既定)か字種内の 1 字。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>dict</p>
+<p><code style="color:#22d3bf">features</code> (n, 88), <code style="color:#22d3bf">labels</code> (n,) str, <code style="color:#22d3bf">weights</code> (88,) 対角マハラノビスの重み,</p>
+<p><code style="color:#22d3bf">blur</code> (n,) 各試料のぼけ, <code style="color:#22d3bf">blur_levels</code>, <code style="color:#22d3bf">blur_step</code>, <code style="color:#22d3bf">charset</code>, <code style="color:#22d3bf">font</code>,</p>
+<p><code style="color:#22d3bf">font_kind</code>, <code style="color:#22d3bf">k</code> (=1), <code style="color:#22d3bf">reject_distance</code>(全体の値、帯を指定しない照合用),</p>
+<p><code style="color:#22d3bf">reject_distance_by_class</code>(字ごと), <code style="color:#22d3bf">min_margin_ratio</code>, <code style="color:#22d3bf">reject_stats</code></p>
+<p>(<code style="color:#22d3bf">within_nn_p99</code>, <code style="color:#22d3bf">factor</code>, <code style="color:#22d3bf">between_nn_min</code>, <code style="color:#22d3bf">between_nn_p01</code>), <code style="color:#22d3bf">n_fallback</code>,</p>
+<p><code style="color:#22d3bf">heights</code>。</p>
+<p>棄却距離の導き方 / reject_distance derivation</p>
+<p>各試料について「同クラス・ぼけ帯内(±1 格子点)の最近傍の<b>他の</b>試料までの重みつき距離」を</p>
+<p>求め、<b>字ごとに</b>その 99 パーセンタイル x <code style="color:#22d3bf">REJECT_FACTOR</code> を棄却距離とする。</p>
+<p>学習分布だけで決まる(係数の選び方は <code style="color:#22d3bf">REJECT_FACTOR</code> の注記を参照)。</p>
+<p>Per class: REJECT_FACTOR x P99 of the within-class, within-band nearest-other-sample</p>
+<p>weighted distance. Derived from the training distribution only.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesymbol:symbol_reading">symbol_reading family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_symbol_lot_ocr">poc_symbol_lot_ocr</a> — <code style="color:#22d3bf">py -3.11 examples/poc_symbol_lot_ocr.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opsymbol:render_symbol">render_symbol</a> · <a style="color:#22d3bf" href="opsymbol:symbol_read_trials">symbol_read_trials</a> · <a style="color:#22d3bf" href="opsymbol:symbol_read_pod">symbol_read_pod</a> · <a style="color:#22d3bf" href="opsymbol:ocr_classify">ocr_classify</a> · <a style="color:#22d3bf" href="opsymbol:ocr_read_line">ocr_read_line</a> · <a style="color:#22d3bf" href="opsymbol:ocr_read_trials">ocr_read_trials</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">ocr</code>)</h3>
+<p><a style="color:#22d3bf" href="opsymbol:ocr_font">ocr_font</a> · <a style="color:#22d3bf" href="opsymbol:ocr_render_text">ocr_render_text</a> · <a style="color:#22d3bf" href="opsymbol:ocr_segment_line">ocr_segment_line</a> · <a style="color:#22d3bf" href="opsymbol:ocr_features">ocr_features</a> · <a style="color:#22d3bf" href="opsymbol:ocr_classify">ocr_classify</a> · <a style="color:#22d3bf" href="opsymbol:ocr_read_line">ocr_read_line</a> · <a style="color:#22d3bf" href="opsymbol:ocr_score">ocr_score</a> · <a style="color:#22d3bf" href="opsymbol:ocr_read_trials">ocr_read_trials</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: ocrclassic.py — SYMBOL operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

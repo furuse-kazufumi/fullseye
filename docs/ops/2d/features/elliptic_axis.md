@@ -39,6 +39,8 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 ``a``, ``b`` は未使用。
 
+**同じ語幹の別の op**: `xg_elliptic_axis` は入出力の型が違う別の処理で、名前が似ているだけ(`docs/IMPL_DIFFERENTIAL.md`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_features ファミリ ガイド](../guides/gallery2d_features.md)

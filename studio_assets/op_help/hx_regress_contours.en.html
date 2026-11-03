@@ -16,6 +16,7 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> are unused.</p>
 <p style="margin:2px 0 2px 12px">• 0.0 if there is no valid contour (indistinguishable from &quot;a perfect line&quot;).</p>
 <p>Smaller means straighter. The slope and position of the line itself are not returned (use <code style="color:#22d3bf">fit_line_contours</code> if you need the fit). To see the number of corners as a polyline, split with <code style="color:#22d3bf">hx_split_contours</code> first and count the segments. Contours with 2 or fewer points are excluded from the evaluation. The analogous measure for only 1 contour is <code style="color:#22d3bf">xg_regress_contours</code>.</p>
+<p><b>Other implementations of the same operation (measured; <code style="color:#22d3bf">docs/IMPL_DIFFERENTIAL.md</code>)</b>: on the same inputs and the same a, b, the interior difference (relative to the value range; below 5e-3 counts as a match) is <code style="color:#22d3bf">xg_regress_contours</code> 1. Why the mismatching ones differ (knob mapping, window, border, quantisation, a different definition) is in the table.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

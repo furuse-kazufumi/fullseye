@@ -63,8 +63,10 @@ def test_aliases_keep_result_counts_at_search_plan_validate_and_pipeline_boundar
             search_ops("image", 20, in_sort=canonical)["ops"])
         assert len(search_ops("image", 20, out_sort=alias)["ops"]) == len(
             search_ops("image", 20, out_sort=canonical)["ops"])
-        assert len(plan(alias, canonical).get("plans", [])) == len(
-            plan(canonical, canonical).get("plans", []))
+        # plan() は既定で plan_timeout_ms(900 ms)で打ち切る(capped="timeout_ms")。CI の負荷で片方だけ
+        # 時間切れになると件数が食い違うので、上限を展開数(50000)の側に移して決定的にする。
+        assert len(plan(alias, canonical, constraints={"timeout_ms": 120_000}).get("plans", [])) == len(
+            plan(canonical, canonical, constraints={"timeout_ms": 120_000}).get("plans", []))
         alias_validation = validate_pipeline([], alias, cat)
         canonical_validation = validate_pipeline([], canonical, cat)
         assert len(alias_validation["errors"]) == len(canonical_validation["errors"])

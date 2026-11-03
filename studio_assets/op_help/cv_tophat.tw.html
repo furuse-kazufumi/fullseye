@@ -17,6 +17,7 @@
 <p>相當於 HALCON 的 <code style="color:#22d3bf">gray_tophat</code>(Perform a gray value top hat transformation on an image.)。實作為將 <code style="color:#22d3bf">cv2.morphologyEx(v, MORPH_TOPHAT, se)</code> 正規化後的結果，se 為橢圓形，尺寸 <code style="color:#22d3bf">3+2*int(a*3)</code> —— a 將結構元素尺寸在 3~9 之間調節。b 未使用。</p>
 <p><b>數值可比性（實測）</b>：輸出以<b>該影像自身的最大值正規化</b>（輸出最大值恆為 1.0，輸入整體縮放不改變輸出）。因此<b>不能跨影像比較數值</b>——同樣強度的特徵會因該影像中最強特徵的不同而取不同的值；在只有弱特徵的影像中，雜訊會被抬升到 1.0。要跨影像比較，請以統一基準重新縮放。</p>
 <p><b>空影格（實測）</b>：輸入亮度均勻的影像時，<b>無論亮度為何，結果都為空（全部像素為背景 0）</b>。純白與純黑表現相同；僅憑亮度偵測不到任何東西。</p>
+<p><b>同一處理的其他實作（實測，<code style="color:#22d3bf">docs/IMPL_DIFFERENTIAL.md</code>）</b>：在相同輸入、相同 a、b 下，內部差（相對於值域之比；小於 5e-3 視為一致）為 <code style="color:#22d3bf">tophat</code> 1。不一致的原因（旋鈕對應、視窗、邊界、量化、定義不同）寫在表中。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_morphology">gallery2d_morphology 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

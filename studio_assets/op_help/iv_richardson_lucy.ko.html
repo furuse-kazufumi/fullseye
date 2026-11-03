@@ -13,6 +13,7 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>작은 가우시안 PSF(sigma = <code style="color:#22d3bf">RL_SIGMA</code>)를 가정한 Richardson-Lucy 디컨볼루션. <code style="color:#22d3bf">a</code>는 반복 횟수 n = 1 + round(a*14) (1..15)를 설정하며, <code style="color:#22d3bf">b</code>는 무시된다. RL은 추정값 <code style="color:#22d3bf">u</code>를 곱셈적으로 갱신하여 <code style="color:#22d3bf">u (*) psf</code>가 흐려진 관측값과 일치하도록 만들어 실제 에지를 선명하게 한다.</p>
+<p><b>같은 처리의 다른 구현(실측, <code style="color:#22d3bf">docs/IMPL_DIFFERENTIAL.md</code>)</b>: 같은 입력·같은 a, b에서의 내부 차이(값 범위 대비 비율, 5e-3 미만이면 일치)는 <code style="color:#22d3bf">xsk_richardson_lucy</code> 0.89. 어긋나는 이유(노브 매핑·창·가장자리·양자화·정의 차이)는 표에 있다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

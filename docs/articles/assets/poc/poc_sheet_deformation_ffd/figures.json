@@ -1,0 +1,24 @@
+[
+ {
+  "file": "01_sheet_ffd_error_maps.png",
+  "name": "sheet_ffd_error_maps",
+  "caption": "register_accuracy_map: error per pixel against the known field",
+  "shape": [
+   734,
+   1118,
+   3
+  ]
+ },
+ {
+  "file": "02_sheet_ffd_regions.png",
+  "name": "sheet_ffd_regions",
+  "caption": "",
+  "shape": [
+   304,
+   809,
+   3
+  ],
+  "csv": "02_sheet_ffd_regions.csv",
+  "tsv": "02_sheet_ffd_regions.tsv"
+ }
+]

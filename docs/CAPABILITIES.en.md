@@ -597,7 +597,7 @@ Operators: `depth_to_points`, `estimate_normals`, `fit_plane_ransac`, `euclidean
 
 Pipeline: [`depth_to_points`](ops/3d/transform/depth_to_points.md) → [`estimate_normals`](ops/3d/curvature/estimate_normals.md) → [`ransac_plane`](ops/3d/robust_fit/ransac_plane.md) → [`icp_point2point_3d`](ops/3d/refine/icp_point2point_3d.md)
 
-Alternatives: `find_surface_pose`, `point_to_plane_icp`, `fpfh`, [`register_cross`](ops/3d/fusion/register_cross.md)
+Alternatives: [`find_surface_pose`](ops/3d/match_pose/find_surface_pose.md), `point_to_plane_icp`, `fpfh`, [`register_cross`](ops/3d/fusion/register_cross.md)
 
 Runnable: `poc_registration_basin`, `poc_real_tless_6dof`
 

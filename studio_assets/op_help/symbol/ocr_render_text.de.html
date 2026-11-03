@@ -1,0 +1,41 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">ocr_render_text — SYMBOL <code style="color:#22d3bf">ocr</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">keine</code> → <code style="color:#22d3bf">table</code> (ein Operator, der allein durch seine Argumente bestimmt ist — er nimmt kein Bild und keine Daten entgegen)</p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ocr_render_text(text, font=&#x27;dot5x7&#x27;, char_height_px=24, pitch=None, dot_diameter=0.8, ink_gain=0.0, contrast=0.8, background=0.9, supersample=4, stroke_width=0.12, subpixel_offset=(0.0, 0.0)) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import ocrclassic; ocrclassic.ocr_render_text(text, font=&#x27;dot5x7&#x27;, char_height_px=24, pitch=None, dot_diameter=0.8, ink_gain=0.0, contrast=0.8, background=0.9, supersample=4, stroke_width=0.12, subpixel_offset=(0.0, 0.0)) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opssymbol.get(&quot;ocr_render_text&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>Rendert eine Zeichenkette mit einer eingebauten Schrift und liefert sie mit dem wahren Rahmen jedes Zeichens (<code style="color:#22d3bf">table</code>).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
+<p>text : str</p>
+<p>字種内の字だけ(大文字)。空文字・字種外は ValueError。</p>
+<p>font : 書体名 (<code style="color:#22d3bf">&quot;dot5x7&quot;</code>/<code style="color:#22d3bf">&quot;stroke&quot;</code>) か <code style="color:#22d3bf">ocr_font</code> の辞書(字を足したもの可)。</p>
+<p>char_height_px : 字高(画素)= 全高の字のインクの縦の広がり。&gt;= 6。</p>
+<p>pitch : 字の送り幅(画素)。None なら書体の既定(~0.88 x 字高)。</p>
+<p>dot_diameter : ドット直径 / ドットピッチ(dot5x7 のみ)。(0, 1.5]。</p>
+<p>ink_gain : にじみ。ドット直径・線幅に <code style="color:#22d3bf">(1 + ink_gain)</code> を掛ける。(-0.9, 2]。</p>
+<p>contrast, background : 地の明るさ <code style="color:#22d3bf">background</code>、インクの明るさ <code style="color:#22d3bf">background - contrast</code>。</p>
+<p>supersample : 1 画素あたりの超標本数(一辺)。1..16。</p>
+<p>stroke_width : 線幅 / 字高(stroke のみ)。(0, 0.4]。</p>
+<p>subpixel_offset : (dy, dx) 画素。字列全体を小数画素ずらす(学習の撹乱用)。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>dict</p>
+<p><code style="color:#22d3bf">image</code> 2-D float [0, 1] (明るい地に暗いインク), <code style="color:#22d3bf">boxes</code> 字ごとの真値の外接箱</p>
+<p><code style="color:#22d3bf">(r0, c0, r1, c1)</code>(終端は含まない、被覆率 &gt;= 0.5 の画素の外接箱), <code style="color:#22d3bf">text</code>,</p>
+<p><code style="color:#22d3bf">line_box</code>(字高の行範囲 x 全幅), <code style="color:#22d3bf">pitch_px</code>, <code style="color:#22d3bf">cells</code>(各字の設計上の字幅の列範囲</p>
+<p><code style="color:#22d3bf">(左, 右)</code>、小数画素)。周囲に約 1 字高の余白。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesymbol:symbol_reading">Leitfaden zur Familie symbol_reading</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_symbol_lot_ocr">poc_symbol_lot_ocr</a> — <code style="color:#22d3bf">py -3.11 examples/poc_symbol_lot_ocr.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">table</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opsymbol:render_symbol">render_symbol</a> · <a style="color:#22d3bf" href="opsymbol:symbol_read_trials">symbol_read_trials</a> · <a style="color:#22d3bf" href="opsymbol:symbol_read_pod">symbol_read_pod</a> · <a style="color:#22d3bf" href="opsymbol:ocr_classify">ocr_classify</a> · <a style="color:#22d3bf" href="opsymbol:ocr_read_line">ocr_read_line</a> · <a style="color:#22d3bf" href="opsymbol:ocr_read_trials">ocr_read_trials</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">ocr</code>)</h3>
+<p><a style="color:#22d3bf" href="opsymbol:ocr_font">ocr_font</a> · <a style="color:#22d3bf" href="opsymbol:ocr_segment_line">ocr_segment_line</a> · <a style="color:#22d3bf" href="opsymbol:ocr_features">ocr_features</a> · <a style="color:#22d3bf" href="opsymbol:ocr_train">ocr_train</a> · <a style="color:#22d3bf" href="opsymbol:ocr_classify">ocr_classify</a> · <a style="color:#22d3bf" href="opsymbol:ocr_read_line">ocr_read_line</a> · <a style="color:#22d3bf" href="opsymbol:ocr_score">ocr_score</a> · <a style="color:#22d3bf" href="opsymbol:ocr_read_trials">ocr_read_trials</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: ocrclassic.py — SYMBOL Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

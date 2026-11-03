@@ -13,6 +13,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Zählt steigend-fallende Kantenpaare (die beiden Enden eines hellen Objekts) entlang einer durch die Mitte verlaufenden Kalipergeraden (entspricht HALCON <code style="color:#22d3bf">measure_pairs</code>: extrahiert Paare gerader Kanten senkrecht zu einem Rechteck/Bogen).</p>
 <p><code style="color:#22d3bf">a</code> ist die Linienrichtung (<code style="color:#22d3bf">theta = a*pi</code>). Die Kantenerkennung ist dieselbe wie bei <code style="color:#22d3bf">m1_measure_pos</code> (subpixelgenaue Erkennung von Gradientenspitzen), und <code style="color:#22d3bf">b</code> (0 bis 1) ist ein Schwellwert relativ zur maximalen Amplitude. Die Kanten über dem Schwellwert werden der Reihe nach abgetastet, und jede Polaritätsfolge rising → falling wird als 1 Paar gezählt (Feature, ganzzahliger Wert). 0.0 bei weniger als 2 Kanten.</p>
+<p><b>Andere Ops mit demselben Wortstamm</b>: <code style="color:#22d3bf">measure_pairs</code> — eine andere Operation mit anderen Ein-/Ausgabetypen; nur der Name ist ähnlich (<code style="color:#22d3bf">docs/IMPL_DIFFERENTIAL.md</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">Leitfaden zur Familie gallery2d_contour_measure</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>

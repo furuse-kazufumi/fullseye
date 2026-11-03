@@ -1,0 +1,51 @@
+[
+ {
+  "file": "01_height_map.png",
+  "name": "height_map",
+  "caption": "高さ地図(フレーム × 列、gauss): 段差 2 mm と高さの変わるビード",
+  "shape": [
+   160,
+   340
+  ]
+ },
+ {
+  "file": "02_line_frame0.png",
+  "name": "line_frame0",
+  "caption": "フレーム 0 の光条(加法雑音 1 %)",
+  "shape": [
+   480,
+   640
+  ]
+ },
+ {
+  "file": "03_scan_errors.png",
+  "name": "scan_errors",
+  "caption": "",
+  "shape": [
+   304,
+   1240,
+   3
+  ],
+  "csv": "03_scan_errors.csv",
+  "tsv": "03_scan_errors.tsv"
+ },
+ {
+  "file": "04_speckled_line.png",
+  "name": "speckled_line",
+  "caption": "スペックルの光条(拡大、sin u = 0.04): 重心は粒で揺れる",
+  "shape": [
+   64,
+   256
+  ]
+ },
+ {
+  "file": "05_floor_vs_aperture.png",
+  "name": "floor_vs_aperture",
+  "caption": "",
+  "shape": [
+   720,
+   1120,
+   3
+  ]
+ }
+]

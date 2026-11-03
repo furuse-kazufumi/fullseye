@@ -54,6 +54,8 @@ parameters.）**と同じ 3 値・同じ式**。3 つとも無次元なので正
 領域が空のときは円の値 ``(1, 1, 0)`` を返す fail-soft 仕様(成分数は入力で
 変わらない)。``a``, ``b`` は未使用。
 
+**同じ語幹の別の op**: `xg_eccentricity` は入出力の型が違う別の処理で、名前が似ているだけ(`docs/IMPL_DIFFERENTIAL.md`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_features ファミリ ガイド](../guides/gallery2d_features.md)

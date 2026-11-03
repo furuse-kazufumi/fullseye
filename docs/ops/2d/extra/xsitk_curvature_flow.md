@@ -43,6 +43,8 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 **端の扱い**: 端画素を重複させて折り返す (d c b a | a b c d、scipy の既定 ``reflect``)(実測。`tools/impl2/border_probe.py`)。
 
+**同じ語幹の別の op**: `curvature_flow` は入出力の型が違う別の処理で、名前が似ているだけ(`docs/IMPL_DIFFERENTIAL.md`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_color_artistic ファミリ ガイド](../guides/gallery2d_color_artistic.md)

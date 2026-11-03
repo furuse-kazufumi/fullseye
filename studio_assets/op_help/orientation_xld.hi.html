@@ -11,7 +11,8 @@
 <p><b>Stages</b> (पहले आने वाले ops → यह op, बाएँ से क्रम में):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/orientation_xld.chain.jpg">orientation_xld: stages का figure</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
-<p>Ellipse fit किए गए contour का झुकाव कोण (<code style="color:#22d3bf">cv2.fitEllipse</code> के कोण को 180° पर मोड़कर [0,1] में normalise किया गया)। HALCON के <code style="color:#22d3bf">orientation_xld</code> (Calculate the orientation of contours or polygons.) के समकक्ष है।</p>
+<p>सबसे बड़े कंटूर पर फ़िट किए गए दीर्घवृत्त (<code style="color:#22d3bf">cv2.fitEllipse</code>) का <b>मुख्य अक्ष कोण θ / 180</b> (θ स्तंभ अक्ष से <b>स्क्रीन पर वामावर्त</b> मापा गया, पंक्तियाँ नीचे की ओर, [0, 180) डिग्री में मोड़ा गया)। क्षेत्र संस्करण <code style="color:#22d3bf">orientation_region</code> जैसा ही नियम (180 से गुणा करने पर डिग्री)। HALCON का <code style="color:#22d3bf">orientation_xld</code> (Calculate the orientation of contours or polygons.) उसी दिशा का कोण -π..π रेडियन में लौटाता है (सबसे दूर के बिंदु से दिशा तय), इसलिए यह 180 डिग्री पर मोड़ा और [0,1) में सामान्यीकृत संस्करण है।</p>
+<p>★2026-11-03 तक <code style="color:#22d3bf">cv2.fitEllipse</code> का कोण जस का तस इस्तेमाल होता था और <b>लघु अक्ष का, स्क्रीन पर दक्षिणावर्त कोण</b> (= 90 - θ) लौटता था (वामावर्त 20 डिग्री घुमाई छड़ पर 0.389 = 70 डिग्री; केवल 45 डिग्री संयोग से मेल खाता था)।</p>
 <p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> का उपयोग नहीं होता।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features family guide</a></p>

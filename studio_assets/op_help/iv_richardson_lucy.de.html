@@ -13,6 +13,7 @@
 <p>*Die 4. Spalte ist eine Farb-Eingabe (H,W,3). Dieser Op verarbeitet Farbe, ohne Kanäle zu vermischen (er faltet den Farbkanal nicht als dritte Raumachse).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Richardson-Lucy-Entfaltung unter Annahme einer kleinen Gauß-PSF (sigma = <code style="color:#22d3bf">RL_SIGMA</code>). <code style="color:#22d3bf">a</code> legt die Iterationsanzahl n = 1 + round(a*14) (1..15) fest; <code style="color:#22d3bf">b</code> wird ignoriert. RL treibt die Schätzung <code style="color:#22d3bf">u</code> multiplikativ so an, dass <code style="color:#22d3bf">u (*) psf</code> der unscharfen Messung entspricht, wodurch echte Kanten geschärft werden.</p>
+<p><b>Andere Implementierungen derselben Operation (gemessen; <code style="color:#22d3bf">docs/IMPL_DIFFERENTIAL.md</code>)</b>: Bei gleichen Eingaben und gleichen a, b beträgt der Unterschied im Inneren (relativ zum Wertebereich; unter 5e-3 gilt als gleich) <code style="color:#22d3bf">xsk_richardson_lucy</code> 0.89. Warum die abweichenden sich unterscheiden (Knopf-Abbildung, Fenster, Rand, Quantisierung, andere Definition), steht in der Tabelle.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">Leitfaden zur Familie gallery2d_smoothing_rank</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

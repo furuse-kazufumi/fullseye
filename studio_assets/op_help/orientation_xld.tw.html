@@ -11,7 +11,8 @@
 <p><b>階段</b>(前置運算子 → 本運算子，由左至右):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/orientation_xld.chain.jpg">orientation_xld: 處理階段</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>擬合到輪廓的橢圓傾斜角（把 <code style="color:#22d3bf">cv2.fitEllipse</code> 的角度以 180° 折返並歸一化到 [0,1]）。相當於 HALCON 的 <code style="color:#22d3bf">orientation_xld</code>（Calculate the orientation of contours or polygons.）。</p>
+<p>對最大輪廓擬合橢圓(<code style="color:#22d3bf">cv2.fitEllipse</code>)所得的<b>主軸角 θ / 180</b>(θ 從欄軸起<b>在螢幕上逆時針</b>量測,列向下,折疊到 [0, 180) 度)。與區域版 <code style="color:#22d3bf">orientation_region</code> 規約相同(乘以 180 即為度)。HALCON 的 <code style="color:#22d3bf">orientation_xld</code>(Calculate the orientation of contours or polygons.)以 -π..π 弧度回傳同方向的角(以最遠點決定朝向),這裡是折疊到 180 度並正規化到 [0,1) 的版本。</p>
+<p>★直到 2026-11-03 一直原樣使用 <code style="color:#22d3bf">cv2.fitEllipse</code> 的角,回傳的是<b>短軸的、螢幕上順時針的角</b>(= 90 - θ)(逆時針轉 20 度的棒得到 0.389 = 70 度,只有 45 度碰巧一致)。</p>
 <p><code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 族使用指南</a></p>

@@ -793,6 +793,22 @@
    "ko": "ECEF 는 지구 표면 좌표(중심에서 약 6.4M m)를 요구하지만, 영상에서 만든 합성 점은 원점 근처에 있어 타원체의 evolute 안에 떨어지므로 반드시 거부된다",
    "de": "ECEF braucht Koordinaten an der Erdoberfläche (~6,4M m vom Mittelpunkt), aber aus einem Bild abgeleitete synthetische Punkte liegen nahe dem Ursprung, fallen in die Evolute des Ellipsoids und werden immer abgelehnt",
    "hi": "ECEF को पृथ्वी-सतह के निर्देशांक (केंद्र से ~6.4M m) चाहिए, पर छवि से बने कृत्रिम बिंदु मूलबिंदु के पास होते हैं, ellipsoid के evolute के अंदर गिरते हैं और हमेशा अस्वीकार होते हैं"
+  },
+  "**同じ処理の別実装(実測、`docs/IMPL_DIFFERENTIAL.md`)**: 同じ入力・同じ a, b での内部の差(振れ幅に対する比。5e-3 未満が一致)は {a0}。食い違う理由(つまみの写し方・窓・端・量子化・定義の違い)は表に書いてある。": {
+   "en": "**Other implementations of the same operation (measured; `docs/IMPL_DIFFERENTIAL.md`)**: on the same inputs and the same a, b, the interior difference (relative to the value range; below 5e-3 counts as a match) is {a0}. Why the mismatching ones differ (knob mapping, window, border, quantisation, a different definition) is in the table.",
+   "zh": "**同一处理的其他实现（实测，`docs/IMPL_DIFFERENTIAL.md`）**：在相同输入、相同 a、b 下，内部差（相对于取值范围之比；小于 5e-3 视为一致）为 {a0}。不一致的原因（旋钮映射、窗口、边界、量化、定义不同）写在表中。",
+   "tw": "**同一處理的其他實作（實測，`docs/IMPL_DIFFERENTIAL.md`）**：在相同輸入、相同 a、b 下，內部差（相對於值域之比；小於 5e-3 視為一致）為 {a0}。不一致的原因（旋鈕對應、視窗、邊界、量化、定義不同）寫在表中。",
+   "ko": "**같은 처리의 다른 구현(실측, `docs/IMPL_DIFFERENTIAL.md`)**: 같은 입력·같은 a, b에서의 내부 차이(값 범위 대비 비율, 5e-3 미만이면 일치)는 {a0}. 어긋나는 이유(노브 매핑·창·가장자리·양자화·정의 차이)는 표에 있다.",
+   "de": "**Andere Implementierungen derselben Operation (gemessen; `docs/IMPL_DIFFERENTIAL.md`)**: Bei gleichen Eingaben und gleichen a, b beträgt der Unterschied im Inneren (relativ zum Wertebereich; unter 5e-3 gilt als gleich) {a0}. Warum die abweichenden sich unterscheiden (Knopf-Abbildung, Fenster, Rand, Quantisierung, andere Definition), steht in der Tabelle.",
+   "hi": "**उसी operation के दूसरे implementation (मापा गया; `docs/IMPL_DIFFERENTIAL.md`)**: एक ही input और एक ही a, b पर भीतरी अंतर (value range के अनुपात में; 5e-3 से कम = मेल) {a0} है। जो मेल नहीं खाते उनका कारण (knob mapping, window, border, quantisation, अलग परिभाषा) table में लिखा है।"
+  },
+  "**同じ語幹の別の op**: {a0} は入出力の型が違う別の処理で、名前が似ているだけ(`docs/IMPL_DIFFERENTIAL.md`)。": {
+   "en": "**Other ops with the same stem**: {a0} — a different operation with different input/output types; only the name is similar (`docs/IMPL_DIFFERENTIAL.md`).",
+   "zh": "**同词干的其他 op**：{a0} 的输入输出类型不同，是另一种处理，只是名字相似（`docs/IMPL_DIFFERENTIAL.md`）。",
+   "tw": "**同詞幹的其他 op**：{a0} 的輸入輸出型別不同，是另一種處理，只是名字相似（`docs/IMPL_DIFFERENTIAL.md`）。",
+   "ko": "**같은 어간의 다른 op**: {a0} 는 입출력 타입이 다른 별개의 처리이며, 이름만 비슷하다(`docs/IMPL_DIFFERENTIAL.md`).",
+   "de": "**Andere Ops mit demselben Wortstamm**: {a0} — eine andere Operation mit anderen Ein-/Ausgabetypen; nur der Name ist ähnlich (`docs/IMPL_DIFFERENTIAL.md`).",
+   "hi": "**उसी stem वाले दूसरे op**: {a0} — अलग input/output type वाला अलग operation; सिर्फ़ नाम मिलता-जुलता है (`docs/IMPL_DIFFERENTIAL.md`)।"
   }
  }
 }

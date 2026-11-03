@@ -12,6 +12,7 @@
 <p>OpenCV संस्करण के ORB (Oriented FAST and Rotated BRIEF) keypoints की पहचानी गई संख्या।</p>
 <p><code style="color:#22d3bf">cv2.ORB_create</code> से केवल detection करता है (descriptors की गणना नहीं करता), और पहचाने गए keypoints की संख्या लौटाता है (feature आउटपुट)। यह <code style="color:#22d3bf">xsk_orb_count</code> (skimage संस्करण) के समान विचार का अलग implementation है; detector का implementation अलग होने से संख्याएँ मेल खाएँ, यह ज़रूरी नहीं।</p>
 <p><code style="color:#22d3bf">a</code> माँगी गई अधिकतम feature points संख्या <code style="color:#22d3bf">nfeatures</code> को 50-500 की range में बदलता है (यह ऊपरी सीमा है; वास्तविक संख्या image की सामग्री पर निर्भर करती है और इससे कम होती है)। <code style="color:#22d3bf">b</code> उपयोग नहीं होता।</p>
+<p><b>उसी operation के दूसरे implementation (मापा गया; <code style="color:#22d3bf">docs/IMPL_DIFFERENTIAL.md</code>)</b>: एक ही input और एक ही a, b पर भीतरी अंतर (value range के अनुपात में; 5e-3 से कम = मेल) <code style="color:#22d3bf">xsk_orb_count</code> 1 है। जो मेल नहीं खाते उनका कारण (knob mapping, window, border, quantisation, अलग परिभाषा) table में लिखा है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

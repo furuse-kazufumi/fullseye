@@ -3626,9 +3626,9 @@
   {
     "op": "xkor_gaussian",
     "out_max_per_input": [
-      0.973567962646,
-      0.878391206264,
-      0.57808816433
+      0.969597220421,
+      0.88036698103,
+      0.554004907608
     ],
     "scale_invariant": false,
     "out_max_always_one": false,

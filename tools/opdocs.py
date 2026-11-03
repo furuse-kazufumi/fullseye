@@ -129,12 +129,25 @@ LEDGER_DIMS = {
     # タイルごとの量を地図にする)。新しい型語彙は 1 つも作らない(既存の image2d と table)。
     "aoi": {"registry": "opsaoi", "table": "OPSAOI",
             "module": "aoi", "family": "aoi_frontend"},
+    # 2026-11-03: 照合と位置合わせ。2 モジュール台帳(featmatch + intensityreg)、"module" は既定値で
+    # op ごとの module は台帳の info が持つ。新しい型語彙は作らない(image2d / table / flow2d)。
+    "matchreg": {"registry": "opsmatchreg", "table": "OPSMATCHREG",
+                 "module": "featmatch", "family": "matching_registration"},
     # 2026-10-23: カメラ校正・平面写像・対応点からの変換推定。実装(calib / caltab /
     # fit_transform)は 2026-08 から在り tests も 30 本超あったのに、**台帳が無いので
     # docs/ops にノートが 1 枚も無く**、RAG コーパスからも op_find からも欠けていた。
     # 新しい型語彙は作らない(points / pose / matrix / table / contour / image2d)。
     "calib": {"registry": "opscalib", "table": "OPSCALIB",
               "module": "calib", "family": "camera_calibration"},
+    # 2026-11-03: 光学式 3D センサの(仮想)受入試験。比較相手の誰も op を持たない手順を、実機の点群にも
+    # シミュレーションのセンサにも同じ評価 op で掛ける。新しい型語彙は作らない(points / table)。
+    "acceptance": {"registry": "opsacceptance", "table": "OPSACCEPTANCE",
+                   "module": "acceptance3d", "family": "optical_3d_acceptance"},
+    # 2026-11-03: 記号の読み取り。1-D は decode_barcode が棒を数えるだけ、2-D コードと
+    # 印字品質の等級は全層ゼロ、OCR は文字領域だけだった(監査 completeness_audit_2026_11_03)。
+    # 新しい型語彙は作らない(table / image2d / signal / matrix / scalar)。
+    "symbol": {"registry": "opssymbol", "table": "OPSSYMBOL",
+               "module": "barcode1d", "family": "symbol_reading"},
     "generative": {"registry": "opsgenerative", "table": "OPSGENERATIVE",
                    "module": "perpetual", "family": "generative_art"},
     "imgmetrics": {"registry": "opsimgmetrics", "table": "OPSIMGMETRICS",
@@ -799,6 +812,53 @@ def _fact_blank_frame(name: str, doc: str):
             "同じで、明るさそのものでは何も検出しない。", {})
 
 
+#: **同じ処理の別実装との突き合わせ**の実測(`tools/impl_differential.py --measure`、2026-11-03)。
+#: 語幹が同じで接頭辞だけ違う op(``gaussian`` / ``cv_gaussian`` / ``xkor_gaussian`` …)を同じ入力・
+#: 同じ a, b で走らせた内部差。**どれと一致し、どれと食い違うか**は利用者が実装を選ぶときの事実なので、
+#: 測った組の両側のノートへ差し込む。食い違いの原因(つまみの写し方・窓・端・量子化・別の処理)は
+#: 表 `docs/IMPL_DIFFERENTIAL.md` にある。引数には op 名と数値だけを入れる(どの言語でも読める)。
+_IMPL_JSON = os.path.join(_ROOT, "docs", "impl_differential.json")
+_IMPL_CACHE = None
+
+
+def _impl_map() -> dict:
+    """op 名 → ``[(相手, 分類, 内部差)]``(名前順)。"""
+    global _IMPL_CACHE
+    if _IMPL_CACHE is None:
+        _IMPL_CACHE = {}
+        if os.path.exists(_IMPL_JSON):
+            with open(_IMPL_JSON, encoding="utf-8") as _f:
+                for r in json.load(_f).get("pairs", []):
+                    for me, other in ((r["a"], r["b"]), (r["b"], r["a"])):
+                        _IMPL_CACHE.setdefault(me, []).append((other, r.get("class"), r.get("worst")))
+            for v in _IMPL_CACHE.values():
+                v.sort()
+    return _IMPL_CACHE
+
+
+def _impl_num(x) -> str:
+    if x is None or x == "inf":
+        return "inf"
+    x = float(x)
+    return "0" if x == 0.0 else ("%.2g" % x)
+
+
+def _fact_impl_twins(name: str, doc: str):
+    """同じ語幹の別実装との内部差(実測)。比較できない相手(入出力の型が違う)は別の文にする。"""
+    rows = _impl_map().get(name)
+    if not rows:
+        return None
+    comparable = [(o, w) for o, c, w in rows if c not in ("比較不能", "未検証")]
+    if comparable:
+        return ("**同じ処理の別実装(実測、`docs/IMPL_DIFFERENTIAL.md`)**: 同じ入力・同じ a, b での"
+                "内部の差(振れ幅に対する比。5e-3 未満が一致)は {a0}。食い違う理由(つまみの写し方・窓・端・"
+                "量子化・定義の違い)は表に書いてある。",
+                {"a0": ", ".join("`%s` %s" % (o, _impl_num(w)) for o, w in comparable)})
+    return ("**同じ語幹の別の op**: {a0} は入出力の型が違う別の処理で、名前が似ているだけ"
+            "(`docs/IMPL_DIFFERENTIAL.md`)。",
+            {"a0": ", ".join("`%s`" % o for o, _c, _w in rows)})
+
+
 #: 実測で確定した事実は、**op 本来の docstring とは別に持つ**。
 #: 連結すると「docstring が読み手の言語で書かれているか」の判定に巻き込まれ、もともと
 #: 本文が無かった op が「訳が届いていないページ」に落ちる(2026-09-16 実測: 23 ページ)。
@@ -806,7 +866,7 @@ def _fact_blank_frame(name: str, doc: str):
 def measured_facts(name: str, doc: str) -> list:
     out = []
     for f in (_fact_border, _fact_knob, _fact_normalisation,
-              _fact_quantisation, _fact_blank_frame):
+              _fact_quantisation, _fact_blank_frame, _fact_impl_twins):
         r = f(name, doc)
         if r:
             out.append(r)

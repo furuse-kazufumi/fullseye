@@ -1,0 +1,36 @@
+[
+ {
+  "file": "01_part_locate_sift.png",
+  "name": "part_locate_sift",
+  "caption": "SIFT -> features_match -> ransac_homography: corner error 0.367 px",
+  "shape": [
+   1534,
+   1950,
+   3
+  ]
+ },
+ {
+  "file": "02_part_locate_accuracy_table.png",
+  "name": "part_locate_accuracy_table",
+  "caption": "",
+  "shape": [
+   640,
+   924,
+   3
+  ],
+  "csv": "02_part_locate_accuracy_table.csv",
+  "tsv": "02_part_locate_accuracy_table.tsv"
+ },
+ {
+  "file": "03_part_locate_stitch_models.png",
+  "name": "part_locate_stitch_models",
+  "caption": "80 px overlap, 9 true pairs: corner error per model",
+  "shape": [
+   352,
+   404,
+   3
+  ],
+  "csv": "03_part_locate_stitch_models.csv",
+  "tsv": "03_part_locate_stitch_models.tsv"
+ }
+]

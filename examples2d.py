@@ -963,6 +963,12 @@ EXAMPLES = [
     {"id": "poc_pod_lighting", "task": "analysis", "data": "synthetic",
      "name": "「解像度の式」は見つかる大きさを教えない(照明ごとの検出確率、MIL-HDBK-1823A)",
      "summary": "ヘアライン金属の V 字の傷(幅 2〜300 µm、斜面 10°±1.5°)を照明の物理モデルで描き、同じカメラ・同じ処理で照明だけを 3 通りに変えて MIL-HDBK-1823A の検出確率を出した。真値は自分で入れた傷の幅。★描画は台帳の放射輝度 illumdesign._radiance を 1 点ずつ呼んだ値と相対差 0 で一致し、傷の斜面の面積は幅 / 画素に厳密に配る。★★設計の式(detectability_limit)は分解できる最小の大きさを 202 µm と言うが、斜面が光をカメラへ鏡面反射するリング仰角 70° では a90/95 が **8.9 µm**(23 分の 1)、ドームは 27.1 µm、仰角 30° は傷の 105/120 が記録閾値の下で a90/95 は試した最大の 20 倍先の外挿(op が旗を立てる)。解像度は「形が分かるか」、POD は「在ることに気づくか」で別の問い。★★モデルを物理で確かめた: 当てた a90 の大きさの傷を 200 本描き直すと実測の検出率は 0.910 / 0.845(0.9 ± 0.064 の帯)。★同じ測定を見つけた/見落としたに落とした 2 値 GLM の a90 は â vs a と 0.15 / 0.18 SE で一致。★記録閾値と応答の天井を無視した素朴な最小二乗は傾きを最大 4.7 SE 寝かせる(打ち切りつき最尤が要る理由)。★ゼロ点: 無欠陥部位にでたらめな大きさを割り振ると op は曲線を拒む。★判定閾値 2→12 DN で a90/95 は 2.7→19.2 µm、正規の誤検出は 0.30→8.6e-05。合成であること(面・傷・センサ・幾何光学)は docstring に明記。検査 16 件・約 9 秒。"},
+    {"id": "fit_circle_xld_bore", "task": "analysis", "data": "synthetic",
+     "name": "穴の位置と半径を XLD 輪郭から読む(fit_circle_xld)",
+     "summary": "新 op `fit_circle_xld`(HALCON fit_circle_contour_xld の Row / Column / Radius)の呼び出し例。被覆率で描いた円板(中心 (50.3, 44.6)、半径 20.5 px)を threshold_sub_pix で輪郭にし、輪郭ごとに幾何距離(既定)と代数法で円を当てる。中心は 0.05 px、半径は 0.15 px 以内で真値に戻る(半径の 0.08 px の偏りは輪郭抽出の側)。60° の短い円弧でも幾何法は半径を 1 px 以内に保つ。"},
+    {"id": "wave_dominant_frequency_grating", "task": "analysis", "data": "synthetic",
+     "name": "縞・格子の周期と向きを 1 回で読む(wave_dominant_frequency)",
+     "summary": "新 op `wave_dominant_frequency` の呼び出し例。向き θ・周期 p の縞を 4 組描き、2-D FFT の DC 以外の最大の山(Hann 窓 + 対数放物線)から周期を 2 % 以内、向きを 0.3° 以内で読み返す。1 軸の wave_fringe_period は斜めの縞で見かけの周期 p / cosθ(30° で 4.94 px、60° で 16 px)を返すことを並べて示す。"},
     {"id": "proportion_interval_audit", "task": "analysis", "data": "synthetic",
      "name": "10/10 は検出限界ではない ―― 小標本の検出率と誤警報率を片側信頼限界で読む",
      "summary": "新 op `proportion_interval`(Clopper–Pearson / Wilson / Jeffreys)と `trials_for_all_success` の呼び出し例。10/10 検出の片側 95 % 下限は 0.7411、誤警報 0/20 の片側 95 % 上限は 0.1391、検出率 0.90 を片側 95 % で言うには 29/29 が要る(28/28 では足りない)。値は閉形式 α^(1/n) と一致することを assert で確かめる。"},
@@ -1026,6 +1032,19 @@ EXAMPLES = [
                 "次数保存 shuffle +0.01(網膜部位対応は配線にある)。縦縞の像を fly_hex_resample で個眼に落として入れると応答が縞を追う。"
                 "Studio の Tools ▸ Compound eye → brain で同じ部品が対話的に動く(マウスで刺激位置、ドラッグで視点、画像を眼に通す、shuffle 切替)。"
                 "新モジュール eyebrain(データ・柱↔個眼の対応・刺激・波・眼の絵)。生データも部分グラフも commit しない。"},
+    {"id": "poc_symbol_package_1d", "task": "decoding", "data": "synthetic",
+     "name": "包装の 1-D バーコード: 読める / 品質が良い / どこまでぼけても読めるか(POD)",
+     "summary": "EAN-13・ITF-14・GS1-128 を生成して読み、印字品質の等級を閉形式で確かめ、デフォーカスの読み取り POD を"
+                "Fullseye と zxing-cpp で比べる。★d90 のぼけで読める記号の等級は F。★d90 で撮り直すと読取率 0.79(点推定は楽観側)、"
+                "使うのは d90/95。"},
+    {"id": "poc_symbol_part_dpm", "task": "decoding", "data": "synthetic",
+     "name": "部品の DPM Data Matrix とラベルの QR: 等級の閉形式と読める限界の POD",
+     "summary": "刻印の SC = 0.35、傾きの AN = 2(1−cos t)/(1+cos t)、k 語の欠けの UEC が閉形式どおり。四角い刻印では 2 つの"
+                "読み取り器の d90 が数 % で一致。★zxing-cpp はくっきりしたドットピーンを 24 方向中 0 しか読まず、POD が非単調。"},
+    {"id": "poc_symbol_lot_ocr", "task": "decoding", "data": "synthetic",
+     "name": "ロット番号の CIJ 印字を古典 OCR で読む: 可読性の POD と誤読の数え方",
+     "summary": "5x7 ドットと線の内蔵書体、k 最近傍 + 棄却。字種外の字は棄却。デフォーカスと字高の可読性 POD。"
+                "★学習の範囲を越えたぼけでは誤読が増える(誤読と棄却を分けて数える)。"},
     {"id": "poc_barcode_1d", "task": "decoding", "data": "synthetic",
      "name": "1 次元バーコードが読めなくなる境界(誤読と読み取り不能を分けて数える)",
      "summary": "自作 4-run 符号なので真値は数字そのもの。★**無傷では 6 つの読み方が全部 24/24 で差が出ない** —— 道具の良し悪しは壊してからしか分からない。★★「読めな"
@@ -1430,6 +1449,12 @@ EXAMPLES = [
      "name": "表現変換(reprconv)op を往復させて嘘を露見させる",
      "summary": "産む op はあるが食う op が無かった 25 型を消費する reprconv 族を往復させ、"
                 "可逆なものは誤差 0、不可逆なものは何がどれだけ落ちるかを印字する。"},
+    {"id": "type_connectivity_tour", "task": "tomography_3d", "data": "synthetic",
+     "name": "行き止まりだった型と入口の無かった型を、本物の産み手からの鎖で通す",
+     "summary": "gradient / hessian / frame / graph / pointmap / match の出口と positions / "
+                "synapse_table / jones の入口、tokens の出口、table の欄・スペクトルのピーク・keypoints の"
+                "軸・pose の 4x4(reprconv の 20 op)を、既存の産み手の返りから既存の受け手まで通し、"
+                "閉形式の真値 20 項目と比べる。"},
     # -- robot perception templates (copy-and-adapt; synthetic data, CLI --save) -- #
     {"id": "perception_pipeline", "task": "perception_templates", "data": "synthetic",
      "name": "整流ステレオ対→深度→点群→地形高さマップ→通行可能性",
@@ -1628,6 +1653,12 @@ EXAMPLES = [
     {"id": "poc_mueller_dofp_observability", "task": "optics_sensing", "data": "synthetic",
      "name": "4方位偏光カメラの Mueller 可観測性",
      "summary": "設計行列のrankと雑音増幅を計算し、線偏光だけのrank 9とQWP追加のrank 16を比較する。"},
+    {"id": "poc_virtual_acceptance_3d", "task": "metrology", "data": "synthetic",
+     "name": "買う前に受入試験をかける ―― 光学式 3D センサの仮想受入試験(VDI/VDE 2634 Part 2 の考え方)と誤差の予算",
+     "summary": "探針の球 1・ダンベル 7 姿勢・平面 7 姿勢を、理想・三角測量(σ_z = z²σ_d/(f b))・iToF 50 MHz(既存 `itof_capture` → `itof_phase_amplitude`)のセンサで撮り、実機の点群と同じ評価 op で PF・PS・SD・F を数える。新 op 8 本(`acceptance3d`、台帳 `opsacceptance`)。理想センサは全評価量 1e-6 mm 未満、距離の尺度 1.0005 で SD = 0.1572 mm = (s−1)L が厳密。仮の MPE(PF 3・PS 1・SD 0.5・F 3 mm)で三角測量は PF 1.505 mm で合格、白い試験体の iToF も合格、黒い球(反射率 0.1)の iToF は PF 5.94 mm で MPE の 1.98 倍の不合格 —— 球の残差 0.297 → 0.934 mm(3.15 倍)はショット雑音の √10 = 3.16 倍と合う。iToF 案の誤差の予算で単独で MPE を超えたのは黒い球だけ。SD の寄与は fx/fy +0.1 % が −0.308、多重反射 2 % が +0.385、距離の尺度 +0.05 % が +0.157 mm で、全部入れると +0.181 mm に打ち消し合う(単独の順位は足し算にならない)。規格の本文は写さず「考え方に沿った」評価。学習 0、較正 0、門 38 件。"},
+    {"id": "poc_calibration_truth_map", "task": "calibration", "data": "synthetic",
+     "name": "真値つきのカメラ校正 ―― 画像から K と歪み、どこで誤るかの地図、次の 1 枚",
+     "summary": "真の K・樽型歪み(k1 = −0.21)・6 姿勢でチェッカー板を描き(画素を板へ逆に引く描画)、角を `find_checkerboard_corners` で拾って `camera_calibration_lm`(Zhang を初期値に K・歪み・全姿勢を同時に LM)で校正する。新 op 8 本(`calib_lm`、`opscalib`)。角は描画の真値に rms 0.046 px、fx の誤差は Zhang の閉形式 12.89 % → LM 0.133 %(共分散の 1σ 0.85 px の内)。真値と比べた誤差の地図(カメラの向きのずれを除いた後)は中央 0.094 px・隅で最大 0.568 px(500 mm 先で 0.413 mm)、共分散を写した不確かさの地図は平均 0.225 px。板を中心にしか置いていない 4 枚に次の 1 枚を推薦させると隅を選び、モンテカルロ 15 本の実際の誤差は 1.41 px(中心に正対 3.13、遠い中心 3.98 px)—— 隅どうしの順位は差が雑音の内。OpenCV の calibrateCamera / stereoCalibrate と同じ極小に落ちることは試験で照合(OpenCV は optional)。学習 0、門 23 件。"},
     {"id": "poc_slanted_edge_sfr_limits", "task": "optics_sensing", "data": "synthetic",
      "name": "斜めエッジ SFR の角度・ガンマ・雑音限界",
      "summary": "ISO 12233型のSFRを420条件で測り、回折と画素開口の合成MTF真値からのずれを数値化する。"},
@@ -1919,6 +1950,12 @@ EXAMPLES = [
     {"id": "poc_laser_line_speckle_floor", "task": "metrology", "data": "synthetic",
      "name": "レーザー光切断の誤差の床はスペックルが決める(平均しても消えない、推定器の順位も入れ替わる)",
      "summary": "溶接ビード PoC の続編。同じ光切断の光条を、なめらかなガウスの帯 + 加法雑音ではなく**コヒーレント結像**(粗面の位相 → 観察開口の瞳 → |E|² → 画素の積分)で描き直した。真値は描画に入れた高さ。★★加法雑音で輝度最大の画素より 8.6 倍良かった 3 点の対数放物線は、スペックルでは輝度最大と同じ誤差(12.7 vs 13.1 µm)まで落ちて重心(6.4 µm)の 2 倍悪い —— 山の 3 点はいちばん明るい粒を追う。列ごとの重心は Dorsch の床 C·λ/(2π sin u sin θ) = 6.9 µm の 0.93 倍。★★静止した部品は 100 枚平均しても 6.91 → 6.79 µm(下がらない)、部品を動かして毎フレーム別のスペックルにすると 1/√N(0.099 倍)。加法雑音のモデルは静止のまま 0.59 → 0.05 µm と下がると言ってしまう。★開口 sin u 0.035〜0.1 と θ 15〜60° を振った誤差は式の線に傾き −0.94 / −0.99 で乗り、実測 / 式は 0.84〜0.90(比例定数は開示のみ)。★★画素を 4 倍にすると見た目のコントラストは 1.02 → 0.80 に鈍るが、箱で積分した強度の重心は元の重心と同じなので重心は 1.6e-13 µm しか動かない。Goodman の指数分布(C = 0.98)・粒径 0.5145 λ/sin u(11.13 vs 11.15 µm)も再掲。スカラ回折・倍率 1・前縮みなし・Dorsch の式は抄録のみ確認であることは docstring に明記。検査 17 件・約 14 秒。"},
+    {"id": "poc_light_section_step_weld_floor", "task": "metrology", "data": "synthetic",
+     "name": "光切断で段差と溶接ビードの高さを測り、不確かさの床を付ける(光面の校正 → 走査 → スペックルの床 → GUM)",
+     "summary": "light_section 族だけで光切断を通す。真値は描画に入れた断面と装置の幾何(順方向 = camera.project_points、測る側 = 視線と光面の交点)。★光面の校正はゲージブロック 0/3/6 mm から法線の角度の誤差 0.002°。高さ 1 つだけの校正は拒む(雑音つきの点は特異値の判定をすり抜けた —— PoC で発見し門を足した)。★段差 2.00 mm とビード 1.20 ± 0.10 mm を 40 フレーム走査: ガウス・窓つき重心・Steger で偏り 0.1〜11 µm。窓なしの列全体の重心は雑音 1 % で −0.67 mm ずれる(教訓)。★★スペックルの床: コヒーレント結像のシミュ 18.1 µm と Dorsch らの閉形式 20.7 µm(比 0.87)、開口で傾き −0.99、独立なパターン N 枚で −0.50。山の 5 点のガウス当てはめは粒を追って床の 2 倍。★GUM の予算で U = 41 µm(k = 1.96)、支配的な成分はスペックル。2 章の合成画像はスペックルを入れていないこと、2π は Ettl ら 2014 の公開論文の形(原論文は抄録のみ)を docstring に明記。"},
+    {"id": "poc_hdr_glossy_metal_inspection", "task": "inspection", "data": "synthetic",
+     "name": "光沢のある金属部品の検査画像を HDR で作る(照り返しの中の傷と暗い所の傷を 1 枚に)",
+     "summary": "既知の放射輝度(地 300・照明の映り込みの帯 3e5 光子/ms)を EMVA 1288 のセンサ(η 0.6・K 0.1・暗雑音 8 e⁻・8 ビット・γ 2.2)で 6 段の露出に撮る。★露出 1 回では 2 本の傷(−20 %)の両方を CNR ≥ 3 で見られない。★Debevec / Robertson の応答は真の γ の逆応答と ln で rms 0.115 / 0.072、放射輝度は倍率 1 つを当てて中央値 12 / 10 %。★★応答を特性化した HDR(露出時間つきの重み = 対数の推定の逆分散)で CNR 4.96 / 3.86、1 枚の最良(2.93)を超える。Debevec の三角の重みは 3.54、自己校正した応答では暗部が 2.11 に落ちる —— 検査なら応答は EMVA で測っておく。Mertens の融合も 3.31 / 3.92。★ダイナミックレンジを EMVA の定義でシミュから実測: 1 枚 48.6 dB(閉形式 48.4)、6 枚 103.6 dB(103.6)。場面に要る 62.5 dB は 1 枚では足りない。合成の場面(BRDF から描いていない)・位置合わせなしは docstring に明記。"},
     {"id": "poc_interreflection_fringe_error", "task": "metrology", "data": "synthetic",
      "name": "白い溝でも縞投影は外れる(相互反射を直接光と分け、誤差を撮る前に予測し、マイクロ位相シフトで消す)",
      "summary": "幅 1 mm の溝 3 本(90° の内角・60° の V 溝・R つきのポケット)を持つ**真っ白な Lambert の部品**(反射率 0.85、光沢も金属も無し)を縞投影で測る。真値は輸送行列(Hottel の crossed-strings 則の形態係数で解いた 2-D のラジオシティ)と、反射 0 回の直接光だけの描画。★★溝に平行な縞を 8 回ずらして直接光と大域光を分けると(Nayar ら 2006)、大域光は凹みの中だけが光り、内角の底では直接光の 1.28 倍・60° の溝では 5.1 倍。真値との差は直接 2.2 %・大域 6.3 %、縞の周期 128 → 8 px で単調に減り、画素の足跡より細い 4 px では 54 % に崩れる。★★縞の位相の誤差は撮る前に予測できる: 輸送行列から出した「直接 + 大域のフェーザの偏角」が、描いた縞を wrapped_phase で復号した誤差と 1e-15 rad で重なり、上限 asin(大域 / 直接) も超えない。視野 4 mm に縞 1 本では高さ誤差 RMS 282 / 579 / 183 µm(深さ 0.5 mm の内角で 282 µm)。★2 段の位相接続(縞 1 本 → 16 px)は 480 画素中 329 画素で次数を最大 7 段取り違え、ほとんど救えない。★★マイクロ位相シフト(Gupta & Nayar 2012、周期 16 / 16.2 / 15.8 px、うなり 1296 px)で 0.76 / 1.97 / 0.02 µm(溝 3 本で 386 → 1.2 µm)。V 溝の頂点の数画素には最大 19 µm 残る(隣のパッチどうしは縞の位相が近く、平均されない)。★ToF も同じ: 白い壁の部屋の隅(4 m、20 MHz)は相互反射で丸く・最大 24 cm 遠く見える。Lambert と押し出し形状(2-D)だけで、鏡面の相互反射(実物のはんだ・金属)は Mitsuba が要ることは docstring に明記。検査 15 件・約 0.3 秒。"},
@@ -2065,6 +2102,16 @@ EXAMPLES = [
     {"id": "poc_star_tracker", "task": "space", "data": "synthetic",
      "name": "星の点像を副画素で測り、角距離で星表へ対応付けて衛星姿勢を求める",
      "summary": "固定 seed の合成星表 196 星と PSF・光子雑音・読み出し雑音を含む 128×128 像を作り、star_detect の 18 検出(真の星 16 + ホットピクセル 2)を三角形の角距離で全星表へ照合し、偽点を捨てて kabsch で姿勢を推定する。誤対応 0・偽点棄却 2/2・姿勢角誤差 0.0046 度。太陽・月の迷光、星不足、高速回転の星の流れは未計算の限界。"},
+    # -- 2026-11-03: 照合と位置合わせ(opsmatchreg 12 op)。真値 = 合成に使った既知の変換・既知の場 ------------ #
+    {"id": "poc_part_locate_features", "task": "registration", "data": "synthetic",
+     "name": "散らかった台の上の部品を、SIFT / ORB の照合 + ホモグラフィで位置決めする(真値つき)",
+     "summary": "寸法表から描いた板金部品(穴 4・長穴・面取り・刻印)を回転 37 度・0.85 倍・わずかな遠近・照明 0.8 倍・ぼけ・雑音で背景に置き、features_sift → features_match → ransac_homography で位置決め: 4 隅誤差 0.367 px、中心 0.011 mm、回転 0.062 度。ORB でも 0.733 px。★既存の Harris + パッチ記述子(features.match_keypoints)は 37 度回転で 4 隅誤差 158 px。features_accuracy_table が部品のテンプレートで壊れる条件を表にする(最悪はぼけ σ=4 の 5.9 px)。★貼り合わせ: 重なり 80 px の帯に正しい組が 9 つだけのとき、8 自由度の射影は 4 隅誤差 9.38 px、物理に合わせた並進の模型は 0.081 px —— ransac_homography(model=\"translation\") と既存の mosaic.gen_projective_mosaic で貼った絵と真の絵の差 rms 0.0094(撮像の雑音 0.0100 以下)。"},
+    {"id": "poc_multimodal_mi_registration", "task": "registration", "data": "synthetic",
+     "name": "可視カメラと長波長赤外カメラの基板の像を、相互情報量で合わせる(放射の式で赤外像を作る)",
+     "summary": "寸法表の基板(基材・銅・パッド・IC・抵抗)を可視の反射率と赤外の放射 εT⁴ + (1-ε)T_amb⁴ の 2 通りに撮る(銅は可視で明るく赤外で暗い)。真の位置での相関係数は -0.7435。register_mi(正規化相互情報量のアフィン)は真のアフィンを 4 隅誤差 0.170 px で取り戻す。★register_ecc は相関の 2 次近似の分母が負になり拒否(黙って合ったふりをしない)、aoi.register_image(位相相関)は residual 2.12 で consistent=False。初期のずれごとの MI の成功率は 2・4 px で 1.000、8 px で 0.875、16 px で 0.625。"},
+    {"id": "poc_sheet_deformation_ffd", "task": "registration", "data": "synthetic",
+     "name": "印刷したシートの変形を B-spline FFD で推定し、真値で領域ごと・成分ごとの誤差の地図を作る",
+     "summary": "点の格子・文字・格子縞・縦棒だけのバーコード・余白の 5 領域を持つシートに、異物の膨らみ 2 か所 + 引き伸ばしの既知の場(最大 3.28 px)を掛ける。2 方向の模様の 3 領域の EPE の平均は register_ffd 0.025 px / 既存の demons 0.125 px / アフィンの ECC 1.226 px。★開口問題: バーコードでは dy の誤差 0.807 px が dx の 0.032 px の 25 倍。★余白の EPE 中央値 1.326 px は模様のある所の 67 倍。★格子の分解能: 波長 24 px の皺で格子 8 / 12 / 16 px の誤差 0.062 / 0.329 / 0.505 px。★曲げの罰だけだと余白で推定が 34.3 px まで暴れ(真の最大 1.5 px)、membrane_weight=0.1 で 3.6 px —— 模様のある所の精度との引き換えなので既定は曲げだけ。registration_to_flow2d → piv_flow_magnitude の最大 3.291 px(真値 3.279 px)。"},
 ]
 
 # Scripts under examples/ that are deliberately NOT in the gallery — each with the

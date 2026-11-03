@@ -6,7 +6,7 @@ in: image
 out: contour
 halcon: threshold_sub_pix
 gpu: なし
-examples: [gallery2d_contour_measure, poc_peg_insertion_tactile, poc_screw_thread_metrology]
+examples: [fit_circle_xld_bore, gallery2d_contour_measure, poc_peg_insertion_tactile, poc_screw_thread_metrology]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.9.0  # fullseye lib version this note was generated for
@@ -64,6 +64,7 @@ threshold_sub_pix 0.50 0.50
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [fit_circle_xld_bore](../../../../examples/fit_circle_xld_bore.py) — `py -3.11 examples/fit_circle_xld_bore.py`
 - [gallery2d_contour_measure](../../../../examples/gallery2d_contour_measure.py) — `py -3.11 examples/gallery2d_contour_measure.py`
 - [poc_peg_insertion_tactile](../../../../examples/poc_peg_insertion_tactile.py) — `py -3.11 examples/poc_peg_insertion_tactile.py`
 - [poc_screw_thread_metrology](../../../../examples/poc_screw_thread_metrology.py) — `py -3.11 examples/poc_screw_thread_metrology.py`

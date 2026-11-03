@@ -36,6 +36,82 @@ VERSIONS_DEFAULT = os.path.join(HERE, "data", "halcon_versions.json")
 PYAPI_DEFAULT = os.path.join(HERE, "data", "halcon_pyapi.json")
 
 
+#: ★2026-11-03(完成度監査 B、ユーザー決定): **名前は HALCON に対応しているが中身が薄い**もの。
+#: 「対応済み」(``covered``)からは外し、「部分対応」(``partial``)として別に数えて見せる。
+#: 中身を足して HALCON の同名 operator の仕事をするようになったら、ここから消す(消すと covered に戻る)。
+#: 根拠: リポジトリ外の完成度監査 B(機能の穴)の
+#: 「名前は対応しているが中身が薄いもの」表(関数本体の行数と呼び出しを ast で数えた)。
+#: 値 = (Fullseye の関数, 何をするか, 何をしないか)。英語にしてあるのは生成物(英語の HALCON_COVERAGE.md)にそのまま載せるため。
+PARTIAL = {
+    "find_deformable_surface_model": (
+        "matching3d.find_deformable_surface_model",
+        "rigid point-pair-feature (PPF) surface matching (calls ppf.surface_match)",
+        "no deformation: the model is matched as a rigid body"),
+    "find_planar_uncalib_deformable_model": (
+        "shapematch.find_planar_uncalib_deformable_model",
+        "calls find_local_deformable_model (rigid shape match, then optical flow)",
+        "no planar perspective / deformation model is estimated"),
+    "measure_profile_sheet_of_light": (
+        "final_genuine.measure_profile_sheet_of_light",
+        "per-column intensity-weighted centroid of the laser line, in pixel rows",
+        "no Steger / Gaussian-fit line centre, no light-plane geometry, no 3-D points"),
+    "calibrate_sheet_of_light": (
+        "final_genuine.calibrate_sheet_of_light",
+        "one linear pixel-to-height scale fitted to known step heights",
+        "no geometric calibration of the light plane, camera and movement axis"),
+    "create_ocv_proj": (
+        "final_genuine.create_ocv_proj",
+        "per-pixel mean and standard-deviation template of the training images",
+        "no character segmentation or projection model (HALCON OCV)"),
+    "create_bead_inspection_model": (
+        "final_genuine.create_bead_inspection_model",
+        "stores the reference centre path, the nominal width and a tolerance",
+        "no bead appearance model"),
+    "apply_bead_inspection_model": (
+        "final_genuine.apply_bead_inspection_model",
+        "flags reference-path points farther than width/2 + tol from the bead mask (distance transform)",
+        "does not tell too narrow / too wide / left-right offset / overflow apart; reports only 'missing'"),
+    "find_box_3d": (
+        "objmodel3d.find_box_3d",
+        "one PCA-oriented bounding box of the whole point cloud",
+        "no box search in a scene: no segmentation, no side-length matching, no score"),
+    "binocular_calibration": (
+        "caltab.binocular_calibration",
+        "Zhang calibration of the left and right camera, each on its own",
+        "no joint estimation of the relative pose between the two cameras"),
+    # ---- 第 2 便(2026-11-03、同じ規則の延長): 監査 B の表の残り ----
+    "find_local_deformable_model": (
+        "shapematch.find_local_deformable_model",
+        "rigid shape match, then a dense optical-flow field on the matched patch",
+        "no deformation model optimised jointly with the match (HALCON's local deformable matching)"),
+    "find_shape_model_3d": (
+        "matching3d.find_shape_model_3d",
+        "projects the model for n_views rotations about one axis and keeps the best NCC position",
+        "no search over a view sphere, no full 6-DoF pose, no edge-based 3-D shape matching"),
+    "create_texture_inspection_model": (
+        "final_genuine.create_texture_inspection_model",
+        "mean and covariance of two local features (patch mean and variance) over good images",
+        "no multi-scale texture features and no training stage (HALCON's texture inspection model)"),
+    "apply_texture_inspection_model": (
+        "final_genuine.apply_texture_inspection_model",
+        "Mahalanobis distance of the two local features, thresholded into a defect mask",
+        "no multi-scale texture features; defects outside mean/variance changes are not modelled"),
+    "camera_calibration": (
+        "calib.camera_calibration",
+        "Zhang closed-form intrinsics K (fx, fy, cx, cy, skew) from >= 3 views of a planar target, fail-closed",
+        "no lens distortion and no joint non-linear refinement of K, distortion and extrinsics"),
+    # ---- 第 3 便(2026-11-03): 部分対応の探す側と対になる、モデルを作る側 ----
+    "create_local_deformable_model": (
+        "shapematch.create_local_deformable_model",
+        "keeps the template and a rigid shape model of it (create_shape_model)",
+        "no deformation model (control grid / deformation parameters) is built"),
+    "create_shape_model_3d": (
+        "matching3d.create_shape_model_3d",
+        "stores the 3-D points, the camera parameters and the number of views",
+        "no views are precomputed: no view sphere, no 2-D shape models per view"),
+}
+
+
 def load_operators(path):
     with open(path, encoding="utf-8") as fh:
         return json.load(fh)
@@ -106,15 +182,21 @@ def analyze(data, registry, versions_data=None):
                 analog.setdefault(hname, []).append("facade:" + ref)
     ours = set(analog)
 
-    covered = ours & real_ops
+    # 部分対応(PARTIAL)は名前の対応があっても covered に入れない。表が古くなった(名乗りが消えた /
+    # 実在しない名前)ら止める —— 黙って何も外さない表は門にならない(fail-closed)。
+    stale = sorted(n for n in PARTIAL if n not in ours or n not in real_ops)
+    if stale:
+        raise SystemExit("[halcon_coverage] PARTIAL に、名乗る op が無い / 実在しない名前: %s" % ", ".join(stale))
+    partial = set(PARTIAL)
+    covered = (ours & real_ops) - partial
     dangling = sorted(ours - real_ops)
 
     per_chapter = {}
     uncovered = {}
     for ch, opset in chapter_ops.items():
-        cov = opset & ours
+        cov = (opset & ours) - partial
         per_chapter[ch] = (len(cov), len(opset))
-        uncovered[ch] = sorted(opset - ours)
+        uncovered[ch] = sorted(opset - covered)
 
     versions = classify_versions(ours, versions_data) if versions_data else None
 
@@ -122,6 +204,7 @@ def analyze(data, registry, versions_data=None):
         "n_real": len(real_ops),
         "n_registry": len(registry),
         "covered": covered,
+        "partial": sorted(partial),
         "dangling": dangling,
         "per_chapter": per_chapter,
         "uncovered": uncovered,
@@ -156,6 +239,15 @@ def build_md(data, a):
         "distinct real operators with an analogue. This number is grounded in the",
         "scraped reference, not memory; grow it by adding operator families to the",
         "registry (each new `Op.halcon` that names a real operator lifts coverage).",
+        "",
+        "**%d more HALCON names are partial analogues and are not counted** (the function "
+        "carries the name but does only part of the operator's job; listed below)." % len(a["partial"]),
+        "",
+        "## Partial analogues (named, not counted as covered)",
+        "",
+        "| HALCON operator | Fullseye function | what it does | what it does not do |",
+        "|---|---|---|---|",
+    ] + ["| %s | `%s` | %s | %s |" % ((n,) + PARTIAL[n]) for n in a["partial"]] + [
         "",
         "## Per-chapter coverage (ranked by gap)",
         "",
@@ -211,6 +303,7 @@ def build_report(data, a):
         "covered (distinct real ops with analogue): %d/%d (%.1f%%)"
         % (n_cov, a["n_real"], pct),
         "dangling Op.halcon refs: %d -> %s" % (len(a["dangling"]), a["dangling"]),
+        "partial analogues (named, not counted): %d -> %s" % (len(a["partial"]), a["partial"]),
     ]
     v = a.get("versions")
     if v:
@@ -247,6 +340,8 @@ def build_stubs(data, a, pyapi=None):
             "imgevolve_analogs": a["analog"].get(name, []),
             "py_signature": sig,
         }
+        if name in PARTIAL:
+            stubs[name]["partial"] = {"does": PARTIAL[name][1], "does_not": PARTIAL[name][2]}
     return {
         "version": data["version"],
         "n_operators": len(stubs),

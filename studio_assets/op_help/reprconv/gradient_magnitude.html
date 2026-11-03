@@ -1,0 +1,29 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">gradient_magnitude — REPRCONV <code style="color:#22d3bf">derivative</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">gradient</code> → <code style="color:#22d3bf">voxel</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gradient_magnitude(gradient)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import reprconv; reprconv.gradient_magnitude(gradient)</code>、台帳から引くなら <code style="color:#22d3bf">opsreprconv.get(&quot;gradient_magnitude&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>3-D 勾配 <code style="color:#22d3bf">gradient</code> → 勾配の大きさの体積 <code style="color:#22d3bf">voxel</code>。<code style="color:#22d3bf">gradient</code> 型の出口。</p>
+<p><code style="color:#22d3bf">|∇I| = sqrt(gz² + gy² + gx²)</code>。<code style="color:#22d3bf">gradient3d</code> の形 <code style="color:#22d3bf">(gmag, gvec)</code> は <code style="color:#22d3bf">gvec</code> から計算し直す(<code style="color:#22d3bf">gmag</code> を信じて素通しにしない —— 渡された対が食い違っていても気づけないため)。<code style="color:#22d3bf">sobel3d</code> の形 <code style="color:#22d3bf">(gz, gy, gx)</code> は利得 32 を割ってから計算するので、<b>どちらの産み手から来ても真の勾配の大きさ</b>(1 voxel あたりの濃度変化)になる。</p>
+<p><b>一方向</b>(向き 2 自由度を捨てる)。向きを残すなら <code style="color:#22d3bf">gradient_coherence</code> や <code style="color:#22d3bf">sobel3d</code> の成分そのもの。</p>
+<p>★外から来た勾配(微分可能レンダラの出力など)は <code style="color:#22d3bf">(gmag, gvec)</code> の形で渡すこと。3 本の形は <code style="color:#22d3bf">sobel3d</code> の利得 32 として割るので、利得 1 の 3 本を渡すと 1/32 に出る(形だけでは利得を見分けられない。型を分けるかは <code style="color:#22d3bf">docs/TYPE_CONNECTIVITY.md</code> の案)。</p>
+<p>Args:</p>
+<p>gradient: <code style="color:#22d3bf">gradient3d</code> の <code style="color:#22d3bf">(gmag, gvec)</code> か <code style="color:#22d3bf">sobel3d</code> の <code style="color:#22d3bf">(gz, gy, gx)</code>。</p>
+<p>Returns:</p>
+<p>(D, H, W) float64。</p>
+<p>Raises:</p>
+<p>ValueError: どちらの形でもない / 非有限 / 空。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:type_connectivity_tour">type_connectivity_tour</a> — <code style="color:#22d3bf">py -3.11 examples/type_connectivity_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">voxel</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:correlation_score">correlation_score</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">derivative</code>)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:gradient_coherence">gradient_coherence</a> · <a style="color:#22d3bf" href="opreprconv:hessian_determinant">hessian_determinant</a> · <a style="color:#22d3bf" href="opreprconv:hessian_vesselness">hessian_vesselness</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: reprconv.py — REPRCONV operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

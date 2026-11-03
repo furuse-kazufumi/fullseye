@@ -1,0 +1,38 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">hdr_merge — OPTICS <code style="color:#22d3bf">hdr</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">images</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.hdr_merge(images, exposures, response=None, weight=&#x27;hat&#x27;, saturation_margin=1, dark_level=None)</code>(要直接呼叫實作,<code style="color:#22d3bf">import hdrfusion; hdrfusion.hdr_merge(images, exposures, response=None, weight=&#x27;hat&#x27;, saturation_margin=1, dark_level=None)</code>;從台帳取用則 <code style="color:#22d3bf">opsoptics.get(&quot;hdr_merge&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>將曝光序列合成為相對輻射亮度圖(<code style="color:#22d3bf">image2d</code>)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>各露出の段 <code style="color:#22d3bf">Z</code> を逆応答 <code style="color:#22d3bf">X(Z)</code> で露光量に戻し、<code style="color:#22d3bf">X / t</code> を重みつきで合成する:</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">weight=&quot;hat&quot;</code> / <code style="color:#22d3bf">&quot;gaussian&quot;</code>: Debevec の対数の重み平均 <code style="color:#22d3bf">ln E = Σ w(Z)(ln X(Z) − ln t) / Σ w(Z)</code>(<code style="color:#22d3bf">X ≤ 0</code> の段は重み 0)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">weight=&quot;hat_time&quot;</code>: 三角の重みに露出時間 <code style="color:#22d3bf">t</code> を掛ける。散弾雑音が支配するとき <code style="color:#22d3bf">Var(ln X_j) ≈ 1/(η L t_j)</code> なので、<code style="color:#22d3bf">t</code> に比例する重みが対数の推定の逆分散の重み(短い露出の暗い段の雑音を持ち込まない。暗部の傷の CNR が 4 倍、PoC で実測)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">weight=&quot;linear&quot;</code>: 光子数の和 <code style="color:#22d3bf">E = Σ X / Σ t</code>(飽和と <code style="color:#22d3bf">Z ≥ L−1−margin</code> を除く全露出、暗部の負の値も含む)。線形のセンサでは散弾雑音の最尤で、暗部も偏らない。</p>
+<p>どの露出でも有効でない画素(全部で飽和 / 全部で真っ暗)は、最短(飽和)/ 最長(真っ暗)の露出 1 枚の値で埋める(下限 / 上限の推定 —— NaN を返さない約束。<code style="color:#22d3bf">hdr_dynamic_range</code> はここで測れる上限を数える)。<code style="color:#22d3bf">response=None</code> は「段 = 露光量」の線形(オフセット 0)。三角の重みは <code style="color:#22d3bf">[dark_level, L−1]</code> に張る(既定 = 逆応答が初めて正になる段。暗いときのオフセットを持つセンサで、オフセットのすぐ上の雑音だらけの段に重みを与えないため)。</p>
+<p>Returns radiance in <code style="color:#22d3bf">inverse</code>-units per exposure-time unit (relative: Debevec/Robertson fix only the scale <code style="color:#22d3bf">g(mid) = 0</code>). ★Assumes a static scene and registered frames.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
+<p>optics 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
+<p style="margin:2px 0 2px 12px">• <b>單位寫進參數名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不會當掉,而是給出「看似合理卻是錯的答案」,所以用命名來防。這裡絕不從數值大小去猜單位。</p>
+<p style="margin:2px 0 2px 12px">• <b>字串一律 <code style="color:#22d3bf">ValueError</code></b> —— <code style="color:#22d3bf">float(&#x27;50&#x27;)</code> 會成功,於是未解析的設定值會被當成長度混進來(實測:<code style="color:#22d3bf">thin_lens(&#x27;50&#x27;, &#x27;200&#x27;)</code> 曾回傳看似合理的 66.667 mm)。bool 也按 <code style="color:#22d3bf">True == 1</code> 的隱式提升拒絕。</p>
+<p style="margin:2px 0 2px 12px">• <b>complex / masked array 一律 <code style="color:#22d3bf">ValueError</code></b>(僅接受實數槽位;拒絕無聲丟棄虛部或剝掉遮罩)。<b>所有輸入中的 NaN/Inf 一律 <code style="color:#22d3bf">ValueError</code></b>。</p>
+<p style="margin:2px 0 2px 12px">• <b>逐項點名拒絕除零及其近親</b>:焦距 0、曲率半徑 0、折射率 &lt;= 0、全不透明光闌(全為 0,正規化變成 0/0)、總和 &lt;= 0 的 PSF、S0 = 0 的 Stokes 向量、物體位於前焦點(像在無窮遠)。</p>
+<p style="margin:2px 0 2px 12px">• <b>只有兩個運算子會回傳非有限值,而且都寫進了契約</b>:<code style="color:#22d3bf">depth_of_field</code> 在超焦距以外回傳 <code style="color:#22d3bf">far_mm = inf</code>(這正是超焦距的定義),<code style="color:#22d3bf">gaussian_beam</code> 在束腰處回傳 <code style="color:#22d3bf">wavefront_radius_mm = inf</code>(平面波前的曲率半徑)。兩者都同時回傳一個有限的夥伴(<code style="color:#22d3bf">far_is_infinite</code> / <code style="color:#22d3bf">curvature_per_mm</code>)。<b>除此之外的無聲 NaN/Inf 都在內部檢出並 <code style="color:#22d3bf">ValueError</code></b> ——「float64 溢位了」和「答案是無窮大」是兩種不同的主張,不能拿後者的臉去交付前者。</p>
+<p style="margin:2px 0 2px 12px">• <b>尺寸上限</b>:生成網格受 <code style="color:#22d3bf">optics.MAX_GRID</code>(4096)限制,傳入的場/PSF/光闌受 <code style="color:#22d3bf">optics.MAX_FIELD_ELEMENTS</code>(2^24),ABCD 元件序列受 <code style="color:#22d3bf">optics.MAX_SYSTEM_ELEMENTS</code>(1024),Zernike 受 <code style="color:#22d3bf">MAX_ZERNIKE_TERMS</code>(512)/ <code style="color:#22d3bf">MAX_ZERNIKE_ORDER</code>(40)/ <code style="color:#22d3bf">MAX_ZERNIKE_BASIS</code>(2^25)。以 fail-closed 堵住「小參數引發巨大內部配置」的路徑(實測:n_max=40 × 4096² 需要 108 GB)。</p>
+<p style="margin:2px 0 2px 12px">• <b>物理上不可能的狀態同樣拒絕</b>:偏振度 &gt; 1 的 Stokes 向量、負穿透率、負強度、n-|m| 為奇數等非法 Zernike 指標。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideoptics:optics_imaging">optics_imaging 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_hdr_glossy_metal_inspection">poc_hdr_glossy_metal_inspection</a> — <code style="color:#22d3bf">py -3.11 examples/poc_hdr_glossy_metal_inspection.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">image2d</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="opoptics:fraunhofer_pattern">fraunhofer_pattern</a> · <a style="color:#22d3bf" href="opoptics:pupil_psf">pupil_psf</a> · <a style="color:#22d3bf" href="opoptics:pupil_blur">pupil_blur</a> · <a style="color:#22d3bf" href="opoptics:psf_to_mtf">psf_to_mtf</a> · <a style="color:#22d3bf" href="opoptics:encircled_energy">encircled_energy</a> · <a style="color:#22d3bf" href="opoptics:ensquared_energy">ensquared_energy</a> · <a style="color:#22d3bf" href="opoptics:energy_radii">energy_radii</a> · <a style="color:#22d3bf" href="opoptics:mtf_tangential_sagittal">mtf_tangential_sagittal</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">hdr</code>)</h3>
+<p><a style="color:#22d3bf" href="opoptics:camera_response_debevec">camera_response_debevec</a> · <a style="color:#22d3bf" href="opoptics:camera_response_robertson">camera_response_robertson</a> · <a style="color:#22d3bf" href="opoptics:camera_response_linear">camera_response_linear</a> · <a style="color:#22d3bf" href="opoptics:exposure_fusion_mertens">exposure_fusion_mertens</a> · <a style="color:#22d3bf" href="opoptics:hdr_exposure_series_simulate">hdr_exposure_series_simulate</a> · <a style="color:#22d3bf" href="opoptics:hdr_radiance_error">hdr_radiance_error</a> · <a style="color:#22d3bf" href="opoptics:hdr_dynamic_range">hdr_dynamic_range</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: hdrfusion.py — OPTICS 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,0 +1,45 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">features_accuracy_table — MATCHREG <code style="color:#22d3bf">featmatch</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.features_accuracy_table(image, detector=&#x27;sift&#x27;, conditions=None, tol_px=2.0, ransac_thresh=2.0, seed=0, detector_kwargs=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import featmatch; featmatch.features_accuracy_table(image, detector=&#x27;sift&#x27;, conditions=None, tol_px=2.0, ransac_thresh=2.0, seed=0, detector_kwargs=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsmatchreg.get(&quot;features_accuracy_table&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>ज्ञात transforms से बनाए जोड़ों पर, हर स्थिति के लिए feature points की repeatability, matching precision और homography की त्रुटि तालिका में लौटाता है। → table।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p><code style="color:#22d3bf">image</code> を条件ごとの既知のホモグラフィ <code style="color:#22d3bf">H_true</code>(中心まわりの回転・拡大・遠近)で写し(3 次スプライン補間 —— 照合側と違う補間で、補間の型が一致する甘さを避ける)、照明(利得・ガンマ)・ぼけ・雑音を足した 2 枚目を作る。2 枚とも検出 → 記述 → <code style="color:#22d3bf">features_match</code> → <code style="color:#22d3bf">ransac_homography</code> を走らせ、<b>合成に使った真の H</b> で答え合わせする:</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">repeatability</code> —— 2 枚の共通の領域にある 1 枚目の点のうち、<code style="color:#22d3bf">H_true</code> で写した位置から <code style="color:#22d3bf">tol_px</code> 以内に 2 枚目の点があるものの割合(Mikolajczyk &amp; Schmid 2005 の考え方を点の距離で。領域の重なりではない)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">precision</code> —— 照合の組のうち <code style="color:#22d3bf">|H_true p1 - p2| &lt; tol_px</code> のものの割合。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">matching_score</code> —— 正しい照合の数 / 共通の領域にある 1 枚目の点の数。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">corner_error_px</code> —— 推定した H と真の H で 4 隅を写したときの距離の平均(HPatches)。RANSAC が合意に届かなければ <code style="color:#22d3bf">homography_ok=False</code> で <code style="color:#22d3bf">corner_error_px=None</code>。</p>
+<p>答えの真値は合成のパラメータそのもので、推定側はそれを知らない(使った式で答え合わせする門</p>
+<p>ではない)。限界: 平面の射影変換だけ(視差・遮蔽・鏡面反射は入らない)。照明はこの画像全体に一様(局所の影は入らない)。</p>
+<p>Args:</p>
+<p>image: 2-D の濃淡画像 [0, 1]。模様の乏しい画像では行がほとんど 0 になる(それも結果)。</p>
+<p>detector: <code style="color:#22d3bf">&quot;sift&quot;</code> / <code style="color:#22d3bf">&quot;orb&quot;</code>。</p>
+<p>conditions: <code style="color:#22d3bf">None</code> なら <code style="color:#22d3bf">DEFAULT_CONDITIONS</code>。条件名の並び(既定の名前から選ぶ)か、</p>
+<p><code style="color:#22d3bf">(名前, {rotate_deg, scale, perspective, gain, gamma, blur_sigma, noise_sigma})</code> の並び。</p>
+<p>tol_px: 正しい対応とみなす距離 [px]。</p>
+<p>ransac_thresh: <code style="color:#22d3bf">ransac_homography</code> の <code style="color:#22d3bf">thresh</code>。</p>
+<p>seed: 雑音と RANSAC の乱数の種。</p>
+<p>detector_kwargs: 検出器へ渡す追加の引数(dict)。</p>
+<p>Returns:</p>
+<p>dict(<code style="color:#22d3bf">kind=&quot;feature_accuracy&quot;</code>)。<code style="color:#22d3bf">rows</code>(条件ごとの dict の list)/ <code style="color:#22d3bf">columns</code> /</p>
+<p><code style="color:#22d3bf">detector</code> / <code style="color:#22d3bf">tol_px</code> / <code style="color:#22d3bf">image_shape</code> / <code style="color:#22d3bf">n_conditions</code> /</p>
+<p><code style="color:#22d3bf">worst</code>(<code style="color:#22d3bf">corner_error_px</code> が最大か失敗した条件の名前)。</p>
+<p>Raises:</p>
+<p>ValueError: 画像が不正 / 検出器の名前が違う / 条件の名前・鍵・値が不正。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidematchreg:matching_registration">matching_registration family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_part_locate_features">poc_part_locate_features</a> — <code style="color:#22d3bf">py -3.11 examples/poc_part_locate_features.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opmatchreg:features_match">features_match</a> · <a style="color:#22d3bf" href="opmatchreg:ransac_homography">ransac_homography</a> · <a style="color:#22d3bf" href="opmatchreg:ransac_fundamental">ransac_fundamental</a> · <a style="color:#22d3bf" href="opmatchreg:registration_to_flow2d">registration_to_flow2d</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">featmatch</code>)</h3>
+<p><a style="color:#22d3bf" href="opmatchreg:features_sift">features_sift</a> · <a style="color:#22d3bf" href="opmatchreg:features_orb">features_orb</a> · <a style="color:#22d3bf" href="opmatchreg:features_match">features_match</a> · <a style="color:#22d3bf" href="opmatchreg:ransac_homography">ransac_homography</a> · <a style="color:#22d3bf" href="opmatchreg:ransac_fundamental">ransac_fundamental</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: featmatch.py — MATCHREG operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

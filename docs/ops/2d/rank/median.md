@@ -6,7 +6,7 @@ in: image
 out: image
 halcon: median_image
 gpu: あり(median_image)
-examples: [astro_stacking, blas_thread_budget, ct_reconstruction, gallery2d_smoothing_rank, genspark_external_review, lightfield_depth, photon_timeresolved, piv_flow_from_particles, poc_am_thermal_to_ct, poc_astro_photometry, poc_compound_eye, poc_dtof_ranging, poc_geodetic_height_frames, poc_hyperspectral_foreign_matter, poc_lidar_terrain_change, poc_nuclei_ploidy, poc_pv_thermal_survey, poc_river_surface_velocity, poc_tacscalib_sphere_lut, poc_web_roll_periodicity, poc_weld_bead_profile, quickstart, specular_photometric]
+examples: [astro_stacking, blas_thread_budget, ct_reconstruction, gallery2d_smoothing_rank, genspark_external_review, lightfield_depth, photon_timeresolved, piv_flow_from_particles, poc_am_thermal_to_ct, poc_astro_photometry, poc_compound_eye, poc_dtof_ranging, poc_geodetic_height_frames, poc_hyperspectral_foreign_matter, poc_lidar_terrain_change, poc_nuclei_ploidy, poc_pv_thermal_survey, poc_river_surface_velocity, poc_sheet_deformation_ffd, poc_tacscalib_sphere_lut, poc_web_roll_periodicity, poc_weld_bead_profile, quickstart, specular_photometric]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.9.0  # fullseye lib version this note was generated for
@@ -47,6 +47,8 @@ NaN を含む画像では scipy の中央値選択により NaN が一部の窓�
 
 **つまみ(実測)**: ``a`` は**段階的**に効き、切り替わるのは a ≈ 0.25、0.49、0.75(実測。刻み 0.02 の掃きで測った位置)。
 
+**同じ処理の別実装(実測、`docs/IMPL_DIFFERENTIAL.md`)**: 同じ入力・同じ a, b での内部の差(振れ幅に対する比。5e-3 未満が一致)は `cv_median` 0.99, `xkor_median` 6.5e-08。食い違う理由(つまみの写し方・窓・端・量子化・定義の違い)は表に書いてある。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_smoothing_rank ファミリ ガイド](../guides/gallery2d_smoothing_rank.md)
@@ -85,6 +87,7 @@ median 0.50 0.50
 - [poc_nuclei_ploidy](../../../../examples/poc_nuclei_ploidy.py) — `py -3.11 examples/poc_nuclei_ploidy.py`
 - [poc_pv_thermal_survey](../../../../examples/poc_pv_thermal_survey.py) — `py -3.11 examples/poc_pv_thermal_survey.py`
 - [poc_river_surface_velocity](../../../../examples/poc_river_surface_velocity.py) — `py -3.11 examples/poc_river_surface_velocity.py`
+- [poc_sheet_deformation_ffd](../../../../examples/poc_sheet_deformation_ffd.py) — `py -3.11 examples/poc_sheet_deformation_ffd.py`
 - [poc_tacscalib_sphere_lut](../../../../examples/poc_tacscalib_sphere_lut.py) — `py -3.11 examples/poc_tacscalib_sphere_lut.py`
 - [poc_web_roll_periodicity](../../../../examples/poc_web_roll_periodicity.py) — `py -3.11 examples/poc_web_roll_periodicity.py`
 - [poc_weld_bead_profile](../../../../examples/poc_weld_bead_profile.py) — `py -3.11 examples/poc_weld_bead_profile.py`

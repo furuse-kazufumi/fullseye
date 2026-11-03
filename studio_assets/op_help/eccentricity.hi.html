@@ -19,6 +19,7 @@
 <p>HALCON के <code style="color:#22d3bf">eccentricity</code> (Shape features derived from the ellipse parameters.) के साथ <b>वही 3 मान, वही सूत्र</b> हैं। सभी 3 dimensionless हैं, इसलिए normalise नहीं किए गए।</p>
 <p>★2026-09-26 तक यह skimage की eccentricity <code style="color:#22d3bf">sqrt(1-(b/a)²)</code> लौटाता था, जो <b>इन 3 में से कोई भी नहीं है</b>, और वह भी 1 scalar के रूप में (circle पर 0.0 बनाम HALCON का 1.0, 4x80 की छड़ पर 0.999 बनाम 20.65)। 1 scalar से 3 मान व्यक्त नहीं हो सकते, इसलिए इसे <code style="color:#22d3bf">area_center</code> की तरह <code style="color:#22d3bf">match</code> sort में बदला गया। <code style="color:#22d3bf">docs/hardening/halcon-named-shape-factors.md</code>।</p>
 <p>region ख़ाली होने पर यह fail-soft नियम के अनुसार circle के मान <code style="color:#22d3bf">(1, 1, 0)</code> लौटाता है (components की संख्या input के साथ नहीं बदलती)। <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> का उपयोग नहीं होता।</p>
+<p><b>उसी stem वाले दूसरे op</b>: <code style="color:#22d3bf">xg_eccentricity</code> — अलग input/output type वाला अलग operation; सिर्फ़ नाम मिलता-जुलता है (<code style="color:#22d3bf">docs/IMPL_DIFFERENTIAL.md</code>)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

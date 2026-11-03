@@ -1222,13 +1222,45 @@ def _knob_builders():
         moved = np.fft.ifftn(fourier_shift(np.fft.fftn(base), (1.37, -2.61))).real
         return [base, moved], {"window": None, "upsample_factor": 8}
 
+    def xld_circles(pool, rng):
+        # 2026-11-03: fit_circle_xld takes the 2-D registry's ``contour`` (XLD dict); no ledger op
+        # declares that sort as output, so the pool never holds one ("no declared producer").
+        # Two noisy circles (one full, one 90-degree arc) and a 2-point fragment that is skipped.
+        t = np.linspace(0.0, 2 * np.pi, 80, endpoint=False)
+        a = np.linspace(0.0, 0.5 * np.pi, 30)
+        full = np.c_[40.0 + 15.0 * np.sin(t), 50.0 + 15.0 * np.cos(t)] + 0.05 * rng.standard_normal((80, 2))
+        arc = np.c_[20.0 + 8.0 * np.sin(a), 20.0 + 8.0 * np.cos(a)] + 0.05 * rng.standard_normal((30, 2))
+        return [{"shape": (96, 96), "cs": [full, arc, np.array([[1.0, 1.0], [2.0, 2.0]])]}], {}
+
+    def bracket_scene(pool, rng):
+        # 2026-11-03: find_surface_pose's angle_bins / k_normals only show when the answer is not
+        # exact anyway: on a scene that is the model itself every setting returns the same pose.
+        # Here the scene is resampled independently on the part's surfaces, with noise, so the
+        # vote resolution and the normal neighbourhood move the refined pose.
+        g = np.linspace(0.0, 1.0, 7)
+        base = np.array([[x * 3.0, y * 2.0, 0.0] for x in g for y in g])
+        wall = np.array([[0.0, y * 2.0, z * 1.5] for y in g for z in g[1:]])
+        th = np.linspace(0.0, 2 * np.pi, 16, endpoint=False)
+        boss = np.array([[2.2 + 0.35 * np.cos(q), 0.6 + 0.35 * np.sin(q), z] for q in th for z in (0.3, 0.6, 0.9)])
+        model = np.vstack([base, wall, boss])
+        n = 300
+        sb = np.c_[rng.uniform(0, 3, 180), rng.uniform(0, 2, 180), np.zeros(180)]
+        sw = np.c_[np.zeros(90), rng.uniform(0, 2, 90), rng.uniform(0, 1.5, 90)]
+        q = rng.uniform(0, 2 * np.pi, n - 270)
+        sc = np.c_[2.2 + 0.35 * np.cos(q), 0.6 + 0.35 * np.sin(q), rng.uniform(0.3, 0.9, n - 270)]
+        c, s_ = np.cos(0.6), np.sin(0.6)
+        R = np.array([[c, -s_, 0.0], [s_, c, 0.0], [0.0, 0.0, 1.0]])
+        scene = np.vstack([sb, sw, sc]) @ R.T + np.array([0.4, -0.2, 0.1]) + 0.01 * rng.standard_normal((n, 3))
+        return [model, scene], {}
+
     return {"refract_rays": oblique, "env_lightbox": sphere_dirs,
             "print_layer_defect_map": layers, "photometric_stereo": ps, "gs_render": gs,
             "slope_to_curvature": bowl_normals, "deflectometry_render": plate,
             "iterate_fixed_point": fixed_point, "mc_sequential_mean": seq_mean,
             "iv_richardson_lucy_until": rl_until, "register_image": ghost_checker,
             "fit_circle_geometric": short_arc,
-            "phase_correlation_shift": subpixel_pair}
+            "phase_correlation_shift": subpixel_pair,
+            "fit_circle_xld": xld_circles, "find_surface_pose": bracket_scene}
 
 
 def _calib_builders():
@@ -1250,6 +1282,107 @@ def _calib_builders():
 
     return {"contour_to_world_plane_xld": lambda pool, rng: _cf()._b_calib_contour(pool, rng),
             "find_marks_and_pose": grey_plate}
+
+
+def _matchreg_builders():
+    """opsmatchreg (2026-11-03): inputs the pool cannot make, kept small for the probe's time.
+
+    * The ``table`` ops take tables with a ``kind`` marker (``features`` / ``feature_matches`` /
+      ``registration``) and refuse any other table, so the pool's generic table would only be a
+      typed refusal. Here: the real upstream outputs on a 96 px synthetic scene and its copy
+      rotated 90 degrees (an exact pixel permutation, so the matches are genuine).
+    * ``ransac_fundamental`` needs pairs that obey an epipolar geometry: projections of a
+      non-planar point cloud into two cameras (8 degree yaw), with 20 % outliers.
+    * ``register_*`` take a 64 px scene and its copy cut 2 px / 1 px off (a known translation);
+      ``register_accuracy_map`` a smooth invertible field; the Fullseye-only layer ops get
+      two conditions / two offsets so a probe call stays under a second or two.
+    * Knobs (dead-knob gate): caps are set where they bind (``max_features`` 80 of 85 points -- x2 on ``contrast_threshold`` leaves 43, x0.5 on ``edge_threshold`` 74,
+      ``n_features`` 30, ``max_iters`` 40 / 30 below the adaptive count of a noisy pair with
+      outliers, ``max_iter`` 5 / 2, ``n_iter`` = 3 past the iteration where ECC stops); ``confidence``
+      0.999 sits where x0.5 drops the adaptive count under ``max_iters``; ``eps`` is read from
+      the run itself (1.1 x the rho change at the stopping iteration, so x0.5 runs one more);
+      ``ratio`` 0.7 on a 30-degree + noise pair, where the ratio values spread across 0.35-0.7.
+    """
+    def scene(n=96, seed=3):
+        import featmatch
+        return featmatch.synthetic_scene((n, n), seed=seed)
+
+    def hard_pair():
+        import featmatch
+        a = scene()
+        H = featmatch.condition_homography(a.shape, rotate_deg=30.0, scale=0.85)
+        b, _ = featmatch.warp_homography(a, H)
+        b = np.clip(b + np.random.default_rng(37).normal(0, 0.04, b.shape), 0, 1)
+        return a, b
+
+    def feats(pool, rng):
+        import featmatch
+        a, b = hard_pair()
+        return [featmatch.features_sift(a), featmatch.features_sift(b)], {"ratio": 0.7}
+
+    def noisy_matches():
+        import featmatch
+        a, b = hard_pair()
+        return featmatch.features_match(featmatch.features_sift(a), featmatch.features_sift(b), ratio=0.95,
+                                        mutual=False)
+
+    def matches():
+        import featmatch
+        a = scene()
+        return featmatch.features_match(featmatch.features_sift(a), featmatch.features_sift(np.rot90(a).copy()))
+
+    def epipolar(pool, rng):
+        r = np.random.default_rng(31)
+        K = np.array([[300.0, 0, 120], [0, 300.0, 90], [0, 0, 1]])
+        th = np.radians(8.0)
+        R = np.array([[np.cos(th), 0, np.sin(th)], [0, 1, 0], [-np.sin(th), 0, np.cos(th)]])
+        X = np.c_[r.uniform(-2, 2, 120), r.uniform(-1.5, 1.5, 120), r.uniform(4, 9, 120)]
+        x1 = (K @ X.T).T
+        x2 = (K @ ((R @ X.T).T + [-1.0, 0.1, 0.05]).T).T
+        x1, x2 = x1[:, :2] / x1[:, 2:], x2[:, :2] / x2[:, 2:] + r.normal(0, 0.2, (120, 2))
+        bad = r.random(120) < 0.2
+        x2[bad] = r.uniform(0, 240, (int(bad.sum()), 2))
+        n = len(x1)
+        return [{"kind": "feature_matches", "pts1": x1, "pts2": x2, "idx": np.c_[np.arange(n), np.arange(n)],
+                 "distance": np.zeros(n), "ratio_value": np.zeros(n), "metric": "l2", "n1": n, "n2": n,
+                 "image_shape1": (180, 240), "image_shape2": (180, 240)}], {"max_iters": 30}
+
+    def pair(pool, rng):
+        big = scene(80, 1)
+        return [big[8:72, 8:72].copy(), big[9:73, 6:70].copy()], {}
+
+    def ecc_at_stop(pool, rng):
+        import intensityreg
+        (f, m), _ = pair(pool, rng)
+        h = intensityreg.register_ecc(f, m, motion="affine", eps=1e-12, n_iter=60)["history"]
+        d = np.abs(np.diff(h))
+        j = int(np.argmax(d < d[0] * 1e-2)) if (d < d[0] * 1e-2).any() else len(d) - 1
+        j = max(j, 2)
+        return [f, m], {"motion": "affine", "eps": float(1.1 * d[j]), "n_iter": j + 4}
+
+    def reg_result(pool, rng):
+        import intensityreg
+        (f, m), _ = pair(pool, rng)
+        return [intensityreg.register_ecc(f, m, motion="translation")], {}
+
+    def acc_map(pool, rng):
+        import intensityreg
+        f = scene(64, 2)
+        return [f, intensityreg.smooth_test_field(f.shape, amplitude=1.5, wavelength=40, seed=0)], {}
+
+    return {"features_match": feats,
+            "ransac_homography": lambda pool, rng: ([noisy_matches()], {"max_iters": 40}),
+            "ransac_fundamental": epipolar,
+            "features_sift": lambda pool, rng: ([scene()], {"max_features": 80}),
+            "features_orb": lambda pool, rng: ([scene()], {"n_features": 30}),
+            "features_accuracy_table": lambda pool, rng: ([scene(64)], {"conditions": ["identity", "blur_2"]}),
+            "register_ecc": ecc_at_stop,
+            "register_mi": lambda pool, rng: (pair(pool, rng)[0], {"levels": 1, "max_iter": 2}),
+            "register_ffd": lambda pool, rng: (pair(pool, rng)[0], {"max_iter": 5}),
+            "registration_to_flow2d": reg_result,
+            "register_accuracy_map": acc_map,
+            "register_capture_range": lambda pool, rng: (
+                [scene(64, 2)], {"offsets_px": (1, 4), "n_directions": 2})}
 
 
 def _fileio_builders():
@@ -1338,6 +1471,75 @@ def _fileio_builders():
     }
 
 
+def _symbol_builders():
+    """opssymbol (2026-11-03): symbols the random pool cannot make.
+
+    Every reader / grader needs an image that actually holds a symbol, every decoder a
+    valid module grid, every encoder its text; a random image or table is refused
+    fail-closed (correctly), which the probe would count as a contract violation of an
+    op it never really ran. Inputs here are rendered from known strings (the truth).
+    ``capture_degrade`` gets a symbol image with ``illum_slope`` / ``motion_px`` set, so its
+    angle knobs (which only act when the slope / motion is non-zero) are live.
+    """
+    import barcode1d
+    import dmsym
+    import ocrclassic
+    import qrsym
+    import symbolpod
+    import symrender
+
+    ean = barcode1d.encode_barcode1d("490123456789", "ean13")
+    qr = qrsym.qr_encode("FULLSEYE-1103")
+    dm = dmsym.dm_encode("LOT2026-1103")
+    ean_img = symrender.render_symbol(ean, 3.0, rotate_deg=12.0)
+    qr_img = symrender.render_symbol(qr, 4.0, rotate_deg=20.0)
+    dm_img = symrender.render_symbol(dm, 5.0, rotate_deg=20.0)
+    prof = symrender.render_symbol(ean, 3.0)[30]
+    cache = {}
+
+    def model():
+        if "m" not in cache:
+            cache["m"] = ocrclassic.ocr_train("dot5x7", char_height_px=(20, 26))
+        return cache["m"]
+
+    def line():
+        return ocrclassic.ocr_render_text("LOT42", char_height_px=24)["image"]
+
+    trials = symbolpod.symbol_read_trials(ean, "defocus_px", [1.0, 7.0, 12.0], trials=2,
+                                          module_px=3.0, seed=0)
+    return {
+        "encode_barcode1d": lambda pool, rng: (["490123456789", "ean13"], {}),
+        "ean_check_digit": lambda pool, rng: (["490123456789"], {}),
+        "decode_barcode_profile": lambda pool, rng: ([prof], {}),
+        "read_barcode1d": lambda pool, rng: ([ean_img], {}),
+        "grade_barcode1d": lambda pool, rng: ([ean_img], {}),
+        "qr_encode": lambda pool, rng: (["FULLSEYE-1103"], {}),
+        "qr_decode_modules": lambda pool, rng: ([qr["modules"]], {}),
+        "qr_locate": lambda pool, rng: ([qr_img], {}),
+        "qr_sample": lambda pool, rng: ([qr_img], {}),
+        "qr_read": lambda pool, rng: ([qr_img], {}),
+        "dm_encode": lambda pool, rng: (["LOT2026-1103"], {}),
+        "dm_decode_modules": lambda pool, rng: ([dm["modules"]], {}),
+        "dm_locate": lambda pool, rng: ([dm_img], {}),
+        "dm_sample": lambda pool, rng: ([dm_img], {}),
+        "dm_read": lambda pool, rng: ([dm_img], {}),
+        "grade_datacode2d": lambda pool, rng: ([dm_img], {}),
+        "render_symbol": lambda pool, rng: ([dm], {"rotate_deg": 15.0, "tilt_deg": 20.0}),
+        "capture_degrade": lambda pool, rng: ([dm_img], {"illum_slope": 0.4, "motion_px": 3.0,
+                                                         "full_well_e": 20000.0}),
+        "symbol_read_trials": lambda pool, rng: ([ean, "defocus_px", [1.0, 7.0, 12.0]],
+                                                 {"trials": 2, "module_px": 3.0}),
+        "symbol_read_pod": lambda pool, rng: ([trials], {}),
+        "ocr_render_text": lambda pool, rng: (["LOT42"], {}),
+        "ocr_score": lambda pool, rng: (["LOT4?", "LOT42"], {}),
+        "ocr_classify": lambda pool, rng: ([ocrclassic.ocr_features(line()[20:50, 20:40])[None, :],
+                                            model()], {}),
+        "ocr_read_line": lambda pool, rng: ([line(), model()], {}),
+        "ocr_read_trials": lambda pool, rng: (["LOT42", "defocus_px", [1.0, 9.0, 14.0]],
+                                              {"model": model(), "trials": 2}),
+    }
+
+
 def probe_builders():
     """Every probe-local builder (name -> builder)."""
     out = dict(_optics_builders())
@@ -1346,7 +1548,37 @@ def probe_builders():
     out.update(_batch2_builders())
     out.update(_knob_builders())
     out.update(_fileio_builders())
+    out.update(_type_connectivity_builders())
+    out.update(_matchreg_builders())
+    out.update(_symbol_builders())
     return out
+
+
+def _type_connectivity_builders():
+    """Meaningful inputs for the reprconv ops that close type gaps (2026-11-03).
+
+    ``match`` is a 2-D registry sort with no ledger producer, so the probe pool has no value of
+    it; the table selectors need a table that really has the named field; the synapse table
+    needs whole-number ids (the op refuses a point cloud read as synapses, by design).
+    """
+    import ops as _ops
+
+    reg = np.zeros((20, 20))
+    reg[5:9, 2:12] = 1.0
+    table = {"gx": np.arange(12.0).reshape(3, 4), "series": np.linspace(0.0, 1.0, 8),
+             "width": 3.5}
+    return {
+        "match_component": lambda pool, rng: ([_ops.RT["area_center"](reg, 0.5, 0.5)], {"index": 0}),
+        "synapse_table_from_table": lambda pool, rng: (
+            [{"pre": np.array([0, 1, 2]), "post": np.array([1, 2, 0]), "count": np.array([3, 1, 2])}],
+            {"count": "count"}),
+        "table_field_image2d": lambda pool, rng: ([table, "gx"], {}),
+        "table_field_matrix": lambda pool, rng: ([table, "gx"], {}),
+        "table_field_signal": lambda pool, rng: ([table, "series"], {}),
+        "table_field_measurement": lambda pool, rng: ([table, "width"], {}),
+        "pose_to_matrix": lambda pool, rng: ([(np.eye(3), np.array([0.1, -0.05, 3.0]))], {}),
+        "indices_to_positions": lambda pool, rng: ([np.array([3, 10, 25, 40])], {"spacing": 0.5, "origin": 1.0}),
+    }
 
 
 def bind(name, fn, ins, pool, cf, extra):

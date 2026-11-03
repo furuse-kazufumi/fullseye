@@ -1,0 +1,26 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">virtual_acceptance_test — ACCEPTANCE <code style="color:#22d3bf">simulate</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.virtual_acceptance_test(sensor, layout=None, mpe=None, exclude_fraction=0.003, seed=0)</code>(要直接调用实现,<code style="color:#22d3bf">import acceptance3d; acceptance3d.virtual_acceptance_test(sensor, layout=None, mpe=None, exclude_fraction=0.003, seed=0)</code>;从台账取用则 <code style="color:#22d3bf">opsacceptance.get(&quot;virtual_acceptance_test&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>用仿真传感器拍摄试验件的全部布置,返回 PF、PS、SD、F 与合格与否(<code style="color:#22d3bf">table</code>)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>Run the whole virtual acceptance test: scan the probing sphere, the ball bar in its 7 positions and the flat in its 7 positions with the simulated <code style="color:#22d3bf">sensor</code> (see <code style="color:#22d3bf">acceptance_scan</code>), evaluate them with the same ops a real point cloud would go through, and (if <code style="color:#22d3bf">mpe</code> is given) the verdict.</p>
+<p>返す <code style="color:#22d3bf">dict</code>: <code style="color:#22d3bf">pf</code>・<code style="color:#22d3bf">ps</code>(探針の球の位置ごと)、<code style="color:#22d3bf">sd</code>(ダンベル 7 姿勢)、<code style="color:#22d3bf">f</code>(平面 7 姿勢)、<code style="color:#22d3bf">probe</code>・<code style="color:#22d3bf">bars</code>・<code style="color:#22d3bf">planes</code>(各評価 op の返り)、<code style="color:#22d3bf">verdict</code>(<code style="color:#22d3bf">mpe</code> があれば <code style="color:#22d3bf">acceptance_verdict</code>)、<code style="color:#22d3bf">layout</code>、<code style="color:#22d3bf">sensor</code>(既定値で埋めた写し)。ダンベルの 2 球は場面の番号で分ける(実機では作業者が範囲を切る作業にあたる)。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: センサや配置が不正、どれかの試験体が 10 点未満しか写らない。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideacceptance:optical_3d_acceptance">optical_3d_acceptance 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_virtual_acceptance_3d">poc_virtual_acceptance_3d</a> — <code style="color:#22d3bf">py -3.11 examples/poc_virtual_acceptance_3d.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="opacceptance:acceptance_verdict">acceptance_verdict</a> · <a style="color:#22d3bf" href="opacceptance:acceptance_scan">acceptance_scan</a> · <a style="color:#22d3bf" href="opacceptance:acceptance_error_budget">acceptance_error_budget</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">simulate</code>)</h3>
+<p><a style="color:#22d3bf" href="opacceptance:acceptance_scan">acceptance_scan</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: acceptance3d.py — ACCEPTANCE 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

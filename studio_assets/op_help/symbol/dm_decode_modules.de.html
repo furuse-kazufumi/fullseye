@@ -1,0 +1,38 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">dm_decode_modules — SYMBOL <code style="color:#22d3bf">datacode2d</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dm_decode_modules(modules) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import dmsym; dmsym.dm_decode_modules(modules) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opssymbol.get(&quot;dm_decode_modules&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>Dekodiert ein Data-Matrix-Modulraster (mit L-Suchmuster und Taktspur, 0/1) und liefert die korrigierten Codewörter (<code style="color:#22d3bf">table</code>).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>Decode an (R, C) 0/1 module matrix that includes the finder L and the clock track. The grid may be given in any of the 4 rotations, optionally mirrored; the orientation is found from the function pattern (solid L + clock) and, when the pattern alone is ambiguous (a square symbol and its anti-diagonal mirror share it), from which orientation passes Reed-Solomon.</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>dict</p>
+<p><code style="color:#22d3bf">text</code>, <code style="color:#22d3bf">rows</code>, <code style="color:#22d3bf">cols</code>, <code style="color:#22d3bf">n_corrected</code>, <code style="color:#22d3bf">block_corrected</code> [int],</p>
+<p><code style="color:#22d3bf">block_ec</code> [EC 語数], <code style="color:#22d3bf">block_capacity</code> [floor(n_ec/2)], <code style="color:#22d3bf">finder_errors</code></p>
+<p>(機能 module の不一致数), <code style="color:#22d3bf">codeword_index</code>(正規化後の向き)、<code style="color:#22d3bf">rotation</code></p>
+<p>(度、0/90/180/270)と <code style="color:#22d3bf">mirrored</code>: 正規化 =</p>
+<p><code style="color:#22d3bf">np.rot90(np.fliplr(g) if mirrored else g, rotation // 90)</code>、<code style="color:#22d3bf">modules</code>(正規化後)、</p>
+<p><code style="color:#22d3bf">codewords_raw</code> / <code style="color:#22d3bf">codewords</code>(訂正前後、送出順)、<code style="color:#22d3bf">encodations</code>、</p>
+<p><code style="color:#22d3bf">fixed_errors</code>(右下固定 2x2 の不一致数、無ければ 0)。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
+<p>ValueError</p>
+<p>2-D でない・0/1 以外・NaN。</p>
+<p>DMDecodeError</p>
+<p>どの向きでも対応する大きさにならない、機能パターンが崩れすぎ、RS 訂正不能、符号化の矛盾。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesymbol:symbol_reading">Leitfaden zur Familie symbol_reading</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_symbol_part_dpm">poc_symbol_part_dpm</a> — <code style="color:#22d3bf">py -3.11 examples/poc_symbol_part_dpm.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">table</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opsymbol:render_symbol">render_symbol</a> · <a style="color:#22d3bf" href="opsymbol:symbol_read_trials">symbol_read_trials</a> · <a style="color:#22d3bf" href="opsymbol:symbol_read_pod">symbol_read_pod</a> · <a style="color:#22d3bf" href="opsymbol:ocr_classify">ocr_classify</a> · <a style="color:#22d3bf" href="opsymbol:ocr_read_line">ocr_read_line</a> · <a style="color:#22d3bf" href="opsymbol:ocr_read_trials">ocr_read_trials</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">datacode2d</code>)</h3>
+<p><a style="color:#22d3bf" href="opsymbol:qr_encode">qr_encode</a> · <a style="color:#22d3bf" href="opsymbol:qr_decode_modules">qr_decode_modules</a> · <a style="color:#22d3bf" href="opsymbol:qr_locate">qr_locate</a> · <a style="color:#22d3bf" href="opsymbol:qr_sample">qr_sample</a> · <a style="color:#22d3bf" href="opsymbol:qr_read">qr_read</a> · <a style="color:#22d3bf" href="opsymbol:dm_encode">dm_encode</a> · <a style="color:#22d3bf" href="opsymbol:dm_locate">dm_locate</a> · <a style="color:#22d3bf" href="opsymbol:dm_sample">dm_sample</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: dmsym.py — SYMBOL Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

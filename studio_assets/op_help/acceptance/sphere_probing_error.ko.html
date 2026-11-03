@@ -1,0 +1,28 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">sphere_probing_error — ACCEPTANCE <code style="color:#22d3bf">evaluate</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sphere_probing_error(points, calibrated_diameter, exclude_fraction=0.003)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import acceptance3d; acceptance3d.sphere_probing_error(points, calibrated_diameter, exclude_fraction=0.003)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsacceptance.get(&quot;sphere_probing_error&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
+<p>구의 점군으로부터 프로빙 오차의 형상 PF와 크기 PS를 계산한다(<code style="color:#22d3bf">table</code>).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>Probing error of form (PF) and of size (PS) from the point cloud of one calibrated sphere.</p>
+<p>ガウスの最小二乗で半径自由の球を当て(代数解を初期値に Gauss-Newton)、半径方向の偏差が最大の点を <code style="color:#22d3bf">floor(exclude_fraction · N)</code> 個まで除いて当て直す。<code style="color:#22d3bf">pf = R_max − R_min</code>(除外後の点の、当てた中心からの距離の範囲)、<code style="color:#22d3bf">ps = 2R − calibrated_diameter</code>(符号つき: 大きく測れば正)。A free-radius least-squares sphere is fitted, at most <code style="color:#22d3bf">floor(exclude_fraction*N)</code> points with the largest radial deviation are dropped and the sphere refitted; <code style="color:#22d3bf">pf</code> is the range of radial distances, <code style="color:#22d3bf">ps</code> the signed diameter error. Definitions as described in Carfagni et al. 2019 (doi:10.3390/s19030489) for VDI/VDE 2634 Part 2 — the normative text is not reproduced; this is not a conformance claim.</p>
+<p>返す <code style="color:#22d3bf">dict</code>: <code style="color:#22d3bf">pf</code>、<code style="color:#22d3bf">ps</code>、<code style="color:#22d3bf">diameter</code>、<code style="color:#22d3bf">radius</code>、<code style="color:#22d3bf">center</code> (3,)、<code style="color:#22d3bf">residual_rms</code>、<code style="color:#22d3bf">n_points</code>、<code style="color:#22d3bf">n_used</code>、<code style="color:#22d3bf">n_excluded</code>、<code style="color:#22d3bf">exclude_fraction</code>、<code style="color:#22d3bf">calibrated_diameter</code>。単位は入力の点の単位のまま。</p>
+<p>限界: 球冠しか見えない点群(片側から撮った球)では半径と中心が相関し、PS は雑音に敏感になる(見えている角度が小さいほど)。<code style="color:#22d3bf">residual_rms</code> が雑音の目安。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 点が (N, 3) でない・10 点未満・非有限、同一平面上(球が定まらない)、<code style="color:#22d3bf">calibrated_diameter</code> が正でない、<code style="color:#22d3bf">exclude_fraction</code> が [0, 0.05] の外。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideacceptance:optical_3d_acceptance">optical_3d_acceptance 패밀리 가이드</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
+<p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
+<p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
+<p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
+<p style="margin:2px 0 2px 12px">• (아직 없음)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">table</code> 를 입력으로 받는 것)</h3>
+<p><a style="color:#22d3bf" href="opacceptance:acceptance_verdict">acceptance_verdict</a> · <a style="color:#22d3bf" href="opacceptance:acceptance_scan">acceptance_scan</a> · <a style="color:#22d3bf" href="opacceptance:virtual_acceptance_test">virtual_acceptance_test</a> · <a style="color:#22d3bf" href="opacceptance:acceptance_error_budget">acceptance_error_budget</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">evaluate</code>)</h3>
+<p><a style="color:#22d3bf" href="opacceptance:sphere_spacing_error">sphere_spacing_error</a> · <a style="color:#22d3bf" href="opacceptance:plane_flatness_error">plane_flatness_error</a> · <a style="color:#22d3bf" href="opacceptance:acceptance_verdict">acceptance_verdict</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: acceptance3d.py — ACCEPTANCE 연산자 레지스트리. 이 op 노트는 <code style="color:#22d3bf">tools/opdocs.py md</code> 가 자동 생성합니다(직접 편집하지 마세요).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

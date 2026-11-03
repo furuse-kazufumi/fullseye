@@ -720,7 +720,7 @@ X 線(や可視光)の透過像は「どれだけ吸われたか」しか写し�
 
 推奨パイプライン: [`depth_to_points`](ops/3d/transform/depth_to_points.md) → [`estimate_normals`](ops/3d/curvature/estimate_normals.md) → [`ransac_plane`](ops/3d/robust_fit/ransac_plane.md) → [`icp_point2point_3d`](ops/3d/refine/icp_point2point_3d.md)
 
-代替: `find_surface_pose`, `point_to_plane_icp`, `fpfh`, [`register_cross`](ops/3d/fusion/register_cross.md)
+代替: [`find_surface_pose`](ops/3d/match_pose/find_surface_pose.md), `point_to_plane_icp`, `fpfh`, [`register_cross`](ops/3d/fusion/register_cross.md)
 
 限界: T-LESS の実機 subset では AR_MSSD 0.290。理想深度 0.880 から 0.590 落ち、Drost-CVPR10-3D-Only の公式 0.478、Vidal-Sensors18 の 0.575 に負ける。接触物体の cluster 結合、遮蔽、深度欠損、対称形状を別々に数える。
 

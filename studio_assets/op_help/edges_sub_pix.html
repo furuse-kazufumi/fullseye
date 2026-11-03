@@ -13,7 +13,9 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/edges_sub_pix.inputs.jpg">edges_sub_pix: 別の画像での出力</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <p>*4 列目はカラー (H,W,3) の入力。この op は色を跨がずに扱える(色チャネルを 3 本目の空間軸として畳み込まない)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>サブピクセル精度のエッジ点抽出。勾配とその法線方向(<code style="color:#22d3bf">gradient_ normals</code>)を求め、しきい値(<code style="color:#22d3bf">0.15+0.5*a</code>)を超える画素を連結成分化した後、放物線当てはめで各点をサブピクセル位置へ精密化する(<code style="color:#22d3bf">subpixel_ refine_edges</code>、<code style="color:#22d3bf">ops</code> 側の同名 op と共有する実装 ―― 2026-09-02 修正で真の意味でサブピクセルになった。旧実装は整数画素座標をそのまま返していた)。HALCON の <code style="color:#22d3bf">edges_sub_pix</code>（Extract sub-pixel precise edges using Deriche, Lanser, Shen, or Canny filters.）に相当。</p>
+<p>サブピクセル精度のエッジ輪郭抽出。勾配とその法線方向(<code style="color:#22d3bf">gradient_ normals</code>)を求め、非極大抑制(Canny と同じ、法線方向の両隣より強い画素だけ)で 1 画素幅に細らせ、しきい値(<code style="color:#22d3bf">0.15+0.5*a</code>、最大勾配で正規化した強度)を超える画素を <b>曲線に沿って並べた輪郭</b>に繋ぎ(分岐点で別の輪郭に分ける。閉じたエッジは始点で閉じる)、放物線当てはめで各点を法線方向にサブピクセル位置へ精密化する(<code style="color:#22d3bf">subpixel_ refine_edges</code>、<code style="color:#22d3bf">ops</code> 側の同名 op と共有する実装 ―― 2026-09-02 修正で真の意味でサブピクセルになった。旧実装は整数画素座標をそのまま返していた)。HALCON の <code style="color:#22d3bf">edges_sub_pix</code>（Extract sub-pixel precise edges using Deriche, Lanser, Shen, or Canny filters.）に相当。</p>
+<p>点は輪郭ごとに<b>曲線に沿った順</b>(隣り合う点の距離は約 1 px)なので、<code style="color:#22d3bf">length_xld</code> はエッジの長さ、<code style="color:#22d3bf">area_center_xld</code> / <code style="color:#22d3bf">circularity_xld</code> は閉じたエッジの囲む形を測れる(r = 18 px の円板で length_xld 約 113 px = 2πr)。</p>
+<p>★2026-11-03 まで、しきい値を超えた幅 2〜3 px の<b>帯</b>の画素を<b>ラスタ順</b>のまま 1 輪郭にしていた —— 同じ円板で length_xld が 2508 px(点の並びが行ごとに往復していた)。点の向きに依らない量(直線当てはめ <code style="color:#22d3bf">fit_line_contour_xld</code> など)は以前と同じ値に近い。</p>
 <p><code style="color:#22d3bf">a</code> がエッジ強度のしきい値を振る。<code style="color:#22d3bf">b</code> は未使用。</p>
 <p>Raises:</p>
 <p>FsValueError: NaN / inf を含む画像。</p>

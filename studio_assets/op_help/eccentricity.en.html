@@ -20,6 +20,7 @@
 <p>parameters.): <b>the same 3 values, the same formulas</b>. All 3 are dimensionless, so they are not normalised.</p>
 <p>★Until 2026-09-26 it returned skimage&#x27;s eccentricity <code style="color:#22d3bf">sqrt(1-(b/a)²)</code>, <b>a quantity that is none of the 3</b>, as 1 scalar (0.0 vs HALCON&#x27;s 1.0 for a circle, 0.999 vs 20.65 for a 4x80 bar). Since 1 scalar cannot represent 3 values, it was changed to the same <code style="color:#22d3bf">match</code> sort as <code style="color:#22d3bf">area_center</code>. <code style="color:#22d3bf">docs/hardening/halcon-named-shape-factors.md</code>.</p>
 <p>When the region is empty it returns the circle&#x27;s values <code style="color:#22d3bf">(1, 1, 0)</code> as fail-soft behaviour (the number of components does not change with the input). <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> are unused.</p>
+<p><b>Other ops with the same stem</b>: <code style="color:#22d3bf">xg_eccentricity</code> — a different operation with different input/output types; only the name is similar (<code style="color:#22d3bf">docs/IMPL_DIFFERENTIAL.md</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

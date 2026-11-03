@@ -1,0 +1,38 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">ocr_features — SYMBOL <code style="color:#22d3bf">ocr</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">signal</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ocr_features(glyph_image) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import ocrclassic; ocrclassic.ocr_features(glyph_image) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opssymbol.get(&quot;ocr_features&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>1 字のインク地図から 88 次元の特徴量(区画の濃度 + 射影)を作る(<code style="color:#22d3bf">signal</code>)。</p>
+<p>入力の約束 / Input contract</p>
+<p><code style="color:#22d3bf">glyph_image</code> は<b>インク量の地図</b>(1 = インク、0 = 地、float)で、</p>
+<p><b>行は字高の範囲(行の上端〜下端)、列はその字を含む範囲</b>を切り出したもの</p>
+<p>(<code style="color:#22d3bf">ocr_read_line</code> はインク重心を中心に送り幅 1 つぶんの幅で切る)。</p>
+<p>行を字高にそろえるので <code style="color:#22d3bf">.</code> <code style="color:#22d3bf">-</code> <code style="color:#22d3bf">:</code> の縦位置と大きさが特徴量に残る</p>
+<p>(インクの外接箱で正規化すると <code style="color:#22d3bf">.</code> は大きな円板になり、何にでも似てしまう)。</p>
+<p>正規化 / Normalisation</p>
+<p>縦: 切り出しの高さを <code style="color:#22d3bf">FEATURE_GRID</code> (24) 画素に拡縮。横: <b>同じ倍率</b>(縦横比保持)で、</p>
+<p>インクの重心列をキャンバス中央に置く(字幅を推定しないので、ぼけで箱が太っても位置がずれない)。</p>
+<p>縮小時は先に Gaussian で前置平滑(エイリアス防止)し、map_coordinates(双線形)で標本化。</p>
+<p>構成 / Layout (length <code style="color:#22d3bf">FEATURE_LENGTH</code> = 88)</p>
+<p>[0:64]  8x8 区画濃度(各 3x3 画素の平均インク、0..1)/ zoning densities</p>
+<p>[64:76] 水平射影(行方向の平均インク、12 ビン)/ horizontal projection profile</p>
+<p>[76:88] 垂直射影(列方向の平均インク、12 ビン)/ vertical projection profile</p>
+<p>交差数(crossing count)は使わない: 離散値で、ぼけとドットの途切れに不安定なため。Crossing counts are not used: they are discrete and unstable under blur / dot gaps.</p>
+<p>インクが無ければ全 0 を返す。/ Returns zeros for an empty glyph.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesymbol:symbol_reading">symbol_reading ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_symbol_lot_ocr">poc_symbol_lot_ocr</a> — <code style="color:#22d3bf">py -3.11 examples/poc_symbol_lot_ocr.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">signal</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opsymbol:decode_barcode_profile">decode_barcode_profile</a> · <a style="color:#22d3bf" href="opsymbol:grade_barcode_profile">grade_barcode_profile</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">ocr</code>)</h3>
+<p><a style="color:#22d3bf" href="opsymbol:ocr_font">ocr_font</a> · <a style="color:#22d3bf" href="opsymbol:ocr_render_text">ocr_render_text</a> · <a style="color:#22d3bf" href="opsymbol:ocr_segment_line">ocr_segment_line</a> · <a style="color:#22d3bf" href="opsymbol:ocr_train">ocr_train</a> · <a style="color:#22d3bf" href="opsymbol:ocr_classify">ocr_classify</a> · <a style="color:#22d3bf" href="opsymbol:ocr_read_line">ocr_read_line</a> · <a style="color:#22d3bf" href="opsymbol:ocr_score">ocr_score</a> · <a style="color:#22d3bf" href="opsymbol:ocr_read_trials">ocr_read_trials</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: ocrclassic.py — SYMBOL operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,0 +1,29 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">table_field_measurement — REPRCONV <code style="color:#22d3bf">field</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">measurement</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.table_field_measurement(table, key)</code>(要直接调用实现,<code style="color:#22d3bf">import reprconv; reprconv.table_field_measurement(table, key)</code>;从台账取用则 <code style="color:#22d3bf">opsreprconv.get(&quot;table_field_measurement&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>表 <code style="color:#22d3bf">table</code> 的一栏 → 一个数 <code style="color:#22d3bf">measurement</code>。例: <code style="color:#22d3bf">label_extent</code> 的 <code style="color:#22d3bf">width</code>。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>値が要素 1 個の有限な数(スカラーか長さ 1 の配列)であることを確かめる。</p>
+<p>Args:</p>
+<p>table: 欄の名前 → 値の dict。</p>
+<p>key: 欄の名前。</p>
+<p>Returns:</p>
+<p>float。</p>
+<p>Raises:</p>
+<p>ValueError: dict でない / 欄が無い / 要素が 1 個でない / 非有限。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• (暂无)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">measurement</code> 作为输入)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">field</code>)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:table_field_image2d">table_field_image2d</a> · <a style="color:#22d3bf" href="opreprconv:table_field_signal">table_field_signal</a> · <a style="color:#22d3bf" href="opreprconv:table_field_matrix">table_field_matrix</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: reprconv.py — REPRCONV 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

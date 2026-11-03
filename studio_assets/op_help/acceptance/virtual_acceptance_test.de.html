@@ -1,0 +1,26 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">virtual_acceptance_test — ACCEPTANCE <code style="color:#22d3bf">simulate</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.virtual_acceptance_test(sensor, layout=None, mpe=None, exclude_fraction=0.003, seed=0)</code> (die Implementierung direkt: <code style="color:#22d3bf">import acceptance3d; acceptance3d.virtual_acceptance_test(sensor, layout=None, mpe=None, exclude_fraction=0.003, seed=0)</code>; aus dem Register: <code style="color:#22d3bf">opsacceptance.get(&quot;virtual_acceptance_test&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>Erfasst alle Prüfkörperlagen mit einem simulierten Sensor und gibt PF, PS, SD, F und das Urteil zurück (<code style="color:#22d3bf">table</code>).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>Run the whole virtual acceptance test: scan the probing sphere, the ball bar in its 7 positions and the flat in its 7 positions with the simulated <code style="color:#22d3bf">sensor</code> (see <code style="color:#22d3bf">acceptance_scan</code>), evaluate them with the same ops a real point cloud would go through, and (if <code style="color:#22d3bf">mpe</code> is given) the verdict.</p>
+<p>返す <code style="color:#22d3bf">dict</code>: <code style="color:#22d3bf">pf</code>・<code style="color:#22d3bf">ps</code>(探針の球の位置ごと)、<code style="color:#22d3bf">sd</code>(ダンベル 7 姿勢)、<code style="color:#22d3bf">f</code>(平面 7 姿勢)、<code style="color:#22d3bf">probe</code>・<code style="color:#22d3bf">bars</code>・<code style="color:#22d3bf">planes</code>(各評価 op の返り)、<code style="color:#22d3bf">verdict</code>(<code style="color:#22d3bf">mpe</code> があれば <code style="color:#22d3bf">acceptance_verdict</code>)、<code style="color:#22d3bf">layout</code>、<code style="color:#22d3bf">sensor</code>(既定値で埋めた写し)。ダンベルの 2 球は場面の番号で分ける(実機では作業者が範囲を切る作業にあたる)。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: センサや配置が不正、どれかの試験体が 10 点未満しか写らない。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideacceptance:optical_3d_acceptance">Leitfaden zur Familie optical_3d_acceptance</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_virtual_acceptance_3d">poc_virtual_acceptance_3d</a> — <code style="color:#22d3bf">py -3.11 examples/poc_virtual_acceptance_3d.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">table</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opacceptance:acceptance_verdict">acceptance_verdict</a> · <a style="color:#22d3bf" href="opacceptance:acceptance_scan">acceptance_scan</a> · <a style="color:#22d3bf" href="opacceptance:acceptance_error_budget">acceptance_error_budget</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">simulate</code>)</h3>
+<p><a style="color:#22d3bf" href="opacceptance:acceptance_scan">acceptance_scan</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: acceptance3d.py — ACCEPTANCE Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

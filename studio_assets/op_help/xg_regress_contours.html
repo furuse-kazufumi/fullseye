@@ -12,6 +12,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Total-least-squares line residual RMS = sqrt(minor covariance eigenvalue).</p>
 <p>The perpendicular (orthogonal-regression) residual variance of a point set equals its smallest covariance eigenvalue; its square root is the RMS perpendicular distance to the best-fit line.</p>
+<p><b>同じ処理の別実装(実測、<code style="color:#22d3bf">docs/IMPL_DIFFERENTIAL.md</code>)</b>: 同じ入力・同じ a, b での内部の差(振れ幅に対する比。5e-3 未満が一致)は <code style="color:#22d3bf">hx_regress_contours</code> 1。食い違う理由(つまみの写し方・窓・端・量子化・定義の違い)は表に書いてある。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

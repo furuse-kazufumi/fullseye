@@ -16,6 +16,7 @@
 <p>维纳反卷积（使用已知点扩散函数的去模糊）。调用<code style="color:#22d3bf">skimage.restoration.wiener</code>。</p>
 <p>PSF 假定为高斯形状并自行生成，a 调节 PSF 的扩展（标准差 <code style="color:#22d3bf">0.5 + 1.5*a</code>，5x5 窗口）。b 调节平衡项（<code style="color:#22d3bf">0.05 + 0.5*b</code>。相当于噪声对信号比的倒数，越大越偏向噪声抑制）。<b>只有当输入图像的模糊实际上与这个假定的高斯 PSF 一致时才有效</b>，PSF 的形状不同时会出现振铃或复原失败。</p>
 <p><b>边界处理</b>：环绕到对侧（周期）（实测。<code style="color:#22d3bf">tools/impl2/border_probe.py</code>）。</p>
+<p><b>同一处理的其他实现（实测，<code style="color:#22d3bf">docs/IMPL_DIFFERENTIAL.md</code>）</b>：在相同输入、相同 a、b 下，内部差（相对于取值范围之比；小于 5e-3 视为一致）为 <code style="color:#22d3bf">xsp_wiener</code> 0.7。不一致的原因（旋钮映射、窗口、边界、量化、定义不同）写在表中。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

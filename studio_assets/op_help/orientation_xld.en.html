@@ -11,7 +11,8 @@
 <p><b>Stages</b> (the ops that come before → this op, left to right):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/orientation_xld.chain.jpg">orientation_xld: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>The tilt angle of the ellipse fitted to the contour (the angle from <code style="color:#22d3bf">cv2.fitEllipse</code>, folded at 180° and normalized to [0,1]). Corresponds to HALCON&#x27;s <code style="color:#22d3bf">orientation_xld</code> (Calculate the orientation of contours or polygons.).</p>
+<p>The <b>main-axis angle θ / 180</b> of the ellipse fitted (<code style="color:#22d3bf">cv2.fitEllipse</code>) to the largest contour (θ measured from the column axis <b>counter-clockwise on screen</b>, rows pointing down, folded into [0, 180) degrees). The same convention as the region version <code style="color:#22d3bf">orientation_region</code> (multiply by 180 for degrees). HALCON&#x27;s <code style="color:#22d3bf">orientation_xld</code> (Calculate the orientation of contours or polygons.) returns the angle in the same sense as radians in -π..π (direction decided by the farthest point), so this is the version folded at 180 degrees and normalised to [0,1).</p>
+<p>★Until 2026-11-03 the angle of <code style="color:#22d3bf">cv2.fitEllipse</code> was used as is, returning <b>the minor axis&#x27;s angle, clockwise on screen</b> (= 90 - θ) (a bar turned 20 degrees counter-clockwise gave 0.389 = 70 degrees; only 45 degrees matched by chance).</p>
 <p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> are unused.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features family guide</a></p>

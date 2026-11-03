@@ -923,7 +923,10 @@ def test_ledger_is_complete_and_every_op_has_an_implementation():
     # 2026-10-23: 有限の消光比の偏光子 mueller_partial_polarizer 1 op(464 → 465)。
     # 2026-10-23: photoelastic(光弾性: 応力場の閉形式・応力光学則・立方晶・偏光器・偏光像の逆算・多波長)12 op(465 → 477)。
     # 2026-10-23: fpm(フーリエ・タイコグラフィ、fourierptycho)6 op を新しい族として追加(477 → 483)。
-    assert len(opsoptics.OPSOPTICS) == 483
+    # 2026-11-03: light_section(光切断、lightsection)13 op と hdr(HDR・露出融合、hdrfusion)8 op を新しい族として追加(483 → 504)。
+    assert len(opsoptics.OPSOPTICS) == 504
+    assert len(opsoptics.list_ops("light_section")) == 13
+    assert len(opsoptics.list_ops("hdr")) == 8
     assert len(opsoptics.list_ops("photoelastic")) == 12
     assert len(opsoptics.list_ops("fpm")) == 6
     assert len(opsoptics.list_ops("tolerancing")) == 8
@@ -954,8 +957,8 @@ def test_ledger_is_complete_and_every_op_has_an_implementation():
     # glassmirror "interface" 4・"mirror" 2・"glassbody" 4 / metalfinish "finish" 5 /
     # surfacelib "material" 6・"surface" 5。下の module 検査と同じ形で実装元も固定する。
     assert sorted(opsoptics.categories()) == [
-        "appearance", "cavity", "coherent", "confocal", "design", "drawing", "fiber", "film", "finish", "fpm", "geometric", "glassbody", "grating_interf", "illumination",
-        "imaging", "imaging_sim", "interface", "itof", "lensconfig", "lensfile", "lensglobal", "lensmerit", "lensrender", "lenssolve", "light_transport", "linescan", "lockin", "material", "matprop", "mirror", "moire_align", "noncoaxial", "oct", "omni360", "optimization",
+        "appearance", "cavity", "coherent", "confocal", "design", "drawing", "fiber", "film", "finish", "fpm", "geometric", "glassbody", "grating_interf", "hdr", "illumination",
+        "imaging", "imaging_sim", "interface", "itof", "lensconfig", "lensfile", "lensglobal", "lensmerit", "lensrender", "lenssolve", "light_section", "light_transport", "linescan", "lockin", "material", "matprop", "mirror", "moire_align", "noncoaxial", "oct", "omni360", "optimization",
             "photoelastic", "pixelshift", "plenoptic", "polarization", "radiosity", "scene", "sensorchar", "sensorgeneral", "shape_from_polarization", "spectral", "spectrometer", "surface", "telecentric", "tem", "tolerancing", "watermedia", "watervision", "wave"]
     assert len(opsoptics.list_ops("scene")) == 44
     # 同名 op は後勝ちで静かに上書きされる。2026-09-05 に optscene.depth_of_field が

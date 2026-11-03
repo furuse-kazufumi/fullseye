@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">rss_longitudinal_same — DRIVE <code style="color:#22d3bf">rss</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">scalar</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rss_longitudinal_same(v_rear: &#x27;float&#x27;, v_front: &#x27;float&#x27;, p: &#x27;dict&#x27;, p_front: &#x27;Optional[dict]&#x27; = None) -&gt; &#x27;float&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import rsssafety; rsssafety.rss_longitudinal_same(v_rear: &#x27;float&#x27;, v_front: &#x27;float&#x27;, p: &#x27;dict&#x27;, p_front: &#x27;Optional[dict]&#x27; = None) -&gt; &#x27;float&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;rss_longitudinal_same&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rss_longitudinal_same(p: &#x27;dict&#x27;, v_rear: &#x27;float&#x27;, v_front: &#x27;float&#x27;, p_front: &#x27;Optional[dict]&#x27; = None) -&gt; &#x27;float&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import opsdrive; opsdrive.rss_longitudinal_same(p: &#x27;dict&#x27;, v_rear: &#x27;float&#x27;, v_front: &#x27;float&#x27;, p_front: &#x27;Optional[dict]&#x27; = None) -&gt; &#x27;float&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;rss_longitudinal_same&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>同向(論文 Lemma 2 / lib <code style="color:#22d3bf">calculateSafeLongitudinalDistanceSameDirection</code>)的最小安全距離 [m]。</p>
@@ -17,5 +17,5 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">rss</code>)</h3>
 <p><a style="color:#22d3bf" href="opdrive:rss_params">rss_params</a> · <a style="color:#22d3bf" href="opdrive:rss_stopping_distance">rss_stopping_distance</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_opposite">rss_longitudinal_opposite</a> · <a style="color:#22d3bf" href="opdrive:rss_lateral">rss_lateral</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_check">rss_longitudinal_check</a> · <a style="color:#22d3bf" href="opdrive:rss_lateral_check">rss_lateral_check</a> · <a style="color:#22d3bf" href="opdrive:rss_worst_case_gap">rss_worst_case_gap</a> · <a style="color:#22d3bf" href="opdrive:rss_worst_case_gap_opposite">rss_worst_case_gap_opposite</a></p>
 <hr style="border:0;border-top:1px solid #2c313f">
-<p>*Provenance: rsssafety.py — DRIVE 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>*Provenance: opsdrive.py — DRIVE 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
 <p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

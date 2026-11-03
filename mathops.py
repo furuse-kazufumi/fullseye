@@ -120,6 +120,7 @@ __all__ = [
     # 波動と力学系(2026-09-23)。定数も公開面に出す(族名の一覧は利用者が読む)。
     "wave_membrane_mode", "wave_mode_frequencies", "wave_nodal_lines",
     "wave_two_slit", "wave_fringe_period", "wave_grating_orders",
+    "wave_dominant_frequency",
     "ode_flow_states", "ode_vector_field_grid", "dynsys_poincare_section",
     "dynsys_lyapunov_spectrum", "dynsys_bifurcation_map",
     "dynsys_correlation_dimension",
@@ -163,6 +164,8 @@ MATHOPS = [
     "wave_two_slit",
     "wave_fringe_period",
     "wave_grating_orders",
+    # 2-D の最強の周期(向きつき)。wave_fringe_period の 2-D 版(2026-11-03)
+    "wave_dominant_frequency",
     # 力学系 —— 積む・断面・指数・分岐(2026-09-23)
     "ode_flow_states",
     "ode_vector_field_grid",
@@ -3278,6 +3281,84 @@ def wave_fringe_period(image, axis=1):
     y0, y1, y2 = np.log(spec[i - 1:i + 2] + 1e-300)
     delta = 0.5 * (y0 - y2) / (y0 - 2.0 * y1 + y2)
     return float(prof.size) / (i + float(delta))
+
+
+#: :func:`wave_dominant_frequency` の窓。
+WAVE_DOMINANT_WINDOWS = ("hann", "none")
+
+
+def wave_dominant_frequency(image, window="hann"):
+    """画像の最も強い周期(2-D FFT の DC 以外で最大の山)の周波数・周期・向きを返す(``table``)。
+
+    平均を引き、``window="hann"``(既定)なら 2-D の Hann 窓を掛けてから ``fft2`` の
+    パワーの最大(DC は除く)を探し、山の 3 点に**対数の放物線**を行・列それぞれで当てて
+    ビンより細かく読む(:func:`wave_fringe_period` の 2-D 版。あちらは 1 軸の周期だけ)。
+    ``window="none"`` は窓を掛けない(周期が画像幅にちょうど整数個入るときだけ厳密)。
+
+    返す dict: ``fx`` / ``fy``(列方向・行方向の空間周波数 [cycles/px]、山は ``fx >= 0`` の
+    半平面に揃える)、``freq_cpp``(``hypot(fx, fy)``)、``period_px``(``1 / freq_cpp``)、
+    ``angle_deg``(波数ベクトルの向き = 縞に**垂直**な向き。+列から +行へ回る角で
+    ``[0, 180)``。縞 ``cos(2π(x cosθ + y sinθ)/p)`` なら θ)、``peak_fraction``(山の
+    ビンとその鏡像が DC 以外の全パワーに占める割合 = 周期の確からしさ)、``window``。
+
+    ★前提: 照明むらのような低周波は山を奪う(画像より長い周期は DC の隣に出る)。
+    むらがある画像は先に背景を引くか高域通過を掛けること。
+
+    空の入力(``image`` が 0 要素)は ``ValueError``。
+    拒否(``ValueError``): 2-D でない、どちらかの辺が 8 画素未満、非有限の値、
+    平らな画像(周期が無い)、未知の ``window``。
+    """
+    if (len(image) if isinstance(image, (list, tuple)) else np.asarray(image).size) == 0:
+        raise ValueError("wave_dominant_frequency: image is empty — pass at least one element")
+    op = "wave_dominant_frequency"
+    if window not in WAVE_DOMINANT_WINDOWS:
+        raise ValueError("%s: window must be one of %s, got %r" % (op, WAVE_DOMINANT_WINDOWS, window))
+    im = np.asarray(image, dtype=np.float64)
+    if im.ndim != 2:
+        raise ValueError("%s: image must be 2-D, got %s" % (op, (im.shape,)))
+    H, W = im.shape
+    if H < 8 or W < 8:
+        raise ValueError("%s: both sides must be >= 8 px, got %dx%d" % (op, H, W))
+    if not np.all(np.isfinite(im)):
+        raise ValueError("%s: image contains a non-finite value" % op)
+    f = im - im.mean()
+    if float(np.ptp(f)) <= 0.0:
+        raise ValueError("%s: the image is flat — there is no period to measure" % op)
+    if window == "hann":
+        f = f * np.outer(np.hanning(H), np.hanning(W))
+    P = np.abs(np.fft.fftshift(np.fft.fft2(f))) ** 2
+    cy, cx = H // 2, W // 2
+    P[cy, cx] = 0.0                                       # DC
+    total = float(P.sum())
+    if total <= 0.0:
+        raise ValueError("%s: no power outside DC — there is no period to measure" % op)
+    iy, ix = np.unravel_index(int(np.argmax(P)), P.shape)
+
+    def _sub(v0, v1, v2):
+        # 対数パワーの 3 点に放物線。山の形でない(分母 >= 0)ときは補正しない。
+        # ★床は山に対する相対量で、対数の**前に**掛ける: 山がビンの真上に乗ると両隣は丸め屑
+        #   (1e-30 前後)になり、その非対称が対数で増幅されて 0.0001 cycles/px の偽の補正に化けた
+        #   (window="none"、64 px に 8 周期、2026-11-03 実測)。
+        floor = float(v1) * 1e-10
+        y0, y1, y2 = np.log(np.maximum(np.array([v0, v1, v2], dtype=np.float64), floor) + 1e-300)
+        den = y0 - 2.0 * y1 + y2
+        if not np.isfinite(den) or den >= 0.0:
+            return 0.0
+        return float(np.clip(0.5 * (y0 - y2) / den, -0.5, 0.5))
+
+    # fftshift 後のスペクトルは周期的なので、端の隣は反対側(mod)で取る。
+    dy = _sub(P[(iy - 1) % H, ix], P[iy, ix], P[(iy + 1) % H, ix])
+    dx = _sub(P[iy, (ix - 1) % W], P[iy, ix], P[iy, (ix + 1) % W])
+    fy = (iy + dy - cy) / H
+    fx = (ix + dx - cx) / W
+    if fx < 0.0 or (fx == 0.0 and fy < 0.0):              # 実画像のスペクトルは点対称: 半平面に揃える
+        fx, fy = -fx, -fy
+    freq = float(np.hypot(fx, fy))
+    my, mx = (2 * cy - iy) % H, (2 * cx - ix) % W         # 鏡像のビン
+    peak = float(P[iy, ix]) + (float(P[my, mx]) if (my, mx) != (iy, ix) else 0.0)
+    ang = float(np.degrees(np.arctan2(fy, fx))) % 180.0
+    return {"fx": float(fx), "fy": float(fy), "freq_cpp": freq, "period_px": 1.0 / freq,
+            "angle_deg": ang, "peak_fraction": peak / total, "window": window}
 
 def wave_grating_orders(pitch_um=1.6, wavelength_nm=550.0, sin_in=0.0,
                         orders=(-2, -1, 1, 2)):

@@ -16,6 +16,7 @@
 <p>HALCON 中没有直接对应的算子。实现为 <code style="color:#22d3bf">cv2.createCLAHE(clipLimit=1.0+4.0*a).apply(_u8(v))</code> 除以 255 —— a 把 clipLimit（对比度限制的强度）在 1.0〜5.0 之间调节。分块网格大小保持默认的 8x8。b 未使用。</p>
 <p><b>旋钮（实测）</b>：将 <code style="color:#22d3bf">a</code> 从 0 扫到 1 <b>输出不变</b>（以 5 种输入实测）。</p>
 <p><b>精度（实测）</b>：内部<b>量子化为 8 bit（256 级）</b>——输出恰好落在 k/255 的栅格上。即使以 float64 传入，<b>该精度也不会被保留</b>：16-bit 相机的级差（约 1.5e-5）被舍入到 1/255 ≈ 3.9e-3，相差小于 1/255 的两幅图会返回相同结果。在测量微小灰度差、或将输出继续送入微分与回归时，量子化台阶会显现——请选用不经过 8 bit 的 op。</p>
+<p><b>同一处理的其他实现（实测，<code style="color:#22d3bf">docs/IMPL_DIFFERENTIAL.md</code>）</b>：在相同输入、相同 a、b 下，内部差（相对于取值范围之比；小于 5e-3 视为一致）为 <code style="color:#22d3bf">clahe</code> 0.61, <code style="color:#22d3bf">xkor_clahe</code> 0.087。不一致的原因（旋钮映射、窗口、边界、量化、定义不同）写在表中。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

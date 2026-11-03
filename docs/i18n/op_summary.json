@@ -9,6 +9,28 @@
   "hi"
  ],
  "summaries": {
+  "2d/tb_keypoints_rowcol_to_uv": {"fp":"b61a1b5b9113","en":"Image points ``(row, col)`` → ``(u, v) = (col, row)``. The bridge between the two conventions of the ``keypoints`` sort.","zh":"像面点 ``(row, col)`` → ``(u, v) = (col, row)``。``keypoints`` 类型两种约定之间的连接。","tw":"像面點 ``(row, col)`` → ``(u, v) = (col, row)``。``keypoints`` 型別兩種慣例之間的連接。","ko":"상면의 점 ``(row, col)`` → ``(u, v) = (col, row)``. ``keypoints`` 형의 두 관례 사이의 연결.","de":"Bildpunkte ``(row, col)`` → ``(u, v) = (col, row)``. Die Brücke zwischen den zwei Konventionen der Sorte ``keypoints``.","hi":"image points ``(row, col)`` → ``(u, v) = (col, row)``। ``keypoints`` sort की दो conventions के बीच का पुल।"},
+  "2d/tb_keypoints_uv_to_rowcol": {"fp":"ed7eb218bbe6","en":"Image points ``(u, v) = (col, row)`` → ``(row, col)``. The reverse of :func:`keypoints_rowcol_to_uv`.","zh":"像面点 ``(u, v) = (col, row)`` → ``(row, col)``。:func:`keypoints_rowcol_to_uv` 的反向。","tw":"像面點 ``(u, v) = (col, row)`` → ``(row, col)``。:func:`keypoints_rowcol_to_uv` 的反向。","ko":"상면의 점 ``(u, v) = (col, row)`` → ``(row, col)``. :func:`keypoints_rowcol_to_uv` 의 역방향.","de":"Bildpunkte ``(u, v) = (col, row)`` → ``(row, col)``. Die Umkehrung von :func:`keypoints_rowcol_to_uv`.","hi":"image points ``(u, v) = (col, row)`` → ``(row, col)``। :func:`keypoints_rowcol_to_uv` का उल्टा।"},
+  "reprconv/table_field_image2d": {"fp":"240d184f546f","en":"One field of a table ``table`` → a 2-D image ``image2d``. The bridge from ops that return a ``table`` to ops that take images.","zh":"表 ``table`` 的一栏 → 2-D 图像 ``image2d``。从返回 ``table`` 的 op 到接收图像的 op 的连接。","tw":"表 ``table`` 的一欄 → 2-D 影像 ``image2d``。從回傳 ``table`` 的 op 到接收影像的 op 的連接。","ko":"표 ``table`` 의 한 칸 → 2-D 이미지 ``image2d``. ``table`` 을 반환하는 op 에서 이미지를 받는 op 로의 연결.","de":"Ein Feld einer Tabelle ``table`` → ein 2-D-Bild ``image2d``. Die Brücke von Ops, die eine ``table`` liefern, zu Ops, die Bilder nehmen.","hi":"table ``table`` का एक field → 2-D image ``image2d``। ``table`` लौटाने वाले ops से image लेने वाले ops तक का पुल।"},
+  "reprconv/table_field_signal": {"fp":"f9d8288d474b","en":"One field of a table ``table`` → a 1-D array ``signal``. Hands a CSV column or a dict series to signal ops.","zh":"表 ``table`` 的一栏 → 1-D 数组 ``signal``。把 CSV 的一列或 dict 的序列交给信号 op。","tw":"表 ``table`` 的一欄 → 1-D 陣列 ``signal``。把 CSV 的一欄或 dict 的序列交給訊號 op。","ko":"표 ``table`` 의 한 칸 → 1-D 배열 ``signal``. CSV 의 한 열이나 dict 의 계열을 신호 op 에 넘긴다.","de":"Ein Feld einer Tabelle ``table`` → ein 1-D-Array ``signal``. Reicht eine CSV-Spalte oder eine dict-Reihe an Signal-Ops weiter.","hi":"table ``table`` का एक field → 1-D array ``signal``। CSV column या dict series को signal ops तक पहुँचाता है।"},
+  "reprconv/table_field_matrix": {"fp":"402d1b4acafb","en":"One field of a table ``table`` → a general matrix ``matrix``. Example: the ``swt`` field of ``swt_map`` → ``text_candidates``.","zh":"表 ``table`` 的一栏 → 一般矩阵 ``matrix``。例: ``swt_map`` 的 ``swt`` 栏 → ``text_candidates``。","tw":"表 ``table`` 的一欄 → 一般矩陣 ``matrix``。例: ``swt_map`` 的 ``swt`` 欄 → ``text_candidates``。","ko":"표 ``table`` 의 한 칸 → 일반 행렬 ``matrix``. 예: ``swt_map`` 의 ``swt`` 칸 → ``text_candidates``.","de":"Ein Feld einer Tabelle ``table`` → eine allgemeine Matrix ``matrix``. Beispiel: das Feld ``swt`` von ``swt_map`` → ``text_candidates``.","hi":"table ``table`` का एक field → सामान्य matrix ``matrix``। उदाहरण: ``swt_map`` का ``swt`` field → ``text_candidates``।"},
+  "reprconv/table_field_measurement": {"fp":"e55b6ba48884","en":"One field of a table ``table`` → a single number ``measurement``. Example: ``width`` of ``label_extent``.","zh":"表 ``table`` 的一栏 → 一个数 ``measurement``。例: ``label_extent`` 的 ``width``。","tw":"表 ``table`` 的一欄 → 一個數 ``measurement``。例: ``label_extent`` 的 ``width``。","ko":"표 ``table`` 의 한 칸 → 수 하나 ``measurement``. 예: ``label_extent`` 의 ``width``.","de":"Ein Feld einer Tabelle ``table`` → eine einzelne Zahl ``measurement``. Beispiel: ``width`` von ``label_extent``.","hi":"table ``table`` का एक field → एक संख्या ``measurement``। उदाहरण: ``label_extent`` का ``width``।"},
+  "reprconv/pairs_peak_x": {"fp":"70dc9a8b579a","en":"Pairs ``pairs (x, y)`` → the x where y peaks (parabolic interpolation between samples) ``measurement``.","zh":"对 ``pairs (x, y)`` → y 最大处的 x(用抛物线插值到采样之间)``measurement``。","tw":"對 ``pairs (x, y)`` → y 最大處的 x(用拋物線內插到取樣之間)``measurement``。","ko":"쌍 ``pairs (x, y)`` → y 가 최대가 되는 x (포물선으로 표본 사이까지 보간) ``measurement``.","de":"Paare ``pairs (x, y)`` → das x, bei dem y maximal ist (parabolische Interpolation zwischen den Abtastwerten) ``measurement``.","hi":"pairs ``pairs (x, y)`` → वह x जहाँ y अधिकतम है (samples के बीच parabolic interpolation) ``measurement``।"},
+  "reprconv/keypoints_rowcol_to_uv": {"fp":"b61a1b5b9113","en":"Image points ``(row, col)`` → ``(u, v) = (col, row)``. The bridge between the two conventions of the ``keypoints`` sort.","zh":"像面点 ``(row, col)`` → ``(u, v) = (col, row)``。``keypoints`` 类型两种约定之间的连接。","tw":"像面點 ``(row, col)`` → ``(u, v) = (col, row)``。``keypoints`` 型別兩種慣例之間的連接。","ko":"상면의 점 ``(row, col)`` → ``(u, v) = (col, row)``. ``keypoints`` 형의 두 관례 사이의 연결.","de":"Bildpunkte ``(row, col)`` → ``(u, v) = (col, row)``. Die Brücke zwischen den zwei Konventionen der Sorte ``keypoints``.","hi":"image points ``(row, col)`` → ``(u, v) = (col, row)``। ``keypoints`` sort की दो conventions के बीच का पुल।"},
+  "reprconv/keypoints_uv_to_rowcol": {"fp":"ed7eb218bbe6","en":"Image points ``(u, v) = (col, row)`` → ``(row, col)``. The reverse of :func:`keypoints_rowcol_to_uv`.","zh":"像面点 ``(u, v) = (col, row)`` → ``(row, col)``。:func:`keypoints_rowcol_to_uv` 的反向。","tw":"像面點 ``(u, v) = (col, row)`` → ``(row, col)``。:func:`keypoints_rowcol_to_uv` 的反向。","ko":"상면의 점 ``(u, v) = (col, row)`` → ``(row, col)``. :func:`keypoints_rowcol_to_uv` 의 역방향.","de":"Bildpunkte ``(u, v) = (col, row)`` → ``(row, col)``. Die Umkehrung von :func:`keypoints_rowcol_to_uv`.","hi":"image points ``(u, v) = (col, row)`` → ``(row, col)``। :func:`keypoints_rowcol_to_uv` का उल्टा।"},
+  "reprconv/pose_to_matrix": {"fp":"a27e5c7aa084","en":"A rigid pose ``pose (R, t)`` → a 4×4 homogeneous transform ``matrix``.","zh":"刚体位姿 ``pose (R, t)`` → 4×4 齐次变换 ``matrix``。","tw":"剛體位姿 ``pose (R, t)`` → 4×4 齊次變換 ``matrix``。","ko":"강체 자세 ``pose (R, t)`` → 4×4 동차 변환 ``matrix``.","de":"Eine starre Pose ``pose (R, t)`` → eine homogene 4×4-Transformation ``matrix``.","hi":"rigid pose ``pose (R, t)`` → 4×4 homogeneous transform ``matrix``।"},
+  "reprconv/jones_state": {"fp":"c5ff866796cd","en":"Polarisation azimuth and ellipticity → a Jones vector ``jones`` (Ex, Ey). The entry into ``jones``.","zh":"偏振方位与椭圆率 → Jones 向量 ``jones``(Ex, Ey)。``jones`` 类型的入口。","tw":"偏振方位與橢圓率 → Jones 向量 ``jones``(Ex, Ey)。``jones`` 型別的入口。","ko":"편광 방위와 타원율 → Jones 벡터 ``jones`` (Ex, Ey). ``jones`` 형의 입구.","de":"Polarisationsazimut und Elliptizität → ein Jones-Vektor ``jones`` (Ex, Ey). Der Eingang zu ``jones``.","hi":"polarisation azimuth और ellipticity → Jones vector ``jones`` (Ex, Ey)। ``jones`` प्रकार का प्रवेश।"},
+  "reprconv/tokens_to_matrix": {"fp":"2f1784b48ce2","en":"A token sequence ``tokens (T, d)`` → a general matrix ``matrix (T, d)``. The exit from ``tokens``.","zh":"token 序列 ``tokens (T, d)`` → 一般矩阵 ``matrix (T, d)``。``tokens`` 类型的出口。","tw":"token 序列 ``tokens (T, d)`` → 一般矩陣 ``matrix (T, d)``。``tokens`` 型別的出口。","ko":"토큰 열 ``tokens (T, d)`` → 일반 행렬 ``matrix (T, d)``. ``tokens`` 형의 출구.","de":"Eine Token-Folge ``tokens (T, d)`` → eine allgemeine Matrix ``matrix (T, d)``. Der Ausgang aus ``tokens``.","hi":"token sequence ``tokens (T, d)`` → सामान्य matrix ``matrix (T, d)``। ``tokens`` प्रकार से निकास।"},
+  "reprconv/gradient_magnitude": {"fp":"83dc32a0bdde","en":"3-D gradient ``gradient`` → a gradient-magnitude volume ``voxel``. The exit from ``gradient``.","zh":"3-D 梯度 ``gradient`` → 梯度幅值体 ``voxel``。``gradient`` 类型的出口。","tw":"3-D 梯度 ``gradient`` → 梯度幅值體 ``voxel``。``gradient`` 型別的出口。","ko":"3-D 기울기 ``gradient`` → 기울기 크기 볼륨 ``voxel``. ``gradient`` 형의 출구.","de":"3-D-Gradient ``gradient`` → ein Gradientenbetrags-Volumen ``voxel``. Der Ausgang aus ``gradient``.","hi":"3-D gradient ``gradient`` → gradient magnitude का volume ``voxel``। ``gradient`` प्रकार से निकास।"},
+  "reprconv/gradient_coherence": {"fp":"dede7fcfeb78","en":"3-D gradient → the structure tensor's **sheet-likeness** (coherence) ``voxel``, range [0, 1].","zh":"3-D 梯度 → 结构张量的**面状程度**(相干性)``voxel``,值域 [0, 1]。","tw":"3-D 梯度 → 結構張量的**面狀程度**(相干性)``voxel``,值域 [0, 1]。","ko":"3-D 기울기 → 구조 텐서의 **면다움**(코히어런스) ``voxel``, 값 범위 [0, 1].","de":"3-D-Gradient → die **Flächenhaftigkeit** (Kohärenz) des Strukturtensors ``voxel``, Wertebereich [0, 1].","hi":"3-D gradient → structure tensor की **sheet-likeness** (coherence) ``voxel``, range [0, 1]।"},
+  "reprconv/hessian_determinant": {"fp":"0fa8b7af5cf2","en":"3-D Hessian ``hessian`` → a volume of the determinant ``det H`` ``voxel`` (signed). The exit from ``hessian``.","zh":"3-D Hessian ``hessian`` → 行列式 ``det H`` 的体 ``voxel``(带符号)。``hessian`` 类型的出口。","tw":"3-D Hessian ``hessian`` → 行列式 ``det H`` 的體 ``voxel``(帶符號)。``hessian`` 型別的出口。","ko":"3-D Hessian ``hessian`` → 행렬식 ``det H`` 볼륨 ``voxel`` (부호 있음). ``hessian`` 형의 출구.","de":"3-D-Hesse-Matrix ``hessian`` → ein Volumen der Determinante ``det H`` ``voxel`` (vorzeichenbehaftet). Der Ausgang aus ``hessian``.","hi":"3-D Hessian ``hessian`` → determinant ``det H`` का volume ``voxel`` (signed)। ``hessian`` प्रकार से निकास।"},
+  "reprconv/hessian_vesselness": {"fp":"666dc0b36c4c","en":"3-D Hessian → Frangi vesselness ``voxel``, range [0, 1].","zh":"3-D Hessian → Frangi 管状度(vesselness)``voxel``,值域 [0, 1]。","tw":"3-D Hessian → Frangi 管狀度(vesselness)``voxel``,值域 [0, 1]。","ko":"3-D Hessian → Frangi 관다움(vesselness) ``voxel``, 값 범위 [0, 1].","de":"3-D-Hesse-Matrix → Frangi-Gefäßhaftigkeit (vesselness) ``voxel``, Wertebereich [0, 1].","hi":"3-D Hessian → Frangi vesselness ``voxel``, range [0, 1]।"},
+  "reprconv/frame_axis": {"fp":"6b529182ce0f","en":"Frenet frame ``frame`` → the unit vectors of one axis ``normals (N,3)``. The exit from ``frame``.","zh":"Frenet 标架 ``frame`` → 一根轴的单位向量列 ``normals (N,3)``。``frame`` 类型的出口。","tw":"Frenet 標架 ``frame`` → 一根軸的單位向量列 ``normals (N,3)``。``frame`` 型別的出口。","ko":"Frenet 표구 ``frame`` → 한 축의 단위 벡터 열 ``normals (N,3)``. ``frame`` 형의 출구.","de":"Frenet-Rahmen ``frame`` → die Einheitsvektoren einer Achse ``normals (N,3)``. Der Ausgang aus ``frame``.","hi":"Frenet frame ``frame`` → एक axis के unit vectors ``normals (N,3)``। ``frame`` प्रकार से निकास।"},
+  "reprconv/knn_graph_to_conn_graph": {"fp":"4f6ca0fc3cef","en":"k-nearest-neighbour graph ``graph`` → a weighted adjacency matrix ``conn_graph (n, n)``. The exit from ``graph``.","zh":"k 近邻图 ``graph`` → 加权邻接矩阵 ``conn_graph (n, n)``。``graph`` 类型的出口。","tw":"k 近鄰圖 ``graph`` → 加權鄰接矩陣 ``conn_graph (n, n)``。``graph`` 型別的出口。","ko":"k 근접 그래프 ``graph`` → 가중 인접 행렬 ``conn_graph (n, n)``. ``graph`` 형의 출구.","de":"k-Nächste-Nachbarn-Graph ``graph`` → eine gewichtete Adjazenzmatrix ``conn_graph (n, n)``. Der Ausgang aus ``graph``.","hi":"k-nearest-neighbour graph ``graph`` → weighted adjacency matrix ``conn_graph (n, n)``। ``graph`` प्रकार से निकास।"},
+  "reprconv/pointmap_to_points": {"fp":"a691e1c715ad","en":"Grid-organised 3-D points ``pointmap (H,W,3)`` → a point cloud ``points (N,3)``. The exit from ``pointmap``.","zh":"网格排列的 3-D 点 ``pointmap (H,W,3)`` → 点云 ``points (N,3)``。``pointmap`` 类型的出口。","tw":"網格排列的 3-D 點 ``pointmap (H,W,3)`` → 點雲 ``points (N,3)``。``pointmap`` 型別的出口。","ko":"격자 정렬 3-D 점 ``pointmap (H,W,3)`` → 점군 ``points (N,3)``. ``pointmap`` 형의 출구.","de":"Gitterorganisierte 3-D-Punkte ``pointmap (H,W,3)`` → eine Punktwolke ``points (N,3)``. Der Ausgang aus ``pointmap``.","hi":"grid-organised 3-D points ``pointmap (H,W,3)`` → point cloud ``points (N,3)``। ``pointmap`` प्रकार से निकास।"},
+  "reprconv/match_component": {"fp":"0159c1d32eea","en":"The ``match`` sort (a 1-D result vector) → one of its components as a ``measurement``. The exit from ``match``.","zh":"``match`` 类型(1-D 结果向量)→ 其中一个分量的 ``measurement``。``match`` 类型的出口。","tw":"``match`` 型別(1-D 結果向量)→ 其中一個分量的 ``measurement``。``match`` 型別的出口。","ko":"``match`` 형(1-D 결과 벡터) → 그 한 성분의 ``measurement``. ``match`` 형의 출구.","de":"Die Sorte ``match`` (ein 1-D-Ergebnisvektor) → eine ihrer Komponenten als ``measurement``. Der Ausgang aus ``match``.","hi":"``match`` sort (1-D result vector) → उसका एक component ``measurement`` के रूप में। ``match`` प्रकार से निकास।"},
+  "reprconv/indices_to_positions": {"fp":"7dee90543252","en":"Indices ``indices`` → event positions ``positions`` (physical units). The entry into ``positions``.","zh":"下标 ``indices`` → 事件位置 ``positions``(物理单位)。``positions`` 类型的入口。","tw":"下標 ``indices`` → 事件位置 ``positions``(物理單位)。``positions`` 型別的入口。","ko":"첨자 ``indices`` → 사건 위치 ``positions`` (물리 단위). ``positions`` 형의 입구.","de":"Indizes ``indices`` → Ereignispositionen ``positions`` (physikalische Einheiten). Der Eingang zu ``positions``.","hi":"indices ``indices`` → event positions ``positions`` (physical units)। ``positions`` प्रकार का प्रवेश।"},
+  "reprconv/synapse_table_from_table": {"fp":"a183072b95ae","en":"A table ``table`` (column name → array) → a synapse table ``synapse_table (m, 3)``. The entry into ``synapse_table``.","zh":"表 ``table``(列名 → 数组)→ 突触表 ``synapse_table (m, 3)``。``synapse_table`` 类型的入口。","tw":"表 ``table``(欄名 → 陣列)→ 突觸表 ``synapse_table (m, 3)``。``synapse_table`` 型別的入口。","ko":"표 ``table`` (열 이름 → 배열) → 시냅스 표 ``synapse_table (m, 3)``. ``synapse_table`` 형의 입구.","de":"Eine Tabelle ``table`` (Spaltenname → Array) → eine Synapsentabelle ``synapse_table (m, 3)``. Der Eingang zu ``synapse_table``.","hi":"table ``table`` (column name → array) → synapse table ``synapse_table (m, 3)``। ``synapse_table`` प्रकार का प्रवेश।"},
   "fileio/e57_write": {"fp":"de1c8763d782","en":"Write a point-cloud `table` with coordinates, intensity, color, and pose as ASTM E57 `bytes`.","zh":"将带坐标、强度、颜色和位姿的点云 `table` 写成 ASTM E57 `bytes`。","tw":"將帶座標、強度、顏色與姿態的點雲 `table` 寫成 ASTM E57 `bytes`。","ko":"좌표, 강도, 색상 및 포즈가 있는 포인트 클라우드 `table`을 ASTM E57 `bytes`로 씁니다.","de":"Schreibt eine Punktwolken-`table` mit Koordinaten, Intensität, Farbe und Pose als ASTM-E57-`bytes`.","hi":"coordinates, intensity, रंग और pose वाली point-cloud `table` को ASTM E57 `bytes` में लिखता है।"},
   "fileio/e57_read": {"fp":"fcf1beb99a4c","en":"Read ASTM E57 `bytes` and return a point-cloud `table` with coordinates, intensity, color, and pose.","zh":"读取 ASTM E57 `bytes`，返回带坐标、强度、颜色和位姿的点云 `table`。","tw":"讀取 ASTM E57 `bytes`，傳回帶座標、強度、顏色與姿態的點雲 `table`。","ko":"ASTM E57 `bytes`를 읽고 좌표, 강도, 색상 및 포즈가 있는 포인트 클라우드 `table`을 반환합니다.","de":"Liest ASTM-E57-`bytes` und liefert eine Punktwolken-`table` mit Koordinaten, Intensität, Farbe und Pose.","hi":"ASTM E57 `bytes` पढ़कर coordinates, intensity, रंग और pose वाली point-cloud `table` लौटाता है।"},
   "fileio/archive_probe": {"fp":"73146970b7f9","en":"Probe archive magic and return its format name.","zh":"检查归档文件的魔数并返回格式名称。","tw":"檢查封存檔的魔術數字並傳回格式名稱。","ko":"아카이브 매직 넘버를 검사하고 형식 이름을 반환합니다.","de":"Prüft die Magie eines Archivs und gibt dessen Formatnamen zurück.","hi":"archive magic की जाँच करके उसका format नाम लौटाता है।"},
@@ -2021,13 +2043,13 @@
    "hi": "Canny edge detection (``skimage.feature.canny``, sigma ``0.5+2*a``) से region extraction। Gaussian smoothing → gradient → non-maximum suppression → hysteresis threshold वाली multi-stage processing एक साथ करने वाली, व्यापक रूप से इस्तेमाल होने वाली edge detection विधि। HALCON के ``edges_image`` (Detect edges using Deriche, Lanser, Shen, or Canny filters.) के समकक्ष है (HALCON Deriche/Lanser/Shen/Canny में से चुन सकता है, लेकिन यहाँ Canny तय है)।"
   },
   "2d/edges_sub_pix": {
-   "fp": "c08c6273e6d4",
-   "en": "Sub-pixel-accurate edge point extraction. Computes the gradient and its normal direction (``gradient_normals``), forms connected components from pixels exceeding a threshold (``0.15+0.5*a``), and then refines each point to sub-pixel position by parabola fitting (``subpixel_refine_edges``, an implementation shared with the same-named op on the ``ops`` side -- a 2026-09-02 fix made this genuinely sub-pixel; the old implementation simply returned integer pixel coordinates). Equivalent to HALCON's ``edges_sub_pix`` (Extract sub-pixel precise edges using Deriche, Lanser, Shen, or Canny filters.).",
-   "zh": "亚像素精度的边缘点提取。求出梯度及其法线方向(``gradient_normals``),将超过阈值(``0.15+0.5*a``)的像素连通成分化,然后通过抛物线拟合将各点精细化到亚像素位置(``subpixel_refine_edges``,与 ``ops`` 侧同名 op 共享的实现——经 2026-09-02 的修复才成为真正意义上的亚像素;旧实现只是原样返回整数像素坐标)。相当于 HALCON 的 ``edges_sub_pix``(Extract sub-pixel precise edges using Deriche, Lanser, Shen, or Canny filters.)。",
-   "tw": "次像素精度的邊緣點擷取。求出梯度及其法線方向(``gradient_normals``),將超過閾值(``0.15+0.5*a``)的像素連通成分化後,透過拋物線擬合將各點精細化到次像素位置(``subpixel_refine_edges``,與 ``ops`` 側同名 op 共用的實作——經 2026-09-02 修正才成為真正意義上的次像素;舊實作只是原樣回傳整數像素座標)。相當於 HALCON 的 ``edges_sub_pix``(Extract sub-pixel precise edges using Deriche, Lanser, Shen, or Canny filters.)。",
-   "ko": "서브픽셀 정밀도의 에지 점 추출. 기울기와 그 법선 방향(``gradient_normals``)을 구하고, 임계값(``0.15+0.5*a``)을 넘는 픽셀을 연결 성분화한 후, 포물선 피팅으로 각 점을 서브픽셀 위치로 정밀화한다(``subpixel_refine_edges``, ``ops`` 쪽 동명 op와 공유하는 구현 -- 2026-09-02 수정으로 진정한 의미의 서브픽셀이 되었다. 이전 구현은 정수 픽셀 좌표를 그대로 반환했다). HALCON의 ``edges_sub_pix``(Extract sub-pixel precise edges using Deriche, Lanser, Shen, or Canny filters.)에 해당.",
-   "de": "Kantenpunkt-Extraktion mit Subpixel-Genauigkeit. Berechnet den Gradienten und seine Normalenrichtung (``gradient_normals``), bildet aus Pixeln, die einen Schwellenwert (``0.15+0.5*a``) überschreiten, zusammenhängende Komponenten und verfeinert dann jeden Punkt durch Parabelanpassung auf eine Subpixel-Position (``subpixel_refine_edges``, eine Implementierung, die sich mit der gleichnamigen Op auf der ``ops``-Seite teilt -- eine Korrektur vom 2026-09-02 machte dies erst zu echtem Subpixel; die alte Implementierung gab einfach ganzzahlige Pixelkoordinaten zurück). Entspricht HALCONs ``edges_sub_pix`` (Extract sub-pixel precise edges using Deriche, Lanser, Shen, or Canny filters.).",
-   "hi": "Sub-pixel सटीकता वाले edge points निकालना। Gradient और उसकी normal दिशा (``gradient_ normals``) निकालकर, threshold (``0.15+0.5*a``) से ऊपर के pixels को connected components में बाँटता है, फिर parabola fitting से हर point को sub-pixel position तक refine करता है (``subpixel_ refine_edges``, ``ops`` की तरफ़ के इसी नाम वाले op के साथ साझा implementation ―― 2026-09-02 के सुधार से यह सचमुच sub-pixel बना; पुराना implementation integer pixel coordinates को वैसे ही लौटा देता था)। HALCON के ``edges_sub_pix`` (Extract sub-pixel precise edges using Deriche, Lanser, Shen, or Canny filters.) के समकक्ष है।"
+   "fp": "0d400cf38661",
+   "en": "Sub-pixel-accurate edge contour extraction. Computes the gradient and its normal direction (``gradient_normals``), thins it to one pixel by non-maximum suppression (as in Canny: only pixels stronger than both neighbours along the normal), links the pixels above the threshold (``0.15+0.5*a``, strength normalised by the maximum gradient) into **contours ordered along the curve** (split into separate contours at branch points; a closed edge is closed at its start point), and refines each point along the normal to sub-pixel position by parabola fitting (``subpixel_refine_edges``, an implementation shared with the same-named op on the ``ops`` side -- a 2026-09-02 fix made it genuinely sub-pixel; the old implementation returned integer pixel coordinates). Equivalent to HALCON's ``edges_sub_pix`` (Extract sub-pixel precise edges using Deriche, Lanser, Shen, or Canny filters.).",
+   "zh": "亚像素精度的边缘轮廓提取。求出梯度及其法线方向(``gradient_normals``),用非极大值抑制(与 Canny 相同,仅保留沿法线方向强于两侧的像素)细化为单像素宽,把超过阈值(``0.15+0.5*a``,按最大梯度归一化的强度)的像素连接成**沿曲线排序的轮廓**(在分支点处拆分为不同轮廓,闭合边缘在起点闭合),再用抛物线拟合沿法线把各点精细化到亚像素位置(``subpixel_refine_edges``,与 ``ops`` 侧同名 op 共享的实现 —— 经 2026-09-02 的修复才成为真正的亚像素;旧实现直接返回整数像素坐标)。相当于 HALCON 的 ``edges_sub_pix``(Extract sub-pixel precise edges using Deriche, Lanser, Shen, or Canny filters.)。",
+   "tw": "次像素精度的邊緣輪廓擷取。求出梯度及其法線方向(``gradient_normals``),以非極大值抑制(與 Canny 相同,只保留沿法線方向強於兩側的像素)細化為單像素寬,把超過閾值(``0.15+0.5*a``,以最大梯度正規化的強度)的像素連接成**沿曲線排序的輪廓**(在分支點拆成不同輪廓,封閉邊緣在起點封閉),再以拋物線擬合沿法線把各點精細化到次像素位置(``subpixel_refine_edges``,與 ``ops`` 側同名 op 共用的實作 —— 經 2026-09-02 的修正才成為真正的次像素;舊實作直接回傳整數像素座標)。相當於 HALCON 的 ``edges_sub_pix``(Extract sub-pixel precise edges using Deriche, Lanser, Shen, or Canny filters.)。",
+   "ko": "서브픽셀 정밀도의 에지 윤곽 추출. 그래디언트와 그 법선 방향(``gradient_normals``)을 구하고, 비최대 억제(Canny와 같이 법선 방향 양옆보다 강한 화소만)로 1화소 폭으로 가늘게 한 뒤, 임계값(``0.15+0.5*a``, 최대 그래디언트로 정규화한 강도)을 넘는 화소를 **곡선을 따라 정렬한 윤곽**으로 잇고(분기점에서 다른 윤곽으로 나누며, 닫힌 에지는 시작점에서 닫음), 포물선 피팅으로 각 점을 법선 방향으로 서브픽셀 위치까지 정밀화한다(``subpixel_refine_edges``, ``ops`` 쪽 동명 op와 공유하는 구현 —— 2026-09-02 수정으로 진정한 서브픽셀이 됨. 이전 구현은 정수 화소 좌표를 그대로 반환). HALCON의 ``edges_sub_pix``(Extract sub-pixel precise edges using Deriche, Lanser, Shen, or Canny filters.)에 해당.",
+   "de": "Subpixelgenaue Extraktion von Kantenkonturen. Berechnet den Gradienten und seine Normalenrichtung (``gradient_normals``), dünnt per Non-Maximum-Suppression (wie bei Canny: nur Pixel, die stärker als beide Nachbarn entlang der Normalen sind) auf ein Pixel aus, verbindet die Pixel über der Schwelle (``0.15+0.5*a``, auf den maximalen Gradienten normierte Stärke) zu **entlang der Kurve geordneten Konturen** (an Verzweigungen in getrennte Konturen geteilt, eine geschlossene Kante wird an ihrem Startpunkt geschlossen) und verfeinert jeden Punkt entlang der Normalen per Parabelanpassung auf Subpixelposition (``subpixel_refine_edges``, eine mit dem gleichnamigen Op auf der ``ops``-Seite geteilte Implementierung -- erst ein Fix vom 2026-09-02 machte sie wirklich subpixelgenau; die alte Implementierung gab ganzzahlige Pixelkoordinaten zurück). Entspricht HALCONs ``edges_sub_pix`` (Extract sub-pixel precise edges using Deriche, Lanser, Shen, or Canny filters.).",
+   "hi": "सब-पिक्सेल सटीकता से किनारे के कंटूर निकालना। ग्रेडिएंट और उसकी लंब दिशा (``gradient_normals``) निकालता है, नॉन-मैक्सिमम सप्रेशन (Canny जैसा: लंब दिशा में दोनों पड़ोसियों से मज़बूत पिक्सेल ही) से एक पिक्सेल चौड़ा करता है, सीमा (``0.15+0.5*a``, अधिकतम ग्रेडिएंट से सामान्यीकृत ताक़त) से ऊपर के पिक्सेलों को **वक्र के साथ क्रमबद्ध कंटूर** में जोड़ता है (शाखा बिंदुओं पर अलग कंटूर, बंद किनारा अपने आरंभ बिंदु पर बंद), और परवलय फ़िटिंग से हर बिंदु को लंब दिशा में सब-पिक्सेल स्थिति तक परिष्कृत करता है (``subpixel_refine_edges``, ``ops`` पक्ष के समान नाम वाले op के साथ साझा कार्यान्वयन —— 2026-09-02 के सुधार से सचमुच सब-पिक्सेल बना; पुराना कार्यान्वयन पूर्णांक पिक्सेल निर्देशांक लौटाता था)। HALCON के ``edges_sub_pix`` (Extract sub-pixel precise edges using Deriche, Lanser, Shen, or Canny filters.) के समतुल्य।"
   },
   "2d/eliminate_min_max": {
    "fp": "01dc7bb769d2",
@@ -2057,13 +2079,13 @@
    "hi": "Region के equivalent ellipse (जिसका moment of inertia मेल खाता है) के ``(Ra, Rb, Phi)`` को ``match`` sort के 3-component vector के रूप में लौटाता है —— ``Ra``/``Rb`` major radius और minor radius (**pixels** में) हैं, ``Phi`` principal axis का कोण है (radians, column axis से anticlockwise)। HALCON के ``elliptic_axis`` (Calculate the parameters of the equivalent ellipse.) वाले ही 3 मान।"
   },
   "2d/elliptic_axis_xld": {
-   "fp": "b946a3135d1f",
-   "en": "Fits an ellipse to the contour with the most points (``cv2.fitEllipse``) and returns ``(Ra, Rb, Phi)`` as a 3-component ``match`` sort vector — ``Ra``/``Rb`` are the semi-major and semi-minor axes [px], ``Phi`` the main-axis angle (radians, counter-clockwise from the column axis, greater than -π/2 and at most π/2). The same three values as HALCON's ``elliptic_axis_xld`` (Parameters of the equivalent ellipse of contours or polygons.).",
-   "zh": "对点数最多的那条轮廓拟合椭圆(``cv2.fitEllipse``),以 ``match`` 类型的 3 分量向量返回 ``(Ra, Rb, Phi)`` —— ``Ra``/``Rb`` 为长半轴、短半轴 [px],``Phi`` 为主轴角(弧度,从列轴逆时针,大于 -π/2 且不超过 π/2)。与 HALCON 的 ``elliptic_axis_xld``（Parameters of the equivalent ellipse of contours or polygons.）为相同的 3 个值。",
-   "tw": "對點數最多的那條輪廓擬合橢圓(``cv2.fitEllipse``),以 ``match`` 型別的 3 分量向量回傳 ``(Ra, Rb, Phi)`` —— ``Ra``/``Rb`` 為長半軸、短半軸 [px],``Phi`` 為主軸角(弧度,從欄軸逆時針,大於 -π/2 且不超過 π/2)。與 HALCON 的 ``elliptic_axis_xld``（Parameters of the equivalent ellipse of contours or polygons.）為相同的 3 個值。",
-   "ko": "점이 가장 많은 윤곽에 타원을 맞추고(``cv2.fitEllipse``) ``(Ra, Rb, Phi)`` 를 ``match`` 형 3 성분 벡터로 돌려준다 —— ``Ra``/``Rb`` 는 장반경·단반경 [px], ``Phi`` 는 주축 각(라디안, 열 축에서 반시계 방향, -π/2 보다 크고 π/2 이하). HALCON 의 ``elliptic_axis_xld``（Parameters of the equivalent ellipse of contours or polygons.）와 같은 3 값.",
-   "de": "Passt eine Ellipse an die Kontur mit den meisten Punkten an (``cv2.fitEllipse``) und gibt ``(Ra, Rb, Phi)`` als 3-Komponenten-Vektor der Sorte ``match`` zurück — ``Ra``/``Rb`` sind große und kleine Halbachse [px], ``Phi`` der Hauptachsenwinkel (Radiant, gegen den Uhrzeigersinn von der Spaltenachse, größer als -π/2 und höchstens π/2). Dieselben drei Werte wie HALCONs ``elliptic_axis_xld`` (Parameters of the equivalent ellipse of contours or polygons.).",
-   "hi": "सबसे अधिक points वाले contour पर ellipse fit करता है (``cv2.fitEllipse``) और ``(Ra, Rb, Phi)`` को ``match`` sort के 3-component vector के रूप में लौटाता है — ``Ra``/``Rb`` semi-major और semi-minor axes [px] हैं, ``Phi`` main axis का कोण (radians, column axis से वामावर्त, -π/2 से बड़ा और π/2 तक)। HALCON के ``elliptic_axis_xld`` (Parameters of the equivalent ellipse of contours or polygons.) जैसे ही 3 मान।"
+   "fp": "3bd51672c1af",
+   "en": "Fits an ellipse to the contour with the most points (``cv2.fitEllipse``) and returns ``(Ra, Rb, Phi)`` as a 3-component ``match`` sort vector — ``Ra``/``Rb`` are the semi-major and semi-minor axes [px], ``Phi`` the main-axis angle (radians, from the column axis **counter-clockwise on screen** with rows pointing down, greater than -π/2 and at most π/2). The same three values as HALCON's ``elliptic_axis_xld`` (Parameters of the equivalent ellipse of contours or polygons.).",
+   "zh": "对点数最多的那条轮廓拟合椭圆(``cv2.fitEllipse``),以 ``match`` 类型的 3 分量向量返回 ``(Ra, Rb, Phi)`` —— ``Ra``/``Rb`` 为长半轴、短半轴 [px],``Phi`` 为主轴角(弧度,从列轴起**在屏幕上逆时针**,行向下,大于 -π/2 且不超过 π/2)。与 HALCON 的 ``elliptic_axis_xld``(Parameters of the equivalent ellipse of contours or polygons.)为相同的 3 个值。",
+   "tw": "對點數最多的那條輪廓擬合橢圓(``cv2.fitEllipse``),以 ``match`` 型別的 3 分量向量回傳 ``(Ra, Rb, Phi)`` —— ``Ra``/``Rb`` 為長半軸、短半軸 [px],``Phi`` 為主軸角(弧度,從欄軸起**在螢幕上逆時針**,列向下,大於 -π/2 且不超過 π/2)。與 HALCON 的 ``elliptic_axis_xld``(Parameters of the equivalent ellipse of contours or polygons.)為相同的 3 個值。",
+   "ko": "점이 가장 많은 윤곽에 타원을 피팅(``cv2.fitEllipse``)하여 ``(Ra, Rb, Phi)``를 ``match`` 정렬의 3성분 벡터로 반환 —— ``Ra``/``Rb``는 장반경·단반경 [px], ``Phi``는 주축 각(라디안, 열 축에서 **화면상 반시계 방향**, 행은 아래 방향, -π/2보다 크고 π/2 이하). HALCON의 ``elliptic_axis_xld``(Parameters of the equivalent ellipse of contours or polygons.)와 같은 3개 값.",
+   "de": "Passt an die Kontur mit den meisten Punkten eine Ellipse an (``cv2.fitEllipse``) und liefert ``(Ra, Rb, Phi)`` als 3-komponentigen Vektor der Sorte ``match`` — ``Ra``/``Rb`` sind große und kleine Halbachse [px], ``Phi`` der Hauptachsenwinkel (Radiant, von der Spaltenachse **auf dem Bildschirm gegen den Uhrzeigersinn**, Zeilen nach unten, größer als -π/2 und höchstens π/2). Dieselben drei Werte wie HALCONs ``elliptic_axis_xld`` (Parameters of the equivalent ellipse of contours or polygons.).",
+   "hi": "सबसे अधिक बिंदुओं वाले कंटूर पर दीर्घवृत्त फ़िट करता है (``cv2.fitEllipse``) और ``(Ra, Rb, Phi)`` को ``match`` सॉर्ट के 3-घटक सदिश के रूप में लौटाता है —— ``Ra``/``Rb`` अर्ध-दीर्घ और अर्ध-लघु अक्ष [px], ``Phi`` मुख्य अक्ष कोण (रेडियन, स्तंभ अक्ष से **स्क्रीन पर वामावर्त**, पंक्तियाँ नीचे की ओर, -π/2 से बड़ा और अधिकतम π/2)। HALCON के ``elliptic_axis_xld`` (Parameters of the equivalent ellipse of contours or polygons.) जैसे ही 3 मान।"
   },
   "2d/em_skeleton": {
    "fp": "2386e20fa264",
@@ -4291,22 +4313,22 @@
    "hi": "Square structuring element से binary opening। ``opening_circle`` का आयताकार संस्करण। HALCON के ``opening_rectangle1`` (Open a region with a rectangular structuring element.) के समकक्ष है।"
   },
   "2d/orientation_region": {
-   "fp": "23824ae510d4",
-   "en": "The orientation of a region's principal axis (``regionprops``'s ``orientation``, linearly mapped from [-pi/2, pi/2] to [0,1]). Represents the tilt of the major axis when the region is fitted to an ellipse. Equivalent to HALCON's ``orientation_region`` (Orientation of a region.).",
-   "zh": "区域主轴的方向(``regionprops`` 的 ``orientation``,从 [-π/2, π/2] 线性映射到 [0,1])。表示对区域进行椭圆拟合时长轴的倾斜角。相当于 HALCON 的 ``orientation_region``(Orientation of a region.)。",
-   "tw": "區域主軸的方向(``regionprops`` 的 ``orientation``,由 [-π/2, π/2] 線性映射到 [0,1])。表示對區域做橢圓擬合時長軸的傾斜角。相當於 HALCON 的 ``orientation_region``(Orientation of a region.)。",
-   "ko": "영역 주축의 방향(``regionprops``의 ``orientation``, [-π/2,π/2]를 [0,1]로 선형 매핑). 영역을 타원에 피팅했을 때 장축의 기울기를 나타낸다. HALCON의 ``orientation_region``(Orientation of a region.)에 해당.",
-   "de": "Die Ausrichtung der Hauptachse einer Region (``orientation`` von ``regionprops``, linear von [-pi/2, pi/2] auf [0,1] abgebildet). Stellt die Neigung der Hauptachse dar, wenn die Region an eine Ellipse angepasst wird. Entspricht HALCONs ``orientation_region`` (Orientation of a region.).",
-   "hi": "Region के principal axis की दिशा (``regionprops`` का ``orientation``, [-π/2,π/2] को [0,1] में linear रूप से map किया गया)। Ellipse fit करने पर major axis का झुकाव दर्शाता है। HALCON के ``orientation_region`` (Orientation of a region.) के समकक्ष है।"
+   "fp": "22754e449931",
+   "en": "Orientation of the region's principal axis as θ / 180 (θ is the angle of the equivalent ellipse's major axis, measured from the column axis **counter-clockwise on screen** with rows pointing down, in [0, 180] degrees; multiply by 180 for degrees; implemented as ``regionprops``'s ``orientation`` mapped by ``(orientation + π/2) / π``). The same sense as HALCON's ``orientation_region`` (Orientation of a region.) — HALCON decides the direction by the farthest point and returns radians in -π..π, whereas this op folds to 180 degrees and normalises to [0,1]. It agrees with ``elliptic_axis``'s Phi (radians) as θ ≡ Phi (mod π).",
+   "zh": "区域主轴方向 θ / 180(θ 为等效椭圆长轴的角度,从列轴起**在屏幕上逆时针**测量,行向下,范围 [0, 180] 度;乘以 180 即为度;实现为将 ``regionprops`` 的 ``orientation`` 按 ``(orientation + π/2) / π`` 映射)。与 HALCON 的 ``orientation_region``(Orientation of a region.)方向相同 —— HALCON 用最远点确定朝向并以 -π..π 弧度返回,这里折叠到 180 度并归一化到 [0,1]。与 ``elliptic_axis`` 的 Phi(弧度)满足 θ ≡ Phi (mod π)。",
+   "tw": "區域主軸方向 θ / 180(θ 為等效橢圓長軸的角度,從欄軸起**在螢幕上逆時針**量測,列向下,範圍 [0, 180] 度;乘以 180 即為度;實作為將 ``regionprops`` 的 ``orientation`` 依 ``(orientation + π/2) / π`` 映射)。與 HALCON 的 ``orientation_region``(Orientation of a region.)方向相同 —— HALCON 以最遠點決定朝向並以 -π..π 弧度回傳,這裡折疊到 180 度並正規化到 [0,1]。與 ``elliptic_axis`` 的 Phi(弧度)滿足 θ ≡ Phi (mod π)。",
+   "ko": "영역 주축의 방향 θ / 180(θ는 등가 타원 장축의 각도로, 열 축에서 **화면상 반시계 방향**으로 잼, 행은 아래 방향, [0, 180]도; 180을 곱하면 도; ``regionprops``의 ``orientation``을 ``(orientation + π/2) / π``로 사상하여 구현). HALCON ``orientation_region``(Orientation of a region.)과 같은 방향 —— HALCON은 가장 먼 점으로 방향을 정하고 -π..π 라디안으로 반환하지만, 여기서는 180도로 접어 [0,1]로 정규화한다. ``elliptic_axis``의 Phi(라디안)와 θ ≡ Phi (mod π)로 일치한다.",
+   "de": "Ausrichtung der Hauptachse der Region als θ / 180 (θ ist der Winkel der großen Achse der äquivalenten Ellipse, von der Spaltenachse **auf dem Bildschirm gegen den Uhrzeigersinn** gemessen, Zeilen nach unten, in [0, 180] Grad; mal 180 ergibt Grad; umgesetzt als ``orientation`` von ``regionprops``, abgebildet mit ``(orientation + π/2) / π``). Derselbe Drehsinn wie HALCONs ``orientation_region`` (Orientation of a region.) — HALCON bestimmt die Richtung über den entferntesten Punkt und liefert Radiant in -π..π, hier wird auf 180 Grad gefaltet und auf [0,1] normiert. Stimmt mit dem Phi (Radiant) von ``elliptic_axis`` als θ ≡ Phi (mod π) überein.",
+   "hi": "क्षेत्र के मुख्य अक्ष की दिशा θ / 180 (θ समतुल्य दीर्घवृत्त के दीर्घ अक्ष का कोण है, स्तंभ अक्ष से **स्क्रीन पर वामावर्त** मापा गया, पंक्तियाँ नीचे की ओर, [0, 180] डिग्री; 180 से गुणा करने पर डिग्री; ``regionprops`` के ``orientation`` को ``(orientation + π/2) / π`` से मैप करके लागू)। HALCON के ``orientation_region`` (Orientation of a region.) जैसी ही दिशा —— HALCON सबसे दूर के बिंदु से दिशा तय करके -π..π रेडियन देता है, यहाँ 180 डिग्री पर मोड़कर [0,1] में सामान्यीकृत है। ``elliptic_axis`` के Phi (रेडियन) से θ ≡ Phi (mod π) के रूप में मेल खाता है।"
   },
   "2d/orientation_xld": {
-   "fp": "e936b5ebe0e2",
-   "en": "The tilt angle of the ellipse fitted to the contour (the angle from ``cv2.fitEllipse``, folded at 180° and normalized to [0,1]). Corresponds to HALCON's ``orientation_xld`` (Calculate the orientation of contours or polygons.).",
-   "zh": "拟合到轮廓的椭圆的倾斜角（把 ``cv2.fitEllipse`` 的角度以 180° 折返并归一化到 [0,1]）。相当于 HALCON 的 ``orientation_xld``（Calculate the orientation of contours or polygons.）。",
-   "tw": "擬合到輪廓的橢圓傾斜角（把 ``cv2.fitEllipse`` 的角度以 180° 折返並歸一化到 [0,1]）。相當於 HALCON 的 ``orientation_xld``（Calculate the orientation of contours or polygons.）。",
-   "ko": "윤곽선에 타원을 맞춘 결과의 기울기 각도(``cv2.fitEllipse``의 각도를 180°로 접어 [0,1]로 정규화). HALCON의 ``orientation_xld``(Calculate the orientation of contours or polygons.)에 해당.",
-   "de": "Der Neigungswinkel der an die Kontur angepassten Ellipse (der Winkel von ``cv2.fitEllipse``, bei 180° gefaltet und auf [0,1] normiert). Entspricht HALCONs ``orientation_xld`` (Calculate the orientation of contours or polygons.).",
-   "hi": "Ellipse fit किए गए contour का झुकाव कोण (``cv2.fitEllipse`` के कोण को 180° पर मोड़कर [0,1] में normalise किया गया)। HALCON के ``orientation_xld`` (Calculate the orientation of contours or polygons.) के समकक्ष है।"
+   "fp": "55011ab070d6",
+   "en": "The **main-axis angle θ / 180** of the ellipse fitted (``cv2.fitEllipse``) to the largest contour (θ measured from the column axis **counter-clockwise on screen**, rows pointing down, folded into [0, 180) degrees). The same convention as the region version ``orientation_region`` (multiply by 180 for degrees). HALCON's ``orientation_xld`` (Calculate the orientation of contours or polygons.) returns the angle in the same sense as radians in -π..π (direction decided by the farthest point), so this is the version folded at 180 degrees and normalised to [0,1).",
+   "zh": "对最大轮廓拟合椭圆(``cv2.fitEllipse``)所得的**主轴角 θ / 180**(θ 从列轴起**在屏幕上逆时针**测量,行向下,折叠到 [0, 180) 度)。与区域版 ``orientation_region`` 规约相同(乘以 180 即为度)。HALCON 的 ``orientation_xld``(Calculate the orientation of contours or polygons.)以 -π..π 弧度返回同方向的角(用最远点确定朝向),这里是折叠到 180 度并归一化到 [0,1) 的版本。",
+   "tw": "對最大輪廓擬合橢圓(``cv2.fitEllipse``)所得的**主軸角 θ / 180**(θ 從欄軸起**在螢幕上逆時針**量測,列向下,折疊到 [0, 180) 度)。與區域版 ``orientation_region`` 規約相同(乘以 180 即為度)。HALCON 的 ``orientation_xld``(Calculate the orientation of contours or polygons.)以 -π..π 弧度回傳同方向的角(以最遠點決定朝向),這裡是折疊到 180 度並正規化到 [0,1) 的版本。",
+   "ko": "가장 큰 윤곽에 타원을 피팅(``cv2.fitEllipse``)한 **주축 각 θ / 180**(θ는 열 축에서 **화면상 반시계 방향**, 행은 아래 방향, [0, 180)도로 접음). 영역 버전 ``orientation_region``과 같은 규약(180을 곱하면 도). HALCON의 ``orientation_xld``(Calculate the orientation of contours or polygons.)는 같은 방향의 각을 -π..π 라디안으로 반환하므로(가장 먼 점으로 방향 결정), 이것은 180도로 접어 [0,1)로 정규화한 버전이다.",
+   "de": "Der **Hauptachsenwinkel θ / 180** der an die größte Kontur angepassten Ellipse (``cv2.fitEllipse``) (θ von der Spaltenachse **auf dem Bildschirm gegen den Uhrzeigersinn** gemessen, Zeilen nach unten, in [0, 180) Grad gefaltet). Dieselbe Konvention wie die Regionsversion ``orientation_region`` (mal 180 ergibt Grad). HALCONs ``orientation_xld`` (Calculate the orientation of contours or polygons.) liefert den Winkel im gleichen Drehsinn als Radiant in -π..π (Richtung über den entferntesten Punkt), dies ist also die auf 180 Grad gefaltete und auf [0,1) normierte Version.",
+   "hi": "सबसे बड़े कंटूर पर फ़िट किए गए दीर्घवृत्त (``cv2.fitEllipse``) का **मुख्य अक्ष कोण θ / 180** (θ स्तंभ अक्ष से **स्क्रीन पर वामावर्त** मापा गया, पंक्तियाँ नीचे की ओर, [0, 180) डिग्री में मोड़ा गया)। क्षेत्र संस्करण ``orientation_region`` जैसा ही नियम (180 से गुणा करने पर डिग्री)। HALCON का ``orientation_xld`` (Calculate the orientation of contours or polygons.) उसी दिशा का कोण -π..π रेडियन में लौटाता है (सबसे दूर के बिंदु से दिशा तय), इसलिए यह 180 डिग्री पर मोड़ा और [0,1) में सामान्यीकृत संस्करण है।"
   },
   "2d/otsu": {
    "fp": "444db6cc648d",
@@ -6388,13 +6410,13 @@
    "hi": "Epipolar-plane image — वह slice जिसकी **line slope ही disparity है**।"
   },
   "2d/tb_lf_epi_slope": {
-   "fp": "24fb316e75cd",
-   "ja": "**EPI直線の向き**から求めた画素ごとの傾き（構造テンソル、1パスで計算）。",
-   "zh": "根据**极平面图像（EPI）直线方向**得到的逐像素斜率（结构张量，单次计算）。",
-   "tw": "依**極平面影像（EPI）直線方向**得到的逐像素斜率（結構張量，單次計算）。",
-   "ko": "**EPI 직선 방향**으로부터 구한 픽셀별 기울기(구조 텐서, 1회 처리).",
-   "de": "Pixelweise Steigung aus der **EPI-Linienorientierung** (Strukturtensor, ein Durchlauf).",
-   "hi": "**EPI line orientation** से हर pixel का slope (structure tensor, एक pass)।"
+   "fp": "640f41c21a10",
+   "ja": "**EPI の線の向き**から画素ごとの傾きを出す(構造テンソルで求め、剪断で詰める)。",
+   "zh": "由 **EPI 线的方向**得到逐像素斜率(结构张量,再用剪切细化)。",
+   "tw": "由 **EPI 線的方向**得到逐像素斜率(結構張量,再以剪切細化)。",
+   "ko": "**EPI 선의 방향**으로부터 화소별 기울기를 냅니다(구조 텐서, 전단으로 정밀화).",
+   "de": "Steigung pro Pixel aus der **Orientierung der EPI-Linien** (Strukturtensor, durch Scherung verfeinert).",
+   "hi": "**EPI line की दिशा** से हर pixel का slope निकालता है (structure tensor, shearing से परिष्कृत)।"
   },
   "2d/tb_lf_refocus": {
    "fp": "7ce970fd37a2",
@@ -7855,13 +7877,13 @@
    "hi": "DoG (Difference of Gaussians) blob response। ``kornia.feature.dog_response_single`` (न हो तो ``dog_response`` पर fallback) को default parameters से call करता है, absolute value लेकर अधिकतम absolute value से normalise करता है।"
   },
   "2d/xkor_gaussian": {
-   "fp": "1d82bd149152",
-   "en": "Gaussian blur (kornia's GPU-native implementation). Applies ``kornia.filters.gaussian_blur2d`` on a torch tensor with a 5x5 kernel and variable sigma.",
-   "zh": "高斯模糊(kornia 的 GPU 原生实现)。在 torch 张量上以 5x5 核、可变 sigma 应用 ``kornia.filters.gaussian_blur2d``。",
-   "tw": "高斯模糊(kornia 的 GPU 原生實作)。於 torch 張量上以 5x5 核、可變 sigma 套用 ``kornia.filters.gaussian_blur2d``。",
-   "ko": "가우시안 블러(kornia의 GPU 네이티브 구현). torch 텐서 상에서 5x5 커널·가변 시그마로 ``kornia.filters.gaussian_blur2d``를 적용한다.",
-   "de": "Gaußsche Unschärfe (GPU-native Implementierung von kornia). Wendet ``kornia.filters.gaussian_blur2d`` auf einem Torch-Tensor mit einem 5x5-Kernel und variablem Sigma an.",
-   "hi": "Gaussian blur (kornia का GPU native implementation)। torch tensor पर ``kornia.filters.gaussian_blur2d`` को 5x5 kernel और बदलने योग्य sigma से लगाता है।"
+   "fp": "d144b0bf7627",
+   "en": "Gaussian blur (kornia's GPU-native implementation). Applies ``kornia.filters.gaussian_blur2d`` on a torch tensor with a window sized to sigma.",
+   "zh": "高斯模糊(kornia 的 GPU 原生实现)。在 torch 张量上以与 sigma 匹配的窗口应用 ``kornia.filters.gaussian_blur2d``。",
+   "tw": "高斯模糊(kornia 的 GPU 原生實作)。於 torch 張量上以與 sigma 相符的視窗套用 ``kornia.filters.gaussian_blur2d``。",
+   "ko": "가우시안 블러(kornia의 GPU 네이티브 구현). torch 텐서 상에서 시그마에 맞춘 창으로 ``kornia.filters.gaussian_blur2d``를 적용한다.",
+   "de": "Gaußsche Unschärfe (GPU-native Implementierung von kornia). Wendet ``kornia.filters.gaussian_blur2d`` auf einen torch-Tensor mit einem an Sigma angepassten Fenster an.",
+   "hi": "Gaussian blur (kornia का GPU-native implementation)। torch tensor पर sigma के अनुसार window के साथ ``kornia.filters.gaussian_blur2d`` लगाता है।"
   },
   "2d/xkor_gftt": {
    "fp": "ab9fca610380",
@@ -7918,13 +7940,13 @@
    "hi": "Motion blur। ``kornia.filters.motion_blur`` को call करता है।"
   },
   "2d/xkor_unsharp": {
-   "fp": "3b48f49cea4b",
-   "en": "Unsharp mask (sharpening). Calls ``kornia.filters.unsharp_mask`` with a 5x5 kernel.",
-   "zh": "反锐化蒙版(锐化)。以 5x5 核调用 ``kornia.filters.unsharp_mask``。",
-   "tw": "反銳化遮罩(銳化)。以 5x5 核呼叫 ``kornia.filters.unsharp_mask``。",
-   "ko": "언샤프 마스크(선명화). 5x5 커널로 ``kornia.filters.unsharp_mask``를 호출한다.",
-   "de": "Unscharfmaskierung (Schärfezeichnung). Ruft ``kornia.filters.unsharp_mask`` mit einem 5x5-Kernel auf.",
-   "hi": "Unsharp mask (sharpening)। ``kornia.filters.unsharp_mask`` को 5x5 kernel से call करता है।"
+   "fp": "fc63c7cd72fe",
+   "en": "Unsharp mask (sharpening). Calls ``kornia.filters.unsharp_mask`` with a window sized to sigma (``v + (v - G_σ * v)``, strength fixed at 1).",
+   "zh": "反锐化蒙版(锐化)。以与 sigma 匹配的窗口调用 ``kornia.filters.unsharp_mask``(``v + (v - G_σ * v)``,强度固定为 1)。",
+   "tw": "反銳化遮罩(銳化)。以與 sigma 相符的視窗呼叫 ``kornia.filters.unsharp_mask``(``v + (v - G_σ * v)``,強度固定為 1)。",
+   "ko": "언샤프 마스크(선명화). 시그마에 맞춘 창으로 ``kornia.filters.unsharp_mask``를 호출한다(``v + (v - G_σ * v)``, 강도 1 고정).",
+   "de": "Unscharfmaskierung (Schärfezeichnung). Ruft ``kornia.filters.unsharp_mask`` mit einem an Sigma angepassten Fenster auf (``v + (v - G_σ * v)``, Stärke fest 1).",
+   "hi": "Unsharp mask (sharpening)। sigma के अनुसार window से ``kornia.filters.unsharp_mask`` को call करता है (``v + (v - G_σ * v)``, strength 1 पर स्थिर)।"
   },
   "2d/xmh_bernsen": {
    "fp": "38e2430a6993",
@@ -14047,13 +14069,13 @@
    "hi": "epipolar-plane image — वह slice जिसमें **line का slope ही disparity है**।"
   },
   "lightfield/lf_epi_slope": {
-   "fp": "24fb316e75cd",
-   "ja": "**EPI の線の向き**から画素ごとの傾きを出す(構造テンソル、1 パス)。",
-   "zh": "由 **EPI 线的方向**得到逐像素斜率(结构张量,一趟完成)。",
-   "tw": "由 **EPI 線的方向**得到逐像素斜率(結構張量,一趟完成)。",
-   "ko": "**EPI 선의 방향**으로부터 화소별 기울기를 냅니다(구조 텐서, 1 패스).",
-   "de": "Steigung pro Pixel aus der **Orientierung der EPI-Linien** (Strukturtensor, ein Durchlauf).",
-   "hi": "**EPI line की दिशा** से हर pixel का slope निकालता है (structure tensor, एक pass)।"
+   "fp": "640f41c21a10",
+   "ja": "**EPI の線の向き**から画素ごとの傾きを出す(構造テンソルで求め、剪断で詰める)。",
+   "zh": "由 **EPI 线的方向**得到逐像素斜率(结构张量,再用剪切细化)。",
+   "tw": "由 **EPI 線的方向**得到逐像素斜率(結構張量,再以剪切細化)。",
+   "ko": "**EPI 선의 방향**으로부터 화소별 기울기를 냅니다(구조 텐서, 전단으로 정밀화).",
+   "de": "Steigung pro Pixel aus der **Orientierung der EPI-Linien** (Strukturtensor, durch Scherung verfeinert).",
+   "hi": "**EPI line की दिशा** से हर pixel का slope निकालता है (structure tensor, shearing से परिष्कृत)।"
   },
   "lightfield/lf_focal_stack": {
    "fp": "b0e98e33086a",
@@ -17861,6 +17883,33 @@
    "ko": "부분군 측정값으로 만드는 Shewhart Xbar-R 관리도.",
    "de": "Shewhart-Xbar-R-Regelkarte aus Untergruppen-Messwerten.",
    "hi": "subgroup measurements से Shewhart Xbar-R control chart।"
+  },
+  "shape2d/fit_circle_xld": {
+   "fp": "b976cc370c92",
+   "en": "Fit a circle to each XLD contour and return its centre row, column and radius (``table``).",
+   "zh": "对每条 XLD 轮廓拟合圆，返回圆心的行、列和半径（``table``）。",
+   "tw": "對每條 XLD 輪廓擬合圓，傳回圓心的列、行座標與半徑（``table``）。",
+   "ko": "XLD 윤곽선마다 원을 맞추고 중심의 행·열과 반지름을 반환합니다(``table``).",
+   "de": "Passt an jede XLD-Kontur einen Kreis an und liefert Mittelpunkt (Zeile, Spalte) und Radius (``table``).",
+   "hi": "हर XLD कंटूर पर वृत्त फिट करता है और केंद्र की पंक्ति, स्तंभ तथा त्रिज्या लौटाता है (``table``)।"
+  },
+  "math/wave_dominant_frequency": {
+   "fp": "2d8d02aa17cb",
+   "en": "Return the frequency, period and orientation of the strongest periodicity of an image (the largest non-DC 2-D FFT peak) (``table``).",
+   "zh": "返回图像最强周期（二维 FFT 中除直流外的最大峰）的频率、周期和方向（``table``）。",
+   "tw": "傳回影像最強週期（二維 FFT 中直流以外的最大峰）的頻率、週期與方向（``table``）。",
+   "ko": "영상의 가장 강한 주기성(DC를 제외한 2-D FFT 최대 피크)의 주파수·주기·방향을 반환합니다(``table``).",
+   "de": "Liefert Frequenz, Periode und Richtung der stärksten Periodizität eines Bildes (größter Nicht-DC-Peak der 2-D-FFT) (``table``).",
+   "hi": "छवि की सबसे प्रबल आवर्तता (DC को छोड़कर 2-D FFT का सबसे बड़ा शिखर) की आवृत्ति, आवर्तकाल और दिशा लौटाता है (``table``)।"
+  },
+  "3d/find_surface_pose": {
+   "fp": "e35275c667b0",
+   "en": "Find where a known object (model point cloud) lies in a scene point cloud by point-pair-feature (PPF) voting and ICP (``pose``).",
+   "zh": "通过点对特征（PPF）投票和 ICP，求出已知物体（模型点云）在场景点云中的位置（``pose``）。",
+   "tw": "以點對特徵（PPF）投票與 ICP，求出已知物體（模型點雲）在場景點雲中的位置（``pose``）。",
+   "ko": "점쌍 특징(PPF) 투표와 ICP로 알려진 물체(모델 점군)가 장면 점군의 어디에 있는지 구합니다(``pose``).",
+   "de": "Bestimmt per Punktpaar-Merkmal-(PPF-)Abstimmung und ICP, wo ein bekanntes Objekt (Modellpunktwolke) in einer Szenenpunktwolke liegt (``pose``).",
+   "hi": "पॉइंट-पेयर फ़ीचर (PPF) वोटिंग और ICP से ज्ञात वस्तु (मॉडल पॉइंट क्लाउड) दृश्य पॉइंट क्लाउड में कहाँ है, यह निकालता है (``pose``)।"
   },
   "spc/proportion_interval": {
    "fp": "40a502123fae",
@@ -31372,13 +31421,13 @@
    "hi": "image में calibration plate के गोल marks के केंद्र खोजता है (connected components के centroid) (find_caltab)।"
   },
   "calib/camera_calibration": {
-   "fp": "082e79cd209c",
-   "en": "Estimates the intrinsic matrix K from several views of a planar target by Zhang's method (camera_calibration).",
-   "zh": "用 Zhang 法从平面靶标的多个视角估计内参矩阵 K(camera_calibration)。",
-   "tw": "用 Zhang 法從平面靶標的多個視角估計內參矩陣 K(camera_calibration)。",
-   "ko": "Zhang 법으로 평면 타깃의 다시점에서 내부 행렬 K를 추정한다(camera_calibration).",
-   "de": "Schätzt die intrinsische Matrix K aus mehreren Ansichten eines ebenen Targets nach Zhang (camera_calibration).",
-   "hi": "Zhang विधि से planar target के कई views से intrinsic matrix K का अनुमान लगाता है (camera_calibration)।"
+   "fp": "6cee86e04b04",
+   "en": "[Partial] Estimates only the intrinsic matrix K from several views of a planar target by Zhang's method (camera_calibration).",
+   "zh": "[部分对应] 用 Zhang 法从平面靶标的多个视角只估计内参矩阵 K(camera_calibration)。",
+   "tw": "[部分對應] 用 Zhang 法從平面靶標的多個視角只估計內參矩陣 K(camera_calibration)。",
+   "ko": "[부분 대응] Zhang 법으로 평면 타깃의 다시점에서 내부 행렬 K만 추정한다(camera_calibration).",
+   "de": "[Teilweise] Schätzt nach Zhang nur die intrinsische Matrix K aus mehreren Ansichten eines ebenen Targets (camera_calibration).",
+   "hi": "[आंशिक] Zhang विधि से planar target के कई views से केवल intrinsic matrix K का अनुमान लगाता है (camera_calibration)।"
   },
   "calib/find_marks_and_pose": {
    "fp": "7399df102562",
@@ -32639,6 +32688,744 @@
    "ko": "영상을 강건하게 표준화하고 ``k = 2 + 3*a`` 시그마에서 이진화한다.",
    "de": "Standardisiert ein Bild robust und binarisiert es bei ``k = 2 + 3*a`` Sigma.",
    "hi": "image को robust ढंग से standardize करके ``k = 2 + 3*a`` sigma पर binarize करता है।"
+  },
+  "acceptance/acceptance_layout": {
+   "fp": "1f2f0bc111e1",
+   "en": "Builds the layout of the test artefacts in the measuring volume (1 probing sphere, ball bar in 7 positions, flat in 7 positions) (``table``).",
+   "zh": "在测量体积中生成试验件的布置(1 个探测球、7 个姿态的球杆、7 个姿态的平面)(``table``)。",
+   "tw": "在量測體積中產生試驗件的配置(1 顆探測球、7 個姿態的球桿、7 個姿態的平面)(``table``)。",
+   "ko": "측정 체적 안에 시험체(프로빙 구 1개, 7자세의 볼바, 7자세의 평면) 배치를 만든다(``table``).",
+   "de": "Erzeugt die Anordnung der Prüfkörper im Messvolumen (1 Antastkugel, Kugelstab in 7 Lagen, Ebene in 7 Lagen) (``table``).",
+   "hi": "measuring volume में test artefacts (1 probing sphere, 7 स्थितियों में ball bar, 7 स्थितियों में flat) की layout बनाता है (``table``)।"
+  },
+  "acceptance/sphere_probing_error": {
+   "fp": "eed2cd9f6552",
+   "en": "Computes the probing errors of form PF and size PS from the point cloud of a sphere (``table``).",
+   "zh": "由球的点云计算探测误差的形状 PF 与尺寸 PS(``table``)。",
+   "tw": "由球的點雲計算探測誤差的形狀 PF 與尺寸 PS(``table``)。",
+   "ko": "구의 점군으로부터 프로빙 오차의 형상 PF와 크기 PS를 계산한다(``table``).",
+   "de": "Berechnet die Antastabweichungen Form PF und Größe PS aus der Punktwolke einer Kugel (``table``).",
+   "hi": "एक sphere के point cloud से probing error का form PF और size PS गणना करता है (``table``)।"
+  },
+  "acceptance/sphere_spacing_error": {
+   "fp": "38b00a37aa71",
+   "en": "Computes the sphere-spacing error SD from the point clouds of a ball bar (two spheres) (``table``).",
+   "zh": "由球杆(两个球)的点云计算球间距误差 SD(``table``)。",
+   "tw": "由球桿(兩顆球)的點雲計算球間距誤差 SD(``table``)。",
+   "ko": "볼바(구 2개)의 점군으로부터 구 간격 오차 SD를 계산한다(``table``).",
+   "de": "Berechnet die Kugelabstandsabweichung SD aus den Punktwolken eines Kugelstabs (zwei Kugeln) (``table``).",
+   "hi": "ball bar (दो spheres) के point clouds से sphere-spacing error SD गणना करता है (``table``)।"
+  },
+  "acceptance/plane_flatness_error": {
+   "fp": "1f99db62970c",
+   "en": "Computes the flatness error F (range of signed distances from the least-squares plane) from the point cloud of a flat (``table``).",
+   "zh": "由平面的点云计算平面度误差 F(到最小二乘平面的带符号距离的极差)(``table``)。",
+   "tw": "由平面的點雲計算平面度誤差 F(到最小平方平面的帶符號距離的全距)(``table``)。",
+   "ko": "평면의 점군으로부터 평면도 오차 F(최소제곱 평면으로부터의 부호 있는 거리의 범위)를 계산한다(``table``).",
+   "de": "Berechnet die Ebenheitsabweichung F (Spannweite der vorzeichenbehafteten Abstände zur Ausgleichsebene) aus der Punktwolke einer Ebene (``table``).",
+   "hi": "flat के point cloud से flatness error F (least-squares plane से signed distances की range) गणना करता है (``table``)।"
+  },
+  "acceptance/acceptance_verdict": {
+   "fp": "e86499f6feff",
+   "en": "Compares the table of evaluation quantities with the MPE (maximum permissible error) and returns pass/fail (``table``).",
+   "zh": "将评价量的表与 MPE(最大允许误差)比较并给出合格与否(``table``)。",
+   "tw": "將評價量的表與 MPE(最大允許誤差)比較並給出合格與否(``table``)。",
+   "ko": "평가량의 표를 MPE(최대 허용 오차)와 비교하여 합격 여부를 낸다(``table``).",
+   "de": "Vergleicht die Tabelle der Kenngrößen mit der MPE (Grenzwert der Messabweichung) und gibt bestanden/nicht bestanden zurück (``table``).",
+   "hi": "evaluation quantities की table की MPE (maximum permissible error) से तुलना करके pass/fail देता है (``table``)।"
+  },
+  "acceptance/acceptance_scan": {
+   "fp": "a425ba6cf972",
+   "en": "Scans one test artefact with a simulated sensor and returns its point cloud ``(N, 3)`` (``points``).",
+   "zh": "用仿真传感器拍摄一个试验件并返回其点云 ``(N, 3)``(``points``)。",
+   "tw": "用模擬感測器拍攝一個試驗件並回傳其點雲 ``(N, 3)``(``points``)。",
+   "ko": "시뮬레이션 센서로 시험체 하나를 촬영하여 그 점군 ``(N, 3)``을 반환한다(``points``).",
+   "de": "Erfasst einen Prüfkörper mit einem simulierten Sensor und gibt seine Punktwolke ``(N, 3)`` zurück (``points``).",
+   "hi": "एक simulated sensor से एक test artefact को scan करके उसका point cloud ``(N, 3)`` लौटाता है (``points``)।"
+  },
+  "acceptance/virtual_acceptance_test": {
+   "fp": "203605d99aa0",
+   "en": "Scans every artefact position with a simulated sensor and returns PF, PS, SD, F and the verdict (``table``).",
+   "zh": "用仿真传感器拍摄试验件的全部布置,返回 PF、PS、SD、F 与合格与否(``table``)。",
+   "tw": "用模擬感測器拍攝試驗件的全部配置,回傳 PF、PS、SD、F 與合格與否(``table``)。",
+   "ko": "시뮬레이션 센서로 시험체의 모든 배치를 촬영하여 PF·PS·SD·F와 합격 여부를 반환한다(``table``).",
+   "de": "Erfasst alle Prüfkörperlagen mit einem simulierten Sensor und gibt PF, PS, SD, F und das Urteil zurück (``table``).",
+   "hi": "simulated sensor से artefact की सभी positions scan करके PF, PS, SD, F और verdict लौटाता है (``table``)।"
+  },
+  "acceptance/acceptance_error_budget": {
+   "fp": "725057bdc604",
+   "en": "Runs the virtual acceptance test with one error source at a time and returns which source decides the verdict (``table``).",
+   "zh": "每次只加入一个误差因素运行虚拟验收试验,返回哪个因素决定了合格与否(``table``)。",
+   "tw": "每次只加入一個誤差因素執行虛擬驗收試驗,回傳哪個因素決定了合格與否(``table``)。",
+   "ko": "오차 요인을 하나씩 넣어 가상 인수 시험을 돌리고 어느 요인이 합격 여부를 결정하는지 반환한다(``table``).",
+   "de": "Führt die virtuelle Abnahmeprüfung mit jeweils einer Fehlerquelle durch und gibt zurück, welche Quelle das Urteil bestimmt (``table``).",
+   "hi": "एक समय में एक error source डालकर virtual acceptance test चलाता है और लौटाता है कि कौन सा source verdict तय करता है (``table``)।"
+  },
+  "calib/checkerboard_points": {
+   "fp": "63718c3d80cd",
+   "en": "Returns the board coordinates (x, y) of the inner corners of a checkerboard in row-major order (``keypoints``).",
+   "zh": "按行优先顺序返回棋盘格内角点的板坐标 (x, y)(``keypoints``)。",
+   "tw": "依列優先順序回傳棋盤格內角點的板座標 (x, y)(``keypoints``)。",
+   "ko": "체커보드 내부 코너의 보드 좌표 (x, y)를 행 우선 순서로 반환한다(``keypoints``).",
+   "de": "Gibt die Brettkoordinaten (x, y) der inneren Ecken eines Schachbretts zeilenweise zurück (``keypoints``).",
+   "hi": "checkerboard के भीतरी corners के board coordinates (x, y) row-major क्रम में लौटाता है (``keypoints``)।"
+  },
+  "calib/sim_checkerboard": {
+   "fp": "3cdc6a941544",
+   "en": "Synthesizes a checkerboard image with known K, distortion and pose and returns it with the true pixel of every corner (``table``).",
+   "zh": "用已知的 K、畸变与位姿合成棋盘格图像,并连同各角点的真实像素一起返回(``table``)。",
+   "tw": "用已知的 K、畸變與姿態合成棋盤格影像,並連同各角點的真實像素一起回傳(``table``)。",
+   "ko": "알려진 K·왜곡·자세로 체커보드 영상을 합성하여 각 코너의 참 픽셀과 함께 반환한다(``table``).",
+   "de": "Synthetisiert ein Schachbrettbild mit bekanntem K, Verzeichnung und Pose und gibt es mit dem wahren Pixel jeder Ecke zurück (``table``).",
+   "hi": "ज्ञात K, distortion और pose से checkerboard image बनाकर हर corner के true pixel के साथ लौटाता है (``table``)।"
+  },
+  "calib/find_checkerboard_corners": {
+   "fp": "56857694a6f9",
+   "en": "Detects the inner corners of a checkerboard image to sub-pixel accuracy and returns them in the board's row-major order (``keypoints``).",
+   "zh": "以亚像素精度检测棋盘格图像的内角点,并按板的行优先顺序返回(``keypoints``)。",
+   "tw": "以次像素精度偵測棋盤格影像的內角點,並依板的列優先順序回傳(``keypoints``)。",
+   "ko": "체커보드 영상에서 내부 코너를 서브픽셀로 검출하여 보드의 행 우선 순서로 반환한다(``keypoints``).",
+   "de": "Erkennt die inneren Ecken eines Schachbrettbilds subpixelgenau und gibt sie in der zeilenweisen Reihenfolge des Bretts zurück (``keypoints``).",
+   "hi": "checkerboard image के भीतरी corners को sub-pixel सटीकता से detect करके board के row-major क्रम में लौटाता है (``keypoints``)।"
+  },
+  "calib/camera_calibration_lm": {
+   "fp": "7cc690077c36",
+   "en": "Jointly refines intrinsics, distortion and all poses by LM from Zhang's initial estimate and returns them with their covariance (``table``).",
+   "zh": "从 Zhang 法的初值出发,用 LM 同时优化内参、畸变与全部位姿,并连同协方差一起返回(``table``)。",
+   "tw": "從 Zhang 法的初值出發,用 LM 同時最佳化內參、畸變與全部姿態,並連同共變異數一起回傳(``table``)。",
+   "ko": "Zhang 법의 초기값에서 내부 파라미터·왜곡·모든 자세를 LM으로 동시에 최적화하여 공분산과 함께 반환한다(``table``).",
+   "de": "Optimiert ausgehend von Zhangs Startwert Intrinsik, Verzeichnung und alle Posen gemeinsam per LM und gibt sie mit ihrer Kovarianz zurück (``table``).",
+   "hi": "Zhang विधि के आरंभिक अनुमान से intrinsics, distortion और सभी poses को LM से एक साथ optimize करके covariance सहित लौटाता है (``table``)।"
+  },
+  "calib/stereo_calibration_lm": {
+   "fp": "6bdfbce7888b",
+   "en": "Jointly refines both cameras' intrinsics and distortion, the board poses and the right camera's relative pose (R, T) by LM (``table``).",
+   "zh": "用 LM 同时优化左右相机的内参与畸变、板的位姿以及右相机的相对位姿 (R, T)(``table``)。",
+   "tw": "用 LM 同時最佳化左右相機的內參與畸變、板的姿態以及右相機的相對姿態 (R, T)(``table``)。",
+   "ko": "좌우 카메라의 내부 파라미터·왜곡, 보드 자세, 오른쪽 카메라의 상대 자세 (R, T)를 LM으로 동시에 최적화한다(``table``).",
+   "de": "Optimiert Intrinsik und Verzeichnung beider Kameras, die Brettposen und die relative Pose (R, T) der rechten Kamera gemeinsam per LM (``table``).",
+   "hi": "दोनों cameras के intrinsics और distortion, board poses तथा right camera की relative pose (R, T) को LM से एक साथ optimize करता है (``table``)।"
+  },
+  "calib/calibration_error_map": {
+   "fp": "e335c88477fd",
+   "en": "Compares the true K and distortion with the estimate and returns a map of where in the image the reprojection error (px) and 3-D error (mm) are large (``table``).",
+   "zh": "比较真实的 K、畸变与估计值,返回图像中重投影误差(px)与 3D 误差(mm)较大位置的分布图(``table``)。",
+   "tw": "比較真實的 K、畸變與估計值,回傳影像中重投影誤差(px)與 3D 誤差(mm)較大位置的分布圖(``table``)。",
+   "ko": "참 K·왜곡과 추정값을 비교하여 영상의 어디에서 재투영 오차(px)와 3D 오차(mm)가 큰지의 지도를 반환한다(``table``).",
+   "de": "Vergleicht wahres K und Verzeichnung mit der Schätzung und gibt eine Karte zurück, wo im Bild der Rückprojektionsfehler (px) und der 3-D-Fehler (mm) groß sind (``table``).",
+   "hi": "true K और distortion की estimate से तुलना करके map लौटाता है कि image में कहाँ reprojection error (px) और 3-D error (mm) बड़ा है (``table``)।"
+  },
+  "calib/calibration_uncertainty_map": {
+   "fp": "aea212c51dee",
+   "en": "Maps the covariance of the calibration estimate onto the image and returns the predicted uncertainty of every pixel (px, or mm at depth Z) (``table``).",
+   "zh": "将标定估计的协方差映射到图像上,返回每个像素的预测不确定度(px,给定深度 Z 时为 mm)的分布图(``table``)。",
+   "tw": "將校正估計的共變異數映射到影像上,回傳每個像素的預測不確定度(px,給定深度 Z 時為 mm)的分布圖(``table``)。",
+   "ko": "캘리브레이션 추정의 공분산을 영상 위로 옮겨 각 픽셀의 예측 불확도(px, 깊이 Z이면 mm) 지도를 반환한다(``table``).",
+   "de": "Bildet die Kovarianz der Kalibrierschätzung auf das Bild ab und gibt die vorhergesagte Unsicherheit jedes Pixels zurück (px, bei Tiefe Z in mm) (``table``).",
+   "hi": "calibration estimate की covariance को image पर map करके हर pixel की predicted uncertainty (px, depth Z पर mm) का map लौटाता है (``table``)।"
+  },
+  "calib/calibration_next_pose": {
+   "fp": "17f064fb25af",
+   "en": "Recommends, among candidate board poses, the one view that would reduce the calibration uncertainty (mean over the image) the most (``table``).",
+   "zh": "在候选的板位姿中推荐加入后最能降低标定不确定度(全图平均)的一张(``table``)。",
+   "tw": "在候選的板姿態中推薦加入後最能降低校正不確定度(全圖平均)的一張(``table``)。",
+   "ko": "후보 보드 자세 중 추가하면 캘리브레이션 불확도(영상 전체 평균)를 가장 줄이는 1장을 추천한다(``table``).",
+   "de": "Empfiehlt unter den Kandidatenposen des Bretts die eine Aufnahme, die die Kalibrierunsicherheit (Mittel über das Bild) am stärksten senkt (``table``).",
+   "hi": "candidate board poses में से वह एक view सुझाता है जो जोड़ने पर calibration uncertainty (पूरी image का औसत) को सबसे अधिक घटाए (``table``)।"
+  },
+  "optics/laser_line_center_centroid": {
+   "fp": "ca3f6cfc3541",
+   "ja": "明るいレーザー光条の中心を、列ごとに輝度の重心でサブピクセルに求める(``table``)。",
+   "zh": "按列用亮度重心以亚像素精度求明亮激光条纹的中心(``table``)。",
+   "tw": "逐行以亮度重心求出明亮雷射光條中心的次像素位置(``table``)。",
+   "ko": "밝은 레이저 라인의 중심을 열마다 밝기 무게중심으로 서브픽셀 단위로 구한다 (``table``).",
+   "de": "Subpixel-Mitte einer hellen Laserlinie in jeder Spalte über den Helligkeitsschwerpunkt (``table``).",
+   "hi": "हर column में चमकीली laser line का केंद्र intensity centroid से sub-pixel में (``table``)।"
+  },
+  "optics/laser_line_center_gauss": {
+   "fp": "6aa2a9578126",
+   "ja": "列ごとの光条の中心をガウスの当てはめ(``ln I`` への重みつき放物線)でサブピクセルに求める(``table``)。",
+   "zh": "按列用高斯拟合(对 ``ln I`` 的加权抛物线)以亚像素精度求光条中心(``table``)。",
+   "tw": "逐行以高斯擬合(對 ``ln I`` 的加權拋物線)求出光條中心的次像素位置(``table``)。",
+   "ko": "열마다 가우스 피팅(``ln I``에 대한 가중 포물선)으로 라인 중심을 서브픽셀로 구한다 (``table``).",
+   "de": "Subpixel-Linienmitte je Spalte durch Gauß-Anpassung = gewichtete Parabel auf ``ln I`` (``table``).",
+   "hi": "हर column में line का केंद्र Gaussian fit (``ln I`` पर weighted parabola) से sub-pixel में (``table``)।"
+  },
+  "optics/laser_line_center_steger": {
+   "fp": "5a32150f3ac5",
+   "ja": "Steger の Hessian 法による線の中心のサブピクセル位置(``table``)。",
+   "zh": "用 Steger 的 Hessian 方法求线中心的亚像素位置(``table``)。",
+   "tw": "以 Steger 的 Hessian 方法求出線中心的次像素位置(``table``)。",
+   "ko": "Steger의 Hessian 방법에 의한 선 중심의 서브픽셀 위치 (``table``).",
+   "de": "Subpixel-Linienmitte nach dem Hesse-Verfahren von Steger (``table``).",
+   "hi": "Steger की Hessian विधि से line का sub-pixel केंद्र (``table``)।"
+  },
+  "optics/light_section_rig": {
+   "fp": "32bcd8666c41",
+   "ja": "幾何が既知の光切断の装置(``table``): ピンホールカメラ + 光面。",
+   "zh": "几何已知的光切断装置(``table``):针孔相机 + 激光平面。",
+   "tw": "幾何已知的光切斷裝置(``table``):針孔相機 + 雷射平面。",
+   "ko": "기하가 알려진 광절단 장치 (``table``): 핀홀 카메라 + 레이저 평면.",
+   "de": "Lichtschnitt-Aufbau mit bekannter Geometrie (``table``): Lochkamera + Laserebene.",
+   "hi": "ज्ञात geometry वाला light-section rig (``table``): pinhole camera + laser plane।"
+  },
+  "optics/light_section_targets": {
+   "fp": "45977e986f94",
+   "ja": "既知の水平面 ``Z = h``(ゲージブロック・段差・基準面)をカメラ座標の平面として返す(``table``)。",
+   "zh": "把已知的水平面 ``Z = h``(量块、台阶、基准面)表示为相机坐标系中的平面(``table``)。",
+   "tw": "將已知的水平面 ``Z = h``(塊規、段差、基準面)表示為相機座標系中的平面(``table``)。",
+   "ko": "알려진 수평면 ``Z = h``(게이지 블록, 단차, 기준면)를 카메라 좌표계의 평면으로 반환한다 (``table``).",
+   "de": "Bekannte horizontale Ebenen ``Z = h`` (Endmaße, Stufe, Basis) als Ebenen im Kamerakoordinatensystem (``table``).",
+   "hi": "ज्ञात क्षैतिज समतल ``Z = h`` (gauge block, step, base) camera-frame समतलों के रूप में (``table``)।"
+  },
+  "optics/light_section_render": {
+   "fp": "9c2197803e3a",
+   "ja": "装置のカメラで見た、表面の断面に当たるレーザー光条の画像(``image2d``)。",
+   "zh": "装置的相机所见、照在表面截面上的激光条纹图像(``image2d``)。",
+   "tw": "裝置的相機所見、照在表面截面上的雷射光條影像(``image2d``)。",
+   "ko": "장치의 카메라로 본, 표면 단면에 비친 레이저 라인 영상 (``image2d``).",
+   "de": "Bild der Laserlinie auf einem Oberflächenprofil, gesehen von der Kamera des Aufbaus (``image2d``).",
+   "hi": "rig के camera से दिखती, surface profile पर पड़ी laser line की image (``image2d``)।"
+  },
+  "optics/light_plane_calibrate": {
+   "fp": "2588d6e38134",
+   "ja": "既知の平面に当たった光条から光面 ``n · X = d``(カメラ座標)を当てはめる(``table``)。",
+   "zh": "由照在已知平面上的光条拟合激光平面 ``n · X = d``(相机坐标)(``table``)。",
+   "tw": "由照在已知平面上的光條擬合雷射平面 ``n · X = d``(相機座標)(``table``)。",
+   "ko": "알려진 평면에 비친 라인으로부터 레이저 평면 ``n · X = d``(카메라 좌표)를 피팅한다 (``table``).",
+   "de": "Passt die Laserebene ``n · X = d`` (Kamerakoordinaten) aus Linien auf bekannten Ebenen an (``table``).",
+   "hi": "ज्ञात समतलों पर पड़ी lines से laser plane ``n · X = d`` (camera frame) fit करता है (``table``)।"
+  },
+  "optics/light_section_profile": {
+   "fp": "7dcc74f53e6d",
+   "ja": "光条の中心を三角測量で 3-D の点にする: 視線 ∩ 光面(``points``)。",
+   "zh": "把光条中心三角测量为三维点:视线 ∩ 激光平面(``points``)。",
+   "tw": "將光條中心以三角測量轉為三維點:視線 ∩ 雷射平面(``points``)。",
+   "ko": "라인 중심을 삼각측량으로 3-D 점으로 만든다: 시선 ∩ 레이저 평면 (``points``).",
+   "de": "Trianguliert Linienmitten zu 3-D-Punkten: Sehstrahl ∩ Laserebene (``points``).",
+   "hi": "line centres को triangulation से 3-D points में: viewing ray ∩ laser plane (``points``)।"
+  },
+  "optics/light_section_scan": {
+   "fp": "003948892281",
+   "ja": "走査: フレーム ``k`` では部品が ``k · step_mm`` 動いている → 部品の座標の 1 つの点群(``points``)。",
+   "zh": "扫描:第 ``k`` 帧时工件已移动 ``k · step_mm`` → 工件坐标系中的一个点云(``points``)。",
+   "tw": "掃描:第 ``k`` 幀時工件已移動 ``k · step_mm`` → 工件座標系中的一個點雲(``points``)。",
+   "ko": "스캔: 프레임 ``k``에서는 부품이 ``k · step_mm`` 이동 → 부품 좌표계의 하나의 점군 (``points``).",
+   "de": "Scan: in Bild ``k`` ist das Teil um ``k · step_mm`` verschoben → eine Punktwolke im Teilekoordinatensystem (``points``).",
+   "hi": "Scan: frame ``k`` में part ``k · step_mm`` खिसका है → part के frame में एक point cloud (``points``)।"
+  },
+  "optics/light_section_height_map": {
+   "fp": "ce0e7dfb87f9",
+   "ja": "走査から (フレーム, 画像の列) の高さ地図(``depth``、NaN = 測れない)。",
+   "zh": "由扫描得到 (帧, 图像列) 的高度图(``depth``,NaN = 无法测量)。",
+   "tw": "由掃描得到 (幀, 影像行) 的高度圖(``depth``,NaN = 無法量測)。",
+   "ko": "스캔으로부터 (프레임, 영상 열) 높이 지도 (``depth``; NaN = 측정 불가).",
+   "de": "Höhenkarte über (Bild, Bildspalte) aus einem Scan (``depth``; NaN = nicht gemessen).",
+   "hi": "scan से (frame, image column) पर height map (``depth``; NaN = मापा नहीं गया)।"
+  },
+  "optics/light_section_speckle_floor": {
+   "fp": "5a4856ba4618",
+   "ja": "光切断の高さのスペックルの床を、シミュと閉形式で並べて返す(``table``)。",
+   "zh": "并列给出光切断高度的散斑下限的仿真值与闭式解(``table``)。",
+   "tw": "並列給出光切斷高度的散斑下限的模擬值與閉式解(``table``)。",
+   "ko": "광절단 높이의 스페클 하한을 시뮬레이션과 닫힌 형식으로 나란히 반환한다 (``table``).",
+   "de": "Speckle-Untergrenze einer Lichtschnitt-Höhe, simuliert und geschlossen nebeneinander (``table``).",
+   "hi": "light-section height का speckle floor, simulation और closed form साथ-साथ (``table``)।"
+  },
+  "optics/light_section_uncertainty_budget": {
+   "fp": "11e312998445",
+   "ja": "光切断の高さの不確かさの予算を GUM の表で返す(``table``)。",
+   "zh": "以 GUM 表给出光切断高度的不确定度预算(``table``)。",
+   "tw": "以 GUM 表給出光切斷高度的不確定度預算(``table``)。",
+   "ko": "광절단 높이의 불확도 예산을 GUM 표로 반환한다 (``table``).",
+   "de": "Unsicherheitsbudget einer Lichtschnitt-Höhe als GUM-Tabelle (``table``).",
+   "hi": "light-section height का uncertainty budget GUM table के रूप में (``table``)।"
+  },
+  "optics/light_section_floor_sweep": {
+   "fp": "2cfe0a8928cc",
+   "ja": "1 つの量を掃引し、高さの不確かさのシミュと閉形式を返す(``table``)。",
+   "zh": "扫描一个量,返回高度不确定度的仿真值与闭式解(``table``)。",
+   "tw": "掃描一個量,回傳高度不確定度的模擬值與閉式解(``table``)。",
+   "ko": "한 가지 양을 스윕하여 높이 불확도의 시뮬레이션 값과 닫힌 형식을 반환한다 (``table``).",
+   "de": "Variiert eine Größe und liefert simulierte vs. geschlossene Höhenunsicherheit (``table``).",
+   "hi": "एक मात्रा को sweep करके height uncertainty का simulation बनाम closed form लौटाता है (``table``)।"
+  },
+  "optics/camera_response_debevec": {
+   "fp": "b1965d2e366e",
+   "ja": "露出の列から、Debevec と Malik の最小二乗でカメラの逆応答を求める(``table``)。",
+   "zh": "用 Debevec 与 Malik 的最小二乘由曝光序列求相机的逆响应(``table``)。",
+   "tw": "以 Debevec 與 Malik 的最小平方由曝光序列求相機的逆響應(``table``)。",
+   "ko": "노출 시리즈로부터 Debevec과 Malik의 최소제곱으로 카메라 역응답을 구한다 (``table``).",
+   "de": "Inverse Kamerakennlinie aus einer Belichtungsreihe nach den kleinsten Quadraten von Debevec & Malik (``table``).",
+   "hi": "exposure series से Debevec और Malik के least squares द्वारा camera का inverse response (``table``)।"
+  },
+  "optics/camera_response_robertson": {
+   "fp": "3b3f4ec9d4c8",
+   "ja": "Robertson, Borman と Stevenson の交互推定によるカメラの逆応答(``table``)。",
+   "zh": "用 Robertson、Borman 与 Stevenson 的交替估计求相机的逆响应(``table``)。",
+   "tw": "以 Robertson、Borman 與 Stevenson 的交替估計求相機的逆響應(``table``)。",
+   "ko": "Robertson, Borman, Stevenson의 교대 추정에 의한 카메라 역응답 (``table``).",
+   "de": "Inverse Kamerakennlinie durch die alternierende Schätzung von Robertson, Borman & Stevenson (``table``).",
+   "hi": "Robertson, Borman और Stevenson के alternating estimate से camera का inverse response (``table``)।"
+  },
+  "optics/camera_response_linear": {
+   "fp": "e2b299b1fc4a",
+   "ja": "線形のセンサの逆応答: ``X = (Z − offset) / gain``(``table``)。",
+   "zh": "线性传感器的逆响应:``X = (Z − offset) / gain``(``table``)。",
+   "tw": "線性感測器的逆響應:``X = (Z − offset) / gain``(``table``)。",
+   "ko": "선형 센서의 역응답: ``X = (Z − offset) / gain`` (``table``).",
+   "de": "Inverse Kennlinie eines linearen Sensors: ``X = (Z − offset) / gain`` (``table``).",
+   "hi": "linear sensor का inverse response: ``X = (Z − offset) / gain`` (``table``)।"
+  },
+  "optics/hdr_merge": {
+   "fp": "9cc77617d9aa",
+   "ja": "露出の列を相対的な放射輝度の地図に合成する(``image2d``)。",
+   "zh": "把曝光序列合成为相对辐射亮度图(``image2d``)。",
+   "tw": "將曝光序列合成為相對輻射亮度圖(``image2d``)。",
+   "ko": "노출 시리즈를 상대 복사휘도 지도로 합성한다 (``image2d``).",
+   "de": "Fügt eine Belichtungsreihe zu einer relativen Strahldichtekarte zusammen (``image2d``).",
+   "hi": "exposure series को relative radiance map में merge करता है (``image2d``)।"
+  },
+  "optics/exposure_fusion_mertens": {
+   "fp": "53bc100429be",
+   "ja": "露出の列を直接 1 枚のよく露出した画像に融合する(``image2d``、RGB の列も可)。",
+   "zh": "把曝光序列直接融合为一张曝光良好的图像(``image2d``;也接受 RGB 序列)。",
+   "tw": "將曝光序列直接融合為一張曝光良好的影像(``image2d``;也接受 RGB 序列)。",
+   "ko": "노출 시리즈를 바로 하나의 잘 노출된 영상으로 융합한다 (``image2d``; RGB 시리즈도 가능).",
+   "de": "Verschmilzt eine Belichtungsreihe direkt zu einem gut belichteten Bild (``image2d``; RGB-Reihen gehen auch).",
+   "hi": "exposure series को सीधे एक अच्छी exposed image में fuse करता है (``image2d``; RGB lists भी चलती हैं)।"
+  },
+  "optics/hdr_exposure_series_simulate": {
+   "fp": "0c2065de4efe",
+   "ja": "放射輝度が既知の場面を、EMVA 1288 のセンサのモデルで露出の列に撮る(``images``)。",
+   "zh": "用 EMVA 1288 传感器模型把辐射亮度已知的场景拍成曝光序列(``images``)。",
+   "tw": "以 EMVA 1288 感測器模型將輻射亮度已知的場景拍成曝光序列(``images``)。",
+   "ko": "복사휘도가 알려진 장면을 EMVA 1288 센서 모델로 노출 시리즈로 촬영한다 (``images``).",
+   "de": "Nimmt eine Szene mit bekannter Strahldichte mit einem EMVA-1288-Sensormodell als Belichtungsreihe auf (``images``).",
+   "hi": "ज्ञात radiance वाले दृश्य को EMVA 1288 sensor model से exposure series में capture करता है (``images``)।"
+  },
+  "optics/hdr_radiance_error": {
+   "fp": "8a8e7effc77f",
+   "ja": "推定した放射輝度の地図の、真値に対する誤差(倍率 1 つを当てた後)(``table``)。",
+   "zh": "估计的辐射亮度图相对真值的误差(拟合一个比例因子后)(``table``)。",
+   "tw": "估計的輻射亮度圖相對真值的誤差(擬合一個比例因子後)(``table``)。",
+   "ko": "추정한 복사휘도 지도의 참값 대비 오차 (배율 하나를 맞춘 뒤) (``table``).",
+   "de": "Fehler einer geschätzten Strahldichtekarte gegenüber der wahren, nach einem angepassten Maßstab (``table``).",
+   "hi": "एक fitted scale के बाद अनुमानित radiance map की सच्चे मान से त्रुटि (``table``)।"
+  },
+  "optics/hdr_dynamic_range": {
+   "fp": "e086f58ca0f0",
+   "ja": "HDR 撮像のダイナミックレンジの実測値(EMVA 1288 の定義)と閉形式(``table``)。",
+   "zh": "HDR 拍摄动态范围的实测值(EMVA 1288 定义)及其闭式解(``table``)。",
+   "tw": "HDR 拍攝動態範圍的實測值(EMVA 1288 定義)及其閉式解(``table``)。",
+   "ko": "HDR 촬영 다이내믹 레인지의 실측값 (EMVA 1288 정의)과 닫힌 형식 (``table``).",
+   "de": "Gemessener Dynamikumfang einer HDR-Aufnahme (EMVA-1288-Definition) mit geschlossener Form (``table``).",
+   "hi": "HDR capture की मापी गई dynamic range (EMVA 1288 परिभाषा) और उसका closed form (``table``)।"
+  },
+  "matchreg/features_sift": {
+   "fp": "c27d898dd32f",
+   "en": "SIFT keypoints and 128-dimensional descriptors (DoG extrema, Lowe 2004). → table (``kind=\"features\"``).",
+   "zh": "SIFT 特征点与 128 维描述子(DoG 极值,Lowe 2004)。→ table(``kind=\"features\"``)。",
+   "tw": "SIFT 特徵點與 128 維描述子(DoG 極值,Lowe 2004)。→ table(``kind=\"features\"``)。",
+   "ko": "SIFT 특징점과 128차원 기술자(DoG 극값, Lowe 2004). → table(``kind=\"features\"``).",
+   "de": "SIFT-Merkmalspunkte und 128-dimensionale Deskriptoren (DoG-Extrema, Lowe 2004). → table (``kind=\"features\"``).",
+   "hi": "SIFT feature points और 128-आयामी descriptors (DoG के extrema, Lowe 2004)। → table (``kind=\"features\"``)।"
+  },
+  "matchreg/features_orb": {
+   "fp": "a45a0445bf0d",
+   "en": "ORB keypoints and 256-bit binary descriptors (Rublee et al. 2011). → table (``kind=\"features\"``).",
+   "zh": "ORB 特征点与 256 位二值描述子(Rublee et al. 2011)。→ table(``kind=\"features\"``)。",
+   "tw": "ORB 特徵點與 256 位元二值描述子(Rublee et al. 2011)。→ table(``kind=\"features\"``)。",
+   "ko": "ORB 특징점과 256비트 이진 기술자(Rublee et al. 2011). → table(``kind=\"features\"``).",
+   "de": "ORB-Merkmalspunkte und 256-Bit-Binärdeskriptoren (Rublee et al. 2011). → table (``kind=\"features\"``).",
+   "hi": "ORB feature points और 256-bit binary descriptors (Rublee et al. 2011)। → table (``kind=\"features\"``)।"
+  },
+  "matchreg/features_match": {
+   "fp": "ec2f9b770111",
+   "en": "Matches two feature tables by nearest neighbour + ratio test (+ mutual nearest neighbour). → table (``kind=\"feature_matches\"``).",
+   "zh": "用最近邻 + 比率检验(+ 互为最近邻)匹配两个特征表。→ table(``kind=\"feature_matches\"``)。",
+   "tw": "以最近鄰 + 比率檢定(+ 互為最近鄰)匹配兩個特徵表。→ table(``kind=\"feature_matches\"``)。",
+   "ko": "두 특징 표를 최근접 이웃 + 비율 검정(+ 상호 최근접)으로 대응시킨다. → table(``kind=\"feature_matches\"``).",
+   "de": "Ordnet zwei Merkmalstabellen per nächstem Nachbarn + Verhältnistest (+ gegenseitigem nächstem Nachbarn) zu. → table (``kind=\"feature_matches\"``).",
+   "hi": "दो feature tables को nearest neighbour + ratio test (+ mutual nearest neighbour) से मिलाता है। → table (``kind=\"feature_matches\"``)।"
+  },
+  "matchreg/ransac_homography": {
+   "fp": "e51fbabc7a5c",
+   "en": "Robustly estimates a homography (pts1 → pts2, homogeneous (x, y)) from matched pairs. → table (``kind=\"homography\"``).",
+   "zh": "从匹配对稳健地估计单应矩阵(pts1 → pts2,(x, y) 的齐次坐标)。→ table(``kind=\"homography\"``)。",
+   "tw": "從匹配對穩健地估計單應矩陣(pts1 → pts2,(x, y) 的齊次座標)。→ table(``kind=\"homography\"``)。",
+   "ko": "대응 쌍에서 호모그래피(pts1 → pts2, (x, y)의 동차 좌표)를 강건하게 추정한다. → table(``kind=\"homography\"``).",
+   "de": "Schätzt aus zugeordneten Paaren robust eine Homographie (pts1 → pts2, homogene (x, y)). → table (``kind=\"homography\"``).",
+   "hi": "मिलाए गए जोड़ों से homography (pts1 → pts2, (x, y) के homogeneous निर्देशांक) का robust अनुमान लगाता है। → table (``kind=\"homography\"``)।"
+  },
+  "matchreg/ransac_fundamental": {
+   "fp": "cd1581603f05",
+   "en": "Robustly estimates the fundamental matrix F (``x2ᵀ F x1 = 0``) from matched pairs. → table (``kind=\"fundamental\"``).",
+   "zh": "从匹配对稳健地估计基础矩阵 F(``x2ᵀ F x1 = 0``)。→ table(``kind=\"fundamental\"``)。",
+   "tw": "從匹配對穩健地估計基礎矩陣 F(``x2ᵀ F x1 = 0``)。→ table(``kind=\"fundamental\"``)。",
+   "ko": "대응 쌍에서 기초 행렬 F(``x2ᵀ F x1 = 0``)를 강건하게 추정한다. → table(``kind=\"fundamental\"``).",
+   "de": "Schätzt aus zugeordneten Paaren robust die Fundamentalmatrix F (``x2ᵀ F x1 = 0``). → table (``kind=\"fundamental\"``).",
+   "hi": "मिलाए गए जोड़ों से fundamental matrix F (``x2ᵀ F x1 = 0``) का robust अनुमान लगाता है। → table (``kind=\"fundamental\"``)।"
+  },
+  "matchreg/features_accuracy_table": {
+   "fp": "dce91614b112",
+   "en": "On pairs synthesised with known transforms, returns keypoint repeatability, matching precision and homography error per condition as a table. → table.",
+   "zh": "在用已知变换合成的图像对上,按条件以表格返回特征点重复率、匹配精度与单应误差。→ table。",
+   "tw": "在以已知變換合成的影像對上,依條件以表格回傳特徵點重複率、匹配精度與單應誤差。→ table。",
+   "ko": "알려진 변환으로 합성한 쌍에서 특징점 재현율·대응 정밀도·호모그래피 오차를 조건별 표로 돌려준다. → table.",
+   "de": "Liefert auf mit bekannten Transformationen synthetisierten Paaren Wiederholbarkeit, Zuordnungsgenauigkeit und Homographiefehler je Bedingung als Tabelle. → table.",
+   "hi": "ज्ञात transforms से बनाए जोड़ों पर, हर स्थिति के लिए feature points की repeatability, matching precision और homography की त्रुटि तालिका में लौटाता है। → table।"
+  },
+  "matchreg/register_ecc": {
+   "fp": "d202cf9ff834",
+   "en": "Aligns moving to fixed with the parametric transform that maximises the enhanced correlation coefficient (ECC). → table (``kind=\"registration\"``).",
+   "zh": "用使增强相关系数(ECC)最大的参数变换将 moving 对齐到 fixed。→ table(``kind=\"registration\"``)。",
+   "tw": "以使增強相關係數(ECC)最大的參數變換將 moving 對齊到 fixed。→ table(``kind=\"registration\"``)。",
+   "ko": "강화 상관계수(ECC)를 최대로 하는 매개변수 변환으로 moving을 fixed에 맞춘다. → table(``kind=\"registration\"``).",
+   "de": "Richtet moving mit der parametrischen Transformation an fixed aus, die den Enhanced Correlation Coefficient (ECC) maximiert. → table (``kind=\"registration\"``).",
+   "hi": "Enhanced correlation coefficient (ECC) को अधिकतम करने वाले parametric transform से moving को fixed पर मिलाता है। → table (``kind=\"registration\"``)।"
+  },
+  "matchreg/register_mi": {
+   "fp": "bcdab890346c",
+   "en": "Aligns moving to fixed with the rigid / similarity / affine transform that maximises (normalised) mutual information. → table (``kind=\"registration\"``).",
+   "zh": "用使(归一化)互信息最大的刚体 / 相似 / 仿射变换将 moving 对齐到 fixed。→ table(``kind=\"registration\"``)。",
+   "tw": "以使(正規化)互資訊最大的剛體 / 相似 / 仿射變換將 moving 對齊到 fixed。→ table(``kind=\"registration\"``)。",
+   "ko": "(정규화) 상호정보량을 최대로 하는 강체 / 상사 / 아핀 변환으로 moving을 fixed에 맞춘다. → table(``kind=\"registration\"``).",
+   "de": "Richtet moving mit der starren / Ähnlichkeits- / affinen Transformation an fixed aus, die die (normierte) Transinformation maximiert. → table (``kind=\"registration\"``).",
+   "hi": "(Normalised) mutual information को अधिकतम करने वाले rigid / similarity / affine transform से moving को fixed पर मिलाता है। → table (``kind=\"registration\"``)।"
+  },
+  "matchreg/register_ffd": {
+   "fp": "91cdff36218e",
+   "en": "Non-rigidly aligns moving to fixed with a cubic B-spline free-form deformation (FFD). → table (``kind=\"registration\"``).",
+   "zh": "用三次 B 样条自由形变(FFD)将 moving 非刚性地对齐到 fixed。→ table(``kind=\"registration\"``)。",
+   "tw": "以三次 B 樣條自由形變(FFD)將 moving 非剛性地對齊到 fixed。→ table(``kind=\"registration\"``)。",
+   "ko": "3차 B-spline 자유 변형(FFD)으로 moving을 fixed에 비강체로 맞춘다. → table(``kind=\"registration\"``).",
+   "de": "Richtet moving mit einer kubischen B-Spline-Freiformdeformation (FFD) nicht-starr an fixed aus. → table (``kind=\"registration\"``).",
+   "hi": "Cubic B-spline free-form deformation (FFD) से moving को fixed पर non-rigid रूप से मिलाता है। → table (``kind=\"registration\"``)।"
+  },
+  "matchreg/registration_to_flow2d": {
+   "fp": "49438f9cbd52",
+   "en": "Extracts the deformation field ``flow2d`` ((2,H,W) ``(dy, dx)``) from a registration result table. → flow2d.",
+   "zh": "从配准结果表中取出形变场 ``flow2d``((2,H,W) 的 ``(dy, dx)``)。→ flow2d。",
+   "tw": "從配準結果表中取出形變場 ``flow2d``((2,H,W) 的 ``(dy, dx)``)。→ flow2d。",
+   "ko": "정합 결과 표에서 변형장 ``flow2d``((2,H,W)의 ``(dy, dx)``)를 꺼낸다. → flow2d.",
+   "de": "Entnimmt einer Registrierungs-Ergebnistabelle das Deformationsfeld ``flow2d`` ((2,H,W) ``(dy, dx)``). → flow2d.",
+   "hi": "Registration के परिणाम की table से deformation field ``flow2d`` ((2,H,W) का ``(dy, dx)``) निकालता है। → flow2d।"
+  },
+  "matchreg/register_accuracy_map": {
+   "fp": "641083c10cc1",
+   "en": "On a pair synthesised with a known deformation field, returns the per-pixel error of the estimated field (an accuracy map). → table.",
+   "zh": "在用已知形变场合成的图像对上,逐像素返回估计形变场的误差(精度图)。→ table。",
+   "tw": "在以已知形變場合成的影像對上,逐像素回傳估計形變場的誤差(精度圖)。→ table。",
+   "ko": "알려진 변형장으로 합성한 쌍에서 추정한 변형장의 오차를 화소마다 돌려준다(정확도 지도). → table.",
+   "de": "Liefert auf einem mit bekanntem Deformationsfeld synthetisierten Paar den pixelweisen Fehler des geschätzten Feldes (eine Genauigkeitskarte). → table.",
+   "hi": "ज्ञात deformation field से बनाए जोड़े पर, अनुमानित field की त्रुटि हर pixel के लिए लौटाता है (सटीकता का नक्शा)। → table।"
+  },
+  "matchreg/register_capture_range": {
+   "fp": "0f53ba91e830",
+   "en": "For each size of initial misalignment, returns the fraction of registrations started from the identity that return to the truth (the capture range). → table.",
+   "zh": "按初始偏移的大小,返回从恒等变换出发的配准回到真值的比例(收敛范围)。→ table。",
+   "tw": "依初始偏移的大小,回傳從恆等變換出發的配準回到真值的比例(收斂範圍)。→ table。",
+   "ko": "초기 어긋남의 크기마다, 항등에서 시작한 정합이 참값으로 돌아오는 비율을 돌려준다(수렴 범위). → table.",
+   "de": "Liefert je Größe der anfänglichen Fehlausrichtung den Anteil der von der Identität aus gestarteten Registrierungen, die zur Wahrheit zurückfinden (der Fangbereich). → table.",
+   "hi": "प्रारंभिक misalignment के हर आकार के लिए, identity से शुरू हुई registrations में से सही मान तक लौटने वालों का अनुपात लौटाता है (capture range)। → table।"
+  },
+  "symbol/barcode_scan_profiles": {
+   "fp": "f347c8475805",
+   "en": "Extract ``n_lines`` parallel scan lines perpendicular to the bars from an image (`table`).",
+   "zh": "从图像中提取 ``n_lines`` 条垂直于条的平行扫描线(`table`)。",
+   "tw": "從影像中擷取 ``n_lines`` 條垂直於條的平行掃描線(`table`)。",
+   "ko": "영상에서 바에 수직인 평행 주사선 ``n_lines`` 개를 추출한다(`table`).",
+   "de": "Entnimmt einem Bild ``n_lines`` parallele Abtastlinien senkrecht zu den Strichen (`table`).",
+   "hi": "image से bars के लंबवत ``n_lines`` समानांतर scan lines निकालता है (`table`)।"
+  },
+  "symbol/capture_degrade": {
+   "fp": "57740960f029",
+   "en": "Apply capture degradation (illumination, blur, sensor noise) to a reflectance image (`image2d`).",
+   "zh": "对反射率图像施加成像退化(照明、模糊、传感器噪声)(`image2d`)。",
+   "tw": "對反射率影像施加成像劣化(照明、模糊、感測器雜訊)(`image2d`)。",
+   "ko": "반사율 영상에 촬상 열화(조명, 흐림, 센서 잡음)를 가한다(`image2d`).",
+   "de": "Wendet Aufnahme-Degradation (Beleuchtung, Unschärfe, Sensorrauschen) auf ein Reflexionsbild an (`image2d`).",
+   "hi": "reflectance image पर capture degradation (illumination, blur, sensor noise) लगाता है (`image2d`)।"
+  },
+  "symbol/decode_barcode_profile": {
+   "fp": "563718eacceb",
+   "en": "Decode one symbol from a single scan line (a 1-D reflectance profile) (`table`).",
+   "zh": "从一条扫描线(反射率的一维序列)解码一个符号(`table`)。",
+   "tw": "從一條掃描線(反射率的一維序列)解碼一個符號(`table`)。",
+   "ko": "주사선 1개(반사율의 1차원 열)에서 심볼 하나를 복호한다(`table`).",
+   "de": "Dekodiert ein Symbol aus einer einzelnen Abtastlinie (einem 1-D-Reflexionsprofil) (`table`).",
+   "hi": "एक scan line (1-D reflectance profile) से एक symbol decode करता है (`table`)।"
+  },
+  "symbol/dm_decode_modules": {
+   "fp": "5c854f635f4c",
+   "en": "Decode a Data Matrix module grid (with L finder and clock track, 0/1) and return the corrected codewords (`table`).",
+   "zh": "解码 Data Matrix 模块网格(含 L 形寻像图形和时钟轨,0/1)并返回纠正码字数(`table`)。",
+   "tw": "解碼 Data Matrix 模組格線(含 L 形尋像圖形與時脈軌,0/1)並回傳更正碼字數(`table`)。",
+   "ko": "Data Matrix 모듈 격자(L자 파인더와 클록 트랙 포함, 0/1)를 복호하고 정정 부호어 수를 반환한다(`table`).",
+   "de": "Dekodiert ein Data-Matrix-Modulraster (mit L-Suchmuster und Taktspur, 0/1) und liefert die korrigierten Codewörter (`table`).",
+   "hi": "Data Matrix module grid (L finder और clock track सहित, 0/1) decode करके सुधारे गए codewords लौटाता है (`table`)।"
+  },
+  "symbol/dm_encode": {
+   "fp": "63bb194385a4",
+   "en": "Encode a string into a Data Matrix ECC200 module grid and its module-to-codeword map (`table`).",
+   "zh": "将字符串编码为 Data Matrix ECC200 的模块网格及模块到码字的对应(`table`)。",
+   "tw": "將字串編碼為 Data Matrix ECC200 的模組格線及模組到碼字的對應(`table`)。",
+   "ko": "문자열을 Data Matrix ECC200의 모듈 격자와 모듈-부호어 대응으로 부호화한다(`table`).",
+   "de": "Kodiert eine Zeichenkette in ein Data-Matrix-ECC200-Modulraster samt Modul-Codewort-Zuordnung (`table`).",
+   "hi": "string को Data Matrix ECC200 module grid और module-to-codeword map में encode करता है (`table`)।"
+  },
+  "symbol/dm_locate": {
+   "fp": "9bc10c16208d",
+   "en": "Find a Data Matrix in an image and estimate the module-space to image homography (`table`).",
+   "zh": "在图像中找到 Data Matrix 并估计模块空间到图像的单应变换(`table`)。",
+   "tw": "在影像中找到 Data Matrix 並估計模組空間到影像的單應變換(`table`)。",
+   "ko": "영상에서 Data Matrix를 찾고 모듈 공간 → 영상의 사영 변환을 추정한다(`table`).",
+   "de": "Findet eine Data Matrix im Bild und schätzt die Homographie vom Modulraum ins Bild (`table`).",
+   "hi": "image में Data Matrix खोजकर module space से image तक का homography estimate करता है (`table`)।"
+  },
+  "symbol/dm_read": {
+   "fp": "5a4cf393b8aa",
+   "en": "Read a Data Matrix from an image: locate, sample, decode, and retry with inverted contrast (`table`).",
+   "zh": "从图像读取 Data Matrix:定位 → 采样 → 解码,反转明暗重试(`table`)。",
+   "tw": "從影像讀取 Data Matrix:定位 → 取樣 → 解碼,反轉明暗重試(`table`)。",
+   "ko": "영상에서 Data Matrix를 읽는다: 위치 결정 → 표본화 → 복호, 명암을 반전해 재시도(`table`).",
+   "de": "Liest eine Data Matrix aus einem Bild: lokalisieren, abtasten, dekodieren, mit invertiertem Kontrast erneut (`table`).",
+   "hi": "image से Data Matrix पढ़ता है: locate → sample → decode, उलटे contrast के साथ फिर कोशिश (`table`)।"
+  },
+  "symbol/dm_sample": {
+   "fp": "5cb755bd7a29",
+   "en": "Sample the reflectance at Data Matrix module centres by bilinear interpolation and binarise with a global threshold (`table`).",
+   "zh": "用双线性插值采样 Data Matrix 模块中心的反射率,并以全局阈值二值化(`table`)。",
+   "tw": "以雙線性內插取樣 Data Matrix 模組中心的反射率,並以全域閾值二值化(`table`)。",
+   "ko": "Data Matrix 모듈 중심의 반사율을 쌍선형 보간으로 표본화하고 전역 임계값으로 2값화한다(`table`).",
+   "de": "Tastet die Reflexion in den Data-Matrix-Modulmitten bilinear ab und binarisiert mit einer globalen Schwelle (`table`).",
+   "hi": "Data Matrix module centres पर reflectance को bilinear interpolation से sample करके global threshold से binarise करता है (`table`)।"
+  },
+  "symbol/ean_check_digit": {
+   "fp": "d39f58e2cc3e",
+   "en": "EAN/UPC check digit (weights 3, 1, 3, … from the rightmost digit, sum to a multiple of 10).",
+   "zh": "EAN/UPC 校验位(从最右位起权重 3、1、3…,使总和为 10 的倍数)。",
+   "tw": "EAN/UPC 檢查碼(從最右位起權重 3、1、3…,使總和為 10 的倍數)。",
+   "ko": "EAN/UPC 검사 숫자(가장 오른쪽 자리부터 가중치 3, 1, 3, …, 합을 10의 배수로).",
+   "de": "EAN/UPC-Prüfziffer (Gewichte 3, 1, 3, … ab der rechten Stelle, Summe auf ein Vielfaches von 10).",
+   "hi": "EAN/UPC check digit (सबसे दाएँ अंक से weights 3, 1, 3, …, योग 10 का गुणज)।"
+  },
+  "symbol/encode_barcode1d": {
+   "fp": "48bda6268474",
+   "en": "Encode a string into the element widths (in modules) of a 1-D bar code (`table`).",
+   "zh": "将字符串编码为一维条码的元素宽度(以模块为单位)(`table`)。",
+   "tw": "將字串編碼為一維條碼的元素寬度(以模組為單位)(`table`)。",
+   "ko": "문자열을 1차원 바코드의 요소 폭(모듈 단위)으로 부호화한다(`table`).",
+   "de": "Kodiert eine Zeichenkette in die Elementbreiten (in Modulen) eines 1-D-Strichcodes (`table`).",
+   "hi": "string को 1-D bar code की element widths (modules में) में encode करता है (`table`)।"
+  },
+  "symbol/grade_barcode1d": {
+   "fp": "d72277879fd7",
+   "en": "Return the print-quality grade of a 1-D symbol in an image (mean over ``n_scans`` scan lines) (`table`).",
+   "zh": "返回图像中一维符号的印刷质量等级(``n_scans`` 条扫描线的平均)(`table`)。",
+   "tw": "回傳影像中一維符號的印刷品質等級(``n_scans`` 條掃描線的平均)(`table`)。",
+   "ko": "영상 속 1-D 심볼의 인쇄 품질 등급(``n_scans`` 개 주사선의 평균)을 반환한다(`table`).",
+   "de": "Liefert die Druckqualitätsnote eines 1-D-Symbols im Bild (Mittel über ``n_scans`` Abtastlinien) (`table`).",
+   "hi": "image में 1-D symbol का print-quality grade (``n_scans`` scan lines का औसत) लौटाता है (`table`)।"
+  },
+  "symbol/grade_barcode_profile": {
+   "fp": "60666df9c7e7",
+   "en": "Return the print-quality parameters and grades of one scan line (a 1-D reflectance profile) (`table`).",
+   "zh": "返回一条扫描线(反射率的一维序列)的印刷质量参数与等级(`table`)。",
+   "tw": "回傳一條掃描線(反射率的一維序列)的印刷品質參數與等級(`table`)。",
+   "ko": "주사선 1개(반사율의 1차원 열)의 인쇄 품질 파라미터와 등급을 반환한다(`table`).",
+   "de": "Liefert die Druckqualitätsparameter und Noten einer Abtastlinie (eines 1-D-Reflexionsprofils) (`table`).",
+   "hi": "एक scan line (1-D reflectance profile) के print-quality parameters और grades लौटाता है (`table`)।"
+  },
+  "symbol/grade_datacode2d": {
+   "fp": "94e70a98767a",
+   "en": "Return the print-quality grade of a 2-D symbol (QR / Data Matrix) in an image (`table`).",
+   "zh": "返回图像中二维符号(QR / Data Matrix)的印刷质量等级(`table`)。",
+   "tw": "回傳影像中二維符號(QR / Data Matrix)的印刷品質等級(`table`)。",
+   "ko": "영상 속 2-D 심볼(QR / Data Matrix)의 인쇄 품질 등급을 반환한다(`table`).",
+   "de": "Liefert die Druckqualitätsnote eines 2-D-Symbols (QR / Data Matrix) im Bild (`table`).",
+   "hi": "image में 2-D symbol (QR / Data Matrix) का print-quality grade लौटाता है (`table`)।"
+  },
+  "symbol/ocr_classify": {
+   "fp": "5ce0e7e39a7d",
+   "en": "Classify feature vectors by k nearest neighbours and reject by distance and distance ratio (`table`).",
+   "zh": "用 k 近邻识别特征,并按距离与距离比拒识(`table`)。",
+   "tw": "以 k 近鄰識別特徵,並依距離與距離比拒識(`table`)。",
+   "ko": "특징량을 k 최근접 이웃으로 식별하고 거리와 거리비로 기각한다(`table`).",
+   "de": "Klassifiziert Merkmalsvektoren per k-nächste-Nachbarn und weist nach Abstand und Abstandsverhältnis zurück (`table`).",
+   "hi": "feature vectors को k nearest neighbours से classify करके distance और distance ratio से reject करता है (`table`)।"
+  },
+  "symbol/ocr_features": {
+   "fp": "35eb1a5643f2",
+   "en": "Build the 88-D feature vector (zoning densities + projections) from the ink map of one glyph (`signal`).",
+   "zh": "由单个字的墨迹图生成 88 维特征(分区密度 + 投影)(`signal`)。",
+   "tw": "由單一字的墨跡圖產生 88 維特徵(分區密度 + 投影)(`signal`)。",
+   "ko": "글자 하나의 잉크 지도에서 88차원 특징량(구획 농도 + 사영)을 만든다(`signal`).",
+   "de": "Bildet aus der Tintenkarte einer Glyphe den 88-D-Merkmalsvektor (Zonendichten + Projektionen) (`signal`).",
+   "hi": "एक glyph के ink map से 88-D feature vector (zoning densities + projections) बनाता है (`signal`)।"
+  },
+  "symbol/ocr_font": {
+   "fp": "0abd911a13ae",
+   "en": "Return the charset and glyph designs of a built-in font (5x7 dot matrix / stroke) (`table`).",
+   "zh": "返回内置字体(5x7 点阵 / 笔画)的字符集与字形设计(`table`)。",
+   "tw": "回傳內建字型(5x7 點陣 / 筆畫)的字元集與字形設計(`table`)。",
+   "ko": "내장 서체(5x7 도트 / 선)의 문자 집합과 자형 설계를 반환한다(`table`).",
+   "de": "Liefert Zeichensatz und Glyphenentwürfe einer eingebauten Schrift (5x7-Punktmatrix / Strich) (`table`).",
+   "hi": "built-in font (5x7 dot matrix / stroke) का charset और glyph designs लौटाता है (`table`)।"
+  },
+  "symbol/ocr_read_line": {
+   "fp": "76688c8f6a05",
+   "en": "Read one text line in an image: segment + classify, rejected characters become ``?`` (`table`).",
+   "zh": "读取图像中的一行:切分 + 识别,拒识的字符记为 ``?``(`table`)。",
+   "tw": "讀取影像中的一行:切分 + 識別,拒識的字元記為 ``?``(`table`)。",
+   "ko": "영상의 한 줄을 읽는다: 잘라내기 + 식별, 기각한 글자는 ``?``(`table`).",
+   "de": "Liest eine Textzeile im Bild: segmentieren + klassifizieren, zurückgewiesene Zeichen werden ``?`` (`table`).",
+   "hi": "image की एक text line पढ़ता है: segment + classify, rejected characters ``?`` बनते हैं (`table`)।"
+  },
+  "symbol/ocr_read_trials": {
+   "fp": "d588a000edf5",
+   "en": "Capture a printed string ``trials`` times at each degradation level, read it by OCR and return one row per attempt (`table`).",
+   "zh": "在每个退化水平下对印刷字符串拍摄 ``trials`` 次并用 OCR 读取,返回每次一行的表(`table`)。",
+   "tw": "在每個劣化水準下對印刷字串拍攝 ``trials`` 次並以 OCR 讀取,回傳每次一列的表(`table`)。",
+   "ko": "인쇄한 문자열을 열화량의 각 수준에서 ``trials`` 회 촬상해 OCR로 읽고 시도 1회 = 1행의 표를 반환한다(`table`).",
+   "de": "Nimmt eine gedruckte Zeichenkette auf jeder Degradationsstufe ``trials``-mal auf, liest sie per OCR und liefert eine Zeile je Versuch (`table`).",
+   "hi": "हर degradation level पर printed string को ``trials`` बार capture करके OCR से पढ़ता है और हर प्रयास की एक row लौटाता है (`table`)।"
+  },
+  "symbol/ocr_render_text": {
+   "fp": "f8a9b0de8e40",
+   "en": "Render a string with a built-in font and return it with the true bounding box of each character (`table`).",
+   "zh": "用内置字体绘制字符串,并连同每个字符的真实外接框一起返回(`table`)。",
+   "tw": "以內建字型繪製字串,並連同每個字元的真實外接框一起回傳(`table`)。",
+   "ko": "문자열을 내장 서체로 그리고 글자별 참 외접 상자와 함께 반환한다(`table`).",
+   "de": "Rendert eine Zeichenkette mit einer eingebauten Schrift und liefert sie mit dem wahren Rahmen jedes Zeichens (`table`).",
+   "hi": "string को built-in font से render करके हर character के सही bounding box के साथ लौटाता है (`table`)।"
+  },
+  "symbol/ocr_score": {
+   "fp": "da959c23f700",
+   "en": "Score a reading against the truth by Levenshtein alignment, counting misreads and rejects separately (`table`).",
+   "zh": "用 Levenshtein 对齐将读取结果与真值评分,误读与拒识分别计数(`table`)。",
+   "tw": "以 Levenshtein 對齊將讀取結果與真值評分,誤讀與拒識分別計數(`table`)。",
+   "ko": "판독 결과를 참값과 Levenshtein 정렬로 채점하고 오독과 기각을 따로 센다(`table`).",
+   "de": "Bewertet eine Lesung gegen die Wahrheit per Levenshtein-Ausrichtung und zählt Fehllesungen und Rückweisungen getrennt (`table`).",
+   "hi": "reading को truth से Levenshtein alignment द्वारा score करता है, misreads और rejects अलग गिनता है (`table`)।"
+  },
+  "symbol/ocr_segment_line": {
+   "fp": "bffe790c08ca",
+   "en": "Segment one text line into a bounding box per character (`table`).",
+   "zh": "将一行文字切分为每个字符的外接框(`table`)。",
+   "tw": "將一行文字切分為每個字元的外接框(`table`)。",
+   "ko": "한 줄의 문자를 글자별 외접 상자로 잘라낸다(`table`).",
+   "de": "Zerlegt eine Textzeile in einen Rahmen je Zeichen (`table`).",
+   "hi": "एक text line को हर character के bounding box में segment करता है (`table`)।"
+  },
+  "symbol/ocr_train": {
+   "fp": "92e8040d0f3e",
+   "en": "Render the font under nuisance variations and collect templates (features + labels) and the rejection thresholds (`table`).",
+   "zh": "在扰动下绘制字体,收集模板(特征 + 标签)与拒识阈值(`table`)。",
+   "tw": "在擾動下繪製字型,收集範本(特徵 + 標籤)與拒識閾值(`table`)。",
+   "ko": "서체를 교란과 함께 그려 템플릿(특징량 + 레이블)과 기각 임계값을 모은다(`table`).",
+   "de": "Rendert die Schrift unter Störvariationen und sammelt Vorlagen (Merkmale + Labels) sowie die Rückweisungsschwellen (`table`).",
+   "hi": "font को nuisance variations के साथ render करके templates (features + labels) और rejection thresholds इकट्ठा करता है (`table`)।"
+  },
+  "symbol/qr_decode_modules": {
+   "fp": "b21ee730c474",
+   "en": "Decode a QR module grid (no quiet zone, 1 = dark) and return the corrected codewords per block (`table`).",
+   "zh": "解码 QR 模块网格(无静区,1 = 暗)并返回每个块的纠正码字数(`table`)。",
+   "tw": "解碼 QR 模組格線(無靜區,1 = 暗)並回傳每個區塊的更正碼字數(`table`)。",
+   "ko": "QR 모듈 격자(정적 영역 없음, 1 = 어두움)를 복호하고 블록별 정정 부호어 수를 반환한다(`table`).",
+   "de": "Dekodiert ein QR-Modulraster (ohne Ruhezone, 1 = dunkel) und liefert die korrigierten Codewörter je Block (`table`).",
+   "hi": "QR module grid (quiet zone के बिना, 1 = dark) decode करके हर block में सुधारे गए codewords लौटाता है (`table`)।"
+  },
+  "symbol/qr_encode": {
+   "fp": "d4f7a47554ca",
+   "en": "Encode a string into a QR Code (Model 2) module grid and its module-to-codeword map (`table`).",
+   "zh": "将字符串编码为 QR Code(Model 2)的模块网格及模块到码字的对应(`table`)。",
+   "tw": "將字串編碼為 QR Code(Model 2)的模組格線及模組到碼字的對應(`table`)。",
+   "ko": "문자열을 QR Code(Model 2)의 모듈 격자와 모듈-부호어 대응으로 부호화한다(`table`).",
+   "de": "Kodiert eine Zeichenkette in ein QR-Code-Modulraster (Model 2) samt Modul-Codewort-Zuordnung (`table`).",
+   "hi": "string को QR Code (Model 2) module grid और module-to-codeword map में encode करता है (`table`)।"
+  },
+  "symbol/qr_locate": {
+   "fp": "bde2ad02d8d8",
+   "en": "Find a QR Code in an image and estimate the module-space to image homography (`table`).",
+   "zh": "在图像中找到 QR 码并估计模块空间到图像的单应变换(`table`)。",
+   "tw": "在影像中找到 QR 碼並估計模組空間到影像的單應變換(`table`)。",
+   "ko": "영상에서 QR을 찾고 모듈 공간 → 영상의 사영 변환을 추정한다(`table`).",
+   "de": "Findet einen QR-Code im Bild und schätzt die Homographie vom Modulraum ins Bild (`table`).",
+   "hi": "image में QR Code खोजकर module space से image तक का homography estimate करता है (`table`)।"
+  },
+  "symbol/qr_read": {
+   "fp": "1e709cba6a56",
+   "en": "Read a QR Code from an image: locate, sample, decode, and retry on the inverted image (`table`).",
+   "zh": "从图像读取 QR 码:定位 → 采样 → 解码,失败时反转明暗重试(`table`)。",
+   "tw": "從影像讀取 QR 碼:定位 → 取樣 → 解碼,失敗時反轉明暗重試(`table`)。",
+   "ko": "영상에서 QR을 읽는다: 위치 검출 → 표본화 → 복호, 실패하면 명암을 반전해 재시도(`table`).",
+   "de": "Liest einen QR-Code aus einem Bild: lokalisieren, abtasten, dekodieren, bei Fehlschlag invertiert erneut (`table`).",
+   "hi": "image से QR Code पढ़ता है: locate → sample → decode, विफल होने पर inverted image पर फिर कोशिश (`table`)।"
+  },
+  "symbol/qr_sample": {
+   "fp": "4e4976313479",
+   "en": "Sample the reflectance at QR module centres by bilinear interpolation and binarise with a global threshold (`table`).",
+   "zh": "用双线性插值采样 QR 模块中心的反射率,并以全局阈值二值化(`table`)。",
+   "tw": "以雙線性內插取樣 QR 模組中心的反射率,並以全域閾值二值化(`table`)。",
+   "ko": "QR 모듈 중심의 반사율을 쌍선형 보간으로 표본화하고 전역 임계값으로 2값화한다(`table`).",
+   "de": "Tastet die Reflexion in den QR-Modulmitten bilinear ab und binarisiert mit einer globalen Schwelle (`table`).",
+   "hi": "QR module centres पर reflectance को bilinear interpolation से sample करके global threshold से binarise करता है (`table`)।"
+  },
+  "symbol/read_barcode1d": {
+   "fp": "ae020c11f573",
+   "en": "Read a 1-D bar code from an image (`table`).",
+   "zh": "从图像读取一维条码(`table`)。",
+   "tw": "從影像讀取一維條碼(`table`)。",
+   "ko": "영상에서 1차원 바코드를 읽는다(`table`).",
+   "de": "Liest einen 1-D-Strichcode aus einem Bild (`table`).",
+   "hi": "image से 1-D bar code पढ़ता है (`table`)।"
+  },
+  "symbol/read_symbols_zxing": {
+   "fp": "90738cff2385",
+   "en": "Read every symbol (1-D / 2-D) in an image with zxing-cpp (`table`).",
+   "zh": "用 zxing-cpp 读取图像中的全部符号(一维 / 二维)(`table`)。",
+   "tw": "用 zxing-cpp 讀取影像中的全部符號(一維 / 二維)(`table`)。",
+   "ko": "zxing-cpp로 영상 속 모든 심볼(1-D / 2-D)을 읽는다(`table`).",
+   "de": "Liest mit zxing-cpp alle Symbole (1-D / 2-D) in einem Bild (`table`).",
+   "hi": "zxing-cpp से image के सभी symbols (1-D / 2-D) पढ़ता है (`table`)।"
+  },
+  "symbol/render_symbol": {
+   "fp": "d796ccebf78d",
+   "en": "Render a symbol (1-D widths or a 2-D module grid) as the reflectance image of a plane (`image2d`).",
+   "zh": "将符号(一维宽度或二维模块网格)绘制为平面的反射率图像(`image2d`)。",
+   "tw": "將符號(一維寬度或二維模組格線)繪製為平面的反射率影像(`image2d`)。",
+   "ko": "심볼(1-D 폭 또는 2-D 모듈 격자)을 평면의 반사율 영상으로 그린다(`image2d`).",
+   "de": "Rendert ein Symbol (1-D-Breiten oder 2-D-Modulraster) als Reflexionsbild einer Ebene (`image2d`).",
+   "hi": "symbol (1-D widths या 2-D module grid) को एक plane की reflectance image के रूप में render करता है (`image2d`)।"
+  },
+  "symbol/symbol_read": {
+   "fp": "39209b9491ee",
+   "en": "Read an image with the chosen reader and return ``{\"ok\", \"text\", \"error\"}`` (`table`).",
+   "zh": "用指定的读取器读取图像并返回 ``{\"ok\", \"text\", \"error\"}``(`table`)。",
+   "tw": "用指定的讀取器讀取影像並回傳 ``{\"ok\", \"text\", \"error\"}``(`table`)。",
+   "ko": "지정한 판독기로 영상을 읽고 ``{\"ok\", \"text\", \"error\"}``를 반환한다(`table`).",
+   "de": "Liest ein Bild mit dem gewählten Leser und liefert ``{\"ok\", \"text\", \"error\"}`` (`table`).",
+   "hi": "चुने हुए reader से image पढ़कर ``{\"ok\", \"text\", \"error\"}`` लौटाता है (`table`)।"
+  },
+  "symbol/symbol_read_pod": {
+   "fp": "ceefc8ada34d",
+   "en": "From a table of read trials, return the POD (hit = the true string was read) and the misread upper bound (`table`).",
+   "zh": "由读取试验表返回 POD(命中 = 读出真实字符串)及误读率上限(`table`)。",
+   "tw": "由讀取試驗表回傳 POD(命中 = 讀出真實字串)及誤讀率上限(`table`)。",
+   "ko": "판독 시행 표에서 POD(적중 = 참 문자열을 읽음)와 오독의 상한을 반환한다(`table`).",
+   "de": "Liefert aus einer Tabelle von Leseversuchen die POD (Treffer = wahre Zeichenkette gelesen) und die Fehllese-Obergrenze (`table`).",
+   "hi": "read trials की table से POD (hit = सही string पढ़ी गई) और misread की upper bound लौटाता है (`table`)।"
+  },
+  "symbol/symbol_read_trials": {
+   "fp": "5d8cc668dc76",
+   "en": "Capture and read the symbol ``trials`` times at each degradation level and return one row per attempt (`table`).",
+   "zh": "在每个退化水平下对符号拍摄并读取 ``trials`` 次,返回每次一行的结果表(`table`)。",
+   "tw": "在每個劣化水準下對符號拍攝並讀取 ``trials`` 次,回傳每次一列的結果表(`table`)。",
+   "ko": "열화량의 각 수준에서 심볼을 ``trials`` 회 촬상·판독하고 시도 1회 = 1행의 표를 반환한다(`table`).",
+   "de": "Nimmt das Symbol auf jeder Degradationsstufe ``trials``-mal auf, liest es und liefert eine Zeile je Versuch (`table`).",
+   "hi": "हर degradation level पर symbol को ``trials`` बार capture करके पढ़ता है और हर प्रयास की एक row लौटाता है (`table`)।"
   }
  }
 }

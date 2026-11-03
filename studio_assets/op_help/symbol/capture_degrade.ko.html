@@ -1,0 +1,31 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">capture_degrade — SYMBOL <code style="color:#22d3bf">symbol_capture</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.capture_degrade(image, *, defocus_px=0.0, motion_px=0.0, motion_deg=0.0, gauss_px=0.0, illum_slope=0.0, illum_deg=0.0, vignette=0.0, exposure=1.0, full_well_e=None, read_noise_e=0.0, bits=None, seed=0)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import symrender; symrender.capture_degrade(image, *, defocus_px=0.0, motion_px=0.0, motion_deg=0.0, gauss_px=0.0, illum_slope=0.0, illum_deg=0.0, vignette=0.0, exposure=1.0, full_well_e=None, read_noise_e=0.0, bits=None, seed=0)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opssymbol.get(&quot;capture_degrade&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
+<p>반사율 영상에 촬상 열화(조명, 흐림, 센서 잡음)를 가한다(<code style="color:#22d3bf">image2d</code>).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>Apply the capture chain to a reflectance image, in physical order:</p>
+<p style="margin:2px 0 2px 12px">1. illumination: <code style="color:#22d3bf">E = exposure · (1 + illum_slope · s) · (1 − vignette · ρ²)</code> with <code style="color:#22d3bf">s</code> in [−0.5, 0.5] across the image along <code style="color:#22d3bf">illum_deg</code> and <code style="color:#22d3bf">ρ</code> = radius / half diagonal (so <code style="color:#22d3bf">illum_slope = 0.4</code> means 40 % more light on one side than the other);</p>
+<p style="margin:2px 0 2px 12px">2. lens: defocus as a uniform disc of diameter <code style="color:#22d3bf">defocus_px</code> (the geometric blur circle <code style="color:#22d3bf">c = A·|Δz|/z&#x27;</code> in pixels), uniform motion over <code style="color:#22d3bf">motion_px</code> along <code style="color:#22d3bf">motion_deg</code>, and a Gaussian of standard deviation <code style="color:#22d3bf">gauss_px</code> (residual aberrations / diffraction), each area-integrated, borders replicated;</p>
+<p style="margin:2px 0 2px 12px">3. sensor (only if <code style="color:#22d3bf">full_well_e</code> is given): the irradiance 1.0 fills <code style="color:#22d3bf">full_well_e</code> electrons; Poisson shot noise, Gaussian read noise <code style="color:#22d3bf">read_noise_e</code> (electrons), saturation at full well, and <code style="color:#22d3bf">bits</code>-bit quantisation if given. Output = electrons / full_well_e, in [0, 1].</p>
+<p>Deterministic for a given <code style="color:#22d3bf">seed</code>. Without <code style="color:#22d3bf">full_well_e</code> the result is noise-free (<code style="color:#22d3bf">read_noise_e</code> must then be 0).</p>
+<p>空の入力(辺が 0)は <code style="color:#22d3bf">ValueError</code>。拒否(<code style="color:#22d3bf">ValueError</code>): 2-D でない、非有限、負のぼけ量、<code style="color:#22d3bf">|illum_slope| &gt;= 2</code>、<code style="color:#22d3bf">vignette</code> が [0, 1) の外、<code style="color:#22d3bf">full_well_e</code> &lt; 10、<code style="color:#22d3bf">read_noise_e</code> &lt; 0 または <code style="color:#22d3bf">full_well_e</code> 無しで &gt; 0、<code style="color:#22d3bf">bits</code> が 1..16 の外。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesymbol:symbol_reading">symbol_reading 패밀리 가이드</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
+<p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
+<p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
+<p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_symbol_lot_ocr">poc_symbol_lot_ocr</a> — <code style="color:#22d3bf">py -3.11 examples/poc_symbol_lot_ocr.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_symbol_package_1d">poc_symbol_package_1d</a> — <code style="color:#22d3bf">py -3.11 examples/poc_symbol_package_1d.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_symbol_part_dpm">poc_symbol_part_dpm</a> — <code style="color:#22d3bf">py -3.11 examples/poc_symbol_part_dpm.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">image2d</code> 를 입력으로 받는 것)</h3>
+<p><a style="color:#22d3bf" href="opsymbol:barcode_scan_profiles">barcode_scan_profiles</a> · <a style="color:#22d3bf" href="opsymbol:read_barcode1d">read_barcode1d</a> · <a style="color:#22d3bf" href="opsymbol:qr_locate">qr_locate</a> · <a style="color:#22d3bf" href="opsymbol:qr_sample">qr_sample</a> · <a style="color:#22d3bf" href="opsymbol:qr_read">qr_read</a> · <a style="color:#22d3bf" href="opsymbol:dm_locate">dm_locate</a> · <a style="color:#22d3bf" href="opsymbol:dm_sample">dm_sample</a> · <a style="color:#22d3bf" href="opsymbol:dm_read">dm_read</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">symbol_capture</code>)</h3>
+<p><a style="color:#22d3bf" href="opsymbol:render_symbol">render_symbol</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: symrender.py — SYMBOL 연산자 레지스트리. 이 op 노트는 <code style="color:#22d3bf">tools/opdocs.py md</code> 가 자동 생성합니다(직접 편집하지 마세요).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

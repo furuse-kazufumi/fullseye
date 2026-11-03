@@ -16,6 +16,7 @@
 <p>a से kernel size को 3/5/7/9 के 4 चरणों में से चुना जाता है (<code style="color:#22d3bf">(3,5,7,9)[min(3, int(a*4))]</code>)। b उपयोग नहीं होता। salt-and-pepper noise जैसे outlier noise के प्रति robust है, और Gaussian blur की तुलना में edges को बेहतर बचाता है।</p>
 <p><b>Border handling</b>: image के बाहर की हर चीज़ को background (0) माना जाता है (मापा गया; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>)।</p>
 <p><b>खाली frame (मापा गया)</b>: एक समान brightness वाली image देने पर <b>brightness चाहे जो हो, परिणाम खाली होता है (सभी pixels background 0)</b>। पूरी सफ़ेद हो या पूरी काली, एक जैसा व्यवहार होता है; केवल brightness से कुछ detect नहीं होता।</p>
+<p><b>उसी operation के दूसरे implementation (मापा गया; <code style="color:#22d3bf">docs/IMPL_DIFFERENTIAL.md</code>)</b>: एक ही input और एक ही a, b पर भीतरी अंतर (value range के अनुपात में; 5e-3 से कम = मेल) <code style="color:#22d3bf">cv_median</code> 0.99, <code style="color:#22d3bf">median</code> 6.5e-08 है। जो मेल नहीं खाते उनका कारण (knob mapping, window, border, quantisation, अलग परिभाषा) table में लिखा है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

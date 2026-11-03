@@ -13,6 +13,7 @@
 <p>*4 列目はカラー (H,W,3) の入力。この op は色を跨がずに扱える(色チャネルを 3 本目の空間軸として畳み込まない)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Richardson-Lucy deconvolution assuming a small Gaussian PSF (sigma = <code style="color:#22d3bf">RL_SIGMA</code>). <code style="color:#22d3bf">a</code> sets the iteration count n = 1 + round(a*14) (1..15); <code style="color:#22d3bf">b</code> is ignored. RL multiplicatively drives the estimate <code style="color:#22d3bf">u</code> so that <code style="color:#22d3bf">u (*) psf</code> matches the blurred measurement, sharpening real edges.</p>
+<p><b>同じ処理の別実装(実測、<code style="color:#22d3bf">docs/IMPL_DIFFERENTIAL.md</code>)</b>: 同じ入力・同じ a, b での内部の差(振れ幅に対する比。5e-3 未満が一致)は <code style="color:#22d3bf">xsk_richardson_lucy</code> 0.89。食い違う理由(つまみの写し方・窓・端・量子化・定義の違い)は表に書いてある。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

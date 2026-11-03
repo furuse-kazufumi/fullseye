@@ -1,14 +1,20 @@
-"""Measure LLM-visible text for a minimal discovery/plan/cards cycle."""
-import json, math, os
+"""Measure LLM-visible text for a minimal discovery/plan/cards cycle.
+
+    py -3.11 tools/measure_mcp_context.py           # docs/mcp_context_benchmark.json を書く
+    py -3.11 tools/measure_mcp_context.py --check   # 書かずに、commit 済みと一致するか(不一致で exit 1)
+    py -3.11 tools/measure_mcp_context.py --help    # 何も書かない
+
+★2026-11-03(完成度監査 A-10): 以前は引数を読まずに必ず書き直していて、``--help`` を渡しても
+``docs/mcp_context_benchmark.json`` が上書きされた。引数の解釈を重い import と測定より先に置き、
+``--check`` を足した。
+"""
+import argparse, json, math, os
 from types import SimpleNamespace
 from pathlib import Path
 
 ROOT=Path(__file__).resolve().parents[1]
+OUT=ROOT/"docs/mcp_context_benchmark.json"
 import sys
-sys.path.insert(0,str(ROOT))
-from fullseye.mcp.handles import HandleStore
-from fullseye.mcp.server import call_tool, handle_tools_list
-from fullseye.opsearch import known_sorts
 
 TASKS=[
  ("surface dent from reflected fringes",["image","image"],"normalmap","deflectometry_phase_to_slope"),
@@ -21,6 +27,11 @@ TASKS=[
 def tokens(value):
  return math.ceil(len(json.dumps(value,ensure_ascii=False,separators=(",",":")).encode("utf-8"))/4)
 def build():
+ # Heavy imports live here so that `--help` / a bad argument never loads the server.
+ if str(ROOT) not in sys.path: sys.path.insert(0,str(ROOT))
+ from fullseye.mcp.handles import HandleStore
+ from fullseye.mcp.server import call_tool, handle_tools_list
+ from fullseye.opsearch import known_sorts
  os.environ["FULLSEYE_MCP_PROFILE"]="minimal"
  schema=handle_tools_list({"profile":"minimal"})
  full_schema=handle_tools_list({"profile":"full"})
@@ -53,7 +64,22 @@ def build():
                           "minimal_tokens":schema["estimated_tokens"]},
          "target_tokens":2800,"tasks":rows,"recall_at_7":sum(r["expected_rank"] is not None for r in rows)/len(rows),
          "max_tokens":max(r["total_tokens"] for r in rows)}
+def render():
+ return json.dumps(build(),ensure_ascii=False,indent=2)+"\n"
+def main(argv=None):
+ ap=argparse.ArgumentParser(description=__doc__,formatter_class=argparse.RawDescriptionHelpFormatter)
+ ap.add_argument("--check",action="store_true",help="書かずに commit 済みと比べる(不一致で exit 1)")
+ a=ap.parse_args(argv)
+ text=render()
+ if a.check:
+  old=OUT.read_text(encoding="utf-8") if OUT.exists() else None
+  if old!=text:
+   print("drift: %s が今の測定と違う(py -3.11 tools/measure_mcp_context.py で書き直す)"%OUT)
+   return 1
+  print("ok: %s"%OUT)
+  return 0
+ OUT.write_text(text,encoding="utf-8",newline="\n")
+ print(OUT)
+ return 0
 if __name__=="__main__":
- out=ROOT/"docs/mcp_context_benchmark.json"
- out.write_text(json.dumps(build(),ensure_ascii=False,indent=2)+"\n",encoding="utf-8",newline="\n")
- print(out)
+ sys.exit(main())

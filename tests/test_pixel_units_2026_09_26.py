@@ -105,10 +105,16 @@ def test_elliptic_axis_returns_ra_rb_phi_in_pixels(h, w):
 
 
 def test_elliptic_axis_phi_follows_the_rotation():
-    """★角は列軸から。30 度回した矩形は 30 度(符号つき)を返す。"""
+    """★角は列軸から。30 度回した矩形は 30 度(符号つき)を返す。
+
+    ``ndi.rotate(+deg)`` は画面上で**反時計回り**に回す(右向きの線分の先端が上 = 行が減る方へ動く)。
+    HALCON の Phi は「mathematically positive」(gen_ellipse / gen_rectangle2 の説明、行は下向きの画像
+    座標で画面上の反時計回り)なので、+deg を返すのが正しい。2026-11-03 まではこの門が ``-deg`` を
+    固定していた(op の符号の誤りを門が写していた。同じ領域の orientation_region は +deg を返す)。
+    """
     for deg in (-40, -20, 0, 25, 40):
         got = np.rad2deg(_v("elliptic_axis", _rect(20, 80, rot=deg))[2])
-        diff = abs((got - (-deg) + 90) % 180 - 90)
+        diff = abs((got - deg + 90) % 180 - 90)
         assert diff < 3.0, "%d 度回した矩形で Phi=%.2f 度" % (deg, got)
 
 

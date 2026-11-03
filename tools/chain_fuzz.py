@@ -141,6 +141,48 @@ def _labels_2d(rng):
     return lab
 
 
+def _match_vector(rng):
+    """``match`` 型の種: 乱数の矩形の (面積 [px], 重心の行 [px], 重心の列 [px])。
+
+    2-D 登録簿の ``area_center`` と同じ並び。値は矩形から閉形式で決まる(面積 = h*w、
+    重心 = 角 + (辺 - 1) / 2)ので、取り出した成分を真値と照合できる。
+
+    ★渡された ``rng`` は**進めない**(2026-11-04)。種のプールは 1 本の乱数列から
+    型名の順(台帳の探針 ``ledger_contracts._run`` は sorted、連鎖ファズは辞書順)に
+    引くので、後から足した型が列を消費すると、それより後ろの型(mesh / sweep / video /
+    volseq / voxel …)の種が全部ずれ、W1 と無関係な既存 op の「効かないつまみ」判定が
+    10 件増え 5 件減った(PR #244 で実測)。値は ``rng`` の状態から決定的に導いた
+    子の乱数列で引く: 同じ状態なら同じ値、状態が違えば違う値、親の列は 1 つも進まない。
+    """
+    import hashlib
+    st = repr(rng.bit_generator.state).encode("utf-8")
+    sub = np.random.default_rng(int.from_bytes(hashlib.sha256(b"match:" + st).digest()[:8], "little"))
+    h, w = (int(v) for v in sub.integers(2, 12, size=2))
+    r0, c0 = (int(v) for v in sub.integers(0, 20, size=2))
+    return np.array([float(h * w), r0 + (h - 1) / 2.0, c0 + (w - 1) / 2.0])
+
+
+def _contour_xld(rng):
+    """``contour`` 型の種: 円を描いた XLD 輪郭の dict(``{"shape", "cs"}``、座標は (row, col))。
+
+    2-D 登録簿の ``threshold_sub_pix`` / ``edges_sub_pix`` の出口と同じ形。型つき台帳の中では
+    ``fit_circle_xld``(W2、2026-11-03)だけが ``contour`` を受け、台帳の側に産む op が無いので、
+    種が無いと到達できない(tests/test_chain_fuzz_minimize.py の不動点の門、2026-11-04 の統合で赤)。
+    半径と中心は真値として閉形式で決まる(円周上の点 + 0.05 px の雑音)。
+
+    ★``_match_vector`` と同じく渡された ``rng`` は**進めない**: 種のプールは 1 本の乱数列から
+    型名の順に引くので、後から足した型が列を消費すると、それより後ろの型の種が全部ずれる。
+    """
+    import hashlib
+    st = repr(rng.bit_generator.state).encode("utf-8")
+    sub = np.random.default_rng(int.from_bytes(hashlib.sha256(b"contour:" + st).digest()[:8], "little"))
+    r = float(sub.uniform(6.0, 14.0))
+    cy, cx = (float(v) for v in sub.uniform(16.0, 32.0, size=2))
+    t = np.linspace(0.0, 2.0 * np.pi, 48, endpoint=False)
+    pts = np.column_stack([cy + r * np.sin(t), cx + r * np.cos(t)]) + 0.05 * sub.standard_normal((48, 2))
+    return {"shape": (48, 48), "cs": [pts]}
+
+
 def _score_volume(rng):
     """ピークを 1 つ持つ異方性ガウスの相関 volume(サブボクセル精緻化の入力)。
 
@@ -415,6 +457,10 @@ def make_generators():
         # 不動点計算で実測: 434 op 中これ 1 件だけが blocked だった)。
         # 一様乱数ではピーク精緻化が意味を持たないので、異方性ガウス山にする
         "score": _score_volume,
+        # match = 2-D 登録簿の結果ベクトル(area_center = 面積・重心の行・列)。台帳側に
+        # 産む op が無く、reprconv.match_component(W1)が永久に未到達だった(2026-11-03)
+        "match": _match_vector,
+        "contour": _contour_xld,
         # 光子カウント列。既知距離の dToF 復路 + 背景光を Poisson 標本化した
         # もの = 実データと同じ形と統計(実測 shape (256,)、値域 [0, 303])
         "counts": _photon_counts,
@@ -5002,6 +5048,133 @@ def _b_speckle_reduction(pool, rng):
     return (), {"n_patterns": 4, "polarizations": 2, "cutoff": 0.5}
 
 
+def _ls_rig():
+    import lightsection as _ls
+    return _ls.light_section_rig(30.0, 200.0, 800.0, (96, 128))
+
+
+def _ls_profile(rng):
+    """光切断の種: 段差 + 溶接ビード型の盛り上がりの断面 (x, h) [mm]。"""
+    x = np.linspace(-6.0, 6.0, 241)
+    h = np.where(np.abs(x) < 2.0, float(rng.uniform(0.5, 2.0)), 0.0) + 0.6 * np.exp(-x * x / 2.0)
+    return np.column_stack([x, h])
+
+
+def _ls_image(rng):
+    """光条の一部(列 40〜59)を暗く(頂の 0.15 倍)した種: min_peak_rel を半分 / 倍にすると有効な列が変わる。"""
+    import lightsection as _ls
+    img = _ls.light_section_render(_ls_rig(), _ls_profile(rng), line_sigma_px=1.5,
+                                   noise=0.01, seed=int(rng.integers(0, 1 << 30)))
+    img[:, 40:60] *= 0.15
+    return img
+
+
+def _b_ls_center(pool, rng):
+    """本物の光条(プールの一様乱数には列ごとに 1 本の輝線が無い)。"""
+    return (_ls_image(rng),), {}
+
+
+def _b_light_section_rig(pool, rng):
+    return (), {"theta_deg": float(rng.uniform(10.0, 60.0)), "image_shape": (96, 128)}
+
+
+def _b_light_section_targets(pool, rng):
+    return (_ls_rig(), [0.0, float(rng.uniform(1.0, 4.0))]), {}
+
+
+def _b_light_section_render(pool, rng):
+    return (_ls_rig(), _ls_profile(rng)), {"seed": int(rng.integers(0, 1 << 30))}
+
+
+def _b_light_plane_calibrate(pool, rng):
+    import lightsection as _ls
+    rig = _ls_rig()
+    hs = [0.0, float(rng.uniform(1.0, 3.0)), float(rng.uniform(3.5, 6.0))]
+    x = np.linspace(-6.0, 6.0, 121)
+    cl = [_ls.laser_line_center_gauss(_ls.light_section_render(rig, np.column_stack([x, np.full_like(x, h)])))
+          for h in hs]
+    return (cl, _ls.light_section_targets(rig, hs), rig["K"]), {}
+
+
+def _b_light_section_profile(pool, rng):
+    import lightsection as _ls
+    return (_ls.laser_line_center_gauss(_ls_image(rng)), _ls_rig()), {}
+
+
+def _b_light_section_scan(pool, rng):
+    return ([_ls_image(rng) for _ in range(3)], _ls_rig()), {"step_mm": (0.0, 0.2, 0.0)}
+
+
+def _b_light_section_height_map(pool, rng):
+    return ([_ls_image(rng) for _ in range(3)], _ls_rig()), {}
+
+
+def _b_light_section_speckle_floor(pool, rng):
+    return (), {"n_trials": 2, "n_columns": 128, "n_rows": 64, "line_width_um": 16.0,
+                "seed": int(rng.integers(0, 1 << 30))}
+
+
+def _b_light_section_uncertainty_budget(pool, rng):
+    return (), {"noise_rel": float(rng.uniform(0.0, 0.1)), "calib_rms_um": 0.5}
+
+
+def _b_light_section_floor_sweep(pool, rng):
+    return ("sin_theta", [0.4, 0.8]), {"n_trials": 2, "n_columns": 128, "n_rows": 64,
+                                       "line_width_um": 16.0}
+
+
+def _hdr_scene(rng, h=24, w=32):
+    """HDR の種: 4 桁にわたる放射輝度の傾斜 [光子 / 時間の単位]。"""
+    xx = np.linspace(0.0, 1.0, w)[None, :] * np.ones((h, 1))
+    return 50.0 * 10.0 ** (4.0 * xx) * (1.0 + 0.1 * rng.random((h, w)))
+
+
+_HDR_T = [0.01, 0.04, 0.16, 0.64, 2.56]
+
+
+def _hdr_series(rng, gamma=1.0):
+    import hdrfusion as _hf
+    return _hf.hdr_exposure_series_simulate(_hdr_scene(rng), _HDR_T, gamma=gamma,
+                                            seed=int(rng.integers(0, 1 << 30)))
+
+
+def _b_camera_response_debevec(pool, rng):
+    return (_hdr_series(rng, 2.2), _HDR_T), {}
+
+
+def _b_camera_response_robertson(pool, rng):
+    # max_pixels を画素数(24×32 = 768)より少なく、tol を反復の途中で効く大きさに: どちらのノブも出力を動かす
+    return (_hdr_series(rng, 2.2), _HDR_T), {"max_pixels": 300, "tol": 1e-3}
+
+
+def _b_camera_response_linear(pool, rng):
+    return (), {"levels": 256, "dark_offset_dn": 4.0, "gain_dn_per_unit": 0.06}
+
+
+def _b_hdr_merge(pool, rng):
+    """飽和の近くの段を含む列(放射輝度を 5 倍): saturation_margin が除く段が実際にある。"""
+    import hdrfusion as _hf
+    imgs = _hf.hdr_exposure_series_simulate(5.0 * _hdr_scene(rng), _HDR_T, seed=int(rng.integers(0, 1 << 30)))
+    return (imgs, _HDR_T), {"response": _hf.camera_response_linear(256, 4.0, 0.06), "weight": "linear"}
+
+
+def _b_exposure_fusion_mertens(pool, rng):
+    return (_hdr_series(rng),), {}
+
+
+def _b_hdr_exposure_series_simulate(pool, rng):
+    return (_hdr_scene(rng),), {"exposures": _HDR_T, "seed": int(rng.integers(0, 1 << 30))}
+
+
+def _b_hdr_radiance_error(pool, rng):
+    s = _hdr_scene(rng)
+    return (s * (1.0 + 0.05 * rng.standard_normal(s.shape)) ** 2, s), {}
+
+
+def _b_hdr_dynamic_range(pool, rng):
+    return ([1.0, 4.0],), {"n_frames": 64, "n_levels": 24}
+
+
 def _sfp_dome(rng, h=24):
     """偏光からの形状復元の種: 凸のドーム(球冠)の解析的な法線と mask。
 
@@ -7266,6 +7439,122 @@ def _b_symmetry_comparison(pool, rng):
     image = images[int(rng.integers(len(images)))]
     model = {"kind": "reflection", "angle_deg": 90.0, "offset_px": 0.0}
     return (image, model), {}
+# --- 光学式 3D センサの仮想受入試験(opsacceptance、2026-11-03)。小さいセンサ(120x160)で速く。 --- #
+#: 族の共通の真値: 既定の配置(400x300x300 mm、z = 800 mm、球 25 mm)を 120x160 の理想センサで撮る。
+_ACC_SENSOR = {"kind": "ideal", "shape": (120, 160), "fx": 225.0, "fy": 225.0}
+_ACC_MPE = {"pf": 0.5, "ps": 0.2, "sd": 0.2, "f": 0.5}
+
+
+def _acc_sphere(seed, center=(0.0, 0.0, 800.0), radius=12.5):
+    rr = np.random.default_rng(seed)
+    u = rr.normal(size=(400, 3))
+    u /= np.linalg.norm(u, axis=1)[:, None]
+    return np.asarray(center, float) + u * (radius + 0.01 * rr.standard_normal((400, 1)))
+
+
+def _b_acc_probe(pool, rng):
+    return (_acc_sphere(1), 25.0), {}
+
+
+def _b_acc_spacing(pool, rng):
+    return (_acc_sphere(2), _acc_sphere(3, (300.0, 0.0, 800.0)), 300.0), {}
+
+
+def _b_acc_flat(pool, rng):
+    x, y = np.meshgrid(np.linspace(-50, 50, 21), np.linspace(-30, 30, 13))
+    z = 900.0 + 0.02 * np.cos(2 * np.pi * x / 40.0) + 0.01 * np.random.default_rng(4).standard_normal(x.shape)
+    return (np.column_stack([x.ravel(), y.ravel(), z.ravel()]),), {}
+
+
+def _b_acc_verdict(pool, rng):
+    return ({"pf": [0.1, 0.3], "ps": [-0.05], "sd": [0.1, -0.25, 0.02], "f": [0.2]}, dict(_ACC_MPE)), {}
+
+
+def _b_acc_scan(pool, rng):
+    import acceptance3d as _a
+    return (dict(_ACC_SENSOR), _a.acceptance_layout()["bars"][0]), {}
+
+
+def _b_acc_virtual(pool, rng):
+    return (dict(_ACC_SENSOR),), {}
+
+
+def _b_acc_budget(pool, rng):
+    return ({**_ACC_SENSOR, "kind": "triangulation"}, {"scale": {"range_scale": 1.001}}, dict(_ACC_MPE)), {}
+
+
+# --- 真値つきのカメラ校正(opscalib の calib_lm、2026-11-03)。小さい板(5x4)と小さい画像(120x160)。 --- #
+_CLM_K = np.array([[200.0, 0.0, 79.5], [0.0, 200.0, 59.5], [0.0, 0.0, 1.0]])
+_CLM_D = np.array([-0.1, 0.01, 0.0, 0.0, 0.0])
+
+
+def _clm_pose(rx, ry, rz, t):
+    import camera as _cam
+    P = np.eye(4)
+    P[:3, :3] = _cam.rodrigues([rx, ry, rz])
+    P[:3, 3] = t
+    return P
+
+
+_CLM_POSES = [(0.3, -0.2, 0.05, (-20, -15, 250)), (-0.25, 0.3, -0.1, (-20, -15, 260)),
+              (0.1, 0.35, 0.2, (-20, -15, 240)), (-0.3, -0.2, 0.0, (-20, -15, 250))]
+
+
+def _clm_views(right=False):
+    import calib_lm as _cl
+    out = []
+    for rx, ry, rz, t in _CLM_POSES:
+        P = _clm_pose(rx, ry, rz, t)
+        if right:
+            Q = _clm_pose(0.0, 0.05, 0.0, (-30.0, 0.0, 0.0))
+            P = Q @ P
+        out.append(_cl.sim_checkerboard((5, 4), 10.0, _CLM_K, _CLM_D, P, (120, 160), supersample=1)["corners"])
+    return out
+
+
+def _clm_cal():
+    import calib_lm as _cl
+    v = _clm_views()
+    rr = np.random.default_rng(7)
+    return _cl.camera_calibration_lm(_cl.checkerboard_points((5, 4), 10.0), [x + rr.normal(0, 0.1, x.shape) for x in v])
+
+
+def _b_clm_points(pool, rng):
+    return ((5, 4), 10.0), {}
+
+
+def _b_clm_sim(pool, rng):
+    return ((5, 4), 10.0, _CLM_K, _CLM_D, _clm_pose(*_CLM_POSES[0][:3], _CLM_POSES[0][3]), (120, 160)), \
+        {"supersample": 2}
+
+
+def _b_clm_find(pool, rng):
+    import calib_lm as _cl
+    P = _clm_pose(*_CLM_POSES[0][:3], _CLM_POSES[0][3])
+    return (_cl.sim_checkerboard((5, 4), 10.0, _CLM_K, _CLM_D, P, (120, 160), supersample=2)["image"], (5, 4)), {}
+
+
+def _b_clm_calibrate(pool, rng):
+    import calib_lm as _cl
+    return (_cl.checkerboard_points((5, 4), 10.0), _clm_views()), {}
+
+
+def _b_clm_stereo(pool, rng):
+    import calib_lm as _cl
+    return (_cl.checkerboard_points((5, 4), 10.0), _clm_views(), _clm_views(right=True)), {}
+
+
+def _b_clm_error_map(pool, rng):
+    return (_clm_cal(), _CLM_K, _CLM_D, (120, 160)), {}
+
+
+def _b_clm_uncertainty(pool, rng):
+    return (_clm_cal(), (120, 160)), {}
+
+
+def _b_clm_next(pool, rng):
+    return (_clm_cal(), [_clm_pose(0.2, 0.2, 0.0, (-20, -15, 250)), _clm_pose(0.0, 0.0, 0.0, (-20, -15, 400))],
+            (120, 160)), {}
 
 
 OP_ARG_BUILDERS = {
@@ -7317,6 +7606,29 @@ OP_ARG_BUILDERS = {
     "laser_line_coherent": _b_laser_line_coherent,
     "triangulation_speckle_limit": _b_triangulation_speckle_limit,
     "speckle_reduction": _b_speckle_reduction,
+    # --- 光切断(本物の光条・装置の幾何・既知の高さの的から組む) ------------- #
+    "laser_line_center_centroid": _b_ls_center,
+    "laser_line_center_gauss": _b_ls_center,
+    "laser_line_center_steger": _b_ls_center,
+    "light_section_rig": _b_light_section_rig,
+    "light_section_targets": _b_light_section_targets,
+    "light_section_render": _b_light_section_render,
+    "light_plane_calibrate": _b_light_plane_calibrate,
+    "light_section_profile": _b_light_section_profile,
+    "light_section_scan": _b_light_section_scan,
+    "light_section_height_map": _b_light_section_height_map,
+    "light_section_speckle_floor": _b_light_section_speckle_floor,
+    "light_section_uncertainty_budget": _b_light_section_uncertainty_budget,
+    "light_section_floor_sweep": _b_light_section_floor_sweep,
+    # --- HDR・露出融合(EMVA 1288 のセンサで撮った本物の露出の列から組む) ---- #
+    "camera_response_debevec": _b_camera_response_debevec,
+    "camera_response_robertson": _b_camera_response_robertson,
+    "camera_response_linear": _b_camera_response_linear,
+    "hdr_merge": _b_hdr_merge,
+    "exposure_fusion_mertens": _b_exposure_fusion_mertens,
+    "hdr_exposure_series_simulate": _b_hdr_exposure_series_simulate,
+    "hdr_radiance_error": _b_hdr_radiance_error,
+    "hdr_dynamic_range": _b_hdr_dynamic_range,
     # --- 偏光からの形状復元(凸のドームの解析的な法線から組む) --------------- #
     "sfp_dolp_model": _b_sfp_dolp_model,
     "dolp_to_zenith": _b_dolp_to_zenith,
@@ -7837,6 +8149,21 @@ OP_ARG_BUILDERS = {
     "vector_to_similarity": _b_calib_fit2d,
     "hom_vector_to_proj_hom_mat2d": _b_calib_fit2d,
     "vector_angle_to_rigid": _b_calib_angle_rigid,
+    "checkerboard_points": _b_clm_points,
+    "sim_checkerboard": _b_clm_sim,
+    "find_checkerboard_corners": _b_clm_find,
+    "camera_calibration_lm": _b_clm_calibrate,
+    "stereo_calibration_lm": _b_clm_stereo,
+    "calibration_error_map": _b_clm_error_map,
+    "calibration_uncertainty_map": _b_clm_uncertainty,
+    "calibration_next_pose": _b_clm_next,
+    "sphere_probing_error": _b_acc_probe,
+    "sphere_spacing_error": _b_acc_spacing,
+    "plane_flatness_error": _b_acc_flat,
+    "acceptance_verdict": _b_acc_verdict,
+    "acceptance_scan": _b_acc_scan,
+    "virtual_acceptance_test": _b_acc_virtual,
+    "acceptance_error_budget": _b_acc_budget,
     "residue_integer_crt": _b_residue_int,
     "residue_crt": _b_residue_real,
     "residue_fault_locate": _b_residue_real,
@@ -7973,6 +8300,14 @@ OP_ARG_BUILDERS = {
 #: gaussian_beam はウエストで wavefront_radius = inf(平面波面の曲率半径)。
 #: どちらも有限の逆数(curvature_per_mm)や bool を併せて返す。
 NONFINITE_BY_CONTRACT_OPTICS = {
+    # lightsection(2026-11-03): 中心が取れない列は row / col が NaN で valid = False(docstring どおり。
+    #   0 や最大の行で埋めると「測れた」に化ける)。高さ地図の NaN = 測れない(triangulate_column と同じ約束)。
+    "laser_line_center_centroid", "laser_line_center_gauss", "laser_line_center_steger",
+    "light_section_height_map",
+    # GUM の自由度: 閉形式の成分は dof = inf(spc.gum_expanded の約束「既知の定数は numpy.inf」)。
+    "light_section_uncertainty_budget",
+    # hdrfusion: 逆応答が 0 以下の段(オフセットより下)は g = ln X が NaN(inverse は有限で負のまま運ぶ)。
+    "camera_response_linear",
     "depth_of_field",
     "gaussian_beam",
     # worst_trial preserves physical infinite planes/object distance.
@@ -8256,6 +8591,8 @@ TYPE_CHECKS = {
     # で落ちる — 第 3 波でプール汚染として実測)
     "measurement": lambda v: isinstance(v, (int, float, np.floating, np.integer)),
     "indices": lambda v: isinstance(v, np.ndarray) and v.ndim == 1,
+    # 2026-11-03: 事象の位置の列(point_spectrum が受ける)。indices_to_positions が産む
+    "positions": lambda v: isinstance(v, np.ndarray) and v.ndim == 1 and v.dtype.kind == "f",
     # coordgrid = ボクセル中心の座標場 (nx,ny,nz,3)。points((N,3))とは**別 sort**:
     # 点群を sphere_sdf に渡すと (N,) が返り、宣言の 3-D 場にならない(型の嘘)。
     "coordgrid": lambda v: isinstance(v, np.ndarray) and v.ndim == 4 and v.shape[3] == 3,
@@ -8375,6 +8712,9 @@ TYPE_CHECKS = {
     # score = ピークを持つ相関 volume。voxel と同じ 3-D だが、意味は「マッチの
     # 良さ」でありサブボクセル精緻化の入力になる
     "score": lambda v: isinstance(v, np.ndarray) and v.ndim == 3,
+    # match = 1-D の有限な結果ベクトル(長さ >= 1)
+    "match": lambda v: (isinstance(v, np.ndarray) and v.ndim == 1 and v.size >= 1
+                        and bool(np.all(np.isfinite(v)))),
     # counts = 時間 bin で添字づけられた**非負**の光子カウント列。既存 signal と
     # 構造は同じだが、signal プール(正弦波 = 負値あり)を渡すと必ず CONTRACT に
     # なり photon 族が一度も実行されない(実測 7/17 未到達)。jones/stokes と同じ判断

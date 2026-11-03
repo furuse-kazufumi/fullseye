@@ -1,0 +1,29 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">pairs_peak_x — REPRCONV <code style="color:#22d3bf">exit</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">measurement</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pairs_peak_x(pairs, x_min=None, x_max=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import reprconv; reprconv.pairs_peak_x(pairs, x_min=None, x_max=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsreprconv.get(&quot;pairs_peak_x&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>pairs <code style="color:#22d3bf">pairs (x, y)</code> → वह x जहाँ y अधिकतम है (samples के बीच parabolic interpolation) <code style="color:#22d3bf">measurement</code>।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p><code style="color:#22d3bf">spectrum</code> の <code style="color:#22d3bf">(freqs, magnitude)</code> から主周波数、<code style="color:#22d3bf">surface_psd</code> の (周波数, PSD) から卓越波長の逆数を読む、のように <b>対の列のピークの位置</b>を返す。最大の標本と両隣の 3 点に放物線を当て、頂点の x を返す(端の標本が最大のときは補間せずその x)。<b>補間の偏りは窓しだい</b>: 窓を掛けない(矩形)正弦波の振幅スペクトルでは最大 0.25 bin ほど(実測 1 Hz 刻みで 123.4 Hz → 123.18、123.25 → 123.05、整数と半整数の周波数では 1e-2 bin 以下)。細かく要るなら窓を掛けた信号か <code style="color:#22d3bf">peak_subbin</code> を使う。<code style="color:#22d3bf">x_min</code> / <code style="color:#22d3bf">x_max</code> で探す範囲を切る —— <b>スペクトルでは DC(x = 0)が最大になりやすい</b>ので、主周波数を探すなら <code style="color:#22d3bf">x_min</code> を 0 より大きくする。y の同点は最初の標本。</p>
+<p>Args:</p>
+<p>pairs: (n, 2) か 2-tuple の (x, y)。x は昇順。</p>
+<p>x_min, x_max: 探す x の範囲(含む)。None で端まで。</p>
+<p>Returns:</p>
+<p>float(ピークの x)。</p>
+<p>Raises:</p>
+<p>ValueError: 対でない / x が昇順でない / 範囲に標本が無い / 非有限。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:type_connectivity_tour">type_connectivity_tour</a> — <code style="color:#22d3bf">py -3.11 examples/type_connectivity_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">measurement</code> को input के रूप में लेते हैं)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">exit</code>)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:tokens_to_matrix">tokens_to_matrix</a> · <a style="color:#22d3bf" href="opreprconv:pose_to_matrix">pose_to_matrix</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: reprconv.py — REPRCONV operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -49,6 +49,8 @@ Unsharp mask. ★出口で [0,1] に clip する(2026-09-02)。
 
 **端の扱い**: 端画素を重複させて折り返す (d c b a | a b c d、scipy の既定 ``reflect``)(2026-09-16 に実測して記録)。
 
+**同じ処理の別実装(実測、`docs/IMPL_DIFFERENTIAL.md`)**: 同じ入力・同じ a, b での内部の差(振れ幅に対する比。5e-3 未満が一致)は `xkor_unsharp` 0.19。食い違う理由(つまみの写し方・窓・端・量子化・定義の違い)は表に書いてある。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_smoothing_rank ファミリ ガイド](../guides/gallery2d_smoothing_rank.md)

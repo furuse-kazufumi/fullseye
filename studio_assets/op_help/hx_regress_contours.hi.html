@@ -16,6 +16,7 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> उपयोग नहीं होते।</p>
 <p style="margin:2px 0 2px 12px">• कोई valid contour न हो तो 0.0 (&quot;perfect straight line&quot; से अलग नहीं पहचाना जा सकता)।</p>
 <p>जितना छोटा, उतना सीधा। line का slope या position खुद नहीं लौटाया जाता (fit का परिणाम चाहिए तो <code style="color:#22d3bf">fit_line_contours</code>)। polyline के रूप में corners की संख्या देखनी हो तो पहले <code style="color:#22d3bf">hx_split_contours</code> से split करके segments गिनें। 2 या कम points वाले contour evaluation से बाहर रहते हैं। केवल 1 contour के लिए इसी तरह का measure <code style="color:#22d3bf">xg_regress_contours</code> है।</p>
+<p><b>उसी operation के दूसरे implementation (मापा गया; <code style="color:#22d3bf">docs/IMPL_DIFFERENTIAL.md</code>)</b>: एक ही input और एक ही a, b पर भीतरी अंतर (value range के अनुपात में; 5e-3 से कम = मेल) <code style="color:#22d3bf">xg_regress_contours</code> 1 है। जो मेल नहीं खाते उनका कारण (knob mapping, window, border, quantisation, अलग परिभाषा) table में लिखा है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

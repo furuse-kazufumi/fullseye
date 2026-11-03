@@ -17,6 +17,7 @@
 <p>非锐化掩蔽。★出口处 clip 到 [0,1] (2026-09-02)。</p>
 <p><code style="color:#22d3bf">v + k*(v - blur)</code> 按定义会产生过冲(实测 min=-0.1499 / max=+1.1499)。<code style="color:#22d3bf">_apply</code> 在各级之间施加相同的 clip，因此 <b>流水线结果逐位不变</b>，但只有单独调用 <code style="color:#22d3bf">fullseye.apply</code> 的路径会输出原始值，在违反 <code style="color:#22d3bf">image</code> 的 [0,1] 约定的状态下保存就会被压成黑/白。GPU 端(<code style="color:#22d3bf">accel._unsharp</code>)也有相同的 clip。</p>
 <p><b>边界处理</b>：重复边界像素并镜像折返 (d c b a | a b c d，scipy 的默认 <code style="color:#22d3bf">reflect</code>)(2026-09-16 实测并记录)。</p>
+<p><b>同一处理的其他实现（实测，<code style="color:#22d3bf">docs/IMPL_DIFFERENTIAL.md</code>）</b>：在相同输入、相同 a、b 下，内部差（相对于取值范围之比；小于 5e-3 视为一致）为 <code style="color:#22d3bf">xkor_unsharp</code> 0.19。不一致的原因（旋钮映射、窗口、边界、量化、定义不同）写在表中。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

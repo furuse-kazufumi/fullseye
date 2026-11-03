@@ -16,6 +16,7 @@
 <p>Bilateral filter (edge बचाने वाली smoothing)। <code style="color:#22d3bf">kornia.filters.bilateral_blur</code> को 5x5 kernel से call करता है।</p>
 <p>a spatial sigma (<code style="color:#22d3bf">1.0 + 3.0 * a</code>, range 1.0–4.0) sweep करता है, b lightness दिशा में sigma (<code style="color:#22d3bf">0.05 + 0.4 * b</code>, range 0.05–0.45)। चूँकि केवल निकट मानों वाले pixels ही मिलाए जाते हैं, smoothing के दौरान edges सुरक्षित रहते हैं।</p>
 <p><b>Border handling</b>: किनारे के pixel को दोहराए बिना mirror होता है (d c b | a b c d, OpenCV का <code style="color:#22d3bf">BORDER_REFLECT_101</code>) (मापा गया; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>)।</p>
+<p><b>उसी operation के दूसरे implementation (मापा गया; <code style="color:#22d3bf">docs/IMPL_DIFFERENTIAL.md</code>)</b>: एक ही input और एक ही a, b पर भीतरी अंतर (value range के अनुपात में; 5e-3 से कम = मेल) <code style="color:#22d3bf">bilateral</code> 2.7e-07, <code style="color:#22d3bf">cv_bilateral</code> 0.055 है। जो मेल नहीं खाते उनका कारण (knob mapping, window, border, quantisation, अलग परिभाषा) table में लिखा है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

@@ -123,6 +123,8 @@ with warnings.catch_warnings():
         sem_metal_layer_cache, sem_metal_layer_root, sem_metal_layer_pairs,
         sem_metal_layer_credit,
         deformreg, warp_by_field, demons_register, field_magnitude, residual_ssd,
+        synthetic_scene, warp_homography, corner_error, condition_homography,
+        warp_parametric, synthesize_moving, smooth_test_field,
         videops, temporal_mean, temporal_median, temporal_std, temporal_max,
         temporal_min, frame_difference, background_subtraction, temporal_gradient,
         motion_energy, moving_average, spatiotemporal_gaussian, spatiotemporal_sobel,
@@ -196,6 +198,7 @@ with warnings.catch_warnings():
         # 波動 —— 膜の固有モード・干渉・回折(2026-09-23)
         wave_membrane_mode, wave_mode_frequencies, wave_nodal_lines,
         wave_two_slit, wave_fringe_period, wave_grating_orders,
+        wave_dominant_frequency,
         # 力学系 —— 積む・断面・指数・分岐(2026-09-23)
         ode_flow_states, ode_vector_field_grid, dynsys_poincare_section,
         dynsys_lyapunov_spectrum, dynsys_bifurcation_map,
@@ -971,6 +974,8 @@ __all__ = [
     "spec_mnf", "spec_unmix", "spec_endmembers_ppi", "spec_continuum_removal",
     "spec_pansharpen", "spec_decorrelation_stretch", "spec_fuse",
     "deformreg", "warp_by_field", "demons_register", "field_magnitude", "residual_ssd",
+    "synthetic_scene", "warp_homography", "corner_error", "condition_homography",
+    "warp_parametric", "synthesize_moving", "smooth_test_field",
     "videops", "temporal_mean", "temporal_median", "temporal_std", "temporal_max",
     "temporal_min", "frame_difference", "background_subtraction", "temporal_gradient",
     "motion_energy", "moving_average", "spatiotemporal_gaussian", "spatiotemporal_sobel",
@@ -1041,6 +1046,7 @@ __all__ = [
     # 波動と力学系(2026-09-23)
     "wave_membrane_mode", "wave_mode_frequencies", "wave_nodal_lines",
     "wave_two_slit", "wave_fringe_period", "wave_grating_orders",
+    "wave_dominant_frequency",
     "ode_flow_states", "ode_vector_field_grid", "dynsys_poincare_section",
     "dynsys_lyapunov_spectrum", "dynsys_bifurcation_map",
     "dynsys_correlation_dimension",

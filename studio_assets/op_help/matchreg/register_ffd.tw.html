@@ -1,0 +1,47 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">register_ffd — MATCHREG <code style="color:#22d3bf">intensityreg</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.register_ffd(fixed, moving, grid_spacing=8, levels=None, max_iter=150, reg_weight=1.0, normalize=True, init_flow2d=None, membrane_weight=0.0, min_coarse_spacing=2.0)</code>(要直接呼叫實作,<code style="color:#22d3bf">import intensityreg; intensityreg.register_ffd(fixed, moving, grid_spacing=8, levels=None, max_iter=150, reg_weight=1.0, normalize=True, init_flow2d=None, membrane_weight=0.0, min_coarse_spacing=2.0)</code>;從台帳取用則 <code style="color:#22d3bf">opsmatchreg.get(&quot;register_ffd&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>以三次 B 樣條自由形變(FFD)將 moving 非剛性地對齊到 fixed。→ table(<code style="color:#22d3bf">kind=&quot;registration&quot;</code>)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>変形を <code style="color:#22d3bf">grid_spacing</code> px 間隔の制御格子の係数 <code style="color:#22d3bf">C</code> で表し(Rueckert et al. 1999)、場は分離可能な行列積 <code style="color:#22d3bf">w = By C Bxᵀ</code>(<code style="color:#22d3bf">By</code>・<code style="color:#22d3bf">Bx</code> は 3 次 B-spline の基底行列)。目的は <code style="color:#22d3bf">mean((M(p + w) - F)²) + reg_weight · 曲げの罰</code>(制御格子の 2 階差分の 2 乗和、<code style="color:#22d3bf">∂²/∂y²</code>・ <code style="color:#22d3bf">∂²/∂x²</code>・<code style="color:#22d3bf">2 ∂²/∂x∂y</code>)、勾配は <code style="color:#22d3bf">Byᵀ (2 r ∇M / N) Bx</code> の解析式。最適化は numpy の L-BFGS を粗から細のピラミッドで(段を上がるたびに場を 2 倍して細かい基底へ最小二乗で写す)。</p>
+<p>demons(<code style="color:#22d3bf">deformreg.demons_register</code>)との違い: demons は画素ごとの場をガウスでならす(自由度 2HW)、FFD は制御格子の自由度 <code style="color:#22d3bf">2 · ny · nx</code> しか持たず、格子より細かい変形は表せない代わりに、模様の無い所でも場が格子の補間で埋まる。どちらが良いかは被写体次第で、<code style="color:#22d3bf">register_accuracy_map</code> が同じ真値で両方を測れる。</p>
+<p>Args:</p>
+<p>fixed: 基準の 2-D 画像。</p>
+<p>moving: 合わせる 2-D 画像(fixed と同じ形)。</p>
+<p>grid_spacing: 制御点の間隔 [px] (全解像で)。</p>
+<p>levels: ピラミッドの段数。<code style="color:#22d3bf">None</code> なら最も粗い段が 16 px 以上になる範囲で最大 3 段。</p>
+<p>max_iter: 段ごとの L-BFGS の反復の上限。</p>
+<p>reg_weight: 曲げの罰の重み(0 で無し)。罰は場の 2 階微分 [1/px] の 2 乗の制御点平均なので、</p>
+<p>格子間隔を変えても効きが変わらない。</p>
+<p>normalize: 2 枚とも平均 0・分散 1 にしてから比べる(明るさのアフィンな違いを消す。SSD のまま)。</p>
+<p>init_flow2d: 初期の場(<code style="color:#22d3bf">(2,H,W)</code>、出力と同じ向き)。<code style="color:#22d3bf">None</code> なら 0。</p>
+<p>membrane_weight: 1 階微分の 2 乗(膜のエネルギー)の重み(既定 0 = Rueckert 1999 どおり曲げだけ)。</p>
+<p>★曲げの罰は一様な傾き(伸び・剪断)を罰しないので、<b>模様の無い所では場が真の振幅の数倍まで暴れうる</b>(<code style="color:#22d3bf">examples/poc_sheet_deformation_ffd.py</code> の 6b 節: 余白で最大 34 px、真値 1.5 px)。</p>
+<p>0.1 でそれが 3.6 px に収まる一方、模様のある所の本物の傾きも罰するので、滑らかな大きな場では</p>
+<p>精度が落ちる(<code style="color:#22d3bf">tests/test_intensityreg.py</code>)。両立しないので既定は 0 のまま。</p>
+<p>min_coarse_spacing: 粗い段での制御点の間隔の下限 [その段の px]。</p>
+<p>Returns:</p>
+<p>dict(<code style="color:#22d3bf">kind=&quot;registration&quot;</code>, <code style="color:#22d3bf">method=&quot;ffd&quot;</code>)。<code style="color:#22d3bf">warp=None</code>、<code style="color:#22d3bf">flow2d</code> (2,H,W) の <code style="color:#22d3bf">(dy, dx)</code>、</p>
+<p><code style="color:#22d3bf">metric_name=&quot;rms_residual&quot;</code>(正規化後の残差の rms、罰を含まない)、<code style="color:#22d3bf">grid_shape</code>(制御格子)、</p>
+<p><code style="color:#22d3bf">grid_spacing</code>。他の鍵は <code style="color:#22d3bf">register_ecc</code> と同じ。</p>
+<p>限界: 微分同相(折り返し無し)は保証しない。模様の無い所・1 方向にしか模様の無い所(縦縞では縦の成分)の場は罰と補間が決めた値で、データの裏付けは無い —— <code style="color:#22d3bf">register_accuracy_map</code> の <code style="color:#22d3bf">by_texture</code> で見える。</p>
+<p>Raises:</p>
+<p>ValueError: 画像が不正 / 形が違う / 引数が値域外 / <code style="color:#22d3bf">init_flow2d</code> の形が違うか非有限。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidematchreg:matching_registration">matching_registration 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_sheet_deformation_ffd">poc_sheet_deformation_ffd</a> — <code style="color:#22d3bf">py -3.11 examples/poc_sheet_deformation_ffd.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="opmatchreg:features_match">features_match</a> · <a style="color:#22d3bf" href="opmatchreg:ransac_homography">ransac_homography</a> · <a style="color:#22d3bf" href="opmatchreg:ransac_fundamental">ransac_fundamental</a> · <a style="color:#22d3bf" href="opmatchreg:registration_to_flow2d">registration_to_flow2d</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">intensityreg</code>)</h3>
+<p><a style="color:#22d3bf" href="opmatchreg:register_ecc">register_ecc</a> · <a style="color:#22d3bf" href="opmatchreg:register_mi">register_mi</a> · <a style="color:#22d3bf" href="opmatchreg:registration_to_flow2d">registration_to_flow2d</a> · <a style="color:#22d3bf" href="opmatchreg:register_accuracy_map">register_accuracy_map</a> · <a style="color:#22d3bf" href="opmatchreg:register_capture_range">register_capture_range</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: intensityreg.py — MATCHREG 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

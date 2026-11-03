@@ -313,8 +313,15 @@ def gen_image_to_world_plane_map(cam_par, pose, shape, scale=1.0):
 
 
 def binocular_calibration(object_points, image_points_left, image_points_right):
-    """左右カメラを Zhang で個別校正しステレオ相対姿勢を推定(binocular_calibration)。
-    引数規約は ``calib.camera_calibration`` と同じ(object (x,y) / image (row,col))。"""
+    """[部分対応] 左右のカメラを Zhang で別々に校正する(binocular_calibration)。
+    引数規約は ``calib.camera_calibration`` と同じ(object (x,y) / image (row,col))。
+
+    する: 左右それぞれの ``camera_calibration`` の結果を ``{"left", "right"}`` で返す。
+    しない: 2 台の相対姿勢を同時に推定しない(``"note"`` は説明の文字列で、相対姿勢の値ではない)。
+    HALCON 対応の数え方では「部分対応」で、対応済みには数えない(``halcon_coverage.PARTIAL``)。
+
+    [Partial HALCON analogue] Two independent Zhang calibrations; no joint relative pose.
+    """
     from calib import camera_calibration
     cl = camera_calibration(object_points, image_points_left)
     cr = camera_calibration(object_points, image_points_right)

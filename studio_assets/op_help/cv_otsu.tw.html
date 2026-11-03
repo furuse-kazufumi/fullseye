@@ -14,6 +14,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>基於大津判別分析法的全域閾值二值化（OpenCV 實作）。演算法與 sk_otsu 相同，但內部會先量化為 8 位元再計算，因此結果可能略有偏差。</p>
 <p>相當於 HALCON 的 <code style="color:#22d3bf">binary_threshold</code>。實作為將 <code style="color:#22d3bf">cv2.threshold(_u8(v), 0, 255, THRESH_BINARY+THRESH_OTSU)</code> 的結果轉為布林值。a、b 未使用。</p>
+<p><b>同一處理的其他實作（實測，<code style="color:#22d3bf">docs/IMPL_DIFFERENTIAL.md</code>）</b>：在相同輸入、相同 a、b 下，內部差（相對於值域之比；小於 5e-3 視為一致）為 <code style="color:#22d3bf">otsu</code> 0.007, <code style="color:#22d3bf">sk_otsu</code> 0.012。不一致的原因（旋鈕對應、視窗、邊界、量化、定義不同）寫在表中。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

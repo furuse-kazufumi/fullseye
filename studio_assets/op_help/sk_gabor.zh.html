@@ -18,6 +18,7 @@
 <p>相当于 HALCON 的 <code style="color:#22d3bf">gen_gabor</code>(Generate a Gabor filter.)（近似。返回的是卷积结果而不是生成的核）。实现是对 <code style="color:#22d3bf">filters.gabor(v, frequency=0.1+0.3*a)</code> 的实部（返回值的第 1 个，虚部被丢弃）取绝对值后归一化 —— a 把频率在 0.1〜0.4 之间调节。方向 <code style="color:#22d3bf">theta</code> 固定为默认的 0（对水平方向的条纹图案响应最强），b 未使用。请注意，本 op 无法调节方向。</p>
 <p><b>边界处理</b>：含端点的镜像折返 (d c b a | a b c d，scipy 默认的 <code style="color:#22d3bf">reflect</code>)（实测。<code style="color:#22d3bf">tools/impl2/border_probe.py</code>）。</p>
 <p><b>数值可比性（实测）</b>：输出按<b>该图自身的最大值归一化</b>（输出最大值恒为 1.0，输入整体缩放不改变输出）。因此<b>不能跨图比较数值</b>——同样强度的特征会因该图中最强特征的不同而取不同的值；在只有弱特征的图中，噪声会被抬升到 1.0。要跨图比较，请以统一基准重新缩放。</p>
+<p><b>同一处理的其他实现（实测，<code style="color:#22d3bf">docs/IMPL_DIFFERENTIAL.md</code>）</b>：在相同输入、相同 a、b 下，内部差（相对于取值范围之比；小于 5e-3 视为一致）为 <code style="color:#22d3bf">gabor</code> 1, <code style="color:#22d3bf">hx_gabor</code> 1。不一致的原因（旋钮映射、窗口、边界、量化、定义不同）写在表中。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_texture_freq">gallery2d_texture_freq 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

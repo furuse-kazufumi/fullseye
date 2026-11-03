@@ -8,14 +8,16 @@
 <p>*图为在 128×128 合成输入上实际运行的输出。左为输入，右为输出。点云以俯视散点显示(亮度 = z)，一维序列为折线，体数据为沿 z 的最大值投影，视频为中间帧，复数图像为幅值；无法成像的返回值直接显示数值。*</p>
 <p><b>扫描旋钮 a</b>(0.1 / 0.5 / 0.9，另一旋钮取默认):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/lines_gauss.a.jpg">lines_gauss: 旋钮 a 扫描</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
-<p>*旋钮 b 不改变输出(实测: 0.1 / 0.5 / 0.9 相同)。*</p>
+<p><b>扫描旋钮 b</b>(0.1 / 0.5 / 0.9，另一旋钮取默认):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/lines_gauss.b.jpg">lines_gauss: 旋钮 b 扫描</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <p><b>换别的图像</b>(合成场景 / 照片 / 硬币。上排为输入，下排为对应输出。旋钮取默认):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/lines_gauss.inputs.jpg">lines_gauss: 其他输入图像</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>线状结构(脊线)检测。将 <code style="color:#22d3bf">skimage.filters.frangi</code>(类血管脊线增强滤波器)的响应用阈值(<code style="color:#22d3bf">0.1+0.4*a</code>)二值化,并将连通成分作为轮廓点集返回。这是简化为对脊线增强图像做阈值化,而非 HALCON 的 <code style="color:#22d3bf">lines_gauss</code>(Detect lines and their width.)本来所做的&quot;线的中心线+宽度估计&quot;(不返回线宽信息的近似)。</p>
-<p><code style="color:#22d3bf">a</code> 调节脊线检测的阈值。<code style="color:#22d3bf">b</code> 未使用。没有 scikit-image 时以 <code style="color:#22d3bf">MissingDependencyError</code>（说明需要安装什么）停止——不会返回另一种答案。</p>
-<p><b>也不返回极性</b>(2026-09-15 实测):亮底上的暗线(0.6 的底上 0.1,宽 2 px)与暗底上的亮线(0.6 的底上 1.0)用相同的 <code style="color:#22d3bf">a</code> 处理,两者都会输出轮廓(a=0.5 时 3 条 / 280 点与 3 条 / 276 点),从返回值无法区分。只要暗线时先用 <code style="color:#22d3bf">bothat</code>(白顶帽 <code style="color:#22d3bf">tophat</code> 对暗线返回 0),只要亮线时先用 <code style="color:#22d3bf">tophat</code>。<b>测宽要用别的 op</b>:用 <code style="color:#22d3bf">gen_measure_rectangle2</code> 布置与线正交的测量线,再用 <code style="color:#22d3bf">measure_pairs</code>(measure1d 族)取两侧边缘。但宽 1〜3 px 是该 op 的危险区(边缘间距 / PSF 宽度 &lt; 3.09 时偏大),亚像素宽度请用亮度亏损的积分来测(<code style="color:#22d3bf">examples/example_scratch_width.py</code>、<code style="color:#22d3bf">poc_crack_width</code>)。选用表见 2d/guides/gallery2d_contour_measure.md。</p>
+<p>★默认(<code style="color:#22d3bf">b &lt; 0.75</code>)的轮廓是<b>把超过阈值的带中像素按 np.where 的光栅顺序排列的集合</b>,并不沿线排序 —— <code style="color:#22d3bf">length_xld</code> 等依赖点顺序的量没有意义(宽 2 px、长 40 / 60 px 的划痕 length_xld 为 117 / 177 px)。要测线的长度和形状,请使用 <code style="color:#22d3bf">b &gt;= 0.75</code> 的<b>中心线模式</b>:把带细化并沿线排序,再用 Steger(1998)的公式(σ = 1.5 px 的高斯导数,沿 Hessian 法线方向移到亮度极值)把各点移到亚像素的线中心(相当于 HALCON 的中心线;仍不返回线宽;端点因细化缩短约半个线宽)。</p>
+<p><code style="color:#22d3bf">a</code> 调节脊线检测阈值。<code style="color:#22d3bf">b &gt;= 0.75</code> 为中心线模式(默认 0.5 返回带的像素)。没有 scikit-image 的环境会以 <code style="color:#22d3bf">MissingDependencyError</code>(说明该安装什么)停止 —— 不会返回别的答案。</p>
+<p><b>也不返回极性</b>(2026-09-15 实测):亮背景上的暗线(0.6 背景上 0.1,宽 2 px)与暗背景上的亮线(0.6 背景上 1.0)以相同 <code style="color:#22d3bf">a</code> 处理,都会得到轮廓(a=0.5 时 3 条 / 280 点与 3 条 / 276 点),无法从返回值区分。只需要暗线时先施加 <code style="color:#22d3bf">bothat</code>(白顶帽 <code style="color:#22d3bf">tophat</code> 对暗线返回 0),只需要亮线时先施加 <code style="color:#22d3bf">tophat</code>。<b>测宽度用别的 op</b>:用 <code style="color:#22d3bf">gen_measure_rectangle2</code> 设置与线正交的测量线,再用 <code style="color:#22d3bf">measure_pairs</code>(measure1d 族)取两侧边缘。但 1〜3 px 的宽度是该 op 的危险区(边缘间距 / PSF 宽 &lt; 3.09 时偏大),亚像素宽度请用亮度缺损的积分来测(<code style="color:#22d3bf">examples/example_scratch_width.py</code>、<code style="color:#22d3bf">poc_crack_width</code>)。用法对照表见 2d/guides/gallery2d_contour_measure.md。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">gallery2d_contour_measure 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

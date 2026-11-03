@@ -1,0 +1,34 @@
+[
+ {
+  "file": "01_calibration_maps.png",
+  "name": "calibration_maps",
+  "caption": "camera_calibration_lm on 6 rendered views (k1 = -0.21): where the estimate errs",
+  "shape": [
+   1012,
+   3880,
+   3
+  ]
+ },
+ {
+  "file": "02_calibration_next_pose.png",
+  "name": "calibration_next_pose",
+  "caption": "calibration_next_pose prediction vs Monte Carlo error against the truth",
+  "shape": [
+   448,
+   844,
+   3
+  ],
+  "csv": "02_calibration_next_pose.csv",
+  "tsv": "02_calibration_next_pose.tsv"
+ },
+ {
+  "file": "03_calibration_next_pose_scatter.png",
+  "name": "calibration_next_pose_scatter",
+  "caption": "6 candidate poses; the linear prediction ranks the far centre worst and the corners best",
+  "shape": [
+   720,
+   1120,
+   3
+  ]
+ }
+]

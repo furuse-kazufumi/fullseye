@@ -14,6 +14,7 @@
 <p>Inpainting, das fehlende Bereiche schätzt und ausfüllt.</p>
 <p>Nach der Umwandlung in 8bit werden extrem helle (&gt;235) / dunkle (&lt;20) Pixel als &quot;fehlend&quot; betrachtet, automatisch maskiert und mit dem Telea-Verfahren von OpenCV (basierend auf der Fast-Marching-Methode, <code style="color:#22d3bf">cv2.INPAINT_TELEA</code>) aus der Umgebung aufgefüllt. Eine Variante mit anderem Algorithmus nach derselben Idee wie <code style="color:#22d3bf">xsk_inpaint</code> (biharmonisches Verfahren).</p>
 <p>Verwendet eine Nachbarschaft mit Radius 3 Pixel (fest). <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> werden nicht verwendet. Da die Schwellwerte fest sind, können auch eigentlich bedeutsame ausgefressene/abgesoffene Pixel aufgefüllt werden.</p>
+<p><b>Andere Implementierungen derselben Operation (gemessen; <code style="color:#22d3bf">docs/IMPL_DIFFERENTIAL.md</code>)</b>: Bei gleichen Eingaben und gleichen a, b beträgt der Unterschied im Inneren (relativ zum Wertebereich; unter 5e-3 gilt als gleich) <code style="color:#22d3bf">xsk_inpaint</code> 0.75. Warum die abweichenden sich unterscheiden (Knopf-Abbildung, Fenster, Rand, Quantisierung, andere Definition), steht in der Tabelle.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">Leitfaden zur Familie gallery2d_smoothing_rank</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

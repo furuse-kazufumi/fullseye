@@ -19,6 +19,7 @@
 <p>Wie HALCONs <code style="color:#22d3bf">eccentricity</code> (Shape features derived from the ellipse parameters.) <b>dieselben 3 Werte, dieselben Formeln</b>. Alle 3 sind dimensionslos und daher nicht normiert.</p>
 <p>★Bis 2026-09-26 lieferte es die Exzentrizität von skimage <code style="color:#22d3bf">sqrt(1-(b/a)²)</code>, <b>eine Größe, die keine der 3 ist</b>, als 1 Skalar (0.0 gegenüber HALCONs 1.0 beim Kreis, 0.999 gegenüber 20.65 bei einem 4x80-Balken). Da 1 Skalar keine 3 Werte darstellen kann, wurde auf dieselbe <code style="color:#22d3bf">match</code>- Sorte wie bei <code style="color:#22d3bf">area_center</code> umgestellt. <code style="color:#22d3bf">docs/hardening/halcon-named-shape-factors.md</code>.</p>
 <p>Ist die Region leer, werden fail-soft die Kreiswerte <code style="color:#22d3bf">(1, 1, 0)</code> geliefert (die Anzahl der Komponenten ändert sich nicht mit der Eingabe). <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> werden nicht verwendet.</p>
+<p><b>Andere Ops mit demselben Wortstamm</b>: <code style="color:#22d3bf">xg_eccentricity</code> — eine andere Operation mit anderen Ein-/Ausgabetypen; nur der Name ist ähnlich (<code style="color:#22d3bf">docs/IMPL_DIFFERENTIAL.md</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">Leitfaden zur Familie gallery2d_features</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

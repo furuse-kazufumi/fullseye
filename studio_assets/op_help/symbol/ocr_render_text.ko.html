@@ -1,0 +1,41 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">ocr_render_text — SYMBOL <code style="color:#22d3bf">ocr</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">table</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ocr_render_text(text, font=&#x27;dot5x7&#x27;, char_height_px=24, pitch=None, dot_diameter=0.8, ink_gain=0.0, contrast=0.8, background=0.9, supersample=4, stroke_width=0.12, subpixel_offset=(0.0, 0.0)) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import ocrclassic; ocrclassic.ocr_render_text(text, font=&#x27;dot5x7&#x27;, char_height_px=24, pitch=None, dot_diameter=0.8, ink_gain=0.0, contrast=0.8, background=0.9, supersample=4, stroke_width=0.12, subpixel_offset=(0.0, 0.0)) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opssymbol.get(&quot;ocr_render_text&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
+<p>문자열을 내장 서체로 그리고 글자별 참 외접 상자와 함께 반환한다(<code style="color:#22d3bf">table</code>).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
+<p>text : str</p>
+<p>字種内の字だけ(大文字)。空文字・字種外は ValueError。</p>
+<p>font : 書体名 (<code style="color:#22d3bf">&quot;dot5x7&quot;</code>/<code style="color:#22d3bf">&quot;stroke&quot;</code>) か <code style="color:#22d3bf">ocr_font</code> の辞書(字を足したもの可)。</p>
+<p>char_height_px : 字高(画素)= 全高の字のインクの縦の広がり。&gt;= 6。</p>
+<p>pitch : 字の送り幅(画素)。None なら書体の既定(~0.88 x 字高)。</p>
+<p>dot_diameter : ドット直径 / ドットピッチ(dot5x7 のみ)。(0, 1.5]。</p>
+<p>ink_gain : にじみ。ドット直径・線幅に <code style="color:#22d3bf">(1 + ink_gain)</code> を掛ける。(-0.9, 2]。</p>
+<p>contrast, background : 地の明るさ <code style="color:#22d3bf">background</code>、インクの明るさ <code style="color:#22d3bf">background - contrast</code>。</p>
+<p>supersample : 1 画素あたりの超標本数(一辺)。1..16。</p>
+<p>stroke_width : 線幅 / 字高(stroke のみ)。(0, 0.4]。</p>
+<p>subpixel_offset : (dy, dx) 画素。字列全体を小数画素ずらす(学習の撹乱用)。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>dict</p>
+<p><code style="color:#22d3bf">image</code> 2-D float [0, 1] (明るい地に暗いインク), <code style="color:#22d3bf">boxes</code> 字ごとの真値の外接箱</p>
+<p><code style="color:#22d3bf">(r0, c0, r1, c1)</code>(終端は含まない、被覆率 &gt;= 0.5 の画素の外接箱), <code style="color:#22d3bf">text</code>,</p>
+<p><code style="color:#22d3bf">line_box</code>(字高の行範囲 x 全幅), <code style="color:#22d3bf">pitch_px</code>, <code style="color:#22d3bf">cells</code>(各字の設計上の字幅の列範囲</p>
+<p><code style="color:#22d3bf">(左, 右)</code>、小数画素)。周囲に約 1 字高の余白。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesymbol:symbol_reading">symbol_reading 패밀리 가이드</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
+<p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
+<p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
+<p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_symbol_lot_ocr">poc_symbol_lot_ocr</a> — <code style="color:#22d3bf">py -3.11 examples/poc_symbol_lot_ocr.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">table</code> 를 입력으로 받는 것)</h3>
+<p><a style="color:#22d3bf" href="opsymbol:render_symbol">render_symbol</a> · <a style="color:#22d3bf" href="opsymbol:symbol_read_trials">symbol_read_trials</a> · <a style="color:#22d3bf" href="opsymbol:symbol_read_pod">symbol_read_pod</a> · <a style="color:#22d3bf" href="opsymbol:ocr_classify">ocr_classify</a> · <a style="color:#22d3bf" href="opsymbol:ocr_read_line">ocr_read_line</a> · <a style="color:#22d3bf" href="opsymbol:ocr_read_trials">ocr_read_trials</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">ocr</code>)</h3>
+<p><a style="color:#22d3bf" href="opsymbol:ocr_font">ocr_font</a> · <a style="color:#22d3bf" href="opsymbol:ocr_segment_line">ocr_segment_line</a> · <a style="color:#22d3bf" href="opsymbol:ocr_features">ocr_features</a> · <a style="color:#22d3bf" href="opsymbol:ocr_train">ocr_train</a> · <a style="color:#22d3bf" href="opsymbol:ocr_classify">ocr_classify</a> · <a style="color:#22d3bf" href="opsymbol:ocr_read_line">ocr_read_line</a> · <a style="color:#22d3bf" href="opsymbol:ocr_score">ocr_score</a> · <a style="color:#22d3bf" href="opsymbol:ocr_read_trials">ocr_read_trials</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: ocrclassic.py — SYMBOL 연산자 레지스트리. 이 op 노트는 <code style="color:#22d3bf">tools/opdocs.py md</code> 가 자동 생성합니다(직접 편집하지 마세요).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

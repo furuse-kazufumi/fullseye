@@ -1,0 +1,29 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">table_field_image2d — REPRCONV <code style="color:#22d3bf">field</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.table_field_image2d(table, key)</code> (die Implementierung direkt: <code style="color:#22d3bf">import reprconv; reprconv.table_field_image2d(table, key)</code>; aus dem Register: <code style="color:#22d3bf">opsreprconv.get(&quot;table_field_image2d&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>Ein Feld einer Tabelle <code style="color:#22d3bf">table</code> → ein 2-D-Bild <code style="color:#22d3bf">image2d</code>. Die Brücke von Ops, die eine <code style="color:#22d3bf">table</code> liefern, zu Ops, die Bilder nehmen.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p><code style="color:#22d3bf">vx_sobel3x3</code> の <code style="color:#22d3bf">{gx, gy, valid}</code> → <code style="color:#22d3bf">vx_magnitude(gx, gy)</code>、<code style="color:#22d3bf">flow_from_depth_motion</code> の <code style="color:#22d3bf">{u, v, ...}</code> → <code style="color:#22d3bf">ttc_from_flow(u, v)</code> のように、<b>dict を返す op の欄を名指しで取り出す</b>。取り出した値が 2-D の有限な数値配列であることを確かめる(型の名前どおりの物しか通さない)。bool の欄(<code style="color:#22d3bf">valid</code> のような印)は 0/1 の float にする。</p>
+<p>Args:</p>
+<p>table: 欄の名前 → 値の dict(<code style="color:#22d3bf">table_read_csv</code> の返りなら <code style="color:#22d3bf">columns</code> から読む)。</p>
+<p>key: 欄の名前。</p>
+<p>Returns:</p>
+<p>(H, W) の配列(dtype はそのまま。bool は float64)。</p>
+<p>Raises:</p>
+<p>ValueError: dict でない / 欄が無い / 2-D でない / 非有限 / 空。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:type_connectivity_tour">type_connectivity_tour</a> — <code style="color:#22d3bf">py -3.11 examples/type_connectivity_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">image2d</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:keypoints_from_image2d">keypoints_from_image2d</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">field</code>)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:table_field_signal">table_field_signal</a> · <a style="color:#22d3bf" href="opreprconv:table_field_matrix">table_field_matrix</a> · <a style="color:#22d3bf" href="opreprconv:table_field_measurement">table_field_measurement</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: reprconv.py — REPRCONV Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -733,7 +733,7 @@ def _registry_adapters():
                  "opsimgforensics", "opsastrostack", "opsdem", "opspiv",
                  "opsprofile", "opsshapestat", "opsshape2d", "opsroughness",
                  "opsmeasure1d", "opsblob", "opsflyvision", "opsspc",
-                 "opsgraph", "opstext", "opsvx", "opsdrive", "opsresidue", "opsmultivar", "opssimcal", "opsconverge", "opscodematch", "opsaoi", "opscalib", "opsgenerative",
+                 "opsgraph", "opstext", "opsvx", "opsdrive", "opsresidue", "opsmultivar", "opssimcal", "opsconverge", "opscodematch", "opsaoi", "opsmatchreg", "opscalib", "opsacceptance", "opssymbol", "opsgenerative",
                  "opssegmentation"):
         try:
             d.update(getattr(__import__(_mod), "RESULT_ADAPTERS", {}))
@@ -956,6 +956,14 @@ def catalog():
     for n, m in opsaoi.OPSAOI.items():
         if m["func"] is not None:
             ops.append((n, "aoi", list(m["in"]), m["out"], m["func"]))
+    # 照合と位置合わせ(opsmatchreg 台帳、2026-11-03)。**新語なし**: 特徴・照合・推定・位置合わせ・
+    # 精度は kind の印つきの table(違う kind は ValueError)、変形場は PIV 族の flow2d ((2,H,W) の (dy, dx))。
+    # 真値は合成に使った既知の変換・既知の場(推定側はそれを知らない)と、既存 op(match_descriptors の
+    # 組の一致、OpenCV の SIFT / findTransformECC と同じ対での誤差の比較)。
+    import opsmatchreg
+    for n, m in opsmatchreg.OPSMATCHREG.items():
+        if m["func"] is not None:
+            ops.append((n, "matchreg", list(m["in"]), m["out"], m["func"]))
     # カメラ校正(opscalib 台帳、実装 2026-08 / 台帳 2026-10-23)。**新語なし**: cam_par の
     # {fx, fy, cx, cy} は table に収まり、族の外に消費者がいない(camera.py の K は 3x3 matrix)。
     # 1 族の中で閉じる型に新語を与えても連鎖は 1 本も増えない。
@@ -963,6 +971,19 @@ def catalog():
     for n, m in opscalib.OPSCALIB.items():
         if m["func"] is not None:
             ops.append((n, "calib", list(m["in"]), m["out"], m["func"]))
+    # 光学式 3D センサの(仮想)受入試験(opsacceptance 台帳、2026-11-03)。**新語なし**: 試験体の点群は
+    # points、配置・センサ・結果・MPE は table。族の外に消費者がいないので語を足しても連鎖は増えない。
+    import opsacceptance
+    for n, m in opsacceptance.OPSACCEPTANCE.items():
+        if m["func"] is not None:
+            ops.append((n, "acceptance", list(m["in"]), m["out"], m["func"]))
+    # 記号の読み取り(opssymbol 台帳、2026-11-03): 1-D / 2-D コードの生成と復号、撮像の
+    # シミュレーション、印字品質の等級、読み取りの POD、OCR。**新語なし**: シンボルの表も
+    # 結果も table、撮った画像は image2d、走査線は signal、モジュール格子は matrix。
+    import opssymbol
+    for n, m in opssymbol.OPSSYMBOL.items():
+        if m["func"] is not None:
+            ops.append((n, "symbol", list(m["in"]), m["out"], m["func"]))
     # 絵を作る側(opsgenerative 台帳)。**新しい型語彙を 1 つも作らない**判断:
     # 30 op の返りは既存の rgb((H,W,3))/ rgbvideo((T,H,W,3))/ table に収まる。
     # 「錯視画像」という型を作らないのが要点で、作った絵に既存の 2,147 op が

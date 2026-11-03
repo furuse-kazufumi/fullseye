@@ -9,13 +9,16 @@ def load_recipe_index():
     if not data.get("recipes"): raise ValueError("RECIPE_INDEX.json is empty")
     return data
 
-def find_recipes(query,*,limit=2,in_sort=None,out_sort=None,lang=None):
-    recipes=load_recipe_index()["recipes"]; lang=lang or detect_lang(query); q=set(tokenize(query))
+def find_recipes(query,*,limit=2,in_sort=None,out_sort=None,lang=None,runner=None,index=None):
+    """BM25 over hand-written recipes. *runner* = "mcp" keeps only recipes MCP fullseye_pipeline can run as is.
+    *index* = an already-loaded RECIPE_INDEX dict (the retrieval report measures an older index with it)."""
+    recipes=(index or load_recipe_index())["recipes"]; lang=lang or detect_lang(query); q=set(tokenize(query))
     docs=[Counter(tokenize(r["index_text"].get(lang) or r["index_text"]["en"])) for r in recipes]
     df=Counter(t for doc in docs for t in doc); ranked=[]
     for recipe,doc in zip(recipes,docs):
         if in_sort and recipe["input_sort"]!=in_sort: continue
         if out_sort and recipe["output_sort"]!=out_sort: continue
+        if runner and recipe.get("runner","mcp")!=runner: continue
         score=sum((1+math.log(doc[t]))*math.log((len(docs)+1)/(df[t]+.5)) for t in q if doc[t])
         if score:
             public={k:v for k,v in recipe.items() if k!="index_text"}; public["score"]=round(score,3); ranked.append((-score,recipe["name"],public))

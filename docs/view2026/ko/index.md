@@ -483,11 +483,11 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 </div>
 
-[PoC가 아닌 사용 예 177개 목록](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
+[PoC가 아닌 사용 예 180개 목록](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
 
 ## 전부 보기
 
-PoC 287개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
+PoC 297개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
 
 <noscript><p><a href="../../GALLERY.en.html">(JavaScript가 없으면 갤러리 페이지에서 모든 그림을 볼 수 있습니다.)</a></p></noscript>
 
@@ -506,7 +506,7 @@ PoC 287개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
 </div>
 </details>
 
-<details class="vall"><summary><b>산업 검사</b> (52)</summary>
+<details class="vall"><summary><b>산업 검사</b> (56)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_barcode_1d/01_misread_split.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_barcode_1d/01_misread_split.png"><img src="../../articles/assets/poc/poc_barcode_1d/story.en.gif" alt="Barcode tests must distinguish a wrong value from no value instead of counting returned answers alone. A simple code was degraded in four ways; strict reading gave a 7.3 % misread rate. A permissive reader appears more successful because it always returns digits, but creates far more wrong answers." loading="lazy" width="200" height="200"></picture><span>1차원 바코드</span></a>
 <a href="../../articles/assets/poc/poc_battery_electrode_tortuosity/01_scene.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_battery_electrode_tortuosity/01_scene.png"><img src="../../articles/assets/poc/poc_battery_electrode_tortuosity/story.en.gif" alt="Electrode tortuosity from CT — the rule of thumb only sees porosity" loading="lazy" width="200" height="200"></picture><span>전극 굴곡도</span></a>
@@ -560,10 +560,14 @@ PoC 287개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
 <a href="../../articles/assets/poc/poc_mueller_dofp_observability/01_observability.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_mueller_dofp_observability.jpg" alt="4방위 편광 카메라가 보지 못하는 Mueller 행렬의 7차원" width="200" height="200"><span>4방위 편광 카메라가 보지 못하는 Mueller 행렬의 7차원</span></a>
 <a href="../../articles/assets/poc/poc_slanted_edge_sfr_limits/01_sfr_limits.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_slanted_edge_sfr_limits.jpg" alt="경사 에지 SFR은 감마 때문에 MTF50을 잘못 읽는다" width="200" height="200"><span>경사 에지 SFR은 감마 때문에 MTF50을 잘못 읽는다</span></a>
 <a href="../../articles/assets/poc/poc_threshold_transfer_after_normalization/01_threshold_transfer.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_threshold_transfer_after_normalization/01_threshold_transfer.png"><img src="../../articles/assets/poc/poc_threshold_transfer_after_normalization/story.en.gif" alt="Raw Grey-Level Thresholds Need Retuning across Lighting, while k-Sigma and P-Tile Transfer" loading="lazy" width="200" height="200"></picture><span>Raw grey-level thresholds need retuning across lighting, while k-sigma and P-tile transfer</span></a>
+<a href="../../articles/assets/poc/poc_hdr_glossy_metal_inspection/02_results.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_hdr_glossy_metal_inspection/02_results.png"><img src="../../articles/assets/poc/poc_hdr_glossy_metal_inspection/story.en.gif" alt="No Single Exposure Shows Both Scratches on Glossy Metal; HDR with a Measured Response Does" loading="lazy" width="200" height="200"></picture><span>한 번의 노출로는 광택 금속의 두 흠집을 다 못 보지만, 응답을 측정한 HDR은 본다</span></a>
+<a href="../../articles/assets/poc/poc_symbol_package_1d/01_ean13_defocus.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_symbol_package_1d.jpg" alt="90 % 읽히는 흐림에서도 바코드 인쇄 품질 등급은 F" width="200" height="200"><span>90 % 읽히는 흐림에서도 바코드 인쇄 품질 등급은 F</span></a>
+<a href="../../articles/assets/poc/poc_symbol_part_dpm/01_dpm_datamatrix.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_symbol_part_dpm.jpg" alt="도트 핀 Data Matrix는 흐려져야 zxing-cpp가 읽는다" width="200" height="200"><span>도트 핀 Data Matrix는 흐려져야 zxing-cpp가 읽는다</span></a>
+<a href="../../articles/assets/poc/poc_symbol_lot_ocr/01_lot_ocr_defocus.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_symbol_lot_ocr.jpg" alt="학습 범위를 넘는 흐림에서 로트 번호 OCR은 거부 대신 오독한다" width="200" height="200"><span>학습 범위를 넘는 흐림에서 로트 번호 OCR은 거부 대신 오독한다</span></a>
 </div>
 </details>
 
-<details class="vall"><summary><b>치수·형상 계측</b> (56)</summary>
+<details class="vall"><summary><b>치수·형상 계측</b> (58)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_aoi_ct_traceability/01_inspection_and_reconstructed_ct.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_aoi_ct_traceability/01_inspection_and_reconstructed_ct.png"><img src="../../articles/assets/poc/poc_aoi_ct_traceability/story.en.gif" alt="Full visual inspection and sampled CT must assign the same index to each joint. Unequal-sided fiducials fixed this correspondence, then top-ranked candidates caught 19 % of interface-touching voids. Apparent void rankings can agree while most life-limiting parts are missed." loading="lazy" width="200" height="200"></picture><span>AOI·CT 대응</span></a>
 <a href="../../articles/assets/poc/poc_asbuilt_wall_deviation/01_scene.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_asbuilt_wall_deviation/01_scene.png"><img src="../../articles/assets/poc/poc_asbuilt_wall_deviation/story.en.gif" alt="Point-cloud dimensions can confuse room heading or furniture with wall position. A room with known tilt and bulges was rotated, while its plane-pair error stayed at +2.24 mm. Bounding boxes grow with heading and sample count; plane fitting jumps to furniture when outliers become the majority." loading="lazy" width="200" height="200"></picture><span>준공 벽면 편차</span></a>
@@ -621,6 +625,8 @@ PoC 287개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
 <a href="../../articles/assets/poc/poc_robust_profile_filter/04_scratched_surface.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_robust_profile_filter/04_scratched_surface.png"><img src="../../articles/assets/poc/poc_robust_profile_filter/story.en.gif" alt="Deep Scratches Dent the Mean Line — How Much Contamination Robust Gaussian and Spline Filters Survive" loading="lazy" width="200" height="200"></picture><span>흠집이 평균선을 얼마나 눌러 내리는가, 로버스트 필터의 붕괴점</span></a>
 <a href="../../articles/assets/poc/poc_sem_tem_same_particle/08_tem_focus_sweep.gif"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_sem_tem_same_particle/02_same_specimen_sem_tem.png"><img src="../../articles/assets/poc/poc_sem_tem_same_particle/story.en.gif" alt="Measuring the Same Particles in Scanning and Transmission Images — Which Is Right, 52 nm or 48 nm?" loading="lazy" width="200" height="200"></picture><b>&#9654;</b><span>같은 입자를 주사 영상과 투과 영상으로 측정</span></a>
 <a href="../../articles/assets/poc/poc_real_sem_metal_layer/01_scene.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_real_sem_metal_layer/01_scene.png"><img src="../../articles/assets/poc/poc_real_sem_metal_layer/story.en.gif" alt="Measuring Tracks and Vias in a Real IC SEM Image — Does the Virtual-SEM Edge Correction Transfer?" loading="lazy" width="200" height="200"></picture><span>실제 SEM 금속층 계측</span></a>
+<a href="../../articles/assets/poc/poc_virtual_acceptance_3d/01_acceptance_layout_and_noise.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_virtual_acceptance_3d/01_acceptance_layout_and_noise.png"><img src="../../articles/assets/poc/poc_virtual_acceptance_3d/story.en.gif" alt="Acceptance-Test an Optical 3-D Sensor Before Buying It: One Black Sphere Fails the Same iToF" loading="lazy" width="200" height="200"></picture><span>사기 전에 인수 시험: 같은 iToF가 검은 구 하나로 불합격</span></a>
+<a href="../../articles/assets/poc/poc_light_section_step_weld_floor/01_height_map.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_light_section_step_weld_floor/01_height_map.png"><img src="../../articles/assets/poc/poc_light_section_step_weld_floor/story.en.gif" alt="Light-Section Heights Agree to Microns, but the Real Limit Is a 20.7 µm Speckle Floor" loading="lazy" width="200" height="200"></picture><span>광절단 높이는 µm 단위로 맞지만 실제 한계는 20.7 µm 스페클 바닥</span></a>
 </div>
 </details>
 
@@ -649,7 +655,7 @@ PoC 287개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
 </div>
 </details>
 
-<details class="vall"><summary><b>기하·보정</b> (20)</summary>
+<details class="vall"><summary><b>기하·보정</b> (24)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_simcal_thin_film/08_real_determined_vs_combinations.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_simcal_thin_film/08_real_determined_vs_combinations.png"><img src="../../articles/assets/poc/poc_simcal_thin_film/story.en.gif" alt="Calibrating a Thin-Film Model to Real Images — and Giving No Number to What the Data Do Not Determine" loading="lazy" width="200" height="200"></picture><span>실제 영상으로 박막 모델 보정(정해지는 계수와 정해지지 않는 조합)</span></a>
 <a href="../../articles/assets/poc/poc_camera_calibration/05_calibration_convergence.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_camera_calibration.jpg" alt="카메라 보정" width="200" height="200"><b>&#9654;</b><span>카메라 보정</span></a>
@@ -671,6 +677,10 @@ PoC 287개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
 <a href="../../articles/assets/poc/poc_public_camera_heading/02_yaw_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_public_camera_heading.jpg" alt="공공 카메라 방향" width="200" height="200"><b>&#9654;</b><span>공공 카메라 방향</span></a>
 <a href="../../articles/assets/poc/poc_public_camera_heading_real/02_sunset_follow.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_public_camera_heading_real.jpg" alt="카메라 방향(실사)" width="200" height="200"><b>&#9654;</b><span>카메라 방향(실사)</span></a>
 <a href="../../articles/assets/poc/poc_real_tless_6dof/01_pose_overlay.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_real_tless_6dof/01_pose_overlay.png"><img src="../../articles/assets/poc/poc_real_tless_6dof/story.en.gif" alt="Six-DoF PPF Matching of Industrial Parts in Real RGB-D Data" loading="lazy" width="200" height="200"></picture><span>실제 깊이 포인트 클라우드에서 알려진 부품의 6자유도 자세 추정</span></a>
+<a href="../../articles/assets/poc/poc_calibration_truth_map/01_calibration_maps.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_calibration_truth_map/01_calibration_maps.png"><img src="../../articles/assets/poc/poc_calibration_truth_map/story.en.gif" alt="Camera Calibration with Ground Truth: 0.044 px Reprojection, Yet 0.568 px Wrong in the Corner" loading="lazy" width="200" height="200"></picture><span>정답이 있는 카메라 보정: 재투영 0.044 px여도 모서리에서 0.568 px 오차</span></a>
+<a href="../../articles/assets/poc/poc_part_locate_features/01_part_locate_sift.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_part_locate_features/01_part_locate_sift.png"><img src="../../articles/assets/poc/poc_part_locate_features/story.en.gif" alt="SIFT Locates a Part Rotated 37 Degrees to 0.367 px; the Existing Harris Matcher Misses by 158 px" loading="lazy" width="200" height="200"></picture><span>SIFT는 37도 회전한 부품을 0.367 px로 찾고, 기존 Harris는 158 px 빗나간다</span></a>
+<a href="../../articles/assets/poc/poc_multimodal_mi_registration/01_multimodal_mi_pair.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_multimodal_mi_registration.jpg" alt="상관 −0.74인 가시광·적외선 기판 영상을 상호정보량이 0.170 px로 정합" width="200" height="200"><span>상관 −0.74인 가시광·적외선 기판 영상을 상호정보량이 0.170 px로 정합</span></a>
+<a href="../../articles/assets/poc/poc_sheet_deformation_ffd/01_sheet_ffd_error_maps.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_sheet_deformation_ffd.jpg" alt="FFD는 시트 변형을 0.025 px로 추적하지만 바코드와 여백에서는 변위장이 정해지지 않는다" width="200" height="200"><span>FFD는 시트 변형을 0.025 px로 추적하지만 바코드와 여백에서는 변위장이 정해지지 않는다</span></a>
 </div>
 </details>
 

@@ -16,6 +16,7 @@
 <p>中值滤波器(OpenCV 实现)。用正方形邻域内的中位数进行替换的经典去噪方法(尤其对椒盐噪声效果好,边缘也相对能得到保留)。</p>
 <p>相当于 HALCON 的 <code style="color:#22d3bf">median_image</code>。实现为 <code style="color:#22d3bf">cv2.medianBlur(_u8(v), ksize=3+2*int(a*3))</code> —— a 把核大小在 3, 5, 7, 9（奇数）之间调节。b 未使用。处理前先量化为 8 bit，因此原图像细微的灰阶会丢失。与 sk_median_disk 不同，核是正方形。</p>
 <p><b>边界处理</b>：复制边缘像素（最近邻）（实测。<code style="color:#22d3bf">tools/impl2/border_probe.py</code>）。</p>
+<p><b>同一处理的其他实现（实测，<code style="color:#22d3bf">docs/IMPL_DIFFERENTIAL.md</code>）</b>：在相同输入、相同 a、b 下，内部差（相对于取值范围之比；小于 5e-3 视为一致）为 <code style="color:#22d3bf">median</code> 0.99, <code style="color:#22d3bf">xkor_median</code> 0.99。不一致的原因（旋钮映射、窗口、边界、量化、定义不同）写在表中。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

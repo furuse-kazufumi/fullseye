@@ -13,6 +13,7 @@
 <p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>假設點擴散函數（PSF）為小型高斯核（sigma = <code style="color:#22d3bf">RL_SIGMA</code>）的 Richardson-Lucy 反卷積。<code style="color:#22d3bf">a</code> 設定疊代次數 n = 1 + round(a*14)（1..15）；<code style="color:#22d3bf">b</code> 被忽略。RL 以乘法方式驅動估計值 <code style="color:#22d3bf">u</code>，使 <code style="color:#22d3bf">u (*) psf</code> 逼近模糊後的觀測值，藉此銳化真實邊緣。</p>
+<p><b>同一處理的其他實作（實測，<code style="color:#22d3bf">docs/IMPL_DIFFERENTIAL.md</code>）</b>：在相同輸入、相同 a、b 下，內部差（相對於值域之比；小於 5e-3 視為一致）為 <code style="color:#22d3bf">xsk_richardson_lucy</code> 0.89。不一致的原因（旋鈕對應、視窗、邊界、量化、定義不同）寫在表中。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

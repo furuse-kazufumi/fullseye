@@ -239,22 +239,73 @@ def build_search() -> dict:
             "ops": rows}
 
 
+#: ``fullseye.apply`` で呼ぶ op の階層(レジストリと n 項)。それ以外の台帳 op は ``fullseye.op_run``。
+_APPLY_TIERS = ("registry", "nary")
+#: テンプレートを別に受け取る照合 op(``apply(..., template=...)``)。``api.apply`` の docstring と同じ 2 本。
+_TEMPLATE_OPS = ("ncc_locate", "shape_locate")
+
+
+def _op_tiers() -> dict:
+    """op 名 -> その名前を持つ階層の集合(``fullseye.list_ops`` が正本)。"""
+    import fullseye
+    tiers: dict = {}
+    for d in fullseye.list_ops(include_ledger=True, include_algo=True):
+        tiers.setdefault(d["name"], set()).add(d.get("tier"))
+    return tiers
+
+
+def card_call(name: str, in_sort, tiers: dict) -> dict:
+    """op カードの呼び出し例を、**実際にその op を受け付ける入口**の署名から組む。
+
+    ★2026-11-03(完成度監査 A-2): 以前は全 op に一律 ``fullseye.apply(value, name, 0.5, 0.5)`` と書いていた。
+    台帳 op(2,684 件)は ``apply`` が KeyError(「typed-ledger operator ... run it with fullseye.op_run」)で
+    拒むので、``fullseye_op_cards`` だけが誤った呼び方を LLM に渡していた。
+
+    返り値: ``{"entry": "apply" | "op_run", "call": <1 行>}``。``<...>`` は値を入れる場所で、中身は型
+    (データは sort、つまみは kind)。台帳の呼び方は ``opassist.param_spec`` の**必須**引数だけを並べる
+    (省略できるものは既定値で走る)。``op_run`` は ``(result, notes)`` を返す。
+
+    Raises:
+        SystemExit: どちらの入口でも呼べない op(カードに呼び方を書けない = 生成を止める、fail-closed)。
+    """
+    import opassist
+    t = tiers.get(name) or set()
+    if t & set(_APPLY_TIERS):
+        parts = [s.strip() for s in str(in_sort or "image").split("×")]
+        value = ("[%s]" % ", ".join("<%s>" % s for s in parts)) if ("nary" in t and len(parts) > 1) else "<%s>" % parts[0]
+        extra = ", template=<image>" if name in _TEMPLATE_OPS else ""
+        return {"entry": "apply", "call": "fullseye.apply(%s, %r, 0.5, 0.5%s)" % (value, name, extra)}
+    if "ledger" in t:
+        if opassist._ledger_entry(name)[1] is None:
+            raise SystemExit("op カード: %s は list_ops で ledger だが op_run が引けない" % name)
+        spec = opassist.param_spec(name)
+        data = ["<%s>" % (sp.get("sort") or sp["name"]) for sp in spec if sp["kind"] == "data" and sp.get("required")]
+        kw = ["%s=<%s>" % (sp["name"], sp["kind"]) for sp in spec if sp["kind"] != "data" and sp.get("required")]
+        return {"entry": "op_run", "call": "fullseye.op_run(%s)" % ", ".join([repr(name)] + data + kw)}
+    raise SystemExit("op カード: %s を呼べる入口が無い(list_ops の階層 %s)" % (name, sorted(map(str, t))))
+
+
 def build_cards(search: dict, knobs: list) -> dict:
     """Build compact, stable cards for small-context models."""
     kt = {r.get("op"): r for r in knobs}
+    tiers = _op_tiers()
     rows = []
     for r in search["ops"]:
         name, kr = r["n"], kt.get(r["n"]) or {}
+        how = card_call(name, r.get("i"), tiers)
         card = {"name": name, "in_sort": r.get("i"), "out_sort": r.get("o"),
-                "summary": ((r.get("s") or {}).get("en") or (r.get("s") or {}).get("ja") or "")[:220],
-                "knobs": {"a": kr.get("a_kind") or "unspecified",
-                            "b": "unused" if kr.get("b_used") is False else "unspecified"},
-                "cautions": (["type metadata is incomplete"] if not r.get("i") or not r.get("o") else []) +
-                             (["knob probe: %s" % kr["status"]] if kr.get("status") not in (None, "determined") else []),
-                "call": "fullseye.apply(value, %r, 0.5, 0.5)" % name}
+                "summary": ((r.get("s") or {}).get("en") or (r.get("s") or {}).get("ja") or "")[:220]}
+        if how["entry"] == "apply":          # a/b は apply の 0..1 つまみ。op_run は名前つきの引数を取る
+            card["knobs"] = {"a": kr.get("a_kind") or "unspecified",
+                             "b": "unused" if kr.get("b_used") is False else "unspecified"}
+        card["cautions"] = ((["type metadata is incomplete"] if not r.get("i") or not r.get("o") else []) +
+                            (["knob probe: %s" % kr["status"]] if kr.get("status") not in (None, "determined") else []) +
+                            (["op_run returns (result, notes)"] if how["entry"] == "op_run" else []))
+        card.update(how)
         card["tokens"] = max(1, (len(json.dumps(card, ensure_ascii=False)) + 3) // 4)
         rows.append(card)
-    return {"generated_by": "tools/gen_mcp_data.py", "n_ops": len(rows), "ops": rows}
+    n_entry = {e: sum(1 for c in rows if c["entry"] == e) for e in ("apply", "op_run")}
+    return {"generated_by": "tools/gen_mcp_data.py", "n_ops": len(rows), "n_by_entry": n_entry, "ops": rows}
 
 
 def build_probe(search: dict) -> dict:

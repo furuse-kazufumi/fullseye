@@ -683,6 +683,8 @@ PROBLEMS: dict[str, Problem] = {
     # (EPI 傾き法には sigma によって最大 27% 過小に出るという別の実測があり、
     # 相関で測る本課題ではその尺度ずれが効かない ― 指標の選び方まで含めて
     # 「何を測っているか」が結果を決める例。)
+    # ★2026-11-03: その「最大 27% 過小」は lf_epi_slope の不具合だった(sin(ws)/sin(w) を返していた)。
+    # 整数シア反復に直したので、0.4694 / 0.2127 は直す前の数字(作り直していない)。
     "lf_slope": Problem(
         "lf_slope", "corr", _make_lf_slope, _score_lf_slope,
         lambda: [ops.stage("tb_lf_epi_slope", 0.5, 0.5)],

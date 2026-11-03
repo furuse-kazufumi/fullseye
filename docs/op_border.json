@@ -5095,16 +5095,16 @@
     "pad": 12,
     "tol": 1e-09,
     "scores": {
-      "constant0": 0.536987841129303,
-      "edge": 0.15948042273521423,
-      "reflect": 0.0,
-      "symmetric": 0.09491962194442749,
-      "wrap": 0.30129609256982803
+      "constant0": 0.5641891658306122,
+      "edge": 0.10488447546958923,
+      "reflect": 0.06434345245361328,
+      "symmetric": 0.0,
+      "wrap": 0.3209591507911682
     },
     "status": "determined",
-    "border": "reflect",
-    "border_ja": "端画素を重複させずに折り返す (d c b | a b c d)",
-    "second_best_diff": 0.09491962194442749
+    "border": "symmetric",
+    "border_ja": "端画素を重複させて折り返す (d c b a | a b c d)",
+    "second_best_diff": 0.06434345245361328
   },
   {
     "op": "xkor_gftt",
@@ -5204,16 +5204,16 @@
     "pad": 12,
     "tol": 1e-09,
     "scores": {
-      "constant0": 0.29131561517715454,
-      "edge": 0.13180890679359436,
-      "reflect": 0.0,
-      "symmetric": 0.09338858723640442,
-      "wrap": 0.14765766263008118
+      "constant0": 0.2996668815612793,
+      "edge": 0.05570092797279358,
+      "reflect": 0.06227943301200867,
+      "symmetric": 0.0,
+      "wrap": 0.1569923460483551
     },
     "status": "determined",
-    "border": "reflect",
-    "border_ja": "端画素を重複させずに折り返す (d c b | a b c d)",
-    "second_best_diff": 0.09338858723640442
+    "border": "symmetric",
+    "border_ja": "端画素を重複させて折り返す (d c b a | a b c d)",
+    "second_best_diff": 0.05570092797279358
   },
   {
     "op": "xmh_daubechies",

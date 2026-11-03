@@ -15,6 +15,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Returns a region filled with the axis-aligned bounding box enclosing the region. a and b are unused. Returns all zeros if the region is empty.</p>
 <p>Implementation corresponding to HALCON&#x27;s <code style="color:#22d3bf">smallest_rectangle1</code> (an operation that finds the smallest axis-parallel enclosing rectangle) (distinct from <code style="color:#22d3bf">smallest_rectangle2</code>, the smallest enclosing rectangle that allows rotation).</p>
+<p><b>Other implementations of the same operation (measured; <code style="color:#22d3bf">docs/IMPL_DIFFERENTIAL.md</code>)</b>: on the same inputs and the same a, b, the interior difference (relative to the value range; below 5e-3 counts as a match) is <code style="color:#22d3bf">r2_smallest_rectangle1</code> 0. Why the mismatching ones differ (knob mapping, window, border, quantisation, a different definition) is in the table.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

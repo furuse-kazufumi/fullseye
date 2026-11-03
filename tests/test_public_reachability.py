@@ -89,6 +89,9 @@ _INTERNAL = {
     #   (watershed3d の 3 本は 2026-10-02 に台帳 opssegmentation の watershed3d へ載せて行を消した。)
     "gsplat_cli": 2, "helpstore": 4, "imgops_nary": 4, "mesh_decimate": 1, "opsearch": 2,
     "sample_data": 7, "scale": 6,
+    # ★2026-11-03: Reed-Solomon(GF(256) の表・符号化・復号)は記号の読み取りの族の内部部品。
+    #   利用者は qr_* / dm_* / grade_datacode2d の返す訂正語数として使う(体そのものは op にしない)。
+    "symrs": 5,
 }
 
 #: **出すべきなのに出ていない**。ここは減らしていく側の台帳です。
@@ -256,7 +259,23 @@ def test_pending_exposure_shrinks_when_fixed():
 #   12 op 本体は fs.ledger に載る)。実測 943 → 944。
 # 2026-10-31 opsfileio 台帳(メモリ内 file I/O 14 op): 台帳の内部 API 4 本で実測 944 → 948。
 #   op 自身は fs.ledger から引ける。
-_HIDDEN_FUNCTIONS_TODAY = 948
+# 2026-11-03 opsacceptance 台帳(光学式 3D センサの仮想受入試験 8 op): 台帳の内部 API 4 本で実測 948 → 952。
+#   op 自身は fs.ledger から引ける。
+# 2026-11-03 opsmatchreg 台帳(照合と位置合わせ 12 op): 台帳の内部 API 4 本で実測 948 → 952。12 op 自身は
+#   fs.ledger から、合成の道具 7 本(synthetic_scene / warp_homography / corner_error / condition_homography /
+#   warp_parametric / synthesize_moving / smooth_test_field)は fs.<名前> から引ける。
+# 2026-11-03 opssymbol 台帳(記号の読み取り 33 op): 台帳の内部 API 4 本、例外の型 3 本
+#   (Barcode1DError / QRDecodeError / DMDecodeError、どれも ValueError の子)、symrs の 5 本(内部部品、
+#   _INTERNAL)、symbol_scene(render_symbol の中身)・grade_letter(等級 → 文字)・zxing_available。
+#   実測 948 → 963。33 op 自身は fs.ledger から引ける。
+# 2026-11-04 統合(integrate/2026-11-04-families): 上の 3 台帳はどれも 948 から測っていたので、重ねると
+#   948 + 4(opsacceptance)+ 4(opsmatchreg)+ 15(opssymbol)= 971。実測も 971(各ブランチで認めた増分の和で、新しい増分はない)。
+# 2026-11-03 opsfit に台帳の内部 API 4 本(call / get / info / missing。f9743b1301)を足した: 実測 948 → 952。
+#   fs.ledger.fit_circle_geometric / phase_correlation_shift が AttributeError で落ちていた修正で、他の台帳
+#   (opscalib / opsfileio / opsmath / opsshape2d …)も同じ 4 本を公開経路に載せていない。op 自身は fs.ledger から引ける。
+# 2026-11-04 統合に W2(opsfit の 4 本)を重ねた: 948 + 4(opsacceptance)+ 4(opsmatchreg)+ 15(opssymbol)
+#   + 4(opsfit)= 975。実測も 975(各ブランチで認めた増分の和で、新しい増分はない)。
+_HIDDEN_FUNCTIONS_TODAY = 975
 
 
 def _hidden_total():

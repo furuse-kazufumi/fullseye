@@ -1,0 +1,30 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">match_component — REPRCONV <code style="color:#22d3bf">structure</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">match</code> → <code style="color:#22d3bf">measurement</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.match_component(match, index=0)</code> (die Implementierung direkt: <code style="color:#22d3bf">import reprconv; reprconv.match_component(match, index=0)</code>; aus dem Register: <code style="color:#22d3bf">opsreprconv.get(&quot;match_component&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>Die Sorte <code style="color:#22d3bf">match</code> (ein 1-D-Ergebnisvektor) → eine ihrer Komponenten als <code style="color:#22d3bf">measurement</code>. Der Ausgang aus <code style="color:#22d3bf">match</code>.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>2-D レジストリの <code style="color:#22d3bf">match</code> 型は「1 スカラーでは表せない複数の値」を 1 本のベクトルで運ぶ:</p>
+<p><code style="color:#22d3bf">area_center</code> = (面積 [px], 重心の行 [px], 重心の列 [px])、<code style="color:#22d3bf">ncc_locate</code> / <code style="color:#22d3bf">shape_locate</code> = (相関値, 行, 列)、<code style="color:#22d3bf">eccentricity</code> = (Anisometry, Bulkiness, StructureFactor) など。HALCON でも <code style="color:#22d3bf">area_center</code> の Row だけを次の処理に渡すように、<b>成分を名指しで 1 つ取り出す</b>のがこの型の自然な出口。どの成分が何かは産んだ op の docstring が決めている(ここでは解釈しない)。</p>
+<p>Args:</p>
+<p>match: 1-D の有限な数値列(長さ &gt;= 1)。0-D のスカラーは長さ 1 として受ける。</p>
+<p>index: 取り出す成分の番号(0 始まり)。負の番号は使えない(取り違えを防ぐため)。</p>
+<p>Returns:</p>
+<p>float。</p>
+<p>Raises:</p>
+<p>ValueError: 1-D でない / 非有限 / 空 / index が範囲外か整数でない。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:type_connectivity_tour">type_connectivity_tour</a> — <code style="color:#22d3bf">py -3.11 examples/type_connectivity_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">measurement</code> als Eingabe)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">structure</code>)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:frame_axis">frame_axis</a> · <a style="color:#22d3bf" href="opreprconv:knn_graph_to_conn_graph">knn_graph_to_conn_graph</a> · <a style="color:#22d3bf" href="opreprconv:pointmap_to_points">pointmap_to_points</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: reprconv.py — REPRCONV Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

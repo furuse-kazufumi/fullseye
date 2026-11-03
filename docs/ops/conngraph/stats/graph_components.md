@@ -5,7 +5,7 @@ category: stats
 in: conn_graph
 out: labels
 gpu: なし
-examples: [gallery_conngraph_closed_forms]
+examples: [gallery_conngraph_closed_forms, type_connectivity_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.9.0  # fullseye lib version this note was generated for
@@ -34,6 +34,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [gallery_conngraph_closed_forms](../../../../examples/gallery_conngraph_closed_forms.py) — `py -3.11 examples/gallery_conngraph_closed_forms.py`
+- [type_connectivity_tour](../../../../examples/type_connectivity_tour.py) — `py -3.11 examples/type_connectivity_tour.py`
 
 ## 型が繋がる次の op(`labels` を入力に取れる)
 

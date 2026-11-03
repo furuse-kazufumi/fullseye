@@ -53,11 +53,19 @@ _LEDGERS = (
     # 2026-10-23(実装は 2026-09-15): AOI(自動外観検査)の前段 3 op —— 照明の落ちを戻す /
     #   基準画像へ合わせる / タイルごとの量を地図にする。新語なし(image2d と table)。
     ("opsaoi", "OPSAOI"),
+    # 2026-11-03: 照合と位置合わせ(SIFT / ORB / 照合 / RANSAC / ECC / MI / B-spline FFD と、真値による
+    #   精度の表・精度の地図・収束の範囲)。新語なし(image2d / table / flow2d)。
+    ("opsmatchreg", "OPSMATCHREG"),
     # ★2026-10-23: カメラ校正(calib / caltab / fit_transform、21 op)。実装は 2026-08 から
     #   あり試験も 30 本超あったのに、台帳が無いので op ノートが 1 枚も無く、fs.ledger /
     #   OP_INDEX.json / op_find("caltab") のどこからも引けなかった(fs.<名前> は 21 中 1)。
     #   新語なし(points / pose / matrix / table / contour / image2d)。
     ("opscalib", "OPSCALIB"),
+    # 2026-11-03: 光学式 3D センサの(仮想)受入試験(VDI/VDE 2634・ISO 10360-13 の考え方、8 op)。新語なし。
+    ("opsacceptance", "OPSACCEPTANCE"),
+    # 2026-11-03: 記号の読み取り(1-D / 2-D コード・撮像シミュ・印字品質・読み取りの POD・OCR)。
+    #   監査で 2-D コードと印字品質は全層ゼロだった。新語なし(table / image2d / signal / matrix)。
+    ("opssymbol", "OPSSYMBOL"),
     # 2026-10-01: OpenVX 1.3.1 の素の口(勾配・表引き・ヒストグラム・非極大の抑制)。新語なし。
     ("opsvx", "OPSVX"),
     # 2026-09-29: 自動運転の教習所ワールド(規格寸法のコース / 3-D の世界 / 回転式 LiDAR)。新語なし。
@@ -1518,6 +1526,12 @@ def run(op_name: str, *data, preset=None, strict: bool = False, **kwargs):
         raise ValueError("opassist.run: preflight: " + " / ".join(notes))
     mod = importlib.import_module(mod_name)
     caller = getattr(mod, "call", None)
+    # ★2026-11-03(op カードの実行の門で発見): 台帳の ``call(name, *args, **kwargs)`` の第 1 引数 ``name`` が、
+    #   op 自身の引数 ``name=`` と衝突していた(21 op: load_asset / example_system / sellmeier / glass_catalog …)。
+    #   ``op_run("example_system", name="singlet")`` が「call() got multiple values for argument 'name'」。
+    #   ``get(key)`` が返すのは ``entry["func"]`` と同じ物(台帳 2,661 op で確認)なので、衝突するときは直接呼ぶ。
+    if caller is not None and "name" in kw:
+        caller = None
     try:
         result = caller(_ledger_key(op_name), *args, **kw) if caller else entry["func"](*args, **kw)
     except (IndexError, AttributeError, TypeError) as e:

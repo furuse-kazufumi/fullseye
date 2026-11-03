@@ -1,0 +1,45 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">記号の読み取り(1-D / 2-D コード・印字品質・読み取りの POD・OCR) — 使い方ガイド</h2>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">この族は何をする道具箱か</h3>
+<p>製造ラインのトレーサビリティで毎日使う<b>記号</b>を、作る・撮る・読む・格付けする・「どこまで劣化しても読めるか」を確率で言う、までを 1 つの鎖にした層です(台帳は <code style="color:#22d3bf">opssymbol.py</code>、numpy と scipy のみ。zxing-cpp は optional)。</p>
+<p style="margin:2px 0 2px 12px">• <b>barcode1d</b> — <code style="color:#22d3bf">encode_barcode1d</code>(EAN-13 / UPC-A / Code 128・GS1-128 / Code 39 / ITF)/ <code style="color:#22d3bf">ean_check_digit</code> / <code style="color:#22d3bf">barcode_scan_profiles</code> / <code style="color:#22d3bf">decode_barcode_profile</code> / <code style="color:#22d3bf">read_barcode1d</code>。</p>
+<p style="margin:2px 0 2px 12px">• <b>datacode2d</b> — <code style="color:#22d3bf">qr_encode</code> / <code style="color:#22d3bf">qr_decode_modules</code> / <code style="color:#22d3bf">qr_locate</code> / <code style="color:#22d3bf">qr_sample</code> / <code style="color:#22d3bf">qr_read</code>、<code style="color:#22d3bf">dm_encode</code> / <code style="color:#22d3bf">dm_decode_modules</code> / <code style="color:#22d3bf">dm_locate</code> / <code style="color:#22d3bf">dm_sample</code> / <code style="color:#22d3bf">dm_read</code>(Data Matrix ECC200)。Reed-Solomon は自前(<code style="color:#22d3bf">symrs.py</code>)で、<b>ブロックごとに直した語数</b>を返す。</p>
+<p style="margin:2px 0 2px 12px">• <b>symbol_capture</b> — <code style="color:#22d3bf">render_symbol</code>(印字のにじみ・刻印の点・回転・あおり、面積で積分)/ <code style="color:#22d3bf">capture_degrade</code>(照明の傾き・周辺減光・デフォーカスの一様円・動きぶれ・ガウス・ショット雑音・読み出し雑音・量子化)。</p>
+<p style="margin:2px 0 2px 12px">• <b>print_quality</b> — <code style="color:#22d3bf">grade_barcode_profile</code> / <code style="color:#22d3bf">grade_barcode1d</code>(ISO/IEC 15416 の考え方)/ <code style="color:#22d3bf">grade_datacode2d</code>(ISO/IEC 15415 の考え方)。</p>
+<p style="margin:2px 0 2px 12px">• <b>read_pod</b> — <code style="color:#22d3bf">symbol_read</code> / <code style="color:#22d3bf">symbol_read_trials</code> / <code style="color:#22d3bf">symbol_read_pod</code>: 物理劣化を 1 つ掃引し、MIL-HDBK-1823A の hit/miss(既存の <code style="color:#22d3bf">pod</code> 族)で「90 % 読める劣化量」とその 95 % 信頼の保守側を返す。</p>
+<p style="margin:2px 0 2px 12px">• <b>symbol_bridge</b> — <code style="color:#22d3bf">read_symbols_zxing</code>(zxing-cpp、Apache-2.0、<code style="color:#22d3bf">pip install zxing-cpp</code>。無ければ <code style="color:#22d3bf">ImportError</code>。黙って自前の読み取り器に切り替えない)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">流れ</h3>
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart TD
+    ENC[&quot;encode_barcode1d / qr_encode / dm_encode&lt;br/&gt;シンボルの表(真値 = 文字列)&quot;]
+    ENC --&gt; R[&quot;render_symbol&lt;br/&gt;印字・回転・あおり&quot;]
+    R --&gt; C[&quot;capture_degrade&lt;br/&gt;照明・ぼけ・雑音&quot;]
+    C --&gt; IMG[&quot;image2d&quot;]
+    IMG --&gt; RD[&quot;read_barcode1d / qr_read / dm_read&lt;br/&gt;(read_symbols_zxing)&quot;]
+    IMG --&gt; GR[&quot;grade_barcode1d / grade_datacode2d&lt;br/&gt;等級 A..F と制限するパラメータ&quot;]
+    ENC --&gt; TR[&quot;symbol_read_trials&lt;br/&gt;劣化を掃引 x 試行(成功 / 誤読 / 不能)&quot;]
+    TR --&gt; POD[&quot;symbol_read_pod&lt;br/&gt;level90 / level90_95・誤読の上限&quot;]</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">最初の 1 本</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">import numpy as np
+import fullseye as fs
+
+sym = fs.ledger.encode_barcode1d(&quot;490123456789&quot;, &quot;ean13&quot;)       # 検査数字は自動 → 4901234567894
+img = fs.ledger.render_symbol(sym, 3.0, rotate_deg=20.0)         # モジュール 3 px、20° 回転
+img = fs.ledger.capture_degrade(img, defocus_px=4.0, full_well_e=20000.0,
+                                read_noise_e=10.0, bits=8, seed=1)
+print(fs.ledger.read_barcode1d(img, (&quot;ean13&quot;,))[&quot;text&quot;])         # 4901234567894
+print(fs.ledger.grade_barcode1d(fs.ledger.render_symbol(sym, 6.0))[&quot;letter&quot;])   # A
+
+tr = fs.ledger.symbol_read_trials(sym, &quot;defocus_px&quot;, np.linspace(2, 16, 8), trials=30,
+                                  module_px=3.0, refine=True, level_jitter=0.05)
+pod = fs.ledger.symbol_read_pod(tr)
+print(pod[&quot;level90&quot;], pod[&quot;level90_95&quot;], pod[&quot;misread_total&quot;])</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">落とし穴(実測に基づく)</h3>
+<p style="margin:2px 0 2px 12px">1. <b>全体系を許すと短読みで誤読する。</b> ぼけた EAN-13 を全体系で読むと、断片が 2 桁や 6 桁の ITF として返った(ITF に検査数字が無いため)。読み取り器は ITF の最短 6 桁・太細比 1.8..3.4・走査線 2 本以上の一致を要求し、<code style="color:#22d3bf">symbol_read_trials</code> は表の体系だけを有効にする。現場でも<b>使う体系だけ</b>を有効にしてください。</p>
+<p style="margin:2px 0 2px 12px">2. <b>「読める」と「品質が良い」は別の問い。</b> EAN-13 は像面のぼけ円が 2.2 モジュールでも 90 % 読める(Fullseye の読み取り器)が、そのぼけで撮ったシンボルの等級は F(変調 0.10)。等級は「どの読み取り器でも読める余裕」、POD は「この読み取り器・この撮像で読めるか」。</p>
+<p style="margin:2px 0 2px 12px">3. <b>d90 は点推定、使うのは d90/95。</b> 30 回 x 8 水準の掃引の d90 で 201 枚撮り直すと読取率は 0.79 だった。保守側の d90/95 と、撮り直しに対する曲線の当てはまりで判断する(<code style="color:#22d3bf">examples/poc_symbol_package_1d.py</code>)。</p>
+<p style="margin:2px 0 2px 12px">4. <b>劣化量だけで決まる読み取りは POD にならない。</b> 雑音も揺らぎも無い撮像では、ある水準を境に全部読める/全部読めない(完全分離)。<code style="color:#22d3bf">symbol_read_pod</code> は傾きの無い曲線を作らず、全数成功の実証(29/29 の論法)を返す。</p>
+<p style="margin:2px 0 2px 12px">5. <b>非単調の POD。</b> zxing-cpp 3.1.1 はくっきりした<b>ドットピーン</b>の Data Matrix を読まず(24 方向中 0)、ぼけで点がつながると読む —— 読取率がぼけに対して増える。<code style="color:#22d3bf">symbol_read_pod</code> は <code style="color:#22d3bf">monotone = False</code> の旗を立てる(<code style="color:#22d3bf">examples/poc_symbol_part_dpm.py</code>)。</p>
+<p style="margin:2px 0 2px 12px">6. <b>DPM の点と測定開口。</b> 直径 0.8 X の点を開口 0.8 X で測ると点の縁が入り、SC が 0.35 → 0.318 に下がる。点の内側に収まる開口(0.4 X)なら閉形式どおり。</p>
+<p style="margin:2px 0 2px 12px">7. <b>これは認証された検証器ではない。</b> 規格の本文は写しておらず、等級の境界は公開の解説の値、細部は docstring に Fullseye の実装として書いた。固定パターンの損傷は簡略化(最悪のモジュール)。</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0.</p>

@@ -20,6 +20,7 @@
 <p><code style="color:#22d3bf">max|clahe(x,0.5,0.0) - clahe(x,0.5,1.0)| == 0.0</code> きっかり)。CLAHE の &quot;C&quot; は contrast <b>limited</b> の C であり、clip limit こそが AHE と CLAHE を分ける当のものなので、<b>実装は AHE であって CLAHE ではなかった</b> —— 名前が嘘をついていた。ここで clip limit を実装して <code style="color:#22d3bf">b</code> に割り当て、<code style="color:#22d3bf">b=1</code> が旧実装とビット一致する端になるよう倍率を選んである(切り取りが起きない上限 = ビン数 256 倍)。</p>
 <p>Tiles PARTITION the image (linspace boundaries, so the last tile absorbs the H % nb / W % nb remainder), each tile&#x27;s clip-limited CDF is its local tone map, and every pixel blends the maps of its (up to) 4 nearest tile centres with bilinear weights — the standard CLAHE interpolation (Zuiderveld 1994).</p>
 <p>2026-08-30: 補間を追加(KNOWN_ISSUES #4 — 旧実装はタイルごとに独立に平坦化しており、タイル境界に不連続(肉眼で見える格子)が出ていた)。タイル中心の近傍領域ではそのタイルの CDF がそのまま支配的なので、旧実装と同じ写像族の連続版になっている。</p>
+<p><b>同じ処理の別実装(実測、<code style="color:#22d3bf">docs/IMPL_DIFFERENTIAL.md</code>)</b>: 同じ入力・同じ a, b での内部の差(振れ幅に対する比。5e-3 未満が一致)は <code style="color:#22d3bf">cv_clahe</code> 0.61, <code style="color:#22d3bf">xkor_clahe</code> 0.61。食い違う理由(つまみの写し方・窓・端・量子化・定義の違い)は表に書いてある。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

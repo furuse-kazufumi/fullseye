@@ -16,6 +16,7 @@
 <p>Algebraic reconstruction: run a few SART/SIRT sweeps on the input sinogram (rows = angles). <code style="color:#22d3bf">a</code> sets the iteration count (<code style="color:#22d3bf">round(1+a*4)</code> -&gt; 1..5), <code style="color:#22d3bf">b</code> sets the relaxation factor (<code style="color:#22d3bf">0.05 + b*0.35</code>). Uses <code style="color:#22d3bf">skimage.transform.iradon_sart</code> when available, else a self-contained NumPy SIRT (project -&gt; residual -&gt; weighted back-projection) loop. Output refit to HxW.</p>
 <p><b>値の比較可能性(実測)</b>: 出力を<b>その画像の最大値で正規化</b>している(出力の最大が常に 1.0、入力を定数倍しても出力が変わらない)。したがって<b>画像をまたいで値を比較できない</b> —— 同じ強さの特徴でも、その画像の中で最も強い特徴が何かによって値が変わる。弱い特徴しか無い画像では雑音が 1.0 まで持ち上がる。画像間で比べたいときは、共通の基準で割り直すこと。</p>
 <p><b>何も写っていないフレーム(実測)</b>: 明るさが一様な画像を入れると、<b>明るさに関係なく空(全画素が背景 0)</b>になる。真っ白でも真っ黒でも同じで、明るさそのものでは何も検出しない。</p>
+<p><b>同じ語幹の別の op</b>: <code style="color:#22d3bf">sart_reconstruct</code> は入出力の型が違う別の処理で、名前が似ているだけ(<code style="color:#22d3bf">docs/IMPL_DIFFERENTIAL.md</code>)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_physics_alife_3d">gallery2d_physics_alife_3d ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

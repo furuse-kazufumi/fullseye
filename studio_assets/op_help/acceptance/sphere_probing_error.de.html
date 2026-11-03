@@ -1,0 +1,28 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">sphere_probing_error — ACCEPTANCE <code style="color:#22d3bf">evaluate</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sphere_probing_error(points, calibrated_diameter, exclude_fraction=0.003)</code> (die Implementierung direkt: <code style="color:#22d3bf">import acceptance3d; acceptance3d.sphere_probing_error(points, calibrated_diameter, exclude_fraction=0.003)</code>; aus dem Register: <code style="color:#22d3bf">opsacceptance.get(&quot;sphere_probing_error&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>Berechnet die Antastabweichungen Form PF und Größe PS aus der Punktwolke einer Kugel (<code style="color:#22d3bf">table</code>).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>Probing error of form (PF) and of size (PS) from the point cloud of one calibrated sphere.</p>
+<p>ガウスの最小二乗で半径自由の球を当て(代数解を初期値に Gauss-Newton)、半径方向の偏差が最大の点を <code style="color:#22d3bf">floor(exclude_fraction · N)</code> 個まで除いて当て直す。<code style="color:#22d3bf">pf = R_max − R_min</code>(除外後の点の、当てた中心からの距離の範囲)、<code style="color:#22d3bf">ps = 2R − calibrated_diameter</code>(符号つき: 大きく測れば正)。A free-radius least-squares sphere is fitted, at most <code style="color:#22d3bf">floor(exclude_fraction*N)</code> points with the largest radial deviation are dropped and the sphere refitted; <code style="color:#22d3bf">pf</code> is the range of radial distances, <code style="color:#22d3bf">ps</code> the signed diameter error. Definitions as described in Carfagni et al. 2019 (doi:10.3390/s19030489) for VDI/VDE 2634 Part 2 — the normative text is not reproduced; this is not a conformance claim.</p>
+<p>返す <code style="color:#22d3bf">dict</code>: <code style="color:#22d3bf">pf</code>、<code style="color:#22d3bf">ps</code>、<code style="color:#22d3bf">diameter</code>、<code style="color:#22d3bf">radius</code>、<code style="color:#22d3bf">center</code> (3,)、<code style="color:#22d3bf">residual_rms</code>、<code style="color:#22d3bf">n_points</code>、<code style="color:#22d3bf">n_used</code>、<code style="color:#22d3bf">n_excluded</code>、<code style="color:#22d3bf">exclude_fraction</code>、<code style="color:#22d3bf">calibrated_diameter</code>。単位は入力の点の単位のまま。</p>
+<p>限界: 球冠しか見えない点群(片側から撮った球)では半径と中心が相関し、PS は雑音に敏感になる(見えている角度が小さいほど)。<code style="color:#22d3bf">residual_rms</code> が雑音の目安。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 点が (N, 3) でない・10 点未満・非有限、同一平面上(球が定まらない)、<code style="color:#22d3bf">calibrated_diameter</code> が正でない、<code style="color:#22d3bf">exclude_fraction</code> が [0, 0.05] の外。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideacceptance:optical_3d_acceptance">Leitfaden zur Familie optical_3d_acceptance</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• (noch keine)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">table</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opacceptance:acceptance_verdict">acceptance_verdict</a> · <a style="color:#22d3bf" href="opacceptance:acceptance_scan">acceptance_scan</a> · <a style="color:#22d3bf" href="opacceptance:virtual_acceptance_test">virtual_acceptance_test</a> · <a style="color:#22d3bf" href="opacceptance:acceptance_error_budget">acceptance_error_budget</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">evaluate</code>)</h3>
+<p><a style="color:#22d3bf" href="opacceptance:sphere_spacing_error">sphere_spacing_error</a> · <a style="color:#22d3bf" href="opacceptance:plane_flatness_error">plane_flatness_error</a> · <a style="color:#22d3bf" href="opacceptance:acceptance_verdict">acceptance_verdict</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: acceptance3d.py — ACCEPTANCE Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

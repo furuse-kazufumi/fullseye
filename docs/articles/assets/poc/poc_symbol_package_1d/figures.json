@@ -1,0 +1,24 @@
+[
+ {
+  "file": "01_ean13_defocus.png",
+  "name": "ean13_defocus",
+  "caption": "d90 のぼけでも 90 % 読めるが、印字品質の等級は F。",
+  "shape": [
+   218,
+   1099,
+   3
+  ]
+ },
+ {
+  "file": "02_ean13_pod_levels.png",
+  "name": "ean13_pod_levels",
+  "caption": "",
+  "shape": [
+   832,
+   636,
+   3
+  ],
+  "csv": "02_ean13_pod_levels.csv",
+  "tsv": "02_ean13_pod_levels.tsv"
+ }
+]

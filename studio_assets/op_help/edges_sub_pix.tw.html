@@ -13,9 +13,12 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/edges_sub_pix.inputs.jpg">edges_sub_pix: 其他輸入影像</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>次像素精度的邊緣點擷取。求出梯度及其法線方向(<code style="color:#22d3bf">gradient_normals</code>),將超過閾值(<code style="color:#22d3bf">0.15+0.5*a</code>)的像素連通成分化後,透過拋物線擬合將各點精細化到次像素位置(<code style="color:#22d3bf">subpixel_refine_edges</code>,與 <code style="color:#22d3bf">ops</code> 側同名 op 共用的實作——經 2026-09-02 修正才成為真正意義上的次像素;舊實作只是原樣回傳整數像素座標)。相當於 HALCON 的 <code style="color:#22d3bf">edges_sub_pix</code>(Extract sub-pixel precise edges using Deriche, Lanser, Shen, or Canny filters.)。</p>
-<p><code style="color:#22d3bf">a</code> 調整邊緣強度的閾值。<code style="color:#22d3bf">b</code> 未使用。</p>
-<p>??? FsValueError????? NaN / inf?</p>
+<p>次像素精度的邊緣輪廓擷取。求出梯度及其法線方向(<code style="color:#22d3bf">gradient_normals</code>),以非極大值抑制(與 Canny 相同,只保留沿法線方向強於兩側的像素)細化為單像素寬,把超過閾值(<code style="color:#22d3bf">0.15+0.5*a</code>,以最大梯度正規化的強度)的像素連接成<b>沿曲線排序的輪廓</b>(在分支點拆成不同輪廓,封閉邊緣在起點封閉),再以拋物線擬合沿法線把各點精細化到次像素位置(<code style="color:#22d3bf">subpixel_refine_edges</code>,與 <code style="color:#22d3bf">ops</code> 側同名 op 共用的實作 —— 經 2026-09-02 的修正才成為真正的次像素;舊實作直接回傳整數像素座標)。相當於 HALCON 的 <code style="color:#22d3bf">edges_sub_pix</code>(Extract sub-pixel precise edges using Deriche, Lanser, Shen, or Canny filters.)。</p>
+<p>每條輪廓的點<b>沿曲線排序</b>(相鄰點間距約 1 px),所以 <code style="color:#22d3bf">length_xld</code> 可量測邊緣長度,<code style="color:#22d3bf">area_center_xld</code> / <code style="color:#22d3bf">circularity_xld</code> 可量測封閉邊緣所圍的形狀(r = 18 px 的圓盤 length_xld 約 113 px = 2πr)。</p>
+<p>★直到 2026-11-03,超過閾值的 2〜3 px 寬<b>帶</b>中的像素依<b>光柵順序</b>原樣放進一條輪廓 —— 同一圓盤的 length_xld 為 2508 px(點逐列往返)。與點順序無關的量(直線擬合 <code style="color:#22d3bf">fit_line_contour_xld</code> 等)與以前的值接近。</p>
+<p><code style="color:#22d3bf">a</code> 調整邊緣強度閾值。<code style="color:#22d3bf">b</code> 未使用。</p>
+<p>Raises:</p>
+<p>FsValueError: 含 NaN / inf 的影像。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">gallery2d_contour_measure 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

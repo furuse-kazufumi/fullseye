@@ -5,7 +5,7 @@ category: gradient
 in: image2d × image2d
 out: image2d
 gpu: なし
-examples: [gallery_openvx_spec_values]
+examples: [gallery_openvx_spec_values, type_connectivity_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.9.0  # fullseye lib version this note was generated for
@@ -37,6 +37,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [gallery_openvx_spec_values](../../../../examples/gallery_openvx_spec_values.py) — `py -3.11 examples/gallery_openvx_spec_values.py`
+- [type_connectivity_tour](../../../../examples/type_connectivity_tour.py) — `py -3.11 examples/type_connectivity_tour.py`
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)
 

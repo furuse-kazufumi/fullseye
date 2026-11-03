@@ -46,6 +46,8 @@ Axis-aligned bounding-box height/width ratio of the point set.
 ``h``, ``w`` は点座標の範囲(画素中心間の距離)で、画素数ベースの幅より 1 小さい。
 複数輪郭があれば全体を囲む 1 つの bbox の比になる。
 
+**同じ語幹の別の op**: `height_width_ratio` は入出力の型が違う別の処理で、名前が似ているだけ(`docs/IMPL_DIFFERENTIAL.md`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_geometry ファミリ ガイド](../guides/gallery2d_geometry.md)

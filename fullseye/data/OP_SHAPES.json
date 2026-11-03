@@ -40,7 +40,7 @@
       ],
       "shape": "join",
       "derived_from": {
-        "direct_edges": 546,
+        "direct_edges": 547,
         "join_edges": 75,
         "reduce_edges": 0
       },
@@ -192,8 +192,8 @@
       ],
       "shape": "join",
       "derived_from": {
-        "direct_edges": 17,
-        "join_edges": 1,
+        "direct_edges": 20,
+        "join_edges": 2,
         "reduce_edges": 0
       },
       "currently_composable": true,
@@ -241,21 +241,22 @@
         "features",
         "points"
       ],
-      "shape": "serial",
+      "shape": "join",
       "derived_from": {
-        "direct_edges": 0,
-        "join_edges": 0,
+        "direct_edges": 1,
+        "join_edges": 1,
         "reduce_edges": 0
       },
-      "currently_composable": false,
+      "currently_composable": true,
       "metric": "task-specific",
-      "representative_chain": [],
+      "representative_chain": [
+        "light_section_scan"
+      ],
       "example": {
-        "status": "none"
+        "status": "verified_graph_edge",
+        "op": "light_section_scan"
       },
-      "missing": [
-        "typed DAG executor or matching executable edge"
-      ]
+      "missing": []
     },
     {
       "input_form": "same_view_bundle",
@@ -635,8 +636,8 @@
       ],
       "shape": "join",
       "derived_from": {
-        "direct_edges": 17,
-        "join_edges": 1,
+        "direct_edges": 20,
+        "join_edges": 2,
         "reduce_edges": 0
       },
       "currently_composable": true,
@@ -684,21 +685,22 @@
         "features",
         "points"
       ],
-      "shape": "serial",
+      "shape": "join",
       "derived_from": {
-        "direct_edges": 0,
-        "join_edges": 0,
+        "direct_edges": 1,
+        "join_edges": 1,
         "reduce_edges": 0
       },
-      "currently_composable": false,
+      "currently_composable": true,
       "metric": "task-specific",
-      "representative_chain": [],
+      "representative_chain": [
+        "light_section_scan"
+      ],
       "example": {
-        "status": "none"
+        "status": "verified_graph_edge",
+        "op": "light_section_scan"
       },
-      "missing": [
-        "typed DAG executor or matching executable edge"
-      ]
+      "missing": []
     },
     {
       "input_form": "time_series",
@@ -1009,8 +1011,8 @@
       ],
       "shape": "join",
       "derived_from": {
-        "direct_edges": 12,
-        "join_edges": 12,
+        "direct_edges": 13,
+        "join_edges": 13,
         "reduce_edges": 0
       },
       "currently_composable": true,
@@ -1085,7 +1087,7 @@
       ],
       "shape": "join",
       "derived_from": {
-        "direct_edges": 546,
+        "direct_edges": 547,
         "join_edges": 75,
         "reduce_edges": 0
       },
@@ -1237,8 +1239,8 @@
       ],
       "shape": "join",
       "derived_from": {
-        "direct_edges": 17,
-        "join_edges": 1,
+        "direct_edges": 20,
+        "join_edges": 2,
         "reduce_edges": 0
       },
       "currently_composable": true,
@@ -1286,21 +1288,22 @@
         "features",
         "points"
       ],
-      "shape": "map",
+      "shape": "join",
       "derived_from": {
-        "direct_edges": 0,
-        "join_edges": 0,
+        "direct_edges": 1,
+        "join_edges": 1,
         "reduce_edges": 0
       },
-      "currently_composable": false,
+      "currently_composable": true,
       "metric": "task-specific",
-      "representative_chain": [],
+      "representative_chain": [
+        "light_section_scan"
+      ],
       "example": {
-        "status": "none"
+        "status": "verified_graph_edge",
+        "op": "light_section_scan"
       },
-      "missing": [
-        "typed DAG executor or matching executable edge"
-      ]
+      "missing": []
     },
     {
       "input_form": "batch",

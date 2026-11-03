@@ -1,0 +1,25 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">symbol_read — SYMBOL <code style="color:#22d3bf">read_pod</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.symbol_read(image, reader=&#x27;barcode1d&#x27;, symbologies=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import symbolpod; symbolpod.symbol_read(image, reader=&#x27;barcode1d&#x27;, symbologies=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">opssymbol.get(&quot;symbol_read&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>चुने हुए reader से image पढ़कर <code style="color:#22d3bf">{&quot;ok&quot;, &quot;text&quot;, &quot;error&quot;}</code> लौटाता है (<code style="color:#22d3bf">table</code>)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>Read an image with one of the family&#x27;s readers (<code style="color:#22d3bf">&quot;barcode1d&quot;</code> = <code style="color:#22d3bf">barcode1d.read_barcode1d</code>, <code style="color:#22d3bf">&quot;qr&quot;</code> = <code style="color:#22d3bf">qrsym.qr_read</code>, <code style="color:#22d3bf">&quot;datamatrix&quot;</code> = <code style="color:#22d3bf">dmsym.dm_read</code>, <code style="color:#22d3bf">&quot;zxing&quot;</code> = <code style="color:#22d3bf">symzxing.read_symbols_zxing</code>, optional extra, restricted to <code style="color:#22d3bf">symbologies</code> mapped by <code style="color:#22d3bf">ZXING_FORMATS</code>; its UPC-A answer is normalised to 12 digits) and return <code style="color:#22d3bf">ok</code> (decoded at all), <code style="color:#22d3bf">text</code> (None if not) and <code style="color:#22d3bf">error</code> (the reader&#x27;s message on a no-read). A no-read is not an exception here — it is an outcome to be counted.</p>
+<p>空の入力は <code style="color:#22d3bf">ValueError</code>(読み取り器の検査をそのまま通す)。拒否(<code style="color:#22d3bf">ValueError</code>): 未知の <code style="color:#22d3bf">reader</code>、2-D でない、非有限。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesymbol:symbol_reading">symbol_reading family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_symbol_package_1d">poc_symbol_package_1d</a> — <code style="color:#22d3bf">py -3.11 examples/poc_symbol_package_1d.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opsymbol:render_symbol">render_symbol</a> · <a style="color:#22d3bf" href="opsymbol:symbol_read_trials">symbol_read_trials</a> · <a style="color:#22d3bf" href="opsymbol:symbol_read_pod">symbol_read_pod</a> · <a style="color:#22d3bf" href="opsymbol:ocr_classify">ocr_classify</a> · <a style="color:#22d3bf" href="opsymbol:ocr_read_line">ocr_read_line</a> · <a style="color:#22d3bf" href="opsymbol:ocr_read_trials">ocr_read_trials</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">read_pod</code>)</h3>
+<p><a style="color:#22d3bf" href="opsymbol:symbol_read_trials">symbol_read_trials</a> · <a style="color:#22d3bf" href="opsymbol:symbol_read_pod">symbol_read_pod</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: symbolpod.py — SYMBOL operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,0 +1,27 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">calibration_next_pose — CALIB <code style="color:#22d3bf">calib_truth</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.calibration_next_pose(calibration, candidate_poses, image_shape, step=32, sigma_px=None)</code>(要直接呼叫實作,<code style="color:#22d3bf">import calib_lm; calib_lm.calibration_next_pose(calibration, candidate_poses, image_shape, step=32, sigma_px=None)</code>;從台帳取用則 <code style="color:#22d3bf">opscalib.get(&quot;calibration_next_pose&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>在候選的板姿態中推薦加入後最能降低校正不確定度(全圖平均)的一張(<code style="color:#22d3bf">table</code>)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>Recommend the next calibration view. The information already gathered is rebuilt from the calibration&#x27;s own geometry (board, poses, current estimate — the Jacobian does not depend on the measured points) as JᵀJ/σ²; each candidate pose (board -&gt; camera 4x4) adds its own block (with its 6 pose unknowns). The score is the mean of <code style="color:#22d3bf">calibration_uncertainty_map</code> after adding the candidate; lower is better. Candidates whose board leaves the image or goes behind the camera get <code style="color:#22d3bf">inf</code>. <code style="color:#22d3bf">sigma_px</code> overrides the corner noise (default: the calibration&#x27;s <code style="color:#22d3bf">sigma_px</code>).</p>
+<p>★これは<b>予測</b>(線形化した共分散)。モンテカルロで「推薦を足した校正の実際の誤差 &lt; 最下位を足した校正」を門で確かめる(tests)。最適な実験計画の D 最適ではなく、画像の上の予測の不確かさの平均を直接減らす基準。画像の上の予測の再投影誤差で次の姿勢を選ぶ考え方は AprilCal(Richardson, Strom &amp; Olson, IROS 2013)と同じ系統(あちらは最大値、こちらは平均)。★実測(tests の 6 候補): 候補どうしの差が小さいとき予測の順位と実際の順位は入れ替わりうる。確かなのは「最下位を避ける」ほうで、門もそこを見る。</p>
+<p>返す <code style="color:#22d3bf">dict</code>: <code style="color:#22d3bf">scores</code>(候補ごと、px)、<code style="color:#22d3bf">best_index</code>、<code style="color:#22d3bf">current_mean_px</code>、<code style="color:#22d3bf">improvement</code>(現在 − 最良)、<code style="color:#22d3bf">visible</code>(候補ごと)、<code style="color:#22d3bf">param_std</code>(候補ごとの 9 変数の標準偏差)。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 校正の表に姿勢・板・雑音が無い、候補が空・剛体でない、引数の範囲外。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidecalib:camera_calibration">camera_calibration 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_calibration_truth_map">poc_calibration_truth_map</a> — <code style="color:#22d3bf">py -3.11 examples/poc_calibration_truth_map.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="opcalib:image_points_to_world_plane">image_points_to_world_plane</a> · <a style="color:#22d3bf" href="opcalib:contour_to_world_plane_xld">contour_to_world_plane_xld</a> · <a style="color:#22d3bf" href="opcalib:sim_caltab">sim_caltab</a> · <a style="color:#22d3bf" href="opcalib:disp_caltab">disp_caltab</a> · <a style="color:#22d3bf" href="opcalib:calibration_error_map">calibration_error_map</a> · <a style="color:#22d3bf" href="opcalib:calibration_uncertainty_map">calibration_uncertainty_map</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">calib_truth</code>)</h3>
+<p><a style="color:#22d3bf" href="opcalib:calibration_error_map">calibration_error_map</a> · <a style="color:#22d3bf" href="opcalib:calibration_uncertainty_map">calibration_uncertainty_map</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: calib_lm.py — CALIB 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

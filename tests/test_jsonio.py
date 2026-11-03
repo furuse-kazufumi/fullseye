@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 import os
 import sys
+import zlib
 
 import numpy as np
 import pytest
@@ -28,7 +29,7 @@ def _same(a, b):
 @pytest.mark.parametrize("sort", sorted(J._ARRAY_SORTS))
 @pytest.mark.parametrize("readable", [False, True])
 def test_every_array_sort_round_trips_bit_for_bit(sort, readable):
-    rng = np.random.default_rng(hash(sort) % 1000)
+    rng = np.random.default_rng(zlib.crc32(sort.encode()) % 1000)
     _, ndim, last = J._ARRAY_SORTS[sort]
     shape = [5, 7, 3, 2][:ndim]
     if last is not None:

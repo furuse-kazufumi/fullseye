@@ -19717,6 +19717,176 @@
     "hi": "वास्तविक SEM धातु परत की मापिकी",
     "fr": "Métrologie de couches métalliques en MEB réel"
    }
+  },
+  {
+   "id": "poc_virtual_acceptance_3d",
+   "group": "wing_metrology",
+   "media": "01_acceptance_layout_and_noise.png",
+   "motion": false,
+   "thumb_src": "01_acceptance_layout_and_noise.png",
+   "label": {
+    "ja": "買う前に受入試験をかける ―― 同じ iToF でも黒い球 1 つで不合格になる",
+    "en": "Acceptance-Test an Optical 3-D Sensor Before Buying It: One Black Sphere Fails the Same iToF",
+    "zh": "购买前先做验收试验:同一台 iToF 仅因一个黑色球就不合格",
+    "tw": "購買前先做驗收試驗:同一台 iToF 僅因一顆黑色球就不合格",
+    "ko": "사기 전에 인수 시험: 같은 iToF가 검은 구 하나로 불합격",
+    "de": "Abnahmeprüfung vor dem Kauf: Eine schwarze Kugel lässt dieselbe iToF durchfallen",
+    "hi": "खरीदने से पहले स्वीकृति परीक्षण: एक काला गोला वही iToF फेल कर देता है",
+    "fr": "Recette avant achat : une seule sphère noire fait échouer le même iToF"
+   }
+  },
+  {
+   "id": "poc_calibration_truth_map",
+   "group": "wing_geometry",
+   "media": "01_calibration_maps.png",
+   "motion": false,
+   "thumb_src": "01_calibration_maps.png",
+   "label": {
+    "ja": "真値つきのカメラ校正 ―― 再投影 0.044 px でも隅では 0.568 px 誤る",
+    "en": "Camera Calibration with Ground Truth: 0.044 px Reprojection, Yet 0.568 px Wrong in the Corner",
+    "zh": "带真值的相机标定:重投影 0.044 px,角落仍错 0.568 px",
+    "tw": "帶真值的相機校正:重投影 0.044 px,角落仍錯 0.568 px",
+    "ko": "정답이 있는 카메라 보정: 재투영 0.044 px여도 모서리에서 0.568 px 오차",
+    "de": "Kamerakalibrierung mit Ground Truth: 0,044 px Reprojektion, 0,568 px Fehler in der Ecke",
+    "hi": "ग्राउंड ट्रुथ के साथ कैमरा कैलिब्रेशन: 0.044 px रीप्रोजेक्शन, कोने में 0.568 px त्रुटि",
+    "fr": "Étalonnage avec vérité terrain : 0,044 px de reprojection, 0,568 px d'erreur dans le coin"
+   }
+  },
+  {
+   "id": "poc_light_section_step_weld_floor",
+   "group": "wing_metrology",
+   "media": "01_height_map.png",
+   "motion": false,
+   "thumb_src": "01_height_map.png",
+   "label": {
+    "ja": "光切断の高さは µm で合うが、実機を決めるのはスペックルの床 20.7 µm",
+    "en": "Light-Section Heights Agree to Microns, but the Real Limit Is a 20.7 µm Speckle Floor",
+    "zh": "光切断高度精确到微米,但实际极限是 20.7 µm 的散斑底限",
+    "tw": "光切斷高度精確到微米,但實際極限是 20.7 µm 的散斑底限",
+    "ko": "광절단 높이는 µm 단위로 맞지만 실제 한계는 20.7 µm 스페클 바닥",
+    "de": "Lichtschnitthöhen stimmen auf µm, die reale Grenze ist ein Speckle-Boden von 20,7 µm",
+    "hi": "लाइट-सेक्शन ऊँचाई µm तक सही, पर असली सीमा 20.7 µm स्पेकल फ़्लोर",
+    "fr": "Les hauteurs par triangulation laser concordent au µm, mais la limite réelle est un plancher de speckle de 20,7 µm"
+   }
+  },
+  {
+   "id": "poc_hdr_glossy_metal_inspection",
+   "group": "wing_industrial",
+   "media": "02_results.png",
+   "motion": false,
+   "thumb_src": "02_results.png",
+   "label": {
+    "ja": "光沢金属の 2 本の傷は露出 1 回では両方見えず、応答を測った HDR で見える",
+    "en": "No Single Exposure Shows Both Scratches on Glossy Metal; HDR with a Measured Response Does",
+    "zh": "单次曝光看不全光泽金属上的两道划痕,测过响应的 HDR 可以",
+    "tw": "單次曝光看不全光澤金屬上的兩道刮痕,量過響應的 HDR 可以",
+    "ko": "한 번의 노출로는 광택 금속의 두 흠집을 다 못 보지만, 응답을 측정한 HDR은 본다",
+    "de": "Keine Einzelbelichtung zeigt beide Kratzer auf glänzendem Metall, HDR mit gemessener Kennlinie schon",
+    "hi": "एक एक्सपोज़र चमकदार धातु की दोनों खरोंचें नहीं दिखाता; मापे गए रिस्पॉन्स वाला HDR दिखाता है",
+    "fr": "Aucune pose unique ne montre les deux rayures sur métal brillant ; la HDR à réponse mesurée, si"
+   }
+  },
+  {
+   "id": "poc_part_locate_features",
+   "group": "wing_geometry",
+   "media": "01_part_locate_sift.png",
+   "motion": false,
+   "thumb_src": "01_part_locate_sift.png",
+   "label": {
+    "ja": "37 度回した部品を SIFT は 0.367 px で見つけ、既存の Harris は 158 px 外す",
+    "en": "SIFT Locates a Part Rotated 37 Degrees to 0.367 px; the Existing Harris Matcher Misses by 158 px",
+    "zh": "SIFT 以 0.367 px 定位旋转 37 度的零件,原有 Harris 偏差 158 px",
+    "tw": "SIFT 以 0.367 px 定位旋轉 37 度的零件,原有 Harris 偏差 158 px",
+    "ko": "SIFT는 37도 회전한 부품을 0.367 px로 찾고, 기존 Harris는 158 px 빗나간다",
+    "de": "SIFT findet ein um 37 Grad gedrehtes Teil auf 0,367 px, der bisherige Harris verfehlt es um 158 px",
+    "hi": "SIFT 37 डिग्री घुमे पुर्ज़े को 0.367 px पर ढूँढता है; पुराना Harris 158 px चूकता है",
+    "fr": "SIFT localise une pièce tournée de 37 degrés à 0,367 px ; l'ancien Harris la manque de 158 px"
+   }
+  },
+  {
+   "id": "poc_multimodal_mi_registration",
+   "group": "wing_geometry",
+   "media": "01_multimodal_mi_pair.png",
+   "motion": false,
+   "thumb_src": "01_multimodal_mi_pair.png",
+   "label": {
+    "ja": "相関 −0.74 の可視と赤外の基板像を、相互情報量は 0.170 px で合わせる",
+    "en": "Visible and Thermal Board Images Correlate at −0.74; Mutual Information Aligns Them to 0.170 px",
+    "zh": "可见光与红外电路板图像相关为 −0.74,互信息仍以 0.170 px 配准",
+    "tw": "可見光與紅外電路板影像相關為 −0.74,互資訊仍以 0.170 px 對位",
+    "ko": "상관 −0.74인 가시광·적외선 기판 영상을 상호정보량이 0.170 px로 정합",
+    "de": "Sicht- und Wärmebild einer Platine korrelieren mit −0,74; Mutual Information registriert auf 0,170 px",
+    "hi": "दृश्य और थर्मल बोर्ड छवियों का सहसंबंध −0.74; म्यूचुअल इन्फ़ॉर्मेशन 0.170 px पर संरेखित करता है",
+    "fr": "Images visible et thermique corrélées à −0,74 ; l'information mutuelle les recale à 0,170 px"
+   }
+  },
+  {
+   "id": "poc_sheet_deformation_ffd",
+   "group": "wing_geometry",
+   "media": "01_sheet_ffd_error_maps.png",
+   "motion": false,
+   "thumb_src": "01_sheet_ffd_error_maps.png",
+   "label": {
+    "ja": "シートの変形を FFD は 0.025 px で追うが、バーコードと余白では場が決まらない",
+    "en": "FFD Tracks Sheet Deformation to 0.025 px, but Barcodes and Blank Margins Leave the Field Undetermined",
+    "zh": "FFD 以 0.025 px 跟踪薄片变形,但条码与空白处无法确定位移场",
+    "tw": "FFD 以 0.025 px 追蹤薄片變形,但條碼與空白處無法確定位移場",
+    "ko": "FFD는 시트 변형을 0.025 px로 추적하지만 바코드와 여백에서는 변위장이 정해지지 않는다",
+    "de": "FFD verfolgt Folienverformung auf 0,025 px, aber Strichcodes und leere Ränder lassen das Feld offen",
+    "hi": "FFD शीट विरूपण को 0.025 px तक ट्रैक करता है, पर बारकोड और खाली हाशिये में क्षेत्र तय नहीं होता",
+    "fr": "La FFD suit la déformation d'une feuille à 0,025 px, mais codes-barres et marges vides laissent le champ indéterminé"
+   }
+  },
+  {
+   "id": "poc_symbol_package_1d",
+   "group": "wing_industrial",
+   "media": "01_ean13_defocus.png",
+   "motion": false,
+   "thumb_src": "01_ean13_defocus.png",
+   "label": {
+    "ja": "90 % 読めるぼけでも、バーコードの印字品質は F",
+    "en": "A Barcode Still Read 90 % of the Time at This Blur Grades F for Print Quality",
+    "zh": "在 90% 可读的模糊下,条码的印刷质量等级为 F",
+    "tw": "在 90% 可讀的模糊下,條碼的印刷品質等級為 F",
+    "ko": "90 % 읽히는 흐림에서도 바코드 인쇄 품질 등급은 F",
+    "de": "Bei einer Unschärfe, die noch 90 % Lesungen erlaubt, erhält der Strichcode die Druckqualität F",
+    "hi": "जिस धुंधलेपन पर बारकोड 90% पढ़ा जाता है, उस पर प्रिंट गुणवत्ता ग्रेड F है",
+    "fr": "Au flou qui permet encore 90 % de lectures, le code-barres obtient la note de qualité F"
+   }
+  },
+  {
+   "id": "poc_symbol_part_dpm",
+   "group": "wing_industrial",
+   "media": "01_dpm_datamatrix.png",
+   "motion": false,
+   "thumb_src": "01_dpm_datamatrix.png",
+   "label": {
+    "ja": "ドットピーンの Data Matrix は、ぼけると zxing-cpp に読めるようになる",
+    "en": "zxing-cpp Reads a Dot-Peen Data Matrix Only Once It Is Blurred",
+    "zh": "点针刻印的 Data Matrix 要模糊后 zxing-cpp 才能读出",
+    "tw": "點針刻印的 Data Matrix 要模糊後 zxing-cpp 才能讀出",
+    "ko": "도트 핀 Data Matrix는 흐려져야 zxing-cpp가 읽는다",
+    "de": "zxing-cpp liest eine Nadelpräge-Data-Matrix erst, wenn sie unscharf ist",
+    "hi": "डॉट-पीन Data Matrix को zxing-cpp तभी पढ़ता है जब वह धुंधली हो",
+    "fr": "zxing-cpp ne lit une Data Matrix micro-percutée qu'une fois floue"
+   }
+  },
+  {
+   "id": "poc_symbol_lot_ocr",
+   "group": "wing_industrial",
+   "media": "01_lot_ocr_defocus.png",
+   "motion": false,
+   "thumb_src": "01_lot_ocr_defocus.png",
+   "label": {
+    "ja": "ロット番号の OCR は、学習の範囲を越えたぼけで棄却でなく誤読に変わる",
+    "en": "Past the Blur It Was Trained On, Lot-Number OCR Misreads Instead of Rejecting",
+    "zh": "超出训练范围的模糊下,批号 OCR 从拒识变为误读",
+    "tw": "超出訓練範圍的模糊下,批號 OCR 從拒識變為誤讀",
+    "ko": "학습 범위를 넘는 흐림에서 로트 번호 OCR은 거부 대신 오독한다",
+    "de": "Jenseits der trainierten Unschärfe liest die Chargen-OCR falsch, statt abzulehnen",
+    "hi": "प्रशिक्षित धुंधलेपन से आगे लॉट-नंबर OCR अस्वीकार करने के बजाय गलत पढ़ता है",
+    "fr": "Au-delà du flou appris, l'OCR des numéros de lot lit mal au lieu de rejeter"
+   }
   }
  ],
  "all_source": "docs/articles/exhibits/poc_captions.json",

@@ -1,0 +1,33 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">wave_dominant_frequency — MATH <code style="color:#22d3bf">wave</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.wave_dominant_frequency(image, window=&#x27;hann&#x27;)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import mathops; mathops.wave_dominant_frequency(image, window=&#x27;hann&#x27;)</code>、台帳から引くなら <code style="color:#22d3bf">opsmath.get(&quot;wave_dominant_frequency&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>画像の最も強い周期(2-D FFT の DC 以外で最大の山)の周波数・周期・向きを返す(<code style="color:#22d3bf">table</code>)。</p>
+<p>平均を引き、<code style="color:#22d3bf">window=&quot;hann&quot;</code>(既定)なら 2-D の Hann 窓を掛けてから <code style="color:#22d3bf">fft2</code> のパワーの最大(DC は除く)を探し、山の 3 点に<b>対数の放物線</b>を行・列それぞれで当ててビンより細かく読む(<code style="color:#22d3bf">wave_fringe_period</code> の 2-D 版。あちらは 1 軸の周期だけ)。<code style="color:#22d3bf">window=&quot;none&quot;</code> は窓を掛けない(周期が画像幅にちょうど整数個入るときだけ厳密)。</p>
+<p>返す dict: <code style="color:#22d3bf">fx</code> / <code style="color:#22d3bf">fy</code>(列方向・行方向の空間周波数 [cycles/px]、山は <code style="color:#22d3bf">fx &gt;= 0</code> の半平面に揃える)、<code style="color:#22d3bf">freq_cpp</code>(<code style="color:#22d3bf">hypot(fx, fy)</code>)、<code style="color:#22d3bf">period_px</code>(<code style="color:#22d3bf">1 / freq_cpp</code>)、<code style="color:#22d3bf">angle_deg</code>(波数ベクトルの向き = 縞に<b>垂直</b>な向き。+列から +行へ回る角で <code style="color:#22d3bf">[0, 180)</code>。縞 <code style="color:#22d3bf">cos(2π(x cosθ + y sinθ)/p)</code> なら θ)、<code style="color:#22d3bf">peak_fraction</code>(山のビンとその鏡像が DC 以外の全パワーに占める割合 = 周期の確からしさ)、<code style="color:#22d3bf">window</code>。</p>
+<p>★前提: 照明むらのような低周波は山を奪う(画像より長い周期は DC の隣に出る)。むらがある画像は先に背景を引くか高域通過を掛けること。</p>
+<p>空の入力(<code style="color:#22d3bf">image</code> が 0 要素)は <code style="color:#22d3bf">ValueError</code>。拒否(<code style="color:#22d3bf">ValueError</code>): 2-D でない、どちらかの辺が 8 画素未満、非有限の値、平らな画像(周期が無い)、未知の <code style="color:#22d3bf">window</code>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">ファミリ共通の入力契約(fail-closed)</h3>
+<p>mathops の全 op は入力を検証してから計算する(黙って通さない):</p>
+<p style="margin:2px 0 2px 12px">• <b>complex 入力は <code style="color:#22d3bf">ValueError</code></b> — float64 への強制変換は虚部を黙って捨てる(numpy は ComplexWarning だけ出して「もっともらしく間違った」実数を返す)。<code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> を明示するか、複素対応の complexops を使う。</p>
+<p style="margin:2px 0 2px 12px">• <b>masked array(masked 要素あり)は <code style="color:#22d3bf">ValueError</code></b> — マスクを剥がして下の生値を使う暗黙変換を拒否。埋める/落とすを明示する。</p>
+<p style="margin:2px 0 2px 12px">• <b>NaN/Inf は全入力で <code style="color:#22d3bf">ValueError</code></b>(件数を明示して拒否 — 結果全体に伝播するため)。</p>
+<p style="margin:2px 0 2px 12px">• <b>形状は厳格</b>: 1-D と 2-D を暗黙昇格・ブロードキャストしない(vector 枠に matrix、matrix 枠に vector は <code style="color:#22d3bf">ValueError</code>。reshape を明示する)。</p>
+<p style="margin:2px 0 2px 12px">• <b>サイズ上限</b>: 行列を取る op と <code style="color:#22d3bf">stat_histogram</code> の bins は <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code>(2^26 ≈ 6700 万要素)超で <code style="color:#22d3bf">ValueError</code>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemath:math_metrology">math_metrology ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:wave_dominant_frequency_grating">wave_dominant_frequency_grating</a> — <code style="color:#22d3bf">py -3.11 examples/wave_dominant_frequency_grating.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opmath:dynsys_poincare_section">dynsys_poincare_section</a> · <a style="color:#22d3bf" href="opmath:dwt_inverse">dwt_inverse</a> · <a style="color:#22d3bf" href="opmath:chebyshev_eval_nd">chebyshev_eval_nd</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">wave</code>)</h3>
+<p><a style="color:#22d3bf" href="opmath:wave_membrane_mode">wave_membrane_mode</a> · <a style="color:#22d3bf" href="opmath:wave_mode_frequencies">wave_mode_frequencies</a> · <a style="color:#22d3bf" href="opmath:wave_nodal_lines">wave_nodal_lines</a> · <a style="color:#22d3bf" href="opmath:wave_two_slit">wave_two_slit</a> · <a style="color:#22d3bf" href="opmath:wave_fringe_period">wave_fringe_period</a> · <a style="color:#22d3bf" href="opmath:wave_grating_orders">wave_grating_orders</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: mathops.py — MATH operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

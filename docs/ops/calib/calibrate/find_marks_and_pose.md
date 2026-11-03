@@ -51,11 +51,11 @@ world は ``caltab["points"]`` の (y, x) をそのまま (x, y, 0) とする。
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 
-[image_points_to_world_plane](../plane/image_points_to_world_plane.md) · [contour_to_world_plane_xld](../plane/contour_to_world_plane_xld.md) · [sim_caltab](../target/sim_caltab.md) · [disp_caltab](../target/disp_caltab.md)
+[image_points_to_world_plane](../plane/image_points_to_world_plane.md) · [contour_to_world_plane_xld](../plane/contour_to_world_plane_xld.md) · [sim_caltab](../target/sim_caltab.md) · [disp_caltab](../target/disp_caltab.md) · [calibration_error_map](../calib_truth/calibration_error_map.md) · [calibration_uncertainty_map](../calib_truth/calibration_uncertainty_map.md) · [calibration_next_pose](../calib_truth/calibration_next_pose.md)
 
 ## 同カテゴリ(`calibrate`)
 
-[camera_calibration](camera_calibration.md) · [hand_eye_calibration](hand_eye_calibration.md)
+[camera_calibration](camera_calibration.md) · [hand_eye_calibration](hand_eye_calibration.md) · [camera_calibration_lm](camera_calibration_lm.md) · [stereo_calibration_lm](stereo_calibration_lm.md)
 
 ---
 *Provenance: caltab.py — CALIB operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

@@ -17,6 +17,7 @@
 <p>Canny 边缘检测（区域版本，OpenCV 实现）。算法与 sk_canny 相同，但 OpenCV 版本的 API 是直接指定两个阈值，而不是高斯平滑的 σ。</p>
 <p>相当于 HALCON 的 <code style="color:#22d3bf">edges_image</code>。实现为将 <code style="color:#22d3bf">cv2.Canny(_u8(v), threshold1=int(50+100*a), threshold2=int(100+150*b))</code> 的结果转为布尔值 —— a 将下侧阈值(弱边缘的采纳线)在 50～150 范围内、b 将上侧阈值(强边缘的确定线)在 100～250 范围内调节。注意 a 调大、b 调小时下侧可能超过上侧，此时的行为取决于 OpenCV 的实现。</p>
 <p><b>空帧（实测）</b>：输入亮度均匀的图像时，<b>无论亮度如何，结果都为空（全部像素为背景 0）</b>。纯白与纯黑表现相同；仅凭亮度检测不到任何东西。</p>
+<p><b>同一处理的其他实现（实测，<code style="color:#22d3bf">docs/IMPL_DIFFERENTIAL.md</code>）</b>：在相同输入、相同 a、b 下，内部差（相对于取值范围之比；小于 5e-3 视为一致）为 <code style="color:#22d3bf">canny</code> 0.8, <code style="color:#22d3bf">sk_canny</code> 0.94, <code style="color:#22d3bf">xkor_canny</code> 0.51。不一致的原因（旋钮映射、窗口、边界、量化、定义不同）写在表中。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

@@ -37,7 +37,7 @@ XLD 輪郭(dict {cs:[Nx2]})を world 平面へ写す(contour_to_world_plane_xld)
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 
-[image_points_to_world_plane](image_points_to_world_plane.md) · [sim_caltab](../target/sim_caltab.md) · [disp_caltab](../target/disp_caltab.md)
+[image_points_to_world_plane](image_points_to_world_plane.md) · [sim_caltab](../target/sim_caltab.md) · [disp_caltab](../target/disp_caltab.md) · [calibration_error_map](../calib_truth/calibration_error_map.md) · [calibration_uncertainty_map](../calib_truth/calibration_uncertainty_map.md) · [calibration_next_pose](../calib_truth/calibration_next_pose.md)
 
 ## 同カテゴリ(`plane`)
 
