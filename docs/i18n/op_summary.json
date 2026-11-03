@@ -2007,13 +2007,13 @@
    "hi": "Canny edge detection (``skimage.feature.canny``, sigma ``0.5+2*a``) से region extraction। Gaussian smoothing → gradient → non-maximum suppression → hysteresis threshold वाली multi-stage processing एक साथ करने वाली, व्यापक रूप से इस्तेमाल होने वाली edge detection विधि। HALCON के ``edges_image`` (Detect edges using Deriche, Lanser, Shen, or Canny filters.) के समकक्ष है (HALCON Deriche/Lanser/Shen/Canny में से चुन सकता है, लेकिन यहाँ Canny तय है)।"
   },
   "2d/edges_sub_pix": {
-   "fp": "c08c6273e6d4",
-   "en": "Sub-pixel-accurate edge point extraction. Computes the gradient and its normal direction (``gradient_normals``), forms connected components from pixels exceeding a threshold (``0.15+0.5*a``), and then refines each point to sub-pixel position by parabola fitting (``subpixel_refine_edges``, an implementation shared with the same-named op on the ``ops`` side -- a 2026-09-02 fix made this genuinely sub-pixel; the old implementation simply returned integer pixel coordinates). Equivalent to HALCON's ``edges_sub_pix`` (Extract sub-pixel precise edges using Deriche, Lanser, Shen, or Canny filters.).",
-   "zh": "亚像素精度的边缘点提取。求出梯度及其法线方向(``gradient_normals``),将超过阈值(``0.15+0.5*a``)的像素连通成分化,然后通过抛物线拟合将各点精细化到亚像素位置(``subpixel_refine_edges``,与 ``ops`` 侧同名 op 共享的实现——经 2026-09-02 的修复才成为真正意义上的亚像素;旧实现只是原样返回整数像素坐标)。相当于 HALCON 的 ``edges_sub_pix``(Extract sub-pixel precise edges using Deriche, Lanser, Shen, or Canny filters.)。",
-   "tw": "次像素精度的邊緣點擷取。求出梯度及其法線方向(``gradient_normals``),將超過閾值(``0.15+0.5*a``)的像素連通成分化後,透過拋物線擬合將各點精細化到次像素位置(``subpixel_refine_edges``,與 ``ops`` 側同名 op 共用的實作——經 2026-09-02 修正才成為真正意義上的次像素;舊實作只是原樣回傳整數像素座標)。相當於 HALCON 的 ``edges_sub_pix``(Extract sub-pixel precise edges using Deriche, Lanser, Shen, or Canny filters.)。",
-   "ko": "서브픽셀 정밀도의 에지 점 추출. 기울기와 그 법선 방향(``gradient_normals``)을 구하고, 임계값(``0.15+0.5*a``)을 넘는 픽셀을 연결 성분화한 후, 포물선 피팅으로 각 점을 서브픽셀 위치로 정밀화한다(``subpixel_refine_edges``, ``ops`` 쪽 동명 op와 공유하는 구현 -- 2026-09-02 수정으로 진정한 의미의 서브픽셀이 되었다. 이전 구현은 정수 픽셀 좌표를 그대로 반환했다). HALCON의 ``edges_sub_pix``(Extract sub-pixel precise edges using Deriche, Lanser, Shen, or Canny filters.)에 해당.",
-   "de": "Kantenpunkt-Extraktion mit Subpixel-Genauigkeit. Berechnet den Gradienten und seine Normalenrichtung (``gradient_normals``), bildet aus Pixeln, die einen Schwellenwert (``0.15+0.5*a``) überschreiten, zusammenhängende Komponenten und verfeinert dann jeden Punkt durch Parabelanpassung auf eine Subpixel-Position (``subpixel_refine_edges``, eine Implementierung, die sich mit der gleichnamigen Op auf der ``ops``-Seite teilt -- eine Korrektur vom 2026-09-02 machte dies erst zu echtem Subpixel; die alte Implementierung gab einfach ganzzahlige Pixelkoordinaten zurück). Entspricht HALCONs ``edges_sub_pix`` (Extract sub-pixel precise edges using Deriche, Lanser, Shen, or Canny filters.).",
-   "hi": "Sub-pixel सटीकता वाले edge points निकालना। Gradient और उसकी normal दिशा (``gradient_ normals``) निकालकर, threshold (``0.15+0.5*a``) से ऊपर के pixels को connected components में बाँटता है, फिर parabola fitting से हर point को sub-pixel position तक refine करता है (``subpixel_ refine_edges``, ``ops`` की तरफ़ के इसी नाम वाले op के साथ साझा implementation ―― 2026-09-02 के सुधार से यह सचमुच sub-pixel बना; पुराना implementation integer pixel coordinates को वैसे ही लौटा देता था)। HALCON के ``edges_sub_pix`` (Extract sub-pixel precise edges using Deriche, Lanser, Shen, or Canny filters.) के समकक्ष है।"
+   "fp": "0d400cf38661",
+   "en": "Sub-pixel-accurate edge contour extraction. Computes the gradient and its normal direction (``gradient_normals``), thins it to one pixel by non-maximum suppression (as in Canny: only pixels stronger than both neighbours along the normal), links the pixels above the threshold (``0.15+0.5*a``, strength normalised by the maximum gradient) into **contours ordered along the curve** (split into separate contours at branch points; a closed edge is closed at its start point), and refines each point along the normal to sub-pixel position by parabola fitting (``subpixel_refine_edges``, an implementation shared with the same-named op on the ``ops`` side -- a 2026-09-02 fix made it genuinely sub-pixel; the old implementation returned integer pixel coordinates). Equivalent to HALCON's ``edges_sub_pix`` (Extract sub-pixel precise edges using Deriche, Lanser, Shen, or Canny filters.).",
+   "zh": "亚像素精度的边缘轮廓提取。求出梯度及其法线方向(``gradient_normals``),用非极大值抑制(与 Canny 相同,仅保留沿法线方向强于两侧的像素)细化为单像素宽,把超过阈值(``0.15+0.5*a``,按最大梯度归一化的强度)的像素连接成**沿曲线排序的轮廓**(在分支点处拆分为不同轮廓,闭合边缘在起点闭合),再用抛物线拟合沿法线把各点精细化到亚像素位置(``subpixel_refine_edges``,与 ``ops`` 侧同名 op 共享的实现 —— 经 2026-09-02 的修复才成为真正的亚像素;旧实现直接返回整数像素坐标)。相当于 HALCON 的 ``edges_sub_pix``(Extract sub-pixel precise edges using Deriche, Lanser, Shen, or Canny filters.)。",
+   "tw": "次像素精度的邊緣輪廓擷取。求出梯度及其法線方向(``gradient_normals``),以非極大值抑制(與 Canny 相同,只保留沿法線方向強於兩側的像素)細化為單像素寬,把超過閾值(``0.15+0.5*a``,以最大梯度正規化的強度)的像素連接成**沿曲線排序的輪廓**(在分支點拆成不同輪廓,封閉邊緣在起點封閉),再以拋物線擬合沿法線把各點精細化到次像素位置(``subpixel_refine_edges``,與 ``ops`` 側同名 op 共用的實作 —— 經 2026-09-02 的修正才成為真正的次像素;舊實作直接回傳整數像素座標)。相當於 HALCON 的 ``edges_sub_pix``(Extract sub-pixel precise edges using Deriche, Lanser, Shen, or Canny filters.)。",
+   "ko": "서브픽셀 정밀도의 에지 윤곽 추출. 그래디언트와 그 법선 방향(``gradient_normals``)을 구하고, 비최대 억제(Canny와 같이 법선 방향 양옆보다 강한 화소만)로 1화소 폭으로 가늘게 한 뒤, 임계값(``0.15+0.5*a``, 최대 그래디언트로 정규화한 강도)을 넘는 화소를 **곡선을 따라 정렬한 윤곽**으로 잇고(분기점에서 다른 윤곽으로 나누며, 닫힌 에지는 시작점에서 닫음), 포물선 피팅으로 각 점을 법선 방향으로 서브픽셀 위치까지 정밀화한다(``subpixel_refine_edges``, ``ops`` 쪽 동명 op와 공유하는 구현 —— 2026-09-02 수정으로 진정한 서브픽셀이 됨. 이전 구현은 정수 화소 좌표를 그대로 반환). HALCON의 ``edges_sub_pix``(Extract sub-pixel precise edges using Deriche, Lanser, Shen, or Canny filters.)에 해당.",
+   "de": "Subpixelgenaue Extraktion von Kantenkonturen. Berechnet den Gradienten und seine Normalenrichtung (``gradient_normals``), dünnt per Non-Maximum-Suppression (wie bei Canny: nur Pixel, die stärker als beide Nachbarn entlang der Normalen sind) auf ein Pixel aus, verbindet die Pixel über der Schwelle (``0.15+0.5*a``, auf den maximalen Gradienten normierte Stärke) zu **entlang der Kurve geordneten Konturen** (an Verzweigungen in getrennte Konturen geteilt, eine geschlossene Kante wird an ihrem Startpunkt geschlossen) und verfeinert jeden Punkt entlang der Normalen per Parabelanpassung auf Subpixelposition (``subpixel_refine_edges``, eine mit dem gleichnamigen Op auf der ``ops``-Seite geteilte Implementierung -- erst ein Fix vom 2026-09-02 machte sie wirklich subpixelgenau; die alte Implementierung gab ganzzahlige Pixelkoordinaten zurück). Entspricht HALCONs ``edges_sub_pix`` (Extract sub-pixel precise edges using Deriche, Lanser, Shen, or Canny filters.).",
+   "hi": "सब-पिक्सेल सटीकता से किनारे के कंटूर निकालना। ग्रेडिएंट और उसकी लंब दिशा (``gradient_normals``) निकालता है, नॉन-मैक्सिमम सप्रेशन (Canny जैसा: लंब दिशा में दोनों पड़ोसियों से मज़बूत पिक्सेल ही) से एक पिक्सेल चौड़ा करता है, सीमा (``0.15+0.5*a``, अधिकतम ग्रेडिएंट से सामान्यीकृत ताक़त) से ऊपर के पिक्सेलों को **वक्र के साथ क्रमबद्ध कंटूर** में जोड़ता है (शाखा बिंदुओं पर अलग कंटूर, बंद किनारा अपने आरंभ बिंदु पर बंद), और परवलय फ़िटिंग से हर बिंदु को लंब दिशा में सब-पिक्सेल स्थिति तक परिष्कृत करता है (``subpixel_refine_edges``, ``ops`` पक्ष के समान नाम वाले op के साथ साझा कार्यान्वयन —— 2026-09-02 के सुधार से सचमुच सब-पिक्सेल बना; पुराना कार्यान्वयन पूर्णांक पिक्सेल निर्देशांक लौटाता था)। HALCON के ``edges_sub_pix`` (Extract sub-pixel precise edges using Deriche, Lanser, Shen, or Canny filters.) के समतुल्य।"
   },
   "2d/eliminate_min_max": {
    "fp": "01dc7bb769d2",
@@ -2043,13 +2043,13 @@
    "hi": "Region के equivalent ellipse (जिसका moment of inertia मेल खाता है) के ``(Ra, Rb, Phi)`` को ``match`` sort के 3-component vector के रूप में लौटाता है —— ``Ra``/``Rb`` major radius और minor radius (**pixels** में) हैं, ``Phi`` principal axis का कोण है (radians, column axis से anticlockwise)। HALCON के ``elliptic_axis`` (Calculate the parameters of the equivalent ellipse.) वाले ही 3 मान।"
   },
   "2d/elliptic_axis_xld": {
-   "fp": "b946a3135d1f",
-   "en": "Fits an ellipse to the contour with the most points (``cv2.fitEllipse``) and returns ``(Ra, Rb, Phi)`` as a 3-component ``match`` sort vector — ``Ra``/``Rb`` are the semi-major and semi-minor axes [px], ``Phi`` the main-axis angle (radians, counter-clockwise from the column axis, greater than -π/2 and at most π/2). The same three values as HALCON's ``elliptic_axis_xld`` (Parameters of the equivalent ellipse of contours or polygons.).",
-   "zh": "对点数最多的那条轮廓拟合椭圆(``cv2.fitEllipse``),以 ``match`` 类型的 3 分量向量返回 ``(Ra, Rb, Phi)`` —— ``Ra``/``Rb`` 为长半轴、短半轴 [px],``Phi`` 为主轴角(弧度,从列轴逆时针,大于 -π/2 且不超过 π/2)。与 HALCON 的 ``elliptic_axis_xld``（Parameters of the equivalent ellipse of contours or polygons.）为相同的 3 个值。",
-   "tw": "對點數最多的那條輪廓擬合橢圓(``cv2.fitEllipse``),以 ``match`` 型別的 3 分量向量回傳 ``(Ra, Rb, Phi)`` —— ``Ra``/``Rb`` 為長半軸、短半軸 [px],``Phi`` 為主軸角(弧度,從欄軸逆時針,大於 -π/2 且不超過 π/2)。與 HALCON 的 ``elliptic_axis_xld``（Parameters of the equivalent ellipse of contours or polygons.）為相同的 3 個值。",
-   "ko": "점이 가장 많은 윤곽에 타원을 맞추고(``cv2.fitEllipse``) ``(Ra, Rb, Phi)`` 를 ``match`` 형 3 성분 벡터로 돌려준다 —— ``Ra``/``Rb`` 는 장반경·단반경 [px], ``Phi`` 는 주축 각(라디안, 열 축에서 반시계 방향, -π/2 보다 크고 π/2 이하). HALCON 의 ``elliptic_axis_xld``（Parameters of the equivalent ellipse of contours or polygons.）와 같은 3 값.",
-   "de": "Passt eine Ellipse an die Kontur mit den meisten Punkten an (``cv2.fitEllipse``) und gibt ``(Ra, Rb, Phi)`` als 3-Komponenten-Vektor der Sorte ``match`` zurück — ``Ra``/``Rb`` sind große und kleine Halbachse [px], ``Phi`` der Hauptachsenwinkel (Radiant, gegen den Uhrzeigersinn von der Spaltenachse, größer als -π/2 und höchstens π/2). Dieselben drei Werte wie HALCONs ``elliptic_axis_xld`` (Parameters of the equivalent ellipse of contours or polygons.).",
-   "hi": "सबसे अधिक points वाले contour पर ellipse fit करता है (``cv2.fitEllipse``) और ``(Ra, Rb, Phi)`` को ``match`` sort के 3-component vector के रूप में लौटाता है — ``Ra``/``Rb`` semi-major और semi-minor axes [px] हैं, ``Phi`` main axis का कोण (radians, column axis से वामावर्त, -π/2 से बड़ा और π/2 तक)। HALCON के ``elliptic_axis_xld`` (Parameters of the equivalent ellipse of contours or polygons.) जैसे ही 3 मान।"
+   "fp": "3bd51672c1af",
+   "en": "Fits an ellipse to the contour with the most points (``cv2.fitEllipse``) and returns ``(Ra, Rb, Phi)`` as a 3-component ``match`` sort vector — ``Ra``/``Rb`` are the semi-major and semi-minor axes [px], ``Phi`` the main-axis angle (radians, from the column axis **counter-clockwise on screen** with rows pointing down, greater than -π/2 and at most π/2). The same three values as HALCON's ``elliptic_axis_xld`` (Parameters of the equivalent ellipse of contours or polygons.).",
+   "zh": "对点数最多的那条轮廓拟合椭圆(``cv2.fitEllipse``),以 ``match`` 类型的 3 分量向量返回 ``(Ra, Rb, Phi)`` —— ``Ra``/``Rb`` 为长半轴、短半轴 [px],``Phi`` 为主轴角(弧度,从列轴起**在屏幕上逆时针**,行向下,大于 -π/2 且不超过 π/2)。与 HALCON 的 ``elliptic_axis_xld``(Parameters of the equivalent ellipse of contours or polygons.)为相同的 3 个值。",
+   "tw": "對點數最多的那條輪廓擬合橢圓(``cv2.fitEllipse``),以 ``match`` 型別的 3 分量向量回傳 ``(Ra, Rb, Phi)`` —— ``Ra``/``Rb`` 為長半軸、短半軸 [px],``Phi`` 為主軸角(弧度,從欄軸起**在螢幕上逆時針**,列向下,大於 -π/2 且不超過 π/2)。與 HALCON 的 ``elliptic_axis_xld``(Parameters of the equivalent ellipse of contours or polygons.)為相同的 3 個值。",
+   "ko": "점이 가장 많은 윤곽에 타원을 피팅(``cv2.fitEllipse``)하여 ``(Ra, Rb, Phi)``를 ``match`` 정렬의 3성분 벡터로 반환 —— ``Ra``/``Rb``는 장반경·단반경 [px], ``Phi``는 주축 각(라디안, 열 축에서 **화면상 반시계 방향**, 행은 아래 방향, -π/2보다 크고 π/2 이하). HALCON의 ``elliptic_axis_xld``(Parameters of the equivalent ellipse of contours or polygons.)와 같은 3개 값.",
+   "de": "Passt an die Kontur mit den meisten Punkten eine Ellipse an (``cv2.fitEllipse``) und liefert ``(Ra, Rb, Phi)`` als 3-komponentigen Vektor der Sorte ``match`` — ``Ra``/``Rb`` sind große und kleine Halbachse [px], ``Phi`` der Hauptachsenwinkel (Radiant, von der Spaltenachse **auf dem Bildschirm gegen den Uhrzeigersinn**, Zeilen nach unten, größer als -π/2 und höchstens π/2). Dieselben drei Werte wie HALCONs ``elliptic_axis_xld`` (Parameters of the equivalent ellipse of contours or polygons.).",
+   "hi": "सबसे अधिक बिंदुओं वाले कंटूर पर दीर्घवृत्त फ़िट करता है (``cv2.fitEllipse``) और ``(Ra, Rb, Phi)`` को ``match`` सॉर्ट के 3-घटक सदिश के रूप में लौटाता है —— ``Ra``/``Rb`` अर्ध-दीर्घ और अर्ध-लघु अक्ष [px], ``Phi`` मुख्य अक्ष कोण (रेडियन, स्तंभ अक्ष से **स्क्रीन पर वामावर्त**, पंक्तियाँ नीचे की ओर, -π/2 से बड़ा और अधिकतम π/2)। HALCON के ``elliptic_axis_xld`` (Parameters of the equivalent ellipse of contours or polygons.) जैसे ही 3 मान।"
   },
   "2d/em_skeleton": {
    "fp": "2386e20fa264",
@@ -4277,22 +4277,22 @@
    "hi": "Square structuring element से binary opening। ``opening_circle`` का आयताकार संस्करण। HALCON के ``opening_rectangle1`` (Open a region with a rectangular structuring element.) के समकक्ष है।"
   },
   "2d/orientation_region": {
-   "fp": "23824ae510d4",
-   "en": "The orientation of a region's principal axis (``regionprops``'s ``orientation``, linearly mapped from [-pi/2, pi/2] to [0,1]). Represents the tilt of the major axis when the region is fitted to an ellipse. Equivalent to HALCON's ``orientation_region`` (Orientation of a region.).",
-   "zh": "区域主轴的方向(``regionprops`` 的 ``orientation``,从 [-π/2, π/2] 线性映射到 [0,1])。表示对区域进行椭圆拟合时长轴的倾斜角。相当于 HALCON 的 ``orientation_region``(Orientation of a region.)。",
-   "tw": "區域主軸的方向(``regionprops`` 的 ``orientation``,由 [-π/2, π/2] 線性映射到 [0,1])。表示對區域做橢圓擬合時長軸的傾斜角。相當於 HALCON 的 ``orientation_region``(Orientation of a region.)。",
-   "ko": "영역 주축의 방향(``regionprops``의 ``orientation``, [-π/2,π/2]를 [0,1]로 선형 매핑). 영역을 타원에 피팅했을 때 장축의 기울기를 나타낸다. HALCON의 ``orientation_region``(Orientation of a region.)에 해당.",
-   "de": "Die Ausrichtung der Hauptachse einer Region (``orientation`` von ``regionprops``, linear von [-pi/2, pi/2] auf [0,1] abgebildet). Stellt die Neigung der Hauptachse dar, wenn die Region an eine Ellipse angepasst wird. Entspricht HALCONs ``orientation_region`` (Orientation of a region.).",
-   "hi": "Region के principal axis की दिशा (``regionprops`` का ``orientation``, [-π/2,π/2] को [0,1] में linear रूप से map किया गया)। Ellipse fit करने पर major axis का झुकाव दर्शाता है। HALCON के ``orientation_region`` (Orientation of a region.) के समकक्ष है।"
+   "fp": "22754e449931",
+   "en": "Orientation of the region's principal axis as θ / 180 (θ is the angle of the equivalent ellipse's major axis, measured from the column axis **counter-clockwise on screen** with rows pointing down, in [0, 180] degrees; multiply by 180 for degrees; implemented as ``regionprops``'s ``orientation`` mapped by ``(orientation + π/2) / π``). The same sense as HALCON's ``orientation_region`` (Orientation of a region.) — HALCON decides the direction by the farthest point and returns radians in -π..π, whereas this op folds to 180 degrees and normalises to [0,1]. It agrees with ``elliptic_axis``'s Phi (radians) as θ ≡ Phi (mod π).",
+   "zh": "区域主轴方向 θ / 180(θ 为等效椭圆长轴的角度,从列轴起**在屏幕上逆时针**测量,行向下,范围 [0, 180] 度;乘以 180 即为度;实现为将 ``regionprops`` 的 ``orientation`` 按 ``(orientation + π/2) / π`` 映射)。与 HALCON 的 ``orientation_region``(Orientation of a region.)方向相同 —— HALCON 用最远点确定朝向并以 -π..π 弧度返回,这里折叠到 180 度并归一化到 [0,1]。与 ``elliptic_axis`` 的 Phi(弧度)满足 θ ≡ Phi (mod π)。",
+   "tw": "區域主軸方向 θ / 180(θ 為等效橢圓長軸的角度,從欄軸起**在螢幕上逆時針**量測,列向下,範圍 [0, 180] 度;乘以 180 即為度;實作為將 ``regionprops`` 的 ``orientation`` 依 ``(orientation + π/2) / π`` 映射)。與 HALCON 的 ``orientation_region``(Orientation of a region.)方向相同 —— HALCON 以最遠點決定朝向並以 -π..π 弧度回傳,這裡折疊到 180 度並正規化到 [0,1]。與 ``elliptic_axis`` 的 Phi(弧度)滿足 θ ≡ Phi (mod π)。",
+   "ko": "영역 주축의 방향 θ / 180(θ는 등가 타원 장축의 각도로, 열 축에서 **화면상 반시계 방향**으로 잼, 행은 아래 방향, [0, 180]도; 180을 곱하면 도; ``regionprops``의 ``orientation``을 ``(orientation + π/2) / π``로 사상하여 구현). HALCON ``orientation_region``(Orientation of a region.)과 같은 방향 —— HALCON은 가장 먼 점으로 방향을 정하고 -π..π 라디안으로 반환하지만, 여기서는 180도로 접어 [0,1]로 정규화한다. ``elliptic_axis``의 Phi(라디안)와 θ ≡ Phi (mod π)로 일치한다.",
+   "de": "Ausrichtung der Hauptachse der Region als θ / 180 (θ ist der Winkel der großen Achse der äquivalenten Ellipse, von der Spaltenachse **auf dem Bildschirm gegen den Uhrzeigersinn** gemessen, Zeilen nach unten, in [0, 180] Grad; mal 180 ergibt Grad; umgesetzt als ``orientation`` von ``regionprops``, abgebildet mit ``(orientation + π/2) / π``). Derselbe Drehsinn wie HALCONs ``orientation_region`` (Orientation of a region.) — HALCON bestimmt die Richtung über den entferntesten Punkt und liefert Radiant in -π..π, hier wird auf 180 Grad gefaltet und auf [0,1] normiert. Stimmt mit dem Phi (Radiant) von ``elliptic_axis`` als θ ≡ Phi (mod π) überein.",
+   "hi": "क्षेत्र के मुख्य अक्ष की दिशा θ / 180 (θ समतुल्य दीर्घवृत्त के दीर्घ अक्ष का कोण है, स्तंभ अक्ष से **स्क्रीन पर वामावर्त** मापा गया, पंक्तियाँ नीचे की ओर, [0, 180] डिग्री; 180 से गुणा करने पर डिग्री; ``regionprops`` के ``orientation`` को ``(orientation + π/2) / π`` से मैप करके लागू)। HALCON के ``orientation_region`` (Orientation of a region.) जैसी ही दिशा —— HALCON सबसे दूर के बिंदु से दिशा तय करके -π..π रेडियन देता है, यहाँ 180 डिग्री पर मोड़कर [0,1] में सामान्यीकृत है। ``elliptic_axis`` के Phi (रेडियन) से θ ≡ Phi (mod π) के रूप में मेल खाता है।"
   },
   "2d/orientation_xld": {
-   "fp": "e936b5ebe0e2",
-   "en": "The tilt angle of the ellipse fitted to the contour (the angle from ``cv2.fitEllipse``, folded at 180° and normalized to [0,1]). Corresponds to HALCON's ``orientation_xld`` (Calculate the orientation of contours or polygons.).",
-   "zh": "拟合到轮廓的椭圆的倾斜角（把 ``cv2.fitEllipse`` 的角度以 180° 折返并归一化到 [0,1]）。相当于 HALCON 的 ``orientation_xld``（Calculate the orientation of contours or polygons.）。",
-   "tw": "擬合到輪廓的橢圓傾斜角（把 ``cv2.fitEllipse`` 的角度以 180° 折返並歸一化到 [0,1]）。相當於 HALCON 的 ``orientation_xld``（Calculate the orientation of contours or polygons.）。",
-   "ko": "윤곽선에 타원을 맞춘 결과의 기울기 각도(``cv2.fitEllipse``의 각도를 180°로 접어 [0,1]로 정규화). HALCON의 ``orientation_xld``(Calculate the orientation of contours or polygons.)에 해당.",
-   "de": "Der Neigungswinkel der an die Kontur angepassten Ellipse (der Winkel von ``cv2.fitEllipse``, bei 180° gefaltet und auf [0,1] normiert). Entspricht HALCONs ``orientation_xld`` (Calculate the orientation of contours or polygons.).",
-   "hi": "Ellipse fit किए गए contour का झुकाव कोण (``cv2.fitEllipse`` के कोण को 180° पर मोड़कर [0,1] में normalise किया गया)। HALCON के ``orientation_xld`` (Calculate the orientation of contours or polygons.) के समकक्ष है।"
+   "fp": "55011ab070d6",
+   "en": "The **main-axis angle θ / 180** of the ellipse fitted (``cv2.fitEllipse``) to the largest contour (θ measured from the column axis **counter-clockwise on screen**, rows pointing down, folded into [0, 180) degrees). The same convention as the region version ``orientation_region`` (multiply by 180 for degrees). HALCON's ``orientation_xld`` (Calculate the orientation of contours or polygons.) returns the angle in the same sense as radians in -π..π (direction decided by the farthest point), so this is the version folded at 180 degrees and normalised to [0,1).",
+   "zh": "对最大轮廓拟合椭圆(``cv2.fitEllipse``)所得的**主轴角 θ / 180**(θ 从列轴起**在屏幕上逆时针**测量,行向下,折叠到 [0, 180) 度)。与区域版 ``orientation_region`` 规约相同(乘以 180 即为度)。HALCON 的 ``orientation_xld``(Calculate the orientation of contours or polygons.)以 -π..π 弧度返回同方向的角(用最远点确定朝向),这里是折叠到 180 度并归一化到 [0,1) 的版本。",
+   "tw": "對最大輪廓擬合橢圓(``cv2.fitEllipse``)所得的**主軸角 θ / 180**(θ 從欄軸起**在螢幕上逆時針**量測,列向下,折疊到 [0, 180) 度)。與區域版 ``orientation_region`` 規約相同(乘以 180 即為度)。HALCON 的 ``orientation_xld``(Calculate the orientation of contours or polygons.)以 -π..π 弧度回傳同方向的角(以最遠點決定朝向),這裡是折疊到 180 度並正規化到 [0,1) 的版本。",
+   "ko": "가장 큰 윤곽에 타원을 피팅(``cv2.fitEllipse``)한 **주축 각 θ / 180**(θ는 열 축에서 **화면상 반시계 방향**, 행은 아래 방향, [0, 180)도로 접음). 영역 버전 ``orientation_region``과 같은 규약(180을 곱하면 도). HALCON의 ``orientation_xld``(Calculate the orientation of contours or polygons.)는 같은 방향의 각을 -π..π 라디안으로 반환하므로(가장 먼 점으로 방향 결정), 이것은 180도로 접어 [0,1)로 정규화한 버전이다.",
+   "de": "Der **Hauptachsenwinkel θ / 180** der an die größte Kontur angepassten Ellipse (``cv2.fitEllipse``) (θ von der Spaltenachse **auf dem Bildschirm gegen den Uhrzeigersinn** gemessen, Zeilen nach unten, in [0, 180) Grad gefaltet). Dieselbe Konvention wie die Regionsversion ``orientation_region`` (mal 180 ergibt Grad). HALCONs ``orientation_xld`` (Calculate the orientation of contours or polygons.) liefert den Winkel im gleichen Drehsinn als Radiant in -π..π (Richtung über den entferntesten Punkt), dies ist also die auf 180 Grad gefaltete und auf [0,1) normierte Version.",
+   "hi": "सबसे बड़े कंटूर पर फ़िट किए गए दीर्घवृत्त (``cv2.fitEllipse``) का **मुख्य अक्ष कोण θ / 180** (θ स्तंभ अक्ष से **स्क्रीन पर वामावर्त** मापा गया, पंक्तियाँ नीचे की ओर, [0, 180) डिग्री में मोड़ा गया)। क्षेत्र संस्करण ``orientation_region`` जैसा ही नियम (180 से गुणा करने पर डिग्री)। HALCON का ``orientation_xld`` (Calculate the orientation of contours or polygons.) उसी दिशा का कोण -π..π रेडियन में लौटाता है (सबसे दूर के बिंदु से दिशा तय), इसलिए यह 180 डिग्री पर मोड़ा और [0,1) में सामान्यीकृत संस्करण है।"
   },
   "2d/otsu": {
    "fp": "444db6cc648d",
@@ -6374,13 +6374,13 @@
    "hi": "Epipolar-plane image — वह slice जिसकी **line slope ही disparity है**।"
   },
   "2d/tb_lf_epi_slope": {
-   "fp": "24fb316e75cd",
-   "ja": "**EPI直線の向き**から求めた画素ごとの傾き（構造テンソル、1パスで計算）。",
-   "zh": "根据**极平面图像（EPI）直线方向**得到的逐像素斜率（结构张量，单次计算）。",
-   "tw": "依**極平面影像（EPI）直線方向**得到的逐像素斜率（結構張量，單次計算）。",
-   "ko": "**EPI 직선 방향**으로부터 구한 픽셀별 기울기(구조 텐서, 1회 처리).",
-   "de": "Pixelweise Steigung aus der **EPI-Linienorientierung** (Strukturtensor, ein Durchlauf).",
-   "hi": "**EPI line orientation** से हर pixel का slope (structure tensor, एक pass)।"
+   "fp": "640f41c21a10",
+   "ja": "**EPI の線の向き**から画素ごとの傾きを出す(構造テンソルで求め、剪断で詰める)。",
+   "zh": "由 **EPI 线的方向**得到逐像素斜率(结构张量,再用剪切细化)。",
+   "tw": "由 **EPI 線的方向**得到逐像素斜率(結構張量,再以剪切細化)。",
+   "ko": "**EPI 선의 방향**으로부터 화소별 기울기를 냅니다(구조 텐서, 전단으로 정밀화).",
+   "de": "Steigung pro Pixel aus der **Orientierung der EPI-Linien** (Strukturtensor, durch Scherung verfeinert).",
+   "hi": "**EPI line की दिशा** से हर pixel का slope निकालता है (structure tensor, shearing से परिष्कृत)।"
   },
   "2d/tb_lf_refocus": {
    "fp": "7ce970fd37a2",
@@ -14033,13 +14033,13 @@
    "hi": "epipolar-plane image — वह slice जिसमें **line का slope ही disparity है**।"
   },
   "lightfield/lf_epi_slope": {
-   "fp": "24fb316e75cd",
-   "ja": "**EPI の線の向き**から画素ごとの傾きを出す(構造テンソル、1 パス)。",
-   "zh": "由 **EPI 线的方向**得到逐像素斜率(结构张量,一趟完成)。",
-   "tw": "由 **EPI 線的方向**得到逐像素斜率(結構張量,一趟完成)。",
-   "ko": "**EPI 선의 방향**으로부터 화소별 기울기를 냅니다(구조 텐서, 1 패스).",
-   "de": "Steigung pro Pixel aus der **Orientierung der EPI-Linien** (Strukturtensor, ein Durchlauf).",
-   "hi": "**EPI line की दिशा** से हर pixel का slope निकालता है (structure tensor, एक pass)।"
+   "fp": "640f41c21a10",
+   "ja": "**EPI の線の向き**から画素ごとの傾きを出す(構造テンソルで求め、剪断で詰める)。",
+   "zh": "由 **EPI 线的方向**得到逐像素斜率(结构张量,再用剪切细化)。",
+   "tw": "由 **EPI 線的方向**得到逐像素斜率(結構張量,再以剪切細化)。",
+   "ko": "**EPI 선의 방향**으로부터 화소별 기울기를 냅니다(구조 텐서, 전단으로 정밀화).",
+   "de": "Steigung pro Pixel aus der **Orientierung der EPI-Linien** (Strukturtensor, durch Scherung verfeinert).",
+   "hi": "**EPI line की दिशा** से हर pixel का slope निकालता है (structure tensor, shearing से परिष्कृत)।"
   },
   "lightfield/lf_focal_stack": {
    "fp": "b0e98e33086a",
@@ -17847,6 +17847,33 @@
    "ko": "부분군 측정값으로 만드는 Shewhart Xbar-R 관리도.",
    "de": "Shewhart-Xbar-R-Regelkarte aus Untergruppen-Messwerten.",
    "hi": "subgroup measurements से Shewhart Xbar-R control chart।"
+  },
+  "shape2d/fit_circle_xld": {
+   "fp": "b976cc370c92",
+   "en": "Fit a circle to each XLD contour and return its centre row, column and radius (``table``).",
+   "zh": "对每条 XLD 轮廓拟合圆，返回圆心的行、列和半径（``table``）。",
+   "tw": "對每條 XLD 輪廓擬合圓，傳回圓心的列、行座標與半徑（``table``）。",
+   "ko": "XLD 윤곽선마다 원을 맞추고 중심의 행·열과 반지름을 반환합니다(``table``).",
+   "de": "Passt an jede XLD-Kontur einen Kreis an und liefert Mittelpunkt (Zeile, Spalte) und Radius (``table``).",
+   "hi": "हर XLD कंटूर पर वृत्त फिट करता है और केंद्र की पंक्ति, स्तंभ तथा त्रिज्या लौटाता है (``table``)।"
+  },
+  "math/wave_dominant_frequency": {
+   "fp": "2d8d02aa17cb",
+   "en": "Return the frequency, period and orientation of the strongest periodicity of an image (the largest non-DC 2-D FFT peak) (``table``).",
+   "zh": "返回图像最强周期（二维 FFT 中除直流外的最大峰）的频率、周期和方向（``table``）。",
+   "tw": "傳回影像最強週期（二維 FFT 中直流以外的最大峰）的頻率、週期與方向（``table``）。",
+   "ko": "영상의 가장 강한 주기성(DC를 제외한 2-D FFT 최대 피크)의 주파수·주기·방향을 반환합니다(``table``).",
+   "de": "Liefert Frequenz, Periode und Richtung der stärksten Periodizität eines Bildes (größter Nicht-DC-Peak der 2-D-FFT) (``table``).",
+   "hi": "छवि की सबसे प्रबल आवर्तता (DC को छोड़कर 2-D FFT का सबसे बड़ा शिखर) की आवृत्ति, आवर्तकाल और दिशा लौटाता है (``table``)।"
+  },
+  "3d/find_surface_pose": {
+   "fp": "e35275c667b0",
+   "en": "Find where a known object (model point cloud) lies in a scene point cloud by point-pair-feature (PPF) voting and ICP (``pose``).",
+   "zh": "通过点对特征（PPF）投票和 ICP，求出已知物体（模型点云）在场景点云中的位置（``pose``）。",
+   "tw": "以點對特徵（PPF）投票與 ICP，求出已知物體（模型點雲）在場景點雲中的位置（``pose``）。",
+   "ko": "점쌍 특징(PPF) 투표와 ICP로 알려진 물체(모델 점군)가 장면 점군의 어디에 있는지 구합니다(``pose``).",
+   "de": "Bestimmt per Punktpaar-Merkmal-(PPF-)Abstimmung und ICP, wo ein bekanntes Objekt (Modellpunktwolke) in einer Szenenpunktwolke liegt (``pose``).",
+   "hi": "पॉइंट-पेयर फ़ीचर (PPF) वोटिंग और ICP से ज्ञात वस्तु (मॉडल पॉइंट क्लाउड) दृश्य पॉइंट क्लाउड में कहाँ है, यह निकालता है (``pose``)।"
   },
   "spc/proportion_interval": {
    "fp": "40a502123fae",
