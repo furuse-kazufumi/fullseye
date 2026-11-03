@@ -56,6 +56,29 @@ def _ramp(n=48):
     return np.linspace(0.0, 1.0, n)[None, :] * np.ones((n, 1))
 
 
+def test_japanese_font_path_keeps_weight_separate_and_reports_every_path(tmp_path, monkeypatch):
+    regular = tmp_path / "regular.ttc"
+    bold = tmp_path / "bold.ttc"
+    regular.touch()
+    bold.touch()
+    monkeypatch.setattr(examplefig, "_JAPANESE_FONT_PATHS",
+                        {False: (regular,), True: (bold,)})
+    monkeypatch.setattr(examplefig, "_JAPANESE_FONT_FAMILIES", ())
+
+    assert examplefig._japanese_font_path() == regular
+    assert examplefig._japanese_font_path(bold=True) == bold
+
+    missing_regular = tmp_path / "missing-regular.ttc"
+    missing_bold = tmp_path / "missing-bold.ttc"
+    monkeypatch.setattr(examplefig, "_JAPANESE_FONT_PATHS",
+                        {False: (missing_regular,), True: (missing_bold,)})
+    with pytest.raises(RuntimeError, match="探したパス") as exc:
+        examplefig._japanese_font_path(bold=True)
+    assert str(missing_bold) in str(exc.value)
+    assert str(missing_regular) not in str(exc.value)
+    assert examplefig._japanese_font_path(bold=True, fail_closed=False) is None
+
+
 def test_depth_kind_appends_turbo_colourbar(tmp_path, monkeypatch):
     from PIL import Image
 

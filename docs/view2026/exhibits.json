@@ -590,7 +590,7 @@
   {
    "id": "poc_real_defect_floor",
    "category": "inspection",
-   "media": "02_defect_floor_sweep.gif",
+   "media": "03_defect_floor_explained.mp4",
    "motion": true,
    "label": {
     "ja": "薄い傷の検出限界",
@@ -1117,8 +1117,8 @@
   {
    "id": "poc_thermography_ndt",
    "category": "thermal",
-   "media": "02_depth_map.png",
-   "motion": false,
+   "media": "07_window_explained.mp4",
+   "motion": true,
    "label": {
     "ja": "熱画像の欠陥深さ",
     "en": "Thermography NDT",
