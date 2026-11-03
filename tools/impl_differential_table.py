@@ -8,7 +8,7 @@
 * :data:`ALIGNED` —— 「差はつまみの写し方だけ」という仮説を、つまみを揃えて確かめる点。門でもある。
 * :data:`SHARED_BACKEND` / :data:`TRIVIAL_MATCH` —— 差がきっかり 0 の組の内訳(同じ下位関数を呼んでいる
   だけか、独立だが自明か)。独立な実装どうしの一致と区別する(「異常に良い一致」は内訳を確かめる)。
-* :data:`MERGE_VERDICT` —— 命名整理 第 2 段(``C:/dev/docs/naming_phase2/README.md``)で
+* :data:`MERGE_VERDICT` —— 命名整理 第 2 段(リポジトリ外の改名案の資料)で
   「1 つの名前 + ``impl`` 引数」にまとめてよいか。
 
 原因の種類(:data:`KINDS`)は表の列にそのまま出る。
