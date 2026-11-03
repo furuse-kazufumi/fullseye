@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: 8f64e2d9c2a9 -->
+<!-- i18n-source-sha: 4dcf96f42356 -->
 # 安裝 / 環境建置完整指南
 
 [日本語](./INSTALL.md) · [English](./INSTALL.en.md) · [简体中文](./INSTALL.zh.md) · **繁體中文** · [한국어](./INSTALL.ko.md) · [Deutsch](./INSTALL.de.md) · [हिन्दी](./INSTALL.hi.md)
@@ -37,7 +37,7 @@ py -3.11 -m pip install -e .            # 僅核心（numpy + scipy。所有 op 
 | `skimage` | `scikit-image>=0.20` | `sk_*` / `xsk_*` 系列(眾多自動產生運算子的基礎) |
 | `pil` | `Pillow>=13.0` | 影像 I/O 的備援方案、`xpil_*` 系列(emboss/posterize/solarize 等) |
 | `wavelets` | `PyWavelets>=1.4` | 小波系列(VisuShrink/子頻帶/小波封包等) |
-| `gpu` | `torch>=2.13`, `kornia>=0.7`, `cupy-cuda12x>=14` (not macOS) | GPU 批次後端(`accel.py`/`bench.py`)、`xkor_*`(kornia)系列 |
+| `gpu` | `torch>=2.13`, `kornia>=0.9`, `cupy-cuda12x>=14` (not macOS) | GPU 批次後端(`accel.py`/`bench.py`)、`xkor_*`(kornia)系列 |
 | `extra` | `mahotas>=1.4`, `SimpleITK>=2.2` | `xsitk_*`(curvature flow 等)、源自 mahotas(Zernike/pftas 等) |
 | `gui` | `PySide6>=6.5` | **Fullseye Studio**(`studio.py` / `fullseye-studio`) |
 | `all` | 上述除 GUI 以外的全部(opencv, skimage, pil, wavelets, gpu, extra) | 全部運算子與後端 |

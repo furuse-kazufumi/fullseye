@@ -72,7 +72,9 @@ wavelets = ["PyWavelets>=1.4"]
 # ★2026-11-03(完成度監査 段 0-5): CuPy を足した(numpy/scipy の実装を GPU で走らせる経路が使う)。
 #   cupy-cuda12x の wheel は Linux と Windows だけ —— macOS で `[gpu]` ごと入らなくならないよう印で外す。
 #   cuCIM は Windows に wheel が無いので extra に入れない(Linux では `pip install cucim-cu12`、docs/DEVICE_GUIDE.md)。
-gpu = ["torch>=2.13", "kornia>=0.7", "cupy-cuda12x>=14; platform_system != 'Darwin'"]
+#   kornia 0.7 -> 0.9: 0.8 系で xkor_hessian が最大 0.68、xkor_clahe が最大 0.46 ずれた
+#   (tests/test_kornia_version_drift_2026_10_24.py)。値の約束は 0.9 で取った golden。
+gpu = ["torch>=2.13", "kornia>=0.9", "cupy-cuda12x>=14; platform_system != 'Darwin'"]
 # 大域照明つきレンダリング(gi_render)。Mitsuba 3 は BSD-3-Clause、公式 wheel が
 # あるのでビルド不要。**必須にはしない** —— 内蔵ラスタライザだけでも動く設計を保つ。
 gi = ["mitsuba>=3.5"]
@@ -121,7 +123,7 @@ dev = ["pytest>=9.0.3", "pytest-cov>=4", "ruff>=0.4", "pytest-timeout>=2.3",
 # adapters stay opt-in (a desktop user does not need pymodbus/asyncua by default).
 all = [
   "opencv-python>=4.8.1.78", "scikit-image>=0.20", "Pillow>=13.0", "PyWavelets>=1.4",
-  "torch>=2.13", "kornia>=0.7", "mahotas>=1.4", "SimpleITK>=2.2",
+  "torch>=2.13", "kornia>=0.9", "mahotas>=1.4", "SimpleITK>=2.2",
   "PySide6>=6.5", "imageio>=2.28", "imageio-ffmpeg>=0.4", "tifffile>=2023.1",
 ]
 

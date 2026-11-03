@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: 8f64e2d9c2a9 -->
+<!-- i18n-source-sha: 4dcf96f42356 -->
 # Installations- und Einrichtungshandbuch
 
 [日本語](./INSTALL.md) · [English](./INSTALL.en.md) · [简体中文](./INSTALL.zh.md) · [繁體中文](./INSTALL.tw.md) · [한국어](./INSTALL.ko.md) · **Deutsch** · [हिन्दी](./INSTALL.hi.md)
@@ -37,7 +37,7 @@ Zusätzliche Backends werden über **Extras** ausgewählt (definiert unter `[pro
 | `skimage` | `scikit-image>=0.20` | `sk_*` / `xsk_*`-Reihen (Grundlage vieler automatisch generierter Operatoren) |
 | `pil` | `Pillow>=13.0` | Fallback für Bild-I/O, `xpil_*`-Reihe (emboss/posterize/solarize usw.) |
 | `wavelets` | `PyWavelets>=1.4` | Wavelet-Verfahren (VisuShrink/Subband/Packet usw.) |
-| `gpu` | `torch>=2.13`, `kornia>=0.7`, `cupy-cuda12x>=14` (not macOS) | GPU-Batch-Backend (`accel.py`/`bench.py`), `xkor_*`(kornia)-Reihe |
+| `gpu` | `torch>=2.13`, `kornia>=0.9`, `cupy-cuda12x>=14` (not macOS) | GPU-Batch-Backend (`accel.py`/`bench.py`), `xkor_*`(kornia)-Reihe |
 | `extra` | `mahotas>=1.4`, `SimpleITK>=2.2` | `xsitk_*` (curvature flow usw.), von mahotas abgeleitet (Zernike/pftas usw.) |
 | `gui` | `PySide6>=6.5` | **Fullseye Studio** (`studio.py` / `fullseye-studio`) |
 | `all` | alles Obige außer GUI (opencv, skimage, pil, wavelets, gpu, extra) | alle Operatoren und Backends |

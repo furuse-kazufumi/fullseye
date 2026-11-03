@@ -34,7 +34,7 @@ py -3.11 -m pip install -e .            # コアのみ（numpy + scipy。全 op 
 | `skimage` | `scikit-image>=0.20` | `sk_*` / `xsk_*` 系（多数の自動生成オペレータの土台） |
 | `pil` | `Pillow>=13.0` | 画像 I/O のフォールバック、`xpil_*` 系（emboss/posterize/solarize 等） |
 | `wavelets` | `PyWavelets>=1.4` | ウェーブレット系（VisuShrink/サブバンド/パケット等） |
-| `gpu` | `torch>=2.13`, `kornia>=0.7`, `cupy-cuda12x>=14` (not macOS) | GPU バッチバックエンド（`accel.py`/`bench.py`）、`xkor_*`（kornia）系 |
+| `gpu` | `torch>=2.13`, `kornia>=0.9`, `cupy-cuda12x>=14` (not macOS) | GPU バッチバックエンド（`accel.py`/`bench.py`）、`xkor_*`（kornia）系 |
 | `extra` | `mahotas>=1.4`, `SimpleITK>=2.2` | `xsitk_*`（curvature flow 等）、mahotas 由来（Zernike/pftas 等） |
 | `gui` | `PySide6>=6.5` | **Fullseye Studio**（`studio.py` / `fullseye-studio`） |
 | `all` | 上記 GUI 以外の全部（opencv, skimage, pil, wavelets, gpu, extra） | 全オペレータ・バックエンド |
