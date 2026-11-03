@@ -84,7 +84,14 @@ def load_targets() -> list:
                                   capture_output=True, check=True).stdout
             cache.write_bytes(blob)
         rows = json.loads(cache.read_text(encoding="utf-8"))["ops"]
-    return [r for r in rows if r.get("gpu_tier") in TIERS_SWEPT]
+    rows = [r for r in rows if r.get("gpu_tier") in TIERS_SWEPT]
+    only = os.environ.get("GPU_SWEEP_ONLY")
+    if only:
+        # 名前の一覧(1 行 1 op)で対象を絞る。cuCIM 等の新経路で、既知の族だけ測り直すとき
+        keep = {ln.strip() for ln in Path(only).read_text(encoding="utf-8").splitlines()
+                if ln.strip()}
+        rows = [r for r in rows if r["name"] in keep]
+    return rows
 
 
 def read_rows(stage: str, max_gen: int = None) -> dict:

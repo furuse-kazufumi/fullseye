@@ -39,6 +39,7 @@ import builtins
 import collections
 import importlib
 import importlib.util
+import sys
 import json
 import os
 import threading
@@ -82,6 +83,39 @@ class Stats:
 STATS = Stats()
 
 
+def _point_cupy14_at_matching_headers() -> None:
+    """CuPy 14 + pip の NVRTC 12.x(Windows): CUDA 12 のヘッダを使わせる。
+
+    CuPy 14 は pip の NVRTC が CUDA 12 の分割配置(``nvidia/cuda_nvrtc``)だと CUDA の根を決めず、
+    環境変数 ``CUDA_PATH``(手元は Toolkit 13.4)のヘッダを読む。13.x の ``cuda_fp8.hpp`` は
+    NVRTC 12.8 で通らず、ndimage 系のカーネルが CompileException で全滅する(2026-11-03 実測、
+    gpu_np2 環境で 145 件)。CuPy 13 で効いた ``-D_CCCL_DISABLE_NVFP8_SUPPORT`` は CuPy 14 では
+    効かなかった。このプロセスに限り ``CUDA_PATH`` を pip の CUDA 12 ランタイム(ヘッダ同梱)へ
+    向ける。CuPy 13(loco)・pip ランタイムが無い・``FULLSEYE_KEEP_CUDA_PATH=1`` では何もしない。
+    """
+    if os.name != "nt" or os.environ.get("FULLSEYE_KEEP_CUDA_PATH") == "1" or "cupy" in sys.modules:
+        return
+    try:
+        from importlib import metadata
+        ver = None
+        for dist in ("cupy-cuda12x", "cupy"):
+            try:
+                ver = metadata.version(dist)
+                break
+            except metadata.PackageNotFoundError:
+                continue
+        if ver is None or int(ver.split(".")[0]) < 14:
+            return
+        spec = importlib.util.find_spec("nvidia.cuda_runtime")
+    except Exception:  # noqa: BLE001 - 判定できなければ触らない
+        return
+    if spec is None or not spec.submodule_search_locations:
+        return
+    root = list(spec.submodule_search_locations)[0]
+    if os.path.isfile(os.path.join(root, "include", "cuda_runtime.h")):
+        os.environ["CUDA_PATH"] = root
+
+
 def _cupy():
     """Import CuPy lazily; fail-closed with a sentence when it cannot run here."""
     global _CUPY
@@ -91,6 +125,7 @@ def _cupy():
         if os.name == "nt":
             # Windows の CuPy wheel は NVRTC を同梱しない。torch(cu128)同梱の NVRTC 12.8 を使う
             import torch  # noqa: F401
+        _point_cupy14_at_matching_headers()
         import cupy
     except Exception as e:  # noqa: BLE001 - CuPy の失敗は ImportError に限らない
         raise GpuAutoError("CuPy is not usable here: %s" % (e,)) from e
@@ -107,13 +142,29 @@ def _fix_nvrtc_headers(cupy) -> None:
     (2026-11-02 実測)。FP8 型はどの op も使わないので、CCCL の正規のスイッチで切る。
     """
     comp = getattr(getattr(cupy, "cuda", None), "compiler", None)
-    prev = getattr(comp, "_get_extra_include_dir_opts", None)
-    if prev is None:
+    if comp is None or getattr(comp, "_fullseye_fp8_off", False):
         return
+    flag = "-D_CCCL_DISABLE_NVFP8_SUPPORT"
+    prev = getattr(comp, "_get_extra_include_dir_opts", None)
+    if prev is not None:
+        # CuPy 13: 追加 include の選択肢を返す関数に足す
+        def opts():
+            return tuple(prev()) + (flag,)
+        comp._get_extra_include_dir_opts = opts
+    else:
+        # CuPy 14: 上の関数が無い。NVRTC でのコンパイルの入口(モジュール内から名前で引かれる)に足す
+        # (2026-11-03 実測: gpu_np2 環境で 145 件が同じ cuda_fp8.hpp の CompileException)
+        inner = getattr(comp, "_compile_using_nvrtc_no_warning", None)
+        if inner is None:
+            return
 
-    def opts():
-        return tuple(prev()) + ("-D_CCCL_DISABLE_NVFP8_SUPPORT",)
-    comp._get_extra_include_dir_opts = opts
+        def compile_fp8_off(source, options=(), *a, **k):
+            options = tuple(options)
+            if flag not in options:
+                options += (flag,)
+            return inner(source, options, *a, **k)
+        comp._compile_using_nvrtc_no_warning = compile_fp8_off
+    comp._fullseye_fp8_off = True
 
 
 def available() -> bool:
@@ -553,6 +604,42 @@ _GPU_TWIN = {"numpy.linalg": "cupy.linalg", "numpy.fft": "cupy.fft",
              "scipy.stats": "cupyx.scipy.stats", "scipy.interpolate": "cupyx.scipy.interpolate"}
 
 
+def _cucim_available() -> bool:
+    """cuCIM(``cucim.skimage``、Apache-2.0)が import できるか。できる環境でだけ skimage を向ける。
+
+    cuCIM の skimage 部は純 Python + CuPy カーネルで、Windows に wheel が無い C++ 部(clara)には
+    依存しない。無い環境(loco 等)では skimage は今までどおり本物のまま = 振る舞いは変わらない。
+    ``GPU_SHADOW_SKIMAGE=0`` で明示的に切れる。
+    """
+    if os.environ.get("GPU_SHADOW_SKIMAGE", "1") == "0":
+        return False
+    if not available():
+        # GPU の無い環境では cuCIM を import しない(CuPy の初期化を中途半端に走らせない)
+        return False
+    try:
+        importlib.import_module("cucim.skimage")
+    except Exception:  # noqa: BLE001 - CuPy の版違い等も「無い」と同じ扱い
+        return False
+    return True
+
+
+_CUCIM: list = []
+
+
+def _skimage_routed() -> bool:
+    """skimage を cuCIM へ向けるか(初回だけ判定して覚える)。"""
+    if not _CUCIM:
+        _CUCIM.append(_cucim_available())
+    return _CUCIM[0]
+
+
+def _twin_of(dotted: str):
+    """CPU 側モジュール名 -> GPU 版モジュール名(無ければ None)。"""
+    if dotted.split(".")[0] == "skimage":
+        return "cucim." + dotted if _skimage_routed() else None
+    return _GPU_TWIN.get(dotted)
+
+
 class ShadowImporter:
     """Compile project modules a second time, with numpy / scipy pointed at the GPU."""
 
@@ -584,7 +671,7 @@ class ShadowImporter:
         if ns is not None:
             return ns
         cpu = importlib.import_module(dotted)
-        twin = _GPU_TWIN.get(dotted)
+        twin = _twin_of(dotted)
         gpu = None
         if dotted == "numpy":
             gpu = _cupy()
@@ -611,7 +698,8 @@ class ShadowImporter:
                 return self._importlib
             # scipy は import 中でも proxy を渡す: 関数の中の ``from scipy import signal`` が
             # 登録時に走り、閉包に本物が残る op がある(backends_scipy)。numpy は表を作るので本物
-            if top == "scipy" or (top == "numpy" and self._depth == 0):
+            if top == "scipy" or (top == "numpy" and self._depth == 0) \
+                    or (top == "skimage" and _skimage_routed()):
                 return self.namespace(name if fromlist else top)
         return builtins.__import__(name, globals, locals, fromlist, level)
 
@@ -653,7 +741,8 @@ class ShadowImporter:
             if isinstance(v, types.ModuleType):
                 nm = v.__name__
                 if nm == "numpy" or nm.startswith("numpy.") or nm == "scipy" \
-                        or nm.startswith("scipy."):
+                        or nm.startswith("scipy.") \
+                        or (nm.split(".")[0] == "skimage" and _skimage_routed()):
                     ns[key] = self.namespace(self._public(nm))
                 elif nm == "importlib":
                     ns[key] = self._importlib
@@ -668,7 +757,9 @@ class ShadowImporter:
             if origin is None and isinstance(v, _np.ufunc):
                 origin = "numpy"
             if isinstance(origin, str) and (origin == "numpy" or origin.startswith("numpy.")
-                                            or origin.startswith("scipy.")) \
+                                            or origin.startswith("scipy.")
+                                            or (origin.startswith("skimage.")
+                                                and _skimage_routed())) \
                     and callable(v) and hasattr(v, "__name__"):
                 try:
                     ns[key] = getattr(self.namespace(self._public(origin)), v.__name__)
