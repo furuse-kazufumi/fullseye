@@ -5,6 +5,131 @@ Versions follow the git tags; a tag push publishes to PyPI (`.github/workflows/r
 What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 ("Versioning") — the minor slot is our breaking signal.
 
+## Unreleased
+
+版はまだ決めていない(0.9.0 の後に入った 7 本の統合)。
+
+### 修正 — 完成度監査の段 0(CI・MCP・HALCON の見せ方・導入の文書)
+
+- CI の夜間の order-shuffle: `run: >` の折り畳みでコメント行と `pip install` が 1 行に連結され、Install が丸ごとシェルの
+  コメントになって何も入っていなかった(job の continue-on-error で run は緑のまま)。コメントを YAML 側へ移し、直列が
+  落ちても並列は回す。新しいジョブ `order-shuffle-ran` が `tools/ci_junit_floor.py` で「走った件数 >= 10,000」を見る
+  (ファイル無し・0 件・床未満は赤)。
+- MCP の op カードの呼び出し例を入口ごとに正しく書く(registry は `fullseye.apply`、台帳は `fullseye.op_run` と必須引数)。
+  どちらの入口でも呼べない op があれば生成を止める。`fullseye_find_ops` は MCP で実行できない op に pipeline の骨格を付けない。
+- HALCON の名前は対応しているが中身が一部だけの 16 名を「対応済み」から外し「部分対応」として見せる
+  (`halcon_coverage.PARTIAL` が正本、`docs/HALCON_COVERAGE.md` に表)。README に Scope 節。
+- `gpu` extra に CuPy(`cupy-cuda12x>=14`、macOS 以外)。cuCIM は Linux 向けに文書で案内。`all` の行を実際の中身に直した。
+- 契約負債のヘッダ件数を中身に合わせ(門 `tests/test_debt_ledger_headers_2026_11_03.py`)、
+  `tools/measure_mcp_context.py --help` がファイルを書き直す件を直した(`--check` を追加)。
+- docstring からリポジトリ外の絶対パスを外した(手元パスの門)。
+
+### 変更 — kornia の下限を 0.7 から 0.9 へ(`gpu` / `all` extra)
+
+- 0.8 系では `xkor_hessian` が内側でも最大 0.68、`xkor_clahe` が最大 0.46 ずれた(2026-10-24 の修正の節)。値の約束(golden)は 0.9.0 で取っており、CI も最新版だけを回すので、0.9 未満を入れられる制約は約束と合わなかった。CI の optional backends の行も `kornia>=0.9` に揃えた。門は `tests/test_kornia_version_drift_2026_10_24.py`。
+
+### 追加 — 同じ処理の別実装を互いに突き合わせる門(differential testing、`docs/IMPL_DIFFERENTIAL.md`)
+
+- 語幹が同じで接頭辞(`cv_` `sk_` `xkor_` `xsk*_` `hx_` `xg_` `tb_` …、実装・由来を表す 32 種)だけ違う op を
+  数えると 190 組(`tb_X` と台帳の `X` だけの組 154、実装どうしの組 36 = 55 対)。実装どうしの 55 対を、同じ入力
+  (構造画像・線分の断片・雑音入り・乱数、region・contour)・同じつまみ (a, b) で走らせて内部差を比べた
+  (`tools/impl_differential.py`)。結果: 一致 8 / 近い 3 / 違う 34 / 比較不能(入出力の型が違う)10。
+  違う組は全部、原因を中身で特定して表に書いた(つまみの写し方・窓の形・端・8 bit 量子化・定義の違い・名前だけ同じ
+  別の処理)。「差はつまみの写し方だけ」の見立ては、つまみを揃えた 10 点で確かめた(例: `cv_median` と `median` は
+  窓を揃えると差が 8 bit の 1/255 だけ、`dog` と `xkor_dog` は σ を揃えると定数倍を除いて 4e-6)。
+- 命名整理 第 2 段(1 つの名前 + `impl` 引数)でまとめてよい組は 8(そのまま 4: gaussian・meijering・skeleton・
+  smallest_rectangle1、一部 2: bilateral・median、つまみを揃えれば 2: unsharp・dog)。差がきっかり 0 の 3 組は内訳を
+  書いた(meijering と skeleton は同じ skimage 関数を呼んでいるだけ = 独立でない)。
+- `tb_` の 154 組は、つまみ k = 0 / 3/7 / 1 が台帳の関数の既定の 1/4・1・2 倍に写るかを標本で確かめた(一致 129、
+  入出力の加工つきで標本外 25)。`tb_lowpass` / `tb_highpass` / `tb_local_std` / `tb_companding_mu_law` は
+  同名のレジストリ op が別の関数(段 1 の C2)。
+- 門 `tests/test_impl_differential.py`: 一致した組は**実装どうしをその場で走らせて**一致し続けること、違う組には
+  理由があること(理由の無い食い違い・古い理由・内訳の無い差 0 は赤)、揃えた点が期待の量に収まること。
+  表は `regen_all` の段(実測は optional 依存の版で揺れるので `--measure` で手回し)。op ノートには
+  「同じ処理の別実装(実測)」の行が出る(`tools/opdocs.py`、6 言語の対訳つき)。
+
+### 修正(値が変わる) — `xkor_gaussian` / `xkor_unsharp` の窓が 5x5 固定で σ を打ち切っていた
+
+- 実装どうしの突き合わせ(新しい門 `tools/impl_differential.py`、下の「追加」)で、kornia 版の `xkor_gaussian` が
+  core の `gaussian` / OpenCV の `cv_gaussian`(どちらも σ = 0.3 + 2.7a)と内部で振れ幅の 9 %(a = 0.5)〜28 %(a = 0.75)
+  食い違っていた。原因は窓: `kornia.filters.gaussian_blur2d(x, (5, 5), (σ, σ))` で、σ = 1.65 でも半径 2(1.2σ)で
+  打ち切られ、σ を上げてもぼけが 5x5 の箱に近づくだけだった(docstring は「σ を 0.3〜3.0 に振る」)。
+  `xkor_unsharp`(`kornia.filters.unsharp_mask`、σ = 0.5 + 2b)も同じ 5x5 で同じ欠陥。
+- 窓の半径を `int(4σ + 0.5)`(scipy の `gaussian_filter` の既定 truncate = 4.0)にし、端は numpy の `symmetric`
+  (= scipy の `reflect`、core の `gaussian` の `b <= 0.5`)を自前で足してから kornia に渡す(4x4 の画像でも落ちない)。
+  `xkor_gaussian(v, a)` は `gaussian(v, a, 0.5)` と、`xkor_unsharp(v, ·, b)` は `unsharp(v, 2/3, (0.5 + 2b − 0.5)/1.5)` と、
+  **画像全体で 3e-7**(float32 の丸め)で一致する。`xkor_gaussian` の出口は [0,1] へ clip(重み和の丸めで定数 1 の画像が
+  1 + 1.2e-7 になるため)。
+- **値が変わる**: 両 op のほぼ全出力(窓の大きさと端の両方が変わるため)。端の規約も `reflect`(d c b | a b c d)から
+  `symmetric`(d c b a | a b c d)に変わったので、`docs/op_border.json` ほか実測台帳 5 本の 2 行を測り直した。
+  `tests/test_kornia_version_drift_2026_10_24.py` の golden の 2 行も新しい値にした(旧値はコメントに残した)。
+  既定の数値が変わる変更なので CONTRIBUTING の Versioning では minor(版は統合のあとに決める)。
+
+### 追加 — 真値つきのカメラ校正(opscalib に calib_lm の 8 op: checkerboard 3・calibrate に 2・calib_truth 3)
+
+- 新モジュール `calib_lm`(numpy + scipy)。既存の `camera_calibration`(Zhang の閉形式、K だけ)は置き換えず、初期値として呼ぶ。
+  - 標準の土台: `checkerboard_points`、`sim_checkerboard`(真の K・歪み・姿勢で描く。画素を板へ逆に引く描画で、投影の式の写しではない)、`find_checkerboard_corners`(鞍点 + Förstner の勾配直交でサブピクセル、格子の組み立て)、`camera_calibration_lm`(K・歪み 5 係数・全姿勢を解析的なヤコビアンの LM で同時に、9x9 の周辺共分散つき)、`stereo_calibration_lm`(左右と相対姿勢 (R, T) を同時に、E と F も)。
+  - Fullseye だけの層: `calibration_error_map`(真値と比べた誤差の地図。既定でカメラの向きのずれと同じ形の成分を除く)、`calibration_uncertainty_map`(共分散を画像へ写した地図、実機でも出る)、`calibration_next_pose`(候補の姿勢から次の 1 枚を推薦)。
+- 門 `tests/test_calib_lm.py`(23 件): 合成の角から真値を 1e-9 で、OpenCV の `calibrateCamera` / `stereoCalibrate` と同じ極小(費用は OpenCV 以下、差は標準偏差の 1 % 未満)、共分散の予測 = モンテカルロ 200 本の散らばり(15 % 以内)、角の検出は描画の真値に rms 0.04 px 未満で `cornerSubPix` 以下、誤差の地図の閉形式(cx の δ → 一様に δ px、3D は δ·Z/fx)、不確かさの地図 = モンテカルロの誤差の地図(回さない 10 %・回して除く 25 % 以内)、推薦した姿勢を足した校正の実際の誤差 < 最下位の候補(2 標準誤差)。
+- 例 `examples/poc_calibration_truth_map.py`: 描画 6 枚 → 角の検出(rms 0.046 px)→ Zhang の fx 誤差 12.89 % が LM で 0.133 %、誤差の地図(中央 0.094 px・隅 0.568 px)、次の 1 枚の推薦とモンテカルロの答え合わせ。
+- 限界: ChArUco は無い(ArUco の符号表の検出が要る)。不確かさの地図は線形の予測で、k3 まで自由にした隅の外挿では実測の 3 倍に出る。
+
+### 追加 — 光学式 3D センサの仮想受入試験(VDI/VDE 2634 Part 2/3・ISO 10360-13 の考え方、新台帳 opsacceptance、8 op)
+
+- 新モジュール `acceptance3d`(numpy のみ)と台帳 `opsacceptance`(layout / evaluate / simulate / budget)。新しい型の語なし(points / table)。
+  - 評価量(実機の点群にもシミュレーションの点群にも同じ op): `sphere_probing_error`(PF・PS)、`sphere_spacing_error`(SD)、`plane_flatness_error`(F)、`acceptance_verdict`(MPE と比べた合否と、合否を決めた量)。定義は規格を適用した公開文献(Carfagni ら 2017・2019、Eiríksson ら 2016)の記述から取り、規格の本文は写していない。「準拠」とは名乗らない。
+  - 配置 `acceptance_layout`(球 1・ダンベル 7 姿勢・平面 7 姿勢。7 姿勢の向きは Fullseye の約束)。
+  - Fullseye だけの層: `acceptance_scan` / `virtual_acceptance_test`(理想・三角測量の雑音則・既存 `itof_capture` → `itof_phase_amplitude` の 3 種のセンサで試験体を撮る。真値は場面の解析解)、`acceptance_error_budget`(誤差の要因を 1 つずつ入れて、どれが合否を決めるか)。
+- 門 `tests/test_acceptance3d.py`(36 件): 完全な球・平面 → 0、尺度 s → SD = (s − 1)·L と PS = (s − 1)·D が厳密、半径方向の偏り b → PS = 2b、余弦のうねり → F = 2a、純ガウス雑音の PF の平均 = σ·d2(N)(d2(25) = 3.931 の公表値で積分を検算)、幾何の当てはめ = scipy.optimize.least_squares、三角測量の正対平面の残差 = z²σ_d/(f b)(3 % 以内)、iToF の黒い球(反射率 0.1)の残差は √10 倍前後、既存 `itof_flying_pixel_mask` を外すと PF が 43.7 mm に壊れる。
+- 例 `examples/poc_virtual_acceptance_3d.py`: 3 つの設計案の合否表(仮の MPE で三角測量と白い試験体の iToF は合格、黒い球の iToF は PF が MPE の 1.98 倍で不合格)と iToF 案の誤差の予算(単独で MPE を超えたのは黒い球だけ。SD の寄与は符号が逆で打ち消し合う)。
+
+### 追加 — 型のつながりを全型で数える台帳と門、行き止まり・入口なしの型をつなぐ 12 op と、レシピで落ちた鎖をつなぐ 8 op(2026-11-03)
+
+- `docs/TYPE_ROLES.json`(手書き)に `docs/OP_INDEX.json` の全 102 型(`any` と、`in_sorts` にだけ現れる `entries` を含む)の分類 a/b/c/d/ok・理由・根拠(検索語と確かめた関数)・入口 / 終端の理由を書いた。`tools/type_connectivity.py` が全入力(`in_sorts`)で数えて `docs/TYPE_CONNECTIVITY.md` を生成する(regen_all に登録)。門 `tests/test_type_connectivity.py`: 台帳の行と型が過不足なく一致 / 行き止まり・入口なしは理由のある型だけ / どの型も入口(全入力のそろう op の不動点)から届き終端へ届く / 入口 29・終端 13 の天井 / 偽の op を足すと全部赤になる。
+- 数え直しの前後(全入力で数える): 行き止まり 5 → 0、入口なし 3 → 1(残る `entries` = 凡例の中身で、入口として正しい)、入口から届かない型 4 → 0、終端へ届かない型 7 → 0(どちらも同じ台帳の入口・終端で数えて)。細い型は 48 のまま(大半は族の中で閉じた型で、問題ではない)。第 1 入力だけで数えた最初の数字(行き止まり 7・入口なし 2・image から届かない 15)と両方を生成物に並べる。
+- 新しい op(`opsreprconv` のカテゴリ `derivative` / `structure` / `entry` / `exit`、新しい型名は 0): `gradient_magnitude` / `gradient_coherence`(構造テンソルの面らしさ)/ `hessian_determinant` / `hessian_vesselness`(Frangi 1998 を与えられた Hessian から)/ `frame_axis` / `knn_graph_to_conn_graph`(1 本で conn_graph 族の 20 op へ)/ `pointmap_to_points`(`depth_to_points` と同じ点が同じ順)/ `match_component`(2-D の `match` 型の出口。進化の候補を動かさないため台帳側)/ `indices_to_positions`(`point_spectrum` への入口)/ `synapse_table_from_table`(CSV からコネクトーム)/ `jones_state`(Jones ベクトルの最初の 1 本)/ `tokens_to_matrix`。レシピの網羅(feat/recipes-coverage)で型の穴として落ちた鎖のために: `table_field_image2d` / `table_field_signal` / `table_field_matrix` / `table_field_measurement`(dict を返す op の欄を型を確かめて渡す)/ `pairs_peak_x`(spectrum のピーク)/ `keypoints_rowcol_to_uv` / `keypoints_uv_to_rowcol`(keypoints 型に同居する 2 つの軸の約束)/ `pose_to_matrix`(R, t -> 4x4)。門 `tests/test_reprconv_type_connectivity_2026_11_03.py`(本物の産み手の返りで真値と比較)、例 `examples/type_connectivity_tour.py`(20 項目)。
+- 実測で見つけた型の揺れ: `gradient` は 2 形が同居(`gradient3d` = (gmag, gvec)、`sobel3d` = 利得 32 の torch 3 本)。受け手は形を見分けて利得をそろえる。`axes` は別物 2 つが同居(図の座標変換 dict と、点群の重心・主軸・固有値)。分けるには新しい型名が要るので**変えていない**(案は `docs/TYPE_CONNECTIVITY.md`)。
+- 破壊的変更: なし(既存の op の宣言・型名は 1 つも変えていない。足しただけ)。
+
+### 追加 — 照合と位置合わせの族(特徴点・頑健推定・強度による位置合わせと、真値による精度の地図)
+
+- 新しい台帳 `opsmatchreg`(12 op / 2 カテゴリ、numpy + scipy のみ、新しい型語彙なし)。
+  - featmatch: `features_sift`(DoG + 128 次元。256 px の合成場面で点の数 139、OpenCV 5.0 は 138)/ `features_orb`(FAST-9 + 輝度重心 + 向きつき BRIEF。学習した rBRIEF の表は使わない)/ `features_match`(比の検定 + 相互最近傍、L2 と Hamming。実数の組は既存の `features.match_descriptors` と一致)/ `ransac_homography`(MSAC + 適応回数 + LO、模型 = 並進・相似・アフィン・射影)/ `ransac_fundamental`(正規化 8 点法 + Sampson)。
+  - intensityreg: `register_ecc`(並進〜射影。平滑化の縁の帯を照合から外し、同じ対のアフィンで 4 隅誤差 0.012 px、OpenCV の findTransformECC は 0.178 px)/ `register_mi`(正規化相互情報量の剛体・相似・アフィン)/ `register_ffd`(3 次 B-spline の FFD、numpy の L-BFGS)/ `registration_to_flow2d`。場の向きは `deformreg` の demons と同じ。
+  - Fullseye だけの層: `features_accuracy_table`(既知の変換・照明・ぼけ・雑音で合成した組の条件ごとの表)/ `register_accuracy_map`(既知の場で合成した組の画素ごとの誤差、模様の強さ別の内訳)/ `register_capture_range`(初期のずれごとの成功率)。
+- 合成の道具 7 本を `fs.<名前>` に: `synthetic_scene` / `warp_homography` / `corner_error` / `condition_homography` / `warp_parametric` / `synthesize_moving` / `smooth_test_field`。
+- PoC 3 本: `poc_part_locate_features`(部品の位置決め、4 隅誤差 0.367 px・回転 0.062 度)、`poc_multimodal_mi_registration`(可視と赤外、MI 0.170 px・ECC は拒否)、`poc_sheet_deformation_ffd`(シートの変形、模様のある所 0.025 px・開口問題・余白・格子の分解能)。
+
+### 追加 — 記号の読み取りの族(1-D / 2-D コード・印字品質・読み取りの POD・OCR)
+
+- 新しい台帳 `opssymbol`(33 op / 7 カテゴリ、numpy + scipy のみ)。新しい型語彙なし(table / image2d / signal / matrix / scalar)。
+  - 1-D: `encode_barcode1d`(EAN-13 / UPC-A / Code 128・GS1-128 / Code 39 / ITF)、`ean_check_digit`、`barcode_scan_profiles`、`decode_barcode_profile`、`read_barcode1d`(任意の角度、10 本の多数決、短読みを拒否)。
+  - 2-D: `qr_encode` / `qr_decode_modules` / `qr_locate` / `qr_sample` / `qr_read`(型番 1-40)、`dm_*`(Data Matrix ECC200、正方 24 + 長方形 6、ドットピーン)。Reed-Solomon は自前の `symrs`(直した語数を返す)。
+  - 撮像: `render_symbol`(にじみ・刻印の点・回転・あおり)、`capture_degrade`(照明・デフォーカス・動きぶれ・ショット / 読み出し雑音・量子化)。
+  - 印字品質: `grade_barcode_profile` / `grade_barcode1d`(ISO/IEC 15416 の考え方)、`grade_datacode2d`(ISO/IEC 15415 の考え方)。規格の本文は写していない、認証された検証器ではない。
+  - 読み取りの POD: `symbol_read` / `symbol_read_trials` / `symbol_read_pod` / `ocr_read_trials`(既存の `pod.pod_hitmiss_fit`、成功 / 誤読 / 不能を分ける、完全分離は 29/29 の実証、非単調に旗)。
+  - OCR(古典、DL の学習なし): `ocr_font` / `ocr_render_text` / `ocr_segment_line` / `ocr_features` / `ocr_train` / `ocr_classify` / `ocr_read_line` / `ocr_score`。
+  - 仲介: `read_symbols_zxing`(extra `symbols` = zxing-cpp、Apache-2.0。無ければ ImportError)。
+- PoC 3 本: `examples/poc_symbol_package_1d.py` / `poc_symbol_part_dpm.py` / `poc_symbol_lot_ocr.py`。
+
+### 追加 — 光切断(13 op)と HDR・露出融合(8 op)の族(opsoptics のカテゴリ `light_section` / `hdr`)
+
+- 新モジュール `lightsection`: 列ごとの光条の中心 3 変種(`laser_line_center_centroid` / `_gauss` / `_steger`)、装置と試験体と
+  描画(`light_section_rig` / `light_section_targets` / `light_section_render`)、光面の校正 `light_plane_calibrate`
+  (高さ 1 つだけの校正は拒む)、走査(`light_section_profile` / `light_section_scan` / `light_section_height_map`)、
+  スペックルの床(`light_section_speckle_floor` / `light_section_floor_sweep`)と GUM の予算 `light_section_uncertainty_budget`。
+- 新モジュール `hdrfusion`: 応答関数 3 種(`camera_response_debevec` / `_robertson` / `_linear`)、`hdr_merge`、
+  `exposure_fusion_mertens`、EMVA 1288 のセンサで撮る真値つきの露出の列 `hdr_exposure_series_simulate`、
+  `hdr_radiance_error`、ダイナミックレンジの実測 `hdr_dynamic_range`。新しい型語彙なし。
+- PoC 2 本: `examples/poc_light_section_step_weld_floor.py`(収蔵 2026.291)、`examples/poc_hdr_glossy_metal_inspection.py`(収蔵 2026.292)。
+
+### 統合(integrate/2026-11-04-families)
+
+- 上の 7 本(段 0・#241・#242・#244・#245・#246・#247)を 1 本にまとめた。新しい PoC 10 本を展示に掛けた
+  (収蔵 2026.289〜2026.298)。
+- 非決定の試験 2 件を決定的にした: `tests/test_mcp_agent_usability.py` の `plan()` の時間切れ(上限を展開数へ)、
+  `tests/test_jsonio.py` の乱数の種(`hash` → `zlib.crc32`)。
+
 ## 0.9.0 — 2026-11-03
 
 minor を上げる理由(CONTRIBUTING.md「Versioning」): Python 3.10 の終了(下限の引き上げ)、`raytrace3d` の傾けた像面で
@@ -63,94 +188,6 @@ minor を上げる理由(CONTRIBUTING.md「Versioning」): Python 3.10 の終了
 - ViEW2026: 2-D 展示 175 本に story GIF(ja/en)。
 - MCP 経由で LLM が課題を解く e2e 測定器(20 課題 × 3 回、判定は LLM を使わない。`tools/mcp_agent_eval.py`)。
 
-
-### 変更 — kornia の下限を 0.7 から 0.9 へ(`gpu` / `all` extra)
-
-- 0.8 系では `xkor_hessian` が内側でも最大 0.68、`xkor_clahe` が最大 0.46 ずれた(2026-10-24 の修正の節)。値の約束(golden)は 0.9.0 で取っており、CI も最新版だけを回すので、0.9 未満を入れられる制約は約束と合わなかった。CI の optional backends の行も `kornia>=0.9` に揃えた。門は `tests/test_kornia_version_drift_2026_10_24.py`。
-
-### 追加 — 同じ処理の別実装を互いに突き合わせる門(differential testing、`docs/IMPL_DIFFERENTIAL.md`)
-
-- 語幹が同じで接頭辞(`cv_` `sk_` `xkor_` `xsk*_` `hx_` `xg_` `tb_` …、実装・由来を表す 32 種)だけ違う op を
-  数えると 190 組(`tb_X` と台帳の `X` だけの組 154、実装どうしの組 36 = 55 対)。実装どうしの 55 対を、同じ入力
-  (構造画像・線分の断片・雑音入り・乱数、region・contour)・同じつまみ (a, b) で走らせて内部差を比べた
-  (`tools/impl_differential.py`)。結果: 一致 8 / 近い 3 / 違う 34 / 比較不能(入出力の型が違う)10。
-  違う組は全部、原因を中身で特定して表に書いた(つまみの写し方・窓の形・端・8 bit 量子化・定義の違い・名前だけ同じ
-  別の処理)。「差はつまみの写し方だけ」の見立ては、つまみを揃えた 10 点で確かめた(例: `cv_median` と `median` は
-  窓を揃えると差が 8 bit の 1/255 だけ、`dog` と `xkor_dog` は σ を揃えると定数倍を除いて 4e-6)。
-- 命名整理 第 2 段(1 つの名前 + `impl` 引数)でまとめてよい組は 8(そのまま 4: gaussian・meijering・skeleton・
-  smallest_rectangle1、一部 2: bilateral・median、つまみを揃えれば 2: unsharp・dog)。差がきっかり 0 の 3 組は内訳を
-  書いた(meijering と skeleton は同じ skimage 関数を呼んでいるだけ = 独立でない)。
-- `tb_` の 154 組は、つまみ k = 0 / 3/7 / 1 が台帳の関数の既定の 1/4・1・2 倍に写るかを標本で確かめた(一致 129、
-  入出力の加工つきで標本外 25)。`tb_lowpass` / `tb_highpass` / `tb_local_std` / `tb_companding_mu_law` は
-  同名のレジストリ op が別の関数(段 1 の C2)。
-- 門 `tests/test_impl_differential.py`: 一致した組は**実装どうしをその場で走らせて**一致し続けること、違う組には
-  理由があること(理由の無い食い違い・古い理由・内訳の無い差 0 は赤)、揃えた点が期待の量に収まること。
-  表は `regen_all` の段(実測は optional 依存の版で揺れるので `--measure` で手回し)。op ノートには
-  「同じ処理の別実装(実測)」の行が出る(`tools/opdocs.py`、6 言語の対訳つき)。
-
-### 修正(値が変わる) — `xkor_gaussian` / `xkor_unsharp` の窓が 5x5 固定で σ を打ち切っていた
-
-- 実装どうしの突き合わせ(新しい門 `tools/impl_differential.py`、下の「追加」)で、kornia 版の `xkor_gaussian` が
-  core の `gaussian` / OpenCV の `cv_gaussian`(どちらも σ = 0.3 + 2.7a)と内部で振れ幅の 9 %(a = 0.5)〜28 %(a = 0.75)
-  食い違っていた。原因は窓: `kornia.filters.gaussian_blur2d(x, (5, 5), (σ, σ))` で、σ = 1.65 でも半径 2(1.2σ)で
-  打ち切られ、σ を上げてもぼけが 5x5 の箱に近づくだけだった(docstring は「σ を 0.3〜3.0 に振る」)。
-  `xkor_unsharp`(`kornia.filters.unsharp_mask`、σ = 0.5 + 2b)も同じ 5x5 で同じ欠陥。
-- 窓の半径を `int(4σ + 0.5)`(scipy の `gaussian_filter` の既定 truncate = 4.0)にし、端は numpy の `symmetric`
-  (= scipy の `reflect`、core の `gaussian` の `b <= 0.5`)を自前で足してから kornia に渡す(4x4 の画像でも落ちない)。
-  `xkor_gaussian(v, a)` は `gaussian(v, a, 0.5)` と、`xkor_unsharp(v, ·, b)` は `unsharp(v, 2/3, (0.5 + 2b − 0.5)/1.5)` と、
-  **画像全体で 3e-7**(float32 の丸め)で一致する。`xkor_gaussian` の出口は [0,1] へ clip(重み和の丸めで定数 1 の画像が
-  1 + 1.2e-7 になるため)。
-- **値が変わる**: 両 op のほぼ全出力(窓の大きさと端の両方が変わるため)。端の規約も `reflect`(d c b | a b c d)から
-  `symmetric`(d c b a | a b c d)に変わったので、`docs/op_border.json` ほか実測台帳 5 本の 2 行を測り直した。
-  `tests/test_kornia_version_drift_2026_10_24.py` の golden の 2 行も新しい値にした(旧値はコメントに残した)。
-  既定の数値が変わる変更なので CONTRIBUTING の Versioning では minor(この Unreleased は既に 3.10 の終了で minor)。
-
-### 追加 — 真値つきのカメラ校正(opscalib に calib_lm の 8 op: checkerboard 3・calibrate に 2・calib_truth 3)
-
-- 新モジュール `calib_lm`(numpy + scipy)。既存の `camera_calibration`(Zhang の閉形式、K だけ)は置き換えず、初期値として呼ぶ。
-  - 標準の土台: `checkerboard_points`、`sim_checkerboard`(真の K・歪み・姿勢で描く。画素を板へ逆に引く描画で、投影の式の写しではない)、`find_checkerboard_corners`(鞍点 + Förstner の勾配直交でサブピクセル、格子の組み立て)、`camera_calibration_lm`(K・歪み 5 係数・全姿勢を解析的なヤコビアンの LM で同時に、9x9 の周辺共分散つき)、`stereo_calibration_lm`(左右と相対姿勢 (R, T) を同時に、E と F も)。
-  - Fullseye だけの層: `calibration_error_map`(真値と比べた誤差の地図。既定でカメラの向きのずれと同じ形の成分を除く)、`calibration_uncertainty_map`(共分散を画像へ写した地図、実機でも出る)、`calibration_next_pose`(候補の姿勢から次の 1 枚を推薦)。
-- 門 `tests/test_calib_lm.py`(23 件): 合成の角から真値を 1e-9 で、OpenCV の `calibrateCamera` / `stereoCalibrate` と同じ極小(費用は OpenCV 以下、差は標準偏差の 1 % 未満)、共分散の予測 = モンテカルロ 200 本の散らばり(15 % 以内)、角の検出は描画の真値に rms 0.04 px 未満で `cornerSubPix` 以下、誤差の地図の閉形式(cx の δ → 一様に δ px、3D は δ·Z/fx)、不確かさの地図 = モンテカルロの誤差の地図(回さない 10 %・回して除く 25 % 以内)、推薦した姿勢を足した校正の実際の誤差 < 最下位の候補(2 標準誤差)。
-- 例 `examples/poc_calibration_truth_map.py`: 描画 6 枚 → 角の検出(rms 0.046 px)→ Zhang の fx 誤差 12.89 % が LM で 0.133 %、誤差の地図(中央 0.094 px・隅 0.568 px)、次の 1 枚の推薦とモンテカルロの答え合わせ。
-- 限界: ChArUco は無い(ArUco の符号表の検出が要る)。不確かさの地図は線形の予測で、k3 まで自由にした隅の外挿では実測の 3 倍に出る。
-
-### 追加 — 光学式 3D センサの仮想受入試験(VDI/VDE 2634 Part 2/3・ISO 10360-13 の考え方、新台帳 opsacceptance、8 op)
-
-- 新モジュール `acceptance3d`(numpy のみ)と台帳 `opsacceptance`(layout / evaluate / simulate / budget)。新しい型の語なし(points / table)。
-  - 評価量(実機の点群にもシミュレーションの点群にも同じ op): `sphere_probing_error`(PF・PS)、`sphere_spacing_error`(SD)、`plane_flatness_error`(F)、`acceptance_verdict`(MPE と比べた合否と、合否を決めた量)。定義は規格を適用した公開文献(Carfagni ら 2017・2019、Eiríksson ら 2016)の記述から取り、規格の本文は写していない。「準拠」とは名乗らない。
-  - 配置 `acceptance_layout`(球 1・ダンベル 7 姿勢・平面 7 姿勢。7 姿勢の向きは Fullseye の約束)。
-  - Fullseye だけの層: `acceptance_scan` / `virtual_acceptance_test`(理想・三角測量の雑音則・既存 `itof_capture` → `itof_phase_amplitude` の 3 種のセンサで試験体を撮る。真値は場面の解析解)、`acceptance_error_budget`(誤差の要因を 1 つずつ入れて、どれが合否を決めるか)。
-- 門 `tests/test_acceptance3d.py`(36 件): 完全な球・平面 → 0、尺度 s → SD = (s − 1)·L と PS = (s − 1)·D が厳密、半径方向の偏り b → PS = 2b、余弦のうねり → F = 2a、純ガウス雑音の PF の平均 = σ·d2(N)(d2(25) = 3.931 の公表値で積分を検算)、幾何の当てはめ = scipy.optimize.least_squares、三角測量の正対平面の残差 = z²σ_d/(f b)(3 % 以内)、iToF の黒い球(反射率 0.1)の残差は √10 倍前後、既存 `itof_flying_pixel_mask` を外すと PF が 43.7 mm に壊れる。
-- 例 `examples/poc_virtual_acceptance_3d.py`: 3 つの設計案の合否表(仮の MPE で三角測量と白い試験体の iToF は合格、黒い球の iToF は PF が MPE の 1.98 倍で不合格)と iToF 案の誤差の予算(単独で MPE を超えたのは黒い球だけ。SD の寄与は符号が逆で打ち消し合う)。
-
-### 追加 — 型のつながりを全型で数える台帳と門、行き止まり・入口なしの型をつなぐ 12 op と、レシピで落ちた鎖をつなぐ 8 op(2026-11-03)
-
-- `docs/TYPE_ROLES.json`(手書き)に `docs/OP_INDEX.json` の全 102 型(`any` と、`in_sorts` にだけ現れる `entries` を含む)の分類 a/b/c/d/ok・理由・根拠(検索語と確かめた関数)・入口 / 終端の理由を書いた。`tools/type_connectivity.py` が全入力(`in_sorts`)で数えて `docs/TYPE_CONNECTIVITY.md` を生成する(regen_all に登録)。門 `tests/test_type_connectivity.py`: 台帳の行と型が過不足なく一致 / 行き止まり・入口なしは理由のある型だけ / どの型も入口(全入力のそろう op の不動点)から届き終端へ届く / 入口 29・終端 13 の天井 / 偽の op を足すと全部赤になる。
-- 数え直しの前後(全入力で数える): 行き止まり 5 → 0、入口なし 3 → 1(残る `entries` = 凡例の中身で、入口として正しい)、入口から届かない型 4 → 0、終端へ届かない型 7 → 0(どちらも同じ台帳の入口・終端で数えて)。細い型は 48 のまま(大半は族の中で閉じた型で、問題ではない)。第 1 入力だけで数えた最初の数字(行き止まり 7・入口なし 2・image から届かない 15)と両方を生成物に並べる。
-- 新しい op(`opsreprconv` のカテゴリ `derivative` / `structure` / `entry` / `exit`、新しい型名は 0): `gradient_magnitude` / `gradient_coherence`(構造テンソルの面らしさ)/ `hessian_determinant` / `hessian_vesselness`(Frangi 1998 を与えられた Hessian から)/ `frame_axis` / `knn_graph_to_conn_graph`(1 本で conn_graph 族の 20 op へ)/ `pointmap_to_points`(`depth_to_points` と同じ点が同じ順)/ `match_component`(2-D の `match` 型の出口。進化の候補を動かさないため台帳側)/ `indices_to_positions`(`point_spectrum` への入口)/ `synapse_table_from_table`(CSV からコネクトーム)/ `jones_state`(Jones ベクトルの最初の 1 本)/ `tokens_to_matrix`。レシピの網羅(feat/recipes-coverage)で型の穴として落ちた鎖のために: `table_field_image2d` / `table_field_signal` / `table_field_matrix` / `table_field_measurement`(dict を返す op の欄を型を確かめて渡す)/ `pairs_peak_x`(spectrum のピーク)/ `keypoints_rowcol_to_uv` / `keypoints_uv_to_rowcol`(keypoints 型に同居する 2 つの軸の約束)/ `pose_to_matrix`(R, t -> 4x4)。門 `tests/test_reprconv_type_connectivity_2026_11_03.py`(本物の産み手の返りで真値と比較)、例 `examples/type_connectivity_tour.py`(20 項目)。
-- 実測で見つけた型の揺れ: `gradient` は 2 形が同居(`gradient3d` = (gmag, gvec)、`sobel3d` = 利得 32 の torch 3 本)。受け手は形を見分けて利得をそろえる。`axes` は別物 2 つが同居(図の座標変換 dict と、点群の重心・主軸・固有値)。分けるには新しい型名が要るので**変えていない**(案は `docs/TYPE_CONNECTIVITY.md`)。
-- 破壊的変更: なし(既存の op の宣言・型名は 1 つも変えていない。足しただけ)。
-
-### 追加 — 照合と位置合わせの族(特徴点・頑健推定・強度による位置合わせと、真値による精度の地図)
-
-- 新しい台帳 `opsmatchreg`(12 op / 2 カテゴリ、numpy + scipy のみ、新しい型語彙なし)。
-  - featmatch: `features_sift`(DoG + 128 次元。256 px の合成場面で点の数 139、OpenCV 5.0 は 138)/ `features_orb`(FAST-9 + 輝度重心 + 向きつき BRIEF。学習した rBRIEF の表は使わない)/ `features_match`(比の検定 + 相互最近傍、L2 と Hamming。実数の組は既存の `features.match_descriptors` と一致)/ `ransac_homography`(MSAC + 適応回数 + LO、模型 = 並進・相似・アフィン・射影)/ `ransac_fundamental`(正規化 8 点法 + Sampson)。
-  - intensityreg: `register_ecc`(並進〜射影。平滑化の縁の帯を照合から外し、同じ対のアフィンで 4 隅誤差 0.012 px、OpenCV の findTransformECC は 0.178 px)/ `register_mi`(正規化相互情報量の剛体・相似・アフィン)/ `register_ffd`(3 次 B-spline の FFD、numpy の L-BFGS)/ `registration_to_flow2d`。場の向きは `deformreg` の demons と同じ。
-  - Fullseye だけの層: `features_accuracy_table`(既知の変換・照明・ぼけ・雑音で合成した組の条件ごとの表)/ `register_accuracy_map`(既知の場で合成した組の画素ごとの誤差、模様の強さ別の内訳)/ `register_capture_range`(初期のずれごとの成功率)。
-- 合成の道具 7 本を `fs.<名前>` に: `synthetic_scene` / `warp_homography` / `corner_error` / `condition_homography` / `warp_parametric` / `synthesize_moving` / `smooth_test_field`。
-- PoC 3 本: `poc_part_locate_features`(部品の位置決め、4 隅誤差 0.367 px・回転 0.062 度)、`poc_multimodal_mi_registration`(可視と赤外、MI 0.170 px・ECC は拒否)、`poc_sheet_deformation_ffd`(シートの変形、模様のある所 0.025 px・開口問題・余白・格子の分解能)。
-
-### 追加 — 記号の読み取りの族(1-D / 2-D コード・印字品質・読み取りの POD・OCR)
-
-- 新しい台帳 `opssymbol`(33 op / 7 カテゴリ、numpy + scipy のみ)。新しい型語彙なし(table / image2d / signal / matrix / scalar)。
-  - 1-D: `encode_barcode1d`(EAN-13 / UPC-A / Code 128・GS1-128 / Code 39 / ITF)、`ean_check_digit`、`barcode_scan_profiles`、`decode_barcode_profile`、`read_barcode1d`(任意の角度、10 本の多数決、短読みを拒否)。
-  - 2-D: `qr_encode` / `qr_decode_modules` / `qr_locate` / `qr_sample` / `qr_read`(型番 1-40)、`dm_*`(Data Matrix ECC200、正方 24 + 長方形 6、ドットピーン)。Reed-Solomon は自前の `symrs`(直した語数を返す)。
-  - 撮像: `render_symbol`(にじみ・刻印の点・回転・あおり)、`capture_degrade`(照明・デフォーカス・動きぶれ・ショット / 読み出し雑音・量子化)。
-  - 印字品質: `grade_barcode_profile` / `grade_barcode1d`(ISO/IEC 15416 の考え方)、`grade_datacode2d`(ISO/IEC 15415 の考え方)。規格の本文は写していない、認証された検証器ではない。
-  - 読み取りの POD: `symbol_read` / `symbol_read_trials` / `symbol_read_pod` / `ocr_read_trials`(既存の `pod.pod_hitmiss_fit`、成功 / 誤読 / 不能を分ける、完全分離は 29/29 の実証、非単調に旗)。
-  - OCR(古典、DL の学習なし): `ocr_font` / `ocr_render_text` / `ocr_segment_line` / `ocr_features` / `ocr_train` / `ocr_classify` / `ocr_read_line` / `ocr_score`。
-  - 仲介: `read_symbols_zxing`(extra `symbols` = zxing-cpp、Apache-2.0。無ければ ImportError)。
-- PoC 3 本: `examples/poc_symbol_package_1d.py` / `poc_symbol_part_dpm.py` / `poc_symbol_lot_ocr.py`。
 
 ### 追加 — 光弾性の族(応力場 → 縞 → 偏光像 → 位相差と主軸)
 
