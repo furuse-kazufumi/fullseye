@@ -13,6 +13,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>统计穿过中心的卡尺线上&quot;上升沿→下降沿&quot;边缘对(明亮物体的两端)的数量(相当于 HALCON <code style="color:#22d3bf">measure_pairs</code>:提取垂直于矩形/圆弧的直线边缘对)。</p>
 <p><code style="color:#22d3bf">a</code> 是线的方向（<code style="color:#22d3bf">theta = a*pi</code>）。边缘检测与 <code style="color:#22d3bf">m1_measure_pos</code> 相同（梯度峰值的亚像素检测），<code style="color:#22d3bf">b</code>（0〜1）是相对最大振幅的阈值。依次扫描超过阈值的边缘，把极性按 rising→falling 排列的组合计为 1 对（feature，整数值）。边缘少于 2 条时为 0.0。</p>
+<p><b>同词干的其他 op</b>：<code style="color:#22d3bf">measure_pairs</code> 的输入输出类型不同，是另一种处理，只是名字相似（<code style="color:#22d3bf">docs/IMPL_DIFFERENTIAL.md</code>）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">gallery2d_contour_measure 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>

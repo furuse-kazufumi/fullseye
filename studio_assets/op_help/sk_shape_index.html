@@ -14,6 +14,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>形状指標(shape index)。Hessian 行列の固有値から、局所的な表面形状を -1(球状の窪み)〜0(鞍点)〜+1(球状の膨らみ)の 1 次元スカラーで表す —— 曲率の「向き」を要約する記述子。</p>
 <p>HALCON に直接対応するものは無い。実装は <code style="color:#22d3bf">feature.shape_index(v, sigma=0.5+2.0*a)</code> の NaN(平坦領域で未定義になる)を 0 に置き換えてから <code style="color:#22d3bf">signed01</code>(符号付き応答の 0 を 0.5 に写像し、±最大値を 0/1 に写像する)で <code style="color:#22d3bf">[0,1]</code> へ写した値 —— a は Hessian を計算する際のガウス微分の σ を 0.5〜2.5 に振る。b は未使用。</p>
+<p><b>同じ語幹の別の op</b>: <code style="color:#22d3bf">shape_index</code> は入出力の型が違う別の処理で、名前が似ているだけ(<code style="color:#22d3bf">docs/IMPL_DIFFERENTIAL.md</code>)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_texture_freq">gallery2d_texture_freq ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

@@ -41,6 +41,8 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 **判別できない入力の扱い**（2026-09-19 の外部レビュー #7 / #8 で明文化）: 有限の画素が 1 つも無い入力（全 NaN / inf）はしきい値が定義できないので ``ValueError`` を投げる（``fullseye.apply`` の既定の方針では台帳に記録して region の既定値へ落ち、``on_error="raise"`` でそのまま止まる。以前は numpy の RuntimeWarning を出しつつ黙って全 0 を返していた）。空白フレーム（定数画像）は山が 1 つも無いので、値が 0 なら全画素が背景、0 より大きければ**全画素が前景**になる（``docs/op_blank_frame.json`` に測定あり）。定数かどうかは呼ぶ側で ``np.ptp`` 等で先に弾くこと。
 
+**同じ処理の別実装(実測、`docs/IMPL_DIFFERENTIAL.md`)**: 同じ入力・同じ a, b での内部の差(振れ幅に対する比。5e-3 未満が一致)は `cv_otsu` 0.007, `sk_otsu` 0.0052。食い違う理由(つまみの写し方・窓・端・量子化・定義の違い)は表に書いてある。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_segmentation ファミリ ガイド](../guides/gallery2d_segmentation.md)

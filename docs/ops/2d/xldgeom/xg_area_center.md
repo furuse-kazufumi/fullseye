@@ -49,6 +49,8 @@ Polygon area of the contour(s) via the shoelace formula (summed abs).
 返さない(面積のみ)。同じ点集合の 2 次モーメントは ``xg_moments``、bbox の
 縦横比は ``xg_height_width_ratio``。
 
+**同じ語幹の別の op**: `area_center` は入出力の型が違う別の処理で、名前が似ているだけ(`docs/IMPL_DIFFERENTIAL.md`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_geometry ファミリ ガイド](../guides/gallery2d_geometry.md)

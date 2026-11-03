@@ -20,6 +20,7 @@
 <p><code style="color:#22d3bf">max|clahe(x,0.5,0.0) - clahe(x,0.5,1.0)| == 0.0</code> 정확히). CLAHE의 &quot;C&quot;는 contrast <b>limited</b>의 C이며, clip limit이야말로 AHE와 CLAHE를가르는 바로 그것이므로, <b>구현은 AHE였지 CLAHE가 아니었다</b> —— 이름이 거짓말을 하고 있었다. 여기서 clip limit을 구현해 <code style="color:#22d3bf">b</code>에 할당하고, <code style="color:#22d3bf">b=1</code>이 구 구현과 비트 일치하는 끝이 되도록 배율을 골랐다(잘라내기가 일어나지 않는 상한 = 빈 수 256배).</p>
 <p>타일은 영상을 분할(PARTITION)한다(경계는 linspace이므로 마지막 타일이 H % nb / W % nb의 나머지를 흡수한다). 각 타일의 clip limit이 걸린 CDF가 그 국소 톤 맵이며, 모든 화소는 (최대) 4개의 가장 가까운 타일 중심의 맵을쌍선형 가중치로 섞는다 — 표준 CLAHE 보간(Zuiderveld 1994).</p>
 <p>2026-08-30: 보간을 추가(KNOWN_ISSUES #4 — 구 구현은 타일마다 독립적으로 평탄화하고있어서, 타일 경계에 불연속(육안으로 보이는 격자)이 나타났다). 타일 중심의근방 영역에서는 그 타일의 CDF가 그대로 지배적이므로, 구 구현과 같은 사상족의연속판이 되어 있다.</p>
+<p><b>같은 처리의 다른 구현(실측, <code style="color:#22d3bf">docs/IMPL_DIFFERENTIAL.md</code>)</b>: 같은 입력·같은 a, b에서의 내부 차이(값 범위 대비 비율, 5e-3 미만이면 일치)는 <code style="color:#22d3bf">cv_clahe</code> 0.61, <code style="color:#22d3bf">xkor_clahe</code> 0.61. 어긋나는 이유(노브 매핑·창·가장자리·양자화·정의 차이)는 표에 있다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

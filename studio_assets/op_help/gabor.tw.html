@@ -21,6 +21,7 @@
 <p>★正規化（2026-09-02 的修正）：<b>除以核的 L1 範數的固定尺度</b>。以前以 <code style="color:#22d3bf">_norm</code> = 該影像中的最大絕對值來除，因此<b>響應大小本身消失了</b>。實測（96×96 的橫條紋，頻率 0.25）：原始摺積的平均振幅 θ=0° 為 0.0165，θ=90° 為 0.9077，相差 <b>54.9 倍</b>，而經過 <code style="color:#22d3bf">_norm</code> 後平均值被壓縮到 0.3554 對 0.4790 = <b>1.35 倍</b> —— 明明是用來區分方向的特徵量，卻失去了區分能力（各方向以不同的除數去除，當然如此）。由於 <code style="color:#22d3bf">|v| &lt;= 1</code> 時 <code style="color:#22d3bf">|v * g| &lt;= sum|g|</code>，除以 L1 就能在保持值域 [0,1] 的同時成為<b>可跨 op 比較的絕對尺度</b>。</p>
 <p><b>邊界處理</b>：含端點的鏡像折返 (d c b a | a b c d，scipy 預設的 <code style="color:#22d3bf">reflect</code>)（實測。<code style="color:#22d3bf">tools/impl2/border_probe.py</code>）。</p>
 <p><b>空影格（實測）</b>：輸入亮度均勻的影像時，<b>無論亮度為何，結果都為空（全部像素為背景 0）</b>。純白與純黑表現相同；僅憑亮度偵測不到任何東西。</p>
+<p><b>同一處理的其他實作（實測，<code style="color:#22d3bf">docs/IMPL_DIFFERENTIAL.md</code>）</b>：在相同輸入、相同 a、b 下，內部差（相對於值域之比；小於 5e-3 視為一致）為 <code style="color:#22d3bf">hx_gabor</code> 0.72, <code style="color:#22d3bf">sk_gabor</code> 1。不一致的原因（旋鈕對應、視窗、邊界、量化、定義不同）寫在表中。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_texture_freq">gallery2d_texture_freq 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

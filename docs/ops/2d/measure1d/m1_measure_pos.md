@@ -43,6 +43,8 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 線は画像中心を通り、``a`` で向きを ``theta = a*pi`` に振る。輝度プロファイルをガウシアンで軽く平滑化してから ``|d/ds gray|`` のピークをサブピクセル（3 点放物線補間）で検出し、``b``（0〜1）を最大振幅に対する相対しきい値として弱いエッジを捨てる。戻り値は CONTOUR（``{"shape": (H,W), "cs": [1x2 の (row, col) 点, ...]}``）、座標単位は入力画像のピクセル。主な使い道はエッジ数を ``count_contours``で数えること。
 
+**同じ語幹の別の op**: `measure_pos` は入出力の型が違う別の処理で、名前が似ているだけ(`docs/IMPL_DIFFERENTIAL.md`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_contour_measure ファミリ ガイド](../guides/gallery2d_contour_measure.md)

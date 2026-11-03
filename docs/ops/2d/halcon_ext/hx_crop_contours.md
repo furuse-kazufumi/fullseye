@@ -53,6 +53,8 @@ contour を中央の a×b 割合の矩形に crop(範囲内の点のみ残す)�
 矩形外を完全に無視したい場合は後段で ``hx_split_contours``。余白を画像端から指定する版は ``hx_clip_contours``、
 1 つのノブで正方形窓にする版は ``xg_crop_contours``。
 
+**同じ処理の別実装(実測、`docs/IMPL_DIFFERENTIAL.md`)**: 同じ入力・同じ a, b での内部の差(振れ幅に対する比。5e-3 未満が一致)は `xg_crop_contours` 0.74。食い違う理由(つまみの写し方・窓・端・量子化・定義の違い)は表に書いてある。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_halcon_ext ファミリ ガイド](../guides/gallery2d_halcon_ext.md)

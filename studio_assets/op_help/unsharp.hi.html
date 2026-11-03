@@ -17,6 +17,7 @@
 <p>Unsharp mask। ★आउटपुट पर [0,1] में clip करता है (2026-09-02)।</p>
 <p><code style="color:#22d3bf">v + k*(v - blur)</code> परिभाषा से ही overshoot करता है (मापा गया min=-0.1499 / max=+1.1499)। <code style="color:#22d3bf">_apply</code> stages के बीच वही clip लगाता है, इसलिए <b>pipeline का परिणाम bit-identical है</b>, लेकिन जो path <code style="color:#22d3bf">fullseye.apply</code> को अकेले call करता था वह raw मान देता था, और उन्हें <code style="color:#22d3bf">image</code> के [0,1] contract को तोड़ते हुए save करने पर वे काले/सफ़ेद में कुचल जाते थे। GPU की तरफ़ (<code style="color:#22d3bf">accel._unsharp</code>) में भी वही clip है।</p>
 <p><b>Border handling</b>: border pixel को दोहराकर mirror किया जाता है (d c b a | a b c d, scipy का default <code style="color:#22d3bf">reflect</code>) (2026-09-16 को मापकर दर्ज किया गया)।</p>
+<p><b>उसी operation के दूसरे implementation (मापा गया; <code style="color:#22d3bf">docs/IMPL_DIFFERENTIAL.md</code>)</b>: एक ही input और एक ही a, b पर भीतरी अंतर (value range के अनुपात में; 5e-3 से कम = मेल) <code style="color:#22d3bf">xkor_unsharp</code> 0.19 है। जो मेल नहीं खाते उनका कारण (knob mapping, window, border, quantisation, अलग परिभाषा) table में लिखा है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

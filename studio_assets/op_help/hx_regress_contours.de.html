@@ -16,6 +16,7 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> werden nicht verwendet.</p>
 <p style="margin:2px 0 2px 12px">• 0.0, wenn keine gültige Kontur vorhanden ist (nicht von &quot;einer perfekten Geraden&quot; zu unterscheiden).</p>
 <p>Kleiner heißt gerader. Steigung und Lage der Geraden selbst werden nicht zurückgegeben (für das Fit-Ergebnis <code style="color:#22d3bf">fit_line_contours</code>). Um die Zahl der Ecken als Polylinie zu sehen, zuerst mit <code style="color:#22d3bf">hx_split_contours</code> aufteilen und die Segmente zählen. Konturen mit 2 oder weniger Punkten fallen aus der Bewertung. Das entsprechende Maß für nur 1 Kontur ist <code style="color:#22d3bf">xg_regress_contours</code>.</p>
+<p><b>Andere Implementierungen derselben Operation (gemessen; <code style="color:#22d3bf">docs/IMPL_DIFFERENTIAL.md</code>)</b>: Bei gleichen Eingaben und gleichen a, b beträgt der Unterschied im Inneren (relativ zum Wertebereich; unter 5e-3 gilt als gleich) <code style="color:#22d3bf">xg_regress_contours</code> 1. Warum die abweichenden sich unterscheiden (Knopf-Abbildung, Fenster, Rand, Quantisierung, andere Definition), steht in der Tabelle.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">Leitfaden zur Familie gallery2d_halcon_ext</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

@@ -49,6 +49,8 @@ Axis-aligned bounding box (smallest_rectangle1).
 ``opening_circle`` を掛けておく。回転を許した最小面積矩形は
 ``r2_smallest_rectangle2``、内接側は ``r2_inner_rectangle1``。
 
+**同じ処理の別実装(実測、`docs/IMPL_DIFFERENTIAL.md`)**: 同じ入力・同じ a, b での内部の差(振れ幅に対する比。5e-3 未満が一致)は `smallest_rectangle1` 0。食い違う理由(つまみの写し方・窓・端・量子化・定義の違い)は表に書いてある。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_region ファミリ ガイド](../guides/gallery2d_region.md)

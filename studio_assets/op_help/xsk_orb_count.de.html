@@ -12,6 +12,7 @@
 <p>Anzahl der erkannten ORB-Keypoints (Oriented FAST and Rotated BRIEF).</p>
 <p>Führt Detektion und Beschreibung mit skimage.feature.ORB aus und gibt die Anzahl der tatsächlich detektierten Keypoints zurück (feature-Ausgabe).</p>
 <p><code style="color:#22d3bf">a</code> variiert die angeforderte maximale Keypoint-Anzahl <code style="color:#22d3bf">n_keypoints</code> im Bereich 50-450 (eine Obergrenze; bei kontrast- oder strukturarmen Bildern ist die tatsächliche Anzahl geringer). <code style="color:#22d3bf">b</code> wird nicht verwendet. Nutzbar als Richtwert für den Texturreichtum und die Merkmalspunktdichte.</p>
+<p><b>Andere Implementierungen derselben Operation (gemessen; <code style="color:#22d3bf">docs/IMPL_DIFFERENTIAL.md</code>)</b>: Bei gleichen Eingaben und gleichen a, b beträgt der Unterschied im Inneren (relativ zum Wertebereich; unter 5e-3 gilt als gleich) <code style="color:#22d3bf">xcv_orb_count</code> 1. Warum die abweichenden sich unterscheiden (Knopf-Abbildung, Fenster, Rand, Quantisierung, andere Definition), steht in der Tabelle.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">Leitfaden zur Familie gallery2d_features</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

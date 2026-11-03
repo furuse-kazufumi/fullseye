@@ -15,6 +15,7 @@
 <p>将图像的定义域(domain)扩展到整个图像范围。相当于 HALCON 的 <code style="color:#22d3bf">full_domain</code>(将图像的定义域扩展到最大)。</p>
 <p>只是返回与输入同形状、全为 1 的 region（=整幅图像）的 op。与其他收窄 ROI 的 op 配对使用，用于重置定义域。<code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。</p>
 <p><b>空帧（实测）</b>：输入亮度均匀的图像时，<b>无论亮度如何，全部像素都成为前景（1）</b>。过曝、被遮挡或没有被摄物的帧会被报为「<b>缺陷 100%</b>」，因此应在上游判定是否均匀并加以剔除。</p>
+<p><b>同词干的其他 op</b>：<code style="color:#22d3bf">it_full_domain</code> 的输入输出类型不同，是另一种处理，只是名字相似（<code style="color:#22d3bf">docs/IMPL_DIFFERENTIAL.md</code>）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

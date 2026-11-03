@@ -16,6 +16,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>バイラテラルフィルタ(OpenCV 実装)。空間的な近さと輝度値の近さの両方を重みにしたガウス的平滑化で、エッジ(輝度差の大きい境界)をぼかさずに平坦部だけを滑らかにする。</p>
 <p>HALCON の <code style="color:#22d3bf">bilateral_filter</code>(bilateral filtering of an image.)に相当。実装は <code style="color:#22d3bf">cv2.bilateralFilter(v, d=5, sigmaColor=0.05+0.4*b, sigmaSpace=1.0+3.0*a)</code> —— カーネル直径 d は 5 に固定、<b>a は空間方向の広がり sigmaSpace を 1.0〜4.0 に、b は輝度方向の許容差 sigmaColor を 0.05〜0.45 に振る</b>(引数の並びが sigmaColor, sigmaSpace の順なので a/b の対応がずれやすい点に注意)。</p>
+<p><b>同じ処理の別実装(実測、<code style="color:#22d3bf">docs/IMPL_DIFFERENTIAL.md</code>)</b>: 同じ入力・同じ a, b での内部の差(振れ幅に対する比。5e-3 未満が一致)は <code style="color:#22d3bf">bilateral</code> 0.055, <code style="color:#22d3bf">xkor_bilateral</code> 0.055。食い違う理由(つまみの写し方・窓・端・量子化・定義の違い)は表に書いてある。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

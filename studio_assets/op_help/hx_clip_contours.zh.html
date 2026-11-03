@@ -20,6 +20,7 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 上下边距 <code style="color:#22d3bf">my = a*0.4*H</code>（0〜高度的 40%）。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 左右边距 <code style="color:#22d3bf">mx = b*0.4*W</code>（0〜宽度的 40%）。a=b=0 时为按图像范围 <code style="color:#22d3bf">[0, H-1] × [0, W-1]</code> 的裁剪。</p>
 <p>只是抽掉点而不分割 contour，因此经过矩形外又回来的 contour 会成为剩下的点彼此直接相连的形状（跳跃）。需要分割时在后续用 <code style="color:#22d3bf">hx_split_contours</code>。按距中心的比例裁切的类似 op 有 <code style="color:#22d3bf">hx_crop_contours</code>（以中心为基准指定宽、高）。与按线长截断的 <code style="color:#22d3bf">xg_clip_contours</code> 是不同的东西。</p>
+<p><b>同一处理的其他实现（实测，<code style="color:#22d3bf">docs/IMPL_DIFFERENTIAL.md</code>）</b>：在相同输入、相同 a、b 下，内部差（相对于取值范围之比；小于 5e-3 视为一致）为 <code style="color:#22d3bf">xg_clip_contours</code> 0.63。不一致的原因（旋钮映射、窗口、边界、量化、定义不同）写在表中。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

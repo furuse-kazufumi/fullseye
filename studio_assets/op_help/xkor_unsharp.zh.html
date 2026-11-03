@@ -12,9 +12,10 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xkor_unsharp.inputs.jpg">xkor_unsharp: 其他输入图像</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>反锐化蒙版(锐化)。以 5x5 核调用 <code style="color:#22d3bf">kornia.filters.unsharp_mask</code>。</p>
-<p><b>a 未使用</b>，b 调节模糊的 sigma（<code style="color:#22d3bf">0.5 + 2.0 * b</code>，范围 0.5〜2.5）。这是从原图像减去低频成分(模糊版)得到差分、将其增强后再加回的经典锐化。</p>
-<p><b>边界处理</b>：不重复端点的镜像折返 (d c b | a b c d，OpenCV 的 <code style="color:#22d3bf">BORDER_REFLECT_101</code>)（实测。<code style="color:#22d3bf">tools/impl2/border_probe.py</code>）。</p>
+<p>反锐化蒙版(锐化)。以与 sigma 匹配的窗口调用 <code style="color:#22d3bf">kornia.filters.unsharp_mask</code>(<code style="color:#22d3bf">v + (v - G_σ * v)</code>,强度固定为 1)。</p>
+<p><b>a 未使用</b>，b 调节模糊的 sigma（<code style="color:#22d3bf">0.5 + 2.0 * b</code>，范围 0.5〜2.5）。从原图减去低频（模糊）成分，再把强调后的差加回的经典锐化。窗口半径为 <code style="color:#22d3bf">int(4σ + 0.5)</code>，边界为含边缘像素的镜像（与 <code style="color:#22d3bf">xkor_gaussian</code> 相同）。与 core 的 <code style="color:#22d3bf">unsharp</code> <b>旋钮含义不同</b>：core 的 <code style="color:#22d3bf">a</code> 是强度（<code style="color:#22d3bf">1.5a</code> 倍），<code style="color:#22d3bf">b</code> 是 σ = <code style="color:#22d3bf">0.5 + 1.5b</code>。core 的 <code style="color:#22d3bf">unsharp(v, 2/3, (s - 0.5)/1.5)</code> 与本 op 的 <code style="color:#22d3bf">b = (s - 0.5)/2</code> 是同一处理。</p>
+<p>★2026-11-03 的修正（数值改变）：此前窗口<b>固定为 5x5</b>，σ = 1.5（b = 0.5）时也在半径 2 处截断（与 <code style="color:#22d3bf">xkor_gaussian</code> 相同的缺陷）。</p>
+<p><b>同一处理的其他实现（实测，<code style="color:#22d3bf">docs/IMPL_DIFFERENTIAL.md</code>）</b>：在相同输入、相同 a、b 下，内部差（相对于取值范围之比；小于 5e-3 视为一致）为 <code style="color:#22d3bf">unsharp</code> 0.19。不一致的原因（旋钮映射、窗口、边界、量化、定义不同）写在表中。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

@@ -16,6 +16,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>自引导滤波器（guided filter，引导图像＝输入自身，torch 实现）。</p>
 <p>在局部窗口内用箱式滤波求解线性回归 <code style="color:#22d3bf">q = a_lin*I + b_lin</code> 的保边平滑。<code style="color:#22d3bf">a</code> 将窗口半径 <code style="color:#22d3bf">r</code> 在 1〜5 间调节（<code style="color:#22d3bf">r = 1 + int(a*4)</code>），<code style="color:#22d3bf">b</code> 将正则化项 <code style="color:#22d3bf">eps</code> 在 0.001〜0.051 间调节（<code style="color:#22d3bf">eps = 0.001 + 0.05*b</code>，越大平滑越强、边缘保持越弱）。这是作为双边滤波的快速替代而知名的方法，由于引导图像就是输入本身，它作为自引导的保边平滑来工作。相当于 HALCON 的 <code style="color:#22d3bf">guided_filter</code>（对图像进行引导滤波），但这是不一定得到相同结果的近似实现。</p>
+<p><b>同一处理的其他实现（实测，<code style="color:#22d3bf">docs/IMPL_DIFFERENTIAL.md</code>）</b>：在相同输入、相同 a、b 下，内部差（相对于取值范围之比；小于 5e-3 视为一致）为 <code style="color:#22d3bf">guided_filter</code> 0.36。不一致的原因（旋钮映射、窗口、边界、量化、定义不同）写在表中。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

@@ -17,6 +17,7 @@
 <p>保边平滑（双边滤波器）。相当于 HALCON 的 <code style="color:#22d3bf">bilateral_filter</code>（bilateral filtering of an image.）。</p>
 <p><code style="color:#22d3bf">a</code> 调节空间方向的扩展 <code style="color:#22d3bf">σ_s = 1.0 + 3.0a</code>，<code style="color:#22d3bf">b</code> 调节亮度方向的容差 <code style="color:#22d3bf">σ_r = 0.05 + 0.4b</code>。邻域窗口固定为半径 <code style="color:#22d3bf">r=2</code>（5×5），不随 <code style="color:#22d3bf">a</code> 变化。邻域权重是 <code style="color:#22d3bf">exp(-距离²/2σ_s²) × exp(-明度差²/2σ_r²)</code> 的乘积，明度差大（=跨越边缘）的像素权重变小，因此能在平滑的同时保持轮廓。窗口内用 Python 双重循环遍历，所以比其他平滑 op 慢。</p>
 <p><b>边界处理</b>：复制边界像素(最近邻)(2026-09-16 实测并记录)。</p>
+<p><b>同一处理的其他实现（实测，<code style="color:#22d3bf">docs/IMPL_DIFFERENTIAL.md</code>）</b>：在相同输入、相同 a、b 下，内部差（相对于取值范围之比；小于 5e-3 视为一致）为 <code style="color:#22d3bf">cv_bilateral</code> 0.055, <code style="color:#22d3bf">xkor_bilateral</code> 2.7e-07。不一致的原因（旋钮映射、窗口、边界、量化、定义不同）写在表中。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

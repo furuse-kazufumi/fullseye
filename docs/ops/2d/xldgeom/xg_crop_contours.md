@@ -54,6 +54,8 @@ Keep only contour points inside the central a-fraction window of the shape.
 扱いたいなら、領域の段階で ``r3_clip_region`` を掛けてから輪郭を取り直す。
 座標は (row, col)。長さで輪郭ごと選別するのは ``xg_clip_contours``。
 
+**同じ処理の別実装(実測、`docs/IMPL_DIFFERENTIAL.md`)**: 同じ入力・同じ a, b での内部の差(振れ幅に対する比。5e-3 未満が一致)は `hx_crop_contours` 0.74。食い違う理由(つまみの写し方・窓・端・量子化・定義の違い)は表に書いてある。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_geometry ファミリ ガイド](../guides/gallery2d_geometry.md)

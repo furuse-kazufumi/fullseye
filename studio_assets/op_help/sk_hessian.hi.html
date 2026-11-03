@@ -16,6 +16,7 @@
 <p>Hybrid Hessian filter। लगभग Frangi जैसा tubular structure detection, लेकिन smoothing का तरीका अलग है (लगभग Frangi के विकल्प के रूप में इस्तेमाल किया जा सकता है)।</p>
 <p>HALCON के <code style="color:#22d3bf">lines_gauss</code> के बराबर (approximation)। a, b उपयोग नहीं होते — scale <code style="color:#22d3bf">sigmas=range(1, 4)</code> पर fixed है। sk_frangi / sk_meijering के साथ यह 3 भाइयों का समूह है, जिन्हें समान input पर response के अंतर की तुलना करने के लिए साथ रखा गया है।</p>
 <p><b>खाली frame (मापा गया)</b>: एक समान brightness वाली image देने पर <b>brightness चाहे जो हो, सभी pixels foreground (1) बन जाते हैं</b>। जिस frame में रोशनी उड़ गई हो, कुछ रास्ते में आ गया हो, या कोई subject न हो, वह &quot;<b>100% defective</b>&quot; के रूप में लौटता है, इसलिए upstream में ही जाँचें कि frame एक समान है या नहीं और ऐसे frames को हटा दें।</p>
+<p><b>उसी operation के दूसरे implementation (मापा गया; <code style="color:#22d3bf">docs/IMPL_DIFFERENTIAL.md</code>)</b>: एक ही input और एक ही a, b पर भीतरी अंतर (value range के अनुपात में; 5e-3 से कम = मेल) <code style="color:#22d3bf">xkor_hessian</code> 1 है। जो मेल नहीं खाते उनका कारण (knob mapping, window, border, quantisation, अलग परिभाषा) table में लिखा है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_texture_freq">gallery2d_texture_freq family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

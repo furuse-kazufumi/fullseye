@@ -43,6 +43,8 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 HALCON の `bilateral_filter`(bilateral filtering of an image.)に相当。実装は ``cv2.bilateralFilter(v, d=5, sigmaColor=0.05+0.4*b, sigmaSpace=1.0+3.0*a)`` —— カーネル直径 d は 5 に固定、**a は空間方向の広がり sigmaSpace を 1.0〜4.0 に、b は輝度方向の許容差 sigmaColor を 0.05〜0.45 に振る**(引数の並びが sigmaColor, sigmaSpace の順なので a/b の対応がずれやすい点に注意)。
 
+**同じ処理の別実装(実測、`docs/IMPL_DIFFERENTIAL.md`)**: 同じ入力・同じ a, b での内部の差(振れ幅に対する比。5e-3 未満が一致)は `bilateral` 0.055, `xkor_bilateral` 0.055。食い違う理由(つまみの写し方・窓・端・量子化・定義の違い)は表に書いてある。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_smoothing_rank ファミリ ガイド](../guides/gallery2d_smoothing_rank.md)

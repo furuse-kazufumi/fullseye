@@ -47,6 +47,8 @@ Major/minor axis ratio sqrt(lambda_max/lambda_min) of the point set.
 見たいときに使う。軸ではなく外接矩形の縦横比なら ``xg_height_width_ratio``
 (こちらは向きに依存する)。
 
+**同じ語幹の別の op**: `elliptic_axis` は入出力の型が違う別の処理で、名前が似ているだけ(`docs/IMPL_DIFFERENTIAL.md`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_geometry ファミリ ガイド](../guides/gallery2d_geometry.md)

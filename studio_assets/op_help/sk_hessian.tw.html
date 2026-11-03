@@ -16,6 +16,7 @@
 <p>Hybrid Hessian 濾波器。與 Frangi 幾乎相同的管狀結構偵測，但平滑方法不同（可近似作為 Frangi 的替代品使用）。</p>
 <p>相當於 HALCON 的 <code style="color:#22d3bf">lines_gauss</code>（近似）。a、b 未使用 —— 尺度固定為 <code style="color:#22d3bf">sigmas=range(1, 4)</code>。與 sk_frangi / sk_meijering 組成 3 兄弟，並列放置是為了比較對同一輸入的響應差異。</p>
 <p><b>空影格（實測）</b>：輸入亮度均勻的影像時，<b>無論亮度為何，全部像素都成為前景（1）</b>。過曝、被遮擋或沒有被攝物的影格會被報為「<b>缺陷 100%</b>」，因此應在上游判定是否均勻並加以剔除。</p>
+<p><b>同一處理的其他實作（實測，<code style="color:#22d3bf">docs/IMPL_DIFFERENTIAL.md</code>）</b>：在相同輸入、相同 a、b 下，內部差（相對於值域之比；小於 5e-3 視為一致）為 <code style="color:#22d3bf">xkor_hessian</code> 1。不一致的原因（旋鈕對應、視窗、邊界、量化、定義不同）寫在表中。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_texture_freq">gallery2d_texture_freq 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

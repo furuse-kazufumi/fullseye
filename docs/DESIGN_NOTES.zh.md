@@ -5,7 +5,7 @@
 
 本仓库把「为什么是这样」写在**源码注释**里。其中标了 `★` 的是真正管用的部分——测出来的结论、踩过的坑、这样做的理由。本页由它们机械汇集而成，正本在源码一侧，因此两者不会走样。
 
-**翻译进度**：611 / 1571 条。未翻译的条目照原文（日语）显示——悄悄回退到原文会看着像已翻译，所以没译就明说没译。
+**翻译进度**：611 / 1572 条。未翻译的条目照原文（日语）显示——悄悄回退到原文会看着像已翻译，所以没译就明说没译。
 
 
 ## `accel.py`
@@ -2423,6 +2423,10 @@
 
 - **L41** _(ja)_ — 歴史側で試す点。★**0.5 を含める** —— 0.5 は「まん中」として既定値に使われて いる(``api.apply`` の既定、studio の中央、保存済みプログラムの初期値)ので、 ここが新しい側に落ちると**既定のまま呼んだだけで答えが変わる**。 最初 ``b < 0.5`` で切ったら、gaussian と HALCON 別名の一致検査まで割れた。
 
+## `tests/test_kornia_version_drift_2026_10_24.py`
+
+- **L186** _(ja)_ — ★2026-11-03: xkor_gaussian / xkor_unsharp の窓を 5x5 固定から int(4σ+0.5) に直した(値が変わる修正、 CHANGELOG「修正(値が変わる)」)。新しい値は core の gaussian / unsharp と 3e-7 で一致する (tests/test_impl_differential.py が実装どうしで見る)。旧値は [0.5741725, 0.1278215, …]。
+
 ## `tests/test_ledger_contracts.py`
 
 - **L55** _(ja)_ — ★同日の 2 回目: 探針側の builder(``ledger_contracts.probe_builders``)で 2,055 / CI 相当 2,019 に上がったので床も上げた(床を据え置くと、builder が黙って外れても気づけない)。
@@ -2936,20 +2940,20 @@
 ## `tools/opdocs.py`
 
 - **L142** — ★2026-09-08: ops1d（dsp 16 + funct1d 23）虽已注册，却 **在 docs/ops 下没有一张笔记** —— 它出现在 OP_CATALOG 中，但因为没有每个 op 的笔记（类型契约、陷阱、相关 op），从 RAG 语料库中整个缺失。是在 `poc_web_roll_periodicity` 给 dsp 添了 2 个时发现的。
-- **L919** _(ja)_ — ★2026-09-23 の実測: 1 回 7〜11 秒かかるこの関数を、`gen_docs_index_ops` が 6 言語 x 3 ブロックで 18 回呼んでおり、`test_the_generated_blocks_are_current` だけで **129 秒**使っていた(スイート 2,301 秒の 5.6 %)。答えは `ops.REGISTRY` と `docs/` から決まり、1 プロセスの中で動かない。 前提は「同じプロセスの中では台帳とノートが変わらない」。生成器は `regen_all.py` が**別プロセスで**呼ぶので跨がない。プロセス内でノートを 書き換えてから読み直す側は `_records_cache_clear()` を呼ぶこと (呼ばないと古い答えが返る —— 黙って古い値を返すのが一番たちが悪いので、 ここに明記しておく)。
-- **L981** — ★n 元（多输入）层。到 2026-09-09 为止**有 17 个算子一份说明都没有**（`add_image`、`sub_image`、`bit_and`、`reduce_domain`、`union2`…）。它们以 tier=`nary` 出现在 `OP_INDEX.json` 中，但 `docs/ops/` 下没有说明，于是**永远无法从 RAG 语料中检索到**。漏掉的原因很清楚：这里只遍历 `ops.REGISTRY`，而 `ops.REGISTRY`（899）与 2-D 说明数（899）相等，从注册表一侧数就显得毫无缺失。只有跨层去数才会暴露。
-- **L1023** — ★2026-09-07: ``OPS3D[...]["doc"]`` 是注册时**只切出 docstring 的第 1 行**的产物（ops3d._build）。在笔记的"用法"里用它，无论实现写了几段都会变成一行 —— "用法只有一行的 op 494 本"中的 3-D 部分正是这个截断造成的（docstring 本身很长的 op 很多）。和台账 dim 一样，把函数的 docstring 整个读进来。
-- **L1046** — ★ 桥接 op（``tb_<name>``）与台账的 ``<name>`` 实现相同，示例以台账名书写。到 2026-09-06 为止有 147 本是"零示例"，但那只是没有数到**以别名存在、调用同一实现的示例**而已。继承台账一侧的示例，并在笔记中明确写上"原 op 的示例"（以免说谎）。
-- **L1104** _(ja)_ — ★2026-10-12: 2-D の例索引(``op_example_index._op_names_2d``)は ``ops.REGISTRY`` から identity と 橋渡し op(category ``typed``)を外し、n-ary 層(``imgops_nary``)はそもそも数えない。そのため この 3 種のノートは、examples/ に ``fullseye.apply([x1, x2], "add_image")`` や ``fullseye.apply(F, "tb_cx_ifft")`` と**名指しで呼ぶ例があっても**「(まだありません)」のままだった (n-ary 17 本・identity・元 op の例を継承できない tb_cx_* 7 本)。カバレッジの門の母集団は変えず、 ノートの案内だけ同じ呼び出し検出(``_index_for``)で名前を直接引く。
-- **L1296** — ★n 元算子无法通过 `fullseye.apply` 调用——那是单图模型。在这里写单图的调用方式会**让说明撒谎**：说明唯一的职责就是告诉别人怎么调用，所以错误的调用方式比没有更糟。公开入口是 `fullseye.FullseyeGraph`。
-- **L1315** — ★2026-09-07: **先写公开路径**。这里只写了实现模块的直接 import，没有出现使用者实际使用的 `fullseye.ledger.<名>`（除 2-D 以外的全部 1,244 op）。PoC 反复报告"fs.<名> 里没有"，问题不在于名字缺失，而在于**入口没有写**。
-- **L1769** — ★ 入口用 6 种语言呈现（2026-09-09）。叶子（Studio 的 op 帮助）有 6 种语言 10,191 页，然而**通向那里的索引却只有日语** —— 译文存在却到不了，这种形式的缺失。框架的文案放在 `T()` 上，所以对照翻译的空洞由既有的门（test_chrome_translation_table_has_no_holes）来看守。
-- **L1809** _(ja)_ — ★2026-10-15: 族の名前だけでは中身が分からない。`drive`(694)は研磨(polish)・粉末 X 線回折 (pxrd)・触覚(tac*)・peg-in-hole を抱え、`optics` は材料表(matprop)・ファイバ(fiber)・ センサーの特性(sensorchar)を抱える —— 族名で選ぶ読み手は、それらを開かずに「無い」と言う。 入口でカテゴリ名を全部見せる(名前は識別子なので訳さない。各カテゴリはその族の INDEX の節)。
-- **L1820** _(ja)_ — ★2026-09-15: 用途から引く索引(docs/CAPABILITIES.md)へ**ここから**送る。文書だけを 渡した AI が 1 回目に見つけられなかったのは、この目次にも AI_RAG_GUIDE にも 導線が無かったから。
-- **L1829** — ★ 这里长期只指向 `2d/guides/`，从未把读者引向光学、PIV、断层成像等 30 个族的指南（2026-09-09 修正）。
-- **L1987** _(ja)_ — コードスパン。★``…``(RST / docstring の二重バッククォート)を `…` より**先に**試す。 2026-10-07 まで `([^`]+)` だけで、``p`` measures … ``p`` が「`` の 2 文字目と次の `` の 1 文字目」で組まれ、コードと散文が**反転して**表示されていた(英語版 3,153 枚中 約 2,800 枚)。前に付いた RST ロール(:func:`x` など)は飲み込み、対象名だけをコードで出す (733 枚で ``:func:`` が生で見えていた)。
-- **L2156** _(ja)_ — ★置き換えは描画時と同じ退避記号で(空白にすると ``**raises `ValueError`**`` の閉じの 直前が空白になって太字の組が外れず、英字にすると ``**name**`(a)``` の閉じの直後が 英字になって外れない —— どちらも「閉じていない」と誤判定して次の箇条書きを飲み込んだ)。
-- **L2858** _(ja)_ — ★2026-09-20: 生成を終えたあと、インタプリタの終了処理(fullseye が引き込む mediapipe の shutdown dispatcher)で 30〜60 分固まり、regen_all の連鎖がその間止まった(2 度実測、CPU 0)。 出力は全部書き終えているので、flush してから os._exit で確定させる。
+- **L966** _(ja)_ — ★2026-09-23 の実測: 1 回 7〜11 秒かかるこの関数を、`gen_docs_index_ops` が 6 言語 x 3 ブロックで 18 回呼んでおり、`test_the_generated_blocks_are_current` だけで **129 秒**使っていた(スイート 2,301 秒の 5.6 %)。答えは `ops.REGISTRY` と `docs/` から決まり、1 プロセスの中で動かない。 前提は「同じプロセスの中では台帳とノートが変わらない」。生成器は `regen_all.py` が**別プロセスで**呼ぶので跨がない。プロセス内でノートを 書き換えてから読み直す側は `_records_cache_clear()` を呼ぶこと (呼ばないと古い答えが返る —— 黙って古い値を返すのが一番たちが悪いので、 ここに明記しておく)。
+- **L1028** — ★n 元（多输入）层。到 2026-09-09 为止**有 17 个算子一份说明都没有**（`add_image`、`sub_image`、`bit_and`、`reduce_domain`、`union2`…）。它们以 tier=`nary` 出现在 `OP_INDEX.json` 中，但 `docs/ops/` 下没有说明，于是**永远无法从 RAG 语料中检索到**。漏掉的原因很清楚：这里只遍历 `ops.REGISTRY`，而 `ops.REGISTRY`（899）与 2-D 说明数（899）相等，从注册表一侧数就显得毫无缺失。只有跨层去数才会暴露。
+- **L1070** — ★2026-09-07: ``OPS3D[...]["doc"]`` 是注册时**只切出 docstring 的第 1 行**的产物（ops3d._build）。在笔记的"用法"里用它，无论实现写了几段都会变成一行 —— "用法只有一行的 op 494 本"中的 3-D 部分正是这个截断造成的（docstring 本身很长的 op 很多）。和台账 dim 一样，把函数的 docstring 整个读进来。
+- **L1093** — ★ 桥接 op（``tb_<name>``）与台账的 ``<name>`` 实现相同，示例以台账名书写。到 2026-09-06 为止有 147 本是"零示例"，但那只是没有数到**以别名存在、调用同一实现的示例**而已。继承台账一侧的示例，并在笔记中明确写上"原 op 的示例"（以免说谎）。
+- **L1151** _(ja)_ — ★2026-10-12: 2-D の例索引(``op_example_index._op_names_2d``)は ``ops.REGISTRY`` から identity と 橋渡し op(category ``typed``)を外し、n-ary 層(``imgops_nary``)はそもそも数えない。そのため この 3 種のノートは、examples/ に ``fullseye.apply([x1, x2], "add_image")`` や ``fullseye.apply(F, "tb_cx_ifft")`` と**名指しで呼ぶ例があっても**「(まだありません)」のままだった (n-ary 17 本・identity・元 op の例を継承できない tb_cx_* 7 本)。カバレッジの門の母集団は変えず、 ノートの案内だけ同じ呼び出し検出(``_index_for``)で名前を直接引く。
+- **L1343** — ★n 元算子无法通过 `fullseye.apply` 调用——那是单图模型。在这里写单图的调用方式会**让说明撒谎**：说明唯一的职责就是告诉别人怎么调用，所以错误的调用方式比没有更糟。公开入口是 `fullseye.FullseyeGraph`。
+- **L1362** — ★2026-09-07: **先写公开路径**。这里只写了实现模块的直接 import，没有出现使用者实际使用的 `fullseye.ledger.<名>`（除 2-D 以外的全部 1,244 op）。PoC 反复报告"fs.<名> 里没有"，问题不在于名字缺失，而在于**入口没有写**。
+- **L1816** — ★ 入口用 6 种语言呈现（2026-09-09）。叶子（Studio 的 op 帮助）有 6 种语言 10,191 页，然而**通向那里的索引却只有日语** —— 译文存在却到不了，这种形式的缺失。框架的文案放在 `T()` 上，所以对照翻译的空洞由既有的门（test_chrome_translation_table_has_no_holes）来看守。
+- **L1856** _(ja)_ — ★2026-10-15: 族の名前だけでは中身が分からない。`drive`(694)は研磨(polish)・粉末 X 線回折 (pxrd)・触覚(tac*)・peg-in-hole を抱え、`optics` は材料表(matprop)・ファイバ(fiber)・ センサーの特性(sensorchar)を抱える —— 族名で選ぶ読み手は、それらを開かずに「無い」と言う。 入口でカテゴリ名を全部見せる(名前は識別子なので訳さない。各カテゴリはその族の INDEX の節)。
+- **L1867** _(ja)_ — ★2026-09-15: 用途から引く索引(docs/CAPABILITIES.md)へ**ここから**送る。文書だけを 渡した AI が 1 回目に見つけられなかったのは、この目次にも AI_RAG_GUIDE にも 導線が無かったから。
+- **L1876** — ★ 这里长期只指向 `2d/guides/`，从未把读者引向光学、PIV、断层成像等 30 个族的指南（2026-09-09 修正）。
+- **L2034** _(ja)_ — コードスパン。★``…``(RST / docstring の二重バッククォート)を `…` より**先に**試す。 2026-10-07 まで `([^`]+)` だけで、``p`` measures … ``p`` が「`` の 2 文字目と次の `` の 1 文字目」で組まれ、コードと散文が**反転して**表示されていた(英語版 3,153 枚中 約 2,800 枚)。前に付いた RST ロール(:func:`x` など)は飲み込み、対象名だけをコードで出す (733 枚で ``:func:`` が生で見えていた)。
+- **L2203** _(ja)_ — ★置き換えは描画時と同じ退避記号で(空白にすると ``**raises `ValueError`**`` の閉じの 直前が空白になって太字の組が外れず、英字にすると ``**name**`(a)``` の閉じの直後が 英字になって外れない —— どちらも「閉じていない」と誤判定して次の箇条書きを飲み込んだ)。
+- **L2905** _(ja)_ — ★2026-09-20: 生成を終えたあと、インタプリタの終了処理(fullseye が引き込む mediapipe の shutdown dispatcher)で 30〜60 分固まり、regen_all の連鎖がその間止まった(2 度実測、CPU 0)。 出力は全部書き終えているので、flush してから os._exit で確定させる。
 
 ## `tools/preflight.py`
 
@@ -2972,15 +2976,15 @@
 - **L49** _(ja)_ — ★最上流。`auto_specs_data.py` は backends_auto が registry を組む入力(wheel 同梱の data/auto_specs/*.json の複製)なので、registry を読む下流すべてより先に回す。 2026-10-07 まで `tools/` の外にあって鎖にも表にも無かった(差分は無かったが、 spec を足して回し忘れても誰も気づけなかった)。
 - **L54** — ★唯一位于 `tools/` 之外的生成物。正因如此才被漏掉——只要按 `tools/*.py` 去找生成器，就永远找不到它。
 - **L56** — ★2026-10-15：从第 16 位提到第 2 位。它的输入只有 registry（不读其他阶段的生成物），但 gen_capabilities_index 和 gen_trust_block 却**先于**它读取此文件——在新增 op 的合并中若索引取主线一侧，旧索引里没有新 op，链就会停下（集成工作中是先手动运行 `imgevolve.py index` 绕过的）。顺序由下面的 OUTPUTS / READS 经 `order_violations()` 检查。
-- **L73** _(ja)_ — ★展示館より**先**に回す —— 生成器は見出しに収蔵番号を出すので、 未発行の展示が 1 つでもあると BuildError で止まる。
-- **L88** _(ja)_ — ★これも `tools/` の外。2026-09-20 まで鎖に無く、docs/OPERATORS.md が 885 op / 47 分類(2026-09-06 の値)のまま置き去りだった(GenSpark 第 53 報と ユーザー指摘)。生成器が鎖に無い生成物は、必ず古びる。
-- **L92** _(ja)_ — ★2026-10-07: 以下 3 本も `tools/` の外にあり、列挙が `tools/*.py` しか見ていなかったので 鎖にも表にも無かった。どれも registry とコミット済みの入力だけから決まり、2 回 回してバイト一致・各 3 秒(実測)。置き去りの実例: EXAMPLES.md は「67-op」、REFERENCES.md は「153 operators」、 OP_DISPOSITION.json は implemented 324(実際 405)のままだった。
-- **L100** — ★2026-10-15：没有 `--md`，**什么都没写**（只把摘要打印到标准输出）。docs/CONVERSION_MATRIX.md 停留在 2026-09-02 的“类型 59 / 转换对 164”而过时，而 --check 无法把“不写的阶段”视为 drift，于是通过了 6 周。现在由 `trace_problems()` 拒绝“连声明的输出都不碰的阶段”。
-- **L108** _(ja)_ — ★2026-10-15: 13 番目から最後の方へ下げた。docmap が docs/*.md の**題**を読むので、 題を持つ生成物(OPERATORS / REFERENCES / EXAMPLES / EXAMPLES_3D / SENSOR_PLAYBOOK / CONVERSION_MATRIX / DESIGN_NOTES*)を書く 7 段すべてより後でなければならない —— 以前はその 7 段より前にあり、題が変わると 2 回回さないと揃わなかった。 文献層の本体はコーパスが要る(EXCLUDED)が、「op ノート N 本」の件数は docs/ops を数えれば直せる。 docs/ops を書く opdocs の後、題を読む docmap(gen_docs_index_ops)の前。
-- **L308** — * ★而且危险：刚生成的文章用**相对路径**写图像。公开版是改成 `raw.githubusercontent.com` 绝对 URL 后的（Qiita 用相对路径不显示图像 —— memory `feedback_qiita_svg_path_and_cache`）。只跑生成器，那些绝对 URL 会回退 42 行。**要跑就一直跑到文章的公开步骤为止。** 排除项要**按文件名**写。用散文归纳（"wing*_gallery 的 10 本"）机器无法比对，下面的 `unclassified()` 就不工作了。
-- **L689** _(ja)_ — ★2026-10-07: 印も探す場所も狭すぎた。初版は ``open(..,"w")`` / ``write_text`` / ``savefig`` / ``json.dump`` だけを ``tools/*.py``(直下のみ)で探していたので、 * **repo 直下の生成器が 1 本も見えなかった** —— ``samples.py``(docs/EXAMPLES.md が 「67-op」のまま)、``references.py``(「153 operators」)、``dispositions.py``、 ``lib_coverage.py``(885 op のまま)、``honest_summary.py`` …。``imgevolve.py`` と ``catalog.py`` だけが手で足されていた —— 手で足す方式は、足し忘れを拾えない。 * **画像の書き手が 1 本も釣れなかった** —— PIL の ``.save``、imageio の ``mimwrite``、``write_bytes``、Fullseye 自身の ``write_video`` / ``save_gif`` …。 ``gen_banner`` の PNG は「731 2-D + 265 3-D」と書いたまま古びている。 * ``tools/impl2/`` など**下の階層**も見ていなかった(docs/op_*.json の台帳)。 印を広げれば門・デモ・ライブラリも釣れる。それは構わない —— **釣れたものは全部 上の表に理由つきで載せる**(印は緩めない)。
-- **L704** _(ja)_ — ★2026-10-25: まだ狭かった。``pv.write_viewer(`` / ``fs.write_viewer(`` で HTML を書く生成器 (``tools/build_view2026_viewers.py``、題材の枝の ``tools/build_*_anim3d.py``)がどの表にも 載っていなかった。同じ洗い出しで ``open(.., "wb")``(``"w"`` しか見ていなかった)と ``shutil.copy*`` / ``copytree`` / ``move`` も足した。印ごとに「その印でしか釣れない実在の 生成器」を ``tests/test_regen_all.py`` が要求する(印を消せば落ちる)。
-- **L752** — ★位于 `tools/` 之外的生成物。只遍历 `tools/*.py` 永远发现不了它，实际上 `docs/OP_INDEX.json` 就一直被漏掉。
+- **L78** _(ja)_ — ★展示館より**先**に回す —— 生成器は見出しに収蔵番号を出すので、 未発行の展示が 1 つでもあると BuildError で止まる。
+- **L93** _(ja)_ — ★これも `tools/` の外。2026-09-20 まで鎖に無く、docs/OPERATORS.md が 885 op / 47 分類(2026-09-06 の値)のまま置き去りだった(GenSpark 第 53 報と ユーザー指摘)。生成器が鎖に無い生成物は、必ず古びる。
+- **L97** _(ja)_ — ★2026-10-07: 以下 3 本も `tools/` の外にあり、列挙が `tools/*.py` しか見ていなかったので 鎖にも表にも無かった。どれも registry とコミット済みの入力だけから決まり、2 回 回してバイト一致・各 3 秒(実測)。置き去りの実例: EXAMPLES.md は「67-op」、REFERENCES.md は「153 operators」、 OP_DISPOSITION.json は implemented 324(実際 405)のままだった。
+- **L105** — ★2026-10-15：没有 `--md`，**什么都没写**（只把摘要打印到标准输出）。docs/CONVERSION_MATRIX.md 停留在 2026-09-02 的“类型 59 / 转换对 164”而过时，而 --check 无法把“不写的阶段”视为 drift，于是通过了 6 周。现在由 `trace_problems()` 拒绝“连声明的输出都不碰的阶段”。
+- **L113** _(ja)_ — ★2026-10-15: 13 番目から最後の方へ下げた。docmap が docs/*.md の**題**を読むので、 題を持つ生成物(OPERATORS / REFERENCES / EXAMPLES / EXAMPLES_3D / SENSOR_PLAYBOOK / CONVERSION_MATRIX / DESIGN_NOTES*)を書く 7 段すべてより後でなければならない —— 以前はその 7 段より前にあり、題が変わると 2 回回さないと揃わなかった。 文献層の本体はコーパスが要る(EXCLUDED)が、「op ノート N 本」の件数は docs/ops を数えれば直せる。 docs/ops を書く opdocs の後、題を読む docmap(gen_docs_index_ops)の前。
+- **L314** — * ★而且危险：刚生成的文章用**相对路径**写图像。公开版是改成 `raw.githubusercontent.com` 绝对 URL 后的（Qiita 用相对路径不显示图像 —— memory `feedback_qiita_svg_path_and_cache`）。只跑生成器，那些绝对 URL 会回退 42 行。**要跑就一直跑到文章的公开步骤为止。** 排除项要**按文件名**写。用散文归纳（"wing*_gallery 的 10 本"）机器无法比对，下面的 `unclassified()` 就不工作了。
+- **L695** _(ja)_ — ★2026-10-07: 印も探す場所も狭すぎた。初版は ``open(..,"w")`` / ``write_text`` / ``savefig`` / ``json.dump`` だけを ``tools/*.py``(直下のみ)で探していたので、 * **repo 直下の生成器が 1 本も見えなかった** —— ``samples.py``(docs/EXAMPLES.md が 「67-op」のまま)、``references.py``(「153 operators」)、``dispositions.py``、 ``lib_coverage.py``(885 op のまま)、``honest_summary.py`` …。``imgevolve.py`` と ``catalog.py`` だけが手で足されていた —— 手で足す方式は、足し忘れを拾えない。 * **画像の書き手が 1 本も釣れなかった** —— PIL の ``.save``、imageio の ``mimwrite``、``write_bytes``、Fullseye 自身の ``write_video`` / ``save_gif`` …。 ``gen_banner`` の PNG は「731 2-D + 265 3-D」と書いたまま古びている。 * ``tools/impl2/`` など**下の階層**も見ていなかった(docs/op_*.json の台帳)。 印を広げれば門・デモ・ライブラリも釣れる。それは構わない —— **釣れたものは全部 上の表に理由つきで載せる**(印は緩めない)。
+- **L710** _(ja)_ — ★2026-10-25: まだ狭かった。``pv.write_viewer(`` / ``fs.write_viewer(`` で HTML を書く生成器 (``tools/build_view2026_viewers.py``、題材の枝の ``tools/build_*_anim3d.py``)がどの表にも 載っていなかった。同じ洗い出しで ``open(.., "wb")``(``"w"`` しか見ていなかった)と ``shutil.copy*`` / ``copytree`` / ``move`` も足した。印ごとに「その印でしか釣れない実在の 生成器」を ``tests/test_regen_all.py`` が要求する(印を消せば落ちる)。
+- **L758** — ★位于 `tools/` 之外的生成物。只遍历 `tools/*.py` 永远发现不了它，实际上 `docs/OP_INDEX.json` 就一直被漏掉。
 
 ## `torch_lazy.py`
 

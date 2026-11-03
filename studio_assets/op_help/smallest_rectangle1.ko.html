@@ -15,6 +15,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>영역을 둘러싸는 좌표축 평행 외접 사각형(axis-aligned bounding box)으로 채운 영역을 반환한다. a, b는 사용되지 않는다. 영역이 비어 있으면 전부 0을 반환한다.</p>
 <p>HALCON의 <code style="color:#22d3bf">smallest_rectangle1</code>(좌표축에 평행한 최소 외접 사각형을 구하는 연산)에 해당하는 구현(회전을 허용하는 최소 외접 사각형인 <code style="color:#22d3bf">smallest_rectangle2</code>와는 별개).</p>
+<p><b>같은 처리의 다른 구현(실측, <code style="color:#22d3bf">docs/IMPL_DIFFERENTIAL.md</code>)</b>: 같은 입력·같은 a, b에서의 내부 차이(값 범위 대비 비율, 5e-3 미만이면 일치)는 <code style="color:#22d3bf">r2_smallest_rectangle1</code> 0. 어긋나는 이유(노브 매핑·창·가장자리·양자화·정의 차이)는 표에 있다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

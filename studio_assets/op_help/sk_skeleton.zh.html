@@ -16,6 +16,7 @@
 <p>区域骨架化(skeletonization)。在保持前景区域拓扑结构(连通关系、孔洞数量)不变的前提下,将其细化为宽度为 1 像素的线条。</p>
 <p>相当于 HALCON 的 <code style="color:#22d3bf">skeleton</code>(Compute the skeleton of a region.)（近似。算法属 Zhang-Suen 系）。实现为 <code style="color:#22d3bf">morphology.skeletonize(binm(v))</code> —— 输入先经 <code style="color:#22d3bf">binm</code>（&gt; 0.5 的阈值）转为布尔值。a、b 未使用。</p>
 <p><b>边界处理</b>：将图像外部视为背景（0）（实测。<code style="color:#22d3bf">tools/impl2/border_probe.py</code>）。</p>
+<p><b>同一处理的其他实现（实测，<code style="color:#22d3bf">docs/IMPL_DIFFERENTIAL.md</code>）</b>：在相同输入、相同 a、b 下，内部差（相对于取值范围之比；小于 5e-3 视为一致）为 <code style="color:#22d3bf">skeleton</code> 0。不一致的原因（旋钮映射、窗口、边界、量化、定义不同）写在表中。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

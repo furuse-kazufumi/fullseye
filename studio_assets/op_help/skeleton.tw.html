@@ -16,6 +16,7 @@
 <p>在保持拓撲結構的前提下,將區域細化為 1 像素寬的骨架線(<code style="color:#22d3bf">skimage.morphology.skeletonize</code>)。分支點與端點的位置會被保留,因此常用於分析帶分支的形狀(例如計算手指數量)。相當於 HALCON 的 <code style="color:#22d3bf">skeleton</code>(Compute the skeleton of a region.)。</p>
 <p><code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。沒有 scikit-image 時由 numpy 的孿生實作（<code style="color:#22d3bf">numpy_twins</code>）計算出相同的答案（門檻檢查逐位元一致）。</p>
 <p><b>邊界處理</b>：將影像外部視為背景（0）（實測。<code style="color:#22d3bf">tools/impl2/border_probe.py</code>）。</p>
+<p><b>同一處理的其他實作（實測，<code style="color:#22d3bf">docs/IMPL_DIFFERENTIAL.md</code>）</b>：在相同輸入、相同 a、b 下，內部差（相對於值域之比；小於 5e-3 視為一致）為 <code style="color:#22d3bf">sk_skeleton</code> 0。不一致的原因（旋鈕對應、視窗、邊界、量化、定義不同）寫在表中。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

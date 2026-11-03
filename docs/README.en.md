@@ -301,7 +301,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 <!-- docmap:start -->
 
-## Document map — all 305
+## Document map — all 306
 
 The complete map, so that **no document is unreachable from this index** (the 3,629 per-op notes and 69 family guides under `docs/ops/` are reached from the operator section above; articles from [articles/](articles/README.md)). One unreachable file fails `tests/test_docs_index_reachable.py`. **Most bodies are in Japanese.**
 
@@ -444,7 +444,7 @@ The complete map, so that **no document is unreachable from this index** (the 3,
 | [`ARTICLE_GPU_SHAPEMATCH.md`](ARTICLE_GPU_SHAPEMATCH.md) | 記事材料: 形状マッチングを GPU に載せる —— 勾配方向スコアの conv2d 定式化 _(ja)_ |
 | [`FULLSEYE_OP_ARTICLE_SPEC.md`](FULLSEYE_OP_ARTICLE_SPEC.md) | Fullseye op カタログ画像・専用記事 仕様書(第 2 陣企画書) _(ja)_ |
 
-**Other**(221)
+**Other**(222)
 
 | document | what it covers |
 |---|---|
@@ -499,6 +499,7 @@ The complete map, so that **no document is unreachable from this index** (the 3,
 | [`HDEVELOP_DEV_OPS.en.md`](HDEVELOP_DEV_OPS.en.md) | HDevelop `dev_*` operator family — the UI/display control surface (Studio north star) |
 | [`HDEVELOP_FIDELITY.en.md`](HDEVELOP_FIDELITY.en.md) | Fullseye Studio — HDevelop Fidelity Spec (North Star) |
 | [`I18N_PLAN.md`](I18N_PLAN.md) | 完全な多言語化 — 計画と現在地 _(ja)_ |
+| [`IMPL_DIFFERENTIAL.md`](IMPL_DIFFERENTIAL.md) | 同じ処理の別実装の突き合わせ(differential testing) _(ja)_ |
 | [`INSTALL.de.md`](INSTALL.de.md) | Installations- und Einrichtungshandbuch |
 | [`INSTALL.en.md`](INSTALL.en.md) | Installation / Environment Setup — Complete Guide |
 | [`INSTALL.hi.md`](INSTALL.hi.md) | Installation / Environment Setup — पूरी गाइड |

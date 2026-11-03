@@ -19,6 +19,7 @@
 <p>與 HALCON 的 <code style="color:#22d3bf">eccentricity</code>（Shape features derived from the ellipse parameters.）<b>是相同的 3 個值、相同的公式</b>。3 個都是無因次量,因此未做正規化。</p>
 <p>★2026-09-26 之前以 1 個純量回傳 skimage 的離心率 <code style="color:#22d3bf">sqrt(1-(b/a)²)</code>,這是<b>3 個中哪一個都不是的量</b>(圓上 0.0 對 HALCON 的 1.0,4x80 的棒上 0.999 對 20.65)。由於 1 個純量無法表示 3 個值,已改為與 <code style="color:#22d3bf">area_center</code> 相同的 <code style="color:#22d3bf">match</code> sort。<code style="color:#22d3bf">docs/hardening/halcon-named-shape-factors.md</code>。</p>
 <p>區域為空時按 fail-soft 規格回傳圓的值 <code style="color:#22d3bf">(1, 1, 0)</code>(分量數不隨輸入而變)。<code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。</p>
+<p><b>同詞幹的其他 op</b>：<code style="color:#22d3bf">xg_eccentricity</code> 的輸入輸出型別不同，是另一種處理，只是名字相似（<code style="color:#22d3bf">docs/IMPL_DIFFERENTIAL.md</code>）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

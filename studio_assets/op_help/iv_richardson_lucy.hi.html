@@ -13,6 +13,7 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>छोटे Gaussian PSF (sigma = <code style="color:#22d3bf">RL_SIGMA</code>) को मानकर Richardson-Lucy deconvolution। <code style="color:#22d3bf">a</code> iterations की संख्या n = 1 + round(a*14) (1..15) तय करता है; <code style="color:#22d3bf">b</code> अनदेखा किया जाता है। RL अनुमान <code style="color:#22d3bf">u</code> को गुणात्मक रूप से इस तरह आगे बढ़ाता है कि <code style="color:#22d3bf">u (*) psf</code> blur हुए measurement से मेल खाए, जिससे असली edges sharp होते हैं।</p>
+<p><b>उसी operation के दूसरे implementation (मापा गया; <code style="color:#22d3bf">docs/IMPL_DIFFERENTIAL.md</code>)</b>: एक ही input और एक ही a, b पर भीतरी अंतर (value range के अनुपात में; 5e-3 से कम = मेल) <code style="color:#22d3bf">xsk_richardson_lucy</code> 0.89 है। जो मेल नहीं खाते उनका कारण (knob mapping, window, border, quantisation, अलग परिभाषा) table में लिखा है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

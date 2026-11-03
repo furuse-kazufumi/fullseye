@@ -12,9 +12,10 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xkor_gaussian.inputs.jpg">xkor_gaussian: 其他输入图像</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>高斯模糊(kornia 的 GPU 原生实现)。在 torch 张量上以 5x5 核、可变 sigma 应用 <code style="color:#22d3bf">kornia.filters.gaussian_blur2d</code>。</p>
-<p>a 将 sigma 在 0.3〜3.0 范围内调节（<code style="color:#22d3bf">0.3 + 2.7 * a</code>）。b 未使用。在 CPU 上运行并不比 scipy 版快（这是在 GPU/批量运行时才见效的实现。设置 <code style="color:#22d3bf">IMGEVOLVE_KORNIA_DEVICE=cuda</code> 即可在 GPU 上运行）。</p>
-<p><b>边界处理</b>：不重复端点的镜像折返 (d c b | a b c d，OpenCV 的 <code style="color:#22d3bf">BORDER_REFLECT_101</code>)（实测。<code style="color:#22d3bf">tools/impl2/border_probe.py</code>）。</p>
+<p>高斯模糊(kornia 的 GPU 原生实现)。在 torch 张量上以与 sigma 匹配的窗口应用 <code style="color:#22d3bf">kornia.filters.gaussian_blur2d</code>。</p>
+<p>a 将 sigma 在 0.3〜3.0 范围内调节（<code style="color:#22d3bf">0.3 + 2.7 * a</code>，与 core 的 <code style="color:#22d3bf">gaussian</code> / <code style="color:#22d3bf">cv_gaussian</code> 相同的映射）。b 未使用。窗口半径为 <code style="color:#22d3bf">int(4σ + 0.5)</code>（与 scipy <code style="color:#22d3bf">gaussian_filter</code> 的默认 truncate=4.0 相同），边界为含边缘像素的镜像（scipy 的 <code style="color:#22d3bf">reflect</code> = numpy 的 <code style="color:#22d3bf">symmetric</code>，与 core <code style="color:#22d3bf">gaussian</code> 在 <code style="color:#22d3bf">b &lt;= 0.5</code> 时相同）。与 core 的 <code style="color:#22d3bf">gaussian(v, a, 0.5)</code> 在 float32 舍入（约 1e-7）内一致（<code style="color:#22d3bf">tools/impl_differential.py</code>、<code style="color:#22d3bf">tests/test_impl_differential.py</code>）。</p>
+<p>★2026-11-03 的修正（数值改变）：此前窗口<b>固定为 5x5</b>，σ = 1.65（a = 0.5）时也在半径 2 = 1.2σ 处截断，增大 σ 只会让模糊趋近 5x5 的盒子（与 core <code style="color:#22d3bf">gaussian</code> 的内部差：a = 0.5 时为值域的 9 %，a = 0.75 时为 28 %）。在 CPU 上运行并不比 scipy 版快（这是在 GPU/批量运行时才见效的实现，<code style="color:#22d3bf">IMGEVOLVE_KORNIA_DEVICE=cuda</code> 可放到 GPU 上）。</p>
+<p><b>同一处理的其他实现（实测，<code style="color:#22d3bf">docs/IMPL_DIFFERENTIAL.md</code>）</b>：在相同输入、相同 a、b 下，内部差（相对于取值范围之比；小于 5e-3 视为一致）为 <code style="color:#22d3bf">cv_gaussian</code> 7.3e-05, <code style="color:#22d3bf">gaussian</code> 3.8e-07。不一致的原因（旋钮映射、窗口、边界、量化、定义不同）写在表中。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

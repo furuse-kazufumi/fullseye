@@ -2421,6 +2421,10 @@
 
 - **L41** — 歴史側で試す点。★**0.5 を含める** —— 0.5 は「まん中」として既定値に使われて いる(``api.apply`` の既定、studio の中央、保存済みプログラムの初期値)ので、 ここが新しい側に落ちると**既定のまま呼んだだけで答えが変わる**。 最初 ``b < 0.5`` で切ったら、gaussian と HALCON 別名の一致検査まで割れた。
 
+## `tests/test_kornia_version_drift_2026_10_24.py`
+
+- **L186** — ★2026-11-03: xkor_gaussian / xkor_unsharp の窓を 5x5 固定から int(4σ+0.5) に直した(値が変わる修正、 CHANGELOG「修正(値が変わる)」)。新しい値は core の gaussian / unsharp と 3e-7 で一致する (tests/test_impl_differential.py が実装どうしで見る)。旧値は [0.5741725, 0.1278215, …]。
+
 ## `tests/test_ledger_contracts.py`
 
 - **L55** — ★同日の 2 回目: 探針側の builder(``ledger_contracts.probe_builders``)で 2,055 / CI 相当 2,019 に上がったので床も上げた(床を据え置くと、builder が黙って外れても気づけない)。
@@ -2934,20 +2938,20 @@
 ## `tools/opdocs.py`
 
 - **L142** — ★2026-09-08: ops1d(dsp 16 + funct1d 23)は登録済みなのに **docs/ops に 1 枚もノートを持っていなかった** —— OP_CATALOG には出るのに、op ごとの ノート(型契約・罠・関連 op)が無いので RAG コーパスから丸ごと欠けていた。 `poc_web_roll_periodicity` が dsp に 2 本足したときに気づいた。
-- **L919** — ★2026-09-23 の実測: 1 回 7〜11 秒かかるこの関数を、`gen_docs_index_ops` が 6 言語 x 3 ブロックで 18 回呼んでおり、`test_the_generated_blocks_are_current` だけで **129 秒**使っていた(スイート 2,301 秒の 5.6 %)。答えは `ops.REGISTRY` と `docs/` から決まり、1 プロセスの中で動かない。 前提は「同じプロセスの中では台帳とノートが変わらない」。生成器は `regen_all.py` が**別プロセスで**呼ぶので跨がない。プロセス内でノートを 書き換えてから読み直す側は `_records_cache_clear()` を呼ぶこと (呼ばないと古い答えが返る —— 黙って古い値を返すのが一番たちが悪いので、 ここに明記しておく)。
-- **L981** — ★n-ary(多入力)層。2026-09-09 まで **17 op がノートを 1 枚も持っていなかった** (`add_image` `sub_image` `bit_and` `reduce_domain` `union2` …)。`OP_INDEX.json` には tier=`nary` で載るのに `docs/ops/` に無いので、**RAG コーパスからは 永久に引けない**状態だった。見落とした理由もはっきりしている: ここが `ops.REGISTRY` だけを歩いていて、`ops.REGISTRY`(899)と 2-D ノート(899)は 一致するので「欠落ゼロ」に見えた。層をまたいで数えて初めて出る (memory: feedback_search_all_tiers_before_declaring_a_gap)。 握り潰さない —— `imgops_nary` は numpy/scipy しか要らない一次モジュールで、 import に失敗するのは「壊れた checkout」であって「その環境に無い機能」ではない (`imgevolve._all_ops` が同じ理由で except を外している)。
-- **L1023** — ★2026-09-07: ``OPS3D[...]["doc"]`` は登録時に **docstring の 1 行目だけ** を切り出したもの(ops3d._build)。ノートの「使い方」にそれを使うと、 実装が何段落書いていても 1 行に化ける —— 「使い方が 1 行の op 494 本」 の 3-D ぶんはこの切り詰めが原因だった(docstring 自体は長い op が多数)。 台帳 dim と同じく関数の docstring を丸ごと読む。
-- **L1046** — ★橋渡し op(``tb_<name>``)は台帳の ``<name>`` と実装が同一で、例は台帳名で 書かれる。2026-09-06 まで 147 本が「例ゼロ」だったが、それは**同じ実装を 呼ぶ例が別名で存在する**のを数えていなかっただけ。台帳側の例を継承し、 ノートには「元 op の例」と明記する(嘘にならないように)。
-- **L1104** — ★2026-10-12: 2-D の例索引(``op_example_index._op_names_2d``)は ``ops.REGISTRY`` から identity と 橋渡し op(category ``typed``)を外し、n-ary 層(``imgops_nary``)はそもそも数えない。そのため この 3 種のノートは、examples/ に ``fullseye.apply([x1, x2], "add_image")`` や ``fullseye.apply(F, "tb_cx_ifft")`` と**名指しで呼ぶ例があっても**「(まだありません)」のままだった (n-ary 17 本・identity・元 op の例を継承できない tb_cx_* 7 本)。カバレッジの門の母集団は変えず、 ノートの案内だけ同じ呼び出し検出(``_index_for``)で名前を直接引く。
-- **L1296** — ★n-ary(多入力)op は `fullseye.apply` では呼べない —— あれは 1 画像 モデル。ここに 1 画像の呼び方を書くと、**ノートが嘘をつく**(この ノートの唯一の仕事は「どう呼ぶか」なので、それは無いより悪い)。 公開経路は `fullseye.FullseyeGraph`。
-- **L1315** — ★2026-09-07: **公開経路を先に書く**。ここは実装モジュールの直 import しか 書いておらず、利用者が実際に使う `fullseye.ledger.<名>` が出ていなかった (2-D 以外の 1,244 op すべて)。PoC が繰り返し「fs.<名> に無い」と報告して いたのは、名前が無いことではなく**入口が書かれていないこと**の問題だった。
-- **L1769** — ★入口は 6 言語で出す(2026-09-09)。葉(Studio の op ヘルプ)は 6 言語 10,191 ページあるのに、**そこへ導く索引が日本語だけ**だった —— 訳は 在るのに辿り着けない、という形の欠落。枠の文言は `T()` に載せるので、 対訳の穴は既存の門(test_chrome_translation_table_has_no_holes)が見る。
-- **L1809** — ★2026-10-15: 族の名前だけでは中身が分からない。`drive`(694)は研磨(polish)・粉末 X 線回折 (pxrd)・触覚(tac*)・peg-in-hole を抱え、`optics` は材料表(matprop)・ファイバ(fiber)・ センサーの特性(sensorchar)を抱える —— 族名で選ぶ読み手は、それらを開かずに「無い」と言う。 入口でカテゴリ名を全部見せる(名前は識別子なので訳さない。各カテゴリはその族の INDEX の節)。
-- **L1820** — ★2026-09-15: 用途から引く索引(docs/CAPABILITIES.md)へ**ここから**送る。文書だけを 渡した AI が 1 回目に見つけられなかったのは、この目次にも AI_RAG_GUIDE にも 導線が無かったから。
-- **L1829** — ★ここは長く `2d/guides/` だけを指していて、光学・PIV・トモグラフィ等 30 ファミリのガイドへ読み手を一度も送っていなかった(2026-09-09 修正)。
-- **L1987** — コードスパン。★``…``(RST / docstring の二重バッククォート)を `…` より**先に**試す。 2026-10-07 まで `([^`]+)` だけで、``p`` measures … ``p`` が「`` の 2 文字目と次の `` の 1 文字目」で組まれ、コードと散文が**反転して**表示されていた(英語版 3,153 枚中 約 2,800 枚)。前に付いた RST ロール(:func:`x` など)は飲み込み、対象名だけをコードで出す (733 枚で ``:func:`` が生で見えていた)。
-- **L2156** — ★置き換えは描画時と同じ退避記号で(空白にすると ``**raises `ValueError`**`` の閉じの 直前が空白になって太字の組が外れず、英字にすると ``**name**`(a)``` の閉じの直後が 英字になって外れない —— どちらも「閉じていない」と誤判定して次の箇条書きを飲み込んだ)。
-- **L2858** — ★2026-09-20: 生成を終えたあと、インタプリタの終了処理(fullseye が引き込む mediapipe の shutdown dispatcher)で 30〜60 分固まり、regen_all の連鎖がその間止まった(2 度実測、CPU 0)。 出力は全部書き終えているので、flush してから os._exit で確定させる。
+- **L966** — ★2026-09-23 の実測: 1 回 7〜11 秒かかるこの関数を、`gen_docs_index_ops` が 6 言語 x 3 ブロックで 18 回呼んでおり、`test_the_generated_blocks_are_current` だけで **129 秒**使っていた(スイート 2,301 秒の 5.6 %)。答えは `ops.REGISTRY` と `docs/` から決まり、1 プロセスの中で動かない。 前提は「同じプロセスの中では台帳とノートが変わらない」。生成器は `regen_all.py` が**別プロセスで**呼ぶので跨がない。プロセス内でノートを 書き換えてから読み直す側は `_records_cache_clear()` を呼ぶこと (呼ばないと古い答えが返る —— 黙って古い値を返すのが一番たちが悪いので、 ここに明記しておく)。
+- **L1028** — ★n-ary(多入力)層。2026-09-09 まで **17 op がノートを 1 枚も持っていなかった** (`add_image` `sub_image` `bit_and` `reduce_domain` `union2` …)。`OP_INDEX.json` には tier=`nary` で載るのに `docs/ops/` に無いので、**RAG コーパスからは 永久に引けない**状態だった。見落とした理由もはっきりしている: ここが `ops.REGISTRY` だけを歩いていて、`ops.REGISTRY`(899)と 2-D ノート(899)は 一致するので「欠落ゼロ」に見えた。層をまたいで数えて初めて出る (memory: feedback_search_all_tiers_before_declaring_a_gap)。 握り潰さない —— `imgops_nary` は numpy/scipy しか要らない一次モジュールで、 import に失敗するのは「壊れた checkout」であって「その環境に無い機能」ではない (`imgevolve._all_ops` が同じ理由で except を外している)。
+- **L1070** — ★2026-09-07: ``OPS3D[...]["doc"]`` は登録時に **docstring の 1 行目だけ** を切り出したもの(ops3d._build)。ノートの「使い方」にそれを使うと、 実装が何段落書いていても 1 行に化ける —— 「使い方が 1 行の op 494 本」 の 3-D ぶんはこの切り詰めが原因だった(docstring 自体は長い op が多数)。 台帳 dim と同じく関数の docstring を丸ごと読む。
+- **L1093** — ★橋渡し op(``tb_<name>``)は台帳の ``<name>`` と実装が同一で、例は台帳名で 書かれる。2026-09-06 まで 147 本が「例ゼロ」だったが、それは**同じ実装を 呼ぶ例が別名で存在する**のを数えていなかっただけ。台帳側の例を継承し、 ノートには「元 op の例」と明記する(嘘にならないように)。
+- **L1151** — ★2026-10-12: 2-D の例索引(``op_example_index._op_names_2d``)は ``ops.REGISTRY`` から identity と 橋渡し op(category ``typed``)を外し、n-ary 層(``imgops_nary``)はそもそも数えない。そのため この 3 種のノートは、examples/ に ``fullseye.apply([x1, x2], "add_image")`` や ``fullseye.apply(F, "tb_cx_ifft")`` と**名指しで呼ぶ例があっても**「(まだありません)」のままだった (n-ary 17 本・identity・元 op の例を継承できない tb_cx_* 7 本)。カバレッジの門の母集団は変えず、 ノートの案内だけ同じ呼び出し検出(``_index_for``)で名前を直接引く。
+- **L1343** — ★n-ary(多入力)op は `fullseye.apply` では呼べない —— あれは 1 画像 モデル。ここに 1 画像の呼び方を書くと、**ノートが嘘をつく**(この ノートの唯一の仕事は「どう呼ぶか」なので、それは無いより悪い)。 公開経路は `fullseye.FullseyeGraph`。
+- **L1362** — ★2026-09-07: **公開経路を先に書く**。ここは実装モジュールの直 import しか 書いておらず、利用者が実際に使う `fullseye.ledger.<名>` が出ていなかった (2-D 以外の 1,244 op すべて)。PoC が繰り返し「fs.<名> に無い」と報告して いたのは、名前が無いことではなく**入口が書かれていないこと**の問題だった。
+- **L1816** — ★入口は 6 言語で出す(2026-09-09)。葉(Studio の op ヘルプ)は 6 言語 10,191 ページあるのに、**そこへ導く索引が日本語だけ**だった —— 訳は 在るのに辿り着けない、という形の欠落。枠の文言は `T()` に載せるので、 対訳の穴は既存の門(test_chrome_translation_table_has_no_holes)が見る。
+- **L1856** — ★2026-10-15: 族の名前だけでは中身が分からない。`drive`(694)は研磨(polish)・粉末 X 線回折 (pxrd)・触覚(tac*)・peg-in-hole を抱え、`optics` は材料表(matprop)・ファイバ(fiber)・ センサーの特性(sensorchar)を抱える —— 族名で選ぶ読み手は、それらを開かずに「無い」と言う。 入口でカテゴリ名を全部見せる(名前は識別子なので訳さない。各カテゴリはその族の INDEX の節)。
+- **L1867** — ★2026-09-15: 用途から引く索引(docs/CAPABILITIES.md)へ**ここから**送る。文書だけを 渡した AI が 1 回目に見つけられなかったのは、この目次にも AI_RAG_GUIDE にも 導線が無かったから。
+- **L1876** — ★ここは長く `2d/guides/` だけを指していて、光学・PIV・トモグラフィ等 30 ファミリのガイドへ読み手を一度も送っていなかった(2026-09-09 修正)。
+- **L2034** — コードスパン。★``…``(RST / docstring の二重バッククォート)を `…` より**先に**試す。 2026-10-07 まで `([^`]+)` だけで、``p`` measures … ``p`` が「`` の 2 文字目と次の `` の 1 文字目」で組まれ、コードと散文が**反転して**表示されていた(英語版 3,153 枚中 約 2,800 枚)。前に付いた RST ロール(:func:`x` など)は飲み込み、対象名だけをコードで出す (733 枚で ``:func:`` が生で見えていた)。
+- **L2203** — ★置き換えは描画時と同じ退避記号で(空白にすると ``**raises `ValueError`**`` の閉じの 直前が空白になって太字の組が外れず、英字にすると ``**name**`(a)``` の閉じの直後が 英字になって外れない —— どちらも「閉じていない」と誤判定して次の箇条書きを飲み込んだ)。
+- **L2905** — ★2026-09-20: 生成を終えたあと、インタプリタの終了処理(fullseye が引き込む mediapipe の shutdown dispatcher)で 30〜60 分固まり、regen_all の連鎖がその間止まった(2 度実測、CPU 0)。 出力は全部書き終えているので、flush してから os._exit で確定させる。
 
 ## `tools/preflight.py`
 
@@ -2970,15 +2974,15 @@
 - **L49** — ★最上流。`auto_specs_data.py` は backends_auto が registry を組む入力(wheel 同梱の data/auto_specs/*.json の複製)なので、registry を読む下流すべてより先に回す。 2026-10-07 まで `tools/` の外にあって鎖にも表にも無かった(差分は無かったが、 spec を足して回し忘れても誰も気づけなかった)。
 - **L54** — ★`tools/` の外にある唯一の生成物。だから取りこぼしていた —— 生成器を `tools/*.py` で探す限り、これは永久に見つからない。
 - **L56** — ★2026-10-15: 16 番目から 2 番目へ上げた。入力は registry だけ(他の段の生成物を 読まない)なのに、gen_capabilities_index と gen_trust_block がこれを**先に**読んでいた —— op を足すマージで索引に本線側を取ると、古い索引に新しい op が無くて止まる (統合作業で `imgevolve.py index` を手で先に回して回避していた)。順序は 下の OUTPUTS / READS から `order_violations()` が検査する。
-- **L73** — ★展示館より**先**に回す —— 生成器は見出しに収蔵番号を出すので、 未発行の展示が 1 つでもあると BuildError で止まる。
-- **L88** — ★これも `tools/` の外。2026-09-20 まで鎖に無く、docs/OPERATORS.md が 885 op / 47 分類(2026-09-06 の値)のまま置き去りだった(GenSpark 第 53 報と ユーザー指摘)。生成器が鎖に無い生成物は、必ず古びる。
-- **L92** — ★2026-10-07: 以下 3 本も `tools/` の外にあり、列挙が `tools/*.py` しか見ていなかったので 鎖にも表にも無かった。どれも registry とコミット済みの入力だけから決まり、2 回 回してバイト一致・各 3 秒(実測)。置き去りの実例: EXAMPLES.md は「67-op」、REFERENCES.md は「153 operators」、 OP_DISPOSITION.json は implemented 324(実際 405)のままだった。
-- **L100** — ★2026-10-15: `--md` が無く、**何も書いていなかった**(要約を標準出力に出すだけ)。 docs/CONVERSION_MATRIX.md は 2026-09-02 の「型 59 / 変換ペア 164」のまま古び、 --check は「書かない段」を drift として見られないので 6 週間通っていた。 いまは `trace_problems()` が「宣言した出力に触れもしない段」を拒む。
-- **L108** — ★2026-10-15: 13 番目から最後の方へ下げた。docmap が docs/*.md の**題**を読むので、 題を持つ生成物(OPERATORS / REFERENCES / EXAMPLES / EXAMPLES_3D / SENSOR_PLAYBOOK / CONVERSION_MATRIX / DESIGN_NOTES*)を書く 7 段すべてより後でなければならない —— 以前はその 7 段より前にあり、題が変わると 2 回回さないと揃わなかった。 文献層の本体はコーパスが要る(EXCLUDED)が、「op ノート N 本」の件数は docs/ops を数えれば直せる。 docs/ops を書く opdocs の後、題を読む docmap(gen_docs_index_ops)の前。
-- **L308** — * ★そして危険: 生成直後の記事は画像を**相対パス**で書く。公開版は `raw.githubusercontent.com` の絶対 URL に直したもの(Qiita は相対パスだと 画像が出ない —— memory `feedback_qiita_svg_path_and_cache`)。生成器だけを 回すと、その絶対 URL が 42 行ぶん巻き戻る。**回すなら記事の公開手順まで 通しでやること。** 除外は**ファイル名で**書く。散文でまとめると(「wing*_gallery の 10 本」) 機械で照合できず、下の `unclassified()` が働かない。
-- **L689** — ★2026-10-07: 印も探す場所も狭すぎた。初版は ``open(..,"w")`` / ``write_text`` / ``savefig`` / ``json.dump`` だけを ``tools/*.py``(直下のみ)で探していたので、 * **repo 直下の生成器が 1 本も見えなかった** —— ``samples.py``(docs/EXAMPLES.md が 「67-op」のまま)、``references.py``(「153 operators」)、``dispositions.py``、 ``lib_coverage.py``(885 op のまま)、``honest_summary.py`` …。``imgevolve.py`` と ``catalog.py`` だけが手で足されていた —— 手で足す方式は、足し忘れを拾えない。 * **画像の書き手が 1 本も釣れなかった** —— PIL の ``.save``、imageio の ``mimwrite``、``write_bytes``、Fullseye 自身の ``write_video`` / ``save_gif`` …。 ``gen_banner`` の PNG は「731 2-D + 265 3-D」と書いたまま古びている。 * ``tools/impl2/`` など**下の階層**も見ていなかった(docs/op_*.json の台帳)。 印を広げれば門・デモ・ライブラリも釣れる。それは構わない —— **釣れたものは全部 上の表に理由つきで載せる**(印は緩めない)。
-- **L704** — ★2026-10-25: まだ狭かった。``pv.write_viewer(`` / ``fs.write_viewer(`` で HTML を書く生成器 (``tools/build_view2026_viewers.py``、題材の枝の ``tools/build_*_anim3d.py``)がどの表にも 載っていなかった。同じ洗い出しで ``open(.., "wb")``(``"w"`` しか見ていなかった)と ``shutil.copy*`` / ``copytree`` / ``move`` も足した。印ごとに「その印でしか釣れない実在の 生成器」を ``tests/test_regen_all.py`` が要求する(印を消せば落ちる)。
-- **L752** — ★`tools/` の外にある生成物。`tools/*.py` を歩くだけでは**永久に見つからない** 位置にあり、実際 `docs/OP_INDEX.json` を取りこぼしていた。
+- **L78** — ★展示館より**先**に回す —— 生成器は見出しに収蔵番号を出すので、 未発行の展示が 1 つでもあると BuildError で止まる。
+- **L93** — ★これも `tools/` の外。2026-09-20 まで鎖に無く、docs/OPERATORS.md が 885 op / 47 分類(2026-09-06 の値)のまま置き去りだった(GenSpark 第 53 報と ユーザー指摘)。生成器が鎖に無い生成物は、必ず古びる。
+- **L97** — ★2026-10-07: 以下 3 本も `tools/` の外にあり、列挙が `tools/*.py` しか見ていなかったので 鎖にも表にも無かった。どれも registry とコミット済みの入力だけから決まり、2 回 回してバイト一致・各 3 秒(実測)。置き去りの実例: EXAMPLES.md は「67-op」、REFERENCES.md は「153 operators」、 OP_DISPOSITION.json は implemented 324(実際 405)のままだった。
+- **L105** — ★2026-10-15: `--md` が無く、**何も書いていなかった**(要約を標準出力に出すだけ)。 docs/CONVERSION_MATRIX.md は 2026-09-02 の「型 59 / 変換ペア 164」のまま古び、 --check は「書かない段」を drift として見られないので 6 週間通っていた。 いまは `trace_problems()` が「宣言した出力に触れもしない段」を拒む。
+- **L113** — ★2026-10-15: 13 番目から最後の方へ下げた。docmap が docs/*.md の**題**を読むので、 題を持つ生成物(OPERATORS / REFERENCES / EXAMPLES / EXAMPLES_3D / SENSOR_PLAYBOOK / CONVERSION_MATRIX / DESIGN_NOTES*)を書く 7 段すべてより後でなければならない —— 以前はその 7 段より前にあり、題が変わると 2 回回さないと揃わなかった。 文献層の本体はコーパスが要る(EXCLUDED)が、「op ノート N 本」の件数は docs/ops を数えれば直せる。 docs/ops を書く opdocs の後、題を読む docmap(gen_docs_index_ops)の前。
+- **L314** — * ★そして危険: 生成直後の記事は画像を**相対パス**で書く。公開版は `raw.githubusercontent.com` の絶対 URL に直したもの(Qiita は相対パスだと 画像が出ない —— memory `feedback_qiita_svg_path_and_cache`)。生成器だけを 回すと、その絶対 URL が 42 行ぶん巻き戻る。**回すなら記事の公開手順まで 通しでやること。** 除外は**ファイル名で**書く。散文でまとめると(「wing*_gallery の 10 本」) 機械で照合できず、下の `unclassified()` が働かない。
+- **L695** — ★2026-10-07: 印も探す場所も狭すぎた。初版は ``open(..,"w")`` / ``write_text`` / ``savefig`` / ``json.dump`` だけを ``tools/*.py``(直下のみ)で探していたので、 * **repo 直下の生成器が 1 本も見えなかった** —— ``samples.py``(docs/EXAMPLES.md が 「67-op」のまま)、``references.py``(「153 operators」)、``dispositions.py``、 ``lib_coverage.py``(885 op のまま)、``honest_summary.py`` …。``imgevolve.py`` と ``catalog.py`` だけが手で足されていた —— 手で足す方式は、足し忘れを拾えない。 * **画像の書き手が 1 本も釣れなかった** —— PIL の ``.save``、imageio の ``mimwrite``、``write_bytes``、Fullseye 自身の ``write_video`` / ``save_gif`` …。 ``gen_banner`` の PNG は「731 2-D + 265 3-D」と書いたまま古びている。 * ``tools/impl2/`` など**下の階層**も見ていなかった(docs/op_*.json の台帳)。 印を広げれば門・デモ・ライブラリも釣れる。それは構わない —— **釣れたものは全部 上の表に理由つきで載せる**(印は緩めない)。
+- **L710** — ★2026-10-25: まだ狭かった。``pv.write_viewer(`` / ``fs.write_viewer(`` で HTML を書く生成器 (``tools/build_view2026_viewers.py``、題材の枝の ``tools/build_*_anim3d.py``)がどの表にも 載っていなかった。同じ洗い出しで ``open(.., "wb")``(``"w"`` しか見ていなかった)と ``shutil.copy*`` / ``copytree`` / ``move`` も足した。印ごとに「その印でしか釣れない実在の 生成器」を ``tests/test_regen_all.py`` が要求する(印を消せば落ちる)。
+- **L758** — ★`tools/` の外にある生成物。`tools/*.py` を歩くだけでは**永久に見つからない** 位置にあり、実際 `docs/OP_INDEX.json` を取りこぼしていた。
 
 ## `torch_lazy.py`
 

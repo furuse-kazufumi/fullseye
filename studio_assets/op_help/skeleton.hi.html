@@ -16,6 +16,7 @@
 <p>Topology बनाए रखते हुए region को 1 pixel चौड़ी skeleton line में पतला करता है (<code style="color:#22d3bf">skimage.morphology.skeletonize</code>)। शाखाओं और सिरों की positions बची रहती हैं, इसलिए शाखाओं वाले shapes के विश्लेषण (उँगलियों की संख्या गिनना आदि) में अक्सर इस्तेमाल होता है। HALCON के <code style="color:#22d3bf">skeleton</code> (Compute the skeleton of a region.) के समकक्ष है।</p>
 <p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> का उपयोग नहीं होता। scikit-image न हो तो वही जवाब numpy twin (<code style="color:#22d3bf">numpy_twins</code>) से निकलता है (gate bit-identical होने की जाँच करता है)।</p>
 <p><b>Border handling</b>: image के बाहर की हर चीज़ को background (0) माना जाता है (मापा गया; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>)।</p>
+<p><b>उसी operation के दूसरे implementation (मापा गया; <code style="color:#22d3bf">docs/IMPL_DIFFERENTIAL.md</code>)</b>: एक ही input और एक ही a, b पर भीतरी अंतर (value range के अनुपात में; 5e-3 से कम = मेल) <code style="color:#22d3bf">sk_skeleton</code> 0 है। जो मेल नहीं खाते उनका कारण (knob mapping, window, border, quantisation, अलग परिभाषा) table में लिखा है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

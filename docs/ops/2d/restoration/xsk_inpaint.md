@@ -49,6 +49,8 @@ skimage の biharmonic inpainting(調和方程式に基づく補間)で周囲か
 
 **つまみ(実測)**: ``a`` を 0 から 1 まで振っても**出力は変わらない**(実測。5 種類の入力で確認)。
 
+**同じ処理の別実装(実測、`docs/IMPL_DIFFERENTIAL.md`)**: 同じ入力・同じ a, b での内部の差(振れ幅に対する比。5e-3 未満が一致)は `xcv_inpaint` 0.75。食い違う理由(つまみの写し方・窓・端・量子化・定義の違い)は表に書いてある。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_smoothing_rank ファミリ ガイド](../guides/gallery2d_smoothing_rank.md)

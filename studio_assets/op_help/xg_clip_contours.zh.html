@@ -16,6 +16,7 @@
 <p>丢弃折线长度低于 a × 最长的 contour(a 在 [0,1])。</p>
 <p>求出每条轮廓的折线长度（相邻点之间欧氏距离之和），相对于最长轮廓的长度 <code style="color:#22d3bf">L_max</code>，只保留满足 <code style="color:#22d3bf">length &gt;= a * L_max</code> 的轮廓。<code style="color:#22d3bf">a</code> 被裁剪(clip)到 [0,1]，<code style="color:#22d3bf">a=0</code> 保留全部轮廓，<code style="color:#22d3bf">a=1</code> 只保留最长的轮廓（等长时保留多条）。<code style="color:#22d3bf">b</code> 未使用。</p>
 <p>返回值是与输入相同 <code style="color:#22d3bf">{&quot;shape&quot;, &quot;cs&quot;}</code> 格式的轮廓字典（点数组为副本）。没有轮廓时 <code style="color:#22d3bf">cs</code> 为空。<code style="color:#22d3bf">L_max &lt;= 1e-12</code>（所有轮廓都只有 1 个点）时原样返回全部轮廓。阈值不是相对于图像尺寸，而是“相对于最长轮廓的值”，因此最长轮廓一变，筛选标准也随之变化（按点数绝对值筛选请用 <code style="color:#22d3bf">select_contours_xld</code>）。它不是名称让人联想到的矩形裁切，而是按长度筛选（用矩形裁切的是 <code style="color:#22d3bf">xg_crop_contours</code> / <code style="color:#22d3bf">hx_clip_contours</code>）。闭合轮廓重复的终点也计入长度，但因为是长度为 0 的边，所以没有影响。</p>
+<p><b>同一处理的其他实现（实测，<code style="color:#22d3bf">docs/IMPL_DIFFERENTIAL.md</code>）</b>：在相同输入、相同 a、b 下，内部差（相对于取值范围之比；小于 5e-3 视为一致）为 <code style="color:#22d3bf">hx_clip_contours</code> 0.63。不一致的原因（旋钮映射、窗口、边界、量化、定义不同）写在表中。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

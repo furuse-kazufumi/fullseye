@@ -15,6 +15,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>返回以包围区域的坐标轴对齐外接矩形（axis-aligned bounding box）填充的区域。a、b 未使用。若区域为空则返回全零。</p>
 <p>相当于 HALCON 的 <code style="color:#22d3bf">smallest_rectangle1</code>（求与坐标轴平行的最小外接矩形的运算）的实现（与允许旋转的最小外接矩形 <code style="color:#22d3bf">smallest_rectangle2</code> 不是同一个东西）。</p>
+<p><b>同一处理的其他实现（实测，<code style="color:#22d3bf">docs/IMPL_DIFFERENTIAL.md</code>）</b>：在相同输入、相同 a、b 下，内部差（相对于取值范围之比；小于 5e-3 视为一致）为 <code style="color:#22d3bf">r2_smallest_rectangle1</code> 0。不一致的原因（旋钮映射、窗口、边界、量化、定义不同）写在表中。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

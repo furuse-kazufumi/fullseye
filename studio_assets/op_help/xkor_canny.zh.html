@@ -16,6 +16,7 @@
 <p>基于 Canny 法的边缘(二值区域)检测。调用 <code style="color:#22d3bf">kornia.filters.canny</code>，在返回值中采用二值边缘图(<code style="color:#22d3bf">edges</code>)(舍弃梯度强度一侧)。</p>
 <p>a 调节低阈值(<code style="color:#22d3bf">0.1 + 0.3 * a</code>)，b 调节高阈值(<code style="color:#22d3bf">max(低阈值 + 1e-3, 0.3 + 0.4 * b)</code>，加了垫高量以保证一定高于低阈值)。输出的 sort 为 <code style="color:#22d3bf">region</code>。</p>
 <p><b>空帧（实测）</b>：输入亮度均匀的图像时，<b>无论亮度如何，结果都为空（全部像素为背景 0）</b>。纯白与纯黑表现相同；仅凭亮度检测不到任何东西。</p>
+<p><b>同一处理的其他实现（实测，<code style="color:#22d3bf">docs/IMPL_DIFFERENTIAL.md</code>）</b>：在相同输入、相同 a、b 下，内部差（相对于取值范围之比；小于 5e-3 视为一致）为 <code style="color:#22d3bf">canny</code> 0.78, <code style="color:#22d3bf">cv_canny</code> 0.51, <code style="color:#22d3bf">sk_canny</code> 0.94。不一致的原因（旋钮映射、窗口、边界、量化、定义不同）写在表中。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

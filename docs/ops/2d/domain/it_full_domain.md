@@ -40,6 +40,8 @@ ignored.
 
 **つまみ(実測)**: ``a`` を 0 から 1 まで振っても**出力は変わらない**(実測。5 種類の入力で確認)。
 
+**同じ語幹の別の op**: `hx_full_domain` は入出力の型が違う別の処理で、名前が似ているだけ(`docs/IMPL_DIFFERENTIAL.md`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_gray_arith ファミリ ガイド](../guides/gallery2d_gray_arith.md)

@@ -36,13 +36,22 @@ version: 0.8.1  # fullseye lib version this note was generated for
 ## 使い方
 
 ガウシアンぼかし（kornia の GPU ネイティブ実装）。torch テンソル上で
-``kornia.filters.gaussian_blur2d`` を 5x5 カーネル・シグマ可変で掛ける。
+``kornia.filters.gaussian_blur2d`` を、σ に合わせた窓で掛ける。
 
-a はシグマを 0.3〜3.0 の範囲で振る（``0.3 + 2.7 * a``）。b は未使用。
+a はシグマを 0.3〜3.0 の範囲で振る（``0.3 + 2.7 * a``、core の ``gaussian`` /
+``cv_gaussian`` と同じ写し方）。b は未使用。窓の半径は ``int(4σ + 0.5)``
+(scipy の ``gaussian_filter`` の既定 truncate=4.0 と同じ)、端は端画素を複製して
+折り返す(scipy の ``reflect`` = numpy の ``symmetric``、core の ``gaussian`` の
+``b <= 0.5`` と同じ)。core の ``gaussian(v, a, 0.5)`` と float32 の丸め(〜1e-7)で一致する
+(``tools/impl_differential.py``、``tests/test_impl_differential.py``)。
+
+★2026-11-03 の修正(値が変わる): それまでは窓が **5x5 固定**で、σ = 1.65(a = 0.5)
+でも半径 2 = 1.2σ で打ち切られ、σ を上げてもぼけが 5x5 の箱に近づくだけだった
+(core の ``gaussian`` との内部差は a = 0.5 で振れ幅の 9 %、a = 0.75 で 28 %)。
 CPU 実行では scipy 版と比べて速くはならない（GPU・バッチ実行時に効く
 実装。``IMGEVOLVE_KORNIA_DEVICE=cuda`` で GPU に乗る）。
 
-**端の扱い**: 端画素を重複させずに折り返す (d c b | a b c d、OpenCV の ``BORDER_REFLECT_101``)(実測。`tools/impl2/border_probe.py`)。
+**同じ処理の別実装(実測、`docs/IMPL_DIFFERENTIAL.md`)**: 同じ入力・同じ a, b での内部の差(振れ幅に対する比。5e-3 未満が一致)は `cv_gaussian` 7.3e-05, `gaussian` 3.8e-07。食い違う理由(つまみの写し方・窓・端・量子化・定義の違い)は表に書いてある。
 
 ## 詳しい使い方ガイド
 

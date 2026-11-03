@@ -16,6 +16,7 @@
 <p>Canny विधि से edge (binary region) detection। <code style="color:#22d3bf">kornia.filters.canny</code> को call करता है और return values में से binary edge map (<code style="color:#22d3bf">edges</code>) अपनाता है (gradient strength वाला हिस्सा छोड़ दिया जाता है)।</p>
 <p>a निचला threshold (<code style="color:#22d3bf">0.1 + 0.3 * a</code>) sweep करता है, और b ऊपरी threshold (<code style="color:#22d3bf">max(low threshold + 1e-3, 0.3 + 0.4 * b)</code>, padding ताकि यह हमेशा निचले से अधिक रहे)। आउटपुट sort <code style="color:#22d3bf">region</code> है।</p>
 <p><b>खाली frame (मापा गया)</b>: एक समान brightness वाली image देने पर <b>brightness चाहे जो हो, परिणाम खाली होता है (सभी pixels background 0)</b>। पूरी सफ़ेद हो या पूरी काली, एक जैसा व्यवहार होता है; केवल brightness से कुछ detect नहीं होता।</p>
+<p><b>उसी operation के दूसरे implementation (मापा गया; <code style="color:#22d3bf">docs/IMPL_DIFFERENTIAL.md</code>)</b>: एक ही input और एक ही a, b पर भीतरी अंतर (value range के अनुपात में; 5e-3 से कम = मेल) <code style="color:#22d3bf">canny</code> 0.78, <code style="color:#22d3bf">cv_canny</code> 0.51, <code style="color:#22d3bf">sk_canny</code> 0.94 है। जो मेल नहीं खाते उनका कारण (knob mapping, window, border, quantisation, अलग परिभाषा) table में लिखा है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

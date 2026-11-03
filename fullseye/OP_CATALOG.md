@@ -1610,9 +1610,9 @@ _計 3629 ops / 56 families。並びとノートの在り処は `docs/ops/INDEX.
 - `xcv3_pyr_laplacian` `image → image` GPU: なし — ラプラシアンピラミッドによる鮮鋭化。``pyrDown`` で縮小してから ``pyrUp`` で戻した画像(低周波成分)を元画像から引いた差分(ラプラシアンピラミッドの 1 層、バンドパス成分に相当)を、元画像に加算して強調するアンシャープマスクの一種。 · 例: `gallery2d_smoothing_rank`
 - `xcv_edge_preserving` `image → image` GPU: なし — OpenCV の edgePreservingFilter(エッジ保存平滑化、``flags=1`` = RECURS_FILTER = 再帰フィルタ方式)。 · 例: `gallery2d_smoothing_rank`
 - `xkor_bilateral` `image → image` GPU: なし — バイラテラルフィルタ（エッジ保存平滑化）。``kornia.filters.bilateral_blur`` を 5x5 カーネルで呼ぶ。 · 例: `gallery2d_smoothing_rank`
-- `xkor_gaussian` `image → image` GPU: なし — ガウシアンぼかし（kornia の GPU ネイティブ実装）。torch テンソル上で ``kornia.filters.gaussian_blur2d`` を 5x5 カーネル・シグマ可変で掛ける。 · 例: `gallery2d_smoothing_rank`
+- `xkor_gaussian` `image → image` GPU: なし — ガウシアンぼかし（kornia の GPU ネイティブ実装）。torch テンソル上で ``kornia.filters.gaussian_blur2d`` を、σ に合わせた窓で掛ける。 · 例: `gallery2d_smoothing_rank`
 - `xkor_motion_blur` `image → image` GPU: なし — モーションブラー。``kornia.filters.motion_blur`` を呼ぶ。 · 例: `gallery2d_smoothing_rank`
-- `xkor_unsharp` `image → image` GPU: なし — アンシャープマスク（鮮鋭化）。``kornia.filters.unsharp_mask`` を 5x5 カーネルで呼ぶ。 · 例: `gallery2d_smoothing_rank`
+- `xkor_unsharp` `image → image` GPU: なし — アンシャープマスク（鮮鋭化）。``kornia.filters.unsharp_mask`` を、σ に 合わせた窓で呼ぶ(``v + (v - G_σ * v)``、強さは 1 倍固定)。 · 例: `gallery2d_smoothing_rank`
 - `xpil_smooth_more` `image → image` GPU: なし — Pillow の平滑化フィルタ（強め）。``PIL.ImageFilter.SMOOTH_MORE`` の固定カーネルで ``SMOOTH`` よりも強くぼかす。 · 例: `gallery2d_smoothing_rank`
 - `xpil_unsharp_mask` `image → image` GPU: なし — Pillow のアンシャープマスク。``PIL.ImageFilter.UnsharpMask`` を呼ぶ（kornia 版 ``xkor_unsharp`` に対応する CPU 実装）。 · 例: `gallery2d_smoothing_rank`
 - `xsk3_rank_mean_bilateral` `image → image` GPU: なし — 局所バイラテラル平均(skimage ``filters.rank.mean_bilateral``)。円盤近傍のうち、中心画素の値から下方 ``s0``〜上方 ``s1`` の範囲に収まる画素だけを平均する、エッジ保存型の平滑化。 · 例: `gallery2d_smoothing_rank`

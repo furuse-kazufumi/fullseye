@@ -64,6 +64,8 @@ bilinear weights — the standard CLAHE interpolation (Zuiderveld 1994).
 近傍領域ではそのタイルの CDF がそのまま支配的なので、旧実装と同じ写像族の
 連続版になっている。
 
+**同じ処理の別実装(実測、`docs/IMPL_DIFFERENTIAL.md`)**: 同じ入力・同じ a, b での内部の差(振れ幅に対する比。5e-3 未満が一致)は `cv_clahe` 0.61, `xkor_clahe` 0.61。食い違う理由(つまみの写し方・窓・端・量子化・定義の違い)は表に書いてある。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_gray_arith ファミリ ガイド](../guides/gallery2d_gray_arith.md)

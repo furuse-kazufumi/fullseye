@@ -13,6 +13,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Counts rising-to-falling edge pairs (the two ends of a bright object) along a caliper line through the centre (equivalent to HALCON <code style="color:#22d3bf">measure_pairs</code>: extracts pairs of straight edges perpendicular to a rectangle/arc).</p>
 <p><code style="color:#22d3bf">a</code> is the line orientation (<code style="color:#22d3bf">theta = a*pi</code>). Edge detection is the same as <code style="color:#22d3bf">m1_measure_pos</code> (sub-pixel detection of gradient peaks), and <code style="color:#22d3bf">b</code> (0 to 1) is a threshold relative to the maximum amplitude. The edges exceeding the threshold are scanned in order, and each rising → falling polarity sequence is counted as 1 pair (feature, integer value). 0.0 if there are fewer than 2 edges.</p>
+<p><b>Other ops with the same stem</b>: <code style="color:#22d3bf">measure_pairs</code> — a different operation with different input/output types; only the name is similar (<code style="color:#22d3bf">docs/IMPL_DIFFERENTIAL.md</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">gallery2d_contour_measure family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>

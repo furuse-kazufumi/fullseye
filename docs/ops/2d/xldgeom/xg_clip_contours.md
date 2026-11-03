@@ -52,6 +52,8 @@ Drop contours whose polyline length is below a * max-length (a in [0,1]).
 長さによる選別である(矩形で切るのは ``xg_crop_contours`` / ``hx_clip_contours``)。
 閉輪郭の重複終点も長さに含むが、0 長の辺なので影響しない。
 
+**同じ処理の別実装(実測、`docs/IMPL_DIFFERENTIAL.md`)**: 同じ入力・同じ a, b での内部の差(振れ幅に対する比。5e-3 未満が一致)は `hx_clip_contours` 0.63。食い違う理由(つまみの写し方・窓・端・量子化・定義の違い)は表に書いてある。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_geometry ファミリ ガイド](../guides/gallery2d_geometry.md)

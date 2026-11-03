@@ -12,6 +12,7 @@
 <p>Number of ORB (Oriented FAST and Rotated BRIEF) keypoints detected.</p>
 <p>Performs detection and description with skimage.feature.ORB and returns the number of keypoints actually detected (feature output).</p>
 <p><code style="color:#22d3bf">a</code> sweeps the requested maximum number of keypoints <code style="color:#22d3bf">n_keypoints</code> over the range 50-450 (it is an upper limit; if the image is poor in contrast or structure, the actual count is lower). <code style="color:#22d3bf">b</code> is unused. Usable as a rough indicator of texture richness and feature-point density.</p>
+<p><b>Other implementations of the same operation (measured; <code style="color:#22d3bf">docs/IMPL_DIFFERENTIAL.md</code>)</b>: on the same inputs and the same a, b, the interior difference (relative to the value range; below 5e-3 counts as a match) is <code style="color:#22d3bf">xcv_orb_count</code> 1. Why the mismatching ones differ (knob mapping, window, border, quantisation, a different definition) is in the table.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

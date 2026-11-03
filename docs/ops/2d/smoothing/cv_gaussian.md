@@ -43,6 +43,8 @@ HALCON の `gauss_filter`(Smooth using discrete Gauss functions.)に相当。実
 
 **端の扱い**: 端画素を重複させずに折り返す (d c b | a b c d、OpenCV の ``BORDER_REFLECT_101``)(実測。`tools/impl2/border_probe.py`)。
 
+**同じ処理の別実装(実測、`docs/IMPL_DIFFERENTIAL.md`)**: 同じ入力・同じ a, b での内部の差(振れ幅に対する比。5e-3 未満が一致)は `gaussian` 7.3e-05, `xkor_gaussian` 7.3e-05。食い違う理由(つまみの写し方・窓・端・量子化・定義の違い)は表に書いてある。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_smoothing_rank ファミリ ガイド](../guides/gallery2d_smoothing_rank.md)

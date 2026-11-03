@@ -49,6 +49,8 @@ version: 0.8.1  # fullseye lib version this note was generated for
 Raises:
     FsValueError: NaN / inf を含む画像。
 
+**同じ語幹の別の op**: `xg_area_center` は入出力の型が違う別の処理で、名前が似ているだけ(`docs/IMPL_DIFFERENTIAL.md`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_features ファミリ ガイド](../guides/gallery2d_features.md)

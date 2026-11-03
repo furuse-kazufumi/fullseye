@@ -16,6 +16,7 @@
 <p>Bilateraler Filter (kantenerhaltende Glättung). Ruft <code style="color:#22d3bf">kornia.filters.bilateral_blur</code> mit einem 5x5-Kernel auf.</p>
 <p>a variiert das räumliche Sigma (<code style="color:#22d3bf">1.0 + 3.0 * a</code>, Bereich 1.0–4.0), b das Sigma in Helligkeitsrichtung (<code style="color:#22d3bf">0.05 + 0.4 * b</code>, Bereich 0.05–0.45). Da nur Pixel mit ähnlichen Werten gemischt werden, bleiben Kanten beim Glätten erhalten.</p>
 <p><b>Randbehandlung</b>: ohne Wiederholung des Randpixels spiegeln (d c b | a b c d — OpenCVs <code style="color:#22d3bf">BORDER_REFLECT_101</code>) (gemessen; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
+<p><b>Andere Implementierungen derselben Operation (gemessen; <code style="color:#22d3bf">docs/IMPL_DIFFERENTIAL.md</code>)</b>: Bei gleichen Eingaben und gleichen a, b beträgt der Unterschied im Inneren (relativ zum Wertebereich; unter 5e-3 gilt als gleich) <code style="color:#22d3bf">bilateral</code> 2.7e-07, <code style="color:#22d3bf">cv_bilateral</code> 0.055. Warum die abweichenden sich unterscheiden (Knopf-Abbildung, Fenster, Rand, Quantisierung, andere Definition), steht in der Tabelle.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">Leitfaden zur Familie gallery2d_smoothing_rank</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

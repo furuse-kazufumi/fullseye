@@ -16,6 +16,7 @@
 <p>Canny 边缘检测(区域版)。通过高斯平滑 -&gt; 梯度计算 -&gt; 非极大值抑制 -&gt; 滞后阈值这一经典多阶段流程求出边缘像素,并以布尔值区域的形式返回。</p>
 <p>相当于 HALCON 的 <code style="color:#22d3bf">edges_image</code>。实现为 <code style="color:#22d3bf">feature.canny(v, sigma=0.5+2.0*a)</code> —— a 将前级高斯平滑的 σ 在 0.5～2.5 范围内调节(越大，源于细小噪声的边缘越会消失，只留下粗的轮廓)。b 未使用 —— 滞后(双阈值)的低/高阈值保持 skimage 从图像自动估计的值(未显式指定)。</p>
 <p><b>空帧（实测）</b>：输入亮度均匀的图像时，<b>无论亮度如何，结果都为空（全部像素为背景 0）</b>。纯白与纯黑表现相同；仅凭亮度检测不到任何东西。</p>
+<p><b>同一处理的其他实现（实测，<code style="color:#22d3bf">docs/IMPL_DIFFERENTIAL.md</code>）</b>：在相同输入、相同 a、b 下，内部差（相对于取值范围之比；小于 5e-3 视为一致）为 <code style="color:#22d3bf">canny</code> 0.77, <code style="color:#22d3bf">cv_canny</code> 0.94, <code style="color:#22d3bf">xkor_canny</code> 0.94。不一致的原因（旋钮映射、窗口、边界、量化、定义不同）写在表中。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

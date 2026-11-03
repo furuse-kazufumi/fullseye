@@ -14,6 +14,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Otsu की discriminant analysis method से global threshold binarisation (OpenCV implementation)। sk_otsu जैसा ही algorithm, लेकिन अंदर 8 bit में quantise करके गणना करता है, यह अंतर है (परिणाम थोड़ा खिसक सकता है)।</p>
 <p>HALCON के <code style="color:#22d3bf">binary_threshold</code> के समकक्ष है। Implementation <code style="color:#22d3bf">cv2.threshold(_u8(v), 0, 255, THRESH_BINARY+THRESH_OTSU)</code> का परिणाम है जिसे booleans में बदला जाता है। a, b उपयोग नहीं होते।</p>
+<p><b>उसी operation के दूसरे implementation (मापा गया; <code style="color:#22d3bf">docs/IMPL_DIFFERENTIAL.md</code>)</b>: एक ही input और एक ही a, b पर भीतरी अंतर (value range के अनुपात में; 5e-3 से कम = मेल) <code style="color:#22d3bf">otsu</code> 0.007, <code style="color:#22d3bf">sk_otsu</code> 0.012 है। जो मेल नहीं खाते उनका कारण (knob mapping, window, border, quantisation, अलग परिभाषा) table में लिखा है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

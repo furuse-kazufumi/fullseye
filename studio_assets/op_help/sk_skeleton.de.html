@@ -16,6 +16,7 @@
 <p>Skelettierung einer Region (skeletonization). Verdünnt die Vordergrundregion auf eine ein Pixel breite Linie, während die Topologie (Zusammenhang und Anzahl der Löcher) erhalten bleibt.</p>
 <p>Entspricht HALCONs <code style="color:#22d3bf">skeleton</code>(Compute the skeleton of a region.) (Näherung; der Algorithmus gehört zur Zhang-Suen-Familie). Die Implementierung ist <code style="color:#22d3bf">morphology.skeletonize(binm(v))</code> - die Eingabe wird zuerst mit <code style="color:#22d3bf">binm</code> (Schwelle &gt; 0.5) in Wahrheitswerte umgewandelt. a, b werden nicht verwendet.</p>
 <p><b>Randbehandlung</b>: alles außerhalb des Bildes als Hintergrund (0) behandeln (gemessen; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
+<p><b>Andere Implementierungen derselben Operation (gemessen; <code style="color:#22d3bf">docs/IMPL_DIFFERENTIAL.md</code>)</b>: Bei gleichen Eingaben und gleichen a, b beträgt der Unterschied im Inneren (relativ zum Wertebereich; unter 5e-3 gilt als gleich) <code style="color:#22d3bf">skeleton</code> 0. Warum die abweichenden sich unterscheiden (Knopf-Abbildung, Fenster, Rand, Quantisierung, andere Definition), steht in der Tabelle.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">Leitfaden zur Familie gallery2d_region</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

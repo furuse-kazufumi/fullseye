@@ -53,6 +53,8 @@ contour dict の各 contour について、画像の内側に取った矩形 ``m
 形(ジャンプ)になる。分割が要るなら後段で ``hx_split_contours``。中心からの割合で切る類似 op に
 ``hx_crop_contours``(中心基準の幅・高さ指定)。線長で足切りする ``xg_clip_contours`` とは別物。
 
+**同じ処理の別実装(実測、`docs/IMPL_DIFFERENTIAL.md`)**: 同じ入力・同じ a, b での内部の差(振れ幅に対する比。5e-3 未満が一致)は `xg_clip_contours` 0.63。食い違う理由(つまみの写し方・窓・端・量子化・定義の違い)は表に書いてある。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_halcon_ext ファミリ ガイド](../guides/gallery2d_halcon_ext.md)

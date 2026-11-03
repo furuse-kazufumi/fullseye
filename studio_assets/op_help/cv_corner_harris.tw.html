@@ -16,6 +16,7 @@
 <p>Harris 角點響應（OpenCV 實作）。與 sk_corner_harris 相同的 Harris 概念，但 OpenCV 版本以固定參數（如梯度計算、平滑的區塊大小等）進行計算。</p>
 <p>相當於 HALCON 的 <code style="color:#22d3bf">points_harris</code>(近似)。實作為用 <code style="color:#22d3bf">signed01</code> 將 <code style="color:#22d3bf">cv2.cornerHarris(v, blockSize=2, ksize=3, k=0.04)</code> 對映到 <code style="color:#22d3bf">[0,1]</code> 的值 —— blockSize(鄰域尺寸)、ksize(Sobel 孔徑)、k(Harris 的自由參數)全部固定。a、b 未使用 —— 與 skimage 版不同，沒有調節尺度的機制，是原始的 Harris 響應。</p>
 <p><b>數值可比性（實測）</b>：輸出以<b>該影像自身的最大值正規化</b>（輸出最大值恆為 1.0，輸入整體縮放不改變輸出）。因此<b>不能跨影像比較數值</b>——同樣強度的特徵會因該影像中最強特徵的不同而取不同的值；在只有弱特徵的影像中，雜訊會被抬升到 1.0。要跨影像比較，請以統一基準重新縮放。</p>
+<p><b>同一處理的其他實作（實測，<code style="color:#22d3bf">docs/IMPL_DIFFERENTIAL.md</code>）</b>：在相同輸入、相同 a、b 下，內部差（相對於值域之比；小於 5e-3 視為一致）為 <code style="color:#22d3bf">sk_corner_harris</code> 0.99。不一致的原因（旋鈕對應、視窗、邊界、量化、定義不同）寫在表中。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">gallery2d_edges 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

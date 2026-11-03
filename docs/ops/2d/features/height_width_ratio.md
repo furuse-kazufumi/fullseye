@@ -47,6 +47,8 @@ coordinate axes.）が返す 3 値のうち **Ratio と同じ量**(Height と Wi
 
 ``a``, ``b`` は未使用。
 
+**同じ語幹の別の op**: `xg_height_width_ratio` は入出力の型が違う別の処理で、名前が似ているだけ(`docs/IMPL_DIFFERENTIAL.md`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_features ファミリ ガイド](../guides/gallery2d_features.md)
