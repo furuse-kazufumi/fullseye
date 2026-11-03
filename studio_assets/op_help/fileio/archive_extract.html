@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">archive_extract — FILEIO <code style="color:#22d3bf">archive</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">any × text</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.archive_extract(data_or_path, dest, *, members=None, max_total_bytes=2147483648, max_members=100000)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import fileio; fileio.archive_extract(data_or_path, dest, *, members=None, max_total_bytes=2147483648, max_members=100000)</code>、台帳から引くなら <code style="color:#22d3bf">opsfileio.get(&quot;archive_extract&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>書庫を空の <code style="color:#22d3bf">dest</code> へ安全に展開し、相対path一覧を返す。 / Safely extract into an empty destination.</p>
 <p>zip-slip(絶対path・<code style="color:#22d3bf">..</code>・drive文字)、link、特殊ファイル、重複名、10万件超、既定2 GiB超、</p>

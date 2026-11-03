@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">archive_probe — FILEIO <code style="color:#22d3bf">archive</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">text</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.archive_probe(data_or_path)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import fileio; fileio.archive_probe(data_or_path)</code>、台帳から引くなら <code style="color:#22d3bf">opsfileio.get(&quot;archive_probe&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>書庫のマジックナンバーを検査し、形式名を返す。 / Probe archive magic and return its format name.</p>
 <p>入力は <code style="color:#22d3bf">bytes</code> または既存ファイルの path。返り値は <code style="color:#22d3bf">zip/tar/tar.gz/tar.bz2/tar.xz/7z/rar</code> のいずれかで、拡張子だけでは判定しない。未知・切断・圧縮tarでないgzip等は明示して拒否する。</p>

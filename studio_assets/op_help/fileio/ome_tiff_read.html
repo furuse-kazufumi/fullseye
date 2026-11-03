@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">ome_tiff_read — FILEIO <code style="color:#22d3bf">ome_tiff</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ome_tiff_read(data)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import fileio; fileio.ome_tiff_read(data)</code>、台帳から引くなら <code style="color:#22d3bf">opsfileio.get(&quot;ome_tiff_read&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>OME-TIFF を <code style="color:#22d3bf">(stack, meta)</code> として読み、OME-XML と配列を相互検証する。</p>
 <p><code style="color:#22d3bf">meta</code> は TCZYX 部分列の <code style="color:#22d3bf">axes</code>、物理サイズと単位、チャネル名を持つ。通常 TIFF、複数 Image、XML の Size/dtype と TIFF の不一致、無名チャネルは拒否する。</p>

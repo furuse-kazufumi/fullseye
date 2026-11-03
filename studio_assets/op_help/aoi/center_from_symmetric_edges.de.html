@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">center_from_symmetric_edges — AOI <code style="color:#22d3bf">symmetry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.center_from_symmetric_edges(image, threshold=0.08, sigma=1.0, min_span=6.0, mad_z=3.5, diagonals=False)</code> (die Implementierung direkt: <code style="color:#22d3bf">import symmetry2d; symmetry2d.center_from_symmetric_edges(image, threshold=0.08, sigma=1.0, min_span=6.0, mad_z=3.5, diagonals=False)</code>; aus dem Register: <code style="color:#22d3bf">opsaoi.get(&quot;center_from_symmetric_edges&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Fasst die Mittelpunkte symmetrischer Außenkantenpaare robust zusammen und liefert ein 2-D-Zentrum.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>

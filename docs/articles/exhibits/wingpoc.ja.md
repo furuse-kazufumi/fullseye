@@ -2,7 +2,7 @@
 
 ### 産業検査ウィング ―― 合格の数字と不合格の数字は両立する
 
-検査ラインの数字は合否に直結するので、1 つの指標に畳みたくなります。この部屋の 41 点は、畳んだ瞬間に消えるものを並べたものです。まとめた ROC が種類別の盲点を隠す織物、MTF が合格のまま黒レベルが不合格になる迷光、読取率だけ見ると寛容なデコーダが良く見えるバーコード。
+検査ラインの数字は合否に直結するので、1 つの指標に畳みたくなります。この部屋の 42 点は、畳んだ瞬間に消えるものを並べたものです。まとめた ROC が種類別の盲点を隠す織物、MTF が合格のまま黒レベルが不合格になる迷光、読取率だけ見ると寛容なデコーダが良く見えるバーコード。
 
 真値はどれも自分で仕込んであります。周期地の閉形式、レーザー断面の h(x)、1 次元熱伝導の解析解、閉形式の欠陥周波数。だから「検出できました」の先にある「どこで検出できなくなるか」を、しきい値を後から合わせずに測れます。
 
@@ -104,7 +104,7 @@ py -3.11 examples/poc_bearing_diagnosis.py
 
 使用 op(ノートへ): [`bearing_defect_frequencies`](https://furuse.work/ops/acoustics/bearing/bearing_defect_frequencies.html) · [`envelope_spectrum`](https://furuse.work/ops/acoustics/bearing/envelope_spectrum.html) · [`spectral_kurtosis`](https://furuse.work/ops/acoustics/bearing/spectral_kurtosis.html) · [`spectrum`](https://furuse.work/ops/oned/signal/spectrum.html) · [`synthesize_bearing_signal`](https://furuse.work/ops/acoustics/synthesis/synthesize_bearing_signal.html)
 
-## No.2026.285 —— 2-D対称性の自己参照検査 ―― 正解画像なしで欠陥だけを残す
+## No.2026.286 —— 2-D対称性の自己参照検査 ―― 正解画像なしで欠陥だけを残す
 
 対称な部品は、欠陥がなければ自身の鏡像や回転像と一致する。模様と照明むらを消した差分では、欠陥領域の平均が0.193になった。中心推定の頑健さと回転次数の正答率も併せて確かめた。
 
@@ -1366,7 +1366,7 @@ py -3.11 examples/poc_slanted_edge_sfr_limits.py
 
 使用 op(ノートへ): [`mtf_diffraction`](https://furuse.work/ops/optics/imaging/mtf_diffraction.html)
 
-## No.2026.285 —— 生の輝度しきい値は照明ごとに合わせ直すが、kσ と P-tile はそのまま移る
+## No.2026.288 —— 生の輝度しきい値は照明ごとに合わせ直すが、kσ と P-tile はそのまま移る
 
 欠陥の形と面積を固定した合成製品像を、照明利得1.35倍、オフセット+0.18、雑音2倍、材質の明るさ+0.18、複合条件で撮り直した。基準像で合わせた生のしきい値は移送先5条件すべてでIoU 0.98を割り、追加の評価は計49回（基準の1回を含め50回）。中央値と1.4826×MADで零中心・σ単位にしてから切るkσは、基準で2回評価した同じkを全条件へ移して追加0回、移植IoUは0.9832以上。P-tileは真の欠陥面積率を基準像で1回評価し、追加0回、移植IoUは0.9820以上。雑音2倍では両方式とも一部の欠陥画素と背景雑音が重なり、正規化しても情報そのものは戻らない。評価回数は実行時間でなく、IoU 0.98へ達するまで決定的な候補列を真値で採点した回数。
 
@@ -6392,7 +6392,7 @@ py -3.11 examples/poc_panorama_drift.py
 
 使用 op(ノートへ): [`axes_frame`](https://furuse.work/ops/annotate/plot/axes_frame.html) · [`axes_transform`](https://furuse.work/ops/annotate/plot/axes_transform.html) · [`hom_vector_to_proj_hom_mat2d`](https://furuse.work/ops/calib/fit/hom_vector_to_proj_hom_mat2d.html) · [`plot_series`](https://furuse.work/ops/annotate/plot/plot_series.html) · [`pose_error`](https://furuse.work/ops/3d/metrics/pose_error.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`ticks`](https://furuse.work/ops/annotate/plot/ticks.html) · [`warp_by_plane`](https://furuse.work/ops/3d/plane_sweep_stereo/warp_by_plane.html)
 
-## No.2026.285 —— 実機 RGB-D の産業部品を PPF で 6 自由度照合する
+## No.2026.287 —— 実機 RGB-D の産業部品を PPF で 6 自由度照合する
 
 BOP T-LESS(CC BY 4.0)のBOP19 test_primesense全20場面から先頭画像を1枚ずつ決定的に選び、可視率0.5以上の132対象を深度→点群→法線→RANSAC平面除去→クラスタ→PPF+ICPと通した。旧180/160点・6 mmの0.162/0.185に対し、密度、ref_fraction、angle_bins、ICP反復を11設定で掃引し、10秒/対象以内でAR_MSSD最大の1000/1000点・2 mm・ref 0.25・24ビン・ICP 100反復を採用した。主経路8.291秒/対象でAR_MSSD 0.197 / AR_MSPD 0.220となり、粗い間引きが成績を抑えていたが、公式全testのDrost 0.478/0.480、Vidal 0.575/0.574にはなお届かない。2000点は2時間で未完走、54.6秒/対象以上。クラスタなしは0.111/0.113、理想深度は0.985/0.985、ICPなしは0.346/0.338、符号未整理の法線は0.132/0.161。MSSD>0.2dの失敗109/132の重複内訳は、結合クラスタ34、可視率0.8未満8、薄い部品21、深度欠損1%超36、対称部品103。
 

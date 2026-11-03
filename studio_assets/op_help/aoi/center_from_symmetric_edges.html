@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">center_from_symmetric_edges — AOI <code style="color:#22d3bf">symmetry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.center_from_symmetric_edges(image, threshold=0.08, sigma=1.0, min_span=6.0, mad_z=3.5, diagonals=False)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import symmetry2d; symmetry2d.center_from_symmetric_edges(image, threshold=0.08, sigma=1.0, min_span=6.0, mad_z=3.5, diagonals=False)</code>、台帳から引くなら <code style="color:#22d3bf">opsaoi.get(&quot;center_from_symmetric_edges&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>対称な外側エッジ対の中点を頑健に集約し、2-D 中心を返す。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>

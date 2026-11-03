@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3627,
- "n_notes": 3633,
+ "n_ops": 3645,
+ "n_notes": 3651,
  "notes": {
   "vol_dilate": [
    {
@@ -3455,6 +3455,16 @@
     "out": "image",
     "halcon": "illuminate",
     "path": "docs/ops/2d/gray/illuminate.md"
+   }
+  ],
+  "image_standardize": [
+   {
+    "op": "image_standardize",
+    "dim": "2d",
+    "category": "gray",
+    "in": "image",
+    "out": "image",
+    "path": "docs/ops/2d/gray/image_standardize.md"
    }
   ],
   "invert": [
@@ -7048,6 +7058,16 @@
     "path": "docs/ops/2d/segmentation/pouring.md"
    }
   ],
+  "ptile_threshold": [
+   {
+    "op": "ptile_threshold",
+    "dim": "2d",
+    "category": "segmentation",
+    "in": "image",
+    "out": "feature",
+    "path": "docs/ops/2d/segmentation/ptile_threshold.md"
+   }
+  ],
   "regiongrowing": [
    {
     "op": "regiongrowing",
@@ -7079,6 +7099,16 @@
     "out": "region",
     "halcon": "segment_image_mser",
     "path": "docs/ops/2d/segmentation/segment_image_mser.md"
+   }
+  ],
+  "sigma_threshold": [
+   {
+    "op": "sigma_threshold",
+    "dim": "2d",
+    "category": "segmentation",
+    "in": "image",
+    "out": "region",
+    "path": "docs/ops/2d/segmentation/sigma_threshold.md"
    }
   ],
   "sk_canny": [
@@ -14700,6 +14730,56 @@
     "in": "image2d × image2d",
     "out": "image2d",
     "path": "docs/ops/aoi/photometric/flat_field_correct.md"
+   }
+  ],
+  "center_from_symmetric_edges": [
+   {
+    "op": "center_from_symmetric_edges",
+    "dim": "aoi",
+    "category": "symmetry",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/aoi/symmetry/center_from_symmetric_edges.md"
+   }
+  ],
+  "reflection_axis": [
+   {
+    "op": "reflection_axis",
+    "dim": "aoi",
+    "category": "symmetry",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/aoi/symmetry/reflection_axis.md"
+   }
+  ],
+  "rotational_symmetry": [
+   {
+    "op": "rotational_symmetry",
+    "dim": "aoi",
+    "category": "symmetry",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/aoi/symmetry/rotational_symmetry.md"
+   }
+  ],
+  "symmetry_difference_map": [
+   {
+    "op": "symmetry_difference_map",
+    "dim": "aoi",
+    "category": "symmetry",
+    "in": "image2d × table",
+    "out": "image2d",
+    "path": "docs/ops/aoi/symmetry/symmetry_difference_map.md"
+   }
+  ],
+  "symmetry_score": [
+   {
+    "op": "symmetry_score",
+    "dim": "aoi",
+    "category": "symmetry",
+    "in": "image2d × table",
+    "out": "measurement",
+    "path": "docs/ops/aoi/symmetry/symmetry_score.md"
    }
   ],
   "align_frames": [
@@ -23190,6 +23270,26 @@
     "path": "docs/ops/fileio/e57/e57_write.md"
    }
   ],
+  "astro_fits_read": [
+   {
+    "op": "astro_fits_read",
+    "dim": "fileio",
+    "category": "fits",
+    "in": "any",
+    "out": "any",
+    "path": "docs/ops/fileio/fits/astro_fits_read.md"
+   }
+  ],
+  "astro_fits_write": [
+   {
+    "op": "astro_fits_write",
+    "dim": "fileio",
+    "category": "fits",
+    "in": "any",
+    "out": "any",
+    "path": "docs/ops/fileio/fits/astro_fits_write.md"
+   }
+  ],
   "mesh_read_obj": [
    {
     "op": "mesh_read_obj",
@@ -23268,6 +23368,86 @@
     "in": "mesh",
     "out": "any",
     "path": "docs/ops/fileio/mesh/mesh_write_stl.md"
+   }
+  ],
+  "em_mrc_read": [
+   {
+    "op": "em_mrc_read",
+    "dim": "fileio",
+    "category": "mrc",
+    "in": "any",
+    "out": "any",
+    "path": "docs/ops/fileio/mrc/em_mrc_read.md"
+   }
+  ],
+  "em_mrc_write": [
+   {
+    "op": "em_mrc_write",
+    "dim": "fileio",
+    "category": "mrc",
+    "in": "any",
+    "out": "any",
+    "path": "docs/ops/fileio/mrc/em_mrc_write.md"
+   }
+  ],
+  "nifti_read": [
+   {
+    "op": "nifti_read",
+    "dim": "fileio",
+    "category": "nifti",
+    "in": "any",
+    "out": "any",
+    "path": "docs/ops/fileio/nifti/nifti_read.md"
+   }
+  ],
+  "nifti_write": [
+   {
+    "op": "nifti_write",
+    "dim": "fileio",
+    "category": "nifti",
+    "in": "any",
+    "out": "any",
+    "path": "docs/ops/fileio/nifti/nifti_write.md"
+   }
+  ],
+  "nrrd_read": [
+   {
+    "op": "nrrd_read",
+    "dim": "fileio",
+    "category": "nrrd",
+    "in": "any",
+    "out": "any",
+    "path": "docs/ops/fileio/nrrd/nrrd_read.md"
+   }
+  ],
+  "nrrd_write": [
+   {
+    "op": "nrrd_write",
+    "dim": "fileio",
+    "category": "nrrd",
+    "in": "any",
+    "out": "any",
+    "path": "docs/ops/fileio/nrrd/nrrd_write.md"
+   }
+  ],
+  "ome_tiff_read": [
+   {
+    "op": "ome_tiff_read",
+    "dim": "fileio",
+    "category": "ome_tiff",
+    "in": "any",
+    "out": "any",
+    "path": "docs/ops/fileio/ome_tiff/ome_tiff_read.md"
+   }
+  ],
+  "ome_tiff_write": [
+   {
+    "op": "ome_tiff_write",
+    "dim": "fileio",
+    "category": "ome_tiff",
+    "in": "any",
+    "out": "any",
+    "path": "docs/ops/fileio/ome_tiff/ome_tiff_write.md"
    }
   ],
   "points_read_xyz": [

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">em_mrc_read — FILEIO <code style="color:#22d3bf">mrc</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.em_mrc_read(data)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import fileio; fileio.em_mrc_read(data)</code>、台帳から引くなら <code style="color:#22d3bf">opsfileio.get(&quot;em_mrc_read&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>MRC2014/CCP4 の mode 0/1/2/6 を <code style="color:#22d3bf">(image_or_volume, meta)</code> として読む。</p>
 <p><code style="color:#22d3bf">meta</code> は Å 単位を明示した <code style="color:#22d3bf">voxel_size</code> / <code style="color:#22d3bf">origin</code> を返す。非標準軸順、extended header、切れたデータ、shape と mode の不一致は名指しで拒否する。</p>

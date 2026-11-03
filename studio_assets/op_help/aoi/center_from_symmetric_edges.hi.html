@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">center_from_symmetric_edges — AOI <code style="color:#22d3bf">symmetry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.center_from_symmetric_edges(image, threshold=0.08, sigma=1.0, min_span=6.0, mad_z=3.5, diagonals=False)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import symmetry2d; symmetry2d.center_from_symmetric_edges(image, threshold=0.08, sigma=1.0, min_span=6.0, mad_z=3.5, diagonals=False)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsaoi.get(&quot;center_from_symmetric_edges&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>सममित बाहरी edge-pairs के midpoints को robust ढंग से जोड़कर 2-D center लौटाता है।</p>
 <p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>

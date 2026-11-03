@@ -4,6 +4,7 @@ dim: fileio
 category: nrrd
 in: any
 out: any
+gpu: なし
 examples: [fileio_scientific_roundtrip]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `any` → `any`
 - **呼び出し**: `import fullseye as fs; fs.ledger.nrrd_read(data)` (実装を直接呼ぶなら `import fileio; fileio.nrrd_read(data)`、台帳から引くなら `opsfileio.get("nrrd_read")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

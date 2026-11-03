@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">nifti_read — FILEIO <code style="color:#22d3bf">nifti</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.nifti_read(data)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import fileio; fileio.nifti_read(data)</code>、台帳から引くなら <code style="color:#22d3bf">opsfileio.get(&quot;nifti_read&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>単一ファイル NIfTI-1(<code style="color:#22d3bf">.nii</code> / <code style="color:#22d3bf">.nii.gz</code>)を <code style="color:#22d3bf">(array, meta)</code> として読む。</p>
 <p>3-D/4-D、qform/sform、pixdim と空間・時間単位を返す。pair 形式、拡張、未知 datatype、header/shape/byte 数の不一致は拒否する。呼び出し例: <code style="color:#22d3bf">volume, meta = nifti_read(payload)</code>。</p>

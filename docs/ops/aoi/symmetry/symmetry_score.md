@@ -4,6 +4,7 @@ dim: aoi
 category: symmetry
 in: image2d × table
 out: measurement
+gpu: なし
 examples: [poc_symmetry_self_reference_inspection]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d × table` → `measurement`
 - **呼び出し**: `import fullseye as fs; fs.ledger.symmetry_score(image, symmetry, exclusion_mask=None, detrend=True)` (実装を直接呼ぶなら `import symmetry2d; symmetry2d.symmetry_score(image, symmetry, exclusion_mask=None, detrend=True)`、台帳から引くなら `opsaoi.get("symmetry_score")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

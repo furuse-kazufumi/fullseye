@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">ome_tiff_write — FILEIO <code style="color:#22d3bf">ome_tiff</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ome_tiff_write(stack, *, meta)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import fileio; fileio.ome_tiff_write(stack, *, meta)</code>、台帳から引くなら <code style="color:#22d3bf">opsfileio.get(&quot;ome_tiff_write&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>TCZYX 多次元配列と物理サイズ・チャネル名を OME-TIFF の <code style="color:#22d3bf">bytes</code> にする。</p>
 <p><code style="color:#22d3bf">meta[&#x27;axes&#x27;]</code> は TCZYX の部分列で YX 終端。X/Y(および Z 軸があれば Z)の <code style="color:#22d3bf">physical_size_*</code> と <code style="color:#22d3bf">*_unit</code>、C 軸があれば <code style="color:#22d3bf">channel_names</code> を必須とする。</p>

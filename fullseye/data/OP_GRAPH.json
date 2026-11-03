@@ -47,21 +47,21 @@
   },
   "lifted_map_edges": [],
   "parameter_summary": {
-    "measured_ops": 570,
+    "measured_ops": 572,
     "a_unused": 147,
     "b_unused": 391,
     "reason": "docs/op_knob.json measured no output effect"
   },
   "execution_summary": {
-    "executable": 3417,
+    "executable": 3425,
     "reasons": {
-      "python_signature": 2458,
-      "registry": 959
+      "python_signature": 2463,
+      "registry": 962
     },
     "not_executable_reasons": {
       "python_callable_not_found": 14,
       "python_signature_has_fewer_inputs_than_graph": 1,
-      "unknown_input_or_output_sort": 198
+      "unknown_input_or_output_sort": 208
     }
   },
   "sources": {
@@ -358,9 +358,9 @@
   },
   "counts": {
     "nodes": 101,
-    "edges": 3630,
+    "edges": 3648,
     "conversion_pairs": 395,
-    "conversion_edge_incidence": 2343
+    "conversion_edge_incidence": 2349
   },
   "nodes": [
     {
@@ -620,7 +620,7 @@
       "sort": "feature",
       "container": "structured_value",
       "size_hint": "input-dependent",
-      "produced_by": 122,
+      "produced_by": 123,
       "consumed_by": 1,
       "generator": false,
       "type_check": false,
@@ -752,8 +752,8 @@
       "sort": "image",
       "container": "dense_array",
       "size_hint": "input-dependent",
-      "produced_by": 721,
-      "consumed_by": 1046,
+      "produced_by": 723,
+      "consumed_by": 1054,
       "generator": true,
       "type_check": true,
       "choose_when": "undocumented",
@@ -884,7 +884,7 @@
       "sort": "measurement",
       "container": "structured_value",
       "size_hint": "input-dependent",
-      "produced_by": 93,
+      "produced_by": 94,
       "consumed_by": 6,
       "generator": true,
       "type_check": true,
@@ -1082,7 +1082,7 @@
       "sort": "region",
       "container": "sparse_set",
       "size_hint": "input-dependent",
-      "produced_by": 186,
+      "produced_by": 187,
       "consumed_by": 159,
       "generator": true,
       "type_check": true,
@@ -1368,8 +1368,8 @@
       "sort": "table",
       "container": "sequence",
       "size_hint": "input-dependent",
-      "produced_by": 1167,
-      "consumed_by": 547,
+      "produced_by": 1170,
+      "consumed_by": 549,
       "generator": true,
       "type_check": true,
       "choose_when": "undocumented",
@@ -1412,8 +1412,8 @@
       "sort": "unknown",
       "container": "structured_value",
       "size_hint": "input-dependent",
-      "produced_by": 96,
-      "consumed_by": 165,
+      "produced_by": 106,
+      "consumed_by": 175,
       "generator": false,
       "type_check": false,
       "choose_when": "undocumented",
@@ -140624,6 +140624,325 @@
       "source_ref": "S00026"
     },
     {
+      "op": "center_from_symmetric_edges",
+      "inputs": [
+        "image"
+      ],
+      "output": "table",
+      "category": "aoi",
+      "family": null,
+      "family_candidate": "edge_detection",
+      "family_candidate_source": "heuristic_regex",
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00026"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00026"
+        }
+      ],
+      "runtime_target": {
+        "module": "symmetry2d",
+        "callable": "center_from_symmetric_edges"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "symmetry2d",
+        "callable": "center_from_symmetric_edges"
+      },
+      "parameter_schema": [
+        {
+          "name": "threshold",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.08
+        },
+        {
+          "name": "sigma",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 1.0
+        },
+        {
+          "name": "min_span",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 6.0
+        },
+        {
+          "name": "mad_z",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 3.5
+        },
+        {
+          "name": "diagonals",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": false
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00026"
+    },
+    {
+      "op": "reflection_axis",
+      "inputs": [
+        "image"
+      ],
+      "output": "table",
+      "category": "aoi",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00026"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00026"
+        }
+      ],
+      "runtime_target": {
+        "module": "symmetry2d",
+        "callable": "reflection_axis"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "symmetry2d",
+        "callable": "reflection_axis"
+      },
+      "parameter_schema": [
+        {
+          "name": "angle_step",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 2.0
+        },
+        {
+          "name": "offset_search",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 4.0
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00026"
+    },
+    {
+      "op": "rotational_symmetry",
+      "inputs": [
+        "image"
+      ],
+      "output": "table",
+      "category": "aoi",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00026"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00026"
+        }
+      ],
+      "runtime_target": {
+        "module": "symmetry2d",
+        "callable": "rotational_symmetry"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "symmetry2d",
+        "callable": "rotational_symmetry"
+      },
+      "parameter_schema": [
+        {
+          "name": "max_order",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 12
+        },
+        {
+          "name": "angular_samples",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 720
+        },
+        {
+          "name": "score_threshold",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.18
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00026"
+    },
+    {
+      "op": "symmetry_difference_map",
+      "inputs": [
+        "image",
+        "table"
+      ],
+      "output": "image",
+      "category": "aoi",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00026"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00026"
+        }
+      ],
+      "runtime_target": {
+        "module": "symmetry2d",
+        "callable": "symmetry_difference_map"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "symmetry2d",
+        "callable": "symmetry_difference_map"
+      },
+      "parameter_schema": [
+        {
+          "name": "exclusion_mask",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
+        },
+        {
+          "name": "detrend",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": true
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00026"
+    },
+    {
+      "op": "symmetry_score",
+      "inputs": [
+        "image",
+        "table"
+      ],
+      "output": "measurement",
+      "category": "aoi",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00026"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00026"
+        }
+      ],
+      "runtime_target": {
+        "module": "symmetry2d",
+        "callable": "symmetry_score"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "symmetry2d",
+        "callable": "symmetry_score"
+      },
+      "parameter_schema": [
+        {
+          "name": "exclusion_mask",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
+        },
+        {
+          "name": "detrend",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": true
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00026"
+    },
+    {
       "op": "project_3d_point",
       "inputs": [
         "points"
@@ -185944,6 +186263,96 @@
       "source_ref": "S00056"
     },
     {
+      "op": "astro_fits_read",
+      "inputs": [
+        "unknown"
+      ],
+      "output": "unknown",
+      "category": "fits",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "unknown",
+      "consumes_input": true,
+      "executable": false,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "unknown",
+        "source_ref": "S00056"
+      },
+      "implementations": [
+        {
+          "backend": "registry",
+          "status": "available",
+          "source_ref": "S00056"
+        }
+      ],
+      "parameters": {
+        "a": {
+          "used": false,
+          "source": "unmeasured",
+          "effect": 0.0,
+          "kind": "unused"
+        },
+        "b": {
+          "used": false,
+          "source": "unmeasured",
+          "effect": 0.0,
+          "kind": "unused"
+        }
+      },
+      "executable_reason": "unknown_input_or_output_sort",
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00056"
+    },
+    {
+      "op": "astro_fits_write",
+      "inputs": [
+        "unknown"
+      ],
+      "output": "unknown",
+      "category": "fits",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "unknown",
+      "consumes_input": true,
+      "executable": false,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "unknown",
+        "source_ref": "S00056"
+      },
+      "implementations": [
+        {
+          "backend": "registry",
+          "status": "available",
+          "source_ref": "S00056"
+        }
+      ],
+      "parameters": {
+        "a": {
+          "used": false,
+          "source": "unmeasured",
+          "effect": 0.0,
+          "kind": "unused"
+        },
+        "b": {
+          "used": false,
+          "source": "unmeasured",
+          "effect": 0.0,
+          "kind": "unused"
+        }
+      },
+      "executable_reason": "unknown_input_or_output_sort",
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00056"
+    },
+    {
       "op": "e57_read",
       "inputs": [
         "unknown"
@@ -185995,6 +186404,96 @@
       ],
       "output": "unknown",
       "category": "e57",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "unknown",
+      "consumes_input": true,
+      "executable": false,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "unknown",
+        "source_ref": "S00056"
+      },
+      "implementations": [
+        {
+          "backend": "registry",
+          "status": "available",
+          "source_ref": "S00056"
+        }
+      ],
+      "parameters": {
+        "a": {
+          "used": false,
+          "source": "unmeasured",
+          "effect": 0.0,
+          "kind": "unused"
+        },
+        "b": {
+          "used": false,
+          "source": "unmeasured",
+          "effect": 0.0,
+          "kind": "unused"
+        }
+      },
+      "executable_reason": "unknown_input_or_output_sort",
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00056"
+    },
+    {
+      "op": "em_mrc_read",
+      "inputs": [
+        "unknown"
+      ],
+      "output": "unknown",
+      "category": "mrc",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "unknown",
+      "consumes_input": true,
+      "executable": false,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "unknown",
+        "source_ref": "S00056"
+      },
+      "implementations": [
+        {
+          "backend": "registry",
+          "status": "available",
+          "source_ref": "S00056"
+        }
+      ],
+      "parameters": {
+        "a": {
+          "used": false,
+          "source": "unmeasured",
+          "effect": 0.0,
+          "kind": "unused"
+        },
+        "b": {
+          "used": false,
+          "source": "unmeasured",
+          "effect": 0.0,
+          "kind": "unused"
+        }
+      },
+      "executable_reason": "unknown_input_or_output_sort",
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00056"
+    },
+    {
+      "op": "em_mrc_write",
+      "inputs": [
+        "unknown"
+      ],
+      "output": "unknown",
+      "category": "mrc",
       "family": null,
       "family_candidate": null,
       "family_candidate_source": null,
@@ -186355,6 +186854,276 @@
       ],
       "output": "unknown",
       "category": "mesh",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "unknown",
+      "consumes_input": true,
+      "executable": false,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "unknown",
+        "source_ref": "S00056"
+      },
+      "implementations": [
+        {
+          "backend": "registry",
+          "status": "available",
+          "source_ref": "S00056"
+        }
+      ],
+      "parameters": {
+        "a": {
+          "used": false,
+          "source": "unmeasured",
+          "effect": 0.0,
+          "kind": "unused"
+        },
+        "b": {
+          "used": false,
+          "source": "unmeasured",
+          "effect": 0.0,
+          "kind": "unused"
+        }
+      },
+      "executable_reason": "unknown_input_or_output_sort",
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00056"
+    },
+    {
+      "op": "nifti_read",
+      "inputs": [
+        "unknown"
+      ],
+      "output": "unknown",
+      "category": "nifti",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "unknown",
+      "consumes_input": true,
+      "executable": false,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "unknown",
+        "source_ref": "S00056"
+      },
+      "implementations": [
+        {
+          "backend": "registry",
+          "status": "available",
+          "source_ref": "S00056"
+        }
+      ],
+      "parameters": {
+        "a": {
+          "used": false,
+          "source": "unmeasured",
+          "effect": 0.0,
+          "kind": "unused"
+        },
+        "b": {
+          "used": false,
+          "source": "unmeasured",
+          "effect": 0.0,
+          "kind": "unused"
+        }
+      },
+      "executable_reason": "unknown_input_or_output_sort",
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00056"
+    },
+    {
+      "op": "nifti_write",
+      "inputs": [
+        "unknown"
+      ],
+      "output": "unknown",
+      "category": "nifti",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "unknown",
+      "consumes_input": true,
+      "executable": false,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "unknown",
+        "source_ref": "S00056"
+      },
+      "implementations": [
+        {
+          "backend": "registry",
+          "status": "available",
+          "source_ref": "S00056"
+        }
+      ],
+      "parameters": {
+        "a": {
+          "used": false,
+          "source": "unmeasured",
+          "effect": 0.0,
+          "kind": "unused"
+        },
+        "b": {
+          "used": false,
+          "source": "unmeasured",
+          "effect": 0.0,
+          "kind": "unused"
+        }
+      },
+      "executable_reason": "unknown_input_or_output_sort",
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00056"
+    },
+    {
+      "op": "nrrd_read",
+      "inputs": [
+        "unknown"
+      ],
+      "output": "unknown",
+      "category": "nrrd",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "unknown",
+      "consumes_input": true,
+      "executable": false,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "unknown",
+        "source_ref": "S00056"
+      },
+      "implementations": [
+        {
+          "backend": "registry",
+          "status": "available",
+          "source_ref": "S00056"
+        }
+      ],
+      "parameters": {
+        "a": {
+          "used": false,
+          "source": "unmeasured",
+          "effect": 0.0,
+          "kind": "unused"
+        },
+        "b": {
+          "used": false,
+          "source": "unmeasured",
+          "effect": 0.0,
+          "kind": "unused"
+        }
+      },
+      "executable_reason": "unknown_input_or_output_sort",
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00056"
+    },
+    {
+      "op": "nrrd_write",
+      "inputs": [
+        "unknown"
+      ],
+      "output": "unknown",
+      "category": "nrrd",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "unknown",
+      "consumes_input": true,
+      "executable": false,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "unknown",
+        "source_ref": "S00056"
+      },
+      "implementations": [
+        {
+          "backend": "registry",
+          "status": "available",
+          "source_ref": "S00056"
+        }
+      ],
+      "parameters": {
+        "a": {
+          "used": false,
+          "source": "unmeasured",
+          "effect": 0.0,
+          "kind": "unused"
+        },
+        "b": {
+          "used": false,
+          "source": "unmeasured",
+          "effect": 0.0,
+          "kind": "unused"
+        }
+      },
+      "executable_reason": "unknown_input_or_output_sort",
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00056"
+    },
+    {
+      "op": "ome_tiff_read",
+      "inputs": [
+        "unknown"
+      ],
+      "output": "unknown",
+      "category": "ome_tiff",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "unknown",
+      "consumes_input": true,
+      "executable": false,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "unknown",
+        "source_ref": "S00056"
+      },
+      "implementations": [
+        {
+          "backend": "registry",
+          "status": "available",
+          "source_ref": "S00056"
+        }
+      ],
+      "parameters": {
+        "a": {
+          "used": false,
+          "source": "unmeasured",
+          "effect": 0.0,
+          "kind": "unused"
+        },
+        "b": {
+          "used": false,
+          "source": "unmeasured",
+          "effect": 0.0,
+          "kind": "unused"
+        }
+      },
+      "executable_reason": "unknown_input_or_output_sort",
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00056"
+    },
+    {
+      "op": "ome_tiff_write",
+      "inputs": [
+        "unknown"
+      ],
+      "output": "unknown",
+      "category": "ome_tiff",
       "family": null,
       "family_candidate": null,
       "family_candidate_source": null,
@@ -210054,6 +210823,87 @@
       "source_ref": "S00056"
     },
     {
+      "op": "image_standardize",
+      "inputs": [
+        "image"
+      ],
+      "output": "image",
+      "category": "gray",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "unknown",
+        "source_ref": "S00056"
+      },
+      "implementations": [
+        {
+          "backend": "ops",
+          "status": "available",
+          "source_ref": "S00056"
+        }
+      ],
+      "parameters": {
+        "a": {
+          "used": true,
+          "effect": 1.1782654425703867,
+          "kind": "discrete",
+          "normalized": [
+            0.0,
+            1.0
+          ],
+          "mapping": "measured normalized knob; physical mapping not documented",
+          "discrete": [
+            0.33,
+            0.67
+          ],
+          "source_ref": "S00002"
+        },
+        "b": {
+          "used": true,
+          "effect": 0.3571327355004188,
+          "kind": "continuous",
+          "normalized": [
+            0.0,
+            1.0
+          ],
+          "mapping": "measured normalized knob; physical mapping not documented",
+          "source_ref": "S00002"
+        }
+      },
+      "executor": {
+        "kind": "registry",
+        "alias": "image_standardize",
+        "module": "backend_safe",
+        "callable": "_safe(_image_standardize)"
+      },
+      "runtime_target": {
+        "module": "backend_safe",
+        "callable": "_safe(_image_standardize)"
+      },
+      "verified_executable": true,
+      "verification": {
+        "source": "tools/gen_op_facets.py::_verified_registry_ops",
+        "status": "ok",
+        "checks": [
+          "executed",
+          "typed",
+          "shape",
+          "finite",
+          "temporary_cwd",
+          "filesystem_unchanged",
+          "random_state_unchanged",
+          "under_2_seconds"
+        ]
+      },
+      "bundle_semantics": "unknown",
+      "source_ref": "S00056"
+    },
+    {
       "op": "img_to_beatcube",
       "inputs": [
         "image"
@@ -218986,6 +219836,73 @@
       "source_ref": "S00056"
     },
     {
+      "op": "ptile_threshold",
+      "inputs": [
+        "image"
+      ],
+      "output": "feature",
+      "category": "segmentation",
+      "family": null,
+      "family_candidate": "thresholding",
+      "family_candidate_source": "heuristic_regex",
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "unknown",
+        "source_ref": "S00056"
+      },
+      "implementations": [
+        {
+          "backend": "ops",
+          "status": "available",
+          "source_ref": "S00056"
+        }
+      ],
+      "parameters": {
+        "a": {
+          "used": false,
+          "source": "unmeasured",
+          "effect": 0.0,
+          "kind": "unused"
+        },
+        "b": {
+          "used": false,
+          "source": "unmeasured",
+          "effect": 0.0,
+          "kind": "unused"
+        }
+      },
+      "executor": {
+        "kind": "registry",
+        "alias": "ptile_threshold",
+        "module": "backend_safe",
+        "callable": "_safe(_ptile_threshold)"
+      },
+      "runtime_target": {
+        "module": "backend_safe",
+        "callable": "_safe(_ptile_threshold)"
+      },
+      "verified_executable": true,
+      "verification": {
+        "source": "tools/gen_op_facets.py::_verified_registry_ops",
+        "status": "ok",
+        "checks": [
+          "executed",
+          "typed",
+          "shape",
+          "finite",
+          "temporary_cwd",
+          "filesystem_unchanged",
+          "random_state_unchanged",
+          "under_2_seconds"
+        ]
+      },
+      "bundle_semantics": "unknown",
+      "source_ref": "S00056"
+    },
+    {
       "op": "quantization_error",
       "inputs": [
         "image"
@@ -224013,6 +224930,88 @@
       "runtime_target": {
         "module": "backend_safe",
         "callable": "_safe(_sh_rank.<locals>.fn)"
+      },
+      "verified_executable": true,
+      "verification": {
+        "source": "tools/gen_op_facets.py::_verified_registry_ops",
+        "status": "ok",
+        "checks": [
+          "executed",
+          "typed",
+          "shape",
+          "finite",
+          "temporary_cwd",
+          "filesystem_unchanged",
+          "random_state_unchanged",
+          "under_2_seconds"
+        ]
+      },
+      "bundle_semantics": "unknown",
+      "source_ref": "S00056"
+    },
+    {
+      "op": "sigma_threshold",
+      "inputs": [
+        "image"
+      ],
+      "output": "region",
+      "category": "segmentation",
+      "family": null,
+      "family_candidate": "thresholding",
+      "family_candidate_source": "heuristic_regex",
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "unknown",
+        "source_ref": "S00056"
+      },
+      "implementations": [
+        {
+          "backend": "ops",
+          "status": "available",
+          "source_ref": "S00056"
+        }
+      ],
+      "parameters": {
+        "a": {
+          "used": true,
+          "effect": 3.0,
+          "kind": "discrete",
+          "normalized": [
+            0.0,
+            1.0
+          ],
+          "mapping": "measured normalized knob; physical mapping not documented",
+          "discrete": [
+            0.01,
+            0.03,
+            0.05
+          ],
+          "source_ref": "S00002"
+        },
+        "b": {
+          "used": true,
+          "effect": 1.0,
+          "kind": "continuous",
+          "normalized": [
+            0.0,
+            1.0
+          ],
+          "mapping": "measured normalized knob; physical mapping not documented",
+          "source_ref": "S00002"
+        }
+      },
+      "executor": {
+        "kind": "registry",
+        "alias": "sigma_threshold",
+        "module": "backend_safe",
+        "callable": "_safe(_sigma_threshold)"
+      },
+      "runtime_target": {
+        "module": "backend_safe",
+        "callable": "_safe(_sigma_threshold)"
       },
       "verified_executable": true,
       "verification": {
@@ -245240,7 +246239,7 @@
       "parameters": {
         "a": {
           "used": true,
-          "effect": 0.09497404098510742,
+          "effect": 0.09497402608394623,
           "kind": "continuous",
           "normalized": [
             0.0,
@@ -245806,7 +246805,7 @@
       "parameters": {
         "a": {
           "used": true,
-          "effect": 1.5911715147548176,
+          "effect": 1.5911715700557416,
           "kind": "discrete",
           "normalized": [
             0.0,

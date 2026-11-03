@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">archive_list — FILEIO <code style="color:#22d3bf">archive</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.archive_list(data_or_path)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import fileio; fileio.archive_list(data_or_path)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsfileio.get(&quot;archive_list&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>아카이브 멤버의 이름, 압축 전후 크기, 수정 시간 및 디렉터리 플래그를 나열합니다.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
@@ -13,7 +14,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:archive_roundtrip">archive_roundtrip</a> — <code style="color:#22d3bf">py -3.11 examples/archive_roundtrip.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">table</code> 를 입력으로 받는 것)</h3>
-<p><a style="color:#22d3bf" href="opfileio:table_write_csv">table_write_csv</a> · <a style="color:#22d3bf" href="opfileio:mesh_write_ply">mesh_write_ply</a> · <a style="color:#22d3bf" href="opfileio:mesh_read_ply">mesh_read_ply</a> · <a style="color:#22d3bf" href="opfileio:mesh_read_stl">mesh_read_stl</a> · <a style="color:#22d3bf" href="opfileio:e57_write">e57_write</a> · <a style="color:#22d3bf" href="opfileio:e57_read">e57_read</a> · <a style="color:#22d3bf" href="opfileio:archive_probe">archive_probe</a></p>
+<p><a style="color:#22d3bf" href="opfileio:table_write_csv">table_write_csv</a> · <a style="color:#22d3bf" href="opfileio:mesh_write_ply">mesh_write_ply</a> · <a style="color:#22d3bf" href="opfileio:mesh_read_ply">mesh_read_ply</a> · <a style="color:#22d3bf" href="opfileio:mesh_read_stl">mesh_read_stl</a> · <a style="color:#22d3bf" href="opfileio:e57_write">e57_write</a> · <a style="color:#22d3bf" href="opfileio:e57_read">e57_read</a> · <a style="color:#22d3bf" href="opfileio:archive_probe">archive_probe</a> · <a style="color:#22d3bf" href="opfileio:astro_fits_write">astro_fits_write</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">archive</code>)</h3>
 <p><a style="color:#22d3bf" href="opfileio:archive_probe">archive_probe</a> · <a style="color:#22d3bf" href="opfileio:archive_extract">archive_extract</a> · <a style="color:#22d3bf" href="opfileio:archive_create">archive_create</a></p>
 <hr style="border:0;border-top:1px solid #2c313f">

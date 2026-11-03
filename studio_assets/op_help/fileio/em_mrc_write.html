@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">em_mrc_write — FILEIO <code style="color:#22d3bf">mrc</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.em_mrc_write(volume, *, meta)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import fileio; fileio.em_mrc_write(volume, *, meta)</code>、台帳から引くなら <code style="color:#22d3bf">opsfileio.get(&quot;em_mrc_write&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>2-D/3-D 電顕データを MRC2014/CCP4 の <code style="color:#22d3bf">bytes</code> にする。</p>
 <p>mode 0/1/2/6(<code style="color:#22d3bf">int8/int16/float32/uint16</code>)を扱う。<code style="color:#22d3bf">meta</code> は <code style="color:#22d3bf">voxel_size</code> / <code style="color:#22d3bf">origin</code> の x,y,z と、それぞれの単位キー <code style="color:#22d3bf">voxel_unit=&#x27;angstrom&#x27;</code> / <code style="color:#22d3bf">origin_unit=&#x27;angstrom&#x27;</code> を必須とする。</p>

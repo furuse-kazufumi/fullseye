@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">archive_extract — FILEIO <code style="color:#22d3bf">archive</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">any × text</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.archive_extract(data_or_path, dest, *, members=None, max_total_bytes=2147483648, max_members=100000)</code>(要直接呼叫實作,<code style="color:#22d3bf">import fileio; fileio.archive_extract(data_or_path, dest, *, members=None, max_total_bytes=2147483648, max_members=100000)</code>;從台帳取用則 <code style="color:#22d3bf">opsfileio.get(&quot;archive_extract&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>將封存檔安全地解壓縮到空白目標目錄，並傳回相對路徑。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>

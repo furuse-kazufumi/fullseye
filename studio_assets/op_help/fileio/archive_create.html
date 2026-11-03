@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">archive_create — FILEIO <code style="color:#22d3bf">archive</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">any × text</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.archive_create(paths_or_items, fmt, *, root=None, level=None, deterministic=True)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import fileio; fileio.archive_create(paths_or_items, fmt, *, root=None, level=None, deterministic=True)</code>、台帳から引くなら <code style="color:#22d3bf">opsfileio.get(&quot;archive_create&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>pathまたは名前つき内容から決定的な書庫 <code style="color:#22d3bf">bytes</code> を作る。 / Create deterministic archive bytes.</p>
 <p><code style="color:#22d3bf">paths_or_items</code> は path(列)または <code style="color:#22d3bf">{relative_name: bytes_or_text}</code>。fmt は <code style="color:#22d3bf">zip/tar/tar.gz/tar.xz/7z</code>、rar作成は非対応として拒否する。同じ入力は名前順・固定時刻・固定属性で同じbytesになり、root外path・link・2 GiB超を拒否する。</p>

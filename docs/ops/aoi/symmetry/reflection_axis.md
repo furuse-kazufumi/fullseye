@@ -4,6 +4,7 @@ dim: aoi
 category: symmetry
 in: image2d
 out: table
+gpu: なし
 examples: []
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.reflection_axis(image, angle_step=2.0, offset_search=4.0)` (実装を直接呼ぶなら `import symmetry2d; symmetry2d.reflection_axis(image, angle_step=2.0, offset_search=4.0)`、台帳から引くなら `opsaoi.get("reflection_axis")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

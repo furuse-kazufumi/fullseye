@@ -2,7 +2,7 @@
 
 ### The Industrial Inspection Wing — A Passing Number and a Failing Number Can Coexist
 
-Numbers on an inspection line decide pass or fail, so there is a strong pull toward collapsing them into a single figure. The 41 exhibits in this room show what disappears the moment you do: a pooled ROC that hides one defect class's blind spot in woven fabric, veiling glare that leaves the MTF passing while the black level fails, a barcode decoder that looks better by read rate alone because it never says 'unreadable'.
+Numbers on an inspection line decide pass or fail, so there is a strong pull toward collapsing them into a single figure. The 42 exhibits in this room show what disappears the moment you do: a pooled ROC that hides one defect class's blind spot in woven fabric, veiling glare that leaves the MTF passing while the black level fails, a barcode decoder that looks better by read rate alone because it never says 'unreadable'.
 
 Every ground truth is planted: a closed-form periodic background, the laser-profile h(x), the analytic 1-D heat-conduction solution, closed-form bearing defect frequencies. That is what lets each exhibit measure 'where detection stops working' instead of 'detection worked', without fitting the threshold afterwards.
 
@@ -104,7 +104,7 @@ This run produced **3 figures** in total - [see them all](https://github.com/fur
 
 Ops used (notes): [`bearing_defect_frequencies`](https://furuse.work/ops/acoustics/bearing/bearing_defect_frequencies.html) · [`envelope_spectrum`](https://furuse.work/ops/acoustics/bearing/envelope_spectrum.html) · [`spectral_kurtosis`](https://furuse.work/ops/acoustics/bearing/spectral_kurtosis.html) · [`spectrum`](https://furuse.work/ops/oned/signal/spectrum.html) · [`synthesize_bearing_signal`](https://furuse.work/ops/acoustics/synthesis/synthesize_bearing_signal.html)
 
-## No.2026.285 —— Self-referenced 2-D symmetry inspection — isolating a defect without a golden image
+## No.2026.286 —— Self-referenced 2-D symmetry inspection — isolating a defect without a golden image
 
 A symmetric part agrees with its own reflected or rotated copy when defect-free. After texture and illumination cancellation, mean residual in the defect region was 0.193. Robust centre estimation and rotational-order accuracy were checked as well.
 
@@ -1366,7 +1366,7 @@ This run produced **1 figures** in total - [see them all](https://github.com/fur
 
 Ops used (notes): [`mtf_diffraction`](https://furuse.work/ops/optics/imaging/mtf_diffraction.html)
 
-## No.2026.285 —— Raw Grey-Level Thresholds Need Retuning across Lighting, while k-Sigma and P-Tile Transfer
+## No.2026.288 —— Raw Grey-Level Thresholds Need Retuning across Lighting, while k-Sigma and P-Tile Transfer
 
 A synthetic product with fixed defect shape and area is re-imaged under 1.35x gain, +0.18 offset, 2x noise, +0.18 material brightness, and a combined condition. The raw threshold tuned on the baseline falls below IoU 0.98 in all five transfers and uses 49 extra evaluations (50 including baseline). Robust centring and scaling by 1.4826 MAD followed by k-sigma uses two baseline evaluations and zero extra evaluations, with transferred IoU at least 0.9832. P-tile uses one baseline evaluation at the known defect area fraction and zero extra evaluations, with transferred IoU at least 0.9820. Under doubled noise, foreground and background overlap; normalisation cannot recover information that is no longer present. An evaluation means scoring one deterministic candidate against truth until IoU 0.98, not runtime.
 
@@ -6396,7 +6396,7 @@ This run produced **5 figures** in total - [see them all](https://github.com/fur
 
 Ops used (notes): [`axes_frame`](https://furuse.work/ops/annotate/plot/axes_frame.html) · [`axes_transform`](https://furuse.work/ops/annotate/plot/axes_transform.html) · [`hom_vector_to_proj_hom_mat2d`](https://furuse.work/ops/calib/fit/hom_vector_to_proj_hom_mat2d.html) · [`plot_series`](https://furuse.work/ops/annotate/plot/plot_series.html) · [`pose_error`](https://furuse.work/ops/3d/metrics/pose_error.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`ticks`](https://furuse.work/ops/annotate/plot/ticks.html) · [`warp_by_plane`](https://furuse.work/ops/3d/plane_sweep_stereo/warp_by_plane.html)
 
-## No.2026.285 —— Six-DoF PPF Matching of Industrial Parts in Real RGB-D Data
+## No.2026.287 —— Six-DoF PPF Matching of Industrial Parts in Real RGB-D Data
 
 One deterministically selected first image from each of all 20 BOP19 test_primesense scenes in BOP T-LESS (CC BY 4.0) gives 132 instances at visibility 0.5 or above. Sweeping density, reference fraction, angular bins and ICP iterations across eleven settings improves the old 180/160-point, 6 mm result of 0.162/0.185; the best AR_MSSD within ten seconds per instance uses 1000/1000 points, 2 mm voxels, reference fraction 0.25, 24 bins and 100 ICP iterations. Its primary path takes 8.291 seconds per instance and reaches AR_MSSD 0.197 and AR_MSPD 0.220, still below the official full-test Drost scores of 0.478/0.480 and Vidal scores of 0.575/0.574. The 2000-point run did not finish in two hours and exceeded 54.6 seconds per instance. Matching without clustering gives 0.111/0.113, ideal depth gives 0.985/0.985, removing ICP gives 0.346/0.338, and leaving normals unoriented gives 0.132/0.161. Of 132 instances, 109 exceed MSSD 0.2d; overlapping causes are 34 merged-cluster cases, eight below 0.8 visibility, 21 thin parts, 36 above one-percent missing depth, and 103 symmetric parts.
 

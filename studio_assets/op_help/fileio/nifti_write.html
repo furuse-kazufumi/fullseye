@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">nifti_write — FILEIO <code style="color:#22d3bf">nifti</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.nifti_write(volume, *, meta, compressed)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import fileio; fileio.nifti_write(volume, *, meta, compressed)</code>、台帳から引くなら <code style="color:#22d3bf">opsfileio.get(&quot;nifti_write&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>3-D/4-D 配列と affine/pixdim を単一ファイル NIfTI-1 の <code style="color:#22d3bf">bytes</code> にする。</p>
 <p><code style="color:#22d3bf">meta</code> は <code style="color:#22d3bf">affine</code> と <code style="color:#22d3bf">spatial_unit</code>(<code style="color:#22d3bf">m/mm/um</code>)を必須とし、4-D では <code style="color:#22d3bf">time_step</code> と <code style="color:#22d3bf">time_unit</code> も必須。qform と sform の両方へ同じ affine を書く。<code style="color:#22d3bf">compressed</code> で <code style="color:#22d3bf">.nii</code> / <code style="color:#22d3bf">.nii.gz</code> 相当を選ぶ。呼び出し例:</p>

@@ -4,6 +4,7 @@ dim: fileio
 category: archive
 in: any × text
 out: any
+gpu: なし
 examples: [archive_roundtrip]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `any × text` → `any`
 - **呼び出し**: `import fullseye as fs; fs.ledger.archive_extract(data_or_path, dest, *, members=None, max_total_bytes=2147483648, max_members=100000)` (実装を直接呼ぶなら `import fileio; fileio.archive_extract(data_or_path, dest, *, members=None, max_total_bytes=2147483648, max_members=100000)`、台帳から引くなら `opsfileio.get("archive_extract")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

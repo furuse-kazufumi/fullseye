@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">astro_fits_write — FILEIO <code style="color:#22d3bf">fits</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.astro_fits_write(image, *, header)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import fileio; fileio.astro_fits_write(image, *, header)</code>、台帳から引くなら <code style="color:#22d3bf">opsfileio.get(&quot;astro_fits_write&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>2-D/3-D 天文画像と基本 WCS を primary-HDU FITS の <code style="color:#22d3bf">bytes</code> にする。</p>
 <p><code style="color:#22d3bf">header</code> は FITS の基本 WCS キー(<code style="color:#22d3bf">CTYPE*</code>, <code style="color:#22d3bf">CRPIX*</code>, <code style="color:#22d3bf">CRVAL*</code>, <code style="color:#22d3bf">CDELT*</code>, <code style="color:#22d3bf">PC*_*</code>, <code style="color:#22d3bf">CD*_*</code>, <code style="color:#22d3bf">CUNIT*</code> など)だけを持つ辞書。構造キーは配列から作り、uint16/uint32 は標準の BZERO 規約で保存する。呼び出し例:</p>

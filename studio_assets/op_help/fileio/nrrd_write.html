@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">nrrd_write — FILEIO <code style="color:#22d3bf">nrrd</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.nrrd_write(array, *, meta, encoding)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import fileio; fileio.nrrd_write(array, *, meta, encoding)</code>、台帳から引くなら <code style="color:#22d3bf">opsfileio.get(&quot;nrrd_write&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>多次元配列と <code style="color:#22d3bf">space directions</code> を raw/gzip NRRD の <code style="color:#22d3bf">bytes</code> にする。</p>
 <p><code style="color:#22d3bf">meta</code> は各配列軸の方向ベクトル(非空間軸は <code style="color:#22d3bf">None</code>)、<code style="color:#22d3bf">space_origin</code>、<code style="color:#22d3bf">space_unit</code>(<code style="color:#22d3bf">mm</code> / <code style="color:#22d3bf">um</code> / <code style="color:#22d3bf">angstrom</code>)を持つ。<code style="color:#22d3bf">encoding</code> は <code style="color:#22d3bf">raw</code> または <code style="color:#22d3bf">gzip</code> を明示する。呼び出し例: <code style="color:#22d3bf">nrrd_write(vol, meta=geometry, encoding=&quot;gzip&quot;)</code>。</p>

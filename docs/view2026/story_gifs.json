@@ -8,7 +8,7 @@
   "color_mad_limit": 6.0,
   "first_duration_ms": 2500,
   "other_duration_ms": 1600,
-  "target_count": 189,
+  "target_count": 193,
   "crop_aspect_range": [
     0.42,
     2.4
@@ -8677,6 +8677,148 @@
       "alt": {
         "ja": "完全対称な標本を測った残差。点対点は点間隔がそのまま床になる。",
         "en": "A reference plane for left-right asymmetry may be pulled toward a one-sided deformation. A known bulge was added to a symmetric skull; the best-fit plane moved by 2.92 mm. The optimized plane shifts toward the bulge and removes part of the asymmetry that should be reported."
+      }
+    },
+    "poc_symmetry_self_reference_inspection": {
+      "representative": "01_self_reference_defect.png",
+      "status": "gif",
+      "selected": [
+        "01_self_reference_defect.png",
+        "02_center_tradeoff.png",
+        "03_rotational_order_noise.png",
+        "04_symmetry_score_monotone.png"
+      ],
+      "excluded_frames": [],
+      "variants": {
+        "ja": {
+          "path": "articles/assets/poc/poc_symmetry_self_reference_inspection/story.ja.gif",
+          "frames": [
+            {
+              "file": "01_self_reference_defect.png",
+              "content_box": [
+                0,
+                238,
+                720,
+                213
+              ]
+            },
+            {
+              "file": "02_center_tradeoff.png",
+              "content_box": [
+                0,
+                195,
+                720,
+                300
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 2.398438
+            },
+            {
+              "file": "03_rotational_order_noise.png",
+              "content_box": [
+                0,
+                103,
+                720,
+                484
+              ]
+            },
+            {
+              "file": "04_symmetry_score_monotone.png",
+              "content_box": [
+                0,
+                178,
+                720,
+                334
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 2.152778
+            }
+          ],
+          "frame_count": 4,
+          "durations_ms": [
+            2500,
+            1600,
+            1600,
+            1600
+          ],
+          "bytes": 160966,
+          "color_mad": [
+            0.214,
+            0.0349,
+            0.2982,
+            0.1078
+          ],
+          "max_color_mad": 0.2982,
+          "source_sha256": "e85b4a8cdaee6cf0e103f509a051690dd2ac7e730aa30416b3b6af5eb5d4722c"
+        },
+        "en": {
+          "path": "articles/assets/poc/poc_symmetry_self_reference_inspection/story.en.gif",
+          "frames": [
+            {
+              "file": "01_self_reference_defect.png",
+              "content_box": [
+                0,
+                238,
+                720,
+                213
+              ]
+            },
+            {
+              "file": "02_center_tradeoff.png",
+              "content_box": [
+                0,
+                195,
+                720,
+                300
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 2.398438
+            },
+            {
+              "file": "03_rotational_order_noise.png",
+              "content_box": [
+                0,
+                103,
+                720,
+                484
+              ]
+            },
+            {
+              "file": "04_symmetry_score_monotone.png",
+              "content_box": [
+                0,
+                178,
+                720,
+                334
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 2.152778
+            }
+          ],
+          "frame_count": 4,
+          "durations_ms": [
+            2500,
+            1600,
+            1600,
+            1600
+          ],
+          "bytes": 160966,
+          "color_mad": [
+            0.214,
+            0.0349,
+            0.2982,
+            0.1078
+          ],
+          "max_color_mad": 0.2982,
+          "source_sha256": "c0a02c49b742ec298738f467bb4d910836ea02cfae15e0265dc626c614d64e1b"
+        }
+      },
+      "reason": null,
+      "cover": "01_self_reference_defect.png",
+      "still": "articles/assets/poc/poc_symmetry_self_reference_inspection/01_self_reference_defect.png",
+      "alt": {
+        "ja": "欠陥領域の平均残差 0.193、模様・照明領域 1.5e-15。比 1.2e+14 で欠陥だけが残る。",
+        "en": "A symmetric part agrees with its own reflected or rotated copy when defect-free. After texture and illumination cancellation, mean residual in the defect region was 0.193. Robust centre estimation and rotational-order accuracy were checked as well."
       }
     },
     "poc_die_tilt_tsv_overlay": {
@@ -33037,6 +33179,321 @@
       "reason": "two_or_fewer_raster_figures",
       "usable_figures": 2
     },
+    "poc_real_tless_6dof": {
+      "representative": "01_pose_overlay.png",
+      "status": "gif",
+      "selected": [
+        "01_pose_overlay.png",
+        "02_rgb_depth.png",
+        "03_mssd_by_object.png",
+        "04_synthetic_vs_real.png",
+        "05_failure.png",
+        "06_density_vs_ar_time.png"
+      ],
+      "excluded_frames": [],
+      "variants": {
+        "ja": {
+          "path": "articles/assets/poc/poc_real_tless_6dof/story.ja.gif",
+          "frames": [
+            {
+              "file": "01_pose_overlay.png",
+              "content_box": [
+                0,
+                37,
+                720,
+                616
+              ]
+            },
+            {
+              "file": "02_rgb_depth.png",
+              "content_box": [
+                0,
+                210,
+                720,
+                269
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 2.676145
+            },
+            {
+              "file": "03_mssd_by_object.png",
+              "content_box": [
+                0,
+                180,
+                720,
+                330
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 2.181818
+            },
+            {
+              "file": "04_synthetic_vs_real.png",
+              "content_box": [
+                0,
+                135,
+                720,
+                420
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 1.714286
+            },
+            {
+              "file": "05_failure.png",
+              "content_box": [
+                0,
+                37,
+                720,
+                616
+              ]
+            },
+            {
+              "file": "06_density_vs_ar_time.png",
+              "content_box": [
+                0,
+                142,
+                720,
+                405
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 1.777778
+            }
+          ],
+          "frame_count": 6,
+          "durations_ms": [
+            2500,
+            1600,
+            1600,
+            1600,
+            1600,
+            1600
+          ],
+          "bytes": 905652,
+          "color_mad": [
+            1.5456,
+            1.1833,
+            0.0628,
+            0.0015,
+            2.7264,
+            0.0657
+          ],
+          "max_color_mad": 2.7264,
+          "source_sha256": "6be7aef4f9fefd303007f12c36aa758cd97095a718d06dafdf83e95607bc948f"
+        },
+        "en": {
+          "path": "articles/assets/poc/poc_real_tless_6dof/story.en.gif",
+          "frames": [
+            {
+              "file": "01_pose_overlay.png",
+              "content_box": [
+                0,
+                37,
+                720,
+                616
+              ]
+            },
+            {
+              "file": "02_rgb_depth.png",
+              "content_box": [
+                0,
+                210,
+                720,
+                269
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 2.676145
+            },
+            {
+              "file": "03_mssd_by_object.png",
+              "content_box": [
+                0,
+                180,
+                720,
+                330
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 2.181818
+            },
+            {
+              "file": "04_synthetic_vs_real.png",
+              "content_box": [
+                0,
+                135,
+                720,
+                420
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 1.714286
+            },
+            {
+              "file": "05_failure.png",
+              "content_box": [
+                0,
+                37,
+                720,
+                616
+              ]
+            },
+            {
+              "file": "06_density_vs_ar_time.png",
+              "content_box": [
+                0,
+                142,
+                720,
+                405
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 1.777778
+            }
+          ],
+          "frame_count": 6,
+          "durations_ms": [
+            2500,
+            1600,
+            1600,
+            1600,
+            1600,
+            1600
+          ],
+          "bytes": 905652,
+          "color_mad": [
+            1.5456,
+            1.1833,
+            0.0628,
+            0.0015,
+            2.7264,
+            0.0657
+          ],
+          "max_color_mad": 2.7264,
+          "source_sha256": "0fed5ef32cfd1f8c5bb09e891220fbc355761f6a0c0b14e63d91a567cc32df2d"
+        }
+      },
+      "reason": null,
+      "cover": "01_pose_overlay.png",
+      "still": "articles/assets/poc/poc_real_tless_6dof/01_pose_overlay.png",
+      "alt": {
+        "ja": "scene 1/image 1。PPF+ICP の推定モデル(橙)と BOP 真値(青)。",
+        "en": "Six-DoF PPF Matching of Industrial Parts in Real RGB-D Data"
+      }
+    },
+    "poc_threshold_transfer_after_normalization": {
+      "representative": "01_threshold_transfer.png",
+      "status": "gif",
+      "selected": [
+        "01_threshold_transfer.png",
+        "02_transfer_iou.png",
+        "03_tuning_evaluations.png"
+      ],
+      "excluded_frames": [],
+      "variants": {
+        "ja": {
+          "path": "articles/assets/poc/poc_threshold_transfer_after_normalization/story.ja.gif",
+          "frames": [
+            {
+              "file": "01_threshold_transfer.png",
+              "content_box": [
+                0,
+                176,
+                720,
+                338
+              ]
+            },
+            {
+              "file": "02_transfer_iou.png",
+              "content_box": [
+                0,
+                165,
+                720,
+                360
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 2.0025
+            },
+            {
+              "file": "03_tuning_evaluations.png",
+              "content_box": [
+                0,
+                145,
+                720,
+                400
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 1.8
+            }
+          ],
+          "frame_count": 3,
+          "durations_ms": [
+            2500,
+            1600,
+            1600
+          ],
+          "bytes": 169723,
+          "color_mad": [
+            0.2416,
+            0.0668,
+            0.0232
+          ],
+          "max_color_mad": 0.2416,
+          "source_sha256": "62811fcebc37d43384feaf74a991bf456f34974b23e31e23d199236d783c9dde"
+        },
+        "en": {
+          "path": "articles/assets/poc/poc_threshold_transfer_after_normalization/story.en.gif",
+          "frames": [
+            {
+              "file": "01_threshold_transfer.png",
+              "content_box": [
+                0,
+                176,
+                720,
+                338
+              ]
+            },
+            {
+              "file": "02_transfer_iou.png",
+              "content_box": [
+                0,
+                165,
+                720,
+                360
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 2.0025
+            },
+            {
+              "file": "03_tuning_evaluations.png",
+              "content_box": [
+                0,
+                145,
+                720,
+                400
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 1.8
+            }
+          ],
+          "frame_count": 3,
+          "durations_ms": [
+            2500,
+            1600,
+            1600
+          ],
+          "bytes": 169723,
+          "color_mad": [
+            0.2416,
+            0.0668,
+            0.0232
+          ],
+          "max_color_mad": 0.2416,
+          "source_sha256": "7d72a7d99b51cbd37fd8ff0984d2d992b95e0e54d4bfbb3b1859f689a64f149b"
+        }
+      },
+      "reason": null,
+      "cover": "01_threshold_transfer.png",
+      "still": "articles/assets/poc/poc_threshold_transfer_after_normalization/01_threshold_transfer.png",
+      "alt": {
+        "ja": "基準像で決めた同じしきい値を移送した。利得・オフセット・材質変化では生のしきい値の二値像がほぼ白く崩れる一方、頑健標準化後の kσ は真値の輪郭を保つ。",
+        "en": "Raw Grey-Level Thresholds Need Retuning across Lighting, while k-Sigma and P-Tile Transfer"
+      }
+    },
     "poc_star_tracker": {
       "representative": "star_tracker_anim3d.html",
       "status": "gif",
@@ -33150,6 +33607,144 @@
       "alt": {
         "ja": "PSF・光子雑音・読み出し雑音を含む合成像。真の星16個に、星表に無いホットピクセル2個を加えた。",
         "en": "How One Star Image Reveals Satellite Attitude"
+      }
+    },
+    "poc_real_sem_metal_layer": {
+      "representative": "01_scene.png",
+      "status": "gif",
+      "selected": [
+        "01_scene.png",
+        "02_segmentation_difference.png",
+        "03_line_width_distribution.png",
+        "04_psf_correction.png"
+      ],
+      "excluded_frames": [],
+      "variants": {
+        "ja": {
+          "path": "articles/assets/poc/poc_real_sem_metal_layer/story.ja.gif",
+          "frames": [
+            {
+              "file": "01_scene.png",
+              "content_box": [
+                15,
+                0,
+                690,
+                690
+              ]
+            },
+            {
+              "file": "02_segmentation_difference.png",
+              "content_box": [
+                15,
+                0,
+                690,
+                690
+              ]
+            },
+            {
+              "file": "03_line_width_distribution.png",
+              "content_box": [
+                0,
+                113,
+                720,
+                463
+              ]
+            },
+            {
+              "file": "04_psf_correction.png",
+              "content_box": [
+                0,
+                142,
+                720,
+                406
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 1.772727
+            }
+          ],
+          "frame_count": 4,
+          "durations_ms": [
+            2500,
+            1600,
+            1600,
+            1600
+          ],
+          "bytes": 794729,
+          "color_mad": [
+            0.6334,
+            1.0759,
+            0.089,
+            0.0729
+          ],
+          "max_color_mad": 1.0759,
+          "source_sha256": "a44f9a37db45f72eda0bc46c42e1d43c2d8c540587085bec3a552cda17622dbd"
+        },
+        "en": {
+          "path": "articles/assets/poc/poc_real_sem_metal_layer/story.en.gif",
+          "frames": [
+            {
+              "file": "01_scene.png",
+              "content_box": [
+                15,
+                0,
+                690,
+                690
+              ]
+            },
+            {
+              "file": "02_segmentation_difference.png",
+              "content_box": [
+                15,
+                0,
+                690,
+                690
+              ]
+            },
+            {
+              "file": "03_line_width_distribution.png",
+              "content_box": [
+                0,
+                113,
+                720,
+                463
+              ]
+            },
+            {
+              "file": "04_psf_correction.png",
+              "content_box": [
+                0,
+                142,
+                720,
+                406
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 1.772727
+            }
+          ],
+          "frame_count": 4,
+          "durations_ms": [
+            2500,
+            1600,
+            1600,
+            1600
+          ],
+          "bytes": 794729,
+          "color_mad": [
+            0.6334,
+            1.0759,
+            0.089,
+            0.0729
+          ],
+          "max_color_mad": 1.0759,
+          "source_sha256": "8b75961c1b6bfb69321c8f896ca263b9c126bddc8b348165074e627d3d0c11ab"
+        }
+      },
+      "reason": null,
+      "cover": "01_scene.png",
+      "still": "articles/assets/poc/poc_real_sem_metal_layer/01_scene.png",
+      "alt": {
+        "ja": "実 SEM 像。緑=track ラベル、赤=重複除去後の via ラベル。",
+        "en": "Measuring Tracks and Vias in a Real IC SEM Image — Does the Virtual-SEM Edge Correction Transfer?"
       }
     }
   }
