@@ -161,7 +161,9 @@ def test_every_halcon_and_required_op_has_a_verdict_and_the_ledger_agrees():
     assert g.consistency(data) == []
     # HALCON は 48 件が全部載る(独立に行列 JSON から数え直す)
     par = json.loads((ROOT / "docs" / "perf" / "halcon_opencl_parity.json").read_text(encoding="utf-8"))
-    assert par["n1_fullseye"] == 71
+    # 71 は第 3 便の時点。第 6 便(opsmv / halcon_ledger_map)が「未対応」とされていた 13 件を台帳の halcon 欄で
+    # 対応づけて 84 になった(2026-11-04 の統合で測り直し)。第 3 便の 48 件の採否はその前の 71 件から選んだもの。
+    assert par["n1_fullseye"] == 84
     assert len({r["halcon"] for r in data["halcon"]}) == 48
     for r in data["halcon"] + data["required"]:
         assert r["verdict"] in ("採用", "不採用", "測定不能") and r["reason"]
