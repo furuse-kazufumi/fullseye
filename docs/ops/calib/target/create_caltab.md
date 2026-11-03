@@ -37,7 +37,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 
-[image_points_to_world_plane](../plane/image_points_to_world_plane.md) · [contour_to_world_plane_xld](../plane/contour_to_world_plane_xld.md) · [sim_caltab](sim_caltab.md) · [disp_caltab](disp_caltab.md)
+[image_points_to_world_plane](../plane/image_points_to_world_plane.md) · [contour_to_world_plane_xld](../plane/contour_to_world_plane_xld.md) · [sim_caltab](sim_caltab.md) · [disp_caltab](disp_caltab.md) · [calibration_error_map](../calib_truth/calibration_error_map.md) · [calibration_uncertainty_map](../calib_truth/calibration_uncertainty_map.md) · [calibration_next_pose](../calib_truth/calibration_next_pose.md)
 
 ## 同カテゴリ(`target`)
 

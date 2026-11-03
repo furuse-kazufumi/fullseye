@@ -32625,6 +32625,78 @@
    "ko": "오차 요인을 하나씩 넣어 가상 인수 시험을 돌리고 어느 요인이 합격 여부를 결정하는지 반환한다(``table``).",
    "de": "Führt die virtuelle Abnahmeprüfung mit jeweils einer Fehlerquelle durch und gibt zurück, welche Quelle das Urteil bestimmt (``table``).",
    "hi": "एक समय में एक error source डालकर virtual acceptance test चलाता है और लौटाता है कि कौन सा source verdict तय करता है (``table``)।"
+  },
+  "calib/checkerboard_points": {
+   "fp": "63718c3d80cd",
+   "en": "Returns the board coordinates (x, y) of the inner corners of a checkerboard in row-major order (``keypoints``).",
+   "zh": "按行优先顺序返回棋盘格内角点的板坐标 (x, y)(``keypoints``)。",
+   "tw": "依列優先順序回傳棋盤格內角點的板座標 (x, y)(``keypoints``)。",
+   "ko": "체커보드 내부 코너의 보드 좌표 (x, y)를 행 우선 순서로 반환한다(``keypoints``).",
+   "de": "Gibt die Brettkoordinaten (x, y) der inneren Ecken eines Schachbretts zeilenweise zurück (``keypoints``).",
+   "hi": "checkerboard के भीतरी corners के board coordinates (x, y) row-major क्रम में लौटाता है (``keypoints``)।"
+  },
+  "calib/sim_checkerboard": {
+   "fp": "3cdc6a941544",
+   "en": "Synthesizes a checkerboard image with known K, distortion and pose and returns it with the true pixel of every corner (``table``).",
+   "zh": "用已知的 K、畸变与位姿合成棋盘格图像,并连同各角点的真实像素一起返回(``table``)。",
+   "tw": "用已知的 K、畸變與姿態合成棋盤格影像,並連同各角點的真實像素一起回傳(``table``)。",
+   "ko": "알려진 K·왜곡·자세로 체커보드 영상을 합성하여 각 코너의 참 픽셀과 함께 반환한다(``table``).",
+   "de": "Synthetisiert ein Schachbrettbild mit bekanntem K, Verzeichnung und Pose und gibt es mit dem wahren Pixel jeder Ecke zurück (``table``).",
+   "hi": "ज्ञात K, distortion और pose से checkerboard image बनाकर हर corner के true pixel के साथ लौटाता है (``table``)।"
+  },
+  "calib/find_checkerboard_corners": {
+   "fp": "56857694a6f9",
+   "en": "Detects the inner corners of a checkerboard image to sub-pixel accuracy and returns them in the board's row-major order (``keypoints``).",
+   "zh": "以亚像素精度检测棋盘格图像的内角点,并按板的行优先顺序返回(``keypoints``)。",
+   "tw": "以次像素精度偵測棋盤格影像的內角點,並依板的列優先順序回傳(``keypoints``)。",
+   "ko": "체커보드 영상에서 내부 코너를 서브픽셀로 검출하여 보드의 행 우선 순서로 반환한다(``keypoints``).",
+   "de": "Erkennt die inneren Ecken eines Schachbrettbilds subpixelgenau und gibt sie in der zeilenweisen Reihenfolge des Bretts zurück (``keypoints``).",
+   "hi": "checkerboard image के भीतरी corners को sub-pixel सटीकता से detect करके board के row-major क्रम में लौटाता है (``keypoints``)।"
+  },
+  "calib/camera_calibration_lm": {
+   "fp": "7cc690077c36",
+   "en": "Jointly refines intrinsics, distortion and all poses by LM from Zhang's initial estimate and returns them with their covariance (``table``).",
+   "zh": "从 Zhang 法的初值出发,用 LM 同时优化内参、畸变与全部位姿,并连同协方差一起返回(``table``)。",
+   "tw": "從 Zhang 法的初值出發,用 LM 同時最佳化內參、畸變與全部姿態,並連同共變異數一起回傳(``table``)。",
+   "ko": "Zhang 법의 초기값에서 내부 파라미터·왜곡·모든 자세를 LM으로 동시에 최적화하여 공분산과 함께 반환한다(``table``).",
+   "de": "Optimiert ausgehend von Zhangs Startwert Intrinsik, Verzeichnung und alle Posen gemeinsam per LM und gibt sie mit ihrer Kovarianz zurück (``table``).",
+   "hi": "Zhang विधि के आरंभिक अनुमान से intrinsics, distortion और सभी poses को LM से एक साथ optimize करके covariance सहित लौटाता है (``table``)।"
+  },
+  "calib/stereo_calibration_lm": {
+   "fp": "6bdfbce7888b",
+   "en": "Jointly refines both cameras' intrinsics and distortion, the board poses and the right camera's relative pose (R, T) by LM (``table``).",
+   "zh": "用 LM 同时优化左右相机的内参与畸变、板的位姿以及右相机的相对位姿 (R, T)(``table``)。",
+   "tw": "用 LM 同時最佳化左右相機的內參與畸變、板的姿態以及右相機的相對姿態 (R, T)(``table``)。",
+   "ko": "좌우 카메라의 내부 파라미터·왜곡, 보드 자세, 오른쪽 카메라의 상대 자세 (R, T)를 LM으로 동시에 최적화한다(``table``).",
+   "de": "Optimiert Intrinsik und Verzeichnung beider Kameras, die Brettposen und die relative Pose (R, T) der rechten Kamera gemeinsam per LM (``table``).",
+   "hi": "दोनों cameras के intrinsics और distortion, board poses तथा right camera की relative pose (R, T) को LM से एक साथ optimize करता है (``table``)।"
+  },
+  "calib/calibration_error_map": {
+   "fp": "e335c88477fd",
+   "en": "Compares the true K and distortion with the estimate and returns a map of where in the image the reprojection error (px) and 3-D error (mm) are large (``table``).",
+   "zh": "比较真实的 K、畸变与估计值,返回图像中重投影误差(px)与 3D 误差(mm)较大位置的分布图(``table``)。",
+   "tw": "比較真實的 K、畸變與估計值,回傳影像中重投影誤差(px)與 3D 誤差(mm)較大位置的分布圖(``table``)。",
+   "ko": "참 K·왜곡과 추정값을 비교하여 영상의 어디에서 재투영 오차(px)와 3D 오차(mm)가 큰지의 지도를 반환한다(``table``).",
+   "de": "Vergleicht wahres K und Verzeichnung mit der Schätzung und gibt eine Karte zurück, wo im Bild der Rückprojektionsfehler (px) und der 3-D-Fehler (mm) groß sind (``table``).",
+   "hi": "true K और distortion की estimate से तुलना करके map लौटाता है कि image में कहाँ reprojection error (px) और 3-D error (mm) बड़ा है (``table``)।"
+  },
+  "calib/calibration_uncertainty_map": {
+   "fp": "aea212c51dee",
+   "en": "Maps the covariance of the calibration estimate onto the image and returns the predicted uncertainty of every pixel (px, or mm at depth Z) (``table``).",
+   "zh": "将标定估计的协方差映射到图像上,返回每个像素的预测不确定度(px,给定深度 Z 时为 mm)的分布图(``table``)。",
+   "tw": "將校正估計的共變異數映射到影像上,回傳每個像素的預測不確定度(px,給定深度 Z 時為 mm)的分布圖(``table``)。",
+   "ko": "캘리브레이션 추정의 공분산을 영상 위로 옮겨 각 픽셀의 예측 불확도(px, 깊이 Z이면 mm) 지도를 반환한다(``table``).",
+   "de": "Bildet die Kovarianz der Kalibrierschätzung auf das Bild ab und gibt die vorhergesagte Unsicherheit jedes Pixels zurück (px, bei Tiefe Z in mm) (``table``).",
+   "hi": "calibration estimate की covariance को image पर map करके हर pixel की predicted uncertainty (px, depth Z पर mm) का map लौटाता है (``table``)।"
+  },
+  "calib/calibration_next_pose": {
+   "fp": "17f064fb25af",
+   "en": "Recommends, among candidate board poses, the one view that would reduce the calibration uncertainty (mean over the image) the most (``table``).",
+   "zh": "在候选的板位姿中推荐加入后最能降低标定不确定度(全图平均)的一张(``table``)。",
+   "tw": "在候選的板姿態中推薦加入後最能降低校正不確定度(全圖平均)的一張(``table``)。",
+   "ko": "후보 보드 자세 중 추가하면 캘리브레이션 불확도(영상 전체 평균)를 가장 줄이는 1장을 추천한다(``table``).",
+   "de": "Empfiehlt unter den Kandidatenposen des Bretts die eine Aufnahme, die die Kalibrierunsicherheit (Mittel über das Bild) am stärksten senkt (``table``).",
+   "hi": "candidate board poses में से वह एक view सुझाता है जो जोड़ने पर calibration uncertainty (पूरी image का औसत) को सबसे अधिक घटाए (``table``)।"
   }
  }
 }

@@ -797,9 +797,9 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Operators by family(族 → カテゴリ、全 op)
 
-_計 3637 ops / 57 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
+_計 3645 ops / 57 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
 
-族の一覧: **2d** 959 · **3d** 376 · **fit** 3 · **math** 114 · **optics** 483 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 41 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 717 · **tomography** 32 · **volcolor** 11 · **reprconv** 42 · **fileio** 14 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 3 · **calib** 21 · **acceptance** 8 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 16 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
+族の一覧: **2d** 959 · **3d** 376 · **fit** 3 · **math** 114 · **optics** 483 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 41 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 717 · **tomography** 32 · **volcolor** 11 · **reprconv** 42 · **fileio** 14 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 3 · **calib** 29 · **acceptance** 8 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 16 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
 
 ### 2d(959 ops / 49 categories)
 
@@ -4783,12 +4783,24 @@ _計 3637 ops / 57 families。並びとノートの在り処は `docs/ops/INDEX.
 #### aoi / photometric(1)
 - `flat_field_correct` `image2d × image2d → image2d` GPU: なし — 照明ムラとセンサ感度のばらつきを、暗電流つきの割り算で戻す。→ 補正済み画像。 · 例: `aoi_frontend_tour`
 
-### calib(21 ops / 5 categories)
+### calib(29 ops / 7 categories)
 
-#### calib / calibrate(3)
-- `camera_calibration` `keypoints → table` GPU: なし — Zhang 法で平面ターゲット多視点から内部行列 K を推定(camera_calibration)。 · 例: `camera_intrinsics_calibration`, `lens_calibration_loop_demo`, `poc_camera_calibration`
+#### calib / calib_truth(3)
+- `calibration_error_map` `table → table` GPU: なし — 真の K・歪みと推定値を比べ、画像のどこで再投影の誤差(px)と 3D の誤差(mm)が大きいかの地図を返す(``table``)。 · 例: `poc_calibration_truth_map`
+- `calibration_next_pose` `table → table` GPU: なし — 候補の板の姿勢のうち、足すと校正の不確かさ(画像全体の平均)を最も減らす 1 枚を推薦する(``table``)。 · 例: `poc_calibration_truth_map`
+- `calibration_uncertainty_map` `table → table` GPU: なし — 校正の推定の共分散を画像の上へ写し、各画素の予測の不確かさ(px、奥行き Z なら mm)の地図を返す(``table``)。 · 例: `poc_calibration_truth_map`
+
+#### calib / calibrate(5)
+- `camera_calibration` `keypoints → table` GPU: なし — Zhang 法で平面ターゲット多視点から内部行列 K を推定(camera_calibration)。 · 例: `camera_intrinsics_calibration`, `lens_calibration_loop_demo`, `poc_calibration_truth_map`, `poc_camera_calibration`
+- `camera_calibration_lm` `keypoints → table` GPU: なし — Zhang 法の初期値から内部パラメータ・歪み・全姿勢を LM で同時に最適化し、共分散とともに返す(``table``)。 · 例: `poc_calibration_truth_map`
 - `find_marks_and_pose` `image2d → table` GPU: なし — マーク検出 + 校正板の姿勢推定(平面ホモグラフィ → pose)(find_marks_and_pose)。
 - `hand_eye_calibration` `入力なし → matrix` GPU: なし — 一連の運動対から AX=XB を解き X(4x4)を推定(hand_eye_calibration)。
+- `stereo_calibration_lm` `keypoints → table` GPU: なし — 左右の内部・歪み・板の姿勢と右カメラの相対姿勢 (R, T) を LM で同時に最適化する(``table``)。
+
+#### calib / checkerboard(3)
+- `checkerboard_points` `入力なし → keypoints` GPU: なし — チェッカー板の内側の角の板座標 (x, y) を行優先で返す(``keypoints``)。 · 例: `poc_calibration_truth_map`
+- `find_checkerboard_corners` `image2d → keypoints` GPU: なし — チェッカー板の画像から内側の角をサブピクセルで検出し、板の行優先の順で返す(``keypoints``)。 · 例: `poc_calibration_truth_map`
+- `sim_checkerboard` `入力なし → table` GPU: なし — 既知の K・歪み・姿勢でチェッカー板の画像を合成し、角の真の画素とともに返す(``table``)。 · 例: `poc_calibration_truth_map`
 
 #### calib / fit(4)
 - `hom_vector_to_proj_hom_mat2d` `keypoints → matrix` GPU: なし — 4 点以上の対応から射影変換(homography, DLT)3x3 を求める(hom_vector_to_proj_hom_mat2d)。 · 例: `poc_panorama_drift`, `poc_wound_area_tracking`

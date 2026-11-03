@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3631,
- "n_notes": 3637,
+ "n_ops": 3639,
+ "n_notes": 3645,
  "notes": {
   "vol_dilate": [
    {
@@ -15069,6 +15069,36 @@
     "path": "docs/ops/cadmap/visibility/cad_visible_faces.md"
    }
   ],
+  "calibration_error_map": [
+   {
+    "op": "calibration_error_map",
+    "dim": "calib",
+    "category": "calib_truth",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/calib/calib_truth/calibration_error_map.md"
+   }
+  ],
+  "calibration_next_pose": [
+   {
+    "op": "calibration_next_pose",
+    "dim": "calib",
+    "category": "calib_truth",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/calib/calib_truth/calibration_next_pose.md"
+   }
+  ],
+  "calibration_uncertainty_map": [
+   {
+    "op": "calibration_uncertainty_map",
+    "dim": "calib",
+    "category": "calib_truth",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/calib/calib_truth/calibration_uncertainty_map.md"
+   }
+  ],
   "camera_calibration": [
    {
     "op": "camera_calibration",
@@ -15077,6 +15107,16 @@
     "in": "keypoints",
     "out": "table",
     "path": "docs/ops/calib/calibrate/camera_calibration.md"
+   }
+  ],
+  "camera_calibration_lm": [
+   {
+    "op": "camera_calibration_lm",
+    "dim": "calib",
+    "category": "calibrate",
+    "in": "keypoints",
+    "out": "table",
+    "path": "docs/ops/calib/calibrate/camera_calibration_lm.md"
    }
   ],
   "find_marks_and_pose": [
@@ -15096,6 +15136,44 @@
     "category": "calibrate",
     "out": "matrix",
     "path": "docs/ops/calib/calibrate/hand_eye_calibration.md"
+   }
+  ],
+  "stereo_calibration_lm": [
+   {
+    "op": "stereo_calibration_lm",
+    "dim": "calib",
+    "category": "calibrate",
+    "in": "keypoints",
+    "out": "table",
+    "path": "docs/ops/calib/calibrate/stereo_calibration_lm.md"
+   }
+  ],
+  "checkerboard_points": [
+   {
+    "op": "checkerboard_points",
+    "dim": "calib",
+    "category": "checkerboard",
+    "out": "keypoints",
+    "path": "docs/ops/calib/checkerboard/checkerboard_points.md"
+   }
+  ],
+  "find_checkerboard_corners": [
+   {
+    "op": "find_checkerboard_corners",
+    "dim": "calib",
+    "category": "checkerboard",
+    "in": "image2d",
+    "out": "keypoints",
+    "path": "docs/ops/calib/checkerboard/find_checkerboard_corners.md"
+   }
+  ],
+  "sim_checkerboard": [
+   {
+    "op": "sim_checkerboard",
+    "dim": "calib",
+    "category": "checkerboard",
+    "out": "table",
+    "path": "docs/ops/calib/checkerboard/sim_checkerboard.md"
    }
   ],
   "hom_vector_to_proj_hom_mat2d": [

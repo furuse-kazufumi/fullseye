@@ -40,7 +40,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)
 
-[find_caltab](find_caltab.md) · [find_marks_and_pose](../calibrate/find_marks_and_pose.md)
+[find_caltab](find_caltab.md) · [find_marks_and_pose](../calibrate/find_marks_and_pose.md) · [find_checkerboard_corners](../checkerboard/find_checkerboard_corners.md)
 
 ## 同カテゴリ(`target`)
 

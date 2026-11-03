@@ -53,9 +53,9 @@
     "reason": "docs/op_knob.json measured no output effect"
   },
   "execution_summary": {
-    "executable": 3425,
+    "executable": 3433,
     "reasons": {
-      "python_signature": 2466,
+      "python_signature": 2474,
       "registry": 959
     },
     "not_executable_reasons": {
@@ -363,9 +363,9 @@
   },
   "counts": {
     "nodes": 101,
-    "edges": 3634,
+    "edges": 3642,
     "conversion_pairs": 395,
-    "conversion_edge_incidence": 2349
+    "conversion_edge_incidence": 2352
   },
   "nodes": [
     {
@@ -758,7 +758,7 @@
       "container": "dense_array",
       "size_hint": "input-dependent",
       "produced_by": 721,
-      "consumed_by": 1046,
+      "consumed_by": 1047,
       "generator": true,
       "type_check": true,
       "choose_when": "undocumented",
@@ -790,8 +790,8 @@
       "sort": "keypoints",
       "container": "sparse_set",
       "size_hint": "input-dependent",
-      "produced_by": 18,
-      "consumed_by": 19,
+      "produced_by": 20,
+      "consumed_by": 21,
       "generator": true,
       "type_check": true,
       "choose_when": "undocumented",
@@ -1373,8 +1373,8 @@
       "sort": "table",
       "container": "sequence",
       "size_hint": "input-dependent",
-      "produced_by": 1173,
-      "consumed_by": 555,
+      "produced_by": 1179,
+      "consumed_by": 558,
       "generator": true,
       "type_check": true,
       "choose_when": "undocumented",
@@ -141597,6 +141597,656 @@
           "required": true,
           "range": "undocumented",
           "unit": "undocumented"
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00027"
+    },
+    {
+      "op": "camera_calibration_lm",
+      "inputs": [
+        "keypoints"
+      ],
+      "output": "table",
+      "category": "calib",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00027"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00027"
+        }
+      ],
+      "runtime_target": {
+        "module": "calib_lm",
+        "callable": "camera_calibration_lm"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "calib_lm",
+        "callable": "camera_calibration_lm"
+      },
+      "parameter_schema": [
+        {
+          "name": "image_points_list",
+          "type": "unannotated",
+          "required": true,
+          "range": "undocumented",
+          "unit": "undocumented"
+        },
+        {
+          "name": "dist_model",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": "k1k2p1p2k3"
+        },
+        {
+          "name": "image_shape",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00027"
+    },
+    {
+      "op": "stereo_calibration_lm",
+      "inputs": [
+        "keypoints"
+      ],
+      "output": "table",
+      "category": "calib",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00027"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00027"
+        }
+      ],
+      "runtime_target": {
+        "module": "calib_lm",
+        "callable": "stereo_calibration_lm"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "calib_lm",
+        "callable": "stereo_calibration_lm"
+      },
+      "parameter_schema": [
+        {
+          "name": "image_points_left",
+          "type": "unannotated",
+          "required": true,
+          "range": "undocumented",
+          "unit": "undocumented"
+        },
+        {
+          "name": "image_points_right",
+          "type": "unannotated",
+          "required": true,
+          "range": "undocumented",
+          "unit": "undocumented"
+        },
+        {
+          "name": "dist_model",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": "k1k2p1p2k3"
+        },
+        {
+          "name": "fix_intrinsics",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": false
+        },
+        {
+          "name": "calib_left",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
+        },
+        {
+          "name": "calib_right",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
+        },
+        {
+          "name": "image_shape",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00027"
+    },
+    {
+      "op": "checkerboard_points",
+      "inputs": [],
+      "output": "keypoints",
+      "category": "calib",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "source",
+      "consumes_input": false,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00027"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00027"
+        }
+      ],
+      "runtime_target": {
+        "module": "calib_lm",
+        "callable": "checkerboard_points"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "calib_lm",
+        "callable": "checkerboard_points"
+      },
+      "parameter_schema": [
+        {
+          "name": "pattern_size",
+          "type": "unannotated",
+          "required": true,
+          "range": "undocumented",
+          "unit": "undocumented"
+        },
+        {
+          "name": "square_size",
+          "type": "unannotated",
+          "required": true,
+          "range": "undocumented",
+          "unit": "undocumented"
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00027"
+    },
+    {
+      "op": "sim_checkerboard",
+      "inputs": [],
+      "output": "table",
+      "category": "calib",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "source",
+      "consumes_input": false,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00027"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00027"
+        }
+      ],
+      "runtime_target": {
+        "module": "calib_lm",
+        "callable": "sim_checkerboard"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "calib_lm",
+        "callable": "sim_checkerboard"
+      },
+      "parameter_schema": [
+        {
+          "name": "pattern_size",
+          "type": "unannotated",
+          "required": true,
+          "range": "undocumented",
+          "unit": "undocumented"
+        },
+        {
+          "name": "square_size",
+          "type": "unannotated",
+          "required": true,
+          "range": "undocumented",
+          "unit": "undocumented"
+        },
+        {
+          "name": "K",
+          "type": "unannotated",
+          "required": true,
+          "range": "undocumented",
+          "unit": "undocumented"
+        },
+        {
+          "name": "dist",
+          "type": "unannotated",
+          "required": true,
+          "range": "undocumented",
+          "unit": "undocumented"
+        },
+        {
+          "name": "pose",
+          "type": "unannotated",
+          "required": true,
+          "range": "undocumented",
+          "unit": "undocumented"
+        },
+        {
+          "name": "image_shape",
+          "type": "unannotated",
+          "required": true,
+          "range": "undocumented",
+          "unit": "undocumented"
+        },
+        {
+          "name": "supersample",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 3
+        },
+        {
+          "name": "margin",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 1.0
+        },
+        {
+          "name": "blur_sigma",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.0
+        },
+        {
+          "name": "noise_sigma",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.0
+        },
+        {
+          "name": "seed",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0
+        },
+        {
+          "name": "black",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.1
+        },
+        {
+          "name": "white",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.9
+        },
+        {
+          "name": "background",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.5
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00027"
+    },
+    {
+      "op": "find_checkerboard_corners",
+      "inputs": [
+        "image"
+      ],
+      "output": "keypoints",
+      "category": "calib",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00027"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00027"
+        }
+      ],
+      "runtime_target": {
+        "module": "calib_lm",
+        "callable": "find_checkerboard_corners"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "calib_lm",
+        "callable": "find_checkerboard_corners"
+      },
+      "parameter_schema": [
+        {
+          "name": "pattern_size",
+          "type": "unannotated",
+          "required": true,
+          "range": "undocumented",
+          "unit": "undocumented"
+        },
+        {
+          "name": "sigma",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 1.5
+        },
+        {
+          "name": "refine_window",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00027"
+    },
+    {
+      "op": "calibration_error_map",
+      "inputs": [
+        "table"
+      ],
+      "output": "table",
+      "category": "calib",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00027"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00027"
+        }
+      ],
+      "runtime_target": {
+        "module": "calib_lm",
+        "callable": "calibration_error_map"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "calib_lm",
+        "callable": "calibration_error_map"
+      },
+      "parameter_schema": [
+        {
+          "name": "K_true",
+          "type": "unannotated",
+          "required": true,
+          "range": "undocumented",
+          "unit": "undocumented"
+        },
+        {
+          "name": "dist_true",
+          "type": "unannotated",
+          "required": true,
+          "range": "undocumented",
+          "unit": "undocumented"
+        },
+        {
+          "name": "image_shape",
+          "type": "unannotated",
+          "required": true,
+          "range": "undocumented",
+          "unit": "undocumented"
+        },
+        {
+          "name": "step",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 16
+        },
+        {
+          "name": "depth",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
+        },
+        {
+          "name": "remove_rotation",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": true
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00027"
+    },
+    {
+      "op": "calibration_uncertainty_map",
+      "inputs": [
+        "table"
+      ],
+      "output": "table",
+      "category": "calib",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00027"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00027"
+        }
+      ],
+      "runtime_target": {
+        "module": "calib_lm",
+        "callable": "calibration_uncertainty_map"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "calib_lm",
+        "callable": "calibration_uncertainty_map"
+      },
+      "parameter_schema": [
+        {
+          "name": "image_shape",
+          "type": "unannotated",
+          "required": true,
+          "range": "undocumented",
+          "unit": "undocumented"
+        },
+        {
+          "name": "step",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 16
+        },
+        {
+          "name": "depth",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
+        },
+        {
+          "name": "remove_rotation",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": true
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00027"
+    },
+    {
+      "op": "calibration_next_pose",
+      "inputs": [
+        "table"
+      ],
+      "output": "table",
+      "category": "calib",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00027"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00027"
+        }
+      ],
+      "runtime_target": {
+        "module": "calib_lm",
+        "callable": "calibration_next_pose"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "calib_lm",
+        "callable": "calibration_next_pose"
+      },
+      "parameter_schema": [
+        {
+          "name": "candidate_poses",
+          "type": "unannotated",
+          "required": true,
+          "range": "undocumented",
+          "unit": "undocumented"
+        },
+        {
+          "name": "image_shape",
+          "type": "unannotated",
+          "required": true,
+          "range": "undocumented",
+          "unit": "undocumented"
+        },
+        {
+          "name": "step",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 32
+        },
+        {
+          "name": "sigma_px",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
         }
       ],
       "verified_executable": false,

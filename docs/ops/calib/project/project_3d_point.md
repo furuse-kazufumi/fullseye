@@ -37,7 +37,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 ## 型が繋がる次の op(`keypoints` を入力に取れる)
 
-[image_to_world_plane](../plane/image_to_world_plane.md) · [camera_calibration](../calibrate/camera_calibration.md) · [vector_to_rigid](../fit/vector_to_rigid.md) · [vector_to_similarity](../fit/vector_to_similarity.md) · [hom_vector_to_proj_hom_mat2d](../fit/hom_vector_to_proj_hom_mat2d.md)
+[image_to_world_plane](../plane/image_to_world_plane.md) · [camera_calibration](../calibrate/camera_calibration.md) · [camera_calibration_lm](../calibrate/camera_calibration_lm.md) · [stereo_calibration_lm](../calibrate/stereo_calibration_lm.md) · [vector_to_rigid](../fit/vector_to_rigid.md) · [vector_to_similarity](../fit/vector_to_similarity.md) · [hom_vector_to_proj_hom_mat2d](../fit/hom_vector_to_proj_hom_mat2d.md)
 
 ## 同カテゴリ(`project`)
 

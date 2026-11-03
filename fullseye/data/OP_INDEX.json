@@ -1,8 +1,8 @@
 {
- "n_ops": 3631,
+ "n_ops": 3639,
  "tiers": {
   "color": 12,
-  "ledger": 2672,
+  "ledger": 2680,
   "nary": 17,
   "registry": 930
  },
@@ -3011,6 +3011,45 @@
    ]
   },
   {
+   "name": "calibration_error_map",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "calib_truth",
+   "tier": "ledger",
+   "ledger": "opscalib",
+   "dim": "calib",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "calibration_next_pose",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "calib_truth",
+   "tier": "ledger",
+   "ledger": "opscalib",
+   "dim": "calib",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "calibration_uncertainty_map",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "calib_truth",
+   "tier": "ledger",
+   "ledger": "opscalib",
+   "dim": "calib",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
    "name": "calibration_views",
    "halcon": "",
    "in_sort": "table",
@@ -3036,6 +3075,19 @@
   },
   {
    "name": "camera_calibration",
+   "halcon": "",
+   "in_sort": "keypoints",
+   "out_sort": "table",
+   "category": "calibrate",
+   "tier": "ledger",
+   "ledger": "opscalib",
+   "dim": "calib",
+   "in_sorts": [
+    "keypoints"
+   ]
+  },
+  {
+   "name": "camera_calibration_lm",
    "halcon": "",
    "in_sort": "keypoints",
    "out_sort": "table",
@@ -3749,6 +3801,17 @@
    "in_sorts": [
     "table"
    ]
+  },
+  {
+   "name": "checkerboard_points",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "keypoints",
+   "category": "checkerboard",
+   "tier": "ledger",
+   "ledger": "opscalib",
+   "dim": "calib",
+   "in_sorts": []
   },
   {
    "name": "chief_ray",
@@ -9416,6 +9479,19 @@
    "in_sort": "image2d",
    "out_sort": "keypoints",
    "category": "target",
+   "tier": "ledger",
+   "ledger": "opscalib",
+   "dim": "calib",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
+   "name": "find_checkerboard_corners",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "keypoints",
+   "category": "checkerboard",
    "tier": "ledger",
    "ledger": "opscalib",
    "dim": "calib",
@@ -27875,6 +27951,17 @@
    ]
   },
   {
+   "name": "sim_checkerboard",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "checkerboard",
+   "tier": "ledger",
+   "ledger": "opscalib",
+   "dim": "calib",
+   "in_sorts": []
+  },
+  {
    "name": "simcal_discrepancy",
    "halcon": "",
    "in_sort": "calresult",
@@ -29667,6 +29754,19 @@
    "in_sorts": [
     "rgbimage",
     "rgbimage"
+   ]
+  },
+  {
+   "name": "stereo_calibration_lm",
+   "halcon": "",
+   "in_sort": "keypoints",
+   "out_sort": "table",
+   "category": "calibrate",
+   "tier": "ledger",
+   "ledger": "opscalib",
+   "dim": "calib",
+   "in_sorts": [
+    "keypoints"
    ]
   },
   {

@@ -7,6 +7,15 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### 追加 — 真値つきのカメラ校正(opscalib に calib_lm の 8 op: checkerboard 3・calibrate に 2・calib_truth 3)
+
+- 新モジュール `calib_lm`(numpy + scipy)。既存の `camera_calibration`(Zhang の閉形式、K だけ)は置き換えず、初期値として呼ぶ。
+  - 標準の土台: `checkerboard_points`、`sim_checkerboard`(真の K・歪み・姿勢で描く。画素を板へ逆に引く描画で、投影の式の写しではない)、`find_checkerboard_corners`(鞍点 + Förstner の勾配直交でサブピクセル、格子の組み立て)、`camera_calibration_lm`(K・歪み 5 係数・全姿勢を解析的なヤコビアンの LM で同時に、9x9 の周辺共分散つき)、`stereo_calibration_lm`(左右と相対姿勢 (R, T) を同時に、E と F も)。
+  - Fullseye だけの層: `calibration_error_map`(真値と比べた誤差の地図。既定でカメラの向きのずれと同じ形の成分を除く)、`calibration_uncertainty_map`(共分散を画像へ写した地図、実機でも出る)、`calibration_next_pose`(候補の姿勢から次の 1 枚を推薦)。
+- 門 `tests/test_calib_lm.py`(23 件): 合成の角から真値を 1e-9 で、OpenCV の `calibrateCamera` / `stereoCalibrate` と同じ極小(費用は OpenCV 以下、差は標準偏差の 1 % 未満)、共分散の予測 = モンテカルロ 200 本の散らばり(15 % 以内)、角の検出は描画の真値に rms 0.04 px 未満で `cornerSubPix` 以下、誤差の地図の閉形式(cx の δ → 一様に δ px、3D は δ·Z/fx)、不確かさの地図 = モンテカルロの誤差の地図(回さない 10 %・回して除く 25 % 以内)、推薦した姿勢を足した校正の実際の誤差 < 最下位の候補(2 標準誤差)。
+- 例 `examples/poc_calibration_truth_map.py`: 描画 6 枚 → 角の検出(rms 0.046 px)→ Zhang の fx 誤差 12.89 % が LM で 0.133 %、誤差の地図(中央 0.094 px・隅 0.568 px)、次の 1 枚の推薦とモンテカルロの答え合わせ。
+- 限界: ChArUco は無い(ArUco の符号表の検出が要る)。不確かさの地図は線形の予測で、k3 まで自由にした隅の外挿では実測の 3 倍に出る。
+
 ### 追加 — 光学式 3D センサの仮想受入試験(VDI/VDE 2634 Part 2/3・ISO 10360-13 の考え方、新台帳 opsacceptance、8 op)
 
 - 新モジュール `acceptance3d`(numpy のみ)と台帳 `opsacceptance`(layout / evaluate / simulate / budget)。新しい型の語なし(points / table)。
