@@ -1,0 +1,729 @@
+{
+ "method": "gpu_route.route(op, 'pipeline') from a read-only GPU worktree appended to sys.path; null = no matching GPU route; ops absent from this table are unmeasured",
+ "gpu_route_module": "gpu_route.py",
+ "gpu_worktree_commit": "a3f91eae72f851e870e6a45294ecfc44ded9cb10",
+ "n_ops": 388,
+ "n_with_route": 83,
+ "routes": {
+  "abs_diff_image": {
+   "kind": "shadow",
+   "use": "resident",
+   "ratio": 9.399
+  },
+  "access_channel": null,
+  "adaptive_gauss_thresh": {
+   "kind": "accel",
+   "use": "single",
+   "ratio": null
+  },
+  "add_metrology_object_circle_measure": null,
+  "airy_pattern": null,
+  "align_frames": null,
+  "anscombe_transform": {
+   "kind": "shadow",
+   "use": "resident",
+   "ratio": 17.379
+  },
+  "aperture_photometry": null,
+  "apply_metrology_model": null,
+  "apply_transport": null,
+  "apply_weighting": {
+   "kind": "shadow",
+   "use": "single",
+   "ratio": 12.35
+  },
+  "area_center": null,
+  "area_center_xld": null,
+  "area_holes": null,
+  "attention_apply": null,
+  "attention_scores": null,
+  "attention_weights": null,
+  "awb_gains": {
+   "kind": "shadow",
+   "use": "pipeline",
+   "ratio": 2.588
+  },
+  "axes_transform": null,
+  "band_snr": null,
+  "bandpass": null,
+  "beamform_doa": null,
+  "bilateral": {
+   "kind": "accel",
+   "use": "single",
+   "ratio": null
+  },
+  "blackbody_spectrum": null,
+  "blob_count_interval": null,
+  "blob_distance": {
+   "kind": "shadow",
+   "use": "single",
+   "ratio": 29.84
+  },
+  "blob_features": null,
+  "blob_label": {
+   "kind": "shadow",
+   "use": "pipeline",
+   "ratio": 3.548
+  },
+  "blob_seeds": null,
+  "blob_split": null,
+  "bothat": {
+   "kind": "accel",
+   "use": "single",
+   "ratio": null
+  },
+  "cad_pixel_to_surface": null,
+  "caltab_points": null,
+  "camera_calibration": null,
+  "canny": {
+   "kind": "accel",
+   "use": "single",
+   "ratio": null
+  },
+  "chromatic_confocal_height": null,
+  "chromatic_confocal_peaks": null,
+  "chromatic_confocal_probe": null,
+  "chromatic_confocal_readout": null,
+  "chromatic_confocal_simulate": null,
+  "chromatic_confocal_spectrum": null,
+  "circularity": null,
+  "clahe": {
+   "kind": "shadow",
+   "use": "single",
+   "ratio": 13.43
+  },
+  "color_transfer": null,
+  "compare_images": null,
+  "contours_to_gcode": null,
+  "conv_observed_order": null,
+  "convex_hull": null,
+  "convexity": null,
+  "copy_move_regions": null,
+  "cosmic_ray_reject_stack": {
+   "kind": "shadow",
+   "use": "single",
+   "ratio": 12.1
+  },
+  "count_contours": null,
+  "count_obj": null,
+  "cplx_argument_principle": null,
+  "cplx_contour_circle": null,
+  "cplx_poly_eval": {
+   "kind": "shadow",
+   "use": "single",
+   "ratio": 55.17
+  },
+  "create_metrology_model": null,
+  "crt_displacement": null,
+  "csi_height_map": null,
+  "csi_peak_position": null,
+  "csi_signal_simulate": null,
+  "csi_stack_simulate": null,
+  "curvature_to_table": null,
+  "cv_good_features": null,
+  "cv_hough_circles": null,
+  "data_to_pixel": {
+   "kind": "shadow",
+   "use": "resident",
+   "ratio": 7.605
+  },
+  "decode_barcode": null,
+  "decode_fringe": null,
+  "deflicker": {
+   "kind": "shadow",
+   "use": "resident",
+   "ratio": 5.847
+  },
+  "delta_e_76": null,
+  "dem_fill_sinks": null,
+  "dem_hillshade": {
+   "kind": "shadow",
+   "use": "single",
+   "ratio": 25.57
+  },
+  "dem_skyline": null,
+  "dem_slope": {
+   "kind": "shadow",
+   "use": "single",
+   "ratio": 36.76
+  },
+  "depth_from_focus": null,
+  "depth_to_points": null,
+  "diameter_region": null,
+  "diameter_xld": null,
+  "dichromatic_render": null,
+  "difference": null,
+  "displacement_series": {
+   "kind": "shadow",
+   "use": "single",
+   "ratio": 159.65
+  },
+  "dist_transform": {
+   "kind": "shadow",
+   "use": "single",
+   "ratio": 40.66
+  },
+  "distance_transform": {
+   "kind": "shadow",
+   "use": "single",
+   "ratio": 19.65
+  },
+  "div_image": {
+   "kind": "shadow",
+   "use": "resident",
+   "ratio": 8.24
+  },
+  "dlt_pose": null,
+  "doe_central_composite": null,
+  "doe_saltelli": null,
+  "dtof_cube_depth": null,
+  "dtof_cube_simulate": null,
+  "dtof_depth": null,
+  "eccentricity": null,
+  "edges_sub_pix": {
+   "kind": "shadow",
+   "use": "single",
+   "ratio": 15.3
+  },
+  "ellipse": null,
+  "elliptic_axis": null,
+  "elliptic_axis_xld": null,
+  "elliptic_fourier": null,
+  "envelope": {
+   "kind": "shadow",
+   "use": "single",
+   "ratio": 31.31
+  },
+  "envelope_spectrum": null,
+  "equalize": {
+   "kind": "accel",
+   "use": "single",
+   "ratio": null
+  },
+  "equivalent_level": null,
+  "estimate_noise": null,
+  "estimate_point_normals": null,
+  "euler_number": null,
+  "fill_up": {
+   "kind": "accel",
+   "use": "single",
+   "ratio": null
+  },
+  "filter_by_volume": null,
+  "filtered_backprojection": {
+   "kind": "shadow",
+   "use": "single",
+   "ratio": 139.44
+  },
+  "fit_circle_geometric": null,
+  "fit_line_contours": null,
+  "fit_sphere_3d": null,
+  "flat_field_correct": null,
+  "fly_egomotion_from_flow": null,
+  "fly_emd_response": null,
+  "fly_flow_from_directions": null,
+  "fly_lamina_filter": null,
+  "fly_t4t5_field": null,
+  "fly_tau_from_expansion": {
+   "kind": "shadow",
+   "use": "single",
+   "ratio": 7.18
+  },
+  "fmcw_beat_simulate": null,
+  "fmcw_window_apply": null,
+  "foe_from_motion": null,
+  "fourier_smooth": null,
+  "gabor": {
+   "kind": "shadow",
+   "use": "single",
+   "ratio": 17.08
+  },
+  "gamma": {
+   "kind": "accel",
+   "use": "single",
+   "ratio": null
+  },
+  "gaussian": {
+   "kind": "accel",
+   "use": "single",
+   "ratio": null
+  },
+  "gcc_delay": null,
+  "gcode_extrusion_volume": null,
+  "gen_measure_rectangle2": null,
+  "get_region_convex": null,
+  "get_region_thickness": null,
+  "gicp": null,
+  "graph_binarize": null,
+  "graph_components": null,
+  "graph_cycle3": null,
+  "graph_from_synapses": null,
+  "graph_laplacian_spectrum": null,
+  "graph_physarum_path": null,
+  "gray_tophat": {
+   "kind": "accel",
+   "use": "single",
+   "ratio": null
+  },
+  "highpass": {
+   "kind": "accel",
+   "use": "single",
+   "ratio": null
+  },
+  "hx_char_threshold": null,
+  "hx_plane_deviation": {
+   "kind": "shadow",
+   "use": "single",
+   "ratio": 5.57
+  },
+  "hysteresis_threshold": null,
+  "icp_point2plane": null,
+  "icp_point2point_3d": null,
+  "illumination_uniformity": null,
+  "image_to_world_plane": null,
+  "img_to_projection_profile": {
+   "kind": "shadow",
+   "use": "single",
+   "ratio": 7.24
+  },
+  "img_to_signal": null,
+  "invariants": null,
+  "invert": {
+   "kind": "accel",
+   "use": "single",
+   "ratio": null
+  },
+  "irradiance_map": null,
+  "iterate_fixed_point": null,
+  "itof_capture": null,
+  "itof_phase_amplitude": null,
+  "itof_unwrap_multifreq": null,
+  "iv_richardson_lucy": {
+   "kind": "shadow",
+   "use": "single",
+   "ratio": 23.22
+  },
+  "lateral_wobble": null,
+  "lens_shading_correct": null,
+  "lens_shading_gain": {
+   "kind": "shadow",
+   "use": "pipeline",
+   "ratio": 3.637
+  },
+  "lens_system": null,
+  "lf_depth_from_focus": null,
+  "lf_disparity_to_depth": {
+   "kind": "shadow",
+   "use": "single",
+   "ratio": 5.2
+  },
+  "lf_focal_stack": null,
+  "lf_from_mla": null,
+  "lf_synthesize": null,
+  "light_source": null,
+  "local_max": {
+   "kind": "accel",
+   "use": "single",
+   "ratio": null
+  },
+  "local_threshold": {
+   "kind": "accel",
+   "use": "single",
+   "ratio": null
+  },
+  "lowpass": {
+   "kind": "accel",
+   "use": "single",
+   "ratio": null
+  },
+  "m1_measure_pairs": null,
+  "m1_measure_pos": null,
+  "mat_cond": null,
+  "mat_eigh": null,
+  "measure_pairs": null,
+  "measure_pos": null,
+  "median": {
+   "kind": "accel",
+   "use": "single",
+   "ratio": null
+  },
+  "merit_default": null,
+  "mesh_area": null,
+  "mesh_read_obj": null,
+  "mesh_slice_contours": null,
+  "mesh_volume": null,
+  "mesh_write_obj": null,
+  "metrics_table": null,
+  "mirror_image": null,
+  "moire_mark_read": null,
+  "moire_overlay_image": null,
+  "monogenic_orientation": null,
+  "monogenic_signal": null,
+  "morph_grad": {
+   "kind": "accel",
+   "use": "single",
+   "ratio": null
+  },
+  "motion_magnify": {
+   "kind": "shadow",
+   "use": "single",
+   "ratio": 94.7
+  },
+  "mtf50": null,
+  "mueller_apply": null,
+  "mueller_element": null,
+  "music_doa": null,
+  "mutual_information": null,
+  "mv_pca": null,
+  "ncc_locate": {
+   "kind": "accel",
+   "use": "single",
+   "ratio": null
+  },
+  "noise_inconsistency_map": {
+   "kind": "shadow",
+   "use": "resident",
+   "ratio": 11.975
+  },
+  "noise_sigma": null,
+  "ocm_match": null,
+  "oct_ascan": null,
+  "oct_interferogram": null,
+  "oct_layer_thickness": null,
+  "opening_circle": {
+   "kind": "accel",
+   "use": "single",
+   "ratio": null
+  },
+  "optimize_lens_operands": null,
+  "orientation_region": null,
+  "otsu": {
+   "kind": "accel",
+   "use": "single",
+   "ratio": null
+  },
+  "ou_estimate": null,
+  "paraxial_trace": null,
+  "peg_params": null,
+  "perpetual_render": null,
+  "perpetual_state": null,
+  "perpetual_step": null,
+  "phase_correlation_shift": null,
+  "photoelastic_phase_estimate": null,
+  "photoelastic_polarization_images": null,
+  "photometric_stereo_robust": null,
+  "photon_sample": null,
+  "piv_ensemble_correlate": null,
+  "piv_flow_magnitude": null,
+  "piv_multipass": null,
+  "piv_outlier_mask": null,
+  "piv_replace_outliers": null,
+  "piv_synth_sequence": null,
+  "piv_to_velocity": null,
+  "piv_vorticity": null,
+  "pl_diffusion_psf": null,
+  "plane_sweep_depth": null,
+  "plot_series": null,
+  "pod_ahat_fit": null,
+  "pod_from_ahat": null,
+  "points_read_xyz": null,
+  "points_to_position": null,
+  "points_write_xyz": null,
+  "polar_trans_image": null,
+  "polarization_dolp_map": null,
+  "principal_curvatures": null,
+  "procrustes_align": null,
+  "procrustes_distance": null,
+  "profile_deviation": null,
+  "profile_leading_edge_radius": null,
+  "profile_normalise": null,
+  "profile_params": null,
+  "profile_perturb": null,
+  "profile_synth_naca4": null,
+  "project_3d_point": null,
+  "psf_fit": null,
+  "psf_to_mtf": {
+   "kind": "shadow",
+   "use": "single",
+   "ratio": 51.77
+  },
+  "quat_color_rotate": null,
+  "quaternion_to_rgb": {
+   "kind": "shadow",
+   "use": "resident",
+   "ratio": 6.995
+  },
+  "r2_endpoints_skeleton": null,
+  "radon_transform": null,
+  "range_doppler_map": null,
+  "range_doppler_peaks": null,
+  "ransac_cylinder": null,
+  "ransac_plane": null,
+  "ransac_sphere": null,
+  "raw_black_level": null,
+  "raw_demosaic_bilinear": {
+   "kind": "shadow",
+   "use": "single",
+   "ratio": 9.01
+  },
+  "region_props": null,
+  "register_image": null,
+  "relative_motion": null,
+  "remove_small": null,
+  "render_skyline_view": null,
+  "rgb_to_lab": null,
+  "rgb_to_quaternion": null,
+  "ring_artifact_apply": null,
+  "ring_artifact_remove": null,
+  "rms": null,
+  "rms_norm": null,
+  "robust_gaussian_profile": null,
+  "robust_spline_profile": null,
+  "rotate_img": {
+   "kind": "shadow",
+   "use": "single",
+   "ratio": 22.95
+  },
+  "rsm_fit": null,
+  "rss_longitudinal_check": null,
+  "rss_params": null,
+  "running_gaussian_foreground": null,
+  "scene_cut_detection": {
+   "kind": "shadow",
+   "use": "pipeline",
+   "ratio": 2.287
+  },
+  "sdf_to_occupancy": null,
+  "seg_dice_jaccard": null,
+  "seg_inject_split": null,
+  "seg_variation_of_information": null,
+  "select_largest": null,
+  "select_shape": null,
+  "sem_render": {
+   "kind": "shadow",
+   "use": "single",
+   "ratio": 21.61
+  },
+  "sens_sobol": null,
+  "sfp_disambiguate": null,
+  "sfp_normals": null,
+  "sfp_render": null,
+  "sg_kmeans_intensity": {
+   "kind": "shadow",
+   "use": "single",
+   "ratio": 38.1
+  },
+  "shape_explained_variance": null,
+  "shape_locate": null,
+  "shape_pca": null,
+  "shape_synth_family": null,
+  "sigma_clip_stack": {
+   "kind": "shadow",
+   "use": "single",
+   "ratio": 111.02
+  },
+  "signal_features": null,
+  "simcal_fit": null,
+  "simcal_model": null,
+  "simcal_observe": null,
+  "simcal_report": null,
+  "sinogram_center_of_rotation": null,
+  "sinogram_center_shift": null,
+  "sk_clear_border": null,
+  "sk_corner_harris": null,
+  "sk_dog": null,
+  "sk_rolling_ball": null,
+  "sk_tv": {
+   "kind": "accel",
+   "use": "single",
+   "ratio": null
+  },
+  "skeleton": null,
+  "skyline_extract": null,
+  "slope_to_curvature": null,
+  "smooth_funct_1d_gauss": {
+   "kind": "shadow",
+   "use": "resident",
+   "ratio": 8.355
+  },
+  "sobel_amp": {
+   "kind": "accel",
+   "use": "single",
+   "ratio": null
+  },
+  "sp_local_max_sub_pix": null,
+  "spc_capability": null,
+  "spc_xbar_r": null,
+  "spectral_stats": null,
+  "specular_coefficient_map": {
+   "kind": "shadow",
+   "use": "single",
+   "ratio": 10.24
+  },
+  "specular_diffuse_split": null,
+  "star_detect": null,
+  "stat_covariance": null,
+  "statistical_outlier_removal": null,
+  "std_filter": {
+   "kind": "accel",
+   "use": "single",
+   "ratio": null
+  },
+  "stokes_analyze": null,
+  "structure_tensor_orientation": {
+   "kind": "shadow",
+   "use": "single",
+   "ratio": 25.98
+  },
+  "sub_image": {
+   "kind": "shadow",
+   "use": "resident",
+   "ratio": 13.135
+  },
+  "surface_filter": {
+   "kind": "shadow",
+   "use": "resident",
+   "ratio": 20.851
+  },
+  "surface_form_remove": {
+   "kind": "shadow",
+   "use": "resident",
+   "ratio": 10.808
+  },
+  "surface_params": null,
+  "surface_synth_psd": null,
+  "swt_map": null,
+  "synth_frame_series": null,
+  "synth_starfield": null,
+  "synthesize_bearing_signal": null,
+  "synthesize_fringes": {
+   "kind": "shadow",
+   "use": "resident",
+   "ratio": 34.084
+  },
+  "synthesize_translation": null,
+  "table_px_to_mm": null,
+  "taubin_smooth": null,
+  "tb_derivate_funct_1d": {
+   "kind": "shadow",
+   "use": "pipeline",
+   "ratio": 1.937
+  },
+  "tb_num_points_funct_1d": null,
+  "tb_smooth_funct_1d_gauss": {
+   "kind": "shadow",
+   "use": "resident",
+   "ratio": 7.717
+  },
+  "tb_stat_zscore": {
+   "kind": "shadow",
+   "use": "resident",
+   "ratio": 5.639
+  },
+  "tb_zero_crossings_funct_1d": null,
+  "tcspc_background_subtract": null,
+  "tcspc_simulate": null,
+  "telecentric_lens": null,
+  "telecentricity_error": null,
+  "temporal_bilateral": {
+   "kind": "shadow",
+   "use": "single",
+   "ratio": 34.7
+  },
+  "text_candidates": null,
+  "threshold": {
+   "kind": "accel",
+   "use": "single",
+   "ratio": null
+  },
+  "threshold_isodata": null,
+  "threshold_sub_pix": null,
+  "tolerance_criteria": null,
+  "tolerance_sensitivity": null,
+  "tolerance_table": null,
+  "trans_from_rgb": null,
+  "transfer_function": null,
+  "transport_plan_1d": null,
+  "tsdf_from_depth": {
+   "kind": "shadow",
+   "use": "single",
+   "ratio": 16.16
+  },
+  "ttc_truth": {
+   "kind": "shadow",
+   "use": "single",
+   "ratio": 15.57
+  },
+  "ula_snapshots": null,
+  "unsharp": {
+   "kind": "accel",
+   "use": "single",
+   "ratio": null
+  },
+  "varmodel_fit": {
+   "kind": "shadow",
+   "use": "single",
+   "ratio": 16.16
+  },
+  "varmodel_score": null,
+  "video_cube_cut": null,
+  "vol_colorize_labels": null,
+  "vol_label": {
+   "kind": "shadow",
+   "use": "pipeline",
+   "ratio": 3.451
+  },
+  "vol_label_shape_stats": null,
+  "vol_label_slice_rgb": {
+   "kind": "shadow",
+   "use": "resident",
+   "ratio": 7.048
+  },
+  "vol_region_props": null,
+  "vol_wall_thickness": null,
+  "vol_window_level": {
+   "kind": "shadow",
+   "use": "resident",
+   "ratio": 6.024
+  },
+  "volseq_mip_video": null,
+  "volseq_synth_beating": null,
+  "voxel_grid_downsample": null,
+  "voxel_to_mesh": null,
+  "vx_histogram": {
+   "kind": "shadow",
+   "use": "single",
+   "ratio": 10.68
+  },
+  "vx_table_lookup": null,
+  "vx_warp_affine": {
+   "kind": "shadow",
+   "use": "single",
+   "ratio": 79.48
+  },
+  "warp_tps_image": {
+   "kind": "shadow",
+   "use": "single",
+   "ratio": 25.19
+  },
+  "watermark_embed": null,
+  "watermark_extract": null,
+  "watersheds_marker": null,
+  "whitney_clearance": null,
+  "xcv_inpaint": null,
+  "xg_orientation": null,
+  "xsk2_h_maxima": null,
+  "xsk_blob_log": null,
+  "xsp_savgol": {
+   "kind": "shadow",
+   "use": "single",
+   "ratio": 8.71
+  },
+  "zero_crossings_funct_1d": null,
+  "zoom_image_factor": {
+   "kind": "shadow",
+   "use": "single",
+   "ratio": 8.68
+  }
+ }
+}

@@ -68,6 +68,11 @@ def build():
     rows = json.loads((ROOT / "fullseye/data/OP_SEARCH.json").read_text(encoding="utf-8"))["ops"]
     by_name = {r["n"]: r for r in rows}
     out = []
+    # 日本語の名前と説明(手書き)。ja の検索文に足し、行にも when_ja として載せる。
+    try:
+        from fullseye.recipebook.notes_ja import NOTES_JA
+    except ImportError:
+        NOTES_JA = {}
     lines = _line_numbers(ROOT / "recipes.py")
     for r in recipes.RECIPES:
         sort = "image"; stages = []
@@ -82,7 +87,10 @@ def build():
                     "halcon": None, "runner": "mcp", "input_sort": "image", "output_sort": sort,
                     "stages": stages, "when": r["note"], "image": r.get("image"),
                     "source": {"path": "recipes.py", "line": lines[r["name"]]},
-                    "index_text": {lang: " ".join([r["name"], r["task"], r["note"], *texts])
+                    "when_ja": NOTES_JA.get(r["name"]),
+                    "index_text": {lang: " ".join([r["name"], r["task"], r["note"],
+                                                   *([NOTES_JA[r["name"]]] if lang == "ja" and r["name"] in NOTES_JA else []),
+                                                   *texts])
                                    for lang, texts in terms.items()}})
     book_lines = {}
     for book in rb.BOOKS:
@@ -106,7 +114,10 @@ def build():
                     "input_sort": rb.norm_sort(r.get("input_sort")), "output_sort": rb.output_sort(r),
                     "stages": stages, "when": r["note"], "image": None,
                     "source": {"path": "fullseye/recipebook/%s.py" % book, "line": book_lines[book][r["name"]]},
-                    "index_text": {lang: " ".join([*words, *texts]) for lang, texts in terms.items()}})
+                    "when_ja": NOTES_JA.get(r["name"]),
+                    "index_text": {lang: " ".join([*words,
+                                                   *([NOTES_JA[r["name"]]] if lang == "ja" and r["name"] in NOTES_JA else []),
+                                                   *texts]) for lang, texts in terms.items()}})
     names = [r["name"] for r in out]
     dup = sorted({n for n in names if names.count(n) > 1})
     if dup:
