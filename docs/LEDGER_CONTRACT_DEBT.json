@@ -7,7 +7,7 @@
   "unbindable": 9,
   "raises": 0,
   "nonfinite": 12,
-  "sort": 2,
+  "sort": 1,
   "nondeterministic": 0
  },
  "debt": {
@@ -106,8 +106,7 @@
    "world_camera_impostors": "undocumented_nan_inf"
   },
   "sort": {
-   "relative_pose": "out_sort_mismatch",
-   "rotation_translation_error": "out_sort_mismatch"
+   "relative_pose": "out_sort_mismatch"
   },
   "nondeterministic": {}
  }

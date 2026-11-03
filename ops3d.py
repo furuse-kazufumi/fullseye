@@ -11,6 +11,7 @@ op の入力)を機械的に列挙・スコアリングでき、指数的な拡�
     ops3d.get("match_shape_3d")(...)        # 実体を取得して呼ぶ
     ops3d.compatible("register_fpfh")       # 出力が別 op の入力になる後続候補
 """
+import inspect
 import numpy as np
 import sys
 from functools import wraps
@@ -134,6 +135,78 @@ shape-from-focus の入口。詳細な信頼度が必要なら
 # extraction and expose the lower-level result dictionary through MCP.
 depth_from_focus.__module__ = __name__
 depth_from_focus.__qualname__ = "depth_from_focus"
+
+# ★2026-11-03(レシピの e2e が見つけた宣言の嘘): ``pose_error`` と ``rotation_translation_error`` は台帳で
+#   ``["pose", "pose"]`` と宣言しているのに、素の関数は ``pose_error(R_est, t_est, R_gt, t_gt)``(4 引数)と
+#   ``rotation_translation_error(gt, est)``(4×4 行列 2 つ)で、どちらも ``pose`` の正典 ``(R(3,3), t(3,), …)``
+#   —— ``icp_point2point_3d`` / ``icp_point2plane`` / ``gicp`` / ``dlt_pose`` / ``register_fpfh`` の返り —— を
+#   受け取れなかった。だから「登録 → 姿勢の精度」の鎖が型で組めなかった(MISSING_OPS に 4×4 変換器を挙げていた)。
+#   素の関数(metrics3d / registration_eval と facade)の並びは公開の約束なので変えず、**台帳の入口だけ**を
+#   宣言どおり「pose を 2 つ」受ける形にする。``__wrapped__`` で同じ op の identity を保ち、``__signature__``
+#   で OP_GRAPH の引数表も 2 スロットになる。旧い呼び方(pose_error の 4 引数、rotation_translation_error の
+#   4×4 行列)はそのまま通す —— 連鎖ファザーの builder と契約探針がこの形で呼ぶ。
+def _pose_rt(v, name, op):
+    """``pose`` の値 → ``(R (3,3), t (3,))``。受けるのは (R, t[, info]) の組 / 4×4 同次変換 / {"R", "t"} の dict。
+
+    形が違う・非有限・4×4 の最下行が (0, 0, 0, 1) でない値は ValueError(fail-closed、黙って読み替えない)。"""
+    if isinstance(v, dict) and "R" in v and "t" in v:
+        R, t = v["R"], v["t"]
+    elif isinstance(v, (tuple, list)) and len(v) >= 2 and tuple(np.shape(v[0])) == (3, 3):
+        R, t = v[0], v[1]
+    else:
+        try:
+            T = np.asarray(v, dtype=np.float64)
+        except (TypeError, ValueError) as exc:
+            raise ValueError("%s: %s must be a pose (R, t), a 4x4 transform or {'R','t'}; got %s"
+                             % (op, name, type(v).__name__)) from exc
+        if T.shape != (4, 4):
+            raise ValueError("%s: %s must be a pose (R, t), a 4x4 transform or {'R','t'}; got an array of shape %r"
+                             % (op, name, T.shape))
+        if not np.all(np.isfinite(T)) or not np.allclose(T[3], [0.0, 0.0, 0.0, 1.0], atol=1e-9):
+            raise ValueError("%s: %s is not a finite rigid 4x4 transform (last row must be 0 0 0 1)" % (op, name))
+        R, t = T[:3, :3], T[:3, 3]
+    try:
+        R = np.asarray(R, dtype=np.float64)
+        t = np.asarray(t, dtype=np.float64).reshape(-1)
+    except (TypeError, ValueError) as exc:
+        raise ValueError("%s: %s holds a non-numeric R or t" % (op, name)) from exc
+    if R.shape != (3, 3) or t.shape != (3,):
+        raise ValueError("%s: %s must hold R of shape (3, 3) and t of length 3; got %r and %r"
+                         % (op, name, R.shape, t.shape))
+    if not (np.all(np.isfinite(R)) and np.all(np.isfinite(t))):
+        raise ValueError("%s: %s holds non-finite values" % (op, name))
+    return R, t
+
+
+@wraps(metrics3d.pose_error)
+def pose_error(*args, **kwargs):
+    if len(args) + len(kwargs) == 4 or {"R_est", "t_est", "R_gt", "t_gt"} & set(kwargs):
+        return metrics3d.pose_error(*args, **kwargs)          # 旧い 4 引数の形(素の関数と同じ)
+    bound = pose_error.__signature__.bind(*args, **kwargs)
+    Re, te = _pose_rt(bound.arguments["pose_est"], "pose_est", "pose_error")
+    Rg, tg = _pose_rt(bound.arguments["pose_gt"], "pose_gt", "pose_error")
+    return metrics3d.pose_error(Re, te, Rg, tg)
+
+
+pose_error.__signature__ = inspect.Signature([
+    inspect.Parameter(n, inspect.Parameter.POSITIONAL_OR_KEYWORD) for n in ("pose_est", "pose_gt")])
+pose_error.__module__ = __name__
+pose_error.__qualname__ = "pose_error"
+
+
+@wraps(registration_eval.rotation_translation_error)
+def rotation_translation_error(gt, est):
+    def as_t(v, name):
+        if isinstance(v, np.ndarray) and v.shape == (4, 4):
+            return v                                          # 旧い形(registration_eval が検証する)
+        R, t = _pose_rt(v, name, "rotation_translation_error")
+        return registration_eval.make_transform(R, t)
+    return registration_eval.rotation_translation_error(as_t(gt, "gt"), as_t(est, "est"))
+
+
+rotation_translation_error.__signature__ = inspect.signature(rotation_translation_error.__wrapped__)
+rotation_translation_error.__module__ = __name__
+rotation_translation_error.__qualname__ = "rotation_translation_error"
 
 _MOD = {"match3d": match3d, "feat_harris": feat_harris, "feat_spin": feat_spin,
         "feat_shot": feat_shot, "feat_fpfh": feat_fpfh, "fuse3d": fuse3d,
@@ -588,7 +661,8 @@ _CATALOG = {
         # **並進誤差を黙って捨てる**。宣言を 'table'(list|dict)へ移し、adapter で
         # 名前つきの dict にする ―― 素の関数の返り値仕様は互換のため不変
         # (2026-09-04、KNOWN_LEDGER_GAPS から解消)。
-        ("pose_error", "metrics3d", ["pose", "pose"], "table", False),
+        # 入口は ops3d.pose_error(pose を 2 つ受ける。_MOD の前の注記)。計算は metrics3d.pose_error。
+        ("pose_error", "ops3d", ["pose", "pose"], "table", False),
     ],
     "robust_fit": [  # RANSAC 頑健プリミティブ適合(外れ値に強い、最小二乗の上位)
         ("ransac_plane", "ransac_fit", ["points"], "primitive", False),
@@ -857,7 +931,10 @@ _CATALOG = {
         # (rmse, n_inliers) を返す → adapter で rmse を剥がして measurement
         ("rmse_inliers", "registration_eval", ["points", "points"], "measurement", False),
         ("registration_recall", "registration_eval", ["points", "points"], "measurement", False),
-        ("rotation_translation_error", "registration_eval", ["pose", "pose"], "measurement", False),
+        # 返りは (RRE[deg], RTE) の 2 量。'measurement'(スカラ 1 つ)と宣言していたのは嘘で、契約探針の
+        # 負債(out_sort_mismatch)に載っていた。pose_error と同じく名前つきの dict(table)にする
+        # (2026-11-03)。入口は ops3d.rotation_translation_error(pose の組も 4×4 も受ける)。
+        ("rotation_translation_error", "ops3d", ["pose", "pose"], "table", False),
     ],
     "bounds": [  # 凸包・バウンディングボリューム(位置/向き/大きさの基本メトロロジー)
         ("convex_hull", "meshrepair", ["points"], "mesh", False),
@@ -953,6 +1030,8 @@ RESULT_ADAPTERS = {
     # どちらも捨てない(宣言 'table')。
     "pose_error": lambda r: ({"rotation_deg": float(r[0]), "translation": float(r[1])}
                              if isinstance(r, tuple) and len(r) == 2 else r),
+    "rotation_translation_error": lambda r: ({"rre_deg": float(r[0]), "rte": float(r[1])}
+                                             if isinstance(r, tuple) and len(r) == 2 else r),
     "gicp": lambda r: (r["R"], r["t"]) if isinstance(r, dict) else r,
     "rigid_flow": lambda r: (r["R"], r["t"]) if isinstance(r, dict) else r,
     "vol_label": lambda r: r[0],                    # (labels, n)
