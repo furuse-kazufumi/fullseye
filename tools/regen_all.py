@@ -270,6 +270,8 @@ READS = {
                                              "fullseye/data/OP_GRAPH.json"],
     "tools/gen_literature_counts.py": ["docs/ops/*"],
     "tools/gen_doc_counts.py": ["docs/README.md", "docs/README.*.md"],
+    # registry(api)を組むときに op のつまみ表を読む(書く段 gen_mcp_data は鎖の前にある)
+    "tools/gen_device_rules.py": ["fullseye/data/op_knob.json"],
 }
 
 #: 順序の例外 —— 読むが、後ろの段が書いてもよいもの。(段, READS のパターン) → 理由。
