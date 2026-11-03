@@ -50,6 +50,9 @@ VERIFIED_PYTHON = {
     "deflectometry_phase_to_slope", "fringe_ftp_phase", "depth_from_focus",
     "fit_circle_geometric", "fit_curve_principal_axis",
     "phase_correlation_shift", "fit_surface_principal_axes",
+    # 2026-11-03: N 段の位相シフト縞 -> 巻いた位相。MCP e2e(PR #224)の位相 2 課題が期待する op なのに
+    #   検証済みに無く、MCP からは組めなかった。下の試験に実行(真値 0.7 rad)を足して載せる。
+    "wrapped_phase",
 }
 DATA_INPUT_OVERRIDES = {
     "triangulate": [("uv1", "image"), ("uv2", "image"), ("P1", "matrix"), ("P2", "matrix")],

@@ -103,7 +103,8 @@ def build():
         book = rb.BOOK_OF[r["name"]]
         if rb.type_cuts(r):
             raise RuntimeError("recipe %r has type cuts: %s" % (r["name"], [c for c in rb.connections(r) if not c[4]]))
-        stages = [_public_stage(st) for st in r["stages"]]
+        mcp = rb.mcp_stages(r)
+        stages = mcp if mcp is not None else [_public_stage(st) for st in r["stages"]]
         terms = _texts([s["op"] for s in stages], by_name)
         words = [r["name"], r["task"], r["task_class"], r["family"], r.get("halcon") or "", r["note"]]
         out.append({"name": r["name"], "task": r["task"], "family": r["family"], "task_class": r["task_class"],

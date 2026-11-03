@@ -164,6 +164,48 @@ def test_legacy_recipe_runs_end_to_end(name):
     assert rb.type_cuts(legacy) == 0, (name, rb.connections(legacy))
 
 
+_MCP_NAMES = [r["name"] for r in rb.RECIPES if rb.is_mcp_runnable(r)]
+
+
+@pytest.fixture(scope="module")
+def mcp():
+    from fullseye.mcp.catalog import Catalog
+    from fullseye.mcp.handles import HandleStore
+    return Catalog.load(), HandleStore(roots=[])
+
+
+def test_mcp_runnable_floor():
+    """MCP でそのまま走るレシピの数(2026-11-03: 58)。黙って python 扱いに落ちるのを止める。"""
+    assert len(_MCP_NAMES) >= 55, len(_MCP_NAMES)
+
+
+@pytest.mark.parametrize("name", _MCP_NAMES)
+def test_mcp_runnable_recipe_runs_through_mcp_pipeline(name, mcp):
+    """runner = mcp のレシピは、MCP の fullseye_pipeline に渡して実際に走り、Python の runner と同じ答えになる。"""
+    from fullseye.mcp.server import call_tool
+    cat, store = mcp
+    r = rb.get(name)
+    s = rb.sample(r, 0)
+    h = store.put(np.asarray(s["value"], float), sort=r["input_sort"], provenance=[{"synthetic": True}])["handle"]
+    want, _ = rb.run(r, s["value"], s["aux"])        # 先に: MCP の pipeline は終わると照合の見本を外す
+    args = {"handle": h, "stages": rb.mcp_stages(r)}
+    if {st["op"] for st in r["stages"]} & {"ncc_locate", "shape_locate"}:
+        # 照合の op は MCP では template_handle で見本を受ける(標本はスレッドに登録している)。
+        import ops
+        tpl = ops._MATCH_CTX.get("template")
+        assert tpl is not None, (name, "the sample must register its template")
+        args["template_handle"] = store.put(np.asarray(tpl, float), sort="image",
+                                            provenance=[{"synthetic": True}])["handle"]
+    res = call_tool("fullseye_pipeline", args, cat, store)
+    assert res.get("isError") is False, (name, res["content"][0]["text"][:600])
+    sc = res["structuredContent"]
+    # 最終段の値は stages[-1]["value_handle"] が指す(配列でない値でも handle に入る)。
+    last = sc["stages"][-1]
+    got = store.get(last.get("value_handle") or sc["handle"])[1]
+    f_got, f_want = rb.fingerprint(got), rb.fingerprint(want)
+    assert f_got.shape == f_want.shape and np.allclose(f_got, f_want, rtol=1e-9, atol=1e-9), name
+
+
 def test_every_recipe_has_a_japanese_note():
     """ja の検索文は英語の名前・説明と op の要約だけだと、日本語の問いで族の当たりが 10/30 だった
     (2026-11-03 実測、目隠し問い合わせ)。手書きの日本語の名前と説明を全レシピに付ける。"""

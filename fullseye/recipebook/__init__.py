@@ -265,15 +265,46 @@ def output_sort(recipe: dict):
     return rows_out[len(recipe["stages"])]
 
 
-def is_mcp_runnable(recipe: dict) -> bool:
-    """MCP の ``fullseye_pipeline`` でそのまま走る形か(全段が MCP 検証済みの登録 op で a/b だけ)。"""
-    for st in recipe["stages"]:
+def mcp_stages(recipe: dict):
+    """MCP ``fullseye_pipeline`` の段の形(``{"op", "inputs", "params", "a", "b"}``)。MCP で走らなければ None。
+
+    全段が OP_GRAPH で ``verified_executable``(登録 op でも、検証済みの Python op でも)で、位置引数は
+    レシピ入力か前の段だけ(``$aux`` は MCP の利用者が別に読み込む物なので、ここでは MCP 形にしない)、
+    ``kw`` の値に参照を含まないこと。★2026-11-03: 最初は「登録 op で a/b だけ」に限っていて、MCP で
+    検証済みの decode_fringe / polarization_dolp_map のレシピまで python 扱いになっていた。
+    """
+    if recipe.get("input_sort") is None:
+        return None
+    out = []
+    for i, st in enumerate(recipe["stages"], 1):
         e = edge(st["op"]) or {}
-        if not (_is_registry(st["op"]) and e.get("verified_executable")):
-            return False
-        if set(st) - {"op", "a", "b"}:
-            return False
-    return recipe.get("input_sort") is not None
+        if not e.get("verified_executable") or st.get("call") == "raw":
+            return None
+        if set(st) - {"op", "a", "b", "args", "kw"}:
+            return None
+        spec = {"op": st["op"]}
+        if "args" in st:
+            refs = []
+            for r in st["args"]:
+                k = _ref_stage(r, i)
+                if k is None:
+                    return None
+                refs.append("have:%s" % norm_sort(recipe["input_sort"]) if k == 0 else "stage:%d" % k)
+            spec["inputs"] = refs
+        if "kw" in st:
+            if any(isinstance(v, str) and v.startswith("$") for v in st["kw"].values()):
+                return None
+            spec["params"] = dict(st["kw"])
+        for k in ("a", "b"):
+            if k in st:
+                spec[k] = st[k]
+        out.append(spec)
+    return out
+
+
+def is_mcp_runnable(recipe: dict) -> bool:
+    """MCP の ``fullseye_pipeline`` でそのまま走る形か(:func:`mcp_stages` が形を返すか)。"""
+    return mcp_stages(recipe) is not None
 
 
 # ---- execution -------------------------------------------------------------------------------

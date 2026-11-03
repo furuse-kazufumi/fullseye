@@ -13808,8 +13808,18 @@
           "default": "general"
         }
       ],
-      "verified_executable": false,
-      "not_executable_in_mcp": "not_verified",
+      "verified_executable": true,
+      "verification": {
+        "source": "tests/test_op_facets_2026_10_28.py::test_three_multi_input_business_dags_execute_through_mcp",
+        "status": "ok",
+        "checks": [
+          "executed",
+          "typed",
+          "shape",
+          "finite",
+          "meaningful_synthetic_input"
+        ]
+      },
       "bundle_semantics": "stack_global",
       "source_ref": "S00001"
     },

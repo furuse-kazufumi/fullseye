@@ -181,6 +181,13 @@ def test_three_multi_input_business_dags_execute_through_mcp():
     assert 0 < np.count_nonzero(polar_value) < polar_value.size
     expected_height=np.full((32,32),1.0*true_phase)  # k=1.0
     assert float(np.sqrt(np.mean((depth_value-expected_height)**2))) < 1e-9
+    # 2026-11-03: wrapped_phase (seq<image> -> image) through MCP, same frames: the wrapped phase is 0.7 rad.
+    wrapped=call_tool("fullseye_pipeline",{"handle":stack,"stages":[
+        {"op":"wrapped_phase","inputs":[stack],"params":{}}]},cat,store)
+    assert wrapped.get("isError") is False, wrapped
+    assert wrapped["structuredContent"]["out_sort"] == "image"
+    wrapped_value=np.asarray(store.get(wrapped["structuredContent"]["handle"])[1])
+    assert float(np.max(np.abs(wrapped_value-true_phase))) < 1e-9
 
 def test_fit_ops_execute_through_mcp_with_meaningful_inputs():
     import numpy as np
