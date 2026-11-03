@@ -504,3 +504,40 @@ def test_fail_closed_modules_and_encode():
     m[e["codeword_index"] >= 0] = 0
     with pytest.raises(DMDecodeError):
         dm_decode_modules(m)
+
+
+# ---------------------------------------------------------------------------------------------
+# 回帰: 画素に揃った鋭い打刻(パイプラインの描画器 symrender)/ regression: sharp pixel-aligned dots
+# ---------------------------------------------------------------------------------------------
+# 原因: 背景が広く濃淡が数段しかない画像で Otsu の閾値がインクの濃度の直上に落ち、
+# 完全に塗れた画素だけが暗になって縁が約 1 px 内側へ寄り、module 中心の標本が閾値すれすれになった
+# (0 / 90 / 180 / 270 度・5 px で再現)。閾値を暗/明の平均の中点へ寄せて解消。
+# Cause: on few-level images with a large background, Otsu sat just above the ink level.
+def _symrender():
+    return pytest.importorskip("symrender")
+
+
+@pytest.mark.parametrize("module_px", list(range(3, 11)))
+def test_dot_peen_sweep_symrender(module_px):
+    SR = _symrender()
+    dm = dm_encode("PN12345-LOT2611A")
+    fails = []
+    for ang in range(0, 360, 15):
+        img = SR.render_symbol(dm, float(module_px), rotate_deg=ang, dot=0.8, dark=0.30,
+                               light=0.65, supersample=2)
+        try:
+            ok = dm_read(img)["text"] == dm["text"]
+        except DMDecodeError:
+            ok = False
+        if not ok:
+            fails.append(ang)
+    assert not fails, "module %d px fails at angles %s" % (module_px, fails)
+
+
+def test_dot_peen_axis_aligned_exact_report():
+    """報告どおりの設定(既定の supersample=4)/ the configuration as reported."""
+    SR = _symrender()
+    dm = dm_encode("PN12345-LOT2611A")
+    for ang in (0, 90, 180, 270, 45):
+        img = SR.render_symbol(dm, 5.0, rotate_deg=ang, dot=0.8, dark=0.30, light=0.65)
+        assert dm_read(img)["text"] == "PN12345-LOT2611A", ang

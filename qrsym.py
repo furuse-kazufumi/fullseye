@@ -388,7 +388,7 @@ def _place_version(m: np.ndarray, version: int):
 
 
 def qr_encode(text, ec_level="M", version=None, mask=None, mode=None) -> dict:
-    """文字列を QR Code(Model 2)のモジュール格子に符号化する。
+    """文字列を QR Code(Model 2)のモジュール格子と符号語の対応に符号化する(``table``)。
 
     Encode ``text`` as a QR Code (Model 2) module grid.
 
@@ -749,7 +749,7 @@ def _check_grid(modules) -> np.ndarray:
 
 
 def qr_decode_modules(modules) -> dict:
-    """モジュール格子(静寂帯なし、1=暗)を復号する。読めなければ転置(鏡像)も試す。
+    """QR のモジュール格子(静寂帯なし、1 = 暗)を復号し、ブロックごとの訂正語数を返す(``table``)。
 
     Decode an (N,N) 0/1 module grid (1 = dark, no quiet zone). The transposed
     (mirrored) grid is tried when the direct read fails.
@@ -1274,7 +1274,7 @@ def _locate_hypotheses(img, max_hyp=6):
 
 
 def qr_locate(image) -> dict:
-    """画像から QR を見つけ、モジュール空間→画像の射影変換を推定する。
+    """画像から QR を見つけ、モジュール空間 → 画像の射影変換を推定する(``table``)。
 
     Locate a QR symbol (dark modules on a light background) in a 2-D float image in
     [0, 1]. Returns ``homography`` (module [x=col, y=row, 1] -> image [x=col_px,
@@ -1290,7 +1290,7 @@ def qr_locate(image) -> dict:
 
 
 def qr_sample(image, located=None) -> dict:
-    """モジュール中心の反射率を双一次補間で取り、大域しきい値で 2 値化する。
+    """QR のモジュール中心の反射率を双一次補間で取り、大域しきい値で 2 値化する(``table``)。
 
     Sample module-centre reflectance (bilinear) and binarise with one global threshold
     midway between the dark- and light-module means (refined iteratively).
@@ -1331,7 +1331,7 @@ def qr_sample(image, located=None) -> dict:
 
 
 def qr_read(image) -> dict:
-    """位置検出 → 標本化 → 復号。失敗したら明暗反転画像でも試す(``inverted``)。
+    """画像から QR を読む: 位置検出 → 標本化 → 復号、失敗したら明暗を反転して再試行(``table``)。
 
     Locate, sample and decode; if that fails, retry on the inverted image
     (light-on-dark symbols) and report ``inverted``. Returns the decode dict plus

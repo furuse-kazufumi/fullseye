@@ -383,7 +383,7 @@ def _sizes_for_shape(shape):
 
 
 def dm_encode(text, size=None, shape: str = "square", encodation: str = "auto") -> dict:
-    """文字列を Data Matrix ECC200 に符号化する(記号の大きさは自動または指定)。
+    """文字列を Data Matrix ECC200 のモジュール格子と符号語の対応に符号化する(``table``)。
 
     Encode ``text`` (str with code points <= 255, or bytes) as an ECC200 symbol.
 
@@ -701,7 +701,7 @@ def _decode_oriented(g, L):
 
 
 def dm_decode_modules(modules) -> dict:
-    """module 行列(L 字とクロック込み、0/1)を復号する。4 回転と鏡像を自動で正す。
+    """Data Matrix のモジュール格子(L 字とクロック込み、0/1)を復号し、訂正語数を返す(``table``)。
 
     Decode an (R, C) 0/1 module matrix that includes the finder L and the clock track.
     The grid may be given in any of the 4 rotations, optionally mirrored; the
@@ -804,6 +804,27 @@ def _otsu(a):
     sb[~np.isfinite(sb)] = -1
     k = int(np.argmax(sb))
     return float(edges[k + 1])
+
+
+def _global_threshold(a):
+    """Otsu で初期分割し、暗/明の平均の中点へ 2 回寄せた大域閾値(isodata)。
+
+    Otsu alone is unsafe on few-level images: with a large light background and
+    sharp, pixel-aligned dots (levels ink / near-ink / partial / substrate) it can
+    land just above the ink level, so only fully inked pixels count as dark, edges
+    move ~1 px inward and module-centre samples sit on the threshold. The midpoint
+    of the class means (refined twice) is the conventional global threshold and
+    keeps partial-coverage pixels on the side they are nearer to.
+    """
+    t = _otsu(a)
+    if t is None:
+        return None
+    for _ in range(2):
+        d, l = a[a < t], a[a >= t]
+        if d.size == 0 or l.size == 0:
+            break
+        t = 0.5 * (float(d.mean()) + float(l.mean()))
+    return t
 
 
 def _homography(src, dst):
@@ -980,20 +1001,24 @@ def _refine_quad(img, t, quad, passes=2, ns=48):
 def _identify(img, t, quad, min_score):
     """どの角が L の角か・記号の大きさを機能パターンの一致率で決める / pick size + correspondence."""
     best = None
-    for rc in DM_SIZES:
-        R, C = rc
-        L = _layout(R, C)
-        mc = np.array([[0, 0], [C, 0], [C, R], [0, R]], float)
-        fpts = L["f_idx"][:, ::-1] + 0.5               # (x, y) of function module centres
-        for d in (1, -1):
-            for s0 in range(4):
-                Q = np.array([quad[(s0 + d * k) % 4] for k in range(4)])
-                top = np.hypot(*(Q[1] - Q[0]))
-                left = np.hypot(*(Q[3] - Q[0]))
+    unit = np.array([[0, 0], [1, 0], [1, 1], [0, 1]], float)
+    for d in (1, -1):
+        for s0 in range(4):
+            Q = np.array([quad[(s0 + d * k) % 4] for k in range(4)])
+            # 単位正方形 → 画像を 1 回だけ解き、大きさごとに diag(1/C, 1/R) を掛ける
+            # one unit-square homography per correspondence; per size H = Hu diag(1/C, 1/R, 1)
+            Hu = _homography(unit, Q)
+            top = np.hypot(*(Q[1] - Q[0]))
+            left = np.hypot(*(Q[3] - Q[0]))
+            for rc in DM_SIZES:
+                R, C = rc
                 mx, my = top / C, left / R
                 if min(mx, my) < 1.0 or not 0.5 <= mx / my <= 2.0:
                     continue
-                H = _homography(mc, Q)
+                L = _layout(R, C)
+                fpts = L["f_idx"][:, ::-1] + 0.5       # (x, y) of function module centres
+                H = Hu @ np.diag([1.0 / C, 1.0 / R, 1.0])
+                H = H / H[2, 2]
                 v = _sample_at(img, _apply_h(H, fpts))
                 score = float(np.mean((v < t) == (L["f_val"] == 1)))
                 a = Q[1] - Q[0]
@@ -1014,7 +1039,7 @@ _RADII = (1.0, 2.0, 3.0, 4.5, 6.5)
 
 def _iter_candidates(img, min_score=0.8):
     """位置候補を(膨張半径の小さい順に)生成 / yield located candidates, smallest radius first."""
-    t = _otsu(img)
+    t = _global_threshold(img)
     if t is None:
         return
     dark = img < t
@@ -1056,10 +1081,10 @@ def _iter_candidates(img, min_score=0.8):
 
 
 def dm_locate(image) -> dict:
-    """画像の中の Data Matrix(暗い module・明るい背景)を探し、module 空間→画像の射影を返す。
+    """画像から Data Matrix を見つけ、モジュール空間 → 画像の射影変換を推定する(``table``)。
 
-    Locate a dark-on-light ECC200 symbol (quiet zone >= 1 module). Otsu
-    binarisation, dark pixels grouped after a distance-based closing at several
+    Locate a dark-on-light ECC200 symbol (quiet zone >= 1 module). Global
+    binarisation (Otsu start, then the midpoint of the dark/light means), dark pixels grouped after a distance-based closing at several
     radii (so separated dot-peen dots join), near max-area quadrilateral in the
     convex hull, sub-pixel edge lines (grey-level threshold crossings, inward
     outliers from the clock gaps trimmed), corners = line intersections, then the
@@ -1072,7 +1097,7 @@ def dm_locate(image) -> dict:
     dict
         ``homography`` 3x3(module 空間 [x=列, y=行, 1] → 画像 [列, 行, w])、``rows``, ``cols``,
         ``corners`` (4, 2) 画素の (行, 列)、順は module 空間の (0,0), (C,0), (C,R), (0,R)、
-        ``module_px``, ``score``(機能パターンの一致率), ``threshold``(Otsu)。
+        ``module_px``, ``score``(機能パターンの一致率), ``threshold``(大域閾値 / global threshold)。
 
     Raises
     ------
@@ -1094,7 +1119,7 @@ def dm_locate(image) -> dict:
 
 
 def dm_sample(image, located=None) -> dict:
-    """module 中心の濃淡を双線形で取り、暗/明の平均の中点の大域閾値で 0/1 にする。
+    """Data Matrix のモジュール中心の反射率を双一次補間で取り、大域しきい値で 2 値化する(``table``)。
 
     Sample every module centre (bilinear) through the located homography and
     threshold globally at the midpoint of the dark and light means (initial split
@@ -1141,7 +1166,7 @@ def _grid_affine(shape, k, mirrored):
 
 
 def dm_read(image) -> dict:
-    """画像から読む: 位置決め → 標本化 → 復号。暗地に明の記号は反転して再試行。
+    """画像から Data Matrix を読む: 位置決め → 標本化 → 復号、明暗を反転して再試行(``table``)。
 
     Read a symbol from a grey image: locate + sample + decode, retrying on the
     inverted image (light-on-dark marks) — ``inverted`` reports which succeeded.
