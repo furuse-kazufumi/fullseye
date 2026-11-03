@@ -2049,26 +2049,12 @@ def explain_device(device: str = "auto", *, stages=None, shape=None, n: int = 1)
     ``FULLSEYE_DEVICE``)/ ``resolved``(:func:`resolve_device` の値)/ ``device``(実際に計算が走る装置)/
     ``path``(``accel`` / ``allow_single`` / ``allow_resident`` / ``allow_pipeline`` / ``cpu``、鎖で段ごとに
     違えば ``mixed``)/ ``reason``(``cpu`` を選んだ理由: ``requested_cpu`` / ``env_cpu`` / ``no_cuda`` /
-    ``vram_low`` / ``crossover`` / ``not_listed`` / ``chain_only`` / ``no_cupy`` / ``below_measured_size``)。
+    ``vram_low`` / ``crossover`` / ``not_listed`` / ``chain_only`` / ``no_cupy`` / ``below_measured_size`` /
+    ``native_not_wired``)。op にどの GPU 経路があるかは :func:`gpu_route.route` だけが決める。
     2 段以上なら ``stages``(段ごとの ``op`` / ``path`` / ``reason``)。空き VRAM を見たときは
     ``vram_free_mb`` / ``vram_min_free_mb``。
     """
     return {k: v for k, v in _decide(device, stages, shape, n).items() if not k.startswith("_")}
-
-
-_SHADOW_USABLE: list = []      # [bool](CuPy が GPU を見られるか。1 プロセス 1 回だけ確かめる)
-
-
-def _shadow_usable() -> bool:
-    """許可リストの道(:mod:`gpu_shadow`、CuPy)が走るか。CuPy の import は重いので必要になってから。"""
-    if not _SHADOW_USABLE:
-        try:
-            import gpu_shadow
-            ok = bool(gpu_shadow.available())
-        except Exception:  # noqa: BLE001 - CuPy の欠如・壊れは「使えない」
-            ok = False
-        _SHADOW_USABLE.append(ok)
-    return _SHADOW_USABLE[0]
 
 
 def _decide(device, stages, shape, n) -> dict:
@@ -2114,11 +2100,10 @@ def _decide(device, stages, shape, n) -> dict:
                 return all_cpu("vram_low")
         dec.update(resolved="cuda", device="cuda", path=None, reason=None, _paths=None)
         return dec
-    accelerated = _gpu_op_names()
-    rows = device_policy.shadow_rows()
-    needs_shadow = any(nm not in accelerated and nm in rows for nm in names)
-    paths = device_policy.plan_paths(names, shape if auto else None, accelerated=accelerated, shadow=rows,
-                                     auto=auto, shadow_usable=needs_shadow and _shadow_usable())
+    import gpu_route
+    accelerated = gpu_route.accelerated_names()
+    paths = device_policy.plan_paths(names, shape if auto else None, route_of=gpu_route.route,
+                                     runnable=gpu_route.runnable, auto=auto)
     if not auto:
         return finish("cuda", paths)
     shadow_on = any(p.startswith("allow_") for p, _r in paths)
@@ -2144,12 +2129,9 @@ def last_device_decision() -> dict | None:
 
 
 def _gpu_op_names() -> frozenset:
-    """GPU 経路を持つ core op 名(2-D + 体積 + 照合)。"""
-    try:
-        import accel_bridge as bridge
-    except ImportError:
-        return frozenset()
-    return frozenset(bridge._C2A) | frozenset(bridge._C2VA) | frozenset(bridge._C2M)
+    """手書きの GPU 経路を持つ core op 名(2-D + 体積 + 照合)。台帳は :mod:`gpu_route` が読む。"""
+    import gpu_route
+    return gpu_route.accelerated_names()
 
 
 def cuda_available() -> bool:
@@ -2702,10 +2684,11 @@ def _try_accel(op, v, a, b, device):
     if accel_name is None or (op.name in _GPU_OPEN and not _bs.is_strict()):
         return _NOACCEL                  # breaker open; strict mode retries so "raise" can raise
     try:
-        if str(device) == "cuda" and not cuda_available():
-            # torch が「CUDA なし」と答える機械では kernel を起こさない(N117 の説明で記録して CPU へ)。
+        if str(device) == "cuda" and getattr(accel, "_HAS_TORCH", False) and not cuda_available():
+            # torch が「CUDA なし」と答える機械では torch の kernel を起こさない(N117 の説明で記録して CPU へ)。
             # 以前は torch の生の例外に任せていたので、torch.cuda.is_available() だけが False の機械
             # (GPU のある loco で is_available を差し替えた門)では kernel が走ってしまい門が落ちていた。
+            # torch を持たない差し替えの accel 表(故障注入の門)は従来どおり kernel を呼ぶ。
             raise RuntimeError("torch.cuda.is_available() is False")
         return accel.run_batch(accel_name, [v], a, b, device)[0]
     except Exception as e:               # noqa: BLE001
@@ -2723,14 +2706,14 @@ def _try_shadow(op, v, a, b):
     失敗は ``_try_accel`` と同じ扱い: 台帳に ``source="gpu"`` で記録し、op の遮断器を開け、
     ``on_error="raise"`` では投げ直す。
     """
-    try:
-        import gpu_shadow
-    except ImportError:
+    import gpu_route
+    r = gpu_route.route(op.name, "single")
+    if r is None or r.kind != "shadow":
         return _NOACCEL
     if op.name in _GPU_OPEN and not _bs.is_strict():
         return _NOACCEL
     try:
-        return gpu_shadow.run_allowed(op.name, v, a, b)
+        return gpu_route.run_single(r, op.name, v, a, b)
     except Exception as e:               # noqa: BLE001
         if _bs.is_strict():
             raise

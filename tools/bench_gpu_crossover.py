@@ -976,12 +976,14 @@ SHADOW_SAMPLE = 12
 def shadow_sample() -> list:
     """許可リスト(単独 ``ops``)の登録 op のうち入力が image で 2048² で測ったもの、名前順に等間隔で 12 件。"""
     import api
-    import device_policy
+    import gpu_route
     rows = {r["name"]: r for r in api._rows()}
-    accelerated = api._gpu_op_names()
-    names = sorted(op for op, row in device_policy.shadow_rows().items()
-                   if row["list"] == "ops" and row.get("min_elements") == 2048 * 2048 and op in rows
-                   and rows[op]["in_sort"] == "image" and op not in accelerated)
+    names = []
+    for op in sorted(rows):
+        r = gpu_route.route(op, "single")
+        if (r is not None and r.kind == "shadow" and r.min_elements == 2048 * 2048
+                and rows[op]["in_sort"] == "image"):
+            names.append(op)
     step = max(1, len(names) // SHADOW_SAMPLE)
     return names[::step][:SHADOW_SAMPLE]
 

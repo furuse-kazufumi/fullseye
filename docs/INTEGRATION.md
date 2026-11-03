@@ -89,9 +89,11 @@ CPU was chosen: `requested_cpu`, `env_cpu`, `no_cuda`, `vram_low`, `crossover`, 
 `chain_only`, `no_cupy`, `below_measured_size`, `gpu_failed`; `fullseye_pipeline` adds one row
 per stage) and the GPU/CPU segment plan; pass `parity_check: true` to also run the CPU reference
 and record `max_abs_diff_vs_cpu` (doubles the work, so it is opt-in). `fullseye_describe`
-(kind `op`) returns `gpu_paths` — whether the op has a hand-written GPU path, its allow-list
-slot and measured speed-up, and the size from which `auto` picks the GPU — so an agent can
-choose before it runs anything. In Python: `fullseye.explain_device(...)`.
+(kind `op`) returns `gpu_paths` — whether the op has a hand-written GPU path, every matching
+route (`kind` accel / native / shadow, where it may be used — single call, resident chain,
+pipeline — and the measured speed-up), the primary route, and the size from which `auto` picks
+the GPU — so an agent can choose before it runs anything. In Python: `fullseye.explain_device(...)`;
+the one function that decides an op's GPU route is `gpu_route.route(op, context)`.
 The `minimal` tool profile advertises `fullseye_pipeline` without `device` / `parity_check`
 (they are still accepted; the minimal profile stays under its 1,500-token budget).
 

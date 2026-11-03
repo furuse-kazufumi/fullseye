@@ -175,47 +175,36 @@ def vram_ok():
     return free >= need, round(free, 1), need
 
 
-# ---- 許可リストの道(gpu_shadow) ------------------------------------------------------------
-_LIST_PATH = {"ops": "allow_single", "resident_ops": "allow_resident", "pipeline_ops": "allow_pipeline"}
-
-
-def shadow_rows(rules=None) -> dict:
-    """``{op: {"list", "ratio", "min_elements", ...}}``(表の ``shadow``。無ければ空)。"""
-    table = rules if rules is not None else load_rules()
-    if not table:
-        return {}
-    return table.get("shadow", {}).get("ops", {})
-
-
-def _elements(shape):
-    return _pixels(shape)
-
-
-def plan_paths(names, shape, *, accelerated, shadow, auto: bool, shadow_usable: bool) -> list:
+# ---- 段ごとの経路(どの経路があるかは gpu_route.route だけが知る) ------------------------------
+def plan_paths(names, shape, *, route_of, runnable, auto: bool) -> list:
     """段ごとの ``(path, reason)``。GPU を使ってよい装置であることは呼ぶ側が確かめてある。
 
-    * GPU 経路(accel)を持つ段は ``accel``。
-    * 許可リストの段: ``auto`` では入力の要素数が倍率を測った大きさ以上のときだけ(それ未満は測って
-      いない = 勝つと言えない)。明示の ``cuda`` では大きさを問わない。
-    * ``resident_ops`` / ``pipeline_ops`` は隣も許可リストの段のとき(GPU に載せたまま続くとき)だけ。
-      単独の呼び出しや孤立した段は ``chain_only`` で CPU。
+    *route_of* = :func:`gpu_route.route`(``(op, context) -> Route | None``)、*runnable* =
+    :func:`gpu_route.runnable`。経路の有無と優先順位はそちらが決め、ここは段の並びと大きさだけを見る。
+
+    * 手書きの経路(``accel``)は ``accel``(大きさは損益分岐の表 :func:`route` が別に見る)。
+    * 許可リスト(shadow)・native: ``auto`` では入力の要素数が倍率を測った大きさ以上のときだけ
+      (それ未満は測っていない = 勝つと言えない)。明示の ``cuda`` では大きさを問わない。
+    * 常駐・鎖の枠(``allow_resident`` / ``allow_pipeline``)は隣も許可リストの段のときだけ。単独の
+      呼び出しや孤立した段は ``chain_only`` で CPU。
     """
     names = list(names)
-    elements = _elements(shape) if shape is not None else None
+    elements = _pixels(shape) if shape is not None else None
+    context = "pipeline" if len(names) > 1 else "single"
     out = []
     for name in names:
-        if name in accelerated:
+        r = route_of(name, context)
+        if r is None:
+            chain = context == "single" and route_of(name, "pipeline") is not None
+            out.append(("cpu", "chain_only" if chain else "not_listed"))
+        elif r.kind == "accel":
             out.append(("accel", None))
-            continue
-        row = shadow.get(name)
-        if row is None:
-            out.append(("cpu", "not_listed"))
-        elif not shadow_usable:
-            out.append(("cpu", "no_cupy"))
-        elif auto and (row.get("min_elements") is None or elements is None or elements < row["min_elements"]):
+        elif not runnable(r):
+            out.append(("cpu", "no_cupy" if r.kind == "shadow" else "native_not_wired"))
+        elif auto and (r.min_elements is None or elements is None or elements < r.min_elements):
             out.append(("cpu", "below_measured_size"))
         else:
-            out.append((_LIST_PATH.get(row.get("list"), "allow_single"), None))
+            out.append((r.path, None))
     first = list(out)
     for i, (path, _r) in enumerate(first):
         if path in ("allow_resident", "allow_pipeline"):
@@ -224,32 +213,3 @@ def plan_paths(names, shape, *, accelerated, shadow, auto: bool, shadow_usable: 
             if not (left or right):
                 out[i] = ("cpu", "chain_only")
     return out
-
-
-def gpu_paths(name: str, rules=None, accelerated=None, allow=None) -> dict:
-    """AI が事前に選ぶための op 1 件の GPU 版の要約(op 説明系のツールが返す)。
-
-    ``accel`` = 手書きの GPU 経路の有無、``allow_list`` = 許可リストの枠(``ops`` / ``resident_ops`` /
-    ``pipeline_ops`` / ``None``)、``ratio`` = その枠の倍率(転送込み、実寸)、``auto_gpu_min_pixels`` =
-    ``device="auto"`` が GPU を選び始める大きさ(手書き経路は損益分岐の表、許可リストは倍率を測った大きさ。
-    ``None`` = auto では選ばない)。
-    """
-    table = rules if rules is not None else load_rules()
-    accelerated = accelerated if accelerated is not None else frozenset()
-    has_accel = name in accelerated
-    row = shadow_rows(table).get(name) if table else None
-    info = {"accel": has_accel, "allow_list": row.get("list") if row else None,
-            "ratio": row.get("ratio") if row else None,
-            "measured_shape": row.get("measured_shape") if row else None}
-    if has_accel:
-        info["kinds"] = ["accel"]
-        info["auto_gpu_min_pixels"] = (_op_threshold(table, name, 1) or 0) if table else 0
-    elif row:
-        info["kinds"] = [_LIST_PATH.get(row.get("list"), "allow_single")]
-        info["auto_gpu_min_pixels"] = row.get("min_elements")
-    else:
-        info["kinds"] = []
-        info["auto_gpu_min_pixels"] = None
-    if row and row.get("ratio_single") is not None:
-        info["ratio_single"] = row["ratio_single"]
-    return info

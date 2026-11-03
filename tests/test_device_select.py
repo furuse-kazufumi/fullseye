@@ -10,9 +10,10 @@ import pytest
 
 import api
 import device_policy
+import gpu_route
 
 RULES = device_policy.load_rules()
-SHADOW = device_policy.shadow_rows()
+SHADOW = RULES["shadow"]["ops"]
 BIG = (2048, 2048)
 SMALL = (64, 64)
 HUGE = (8192, 8192)          # 形だけ(配列は作らない)。どの op の損益分岐よりも大きい
@@ -26,7 +27,7 @@ def gpu_box(monkeypatch):
     monkeypatch.setattr(api, "cuda_available", lambda: True)
     monkeypatch.setattr(device_policy, "_query_free_mb", lambda: 30000.0)
     monkeypatch.setattr(device_policy, "_VRAM_CACHE", [])
-    monkeypatch.setattr(api, "_SHADOW_USABLE", [True])
+    monkeypatch.setattr(gpu_route, "_CACHE", {"shadow_usable": True})
 
 
 def _accel_op():
@@ -141,7 +142,7 @@ def test_allow_list_single_needs_the_measured_size_under_auto(gpu_box):
 
 
 def test_allow_list_without_cupy(gpu_box, monkeypatch):
-    monkeypatch.setattr(api, "_SHADOW_USABLE", [False])
+    monkeypatch.setattr(gpu_route, "_CACHE", {"shadow_usable": False})
     op = _listed("ops")[0]
     assert api.explain_device("auto", stages=(op,), shape=BIG)["reason"] == "no_cupy"
     dec = api.explain_device("cuda", stages=(op,), shape=BIG)
@@ -162,26 +163,99 @@ def test_resident_ops_only_inside_a_chain(gpu_box):
     assert dec["device"] == "cpu"
 
 
+def _fake_router(table):
+    def route_of(name, context):
+        r = table.get(name)
+        if r is None or (context == "single" and r.use != "single"):
+            return None
+        return r
+    return route_of
+
+
 def test_plan_paths_demotes_isolated_chain_ops():
-    shadow = {"r": {"list": "resident_ops", "min_elements": 1}, "p": {"list": "pipeline_ops", "min_elements": 1},
-              "s": {"list": "ops", "min_elements": 1}}
-    plan = device_policy.plan_paths(["r", "x", "s", "p", "acc"], (8, 8), accelerated={"acc"}, shadow=shadow,
-                                    auto=True, shadow_usable=True)
+    table = {"r": gpu_route.Route("r", "shadow", "resident", min_elements=1),
+             "p": gpu_route.Route("p", "shadow", "pipeline", min_elements=1),
+             "s": gpu_route.Route("s", "shadow", "single", min_elements=1),
+             "acc": gpu_route.Route("acc", "accel", "single"),
+             "nat": gpu_route.Route("nat", "native", "single", ratio=3.0, min_elements=1)}
+    plan = device_policy.plan_paths(["r", "x", "s", "p", "acc", "nat"], (8, 8), route_of=_fake_router(table),
+                                    runnable=lambda r: r.kind != "native", auto=True)
     assert plan == [("cpu", "chain_only"), ("cpu", "not_listed"), ("allow_single", None),
-                    ("allow_pipeline", None), ("accel", None)]
+                    ("allow_pipeline", None), ("accel", None), ("cpu", "native_not_wired")]
+    single = device_policy.plan_paths(["r"], (8, 8), route_of=_fake_router(table), runnable=lambda r: True,
+                                      auto=True)
+    assert single == [("cpu", "chain_only")]
 
 
 def test_gpu_paths_summary_for_the_ai():
     accel_op = _accel_op()
-    info = device_policy.gpu_paths(accel_op, accelerated={accel_op})
-    assert info["accel"] and info["kinds"] == ["accel"]
+    info = gpu_route.describe(accel_op)
+    assert info["accel"] and info["primary"] == "accel"
     assert info["auto_gpu_min_pixels"] == RULES["ops"][accel_op]["min_pixels"]
     op = _listed("ops")[0]
-    info = device_policy.gpu_paths(op)
-    assert (info["accel"], info["allow_list"], info["kinds"]) == (False, "ops", ["allow_single"])
+    info = gpu_route.describe(op)
+    assert (info["accel"], info["allow_list"], info["primary"]) == (False, "ops", "allow_single")
     assert info["ratio"] >= 5.0 and info["auto_gpu_min_pixels"] == BIG[0] * BIG[1]
-    none = device_policy.gpu_paths("no_such_op")
-    assert none["kinds"] == [] and none["auto_gpu_min_pixels"] is None
+    none = gpu_route.describe("no_such_op")
+    assert none["kinds"] == [] and none["primary"] is None and none["auto_gpu_min_pixels"] is None
+
+
+# ---- gpu_route: 経路の選択は 1 か所 ---------------------------------------------------------------
+def test_route_context_filters_chain_only_slots():
+    op = _listed("resident_ops")[0]
+    assert gpu_route.route(op, "single") is None
+    r = gpu_route.route(op, "pipeline")
+    assert (r.kind, r.use, r.path) == ("shadow", "resident", "allow_resident")
+    with pytest.raises(ValueError):
+        gpu_route.route(op, "batch")
+
+
+def test_route_prefers_hand_written_then_the_fastest(monkeypatch):
+    """優先順位の規則(gpu_route._best)。accel(倍率なし)> 倍率の高い一致した経路。"""
+    acc = gpu_route.Route("x", "accel", "single")
+    slow = gpu_route.Route("x", "shadow", "single", ratio=6.0)
+    fast = gpu_route.Route("x", "native", "single", ratio=30.0)
+    assert gpu_route._best([slow, fast, acc]) is acc
+    assert gpu_route._best([slow, fast]) is fast
+    assert gpu_route._best([]) is None
+    # 両方を持つ実在の op(許可リストにもある手書き経路)は accel が主
+    both = next(op for op in api._gpu_op_names() if op in SHADOW and SHADOW[op]["list"] == "ops")
+    assert gpu_route.route(both).kind == "accel"
+    assert {r.kind for r in gpu_route.routes(both)} == {"accel", "shadow"}
+
+
+def test_native_needs_a_measured_faster_match(monkeypatch, tmp_path):
+    """native は実測があり、一致し、CPU より速いものだけ(実測の無い op は route しない = fail-closed)。"""
+    rows = [{"name": "edt_jfa", "ok": True, "status": "measured", "ratio": 32.1, "elems": 16777216},
+            {"name": "cylinder_unwrap", "ok": True, "status": "measured", "ratio": 0.98, "elems": 16777216},
+            {"name": "bad_one", "ok": False, "status": "mismatch", "ratio": 50.0, "elems": 10}]
+    path = tmp_path / "GPU_NATIVE.json"
+    path.write_text(__import__("json").dumps(rows), encoding="utf-8")
+    monkeypatch.setattr(gpu_route, "NATIVE_PATH", str(path))
+    monkeypatch.setattr(gpu_route, "_CACHE", {})
+    r = gpu_route.route("edt_jfa")
+    assert (r.kind, r.ratio, r.min_elements) == ("native", 32.1, 16777216)
+    def native(op):
+        return [r for r in gpu_route.routes(op) if r.kind == "native"]
+    assert native("cylinder_unwrap") == []                     # 遅い(別の経路 shadow は残る)
+    assert native("bad_one") == []                             # 一致しない
+    assert native("fit_zernike") == []                         # 測っていない
+    assert gpu_route.runnable(r) is False                      # apply からはまだ走らせない
+    monkeypatch.setattr(gpu_route, "NATIVE_PATH", str(tmp_path / "missing.json"))
+    monkeypatch.setattr(gpu_route, "_CACHE", {})
+    assert gpu_route.route("edt_jfa") is None
+
+
+def test_only_gpu_route_reads_the_gpu_ledgers():
+    """apply / run_pipeline / MCP は台帳(accel の表・許可リスト・native)を直接読まない。"""
+    root = __import__("pathlib").Path(api.__file__).resolve().parent
+    for rel in ("api.py", "device_policy.py", "accel_bridge.py", "fullseye/mcp/server.py", "fullseye/opsearch.py"):
+        text = (root / rel).read_text(encoding="utf-8")
+        for needle in ("allowed_ops(", "resident_ops(", "pipeline_ops(",
+                       "GPU_NATIVE", "import gpu_shadow", "_C2VA", "_C2M"):
+            if rel == "accel_bridge.py" and needle in ("_C2VA", "_C2M"):
+                continue                                       # 表の持ち主
+            assert needle not in text, (rel, needle)
 
 
 def test_shadow_table_matches_the_allow_list():
@@ -352,7 +426,7 @@ def test_real_gpu_decision_and_vram(monkeypatch):
     torch.zeros(1, device="cuda")
     free = device_policy.free_vram_mb()
     assert free is not None and free > 0
-    op = _accel_op()
+    op = min(RULES["ops"], key=lambda o: RULES["ops"][o]["min_pixels"])     # どの大きさでも GPU の op
     image = np.random.default_rng(5).random((1024, 1024))
     dec = api.explain_device("auto", stages=(op,), shape=image.shape)
     assert dec["path"] == "accel" and dec["vram_free_mb"] is not None

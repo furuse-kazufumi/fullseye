@@ -143,9 +143,9 @@ def run(stages_or_genome, imgs, device="cpu", start=ops.IMAGE, shadow=None):
     cur = [np.asarray(im, np.float64) for im in imgs]
     for kind, items in plan(stages, shadow if device != "cpu" else None):
         if kind == "shadow":
-            import gpu_shadow
+            import gpu_route
             cur = [np.asarray(v, np.float64) if isinstance(v, np.ndarray) else v
-                   for v in gpu_shadow.run_chain(items, cur)]
+                   for v in gpu_route.run_chain(items, cur)]
         elif kind == "gpu":
             cur = [np.asarray(im, np.float64)
                    for im in accel.run_pipeline(items, cur, device=device)]

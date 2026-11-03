@@ -301,7 +301,25 @@ before = 規則の前(`device="cuda"` = CUDA が在れば常に GPU)、after = `
   `median` / `percentile` の大きい寸法はこれでも足りない(WDDM では OOM にならずページングで止まる)。
   LLM と GPU を分け合う機械では大きめに設定する。
 
-## 6. 開示(AI と人が選ぶために)
+## 6. 経路の選択は 1 か所(`gpu_route.route`)
+
+`gpu_route.route(op_name, context="single" | "pipeline") -> Route | None`。`apply` / `run_pipeline` /
+`explain_device` / MCP はこの関数だけを呼び、GPU の台帳(手書き経路の表・許可リスト・native の実測)を
+読むのもこのモジュールだけ(`tests/test_device_select.py` が他のファイルの直読みを拒む)。
+
+- `Route`: `kind`(`accel` = accel / accel_vol / accel_match の手書き、`native` = op 自身が `device=` を
+  持つ torch 実装、`shadow` = `gpu_shadow` の機械的経路)、`use`(`single` / `resident` / `pipeline`)、
+  `ratio`(実寸の倍率、転送込み)、`min_elements` / `measured_shape`(倍率を測った大きさ)、`source`。
+- `context="single"` は `use == "single"` の経路だけ、`"pipeline"` は全部が候補。常駐・鎖の枠を
+  実際に使うか(隣の段も GPU に載るか)は `device_policy.plan_paths` が段の並びで決める。
+- 優先順位(`gpu_route._best` の 1 か所): 一致した経路だけ → 倍率の分からない accel を最優先(損益分岐・
+  before/after が前提にしている経路)→ 残りは倍率の高い順。
+- native は実測(`fullseye/data/GPU_NATIVE.json`、`tools/bench_device_ops.py` の summary と同じ形)が
+  あり、一致し、倍率 1 以上のものだけを返す。台帳はまだ同梱していないので今は 0 件(fail-closed)。
+  native の op は登録簿の外なので、`apply` からの実行は繋いでいない(`native_not_wired`)。
+- 台帳を `fullseye/data/GPU_CATALOG.json` に一本化するときは `gpu_route._load_sources` を差し替える。
+
+## 7. 開示(AI と人が選ぶために)
 
 - `fullseye.explain_device(device, stages=..., shape=...)` / `api.last_device_decision()`: 要求・出所・
   解決値・実際の装置・経路(`accel` / `allow_single` / `allow_resident` / `allow_pipeline` / `cpu` /
@@ -311,8 +329,9 @@ before = 規則の前(`device="cuda"` = CUDA が在れば常に GPU)、after = `
   `requested` / `device` / `approximate` はそのまま)。GPU で失敗して CPU で続いたときは `gpu_failed`。
   `fullseye_pipeline` は段ごとの行(`stages`)を返し、`n_transfers` は GPU で走った段ごとに往復 1 回で数える
   (MCP の pipeline は段ごとに `apply` を呼ぶので、常駐の区間の数ではない)。
-- `fullseye_describe`(kind `op`)に `gpu_paths`: 手書き経路の有無、許可リストの枠と倍率、測った形、
-  `auto` が GPU を選び始める大きさ(`auto_gpu_min_pixels`)。
+- `fullseye_describe`(kind `op`)に `gpu_paths`(`gpu_route.describe`): 手書き経路の有無、一致した
+  全経路(種類・場面・倍率・測った形)、主な経路、許可リストの枠、`auto` が GPU を選び始める大きさ
+  (`auto_gpu_min_pixels`)。
 
 ## 測れなかったもの・残り
 

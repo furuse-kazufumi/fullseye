@@ -145,6 +145,8 @@ py-modules = [
   "api", "param_specs", "ops", "backend_safe", "torch_lazy", "fileio", "opsfileio",
   # device_policy: device="auto" の規則(表は fullseye/data/DEVICE_RULES.json)。api が import する。
   "device_policy",
+  # gpu_route: op の GPU 経路(accel / native / shadow)を決める唯一の関数。台帳を読むのもここだけ。
+  "gpu_route",
   # ★2026-10-25: numpy_twins は backends_auto / backends_filters2 / backends_regions2 が import する
   #   (scikit-image の無い環境の双子)。py-modules に無いと wheel から落ちて 3 backend ごと消える。
   "numpy_twins",
