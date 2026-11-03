@@ -368,6 +368,9 @@ _IMAGE_REASON = ("画像・動画の書き手。PNG/GIF のバイトは Pillow �
 _SPIKE_REASON = ("スパイク(実験)の記録。spikes/out_gallery/ の図は当時の証跡として凍結してあり、"
                  "再描画(matplotlib / GUI)はバイトが変わる。")
 EXCLUDED = {
+    "tools/gpu_fill3_bench.py": ("GPU 第 3 便の実測器。CPU(登録経路)と GPU(転送込み)の時間を測り docs/perf/logs/fill3_*.json へ"
+                                  "書く。数字は機械と負荷で変わり、GPU と gpu_in_use.lock の手順が要るので CI では回さず手で回して "
+                                  "commit する。採否表は gen_gpu_fill3_report.py(鎖の段)がそのログから作る(2026-11-04 の統合で分類)。"),
     "tools/snapshot_recipe_gpu_routes.py": ("レシピの段の op が pipeline 文脈の GPU 経路を持つかの snapshot(docs/recipe_gpu_routes.json)。"
                                              "gpu_route がまだ本線に無く、GPU の枝の worktree を読み取りで借りるので手で回して commit する"
                                              "(2026-11-03)。gen_recipe_coverage は snapshot だけを読むので --check は決定的。"),
