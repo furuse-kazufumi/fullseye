@@ -403,6 +403,21 @@ def ms_swt_field(variant):
     return {"value": m, "aux": {}, "truth": {"count": float(k)}}
 
 
+def ms_swt_lines(variant):
+    """Stroke-width field with n = 2 / 3 text lines of 4 glyph blobs (16 x 8 px, width 3 px) each.
+
+    Lines start at row 8 and are 28 px apart (12 px of blank between lines: no vertical overlap), glyphs are
+    6 px apart inside a line (well inside the 3 x height gap rule), so the line grouping is unambiguous."""
+    n = 2 + variant
+    m = np.zeros((8 + 28 * n, 96))
+    for li in range(n):
+        y0 = 8 + 28 * li
+        for g in range(4):
+            x0 = 6 + 14 * g
+            m[y0:y0 + 16, x0:x0 + 8] = 3.0
+    return {"value": m, "aux": {}, "truth": {"n_lines": n, "glyphs": 4, "line0_bottom": 24}}
+
+
 SAMPLES = {
     "ms_blobs": ms_blobs, "ms_touching": ms_touching, "ms_disk_gt": ms_disk_gt, "ms_two_level": ms_two_level,
     "ms_edge": ms_edge, "ms_bar": ms_bar, "ms_hole": ms_hole, "ms_u8_edge": ms_u8_edge,
@@ -414,7 +429,7 @@ SAMPLES = {
     "ms_landmarks": ms_landmarks, "ms_naca": ms_naca, "ms_rgb_two": ms_rgb_two, "ms_grating": ms_grating,
     "ms_color_pair": ms_color_pair, "ms_samples_1d": ms_samples_1d, "ms_sine_profile": ms_sine_profile,
     "ms_sine_surface": ms_sine_surface, "ms_psd_surface": ms_psd_surface, "ms_template": ms_template, "ms_crt_shift": ms_crt_shift,
-    "ms_aoi": ms_aoi, "ms_strokes": ms_strokes, "ms_swt_field": ms_swt_field,
+    "ms_aoi": ms_aoi, "ms_strokes": ms_strokes, "ms_swt_field": ms_swt_field, "ms_swt_lines": ms_swt_lines,
 }
 
 
@@ -553,7 +568,7 @@ RECIPES = [
     # ---------------- generative ----------------
     {"name": "Simulate — rule-90 cellular automaton (Sierpinski) stepped and rendered", "family": "generative",
      "task": "simulate", "task_class": "simulation", "halcon": None, "input_sort": None, "sample": "ms_ca",
-     "stages": [{"op": "perpetual_state", "kw": {"name": "elementary_ca", "size": 65, "rule": 90}, "call": "raw", "call_reason": "fs.ledger.perpetual_state is broken: its kwarg `name` collides with the ledger call(name, ...), TypeError (2026-11-03); the OP_GRAPH executor is called directly"},
+     "stages": [{"op": "perpetual_state", "kw": {"name": "elementary_ca", "size": 65, "rule": 90}, "call": "raw", "call_reason": "fs.ledger.perpetual_state is broken: its kwarg `name` collides with the ledger call(name, ...), TypeError (2026-11-03); the OP_GRAPH executor is called directly. TODO: drop call raw once fix/completeness-stage0-2026-11-03 (e5c854e28f, opassist calls the function directly on a name collision) is merged"},
                 {"op": "perpetual_step", "kw": {"steps": "$aux.steps"}},
                 {"op": "perpetual_render", "kw": {"cell": 1}}],
      "expect": [{"get": ["$s2", "row", "@sum"], "approx": "live", "atol": 0.5}],
@@ -831,8 +846,17 @@ RECIPES = [
      "stages": [{"op": "text_candidates", "kw": {"min_area": 8}}],
      "expect": [{"get": ["boxes", "@len"], "equals": "count"}, {"get": ["n_components"], "equals": "count"}],
      "note": "connected components of constant stroke width with sane aspect and size are kept as character "
-             "boxes [y0, x0, y1, x1]; a synthetic SWT field with 3 / 5 glyph-sized blobs. Single stage: its "
-             "table cannot be handed to text_lines (TypeError, FAILED_ATTEMPTS)"},
+             "boxes [y0, x0, y1, x1]; a synthetic SWT field with 3 / 5 glyph-sized blobs. Single stage; the "
+             "next recipe hands its table on to text_lines"},
+    {"name": "Inspect — group character candidates into text lines", "family": "text", "task": "ocr",
+     "task_class": "inspection", "halcon": "OCR", "input_sort": "matrix", "sample": "ms_swt_lines",
+     "stages": [{"op": "text_candidates", "kw": {"min_area": 8}}, {"op": "text_lines"}],
+     "expect": [{"get": ["lines", "@len"], "equals": "n_lines"}, {"get": ["members", 0, "@len"], "equals": "glyphs"},
+                {"get": ["lines", 0, 2], "equals": "line0_bottom"}],
+     "note": "text layout without a recogniser: character candidates (constant stroke width, sane size / aspect) "
+             "are joined into lines when they overlap vertically by half the smaller height and sit within 3 "
+             "heights horizontally (Epshtein 2010 grouping, overlap rule). The candidates table goes straight "
+             "into text_lines; 2 / 3 lines of 4 glyphs each, line boxes [y0, x0, y1, x1]"},
 ]
 
 
@@ -855,13 +879,17 @@ MISSING_OPS = [
 
 
 FAILED_ATTEMPTS = [
-    {"family": "text", "recipe": "Inspect — group character candidates into text lines", "op": "text_lines",
-     "error": "text_candidates (out=table) -> text_lines (in=table): TypeError: int() argument must be a "
-              "string, a bytes-like object or a real number, not 'dict' — it needs the (N, 4) boxes array",
-     "cause": "doc_mismatch"},
     {"family": "text", "recipe": "Inspect — detect text: SWT then character candidates", "op": "text_candidates",
      "error": "swt_map returns table {swt, edges, ...}; text_candidates takes matrix (the swt field)",
      "cause": "type_gap"},
     {"family": "vx", "recipe": "Inspect — OpenVX gradient magnitude", "op": "vx_magnitude",
      "error": "vx_sobel3x3 returns table {gx, gy, valid}; vx_magnitude needs two image2d", "cause": "type_gap"},
 ]
+
+
+#: 本ごとの日本語ノート(この本で足したレシピ。notes_ja.py の表と合わせて引く)。
+NOTES_JA = {
+    "Inspect — group character candidates into text lines":
+        "文字候補を行にまとめる — 線幅が一定の文字候補の矩形を、縦に重なり横に近いものどうし繋いで"
+        "テキストの行の矩形にする(認識器なし、Epshtein 2010 の行まとめ)。候補の表をそのまま渡す。",
+}

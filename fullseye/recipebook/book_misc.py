@@ -383,14 +383,25 @@ RECIPES = [
      "family": "drive", "task": "measure", "task_class": "analysis", "halcon": None, "input_sort": None,
      "sample": "mx_rss_follow",
      "stages": [{"op": "rss_params"},
-                {"op": "rss_longitudinal_check", "args": [],
-                 "kw": {"d": "$aux.d", "v_rear": "$aux.v_rear", "v_front": "$aux.v_front", "p": "$prev"}}],
+                {"op": "rss_longitudinal_check", "args": ["$prev"],
+                 "kw": {"d": "$aux.d", "v_rear": "$aux.v_rear", "v_front": "$aux.v_front"}}],
      "expect": [{"get": ["safe_distance"], "approx": "safe_distance", "rtol": 1e-9},
                 {"get": ["margin"], "approx": "margin", "atol": 1e-9}],
      "note": "Mobileye RSS longitudinal rule (Shalev-Shwartz 2017, Lemma 2) with the ad-rss-lib conservative "
              "parameters (ρ 1 s, accel 3.5, brake_min 4, brake_max 8 m/s²): minimum gap in m a following car must keep, "
-             "and whether the current gap is dangerous. Speeds in m/s. The parameter table feeds the check as its "
-             "keyword p (the op's positional args are the speeds, so the table cannot ride the first slot)."},
+             "and whether the current gap is dangerous. Speeds in m/s. The parameter table rides the first slot (the "
+             "ledger door takes the table first, as declared; the speeds and the gap are keywords)."},
+    {"name": "Measure — RSS minimum safe gap behind a braking lead car (rss_params -> rss_longitudinal_same)",
+     "family": "drive", "task": "measure", "task_class": "analysis", "halcon": None, "input_sort": None,
+     "sample": "mx_rss_follow",
+     "stages": [{"op": "rss_params"},
+                {"op": "rss_longitudinal_same", "args": ["$prev"],
+                 "kw": {"v_rear": "$aux.v_rear", "v_front": "$aux.v_front"}}],
+     "expect": [{"get": [], "approx": "safe_distance", "rtol": 1e-9}],
+     "note": "the RSS same-direction distance alone (Shalev-Shwartz 2017, Lemma 2): the gap in m a rear car at "
+             "v_r must keep so it can still stop if the front car at v_f brakes at b_max — rear reacts for ρ "
+             "while accelerating, then brakes at b_min. ad-rss-lib conservative parameters; truth = the closed "
+             "form d = [v_r ρ + ½aρ² + (v_r + aρ)²/(2 b_min) − v_f²/(2 b_max)]_+."},
     {"name": "Analyze — driver lateral wobble (Ornstein-Uhlenbeck mean reversion and noise)", "family": "drive",
      "task": "estimate", "task_class": "analysis", "halcon": None, "input_sort": None, "sample": "mx_ou_wobble",
      "stages": [{"op": "lateral_wobble",
@@ -634,15 +645,6 @@ MISSING_OPS = [
 ]
 
 FAILED_ATTEMPTS = [
-    {"family": "drive", "recipe": "Measure — RSS minimum safe following distance (rss_params -> rss_longitudinal_same)",
-     "op": "rss_longitudinal_same",
-     "error": "TypeError: rss_longitudinal_same() missing 2 required positional arguments: 'v_front' and 'p' — "
-              "OP_GRAPH inputs=['table'] binds the first positional slot, which is v_rear (a float); parameter_schema "
-              "omits v_rear. Same pattern for rss_longitudinal_check / rss_lateral*: the table is the keyword p. "
-              "Still so through the ledger (2026-11-03): fs.ledger.rss_longitudinal_same(p, v_rear=20, v_front=15) "
-              "-> TypeError: got multiple values for argument 'v_rear'; fs.ledger.rss_longitudinal_check(p, d=50, "
-              "v_rear=20, v_front=15) -> got multiple values for argument 'd' (the table is not taken positionally)",
-     "cause": "declaration_lie"},
     {"family": "drive", "recipe": "Sense — TTC from optical flow (flow_from_depth_motion -> ttc_from_flow)",
      "op": "ttc_from_flow", "error": "flow_from_depth_motion outputs table {u, v, valid, depth1}; ttc_from_flow "
                                      "inputs ['image', 'image'] — no op selects a table field as an image. Via the ledger too: "
@@ -661,3 +663,12 @@ FAILED_ATTEMPTS = [
                                   "ValueError: expected a 1-D signal ..., got shape (129, 2)",
      "cause": "type_gap"},
 ]
+
+
+#: 本ごとの日本語ノート(この本で足したレシピ。notes_ja.py の表と合わせて引く)。
+NOTES_JA = {
+    "Measure — RSS minimum safe gap behind a braking lead car (rss_params -> rss_longitudinal_same)":
+        "RSS の同方向の最小安全距離 — 前の車が最大の制動で止まっても、後ろの車が反応時間 ρ のあいだ加速してから"
+        "制動して止まれる車間 [m](Shalev-Shwartz 2017 の Lemma 2、ad-rss-lib の保守的な定数)。"
+        "パラメータの表を第 1 引数に、速さを名前つきで渡す。真値は閉形式。",
+}

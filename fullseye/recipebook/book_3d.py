@@ -99,6 +99,38 @@ def t3_pnp(variant):
     return {"value": P, "aux": {"uv": uv, "K": K}, "truth": {"tz": float(t[2]), "r10": float(R[1, 0])}}
 
 
+def t3_rigid_pair_nominal(variant):
+    """``t3_rigid_pair`` plus the part's nominal pose (identity): the pose error to it is the applied motion."""
+    s = t3_rigid_pair(variant)
+    ang = s["truth"]["angle_deg"]
+    t = np.array([s["truth"]["tx"], s["truth"]["ty"], 0.02])
+    s["aux"]["nominal"] = (np.eye(3), np.zeros(3))
+    s["truth"].update({"t_norm": float(np.linalg.norm(t)), "angle_deg": ang})
+    return s
+
+
+def t3_pnp_nominal(variant):
+    """``t3_pnp`` plus the camera's nominal pose as a 4 x 4 identity (no rotation, object at the optical centre)."""
+    s = t3_pnp(variant)
+    ang = 10.0 + 15.0 * variant
+    t = np.array([0.1, -0.05, 3.0 + 1.0 * variant])
+    s["aux"]["nominal"] = np.eye(4)
+    s["truth"].update({"angle_deg": ang, "t_norm": float(np.linalg.norm(t))})
+    return s
+
+
+def t3_sun_day(variant):
+    """UNIX times (UTC) every 5 min over the March equinox day 2024-03-20, for Tokyo / Sydney.
+
+    Truth: at the equinox the declination is ~0 (|delta| < 0.02 deg at either site's solar noon that day), so
+    the day's highest true (unrefracted) sun elevation is 90 - |latitude|; the equation of time on 20 March is
+    about -7.3 min (sundial behind the clock)."""
+    t0 = 1710892800.0                                   # 2024-03-20T00:00:00Z
+    lat, lon = (35.68, 139.77) if variant == 0 else (-33.87, 151.21)
+    t = t0 + np.arange(0.0, 86400.0, 300.0)
+    return {"value": t, "aux": {"lat": lat, "lon": lon}, "truth": {"el_max": 90.0 - abs(lat)}}
+
+
 def t3_circle3d(variant):
     """3-D ring of radius R = 20 + 10·v mm, fronto-parallel at Z = 500 mm; truth = image radius f·R/Z px."""
     R = 20.0 + 10.0 * variant
@@ -325,6 +357,7 @@ SAMPLES = {
     "t3_moving_dot_video": t3_moving_dot_video, "t3_ball_binary": t3_ball_binary, "t3_label_vol": t3_label_vol,
     "t3_ct_disk": t3_ct_disk, "t3_sino_offaxis": t3_sino_offaxis, "t3_sino_centred": t3_sino_centred,
     "t3_beat_aux": t3_beat_aux, "t3_ball_chord": t3_ball_chord, "t3_ball_area": t3_ball_area,
+    "t3_rigid_pair_nominal": t3_rigid_pair_nominal, "t3_pnp_nominal": t3_pnp_nominal, "t3_sun_day": t3_sun_day,
 }
 
 _3D = dict(family="3d", task="measure", task_class="3d")
@@ -421,6 +454,27 @@ RECIPES = [
          note="Camera-to-object pose (R, t, Xc = R·X + t) from model points and their pixel positions (u = col, "
               "v = row) with known intrinsics K: normalised DLT + LM refinement. Single stage: projecting with "
               "project_3d_point first gives (row, col) and silently mirrors the pose (see FAILED_ATTEMPTS)."),
+    dict(_3D, name="3D — how far a part sits from its nominal pose (point-to-plane ICP -> pose error)",
+         halcon="3D Matching", input_sort="points", sample="t3_rigid_pair_nominal",
+         stages=[{"op": "estimate_point_normals", "args": ["$aux.dst"], "kw": {"k": 16}},
+                 {"op": "icp_point2plane", "args": ["$in", "$aux.dst", "$prev"], "kw": {"iters": 30}},
+                 {"op": "pose_error", "args": ["$prev", "$aux.nominal"]}],
+         expect=[{"get": ["rotation_deg"], "approx": "angle_deg", "atol": 1e-3},
+                 {"get": ["translation"], "approx": "t_norm", "atol": 1e-3}],
+         note="Placement check of a fixtured part: register the measured scan onto the reference (point-to-plane "
+              "ICP), then compare the recovered pose (R, t) with the nominal pose — rotation error in degrees "
+              "(geodesic angle of R_estᵀ·R_nominal) and translation error |t_est − t_nominal| in scan units. "
+              "The nominal pose is the identity, so the error is the applied motion (6 / 10 deg, ~0.06 / 0.1)."),
+    dict(_3D, name="3D — camera pose deviation from its nominal mounting (PnP -> RRE / RTE)",
+         halcon="3D Matching", input_sort="points", sample="t3_pnp_nominal",
+         stages=[{"op": "dlt_pose", "args": ["$in", "$aux.uv"], "kw": {"K": "$aux.K"}},
+                 {"op": "rotation_translation_error", "args": ["$aux.nominal", "$prev"]}],
+         expect=[{"get": ["rre_deg"], "approx": "angle_deg", "atol": 1e-6},
+                 {"get": ["rte"], "approx": "t_norm", "atol": 1e-6}],
+         note="Registration-benchmark error measures (RRE = relative rotation error in degrees, RTE = relative "
+              "translation error) between a nominal pose and the pose solved by PnP from model points and their "
+              "pixels (u = col, v = row). The nominal side is a 4 x 4 transform and the estimate a (R, t) pose: "
+              "the ledger door takes either. Identity nominal, so RRE / RTE are the true rotation / |t|."),
     # ---- 3d: depth / reconstruction (HALCON 3D Reconstruction) ------------------------------
     dict(_3D, name="3D — plane tilt from a depth camera image",
          halcon="3D Reconstruction", input_sort="depth", sample="t3_plane_depth",
@@ -550,20 +604,20 @@ RECIPES = [
     dict(name="Measure — circle on a plane in millimetres from pixels (homography)", family="calib",
          task="measure", task_class="measurement", halcon="Calibration", input_sort="keypoints",
          sample="t3_plane_circle_px",
-         stages=[{"op": "image_to_world_plane", "kw": {"homography": "$aux.Hinv"}}, {"op": "fit_circle_geometric", "call": "raw", "call_reason": "fs.ledger.fit_circle_geometric is broken: opsfit has no call(), AttributeError (2026-11-03); the OP_GRAPH executor is called directly"}],
+         stages=[{"op": "image_to_world_plane", "kw": {"homography": "$aux.Hinv"}}, {"op": "fit_circle_geometric"}],
          expect=[{"get": ["r"], "approx": "radius", "rtol": 1e-6}],
          note="Metric measurement on a calibrated plane: map edge pixels through the image->world plane "
               "homography (perspective removed) and fit a geometric circle; the radius comes out in mm."),
     dict(name="Measure — image radius of a 3-D ring seen by a camera", family="fit", task="measure",
          task_class="measurement", halcon="2D Metrology", input_sort="points", sample="t3_circle3d",
-         stages=[{"op": "project_3d_point", "kw": {"cam_par": "$aux.cam"}}, {"op": "fit_circle_geometric", "call": "raw", "call_reason": "fs.ledger.fit_circle_geometric is broken: opsfit has no call(), AttributeError (2026-11-03); the OP_GRAPH executor is called directly"}],
+         stages=[{"op": "project_3d_point", "kw": {"cam_par": "$aux.cam"}}, {"op": "fit_circle_geometric"}],
          expect=[{"get": ["r"], "approx": "r_px", "rtol": 1e-6}],
          note="Predict how large a round feature appears in the image: project 3-D rim points through the "
               "pinhole camera (fx = 800 px) to (row, col), then geometric least-squares circle fit; radius = "
               "f·R/Z px for a fronto-parallel ring."),
     dict(name="Measure — sub-pixel shift between two images (phase correlation)", family="fit",
          task="register", task_class="measurement", halcon="Matching", input_sort="image", sample="t3_shift_pair",
-         stages=[{"op": "phase_correlation_shift", "args": ["$in", "$aux.moved"], "call": "raw", "call_reason": "fs.ledger.phase_correlation_shift is broken: opsfit has no call(), AttributeError (2026-11-03); the OP_GRAPH executor is called directly"}],
+         stages=[{"op": "phase_correlation_shift", "args": ["$in", "$aux.moved"]}],
          expect=[{"get": ["dy"], "approx": "reg_dy", "atol": 0.15}, {"get": ["dx"], "approx": "reg_dx", "atol": 0.15}],
          note="Translation registration of two images (drift, vibration, stitching) by whitened phase "
               "correlation with upsampled peak refinement; returns the (dy, dx) px that re-aligns the second "
@@ -651,6 +705,15 @@ RECIPES = [
          note="4-D (volume time-series) preview: synthesize a beating shell (known radius law, 8 frames of "
               "16x24x24) and turn each volume into a maximum-intensity projection frame, giving a 2-D video of "
               "the 3-D motion for review."),
+    dict(name="Sense — sun elevation at a site over a day", family="geocam", task="measure",
+         task_class="sensing", halcon=None, input_sort="signal", sample="t3_sun_day",
+         stages=[{"op": "sun_position", "kw": {"lat_deg": "$aux.lat", "lon_deg": "$aux.lon"}}],
+         expect=[{"get": ["elevation_true_deg", "@max"], "approx": "el_max", "atol": 0.05},
+                 {"get": ["equation_of_time_min", "@mean"], "between": [-8.0, -6.8]}],
+         note="Sun azimuth / elevation (deg) for a list of UTC times at a known site (NOAA solar calculator, "
+              "Meeus): the day's sun track for shading / glare prediction and for orienting a fixed camera from "
+              "the sun. On the equinox the highest true elevation is 90 − |latitude| (Tokyo / Sydney) and the "
+              "equation of time is about −7.3 min. The time series is the input; the site is a keyword."),
 ]
 
 MISSING_OPS = [
@@ -661,10 +724,6 @@ MISSING_OPS = [
     {"family": "3d", "need": "threshold a grey voxel volume to a binary voxel volume (voxel -> voxel)",
      "why": "no explicit volume threshold op; vol_label thresholds implicitly at 0.5 (fixed), and "
             "region_props / label_components binarise with astype(bool) (every nonzero voxel is foreground)"},
-    {"family": "3d", "need": "pose (R, t) -> 4x4 transform converter",
-     "why": "rotation_translation_error / registration_recall take 4x4 matrices while dlt_pose / ICP / FPFH "
-            "return (R, t) tuples; pose_error takes R and t as four separate arguments, so no pose-sorted chain "
-            "can end in a pose-accuracy stage"},
     {"family": "reprconv", "need": "keypoints (row, col) <-> (u = col, v = row) swap",
      "why": "the keypoints sort carries both conventions (calib.project_3d_point returns (row, col); "
             "pnp3d.dlt_pose / pnp_ransac expect (u, v)) and no op converts between them"},
@@ -682,14 +741,18 @@ FAILED_ATTEMPTS = [
               "matrix_to_angle reads a rotation in axes (1, 2) (atan2(R[2,1], R[1,1])) -> 0.0 deg for a 20 deg "
               "rotation; matrix_to_rot_scale raises 'matrix: must be (2, 2); got (3, 3)'",
      "cause": "type_gap"},
-    {"family": "geocam", "recipe": "Sense — sun elevation at a site over a day", "op": "sun_position",
-     "error": "OP_GRAPH declares one input (signal) + kw lon_deg, unix_times, but the signature is "
-              "(lat_deg, lon_deg, unix_times): the signal lands in lat_deg -> TypeError: only 0-dimensional "
-              "arrays can be converted to Python scalars",
-     "cause": "doc_mismatch"},
-    {"family": "3d", "recipe": "3D — pose accuracy of a registration against ground truth",
-     "op": "pose_error / rotation_translation_error",
-     "error": "pose_error is declared [pose, pose] but takes (R_est, t_est, R_gt, t_gt); "
-              "rotation_translation_error needs 4x4 matrices, which no pose-producing op returns",
-     "cause": "doc_mismatch"},
 ]
+
+
+#: 本ごとの日本語ノート(この本で足したレシピ。notes_ja.py の表と合わせて引く)。
+NOTES_JA = {
+    "3D — how far a part sits from its nominal pose (point-to-plane ICP -> pose error)":
+        "部品の置き位置のずれ — 測った点群を基準に点対面 ICP で合わせ、求めた姿勢 (R, t) を公称の姿勢と比べて"
+        "回転の誤差(度)と並進の誤差を出す。位置決め・治具の検査。",
+    "3D — camera pose deviation from its nominal mounting (PnP -> RRE / RTE)":
+        "カメラの取り付けのずれ — 既知の 3 次元点と画像上の位置から PnP で姿勢を解き、公称の取り付け(4×4)との"
+        "相対回転誤差 RRE(度)と相対並進誤差 RTE を出す。姿勢は (R, t) でも 4×4 でも渡せる。",
+    "Sense — sun elevation at a site over a day":
+        "太陽の高さと方位の 1 日の動き — 場所(緯度・経度)と UTC の時刻の列から太陽の方位・仰角を出す"
+        "(NOAA の太陽位置の式)。日照・まぶしさの予測、固定カメラの向きの推定に。春分の最高仰角は 90 − |緯度|。",
+}

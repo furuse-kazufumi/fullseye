@@ -9,10 +9,13 @@ each op note in ``docs/ops/2d/<category>/<op>.md`` documents how a knob maps to 
 the mapping used is repeated in each recipe's note). The samples below are small (96 x 96) synthetic
 scenes with a closed-form answer (pixel area of a disk, number of parts, edge column, angle, period...).
 
-Angle conventions seen while writing this book (measured, see FAILED_ATTEMPTS): ``orientation_region``
-returns the HALCON angle (counter-clockwise from the column axis with rows pointing down) divided by
-180 deg; ``xg_orientation`` and ``structure_tensor_orientation`` return the angle measured the other way
-round, i.e. (180 - theta) / 180 for a line turned theta counter-clockwise.
+Angle conventions (measured; HALCON: angles from the column axis, "mathematically positive" =
+counter-clockwise on screen with rows pointing down). Follow HALCON: ``orientation_region`` and
+``orientation_xld`` (theta / 180 deg, folded to [0, 180)), ``elliptic_axis`` and ``elliptic_axis_xld``
+(Phi in radians, (-pi/2, pi/2]) — the sign of the last three was fixed on 2026-11-03. Measured the other
+way round (row-down atan2, i.e. clockwise on screen, documented in their docstrings): ``xg_orientation``
+(HALCON alias orientation_points_xld — opposite sense to HALCON) and ``structure_tensor_orientation`` (no
+HALCON operator): (180 - theta) / 180 for a line turned theta counter-clockwise.
 """
 from __future__ import annotations
 
@@ -130,8 +133,16 @@ RECIPES = [
      "stages": [_R("otsu"), _R("elliptic_axis")],
      "expect": [{"get": [0], "approx": "ra", "atol": 1.0}, {"get": [1], "approx": "rb", "atol": 1.0}],
      "note": "Equivalent ellipse (same second moments) of a binarized oval: (Ra, Rb, Phi), Ra / Rb in px. "
-             "Truth Ra = 32, Rb = 12 / 18 px. (Phi is not gated: its sign is opposite to orientation_region's, "
-             "see FAILED_ATTEMPTS.)"},
+             "Truth Ra = 32, Rb = 12 / 18 px (the oval is axis-aligned, Phi = 0; Phi is gated on a turned bar "
+             "in the next recipe)."},
+    {"name": "Measure — equivalent-ellipse angle Phi of a turned bar (elliptic_axis)", "family": "2d",
+     "task": "measure", "task_class": "measurement", "halcon": "Regions", "input_sort": "image",
+     "sample": "d2_bar",
+     "stages": [_R("otsu"), _R("elliptic_axis")],
+     "expect": [{"get": [2], "approx": "theta_rad", "atol": 0.02}],
+     "note": "Phi of the equivalent ellipse in radians, counter-clockwise on screen from the column axis "
+             "(HALCON 'mathematically positive', range (-pi/2, pi/2]); equals orientation_region x pi mod pi. "
+             "Truth 20 / 45 deg = 0.349 / 0.785 rad. (Before 2026-11-03 the sign was flipped: -0.348 rad.)"},
     {"name": "Measure — anisometry (aspect ratio) of an oval part", "family": "2d", "task": "measure",
      "task_class": "measurement", "halcon": "Regions", "input_sort": "image", "sample": "d2_ellipse",
      "stages": [_R("gaussian", 0.1), _R("otsu"), _R("eccentricity")],
@@ -295,7 +306,38 @@ RECIPES = [
      "stages": [_R("threshold_sub_pix", 0.5), _R("xg_orientation")],
      "expect": [{"get": [], "approx": "orient01_rowdown", "atol": 0.006}],
      "note": "Principal axis of the bar's iso-contour points (PCA), folded to [0,1) (x 180 = degrees, row-down "
-             "convention: 180 - 20 and 180 - 45 deg). orientation_xld was dropped (see FAILED_ATTEMPTS)."},
+             "convention: 180 - 20 and 180 - 45 deg). orientation_xld (next recipe) gives the HALCON sense."},
+    {"name": "Measure — orientation of a bar from its sub-pixel outline (orientation_xld)", "family": "2d",
+     "task": "measure", "task_class": "measurement", "halcon": "XLD", "input_sort": "image", "sample": "d2_bar",
+     "stages": [_R("threshold_sub_pix", 0.5), _R("orientation_xld")],
+     "expect": [{"get": [], "approx": "orient01", "atol": 0.006}],
+     "note": "Ellipse fit to the bar's iso-contour; the major axis angle theta (counter-clockwise on screen from "
+             "the column axis, as HALCON and orientation_region) folded to [0, 180) and divided by 180 deg. "
+             "Truth 20 / 45 deg. (Before 2026-11-03 it returned the minor axis angle clockwise: 70 deg for 20.)"},
+    {"name": "Measure — equivalent-ellipse angle Phi of a bar from its sub-pixel outline (elliptic_axis_xld)",
+     "family": "2d", "task": "measure", "task_class": "measurement", "halcon": "XLD", "input_sort": "image",
+     "sample": "d2_bar",
+     "stages": [_R("threshold_sub_pix", 0.5), _R("elliptic_axis_xld")],
+     "expect": [{"get": [2], "approx": "theta_rad", "atol": 0.02}],
+     "note": "(Ra, Rb, Phi) of an ellipse fitted to the iso-contour; Phi in radians counter-clockwise on screen "
+             "(HALCON), the same as the region version elliptic_axis. Truth 0.349 / 0.785 rad."},
+    {"name": "Measure — perimeter of a round part from sub-pixel edges", "family": "2d", "task": "measure",
+     "task_class": "measurement", "halcon": "XLD", "input_sort": "image", "sample": "d2_disk_edge",
+     "stages": [_R("gaussian", 0.3), _R("edges_sub_pix", 0.3), _R("length_xld")],
+     "expect": [{"get": [], "approx": "circumference", "rtol": 0.02}],
+     "note": "Smooth, sub-pixel edges (non-maximum suppressed to one pixel, gradient threshold 0.3 -> 0.30, "
+             "linked along the curve and refined along the normal), then the contour length in px: 2·pi·r = "
+             "113.1 / 150.8 for r 18 / 24 (measured 113.5 / 151.7). Before 2026-11-03 the edge band's pixels "
+             "came in raster order and the length was 2508 px."},
+    {"name": "Inspect — length of a scratch from its centre line (lines_gauss)", "family": "2d",
+     "task": "inspect", "task_class": "inspection", "halcon": "XLD", "input_sort": "image",
+     "sample": "d2_scratch_on_texture",
+     "stages": [_R("lines_gauss", 0.5, 1.0), _R("length_xld")],
+     "expect": [{"get": [], "approx": "length", "atol": 1.5}],
+     "note": "Frangi ridge (a=0.5 -> threshold 0.30) in centre-line mode (b >= 0.75: the ridge band thinned, "
+             "linked along the line, refined to the ridge top): its length_xld is the scratch length in px "
+             "(truth 40 / 60, measured 39.2 / 59.3 — pixel centres give L - 1). The default b = 0.5 returns "
+             "the band's pixels unordered (length_xld 117 / 177)."},
 
     # ---------------------------------------------------------------- Subpix
     {"name": "Measure — sub-pixel centre of a laser spot / fiducial dot", "family": "2d", "task": "measure",
@@ -583,7 +625,8 @@ def d2_bar(variant):
     th, w = 20.0 + 25.0 * variant, 10.0 + 4.0 * variant
     m = _bar_mask(th, 64.0, w)
     return {"value": _scene(m, variant, 7), "aux": {},
-            "truth": {"theta_deg": th, "orient01": th / 180.0, "orient01_rot15": (th + 15.0) / 180.0,
+            "truth": {"theta_deg": th, "theta_rad": float(np.radians(th)), "orient01": th / 180.0,
+                      "orient01_rot15": (th + 15.0) / 180.0,
                       "orient01_rowdown": (180.0 - th) / 180.0, "length": 64.0, "width": w}}
 
 
@@ -828,6 +871,14 @@ def d2_tilted_stripes(variant):
     return {"value": img, "aux": {}, "truth": {"theta_deg": deg, "orient01_rowdown": (180.0 - deg) / 180.0}}
 
 
+def d2_disk_edge(variant):
+    """The common ``disk_image`` (r = 18 + 6·variant, noise 0.02) with its circumference 2·pi·r as truth."""
+    from fullseye.recipebook.common import disk_image
+    s = disk_image(variant)
+    s["truth"] = dict(s["truth"], circumference=float(2.0 * np.pi * s["truth"]["radius"]))
+    return s
+
+
 def d2_scratch_on_texture(variant):
     """Brushed-metal-like fine noise (sigma 0.03) with one dark 2 px scratch, length 40 + 20·variant px."""
     L = 40 + 20 * int(variant)
@@ -960,36 +1011,26 @@ MISSING_OPS: list = [
             "be unwrapped after locating it with area_center (the ring recipe needs the ring at the image centre)"},
 ]
 
+# Resolved on 2026-11-03 and removed from this list: orientation_xld (minor axis, clockwise),
+# elliptic_axis / elliptic_axis_xld (Phi sign), edges_sub_pix (raster-ordered band), lines_gauss (band pixels;
+# centre-line mode b >= 0.75 added) — recipes above; cv_hough_circles (needs pre-smoothing — now stated in its
+# doc; the recipe with gaussian a=0.5 stands).
 FAILED_ATTEMPTS: list = [
-    {"family": "2d", "recipe": "Measure — orientation of a bar from its sub-pixel outline (orientation_xld)",
-     "op": "orientation_xld",
-     "error": "returns 0.389 (70.0 deg) for a bar that orientation_region measures at 19.9 deg on the same scene "
-              "(0.250 = 45 deg agrees only because 45 = 90 - 45)",
-     "cause": "doc_mismatch"},
-    {"family": "2d", "recipe": "Measure — equivalent-ellipse angle Phi of a bar (elliptic_axis)",
-     "op": "elliptic_axis",
-     "error": "Phi = -0.348 rad for a bar turned +20 deg counter-clockwise on screen, while orientation_region on "
-              "the same region gives +19.9 deg; the note says Phi is counter-clockwise from the column axis "
-              "(elliptic_axis_xld shows the same sign: -0.3505)",
-     "cause": "doc_mismatch"},
-    {"family": "2d", "recipe": "Inspect — count circular holes with the Hough circle transform (no pre-smoothing)",
-     "op": "cv_hough_circles",
-     "error": "returns 0.0 on blobs_image (3 disks r 6-8) and on disk_image (r 18) with noise sigma 0.02; "
-              "cv2.HoughCircles called directly also returns None; after gaussian a=0.5 it counts 3 / 4 correctly",
-     "cause": "doc_mismatch"},
     {"family": "2d", "recipe": "Inspect — split touching parts with a marker-controlled watershed",
      "op": "xcv_watershed_markers",
      "error": "count_obj of its output = 3 / 4 for 4 / 6 touching disks (it returns the dam lines, not basins)",
      "cause": "type_gap"},
-    {"family": "2d", "recipe": "Measure — perimeter of a round part from sub-pixel edges",
-     "op": "edges_sub_pix",
-     "error": "gaussian -> edges_sub_pix -> length_xld = 2508 px for a disk of circumference 113 px (4237 vs 151): "
-              "the edge points of one contour are not ordered along the curve, so length_xld / circularity_xld "
-              "sum raster jumps; threshold_sub_pix (ordered marching squares) gives 121 px",
-     "cause": "doc_mismatch"},
-    {"family": "2d", "recipe": "Inspect — length of a scratch from its line contour (lines_gauss)",
-     "op": "lines_gauss",
-     "error": "lines_gauss -> length_xld = 117 / 177 px for 40 / 60 px scratches (one contour of the thresholded "
-              "ridge band's pixels, not a centre line)",
-     "cause": "doc_mismatch"},
 ]
+
+NOTES_JA: dict = {
+    "Measure — equivalent-ellipse angle Phi of a turned bar (elliptic_axis)":
+        "向き計測 — 回った棒の等価楕円の角 Phi(ラジアン、画面上で反時計回り = HALCON の向き)",
+    "Measure — orientation of a bar from its sub-pixel outline (orientation_xld)":
+        "向き計測 — 棒のサブピクセル輪郭に楕円を当て、長軸の角(画面上で反時計回り)/180 を読む",
+    "Measure — equivalent-ellipse angle Phi of a bar from its sub-pixel outline (elliptic_axis_xld)":
+        "向き計測 — 棒のサブピクセル輪郭の楕円パラメータ Phi(領域版 elliptic_axis と同じ向き)",
+    "Measure — perimeter of a round part from sub-pixel edges":
+        "周長計測 — 平滑化してサブピクセルエッジ(1 画素幅・曲線に沿って並ぶ)を取り、輪郭長 = 2πr を測る",
+    "Inspect — length of a scratch from its centre line (lines_gauss)":
+        "傷検査 — リッジ検出の中心線モード(b>=0.75)で傷の中心線を取り、その長さ(px)を測る",
+}
