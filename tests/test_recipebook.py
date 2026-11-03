@@ -130,6 +130,37 @@ def test_recipe_runs_end_to_end(name):
         assert not bad, "%s (variant %d): %s" % (name, v, bad)
 
 
+# --- recipes.py (the 25 Studio sample pipelines) under the same e2e rules -------------------------
+import recipes as _legacy  # noqa: E402
+
+#: recipes.py の見本の標本。FA の 5 本は同梱の物理標本(真値は tests/test_fa_samples.py が画素で照合)、
+#: 他は合成の 2 種。「Segment — blob / coin」は remove_small(0.3)が半径 6〜8 px の小物を全部消す
+#: (硬貨の大きさの物を想定した見本)ので、大きい円盤の標本で回す。
+_LEGACY_SAMPLE = {"Segment — blob / coin": "disk_image"}
+
+
+@pytest.mark.parametrize("name", _legacy.names())
+def test_legacy_recipe_runs_end_to_end(name):
+    import api
+    import sample_images
+    r = _legacy.get(name)
+    if r.get("image"):
+        inputs = [sample_images.load(r["image"])]
+    else:
+        gen = rb.SAMPLES[_LEGACY_SAMPLE.get(name, "blobs_image")]
+        inputs = [gen(0)["value"], gen(1)["value"]]
+    outs = [api.run_pipeline(im, _legacy.stages(name)) for im in inputs]
+    for v, out in enumerate(outs):
+        why = rb.degeneracy(out)
+        assert why is None, "%s (input %d): %s" % (name, v, why)
+    if len(outs) == 2:
+        f0, f1 = rb.fingerprint(outs[0]), rb.fingerprint(outs[1])
+        assert not (f0.shape == f1.shape and np.allclose(f0, f1)), "%s: output does not move with the input" % name
+    legacy = {"name": name, "family": "2d", "input_sort": "image",
+              "stages": [{"op": op, "a": a, "b": b} for op, a, b in r["stages"]]}
+    assert rb.type_cuts(legacy) == 0, (name, rb.connections(legacy))
+
+
 def test_static_ok_reasons_are_written():
     for name, why in STATIC_OK.items():
         assert isinstance(why, str) and len(why) >= 20, name
