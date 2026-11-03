@@ -325,19 +325,37 @@ def ms_samples_1d(variant):
 
 
 def ms_sine_profile(variant):
-    """Turned-surface profile: sine of amplitude A = 1 / 1.5 µm, wavelength 20 µm, dx = 0.5 µm."""
+    """Turned-surface profile: sine A = 1 / 1.5 µm, λ = 20 µm, dx = 0.5 µm, plus a curved form
+    (tilt + bow) and one 3 µm-wide scratch 6A deep. Truth = Ra / Rq of the true roughness
+    (sine + scratch, mean removed) computed directly with numpy — form must be removed by the filter,
+    the scratch must not drag the mean line (robust filter) and stays in the roughness (ISO)."""
     A = 1.0 + 0.5 * variant
     x = np.arange(2048) * 0.5
-    p = A * np.sin(2 * np.pi * x / 20.0)
-    return {"value": p, "aux": {"dx": 0.5}, "truth": {"Ra": 2 * A / math.pi, "Rq": A / math.sqrt(2), "Rt": 2 * A}}
+    rough = A * np.sin(2 * np.pi * x / 20.0)
+    rough[1000:1006] -= 6 * A
+    form = 0.01 * x + 0.002 * (x - 500.0) ** 2 / 100.0
+    q = rough - rough.mean()
+    return {"value": rough + form, "aux": {"dx": 0.5},
+            "truth": {"Ra": float(np.abs(q).mean()), "Rq": float(np.sqrt((q ** 2).mean()))}}
 
 
 def ms_sine_surface(variant):
-    """Areal height field: sine grating of amplitude A = 0.5 / 0.8 µm, period 8 px, dx = 1 µm."""
+    """Areal height map 96x96 (dx = 1 µm): sine grating A = 0.5 / 0.8 µm, period 8 µm, on a tilted plane.
+    After plane removal and the ISO 16610-21 Gaussian L-filter (λc = 24 µm) the grating keeps the
+    closed-form transmission T = 1 - exp(-π (α λc / λ)²), α = sqrt(ln 2 / π): Sq = T·A/√2."""
     A = 0.5 + 0.3 * variant
-    xx = np.mgrid[0:64, 0:64][1].astype(float)
-    z = A * np.sin(2 * np.pi * xx / 8.0)
-    return {"value": z, "aux": {}, "truth": {"Sq": A / math.sqrt(2), "Sz": 2 * A}}
+    yy, xx = np.mgrid[0:96, 0:96].astype(float)
+    z = A * np.sin(2 * np.pi * xx / 8.0) + 0.05 * xx - 0.03 * yy + 3.0
+    alpha = math.sqrt(math.log(2) / math.pi)
+    T = 1.0 - math.exp(-math.pi * (alpha * 24.0 / 8.0) ** 2)
+    return {"value": z, "aux": {}, "truth": {"Sq": T * A / math.sqrt(2)}}
+
+
+def ms_psd_surface(variant):
+    """Self-affine surface synthesised from a PSD with analytic Sq = 0.5 / 0.8 µm (phases random,
+    amplitudes fixed, so Sq does not depend on the seed)."""
+    sq = 0.5 + 0.3 * variant
+    return {"value": None, "aux": {"sq": sq}, "truth": {"Sq": sq}}
 
 
 def ms_template(variant):
@@ -395,7 +413,7 @@ SAMPLES = {
     "ms_circle_contour": ms_circle_contour, "ms_tps_disk": ms_tps_disk, "ms_shapefamily": ms_shapefamily,
     "ms_landmarks": ms_landmarks, "ms_naca": ms_naca, "ms_rgb_two": ms_rgb_two, "ms_grating": ms_grating,
     "ms_color_pair": ms_color_pair, "ms_samples_1d": ms_samples_1d, "ms_sine_profile": ms_sine_profile,
-    "ms_sine_surface": ms_sine_surface, "ms_template": ms_template, "ms_crt_shift": ms_crt_shift,
+    "ms_sine_surface": ms_sine_surface, "ms_psd_surface": ms_psd_surface, "ms_template": ms_template, "ms_crt_shift": ms_crt_shift,
     "ms_aoi": ms_aoi, "ms_strokes": ms_strokes, "ms_swt_field": ms_swt_field,
 }
 
@@ -535,7 +553,7 @@ RECIPES = [
     # ---------------- generative ----------------
     {"name": "Simulate — rule-90 cellular automaton (Sierpinski) stepped and rendered", "family": "generative",
      "task": "simulate", "task_class": "simulation", "halcon": None, "input_sort": None, "sample": "ms_ca",
-     "stages": [{"op": "perpetual_state", "kw": {"name": "elementary_ca", "size": 65, "rule": 90}},
+     "stages": [{"op": "perpetual_state", "kw": {"name": "elementary_ca", "size": 65, "rule": 90}, "call": "raw", "call_reason": "fs.ledger.perpetual_state is broken: its kwarg `name` collides with the ledger call(name, ...), TypeError (2026-11-03); the OP_GRAPH executor is called directly"},
                 {"op": "perpetual_step", "kw": {"steps": "$aux.steps"}},
                 {"op": "perpetual_render", "kw": {"cell": 1}}],
      "expect": [{"get": ["$s2", "row", "@sum"], "approx": "live", "atol": 0.5}],
@@ -563,8 +581,8 @@ RECIPES = [
      "stages": [{"op": "axes_transform", "kw": {"rect": "$aux.rect", "xlim": "$aux.xlim", "ylim": "$aux.ylim"}},
                 {"op": "data_to_pixel", "args": ["$s1", "$aux.x", "$aux.y"]},
                 {"op": "plot_series", "args": ["$in", "$s1", "$aux.x", "$aux.y"], "kw": {"kind": "line"}}],
-     "expect": [{"get": ["$s2", 0, 8], "approx": "px_last", "atol": 1e-9},
-                {"get": ["$s2", 1, 8], "approx": "py_last", "atol": 1e-9}],
+     "expect": [{"get": ["$s2", 8, 0], "approx": "px_last", "atol": 1e-9},
+                {"get": ["$s2", 8, 1], "approx": "py_last", "atol": 1e-9}],
      "note": "draw a measurement trend into a report image: closed-form axes (rect 81x61 px, x∈[0,8], y∈[0,6], "
              "y up), data -> pixel coordinates, then the line plot. The last point (8, 8s) maps to px = 90, "
              "py = 70 - 60·(8s/6)"},
@@ -710,22 +728,46 @@ RECIPES = [
      "note": "leading-edge radius of a blade section after normalising to unit chord; for NACA 00tt the design "
              "value is 1.1019·t² (t = 0.12 / 0.18 -> 0.0159 / 0.0357 chord)"},
     # ---------------- roughness ----------------
-    {"name": "Measure — profile roughness Ra / Rq / Rt of a turned surface", "family": "roughness",
+    {"name": "Measure — profile roughness Ra / Rq after a robust Gaussian filter (scratched, curved part)",
+     "family": "roughness", "task": "measure", "task_class": "measurement", "halcon": None,
+     "input_sort": "signal", "sample": "ms_sine_profile",
+     "stages": [{"op": "robust_gaussian_profile", "kw": {"dx": "$aux.dx", "lambda_c": 80.0}},
+                {"op": "profile_params", "kw": {"dx": "$aux.dx"}}],
+     "expect": [{"get": ["Ra"], "approx": "Ra", "rtol": 0.01}, {"get": ["Rq"], "approx": "Rq", "rtol": 0.01}],
+     "note": "ISO 16610-31 robust Gaussian regression filter (λc = 80 µm, Tukey biweight) separates the mean "
+             "line (tilt + bow form) from the roughness without being dragged into a deep scratch, then ISO 4287 "
+             "Ra / Rq. Feed marks: sine A = 1 / 1.5 µm, λ = 20 µm (passes the filter ~100 %), dx = 0.5 µm"},
+    {"name": "Measure — profile roughness Ra / Rq after a robust spline filter", "family": "roughness",
      "task": "measure", "task_class": "measurement", "halcon": None, "input_sort": "signal",
      "sample": "ms_sine_profile",
-     "stages": [{"op": "profile_params", "kw": {"dx": "$aux.dx"}}],
-     "expect": [{"get": ["Ra"], "approx": "Ra", "rtol": 0.01}, {"get": ["Rq"], "approx": "Rq", "rtol": 0.01},
-                {"get": ["Rt"], "approx": "Rt", "rtol": 0.01}],
-     "note": "ISO 4287 profile parameters of a band-limited profile (feed marks = sine A = 1 / 1.5 µm, λ = 20 µm, "
-             "dx = 0.5 µm): Ra = 2A/π, Rq = A/√2, Rt = 2A. Single stage: the robust Gaussian / spline filters "
-             "that should precede it return a tuple, not the declared signal (see FAILED_ATTEMPTS)"},
-    {"name": "Measure — areal roughness Sq / Sz of a machined surface", "family": "roughness", "task": "measure",
-     "task_class": "measurement", "halcon": None, "input_sort": "depth", "sample": "ms_sine_surface",
-     "stages": [{"op": "surface_params", "kw": {"dx": 1.0}}],
-     "expect": [{"get": ["Sq"], "approx": "Sq", "rtol": 1e-6}, {"get": ["Sz"], "approx": "Sz", "rtol": 1e-6}],
-     "note": "ISO 25178-2 areal parameters of a height map with a sine grating (A = 0.5 / 0.8 µm, period 8 px): "
-             "Sq = A/√2, Sz = 2A; the op checks the band (no form left) before answering. Single stage: form "
-             "removal / S-L filters return tuples (FAILED_ATTEMPTS)"},
+     "stages": [{"op": "robust_spline_profile", "kw": {"dx": "$aux.dx", "lambda_c": 80.0}},
+                {"op": "profile_params", "kw": {"dx": "$aux.dx"}}],
+     "expect": [{"get": ["Ra"], "approx": "Ra", "rtol": 0.01}, {"get": ["Rq"], "approx": "Rq", "rtol": 0.01}],
+     "note": "same scratched, curved profile through the robust spline mean-line filter (ISO 16610-32 style, "
+             "λc = 80 µm) then Ra / Rq; the alternative to the Gaussian regression when the form is strongly "
+             "curved"},
+    {"name": "Measure — areal roughness Sq: form removal, Gaussian L-filter, ISO 25178 parameters",
+     "family": "roughness", "task": "measure", "task_class": "measurement", "halcon": None,
+     "input_sort": "depth", "sample": "ms_sine_surface",
+     "stages": [{"op": "surface_form_remove", "kw": {"dx": 1.0, "order": 1}},
+                {"op": "surface_filter", "kw": {"dx": 1.0, "lambda_c": 24.0, "end_effect": "reject"}},
+                {"op": "surface_params", "kw": {"dx": 1.0}}],
+     "expect": [{"get": ["Sq"], "approx": "Sq", "rtol": 0.002}],
+     "note": "the full areal chain on a tilted height map: least-squares plane removal, ISO 16610-21 Gaussian "
+             "L-filter λc = 24 µm (end regions rejected, 96 -> 60 px), then Sq/Sa/Sz...; a sine grating "
+             "(A = 0.5 / 0.8 µm, period 8 µm) keeps Sq = T·A/√2 with the filter's closed-form transmission T"},
+    {"name": "Measure — Sq of a synthetic self-affine surface (PSD synthesis + form removal)",
+     "family": "roughness", "task": "measure", "task_class": "simulation", "halcon": None,
+     "input_sort": None, "sample": "ms_psd_surface",
+     "stages": [{"op": "surface_synth_psd",
+                 "kw": {"n": 64, "dx": 1.0, "hurst": 0.5, "lambda_lo": 4.0, "lambda_hi": 16.0, "sq": "$aux.sq",
+                        "seed": 1}},
+                {"op": "surface_form_remove", "kw": {"dx": 1.0}},
+                {"op": "surface_params", "kw": {"dx": 1.0}}],
+     "expect": [{"get": ["Sq"], "approx": "Sq", "rtol": 0.003}],
+     "note": "test surface with a known answer for a roughness pipeline: band 4-16 µm, Hurst 0.5, analytic "
+             "Sq = 0.5 / 0.8 µm (seed-independent by Parseval); plane removal takes only ~0.1 % of it, so "
+             "surface_params must return the target Sq"},
     # ---------------- quat ----------------
     {"name": "Preprocess — rotate colours about the grey axis (quaternion colour rotation)", "family": "quat",
      "task": "color", "task_class": "preprocess", "halcon": "Color", "input_sort": "rgbimage",
@@ -802,9 +844,6 @@ MISSING_OPS = [
     {"family": "vx", "need": "split vx_sobel3x3's {gx, gy} table into two S16 images (or a vx_sobel_magnitude)",
      "why": "vx_magnitude / vx_phase take two image2d, vx_sobel3x3 returns one table: the OpenVX gradient "
             "graph Sobel -> Magnitude -> NonMax cannot be chained"},
-    {"family": "roughness", "need": "an op returning only the roughness profile / residual surface (signal / depth)",
-     "why": "robust_gaussian_profile, robust_spline_profile, surface_filter and surface_form_remove return "
-            "tuples, so the ISO chain filter -> profile_params / surface_params cannot be typed"},
     {"family": "roughness", "need": "dominant wavelength (peak) of surface_psd's (frequency, PSD) pairs",
      "why": "feed-mark wavelength from an areal PSD needs an argmax-to-frequency read; no op converts the "
             "pairs to a scalar"},
@@ -816,22 +855,6 @@ MISSING_OPS = [
 
 
 FAILED_ATTEMPTS = [
-    {"family": "roughness", "recipe": "Measure — profile roughness after a robust Gaussian filter",
-     "op": "robust_gaussian_profile",
-     "error": "declared out=signal, returns tuple (roughness, mean_line, info) — TYPE_CHECKS['signal'] fails",
-     "cause": "declaration_lie"},
-    {"family": "roughness", "recipe": "Measure — profile roughness after a robust spline filter",
-     "op": "robust_spline_profile",
-     "error": "declared out=signal, returns tuple (roughness, mean_line, info)", "cause": "declaration_lie"},
-    {"family": "roughness", "recipe": "Measure — Sq of a synthetic self-affine surface",
-     "op": "surface_synth_psd",
-     "error": "declared out=depth, returns tuple (z, sq_analytic)", "cause": "declaration_lie"},
-    {"family": "roughness", "recipe": "Measure — areal roughness after form removal",
-     "op": "surface_form_remove",
-     "error": "declared out=depth, returns tuple (residual, coeffs)", "cause": "declaration_lie"},
-    {"family": "roughness", "recipe": "Measure — areal roughness after the S-L Gaussian filter",
-     "op": "surface_filter",
-     "error": "declared out=depth, returns tuple (roughness, waviness)", "cause": "declaration_lie"},
     {"family": "text", "recipe": "Inspect — group character candidates into text lines", "op": "text_lines",
      "error": "text_candidates (out=table) -> text_lines (in=table): TypeError: int() argument must be a "
               "string, a bytes-like object or a real number, not 'dict' — it needs the (N, 4) boxes array",
