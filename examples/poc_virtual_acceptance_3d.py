@@ -21,6 +21,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import numpy as np  # noqa: E402
 
+import examplefig as figs  # noqa: E402
 import fullseye as fs  # noqa: E402
 
 #: 仮の仕様(メーカーが決める値の例。規格の値ではない)/ an illustrative spec, not a normative value
@@ -36,6 +37,28 @@ DESIGNS = {
 def _worst(v):
     v = np.asarray(v, float)
     return float(v[np.argmax(np.abs(v))])
+
+
+def _depth_image(points, shape=(480, 640), fx=900.0, cx=319.5, cy=239.5, out=None):
+    """センサ座標の点 (N,3) を画素へ戻して奥行き z の図にする(既定のセンサの K)。空の画素は NaN。"""
+    img = np.full(shape, np.nan) if out is None else out
+    c = np.rint(points[:, 0] / points[:, 2] * fx + cx).astype(int)
+    r = np.rint(points[:, 1] / points[:, 2] * fx + cy).astype(int)
+    ok = (r >= 0) & (r < shape[0]) & (c >= 0) & (c < shape[1])
+    img[r[ok], c[ok]] = points[ok, 2]
+    return img
+
+
+def _plane_residual_image(points, shape=(480, 640), fx=900.0, cx=319.5, cy=239.5):
+    """平面の点の、最小二乗平面からの符号つき距離 [mm] を画素へ戻した図。"""
+    c0 = points.mean(0)
+    n = np.linalg.svd(points - c0, full_matrices=False)[2][-1]
+    d = (points - c0) @ n
+    img = np.full(shape, np.nan)
+    c = np.rint(points[:, 0] / points[:, 2] * fx + cx).astype(int)
+    r = np.rint(points[:, 1] / points[:, 2] * fx + cy).astype(int)
+    img[r, c] = d
+    return img
 
 
 def main():
@@ -95,6 +118,53 @@ def main():
     print("note: the SD contributions have opposite signs and partly cancel together "
           "(sum of single |SD| %.3f mm vs all-together SD %.3f mm) -- a one-at-a-time ranking does not add up."
           % (sd_single, b["all"]["sd"]))
+    # --- 図 / figures --------------------------------------------------------------------------
+    ideal = {"kind": "ideal"}
+    bars_img = None
+    for bar in layout["bars"]:
+        bars_img = _depth_image(fs.ledger.acceptance_scan(ideal, bar), out=bars_img)
+    bars_img = _depth_image(fs.ledger.acceptance_scan(ideal, layout["probe"][0]), out=bars_img)
+    tilt = [p for p in layout["planes"] if p["name"] == "tilt_x_pos"][0]
+    res_tri = _plane_residual_image(fs.ledger.acceptance_scan(DESIGNS["triangulation b=100 mm, 0.05 px"], tilt))
+    res_tof = _plane_residual_image(fs.ledger.acceptance_scan(DESIGNS["iToF 50 MHz, white artefacts"], tilt))
+    for nm, arr in (("bars", bars_img), ("res_tri", res_tri), ("res_tof", res_tof)):
+        v = arr[np.isfinite(arr)]
+        assert v.size > 1000 and float(np.ptp(v)) > 0.0, nm
+    lim = float(np.nanpercentile(np.abs(np.r_[res_tri[np.isfinite(res_tri)], res_tof[np.isfinite(res_tof)]]), 99.5))
+    figs.save_grid("acceptance_layout_and_noise",
+                   [np.nan_to_num(bars_img, nan=float(np.nanmax(bars_img))), np.nan_to_num(res_tri), np.nan_to_num(res_tof)],
+                   captions=["ball bar x7 + probe sphere: depth z [mm] (ideal sensor)",
+                             "flat tilted +25 deg: residual [mm], triangulation",
+                             "same flat: residual [mm], iToF 50 MHz"],
+                   ncols=3, signed=[False, True, True], vrange=[None, (-lim, lim), (-lim, lim)],
+                   colorbar=True, unit="mm",
+                   caption="artefact layout (VDI/VDE 2634-2 idea) and the noise each design leaves on the flat")
+    sd_series = [(name, np.arange(1, 8), np.asarray(r["sd"])) for name, r in rows.items()]
+    sd_series.append(("MPE +", np.array([1, 7]), np.array([MPE["sd"]] * 2)))
+    sd_series.append(("", np.array([1, 7]), np.array([-MPE["sd"]] * 2)))
+    figs.save_plot("acceptance_sd_per_position", sd_series, xlabel="ball-bar position (1-4 space diag, 5-7 face diag)",
+                   ylabel="SD [mm]", title="sphere-spacing error per position",
+                   kinds=["scatter"] * len(rows) + ["line", "line"],
+                   styles=[None] * len(rows) + ["dashed", "dashed"],
+                   colors=["right", "neutral", "wrong"][:len(rows)] + ["reference", "reference"],
+                   caption="SD of the three designs at the 7 ball-bar positions; dashed = +-MPE")
+    figs.save_table("acceptance_designs", ["design", "PF", "PS", "SD", "F", "verdict"],
+                    [[name, "%.3f" % _worst(r["pf"]), "%.3f" % _worst(r["ps"]), "%.3f" % _worst(r["sd"]),
+                      "%.3f" % _worst(r["f"]), "%s (%s x%.2f)" % ("pass" if r["verdict"]["passed"] else "FAIL",
+                                                                r["verdict"]["decided_by"], r["verdict"]["max_ratio"])]
+                     for name, r in rows.items()],
+                    title="virtual acceptance test [mm], MPE %s" % MPE,
+                    caption="worst value over positions; MPE is an illustrative spec")
+    brows = []
+    for name in ["(baseline)"] + list(factors) + ["(all together)"]:
+        r = b["baseline"] if name == "(baseline)" else b["all"] if name == "(all together)" else b["factors"][name]
+        brows.append([name, "%.3f" % r["pf"], "%.3f" % r["ps"], "%.3f" % r["sd"], "%.3f" % r["f"],
+                      "x%.2f on %s" % (r["verdict"]["max_ratio"], r["verdict"]["decided_by"])])
+    figs.save_table("acceptance_error_budget", ["factor", "PF", "PS", "SD", "F", "worst / MPE"], brows,
+                    title="error budget of the iToF design (one factor at a time)",
+                    caption="decisive alone: %s" % ", ".join(b["decisive"]))
+    if figs.errors():
+        print("図の書き出しで失敗:", "; ".join(figs.errors()))
     print("PASS")
 
 

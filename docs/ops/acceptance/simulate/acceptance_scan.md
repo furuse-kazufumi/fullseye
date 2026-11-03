@@ -5,7 +5,7 @@ category: simulate
 in: table × table
 out: points
 gpu: なし
-examples: []
+examples: [poc_virtual_acceptance_3d]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.8.1  # fullseye lib version this note was generated for
@@ -51,7 +51,7 @@ spheres are concatenated in the order a, b (use :func:`virtual_acceptance_test` 
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- (まだありません)
+- [poc_virtual_acceptance_3d](../../../../examples/poc_virtual_acceptance_3d.py) — `py -3.11 examples/poc_virtual_acceptance_3d.py`
 
 ## 型が繋がる次の op(`points` を入力に取れる)
 

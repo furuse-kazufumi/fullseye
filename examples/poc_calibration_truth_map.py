@@ -20,6 +20,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import numpy as np  # noqa: E402
 
 import camera  # noqa: E402
+import examplefig as figs  # noqa: E402
 import fullseye as fs  # noqa: E402
 
 K_TRUE = np.array([[800.0, 0.0, 319.5], [0.0, 790.0, 241.0], [0.0, 0.0, 1.0]])
@@ -117,6 +118,45 @@ def main():
     worst = int(np.argmax(nx["scores"]))
     assert actual[nx["best_index"]] < actual[worst]
     assert nx["best_index"] >= 2                            # 隅のどれか / one of the corners
+    # --- 図 / figures --------------------------------------------------------------------------
+    # 1) 描画した 1 枚と検出した角(赤)・真の角(青)。2) 誤差の地図(真値つき)と不確かさの地図(共分散から)。
+    img = sims[0]["image"]
+    over = np.stack([img, img, img], axis=-1)
+    for pts, ch in ((found[0], 0), (sims[0]["corners"], 2)):
+        rr = np.clip(np.rint(pts[:, 0]).astype(int), 0, SHAPE[0] - 1)
+        cc = np.clip(np.rint(pts[:, 1]).astype(int), 0, SHAPE[1] - 1)
+        for dr in range(-4, 5):                          # 9 px の十字 / 9-px crosses
+            over[np.clip(rr + dr, 0, SHAPE[0] - 1), cc, ch] = 1.0
+            over[rr, np.clip(cc + dr, 0, SHAPE[1] - 1), ch] = 1.0
+    # 図は細かい格子(2 px おき)で作り直す —— 16 px おきの地図を拡大して見せない
+    emap = fs.ledger.calibration_error_map(cal, K_TRUE, D_TRUE, SHAPE, step=2)["reproj_error_px"]
+    umap = fs.ledger.calibration_uncertainty_map(cal, SHAPE, step=2)["std_px"]
+    for nm, arr in (("image", img), ("error map", emap), ("uncertainty map", umap)):
+        assert np.isfinite(arr).all() and float(np.ptp(arr)) > 0.0, nm
+    hi = float(max(emap.max(), umap.max()))
+    figs.save_grid("calibration_maps", [over, emap, umap],
+                   captions=["rendered view 1: detected corners red, truth blue (rms %.3f px)"
+                             % np.sqrt(np.mean(err ** 2)),
+                             "error vs truth after removing the best rotation [px] (max %.3f)" % emap.max(),
+                             "predicted 1-sigma from the covariance [px] (no truth needed)"],
+                   ncols=3, gray=[True, False, False], vrange=[None, (0.0, hi), (0.0, hi)],
+                   colorbar=[False, True, True], unit="px",
+                   caption="camera_calibration_lm on 6 rendered views (k1 = -0.21): where the estimate errs")
+    figs.save_table("calibration_next_pose", ["candidate", "predicted px", "actual error px (MC 15)"],
+                    [[n + ("  <- recommended" if i == nx["best_index"] else ""), "%.2f" % nx["scores"][i],
+                      "%.2f" % actual[i]] for i, n in enumerate(names)],
+                    title="next view after 4 centred views (sigma %.1f px)" % sig,
+                    caption="calibration_next_pose prediction vs Monte Carlo error against the truth")
+    figs.save_plot("calibration_next_pose_scatter",
+                   [("candidates", np.asarray(nx["scores"]), np.asarray(actual)),
+                    ("y = x", np.array([0.0, max(max(nx["scores"]), max(actual))]),
+                     np.array([0.0, max(max(nx["scores"]), max(actual))]))],
+                   xlabel="predicted mean uncertainty [px]", ylabel="actual mean error [px]",
+                   title="next-view recommendation: predicted vs actual", kinds=["scatter", "line"],
+                   styles=[None, "dashed"], colors=["emphasis", "reference"],
+                   caption="6 candidate poses; the linear prediction ranks the far centre worst and the corners best")
+    if figs.errors():
+        print("図の書き出しで失敗:", "; ".join(figs.errors()))
     print("PASS")
 
 
