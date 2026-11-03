@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: f7dcbd5d4722 -->
+<!-- i18n-source-sha: 056a87b1bfa1 -->
 # 安裝 / 環境建置完整指南
 
 [日本語](./INSTALL.md) · [English](./INSTALL.en.md) · [简体中文](./INSTALL.zh.md) · **繁體中文** · [한국어](./INSTALL.ko.md) · [Deutsch](./INSTALL.de.md) · [हिन्दी](./INSTALL.hi.md)
@@ -40,7 +40,7 @@ py -3.11 -m pip install -e .            # 僅核心（numpy + scipy。所有 op 
 | `gpu` | `torch>=2.13`, `kornia>=0.9`, `cupy-cuda12x>=14` (not macOS) | GPU 批次後端(`accel.py`/`bench.py`)、`xkor_*`(kornia)系列 |
 | `extra` | `mahotas>=1.4`, `SimpleITK>=2.2` | `xsitk_*`(curvature flow 等)、源自 mahotas(Zernike/pftas 等) |
 | `gui` | `PySide6>=6.5` | **Fullseye Studio**(`studio.py` / `fullseye-studio`) |
-| `all` | `opencv-python`, `scikit-image`, `Pillow`, `PyWavelets`, `torch`, `kornia`, `mahotas`, `SimpleITK`, `PySide6`, `imageio`, `imageio-ffmpeg`, `tifffile`(不含 CuPy；完整的 GPU 套件請用 `fullseye[gpu]`) | 全部運算子與後端 |
+| `all` | `opencv-python`, `scikit-image`, `Pillow`, `PyWavelets`, `torch`, `kornia`, `mahotas`, `SimpleITK`, `PySide6`, `imageio`, `imageio-ffmpeg`, `tifffile`(不含 CuPy；完整的 GPU 套件請用 `fullseye[gpu]`。依 PyTorch 的安裝說明，Linux 上預設的 torch 是 CUDA 版，可能會一併裝入 CUDA 元件(nvidia-* 的 wheel)。只用 CPU 時，請先從 CPU 版的來源安裝 torch：`pip install torch --index-url https://download.pytorch.org/whl/cpu`) | 全部運算子與後端 |
 
 使用建議：
 

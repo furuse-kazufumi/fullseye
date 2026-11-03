@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: f7dcbd5d4722 -->
+<!-- i18n-source-sha: 056a87b1bfa1 -->
 # Installation / Environment Setup — Complete Guide
 
 [日本語](./INSTALL.md) · **English** · [简体中文](./INSTALL.zh.md) · [繁體中文](./INSTALL.tw.md) · [한국어](./INSTALL.ko.md) · [Deutsch](./INSTALL.de.md) · [हिन्दी](./INSTALL.hi.md)
@@ -45,7 +45,7 @@ Additional backends are selected through **extras** (defined in `pyproject.toml`
 | `gpu` | `torch>=2.13`, `kornia>=0.9`, `cupy-cuda12x>=14` (not macOS) | the GPU batch backend (`accel.py`/`bench.py`), the `xkor_*` (kornia) family |
 | `extra` | `mahotas>=1.4`, `SimpleITK>=2.2` | `xsitk_*` (curvature flow, etc.), mahotas-derived (Zernike / pftas, etc.) |
 | `gui` | `PySide6>=6.5` | **Fullseye Studio** (`studio.py` / `fullseye-studio`) |
-| `all` | `opencv-python`, `scikit-image`, `Pillow`, `PyWavelets`, `torch`, `kornia`, `mahotas`, `SimpleITK`, `PySide6`, `imageio`, `imageio-ffmpeg`, `tifffile` (no CuPy; the full GPU set is `fullseye[gpu]`) | all operators and backends |
+| `all` | `opencv-python`, `scikit-image`, `Pillow`, `PyWavelets`, `torch`, `kornia`, `mahotas`, `SimpleITK`, `PySide6`, `imageio`, `imageio-ffmpeg`, `tifffile` (no CuPy; the full GPU set is `fullseye[gpu]`. Per PyTorch's install guide, the default torch on Linux is the CUDA build and may bring CUDA components (nvidia-* wheels) with it. For CPU-only use, install torch first from the CPU-only index: `pip install torch --index-url https://download.pytorch.org/whl/cpu`) | all operators and backends |
 
 Rules of thumb:
 

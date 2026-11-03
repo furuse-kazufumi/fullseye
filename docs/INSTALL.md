@@ -37,7 +37,7 @@ py -3.11 -m pip install -e .            # コアのみ（numpy + scipy。全 op 
 | `gpu` | `torch>=2.13`, `kornia>=0.9`, `cupy-cuda12x>=14` (not macOS) | GPU バッチバックエンド（`accel.py`/`bench.py`）、`xkor_*`（kornia）系 |
 | `extra` | `mahotas>=1.4`, `SimpleITK>=2.2` | `xsitk_*`（curvature flow 等）、mahotas 由来（Zernike/pftas 等） |
 | `gui` | `PySide6>=6.5` | **Fullseye Studio**（`studio.py` / `fullseye-studio`） |
-| `all` | `opencv-python`, `scikit-image`, `Pillow`, `PyWavelets`, `torch`, `kornia`, `mahotas`, `SimpleITK`, `PySide6`, `imageio`, `imageio-ffmpeg`, `tifffile`（CuPy は入らない。GPU 一式は `fullseye[gpu]`） | 全オペレータ・バックエンド |
+| `all` | `opencv-python`, `scikit-image`, `Pillow`, `PyWavelets`, `torch`, `kornia`, `mahotas`, `SimpleITK`, `PySide6`, `imageio`, `imageio-ffmpeg`, `tifffile`（CuPy は入らない。GPU 一式は `fullseye[gpu]`。PyTorch の案内では Linux の既定の torch は CUDA 版で、CUDA の部品(nvidia-* の wheel)も一緒に入ることがある。CPU だけで使うなら、先に CPU 版の入手先から `pip install torch --index-url https://download.pytorch.org/whl/cpu` で torch を入れておく） | 全オペレータ・バックエンド |
 
 使い分けの目安:
 
