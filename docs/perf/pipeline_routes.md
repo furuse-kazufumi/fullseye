@@ -277,6 +277,7 @@
 | Accept — probing error of a 3-D sensor on a calibrated sphere (VDI/VDE 2634-2 idea: PF and PS) | 0 / 0 | 0 / 0 | sphere_probing_error[CPU:not_listed] |
 | Register — sub-pixel shift between two images by ECC (enhanced correlation coefficient) | 0 / 0 | 0 / 0 | register_ecc[CPU:not_listed] |
 | Read — an EAN-13 (JAN) barcode label, including a tilted and noisy one | 0 / 0 | 0 / 0 | read_barcode1d[CPU:not_listed] |
+| Stereo — disparity of a rectified pair by multi-scale semi-global matching | 0 / 0 | 0 / 0 | binocular_disparity_ms[CPU:not_listed] |
 | Sense — degree of linear polarization map from four analyzer angles (0/45/90/135) | 0 / 0 | 0 / 0 | polarization_dolp_map[CPU:not_listed] |
 | Inspect — glossy (specular) area from polarization: DoLP map, threshold, area fraction | 2 / 1 | 1 / 1 | polarization_dolp_map[CPU:not_listed] → threshold[GPU] → area_frac[GPU] |
 | Measure — wrapped phase from 4-step phase-shifted fringes | 0 / 1 | 0 / 1 | wrapped_phase[GPU] |

@@ -1,16 +1,14 @@
 {
  "summary": {
-  "recipes": 270,
+  "recipes": 271,
   "recipes_py": 25,
-  "recipebook": 245,
+  "recipebook": 246,
   "multi_stage": 220,
   "families_total": 60,
-  "families_covered": 59,
-  "families_uncovered": [
-   "mv"
-  ],
+  "families_covered": 60,
+  "families_uncovered": [],
   "task_class": {
-   "3d": 36,
+   "3d": 37,
    "analysis": 24,
    "inspection": 60,
    "measurement": 73,
@@ -25,7 +23,7 @@
    "2D Metrology": 6,
    "3D Matching": 8,
    "3D Object Model": 18,
-   "3D Reconstruction": 14,
+   "3D Reconstruction": 15,
    "Bar Code": 1,
    "Calibration": 4,
    "Color": 8,
@@ -46,12 +44,12 @@
   },
   "runner": {
    "mcp": 89,
-   "python": 181
+   "python": 182
   },
-  "truth_gated": 246,
+  "truth_gated": 247,
   "type_cuts_total": 0,
   "recipes_with_type_cuts": 0,
-  "distinct_ops": 412,
+  "distinct_ops": 413,
   "categories_2d_total": 49,
   "categories_2d_covered": 25,
   "categories_2d_uncovered": [
@@ -83,7 +81,7 @@
   "gpu": {
    "snapshot_commit": "a3f91eae72f851e870e6a45294ecfc44ded9cb10",
    "recipes_measured": 247,
-   "recipes_unmeasured": 23,
+   "recipes_unmeasured": 24,
    "recipes_with_gpu_stage": 127,
    "switches_total": 96,
    "switch_histogram": {
@@ -308,8 +306,8 @@
   {
    "family": "mv",
    "ops": 47,
-   "recipes": 0,
-   "ops_used": 0
+   "recipes": 1,
+   "ops_used": 1
   },
   {
    "family": "oned",
@@ -5377,6 +5375,25 @@
    "gpu_stages": null,
    "gpu_unmeasured_ops": [
     "read_barcode1d"
+   ],
+   "gpu_switches": null
+  },
+  {
+   "name": "Stereo — disparity of a rectified pair by multi-scale semi-global matching",
+   "source": "recipebook",
+   "family": "mv",
+   "task_class": "3d",
+   "halcon": "3D Reconstruction",
+   "runner": "python",
+   "stages": 1,
+   "ops": [
+    "binocular_disparity_ms"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": null,
+   "gpu_unmeasured_ops": [
+    "binocular_disparity_ms"
    ],
    "gpu_switches": null
   },

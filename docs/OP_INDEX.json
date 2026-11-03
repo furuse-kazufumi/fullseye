@@ -6529,7 +6529,7 @@
     "projstack",
     "ctgeometry"
    ],
-   "gpu_tier": "none"
+   "gpu_tier": "suitable"
   },
   {
    "name": "ct_forward_project",
@@ -9328,7 +9328,7 @@
    "in_sorts": [
     "ctgeometry"
    ],
-   "gpu_tier": "none"
+   "gpu_tier": "suitable"
   },
   {
    "name": "elliptic_fourier",

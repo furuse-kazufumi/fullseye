@@ -10741,7 +10741,7 @@
       "image": null,
       "source": {
         "path": "fullseye/recipebook/book_newops.py",
-        "line": 256
+        "line": 271
       },
       "when_ja": "穴の中心と半径をサブピクセル輪郭から測る — threshold_sub_pix で円板の縁を XLD 輪郭にし、fit_circle_xld で輪郭ごとに幾何距離の円を当てて中心(行・列)と半径を画素で読む(HALCON fit_circle_contour_xld)。真値は被覆率で描いた円。",
       "index_text": {
@@ -10790,7 +10790,7 @@
       "image": null,
       "source": {
         "path": "fullseye/recipebook/book_newops.py",
-        "line": 269
+        "line": 284
       },
       "when_ja": "接した部品を分水嶺の盆地として数える — 二値化・距離変換・反転で部品ごとの谷を作り、hierarchical_watershed をマスクの中で回して盆地のラベル画像(1..k)と個数を得る(HALCON watersheds の basins 出力)。",
       "index_text": {
@@ -10850,7 +10850,7 @@
       "image": null,
       "source": {
         "path": "fullseye/recipebook/book_newops.py",
-        "line": 282
+        "line": 297
       },
       "when_ja": "マスク付きのマーカー分水嶺 — 部品のマスクを 1 ラベル、作業者の印を種、勾配の反転を優先度にして blob_split で流す。マスクの外へは出ないので面積の合計がマスクと一致し、2 部品の面積が分かる(watersheds_marker に mask 引数が無い穴の代わり)。",
       "index_text": {
@@ -10893,7 +10893,7 @@
       "image": null,
       "source": {
         "path": "fullseye/recipebook/book_newops.py",
-        "line": 298
+        "line": 313
       },
       "when_ja": "中心のずれたリングを、その中心で極座標展開して半径を読む — polar_unwrap に中心(行・列)と半径の範囲を渡し、角度で平均した断面の最大の列からリングの半径を得る(HALCON polar_trans_image_ext の Row/Column/Radius)。",
       "index_text": {
@@ -10931,7 +10931,7 @@
       "image": null,
       "source": {
         "path": "fullseye/recipebook/book_newops.py",
-        "line": 310
+        "line": 325
       },
       "when_ja": "濃淡ボリュームの明るい介在物と暗い介在物を数える — vol_threshold で明示のレベル(0.25)で二値化してから vol_count で連結成分を数える。vol_count だけだと 0.5 固定で暗い方を落とす。",
       "index_text": {
@@ -10968,7 +10968,7 @@
       "image": null,
       "source": {
         "path": "fullseye/recipebook/book_newops.py",
-        "line": 319
+        "line": 334
       },
       "when_ja": "マイク 2 本で音源の方位を測る — tdoa_bearing が相互相関で到着時間差 Δt を取り、遠方近似 θ = asin(cΔt/d) で方位(度)にする。マイク間隔 0.2 m、48 kHz。",
       "index_text": {
@@ -11005,7 +11005,7 @@
       "image": null,
       "source": {
         "path": "fullseye/recipebook/book_newops.py",
-        "line": 329
+        "line": 344
       },
       "when_ja": "加工面の送りマークの波長を面 PSD の山から測る — surface_psd の (q, PSD) 対を spectral_stats に渡し、山の横軸 q(cycles/mm)= 1/λ を読む。peak_nm という名前だが単位は対の横軸のまま。",
       "index_text": {
@@ -11036,7 +11036,7 @@
       "image": null,
       "source": {
         "path": "fullseye/recipebook/book_newops.py",
-        "line": 338
+        "line": 353
       },
       "when_ja": "縞・格子・テクスチャの周期と向きを測る — wave_dominant_frequency が Hann 窓の 2-D FFT の DC 以外の最大の山を対数放物線で細かく読み、周期(画素)と波数ベクトルの向き(度)を返す。",
       "index_text": {
@@ -11071,7 +11071,7 @@
       "image": null,
       "source": {
         "path": "fullseye/recipebook/book_newops.py",
-        "line": 348
+        "line": 363
       },
       "when_ja": "既知の部品の 6 自由度の姿勢を場面の点群から求める — find_surface_pose が点対特徴(PPF)の投票で初期値なしに姿勢を立て、ICP で詰めて (R, t) を返す(HALCON find_surface_model)。",
       "index_text": {
@@ -11106,7 +11106,7 @@
       "image": null,
       "source": {
         "path": "fullseye/recipebook/book_newops.py",
-        "line": 362
+        "line": 377
       },
       "when_ja": "3D センサの受入試験で、校正済みの球から探針の誤差を測る — sphere_probing_error が点群に球を当て、大きさの誤差 PS(当てた直径 − 校正値)と形状の誤差 PF(最悪 0.3 % を除いた半径の残差の幅)を返す。雑音 0 なら両方 0(閉形式)。",
       "index_text": {
@@ -11144,7 +11144,7 @@
       "image": null,
       "source": {
         "path": "fullseye/recipebook/book_newops.py",
-        "line": 373
+        "line": 388
       },
       "when_ja": "2 枚の像のサブピクセルのずれを ECC で測る — register_ecc(並進)の warp の平行移動の列が(dx, dy)(列が先)。滑らかな模様を既知の量だけずらした像なので、真値はそのずれ。",
       "index_text": {
@@ -11175,7 +11175,7 @@
       "image": null,
       "source": {
         "path": "fullseye/recipebook/book_newops.py",
-        "line": 383
+        "line": 398
       },
       "when_ja": "EAN-13(JAN)のラベルを読む(傾きと雑音つきも)— read_barcode1d が推定した向きで平行な走査線を引き、線ごとに復号して多数決で一致したときだけ文字列を返す。真値は符号化した 13 桁。",
       "index_text": {
@@ -11186,6 +11186,44 @@
         "ko": "Read — an EAN-13 (JAN) barcode label, including a tilted and noisy one decode inspection symbol Bar Code find_bar_code for retail labels: parallel scan lines across the bars at the estimated angle, each line decoded on its own and the text accepted only when lines agree (majority vote, so a single misread line cannot win). The label is rendered from the encoded symbol, so the truth is the 13 digits that were encoded. 영상에서 1차원 바코드를 읽는다(`table`).",
         "de": "Read — an EAN-13 (JAN) barcode label, including a tilted and noisy one decode inspection symbol Bar Code find_bar_code for retail labels: parallel scan lines across the bars at the estimated angle, each line decoded on its own and the text accepted only when lines agree (majority vote, so a single misread line cannot win). The label is rendered from the encoded symbol, so the truth is the 13 digits that were encoded. Liest einen 1-D-Strichcode aus einem Bild (`table`).",
         "hi": "Read — an EAN-13 (JAN) barcode label, including a tilted and noisy one decode inspection symbol Bar Code find_bar_code for retail labels: parallel scan lines across the bars at the estimated angle, each line decoded on its own and the text accepted only when lines agree (majority vote, so a single misread line cannot win). The label is rendered from the encoded symbol, so the truth is the 13 digits that were encoded. image से 1-D bar code पढ़ता है (`table`)।"
+      }
+    },
+    {
+      "name": "Stereo — disparity of a rectified pair by multi-scale semi-global matching",
+      "task": "measure",
+      "family": "mv",
+      "task_class": "3d",
+      "halcon": "3D Reconstruction",
+      "runner": "python",
+      "input_sort": "image",
+      "output_sort": "table",
+      "stages": [
+        {
+          "op": "binocular_disparity_ms",
+          "args": [
+            "$in",
+            "$aux.right"
+          ],
+          "kw": {
+            "max_disp": 12
+          }
+        }
+      ],
+      "when": "HALCON binocular_disparity_ms: a rectified left / right pair (the left image is the right one moved by a uniform disparity d of 5 / 3 px), matched by semi-global aggregation over several paths with a left-right consistency check; the median of the disparity map is d. The truth is the shift itself.",
+      "image": null,
+      "source": {
+        "path": "fullseye/recipebook/book_newops.py",
+        "line": 408
+      },
+      "when_ja": "平行化したステレオ対の視差を半大域照合で測る — binocular_disparity_ms(HALCON の同名 op)が複数の経路で集約し左右の整合を確かめて視差の地図を返す。左は右を一様な視差 d(5 / 3 px)だけずらした像なので、地図の中央値が d になる。",
+      "index_text": {
+        "ja": "Stereo — disparity of a rectified pair by multi-scale semi-global matching measure 3d mv 3D Reconstruction HALCON binocular_disparity_ms: a rectified left / right pair (the left image is the right one moved by a uniform disparity d of 5 / 3 px), matched by semi-global aggregation over several paths with a left-right consistency check; the median of the disparity map is d. The truth is the shift itself. 平行化したステレオ対の視差を半大域照合で測る — binocular_disparity_ms(HALCON の同名 op)が複数の経路で集約し左右の整合を確かめて視差の地図を返す。左は右を一様な視差 d(5 / 3 px)だけずらした像なので、地図の中央値が d になる。 平行化ステレオの視差を半大域マッチングで求め、左右一致で検査して小数へ補間する。",
+        "en": "Stereo — disparity of a rectified pair by multi-scale semi-global matching measure 3d mv 3D Reconstruction HALCON binocular_disparity_ms: a rectified left / right pair (the left image is the right one moved by a uniform disparity d of 5 / 3 px), matched by semi-global aggregation over several paths with a left-right consistency check; the median of the disparity map is d. The truth is the shift itself. Compute rectified-stereo disparity with semi-global matching, verify it left-right and interpolate to subpixel.",
+        "zh": "Stereo — disparity of a rectified pair by multi-scale semi-global matching measure 3d mv 3D Reconstruction HALCON binocular_disparity_ms: a rectified left / right pair (the left image is the right one moved by a uniform disparity d of 5 / 3 px), matched by semi-global aggregation over several paths with a left-right consistency check; the median of the disparity map is d. The truth is the shift itself. 用半全局匹配计算校正立体的视差，做左右一致检查并插值到亚像素。",
+        "tw": "Stereo — disparity of a rectified pair by multi-scale semi-global matching measure 3d mv 3D Reconstruction HALCON binocular_disparity_ms: a rectified left / right pair (the left image is the right one moved by a uniform disparity d of 5 / 3 px), matched by semi-global aggregation over several paths with a left-right consistency check; the median of the disparity map is d. The truth is the shift itself. 以半全域匹配計算校正立體的視差，做左右一致檢查並內插到次像素。",
+        "ko": "Stereo — disparity of a rectified pair by multi-scale semi-global matching measure 3d mv 3D Reconstruction HALCON binocular_disparity_ms: a rectified left / right pair (the left image is the right one moved by a uniform disparity d of 5 / 3 px), matched by semi-global aggregation over several paths with a left-right consistency check; the median of the disparity map is d. The truth is the shift itself. 반전역 정합으로 평행화 스테레오의 시차를 구하고 좌우 일치를 검사한 뒤 서브픽셀로 보간한다.",
+        "de": "Stereo — disparity of a rectified pair by multi-scale semi-global matching measure 3d mv 3D Reconstruction HALCON binocular_disparity_ms: a rectified left / right pair (the left image is the right one moved by a uniform disparity d of 5 / 3 px), matched by semi-global aggregation over several paths with a left-right consistency check; the median of the disparity map is d. The truth is the shift itself. Berechnet die Disparität rektifizierter Stereobilder per Semi-Global Matching, prüft sie links-rechts und interpoliert subpixelgenau.",
+        "hi": "Stereo — disparity of a rectified pair by multi-scale semi-global matching measure 3d mv 3D Reconstruction HALCON binocular_disparity_ms: a rectified left / right pair (the left image is the right one moved by a uniform disparity d of 5 / 3 px), matched by semi-global aggregation over several paths with a left-right consistency check; the median of the disparity map is d. The truth is the shift itself. सेमी-ग्लोबल मैचिंग से रेक्टिफ़ाइड स्टीरियो का डिस्पैरिटी निकालता है, बाएँ-दाएँ जाँचता है और सबपिक्सेल तक इंटरपोलेट करता है।"
       }
     },
     {
@@ -11355,8 +11393,8 @@
     },
     {
       "source": "fullseye/recipebook RECIPES",
-      "found": 245,
-      "included": 245,
+      "found": 246,
+      "included": 246,
       "excluded": 0,
       "reason": null
     },

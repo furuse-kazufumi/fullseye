@@ -18,9 +18,9 @@
 | tier | 件数 |
 |---|---:|
 | `required` | 49 |
-| `suitable` | 2182 |
+| `suitable` | 2184 |
 | `partial` | 643 |
-| `none` | 936 |
+| `none` | 934 |
 | **合計** | **3810** |
 
 ## GPU 対応率
@@ -28,8 +28,8 @@
 指標 = `gpu_status=あり` の件数 ÷ (`required` + `suitable`) の件数(件数÷全体ではない)。現状値をそのまま書く(低くてよい)。
 
 - gpu 経路あり: **173**
-- `required` + `suitable`: **2231**
-- **GPU 対応率 = 7.8%** (173 / 2231)
+- `required` + `suitable`: **2233**
+- **GPU 対応率 = 7.7%** (173 / 2233)
 
 正直な内訳: gpu 経路を持つ op のうち 50 件は `partial`(領域モルフォロジ等)、0 件は `none` で、分母には入らない(分子にのみ計上)。
 
@@ -136,7 +136,7 @@
 | tacdome | 0 | 7 | 0 | 5 | 12 |
 | world | 0 | 0 | 1 | 11 | 12 |
 | construct | 0 | 1 | 8 | 2 | 11 |
-| ct_scan | 0 | 8 | 0 | 3 | 11 |
+| ct_scan | 0 | 10 | 0 | 1 | 11 |
 | imaging | 0 | 7 | 3 | 1 | 11 |
 | iqa | 0 | 0 | 0 | 11 | 11 |
 | light_transport | 2 | 4 | 0 | 5 | 11 |
@@ -507,5 +507,3 @@
 ## required 名簿の実在検査
 
 名簿の op が全部実在: **はい**
-
-⚠ 型表 `SORT_TIER` に無い型(none に落ちている): ctgeometry, projstack

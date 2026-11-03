@@ -1,6 +1,6 @@
 {
   "method": "Business-language queries contain no operator names. recall_at_2: the expected existing recipe is in the top 2. e2e_task_recipe_hit_at_2: one of the top-2 MCP-runnable recipes contains an op PR #224's judge expects. blind_*_hit_at_3: queries written from docs/ops without seeing the recipes; a top-3 recipe has that family / one of the listed ops.",
-  "recipes_in_index": 270,
+  "recipes_in_index": 271,
   "recipes_mcp": 89,
   "recall_at_2": 0.6666666666666666,
   "queries": [
@@ -833,8 +833,8 @@
       "query": "鏡のような塗装面のうねりを、縞模様の映り込みを使って検査したい",
       "top_3": [
         "Measure — areal roughness Sq: form removal, Gaussian L-filter, ISO 25178 parameters",
-        "Inspect — dark contamination spots on a woven fabric",
-        "FA — count holes in a back-lit plate"
+        "Stereo — disparity of a rectified pair by multi-scale semi-global matching",
+        "Inspect — dark contamination spots on a woven fabric"
       ],
       "family_hit": false,
       "op_hit": false
@@ -910,7 +910,7 @@
     "before_label": "master a8b9c1f249 (recipes.py 25 recipes), 2026-11-03",
     "recipes_in_index": {
       "before": 25,
-      "after": 270
+      "after": 271
     },
     "recipes_mcp": {
       "before": 25,
@@ -943,8 +943,8 @@
     },
     {
       "source": "fullseye/recipebook RECIPES",
-      "found": 245,
-      "included": 245,
+      "found": 246,
+      "included": 246,
       "excluded": 0,
       "reason": null
     },

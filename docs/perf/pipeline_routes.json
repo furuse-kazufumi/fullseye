@@ -21655,6 +21655,58 @@
     "stages": [
      {
       "on": "cpu",
+      "op": "binocular_disparity_ms",
+      "path": "cpu",
+      "reason": "not_listed"
+     }
+    ],
+    "switches": [],
+    "type_breaks": [
+     {
+      "expected": null,
+      "got": null,
+      "index": 0,
+      "op": "binocular_disparity_ms",
+      "reason": "unknown_op"
+     }
+    ]
+   },
+   "before": {
+    "n_gpu_stages": 0,
+    "n_switches": 0,
+    "n_transfers": 0,
+    "stages": [
+     {
+      "on": "cpu",
+      "op": "binocular_disparity_ms",
+      "path": "cpu",
+      "reason": "not_listed"
+     }
+    ],
+    "switches": [],
+    "type_breaks": [
+     {
+      "expected": null,
+      "got": null,
+      "index": 0,
+      "op": "binocular_disparity_ms",
+      "reason": "unknown_op"
+     }
+    ]
+   },
+   "recipe": "Stereo — disparity of a rectified pair by multi-scale semi-global matching",
+   "stages": [
+    "binocular_disparity_ms"
+   ]
+  },
+  {
+   "after": {
+    "n_gpu_stages": 0,
+    "n_switches": 0,
+    "n_transfers": 0,
+    "stages": [
+     {
+      "on": "cpu",
       "op": "polarization_dolp_map",
       "path": "cpu",
       "reason": "not_listed"
