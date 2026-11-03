@@ -15,6 +15,7 @@ from pathlib import Path
 #: 分類の表示順と見出し。
 CLASSES = (("adopted", "採用(一致 + 転送込み 5 倍以上)"),
            ("adopted_resident", "常駐前提で採用(単独 1 回は 5 倍未満、GPU に載せたままの連続処理で 5 倍以上)"),
+           ("pipeline", "パイプライン常駐可(単独は 5 倍未満、GPU に載せたままの連続処理で 1 倍以上 5 倍未満。単独では採用しない)"),
            ("match_slow", "一致したが遅い(5 倍未満)"),
            ("match_fixed", "一致したが実寸の入力を作れない(固定形の入力)"),
            ("mismatch", "不一致"),
@@ -106,6 +107,10 @@ def classes(out, targets, is_python_loop, min_ratio, max_gen=None):
                 and rz.get("nonconst") and (rz.get("ratio") or 0) >= min_ratio \
                 and not (rz.get("stats") or {}).get("n_cpu_fallback"):
             cl, why = "adopted_resident", "chain_%d" % rz.get("chain", 0)
+        elif cl == "match_slow" and why == "ratio" and rz and rz.get("status") == "measured" \
+                and rz.get("nonconst") and 1.0 <= (rz.get("ratio") or 0) < min_ratio \
+                and not (rz.get("stats") or {}).get("n_cpu_fallback"):
+            cl, why = "pipeline", "chain_%d" % rz.get("chain", 0)
         if cl == "adopted" and v is not None and not v["ok"]:
             cl, why = "mismatch", "at_full_resolution"
         rows.append({"name": n, "family": t.get("category") or "?", "tier": t.get("gpu_tier"),
@@ -398,6 +403,10 @@ def report(out, targets, root, is_python_loop, tol, min_ratio) -> int:
                                           "ratio_single": round(r["s"].get("ratio") or 0, 3),
                                           "chain": r["r"].get("chain"), "family": r["family"]}
                               for r in rows if r["class"] == "adopted_resident"},
+             "pipeline_ops": {r["name"]: {"ratio_resident": round(r["r"]["ratio"], 3),
+                                          "ratio_single": round(r["s"].get("ratio") or 0, 3),
+                                          "chain": r["r"].get("chain"), "family": r["family"]}
+                              for r in rows if r["class"] == "pipeline"},
              "note": "ops = single-call adoption; resident_ops = adopted only when inputs and "
                      "outputs stay on the GPU across a chain (never mixed with ops)."}
     (Path(root) / "fullseye" / "data" / "gpu_auto_allow.json").write_text(

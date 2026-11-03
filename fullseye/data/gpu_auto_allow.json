@@ -18,6 +18,12 @@
    "hand_written_gpu": false,
    "ratio": 29.35
   },
+  "affine_trans_region": {
+   "family": "geometry",
+   "hand_written_gpu": false,
+   "ratio": 19.21,
+   "tier_swept": "partial,none"
+  },
   "affine_warp": {
    "family": "geometry",
    "hand_written_gpu": false,
@@ -388,6 +394,12 @@
    "hand_written_gpu": false,
    "ratio": 14.39
   },
+  "closing_rectangle1": {
+   "family": "region",
+   "hand_written_gpu": false,
+   "ratio": 7.72,
+   "tier_swept": "partial,none"
+  },
   "coherence_enhancing_diff": {
    "family": "smoothing",
    "hand_written_gpu": false,
@@ -582,6 +594,12 @@
    "family": "edges",
    "hand_written_gpu": true,
    "ratio": 12.67
+  },
+  "dilation_rectangle1": {
+   "family": "region",
+   "hand_written_gpu": false,
+   "ratio": 8.61,
+   "tier_swept": "partial,none"
   },
   "displacement_series": {
    "family": "measure",
@@ -1023,6 +1041,12 @@
    "hand_written_gpu": false,
    "ratio": 10.9
   },
+  "hx_closing": {
+   "family": "halcon_ext",
+   "hand_written_gpu": false,
+   "ratio": 6.41,
+   "tier_swept": "partial,none"
+  },
   "hx_fit_surface1": {
    "family": "halcon_ext",
    "hand_written_gpu": false,
@@ -1067,6 +1091,12 @@
    "family": "halcon_ext",
    "hand_written_gpu": false,
    "ratio": 16.13
+  },
+  "hx_opening": {
+   "family": "halcon_ext",
+   "hand_written_gpu": false,
+   "ratio": 6.63,
+   "tier_swept": "partial,none"
   },
   "hx_plane_deviation": {
    "family": "halcon_ext",
@@ -1318,6 +1348,12 @@
    "hand_written_gpu": false,
    "ratio": 13.73
   },
+  "luma_limited_u8": {
+   "family": "iqa",
+   "hand_written_gpu": false,
+   "ratio": 38.24,
+   "tier_swept": "partial,none"
+  },
   "macro_binarize": {
    "family": "macro",
    "hand_written_gpu": false,
@@ -1487,6 +1523,12 @@
    "family": "omni360",
    "hand_written_gpu": false,
    "ratio": 5.31
+  },
+  "opening_rectangle1": {
+   "family": "region",
+   "hand_written_gpu": false,
+   "ratio": 10.25,
+   "tier_swept": "partial,none"
   },
   "orientation_code": {
    "family": "code",
@@ -1703,6 +1745,36 @@
    "hand_written_gpu": false,
    "ratio": 10.93
   },
+  "r2_inner_circle": {
+   "family": "region",
+   "hand_written_gpu": false,
+   "ratio": 25.69,
+   "tier_swept": "partial,none"
+  },
+  "r2_union1": {
+   "family": "region",
+   "hand_written_gpu": false,
+   "ratio": 5.36,
+   "tier_swept": "partial,none"
+  },
+  "r3_background_seg": {
+   "family": "region",
+   "hand_written_gpu": false,
+   "ratio": 13.15,
+   "tier_swept": "partial,none"
+  },
+  "r3_clip_region": {
+   "family": "region",
+   "hand_written_gpu": false,
+   "ratio": 10.16,
+   "tier_swept": "partial,none"
+  },
+  "r3_polar_trans_region": {
+   "family": "region",
+   "hand_written_gpu": false,
+   "ratio": 28.39,
+   "tier_swept": "partial,none"
+  },
   "radial_periodogram": {
    "family": "terrain",
    "hand_written_gpu": false,
@@ -1732,6 +1804,12 @@
    "family": "isp",
    "hand_written_gpu": false,
    "ratio": 9.01
+  },
+  "region_boundary": {
+   "family": "region",
+   "hand_written_gpu": false,
+   "ratio": 5.21,
+   "tier_swept": "partial,none"
   },
   "removal_depth_from_heights": {
    "family": "polish",
@@ -2542,9 +2620,283 @@
    "family": "compose",
    "hand_written_gpu": false,
    "ratio": 6.41
+  },
+  "zoom_region": {
+   "family": "geometry",
+   "hand_written_gpu": false,
+   "ratio": 28.29,
+   "tier_swept": "partial,none"
+  }
+ },
+ "pipeline_ops": {
+  "abs_funct_1d": {
+   "chain": 8,
+   "family": "function",
+   "ratio_resident": 2.262,
+   "ratio_single": 1.077
+  },
+  "abs_image": {
+   "chain": 8,
+   "family": "arithmetic",
+   "ratio_resident": 1.965,
+   "ratio_single": 1.776
+  },
+  "absolute_phase": {
+   "chain": 8,
+   "family": "structured_light",
+   "ratio_resident": 4.944,
+   "ratio_single": 1.614
+  },
+  "alife_langton_ant": {
+   "chain": 8,
+   "family": "artificial-life",
+   "ratio_resident": 3.394,
+   "ratio_single": 1.086
+  },
+  "annotate_panel_label": {
+   "chain": 8,
+   "family": "paper",
+   "ratio_resident": 4.09,
+   "ratio_single": 3.335
+  },
+  "anomaly_region_overlap": {
+   "chain": 8,
+   "family": "anomaly_eval",
+   "ratio_resident": 2.462,
+   "ratio_single": 1.738
+  },
+  "awb_gains": {
+   "chain": 8,
+   "family": "isp",
+   "ratio_resident": 2.588,
+   "ratio_single": 1.721
+  },
+  "axes_frame": {
+   "chain": 8,
+   "family": "plot",
+   "ratio_resident": 3.333,
+   "ratio_single": 1.867
+  },
+  "background_flatten": {
+   "chain": 8,
+   "family": "surface_fit",
+   "ratio_resident": 1.172,
+   "ratio_single": 1.016
+  },
+  "beer_lambert_transmittance": {
+   "chain": 8,
+   "family": "glassbody",
+   "ratio_resident": 4.124,
+   "ratio_single": 1.97
+  },
+  "bit_not": {
+   "chain": 8,
+   "family": "gray",
+   "ratio_resident": 3.368,
+   "ratio_single": 2.317
+  },
+  "blob_label": {
+   "chain": 8,
+   "family": "connect",
+   "ratio_resident": 3.548,
+   "ratio_single": 1.985
+  },
+  "brightness_contrast": {
+   "chain": 8,
+   "family": "isp",
+   "ratio_resident": 2.367,
+   "ratio_single": 2.169
+  },
+  "dem_height_frame_residual": {
+   "chain": 8,
+   "family": "geodesy",
+   "ratio_resident": 3.42,
+   "ratio_single": 4.371
+  },
+  "derivate_funct_1d": {
+   "chain": 8,
+   "family": "function",
+   "ratio_resident": 1.807,
+   "ratio_single": 1.421
+  },
+  "dl_aniso_diffusion": {
+   "chain": 8,
+   "family": "smoothing",
+   "ratio_resident": 3.694,
+   "ratio_single": 2.684
+  },
+  "gdilate": {
+   "chain": 8,
+   "family": "morphology",
+   "ratio_resident": 4.104,
+   "ratio_single": 4.673
+  },
+  "graph_activation_latency": {
+   "chain": 8,
+   "family": "activity",
+   "ratio_resident": 3.188,
+   "ratio_single": 3.466
+  },
+  "harris3d_keypoints": {
+   "chain": 8,
+   "family": "feature_register",
+   "ratio_resident": 1.422,
+   "ratio_single": 1.102
+  },
+  "hx_clip_region_rel": {
+   "chain": 8,
+   "family": "halcon_ext",
+   "ratio_resident": 4.968,
+   "ratio_single": 2.369,
+   "tier_swept": "partial,none"
+  },
+  "hx_fit_surface2": {
+   "chain": 8,
+   "family": "halcon_ext",
+   "ratio_resident": 1.932,
+   "ratio_single": 1.723
+  },
+  "integrate_funct_1d": {
+   "chain": 8,
+   "family": "function",
+   "ratio_resident": 3.349,
+   "ratio_single": 2.449
+  },
+  "invert": {
+   "chain": 8,
+   "family": "gray",
+   "ratio_resident": 3.48,
+   "ratio_single": 1.352
+  },
+  "lens_shading_gain": {
+   "chain": 8,
+   "family": "isp",
+   "ratio_resident": 3.637,
+   "ratio_single": 1.765
+  },
+  "lf_epi": {
+   "chain": 8,
+   "family": "views",
+   "ratio_resident": 1.13,
+   "ratio_single": 1.047
+  },
+  "morph_erode3d": {
+   "chain": 8,
+   "family": "morphology",
+   "ratio_resident": 2.092,
+   "ratio_single": 2.128
+  },
+  "morph_gradient3d": {
+   "chain": 8,
+   "family": "morphology",
+   "ratio_resident": 2.423,
+   "ratio_single": 2.276
+  },
+  "morph_open3d": {
+   "chain": 8,
+   "family": "morphology",
+   "ratio_resident": 1.915,
+   "ratio_single": 1.869
+  },
+  "scene_cut_detection": {
+   "chain": 8,
+   "family": "analysis",
+   "ratio_resident": 2.287,
+   "ratio_single": 1.689
+  },
+  "sdf_subtract": {
+   "chain": 8,
+   "family": "sdf_csg",
+   "ratio_resident": 2.304,
+   "ratio_single": 1.012
+  },
+  "sobel3d": {
+   "chain": 8,
+   "family": "feature",
+   "ratio_resident": 1.486,
+   "ratio_single": 1.218
+  },
+  "sqrt_image": {
+   "chain": 8,
+   "family": "arithmetic",
+   "ratio_resident": 1.555,
+   "ratio_single": 1.712
+  },
+  "tb_abs_funct_1d": {
+   "chain": 8,
+   "family": "typed",
+   "ratio_resident": 2.678,
+   "ratio_single": 2.265
+  },
+  "tb_derivate_funct_1d": {
+   "chain": 8,
+   "family": "typed",
+   "ratio_resident": 1.937,
+   "ratio_single": 2.642
+  },
+  "tb_negate_funct_1d": {
+   "chain": 8,
+   "family": "typed",
+   "ratio_resident": 4.473,
+   "ratio_single": 1.444
+  },
+  "tb_spad_deadtime_correct": {
+   "chain": 8,
+   "family": "typed",
+   "ratio_resident": 2.438,
+   "ratio_single": 2.755,
+   "tier_swept": "partial,none"
+  },
+  "tb_specular_free_transform": {
+   "chain": 8,
+   "family": "typed",
+   "ratio_resident": 3.33,
+   "ratio_single": 1.564
+  },
+  "vol_label": {
+   "chain": 8,
+   "family": "regionprops",
+   "ratio_resident": 3.451,
+   "ratio_single": 3.255
+  },
+  "wrist_deflection_from_rgbd": {
+   "chain": 8,
+   "family": "pegtactile",
+   "ratio_resident": 1.091,
+   "ratio_single": 1.039
   }
  },
  "resident_ops": {
+  "abs_diff_image": {
+   "chain": 8,
+   "family": "nary",
+   "ratio_resident": 9.399,
+   "ratio_single": 1.908
+  },
+  "acos_image": {
+   "chain": 8,
+   "family": "arithmetic",
+   "ratio_resident": 12.721,
+   "ratio_single": 1.879
+  },
+  "alpha_composite_premul": {
+   "chain": 8,
+   "family": "composite",
+   "ratio_resident": 22.624,
+   "ratio_single": 2.467
+  },
+  "anaglyph_crosstalk": {
+   "chain": 8,
+   "family": "omni360",
+   "ratio_resident": 20.906,
+   "ratio_single": 3.402
+  },
+  "annotate_scale_bar": {
+   "chain": 8,
+   "family": "paper",
+   "ratio_resident": 10.19,
+   "ratio_single": 2.2
+  },
   "anscombe_transform": {
    "chain": 8,
    "family": "transform",
@@ -2575,6 +2927,45 @@
    "ratio_resident": 14.513,
    "ratio_single": 3.809
   },
+  "bit_or": {
+   "chain": 8,
+   "family": "nary",
+   "ratio_resident": 12.183,
+   "ratio_single": 2.622
+  },
+  "boundary": {
+   "chain": 8,
+   "family": "region",
+   "ratio_resident": 12.814,
+   "ratio_single": 2.767,
+   "tier_swept": "partial,none"
+  },
+  "carla_label_map": {
+   "chain": 8,
+   "family": "carla",
+   "ratio_resident": 6.631,
+   "ratio_single": 1.905
+  },
+  "caustic_floor_segmentation": {
+   "chain": 8,
+   "family": "watervision",
+   "ratio_resident": 12.731,
+   "ratio_single": 3.145
+  },
+  "closing_circle": {
+   "chain": 8,
+   "family": "region",
+   "ratio_resident": 5.837,
+   "ratio_single": 4.745,
+   "tier_swept": "partial,none"
+  },
+  "closing_golay": {
+   "chain": 8,
+   "family": "region",
+   "ratio_resident": 9.893,
+   "ratio_single": 4.748,
+   "tier_swept": "partial,none"
+  },
   "coat_thickness_from_image": {
    "chain": 8,
    "family": "polish",
@@ -2587,11 +2978,56 @@
    "ratio_resident": 5.365,
    "ratio_single": 3.702
   },
+  "cos_image": {
+   "chain": 8,
+   "family": "arithmetic",
+   "ratio_resident": 15.838,
+   "ratio_single": 1.474
+  },
   "curvature_maps": {
    "chain": 8,
    "family": "feature",
    "ratio_resident": 5.822,
    "ratio_single": 4.721
+  },
+  "data_to_pixel": {
+   "chain": 8,
+   "family": "plot",
+   "ratio_resident": 7.605,
+   "ratio_single": 3.229,
+   "tier_swept": "partial,none"
+  },
+  "deflicker": {
+   "chain": 8,
+   "family": "restore",
+   "ratio_resident": 5.847,
+   "ratio_single": 2.873
+  },
+  "depth_to_organized_points": {
+   "chain": 8,
+   "family": "range_image",
+   "ratio_resident": 10.796,
+   "ratio_single": 1.854
+  },
+  "dilation_circle": {
+   "chain": 8,
+   "family": "region",
+   "ratio_resident": 9.038,
+   "ratio_single": 3.318,
+   "tier_swept": "partial,none"
+  },
+  "dilation_golay": {
+   "chain": 8,
+   "family": "region",
+   "ratio_resident": 8.938,
+   "ratio_single": 3.231,
+   "tier_swept": "partial,none"
+  },
+  "div_image": {
+   "chain": 8,
+   "family": "nary",
+   "ratio_resident": 8.24,
+   "ratio_single": 2.704
   },
   "edge_points": {
    "chain": 8,
@@ -2611,11 +3047,44 @@
    "ratio_resident": 8.381,
    "ratio_single": 3.75
   },
+  "equalize": {
+   "chain": 8,
+   "family": "gray",
+   "ratio_resident": 12.773,
+   "ratio_single": 1.327
+  },
+  "erosion_circle": {
+   "chain": 8,
+   "family": "region",
+   "ratio_resident": 7.793,
+   "ratio_single": 1.996,
+   "tier_swept": "partial,none"
+  },
+  "erosion_golay": {
+   "chain": 8,
+   "family": "region",
+   "ratio_resident": 7.927,
+   "ratio_single": 1.892,
+   "tier_swept": "partial,none"
+  },
+  "erosion_rectangle1": {
+   "chain": 8,
+   "family": "region",
+   "ratio_resident": 12.658,
+   "ratio_single": 4.47,
+   "tier_swept": "partial,none"
+  },
   "exp_image": {
    "chain": 8,
    "family": "arithmetic",
    "ratio_resident": 13.128,
    "ratio_single": 4.335
+  },
+  "fast_threshold": {
+   "chain": 8,
+   "family": "segmentation",
+   "ratio_resident": 11.268,
+   "ratio_single": 2.258
   },
   "flow_magnitude": {
    "chain": 8,
@@ -2623,17 +3092,48 @@
    "ratio_resident": 8.299,
    "ratio_single": 3.599
   },
+  "gamma": {
+   "chain": 8,
+   "family": "gray",
+   "ratio_resident": 14.329,
+   "ratio_single": 1.783
+  },
   "gerode": {
    "chain": 8,
    "family": "morphology",
    "ratio_resident": 14.169,
    "ratio_single": 4.986
   },
+  "get_region_contour": {
+   "chain": 8,
+   "family": "region",
+   "ratio_resident": 13.179,
+   "ratio_single": 4.96,
+   "tier_swept": "partial,none"
+  },
   "grating_stepping_simulate": {
    "chain": 8,
    "family": "grating_interf",
    "ratio_resident": 23.904,
    "ratio_single": 4.749
+  },
+  "gray_dilation_rect": {
+   "chain": 8,
+   "family": "rank",
+   "ratio_resident": 8.246,
+   "ratio_single": 1.783
+  },
+  "gray_dilation_shape": {
+   "chain": 8,
+   "family": "morphology",
+   "ratio_resident": 14.529,
+   "ratio_single": 2.848
+  },
+  "gray_erosion_shape": {
+   "chain": 8,
+   "family": "morphology",
+   "ratio_resident": 8.737,
+   "ratio_single": 2.361
   },
   "hertzian_tangential_inner": {
    "chain": 8,
@@ -2647,11 +3147,32 @@
    "ratio_resident": 16.168,
    "ratio_single": 4.538
   },
+  "hx_dilation1": {
+   "chain": 8,
+   "family": "halcon_ext",
+   "ratio_resident": 12.201,
+   "ratio_single": 4.832,
+   "tier_swept": "partial,none"
+  },
+  "hx_dilation2": {
+   "chain": 8,
+   "family": "halcon_ext",
+   "ratio_resident": 13.339,
+   "ratio_single": 1.757,
+   "tier_swept": "partial,none"
+  },
   "hx_disparity_to_xyz": {
    "chain": 8,
    "family": "halcon_ext",
    "ratio_resident": 12.82,
    "ratio_single": 4.535
+  },
+  "hx_erosion1": {
+   "chain": 8,
+   "family": "halcon_ext",
+   "ratio_resident": 8.14,
+   "ratio_single": 3.021,
+   "tier_swept": "partial,none"
   },
   "hx_fill_interlace": {
    "chain": 8,
@@ -2659,17 +3180,84 @@
    "ratio_resident": 11.76,
    "ratio_single": 3.509
   },
+  "hx_gen_bandfilter": {
+   "chain": 8,
+   "family": "halcon_ext",
+   "ratio_resident": 15.882,
+   "ratio_single": 3.317
+  },
+  "hx_gen_checker_region": {
+   "chain": 8,
+   "family": "halcon_ext",
+   "ratio_resident": 25.44,
+   "ratio_single": 2.044
+  },
   "hx_gen_highpass": {
    "chain": 8,
    "family": "halcon_ext",
    "ratio_resident": 6.349,
    "ratio_single": 3.565
   },
+  "hx_histo_to_thresh": {
+   "chain": 8,
+   "family": "halcon_ext",
+   "ratio_resident": 8.857,
+   "ratio_single": 3.326
+  },
+  "hx_mean_shape": {
+   "chain": 8,
+   "family": "halcon_ext",
+   "ratio_resident": 10.036,
+   "ratio_single": 1.925
+  },
+  "hx_rectangle1_domain": {
+   "chain": 8,
+   "family": "halcon_ext",
+   "ratio_resident": 7.431,
+   "ratio_single": 1.947
+  },
+  "hx_region_to_label": {
+   "chain": 8,
+   "family": "halcon_ext",
+   "ratio_resident": 7.847,
+   "ratio_single": 3.134
+  },
   "img_to_rgb": {
    "chain": 8,
    "family": "bridge",
    "ratio_resident": 10.424,
    "ratio_single": 4.352
+  },
+  "img_to_video": {
+   "chain": 8,
+   "family": "bridge",
+   "ratio_resident": 29.196,
+   "ratio_single": 3.45
+  },
+  "img_to_volume": {
+   "chain": 8,
+   "family": "bridge",
+   "ratio_resident": 11.963,
+   "ratio_single": 2.386
+  },
+  "invert_image": {
+   "chain": 8,
+   "family": "gray",
+   "ratio_resident": 6.644,
+   "ratio_single": 1.791
+  },
+  "invert_region": {
+   "chain": 8,
+   "family": "region",
+   "ratio_resident": 7.296,
+   "ratio_single": 2.701,
+   "tier_swept": "partial,none"
+  },
+  "it_full_domain": {
+   "chain": 8,
+   "family": "domain",
+   "ratio_resident": 8.801,
+   "ratio_single": 1.752
   },
   "laplace_of_gauss": {
    "chain": 8,
@@ -2689,6 +3277,12 @@
    "ratio_resident": 11.439,
    "ratio_single": 3.541
   },
+  "lights_fit_from_sphere": {
+   "chain": 8,
+   "family": "tacscalib",
+   "ratio_resident": 6.113,
+   "ratio_single": 1.353
+  },
   "linear_trans_color": {
    "chain": 8,
    "family": "color",
@@ -2701,17 +3295,79 @@
    "ratio_resident": 9.455,
    "ratio_single": 2.846
   },
+  "marker_image": {
+   "chain": 8,
+   "family": "tacslip",
+   "ratio_resident": 5.164,
+   "ratio_single": 1.937
+  },
+  "mean_box": {
+   "chain": 8,
+   "family": "smoothing",
+   "ratio_resident": 27.559,
+   "ratio_single": 1.324
+  },
+  "membrane_predict_rgb": {
+   "chain": 8,
+   "family": "tacscalib",
+   "ratio_resident": 7.163,
+   "ratio_single": 1.165
+  },
   "min_image": {
    "chain": 8,
    "family": "nary",
    "ratio_resident": 7.907,
    "ratio_single": 3.454
   },
+  "monogenic_amplitude": {
+   "chain": 8,
+   "family": "riesz",
+   "ratio_resident": 11.297,
+   "ratio_single": 3.082
+  },
+  "mult_image": {
+   "chain": 8,
+   "family": "nary",
+   "ratio_resident": 10.252,
+   "ratio_single": 2.763
+  },
+  "noise_inconsistency_map": {
+   "chain": 8,
+   "family": "noise",
+   "ratio_resident": 11.975,
+   "ratio_single": 3.023
+  },
+  "opening_circle": {
+   "chain": 8,
+   "family": "region",
+   "ratio_resident": 12.776,
+   "ratio_single": 4.883,
+   "tier_swept": "partial,none"
+  },
+  "opening_golay": {
+   "chain": 8,
+   "family": "region",
+   "ratio_resident": 8.867,
+   "ratio_single": 3.243,
+   "tier_swept": "partial,none"
+  },
   "otsu": {
    "chain": 8,
    "family": "segmentation",
    "ratio_resident": 10.126,
    "ratio_single": 4.103
+  },
+  "panel_grid": {
+   "chain": 8,
+   "family": "compose",
+   "ratio_resident": 8.975,
+   "ratio_single": 1.365
+  },
+  "phase_deg": {
+   "chain": 8,
+   "family": "frequency",
+   "ratio_resident": 31.329,
+   "ratio_single": 2.469
   },
   "photon_uncertainty": {
    "chain": 8,
@@ -2743,11 +3399,105 @@
    "ratio_resident": 13.459,
    "ratio_single": 3.865
   },
+  "quaternion_to_rgb": {
+   "chain": 8,
+   "family": "convert",
+   "ratio_resident": 6.995,
+   "ratio_single": 1.612
+  },
+  "r2_partition_rectangle": {
+   "chain": 8,
+   "family": "region",
+   "ratio_resident": 6.112,
+   "ratio_single": 1.959,
+   "tier_swept": "partial,none"
+  },
+  "r2_smallest_rectangle1": {
+   "chain": 8,
+   "family": "region",
+   "ratio_resident": 9.071,
+   "ratio_single": 3.254,
+   "tier_swept": "partial,none"
+  },
+  "r3_rank_region": {
+   "chain": 8,
+   "family": "region",
+   "ratio_resident": 28.679,
+   "ratio_single": 4.249,
+   "tier_swept": "partial,none"
+  },
+  "raw_apply_gains": {
+   "chain": 8,
+   "family": "isp",
+   "ratio_resident": 5.98,
+   "ratio_single": 2.424
+  },
+  "remove_noise_region": {
+   "chain": 8,
+   "family": "region",
+   "ratio_resident": 12.612,
+   "ratio_single": 4.746,
+   "tier_swept": "partial,none"
+  },
+  "rescale_img": {
+   "chain": 8,
+   "family": "geometry",
+   "ratio_resident": 34.332,
+   "ratio_single": 1.925
+  },
+  "retardation_convert": {
+   "chain": 8,
+   "family": "photoelastic",
+   "ratio_resident": 8.088,
+   "ratio_single": 2.274
+  },
+  "retardation_from_birefringence": {
+   "chain": 8,
+   "family": "photoelastic",
+   "ratio_resident": 11.56,
+   "ratio_single": 2.194
+  },
+  "rgb3_to_gray": {
+   "chain": 8,
+   "family": "color",
+   "ratio_resident": 21.648,
+   "ratio_single": 1.847
+  },
+  "rgb_apply_gains": {
+   "chain": 8,
+   "family": "isp",
+   "ratio_resident": 11.372,
+   "ratio_single": 3.04
+  },
+  "ritter_dam_break": {
+   "chain": 8,
+   "family": "swarmflow",
+   "ratio_resident": 15.033,
+   "ratio_single": 3.414
+  },
   "roberts_mag": {
    "chain": 8,
    "family": "edges",
    "ratio_resident": 23.867,
    "ratio_single": 4.209
+  },
+  "scale_image": {
+   "chain": 8,
+   "family": "gray",
+   "ratio_resident": 12.218,
+   "ratio_single": 3.286
+  },
+  "scale_image_max": {
+   "chain": 8,
+   "family": "gray",
+   "ratio_resident": 11.293,
+   "ratio_single": 2.177
+  },
+  "sdf_offset": {
+   "chain": 8,
+   "family": "sdf_csg",
+   "ratio_resident": 7.438,
+   "ratio_single": 2.394
   },
   "sin_image": {
    "chain": 8,
@@ -2755,17 +3505,54 @@
    "ratio_resident": 15.868,
    "ratio_single": 4.818
   },
+  "smallest_rectangle1": {
+   "chain": 8,
+   "family": "region",
+   "ratio_resident": 5.416,
+   "ratio_single": 1.458,
+   "tier_swept": "partial,none"
+  },
+  "smooth_funct_1d_gauss": {
+   "chain": 8,
+   "family": "function",
+   "ratio_resident": 8.355,
+   "ratio_single": 1.911
+  },
+  "specular_free_transform": {
+   "chain": 8,
+   "family": "dichromatic",
+   "ratio_resident": 5.039,
+   "ratio_single": 3.403
+  },
   "stat_zscore": {
    "chain": 8,
    "family": "stats",
    "ratio_resident": 6.468,
    "ratio_single": 4.562
   },
+  "stereo360_sbs": {
+   "chain": 8,
+   "family": "omni360",
+   "ratio_resident": 10.109,
+   "ratio_single": 1.429
+  },
+  "sub_image": {
+   "chain": 8,
+   "family": "nary",
+   "ratio_resident": 13.135,
+   "ratio_single": 2.833
+  },
   "surface_filter": {
    "chain": 8,
    "family": "prepare",
    "ratio_resident": 20.851,
    "ratio_single": 4.705
+  },
+  "surface_form_remove": {
+   "chain": 8,
+   "family": "prepare",
+   "ratio_resident": 10.808,
+   "ratio_single": 3.051
   },
   "synthesize_fringes": {
    "chain": 8,
@@ -2779,17 +3566,35 @@
    "ratio_resident": 55.731,
    "ratio_single": 4.853
   },
+  "tb_cx_apply_transfer_function": {
+   "chain": 8,
+   "family": "typed",
+   "ratio_resident": 12.383,
+   "ratio_single": 1.058
+  },
   "tb_cx_log_magnitude": {
    "chain": 8,
    "family": "typed",
    "ratio_resident": 6.597,
    "ratio_single": 4.495
   },
+  "tb_cx_phase": {
+   "chain": 8,
+   "family": "typed",
+   "ratio_resident": 11.099,
+   "ratio_single": 3.091
+  },
   "tb_exponential_background": {
    "chain": 8,
    "family": "typed",
    "ratio_resident": 10.24,
    "ratio_single": 3.952
+  },
+  "tb_integrate_funct_1d": {
+   "chain": 8,
+   "family": "typed",
+   "ratio_resident": 7.627,
+   "ratio_single": 2.792
   },
   "tb_magnus_lift_coefficient": {
    "chain": 8,
@@ -2803,6 +3608,66 @@
    "ratio_resident": 8.598,
    "ratio_single": 3.94
   },
+  "tb_quaternion_to_rgb": {
+   "chain": 8,
+   "family": "typed",
+   "ratio_resident": 11.159,
+   "ratio_single": 2.931
+  },
+  "tb_scale_y_funct_1d": {
+   "chain": 8,
+   "family": "typed",
+   "ratio_resident": 5.803,
+   "ratio_single": 2.029
+  },
+  "tb_smooth_funct_1d_gauss": {
+   "chain": 8,
+   "family": "typed",
+   "ratio_resident": 7.717,
+   "ratio_single": 3.211
+  },
+  "tb_smooth_funct_1d_mean": {
+   "chain": 8,
+   "family": "typed",
+   "ratio_resident": 5.429,
+   "ratio_single": 3.012
+  },
+  "tb_stat_zscore": {
+   "chain": 8,
+   "family": "typed",
+   "ratio_resident": 5.639,
+   "ratio_single": 2.91
+  },
+  "text_box": {
+   "chain": 8,
+   "family": "text",
+   "ratio_resident": 8.177,
+   "ratio_single": 2.533
+  },
+  "threshold": {
+   "chain": 8,
+   "family": "segmentation",
+   "ratio_resident": 7.799,
+   "ratio_single": 2.474
+  },
+  "transform_funct_1d": {
+   "chain": 8,
+   "family": "function",
+   "ratio_resident": 11.381,
+   "ratio_single": 2.875
+  },
+  "vol_boundary": {
+   "chain": 8,
+   "family": "boundary",
+   "ratio_resident": 8.328,
+   "ratio_single": 1.318
+  },
+  "vol_dilation_ball": {
+   "chain": 8,
+   "family": "3d",
+   "ratio_resident": 17.891,
+   "ratio_single": 2.002
+  },
   "vol_equalize": {
    "chain": 8,
    "family": "gray",
@@ -2815,11 +3680,59 @@
    "ratio_resident": 12.852,
    "ratio_single": 4.728
   },
+  "vol_erosion_ball": {
+   "chain": 8,
+   "family": "3d",
+   "ratio_resident": 9.527,
+   "ratio_single": 3.242
+  },
+  "vol_fft_bandpass": {
+   "chain": 8,
+   "family": "frequency",
+   "ratio_resident": 16.692,
+   "ratio_single": 3.05
+  },
+  "vol_label_slice_rgb": {
+   "chain": 8,
+   "family": "slice",
+   "ratio_resident": 7.048,
+   "ratio_single": 1.648
+  },
+  "vol_rotate": {
+   "chain": 8,
+   "family": "geom_transform",
+   "ratio_resident": 22.582,
+   "ratio_single": 1.8
+  },
+  "vol_threshold": {
+   "chain": 8,
+   "family": "3d",
+   "ratio_resident": 10.001,
+   "ratio_single": 1.628
+  },
+  "vol_tiled_map": {
+   "chain": 8,
+   "family": "domain",
+   "ratio_resident": 8.735,
+   "ratio_single": 1.196
+  },
+  "vol_window_level": {
+   "chain": 8,
+   "family": "gray",
+   "ratio_resident": 6.024,
+   "ratio_single": 2.314
+  },
   "volume_downsample": {
    "chain": 8,
    "family": "preprocess",
    "ratio_resident": 6.393,
    "ratio_single": 3.773
+  },
+  "zoom_image_size": {
+   "chain": 8,
+   "family": "geometry",
+   "ratio_resident": 21.695,
+   "ratio_single": 1.002
   }
  }
 }

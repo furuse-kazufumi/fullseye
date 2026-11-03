@@ -1,11 +1,12 @@
 {
 "classes": {
 "adopted": 508,
-"adopted_resident": 46,
+"adopted_resident": 120,
 "exception": 48,
 "match_fixed": 444,
-"match_slow": 442,
+"match_slow": 331,
 "mismatch": 47,
+"pipeline": 37,
 "python_loop": 67,
 "unmeasured": 196,
 "vacuous": 145,
@@ -63,35 +64,35 @@
 },
 "abs_diff_image": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "nary",
 "ratio": 1.9079367291352545,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "abs_funct_1d": {
 "at": null,
-"class": "match_slow",
+"class": "pipeline",
 "family": "function",
 "ratio": 1.07688856251874,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "abs_image": {
 "at": null,
-"class": "match_slow",
+"class": "pipeline",
 "family": "arithmetic",
 "ratio": 1.7763391313480477,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "absolute_phase": {
 "at": null,
-"class": "match_slow",
+"class": "pipeline",
 "family": "structured_light",
 "ratio": 1.6139820501367694,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "access_channel": {
 "at": null,
@@ -103,11 +104,11 @@
 },
 "acos_image": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "arithmetic",
 "ratio": 1.8788740669144008,
 "rel": 1.3502422605909586e-16,
-"why": "ratio"
+"why": "chain_8"
 },
 "adaptive_gauss_thresh": {
 "at": null,
@@ -231,11 +232,11 @@
 },
 "alife_langton_ant": {
 "at": null,
-"class": "match_slow",
+"class": "pipeline",
 "family": "artificial-life",
 "ratio": 1.0862707523066089,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "alife_lenia": {
 "at": null,
@@ -311,11 +312,11 @@
 },
 "alpha_composite_premul": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "composite",
 "ratio": 2.4671279492080562,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "alpha_expansion": {
 "at": null,
@@ -343,11 +344,11 @@
 },
 "anaglyph_crosstalk": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "omni360",
 "ratio": 3.4015448037786284,
 "rel": 1.35531561014612e-16,
-"why": "ratio"
+"why": "chain_8"
 },
 "anaglyph_from_ods": {
 "at": null,
@@ -551,19 +552,19 @@
 },
 "annotate_panel_label": {
 "at": null,
-"class": "match_slow",
+"class": "pipeline",
 "family": "paper",
 "ratio": 3.334644715742271,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "annotate_scale_bar": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "paper",
 "ratio": 2.1995154924708484,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "annotate_table": {
 "at": null,
@@ -631,11 +632,11 @@
 },
 "anomaly_region_overlap": {
 "at": null,
-"class": "match_slow",
+"class": "pipeline",
 "family": "anomaly_eval",
 "ratio": 1.7375438223382305,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "anscombe_inverse": {
 "at": null,
@@ -863,19 +864,19 @@
 },
 "awb_gains": {
 "at": null,
-"class": "match_slow",
+"class": "pipeline",
 "family": "isp",
 "ratio": 1.7210282431635935,
 "rel": 2.6034789386151802e-14,
-"why": "ratio"
+"why": "chain_8"
 },
 "axes_frame": {
 "at": null,
-"class": "match_slow",
+"class": "pipeline",
 "family": "plot",
 "ratio": 1.8665219408933815,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "azimuthal_integrate": {
 "at": null,
@@ -887,11 +888,11 @@
 },
 "background_flatten": {
 "at": null,
-"class": "match_slow",
+"class": "pipeline",
 "family": "surface_fit",
 "ratio": 1.0164926820290008,
 "rel": 2.7022750465994343e-15,
-"why": "ratio"
+"why": "chain_8"
 },
 "background_subtraction_window": {
 "at": null,
@@ -1015,11 +1016,11 @@
 },
 "beer_lambert_transmittance": {
 "at": null,
-"class": "match_slow",
+"class": "pipeline",
 "family": "glassbody",
 "ratio": 1.9695479401791869,
 "rel": 1.1004083312467542e-14,
-"why": "ratio"
+"why": "chain_8"
 },
 "bekker_pressure": {
 "at": null,
@@ -1103,19 +1104,19 @@
 },
 "bit_not": {
 "at": null,
-"class": "match_slow",
+"class": "pipeline",
 "family": "gray",
 "ratio": 2.317149652520853,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "bit_or": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "nary",
 "ratio": 2.622025641913605,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "blast_normals": {
 "at": null,
@@ -1167,11 +1168,11 @@
 },
 "blob_label": {
 "at": null,
-"class": "match_slow",
+"class": "pipeline",
 "family": "connect",
 "ratio": 1.9848484897076268,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "blob_overlay": {
 "at": null,
@@ -1311,11 +1312,11 @@
 },
 "brightness_contrast": {
 "at": null,
-"class": "match_slow",
+"class": "pipeline",
 "family": "isp",
 "ratio": 2.1686396081779558,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "bump_normals_fbm": {
 "at": null,
@@ -1431,11 +1432,11 @@
 },
 "carla_label_map": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "carla",
 "ratio": 1.9051112342642968,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "carla_label_unmap": {
 "at": null,
@@ -1495,11 +1496,11 @@
 },
 "caustic_floor_segmentation": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "watervision",
 "ratio": 3.1446675500734167,
 "rel": 3.5735305276537105e-16,
-"why": "ratio"
+"why": "chain_8"
 },
 "caustic_irradiance": {
 "at": null,
@@ -1975,11 +1976,11 @@
 },
 "cos_image": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "arithmetic",
 "ratio": 1.4740781825949156,
 "rel": 5.587046358913653e-17,
-"why": "ratio"
+"why": "chain_8"
 },
 "cosmic_ray_reject": {
 "at": null,
@@ -2663,11 +2664,11 @@
 },
 "deflicker": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "restore",
 "ratio": 2.873462133385434,
 "rel": 3.491195820271596e-16,
-"why": "ratio"
+"why": "chain_8"
 },
 "defocus_blur": {
 "at": null,
@@ -2815,11 +2816,11 @@
 },
 "dem_height_frame_residual": {
 "at": null,
-"class": "match_slow",
+"class": "pipeline",
 "family": "geodesy",
 "ratio": 4.371016261990519,
 "rel": 1.7665476922256947e-16,
-"why": "ratio"
+"why": "chain_8"
 },
 "dem_hillshade": {
 "at": null,
@@ -2903,11 +2904,11 @@
 },
 "depth_to_organized_points": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "range_image",
 "ratio": 1.853788964891166,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "depth_to_points": {
 "at": null,
@@ -2919,11 +2920,11 @@
 },
 "derivate_funct_1d": {
 "at": null,
-"class": "match_slow",
+"class": "pipeline",
 "family": "function",
 "ratio": 1.4206495475966854,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "derivate_gauss": {
 "at": null,
@@ -3183,19 +3184,19 @@
 },
 "div_image": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "nary",
 "ratio": 2.7036406957348116,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "dl_aniso_diffusion": {
 "at": null,
-"class": "match_slow",
+"class": "pipeline",
 "family": "smoothing",
 "ratio": 2.6837585499566092,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "dl_guided_filter": {
 "at": null,
@@ -3783,11 +3784,11 @@
 },
 "equalize": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "gray",
 "ratio": 1.3268755912078247,
 "rel": 1.5416790313020495e-17,
-"why": "ratio"
+"why": "chain_8"
 },
 "equirect_defect_unwrap_pipe": {
 "at": null,
@@ -4079,11 +4080,11 @@
 },
 "fast_threshold": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "segmentation",
 "ratio": 2.25757608162761,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "fbm_gradient": {
 "at": null,
@@ -4815,11 +4816,11 @@
 },
 "gamma": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "gray",
 "ratio": 1.7826606604301345,
 "rel": 8.479603931642565e-17,
-"why": "ratio"
+"why": "chain_8"
 },
 "gamma_image": {
 "at": null,
@@ -4911,11 +4912,11 @@
 },
 "gdilate": {
 "at": null,
-"class": "match_slow",
+"class": "pipeline",
 "family": "morphology",
 "ratio": 4.672803679142394,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "gen_gabor": {
 "at": null,
@@ -5047,11 +5048,11 @@
 },
 "graph_activation_latency": {
 "at": null,
-"class": "match_slow",
+"class": "pipeline",
 "family": "activity",
 "ratio": 3.4656454613293146,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "graph_activity_spread": {
 "at": null,
@@ -5263,19 +5264,19 @@
 },
 "gray_dilation_rect": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "rank",
 "ratio": 1.7826545801193554,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "gray_dilation_shape": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "morphology",
 "ratio": 2.8478263004910813,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "gray_erosion": {
 "at": null,
@@ -5295,11 +5296,11 @@
 },
 "gray_erosion_shape": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "morphology",
 "ratio": 2.3605157971260144,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "gray_histo_abs": {
 "at": null,
@@ -5503,11 +5504,11 @@
 },
 "harris3d_keypoints": {
 "at": null,
-"class": "match_slow",
+"class": "pipeline",
 "family": "feature_register",
 "ratio": 1.1017587246556575,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "hatch_field": {
 "at": null,
@@ -5839,11 +5840,11 @@
 },
 "hx_fit_surface2": {
 "at": null,
-"class": "match_slow",
+"class": "pipeline",
 "family": "halcon_ext",
 "ratio": 1.7233197597654746,
 "rel": 1.325131177333826e-15,
-"why": "ratio"
+"why": "chain_8"
 },
 "hx_full_domain": {
 "at": null,
@@ -5871,11 +5872,11 @@
 },
 "hx_gen_bandfilter": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "halcon_ext",
 "ratio": 3.316557475803725,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "hx_gen_bandpass": {
 "at": null,
@@ -5887,11 +5888,11 @@
 },
 "hx_gen_checker_region": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "halcon_ext",
 "ratio": 2.043581076663769,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "hx_gen_circle": {
 "at": null,
@@ -5999,11 +6000,11 @@
 },
 "hx_histo_to_thresh": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "halcon_ext",
 "ratio": 3.3262490757415577,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "hx_lowlands": {
 "at": null,
@@ -6015,11 +6016,11 @@
 },
 "hx_mean_shape": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "halcon_ext",
 "ratio": 1.9246840905581595,
 "rel": 5.050433725582643e-16,
-"why": "ratio"
+"why": "chain_8"
 },
 "hx_nonmax_dir": {
 "at": null,
@@ -6047,19 +6048,19 @@
 },
 "hx_rectangle1_domain": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "halcon_ext",
 "ratio": 1.9471590999704518,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "hx_region_to_label": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "halcon_ext",
 "ratio": 3.134286575823218,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "hx_region_to_mean": {
 "at": null,
@@ -6343,19 +6344,19 @@
 },
 "img_to_video": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "bridge",
 "ratio": 3.4503137093369927,
 "rel": 1.1102230246251565e-16,
-"why": "ratio"
+"why": "chain_8"
 },
 "img_to_volume": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "bridge",
 "ratio": 2.3858179265726296,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "increment_sign": {
 "at": null,
@@ -6415,11 +6416,11 @@
 },
 "integrate_funct_1d": {
 "at": null,
-"class": "match_slow",
+"class": "pipeline",
 "family": "function",
 "ratio": 2.4492017308917466,
 "rel": 1.898966980286213e-16,
-"why": "ratio"
+"why": "chain_8"
 },
 "integrate_hamiltonian": {
 "at": null,
@@ -6487,11 +6488,11 @@
 },
 "invert": {
 "at": null,
-"class": "match_slow",
+"class": "pipeline",
 "family": "gray",
 "ratio": 1.3522159755395267,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "invert_funct_1d": {
 "at": null,
@@ -6503,11 +6504,11 @@
 },
 "invert_image": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "gray",
 "ratio": 1.791375825692036,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "iqft2": {
 "at": null,
@@ -6623,11 +6624,11 @@
 },
 "it_full_domain": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "domain",
 "ratio": 1.7518703770558297,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "it_region_to_bin": {
 "at": null,
@@ -6999,11 +7000,11 @@
 },
 "lens_shading_gain": {
 "at": null,
-"class": "match_slow",
+"class": "pipeline",
 "family": "isp",
 "ratio": 1.765314834204505,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "level_set_reinit": {
 "at": null,
@@ -7055,11 +7056,11 @@
 },
 "lf_epi": {
 "at": null,
-"class": "match_slow",
+"class": "pipeline",
 "family": "views",
 "ratio": 1.046555027282393,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "lf_epi_slope": {
 "at": null,
@@ -7151,11 +7152,11 @@
 },
 "lights_fit_from_sphere": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "tacscalib",
 "ratio": 1.353249812285632,
 "rel": 4.2018260756249377e-13,
-"why": "ratio"
+"why": "chain_8"
 },
 "linear_to_srgb": {
 "at": null,
@@ -7535,11 +7536,11 @@
 },
 "marker_image": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "tacslip",
 "ratio": 1.9372197587497897,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "marker_match_grow": {
 "at": null,
@@ -7815,11 +7816,11 @@
 },
 "mean_box": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "smoothing",
 "ratio": 1.3235593487241868,
 "rel": 1.6439592598918006e-15,
-"why": "ratio"
+"why": "chain_8"
 },
 "mean_box_wh": {
 "at": null,
@@ -7959,11 +7960,11 @@
 },
 "membrane_predict_rgb": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "tacscalib",
 "ratio": 1.165037034058268,
 "rel": 1.2529581477782292e-16,
-"why": "ratio"
+"why": "chain_8"
 },
 "membrane_recover": {
 "at": null,
@@ -8127,11 +8128,11 @@
 },
 "monogenic_amplitude": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "riesz",
 "ratio": 3.081943984102015,
 "rel": 1.1668189478689224e-16,
-"why": "ratio"
+"why": "chain_8"
 },
 "monogenic_orientation": {
 "at": null,
@@ -8207,11 +8208,11 @@
 },
 "morph_erode3d": {
 "at": null,
-"class": "match_slow",
+"class": "pipeline",
 "family": "morphology",
 "ratio": 2.127870568858243,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "morph_geodesic_ac": {
 "at": null,
@@ -8231,19 +8232,19 @@
 },
 "morph_gradient3d": {
 "at": null,
-"class": "match_slow",
+"class": "pipeline",
 "family": "morphology",
 "ratio": 2.275646604969262,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "morph_open3d": {
 "at": null,
-"class": "match_slow",
+"class": "pipeline",
 "family": "morphology",
 "ratio": 1.8687927027483409,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "morph_sequence": {
 "at": null,
@@ -8375,11 +8376,11 @@
 },
 "mult_image": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "nary",
 "ratio": 2.762881839928522,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "music_doa": {
 "at": null,
@@ -8495,11 +8496,11 @@
 },
 "noise_inconsistency_map": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "noise",
 "ratio": 3.0234547118207313,
 "rel": 4.778426862510378e-16,
-"why": "ratio"
+"why": "chain_8"
 },
 "noise_sigma": {
 "at": null,
@@ -8871,11 +8872,11 @@
 },
 "panel_grid": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "compose",
 "ratio": 1.3653362513588905,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "parallax_layers": {
 "at": null,
@@ -9215,11 +9216,11 @@
 },
 "phase_deg": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "frequency",
 "ratio": 2.469230020547183,
 "rel": 2.1207247771522904e-15,
-"why": "ratio"
+"why": "chain_8"
 },
 "phase_displacement": {
 "at": null,
@@ -10407,11 +10408,11 @@
 },
 "quaternion_to_rgb": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "convert",
 "ratio": 1.6121828903301512,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "query_distance": {
 "at": null,
@@ -10511,11 +10512,11 @@
 },
 "raw_apply_gains": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "isp",
 "ratio": 2.4243466789473236,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "raw_black_level": {
 "at": null,
@@ -10831,11 +10832,11 @@
 },
 "rescale_img": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "geometry",
 "ratio": 1.9246194315455951,
 "rel": 2.278623674994863e-16,
-"why": "ratio"
+"why": "chain_8"
 },
 "reservoir_encode": {
 "at": null,
@@ -10895,19 +10896,19 @@
 },
 "retardation_convert": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "photoelastic",
 "ratio": 2.2736596904070345,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "retardation_from_birefringence": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "photoelastic",
 "ratio": 2.193533028241686,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "retardation_unwrap_multiwavelength": {
 "at": null,
@@ -10943,19 +10944,19 @@
 },
 "rgb3_to_gray": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "color",
 "ratio": 1.847408290244111,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "rgb_apply_gains": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "isp",
 "ratio": 3.0404696419054615,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "rgb_to_lab": {
 "at": null,
@@ -11055,11 +11056,11 @@
 },
 "ritter_dam_break": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "swarmflow",
 "ratio": 3.413754787798118,
 "rel": 7.644398251721399e-17,
-"why": "ratio"
+"why": "chain_8"
 },
 "rms": {
 "at": null,
@@ -11271,19 +11272,19 @@
 },
 "scale_image": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "gray",
 "ratio": 3.285802769219612,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "scale_image_max": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "gray",
 "ratio": 2.1767488047179437,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "scale_select_std": {
 "at": null,
@@ -11311,11 +11312,11 @@
 },
 "scene_cut_detection": {
 "at": null,
-"class": "match_slow",
+"class": "pipeline",
 "family": "analysis",
 "ratio": 1.6890550433232472,
 "rel": 8.53025111651735e-17,
-"why": "ratio"
+"why": "chain_8"
 },
 "scene_flow_lk": {
 "at": null,
@@ -11351,11 +11352,11 @@
 },
 "sdf_offset": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "sdf_csg",
 "ratio": 2.393872446446494,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "sdf_smooth_union": {
 "at": null,
@@ -11367,11 +11368,11 @@
 },
 "sdf_subtract": {
 "at": null,
-"class": "match_slow",
+"class": "pipeline",
 "family": "sdf_csg",
 "ratio": 1.0116410228192187,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "sdf_to_occupancy": {
 "at": null,
@@ -12231,11 +12232,11 @@
 },
 "smooth_funct_1d_gauss": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "function",
 "ratio": 1.910794316670939,
 "rel": 2.848699024000888e-16,
-"why": "ratio"
+"why": "chain_8"
 },
 "smooth_funct_1d_mean": {
 "at": null,
@@ -12271,11 +12272,11 @@
 },
 "sobel3d": {
 "at": null,
-"class": "match_slow",
+"class": "pipeline",
 "family": "feature",
 "ratio": 1.2181980545683513,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "sobel_amp": {
 "at": null,
@@ -12511,11 +12512,11 @@
 },
 "specular_free_transform": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "dichromatic",
 "ratio": 3.4025883653857147,
 "rel": 2.6952282589366233e-16,
-"why": "ratio"
+"why": "chain_8"
 },
 "sph_density_pressure": {
 "at": null,
@@ -12615,11 +12616,11 @@
 },
 "sqrt_image": {
 "at": null,
-"class": "match_slow",
+"class": "pipeline",
 "family": "arithmetic",
 "ratio": 1.7117903316137462,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "srgb_to_linear": {
 "at": null,
@@ -12767,11 +12768,11 @@
 },
 "stereo360_sbs": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "omni360",
 "ratio": 1.4293423552477333,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "stereo360_top_bottom": {
 "at": null,
@@ -12887,11 +12888,11 @@
 },
 "sub_image": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "nary",
 "ratio": 2.8331385102898103,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "subsurface_approx": {
 "at": null,
@@ -12967,11 +12968,11 @@
 },
 "surface_form_remove": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "prepare",
 "ratio": 3.0511940678395173,
 "rel": 2.2954190606427515e-16,
-"why": "ratio"
+"why": "chain_8"
 },
 "surface_normals": {
 "at": null,
@@ -13159,11 +13160,11 @@
 },
 "tb_abs_funct_1d": {
 "at": null,
-"class": "match_slow",
+"class": "pipeline",
 "family": "typed",
 "ratio": 2.264691886513766,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "tb_alpha_shape_boundary": {
 "at": null,
@@ -13255,11 +13256,11 @@
 },
 "tb_cx_apply_transfer_function": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "typed",
 "ratio": 1.058167816582293,
 "rel": 7.42041369566452e-17,
-"why": "ratio"
+"why": "chain_8"
 },
 "tb_cx_ifft": {
 "at": null,
@@ -13295,11 +13296,11 @@
 },
 "tb_cx_phase": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "typed",
 "ratio": 3.090545218625122,
 "rel": 1.5278504788500627e-16,
-"why": "ratio"
+"why": "chain_8"
 },
 "tb_cx_real": {
 "at": null,
@@ -13327,11 +13328,11 @@
 },
 "tb_derivate_funct_1d": {
 "at": null,
-"class": "match_slow",
+"class": "pipeline",
 "family": "typed",
 "ratio": 2.641707759782422,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "tb_drag_coefficient_sphere": {
 "at": null,
@@ -13503,11 +13504,11 @@
 },
 "tb_integrate_funct_1d": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "typed",
 "ratio": 2.791702911425016,
 "rel": 2.8422345558074474e-16,
-"why": "ratio"
+"why": "chain_8"
 },
 "tb_intrinsics_to_carla": {
 "at": null,
@@ -13727,11 +13728,11 @@
 },
 "tb_negate_funct_1d": {
 "at": null,
-"class": "match_slow",
+"class": "pipeline",
 "family": "typed",
 "ratio": 1.444259782020479,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "tb_normals_to_egi": {
 "at": null,
@@ -13871,11 +13872,11 @@
 },
 "tb_quaternion_to_rgb": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "typed",
 "ratio": 2.930563726562719,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "tb_range_doppler_map": {
 "at": null,
@@ -13951,11 +13952,11 @@
 },
 "tb_scale_y_funct_1d": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "typed",
 "ratio": 2.0287578224064635,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "tb_sensor_capture": {
 "at": null,
@@ -13967,19 +13968,19 @@
 },
 "tb_smooth_funct_1d_gauss": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "typed",
 "ratio": 3.2108949567061185,
 "rel": 4.2502128753834383e-16,
-"why": "ratio"
+"why": "chain_8"
 },
 "tb_smooth_funct_1d_mean": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "typed",
 "ratio": 3.012344219987093,
 "rel": 5.341819403153172e-16,
-"why": "ratio"
+"why": "chain_8"
 },
 "tb_spectrogram": {
 "at": null,
@@ -14007,11 +14008,11 @@
 },
 "tb_specular_free_transform": {
 "at": null,
-"class": "match_slow",
+"class": "pipeline",
 "family": "typed",
 "ratio": 1.5636289853457401,
 "rel": 2.6952282589366233e-16,
-"why": "ratio"
+"why": "chain_8"
 },
 "tb_sphere_sdf": {
 "at": null,
@@ -14039,11 +14040,11 @@
 },
 "tb_stat_zscore": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "typed",
 "ratio": 2.9103549003281826,
 "rel": 2.1344814332610782e-16,
-"why": "ratio"
+"why": "chain_8"
 },
 "tb_synthesize_silhouette": {
 "at": null,
@@ -14271,11 +14272,11 @@
 },
 "text_box": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "text",
 "ratio": 2.533114015902899,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "text_candidates": {
 "at": null,
@@ -14415,11 +14416,11 @@
 },
 "threshold": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "segmentation",
 "ratio": 2.4737521575699217,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "threshold_isodata": {
 "at": null,
@@ -14655,11 +14656,11 @@
 },
 "transform_funct_1d": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "function",
 "ratio": 2.874535674326848,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "transport_cost": {
 "at": null,
@@ -14991,11 +14992,11 @@
 },
 "vol_boundary": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "boundary",
 "ratio": 1.31754510471576,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "vol_boundary_points": {
 "at": null,
@@ -15047,11 +15048,11 @@
 },
 "vol_dilation_ball": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "3d",
 "ratio": 2.0016420945622935,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "vol_distance_transform": {
 "at": null,
@@ -15087,11 +15088,11 @@
 },
 "vol_erosion_ball": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "3d",
 "ratio": 3.2422571404013896,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "vol_euler_number": {
 "at": "volops.py:1253",
@@ -15103,11 +15104,11 @@
 },
 "vol_fft_bandpass": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "frequency",
 "ratio": 3.0498562405685674,
 "rel": 2.6150571764978217e-16,
-"why": "ratio"
+"why": "chain_8"
 },
 "vol_fft_highpass": {
 "at": null,
@@ -15191,11 +15192,11 @@
 },
 "vol_label": {
 "at": null,
-"class": "match_slow",
+"class": "pipeline",
 "family": "regionprops",
 "ratio": 3.2554970511821897,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "vol_label_color_flicker": {
 "at": null,
@@ -15231,11 +15232,11 @@
 },
 "vol_label_slice_rgb": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "slice",
 "ratio": 1.6483820323091078,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "vol_label_volume_render": {
 "at": null,
@@ -15399,11 +15400,11 @@
 },
 "vol_rotate": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "geom_transform",
 "ratio": 1.8001011967768927,
 "rel": 8.56583715569279e-16,
-"why": "ratio"
+"why": "chain_8"
 },
 "vol_sato": {
 "at": null,
@@ -15431,19 +15432,19 @@
 },
 "vol_threshold": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "3d",
 "ratio": 1.6284121236419038,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "vol_tiled_map": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "domain",
 "ratio": 1.1957869532640406,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "vol_uncrop": {
 "at": null,
@@ -15471,11 +15472,11 @@
 },
 "vol_window_level": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "gray",
 "ratio": 2.3136202076371912,
 "rel": 0.0,
-"why": "ratio"
+"why": "chain_8"
 },
 "volseq_cut_video": {
 "at": null,
@@ -15911,11 +15912,11 @@
 },
 "wrist_deflection_from_rgbd": {
 "at": null,
-"class": "match_slow",
+"class": "pipeline",
 "family": "pegtactile",
 "ratio": 1.038817450831055,
 "rel": 4.603362431776254e-12,
-"why": "ratio"
+"why": "chain_8"
 },
 "wrist_stiffness_fit": {
 "at": null,
@@ -17015,11 +17016,11 @@
 },
 "zoom_image_size": {
 "at": null,
-"class": "match_slow",
+"class": "adopted_resident",
 "family": "geometry",
 "ratio": 1.0024967794475006,
 "rel": 1.134188264551108e-16,
-"why": "ratio"
+"why": "chain_8"
 },
 "zoom_inset": {
 "at": null,

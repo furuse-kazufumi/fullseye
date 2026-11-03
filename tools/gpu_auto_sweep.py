@@ -47,7 +47,9 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "tools"))
 
-OUT = ROOT / "out" / "gpu_auto_sweep"
+OUT = ROOT / "out" / os.environ.get("GPU_SWEEP_OUT", "gpu_auto_sweep")
+#: 掃引の対象 tier(既定は required,suitable。全 op 調査では partial,none を指す)
+TIERS_SWEPT = tuple(os.environ.get("GPU_SWEEP_TIERS", "required,suitable").split(","))
 TIER_BRANCH = "feat/gpu-programme-2-2026-11-02"
 #: 内部差の合格線(出力の振れ幅に対する比)。``accel`` の faithful 基準と同じ 5e-3。
 TOL = 5e-3
@@ -82,7 +84,7 @@ def load_targets() -> list:
                                   capture_output=True, check=True).stdout
             cache.write_bytes(blob)
         rows = json.loads(cache.read_text(encoding="utf-8"))["ops"]
-    return [r for r in rows if r.get("gpu_tier") in ("required", "suitable")]
+    return [r for r in rows if r.get("gpu_tier") in TIERS_SWEPT]
 
 
 def read_rows(stage: str, max_gen: int = None) -> dict:
@@ -771,7 +773,7 @@ def load_thin(f):
 #: 常駐の連続処理の長さ。転送(往路 1 回 + 復路 1 回)をこの回数で割る。
 CHAIN = 8
 #: 常駐で測り直す倍率の帯。下限は「転送を消せば届きうる」線。
-RESIDENT_LO = 3.5
+RESIDENT_LO = float(os.environ.get("GPU_SWEEP_RESIDENT_LO", "3.5"))  # パイプライン常駐の下限(単独の倍率)
 
 
 def stage_resident(env, name: str, G, shadow_cat, base: dict, scale_row: dict) -> dict:
