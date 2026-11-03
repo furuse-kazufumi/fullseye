@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 636 of 1604. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 636 of 1606. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel.py`
@@ -2407,8 +2407,8 @@ This repository records *why* things are the way they are in **comments in the s
 ## `tests/test_example_scripts_run.py`
 
 - **L48** — ★2026-09-09, on the first CI after adding this gate, **7 failed on py3.12** (py3.11 was green). CI deliberately installs torch / kornia / mahotas / opencv-contrib **only on py3.11** and not on other versions. The test side already had a declaration mechanism called ``requires_backend``, yet **the gate that runs the examples did not have it** —— that a mechanism exists and that every path goes through it are different things. ``gallery2d_*`` is a gallery that "runs all ops of that family", so its very contract **depends on which backends are installed** (it hard-codes op names and reconciles against the registry, failing with "extra in OPS" if even one is missing). So declare per family. The remaining 2 use torch directly (``fit_zernike`` / ``match_logpolar_z``). In a full environment (CI's py3.11, ``FULLSEYE_REQUIRE_OPTIONAL=1``) a skip becomes a **failure**, so both over-declaring and forgetting to declare fail in both directions.
-- **L87** — ★Do not pass PYTHONPATH (the whole point of this gate). Users do not set environment variables.
-- **L126** _(ja)_ — ★2026-10-07: 以前は**全例を**走らせていた。session fixture はセッションごと(CI のシャードごと・ xdist のワーカーごと)に作られるので、CI では 4 シャード × 3 版 = 12 回、全例を走らせていた (シャードあたり 21〜41 分、run 37474292595)。手元の -n 6 では 6 ワーカーがそれぞれ全例を WORKERS 並列で回し、最大 48 本が同時に走って単独 207 秒の quickstart が 600 秒を超えていた。 いまは (1) xdist のワーカーでは引かれた 1 本だけを走らせ、並列は xdist に任せる (2) それ以外(CI のシャード)では、このセッションに残ったテストの分だけをまとめて並列に走らせる。
+- **L90** — ★Do not pass PYTHONPATH (the whole point of this gate). Users do not set environment variables.
+- **L129** _(ja)_ — ★2026-10-07: 以前は**全例を**走らせていた。session fixture はセッションごと(CI のシャードごと・ xdist のワーカーごと)に作られるので、CI では 4 シャード × 3 版 = 12 回、全例を走らせていた (シャードあたり 21〜41 分、run 37474292595)。手元の -n 6 では 6 ワーカーがそれぞれ全例を WORKERS 並列で回し、最大 48 本が同時に走って単独 207 秒の quickstart が 600 秒を超えていた。 いまは (1) xdist のワーカーでは引かれた 1 本だけを走らせ、並列は xdist に任せる (2) それ以外(CI のシャード)では、このセッションに残ったテストの分だけをまとめて並列に走らせる。
 
 ## `tests/test_fallback_names_identify_the_op.py`
 
@@ -2488,6 +2488,10 @@ This repository records *why* things are the way they are in **comments in the s
 ## `tests/test_imgforensics.py`
 
 - **L1064** _(ja)_ — ★2026-10-18: 以前は float の [0,1] をそのまま渡し、古い Pillow がバイト列を読み替えて黙って通していた (Pillow 13 で発覚)。本物の 8 bit に直してから JPEG を通す。
+
+## `tests/test_impl_differential.py`
+
+- **L191** _(ja)_ — ★2026-11-04 の master(run 41724324673)の py3.12 / py3.14 で ``tb_points_to_voxel``(torch の scatter_add)が「片方が落ちる」になった。台帳(docs/IMPL_DIFFERENTIAL.json)は全 backend の ある環境で作るので、torch の無い版では**比べられない**だけで、写し方が壊れたのではない。 tests/test_op_probe_ledger.py と同じ判定: 「壊れている」と「この環境に無い」を分け、 分けた分は残りを確かめてから ``requires_backend`` で明示する(完全環境では失敗)。
 
 ## `tests/test_kendama_combo.py`
 
@@ -2665,6 +2669,10 @@ This repository records *why* things are the way they are in **comments in the s
 ## `tests/test_raytrace3d.py`
 
 - **L276** _(ja)_ — ★2026-10-15: 傾いた鏡(摂動)の後で像面と平行に進む光線を、以前は rms 3.4e18 mm の有効な点として数えた
+
+## `tests/test_reprconv_type_connectivity_2026_11_03.py`
+
+- **L24** _(ja)_ — ★sobel3d / hessian3d は torch を使う。`match3d` 自体は torch 無しでも import できる (torch_lazy が初回使用まで読み込まない)ので、2026-11-03 までの `pytest.importorskip("match3d")` は**何も skip せず**、torch の無い master の py3.12 / py3.14 で ImportError になっていた。要るのは torch なので、それを 使うテストごとに `requires_backend("torch")` で宣言する(完全環境では skip が失敗)。
 
 ## `tests/test_roughness_robust.py`
 
