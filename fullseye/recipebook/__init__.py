@@ -27,6 +27,10 @@ Stage forms
   executor (``fullseye/data/OP_GRAPH.json``: ``module.callable``). ``args`` defaults to
   ``["$prev"]`` (the previous stage's output; the recipe input for stage 1; nothing for a generator).
 
+A ledger stage is called through ``fs.ledger.<op>`` (the call line of every op note; it returns the
+declared sort). ``"call": "raw"`` (with a ``"call_reason"``) calls the OP_GRAPH executor instead — only
+for stages whose ledger entry is broken; the reason is the finding.
+
 References inside ``args`` / ``kw`` (strings starting with ``$``): ``$prev``, ``$in`` (recipe input),
 ``$s1`` .. ``$sN`` (output of stage k), ``$aux.<key>`` (an auxiliary value the sample provides, e.g. a
 reference image or a known pose). ``$$text`` escapes a literal string starting with ``$``.
@@ -150,14 +154,32 @@ def _is_registry(op: str) -> bool:
     return (e.get("executor") or {}).get("kind") == "registry"
 
 
-def _callable(op: str):
+def _callable(op: str, raw: bool = False):
+    """op の呼び口。**台帳の入口 ``fs.ledger.<op>`` が先**(op ノートの「呼び出し」行と同じ)。
+
+    ★2026-11-03: 最初は OP_GRAPH の executor(生の関数)を直に呼んでいた。生の関数の多くは
+    ``(値, 情報)`` のタプルを返し、宣言の型どおりに直すのは台帳の adapter(RESULT_ADAPTERS)の
+    仕事なので、astrostack / piv / lightfield / specular の鎖が「宣言の嘘」に見えて組めなかった
+    (book_optics の実測)。利用者が呼ぶのは台帳の入口なので、レシピもそこを通す。生の値が
+    要る段は無い(要れば ``fs.ledger.<op>.raw`` を executor にした op を別に足すこと)。
+    """
     e = edge(op)
     if e is None:
         raise KeyError("op %r is not in OP_GRAPH" % op)
+    import fullseye
+    led = getattr(fullseye.ledger, op, None)
+    if callable(led) and not raw:
+        return led
     tgt = e.get("executor") or e.get("runtime_target") or {}
     mod, fn = tgt.get("module"), tgt.get("callable")
     if not mod or not fn:
-        raise KeyError("op %r has no python executor in OP_GRAPH (%r)" % (op, tgt))
+        # ★OP_GRAPH に実行先の無い辺が 20 本ある(fileio 14 など、2026-11-03 実測)。op ノートの
+        #   「呼び出し」行が案内する台帳の入口 fs.ledger.<op> を引く(無ければ従来どおり拒否)。
+        import fullseye
+        obj = getattr(fullseye.ledger, op, None)
+        if callable(obj):
+            return obj
+        raise KeyError("op %r has no python executor in OP_GRAPH (%r) nor fullseye.ledger" % (op, tgt))
     obj = importlib.import_module(mod)
     for part in fn.split("."):
         obj = getattr(obj, part)
@@ -283,12 +305,13 @@ def run(recipe: dict, value=None, aux: dict | None = None, *, trace: list | None
     for i, st in enumerate(recipe["stages"], 1):
         op = st["op"]
         try:
-            if _is_registry(op) and not (set(st) - {"op", "a", "b"}):
+            if _is_registry(op) and not (set(st) - {"op", "a", "b", "args"}):
+                # 登録 op は api.apply 一本。入力 2 本以上(n 項 op: abs_diff_image 等)は args の list で渡す。
                 args = [_resolve(r, outs, aux, i) for r in stage_args(st, i)]
                 x = args[0] if len(args) == 1 else args
                 out = api.apply(x, op, float(st.get("a", 0.5)), float(st.get("b", 0.5)), device="cpu")
             else:
-                fn = _callable(op)
+                fn = _callable(op, raw=st.get("call") == "raw")
                 args = [_resolve(r, outs, aux, i) for r in stage_args(st, i)]
                 kw = _resolve(dict(st.get("kw", {})), outs, aux, i)
                 out = fn(*args, **kw)

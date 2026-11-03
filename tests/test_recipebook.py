@@ -71,6 +71,8 @@ def test_recipe_is_well_formed(name):
     fam_ops = rb.op_families()
     for st in r["stages"]:
         assert rb.edge(st["op"]) is not None, (name, st["op"], "not in OP_GRAPH")
+        if st.get("call") == "raw":      # 台帳の入口を迂回するのは、壊れていると書いた段だけ
+            assert len(st.get("call_reason", "")) >= 20, (name, st["op"], "say why fs.ledger cannot be used")
     touched = set().union(*(fam_ops.get(st["op"], set()) for st in r["stages"]))
     assert r["family"] in touched, (name, r["family"], sorted(touched))
     assert len(r["note"]) >= 20, (name, "write what the recipe is for and why these stages")

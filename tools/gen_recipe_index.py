@@ -53,7 +53,7 @@ def _texts(names, by_name):
 def _public_stage(st):
     """索引に載せる段(既定の args は省く)。"""
     out = {"op": st["op"]}
-    for k in ("a", "b", "args", "kw"):
+    for k in ("a", "b", "args", "kw", "call"):
         if k in st:
             out[k] = st[k]
     return out
