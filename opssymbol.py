@@ -27,7 +27,7 @@ deep-learning training), whose legibility POD uses the same chain.
 
 ## なぜこの族か(2026-11-03)
 
-監査(``C:/dev/docs/completeness_audit_2026_11_03``)で、1-D は既存の ``decode_barcode`` が
+監査(2026-11-03 の完成度監査、リポジトリ外の資料)で、1-D は既存の ``decode_barcode`` が
 **暗い棒を数えるだけ**、2-D コードは語彙が**全層ゼロ**、印字品質の等級は**全層ゼロ**、
 OCR は文字領域の検出(``opstext``)と期待文字との照合(``glyphops``)だけだった。
 差別化の型: 復号の土台は標準(自前 + zxing-cpp を独立な第 2 の実装として仲介)、その上に
