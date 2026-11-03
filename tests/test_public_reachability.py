@@ -89,6 +89,9 @@ _INTERNAL = {
     #   (watershed3d の 3 本は 2026-10-02 に台帳 opssegmentation の watershed3d へ載せて行を消した。)
     "gsplat_cli": 2, "helpstore": 4, "imgops_nary": 4, "mesh_decimate": 1, "opsearch": 2,
     "sample_data": 7, "scale": 6,
+    # ★2026-11-03: Reed-Solomon(GF(256) の表・符号化・復号)は記号の読み取りの族の内部部品。
+    #   利用者は qr_* / dm_* / grade_datacode2d の返す訂正語数として使う(体そのものは op にしない)。
+    "symrs": 5,
 }
 
 #: **出すべきなのに出ていない**。ここは減らしていく側の台帳です。
@@ -261,7 +264,11 @@ def test_pending_exposure_shrinks_when_fixed():
 # 2026-11-03 opsmatchreg 台帳(照合と位置合わせ 12 op): 台帳の内部 API 4 本で実測 948 → 952。12 op 自身は
 #   fs.ledger から、合成の道具 7 本(synthetic_scene / warp_homography / corner_error / condition_homography /
 #   warp_parametric / synthesize_moving / smooth_test_field)は fs.<名前> から引ける。
-_HIDDEN_FUNCTIONS_TODAY = 952
+# 2026-11-03 opssymbol 台帳(記号の読み取り 33 op): 台帳の内部 API 4 本、例外の型 3 本
+#   (Barcode1DError / QRDecodeError / DMDecodeError、どれも ValueError の子)、symrs の 5 本(内部部品、
+#   _INTERNAL)、symbol_scene(render_symbol の中身)・grade_letter(等級 → 文字)・zxing_available。
+#   実測 948 → 963。33 op 自身は fs.ledger から引ける。
+_HIDDEN_FUNCTIONS_TODAY = 963
 
 
 def _hidden_total():

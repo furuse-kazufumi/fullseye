@@ -1,0 +1,34 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">grade_barcode_profile — SYMBOL <code style="color:#22d3bf">print_quality</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.grade_barcode_profile(profile, symbologies=None, *, quiet_zone_x=None)</code> (to call the implementation directly, <code style="color:#22d3bf">import symgrade; symgrade.grade_barcode_profile(profile, symbologies=None, *, quiet_zone_x=None)</code>; from the registry, <code style="color:#22d3bf">opssymbol.get(&quot;grade_barcode_profile&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
+<p>Return the print-quality parameters and grades of one scan line (a 1-D reflectance profile) (<code style="color:#22d3bf">table</code>).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
+<p>Grade one scan reflectance profile. The profile must cover the symbol and its quiet zones. Quantities (reflectances in [0, 1]):</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">r_max</code> / <code style="color:#22d3bf">r_min</code>: highest / lowest reflectance over the profile.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">symbol_contrast</code> SC = r_max − r_min; global threshold GT = r_min + SC / 2.</p>
+<p style="margin:2px 0 2px 12px">• elements = runs between GT crossings; a space&#x27;s reflectance is its maximum, a bar&#x27;s its minimum; the quiet zones are the outer spaces.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">edge_contrast_min</code> ECmin = min over adjacent element pairs of |Rs − Rb|.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">modulation</code> MOD = ECmin / SC.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">defects</code> = ERNmax / SC, where an element&#x27;s reflectance non-uniformity ERN is the deepest valley trapped between two higher samples inside a space (or the highest peak trapped inside a bar) — monotone edges contribute nothing.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">decodability</code> = the smallest per-character decode margin returned by the reference decode (<code style="color:#22d3bf">barcode1d.decode_barcode_profile</code> at GT): for the edge-to-similar-edge symbologies (EAN/UPC, Code 128) the margin of each similar-edge sum from its decision boundary (half a module), for the two-width ones (Code 39, ITF) the margin of the narrowest wide / widest narrow element from the mid threshold, both scaled to 1 = ideal, 0 = on the boundary.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">decode</code> (bool), <code style="color:#22d3bf">quiet_zone_ok</code> (both light zones at least the symbology&#x27;s quiet zone, or <code style="color:#22d3bf">quiet_zone_x</code> X, wide), <code style="color:#22d3bf">r_min_ok</code> (Rmin ≤ 0.5 Rmax), <code style="color:#22d3bf">edge_contrast_ok</code> (ECmin ≥ 0.15).</p>
+<p>Grades 4..0 per parameter (<code style="color:#22d3bf">grades</code>), <code style="color:#22d3bf">profile_grade</code> = the minimum, and <code style="color:#22d3bf">limiting</code> = the parameters at that minimum. A profile that does not decode is graded 0 with <code style="color:#22d3bf">decode = False</code> (the other quantities are still reported when the profile has edges).</p>
+<p>空の入力(16 標本未満)は <code style="color:#22d3bf">ValueError</code>。拒否(<code style="color:#22d3bf">ValueError</code>): 1-D でない、非有限、<code style="color:#22d3bf">quiet_zone_x</code> が負。平らな走査線(縁が無い)は SC = 0 で <code style="color:#22d3bf">profile_grade = 0</code>(読めない、と数える)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesymbol:symbol_reading">symbol_reading family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
+<p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>
+<p style="margin:2px 0 2px 12px">• The canonical algorithm (author, year) and its uses are named in the <b>family usage guide</b> above.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_symbol_package_1d">poc_symbol_package_1d</a> — <code style="color:#22d3bf">py -3.11 examples/poc_symbol_package_1d.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">table</code> as input)</h3>
+<p><a style="color:#22d3bf" href="opsymbol:render_symbol">render_symbol</a> · <a style="color:#22d3bf" href="opsymbol:symbol_read_trials">symbol_read_trials</a> · <a style="color:#22d3bf" href="opsymbol:symbol_read_pod">symbol_read_pod</a> · <a style="color:#22d3bf" href="opsymbol:ocr_classify">ocr_classify</a> · <a style="color:#22d3bf" href="opsymbol:ocr_read_line">ocr_read_line</a> · <a style="color:#22d3bf" href="opsymbol:ocr_read_trials">ocr_read_trials</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Same category (<code style="color:#22d3bf">print_quality</code>)</h3>
+<p><a style="color:#22d3bf" href="opsymbol:grade_barcode1d">grade_barcode1d</a> · <a style="color:#22d3bf" href="opsymbol:grade_datacode2d">grade_datacode2d</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: symgrade.py — SYMBOL operator registry. This per-op note is generated by <code style="color:#22d3bf">tools/opdocs.py md</code> (do not hand-edit).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

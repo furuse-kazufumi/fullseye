@@ -1026,6 +1026,19 @@ EXAMPLES = [
                 "次数保存 shuffle +0.01(網膜部位対応は配線にある)。縦縞の像を fly_hex_resample で個眼に落として入れると応答が縞を追う。"
                 "Studio の Tools ▸ Compound eye → brain で同じ部品が対話的に動く(マウスで刺激位置、ドラッグで視点、画像を眼に通す、shuffle 切替)。"
                 "新モジュール eyebrain(データ・柱↔個眼の対応・刺激・波・眼の絵)。生データも部分グラフも commit しない。"},
+    {"id": "poc_symbol_package_1d", "task": "decoding", "data": "synthetic",
+     "name": "包装の 1-D バーコード: 読める / 品質が良い / どこまでぼけても読めるか(POD)",
+     "summary": "EAN-13・ITF-14・GS1-128 を生成して読み、印字品質の等級を閉形式で確かめ、デフォーカスの読み取り POD を"
+                "Fullseye と zxing-cpp で比べる。★d90 のぼけで読める記号の等級は F。★d90 で撮り直すと読取率 0.79(点推定は楽観側)、"
+                "使うのは d90/95。"},
+    {"id": "poc_symbol_part_dpm", "task": "decoding", "data": "synthetic",
+     "name": "部品の DPM Data Matrix とラベルの QR: 等級の閉形式と読める限界の POD",
+     "summary": "刻印の SC = 0.35、傾きの AN = 2(1−cos t)/(1+cos t)、k 語の欠けの UEC が閉形式どおり。四角い刻印では 2 つの"
+                "読み取り器の d90 が数 % で一致。★zxing-cpp はくっきりしたドットピーンを 24 方向中 0 しか読まず、POD が非単調。"},
+    {"id": "poc_symbol_lot_ocr", "task": "decoding", "data": "synthetic",
+     "name": "ロット番号の CIJ 印字を古典 OCR で読む: 可読性の POD と誤読の数え方",
+     "summary": "5x7 ドットと線の内蔵書体、k 最近傍 + 棄却。字種外の字は棄却。デフォーカスと字高の可読性 POD。"
+                "★学習の範囲を越えたぼけでは誤読が増える(誤読と棄却を分けて数える)。"},
     {"id": "poc_barcode_1d", "task": "decoding", "data": "synthetic",
      "name": "1 次元バーコードが読めなくなる境界(誤読と読み取り不能を分けて数える)",
      "summary": "自作 4-run 符号なので真値は数字そのもの。★**無傷では 6 つの読み方が全部 24/24 で差が出ない** —— 道具の良し悪しは壊してからしか分からない。★★「読めな"

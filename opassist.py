@@ -63,6 +63,9 @@ _LEDGERS = (
     ("opscalib", "OPSCALIB"),
     # 2026-11-03: 光学式 3D センサの(仮想)受入試験(VDI/VDE 2634・ISO 10360-13 の考え方、8 op)。新語なし。
     ("opsacceptance", "OPSACCEPTANCE"),
+    # 2026-11-03: 記号の読み取り(1-D / 2-D コード・撮像シミュ・印字品質・読み取りの POD・OCR)。
+    #   監査で 2-D コードと印字品質は全層ゼロだった。新語なし(table / image2d / signal / matrix)。
+    ("opssymbol", "OPSSYMBOL"),
     # 2026-10-01: OpenVX 1.3.1 の素の口(勾配・表引き・ヒストグラム・非極大の抑制)。新語なし。
     ("opsvx", "OPSVX"),
     # 2026-09-29: 自動運転の教習所ワールド(規格寸法のコース / 3-D の世界 / 回転式 LiDAR)。新語なし。

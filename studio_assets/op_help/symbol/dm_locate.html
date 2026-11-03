@@ -1,0 +1,33 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">dm_locate — SYMBOL <code style="color:#22d3bf">datacode2d</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dm_locate(image) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import dmsym; dmsym.dm_locate(image) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opssymbol.get(&quot;dm_locate&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>画像から Data Matrix を見つけ、モジュール空間 → 画像の射影変換を推定する(<code style="color:#22d3bf">table</code>)。</p>
+<p>Locate a dark-on-light ECC200 symbol (quiet zone &gt;= 1 module). Global binarisation (Otsu start, then the midpoint of the dark/light means), dark pixels grouped after a distance-based closing at several radii (so separated dot-peen dots join), near max-area quadrilateral in the convex hull, sub-pixel edge lines (grey-level threshold crossings, inward outliers from the clock gaps trimmed), corners = line intersections, then the size and which corner is the L corner are chosen by the agreement of the sampled function pattern (finder + clock + alignment) for every supported size and corner correspondence.</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>dict</p>
+<p><code style="color:#22d3bf">homography</code> 3x3(module 空間 [x=列, y=行, 1] → 画像 [列, 行, w])、<code style="color:#22d3bf">rows</code>, <code style="color:#22d3bf">cols</code>,</p>
+<p><code style="color:#22d3bf">corners</code> (4, 2) 画素の (行, 列)、順は module 空間の (0,0), (C,0), (C,R), (0,R)、</p>
+<p><code style="color:#22d3bf">module_px</code>, <code style="color:#22d3bf">score</code>(機能パターンの一致率), <code style="color:#22d3bf">threshold</code>(大域閾値 / global threshold)。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
+<p>ValueError</p>
+<p>2-D でない・NaN/inf・小さすぎる。</p>
+<p>DMDecodeError</p>
+<p>記号が見つからない。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesymbol:symbol_reading">symbol_reading ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_symbol_part_dpm">poc_symbol_part_dpm</a> — <code style="color:#22d3bf">py -3.11 examples/poc_symbol_part_dpm.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opsymbol:render_symbol">render_symbol</a> · <a style="color:#22d3bf" href="opsymbol:symbol_read_trials">symbol_read_trials</a> · <a style="color:#22d3bf" href="opsymbol:symbol_read_pod">symbol_read_pod</a> · <a style="color:#22d3bf" href="opsymbol:ocr_classify">ocr_classify</a> · <a style="color:#22d3bf" href="opsymbol:ocr_read_line">ocr_read_line</a> · <a style="color:#22d3bf" href="opsymbol:ocr_read_trials">ocr_read_trials</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">datacode2d</code>)</h3>
+<p><a style="color:#22d3bf" href="opsymbol:qr_encode">qr_encode</a> · <a style="color:#22d3bf" href="opsymbol:qr_decode_modules">qr_decode_modules</a> · <a style="color:#22d3bf" href="opsymbol:qr_locate">qr_locate</a> · <a style="color:#22d3bf" href="opsymbol:qr_sample">qr_sample</a> · <a style="color:#22d3bf" href="opsymbol:qr_read">qr_read</a> · <a style="color:#22d3bf" href="opsymbol:dm_encode">dm_encode</a> · <a style="color:#22d3bf" href="opsymbol:dm_decode_modules">dm_decode_modules</a> · <a style="color:#22d3bf" href="opsymbol:dm_sample">dm_sample</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: dmsym.py — SYMBOL operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

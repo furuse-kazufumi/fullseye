@@ -143,6 +143,11 @@ LEDGER_DIMS = {
     # シミュレーションのセンサにも同じ評価 op で掛ける。新しい型語彙は作らない(points / table)。
     "acceptance": {"registry": "opsacceptance", "table": "OPSACCEPTANCE",
                    "module": "acceptance3d", "family": "optical_3d_acceptance"},
+    # 2026-11-03: 記号の読み取り。1-D は decode_barcode が棒を数えるだけ、2-D コードと
+    # 印字品質の等級は全層ゼロ、OCR は文字領域だけだった(監査 completeness_audit_2026_11_03)。
+    # 新しい型語彙は作らない(table / image2d / signal / matrix / scalar)。
+    "symbol": {"registry": "opssymbol", "table": "OPSSYMBOL",
+               "module": "barcode1d", "family": "symbol_reading"},
     "generative": {"registry": "opsgenerative", "table": "OPSGENERATIVE",
                    "module": "perpetual", "family": "generative_art"},
     "imgmetrics": {"registry": "opsimgmetrics", "table": "OPSIMGMETRICS",

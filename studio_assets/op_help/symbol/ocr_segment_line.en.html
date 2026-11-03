@@ -1,0 +1,39 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">ocr_segment_line — SYMBOL <code style="color:#22d3bf">ocr</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ocr_segment_line(image, char_height_px=None, dot_font=None) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import ocrclassic; ocrclassic.ocr_segment_line(image, char_height_px=None, dot_font=None) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opssymbol.get(&quot;ocr_segment_line&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
+<p>Segment one text line into a bounding box per character (<code style="color:#22d3bf">table</code>).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
+<p>手順: 大津で地とインクの代表値(中央値)→ インク量の地図 → 字の画素 = インク量 &gt;= 0.5 → 雑音点の除去 → (ドット書体なら) 列射影にドットピッチ 0.6 倍の 1-D closing で 1 字のドットをまとめる → 列射影の切れ目で区間化 → 想定送り幅で断片を併合・接触字を分割(射影の谷)→ 字の画素が 0.02 h^2 未満の区間を捨てる。等幅(固定ピッチ)印字を前提とする。幾何だけの分割なので、ぼけで接触した字は <code style="color:#22d3bf">ocr_read_line</code> が認識で切り直す。Otsu class medians -&gt; ink map -&gt; glyph pixels (ink &gt;= 0.5) -&gt; speck removal -&gt; (dot font) 1-D closing of the column projection (0.6 x dot pitch) -&gt; runs -&gt; merge / split by expected pitch -&gt; drop pieces &lt; 0.02 h^2 pixels. Assumes fixed-pitch print.</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
+<p>image : 2-D 灰色(float 0..1 か uint8)。暗いインク・明るい地(逆なら縁から自動反転)。</p>
+<p>char_height_px : 字高の既知値。None なら行のインクの縦幅から推定</p>
+<p>(★行が <code style="color:#22d3bf">-</code> <code style="color:#22d3bf">.</code> だけだと過小推定になる —— 既知なら渡すこと)。</p>
+<p>dot_font : True/False/None(None = 連結成分の大きさで自動判定)。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>dict</p>
+<p><code style="color:#22d3bf">boxes</code> 左→右の <code style="color:#22d3bf">(r0, c0, r1, c1)</code>(終端は含まない), <code style="color:#22d3bf">threshold</code>(大津の閾値、</p>
+<p>雑音があれば 0.7 px 平滑後の画像に対する値。字の画素の判定には使わない参考値),</p>
+<p><code style="color:#22d3bf">line_box</code>, <code style="color:#22d3bf">char_height_px</code>(使った値), <code style="color:#22d3bf">pitch_px</code>(推定送り幅), <code style="color:#22d3bf">dot_font</code>。</p>
+<p>白紙(インクと地の分離が雑音 4σ 未満)は <b>fail-soft で</b> <code style="color:#22d3bf">boxes == []</code>,</p>
+<p><code style="color:#22d3bf">line_box is None</code>。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
+<p>ValueError</p>
+<p>NaN/inf、2-D 以外、数値でない、4x4 未満。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesymbol:symbol_reading">symbol_reading family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
+<p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>
+<p style="margin:2px 0 2px 12px">• The canonical algorithm (author, year) and its uses are named in the <b>family usage guide</b> above.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_symbol_lot_ocr">poc_symbol_lot_ocr</a> — <code style="color:#22d3bf">py -3.11 examples/poc_symbol_lot_ocr.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">table</code> as input)</h3>
+<p><a style="color:#22d3bf" href="opsymbol:render_symbol">render_symbol</a> · <a style="color:#22d3bf" href="opsymbol:symbol_read_trials">symbol_read_trials</a> · <a style="color:#22d3bf" href="opsymbol:symbol_read_pod">symbol_read_pod</a> · <a style="color:#22d3bf" href="opsymbol:ocr_classify">ocr_classify</a> · <a style="color:#22d3bf" href="opsymbol:ocr_read_line">ocr_read_line</a> · <a style="color:#22d3bf" href="opsymbol:ocr_read_trials">ocr_read_trials</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Same category (<code style="color:#22d3bf">ocr</code>)</h3>
+<p><a style="color:#22d3bf" href="opsymbol:ocr_font">ocr_font</a> · <a style="color:#22d3bf" href="opsymbol:ocr_render_text">ocr_render_text</a> · <a style="color:#22d3bf" href="opsymbol:ocr_features">ocr_features</a> · <a style="color:#22d3bf" href="opsymbol:ocr_train">ocr_train</a> · <a style="color:#22d3bf" href="opsymbol:ocr_classify">ocr_classify</a> · <a style="color:#22d3bf" href="opsymbol:ocr_read_line">ocr_read_line</a> · <a style="color:#22d3bf" href="opsymbol:ocr_score">ocr_score</a> · <a style="color:#22d3bf" href="opsymbol:ocr_read_trials">ocr_read_trials</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: ocrclassic.py — SYMBOL operator registry. This per-op note is generated by <code style="color:#22d3bf">tools/opdocs.py md</code> (do not hand-edit).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

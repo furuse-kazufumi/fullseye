@@ -1,0 +1,42 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">dm_encode — SYMBOL <code style="color:#22d3bf">datacode2d</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">table</code> (an op determined by its arguments alone — it takes no image or data input)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dm_encode(text, size=None, shape: &#x27;str&#x27; = &#x27;square&#x27;, encodation: &#x27;str&#x27; = &#x27;auto&#x27;) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import dmsym; dmsym.dm_encode(text, size=None, shape: &#x27;str&#x27; = &#x27;square&#x27;, encodation: &#x27;str&#x27; = &#x27;auto&#x27;) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opssymbol.get(&quot;dm_encode&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
+<p>Encode a string into a Data Matrix ECC200 module grid and its module-to-codeword map (<code style="color:#22d3bf">table</code>).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
+<p>Encode <code style="color:#22d3bf">text</code> (str with code points &lt;= 255, or bytes) as an ECC200 symbol.</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
+<p>text : str | bytes</p>
+<p>U+0000..U+00FF のみ(Latin-1 の 1 バイト)。ECI は扱わない。</p>
+<p>size : None | int | (rows, cols)</p>
+<p>None なら <code style="color:#22d3bf">shape</code> の中で収まる最小の記号。int は正方形 N×N。</p>
+<p>shape : {&quot;square&quot;, &quot;rectangle&quot;, &quot;any&quot;}</p>
+<p><code style="color:#22d3bf">size</code> が None のときの候補。&quot;rect&quot; も &quot;rectangle&quot; と同じ。</p>
+<p>encodation : {&quot;auto&quot;, &quot;ascii&quot;, &quot;c40&quot;, &quot;text&quot;, &quot;base256&quot;}</p>
+<p>&quot;auto&quot; は各記号の大きさで ascii → c40 → text → base256 の順に試し、</p>
+<p>最小の記号に収まる最初のもの(文書全体を 1 つの符号化で書く。区間ごとの最適化はしない)。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>dict</p>
+<p><code style="color:#22d3bf">modules</code> (R, C) uint8 1 = 暗(L 字・クロック・領域の区切り込み)、<code style="color:#22d3bf">rows</code>, <code style="color:#22d3bf">cols</code>,</p>
+<p><code style="color:#22d3bf">text</code>, <code style="color:#22d3bf">encodation</code>, <code style="color:#22d3bf">blocks</code> [(n_data, n_ec)], <code style="color:#22d3bf">n_data_codewords</code>,</p>
+<p><code style="color:#22d3bf">n_ec_codewords</code>, <code style="color:#22d3bf">function_mask</code> (R, C) bool, <code style="color:#22d3bf">fixed_mask</code>(右下の固定 2x2),</p>
+<p><code style="color:#22d3bf">codeword_index</code> (R, C) int16(送出順の符号語番号、機能 module と固定角は -1)、</p>
+<p><code style="color:#22d3bf">bit_index</code>(0 = 最上位ビット、-1 = 対象外)、<code style="color:#22d3bf">codewords</code>(送出順の全符号語)、</p>
+<p><code style="color:#22d3bf">data_codewords</code>(パッド込み)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesymbol:symbol_reading">symbol_reading family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
+<p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>
+<p style="margin:2px 0 2px 12px">• The canonical algorithm (author, year) and its uses are named in the <b>family usage guide</b> above.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_symbol_part_dpm">poc_symbol_part_dpm</a> — <code style="color:#22d3bf">py -3.11 examples/poc_symbol_part_dpm.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">table</code> as input)</h3>
+<p><a style="color:#22d3bf" href="opsymbol:render_symbol">render_symbol</a> · <a style="color:#22d3bf" href="opsymbol:symbol_read_trials">symbol_read_trials</a> · <a style="color:#22d3bf" href="opsymbol:symbol_read_pod">symbol_read_pod</a> · <a style="color:#22d3bf" href="opsymbol:ocr_classify">ocr_classify</a> · <a style="color:#22d3bf" href="opsymbol:ocr_read_line">ocr_read_line</a> · <a style="color:#22d3bf" href="opsymbol:ocr_read_trials">ocr_read_trials</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Same category (<code style="color:#22d3bf">datacode2d</code>)</h3>
+<p><a style="color:#22d3bf" href="opsymbol:qr_encode">qr_encode</a> · <a style="color:#22d3bf" href="opsymbol:qr_decode_modules">qr_decode_modules</a> · <a style="color:#22d3bf" href="opsymbol:qr_locate">qr_locate</a> · <a style="color:#22d3bf" href="opsymbol:qr_sample">qr_sample</a> · <a style="color:#22d3bf" href="opsymbol:qr_read">qr_read</a> · <a style="color:#22d3bf" href="opsymbol:dm_decode_modules">dm_decode_modules</a> · <a style="color:#22d3bf" href="opsymbol:dm_locate">dm_locate</a> · <a style="color:#22d3bf" href="opsymbol:dm_sample">dm_sample</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: dmsym.py — SYMBOL operator registry. This per-op note is generated by <code style="color:#22d3bf">tools/opdocs.py md</code> (do not hand-edit).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

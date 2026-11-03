@@ -1,0 +1,26 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">read_symbols_zxing — SYMBOL <code style="color:#22d3bf">symbol_bridge</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.read_symbols_zxing(image, formats=None, *, try_rotate=True, try_invert=True)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import symzxing; symzxing.read_symbols_zxing(image, formats=None, *, try_rotate=True, try_invert=True)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opssymbol.get(&quot;read_symbols_zxing&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
+<p>zxing-cpp로 영상 속 모든 심볼(1-D / 2-D)을 읽는다(<code style="color:#22d3bf">table</code>).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>Read every symbol zxing-cpp finds in a 2-D reflectance image (values in [0, 1], converted to 8-bit). <code style="color:#22d3bf">formats</code> is None (all) or a list of zxing format names (<code style="color:#22d3bf">&quot;QRCode&quot;</code>, <code style="color:#22d3bf">&quot;DataMatrix&quot;</code>, <code style="color:#22d3bf">&quot;EAN13&quot;</code>, <code style="color:#22d3bf">&quot;Code128&quot;</code> …). Returns <code style="color:#22d3bf">n</code>, <code style="color:#22d3bf">texts</code>, <code style="color:#22d3bf">formats</code>, <code style="color:#22d3bf">positions</code> (4 corners (row, col) per symbol, top-left first as zxing reports them), <code style="color:#22d3bf">valid</code> and <code style="color:#22d3bf">reader</code> = <code style="color:#22d3bf">&quot;zxing-cpp &lt;version&gt;&quot;</code>.</p>
+<p>空の入力(辺が 0)は <code style="color:#22d3bf">ValueError</code>。拒否(<code style="color:#22d3bf">ValueError</code>): 2-D でない、非有限、値が [0, 1] の外、未知の形式名。zxing-cpp が入っていなければ <code style="color:#22d3bf">ImportError</code>(fail-closed、<code style="color:#22d3bf">pip install zxing-cpp</code>)。何も見つからなければ <code style="color:#22d3bf">n = 0</code>(読めないことは例外ではなく結果)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesymbol:symbol_reading">symbol_reading 패밀리 가이드</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
+<p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
+<p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
+<p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_symbol_package_1d">poc_symbol_package_1d</a> — <code style="color:#22d3bf">py -3.11 examples/poc_symbol_package_1d.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_symbol_part_dpm">poc_symbol_part_dpm</a> — <code style="color:#22d3bf">py -3.11 examples/poc_symbol_part_dpm.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">table</code> 를 입력으로 받는 것)</h3>
+<p><a style="color:#22d3bf" href="opsymbol:render_symbol">render_symbol</a> · <a style="color:#22d3bf" href="opsymbol:symbol_read_trials">symbol_read_trials</a> · <a style="color:#22d3bf" href="opsymbol:symbol_read_pod">symbol_read_pod</a> · <a style="color:#22d3bf" href="opsymbol:ocr_classify">ocr_classify</a> · <a style="color:#22d3bf" href="opsymbol:ocr_read_line">ocr_read_line</a> · <a style="color:#22d3bf" href="opsymbol:ocr_read_trials">ocr_read_trials</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">symbol_bridge</code>)</h3>
+<p>—</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: symzxing.py — SYMBOL 연산자 레지스트리. 이 op 노트는 <code style="color:#22d3bf">tools/opdocs.py md</code> 가 자동 생성합니다(직접 편집하지 마세요).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

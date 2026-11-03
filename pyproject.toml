@@ -105,6 +105,10 @@ threed = ["torch>=2.13", "scikit-image>=0.20", "SimpleITK>=2.2"]   # 3-D toolkit
 # these extras add optional protocol/device adapters.
 serial = ["pyserial>=3.5"]
 modbus = ["pymodbus>=3.0"]            # Modbus RTU (Modbus TCP is built-in)
+# 記号の読み取りの第 2 の読み取り器(symzxing.read_symbols_zxing)。zxing-cpp は Apache-2.0。
+# 自前の読み取り器(barcode1d / qrsym / dmsym)だけで族は動く —— これは比較と、自前に無い
+# 体系(PDF417 / Aztec / DataBar …)のため。zbar(pyzbar)は LGPL なので仲介しない。
+symbols = ["zxing-cpp>=2.2"]
 mqtt = ["paho-mqtt>=1.6"]
 opcua = ["asyncua>=1.0"]
 # contributor toolchain (CI mirror)。道具は「今日踏んだ失敗の型」で選んでいる ——
@@ -267,6 +271,10 @@ py-modules = [
   "calib_lm",
   # opsacceptance: 光学式 3D センサの(仮想)受入試験の台帳と実体 acceptance3d(2026-11-03)。
   "acceptance3d", "opsacceptance",
+  # opssymbol: 記号の読み取りの台帳(2026-11-03)。1-D / 2-D コードの生成と復号(自前、
+  # Reed-Solomon は symrs)、撮像シミュ、印字品質の等級、読み取りの POD、zxing-cpp の仲介、OCR。
+  "symrs", "barcode1d", "qrsym", "dmsym", "symrender", "symgrade", "symbolpod", "symzxing",
+  "ocrclassic", "opssymbol",
   "recipes", "measure", "studio", "studio_search", "studio_errors", "studio_roundtrip", "studio_batch", "studio_display", "studio_layout", "studio_result", "sample_images", "sample_data", "accuracy_bench",
   "evolve", "problems", "baseline", "robust",
   "verify_auto", "honest_summary", "dispositions", "catalog", "report",

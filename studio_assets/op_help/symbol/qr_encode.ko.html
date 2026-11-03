@@ -1,0 +1,41 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">qr_encode — SYMBOL <code style="color:#22d3bf">datacode2d</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">table</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.qr_encode(text, ec_level=&#x27;M&#x27;, version=None, mask=None, mode=None) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import qrsym; qrsym.qr_encode(text, ec_level=&#x27;M&#x27;, version=None, mask=None, mode=None) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opssymbol.get(&quot;qr_encode&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
+<p>문자열을 QR Code(Model 2)의 모듈 격자와 모듈-부호어 대응으로 부호화한다(<code style="color:#22d3bf">table</code>).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>Encode <code style="color:#22d3bf">text</code> as a QR Code (Model 2) module grid.</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
+<p>text : str</p>
+<p>符号化する文字列 / the text. Byte mode stores UTF-8 (no ECI).</p>
+<p>ec_level : {&quot;L&quot;, &quot;M&quot;, &quot;Q&quot;, &quot;H&quot;}</p>
+<p>誤り訂正レベル / error-correction level.</p>
+<p>version : int or None</p>
+<p>1..40。None なら収まる最小 / 1..40, or None for the smallest that fits.</p>
+<p>mask : int or None</p>
+<p>0..7。None なら 4 規則の減点が最小のもの / 0..7, or None to pick by penalty.</p>
+<p>mode : {&quot;numeric&quot;, &quot;alphanumeric&quot;, &quot;byte&quot;} or None</p>
+<p>None なら文字種から自動 / None to choose from the characters.</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>dict</p>
+<p><code style="color:#22d3bf">modules</code> (N,N) uint8 (1=暗/dark), <code style="color:#22d3bf">size</code>, <code style="color:#22d3bf">version</code>, <code style="color:#22d3bf">ec_level</code>, <code style="color:#22d3bf">mask</code>,</p>
+<p><code style="color:#22d3bf">mode</code>, <code style="color:#22d3bf">text</code>, <code style="color:#22d3bf">blocks</code> [(n_data, n_ec)…], <code style="color:#22d3bf">n_data_codewords</code>,</p>
+<p><code style="color:#22d3bf">n_ec_codewords</code>, <code style="color:#22d3bf">function_mask</code> (N,N) bool, <code style="color:#22d3bf">codeword_index</code> (N,N) int16</p>
+<p>(-1 = 機能/余り / function or remainder), <code style="color:#22d3bf">codewords</code> (interleaved list).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesymbol:symbol_reading">symbol_reading 패밀리 가이드</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
+<p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
+<p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
+<p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_symbol_part_dpm">poc_symbol_part_dpm</a> — <code style="color:#22d3bf">py -3.11 examples/poc_symbol_part_dpm.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">table</code> 를 입력으로 받는 것)</h3>
+<p><a style="color:#22d3bf" href="opsymbol:render_symbol">render_symbol</a> · <a style="color:#22d3bf" href="opsymbol:symbol_read_trials">symbol_read_trials</a> · <a style="color:#22d3bf" href="opsymbol:symbol_read_pod">symbol_read_pod</a> · <a style="color:#22d3bf" href="opsymbol:ocr_classify">ocr_classify</a> · <a style="color:#22d3bf" href="opsymbol:ocr_read_line">ocr_read_line</a> · <a style="color:#22d3bf" href="opsymbol:ocr_read_trials">ocr_read_trials</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">datacode2d</code>)</h3>
+<p><a style="color:#22d3bf" href="opsymbol:qr_decode_modules">qr_decode_modules</a> · <a style="color:#22d3bf" href="opsymbol:qr_locate">qr_locate</a> · <a style="color:#22d3bf" href="opsymbol:qr_sample">qr_sample</a> · <a style="color:#22d3bf" href="opsymbol:qr_read">qr_read</a> · <a style="color:#22d3bf" href="opsymbol:dm_encode">dm_encode</a> · <a style="color:#22d3bf" href="opsymbol:dm_decode_modules">dm_decode_modules</a> · <a style="color:#22d3bf" href="opsymbol:dm_locate">dm_locate</a> · <a style="color:#22d3bf" href="opsymbol:dm_sample">dm_sample</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: qrsym.py — SYMBOL 연산자 레지스트리. 이 op 노트는 <code style="color:#22d3bf">tools/opdocs.py md</code> 가 자동 생성합니다(직접 편집하지 마세요).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>
