@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3623,
- "n_notes": 3629,
+ "n_ops": 3644,
+ "n_notes": 3650,
  "notes": {
   "vol_dilate": [
    {
@@ -28601,6 +28601,84 @@
     "path": "docs/ops/optics/grating_interf/talbot_source_visibility.md"
    }
   ],
+  "camera_response_debevec": [
+   {
+    "op": "camera_response_debevec",
+    "dim": "optics",
+    "category": "hdr",
+    "in": "images",
+    "out": "table",
+    "path": "docs/ops/optics/hdr/camera_response_debevec.md"
+   }
+  ],
+  "camera_response_linear": [
+   {
+    "op": "camera_response_linear",
+    "dim": "optics",
+    "category": "hdr",
+    "out": "table",
+    "path": "docs/ops/optics/hdr/camera_response_linear.md"
+   }
+  ],
+  "camera_response_robertson": [
+   {
+    "op": "camera_response_robertson",
+    "dim": "optics",
+    "category": "hdr",
+    "in": "images",
+    "out": "table",
+    "path": "docs/ops/optics/hdr/camera_response_robertson.md"
+   }
+  ],
+  "exposure_fusion_mertens": [
+   {
+    "op": "exposure_fusion_mertens",
+    "dim": "optics",
+    "category": "hdr",
+    "in": "images",
+    "out": "image2d",
+    "path": "docs/ops/optics/hdr/exposure_fusion_mertens.md"
+   }
+  ],
+  "hdr_dynamic_range": [
+   {
+    "op": "hdr_dynamic_range",
+    "dim": "optics",
+    "category": "hdr",
+    "out": "table",
+    "path": "docs/ops/optics/hdr/hdr_dynamic_range.md"
+   }
+  ],
+  "hdr_exposure_series_simulate": [
+   {
+    "op": "hdr_exposure_series_simulate",
+    "dim": "optics",
+    "category": "hdr",
+    "in": "image2d",
+    "out": "images",
+    "path": "docs/ops/optics/hdr/hdr_exposure_series_simulate.md"
+   }
+  ],
+  "hdr_merge": [
+   {
+    "op": "hdr_merge",
+    "dim": "optics",
+    "category": "hdr",
+    "in": "images",
+    "out": "image2d",
+    "path": "docs/ops/optics/hdr/hdr_merge.md"
+   }
+  ],
+  "hdr_radiance_error": [
+   {
+    "op": "hdr_radiance_error",
+    "dim": "optics",
+    "category": "hdr",
+    "in": "image2d × image2d",
+    "out": "table",
+    "path": "docs/ops/optics/hdr/hdr_radiance_error.md"
+   }
+  ],
   "coaxial_illumination": [
    {
     "op": "coaxial_illumination",
@@ -29359,6 +29437,132 @@
     "in": "table",
     "out": "table",
     "path": "docs/ops/optics/lenssolve/lens_zmx_solves_roundtrip.md"
+   }
+  ],
+  "laser_line_center_centroid": [
+   {
+    "op": "laser_line_center_centroid",
+    "dim": "optics",
+    "category": "light_section",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/optics/light_section/laser_line_center_centroid.md"
+   }
+  ],
+  "laser_line_center_gauss": [
+   {
+    "op": "laser_line_center_gauss",
+    "dim": "optics",
+    "category": "light_section",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/optics/light_section/laser_line_center_gauss.md"
+   }
+  ],
+  "laser_line_center_steger": [
+   {
+    "op": "laser_line_center_steger",
+    "dim": "optics",
+    "category": "light_section",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/optics/light_section/laser_line_center_steger.md"
+   }
+  ],
+  "light_plane_calibrate": [
+   {
+    "op": "light_plane_calibrate",
+    "dim": "optics",
+    "category": "light_section",
+    "in": "table × table × matrix",
+    "out": "table",
+    "path": "docs/ops/optics/light_section/light_plane_calibrate.md"
+   }
+  ],
+  "light_section_floor_sweep": [
+   {
+    "op": "light_section_floor_sweep",
+    "dim": "optics",
+    "category": "light_section",
+    "out": "table",
+    "path": "docs/ops/optics/light_section/light_section_floor_sweep.md"
+   }
+  ],
+  "light_section_height_map": [
+   {
+    "op": "light_section_height_map",
+    "dim": "optics",
+    "category": "light_section",
+    "in": "images × table",
+    "out": "depth",
+    "path": "docs/ops/optics/light_section/light_section_height_map.md"
+   }
+  ],
+  "light_section_profile": [
+   {
+    "op": "light_section_profile",
+    "dim": "optics",
+    "category": "light_section",
+    "in": "table × table",
+    "out": "points",
+    "path": "docs/ops/optics/light_section/light_section_profile.md"
+   }
+  ],
+  "light_section_render": [
+   {
+    "op": "light_section_render",
+    "dim": "optics",
+    "category": "light_section",
+    "in": "table × pairs",
+    "out": "image2d",
+    "path": "docs/ops/optics/light_section/light_section_render.md"
+   }
+  ],
+  "light_section_rig": [
+   {
+    "op": "light_section_rig",
+    "dim": "optics",
+    "category": "light_section",
+    "out": "table",
+    "path": "docs/ops/optics/light_section/light_section_rig.md"
+   }
+  ],
+  "light_section_scan": [
+   {
+    "op": "light_section_scan",
+    "dim": "optics",
+    "category": "light_section",
+    "in": "images × table",
+    "out": "points",
+    "path": "docs/ops/optics/light_section/light_section_scan.md"
+   }
+  ],
+  "light_section_speckle_floor": [
+   {
+    "op": "light_section_speckle_floor",
+    "dim": "optics",
+    "category": "light_section",
+    "out": "table",
+    "path": "docs/ops/optics/light_section/light_section_speckle_floor.md"
+   }
+  ],
+  "light_section_targets": [
+   {
+    "op": "light_section_targets",
+    "dim": "optics",
+    "category": "light_section",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/light_section/light_section_targets.md"
+   }
+  ],
+  "light_section_uncertainty_budget": [
+   {
+    "op": "light_section_uncertainty_budget",
+    "dim": "optics",
+    "category": "light_section",
+    "out": "table",
+    "path": "docs/ops/optics/light_section/light_section_uncertainty_budget.md"
    }
   ],
   "form_factors_2d": [

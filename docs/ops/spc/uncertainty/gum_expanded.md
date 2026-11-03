@@ -5,7 +5,7 @@ category: uncertainty
 in: table
 out: table
 gpu: なし
-examples: [poc_measurement_system_analysis]
+examples: [poc_light_section_step_weld_floor, poc_measurement_system_analysis]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.8.1  # fullseye lib version this note was generated for
@@ -42,6 +42,7 @@ Welch-Satterthwaite の有効自由度と包含係数 k、拡張不確かさ U(`
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [poc_light_section_step_weld_floor](../../../../examples/poc_light_section_step_weld_floor.py) — `py -3.11 examples/poc_light_section_step_weld_floor.py`
 - [poc_measurement_system_analysis](../../../../examples/poc_measurement_system_analysis.py) — `py -3.11 examples/poc_measurement_system_analysis.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)

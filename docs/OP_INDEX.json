@@ -1,8 +1,8 @@
 {
- "n_ops": 3623,
+ "n_ops": 3644,
  "tiers": {
   "color": 12,
-  "ledger": 2664,
+  "ledger": 2685,
   "nary": 17,
   "registry": 930
  },
@@ -3073,6 +3073,43 @@
    "dim": "optics",
    "in_sorts": [
     "table"
+   ]
+  },
+  {
+   "name": "camera_response_debevec",
+   "halcon": "",
+   "in_sort": "images",
+   "out_sort": "table",
+   "category": "hdr",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "images"
+   ]
+  },
+  {
+   "name": "camera_response_linear",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "hdr",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
+   "name": "camera_response_robertson",
+   "halcon": "",
+   "in_sort": "images",
+   "out_sort": "table",
+   "category": "hdr",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "images"
    ]
   },
   {
@@ -8973,6 +9010,19 @@
    ]
   },
   {
+   "name": "exposure_fusion_mertens",
+   "halcon": "",
+   "in_sort": "images",
+   "out_sort": "image2d",
+   "category": "hdr",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "images"
+   ]
+  },
+  {
    "name": "extent_signature",
    "halcon": "",
    "in_sort": "points",
@@ -12445,6 +12495,57 @@
    ]
   },
   {
+   "name": "hdr_dynamic_range",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "hdr",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
+   "name": "hdr_exposure_series_simulate",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "images",
+   "category": "hdr",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
+   "name": "hdr_merge",
+   "halcon": "",
+   "in_sort": "images",
+   "out_sort": "image2d",
+   "category": "hdr",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "images"
+   ]
+  },
+  {
+   "name": "hdr_radiance_error",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "hdr",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "image2d",
+    "image2d"
+   ]
+  },
+  {
    "name": "heap_mass",
    "halcon": "",
    "in_sort": "scalar",
@@ -14902,6 +15003,45 @@
    ]
   },
   {
+   "name": "laser_line_center_centroid",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "light_section",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
+   "name": "laser_line_center_gauss",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "light_section",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
+   "name": "laser_line_center_steger",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "light_section",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
    "name": "laser_line_coherent",
    "halcon": "",
    "in_sort": null,
@@ -15765,6 +15905,134 @@
     "rgb",
     "rgb"
    ]
+  },
+  {
+   "name": "light_plane_calibrate",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "light_section",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table",
+    "table",
+    "matrix"
+   ]
+  },
+  {
+   "name": "light_section_floor_sweep",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "light_section",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
+   "name": "light_section_height_map",
+   "halcon": "",
+   "in_sort": "images",
+   "out_sort": "depth",
+   "category": "light_section",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "images",
+    "table"
+   ]
+  },
+  {
+   "name": "light_section_profile",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "points",
+   "category": "light_section",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table",
+    "table"
+   ]
+  },
+  {
+   "name": "light_section_render",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "image2d",
+   "category": "light_section",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table",
+    "pairs"
+   ]
+  },
+  {
+   "name": "light_section_rig",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "light_section",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
+   "name": "light_section_scan",
+   "halcon": "",
+   "in_sort": "images",
+   "out_sort": "points",
+   "category": "light_section",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "images",
+    "table"
+   ]
+  },
+  {
+   "name": "light_section_speckle_floor",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "light_section",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
+   "name": "light_section_targets",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "light_section",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "light_section_uncertainty_budget",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "light_section",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
   },
   {
    "name": "light_source",

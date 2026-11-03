@@ -53,9 +53,9 @@
     "reason": "docs/op_knob.json measured no output effect"
   },
   "execution_summary": {
-    "executable": 3417,
+    "executable": 3438,
     "reasons": {
-      "python_signature": 2458,
+      "python_signature": 2479,
       "registry": 959
     },
     "not_executable_reasons": {
@@ -358,9 +358,9 @@
   },
   "counts": {
     "nodes": 101,
-    "edges": 3626,
-    "conversion_pairs": 395,
-    "conversion_edge_incidence": 2343
+    "edges": 3647,
+    "conversion_pairs": 397,
+    "conversion_edge_incidence": 2362
   },
   "nodes": [
     {
@@ -565,7 +565,7 @@
       "sort": "depth",
       "container": "dense_array",
       "size_hint": "input-dependent",
-      "produced_by": 16,
+      "produced_by": 17,
       "consumed_by": 37,
       "generator": true,
       "type_check": true,
@@ -752,8 +752,8 @@
       "sort": "image",
       "container": "dense_array",
       "size_hint": "input-dependent",
-      "produced_by": 721,
-      "consumed_by": 1046,
+      "produced_by": 724,
+      "consumed_by": 1052,
       "generator": true,
       "type_check": true,
       "choose_when": "undocumented",
@@ -863,7 +863,7 @@
       "container": "structured_value",
       "size_hint": "input-dependent",
       "produced_by": 91,
-      "consumed_by": 248,
+      "consumed_by": 249,
       "generator": true,
       "type_check": true,
       "choose_when": "undocumented",
@@ -951,7 +951,7 @@
       "container": "structured_value",
       "size_hint": "input-dependent",
       "produced_by": 85,
-      "consumed_by": 66,
+      "consumed_by": 67,
       "generator": false,
       "type_check": true,
       "choose_when": "undocumented",
@@ -983,7 +983,7 @@
       "sort": "points",
       "container": "sparse_set",
       "size_hint": "input-dependent",
-      "produced_by": 78,
+      "produced_by": 80,
       "consumed_by": 292,
       "generator": true,
       "type_check": true,
@@ -1225,8 +1225,8 @@
       "sort": "seq<image>",
       "container": "dense_array",
       "size_hint": "input-dependent",
-      "produced_by": 59,
-      "consumed_by": 103,
+      "produced_by": 60,
+      "consumed_by": 109,
       "generator": true,
       "type_check": true,
       "choose_when": "undocumented",
@@ -1368,8 +1368,8 @@
       "sort": "table",
       "container": "sequence",
       "size_hint": "input-dependent",
-      "produced_by": 1166,
-      "consumed_by": 547,
+      "produced_by": 1180,
+      "consumed_by": 555,
       "generator": true,
       "type_check": true,
       "choose_when": "undocumented",
@@ -73543,6 +73543,1761 @@
           "range": "undocumented",
           "unit": "undocumented",
           "default": 0.01
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00006"
+    },
+    {
+      "op": "laser_line_center_centroid",
+      "inputs": [
+        "image"
+      ],
+      "output": "table",
+      "category": "optics",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00006"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00006"
+        }
+      ],
+      "runtime_target": {
+        "module": "lightsection",
+        "callable": "laser_line_center_centroid"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "lightsection",
+        "callable": "laser_line_center_centroid"
+      },
+      "parameter_schema": [
+        {
+          "name": "min_peak_rel",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.1
+        },
+        {
+          "name": "half_window",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
+        },
+        {
+          "name": "background",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.0
+        },
+        {
+          "name": "clip_negative",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": true
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00006"
+    },
+    {
+      "op": "laser_line_center_gauss",
+      "inputs": [
+        "image"
+      ],
+      "output": "table",
+      "category": "optics",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00006"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00006"
+        }
+      ],
+      "runtime_target": {
+        "module": "lightsection",
+        "callable": "laser_line_center_gauss"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "lightsection",
+        "callable": "laser_line_center_gauss"
+      },
+      "parameter_schema": [
+        {
+          "name": "min_peak_rel",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.1
+        },
+        {
+          "name": "half_window",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 2
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00006"
+    },
+    {
+      "op": "laser_line_center_steger",
+      "inputs": [
+        "image"
+      ],
+      "output": "table",
+      "category": "optics",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00006"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00006"
+        }
+      ],
+      "runtime_target": {
+        "module": "lightsection",
+        "callable": "laser_line_center_steger"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "lightsection",
+        "callable": "laser_line_center_steger"
+      },
+      "parameter_schema": [
+        {
+          "name": "sigma",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 1.5
+        },
+        {
+          "name": "min_peak_rel",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.1
+        },
+        {
+          "name": "max_iter",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 3
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00006"
+    },
+    {
+      "op": "light_section_rig",
+      "inputs": [],
+      "output": "table",
+      "category": "optics",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "source",
+      "consumes_input": false,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00006"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00006"
+        }
+      ],
+      "runtime_target": {
+        "module": "lightsection",
+        "callable": "light_section_rig"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "lightsection",
+        "callable": "light_section_rig"
+      },
+      "parameter_schema": [
+        {
+          "name": "theta_deg",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 30.0
+        },
+        {
+          "name": "standoff_mm",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 200.0
+        },
+        {
+          "name": "focal_px",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 2000.0
+        },
+        {
+          "name": "image_shape",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": [
+            480,
+            640
+          ]
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00006"
+    },
+    {
+      "op": "light_section_targets",
+      "inputs": [
+        "table"
+      ],
+      "output": "table",
+      "category": "optics",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00006"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00006"
+        }
+      ],
+      "runtime_target": {
+        "module": "lightsection",
+        "callable": "light_section_targets"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "lightsection",
+        "callable": "light_section_targets"
+      },
+      "parameter_schema": [
+        {
+          "name": "heights_mm",
+          "type": "unannotated",
+          "required": true,
+          "range": "undocumented",
+          "unit": "undocumented"
+        },
+        {
+          "name": "col_ranges",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00006"
+    },
+    {
+      "op": "light_section_render",
+      "inputs": [
+        "table",
+        "pairs"
+      ],
+      "output": "image",
+      "category": "optics",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00006"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00006"
+        }
+      ],
+      "runtime_target": {
+        "module": "lightsection",
+        "callable": "light_section_render"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "lightsection",
+        "callable": "light_section_render"
+      },
+      "parameter_schema": [
+        {
+          "name": "line_sigma_px",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 1.5
+        },
+        {
+          "name": "peak",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 1.0
+        },
+        {
+          "name": "background",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.0
+        },
+        {
+          "name": "noise",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.0
+        },
+        {
+          "name": "seed",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0
+        },
+        {
+          "name": "sampling",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": "point"
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00006"
+    },
+    {
+      "op": "light_plane_calibrate",
+      "inputs": [
+        "table",
+        "table",
+        "matrix"
+      ],
+      "output": "table",
+      "category": "optics",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00006"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00006"
+        }
+      ],
+      "input_roles": [
+        "centers_list",
+        "targets",
+        "K"
+      ],
+      "runtime_target": {
+        "module": "lightsection",
+        "callable": "light_plane_calibrate"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "lightsection",
+        "callable": "light_plane_calibrate"
+      },
+      "parameter_schema": [
+        {
+          "name": "R",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
+        },
+        {
+          "name": "t",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00006"
+    },
+    {
+      "op": "light_section_profile",
+      "inputs": [
+        "table",
+        "table"
+      ],
+      "output": "points",
+      "category": "optics",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00006"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00006"
+        }
+      ],
+      "input_roles": [
+        "centers",
+        "rig"
+      ],
+      "runtime_target": {
+        "module": "lightsection",
+        "callable": "light_section_profile"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "lightsection",
+        "callable": "light_section_profile"
+      },
+      "parameter_schema": [],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00006"
+    },
+    {
+      "op": "light_section_scan",
+      "inputs": [
+        "seq<image>",
+        "table"
+      ],
+      "output": "points",
+      "category": "optics",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00006"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00006"
+        }
+      ],
+      "runtime_target": {
+        "module": "lightsection",
+        "callable": "light_section_scan"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "lightsection",
+        "callable": "light_section_scan"
+      },
+      "parameter_schema": [
+        {
+          "name": "step_mm",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": [
+            0.0,
+            0.1,
+            0.0
+          ]
+        },
+        {
+          "name": "method",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": "gauss"
+        },
+        {
+          "name": "center_kw",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "stack_global",
+      "source_ref": "S00006"
+    },
+    {
+      "op": "light_section_height_map",
+      "inputs": [
+        "seq<image>",
+        "table"
+      ],
+      "output": "depth",
+      "category": "optics",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00006"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00006"
+        }
+      ],
+      "runtime_target": {
+        "module": "lightsection",
+        "callable": "light_section_height_map"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "lightsection",
+        "callable": "light_section_height_map"
+      },
+      "parameter_schema": [
+        {
+          "name": "reference_plane",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
+        },
+        {
+          "name": "method",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": "gauss"
+        },
+        {
+          "name": "center_kw",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "stack_global",
+      "source_ref": "S00006"
+    },
+    {
+      "op": "light_section_speckle_floor",
+      "inputs": [],
+      "output": "table",
+      "category": "optics",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "source",
+      "consumes_input": false,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00006"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00006"
+        }
+      ],
+      "runtime_target": {
+        "module": "lightsection",
+        "callable": "light_section_speckle_floor"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "lightsection",
+        "callable": "light_section_speckle_floor"
+      },
+      "parameter_schema": [
+        {
+          "name": "wavelength_um",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.65
+        },
+        {
+          "name": "sin_u_obs",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.1
+        },
+        {
+          "name": "sin_theta",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.5
+        },
+        {
+          "name": "line_width_um",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 40.0
+        },
+        {
+          "name": "pixel_um",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 1.0
+        },
+        {
+          "name": "length_um",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
+        },
+        {
+          "name": "method",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": "centroid"
+        },
+        {
+          "name": "n_trials",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 12
+        },
+        {
+          "name": "n_columns",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 1024
+        },
+        {
+          "name": "n_rows",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 160
+        },
+        {
+          "name": "n_patterns",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 1
+        },
+        {
+          "name": "polarizations",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 1
+        },
+        {
+          "name": "noise_rel",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.0
+        },
+        {
+          "name": "pixel_oversample",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 2
+        },
+        {
+          "name": "seed",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0
+        },
+        {
+          "name": "center_kw",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
+        },
+        {
+          "name": "smooth_surface",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": false
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00006"
+    },
+    {
+      "op": "light_section_uncertainty_budget",
+      "inputs": [],
+      "output": "table",
+      "category": "optics",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "source",
+      "consumes_input": false,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00006"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00006"
+        }
+      ],
+      "runtime_target": {
+        "module": "lightsection",
+        "callable": "light_section_uncertainty_budget"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "lightsection",
+        "callable": "light_section_uncertainty_budget"
+      },
+      "parameter_schema": [
+        {
+          "name": "wavelength_um",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.65
+        },
+        {
+          "name": "sin_u_obs",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.1
+        },
+        {
+          "name": "sin_theta",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.5
+        },
+        {
+          "name": "line_width_um",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 40.0
+        },
+        {
+          "name": "pixel_um",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 1.0
+        },
+        {
+          "name": "length_um",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
+        },
+        {
+          "name": "n_patterns",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 1
+        },
+        {
+          "name": "polarizations",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 1
+        },
+        {
+          "name": "noise_rel",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.0
+        },
+        {
+          "name": "peak_dn",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
+        },
+        {
+          "name": "window_rows",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 160
+        },
+        {
+          "name": "calib_rms_um",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.0
+        },
+        {
+          "name": "calib_dof",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": Infinity
+        },
+        {
+          "name": "speckle_contrast",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00006"
+    },
+    {
+      "op": "light_section_floor_sweep",
+      "inputs": [],
+      "output": "table",
+      "category": "optics",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "source",
+      "consumes_input": false,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00006"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00006"
+        }
+      ],
+      "runtime_target": {
+        "module": "lightsection",
+        "callable": "light_section_floor_sweep"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "lightsection",
+        "callable": "light_section_floor_sweep"
+      },
+      "parameter_schema": [
+        {
+          "name": "parameter",
+          "type": "unannotated",
+          "required": true,
+          "range": "undocumented",
+          "unit": "undocumented"
+        },
+        {
+          "name": "values",
+          "type": "unannotated",
+          "required": true,
+          "range": "undocumented",
+          "unit": "undocumented"
+        },
+        {
+          "name": "n_trials",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 6
+        },
+        {
+          "name": "method",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": "centroid"
+        },
+        {
+          "name": "seed",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00006"
+    },
+    {
+      "op": "camera_response_debevec",
+      "inputs": [
+        "seq<image>"
+      ],
+      "output": "table",
+      "category": "optics",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00006"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00006"
+        }
+      ],
+      "runtime_target": {
+        "module": "hdrfusion",
+        "callable": "camera_response_debevec"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "hdrfusion",
+        "callable": "camera_response_debevec"
+      },
+      "parameter_schema": [
+        {
+          "name": "exposures",
+          "type": "unannotated",
+          "required": true,
+          "range": "undocumented",
+          "unit": "undocumented"
+        },
+        {
+          "name": "levels",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 256
+        },
+        {
+          "name": "smoothness",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 10.0
+        },
+        {
+          "name": "n_samples",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
+        },
+        {
+          "name": "seed",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "stack_global",
+      "source_ref": "S00006"
+    },
+    {
+      "op": "camera_response_robertson",
+      "inputs": [
+        "seq<image>"
+      ],
+      "output": "table",
+      "category": "optics",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00006"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00006"
+        }
+      ],
+      "runtime_target": {
+        "module": "hdrfusion",
+        "callable": "camera_response_robertson"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "hdrfusion",
+        "callable": "camera_response_robertson"
+      },
+      "parameter_schema": [
+        {
+          "name": "exposures",
+          "type": "unannotated",
+          "required": true,
+          "range": "undocumented",
+          "unit": "undocumented"
+        },
+        {
+          "name": "levels",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 256
+        },
+        {
+          "name": "max_iter",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 30
+        },
+        {
+          "name": "tol",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 1e-06
+        },
+        {
+          "name": "max_pixels",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 200000
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "stack_global",
+      "source_ref": "S00006"
+    },
+    {
+      "op": "camera_response_linear",
+      "inputs": [],
+      "output": "table",
+      "category": "optics",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "source",
+      "consumes_input": false,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00006"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00006"
+        }
+      ],
+      "runtime_target": {
+        "module": "hdrfusion",
+        "callable": "camera_response_linear"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "hdrfusion",
+        "callable": "camera_response_linear"
+      },
+      "parameter_schema": [
+        {
+          "name": "levels",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 256
+        },
+        {
+          "name": "dark_offset_dn",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.0
+        },
+        {
+          "name": "gain_dn_per_unit",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 1.0
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00006"
+    },
+    {
+      "op": "hdr_merge",
+      "inputs": [
+        "seq<image>"
+      ],
+      "output": "image",
+      "category": "optics",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00006"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00006"
+        }
+      ],
+      "runtime_target": {
+        "module": "hdrfusion",
+        "callable": "hdr_merge"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "hdrfusion",
+        "callable": "hdr_merge"
+      },
+      "parameter_schema": [
+        {
+          "name": "exposures",
+          "type": "unannotated",
+          "required": true,
+          "range": "undocumented",
+          "unit": "undocumented"
+        },
+        {
+          "name": "response",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
+        },
+        {
+          "name": "weight",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": "hat"
+        },
+        {
+          "name": "saturation_margin",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 1
+        },
+        {
+          "name": "dark_level",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "stack_global",
+      "source_ref": "S00006"
+    },
+    {
+      "op": "exposure_fusion_mertens",
+      "inputs": [
+        "seq<image>"
+      ],
+      "output": "image",
+      "category": "optics",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00006"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00006"
+        }
+      ],
+      "runtime_target": {
+        "module": "hdrfusion",
+        "callable": "exposure_fusion_mertens"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "hdrfusion",
+        "callable": "exposure_fusion_mertens"
+      },
+      "parameter_schema": [
+        {
+          "name": "contrast_weight",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 1.0
+        },
+        {
+          "name": "saturation_weight",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 1.0
+        },
+        {
+          "name": "exposedness_weight",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 1.0
+        },
+        {
+          "name": "sigma",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.2
+        },
+        {
+          "name": "n_levels",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "stack_global",
+      "source_ref": "S00006"
+    },
+    {
+      "op": "hdr_exposure_series_simulate",
+      "inputs": [
+        "image"
+      ],
+      "output": "seq<image>",
+      "category": "optics",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00006"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00006"
+        }
+      ],
+      "runtime_target": {
+        "module": "hdrfusion",
+        "callable": "hdr_exposure_series_simulate"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "hdrfusion",
+        "callable": "hdr_exposure_series_simulate"
+      },
+      "parameter_schema": [
+        {
+          "name": "exposures",
+          "type": "unannotated",
+          "required": true,
+          "range": "undocumented",
+          "unit": "undocumented"
+        },
+        {
+          "name": "eta",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.6
+        },
+        {
+          "name": "K",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.1
+        },
+        {
+          "name": "sigma_d_e",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 8.0
+        },
+        {
+          "name": "dark_offset_dn",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 4.0
+        },
+        {
+          "name": "bits",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 8
+        },
+        {
+          "name": "full_well_e",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
+        },
+        {
+          "name": "gamma",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 1.0
+        },
+        {
+          "name": "seed",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0
+        },
+        {
+          "name": "as_float",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": true
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "stack_global",
+      "source_ref": "S00006"
+    },
+    {
+      "op": "hdr_radiance_error",
+      "inputs": [
+        "image",
+        "image"
+      ],
+      "output": "table",
+      "category": "optics",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00006"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00006"
+        }
+      ],
+      "input_roles": [
+        "estimate",
+        "truth"
+      ],
+      "runtime_target": {
+        "module": "hdrfusion",
+        "callable": "hdr_radiance_error"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "hdrfusion",
+        "callable": "hdr_radiance_error"
+      },
+      "parameter_schema": [
+        {
+          "name": "mask",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
+        },
+        {
+          "name": "fit_scale",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": true
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00006"
+    },
+    {
+      "op": "hdr_dynamic_range",
+      "inputs": [],
+      "output": "table",
+      "category": "optics",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "source",
+      "consumes_input": false,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00006"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00006"
+        }
+      ],
+      "runtime_target": {
+        "module": "hdrfusion",
+        "callable": "hdr_dynamic_range"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "hdrfusion",
+        "callable": "hdr_dynamic_range"
+      },
+      "parameter_schema": [
+        {
+          "name": "exposures",
+          "type": "unannotated",
+          "required": true,
+          "range": "undocumented",
+          "unit": "undocumented"
+        },
+        {
+          "name": "eta",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.6
+        },
+        {
+          "name": "K",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.1
+        },
+        {
+          "name": "sigma_d_e",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 8.0
+        },
+        {
+          "name": "dark_offset_dn",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 4.0
+        },
+        {
+          "name": "bits",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 8
+        },
+        {
+          "name": "full_well_e",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
+        },
+        {
+          "name": "n_frames",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 400
+        },
+        {
+          "name": "n_levels",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 97
+        },
+        {
+          "name": "decades",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
+        },
+        {
+          "name": "seed",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0
         }
       ],
       "verified_executable": false,
