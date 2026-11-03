@@ -1,0 +1,32 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">create_ncc_model — MV <code style="color:#22d3bf">detect</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.create_ncc_model(template) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import matching; matching.create_ncc_model(template) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsmv.get(&quot;create_ncc_model&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>HALCON समकक्ष</b>: <code style="color:#22d3bf">create_ncc_model</code> (अर्थ और parameters समझने के लिए HALCON reference उपयोगी है)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>NCC मॉडल (सामान्यीकृत टेम्पलेट) तैयार करता है।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>Args:</p>
+<p>template: 2次元の有限値テンプレート。呼び出し元と独立した</p>
+<p>float64 コピーを保持する。</p>
+<p>Returns:</p>
+<p>中心化・単位ノルム化済みテンプレートと準備時の <code style="color:#22d3bf">template_scale</code>、整数の <code style="color:#22d3bf">template_scale_exp</code> を持つモデル。最大絶対値の2進指数が -500 未満または 500 超、すなわち <code style="color:#22d3bf">2**-500</code> 未満または <code style="color:#22d3bf">2**501</code> 以上のとき、有限な正の 2のべき乗で拡大縮小して <code style="color:#22d3bf">norm</code> を計算する。有限の非定数テンプレートは倍率によらず自己一致が 1（誤差 1e-12 以下）になり、<code style="color:#22d3bf">1e-200</code> と <code style="color:#22d3bf">1e200</code> の混在も含む。最大値と最小値が等しい定数テンプレートは <code style="color:#22d3bf">constant=True</code>、<code style="color:#22d3bf">norm=0</code>、<code style="color:#22d3bf">t0n</code> が全ゼロとなり、すべての窓にスコア0を返す。</p>
+<p>空の入力(<code style="color:#22d3bf">template</code> が 0 要素)は ValueError。</p>
+<p>Raises:</p>
+<p>FsValueError: <code style="color:#22d3bf">template</code> が NaN または無限大を含む場合。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemv:machine_vision_classics">machine_vision_classics family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:machine_vision_tour">machine_vision_tour</a> — <code style="color:#22d3bf">py -3.11 examples/machine_vision_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opmv:map_image">map_image</a> · <a style="color:#22d3bf" href="opmv:rectify_to_world_plane">rectify_to_world_plane</a> · <a style="color:#22d3bf" href="opmv:change_radial_distortion_image">change_radial_distortion_image</a> · <a style="color:#22d3bf" href="opmv:find_ncc_models">find_ncc_models</a> · <a style="color:#22d3bf" href="opmv:run_bg_esti">run_bg_esti</a> · <a style="color:#22d3bf" href="opmv:give_bg_esti">give_bg_esti</a> · <a style="color:#22d3bf" href="opmv:update_bg_esti">update_bg_esti</a> · <a style="color:#22d3bf" href="opmv:classify_class_gmm">classify_class_gmm</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">detect</code>)</h3>
+<p><a style="color:#22d3bf" href="opmv:points_lepetit">points_lepetit</a> · <a style="color:#22d3bf" href="opmv:find_ncc_models">find_ncc_models</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: matching.py — MV operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

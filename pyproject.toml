@@ -275,6 +275,9 @@ py-modules = [
   # Reed-Solomon は symrs)、撮像シミュ、印字品質の等級、読み取りの POD、zxing-cpp の仲介、OCR。
   "symrs", "barcode1d", "qrsym", "dmsym", "symrender", "symgrade", "symbolpod", "symzxing",
   "ocrclassic", "opssymbol",
+  # opsmv: 工業用ビジョンの定番の演算の台帳(2026-11-02)。ステレオ・幾何の再標本化・古典形態学・
+  # カルマン背景・分類器の入口・文字行。実体は mvimage / mvstereo / mvmorph / mvtrack / mvclass / mvtext。
+  "opsmv", "mvimage", "mvstereo", "mvmorph", "mvtrack", "mvclass", "mvtext",
   "recipes", "measure", "studio", "studio_search", "studio_errors", "studio_roundtrip", "studio_batch", "studio_display", "studio_layout", "studio_result", "sample_images", "sample_data", "accuracy_bench",
   "evolve", "problems", "baseline", "robust",
   "verify_auto", "honest_summary", "dispositions", "catalog", "report",
@@ -350,7 +353,7 @@ py-modules = [
               # Canonical facade / disposition data (unified.py + dispositions.py
               # read these; the root-level data/ dir is only a dev-cache fallback
               # and never ships).
-              "data/halcon_facade_map.json", "data/halcon_stubs.json",
+              "data/halcon_facade_map.json", "data/halcon_ledger_map.json", "data/halcon_stubs.json",
               "data/halcon_graph.json",
               # MCP サーバ(fullseye.mcp)が wheel から読むカタログ: 索引の複製と
               # ノートの frontmatter(tools/gen_mcp_data.py が書く)。0.1.11 は docs/ を

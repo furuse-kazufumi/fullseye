@@ -24,6 +24,23 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 - 新モジュール `polar_gpu`: 実光線の各面に Fresnel 振幅を掛けて光線ごとの Jones 行列を作る経路と、`optics` / `photoelastic` / `sfpolar` の画素ごとの計算のバッチ版。
 - どちらも公開 op ではなく下回りの部品で、torch が無い環境では `raytrace` / `optics` がそのまま使える。測定は `docs/perf/gpu_optics_2026-11-02.md`。
 
+### 追加 — 工業用ビジョンの定番の演算(opsmv、47 op)と HALCON 全名の棚卸し
+
+- 新しい台帳 `opsmv`: ステレオ(`binocular_disparity_ms` ほか)、幾何の再標本化(`map_image` /
+  `rectify_to_world_plane` / `change_radial_distortion_image`)、`points_lepetit`、`get_circle_pose`、
+  Golay の組と肥厚、`morph_skiz`、`filter_kalman`、カルマン背景推定、GMM / k-NN と語の照合、文字行の傾き。
+- `docs/HALCON_GAP_2026-11-02.md`: 全 2,313 演算子の 4 分類。`tools/gen_halcon_gap.py` が生成する。
+- 台帳 op の `halcon` 欄を `fullseye/data/halcon_ledger_map.json` から埋めた(以前は全部空)。
+
+### 変更 — opsmv の統合で既存 op の振る舞いが変わるもの(値・署名)
+
+- `gray_projections` は和でなく平均を返す。`gray_histo` は `[0, 1]` の外の画素を拒む。
+- `filters_freq.map_image`(灰色値の LUT)を消し、`mvimage.map_image`(幾何の写像)に置き換えた。
+  LUT は `lut_trans` を使う。
+- `calibration3d.change_radial_distortion_image` を消し、2 つのカメラの間を除算モデルで変換する
+  `mvimage.change_radial_distortion_image` に置き換えた。
+- `find_ncc_models` はモデルのリストも受ける。`create_ncc_model` は空のテンプレートを拒む。
+
 ### 修正 — 完成度監査の段 0(CI・MCP・HALCON の見せ方・導入の文書)
 
 - CI の夜間の order-shuffle: `run: >` の折り畳みでコメント行と `pip install` が 1 行に連結され、Install が丸ごとシェルの

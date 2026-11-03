@@ -157,14 +157,25 @@ def classify_image_class_mlp(feature_images, model):
     return model["classes"][o.argmax(1)].reshape(H, W)
 
 
+def _class_rows(features, labels, op):
+    """学習の入口の検査: 空・行数違い・非有限は ValueError。(N, D) の float を返す。"""
+    if len(features) == 0:
+        raise ValueError("%s: features are empty — pass at least one row" % op)
+    X = np.asarray(features, float).reshape(len(features), -1)
+    if np.asarray(labels).ravel().size != X.shape[0] or not np.isfinite(X).all():
+        raise ValueError("%s: features must be finite with one label per row" % op)
+    return X
+
+
 def train_class_mlp(features, labels, hidden=8, epochs=300):
     """MLP 分類器を学習(train_class_mlp)。
 
     ``features`` は (N, D)、``labels`` は (N,)。特徴は学習データの平均・標準偏差で標準化し、
     その値をモデル(``mu`` / ``sd``)に残す —— ``classify_image_class_mlp`` が同じ変換をかける。
     戻り値は ``classify_image_class_mlp`` にそのまま渡せる dict。
+    空の入力(``features`` が 0 要素)は ValueError。
     """
-    X = np.asarray(features, float).reshape(len(features), -1)
+    X = _class_rows(features, labels, "train_class_mlp")
     mu, sd = _standardise_fit(X)
     model = _train_mlp((X - mu) / sd, np.asarray(labels).ravel(), hidden, epochs)
     model["mu"], model["sd"] = mu, sd
@@ -176,8 +187,9 @@ def train_class_svm(features, labels, C=1.0, epochs=300, lr=0.01):
 
     特徴は標準化してから学習し、``mu`` / ``sd`` をモデルに残す(``classify_image_class_svm`` が使う)。
     one-vs-rest の線形分離なので、一直線に並んだ 3 クラスの真ん中のような配置は苦手(既知の限界)。
+    空の入力(``features`` が 0 要素)は ValueError。
     """
-    X = np.asarray(features, float).reshape(len(features), -1)
+    X = _class_rows(features, labels, "train_class_svm")
     mu, sd = _standardise_fit(X)
     X = (X - mu) / sd
     y = np.asarray(labels).ravel(); classes = np.unique(y)

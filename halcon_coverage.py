@@ -180,6 +180,10 @@ def analyze(data, registry, versions_data=None):
                 if hname.startswith("_"):
                     continue
                 analog.setdefault(hname, []).append("facade:" + ref)
+    # 台帳 op の対応(2026-11-02)。Op.halcon を持たない台帳の側の正本。
+    import opassist
+    for op_name, hname in opassist.ledger_halcon_map().items():
+        analog.setdefault(hname, []).append("ledger:" + op_name)
     ours = set(analog)
 
     # 部分対応(PARTIAL)は名前の対応があっても covered に入れない。表が古くなった(名乗りが消えた /

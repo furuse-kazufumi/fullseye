@@ -1,5 +1,7 @@
 # HALCON カバレッジ — honest な分母(2026-08-18 更新)
 
+> 2026-11-02 追記: 下の 2026-08 の分類は名前を 1 つずつ見直して更新した。最新の 4 分類は [HALCON_GAP_2026-11-02.md](HALCON_GAP_2026-11-02.md)。
+
 `halcon_coverage.py` は全 2313 operator を分母に **31.5%(728/2313)** と報告する。しかし
 **「HALCON 級 vision ライブラリ」の honest な目標分母は 2313 ではない** — HALCON の 2313 には
 numpy vision スキルライブラリが再現すべきでない/できない operator が約 1034 含まれる。

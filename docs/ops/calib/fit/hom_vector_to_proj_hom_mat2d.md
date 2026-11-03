@@ -4,6 +4,7 @@ dim: calib
 category: fit
 in: keypoints
 out: matrix
+halcon: hom_vector_to_proj_hom_mat2d
 gpu: なし
 examples: [poc_panorama_drift, poc_wound_area_tracking]
 author: Kazufumi Furuse
@@ -15,6 +16,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 - **データ種**: `keypoints` → `matrix`
 - **呼び出し**: `import fullseye as fs; fs.ledger.hom_vector_to_proj_hom_mat2d(src, dst) -> 'np.ndarray'` (実装を直接呼ぶなら `import fit_transform; fit_transform.hom_vector_to_proj_hom_mat2d(src, dst) -> 'np.ndarray'`、台帳から引くなら `opscalib.get("hom_vector_to_proj_hom_mat2d")`)
+- **HALCON 相当**: `hom_vector_to_proj_hom_mat2d`(意味・パラメータは HALCON リファレンスが参考になる)
 - **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方

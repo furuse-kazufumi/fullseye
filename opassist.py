@@ -66,6 +66,9 @@ _LEDGERS = (
     # 2026-11-03: 記号の読み取り(1-D / 2-D コード・撮像シミュ・印字品質・読み取りの POD・OCR)。
     #   監査で 2-D コードと印字品質は全層ゼロだった。新語なし(table / image2d / signal / matrix)。
     ("opssymbol", "OPSSYMBOL"),
+    # 2026-11-02: 工業用ビジョンの定番の演算(ステレオ・幾何の再標本化・古典形態学・カルマン背景・
+    #   分類器の入口・文字行)。新語なし(image2d / mask / labels2d / keypoints / table / scalar)。
+    ("opsmv", "OPSMV"),
     # 2026-10-01: OpenVX 1.3.1 の素の口(勾配・表引き・ヒストグラム・非極大の抑制)。新語なし。
     ("opsvx", "OPSVX"),
     # 2026-09-29: 自動運転の教習所ワールド(規格寸法のコース / 3-D の世界 / 回転式 LiDAR)。新語なし。
@@ -104,6 +107,21 @@ _LEDGERS = (
     ("opssegmentation", "OPSSEGMENTATION"),
     ("opsgeocam", "OPSGEOCAM"),          # 2026-09-21: 固定カメラの向きを写真から(太陽・スカイライン、新語なし)      # 2026-09-21: 3D プリンタ(G-code / 3MF / スライス / 層画像の検査)            # 2026-09-21: 生きている組織の 3D+t(増幅・流れ・補間・高さ場)      # 2026-09-21: 動画の空間×時間の立方体(Video Summagator の再実装)          # 2026-09-21: EM 校正のセカンドオピニオン(labels2d / image2d / table)
 )
+
+def ledger_halcon_map() -> dict:
+    """台帳 op → HALCON の演算子名の表(``fullseye/data/halcon_ledger_map.json``)。
+
+    ``Op.halcon`` を持つのは registry だけで、台帳の行の ``halcon`` 欄は長く空のままだった。
+    そのため実装のある名前まで「未対応」と数える門が出た(2026-11-02、OpenCL の対応行列)。
+    表が読めないときは例外にする(黙って空を返すと索引の欄が全部消える)。
+    """
+    import json
+    import os
+    path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "fullseye", "data",
+                        "halcon_ledger_map.json")
+    with open(path, encoding="utf-8") as fh:
+        return {k: v for k, v in json.load(fh).items() if not k.startswith("_")}
+
 
 #: 進化する 2-D op のレジストリ(``ops.REGISTRY``、882 op)。**台帳ではない** ——
 #: つまみが ``a``/``b`` の 2 つに固定されており、:func:`run` の宣言型・プリセット・

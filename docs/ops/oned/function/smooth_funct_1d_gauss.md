@@ -4,6 +4,7 @@ dim: oned
 category: function
 in: signal
 out: signal
+halcon: smooth_funct_1d_gauss
 gpu: なし
 examples: [poc_fiber_orientation, poc_tree_ring_dendro, poc_web_roll_periodicity, signal_funct1d]
 author: Kazufumi Furuse
@@ -15,6 +16,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 - **データ種**: `signal` → `signal`
 - **呼び出し**: `import fullseye as fs; fs.ledger.smooth_funct_1d_gauss(y, sigma: 'float' = 1.0)` (実装を直接呼ぶなら `import funct1d; funct1d.smooth_funct_1d_gauss(y, sigma: 'float' = 1.0)`、台帳から引くなら `ops1d.get("smooth_funct_1d_gauss")`)
+- **HALCON 相当**: `smooth_funct_1d_gauss`(意味・パラメータは HALCON リファレンスが参考になる)
 - **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方

@@ -292,7 +292,10 @@ def test_pending_exposure_shrinks_when_fixed():
 #   (M, W, R) で計算する)。実測 948 → 977。公開 op として載せる判断は次の便。
 # 2026-11-04 統合 GPU: 999 + 35(第 4 便 lens_gpu 22・polar_gpu 13。ブランチの注記は 29 だが、その後の commit
 #   21ba71f0bf / 959c474b26 で増えた分が数え直されていなかった)= 1034。実測も 1034。
-_HIDDEN_FUNCTIONS_TODAY = 1034
+# 2026-11-02 opsmv 台帳(工業用ビジョンの定番 47 op): 台帳の内部 API 4 本、除算モデルの 2 本
+#   (distort_division / undistort_division、op の部品)、opassist.ledger_halcon_map。実測 948 → 955。
+# 2026-11-04 統合 GPU: 1034 + 7(opsmv)= 1041。実測も 1041。
+_HIDDEN_FUNCTIONS_TODAY = 1041
 
 
 def _hidden_total():

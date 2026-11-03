@@ -1,0 +1,24 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">area_center_gray — MV <code style="color:#22d3bf">gray</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.area_center_gray(image, region=None)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import image_gray; image_gray.area_center_gray(image, region=None)</code>、台帳から引くなら <code style="color:#22d3bf">opsmv.get(&quot;area_center_gray&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>HALCON 相当</b>: <code style="color:#22d3bf">area_center_gray</code>(意味・パラメータは HALCON リファレンスが参考になる)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>灰色値を重みとした質量と重心 <code style="color:#22d3bf">(row, col)</code> を返す(area_center_gray)。</p>
+<p><code style="color:#22d3bf">region</code> を渡すとその画素だけを数える。質量が 0 なら <code style="color:#22d3bf">area</code> が 0.0 で重心は原点を返す(理由: 重みが無いと重心が定義できない)。空の入力(<code style="color:#22d3bf">image</code> が 0 要素)は ValueError。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemv:machine_vision_classics">machine_vision_classics ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:machine_vision_tour">machine_vision_tour</a> — <code style="color:#22d3bf">py -3.11 examples/machine_vision_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opmv:map_image">map_image</a> · <a style="color:#22d3bf" href="opmv:rectify_to_world_plane">rectify_to_world_plane</a> · <a style="color:#22d3bf" href="opmv:change_radial_distortion_image">change_radial_distortion_image</a> · <a style="color:#22d3bf" href="opmv:find_ncc_models">find_ncc_models</a> · <a style="color:#22d3bf" href="opmv:run_bg_esti">run_bg_esti</a> · <a style="color:#22d3bf" href="opmv:give_bg_esti">give_bg_esti</a> · <a style="color:#22d3bf" href="opmv:update_bg_esti">update_bg_esti</a> · <a style="color:#22d3bf" href="opmv:classify_class_gmm">classify_class_gmm</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">gray</code>)</h3>
+<p><a style="color:#22d3bf" href="opmv:atan2_image">atan2_image</a> · <a style="color:#22d3bf" href="opmv:gray_histo">gray_histo</a> · <a style="color:#22d3bf" href="opmv:gray_projections">gray_projections</a> · <a style="color:#22d3bf" href="opmv:get_grayval_contour_xld">get_grayval_contour_xld</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: image_gray.py — MV operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

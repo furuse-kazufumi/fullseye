@@ -348,11 +348,22 @@ def match_rel_pose_ransac(points1, points2, K, thresh=1.0, iters=200, seed=0):
 
 
 def reconstruct_surface_stereo(disparity, focal=500.0, baseline=0.1, cx=0.0, cy=0.0):
-    """視差マップ全体から 3D 点群(サーフェス)を復元(reconstruct_surface_stereo)。"""
+    """視差画像の有効な画素を 3-D の点へ写す(reconstruct_surface_stereo)。
+
+    ``Z = focal * baseline / d``、``X = (col - cx) * baseline / d``、``Y = (row - cy) * baseline / d``。
+    NaN と inf と 0 の視差は無効として落とす。有効な画素が無いと (0, 3) の空を返す(理由: 無効の
+    画素は点を作らない)。空の入力(``disparity`` が 0 要素)は ValueError。
+    """
     d = np.asarray(disparity, float)
+    if d.size == 0:
+        raise ValueError("reconstruct_surface_stereo: disparity is empty — pass at least one pixel")
+    if d.ndim != 2:
+        raise ValueError("reconstruct_surface_stereo: disparity must be 2-D, got %r" % (d.shape,))
+    if not (np.isfinite([focal, baseline, cx, cy]).all() and focal > 0 and baseline > 0):
+        raise ValueError("reconstruct_surface_stereo: focal and baseline must be positive and finite")
     H, W = d.shape
     rr, cc = np.mgrid[0:H, 0:W]
-    valid = np.abs(d) > 1e-6
+    valid = np.isfinite(d) & (np.abs(d) > 1e-6)
     dd = np.where(valid, d, np.nan)
     Z = focal * baseline / dd
     X = (cc - cx) * baseline / dd

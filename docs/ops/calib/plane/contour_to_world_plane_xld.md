@@ -4,6 +4,7 @@ dim: calib
 category: plane
 in: table
 out: table
+halcon: contour_to_world_plane_xld
 gpu: なし
 examples: [poc_wound_area_tracking]
 author: Kazufumi Furuse
@@ -15,6 +16,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 - **データ種**: `table` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.contour_to_world_plane_xld(contour, homography)` (実装を直接呼ぶなら `import calib; calib.contour_to_world_plane_xld(contour, homography)`、台帳から引くなら `opscalib.get("contour_to_world_plane_xld")`)
+- **HALCON 相当**: `contour_to_world_plane_xld`(意味・パラメータは HALCON リファレンスが参考になる)
 - **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方

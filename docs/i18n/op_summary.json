@@ -33437,6 +33437,429 @@
    "ko": "열화량의 각 수준에서 심볼을 ``trials`` 회 촬상·판독하고 시도 1회 = 1행의 표를 반환한다(`table`).",
    "de": "Nimmt das Symbol auf jeder Degradationsstufe ``trials``-mal auf, liest es und liefert eine Zeile je Versuch (`table`).",
    "hi": "हर degradation level पर symbol को ``trials`` बार capture करके पढ़ता है और हर प्रयास की एक row लौटाता है (`table`)।"
+  },
+  "mv/binocular_disparity_ms": {
+   "fp": "54a98bfbb4c9",
+   "en": "Compute rectified-stereo disparity with semi-global matching, verify it left-right and interpolate to subpixel.",
+   "zh": "用半全局匹配计算校正立体的视差，做左右一致检查并插值到亚像素。",
+   "tw": "以半全域匹配計算校正立體的視差，做左右一致檢查並內插到次像素。",
+   "ko": "반전역 정합으로 평행화 스테레오의 시차를 구하고 좌우 일치를 검사한 뒤 서브픽셀로 보간한다.",
+   "de": "Berechnet die Disparität rektifizierter Stereobilder per Semi-Global Matching, prüft sie links-rechts und interpoliert subpixelgenau.",
+   "hi": "सेमी-ग्लोबल मैचिंग से रेक्टिफ़ाइड स्टीरियो का डिस्पैरिटी निकालता है, बाएँ-दाएँ जाँचता है और सबपिक्सेल तक इंटरपोलेट करता है।"
+  },
+  "mv/binocular_distance_ms": {
+   "fp": "3872a045e85f",
+   "en": "Compute the distance image of a rectified stereo pair (`Z = focal * baseline / (disparity + doffs)`).",
+   "zh": "计算校正立体的距离图（`Z = focal * baseline / (disparity + doffs)`）。",
+   "tw": "計算校正立體的距離圖（`Z = focal * baseline / (disparity + doffs)`）。",
+   "ko": "평행화 스테레오의 거리 영상을 구한다(`Z = focal * baseline / (disparity + doffs)`).",
+   "de": "Berechnet das Distanzbild eines rektifizierten Stereopaars (`Z = focal * baseline / (disparity + doffs)`).",
+   "hi": "रेक्टिफ़ाइड स्टीरियो की दूरी छवि निकालता है (`Z = focal * baseline / (disparity + doffs)`)।"
+  },
+  "mv/reconstruct_surface_stereo": {
+   "fp": "69b5f021a5f4",
+   "en": "Map the valid pixels of a disparity image to 3-D points.",
+   "zh": "把视差图的有效像素映射为三维点。",
+   "tw": "把視差圖的有效像素映射為三維點。",
+   "ko": "시차 영상의 유효 화소를 3차원 점으로 옮긴다.",
+   "de": "Bildet die gültigen Pixel eines Disparitätsbilds auf 3-D-Punkte ab.",
+   "hi": "डिस्पैरिटी छवि के मान्य पिक्सेल को 3-D बिंदुओं में बदलता है।"
+  },
+  "mv/map_image": {
+   "fp": "09c4f8b2196a",
+   "en": "Resample an image through an inverse map (each output pixel reads an input coordinate).",
+   "zh": "用逆映射表对图像重采样（每个输出像素读取一个输入坐标）。",
+   "tw": "以逆映射表對影像重取樣（每個輸出像素讀取一個輸入座標）。",
+   "ko": "역매핑 표로 영상을 재표본화한다(출력 화소마다 입력 좌표를 읽는다).",
+   "de": "Tastet ein Bild über eine inverse Abbildung neu ab (jedes Ausgabepixel liest eine Eingabekoordinate).",
+   "hi": "व्युत्क्रम मैप से छवि को पुनः-सैंपल करता है (हर आउटपुट पिक्सेल एक इनपुट निर्देशांक पढ़ता है)।"
+  },
+  "mv/rectify_to_world_plane": {
+   "fp": "4599a3cc6bdf",
+   "en": "Rectify an image to a fronto-parallel view of the world plane z=0 (one pixel = `scale` world units).",
+   "zh": "把图像校正为世界平面 z=0 的正视图（1 像素 = `scale` 世界单位）。",
+   "tw": "把影像校正為世界平面 z=0 的正視圖（1 像素 = `scale` 世界單位）。",
+   "ko": "영상을 세계 평면 z=0의 정면도로 평행화한다(1화소 = `scale` 세계 단위).",
+   "de": "Rektifiziert ein Bild zur Frontalansicht der Weltebene z=0 (ein Pixel = `scale` Welteinheiten).",
+   "hi": "छवि को विश्व तल z=0 के सीधे दृश्य में रेक्टिफ़ाई करता है (1 पिक्सेल = `scale` विश्व इकाई)।"
+  },
+  "mv/change_radial_distortion_image": {
+   "fp": "1befa9a31943",
+   "en": "Redraw an image from one division-model camera into another distortion and intrinsics.",
+   "zh": "把除法模型相机的图像重绘为另一组畸变与内参的图像。",
+   "tw": "把除法模型相機的影像重繪為另一組畸變與內參的影像。",
+   "ko": "나눗셈 모델 카메라의 영상을 다른 왜곡·내부 파라미터의 영상으로 다시 그린다.",
+   "de": "Zeichnet ein Bild einer Divisionsmodell-Kamera in eine andere Verzeichnung und Intrinsik um.",
+   "hi": "डिविज़न मॉडल कैमरे की छवि को दूसरे विरूपण और आंतरिक प्राचलों की छवि में फिर से बनाता है।"
+  },
+  "mv/crop_rectangle2": {
+   "fp": "81bf3c05e80c",
+   "en": "Read the inside of a rotated rectangle by linear interpolation and cut it out as an axis-aligned image.",
+   "zh": "用线性插值读取旋转矩形内部，并裁剪为轴对齐图像。",
+   "tw": "以線性內插讀取旋轉矩形內部，並裁切為軸對齊影像。",
+   "ko": "회전 사각형 내부를 선형 보간으로 읽어 축 정렬 영상으로 잘라낸다.",
+   "de": "Liest das Innere eines gedrehten Rechtecks linear interpoliert und schneidet es achsparallel aus.",
+   "hi": "घूमे आयत के भीतर को रैखिक इंटरपोलेशन से पढ़कर अक्ष-संरेखित छवि के रूप में काटता है।"
+  },
+  "mv/atan2_image": {
+   "fp": "354eca1b2260",
+   "en": "Return the per-pixel `atan2(image1, image2)` of two images in radians.",
+   "zh": "以弧度返回两幅图像逐像素的 `atan2(image1, image2)`。",
+   "tw": "以弧度回傳兩幅影像逐像素的 `atan2(image1, image2)`。",
+   "ko": "두 영상의 화소별 `atan2(image1, image2)`를 라디안으로 반환한다.",
+   "de": "Gibt pixelweise `atan2(image1, image2)` zweier Bilder im Bogenmaß zurück.",
+   "hi": "दो छवियों का प्रति-पिक्सेल `atan2(image1, image2)` रेडियन में लौटाता है।"
+  },
+  "mv/area_center_gray": {
+   "fp": "cff2fb63ab2e",
+   "en": "Return the gray-weighted mass and centroid `(row, col)`.",
+   "zh": "返回以灰度为权的质量与重心 `(row, col)`。",
+   "tw": "回傳以灰度為權的質量與重心 `(row, col)`。",
+   "ko": "회색값을 가중치로 한 질량과 무게중심 `(row, col)`을 반환한다.",
+   "de": "Gibt die grauwertgewichtete Masse und den Schwerpunkt `(row, col)` zurück.",
+   "hi": "ग्रे मान से भारित द्रव्यमान और केंद्रक `(row, col)` लौटाता है।"
+  },
+  "mv/gray_histo": {
+   "fp": "fc5d279abcdc",
+   "en": "Return the gray-value histogram as absolute and relative frequencies.",
+   "zh": "以绝对频数与相对频率返回灰度直方图。",
+   "tw": "以絕對次數與相對頻率回傳灰度直方圖。",
+   "ko": "회색값 히스토그램을 절대 도수와 상대 도수로 반환한다.",
+   "de": "Gibt das Grauwerthistogramm als absolute und relative Häufigkeiten zurück.",
+   "hi": "ग्रे-मान हिस्टोग्राम को निरपेक्ष और सापेक्ष आवृत्तियों में लौटाता है।"
+  },
+  "mv/gray_projections": {
+   "fp": "6448544b259b",
+   "en": "Return the mean gray value per row and per column.",
+   "zh": "返回每行与每列的灰度平均值。",
+   "tw": "回傳每列與每行的灰度平均值。",
+   "ko": "행별·열별 회색값 평균을 반환한다.",
+   "de": "Gibt den mittleren Grauwert je Zeile und je Spalte zurück.",
+   "hi": "प्रति पंक्ति और प्रति स्तंभ औसत ग्रे मान लौटाता है।"
+  },
+  "mv/get_grayval_contour_xld": {
+   "fp": "5fa2475db06d",
+   "en": "Read gray values along a contour by interpolation into one signal.",
+   "zh": "沿轮廓点列插值读取灰度，得到一条信号。",
+   "tw": "沿輪廓點列內插讀取灰度，得到一條訊號。",
+   "ko": "윤곽 점열을 따라 회색값을 보간으로 읽어 하나의 신호로 만든다.",
+   "de": "Liest Grauwerte entlang einer Kontur interpoliert zu einem Signal aus.",
+   "hi": "कंटूर के साथ ग्रे मानों को इंटरपोलेशन से पढ़कर एक सिग्नल बनाता है।"
+  },
+  "mv/points_lepetit": {
+   "fp": "8b3312fff889",
+   "en": "Detect interest points by comparing opposite pairs on a circle (the Lepetit-Fua detector).",
+   "zh": "比较圆周上相对的两点来检测关注点（Lepetit–Fua 检测器）。",
+   "tw": "比較圓周上相對的兩點來偵測關注點（Lepetit–Fua 偵測器）。",
+   "ko": "원주 위 마주 보는 두 점을 비교해 관심점을 검출한다(Lepetit–Fua 검출기).",
+   "de": "Erkennt Interessenpunkte durch Vergleich gegenüberliegender Punkte auf einem Kreis (Lepetit-Fua-Detektor).",
+   "hi": "वृत्त पर आमने-सामने के बिंदुओं की तुलना से रुचि बिंदु खोजता है (Lepetit–Fua डिटेक्टर)।"
+  },
+  "mv/find_ncc_models": {
+   "fp": "3a081ee5c837",
+   "en": "Find one or more NCC models in one image.",
+   "zh": "在一幅图像中查找一个或多个 NCC 模型。",
+   "tw": "在一幅影像中尋找一個或多個 NCC 模型。",
+   "ko": "한 영상에서 하나 이상의 NCC 모델을 찾는다.",
+   "de": "Sucht ein oder mehrere NCC-Modelle in einem Bild.",
+   "hi": "एक छवि में एक या अधिक NCC मॉडल खोजता है।"
+  },
+  "mv/get_circle_pose": {
+   "fp": "3582bba5dfb8",
+   "en": "Recover the center and normal of a circle of known radius from its image ellipse, in camera coordinates.",
+   "zh": "由已知半径圆的图像椭圆点列，在相机坐标系中求圆心与法线。",
+   "tw": "由已知半徑圓的影像橢圓點列，在相機座標系中求圓心與法線。",
+   "ko": "반지름이 알려진 원의 상(타원 점열)에서 원의 중심과 법선을 카메라 좌표로 구한다.",
+   "de": "Bestimmt Mittelpunkt und Normale eines Kreises bekannten Radius aus seiner Bildellipse in Kamerakoordinaten.",
+   "hi": "ज्ञात त्रिज्या वाले वृत्त की छवि (दीर्घवृत्त) से कैमरा निर्देशांक में केंद्र और अभिलंब निकालता है।"
+  },
+  "mv/golay_elements": {
+   "fp": "a621031f0a98",
+   "en": "Build the 3x3 hit and miss structuring elements of a Golay letter with 45-degree rotation.",
+   "zh": "生成 Golay 字母的 3x3 击中与击不中结构元（45 度步进旋转）。",
+   "tw": "產生 Golay 字母的 3x3 擊中與擊不中結構元（45 度步進旋轉）。",
+   "ko": "Golay 문자의 3x3 히트·미스 구조 요소 쌍을 45도 회전으로 만든다.",
+   "de": "Erzeugt die 3x3-Hit- und Miss-Strukturelemente eines Golay-Buchstabens mit 45-Grad-Rotation.",
+   "hi": "Golay अक्षर के 3x3 हिट और मिस संरचनात्मक तत्व 45-डिग्री घूर्णन के साथ बनाता है।"
+  },
+  "mv/hit_or_miss_golay": {
+   "fp": "1c34cb3bffc4",
+   "en": "Apply the hit-or-miss transform with one Golay letter (returns the matching center pixels).",
+   "zh": "用一个 Golay 字母做击中击不中变换（返回匹配的中心像素）。",
+   "tw": "以一個 Golay 字母做擊中擊不中變換（回傳匹配的中心像素）。",
+   "ko": "Golay 문자 하나로 히트 오어 미스 변환을 적용한다(일치한 중심 화소를 반환).",
+   "de": "Wendet die Hit-or-Miss-Transformation mit einem Golay-Buchstaben an (liefert die passenden Mittelpixel).",
+   "hi": "एक Golay अक्षर से हिट-ऑर-मिस रूपांतरण लगाता है (मेल खाने वाले केंद्र पिक्सेल लौटाता है)।"
+  },
+  "mv/hit_or_miss_seq": {
+   "fp": "09556e0457de",
+   "en": "Return the union of the hit-or-miss transforms over all eight rotations of a Golay letter.",
+   "zh": "返回 Golay 字母 8 个旋转的击中击不中变换的并集。",
+   "tw": "回傳 Golay 字母 8 個旋轉的擊中擊不中變換的聯集。",
+   "ko": "Golay 문자의 8개 회전 전부에 대한 히트 오어 미스 변환의 합집합을 반환한다.",
+   "de": "Gibt die Vereinigung der Hit-or-Miss-Transformationen über alle acht Rotationen eines Golay-Buchstabens zurück.",
+   "hi": "Golay अक्षर के सभी आठ घूर्णनों के हिट-ऑर-मिस रूपांतरणों का संघ लौटाता है।"
+  },
+  "mv/thickening_hit_miss": {
+   "fp": "3b954e582bbd",
+   "en": "Thicken a region with an arbitrary structuring pair (`A ∪ HMT(A)`, `iterations` times).",
+   "zh": "用任意结构元对加厚区域（`A ∪ HMT(A)`，重复 `iterations` 次）。",
+   "tw": "以任意結構元對加厚區域（`A ∪ HMT(A)`，重複 `iterations` 次）。",
+   "ko": "임의의 구조 요소 쌍으로 영역을 두껍게 한다(`A ∪ HMT(A)`를 `iterations`회).",
+   "de": "Verdickt eine Region mit einem beliebigen Strukturpaar (`A ∪ HMT(A)`, `iterations`-mal).",
+   "hi": "मनचाहे संरचनात्मक युग्म से क्षेत्र को मोटा करता है (`A ∪ HMT(A)`, `iterations` बार)।"
+  },
+  "mv/thickening_golay": {
+   "fp": "b170d3560994",
+   "en": "Thicken a region with one Golay letter.",
+   "zh": "用一个 Golay 字母加厚区域。",
+   "tw": "以一個 Golay 字母加厚區域。",
+   "ko": "Golay 문자 하나로 영역을 두껍게 한다.",
+   "de": "Verdickt eine Region mit einem Golay-Buchstaben.",
+   "hi": "एक Golay अक्षर से क्षेत्र को मोटा करता है।"
+  },
+  "mv/thickening_seq": {
+   "fp": "130a160d7551",
+   "en": "Thicken a region through the rotations of a Golay letter in turn until it stops changing.",
+   "zh": "依次使用 Golay 字母的各旋转加厚，直到不再变化。",
+   "tw": "依序使用 Golay 字母的各旋轉加厚，直到不再變化。",
+   "ko": "Golay 문자의 회전을 차례로 적용해 변화가 멈출 때까지 두껍게 한다.",
+   "de": "Verdickt reihum mit den Rotationen eines Golay-Buchstabens, bis sich nichts mehr ändert.",
+   "hi": "Golay अक्षर के घूर्णनों को बारी-बारी लगाकर बदलाव रुकने तक मोटा करता है।"
+  },
+  "mv/morph_hat": {
+   "fp": "2849433a327a",
+   "en": "Return the union of the pixels removed by opening and the pixels added by closing.",
+   "zh": "返回开运算去掉的像素与闭运算增加的像素的并集。",
+   "tw": "回傳開運算去掉的像素與閉運算增加的像素的聯集。",
+   "ko": "열림으로 사라진 화소와 닫힘으로 늘어난 화소의 합집합을 반환한다.",
+   "de": "Gibt die Vereinigung der durch Öffnen entfernten und durch Schließen hinzugefügten Pixel zurück.",
+   "hi": "ओपनिंग से हटे और क्लोज़िंग से जुड़े पिक्सेल का संघ लौटाता है।"
+  },
+  "mv/morph_skiz": {
+   "fp": "96531191d553",
+   "en": "Compute the boundaries of the zones of influence (SKIZ) of the components in Euclidean distance.",
+   "zh": "用欧氏距离求连通分量影响区的边界（SKIZ）。",
+   "tw": "以歐氏距離求連通成分影響區的邊界（SKIZ）。",
+   "ko": "연결 성분의 영향권 경계(SKIZ)를 유클리드 거리로 구한다.",
+   "de": "Berechnet die Grenzen der Einflusszonen (SKIZ) der Komponenten in euklidischer Distanz.",
+   "hi": "घटकों के प्रभाव क्षेत्रों की सीमाएँ (SKIZ) यूक्लिडियन दूरी से निकालता है।"
+  },
+  "mv/opening_seg": {
+   "fp": "d8986245cb12",
+   "en": "Separate objects joined by necks with an erosion and grow them back inside the region as labels.",
+   "zh": "用腐蚀分开由细颈相连的物体，并在区域内重新扩展为标签。",
+   "tw": "以侵蝕分開由細頸相連的物體，並在區域內重新擴展為標籤。",
+   "ko": "잘록하게 이어진 물체를 침식으로 떼어 내고 영역 안에서 다시 넓혀 라벨로 만든다.",
+   "de": "Trennt durch Engstellen verbundene Objekte per Erosion und lässt sie innerhalb der Region als Labels wieder wachsen.",
+   "hi": "संकरी कड़ियों से जुड़ी वस्तुओं को अपक्षरण से अलग कर क्षेत्र के भीतर फिर बढ़ाकर लेबल बनाता है।"
+  },
+  "mv/gen_nurbs_interp": {
+   "fp": "0b901dc76830",
+   "en": "Find the control points of a non-rational B-spline through every point (global interpolation).",
+   "zh": "求经过全部点的非有理 B 样条控制点（全局插值）。",
+   "tw": "求通過全部點的非有理 B 樣條控制點（全域內插）。",
+   "ko": "모든 점을 지나는 비유리 B-스플라인의 제어점을 구한다(전역 보간).",
+   "de": "Bestimmt die Kontrollpunkte eines nichtrationalen B-Splines durch alle Punkte (globale Interpolation).",
+   "hi": "सभी बिंदुओं से गुज़रने वाले गैर-परिमेय B-स्प्लाइन के नियंत्रण बिंदु निकालता है (वैश्विक इंटरपोलेशन)।"
+  },
+  "mv/filter_kalman": {
+   "fp": "b87348b4fade",
+   "en": "Run one predict-and-update cycle of a linear Kalman filter.",
+   "zh": "执行线性卡尔曼滤波的一次预测与更新。",
+   "tw": "執行線性卡爾曼濾波的一次預測與更新。",
+   "ko": "선형 칼만 필터의 예측과 갱신을 1주기 계산한다.",
+   "de": "Führt einen Prädiktions- und Korrekturzyklus eines linearen Kalman-Filters aus.",
+   "hi": "रैखिक कालमैन फ़िल्टर का एक पूर्वानुमान-और-अद्यतन चक्र चलाता है।"
+  },
+  "mv/create_bg_esti": {
+   "fp": "62c503f80612",
+   "en": "Create a per-pixel Kalman background model from the first image.",
+   "zh": "由第一幅图像创建逐像素卡尔曼背景模型。",
+   "tw": "由第一幅影像建立逐像素卡爾曼背景模型。",
+   "ko": "첫 영상에서 화소별 칼만 배경 모델을 만든다.",
+   "de": "Erzeugt aus dem ersten Bild ein pixelweises Kalman-Hintergrundmodell.",
+   "hi": "पहली छवि से प्रति-पिक्सेल कालमैन पृष्ठभूमि मॉडल बनाता है।"
+  },
+  "mv/run_bg_esti": {
+   "fp": "3efa4588c08c",
+   "en": "Update the background with one image and return the foreground region.",
+   "zh": "用一幅图像更新背景并返回前景区域。",
+   "tw": "以一幅影像更新背景並回傳前景區域。",
+   "ko": "영상 한 장으로 배경을 갱신하고 전경 영역을 반환한다.",
+   "de": "Aktualisiert den Hintergrund mit einem Bild und gibt die Vordergrundregion zurück.",
+   "hi": "एक छवि से पृष्ठभूमि अद्यतन करता है और अग्रभूमि क्षेत्र लौटाता है।"
+  },
+  "mv/give_bg_esti": {
+   "fp": "81b56af91545",
+   "en": "Return a copy of the model's current background image.",
+   "zh": "返回模型当前背景图像的副本。",
+   "tw": "回傳模型目前背景影像的副本。",
+   "ko": "모델의 현재 배경 영상의 사본을 반환한다.",
+   "de": "Gibt eine Kopie des aktuellen Hintergrundbilds des Modells zurück.",
+   "hi": "मॉडल की वर्तमान पृष्ठभूमि छवि की प्रति लौटाता है।"
+  },
+  "mv/update_bg_esti": {
+   "fp": "7852286b12dd",
+   "en": "Update the background only inside the given region.",
+   "zh": "只在给定区域内更新背景。",
+   "tw": "只在給定區域內更新背景。",
+   "ko": "지정한 영역의 화소만 배경을 갱신한다.",
+   "de": "Aktualisiert den Hintergrund nur innerhalb der angegebenen Region.",
+   "hi": "केवल दिए गए क्षेत्र के भीतर पृष्ठभूमि अद्यतन करता है।"
+  },
+  "mv/train_class_gmm": {
+   "fp": "dc4ff3d04d10",
+   "en": "Train a Gaussian mixture per class with EM.",
+   "zh": "用 EM 为每个类学习高斯混合模型。",
+   "tw": "以 EM 為每個類別學習高斯混合模型。",
+   "ko": "클래스마다 혼합 정규 분포를 EM으로 학습한다.",
+   "de": "Trainiert je Klasse ein Gaußsches Mischmodell mit EM.",
+   "hi": "हर वर्ग के लिए EM से गॉसियन मिश्रण सीखता है।"
+  },
+  "mv/classify_class_gmm": {
+   "fp": "db03db6cc8ec",
+   "en": "Return the class with the largest posterior for each row under a Gaussian mixture model.",
+   "zh": "按高斯混合模型逐行返回后验最大的类。",
+   "tw": "依高斯混合模型逐列回傳後驗最大的類別。",
+   "ko": "혼합 정규 분포 모델에서 사후 확률이 최대인 클래스를 행마다 반환한다.",
+   "de": "Gibt je Zeile die Klasse mit der größten A-posteriori-Wahrscheinlichkeit eines Gauß-Mischmodells zurück.",
+   "hi": "गॉसियन मिश्रण मॉडल के तहत हर पंक्ति के लिए अधिकतम पश्च-प्रायिकता वाला वर्ग लौटाता है।"
+  },
+  "mv/evaluate_class_gmm": {
+   "fp": "49e5e9756e29",
+   "en": "Return the class posteriors and the overall log density for each row.",
+   "zh": "逐行返回各类后验与模型整体的对数密度。",
+   "tw": "逐列回傳各類後驗與模型整體的對數密度。",
+   "ko": "각 클래스의 사후 확률과 모델 전체의 로그 밀도를 행마다 반환한다.",
+   "de": "Gibt je Zeile die Klassen-Posterioren und die gesamte Log-Dichte zurück.",
+   "hi": "हर पंक्ति के लिए वर्ग पश्च-प्रायिकताएँ और कुल लॉग घनत्व लौटाता है।"
+  },
+  "mv/train_class_knn": {
+   "fp": "25c5cb3dfb6b",
+   "en": "Build a k-NN classifier (the features are standardized and kept).",
+   "zh": "构建 k-NN 分类器（特征标准化后保存）。",
+   "tw": "建立 k-NN 分類器（特徵標準化後保存）。",
+   "ko": "k-NN 분류기를 만든다(특징을 표준화해 보관).",
+   "de": "Erstellt einen k-NN-Klassifikator (Merkmale werden standardisiert gespeichert).",
+   "hi": "k-NN वर्गीकारक बनाता है (विशेषताएँ मानकीकृत कर रखी जाती हैं)।"
+  },
+  "mv/classify_class_knn": {
+   "fp": "1fa3a38c9c77",
+   "en": "Return the class per row by a k-nearest-neighbor majority vote (ties go to the smaller distance sum).",
+   "zh": "以 k 近邻多数表决逐行返回类（平票取距离和较小者）。",
+   "tw": "以 k 近鄰多數決逐列回傳類別（平票取距離和較小者）。",
+   "ko": "k 근방 다수결로 클래스를 행마다 반환한다(동표는 거리 합이 작은 클래스).",
+   "de": "Gibt je Zeile die Klasse per k-NN-Mehrheitsentscheid zurück (Gleichstand: kleinere Distanzsumme).",
+   "hi": "k-निकटतम पड़ोसी बहुमत से हर पंक्ति का वर्ग लौटाता है (बराबरी में छोटे दूरी-योग वाला)।"
+  },
+  "mv/classify_class_mlp": {
+   "fp": "b1a0e7f043d3",
+   "en": "Classify feature rows with the multilayer perceptron from `train_class_mlp`.",
+   "zh": "用 `train_class_mlp` 的多层感知机分类特征行。",
+   "tw": "以 `train_class_mlp` 的多層感知機分類特徵列。",
+   "ko": "`train_class_mlp`의 다층 퍼셉트론으로 특징 행을 분류한다.",
+   "de": "Klassifiziert Merkmalszeilen mit dem Mehrschichtperzeptron aus `train_class_mlp`.",
+   "hi": "`train_class_mlp` के बहु-परत परसेप्ट्रॉन से विशेषता पंक्तियों को वर्गीकृत करता है।"
+  },
+  "mv/classify_class_svm": {
+   "fp": "b81eb5519a70",
+   "en": "Classify feature rows with the linear SVM from `train_class_svm` (one-vs-rest maximum margin).",
+   "zh": "用 `train_class_svm` 的线性 SVM 分类特征行（一对多取最大间隔）。",
+   "tw": "以 `train_class_svm` 的線性 SVM 分類特徵列（一對多取最大間隔）。",
+   "ko": "`train_class_svm`의 선형 SVM으로 특징 행을 분류한다(one-vs-rest 최대 마진).",
+   "de": "Klassifiziert Merkmalszeilen mit der linearen SVM aus `train_class_svm` (One-vs-Rest, größte Marge).",
+   "hi": "`train_class_svm` की रैखिक SVM से विशेषता पंक्तियों को वर्गीकृत करता है (one-vs-rest अधिकतम मार्जिन)।"
+  },
+  "mv/create_lexicon": {
+   "fp": "45420495f8b1",
+   "en": "Build a word list for matching (duplicates removed, order fixed).",
+   "zh": "创建用于匹配的词表（去重并固定顺序）。",
+   "tw": "建立用於比對的詞表（去重並固定順序）。",
+   "ko": "대조에 쓸 단어 목록을 만든다(중복 제거, 순서 고정).",
+   "de": "Erstellt eine Wortliste zum Abgleich (ohne Duplikate, feste Reihenfolge).",
+   "hi": "मिलान के लिए शब्द सूची बनाता है (दोहराव हटाकर, क्रम स्थिर)।"
+  },
+  "mv/lookup_lexicon": {
+   "fp": "5a4b479ccb7f",
+   "en": "Check whether a word is in the list by exact match and return 1.0 if so, otherwise 0.0.",
+   "zh": "以完全匹配检查词是否在表中，在则返回 1.0，否则返回 0.0。",
+   "tw": "以完全比對檢查詞是否在表中，在則回傳 1.0，否則回傳 0.0。",
+   "ko": "단어가 목록에 있는지 완전 일치로 확인해 있으면 1.0, 없으면 0.0을 반환한다.",
+   "de": "Prüft per exaktem Treffer, ob ein Wort in der Liste steht, und gibt 1.0 oder sonst 0.0 zurück.",
+   "hi": "सटीक मिलान से जाँचता है कि शब्द सूची में है या नहीं; हो तो 1.0, नहीं तो 0.0 लौटाता है।"
+  },
+  "mv/suggest_lexicon": {
+   "fp": "bc9596034b30",
+   "en": "Return the word with the smallest edit distance and that distance.",
+   "zh": "返回编辑距离最小的词及其距离。",
+   "tw": "回傳編輯距離最小的詞及其距離。",
+   "ko": "편집 거리가 최소인 단어와 그 거리를 반환한다.",
+   "de": "Gibt das Wort mit dem kleinsten Editierabstand und diesen Abstand zurück.",
+   "hi": "सबसे कम संपादन दूरी वाला शब्द और वह दूरी लौटाता है।"
+  },
+  "mv/text_line_orientation": {
+   "fp": "fc05e71370a8",
+   "en": "Find the tilt of text lines in degrees by maximizing the sharpness of the projection.",
+   "zh": "通过使投影最锐利求文字行的倾角（度）。",
+   "tw": "透過使投影最銳利求文字列的傾角（度）。",
+   "ko": "투영의 선명도를 최대로 하여 문자 행의 기울기를 도 단위로 구한다.",
+   "de": "Bestimmt die Neigung von Textzeilen in Grad durch Maximieren der Projektionsschärfe.",
+   "hi": "प्रोजेक्शन की तीक्ष्णता अधिकतम करके पाठ पंक्तियों का झुकाव डिग्री में निकालता है।"
+  },
+  "mv/text_line_slant": {
+   "fp": "0d9b13fa54ba",
+   "en": "Find the character slant of a horizontal text line in degrees by maximizing the sharpness of the column projection.",
+   "zh": "通过使列投影最锐利求水平文字行的字符倾斜角（度）。",
+   "tw": "透過使行投影最銳利求水平文字列的字元傾斜角（度）。",
+   "ko": "열 투영의 선명도를 최대로 하여 수평 문자 행의 글자 기울임 각을 도 단위로 구한다.",
+   "de": "Bestimmt die Zeichenschräge einer waagerechten Textzeile in Grad durch Maximieren der Spaltenprojektionsschärfe.",
+   "hi": "स्तंभ प्रोजेक्शन की तीक्ष्णता अधिकतम करके क्षैतिज पाठ पंक्ति का अक्षर-झुकाव डिग्री में निकालता है।"
+  },
+  "mv/segment_characters": {
+   "fp": "396581c71425",
+   "en": "Split a text line image into a label image with one label per character column.",
+   "zh": "把文字行图像切分为按字符列分块的标签图。",
+   "tw": "把文字列影像切分為依字元行分塊的標籤圖。",
+   "ko": "문자 행 영상을 글자별 열 덩어리로 나눈 라벨 영상을 만든다.",
+   "de": "Zerlegt ein Textzeilenbild in ein Labelbild mit einem Label je Zeichenspalte.",
+   "hi": "पाठ पंक्ति की छवि को प्रति अक्षर-स्तंभ एक लेबल वाली लेबल छवि में बाँटता है।"
+  },
+  "mv/select_characters": {
+   "fp": "96cd784fbcb8",
+   "en": "Drop blobs whose height or width is off the median from a character label image and renumber from the left.",
+   "zh": "从字符标签图中去掉高度或宽度偏离中位数的块，并从左重新编号。",
+   "tw": "從字元標籤圖中去掉高度或寬度偏離中位數的塊，並從左重新編號。",
+   "ko": "글자 라벨 영상에서 높이나 폭이 중앙값에서 벗어난 덩어리를 빼고 왼쪽부터 다시 번호를 매긴다.",
+   "de": "Entfernt aus einem Zeichenlabelbild Blobs mit vom Median abweichender Höhe oder Breite und nummeriert von links neu.",
+   "hi": "अक्षर लेबल छवि से माध्यिका से हटकर ऊँचाई या चौड़ाई वाले ब्लॉब हटाकर बाएँ से फिर क्रमांकित करता है।"
+  },
+  "mv/train_class_mlp": {
+   "fp": "eee00bff6a78",
+   "en": "Train an MLP classifier.",
+   "zh": "训练 MLP 分类器。",
+   "tw": "訓練 MLP 分類器。",
+   "ko": "MLP 분류기를 학습한다.",
+   "de": "Trainiert einen MLP-Klassifikator.",
+   "hi": "MLP वर्गीकारक को प्रशिक्षित करता है।"
+  },
+  "mv/train_class_svm": {
+   "fp": "e45865bf8b24",
+   "en": "Train a linear SVM (hinge loss, one-vs-rest).",
+   "zh": "训练线性 SVM（hinge 损失，一对多）。",
+   "tw": "訓練線性 SVM（hinge 損失，一對多）。",
+   "ko": "선형 SVM(hinge 손실, one-vs-rest)을 학습한다.",
+   "de": "Trainiert eine lineare SVM (Hinge-Verlust, One-vs-Rest).",
+   "hi": "रैखिक SVM (hinge हानि, one-vs-rest) को प्रशिक्षित करता है।"
+  },
+  "mv/create_ncc_model": {
+   "fp": "25f18baa6a8d",
+   "en": "Prepare an NCC model (a normalized template).",
+   "zh": "准备 NCC 模型（归一化模板）。",
+   "tw": "準備 NCC 模型（正規化範本）。",
+   "ko": "NCC 모델(정규화 템플릿)을 준비한다.",
+   "de": "Bereitet ein NCC-Modell vor (normierte Vorlage).",
+   "hi": "NCC मॉडल (सामान्यीकृत टेम्पलेट) तैयार करता है।"
   }
  }
 }

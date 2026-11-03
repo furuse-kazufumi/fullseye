@@ -71,6 +71,8 @@ CHAIN = [
     # opdocs はノートへ同じ JSON から「同じ処理の別実装」の行を差し込む(この段の出力は読まない)。
     (["tools/impl_differential.py", "--quiet"],
      "docs/IMPL_DIFFERENTIAL.md(同じ処理の別実装の突き合わせ表)"),
+    (["tools/gen_halcon_gap.py"],
+     "HALCON 全 2,313 演算子の 4 分類の台帳(docs/HALCON_GAP_2026-11-02.md + 機械可読版)"),
     (["tools/opdocs.py", "all"],
      "op ノート + SAMPLES + TOC + RAG skill のコーパス地図 + Studio help HTML(6 言語)"),
     (["tools/gen_op_catalog.py"], "1 ページの op カタログ"),
@@ -172,6 +174,7 @@ OUTPUTS = {
                                         "docs/halcon_comparison_manifest.json",
                                         "docs/HALCON_PARITY.md"],
     "tools/impl_differential.py": ["docs/IMPL_DIFFERENTIAL.md"],
+    "tools/gen_halcon_gap.py": ["docs/HALCON_GAP_2026-11-02.md", "docs/halcon_gap_2026-11-02.json"],
     "tools/opdocs.py": ["docs/ops/*", "studio_assets/op_help/*", "docs/i18n/help_coverage.json",
                         "fullseye/skill_template/SKILL.md", "skills/fullseye-ops/SKILL.md"],
     "tools/gen_op_catalog.py": ["docs/OP_CATALOG.md", "fullseye/OP_CATALOG.md"],
@@ -267,6 +270,7 @@ READS = {
     "tools/gen_gpu_fill3_report.py": ["docs/perf/GPU_TIERS.md", "docs/perf/halcon_opencl_parity.json"],
     "tools/audit_file_formats.py": ["auto_specs_data.py", "docs/OP_INDEX.json"],
     "tools/halcon_compat_profile.py": ["docs/OP_INDEX.json"],
+    "tools/gen_halcon_gap.py": ["docs/OP_INDEX.json"],
     "tools/gen_capabilities_index.py": ["docs/OP_INDEX.json"],
     "tools/type_connectivity.py": ["docs/OP_INDEX.json"],
     "tools/gen_wingpoc_gallery.py": ["docs/articles/exhibits/exhibit_numbers.json",
@@ -277,7 +281,7 @@ READS = {
     "tools/gen_trust_block.py": ["docs/OP_INDEX.json", "docs/maturity.json",
                                  "docs/README.md", "docs/README.*.md"],
     "tools/gen_design_notes.py": ["auto_specs_data.py"],
-    "tools/gen_docs_index_ops.py": [
+    "tools/gen_docs_index_ops.py": ["docs/HALCON_GAP_2026-11-02.md", 
         "docs/ops/*", "docs/OP_CATALOG.md", "docs/CAPABILITIES.md", "docs/CAPABILITIES.*.md",
         "docs/HARDENING.md", "docs/HARDENING.*.md", "docs/MATURITY.md", "docs/FILE_FORMATS.md",
         "docs/articles/exhibits/wingpoc.*.md", "docs/articles/fullseye_poc_museum_qiita_*.md", "docs/articles/fullseye_poc_museum_*_qiita_*.md",
@@ -368,6 +372,9 @@ _IMAGE_REASON = ("画像・動画の書き手。PNG/GIF のバイトは Pillow �
 _SPIKE_REASON = ("スパイク(実験)の記録。spikes/out_gallery/ の図は当時の証跡として凍結してあり、"
                  "再描画(matplotlib / GUI)はバイトが変わる。")
 EXCLUDED = {
+    "tools/bench_gpu_optics.py": ("GPU 第 4 便の実測器(raytrace の CPU 基準と lens_gpu の一括経路の時間、--out の JSON)。"
+                                  "数字は機械と負荷で変わり、--batch cuda は GPU と gpu_in_use.lock の手順が要るので手で回す。"
+                                  "測定の記録は docs/perf/gpu_optics_2026-11-02.md / .json(2026-11-04 の統合で分類)。"),
     "tools/gpu_fill3_bench.py": ("GPU 第 3 便の実測器。CPU(登録経路)と GPU(転送込み)の時間を測り docs/perf/logs/fill3_*.json へ"
                                   "書く。数字は機械と負荷で変わり、GPU と gpu_in_use.lock の手順が要るので CI では回さず手で回して "
                                   "commit する。採否表は gen_gpu_fill3_report.py(鎖の段)がそのログから作る(2026-11-04 の統合で分類)。"),

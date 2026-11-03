@@ -4,6 +4,7 @@ dim: oned
 category: function
 in: signal
 out: measurement
+halcon: get_y_value_funct_1d
 gpu: なし
 examples: [poc_veiling_glare, signal_funct1d]
 author: Kazufumi Furuse
@@ -15,6 +16,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 - **データ種**: `signal` → `measurement`
 - **呼び出し**: `import fullseye as fs; fs.ledger.get_y_value_funct_1d(y, x, interpolate=True)` (実装を直接呼ぶなら `import funct1d; funct1d.get_y_value_funct_1d(y, x, interpolate=True)`、台帳から引くなら `ops1d.get("get_y_value_funct_1d")`)
+- **HALCON 相当**: `get_y_value_funct_1d`(意味・パラメータは HALCON リファレンスが参考になる)
 - **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方

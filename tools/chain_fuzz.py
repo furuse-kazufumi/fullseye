@@ -7563,7 +7563,207 @@ def _b_clm_next(pool, rng):
             (120, 160)), {}
 
 
+# --- 工業用ビジョンの定番(opsmv、2026-11-02)。引数は真値の分かる小さな入力から作る。 --- #
+_MV_CAM = {"fx": 200.0, "fy": 200.0, "cx": 24.0, "cy": 24.0}
+
+
+def _mv_pair():
+    """真の視差 3 画素の小さなステレオ対。"""
+    from scipy import ndimage as _ndi
+    right = _ndi.gaussian_filter(np.random.default_rng(11).random((24, 48)), 1.0)
+    right = (right - right.min()) / (right.max() - right.min())
+    rr, cc = np.mgrid[0:24, 0:48].astype(float)
+    d = np.where((cc > 20) & (cc < 34) & (rr > 6) & (rr < 18), 6.0, 3.0)     # 段差: P2 が効く
+    return _ndi.map_coordinates(right, [rr, cc - d], order=1, mode="nearest"), right
+
+
+def _mv_region():
+    a = np.zeros((32, 32), bool)
+    a[8:24, 6:14] = True
+    a[8:24, 18:26] = True
+    a[14:16, 14:18] = True
+    return a
+
+
+def _mv_blobs():
+    rng = np.random.default_rng(12)
+    return (np.vstack([rng.normal([0.0, 0.0], 1.0, (20, 2)), rng.normal([6.0, 1.0], 1.0, (20, 2))]),
+            np.repeat([0, 1], 20))
+
+
+def _mv_circle_points():
+    t = np.linspace(0.0, 2.0 * np.pi, 24, endpoint=False)
+    center, normal = np.array([0.1, -0.05, 1.0]), np.array([0.3, 0.2, -1.0])
+    nz = normal / np.linalg.norm(normal)
+    e1 = np.cross(nz, [1.0, 0.0, 0.0])
+    e1 /= np.linalg.norm(e1)
+    e2 = np.cross(nz, e1)
+    p = center + 0.05 * (np.cos(t)[:, None] * e1 + np.sin(t)[:, None] * e2)
+    return np.column_stack([200.0 * p[:, 1] / p[:, 2] + 24.0, 200.0 * p[:, 0] / p[:, 2] + 24.0])
+
+
+def _b_mv_disparity(pool, rng):
+    return _mv_pair(), {"max_disp": 8}
+
+
+def _b_mv_distance(pool, rng):
+    left, right = _mv_pair()
+    return (left, right, 100.0, 0.5), {"max_disp": 8}
+
+
+def _b_mv_map(pool, rng):
+    rr, cc = np.mgrid[0:16, 0:16].astype(float)
+    return (rng.random((32, 32)), {"row_map": rr + 20.5, "col_map": cc + 1.5}), {}      # 外へ出る: fill が効く
+
+
+def _b_mv_rectify(pool, rng):
+    pose = np.eye(4)
+    pose[:3, 3] = [-0.1, -0.1, 1.0]
+    return (rng.random((48, 48)), _MV_CAM, pose, 32, 32, 0.005), {}
+
+
+def _b_mv_distortion(pool, rng):
+    return (rng.random((48, 48)), dict(_MV_CAM, kappa=-1e-4), dict(_MV_CAM, kappa=0.0)), {}
+
+
+def _b_mv_crop(pool, rng):
+    return (rng.random((48, 48)), 24.0, 24.0, 0.3, 10.0, 5.0), {}
+
+
+def _b_mv_contour_gray(pool, rng):
+    return (rng.random((32, 32)), np.column_stack([np.linspace(2.0, 28.0, 20), np.linspace(4.0, 20.0, 20)])), {}
+
+
+def _b_mv_ncc_models(pool, rng):
+    import matching as _mt
+    tile = rng.random((8, 8))
+    img = np.tile(tile, (7, 7))                     # 8 画素周期: min_distance が効く
+    return ([_mt.create_ncc_model(img[0:8, 0:8])], img), {"min_score": 0.5}
+
+
+def _b_mv_circle(pool, rng):
+    return (_mv_circle_points(), 0.05, _MV_CAM), {}
+
+
+def _b_mv_golay(pool, rng):
+    return ("l", 2), {}
+
+
+def _b_mv_hmt(pool, rng):
+    return (_mv_region(), "l"), {}
+
+
+def _b_mv_thickening_hit_miss(pool, rng):
+    import mvmorph as _mm
+    pair = _mm.golay_elements("c", 2)
+    return (_mv_region(), pair["hit"], pair["miss"]), {"iterations": 2}
+
+
+def _b_mv_thickening_letter(pool, rng):
+    return (_mv_region(), "c"), {}
+
+
+def _b_mv_se(pool, rng):
+    return (_mv_region(), np.ones((3, 3), bool)), {}
+
+
+def _b_mv_region(pool, rng):
+    return (_mv_region(),), {}
+
+
+def _b_mv_nurbs(pool, rng):
+    t = np.linspace(0.0, 3.0, 10)
+    return (np.column_stack([30.0 * np.cos(t), 20.0 * np.sin(t)]),), {}
+
+
+def _b_mv_kalman(pool, rng):
+    F = np.array([[1.0, 1.0], [0.0, 1.0]])
+    return (np.zeros(2), np.eye(2), [1.0], F, np.array([[1.0, 0.0]]), 1e-3, 0.1), {}
+
+
+def _mv_bg():
+    import mvtrack as _tk
+    return _tk.create_bg_esti(np.full((16, 16), 0.5))
+
+
+def _b_mv_bg_run(pool, rng):
+    return (_mv_bg(), rng.random((16, 16))), {}
+
+
+def _b_mv_bg_give(pool, rng):
+    return (_mv_bg(),), {}
+
+
+def _b_mv_bg_update(pool, rng):
+    reg = np.zeros((16, 16), bool)
+    reg[:8] = True
+    return (_mv_bg(), rng.random((16, 16)), reg), {}
+
+
+def _b_mv_train(pool, rng):
+    return _mv_blobs(), {}
+
+
+def _b_mv_gmm_use(pool, rng):
+    import mvclass as _mc
+    X, y = _mv_blobs()
+    return (_mc.train_class_gmm(X, y), X), {}
+
+
+def _b_mv_knn_use(pool, rng):
+    import mvclass as _mc
+    X, y = _mv_blobs()
+    return (_mc.train_class_knn(X, y), X), {}
+
+
+def _b_mv_mlp_use(pool, rng):
+    import final_genuine2 as _fg
+    X, y = _mv_blobs()
+    return (_fg.train_class_mlp(X, y, epochs=20), X), {}
+
+
+def _b_mv_svm_use(pool, rng):
+    import final_genuine2 as _fg
+    X, y = _mv_blobs()
+    return (_fg.train_class_svm(X, y, epochs=20), X), {}
+
+
+def _b_mv_lexicon(pool, rng):
+    return (["bolt", "nut", "washer"],), {}
+
+
+def _b_mv_lexicon_word(pool, rng):
+    return ({"words": ["bolt", "nut", "washer"]}, "wasber"), {}
+
+
+def _b_mv_glyphs(pool, rng):
+    lab = np.zeros((24, 64), dtype=np.int32)
+    for i, x in enumerate(range(4, 52, 10), 1):
+        lab[6:18, x:x + 5] = i
+    return (lab,), {}
+
+
+_MV_BUILDERS = {
+    "binocular_disparity_ms": _b_mv_disparity, "binocular_distance_ms": _b_mv_distance,
+    "map_image": _b_mv_map, "rectify_to_world_plane": _b_mv_rectify,
+    "change_radial_distortion_image": _b_mv_distortion, "crop_rectangle2": _b_mv_crop,
+    "get_grayval_contour_xld": _b_mv_contour_gray, "find_ncc_models": _b_mv_ncc_models,
+    "get_circle_pose": _b_mv_circle, "golay_elements": _b_mv_golay,
+    "hit_or_miss_golay": _b_mv_hmt, "hit_or_miss_seq": _b_mv_hmt, "thickening_hit_miss": _b_mv_thickening_hit_miss,
+    "thickening_golay": _b_mv_thickening_letter, "thickening_seq": _b_mv_thickening_letter,
+    "morph_hat": _b_mv_se, "morph_skiz": _b_mv_region, "opening_seg": _b_mv_se,
+    "gen_nurbs_interp": _b_mv_nurbs, "filter_kalman": _b_mv_kalman, "run_bg_esti": _b_mv_bg_run,
+    "give_bg_esti": _b_mv_bg_give, "update_bg_esti": _b_mv_bg_update,
+    "train_class_gmm": _b_mv_train, "train_class_knn": _b_mv_train, "train_class_mlp": _b_mv_train,
+    "train_class_svm": _b_mv_train, "classify_class_gmm": _b_mv_gmm_use, "evaluate_class_gmm": _b_mv_gmm_use,
+    "classify_class_knn": _b_mv_knn_use, "classify_class_mlp": _b_mv_mlp_use, "classify_class_svm": _b_mv_svm_use,
+    "create_lexicon": _b_mv_lexicon, "lookup_lexicon": _b_mv_lexicon_word, "suggest_lexicon": _b_mv_lexicon_word,
+    "select_characters": _b_mv_glyphs,
+}
+
+
 OP_ARG_BUILDERS = {
+    **_MV_BUILDERS,
     "archive_probe": lambda pool, rng: ((_archive_probe_payload(),), {}),
     "archive_list": lambda pool, rng: ((_archive_probe_payload(),), {}),
     "archive_extract": _b_archive_extract,
@@ -9015,6 +9215,8 @@ NONFINITE_BY_CONTRACT_MSA = {"msa_anova_table"}
 #: ことを 1 本ずつ確かめた。docstring に書かれていない非有限(world_camera の depth の
 #: inf など)は**載せていない** —— 台帳の負債(docs/LEDGER_CONTRACT_DEBT.json)に残る。
 NONFINITE_BY_CONTRACT_LEDGER_GATE = {
+    # opsmv: 無効の画素は NaN(左端の列と左右一致で落ちた画素)。valid と揃って返す約束。
+    "binocular_disparity_ms", "binocular_distance_ms",
     "sphere_cap_height",          # shape_rel: 「外側は nan」
     "hertz_small_strain_error",   # force_from_radius: 「平頭(p = inf)は nan」
     "large_deformation_contact",  # F_hertz_from_radius: 「平頭は nan」(err_* はその比)

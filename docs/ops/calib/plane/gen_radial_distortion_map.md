@@ -4,6 +4,7 @@ dim: calib
 category: plane
 in: 
 out: table
+halcon: gen_radial_distortion_map
 gpu: なし
 examples: []
 author: Kazufumi Furuse
@@ -15,6 +16,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.gen_radial_distortion_map(cam_par, kappa, shape)` (実装を直接呼ぶなら `import calib; calib.gen_radial_distortion_map(cam_par, kappa, shape)`、台帳から引くなら `opscalib.get("gen_radial_distortion_map")`)
+- **HALCON 相当**: `gen_radial_distortion_map`(意味・パラメータは HALCON リファレンスが参考になる)
 - **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方

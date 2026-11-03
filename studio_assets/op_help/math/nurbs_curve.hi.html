@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">nurbs_curve — MATH <code style="color:#22d3bf">geometry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.nurbs_curve(control_points, weights=None, *, degree: &#x27;int&#x27; = 3, knots=None, n: &#x27;int&#x27; = 200) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import mathgeometry; mathgeometry.nurbs_curve(control_points, weights=None, *, degree: &#x27;int&#x27; = 3, knots=None, n: &#x27;int&#x27; = 200) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsmath.get(&quot;nurbs_curve&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>HALCON समकक्ष</b>: <code style="color:#22d3bf">gen_contour_nurbs_xld</code> (अर्थ और parameters समझने के लिए HALCON reference उपयोगी है)</p>
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>NURBS curve evaluate करता है (weighted, सामान्यतः control points से नहीं गुज़रता)।</p>
@@ -30,6 +31,7 @@
 <p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:geometry_tour">geometry_tour</a> — <code style="color:#22d3bf">py -3.11 examples/geometry_tour.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:machine_vision_tour">machine_vision_tour</a> — <code style="color:#22d3bf">py -3.11 examples/machine_vision_tour.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
 <p><a style="color:#22d3bf" href="opmath:dynsys_poincare_section">dynsys_poincare_section</a> · <a style="color:#22d3bf" href="opmath:dwt_inverse">dwt_inverse</a> · <a style="color:#22d3bf" href="opmath:chebyshev_eval_nd">chebyshev_eval_nd</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">geometry</code>)</h3>

@@ -1,0 +1,29 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">golay_elements — MV <code style="color:#22d3bf">morphology</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.golay_elements(letter, rotation=0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import mvmorph; mvmorph.golay_elements(letter, rotation=0)</code>、台帳から引くなら <code style="color:#22d3bf">opsmv.get(&quot;golay_elements&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>HALCON 相当</b>: <code style="color:#22d3bf">golay_elements</code>(意味・パラメータは HALCON リファレンスが参考になる)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>Golay の文字の 3x3 構造要素組(ヒット、ミス)を 45 度刻みの回転つきで作る。</p>
+<p><code style="color:#22d3bf">letter</code> は <code style="color:#22d3bf">l</code> / <code style="color:#22d3bf">m</code> / <code style="color:#22d3bf">e</code> / <code style="color:#22d3bf">i</code> / <code style="color:#22d3bf">c</code>。<code style="color:#22d3bf">rotation</code> は 45 度の時計回りの回数。実装していない文字は ValueError。</p>
+<p>Args:</p>
+<p>letter: Golay の文字。</p>
+<p>rotation: 回転の回数(整数、8 で一周)。</p>
+<p>Returns:</p>
+<p><code style="color:#22d3bf">hit</code> と <code style="color:#22d3bf">miss</code>(どちらも (3, 3) の bool)を持つ dict。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemv:machine_vision_classics">machine_vision_classics ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:machine_vision_tour">machine_vision_tour</a> — <code style="color:#22d3bf">py -3.11 examples/machine_vision_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opmv:map_image">map_image</a> · <a style="color:#22d3bf" href="opmv:rectify_to_world_plane">rectify_to_world_plane</a> · <a style="color:#22d3bf" href="opmv:change_radial_distortion_image">change_radial_distortion_image</a> · <a style="color:#22d3bf" href="opmv:find_ncc_models">find_ncc_models</a> · <a style="color:#22d3bf" href="opmv:run_bg_esti">run_bg_esti</a> · <a style="color:#22d3bf" href="opmv:give_bg_esti">give_bg_esti</a> · <a style="color:#22d3bf" href="opmv:update_bg_esti">update_bg_esti</a> · <a style="color:#22d3bf" href="opmv:classify_class_gmm">classify_class_gmm</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">morphology</code>)</h3>
+<p><a style="color:#22d3bf" href="opmv:hit_or_miss_golay">hit_or_miss_golay</a> · <a style="color:#22d3bf" href="opmv:hit_or_miss_seq">hit_or_miss_seq</a> · <a style="color:#22d3bf" href="opmv:thickening_hit_miss">thickening_hit_miss</a> · <a style="color:#22d3bf" href="opmv:thickening_golay">thickening_golay</a> · <a style="color:#22d3bf" href="opmv:thickening_seq">thickening_seq</a> · <a style="color:#22d3bf" href="opmv:morph_hat">morph_hat</a> · <a style="color:#22d3bf" href="opmv:morph_skiz">morph_skiz</a> · <a style="color:#22d3bf" href="opmv:opening_seg">opening_seg</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: mvmorph.py — MV operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

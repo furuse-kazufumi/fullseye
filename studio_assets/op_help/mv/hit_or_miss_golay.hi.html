@@ -1,0 +1,31 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">hit_or_miss_golay — MV <code style="color:#22d3bf">morphology</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">mask</code> → <code style="color:#22d3bf">mask</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.hit_or_miss_golay(region, letter, rotation=0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import mvmorph; mvmorph.hit_or_miss_golay(region, letter, rotation=0)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsmv.get(&quot;hit_or_miss_golay&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>HALCON समकक्ष</b>: <code style="color:#22d3bf">hit_or_miss_golay</code> (अर्थ और parameters समझने के लिए HALCON reference उपयोगी है)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>एक Golay अक्षर से हिट-ऑर-मिस रूपांतरण लगाता है (मेल खाने वाले केंद्र पिक्सेल लौटाता है)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>画像の外は背景と見なす。空の入力(<code style="color:#22d3bf">region</code> が 0 要素)は ValueError。</p>
+<p>Args:</p>
+<p>region: 2-D の領域。</p>
+<p>letter: Golay の文字。</p>
+<p>rotation: 45 度の回転の回数。</p>
+<p>Returns:</p>
+<p><code style="color:#22d3bf">region</code> と同じ形の bool 配列。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemv:machine_vision_classics">machine_vision_classics family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:machine_vision_tour">machine_vision_tour</a> — <code style="color:#22d3bf">py -3.11 examples/machine_vision_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">mask</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opmv:hit_or_miss_seq">hit_or_miss_seq</a> · <a style="color:#22d3bf" href="opmv:thickening_hit_miss">thickening_hit_miss</a> · <a style="color:#22d3bf" href="opmv:thickening_golay">thickening_golay</a> · <a style="color:#22d3bf" href="opmv:thickening_seq">thickening_seq</a> · <a style="color:#22d3bf" href="opmv:morph_hat">morph_hat</a> · <a style="color:#22d3bf" href="opmv:morph_skiz">morph_skiz</a> · <a style="color:#22d3bf" href="opmv:opening_seg">opening_seg</a> · <a style="color:#22d3bf" href="opmv:update_bg_esti">update_bg_esti</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">morphology</code>)</h3>
+<p><a style="color:#22d3bf" href="opmv:golay_elements">golay_elements</a> · <a style="color:#22d3bf" href="opmv:hit_or_miss_seq">hit_or_miss_seq</a> · <a style="color:#22d3bf" href="opmv:thickening_hit_miss">thickening_hit_miss</a> · <a style="color:#22d3bf" href="opmv:thickening_golay">thickening_golay</a> · <a style="color:#22d3bf" href="opmv:thickening_seq">thickening_seq</a> · <a style="color:#22d3bf" href="opmv:morph_hat">morph_hat</a> · <a style="color:#22d3bf" href="opmv:morph_skiz">morph_skiz</a> · <a style="color:#22d3bf" href="opmv:opening_seg">opening_seg</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: mvmorph.py — MV operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

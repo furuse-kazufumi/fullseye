@@ -1,0 +1,31 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">get_grayval_contour_xld — MV <code style="color:#22d3bf">gray</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d × keypoints</code> → <code style="color:#22d3bf">signal</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.get_grayval_contour_xld(image, contour, order=1)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import mvimage; mvimage.get_grayval_contour_xld(image, contour, order=1)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsmv.get(&quot;get_grayval_contour_xld&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>HALCON समकक्ष</b>: <code style="color:#22d3bf">get_grayval_contour_xld</code> (अर्थ और parameters समझने के लिए HALCON reference उपयोगी है)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>कंटूर के साथ ग्रे मानों को इंटरपोलेशन से पढ़कर एक सिग्नल बनाता है।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p><code style="color:#22d3bf">contour</code> は (N, 2) の <code style="color:#22d3bf">(row, col)</code> か、輪郭が 1 本だけの XLD dict。<code style="color:#22d3bf">order</code> は補間の次数(0 最近傍 / 1 線形 / 3 三次)。画像の外の点があると ValueError(外挿の値を実測の顔で返さない)。空の入力(<code style="color:#22d3bf">image</code> が 0 要素)は ValueError。</p>
+<p>Args:</p>
+<p>image: (H, W) の画像。</p>
+<p>contour: (N, 2) の点列、または <code style="color:#22d3bf">{&quot;shape&quot;, &quot;cs&quot;}</code> の XLD dict。</p>
+<p>order: 補間の次数(0 / 1 / 3)。</p>
+<p>Returns:</p>
+<p>長さ N の float 信号。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemv:machine_vision_classics">machine_vision_classics family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:machine_vision_tour">machine_vision_tour</a> — <code style="color:#22d3bf">py -3.11 examples/machine_vision_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">signal</code> को input के रूप में लेते हैं)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">gray</code>)</h3>
+<p><a style="color:#22d3bf" href="opmv:atan2_image">atan2_image</a> · <a style="color:#22d3bf" href="opmv:area_center_gray">area_center_gray</a> · <a style="color:#22d3bf" href="opmv:gray_histo">gray_histo</a> · <a style="color:#22d3bf" href="opmv:gray_projections">gray_projections</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: mvimage.py — MV operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

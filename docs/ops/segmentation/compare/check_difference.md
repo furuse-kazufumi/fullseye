@@ -4,6 +4,7 @@ dim: segmentation
 category: compare
 in: image2d × image2d
 out: mask
+halcon: check_difference
 gpu: なし
 examples: [halcon_segmentation_tour]
 author: Kazufumi Furuse
@@ -15,6 +16,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d × image2d` → `mask`
 - **呼び出し**: `import fullseye as fs; fs.ledger.check_difference(image, ref_image, tol=0.1)` (実装を直接呼ぶなら `import segmentation; segmentation.check_difference(image, ref_image, tol=0.1)`、台帳から引くなら `opssegmentation.get("check_difference")`)
+- **HALCON 相当**: `check_difference`(意味・パラメータは HALCON リファレンスが参考になる)
 - **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方

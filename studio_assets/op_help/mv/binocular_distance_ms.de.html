@@ -1,0 +1,39 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">binocular_distance_ms — MV <code style="color:#22d3bf">stereo</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.binocular_distance_ms(left, right, focal, baseline, doffs=0.0, max_disp=32, window=5, P1=5.0, P2=50.0, paths=4, lr_tolerance=1.0)</code> (die Implementierung direkt: <code style="color:#22d3bf">import mvstereo; mvstereo.binocular_distance_ms(left, right, focal, baseline, doffs=0.0, max_disp=32, window=5, P1=5.0, P2=50.0, paths=4, lr_tolerance=1.0)</code>; aus dem Register: <code style="color:#22d3bf">opsmv.get(&quot;binocular_distance_ms&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">binocular_distance_ms</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>Berechnet das Distanzbild eines rektifizierten Stereopaars (<code style="color:#22d3bf">Z = focal * baseline / (disparity + doffs)</code>).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>視差は <code style="color:#22d3bf">binocular_disparity_ms</code> の値をそのまま使う。無効の画素と、視差が 0 以下で距離の決まらない画素は <code style="color:#22d3bf">distance</code> が NaN になる。空の入力(<code style="color:#22d3bf">left</code> が 0 要素)は ValueError。</p>
+<p>Args:</p>
+<p>left: 左の画像 (H, W)。</p>
+<p>right: 右の画像 (H, W)。</p>
+<p>focal: 焦点距離(画素、&gt; 0)。</p>
+<p>baseline: 基線長(距離の単位がこの単位になる、&gt; 0)。</p>
+<p>doffs: 主点の差 <code style="color:#22d3bf">cx_right - cx_left</code>(画素)。</p>
+<p>max_disp: 探す視差の上限。</p>
+<p>window: census と SAD の窓(奇数)。</p>
+<p>P1: 視差 1 の段差の罰則。</p>
+<p>P2: 視差 2 以上の段差の罰則。</p>
+<p>paths: 集約の方向数(2 / 4)。</p>
+<p>lr_tolerance: 左右一致の許容差(画素)。</p>
+<p>Returns:</p>
+<p><code style="color:#22d3bf">distance</code>(無効は NaN)、<code style="color:#22d3bf">disparity</code>、<code style="color:#22d3bf">valid</code>、<code style="color:#22d3bf">score</code> を持つ dict。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemv:machine_vision_classics">Leitfaden zur Familie machine_vision_classics</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:machine_vision_tour">machine_vision_tour</a> — <code style="color:#22d3bf">py -3.11 examples/machine_vision_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">table</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opmv:map_image">map_image</a> · <a style="color:#22d3bf" href="opmv:rectify_to_world_plane">rectify_to_world_plane</a> · <a style="color:#22d3bf" href="opmv:change_radial_distortion_image">change_radial_distortion_image</a> · <a style="color:#22d3bf" href="opmv:find_ncc_models">find_ncc_models</a> · <a style="color:#22d3bf" href="opmv:run_bg_esti">run_bg_esti</a> · <a style="color:#22d3bf" href="opmv:give_bg_esti">give_bg_esti</a> · <a style="color:#22d3bf" href="opmv:update_bg_esti">update_bg_esti</a> · <a style="color:#22d3bf" href="opmv:classify_class_gmm">classify_class_gmm</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">stereo</code>)</h3>
+<p><a style="color:#22d3bf" href="opmv:binocular_disparity_ms">binocular_disparity_ms</a> · <a style="color:#22d3bf" href="opmv:reconstruct_surface_stereo">reconstruct_surface_stereo</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: mvstereo.py — MV Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

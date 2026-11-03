@@ -1,0 +1,24 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">crop_rectangle2 — MV <code style="color:#22d3bf">resample</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.crop_rectangle2(image, row, col, phi, length1, length2) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import image_gen; image_gen.crop_rectangle2(image, row, col, phi, length1, length2) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsmv.get(&quot;crop_rectangle2&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>HALCON 相当</b>: <code style="color:#22d3bf">crop_rectangle2</code>(意味・パラメータは HALCON リファレンスが参考になる)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>回転矩形の内側を線形補間で読み、軸に沿った画像として切り出す(crop_rectangle2)。</p>
+<p>矩形は中心 <code style="color:#22d3bf">(row, col)</code>、長軸の半分 <code style="color:#22d3bf">length1</code>、短軸の半分 <code style="color:#22d3bf">length2</code>、向き <code style="color:#22d3bf">phi</code> [rad]。向きはこの repo の矩形(<code style="color:#22d3bf">gen_rectangle2_contour_xld</code>)と同じで、<code style="color:#22d3bf">phi</code> が正だと長軸は右へ進むほど行が増える。出力は (2 length2 + 1, 2 length1 + 1)。空の入力(<code style="color:#22d3bf">image</code> が 0 要素)は ValueError。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemv:machine_vision_classics">machine_vision_classics ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:machine_vision_tour">machine_vision_tour</a> — <code style="color:#22d3bf">py -3.11 examples/machine_vision_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">image2d</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opmv:binocular_disparity_ms">binocular_disparity_ms</a> · <a style="color:#22d3bf" href="opmv:binocular_distance_ms">binocular_distance_ms</a> · <a style="color:#22d3bf" href="opmv:reconstruct_surface_stereo">reconstruct_surface_stereo</a> · <a style="color:#22d3bf" href="opmv:map_image">map_image</a> · <a style="color:#22d3bf" href="opmv:rectify_to_world_plane">rectify_to_world_plane</a> · <a style="color:#22d3bf" href="opmv:change_radial_distortion_image">change_radial_distortion_image</a> · <a style="color:#22d3bf" href="opmv:atan2_image">atan2_image</a> · <a style="color:#22d3bf" href="opmv:area_center_gray">area_center_gray</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">resample</code>)</h3>
+<p><a style="color:#22d3bf" href="opmv:map_image">map_image</a> · <a style="color:#22d3bf" href="opmv:rectify_to_world_plane">rectify_to_world_plane</a> · <a style="color:#22d3bf" href="opmv:change_radial_distortion_image">change_radial_distortion_image</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: image_gen.py — MV operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

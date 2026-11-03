@@ -1,0 +1,32 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">thickening_golay — MV <code style="color:#22d3bf">morphology</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">mask</code> → <code style="color:#22d3bf">mask</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.thickening_golay(region, letter, rotation=0, iterations=1)</code> (die Implementierung direkt: <code style="color:#22d3bf">import mvmorph; mvmorph.thickening_golay(region, letter, rotation=0, iterations=1)</code>; aus dem Register: <code style="color:#22d3bf">opsmv.get(&quot;thickening_golay&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">thickening_golay</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>Verdickt eine Region mit einem Golay-Buchstaben.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>空の入力(<code style="color:#22d3bf">region</code> が 0 要素)は ValueError。</p>
+<p>Args:</p>
+<p>region: 2-D の領域。</p>
+<p>letter: Golay の文字(中心がミスの文字だけが領域を増やす)。</p>
+<p>rotation: 45 度の回転の回数。</p>
+<p>iterations: 繰り返しの上限(&gt;= 1)。</p>
+<p>Returns:</p>
+<p><code style="color:#22d3bf">region</code> と同じ形の bool 配列。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemv:machine_vision_classics">Leitfaden zur Familie machine_vision_classics</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:machine_vision_tour">machine_vision_tour</a> — <code style="color:#22d3bf">py -3.11 examples/machine_vision_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">mask</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opmv:hit_or_miss_golay">hit_or_miss_golay</a> · <a style="color:#22d3bf" href="opmv:hit_or_miss_seq">hit_or_miss_seq</a> · <a style="color:#22d3bf" href="opmv:thickening_hit_miss">thickening_hit_miss</a> · <a style="color:#22d3bf" href="opmv:thickening_seq">thickening_seq</a> · <a style="color:#22d3bf" href="opmv:morph_hat">morph_hat</a> · <a style="color:#22d3bf" href="opmv:morph_skiz">morph_skiz</a> · <a style="color:#22d3bf" href="opmv:opening_seg">opening_seg</a> · <a style="color:#22d3bf" href="opmv:update_bg_esti">update_bg_esti</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">morphology</code>)</h3>
+<p><a style="color:#22d3bf" href="opmv:golay_elements">golay_elements</a> · <a style="color:#22d3bf" href="opmv:hit_or_miss_golay">hit_or_miss_golay</a> · <a style="color:#22d3bf" href="opmv:hit_or_miss_seq">hit_or_miss_seq</a> · <a style="color:#22d3bf" href="opmv:thickening_hit_miss">thickening_hit_miss</a> · <a style="color:#22d3bf" href="opmv:thickening_seq">thickening_seq</a> · <a style="color:#22d3bf" href="opmv:morph_hat">morph_hat</a> · <a style="color:#22d3bf" href="opmv:morph_skiz">morph_skiz</a> · <a style="color:#22d3bf" href="opmv:opening_seg">opening_seg</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: mvmorph.py — MV Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -35,20 +35,6 @@ def cam_par_pose_to_hom_mat3d(pose) -> np.ndarray:
     return H
 
 
-def change_radial_distortion_image(image, kappa: float = 0.0):
-    """画像に放射歪み r' = r(1 + kappa r^2) を適用して再サンプル(change_radial_distortion_image)。"""
-    img = np.asarray(image, dtype=np.float64)
-    h, w = img.shape
-    cy, cx = (h - 1) / 2, (w - 1) / 2
-    scale = max(h, w) / 2
-    yy, xx = np.mgrid[0:h, 0:w].astype(np.float64)
-    dy, dx = (yy - cy) / scale, (xx - cx) / scale
-    r2 = dx * dx + dy * dy
-    f = 1 + kappa * r2
-    src_y = cy + dy * f * scale
-    src_x = cx + dx * f * scale
-    return ndimage.map_coordinates(img, [src_y, src_x], order=1, mode="reflect")
-
 
 def change_radial_distortion_cam_par(cam_par, kappa_new: float = 0.0) -> np.ndarray:
     """カメラパラメータの放射歪み係数を kappa_new に置換(change_radial_distortion_cam_par)。"""

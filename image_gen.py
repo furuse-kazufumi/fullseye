@@ -177,10 +177,22 @@ def crop_domain_rel(image, region, top=0, left=0, bottom=0, right=0, *, keep_pix
 
 
 def crop_rectangle2(image, row, col, phi, length1, length2) -> np.ndarray:
-    """回転矩形 (row,col,phi,l1,l2) を切り出し軸並行化(crop_rectangle2)。"""
-    from scipy.ndimage import rotate, map_coordinates
+    """回転矩形の内側を線形補間で読み、軸に沿った画像として切り出す(crop_rectangle2)。
+
+    矩形は中心 ``(row, col)``、長軸の半分 ``length1``、短軸の半分 ``length2``、向き ``phi``
+    [rad]。向きはこの repo の矩形(``gen_rectangle2_contour_xld``)と同じで、``phi`` が正だと
+    長軸は右へ進むほど行が増える。出力は (2 length2 + 1, 2 length1 + 1)。
+    空の入力(``image`` が 0 要素)は ValueError。
+    """
+    from scipy.ndimage import map_coordinates
     im = _img(image)
+    if im.size == 0:
+        raise ValueError("crop_rectangle2: image is empty — pass at least one pixel")
+    if im.ndim != 2 or not np.isfinite(im).all():
+        raise ValueError("crop_rectangle2: image must be a finite 2-D array")
     l1, l2 = float(length1), float(length2)
+    if not (np.isfinite([row, col, phi, l1, l2]).all() and l1 > 0 and l2 > 0):
+        raise ValueError("crop_rectangle2: rectangle must be finite with positive half-lengths")
     h = int(2 * l2 + 1); w = int(2 * l1 + 1)
     jj, ii = np.meshgrid(np.arange(w) - l1, np.arange(h) - l2)
     ca, sa = np.cos(phi), np.sin(phi)

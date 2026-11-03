@@ -679,6 +679,13 @@ EXAMPLES = [
                 "学習ではない)、外部読み込み無しの 1 枚の HTML に書く。WebGL2 で gs_render と同じ EWA の式、"
                 "並べ替えは Web Worker、寸法は smallest_box3。注記点・回転台・背景・品質つまみ、8 言語。"
                 "書いた HTML を読み戻し、量子化の刻みの半分以内で戻ること・外部 URL 0 を確かめる。"},
+    {"id": "machine_vision_tour", "task": "calibration", "data": "synthetic",
+     "name": "工業用ビジョンの定番 47 op を答えの分かる入力で 1 周する",
+     "summary": "ステレオの視差と距離、平面の正面図、除算モデルの歪み、複数 NCC、円の像からの 3-D 姿勢、"
+                "Golay の組と肥厚、SKIZ、カルマンの定常ゲイン、画素ごとの背景推定、GMM と k-NN、語の照合、"
+                "文字行の傾きを、真値を決めた合成データに掛ける。各段を閉形式か独立の計算と比べ、"
+                "合わなければ exit 1。族をまたいで視差 → 点群、校正の写像 → map_image、"
+                "点列 → gen_nurbs_interp → nurbs_curve とつなぐ。来歴は各 op の docstring。"},
     {"id": "camera_intrinsics_calibration", "task": "calibration", "data": "synthetic",
      "name": "平面ターゲットの多視点から内部行列 K を推定する(Zhang 法)",
      "summary": "fs.camera_calibration を facade から呼ぶ最小例。傾けた 6 視点で K を厳密回収し"

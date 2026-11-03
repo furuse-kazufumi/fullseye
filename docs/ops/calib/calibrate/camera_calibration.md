@@ -4,6 +4,7 @@ dim: calib
 category: calibrate
 in: keypoints
 out: table
+halcon: camera_calibration
 gpu: なし
 examples: [camera_intrinsics_calibration, lens_calibration_loop_demo, poc_calibration_truth_map, poc_camera_calibration]
 author: Kazufumi Furuse
@@ -15,6 +16,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 - **データ種**: `keypoints` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.camera_calibration(object_points, image_points_list)` (実装を直接呼ぶなら `import calib; calib.camera_calibration(object_points, image_points_list)`、台帳から引くなら `opscalib.get("camera_calibration")`)
+- **HALCON 相当**: `camera_calibration`(意味・パラメータは HALCON リファレンスが参考になる)
 - **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方

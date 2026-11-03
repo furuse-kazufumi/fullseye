@@ -52,8 +52,19 @@ def min_image(image1, image2):
 
 
 def atan2_image(image1, image2):
-    """atan2(image1, image2)(vector field の角度、atan2_image)。"""
-    return np.arctan2(_img(image1), _img(image2))
+    """2 枚の画像の画素ごとの ``atan2(image1, image2)`` をラジアンで返す(atan2_image)。
+
+    勾配の成分から向きを求めるのに使う。値は ``-pi .. pi``。
+    空の入力(``image1`` が 0 要素)は ValueError。
+    """
+    a, b = _img(image1), _img(image2)
+    if a.size == 0 or b.size == 0:
+        raise ValueError("atan2_image: image1/image2 are empty — pass at least one pixel")
+    if a.shape != b.shape:
+        raise ValueError("atan2_image: shapes differ, %r vs %r" % (a.shape, b.shape))
+    if not (np.isfinite(a).all() and np.isfinite(b).all()):
+        raise ValueError("atan2_image: images have NaN/inf pixels")
+    return np.arctan2(a, b)
 
 
 def _to_int(a, bits=8):

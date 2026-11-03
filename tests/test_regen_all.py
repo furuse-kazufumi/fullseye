@@ -102,7 +102,7 @@ _OLD_ORDER = [
     "tools/gen_sensor_playbook.py", "imgevolve.py",
     # 2026-11-02: GPU tier 台帳と HALCON OpenCL 対応行列(索引の直後に置く段。旧順序では docs 索引が先に読む)
     "tools/gpu_tier_rules.py", "tools/gen_halcon_opencl_parity.py", "tools/gen_gpu_fill3_report.py",
-    "tools/audit_file_formats.py", "tools/halcon_compat_profile.py", "catalog.py", "dispositions.py", "references.py", "samples.py",
+    "tools/audit_file_formats.py", "tools/halcon_compat_profile.py", "tools/gen_halcon_gap.py", "catalog.py", "dispositions.py", "references.py", "samples.py",
     "tools/gen_mcp_data.py", "tools/gen_recipe_index.py", "tools/gen_recipe_retrieval_report.py", "tools/gen_rag_benchmark_report.py", "tools/conversion_matrix.py",
     "tools/type_connectivity.py",   # 2026-11-03 に鎖へ加わった段(索引を読むだけ。探針の逆順は増やさない)
     "tools/gen_design_notes.py",
@@ -139,6 +139,8 @@ def test_the_order_gate_catches_the_old_order():
         ("tools/gen_trust_block.py", "imgevolve.py"),
         # 2026-10-22: 互換プロファイルは HALCON_PARITY.md を書き、旧順序では docs 索引がそれを先に読む。
         ("tools/gen_docs_index_ops.py", "tools/halcon_compat_profile.py"),
+        # 2026-11-02: HALCON の棚卸しの文書も docs 索引の文書地図に載る。
+        ("tools/gen_docs_index_ops.py", "tools/gen_halcon_gap.py"),
         # FILE_FORMATS.md は audit_file_formats が書き、docs 索引が文書地図へ載せる。
         ("tools/gen_docs_index_ops.py", "tools/audit_file_formats.py"),
             ("tools/gen_rag_benchmark_report.py", "tools/gen_op_facets.py"),

@@ -4,6 +4,7 @@ dim: calib
 category: calibrate
 in: image2d
 out: table
+halcon: find_marks_and_pose
 gpu: なし
 examples: []
 author: Kazufumi Furuse
@@ -15,6 +16,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.find_marks_and_pose(image, cam_par, caltab, thresh=0.5, max_reproj_rms=3.0)` (実装を直接呼ぶなら `import caltab; caltab.find_marks_and_pose(image, cam_par, caltab, thresh=0.5, max_reproj_rms=3.0)`、台帳から引くなら `opscalib.get("find_marks_and_pose")`)
+- **HALCON 相当**: `find_marks_and_pose`(意味・パラメータは HALCON リファレンスが参考になる)
 - **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方

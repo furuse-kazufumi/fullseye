@@ -4,6 +4,7 @@ dim: oned
 category: function
 in: signal
 out: signal
+halcon: abs_funct_1d
 gpu: なし
 examples: [signal_funct1d]
 author: Kazufumi Furuse
@@ -15,6 +16,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 - **データ種**: `signal` → `signal`
 - **呼び出し**: `import fullseye as fs; fs.ledger.abs_funct_1d(y)` (実装を直接呼ぶなら `import funct1d; funct1d.abs_funct_1d(y)`、台帳から引くなら `ops1d.get("abs_funct_1d")`)
+- **HALCON 相当**: `abs_funct_1d`(意味・パラメータは HALCON リファレンスが参考になる)
 - **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方

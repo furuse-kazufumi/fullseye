@@ -4,6 +4,7 @@ dim: segmentation
 category: watershed
 in: image2d × labels2d
 out: labels2d
+halcon: watersheds_marker
 gpu: なし
 examples: [halcon_segmentation_tour, poc_sem_tem_same_particle]
 author: Kazufumi Furuse
@@ -15,6 +16,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d × labels2d` → `labels2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.watersheds_marker(image, markers)` (実装を直接呼ぶなら `import segmentation; segmentation.watersheds_marker(image, markers)`、台帳から引くなら `opssegmentation.get("watersheds_marker")`)
+- **HALCON 相当**: `watersheds_marker`(意味・パラメータは HALCON リファレンスが参考になる)
 - **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方

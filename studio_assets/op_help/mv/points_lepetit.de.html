@@ -1,0 +1,35 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">points_lepetit — MV <code style="color:#22d3bf">detect</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">keypoints</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.points_lepetit(image, radius=3, check_neighbor=1, min_check_neighbor_diff=0.06, min_score=0.2, subpix=True)</code> (die Implementierung direkt: <code style="color:#22d3bf">import mvimage; mvimage.points_lepetit(image, radius=3, check_neighbor=1, min_check_neighbor_diff=0.06, min_score=0.2, subpix=True)</code>; aus dem Register: <code style="color:#22d3bf">opsmv.get(&quot;points_lepetit&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">points_lepetit</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>Erkennt Interessenpunkte durch Vergleich gegenüberliegender Punkte auf einem Kreis (Lepetit-Fua-Detektor).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>中心の灰色値に近い向かい合う 2 点が円周のどこかにあれば、そこを通る直線が伸びていると見なして落とす。残った画素を、円周の 2 階差分の総和(離散ラプラシアンの近似)で採点し、半径 <code style="color:#22d3bf">radius</code> の窓の極大だけを残す。<code style="color:#22d3bf">subpix</code> が真なら応答の放物線で小数の位置へ寄せる。灰色の範囲は <code style="color:#22d3bf">[0, 1]</code> を想定するので、<code style="color:#22d3bf">min_check_neighbor_diff</code> と <code style="color:#22d3bf">min_score</code> はその尺度で渡す。平らな画像は空の点列を返す。空の入力(<code style="color:#22d3bf">image</code> が 0 要素)は ValueError。</p>
+<p>Args:</p>
+<p>image: (H, W) の画像。</p>
+<p>radius: 比較する円の半径(画素、&gt;= 1)。</p>
+<p>check_neighbor: 円周で左右に何点まで一緒に比べるか(&gt;= 0)。</p>
+<p>min_check_neighbor_diff: 「近い」と見なす灰色の差の上限。</p>
+<p>min_score: 応答(円周平均の 2 階差分の絶対値)の下限。</p>
+<p>subpix: 位置を小数へ寄せるか。</p>
+<p>Returns:</p>
+<p>(N, 2) の <code style="color:#22d3bf">(row, col)</code>。応答の強い順。</p>
+<p>出典: V. Lepetit and P. Fua, IEEE Trans. PAMI 28(9), 1465-1479 (2006), doi:10.1109/TPAMI.2006.188。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemv:machine_vision_classics">Leitfaden zur Familie machine_vision_classics</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:machine_vision_tour">machine_vision_tour</a> — <code style="color:#22d3bf">py -3.11 examples/machine_vision_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">keypoints</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opmv:get_grayval_contour_xld">get_grayval_contour_xld</a> · <a style="color:#22d3bf" href="opmv:get_circle_pose">get_circle_pose</a> · <a style="color:#22d3bf" href="opmv:gen_nurbs_interp">gen_nurbs_interp</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">detect</code>)</h3>
+<p><a style="color:#22d3bf" href="opmv:create_ncc_model">create_ncc_model</a> · <a style="color:#22d3bf" href="opmv:find_ncc_models">find_ncc_models</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: mvimage.py — MV Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

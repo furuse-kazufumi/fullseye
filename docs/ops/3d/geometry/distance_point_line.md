@@ -4,6 +4,7 @@ dim: 3d
 category: geometry
 in: points × primitive
 out: measurement
+halcon: distance_point_line
 gpu: なし
 examples: [geometry_metrology]
 author: Kazufumi Furuse
@@ -15,6 +16,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 - **データ種**: `points × primitive` → `measurement`
 - **呼び出し**: `import fullseye as fs; fs.ledger.distance_point_line(p, line_pt, d)` (実装を直接呼ぶなら `import match3d; match3d.distance_point_line(p, line_pt, d)`、台帳から引くなら `ops3d.get("distance_point_line")`)
+- **HALCON 相当**: `distance_point_line`(意味・パラメータは HALCON リファレンスが参考になる)
 - **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
