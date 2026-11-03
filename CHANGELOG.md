@@ -64,6 +64,10 @@ minor を上げる理由(CONTRIBUTING.md「Versioning」): Python 3.10 の終了
 - MCP 経由で LLM が課題を解く e2e 測定器(20 課題 × 3 回、判定は LLM を使わない。`tools/mcp_agent_eval.py`)。
 
 
+### 変更 — kornia の下限を 0.7 から 0.9 へ(`gpu` / `all` extra)
+
+- 0.8 系では `xkor_hessian` が内側でも最大 0.68、`xkor_clahe` が最大 0.46 ずれた(2026-10-24 の修正の節)。値の約束(golden)は 0.9.0 で取っており、CI も最新版だけを回すので、0.9 未満を入れられる制約は約束と合わなかった。CI の optional backends の行も `kornia>=0.9` に揃えた。門は `tests/test_kornia_version_drift_2026_10_24.py`。
+
 ### 追加 — 光弾性の族(応力場 → 縞 → 偏光像 → 位相差と主軸)
 
 - 新モジュール `photoelastic`(opsoptics のカテゴリ `photoelastic`、12 op)。単位は SI、位相差は rad・nm・縞次数を並べて返し、mm を m に・nm を m に・表の ×10⁻⁷ MPa⁻¹ を Pa⁻¹ に渡す取り違えは ValueError で拒否する。

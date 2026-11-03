@@ -15,14 +15,28 @@ def _img(a):
 
 # ── Inspection: variation/bead/texture/ocv ─────────────────────────────────────── #
 def create_bead_inspection_model(reference_path, width=5.0, tol=0.3):
-    """接着ビード検査モデル(基準経路 + 幅公差)(create_bead_inspection_model)。
-    reference_path: ビード中心線の (row,col) 点列。"""
+    """[部分対応] 接着ビード検査のモデル = 基準経路 + 幅 + 公差を入れるだけ(create_bead_inspection_model)。
+    reference_path: ビード中心線の (row,col) 点列。
+
+    しない: ビードの見え方のモデルは作らない。判定は ``apply_bead_inspection_model`` の距離変換だけ。
+    HALCON 対応の数え方では「部分対応」で、対応済みには数えない(``halcon_coverage.PARTIAL``)。
+
+    [Partial HALCON analogue] Stores path, width and tolerance only.
+    """
     return {"path": np.asarray(reference_path, float).reshape(-1, 2),
             "width": float(width), "tol": float(tol)}
 
 
 def apply_bead_inspection_model(model, image, thresh=0.3):
-    """画像中のビードを検査し、経路上での欠損/はみ出しを検出(apply_bead_inspection_model)。"""
+    """[部分対応] 基準経路の点がビードから離れすぎていれば「欠け」とする(apply_bead_inspection_model)。
+
+    する: ``image > thresh`` のマスクの距離変換で、経路上の点がマスクから ``width/2 + tol`` より遠ければ
+    ``{"type": "missing"}``。
+    しない: 幅の細り・太り、左右のずれ、はみ出しの区別(返す種類は ``missing`` だけ)。HALCON 対応の
+    数え方では「部分対応」で、対応済みには数えない(``halcon_coverage.PARTIAL``)。
+
+    [Partial HALCON analogue] Reports only 'missing'; no narrow / wide / offset / overflow classes.
+    """
     im = _img(image); m = im > thresh
     from scipy.ndimage import distance_transform_edt
     dt = distance_transform_edt(~m)
@@ -38,7 +52,15 @@ def apply_bead_inspection_model(model, image, thresh=0.3):
 
 
 def create_texture_inspection_model(reference_images, patch=8):
-    """テクスチャ検査モデル(正常サンプルの局所統計分布)(create_texture_inspection_model)。"""
+    """[部分対応] 正常画像の局所平均と局所分散の 2 特徴の平均と共分散(create_texture_inspection_model)。
+
+    する: ``patch`` の窓で局所平均・局所分散を取り、その 2 次元の分布(平均・共分散)を返す。
+    しない: 多尺度のテクスチャ特徴と学習の段(HALCON の texture inspection model)。近い厚い道具は
+    ``anomaly_patch`` の patchbank / patchdist と ``varmodel``。HALCON 対応の数え方では「部分対応」で、
+    対応済みには数えない(``halcon_coverage.PARTIAL``)。
+
+    [Partial HALCON analogue] Two local features (mean, variance); no multi-scale texture model.
+    """
     from scipy.ndimage import uniform_filter
     feats = []
     for im in reference_images:
@@ -52,7 +74,14 @@ def create_texture_inspection_model(reference_images, patch=8):
 
 
 def apply_texture_inspection_model(model, image, thresh=3.0):
-    """テクスチャ検査モデルで異常(Mahalanobis 距離大)領域を検出(apply_texture_inspection_model)。"""
+    """[部分対応] 局所平均・局所分散の Mahalanobis 距離で異常を出す(apply_texture_inspection_model)。
+
+    する: 2 特徴の Mahalanobis 距離の図と、``thresh`` を超えた画素のマスクを返す。
+    しない: 多尺度のテクスチャ特徴。平均と分散が変わらない模様の乱れは見えない。HALCON 対応の数え方では
+    「部分対応」で、対応済みには数えない(``halcon_coverage.PARTIAL``)。
+
+    [Partial HALCON analogue] Mahalanobis on two local features; no multi-scale texture model.
+    """
     from scipy.ndimage import uniform_filter
     g = _img(image); patch = model["patch"]
     mean = uniform_filter(g, patch); var = uniform_filter(g * g, patch) - mean ** 2
@@ -63,7 +92,14 @@ def apply_texture_inspection_model(model, image, thresh=3.0):
 
 
 def create_ocv_proj(training_images):
-    """OCV(光学文字検証)用の平均テンプレートモデル(create_ocv_proj)。"""
+    """[部分対応] 学習画像の画素ごとの平均と標準偏差のテンプレート(create_ocv_proj)。
+
+    する: 学習画像を重ねて ``{"mean", "std"}`` を返す。
+    しない: 文字の切り出し・射影のモデル(HALCON の OCV)。字の照合には ``glyphops`` を使う。HALCON 対応の
+    数え方では「部分対応」で、対応済みには数えない(``halcon_coverage.PARTIAL``)。
+
+    [Partial HALCON analogue] Mean/std template only; no character projection model.
+    """
     stack = np.stack([_img(im) for im in training_images], axis=0)
     return {"mean": stack.mean(0), "std": stack.std(0) + 1e-6}
 
@@ -187,8 +223,14 @@ def create_sheet_of_light_calib_object(spacing=1.0):
 
 
 def measure_profile_sheet_of_light(model, image, thresh=0.3):
-    """各列でレーザライン(最大輝度)の行位置=高さプロファイルを抽出
-    (measure_profile_sheet_of_light)。"""
+    """[部分対応] 各列でレーザラインの輝度重心の行位置を返す(measure_profile_sheet_of_light)。
+
+    する: 列ごとに ``thresh`` を超えた輝度の重心(サブピクセルの行位置、画素単位)。線の無い列は NaN。
+    しない: Steger・ガウス当てはめの線中心、光面の幾何、移動軸と合わせた 3-D 点群化。HALCON 対応の
+    数え方では「部分対応」で、対応済みには数えない(``halcon_coverage.PARTIAL``)。
+
+    [Partial HALCON analogue] Per-column centroid in pixel rows; no light-plane geometry, no 3-D points.
+    """
     im = _img(image); H, W = im.shape
     profile = np.full(W, np.nan)
     for c in range(W):
@@ -209,7 +251,14 @@ def apply_sheet_of_light_calibration(model, profile):
 
 
 def calibrate_sheet_of_light(model, calib_image, known_heights):
-    """既知段差からシート光の画素→高さスケールを校正(calibrate_sheet_of_light)。"""
+    """[部分対応] 既知段差から画素→高さの比例係数を 1 つ当てはめる(calibrate_sheet_of_light)。
+
+    する: ``measure_profile_sheet_of_light`` の行位置と既知の高さの 1 次式の傾きを ``pixel_to_height`` に入れる。
+    しない: 光面・カメラ・移動軸の幾何校正(HALCON の同名 operator の仕事)。HALCON 対応の数え方では
+    「部分対応」で、対応済みには数えない(``halcon_coverage.PARTIAL``)。
+
+    [Partial HALCON analogue] One linear scale; no geometric light-plane calibration.
+    """
     prof = measure_profile_sheet_of_light(model, calib_image)
     valid = ~np.isnan(prof)
     if valid.sum() < 2:

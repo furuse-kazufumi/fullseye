@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: 07a040311789 -->
+<!-- i18n-source-sha: 056a87b1bfa1 -->
 # Installation / Environment Setup — पूरी गाइड
 
 [日本語](./INSTALL.md) · [English](./INSTALL.en.md) · [简体中文](./INSTALL.zh.md) · [繁體中文](./INSTALL.tw.md) · [한국어](./INSTALL.ko.md) · [Deutsch](./INSTALL.de.md) · **हिन्दी**
@@ -42,10 +42,10 @@ py -3.11 -m pip install -e .            # core only (numpy + scipy; every op is 
 | `skimage` | `scikit-image>=0.20` | `sk_*` / `xsk_*` families (कई auto-generated operators का आधार) |
 | `pil` | `Pillow>=13.0` | image I/O fallback, `xpil_*` family (emboss/posterize/solarize आदि) |
 | `wavelets` | `PyWavelets>=1.4` | wavelet family (VisuShrink / subbands / packets आदि) |
-| `gpu` | `torch>=2.13`, `kornia>=0.7` | GPU batch backend (`accel.py`/`bench.py`), `xkor_*` (kornia) family |
+| `gpu` | `torch>=2.13`, `kornia>=0.9`, `cupy-cuda12x>=14` (not macOS) | GPU batch backend (`accel.py`/`bench.py`), `xkor_*` (kornia) family |
 | `extra` | `mahotas>=1.4`, `SimpleITK>=2.2` | `xsitk_*` (curvature flow आदि), mahotas से बने (Zernike / pftas आदि) |
 | `gui` | `PySide6>=6.5` | **Fullseye Studio** (`studio.py` / `fullseye-studio`) |
-| `all` | GUI को छोड़कर ऊपर का सब कुछ (opencv, skimage, pil, wavelets, gpu, extra) | सभी operators और backends |
+| `all` | `opencv-python`, `scikit-image`, `Pillow`, `PyWavelets`, `torch`, `kornia`, `mahotas`, `SimpleITK`, `PySide6`, `imageio`, `imageio-ffmpeg`, `tifffile` (CuPy नहीं; पूरा GPU set `fullseye[gpu]` से। PyTorch के install guide के अनुसार Linux पर default torch CUDA build है और साथ में CUDA components (nvidia-* wheels) भी आ सकते हैं। केवल CPU के लिए पहले CPU-only index से torch install करें: `pip install torch --index-url https://download.pytorch.org/whl/cpu`) | सभी operators और backends |
 
 मोटे तौर पर नियम:
 

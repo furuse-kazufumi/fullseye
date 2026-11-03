@@ -874,7 +874,14 @@ def adapt_shape_model_high_noise(template, min_grad=0.25, smooth=2.0):
 
 
 def create_local_deformable_model(template, min_grad=0.1):
-    """局所変形マッチング用モデル(テンプレート保持)(create_local_deformable_model)。"""
+    """[部分対応] テンプレートとその剛体の形状モデルを持つだけ(create_local_deformable_model)。
+
+    する: テンプレートと ``create_shape_model`` の剛体モデルを ``{"template", "shape", "edge"}`` で返す。
+    しない: 変形のモデル(制御格子・変形のパラメータ)は作らない。探す側の ``find_local_deformable_model`` も
+    部分対応。HALCON 対応の数え方では「部分対応」で、対応済みには数えない(``halcon_coverage.PARTIAL``)。
+
+    [Partial HALCON analogue] Template plus a rigid shape model; no deformation model.
+    """
     t = np.asarray(template, float)
     return {"template": t, "shape": t.shape, "edge": create_shape_model(t, min_grad)}
 
@@ -885,8 +892,15 @@ def create_local_deformable_model_xld(contour, min_grad=0.1):
 
 
 def find_local_deformable_model(model, image, min_score=0.5):
-    """剛体位置を粗く合わせた後、オプティカルフローで局所変形を推定
-    (find_local_deformable_model)。変形ベクトル場を返す。"""
+    """[部分対応] 剛体の形状照合のあと、オプティカルフローで局所変形を推定(find_local_deformable_model)。
+    変形ベクトル場を返す。
+
+    する: ``find_shape_model`` で剛体の位置を合わせ、その切り出しとテンプレートの間の密なフローを返す。
+    しない: 変形のモデルを照合と同時に最適化しない(HALCON の local deformable matching の仕事)。
+    HALCON 対応の数え方では「部分対応」で、対応済みには数えない(``halcon_coverage.PARTIAL``)。
+
+    [Partial HALCON analogue] Rigid match plus optical flow; no jointly optimised deformation model.
+    """
     rigid = find_shape_model(model["edge"], image, min_score)
     from filters_flow import optical_flow_mg
     t = model["template"]; H, W = t.shape
@@ -907,7 +921,14 @@ def create_planar_uncalib_deformable_model(template, min_grad=0.1):
 
 
 def find_planar_uncalib_deformable_model(model, image, min_score=0.5):
-    """平面未校正変形モデルの検出(find_planar_uncalib_deformable_model)。"""
+    """[部分対応] ``find_local_deformable_model`` を呼ぶだけ(find_planar_uncalib_deformable_model)。
+
+    する: 剛体の形状照合のあとに光学フローを掛ける(``find_local_deformable_model`` と同じ結果)。
+    しない: 平面の射影(遠近)変形のモデルを推定しない。HALCON 対応の数え方では「部分対応」で、
+    対応済みには数えない(``halcon_coverage.PARTIAL``)。
+
+    [Partial HALCON analogue] Delegates to find_local_deformable_model; no planar perspective model.
+    """
     return find_local_deformable_model(model, image, min_score)
 
 

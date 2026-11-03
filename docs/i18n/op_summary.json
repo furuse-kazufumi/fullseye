@@ -31372,13 +31372,13 @@
    "hi": "image में calibration plate के गोल marks के केंद्र खोजता है (connected components के centroid) (find_caltab)।"
   },
   "calib/camera_calibration": {
-   "fp": "082e79cd209c",
-   "en": "Estimates the intrinsic matrix K from several views of a planar target by Zhang's method (camera_calibration).",
-   "zh": "用 Zhang 法从平面靶标的多个视角估计内参矩阵 K(camera_calibration)。",
-   "tw": "用 Zhang 法從平面靶標的多個視角估計內參矩陣 K(camera_calibration)。",
-   "ko": "Zhang 법으로 평면 타깃의 다시점에서 내부 행렬 K를 추정한다(camera_calibration).",
-   "de": "Schätzt die intrinsische Matrix K aus mehreren Ansichten eines ebenen Targets nach Zhang (camera_calibration).",
-   "hi": "Zhang विधि से planar target के कई views से intrinsic matrix K का अनुमान लगाता है (camera_calibration)।"
+   "fp": "6cee86e04b04",
+   "en": "[Partial] Estimates only the intrinsic matrix K from several views of a planar target by Zhang's method (camera_calibration).",
+   "zh": "[部分对应] 用 Zhang 法从平面靶标的多个视角只估计内参矩阵 K(camera_calibration)。",
+   "tw": "[部分對應] 用 Zhang 法從平面靶標的多個視角只估計內參矩陣 K(camera_calibration)。",
+   "ko": "[부분 대응] Zhang 법으로 평면 타깃의 다시점에서 내부 행렬 K만 추정한다(camera_calibration).",
+   "de": "[Teilweise] Schätzt nach Zhang nur die intrinsische Matrix K aus mehreren Ansichten eines ebenen Targets (camera_calibration).",
+   "hi": "[आंशिक] Zhang विधि से planar target के कई views से केवल intrinsic matrix K का अनुमान लगाता है (camera_calibration)।"
   },
   "calib/find_marks_and_pose": {
    "fp": "7399df102562",

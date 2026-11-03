@@ -327,7 +327,7 @@ jobs:
         if: matrix.python-version == '3.11'
         run: |
           pip install --index-url https://download.pytorch.org/whl/cpu "torch>=2.13"
-          pip install "kornia>=0.7" "mahotas>=1.4"
+          pip install "kornia>=0.9" "mahotas>=1.4"
           pip uninstall -y opencv-python
           pip install "opencv-contrib-python>=4.8.1.78"
           python -c "import torch, kornia, mahotas, cv2; print(torch.__version__, cv2.__version__); assert hasattr(cv2, 'xfeatures2d')"
@@ -477,14 +477,49 @@ jobs:
           #   距離」= 判定の床が測れず、glyph 系の PoC が丸ごと skip して
           #   落ちた(2026-09-17、run 35170653847)。ipafont は軽い。
           sudo apt-get install -y -q fonts-noto-cjk fonts-ipafont-gothic
+      # xlsx も入れる(2026-10-24: この行だけ抜けていて、能力ノートの Excel 出力の例が
+      # 「xlsxio needs openpyxl」で落ちた。順番の問題ではなく入れ忘れ)。
+      # ★コメントは `run: >` の中に書かない(2026-11-02〜03 に実際に踏んだ): 上の 2 行が
+      #   折り畳みで pip install と **1 行に連結**され、行全体がシェルのコメントになって何も入らず、
+      #   次の段が `pytest: command not found`(exit 127)。job の continue-on-error で誰も
+      #   気づかなかった。門 = tests/test_ci_folded_run_no_comment_2026_11_03.py と、下の order-shuffle-ran。
       - name: Install with optional backends (no torch)
+        id: install
         run: >
-          # xlsx も入れる(2026-10-24: この行だけ抜けていて、能力ノートの Excel 出力の例が
-          # 「xlsxio needs openpyxl」で落ちた。順番の問題ではなく入れ忘れ)。
           pip install -e ".[opencv,skimage,pil,wavelets,gui,video,volume,gltf,lidar,pcd,xlsx,export-verify]"
           pytest pytest-xdist pytest-randomly matplotlib sympy ziglang
       # 種を出力に残す —— 落ちたら `-p randomly --randomly-seed=<種>` で再現できる。
+      # --junitxml は「何件走ったか」を下の order-shuffle-ran ジョブへ渡すため。
       - name: Shuffled, serial (順序依存だけを見る)
-        run: pytest -q -p randomly -ra
+        run: pytest -q -p randomly -ra --junitxml=shuffle-serial.xml
+      # 直列が落ちても並列は回す(以前は直列の失敗で並列が丸ごと飛んでいた)。入れる段が落ちたら回さない。
       - name: Shuffled, parallel (ワーカー使い回しで崩れる順序を見る)
-        run: pytest -q -p randomly -n auto -ra
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
+        run: pytest -q -p randomly -n auto -ra --junitxml=shuffle-parallel.xml
+      - name: JUnit を次のジョブへ渡す
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9  # v7.0.2
+        with:
+          name: order-shuffle-junit
+          path: shuffle-*.xml
+          if-no-files-found: ignore
+
+  # order-shuffle は continue-on-error なので、ジョブが赤でも run 全体は緑のまま。
+  # 「テストが落ちた」(順序依存、調査は人)はそれでよいが、「テストが 1 件も走っていない」
+  # (入れる段の故障、2026-11-02〜03)は run を赤にする。こちらには continue-on-error を付けない。
+  # 床 10,000 = 直列・並列それぞれで走った件数(tests - skipped)の下限。全体は約 22,000 件
+  # (.test_durations、2026-10-22)で、torch なしの skip を引いても十分上にある見込み。
+  order-shuffle-ran:
+    name: order shuffle actually ran tests (nightly)
+    needs: order-shuffle
+    if: always() && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333  # v8.0.2
+        continue-on-error: true
+        with:
+          name: order-shuffle-junit
+          path: junit
+      - name: 走った件数の床(ファイルが無い・0 件・床未満は赤)
+        run: python3 tools/ci_junit_floor.py junit/shuffle-serial.xml junit/shuffle-parallel.xml --min-executed 10000
