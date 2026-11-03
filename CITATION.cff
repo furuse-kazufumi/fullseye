@@ -10,7 +10,7 @@ repository-code: "https://github.com/furuse-kazufumi/fullseye"
 url: "https://furuse.work/"
 repository-artifact: "https://pypi.org/project/fullseye/"
 version: 0.9.0
-date-released: "2026-11-03"
+date-released: "2026-11-04"
 doi: 10.5281/zenodo.22761195
 identifiers:
   - type: doi

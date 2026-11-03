@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 611 von 1603. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 611 von 1604. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `accel.py`
@@ -1380,6 +1380,10 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `examples/profile_shape_inspection.py`
 
 - **L25** — ★Da ein Modul direkt unter dem Repo (profileops) importiert wird, den Repo-Stamm nach vorne stellen, damit es direkt aus einem Checkout läuft. Gleiche Konvention wie die anderen Beispiele. Ohne dies scheitert `py -3.11 examples/<name>.py` mit ModuleNotFoundError (gemessen 2026-09-09: von den 83 ohne Gate zum Ausführen scheiterten nur 2 dieses Typs).
+
+## `examples/quickstart.py`
+
+- **L58** _(ja)_ — ★世代は 8(以前は 30)。見せるのは 4 段が通ることで、探索の質ではない。 30 世代は進化だけで手元 147 秒、CI の py3.12/3.14 では例全体が 600 秒を超えた(2026-11-04)。
 
 ## `examples/representation_roundtrip.py`
 

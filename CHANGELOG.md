@@ -5,9 +5,14 @@ Versions follow the git tags; a tag push publishes to PyPI (`.github/workflows/r
 What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 ("Versioning") — the minor slot is our breaking signal.
 
-## Unreleased
+## 0.9.0 — 2026-11-04
 
-版はまだ決めていない(0.9.0 の後に入った 8 本の統合)。
+PyPI に出す 0.9.0。11/03 に用意した分(下の「0.9.0 として 11/03 に用意した分」、PR #243)は tag を付けず未公開のままだったので、同じ版に 11/04 の 8 本の統合(この節)を足して出す。
+
+### 修正 — master の py3.12 / py3.14 だけで赤だった 2 件(PR の CI は py3.11 だけなので見えなかった)
+
+- `tests/test_pipeline_engine.py::test_run_genome_is_deterministic`: `run_genome` が輪郭の dict を返すと、比べ方(`np.array_equal(np.asarray(a), np.asarray(b))`)が「真偽値が曖昧」の ValueError を投げていた。optional の backend が無い版は登録表が小さく、同じ seed でも輪郭を返す鎖が選ばれた。入れ子まで比べる形に直し、seed 40 本で画像以外の出力も必ず通す試験を足した(py3.11 でも dict を 2 本通る)。
+- `examples/quickstart.py` が CI で 600 秒を超えた: 進化 30 世代だけで手元 147 秒。見せるのは 4 段が通ることなので 8 世代にした(例全体 178 → 69 秒)。
 
 ### 修正 — 完成度監査の段 0(CI・MCP・HALCON の見せ方・導入の文書)
 
@@ -150,7 +155,9 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
   `tests/test_jsonio.py` の乱数の種(`hash` → `zlib.crc32`)。
 - 連鎖ファズに `contour` 型の種(`fit_circle_xld` が台帳の中で到達できなかった。親の乱数列は進めない)。
 
-## 0.9.0 — 2026-11-03
+### 0.9.0 として 11/03 に用意した分(PR #243)
+
+以下の小節(「minor を上げる理由」から 0.8.1 の前まで)は 11/03 の時点の 0.9.0 の中身。
 
 minor を上げる理由(CONTRIBUTING.md「Versioning」): Python 3.10 の終了(下限の引き上げ)、`raytrace3d` の傾けた像面で
 値が変わる修正、21 op(`opscalib`)の入口を ValueError にした契約変更。

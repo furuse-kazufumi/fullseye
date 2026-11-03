@@ -28,12 +28,45 @@ def test_decode_is_deterministic():
     assert [s.op for s in ops.decode(g)] == [s.op for s in ops.decode(g)]
 
 
+def _same(a, b) -> bool:
+    """入れ子(dict / list / tuple / ndarray / 数)まで含めて値が一致するか。
+
+    ``run_genome`` は画像だけでなく特徴量や輪郭の dict(``{"shape", "cs"}``)も返す。
+    ``np.array_equal(np.asarray(a), np.asarray(b))`` は dict を 0 次元の object 配列にし、
+    中の配列の比較で「真偽値が曖昧」の ValueError を投げる(2026-11-04、master の py3.12/3.14。
+    optional の backend が無い版では登録表が小さく、同じ seed でも輪郭を返す鎖が選ばれた)。
+    """
+    if isinstance(a, dict):
+        return isinstance(b, dict) and a.keys() == b.keys() and all(_same(a[k], b[k]) for k in a)
+    if isinstance(a, (list, tuple)):
+        return isinstance(b, (list, tuple)) and len(a) == len(b) and all(map(_same, a, b))
+    return np.array_equal(np.asarray(a), np.asarray(b), equal_nan=True)
+
+
 def test_run_genome_is_deterministic():
     g = np.random.default_rng(2).random(ops.GENOME_LEN)
     img = _img()
     a = ops.run_genome(g, img.copy())
     b = ops.run_genome(g, img.copy())
-    assert np.array_equal(np.asarray(a), np.asarray(b))
+    assert _same(a, b)
+
+
+def test_run_genome_is_deterministic_for_every_kind_of_output():
+    """出力の種類(画像・特徴量・輪郭の dict …)によらず決定的であること。
+
+    seed 1 本だと、どの種類の出力を試すかが登録表の大きさ(= 入っている backend)で変わり、
+    py3.11 では画像、py3.12 では輪郭の dict、と版ごとに別のものを検査していた。
+    seed を 40 本回し、画像以外の出力も少なくとも 1 本は通ることを確かめる。
+    """
+    img = _img()
+    kinds = set()
+    for seed in range(40):
+        g = np.random.default_rng(seed).random(ops.GENOME_LEN)
+        a = ops.run_genome(g, img.copy())
+        b = ops.run_genome(g, img.copy())
+        assert _same(a, b), (seed, ops.pipeline_str(g))
+        kinds.add("image" if isinstance(a, np.ndarray) and a.ndim == 2 else type(a).__name__)
+    assert len(kinds) >= 2, kinds
 
 
 def test_apply_genome_always_returns_2d_image():

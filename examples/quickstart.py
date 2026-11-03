@@ -55,7 +55,9 @@ def main() -> None:
     # 6. drive evolve -> codegen -> difftest (writes into a scratch workdir)
     wd = ROOT / "out" / "quickstart"
     for argv in (["baseline.py", "--problem", "edge", "--workdir", str(wd), "--seed", "0"],
-                 ["evolve.py", "--problem", "edge", "--workdir", str(wd), "--gens", "30", "--seed", "0"],
+                 # ★世代は 8(以前は 30)。見せるのは 4 段が通ることで、探索の質ではない。
+                 #   30 世代は進化だけで手元 147 秒、CI の py3.12/3.14 では例全体が 600 秒を超えた(2026-11-04)。
+                 ["evolve.py", "--problem", "edge", "--workdir", str(wd), "--gens", "8", "--seed", "0"],
                  ["codegen.py", "--problem", "edge", "--workdir", str(wd)],
                  ["difftest.py", "--problem", "edge", "--workdir", str(wd)]):
         r = subprocess.run([PY, str(ROOT / argv[0]), *argv[1:]], cwd=str(ROOT), capture_output=True, text=True)

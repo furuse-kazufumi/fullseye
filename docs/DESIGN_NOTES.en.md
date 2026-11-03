@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 636 of 1603. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 636 of 1604. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel.py`
@@ -1380,6 +1380,10 @@ This repository records *why* things are the way they are in **comments in the s
 ## `examples/profile_shape_inspection.py`
 
 - **L25** — ★Since it imports a module directly under the repo (profileops), put the repo root at the front so it runs straight from a checkout. Same convention as the other examples. Without this, `py -3.11 examples/<name>.py` fails with ModuleNotFoundError (measured 2026-09-09: of the 83 that had no gate to run them, only 2 of this type failed).
+
+## `examples/quickstart.py`
+
+- **L58** _(ja)_ — ★世代は 8(以前は 30)。見せるのは 4 段が通ることで、探索の質ではない。 30 世代は進化だけで手元 147 秒、CI の py3.12/3.14 では例全体が 600 秒を超えた(2026-11-04)。
 
 ## `examples/representation_roundtrip.py`
 
