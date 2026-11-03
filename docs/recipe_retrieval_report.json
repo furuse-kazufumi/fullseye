@@ -1,6 +1,6 @@
 {
   "method": "Business-language queries contain no operator names. recall_at_2: the expected existing recipe is in the top 2. e2e_task_recipe_hit_at_2: one of the top-2 MCP-runnable recipes contains an op PR #224's judge expects. blind_*_hit_at_3: queries written from docs/ops without seeing the recipes; a top-3 recipe has that family / one of the listed ops.",
-  "recipes_in_index": 267,
+  "recipes_in_index": 270,
   "recipes_mcp": 89,
   "recall_at_2": 0.6666666666666666,
   "queries": [
@@ -548,7 +548,7 @@
       "top_3": [
         "Inspect — image fidelity report of a noisy capture (PSNR / RMSE with conditions)",
         "Measure — sub-pixel shift between two images (phase correlation)",
-        "Measure — ring radius by polar unwrapping"
+        "Inspect — perceptual colour difference ΔE*ab against a reference colour"
       ],
       "family_hit": true,
       "op_hit": true
@@ -602,8 +602,8 @@
       "query": "Fit a polynomial calibration curve to sensor readings and find where it crosses zero",
       "top_3": [
         "Analyze — count polynomial roots inside a circle (argument principle)",
-        "Measure — count zero crossings of a smoothed profile (1-D function)",
-        "Calibrate — camera gain from a captured test chart (simulation calibration)"
+        "Accept — probing error of a 3-D sensor on a calibrated sphere (VDI/VDE 2634-2 idea: PF and PS)",
+        "Measure — count zero crossings of a smoothed profile (1-D function)"
       ],
       "family_hit": true,
       "op_hit": false
@@ -801,7 +801,7 @@
       "top_3": [
         "Analyze — statistical shape model: variance explained by the first mode",
         "Inspect — variation-model defect detection against good samples",
-        "Inspect — form error after best-fit similarity alignment of landmarks"
+        "3D — ball radius by least squares after statistical outlier removal"
       ],
       "family_hit": true,
       "op_hit": true
@@ -834,7 +834,7 @@
       "top_3": [
         "Measure — areal roughness Sq: form removal, Gaussian L-filter, ISO 25178 parameters",
         "Inspect — dark contamination spots on a woven fabric",
-        "Texture — Gabor"
+        "FA — count holes in a back-lit plate"
       ],
       "family_hit": false,
       "op_hit": false
@@ -910,7 +910,7 @@
     "before_label": "master a8b9c1f249 (recipes.py 25 recipes), 2026-11-03",
     "recipes_in_index": {
       "before": 25,
-      "after": 267
+      "after": 270
     },
     "recipes_mcp": {
       "before": 25,
@@ -943,8 +943,8 @@
     },
     {
       "source": "fullseye/recipebook RECIPES",
-      "found": 242,
-      "included": 242,
+      "found": 245,
+      "included": 245,
       "excluded": 0,
       "reason": null
     },

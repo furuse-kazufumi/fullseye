@@ -1,21 +1,17 @@
 {
  "summary": {
-  "recipes": 267,
+  "recipes": 270,
   "recipes_py": 25,
-  "recipebook": 242,
+  "recipebook": 245,
   "multi_stage": 220,
   "families_total": 59,
-  "families_covered": 56,
-  "families_uncovered": [
-   "acceptance",
-   "matchreg",
-   "symbol"
-  ],
+  "families_covered": 59,
+  "families_uncovered": [],
   "task_class": {
    "3d": 36,
    "analysis": 24,
-   "inspection": 59,
-   "measurement": 71,
+   "inspection": 60,
+   "measurement": 73,
    "optics": 8,
    "preprocess": 38,
    "sensing": 17,
@@ -28,6 +24,7 @@
    "3D Matching": 8,
    "3D Object Model": 18,
    "3D Reconstruction": 14,
+   "Bar Code": 1,
    "Calibration": 4,
    "Color": 8,
    "Features": 2,
@@ -35,7 +32,7 @@
    "Frequency": 1,
    "Identification": 1,
    "Inspection": 4,
-   "Matching": 5,
+   "Matching": 6,
    "Morphology": 3,
    "OCR": 4,
    "Regions": 19,
@@ -47,12 +44,12 @@
   },
   "runner": {
    "mcp": 89,
-   "python": 178
+   "python": 181
   },
-  "truth_gated": 243,
+  "truth_gated": 246,
   "type_cuts_total": 0,
   "recipes_with_type_cuts": 0,
-  "distinct_ops": 409,
+  "distinct_ops": 412,
   "categories_2d_total": 49,
   "categories_2d_covered": 25,
   "categories_2d_uncovered": [
@@ -84,7 +81,7 @@
   "gpu": {
    "snapshot_commit": "a3f91eae72f851e870e6a45294ecfc44ded9cb10",
    "recipes_measured": 247,
-   "recipes_unmeasured": 20,
+   "recipes_unmeasured": 23,
    "recipes_with_gpu_stage": 127,
    "switches_total": 96,
    "switch_histogram": {
@@ -111,8 +108,8 @@
   {
    "family": "acceptance",
    "ops": 8,
-   "recipes": 0,
-   "ops_used": 0
+   "recipes": 1,
+   "ops_used": 1
   },
   {
    "family": "acoustics",
@@ -279,8 +276,8 @@
   {
    "family": "matchreg",
    "ops": 12,
-   "recipes": 0,
-   "ops_used": 0
+   "recipes": 1,
+   "ops_used": 1
   },
   {
    "family": "math",
@@ -411,8 +408,8 @@
   {
    "family": "symbol",
    "ops": 33,
-   "recipes": 0,
-   "ops_used": 0
+   "recipes": 1,
+   "ops_used": 1
   },
   {
    "family": "text",
@@ -5315,6 +5312,63 @@
    "gpu_stages": null,
    "gpu_unmeasured_ops": [
     "find_surface_pose"
+   ],
+   "gpu_switches": null
+  },
+  {
+   "name": "Accept — probing error of a 3-D sensor on a calibrated sphere (VDI/VDE 2634-2 idea: PF and PS)",
+   "source": "recipebook",
+   "family": "acceptance",
+   "task_class": "measurement",
+   "halcon": null,
+   "runner": "python",
+   "stages": 1,
+   "ops": [
+    "sphere_probing_error"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": null,
+   "gpu_unmeasured_ops": [
+    "sphere_probing_error"
+   ],
+   "gpu_switches": null
+  },
+  {
+   "name": "Register — sub-pixel shift between two images by ECC (enhanced correlation coefficient)",
+   "source": "recipebook",
+   "family": "matchreg",
+   "task_class": "measurement",
+   "halcon": "Matching",
+   "runner": "python",
+   "stages": 1,
+   "ops": [
+    "register_ecc"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": null,
+   "gpu_unmeasured_ops": [
+    "register_ecc"
+   ],
+   "gpu_switches": null
+  },
+  {
+   "name": "Read — an EAN-13 (JAN) barcode label, including a tilted and noisy one",
+   "source": "recipebook",
+   "family": "symbol",
+   "task_class": "inspection",
+   "halcon": "Bar Code",
+   "runner": "python",
+   "stages": 1,
+   "ops": [
+    "read_barcode1d"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": null,
+   "gpu_unmeasured_ops": [
+    "read_barcode1d"
    ],
    "gpu_switches": null
   },
