@@ -733,7 +733,7 @@ def _registry_adapters():
                  "opsimgforensics", "opsastrostack", "opsdem", "opspiv",
                  "opsprofile", "opsshapestat", "opsshape2d", "opsroughness",
                  "opsmeasure1d", "opsblob", "opsflyvision", "opsspc",
-                 "opsgraph", "opstext", "opsvx", "opsdrive", "opsresidue", "opsmultivar", "opssimcal", "opsconverge", "opscodematch", "opsaoi", "opscalib", "opsgenerative",
+                 "opsgraph", "opstext", "opsvx", "opsdrive", "opsresidue", "opsmultivar", "opssimcal", "opsconverge", "opscodematch", "opsaoi", "opscalib", "opssymbol", "opsgenerative",
                  "opssegmentation"):
         try:
             d.update(getattr(__import__(_mod), "RESULT_ADAPTERS", {}))
@@ -963,6 +963,13 @@ def catalog():
     for n, m in opscalib.OPSCALIB.items():
         if m["func"] is not None:
             ops.append((n, "calib", list(m["in"]), m["out"], m["func"]))
+    # 記号の読み取り(opssymbol 台帳、2026-11-03): 1-D / 2-D コードの生成と復号、撮像の
+    # シミュレーション、印字品質の等級、読み取りの POD、OCR。**新語なし**: シンボルの表も
+    # 結果も table、撮った画像は image2d、走査線は signal、モジュール格子は matrix。
+    import opssymbol
+    for n, m in opssymbol.OPSSYMBOL.items():
+        if m["func"] is not None:
+            ops.append((n, "symbol", list(m["in"]), m["out"], m["func"]))
     # 絵を作る側(opsgenerative 台帳)。**新しい型語彙を 1 つも作らない**判断:
     # 30 op の返りは既存の rgb((H,W,3))/ rgbvideo((T,H,W,3))/ table に収まる。
     # 「錯視画像」という型を作らないのが要点で、作った絵に既存の 2,147 op が

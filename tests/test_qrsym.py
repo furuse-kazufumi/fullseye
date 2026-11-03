@@ -250,6 +250,7 @@ def test_error_injection_up_to_capacity_is_corrected_and_counted(v, ec):
     d0 = qr_decode_modules(e["modules"])
     caps = d0["block_capacity"]
     expected_p = {(1, "L"): 3, (1, "M"): 2, (1, "Q"): 1, (2, "L"): 2, (3, "L"): 1}.get((v, ec), 0)
+    assert len(caps) == len(e["blocks"]) >= 1
     for (nd, ne), cap, p in zip(e["blocks"], caps, d0["block_p"]):
         assert p == expected_p and cap == (ne - p) // 2
     assert d0["block_ec"] == [ne for _nd, ne in e["blocks"]]

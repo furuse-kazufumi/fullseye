@@ -1253,6 +1253,9 @@ def ocr_classify(features, model, k=1, blur=None) -> dict:
         raise ValueError(f"features must have length {FEATURE_LENGTH}")
     if not np.isfinite(F).all():
         raise ValueError("features contain NaN or inf")
+    if F.shape[0] == 0:
+        # 空の入力は黙って空の結果を返さない(fail-closed)/ refuse an empty batch
+        raise ValueError("features is empty (0 rows) — nothing to classify")
     band = _band_mask(model, blur)
     w = _model_w(model)
     X = np.asarray(model["features"], float)[band] * w

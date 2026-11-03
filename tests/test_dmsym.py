@@ -171,7 +171,8 @@ def test_auto_size_is_smallest_and_shapes():
         need = len(dmsym._enc_ascii(txt.encode("latin-1")))
         smaller = [s for s in SQUARE if dmsym._SPEC[s][4] < dmsym._SPEC[(e["rows"], e["cols"])][4]]
         assert dmsym._SPEC[(e["rows"], e["cols"])][4] >= need
-        assert all(dmsym._SPEC[s][4] < need for s in smaller)
+        # 小さい側が空(最小の記号)でも意味のある形: 小さい記号の容量の最大 < 必要量
+        assert max((dmsym._SPEC[s][4] for s in smaller), default=-1) < need
     r = dm_encode("ABC123", shape="rectangle")
     assert r["rows"] != r["cols"]
     assert dm_decode_modules(r["modules"])["text"] == "ABC123"

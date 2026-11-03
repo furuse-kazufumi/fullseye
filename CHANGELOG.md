@@ -7,6 +7,18 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### 追加 — 記号の読み取りの族(1-D / 2-D コード・印字品質・読み取りの POD・OCR)
+
+- 新しい台帳 `opssymbol`(33 op / 7 カテゴリ、numpy + scipy のみ)。新しい型語彙なし(table / image2d / signal / matrix / scalar)。
+  - 1-D: `encode_barcode1d`(EAN-13 / UPC-A / Code 128・GS1-128 / Code 39 / ITF)、`ean_check_digit`、`barcode_scan_profiles`、`decode_barcode_profile`、`read_barcode1d`(任意の角度、10 本の多数決、短読みを拒否)。
+  - 2-D: `qr_encode` / `qr_decode_modules` / `qr_locate` / `qr_sample` / `qr_read`(型番 1-40)、`dm_*`(Data Matrix ECC200、正方 24 + 長方形 6、ドットピーン)。Reed-Solomon は自前の `symrs`(直した語数を返す)。
+  - 撮像: `render_symbol`(にじみ・刻印の点・回転・あおり)、`capture_degrade`(照明・デフォーカス・動きぶれ・ショット / 読み出し雑音・量子化)。
+  - 印字品質: `grade_barcode_profile` / `grade_barcode1d`(ISO/IEC 15416 の考え方)、`grade_datacode2d`(ISO/IEC 15415 の考え方)。規格の本文は写していない、認証された検証器ではない。
+  - 読み取りの POD: `symbol_read` / `symbol_read_trials` / `symbol_read_pod` / `ocr_read_trials`(既存の `pod.pod_hitmiss_fit`、成功 / 誤読 / 不能を分ける、完全分離は 29/29 の実証、非単調に旗)。
+  - OCR(古典、DL の学習なし): `ocr_font` / `ocr_render_text` / `ocr_segment_line` / `ocr_features` / `ocr_train` / `ocr_classify` / `ocr_read_line` / `ocr_score`。
+  - 仲介: `read_symbols_zxing`(extra `symbols` = zxing-cpp、Apache-2.0。無ければ ImportError)。
+- PoC 3 本: `examples/poc_symbol_package_1d.py` / `poc_symbol_part_dpm.py` / `poc_symbol_lot_ocr.py`。
+
 ### 追加 — 光弾性の族(応力場 → 縞 → 偏光像 → 位相差と主軸)
 
 - 新モジュール `photoelastic`(opsoptics のカテゴリ `photoelastic`、12 op)。単位は SI、位相差は rad・nm・縞次数を並べて返し、mm を m に・nm を m に・表の ×10⁻⁷ MPa⁻¹ を Pa⁻¹ に渡す取り違えは ValueError で拒否する。

@@ -58,6 +58,9 @@ _LEDGERS = (
     #   OP_INDEX.json / op_find("caltab") のどこからも引けなかった(fs.<名前> は 21 中 1)。
     #   新語なし(points / pose / matrix / table / contour / image2d)。
     ("opscalib", "OPSCALIB"),
+    # 2026-11-03: 記号の読み取り(1-D / 2-D コード・撮像シミュ・印字品質・読み取りの POD・OCR)。
+    #   監査で 2-D コードと印字品質は全層ゼロだった。新語なし(table / image2d / signal / matrix)。
+    ("opssymbol", "OPSSYMBOL"),
     # 2026-10-01: OpenVX 1.3.1 の素の口(勾配・表引き・ヒストグラム・非極大の抑制)。新語なし。
     ("opsvx", "OPSVX"),
     # 2026-09-29: 自動運転の教習所ワールド(規格寸法のコース / 3-D の世界 / 回転式 LiDAR)。新語なし。

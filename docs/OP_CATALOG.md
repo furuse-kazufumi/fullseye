@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(450 例)
+### 2-D 画像/信号/幾何(453 例)
 
 **workflow**
 - **MCPで物理量・登録見本・検証済みpipeline案を明示して使う** — 外部資産なしの合成画像で、名前つき物理量による平滑化、明示的な登録見本ハンドルによる位置決め、候補が一意なときだけ返す検証済みpipeline案を実行し、結果を自己検査する。 `py -3.11 examples/mcp_usability.py`
@@ -337,6 +337,9 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 **decoding**
 - **2 値マトリクスコードの読取限界(何画素あれば読めるか)** — QR と同型の構造(位置検出パターン + タイミング + 25x25 格子)を自分で作り、埋めたビット行列を真値に BER を測る。読める限界は **2 px/モジュール**、ぼけ σ/m 0.50、傾き 72 度。★**局所閾値は「モジュールが 12 px 以下のときだけ****照明ムラに強い**」—— 解像度を上げると BER 0.55 まで崩れる。 `py -3.11 examples/poc_matrix_code_reading.py`
+- **包装の 1-D バーコード: 読める / 品質が良い / どこまでぼけても読めるか(POD)** — EAN-13・ITF-14・GS1-128 を生成して読み、印字品質の等級を閉形式で確かめ、デフォーカスの読み取り POD をFullseye と zxing-cpp で比べる。★d90 のぼけで読める記号の等級は F。★d90 で撮り直すと読取率 0.79(点推定は楽観側)、使うのは d90/95。 `py -3.11 examples/poc_symbol_package_1d.py`
+- **部品の DPM Data Matrix とラベルの QR: 等級の閉形式と読める限界の POD** — 刻印の SC = 0.35、傾きの AN = 2(1−cos t)/(1+cos t)、k 語の欠けの UEC が閉形式どおり。四角い刻印では 2 つの読み取り器の d90 が数 % で一致。★zxing-cpp はくっきりしたドットピーンを 24 方向中 0 しか読まず、POD が非単調。 `py -3.11 examples/poc_symbol_part_dpm.py`
+- **ロット番号の CIJ 印字を古典 OCR で読む: 可読性の POD と誤読の数え方** — 5x7 ドットと線の内蔵書体、k 最近傍 + 棄却。字種外の字は棄却。デフォーカスと字高の可読性 POD。★学習の範囲を越えたぼけでは誤読が増える(誤読と棄却を分けて数える)。 `py -3.11 examples/poc_symbol_lot_ocr.py`
 - **1 次元バーコードが読めなくなる境界(誤読と読み取り不能を分けて数える)** — 自作 4-run 符号なので真値は数字そのもの。★**無傷では 6 つの読み方が全部 24/24 で差が出ない** —— 道具の良し悪しは壊してからしか分からない。★★「読めない」と言える実装かどうかで誤読率が 6 倍変わる(厳格 7.3 % / 寛容 46.1 %。**寛容のほうが成功率も高い**)。検査数字は寛容の誤読を 46.1 → 2.6 % にするが 0 にはしない。傾きの崖はatan(60/210)=15.95 度の予測に対し実測 15.5〜16.0 度。ぼけは σ/m に畳めるが傾きは畳めない。 `py -3.11 examples/poc_barcode_1d.py`
 
 **restoration**
@@ -797,9 +800,9 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Operators by family(族 → カテゴリ、全 op)
 
-_計 3629 ops / 56 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
+_計 3662 ops / 57 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
 
-族の一覧: **2d** 959 · **3d** 376 · **fit** 3 · **math** 114 · **optics** 483 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 41 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 717 · **tomography** 32 · **volcolor** 11 · **reprconv** 42 · **fileio** 14 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 3 · **calib** 21 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 16 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
+族の一覧: **2d** 959 · **3d** 376 · **fit** 3 · **math** 114 · **optics** 483 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 41 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 717 · **tomography** 32 · **volcolor** 11 · **reprconv** 42 · **fileio** 14 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 3 · **calib** 21 · **symbol** 33 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 16 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
 
 ### 2d(959 ops / 49 categories)
 
@@ -4815,6 +4818,55 @@ _計 3629 ops / 56 families。並びとノートの在り処は `docs/ops/INDEX.
 - `find_caltab` `image2d → keypoints` GPU: なし — 画像から校正板の円マーク中心を検出(連結成分の重心)(find_caltab)。
 - `gen_caltab` `入力なし → table` GPU: なし — 円マーク格子の校正板画像を生成(gen_caltab)。
 - `sim_caltab` `table → table` GPU: なし — 校正板を指定カメラ姿勢で投影した画像をシミュレート(sim_caltab)。
+
+### symbol(33 ops / 7 categories)
+
+#### symbol / barcode1d(5)
+- `barcode_scan_profiles` `image2d → table` GPU: なし — 画像から、縞に垂直な平行走査線を ``n_lines`` 本取り出す(``table``)。 · 例: `poc_symbol_package_1d`
+- `decode_barcode_profile` `signal → table` GPU: なし — 1 本の走査線(反射率の 1-D 列)からシンボルを 1 つ復号する(``table``)。 · 例: `poc_symbol_package_1d`
+- `ean_check_digit` `入力なし → scalar` GPU: なし — EAN/UPC の検査数字(右端の桁から重み 3, 1, 3, …、和を 10 の倍数に)/ EAN/UPC check digit. · 例: `poc_symbol_package_1d`
+- `encode_barcode1d` `入力なし → table` GPU: なし — 文字列を 1 次元バーコードの要素幅(モジュール単位)へ符号化する(``table``)。 · 例: `poc_symbol_package_1d`
+- `read_barcode1d` `image2d → table` GPU: なし — 画像から 1 次元バーコードを読む(``table``)。 · 例: `poc_symbol_package_1d`
+
+#### symbol / datacode2d(10)
+- `dm_decode_modules` `matrix → table` GPU: なし — Data Matrix のモジュール格子(L 字とクロック込み、0/1)を復号し、訂正語数を返す(``table``)。 · 例: `poc_symbol_part_dpm`
+- `dm_encode` `入力なし → table` GPU: なし — 文字列を Data Matrix ECC200 のモジュール格子と符号語の対応に符号化する(``table``)。 · 例: `poc_symbol_part_dpm`
+- `dm_locate` `image2d → table` GPU: なし — 画像から Data Matrix を見つけ、モジュール空間 → 画像の射影変換を推定する(``table``)。 · 例: `poc_symbol_part_dpm`
+- `dm_read` `image2d → table` GPU: なし — 画像から Data Matrix を読む: 位置決め → 標本化 → 復号、明暗を反転して再試行(``table``)。 · 例: `poc_symbol_part_dpm`
+- `dm_sample` `image2d → table` GPU: なし — Data Matrix のモジュール中心の反射率を双一次補間で取り、大域しきい値で 2 値化する(``table``)。 · 例: `poc_symbol_part_dpm`
+- `qr_decode_modules` `matrix → table` GPU: なし — QR のモジュール格子(静寂帯なし、1 = 暗)を復号し、ブロックごとの訂正語数を返す(``table``)。 · 例: `poc_symbol_part_dpm`
+- `qr_encode` `入力なし → table` GPU: なし — 文字列を QR Code(Model 2)のモジュール格子と符号語の対応に符号化する(``table``)。 · 例: `poc_symbol_part_dpm`
+- `qr_locate` `image2d → table` GPU: なし — 画像から QR を見つけ、モジュール空間 → 画像の射影変換を推定する(``table``)。 · 例: `poc_symbol_part_dpm`
+- `qr_read` `image2d → table` GPU: なし — 画像から QR を読む: 位置検出 → 標本化 → 復号、失敗したら明暗を反転して再試行(``table``)。 · 例: `poc_symbol_part_dpm`
+- `qr_sample` `image2d → table` GPU: なし — QR のモジュール中心の反射率を双一次補間で取り、大域しきい値で 2 値化する(``table``)。 · 例: `poc_symbol_part_dpm`
+
+#### symbol / ocr(9)
+- `ocr_classify` `matrix × table → table` GPU: なし — 特徴量を k 最近傍で識別し、距離と距離比で棄却する(``table``)。 · 例: `poc_symbol_lot_ocr`
+- `ocr_features` `image2d → signal` GPU: なし — 1 字のインク地図から 88 次元の特徴量(区画の濃度 + 射影)を作る(``signal``)。 · 例: `poc_symbol_lot_ocr`
+- `ocr_font` `入力なし → table` GPU: なし — 内蔵書体(5x7 ドット / 線)の字種と字形の設計を返す(``table``)。 · 例: `poc_symbol_lot_ocr`
+- `ocr_read_line` `image2d × table → table` GPU: なし — 画像の 1 行を読む: 切り出し + 識別、棄却した字は ``?``(``table``)。 · 例: `poc_symbol_lot_ocr`
+- `ocr_read_trials` `table → table` GPU: なし — 印字した文字列を劣化量の各水準で ``trials`` 回撮って OCR で読み、1 行 = 1 回の表を返す(``table``)。 · 例: `poc_symbol_lot_ocr`
+- `ocr_render_text` `入力なし → table` GPU: なし — 文字列を内蔵書体で描き、字ごとの真値の外接箱と一緒に返す(``table``)。 · 例: `poc_symbol_lot_ocr`
+- `ocr_score` `入力なし → table` GPU: なし — 読み取り結果を真値と Levenshtein 整列で採点し、誤読と棄却を分けて数える(``table``)。 · 例: `poc_symbol_lot_ocr`
+- `ocr_segment_line` `image2d → table` GPU: なし — 1 行の文字を 1 字ずつの外接箱に切り出す(``table``)。 · 例: `poc_symbol_lot_ocr`
+- `ocr_train` `入力なし → table` GPU: なし — 書体を撹乱つきで描いてテンプレート(特徴量 + ラベル)と棄却の閾値を集める(``table``)。 · 例: `poc_symbol_lot_ocr`
+
+#### symbol / print_quality(3)
+- `grade_barcode1d` `image2d → table` GPU: なし — 画像の 1-D シンボルの印字品質の等級(``n_scans`` 本の走査線の平均)を返す(``table``)。 · 例: `poc_symbol_package_1d`
+- `grade_barcode_profile` `signal → table` GPU: なし — 1 本の走査線(反射率の 1-D 列)の印字品質のパラメータと等級を返す(``table``)。 · 例: `poc_symbol_package_1d`
+- `grade_datacode2d` `image2d → table` GPU: なし — 画像の 2-D シンボル(QR / DataMatrix)の印字品質の等級を返す(``table``)。 · 例: `poc_symbol_part_dpm`
+
+#### symbol / read_pod(3)
+- `symbol_read` `image2d → table` GPU: なし — 画像を指定の読み取り器で読み、``{"ok", "text", "error"}`` を返す(``table``)。 · 例: `poc_symbol_package_1d`
+- `symbol_read_pod` `table → table` GPU: なし — 読み取りの試行表から、POD(当たり = 真の文字列を読めた)と誤読の上限を返す(``table``)。 · 例: `poc_symbol_lot_ocr`, `poc_symbol_package_1d`, `poc_symbol_part_dpm`
+- `symbol_read_trials` `table → table` GPU: なし — 劣化量の各水準でシンボルを ``trials`` 回撮って読み、1 行 = 1 回の結果の表を返す(``table``)。 · 例: `poc_symbol_package_1d`, `poc_symbol_part_dpm`
+
+#### symbol / symbol_bridge(1)
+- `read_symbols_zxing` `image2d → table` GPU: なし — zxing-cpp で画像の記号(1-D / 2-D)を全部読む(``table``)。 · 例: `poc_symbol_package_1d`, `poc_symbol_part_dpm`
+
+#### symbol / symbol_capture(2)
+- `capture_degrade` `image2d → image2d` GPU: なし — 反射率の画像に撮像の劣化(照明・ぼけ・センサ雑音)を掛ける(``image2d``)。 · 例: `poc_symbol_lot_ocr`, `poc_symbol_package_1d`, `poc_symbol_part_dpm`
+- `render_symbol` `table → image2d` GPU: なし — シンボル(1-D の幅か 2-D のモジュール格子)を、平面の反射率画像として描く(``image2d``)。 · 例: `poc_symbol_package_1d`, `poc_symbol_part_dpm`
 
 ### generative(42 ops / 6 categories)
 

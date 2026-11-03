@@ -31,6 +31,7 @@ def test_outcomes_are_exclusive_and_match_the_score(model):
                            trials=6, seed=3)
     assert np.all(tr["hit"] + tr["misread"] + tr["noread"] == 1)
     assert tr["hit"][tr["level"] == 1.0].all()                  # くっきりは全部読める
+    assert len(tr["text"]) == 24
     for got, mis, sub in zip(tr["text"], tr["misread"], tr["substituted_chars"]):
         sc = O.ocr_score(got, "LOT2611A")
         ins_real = sum(c != "?" for c in got) - sc["correct"] - sc["substituted"]

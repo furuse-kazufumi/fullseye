@@ -1,0 +1,26 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">grade_barcode1d — SYMBOL <code style="color:#22d3bf">print_quality</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.grade_barcode1d(image, symbologies=None, *, n_scans=10, aperture_x=0.5, angle_deg=None, expected_text=None)</code>(要直接调用实现,<code style="color:#22d3bf">import symgrade; symgrade.grade_barcode1d(image, symbologies=None, *, n_scans=10, aperture_x=0.5, angle_deg=None, expected_text=None)</code>;从台账取用则 <code style="color:#22d3bf">opssymbol.get(&quot;grade_barcode1d&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>返回图像中一维符号的印刷质量等级(<code style="color:#22d3bf">n_scans</code> 条扫描线的平均)(<code style="color:#22d3bf">table</code>)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>Grade a 1-D symbol in a reflectance image: read it (<code style="color:#22d3bf">barcode1d.read_barcode1d</code>) to find the bar direction and the module width X, filter the image with a circular measuring aperture of <code style="color:#22d3bf">aperture_x</code> · X diameter (default 0.5 X), take <code style="color:#22d3bf">n_scans</code> profiles evenly over 10 %..90 % of the bar height and grade each (<code style="color:#22d3bf">grade_barcode_profile</code>). <code style="color:#22d3bf">symbol_grade</code> = mean of the profile grades (0..4), <code style="color:#22d3bf">letter</code> its letter; <code style="color:#22d3bf">parameters</code> = per-parameter lists over the scans and <code style="color:#22d3bf">parameter_grade_mean</code> their mean grades; <code style="color:#22d3bf">limiting</code> = the parameters that most often set a profile&#x27;s grade. With <code style="color:#22d3bf">expected_text</code> a profile that decodes to a different string is graded 0 (<code style="color:#22d3bf">misread</code> counts them) — a misread is worse than a no-read.</p>
+<p>限界 / limits: 開口は円(画素で積分)、反射率は画像の値そのまま。走査線は画像の端まで伸ばし、各走査線で読めたシンボルの両側の静寂域 + 1 X だけを評価に使う。</p>
+<p>空の入力は <code style="color:#22d3bf">ValueError</code>。拒否(<code style="color:#22d3bf">ValueError</code>): 2-D でない、非有限、<code style="color:#22d3bf">n_scans</code> &lt; 1、<code style="color:#22d3bf">aperture_x</code> が [0, 2] の外。シンボルが見つからなければ <code style="color:#22d3bf">barcode1d.Barcode1DError</code>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesymbol:symbol_reading">symbol_reading 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_symbol_package_1d">poc_symbol_package_1d</a> — <code style="color:#22d3bf">py -3.11 examples/poc_symbol_package_1d.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="opsymbol:render_symbol">render_symbol</a> · <a style="color:#22d3bf" href="opsymbol:symbol_read_trials">symbol_read_trials</a> · <a style="color:#22d3bf" href="opsymbol:symbol_read_pod">symbol_read_pod</a> · <a style="color:#22d3bf" href="opsymbol:ocr_classify">ocr_classify</a> · <a style="color:#22d3bf" href="opsymbol:ocr_read_line">ocr_read_line</a> · <a style="color:#22d3bf" href="opsymbol:ocr_read_trials">ocr_read_trials</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">print_quality</code>)</h3>
+<p><a style="color:#22d3bf" href="opsymbol:grade_barcode_profile">grade_barcode_profile</a> · <a style="color:#22d3bf" href="opsymbol:grade_datacode2d">grade_datacode2d</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: symgrade.py — SYMBOL 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

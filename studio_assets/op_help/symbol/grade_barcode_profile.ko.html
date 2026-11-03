@@ -1,0 +1,34 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">grade_barcode_profile — SYMBOL <code style="color:#22d3bf">print_quality</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.grade_barcode_profile(profile, symbologies=None, *, quiet_zone_x=None)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import symgrade; symgrade.grade_barcode_profile(profile, symbologies=None, *, quiet_zone_x=None)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opssymbol.get(&quot;grade_barcode_profile&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
+<p>주사선 1개(반사율의 1차원 열)의 인쇄 품질 파라미터와 등급을 반환한다(<code style="color:#22d3bf">table</code>).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>Grade one scan reflectance profile. The profile must cover the symbol and its quiet zones. Quantities (reflectances in [0, 1]):</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">r_max</code> / <code style="color:#22d3bf">r_min</code>: highest / lowest reflectance over the profile.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">symbol_contrast</code> SC = r_max − r_min; global threshold GT = r_min + SC / 2.</p>
+<p style="margin:2px 0 2px 12px">• elements = runs between GT crossings; a space&#x27;s reflectance is its maximum, a bar&#x27;s its minimum; the quiet zones are the outer spaces.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">edge_contrast_min</code> ECmin = min over adjacent element pairs of |Rs − Rb|.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">modulation</code> MOD = ECmin / SC.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">defects</code> = ERNmax / SC, where an element&#x27;s reflectance non-uniformity ERN is the deepest valley trapped between two higher samples inside a space (or the highest peak trapped inside a bar) — monotone edges contribute nothing.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">decodability</code> = the smallest per-character decode margin returned by the reference decode (<code style="color:#22d3bf">barcode1d.decode_barcode_profile</code> at GT): for the edge-to-similar-edge symbologies (EAN/UPC, Code 128) the margin of each similar-edge sum from its decision boundary (half a module), for the two-width ones (Code 39, ITF) the margin of the narrowest wide / widest narrow element from the mid threshold, both scaled to 1 = ideal, 0 = on the boundary.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">decode</code> (bool), <code style="color:#22d3bf">quiet_zone_ok</code> (both light zones at least the symbology&#x27;s quiet zone, or <code style="color:#22d3bf">quiet_zone_x</code> X, wide), <code style="color:#22d3bf">r_min_ok</code> (Rmin ≤ 0.5 Rmax), <code style="color:#22d3bf">edge_contrast_ok</code> (ECmin ≥ 0.15).</p>
+<p>Grades 4..0 per parameter (<code style="color:#22d3bf">grades</code>), <code style="color:#22d3bf">profile_grade</code> = the minimum, and <code style="color:#22d3bf">limiting</code> = the parameters at that minimum. A profile that does not decode is graded 0 with <code style="color:#22d3bf">decode = False</code> (the other quantities are still reported when the profile has edges).</p>
+<p>空の入力(16 標本未満)は <code style="color:#22d3bf">ValueError</code>。拒否(<code style="color:#22d3bf">ValueError</code>): 1-D でない、非有限、<code style="color:#22d3bf">quiet_zone_x</code> が負。平らな走査線(縁が無い)は SC = 0 で <code style="color:#22d3bf">profile_grade = 0</code>(読めない、と数える)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesymbol:symbol_reading">symbol_reading 패밀리 가이드</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
+<p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
+<p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
+<p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_symbol_package_1d">poc_symbol_package_1d</a> — <code style="color:#22d3bf">py -3.11 examples/poc_symbol_package_1d.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">table</code> 를 입력으로 받는 것)</h3>
+<p><a style="color:#22d3bf" href="opsymbol:render_symbol">render_symbol</a> · <a style="color:#22d3bf" href="opsymbol:symbol_read_trials">symbol_read_trials</a> · <a style="color:#22d3bf" href="opsymbol:symbol_read_pod">symbol_read_pod</a> · <a style="color:#22d3bf" href="opsymbol:ocr_classify">ocr_classify</a> · <a style="color:#22d3bf" href="opsymbol:ocr_read_line">ocr_read_line</a> · <a style="color:#22d3bf" href="opsymbol:ocr_read_trials">ocr_read_trials</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">print_quality</code>)</h3>
+<p><a style="color:#22d3bf" href="opsymbol:grade_barcode1d">grade_barcode1d</a> · <a style="color:#22d3bf" href="opsymbol:grade_datacode2d">grade_datacode2d</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: symgrade.py — SYMBOL 연산자 레지스트리. 이 op 노트는 <code style="color:#22d3bf">tools/opdocs.py md</code> 가 자동 생성합니다(직접 편집하지 마세요).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

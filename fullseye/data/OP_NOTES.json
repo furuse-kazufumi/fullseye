@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3623,
- "n_notes": 3629,
+ "n_ops": 3656,
+ "n_notes": 3662,
  "notes": {
   "vol_dilate": [
    {
@@ -35564,6 +35564,328 @@
     "in": "normalmap",
     "out": "rgbimage",
     "path": "docs/ops/specular/reflectance/dichromatic_render.md"
+   }
+  ],
+  "barcode_scan_profiles": [
+   {
+    "op": "barcode_scan_profiles",
+    "dim": "symbol",
+    "category": "barcode1d",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/symbol/barcode1d/barcode_scan_profiles.md"
+   }
+  ],
+  "decode_barcode_profile": [
+   {
+    "op": "decode_barcode_profile",
+    "dim": "symbol",
+    "category": "barcode1d",
+    "in": "signal",
+    "out": "table",
+    "path": "docs/ops/symbol/barcode1d/decode_barcode_profile.md"
+   }
+  ],
+  "ean_check_digit": [
+   {
+    "op": "ean_check_digit",
+    "dim": "symbol",
+    "category": "barcode1d",
+    "out": "scalar",
+    "path": "docs/ops/symbol/barcode1d/ean_check_digit.md"
+   }
+  ],
+  "encode_barcode1d": [
+   {
+    "op": "encode_barcode1d",
+    "dim": "symbol",
+    "category": "barcode1d",
+    "out": "table",
+    "path": "docs/ops/symbol/barcode1d/encode_barcode1d.md"
+   }
+  ],
+  "read_barcode1d": [
+   {
+    "op": "read_barcode1d",
+    "dim": "symbol",
+    "category": "barcode1d",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/symbol/barcode1d/read_barcode1d.md"
+   }
+  ],
+  "dm_decode_modules": [
+   {
+    "op": "dm_decode_modules",
+    "dim": "symbol",
+    "category": "datacode2d",
+    "in": "matrix",
+    "out": "table",
+    "path": "docs/ops/symbol/datacode2d/dm_decode_modules.md"
+   }
+  ],
+  "dm_encode": [
+   {
+    "op": "dm_encode",
+    "dim": "symbol",
+    "category": "datacode2d",
+    "out": "table",
+    "path": "docs/ops/symbol/datacode2d/dm_encode.md"
+   }
+  ],
+  "dm_locate": [
+   {
+    "op": "dm_locate",
+    "dim": "symbol",
+    "category": "datacode2d",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/symbol/datacode2d/dm_locate.md"
+   }
+  ],
+  "dm_read": [
+   {
+    "op": "dm_read",
+    "dim": "symbol",
+    "category": "datacode2d",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/symbol/datacode2d/dm_read.md"
+   }
+  ],
+  "dm_sample": [
+   {
+    "op": "dm_sample",
+    "dim": "symbol",
+    "category": "datacode2d",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/symbol/datacode2d/dm_sample.md"
+   }
+  ],
+  "qr_decode_modules": [
+   {
+    "op": "qr_decode_modules",
+    "dim": "symbol",
+    "category": "datacode2d",
+    "in": "matrix",
+    "out": "table",
+    "path": "docs/ops/symbol/datacode2d/qr_decode_modules.md"
+   }
+  ],
+  "qr_encode": [
+   {
+    "op": "qr_encode",
+    "dim": "symbol",
+    "category": "datacode2d",
+    "out": "table",
+    "path": "docs/ops/symbol/datacode2d/qr_encode.md"
+   }
+  ],
+  "qr_locate": [
+   {
+    "op": "qr_locate",
+    "dim": "symbol",
+    "category": "datacode2d",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/symbol/datacode2d/qr_locate.md"
+   }
+  ],
+  "qr_read": [
+   {
+    "op": "qr_read",
+    "dim": "symbol",
+    "category": "datacode2d",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/symbol/datacode2d/qr_read.md"
+   }
+  ],
+  "qr_sample": [
+   {
+    "op": "qr_sample",
+    "dim": "symbol",
+    "category": "datacode2d",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/symbol/datacode2d/qr_sample.md"
+   }
+  ],
+  "ocr_classify": [
+   {
+    "op": "ocr_classify",
+    "dim": "symbol",
+    "category": "ocr",
+    "in": "matrix × table",
+    "out": "table",
+    "path": "docs/ops/symbol/ocr/ocr_classify.md"
+   }
+  ],
+  "ocr_features": [
+   {
+    "op": "ocr_features",
+    "dim": "symbol",
+    "category": "ocr",
+    "in": "image2d",
+    "out": "signal",
+    "path": "docs/ops/symbol/ocr/ocr_features.md"
+   }
+  ],
+  "ocr_font": [
+   {
+    "op": "ocr_font",
+    "dim": "symbol",
+    "category": "ocr",
+    "out": "table",
+    "path": "docs/ops/symbol/ocr/ocr_font.md"
+   }
+  ],
+  "ocr_read_line": [
+   {
+    "op": "ocr_read_line",
+    "dim": "symbol",
+    "category": "ocr",
+    "in": "image2d × table",
+    "out": "table",
+    "path": "docs/ops/symbol/ocr/ocr_read_line.md"
+   }
+  ],
+  "ocr_read_trials": [
+   {
+    "op": "ocr_read_trials",
+    "dim": "symbol",
+    "category": "ocr",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/symbol/ocr/ocr_read_trials.md"
+   }
+  ],
+  "ocr_render_text": [
+   {
+    "op": "ocr_render_text",
+    "dim": "symbol",
+    "category": "ocr",
+    "out": "table",
+    "path": "docs/ops/symbol/ocr/ocr_render_text.md"
+   }
+  ],
+  "ocr_score": [
+   {
+    "op": "ocr_score",
+    "dim": "symbol",
+    "category": "ocr",
+    "out": "table",
+    "path": "docs/ops/symbol/ocr/ocr_score.md"
+   }
+  ],
+  "ocr_segment_line": [
+   {
+    "op": "ocr_segment_line",
+    "dim": "symbol",
+    "category": "ocr",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/symbol/ocr/ocr_segment_line.md"
+   }
+  ],
+  "ocr_train": [
+   {
+    "op": "ocr_train",
+    "dim": "symbol",
+    "category": "ocr",
+    "out": "table",
+    "path": "docs/ops/symbol/ocr/ocr_train.md"
+   }
+  ],
+  "grade_barcode1d": [
+   {
+    "op": "grade_barcode1d",
+    "dim": "symbol",
+    "category": "print_quality",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/symbol/print_quality/grade_barcode1d.md"
+   }
+  ],
+  "grade_barcode_profile": [
+   {
+    "op": "grade_barcode_profile",
+    "dim": "symbol",
+    "category": "print_quality",
+    "in": "signal",
+    "out": "table",
+    "path": "docs/ops/symbol/print_quality/grade_barcode_profile.md"
+   }
+  ],
+  "grade_datacode2d": [
+   {
+    "op": "grade_datacode2d",
+    "dim": "symbol",
+    "category": "print_quality",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/symbol/print_quality/grade_datacode2d.md"
+   }
+  ],
+  "symbol_read": [
+   {
+    "op": "symbol_read",
+    "dim": "symbol",
+    "category": "read_pod",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/symbol/read_pod/symbol_read.md"
+   }
+  ],
+  "symbol_read_pod": [
+   {
+    "op": "symbol_read_pod",
+    "dim": "symbol",
+    "category": "read_pod",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/symbol/read_pod/symbol_read_pod.md"
+   }
+  ],
+  "symbol_read_trials": [
+   {
+    "op": "symbol_read_trials",
+    "dim": "symbol",
+    "category": "read_pod",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/symbol/read_pod/symbol_read_trials.md"
+   }
+  ],
+  "read_symbols_zxing": [
+   {
+    "op": "read_symbols_zxing",
+    "dim": "symbol",
+    "category": "symbol_bridge",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/symbol/symbol_bridge/read_symbols_zxing.md"
+   }
+  ],
+  "capture_degrade": [
+   {
+    "op": "capture_degrade",
+    "dim": "symbol",
+    "category": "symbol_capture",
+    "in": "image2d",
+    "out": "image2d",
+    "path": "docs/ops/symbol/symbol_capture/capture_degrade.md"
+   }
+  ],
+  "render_symbol": [
+   {
+    "op": "render_symbol",
+    "dim": "symbol",
+    "category": "symbol_capture",
+    "in": "table",
+    "out": "image2d",
+    "path": "docs/ops/symbol/symbol_capture/render_symbol.md"
    }
   ],
   "text_candidates": [

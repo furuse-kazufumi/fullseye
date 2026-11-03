@@ -74,6 +74,7 @@ def test_fonts_cover_charset_and_designs():
         assert f["charset"] == oc.CHARSET
         assert set(f["glyphs"]) == set(oc.CHARSET)
     dot = oc.ocr_font("dot5x7")
+    assert len(dot["glyphs"]) == len(oc.CHARSET)
     for c, bm in dot["glyphs"].items():
         assert bm.shape == (7, 5) and bm.dtype == np.uint8 and bm.any(), c
     # 設計どうしが全部違う(紛らわしい対も含めて)/ all dot designs are distinct

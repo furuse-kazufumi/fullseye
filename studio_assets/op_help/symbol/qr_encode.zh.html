@@ -1,0 +1,41 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">qr_encode — SYMBOL <code style="color:#22d3bf">datacode2d</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">table</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.qr_encode(text, ec_level=&#x27;M&#x27;, version=None, mask=None, mode=None) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import qrsym; qrsym.qr_encode(text, ec_level=&#x27;M&#x27;, version=None, mask=None, mode=None) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opssymbol.get(&quot;qr_encode&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>将字符串编码为 QR Code(Model 2)的模块网格及模块到码字的对应(<code style="color:#22d3bf">table</code>)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>Encode <code style="color:#22d3bf">text</code> as a QR Code (Model 2) module grid.</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
+<p>text : str</p>
+<p>符号化する文字列 / the text. Byte mode stores UTF-8 (no ECI).</p>
+<p>ec_level : {&quot;L&quot;, &quot;M&quot;, &quot;Q&quot;, &quot;H&quot;}</p>
+<p>誤り訂正レベル / error-correction level.</p>
+<p>version : int or None</p>
+<p>1..40。None なら収まる最小 / 1..40, or None for the smallest that fits.</p>
+<p>mask : int or None</p>
+<p>0..7。None なら 4 規則の減点が最小のもの / 0..7, or None to pick by penalty.</p>
+<p>mode : {&quot;numeric&quot;, &quot;alphanumeric&quot;, &quot;byte&quot;} or None</p>
+<p>None なら文字種から自動 / None to choose from the characters.</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>dict</p>
+<p><code style="color:#22d3bf">modules</code> (N,N) uint8 (1=暗/dark), <code style="color:#22d3bf">size</code>, <code style="color:#22d3bf">version</code>, <code style="color:#22d3bf">ec_level</code>, <code style="color:#22d3bf">mask</code>,</p>
+<p><code style="color:#22d3bf">mode</code>, <code style="color:#22d3bf">text</code>, <code style="color:#22d3bf">blocks</code> [(n_data, n_ec)…], <code style="color:#22d3bf">n_data_codewords</code>,</p>
+<p><code style="color:#22d3bf">n_ec_codewords</code>, <code style="color:#22d3bf">function_mask</code> (N,N) bool, <code style="color:#22d3bf">codeword_index</code> (N,N) int16</p>
+<p>(-1 = 機能/余り / function or remainder), <code style="color:#22d3bf">codewords</code> (interleaved list).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesymbol:symbol_reading">symbol_reading 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_symbol_part_dpm">poc_symbol_part_dpm</a> — <code style="color:#22d3bf">py -3.11 examples/poc_symbol_part_dpm.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="opsymbol:render_symbol">render_symbol</a> · <a style="color:#22d3bf" href="opsymbol:symbol_read_trials">symbol_read_trials</a> · <a style="color:#22d3bf" href="opsymbol:symbol_read_pod">symbol_read_pod</a> · <a style="color:#22d3bf" href="opsymbol:ocr_classify">ocr_classify</a> · <a style="color:#22d3bf" href="opsymbol:ocr_read_line">ocr_read_line</a> · <a style="color:#22d3bf" href="opsymbol:ocr_read_trials">ocr_read_trials</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">datacode2d</code>)</h3>
+<p><a style="color:#22d3bf" href="opsymbol:qr_decode_modules">qr_decode_modules</a> · <a style="color:#22d3bf" href="opsymbol:qr_locate">qr_locate</a> · <a style="color:#22d3bf" href="opsymbol:qr_sample">qr_sample</a> · <a style="color:#22d3bf" href="opsymbol:qr_read">qr_read</a> · <a style="color:#22d3bf" href="opsymbol:dm_encode">dm_encode</a> · <a style="color:#22d3bf" href="opsymbol:dm_decode_modules">dm_decode_modules</a> · <a style="color:#22d3bf" href="opsymbol:dm_locate">dm_locate</a> · <a style="color:#22d3bf" href="opsymbol:dm_sample">dm_sample</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: qrsym.py — SYMBOL 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

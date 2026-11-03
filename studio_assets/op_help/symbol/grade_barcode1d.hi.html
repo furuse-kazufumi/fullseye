@@ -1,0 +1,26 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">grade_barcode1d — SYMBOL <code style="color:#22d3bf">print_quality</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.grade_barcode1d(image, symbologies=None, *, n_scans=10, aperture_x=0.5, angle_deg=None, expected_text=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import symgrade; symgrade.grade_barcode1d(image, symbologies=None, *, n_scans=10, aperture_x=0.5, angle_deg=None, expected_text=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">opssymbol.get(&quot;grade_barcode1d&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>image में 1-D symbol का print-quality grade (<code style="color:#22d3bf">n_scans</code> scan lines का औसत) लौटाता है (<code style="color:#22d3bf">table</code>)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>Grade a 1-D symbol in a reflectance image: read it (<code style="color:#22d3bf">barcode1d.read_barcode1d</code>) to find the bar direction and the module width X, filter the image with a circular measuring aperture of <code style="color:#22d3bf">aperture_x</code> · X diameter (default 0.5 X), take <code style="color:#22d3bf">n_scans</code> profiles evenly over 10 %..90 % of the bar height and grade each (<code style="color:#22d3bf">grade_barcode_profile</code>). <code style="color:#22d3bf">symbol_grade</code> = mean of the profile grades (0..4), <code style="color:#22d3bf">letter</code> its letter; <code style="color:#22d3bf">parameters</code> = per-parameter lists over the scans and <code style="color:#22d3bf">parameter_grade_mean</code> their mean grades; <code style="color:#22d3bf">limiting</code> = the parameters that most often set a profile&#x27;s grade. With <code style="color:#22d3bf">expected_text</code> a profile that decodes to a different string is graded 0 (<code style="color:#22d3bf">misread</code> counts them) — a misread is worse than a no-read.</p>
+<p>限界 / limits: 開口は円(画素で積分)、反射率は画像の値そのまま。走査線は画像の端まで伸ばし、各走査線で読めたシンボルの両側の静寂域 + 1 X だけを評価に使う。</p>
+<p>空の入力は <code style="color:#22d3bf">ValueError</code>。拒否(<code style="color:#22d3bf">ValueError</code>): 2-D でない、非有限、<code style="color:#22d3bf">n_scans</code> &lt; 1、<code style="color:#22d3bf">aperture_x</code> が [0, 2] の外。シンボルが見つからなければ <code style="color:#22d3bf">barcode1d.Barcode1DError</code>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesymbol:symbol_reading">symbol_reading family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_symbol_package_1d">poc_symbol_package_1d</a> — <code style="color:#22d3bf">py -3.11 examples/poc_symbol_package_1d.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opsymbol:render_symbol">render_symbol</a> · <a style="color:#22d3bf" href="opsymbol:symbol_read_trials">symbol_read_trials</a> · <a style="color:#22d3bf" href="opsymbol:symbol_read_pod">symbol_read_pod</a> · <a style="color:#22d3bf" href="opsymbol:ocr_classify">ocr_classify</a> · <a style="color:#22d3bf" href="opsymbol:ocr_read_line">ocr_read_line</a> · <a style="color:#22d3bf" href="opsymbol:ocr_read_trials">ocr_read_trials</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">print_quality</code>)</h3>
+<p><a style="color:#22d3bf" href="opsymbol:grade_barcode_profile">grade_barcode_profile</a> · <a style="color:#22d3bf" href="opsymbol:grade_datacode2d">grade_datacode2d</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: symgrade.py — SYMBOL operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

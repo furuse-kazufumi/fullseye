@@ -1,8 +1,8 @@
 {
- "n_ops": 3623,
+ "n_ops": 3656,
  "tiers": {
   "color": 12,
-  "ledger": 2664,
+  "ledger": 2697,
   "nary": 17,
   "registry": 930
  },
@@ -2059,6 +2059,19 @@
    "in_sorts": []
   },
   {
+   "name": "barcode_scan_profiles",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "barcode1d",
+   "tier": "ledger",
+   "ledger": "opssymbol",
+   "dim": "symbol",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
    "name": "basis_decomposition_crlb",
    "halcon": "",
    "in_sort": null,
@@ -3125,6 +3138,19 @@
    "dim": "3d",
    "in_sorts": [
     "coordgrid"
+   ]
+  },
+  {
+   "name": "capture_degrade",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "image2d",
+   "category": "symbol_capture",
+   "tier": "ledger",
+   "ledger": "opssymbol",
+   "dim": "symbol",
+   "in_sorts": [
+    "image2d"
    ]
   },
   {
@@ -6133,6 +6159,19 @@
    ]
   },
   {
+   "name": "decode_barcode_profile",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "table",
+   "category": "barcode1d",
+   "tier": "ledger",
+   "ledger": "opssymbol",
+   "dim": "symbol",
+   "in_sorts": [
+    "signal"
+   ]
+  },
+  {
    "name": "decode_fringe",
    "halcon": "",
    "in_sort": "images",
@@ -7367,6 +7406,69 @@
    ]
   },
   {
+   "name": "dm_decode_modules",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "table",
+   "category": "datacode2d",
+   "tier": "ledger",
+   "ledger": "opssymbol",
+   "dim": "symbol",
+   "in_sorts": [
+    "matrix"
+   ]
+  },
+  {
+   "name": "dm_encode",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "datacode2d",
+   "tier": "ledger",
+   "ledger": "opssymbol",
+   "dim": "symbol",
+   "in_sorts": []
+  },
+  {
+   "name": "dm_locate",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "datacode2d",
+   "tier": "ledger",
+   "ledger": "opssymbol",
+   "dim": "symbol",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
+   "name": "dm_read",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "datacode2d",
+   "tier": "ledger",
+   "ledger": "opssymbol",
+   "dim": "symbol",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
+   "name": "dm_sample",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "datacode2d",
+   "tier": "ledger",
+   "ledger": "opssymbol",
+   "dim": "symbol",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
    "name": "doe_box_behnken",
    "halcon": "",
    "in_sort": null,
@@ -7891,6 +7993,17 @@
    ]
   },
   {
+   "name": "ean_check_digit",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "scalar",
+   "category": "barcode1d",
+   "tier": "ledger",
+   "ledger": "opssymbol",
+   "dim": "symbol",
+   "in_sorts": []
+  },
+  {
    "name": "echo_phase_polarity",
    "halcon": "",
    "in_sort": "table",
@@ -8390,6 +8503,17 @@
    "in_sorts": [
     "image2d"
    ]
+  },
+  {
+   "name": "encode_barcode1d",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "barcode1d",
+   "tier": "ledger",
+   "ledger": "opssymbol",
+   "dim": "symbol",
+   "in_sorts": []
   },
   {
    "name": "energy_radii",
@@ -11439,6 +11563,45 @@
    "dim": "imgmetrics",
    "in_sorts": [
     "image2d",
+    "image2d"
+   ]
+  },
+  {
+   "name": "grade_barcode1d",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "print_quality",
+   "tier": "ledger",
+   "ledger": "opssymbol",
+   "dim": "symbol",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
+   "name": "grade_barcode_profile",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "table",
+   "category": "print_quality",
+   "tier": "ledger",
+   "ledger": "opssymbol",
+   "dim": "symbol",
+   "in_sorts": [
+    "signal"
+   ]
+  },
+  {
+   "name": "grade_datacode2d",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "print_quality",
+   "tier": "ledger",
+   "ledger": "opssymbol",
+   "dim": "symbol",
+   "in_sorts": [
     "image2d"
    ]
   },
@@ -19453,6 +19616,117 @@
    ]
   },
   {
+   "name": "ocr_classify",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "table",
+   "category": "ocr",
+   "tier": "ledger",
+   "ledger": "opssymbol",
+   "dim": "symbol",
+   "in_sorts": [
+    "matrix",
+    "table"
+   ]
+  },
+  {
+   "name": "ocr_features",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "signal",
+   "category": "ocr",
+   "tier": "ledger",
+   "ledger": "opssymbol",
+   "dim": "symbol",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
+   "name": "ocr_font",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "ocr",
+   "tier": "ledger",
+   "ledger": "opssymbol",
+   "dim": "symbol",
+   "in_sorts": []
+  },
+  {
+   "name": "ocr_read_line",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "ocr",
+   "tier": "ledger",
+   "ledger": "opssymbol",
+   "dim": "symbol",
+   "in_sorts": [
+    "image2d",
+    "table"
+   ]
+  },
+  {
+   "name": "ocr_read_trials",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "ocr",
+   "tier": "ledger",
+   "ledger": "opssymbol",
+   "dim": "symbol",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "ocr_render_text",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "ocr",
+   "tier": "ledger",
+   "ledger": "opssymbol",
+   "dim": "symbol",
+   "in_sorts": []
+  },
+  {
+   "name": "ocr_score",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "ocr",
+   "tier": "ledger",
+   "ledger": "opssymbol",
+   "dim": "symbol",
+   "in_sorts": []
+  },
+  {
+   "name": "ocr_segment_line",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "ocr",
+   "tier": "ledger",
+   "ledger": "opssymbol",
+   "dim": "symbol",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
+   "name": "ocr_train",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "ocr",
+   "tier": "ledger",
+   "ledger": "opssymbol",
+   "dim": "symbol",
+   "in_sorts": []
+  },
+  {
    "name": "oct_ascan",
    "halcon": "",
    "in_sort": "table",
@@ -23798,6 +24072,69 @@
    ]
   },
   {
+   "name": "qr_decode_modules",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "table",
+   "category": "datacode2d",
+   "tier": "ledger",
+   "ledger": "opssymbol",
+   "dim": "symbol",
+   "in_sorts": [
+    "matrix"
+   ]
+  },
+  {
+   "name": "qr_encode",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "datacode2d",
+   "tier": "ledger",
+   "ledger": "opssymbol",
+   "dim": "symbol",
+   "in_sorts": []
+  },
+  {
+   "name": "qr_locate",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "datacode2d",
+   "tier": "ledger",
+   "ledger": "opssymbol",
+   "dim": "symbol",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
+   "name": "qr_read",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "datacode2d",
+   "tier": "ledger",
+   "ledger": "opssymbol",
+   "dim": "symbol",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
+   "name": "qr_sample",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "datacode2d",
+   "tier": "ledger",
+   "ledger": "opssymbol",
+   "dim": "symbol",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
    "name": "quantize",
    "halcon": "",
    "in_sort": "signal",
@@ -24510,6 +24847,19 @@
    ]
   },
   {
+   "name": "read_barcode1d",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "barcode1d",
+   "tier": "ledger",
+   "ledger": "opssymbol",
+   "dim": "symbol",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
    "name": "read_bvh",
    "halcon": "",
    "in_sort": null,
@@ -24541,6 +24891,19 @@
    "ledger": "opsoptics",
    "dim": "optics",
    "in_sorts": []
+  },
+  {
+   "name": "read_symbols_zxing",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "symbol_bridge",
+   "tier": "ledger",
+   "ledger": "opssymbol",
+   "dim": "symbol",
+   "in_sorts": [
+    "image2d"
+   ]
   },
   {
    "name": "read_wav",
@@ -25133,6 +25496,19 @@
    "dim": "optics",
    "in_sorts": [
     "table",
+    "table"
+   ]
+  },
+  {
+   "name": "render_symbol",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "image2d",
+   "category": "symbol_capture",
+   "tier": "ledger",
+   "ledger": "opssymbol",
+   "dim": "symbol",
+   "in_sorts": [
     "table"
    ]
   },
@@ -30355,6 +30731,45 @@
    "dim": "text",
    "in_sorts": [
     "image2d"
+   ]
+  },
+  {
+   "name": "symbol_read",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "read_pod",
+   "tier": "ledger",
+   "ledger": "opssymbol",
+   "dim": "symbol",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
+   "name": "symbol_read_pod",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "read_pod",
+   "tier": "ledger",
+   "ledger": "opssymbol",
+   "dim": "symbol",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "symbol_read_trials",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "read_pod",
+   "tier": "ledger",
+   "ledger": "opssymbol",
+   "dim": "symbol",
+   "in_sorts": [
+    "table"
    ]
   },
   {

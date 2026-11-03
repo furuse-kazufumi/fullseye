@@ -1292,6 +1292,75 @@ def _fileio_builders():
     }
 
 
+def _symbol_builders():
+    """opssymbol (2026-11-03): symbols the random pool cannot make.
+
+    Every reader / grader needs an image that actually holds a symbol, every decoder a
+    valid module grid, every encoder its text; a random image or table is refused
+    fail-closed (correctly), which the probe would count as a contract violation of an
+    op it never really ran. Inputs here are rendered from known strings (the truth).
+    ``capture_degrade`` gets a symbol image with ``illum_slope`` / ``motion_px`` set, so its
+    angle knobs (which only act when the slope / motion is non-zero) are live.
+    """
+    import barcode1d
+    import dmsym
+    import ocrclassic
+    import qrsym
+    import symbolpod
+    import symrender
+
+    ean = barcode1d.encode_barcode1d("490123456789", "ean13")
+    qr = qrsym.qr_encode("FULLSEYE-1103")
+    dm = dmsym.dm_encode("LOT2026-1103")
+    ean_img = symrender.render_symbol(ean, 3.0, rotate_deg=12.0)
+    qr_img = symrender.render_symbol(qr, 4.0, rotate_deg=20.0)
+    dm_img = symrender.render_symbol(dm, 5.0, rotate_deg=20.0)
+    prof = symrender.render_symbol(ean, 3.0)[30]
+    cache = {}
+
+    def model():
+        if "m" not in cache:
+            cache["m"] = ocrclassic.ocr_train("dot5x7", char_height_px=(20, 26))
+        return cache["m"]
+
+    def line():
+        return ocrclassic.ocr_render_text("LOT42", char_height_px=24)["image"]
+
+    trials = symbolpod.symbol_read_trials(ean, "defocus_px", [1.0, 7.0, 12.0], trials=2,
+                                          module_px=3.0, seed=0)
+    return {
+        "encode_barcode1d": lambda pool, rng: (["490123456789", "ean13"], {}),
+        "ean_check_digit": lambda pool, rng: (["490123456789"], {}),
+        "decode_barcode_profile": lambda pool, rng: ([prof], {}),
+        "read_barcode1d": lambda pool, rng: ([ean_img], {}),
+        "grade_barcode1d": lambda pool, rng: ([ean_img], {}),
+        "qr_encode": lambda pool, rng: (["FULLSEYE-1103"], {}),
+        "qr_decode_modules": lambda pool, rng: ([qr["modules"]], {}),
+        "qr_locate": lambda pool, rng: ([qr_img], {}),
+        "qr_sample": lambda pool, rng: ([qr_img], {}),
+        "qr_read": lambda pool, rng: ([qr_img], {}),
+        "dm_encode": lambda pool, rng: (["LOT2026-1103"], {}),
+        "dm_decode_modules": lambda pool, rng: ([dm["modules"]], {}),
+        "dm_locate": lambda pool, rng: ([dm_img], {}),
+        "dm_sample": lambda pool, rng: ([dm_img], {}),
+        "dm_read": lambda pool, rng: ([dm_img], {}),
+        "grade_datacode2d": lambda pool, rng: ([dm_img], {}),
+        "render_symbol": lambda pool, rng: ([dm], {"rotate_deg": 15.0, "tilt_deg": 20.0}),
+        "capture_degrade": lambda pool, rng: ([dm_img], {"illum_slope": 0.4, "motion_px": 3.0,
+                                                         "full_well_e": 20000.0}),
+        "symbol_read_trials": lambda pool, rng: ([ean, "defocus_px", [1.0, 7.0, 12.0]],
+                                                 {"trials": 2, "module_px": 3.0}),
+        "symbol_read_pod": lambda pool, rng: ([trials], {}),
+        "ocr_render_text": lambda pool, rng: (["LOT42"], {}),
+        "ocr_score": lambda pool, rng: (["LOT4?", "LOT42"], {}),
+        "ocr_classify": lambda pool, rng: ([ocrclassic.ocr_features(line()[20:50, 20:40])[None, :],
+                                            model()], {}),
+        "ocr_read_line": lambda pool, rng: ([line(), model()], {}),
+        "ocr_read_trials": lambda pool, rng: (["LOT42", "defocus_px", [1.0, 9.0, 14.0]],
+                                              {"model": model(), "trials": 2}),
+    }
+
+
 def probe_builders():
     """Every probe-local builder (name -> builder)."""
     out = dict(_optics_builders())
@@ -1300,6 +1369,7 @@ def probe_builders():
     out.update(_batch2_builders())
     out.update(_knob_builders())
     out.update(_fileio_builders())
+    out.update(_symbol_builders())
     return out
 
 

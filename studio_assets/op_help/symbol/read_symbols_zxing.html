@@ -1,0 +1,25 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">read_symbols_zxing — SYMBOL <code style="color:#22d3bf">symbol_bridge</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.read_symbols_zxing(image, formats=None, *, try_rotate=True, try_invert=True)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import symzxing; symzxing.read_symbols_zxing(image, formats=None, *, try_rotate=True, try_invert=True)</code>、台帳から引くなら <code style="color:#22d3bf">opssymbol.get(&quot;read_symbols_zxing&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>zxing-cpp で画像の記号(1-D / 2-D)を全部読む(<code style="color:#22d3bf">table</code>)。</p>
+<p>Read every symbol zxing-cpp finds in a 2-D reflectance image (values in [0, 1], converted to 8-bit). <code style="color:#22d3bf">formats</code> is None (all) or a list of zxing format names (<code style="color:#22d3bf">&quot;QRCode&quot;</code>, <code style="color:#22d3bf">&quot;DataMatrix&quot;</code>, <code style="color:#22d3bf">&quot;EAN13&quot;</code>, <code style="color:#22d3bf">&quot;Code128&quot;</code> …). Returns <code style="color:#22d3bf">n</code>, <code style="color:#22d3bf">texts</code>, <code style="color:#22d3bf">formats</code>, <code style="color:#22d3bf">positions</code> (4 corners (row, col) per symbol, top-left first as zxing reports them), <code style="color:#22d3bf">valid</code> and <code style="color:#22d3bf">reader</code> = <code style="color:#22d3bf">&quot;zxing-cpp &lt;version&gt;&quot;</code>.</p>
+<p>空の入力(辺が 0)は <code style="color:#22d3bf">ValueError</code>。拒否(<code style="color:#22d3bf">ValueError</code>): 2-D でない、非有限、値が [0, 1] の外、未知の形式名。zxing-cpp が入っていなければ <code style="color:#22d3bf">ImportError</code>(fail-closed、<code style="color:#22d3bf">pip install zxing-cpp</code>)。何も見つからなければ <code style="color:#22d3bf">n = 0</code>(読めないことは例外ではなく結果)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesymbol:symbol_reading">symbol_reading ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_symbol_package_1d">poc_symbol_package_1d</a> — <code style="color:#22d3bf">py -3.11 examples/poc_symbol_package_1d.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_symbol_part_dpm">poc_symbol_part_dpm</a> — <code style="color:#22d3bf">py -3.11 examples/poc_symbol_part_dpm.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opsymbol:render_symbol">render_symbol</a> · <a style="color:#22d3bf" href="opsymbol:symbol_read_trials">symbol_read_trials</a> · <a style="color:#22d3bf" href="opsymbol:symbol_read_pod">symbol_read_pod</a> · <a style="color:#22d3bf" href="opsymbol:ocr_classify">ocr_classify</a> · <a style="color:#22d3bf" href="opsymbol:ocr_read_line">ocr_read_line</a> · <a style="color:#22d3bf" href="opsymbol:ocr_read_trials">ocr_read_trials</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">symbol_bridge</code>)</h3>
+<p>—</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: symzxing.py — SYMBOL operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

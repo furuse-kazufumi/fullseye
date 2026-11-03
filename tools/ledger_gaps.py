@@ -271,6 +271,23 @@ KNOB_SKIP_SLOW = frozenset({
 KNOB_EXEMPT = {
     ("fit_circle_geometric", "radius_limit_factor"):
         "safety bound: changing it only accepts or rejects a line-like circle fit",
+    # opssymbol (2026-11-03): reader policies -- they accept or refuse a read, the text of
+    # an accepted read does not depend on them.
+    ("decode_barcode_profile", "itf_min_length"):
+        "reader policy: refuses ITF reads shorter than this (short-read guard); EAN probe",
+    ("read_barcode1d", "itf_min_length"):
+        "reader policy: refuses ITF reads shorter than this (short-read guard); EAN probe",
+    ("read_barcode1d", "min_agree"):
+        "reader policy: refuses a read when fewer scan lines agree; all lines agree on the probe",
+    ("ocr_classify", "k"):
+        "vote count: a clean probe glyph wins the k-NN vote at any k",
+    ("ocr_render_text", "stroke_width"):
+        "font-specific: only the stroke font has strokes; the probe renders dot5x7",
+    ("symbol_read_trials", "rotate_jitter_deg"):
+        "nuisance spread: moves outcomes only near the read limit; the probe levels are far from it",
+    ("capture_degrade", "defocus_px"):
+        "sub-pixel: a defocus disc of diameter <= 1 px centred on a pixel stays inside it "
+        "(area-integrated kernel = identity); the probe sweeps 0.5 / 1 px from the default 0",
 }
 
 
