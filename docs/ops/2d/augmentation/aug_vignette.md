@@ -8,7 +8,7 @@ gpu: なし
 examples: [gallery2d_color_artistic, poc_solar_el_inspection, sim2real_and_alife]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.8.1  # fullseye lib version this note was generated for
+version: 0.9.0  # fullseye lib version this note was generated for
 ---
 
 # aug_vignette — 2D `augmentation` op

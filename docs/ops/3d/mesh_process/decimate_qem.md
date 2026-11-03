@@ -8,7 +8,7 @@ gpu: なし
 examples: [mesh_decimate, mesh_lod_download, mesh_resolution_demo]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.8.1  # fullseye lib version this note was generated for
+version: 0.9.0  # fullseye lib version this note was generated for
 ---
 
 # decimate_qem — 3D `mesh_process` op

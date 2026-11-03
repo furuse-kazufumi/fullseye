@@ -77,6 +77,7 @@ CHAIN = [
     (["tools/gen_wingpoc_gallery.py"], "PoC 展示館(総合案内 + 棟、ja/en)"),
     (["tools/gen_examples_readme.py"], "examples/README.md"),
     (["tools/gen_oss_landscape.py"], "既存 OSS の地図(docs/literature/oss_landscape.json → OSS_LANDSCAPE.md)"),
+    (["tools/gen_view2026_story_gifs.py"], "ViEW2026 の 2-D 展示を流れで見せる story GIF と台帳"),
     (["tools/gen_view2026_pages.py"], "docs/view2026/**/index.md(論文の QR の行き先、正本は exhibits.json)"),
     # gen_maturity の後(maturity.json を読む)、索引の後(docs/OP_INDEX.json と照合する)。
     # README*.md は gen_docs_index_ops も書くが、マーカーが別なので互いの中身には触れない
@@ -165,6 +166,7 @@ OUTPUTS = {
                                      "docs/articles/assets/poc/_hero_montage.jpg"],
     "tools/gen_examples_readme.py": ["examples/README.md"],
     "tools/gen_oss_landscape.py": ["docs/literature/OSS_LANDSCAPE.md"],
+    "tools/gen_view2026_story_gifs.py": ["docs/view2026/story_gifs.json"],
     "tools/gen_view2026_pages.py": ["docs/view2026/index.md", "docs/view2026/*/index.md"],
     "tools/gen_trust_block.py": ["README.md", "docs/README.md", "docs/README.*.md",
                                  "docs/OP_COUNT_HISTORY.md"],
@@ -181,7 +183,8 @@ OUTPUTS = {
                                  "docs/AI_RAG_GUIDE.md", "docs/AI_RAG_GUIDE.*.md"],
     "tools/gen_mcp_data.py": ["fullseye/data/OP_INDEX.json", "fullseye/data/OP_NOTES.json",
                               "fullseye/data/OP_SEARCH.json", "fullseye/data/OP_CARDS.json",
-                              "fullseye/data/OP_PROBE.json", "fullseye/data/op_knob.json"],
+                              "fullseye/data/OP_PROBE.json", "fullseye/data/op_knob.json",
+                              "fullseye/data/TUNING_CARDS.json"],
     "tools/gen_op_facets.py": ["fullseye/data/OP_GRAPH.json", "fullseye/data/OP_FAMILIES.json",
                                   "fullseye/data/OP_SHAPES.json", "fullseye/data/SYSTEM_PARAMS.json"],
     "tools/gen_recipe_index.py": ["fullseye/data/RECIPE_INDEX.json"],
@@ -223,6 +226,11 @@ MAY_OUTPUTS = {
             ("幅 720 px の JPEG サムネ。元の図(PNG)より古いか無いときだけ書く(_thumb)ので、"
              "図を初めて載せた回・差し替えた回にしか書き込みが起きない。"),
     },
+    "tools/gen_view2026_story_gifs.py": {
+        "docs/articles/assets/poc/*/story.*.gif":
+            ("対象と色差・容量の門を通った 2-D 展示だけに作る日英 story GIF。入力の図と選択が"
+             "変わらなければ source_sha256 を照合して書き直さない。"),
+    },
 }
 
 
@@ -235,7 +243,9 @@ READS = {
     "tools/gen_capabilities_index.py": ["docs/OP_INDEX.json"],
     "tools/gen_wingpoc_gallery.py": ["docs/articles/exhibits/exhibit_numbers.json",
                                       "docs/articles/exhibits/glossary.json"],
-    "tools/gen_view2026_pages.py": ["docs/articles/exhibits/glossary.json"],
+    "tools/gen_view2026_story_gifs.py": ["docs/articles/assets/poc/*_720.jpg"],
+    "tools/gen_view2026_pages.py": ["docs/articles/exhibits/glossary.json",
+                                      "docs/view2026/story_gifs.json"],
     "tools/gen_trust_block.py": ["docs/OP_INDEX.json", "docs/maturity.json",
                                  "docs/README.md", "docs/README.*.md"],
     "tools/gen_design_notes.py": ["auto_specs_data.py"],
@@ -258,12 +268,13 @@ READS = {
     "tools/gen_recipe_retrieval_report.py": ["fullseye/data/RECIPE_INDEX.json"],
     "tools/measure_mcp_context.py": ["fullseye/data/OP_GRAPH.json", "fullseye/data/OP_SEARCH.json",
                                       "fullseye/data/OP_CARDS.json", "fullseye/data/OP_PROBE.json",
-                                      "fullseye/data/RECIPE_INDEX.json"],
+                                      "fullseye/data/RECIPE_INDEX.json", "fullseye/data/TUNING_CARDS.json"],
     "tools/gen_rag_benchmark_report.py": ["docs/ops/rag_benchmark.json",
                                              "fullseye/data/OP_SEARCH.json",
                                              "fullseye/data/OP_CARDS.json",
                                              "fullseye/data/OP_PROBE.json",
-                                             "fullseye/data/OP_GRAPH.json"],
+                                             "fullseye/data/OP_GRAPH.json",
+                                             "fullseye/data/TUNING_CARDS.json"],
     "tools/gen_literature_counts.py": ["docs/ops/*"],
     "tools/gen_doc_counts.py": ["docs/README.md", "docs/README.*.md"],
 }
@@ -587,6 +598,7 @@ EXCLUDED = {
 #: だから**釣れたものは全部ここに名前と理由を書いて外す**(印は緩めない)。
 _OUT_REASON = "出力は out/(gitignore)で、コミット物を書かない。"
 NOT_A_GENERATOR = {
+    "tools/fetch_tless.py": "取得器(T-LESS を repo の外のキャッシュへ落とし SHA-256 を照合する)。生成物は無く、CI では回さない。",
     # ---- 2026-11-01: ViEW2026 の目玉 14 本の受け取り検査(生成物を書かない) ----
     "tools/check_view2026_figure_scale.py": "検査。図が最近傍拡大でなく描画倍率どおりかを数えて表にする(repo の生成物は書かない)。",
     "tools/make_view2026_before_after.py": "検査用の比較画像を repo の外(--output)へ書く。受け取りで目視するためだけに手で回す。",
@@ -602,6 +614,7 @@ NOT_A_GENERATOR = {
     "tools/probe_studio_web/build_proof.py": ("探針の証明ページを --out(repo の外)に組む(Pyodide 本体の複製 + repo 内モジュールの zip)。"
                                                "dist は repo に入れない。"),
     "tools/mcp_agent_eval.py": "測定器(ローカル LLM に MCP ツールだけで課題を解かせ、真値で採点する)。LLM の応答で結果が変わり、出力は --output/--report の指定先(repo の外)。--validate-only は LLM なしの門で tests/test_mcp_agent_eval_tasks.py が回す。",
+    "tools/fetch_sem_metal_layer.py": "取得器(実データ Metal-layer SEM 6.4 GB を repo の外のキャッシュへ落とし SHA-256 を照合する)。生成物は無く、CI では回さない。",
     "tools/check_fallback_parity.py": "門の実測(min 構成 = cv2/skimage/PIL なしで op が別の答えを返さないか、full と ULP 照合)。出力は一時 dir か --out の指定先で、repo の生成物は無い。",
     "tools/algo_gate.py": "門(algo 層の合否を出す)。出力は out/ へ。", "tools/mutation_probe.py": "門の実測。出力は指定先、一時変更は復元。",
     "gsviewer.py": "ライブラリ + CLI(fs.gs_viewer_html / gs_catalog_html)。呼び出し側が指定した出力先へ 1 つの HTML を書く道具で、repo の生成物ではない(公開ページの生成器は tools/build_gsplat_pages.py)。",
@@ -846,7 +859,7 @@ def table_problems() -> list:
             probs.append("READS に鎖に無い段: %s" % s)
     for s, pats in READS.items():
         for rp in pats:
-            if not any(_overlap(rp, wp) for w, wps in OUTPUTS.items() if w != s for wp in wps):
+            if not any(_overlap(rp, wp) for w in scripts if w != s for wp in _all_outputs(w)):
                 probs.append("%s の READS %r は、どの(他の)段の出力でもない" % (s, rp))
     for s, pats in OUTPUTS.items():
         if not pats:

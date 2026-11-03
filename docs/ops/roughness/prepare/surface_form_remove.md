@@ -8,7 +8,7 @@ gpu: なし
 examples: [poc_polish_wipe_measure, poc_pv_thermal_survey, poc_surface_roughness]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.8.1  # fullseye lib version this note was generated for
+version: 0.9.0  # fullseye lib version this note was generated for
 ---
 
 # surface_form_remove — ROUGHNESS `prepare` op

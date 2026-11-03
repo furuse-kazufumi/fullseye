@@ -1270,11 +1270,47 @@ def _fileio_builders():
     e57_table = {"points": points, "intensity": np.linspace(0.1, 0.9, len(points)),
                  "colors": np.tile([128, 64, 255], (len(points), 1)),
                  "pose": {"rotation": [1, 0, 0, 0], "translation": [1, 2, 3]}}
+    fits_image = np.arange(20, dtype=np.float32).reshape(4, 5)
+    fits_header = {"CTYPE1": "RA---TAN", "CTYPE2": "DEC--TAN", "CUNIT1": "deg",
+                   "CUNIT2": "deg"}
+    mrc_volume = np.arange(24, dtype=np.float32).reshape(2, 3, 4)
+    mrc_meta = {"voxel_size": [1, 1, 2], "voxel_unit": "angstrom",
+                "origin": [0, 0, 0], "origin_unit": "angstrom"}
+    nrrd_meta = {"space_directions": np.diag([1.0, 1.0, 2.0]),
+                 "space_unit": "mm", "space_origin": [0, 0, 0]}
+    nifti_meta = {"affine": np.diag([1.0, 1.0, 2.0, 1.0]), "spatial_unit": "mm"}
+    ome_stack = np.arange(48, dtype=np.uint16).reshape(2, 2, 3, 4)
+    ome_meta = {"axes": "CZYX", "physical_size_x": 1, "physical_size_x_unit": "um",
+                "physical_size_y": 1, "physical_size_y_unit": "um",
+                "physical_size_z": 2, "physical_size_z_unit": "um",
+                "channel_names": ["A", "B"]}
 
     def csv_payload():
         return fileio.table_write_csv(csv_table, units=units, meta=meta)
 
+    def archive_payload():
+        return fileio.archive_create({"probe.txt": b"fullseye archive probe\n"}, "zip")
+
+    class FreshArchiveDestination:
+        """A fresh path for each deep-copied contract call.
+
+        ``archive_extract`` correctly refuses a non-empty destination.  The
+        contract probe calls every op twice, so each copied argument must point
+        at a different missing path while preserving the same relative-name
+        result. 契約検査の各呼び出しを、別々の未作成出力先へ隔離する。
+        """
+
+        def __deepcopy__(self, memo):
+            return type(self)()
+
+        def __fspath__(self):
+            return os.path.join(tempfile.mkdtemp(prefix="fullseye-ledger-archive-"), "out")
+
     return {
+        "archive_probe": lambda pool, rng: ([archive_payload()], {}),
+        "archive_list": lambda pool, rng: ([archive_payload()], {}),
+        "archive_extract": lambda pool, rng: ([archive_payload(), FreshArchiveDestination()], {}),
+        "archive_create": lambda pool, rng: ([{"probe.txt": b"fullseye archive probe\n"}, "zip"], {}),
         "table_write_csv": lambda pool, rng: ([csv_table], {"units": units, "meta": meta}),
         "table_read_csv": lambda pool, rng: ([csv_payload()], {}),
         "mesh_write_ply": lambda pool, rng: ([ply_table], {"binary": False}),
@@ -1289,6 +1325,16 @@ def _fileio_builders():
         "points_read_xyz": lambda pool, rng: ([fileio.points_write_xyz(points)], {}),
         "e57_write": lambda pool, rng: ([e57_table], {}),
         "e57_read": lambda pool, rng: ([fileio.e57_write(e57_table)], {}),
+        "astro_fits_write": lambda pool, rng: ([fits_image], {"header": fits_header}),
+        "astro_fits_read": lambda pool, rng: ([fileio.astro_fits_write(fits_image, header=fits_header)], {}),
+        "em_mrc_write": lambda pool, rng: ([mrc_volume], {"meta": mrc_meta}),
+        "em_mrc_read": lambda pool, rng: ([fileio.em_mrc_write(mrc_volume, meta=mrc_meta)], {}),
+        "nrrd_write": lambda pool, rng: ([mrc_volume], {"meta": nrrd_meta, "encoding": "raw"}),
+        "nrrd_read": lambda pool, rng: ([fileio.nrrd_write(mrc_volume, meta=nrrd_meta, encoding="raw")], {}),
+        "nifti_write": lambda pool, rng: ([mrc_volume], {"meta": nifti_meta, "compressed": False}),
+        "nifti_read": lambda pool, rng: ([fileio.nifti_write(mrc_volume, meta=nifti_meta, compressed=False)], {}),
+        "ome_tiff_write": lambda pool, rng: ([ome_stack], {"meta": ome_meta}),
+        "ome_tiff_read": lambda pool, rng: ([fileio.ome_tiff_write(ome_stack, meta=ome_meta)], {}),
     }
 
 

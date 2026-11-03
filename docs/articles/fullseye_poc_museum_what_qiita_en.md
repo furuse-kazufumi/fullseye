@@ -4,13 +4,13 @@
 
 > One wing of **[A Metrology Museum on Paper — the entrance](https://qiita.com/furuse-kazufumi/items/8a8f23e53b19ee8cdc10)**, where the other wings, the glossary and the thesis live.
 
-**133 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
+**135 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
 
 > The "Ops used" line under each exhibit links to that op's note (type contract, pitfalls, figures, a runnable Studio program): [Operator catalogue](https://furuse.work/OP_CATALOG.html) / [Op notes index](https://furuse.work/ops/INDEX.html).
 
 ### The Industrial Inspection Wing — A Passing Number and a Failing Number Can Coexist
 
-Numbers on an inspection line decide pass or fail, so there is a strong pull toward collapsing them into a single figure. The 40 exhibits in this room show what disappears the moment you do: a pooled ROC that hides one defect class's blind spot in woven fabric, veiling glare that leaves the MTF passing while the black level fails, a barcode decoder that looks better by read rate alone because it never says 'unreadable'.
+Numbers on an inspection line decide pass or fail, so there is a strong pull toward collapsing them into a single figure. The 42 exhibits in this room show what disappears the moment you do: a pooled ROC that hides one defect class's blind spot in woven fabric, veiling glare that leaves the MTF passing while the black level fails, a barcode decoder that looks better by read rate alone because it never says 'unreadable'.
 
 Every ground truth is planted: a closed-form periodic background, the laser-profile h(x), the analytic 1-D heat-conduction solution, closed-form bearing defect frequencies. That is what lets each exhibit measure 'where detection stops working' instead of 'detection worked', without fitting the threshold afterwards.
 
@@ -111,6 +111,36 @@ Source: [examples/poc_bearing_diagnosis.py](https://github.com/furuse-kazufumi/f
 This run produced **3 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_bearing_diagnosis)
 
 Ops used (notes): [`bearing_defect_frequencies`](https://furuse.work/ops/acoustics/bearing/bearing_defect_frequencies.html) · [`envelope_spectrum`](https://furuse.work/ops/acoustics/bearing/envelope_spectrum.html) · [`spectral_kurtosis`](https://furuse.work/ops/acoustics/bearing/spectral_kurtosis.html) · [`spectrum`](https://furuse.work/ops/oned/signal/spectrum.html) · [`synthesize_bearing_signal`](https://furuse.work/ops/acoustics/synthesis/synthesize_bearing_signal.html)
+
+## No.2026.286 —— Self-referenced 2-D symmetry inspection — isolating a defect without a golden image
+
+A symmetric part agrees with its own reflected or rotated copy when defect-free. After texture and illumination cancellation, mean residual in the defect region was 0.193. Robust centre estimation and rotational-order accuracy were checked as well.
+
+[![Self-referenced 2-D symmetry inspection — isolating a defect without a golden image](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symmetry_self_reference_inspection/01_self_reference_defect_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symmetry_self_reference_inspection/01_self_reference_defect.png)
+
+*↑ **Self-referenced 2-D symmetry inspection — isolating a defect without a golden image** ―― A single asymmetric defect was added to a part with symmetric texture and a linear illumination gradient, then the part was subtracted from its own reflection. After removing a fitted plane, mean residual was 0.193 in the defect pair and 1.5e-15 over texture and illumination. For a bitten disc, centre error was 0.231 px from edge pairs versus 3.171 px from the area centroid, while the centroid was more precise without the bite. Rotational orders n=2,3,4,6 were correct in all 12 noise/blur cases.*
+
+[![片側欠けではエッジ対中心 0.231 px、面積重心 3.171 px。欠け無しでは重心 0.041 px がエッジ対 0.305 px より精密。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symmetry_self_reference_inspection/02_center_tradeoff_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symmetry_self_reference_inspection/02_center_tradeoff.png)
+
+*↑ The measurement ―― 片側欠けではエッジ対中心 0.231 px、面積重心 3.171 px。欠け無しでは重心 0.041 px がエッジ対 0.305 px より精密。 (figure labels are in Japanese; the numbers are the same)*
+
+[![n=2 は blur 6 px・noise 0.114 で低下（1未満 22 格子）；n=3 は blur 6 px・noise 0.114 で低下（1未満 22 格子）；n=4 は blur 6 p](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symmetry_self_reference_inspection/03_rotational_order_noise_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symmetry_self_reference_inspection/03_rotational_order_noise.png)
+
+*↑ n=2 は blur 6 px・noise 0.114 で低下（1未満 22 格子）；n=3 は blur 6 px・noise 0.114 で低下（1未満 22 格子）；n=4 は blur 6 px・noise 0.114 で低下（1未満 22 格子）；n=6 は blur 5 px・noise…*
+
+[![noise 0.010 では振幅 3.16 から検出；noise 0.025 では振幅 5.47 から検出；noise 0.050 では振幅 8.23 から検出。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symmetry_self_reference_inspection/04_symmetry_score_monotone_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symmetry_self_reference_inspection/04_symmetry_score_monotone.png)
+
+*↑ noise 0.010 では振幅 3.16 から検出；noise 0.025 では振幅 5.47 から検出；noise 0.050 では振幅 8.23 から検出。*
+
+```
+py -3.11 examples/poc_symmetry_self_reference_inspection.py
+```
+
+Source: [examples/poc_symmetry_self_reference_inspection.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_symmetry_self_reference_inspection.py)
+
+This run produced **4 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_symmetry_self_reference_inspection)
+
+Ops used (notes): [`center_from_symmetric_edges`](https://furuse.work/ops/aoi/symmetry/center_from_symmetric_edges.html) · [`rotational_symmetry`](https://furuse.work/ops/aoi/symmetry/rotational_symmetry.html) · [`symmetry_difference_map`](https://furuse.work/ops/aoi/symmetry/symmetry_difference_map.html) · [`symmetry_score`](https://furuse.work/ops/aoi/symmetry/symmetry_score.html)
 
 ## No.2026.094 —— Bump coplanarity versus substrate warpage — subtract too much and the real defect goes with it
 
@@ -400,13 +430,17 @@ The usual way to estimate "how faint a defect can we still catch" is to measure 
 
 *↑ The measurement ―― 同じ欠陥を振幅 0.02 から 1.20 まで上げていく。左=実写の brick、右=**残差 σ を揃えた**合成の地。雑音の量は同じなのに、右のほうが先に見えてくる。 (figure labels are in Japanese; the numbers are the same)*
 
+[![同じ欠陥を実写 brick と残差 σ を揃えた合成の地へ仕込み、整合フィルタの応答が 99.99 % 閾値を越えるまでを示す。検出限界は brick 0.475、合成 0.137、閾値は 0.836 / 0.275。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_defect_floor/03_defect_floor_explained.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_defect_floor/03_defect_floor_explained.gif)
+
+*↑ The animation ―― 同じ欠陥を実写 brick と残差 σ を揃えた合成の地へ仕込み、整合フィルタの応答が 99.99 % 閾値を越えるまでを示す。検出限界は brick 0.475、合成 0.137、閾値は 0.836 / 0.275。*
+
 ```
 py -3.11 examples/poc_real_defect_floor.py
 ```
 
 Source: [examples/poc_real_defect_floor.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_defect_floor.py)
 
-This run produced **2 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_real_defect_floor)
+This run produced **3 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_real_defect_floor)
 
 Ops used (notes): [`annotate_inset`](https://furuse.work/ops/annotate/paper/annotate_inset.html) · [`annotate_legend`](https://furuse.work/ops/annotate/paper/annotate_legend.html) · [`laplace_of_gauss`](https://furuse.work/ops/2d/edges/laplace_of_gauss.html) · [`reflect`](https://furuse.work/ops/3d/optics/reflect.html)
 
@@ -1339,6 +1373,34 @@ Source: [examples/poc_slanted_edge_sfr_limits.py](https://github.com/furuse-kazu
 This run produced **1 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_slanted_edge_sfr_limits)
 
 Ops used (notes): [`mtf_diffraction`](https://furuse.work/ops/optics/imaging/mtf_diffraction.html)
+
+## No.2026.288 —— Raw Grey-Level Thresholds Need Retuning across Lighting, while k-Sigma and P-Tile Transfer
+
+A synthetic product with fixed defect shape and area is re-imaged under 1.35x gain, +0.18 offset, 2x noise, +0.18 material brightness, and a combined condition. The raw threshold tuned on the baseline falls below IoU 0.98 in all five transfers and uses 49 extra evaluations (50 including baseline). Robust centring and scaling by 1.4826 MAD followed by k-sigma uses two baseline evaluations and zero extra evaluations, with transferred IoU at least 0.9832. P-tile uses one baseline evaluation at the known defect area fraction and zero extra evaluations, with transferred IoU at least 0.9820. Under doubled noise, foreground and background overlap; normalisation cannot recover information that is no longer present. An evaluation means scoring one deterministic candidate against truth until IoU 0.98, not runtime.
+
+[![Raw Grey-Level Thresholds Need Retuning across Lighting, while k-Sigma and P-Tile Transfer](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_threshold_transfer_after_normalization/01_threshold_transfer_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_threshold_transfer_after_normalization/01_threshold_transfer.png)
+
+*↑ **Raw Grey-Level Thresholds Need Retuning across Lighting, while k-Sigma and P-Tile Transfer** ―― A synthetic product with fixed defect shape and area is re-imaged under 1.35x gain, +0.18 offset, 2x noise, +0.18 material brightness, and a combined condition. The raw threshold tuned on the baseline falls below IoU 0.98 in all five transfers and uses 49 extra evaluations (50 including baseline). Robust centring and scaling by 1.4826 MAD followed by k-sigma uses two baseline evaluations and zero extra evaluations, with transferred IoU at least 0.9832. P-tile uses one baseline evaluation at the known defect area fraction and zero extra evaluations, with transferred IoU at least 0.9820. Under doubled noise, foreground and background overlap; normalisation cannot recover information that is no longer present. An evaluation means scoring one deterministic candidate against truth until IoU 0.98, not runtime.*
+
+Terms: IoU — A 0-to-1 overlap score equal to the area of the intersection of two regions divided by the area of their union.
+
+[![基準像で選んだ値を各条件へそのまま移した結果。棒上の数値はIoU。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_threshold_transfer_after_normalization/02_transfer_iou_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_threshold_transfer_after_normalization/02_transfer_iou.png)
+
+*↑ The measurement ―― 基準像で選んだ値を各条件へそのまま移した結果。棒上の数値はIoU。 (figure labels are in Japanese; the numbers are the same)*
+
+[![基準像で選んだ値を各条件へそのまま移した結果。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_threshold_transfer_after_normalization/03_tuning_evaluations_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_threshold_transfer_after_normalization/03_tuning_evaluations.png)
+
+*↑ 基準像で選んだ値を各条件へそのまま移した結果。*
+
+```
+py -3.11 examples/poc_threshold_transfer_after_normalization.py
+```
+
+Source: [examples/poc_threshold_transfer_after_normalization.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_threshold_transfer_after_normalization.py)
+
+This run produced **3 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_threshold_transfer_after_normalization)
+
+Ops used (notes): [`axes_transform`](https://furuse.work/ops/annotate/plot/axes_transform.html) · [`ptile_threshold`](https://furuse.work/ops/2d/segmentation/ptile_threshold.html) · [`sigma_threshold`](https://furuse.work/ops/2d/segmentation/sigma_threshold.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html)
 
 ### The Dimensional and Shape Metrology Wing — Keep Bias and Scatter Apart
 

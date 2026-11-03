@@ -8,7 +8,7 @@ gpu: なし
 examples: [poc_ball_bounce, poc_driving_longitudinal, poc_driving_school, poc_driving_weather, poc_kendama, poc_table_tennis_bounce, poc_table_tennis_spin]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.8.1  # fullseye lib version this note was generated for
+version: 0.9.0  # fullseye lib version this note was generated for
 ---
 
 # ball_detect — DRIVE `balltrack` op

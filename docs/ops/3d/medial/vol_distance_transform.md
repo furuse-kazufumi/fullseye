@@ -8,7 +8,7 @@ gpu: なし
 examples: [medial_topology, molecule_atom_count, nearest_seed_partition, vessel_metrology]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.8.1  # fullseye lib version this note was generated for
+version: 0.9.0  # fullseye lib version this note was generated for
 ---
 
 # vol_distance_transform — 3D `medial` op

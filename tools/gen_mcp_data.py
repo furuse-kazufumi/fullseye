@@ -38,9 +38,35 @@ if _ROOT not in sys.path:
     sys.path.insert(0, _ROOT)
 
 from fullseye.mcp.catalog import NOTE_KEYS, OP_INDEX, OP_KNOB, OPS_DOCS, PKG_INDEX, PKG_KNOBS, PKG_NOTES, scan_notes  # noqa: E402
-from fullseye.opsearch import PKG_CARDS, PKG_PROBE, PKG_SEARCH  # noqa: E402
+from fullseye.opsearch import PKG_CARDS, PKG_PROBE, PKG_SEARCH, PKG_TUNING  # noqa: E402
 
 DATA_DIR = os.path.join(_ROOT, "fullseye", "data")
+TUNING_SOURCE = os.path.join(_ROOT, "docs", "ops", "segmentation", "guides",
+                             "normalized_threshold_tuning_cards.json")
+
+
+def build_tuning(index: dict) -> dict:
+    """Validate and package the single hand-written source of normalized-threshold cards."""
+    with open(TUNING_SOURCE, encoding="utf-8") as f:
+        source = json.load(f)
+    cards = source.get("cards") or []
+    if not 6 <= len(cards) <= 10:
+        raise SystemExit("normalized threshold tuning cards must contain 6..10 cards")
+    required = {"id", "situation", "normalization", "knob", "typical", "ops", "reference"}
+    known = {row["name"] for row in index["ops"]}
+    seen = set()
+    for card in cards:
+        missing = required - set(card)
+        if missing or not all(card.get(key) for key in required):
+            raise SystemExit("incomplete tuning card %r: missing/empty %s" % (card.get("id"), sorted(missing)))
+        if card["id"] in seen:
+            raise SystemExit("duplicate tuning card id: %s" % card["id"])
+        seen.add(card["id"])
+        unknown = sorted(set(card["ops"]) - known)
+        if unknown:
+            raise SystemExit("tuning card %s names unknown ops: %s" % (card["id"], unknown))
+    return {"generated_by": "tools/gen_mcp_data.py", "source": os.path.relpath(TUNING_SOURCE, _ROOT).replace("\\", "/"),
+            "title": source.get("title"), "n_cards": len(cards), "cards": cards}
 
 
 def build_notes() -> dict:
@@ -290,10 +316,12 @@ def main(argv=None) -> int:
     ap.add_argument("--check", action="store_true", help="書かずに一致を確かめる(不一致で exit 1)")
     a = ap.parse_args(argv)
     search, knobs = build_search(), build_knobs()
-    targets = {PKG_INDEX: _dump(build_index()), PKG_NOTES: _dump(build_notes()),
+    index = build_index()
+    targets = {PKG_INDEX: _dump(index), PKG_NOTES: _dump(build_notes()),
                PKG_KNOBS: _dump(knobs), PKG_SEARCH: _dump_compact(search),
                PKG_CARDS: _dump_compact(build_cards(search, knobs)),
-               PKG_PROBE: _dump_compact(build_probe(search))}
+               PKG_PROBE: _dump_compact(build_probe(search)),
+               PKG_TUNING: _dump(build_tuning(index))}
     os.makedirs(DATA_DIR, exist_ok=True)
     rc = 0
     for name, text in targets.items():

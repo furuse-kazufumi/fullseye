@@ -8,7 +8,7 @@ gpu: なし
 examples: [aoi_frontend_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.8.1  # fullseye lib version this note was generated for
+version: 0.9.0  # fullseye lib version this note was generated for
 ---
 
 # flat_field_correct — AOI `photometric` op
@@ -94,7 +94,7 @@ Raises:
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)
 
-[register_image](../geometric/register_image.md) · [tiled_map](../aggregate/tiled_map.md)
+[register_image](../geometric/register_image.md) · [tiled_map](../aggregate/tiled_map.md) · [center_from_symmetric_edges](../symmetry/center_from_symmetric_edges.md) · [reflection_axis](../symmetry/reflection_axis.md) · [rotational_symmetry](../symmetry/rotational_symmetry.md) · [symmetry_difference_map](../symmetry/symmetry_difference_map.md) · [symmetry_score](../symmetry/symmetry_score.md)
 
 ## 同カテゴリ(`photometric`)
 

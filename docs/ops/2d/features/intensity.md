@@ -9,7 +9,7 @@ gpu: なし
 examples: [gallery2d_bridge, gallery2d_features, poc_multibeam_bathymetry, poc_patch_anomaly, poc_pocket_interreflection, poc_pxrd_phase_peel, poc_solder_fillet_aoi, poc_video_cube]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.8.1  # fullseye lib version this note was generated for
+version: 0.9.0  # fullseye lib version this note was generated for
 ---
 
 # intensity — 2D `features` op

@@ -8,7 +8,7 @@ gpu: なし
 examples: [fileio_roundtrip]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.8.1  # fullseye lib version this note was generated for
+version: 0.9.0  # fullseye lib version this note was generated for
 ---
 
 # points_read_xyz — FILEIO `points` op
@@ -36,7 +36,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 ## 型が繋がる次の op(`points` を入力に取れる)
 
-[mesh_read_ply](../mesh/mesh_read_ply.md) · [mesh_read_stl](../mesh/mesh_read_stl.md) · [points_write_xyz](points_write_xyz.md) · [e57_read](../e57/e57_read.md)
+[mesh_read_ply](../mesh/mesh_read_ply.md) · [mesh_read_stl](../mesh/mesh_read_stl.md) · [points_write_xyz](points_write_xyz.md) · [e57_read](../e57/e57_read.md) · [archive_probe](../archive/archive_probe.md) · [archive_list](../archive/archive_list.md) · [astro_fits_write](../fits/astro_fits_write.md) · [astro_fits_read](../fits/astro_fits_read.md)
 
 ## 同カテゴリ(`points`)
 

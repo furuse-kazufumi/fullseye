@@ -4,7 +4,7 @@ title: 点群をそのまま色の絵にする
 title_en: Draw a point cloud as a colour picture
 category: 見せる
 ops: [points_render, render_point_depth, project_points]
-examples: [points_render_basics, poc_flybrain_pointcloud]
+examples: [points_render_basics, poc_flybrain_pointcloud, poc_real_tless_6dof]
 version: 0.2.0
 inputs: [points]
 pipeline: [points_render]

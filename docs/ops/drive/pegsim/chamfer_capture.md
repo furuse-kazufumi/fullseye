@@ -8,7 +8,7 @@ gpu: なし
 examples: [poc_peg_failure_recovery, poc_pegsim_insertion]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.8.1  # fullseye lib version this note was generated for
+version: 0.9.0  # fullseye lib version this note was generated for
 ---
 
 # chamfer_capture — DRIVE `pegsim` op

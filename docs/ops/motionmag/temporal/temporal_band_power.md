@@ -8,7 +8,7 @@ gpu: なし
 examples: [motion_magnification, poc_motion_magnification]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.8.1  # fullseye lib version this note was generated for
+version: 0.9.0  # fullseye lib version this note was generated for
 ---
 
 # temporal_band_power — MOTIONMAG `temporal` op

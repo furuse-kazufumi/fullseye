@@ -6,10 +6,10 @@ in: image
 out: region
 halcon: threshold
 gpu: あり(threshold)
-examples: [gallery2d_segmentation, poc_bone_trabecular_thickness, poc_change_detection_misreg, poc_fresco_craquelure, poc_gear_tooth_metrology, poc_metal_grain_size, poc_screw_thread_metrology, poc_tof_camera, poc_traffic_counting, poc_virtual_sem_kv_cd_bse, poc_water_level, tof_realdata, video_streaming]
+examples: [gallery2d_segmentation, poc_bone_trabecular_thickness, poc_change_detection_misreg, poc_fresco_craquelure, poc_gear_tooth_metrology, poc_metal_grain_size, poc_real_sem_metal_layer, poc_screw_thread_metrology, poc_tof_camera, poc_traffic_counting, poc_virtual_sem_kv_cd_bse, poc_water_level, tof_realdata, video_streaming]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.8.1  # fullseye lib version this note was generated for
+version: 0.9.0  # fullseye lib version this note was generated for
 ---
 
 # threshold — 2D `segmentation` op
@@ -70,6 +70,7 @@ threshold 0.50 0.50
 - [poc_fresco_craquelure](../../../../examples/poc_fresco_craquelure.py) — `py -3.11 examples/poc_fresco_craquelure.py`
 - [poc_gear_tooth_metrology](../../../../examples/poc_gear_tooth_metrology.py) — `py -3.11 examples/poc_gear_tooth_metrology.py`
 - [poc_metal_grain_size](../../../../examples/poc_metal_grain_size.py) — `py -3.11 examples/poc_metal_grain_size.py`
+- [poc_real_sem_metal_layer](../../../../examples/poc_real_sem_metal_layer.py) — `py -3.11 examples/poc_real_sem_metal_layer.py`
 - [poc_screw_thread_metrology](../../../../examples/poc_screw_thread_metrology.py) — `py -3.11 examples/poc_screw_thread_metrology.py`
 - [poc_tof_camera](../../../../examples/poc_tof_camera.py) — `py -3.11 examples/poc_tof_camera.py`
 - [poc_traffic_counting](../../../../examples/poc_traffic_counting.py) — `py -3.11 examples/poc_traffic_counting.py`
@@ -84,7 +85,7 @@ threshold 0.50 0.50
 
 ## 同カテゴリ(`segmentation`)
 
-[otsu](otsu.md) · [canny](canny.md) · [adaptive_gauss_thresh](adaptive_gauss_thresh.md) · [sk_otsu](sk_otsu.md) · [sk_li](sk_li.md) · [sk_yen](sk_yen.md) · [sk_sauvola](sk_sauvola.md) · [sk_niblack](sk_niblack.md)
+[ptile_threshold](ptile_threshold.md) · [sigma_threshold](sigma_threshold.md) · [otsu](otsu.md) · [canny](canny.md) · [adaptive_gauss_thresh](adaptive_gauss_thresh.md) · [sk_otsu](sk_otsu.md) · [sk_li](sk_li.md) · [sk_yen](sk_yen.md)
 
 ---
 *Provenance: ops.py — 2D operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

@@ -51,6 +51,7 @@ _NOT_TILE_SAFE = frozenset({
     'cv_min_eigen', 'cv_precorner', 'cv_scharr', 'cv_tophat', 'derivate_gauss', 'deviation_image',
     'diff_of_gauss', 'dist_transform', 'dist_transform_abs', 'distance_transform', 'dl_aniso_diffusion', 'dog', 'dots_image',
     'edges_color', 'em_skeleton', 'entropy_image', 'equ_histo_image', 'equ_histo_image_rect', 'equalize',
+    'image_standardize',
     # ★2026-09-17: 検査のタイル幅を 64/16 だけから 60/12 も見るように広げたら、
     #   tile_safe と宣言されていた 168 本のうち 16 本が割れた。64 も 16 も 8 の
     #   倍数なので、周期 8 の処理と、たまたま境界が穴に掛からない領域処理が
@@ -98,6 +99,11 @@ _NOT_TILE_SAFE = frozenset({
 #: から割れる。床は一様面で arctan2 が丸め屑を増幅するのを止めるためのもので、
 #: タイルごとに取り直すと、真っ平らなタイルでは屑そのものが最大値になって床が効かない。
 _NOT_TILE_SAFE_OP_REASON = {
+    "image_standardize": (
+        "global_reduce",
+        "the centre and scale are estimated once from the whole image; per-tile statistics "
+        "give every tile a different zero and sigma (measured drift 7.26). Run it once on "
+        "the full image before tiling downstream local operators."),
     "deskew": (
         "global",
         "the skew angle is estimated ONCE from the whole image (the projection-profile "

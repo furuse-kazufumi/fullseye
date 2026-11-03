@@ -457,6 +457,19 @@
    "lead_en": "A reference plane for left-right asymmetry may be pulled toward a one-sided deformation. A known bulge was added to a symmetric skull; the best-fit plane moved by 2.92 mm. The optimized plane shifts toward the bulge and removes part of the asymmetry that should be reported."
   },
   {
+   "id": "poc_symmetry_self_reference_inspection",
+   "wing": "wing_industrial",
+   "added": "2026-11-01",
+   "numbers_source": "log",
+   "title_ja": "2-D対称性の自己参照検査 ―― 正解画像なしで欠陥だけを残す",
+   "title_en": "Self-referenced 2-D symmetry inspection — isolating a defect without a golden image",
+   "caption_ja": "対称模様と線形照明むらを持つ部品へ非対称欠陥を1個入れ、推定軸で鏡映した自身との差を取った。一次面を除いた差分は欠陥領域で平均0.193、模様・照明領域で1.5e-15。片側を欠いた円板の中心誤差はエッジ対0.231 px、面積重心3.171 pxだが、欠け無しでは重心の方が精密だった。回転次数はn=2,3,4,6と雑音・ぼけ3条件の12/12で正答した。",
+   "caption_en": "A single asymmetric defect was added to a part with symmetric texture and a linear illumination gradient, then the part was subtracted from its own reflection. After removing a fitted plane, mean residual was 0.193 in the defect pair and 1.5e-15 over texture and illumination. For a bitten disc, centre error was 0.231 px from edge pairs versus 3.171 px from the area centroid, while the centroid was more precise without the bite. Rotational orders n=2,3,4,6 were correct in all 12 noise/blur cases.",
+   "run": "py -3.11 examples/poc_symmetry_self_reference_inspection.py",
+   "lead_ja": "対称な部品は、欠陥がなければ自身の鏡像や回転像と一致する。模様と照明むらを消した差分では、欠陥領域の平均が0.193になった。中心推定の頑健さと回転次数の正答率も併せて確かめた。",
+   "lead_en": "A symmetric part agrees with its own reflected or rotated copy when defect-free. After texture and illumination cancellation, mean residual in the defect region was 0.193. Robust centre estimation and rotational-order accuracy were checked as well."
+  },
+  {
    "id": "poc_bone_trabecular_thickness",
    "wing": "wing_bio",
    "added": "2026-09-07",
@@ -1377,6 +1390,27 @@
     "stain_unmix",
     "stain_recompose",
     "stain_vectors_from_patches"
+   ],
+   "lead_ja": "",
+   "lead_en": ""
+  },
+  {
+   "id": "poc_real_tless_6dof",
+   "wing": "wing_geometry",
+   "added": "2026-11-01",
+   "numbers_source": "log",
+   "title_ja": "実機 RGB-D の産業部品を PPF で 6 自由度照合する",
+   "title_en": "Six-DoF PPF Matching of Industrial Parts in Real RGB-D Data",
+    "caption_ja": "BOP T-LESS(CC BY 4.0)のBOP19 test_primesense全20場面から先頭画像を1枚ずつ決定的に選び、可視率0.5以上の132対象を深度→点群→法線→RANSAC平面除去→クラスタ→PPF+ICPと通した。旧180/160点・6 mmの0.162/0.185に対し、密度、ref_fraction、angle_bins、ICP反復を11設定で掃引し、10秒/対象以内でAR_MSSD最大の1000/1000点・2 mm・ref 0.25・24ビン・ICP 100反復を採用した。主経路8.291秒/対象でAR_MSSD 0.197 / AR_MSPD 0.220となり、粗い間引きが成績を抑えていたが、公式全testのDrost 0.478/0.480、Vidal 0.575/0.574にはなお届かない。2000点は2時間で未完走、54.6秒/対象以上。クラスタなしは0.111/0.113、理想深度は0.985/0.985、ICPなしは0.346/0.338、符号未整理の法線は0.132/0.161。MSSD>0.2dの失敗109/132の重複内訳は、結合クラスタ34、可視率0.8未満8、薄い部品21、深度欠損1%超36、対称部品103。",
+    "caption_en": "One deterministically selected first image from each of all 20 BOP19 test_primesense scenes in BOP T-LESS (CC BY 4.0) gives 132 instances at visibility 0.5 or above. Sweeping density, reference fraction, angular bins and ICP iterations across eleven settings improves the old 180/160-point, 6 mm result of 0.162/0.185; the best AR_MSSD within ten seconds per instance uses 1000/1000 points, 2 mm voxels, reference fraction 0.25, 24 bins and 100 ICP iterations. Its primary path takes 8.291 seconds per instance and reaches AR_MSSD 0.197 and AR_MSPD 0.220, still below the official full-test Drost scores of 0.478/0.480 and Vidal scores of 0.575/0.574. The 2000-point run did not finish in two hours and exceeded 54.6 seconds per instance. Matching without clustering gives 0.111/0.113, ideal depth gives 0.985/0.985, removing ICP gives 0.346/0.338, and leaving normals unoriented gives 0.132/0.161. Of 132 instances, 109 exceed MSSD 0.2d; overlapping causes are 34 merged-cluster cases, eight below 0.8 visibility, 21 thin parts, 36 above one-percent missing depth, and 103 symmetric parts.",
+   "ops": [
+    "depth_to_points",
+    "estimate_normals",
+    "fit_plane_ransac",
+    "euclidean_clusters",
+    "ppf_model",
+    "surface_match",
+    "icp_point2point_3d"
    ],
    "lead_ja": "",
    "lead_en": ""
@@ -3316,6 +3350,22 @@
    "lead_en": ""
   },
   {
+   "id": "poc_real_sem_metal_layer",
+   "wing": "wing_device",
+   "added": "2026-11-01",
+   "figure": "scene",
+   "figure_caption_ja": "商用 128 nm IC の metal-2 BSE 像に、SVG から読んだ track 輪郭を緑、重複を除いた via 輪郭を赤で重ねた。",
+   "figure_caption_en": "A measured metal-2 BSE image of a commercial 128 nm IC, with SVG track outlines in green and deduplicated via outlines in red.",
+   "numbers_source": "log",
+   "title_ja": "実物 IC の SEM 像で配線幅とビアを測る ―― 仮想 SEM の縁補正は実機でも効くか",
+   "title_en": "Measuring Tracks and Vias in a Real IC SEM Image — Does the Virtual-SEM Edge Correction Transfer?",
+   "caption_ja": "Rothaug ほかの metal-2 SEM データ(14.65 nm/px、CC BY 4.0、DOI 10.17617/3.HY5SYN)10枚を使い、既存 op `svg_entities` と独立 XML reader の一致を門にした。初版の幅偏り −296.3 nm は、切り出しのざらついた縁から生えたスケルトンの枝をラベルと違う手続きで数えた計測誤りだった。生スケルトンの画素/主軸長はラベル 1.07 対切り出し 6.80、端点中央は 2 対 46。ラベル中心線の両端と曲がり角を除いた 47,271 断面を両方に同じ手続きで当てると、ラベル p10/50/90 = 293.0/380.9/536.2 nm、Otsu 切り出し 263.7/351.6/519.0 nm、偏り −14.6 nm。同一中心線の距離変換幅とも 1 px 以内で一致した。端切れ track 領域も ROI から除くと Otsu の IoU 中央 0.819、境界距離平均 58.1 nm。図 02 下端の帯は画像端へ続く不完全ラベルで、橙で採点除外を明示した。欠陥は重複 via 1,740、端切れ via 112、端切れ track 1,239、未ラベル端成分 51、部分欠け 7。PSF 補正を独立性で分けると、切り出し自身の境界だけを使うラベル不使用は −14.6 → −7.8 nm(絶対偏り46.9 %縮小)、10枚を5/5に入れ替える分割検証は −14.6 → −0.5 nm。ただし前半5枚から求めた補正は −1.4 nm、後半5枚からは −17.8 nm で、画像の組による差が大きい。同一画像・同一ラベルで求めた −14.6 → +3.1 nmは循環する参考値に隔離した。15 keV BSE・14.65 nm標本・真幅350 nmを入れた仮想 SEM の Cu/Si 代理断面は −10.5 nmを予測し実測との差は +4.2 nmだが、材料・配線高さ・側壁角・ビーム径は不明で、平坦な埋込 metal-2 も模型外なので一致とはしない。via は TP/FP/FN = 5,604/124/361、適合率 0.978、再現率 0.939。データはrepo外に置き、CIでは6.4 GBを取得しない。",
+   "caption_en": "Ten measured metal-2 SEM images from Rothaug et al. (14.65 nm/px, CC BY 4.0, DOI 10.17617/3.HY5SYN) are admitted only after the existing `svg_entities` operator agrees with an independent XML reader. The original -296.3 nm width bias was a measurement error: ragged extraction edges created many skeleton branches, so the extraction and label were not measuring the same quantity. Raw skeleton pixels per major-axis length are 1.07 for labels versus 6.80 for extractions, and median endpoint counts are 2 versus 46. Re-measuring both masks at the same 47,271 cross-sections along the label centerline, excluding ends and corners, gives label width p10/50/90 of 293.0/380.9/536.2 nm and Otsu extraction width of 263.7/351.6/519.0 nm, a -14.6 nm median bias. A same-centerline distance-transform method agrees within 1 px. Excluding border-clipped label regions from the ROI as well as the truth gives Otsu median IoU 0.819 and mean boundary distance 58.1 nm. The bottom band in Figure 02 is an incomplete label continuing to the image edge and is shown in orange as excluded. The audit counts 1,740 duplicate vias, 112 border vias, 1,239 clipped tracks, 51 wholly missing border components, and 7 partial border-label gaps. Separating the PSF evaluation by independence, the label-free estimate from the extraction's own boundary changes the bias from -14.6 to -7.8 nm, reducing absolute bias by 46.9%; two-way 5/5 image cross-validation gives -0.5 nm, although the correction estimated from the first five images (-1.4 nm) and from the last five (-17.8 nm) differ widely. The -14.6 to +3.1 nm same-image result uses the same image and label to estimate and score the correction, so it is retained only as a circular reference. A virtual-SEM proxy at 15 keV BSE, 14.65 nm sampling, and 350 nm true width predicts -10.5 nm, 4.2 nm from the measured bias. This is not validation: the Cu/Si material pair, 40 nm height, 88-degree sidewall, and 1 nm beam sigma are assumptions, while the model cannot represent the flat embedded metal-2 material boundary. Via TP/FP/FN is 5,604/124/361, precision 0.978 and recall 0.939. The 6.4 GB archive stays outside the repository and CI does not download it.",
+   "run": "py -3.11 examples/poc_real_sem_metal_layer.py",
+   "lead_ja": "",
+   "lead_en": ""
+  },
+  {
    "id": "poc_si_wafer_pl_defect_visibility",
    "wing": "wing_industrial",
    "added": "2026-10-13",
@@ -4274,6 +4324,20 @@
    "caption_ja": "3.45 µm画素、F/5.6、550 nmの円形瞳Airy OTFを高解像度エッジへ適用してから画素面積積分し、真値とforward模型を全周波数で一致させた。中心差分補正はDCで1、Nyquistで1.1107207。420条件で、線形・無雑音の残る推定器誤差は最大0.00872 cycles/pixel、模型誤差は0として分離表示する。10 %超の破綻は1.0度から現れた。",
    "caption_en": "For a 3.45 um pixel, F/5.6 and 550 nm system, the circular-pupil Airy OTF is applied to a high-resolution edge before pixel-area integration, so forward model and truth agree over the full frequency range. Central-difference correction is 1 at DC and 1.1107207 at Nyquist. Across 420 conditions the remaining clean linear estimator error is at most 0.00872 cycles per pixel, displayed separately from zero model error; failures beyond 10 percent begin at 1.0 degree.",
    "run": "py -3.11 examples/poc_slanted_edge_sfr_limits.py",
+   "lead_ja": "",
+   "lead_en": ""
+  },
+  {
+   "id": "poc_threshold_transfer_after_normalization",
+   "wing": "wing_industrial",
+   "added": "2026-11-01",
+   "numbers_source": "log",
+   "figure": "threshold_transfer",
+   "title_ja": "生の輝度しきい値は照明ごとに合わせ直すが、kσ と P-tile はそのまま移る",
+   "title_en": "Raw Grey-Level Thresholds Need Retuning across Lighting, while k-Sigma and P-Tile Transfer",
+   "caption_ja": "欠陥の形と面積を固定した合成製品像を、照明利得1.35倍、オフセット+0.18、雑音2倍、材質の明るさ+0.18、複合条件で撮り直した。基準像で合わせた生のしきい値は移送先5条件すべてでIoU 0.98を割り、追加の評価は計49回（基準の1回を含め50回）。中央値と1.4826×MADで零中心・σ単位にしてから切るkσは、基準で2回評価した同じkを全条件へ移して追加0回、移植IoUは0.9832以上。P-tileは真の欠陥面積率を基準像で1回評価し、追加0回、移植IoUは0.9820以上。雑音2倍では両方式とも一部の欠陥画素と背景雑音が重なり、正規化しても情報そのものは戻らない。評価回数は実行時間でなく、IoU 0.98へ達するまで決定的な候補列を真値で採点した回数。",
+   "caption_en": "A synthetic product with fixed defect shape and area is re-imaged under 1.35x gain, +0.18 offset, 2x noise, +0.18 material brightness, and a combined condition. The raw threshold tuned on the baseline falls below IoU 0.98 in all five transfers and uses 49 extra evaluations (50 including baseline). Robust centring and scaling by 1.4826 MAD followed by k-sigma uses two baseline evaluations and zero extra evaluations, with transferred IoU at least 0.9832. P-tile uses one baseline evaluation at the known defect area fraction and zero extra evaluations, with transferred IoU at least 0.9820. Under doubled noise, foreground and background overlap; normalisation cannot recover information that is no longer present. An evaluation means scoring one deterministic candidate against truth until IoU 0.98, not runtime.",
+   "run": "py -3.11 examples/poc_threshold_transfer_after_normalization.py",
    "lead_ja": "",
    "lead_en": ""
   }

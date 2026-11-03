@@ -56,6 +56,38 @@ ENV_DIR = "FULLSEYE_FIGURE_DIR"
 #: この倍率で Fullseye の annotate 族へ渡す。未設定時は発表用の 2 倍描画。
 ENV_SCALE = "FULLSEYE_FIGURE_SCALE"
 
+#: 日本語を描けるフォントの既知パス。PoC 2 本にあった固定順探索を共通化し、
+#: Ubuntu の fonts-noto-cjk / fonts-ipafont-gothic と macOS の標準パスを補った。
+_JAPANESE_FONT_PATHS = {
+    False: (
+        r"C:\Windows\Fonts\YuGothM.ttc",
+        r"C:\Windows\Fonts\meiryo.ttc",
+        r"C:\Windows\Fonts\msgothic.ttc",
+        "/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc",
+        "/usr/share/fonts/opentype/noto/NotoSansCJKjp-Regular.otf",
+        "/usr/share/fonts/opentype/ipafont-gothic/ipag.ttf",
+        "/usr/share/fonts/opentype/ipafont-gothic/ipagp.ttf",
+        "/usr/share/fonts/truetype/fonts-japanese-gothic.ttf",
+        "/usr/share/fonts/truetype/vlgothic/VL-Gothic-Regular.ttf",
+        "/usr/share/fonts/truetype/takao-gothic/TakaoPGothic.ttf",
+        "/System/Library/Fonts/ヒラギノ角ゴシック W3.ttc",
+        "/System/Library/Fonts/Hiragino Sans GB.ttc",
+    ),
+    True: (
+        r"C:\Windows\Fonts\YuGothB.ttc",
+        r"C:\Windows\Fonts\meiryob.ttc",
+        "/usr/share/fonts/opentype/noto/NotoSansCJK-Bold.ttc",
+        "/usr/share/fonts/opentype/noto/NotoSansCJKjp-Bold.otf",
+        "/System/Library/Fonts/ヒラギノ角ゴシック W6.ttc",
+    ),
+}
+
+_JAPANESE_FONT_FAMILIES = (
+    "Yu Gothic", "Meiryo", "MS Gothic", "Noto Sans CJK JP", "Noto Sans JP",
+    "BIZ UDGothic", "IPA Gothic", "IPAGothic", "VL Gothic", "TakaoGothic",
+    "Hiragino Sans",
+)
+
 #: 1 回の実行で書く枚数の上限。暴走した例がディスクを埋めないための歯止め。
 MAX_FIGURES = 64
 
@@ -119,6 +151,57 @@ _auto_default()
 def enabled() -> bool:
     """図を出す設定になっているか。重い描画を組む前の分岐に使う。"""
     return target_dir() is not None
+
+
+def _japanese_font_path(*, bold: bool = False, fail_closed: bool = True) -> Path | None:
+    """日本語フォントのファイルを固定順で探す。
+
+    ``bold`` は通常体と太字体を混ぜない。既知の Windows/Linux/macOS パスを先に
+    調べ、matplotlib があれば登録済みフォントも同じ書体順で調べる。見つからない
+    ときは既定で、調べたパスをすべて含む :class:`RuntimeError` を送出する。
+    matplotlib のように英語へ退避できる呼び出し側だけ ``fail_closed=False`` を使う。
+    """
+    searched: list[Path] = []
+
+    def consider(raw_path) -> Path | None:
+        path = Path(raw_path)
+        if path not in searched:
+            searched.append(path)
+        return path if path.is_file() else None
+
+    for raw_path in _JAPANESE_FONT_PATHS[bool(bold)]:
+        found = consider(raw_path)
+        if found is not None:
+            return found
+
+    # mesh_props.py の探索範囲を維持する。matplotlib は任意依存なので、無ければ
+    # 既知パスだけで完結する。
+    try:
+        from matplotlib import font_manager
+    except ImportError:
+        pass
+    else:
+        family_order = {name: n for n, name in enumerate(_JAPANESE_FONT_FAMILIES)}
+        bold_weights = {"bold", "demibold", "semibold", "heavy", "black", "700", "800", "900"}
+        entries = []
+        for entry in font_manager.fontManager.ttflist:
+            if entry.name not in family_order:
+                continue
+            entry_is_bold = str(entry.weight).lower() in bold_weights
+            if entry_is_bold == bool(bold):
+                entries.append((family_order[entry.name], str(entry.fname)))
+        for _order, raw_path in sorted(entries):
+            found = consider(raw_path)
+            if found is not None:
+                return found
+
+    if not fail_closed:
+        return None
+    paths = "\n".join("  - %s" % path for path in searched) or "  - (候補なし)"
+    raise RuntimeError(
+        "showcase 用の日本語%sフォントが見つからない。探したパス:\n%s"
+        % ("太字" if bold else "", paths)
+    )
 
 
 def _figure_scale(scale=None) -> int:
@@ -760,6 +843,79 @@ def save_plot(name: str, series, xlabel: str = "", ylabel: str = "", title: str 
     except Exception as exc:                            # noqa: BLE001
         _errors.append("%s(plot): %s: %s" % (name, type(exc).__name__, exc))
         return None
+
+
+def _render_heatmap(values, xvalues, yvalues, xlabel: str = "", ylabel: str = "",
+                    vrange=(0.0, 1.0), boundary=None, size=(420, 300),
+                    cmap="turbo", colorbar_unit: str = ""):
+    """固定尺度のヒートマップを軸・目盛り・任意の白い境界線つきで描く。
+
+    ``boundary`` は ``values`` と同じ形の bool 配列。True/False が隣り合う
+    セル境界だけを白線で描く。小さな格子は最近傍で拡大し、存在しない中間値を
+    作らない。返り値は :func:`save_grid` のパネルとしてそのまま使える。
+    """
+    import fullseye as fs
+
+    z = np.asarray(values, dtype=np.float64)
+    xv = np.asarray(xvalues, dtype=np.float64).ravel()
+    yv = np.asarray(yvalues, dtype=np.float64).ravel()
+    if z.ndim != 2 or z.shape != (yv.size, xv.size):
+        raise ValueError("render_heatmap: values must have shape (len(yvalues), len(xvalues))")
+    if xv.size < 2 or yv.size < 2 or np.any(np.diff(xv) <= 0.0) or np.any(np.diff(yv) <= 0.0):
+        raise ValueError("render_heatmap: xvalues/yvalues must be strictly increasing with 2+ values")
+    if boundary is not None and np.asarray(boundary).shape != z.shape:
+        raise ValueError("render_heatmap: boundary must match values")
+    lo, hi = float(vrange[0]), float(vrange[1])
+    if not np.isfinite(z).all() or not lo < hi:
+        raise ValueError("render_heatmap: values and vrange must be finite, with lo < hi")
+
+    w, h = map(int, size)
+    # 8 x 7 程度の格子を整数倍できる描画域。余りは白い軸余白へ回す。
+    cell_w = max(1, (w - 100) // xv.size)
+    cell_h = max(1, (h - 76) // yv.size)
+    rw, rh = cell_w * xv.size, cell_h * yv.size
+    rect = (64, 14, rw, rh)
+    img = np.ones((h, w, 3), dtype=np.float64)
+    rgb = _to_rgb8(z, signed=False, gray=False, vrange=(lo, hi), cmap=cmap)
+    enlarged = np.repeat(np.repeat(rgb, cell_h, axis=0), cell_w, axis=1)
+    x0, y0, _, _ = rect
+    img[y0:y0 + rh, x0:x0 + rw] = enlarged.astype(np.float64) / 255.0
+
+    dx = float(np.median(np.diff(xv)))
+    dy = float(np.median(np.diff(yv)))
+    axes = fs.axes_transform(rect, (xv[0] - dx / 2.0, xv[-1] + dx / 2.0),
+                             (yv[0] - dy / 2.0, yv[-1] + dy / 2.0), invert_y=False)
+    img = np.asarray(fs.axes_frame(img, axes, width=1))
+    img = np.asarray(fs.ticks(img, axes, xticks=xv, yticks=[], label_fmt="{:.2f}",
+                              tick_len=4, font_size=11))
+    img = np.asarray(fs.ticks(img, axes, xticks=[], yticks=yv, label_fmt="{:.0f}",
+                              tick_len=4, font_size=11))
+
+    if boundary is not None:
+        b = np.asarray(boundary, dtype=bool)
+        # セル間で判定が変わる辺だけを描くので、等高線補間による架空の値を作らない。
+        for row in range(yv.size):
+            for col in range(xv.size - 1):
+                if b[row, col] != b[row, col + 1]:
+                    xx = 0.5 * (xv[col] + xv[col + 1])
+                    p0 = fs.data_to_pixel(axes, xx, yv[row] - dy / 2.0)
+                    p1 = fs.data_to_pixel(axes, xx, yv[row] + dy / 2.0)
+                    img = np.asarray(fs.draw_line(img, p0, p1, color=(1.0, 1.0, 1.0), width=3))
+        for row in range(yv.size - 1):
+            for col in range(xv.size):
+                if b[row, col] != b[row + 1, col]:
+                    yy = 0.5 * (yv[row] + yv[row + 1])
+                    p0 = fs.data_to_pixel(axes, xv[col] - dx / 2.0, yy)
+                    p1 = fs.data_to_pixel(axes, xv[col] + dx / 2.0, yy)
+                    img = np.asarray(fs.draw_line(img, p0, p1, color=(1.0, 1.0, 1.0), width=3))
+
+    foot = (xlabel + ("   |   " if xlabel and ylabel else "") + ylabel).strip()
+    if foot:
+        img = np.asarray(fs.text_box(img, foot, (10, h - 8), anchor="lb", font_size=12))
+    if colorbar_unit:
+        img = _append_colorbar(img, z, unit=colorbar_unit, cmap=cmap,
+                               signed=False, vrange=(lo, hi))
+    return img
 
 
 def render_plot(series, xlabel: str = "", ylabel: str = "", title: str = "", size=(560, 360),

@@ -6,10 +6,10 @@ in: image
 out: region
 halcon: binary_threshold
 gpu: あり(otsu)
-examples: [ct_inspection, degenerate_inputs, example_inner_diameter_mm, find_ops_by_meaning, gallery2d_segmentation, genspark_external_review, line_handshake, poc_bone_trabecular_thickness, poc_colocalization_crosstalk, poc_dimensional_inspection, poc_document_scan, poc_fresco_craquelure, poc_matrix_code_reading, poc_metal_grain_size, poc_real_coin_metrology, poc_segmentation_gauntlet, poc_solar_el_inspection, poc_vegetation_cover, poc_water_inspection_images, quickstart, segment_and_classify, threshold_family_agreement, typed_results_json]
+examples: [ct_inspection, degenerate_inputs, example_inner_diameter_mm, find_ops_by_meaning, gallery2d_segmentation, genspark_external_review, line_handshake, poc_bone_trabecular_thickness, poc_colocalization_crosstalk, poc_dimensional_inspection, poc_document_scan, poc_fresco_craquelure, poc_matrix_code_reading, poc_metal_grain_size, poc_real_coin_metrology, poc_real_sem_metal_layer, poc_segmentation_gauntlet, poc_solar_el_inspection, poc_vegetation_cover, poc_water_inspection_images, quickstart, segment_and_classify, threshold_family_agreement, typed_results_json]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.8.1  # fullseye lib version this note was generated for
+version: 0.9.0  # fullseye lib version this note was generated for
 ---
 
 # otsu — 2D `segmentation` op
@@ -76,6 +76,7 @@ otsu 0.50 0.50
 - [poc_matrix_code_reading](../../../../examples/poc_matrix_code_reading.py) — `py -3.11 examples/poc_matrix_code_reading.py`
 - [poc_metal_grain_size](../../../../examples/poc_metal_grain_size.py) — `py -3.11 examples/poc_metal_grain_size.py`
 - [poc_real_coin_metrology](../../../../examples/poc_real_coin_metrology.py) — `py -3.11 examples/poc_real_coin_metrology.py`
+- [poc_real_sem_metal_layer](../../../../examples/poc_real_sem_metal_layer.py) — `py -3.11 examples/poc_real_sem_metal_layer.py`
 - [poc_segmentation_gauntlet](../../../../examples/poc_segmentation_gauntlet.py) — `py -3.11 examples/poc_segmentation_gauntlet.py`
 - [poc_solar_el_inspection](../../../../examples/poc_solar_el_inspection.py) — `py -3.11 examples/poc_solar_el_inspection.py`
 - [poc_vegetation_cover](../../../../examples/poc_vegetation_cover.py) — `py -3.11 examples/poc_vegetation_cover.py`
@@ -91,7 +92,7 @@ otsu 0.50 0.50
 
 ## 同カテゴリ(`segmentation`)
 
-[threshold](threshold.md) · [canny](canny.md) · [adaptive_gauss_thresh](adaptive_gauss_thresh.md) · [sk_otsu](sk_otsu.md) · [sk_li](sk_li.md) · [sk_yen](sk_yen.md) · [sk_sauvola](sk_sauvola.md) · [sk_niblack](sk_niblack.md)
+[threshold](threshold.md) · [ptile_threshold](ptile_threshold.md) · [sigma_threshold](sigma_threshold.md) · [canny](canny.md) · [adaptive_gauss_thresh](adaptive_gauss_thresh.md) · [sk_otsu](sk_otsu.md) · [sk_li](sk_li.md) · [sk_yen](sk_yen.md)
 
 ---
 *Provenance: ops.py — 2D operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

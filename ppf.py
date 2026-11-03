@@ -25,6 +25,35 @@ import numpy as np
 __all__ = ["ppf_model", "surface_match", "find_surface_pose"]
 
 
+_PAIR_BLOCK = 32768
+_VOTE_BLOCK = 1000000
+
+
+class _PPFTable:
+    """Sorted PPF buckets without a Python hash map. / Python 辞書を使わない整列済み PPF バケット。"""
+
+    __slots__ = ("keys", "offsets", "model_indices", "alphas")
+
+    def __init__(self, keys, offsets, model_indices, alphas):
+        self.keys = keys
+        self.offsets = offsets
+        self.model_indices = model_indices
+        self.alphas = alphas
+
+    def __len__(self):
+        return len(self.keys)
+
+    # dict だった頃の読み手(set(model["table"]) で鍵を集める回転不変の門、PoC)を壊さない。
+    # Keep the mapping-like reads the old dict table supported (iteration = keys, membership).
+    def __iter__(self):
+        return iter(np.asarray(self.keys).tolist())
+
+    def __contains__(self, key):
+        keys = np.asarray(self.keys)
+        i = int(np.searchsorted(keys, key))
+        return i < len(keys) and keys[i] == key
+
+
 def _unit(v, axis=-1):
     n = np.linalg.norm(v, axis=axis, keepdims=True)
     return v / np.maximum(n, 1e-12)
@@ -74,6 +103,112 @@ def _angle(u, v):
     """Unsigned angle in [0, pi] between rows of u and v (both (..,3))."""
     d = np.clip((u * v).sum(-1), -1.0, 1.0)
     return np.arccos(d)
+
+
+def _quantized_keys(distance, angle_1, angle_2, angle_3, dist_step, angle_bins):
+    """Pack quantized PPF rows into sortable integers. / 量子化 PPF 行を整列可能な整数へ詰める。"""
+    astep = np.pi / angle_bins
+    base = angle_bins + 1
+    qd = np.floor(distance / dist_step).astype(np.int64)
+    q1 = np.floor(angle_1 / astep).astype(np.int64)
+    q2 = np.floor(angle_2 / astep).astype(np.int64)
+    q3 = np.floor(angle_3 / astep).astype(np.int64)
+    return ((qd * base + q1) * base + q2) * base + q3
+
+
+def _pair_table(P, N, dist_step, angle_bins):
+    """Vectorize ordered model pairs in bounded blocks. / モデル順序対を上限付きブロックでベクトル化する。"""
+    count_max = P.shape[0] * (P.shape[0] - 1)
+    keys = np.empty(count_max, dtype=np.int64)
+    model_indices = np.empty(count_max, dtype=np.int32)
+    alphas = np.empty(count_max, dtype=np.float64)
+    write = 0
+    total = P.shape[0] * P.shape[0]
+    x_axis = np.array([1.0, 0.0, 0.0])
+    for first in range(0, total, _PAIR_BLOCK):
+        pair = np.arange(first, min(first + _PAIR_BLOCK, total), dtype=np.int64)
+        i, j = pair // P.shape[0], pair % P.shape[0]
+        keep = i != j
+        i, j = i[keep], j[keep]
+        d = P[j] - P[i]
+        distance = np.linalg.norm(d, axis=1)
+        keep = distance >= 1e-9
+        if not np.any(keep):
+            continue
+        i, j, d, distance = i[keep], j[keep], d[keep], distance[keep]
+        direction = d / distance[:, None]
+        packed = _quantized_keys(
+            distance,
+            _angle(N[i], direction),
+            _angle(N[j], direction),
+            _angle(N[i], N[j]),
+            dist_step,
+            angle_bins,
+        )
+        refs, inverse = np.unique(i, return_inverse=True)
+        rotations = np.stack([_rot_align(N[index], x_axis) for index in refs])
+        rotations = rotations[inverse]
+        translations = -np.einsum("nij,nj->ni", rotations, P[i])
+        local = np.einsum("nij,nj->ni", rotations, P[j]) + translations
+        alpha = _alpha_of(local)
+        stop = write + len(i)
+        keys[write:stop] = packed
+        model_indices[write:stop] = i
+        alphas[write:stop] = alpha
+        write = stop
+    keys = keys[:write]
+    model_indices = model_indices[:write]
+    alphas = alphas[:write]
+    order = np.argsort(keys, kind="stable")
+    keys = keys[order]
+    model_indices = model_indices[order]
+    alphas = alphas[order]
+    unique_keys, starts = np.unique(keys, return_index=True)
+    offsets = np.append(starts, len(keys)).astype(np.int64, copy=False)
+    return _PPFTable(unique_keys, offsets, model_indices, alphas)
+
+
+def _vote(table, scene_keys, scene_alphas, model_size, angle_bins):
+    """Accumulate matching buckets with bounded bincount blocks. / 一致バケットを上限付き bincount で投票する。"""
+    positions = np.searchsorted(table.keys, scene_keys)
+    found = positions < len(table.keys)
+    found[found] &= table.keys[positions[found]] == scene_keys[found]
+    positions = positions[found]
+    scene_alphas = scene_alphas[found]
+    if positions.size == 0:
+        return np.zeros((model_size, angle_bins), dtype=np.int64)
+    starts = table.offsets[positions]
+    counts = table.offsets[positions + 1] - starts
+    accumulator = np.zeros(model_size * angle_bins, dtype=np.int64)
+    cumulative = np.cumsum(counts, dtype=np.int64)
+    cursor = 0
+    two_pi = 2.0 * np.pi
+    while cursor < len(counts):
+        before = 0 if cursor == 0 else cumulative[cursor - 1]
+        end = int(np.searchsorted(cumulative, before + _VOTE_BLOCK, side="right"))
+        if end == cursor:
+            # One exceptionally large model bucket. / モデル側の単一巨大バケット。
+            for entry_first in range(int(starts[cursor]),
+                                     int(starts[cursor] + counts[cursor]), _VOTE_BLOCK):
+                entry_last = min(entry_first + _VOTE_BLOCK,
+                                 int(starts[cursor] + counts[cursor]))
+                model_rows = np.arange(entry_first, entry_last, dtype=np.int64)
+                bins = np.rint(((table.alphas[model_rows] - scene_alphas[cursor]) % two_pi)
+                               / (two_pi / angle_bins)).astype(np.int64) % angle_bins
+                flat = table.model_indices[model_rows].astype(np.int64) * angle_bins + bins
+                accumulator += np.bincount(flat, minlength=accumulator.size)
+            cursor += 1
+            continue
+        block_counts = counts[cursor:end]
+        repeated = np.repeat(np.arange(end - cursor), block_counts)
+        block_offsets = np.repeat(np.cumsum(block_counts) - block_counts, block_counts)
+        model_rows = starts[cursor:end][repeated] + np.arange(repeated.size) - block_offsets
+        bins = np.rint(((table.alphas[model_rows] - scene_alphas[cursor:end][repeated]) % two_pi)
+                       / (two_pi / angle_bins)).astype(np.int64) % angle_bins
+        flat = table.model_indices[model_rows].astype(np.int64) * angle_bins + bins
+        accumulator += np.bincount(flat, minlength=accumulator.size)
+        cursor = end
+    return accumulator.reshape(model_size, angle_bins)
 
 
 def _invariant_diameter(P) -> float:
@@ -135,30 +270,10 @@ def ppf_model(points, normals=None, dist_step: float = None, angle_bins: int = 3
     diam = _invariant_diameter(P)
     if dist_step is None:
         dist_step = diam / 20.0 if diam > 0 else 1.0
-    astep = np.pi / int(angle_bins)
-    table: dict = {}
-    for i in range(M):
-        d = P - P[i]                                   # (M,3) vectors to all others
-        dn = np.linalg.norm(d, axis=1)
-        du = _unit(d)
-        f1 = dn
-        f2 = _angle(np.broadcast_to(N[i], du.shape), du)
-        f3 = _angle(N, du)
-        f4 = _angle(np.broadcast_to(N[i], N.shape), N)
-        qd = np.floor(f1 / dist_step).astype(np.int64)
-        q2 = np.floor(f2 / astep).astype(np.int64)
-        q3 = np.floor(f3 / astep).astype(np.int64)
-        q4 = np.floor(f4 / astep).astype(np.int64)
-        Ti = _align_to_x(P[i], N[i])
-        pg = (P @ Ti[:3, :3].T) + Ti[:3, 3]            # all points in i's local frame
-        alpha_m = _alpha_of(pg)
-        for j in range(M):
-            if j == i or dn[j] < 1e-9:
-                continue
-            key = (int(qd[j]), int(q2[j]), int(q3[j]), int(q4[j]))
-            table.setdefault(key, []).append((i, float(alpha_m[j])))
+    table = _pair_table(P, N, float(dist_step), int(angle_bins))
     return {"points": P, "normals": N, "table": table,
-            "dist_step": float(dist_step), "angle_bins": int(angle_bins)}
+            "dist_step": float(dist_step), "angle_bins": int(angle_bins),
+            "diameter": diam}
 
 
 def _pose_from(sr_p, sr_n, model, mi, alpha):
@@ -197,42 +312,37 @@ def surface_match(model: dict, scene_points, scene_normals=None,
     M = model["points"].shape[0]
     dist_step = model["dist_step"]
     ab = model["angle_bins"]
-    astep = np.pi / ab
     two_pi = 2.0 * np.pi
     rng = np.random.default_rng(seed)
     n_ref = max(1, int(round(ref_fraction * ns)))
     refs = rng.choice(ns, min(n_ref, ns), replace=False)
 
+    tree = cKDTree(S)
+    diameter = float(model.get("diameter", _invariant_diameter(model["points"])))
     hypotheses = []
     for r in refs:
         Ts = _align_to_x(S[r], SN[r])
-        d = S - S[r]
+        neighbours = np.asarray(tree.query_ball_point(S[r], r=diameter,
+                                                      return_sorted=True), dtype=np.int64)
+        neighbours = neighbours[neighbours != r]
+        d = S[neighbours] - S[r]
         dn = np.linalg.norm(d, axis=1)
-        du = _unit(d)
-        f2 = _angle(np.broadcast_to(SN[r], du.shape), du)
-        f3 = _angle(SN, du)
-        f4 = _angle(np.broadcast_to(SN[r], SN.shape), SN)
-        qd = np.floor(dn / dist_step).astype(np.int64)
-        q2 = np.floor(f2 / astep).astype(np.int64)
-        q3 = np.floor(f3 / astep).astype(np.int64)
-        q4 = np.floor(f4 / astep).astype(np.int64)
-        pg = (S @ Ts[:3, :3].T) + Ts[:3, 3]
+        keep = dn >= 1e-9
+        neighbours, d, dn = neighbours[keep], d[keep], dn[keep]
+        if neighbours.size == 0:
+            continue
+        du = d / dn[:, None]
+        keys = _quantized_keys(
+            dn,
+            _angle(np.broadcast_to(SN[r], du.shape), du),
+            _angle(SN[neighbours], du),
+            _angle(np.broadcast_to(SN[r], (len(neighbours), 3)), SN[neighbours]),
+            dist_step,
+            ab,
+        )
+        pg = (S[neighbours] @ Ts[:3, :3].T) + Ts[:3, 3]
         alpha_s = _alpha_of(pg)
-        acc = np.zeros((M, ab))
-        for j in range(ns):
-            if j == r or dn[j] < 1e-9:
-                continue
-            hits = model["table"].get((int(qd[j]), int(q2[j]), int(q3[j]), int(q4[j])))
-            if not hits:
-                continue
-            for mi, alpha_m in hits:
-                # T = Ts^-1 . Rx(alpha) . Tm maps model -> scene, and Rx(alpha_m) pg_m
-                # and Rx(alpha_s) pg_s both land in the y>=0 half-plane, so
-                # pg_s = Rx(alpha_m - alpha_s) pg_m: vote for alpha_m - alpha_s.
-                # (The reversed difference put the sign of the rotation about the
-                # normal backwards: Rerr 27-169 deg on random poses, 2026-09-02.)
-                b = int(round(((alpha_m - alpha_s[j]) % two_pi) / (two_pi / ab))) % ab
-                acc[mi, b] += 1.0
+        acc = _vote(model["table"], keys, alpha_s, M, ab)
         if acc.max() <= 0:
             continue
         mi_star, b_star = np.unravel_index(int(acc.argmax()), acc.shape)
@@ -245,7 +355,6 @@ def surface_match(model: dict, scene_points, scene_normals=None,
                 "votes": 0.0, "inlier_fraction": 0.0}
 
     hypotheses.sort(key=lambda h: -h[0])
-    tree = cKDTree(S)
     tol = 2.0 * dist_step
     best = None
     for votes, R0, t0 in hypotheses[:max(1, int(topk))]:

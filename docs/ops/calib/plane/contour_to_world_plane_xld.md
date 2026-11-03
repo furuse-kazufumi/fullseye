@@ -8,7 +8,7 @@ gpu: なし
 examples: [poc_wound_area_tracking]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.8.1  # fullseye lib version this note was generated for
+version: 0.9.0  # fullseye lib version this note was generated for
 ---
 
 # contour_to_world_plane_xld — CALIB `plane` op

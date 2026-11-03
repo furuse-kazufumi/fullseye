@@ -7245,7 +7245,36 @@ def _b_photoel_unwrap(pool, rng):
     return (phases, lams, 3000.0), {}
 
 
+def _archive_probe_payload():
+    """Return a tiny valid ZIP for the archive-op argument builders."""
+    import fileio
+    return fileio.archive_create({"probe.txt": b"fullseye archive probe\n"}, "zip")
+
+
+def _b_archive_extract(pool, rng):
+    # The fuzzer calls an op once, so a fresh child in its scratch directory is
+    # sufficient. 契約検査の二重呼び出しには ledger_contracts 側の専用 builder を使う。
+    parent = tempfile.mkdtemp(prefix="fullseye-chain-archive-")
+    return (_archive_probe_payload(), os.path.join(parent, "out")), {}
+
+
+def _b_symmetry_comparison(pool, rng):
+    """Build a valid image/model pair for the two self-reference operators."""
+    images = pool.get("image2d") or []
+    if not images:
+        return None
+    image = images[int(rng.integers(len(images)))]
+    model = {"kind": "reflection", "angle_deg": 90.0, "offset_px": 0.0}
+    return (image, model), {}
+
+
 OP_ARG_BUILDERS = {
+    "archive_probe": lambda pool, rng: ((_archive_probe_payload(),), {}),
+    "archive_list": lambda pool, rng: ((_archive_probe_payload(),), {}),
+    "archive_extract": _b_archive_extract,
+    "archive_create": lambda pool, rng: (({"probe.txt": b"fullseye archive probe\n"}, "zip"), {}),
+    "symmetry_difference_map": _b_symmetry_comparison,
+    "symmetry_score": _b_symmetry_comparison,
     "fringe_ftp_phase": _b_fringe_ftp,
     "plenoptic_system": _b_plenoptic_system,
     # --- 光弾性(photoelastic、2026-10-23): 単位つきの必須引数を SI の桁で渡す --- #

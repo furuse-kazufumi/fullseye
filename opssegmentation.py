@@ -81,10 +81,11 @@ import segcontour
 import seggraph
 import watershed3d
 import cropweed
+import normalized_threshold
 
 _MOD = {"segmentation": segmentation, "segeval": segeval, "segworld": segworld,
         "segcontour": segcontour, "seggraph": seggraph, "watershed3d": watershed3d,
-        "cropweed": cropweed}
+        "cropweed": cropweed, "normalized_threshold": normalized_threshold}
 
 # カテゴリ → [(op 名, module, [入力種別], 出力種別)]
 _CATALOG = {

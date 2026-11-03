@@ -749,6 +749,10 @@
    "accessioned": "2026-09-09",
    "no": "2026.116"
   },
+  "poc_real_sem_metal_layer": {
+   "accessioned": "2026-11-01",
+   "no": "2026.285"
+  },
   "poc_real_sky_photometry": {
    "accessioned": "2026-09-08",
    "no": "2026.106"
@@ -764,6 +768,10 @@
   "poc_real_texture_invariance": {
    "accessioned": "2026-09-08",
    "no": "2026.109"
+  },
+  "poc_real_tless_6dof": {
+   "accessioned": "2026-11-01",
+   "no": "2026.287"
   },
   "poc_recycling_sorting": {
    "accessioned": "2026-09-07",
@@ -925,6 +933,10 @@
    "accessioned": "2026-09-07",
    "no": "2026.087"
   },
+  "poc_symmetry_self_reference_inspection": {
+   "accessioned": "2026-11-01",
+   "no": "2026.286"
+  },
   "poc_table_tennis_bounce": {
    "accessioned": "2026-10-01",
    "no": "2026.175"
@@ -996,6 +1008,10 @@
   "poc_thin_film_reflectometry": {
    "accessioned": "2026-10-15",
    "no": "2026.237"
+  },
+  "poc_threshold_transfer_after_normalization": {
+   "accessioned": "2026-11-01",
+   "no": "2026.288"
   },
   "poc_timelapse_growth": {
    "accessioned": "2026-09-06",

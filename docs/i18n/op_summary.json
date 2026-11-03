@@ -11,6 +11,20 @@
  "summaries": {
   "fileio/e57_write": {"fp":"de1c8763d782","en":"Write a point-cloud `table` with coordinates, intensity, color, and pose as ASTM E57 `bytes`.","zh":"将带坐标、强度、颜色和位姿的点云 `table` 写成 ASTM E57 `bytes`。","tw":"將帶座標、強度、顏色與姿態的點雲 `table` 寫成 ASTM E57 `bytes`。","ko":"좌표, 강도, 색상 및 포즈가 있는 포인트 클라우드 `table`을 ASTM E57 `bytes`로 씁니다.","de":"Schreibt eine Punktwolken-`table` mit Koordinaten, Intensität, Farbe und Pose als ASTM-E57-`bytes`.","hi":"coordinates, intensity, रंग और pose वाली point-cloud `table` को ASTM E57 `bytes` में लिखता है।"},
   "fileio/e57_read": {"fp":"fcf1beb99a4c","en":"Read ASTM E57 `bytes` and return a point-cloud `table` with coordinates, intensity, color, and pose.","zh":"读取 ASTM E57 `bytes`，返回带坐标、强度、颜色和位姿的点云 `table`。","tw":"讀取 ASTM E57 `bytes`，傳回帶座標、強度、顏色與姿態的點雲 `table`。","ko":"ASTM E57 `bytes`를 읽고 좌표, 강도, 색상 및 포즈가 있는 포인트 클라우드 `table`을 반환합니다.","de":"Liest ASTM-E57-`bytes` und liefert eine Punktwolken-`table` mit Koordinaten, Intensität, Farbe und Pose.","hi":"ASTM E57 `bytes` पढ़कर coordinates, intensity, रंग और pose वाली point-cloud `table` लौटाता है।"},
+  "fileio/archive_probe": {"fp":"73146970b7f9","en":"Probe archive magic and return its format name.","zh":"检查归档文件的魔数并返回格式名称。","tw":"檢查封存檔的魔術數字並傳回格式名稱。","ko":"아카이브 매직 넘버를 검사하고 형식 이름을 반환합니다.","de":"Prüft die Magie eines Archivs und gibt dessen Formatnamen zurück.","hi":"archive magic की जाँच करके उसका format नाम लौटाता है।"},
+  "fileio/archive_list": {"fp":"f62e32388cb9","en":"List archive member names, expanded and compressed sizes, modification times, and directory flags.","zh":"列出归档成员的名称、解压前后大小、修改时间和目录标志。","tw":"列出封存成員的名稱、解壓縮前後大小、修改時間與目錄旗標。","ko":"아카이브 멤버의 이름, 압축 전후 크기, 수정 시간 및 디렉터리 플래그를 나열합니다.","de":"Listet Namen, entpackte und komprimierte Größen, Änderungszeiten und Verzeichniskennzeichen der Archivmitglieder auf.","hi":"archive members के नाम, expanded और compressed sizes, modification times तथा directory flags सूचीबद्ध करता है।"},
+  "fileio/archive_extract": {"fp":"f0b5320954dd","en":"Safely extract an archive into an empty destination and return relative paths.","zh":"将归档安全地解压到空目标目录，并返回相对路径。","tw":"將封存檔安全地解壓縮到空白目標目錄，並傳回相對路徑。","ko":"아카이브를 빈 대상 디렉터리에 안전하게 풀고 상대 경로를 반환합니다.","de":"Entpackt ein Archiv sicher in ein leeres Ziel und gibt relative Pfade zurück.","hi":"archive को खाली destination में सुरक्षित रूप से extract करके relative paths लौटाता है।"},
+  "fileio/archive_create": {"fp":"fc935ad17b5f","en":"Create deterministic archive `bytes` from paths or named content.","zh":"从路径或命名内容创建确定性的归档 `bytes`。","tw":"從路徑或具名內容建立決定性的封存 `bytes`。","ko":"경로 또는 이름이 지정된 내용에서 결정적 아카이브 `bytes`를 만듭니다.","de":"Erzeugt deterministische Archiv-`bytes` aus Pfaden oder benannten Inhalten.","hi":"paths या नामित content से deterministic archive `bytes` बनाता है।"},
+  "fileio/astro_fits_write": {"fp":"247ceb7dd5dd","en":"Write a 2-D/3-D astronomical image and basic WCS as primary-HDU FITS `bytes`.","zh":"将二维/三维天文图像和基本 WCS 写成主 HDU FITS `bytes`。","tw":"將二維/三維天文影像與基本 WCS 寫成主 HDU FITS `bytes`。","ko":"2-D/3-D 천문 영상과 기본 WCS를 primary-HDU FITS `bytes`로 씁니다.","de":"Schreibt ein astronomisches 2-D/3-D-Bild samt grundlegendem WCS als Primary-HDU-FITS-`bytes`.","hi":"2-D/3-D astronomical image और basic WCS को primary-HDU FITS `bytes` में लिखता है।"},
+  "fileio/astro_fits_read": {"fp":"0f0c164ce217","en":"Read a primary-HDU 2-D/3-D FITS image as `(image_or_volume, meta)`.","zh":"读取主 HDU 的二维/三维 FITS 图像，返回 `(image_or_volume, meta)`。","tw":"讀取主 HDU 的二維/三維 FITS 影像，傳回 `(image_or_volume, meta)`。","ko":"primary HDU의 2-D/3-D FITS 영상을 `(image_or_volume, meta)`로 읽습니다.","de":"Liest ein 2-D/3-D-FITS-Bild aus der Primary HDU als `(image_or_volume, meta)`.","hi":"primary HDU की 2-D/3-D FITS image को `(image_or_volume, meta)` के रूप में पढ़ता है।"},
+  "fileio/em_mrc_write": {"fp":"ae025324ce5a","en":"Write 2-D/3-D electron-microscopy data as MRC2014/CCP4 `bytes`.","zh":"将二维/三维电镜数据写成 MRC2014/CCP4 `bytes`。","tw":"將二維/三維電顯資料寫成 MRC2014/CCP4 `bytes`。","ko":"2-D/3-D 전자현미경 데이터를 MRC2014/CCP4 `bytes`로 씁니다.","de":"Schreibt 2-D/3-D-Elektronenmikroskopiedaten als MRC2014/CCP4-`bytes`.","hi":"2-D/3-D electron-microscopy data को MRC2014/CCP4 `bytes` में लिखता है।"},
+  "fileio/em_mrc_read": {"fp":"4585877f1363","en":"Read MRC2014/CCP4 mode 0/1/2/6 as `(image_or_volume, meta)`.","zh":"读取 MRC2014/CCP4 的 mode 0/1/2/6，返回 `(image_or_volume, meta)`。","tw":"讀取 MRC2014/CCP4 的 mode 0/1/2/6，傳回 `(image_or_volume, meta)`。","ko":"MRC2014/CCP4 mode 0/1/2/6을 `(image_or_volume, meta)`로 읽습니다.","de":"Liest MRC2014/CCP4-Modus 0/1/2/6 als `(image_or_volume, meta)`.","hi":"MRC2014/CCP4 mode 0/1/2/6 को `(image_or_volume, meta)` के रूप में पढ़ता है।"},
+  "fileio/nrrd_write": {"fp":"07e5cd422faa","en":"Write a multidimensional array and `space directions` as raw/gzip NRRD `bytes`.","zh":"将多维数组和 `space directions` 写成 raw/gzip NRRD `bytes`。","tw":"將多維陣列與 `space directions` 寫成 raw/gzip NRRD `bytes`。","ko":"다차원 배열과 `space directions`를 raw/gzip NRRD `bytes`로 씁니다.","de":"Schreibt ein mehrdimensionales Array samt `space directions` als Raw/Gzip-NRRD-`bytes`.","hi":"multidimensional array और `space directions` को raw/gzip NRRD `bytes` में लिखता है।"},
+  "fileio/nrrd_read": {"fp":"590f6ae52b1a","en":"Read raw/gzip NRRD as `(array, meta)` with explicit spatial units.","zh":"读取 raw/gzip NRRD，返回带明确空间单位的 `(array, meta)`。","tw":"讀取 raw/gzip NRRD，傳回帶明確空間單位的 `(array, meta)`。","ko":"raw/gzip NRRD를 읽고 공간 단위를 명시한 `(array, meta)`를 반환합니다.","de":"Liest Raw/Gzip-NRRD als `(array, meta)` mit expliziten Raumeinheiten.","hi":"raw/gzip NRRD पढ़कर स्पष्ट spatial units वाला `(array, meta)` लौटाता है।"},
+  "fileio/nifti_write": {"fp":"f923618ea207","en":"Write a 3-D/4-D array with affine/pixdim as single-file NIfTI-1 `bytes`.","zh":"将带 affine/pixdim 的三维/四维数组写成单文件 NIfTI-1 `bytes`。","tw":"將帶 affine/pixdim 的三維/四維陣列寫成單檔 NIfTI-1 `bytes`。","ko":"affine/pixdim이 있는 3-D/4-D 배열을 단일 파일 NIfTI-1 `bytes`로 씁니다.","de":"Schreibt ein 3-D/4-D-Array samt Affine/Pixdim als NIfTI-1-Einzeldatei-`bytes`.","hi":"affine/pixdim वाले 3-D/4-D array को single-file NIfTI-1 `bytes` में लिखता है।"},
+  "fileio/nifti_read": {"fp":"823d54f85e2b","en":"Read single-file NIfTI-1 (`.nii` / `.nii.gz`) as `(array, meta)`.","zh":"读取单文件 NIfTI-1（`.nii` / `.nii.gz`），返回 `(array, meta)`。","tw":"讀取單檔 NIfTI-1（`.nii` / `.nii.gz`），傳回 `(array, meta)`。","ko":"단일 파일 NIfTI-1(`.nii` / `.nii.gz`)을 `(array, meta)`로 읽습니다.","de":"Liest eine NIfTI-1-Einzeldatei (`.nii` / `.nii.gz`) als `(array, meta)`.","hi":"single-file NIfTI-1 (`.nii` / `.nii.gz`) को `(array, meta)` के रूप में पढ़ता है।"},
+  "fileio/ome_tiff_write": {"fp":"c399f4feb17a","en":"Write a TCZYX multidimensional array with physical sizes and channel names as OME-TIFF `bytes`.","zh":"将带物理尺寸和通道名的 TCZYX 多维数组写成 OME-TIFF `bytes`。","tw":"將帶物理尺寸與通道名稱的 TCZYX 多維陣列寫成 OME-TIFF `bytes`。","ko":"물리 크기와 채널 이름이 있는 TCZYX 다차원 배열을 OME-TIFF `bytes`로 씁니다.","de":"Schreibt ein mehrdimensionales TCZYX-Array mit physikalischen Größen und Kanalnamen als OME-TIFF-`bytes`.","hi":"physical sizes और channel names वाले TCZYX multidimensional array को OME-TIFF `bytes` में लिखता है।"},
+  "fileio/ome_tiff_read": {"fp":"5bcfe87e973c","en":"Read OME-TIFF as `(stack, meta)` and cross-check OME-XML against the array.","zh":"读取 OME-TIFF 为 `(stack, meta)`，并交叉核对 OME-XML 与数组。","tw":"讀取 OME-TIFF 為 `(stack, meta)`，並交叉核對 OME-XML 與陣列。","ko":"OME-TIFF를 `(stack, meta)`로 읽고 OME-XML과 배열을 교차 검증합니다.","de":"Liest OME-TIFF als `(stack, meta)` und gleicht OME-XML mit dem Array ab.","hi":"OME-TIFF को `(stack, meta)` के रूप में पढ़कर OME-XML और array का परस्पर सत्यापन करता है।"},
   "fileio/mesh_write_ply": {"fp":"2f3440e64501","en":"Write vertices, faces, colors, normals, and arbitrary scalar attributes as ASCII or little-endian PLY (`text` / `bytes`).","zh":"将顶点、面、颜色、法线和任意标量属性写成 ASCII 或小端 PLY（`text` / `bytes`）。","tw":"將頂點、面、顏色、法線和任意純量屬性寫成 ASCII 或小端 PLY（`text` / `bytes`）。","ko":"정점, 면, 색상, 법선 및 임의의 스칼라 속성을 ASCII 또는 리틀 엔디언 PLY로 씁니다(`text` / `bytes`).","de":"Schreibt Vertices, Flächen, Farben, Normalen und beliebige Skalarattribute als ASCII- oder Little-Endian-PLY (`text` / `bytes`).","hi":"vertices, faces, रंग, normals और मनमाने scalar attributes को ASCII या little-endian PLY (`text` / `bytes`) में लिखता है।"},
   "fileio/mesh_read_ply": {"fp":"5b8ae067344d","en":"Read ASCII or binary PLY and return a `table` of vertices, faces, colors, normals, and scalar attributes.","zh":"读取 ASCII 或二进制 PLY，返回包含顶点、面、颜色、法线和标量属性的 `table`。","tw":"讀取 ASCII 或二進位 PLY，傳回包含頂點、面、顏色、法線和純量屬性的 `table`。","ko":"ASCII 또는 바이너리 PLY를 읽고 정점, 면, 색상, 법선 및 스칼라 속성의 `table`을 반환합니다.","de":"Liest ASCII- oder Binär-PLY und liefert eine `table` mit Vertices, Flächen, Farben, Normalen und Skalarattributen.","hi":"ASCII या binary PLY पढ़कर vertices, faces, रंग, normals और scalar attributes की `table` लौटाता है।"},
   "fileio/mesh_write_stl": {"fp":"70cdb6192bf3","en":"Write a triangle mesh as ASCII or little-endian binary STL (`text` / `bytes`).","zh":"将三角网格写成 ASCII 或小端二进制 STL（`text` / `bytes`）。","tw":"將三角網格寫成 ASCII 或小端二進位 STL（`text` / `bytes`）。","ko":"삼각 메시를 ASCII 또는 리틀 엔디언 바이너리 STL로 씁니다(`text` / `bytes`).","de":"Schreibt ein Dreiecksnetz als ASCII- oder Little-Endian-Binär-STL (`text` / `bytes`).","hi":"triangle mesh को ASCII या little-endian binary STL (`text` / `bytes`) में लिखता है।"},
@@ -31186,6 +31200,51 @@
    "de": "Teilt ein Bild in Kacheln und macht aus einer Größe je Kachel eine kleine Karte. → dict.",
    "hi": "image को tiles में बाँटता है और हर tile की मात्रा से एक छोटा map बनाता है। → dict."
   },
+  "aoi/center_from_symmetric_edges": {
+   "fp": "883dce2423d5",
+   "en": "Robustly pools the midpoints of symmetric outer-edge pairs and returns a 2-D centre.",
+   "zh": "稳健汇总对称外缘对的中点，返回二维中心。",
+   "tw": "穩健彙整對稱外緣對的中點，回傳二維中心。",
+   "ko": "대칭인 바깥쪽 에지 쌍의 중점을 강건하게 모아 2-D 중심을 반환한다.",
+   "de": "Fasst die Mittelpunkte symmetrischer Außenkantenpaare robust zusammen und liefert ein 2-D-Zentrum.",
+   "hi": "सममित बाहरी edge-pairs के midpoints को robust ढंग से जोड़कर 2-D center लौटाता है।"
+  },
+  "aoi/reflection_axis": {
+   "fp": "f3cf56a99697",
+   "en": "Estimates the angle and offset of the reflection axis of a line-symmetric 2-D image.",
+   "zh": "估计线对称二维图像的反射轴角度与偏移。",
+   "tw": "估計線對稱二維影像的反射軸角度與偏移。",
+   "ko": "선대칭 2-D 영상의 반사축 각도와 오프셋을 추정한다.",
+   "de": "Schätzt Winkel und Versatz der Spiegelachse eines achsensymmetrischen 2-D-Bildes.",
+   "hi": "line-symmetric 2-D image के reflection axis का angle और offset अनुमानित करता है।"
+  },
+  "aoi/rotational_symmetry": {
+   "fp": "1596a155a82d",
+   "en": "Returns the 180-degree point-symmetry centre and the rotational order from polar autocorrelation.",
+   "zh": "返回180度点对称中心及由极坐标自相关得到的旋转对称阶数。",
+   "tw": "回傳180度點對稱中心及由極座標自相關得到的旋轉對稱階數。",
+   "ko": "180도 점대칭 중심과 극좌표 자기상관으로 구한 회전대칭 차수를 반환한다.",
+   "de": "Liefert das Zentrum der 180-Grad-Punktsymmetrie und die Rotationsordnung aus der polaren Autokorrelation.",
+   "hi": "180-degree point-symmetry center और polar autocorrelation से rotational order लौटाता है।"
+  },
+  "aoi/symmetry_difference_map": {
+   "fp": "ff6fd31bcd4e",
+   "en": "Returns a self-referenced difference map against an estimated reflection axis or rotation centre.",
+   "zh": "返回相对于估计反射轴或旋转中心的自参考差分图。",
+   "tw": "回傳相對於估計反射軸或旋轉中心的自參考差分圖。",
+   "ko": "추정한 반사축 또는 회전 중심에 대한 자기참조 차이 지도를 반환한다.",
+   "de": "Liefert eine selbstreferenzierte Differenzkarte zu einer geschätzten Spiegelachse oder einem Rotationszentrum.",
+   "hi": "अनुमानित reflection axis या rotation center के विरुद्ध self-referenced difference map लौटाता है।"
+  },
+  "aoi/symmetry_score": {
+   "fp": "2ef0dfde6bb7",
+   "en": "Returns distance from symmetry by normalising the self-referenced difference by image dynamic range.",
+   "zh": "以图像动态范围归一化自参考差分，返回到对称状态的距离。",
+   "tw": "以影像動態範圍正規化自參考差分，回傳到對稱狀態的距離。",
+   "ko": "자기참조 차이를 영상 동적 범위로 정규화해 대칭으로부터의 거리를 반환한다.",
+   "de": "Liefert den Abstand von der Symmetrie, indem die selbstreferenzierte Differenz mit dem Bilddynamikbereich normiert wird.",
+   "hi": "self-referenced difference को image dynamic range से normalise कर symmetry से दूरी लौटाता है।"
+  },
   "calib/project_3d_point": {
    "fp": "d3fc949c7a2d",
    "en": "Perspective-projects 3-D points into the camera and returns pixels (row, col) (project_3d_point).",
@@ -32553,6 +32612,33 @@
    "ko": ":func:`table_write_csv`가 만든 단위 포함 CSV를 읽고 열, 단위, 메타데이터가 든 ``table``을 반환한다.",
    "de": "Liest das von :func:`table_write_csv` erzeugte CSV mit Einheiten und gibt eine ``table`` mit Spalten, Einheiten und Metadaten zurück.",
    "hi": ":func:`table_write_csv` से बने इकाई-सहित CSV को पढ़कर columns, units और metadata वाली ``table`` लौटाता है।"
+  },
+  "2d/ptile_threshold": {
+   "fp": "c942008d5261",
+   "en": "Returns a P-tile threshold chosen by area fraction as a feature.",
+   "zh": "将按面积比例选择的 P-tile 阈值作为特征返回。",
+   "tw": "將按面積比例選擇的 P-tile 閾值作為特徵回傳。",
+   "ko": "면적 비율로 정한 P-tile 임계값을 특징값으로 반환한다.",
+   "de": "Liefert einen über den Flächenanteil bestimmten P-Tile-Schwellwert als Merkmal.",
+   "hi": "area fraction से चुना गया P-tile threshold feature के रूप में लौटाता है।"
+  },
+  "2d/image_standardize": {
+   "fp": "81cfb456352b",
+   "en": "Standardises an image and maps signed deviations to an intensity image in ``[0,1]``.",
+   "zh": "对图像进行标准化，并将带符号偏差映射为 ``[0,1]`` 强度图像。",
+   "tw": "對影像進行標準化，並將帶符號偏差映射為 ``[0,1]`` 強度影像。",
+   "ko": "영상을 표준화하고 부호 있는 편차를 ``[0,1]`` 강도 영상으로 매핑한다.",
+   "de": "Standardisiert ein Bild und bildet vorzeichenbehaftete Abweichungen auf ein Intensitätsbild in ``[0,1]`` ab.",
+   "hi": "image को standardize करके signed deviations को ``[0,1]`` intensity image में map करता है।"
+  },
+  "2d/sigma_threshold": {
+   "fp": "9a83e56e5284",
+   "en": "Robustly standardises an image and binarises it at ``k = 2 + 3*a`` sigma.",
+   "zh": "对图像进行稳健标准化，并以 ``k = 2 + 3*a`` 个标准差二值化。",
+   "tw": "對影像進行穩健標準化，並以 ``k = 2 + 3*a`` 個標準差二值化。",
+   "ko": "영상을 강건하게 표준화하고 ``k = 2 + 3*a`` 시그마에서 이진화한다.",
+   "de": "Standardisiert ein Bild robust und binarisiert es bei ``k = 2 + 3*a`` Sigma.",
+   "hi": "image को robust ढंग से standardize करके ``k = 2 + 3*a`` sigma पर binarize करता है।"
   }
  }
 }

@@ -8,7 +8,7 @@ gpu: なし
 examples: [poc_print_layer_inspection, poc_video_cube]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.8.1  # fullseye lib version this note was generated for
+version: 0.9.0  # fullseye lib version this note was generated for
 ---
 
 # vol_render_transfer — VIDEOCUBE `render` op

@@ -213,6 +213,12 @@ from fileio import (  # noqa: E402,F401
     mesh_write_obj, mesh_read_obj, mesh_write_off, mesh_read_off,
     points_write_xyz, points_read_xyz,
     e57_write, e57_read,
+    archive_probe, archive_list, archive_extract, archive_create,
+    astro_fits_write, astro_fits_read,
+    em_mrc_write, em_mrc_read,
+    nrrd_write, nrrd_read,
+    nifti_write, nifti_read,
+    ome_tiff_write, ome_tiff_read,
 )
 from meshio_opt import (  # noqa: E402,F401
     read_gltf, read_gltf_merged, read_las, read_pcd, formats_available,
@@ -303,6 +309,8 @@ from specops import (  # noqa: E402,F401
 from realdata import (  # noqa: E402,F401
     SAMPLE_PHOTOS, sample_photo, sample_photo_rgb, sample_photo_raw,
     sample_stereo_pair, sample_photo_credit,
+    sem_metal_layer_cache, sem_metal_layer_root, sem_metal_layer_pairs,
+    sem_metal_layer_credit,
 )
 from deformreg import (  # noqa: E402,F401
     warp_by_field, demons_register, field_magnitude, residual_ssd,
@@ -1127,6 +1135,10 @@ from photometric import normals_to_gradients, integrate_gradients  # noqa: E402,
 from reconstruction import triangulate_points, rel_pose_to_essential_matrix  # noqa: E402,F401
 from shapematch import pyr_down, image_pyramid  # noqa: E402,F401
 from symmetry3d import rotational_symmetry_score  # noqa: E402,F401
+from symmetry2d import (  # noqa: E402,F401
+    center_from_symmetric_edges, reflection_axis, rotational_symmetry,
+    symmetry_difference_map, symmetry_score,
+)
 
 __all__ = [
     "orient2d", "orient3d", "incircle", "insphere",
@@ -1173,6 +1185,12 @@ __all__ = [
     "mesh_write_obj", "mesh_read_obj", "mesh_write_off", "mesh_read_off",
     "points_write_xyz", "points_read_xyz",
     "e57_write", "e57_read",
+    "archive_probe", "archive_list", "archive_extract", "archive_create",
+    "astro_fits_write", "astro_fits_read",
+    "em_mrc_write", "em_mrc_read",
+    "nrrd_write", "nrrd_read",
+    "nifti_write", "nifti_read",
+    "ome_tiff_write", "ome_tiff_read",
     "mesh_to_points", "voxelize", "bounds", "recenter", "normalize_scale",
     "meshio_opt", "read_gltf", "read_gltf_merged", "read_las", "read_pcd", "formats_available",
     "volio", "read_volume", "write_volume", "list_dicom_series", "VolumeMeta",
@@ -1214,6 +1232,8 @@ __all__ = [
     "specops", "stain_unmix", "stain_recompose", "stain_vectors_from_patches",
     "SAMPLE_PHOTOS", "sample_photo", "sample_photo_rgb", "sample_photo_raw",
     "sample_stereo_pair", "sample_photo_credit",
+    "sem_metal_layer_cache", "sem_metal_layer_root", "sem_metal_layer_pairs",
+    "sem_metal_layer_credit",
     "STAIN_VECTORS",
     "BandMeta", "read_envi", "write_envi", "spec_band", "spec_rgb_composite",
     "spec_nearest_band", "spec_band_ratio", "spec_index", "spec_angle_mapper", "spec_pca",
@@ -1564,6 +1584,8 @@ __all__ = [
     "dilation2", "get_bounding_box_object_model_3d", "normals_to_gradients", "integrate_gradients",
     "triangulate_points", "rel_pose_to_essential_matrix", "pyr_down", "image_pyramid",
     "rotational_symmetry_score",
+    "center_from_symmetric_edges", "reflection_axis", "rotational_symmetry",
+    "symmetry_difference_map", "symmetry_score",
     "register_pointclouds", "align_cad_to_scan", "measure_plane", "inspect_roundness", "match_sdf",
     "register_auto",
 ]
@@ -2022,10 +2044,11 @@ _GPU_OPEN: set = set()
 _TORCH_IMPORT_FAILURE: str | None = None     # torch が import できない理由(一度だけ試す)
 
 
-def resolve_device(device: str = "auto") -> str:
+def resolve_device(device: str = "cpu") -> str:
     """実行 device を解決する / Resolve ``auto`` and ``FULLSEYE_DEVICE``.
 
-    明示した引数より ``FULLSEYE_DEVICE`` を優先する。``auto`` は CUDA が使えれば ``cuda``、無ければ
+    明示した引数より ``FULLSEYE_DEVICE`` を優先する。既定は ``cpu``(0.9.0、計測の再現性のため GPU は
+    明示したときだけ)。``auto`` は CUDA が使えれば ``cuda``、無ければ
     ``cpu``。``cuda`` の明示はそのまま返す: CUDA の無い機械では op ごとに N117 の説明つきで
     台帳に記録して CPU で続き(既定)、``on_error="raise"`` ではその説明つき ``RuntimeError`` になる
     (入口で拒まない = 2026-09-20 の契約 ``tests/test_release_0_2_1_gates_2026_09_20.py``)。
@@ -2619,7 +2642,7 @@ def _explain_gpu_failure(device, e):
 
 
 def apply(image, name: str, a: float = 0.5, b: float = 0.5, coerce: bool = True,
-          device: str = "auto", on_error: str | None = None, template=None,
+          device: str = "cpu", on_error: str | None = None, template=None,
           fast: bool | None = None, allow_nonfinite: bool = False):
     """Apply one operator to *image* and return its raw output.
 
@@ -2641,8 +2664,8 @@ def apply(image, name: str, a: float = 0.5, b: float = 0.5, coerce: bool = True,
     ``on_error="raise"``. It used to be handed to the op unchanged, which produced a
     uint8/float16/all-ones result with no exception — see :func:`_contract_dtype`.
 
-    ``device`` (default ``"auto"`` = CUDA when available, else CPU; ``FULLSEYE_DEVICE``
-    overrides): ``"cuda"`` runs accel-enabled ops on the GPU; on a host without CUDA the op
+    ``device`` (default ``"cpu"``; ``"auto"`` = CUDA when available, else CPU —
+    GPU only when asked for; ``FULLSEYE_DEVICE`` overrides): ``"cuda"`` runs accel-enabled ops on the GPU; on a host without CUDA the op
     runs on the CPU and the reason is recorded in the fallback ledger (``on_error="raise"`` raises it).
     torch/accel *absent* falls back to CPU silently (documented); a kernel that
     FAILS is recorded in the fallback ledger and raises under ``on_error="raise"``.
@@ -3077,7 +3100,7 @@ def _pipeline_steps(image, norm, ops_, coerce, policy, use_fast, entry=True):
 
 
 def run_pipeline(image, stages: Iterable, a: float = 0.5, b: float = 0.5,
-                 coerce: bool = True, device: str = "auto", on_error: str | None = None,
+                 coerce: bool = True, device: str = "cpu", on_error: str | None = None,
                  fast: bool | None = None):
     """Apply a sequence of operators, threading the array through each.
 
@@ -3091,8 +3114,8 @@ def run_pipeline(image, stages: Iterable, a: float = 0.5, b: float = 0.5,
     themselves, so re-coercing mid-chain would only strip gray levels a stage may
     still want (see :func:`_coerce_input`).
 
-    ``device`` (default ``"auto"`` = CUDA when available, else CPU; ``FULLSEYE_DEVICE``
-    overrides): ``"cuda"`` (or any non-cpu) runs the chain on the
+    ``device`` (default ``"cpu"``; ``"auto"`` = CUDA when available, else CPU —
+    GPU only when asked for; ``FULLSEYE_DEVICE`` overrides): ``"cuda"`` (or any non-cpu) runs the chain on the
     ``accel_bridge`` resident pipeline (unsupported ops fall back to CPU inside the
     bridge; consecutive accel ops share one transfer). torch/GPU *absent* silently
     uses the CPU path; a bridge that FAILS is recorded (source ``"gpu"``) and raises

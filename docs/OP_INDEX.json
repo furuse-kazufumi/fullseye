@@ -1,10 +1,10 @@
 {
- "n_ops": 3623,
+ "n_ops": 3645,
  "tiers": {
   "color": 12,
-  "ledger": 2664,
+  "ledger": 2683,
   "nary": 17,
-  "registry": 930
+  "registry": 933
  },
  "sorts": [
   "angle",
@@ -1685,6 +1685,60 @@
    ]
   },
   {
+   "name": "archive_create",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "any",
+   "category": "archive",
+   "tier": "ledger",
+   "ledger": "opsfileio",
+   "dim": "fileio",
+   "in_sorts": [
+    "any",
+    "text"
+   ]
+  },
+  {
+   "name": "archive_extract",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "any",
+   "category": "archive",
+   "tier": "ledger",
+   "ledger": "opsfileio",
+   "dim": "fileio",
+   "in_sorts": [
+    "any",
+    "text"
+   ]
+  },
+  {
+   "name": "archive_list",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "table",
+   "category": "archive",
+   "tier": "ledger",
+   "ledger": "opsfileio",
+   "dim": "fileio",
+   "in_sorts": [
+    "any"
+   ]
+  },
+  {
+   "name": "archive_probe",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "text",
+   "category": "archive",
+   "tier": "ledger",
+   "ledger": "opsfileio",
+   "dim": "fileio",
+   "in_sorts": [
+    "any"
+   ]
+  },
+  {
    "name": "area_opening_attr",
    "halcon": "",
    "in_sort": "image2d",
@@ -1721,6 +1775,32 @@
    "dim": "math",
    "in_sorts": [
     "matrix"
+   ]
+  },
+  {
+   "name": "astro_fits_read",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "any",
+   "category": "fits",
+   "tier": "ledger",
+   "ledger": "opsfileio",
+   "dim": "fileio",
+   "in_sorts": [
+    "any"
+   ]
+  },
+  {
+   "name": "astro_fits_write",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "any",
+   "category": "fits",
+   "tier": "ledger",
+   "ledger": "opsfileio",
+   "dim": "fileio",
+   "in_sorts": [
+    "any"
    ]
   },
   {
@@ -3519,6 +3599,19 @@
    "ledger": "opsoptics",
    "dim": "optics",
    "in_sorts": []
+  },
+  {
+   "name": "center_from_symmetric_edges",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "symmetry",
+   "tier": "ledger",
+   "ledger": "opsaoi",
+   "dim": "aoi",
+   "in_sorts": [
+    "image2d"
+   ]
   },
   {
    "name": "central_moments",
@@ -8082,6 +8175,32 @@
    "ledger": "opsdrive",
    "dim": "drive",
    "in_sorts": []
+  },
+  {
+   "name": "em_mrc_read",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "any",
+   "category": "mrc",
+   "tier": "ledger",
+   "ledger": "opsfileio",
+   "dim": "fileio",
+   "in_sorts": [
+    "any"
+   ]
+  },
+  {
+   "name": "em_mrc_write",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "any",
+   "category": "mrc",
+   "tier": "ledger",
+   "ledger": "opsfileio",
+   "dim": "fileio",
+   "in_sorts": [
+    "any"
+   ]
   },
   {
    "name": "emva_bspline_regression",
@@ -18933,6 +19052,32 @@
    "in_sorts": []
   },
   {
+   "name": "nifti_read",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "any",
+   "category": "nifti",
+   "tier": "ledger",
+   "ledger": "opsfileio",
+   "dim": "fileio",
+   "in_sorts": [
+    "any"
+   ]
+  },
+  {
+   "name": "nifti_write",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "any",
+   "category": "nifti",
+   "tier": "ledger",
+   "ledger": "opsfileio",
+   "dim": "fileio",
+   "in_sorts": [
+    "any"
+   ]
+  },
+  {
    "name": "nine_slice",
    "halcon": "",
    "in_sort": "rgba",
@@ -19225,6 +19370,32 @@
    "dim": "reprconv",
    "in_sorts": [
     "normals"
+   ]
+  },
+  {
+   "name": "nrrd_read",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "any",
+   "category": "nrrd",
+   "tier": "ledger",
+   "ledger": "opsfileio",
+   "dim": "fileio",
+   "in_sorts": [
+    "any"
+   ]
+  },
+  {
+   "name": "nrrd_write",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "any",
+   "category": "nrrd",
+   "tier": "ledger",
+   "ledger": "opsfileio",
+   "dim": "fileio",
+   "in_sorts": [
+    "any"
    ]
   },
   {
@@ -19723,6 +19894,32 @@
    "ledger": "opsdrive",
    "dim": "drive",
    "in_sorts": []
+  },
+  {
+   "name": "ome_tiff_read",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "any",
+   "category": "ome_tiff",
+   "tier": "ledger",
+   "ledger": "opsfileio",
+   "dim": "fileio",
+   "in_sorts": [
+    "any"
+   ]
+  },
+  {
+   "name": "ome_tiff_write",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "any",
+   "category": "ome_tiff",
+   "tier": "ledger",
+   "ledger": "opsfileio",
+   "dim": "fileio",
+   "in_sorts": [
+    "any"
+   ]
   },
   {
    "name": "omni_anaglyph_compose",
@@ -24696,6 +24893,19 @@
    ]
   },
   {
+   "name": "reflection_axis",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "symmetry",
+   "tier": "ledger",
+   "ledger": "opsaoi",
+   "dim": "aoi",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
    "name": "reflection_symmetry_score",
    "halcon": "",
    "in_sort": "points",
@@ -25892,6 +26102,19 @@
     "scalar",
     "scalar",
     "scalar"
+   ]
+  },
+  {
+   "name": "rotational_symmetry",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "symmetry",
+   "tier": "ledger",
+   "ledger": "opsaoi",
+   "dim": "aoi",
+   "in_sorts": [
+    "image2d"
    ]
   },
   {
@@ -30371,6 +30594,20 @@
    ]
   },
   {
+   "name": "symmetry_difference_map",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "image2d",
+   "category": "symmetry",
+   "tier": "ledger",
+   "ledger": "opsaoi",
+   "dim": "aoi",
+   "in_sorts": [
+    "image2d",
+    "table"
+   ]
+  },
+  {
    "name": "symmetry_fold",
    "halcon": "",
    "in_sort": "scalar",
@@ -30395,6 +30632,20 @@
    "dim": "drive",
    "in_sorts": [
     "matrix"
+   ]
+  },
+  {
+   "name": "symmetry_score",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "measurement",
+   "category": "symmetry",
+   "tier": "ledger",
+   "ledger": "opsaoi",
+   "dim": "aoi",
+   "in_sorts": [
+    "image2d",
+    "table"
    ]
   },
   {
@@ -38972,6 +39223,16 @@
    ]
   },
   {
+   "name": "image_standardize",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "gray",
+   "tier": "registry",
+   "module": "ops",
+   "requires": []
+  },
+  {
    "name": "img_to_beatcube",
    "halcon": "",
    "in_sort": "image",
@@ -40428,6 +40689,16 @@
    ]
   },
   {
+   "name": "ptile_threshold",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "feature",
+   "category": "segmentation",
+   "tier": "registry",
+   "module": "ops",
+   "requires": []
+  },
+  {
    "name": "quantization_error",
    "halcon": null,
    "in_sort": "image",
@@ -41221,6 +41492,16 @@
     "cv2",
     "skimage"
    ]
+  },
+  {
+   "name": "sigma_threshold",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "region",
+   "category": "segmentation",
+   "tier": "registry",
+   "module": "ops",
+   "requires": []
   },
   {
    "name": "sigmoid",

@@ -29,9 +29,117 @@ EXTEND: 自前の撮影に差し替えるなら :func:`sample_photo` の戻り�
 """
 from __future__ import annotations
 
+import os
 import sys
+from pathlib import Path
 
 import numpy as np
+
+
+#: Rothaug et al. の metal-layer SEM 実データ。原本は repo に入れず、
+#: ``tools/fetch_sem_metal_layer.py`` がこの固定 URL から取得して provenance を残す。
+SEM_METAL_URL = "https://edmond.mpg.de/api/access/datafile/223856"
+SEM_METAL_BYTES = 6_396_523_974
+# 2026-11-01 に上の固定 URL から取得した dataset.zip の SHA-256。
+# サイズ・ZIP CRC と併せて検証済み。取得スクリプトは不一致なら展開しない。
+SEM_METAL_SHA256 = "14e0aef2ceeee0aa46b324521535133eba2e33bea222c9b360a0e7b505024753"
+SEM_METAL_DATASET_DOI = "10.17617/3.HY5SYN"
+SEM_METAL_PAPER_DOI = "10.1145/3605769.3624000"
+SEM_METAL_LICENSE = "CC BY 4.0"
+
+
+def sem_metal_layer_cache() -> Path:
+    """Metal-layer SEM データの repo 外キャッシュ先を返す。
+
+    ``FULLSEYE_SEM_METAL_DATA`` があればその場所を使う。開発 worktree が
+    ``<root>/projects/<checkout>`` にある場合は ``<root>/data/realdata``、それ以外の
+    インストールではユーザーキャッシュを既定にする。ローカル絶対パスをソースへ
+    焼き込まないための分岐である。
+    """
+    configured = os.environ.get("FULLSEYE_SEM_METAL_DATA", "").strip()
+    if configured:
+        return Path(configured).expanduser()
+    here = Path(__file__).resolve().parent
+    if here.parent.name.lower() == "projects":
+        return here.parent.parent / "data" / "realdata" / "metal_layer_sem"
+    return Path.home() / ".cache" / "fullseye" / "metal_layer_sem"
+
+
+def sem_metal_layer_root(*, required: bool = True) -> Path | None:
+    """展開済み metal-layer SEM データの root を探す。
+
+    認める配置は ``sems`` と ``labels`` を直下に持つ dir、またはキャッシュ内の
+    1〜3 段下に同じ組を持つ dir。曖昧な候補が複数あれば選ばずに例外にする。
+    PoC はこの関数から読むだけで、データが無い CI からネットへは出ない。
+    """
+    cache = sem_metal_layer_cache()
+    candidates = []
+    if (cache / "sems").is_dir() and (cache / "labels").is_dir():
+        candidates.append(cache)
+    if cache.is_dir():
+        for sems in cache.glob("**/sems"):
+            try:
+                rel_parts = sems.relative_to(cache).parts
+            except ValueError:  # pragma: no cover - Path contract
+                continue
+            if len(rel_parts) <= 4 and (sems.parent / "labels").is_dir():
+                candidates.append(sems.parent)
+    unique = sorted(set(p.resolve() for p in candidates))
+    if len(unique) == 1:
+        return unique[0]
+    if len(unique) > 1:
+        raise RealDataError(
+            "metal-layer SEM の展開先が複数ある: %s — FULLSEYE_SEM_METAL_DATA で 1 つを指定する"
+            % ", ".join(str(p) for p in unique))
+    if required:
+        raise RealDataError(
+            "metal-layer SEM データが無い: %s。tools/fetch_sem_metal_layer.py で取得するか、"
+            "FULLSEYE_SEM_METAL_DATA を展開先へ向ける" % cache)
+    return None
+
+
+def sem_metal_layer_pairs(limit: int | None = None) -> list[tuple[Path, Path]]:
+    """ラベルのある SEM / SVG の組を番号順に返す。
+
+    名前は配布物の ``semNNNN.*`` / ``labelNNNN.svg`` に限る。片方だけの番号を
+    黙って落とさず、対応が無ければ :class:`RealDataError` にする。
+    """
+    root = sem_metal_layer_root(required=True)
+    assert root is not None
+    sem_dir = root / "sems"
+    label_dir = root / "labels"
+    nested_sem = sem_dir / "m2"
+    nested_label = label_dir / "m2"
+    if nested_sem.is_dir() or nested_label.is_dir():
+        if not nested_sem.is_dir() or not nested_label.is_dir():
+            raise RealDataError("metal-2 の sems / labels 配置が片側だけにある: %s" % root)
+        sem_dir, label_dir = nested_sem, nested_label
+    sems = {}
+    for p in sem_dir.iterdir():
+        if p.is_file() and p.stem.startswith("sem") and p.stem[3:].isdigit():
+            sems[int(p.stem[3:])] = p
+    labels = {}
+    for p in label_dir.glob("label*.svg"):
+        if p.stem[5:].isdigit():
+            labels[int(p.stem[5:])] = p
+    missing_image = sorted(set(labels) - set(sems))
+    if missing_image:
+        raise RealDataError("SVG に対応する SEM が無い番号: %s" % missing_image[:10])
+    numbers = sorted(set(sems) & set(labels))
+    if not numbers:
+        raise RealDataError("ラベルつき SEM が 1 組も無い: %s" % root)
+    if limit is not None:
+        if not isinstance(limit, int) or limit <= 0:
+            raise ValueError("limit must be a positive integer or None")
+        numbers = numbers[:limit]
+    return [(sems[n], labels[n]) for n in numbers]
+
+
+def sem_metal_layer_credit() -> str:
+    """図と実行ログへ載せるデータセットの帰属表記を返す。"""
+    return ("Rothaug et al., A Real-World Metal-Layer SEM Image Dataset with Partial Labels, "
+            "Edmond/MPG, DOI %s, %s; paper DOI %s"
+            % (SEM_METAL_DATASET_DOI, SEM_METAL_LICENSE, SEM_METAL_PAPER_DOI))
 
 #: 名前 -> (skimage.data の関数名, 種類, ライセンス, 出どころ)
 #:

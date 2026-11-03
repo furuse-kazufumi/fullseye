@@ -9,7 +9,7 @@ gpu: あり(sobel_dir)
 examples: [gallery2d_edges, poc_document_scan, poc_fiber_orientation]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.8.1  # fullseye lib version this note was generated for
+version: 0.9.0  # fullseye lib version this note was generated for
 ---
 
 # sobel_dir — 2D `edges` op

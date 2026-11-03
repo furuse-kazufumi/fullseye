@@ -8,7 +8,7 @@ gpu: なし
 examples: [aoi_frontend_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.8.1  # fullseye lib version this note was generated for
+version: 0.9.0  # fullseye lib version this note was generated for
 ---
 
 # tiled_map — AOI `aggregate` op
@@ -76,7 +76,7 @@ Raises:
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 
-—
+[symmetry_difference_map](../symmetry/symmetry_difference_map.md) · [symmetry_score](../symmetry/symmetry_score.md)
 
 ## 同カテゴリ(`aggregate`)
 

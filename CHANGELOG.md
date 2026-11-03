@@ -5,7 +5,64 @@ Versions follow the git tags; a tag push publishes to PyPI (`.github/workflows/r
 What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 ("Versioning") — the minor slot is our breaking signal.
 
-## Unreleased
+## 0.9.0 — 2026-11-03
+
+minor を上げる理由(CONTRIBUTING.md「Versioning」): Python 3.10 の終了(下限の引き上げ)、`raytrace3d` の傾けた像面で
+値が変わる修正、21 op(`opscalib`)の入口を ValueError にした契約変更。
+
+### 追加 — 2-D 対称性の検査 5 op(#234)
+
+- `symmetry2d`(台帳 `opsaoi`): `center_from_symmetric_edges` / `reflection_axis` / `rotational_symmetry`(image2d → table)、
+  `symmetry_difference_map`(image2d + table → image2d)、`symmetry_score`(image2d + table → measurement)。正解画像なしの自己参照検査。
+- PoC `examples/poc_symmetry_self_reference_inspection.py`(収蔵 2026.286)。
+
+### 追加 — 正規化してから閾値を決める 3 op + 調整カード + 計画の代替案(#229)
+
+- `ptile_threshold` / `image_standardize` / `sigma_threshold`(σ 単位の閾値)。`opsearch.plan` は生の大域閾値の経路に
+  「頑健標準化 → kσ 閾値」の代替案と調整カード(`tuning_cards`)を添える。
+- PoC `examples/poc_threshold_transfer_after_normalization.py`(収蔵 2026.288): 照明が変わると生の輝度閾値は合わせ直しが要り、
+  kσ と P-tile はそのまま移ることを測る。
+
+### 追加 — ファイル形式 op B 便: 科学画像・体積の読み書き 10 op(#228)
+
+- `astro_fits_write` / `astro_fits_read`、`em_mrc_write` / `em_mrc_read`、`nrrd_write` / `nrrd_read`、`nifti_write` / `nifti_read`、
+  `ome_tiff_write` / `ome_tiff_read`(`fileio`、台帳 `opsfileio`)。bytes 入出力、独立の読み手で照合、壊れた入力は fail-closed。
+
+### 追加 — 書庫の安全な読み書き 4 op(#238)
+
+- `archive_probe` / `archive_list` / `archive_extract` / `archive_create`(`fileio`、台帳 `opsfileio` の `archive`)。展開は空の行き先だけ、
+  メンバー数・展開後の総量・圧縮率に上限(fail-closed)。
+
+### 変更 — `device` の既定は `"cpu"`(0.8.0 と同じ)。GPU は `device="auto"` / `"cuda"` か `FULLSEYE_DEVICE` で明示(GPU 第 1 便 #239 + 2026-11-03 の決定)
+
+- #239 は `apply()` / `run_pipeline()` と MCP の `device` の既定を `"auto"` にしていたが、0.9.0 では `"cpu"` に戻した。理由 = 計測の
+  再現性: CUDA のある機械では同じ呼び出しが GPU で走り値が変わりうる(近似一致)うえ、GPU 経路は CI で検査されない。
+  既定を auto のまま出すと、後で戻すときに破壊的変更がもう 1 つ重なる。
+- `device="auto"`(CUDA があれば GPU、無ければ CPU)と `FULLSEYE_DEVICE=auto` を明示したときだけ GPU を選ぶ。`resolve_device("auto")`
+  の振る舞いは #239 のまま。明示した `"cuda"` を CPU だけの環境で入口で拒まない挙動(N117)も従来どおり。MCP の結果の
+  `acceleration` と `parity_check=true`(CPU 参照との差)は #239 のまま。
+- 全台帳に GPU 欄(`gpu_accel` / `gpu_status`、手書きの旗なし)、op ごとの時間の測定器 `tools/profile_ops.py`。
+
+### 変更 — 評価の枠組みの共通層 P0-A(#236)
+
+- `fullseye/evaluation/`(result / truth / metrics / artifacts / video / manifest)を既存の基底の上のアダプターとして追加し、
+  第一波の PoC 15 本を移行(移行前後で figures.json・PNG 配列・`[PASS]` 行が一致)。
+
+### 性能 — PPF 投票のベクトル化(#237)
+
+- T-LESS 1000 点で 1 対象 10.1 → 0.98 秒、AR は同一。
+
+### 追加 — 実データ PoC 2 本(#235、#222)
+
+- T-LESS の 6 自由度姿勢を PPF で測る(密度掃引つき。AR_MSSD 0.197 で公式ベースライン Drost 0.478 に届かないことをそのまま書く。収蔵 2026.287)。
+- 実物の IC 配線層 SEM で線幅・ビアを測り、縁の補正が実機で効くかを確かめる(収蔵 2026.285)。
+
+### ドキュメント・測定器(#232、#227、#224)
+
+- 入口メディアの作り直し A(薄い傷の検出限界・熱画像の時間窓、1280×720)。
+- ViEW2026: 2-D 展示 175 本に story GIF(ja/en)。
+- MCP 経由で LLM が課題を解く e2e 測定器(20 課題 × 3 回、判定は LLM を使わない。`tools/mcp_agent_eval.py`)。
+
 
 ### 追加 — 光弾性の族(応力場 → 縞 → 偏光像 → 位相差と主軸)
 

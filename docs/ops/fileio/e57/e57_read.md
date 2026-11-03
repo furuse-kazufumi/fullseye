@@ -8,7 +8,7 @@ gpu: なし
 examples: [fileio_roundtrip]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.8.1  # fullseye lib version this note was generated for
+version: 0.9.0  # fullseye lib version this note was generated for
 ---
 
 # e57_read — FILEIO `e57` op
@@ -36,7 +36,7 @@ ASTM E57 の ``bytes`` を読み、座標・強度・色・pose の点群 ``tabl
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 
-[table_write_csv](../table/table_write_csv.md) · [mesh_write_ply](../mesh/mesh_write_ply.md) · [mesh_read_ply](../mesh/mesh_read_ply.md) · [mesh_read_stl](../mesh/mesh_read_stl.md) · [e57_write](e57_write.md)
+[table_write_csv](../table/table_write_csv.md) · [mesh_write_ply](../mesh/mesh_write_ply.md) · [mesh_read_ply](../mesh/mesh_read_ply.md) · [mesh_read_stl](../mesh/mesh_read_stl.md) · [e57_write](e57_write.md) · [archive_probe](../archive/archive_probe.md) · [archive_list](../archive/archive_list.md) · [astro_fits_write](../fits/astro_fits_write.md)
 
 ## 同カテゴリ(`e57`)
 

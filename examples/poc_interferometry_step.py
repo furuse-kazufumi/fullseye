@@ -53,6 +53,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import examplefig as figs                                        # noqa: E402
 import fringe                                                    # noqa: E402
 import interferometry as I                                       # noqa: E402
+from fullseye.evaluation import save_video as save_evaluation_video  # noqa: E402
 
 LAM = 0.60          # µm  光源中心波長
 DLAM = 0.10         # µm  スペクトル幅
@@ -174,8 +175,11 @@ def fig_surface_csi():
     for k in range(48):
         q = np.clip(r["stack"][k], 0.0, 1.0)
         frames.append((np.repeat(q[..., None], 3, axis=2) * 255).astype(np.uint8))
-    figs.save_video("surface_z_scan", frames, fps=12.0, gif_every=2, gif_width=512,
-                    caption="48 raw uint8 coherence-scan frames; the localized envelope sweeps over the tilted step.")
+    save_evaluation_video(
+        "surface_z_scan", frames,
+        caption="48 raw uint8 coherence-scan frames; the localized envelope sweeps over the tilted step.",
+        capture_fps=12.0, playback_fps=12.0, hold_frames=0, gif_stride=2,
+        display_scale=512 / frames[0].shape[1], interpolation="linear")
     return r
 
 
@@ -516,8 +520,10 @@ def fig_step_sweep_video(n_steps=136, s_max=0.90, n_hold=12, fps=12.0):
                       "" if n_ord == 0 else "(λ/2 × %+d 飛んだ)" % n_ord), (8, 6), fs_=12)
         f[TB:, xs[1]:xs[1] + S_W] = b
         frames.append(np.clip(f, 0.0, 1.0))
-    figs.save_video("step_sweep", frames, fps=fps, gif_every=2, gif_width=640,
-                    caption="動画(%d コマ): 仕込む段差を 0 → %.2f µm へ連続に増やし、同じ表面を 2 つの方法で測る(雑音なし)。"
+    save_evaluation_video(
+        "step_sweep", frames, capture_fps=fps, playback_fps=fps, hold_frames=0, gif_stride=2,
+        display_scale=640 / frames[0].shape[1], interpolation="linear",
+        caption="動画(%d コマ): 仕込む段差を 0 → %.2f µm へ連続に増やし、同じ表面を 2 つの方法で測る(雑音なし)。"
                             "左は低い側・高い側 1 画素ずつのコヒーレンス走査の信号で、縦線は csi_height_map(gaussian)が"
                             "包絡線から読んだ高さ。右は測った段差 vs 仕込んだ段差。包絡線(だいだい)は全域で対角線に乗り、"
                             "誤差は最大 %.1e nm —— 包絡線には周期が無いので巻き戻らない。位相シフト法(水色、4 段)は"

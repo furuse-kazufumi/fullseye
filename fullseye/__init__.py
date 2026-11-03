@@ -67,6 +67,12 @@ with warnings.catch_warnings():
         mesh_write_obj, mesh_read_obj, mesh_write_off, mesh_read_off,
         points_write_xyz, points_read_xyz,
         e57_write, e57_read,
+        archive_probe, archive_list, archive_extract, archive_create,
+        astro_fits_write, astro_fits_read,
+        em_mrc_write, em_mrc_read,
+        nrrd_write, nrrd_read,
+        nifti_write, nifti_read,
+        ome_tiff_write, ome_tiff_read,
         mesh_to_points, voxelize, bounds, recenter, normalize_scale,
         meshio_opt, read_gltf, read_gltf_merged, read_las, read_pcd, formats_available,
         volio, read_volume, write_volume, list_dicom_series, VolumeMeta,
@@ -114,6 +120,8 @@ with warnings.catch_warnings():
         stain_unmix, stain_recompose, stain_vectors_from_patches, STAIN_VECTORS,
         SAMPLE_PHOTOS, sample_photo, sample_photo_rgb, sample_photo_raw,
         sample_stereo_pair, sample_photo_credit,
+        sem_metal_layer_cache, sem_metal_layer_root, sem_metal_layer_pairs,
+        sem_metal_layer_credit,
         deformreg, warp_by_field, demons_register, field_magnitude, residual_ssd,
         videops, temporal_mean, temporal_median, temporal_std, temporal_max,
         temporal_min, frame_difference, background_subtraction, temporal_gradient,
@@ -474,12 +482,17 @@ with warnings.catch_warnings():
     from filters_flow import gen_gauss_bandpass, apply_bandpass  # noqa: E402,F401
     from gsplat_sugar import gaussians_to_mesh  # noqa: E402,F401  (open3d は呼んだときだけ要る)
     from imgio import ensure_gray, ensure_color  # noqa: E402,F401
+    from normalized_threshold import image_standardize_raw  # noqa: E402,F401
     from morph_minkowski import dilation2  # noqa: E402,F401
     from objmodel3d import get_bounding_box_object_model_3d  # noqa: E402,F401
     from photometric import normals_to_gradients, integrate_gradients  # noqa: E402,F401
     from reconstruction import triangulate_points, rel_pose_to_essential_matrix  # noqa: E402,F401
     from shapematch import pyr_down, image_pyramid  # noqa: E402,F401
     from symmetry3d import rotational_symmetry_score  # noqa: E402,F401
+    from symmetry2d import (  # noqa: E402,F401
+        center_from_symmetric_edges, reflection_axis, rotational_symmetry,
+        symmetry_difference_map, symmetry_score,
+    )
     # 3-D 合成パイプライン(pipeline3d が import できない環境では api 側の代役 = 呼ぶと ImportError)
     from api import (  # noqa: E402,F401
         register_pointclouds, align_cad_to_scan, measure_plane, inspect_roundness, match_sdf, register_auto)
@@ -866,7 +879,7 @@ __all__ = [
     "fallbacks", "fallback_counts", "fallback_overflow", "clear_fallbacks", "FullseyeFallbackWarning",
     "strict_mode", "set_match_template", "FAILED_BACKENDS", "ambiguous_aliases", "reset_gpu", "gpu_open_ops",
     "reset_fast", "fast_open_ops", "MissingBackendError", "MissingDependencyError",
-    "read_image", "write_image", "RT", "REGISTRY", "__version__", "version",
+    "read_image", "write_image", "image_standardize_raw", "RT", "REGISTRY", "__version__", "version",
     "stereo", "disparity_map", "disparity_subpixel", "lr_consistency",
     "depth_from_disparity", "reproject_to_points",
     "census_transform", "disparity_census", "disparity_sgm",
@@ -903,6 +916,12 @@ __all__ = [
     "mesh_write_obj", "mesh_read_obj", "mesh_write_off", "mesh_read_off",
     "points_write_xyz", "points_read_xyz",
     "e57_write", "e57_read",
+    "archive_probe", "archive_list", "archive_extract", "archive_create",
+    "astro_fits_write", "astro_fits_read",
+    "em_mrc_write", "em_mrc_read",
+    "nrrd_write", "nrrd_read",
+    "nifti_write", "nifti_read",
+    "ome_tiff_write", "ome_tiff_read",
     "mesh_to_points", "voxelize", "bounds", "recenter", "normalize_scale",
     "meshio_opt", "read_gltf", "read_gltf_merged", "read_las", "read_pcd", "formats_available",
     "volio", "read_volume", "write_volume", "list_dicom_series", "VolumeMeta",
@@ -944,6 +963,8 @@ __all__ = [
     "specops", "stain_unmix", "stain_recompose", "stain_vectors_from_patches",
     "SAMPLE_PHOTOS", "sample_photo", "sample_photo_rgb", "sample_photo_raw",
     "sample_stereo_pair", "sample_photo_credit",
+    "sem_metal_layer_cache", "sem_metal_layer_root", "sem_metal_layer_pairs",
+    "sem_metal_layer_credit",
     "STAIN_VECTORS",
     "BandMeta", "read_envi", "write_envi", "spec_band", "spec_rgb_composite",
     "spec_nearest_band", "spec_band_ratio", "spec_index", "spec_angle_mapper", "spec_pca",
@@ -1254,6 +1275,8 @@ __all__ = [
     "dilation2", "get_bounding_box_object_model_3d", "normals_to_gradients", "integrate_gradients",
     "triangulate_points", "rel_pose_to_essential_matrix", "pyr_down", "image_pyramid",
     "rotational_symmetry_score",
+    "center_from_symmetric_edges", "reflection_axis", "rotational_symmetry",
+    "symmetry_difference_map", "symmetry_score",
     "register_pointclouds", "align_cad_to_scan", "measure_plane", "inspect_roundness", "match_sdf",
     "register_auto",
 ]

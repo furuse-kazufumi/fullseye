@@ -8,7 +8,7 @@ gpu: なし
 examples: [poc_em_second_opinion]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.8.1  # fullseye lib version this note was generated for
+version: 0.9.0  # fullseye lib version this note was generated for
 ---
 
 # seg_membrane_chord_score — EMPROOF `suspect` op

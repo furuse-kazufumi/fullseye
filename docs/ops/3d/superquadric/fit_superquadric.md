@@ -8,7 +8,7 @@ gpu: なし
 examples: [superquadric_fit]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.8.1  # fullseye lib version this note was generated for
+version: 0.9.0  # fullseye lib version this note was generated for
 ---
 
 # fit_superquadric — 3D `superquadric` op

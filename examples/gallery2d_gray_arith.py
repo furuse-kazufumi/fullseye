@@ -49,7 +49,7 @@ TARGET_CATS = {"gray", "intensity-transform", "arithmetic", "domain"}
 # --------------------------------------------------------------------------- #
 OPS = [
     # gray / intensity-transform(階調曲線・コントラスト強調)
-    "gamma", "invert", "scale_clip", "equalize", "sigmoid", "clahe",
+    "gamma", "invert", "scale_clip", "equalize", "sigmoid", "clahe", "image_standardize",
     # 量子化・ビット深度(閉形式の誤差 Δ²/12 を持つ族)
     "quantize_uniform", "quantize_lloyd_max", "quantization_error",
     "dither_ordered", "dither_floyd_steinberg", "companding_mu_law", "banding_map",

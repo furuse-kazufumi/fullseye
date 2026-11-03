@@ -590,7 +590,7 @@
   {
    "id": "poc_real_defect_floor",
    "category": "inspection",
-   "media": "02_defect_floor_sweep.gif",
+   "media": "03_defect_floor_explained.mp4",
    "motion": true,
    "label": {
     "ja": "薄い傷の検出限界",
@@ -1117,8 +1117,8 @@
   {
    "id": "poc_thermography_ndt",
    "category": "thermal",
-   "media": "02_depth_map.png",
-   "motion": false,
+   "media": "07_window_explained.mp4",
+   "motion": true,
    "label": {
     "ja": "熱画像の欠陥深さ",
     "en": "Thermography NDT",
@@ -15468,6 +15468,23 @@
    }
   },
   {
+   "id": "poc_symmetry_self_reference_inspection",
+   "group": "wing_industrial",
+   "media": "01_self_reference_defect.png",
+   "motion": false,
+   "thumb_src": "01_self_reference_defect_720.jpg",
+   "label": {
+    "ja": "2-D対称性の自己参照検査",
+    "en": "Self-referenced 2-D symmetry inspection",
+    "zh": "二维对称性自参考检测",
+    "tw": "二維對稱性自參考檢測",
+    "ko": "2-D 대칭 자기참조 검사",
+    "de": "Selbstreferenzierte 2-D-Symmetrieprüfung",
+    "hi": "Self-referenced 2-D symmetry inspection",
+    "fr": "Inspection auto-référencée par symétrie 2-D"
+   }
+  },
+  {
    "id": "poc_dic_strain",
    "group": "wing_metrology",
    "media": "05_tensile_ramp.mp4",
@@ -19633,6 +19650,40 @@
    }
   },
   {
+   "id": "poc_real_tless_6dof",
+   "group": "wing_geometry",
+   "media": "01_pose_overlay.png",
+   "motion": false,
+   "thumb_src": "01_pose_overlay_720.jpg",
+   "label": {
+    "ja": "実深度点群で既知部品の6自由度姿勢を推定する",
+    "en": "Estimate known-part 6-DoF pose from real depth point clouds",
+    "zh": "从真实深度点云估计已知零件的六自由度姿态",
+    "tw": "從真實深度點雲估計已知零件的六自由度姿態",
+    "ko": "실제 깊이 포인트 클라우드에서 알려진 부품의 6자유도 자세 추정",
+    "de": "Die 6-DoF-Pose bekannter Teile aus realen Tiefenpunktwolken schätzen",
+    "hi": "वास्तविक depth point cloud से ज्ञात भाग की 6-DoF pose का अनुमान",
+    "fr": "Estimer la pose 6-DoF de pièces connues à partir de vrais nuages de profondeur"
+   }
+  },
+  {
+   "id": "poc_threshold_transfer_after_normalization",
+   "group": "wing_industrial",
+   "media": "01_threshold_transfer.png",
+   "motion": false,
+   "thumb_src": "01_threshold_transfer.png",
+   "label": {
+    "ja": "生の輝度しきい値は照明ごとに合わせ直すが、kσ と P-tile はそのまま移る",
+    "en": "Raw grey-level thresholds need retuning across lighting, while k-sigma and P-tile transfer",
+    "zh": "Raw grey-level thresholds need retuning across lighting, while k-sigma and P-tile transfer",
+    "tw": "Raw grey-level thresholds need retuning across lighting, while k-sigma and P-tile transfer",
+    "ko": "Raw grey-level thresholds need retuning across lighting, while k-sigma and P-tile transfer",
+    "de": "Raw grey-level thresholds need retuning across lighting, while k-sigma and P-tile transfer",
+    "hi": "Raw grey-level thresholds need retuning across lighting, while k-sigma and P-tile transfer",
+    "fr": "Raw grey-level thresholds need retuning across lighting, while k-sigma and P-tile transfer"
+   }
+  },
+  {
    "id": "poc_star_tracker",
    "group": "wing_threed",
    "media": "star_tracker_anim3d.html",
@@ -19648,6 +19699,23 @@
     "de": "Estimate satellite attitude from a synthetic star image",
     "hi": "Estimate satellite attitude from a synthetic star image",
     "fr": "Estimate satellite attitude from a synthetic star image"
+   }
+  },
+  {
+   "id": "poc_real_sem_metal_layer",
+   "group": "wing_metrology",
+   "media": "01_scene.png",
+   "motion": false,
+   "thumb_src": "01_scene.png",
+   "label": {
+    "ja": "実SEM金属配線の寸法計測",
+    "en": "Metrology on real SEM metal layers",
+    "zh": "真实 SEM 金属层测量",
+    "tw": "真實 SEM 金屬層量測",
+    "ko": "실제 SEM 금속층 계측",
+    "de": "Metrologie realer REM-Metallschichten",
+    "hi": "वास्तविक SEM धातु परत की मापिकी",
+    "fr": "Métrologie de couches métalliques en MEB réel"
    }
   }
  ],
@@ -19775,9 +19843,17 @@
     "ko": "3차원 점군에서 평면도 구하기",
     "de": "Ebenheit einer Fläche aus einer 3-D-Punktwolke",
     "hi": "3-D point cloud से सतह की समतलता (flatness)",
-    "fr": "Calculer la planéité à partir d'un nuage de points 3-D"
-   },
-   "polarisation-specular-removal": {
+   "fr": "Calculer la planéité à partir d'un nuage de points 3-D"
+  },
+  "six-dof-surface-pose": {
+   "zh": "从点云中以六自由度定位已知三维零件",
+   "tw": "從點雲中以六自由度定位已知 3D 零件",
+   "ko": "포인트 클라우드에서 알려진 3D 부품의 6자유도 자세 추정",
+   "de": "Ein bekanntes 3-D-Teil mit sechs Freiheitsgraden in einer Punktwolke lokalisieren",
+   "hi": "point cloud में ज्ञात 3-D भाग का छह स्वतंत्रता अंशों में पता लगाएँ",
+   "fr": "Localiser une pièce 3D connue dans un nuage de points avec six degrés de liberté"
+  },
+  "polarisation-specular-removal": {
     "zh": "用 4 个偏振方向去除镜面反射(区分电介质与金属)",
     "tw": "用 4 個偏振方向去除鏡面反射(區分介電質與金屬)",
     "ko": "편광 4 방향으로 정반사 제거(유전체와 금속을 구분)",

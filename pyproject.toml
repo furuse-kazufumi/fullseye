@@ -5,8 +5,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "fullseye"
-version = "0.8.1"
-description = "Numpy-native operator library for vision, 3-D and measurement (3,623 typed ops in the machine-readable index: imaging, point clouds, optics, tomography, metrology) with an evolutionary pipeline designer and honest holdout gating"
+version = "0.9.0"
+description = "Numpy-native operator library for vision, 3-D and measurement (3,645 typed ops in the machine-readable index: imaging, point clouds, optics, tomography, metrology) with an evolutionary pipeline designer and honest holdout gating"
 readme = "README.md"
 requires-python = ">=3.11"
 license = { text = "Apache-2.0" }
@@ -85,7 +85,7 @@ lidar = ["laspy>=2.5", "lazrs>=0.5"]              # LAS / LAZ LiDAR point clouds
 pcd = ["pypcd4>=1.4"]                             # PCD binary / binary_compressed point clouds
 xlsx = ["openpyxl>=3.1"]                           # Excel (.xlsx) レポート出力(fullseye.save_xlsx_report、測定表+画像)
 e57 = ["pye57>=0.4"]                              # ASTM E57 point-cloud import/export (MIT, libE57 wheel)
-export-verify = ["pandas>=2.0", "trimesh>=4.0", "numpy-stl>=3.0", "plyfile>=1.0", "pye57>=0.4"] # テスト専用の独立リーダー(GPL の plyfile は配布コードから import しない)
+export-verify = ["pandas>=2.0", "trimesh>=4.0", "numpy-stl>=3.0", "plyfile>=1.0", "pye57>=0.4", "astropy>=7.0", "mrcfile>=1.5", "pynrrd>=1.1", "nibabel>=5.3", "tifffile>=2023.1"] # テスト専用の独立リーダー(GPL の plyfile は配布コードから import しない)
 # 2026-09-05: deptry(依存の宣言漏れ検査)で見つけた —— 出荷モジュール
 # contours_xld / regions_gen が `matplotlib.path.Path` を**関数内で遅延 import**
 # しており、どの extra にも宣言が無かった。import は通るので clean install の
@@ -137,12 +137,12 @@ fullseye-rag = "fullseye.rag_setup:main"      # Claude Code RAG skill installer 
 # 作ったら `fullseye/mcp/*` は 0 エントリだった(2026-09-15 実測)。import は通り、
 # テストは緑、wheel からは丸ごと消える —— root モジュールが落ちた事故 3 回と同じ族。
 # サブパッケージを足したらここにも足す(tests/test_packaging_subpackages.py が数える)。
-packages = ["fullseye", "fullseye.mcp", "studio_assets", "examples_3d", "examples"]
+packages = ["fullseye", "fullseye.mcp", "fullseye.evaluation", "studio_assets", "examples_3d", "examples"]
 py-modules = [
   # `torch_lazy` is the lazy torch/torch.nn.functional shim imported by
   # accel_match / match3d / feat_* — it MUST ship or those modules ImportError
   # on a pip install (it keeps `import torch`, ~700 ms, off every start-up).
-  "api", "param_specs", "ops", "backend_safe", "torch_lazy", "fileio", "opsfileio",
+  "api", "param_specs", "ops", "backend_safe", "torch_lazy", "fileio", "opsfileio", "_archive_tarxz",
   # ★2026-10-25: numpy_twins は backends_auto / backends_filters2 / backends_regions2 が import する
   #   (scikit-image の無い環境の双子)。py-modules に無いと wheel から落ちて 3 backend ごと消える。
   "numpy_twins",
@@ -191,7 +191,7 @@ py-modules = [
   "segcontour",
   # 2026-10-02: セグメンテーション第 3 陣。グラフ・階層・閾値(graph cut / α-expansion / SRM / 成分木 /
   #   準平坦領域 / 階層分水嶺 / 超画素 / 閾値 4 定理)の実体。opssegmentation 台帳に graph / threshold として載る。
-  "seggraph",
+  "seggraph", "normalized_threshold",
   "cropweed",
   "backends", "backends_auto", "backends_color", "backends_cv2b", "backends_dl",
   "backends_extra", "backends_kornia", "backends_pil", "backends_r3",
@@ -251,7 +251,7 @@ py-modules = [
   "glyphops",
   # AOI(自動外観検査)の前段 3 op(フラット補正 / 平行移動の位置合わせ / タイル統計の地図)。
   # 測る層の手前が公開面のどこにも無かった(実装 2026-09-15、台帳に載せたのは 2026-10-23)。
-  "aoi", "opsaoi",
+  "aoi", "symmetry2d", "opsaoi",
   # opscalib: カメラ校正・平面写像・対応点からの変換推定の台帳(2026-10-23)。実体の
   # calib / caltab / fit_transform は前から同梱されていたが、台帳が無いため op ノートも
   # OP_INDEX.json の行も無く、fs.op_find("caltab") が 0 件だった。

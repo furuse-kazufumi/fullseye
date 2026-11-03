@@ -5,10 +5,10 @@ category: sem
 in: 
 out: table
 gpu: なし
-examples: [poc_virtual_sem_kv_cd_bse]
+examples: [poc_real_sem_metal_layer, poc_virtual_sem_kv_cd_bse]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.8.1  # fullseye lib version this note was generated for
+version: 0.9.0  # fullseye lib version this note was generated for
 ---
 
 # sem_line_profile — GENERATIVE `sem` op
@@ -53,6 +53,7 @@ Examples
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [poc_real_sem_metal_layer](../../../../examples/poc_real_sem_metal_layer.py) — `py -3.11 examples/poc_real_sem_metal_layer.py`
 - [poc_virtual_sem_kv_cd_bse](../../../../examples/poc_virtual_sem_kv_cd_bse.py) — `py -3.11 examples/poc_virtual_sem_kv_cd_bse.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)

@@ -4,7 +4,7 @@
  "queries": [
   {"q": "エッジ検出", "set": "classic", "ops": ["sobel_amp", "sobel_mag", "canny3d", "prewitt_mag", "sk_canny", "edges_image", "roberts", "xkor_canny", "hx_detect_edge_segments", "roberts_mag", "xsp_gauss_grad_mag", "xpil_find_edges"]},
   {"q": "edge detection", "set": "classic", "ops": ["sobel_amp", "sobel_mag", "canny3d", "prewitt_mag", "sk_canny", "edges_image", "roberts", "xkor_canny", "hx_detect_edge_segments", "roberts_mag", "xsp_gauss_grad_mag", "xpil_find_edges"]},
-  {"q": "画像を二値化したい", "set": "classic", "ops": ["otsu", "auto_threshold", "threshold", "binary_threshold", "local_threshold", "dyn_threshold", "var_threshold", "bin_threshold", "fast_threshold", "dual_threshold", "hysteresis_threshold", "sk_otsu", "cv_otsu", "sk_yen", "sk_li", "sk_sauvola", "cv_adaptive_gauss", "cv_adaptive_mean"]},
+  {"q": "画像を二値化したい", "set": "classic", "ops": ["otsu", "auto_threshold", "threshold", "binary_threshold", "local_threshold", "dyn_threshold", "var_threshold", "bin_threshold", "fast_threshold", "dual_threshold", "hysteresis_threshold", "sk_otsu", "cv_otsu", "sk_yen", "sk_li", "sk_sauvola", "cv_adaptive_gauss", "cv_adaptive_mean", "sigma_threshold"]},
   {"q": "binarize an image with an automatic threshold", "set": "classic", "ops": ["otsu", "auto_threshold", "threshold", "binary_threshold", "local_threshold", "dyn_threshold", "var_threshold", "bin_threshold", "fast_threshold"]},
   {"q": "円を検出する", "set": "classic", "ops": ["cv_hough_circles", "hough_circle_trans"]},
   {"q": "detect circles", "set": "classic", "ops": ["cv_hough_circles", "hough_circle_trans"]},

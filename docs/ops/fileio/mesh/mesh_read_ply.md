@@ -8,7 +8,7 @@ gpu: なし
 examples: [fileio_roundtrip]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.8.1  # fullseye lib version this note was generated for
+version: 0.9.0  # fullseye lib version this note was generated for
 ---
 
 # mesh_read_ply — FILEIO `mesh` op
@@ -36,7 +36,7 @@ property は名前を示して拒否する。呼び出し例: ``table = mesh_rea
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 
-[table_write_csv](../table/table_write_csv.md) · [mesh_write_ply](mesh_write_ply.md) · [mesh_read_stl](mesh_read_stl.md) · [e57_write](../e57/e57_write.md) · [e57_read](../e57/e57_read.md)
+[table_write_csv](../table/table_write_csv.md) · [mesh_write_ply](mesh_write_ply.md) · [mesh_read_stl](mesh_read_stl.md) · [e57_write](../e57/e57_write.md) · [e57_read](../e57/e57_read.md) · [archive_probe](../archive/archive_probe.md) · [archive_list](../archive/archive_list.md) · [astro_fits_write](../fits/astro_fits_write.md)
 
 ## 同カテゴリ(`mesh`)
 

@@ -1,0 +1,62 @@
+[
+ {
+  "file": "01_pose_overlay.png",
+  "name": "pose_overlay",
+  "caption": "scene 1/image 1。PPF+ICP の推定モデル(橙)と BOP 真値(青)。",
+  "shape": [
+   633,
+   740,
+   3
+  ]
+ },
+ {
+  "file": "02_rgb_depth.png",
+  "name": "rgb_depth",
+  "caption": "欠測 1164 px、孤立飛び候補 0 px。 BOP T-LESS, CC BY 4.0。",
+  "shape": [
+   633,
+   1694,
+   3
+  ]
+ },
+ {
+  "file": "03_mssd_by_object.png",
+  "name": "mssd_by_object",
+  "caption": "20場面の標本を obj_id ごとに平均。棒上は AR_MSSD と対象件数 n。",
+  "shape": [
+   440,
+   960,
+   3
+  ]
+ },
+ {
+  "file": "04_synthetic_vs_real.png",
+  "name": "synthetic_vs_real",
+  "caption": "合成 MSSD 0.985 / 合成 MSPD 0.985 / 実機 MSSD 0.197 / 実機 MSPD 0.220。",
+  "shape": [
+   420,
+   720,
+   3
+  ]
+ },
+ {
+  "file": "05_failure.png",
+  "name": "failure",
+  "caption": "橙=推定、青=真値。MSSD 176.2 mm、cluster merged=True。",
+  "shape": [
+   633,
+   740,
+   3
+  ]
+ },
+ {
+  "file": "06_density_vs_ar_time.png",
+  "name": "density_vs_ar_time",
+  "caption": "180/160、500/500、1000/1000は132対象の完走値。2000/2000は2時間で未完走のため54.6秒/対象以上、ARは未記録。",
+  "shape": [
+   720,
+   1280,
+   3
+  ]
+ }
+]
