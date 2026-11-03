@@ -7,6 +7,23 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### 修正(値が変わる) — `xkor_gaussian` / `xkor_unsharp` の窓が 5x5 固定で σ を打ち切っていた
+
+- 実装どうしの突き合わせ(新しい門 `tools/impl_differential.py`、下の「追加」)で、kornia 版の `xkor_gaussian` が
+  core の `gaussian` / OpenCV の `cv_gaussian`(どちらも σ = 0.3 + 2.7a)と内部で振れ幅の 9 %(a = 0.5)〜28 %(a = 0.75)
+  食い違っていた。原因は窓: `kornia.filters.gaussian_blur2d(x, (5, 5), (σ, σ))` で、σ = 1.65 でも半径 2(1.2σ)で
+  打ち切られ、σ を上げてもぼけが 5x5 の箱に近づくだけだった(docstring は「σ を 0.3〜3.0 に振る」)。
+  `xkor_unsharp`(`kornia.filters.unsharp_mask`、σ = 0.5 + 2b)も同じ 5x5 で同じ欠陥。
+- 窓の半径を `int(4σ + 0.5)`(scipy の `gaussian_filter` の既定 truncate = 4.0)にし、端は numpy の `symmetric`
+  (= scipy の `reflect`、core の `gaussian` の `b <= 0.5`)を自前で足してから kornia に渡す(4x4 の画像でも落ちない)。
+  `xkor_gaussian(v, a)` は `gaussian(v, a, 0.5)` と、`xkor_unsharp(v, ·, b)` は `unsharp(v, 2/3, (0.5 + 2b − 0.5)/1.5)` と、
+  **画像全体で 3e-7**(float32 の丸め)で一致する。`xkor_gaussian` の出口は [0,1] へ clip(重み和の丸めで定数 1 の画像が
+  1 + 1.2e-7 になるため)。
+- **値が変わる**: 両 op のほぼ全出力(窓の大きさと端の両方が変わるため)。端の規約も `reflect`(d c b | a b c d)から
+  `symmetric`(d c b a | a b c d)に変わったので、`docs/op_border.json` ほか実測台帳 5 本の 2 行を測り直した。
+  `tests/test_kornia_version_drift_2026_10_24.py` の golden の 2 行も新しい値にした(旧値はコメントに残した)。
+  既定の数値が変わる変更なので CONTRIBUTING の Versioning では minor(この Unreleased は既に 3.10 の終了で minor)。
+
 ### 追加 — 光弾性の族(応力場 → 縞 → 偏光像 → 位相差と主軸)
 
 - 新モジュール `photoelastic`(opsoptics のカテゴリ `photoelastic`、12 op)。単位は SI、位相差は rad・nm・縞次数を並べて返し、mm を m に・nm を m に・表の ×10⁻⁷ MPa⁻¹ を Pa⁻¹ に渡す取り違えは ValueError で拒否する。

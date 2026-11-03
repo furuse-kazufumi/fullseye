@@ -6293,13 +6293,13 @@
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
-      0.755219,
-      0.197646,
-      0.817541,
-      0.298077,
-      0.215089
+      0.9426,
+      0.278177,
+      1.09372,
+      0.392939,
+      0.245641
     ],
-    "a_effect": 0.8175413310527802,
+    "a_effect": 1.093719631433487,
     "a_kind": "continuous",
     "breakpoints": [],
     "status": "determined"
@@ -6426,7 +6426,7 @@
     "op": "xkor_unsharp",
     "steps": 51,
     "n_probe_images": 5,
-    "b_effect": 0.20421607792377472,
+    "b_effect": 0.2182842493057251,
     "b_used": true,
     "a_effect_per_image": [
       0.0,

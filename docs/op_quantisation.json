@@ -2720,7 +2720,7 @@
   {
     "op": "xkor_gaussian",
     "status": "determined",
-    "worst_off_grid": 0.499742269516,
+    "worst_off_grid": 0.499908864498,
     "distinct_levels": 576,
     "output_on_8bit_grid": false,
     "uses_many_levels": true,
@@ -2783,8 +2783,8 @@
   {
     "op": "xkor_unsharp",
     "status": "determined",
-    "worst_off_grid": 0.498683512211,
-    "distinct_levels": 557,
+    "worst_off_grid": 0.499411195517,
+    "distinct_levels": 556,
     "output_on_8bit_grid": false,
     "uses_many_levels": true,
     "quantises_to_8bit": false
