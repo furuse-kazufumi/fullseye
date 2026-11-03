@@ -10,8 +10,8 @@
     {
       "task": "surface dent from reflected fringes",
       "tool_schema_tokens": 1497,
-      "response_tokens": 451,
-      "total_tokens": 1948,
+      "response_tokens": 447,
+      "total_tokens": 1944,
       "planned": true,
       "expected": "deflectometry_phase_to_slope",
       "expected_rank": 1,
@@ -22,8 +22,8 @@
     {
       "task": "find scratches using polarization",
       "tool_schema_tokens": 1497,
-      "response_tokens": 236,
-      "total_tokens": 1733,
+      "response_tokens": 231,
+      "total_tokens": 1728,
       "planned": true,
       "expected": "polarization_dolp_map",
       "expected_rank": 1,
@@ -81,5 +81,5 @@
     }
   ],
   "recall_at_7": 1.0,
-  "max_tokens": 1948
+  "max_tokens": 1944
 }

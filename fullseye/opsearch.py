@@ -591,6 +591,17 @@ def _next_call_skeleton(row: dict) -> str:
         edge = next((e for e in _graph()["edges"] if e["op"] == op), None)
     except (FileNotFoundError, ValueError):
         edge = None
+    # ★2026-11-03(完成度監査 A-2): MCP で実行できない op(``verified_executable`` でない = 台帳 op の大半)にも
+    #   ``fullseye_pipeline(...)`` の骨格を付けていた。従うと ``fullseye_validate_pipeline`` が
+    #   ``not_executable_in_mcp`` で拒む。MCP の外での呼び方(カードの ``call``)を返す。
+    if edge is not None and not edge.get("verified_executable"):
+        reason = edge.get("not_executable_in_mcp") or edge.get("executable_reason") or "not_verified"
+        try:
+            card = next((c for c in _load_data(PKG_CARDS)["ops"] if c["name"] == op), None)
+        except (FileNotFoundError, ValueError):
+            card = None
+        call = (card or {}).get("call") or "see fullseye_op_cards"
+        return "not executable in MCP (%s); call from Python: %s" % (reason, call)
     inputs = list((edge or {}).get("inputs") or ([sort] if sort else []))
     if len(inputs) <= 1:
         stage = '{"op":%r}' % op

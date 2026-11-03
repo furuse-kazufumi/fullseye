@@ -1518,6 +1518,12 @@ def run(op_name: str, *data, preset=None, strict: bool = False, **kwargs):
         raise ValueError("opassist.run: preflight: " + " / ".join(notes))
     mod = importlib.import_module(mod_name)
     caller = getattr(mod, "call", None)
+    # ★2026-11-03(op カードの実行の門で発見): 台帳の ``call(name, *args, **kwargs)`` の第 1 引数 ``name`` が、
+    #   op 自身の引数 ``name=`` と衝突していた(21 op: load_asset / example_system / sellmeier / glass_catalog …)。
+    #   ``op_run("example_system", name="singlet")`` が「call() got multiple values for argument 'name'」。
+    #   ``get(key)`` が返すのは ``entry["func"]`` と同じ物(台帳 2,661 op で確認)なので、衝突するときは直接呼ぶ。
+    if caller is not None and "name" in kw:
+        caller = None
     try:
         result = caller(_ledger_key(op_name), *args, **kw) if caller else entry["func"](*args, **kw)
     except (IndexError, AttributeError, TypeError) as e:
