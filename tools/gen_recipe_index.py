@@ -88,7 +88,12 @@ def build():
     for book in rb.BOOKS:
         p = ROOT / "fullseye" / "recipebook" / (book + ".py")
         if p.exists():
-            book_lines[book] = _line_numbers(p)
+            # 本は dict を直に書くものと、小さな関数で組むものがある。名前の文字列定数の最初の行を取る。
+            first = {}
+            for node in ast.walk(ast.parse(p.read_text(encoding="utf-8"))):
+                if isinstance(node, ast.Constant) and isinstance(node.value, str):
+                    first[node.value] = min(first.get(node.value, node.lineno), node.lineno)
+            book_lines[book] = first
     for r in rb.RECIPES:
         book = rb.BOOK_OF[r["name"]]
         if rb.type_cuts(r):

@@ -108,7 +108,8 @@ def mx_aniso_samples(variant: int):
     Y = (W * sig) @ Q.T + np.array([1.0, -2.0, 0.5])
     ev = np.sort(sig ** 2)[::-1]
     return {"value": Y, "aux": {}, "truth": {"cond": float(ev[0] / ev[-1]), "ev0": float(ev[0]),
-                                             "ratio0": float(ev[0] / ev.sum())}}
+                                             "ratio0": float(ev[0] / ev.sum()),
+                                             "ev_min": float(ev[-1])}}
 
 
 def mx_process_sample(variant: int):
@@ -434,6 +435,14 @@ RECIPES = [
      "note": "sample covariance of N×D observations (rows = samples), then its 2-norm condition number "
              "λmax/λmin: how elongated the scatter is and how many digits a least-squares / Mahalanobis solve on it "
              "loses. Sample built so its covariance is exactly diag(4, 1, 0.25) rotated (cond 16) or (9, 1, 1)."},
+    {"name": "Measure — principal axes of a scatter (covariance eigen-decomposition)", "family": "math",
+     "task": "measure", "task_class": "measurement", "halcon": None, "input_sort": "matrix",
+     "sample": "mx_aniso_samples",
+     "stages": [{"op": "stat_covariance"}, {"op": "mat_eigh"}],
+     "expect": [{"get": ["w", -1], "approx": "ev0", "rtol": 1e-9}, {"get": ["w", 0], "approx": "ev_min", "rtol": 1e-9}],
+     "note": "covariance of N×D samples, then its symmetric eigen-decomposition: eigenvalues (ascending, variance "
+             "along each principal axis, units²) and orthonormal axes V — the covariance-ellipse / orientation / "
+             "flatness measurement of a point scatter or a set of features. Exact on the constructed sample."},
     # ---------------------------------------------------------------- oned
     {"name": "Sense — dominant vibration frequency after band-pass filtering", "family": "oned", "task": "measure",
      "task_class": "sensing", "halcon": None, "input_sort": "signal", "sample": "sine_signal",
@@ -625,26 +634,30 @@ MISSING_OPS = [
 ]
 
 FAILED_ATTEMPTS = [
-    {"family": "math", "recipe": "Measure — principal axes of a covariance (stat_covariance -> mat_eigh)",
-     "op": "mat_eigh", "error": "declared out=table, returns tuple (w, V); TYPE_CHECKS['table'] (list or dict) "
-                                "rejects it (mat_svd likewise returns a tuple under out=table)",
-     "cause": "declaration_lie"},
     {"family": "drive", "recipe": "Measure — RSS minimum safe following distance (rss_params -> rss_longitudinal_same)",
      "op": "rss_longitudinal_same",
      "error": "TypeError: rss_longitudinal_same() missing 2 required positional arguments: 'v_front' and 'p' — "
               "OP_GRAPH inputs=['table'] binds the first positional slot, which is v_rear (a float); parameter_schema "
-              "omits v_rear. Same pattern for rss_longitudinal_check / rss_lateral*: the table is the keyword p",
+              "omits v_rear. Same pattern for rss_longitudinal_check / rss_lateral*: the table is the keyword p. "
+              "Still so through the ledger (2026-11-03): fs.ledger.rss_longitudinal_same(p, v_rear=20, v_front=15) "
+              "-> TypeError: got multiple values for argument 'v_rear'; fs.ledger.rss_longitudinal_check(p, d=50, "
+              "v_rear=20, v_front=15) -> got multiple values for argument 'd' (the table is not taken positionally)",
      "cause": "declaration_lie"},
     {"family": "drive", "recipe": "Sense — TTC from optical flow (flow_from_depth_motion -> ttc_from_flow)",
      "op": "ttc_from_flow", "error": "flow_from_depth_motion outputs table {u, v, valid, depth1}; ttc_from_flow "
-                                     "inputs ['image', 'image'] — no op selects a table field as an image",
+                                     "inputs ['image', 'image'] — no op selects a table field as an image. Via the ledger too: "
+                                     "fs.ledger.ttc_from_flow(flow_table, dt=0.1) -> TypeError: missing 1 required "
+                                     "positional argument: 'v'",
      "cause": "type_gap"},
     {"family": "drive", "recipe": "Sense — TTC from apparent size growth (label_extent -> ttc_from_scale)",
      "op": "ttc_from_scale", "error": "label_extent outputs table {width, height, ...}; ttc_from_scale is declared a "
-                                      "generator (inputs []) taking w0, w1 as scalar keywords",
+                                      "generator (inputs []) taking w0, w1 as scalar keywords. Via the ledger: "
+                                      "fs.ledger.ttc_from_scale(extent_table, dt=0.1) -> TypeError: missing 1 "
+                                      "required positional argument: 'w1'",
      "cause": "type_gap"},
     {"family": "oned", "recipe": "Sense — FFT peak frequency (spectrum -> find_peaks -> peak_subbin)",
      "op": "find_peaks", "error": "spectrum outputs pairs (freqs, magnitude); find_peaks / peak_subbin input "
-                                  "'signal' — type cut at stage 2",
+                                  "'signal' — type cut at stage 2. Via the ledger: fs.ledger.find_peaks(spectrum(...)) -> "
+                                  "ValueError: expected a 1-D signal ..., got shape (129, 2)",
      "cause": "type_gap"},
 ]
