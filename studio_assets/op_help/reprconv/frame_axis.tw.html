@@ -1,0 +1,31 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">frame_axis — REPRCONV <code style="color:#22d3bf">structure</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">frame</code> → <code style="color:#22d3bf">normals</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.frame_axis(frame, axis=&#x27;tangent&#x27;)</code>(要直接呼叫實作,<code style="color:#22d3bf">import reprconv; reprconv.frame_axis(frame, axis=&#x27;tangent&#x27;)</code>;從台帳取用則 <code style="color:#22d3bf">opsreprconv.get(&quot;frame_axis&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>Frenet 標架 <code style="color:#22d3bf">frame</code> → 一根軸的單位向量列 <code style="color:#22d3bf">normals (N,3)</code>。<code style="color:#22d3bf">frame</code> 型別的出口。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p><code style="color:#22d3bf">frenet_frame</code> の返り <code style="color:#22d3bf">(T, N, B)</code>(各 (N,3))から <code style="color:#22d3bf">axis</code> の 1 本を取り出す:</p>
+<p><code style="color:#22d3bf">&quot;tangent&quot;</code> = 接線 T、<code style="color:#22d3bf">&quot;normal&quot;</code> = 主法線 N、<code style="color:#22d3bf">&quot;binormal&quot;</code> = 陪法線 B。取り出した列は点ごとの単位ベクトルなので <code style="color:#22d3bf">normals</code> 型に載る(<code style="color:#22d3bf">normals_to_angles</code> / <code style="color:#22d3bf">normals_to_egi</code> などがそのまま掛かる)。</p>
+<p><code style="color:#22d3bf">frenet_frame</code> は直線区間で N・B がほぼゼロベクトルになる(向き不定)。ここでは <b>長さ 0.5 未満の行を拒否</b>する(黙って単位ベクトルのふりをさせない)。直線を含む曲線で N/B を使うなら、先に <code style="color:#22d3bf">fit_spline_curve</code> で滑らかにするか接線だけを使う。</p>
+<p>Args:</p>
+<p>frame: <code style="color:#22d3bf">(T, N, B)</code> の 3-tuple、各 (N,3)。</p>
+<p>axis: <code style="color:#22d3bf">&quot;tangent&quot;</code> / <code style="color:#22d3bf">&quot;normal&quot;</code> / <code style="color:#22d3bf">&quot;binormal&quot;</code>。</p>
+<p>Returns:</p>
+<p>(N, 3) float64、各行は単位長(<code style="color:#22d3bf">frenet_frame</code> が正規化した値そのまま)。</p>
+<p>Raises:</p>
+<p>ValueError: 3-tuple でない / 形がそろわない / axis が不正 / 長さ 0.5 未満の行がある。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:type_connectivity_tour">type_connectivity_tour</a> — <code style="color:#22d3bf">py -3.11 examples/type_connectivity_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">normals</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:normals_to_angles">normals_to_angles</a> · <a style="color:#22d3bf" href="opreprconv:normals_to_egi">normals_to_egi</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">structure</code>)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:knn_graph_to_conn_graph">knn_graph_to_conn_graph</a> · <a style="color:#22d3bf" href="opreprconv:pointmap_to_points">pointmap_to_points</a> · <a style="color:#22d3bf" href="opreprconv:match_component">match_component</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: reprconv.py — REPRCONV 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

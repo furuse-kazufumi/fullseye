@@ -1,0 +1,30 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">gradient_magnitude — REPRCONV <code style="color:#22d3bf">derivative</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">gradient</code> → <code style="color:#22d3bf">voxel</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gradient_magnitude(gradient)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import reprconv; reprconv.gradient_magnitude(gradient)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsreprconv.get(&quot;gradient_magnitude&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>3-D gradient <code style="color:#22d3bf">gradient</code> → gradient magnitude का volume <code style="color:#22d3bf">voxel</code>। <code style="color:#22d3bf">gradient</code> प्रकार से निकास।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p><code style="color:#22d3bf">|∇I| = sqrt(gz² + gy² + gx²)</code>。<code style="color:#22d3bf">gradient3d</code> の形 <code style="color:#22d3bf">(gmag, gvec)</code> は <code style="color:#22d3bf">gvec</code> から計算し直す(<code style="color:#22d3bf">gmag</code> を信じて素通しにしない —— 渡された対が食い違っていても気づけないため)。<code style="color:#22d3bf">sobel3d</code> の形 <code style="color:#22d3bf">(gz, gy, gx)</code> は利得 32 を割ってから計算するので、<b>どちらの産み手から来ても真の勾配の大きさ</b>(1 voxel あたりの濃度変化)になる。</p>
+<p><b>一方向</b>(向き 2 自由度を捨てる)。向きを残すなら <code style="color:#22d3bf">gradient_coherence</code> や <code style="color:#22d3bf">sobel3d</code> の成分そのもの。</p>
+<p>★外から来た勾配(微分可能レンダラの出力など)は <code style="color:#22d3bf">(gmag, gvec)</code> の形で渡すこと。3 本の形は <code style="color:#22d3bf">sobel3d</code> の利得 32 として割るので、利得 1 の 3 本を渡すと 1/32 に出る(形だけでは利得を見分けられない。型を分けるかは <code style="color:#22d3bf">docs/TYPE_CONNECTIVITY.md</code> の案)。</p>
+<p>Args:</p>
+<p>gradient: <code style="color:#22d3bf">gradient3d</code> の <code style="color:#22d3bf">(gmag, gvec)</code> か <code style="color:#22d3bf">sobel3d</code> の <code style="color:#22d3bf">(gz, gy, gx)</code>。</p>
+<p>Returns:</p>
+<p>(D, H, W) float64。</p>
+<p>Raises:</p>
+<p>ValueError: どちらの形でもない / 非有限 / 空。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:type_connectivity_tour">type_connectivity_tour</a> — <code style="color:#22d3bf">py -3.11 examples/type_connectivity_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">voxel</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:correlation_score">correlation_score</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">derivative</code>)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:gradient_coherence">gradient_coherence</a> · <a style="color:#22d3bf" href="opreprconv:hessian_determinant">hessian_determinant</a> · <a style="color:#22d3bf" href="opreprconv:hessian_vesselness">hessian_vesselness</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: reprconv.py — REPRCONV operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

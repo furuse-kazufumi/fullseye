@@ -1,0 +1,28 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">tokens_to_matrix — REPRCONV <code style="color:#22d3bf">exit</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">tokens</code> → <code style="color:#22d3bf">matrix</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tokens_to_matrix(tokens)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import reprconv; reprconv.tokens_to_matrix(tokens)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsreprconv.get(&quot;tokens_to_matrix&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>token sequence <code style="color:#22d3bf">tokens (T, d)</code> → सामान्य matrix <code style="color:#22d3bf">matrix (T, d)</code>। <code style="color:#22d3bf">tokens</code> प्रकार से निकास।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>中身は変えない(写しを返す)。<code style="color:#22d3bf">tokens</code> を <code style="color:#22d3bf">matrix</code> と分けてあるのは、<b>入る側</b>で転置した (d, T) が黙って通るのを防ぐため(<code style="color:#22d3bf">opsllmcore</code> の docstring)で、出る側は一般の行列として扱ってよい —— SVD・条件数・ノルムなど <code style="color:#22d3bf">matrix</code> の op がそのまま掛かる(例: 注意の出力の実効次数を <code style="color:#22d3bf">mat_cond</code> で見る)。逆向き(<code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">tokens</code>)は軸の順を確かめようがないので作らない。</p>
+<p>Args:</p>
+<p>tokens: (T, d) の有限な実数列。</p>
+<p>Returns:</p>
+<p>(T, d) float64。</p>
+<p>Raises:</p>
+<p>ValueError: 2-D でない / 非有限 / 空。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:type_connectivity_tour">type_connectivity_tour</a> — <code style="color:#22d3bf">py -3.11 examples/type_connectivity_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">matrix</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:matrix_to_descriptor">matrix_to_descriptor</a> · <a style="color:#22d3bf" href="opreprconv:matrix_to_angle">matrix_to_angle</a> · <a style="color:#22d3bf" href="opreprconv:matrix_to_rot_scale">matrix_to_rot_scale</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">exit</code>)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:pose_to_matrix">pose_to_matrix</a> · <a style="color:#22d3bf" href="opreprconv:pairs_peak_x">pairs_peak_x</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: reprconv.py — REPRCONV operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

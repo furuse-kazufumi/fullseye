@@ -5,7 +5,7 @@ category: signal
 in: signal
 out: pairs
 gpu: なし
-examples: [acoustic_condition_monitoring, anim3d_lens_aberrations, poc_bearing_diagnosis, poc_gear_tooth_metrology, poc_machine_condition_fusion, poc_pipe_wall_loss, poc_recycling_sorting, poc_thin_film_reflectometry, poc_web_roll_periodicity]
+examples: [acoustic_condition_monitoring, anim3d_lens_aberrations, poc_bearing_diagnosis, poc_gear_tooth_metrology, poc_machine_condition_fusion, poc_pipe_wall_loss, poc_recycling_sorting, poc_thin_film_reflectometry, poc_web_roll_periodicity, type_connectivity_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.9.0  # fullseye lib version this note was generated for
@@ -77,6 +77,7 @@ factor twice when comparing their output with this one.
 - [poc_recycling_sorting](../../../../examples/poc_recycling_sorting.py) — `py -3.11 examples/poc_recycling_sorting.py`
 - [poc_thin_film_reflectometry](../../../../examples/poc_thin_film_reflectometry.py) — `py -3.11 examples/poc_thin_film_reflectometry.py`
 - [poc_web_roll_periodicity](../../../../examples/poc_web_roll_periodicity.py) — `py -3.11 examples/poc_web_roll_periodicity.py`
+- [type_connectivity_tour](../../../../examples/type_connectivity_tour.py) — `py -3.11 examples/type_connectivity_tour.py`
 
 ## 型が繋がる次の op(`pairs` を入力に取れる)
 

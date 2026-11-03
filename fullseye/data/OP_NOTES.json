@@ -9088,6 +9088,16 @@
     "path": "docs/ops/2d/typed/tb_jitter.md"
    }
   ],
+  "tb_keypoints_rowcol_to_uv": [
+   {
+    "op": "tb_keypoints_rowcol_to_uv",
+    "dim": "2d",
+    "category": "typed",
+    "in": "keypoints",
+    "out": "keypoints",
+    "path": "docs/ops/2d/typed/tb_keypoints_rowcol_to_uv.md"
+   }
+  ],
   "tb_keypoints_to_image2d": [
    {
     "op": "tb_keypoints_to_image2d",
@@ -9106,6 +9116,16 @@
     "in": "keypoints",
     "out": "points",
     "path": "docs/ops/2d/typed/tb_keypoints_uv_to_points.md"
+   }
+  ],
+  "tb_keypoints_uv_to_rowcol": [
+   {
+    "op": "tb_keypoints_uv_to_rowcol",
+    "dim": "2d",
+    "category": "typed",
+    "in": "keypoints",
+    "out": "keypoints",
+    "path": "docs/ops/2d/typed/tb_keypoints_uv_to_rowcol.md"
    }
   ],
   "tb_landmark_asymmetry": [
@@ -33772,6 +33792,46 @@
     "path": "docs/ops/reprconv/curvature/shape_index_to_curvature.md"
    }
   ],
+  "gradient_coherence": [
+   {
+    "op": "gradient_coherence",
+    "dim": "reprconv",
+    "category": "derivative",
+    "in": "gradient",
+    "out": "voxel",
+    "path": "docs/ops/reprconv/derivative/gradient_coherence.md"
+   }
+  ],
+  "gradient_magnitude": [
+   {
+    "op": "gradient_magnitude",
+    "dim": "reprconv",
+    "category": "derivative",
+    "in": "gradient",
+    "out": "voxel",
+    "path": "docs/ops/reprconv/derivative/gradient_magnitude.md"
+   }
+  ],
+  "hessian_determinant": [
+   {
+    "op": "hessian_determinant",
+    "dim": "reprconv",
+    "category": "derivative",
+    "in": "hessian",
+    "out": "voxel",
+    "path": "docs/ops/reprconv/derivative/hessian_determinant.md"
+   }
+  ],
+  "hessian_vesselness": [
+   {
+    "op": "hessian_vesselness",
+    "dim": "reprconv",
+    "category": "derivative",
+    "in": "hessian",
+    "out": "voxel",
+    "path": "docs/ops/reprconv/derivative/hessian_vesselness.md"
+   }
+  ],
   "descriptor_to_matrix": [
    {
     "op": "descriptor_to_matrix",
@@ -33830,6 +33890,105 @@
     "in": "normals",
     "out": "image2d",
     "path": "docs/ops/reprconv/direction/normals_to_egi.md"
+   }
+  ],
+  "indices_to_positions": [
+   {
+    "op": "indices_to_positions",
+    "dim": "reprconv",
+    "category": "entry",
+    "in": "indices",
+    "out": "positions",
+    "path": "docs/ops/reprconv/entry/indices_to_positions.md"
+   }
+  ],
+  "jones_state": [
+   {
+    "op": "jones_state",
+    "dim": "reprconv",
+    "category": "entry",
+    "out": "jones",
+    "path": "docs/ops/reprconv/entry/jones_state.md"
+   }
+  ],
+  "synapse_table_from_table": [
+   {
+    "op": "synapse_table_from_table",
+    "dim": "reprconv",
+    "category": "entry",
+    "in": "table",
+    "out": "synapse_table",
+    "path": "docs/ops/reprconv/entry/synapse_table_from_table.md"
+   }
+  ],
+  "pairs_peak_x": [
+   {
+    "op": "pairs_peak_x",
+    "dim": "reprconv",
+    "category": "exit",
+    "in": "pairs",
+    "out": "measurement",
+    "path": "docs/ops/reprconv/exit/pairs_peak_x.md"
+   }
+  ],
+  "pose_to_matrix": [
+   {
+    "op": "pose_to_matrix",
+    "dim": "reprconv",
+    "category": "exit",
+    "in": "pose",
+    "out": "matrix",
+    "path": "docs/ops/reprconv/exit/pose_to_matrix.md"
+   }
+  ],
+  "tokens_to_matrix": [
+   {
+    "op": "tokens_to_matrix",
+    "dim": "reprconv",
+    "category": "exit",
+    "in": "tokens",
+    "out": "matrix",
+    "path": "docs/ops/reprconv/exit/tokens_to_matrix.md"
+   }
+  ],
+  "table_field_image2d": [
+   {
+    "op": "table_field_image2d",
+    "dim": "reprconv",
+    "category": "field",
+    "in": "table",
+    "out": "image2d",
+    "path": "docs/ops/reprconv/field/table_field_image2d.md"
+   }
+  ],
+  "table_field_matrix": [
+   {
+    "op": "table_field_matrix",
+    "dim": "reprconv",
+    "category": "field",
+    "in": "table",
+    "out": "matrix",
+    "path": "docs/ops/reprconv/field/table_field_matrix.md"
+   }
+  ],
+  "table_field_measurement": [
+   {
+    "op": "table_field_measurement",
+    "dim": "reprconv",
+    "category": "field",
+    "in": "table",
+    "out": "measurement",
+    "path": "docs/ops/reprconv/field/table_field_measurement.md"
+   }
+  ],
+  "table_field_signal": [
+   {
+    "op": "table_field_signal",
+    "dim": "reprconv",
+    "category": "field",
+    "in": "table",
+    "out": "signal",
+    "path": "docs/ops/reprconv/field/table_field_signal.md"
    }
   ],
   "flow_apply": [
@@ -33932,6 +34091,16 @@
     "path": "docs/ops/reprconv/keypoint/keypoints_from_image2d.md"
    }
   ],
+  "keypoints_rowcol_to_uv": [
+   {
+    "op": "keypoints_rowcol_to_uv",
+    "dim": "reprconv",
+    "category": "keypoint",
+    "in": "keypoints",
+    "out": "keypoints",
+    "path": "docs/ops/reprconv/keypoint/keypoints_rowcol_to_uv.md"
+   }
+  ],
   "keypoints_to_image2d": [
    {
     "op": "keypoints_to_image2d",
@@ -33950,6 +34119,16 @@
     "in": "keypoints",
     "out": "points",
     "path": "docs/ops/reprconv/keypoint/keypoints_uv_to_points.md"
+   }
+  ],
+  "keypoints_uv_to_rowcol": [
+   {
+    "op": "keypoints_uv_to_rowcol",
+    "dim": "reprconv",
+    "category": "keypoint",
+    "in": "keypoints",
+    "out": "keypoints",
+    "path": "docs/ops/reprconv/keypoint/keypoints_uv_to_rowcol.md"
    }
   ],
   "points_to_position": [
@@ -34040,6 +34219,46 @@
     "in": "score",
     "out": "position",
     "path": "docs/ops/reprconv/score/score_to_position.md"
+   }
+  ],
+  "frame_axis": [
+   {
+    "op": "frame_axis",
+    "dim": "reprconv",
+    "category": "structure",
+    "in": "frame",
+    "out": "normals",
+    "path": "docs/ops/reprconv/structure/frame_axis.md"
+   }
+  ],
+  "knn_graph_to_conn_graph": [
+   {
+    "op": "knn_graph_to_conn_graph",
+    "dim": "reprconv",
+    "category": "structure",
+    "in": "graph",
+    "out": "conn_graph",
+    "path": "docs/ops/reprconv/structure/knn_graph_to_conn_graph.md"
+   }
+  ],
+  "match_component": [
+   {
+    "op": "match_component",
+    "dim": "reprconv",
+    "category": "structure",
+    "in": "match",
+    "out": "measurement",
+    "path": "docs/ops/reprconv/structure/match_component.md"
+   }
+  ],
+  "pointmap_to_points": [
+   {
+    "op": "pointmap_to_points",
+    "dim": "reprconv",
+    "category": "structure",
+    "in": "pointmap",
+    "out": "points",
+    "path": "docs/ops/reprconv/structure/pointmap_to_points.md"
    }
   ],
   "crt_displacement": [

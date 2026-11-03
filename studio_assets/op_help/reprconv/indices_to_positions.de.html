@@ -1,0 +1,31 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">indices_to_positions — REPRCONV <code style="color:#22d3bf">entry</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">indices</code> → <code style="color:#22d3bf">positions</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.indices_to_positions(indices, spacing=1.0, origin=0.0)</code> (die Implementierung direkt: <code style="color:#22d3bf">import reprconv; reprconv.indices_to_positions(indices, spacing=1.0, origin=0.0)</code>; aus dem Register: <code style="color:#22d3bf">opsreprconv.get(&quot;indices_to_positions&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>Indizes <code style="color:#22d3bf">indices</code> → Ereignispositionen <code style="color:#22d3bf">positions</code> (physikalische Einheiten). Der Eingang zu <code style="color:#22d3bf">positions</code>.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p><code style="color:#22d3bf">x = origin + spacing * i</code>。<code style="color:#22d3bf">find_peaks</code> / <code style="color:#22d3bf">zero_crossings_funct_1d</code> などが返す <b>標本番号</b>を、<code style="color:#22d3bf">point_spectrum</code> が受ける<b>位置の列</b>(欠陥が流れ方向のどこにあったか、いつ数えたか)にする。<code style="color:#22d3bf">positions</code> を <code style="color:#22d3bf">signal</code> と分けてあるのは、等間隔標本の列を事象の位置として(またはその逆に)渡すと、例外なしに別物のスペクトルが出るため(<code style="color:#22d3bf">point_spectrum</code> の docstring)。順序は入力のまま(並べ替えない)。</p>
+<p>空の添字は ValueError(この repo の空入力の方針 A: 黙って空を返さず、何が空かを名指しで拒否)。</p>
+<p>Args:</p>
+<p>indices: 1-D の整数(整数値の float も可。非整数・非有限・空は拒否)。</p>
+<p>spacing: 標本間隔(位置の単位 / 標本)。有限で 0 でないこと。</p>
+<p>origin: 添字 0 の位置。有限。</p>
+<p>Returns:</p>
+<p>(k,) float64。</p>
+<p>Raises:</p>
+<p>ValueError: 1-D でない / 整数でない / 非有限 / 空 / spacing が 0 か非有限。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:type_connectivity_tour">type_connectivity_tour</a> — <code style="color:#22d3bf">py -3.11 examples/type_connectivity_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">positions</code> als Eingabe)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">entry</code>)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:synapse_table_from_table">synapse_table_from_table</a> · <a style="color:#22d3bf" href="opreprconv:jones_state">jones_state</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: reprconv.py — REPRCONV Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

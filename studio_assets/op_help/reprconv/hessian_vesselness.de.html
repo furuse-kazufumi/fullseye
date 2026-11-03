@@ -1,0 +1,34 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">hessian_vesselness — REPRCONV <code style="color:#22d3bf">derivative</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">hessian</code> → <code style="color:#22d3bf">voxel</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.hessian_vesselness(hessian, alpha=0.5, beta=0.5, c=None, black_ridges=False)</code> (die Implementierung direkt: <code style="color:#22d3bf">import reprconv; reprconv.hessian_vesselness(hessian, alpha=0.5, beta=0.5, c=None, black_ridges=False)</code>; aus dem Register: <code style="color:#22d3bf">opsreprconv.get(&quot;hessian_vesselness&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>3-D-Hesse-Matrix → Frangi-Gefäßhaftigkeit (vesselness) <code style="color:#22d3bf">voxel</code>, Wertebereich [0, 1].</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>固有値を <code style="color:#22d3bf">|λ1| ≤ |λ2| ≤ |λ3|</code> に並べ、<code style="color:#22d3bf">Ra = |λ2|/|λ3|</code>(板と管を分ける)、<code style="color:#22d3bf">Rb = |λ1|/sqrt(|λ2 λ3|)</code>(塊を除く)、<code style="color:#22d3bf">S = sqrt(λ1²+λ2²+λ3²)</code>(背景の雑音を除く)から</p>
+<p>V = (1 − exp(−Ra²/2α²)) · exp(−Rb²/2β²) · (1 − exp(−S²/2c²))</p>
+<p>を返す(Frangi et al. 1998, MICCAI)。明るい管(<code style="color:#22d3bf">black_ridges=False</code>)では <code style="color:#22d3bf">λ2 &gt; 0</code> か <code style="color:#22d3bf">λ3 &gt; 0</code> の voxel を 0 にする(暗い管なら符号を逆に)。<code style="color:#22d3bf">c</code> の既定は Frangi の勧めどおり <code style="color:#22d3bf">S</code> の最大値の半分。</p>
+<p><code style="color:#22d3bf">vol_frangi</code> は体積から Hessian を<b>自分で作る</b>(尺度ごとに)のに対し、こちらは <code style="color:#22d3bf">hessian</code> 型を受ける —— Hessian の出どころ(<code style="color:#22d3bf">hessian3d</code> / 外部の微分)を選べ、同じ Hessian から <code style="color:#22d3bf">hessian_determinant</code> など複数の量を引き出せる。1 尺度だけ(多尺度の最大は呼ぶ側で取る)。</p>
+<p>Args:</p>
+<p>hessian: <code style="color:#22d3bf">hessian3d</code> の 6 成分 (zz, yy, xx, zy, zx, yx)。</p>
+<p>alpha, beta: Frangi の感度(既定 0.5 / 0.5)。&gt; 0。</p>
+<p>c: 構造の強さの感度。None で <code style="color:#22d3bf">max(S)/2</code>。&gt; 0。全面 0 の Hessian では 0 を返す。</p>
+<p>black_ridges: True で暗い管(背景より暗い)を拾う。</p>
+<p>Returns:</p>
+<p>(D, H, W) float64、[0, 1]。</p>
+<p>Raises:</p>
+<p>ValueError: 6 成分でない / 非有限 / alpha・beta・c が正でない。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:type_connectivity_tour">type_connectivity_tour</a> — <code style="color:#22d3bf">py -3.11 examples/type_connectivity_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">voxel</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:correlation_score">correlation_score</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">derivative</code>)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:gradient_magnitude">gradient_magnitude</a> · <a style="color:#22d3bf" href="opreprconv:gradient_coherence">gradient_coherence</a> · <a style="color:#22d3bf" href="opreprconv:hessian_determinant">hessian_determinant</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: reprconv.py — REPRCONV Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

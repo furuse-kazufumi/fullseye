@@ -1346,7 +1346,35 @@ def probe_builders():
     out.update(_batch2_builders())
     out.update(_knob_builders())
     out.update(_fileio_builders())
+    out.update(_type_connectivity_builders())
     return out
+
+
+def _type_connectivity_builders():
+    """Meaningful inputs for the reprconv ops that close type gaps (2026-11-03).
+
+    ``match`` is a 2-D registry sort with no ledger producer, so the probe pool has no value of
+    it; the table selectors need a table that really has the named field; the synapse table
+    needs whole-number ids (the op refuses a point cloud read as synapses, by design).
+    """
+    import ops as _ops
+
+    reg = np.zeros((20, 20))
+    reg[5:9, 2:12] = 1.0
+    table = {"gx": np.arange(12.0).reshape(3, 4), "series": np.linspace(0.0, 1.0, 8),
+             "width": 3.5}
+    return {
+        "match_component": lambda pool, rng: ([_ops.RT["area_center"](reg, 0.5, 0.5)], {"index": 0}),
+        "synapse_table_from_table": lambda pool, rng: (
+            [{"pre": np.array([0, 1, 2]), "post": np.array([1, 2, 0]), "count": np.array([3, 1, 2])}],
+            {"count": "count"}),
+        "table_field_image2d": lambda pool, rng: ([table, "gx"], {}),
+        "table_field_matrix": lambda pool, rng: ([table, "gx"], {}),
+        "table_field_signal": lambda pool, rng: ([table, "series"], {}),
+        "table_field_measurement": lambda pool, rng: ([table, "width"], {}),
+        "pose_to_matrix": lambda pool, rng: ([(np.eye(3), np.array([0.1, -0.05, 3.0]))], {}),
+        "indices_to_positions": lambda pool, rng: ([np.array([3, 10, 25, 40])], {"spacing": 0.5, "origin": 1.0}),
+    }
 
 
 def bind(name, fn, ins, pool, cf, extra):

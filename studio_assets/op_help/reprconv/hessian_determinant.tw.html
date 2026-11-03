@@ -1,0 +1,29 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">hessian_determinant — REPRCONV <code style="color:#22d3bf">derivative</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">hessian</code> → <code style="color:#22d3bf">voxel</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.hessian_determinant(hessian)</code>(要直接呼叫實作,<code style="color:#22d3bf">import reprconv; reprconv.hessian_determinant(hessian)</code>;從台帳取用則 <code style="color:#22d3bf">opsreprconv.get(&quot;hessian_determinant&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>3-D Hessian <code style="color:#22d3bf">hessian</code> → 行列式 <code style="color:#22d3bf">det H</code> 的體 <code style="color:#22d3bf">voxel</code>(帶符號)。<code style="color:#22d3bf">hessian</code> 型別的出口。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p><code style="color:#22d3bf">det H = λ1 λ2 λ3</code>(固有値の積)。球状の明るい塊の中心では 3 つとも負なので負、暗い塊では正、管や板(固有値の 1 つ以上が 0 に近い)では 0 に近い —— Determinant-of-Hessian の塊検出(Lindeberg 1998)の 3-D 版。単位は <code style="color:#22d3bf">hessian3d</code> と同じ 1/voxel² の 3 乗(正規化しない。<b>値の比較は同じ尺度の中だけ</b>で)。</p>
+<p>固有値を経由せず成分から直接 <code style="color:#22d3bf">zz(yy·xx − yx²) − zy(zy·xx − yx·zx) + zx(zy·yx − yy·zx)</code> で計算する(固有値分解の丸めを入れないため)。</p>
+<p>Args:</p>
+<p>hessian: <code style="color:#22d3bf">hessian3d</code> の 6 成分 (zz, yy, xx, zy, zx, yx)。torch でも numpy でもよい。</p>
+<p>Returns:</p>
+<p>(D, H, W) float64。</p>
+<p>Raises:</p>
+<p>ValueError: 6 成分でない / 形がそろわない / 非有限 / 空。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:type_connectivity_tour">type_connectivity_tour</a> — <code style="color:#22d3bf">py -3.11 examples/type_connectivity_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">voxel</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:correlation_score">correlation_score</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">derivative</code>)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:gradient_magnitude">gradient_magnitude</a> · <a style="color:#22d3bf" href="opreprconv:gradient_coherence">gradient_coherence</a> · <a style="color:#22d3bf" href="opreprconv:hessian_vesselness">hessian_vesselness</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: reprconv.py — REPRCONV 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

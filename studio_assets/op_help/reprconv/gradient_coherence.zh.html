@@ -1,0 +1,31 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">gradient_coherence — REPRCONV <code style="color:#22d3bf">derivative</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">gradient</code> → <code style="color:#22d3bf">voxel</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gradient_coherence(gradient, sigma=1.5, eps=1e-12)</code>(要直接调用实现,<code style="color:#22d3bf">import reprconv; reprconv.gradient_coherence(gradient, sigma=1.5, eps=1e-12)</code>;从台账取用则 <code style="color:#22d3bf">opsreprconv.get(&quot;gradient_coherence&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>3-D 梯度 → 结构张量的<b>面状程度</b>(相干性)<code style="color:#22d3bf">voxel</code>,值域 [0, 1]。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>各 voxel で勾配の外積 <code style="color:#22d3bf">g gᵀ</code> をガウス <code style="color:#22d3bf">sigma</code> で平均した構造テンソル <code style="color:#22d3bf">J</code> を作り、固有値 <code style="color:#22d3bf">μ1 ≥ μ2 ≥ μ3 ≥ 0</code> から <code style="color:#22d3bf">(μ1 − μ2) / (μ1 + μ2 + μ3 + eps)</code> を返す(Westin の線形異方性を構造テンソルに当てたもの。Bigün &amp; Granlund 1987、Westin 2002)。近傍の勾配が 1 方向にそろう(層・板・界面)と 1 に近づき、向きがばらばら(等方的なざらつき・塊)だと 0 に近づく。<b>勾配の大きさには依らない</b>(比なので)。平らで勾配の無い所は分母が <code style="color:#22d3bf">eps</code> だけになり 0 を返す。</p>
+<p><code style="color:#22d3bf">gradient</code> 型を一級の入力として受けるので、勾配の出どころ(<code style="color:#22d3bf">gradient3d</code> / <code style="color:#22d3bf">sobel3d</code> / 外部の微分可能レンダラ)を問わない。</p>
+<p>Args:</p>
+<p>gradient: <code style="color:#22d3bf">gradient3d</code> の <code style="color:#22d3bf">(gmag, gvec)</code> か <code style="color:#22d3bf">sobel3d</code> の <code style="color:#22d3bf">(gz, gy, gx)</code>。</p>
+<p>sigma: 構造テンソルを平均するガウスの標準偏差 [voxel]。&gt; 0。</p>
+<p>eps: 分母の下駄(勾配ゼロの所で 0 を返すため)。&gt; 0。</p>
+<p>Returns:</p>
+<p>(D, H, W) float64、[0, 1]。</p>
+<p>Raises:</p>
+<p>ValueError: 形が違う / 非有限 / sigma &lt;= 0 / eps &lt;= 0。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:type_connectivity_tour">type_connectivity_tour</a> — <code style="color:#22d3bf">py -3.11 examples/type_connectivity_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">voxel</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:correlation_score">correlation_score</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">derivative</code>)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:gradient_magnitude">gradient_magnitude</a> · <a style="color:#22d3bf" href="opreprconv:hessian_determinant">hessian_determinant</a> · <a style="color:#22d3bf" href="opreprconv:hessian_vesselness">hessian_vesselness</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: reprconv.py — REPRCONV 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

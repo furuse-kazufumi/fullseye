@@ -1,0 +1,31 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">frame_axis — REPRCONV <code style="color:#22d3bf">structure</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">frame</code> → <code style="color:#22d3bf">normals</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.frame_axis(frame, axis=&#x27;tangent&#x27;)</code> (die Implementierung direkt: <code style="color:#22d3bf">import reprconv; reprconv.frame_axis(frame, axis=&#x27;tangent&#x27;)</code>; aus dem Register: <code style="color:#22d3bf">opsreprconv.get(&quot;frame_axis&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>Frenet-Rahmen <code style="color:#22d3bf">frame</code> → die Einheitsvektoren einer Achse <code style="color:#22d3bf">normals (N,3)</code>. Der Ausgang aus <code style="color:#22d3bf">frame</code>.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p><code style="color:#22d3bf">frenet_frame</code> の返り <code style="color:#22d3bf">(T, N, B)</code>(各 (N,3))から <code style="color:#22d3bf">axis</code> の 1 本を取り出す:</p>
+<p><code style="color:#22d3bf">&quot;tangent&quot;</code> = 接線 T、<code style="color:#22d3bf">&quot;normal&quot;</code> = 主法線 N、<code style="color:#22d3bf">&quot;binormal&quot;</code> = 陪法線 B。取り出した列は点ごとの単位ベクトルなので <code style="color:#22d3bf">normals</code> 型に載る(<code style="color:#22d3bf">normals_to_angles</code> / <code style="color:#22d3bf">normals_to_egi</code> などがそのまま掛かる)。</p>
+<p><code style="color:#22d3bf">frenet_frame</code> は直線区間で N・B がほぼゼロベクトルになる(向き不定)。ここでは <b>長さ 0.5 未満の行を拒否</b>する(黙って単位ベクトルのふりをさせない)。直線を含む曲線で N/B を使うなら、先に <code style="color:#22d3bf">fit_spline_curve</code> で滑らかにするか接線だけを使う。</p>
+<p>Args:</p>
+<p>frame: <code style="color:#22d3bf">(T, N, B)</code> の 3-tuple、各 (N,3)。</p>
+<p>axis: <code style="color:#22d3bf">&quot;tangent&quot;</code> / <code style="color:#22d3bf">&quot;normal&quot;</code> / <code style="color:#22d3bf">&quot;binormal&quot;</code>。</p>
+<p>Returns:</p>
+<p>(N, 3) float64、各行は単位長(<code style="color:#22d3bf">frenet_frame</code> が正規化した値そのまま)。</p>
+<p>Raises:</p>
+<p>ValueError: 3-tuple でない / 形がそろわない / axis が不正 / 長さ 0.5 未満の行がある。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:type_connectivity_tour">type_connectivity_tour</a> — <code style="color:#22d3bf">py -3.11 examples/type_connectivity_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">normals</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:normals_to_angles">normals_to_angles</a> · <a style="color:#22d3bf" href="opreprconv:normals_to_egi">normals_to_egi</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">structure</code>)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:knn_graph_to_conn_graph">knn_graph_to_conn_graph</a> · <a style="color:#22d3bf" href="opreprconv:pointmap_to_points">pointmap_to_points</a> · <a style="color:#22d3bf" href="opreprconv:match_component">match_component</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: reprconv.py — REPRCONV Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

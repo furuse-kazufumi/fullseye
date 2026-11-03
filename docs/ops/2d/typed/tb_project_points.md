@@ -73,7 +73,7 @@ tb_project_points 0.50 0.50
 
 ## 型が繋がる次の op(`keypoints` を入力に取れる)
 
-[identity](../misc/identity.md) · [tb_keypoints_uv_to_points](tb_keypoints_uv_to_points.md) · [tb_keypoints_to_image2d](tb_keypoints_to_image2d.md)
+[identity](../misc/identity.md) · [tb_keypoints_uv_to_points](tb_keypoints_uv_to_points.md) · [tb_keypoints_to_image2d](tb_keypoints_to_image2d.md) · [tb_keypoints_rowcol_to_uv](tb_keypoints_rowcol_to_uv.md) · [tb_keypoints_uv_to_rowcol](tb_keypoints_uv_to_rowcol.md)
 
 ## 同カテゴリ(`typed`)
 

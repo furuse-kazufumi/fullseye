@@ -1,0 +1,29 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">table_field_measurement — REPRCONV <code style="color:#22d3bf">field</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">measurement</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.table_field_measurement(table, key)</code> (die Implementierung direkt: <code style="color:#22d3bf">import reprconv; reprconv.table_field_measurement(table, key)</code>; aus dem Register: <code style="color:#22d3bf">opsreprconv.get(&quot;table_field_measurement&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>Ein Feld einer Tabelle <code style="color:#22d3bf">table</code> → eine einzelne Zahl <code style="color:#22d3bf">measurement</code>. Beispiel: <code style="color:#22d3bf">width</code> von <code style="color:#22d3bf">label_extent</code>.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>値が要素 1 個の有限な数(スカラーか長さ 1 の配列)であることを確かめる。</p>
+<p>Args:</p>
+<p>table: 欄の名前 → 値の dict。</p>
+<p>key: 欄の名前。</p>
+<p>Returns:</p>
+<p>float。</p>
+<p>Raises:</p>
+<p>ValueError: dict でない / 欄が無い / 要素が 1 個でない / 非有限。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• (noch keine)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">measurement</code> als Eingabe)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">field</code>)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:table_field_image2d">table_field_image2d</a> · <a style="color:#22d3bf" href="opreprconv:table_field_signal">table_field_signal</a> · <a style="color:#22d3bf" href="opreprconv:table_field_matrix">table_field_matrix</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: reprconv.py — REPRCONV Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -5,7 +5,7 @@ category: polarization
 in: stokes
 out: table
 gpu: なし
-examples: [optics_imaging, polarization_camera_pipeline, specular_photometric]
+examples: [optics_imaging, polarization_camera_pipeline, specular_photometric, type_connectivity_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.9.0  # fullseye lib version this note was generated for
@@ -94,6 +94,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 - [optics_imaging](../../../../examples/optics_imaging.py) — `py -3.11 examples/optics_imaging.py`
 - [polarization_camera_pipeline](../../../../examples/polarization_camera_pipeline.py) — `py -3.11 examples/polarization_camera_pipeline.py`
 - [specular_photometric](../../../../examples/specular_photometric.py) — `py -3.11 examples/specular_photometric.py`
+- [type_connectivity_tour](../../../../examples/type_connectivity_tour.py) — `py -3.11 examples/type_connectivity_tour.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 

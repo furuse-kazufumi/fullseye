@@ -128,6 +128,27 @@ __all__ = [
     "cscalar_to_polar", "polar_to_cscalar",
     "countrate_to_counts", "counts_to_countrate",
     "deformation_to_points",
+    # 型のつながりを閉じる変換(2026-11-03)
+    "gradient_magnitude",
+    "gradient_coherence",
+    "hessian_determinant",
+    "hessian_vesselness",
+    "frame_axis",
+    "knn_graph_to_conn_graph",
+    "pointmap_to_points",
+    "match_component",
+    "indices_to_positions",
+    "synapse_table_from_table",
+    "jones_state",
+    "tokens_to_matrix",
+    "table_field_image2d",
+    "table_field_signal",
+    "table_field_matrix",
+    "table_field_measurement",
+    "pairs_peak_x",
+    "keypoints_rowcol_to_uv",
+    "keypoints_uv_to_rowcol",
+    "pose_to_matrix",
     "selftest",
 ]
 
@@ -1540,6 +1561,752 @@ def deformation_to_points(deformation):
     if "ctrl" not in deformation:
         raise ValueError(f"deformation: missing 'ctrl' (keys: {sorted(deformation)})")
     return _n3(deformation["ctrl"], "deformation['ctrl']").copy()
+
+
+# --------------------------------------------------------------------------- #
+# 型のつながりを閉じる変換(2026-11-03)                                          #
+#                                                                               #
+# ``tools/type_connectivity.py`` が数えた「作られるのに誰も受けない型」と       #
+# 「受ける op はあるのに誰も作らない型」を、実物を確かめてから 1 つずつ閉じる。 #
+# どれも**既存の型語彙だけ**を使う(新しい型名は 1 つも足していない)。         #
+# --------------------------------------------------------------------------- #
+def _host(x, what):
+    """torch.Tensor でも numpy でも、ホストの float64 ndarray にする(torch は import しない)。"""
+    if hasattr(x, "detach") and hasattr(x, "cpu"):
+        x = x.detach().cpu().numpy()
+    return _arr(x, what)
+
+
+#: ``sobel3d`` の利得(微分 [-1,0,1] の 2 × 他 2 軸の平滑 [1,2,1] の 4 × 4)。
+#: ``sobel3d`` の docstring が「真の勾配の 32 倍」と書いているのと同じ数。
+SOBEL3D_GAIN = 32.0
+
+
+def _gradient_field(gradient):
+    """``gradient`` 型の 2 つの形を、真の勾配 ``(3, D, H, W)``(成分 = d/d軸0, d/d軸1, d/d軸2)に揃える。
+
+    ``gradient`` 型を産む op は 2 つあり、**形が違う**(実測 2026-11-03):
+
+    * ``gradient3d`` → ``(gmag (D,H,W), gvec (D,H,W,3))`` の numpy 2-tuple。利得 1。
+    * ``sobel3d`` → ``(gz, gy, gx)`` の torch tensor 3 本、各 ``(1,1,D,H,W)``。**利得 32**。
+
+    取り違えると大きさが 32 倍ずれるのに例外は出ないので、ここで形から見分けて
+    ``sobel3d`` の形は :data:`SOBEL3D_GAIN` で割る。どちらの形でもなければ拒否する。
+    """
+    if isinstance(gradient, (tuple, list)) and len(gradient) == 2:
+        gvec = _host(gradient[1], "gradient[1] (gvec)")
+        if gvec.ndim != 4 or gvec.shape[-1] != 3:
+            raise ValueError(f"gradient: the gradient3d form is (gmag, gvec) with gvec (D,H,W,3); "
+                             f"got gvec {gvec.shape}")
+        return np.moveaxis(gvec.astype(np.float64), -1, 0)
+    if isinstance(gradient, (tuple, list)) and len(gradient) == 3:
+        comps = []
+        for i, g in enumerate(gradient):
+            a = _host(g, f"gradient[{i}]")
+            a = a.reshape(a.shape[-3:]) if a.ndim == 5 and a.shape[:2] == (1, 1) else a
+            if a.ndim != 3:
+                raise ValueError(f"gradient: the sobel3d form is 3 arrays of (D,H,W) or (1,1,D,H,W); "
+                                 f"got component {i} with shape {np.shape(g)}")
+            comps.append(a.astype(np.float64))
+        if not (comps[0].shape == comps[1].shape == comps[2].shape):
+            raise ValueError(f"gradient: components differ in shape {[c.shape for c in comps]}")
+        return np.stack(comps) / SOBEL3D_GAIN
+    raise ValueError("gradient: expected the gradient3d form (gmag, gvec) or the sobel3d form "
+                     f"(gz, gy, gx); got {type(gradient).__name__}"
+                     + (f" of length {len(gradient)}" if isinstance(gradient, (tuple, list)) else ""))
+
+
+def gradient_magnitude(gradient):
+    """3-D 勾配 ``gradient`` → 勾配の大きさの体積 ``voxel``。``gradient`` 型の出口。
+
+    ``|∇I| = sqrt(gz² + gy² + gx²)``。``gradient3d`` の形 ``(gmag, gvec)`` は ``gvec`` から
+    計算し直す(``gmag`` を信じて素通しにしない —— 渡された対が食い違っていても気づけないため)。
+    ``sobel3d`` の形 ``(gz, gy, gx)`` は利得 32 を割ってから計算するので、**どちらの産み手から
+    来ても真の勾配の大きさ**(1 voxel あたりの濃度変化)になる。
+
+    **一方向**(向き 2 自由度を捨てる)。向きを残すなら :func:`gradient_coherence` や
+    ``sobel3d`` の成分そのもの。
+
+    ★外から来た勾配(微分可能レンダラの出力など)は ``(gmag, gvec)`` の形で渡すこと。
+    3 本の形は ``sobel3d`` の利得 32 として割るので、利得 1 の 3 本を渡すと 1/32 に出る
+    (形だけでは利得を見分けられない。型を分けるかは ``docs/TYPE_CONNECTIVITY.md`` の案)。
+
+    Args:
+        gradient: ``gradient3d`` の ``(gmag, gvec)`` か ``sobel3d`` の ``(gz, gy, gx)``。
+    Returns:
+        (D, H, W) float64。
+    Raises:
+        ValueError: どちらの形でもない / 非有限 / 空。
+    """
+    g = _gradient_field(gradient)
+    return np.sqrt(np.sum(g * g, axis=0))
+
+
+def gradient_coherence(gradient, sigma=1.5, eps=1e-12):
+    """3-D 勾配 → 構造テンソルの**面らしさ**(コヒーレンス)``voxel``、値域 [0, 1]。
+
+    各 voxel で勾配の外積 ``g gᵀ`` をガウス ``sigma`` で平均した構造テンソル ``J`` を作り、
+    固有値 ``μ1 ≥ μ2 ≥ μ3 ≥ 0`` から ``(μ1 − μ2) / (μ1 + μ2 + μ3 + eps)`` を返す
+    (Westin の線形異方性を構造テンソルに当てたもの。Bigün & Granlund 1987、Westin 2002)。
+    近傍の勾配が 1 方向にそろう(層・板・界面)と 1 に近づき、向きがばらばら(等方的な
+    ざらつき・塊)だと 0 に近づく。**勾配の大きさには依らない**(比なので)。
+    平らで勾配の無い所は分母が ``eps`` だけになり 0 を返す。
+
+    ``gradient`` 型を一級の入力として受けるので、勾配の出どころ(``gradient3d`` /
+    ``sobel3d`` / 外部の微分可能レンダラ)を問わない。
+
+    Args:
+        gradient: ``gradient3d`` の ``(gmag, gvec)`` か ``sobel3d`` の ``(gz, gy, gx)``。
+        sigma: 構造テンソルを平均するガウスの標準偏差 [voxel]。> 0。
+        eps: 分母の下駄(勾配ゼロの所で 0 を返すため)。> 0。
+    Returns:
+        (D, H, W) float64、[0, 1]。
+    Raises:
+        ValueError: 形が違う / 非有限 / sigma <= 0 / eps <= 0。
+    """
+    from scipy.ndimage import gaussian_filter
+    if not (np.isfinite(sigma) and sigma > 0):
+        raise ValueError(f"sigma: must be a finite number > 0; got {sigma}")
+    if not (np.isfinite(eps) and eps > 0):
+        raise ValueError(f"eps: must be a finite number > 0; got {eps}")
+    g = _gradient_field(gradient)
+    J = np.empty(g.shape[1:] + (3, 3), dtype=np.float64)
+    for i in range(3):
+        for j in range(i, 3):
+            s = gaussian_filter(g[i] * g[j], sigma=float(sigma), mode="nearest")
+            J[..., i, j] = s
+            J[..., j, i] = s
+    mu = np.linalg.eigvalsh(J)[..., ::-1]          # 降順
+    mu = np.clip(mu, 0.0, None)                    # 丸めで出る微小な負を 0 に
+    return np.clip((mu[..., 0] - mu[..., 1]) / (mu.sum(axis=-1) + float(eps)), 0.0, 1.0)
+
+
+def _hessian_eigs(hessian):
+    """``hessian3d`` の 6 成分 (zz, yy, xx, zy, zx, yx) → 固有値 (D,H,W,3)、``|λ|`` の昇順。"""
+    if not isinstance(hessian, (tuple, list)) or len(hessian) != 6:
+        raise ValueError("hessian: expected the hessian3d form, 6 arrays (zz, yy, xx, zy, zx, yx); "
+                         f"got {type(hessian).__name__}"
+                         + (f" of length {len(hessian)}" if isinstance(hessian, (tuple, list)) else ""))
+    c = [_host(h, f"hessian[{i}]").astype(np.float64) for i, h in enumerate(hessian)]
+    if any(x.ndim != 3 or x.shape != c[0].shape for x in c):
+        raise ValueError(f"hessian: the 6 components must share one (D,H,W) shape; "
+                         f"got {[x.shape for x in c]}")
+    zz, yy, xx, zy, zx, yx = c
+    H = np.stack([np.stack([zz, zy, zx], -1),
+                  np.stack([zy, yy, yx], -1),
+                  np.stack([zx, yx, xx], -1)], -2)
+    lam = np.linalg.eigvalsh(H)
+    order = np.argsort(np.abs(lam), axis=-1)
+    return np.take_along_axis(lam, order, axis=-1)
+
+
+def hessian_determinant(hessian):
+    """3-D Hessian ``hessian`` → 行列式 ``det H`` の体積 ``voxel``(符号つき)。``hessian`` 型の出口。
+
+    ``det H = λ1 λ2 λ3``(固有値の積)。球状の明るい塊の中心では 3 つとも負なので負、
+    暗い塊では正、管や板(固有値の 1 つ以上が 0 に近い)では 0 に近い ——
+    Determinant-of-Hessian の塊検出(Lindeberg 1998)の 3-D 版。単位は ``hessian3d``
+    と同じ 1/voxel² の 3 乗(正規化しない。**値の比較は同じ尺度の中だけ**で)。
+
+    固有値を経由せず成分から直接 ``zz(yy·xx − yx²) − zy(zy·xx − yx·zx) + zx(zy·yx − yy·zx)``
+    で計算する(固有値分解の丸めを入れないため)。
+
+    Args:
+        hessian: ``hessian3d`` の 6 成分 (zz, yy, xx, zy, zx, yx)。torch でも numpy でもよい。
+    Returns:
+        (D, H, W) float64。
+    Raises:
+        ValueError: 6 成分でない / 形がそろわない / 非有限 / 空。
+    """
+    if not isinstance(hessian, (tuple, list)) or len(hessian) != 6:
+        raise ValueError("hessian: expected the hessian3d form, 6 arrays (zz, yy, xx, zy, zx, yx); "
+                         f"got {type(hessian).__name__}"
+                         + (f" of length {len(hessian)}" if isinstance(hessian, (tuple, list)) else ""))
+    c = [_host(h, f"hessian[{i}]").astype(np.float64) for i, h in enumerate(hessian)]
+    if any(x.ndim != 3 or x.shape != c[0].shape for x in c):
+        raise ValueError(f"hessian: the 6 components must share one (D,H,W) shape; "
+                         f"got {[x.shape for x in c]}")
+    zz, yy, xx, zy, zx, yx = c
+    return zz * (yy * xx - yx * yx) - zy * (zy * xx - yx * zx) + zx * (zy * yx - yy * zx)
+
+
+def hessian_vesselness(hessian, alpha=0.5, beta=0.5, c=None, black_ridges=False):
+    """3-D Hessian → Frangi の管らしさ(vesselness)``voxel``、値域 [0, 1]。
+
+    固有値を ``|λ1| ≤ |λ2| ≤ |λ3|`` に並べ、``Ra = |λ2|/|λ3|``(板と管を分ける)、
+    ``Rb = |λ1|/sqrt(|λ2 λ3|)``(塊を除く)、``S = sqrt(λ1²+λ2²+λ3²)``(背景の雑音を除く)から
+
+        V = (1 − exp(−Ra²/2α²)) · exp(−Rb²/2β²) · (1 − exp(−S²/2c²))
+
+    を返す(Frangi et al. 1998, MICCAI)。明るい管(``black_ridges=False``)では
+    ``λ2 > 0`` か ``λ3 > 0`` の voxel を 0 にする(暗い管なら符号を逆に)。
+    ``c`` の既定は Frangi の勧めどおり ``S`` の最大値の半分。
+
+    ``vol_frangi`` は体積から Hessian を**自分で作る**(尺度ごとに)のに対し、こちらは
+    ``hessian`` 型を受ける —— Hessian の出どころ(``hessian3d`` / 外部の微分)を選べ、
+    同じ Hessian から :func:`hessian_determinant` など複数の量を引き出せる。
+    1 尺度だけ(多尺度の最大は呼ぶ側で取る)。
+
+    Args:
+        hessian: ``hessian3d`` の 6 成分 (zz, yy, xx, zy, zx, yx)。
+        alpha, beta: Frangi の感度(既定 0.5 / 0.5)。> 0。
+        c: 構造の強さの感度。None で ``max(S)/2``。> 0。全面 0 の Hessian では 0 を返す。
+        black_ridges: True で暗い管(背景より暗い)を拾う。
+    Returns:
+        (D, H, W) float64、[0, 1]。
+    Raises:
+        ValueError: 6 成分でない / 非有限 / alpha・beta・c が正でない。
+    """
+    for nm, v in (("alpha", alpha), ("beta", beta)):
+        if not (np.isfinite(v) and v > 0):
+            raise ValueError(f"{nm}: must be a finite number > 0; got {v}")
+    lam = _hessian_eigs(hessian)
+    l1, l2, l3 = lam[..., 0], lam[..., 1], lam[..., 2]
+    a1, a2, a3 = np.abs(l1), np.abs(l2), np.abs(l3)
+    S = np.sqrt(l1 * l1 + l2 * l2 + l3 * l3)
+    if c is None:
+        smax = float(S.max())
+        if smax == 0.0:
+            return np.zeros(S.shape, dtype=np.float64)
+        c = 0.5 * smax
+    if not (np.isfinite(c) and c > 0):
+        raise ValueError(f"c: must be a finite number > 0 (or None); got {c}")
+    tiny = np.finfo(np.float64).tiny
+    Ra = a2 / np.maximum(a3, tiny)
+    Rb = a1 / np.maximum(np.sqrt(a2 * a3), tiny)
+    V = ((1.0 - np.exp(-(Ra * Ra) / (2.0 * alpha * alpha)))
+         * np.exp(-(Rb * Rb) / (2.0 * beta * beta))
+         * (1.0 - np.exp(-(S * S) / (2.0 * float(c) * float(c)))))
+    wrong = (l2 < 0) | (l3 < 0) if black_ridges else (l2 > 0) | (l3 > 0)
+    V[wrong] = 0.0
+    return np.clip(V, 0.0, 1.0)
+
+
+_FRAME_AXES = {"tangent": 0, "normal": 1, "binormal": 2}
+
+
+def frame_axis(frame, axis="tangent"):
+    """Frenet 標構 ``frame`` → 1 本の軸の単位ベクトル列 ``normals (N,3)``。``frame`` 型の出口。
+
+    ``frenet_frame`` の返り ``(T, N, B)``(各 (N,3))から ``axis`` の 1 本を取り出す:
+    ``"tangent"`` = 接線 T、``"normal"`` = 主法線 N、``"binormal"`` = 陪法線 B。
+    取り出した列は点ごとの単位ベクトルなので ``normals`` 型に載る
+    (``normals_to_angles`` / ``normals_to_egi`` などがそのまま掛かる)。
+
+    ``frenet_frame`` は直線区間で N・B がほぼゼロベクトルになる(向き不定)。ここでは
+    **長さ 0.5 未満の行を拒否**する(黙って単位ベクトルのふりをさせない)。
+    直線を含む曲線で N/B を使うなら、先に ``fit_spline_curve`` で滑らかにするか接線だけを使う。
+
+    Args:
+        frame: ``(T, N, B)`` の 3-tuple、各 (N,3)。
+        axis: ``"tangent"`` / ``"normal"`` / ``"binormal"``。
+    Returns:
+        (N, 3) float64、各行は単位長(``frenet_frame`` が正規化した値そのまま)。
+    Raises:
+        ValueError: 3-tuple でない / 形がそろわない / axis が不正 / 長さ 0.5 未満の行がある。
+    """
+    if axis not in _FRAME_AXES:
+        raise ValueError(f"axis: must be one of {sorted(_FRAME_AXES)}; got {axis!r}")
+    if not isinstance(frame, (tuple, list)) or len(frame) != 3:
+        raise ValueError("frame: expected the frenet_frame form (T, N, B); "
+                         f"got {type(frame).__name__}"
+                         + (f" of length {len(frame)}" if isinstance(frame, (tuple, list)) else ""))
+    parts = [_n3(f, f"frame[{i}]") for i, f in enumerate(frame)]
+    if not (parts[0].shape == parts[1].shape == parts[2].shape):
+        raise ValueError(f"frame: T, N, B must share one shape; got {[p.shape for p in parts]}")
+    v = parts[_FRAME_AXES[axis]].astype(np.float64)
+    n = np.linalg.norm(v, axis=1)
+    bad = np.flatnonzero(n < 0.5)
+    if bad.size:
+        raise ValueError(f"frame_axis: {bad.size} row(s) of the {axis} are not unit vectors "
+                         f"(first at index {int(bad[0])}, length {float(n[bad[0]]):.3g}) — "
+                         f"the Frenet {axis} is undefined on straight stretches")
+    return v.copy()
+
+
+_GRAPH_WEIGHTS = ("inverse_distance", "distance", "binary")
+
+
+def knn_graph_to_conn_graph(graph, weight="inverse_distance", symmetric=True):
+    """k 近傍グラフ ``graph`` → 重みつき隣接行列 ``conn_graph (n, n)``。``graph`` 型の出口。
+
+    ``knn_graph`` の返り ``(idx (n,k) int, dist (n,k) float)`` を、``conn_graph`` 族
+    (``graph_components`` / ``graph_laplacian_spectrum`` / ``graph_layout_spectral`` …)が
+    受ける n×n の ``W[i, j]`` = i → j の重みにする。``weight``:
+
+    * ``"inverse_distance"`` —— ``1 / dist``(近いほど強い。距離 0 の重複点は拒否する)
+    * ``"distance"`` —— ``dist`` そのもの(経路長として使う側向け)
+    * ``"binary"`` —— 1
+
+    ``symmetric=True`` で ``W = max(W, Wᵀ)``(k 近傍は片想いがあるので、無向グラフとして
+    扱うなら対称化する)。対角は 0(``knn_graph`` は自分を除いている)。
+    n は ``conngraph.MAX_NODES``(4096)まで —— 密行列なので、それを超える点群は
+    先に ``farthest_point_sampling`` などで間引く。
+
+    Args:
+        graph: ``(idx, dist)`` の 2-tuple(``knn_graph`` の返り)。
+        weight: ``"inverse_distance"`` / ``"distance"`` / ``"binary"``。
+        symmetric: True で対称化。
+    Returns:
+        (n, n) float64。
+    Raises:
+        ValueError: 2-tuple でない / 形が違う / 添字が範囲外 / 自己ループ / n が上限超え /
+            ``inverse_distance`` で距離 0 / weight が不正。
+    """
+    import conngraph
+    if weight not in _GRAPH_WEIGHTS:
+        raise ValueError(f"weight: must be one of {list(_GRAPH_WEIGHTS)}; got {weight!r}")
+    if not isinstance(graph, (tuple, list)) or len(graph) != 2:
+        raise ValueError("graph: expected the knn_graph form (idx, dist); "
+                         f"got {type(graph).__name__}"
+                         + (f" of length {len(graph)}" if isinstance(graph, (tuple, list)) else ""))
+    idx = _arr(graph[0], "graph[0] (idx)", dtype=np.int64)
+    dist = _arr(graph[1], "graph[1] (dist)")
+    if idx.ndim != 2 or idx.shape != dist.shape:
+        raise ValueError(f"graph: idx and dist must both be (n, k); got {idx.shape} and {dist.shape}")
+    n = idx.shape[0]
+    if n > conngraph.MAX_NODES:
+        raise ValueError(f"graph: n = {n} nodes exceeds conngraph.MAX_NODES = {conngraph.MAX_NODES} "
+                         f"(a dense n×n matrix); subsample the points first")
+    if idx.size and (idx.min() < 0 or idx.max() >= n):
+        raise ValueError(f"graph: neighbour indices must lie in [0, {n - 1}]; "
+                         f"got [{int(idx.min())}, {int(idx.max())}]")
+    rows = np.repeat(np.arange(n), idx.shape[1])
+    cols = idx.ravel()
+    if np.any(rows == cols):
+        raise ValueError("graph: a node lists itself as a neighbour (knn_graph excludes self)")
+    if np.any(dist < 0):
+        raise ValueError("graph: distances must be >= 0")
+    if weight == "inverse_distance":
+        if np.any(dist == 0):
+            raise ValueError("graph: zero distance (duplicate points) cannot be inverted; "
+                             "use weight='binary' or drop duplicate points first")
+        w = 1.0 / dist.ravel()
+    elif weight == "distance":
+        w = dist.ravel().astype(np.float64)
+    else:
+        w = np.ones(rows.size, dtype=np.float64)
+    W = np.zeros((n, n), dtype=np.float64)
+    W[rows, cols] = w
+    if symmetric:
+        W = np.maximum(W, W.T)
+    return W
+
+
+def pointmap_to_points(pointmap, drop_nonpositive_z=False):
+    """格子整列の 3-D 点 ``pointmap (H,W,3)`` → 点群 ``points (N,3)``。``pointmap`` 型の出口。
+
+    行優先(row-major)に並べ直し、**非有限の行は捨てる**(``pointmap`` では NaN が「その
+    画素は無効」の印なので、ここでは拒否せず落とす)。``drop_nonpositive_z=True`` は
+    ``z <= 0`` の行も捨てる —— ``depth_to_organized_points`` のカメラ座標の pointmap は
+    無効深度 0 が原点に集まるので、その場合に使う(``depth_to_points`` と同じ規約になり、
+    同じ内部行列なら**同じ点が同じ順に**出る)。地心座標(``dem_geocentric_grid``)では
+    z が負になりうるので既定は False。列の意味(x, y, z)は入力のまま変えない。
+
+    Args:
+        pointmap: (H, W, 3)。
+        drop_nonpositive_z: True で z <= 0 の行も捨てる。
+    Returns:
+        (N, 3) float64。
+    Raises:
+        ValueError: (H, W, 3) でない / 空 / 有効な点が 1 つも残らない。
+    """
+    try:
+        p = np.asarray(pointmap, dtype=np.float64)
+    except (TypeError, ValueError) as exc:
+        raise ValueError(f"pointmap: cannot be read as a numeric array ({exc})") from exc
+    if p.ndim != 3 or p.shape[2] != 3:
+        raise ValueError(f"pointmap: must be (H, W, 3); got {p.shape}")
+    if p.size == 0:
+        raise ValueError("pointmap: empty array is not a valid representation")
+    flat = p.reshape(-1, 3)
+    keep = np.all(np.isfinite(flat), axis=1)
+    if drop_nonpositive_z:
+        keep &= flat[:, 2] > 0
+    if not np.any(keep):
+        raise ValueError(f"pointmap: no valid point remains out of {flat.shape[0]} "
+                         f"(non-finite{' or z <= 0' if drop_nonpositive_z else ''})")
+    return flat[keep].copy()
+
+
+def match_component(match, index=0):
+    """``match`` 型(1-D の結果ベクトル)→ その 1 成分の ``measurement``。``match`` 型の出口。
+
+    2-D レジストリの ``match`` 型は「1 スカラーでは表せない複数の値」を 1 本のベクトルで運ぶ:
+    ``area_center`` = (面積 [px], 重心の行 [px], 重心の列 [px])、``ncc_locate`` /
+    ``shape_locate`` = (相関値, 行, 列)、``eccentricity`` = (Anisometry, Bulkiness,
+    StructureFactor) など。HALCON でも ``area_center`` の Row だけを次の処理に渡すように、
+    **成分を名指しで 1 つ取り出す**のがこの型の自然な出口。どの成分が何かは産んだ op の
+    docstring が決めている(ここでは解釈しない)。
+
+    Args:
+        match: 1-D の有限な数値列(長さ >= 1)。0-D のスカラーは長さ 1 として受ける。
+        index: 取り出す成分の番号(0 始まり)。負の番号は使えない(取り違えを防ぐため)。
+    Returns:
+        float。
+    Raises:
+        ValueError: 1-D でない / 非有限 / 空 / index が範囲外か整数でない。
+    """
+    a = np.atleast_1d(_arr(match, "match"))
+    if a.ndim != 1:
+        raise ValueError(f"match: must be a 1-D result vector; got shape {a.shape}")
+    if isinstance(index, bool) or not isinstance(index, (int, np.integer)):
+        raise ValueError(f"index: must be an int; got {type(index).__name__}")
+    if not 0 <= int(index) < a.size:
+        raise ValueError(f"index: must be within [0, {a.size - 1}]; got {index}")
+    return float(a[int(index)])
+
+
+def indices_to_positions(indices, spacing=1.0, origin=0.0):
+    """添字 ``indices`` → 事象の位置 ``positions``(物理単位)。``positions`` 型の入口。
+
+    ``x = origin + spacing * i``。``find_peaks`` / ``zero_crossings_funct_1d`` などが返す
+    **標本番号**を、``point_spectrum`` が受ける**位置の列**(欠陥が流れ方向のどこにあったか、
+    いつ数えたか)にする。``positions`` を ``signal`` と分けてあるのは、等間隔標本の列を
+    事象の位置として(またはその逆に)渡すと、例外なしに別物のスペクトルが出るため
+    (``point_spectrum`` の docstring)。順序は入力のまま(並べ替えない)。
+
+    空の添字は ValueError(この repo の空入力の方針 A: 黙って空を返さず、何が空かを名指しで拒否)。
+
+    Args:
+        indices: 1-D の整数(整数値の float も可。非整数・非有限・空は拒否)。
+        spacing: 標本間隔(位置の単位 / 標本)。有限で 0 でないこと。
+        origin: 添字 0 の位置。有限。
+    Returns:
+        (k,) float64。
+    Raises:
+        ValueError: 1-D でない / 整数でない / 非有限 / 空 / spacing が 0 か非有限。
+    """
+    if not (np.isfinite(spacing) and spacing != 0):
+        raise ValueError(f"spacing: must be finite and non-zero; got {spacing}")
+    if not np.isfinite(origin):
+        raise ValueError(f"origin: must be finite; got {origin}")
+    i = np.atleast_1d(_arr(indices, "indices", dtype=np.int64))
+    if i.ndim != 1:
+        raise ValueError(f"indices: must be 1-D; got shape {i.shape}")
+    if not (np.isfinite(spacing) and spacing != 0):
+        raise ValueError(f"spacing: must be finite and non-zero; got {spacing}")
+    if not np.isfinite(origin):
+        raise ValueError(f"origin: must be finite; got {origin}")
+    return float(origin) + float(spacing) * i.astype(np.float64)
+
+
+def synapse_table_from_table(table, pre="pre", post="post", count=None):
+    """表 ``table``(列名 → 配列)→ シナプス表 ``synapse_table (m, 3)``。``synapse_table`` 型の入口。
+
+    コネクトームの公開データは CSV(``table_read_csv`` で ``table`` になる)で来るので、
+    その 3 列を ``(pre_id, post_id, count)`` の m×3 に詰め直す。``count`` を省くと 1
+    (シナプス 1 個 = 1 行の表)。``synapse_table`` を ``points`` と分けてある理由
+    (形が同じ (N,3) で、点群を渡すと座標が id として読まれる)を守るため、**id が
+    0 以上の整数であることをここで確かめる**(``graph_from_synapses`` と同じ規約)。
+
+    ``table`` は 2 つの形を受ける: 列名 → 配列の dict そのものと、``table_read_csv`` の返り
+    ``{"columns": {列名: 配列}, "units": ..., "meta": ...}``(列は ``columns`` から読む)。
+
+    Args:
+        table: 列名 → 1-D 配列の dict、または ``table_read_csv`` の返り。
+        pre, post: 前・後ニューロン id の列名。
+        count: シナプス数の列名(None で全行 1)。
+    Returns:
+        (m, 3) float64。
+    Raises:
+        ValueError: dict でない / 列が無い / 長さがそろわない / id が 0 以上の整数でない /
+            count が負か非有限 / 空。
+    """
+    if not isinstance(table, dict):
+        raise ValueError(f"table: must be a dict of column name -> 1-D array; "
+                         f"got {type(table).__name__}")
+    if isinstance(table.get("columns"), dict) and pre not in table:
+        table = table["columns"]                   # table_read_csv の形
+    for col in (pre, post) + ((count,) if count is not None else ()):
+        if col not in table:
+            raise ValueError(f"table: missing column {col!r} (columns: {sorted(map(str, table))})")
+    a = np.ravel(_arr(table[pre], f"table[{pre!r}]"))
+    b = np.ravel(_arr(table[post], f"table[{post!r}]"))
+    c = (np.ones_like(a, dtype=np.float64) if count is None
+         else np.ravel(_arr(table[count], f"table[{count!r}]")))
+    if not (a.size == b.size == c.size):
+        raise ValueError(f"table: columns differ in length ({a.size}, {b.size}, {c.size})")
+    ids = np.concatenate([a, b])
+    if np.any(ids < 0) or not np.all(ids == np.round(ids)):
+        raise ValueError("table: pre / post ids must be whole numbers >= 0 "
+                         "(a point cloud read as synapses would pass silently otherwise)")
+    if np.any(c < 0):
+        raise ValueError("table: count must be >= 0")
+    return np.stack([a, b, c], axis=1).astype(np.float64)
+
+
+def jones_state(azimuth_deg=0.0, ellipticity_deg=0.0, amplitude=1.0):
+    """偏光の向きと楕円率 → Jones ベクトル ``jones``(Ex, Ey)。``jones`` 型の入口。
+
+    方位角 ψ = ``azimuth_deg``、楕円率角 χ = ``ellipticity_deg``(|χ| <= 45 度)で
+
+        E = A · [cos ψ cos χ + i sin ψ sin χ,  sin ψ cos χ − i cos ψ sin χ]
+
+    を返す。``optics.stokes_from_jones`` の約束(S3 = 2 Im(Ex·conj(Ey)))のもとで
+    **Stokes が (A², A² cos2χ cos2ψ, A² cos2χ sin2ψ, A² sin2χ) になる**ように符号を選んである
+    (χ = 0 で直線偏光、χ = +45 度で S3 > 0 の円偏光 = ``[1, -i]/√2``)。
+    ``jones_apply`` に通す入射光の状態として使う。それまで Jones ベクトルを作る op が無く、
+    ``jones_apply`` の第 2 入力と ``stokes_from_jones`` に何も渡せなかった。
+
+    Args:
+        azimuth_deg: 偏光楕円の長軸の向き [度](+x から +y へ)。有限。
+        ellipticity_deg: 楕円率角 [度]、[-45, 45]。
+        amplitude: 振幅 A(>= 0、有限)。強度は A²。
+    Returns:
+        (2,) complex128。
+    Raises:
+        ValueError: 非有限 / ellipticity が [-45, 45] の外 / amplitude < 0。
+    """
+    for nm, v in (("azimuth_deg", azimuth_deg), ("ellipticity_deg", ellipticity_deg),
+                  ("amplitude", amplitude)):
+        if not np.isfinite(v):
+            raise ValueError(f"{nm}: must be finite; got {v}")
+    if not -45.0 <= float(ellipticity_deg) <= 45.0:
+        raise ValueError(f"ellipticity_deg: must be within [-45, 45]; got {ellipticity_deg}")
+    if amplitude < 0:
+        raise ValueError(f"amplitude: must be >= 0; got {amplitude}")
+    p, c = np.radians(float(azimuth_deg)), np.radians(float(ellipticity_deg))
+    return float(amplitude) * np.array(
+        [np.cos(p) * np.cos(c) + 1j * np.sin(p) * np.sin(c),
+         np.sin(p) * np.cos(c) - 1j * np.cos(p) * np.sin(c)], dtype=np.complex128)
+
+
+def tokens_to_matrix(tokens):
+    """トークン列 ``tokens (T, d)`` → 一般の行列 ``matrix (T, d)``。``tokens`` 型の出口。
+
+    中身は変えない(写しを返す)。``tokens`` を ``matrix`` と分けてあるのは、**入る側**で
+    転置した (d, T) が黙って通るのを防ぐため(``opsllmcore`` の docstring)で、出る側は
+    一般の行列として扱ってよい —— SVD・条件数・ノルムなど ``matrix`` の op がそのまま掛かる
+    (例: 注意の出力の実効次数を ``mat_cond`` で見る)。逆向き(``matrix`` → ``tokens``)は
+    軸の順を確かめようがないので作らない。
+
+    Args:
+        tokens: (T, d) の有限な実数列。
+    Returns:
+        (T, d) float64。
+    Raises:
+        ValueError: 2-D でない / 非有限 / 空。
+    """
+    t = _arr(tokens, "tokens")
+    if t.ndim != 2:
+        raise ValueError(f"tokens: must be (T, d); got {t.shape}")
+    return t.astype(np.float64, copy=True)
+
+
+def _table_value(table, key, what):
+    """``table`` 型の値から 1 欄を取り出す(dict そのもの / ``table_read_csv`` の ``columns``)。"""
+    if not isinstance(table, dict):
+        raise ValueError(f"{what}: table must be a dict (column name -> value); got {type(table).__name__}")
+    if key not in table and isinstance(table.get("columns"), dict):
+        table = table["columns"]                   # table_read_csv の形
+    if key not in table:
+        raise ValueError(f"{what}: no field {key!r} (fields: {sorted(map(str, table))})")
+    return table[key]
+
+
+def table_field_image2d(table, key):
+    """表 ``table`` の 1 欄 → 2-D 画像 ``image2d``。``table`` を返す op から画像を受ける op へのつなぎ。
+
+    ``vx_sobel3x3`` の ``{gx, gy, valid}`` → ``vx_magnitude(gx, gy)``、``flow_from_depth_motion``
+    の ``{u, v, ...}`` → ``ttc_from_flow(u, v)`` のように、**dict を返す op の欄を名指しで取り出す**。
+    取り出した値が 2-D の有限な数値配列であることを確かめる(型の名前どおりの物しか通さない)。
+    bool の欄(``valid`` のような印)は 0/1 の float にする。
+
+    Args:
+        table: 欄の名前 → 値の dict(``table_read_csv`` の返りなら ``columns`` から読む)。
+        key: 欄の名前。
+    Returns:
+        (H, W) の配列(dtype はそのまま。bool は float64)。
+    Raises:
+        ValueError: dict でない / 欄が無い / 2-D でない / 非有限 / 空。
+    """
+    v = _table_value(table, key, "table_field_image2d")
+    a = np.asarray(v)
+    if a.dtype == bool:
+        a = a.astype(np.float64)
+    a = _arr(a, f"table[{key!r}]", dtype=a.dtype if a.dtype.kind in "iuf" else float)
+    if a.ndim != 2:
+        raise ValueError(f"table_field_image2d: field {key!r} is not 2-D (shape {a.shape})")
+    return a.copy()
+
+
+def table_field_signal(table, key):
+    """表 ``table`` の 1 欄 → 1-D 配列 ``signal``。CSV の 1 列や dict の系列を信号の op へ渡す。
+
+    1-D の有限な数値列であることを確かめる((n,1) / (1,n) は 1-D に直す。それ以外の 2-D は拒否)。
+
+    Args:
+        table: 欄の名前 → 値の dict(``table_read_csv`` の返りなら ``columns`` から読む)。
+        key: 欄の名前。
+    Returns:
+        (n,) float64。
+    Raises:
+        ValueError: dict でない / 欄が無い / 1-D に直せない / 非有限 / 空。
+    """
+    a = _arr(_table_value(table, key, "table_field_signal"), f"table[{key!r}]")
+    if a.ndim == 2 and 1 in a.shape:
+        a = a.ravel()
+    if a.ndim != 1:
+        raise ValueError(f"table_field_signal: field {key!r} is not 1-D (shape {a.shape})")
+    return a.astype(np.float64, copy=True)
+
+
+def table_field_matrix(table, key):
+    """表 ``table`` の 1 欄 → 一般の行列 ``matrix``。例: ``swt_map`` の ``swt`` 欄 → ``text_candidates``。
+
+    2-D の有限な数値配列であることを確かめる。``swt_map`` の SWT 場のように「線の無い画素」を
+    0 で持つ欄はそのまま通る(NaN で持つ欄は拒否される —— 中身の約束は産んだ op の docstring)。
+
+    Args:
+        table: 欄の名前 → 値の dict。
+        key: 欄の名前。
+    Returns:
+        2-D float64。
+    Raises:
+        ValueError: dict でない / 欄が無い / 2-D でない / 非有限 / 空。
+    """
+    a = _arr(_table_value(table, key, "table_field_matrix"), f"table[{key!r}]")
+    if a.ndim != 2:
+        raise ValueError(f"table_field_matrix: field {key!r} is not 2-D (shape {a.shape})")
+    return a.astype(np.float64, copy=True)
+
+
+def table_field_measurement(table, key):
+    """表 ``table`` の 1 欄 → 数 1 個 ``measurement``。例: ``label_extent`` の ``width``。
+
+    値が要素 1 個の有限な数(スカラーか長さ 1 の配列)であることを確かめる。
+
+    Args:
+        table: 欄の名前 → 値の dict。
+        key: 欄の名前。
+    Returns:
+        float。
+    Raises:
+        ValueError: dict でない / 欄が無い / 要素が 1 個でない / 非有限。
+    """
+    a = _arr(_table_value(table, key, "table_field_measurement"), f"table[{key!r}]")
+    if a.size != 1:
+        raise ValueError(f"table_field_measurement: field {key!r} holds {a.size} values, not one")
+    return float(a.ravel()[0])
+
+
+def pairs_peak_x(pairs, x_min=None, x_max=None):
+    """対 ``pairs (x, y)`` → y が最大になる x(放物線で標本の間まで補間)``measurement``。
+
+    ``spectrum`` の ``(freqs, magnitude)`` から主周波数、``surface_psd`` の (周波数, PSD) から
+    卓越波長の逆数を読む、のように **対の列のピークの位置**を返す。最大の標本と両隣の 3 点に
+    放物線を当て、頂点の x を返す(端の標本が最大のときは補間せずその x)。**補間の偏りは
+    窓しだい**: 窓を掛けない(矩形)正弦波の振幅スペクトルでは最大 0.25 bin ほど(実測 1 Hz 刻みで
+    123.4 Hz → 123.18、123.25 → 123.05、整数と半整数の周波数では 1e-2 bin 以下)。
+    細かく要るなら窓を掛けた信号か ``peak_subbin`` を使う。``x_min`` / ``x_max`` で探す範囲を切る ——
+    **スペクトルでは DC(x = 0)が最大になりやすい**ので、主周波数を探すなら ``x_min`` を 0 より
+    大きくする。y の同点は最初の標本。
+
+    Args:
+        pairs: (n, 2) か 2-tuple の (x, y)。x は昇順。
+        x_min, x_max: 探す x の範囲(含む)。None で端まで。
+    Returns:
+        float(ピークの x)。
+    Raises:
+        ValueError: 対でない / x が昇順でない / 範囲に標本が無い / 非有限。
+    """
+    p = _n2(pairs, "pairs")
+    x, y = p[:, 0], p[:, 1]
+    if x.size > 1 and np.any(np.diff(x) <= 0):
+        raise ValueError("pairs: x must be strictly increasing")
+    keep = np.ones(x.size, dtype=bool)
+    if x_min is not None:
+        keep &= x >= float(x_min)
+    if x_max is not None:
+        keep &= x <= float(x_max)
+    idx = np.flatnonzero(keep)
+    if idx.size == 0:
+        raise ValueError(f"pairs_peak_x: no sample within [{x_min}, {x_max}]")
+    k = int(idx[np.argmax(y[idx])])
+    if k - 1 not in idx or k + 1 not in idx:
+        return float(x[k])
+    y0, y1, y2 = y[k - 1], y[k], y[k + 1]
+    den = y0 - 2.0 * y1 + y2
+    if den >= 0:                                   # 平ら・谷: 補間しない
+        return float(x[k])
+    d = 0.5 * (y0 - y2) / den                      # 標本番号での頂点のずれ、|d| <= 0.5
+    step = (x[k + 1] - x[k - 1]) / 2.0
+    return float(x[k] + d * step)
+
+
+def _swap2(keypoints, what):
+    a = _n2(keypoints, what)
+    return a[:, ::-1].copy()
+
+
+def keypoints_rowcol_to_uv(keypoints):
+    """像面の点 ``(row, col)`` → ``(u, v) = (col, row)``。``keypoints`` 型の 2 つの流儀のつなぎ。
+
+    ``keypoints`` 型には 2 つの軸の約束が同居している(実測): ``calib.project_3d_point`` などは
+    **(row, col)**、``project_points`` / ``dlt_pose`` / ``pnp_ransac`` は **(u, v) = (列, 行)**。
+    取り違えても例外は出ず、姿勢が鏡に映ったように出る(W2 の実測: t = (−0.565, 0.61, 3.21)
+    のはずが (0.1, −0.05, 3.0))。列を入れ替えるだけだが、**どちらの向きかを op 名に書く**ため
+    逆向きの :func:`keypoints_uv_to_rowcol` と 2 本に分けてある(中身は同じ入れ替え)。
+
+    Args:
+        keypoints: (N, 2) の (row, col)。
+    Returns:
+        (N, 2) float64 の (u, v)。
+    Raises:
+        ValueError: (N, 2) でない / 非有限 / 空。
+    """
+    return _swap2(keypoints, "keypoints")
+
+
+def keypoints_uv_to_rowcol(keypoints):
+    """像面の点 ``(u, v) = (col, row)`` → ``(row, col)``。:func:`keypoints_rowcol_to_uv` の逆向き。
+
+    Args:
+        keypoints: (N, 2) の (u, v)。
+    Returns:
+        (N, 2) float64 の (row, col)。
+    Raises:
+        ValueError: (N, 2) でない / 非有限 / 空。
+    """
+    return _swap2(keypoints, "keypoints")
+
+
+def pose_to_matrix(pose):
+    """剛体姿勢 ``pose (R, t)`` → 4×4 の同次変換 ``matrix``。
+
+    ``dlt_pose`` / ``icp_point2point_3d`` / ``fit_rigid`` などは ``(R (3,3), t (3,))`` を返すが、
+    ``rotation_translation_error`` などは 4×4 を受ける。``[[R, t], [0, 0, 0, 1]]`` に詰める。
+    既に 4×4 の配列が来たら、最下行が (0, 0, 0, 1) であることを確かめて写しを返す。
+    R が回転行列であること(``RᵀR = I``、``det R = +1``、公差 1e-6)を確かめる ——
+    相似変換や鏡映を黙って剛体として通さない。
+
+    Args:
+        pose: ``(R, t)`` の 2-tuple / list、``{"R": .., "t": ..}`` の dict、または 4×4 配列。
+    Returns:
+        (4, 4) float64。
+    Raises:
+        ValueError: 形が違う / R が回転行列でない / 非有限。
+    """
+    if isinstance(pose, dict) and "R" in pose and "t" in pose:
+        pose = (pose["R"], pose["t"])
+    if isinstance(pose, (tuple, list)) and len(pose) >= 2:
+        R_ = _arr(pose[0], "pose[0] (R)")
+        t_ = np.ravel(_arr(pose[1], "pose[1] (t)"))
+        if R_.shape != (3, 3) or t_.shape != (3,):
+            raise ValueError(f"pose: R must be (3,3) and t (3,); got {R_.shape} and {t_.shape}")
+        M = np.eye(4)
+        M[:3, :3] = R_
+        M[:3, 3] = t_
+    else:
+        M = _arr(pose, "pose")
+        if M.shape != (4, 4) or not np.allclose(M[3], [0, 0, 0, 1], atol=1e-12):
+            raise ValueError(f"pose: expected (R, t) or a 4x4 homogeneous matrix; got shape {M.shape}")
+        M = M.astype(np.float64, copy=True)
+    R_ = M[:3, :3]
+    if not (np.allclose(R_.T @ R_, np.eye(3), atol=1e-6) and np.linalg.det(R_) > 0):
+        raise ValueError("pose: R is not a rotation (R^T R != I or det R <= 0)")
+    return M
 
 
 # --------------------------------------------------------------------------- #

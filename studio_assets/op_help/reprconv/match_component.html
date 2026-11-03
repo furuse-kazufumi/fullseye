@@ -1,0 +1,29 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">match_component — REPRCONV <code style="color:#22d3bf">structure</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">match</code> → <code style="color:#22d3bf">measurement</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.match_component(match, index=0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import reprconv; reprconv.match_component(match, index=0)</code>、台帳から引くなら <code style="color:#22d3bf">opsreprconv.get(&quot;match_component&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p><code style="color:#22d3bf">match</code> 型(1-D の結果ベクトル)→ その 1 成分の <code style="color:#22d3bf">measurement</code>。<code style="color:#22d3bf">match</code> 型の出口。</p>
+<p>2-D レジストリの <code style="color:#22d3bf">match</code> 型は「1 スカラーでは表せない複数の値」を 1 本のベクトルで運ぶ:</p>
+<p><code style="color:#22d3bf">area_center</code> = (面積 [px], 重心の行 [px], 重心の列 [px])、<code style="color:#22d3bf">ncc_locate</code> / <code style="color:#22d3bf">shape_locate</code> = (相関値, 行, 列)、<code style="color:#22d3bf">eccentricity</code> = (Anisometry, Bulkiness, StructureFactor) など。HALCON でも <code style="color:#22d3bf">area_center</code> の Row だけを次の処理に渡すように、<b>成分を名指しで 1 つ取り出す</b>のがこの型の自然な出口。どの成分が何かは産んだ op の docstring が決めている(ここでは解釈しない)。</p>
+<p>Args:</p>
+<p>match: 1-D の有限な数値列(長さ &gt;= 1)。0-D のスカラーは長さ 1 として受ける。</p>
+<p>index: 取り出す成分の番号(0 始まり)。負の番号は使えない(取り違えを防ぐため)。</p>
+<p>Returns:</p>
+<p>float。</p>
+<p>Raises:</p>
+<p>ValueError: 1-D でない / 非有限 / 空 / index が範囲外か整数でない。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:type_connectivity_tour">type_connectivity_tour</a> — <code style="color:#22d3bf">py -3.11 examples/type_connectivity_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">measurement</code> を入力に取れる)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">structure</code>)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:frame_axis">frame_axis</a> · <a style="color:#22d3bf" href="opreprconv:knn_graph_to_conn_graph">knn_graph_to_conn_graph</a> · <a style="color:#22d3bf" href="opreprconv:pointmap_to_points">pointmap_to_points</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: reprconv.py — REPRCONV operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

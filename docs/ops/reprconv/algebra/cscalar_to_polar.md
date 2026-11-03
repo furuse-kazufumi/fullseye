@@ -46,7 +46,7 @@ Raises:
 
 ## 型が繋がる次の op(`pairs` を入力に取れる)
 
-[angles_to_normals](../direction/angles_to_normals.md) · [shape_index_to_curvature](../curvature/shape_index_to_curvature.md) · [pairs_to_signal](../pairs/pairs_to_signal.md) · [pairs_to_image2d](../pairs/pairs_to_image2d.md) · [pairs_to_table](../pairs/pairs_to_table.md) · [polar_to_cscalar](polar_to_cscalar.md)
+[angles_to_normals](../direction/angles_to_normals.md) · [shape_index_to_curvature](../curvature/shape_index_to_curvature.md) · [pairs_to_signal](../pairs/pairs_to_signal.md) · [pairs_to_image2d](../pairs/pairs_to_image2d.md) · [pairs_to_table](../pairs/pairs_to_table.md) · [polar_to_cscalar](polar_to_cscalar.md) · [pairs_peak_x](../exit/pairs_peak_x.md)
 
 ## 同カテゴリ(`algebra`)
 

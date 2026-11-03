@@ -5,7 +5,7 @@ category: construct
 in: synapse_table
 out: conn_graph
 gpu: なし
-examples: [poc_fly_optomotor_steering, poc_microns_brain_wave]
+examples: [poc_fly_optomotor_steering, poc_microns_brain_wave, type_connectivity_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.9.0  # fullseye lib version this note was generated for
@@ -40,6 +40,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 - [poc_fly_optomotor_steering](../../../../examples/poc_fly_optomotor_steering.py) — `py -3.11 examples/poc_fly_optomotor_steering.py`
 - [poc_microns_brain_wave](../../../../examples/poc_microns_brain_wave.py) — `py -3.11 examples/poc_microns_brain_wave.py`
+- [type_connectivity_tour](../../../../examples/type_connectivity_tour.py) — `py -3.11 examples/type_connectivity_tour.py`
 
 ## 型が繋がる次の op(`conn_graph` を入力に取れる)
 

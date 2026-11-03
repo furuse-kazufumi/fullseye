@@ -5,7 +5,7 @@ category: signal
 in: positions
 out: table
 gpu: なし
-examples: [poc_web_roll_periodicity]
+examples: [poc_web_roll_periodicity, type_connectivity_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.9.0  # fullseye lib version this note was generated for
@@ -76,6 +76,7 @@ one point is not a weak measurement, it is not a measurement.
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [poc_web_roll_periodicity](../../../../examples/poc_web_roll_periodicity.py) — `py -3.11 examples/poc_web_roll_periodicity.py`
+- [type_connectivity_tour](../../../../examples/type_connectivity_tour.py) — `py -3.11 examples/type_connectivity_tour.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 
