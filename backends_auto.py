@@ -199,14 +199,23 @@ def _max_chord(mask) -> float:
 def _ellipse_axes(pr):
     """``(Ra, Rb, Phi)`` —— 同じモーメントを持つ楕円の半径(画素)と主軸の角(ラジアン)。
 
-    HALCON の ``elliptic_axis`` が返す 3 値。``Phi`` は列(x)軸から反時計回り。
+    HALCON の ``elliptic_axis`` が返す 3 値。``Phi`` は列(x)軸から**画面上で反時計回り**
+    (行は下向き。HALCON の「mathematically positive」、gen_ellipse / gen_rectangle2 と同じ向き)、
+    範囲は ``-π/2 < Phi <= π/2``。
+
+    ★2026-11-03 修正: 以前は ``π/2 - orientation`` で**符号が逆**だった(画面上で反時計回りに
+    20 度回した棒で Phi = -0.348 rad、同じ領域の ``orientation_region`` は +19.9 度)。
+    skimage の ``orientation`` は行軸から主軸までの角で、主軸が画面上で反時計回りに θ のとき
+    ``orientation = θ - π/2``(``orientation_region`` = ``(orientation + π/2)/π`` が θ/π を返すのと
+    同じ関係)。したがって Phi = orientation + π/2 を ``(-π/2, π/2]`` に畳む。
     """
     ra = float(pr.axis_major_length) / 2.0
     rb = float(pr.axis_minor_length) / 2.0
-    # skimage の orientation は「行軸から主軸まで」なので、列軸基準へ写す。
-    phi = float(np.pi / 2.0 - pr.orientation)
+    phi = float(pr.orientation + np.pi / 2.0)
     if phi > np.pi / 2.0:
         phi -= np.pi
+    if phi <= -np.pi / 2.0:
+        phi += np.pi
     return np.array([ra, rb, phi], np.float64)
 
 
@@ -1328,6 +1337,119 @@ def _moore_boundaries(mask):
     return out
 
 
+#: 勾配方向を 45 度刻みに量子化したときの (行, 列) オフセット。k = round(atan2(ny, nx) / 45°) mod 8。
+_NMS_STEP = ((0, 1), (1, 1), (1, 0), (1, -1), (0, -1), (-1, -1), (-1, 0), (-1, 1))
+_N4 = ((-1, 0), (0, 1), (1, 0), (0, -1))
+_ND = ((-1, 1), (1, 1), (1, -1), (-1, -1))
+
+
+def _nms_mask(mag, ny, nx):
+    """Canny 流の非極大抑制: 勾配方向(法線)に沿って両隣より強い画素だけを残す(1 画素幅のエッジ)。
+
+    片側は ``>=``、もう片側は ``>`` で比べる —— 真のエッジが画素の中点に在って 2 画素が同じ強さの
+    ときに、片方だけが残る(両方残ると 2 画素幅、両方消えると切れる)。
+    """
+    H, W = mag.shape
+    k = np.rint(np.arctan2(ny, nx) / (np.pi / 4.0)).astype(int) % 8
+    pm = np.pad(mag, 1, mode="constant")
+    keep = np.zeros((H, W), bool)
+    for i, (dy, dx) in enumerate(_NMS_STEP):
+        sel = k == i
+        if not sel.any():
+            continue
+        fwd = pm[1 + dy:1 + dy + H, 1 + dx:1 + dx + W]
+        bwd = pm[1 - dy:1 - dy + H, 1 - dx:1 - dx + W]
+        keep |= sel & (mag >= fwd) & (mag > bwd)
+    return keep
+
+
+def _link_chains(mask, min_len=3):
+    """1 画素幅の画素集合を、**曲線に沿って並んだ**点列(輪郭)に繋ぐ。
+
+    各輪郭の隣り合う点は 8 近傍(距離 <= √2)。分岐点では別の輪郭に分かれる(点列が飛ばない)。
+    始点は端点(8 近傍が 1 つ)を先に使い、輪郭の途中から始めたときは両方向に伸ばして繋ぐ。
+    閉じた曲線(最後の点が始点の 8 近傍)は始点をもう一度足して閉じる —— ``length_xld`` が
+    周長を、``area_center_xld`` が囲む面積を正しく数えられるように。
+
+    返り値: (N, 2) float64 (行, 列) の list。点が ``min_len`` 未満の輪郭は捨てる。
+    """
+    H, W = mask.shape
+    on = set(zip(*[a.tolist() for a in np.nonzero(mask)]))
+    if not on:
+        return []
+
+    def nbrs(p):
+        y, x = p
+        for dy, dx in _N4 + _ND:                 # 4 近傍を先に(角の画素を取り残さない)
+            q = (y + dy, x + dx)
+            if q in on:
+                yield q
+
+    deg = {p: sum(1 for _ in nbrs(p)) for p in on}
+    starts = sorted(p for p in on if deg[p] <= 1) + sorted(p for p in on if deg[p] > 1)
+    seen = set()
+
+    def walk(p):
+        out = []
+        cur = p
+        while True:
+            nxt = next((q for q in nbrs(cur) if q not in seen), None)
+            if nxt is None:
+                return out
+            seen.add(nxt)
+            out.append(nxt)
+            cur = nxt
+
+    chains = []
+    for s in starts:
+        if s in seen:
+            continue
+        seen.add(s)
+        fwd = walk(s)
+        bwd = walk(s)
+        pts = bwd[::-1] + [s] + fwd
+        if len(pts) >= 4 and not bwd and max(abs(pts[-1][0] - s[0]), abs(pts[-1][1] - s[1])) <= 1:
+            pts.append(s)                        # 閉曲線: 始点で閉じる
+        if len(pts) >= min_len:
+            chains.append(np.asarray(pts, np.float64))
+    return chains
+
+
+def _steger_refine(pts, x, sigma):
+    """線の中心線の点を、Steger(1998)の式でサブピクセルの線の中心へ寄せる。
+
+    ガウス微分のヘッセ行列の |固有値| 最大の固有ベクトル n(線に直交)に沿って、輝度の 2 次近似が
+    極値を取る位置 ``t = -(n·∇g) / (nᵀ H n)`` へ動かす(HALCON ``lines_gauss`` の中心線と同じ考え方)。
+    ``|t| > 1.5`` の点(極値が隣の画素より外)は画素中心のまま残す(Steger は自分の画素の外 ``|t| > 0.5`` を
+    捨てるが、細線化の画素は中心から 1 画素ずれることがあるので 1.5 まで寄せ、点は減らさない)。
+    ``pts`` は整数画素の (行, 列)。
+    """
+    pts = np.asarray(pts, np.float64)
+    if pts.size == 0:
+        return pts
+    gr = ndimage.gaussian_filter(x, sigma, order=(1, 0))
+    gc = ndimage.gaussian_filter(x, sigma, order=(0, 1))
+    hrr = ndimage.gaussian_filter(x, sigma, order=(2, 0))
+    hcc = ndimage.gaussian_filter(x, sigma, order=(0, 2))
+    hrc = ndimage.gaussian_filter(x, sigma, order=(1, 1))
+    ri = np.clip(pts[:, 0].astype(int), 0, x.shape[0] - 1)
+    ci = np.clip(pts[:, 1].astype(int), 0, x.shape[1] - 1)
+    a, c, b = hrr[ri, ci], hcc[ri, ci], hrc[ri, ci]
+    # 2x2 対称行列 [[a, b], [b, c]] の固有値 m ± d。角 0.5·atan2(2b, a - c)(行軸から)は m + d の方向。
+    ang = 0.5 * np.arctan2(2.0 * b, a - c)
+    m = 0.5 * (a + c)
+    d = np.hypot(0.5 * (a - c), b)
+    ang = np.where(np.abs(m - d) > np.abs(m + d), ang + np.pi / 2.0, ang)
+    nr, nc = np.cos(ang), np.sin(ang)
+    den = a * nr * nr + 2.0 * b * nr * nc + c * nc * nc
+    num = gr[ri, ci] * nr + gc[ri, ci] * nc
+    ok = np.abs(den) > 1e-12
+    t = np.zeros_like(num)
+    t[ok] = -num[ok] / den[ok]
+    t = np.where(np.isfinite(t) & (np.abs(t) <= 1.5), t, 0.0)
+    return np.stack([pts[:, 0] + t * nr, pts[:, 1] + t * nc], 1)
+
+
 def _sh_xld(p):
     kind = p["kind"]
 
@@ -1361,22 +1483,31 @@ def _sh_xld(p):
             #   返す列は {20.0, 21.0} で平均絶対誤差 0.500 px、精密化後は
             #   {20.324, 20.370} で 0.0228 px(約 22 倍改善)。
             #   点の個数・連結成分の分け方は不変(座標が 1 px 未満動くだけ)。
+            # ★2026-11-03: 以前は「しきい値を超えた**帯**(幅 2〜3 px)の画素を np.where の
+            #   **ラスタ順**で」1 輪郭にしていた —— 点が曲線に沿って並ばず、length_xld が
+            #   r = 18 の円(周長 113 px)で 2508 px を返した。HALCON の edges_sub_pix は
+            #   **1 本の線として並んだ**サブピクセルのエッジ輪郭を返す。非極大抑制(Canny)で
+            #   1 画素幅に細らせ、曲線に沿って繋いで(分岐で分ける)から、各点を法線方向に精密化する。
             x = np.asarray(v, np.float64)
             g, ny, nx = gradient_normals(x)
             m = _norm(g)
-            lab, n = ndimage.label(m > (0.15 + 0.5 * a), structure=np.ones((3, 3)))
-            cs = []
-            for i in range(1, n + 1):
-                ys, xs = np.where(lab == i)
-                if len(ys) >= 3:
-                    pts = np.stack([ys, xs], 1).astype(np.float64)
-                    cs.append(subpixel_refine_edges(pts, m, ny, nx))
+            thin = _nms_mask(m, ny, nx) & (m > (0.15 + 0.5 * a))
+            cs = [subpixel_refine_edges(c, m, ny, nx) for c in _link_chains(thin)]
             return {"shape": x.shape, "cs": cs}
         if kind == "lines_gauss":
             _require_dep(_HAS_SK, "skimage", "ridge filter = skimage.filters.frangi")
             x = np.asarray(v, np.float64)
             r = _norm(skfilters.frangi(x, sigmas=range(1, 4)))
-            lab, n = ndimage.label(r > (0.1 + 0.4 * a), structure=np.ones((3, 3)))
+            band = r > (0.1 + 0.4 * a)
+            if b >= 0.75:
+                # ★2026-11-03 追加(既定 b = 0.5 は 1 ビットも変わらない): **中心線**モード。
+                #   帯を細線化して線に沿って並べ、各点を Steger の式で線の中心へサブピクセルで
+                #   寄せる(HALCON lines_gauss の「線の中心線」に当たる量)。
+                #   length_xld がそのまま線の長さになる(既定モードの帯の画素では 2.9 倍に出る)。
+                sk = _skeletonize(band)
+                cs = [_steger_refine(c, x, 1.5) for c in _link_chains(sk)]
+                return {"shape": x.shape, "cs": cs}
+            lab, n = ndimage.label(band, structure=np.ones((3, 3)))
             cs = [np.stack(np.where(lab == i), 1).astype(np.float64) for i in range(1, n + 1)]
             return {"shape": x.shape, "cs": [c for c in cs if len(c) >= 3]}
         if kind == "threshold_sub_pix":                  # subpixel level crossings as contours
@@ -1495,14 +1626,18 @@ def _sh_xld(p):
                 l1, l2 = 0.5 * (c20 + c02 + root), 0.5 * (c20 + c02 - root)
                 return _halcon_eccentricity(2.0 * np.sqrt(max(l1, 0.0)),
                                             2.0 * np.sqrt(max(l2, 0.0)), ar)
-            if kind == "orientation":
-                return np.float64((ang % 180) / 180.0)
-            # ★elliptic_axis: HALCON は (Ra, Rb, Phi)。fitEllipse は**直径**を返すので
-            # 半径にし、角は列(x)軸から反時計回りのラジアンに直す。
             # ★``ang`` は**最初に返る軸**(d1 = 短軸のことが多い)の向きなので、
             #   長軸でなければ 90 度回す —— これを忘れると領域版と 90 度ずれる
             #   (30x70 の矩形で region 0 度 / xld -89.9 度、2026-09-26 に実測)。
-            deg = float(ang) + (0.0 if d1 >= d2 else 90.0)
+            # ★cv2 の角は画像座標(行が下向き)で x 軸から y 軸へ = **画面上で時計回り**。
+            #   HALCON の Phi は画面上で**反時計回り**(mathematically positive)なので符号を反転する。
+            #   2026-11-03 まで orientation_xld は短軸の時計回りの角(画面上で反時計回り 20 度の棒で
+            #   70 度)、elliptic_axis_xld は符号が逆(-0.3505 rad)を返していた。
+            deg = -(float(ang) + (0.0 if d1 >= d2 else 90.0))
+            if kind == "orientation":
+                # 領域版 orientation_region と同じ規約: 主軸の角 θ(度、[0, 180))/ 180。
+                return np.float64((deg % 180.0) / 180.0)
+            # ★elliptic_axis: HALCON は (Ra, Rb, Phi)。fitEllipse は**直径**を返すので半径にする。
             phi = np.deg2rad(deg) % np.pi
             if phi > np.pi / 2.0:
                 phi -= np.pi
@@ -1855,7 +1990,7 @@ SEED: list[tuple] = [
     ("eccentricity", "features", REG, MAT, "region_feat", {"metric": "eccentricity"},
      '楕円パラメータ由来の 3 つの形状指標 ``(Anisometry, Bulkiness, StructureFactor)``\nを、``match`` ソートの 3 成分ベクトルで返す(1 スカラーでは 3 値を表せないため、\n``area_center`` と同じ形)。\n\n``Ra``/``Rb`` を同じモーメントを持つ楕円の半径、``A`` を面積として\n\n  ``Anisometry = Ra/Rb``(細長さ。円で 1、下限 1)\n  ``Bulkiness = π·Ra·Rb / A``(楕円をどれだけ埋めていないか。円で 1)\n  ``StructureFactor = Anisometry·Bulkiness - 1``(円で 0)\n\nHALCON の ``eccentricity``（Shape features derived from the ellipse\nparameters.）**と同じ 3 値・同じ式**。3 つとも無次元なので正規化していない。\n\n★2026-09-26 まで skimage の離心率 ``sqrt(1-(b/a)²)`` という**3 つのどれでもない\n量**を 1 スカラーで返していた(円で 0.0 対 HALCON の 1.0、4x80 の棒で 0.999 対\n20.65)。1 スカラーでは 3 値を表せないため、``area_center`` と同じ ``match``\nソートに変えた。``docs/hardening/halcon-named-shape-factors.md``。\n\n領域が空のときは円の値 ``(1, 1, 0)`` を返す fail-soft 仕様(成分数は入力で\n変わらない)。``a``, ``b`` は未使用。'),
     ("orientation_region", "features", REG, FEA, "region_feat", {"metric": "orientation"},
-     '領域の主軸の向き(``regionprops`` の ``orientation``、[-π/2,π/2] を\n[0,1] へ線形写像)。楕円フィットした際の長軸の傾きを表す。HALCON の\n``orientation_region``（Orientation of a region.）に相当。\n\n``a``, ``b`` は未使用。'),
+     '領域の主軸の向き θ / 180(θ は等価楕円の長軸の角、列軸から**画面上で反時計回り**・行は\n下向き、[0, 180] 度。× 180 で度。実装は ``regionprops`` の ``orientation`` を\n``(orientation + π/2) / π`` で写したもの)。HALCON の\n``orientation_region``（Orientation of a region.）と同じ向きの角 —— HALCON は最遠点で\n向きを決めて -π..π のラジアンで返すが、ここは 180 度で畳んで [0,1] に正規化している。\n``elliptic_axis`` の Phi(ラジアン)とは θ ≡ Phi (mod π) で一致する。\n\n``a``, ``b`` は未使用。'),
     ("roundness", "features", REG, FEA, "region_feat", {"metric": "roundness"},
      '真円度 ``1 - σ/μ``。``μ`` と ``σ`` は**重心から輪郭画素までの距離**の平均と\n標準偏差で、距離が一様なほど(= 真円に近いほど)1 に近い。HALCON の\n``roundness``（Shape factors from contour.）**と同じ式**。\n\n★2026-09-26 まで ``4・面積/(π・長軸長²)`` という別の量を返していた\n(16x64 の矩形で 0.239 対 0.577)。``circularity`` が「面積が最大距離の円を\nどれだけ埋めるか」を見るのに対し、こちらは**縁の凸凹**を見る。\n\n``a``, ``b`` は未使用。'),
     ("diameter_region", "features", REG, FEA, "region_feat", {"metric": "diameter"},
@@ -1873,9 +2008,9 @@ SEED: list[tuple] = [
      'グレースケール階調の Shannon エントロピー(64 ビンヒストグラムから計算\nし、最大値 ``log2(64)=6`` bit で正規化)。階調分布の「ばらつき/情報量」を\n表し、一様な画像ほど値は大きく、単一階調に偏るほど 0 に近づく。HALCON の\n``entropy_gray``（Determine the entropy and anisotropy of images.）は\nエントロピーと異方性の組を返すが、この代役ではエントロピーのみを実装\nしている。\n\n``a``, ``b`` は未使用。'),
     # ---- XLD contours -----------------------------------------------------
     ("edges_sub_pix", "contour", IMG, CON, "xld", {"kind": "edges_sub_pix"},
-     'サブピクセル精度のエッジ点抽出。勾配とその法線方向(``gradient_\nnormals``)を求め、しきい値(``0.15+0.5*a``)を超える画素を連結成分化した\n後、放物線当てはめで各点をサブピクセル位置へ精密化する(``subpixel_\nrefine_edges``、``ops`` 側の同名 op と共有する実装 ―― 2026-09-02 修正で\n真の意味でサブピクセルになった。旧実装は整数画素座標をそのまま返して\nいた)。HALCON の ``edges_sub_pix``（Extract sub-pixel precise edges using\nDeriche, Lanser, Shen, or Canny filters.）に相当。\n\n``a`` がエッジ強度のしきい値を振る。``b`` は未使用。\n\nRaises:\n    FsValueError: NaN / inf を含む画像。'),
+     'サブピクセル精度のエッジ輪郭抽出。勾配とその法線方向(``gradient_\nnormals``)を求め、非極大抑制(Canny と同じ、法線方向の両隣より強い画素だけ)で\n1 画素幅に細らせ、しきい値(``0.15+0.5*a``、最大勾配で正規化した強度)を超える画素を\n**曲線に沿って並べた輪郭**に繋ぎ(分岐点で別の輪郭に分ける。閉じたエッジは始点で閉じる)、\n放物線当てはめで各点を法線方向にサブピクセル位置へ精密化する(``subpixel_\nrefine_edges``、``ops`` 側の同名 op と共有する実装 ―― 2026-09-02 修正で\n真の意味でサブピクセルになった。旧実装は整数画素座標をそのまま返して\nいた)。HALCON の ``edges_sub_pix``（Extract sub-pixel precise edges using\nDeriche, Lanser, Shen, or Canny filters.）に相当。\n\n点は輪郭ごとに**曲線に沿った順**(隣り合う点の距離は約 1 px)なので、``length_xld`` は\nエッジの長さ、``area_center_xld`` / ``circularity_xld`` は閉じたエッジの囲む形を測れる\n(r = 18 px の円板で length_xld 約 113 px = 2πr)。\n\n★2026-11-03 まで、しきい値を超えた幅 2〜3 px の**帯**の画素を**ラスタ順**のまま 1 輪郭に\nしていた —— 同じ円板で length_xld が 2508 px(点の並びが行ごとに往復していた)。\n点の向きに依らない量(直線当てはめ ``fit_line_contour_xld`` など)は以前と同じ値に近い。\n\n``a`` がエッジ強度のしきい値を振る。``b`` は未使用。\n\nRaises:\n    FsValueError: NaN / inf を含む画像。'),
     ("lines_gauss", "contour", IMG, CON, "xld", {"kind": "lines_gauss"},
-     '線状構造(リッジ)検出。``skimage.filters.frangi``(血管様のリッジ強調\nフィルタ)の応答をしきい値(``0.1+0.4*a``)で二値化し、連結成分を輪郭点群\nとして返す。HALCON の ``lines_gauss``（Detect lines and their width.）が\n本来行う「線の中心線+幅の推定」ではなく、リッジ強調画像のしきい値化に\n単純化している(線幅の情報は返らない近似)。\n\n``a`` がリッジ検出のしきい値を振る。``b`` は未使用。scikit-image が無い環境では ``MissingDependencyError``(何を入れればよいかを言う)で止まる —— 別の答えは返さない。\n\n**極性も返さない**(2026-09-15 実測): 明るい地の暗線(0.6 の地に 0.1、幅 2 px)と\n暗い地の明線(0.6 の地に 1.0)を同じ ``a`` で通すと、どちらも輪郭が出て\n(a=0.5 で 3 本 / 280 点と 3 本 / 276 点)返り値からは区別できない。暗線だけが\n要るなら ``bothat``(白トップハット ``tophat`` は暗線に 0 を返す)、明線だけなら\n``tophat`` を先に掛ける。**幅を測る道は別の op**: 線に直交する測定線を\n``gen_measure_rectangle2`` で張って ``measure_pairs``(measure1d 族)で両縁を取る。\nただし幅 1〜3 px はその op の危険域(エッジ間距離 / PSF 幅 < 3.09 で大きい側に\n偏る)なので、画素以下の幅は輝度欠損の積分で測る(``examples/example_scratch_width.py``、\n``poc_crack_width``)。使い分けの表は 2d/guides/gallery2d_contour_measure.md。'),
+     '線状構造(リッジ)検出。``skimage.filters.frangi``(血管様のリッジ強調\nフィルタ)の応答をしきい値(``0.1+0.4*a``)で二値化し、連結成分を輪郭点群\nとして返す。HALCON の ``lines_gauss``（Detect lines and their width.）が\n本来行う「線の中心線+幅の推定」ではなく、リッジ強調画像のしきい値化に\n単純化している(線幅の情報は返らない近似)。\n\n★既定(``b < 0.75``)の輪郭は**しきい値を超えた帯の画素の集合を np.where のラスタ順に\n並べたもの**で、線に沿って並んでいない —— ``length_xld`` などの点の順序に依る量は\n意味を持たない(幅 2 px・長さ 40 / 60 px の傷で length_xld 117 / 177 px)。線の長さ・\n形を測るなら ``b >= 0.75`` の**中心線モード**を使う: 帯を細線化して線に沿って並べ、各点を\nSteger(1998)の式(σ = 1.5 px のガウス微分、ヘッセ行列の法線方向に輝度の極値へ)で\nサブピクセルの線の中心へ寄せる(HALCON の中心線に当たる。線幅はやはり返らない。\n端は細線化で線幅の半分ほど縮む)。\n\n``a`` がリッジ検出のしきい値を振る。``b >= 0.75`` で中心線モード(既定 0.5 は帯の画素)。scikit-image が無い環境では ``MissingDependencyError``(何を入れればよいかを言う)で止まる —— 別の答えは返さない。\n\n**極性も返さない**(2026-09-15 実測): 明るい地の暗線(0.6 の地に 0.1、幅 2 px)と\n暗い地の明線(0.6 の地に 1.0)を同じ ``a`` で通すと、どちらも輪郭が出て\n(a=0.5 で 3 本 / 280 点と 3 本 / 276 点)返り値からは区別できない。暗線だけが\n要るなら ``bothat``(白トップハット ``tophat`` は暗線に 0 を返す)、明線だけなら\n``tophat`` を先に掛ける。**幅を測る道は別の op**: 線に直交する測定線を\n``gen_measure_rectangle2`` で張って ``measure_pairs``(measure1d 族)で両縁を取る。\nただし幅 1〜3 px はその op の危険域(エッジ間距離 / PSF 幅 < 3.09 で大きい側に\n偏る)なので、画素以下の幅は輝度欠損の積分で測る(``examples/example_scratch_width.py``、\n``poc_crack_width``)。使い分けの表は 2d/guides/gallery2d_contour_measure.md。'),
     ("select_contours_xld", "contour", CON, CON, "xld", {"kind": "select_contours"},
      '既存の輪郭(XLD contour)集合から、点数が閾値(``3+40*a``)以上のものだけ\nを残すフィルタ。HALCON の ``select_contours_xld``（Select XLD contours\naccording to several features.）は面積・円形度など任意の特徴で選別できる\n汎用演算子だが、この代役では点数(長さの代理指標)による足切り 1 種類に\n固定している(近似)。\n\n``a`` が点数のしきい値を振る。``b`` は未使用。'),
     ("smooth_contours_xld", "contour", CON, CON, "xld", {"kind": "smooth_contours"},
@@ -1967,9 +2102,9 @@ SEED: list[tuple] = [
     ("eccentricity_xld", "features", CON, MAT, "xld", {"kind": "eccentricity"},
      '``eccentricity`` の輪郭版。最大の輪郭について ``(Anisometry, Bulkiness,\nStructureFactor)`` を ``match`` ソートの 3 成分ベクトルで返す。HALCON の\n``eccentricity_xld``（Shape features derived from the ellipse parameters of\ncontours or polygons.）**と同じ 3 値・同じ式**。\n\n★``Ra``/``Rb`` は**囲まれた面積の幾何モーメント**から導く。2026-09-26 まで\n``cv2.fitEllipse``(輪郭「点」への最小二乗当てはめ)を使っていて、細長い形で\n大きく外れていた —— 4x80 の棒で Anisometry 39.1 対 20.65。HALCON の定義は\nモーメント由来の方である。\n\n点数が足りない、面積が 0 のときは円の値 ``(1, 1, 0)`` を返す。cv2 が無い環境では ``MissingDependencyError`` で止まる。\n``a``, ``b`` は未使用。'),
     ("orientation_xld", "features", CON, FEA, "xld", {"kind": "orientation"},
-     '楕円フィットした輪郭の傾き角(``cv2.fitEllipse`` の角度を 180° で\n折り返して [0,1] に正規化)。HALCON の ``orientation_xld``（Calculate the\norientation of contours or polygons.）に相当。\n\n``a``, ``b`` は未使用。'),
+     '楕円フィット(``cv2.fitEllipse``)した最大の輪郭の**主軸の角 θ / 180**(θ は列軸から\n**画面上で反時計回り**、行は下向き、[0, 180) 度に折り返す)。領域版 ``orientation_region``\nと同じ規約(× 180 で度)。HALCON の ``orientation_xld``（Calculate the\norientation of contours or polygons.）は同じ向きの角をラジアンで -π..π に返す\n(最遠点で向きを決める)ので、ここは 180 度で畳んで [0,1) に正規化した版。\n\n★2026-11-03 まで ``cv2.fitEllipse`` の角をそのまま使っていて、**短軸の、画面上で時計回りの角**\n(= 90 - θ)を返していた(反時計回り 20 度の棒で 0.389 = 70 度、45 度だけ偶然一致)。\n\n``a``, ``b`` は未使用。'),
     ("elliptic_axis_xld", "features", CON, MAT, "xld", {"kind": "elliptic_axis"},
-     '最大の点数を持つ輪郭に楕円を当てはめ(``cv2.fitEllipse``)、``(Ra, Rb, Phi)`` を ``match`` ソートの 3 成分ベクトルで返す —— ``Ra``/``Rb`` は長半径・短半径 [px]、``Phi`` は主軸の角(ラジアン、列軸から反時計回り、-π/2 より大きく π/2 以下)。HALCON の ``elliptic_axis_xld``（Parameters of the equivalent ellipse of contours or polygons.）と同じ 3 値。\n\n領域版 ``elliptic_axis`` と同じ形。輪郭点への最小二乗当てはめなので、領域の\nモーメントからの値とは一致しない(30x70 の矩形で region (40.41, 17.31, 0.0) 対\nxld (44.53, 16.99, 0.0018))。\n\n★2026-09-26 まで短軸/長軸の比 1 スカラーを返していた\n(``docs/hardening/dimensional-features-were-normalised.md``)。\n\n``a``, ``b`` は未使用。点が 5 個以上の輪郭が無いときは 0(スカラー)を返す。\ncv2 が要る。'),
+     '最大の点数を持つ輪郭に楕円を当てはめ(``cv2.fitEllipse``)、``(Ra, Rb, Phi)`` を ``match`` ソートの 3 成分ベクトルで返す —— ``Ra``/``Rb`` は長半径・短半径 [px]、``Phi`` は主軸の角(ラジアン、列軸から**画面上で反時計回り**・行は下向き、-π/2 より大きく π/2 以下)。HALCON の ``elliptic_axis_xld``（Parameters of the equivalent ellipse of contours or polygons.）と同じ 3 値。\n\n★2026-11-03 まで Phi の**符号が逆**だった(``cv2.fitEllipse`` の角は画面上で時計回り。反時計回り 20 度の棒で -0.3505 rad)。\n\n領域版 ``elliptic_axis`` と同じ形。輪郭点への最小二乗当てはめなので、領域の\nモーメントからの値とは一致しない(30x70 の矩形で region (40.41, 17.31, 0.0) 対\nxld (44.53, 16.99, 0.0018))。\n\n★2026-09-26 まで短軸/長軸の比 1 スカラーを返していた\n(``docs/hardening/dimensional-features-were-normalised.md``)。\n\n``a``, ``b`` は未使用。点が 5 個以上の輪郭が無いときは 0(スカラー)を返す。\ncv2 が要る。'),
     ("diameter_xld", "features", CON, FEA, "xld", {"kind": "diameter"},
      '最大の点数を持つ輪郭の直径 [px] = 輪郭点 2 点間の最大距離(最大弦)。HALCON の ``diameter_xld``（Maximum distance between two contour or polygon points.）と同じ量・同じ単位。\n\n領域版 ``diameter_region`` と同じ量(30x70 の矩形で 75.77 対 74.85)。\n\n★2026-09-26 まで最小外接円(``cv2.minEnclosingCircle``)の直径を画像の最大辺長で\n割った値を返していた(``docs/hardening/dimensional-features-were-normalised.md``)。\n\n``a``, ``b`` は未使用。点が 5 個以上の輪郭が無いときは 0 を返す。cv2 が要る。'),
     ("rectangularity_xld", "features", CON, FEA, "xld", {"kind": "rectangularity"},
