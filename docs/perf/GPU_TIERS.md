@@ -18,36 +18,36 @@
 | tier | 件数 |
 |---|---:|
 | `required` | 49 |
-| `suitable` | 2078 |
-| `partial` | 620 |
-| `none` | 876 |
-| **合計** | **3623** |
+| `suitable` | 2182 |
+| `partial` | 643 |
+| `none` | 936 |
+| **合計** | **3810** |
 
 ## GPU 対応率
 
 指標 = `gpu_status=あり` の件数 ÷ (`required` + `suitable`) の件数(件数÷全体ではない)。現状値をそのまま書く(低くてよい)。
 
-- gpu 経路あり: **138**
-- `required` + `suitable`: **2127**
-- **GPU 対応率 = 6.5%** (138 / 2127)
+- gpu 経路あり: **173**
+- `required` + `suitable`: **2231**
+- **GPU 対応率 = 7.8%** (173 / 2231)
 
-正直な内訳: gpu 経路を持つ op のうち 16 件は `partial`(領域モルフォロジ等)、0 件は `none` で、分母には入らない(分子にのみ計上)。
+正直な内訳: gpu 経路を持つ op のうち 50 件は `partial`(領域モルフォロジ等)、0 件は `none` で、分母には入らない(分子にのみ計上)。
 
 ## 族別の内訳
 
 | 族 | required | suitable | partial | none | 合計 |
 |---|---:|---:|---:|---:|---:|
-| typed | 0 | 123 | 31 | 7 | 161 |
+| typed | 0 | 123 | 33 | 7 | 163 |
 | halcon_ext | 0 | 43 | 38 | 0 | 81 |
 | region | 0 | 6 | 73 | 0 | 79 |
 | features | 0 | 33 | 41 | 0 | 74 |
 | geometry | 0 | 32 | 35 | 2 | 69 |
 | edges | 0 | 64 | 0 | 0 | 64 |
-| segmentation | 0 | 54 | 0 | 0 | 54 |
-| gray | 0 | 52 | 0 | 0 | 52 |
+| gray | 0 | 58 | 0 | 0 | 58 |
+| segmentation | 0 | 56 | 0 | 0 | 56 |
+| morphology | 0 | 51 | 0 | 1 | 52 |
 | smoothing | 5 | 45 | 0 | 0 | 50 |
 | scene | 1 | 10 | 5 | 28 | 44 |
-| morphology | 0 | 43 | 0 | 0 | 43 |
 | transform | 1 | 31 | 2 | 2 | 36 |
 | contour | 0 | 18 | 17 | 0 | 35 |
 | ball | 0 | 14 | 0 | 18 | 32 |
@@ -68,6 +68,7 @@
 | spectral | 0 | 7 | 14 | 0 | 21 |
 | tacslip | 0 | 13 | 0 | 8 | 21 |
 | lateral | 0 | 1 | 0 | 19 | 20 |
+| classify | 0 | 10 | 0 | 9 | 19 |
 | kendama | 0 | 1 | 0 | 18 | 19 |
 | pegtactile | 0 | 7 | 0 | 12 | 19 |
 | sensorchar | 0 | 17 | 0 | 2 | 19 |
@@ -87,6 +88,7 @@
 | env | 0 | 0 | 0 | 16 | 16 |
 | pegfail | 0 | 1 | 0 | 15 | 16 |
 | polarization | 0 | 16 | 0 | 0 | 16 |
+| wave | 0 | 13 | 1 | 2 | 16 |
 | feature | 0 | 15 | 0 | 0 | 15 |
 | model | 0 | 3 | 4 | 8 | 15 |
 | pegsym | 0 | 9 | 0 | 6 | 15 |
@@ -95,8 +97,8 @@
 | scoop | 0 | 5 | 0 | 10 | 15 |
 | spectral_xray | 0 | 4 | 5 | 6 | 15 |
 | tacsim | 0 | 9 | 0 | 6 | 15 |
-| wave | 0 | 12 | 1 | 2 | 15 |
 | algebra | 0 | 8 | 4 | 2 | 14 |
+| descriptor | 0 | 6 | 8 | 0 | 14 |
 | extra | 0 | 14 | 0 | 0 | 14 |
 | illumination | 1 | 4 | 1 | 8 | 14 |
 | pxrd | 0 | 6 | 0 | 8 | 14 |
@@ -104,10 +106,10 @@
 | stats | 0 | 7 | 7 | 0 | 14 |
 | agv | 0 | 5 | 0 | 8 | 13 |
 | course | 0 | 2 | 0 | 11 | 13 |
-| descriptor | 0 | 6 | 7 | 0 | 13 |
 | flow | 5 | 7 | 1 | 0 | 13 |
 | grind | 0 | 6 | 0 | 7 | 13 |
 | illusion | 0 | 12 | 0 | 1 | 13 |
+| light_section | 0 | 6 | 1 | 6 | 13 |
 | long | 0 | 0 | 0 | 13 | 13 |
 | measure | 0 | 5 | 8 | 0 | 13 |
 | medial | 0 | 13 | 0 | 0 | 13 |
@@ -118,6 +120,7 @@
 | artificial-life | 0 | 12 | 0 | 0 | 12 |
 | braidpath | 0 | 7 | 0 | 5 | 12 |
 | estimation | 0 | 12 | 0 | 0 | 12 |
+| field | 0 | 11 | 1 | 0 | 12 |
 | geodesy | 0 | 5 | 7 | 0 | 12 |
 | graph | 0 | 11 | 1 | 0 | 12 |
 | inf | 0 | 0 | 0 | 12 | 12 |
@@ -128,10 +131,12 @@
 | sdf_csg | 0 | 12 | 0 | 0 | 12 |
 | signal | 0 | 11 | 1 | 0 | 12 |
 | swarmflow | 0 | 5 | 0 | 7 | 12 |
+| symmetry | 0 | 8 | 4 | 0 | 12 |
 | synth | 0 | 8 | 4 | 0 | 12 |
 | tacdome | 0 | 7 | 0 | 5 | 12 |
 | world | 0 | 0 | 1 | 11 | 12 |
 | construct | 0 | 1 | 8 | 2 | 11 |
+| ct_scan | 0 | 8 | 0 | 3 | 11 |
 | imaging | 0 | 7 | 3 | 1 | 11 |
 | iqa | 0 | 0 | 0 | 11 | 11 |
 | light_transport | 2 | 4 | 0 | 5 | 11 |
@@ -143,6 +148,7 @@
 | balltrack | 0 | 5 | 2 | 3 | 10 |
 | color | 0 | 10 | 0 | 0 | 10 |
 | commonroad | 0 | 0 | 0 | 10 | 10 |
+| datacode2d | 0 | 8 | 0 | 2 | 10 |
 | linalg | 0 | 10 | 0 | 0 | 10 |
 | mesh_process | 0 | 2 | 8 | 0 | 10 |
 | racket | 0 | 0 | 0 | 10 | 10 |
@@ -155,15 +161,17 @@
 | drawing | 0 | 1 | 0 | 8 | 9 |
 | lenssolve | 0 | 0 | 0 | 9 | 9 |
 | lockin | 0 | 7 | 0 | 2 | 9 |
+| ocr | 0 | 4 | 0 | 5 | 9 |
 | rle_region | 0 | 3 | 6 | 0 | 9 |
 | sem | 0 | 5 | 1 | 3 | 9 |
 | structured_light | 0 | 9 | 0 | 0 | 9 |
 | ttc | 0 | 6 | 1 | 2 | 9 |
 | curvature | 0 | 6 | 2 | 0 | 8 |
-| field | 0 | 8 | 0 | 0 | 8 |
 | fit | 0 | 4 | 2 | 2 | 8 |
 | grating_interf | 0 | 3 | 0 | 5 | 8 |
+| hdr | 0 | 6 | 0 | 2 | 8 |
 | itof | 0 | 2 | 0 | 6 | 8 |
+| keypoint | 0 | 2 | 6 | 0 | 8 |
 | lensrender | 0 | 0 | 0 | 8 | 8 |
 | mesh | 0 | 0 | 6 | 2 | 8 |
 | metrics | 0 | 2 | 6 | 0 | 8 |
@@ -175,7 +183,6 @@
 | annotate3d | 0 | 6 | 1 | 0 | 7 |
 | anomaly_eval | 0 | 7 | 0 | 0 | 7 |
 | appearance | 0 | 6 | 1 | 0 | 7 |
-| classify | 0 | 6 | 0 | 1 | 7 |
 | decomposition | 0 | 7 | 0 | 0 | 7 |
 | domain | 0 | 7 | 0 | 0 | 7 |
 | feature_register | 1 | 1 | 5 | 0 | 7 |
@@ -193,7 +200,6 @@
 | roadjp | 0 | 2 | 0 | 5 | 7 |
 | robust_fit | 0 | 0 | 7 | 0 | 7 |
 | stroke | 0 | 4 | 3 | 0 | 7 |
-| symmetry | 0 | 3 | 4 | 0 | 7 |
 | telecentric | 0 | 0 | 3 | 4 | 7 |
 | ultrasonic | 0 | 0 | 1 | 6 | 7 |
 | watervision | 0 | 5 | 0 | 2 | 7 |
@@ -204,14 +210,17 @@
 | composite | 0 | 6 | 0 | 0 | 6 |
 | compression | 0 | 6 | 0 | 0 | 6 |
 | confocal | 0 | 0 | 3 | 3 | 6 |
+| curve | 0 | 1 | 5 | 0 | 6 |
 | deflectometry | 0 | 4 | 0 | 2 | 6 |
+| detect | 0 | 5 | 0 | 1 | 6 |
 | dynsys | 0 | 2 | 3 | 1 | 6 |
+| featmatch | 0 | 3 | 0 | 3 | 6 |
 | fidelity | 0 | 6 | 0 | 0 | 6 |
 | fpm | 0 | 3 | 0 | 3 | 6 |
 | geometric | 0 | 3 | 1 | 2 | 6 |
 | imaging_sim | 0 | 2 | 0 | 4 | 6 |
+| intensityreg | 0 | 6 | 0 | 0 | 6 |
 | interp_poly | 0 | 5 | 1 | 0 | 6 |
-| keypoint | 0 | 2 | 4 | 0 | 6 |
 | lensmerit | 0 | 0 | 0 | 6 | 6 |
 | level | 0 | 5 | 0 | 1 | 6 |
 | linescan | 0 | 1 | 0 | 5 | 6 |
@@ -224,15 +233,19 @@
 | pixelshift | 0 | 5 | 0 | 1 | 6 |
 | plenoptic | 0 | 3 | 0 | 3 | 6 |
 | refine | 2 | 3 | 1 | 0 | 6 |
+| simulate | 0 | 4 | 1 | 1 | 6 |
 | subpix | 0 | 6 | 0 | 0 | 6 |
 | target | 0 | 2 | 1 | 3 | 6 |
+| text | 0 | 4 | 1 | 1 | 6 |
 | analysis | 0 | 3 | 0 | 2 | 5 |
 | anomaly_patch | 0 | 5 | 0 | 0 | 5 |
 | artifact | 0 | 5 | 0 | 0 | 5 |
+| barcode1d | 0 | 3 | 0 | 2 | 5 |
+| calibrate | 0 | 2 | 3 | 0 | 5 |
 | cavity | 0 | 0 | 2 | 3 | 5 |
-| curve | 0 | 1 | 4 | 0 | 5 |
 | depth | 0 | 4 | 0 | 1 | 5 |
 | direction | 0 | 3 | 2 | 0 | 5 |
+| evaluate | 0 | 1 | 3 | 1 | 5 |
 | film | 0 | 1 | 3 | 1 | 5 |
 | finish | 0 | 4 | 0 | 1 | 5 |
 | freeform | 0 | 3 | 2 | 0 | 5 |
@@ -240,6 +253,7 @@
 | information | 0 | 5 | 0 | 0 | 5 |
 | lensconfig | 0 | 0 | 0 | 5 | 5 |
 | light | 0 | 5 | 0 | 0 | 5 |
+| match_pose | 0 | 2 | 3 | 0 | 5 |
 | matching | 0 | 5 | 0 | 0 | 5 |
 | measure1d | 0 | 5 | 0 | 0 | 5 |
 | optics | 0 | 0 | 5 | 0 | 5 |
@@ -258,11 +272,13 @@
 | sun | 0 | 3 | 2 | 0 | 5 |
 | tactile | 0 | 5 | 0 | 0 | 5 |
 | tomography | 3 | 2 | 0 | 0 | 5 |
+| tracking | 0 | 2 | 0 | 3 | 5 |
 | transport | 0 | 5 | 0 | 0 | 5 |
 | two_view | 0 | 5 | 0 | 0 | 5 |
 | uncertainty | 0 | 0 | 0 | 5 | 5 |
 | variation | 0 | 3 | 0 | 2 | 5 |
 | visualise | 0 | 5 | 0 | 0 | 5 |
+| archive | 0 | 0 | 0 | 4 | 4 |
 | assess | 0 | 4 | 0 | 0 | 4 |
 | attend | 0 | 0 | 0 | 4 | 4 |
 | bearing | 0 | 3 | 0 | 1 | 4 |
@@ -270,6 +286,7 @@
 | check | 0 | 0 | 0 | 4 | 4 |
 | decode | 0 | 3 | 0 | 1 | 4 |
 | deform | 1 | 2 | 1 | 0 | 4 |
+| derivative | 0 | 4 | 0 | 0 | 4 |
 | dichromatic | 0 | 4 | 0 | 0 | 4 |
 | dimension | 0 | 3 | 1 | 0 | 4 |
 | estimate | 3 | 1 | 0 | 0 | 4 |
@@ -278,11 +295,11 @@
 | humanoid | 0 | 0 | 0 | 4 | 4 |
 | hydrology | 0 | 4 | 0 | 0 | 4 |
 | interface | 0 | 2 | 2 | 0 | 4 |
+| layout | 0 | 1 | 0 | 3 | 4 |
 | lensfile | 0 | 0 | 0 | 4 | 4 |
 | lidar | 0 | 2 | 1 | 1 | 4 |
 | macro | 0 | 4 | 0 | 0 | 4 |
 | match | 0 | 4 | 0 | 0 | 4 |
-| match_pose | 0 | 2 | 2 | 0 | 4 |
 | moment_invariant | 0 | 1 | 3 | 0 | 4 |
 | msa | 0 | 0 | 0 | 4 | 4 |
 | occupancy | 1 | 3 | 0 | 0 | 4 |
@@ -293,11 +310,12 @@
 | recursive | 0 | 4 | 0 | 0 | 4 |
 | refocus | 0 | 4 | 0 | 0 | 4 |
 | registration_metrics | 0 | 0 | 4 | 0 | 4 |
+| resample | 0 | 4 | 0 | 0 | 4 |
 | sensitivity | 0 | 0 | 0 | 4 | 4 |
 | shape | 0 | 4 | 0 | 0 | 4 |
-| simulate | 0 | 4 | 0 | 0 | 4 |
 | space_carving | 0 | 3 | 1 | 0 | 4 |
 | split | 0 | 3 | 1 | 0 | 4 |
+| structure | 0 | 2 | 2 | 0 | 4 |
 | superquadric | 0 | 1 | 3 | 0 | 4 |
 | surface_fit | 0 | 4 | 0 | 0 | 4 |
 | synthesis | 0 | 3 | 0 | 1 | 4 |
@@ -310,8 +328,9 @@
 | activity | 0 | 3 | 0 | 0 | 3 |
 | artistic | 0 | 3 | 0 | 0 | 3 |
 | bundle_adjust | 0 | 0 | 3 | 0 | 3 |
-| calibrate | 0 | 2 | 1 | 0 | 3 |
+| calib_truth | 0 | 0 | 0 | 3 | 3 |
 | change | 0 | 3 | 0 | 0 | 3 |
+| checkerboard | 0 | 1 | 1 | 1 | 3 |
 | colordiff | 0 | 3 | 0 | 0 | 3 |
 | compare | 0 | 1 | 2 | 0 | 3 |
 | compose | 0 | 3 | 0 | 0 | 3 |
@@ -320,10 +339,11 @@
 | curvilinear | 0 | 3 | 0 | 0 | 3 |
 | cuttouch | 0 | 0 | 0 | 3 | 3 |
 | deformation | 0 | 3 | 0 | 0 | 3 |
-| detect | 0 | 3 | 0 | 0 | 3 |
 | doseunif | 0 | 1 | 0 | 2 | 3 |
 | dtof | 0 | 2 | 1 | 0 | 3 |
 | dual | 0 | 3 | 0 | 0 | 3 |
+| entry | 0 | 1 | 2 | 0 | 3 |
+| exit | 0 | 2 | 1 | 0 | 3 |
 | extract | 0 | 3 | 0 | 0 | 3 |
 | forward | 1 | 2 | 0 | 0 | 3 |
 | frame | 0 | 0 | 3 | 0 | 3 |
@@ -333,7 +353,6 @@
 | index | 0 | 0 | 3 | 0 | 3 |
 | inject | 0 | 0 | 3 | 0 | 3 |
 | io | 0 | 3 | 0 | 0 | 3 |
-| layout | 0 | 1 | 0 | 2 | 3 |
 | lensglobal | 0 | 0 | 0 | 3 | 3 |
 | lidar_projection | 0 | 3 | 0 | 0 | 3 |
 | looming | 0 | 3 | 0 | 0 | 3 |
@@ -351,8 +370,10 @@
 | population | 0 | 1 | 0 | 2 | 3 |
 | pose_estimation | 0 | 0 | 3 | 0 | 3 |
 | pose_graph | 0 | 0 | 3 | 0 | 3 |
+| print_quality | 0 | 3 | 0 | 0 | 3 |
 | probe | 0 | 3 | 0 | 0 | 3 |
 | quality | 0 | 3 | 0 | 0 | 3 |
+| read_pod | 0 | 1 | 0 | 2 | 3 |
 | reflectance | 0 | 3 | 0 | 0 | 3 |
 | scale | 0 | 0 | 2 | 1 | 3 |
 | scene_flow3d | 0 | 0 | 3 | 0 | 3 |
@@ -363,6 +384,7 @@
 | skyline | 0 | 3 | 0 | 0 | 3 |
 | solid | 0 | 3 | 0 | 0 | 3 |
 | spad | 0 | 0 | 0 | 3 | 3 |
+| stereo | 0 | 3 | 0 | 0 | 3 |
 | stream | 0 | 1 | 0 | 2 | 3 |
 | temporal | 0 | 3 | 0 | 0 | 3 |
 | time | 0 | 3 | 0 | 0 | 3 |
@@ -388,6 +410,7 @@
 | depth_denoise | 1 | 1 | 0 | 0 | 2 |
 | describe | 0 | 2 | 0 | 0 | 2 |
 | e57 | 0 | 0 | 0 | 2 | 2 |
+| fits | 0 | 0 | 0 | 2 | 2 |
 | format | 0 | 0 | 1 | 1 | 2 |
 | fourier | 0 | 2 | 0 | 0 | 2 |
 | fusion | 1 | 0 | 1 | 0 | 2 |
@@ -403,7 +426,11 @@
 | loop | 0 | 2 | 0 | 0 | 2 |
 | mirror | 0 | 1 | 1 | 0 | 2 |
 | montecarlo | 0 | 0 | 0 | 2 | 2 |
+| mrc | 0 | 0 | 0 | 2 | 2 |
+| nifti | 0 | 0 | 0 | 2 | 2 |
 | normals_orient | 0 | 0 | 2 | 0 | 2 |
+| nrrd | 0 | 0 | 0 | 2 | 2 |
+| ome_tiff | 0 | 0 | 0 | 2 | 2 |
 | order | 0 | 2 | 0 | 0 | 2 |
 | pixel | 0 | 2 | 0 | 0 | 2 |
 | plan_use | 0 | 2 | 0 | 0 | 2 |
@@ -416,8 +443,8 @@
 | stack | 0 | 2 | 0 | 0 | 2 |
 | stimulus | 0 | 2 | 0 | 0 | 2 |
 | suspect | 0 | 0 | 2 | 0 | 2 |
+| symbol_capture | 0 | 2 | 0 | 0 | 2 |
 | table | 0 | 0 | 0 | 2 | 2 |
-| text | 0 | 1 | 0 | 1 | 2 |
 | tile | 0 | 2 | 0 | 0 | 2 |
 | validate | 0 | 2 | 0 | 0 | 2 |
 | verification | 0 | 0 | 0 | 2 | 2 |
@@ -425,6 +452,7 @@
 | aggregate | 0 | 1 | 0 | 0 | 1 |
 | barcode | 0 | 1 | 0 | 0 | 1 |
 | blend | 0 | 1 | 0 | 0 | 1 |
+| budget | 0 | 0 | 0 | 1 | 1 |
 | camera | 0 | 1 | 0 | 0 | 1 |
 | capability | 0 | 1 | 0 | 0 | 1 |
 | chart | 0 | 1 | 0 | 0 | 1 |
@@ -439,7 +467,6 @@
 | deviation | 0 | 1 | 0 | 0 | 1 |
 | diagnose | 0 | 1 | 0 | 0 | 1 |
 | envelope | 0 | 1 | 0 | 0 | 1 |
-| evaluate | 0 | 1 | 0 | 0 | 1 |
 | export | 0 | 1 | 0 | 0 | 1 |
 | filter | 0 | 1 | 0 | 0 | 1 |
 | filtering | 0 | 1 | 0 | 0 | 1 |
@@ -457,6 +484,7 @@
 | orientation | 0 | 1 | 0 | 0 | 1 |
 | palette | 0 | 1 | 0 | 0 | 1 |
 | polyhedron | 0 | 0 | 1 | 0 | 1 |
+| pose | 0 | 0 | 1 | 0 | 1 |
 | raycast | 0 | 0 | 1 | 0 | 1 |
 | region-morphology | 0 | 0 | 1 | 0 | 1 |
 | region-transform | 0 | 0 | 1 | 0 | 1 |
@@ -468,6 +496,7 @@
 | stopping | 0 | 1 | 0 | 0 | 1 |
 | summary | 0 | 1 | 0 | 0 | 1 |
 | suppress | 0 | 1 | 0 | 0 | 1 |
+| symbol_bridge | 0 | 1 | 0 | 0 | 1 |
 | texture-feature | 0 | 1 | 0 | 0 | 1 |
 | texture/shape-feature | 0 | 1 | 0 | 0 | 1 |
 | theorem | 0 | 1 | 0 | 0 | 1 |
@@ -478,3 +507,5 @@
 ## required 名簿の実在検査
 
 名簿の op が全部実在: **はい**
+
+⚠ 型表 `SORT_TIER` に無い型(none に落ちている): ctgeometry, projstack

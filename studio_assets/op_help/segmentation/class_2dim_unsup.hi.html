@@ -3,7 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">labels2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.class_2dim_unsup(image1, image2, n_clusters=3, iters=20)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import segmentation; segmentation.class_2dim_unsup(image1, image2, n_clusters=3, iters=20)</code>, registry से लेना हो तो <code style="color:#22d3bf">opssegmentation.get(&quot;class_2dim_unsup&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON समकक्ष</b>: <code style="color:#22d3bf">class_2dim_unsup</code> (अर्थ और parameters समझने के लिए HALCON reference उपयोगी है)</p>
-<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: हाँ (allow-list का mechanical GPU path, CuPy)। <code style="color:#22d3bf">device=&quot;auto&quot;</code> मापे गए आकार (4,194,304 pixel) और उससे बड़े पर GPU चुनता है</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>2-channel feature space का k-means से unsupervised classification (class_2dim_unsup)। label image लौटाता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>

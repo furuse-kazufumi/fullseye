@@ -1,8 +1,8 @@
 {
- "n_ops": 3752,
+ "n_ops": 3810,
  "tiers": {
   "color": 12,
-  "ledger": 2788,
+  "ledger": 2846,
   "nary": 17,
   "registry": 935
  },
@@ -24,6 +24,7 @@
   "counts",
   "cpoints",
   "cscalar",
+  "ctgeometry",
   "curvature",
   "deformation",
   "depth",
@@ -73,6 +74,7 @@
   "position",
   "positions",
   "primitive",
+  "projstack",
   "qimage",
   "region",
   "rgb",
@@ -392,7 +394,7 @@
   },
   {
    "name": "abs_funct_1d",
-   "halcon": "",
+   "halcon": "abs_funct_1d",
    "in_sort": "signal",
    "out_sort": "signal",
    "category": "function",
@@ -432,7 +434,8 @@
     "table",
     "table",
     "table"
-   ]
+   ],
+   "gpu_tier": "none"
   },
   {
    "name": "acceptance_layout",
@@ -443,7 +446,8 @@
    "tier": "ledger",
    "ledger": "opsacceptance",
    "dim": "acceptance",
-   "in_sorts": []
+   "in_sorts": [],
+   "gpu_tier": "none"
   },
   {
    "name": "acceptance_scan",
@@ -457,7 +461,8 @@
    "in_sorts": [
     "table",
     "table"
-   ]
+   ],
+   "gpu_tier": "partial"
   },
   {
    "name": "acceptance_verdict",
@@ -471,7 +476,8 @@
    "in_sorts": [
     "table",
     "table"
-   ]
+   ],
+   "gpu_tier": "none"
   },
   {
    "name": "ackermann_steer_angles",
@@ -598,7 +604,7 @@
   },
   {
    "name": "add_metrology_object_circle_measure",
-   "halcon": "",
+   "halcon": "add_metrology_object_circle_measure",
    "in_sort": "metrologymodel",
    "out_sort": "scalar",
    "category": "model",
@@ -612,7 +618,7 @@
   },
   {
    "name": "add_metrology_object_ellipse_measure",
-   "halcon": "",
+   "halcon": "add_metrology_object_ellipse_measure",
    "in_sort": "metrologymodel",
    "out_sort": "scalar",
    "category": "model",
@@ -626,7 +632,7 @@
   },
   {
    "name": "add_metrology_object_generic",
-   "halcon": "",
+   "halcon": "add_metrology_object_generic",
    "in_sort": "metrologymodel",
    "out_sort": "scalar",
    "category": "model",
@@ -640,7 +646,7 @@
   },
   {
    "name": "add_metrology_object_line_measure",
-   "halcon": "",
+   "halcon": "add_metrology_object_line_measure",
    "in_sort": "metrologymodel",
    "out_sort": "scalar",
    "category": "model",
@@ -654,7 +660,7 @@
   },
   {
    "name": "add_metrology_object_rectangle2_measure",
-   "halcon": "",
+   "halcon": "add_metrology_object_rectangle2_measure",
    "in_sort": "metrologymodel",
    "out_sort": "scalar",
    "category": "model",
@@ -874,7 +880,7 @@
   },
   {
    "name": "align_metrology_model",
-   "halcon": "",
+   "halcon": "align_metrology_model",
    "in_sort": "metrologymodel",
    "out_sort": "metrologymodel",
    "category": "apply",
@@ -1790,7 +1796,7 @@
   },
   {
    "name": "apply_metrology_model",
-   "halcon": "",
+   "halcon": "apply_metrology_model",
    "in_sort": "metrologymodel",
    "out_sort": "table",
    "category": "apply",
@@ -1872,7 +1878,8 @@
    "in_sorts": [
     "any",
     "text"
-   ]
+   ],
+   "gpu_tier": "none"
   },
   {
    "name": "archive_extract",
@@ -1886,7 +1893,8 @@
    "in_sorts": [
     "any",
     "text"
-   ]
+   ],
+   "gpu_tier": "none"
   },
   {
    "name": "archive_list",
@@ -1899,7 +1907,8 @@
    "dim": "fileio",
    "in_sorts": [
     "any"
-   ]
+   ],
+   "gpu_tier": "none"
   },
   {
    "name": "archive_probe",
@@ -1912,7 +1921,22 @@
    "dim": "fileio",
    "in_sorts": [
     "any"
-   ]
+   ],
+   "gpu_tier": "none"
+  },
+  {
+   "name": "area_center_gray",
+   "halcon": "area_center_gray",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "gray",
+   "tier": "ledger",
+   "ledger": "opsmv",
+   "dim": "mv",
+   "in_sorts": [
+    "image2d"
+   ],
+   "gpu_tier": "suitable"
   },
   {
    "name": "area_opening_attr",
@@ -1967,7 +1991,8 @@
    "dim": "fileio",
    "in_sorts": [
     "any"
-   ]
+   ],
+   "gpu_tier": "none"
   },
   {
    "name": "astro_fits_write",
@@ -1980,7 +2005,23 @@
    "dim": "fileio",
    "in_sorts": [
     "any"
-   ]
+   ],
+   "gpu_tier": "none"
+  },
+  {
+   "name": "atan2_image",
+   "halcon": "atan2_image",
+   "in_sort": "image2d",
+   "out_sort": "image2d",
+   "category": "gray",
+   "tier": "ledger",
+   "ledger": "opsmv",
+   "dim": "mv",
+   "in_sorts": [
+    "image2d",
+    "image2d"
+   ],
+   "gpu_tier": "suitable"
   },
   {
    "name": "attention_apply",
@@ -2353,7 +2394,8 @@
    "dim": "symbol",
    "in_sorts": [
     "image2d"
-   ]
+   ],
+   "gpu_tier": "suitable"
   },
   {
    "name": "basis_decomposition_crlb",
@@ -2619,6 +2661,36 @@
    "dim": "3d",
    "in_sorts": [
     "depth"
+   ],
+   "gpu_tier": "suitable"
+  },
+  {
+   "name": "binocular_disparity_ms",
+   "halcon": "binocular_disparity_ms",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "stereo",
+   "tier": "ledger",
+   "ledger": "opsmv",
+   "dim": "mv",
+   "in_sorts": [
+    "image2d",
+    "image2d"
+   ],
+   "gpu_tier": "suitable"
+  },
+  {
+   "name": "binocular_distance_ms",
+   "halcon": "binocular_distance_ms",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "stereo",
+   "tier": "ledger",
+   "ledger": "opsmv",
+   "dim": "mv",
+   "in_sorts": [
+    "image2d",
+    "image2d"
    ],
    "gpu_tier": "suitable"
   },
@@ -3332,7 +3404,8 @@
    "dim": "calib",
    "in_sorts": [
     "table"
-   ]
+   ],
+   "gpu_tier": "none"
   },
   {
    "name": "calibration_next_pose",
@@ -3345,7 +3418,8 @@
    "dim": "calib",
    "in_sorts": [
     "table"
-   ]
+   ],
+   "gpu_tier": "none"
   },
   {
    "name": "calibration_uncertainty_map",
@@ -3358,7 +3432,8 @@
    "dim": "calib",
    "in_sorts": [
     "table"
-   ]
+   ],
+   "gpu_tier": "none"
   },
   {
    "name": "calibration_views",
@@ -3376,7 +3451,7 @@
   },
   {
    "name": "caltab_points",
-   "halcon": "",
+   "halcon": "caltab_points",
    "in_sort": null,
    "out_sort": "keypoints",
    "category": "target",
@@ -3388,7 +3463,7 @@
   },
   {
    "name": "camera_calibration",
-   "halcon": "",
+   "halcon": "camera_calibration",
    "in_sort": "keypoints",
    "out_sort": "table",
    "category": "calibrate",
@@ -3411,7 +3486,8 @@
    "dim": "calib",
    "in_sorts": [
     "keypoints"
-   ]
+   ],
+   "gpu_tier": "partial"
   },
   {
    "name": "camera_orientation_from_skyline",
@@ -3512,7 +3588,8 @@
    "dim": "optics",
    "in_sorts": [
     "images"
-   ]
+   ],
+   "gpu_tier": "suitable"
   },
   {
    "name": "camera_response_linear",
@@ -3523,7 +3600,8 @@
    "tier": "ledger",
    "ledger": "opsoptics",
    "dim": "optics",
-   "in_sorts": []
+   "in_sorts": [],
+   "gpu_tier": "none"
   },
   {
    "name": "camera_response_robertson",
@@ -3536,7 +3614,8 @@
    "dim": "optics",
    "in_sorts": [
     "images"
-   ]
+   ],
+   "gpu_tier": "suitable"
   },
   {
    "name": "camera_rig",
@@ -3605,7 +3684,8 @@
    "dim": "symbol",
    "in_sorts": [
     "image2d"
-   ]
+   ],
+   "gpu_tier": "suitable"
   },
   {
    "name": "car_dubins_path",
@@ -4042,7 +4122,8 @@
    "dim": "aoi",
    "in_sorts": [
     "image2d"
-   ]
+   ],
+   "gpu_tier": "suitable"
   },
   {
    "name": "central_moments",
@@ -4164,6 +4245,22 @@
    "gpu_tier": "suitable"
   },
   {
+   "name": "change_radial_distortion_image",
+   "halcon": "change_radial_distortion_image",
+   "in_sort": "image2d",
+   "out_sort": "image2d",
+   "category": "resample",
+   "tier": "ledger",
+   "ledger": "opsmv",
+   "dim": "mv",
+   "in_sorts": [
+    "image2d",
+    "table",
+    "table"
+   ],
+   "gpu_tier": "suitable"
+  },
+  {
    "name": "chebyshev_coeffs_nd",
    "halcon": "",
    "in_sort": "image2d",
@@ -4206,7 +4303,7 @@
   },
   {
    "name": "check_difference",
-   "halcon": "",
+   "halcon": "check_difference",
    "in_sort": "image2d",
    "out_sort": "mask",
    "category": "compare",
@@ -4242,7 +4339,8 @@
    "tier": "ledger",
    "ledger": "opscalib",
    "dim": "calib",
-   "in_sorts": []
+   "in_sorts": [],
+   "gpu_tier": "partial"
   },
   {
    "name": "chief_ray",
@@ -4501,7 +4599,7 @@
   },
   {
    "name": "class_2dim_sup",
-   "halcon": "",
+   "halcon": "class_2dim_sup",
    "in_sort": "image2d",
    "out_sort": "mask",
    "category": "classify",
@@ -4517,7 +4615,7 @@
   },
   {
    "name": "class_2dim_unsup",
-   "halcon": "",
+   "halcon": "class_2dim_unsup",
    "in_sort": "image2d",
    "out_sort": "labels2d",
    "category": "classify",
@@ -4532,7 +4630,7 @@
   },
   {
    "name": "class_ndim_norm",
-   "halcon": "",
+   "halcon": "class_ndim_norm",
    "in_sort": "images",
    "out_sort": "mask",
    "category": "classify",
@@ -4546,8 +4644,68 @@
    "gpu_tier": "suitable"
   },
   {
+   "name": "classify_class_gmm",
+   "halcon": "classify_class_gmm",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "classify",
+   "tier": "ledger",
+   "ledger": "opsmv",
+   "dim": "mv",
+   "in_sorts": [
+    "table",
+    "matrix"
+   ],
+   "gpu_tier": "none"
+  },
+  {
+   "name": "classify_class_knn",
+   "halcon": "classify_class_knn",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "classify",
+   "tier": "ledger",
+   "ledger": "opsmv",
+   "dim": "mv",
+   "in_sorts": [
+    "table",
+    "matrix"
+   ],
+   "gpu_tier": "none"
+  },
+  {
+   "name": "classify_class_mlp",
+   "halcon": "classify_class_mlp",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "classify",
+   "tier": "ledger",
+   "ledger": "opsmv",
+   "dim": "mv",
+   "in_sorts": [
+    "table",
+    "matrix"
+   ],
+   "gpu_tier": "none"
+  },
+  {
+   "name": "classify_class_svm",
+   "halcon": "classify_class_svm",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "classify",
+   "tier": "ledger",
+   "ledger": "opsmv",
+   "dim": "mv",
+   "in_sorts": [
+    "table",
+    "matrix"
+   ],
+   "gpu_tier": "none"
+  },
+  {
    "name": "classify_image_class_lut",
-   "halcon": "",
+   "halcon": "classify_image_class_lut",
    "in_sort": "image2d",
    "out_sort": "labels2d",
    "category": "classify",
@@ -4863,7 +5021,7 @@
   },
   {
    "name": "compose_funct_1d",
-   "halcon": "",
+   "halcon": "compose_funct_1d",
    "in_sort": "signal",
    "out_sort": "signal",
    "category": "function",
@@ -5148,7 +5306,7 @@
   },
   {
    "name": "contour_to_world_plane_xld",
-   "halcon": "",
+   "halcon": "contour_to_world_plane_xld",
    "in_sort": "table",
    "out_sort": "table",
    "category": "plane",
@@ -5927,8 +6085,22 @@
    "gpu_tier": "none"
   },
   {
+   "name": "create_bg_esti",
+   "halcon": "create_bg_esti",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "tracking",
+   "tier": "ledger",
+   "ledger": "opsmv",
+   "dim": "mv",
+   "in_sorts": [
+    "image2d"
+   ],
+   "gpu_tier": "suitable"
+  },
+  {
    "name": "create_caltab",
-   "halcon": "",
+   "halcon": "create_caltab",
    "in_sort": null,
    "out_sort": "table",
    "category": "target",
@@ -5940,7 +6112,7 @@
   },
   {
    "name": "create_funct_1d_array",
-   "halcon": "",
+   "halcon": "create_funct_1d_array",
    "in_sort": "signal",
    "out_sort": "signal",
    "category": "function",
@@ -5954,7 +6126,7 @@
   },
   {
    "name": "create_funct_1d_pairs",
-   "halcon": "",
+   "halcon": "create_funct_1d_pairs",
    "in_sort": "signal",
    "out_sort": "signal",
    "category": "function",
@@ -5968,8 +6140,20 @@
    "gpu_tier": "suitable"
   },
   {
+   "name": "create_lexicon",
+   "halcon": "create_lexicon",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "classify",
+   "tier": "ledger",
+   "ledger": "opsmv",
+   "dim": "mv",
+   "in_sorts": [],
+   "gpu_tier": "none"
+  },
+  {
    "name": "create_metrology_model",
-   "halcon": "",
+   "halcon": "create_metrology_model",
    "in_sort": null,
    "out_sort": "metrologymodel",
    "category": "model",
@@ -5978,6 +6162,20 @@
    "dim": "measure1d",
    "in_sorts": [],
    "gpu_tier": "none"
+  },
+  {
+   "name": "create_ncc_model",
+   "halcon": "create_ncc_model",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "detect",
+   "tier": "ledger",
+   "ledger": "opsmv",
+   "dim": "mv",
+   "in_sorts": [
+    "image2d"
+   ],
+   "gpu_tier": "suitable"
   },
   {
    "name": "crest_safe_speed",
@@ -6029,6 +6227,20 @@
    "in_sorts": [
     "signal",
     "signal"
+   ],
+   "gpu_tier": "suitable"
+  },
+  {
+   "name": "crop_rectangle2",
+   "halcon": "crop_rectangle2",
+   "in_sort": "image2d",
+   "out_sort": "image2d",
+   "category": "resample",
+   "tier": "ledger",
+   "ledger": "opsmv",
+   "dim": "mv",
+   "in_sorts": [
+    "image2d"
    ],
    "gpu_tier": "suitable"
   },
@@ -6287,6 +6499,64 @@
     "depth"
    ],
    "gpu_tier": "suitable"
+  },
+  {
+   "name": "ct_adjoint_project",
+   "halcon": "",
+   "in_sort": "projstack",
+   "out_sort": "voxel",
+   "category": "ct_scan",
+   "tier": "ledger",
+   "ledger": "opstomography",
+   "dim": "tomography",
+   "in_sorts": [
+    "projstack",
+    "ctgeometry"
+   ],
+   "gpu_tier": "suitable"
+  },
+  {
+   "name": "ct_dual_energy_reconstruct",
+   "halcon": "",
+   "in_sort": "projstack",
+   "out_sort": "table",
+   "category": "ct_scan",
+   "tier": "ledger",
+   "ledger": "opstomography",
+   "dim": "tomography",
+   "in_sorts": [
+    "projstack",
+    "projstack",
+    "ctgeometry"
+   ],
+   "gpu_tier": "none"
+  },
+  {
+   "name": "ct_forward_project",
+   "halcon": "",
+   "in_sort": "voxel",
+   "out_sort": "projstack",
+   "category": "ct_scan",
+   "tier": "ledger",
+   "ledger": "opstomography",
+   "dim": "tomography",
+   "in_sorts": [
+    "voxel",
+    "ctgeometry"
+   ],
+   "gpu_tier": "suitable"
+  },
+  {
+   "name": "ct_scan_geometry",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "ctgeometry",
+   "category": "ct_scan",
+   "tier": "ledger",
+   "ledger": "opstomography",
+   "dim": "tomography",
+   "in_sorts": [],
+   "gpu_tier": "none"
   },
   {
    "name": "cubemap_from_equirect",
@@ -6878,7 +7148,8 @@
    "dim": "symbol",
    "in_sorts": [
     "signal"
-   ]
+   ],
+   "gpu_tier": "suitable"
   },
   {
    "name": "decode_fringe",
@@ -7473,7 +7744,7 @@
   },
   {
    "name": "depth_from_focus",
-   "halcon": "",
+   "halcon": "depth_from_focus",
    "in_sort": "images",
    "out_sort": "depth",
    "category": "structured_light",
@@ -7527,7 +7798,7 @@
   },
   {
    "name": "derivate_funct_1d",
-   "halcon": "",
+   "halcon": "derivate_funct_1d",
    "in_sort": "signal",
    "out_sort": "signal",
    "category": "function",
@@ -7988,7 +8259,7 @@
   },
   {
    "name": "disp_caltab",
-   "halcon": "",
+   "halcon": "disp_caltab",
    "in_sort": "table",
    "out_sort": "image2d",
    "category": "target",
@@ -8064,7 +8335,7 @@
   },
   {
    "name": "distance_funct_1d",
-   "halcon": "",
+   "halcon": "distance_funct_1d",
    "in_sort": "signal",
    "out_sort": "measurement",
    "category": "function",
@@ -8107,7 +8378,7 @@
   },
   {
    "name": "distance_point_line",
-   "halcon": "",
+   "halcon": "distance_point_line",
    "in_sort": "points",
    "out_sort": "measurement",
    "category": "geometry",
@@ -8217,7 +8488,8 @@
    "dim": "symbol",
    "in_sorts": [
     "matrix"
-   ]
+   ],
+   "gpu_tier": "suitable"
   },
   {
    "name": "dm_encode",
@@ -8228,7 +8500,8 @@
    "tier": "ledger",
    "ledger": "opssymbol",
    "dim": "symbol",
-   "in_sorts": []
+   "in_sorts": [],
+   "gpu_tier": "none"
   },
   {
    "name": "dm_locate",
@@ -8241,7 +8514,8 @@
    "dim": "symbol",
    "in_sorts": [
     "image2d"
-   ]
+   ],
+   "gpu_tier": "suitable"
   },
   {
    "name": "dm_read",
@@ -8254,7 +8528,8 @@
    "dim": "symbol",
    "in_sorts": [
     "image2d"
-   ]
+   ],
+   "gpu_tier": "suitable"
   },
   {
    "name": "dm_sample",
@@ -8267,7 +8542,8 @@
    "dim": "symbol",
    "in_sorts": [
     "image2d"
-   ]
+   ],
+   "gpu_tier": "suitable"
   },
   {
    "name": "doe_box_behnken",
@@ -8843,7 +9119,8 @@
    "tier": "ledger",
    "ledger": "opssymbol",
    "dim": "symbol",
-   "in_sorts": []
+   "in_sorts": [],
+   "gpu_tier": "none"
   },
   {
    "name": "echo_phase_polarity",
@@ -9028,6 +9305,32 @@
    "gpu_tier": "suitable"
   },
   {
+   "name": "ellipsoid_phantom",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "voxel",
+   "category": "ct_scan",
+   "tier": "ledger",
+   "ledger": "opstomography",
+   "dim": "tomography",
+   "in_sorts": [],
+   "gpu_tier": "suitable"
+  },
+  {
+   "name": "ellipsoid_projections",
+   "halcon": "",
+   "in_sort": "ctgeometry",
+   "out_sort": "projstack",
+   "category": "ct_scan",
+   "tier": "ledger",
+   "ledger": "opstomography",
+   "dim": "tomography",
+   "in_sorts": [
+    "ctgeometry"
+   ],
+   "gpu_tier": "none"
+  },
+  {
    "name": "elliptic_fourier",
    "halcon": "",
    "in_sort": "pairs",
@@ -9064,7 +9367,8 @@
    "dim": "fileio",
    "in_sorts": [
     "any"
-   ]
+   ],
+   "gpu_tier": "none"
   },
   {
    "name": "em_mrc_write",
@@ -9077,7 +9381,8 @@
    "dim": "fileio",
    "in_sorts": [
     "any"
-   ]
+   ],
+   "gpu_tier": "none"
   },
   {
    "name": "emva_bspline_regression",
@@ -9419,7 +9724,8 @@
    "tier": "ledger",
    "ledger": "opssymbol",
    "dim": "symbol",
-   "in_sorts": []
+   "in_sorts": [],
+   "gpu_tier": "none"
   },
   {
    "name": "energy_radii",
@@ -9935,6 +10241,21 @@
    "gpu_tier": "suitable"
   },
   {
+   "name": "evaluate_class_gmm",
+   "halcon": "evaluate_class_gmm",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "classify",
+   "tier": "ledger",
+   "ledger": "opsmv",
+   "dim": "mv",
+   "in_sorts": [
+    "table",
+    "matrix"
+   ],
+   "gpu_tier": "none"
+  },
+  {
    "name": "events_to_frames",
    "halcon": "",
    "in_sort": "table",
@@ -10005,7 +10326,7 @@
   },
   {
    "name": "expand_gray",
-   "halcon": "",
+   "halcon": "expand_gray",
    "in_sort": "image2d",
    "out_sort": "mask",
    "category": "grow",
@@ -10057,7 +10378,8 @@
    "dim": "optics",
    "in_sorts": [
     "images"
-   ]
+   ],
+   "gpu_tier": "suitable"
   },
   {
    "name": "extent_signature",
@@ -10229,6 +10551,21 @@
    "gpu_tier": "required"
   },
   {
+   "name": "fdk_reconstruct",
+   "halcon": "",
+   "in_sort": "projstack",
+   "out_sort": "voxel",
+   "category": "ct_scan",
+   "tier": "ledger",
+   "ledger": "opstomography",
+   "dim": "tomography",
+   "in_sorts": [
+    "projstack",
+    "ctgeometry"
+   ],
+   "gpu_tier": "suitable"
+  },
+  {
    "name": "feat_image_vector",
    "halcon": "",
    "in_sort": "images",
@@ -10253,7 +10590,8 @@
    "dim": "matchreg",
    "in_sorts": [
     "image2d"
-   ]
+   ],
+   "gpu_tier": "suitable"
   },
   {
    "name": "features_match",
@@ -10267,7 +10605,8 @@
    "in_sorts": [
     "table",
     "table"
-   ]
+   ],
+   "gpu_tier": "none"
   },
   {
    "name": "features_orb",
@@ -10280,7 +10619,8 @@
    "dim": "matchreg",
    "in_sorts": [
     "image2d"
-   ]
+   ],
+   "gpu_tier": "suitable"
   },
   {
    "name": "features_sift",
@@ -10293,7 +10633,8 @@
    "dim": "matchreg",
    "in_sorts": [
     "image2d"
-   ]
+   ],
+   "gpu_tier": "suitable"
   },
   {
    "name": "fem_nodes_load",
@@ -10513,6 +10854,18 @@
    "gpu_tier": "suitable"
   },
   {
+   "name": "filter_kalman",
+   "halcon": "filter_kalman",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "tracking",
+   "tier": "ledger",
+   "ledger": "opsmv",
+   "dim": "mv",
+   "in_sorts": [],
+   "gpu_tier": "none"
+  },
+  {
    "name": "filtered_backprojection",
    "halcon": "",
    "in_sort": "sinogram",
@@ -10528,7 +10881,7 @@
   },
   {
    "name": "find_caltab",
-   "halcon": "",
+   "halcon": "find_caltab",
    "in_sort": "image2d",
    "out_sort": "keypoints",
    "category": "target",
@@ -10551,11 +10904,12 @@
    "dim": "calib",
    "in_sorts": [
     "image2d"
-   ]
+   ],
+   "gpu_tier": "suitable"
   },
   {
    "name": "find_marks_and_pose",
-   "halcon": "",
+   "halcon": "find_marks_and_pose",
    "in_sort": "image2d",
    "out_sort": "table",
    "category": "calibrate",
@@ -10566,6 +10920,21 @@
     "image2d"
    ],
    "gpu_tier": "suitable"
+  },
+  {
+   "name": "find_ncc_models",
+   "halcon": "find_ncc_models",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "detect",
+   "tier": "ledger",
+   "ledger": "opsmv",
+   "dim": "mv",
+   "in_sorts": [
+    "table",
+    "image2d"
+   ],
+   "gpu_tier": "none"
   },
   {
    "name": "find_peaks",
@@ -10593,7 +10962,8 @@
    "in_sorts": [
     "points",
     "points"
-   ]
+   ],
+   "gpu_tier": "partial"
   },
   {
    "name": "fingerprint_correlate",
@@ -10807,7 +11177,8 @@
    "dim": "shape2d",
    "in_sorts": [
     "contour"
-   ]
+   ],
+   "gpu_tier": "partial"
   },
   {
    "name": "fit_cone",
@@ -12000,7 +12371,8 @@
    "dim": "reprconv",
    "in_sorts": [
     "frame"
-   ]
+   ],
+   "gpu_tier": "suitable"
   },
   {
    "name": "frame_difference_causal",
@@ -12259,7 +12631,7 @@
   },
   {
    "name": "funct_1d_to_pairs",
-   "halcon": "",
+   "halcon": "funct_1d_to_pairs",
    "in_sort": "signal",
    "out_sort": "pairs",
    "category": "function",
@@ -12316,7 +12688,7 @@
   },
   {
    "name": "fuzzy_measure_pairing",
-   "halcon": "",
+   "halcon": "fuzzy_measure_pairing",
    "in_sort": "image2d",
    "out_sort": "table",
    "category": "caliper",
@@ -12510,7 +12882,7 @@
   },
   {
    "name": "gen_caltab",
-   "halcon": "",
+   "halcon": "gen_caltab",
    "in_sort": null,
    "out_sort": "table",
    "category": "target",
@@ -12522,7 +12894,7 @@
   },
   {
    "name": "gen_image_to_world_plane_map",
-   "halcon": "",
+   "halcon": "gen_image_to_world_plane_map",
    "in_sort": null,
    "out_sort": "table",
    "category": "plane",
@@ -12534,7 +12906,7 @@
   },
   {
    "name": "gen_measure_arc",
-   "halcon": "",
+   "halcon": "gen_measure_arc",
    "in_sort": null,
    "out_sort": "measurehandle",
    "category": "caliper",
@@ -12546,7 +12918,7 @@
   },
   {
    "name": "gen_measure_rectangle2",
-   "halcon": "",
+   "halcon": "gen_measure_rectangle2",
    "in_sort": null,
    "out_sort": "measurehandle",
    "category": "caliper",
@@ -12557,8 +12929,22 @@
    "gpu_tier": "none"
   },
   {
+   "name": "gen_nurbs_interp",
+   "halcon": "gen_nurbs_interp",
+   "in_sort": "keypoints",
+   "out_sort": "table",
+   "category": "curve",
+   "tier": "ledger",
+   "ledger": "opsmv",
+   "dim": "mv",
+   "in_sorts": [
+    "keypoints"
+   ],
+   "gpu_tier": "partial"
+  },
+  {
    "name": "gen_radial_distortion_map",
-   "halcon": "",
+   "halcon": "gen_radial_distortion_map",
    "in_sort": null,
    "out_sort": "table",
    "category": "plane",
@@ -12651,8 +13037,37 @@
    "gpu_tier": "suitable"
   },
   {
+   "name": "get_circle_pose",
+   "halcon": "get_circle_pose",
+   "in_sort": "keypoints",
+   "out_sort": "table",
+   "category": "pose",
+   "tier": "ledger",
+   "ledger": "opsmv",
+   "dim": "mv",
+   "in_sorts": [
+    "keypoints"
+   ],
+   "gpu_tier": "partial"
+  },
+  {
+   "name": "get_grayval_contour_xld",
+   "halcon": "get_grayval_contour_xld",
+   "in_sort": "image2d",
+   "out_sort": "signal",
+   "category": "gray",
+   "tier": "ledger",
+   "ledger": "opsmv",
+   "dim": "mv",
+   "in_sorts": [
+    "image2d",
+    "keypoints"
+   ],
+   "gpu_tier": "suitable"
+  },
+  {
    "name": "get_pair_funct_1d",
-   "halcon": "",
+   "halcon": "get_pair_funct_1d",
    "in_sort": "signal",
    "out_sort": "pairs",
    "category": "function",
@@ -12666,7 +13081,7 @@
   },
   {
    "name": "get_y_value_funct_1d",
-   "halcon": "",
+   "halcon": "get_y_value_funct_1d",
    "in_sort": "signal",
    "out_sort": "measurement",
    "category": "function",
@@ -12734,6 +13149,20 @@
     "points"
    ],
    "gpu_tier": "required"
+  },
+  {
+   "name": "give_bg_esti",
+   "halcon": "give_bg_esti",
+   "in_sort": "table",
+   "out_sort": "image2d",
+   "category": "tracking",
+   "tier": "ledger",
+   "ledger": "opsmv",
+   "dim": "mv",
+   "in_sorts": [
+    "table"
+   ],
+   "gpu_tier": "suitable"
   },
   {
    "name": "glass",
@@ -12826,6 +13255,18 @@
    "gpu_tier": "suitable"
   },
   {
+   "name": "golay_elements",
+   "halcon": "golay_elements",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "morphology",
+   "tier": "ledger",
+   "ledger": "opsmv",
+   "dim": "mv",
+   "in_sorts": [],
+   "gpu_tier": "none"
+  },
+  {
    "name": "grade_barcode1d",
    "halcon": "",
    "in_sort": "image2d",
@@ -12836,7 +13277,8 @@
    "dim": "symbol",
    "in_sorts": [
     "image2d"
-   ]
+   ],
+   "gpu_tier": "suitable"
   },
   {
    "name": "grade_barcode_profile",
@@ -12849,7 +13291,8 @@
    "dim": "symbol",
    "in_sorts": [
     "signal"
-   ]
+   ],
+   "gpu_tier": "suitable"
   },
   {
    "name": "grade_datacode2d",
@@ -12862,7 +13305,8 @@
    "dim": "symbol",
    "in_sorts": [
     "image2d"
-   ]
+   ],
+   "gpu_tier": "suitable"
   },
   {
    "name": "gradient3d",
@@ -12889,7 +13333,8 @@
    "dim": "reprconv",
    "in_sorts": [
     "gradient"
-   ]
+   ],
+   "gpu_tier": "suitable"
   },
   {
    "name": "gradient_lut_build",
@@ -12933,7 +13378,8 @@
    "dim": "reprconv",
    "in_sorts": [
     "gradient"
-   ]
+   ],
+   "gpu_tier": "suitable"
   },
   {
    "name": "graph_activation_latency",
@@ -13496,6 +13942,34 @@
    "gpu_tier": "partial"
   },
   {
+   "name": "gray_histo",
+   "halcon": "gray_histo",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "gray",
+   "tier": "ledger",
+   "ledger": "opsmv",
+   "dim": "mv",
+   "in_sorts": [
+    "image2d"
+   ],
+   "gpu_tier": "suitable"
+  },
+  {
+   "name": "gray_projections",
+   "halcon": "gray_projections",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "gray",
+   "tier": "ledger",
+   "ledger": "opsmv",
+   "dim": "mv",
+   "in_sorts": [
+    "image2d"
+   ],
+   "gpu_tier": "suitable"
+  },
+  {
    "name": "graycode_decode",
    "halcon": "",
    "in_sort": "images",
@@ -13856,7 +14330,7 @@
   },
   {
    "name": "hand_eye_calibration",
-   "halcon": "",
+   "halcon": "hand_eye_calibration",
    "in_sort": null,
    "out_sort": "matrix",
    "category": "calibrate",
@@ -13977,7 +14451,8 @@
    "tier": "ledger",
    "ledger": "opsoptics",
    "dim": "optics",
-   "in_sorts": []
+   "in_sorts": [],
+   "gpu_tier": "none"
   },
   {
    "name": "hdr_exposure_series_simulate",
@@ -13990,7 +14465,8 @@
    "dim": "optics",
    "in_sorts": [
     "image2d"
-   ]
+   ],
+   "gpu_tier": "suitable"
   },
   {
    "name": "hdr_merge",
@@ -14003,7 +14479,8 @@
    "dim": "optics",
    "in_sorts": [
     "images"
-   ]
+   ],
+   "gpu_tier": "suitable"
   },
   {
    "name": "hdr_radiance_error",
@@ -14017,7 +14494,8 @@
    "in_sorts": [
     "image2d",
     "image2d"
-   ]
+   ],
+   "gpu_tier": "suitable"
   },
   {
    "name": "heap_mass",
@@ -14284,7 +14762,8 @@
    "dim": "reprconv",
    "in_sorts": [
     "hessian"
-   ]
+   ],
+   "gpu_tier": "suitable"
   },
   {
    "name": "hessian_vesselness",
@@ -14297,7 +14776,8 @@
    "dim": "reprconv",
    "in_sorts": [
     "hessian"
-   ]
+   ],
+   "gpu_tier": "suitable"
   },
   {
    "name": "hierarchical_watershed",
@@ -14429,6 +14909,34 @@
    "gpu_tier": "suitable"
   },
   {
+   "name": "hit_or_miss_golay",
+   "halcon": "hit_or_miss_golay",
+   "in_sort": "mask",
+   "out_sort": "mask",
+   "category": "morphology",
+   "tier": "ledger",
+   "ledger": "opsmv",
+   "dim": "mv",
+   "in_sorts": [
+    "mask"
+   ],
+   "gpu_tier": "suitable"
+  },
+  {
+   "name": "hit_or_miss_seq",
+   "halcon": "hit_or_miss_seq",
+   "in_sort": "mask",
+   "out_sort": "mask",
+   "category": "morphology",
+   "tier": "ledger",
+   "ledger": "opsmv",
+   "dim": "mv",
+   "in_sorts": [
+    "mask"
+   ],
+   "gpu_tier": "suitable"
+  },
+  {
    "name": "holdout_threshold",
    "halcon": "",
    "in_sort": "signal",
@@ -14477,7 +14985,7 @@
   },
   {
    "name": "hom_vector_to_proj_hom_mat2d",
-   "halcon": "",
+   "halcon": "hom_vector_to_proj_hom_mat2d",
    "in_sort": "keypoints",
    "out_sort": "matrix",
    "category": "fit",
@@ -15010,7 +15518,7 @@
   },
   {
    "name": "image_points_to_world_plane",
-   "halcon": "",
+   "halcon": "image_points_to_world_plane",
    "in_sort": "table",
    "out_sort": "keypoints",
    "category": "plane",
@@ -15113,7 +15621,8 @@
    "dim": "reprconv",
    "in_sorts": [
     "indices"
-   ]
+   ],
+   "gpu_tier": "partial"
   },
   {
    "name": "inertia_tensor",
@@ -15356,7 +15865,7 @@
   },
   {
    "name": "integrate_funct_1d",
-   "halcon": "",
+   "halcon": "integrate_funct_1d",
    "in_sort": "signal",
    "out_sort": "signal",
    "category": "function",
@@ -15547,7 +16056,7 @@
   },
   {
    "name": "invert_funct_1d",
-   "halcon": "",
+   "halcon": "invert_funct_1d",
    "in_sort": "signal",
    "out_sort": "pairs",
    "category": "function",
@@ -15933,7 +16442,8 @@
    "tier": "ledger",
    "ledger": "opsreprconv",
    "dim": "reprconv",
-   "in_sorts": []
+   "in_sorts": [],
+   "gpu_tier": "suitable"
   },
   {
    "name": "joukowski_circulation",
@@ -16303,7 +16813,8 @@
    "dim": "reprconv",
    "in_sorts": [
     "keypoints"
-   ]
+   ],
+   "gpu_tier": "partial"
   },
   {
    "name": "keypoints_to_image2d",
@@ -16344,7 +16855,8 @@
    "dim": "reprconv",
    "in_sorts": [
     "keypoints"
-   ]
+   ],
+   "gpu_tier": "partial"
   },
   {
    "name": "kirsch_plate_stress",
@@ -16414,7 +16926,8 @@
    "dim": "reprconv",
    "in_sorts": [
     "graph"
-   ]
+   ],
+   "gpu_tier": "partial"
   },
   {
    "name": "koschmieder",
@@ -16763,7 +17276,8 @@
    "dim": "optics",
    "in_sorts": [
     "image2d"
-   ]
+   ],
+   "gpu_tier": "suitable"
   },
   {
    "name": "laser_line_center_gauss",
@@ -16776,7 +17290,8 @@
    "dim": "optics",
    "in_sorts": [
     "image2d"
-   ]
+   ],
+   "gpu_tier": "suitable"
   },
   {
    "name": "laser_line_center_steger",
@@ -16789,7 +17304,8 @@
    "dim": "optics",
    "in_sorts": [
     "image2d"
-   ]
+   ],
+   "gpu_tier": "suitable"
   },
   {
    "name": "laser_line_coherent",
@@ -16934,7 +17450,7 @@
   },
   {
    "name": "learn_ndim_norm",
-   "halcon": "",
+   "halcon": "learn_ndim_norm",
    "in_sort": "matrix",
    "out_sort": "table",
    "category": "classify",
@@ -17737,7 +18253,8 @@
     "table",
     "table",
     "matrix"
-   ]
+   ],
+   "gpu_tier": "none"
   },
   {
    "name": "light_section_floor_sweep",
@@ -17748,7 +18265,8 @@
    "tier": "ledger",
    "ledger": "opsoptics",
    "dim": "optics",
-   "in_sorts": []
+   "in_sorts": [],
+   "gpu_tier": "none"
   },
   {
    "name": "light_section_height_map",
@@ -17762,7 +18280,8 @@
    "in_sorts": [
     "images",
     "table"
-   ]
+   ],
+   "gpu_tier": "suitable"
   },
   {
    "name": "light_section_profile",
@@ -17776,7 +18295,8 @@
    "in_sorts": [
     "table",
     "table"
-   ]
+   ],
+   "gpu_tier": "partial"
   },
   {
    "name": "light_section_render",
@@ -17790,7 +18310,8 @@
    "in_sorts": [
     "table",
     "pairs"
-   ]
+   ],
+   "gpu_tier": "suitable"
   },
   {
    "name": "light_section_rig",
@@ -17801,7 +18322,8 @@
    "tier": "ledger",
    "ledger": "opsoptics",
    "dim": "optics",
-   "in_sorts": []
+   "in_sorts": [],
+   "gpu_tier": "none"
   },
   {
    "name": "light_section_scan",
@@ -17815,7 +18337,8 @@
    "in_sorts": [
     "images",
     "table"
-   ]
+   ],
+   "gpu_tier": "suitable"
   },
   {
    "name": "light_section_speckle_floor",
@@ -17826,7 +18349,8 @@
    "tier": "ledger",
    "ledger": "opsoptics",
    "dim": "optics",
-   "in_sorts": []
+   "in_sorts": [],
+   "gpu_tier": "none"
   },
   {
    "name": "light_section_targets",
@@ -17839,7 +18363,8 @@
    "dim": "optics",
    "in_sorts": [
     "table"
-   ]
+   ],
+   "gpu_tier": "none"
   },
   {
    "name": "light_section_uncertainty_budget",
@@ -17850,7 +18375,8 @@
    "tier": "ledger",
    "ledger": "opsoptics",
    "dim": "optics",
-   "in_sorts": []
+   "in_sorts": [],
+   "gpu_tier": "none"
   },
   {
    "name": "light_source",
@@ -18030,7 +18556,7 @@
   },
   {
    "name": "local_min_max_funct_1d",
-   "halcon": "",
+   "halcon": "local_min_max_funct_1d",
    "in_sort": "signal",
    "out_sort": "table",
    "category": "function",
@@ -18237,6 +18763,20 @@
    "gpu_tier": "none"
   },
   {
+   "name": "lookup_lexicon",
+   "halcon": "lookup_lexicon",
+   "in_sort": "table",
+   "out_sort": "scalar",
+   "category": "classify",
+   "tier": "ledger",
+   "ledger": "opsmv",
+   "dim": "mv",
+   "in_sorts": [
+    "table"
+   ],
+   "gpu_tier": "none"
+  },
+  {
    "name": "low_discrepancy",
    "halcon": "",
    "in_sort": null,
@@ -18330,6 +18870,21 @@
    "dim": "math",
    "in_sorts": [
     "cimage"
+   ],
+   "gpu_tier": "suitable"
+  },
+  {
+   "name": "map_image",
+   "halcon": "map_image",
+   "in_sort": "image2d",
+   "out_sort": "image2d",
+   "category": "resample",
+   "tier": "ledger",
+   "ledger": "opsmv",
+   "dim": "mv",
+   "in_sorts": [
+    "image2d",
+    "table"
    ],
    "gpu_tier": "suitable"
   },
@@ -18693,7 +19248,8 @@
    "dim": "reprconv",
    "in_sorts": [
     "match"
-   ]
+   ],
+   "gpu_tier": "partial"
   },
   {
    "name": "match_curvature_3d",
@@ -18712,7 +19268,7 @@
   },
   {
    "name": "match_funct_1d_trans",
-   "halcon": "",
+   "halcon": "match_funct_1d_trans",
    "in_sort": "signal",
    "out_sort": "table",
    "category": "function",
@@ -19284,7 +19840,7 @@
   },
   {
    "name": "measure_pairs",
-   "halcon": "",
+   "halcon": "measure_pairs",
    "in_sort": "image2d",
    "out_sort": "table",
    "category": "caliper",
@@ -19299,7 +19855,7 @@
   },
   {
    "name": "measure_pos",
-   "halcon": "",
+   "halcon": "measure_pos",
    "in_sort": "image2d",
    "out_sort": "table",
    "category": "caliper",
@@ -20718,6 +21274,21 @@
    "gpu_tier": "suitable"
   },
   {
+   "name": "morph_hat",
+   "halcon": "morph_hat",
+   "in_sort": "mask",
+   "out_sort": "mask",
+   "category": "morphology",
+   "tier": "ledger",
+   "ledger": "opsmv",
+   "dim": "mv",
+   "in_sorts": [
+    "mask",
+    "mask"
+   ],
+   "gpu_tier": "suitable"
+  },
+  {
    "name": "morph_open3d",
    "halcon": "",
    "in_sort": "voxel",
@@ -20745,6 +21316,20 @@
     "image2d",
     "pairs",
     "pairs"
+   ],
+   "gpu_tier": "suitable"
+  },
+  {
+   "name": "morph_skiz",
+   "halcon": "morph_skiz",
+   "in_sort": "mask",
+   "out_sort": "mask",
+   "category": "morphology",
+   "tier": "ledger",
+   "ledger": "opsmv",
+   "dim": "mv",
+   "in_sorts": [
+    "mask"
    ],
    "gpu_tier": "suitable"
   },
@@ -21224,7 +21809,7 @@
   },
   {
    "name": "negate_funct_1d",
-   "halcon": "",
+   "halcon": "negate_funct_1d",
    "in_sort": "signal",
    "out_sort": "signal",
    "category": "function",
@@ -21287,7 +21872,8 @@
    "dim": "fileio",
    "in_sorts": [
     "any"
-   ]
+   ],
+   "gpu_tier": "none"
   },
   {
    "name": "nifti_write",
@@ -21300,7 +21886,8 @@
    "dim": "fileio",
    "in_sorts": [
     "any"
-   ]
+   ],
+   "gpu_tier": "none"
   },
   {
    "name": "nine_slice",
@@ -21631,7 +22218,8 @@
    "dim": "fileio",
    "in_sorts": [
     "any"
-   ]
+   ],
+   "gpu_tier": "none"
   },
   {
    "name": "nrrd_write",
@@ -21644,7 +22232,8 @@
    "dim": "fileio",
    "in_sorts": [
     "any"
-   ]
+   ],
+   "gpu_tier": "none"
   },
   {
    "name": "null_distribution",
@@ -21662,7 +22251,7 @@
   },
   {
    "name": "num_points_funct_1d",
-   "halcon": "",
+   "halcon": "num_points_funct_1d",
    "in_sort": "signal",
    "out_sort": "measurement",
    "category": "function",
@@ -21688,7 +22277,7 @@
   },
   {
    "name": "nurbs_curve",
-   "halcon": "",
+   "halcon": "gen_contour_nurbs_xld",
    "in_sort": "matrix",
    "out_sort": "table",
    "category": "geometry",
@@ -21901,7 +22490,8 @@
    "in_sorts": [
     "matrix",
     "table"
-   ]
+   ],
+   "gpu_tier": "suitable"
   },
   {
    "name": "ocr_features",
@@ -21914,7 +22504,8 @@
    "dim": "symbol",
    "in_sorts": [
     "image2d"
-   ]
+   ],
+   "gpu_tier": "suitable"
   },
   {
    "name": "ocr_font",
@@ -21925,7 +22516,8 @@
    "tier": "ledger",
    "ledger": "opssymbol",
    "dim": "symbol",
-   "in_sorts": []
+   "in_sorts": [],
+   "gpu_tier": "none"
   },
   {
    "name": "ocr_read_line",
@@ -21939,7 +22531,8 @@
    "in_sorts": [
     "image2d",
     "table"
-   ]
+   ],
+   "gpu_tier": "suitable"
   },
   {
    "name": "ocr_read_trials",
@@ -21952,7 +22545,8 @@
    "dim": "symbol",
    "in_sorts": [
     "table"
-   ]
+   ],
+   "gpu_tier": "none"
   },
   {
    "name": "ocr_render_text",
@@ -21963,7 +22557,8 @@
    "tier": "ledger",
    "ledger": "opssymbol",
    "dim": "symbol",
-   "in_sorts": []
+   "in_sorts": [],
+   "gpu_tier": "none"
   },
   {
    "name": "ocr_score",
@@ -21974,7 +22569,8 @@
    "tier": "ledger",
    "ledger": "opssymbol",
    "dim": "symbol",
-   "in_sorts": []
+   "in_sorts": [],
+   "gpu_tier": "none"
   },
   {
    "name": "ocr_segment_line",
@@ -21987,7 +22583,8 @@
    "dim": "symbol",
    "in_sorts": [
     "image2d"
-   ]
+   ],
+   "gpu_tier": "suitable"
   },
   {
    "name": "ocr_train",
@@ -21998,7 +22595,8 @@
    "tier": "ledger",
    "ledger": "opssymbol",
    "dim": "symbol",
-   "in_sorts": []
+   "in_sorts": [],
+   "gpu_tier": "none"
   },
   {
    "name": "oct_ascan",
@@ -22305,7 +22903,8 @@
    "dim": "fileio",
    "in_sorts": [
     "any"
-   ]
+   ],
+   "gpu_tier": "none"
   },
   {
    "name": "ome_tiff_write",
@@ -22318,7 +22917,8 @@
    "dim": "fileio",
    "in_sorts": [
     "any"
-   ]
+   ],
+   "gpu_tier": "none"
   },
   {
    "name": "omni_anaglyph_compose",
@@ -22362,6 +22962,21 @@
     "table"
    ],
    "gpu_tier": "none"
+  },
+  {
+   "name": "opening_seg",
+   "halcon": "opening_seg",
+   "in_sort": "mask",
+   "out_sort": "labels2d",
+   "category": "morphology",
+   "tier": "ledger",
+   "ledger": "opsmv",
+   "dim": "mv",
+   "in_sorts": [
+    "mask",
+    "mask"
+   ],
+   "gpu_tier": "suitable"
   },
   {
    "name": "optical_budget",
@@ -22572,6 +23187,21 @@
    "dim": "codematch",
    "in_sorts": [
     "image2d"
+   ],
+   "gpu_tier": "suitable"
+  },
+  {
+   "name": "os_sart_reconstruct",
+   "halcon": "",
+   "in_sort": "projstack",
+   "out_sort": "voxel",
+   "category": "ct_scan",
+   "tier": "ledger",
+   "ledger": "opstomography",
+   "dim": "tomography",
+   "in_sorts": [
+    "projstack",
+    "ctgeometry"
    ],
    "gpu_tier": "suitable"
   },
@@ -22886,7 +23516,8 @@
    "dim": "reprconv",
    "in_sorts": [
     "pairs"
-   ]
+   ],
+   "gpu_tier": "partial"
   },
   {
    "name": "pairs_to_image2d",
@@ -24025,7 +24656,7 @@
   },
   {
    "name": "photometric_stereo",
-   "halcon": "",
+   "halcon": "photometric_stereo",
    "in_sort": "images",
    "out_sort": "normalmap",
    "category": "photometric",
@@ -24686,7 +25317,8 @@
    "dim": "acceptance",
    "in_sorts": [
     "points"
-   ]
+   ],
+   "gpu_tier": "partial"
   },
   {
    "name": "plane_from_3points",
@@ -25033,7 +25665,8 @@
    "dim": "reprconv",
    "in_sorts": [
     "pointmap"
-   ]
+   ],
+   "gpu_tier": "suitable"
   },
   {
    "name": "points_activity_video",
@@ -25047,6 +25680,20 @@
    "in_sorts": [
     "points",
     "matrix"
+   ],
+   "gpu_tier": "suitable"
+  },
+  {
+   "name": "points_lepetit",
+   "halcon": "points_lepetit",
+   "in_sort": "image2d",
+   "out_sort": "keypoints",
+   "category": "detect",
+   "tier": "ledger",
+   "ledger": "opsmv",
+   "dim": "mv",
+   "in_sorts": [
+    "image2d"
    ],
    "gpu_tier": "suitable"
   },
@@ -25592,7 +26239,8 @@
    "dim": "reprconv",
    "in_sorts": [
     "pose"
-   ]
+   ],
+   "gpu_tier": "suitable"
   },
   {
    "name": "position_to_points",
@@ -26166,7 +26814,7 @@
   },
   {
    "name": "project_3d_point",
-   "halcon": "",
+   "halcon": "project_3d_point",
    "in_sort": "points",
    "out_sort": "keypoints",
    "category": "project",
@@ -26194,7 +26842,7 @@
   },
   {
    "name": "project_hom_point_hom_mat3d",
-   "halcon": "",
+   "halcon": "project_hom_point_hom_mat3d",
    "in_sort": "matrix",
    "out_sort": "keypoints",
    "category": "project",
@@ -26208,7 +26856,7 @@
   },
   {
    "name": "project_point_hom_mat3d",
-   "halcon": "",
+   "halcon": "project_point_hom_mat3d",
    "in_sort": "points",
    "out_sort": "keypoints",
    "category": "project",
@@ -26765,7 +27413,8 @@
    "dim": "symbol",
    "in_sorts": [
     "matrix"
-   ]
+   ],
+   "gpu_tier": "suitable"
   },
   {
    "name": "qr_encode",
@@ -26776,7 +27425,8 @@
    "tier": "ledger",
    "ledger": "opssymbol",
    "dim": "symbol",
-   "in_sorts": []
+   "in_sorts": [],
+   "gpu_tier": "none"
   },
   {
    "name": "qr_locate",
@@ -26789,7 +27439,8 @@
    "dim": "symbol",
    "in_sorts": [
     "image2d"
-   ]
+   ],
+   "gpu_tier": "suitable"
   },
   {
    "name": "qr_read",
@@ -26802,7 +27453,8 @@
    "dim": "symbol",
    "in_sorts": [
     "image2d"
-   ]
+   ],
+   "gpu_tier": "suitable"
   },
   {
    "name": "qr_sample",
@@ -26815,7 +27467,8 @@
    "dim": "symbol",
    "in_sorts": [
     "image2d"
-   ]
+   ],
+   "gpu_tier": "suitable"
   },
   {
    "name": "quantize",
@@ -27364,7 +28017,8 @@
    "dim": "matchreg",
    "in_sorts": [
     "table"
-   ]
+   ],
+   "gpu_tier": "none"
   },
   {
    "name": "ransac_homography",
@@ -27377,7 +28031,8 @@
    "dim": "matchreg",
    "in_sorts": [
     "table"
-   ]
+   ],
+   "gpu_tier": "none"
   },
   {
    "name": "ransac_line",
@@ -27620,7 +28275,8 @@
    "dim": "symbol",
    "in_sorts": [
     "image2d"
-   ]
+   ],
+   "gpu_tier": "suitable"
   },
   {
    "name": "read_bvh",
@@ -27669,7 +28325,8 @@
    "dim": "symbol",
    "in_sorts": [
     "image2d"
-   ]
+   ],
+   "gpu_tier": "suitable"
   },
   {
    "name": "read_wav",
@@ -27714,6 +28371,20 @@
    "gpu_tier": "partial"
   },
   {
+   "name": "reconstruct_surface_stereo",
+   "halcon": "reconstruct_surface_stereo",
+   "in_sort": "image2d",
+   "out_sort": "points",
+   "category": "stereo",
+   "tier": "ledger",
+   "ledger": "opsmv",
+   "dim": "mv",
+   "in_sorts": [
+    "image2d"
+   ],
+   "gpu_tier": "suitable"
+  },
+  {
    "name": "recover_pose",
    "halcon": "",
    "in_sort": "image2d",
@@ -27725,6 +28396,22 @@
    "in_sorts": [
     "image2d",
     "image2d"
+   ],
+   "gpu_tier": "suitable"
+  },
+  {
+   "name": "rectify_to_world_plane",
+   "halcon": "image_to_world_plane",
+   "in_sort": "image2d",
+   "out_sort": "image2d",
+   "category": "resample",
+   "tier": "ledger",
+   "ledger": "opsmv",
+   "dim": "mv",
+   "in_sorts": [
+    "image2d",
+    "table",
+    "matrix"
    ],
    "gpu_tier": "suitable"
   },
@@ -27846,7 +28533,8 @@
    "dim": "aoi",
    "in_sorts": [
     "image2d"
-   ]
+   ],
+   "gpu_tier": "suitable"
   },
   {
    "name": "reflection_symmetry_score",
@@ -27934,7 +28622,7 @@
   },
   {
    "name": "regiongrowing_n",
-   "halcon": "",
+   "halcon": "regiongrowing_n",
    "in_sort": "images",
    "out_sort": "labels2d",
    "category": "grow",
@@ -27958,7 +28646,8 @@
    "in_sorts": [
     "image2d",
     "flow2d"
-   ]
+   ],
+   "gpu_tier": "suitable"
   },
   {
    "name": "register_capture_range",
@@ -27971,7 +28660,8 @@
    "dim": "matchreg",
    "in_sorts": [
     "image2d"
-   ]
+   ],
+   "gpu_tier": "suitable"
   },
   {
    "name": "register_cpd_rigid",
@@ -28015,7 +28705,8 @@
    "in_sorts": [
     "image2d",
     "image2d"
-   ]
+   ],
+   "gpu_tier": "suitable"
   },
   {
    "name": "register_ffd",
@@ -28029,7 +28720,8 @@
    "in_sorts": [
     "image2d",
     "image2d"
-   ]
+   ],
+   "gpu_tier": "suitable"
   },
   {
    "name": "register_fpfh",
@@ -28085,7 +28777,8 @@
    "in_sorts": [
     "image2d",
     "image2d"
-   ]
+   ],
+   "gpu_tier": "suitable"
   },
   {
    "name": "register_nonrigid",
@@ -28158,7 +28851,8 @@
    "dim": "matchreg",
    "in_sorts": [
     "table"
-   ]
+   ],
+   "gpu_tier": "suitable"
   },
   {
    "name": "relative_illumination",
@@ -28415,7 +29109,8 @@
    "dim": "symbol",
    "in_sorts": [
     "table"
-   ]
+   ],
+   "gpu_tier": "suitable"
   },
   {
    "name": "render_through_lens",
@@ -29242,7 +29937,8 @@
    "dim": "aoi",
    "in_sorts": [
     "image2d"
-   ]
+   ],
+   "gpu_tier": "suitable"
   },
   {
    "name": "rough_transmission",
@@ -29467,6 +30163,21 @@
    "gpu_tier": "none"
   },
   {
+   "name": "run_bg_esti",
+   "halcon": "run_bg_esti",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "tracking",
+   "tier": "ledger",
+   "ledger": "opsmv",
+   "dim": "mv",
+   "in_sorts": [
+    "table",
+    "image2d"
+   ],
+   "gpu_tier": "none"
+  },
+  {
    "name": "running_gaussian_background",
    "halcon": "",
    "in_sort": "video",
@@ -29554,7 +30265,7 @@
   },
   {
    "name": "sample_funct_1d",
-   "halcon": "",
+   "halcon": "sample_funct_1d",
    "in_sort": "signal",
    "out_sort": "signal",
    "category": "function",
@@ -29637,7 +30348,7 @@
   },
   {
    "name": "scale_y_funct_1d",
-   "halcon": "",
+   "halcon": "scale_y_funct_1d",
    "in_sort": "signal",
    "out_sort": "signal",
    "category": "function",
@@ -30415,6 +31126,20 @@
    "gpu_tier": "partial"
   },
   {
+   "name": "segment_characters",
+   "halcon": "segment_characters",
+   "in_sort": "image2d",
+   "out_sort": "labels2d",
+   "category": "text",
+   "tier": "ledger",
+   "ledger": "opsmv",
+   "dim": "mv",
+   "in_sorts": [
+    "image2d"
+   ],
+   "gpu_tier": "suitable"
+  },
+  {
    "name": "segment_rigid_motions",
    "halcon": "",
    "in_sort": "points",
@@ -30442,6 +31167,20 @@
     "table"
    ],
    "gpu_tier": "none"
+  },
+  {
+   "name": "select_characters",
+   "halcon": "select_characters",
+   "in_sort": "labels2d",
+   "out_sort": "labels2d",
+   "category": "text",
+   "tier": "ledger",
+   "ledger": "opsmv",
+   "dim": "mv",
+   "in_sorts": [
+    "labels2d"
+   ],
+   "gpu_tier": "partial"
   },
   {
    "name": "select_points",
@@ -31051,6 +31790,18 @@
    "gpu_tier": "suitable"
   },
   {
+   "name": "shepp_logan_3d",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "voxel",
+   "category": "ct_scan",
+   "tier": "ledger",
+   "ledger": "opstomography",
+   "dim": "tomography",
+   "in_sorts": [],
+   "gpu_tier": "suitable"
+  },
+  {
    "name": "shift_to_vector",
    "halcon": "",
    "in_sort": "shift",
@@ -31292,7 +32043,7 @@
   },
   {
    "name": "sim_caltab",
-   "halcon": "",
+   "halcon": "sim_caltab",
    "in_sort": "table",
    "out_sort": "table",
    "category": "target",
@@ -31313,7 +32064,8 @@
    "tier": "ledger",
    "ledger": "opscalib",
    "dim": "calib",
-   "in_sorts": []
+   "in_sorts": [],
+   "gpu_tier": "none"
   },
   {
    "name": "simcal_discrepancy",
@@ -31554,6 +32306,21 @@
    "dim": "drive",
    "in_sorts": [],
    "gpu_tier": "none"
+  },
+  {
+   "name": "sirt_reconstruct",
+   "halcon": "",
+   "in_sort": "projstack",
+   "out_sort": "voxel",
+   "category": "ct_scan",
+   "tier": "ledger",
+   "ledger": "opstomography",
+   "dim": "tomography",
+   "in_sorts": [
+    "projstack",
+    "ctgeometry"
+   ],
+   "gpu_tier": "suitable"
   },
   {
    "name": "skeleton_branches3d",
@@ -31918,7 +32685,7 @@
   },
   {
    "name": "smooth_funct_1d_gauss",
-   "halcon": "",
+   "halcon": "smooth_funct_1d_gauss",
    "in_sort": "signal",
    "out_sort": "signal",
    "category": "function",
@@ -31932,7 +32699,7 @@
   },
   {
    "name": "smooth_funct_1d_mean",
-   "halcon": "",
+   "halcon": "smooth_funct_1d_mean",
    "in_sort": "signal",
    "out_sort": "signal",
    "category": "function",
@@ -32612,7 +33379,8 @@
    "dim": "acceptance",
    "in_sorts": [
     "points"
-   ]
+   ],
+   "gpu_tier": "partial"
   },
   {
    "name": "sphere_sdf",
@@ -32640,7 +33408,8 @@
    "in_sorts": [
     "points",
     "points"
-   ]
+   ],
+   "gpu_tier": "partial"
   },
   {
    "name": "spheres_render_shaded",
@@ -33254,7 +34023,8 @@
    "dim": "calib",
    "in_sorts": [
     "keypoints"
-   ]
+   ],
+   "gpu_tier": "partial"
   },
   {
    "name": "stereo_pack",
@@ -33632,6 +34402,20 @@
     "normalmap"
    ],
    "gpu_tier": "suitable"
+  },
+  {
+   "name": "suggest_lexicon",
+   "halcon": "suggest_lexicon",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "classify",
+   "tier": "ledger",
+   "ledger": "opsmv",
+   "dim": "mv",
+   "in_sorts": [
+    "table"
+   ],
+   "gpu_tier": "none"
   },
   {
    "name": "sun_at",
@@ -34107,7 +34891,8 @@
    "dim": "symbol",
    "in_sorts": [
     "image2d"
-   ]
+   ],
+   "gpu_tier": "suitable"
   },
   {
    "name": "symbol_read_pod",
@@ -34120,7 +34905,8 @@
    "dim": "symbol",
    "in_sorts": [
     "table"
-   ]
+   ],
+   "gpu_tier": "none"
   },
   {
    "name": "symbol_read_trials",
@@ -34133,7 +34919,8 @@
    "dim": "symbol",
    "in_sorts": [
     "table"
-   ]
+   ],
+   "gpu_tier": "none"
   },
   {
    "name": "symmetric_peg_shape",
@@ -34161,7 +34948,8 @@
    "in_sorts": [
     "image2d",
     "table"
-   ]
+   ],
+   "gpu_tier": "suitable"
   },
   {
    "name": "symmetry_fold",
@@ -34204,7 +34992,8 @@
    "in_sorts": [
     "image2d",
     "table"
-   ]
+   ],
+   "gpu_tier": "suitable"
   },
   {
    "name": "synapse_table_from_table",
@@ -34217,7 +35006,8 @@
    "dim": "reprconv",
    "in_sorts": [
     "table"
-   ]
+   ],
+   "gpu_tier": "partial"
   },
   {
    "name": "synth_frame_series",
@@ -34318,7 +35108,8 @@
    "dim": "reprconv",
    "in_sorts": [
     "table"
-   ]
+   ],
+   "gpu_tier": "suitable"
   },
   {
    "name": "table_field_matrix",
@@ -34331,7 +35122,8 @@
    "dim": "reprconv",
    "in_sorts": [
     "table"
-   ]
+   ],
+   "gpu_tier": "suitable"
   },
   {
    "name": "table_field_measurement",
@@ -34344,7 +35136,8 @@
    "dim": "reprconv",
    "in_sorts": [
     "table"
-   ]
+   ],
+   "gpu_tier": "partial"
   },
   {
    "name": "table_field_signal",
@@ -34357,7 +35150,8 @@
    "dim": "reprconv",
    "in_sorts": [
     "table"
-   ]
+   ],
+   "gpu_tier": "suitable"
   },
   {
    "name": "table_params",
@@ -34974,6 +35768,34 @@
    "gpu_tier": "suitable"
   },
   {
+   "name": "text_line_orientation",
+   "halcon": "text_line_orientation",
+   "in_sort": "image2d",
+   "out_sort": "scalar",
+   "category": "text",
+   "tier": "ledger",
+   "ledger": "opsmv",
+   "dim": "mv",
+   "in_sorts": [
+    "image2d"
+   ],
+   "gpu_tier": "suitable"
+  },
+  {
+   "name": "text_line_slant",
+   "halcon": "text_line_slant",
+   "in_sort": "image2d",
+   "out_sort": "scalar",
+   "category": "text",
+   "tier": "ledger",
+   "ledger": "opsmv",
+   "dim": "mv",
+   "in_sorts": [
+    "image2d"
+   ],
+   "gpu_tier": "suitable"
+  },
+  {
    "name": "text_lines",
    "halcon": "",
    "in_sort": "table",
@@ -35088,6 +35910,50 @@
    "dim": "optics",
    "in_sorts": [],
    "gpu_tier": "none"
+  },
+  {
+   "name": "thickening_golay",
+   "halcon": "thickening_golay",
+   "in_sort": "mask",
+   "out_sort": "mask",
+   "category": "morphology",
+   "tier": "ledger",
+   "ledger": "opsmv",
+   "dim": "mv",
+   "in_sorts": [
+    "mask"
+   ],
+   "gpu_tier": "suitable"
+  },
+  {
+   "name": "thickening_hit_miss",
+   "halcon": "thickening",
+   "in_sort": "mask",
+   "out_sort": "mask",
+   "category": "morphology",
+   "tier": "ledger",
+   "ledger": "opsmv",
+   "dim": "mv",
+   "in_sorts": [
+    "mask",
+    "mask",
+    "mask"
+   ],
+   "gpu_tier": "suitable"
+  },
+  {
+   "name": "thickening_seq",
+   "halcon": "thickening_seq",
+   "in_sort": "mask",
+   "out_sort": "mask",
+   "category": "morphology",
+   "tier": "ledger",
+   "ledger": "opsmv",
+   "dim": "mv",
+   "in_sorts": [
+    "mask"
+   ],
+   "gpu_tier": "suitable"
   },
   {
    "name": "thin_film_reflectance",
@@ -35703,7 +36569,8 @@
    "dim": "reprconv",
    "in_sorts": [
     "tokens"
-   ]
+   ],
+   "gpu_tier": "suitable"
   },
   {
    "name": "tolerance_analysis",
@@ -36185,6 +37052,62 @@
    "gpu_tier": "none"
   },
   {
+   "name": "train_class_gmm",
+   "halcon": "train_class_gmm",
+   "in_sort": "matrix",
+   "out_sort": "table",
+   "category": "classify",
+   "tier": "ledger",
+   "ledger": "opsmv",
+   "dim": "mv",
+   "in_sorts": [
+    "matrix"
+   ],
+   "gpu_tier": "suitable"
+  },
+  {
+   "name": "train_class_knn",
+   "halcon": "train_class_knn",
+   "in_sort": "matrix",
+   "out_sort": "table",
+   "category": "classify",
+   "tier": "ledger",
+   "ledger": "opsmv",
+   "dim": "mv",
+   "in_sorts": [
+    "matrix"
+   ],
+   "gpu_tier": "suitable"
+  },
+  {
+   "name": "train_class_mlp",
+   "halcon": "train_class_mlp",
+   "in_sort": "matrix",
+   "out_sort": "table",
+   "category": "classify",
+   "tier": "ledger",
+   "ledger": "opsmv",
+   "dim": "mv",
+   "in_sorts": [
+    "matrix"
+   ],
+   "gpu_tier": "suitable"
+  },
+  {
+   "name": "train_class_svm",
+   "halcon": "train_class_svm",
+   "in_sort": "matrix",
+   "out_sort": "table",
+   "category": "classify",
+   "tier": "ledger",
+   "ledger": "opsmv",
+   "dim": "mv",
+   "in_sorts": [
+    "matrix"
+   ],
+   "gpu_tier": "suitable"
+  },
+  {
    "name": "traj_tau_dot",
    "halcon": "",
    "in_sort": "points",
@@ -36216,7 +37139,7 @@
   },
   {
    "name": "transform_funct_1d",
-   "halcon": "",
+   "halcon": "transform_funct_1d",
    "in_sort": "signal",
    "out_sort": "pairs",
    "category": "function",
@@ -36230,7 +37153,7 @@
   },
   {
    "name": "translate_measure",
-   "halcon": "",
+   "halcon": "translate_measure",
    "in_sort": "measurehandle",
    "out_sort": "measurehandle",
    "category": "caliper",
@@ -36522,6 +37445,21 @@
    "gpu_tier": "none"
   },
   {
+   "name": "tv_reconstruct",
+   "halcon": "",
+   "in_sort": "projstack",
+   "out_sort": "voxel",
+   "category": "ct_scan",
+   "tier": "ledger",
+   "ledger": "opstomography",
+   "dim": "tomography",
+   "in_sorts": [
+    "projstack",
+    "ctgeometry"
+   ],
+   "gpu_tier": "suitable"
+  },
+  {
    "name": "two_point_depth",
    "halcon": "",
    "in_sort": "table",
@@ -36698,6 +37636,22 @@
    "gpu_tier": "suitable"
   },
   {
+   "name": "update_bg_esti",
+   "halcon": "update_bg_esti",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "tracking",
+   "tier": "ledger",
+   "ledger": "opsmv",
+   "dim": "mv",
+   "in_sorts": [
+    "table",
+    "image2d",
+    "mask"
+   ],
+   "gpu_tier": "none"
+  },
+  {
    "name": "varmodel_alignment",
    "halcon": "",
    "in_sort": "video",
@@ -36740,7 +37694,7 @@
   },
   {
    "name": "varmodel_fit",
-   "halcon": "",
+   "halcon": "train_variation_model",
    "in_sort": "video",
    "out_sort": "table",
    "category": "variation",
@@ -36797,7 +37751,7 @@
   },
   {
    "name": "vector_angle_to_rigid",
-   "halcon": "",
+   "halcon": "vector_angle_to_rigid",
    "in_sort": null,
    "out_sort": "matrix",
    "category": "fit",
@@ -36809,7 +37763,7 @@
   },
   {
    "name": "vector_to_rigid",
-   "halcon": "",
+   "halcon": "vector_to_rigid",
    "in_sort": "keypoints",
    "out_sort": "matrix",
    "category": "fit",
@@ -36837,7 +37791,7 @@
   },
   {
    "name": "vector_to_similarity",
-   "halcon": "",
+   "halcon": "vector_to_similarity",
    "in_sort": "keypoints",
    "out_sort": "matrix",
    "category": "fit",
@@ -37131,7 +38085,8 @@
    "dim": "acceptance",
    "in_sorts": [
     "table"
-   ]
+   ],
+   "gpu_tier": "none"
   },
   {
    "name": "vision_boundary_flip",
@@ -38566,7 +39521,7 @@
   },
   {
    "name": "watersheds_marker",
-   "halcon": "",
+   "halcon": "watersheds_marker",
    "in_sort": "image2d",
    "out_sort": "labels2d",
    "category": "watershed",
@@ -38590,7 +39545,8 @@
    "dim": "math",
    "in_sorts": [
     "image2d"
-   ]
+   ],
+   "gpu_tier": "suitable"
   },
   {
    "name": "wave_fringe_period",
@@ -39299,7 +40255,7 @@
   },
   {
    "name": "x_range_funct_1d",
-   "halcon": "",
+   "halcon": "x_range_funct_1d",
    "in_sort": "signal",
    "out_sort": "pairs",
    "category": "function",
@@ -39367,7 +40323,7 @@
   },
   {
    "name": "y_range_funct_1d",
-   "halcon": "",
+   "halcon": "y_range_funct_1d",
    "in_sort": "signal",
    "out_sort": "pairs",
    "category": "function",
@@ -39409,7 +40365,7 @@
   },
   {
    "name": "zero_crossings_funct_1d",
-   "halcon": "",
+   "halcon": "zero_crossings_funct_1d",
    "in_sort": "signal",
    "out_sort": "indices",
    "category": "function",
@@ -43585,7 +44541,8 @@
    "category": "gray",
    "tier": "registry",
    "module": "ops",
-   "requires": []
+   "requires": [],
+   "gpu_tier": "suitable"
   },
   {
    "name": "img_to_beatcube",
@@ -45178,7 +46135,8 @@
    "category": "segmentation",
    "tier": "registry",
    "module": "ops",
-   "requires": []
+   "requires": [],
+   "gpu_tier": "suitable"
   },
   {
    "name": "quantization_error",
@@ -46052,7 +47010,8 @@
    "category": "segmentation",
    "tier": "registry",
    "module": "ops",
-   "requires": []
+   "requires": [],
+   "gpu_tier": "suitable"
   },
   {
    "name": "sigmoid",
@@ -47754,7 +48713,8 @@
    "category": "typed",
    "tier": "registry",
    "module": "backends_typed",
-   "requires": []
+   "requires": [],
+   "gpu_tier": "partial"
   },
   {
    "name": "tb_keypoints_to_image2d",
@@ -47786,7 +48746,8 @@
    "category": "typed",
    "tier": "registry",
    "module": "backends_typed",
-   "requires": []
+   "requires": [],
+   "gpu_tier": "partial"
   },
   {
    "name": "tb_landmark_asymmetry",

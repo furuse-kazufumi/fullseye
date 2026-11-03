@@ -4,9 +4,11 @@
   "recipes_py": 25,
   "recipebook": 245,
   "multi_stage": 220,
-  "families_total": 59,
+  "families_total": 60,
   "families_covered": 59,
-  "families_uncovered": [],
+  "families_uncovered": [
+   "mv"
+  ],
   "task_class": {
    "3d": 36,
    "analysis": 24,
@@ -304,6 +306,12 @@
    "ops_used": 5
   },
   {
+   "family": "mv",
+   "ops": 47,
+   "recipes": 0,
+   "ops_used": 0
+  },
+  {
    "family": "oned",
    "ops": 49,
    "recipes": 3,
@@ -419,7 +427,7 @@
   },
   {
    "family": "tomography",
-   "ops": 32,
+   "ops": 43,
    "recipes": 4,
    "ops_used": 6
   },

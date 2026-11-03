@@ -4,7 +4,7 @@ dim: tomography
 category: volume
 in: sinostack
 out: voxel
-gpu: あり(accel_typed.call('fbp_volume'))
+gpu: なし
 examples: [poc_battery_ct_degradation, tomography_reconstruct]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,8 +14,8 @@ version: 0.9.0  # fullseye lib version this note was generated for
 # fbp_volume — TOMOGRAPHY `volume` op
 
 - **データ種**: `sinostack` → `voxel`
-- **呼び出し**: `import fullseye as fs; fs.ledger.fbp_volume(stack, angles_deg=None, size=None, filter_name='ramp', cutoff=1.0, span_deg=None)` (実装を直接呼ぶなら `import tomography; tomography.fbp_volume(stack, angles_deg=None, size=None, filter_name='ramp', cutoff=1.0, span_deg=None)`、台帳から引くなら `opstomography.get("fbp_volume")`)
-- **GPU**: あり(`accel_typed.call('fbp_volume')`、`device="cuda"` で高速経路)
+- **呼び出し**: `import fullseye as fs; fs.ledger.fbp_volume(stack, angles_deg=None, size=None, filter_name='ramp', cutoff=1.0, span_deg=None, device='cpu')` (実装を直接呼ぶなら `import tomography; tomography.fbp_volume(stack, angles_deg=None, size=None, filter_name='ramp', cutoff=1.0, span_deg=None, device='cpu')`、台帳から引くなら `opstomography.get("fbp_volume")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 
@@ -39,6 +39,8 @@ tomographic volume becomes a wrong number — see
 :param filter_name: one of :data:`FILTERS`.
 :param cutoff: fraction of Nyquist to keep.
 :param span_deg: angular range for the ``d(theta)`` weight.
+:param device: ``"cpu"`` (default) stays on this float64 route. ``"auto"`` or
+    ``"cuda"`` hands the call to :mod:`tomography_gpu`, single precision on a GPU.
 :returns: ``(Z, size, size)`` float64 volume.
 :raises ValueError: on a non-3-D stack, or an output over
     :data:`MAX_STACK_ELEMENTS`. Empty input (``stack`` with 0 elements) raises ``ValueError``.
@@ -56,7 +58,7 @@ tomographic volume becomes a wrong number — see
 
 ## 型が繋がる次の op(`voxel` を入力に取れる)
 
-[radon_volume](radon_volume.md)
+[radon_volume](radon_volume.md) · [ct_forward_project](../ct_scan/ct_forward_project.md)
 
 ## 同カテゴリ(`volume`)
 

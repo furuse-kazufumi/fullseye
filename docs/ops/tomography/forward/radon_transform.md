@@ -4,7 +4,7 @@ dim: tomography
 category: forward
 in: image2d
 out: sinogram
-gpu: あり(accel_typed.call('radon_transform'))
+gpu: なし
 examples: [ct_reconstruction, poc_aoi_ct_traceability, poc_ct_fidelity, poc_sem_tem_same_particle]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,8 +14,8 @@ version: 0.9.0  # fullseye lib version this note was generated for
 # radon_transform — TOMOGRAPHY `forward` op
 
 - **データ種**: `image2d` → `sinogram`
-- **呼び出し**: `import fullseye as fs; fs.ledger.radon_transform(image, angles_deg=None, n_detectors=None, oversample=1)` (実装を直接呼ぶなら `import tomography; tomography.radon_transform(image, angles_deg=None, n_detectors=None, oversample=1)`、台帳から引くなら `opstomography.get("radon_transform")`)
-- **GPU**: あり(`accel_typed.call('radon_transform')`、`device="cuda"` で高速経路)
+- **呼び出し**: `import fullseye as fs; fs.ledger.radon_transform(image, angles_deg=None, n_detectors=None, oversample=1, device='cpu')` (実装を直接呼ぶなら `import tomography; tomography.radon_transform(image, angles_deg=None, n_detectors=None, oversample=1, device='cpu')`、台帳から引くなら `opstomography.get("radon_transform")`)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 
@@ -47,6 +47,8 @@ own anti-aliased boundary is what is being sampled.
 :param n_detectors: bins; ``None`` -> odd count covering the diagonal.
 :param oversample: ray samples per pixel, ``1 .. 8``. The default is 1
     because 4 measures no better (0.073 % against 0.070 %).
+:param device: ``"cpu"`` (default) stays on this float64 route. ``"auto"`` or
+    ``"cuda"`` hands the call to :mod:`tomography_gpu`, single precision on a GPU.
 :returns: ``(n_angles, n_detectors)`` float64 sinogram.
 :raises ValueError: on non-finite input, an empty angle list, a detector count
     under 4, or a sinogram over :data:`MAX_SINOGRAM_ELEMENTS`.

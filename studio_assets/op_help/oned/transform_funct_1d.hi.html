@@ -3,7 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">pairs</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.transform_funct_1d(y, mult_x=1.0, add_x=0.0, mult_y=1.0, add_y=0.0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import funct1d; funct1d.transform_funct_1d(y, mult_x=1.0, add_x=0.0, mult_y=1.0, add_y=0.0)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops1d.get(&quot;transform_funct_1d&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON समकक्ष</b>: <code style="color:#22d3bf">transform_funct_1d</code> (अर्थ और parameters समझने के लिए HALCON reference उपयोगी है)</p>
-<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: केवल chain के भीतर (allow-list का mechanical GPU path, CuPy)। पड़ोसी stage भी allow-list में हो तभी GPU पर resident रहता है। अकेली call CPU पर चलती है</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>x और y का स्वतंत्र affine transform (HALCON <code style="color:#22d3bf">transform_funct_1d</code>)।</p>
 <p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>

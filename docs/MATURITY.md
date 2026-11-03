@@ -39,6 +39,7 @@
 | [周期パターンが標本化格子で折り返す距離と、縞の上で狂う衝突時間を閉形式で測る(複眼・検査カメラ)](capabilities/compound-eye-aliasing-and-ttc.md) | The distance at which a periodic pattern aliases on a sampling lattice, and the time-to-contact that stripes corrupt — in closed form (compound eyes and inspection cameras) | 測る | `verified-synthetic` | 8/8 | `poc_zebra_stripes_fly_eye` synthetic → tests/test_poc_scripts_run.py |
 | [多重反射・多重散乱・反復を収束まで回す —— 収束した証拠と残りの誤差を返し、収束しなければ値を出さない](capabilities/convergent-forward-models.md) | Run inter-reflections, multiple scattering and iterations to convergence — return the evidence and the remaining error, and no value when it did not converge | 光と色 | `verified-synthetic` | 6/6 | `converge_tour` synthetic → tests/test_example_scripts_run.py |
 | [圃場の RGB から作物と雑草を色と肌理で分け、雑草の被度を宣言した境で段階にする(学習器なし)](capabilities/crop-weed-cover-grade.md) | Separating crop from weeds in field RGB by colour and texture, and grading weed cover at declared edges (no learned network) | 見つける | `validated-public-real-data` | 5/5 | `poc_weed_rice_ratio` real → tests/test_poc_scripts_run.py |
+| [コーンビーム・ヘリカル・ラミノグラフィを 1 つの幾何で再構成する(工業用 CT)](capabilities/ct-scan-modes.md) | Reconstruct cone-beam, helical and laminography scans on one geometry (industrial CT) | 形にする | `verified-synthetic` | 5/5 | `ct_scan_modes` synthetic → tests/test_example_scripts_run.py |
 | [X 線の 2 つのエネルギーで厚みと材質を分ける(デュアルエナジー / フォトンカウンティング: スペクトル → 窓 → 基底分解 → 実効 Z)](capabilities/dual-energy-xray-material-discrimination.md) | Separate thickness from material with two X-ray energies (dual-energy and photon-counting X-ray: spectrum, energy windows, basis decomposition, effective Z) | 見つける | `verified-synthetic` | 15/15 | `poc_dual_energy_xray` synthetic → tests/test_poc_scripts_run.py |
 | [カメラのデータシートの数を EMVA 1288 の手順で測り直し、カメラの中の前処理がその数をどれだけ動かすかを見る(Linear と General)](capabilities/emva1288-camera-datasheets.md) | Re-measure a camera's datasheet numbers with the EMVA 1288 procedure, and see how much in-camera processing moves them (Linear and General) | 測る | `verified-synthetic` | 13/13 | `poc_emva1288_sensor` synthetic → tests/test_poc_scripts_run.py<br>`poc_emva1288_in_camera_processing` synthetic → tests/test_poc_scripts_run.py |
 | [本来まっすぐな線から歪み係数を推定する(plumb-line、チェッカー不要)](capabilities/estimate-lens-distortion.md) | Estimate lens distortion coefficients from straight lines (plumb-line, no board) | 測る | `verified-synthetic` | 4/4 | `estimate_lens_distortion` synthetic → tests/test_example_scripts_run.py |
@@ -136,9 +137,9 @@
 
 | | 件数 |
 |---|---|
-| 2-D 台帳の例 | 469 |
+| 2-D 台帳の例 | 471 |
 | `tests/test_poc_scripts_run.py` が走らせる | 297 |
-| `tests/test_example_scripts_run.py` が走らせる | 172 |
+| `tests/test_example_scripts_run.py` が走らせる | 174 |
 | **どの門も走らせていない** | **0** |
 
 走らせない門は、実行時の壊れに盲目です。2026-09-06 に PoC 側で穴が見つかり

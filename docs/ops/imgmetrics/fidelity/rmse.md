@@ -5,7 +5,7 @@ category: fidelity
 in: image2d × image2d
 out: scalar
 gpu: なし
-examples: [grasp_pose, image_quality_metrics, poc_ct_fidelity, poc_datacenter_thermal_field, poc_polarization_specular, poc_real_tless_6dof, poc_structure_4d_deterioration]
+examples: [ct_scan_modes, grasp_pose, image_quality_metrics, poc_ct_fidelity, poc_datacenter_thermal_field, poc_polarization_specular, poc_real_tless_6dof, poc_structure_4d_deterioration]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.9.0  # fullseye lib version this note was generated for
@@ -42,6 +42,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [ct_scan_modes](../../../../examples/ct_scan_modes.py) — `py -3.11 examples/ct_scan_modes.py`
 - [grasp_pose](../../../../examples/grasp_pose.py) — `py -3.11 examples/grasp_pose.py`
 - [image_quality_metrics](../../../../examples/image_quality_metrics.py) — `py -3.11 examples/image_quality_metrics.py`
 - [poc_ct_fidelity](../../../../examples/poc_ct_fidelity.py) — `py -3.11 examples/poc_ct_fidelity.py`

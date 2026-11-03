@@ -17,7 +17,7 @@ claim with nothing behind it cannot survive.
 `py -3.11 tools/gen_capabilities_index.py` (this index is generated —
 do not edit it by hand).
 
-**Currently 98 capabilities**
+**Currently 99 capabilities**
 
 ## Look up by task (recommended pipeline)
 

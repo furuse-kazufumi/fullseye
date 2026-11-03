@@ -5,7 +5,7 @@ category: function
 in: signal × signal
 out: signal
 halcon: create_funct_1d_pairs
-gpu: なし
+gpu: あり(許可リスト)
 examples: [poc_veiling_glare]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -17,7 +17,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 - **データ種**: `signal × signal` → `signal`
 - **呼び出し**: `import fullseye as fs; fs.ledger.create_funct_1d_pairs(x, y)` (実装を直接呼ぶなら `import funct1d; funct1d.create_funct_1d_pairs(x, y)`、台帳から引くなら `ops1d.get("create_funct_1d_pairs")`)
 - **HALCON 相当**: `create_funct_1d_pairs`(意味・パラメータは HALCON リファレンスが参考になる)
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: あり(許可リストの機械的 GPU 経路、CuPy)。`device="auto"` は測った大きさ(1,048,576 画素)以上で GPU を選ぶ
 
 ## 使い方
 

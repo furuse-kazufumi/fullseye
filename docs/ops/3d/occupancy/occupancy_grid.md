@@ -4,7 +4,7 @@ dim: 3d
 category: occupancy
 in: points
 out: voxel
-gpu: あり(accel_typed.call('occupancy_grid'))
+gpu: なし
 examples: [occupancy_esdf]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +15,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 - **データ種**: `points` → `voxel`
 - **呼び出し**: `import fullseye as fs; fs.ledger.occupancy_grid(points, bounds, res, *, chunk=262144)` (実装を直接呼ぶなら `import occupancy; occupancy.occupancy_grid(points, bounds, res, *, chunk=262144)`、台帳から引くなら `ops3d.get("occupancy_grid")`)
-- **GPU**: あり(`accel_typed.call('occupancy_grid')`、`device="cuda"` で高速経路)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

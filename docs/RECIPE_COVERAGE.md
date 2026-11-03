@@ -9,7 +9,7 @@ MCP の検索(`fullseye_find_ops`)は runner = mcp(MCP の pipeline でそのま
 | 項目 | 値 |
 |---|---|
 | レシピ | 270(2 段以上 220) |
-| 族(docs/ops)の網羅 | 59 / 59 |
+| 族(docs/ops)の網羅 | 59 / 60 |
 | 2-D の category の網羅 | 25 / 49 |
 | 使った op(重複なし) | 412 |
 | 真値の門つき | 246 |
@@ -20,6 +20,8 @@ MCP の検索(`fullseye_find_ops`)は runner = mcp(MCP の pipeline でそのま
 課題の分類: 3d 36, analysis 24, inspection 60, measurement 73, optics 8, preprocess 38, sensing 17, simulation 9, visualization 5
 
 HALCON の章: 1D Measuring 7, 2D Metrology 6, 3D Matching 8, 3D Object Model 18, 3D Reconstruction 14, Bar Code 1, Calibration 4, Color 8, Features 2, Filters 10, Frequency 1, Identification 1, Inspection 4, Matching 6, Morphology 3, OCR 4, Regions 19, Restoration 2, Segmentation 10, Texture 3, Transformations 7, XLD 10
+
+**レシピの無い族**: mv
 
 2-D でレシピの無い category: arithmetic, artificial_life, artistic, augmentation, classification, decomposition, deformation, domain, extra, filtering, intensity_transform, macro, misc, morphology_markers, noise, physics, region_morphology, region_transform, self_similarity, tactile, texture_feature, texture_shape_feature, tomography, transform
 
@@ -64,6 +66,7 @@ GPU の切り替わり = 隣り合う 2 段で、片方だけが pipeline 文脈
 | measure1d | 17 | 3 | 7 |
 | motionmag | 9 | 3 | 4 |
 | multivar | 18 | 3 | 5 |
+| mv | 47 | 0 | 0 |
 | oned | 49 | 3 | 8 |
 | optics | 504 | 14 | 37 |
 | photon | 17 | 3 | 7 |
@@ -83,7 +86,7 @@ GPU の切り替わり = 隣り合う 2 段で、片方だけが pipeline 文脈
 | specular | 20 | 6 | 6 |
 | symbol | 33 | 1 | 1 |
 | text | 3 | 3 | 3 |
-| tomography | 32 | 4 | 6 |
+| tomography | 43 | 4 | 6 |
 | videocube | 6 | 1 | 1 |
 | videostream | 16 | 2 | 4 |
 | volcolor | 11 | 3 | 3 |

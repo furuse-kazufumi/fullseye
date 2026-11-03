@@ -4,7 +4,7 @@ dim: 3d
 category: preprocess
 in: points
 out: points
-gpu: あり(accel_typed.call('voxel_grid_downsample'))
+gpu: なし
 examples: [pointcloud_downsampling]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +15,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 - **データ種**: `points` → `points`
 - **呼び出し**: `import fullseye as fs; fs.ledger.voxel_grid_downsample(points, voxel_size: 'float')` (実装を直接呼ぶなら `import pcl_filter; pcl_filter.voxel_grid_downsample(points, voxel_size: 'float')`、台帳から引くなら `ops3d.get("voxel_grid_downsample")`)
-- **GPU**: あり(`accel_typed.call('voxel_grid_downsample')`、`device="cuda"` で高速経路)
+- **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
 

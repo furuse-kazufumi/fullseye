@@ -55,16 +55,16 @@
 
 ### 검증 단계
 
-능력 98건을 무엇으로 확인했는지에 따라 나눈 수(`docs/maturity.json`, 현재 트리(pyproject 버전 0.9.0)에서 `tools/gen_maturity.py`가 생성. 단계 정의는 [MATURITY.md](MATURITY.md)).
+능력 99건을 무엇으로 확인했는지에 따라 나눈 수(`docs/maturity.json`, 현재 트리(pyproject 버전 0.9.0)에서 `tools/gen_maturity.py`가 생성. 단계 정의는 [MATURITY.md](MATURITY.md)).
 
 | 단계 | 의미 | 능력 |
 |---|---|---|
 | `research-prototype` | 구현은 있으나 테스트나 실행되는 예가 아직 갖춰지지 않음 | 0 |
-| `verified-synthetic` | 참값을 가진 합성 데이터로 자동 검증 | 79 |
+| `verified-synthetic` | 참값을 가진 합성 데이터로 자동 검증 | 80 |
 | `validated-public-real-data` | 공개 실측 데이터를 쓰는 예가 게이트에서 실제로 실행됨 | 19 |
 | `validated-hardware` | 실기로 검증(외부 보고를 수리한 경우에만) | 0 |
 
-예 469건 중 게이트가 실제로 실행하는 것은 469건.
+예 471건 중 게이트가 실제로 실행하는 것은 471건.
 
 ### 버전별 연산자 수
 
@@ -140,11 +140,11 @@
 
 ## 연산자 찾기
 
-**3,758개의 연산자 노트**(호출 형식, 타입 계약, HALCON 대응, 참고문헌, 출처)와 **72개의 패밀리 가이드**가 있습니다. 차원별 입구:
+**3,816개의 연산자 노트**(호출 형식, 타입 계약, HALCON 대응, 참고문헌, 출처)와 **73개의 패밀리 가이드**가 있습니다. 차원별 입구:
 
-**실측 커버리지**: 진화 연산자 947/947, 타입 台帳 2762/2774, 한 줄 파사드 `fullseye.<이름>` 745/1546 — **파사드는 아직 절반**.
+**실측 커버리지**: 진화 연산자 947/947, 타입 台帳 2820/2832, 한 줄 파사드 `fullseye.<이름>` 756/1559 — **파사드는 아직 절반**.
 
-**내용 실측**: 3758건 중 실행 가능한 예제가 붙은 것은 **3711**건(47건은 없음), 사용법이 120자 이상인 것은 **3556**건(202건은 한 줄 요약). 구조(호출 형식·타입·다음 연산자)는 3758건 모두.
+**내용 실측**: 3816건 중 실행 가능한 예제가 붙은 것은 **3768**건(48건은 없음), 사용법이 120자 이상인 것은 **3614**건(202건은 한 줄 요약). 구조(호출 형식·타입·다음 연산자)는 3816건 모두.
 
 | 차원 | 연산자 수 | 입구 |
 |---|---:|---|
@@ -157,12 +157,13 @@
 | `segmentation` | 59 | [INDEX](ops/segmentation/INDEX.md) · [guide](ops/segmentation/guides/halcon_segmentation.md) |
 | `annotate` | 51 | [INDEX](ops/annotate/INDEX.md) · [guide](ops/annotate/guides/figure_annotation.md) |
 | `oned` | 49 | [INDEX](ops/oned/INDEX.md) |
+| `mv` | 47 | [INDEX](ops/mv/INDEX.md) · [guide](ops/mv/guides/machine_vision_classics.md) |
 | `gfx2d` | 44 | [INDEX](ops/gfx2d/INDEX.md) |
+| `tomography` | 43 | [INDEX](ops/tomography/INDEX.md) |
 | `generative` | 42 | [INDEX](ops/generative/INDEX.md) · [guide](ops/generative/guides/generative_art.md) |
 | `imgmetrics` | 42 | [INDEX](ops/imgmetrics/INDEX.md) · [guide](ops/imgmetrics/guides/image_difference_metrics.md) |
 | `spc` | 41 | [INDEX](ops/spc/INDEX.md) |
 | `symbol` | 33 | [INDEX](ops/symbol/INDEX.md) · [guide](ops/symbol/guides/symbol_reading.md) |
-| `tomography` | 32 | [INDEX](ops/tomography/INDEX.md) |
 | `calib` | 29 | [INDEX](ops/calib/INDEX.md) · [guide](ops/calib/guides/camera_calibration.md) |
 | `piv` | 29 | [INDEX](ops/piv/INDEX.md) · [guide](ops/piv/guides/piv_displacement.md) |
 | `conngraph` | 28 | [INDEX](ops/conngraph/INDEX.md) · [guide](ops/conngraph/guides/conngraph.md) |
@@ -304,9 +305,9 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 <!-- docmap:start -->
 
-## 문서 지도 — 전 312건
+## 문서 지도 — 전 325건
 
-**색인에서 닿지 않는 문서를 만들지 않기** 위한 전체 지도입니다(`docs/ops/`의 연산자 노트 3,758건과 패밀리 가이드 72건은 위의 「연산자 찾기」에서, 기사는 [articles/](articles/README.md)에서). **본문은 대부분 일본어입니다.**
+**색인에서 닿지 않는 문서를 만들지 않기** 위한 전체 지도입니다(`docs/ops/`의 연산자 노트 3,816건과 패밀리 가이드 73건은 위의 「연산자 찾기」에서, 기사는 [articles/](articles/README.md)에서). **본문은 대부분 일본어입니다.**
 
 **Getting started**(12)
 
@@ -447,7 +448,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`ARTICLE_GPU_SHAPEMATCH.md`](ARTICLE_GPU_SHAPEMATCH.md) | 記事材料: 形状マッチングを GPU に載せる —— 勾配方向スコアの conv2d 定式化 _(ja)_ |
 | [`FULLSEYE_OP_ARTICLE_SPEC.md`](FULLSEYE_OP_ARTICLE_SPEC.md) | Fullseye op カタログ画像・専用記事 仕様書(第 2 陣企画書) _(ja)_ |
 
-**Other**(228)
+**Other**(241)
 
 | 문서 | 내용 |
 |---|---|
@@ -497,6 +498,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`GPU_OPTIMIZATION_PATTERNS.en.md`](GPU_OPTIMIZATION_PATTERNS.en.md) | GPU Optimization Design-Pattern Catalog (for RTX 5090 / Blackwell sm_120) |
 | [`GSPLAT_NATIVE_WINDOWS.en.md`](GSPLAT_NATIVE_WINDOWS.en.md) | Building native gsplat on Windows (RTX 5090 / torch cu128) — a proven procedure |
 | [`HALCON_COVERAGE_HONEST.en.md`](HALCON_COVERAGE_HONEST.en.md) | HALCON Coverage — the honest denominator (updated 2026-08-18) |
+| [`HALCON_GAP_2026-11-02.md`](HALCON_GAP_2026-11-02.md) | HALCON 2605 の全 2,313 演算子の棚卸し(2026-11-02) _(ja)_ |
 | [`HARDENING.en.md`](HARDENING.en.md) | What the PoCs hardened — found, fixed, and gated |
 | [`HARDENING.md`](HARDENING.md) | What the PoCs hardened — found, fixed, and gated → [`HARDENING.en.md`](HARDENING.en.md) · 원문 _(ja)_ |
 | [`HDEVELOP_DEV_OPS.en.md`](HDEVELOP_DEV_OPS.en.md) | HDevelop `dev_*` operator family — the UI/display control surface (Studio north star) |
@@ -542,6 +544,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`capabilities/compound-eye-aliasing-and-ttc.md`](capabilities/compound-eye-aliasing-and-ttc.md) | id: compound-eye-aliasing-and-ttc |
 | [`capabilities/convergent-forward-models.md`](capabilities/convergent-forward-models.md) | id: convergent-forward-models |
 | [`capabilities/crop-weed-cover-grade.md`](capabilities/crop-weed-cover-grade.md) | id: crop-weed-cover-grade |
+| [`capabilities/ct-scan-modes.md`](capabilities/ct-scan-modes.md) | id: ct-scan-modes |
 | [`capabilities/dual-energy-xray-material-discrimination.md`](capabilities/dual-energy-xray-material-discrimination.md) | id: dual-energy-xray-material-discrimination |
 | [`capabilities/emva1288-camera-datasheets.md`](capabilities/emva1288-camera-datasheets.md) | id: emva1288-camera-datasheets |
 | [`capabilities/estimate-lens-distortion.md`](capabilities/estimate-lens-distortion.md) | id: estimate-lens-distortion |
@@ -669,6 +672,17 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`literature/electron_microscopy.md`](literature/electron_microscopy.md) | 文献層: 電子顕微鏡の撮像と計測(厳選) _(ja)_ |
 | [`literature/industrial_optical_sensing.md`](literature/industrial_optical_sensing.md) | 文献層: 工業用光学センシング(厳選) _(ja)_ |
 | [`literature/sensitivity_uq_calibration.md`](literature/sensitivity_uq_calibration.md) | 文献層: 感度解析・不確かさ定量化・較正(厳選) _(ja)_ |
+| [`perf/GPU_TIERS.md`](perf/GPU_TIERS.md) | GPU tier 分類 — 全 op の 4 段台帳 _(ja)_ |
+| [`perf/HALCON_OPENCL_PARITY.md`](perf/HALCON_OPENCL_PARITY.md) | HALCON 26.05 OpenCL 84 演算子 — Fullseye 対応行列 _(ja)_ |
+| [`perf/gpu_auto_sweep_2026-11-02.md`](perf/gpu_auto_sweep_2026-11-02.md) | 機械的 GPU 化の掃引 (2026-11-02) _(ja)_ |
+| [`perf/gpu_crossover_2026-11-02.md`](perf/gpu_crossover_2026-11-02.md) | GPU の損益分岐とパイプライン(第 5 便、2026-11-02〜03) _(ja)_ |
+| [`perf/gpu_ct_2026-11-02.md`](perf/gpu_ct_2026-11-02.md) | CT 再構成の CPU / GPU 実測(2026-11-02、GPU 第 8 便) _(ja)_ |
+| [`perf/gpu_fill3_2026-11-02.md`](perf/gpu_fill3_2026-11-02.md) | GPU 穴埋め 第 3 便 — HALCON OpenCL 48 件と required 名簿の採否 — 2026-11-02 _(ja)_ |
+| [`perf/gpu_fill_2026-11-02.md`](perf/gpu_fill_2026-11-02.md) | GPU 穴埋め候補 10 op の採否(D') — 2026-11-02 _(ja)_ |
+| [`perf/gpu_optics_2026-11-02.md`](perf/gpu_optics_2026-11-02.md) | GPU 第 4 便: 光路・波長・偏光の一括計算(2026-11-02) _(ja)_ |
+| [`perf/gpu_required_2026-11-02.md`](perf/gpu_required_2026-11-02.md) | GPU でしか回らない寸法 — 実寸の実演(C') 2026-11-02 _(ja)_ |
+| [`perf/op_time_ranking_2026-11-02.md`](perf/op_time_ranking_2026-11-02.md) | Op time ranking — 2026-11-02 |
+| [`perf/pipeline_routes.md`](perf/pipeline_routes.md) | レシピの GPU 経路(生成物) _(ja)_ |
 | [`view2026/about.md`](view2026/about.md) | Fullseye |
 | [`view2026/de/index.md`](view2026/de/index.md) | Fullseye — ViEW2026 |
 | [`view2026/en/about.md`](view2026/en/about.md) | Fullseye |

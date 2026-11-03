@@ -2,22 +2,22 @@
 
 HALCON 26.05 で「Supports OpenCL compute devices」が付く古典演算子 84 件(正本 `docs/perf/halcon_2605_opencl_ops.json`)を、Fullseye の機械可読索引(`docs/OP_INDEX.json` の `halcon` 欄)と実装台帳(`accel.ACCEL` ほか)に対応づけた。
 
-- **Fullseye 対応あり N1 = 71**
+- **Fullseye 対応あり N1 = 84**
 - **そのうち GPU 経路あり N2 = 36**
-- **未対応 N3 = 13**
+- **未対応 N3 = 0**
 
-門: N1 + N3 = 71 + 13 = **84**。
+門: N1 + N3 = 84 + 0 = **84**。
 
 「HALCON より速い」等、測っていない比較は書かない。
 
 | HALCON 名 | 章 | Fullseye 対応 op | GPU 経路 | 備考 |
 |---|---|---|:---:|---|
-| `binocular_disparity_ms` | 3DRECONSTRUCTION | — | — | Fullseye 未対応 |
-| `binocular_distance_ms` | 3DRECONSTRUCTION | — | — | Fullseye 未対応 |
-| `depth_from_focus` | 3DRECONSTRUCTION | — | — | Fullseye 未対応 |
-| `reconstruct_surface_stereo` | 3DRECONSTRUCTION | — | — | Fullseye 未対応 |
-| `change_radial_distortion_image` | CALIBRATION | — | — | Fullseye 未対応 |
-| `image_to_world_plane` | CALIBRATION | — | — | Fullseye 未対応 |
+| `binocular_disparity_ms` | 3DRECONSTRUCTION | `binocular_disparity_ms` | なし | Fullseye 対応あり(CPU のみ) |
+| `binocular_distance_ms` | 3DRECONSTRUCTION | `binocular_distance_ms` | なし | Fullseye 対応あり(CPU のみ) |
+| `depth_from_focus` | 3DRECONSTRUCTION | `depth_from_focus` | なし | Fullseye 対応あり(CPU のみ) |
+| `reconstruct_surface_stereo` | 3DRECONSTRUCTION | `reconstruct_surface_stereo` | なし | Fullseye 対応あり(CPU のみ) |
+| `change_radial_distortion_image` | CALIBRATION | `change_radial_distortion_image` | なし | Fullseye 対応あり(CPU のみ) |
+| `image_to_world_plane` | CALIBRATION | `rectify_to_world_plane` | なし | Fullseye 対応あり(CPU のみ) |
 | `abs_diff_image` | FILTERS | `abs_diff_image` | なし | Fullseye 対応あり(CPU のみ) |
 | `abs_image` | FILTERS | `abs_image` | なし | Fullseye 対応あり(CPU のみ) |
 | `acos_image` | FILTERS | `acos_image` | なし | Fullseye 対応あり(CPU のみ) |
@@ -25,7 +25,7 @@ HALCON 26.05 で「Supports OpenCL compute devices」が付く古典演算子 84
 | `affine_trans_image` | FILTERS | `affine_trans_image`, `affine_warp` | あり | Fullseye 対応あり(GPU 経路あり) |
 | `affine_trans_image_size` | FILTERS | `affine_trans_image_size` | あり | Fullseye 対応あり(GPU 経路あり) |
 | `asin_image` | FILTERS | `asin_image` | なし | Fullseye 対応あり(CPU のみ) |
-| `atan2_image` | FILTERS | — | — | Fullseye 未対応 |
+| `atan2_image` | FILTERS | `atan2_image` | なし | Fullseye 対応あり(CPU のみ) |
 | `atan_image` | FILTERS | `atan_image` | なし | Fullseye 対応あり(CPU のみ) |
 | `binomial_filter` | FILTERS | `binomial_filter` | あり | Fullseye 対応あり(GPU 経路あり) |
 | `cfa_to_rgb` | FILTERS | `cfa_to_rgb` | なし | Fullseye 対応あり(CPU のみ) |
@@ -45,7 +45,7 @@ HALCON 26.05 で「Supports OpenCL compute devices」が付く古典演算子 84
 | `lines_gauss` | FILTERS | `lines_gauss`, `sk_frangi`, `sk_hessian`, `sk_meijering` | なし | Fullseye 対応あり(CPU のみ) |
 | `log_image` | FILTERS | `log_image`, `sk_adjust_log` | なし | Fullseye 対応あり(CPU のみ) |
 | `lut_trans` | FILTERS | `f2_lut_trans` | あり | Fullseye 対応あり(GPU 経路あり) |
-| `map_image` | FILTERS | — | — | Fullseye 未対応 |
+| `map_image` | FILTERS | `map_image` | なし | Fullseye 対応あり(CPU のみ) |
 | `max_image` | FILTERS | `max_image` | なし | Fullseye 対応あり(CPU のみ) |
 | `mean_image` | FILTERS | `cv_box`, `mean_box`, `mean_box_wh`, `mean_image` | あり | Fullseye 対応あり(GPU 経路あり) |
 | `median_image` | FILTERS | `cv_median`, `median`, `median_image`, `sk_median_disk` | あり | Fullseye 対応あり(GPU 経路あり) |
@@ -75,18 +75,18 @@ HALCON 26.05 で「Supports OpenCL compute devices」が付く古典演算子 84
 | `trans_to_rgb` | FILTERS | `trans_to_rgb` | なし | Fullseye 対応あり(CPU のみ) |
 | `zoom_image_factor` | FILTERS | `rescale_img`, `zoom_image_factor` | あり | Fullseye 対応あり(GPU 経路あり) |
 | `zoom_image_size` | FILTERS | `zoom_image_size` | なし | Fullseye 対応あり(CPU のみ) |
-| `area_center_gray` | IMAGE | — | — | Fullseye 未対応 |
+| `area_center_gray` | IMAGE | `area_center_gray` | なし | Fullseye 対応あり(CPU のみ) |
 | `convert_image_type` | IMAGE | `it_convert_image_type` | なし | Fullseye 対応あり(CPU のみ) |
 | `crop_domain` | IMAGE | `it_crop_domain` | なし | Fullseye 対応あり(CPU のみ) |
 | `crop_part` | IMAGE | `it_crop_part` | あり | Fullseye 対応あり(GPU 経路あり) |
 | `crop_rectangle1` | IMAGE | `it_crop_rectangle1` | あり | Fullseye 対応あり(GPU 経路あり) |
-| `crop_rectangle2` | IMAGE | — | — | Fullseye 未対応 |
-| `gray_histo` | IMAGE | — | — | Fullseye 未対応 |
-| `gray_projections` | IMAGE | — | — | Fullseye 未対応 |
+| `crop_rectangle2` | IMAGE | `crop_rectangle2` | なし | Fullseye 対応あり(CPU のみ) |
+| `gray_histo` | IMAGE | `gray_histo` | なし | Fullseye 対応あり(CPU のみ) |
+| `gray_projections` | IMAGE | `gray_projections` | なし | Fullseye 対応あり(CPU のみ) |
 | `gauss_image` | LEGACY | `gauss_image` | あり | Fullseye 対応あり(GPU 経路あり) |
 | `polar_trans_image` | LEGACY | `polar_trans_image`, `sk_swirl` | なし | Fullseye 対応あり(CPU のみ) |
 | `find_ncc_model` | MATCHING | `ncc_locate` | あり | Fullseye 対応あり(GPU 経路あり) |
-| `find_ncc_models` | MATCHING | — | — | Fullseye 未対応 |
+| `find_ncc_models` | MATCHING | `find_ncc_models` | なし | Fullseye 対応あり(CPU のみ) |
 | `gray_closing_rect` | MORPHOLOGY | `gray_closing_rect` | あり | Fullseye 対応あり(GPU 経路あり) |
 | `gray_closing_shape` | MORPHOLOGY | `gray_closing_shape` | なし | Fullseye 対応あり(CPU のみ) |
 | `gray_dilation_rect` | MORPHOLOGY | `gray_dilation_rect`, `max_filter` | あり | Fullseye 対応あり(GPU 経路あり) |

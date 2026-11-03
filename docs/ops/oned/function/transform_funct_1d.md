@@ -5,7 +5,7 @@ category: function
 in: signal
 out: pairs
 halcon: transform_funct_1d
-gpu: なし
+gpu: 鎖の中だけ(許可リスト)
 examples: [gallery_oned_audio_funct]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -17,7 +17,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 - **データ種**: `signal` → `pairs`
 - **呼び出し**: `import fullseye as fs; fs.ledger.transform_funct_1d(y, mult_x=1.0, add_x=0.0, mult_y=1.0, add_y=0.0)` (実装を直接呼ぶなら `import funct1d; funct1d.transform_funct_1d(y, mult_x=1.0, add_x=0.0, mult_y=1.0, add_y=0.0)`、台帳から引くなら `ops1d.get("transform_funct_1d")`)
 - **HALCON 相当**: `transform_funct_1d`(意味・パラメータは HALCON リファレンスが参考になる)
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: 鎖の中だけ(許可リストの機械的 GPU 経路、CuPy)。隣の段も許可リストのときだけGPU に載せたまま走る。単独の呼び出しは CPU
 
 ## 使い方
 

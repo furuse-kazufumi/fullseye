@@ -40,8 +40,8 @@
       ],
       "shape": "join",
       "derived_from": {
-        "direct_edges": 547,
-        "join_edges": 75,
+        "direct_edges": 552,
+        "join_edges": 79,
         "reduce_edges": 0
       },
       "currently_composable": true,
@@ -91,7 +91,7 @@
       ],
       "shape": "join",
       "derived_from": {
-        "direct_edges": 60,
+        "direct_edges": 61,
         "join_edges": 1,
         "reduce_edges": 0
       },
@@ -141,7 +141,7 @@
       ],
       "shape": "join",
       "derived_from": {
-        "direct_edges": 59,
+        "direct_edges": 61,
         "join_edges": 13,
         "reduce_edges": 0
       },
@@ -1087,8 +1087,8 @@
       ],
       "shape": "join",
       "derived_from": {
-        "direct_edges": 547,
-        "join_edges": 75,
+        "direct_edges": 552,
+        "join_edges": 79,
         "reduce_edges": 0
       },
       "currently_composable": true,
@@ -1138,7 +1138,7 @@
       ],
       "shape": "join",
       "derived_from": {
-        "direct_edges": 60,
+        "direct_edges": 61,
         "join_edges": 1,
         "reduce_edges": 0
       },
@@ -1188,7 +1188,7 @@
       ],
       "shape": "join",
       "derived_from": {
-        "direct_edges": 59,
+        "direct_edges": 61,
         "join_edges": 13,
         "reduce_edges": 0
       },
