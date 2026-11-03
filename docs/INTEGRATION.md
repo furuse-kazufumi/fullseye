@@ -74,8 +74,8 @@ degradation ledger is always in the result. Paths outside the sandbox roots, unk
 operator names, sort mismatches, out-of-range knobs and unknown arguments are all refused
 explicitly — nothing is coerced to "the nearest thing".
 
-Every tool that runs operators accepts `device` (`auto` = CUDA when the host has it,
-otherwise CPU; `FULLSEYE_DEVICE` overrides; `cuda` on a CPU-only host runs on the CPU with the
+Every tool that runs operators accepts `device` (default `cpu`, so the same call gives the same
+numbers on every host; `auto` = CUDA when the host has it, otherwise CPU; `FULLSEYE_DEVICE` overrides; `cuda` on a CPU-only host runs on the CPU with the
 reason recorded per op, as before). The result carries `acceleration` (`requested`, effective
 `device`, `approximate: true` only when it really ran on CUDA) and the GPU/CPU
 segment plan; pass `parity_check: true` to also run the CPU reference and record

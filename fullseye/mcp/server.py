@@ -1126,7 +1126,7 @@ def validate_pipeline(stages: list[dict], start_sort: str | None, cat: Catalog, 
             "stages": normalized, "execution_order":[x[0] for x in ordered], "errors": errors}
 
 
-def _run_op(arr, op, ka: float, kb: float, allow: bool, device: str = "auto"):
+def _run_op(arr, op, ka: float, kb: float, allow: bool, device: str = "cpu"):
     """1 op を走らせる。strict で失敗したら (None, degraded, err)。"""
     import backend_safe
     import fullseye
@@ -1140,7 +1140,7 @@ def _run_op(arr, op, ka: float, kb: float, allow: bool, device: str = "auto"):
 
 
 def _stage(store: HandleStore, meta: dict, arr, op, ka: float, kb: float, allow: bool, *,
-           vision: str, thumb_allowed: bool, tag: str, device: str = "auto"):
+           vision: str, thumb_allowed: bool, tag: str, device: str = "cpu"):
     """apply 1 段ぶん: 記録(数値 + 判定 + 劣化台帳)と、必要なら小図。
     返り値 = (record, links, out_meta | None, out_value)。out_meta は配列のときだけ。"""
     import numpy as np
@@ -1293,16 +1293,16 @@ def _apply(a: dict, cat: Catalog, store: HandleStore, *,
                                   float(a.get("a", 0.5)), float(a.get("b", 0.5)))
     allow = bool(a.get("allow_degraded", False))
     rec, links, _, out = _stage(store, meta, arr, op, ka, kb, allow, vision=a.get("vision", "auto"),
-                                thumb_allowed=True, tag=op.name, device=a.get("device", "auto"))
+                                thumb_allowed=True, tag=op.name, device=a.get("device", "cpu"))
     if "error" in rec:
         text = _stage_text(rec) + "\n(allow_degraded=true で fail-soft を許せるが、劣化は degraded に載る)"
         return _tool_error(text, rec)
     if named:
         rec["named_params"] = named
     import fullseye
-    resolved_device = fullseye.resolve_device(a.get("device", "auto"))
+    resolved_device = fullseye.resolve_device(a.get("device", "cpu"))
     effective = resolved_device if resolved_device != "cuda" or fullseye.cuda_available() else "cpu"
-    rec["acceleration"] = {"requested": a.get("device", "auto"), "device": effective,
+    rec["acceleration"] = {"requested": a.get("device", "cpu"), "device": effective,
                            "approximate": effective == "cuda"}
     # CPU 参照との照合は求められた時だけ(既定で毎回 2 回走らせると GPU の意味が無い)
     if effective == "cuda" and bool(a.get("parity_check", False)) and isinstance(out, np.ndarray):
@@ -1332,7 +1332,7 @@ def _pipeline_dag(a: dict, cat: Catalog, store: HandleStore, *, max_structured_b
     from fullseye.opsearch import _graph
     edges={e["op"]:e for e in _graph()["edges"]}
     policy=_execution_policy()
-    device=fullseye.resolve_device(a.get("device", "auto"))
+    device=fullseye.resolve_device(a.get("device", "cpu"))
     gpu_effective=(device == "cuda" and fullseye.cuda_available())
     parity_check=bool(a.get("parity_check", False))
     explicit=bool(a.get("bindings") or a.get("outputs") or any("inputs" in s or "params" in s for s in a["stages"]))
@@ -1523,7 +1523,7 @@ def _pipeline_dag(a: dict, cat: Catalog, store: HandleStore, *, max_structured_b
         acceleration=accel_bridge.coverage(linear_specs)
     except Exception:  # noqa: BLE001 - metadata must not change execution outcome
         acceleration={"n_gpu_segments":0,"segments":[],"n_transfers":0}
-    acceleration["requested"] = a.get("device", "auto")
+    acceleration["requested"] = a.get("device", "cpu")
     acceleration["device"] = "cuda" if gpu_effective else "cpu"
     acceleration["n_transfers"] = (2 * acceleration.get("n_gpu_segments", 0)
                                      if gpu_effective else 0)

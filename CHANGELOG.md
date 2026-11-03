@@ -8,7 +8,7 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 ## 0.9.0 — 2026-11-03
 
 minor を上げる理由(CONTRIBUTING.md「Versioning」): Python 3.10 の終了(下限の引き上げ)、`raytrace3d` の傾けた像面で
-値が変わる修正、21 op(`opscalib`)の入口を ValueError にした契約変更、`device` の既定を `"auto"` にしたこと。
+値が変わる修正、21 op(`opscalib`)の入口を ValueError にした契約変更。
 
 ### 追加 — 2-D 対称性の検査 5 op(#234)
 
@@ -33,11 +33,14 @@ minor を上げる理由(CONTRIBUTING.md「Versioning」): Python 3.10 の終了
 - `archive_probe` / `archive_list` / `archive_extract` / `archive_create`(`fileio`、台帳 `opsfileio` の `archive`)。展開は空の行き先だけ、
   メンバー数・展開後の総量・圧縮率に上限(fail-closed)。
 
-### 変更 — `device` の既定を `"auto"` に(GPU 第 1 便、#239)
+### 変更 — `device` の既定は `"cpu"`(0.8.0 と同じ)。GPU は `device="auto"` / `"cuda"` か `FULLSEYE_DEVICE` で明示(GPU 第 1 便 #239 + 2026-11-03 の決定)
 
-- `apply()` / `run_pipeline()` の `device` の既定が `"auto"`(CUDA があれば GPU、無ければ CPU。`FULLSEYE_DEVICE` が優先)。
-  **CPU だけの環境ではビット一致**(`tests/test_device_default.py`)。CUDA のある環境では GPU 経路の op の値が CPU と近似一致に
-  なりうる(`parity_check=true` で CPU 参照との差を返す)。明示した `"cuda"` を CPU だけの環境で拒否する挙動は従来どおり。
+- #239 は `apply()` / `run_pipeline()` と MCP の `device` の既定を `"auto"` にしていたが、0.9.0 では `"cpu"` に戻した。理由 = 計測の
+  再現性: CUDA のある機械では同じ呼び出しが GPU で走り値が変わりうる(近似一致)うえ、GPU 経路は CI で検査されない。
+  既定を auto のまま出すと、後で戻すときに破壊的変更がもう 1 つ重なる。
+- `device="auto"`(CUDA があれば GPU、無ければ CPU)と `FULLSEYE_DEVICE=auto` を明示したときだけ GPU を選ぶ。`resolve_device("auto")`
+  の振る舞いは #239 のまま。明示した `"cuda"` を CPU だけの環境で入口で拒まない挙動(N117)も従来どおり。MCP の結果の
+  `acceleration` と `parity_check=true`(CPU 参照との差)は #239 のまま。
 - 全台帳に GPU 欄(`gpu_accel` / `gpu_status`、手書きの旗なし)、op ごとの時間の測定器 `tools/profile_ops.py`。
 
 ### 変更 — 評価の枠組みの共通層 P0-A(#236)

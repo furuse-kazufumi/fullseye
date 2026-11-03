@@ -2044,10 +2044,11 @@ _GPU_OPEN: set = set()
 _TORCH_IMPORT_FAILURE: str | None = None     # torch が import できない理由(一度だけ試す)
 
 
-def resolve_device(device: str = "auto") -> str:
+def resolve_device(device: str = "cpu") -> str:
     """実行 device を解決する / Resolve ``auto`` and ``FULLSEYE_DEVICE``.
 
-    明示した引数より ``FULLSEYE_DEVICE`` を優先する。``auto`` は CUDA が使えれば ``cuda``、無ければ
+    明示した引数より ``FULLSEYE_DEVICE`` を優先する。既定は ``cpu``(0.9.0、計測の再現性のため GPU は
+    明示したときだけ)。``auto`` は CUDA が使えれば ``cuda``、無ければ
     ``cpu``。``cuda`` の明示はそのまま返す: CUDA の無い機械では op ごとに N117 の説明つきで
     台帳に記録して CPU で続き(既定)、``on_error="raise"`` ではその説明つき ``RuntimeError`` になる
     (入口で拒まない = 2026-09-20 の契約 ``tests/test_release_0_2_1_gates_2026_09_20.py``)。
@@ -2641,7 +2642,7 @@ def _explain_gpu_failure(device, e):
 
 
 def apply(image, name: str, a: float = 0.5, b: float = 0.5, coerce: bool = True,
-          device: str = "auto", on_error: str | None = None, template=None,
+          device: str = "cpu", on_error: str | None = None, template=None,
           fast: bool | None = None, allow_nonfinite: bool = False):
     """Apply one operator to *image* and return its raw output.
 
@@ -2663,8 +2664,8 @@ def apply(image, name: str, a: float = 0.5, b: float = 0.5, coerce: bool = True,
     ``on_error="raise"``. It used to be handed to the op unchanged, which produced a
     uint8/float16/all-ones result with no exception — see :func:`_contract_dtype`.
 
-    ``device`` (default ``"auto"`` = CUDA when available, else CPU; ``FULLSEYE_DEVICE``
-    overrides): ``"cuda"`` runs accel-enabled ops on the GPU; on a host without CUDA the op
+    ``device`` (default ``"cpu"``; ``"auto"`` = CUDA when available, else CPU —
+    GPU only when asked for; ``FULLSEYE_DEVICE`` overrides): ``"cuda"`` runs accel-enabled ops on the GPU; on a host without CUDA the op
     runs on the CPU and the reason is recorded in the fallback ledger (``on_error="raise"`` raises it).
     torch/accel *absent* falls back to CPU silently (documented); a kernel that
     FAILS is recorded in the fallback ledger and raises under ``on_error="raise"``.
@@ -3099,7 +3100,7 @@ def _pipeline_steps(image, norm, ops_, coerce, policy, use_fast, entry=True):
 
 
 def run_pipeline(image, stages: Iterable, a: float = 0.5, b: float = 0.5,
-                 coerce: bool = True, device: str = "auto", on_error: str | None = None,
+                 coerce: bool = True, device: str = "cpu", on_error: str | None = None,
                  fast: bool | None = None):
     """Apply a sequence of operators, threading the array through each.
 
@@ -3113,8 +3114,8 @@ def run_pipeline(image, stages: Iterable, a: float = 0.5, b: float = 0.5,
     themselves, so re-coercing mid-chain would only strip gray levels a stage may
     still want (see :func:`_coerce_input`).
 
-    ``device`` (default ``"auto"`` = CUDA when available, else CPU; ``FULLSEYE_DEVICE``
-    overrides): ``"cuda"`` (or any non-cpu) runs the chain on the
+    ``device`` (default ``"cpu"``; ``"auto"`` = CUDA when available, else CPU —
+    GPU only when asked for; ``FULLSEYE_DEVICE`` overrides): ``"cuda"`` (or any non-cpu) runs the chain on the
     ``accel_bridge`` resident pipeline (unsupported ops fall back to CPU inside the
     bridge; consecutive accel ops share one transfer). torch/GPU *absent* silently
     uses the CPU path; a bridge that FAILS is recorded (source ``"gpu"``) and raises
