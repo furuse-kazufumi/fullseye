@@ -494,7 +494,7 @@
       "size_hint": "input-dependent",
       "produced_by": 43,
       "consumed_by": 67,
-      "generator": false,
+      "generator": true,
       "type_check": false,
       "choose_when": "undocumented",
       "source": "chain_fuzz catalog"
@@ -262246,14 +262246,10 @@
   ],
   "diagnostics": {
     "dead_ends": [],
-    "orphans": [
-      "contour"
-    ],
+    "orphans": [],
     "never_consumed": [],
     "unchecked_ops": [],
-    "unreachable": [
-      "contour"
-    ],
+    "unreachable": [],
     "duplicate_declarations": [
       {
         "op": "gaussians_to_voxel",
