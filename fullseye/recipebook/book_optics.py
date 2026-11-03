@@ -5,10 +5,9 @@ OCT, indirect ToF, telecentric, spectral radiometry, moire alignment, photoelast
 acoustics, piv, flyvision, specular, lightfield, photon, astrostack, interferometry, motionmag, rangedoppler.
 
 Every sample is synthetic with a closed-form truth (thick-lens EFL, Wien's law, Malus's law, Fresnel DoLP,
-round-trip time of flight, FMCW range / Doppler bins, Airy MTF50 and so on). Several simulators of these
-families return ``(value, truth)`` from the OP_GRAPH executor (the ledger wrapper drops the truth, the raw
-executor the runner calls does not), so where such an op is the natural first stage the sample calls the
-simulator itself and the recipe starts from the value; those ops are listed in ``FAILED_ATTEMPTS``.
+round-trip time of flight, FMCW range / Doppler bins, Airy MTF50 and so on). Stages run through
+``fs.ledger.<op>``, whose result adapters return the declared sort (the raw bodies of the astrostack / piv /
+lightfield simulators and estimators return ``(value, info)`` tuples), so simulators start the chains.
 """
 from __future__ import annotations
 
@@ -107,10 +106,16 @@ def op_moire(variant):
     return {"value": None, "aux": {"shift_nm": shift, "ref": ref}, "truth": {"shift_nm": shift}}
 
 
+def op_confocal_surface(variant):
+    """Aluminium surface at z um inside a chromatic confocal probe's calibrated range; truth = z."""
+    z = 300.0 if variant == 0 else 700.0
+    return {"value": None, "aux": {"surface_um": z}, "truth": {"surface_um": z}}
+
+
 def op_retardance(variant):
     """Retardance map from the stress-optic law delta = 2 pi t C (s1 - s2) / lambda; truth = mean delta."""
     t, c, lam = 0.006, 7.0e-11, 550e-9               # 6 mm epoxy, 70 brewster, green light
-    smax = 1.5e6 if variant == 0 else 0.9e6           # Pa, ramp 10 % .. 100 % of smax
+    smax = 0.3e6 if variant == 0 else 0.2e6           # Pa, ramp 10 % .. 100 % of smax
     ds = np.tile(np.linspace(0.1, 1.0, 32), (24, 1)) * smax
     delta = 2 * np.pi * t * c * ds / lam               # stays below pi/2 (camera4 is unique there)
     axis = 30.0 if variant == 0 else 75.0
@@ -167,10 +172,10 @@ def op_csi_point(variant):
 
 
 def op_csi_tilt(variant, n=24):
-    """Tilted flat z = 2 + s x um on 1 um pixels; truth = tilt atan(s) in degrees."""
-    s = 0.15 if variant == 0 else 0.3
+    """Tilted flat z = 3.5 + s x um on 1 um pixels; truth = tilt atan(s) in degrees."""
+    s = 0.1 if variant == 0 else 0.17
     yy, xx = np.mgrid[0:n, 0:n].astype(float)
-    return {"value": 2.0 + s * xx, "aux": {}, "truth": {"tilt_deg": math.degrees(math.atan(s))}}
+    return {"value": 3.5 + s * xx, "aux": {}, "truth": {"tilt_deg": math.degrees(math.atan(s))}}
 
 
 def op_confocal_point(variant):
@@ -180,13 +185,11 @@ def op_confocal_point(variant):
 
 
 def op_starfield(variant):
-    """Synthetic star field (64x64, Gaussian PSF); truth = number of stars and PSF FWHM (px)."""
-    import astrostack
-    n = 8 if variant == 0 else 14
-    fwhm = 3.2 if variant == 0 else 4.5
-    img, tr = astrostack.synth_starfield(shape=(64, 64), n_stars=n, fwhm_px=fwhm, flux_min=3000.0,
-                                         flux_max=9000.0, seed=2 + variant, margin_px=8.0)
-    return {"value": img, "aux": {}, "truth": {"n_stars": n, "n_lo": n - 1, "n_hi": n, "fwhm_px": fwhm}}
+    """Star field parameters (64x64, Gaussian PSF); truth = number of stars and PSF FWHM (px)."""
+    n = 8 if variant == 0 else 11
+    fwhm = 3.2 if variant == 0 else 4.0
+    return {"value": None, "aux": {"n_stars": n, "fwhm_px": fwhm},
+            "truth": {"n_stars": n, "n_lo": n - 1, "n_hi": n, "fwhm_px": fwhm}}
 
 
 def op_sky_frames(variant):
@@ -195,6 +198,64 @@ def op_sky_frames(variant):
     g = _rng(variant, 11)
     frames = [100.0 + 5.0 * g.standard_normal((64, 64)) for _ in range(nf)]
     return {"value": frames, "aux": {}, "truth": {"sigma_stack": 5.0 / math.sqrt(nf)}}
+
+
+def op_dithered_series(variant):
+    """Dithered exposures (1.5 px) of one faint star field with cosmic rays; truth = number of stars."""
+    nf, ns = (6, 10) if variant == 0 else (12, 16)
+    return {"value": None, "aux": {"n_frames": nf, "n_stars": ns},
+            "truth": {"n_stars": ns, "n_lo": ns - 2, "n_hi": ns}}
+
+
+def op_lf_plane(variant):
+    """Light field of a textured plane at disparity s px/view (5x5 views); truth = depth f b / |s|."""
+    s = 1.0 if variant == 0 else -1.5
+    return {"value": None, "aux": {"slopes": [s]}, "truth": {"slope": s, "depth": 1000.0 * 1.0 / abs(s)}}
+
+
+def op_piv_pair(variant):
+    """PIV image pair with a uniform particle displacement (dy, dx) px; 10 um pixels, 1 ms; truth = speed."""
+    import pivops
+    d = (1.5, -2.0) if variant == 0 else (0.5, 3.25)
+    a, b, _ = pivops.piv_synth_pair((64, 64), d, seed=2)      # raw body: the ledger keeps only frame a
+    return {"value": a, "aux": {"b": b}, "truth": {"speed": math.hypot(*d) * 1e-5 / 1e-3, "dx": d[1]}}
+
+
+def op_piv_seq(variant):
+    """Particle image sequence (8 frames) with uniform displacement (dy, dx); truth = |d| px/frame."""
+    d = (1.5, -2.0) if variant == 0 else (0.5, 1.25)
+    return {"value": None, "aux": {"d": list(d)}, "truth": {"mag": math.hypot(*d)}}
+
+
+def op_ps_sphere(variant, n=32):
+    """Lambertian spherical cap (radius R px) lit by 6 lights at 50 deg elevation; truth = curvature -1/R."""
+    r = 60.0 if variant == 0 else 35.0
+    yy, xx = np.mgrid[0:n, 0:n] - (n - 1) / 2.0
+    nm = np.stack([xx / r, yy / r, np.sqrt(1.0 - (xx / r) ** 2 - (yy / r) ** 2)], -1)
+    el = math.radians(50.0)
+    lights = np.array([[math.cos(el) * math.cos(a), math.cos(el) * math.sin(a), math.sin(el)]
+                       for a in np.radians([0, 60, 120, 180, 240, 300])])
+    return {"value": [np.clip(nm @ l, 0.0, None) for l in lights], "aux": {"lights": lights},
+            "truth": {"curvature": -1.0 / r}}
+
+
+def op_painted_dome(variant):
+    """Glossy dome with body colour albedo; truth = peak diffuse value = max(albedo)."""
+    s = op_glossy_dome(0)
+    alb = [0.8, 0.55, 0.35] if variant == 0 else [0.3, 0.7, 0.5]
+    return {"value": s["value"], "aux": {"albedo": alb}, "truth": {"albedo_max": max(alb)}}
+
+
+def op_mic_pair(variant):
+    """White noise reaching two microphones 0.2 m apart from angle a (c = 343 m/s); truth = TDOA s."""
+    fs, n, d, c = 48000.0, 4096, 0.2, 343.0
+    a = 30.0 if variant == 0 else -50.0
+    tau = d * math.sin(math.radians(a)) / c
+    g = _rng(variant, 13)
+    x = g.standard_normal(n)
+    f = np.fft.rfftfreq(n, 1.0 / fs)
+    y = np.fft.irfft(np.fft.rfft(x) * np.exp(-2j * np.pi * f * tau), n)
+    return {"value": x, "aux": {"mic2": y, "rate": fs}, "truth": {"tdoa_s": tau, "angle_deg": a}}
 
 
 def op_mla_raw(variant):
@@ -230,16 +291,13 @@ def op_bearing(variant):
     return {"value": None, "aux": {"defect_hz": f}, "truth": {"defect_hz": f}}
 
 
-def op_mic_pair(variant):
-    """White noise reaching two microphones 0.2 m apart from angle a (c = 343 m/s); truth = TDOA s."""
-    fs, n, d, c = 48000.0, 4096, 0.2, 343.0
-    a = 30.0 if variant == 0 else -50.0
-    tau = d * math.sin(math.radians(a)) / c
-    g = _rng(variant, 13)
-    x = g.standard_normal(n)
-    f = np.fft.rfftfreq(n, 1.0 / fs)
-    y = np.fft.irfft(np.fft.rfft(x) * np.exp(-2j * np.pi * f * tau), n)
-    return {"value": x, "aux": {"mic2": y, "rate": fs}, "truth": {"tdoa_s": tau, "angle_deg": a}}
+def op_dut_pair(variant):
+    """White-noise input x and device output y = g x + 2 % noise (8 kHz); truth = gain g."""
+    gain = 0.5 if variant == 0 else 2.0
+    g = _rng(variant, 14)
+    x = g.standard_normal(4096)
+    y = gain * x + 0.02 * gain * g.standard_normal(4096)
+    return {"value": x, "aux": {"out": y, "rate": 8000.0}, "truth": {"gain": gain}}
 
 
 def op_tone(variant):
@@ -272,7 +330,7 @@ def op_fly_pair(variant):
     a = 1.0 + di * np.sin(2 * np.pi * f * t)
     b = 1.0 + di * np.sin(2 * np.pi * f * t - psi)
     wt = 2 * np.pi * f * tau
-    rbar = di ** 2 / 2.0 * math.sin(psi) * wt / (1 + wt ** 2)
+    rbar = di ** 2 * math.sin(psi) * wt / (1 + wt ** 2)
     return {"value": a, "aux": {"b": b}, "truth": {"rbar": rbar}}
 
 
@@ -332,12 +390,14 @@ SAMPLES = {
     "op_singlet": op_singlet, "op_airy": op_airy, "op_itof_scene": op_itof_scene, "op_oct_film": op_oct_film,
     "op_polarizer": op_polarizer, "op_sphere_normals": op_sphere_normals, "op_telecentric": op_telecentric,
     "op_point_light": op_point_light, "op_blackbody": op_blackbody, "op_moire": op_moire,
-    "op_retardance": op_retardance, "op_fmcw_target": op_fmcw_target, "op_fmcw_array": op_fmcw_array,
+    "op_retardance": op_retardance, "op_confocal_surface": op_confocal_surface, "op_fmcw_target": op_fmcw_target, "op_fmcw_array": op_fmcw_array,
     "op_tcspc": op_tcspc, "op_dtof_scene": op_dtof_scene, "op_flat_irradiance": op_flat_irradiance,
     "op_csi_point": op_csi_point, "op_csi_tilt": op_csi_tilt, "op_confocal_point": op_confocal_point,
-    "op_starfield": op_starfield, "op_sky_frames": op_sky_frames, "op_mla_raw": op_mla_raw,
+    "op_starfield": op_starfield, "op_sky_frames": op_sky_frames, "op_dithered_series": op_dithered_series,
+    "op_lf_plane": op_lf_plane, "op_piv_pair": op_piv_pair, "op_piv_seq": op_piv_seq, "op_ps_sphere": op_ps_sphere,
+    "op_painted_dome": op_painted_dome, "op_mic_pair": op_mic_pair, "op_mla_raw": op_mla_raw,
     "op_rotating_flow": op_rotating_flow, "op_uniform_flow": op_uniform_flow, "op_bearing": op_bearing,
-    "op_mic_pair": op_mic_pair, "op_tone": op_tone, "op_fly_drum": op_fly_drum, "op_fly_pair": op_fly_pair,
+    "op_dut_pair": op_dut_pair, "op_tone": op_tone, "op_fly_drum": op_fly_drum, "op_fly_pair": op_fly_pair,
     "op_looming": op_looming, "op_glossy_dome": op_glossy_dome, "op_tilted_dielectric": op_tilted_dielectric,
     "op_vibration": op_vibration, "op_vibration_video": op_vibration_video,
 }
@@ -480,6 +540,17 @@ RECIPES = [
      "note": "stress inspection in glass / epoxy: retardance delta = 2 pi t C (s1-s2)/lambda (rad) under "
              "circularly polarized light is imaged by a 4-direction polarization camera and inverted in closed "
              "form to retardance and fast-axis angle in degrees"},
+    {"name": "Measure — height with a chromatic confocal probe (designed lens, calibration table)",
+     "family": "optics", "task": "measure", "task_class": "measurement", "halcon": None, "input_sort": None,
+     "sample": "op_confocal_surface",
+     "stages": [{"op": "chromatic_confocal_probe"},
+                {"op": "chromatic_confocal_spectrum", "kw": {"surface_um": "$aux.surface_um"}},
+                {"op": "chromatic_confocal_peaks", "kw": {"max_peaks": 1}},
+                {"op": "chromatic_confocal_readout", "args": ["$prev", "$s1"]}],
+     "expect": [{"get": ["heights_um", 0], "approx": "surface_um", "atol": 0.1}],
+     "note": "chromatic confocal displacement sensor designed from a real lens prescription: ray-traced axial "
+             "chromatic focus vs wavelength (1.19 mm range), the return spectrum of a mirror-like aluminium surface, "
+             "sub-bin peak wavelength and the inverse calibration back to height in um"},
     # ------------------------------------------------------------------ rangedoppler
     {"name": "Sense — FMCW radar range and velocity of a target (range-Doppler map)", "family": "rangedoppler",
      "task": "sense", "task_class": "sensing", "halcon": None, "input_sort": None, "sample": "op_fmcw_target",
@@ -535,11 +606,11 @@ RECIPES = [
     {"name": "Measure — surface height at a pixel by white-light interferometry (CSI peak)",
      "family": "interferometry", "task": "measure", "task_class": "measurement", "halcon": None,
      "input_sort": None, "sample": "op_csi_point",
-     "stages": [{"op": "csi_signal_simulate", "kw": {"surface_um": "$aux.surface_um", "noise": 0.005, "seed": 1}},
+     "stages": [{"op": "csi_signal_simulate", "kw": {"surface_um": "$aux.surface_um", "noise": 0.0}},
                 {"op": "csi_peak_position"}],
-     "expect": [{"get": [], "approx": "surface_um", "atol": 0.02}],
+     "expect": [{"get": [], "approx": "surface_um", "atol": 0.005}],
      "note": "coherence scanning interferometry: the correlogram of a 0.6 um broadband source scanned in 0.05 um "
-             "steps peaks where the optical path difference is zero; envelope + phase gives the height in um"},
+             "steps peaks where the optical path difference is zero; the log-parabola envelope peak gives the height in um (noiseless here: the op's own doc measures 0.14 um RMS for this estimator at 1 % noise)"},
     {"name": "Measure — tilt of a flat measured by a coherence-scanning interferometer", "family": "interferometry",
      "task": "measure", "task_class": "measurement", "halcon": "3D Reconstruction", "input_sort": "depth",
      "sample": "op_csi_tilt",
@@ -561,27 +632,47 @@ RECIPES = [
              "surface; the spectrometer peak (Gaussian fit) maps back to height in um"},
     # ------------------------------------------------------------------ astrostack
     {"name": "Sense — detect and photometer stars in a frame (aperture photometry)", "family": "astrostack",
-     "task": "detect", "task_class": "sensing", "halcon": None, "input_sort": "image", "sample": "op_starfield",
-     "stages": [{"op": "star_detect", "kw": {"threshold_sigma": 5.0}},
-                {"op": "aperture_photometry", "args": ["$in", "$prev"]}],
+     "task": "detect", "task_class": "sensing", "halcon": None, "input_sort": None, "sample": "op_starfield",
+     "stages": [{"op": "synth_starfield", "kw": {"shape": [64, 64], "n_stars": "$aux.n_stars", "fwhm_px": "$aux.fwhm_px",
+                                                 "flux_min": 3000.0, "flux_max": 9000.0, "seed": 3, "margin_px": 8.0}},
+                {"op": "star_detect", "kw": {"threshold_sigma": 5.0}},
+                {"op": "aperture_photometry", "args": ["$s1", "$prev"]}],
      "expect": [{"get": ["@len"], "between": ["n_lo", "n_hi"]}],
-     "note": "point-source detection and photometry (stars, also laser spots / fluorescent beads): MAD-noise "
-             "threshold at 5 sigma, centroids, then aperture flux with local sky annulus; count of sources found"},
+     "note": "point-source detection and photometry (stars, also laser spots / fluorescent beads): synthetic "
+             "frame with shot + read noise, MAD-noise threshold at 5 sigma, centroids, then aperture flux with "
+             "local sky annulus; count of sources found (one may merge with a neighbour)"},
     {"name": "Measure — seeing / PSF FWHM of point sources (Gaussian PSF fit)", "family": "astrostack",
-     "task": "measure", "task_class": "measurement", "halcon": None, "input_sort": "image", "sample": "op_starfield",
-     "stages": [{"op": "star_detect", "kw": {"threshold_sigma": 5.0}},
-                {"op": "psf_fit", "args": ["$in", "$prev"]}],
-     "expect": [{"get": ["@len"], "between": ["n_lo", "n_hi"]}],
+     "task": "measure", "task_class": "measurement", "halcon": None, "input_sort": None, "sample": "op_starfield",
+     "stages": [{"op": "synth_starfield", "kw": {"shape": [64, 64], "n_stars": "$aux.n_stars", "fwhm_px": "$aux.fwhm_px",
+                                                 "flux_min": 3000.0, "flux_max": 9000.0, "seed": 3, "margin_px": 8.0}},
+                {"op": "star_detect", "kw": {"threshold_sigma": 5.0}},
+                {"op": "psf_fit", "args": ["$s1", "$prev"]}],
+     "expect": [{"get": [0, "fwhm_px"], "approx": "fwhm_px", "atol": 0.3},
+                {"get": ["@len"], "between": ["n_lo", "n_hi"]}],
      "note": "image quality of a telescope or optical bench: fit a 2-D Gaussian to every detected point source; "
-             "the FWHM in px is the seeing / focus figure (synthetic PSF 3.2 or 4.5 px)"},
+             "the FWHM in px is the seeing / focus figure (synthetic PSF 3.2 or 4.0 px, read on the first star)"},
     {"name": "Preprocess — stack N frames with sigma clipping (noise drops as 1/sqrt N)", "family": "astrostack",
      "task": "preprocess", "task_class": "preprocess", "halcon": "Filters", "input_sort": "seq<image>",
      "sample": "op_sky_frames",
-     "stages": [{"op": "sigma_clip_stack", "kw": {"kappa": 3.0}}],
-     "expect": [{"get": [0, "@std"], "approx": "sigma_stack", "rtol": 0.12}],
+     "stages": [{"op": "sigma_clip_stack", "kw": {"kappa": 3.0}},
+                {"op": "noise_sigma"}],
+     "expect": [{"get": [], "approx": "sigma_stack", "rtol": 0.12}],
      "note": "frame stacking for low-light imaging: kappa-sigma clipped mean of 4 or 16 flat-sky frames (read noise "
-             "5 e-); the stacked noise falls as 5/sqrt(N). Single stage: the executor returns (stack, accepted) "
-             "so no op can follow it (see FAILED_ATTEMPTS); get [0] reads the stack"},
+             "5 e-), then the robust (MAD) noise of the stack in e-; it falls as 5/sqrt(N) (the median-centred "
+             "clipping costs up to ~10 % efficiency vs a plain mean, hence 12 %)"},
+    {"name": "Preprocess — reveal faint stars: cosmic-ray reject, register and stack dithered frames",
+     "family": "astrostack", "task": "preprocess", "task_class": "preprocess", "halcon": None, "input_sort": None,
+     "sample": "op_dithered_series",
+     "stages": [{"op": "synth_frame_series", "kw": {"shape": [64, 64], "n_frames": "$aux.n_frames", "dither_px": 1.5,
+                                                    "n_cosmic": 3, "n_stars": "$aux.n_stars", "seed": 0}},
+                {"op": "cosmic_ray_reject_stack"},
+                {"op": "align_frames"},
+                {"op": "sigma_clip_stack", "kw": {"kappa": 3.0}},
+                {"op": "star_detect", "kw": {"threshold_sigma": 5.0}}],
+     "expect": [{"get": ["@len"], "between": ["n_lo", "n_hi"]}],
+     "note": "astro / low-light imaging pipeline: per-pixel temporal cosmic-ray rejection, star-matched "
+             "registration of the dithered exposures, sigma-clipped stack, then source detection on the deep "
+             "image; it recovers the field's stars (count) that single frames lose in noise"},
     # ------------------------------------------------------------------ lightfield
     {"name": "3D — depth of a plane from a plenoptic camera raw image (refocus stack, depth from focus)",
      "family": "lightfield", "task": "3d", "task_class": "3d", "halcon": "3D Reconstruction",
@@ -593,7 +684,37 @@ RECIPES = [
      "note": "light-field (micro-lens array) camera: decode the raw sensor into 5x5 sub-aperture views, "
              "synthetically refocus at disparities -2..2 px/view, and pick per pixel the sharpest refocus "
              "(Sum-Modified-Laplacian); the median disparity equals the plane's true disparity"},
+    {"name": "3D — metric depth from a light field (refocus depth from focus, camera-array model)",
+     "family": "lightfield", "task": "3d", "task_class": "3d", "halcon": "3D Reconstruction", "input_sort": None,
+     "sample": "op_lf_plane",
+     "stages": [{"op": "lf_synthesize", "kw": {"slopes": "$aux.slopes", "shape": [48, 48], "seed": 3}},
+                {"op": "lf_depth_from_focus", "kw": {"slopes": _SLOPES}},
+                {"op": "lf_disparity_to_depth", "kw": {"focal_px": 1000.0, "baseline": 1.0}}],
+     "expect": [{"get": ["@median"], "approx": "depth", "rtol": 0.02},
+                {"get": ["$s2", "@median"], "approx": "slope", "atol": 0.05}],
+     "note": "light-field / camera-array depth: synthetic 5x5-view light field of a textured plane, refocus over "
+             "disparities -2..2 px/view and keep the sharpest per pixel (sub-step), then depth = f b / |s| "
+             "(focal 1000 px, baseline 1 unit): 1000 or 667 units"},
     # ------------------------------------------------------------------ piv
+    {"name": "Measure — flow velocity from a PIV image pair (multipass cross-correlation)", "family": "piv",
+     "task": "measure", "task_class": "measurement", "halcon": None, "input_sort": "image", "sample": "op_piv_pair",
+     "stages": [{"op": "piv_multipass", "args": ["$prev", "$aux.b"], "kw": {"windows": [32, 16]}},
+                {"op": "piv_to_velocity", "kw": {"pixel_size_m": 1e-5, "dt_s": 1e-3}},
+                {"op": "piv_flow_magnitude"}],
+     "expect": [{"get": ["@median"], "approx": "speed", "rtol": 0.02},
+                {"get": ["$s1", 1, "@median"], "approx": "dx", "atol": 0.05}],
+     "note": "particle image velocimetry: two exposures of seeded flow, window-deformation multipass correlation "
+             "32 -> 16 px with Gaussian sub-pixel peaks, calibrated to m/s with 10 um pixels and 1 ms pulse "
+             "separation; median speed in m/s"},
+    {"name": "Measure — mean flow from a PIV image sequence (ensemble correlation)", "family": "piv",
+     "task": "measure", "task_class": "measurement", "halcon": None, "input_sort": None, "sample": "op_piv_seq",
+     "stages": [{"op": "piv_synth_sequence", "kw": {"shape": [64, 64], "displacement": "$aux.d", "n_frames": 8,
+                                                    "seed": 1}},
+                {"op": "piv_ensemble_correlate", "kw": {"window": 32, "overlap": 0.5}},
+                {"op": "piv_flow_magnitude"}],
+     "expect": [{"get": ["@median"], "approx": "mag", "rtol": 0.03}],
+     "note": "low-seeding / micro-PIV: correlation planes of all consecutive pairs are averaged before peak "
+             "finding, giving the mean displacement in px/frame where single pairs are too sparse (32 px windows; a quarter-pixel component still reads ~2 % low from peak locking with 2.5 px particles, 4 % at 16 px windows)"},
     {"name": "Measure — vorticity of a PIV vector field after outlier replacement", "family": "piv",
      "task": "measure", "task_class": "measurement", "halcon": None, "input_sort": "flow2d",
      "sample": "op_rotating_flow",
@@ -624,6 +745,15 @@ RECIPES = [
      "note": "vibration / acoustic condition monitoring: band-pass around the 2 kHz structural resonance, Hilbert "
              "envelope, spectrum of the envelope; the peak in Hz is the defect repetition rate (BPFO) within the "
              "2 Hz resolution"},
+    {"name": "Measure — frequency response (gain) of a device from input / output noise (H1)",
+     "family": "acoustics", "task": "measure", "task_class": "measurement", "halcon": None, "input_sort": "signal",
+     "sample": "op_dut_pair",
+     "stages": [{"op": "transfer_function", "args": ["$prev", "$aux.out"], "kw": {"rate": "$aux.rate"}}],
+     "expect": [{"get": ["magnitude", "@median"], "approx": "gain", "rtol": 0.02},
+                {"get": ["coherence", "@median"], "between": [0.9, 1.0]}],
+     "note": "vibration / acoustic test: white-noise excitation and the response of a device (flat gain g plus 2 % "
+             "sensor noise), Welch-averaged H1 estimator; the median |H| equals g and the coherence ~1 shows the "
+             "output is linearly explained by the input. Single stage: the FRF is the end product"},
     {"name": "Sense — time difference of arrival between two microphones (GCC-PHAT)", "family": "acoustics",
      "task": "sense", "task_class": "sensing", "halcon": None, "input_sort": "signal", "sample": "op_mic_pair",
      "stages": [{"op": "gcc_delay", "args": ["$prev", "$aux.mic2"],
@@ -657,7 +787,7 @@ RECIPES = [
      "stages": [{"op": "fly_emd_response", "args": ["$prev", "$aux.b"], "kw": {"tau_s": 0.05, "dt_s": 0.001}}],
      "expect": [{"get": ["@mean"], "approx": "rbar", "rtol": 0.08}],
      "note": "elementary motion detector: low-pass-delayed cross-correlation of two neighbouring receptors; the "
-             "mean response sign is the motion direction and its size dI^2/2 sin(psi) w tau / (1 + (w tau)^2). "
+             "mean response sign is the motion direction and its size dI^2 sin(psi) w tau / (1 + (w tau)^2). "
              "Single stage: the detector itself is the task"},
     {"name": "Sense — time to collision from the looming angle (tau)", "family": "flyvision", "task": "sense",
      "task_class": "sensing", "halcon": None, "input_sort": "signal", "sample": "op_looming",
@@ -686,6 +816,23 @@ RECIPES = [
      "note": "polarization imaging of glossy dielectrics: specular reflection off n = 1.5 at zenith 20..75 deg seen "
              "through 0/45/90/135 deg analyzers; the DoLP map follows Fresnel (Rs - Rp)/(Rs + Rp) — basis of "
              "glare removal and shape-from-polarization"},
+    {"name": "3D — curvature of a matte part by robust photometric stereo", "family": "specular", "task": "3d",
+     "task_class": "3d", "halcon": "3D Reconstruction", "input_sort": "seq<image>", "sample": "op_ps_sphere",
+     "stages": [{"op": "photometric_stereo_robust", "kw": {"lights": "$aux.lights"}},
+                {"op": "slope_to_curvature", "kw": {"spacing": 1.0}}],
+     "expect": [{"get": ["@median"], "approx": "curvature", "rtol": 0.03}],
+     "note": "surface inspection with a multi-light dome: six images under known light directions, RANSAC "
+             "photometric stereo (robust to shadows and highlights) gives the normal map, then mean curvature "
+             "in 1/px = -1/R of the spherical part"},
+    {"name": "Inspect — remove specular glare to read the body colour (dichromatic separation)",
+     "family": "specular", "task": "inspect", "task_class": "inspection", "halcon": "Color",
+     "input_sort": "normalmap", "sample": "op_painted_dome",
+     "stages": [{"op": "dichromatic_render", "kw": {"albedo_rgb": "$aux.albedo", "specular": 0.4}},
+                {"op": "specular_diffuse_split"}],
+     "expect": [{"get": ["@max"], "approx": "albedo_max", "atol": 0.01}],
+     "note": "colour inspection of glossy parts: the dichromatic model splits each RGB pixel into body (diffuse) "
+             "and illuminant-coloured highlight; the diffuse image keeps the paint colour without glare, its peak "
+             "equals the albedo of the brightest channel"},
     # ------------------------------------------------------------------ motionmag
     {"name": "Measure — sub-pixel vibration amplitude from video (phase-based)", "family": "motionmag",
      "task": "measure", "task_class": "measurement", "halcon": None, "input_sort": None, "sample": "op_vibration",
@@ -700,52 +847,39 @@ RECIPES = [
      "task": "inspect", "task_class": "inspection", "halcon": None, "input_sort": "seq<image>",
      "sample": "op_vibration_video",
      "stages": [{"op": "motion_magnify", "kw": {"alpha": 10.0, "f_lo": 3.0, "f_hi": 5.0, "fps": 32.0}}],
-     "expect": [{"get": ["phase_shift_max_rad"], "between": [0.0, 10.0]}],
+     "expect": [{"get": ["phase_shift_rms_rad"], "between": [0.0, 3.14159]},
+                {"get": ["linear_regime"], "equals": True},
+                {"get": ["reference_coherence"], "between": [0.99, 1.0]}],
      "note": "visual vibration inspection (machines, structures): phase-based Eulerian motion magnification by "
-             "alpha = 10 in the 3..5 Hz band; returns the magnified video and SNR / linearity figures. "
+             "alpha = 10 (displacement gain, 1 = identity) in the 3..5 Hz band; returns the magnified video and SNR / linearity figures, gated on staying in the linear regime (rms phase increment < pi). "
              "Single stage: the magnified video is the end product"},
     {"name": "Measure — vibration SNR in a frequency band of a video", "family": "motionmag", "task": "measure",
      "task_class": "measurement", "halcon": None, "input_sort": "seq<image>", "sample": "op_vibration_video",
-     "stages": [{"op": "temporal_bandpass", "kw": {"f_lo": 3.0, "f_hi": 5.0, "fps": 32.0}},
-                {"op": "band_snr", "kw": {"f_lo": 3.0, "f_hi": 5.0, "fps": 32.0}}],
-     "expect": [{"get": ["motion_power"], "between": [0.0, 1.0]}],
-     "note": "how detectable is a vibration: temporal band-pass 3..5 Hz of every pixel, then band power vs noise "
-             "per bin (dB); motion power scales with amplitude^2"},
+     "stages": [{"op": "band_snr", "kw": {"f_lo": 3.0, "f_hi": 5.0, "fps": 32.0}}],
+     "expect": [{"get": ["motion_snr_db"], "between": [20.0, 80.0]},
+                {"get": ["snr_clamped"], "equals": False},
+                {"get": ["motion_power"], "between": [1e-6, 1e-2]}],
+     "note": "how detectable is a vibration before magnifying it: per-pixel temporal spectrum, power in the "
+             "3..5 Hz band vs the out-of-band noise floor per bin (dB); motion power scales with amplitude^2. "
+             "Single stage: a temporal band-pass first would remove the out-of-band noise the SNR is measured "
+             "against (tried: the SNR clamps at 100 dB)"},
 ]
 
 MISSING_OPS = [
     {"family": "acoustics", "need": "TDOA (s) + microphone spacing -> source bearing angle (deg)",
      "why": "gcc_delay returns a delay; no op turns delay into a direction of arrival for a mic pair / array"},
-    {"family": "astrostack", "need": "stacked-image SNR / noise gain report vs single frame",
-     "why": "noise_sigma works on one image; every stacking op returns a tuple, so the gain cannot be chained"},
-    {"family": "piv", "need": "image pair -> flow2d estimator whose executor returns only the flow",
-     "why": "piv_cross_correlate / piv_multipass / piv_deform_pass / piv_ensemble_correlate all return (flow, info)"},
+    {"family": "piv", "need": "a pair generator whose ledger form returns both frames (or seq<image> of 2)",
+     "why": "fs.ledger.piv_synth_pair keeps only frame a (declared image), so a pair cannot start a chain; "
+            "piv_synth_sequence -> piv_ensemble_correlate works, piv_cross_correlate needs a sample-built pair"},
 ]
 
 FAILED_ATTEMPTS = [
-    {"family": "astrostack", "recipe": "starfield -> star_detect", "op": "synth_starfield",
-     "error": "star_detect: ValueError setting an array element with a sequence (got a 2-tuple)",
-     "cause": "declaration_lie"},
-    {"family": "astrostack", "recipe": "frames -> sigma_clip_stack -> noise_sigma", "op": "sigma_clip_stack",
-     "error": "noise_sigma: ValueError inhomogeneous shape — executor returns (stack, accepted), declared image",
-     "cause": "declaration_lie"},
-    {"family": "astrostack", "recipe": "frames -> align_frames -> sigma_clip_stack", "op": "align_frames",
-     "error": "returns (aligned, matrices), declared seq<image>; same for cosmic_ray_reject(_stack), "
-              "drizzle_resample, synth_frame_series, frame_align", "cause": "declaration_lie"},
-    {"family": "piv", "recipe": "piv_synth_pair -> piv_cross_correlate -> piv_vorticity", "op": "piv_cross_correlate",
-     "error": "returns (flow, info) (2-tuple), declared flow2d — fails TYPE_CHECKS['flow2d']; piv_synth_pair returns "
-              "(a, b, truth) declared image", "cause": "declaration_lie"},
-    {"family": "lightfield", "recipe": "lf_synthesize -> lf_depth_from_focus", "op": "lf_synthesize",
-     "error": "lf_depth_from_focus: ValueError inhomogeneous shape — lf_synthesize returns (lf, truth), declared "
-              "lightfield", "cause": "declaration_lie"},
-    {"family": "lightfield", "recipe": "lightfield -> lf_epi_slope -> lf_disparity_to_depth", "op": "lf_epi_slope",
-     "error": "lf_epi_slope and lf_depth_from_focus return (map, confidence) declared image; lf_disparity_to_depth "
-              "then silently returns a (2, H, W) 'depth'", "cause": "declaration_lie"},
-    {"family": "specular", "recipe": "seq<image> -> photometric_stereo_robust -> slope_to_curvature",
-     "op": "photometric_stereo_robust",
-     "error": "returns a 3-tuple (normals, ...) declared normalmap", "cause": "declaration_lie"},
-    {"family": "specular", "recipe": "rgbimage -> specular_diffuse_split -> ...", "op": "specular_diffuse_split",
-     "error": "returns (diffuse, specular) 2-tuple declared rgbimage", "cause": "declaration_lie"},
+    {"family": "piv", "recipe": "piv_synth_pair -> piv_cross_correlate", "op": "piv_synth_pair",
+     "error": "fs.ledger.piv_synth_pair returns only frame a (64, 64); frame b and the truth are dropped, so "
+              "piv_cross_correlate(a, b) has no b in the chain", "cause": "type_gap"},
+    {"family": "lightfield", "recipe": "lf_synthesize -> lf_epi_slope -> lf_disparity_to_depth", "op": "lf_epi_slope",
+     "error": "runs, but the structure-tensor EPI slope reads -1.38 for a true -1.5 px/view (8 % bias; 0.995 for "
+              "1.0), so the depth gate fails at 2 %; lf_depth_from_focus is used instead", "cause": "op_bug"},
     {"family": "optics", "recipe": "thick_lens -> paraxial_trace", "op": "thick_lens",
      "error": "paraxial_trace: expected the dict returned by lens_system(); thick_lens returns its own EFL table",
      "cause": "type_gap"},
