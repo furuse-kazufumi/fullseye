@@ -4,7 +4,7 @@ dim: 3d
 category: curvilinear
 in: voxel
 out: voxel
-gpu: なし
+gpu: あり(許可リスト)
 examples: [curvilinear_proj]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `voxel` → `voxel`
 - **呼び出し**: `import fullseye as fs; fs.ledger.cylinder_unwrap(vol, center=None, r_in=0.0, r_out=None, ntheta=180, nr=32, device='cpu')` (実装を直接呼ぶなら `import match3d; match3d.cylinder_unwrap(vol, center=None, r_in=0.0, r_out=None, ntheta=180, nr=32, device='cpu')`、台帳から引くなら `ops3d.get("cylinder_unwrap")`)
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: あり(許可リストの機械的 GPU 経路、CuPy)。`device="auto"` は測った大きさ(16,777,216 画素)以上で GPU を選ぶ
 
 ## 使い方
 

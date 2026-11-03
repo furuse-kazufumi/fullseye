@@ -4,7 +4,7 @@ dim: 3d
 category: medial
 in: voxel
 out: voxel
-gpu: なし
+gpu: あり(許可リスト)
 examples: [pcl_geodesic]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -17,7 +17,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **呼び出し**: `import fullseye as fs; fs.ledger.distance_ridge(vol, min_radius=0.0)` (実装を直接呼ぶなら `import medial; medial.distance_ridge(vol, min_radius=0.0)`、台帳から引くなら `ops3d.get("distance_ridge")`)
 - **台帳経由の戻り値**: `fullseye.ledger.distance_ridge(...)` は**宣言 out 型 `voxel` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.distance_ridge.raw(...)`、または `medial.distance_ridge` を直接呼ぶ。
   - 本体の返り: `(ridge, dist)`
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: あり(許可リストの機械的 GPU 経路、CuPy)。`device="auto"` は測った大きさ(16,777,216 画素)以上で GPU を選ぶ
 
 ## 使い方
 

@@ -4,7 +4,7 @@ dim: annotate
 category: paper
 in: image2d
 out: image2d
-gpu: なし
+gpu: あり(許可リスト)
 examples: [paper_figure]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.annotate_orientation(img, angle_deg=0.0, corner='rt', xy=None, size=26.0, margin=16, label='N', color='neutral', width=2, font_size=12, box_alpha=0.0, text_color=None, scheme='okabe_ito', font_path=None)` (実装を直接呼ぶなら `import annotate; annotate.annotate_orientation(img, angle_deg=0.0, corner='rt', xy=None, size=26.0, margin=16, label='N', color='neutral', width=2, font_size=12, box_alpha=0.0, text_color=None, scheme='okabe_ito', font_path=None)`、台帳から引くなら `opsannotate.get("annotate_orientation")`)
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: あり(許可リストの機械的 GPU 経路、CuPy)。`device="auto"` は測った大きさ(4,194,304 画素)以上で GPU を選ぶ
 
 ## 使い方
 

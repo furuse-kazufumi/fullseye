@@ -4,7 +4,7 @@ dim: annotate
 category: overlay
 in: image2d × labels
 out: image2d
-gpu: なし
+gpu: あり(許可リスト)
 examples: [annotate_gallery, poc_mri_bias_field, poc_recycling_sorting]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d × labels` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.overlay_labels(img, labels, alpha=0.5, colors=None, scheme='okabe_ito', background=0)` (実装を直接呼ぶなら `import annotate; annotate.overlay_labels(img, labels, alpha=0.5, colors=None, scheme='okabe_ito', background=0)`、台帳から引くなら `opsannotate.get("overlay_labels")`)
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: あり(許可リストの機械的 GPU 経路、CuPy)。`device="auto"` は測った大きさ(4,194,304 画素)以上で GPU を選ぶ
 
 ## 使い方
 

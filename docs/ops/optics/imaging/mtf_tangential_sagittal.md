@@ -4,7 +4,7 @@ dim: optics
 category: imaging
 in: image2d
 out: table
-gpu: なし
+gpu: あり(許可リスト)
 examples: [optical_design_metrics]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.mtf_tangential_sagittal(psf, pixel_pitch_um=1.0, tangential_axis='y')` (実装を直接呼ぶなら `import optics; optics.mtf_tangential_sagittal(psf, pixel_pitch_um=1.0, tangential_axis='y')`、台帳から引くなら `opsoptics.get("mtf_tangential_sagittal")`)
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: あり(許可リストの機械的 GPU 経路、CuPy)。`device="auto"` は測った大きさ(4,194,304 画素)以上で GPU を選ぶ
 
 ## 使い方
 

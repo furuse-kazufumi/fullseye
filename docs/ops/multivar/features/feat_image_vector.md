@@ -4,7 +4,7 @@ dim: multivar
 category: features
 in: images
 out: table
-gpu: なし
+gpu: あり(許可リスト)
 examples: [multivar_inspection_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `images` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.feat_image_vector(images=None, features=('mean', 'std', 'p01', 'p99', 'rms_contrast', 'michelson_contrast', 'grad_energy', 'laplacian_var'), data_range=None, unit='DN', roi=None) -> 'dict'` (実装を直接呼ぶなら `import multivar; multivar.feat_image_vector(images=None, features=('mean', 'std', 'p01', 'p99', 'rms_contrast', 'michelson_contrast', 'grad_energy', 'laplacian_var'), data_range=None, unit='DN', roi=None) -> 'dict'`、台帳から引くなら `opsmultivar.get("feat_image_vector")`)
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: あり(許可リストの機械的 GPU 経路、CuPy)。`device="auto"` は測った大きさ(4,194,304 画素)以上で GPU を選ぶ
 
 ## 使い方
 

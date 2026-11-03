@@ -5,7 +5,7 @@ category: edges
 in: image
 out: image
 halcon: laplace_of_gauss
-gpu: なし
+gpu: 鎖の中だけ(許可リスト)
 examples: [gallery2d_edges, poc_real_defect_floor]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -17,7 +17,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **データ種**: `image` → `image`
 - **呼び出し**: `fullseye.apply(img, "laplace_of_gauss", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 - **HALCON 相当**: `laplace_of_gauss`(意味・パラメータは HALCON リファレンスが参考になる)
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: 鎖の中だけ(許可リストの機械的 GPU 経路、CuPy)。隣の段も許可リストのときだけGPU に載せたまま走る。単独の呼び出しは CPU
 
 ![laplace_of_gauss: input → output](../../_fig/laplace_of_gauss.png)
 

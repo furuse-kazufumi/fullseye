@@ -4,7 +4,7 @@ dim: optics
 category: light_transport
 in: images
 out: table
-gpu: なし
+gpu: あり(許可リスト)
 examples: [poc_interreflection_fringe_error]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `images` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.separate_direct_global(images, fill=0.5, black_level=0.0, scheme='shift')` (実装を直接呼ぶなら `import lighttransport; lighttransport.separate_direct_global(images, fill=0.5, black_level=0.0, scheme='shift')`、台帳から引くなら `opsoptics.get("separate_direct_global")`)
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: あり(許可リストの機械的 GPU 経路、CuPy)。`device="auto"` は測った大きさ(4,194,304 画素)以上で GPU を選ぶ
 
 ## 使い方
 

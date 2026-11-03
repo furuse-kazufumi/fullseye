@@ -4,7 +4,7 @@ dim: 3d
 category: structured_light
 in: images
 out: image2d
-gpu: なし
+gpu: あり(許可リスト)
 examples: [structured_light, structured_light_scan]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `images` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.wrapped_phase(images, method='general') -> 'np.ndarray'` (実装を直接呼ぶなら `import fringe; fringe.wrapped_phase(images, method='general') -> 'np.ndarray'`、台帳から引くなら `ops3d.get("wrapped_phase")`)
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: あり(許可リストの機械的 GPU 経路、CuPy)。`device="auto"` は測った大きさ(4,194,304 画素)以上で GPU を選ぶ
 
 ## 使い方
 

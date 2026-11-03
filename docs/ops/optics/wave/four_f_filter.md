@@ -4,7 +4,7 @@ dim: optics
 category: wave
 in: cimage × cimage
 out: cimage
-gpu: なし
+gpu: あり(許可リスト)
 examples: [optics_four_f_processor]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `cimage × cimage` → `cimage`
 - **呼び出し**: `import fullseye as fs; fs.ledger.four_f_filter(field, transfer, invert=True)` (実装を直接呼ぶなら `import optics; optics.four_f_filter(field, transfer, invert=True)`、台帳から引くなら `opsoptics.get("four_f_filter")`)
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: あり(許可リストの機械的 GPU 経路、CuPy)。`device="auto"` は測った大きさ(4,194,304 画素)以上で GPU を選ぶ
 
 ## 使い方
 

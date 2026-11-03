@@ -4,7 +4,7 @@ dim: drive
 category: ttc
 in: image2d × matrix × matrix
 out: table
-gpu: なし
+gpu: あり(許可リスト)
 examples: [poc_ttc_rss, poc_world_terrain]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d × matrix × matrix` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.flow_from_depth_motion(depth, K, T_rel) -> 'dict'` (実装を直接呼ぶなら `import drivettc; drivettc.flow_from_depth_motion(depth, K, T_rel) -> 'dict'`、台帳から引くなら `opsdrive.get("flow_from_depth_motion")`)
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: あり(許可リストの機械的 GPU 経路、CuPy)。`device="auto"` は測った大きさ(4,194,304 画素)以上で GPU を選ぶ
 
 ## 使い方
 

@@ -4,7 +4,7 @@ dim: optics
 category: shape_from_polarization
 in: image2d
 out: table
-gpu: なし
+gpu: あり(許可リスト)
 examples: [poc_shape_from_polarization]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.dolp_to_zenith(dolp, refractive_index=1.5, model='diffuse', out_of_range='clamp')` (実装を直接呼ぶなら `import sfpolar; sfpolar.dolp_to_zenith(dolp, refractive_index=1.5, model='diffuse', out_of_range='clamp')`、台帳から引くなら `opsoptics.get("dolp_to_zenith")`)
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: あり(許可リストの機械的 GPU 経路、CuPy)。`device="auto"` は測った大きさ(4,194,304 画素)以上で GPU を選ぶ
 
 ## 使い方
 

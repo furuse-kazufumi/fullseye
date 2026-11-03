@@ -4,7 +4,7 @@ dim: optics
 category: photoelastic
 in: image2d
 out: image2d
-gpu: なし
+gpu: 鎖の中だけ(許可リスト)
 examples: [photoelastic_roundtrip]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.retardation_convert(value, from_unit='rad', to_unit='nm', wavelength_nm=550.0)` (実装を直接呼ぶなら `import photoelastic; photoelastic.retardation_convert(value, from_unit='rad', to_unit='nm', wavelength_nm=550.0)`、台帳から引くなら `opsoptics.get("retardation_convert")`)
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: 鎖の中だけ(許可リストの機械的 GPU 経路、CuPy)。隣の段も許可リストのときだけGPU に載せたまま走る。単独の呼び出しは CPU
 
 ## 使い方
 

@@ -4,7 +4,7 @@ dim: optics
 category: glassbody
 in: signal
 out: signal
-gpu: なし
+gpu: 鎖の中だけ(許可リスト)
 examples: [glass_and_mirror_optics, poc_pv_thermal_survey, poc_thermal_radiometry, poc_water_transparent_media]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal` → `signal`
 - **呼び出し**: `import fullseye as fs; fs.ledger.beer_lambert_transmittance(path_mm, sigma_per_mm=0.01) -> 'np.ndarray'` (実装を直接呼ぶなら `import glassmirror; glassmirror.beer_lambert_transmittance(path_mm, sigma_per_mm=0.01) -> 'np.ndarray'`、台帳から引くなら `opsoptics.get("beer_lambert_transmittance")`)
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: 鎖の中だけ(許可リストの機械的 GPU 経路、CuPy)。隣の段も許可リストのときだけGPU に載せたまま走る。単独の呼び出しは CPU
 
 ## 使い方
 

@@ -4,7 +4,7 @@ dim: 3d
 category: feature
 in: voxel
 out: hessian
-gpu: なし
+gpu: native(device 引数)
 examples: [diff_features]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `voxel` → `hessian`
 - **呼び出し**: `import fullseye as fs; fs.ledger.hessian3d(vol, device='cpu')` (実装を直接呼ぶなら `import match3d; match3d.hessian3d(vol, device='cpu')`、台帳から引くなら `ops3d.get("hessian3d")`)
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: op 自身の `device=` 引数(native、実測 5.507 倍)。`fullseye.apply` / `run_pipeline` からはまだ GPU に送らない —— 実装を直接 `device="cuda"` で呼ぶ
 
 ## 使い方
 

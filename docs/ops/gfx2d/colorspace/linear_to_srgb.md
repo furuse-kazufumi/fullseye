@@ -4,7 +4,7 @@ dim: gfx2d
 category: colorspace
 in: rgb
 out: rgb
-gpu: なし
+gpu: あり(許可リスト)
 examples: [gfx2d_scene, poc_leaf_disease_area, poc_pigment_unmixing, poc_white_balance]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `rgb` → `rgb`
 - **呼び出し**: `import fullseye as fs; fs.ledger.linear_to_srgb(img)` (実装を直接呼ぶなら `import gfx2d; gfx2d.linear_to_srgb(img)`、台帳から引くなら `opsgfx2d.get("linear_to_srgb")`)
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: あり(許可リストの機械的 GPU 経路、CuPy)。`device="auto"` は測った大きさ(12,582,912 画素)以上で GPU を選ぶ
 
 ## 使い方
 

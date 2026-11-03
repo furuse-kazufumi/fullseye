@@ -4,7 +4,7 @@ dim: annotate
 category: pointer
 in: image2d
 out: image2d
-gpu: なし
+gpu: あり(許可リスト)
 examples: [annotate_gallery, poc_air_hockey_intercept, poc_ball_bounce, poc_kendama, poc_table_tennis_bounce, poc_ttc_rss, poc_world_terrain]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.crosshair(img, xy, color='emphasis', width=1, gap=6, extent=None, scheme='okabe_ito', style=None)` (実装を直接呼ぶなら `import annotate; annotate.crosshair(img, xy, color='emphasis', width=1, gap=6, extent=None, scheme='okabe_ito', style=None)`、台帳から引くなら `opsannotate.get("crosshair")`)
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: あり(許可リストの機械的 GPU 経路、CuPy)。`device="auto"` は測った大きさ(4,194,304 画素)以上で GPU を選ぶ
 
 ## 使い方
 

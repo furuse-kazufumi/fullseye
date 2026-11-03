@@ -4,7 +4,7 @@ dim: blob
 category: split
 in: mask
 out: image2d
-gpu: なし
+gpu: あり(許可リスト)
 examples: [blob_split_tour, poc_bone_trabecular_thickness, poc_dense_bubble_count, poc_segmentation_gauntlet]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `mask` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.blob_distance(region: 'Any', spacing: 'float' = 1.0) -> 'np.ndarray'` (実装を直接呼ぶなら `import blob2d; blob2d.blob_distance(region: 'Any', spacing: 'float' = 1.0) -> 'np.ndarray'`、台帳から引くなら `opsblob.get("blob_distance")`)
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: あり(許可リストの機械的 GPU 経路、CuPy)。`device="auto"` は測った大きさ(4,194,304 画素)以上で GPU を選ぶ
 
 ## 使い方
 

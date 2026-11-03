@@ -4,7 +4,7 @@ dim: specular
 category: polarization
 in: image2d × image2d
 out: polsweep
-gpu: なし
+gpu: 鎖の中だけ(許可リスト)
 examples: [example_polarization_metal, poc_polarization_specular, specular_photometric]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d × image2d` → `polsweep`
 - **呼び出し**: `import fullseye as fs; fs.ledger.polarization_render(diffuse, specular, angles_deg=(0.0, 45.0, 90.0, 135.0), azimuth_deg=0.0)` (実装を直接呼ぶなら `import specularity; specularity.polarization_render(diffuse, specular, angles_deg=(0.0, 45.0, 90.0, 135.0), azimuth_deg=0.0)`、台帳から引くなら `opsspecular.get("polarization_render")`)
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: 鎖の中だけ(許可リストの機械的 GPU 経路、CuPy)。隣の段も許可リストのときだけGPU に載せたまま走る。単独の呼び出しは CPU
 
 ## 使い方
 

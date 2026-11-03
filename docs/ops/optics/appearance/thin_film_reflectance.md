@@ -4,7 +4,7 @@ dim: optics
 category: appearance
 in: signal
 out: signal
-gpu: なし
+gpu: あり(許可リスト)
 examples: [appearance_structural_colour, simcal_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal` → `signal`
 - **呼び出し**: `import fullseye as fs; fs.ledger.thin_film_reflectance(nm, thickness_nm=350.0, n_film=1.33, n_sub=1.0, cos_theta=1.0, n_out=1.0, polarization='unpolarized', under_layers=()) -> 'np.ndarray'` (実装を直接呼ぶなら `import matappear; matappear.thin_film_reflectance(nm, thickness_nm=350.0, n_film=1.33, n_sub=1.0, cos_theta=1.0, n_out=1.0, polarization='unpolarized', under_layers=()) -> 'np.ndarray'`、台帳から引くなら `opsoptics.get("thin_film_reflectance")`)
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: あり(許可リストの機械的 GPU 経路、CuPy)。`device="auto"` は測った大きさ(1,048,576 画素)以上で GPU を選ぶ
 
 ## 使い方
 

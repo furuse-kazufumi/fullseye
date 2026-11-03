@@ -4,7 +4,7 @@ dim: spc
 category: variation
 in: video
 out: table
-gpu: なし
+gpu: あり(許可リスト)
 examples: [poc_good_sample_variation_model]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `video` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.varmodel_alignment(stack, max_misalign_px=0.5)` (実装を直接呼ぶなら `import varmodel; varmodel.varmodel_alignment(stack, max_misalign_px=0.5)`、台帳から引くなら `opsspc.get("varmodel_alignment")`)
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: あり(許可リストの機械的 GPU 経路、CuPy)。`device="auto"` は測った大きさ(2,097,152 画素)以上で GPU を選ぶ
 
 ## 使い方
 

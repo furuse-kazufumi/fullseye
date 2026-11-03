@@ -4,7 +4,7 @@ dim: 3d
 category: occupancy
 in: voxel
 out: sdf
-gpu: なし
+gpu: あり(許可リスト)
 examples: [occupancy_esdf]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `voxel` → `sdf`
 - **呼び出し**: `import fullseye as fs; fs.ledger.esdf(occupancy, voxel_size=1.0)` (実装を直接呼ぶなら `import occupancy; occupancy.esdf(occupancy, voxel_size=1.0)`、台帳から引くなら `ops3d.get("esdf")`)
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: あり(許可リストの機械的 GPU 経路、CuPy)。`device="auto"` は測った大きさ(16,777,216 画素)以上で GPU を選ぶ
 
 ## 使い方
 

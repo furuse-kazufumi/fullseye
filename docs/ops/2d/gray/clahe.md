@@ -4,7 +4,7 @@ dim: 2d
 category: gray
 in: image
 out: image
-gpu: なし
+gpu: あり(許可リスト)
 examples: [gallery2d_gray_arith, poc_dehazing]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image` → `image`
 - **呼び出し**: `fullseye.apply(img, "clahe", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: あり(許可リストの機械的 GPU 経路、CuPy)。`device="auto"` は測った大きさ(4,194,304 画素)以上で GPU を選ぶ
 
 ![clahe: input → output](../../_fig/clahe.png)
 

@@ -4,7 +4,7 @@ dim: oned
 category: function
 in: signal
 out: pairs
-gpu: なし
+gpu: あり(許可リスト)
 examples: [poc_veiling_glare]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -16,7 +16,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **データ種**: `signal` → `pairs`
 - **呼び出し**: `import fullseye as fs; fs.ledger.invert_funct_1d(y)` (実装を直接呼ぶなら `import funct1d; funct1d.invert_funct_1d(y)`、台帳から引くなら `ops1d.get("invert_funct_1d")`)
 - **台帳経由の戻り値**: `fullseye.ledger.invert_funct_1d(...)` は**宣言 out 型 `pairs` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.invert_funct_1d.raw(...)`、または `funct1d.invert_funct_1d` を直接呼ぶ。
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: あり(許可リストの機械的 GPU 経路、CuPy)。`device="auto"` は測った大きさ(1,048,576 画素)以上で GPU を選ぶ
 
 ## 使い方
 

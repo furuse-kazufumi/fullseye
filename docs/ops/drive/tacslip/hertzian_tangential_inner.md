@@ -4,7 +4,7 @@ dim: drive
 category: tacslip
 in: matrix × matrix × scalar × scalar × scalar × scalar
 out: table
-gpu: なし
+gpu: 鎖の中だけ(許可リスト)
 examples: [poc_tacsim_marker_shear]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `matrix × matrix × scalar × scalar × scalar × scalar` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.hertzian_tangential_inner(x, y, q0: 'float', a: 'float', G: 'float', nu: 'float') -> 'dict'` (実装を直接呼ぶなら `import tacslip; tacslip.hertzian_tangential_inner(x, y, q0: 'float', a: 'float', G: 'float', nu: 'float') -> 'dict'`、台帳から引くなら `opsdrive.get("hertzian_tangential_inner")`)
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: 鎖の中だけ(許可リストの機械的 GPU 経路、CuPy)。隣の段も許可リストのときだけGPU に載せたまま走る。単独の呼び出しは CPU
 
 ## 使い方
 

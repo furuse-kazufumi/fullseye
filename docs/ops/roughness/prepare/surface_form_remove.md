@@ -4,7 +4,7 @@ dim: roughness
 category: prepare
 in: depth
 out: depth
-gpu: なし
+gpu: 鎖の中だけ(許可リスト)
 examples: [poc_polish_wipe_measure, poc_pv_thermal_survey, poc_surface_roughness]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -17,7 +17,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **呼び出し**: `import fullseye as fs; fs.ledger.surface_form_remove(z, dx, order=1, method='ls', thresh=None, dy=None, iters=200, seed=0)` (実装を直接呼ぶなら `import roughness; roughness.surface_form_remove(z, dx, order=1, method='ls', thresh=None, dy=None, iters=200, seed=0)`、台帳から引くなら `opsroughness.get("surface_form_remove")`)
 - **台帳経由の戻り値**: `fullseye.ledger.surface_form_remove(...)` は**宣言 out 型 `depth` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.surface_form_remove.raw(...)`、または `roughness.surface_form_remove` を直接呼ぶ。
   - 本体の返り: `(residual, coeffs)`
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: 鎖の中だけ(許可リストの機械的 GPU 経路、CuPy)。隣の段も許可リストのときだけGPU に載せたまま走る。単独の呼び出しは CPU
 
 ## 使い方
 

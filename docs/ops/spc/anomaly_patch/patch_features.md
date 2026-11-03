@@ -4,7 +4,7 @@ dim: spc
 category: anomaly_patch
 in: image2d
 out: table
-gpu: なし
+gpu: あり(許可リスト)
 examples: [poc_patch_anomaly]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.patch_features(image, patch=8, stride=4, scales=(1.0, 2.0, 4.0), groups=('gradient', 'gabor', 'lbp'), n_orient=4)` (実装を直接呼ぶなら `import anomaly_patch; anomaly_patch.patch_features(image, patch=8, stride=4, scales=(1.0, 2.0, 4.0), groups=('gradient', 'gabor', 'lbp'), n_orient=4)`、台帳から引くなら `opsspc.get("patch_features")`)
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: あり(許可リストの機械的 GPU 経路、CuPy)。`device="auto"` は測った大きさ(4,194,304 画素)以上で GPU を選ぶ
 
 ## 使い方
 

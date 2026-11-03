@@ -4,7 +4,7 @@ dim: 2d
 category: bridge
 in: image
 out: rgbimage
-gpu: なし
+gpu: 鎖の中だけ(許可リスト)
 examples: [gallery2d_bridge]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image` → `rgbimage`
 - **呼び出し**: `fullseye.apply(img, "img_to_rgb", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: 鎖の中だけ(許可リストの機械的 GPU 経路、CuPy)。隣の段も許可リストのときだけGPU に載せたまま走る。単独の呼び出しは CPU
 
 ![img_to_rgb: input → output](../../_fig/img_to_rgb.png)
 

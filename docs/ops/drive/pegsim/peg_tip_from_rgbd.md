@@ -4,7 +4,7 @@ dim: drive
 category: pegsim
 in: rgb × image2d × matrix
 out: table
-gpu: なし
+gpu: あり(許可リスト)
 examples: [gallery_drive_peg]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `rgb × image2d × matrix` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.peg_tip_from_rgbd(rgb, depth, K, r_peg: 'float' = 0.005, peg_mask=None) -> 'dict'` (実装を直接呼ぶなら `import pegsim; pegsim.peg_tip_from_rgbd(rgb, depth, K, r_peg: 'float' = 0.005, peg_mask=None) -> 'dict'`、台帳から引くなら `opsdrive.get("peg_tip_from_rgbd")`)
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: あり(許可リストの機械的 GPU 経路、CuPy)。`device="auto"` は測った大きさ(12,582,912 画素)以上で GPU を選ぶ
 
 ## 使い方
 

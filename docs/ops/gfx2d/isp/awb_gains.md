@@ -4,7 +4,7 @@ dim: gfx2d
 category: isp
 in: rgb
 out: vector
-gpu: なし
+gpu: 鎖の中だけ(許可リスト)
 examples: [raw_to_display_isp]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `rgb` → `vector`
 - **呼び出し**: `import fullseye as fs; fs.ledger.awb_gains(rgb, method='gray_world', percentile=99.0)` (実装を直接呼ぶなら `import gfx2d; gfx2d.awb_gains(rgb, method='gray_world', percentile=99.0)`、台帳から引くなら `opsgfx2d.get("awb_gains")`)
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: 鎖の中だけ(許可リストの機械的 GPU 経路、CuPy)。隣の段も許可リストのときだけGPU に載せたまま走る。単独の呼び出しは CPU
 
 ## 使い方
 

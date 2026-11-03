@@ -4,7 +4,7 @@ dim: 3d
 category: transform
 in: mesh
 out: voxel
-gpu: なし
+gpu: native(device 引数、鎖の中だけ)
 examples: [transforms_repr]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `mesh` → `voxel`
 - **呼び出し**: `import fullseye as fs; fs.ledger.mesh_to_voxel(vertices, faces, size, bounds=None, samples=40000, device='cpu', smooth=0.8)` (実装を直接呼ぶなら `import match3d; match3d.mesh_to_voxel(vertices, faces, size, bounds=None, samples=40000, device='cpu', smooth=0.8)`、台帳から引くなら `ops3d.get("mesh_to_voxel")`)
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: op 自身の `device=` 引数(native、実測 1.076 倍で単独の門 5 倍に届かない)。`fullseye.apply` / `run_pipeline` からは GPU に送らない —— 実装を直接 `device="cuda"` で呼ぶ
 
 ## 使い方
 

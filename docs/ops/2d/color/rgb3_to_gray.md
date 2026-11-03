@@ -5,7 +5,7 @@ category: color
 in: color
 out: image
 halcon: rgb3_to_gray
-gpu: なし
+gpu: 鎖の中だけ(許可リスト)
 examples: [gallery2d_color_artistic]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -17,7 +17,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **データ種**: `color` → `image`
 - **呼び出し**: `fullseye.apply(img, "rgb3_to_gray", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 - **HALCON 相当**: `rgb3_to_gray`(意味・パラメータは HALCON リファレンスが参考になる)
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: 鎖の中だけ(許可リストの機械的 GPU 経路、CuPy)。隣の段も許可リストのときだけGPU に載せたまま走る。単独の呼び出しは CPU
 
 ![rgb3_to_gray: input → output](../../_fig/rgb3_to_gray.png)
 

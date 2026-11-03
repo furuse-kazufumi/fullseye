@@ -4,7 +4,7 @@ dim: 2d
 category: typed
 in: signal
 out: signal
-gpu: なし
+gpu: あり(許可リスト)
 examples: []
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal` → `signal`
 - **呼び出し**: `fullseye.apply(img, "tb_fly_lgmd_eta", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: あり(許可リストの機械的 GPU 経路、CuPy)。`device="auto"` は測った大きさ(1,048,576 画素)以上で GPU を選ぶ
 
 ![tb_fly_lgmd_eta: input → output](../../_fig/tb_fly_lgmd_eta.png)
 

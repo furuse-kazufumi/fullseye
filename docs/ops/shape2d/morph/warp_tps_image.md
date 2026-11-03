@@ -4,7 +4,7 @@ dim: shape2d
 category: morph
 in: image2d × pairs × pairs
 out: image2d
-gpu: なし
+gpu: あり(許可リスト)
 examples: [shape2d_morph_descriptor_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d × pairs × pairs` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.warp_tps_image(img, src_pts, dst_pts, lam=0.0, order=1)` (実装を直接呼ぶなら `import imagemorph; imagemorph.warp_tps_image(img, src_pts, dst_pts, lam=0.0, order=1)`、台帳から引くなら `opsshape2d.get("warp_tps_image")`)
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: あり(許可リストの機械的 GPU 経路、CuPy)。`device="auto"` は測った大きさ(4,194,304 画素)以上で GPU を選ぶ
 
 ## 使い方
 

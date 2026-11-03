@@ -4,7 +4,7 @@ dim: math
 category: spectral
 in: signal
 out: table
-gpu: なし
+gpu: あり(許可リスト)
 examples: [spectral_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.hilbert_analytic(x, fs: 'float' = 1.0) -> 'dict'` (実装を直接呼ぶなら `import mathspectral; mathspectral.hilbert_analytic(x, fs: 'float' = 1.0) -> 'dict'`、台帳から引くなら `opsmath.get("hilbert_analytic")`)
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: あり(許可リストの機械的 GPU 経路、CuPy)。`device="auto"` は測った大きさ(1,048,576 画素)以上で GPU を選ぶ
 
 ## 使い方
 

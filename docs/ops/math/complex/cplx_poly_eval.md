@@ -4,7 +4,7 @@ dim: math
 category: complex
 in: signal × cpoints
 out: cpoints
-gpu: なし
+gpu: あり(許可リスト)
 examples: [math_complex]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal × cpoints` → `cpoints`
 - **呼び出し**: `import fullseye as fs; fs.ledger.cplx_poly_eval(coeffs, z)` (実装を直接呼ぶなら `import mathops; mathops.cplx_poly_eval(coeffs, z)`、台帳から引くなら `opsmath.get("cplx_poly_eval")`)
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: あり(許可リストの機械的 GPU 経路、CuPy)。`device="auto"` は測った大きさ(1,048,576 画素)以上で GPU を選ぶ
 
 ## 使い方
 

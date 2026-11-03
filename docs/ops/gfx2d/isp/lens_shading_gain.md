@@ -4,7 +4,7 @@ dim: gfx2d
 category: isp
 in: image2d
 out: image2d
-gpu: なし
+gpu: 鎖の中だけ(許可リスト)
 examples: [poc_tdi_linescan, raw_to_display_isp]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.lens_shading_gain(flat, pattern=None, smooth_sigma=0.0)` (実装を直接呼ぶなら `import gfx2d; gfx2d.lens_shading_gain(flat, pattern=None, smooth_sigma=0.0)`、台帳から引くなら `opsgfx2d.get("lens_shading_gain")`)
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: 鎖の中だけ(許可リストの機械的 GPU 経路、CuPy)。隣の段も許可リストのときだけGPU に載せたまま走る。単独の呼び出しは CPU
 
 ## 使い方
 

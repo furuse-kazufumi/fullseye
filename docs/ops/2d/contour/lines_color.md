@@ -5,7 +5,7 @@ category: contour
 in: color
 out: contour
 halcon: lines_color
-gpu: なし
+gpu: あり(許可リスト)
 examples: [gallery2d_contour_measure]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -17,7 +17,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **データ種**: `color` → `contour`
 - **呼び出し**: `fullseye.apply(img, "lines_color", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 - **HALCON 相当**: `lines_color`(意味・パラメータは HALCON リファレンスが参考になる)
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: あり(許可リストの機械的 GPU 経路、CuPy)。`device="auto"` は測った大きさ(12,582,912 画素)以上で GPU を選ぶ
 
 ![lines_color: input → output](../../_fig/lines_color.png)
 

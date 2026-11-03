@@ -5,7 +5,7 @@ category: features
 in: region
 out: feature
 halcon: connect_and_holes
-gpu: あり(lbl_connect_and_holes)
+gpu: 鎖の中だけ(lbl_connect_and_holes)
 examples: [gallery2d_features]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -17,7 +17,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **データ種**: `region` → `feature`
 - **呼び出し**: `fullseye.apply(img, "connect_and_holes", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 - **HALCON 相当**: `connect_and_holes`(意味・パラメータは HALCON リファレンスが参考になる)
-- **GPU**: あり(`lbl_connect_and_holes`、`device="cuda"` で高速経路)
+- **GPU**: 鎖の中だけ(`lbl_connect_and_holes`)。隣の段も GPU のパイプラインでは GPU に載せたまま走る。単独の呼び出しは `device="cuda"` でも CPU(単独では CPU に勝たないと実測した)
 
 ![connect_and_holes: input → output](../../_fig/connect_and_holes.png)
 

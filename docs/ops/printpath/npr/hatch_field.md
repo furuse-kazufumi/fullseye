@@ -4,7 +4,7 @@ dim: printpath
 category: npr
 in: image2d
 out: image2d
-gpu: なし
+gpu: あり(許可リスト)
 examples: [poc_beats_fringes_and_screens]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.hatch_field(image, spacing_px=8.0, sigma=2.0, levels=3, cross_deg=90.0)` (実装を直接呼ぶなら `import printpath; printpath.hatch_field(image, spacing_px=8.0, sigma=2.0, levels=3, cross_deg=90.0)`、台帳から引くなら `opsprintpath.get("hatch_field")`)
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: あり(許可リストの機械的 GPU 経路、CuPy)。`device="auto"` は測った大きさ(4,194,304 画素)以上で GPU を選ぶ
 
 ## 使い方
 

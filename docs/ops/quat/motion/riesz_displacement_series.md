@@ -4,7 +4,7 @@ dim: quat
 category: motion
 in: video
 out: pairs
-gpu: なし
+gpu: あり(許可リスト)
 examples: [quaternion_monogenic]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `video` → `pairs`
 - **呼び出し**: `import fullseye as fs; fs.ledger.riesz_displacement_series(video, f_lo, f_hi, fps, scales: 'int' = 4) -> 'np.ndarray'` (実装を直接呼ぶなら `import quatimage; quatimage.riesz_displacement_series(video, f_lo, f_hi, fps, scales: 'int' = 4) -> 'np.ndarray'`、台帳から引くなら `opsquat.get("riesz_displacement_series")`)
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: あり(許可リストの機械的 GPU 経路、CuPy)。`device="auto"` は測った大きさ(2,097,152 画素)以上で GPU を選ぶ
 
 ## 使い方
 

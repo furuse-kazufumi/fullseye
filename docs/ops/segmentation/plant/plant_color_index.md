@@ -4,7 +4,7 @@ dim: segmentation
 category: plant
 in: rgbimage
 out: table
-gpu: なし
+gpu: あり(許可リスト)
 examples: [poc_leaf_disease_area, poc_weed_rice_ratio]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `rgbimage` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.plant_color_index(rgb, *, index: 'str' = 'exg', dark_floor: 'float' = 0.02) -> 'Dict[str, object]'` (実装を直接呼ぶなら `import cropweed; cropweed.plant_color_index(rgb, *, index: 'str' = 'exg', dark_floor: 'float' = 0.02) -> 'Dict[str, object]'`、台帳から引くなら `opssegmentation.get("plant_color_index")`)
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: あり(許可リストの機械的 GPU 経路、CuPy)。`device="auto"` は測った大きさ(12,582,912 画素)以上で GPU を選ぶ
 
 ## 使い方
 

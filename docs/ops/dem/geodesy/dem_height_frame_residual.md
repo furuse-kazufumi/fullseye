@@ -4,7 +4,7 @@ dim: dem
 category: geodesy
 in: signal × signal × signal
 out: table
-gpu: なし
+gpu: 鎖の中だけ(許可リスト)
 examples: [poc_geodetic_benchmarks_real]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `signal × signal × signal` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.dem_height_frame_residual(h_ellipsoidal_m, h_orthometric_m, geoid_height_m, tol_m=0.1)` (実装を直接呼ぶなら `import demops; demops.dem_height_frame_residual(h_ellipsoidal_m, h_orthometric_m, geoid_height_m, tol_m=0.1)`、台帳から引くなら `opsdem.get("dem_height_frame_residual")`)
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: 鎖の中だけ(許可リストの機械的 GPU 経路、CuPy)。隣の段も許可リストのときだけGPU に載せたまま走る。単独の呼び出しは CPU
 
 ## 使い方
 

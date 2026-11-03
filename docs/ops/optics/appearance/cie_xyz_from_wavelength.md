@@ -4,7 +4,7 @@ dim: optics
 category: appearance
 in: signal
 out: points
-gpu: なし
+gpu: あり(許可リスト)
 examples: [appearance_structural_colour, poc_chromatic_confocal]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -16,7 +16,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **データ種**: `signal` → `points`
 - **呼び出し**: `import fullseye as fs; fs.ledger.cie_xyz_from_wavelength(nm) -> 'np.ndarray'` (実装を直接呼ぶなら `import matappear; matappear.cie_xyz_from_wavelength(nm) -> 'np.ndarray'`、台帳から引くなら `opsoptics.get("cie_xyz_from_wavelength")`)
 - **台帳経由の戻り値**: `fullseye.ledger.cie_xyz_from_wavelength(...)` は**宣言 out 型 `points` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.cie_xyz_from_wavelength.raw(...)`、または `matappear.cie_xyz_from_wavelength` を直接呼ぶ。
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: あり(許可リストの機械的 GPU 経路、CuPy)。`device="auto"` は測った大きさ(1,048,576 画素)以上で GPU を選ぶ
 
 ## 使い方
 

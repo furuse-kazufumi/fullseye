@@ -4,7 +4,7 @@ dim: 3d
 category: morphology
 in: voxel
 out: voxel
-gpu: なし
+gpu: native(device 引数)
 examples: [morphology_3d]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `voxel` → `voxel`
 - **呼び出し**: `import fullseye as fs; fs.ledger.morph_open3d(vol, r=1, device='cpu', se='cube')` (実装を直接呼ぶなら `import match3d; match3d.morph_open3d(vol, r=1, device='cpu', se='cube')`、台帳から引くなら `ops3d.get("morph_open3d")`)
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: op 自身の `device=` 引数(native、実測 18.486 倍)。`fullseye.apply` / `run_pipeline` からはまだ GPU に送らない —— 実装を直接 `device="cuda"` で呼ぶ
 
 ## 使い方
 

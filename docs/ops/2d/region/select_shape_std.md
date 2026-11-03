@@ -5,7 +5,7 @@ category: region
 in: region
 out: region
 halcon: select_shape_std
-gpu: あり(lbl_select_shape_std)
+gpu: 鎖の中だけ(lbl_select_shape_std)
 examples: [gallery2d_region]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -17,7 +17,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **データ種**: `region` → `region`
 - **呼び出し**: `fullseye.apply(img, "select_shape_std", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 - **HALCON 相当**: `select_shape_std`(意味・パラメータは HALCON リファレンスが参考になる)
-- **GPU**: あり(`lbl_select_shape_std`、`device="cuda"` で高速経路)
+- **GPU**: 鎖の中だけ(`lbl_select_shape_std`)。隣の段も GPU のパイプラインでは GPU に載せたまま走る。単独の呼び出しは `device="cuda"` でも CPU(単独では CPU に勝たないと実測した)
 
 ![select_shape_std: input → output](../../_fig/select_shape_std.png)
 

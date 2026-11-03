@@ -4,7 +4,7 @@ dim: drive
 category: polish
 in: image2d × scalar × scalar × scalar × scalar × scalar
 out: table
-gpu: なし
+gpu: あり(許可リスト)
 examples: [poc_polish_wipe_measure]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d × scalar × scalar × scalar × scalar × scalar` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.winkler_polish_run(z, pressure: 'float', k_w: 'float', k_p: 'float', speed: 'float', duration: 'float', dt=None, n_record: 'int' = 50) -> 'dict'` (実装を直接呼ぶなら `import polish; polish.winkler_polish_run(z, pressure: 'float', k_w: 'float', k_p: 'float', speed: 'float', duration: 'float', dt=None, n_record: 'int' = 50) -> 'dict'`、台帳から引くなら `opsdrive.get("winkler_polish_run")`)
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: あり(許可リストの機械的 GPU 経路、CuPy)。`device="auto"` は測った大きさ(4,194,304 画素)以上で GPU を選ぶ
 
 ## 使い方
 

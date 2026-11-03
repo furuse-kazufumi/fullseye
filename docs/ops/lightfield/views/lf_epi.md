@@ -4,7 +4,7 @@ dim: lightfield
 category: views
 in: lightfield
 out: image2d
-gpu: なし
+gpu: 鎖の中だけ(許可リスト)
 examples: [lightfield_depth, poc_lightfield_depth]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `lightfield` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.lf_epi(lf, axis='u', index=0, view=None)` (実装を直接呼ぶなら `import lightfield; lightfield.lf_epi(lf, axis='u', index=0, view=None)`、台帳から引くなら `opslightfield.get("lf_epi")`)
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: 鎖の中だけ(許可リストの機械的 GPU 経路、CuPy)。隣の段も許可リストのときだけGPU に載せたまま走る。単独の呼び出しは CPU
 
 ## 使い方
 

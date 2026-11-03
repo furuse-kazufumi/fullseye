@@ -5,7 +5,7 @@ category: features
 in: region
 out: feature
 halcon: count_obj
-gpu: あり(lbl_blob_count)
+gpu: 鎖の中だけ(lbl_blob_count)
 examples: [gallery2d_features, poc_real_coin_metrology, quickstart]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -17,7 +17,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 - **データ種**: `region` → `feature`
 - **呼び出し**: `fullseye.apply(img, "blob_count", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 - **HALCON 相当**: `count_obj`(意味・パラメータは HALCON リファレンスが参考になる)
-- **GPU**: あり(`lbl_blob_count`、`device="cuda"` で高速経路)
+- **GPU**: 鎖の中だけ(`lbl_blob_count`)。隣の段も GPU のパイプラインでは GPU に載せたまま走る。単独の呼び出しは `device="cuda"` でも CPU(単独では CPU に勝たないと実測した)
 
 ![blob_count: input → output](../../_fig/blob_count.png)
 

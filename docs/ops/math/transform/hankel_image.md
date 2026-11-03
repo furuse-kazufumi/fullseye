@@ -4,7 +4,7 @@ dim: math
 category: transform
 in: image2d
 out: table
-gpu: なし
+gpu: あり(許可リスト)
 examples: [transforms_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +15,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.hankel_image(image, *, center=None, spacing: 'float' = 1.0, n: 'int' = 256, r_max: 'float | None' = None, memory_budget: 'int | None' = None) -> 'dict'` (実装を直接呼ぶなら `import mathtransforms; mathtransforms.hankel_image(image, *, center=None, spacing: 'float' = 1.0, n: 'int' = 256, r_max: 'float | None' = None, memory_budget: 'int | None' = None) -> 'dict'`、台帳から引くなら `opsmath.get("hankel_image")`)
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: あり(許可リストの機械的 GPU 経路、CuPy)。`device="auto"` は測った大きさ(4,194,304 画素)以上で GPU を選ぶ
 
 ## 使い方
 
