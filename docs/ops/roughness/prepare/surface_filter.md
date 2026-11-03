@@ -4,7 +4,7 @@ dim: roughness
 category: prepare
 in: depth
 out: depth
-gpu: なし
+gpu: 鎖の中だけ(許可リスト)
 examples: [poc_robust_profile_filter, poc_surface_roughness]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -17,7 +17,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 - **呼び出し**: `import fullseye as fs; fs.ledger.surface_filter(z, dx, lambda_c=None, lambda_s=None, kind='gaussian', end_effect='reject', dy=None)` (実装を直接呼ぶなら `import roughness; roughness.surface_filter(z, dx, lambda_c=None, lambda_s=None, kind='gaussian', end_effect='reject', dy=None)`、台帳から引くなら `opsroughness.get("surface_filter")`)
 - **台帳経由の戻り値**: `fullseye.ledger.surface_filter(...)` は**宣言 out 型 `depth` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.surface_filter.raw(...)`、または `roughness.surface_filter` を直接呼ぶ。
   - 本体の返り: `(roughness, waviness)`
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: 鎖の中だけ(許可リストの機械的 GPU 経路、CuPy)。隣の段も許可リストのときだけGPU に載せたまま走る。単独の呼び出しは CPU
 
 ## 使い方
 

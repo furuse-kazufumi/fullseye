@@ -1,0 +1,433 @@
+{
+ "gate": {
+  "knobs": [
+   [
+    0.5,
+    0.5
+   ],
+   [
+    0.1,
+    0.9
+   ],
+   [
+    0.9,
+    0.2
+   ]
+  ],
+  "parity": "region: pixel-exact; feature: rtol 1e-9",
+  "pipeline_min": 1.0,
+  "side": 2048,
+  "single_min": 5.0
+ },
+ "generated_by": "tools/bench_label_ops.py",
+ "log": "docs/perf/logs/label/label_ops.jsonl",
+ "ops": {
+  "area_center": {
+   "elems": 4194304,
+   "nonconst": true,
+   "ok": true,
+   "points": 12,
+   "ratio_resident": 47.532,
+   "ratio_single": 2.283,
+   "rejected": null,
+   "use": "pipeline",
+   "worst_fixture": "coins"
+  },
+  "area_frac": {
+   "elems": 4194304,
+   "nonconst": true,
+   "ok": true,
+   "points": 12,
+   "ratio_resident": 43.578,
+   "ratio_single": 0.68,
+   "rejected": null,
+   "use": "pipeline",
+   "worst_fixture": "spiral"
+  },
+  "area_holes": {
+   "elems": 4194304,
+   "nonconst": true,
+   "ok": true,
+   "points": 12,
+   "ratio_resident": 4.365,
+   "ratio_single": 3.199,
+   "rejected": null,
+   "use": "pipeline",
+   "worst_fixture": "scene"
+  },
+  "blob_count": {
+   "elems": 4194304,
+   "nonconst": true,
+   "ok": true,
+   "points": 12,
+   "ratio_resident": 5.706,
+   "ratio_single": 0.876,
+   "rejected": null,
+   "use": "pipeline",
+   "worst_fixture": "coins"
+  },
+  "circularity": {
+   "elems": 4194304,
+   "nonconst": true,
+   "ok": true,
+   "points": 12,
+   "ratio_resident": 5.04,
+   "ratio_single": 4.03,
+   "rejected": null,
+   "use": "pipeline",
+   "worst_fixture": "spiral"
+  },
+  "classify_shape": {
+   "elems": 4194304,
+   "nonconst": true,
+   "ok": true,
+   "points": 12,
+   "ratio_resident": 37.743,
+   "ratio_single": 5.779,
+   "rejected": null,
+   "use": "single",
+   "worst_fixture": "spiral"
+  },
+  "compactness": {
+   "elems": 4194304,
+   "nonconst": true,
+   "ok": true,
+   "points": 12,
+   "ratio_resident": 14.261,
+   "ratio_single": 3.712,
+   "rejected": null,
+   "use": "pipeline",
+   "worst_fixture": "coins"
+  },
+  "connect_and_holes": {
+   "elems": 4194304,
+   "nonconst": true,
+   "ok": true,
+   "points": 12,
+   "ratio_resident": 2.585,
+   "ratio_single": 0.718,
+   "rejected": null,
+   "use": "pipeline",
+   "worst_fixture": "scene"
+  },
+  "contlength": {
+   "elems": 4194304,
+   "nonconst": true,
+   "ok": true,
+   "points": 12,
+   "ratio_resident": 21.164,
+   "ratio_single": 5.474,
+   "rejected": null,
+   "use": "single",
+   "worst_fixture": "spiral"
+  },
+  "convexity": {
+   "elems": 4194304,
+   "nonconst": true,
+   "ok": true,
+   "points": 12,
+   "ratio_resident": 0.963,
+   "ratio_single": 0.699,
+   "rejected": "slower_than_cpu_even_resident",
+   "use": null,
+   "worst_fixture": "blobs"
+  },
+  "count_obj": {
+   "elems": 4194304,
+   "nonconst": true,
+   "ok": true,
+   "points": 12,
+   "ratio_resident": 1.462,
+   "ratio_single": 0.46,
+   "rejected": null,
+   "use": "pipeline",
+   "worst_fixture": "spiral"
+  },
+  "cv_cc_count": {
+   "elems": 4194304,
+   "nonconst": true,
+   "ok": true,
+   "points": 12,
+   "ratio_resident": 9.651,
+   "ratio_single": 3.728,
+   "rejected": null,
+   "use": "pipeline",
+   "worst_fixture": "blobs"
+  },
+  "diameter_region": {
+   "elems": 4194304,
+   "nonconst": true,
+   "ok": true,
+   "points": 12,
+   "ratio_resident": 0.838,
+   "ratio_single": 0.725,
+   "rejected": "slower_than_cpu_even_resident",
+   "use": null,
+   "worst_fixture": "blobs"
+  },
+  "eccentricity": {
+   "elems": 4194304,
+   "nonconst": true,
+   "ok": true,
+   "points": 12,
+   "ratio_resident": 30.552,
+   "ratio_single": 4.36,
+   "rejected": null,
+   "use": "pipeline",
+   "worst_fixture": "scene"
+  },
+  "elliptic_axis": {
+   "elems": 4194304,
+   "nonconst": true,
+   "ok": true,
+   "points": 12,
+   "ratio_resident": 35.632,
+   "ratio_single": 6.002,
+   "rejected": null,
+   "use": "single",
+   "worst_fixture": "coins"
+  },
+  "fill_up_shape": {
+   "elems": 4194304,
+   "nonconst": true,
+   "ok": true,
+   "points": 12,
+   "ratio_resident": 7.057,
+   "ratio_single": 2.785,
+   "rejected": null,
+   "use": "pipeline",
+   "worst_fixture": "coins"
+  },
+  "height_width_ratio": {
+   "elems": 4194304,
+   "nonconst": true,
+   "ok": true,
+   "points": 12,
+   "ratio_resident": 25.209,
+   "ratio_single": 3.986,
+   "rejected": null,
+   "use": "pipeline",
+   "worst_fixture": "blobs"
+  },
+  "moments_region_2nd": {
+   "elems": 4194304,
+   "nonconst": true,
+   "ok": true,
+   "points": 12,
+   "ratio_resident": 22.267,
+   "ratio_single": 5.025,
+   "rejected": null,
+   "use": "single",
+   "worst_fixture": "blobs"
+  },
+  "moments_region_2nd_invar": {
+   "elems": 4194304,
+   "nonconst": true,
+   "ok": true,
+   "points": 12,
+   "ratio_resident": 25.461,
+   "ratio_single": 5.537,
+   "rejected": null,
+   "use": "single",
+   "worst_fixture": "spiral"
+  },
+  "moments_region_2nd_rel_invar": {
+   "elems": 4194304,
+   "nonconst": true,
+   "ok": true,
+   "points": 12,
+   "ratio_resident": 22.119,
+   "ratio_single": 5.238,
+   "rejected": null,
+   "use": "single",
+   "worst_fixture": "spiral"
+  },
+  "moments_region_3rd": {
+   "elems": 4194304,
+   "nonconst": true,
+   "ok": true,
+   "points": 12,
+   "ratio_resident": 24.569,
+   "ratio_single": 4.657,
+   "rejected": null,
+   "use": "pipeline",
+   "worst_fixture": "coins"
+  },
+  "moments_region_3rd_invar": {
+   "elems": 4194304,
+   "nonconst": true,
+   "ok": true,
+   "points": 12,
+   "ratio_resident": 32.347,
+   "ratio_single": 5.471,
+   "rejected": null,
+   "use": "single",
+   "worst_fixture": "coins"
+  },
+  "moments_region_central": {
+   "elems": 4194304,
+   "nonconst": true,
+   "ok": true,
+   "points": 12,
+   "ratio_resident": 23.9,
+   "ratio_single": 4.647,
+   "rejected": null,
+   "use": "pipeline",
+   "worst_fixture": "spiral"
+  },
+  "moments_region_central_invar": {
+   "elems": 4194304,
+   "nonconst": true,
+   "ok": true,
+   "points": 12,
+   "ratio_resident": 27.438,
+   "ratio_single": 4.677,
+   "rejected": null,
+   "use": "pipeline",
+   "worst_fixture": "blobs"
+  },
+  "orientation_region": {
+   "elems": 4194304,
+   "nonconst": true,
+   "ok": true,
+   "points": 12,
+   "ratio_resident": 24.036,
+   "ratio_single": 6.058,
+   "rejected": null,
+   "use": "single",
+   "worst_fixture": "scene"
+  },
+  "r2_sort_region": {
+   "elems": 4194304,
+   "nonconst": true,
+   "ok": true,
+   "points": 12,
+   "ratio_resident": 25.465,
+   "ratio_single": 3.972,
+   "rejected": null,
+   "use": "pipeline",
+   "worst_fixture": "blobs"
+  },
+  "r3_background_seg": {
+   "elems": 4194304,
+   "nonconst": true,
+   "ok": true,
+   "points": 12,
+   "ratio_resident": 20.861,
+   "ratio_single": 5.496,
+   "rejected": null,
+   "use": "single",
+   "worst_fixture": "coins"
+  },
+  "r3_select_region_point": {
+   "elems": 4194304,
+   "nonconst": true,
+   "ok": true,
+   "points": 12,
+   "ratio_resident": 20.307,
+   "ratio_single": 4.503,
+   "rejected": null,
+   "use": "pipeline",
+   "worst_fixture": "blobs"
+  },
+  "rectangularity": {
+   "elems": 4194304,
+   "nonconst": true,
+   "ok": true,
+   "points": 12,
+   "ratio_resident": 0.916,
+   "ratio_single": 0.841,
+   "rejected": "slower_than_cpu_even_resident",
+   "use": null,
+   "worst_fixture": "spiral"
+  },
+  "remove_small": {
+   "elems": 4194304,
+   "nonconst": true,
+   "ok": true,
+   "points": 12,
+   "ratio_resident": 8.377,
+   "ratio_single": 8.354,
+   "rejected": null,
+   "use": "single",
+   "worst_fixture": "scene"
+  },
+  "roundness": {
+   "elems": 4194304,
+   "nonconst": true,
+   "ok": true,
+   "points": 12,
+   "ratio_resident": 5.123,
+   "ratio_single": 3.616,
+   "rejected": null,
+   "use": "pipeline",
+   "worst_fixture": "spiral"
+  },
+  "select_largest": {
+   "elems": 4194304,
+   "nonconst": true,
+   "ok": true,
+   "points": 12,
+   "ratio_resident": 12.543,
+   "ratio_single": 4.37,
+   "rejected": null,
+   "use": "pipeline",
+   "worst_fixture": "blobs"
+  },
+  "select_shape": {
+   "elems": 4194304,
+   "nonconst": true,
+   "ok": true,
+   "points": 12,
+   "ratio_resident": 17.141,
+   "ratio_single": 5.082,
+   "rejected": null,
+   "use": "single",
+   "worst_fixture": "spiral"
+  },
+  "select_shape_std": {
+   "elems": 4194304,
+   "nonconst": true,
+   "ok": true,
+   "points": 12,
+   "ratio_resident": 13.688,
+   "ratio_single": 2.997,
+   "rejected": null,
+   "use": "pipeline",
+   "worst_fixture": "blobs"
+  },
+  "sk_clear_border": {
+   "elems": 4194304,
+   "nonconst": true,
+   "ok": true,
+   "points": 12,
+   "ratio_resident": 11.654,
+   "ratio_single": 2.067,
+   "rejected": null,
+   "use": "pipeline",
+   "worst_fixture": "spiral"
+  },
+  "sk_remove_holes": {
+   "elems": 4194304,
+   "nonconst": true,
+   "ok": true,
+   "points": 12,
+   "ratio_resident": 12.169,
+   "ratio_single": 2.734,
+   "rejected": null,
+   "use": "pipeline",
+   "worst_fixture": "coins"
+  },
+  "smallest_rectangle1": {
+   "elems": 4194304,
+   "nonconst": true,
+   "ok": true,
+   "points": 12,
+   "ratio_resident": 136.445,
+   "ratio_single": 1.747,
+   "rejected": null,
+   "use": "pipeline",
+   "worst_fixture": "scene"
+  }
+ }
+}

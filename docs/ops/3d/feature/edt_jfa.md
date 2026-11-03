@@ -4,7 +4,7 @@ dim: 3d
 category: feature
 in: voxel
 out: sdf
-gpu: なし
+gpu: native(device 引数)
 examples: [diff_features]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -16,7 +16,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 - **データ種**: `voxel` → `sdf`
 - **呼び出し**: `import fullseye as fs; fs.ledger.edt_jfa(seed_bool, device='cpu')` (実装を直接呼ぶなら `import match3d; match3d.edt_jfa(seed_bool, device='cpu')`、台帳から引くなら `ops3d.get("edt_jfa")`)
 - **台帳経由の戻り値**: `fullseye.ledger.edt_jfa(...)` は**宣言 out 型 `sdf` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.edt_jfa.raw(...)`、または `match3d.edt_jfa` を直接呼ぶ。
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: op 自身の `device=` 引数(native、実測 32.103 倍)。`fullseye.apply` / `run_pipeline` からはまだ GPU に送らない —— 実装を直接 `device="cuda"` で呼ぶ
 
 ## 使い方
 

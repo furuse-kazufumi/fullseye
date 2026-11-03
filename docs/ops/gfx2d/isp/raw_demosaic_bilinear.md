@@ -4,7 +4,7 @@ dim: gfx2d
 category: isp
 in: image2d
 out: rgb
-gpu: なし
+gpu: あり(許可リスト)
 examples: [poc_pixel_shift, raw_to_display_isp]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +15,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d` → `rgb`
 - **呼び出し**: `import fullseye as fs; fs.ledger.raw_demosaic_bilinear(raw, pattern='RGGB')` (実装を直接呼ぶなら `import gfx2d; gfx2d.raw_demosaic_bilinear(raw, pattern='RGGB')`、台帳から引くなら `opsgfx2d.get("raw_demosaic_bilinear")`)
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: あり(許可リストの機械的 GPU 経路、CuPy)。`device="auto"` は測った大きさ(4,194,304 画素)以上で GPU を選ぶ
 
 ## 使い方
 

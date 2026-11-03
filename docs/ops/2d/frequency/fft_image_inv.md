@@ -5,7 +5,7 @@ category: frequency
 in: image
 out: image
 halcon: fft_image_inv
-gpu: なし
+gpu: あり(許可リスト)
 examples: [gallery2d_texture_freq]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -17,7 +17,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 - **データ種**: `image` → `image`
 - **呼び出し**: `fullseye.apply(img, "fft_image_inv", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 - **HALCON 相当**: `fft_image_inv`(意味・パラメータは HALCON リファレンスが参考になる)
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: あり(許可リストの機械的 GPU 経路、CuPy)。`device="auto"` は測った大きさ(4,194,304 画素)以上で GPU を選ぶ
 
 ![fft_image_inv: input → output](../../_fig/fft_image_inv.png)
 

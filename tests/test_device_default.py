@@ -111,7 +111,9 @@ def test_default_apply_never_attempts_the_gpu(monkeypatch):
             default = api.apply(image, "gaussian")
             assert calls == [], "the default call reached the GPU path"
             assert np.array_equal(default, api.apply(image, "gaussian", device="cpu"))
-            api.apply(image, "gaussian", device="auto")          # control: auto does try the GPU
-        assert calls, "control failed: device='auto' never tried the (fake) GPU, so the check above proves nothing"
+            # control: an explicit request does try the GPU. ★2026-11-04(統合 GPU): 第 5 便の auto は
+            # 実測の損益分岐で 32x32 を CPU に残すので、対照は auto でなく cuda で取る(既定 cpu の検査は不変)。
+            api.apply(image, "gaussian", device="cuda")
+        assert calls, "control failed: device='cuda' never tried the (fake) GPU, so the check above proves nothing"
     finally:
         api.reset_gpu()

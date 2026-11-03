@@ -4,7 +4,7 @@ dim: specular
 category: dichromatic
 in: rgbimage
 out: rgbimage
-gpu: なし
+gpu: 鎖の中だけ(許可リスト)
 examples: [poc_leaf_disease_area, specular_photometric]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +15,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 - **データ種**: `rgbimage` → `rgbimage`
 - **呼び出し**: `import fullseye as fs; fs.ledger.specular_free_transform(image_rgb, illuminant_rgb=(1.0, 1.0, 1.0))` (実装を直接呼ぶなら `import specularity; specularity.specular_free_transform(image_rgb, illuminant_rgb=(1.0, 1.0, 1.0))`、台帳から引くなら `opsspecular.get("specular_free_transform")`)
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: 鎖の中だけ(許可リストの機械的 GPU 経路、CuPy)。隣の段も許可リストのときだけGPU に載せたまま走る。単独の呼び出しは CPU
 
 ## 使い方
 

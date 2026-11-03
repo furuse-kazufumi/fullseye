@@ -4,7 +4,7 @@ dim: 3d
 category: gray
 in: voxel
 out: voxel
-gpu: なし
+gpu: あり(許可リスト)
 examples: [gray_window_level]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +15,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 - **データ種**: `voxel` → `voxel`
 - **呼び出し**: `import fullseye as fs; fs.ledger.vol_gamma(vol, gamma)` (実装を直接呼ぶなら `import volgray; volgray.vol_gamma(vol, gamma)`、台帳から引くなら `ops3d.get("vol_gamma")`)
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: あり(許可リストの機械的 GPU 経路、CuPy)。`device="auto"` は測った大きさ(16,777,216 画素)以上で GPU を選ぶ
 
 ## 使い方
 

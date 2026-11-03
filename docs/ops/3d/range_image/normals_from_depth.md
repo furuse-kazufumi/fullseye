@@ -4,7 +4,7 @@ dim: 3d
 category: range_image
 in: depth
 out: normalmap
-gpu: なし
+gpu: あり(許可リスト)
 examples: [range_image]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +15,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 - **データ種**: `depth` → `normalmap`
 - **呼び出し**: `import fullseye as fs; fs.ledger.normals_from_depth(depth, fx=None, fy=None, cx=None, cy=None, orient_to_camera=True, spacing=None)` (実装を直接呼ぶなら `import range_image; range_image.normals_from_depth(depth, fx=None, fy=None, cx=None, cy=None, orient_to_camera=True, spacing=None)`、台帳から引くなら `ops3d.get("normals_from_depth")`)
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: あり(許可リストの機械的 GPU 経路、CuPy)。`device="auto"` は測った大きさ(4,194,304 画素)以上で GPU を選ぶ
 
 ## 使い方
 

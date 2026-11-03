@@ -593,6 +593,35 @@ def _sk_tv(t, a, b, dev):
     return _tv_chambolle(t, weight=0.02 + 0.3 * a)
 
 
+_RB_CACHE: dict = {}
+
+
+def _rolling_ball(t, a, b, dev):
+    """``sk_rolling_ball`` = ``clip(v - skimage.restoration.rolling_ball(v, radius=5+int(20a)), 0, 1)``。
+
+    skimage の背景は**非平坦な収縮 1 回**: ``bg[p] = min_k (v[p+k] + (h_c - h_k))``(``h`` = 球の高さ
+    ``ball_kernel``、窓の外は +inf で埋める)。2026-11-03 に 40x37 の乱数画像・半径 7 で skimage と
+    float64 で差 0 を確かめてから写した。窓の画素ごとに 1 回ずつずらした画像と最小を取る(半径 15 で 709 回)。
+    球の表は skimage の ``ball_kernel`` をそのまま使う(この op は skimage が在るときだけ登録簿に載る)。
+    """
+    from skimage.restoration import ball_kernel
+    r = 5 + int(a * 20)
+    if r not in _RB_CACHE:
+        k = ball_kernel(r, 2)
+        c = np.array(k.shape) // 2
+        fin = np.isfinite(k)
+        d = (k[tuple(c)] - k)[fin]
+        ii, jj = np.nonzero(fin)
+        _RB_CACHE[r] = (int(c[0]), int(c[1]), ii.tolist(), jj.tolist(), d.astype(np.float64).tolist())
+    cy, cx, ii, jj, dd = _RB_CACHE[r]
+    H, W = t.shape[2], t.shape[3]
+    P = F.pad(t, (cx, cx, cy, cy), value=float("inf"))
+    bg = torch.full_like(t, float("inf"))
+    for i, j, dv in zip(ii, jj, dd):
+        torch.minimum(bg, P[:, :, i:i + H, j:j + W] + dv, out=bg)
+    return (t - bg).clamp(0, 1)
+
+
 def _persp_matrix(src, dst):
     """4 点対応から透視変換 3x3(cv2.getPerspectiveTransform 相当、numpy 求解)。"""
     A, rhs = [], []
@@ -1174,6 +1203,8 @@ ACCEL = {
     "dc_local_contrast_norm": (_local_contrast_norm, "dc_local_contrast_norm", ""),
     "cos_image": (_cos_image, "cos_image", "cos_image"),
     "companding_mu_law": (_companding_mu_law, "companding_mu_law", ""),
+    # rolling ball(非平坦な収縮、窓の画素数だけずらして最小)。「FA — scratch」の途中の CPU の段だった
+    "sk_rolling_ball": (_rolling_ball, "sk_rolling_ball", ""),
 }
 
 
@@ -1304,10 +1335,29 @@ def run_nary(name, inputs, a=0.5, b=0.4, device="cpu"):
     return _from_batch(NARY_ACCEL[name](io, a, b, device).clamp(0, 1))[0]
 
 
+# ── 領域の解析(2026-11-03): 連結成分のラベル付け + 領域ごとの集計 ─────────────────────────
+# 実装と門は accel_label(``tests/test_accel_label.py``)。採用は実測の門(一致・定数でない・単独 5 倍 /
+# 常駐 1 倍)を通った op だけ(``accel_label.ADOPTED``、根拠 ``fullseye/data/GPU_ACCEL_USE.json``)。
+# REDUCERS(領域 -> 特徴・ベクトル)は 0..1 に切らず 1 枚ごとの np の値を返し、鎖では区間の最後に置く。
+REDUCERS: frozenset = frozenset()
+if _HAS_TORCH:
+    import accel_label as _accel_label
+    for _key, _row in _accel_label.table().items():
+        if _row[1] in _accel_label.ADOPTED:
+            ACCEL[_key] = _row
+    REDUCERS = frozenset(k for k in _accel_label.REDUCERS if k in ACCEL)
+    del _key, _row
+
+
 def run_batch(name, imgs, a=0.5, b=0.4, device="cpu"):
-    """Run one accel op over a batch of images; returns a list of 2-D arrays."""
+    """Run one accel op over a batch of images; returns a list of 2-D arrays.
+
+    :data:`REDUCERS`(領域 -> 特徴・ベクトル)は 1 枚ごとの ``np.float64`` / 1-D 配列のリスト(0..1 に切らない)。
+    """
     fn = ACCEL[name][0]
     t = _to_batch(imgs, device)
+    if name in REDUCERS:
+        return list(fn(t, a, b, device))
     out = fn(t, a, b, device).clamp(0, 1)
     return _from_batch(out)
 
@@ -1327,7 +1377,13 @@ def run_pipeline(steps, imgs, device="cpu"):
     ``pipeline_parity``); the only difference is border conventions (reflect/pool).
     """
     t = _to_batch(imgs, device)
-    for name, a, b in steps:
+    steps = list(steps)
+    for i, (name, a, b) in enumerate(steps):
+        if name in REDUCERS:
+            # 特徴を返す段は区間の最後(次の段は特徴を受ける op で、GPU の区間には載らない)
+            if i != len(steps) - 1:
+                raise ValueError("accel reducer %r must be the last step of a resident segment" % name)
+            return list(ACCEL[name][0](t, a, b, device))
         t = ACCEL[name][0](t, a, b, device).clamp(0, 1)
     return _from_batch(t)
 
@@ -1381,6 +1437,17 @@ def parity(device="cpu"):
         if core_name not in ops.RT:
             continue
         full = inter = 0.0
+        if name in REDUCERS:
+            # 特徴は 0..1 に切らずに比べる(個数・面積は整数で完全一致、形の量は相対差)
+            for a, b in PARITY_AB:
+                got = run_batch(name, imgs, a, b, device)
+                for i, im in enumerate(imgs):
+                    ref = np.asarray(ops.RT[core_name](im.copy(), a, b), np.float64)
+                    g = np.asarray(got[i], np.float64)
+                    d = float(np.max(np.abs(ref - g) / np.maximum(1.0, np.abs(ref)))) if ref.shape == g.shape else 1.0
+                    full = inter = max(full, d)
+            rows.append((name, halcon, full, inter))
+            continue
         for a, b in PARITY_AB:
             m = max(3, _k(a) // 2 + 1)
             got = run_batch(name, imgs, a, b, device)

@@ -4,7 +4,7 @@ dim: annotate
 category: paper
 in: image2d × text
 out: image2d
-gpu: なし
+gpu: あり(許可リスト)
 examples: [annotate_paper_tour, paper_figure]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +15,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d × text` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.annotate_text_path(img, text, path, font_size=13, color='neutral', spacing=1.0, start=0.0, draw_path=False, width=1.0, scheme='okabe_ito', font_path=None, layout=None, anchor='start', offset=0.0, upright=False, line_spacing=1.15, bold=False, italic=False)` (実装を直接呼ぶなら `import annotate; annotate.annotate_text_path(img, text, path, font_size=13, color='neutral', spacing=1.0, start=0.0, draw_path=False, width=1.0, scheme='okabe_ito', font_path=None, layout=None, anchor='start', offset=0.0, upright=False, line_spacing=1.15, bold=False, italic=False)`、台帳から引くなら `opsannotate.get("annotate_text_path")`)
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: あり(許可リストの機械的 GPU 経路、CuPy)。`device="auto"` は測った大きさ(4,194,304 画素)以上で GPU を選ぶ
 
 ## 使い方
 

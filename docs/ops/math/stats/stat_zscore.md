@@ -4,7 +4,7 @@ dim: math
 category: stats
 in: signal
 out: signal
-gpu: なし
+gpu: 鎖の中だけ(許可リスト)
 examples: [math_metrology]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +15,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 - **データ種**: `signal` → `signal`
 - **呼び出し**: `import fullseye as fs; fs.ledger.stat_zscore(x)` (実装を直接呼ぶなら `import mathops; mathops.stat_zscore(x)`、台帳から引くなら `opsmath.get("stat_zscore")`)
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: 鎖の中だけ(許可リストの機械的 GPU 経路、CuPy)。隣の段も許可リストのときだけGPU に載せたまま走る。単独の呼び出しは CPU
 
 ## 使い方
 

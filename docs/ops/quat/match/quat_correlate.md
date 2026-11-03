@@ -4,7 +4,7 @@ dim: quat
 category: match
 in: qimage × qimage
 out: qimage
-gpu: なし
+gpu: あり(許可リスト)
 examples: [quaternion_monogenic]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +15,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 - **データ種**: `qimage × qimage` → `qimage`
 - **呼び出し**: `import fullseye as fs; fs.ledger.quat_correlate(qimage, template, *, method='exact') -> 'np.ndarray'` (実装を直接呼ぶなら `import quatimage; quatimage.quat_correlate(qimage, template, *, method='exact') -> 'np.ndarray'`、台帳から引くなら `opsquat.get("quat_correlate")`)
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: あり(許可リストの機械的 GPU 経路、CuPy)。`device="auto"` は測った大きさ(16,777,216 画素)以上で GPU を選ぶ
 
 ## 使い方
 

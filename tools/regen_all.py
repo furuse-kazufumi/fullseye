@@ -51,6 +51,11 @@ CHAIN = [
     #   2026-10-07 まで `tools/` の外にあって鎖にも表にも無かった(差分は無かったが、
     #   spec を足して回し忘れても誰も気づけなかった)。
     (["gen_auto_specs_data.py"], "auto_specs_data.py(data/auto_specs/*.json の wheel 同梱用ミラー)"),
+    # ★2026-11-03: GPU の台帳 2 本は op ノートより前に。op ノートの GPU 欄は gpu_route(この 2 本と許可リスト)
+    #   から書くので、後ろで台帳が変わるとノートが 1 周遅れになる。入力は commit した実測ログと許可リストだけ
+    #   (registry を組むときに op_knob.json を読むが、表の中身には入らない —— ORDER_EXEMPT)。
+    (["tools/gen_device_rules.py"], "fullseye/data/DEVICE_RULES.json(device=auto の実測規則と許可リストの道)"),
+    (["tools/gen_accel_use.py"], "fullseye/data/GPU_ACCEL_USE.json(手書き経路の場面: 領域の解析の族の実測から)"),
     # ★`tools/` の外にある唯一の生成物。だから取りこぼしていた ——
     # 生成器を `tools/*.py` で探す限り、これは永久に見つからない。
     # ★2026-10-15: 16 番目から 2 番目へ上げた。入力は registry だけ(他の段の生成物を
@@ -142,6 +147,9 @@ CHAIN = [
     (["tools/gen_recipe_retrieval_report.py"], "business-language recipe recall report"),
     (["tools/measure_mcp_context.py"], "six-task minimal MCP context benchmark"),
     (["tools/gen_rag_benchmark_report.py"], "RAG recall measurement and synonym-gap report"),
+    # レシピ全部に explain_pipeline を当てた表。レシピの索引を読むので、その段の後
+    # (規則表 DEVICE_RULES と場面の台帳 GPU_ACCEL_USE は鎖の先頭近くで作ってある)。
+    (["tools/gen_gpu_routes.py"], "docs/perf/pipeline_routes.{json,md}(レシピ全部の GPU 経路)"),
 ]
 
 #: ---- 段の依存表(2026-10-15)------------------------------------------------------
@@ -218,6 +226,9 @@ OUTPUTS = {
     "tools/gen_recipe_retrieval_report.py": ["docs/recipe_retrieval_report.json"],
     "tools/measure_mcp_context.py": ["docs/mcp_context_benchmark.json"],
     "tools/gen_rag_benchmark_report.py": ["docs/rag_synonym_gaps.json"],
+    "tools/gen_device_rules.py": ["fullseye/data/DEVICE_RULES.json"],
+    "tools/gen_gpu_routes.py": ["docs/perf/pipeline_routes.json", "docs/perf/pipeline_routes.md"],
+    "tools/gen_accel_use.py": ["fullseye/data/GPU_ACCEL_USE.json"],
     # 2026-10-23: 手で列挙していて #116 の文献 4 本が漏れ、regen が exit 1(--check は緑)だった。
     #   件数を打ち直す文献ノートの実ファイルと合わせる(OSS_LANDSCAPE.md は gen_oss_landscape.py の生成物、
     #   oss_landscape_notes.md は手書きの注で、どちらもこの段は書かない)。
@@ -273,7 +284,7 @@ READS = {
     "tools/gen_halcon_gap.py": ["docs/OP_INDEX.json"],
     "tools/gen_capabilities_index.py": ["docs/OP_INDEX.json"],
     "tools/type_connectivity.py": ["docs/OP_INDEX.json"],
-    "tools/gen_wingpoc_gallery.py": ["docs/articles/exhibits/exhibit_numbers.json",
+    "tools/gen_wingpoc_gallery.py": ["fullseye/data/DEVICE_RULES.json", "fullseye/data/GPU_ACCEL_USE.json", "docs/articles/exhibits/exhibit_numbers.json",
                                       "docs/articles/exhibits/glossary.json"],
     "tools/gen_view2026_story_gifs.py": ["docs/articles/assets/poc/*_720.jpg"],
     "tools/gen_view2026_pages.py": ["docs/articles/exhibits/glossary.json",
@@ -281,7 +292,7 @@ READS = {
     "tools/gen_trust_block.py": ["docs/OP_INDEX.json", "docs/maturity.json",
                                  "docs/README.md", "docs/README.*.md"],
     "tools/gen_design_notes.py": ["auto_specs_data.py"],
-    "tools/gen_docs_index_ops.py": ["docs/HALCON_GAP_2026-11-02.md", 
+    "tools/gen_docs_index_ops.py": ["fullseye/data/DEVICE_RULES.json", "fullseye/data/GPU_ACCEL_USE.json", "docs/HALCON_GAP_2026-11-02.md", 
         "docs/ops/*", "docs/OP_CATALOG.md", "docs/CAPABILITIES.md", "docs/CAPABILITIES.*.md",
         "docs/HARDENING.md", "docs/HARDENING.*.md", "docs/MATURITY.md", "docs/FILE_FORMATS.md",
         "docs/articles/exhibits/wingpoc.*.md", "docs/articles/fullseye_poc_museum_qiita_*.md", "docs/articles/fullseye_poc_museum_*_qiita_*.md",
@@ -294,8 +305,11 @@ READS = {
         "docs/perf/GPU_TIERS.md", "docs/perf/HALCON_OPENCL_PARITY.md", "docs/perf/gpu_fill3_2026-11-02.md",   # docmap が題を読む(2026-11-02)
         "docs/DESIGN_NOTES.md", "docs/DESIGN_NOTES.*.md",
         "docs/AI_RAG_GUIDE.md", "docs/AI_RAG_GUIDE.*.md", "docs/RECIPE_COVERAGE.md",
-        "docs/view2026/index.md", "docs/view2026/*/index.md"],
-    "tools/gen_mcp_data.py": ["docs/OP_INDEX.json", "docs/ops/*"],
+        "docs/view2026/index.md", "docs/view2026/*/index.md",
+        "docs/perf/pipeline_routes.md"],                # 題だけ(ORDER_EXEMPT)
+    # op ノートの GPU 欄・索引の gpu 欄は gpu_route(規則表の許可リストの道と場面の台帳)から書く
+    "tools/gen_mcp_data.py": ["docs/OP_INDEX.json", "docs/ops/*", "fullseye/data/DEVICE_RULES.json",
+                              "fullseye/data/GPU_ACCEL_USE.json"],
     "tools/gen_op_facets.py": ["docs/OP_INDEX.json", "docs/ops/families.json",
                                   "docs/ops/families_timing.json"],
     "tools/gen_recipe_index.py": ["fullseye/data/OP_SEARCH.json", "fullseye/data/OP_GRAPH.json"],
@@ -311,7 +325,15 @@ READS = {
                                              "fullseye/data/OP_GRAPH.json",
                                              "fullseye/data/TUNING_CARDS.json"],
     "tools/gen_literature_counts.py": ["docs/ops/*"],
-    "tools/gen_doc_counts.py": ["docs/README.md", "docs/README.*.md"],
+    "tools/gen_doc_counts.py": ["docs/README.md", "docs/README.*.md", "fullseye/data/DEVICE_RULES.json",
+                                "fullseye/data/GPU_ACCEL_USE.json"],
+    # registry(api)を組むときに op のつまみ表を読む(書く段 gen_mcp_data は鎖の前にある)
+    "tools/gen_device_rules.py": ["fullseye/data/op_knob.json"],
+    "tools/gen_gpu_routes.py": ["fullseye/data/DEVICE_RULES.json", "fullseye/data/RECIPE_INDEX.json",
+                                "fullseye/data/GPU_ACCEL_USE.json"],
+    # op ノートの GPU 欄(とそれを写すカタログ)は gpu_route から書く: 規則表の許可リストの道と場面の台帳
+    "tools/opdocs.py": ["fullseye/data/DEVICE_RULES.json", "fullseye/data/GPU_ACCEL_USE.json"],
+    "tools/gen_op_catalog.py": ["fullseye/data/DEVICE_RULES.json", "fullseye/data/GPU_ACCEL_USE.json"],
 }
 
 #: 順序の例外 —— 読むが、後ろの段が書いてもよいもの。(段, READS のパターン) → 理由。
@@ -335,6 +357,14 @@ ORDER_EXEMPT = {
     ("tools/gen_docs_index_ops.py", "docs/README.*.md"): _SHARED_README,
     ("tools/gen_docs_index_ops.py", "docs/AI_RAG_GUIDE.md"): _DOCMAP_COUNT,
     ("tools/gen_docs_index_ops.py", "docs/AI_RAG_GUIDE.*.md"): _DOCMAP_COUNT,
+    # 文書地図は docs/perf/pipeline_routes.md の題(1 行目、生成器に固定の文)だけを読む。表の中身は
+    # gen_gpu_routes が鎖の最後(規則表とレシピの索引の後)で書くが、題は変わらないので地図に影響しない。
+    ("tools/gen_device_rules.py", "fullseye/data/op_knob.json"): (
+        "gen_device_rules は registry を組むときに op のつまみ表を読むが、規則表に入るのは実測ログ・許可リスト・"
+        "op 名だけ(つまみの値は入らない)。op ノートが GPU 欄のために規則表を読むので、鎖の先頭近くに置く。"),
+    ("tools/gen_docs_index_ops.py", "docs/perf/pipeline_routes.md"): (
+        "gen_docs_index_ops は文書地図に載せるため pipeline_routes.md の題だけを読む。題は gen_gpu_routes の"
+        "固定の文で、後で書き直されるのは表の中身だけなので、地図の生成結果には影響しない。"),
 }
 
 #: **CHAIN に入れないものと、その理由**(2026-09-09)。
@@ -391,6 +421,18 @@ EXCLUDED = {
                              "手で回し、docs/perf/op_time_ranking_<date>.json を日付つきで commit する(2026-11-02)。"),
     "tools/measure_op_families.py": ("CPU timing and peak memory are machine-dependent raw measurements; run manually, "
                                       "then commit docs/ops/families_timing.json with environment metadata."),
+    "tools/bench_label_ops.py": ("領域の解析の族の GPU 実測(CUDA と共有 GPU のロックが要り、値は機械と負荷で変わる)。生ログを "
+                                 "docs/perf/logs/label/ に commit し、採否の台帳はそのログから tools/gen_gpu_routes.py が書く。"),
+    "tools/bench_gpu_crossover.py": ("GPU の実測(機械と負荷で値が変わり、共有 GPU のロックの下で手で回す)。生ログを docs/perf/logs/ に "
+            "commit し、表はそのログから決定的に作る生成器(tools/gen_device_rules.py)が書く。"),
+    "tools/gpu_auto_sweep.py": ("機械的 GPU 化の掃引(CuPy と GPU が要り、作業ファイルは out/)。採用の結果は "
+                                "report 段が fullseye/data/gpu_auto_allow.json と docs/perf/gpu_auto_sweep_*.md へ書く。"),
+    "tools/gpu_auto_report.py": ("gpu_auto_sweep の report 段の本体。入力は out/ の掃引ログ(コミットしない)なので、"
+                                 "掃引した機械でだけ回して許可リストと報告を commit する。"),
+    "tools/gpu_auto_merge_rest.py": ("partial/none の掃引(out/、コミットしない)の採用分を許可リストへ足す。"
+                                     "掃引した機械でだけ回す。"),
+    "tools/gpu_auto_method_compare.py": "GPU 化の方式比較の実測(CuPy / torch が要る)。結果は --out の JSON。",
+    "tools/gpu_auto_verify.py": "採用 op の実寸照合(GPU が要る)。作業ファイルは out/。",
     "tools/measure_device_crossover.py": ("GPU timing is machine-dependent and must be run manually only after "
                                            "the script verifies that the GPU is idle; raw timing is not deterministic."),
     "tools/build_shwfs_anim3d.py": ("Shack-Hartmann 波面センサーの動く 3-D 教材(docs/view2026/anim3d/shack_hartmann_anim3d.html)。"

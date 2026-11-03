@@ -4,7 +4,7 @@ dim: conngraph
 category: activity
 in: matrix
 out: labels
-gpu: なし
+gpu: 鎖の中だけ(許可リスト)
 examples: [poc_malecns_activity_wave]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +15,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 - **データ種**: `matrix` → `labels`
 - **呼び出し**: `import fullseye as fs; fs.ledger.graph_activation_latency(X: 'Any', thresh: 'float' = 0.1) -> 'np.ndarray'` (実装を直接呼ぶなら `import conngraph; conngraph.graph_activation_latency(X: 'Any', thresh: 'float' = 0.1) -> 'np.ndarray'`、台帳から引くなら `opsconngraph.get("graph_activation_latency")`)
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: 鎖の中だけ(許可リストの機械的 GPU 経路、CuPy)。隣の段も許可リストのときだけGPU に載せたまま走る。単独の呼び出しは CPU
 
 ## 使い方
 

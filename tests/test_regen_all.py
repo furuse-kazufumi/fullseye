@@ -91,7 +91,9 @@ def test_classified_entries_still_exist():
 #: 2026-10-15 に直す前の並び(回帰の探針)。
 _OLD_ORDER = [
     # 2026-11-03 に足した段(tools/impl_differential.py)は旧順序の探針の外 —— 先頭に置いて逆順を作らない
-    "gen_auto_specs_data.py", "tools/impl_differential.py", "tools/opdocs.py", "tools/gen_op_catalog.py",
+    # GPU の台帳 2 段(2026-11-03 に足した)は今の鎖と同じ位置。旧順序の探針は op ノートの逆順を見るためのもの
+    "gen_auto_specs_data.py", "tools/impl_differential.py", "tools/gen_device_rules.py", "tools/gen_accel_use.py",
+    "tools/opdocs.py", "tools/gen_op_catalog.py",
     "tools/gen_capabilities_index.py", "tools/gen_hardening_index.py", "tools/audit_fallbacks.py",
     "tools/gen_maturity.py",
     "tools/gen_exhibit_numbers.py", "tools/gen_exhibit_glossary.py",
@@ -110,6 +112,7 @@ _OLD_ORDER = [
     "tools/gen_doc_counts.py",
     # 2026-11-03 に足した段。旧順序の探針としては「docs 索引より後ろ」に置く(題を先に読まれる逆順)。
     "tools/gen_recipe_coverage.py",
+    "tools/gen_gpu_routes.py",
 ]
 
 

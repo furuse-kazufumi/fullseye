@@ -4,7 +4,7 @@ dim: imgforensics
 category: hash
 in: image2d
 out: phash
-gpu: なし
+gpu: あり(許可リスト)
 examples: [image_forensics_audit]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +15,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d` → `phash`
 - **呼び出し**: `import fullseye as fs; fs.ledger.perceptual_hash(image, mode: 'str' = 'dct', hash_size: 'int' = 8) -> 'np.ndarray'` (実装を直接呼ぶなら `import imgforensics; imgforensics.perceptual_hash(image, mode: 'str' = 'dct', hash_size: 'int' = 8) -> 'np.ndarray'`、台帳から引くなら `opsimgforensics.get("perceptual_hash")`)
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: あり(許可リストの機械的 GPU 経路、CuPy)。`device="auto"` は測った大きさ(4,194,304 画素)以上で GPU を選ぶ
 
 ## 使い方
 

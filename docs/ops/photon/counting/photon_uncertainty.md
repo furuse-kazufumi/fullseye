@@ -4,7 +4,7 @@ dim: photon
 category: counting
 in: image2d
 out: image2d
-gpu: なし
+gpu: 鎖の中だけ(許可リスト)
 examples: [photon_timeresolved, poc_thermal_radiometry]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +15,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.photon_uncertainty(counts, relative=False, zero_floor=0.0)` (実装を直接呼ぶなら `import photoncount; photoncount.photon_uncertainty(counts, relative=False, zero_floor=0.0)`、台帳から引くなら `opsphoton.get("photon_uncertainty")`)
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: 鎖の中だけ(許可リストの機械的 GPU 経路、CuPy)。隣の段も許可リストのときだけGPU に載せたまま走る。単独の呼び出しは CPU
 
 ## 使い方
 

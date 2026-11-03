@@ -1,0 +1,18 @@
+window start 2026-11-03T12:21:34 {'util_pct': 0, 'mem_mib': 1123}
+scratch_surface all 128 0.736 ms cpu / 1.070 ms gpu
+scratch_surface all 256 2.241 ms cpu / 1.136 ms gpu
+scratch_surface mixed 128 2.121 ms cpu / 2.753 ms gpu
+scratch_surface mixed 256 5.621 ms cpu / 4.873 ms gpu
+edge_dimension all 128 4.713 ms cpu / 14.006 ms gpu
+edge_dimension all 256 18.458 ms cpu / 27.978 ms gpu
+edge_dimension mixed 128 5.739 ms cpu / 19.033 ms gpu
+edge_dimension mixed 256 21.580 ms cpu / 30.764 ms gpu
+shading_blob all 128 1.599 ms cpu / 1.660 ms gpu
+shading_blob all 256 5.540 ms cpu / 1.758 ms gpu
+shading_blob mixed 128 1.435 ms cpu / 1.662 ms gpu
+shading_blob mixed 256 4.517 ms cpu / 2.237 ms gpu
+interleaved_worst all 128 3.895 ms cpu / 1.453 ms gpu
+interleaved_worst all 256 15.029 ms cpu / 1.854 ms gpu
+interleaved_worst mixed 128 6.524 ms cpu / 4.969 ms gpu
+interleaved_worst mixed 256 22.821 ms cpu / 11.462 ms gpu
+window end 2026-11-03T12:21:44 {'util_pct': 2, 'mem_mib': 1694} more False

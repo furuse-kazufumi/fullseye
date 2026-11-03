@@ -34,8 +34,15 @@ def _an_allowed_registry_op():
 
 @pytest.fixture
 def no_device(monkeypatch):
-    """CuPy はあっても GPU が見えない環境を作る。"""
+    """CuPy はあっても GPU が見えない環境を作る。
+
+    torch 側にも GPU が見えないことにする(2026-11-03): GPU のある機械で CuPy だけを隠すと、
+    ``api.apply`` の既定(auto)は小さい画像を損益分岐の規則で CPU に残し、``device="cuda"`` は
+    torch の手書き経路で GPU に乗るので、比べる 2 つが別の装置になっていた。
+    """
+    import api
     monkeypatch.setattr(G, "available", lambda: False)
+    monkeypatch.setattr(api, "cuda_available", lambda: False)
     monkeypatch.setattr(G, "_CUCIM", [])
     yield
 

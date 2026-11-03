@@ -4,7 +4,7 @@ dim: annotate
 category: paper
 in: image2d
 out: image2d
-gpu: なし
+gpu: あり(許可リスト)
 examples: [paper_figure]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +15,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.annotate_angle(img, a, vertex, b, radius=30.0, color='emphasis', width=1.5, draw_rays=True, label_fmt='{:.1f}°', font_size=11, box_alpha=0.6, text_color=None, scheme='okabe_ito', font_path=None, layout=None)` (実装を直接呼ぶなら `import annotate; annotate.annotate_angle(img, a, vertex, b, radius=30.0, color='emphasis', width=1.5, draw_rays=True, label_fmt='{:.1f}°', font_size=11, box_alpha=0.6, text_color=None, scheme='okabe_ito', font_path=None, layout=None)`、台帳から引くなら `opsannotate.get("annotate_angle")`)
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: あり(許可リストの機械的 GPU 経路、CuPy)。`device="auto"` は測った大きさ(4,194,304 画素)以上で GPU を選ぶ
 
 ## 使い方
 

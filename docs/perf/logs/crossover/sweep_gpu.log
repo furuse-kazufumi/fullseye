@@ -1,0 +1,9 @@
+window start 2026-11-02T17:22:35 {'util_pct': 0, 'mem_mib': 788}
+window end 2026-11-02T17:29:35 {'util_pct': 10, 'mem_mib': 10837} more True
+window start 2026-11-02T17:41:41 {'util_pct': 0, 'mem_mib': 6394}
+window end 2026-11-02T17:48:41 {'util_pct': 2, 'mem_mib': 11455} more True
+window start 2026-11-02T18:02:17 {'util_pct': 0, 'mem_mib': 12925}
+window end 2026-11-02T18:09:26 {'util_pct': 0, 'mem_mib': 12934} more True
+window start 2026-11-02T18:20:56 {'util_pct': 0, 'mem_mib': 1532}
+window end 2026-11-02T18:23:43 {'util_pct': 1, 'mem_mib': 3005} more False
+sweep-gpu exit 0

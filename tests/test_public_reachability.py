@@ -55,6 +55,9 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 #: 数字は不可視な関数の本数で、増減しても意図的なら書き換えてよい。
 _INTERNAL = {
     "accel_bridge": 9, "accel_vol": 3,
+    # 2026-11-03 device="auto" の判断(損益分岐の表・空き VRAM・段ごとの経路)。利用者の入口は
+    # fullseye.explain_device / resolve_device で、この部品は api の内側からだけ呼ぶ。
+    "device_policy": 6,
     "algo_codegen": 4, "algo_difftest": 8, "backends": 4, "backends_auto": 2,
     "backends_color": 3, "backends_cv2b": 1, "backends_dl": 3, "backends_extra": 1,
     "backends_halcon_ext": 1, "backends_kornia": 1, "backends_macro": 1,
@@ -99,6 +102,9 @@ _INTERNAL = {
     #   利用者は各 op の device 引数(既定 cpu)から使い、核そのものは op にしない。第 2・3 便のブランチは
     #   ここに書いていなかった(統合で門が赤になって分かった)。
     "accel_seam": 2, "accel_typed": 14,
+    # ★2026-11-04(統合 GPU): 第 5 便の accel_label(連結成分のラベル付けと領域ごとの集計の torch 経路、label / table)。
+    #   accel が import する核で、利用者は領域解析の op の device 引数から使う。
+    "accel_label": 2,
 }
 
 #: **出すべきなのに出ていない**。ここは減らしていく側の台帳です。
@@ -298,7 +304,12 @@ def test_pending_exposure_shrinks_when_fixed():
 # 2026-11-02 gpu_shadow(機械的 GPU の影の層 10 本)。CuPy は任意依存で、入口は gpu_shadow.apply / run_allowed。実測 948 → 958。
 # 2026-11-04 統合 GPU: 1041 + 11(gpu_shadow。ブランチの注記は 10 本、実測は 11 本 = GpuAutoError / ShadowImporter / Stats /
 #   allowed_ops / available / get_shadow / resident_ops / run_allowed / shadow_fn / to_cpu / to_gpu)= 1052。実測も 1052。
-_HIDDEN_FUNCTIONS_TODAY = 1052
+# 2026-11-03 GPU 第 5 便: device_policy(auto の判断 6 本)・gpu_route(GPU 経路を決める唯一の関数と Route 型、
+#   実行の入口の 9 本)・gpu_shadow の鎖の 2 本(pipeline_ops / run_chain)。利用者の入口は fullseye.explain_device
+#   と fullseye_describe の gpu_paths で、部品そのものは公開経路に載せない。実測 958 → 975。
+# 2026-11-04 統合 GPU: 1052 + 19(第 5 便 device_policy 6・gpu_route 9・gpu_shadow の鎖 2・accel_label 2。
+#   ブランチの注記は 17、accel_label の 2 本が数えられていなかった)= 1071。実測も 1071。
+_HIDDEN_FUNCTIONS_TODAY = 1071
 
 
 def _hidden_total():

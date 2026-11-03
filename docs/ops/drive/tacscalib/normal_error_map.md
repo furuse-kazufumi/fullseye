@@ -4,7 +4,7 @@ dim: drive
 category: tacscalib
 in: normalmap × normalmap
 out: image2d
-gpu: なし
+gpu: あり(許可リスト)
 examples: [poc_tacscalib_sphere_lut]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +15,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 - **データ種**: `normalmap × normalmap` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.normal_error_map(n_a, n_b) -> 'np.ndarray'` (実装を直接呼ぶなら `import tacscalib; tacscalib.normal_error_map(n_a, n_b) -> 'np.ndarray'`、台帳から引くなら `opsdrive.get("normal_error_map")`)
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: あり(許可リストの機械的 GPU 経路、CuPy)。`device="auto"` は測った大きさ(12,582,912 画素)以上で GPU を選ぶ
 
 ## 使い方
 

@@ -4,7 +4,7 @@ dim: specular
 category: deflectometry
 in: image2d
 out: images
-gpu: なし
+gpu: あり(許可リスト)
 examples: [poc_phase_measuring_deflectometry]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +15,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d` → `images`
 - **呼び出し**: `import fullseye as fs; fs.ledger.deflectometry_render(height, rig=None, period_mm=10.0, n_steps=4, direction='x', kind='fringe', slope_x=None, slope_y=None, diffuse_fraction=0.0, scatter_rad=0.0, back_thickness_mm=None, refractive_index=1.52, focus='surface', aperture_samples=None, noise_sigma=0.0, bits=None, seed=0)` (実装を直接呼ぶなら `import deflectometry; deflectometry.deflectometry_render(height, rig=None, period_mm=10.0, n_steps=4, direction='x', kind='fringe', slope_x=None, slope_y=None, diffuse_fraction=0.0, scatter_rad=0.0, back_thickness_mm=None, refractive_index=1.52, focus='surface', aperture_samples=None, noise_sigma=0.0, bits=None, seed=0)`、台帳から引くなら `opsspecular.get("deflectometry_render")`)
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: あり(許可リストの機械的 GPU 経路、CuPy)。`device="auto"` は測った大きさ(4,194,304 画素)以上で GPU を選ぶ
 
 ## 使い方
 

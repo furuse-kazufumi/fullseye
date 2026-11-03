@@ -4,7 +4,7 @@ dim: optics
 category: sensorchar
 in: signal × signal
 out: table
-gpu: なし
+gpu: あり(許可リスト)
 examples: [poc_emva1288_in_camera_processing, poc_emva1288_sensor]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +15,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 - **データ種**: `signal × signal` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.emva_ptc_linearity_check(mu_y, var_y, mu_y_dark, var_y_dark, mu_y_sat, n_intervals=6, limit=0.03)` (実装を直接呼ぶなら `import sensorchar; sensorchar.emva_ptc_linearity_check(mu_y, var_y, mu_y_dark, var_y_dark, mu_y_sat, n_intervals=6, limit=0.03)`、台帳から引くなら `opsoptics.get("emva_ptc_linearity_check")`)
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: あり(許可リストの機械的 GPU 経路、CuPy)。`device="auto"` は測った大きさ(1,048,576 画素)以上で GPU を選ぶ
 
 ## 使い方
 

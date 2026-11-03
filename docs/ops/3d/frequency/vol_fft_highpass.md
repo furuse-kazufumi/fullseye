@@ -4,7 +4,7 @@ dim: 3d
 category: frequency
 in: voxel
 out: voxel
-gpu: なし
+gpu: あり(許可リスト)
 examples: [deconv_fft_restore]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +15,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 - **データ種**: `voxel` → `voxel`
 - **呼び出し**: `import fullseye as fs; fs.ledger.vol_fft_highpass(vol, cutoff, spacing=None)` (実装を直接呼ぶなら `import volfreq; volfreq.vol_fft_highpass(vol, cutoff, spacing=None)`、台帳から引くなら `ops3d.get("vol_fft_highpass")`)
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: あり(許可リストの機械的 GPU 経路、CuPy)。`device="auto"` は測った大きさ(16,777,216 画素)以上で GPU を選ぶ
 
 ## 使い方
 
