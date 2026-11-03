@@ -450,3 +450,28 @@ def test_real_gpu_allow_list_path_matches_cpu(monkeypatch):
     assert api.last_device_decision()["path"] == "allow_single"
     ref = api.apply(image, op, device="cpu", on_error="raise")
     assert np.max(np.abs(np.asarray(out, np.float64) - np.asarray(ref, np.float64))) < 5e-3
+
+
+def test_native_route_needs_parity_nonconstant_output_and_the_ratio_gate(monkeypatch):
+    """native の実測(GPU_NATIVE.json)は、一致・出力が定数でない・倍率の門を全部通ったものだけ。
+
+    2026-11-03: 定数出力(判定不能)の hough_sphere_3d が 12.8 倍で GPU に回る穴と、1〜5 倍が単独呼びに
+    使われる穴(他の経路は単独 5 倍以上・1〜5 倍はパイプラインだけ)を塞いだ。
+    """
+    import gpu_route as R
+    fake = {
+        "fast": {"name": "fast", "status": "measured", "ok": True, "nonconst": True, "ratio": 20.0},
+        "mid": {"name": "mid", "status": "measured", "ok": True, "nonconst": True, "ratio": 3.0},
+        "const": {"name": "const", "status": "measured", "ok": True, "nonconst": False, "ratio": 12.8},
+        "bad": {"name": "bad", "status": "mismatch", "ok": False, "nonconst": True, "ratio": 25.0},
+        "slow": {"name": "slow", "status": "measured", "ok": True, "nonconst": True, "ratio": 0.7},
+    }
+    monkeypatch.setitem(R._CACHE, "native", fake)
+    monkeypatch.setattr(R, "_accel_names", lambda: frozenset())
+    monkeypatch.setattr(R, "_shadow_rows", lambda: {})
+    single = {n: R.route(n, "single") for n in fake}
+    pipe = {n: R.route(n, "pipeline") for n in fake}
+    assert single["fast"] is not None and single["fast"].kind == "native" and single["fast"].use == "single"
+    assert single["mid"] is None and pipe["mid"] is not None and pipe["mid"].use == "pipeline"
+    for n in ("const", "bad", "slow"):
+        assert single[n] is None and pipe[n] is None, n

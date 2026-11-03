@@ -97,6 +97,8 @@ def _native_rows() -> dict:
         try:
             with open(NATIVE_PATH, encoding="utf-8") as f:
                 data = json.load(f)
+            if isinstance(data, dict) and isinstance(data.get("rows"), dict):
+                data = data["rows"]                    # 見出し(generated_by / method / gate)つきの形
             items = data.values() if isinstance(data, dict) else data
             for row in items:
                 if isinstance(row, dict) and row.get("name"):
@@ -115,9 +117,13 @@ def _load_sources(op: str) -> list:
     row = _native_rows().get(op)
     if row is not None:
         ok = bool(row.get("ok")) and row.get("status", "measured") == "measured"
+        # 出力が定数の測定は一致の証明にならない(判定不能)。他の経路と同じ門で除く
+        nonconst = row.get("nonconst", True) is not False
         ratio = row.get("ratio")
-        if ok and isinstance(ratio, (int, float)) and ratio >= 1.0:
-            out.append(Route(op, "native", "single", ratio=round(float(ratio), 3),
+        if ok and nonconst and isinstance(ratio, (int, float)) and ratio >= 1.0:
+            # 単独の採用は 5 倍以上(掃引・許可リストと同じ門)、1〜5 倍はパイプラインの中だけ
+            use = "single" if ratio >= 5.0 else "pipeline"
+            out.append(Route(op, "native", use, ratio=round(float(ratio), 3),
                              min_elements=row.get("elems"), source="GPU_NATIVE.json"))
     row = _shadow_rows().get(op)
     if row is not None:
