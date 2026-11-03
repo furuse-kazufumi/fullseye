@@ -72,6 +72,8 @@ SPEC = [
     ("poc_microns_brain_wave", _P + "poc_microns_brain_wave/04_wave_on_wiring.gif", 0.5, None),
     ("evis_stereo_depth", "articles/assets/evis_stereo_fullseye_still.png", None, (0.0, 0.0, 1.0)),
     ("evis_bean_track", "articles/assets/evis_bean_track_fullseye_still.png", None, (0.5, 0.0, 1.0)),
+    # 5 枚を縦に積んだ全体ではなく、最初の OCT 断面を案内用の代表図にする。
+    ("poc_industrial_oct", _P + "poc_industrial_oct/01_real_paint_bscans.png", None, (0.04, 0.05, 0.25)),
     # 動く 3-D: 元はビューアをスマホ幅(375 px、WebGL)で開いた画面から 3-D の部分だけを切った静止画
 ]
 
@@ -138,10 +140,8 @@ def _save_jpg(im: Image.Image, dst: Path, quality: int, limit: int | None = None
         q -= 8
 
 
-def build() -> list[tuple[str, int]]:
-    """見どころのサムネイルを書く。元が無ければ例外で止める(黙って欠けさせない)。"""
-    OUT.mkdir(parents=True, exist_ok=True)
-    out = []
+def thumbnail_specs() -> tuple[list[tuple[str, str, float | None, tuple | None]], set[str]]:
+    """全サムネの仕様と、手書き crop が無く contain する生成展示の id を返す。"""
     data = json.loads(DATA.read_text(encoding="utf-8"))
     specs = list(SPEC)
     known = {s[0] for s in specs}
@@ -150,13 +150,21 @@ def build() -> list[tuple[str, int]]:
         if e["id"] not in known:
             rel = e.get("media_path") or (_P + e["id"] + "/" + e["media"])
             specs.append((e["id"], rel, 0.5, None))
+    return specs, generated - known
+
+
+def build() -> list[tuple[str, int]]:
+    """見どころのサムネイルを書く。元が無ければ例外で止める(黙って欠けさせない)。"""
+    OUT.mkdir(parents=True, exist_ok=True)
+    out = []
+    specs, contained = thumbnail_specs()
     for pid, rel, frame, crop in specs:
         src = DOCS / rel
         if not src.is_file():
             raise FileNotFoundError("サムネイルの元が無い: %s" % src)
         dst = OUT / (pid + ".jpg")
         im = _load(src, frame)
-        thumb = _contain_square(im, SIZE) if pid in generated else _square(im, crop, SIZE)
+        thumb = _contain_square(im, SIZE) if pid in contained else _square(im, crop, SIZE)
         out.append((dst.name, _save_jpg(thumb, dst, QUALITY)))
     return out
 
