@@ -2,7 +2,7 @@
  "_note": "型付き台帳の全 op に対する契約違反の既存分(tests/test_ledger_contracts.py のラチェット)。増えたら落ち、直って通るようになっても落ちる(= 縮むしかない)。op 名 -> 理由の区分。詳細は py -3.11 tools/ledger_contracts.py -v で見る。",
  "_written": "2026-10-11",
  "counts": {
-  "refused": 66,
+  "refused": 65,
   "no_input": 0,
   "unbindable": 9,
   "raises": 0,
