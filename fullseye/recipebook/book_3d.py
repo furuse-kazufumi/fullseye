@@ -1,7 +1,7 @@
 """3-D, depth, volume, CT, DEM and calibration recipes (coverage book ``book_3d``).
 
 Families: 3d · reprconv · tomography · dem · calib · printpath · live4d · volcolor · geocam · videocube ·
-cadmap · fit (fileio has no runnable recipe — see ``FAILED_ATTEMPTS``).
+cadmap · fit · fileio.
 HALCON chapters: 3D Object Model, 3D Matching, 3D Reconstruction, Calibration, 2D Metrology, Matching.
 
 Every sample here is synthetic with a closed-form answer (a sphere radius, a plane normal, a known rigid
@@ -296,6 +296,20 @@ def t3_sino_centred(variant):
     return _sino_disk(variant, 0.0)
 
 
+def t3_ball_chord(variant):
+    """Common grey ``volume_ball`` (r = 5 + 2·v); truth adds the voxel chord through the centre, 2r + 1."""
+    from fullseye.recipebook.common import volume_ball
+    s = volume_ball(variant)
+    return {"value": s["value"], "aux": {}, "truth": dict(s["truth"], chord=2 * (5.0 + 2.0 * variant) + 1)}
+
+
+def t3_ball_area(variant):
+    """Common grey ``volume_ball`` with the analytic sphere area 4·pi·r^2 (r = 5 + 2·v voxels)."""
+    from fullseye.recipebook.common import volume_ball
+    s = volume_ball(variant)
+    return {"value": s["value"], "aux": {}, "truth": dict(s["truth"], area_true=4 * np.pi * (5.0 + 2.0 * variant) ** 2)}
+
+
 def t3_beat_aux(variant):
     """Parameters for the beating-shell generator (radius 5 + 1.5·v voxels, period 8 frames)."""
     return {"value": None, "aux": {"radius": 5.0 + 1.5 * variant, "period": 8.0}, "truth": {}}
@@ -310,7 +324,7 @@ SAMPLES = {
     "t3_plane_circle_px": t3_plane_circle_px, "t3_calib_views": t3_calib_views, "t3_shift_pair": t3_shift_pair,
     "t3_moving_dot_video": t3_moving_dot_video, "t3_ball_binary": t3_ball_binary, "t3_label_vol": t3_label_vol,
     "t3_ct_disk": t3_ct_disk, "t3_sino_offaxis": t3_sino_offaxis, "t3_sino_centred": t3_sino_centred,
-    "t3_beat_aux": t3_beat_aux,
+    "t3_beat_aux": t3_beat_aux, "t3_ball_chord": t3_ball_chord, "t3_ball_area": t3_ball_area,
 }
 
 _3D = dict(family="3d", task="measure", task_class="3d")
@@ -325,6 +339,15 @@ RECIPES = [
          note="Measure a spherical part (ball, bearing, probe tip) from a 3-D scan that also caught stray points: "
               "voxel-grid downsampling evens out the density (voxel 0.04 units), then RANSAC sphere fitting "
               "(inlier band 0.02) ignores the outliers. Output: centre and radius in the scan's units."),
+    dict(_3D, name="3D — ball radius by least squares after statistical outlier removal",
+         halcon="3D Object Model", input_sort="points", sample="t3_sphere_outliers",
+         stages=[{"op": "statistical_outlier_removal", "kw": {"k": 16, "std_ratio": 2.0}},
+                 {"op": "fit_sphere_3d"}],
+         expect=[{"get": [1], "approx": "radius", "rtol": 0.015}],
+         note="Clean a scan before a plain (non-robust) least-squares fit: statistical outlier removal drops "
+              "points whose mean distance to their 16 neighbours is beyond mean + 2 std, then the algebraic "
+              "sphere fit gives (centre, radius). Without the cleaning the 40 stray points bias the radius by "
+              "~15 %; after it the error is ~1 %."),
     dict(_3D, name="3D — tilt of a flat face (RANSAC plane) despite clutter",
          halcon="3D Object Model", input_sort="points", sample="t3_plane_outliers",
          stages=[{"op": "ransac_plane", "kw": {"thresh": 0.01, "iters": 300}}],
@@ -383,6 +406,14 @@ RECIPES = [
          note="Fine registration that converges in a few iterations on smooth parts: normals of the reference "
               "scan (k = 16), then point-to-plane ICP of the moving scan onto it. Recovers the known rotation "
               "and translation to 1e-4."),
+    dict(_3D, name="3D — register two scans with generalized ICP (plane-to-plane)",
+         halcon="3D Matching", input_sort="points", sample="t3_rigid_pair",
+         stages=[{"op": "voxel_grid_downsample", "kw": {"voxel_size": 0.03}},
+                 {"op": "gicp", "args": ["$prev", "$aux.dst"], "kw": {"max_iter": 30, "k": 20}}],
+         expect=[{"get": [1, 0], "approx": "tx", "atol": 1e-3}, {"get": [0, 1, 0], "approx": "r10", "atol": 1e-3}],
+         note="Generalized-ICP registration (covariance-weighted, robust on planar and noisy scans) of a "
+              "downsampled moving scan onto its reference; returns the rigid transform (R, t) with "
+              "dst ≈ src·Rᵀ + t. Needs a near initial alignment (here 6-10 deg)."),
     dict(_3D, name="3D — object pose from known 3-D points and their image (PnP)",
          halcon="3D Matching", input_sort="points", sample="t3_pnp",
          stages=[{"op": "dlt_pose", "args": ["$in", "$aux.uv"], "kw": {"K": "$aux.K"}}],
@@ -432,6 +463,35 @@ RECIPES = [
          note="Size of a pore, void or inclusion in a segmented CT volume: drop connected components under 10 "
               "voxels (single-voxel speckle), then per-component region properties (volume in voxels, centroid, "
               "bbox, equivalent radius, sphericity). Exactly one component and its exact voxel count remain."),
+    dict(_3D, name="3D — volume of a CT inclusion from its marching-cubes surface",
+         halcon="3D Object Model", input_sort="voxel", sample="volume_ball",
+         stages=[{"op": "voxel_to_mesh", "kw": {"iso": 0.5}}, {"op": "mesh_volume"}],
+         expect=[{"get": ["@abs"], "approx": "voxels", "rtol": 0.03}],
+         note="Iso-surface the grey volume at 0.5 (marching cubes) and take the enclosed volume of the mesh "
+              "(voxel^3). Marching-cubes faces wind inward, so the signed volume is negative — read its "
+              "magnitude; it lands within ~2 % of the voxel count of the inclusion."),
+    dict(_3D, name="3D — surface area of a CT inclusion (marching cubes + Taubin smoothing)",
+         halcon="3D Object Model", input_sort="voxel", sample="t3_ball_area",
+         stages=[{"op": "voxel_to_mesh", "kw": {"iso": 0.5}}, {"op": "taubin_smooth", "kw": {"iters": 10}},
+                 {"op": "mesh_area"}],
+         expect=[{"get": [], "approx": "area_true", "rtol": 0.03}],
+         note="Surface area of a void / inclusion from a CT volume: marching cubes at iso 0.5, Taubin smoothing "
+              "(10 iterations, volume-preserving) to remove the staircase, then the triangle-area sum "
+              "(voxel^2); ~2 % above 4·pi·r^2."),
+    dict(_3D, name="3D — label the objects in a CT volume and read their voxel counts",
+         halcon="3D Object Model", input_sort="voxel", sample="volume_ball",
+         stages=[{"op": "vol_label", "kw": {"connectivity": 26}}, {"op": "vol_region_props"}],
+         expect=[{"get": [0, "voxel_count"], "equals": "voxels"}, {"get": ["@len"], "equals": 1}],
+         note="Connected-component labelling of a grey CT volume (threshold 0.5, 26-connectivity) followed by "
+              "per-component descriptors (voxel count, volume, centroid, bbox, surface area, sphericity)."),
+    dict(_3D, name="Inspect — diameter of a dense inclusion along a probe line (CT volume)",
+         halcon="3D Object Model", input_sort="voxel", sample="t3_ball_chord",
+         stages=[{"op": "vol_window_level", "kw": {"center": 0.5, "width": 1.0}},
+                 {"op": "vol_wall_thickness", "kw": {"p0": [12.0, 12.0, 0.0], "p1": [12.0, 12.0, 23.0]}}],
+         expect=[{"get": [0], "approx": "chord", "atol": 0.3}],
+         note="Caliper-style thickness along a line through a CT volume: window/level to [0, 1], then the "
+              "edge-to-edge distance of each bright run along the probe (voxels). A ball of radius r occupies "
+              "2r + 1 voxels on its centre line."),
     # ---- dem ----------------------------------------------------------------------------------
     dict(name="DEM — slope of a hillside after filling sinks", family="dem", task="measure",
          task_class="measurement", halcon=None, input_sort="depth", sample="tilted_plane_depth",
@@ -490,24 +550,40 @@ RECIPES = [
     dict(name="Measure — circle on a plane in millimetres from pixels (homography)", family="calib",
          task="measure", task_class="measurement", halcon="Calibration", input_sort="keypoints",
          sample="t3_plane_circle_px",
-         stages=[{"op": "image_to_world_plane", "kw": {"homography": "$aux.Hinv"}}, {"op": "fit_circle_geometric"}],
+         stages=[{"op": "image_to_world_plane", "kw": {"homography": "$aux.Hinv"}}, {"op": "fit_circle_geometric", "call": "raw", "call_reason": "fs.ledger.fit_circle_geometric is broken: opsfit has no call(), AttributeError (2026-11-03); the OP_GRAPH executor is called directly"}],
          expect=[{"get": ["r"], "approx": "radius", "rtol": 1e-6}],
          note="Metric measurement on a calibrated plane: map edge pixels through the image->world plane "
               "homography (perspective removed) and fit a geometric circle; the radius comes out in mm."),
     dict(name="Measure — image radius of a 3-D ring seen by a camera", family="fit", task="measure",
          task_class="measurement", halcon="2D Metrology", input_sort="points", sample="t3_circle3d",
-         stages=[{"op": "project_3d_point", "kw": {"cam_par": "$aux.cam"}}, {"op": "fit_circle_geometric"}],
+         stages=[{"op": "project_3d_point", "kw": {"cam_par": "$aux.cam"}}, {"op": "fit_circle_geometric", "call": "raw", "call_reason": "fs.ledger.fit_circle_geometric is broken: opsfit has no call(), AttributeError (2026-11-03); the OP_GRAPH executor is called directly"}],
          expect=[{"get": ["r"], "approx": "r_px", "rtol": 1e-6}],
          note="Predict how large a round feature appears in the image: project 3-D rim points through the "
               "pinhole camera (fx = 800 px) to (row, col), then geometric least-squares circle fit; radius = "
               "f·R/Z px for a fronto-parallel ring."),
     dict(name="Measure — sub-pixel shift between two images (phase correlation)", family="fit",
          task="register", task_class="measurement", halcon="Matching", input_sort="image", sample="t3_shift_pair",
-         stages=[{"op": "phase_correlation_shift", "args": ["$in", "$aux.moved"]}],
+         stages=[{"op": "phase_correlation_shift", "args": ["$in", "$aux.moved"], "call": "raw", "call_reason": "fs.ledger.phase_correlation_shift is broken: opsfit has no call(), AttributeError (2026-11-03); the OP_GRAPH executor is called directly"}],
          expect=[{"get": ["dy"], "approx": "reg_dy", "atol": 0.15}, {"get": ["dx"], "approx": "reg_dx", "atol": 0.15}],
          note="Translation registration of two images (drift, vibration, stitching) by whitened phase "
               "correlation with upsampled peak refinement; returns the (dy, dx) px that re-aligns the second "
               "image (= minus the applied shift). Measured error here ~0.1 px (Hann window on a cyclic shift)."),
+    # ---- fileio -------------------------------------------------------------------------------
+    dict(name="3D — save a scan as XYZ text, reload it and re-measure the ball", family="fileio",
+         task="exchange", task_class="3d", halcon="3D Object Model", input_sort="points", sample="t3_sphere",
+         stages=[{"op": "points_write_xyz"}, {"op": "points_read_xyz"},
+                 {"op": "ransac_sphere", "kw": {"thresh": 0.01, "iters": 300}}],
+         expect=[{"get": [0, "radius"], "approx": "radius", "rtol": 1e-6}],
+         note="Point-cloud exchange round trip: write the scan as plain 'x y z' text (17 significant digits, "
+              "lossless for float64), read it back, and check that the measurement survives (RANSAC sphere "
+              "radius equals the true radius). The ops work on text in memory; write the text to any .xyz file."),
+    dict(name="3D — export a part mesh as OBJ, re-import it and check its volume", family="fileio",
+         task="exchange", task_class="3d", halcon="3D Object Model", input_sort="points", sample="t3_sphere",
+         stages=[{"op": "convex_hull"}, {"op": "mesh_write_obj"}, {"op": "mesh_read_obj"}, {"op": "mesh_volume"}],
+         expect=[{"get": [], "approx": "volume", "rtol": 0.035}],
+         note="Mesh exchange round trip for CAD / slicer / viewer hand-off: convex-hull mesh of a scanned ball, "
+              "Wavefront OBJ text out (v / vn / f), OBJ back in (geometry only), then the enclosed volume "
+              "(units^3) — the re-imported mesh keeps its outward winding, so the volume stays positive."),
     # ---- printpath ----------------------------------------------------------------------------
     dict(name="Print — filament volume for the equator layer of a scanned ball", family="printpath",
          task="plan", task_class="simulation", halcon=None, input_sort="points", sample="t3_print_ball",
@@ -547,6 +623,12 @@ RECIPES = [
          expect=[{"get": ["@len"], "equals": "count"}],
          note="Per-label statistics of a labelled 3-D volume (voxel count, centroid, bounding box, principal-axis "
               "shape indices) in O(N); one row per object. Single stage: label volumes come from a segmentation."),
+    dict(name="3D — volume table of the objects found in a grey scan", family="volcolor", task="measure",
+         task_class="3d", halcon="3D Object Model", input_sort="voxel", sample="volume_ball",
+         stages=[{"op": "vol_label"}, {"op": "vol_label_shape_stats"}],
+         expect=[{"get": [0, "voxel_count"], "equals": "voxels"}],
+         note="From a grey CT volume straight to a per-object table: connected-component labels (threshold 0.5), "
+              "then linear-time per-label statistics (voxel count, centroid, bbox, principal-axis shape)."),
     dict(name="3D — colour a labelled volume and cut an RGB slice", family="volcolor", task="visualize",
          task_class="visualization", halcon=None, input_sort="labels", sample="t3_label_vol",
          stages=[{"op": "vol_colorize_labels"}, {"op": "vol_label_slice_rgb", "kw": {"index": 8, "axis": "x"}}],
@@ -577,7 +659,7 @@ MISSING_OPS = [
      "why": "no point-pair-feature or surface-model matching op exists in OP_GRAPH or docs/ops (only ICP / GICP / "
             "FPFH / SHOT / spin registration)"},
     {"family": "3d", "need": "threshold a grey voxel volume to a binary voxel volume (voxel -> voxel)",
-     "why": "no explicit volume threshold op; vol_label thresholds implicitly at 0.5 but returns a tuple, and "
+     "why": "no explicit volume threshold op; vol_label thresholds implicitly at 0.5 (fixed), and "
             "region_props / label_components binarise with astype(bool) (every nonzero voxel is foreground)"},
     {"family": "3d", "need": "pose (R, t) -> 4x4 transform converter",
      "why": "rotation_translation_error / registration_recall take 4x4 matrices while dlt_pose / ICP / FPFH "
@@ -586,37 +668,9 @@ MISSING_OPS = [
     {"family": "reprconv", "need": "keypoints (row, col) <-> (u = col, v = row) swap",
      "why": "the keypoints sort carries both conventions (calib.project_3d_point returns (row, col); "
             "pnp3d.dlt_pose / pnp_ransac expect (u, v)) and no op converts between them"},
-    {"family": "fileio", "need": "any runnable read/write op",
-     "why": "all 14 fileio ops exist in the python module fileio but OP_GRAPH has no executor for them "
-            "(executable: false, python_callable_not_found), so the recipe runner cannot call them"},
 ]
 
 FAILED_ATTEMPTS = [
-    {"family": "fileio", "recipe": "3D — save a point cloud as XYZ text and read it back",
-     "op": "points_write_xyz / points_read_xyz (and all 14 fileio ops)",
-     "error": "KeyError: op 'points_write_xyz' has no python executor in OP_GRAPH ({})",
-     "cause": "doc_mismatch"},
-    {"family": "3d", "recipe": "3D — radius of a ball from a noisy scan with stray points",
-     "op": "radius_outlier_removal / statistical_outlier_removal",
-     "error": "returns (filtered, keep_mask) tuple while declared out sort is points; next stage ransac_sphere "
-              "raised ValueError: setting an array element with a sequence ... inhomogeneous shape",
-     "cause": "declaration_lie"},
-    {"family": "3d", "recipe": "3D — register two scans with generalized ICP", "op": "gicp",
-     "error": "returns a dict, declared out sort pose (TYPE_CHECKS['pose'] rejects it)",
-     "cause": "declaration_lie"},
-    {"family": "3d", "recipe": "3D — surface area of a CT blob (marching cubes + smoothing)", "op": "voxel_to_mesh",
-     "error": "returns (verts, faces, normals) 3-tuple, declared mesh; TYPE_CHECKS['mesh'] rejects it and "
-              "mesh_area / mesh_volume require a 2-tuple (vertices, faces)",
-     "cause": "declaration_lie"},
-    {"family": "3d", "recipe": "3D — count voxels of a bright inclusion in a volume", "op": "vol_label",
-     "error": "returns (labels, n) tuple, declared labels; vol_region_props then raised ValueError: setting an "
-              "array element with a sequence (label_components has the same (labels, n) shape)",
-     "cause": "declaration_lie"},
-    {"family": "3d", "recipe": "Inspect — diameter of a dense inclusion along a probe line (CT volume)",
-     "op": "vol_wall_thickness",
-     "error": "returns a Python list (e.g. [15.0]), declared signal; TYPE_CHECKS['signal'] rejects a list "
-              "(the value itself is right: 2r + 1 voxels)",
-     "cause": "declaration_lie"},
     {"family": "3d", "recipe": "3D — object pose from known 3-D points and their image (PnP)",
      "op": "project_3d_point -> dlt_pose",
      "error": "no exception; project_3d_point gives (row, col), dlt_pose reads (u, v) -> mirrored pose "
