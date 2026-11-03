@@ -6,7 +6,7 @@ in: any
 out: any
 halcon: copy_image
 gpu: なし
-examples: [gallery_nary_image_algebra, optics_four_f_processor, poc_em_branch_territory, poc_food_cutting_measure]
+examples: [gallery_nary_image_algebra, optics_four_f_processor, poc_em_branch_territory, poc_food_cutting_measure, poc_part_locate_features]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.9.0  # fullseye lib version this note was generated for
@@ -58,6 +58,7 @@ identity 0.50 0.50
 - [optics_four_f_processor](../../../../examples/optics_four_f_processor.py) — `py -3.11 examples/optics_four_f_processor.py`
 - [poc_em_branch_territory](../../../../examples/poc_em_branch_territory.py) — `py -3.11 examples/poc_em_branch_territory.py`
 - [poc_food_cutting_measure](../../../../examples/poc_food_cutting_measure.py) — `py -3.11 examples/poc_food_cutting_measure.py`
+- [poc_part_locate_features](../../../../examples/poc_part_locate_features.py) — `py -3.11 examples/poc_part_locate_features.py`
 
 ## 型が繋がる次の op(`any` を入力に取れる)
 

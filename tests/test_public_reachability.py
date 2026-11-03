@@ -258,6 +258,9 @@ def test_pending_exposure_shrinks_when_fixed():
 #   op 自身は fs.ledger から引ける。
 # 2026-11-03 opsacceptance 台帳(光学式 3D センサの仮想受入試験 8 op): 台帳の内部 API 4 本で実測 948 → 952。
 #   op 自身は fs.ledger から引ける。
+# 2026-11-03 opsmatchreg 台帳(照合と位置合わせ 12 op): 台帳の内部 API 4 本で実測 948 → 952。12 op 自身は
+#   fs.ledger から、合成の道具 7 本(synthetic_scene / warp_homography / corner_error / condition_homography /
+#   warp_parametric / synthesize_moving / smooth_test_field)は fs.<名前> から引ける。
 _HIDDEN_FUNCTIONS_TODAY = 952
 
 

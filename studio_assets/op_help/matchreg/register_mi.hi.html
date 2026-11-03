@@ -1,0 +1,42 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">register_mi — MATCHREG <code style="color:#22d3bf">intensityreg</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.register_mi(fixed, moving, model=&#x27;affine&#x27;, bins=32, metric=&#x27;nmi&#x27;, levels=None, max_iter=2000, warp_init=None, min_overlap=0.25)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import intensityreg; intensityreg.register_mi(fixed, moving, model=&#x27;affine&#x27;, bins=32, metric=&#x27;nmi&#x27;, levels=None, max_iter=2000, warp_init=None, min_overlap=0.25)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsmatchreg.get(&quot;register_mi&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>(Normalised) mutual information को अधिकतम करने वाले rigid / similarity / affine transform से moving को fixed पर मिलाता है। → table (<code style="color:#22d3bf">kind=&quot;registration&quot;</code>)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>撮像の違う組(可視と赤外、CT と MR、照明の向きの違う 2 枚)では明るさの対応が線形でも単調でもないので、相関(<code style="color:#22d3bf">register_ecc</code>)や SSD は使えない。相互情報量は「fixed の明るさを知ると moving の明るさがどれだけ当てられるか」なので、対応が<b>一対一でなくても</b>(折り返しがあっても) 合わせられる(Viola &amp; Wells 1997、Maes et al. 1997)。既定の目的は重なりの大きさに鈍い正規化版 <code style="color:#22d3bf">(H(A)+H(B))/H(A,B)</code>(Studholme 1999、1〜2)。</p>
+<p>同時ヒストグラムは fixed を硬いビン、moving を隣り合う 2 ビンへ線形に振り分け(変換のパラメータに対して連続)、moving の外へ出た画素は数えない。最適化は Powell 法(微分を使わない)を粗から細の <code style="color:#22d3bf">levels</code> 段で。変数は回転・伸縮を画像の半径倍して画素の単位にそろえてある。</p>
+<p>★<code style="color:#22d3bf">imgmetrics.mutual_information</code> は<b>指標</b>(硬いビン 2 つ、ビットで返す)で、ここの目的関数は振り分けのある別の推定量。合わせ終わった組を <code style="color:#22d3bf">imgmetrics</code> で測ると <code style="color:#22d3bf">metric</code> と少し違う。</p>
+<p>Args:</p>
+<p>fixed: 基準の 2-D 画像。</p>
+<p>moving: 合わせる 2-D 画像(撮像が違ってよい)。</p>
+<p>model: <code style="color:#22d3bf">MI_MODELS</code>。</p>
+<p>bins: ヒストグラムのビン数(2 以上)。</p>
+<p>metric: <code style="color:#22d3bf">&quot;nmi&quot;</code>(既定)/ <code style="color:#22d3bf">&quot;mi&quot;</code>(ビット)。</p>
+<p>levels: ピラミッドの段数。<code style="color:#22d3bf">None</code> なら最も粗い段が 16 px 以上になる範囲で最大 3 段。</p>
+<p>max_iter: 段ごとの Powell の反復の上限。</p>
+<p>warp_init: 初期の変換(2×3 / 3×3、fixed → moving、射影の行は 0)。</p>
+<p>min_overlap: 重なりの割合がこれ未満の変換は目的関数を最悪にする(外へ逃げる解を防ぐ)。</p>
+<p>Returns:</p>
+<p>dict(<code style="color:#22d3bf">kind=&quot;registration&quot;</code>, <code style="color:#22d3bf">method=&quot;mi&quot;</code>)。鍵は <code style="color:#22d3bf">register_ecc</code> と同じ。<code style="color:#22d3bf">metric_name</code> は</p>
+<p><code style="color:#22d3bf">&quot;nmi&quot;</code> / <code style="color:#22d3bf">&quot;mi_bits&quot;</code>、加えて <code style="color:#22d3bf">mi_bits</code> / <code style="color:#22d3bf">nmi</code>(全解像の最後の値)。</p>
+<p>Raises:</p>
+<p>ValueError: 画像が不正 / <code style="color:#22d3bf">model</code> / <code style="color:#22d3bf">metric</code> が違う / 引数が値域外 / 初期の変換が射影 /</p>
+<p>合わせ終わっても重なりが <code style="color:#22d3bf">min_overlap</code> 未満。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidematchreg:matching_registration">matching_registration family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_multimodal_mi_registration">poc_multimodal_mi_registration</a> — <code style="color:#22d3bf">py -3.11 examples/poc_multimodal_mi_registration.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opmatchreg:features_match">features_match</a> · <a style="color:#22d3bf" href="opmatchreg:ransac_homography">ransac_homography</a> · <a style="color:#22d3bf" href="opmatchreg:ransac_fundamental">ransac_fundamental</a> · <a style="color:#22d3bf" href="opmatchreg:registration_to_flow2d">registration_to_flow2d</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">intensityreg</code>)</h3>
+<p><a style="color:#22d3bf" href="opmatchreg:register_ecc">register_ecc</a> · <a style="color:#22d3bf" href="opmatchreg:register_ffd">register_ffd</a> · <a style="color:#22d3bf" href="opmatchreg:registration_to_flow2d">registration_to_flow2d</a> · <a style="color:#22d3bf" href="opmatchreg:register_accuracy_map">register_accuracy_map</a> · <a style="color:#22d3bf" href="opmatchreg:register_capture_range">register_capture_range</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: intensityreg.py — MATCHREG operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,0 +1,38 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">features_orb — MATCHREG <code style="color:#22d3bf">featmatch</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.features_orb(image, n_features=1000, n_levels=8, scale_factor=1.2, fast_threshold=0.08, harris_k=0.04)</code> (die Implementierung direkt: <code style="color:#22d3bf">import featmatch; featmatch.features_orb(image, n_features=1000, n_levels=8, scale_factor=1.2, fast_threshold=0.08, harris_k=0.04)</code>; aus dem Register: <code style="color:#22d3bf">opsmatchreg.get(&quot;features_orb&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>ORB-Merkmalspunkte und 256-Bit-Binärdeskriptoren (Rublee et al. 2011). → table (<code style="color:#22d3bf">kind=&quot;features&quot;</code>).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>縮小の段(<code style="color:#22d3bf">scale_factor</code> ずつ <code style="color:#22d3bf">n_levels</code> 段)ごとに FAST-9 の角(<code style="color:#22d3bf">features.fast_corners</code> を再利用)を拾い、Harris の応答で順位をつけて段ごとの割り当て数だけ残す。向きは半径 15 の円の輝度重心(Rosin 1999)、記述子はガウス(σ=2)でならした像の上で、向きに合わせて回した 256 組の明暗比較。</p>
+<p>★学習した rBRIEF の対の表は使わない(乱数で固定した対 = steered BRIEF)。OpenCV の ORB の記述子とは<b>ビット単位で一致しない</b>。比べられるのは「照合して推定したホモグラフィの誤差」まで。</p>
+<p>座標は原画像の <b>(x, y)</b>(段の座標 × 段の倍率)。<code style="color:#22d3bf">scale</code> は段の倍率 × 31(パッチの一辺)。</p>
+<p>Args:</p>
+<p>image: 2-D の濃淡画像([0, 1] の尺度。<code style="color:#22d3bf">fast_threshold</code> がこの尺度)。</p>
+<p>n_features: 全段の合計の上限(段ごとの割り当ては面積に比例する等比数列)。</p>
+<p>n_levels: 段の数。</p>
+<p>scale_factor: 段の縮小率(&gt; 1)。</p>
+<p>fast_threshold: FAST の明暗差のしきい値(既定 0.08 ≈ 20/255)。</p>
+<p>harris_k: Harris の k。</p>
+<p>Returns:</p>
+<p>dict(<code style="color:#22d3bf">kind=&quot;features&quot;</code>, <code style="color:#22d3bf">detector=&quot;orb&quot;</code>)。<code style="color:#22d3bf">descriptors</code> は (N,32) uint8</p>
+<p>(256 bit を詰めたもの)、<code style="color:#22d3bf">descriptor_kind=&quot;binary&quot;</code>。他の鍵は <code style="color:#22d3bf">features_sift</code> と同じ。</p>
+<p>Raises:</p>
+<p>ValueError: 2-D でない / 16 px 未満 / 非有限 / 定数画像 / 引数が値域外(<code style="color:#22d3bf">scale_factor &lt;= 1</code> など)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidematchreg:matching_registration">Leitfaden zur Familie matching_registration</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_part_locate_features">poc_part_locate_features</a> — <code style="color:#22d3bf">py -3.11 examples/poc_part_locate_features.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">table</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opmatchreg:features_match">features_match</a> · <a style="color:#22d3bf" href="opmatchreg:ransac_homography">ransac_homography</a> · <a style="color:#22d3bf" href="opmatchreg:ransac_fundamental">ransac_fundamental</a> · <a style="color:#22d3bf" href="opmatchreg:registration_to_flow2d">registration_to_flow2d</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">featmatch</code>)</h3>
+<p><a style="color:#22d3bf" href="opmatchreg:features_sift">features_sift</a> · <a style="color:#22d3bf" href="opmatchreg:features_match">features_match</a> · <a style="color:#22d3bf" href="opmatchreg:ransac_homography">ransac_homography</a> · <a style="color:#22d3bf" href="opmatchreg:ransac_fundamental">ransac_fundamental</a> · <a style="color:#22d3bf" href="opmatchreg:features_accuracy_table">features_accuracy_table</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: featmatch.py — MATCHREG Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

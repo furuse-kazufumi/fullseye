@@ -129,6 +129,10 @@ LEDGER_DIMS = {
     # タイルごとの量を地図にする)。新しい型語彙は 1 つも作らない(既存の image2d と table)。
     "aoi": {"registry": "opsaoi", "table": "OPSAOI",
             "module": "aoi", "family": "aoi_frontend"},
+    # 2026-11-03: 照合と位置合わせ。2 モジュール台帳(featmatch + intensityreg)、"module" は既定値で
+    # op ごとの module は台帳の info が持つ。新しい型語彙は作らない(image2d / table / flow2d)。
+    "matchreg": {"registry": "opsmatchreg", "table": "OPSMATCHREG",
+                 "module": "featmatch", "family": "matching_registration"},
     # 2026-10-23: カメラ校正・平面写像・対応点からの変換推定。実装(calib / caltab /
     # fit_transform)は 2026-08 から在り tests も 30 本超あったのに、**台帳が無いので
     # docs/ops にノートが 1 枚も無く**、RAG コーパスからも op_find からも欠けていた。

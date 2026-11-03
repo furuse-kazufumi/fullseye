@@ -1,0 +1,40 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">register_capture_range — MATCHREG <code style="color:#22d3bf">intensityreg</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.register_capture_range(fixed, method=&#x27;ecc&#x27;, offsets_px=(1, 2, 4, 8, 12, 16, 24, 32), n_directions=8, success_px=0.5, rotation_deg=0.0, modality=&#x27;same&#x27;, noise_sigma=0.0, margin=8, seed=0, method_kwargs=None)</code>(要直接呼叫實作,<code style="color:#22d3bf">import intensityreg; intensityreg.register_capture_range(fixed, method=&#x27;ecc&#x27;, offsets_px=(1, 2, 4, 8, 12, 16, 24, 32), n_directions=8, success_px=0.5, rotation_deg=0.0, modality=&#x27;same&#x27;, noise_sigma=0.0, margin=8, seed=0, method_kwargs=None)</code>;從台帳取用則 <code style="color:#22d3bf">opsmatchreg.get(&quot;register_capture_range&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>依初始偏移的大小,回傳從恆等變換出發的配準回到真值的比例(收斂範圍)。→ table。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>大きさ <code style="color:#22d3bf">d</code>(<code style="color:#22d3bf">offsets_px</code>)の並進を <code style="color:#22d3bf">n_directions</code> 方向(+ 任意の回転 <code style="color:#22d3bf">rotation_deg</code>)で合成し(<code style="color:#22d3bf">synthesize_moving</code>)、<code style="color:#22d3bf">method</code> を<b>恒等の初期値から</b>走らせ、内側の画素の EPE の平均が <code style="color:#22d3bf">success_px</code> 未満なら成功。method が例外で止まったら失敗として数える(理由を <code style="color:#22d3bf">failures</code> に数える)。<code style="color:#22d3bf">capture_range_px</code> は、それ以下のすべての大きさで成功率が 0.9 以上になる最大の <code style="color:#22d3bf">d</code> (最小の大きさで届かなければ 0)。</p>
+<p>ECC のような局所の最適化は、ずれが模様の大きさを超えると別の極値に落ちる。位相相関(<code style="color:#22d3bf">&quot;phase&quot;</code>)は大域の探索なので並進には範囲が広いが、回転が入ると崩れる —— 同じ表で比べられる。</p>
+<p>Args:</p>
+<p>fixed: 基準の 2-D 画像。</p>
+<p>method: <code style="color:#22d3bf">ACCURACY_METHODS</code>。</p>
+<p>offsets_px: 試す並進の大きさ [px] の並び(正、昇順でなくてよい)。</p>
+<p>n_directions: 方向の数。</p>
+<p>success_px: 成功とみなす EPE の平均の上限 [px]。</p>
+<p>rotation_deg: 並進に加える回転(中心まわり、度)。</p>
+<p>modality / noise_sigma / seed / method_kwargs: <code style="color:#22d3bf">register_accuracy_map</code> と同じ。</p>
+<p>margin: 縁から除く画素数(大きなずれで moving の外から来る画素も除く)。</p>
+<p>Returns:</p>
+<p>dict(<code style="color:#22d3bf">kind=&quot;capture_range&quot;</code>)。<code style="color:#22d3bf">rows</code>(大きさごとの <code style="color:#22d3bf">offset_px</code> / <code style="color:#22d3bf">success_rate</code> /</p>
+<p><code style="color:#22d3bf">median_epe</code> / <code style="color:#22d3bf">n_trials</code> / <code style="color:#22d3bf">failures</code>)/ <code style="color:#22d3bf">capture_range_px</code> / <code style="color:#22d3bf">method</code> / <code style="color:#22d3bf">success_px</code> /</p>
+<p><code style="color:#22d3bf">rotation_deg</code> / <code style="color:#22d3bf">modality</code>。</p>
+<p>Raises:</p>
+<p>ValueError: 画像が不正 / method・modality が違う / 引数が値域外。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidematchreg:matching_registration">matching_registration 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• (尚無)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="opmatchreg:features_match">features_match</a> · <a style="color:#22d3bf" href="opmatchreg:ransac_homography">ransac_homography</a> · <a style="color:#22d3bf" href="opmatchreg:ransac_fundamental">ransac_fundamental</a> · <a style="color:#22d3bf" href="opmatchreg:registration_to_flow2d">registration_to_flow2d</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">intensityreg</code>)</h3>
+<p><a style="color:#22d3bf" href="opmatchreg:register_ecc">register_ecc</a> · <a style="color:#22d3bf" href="opmatchreg:register_mi">register_mi</a> · <a style="color:#22d3bf" href="opmatchreg:register_ffd">register_ffd</a> · <a style="color:#22d3bf" href="opmatchreg:registration_to_flow2d">registration_to_flow2d</a> · <a style="color:#22d3bf" href="opmatchreg:register_accuracy_map">register_accuracy_map</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: intensityreg.py — MATCHREG 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

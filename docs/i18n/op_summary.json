@@ -32994,6 +32994,114 @@
    "ko": "HDR 촬영 다이내믹 레인지의 실측값 (EMVA 1288 정의)과 닫힌 형식 (``table``).",
    "de": "Gemessener Dynamikumfang einer HDR-Aufnahme (EMVA-1288-Definition) mit geschlossener Form (``table``).",
    "hi": "HDR capture की मापी गई dynamic range (EMVA 1288 परिभाषा) और उसका closed form (``table``)।"
+  },
+  "matchreg/features_sift": {
+   "fp": "c27d898dd32f",
+   "en": "SIFT keypoints and 128-dimensional descriptors (DoG extrema, Lowe 2004). → table (``kind=\"features\"``).",
+   "zh": "SIFT 特征点与 128 维描述子(DoG 极值,Lowe 2004)。→ table(``kind=\"features\"``)。",
+   "tw": "SIFT 特徵點與 128 維描述子(DoG 極值,Lowe 2004)。→ table(``kind=\"features\"``)。",
+   "ko": "SIFT 특징점과 128차원 기술자(DoG 극값, Lowe 2004). → table(``kind=\"features\"``).",
+   "de": "SIFT-Merkmalspunkte und 128-dimensionale Deskriptoren (DoG-Extrema, Lowe 2004). → table (``kind=\"features\"``).",
+   "hi": "SIFT feature points और 128-आयामी descriptors (DoG के extrema, Lowe 2004)। → table (``kind=\"features\"``)।"
+  },
+  "matchreg/features_orb": {
+   "fp": "a45a0445bf0d",
+   "en": "ORB keypoints and 256-bit binary descriptors (Rublee et al. 2011). → table (``kind=\"features\"``).",
+   "zh": "ORB 特征点与 256 位二值描述子(Rublee et al. 2011)。→ table(``kind=\"features\"``)。",
+   "tw": "ORB 特徵點與 256 位元二值描述子(Rublee et al. 2011)。→ table(``kind=\"features\"``)。",
+   "ko": "ORB 특징점과 256비트 이진 기술자(Rublee et al. 2011). → table(``kind=\"features\"``).",
+   "de": "ORB-Merkmalspunkte und 256-Bit-Binärdeskriptoren (Rublee et al. 2011). → table (``kind=\"features\"``).",
+   "hi": "ORB feature points और 256-bit binary descriptors (Rublee et al. 2011)। → table (``kind=\"features\"``)।"
+  },
+  "matchreg/features_match": {
+   "fp": "ec2f9b770111",
+   "en": "Matches two feature tables by nearest neighbour + ratio test (+ mutual nearest neighbour). → table (``kind=\"feature_matches\"``).",
+   "zh": "用最近邻 + 比率检验(+ 互为最近邻)匹配两个特征表。→ table(``kind=\"feature_matches\"``)。",
+   "tw": "以最近鄰 + 比率檢定(+ 互為最近鄰)匹配兩個特徵表。→ table(``kind=\"feature_matches\"``)。",
+   "ko": "두 특징 표를 최근접 이웃 + 비율 검정(+ 상호 최근접)으로 대응시킨다. → table(``kind=\"feature_matches\"``).",
+   "de": "Ordnet zwei Merkmalstabellen per nächstem Nachbarn + Verhältnistest (+ gegenseitigem nächstem Nachbarn) zu. → table (``kind=\"feature_matches\"``).",
+   "hi": "दो feature tables को nearest neighbour + ratio test (+ mutual nearest neighbour) से मिलाता है। → table (``kind=\"feature_matches\"``)।"
+  },
+  "matchreg/ransac_homography": {
+   "fp": "e51fbabc7a5c",
+   "en": "Robustly estimates a homography (pts1 → pts2, homogeneous (x, y)) from matched pairs. → table (``kind=\"homography\"``).",
+   "zh": "从匹配对稳健地估计单应矩阵(pts1 → pts2,(x, y) 的齐次坐标)。→ table(``kind=\"homography\"``)。",
+   "tw": "從匹配對穩健地估計單應矩陣(pts1 → pts2,(x, y) 的齊次座標)。→ table(``kind=\"homography\"``)。",
+   "ko": "대응 쌍에서 호모그래피(pts1 → pts2, (x, y)의 동차 좌표)를 강건하게 추정한다. → table(``kind=\"homography\"``).",
+   "de": "Schätzt aus zugeordneten Paaren robust eine Homographie (pts1 → pts2, homogene (x, y)). → table (``kind=\"homography\"``).",
+   "hi": "मिलाए गए जोड़ों से homography (pts1 → pts2, (x, y) के homogeneous निर्देशांक) का robust अनुमान लगाता है। → table (``kind=\"homography\"``)।"
+  },
+  "matchreg/ransac_fundamental": {
+   "fp": "cd1581603f05",
+   "en": "Robustly estimates the fundamental matrix F (``x2ᵀ F x1 = 0``) from matched pairs. → table (``kind=\"fundamental\"``).",
+   "zh": "从匹配对稳健地估计基础矩阵 F(``x2ᵀ F x1 = 0``)。→ table(``kind=\"fundamental\"``)。",
+   "tw": "從匹配對穩健地估計基礎矩陣 F(``x2ᵀ F x1 = 0``)。→ table(``kind=\"fundamental\"``)。",
+   "ko": "대응 쌍에서 기초 행렬 F(``x2ᵀ F x1 = 0``)를 강건하게 추정한다. → table(``kind=\"fundamental\"``).",
+   "de": "Schätzt aus zugeordneten Paaren robust die Fundamentalmatrix F (``x2ᵀ F x1 = 0``). → table (``kind=\"fundamental\"``).",
+   "hi": "मिलाए गए जोड़ों से fundamental matrix F (``x2ᵀ F x1 = 0``) का robust अनुमान लगाता है। → table (``kind=\"fundamental\"``)।"
+  },
+  "matchreg/features_accuracy_table": {
+   "fp": "dce91614b112",
+   "en": "On pairs synthesised with known transforms, returns keypoint repeatability, matching precision and homography error per condition as a table. → table.",
+   "zh": "在用已知变换合成的图像对上,按条件以表格返回特征点重复率、匹配精度与单应误差。→ table。",
+   "tw": "在以已知變換合成的影像對上,依條件以表格回傳特徵點重複率、匹配精度與單應誤差。→ table。",
+   "ko": "알려진 변환으로 합성한 쌍에서 특징점 재현율·대응 정밀도·호모그래피 오차를 조건별 표로 돌려준다. → table.",
+   "de": "Liefert auf mit bekannten Transformationen synthetisierten Paaren Wiederholbarkeit, Zuordnungsgenauigkeit und Homographiefehler je Bedingung als Tabelle. → table.",
+   "hi": "ज्ञात transforms से बनाए जोड़ों पर, हर स्थिति के लिए feature points की repeatability, matching precision और homography की त्रुटि तालिका में लौटाता है। → table।"
+  },
+  "matchreg/register_ecc": {
+   "fp": "d202cf9ff834",
+   "en": "Aligns moving to fixed with the parametric transform that maximises the enhanced correlation coefficient (ECC). → table (``kind=\"registration\"``).",
+   "zh": "用使增强相关系数(ECC)最大的参数变换将 moving 对齐到 fixed。→ table(``kind=\"registration\"``)。",
+   "tw": "以使增強相關係數(ECC)最大的參數變換將 moving 對齊到 fixed。→ table(``kind=\"registration\"``)。",
+   "ko": "강화 상관계수(ECC)를 최대로 하는 매개변수 변환으로 moving을 fixed에 맞춘다. → table(``kind=\"registration\"``).",
+   "de": "Richtet moving mit der parametrischen Transformation an fixed aus, die den Enhanced Correlation Coefficient (ECC) maximiert. → table (``kind=\"registration\"``).",
+   "hi": "Enhanced correlation coefficient (ECC) को अधिकतम करने वाले parametric transform से moving को fixed पर मिलाता है। → table (``kind=\"registration\"``)।"
+  },
+  "matchreg/register_mi": {
+   "fp": "bcdab890346c",
+   "en": "Aligns moving to fixed with the rigid / similarity / affine transform that maximises (normalised) mutual information. → table (``kind=\"registration\"``).",
+   "zh": "用使(归一化)互信息最大的刚体 / 相似 / 仿射变换将 moving 对齐到 fixed。→ table(``kind=\"registration\"``)。",
+   "tw": "以使(正規化)互資訊最大的剛體 / 相似 / 仿射變換將 moving 對齊到 fixed。→ table(``kind=\"registration\"``)。",
+   "ko": "(정규화) 상호정보량을 최대로 하는 강체 / 상사 / 아핀 변환으로 moving을 fixed에 맞춘다. → table(``kind=\"registration\"``).",
+   "de": "Richtet moving mit der starren / Ähnlichkeits- / affinen Transformation an fixed aus, die die (normierte) Transinformation maximiert. → table (``kind=\"registration\"``).",
+   "hi": "(Normalised) mutual information को अधिकतम करने वाले rigid / similarity / affine transform से moving को fixed पर मिलाता है। → table (``kind=\"registration\"``)।"
+  },
+  "matchreg/register_ffd": {
+   "fp": "91cdff36218e",
+   "en": "Non-rigidly aligns moving to fixed with a cubic B-spline free-form deformation (FFD). → table (``kind=\"registration\"``).",
+   "zh": "用三次 B 样条自由形变(FFD)将 moving 非刚性地对齐到 fixed。→ table(``kind=\"registration\"``)。",
+   "tw": "以三次 B 樣條自由形變(FFD)將 moving 非剛性地對齊到 fixed。→ table(``kind=\"registration\"``)。",
+   "ko": "3차 B-spline 자유 변형(FFD)으로 moving을 fixed에 비강체로 맞춘다. → table(``kind=\"registration\"``).",
+   "de": "Richtet moving mit einer kubischen B-Spline-Freiformdeformation (FFD) nicht-starr an fixed aus. → table (``kind=\"registration\"``).",
+   "hi": "Cubic B-spline free-form deformation (FFD) से moving को fixed पर non-rigid रूप से मिलाता है। → table (``kind=\"registration\"``)।"
+  },
+  "matchreg/registration_to_flow2d": {
+   "fp": "49438f9cbd52",
+   "en": "Extracts the deformation field ``flow2d`` ((2,H,W) ``(dy, dx)``) from a registration result table. → flow2d.",
+   "zh": "从配准结果表中取出形变场 ``flow2d``((2,H,W) 的 ``(dy, dx)``)。→ flow2d。",
+   "tw": "從配準結果表中取出形變場 ``flow2d``((2,H,W) 的 ``(dy, dx)``)。→ flow2d。",
+   "ko": "정합 결과 표에서 변형장 ``flow2d``((2,H,W)의 ``(dy, dx)``)를 꺼낸다. → flow2d.",
+   "de": "Entnimmt einer Registrierungs-Ergebnistabelle das Deformationsfeld ``flow2d`` ((2,H,W) ``(dy, dx)``). → flow2d.",
+   "hi": "Registration के परिणाम की table से deformation field ``flow2d`` ((2,H,W) का ``(dy, dx)``) निकालता है। → flow2d।"
+  },
+  "matchreg/register_accuracy_map": {
+   "fp": "641083c10cc1",
+   "en": "On a pair synthesised with a known deformation field, returns the per-pixel error of the estimated field (an accuracy map). → table.",
+   "zh": "在用已知形变场合成的图像对上,逐像素返回估计形变场的误差(精度图)。→ table。",
+   "tw": "在以已知形變場合成的影像對上,逐像素回傳估計形變場的誤差(精度圖)。→ table。",
+   "ko": "알려진 변형장으로 합성한 쌍에서 추정한 변형장의 오차를 화소마다 돌려준다(정확도 지도). → table.",
+   "de": "Liefert auf einem mit bekanntem Deformationsfeld synthetisierten Paar den pixelweisen Fehler des geschätzten Feldes (eine Genauigkeitskarte). → table.",
+   "hi": "ज्ञात deformation field से बनाए जोड़े पर, अनुमानित field की त्रुटि हर pixel के लिए लौटाता है (सटीकता का नक्शा)। → table।"
+  },
+  "matchreg/register_capture_range": {
+   "fp": "0f53ba91e830",
+   "en": "For each size of initial misalignment, returns the fraction of registrations started from the identity that return to the truth (the capture range). → table.",
+   "zh": "按初始偏移的大小,返回从恒等变换出发的配准回到真值的比例(收敛范围)。→ table。",
+   "tw": "依初始偏移的大小,回傳從恆等變換出發的配準回到真值的比例(收斂範圍)。→ table。",
+   "ko": "초기 어긋남의 크기마다, 항등에서 시작한 정합이 참값으로 돌아오는 비율을 돌려준다(수렴 범위). → table.",
+   "de": "Liefert je Größe der anfänglichen Fehlausrichtung den Anteil der von der Identität aus gestarteten Registrierungen, die zur Wahrheit zurückfinden (der Fangbereich). → table.",
+   "hi": "प्रारंभिक misalignment के हर आकार के लिए, identity से शुरू हुई registrations में से सही मान तक लौटने वालों का अनुपात लौटाता है (capture range)। → table।"
   }
  }
 }
