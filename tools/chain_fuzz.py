@@ -141,6 +141,17 @@ def _labels_2d(rng):
     return lab
 
 
+def _match_vector(rng):
+    """``match`` 型の種: 乱数の矩形の (面積 [px], 重心の行 [px], 重心の列 [px])。
+
+    2-D 登録簿の ``area_center`` と同じ並び。値は矩形から閉形式で決まる(面積 = h*w、
+    重心 = 角 + (辺 - 1) / 2)ので、取り出した成分を真値と照合できる。
+    """
+    h, w = (int(v) for v in rng.integers(2, 12, size=2))
+    r0, c0 = (int(v) for v in rng.integers(0, 20, size=2))
+    return np.array([float(h * w), r0 + (h - 1) / 2.0, c0 + (w - 1) / 2.0])
+
+
 def _score_volume(rng):
     """ピークを 1 つ持つ異方性ガウスの相関 volume(サブボクセル精緻化の入力)。
 
@@ -415,6 +426,9 @@ def make_generators():
         # 不動点計算で実測: 434 op 中これ 1 件だけが blocked だった)。
         # 一様乱数ではピーク精緻化が意味を持たないので、異方性ガウス山にする
         "score": _score_volume,
+        # match = 2-D 登録簿の結果ベクトル(area_center = 面積・重心の行・列)。台帳側に
+        # 産む op が無く、reprconv.match_component(W1)が永久に未到達だった(2026-11-03)
+        "match": _match_vector,
         # 光子カウント列。既知距離の dToF 復路 + 背景光を Poisson 標本化した
         # もの = 実データと同じ形と統計(実測 shape (256,)、値域 [0, 303])
         "counts": _photon_counts,
@@ -8348,6 +8362,9 @@ TYPE_CHECKS = {
     # score = ピークを持つ相関 volume。voxel と同じ 3-D だが、意味は「マッチの
     # 良さ」でありサブボクセル精緻化の入力になる
     "score": lambda v: isinstance(v, np.ndarray) and v.ndim == 3,
+    # match = 1-D の有限な結果ベクトル(長さ >= 1)
+    "match": lambda v: (isinstance(v, np.ndarray) and v.ndim == 1 and v.size >= 1
+                        and bool(np.all(np.isfinite(v)))),
     # counts = 時間 bin で添字づけられた**非負**の光子カウント列。既存 signal と
     # 構造は同じだが、signal プール(正弦波 = 負値あり)を渡すと必ず CONTRACT に
     # なり photon 族が一度も実行されない(実測 7/17 未到達)。jones/stokes と同じ判断
