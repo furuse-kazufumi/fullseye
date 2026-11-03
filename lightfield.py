@@ -115,20 +115,21 @@ Conventions, stated once (these are the traps):
 
 Honest disclosure (what these ops cannot do):
 
-  * **:func:`lf_epi_slope` is biased for large slopes, and the bias is real.**
-    It is an ordinary least-squares fit of ``E_u + s*E_x = 0`` on
-    finite-difference gradients, so it needs the EPI line to move less than
-    about one texture correlation length per view. Measured 2026-09-01 on a
-    5x5x64x64 synthetic field of Gaussian-smoothed noise (``seed=0``,
-    ``occlusion=False``, ``edge="wrap"``), median estimate over the interior
-    against the true slope: at texture ``sigma = 1.5`` px, true
-    ``+1.00 -> +1.0004``, ``+0.50 -> +0.5285``, ``+1.50 -> +1.3018``,
-    ``+2.00 -> +1.4614``; at ``sigma = 5.0`` px the same slopes give ``+1.0003``,
-    ``+0.5029``, ``+1.4827``, ``+1.9482``. It is fast and dense, not accurate at
-    ``|s| > 1``. :func:`lf_depth_from_focus` has no such bias — over those same
-    18 combinations (6 slopes x 3 texture scales) its argmax landed **exactly**
-    on the true slope 18 times out of 18 — but it only resolves what you put in
-    ``slopes``.
+  * **:func:`lf_epi_slope` has a valid slope range, and it is stated.**
+    Until 2026-11-03 it was a one-pass least-squares fit of
+    ``E_u + s*E_x = 0`` on central differences, which reads
+    ``sin(w s) / sin(w)`` instead of ``s`` for a texture component of angular
+    frequency ``w`` — exact only at ``|s|`` in ``{0, 1}`` (measured then, sigma
+    1.5 px: ``+0.50 -> +0.5285``, ``+1.50 -> +1.3018``, ``+2.00 -> +1.4614``).
+    It now shears the field by integer slopes and measures only a
+    ``|r| <= 1/2`` residual with matched derivatives: error <= 0.006 px/view
+    over ``|s| <= 3`` on 5x5 / 9x9 views (<= 0.012 on 3x3). The shear ladder
+    starts at 0, so on a 1 px texture it **loses the slope beyond ``|s| = 5``**
+    (aliasing; a 2 px texture is followed to 8); near occlusion boundaries the window mixes two
+    slopes. :func:`lf_depth_from_focus` has no range limit but only resolves
+    what you put in ``slopes`` — over 18 combinations (6 slopes x 3 texture
+    scales) its argmax landed **exactly** on the true slope 18 times out of 18,
+    all of them on the sweep grid.
   * **No sub-pixel MLA calibration.** :func:`lf_from_mla` re-sorts on an
     *integer* pixel grid with an integer ``offset``. Real plenoptic decoding
     starts by fitting the microlens centres to sub-pixel accuracy from a white
@@ -1109,35 +1110,128 @@ def lf_depth_from_focus(lf, slopes=(-2.0, -1.0, 0.0, 1.0, 2.0), *,
     return best, peak
 
 
+#: Inner (derivative) scale of :func:`lf_epi_slope`, in pixels: the spatial
+#: gradient is the derivative of a Gaussian of this sigma and the angular
+#: difference is taken on the same smoothed views, so both sides of the
+#: brightness-constancy constraint see the same pre-filter (Wanner &
+#: Goldluecke use an inner scale of the same order, ~0.8 px).
+EPI_INNER_SIGMA = 1.0
+
+#: Most refinement rounds :func:`lf_epi_slope` runs (each round re-rounds the
+#: per-pixel integer shear; a round with no change ends the loop early).
+EPI_MAX_ROUNDS = 32
+
+#: Most distinct integer shears :func:`lf_epi_slope` evaluates. Each one is a
+#: full structure-tensor pass over the light field.
+EPI_MAX_SHEARS = 64
+
+
+def _epi_tensor(arr, use_h, use_v, win):
+    """One structure-tensor pass: ``(-num/den, den)`` before the ratio is taken.
+
+    Matched discretisation (the 2026-11-03 fix): the angular derivative is the
+    **difference of adjacent views** and the spatial derivative is the
+    **average of the two views' Gaussian derivatives**, so both are evaluated
+    at the same half-step ``u + 1/2``. For a sinusoid of angular frequency
+    ``w`` displaced by ``r`` px per view this reads ``2 tan(w r / 2) / w``
+    instead of ``r`` — exact at ``r = 0`` and within ``r^3 w^2 / 12`` of it.
+    """
+    H, W = arr.shape[2:]
+    num = np.zeros((H, W), dtype=np.float64)
+    den = np.zeros((H, W), dtype=np.float64)
+    for use, ang_ax, sp_ax in ((use_h, 1, 3), (use_v, 0, 2)):
+        if not use:
+            continue
+        sm = _ndi.gaussian_filter1d(arr, EPI_INNER_SIGMA, axis=sp_ax, order=0,
+                                    mode="nearest")
+        d = _ndi.gaussian_filter1d(arr, EPI_INNER_SIGMA, axis=sp_ax, order=1,
+                                   mode="nearest")
+        lo = [slice(None)] * 4
+        hi = [slice(None)] * 4
+        lo[ang_ax] = slice(None, -1)
+        hi[ang_ax] = slice(1, None)
+        e_a = sm[tuple(hi)] - sm[tuple(lo)]
+        e_s = 0.5 * (d[tuple(hi)] + d[tuple(lo)])
+        num += (e_a * e_s).sum(axis=(0, 1))
+        den += (e_s * e_s).sum(axis=(0, 1))
+    num = _ndi.uniform_filter(num, win, mode="nearest")
+    den = _ndi.uniform_filter(den, win, mode="nearest")
+    return num, den
+
+
+def _epi_shear(arr, k):
+    """Undo an integer slope *k*: shift view ``(v, u)`` by ``-(k*v - mv, k*u - mu)``.
+
+    The shifts are integers and exactly linear in the view index (so a point at
+    slope ``k`` lands on one column in every view, also for an even angular
+    count whose centre is a half index). ``mv = round(k * v_c)``; the stack is
+    then aligned on centre-view position ``x - o`` with ``o = k*c - m`` in
+    ``{0, +-1/2}``, returned so the caller can move the result map back.
+    """
+    V, U = arr.shape[:2]
+    vc, uc = _angular_centers(V, U)
+    mv, mu = int(round(k * vc)), int(round(k * uc))
+    out = np.empty_like(arr)
+    for v in range(V):
+        for u in range(U):
+            out[v, u] = _shift2(arr[v, u], float(mv - k * v), float(mu - k * u),
+                                0, "nearest")
+    return out, (k * vc - mv, k * uc - mu)
+
+
 def lf_epi_slope(lf, *, window=9, min_energy=1e-10):
-    """Per-pixel slope from the **EPI line orientation** (structure tensor, one pass).
+    """Per-pixel slope from the **EPI line orientation** (structure tensor, refined by shearing).
 
     A scene point traces a straight line in the epipolar-plane image
     (:func:`lf_epi`), so along that line the intensity is constant:
     ``E_u + s * E_x = 0``. Accumulating that constraint over the whole angular
     grid and a ``window x window`` spatial neighbourhood gives the closed-form
     least-squares slope ``s = -(J_ux + J_vy) / (J_xx + J_yy)`` with
-    ``J_ab = sum(E_a * E_b)`` — one pass over the light field, no sweep, both
-    the horizontal and vertical EPI directions pooled.
+    ``J_ab = sum(E_a * E_b)`` — both the horizontal and vertical EPI directions
+    pooled.
 
-    **This estimator is biased, and the bias is the reason to also run**
-    :func:`lf_depth_from_focus`. It is ordinary (not total) least squares on
-    finite differences, so it needs the EPI line to advance less than roughly
-    one texture correlation length per view. Measured 2026-09-01 on
-    5x5x64x64 synthetic fields, median over the interior: with texture
-    ``sigma = 1.5`` px, true ``+1.00 -> +1.0004``, ``+0.50 -> +0.5285``,
-    ``+1.50 -> +1.3018``, ``+2.00 -> +1.4614``; with ``sigma = 5.0`` px the same
-    slopes give ``+1.0003``, ``+0.5029``, ``+1.4827``, ``+1.9482``. Integer
-    slopes on a wrapped field come back within 4e-4 and ``s = 0`` is exact;
-    ``|s| > 1`` is under-estimated, by 27% at ``s = 2`` on the roughest texture.
-    Use it as a fast dense initialiser, not as the final word.
+    **Why it is iterated (fixed 2026-11-03).** A finite difference across
+    views measures a displacement of ``s`` px per view, while a finite
+    difference across pixels measures one of 1 px; for a texture component of
+    angular frequency ``w`` the ratio is ``sin(w s) / sin(w)`` (the pre-fix
+    central differences), equal to ``s`` only at ``|s|`` in ``{0, 1}``. That
+    is the classic statement that the structure tensor is accurate only for
+    disparities in a small range around zero (Wanner & Goldluecke, CVPR 2012
+    and TPAMI 36(3) 2014, who handle larger ranges by **shearing** the light
+    field). So the estimator shears the field by an integer slope ``k``
+    (integer shifts: no resampling blur), measures the residual
+    ``r = s - k``, sets ``k <- round(k + r)`` per pixel and repeats until no
+    pixel changes (at most :data:`EPI_MAX_ROUNDS` rounds, at most
+    :data:`EPI_MAX_SHEARS` distinct shears). The residual is measured with a
+    matched discretisation (adjacent-view difference against the mean of the
+    two views' Gaussian derivatives, inner scale :data:`EPI_INNER_SIGMA`), whose
+    error is ``O(r^3 w^2)`` with ``|r| <= 1/2``.
 
-    Returns ``(slope_map, energy)``: the ``(H, W)`` slope map and the ``(H, W)``
-    gradient energy ``J_xx + J_yy`` that was the denominator. Pixels whose
-    energy is below *min_energy* have **no** measurable parallax (a flat patch
-    of sky); their slope is set to 0 and their energy reported as-is, so you
-    threshold on ``energy`` instead of being handed a plausible-looking number
-    divided by ~0.
+    Measured 2026-11-03, median over the interior of single-layer
+    ``lf_synthesize`` fields (64x64, ``edge="wrap"``), ``s`` in
+    ``[-3, 3]`` in steps of 0.25: error <= 0.006 px for 5x5 and 9x9 views,
+    <= 0.007 px for 4x4 (even count) and <= 0.012 px for 3x3 and for a single
+    row of 6 views, at texture sigma 1.0 / 1.5 / 2.0 / 5.0 px, for windows
+    5 / 9 / 15 (the
+    pre-fix estimator read -1.388 for -1.5 at sigma 2 and 1.46 for 2.0 at
+    sigma 1.5). Integer slopes are exact to 1e-9 on a wrapped field.
+    **Valid range:** the shear ladder starts at ``k = 0``, so the first pass
+    must see the right sign and a non-vanishing magnitude: that holds for
+    ``|s| <= 3`` at any texture correlation length >= 1 px, and (measured) up
+    to ``|s| = 8`` at sigma >= 2; at sigma 1 it **fails beyond |s| = 5**
+    (``s = 6`` read as 0.25 — the texture is aliased: it moves more than its
+    correlation length several times per view). Near an occlusion boundary the
+    window mixes two slopes (no estimator of a single orientation per window
+    can avoid that). With ``edge="nearest"`` input the outer ``|k|*(N-1)/2``
+    px of the frame see clamped border pixels.
+
+    Returns ``(slope_map, energy)``: the ``(H, W)`` slope map (centre-view
+    coordinates) and the ``(H, W)`` gradient energy ``J_xx + J_yy`` of the
+    unsheared field (the first pass's denominator). Pixels whose energy is
+    below *min_energy* have **no** measurable parallax (a flat patch of sky);
+    their slope is set to 0 and their energy reported as-is, so you threshold
+    on ``energy`` instead of being handed a plausible-looking number divided by
+    ~0.
 
     **Raises** ``ValueError``: *lf* not a valid light field, an angular/spatial
     shape where *neither* EPI direction carries information (the horizontal EPI
@@ -1162,25 +1256,42 @@ def lf_epi_slope(lf, *, window=9, min_energy=1e-10):
                          "no parallax to measure." % (op, U, W, V, H))
     win = _odd_window(window, "window", op)
     eps = _positive(min_energy, op + ": min_energy")
-    num = np.zeros(arr.shape[2:], dtype=np.float64)
-    den = np.zeros(arr.shape[2:], dtype=np.float64)
-    if use_h:
-        e_u = np.gradient(arr, axis=1)
-        e_x = np.gradient(arr, axis=3)
-        num += (e_u * e_x).sum(axis=(0, 1))
-        den += (e_x * e_x).sum(axis=(0, 1))
-    if use_v:
-        e_v = np.gradient(arr, axis=0)
-        e_y = np.gradient(arr, axis=2)
-        num += (e_v * e_y).sum(axis=(0, 1))
-        den += (e_y * e_y).sum(axis=(0, 1))
-    num = _ndi.uniform_filter(num, win, mode="nearest")
-    den = _ndi.uniform_filter(den, win, mode="nearest")
-    slope = np.zeros_like(den)
-    ok = den > eps
-    np.divide(-num, den, out=slope, where=ok)
+
+    num0, energy = _epi_tensor(arr, use_h, use_v, win)
+    ok = energy > eps
+    residuals = {}
+
+    def residual(k):
+        # residual slope map r_k (centre-view coordinates) for integer shear k
+        if k not in residuals:
+            if k == 0:
+                num, den = num0, energy
+            else:
+                sheared, (ov, ou) = _epi_shear(arr, k)
+                num, den = _epi_tensor(sheared, use_h, use_v, win)
+            r = np.zeros_like(den)
+            np.divide(-num, den, out=r, where=den > eps)
+            if k != 0 and (ov != 0.0 or ou != 0.0):
+                # the sheared stack sits at x - o; move the map back by +o
+                r = _ndi.shift(r, (ov if use_v else 0.0, ou if use_h else 0.0),
+                               order=1, mode="nearest")
+            residuals[k] = r
+        return residuals[k]
+
+    k = np.zeros((H, W), dtype=np.int64)
+    slope = np.zeros((H, W), dtype=np.float64)
+    for _ in range(EPI_MAX_ROUNDS):
+        for kk in np.unique(k[ok]):
+            m = ok & (k == kk)
+            slope[m] = kk + residual(int(kk))[m]
+        k_new = np.where(ok, np.round(slope), 0).astype(np.int64)
+        if np.array_equal(k_new, k):
+            break
+        if len(set(np.unique(k_new[ok]).tolist()) | set(residuals)) > EPI_MAX_SHEARS:
+            break                       # budget: keep the last consistent estimate
+        k = k_new
     slope[~ok] = 0.0
-    return slope, den
+    return slope, energy
 
 
 def lf_disparity_to_depth(slope, focal_px=1000.0, baseline=1.0, *,

@@ -338,15 +338,19 @@ def test_epi_slope_recovers_an_integer_slope_and_its_sign(slope):
     assert (energy >= 0.0).all()
 
 
-def test_epi_slope_bias_at_large_slope_is_the_documented_one():
-    """Pinning the honest disclosure: this estimator under-reads past |s| = 1."""
+def test_epi_slope_bias_at_large_slope_is_gone():
+    """2026-11-03: this used to pin the documented 27% under-read at s = 2
+    (1.4614 rough / 1.9482 smooth). That was the estimator's own bug — the
+    angular central difference spans 2s px against 2 px spatially, so it read
+    sin(w s)/sin(w) — not a property of the scene; the fix shears the field
+    by an integer slope first (Wanner & Goldluecke 2014). Both textures now
+    read the truth; tests/test_lf_epi_slope_2026_11_03.py has the full gate."""
     rough, _ = _single_layer(2.0, sigma=1.5)
     smooth, _ = _single_layer(2.0, sigma=5.0)
     r = float(np.median(_interior(LF.lf_epi_slope(rough)[0])))
     s = float(np.median(_interior(LF.lf_epi_slope(smooth)[0])))
-    assert r == pytest.approx(1.4614, abs=5e-3)      # 27% low, as documented
-    assert s == pytest.approx(1.9482, abs=5e-3)
-    assert r < s < 2.0                               # smoother texture, less bias
+    assert r == pytest.approx(2.0, abs=5e-3)
+    assert s == pytest.approx(2.0, abs=5e-3)
 
 
 def test_epi_slope_is_zero_where_there_is_no_texture():

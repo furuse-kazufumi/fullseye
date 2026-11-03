@@ -7,6 +7,25 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### 修正(値が変わる) — lf_epi_slope の |s|≠0,1 での偏り(EPI 構造テンソルを整数シア反復へ)
+
+- `lf_epi_slope` は視点方向の中心差分(2s px を跨ぐ)と画素方向の中心差分(2 px)の比を取っていたため、
+  テクスチャの角周波数 w に対し s ではなく sin(ws)/sin(w) を返し、|s| = 0, 1 でしか一致しなかった
+  (|s| < 1 で過大・|s| > 1 で過小)。Wanner & Goldluecke(CVPR 2012 / TPAMI 2014)と同じく光場を
+  整数スロープでシアして |r| <= 1/2 の残差だけを測る反復に直し、残差は隣接視点差分と 2 視点の
+  ガウス微分平均(内側スケール 1 px)で測る。署名は変えていない。
+- 前 → 後(5x5x64x64、中央値): 真値 -1.5 → -1.388 → -1.4975(既定 lf_synthesize)、
+  sigma 1.5 で +0.5 → +0.5285 → +0.4961、+1.5 → +1.3018 → +1.4962、+2.0 → +1.4614 → +2.0000、
+  sigma 5 で +2.0 → +1.9482 → +2.0000。|s| <= 3 で誤差 <= 0.006 px/view(5x5 / 9x9)、<= 0.012(3x3)。
+- 有効範囲: シアの梯子は k = 0 から始まるため、テクスチャ相関長 1 px では |s| > 5 で見失う(2 px なら 8 まで)。
+- 返り値 energy は Gaussian 微分による未シア場の J_xx + J_yy に変わった(np.gradient 版と値が違う)。
+- 9x9x96x96 で約 100 ms(1 パス → シア数回分)。
+- 偏りを固定していた `tests/test_lightfield.py::test_epi_slope_bias_at_large_slope_is_the_documented_one` は
+  `..._is_gone`(2.0 ± 5e-3)に、`examples/lightfield_depth.py` / `poc_lightfield_depth.py` の門も直した
+  (9x9 で EPI の RMSE 0.0147 が 2 視点ブロック照合 0.0252 より小さい、という向きに変わる)。
+- 見つけたのはレシピの e2e(`fullseye/recipebook`、lf_synthesize → lf_epi_slope → lf_disparity_to_depth が
+  深度の真値 1 % を外していた)。いまはこの鎖が真値の門を通る。
+
 ### 追加 — 光弾性の族(応力場 → 縞 → 偏光像 → 位相差と主軸)
 
 - 新モジュール `photoelastic`(opsoptics のカテゴリ `photoelastic`、12 op)。単位は SI、位相差は rad・nm・縞次数を並べて返し、mm を m に・nm を m に・表の ×10⁻⁷ MPa⁻¹ を Pa⁻¹ に渡す取り違えは ValueError で拒否する。

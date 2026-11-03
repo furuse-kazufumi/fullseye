@@ -695,6 +695,18 @@ RECIPES = [
      "note": "light-field / camera-array depth: synthetic 5x5-view light field of a textured plane, refocus over "
              "disparities -2..2 px/view and keep the sharpest per pixel (sub-step), then depth = f b / |s| "
              "(focal 1000 px, baseline 1 unit): 1000 or 667 units"},
+    {"name": "3D — metric depth from a light field (EPI structure-tensor slope, camera-array model)",
+     "family": "lightfield", "task": "3d", "task_class": "3d", "halcon": "3D Reconstruction", "input_sort": None,
+     "sample": "op_lf_plane",
+     "stages": [{"op": "lf_synthesize", "kw": {"slopes": "$aux.slopes", "shape": [48, 48], "seed": 3}},
+                {"op": "lf_epi_slope", "kw": {"window": 9}},
+                {"op": "lf_disparity_to_depth", "kw": {"focal_px": 1000.0, "baseline": 1.0}}],
+     "expect": [{"get": ["@median"], "approx": "depth", "rtol": 0.01},
+                {"get": ["$s2", "@median"], "approx": "slope", "atol": 0.01}],
+     "note": "light-field depth without a sweep: per-pixel EPI line orientation by the structure tensor, "
+             "refined by shearing the 5x5 views with integer slopes until only a |r| <= 1/2 residual is measured "
+             "(unbiased to 0.01 px/view for |s| <= 3), then depth = f b / |s| (focal 1000 px, baseline 1 unit): "
+             "1000 or 667 units"},
     # ------------------------------------------------------------------ piv
     {"name": "Measure — flow velocity from a PIV image pair (multipass cross-correlation)", "family": "piv",
      "task": "measure", "task_class": "measurement", "halcon": None, "input_sort": "image", "sample": "op_piv_pair",
@@ -877,9 +889,6 @@ FAILED_ATTEMPTS = [
     {"family": "piv", "recipe": "piv_synth_pair -> piv_cross_correlate", "op": "piv_synth_pair",
      "error": "fs.ledger.piv_synth_pair returns only frame a (64, 64); frame b and the truth are dropped, so "
               "piv_cross_correlate(a, b) has no b in the chain", "cause": "type_gap"},
-    {"family": "lightfield", "recipe": "lf_synthesize -> lf_epi_slope -> lf_disparity_to_depth", "op": "lf_epi_slope",
-     "error": "runs, but the structure-tensor EPI slope reads -1.38 for a true -1.5 px/view (8 % bias; 0.995 for "
-              "1.0), so the depth gate fails at 2 %; lf_depth_from_focus is used instead", "cause": "op_bug"},
     {"family": "optics", "recipe": "thick_lens -> paraxial_trace", "op": "thick_lens",
      "error": "paraxial_trace: expected the dict returned by lens_system(); thick_lens returns its own EFL table",
      "cause": "type_gap"},
@@ -888,3 +897,11 @@ FAILED_ATTEMPTS = [
      "error": "ValueError movie has a negative entry; the default model needs one ON/OFF half (onoff[:, :n]) which "
               "a chain cannot slice — used model='hr' instead", "cause": "type_gap"},
 ]
+
+
+NOTES_JA = {
+    "3D — metric depth from a light field (EPI structure-tensor slope, camera-array model)":
+        "ライトフィールドの EPI 傾きから距離を測る — 5x5 視点の光場で、エピポーラ平面画像の直線の傾きを"
+        "構造テンソルで画素ごとに求める(焦点掃引なし)。整数スロープで視点をずらしてから残差だけを測る"
+        "反復で |s| <= 3 まで 0.01 px/view 以内に偏りなく、Z = f b / |s| で 1000 / 667 単位の深度になる",
+}
