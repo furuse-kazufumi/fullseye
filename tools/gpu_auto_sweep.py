@@ -998,7 +998,7 @@ class GpuLock:
         sys.stderr.flush()
         if os.name == "nt":
             subprocess.run(["taskkill", "/PID", str(os.getpid()), "/T", "/F"],
-                           capture_output=True)
+                           capture_output=True, creationflags=0x08000000)  # 窓を作らない
         os._exit(75)
 
     def acquire(self, max_wait: float) -> bool:
