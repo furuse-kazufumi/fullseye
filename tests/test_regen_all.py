@@ -90,7 +90,8 @@ def test_classified_entries_still_exist():
 
 #: 2026-10-15 に直す前の並び(回帰の探針)。
 _OLD_ORDER = [
-    "gen_auto_specs_data.py", "tools/opdocs.py", "tools/gen_op_catalog.py",
+    # 2026-11-03 に足した段(tools/impl_differential.py)は旧順序の探針の外 —— 先頭に置いて逆順を作らない
+    "gen_auto_specs_data.py", "tools/impl_differential.py", "tools/opdocs.py", "tools/gen_op_catalog.py",
     "tools/gen_capabilities_index.py", "tools/gen_hardening_index.py", "tools/audit_fallbacks.py",
     "tools/gen_maturity.py",
     "tools/gen_exhibit_numbers.py", "tools/gen_exhibit_glossary.py",

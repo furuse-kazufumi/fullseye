@@ -7,6 +7,26 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### 追加 — 同じ処理の別実装を互いに突き合わせる門(differential testing、`docs/IMPL_DIFFERENTIAL.md`)
+
+- 語幹が同じで接頭辞(`cv_` `sk_` `xkor_` `xsk*_` `hx_` `xg_` `tb_` …、実装・由来を表す 32 種)だけ違う op を
+  数えると 190 組(`tb_X` と台帳の `X` だけの組 154、実装どうしの組 36 = 55 対)。実装どうしの 55 対を、同じ入力
+  (構造画像・線分の断片・雑音入り・乱数、region・contour)・同じつまみ (a, b) で走らせて内部差を比べた
+  (`tools/impl_differential.py`)。結果: 一致 8 / 近い 3 / 違う 34 / 比較不能(入出力の型が違う)10。
+  違う組は全部、原因を中身で特定して表に書いた(つまみの写し方・窓の形・端・8 bit 量子化・定義の違い・名前だけ同じ
+  別の処理)。「差はつまみの写し方だけ」の見立ては、つまみを揃えた 10 点で確かめた(例: `cv_median` と `median` は
+  窓を揃えると差が 8 bit の 1/255 だけ、`dog` と `xkor_dog` は σ を揃えると定数倍を除いて 4e-6)。
+- 命名整理 第 2 段(1 つの名前 + `impl` 引数)でまとめてよい組は 8(そのまま 4: gaussian・meijering・skeleton・
+  smallest_rectangle1、一部 2: bilateral・median、つまみを揃えれば 2: unsharp・dog)。差がきっかり 0 の 3 組は内訳を
+  書いた(meijering と skeleton は同じ skimage 関数を呼んでいるだけ = 独立でない)。
+- `tb_` の 154 組は、つまみ k = 0 / 3/7 / 1 が台帳の関数の既定の 1/4・1・2 倍に写るかを標本で確かめた(一致 129、
+  入出力の加工つきで標本外 25)。`tb_lowpass` / `tb_highpass` / `tb_local_std` / `tb_companding_mu_law` は
+  同名のレジストリ op が別の関数(段 1 の C2)。
+- 門 `tests/test_impl_differential.py`: 一致した組は**実装どうしをその場で走らせて**一致し続けること、違う組には
+  理由があること(理由の無い食い違い・古い理由・内訳の無い差 0 は赤)、揃えた点が期待の量に収まること。
+  表は `regen_all` の段(実測は optional 依存の版で揺れるので `--measure` で手回し)。op ノートには
+  「同じ処理の別実装(実測)」の行が出る(`tools/opdocs.py`、6 言語の対訳つき)。
+
 ### 修正(値が変わる) — `xkor_gaussian` / `xkor_unsharp` の窓が 5x5 固定で σ を打ち切っていた
 
 - 実装どうしの突き合わせ(新しい門 `tools/impl_differential.py`、下の「追加」)で、kornia 版の `xkor_gaussian` が

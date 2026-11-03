@@ -1,0 +1,4462 @@
+{
+ "aligned": [
+  {
+   "a": "cv_median",
+   "b": "median",
+   "expect": [
+    "max_abs",
+    0.003921569627450981
+   ],
+   "knobs_a": [
+    0.0,
+    0.5
+   ],
+   "knobs_b": [
+    0.0,
+    0.5
+   ],
+   "ok": true,
+   "value": 0.00392
+  },
+  {
+   "a": "cv_median",
+   "b": "median",
+   "expect": [
+    "max_abs",
+    0.003921569627450981
+   ],
+   "knobs_a": [
+    0.4,
+    0.5
+   ],
+   "knobs_b": [
+    0.4,
+    0.5
+   ],
+   "ok": true,
+   "value": 0.00392
+  },
+  {
+   "a": "cv_median",
+   "b": "median",
+   "expect": [
+    "max_abs",
+    0.003921569627450981
+   ],
+   "knobs_a": [
+    0.7,
+    0.5
+   ],
+   "knobs_b": [
+    0.5,
+    0.5
+   ],
+   "ok": true,
+   "value": 0.00392
+  },
+  {
+   "a": "cv_median",
+   "b": "xkor_median",
+   "expect": [
+    "max_abs",
+    0.0039225686274509805
+   ],
+   "knobs_a": [
+    0.7,
+    0.5
+   ],
+   "knobs_b": [
+    0.5,
+    0.5
+   ],
+   "ok": true,
+   "value": 0.00392
+  },
+  {
+   "a": "dog",
+   "b": "sk_dog",
+   "expect": [
+    "affine",
+    1e-09
+   ],
+   "knobs_a": [
+    0.25,
+    0.25
+   ],
+   "knobs_b": [
+    0.333333,
+    0.5
+   ],
+   "ok": true,
+   "value": 5.55e-16
+  },
+  {
+   "a": "dog",
+   "b": "xkor_dog",
+   "expect": [
+    "affine",
+    5e-05
+   ],
+   "knobs_a": [
+    0.25,
+    0.15
+   ],
+   "knobs_b": [
+    0.5,
+    0.5
+   ],
+   "ok": true,
+   "value": 4.42e-06
+  },
+  {
+   "a": "sk_dog",
+   "b": "xkor_dog",
+   "expect": [
+    "affine",
+    5e-05
+   ],
+   "knobs_a": [
+    0.2,
+    0.5
+   ],
+   "knobs_b": [
+    0.5,
+    0.5
+   ],
+   "ok": true,
+   "value": 4.42e-06
+  },
+  {
+   "a": "unsharp",
+   "b": "xkor_unsharp",
+   "expect": [
+    "score",
+    1e-05
+   ],
+   "knobs_a": [
+    0.666667,
+    0.0
+   ],
+   "knobs_b": [
+    0.5,
+    0.0
+   ],
+   "ok": true,
+   "value": 2.93e-07
+  },
+  {
+   "a": "unsharp",
+   "b": "xkor_unsharp",
+   "expect": [
+    "score",
+    1e-05
+   ],
+   "knobs_a": [
+    0.666667,
+    0.5
+   ],
+   "knobs_b": [
+    0.5,
+    0.375
+   ],
+   "ok": true,
+   "value": 2.5e-07
+  },
+  {
+   "a": "unsharp",
+   "b": "xkor_unsharp",
+   "expect": [
+    "score",
+    1e-05
+   ],
+   "knobs_a": [
+    0.666667,
+    1.0
+   ],
+   "knobs_b": [
+    0.5,
+    0.75
+   ],
+   "ok": true,
+   "value": 3.42e-07
+  }
+ ],
+ "border": 8,
+ "bridge_groups": {
+  "abs_funct_1d": [
+   "abs_funct_1d",
+   "tb_abs_funct_1d"
+  ],
+  "alpha_shape_boundary": [
+   "alpha_shape_boundary",
+   "tb_alpha_shape_boundary"
+  ],
+  "angular_spectrum_propagate": [
+   "angular_spectrum_propagate",
+   "tb_angular_spectrum_propagate"
+  ],
+  "apply_weighting": [
+   "apply_weighting",
+   "tb_apply_weighting"
+  ],
+  "arc_length": [
+   "arc_length",
+   "tb_arc_length"
+  ],
+  "background_subtraction_window": [
+   "background_subtraction_window",
+   "tb_background_subtraction_window"
+  ],
+  "bandpass": [
+   "bandpass",
+   "tb_bandpass"
+  ],
+  "beamform_delay_sum": [
+   "beamform_delay_sum",
+   "tb_beamform_delay_sum"
+  ],
+  "box_sdf": [
+   "box_sdf",
+   "tb_box_sdf"
+  ],
+  "capsule_sdf": [
+   "capsule_sdf",
+   "tb_capsule_sdf"
+  ],
+  "companding_mu_law": [
+   "companding_mu_law",
+   "tb_companding_mu_law"
+  ],
+  "countrate_to_counts": [
+   "countrate_to_counts",
+   "tb_countrate_to_counts"
+  ],
+  "counts_to_countrate": [
+   "counts_to_countrate",
+   "tb_counts_to_countrate"
+  ],
+  "cplx_cr_residual": [
+   "cplx_cr_residual",
+   "tb_cplx_cr_residual"
+  ],
+  "create_funct_1d_array": [
+   "create_funct_1d_array",
+   "tb_create_funct_1d_array"
+  ],
+  "cutout": [
+   "cutout",
+   "tb_cutout"
+  ],
+  "cylinder_sdf": [
+   "cylinder_sdf",
+   "tb_cylinder_sdf"
+  ],
+  "deflicker": [
+   "deflicker",
+   "tb_deflicker"
+  ],
+  "dem_ecef_to_geodetic": [
+   "dem_ecef_to_geodetic",
+   "tb_dem_ecef_to_geodetic"
+  ],
+  "derivate_funct_1d": [
+   "derivate_funct_1d",
+   "tb_derivate_funct_1d"
+  ],
+  "drag_coefficient_sphere": [
+   "drag_coefficient_sphere",
+   "tb_drag_coefficient_sphere"
+  ],
+  "dtof_depth": [
+   "dtof_depth",
+   "tb_dtof_depth"
+  ],
+  "dynsys_correlation_dimension": [
+   "dynsys_correlation_dimension",
+   "tb_dynsys_correlation_dimension"
+  ],
+  "elastic_deform": [
+   "elastic_deform",
+   "tb_elastic_deform"
+  ],
+  "env_lightbox": [
+   "env_lightbox",
+   "tb_env_lightbox"
+  ],
+  "env_studio": [
+   "env_studio",
+   "tb_env_studio"
+  ],
+  "envelope": [
+   "envelope",
+   "tb_envelope"
+  ],
+  "equivalent_level": [
+   "equivalent_level",
+   "tb_equivalent_level"
+  ],
+  "estimate_alpha": [
+   "estimate_alpha",
+   "tb_estimate_alpha"
+  ],
+  "estimate_normals": [
+   "estimate_normals",
+   "tb_estimate_normals"
+  ],
+  "estimate_oriented_normals": [
+   "estimate_oriented_normals",
+   "tb_estimate_oriented_normals"
+  ],
+  "estimate_point_normals": [
+   "estimate_point_normals",
+   "tb_estimate_point_normals"
+  ],
+  "euclidean_cluster": [
+   "euclidean_cluster",
+   "tb_euclidean_cluster"
+  ],
+  "exponential_background": [
+   "exponential_background",
+   "tb_exponential_background"
+  ],
+  "exponential_foreground": [
+   "exponential_foreground",
+   "tb_exponential_foreground"
+  ],
+  "farthest_point_sampling": [
+   "farthest_point_sampling",
+   "tb_farthest_point_sampling"
+  ],
+  "find_peaks": [
+   "find_peaks",
+   "tb_find_peaks"
+  ],
+  "fit_spline_curve": [
+   "fit_spline_curve",
+   "tb_fit_spline_curve"
+  ],
+  "fly_lgmd_eta": [
+   "fly_lgmd_eta",
+   "tb_fly_lgmd_eta"
+  ],
+  "fly_tau_from_expansion": [
+   "fly_tau_from_expansion",
+   "tb_fly_tau_from_expansion"
+  ],
+  "fmcw_range_profile": [
+   "fmcw_range_profile",
+   "tb_fmcw_range_profile"
+  ],
+  "fmcw_window_apply": [
+   "fmcw_window_apply",
+   "tb_fmcw_window_apply"
+  ],
+  "frame_difference_causal": [
+   "frame_difference_causal",
+   "tb_frame_difference_causal"
+  ],
+  "gaussian_curvature": [
+   "gaussian_curvature",
+   "tb_gaussian_curvature"
+  ],
+  "geodesic_distances": [
+   "geodesic_distances",
+   "tb_geodesic_distances"
+  ],
+  "get_y_value_funct_1d": [
+   "get_y_value_funct_1d",
+   "tb_get_y_value_funct_1d"
+  ],
+  "highpass": [
+   "highpass",
+   "tb_highpass"
+  ],
+  "inertia_tensor": [
+   "inertia_tensor",
+   "tb_inertia_tensor"
+  ],
+  "inside_outside": [
+   "inside_outside",
+   "tb_inside_outside"
+  ],
+  "integrate_funct_1d": [
+   "integrate_funct_1d",
+   "tb_integrate_funct_1d"
+  ],
+  "intrinsics_to_carla": [
+   "intrinsics_to_carla",
+   "tb_intrinsics_to_carla"
+  ],
+  "intrinsics_to_fullseye": [
+   "intrinsics_to_fullseye",
+   "tb_intrinsics_to_fullseye"
+  ],
+  "iqft2": [
+   "iqft2",
+   "tb_iqft2"
+  ],
+  "iss_keypoints": [
+   "iss_keypoints",
+   "tb_iss_keypoints"
+  ],
+  "jitter": [
+   "jitter",
+   "tb_jitter"
+  ],
+  "keypoints_to_image2d": [
+   "keypoints_to_image2d",
+   "tb_keypoints_to_image2d"
+  ],
+  "keypoints_uv_to_points": [
+   "keypoints_uv_to_points",
+   "tb_keypoints_uv_to_points"
+  ],
+  "landmark_asymmetry": [
+   "landmark_asymmetry",
+   "tb_landmark_asymmetry"
+  ],
+  "lf_center_view": [
+   "lf_center_view",
+   "tb_lf_center_view"
+  ],
+  "lf_depth_from_focus": [
+   "lf_depth_from_focus",
+   "tb_lf_depth_from_focus"
+  ],
+  "lf_epi": [
+   "lf_epi",
+   "tb_lf_epi"
+  ],
+  "lf_epi_slope": [
+   "lf_epi_slope",
+   "tb_lf_epi_slope"
+  ],
+  "lf_refocus": [
+   "lf_refocus",
+   "tb_lf_refocus"
+  ],
+  "lf_subaperture": [
+   "lf_subaperture",
+   "tb_lf_subaperture"
+  ],
+  "lf_synthetic_aperture": [
+   "lf_synthetic_aperture",
+   "tb_lf_synthetic_aperture"
+  ],
+  "lf_to_mla": [
+   "lf_to_mla",
+   "tb_lf_to_mla"
+  ],
+  "local_std": [
+   "local_std",
+   "tb_local_std"
+  ],
+  "lowpass": [
+   "lowpass",
+   "tb_lowpass"
+  ],
+  "magnus_lift_coefficient": [
+   "magnus_lift_coefficient",
+   "tb_magnus_lift_coefficient"
+  ],
+  "mat_cond": [
+   "mat_cond",
+   "tb_mat_cond"
+  ],
+  "mat_pinv": [
+   "mat_pinv",
+   "tb_mat_pinv"
+  ],
+  "mean_curvature": [
+   "mean_curvature",
+   "tb_mean_curvature"
+  ],
+  "mirror_plane_from_pairs": [
+   "mirror_plane_from_pairs",
+   "tb_mirror_plane_from_pairs"
+  ],
+  "mls_smooth": [
+   "mls_smooth",
+   "tb_mls_smooth"
+  ],
+  "monogenic_amplitude": [
+   "monogenic_amplitude",
+   "tb_monogenic_amplitude"
+  ],
+  "monogenic_orientation": [
+   "monogenic_orientation",
+   "tb_monogenic_orientation"
+  ],
+  "monogenic_phase": [
+   "monogenic_phase",
+   "tb_monogenic_phase"
+  ],
+  "motion_energy_image": [
+   "motion_energy_image",
+   "tb_motion_energy_image"
+  ],
+  "motion_history_image": [
+   "motion_history_image",
+   "tb_motion_history_image"
+  ],
+  "moving_average_window": [
+   "moving_average_window",
+   "tb_moving_average_window"
+  ],
+  "negate_funct_1d": [
+   "negate_funct_1d",
+   "tb_negate_funct_1d"
+  ],
+  "normals_to_egi": [
+   "normals_to_egi",
+   "tb_normals_to_egi"
+  ],
+  "num_points_funct_1d": [
+   "num_points_funct_1d",
+   "tb_num_points_funct_1d"
+  ],
+  "occupancy_grid": [
+   "occupancy_grid",
+   "tb_occupancy_grid"
+  ],
+  "optical_flow_magnitude_stream": [
+   "optical_flow_magnitude_stream",
+   "tb_optical_flow_magnitude_stream"
+  ],
+  "pc_density_equalize": [
+   "pc_density_equalize",
+   "tb_pc_density_equalize"
+  ],
+  "pc_fill_sparse": [
+   "pc_fill_sparse",
+   "tb_pc_fill_sparse"
+  ],
+  "pc_poisson_disk": [
+   "pc_poisson_disk",
+   "tb_pc_poisson_disk"
+  ],
+  "plane_sdf": [
+   "plane_sdf",
+   "tb_plane_sdf"
+  ],
+  "plane_segmentation": [
+   "plane_segmentation",
+   "tb_plane_segmentation"
+  ],
+  "points_render": [
+   "points_render",
+   "tb_points_render"
+  ],
+  "points_to_voxel": [
+   "points_to_voxel",
+   "tb_points_to_voxel"
+  ],
+  "points_zyx_to_keypoints_uv": [
+   "points_zyx_to_keypoints_uv",
+   "tb_points_zyx_to_keypoints_uv"
+  ],
+  "project": [
+   "project",
+   "tb_project"
+  ],
+  "project_cylindrical": [
+   "project_cylindrical",
+   "tb_project_cylindrical"
+  ],
+  "project_points": [
+   "project_points",
+   "tb_project_points"
+  ],
+  "project_spherical": [
+   "project_spherical",
+   "tb_project_spherical"
+  ],
+  "qft2": [
+   "qft2",
+   "tb_qft2"
+  ],
+  "quantize": [
+   "quantize",
+   "tb_quantize"
+  ],
+  "quat_color_filter": [
+   "quat_color_filter",
+   "tb_quat_color_filter"
+  ],
+  "quat_color_rotate": [
+   "quat_color_rotate",
+   "tb_quat_color_rotate"
+  ],
+  "quat_conjugate_image": [
+   "quat_conjugate_image",
+   "tb_quat_conjugate_image"
+  ],
+  "quat_norm": [
+   "quat_norm",
+   "tb_quat_norm"
+  ],
+  "quat_normalize_image": [
+   "quat_normalize_image",
+   "tb_quat_normalize_image"
+  ],
+  "quaternion_to_rgb": [
+   "quaternion_to_rgb",
+   "tb_quaternion_to_rgb"
+  ],
+  "radius_outlier_removal": [
+   "radius_outlier_removal",
+   "tb_radius_outlier_removal"
+  ],
+  "random_dropout": [
+   "random_dropout",
+   "tb_random_dropout"
+  ],
+  "random_rotation": [
+   "random_rotation",
+   "tb_random_rotation"
+  ],
+  "random_scale": [
+   "random_scale",
+   "tb_random_scale"
+  ],
+  "range_doppler_map": [
+   "range_doppler_map",
+   "tb_range_doppler_map"
+  ],
+  "reflect_points": [
+   "reflect_points",
+   "tb_reflect_points"
+  ],
+  "reflection_symmetry_score": [
+   "reflection_symmetry_score",
+   "tb_reflection_symmetry_score"
+  ],
+  "region_growing": [
+   "region_growing",
+   "tb_region_growing"
+  ],
+  "render_point_depth": [
+   "render_point_depth",
+   "tb_render_point_depth"
+  ],
+  "resample": [
+   "resample",
+   "tb_resample"
+  ],
+  "resample_uniform": [
+   "resample_uniform",
+   "tb_resample_uniform"
+  ],
+  "rgb_to_quaternion": [
+   "rgb_to_quaternion",
+   "tb_rgb_to_quaternion"
+  ],
+  "rms": [
+   "rms",
+   "tb_rms"
+  ],
+  "running_gaussian_background": [
+   "running_gaussian_background",
+   "tb_running_gaussian_background"
+  ],
+  "running_gaussian_foreground": [
+   "running_gaussian_foreground",
+   "tb_running_gaussian_foreground"
+  ],
+  "sample_funct_1d": [
+   "sample_funct_1d",
+   "tb_sample_funct_1d"
+  ],
+  "scale_y_funct_1d": [
+   "scale_y_funct_1d",
+   "tb_scale_y_funct_1d"
+  ],
+  "sensor_capture": [
+   "sensor_capture",
+   "tb_sensor_capture"
+  ],
+  "shape_perturb": [
+   "shape_perturb",
+   "tb_shape_perturb"
+  ],
+  "smooth_funct_1d_gauss": [
+   "smooth_funct_1d_gauss",
+   "tb_smooth_funct_1d_gauss"
+  ],
+  "smooth_funct_1d_mean": [
+   "smooth_funct_1d_mean",
+   "tb_smooth_funct_1d_mean"
+  ],
+  "spad_deadtime_apply": [
+   "spad_deadtime_apply",
+   "tb_spad_deadtime_apply"
+  ],
+  "spad_deadtime_correct": [
+   "spad_deadtime_correct",
+   "tb_spad_deadtime_correct"
+  ],
+  "spectrogram": [
+   "spectrogram",
+   "tb_spectrogram"
+  ],
+  "specular_coefficient_map": [
+   "specular_coefficient_map",
+   "tb_specular_coefficient_map"
+  ],
+  "specular_diffuse_split": [
+   "specular_diffuse_split",
+   "tb_specular_diffuse_split"
+  ],
+  "specular_free_transform": [
+   "specular_free_transform",
+   "tb_specular_free_transform"
+  ],
+  "sphere_sdf": [
+   "sphere_sdf",
+   "tb_sphere_sdf"
+  ],
+  "stat_correlation": [
+   "stat_correlation",
+   "tb_stat_correlation"
+  ],
+  "stat_covariance": [
+   "stat_covariance",
+   "tb_stat_covariance"
+  ],
+  "stat_zscore": [
+   "stat_zscore",
+   "tb_stat_zscore"
+  ],
+  "statistical_outlier_removal": [
+   "statistical_outlier_removal",
+   "tb_statistical_outlier_removal"
+  ],
+  "superquadric_residual": [
+   "superquadric_residual",
+   "tb_superquadric_residual"
+  ],
+  "synthesize_silhouette": [
+   "synthesize_silhouette",
+   "tb_synthesize_silhouette"
+  ],
+  "tcspc_background_subtract": [
+   "tb_tcspc_background_subtract",
+   "tcspc_background_subtract"
+  ],
+  "tcspc_coates_correct": [
+   "tb_tcspc_coates_correct",
+   "tcspc_coates_correct"
+  ],
+  "tcspc_irf_convolve": [
+   "tb_tcspc_irf_convolve",
+   "tcspc_irf_convolve"
+  ],
+  "temporal_band_power": [
+   "tb_temporal_band_power",
+   "temporal_band_power"
+  ],
+  "temporal_bandpass": [
+   "tb_temporal_bandpass",
+   "temporal_bandpass"
+  ],
+  "temporal_bilateral": [
+   "tb_temporal_bilateral",
+   "temporal_bilateral"
+  ],
+  "temporal_median_window": [
+   "tb_temporal_median_window",
+   "temporal_median_window"
+  ],
+  "three_frame_difference": [
+   "tb_three_frame_difference",
+   "three_frame_difference"
+  ],
+  "torus_sdf": [
+   "tb_torus_sdf",
+   "torus_sdf"
+  ],
+  "viewport_from_equirect": [
+   "tb_viewport_from_equirect",
+   "viewport_from_equirect"
+  ],
+  "voxel_grid_downsample": [
+   "tb_voxel_grid_downsample",
+   "voxel_grid_downsample"
+  ],
+  "weighting_response": [
+   "tb_weighting_response",
+   "weighting_response"
+  ],
+  "wetness": [
+   "tb_wetness",
+   "wetness"
+  ],
+  "zero_crossing_rate": [
+   "tb_zero_crossing_rate",
+   "zero_crossing_rate"
+  ],
+  "zero_crossings_funct_1d": [
+   "tb_zero_crossings_funct_1d",
+   "zero_crossings_funct_1d"
+  ]
+ },
+ "bridges": [
+  {
+   "op": "tb_abs_funct_1d",
+   "result": "一致",
+   "tunable": [],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_alpha_shape_boundary",
+   "result": "一致",
+   "tunable": [],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_angular_spectrum_propagate",
+   "result": "一致",
+   "tunable": [
+    "wavelength_um",
+    "distance_um"
+   ],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_apply_weighting",
+   "result": "一致",
+   "tunable": [],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_arc_length",
+   "result": "標本外",
+   "tunable": [],
+   "why": "入出力の加工つき(adapter / call-time 束縛)"
+  },
+  {
+   "op": "tb_background_subtraction_window",
+   "result": "一致",
+   "tunable": [
+    "window",
+    "threshold"
+   ],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_bandpass",
+   "result": "一致",
+   "tunable": [
+    "order"
+   ],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_beamform_delay_sum",
+   "result": "一致",
+   "tunable": [
+    "wavelength_m"
+   ],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_box_sdf",
+   "result": "標本外",
+   "tunable": [],
+   "why": "入出力の加工つき(adapter / call-time 束縛)"
+  },
+  {
+   "op": "tb_capsule_sdf",
+   "result": "標本外",
+   "tunable": [],
+   "why": "入出力の加工つき(adapter / call-time 束縛)"
+  },
+  {
+   "op": "tb_companding_mu_law",
+   "registry_name_collision": "companding_mu_law(image → image)",
+   "result": "一致",
+   "tunable": [
+    "mu",
+    "bits"
+   ],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_countrate_to_counts",
+   "result": "一致",
+   "tunable": [
+    "gate_s"
+   ],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_counts_to_countrate",
+   "result": "一致",
+   "tunable": [
+    "gate_s"
+   ],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_cplx_cr_residual",
+   "result": "一致",
+   "tunable": [
+    "spacing"
+   ],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_create_funct_1d_array",
+   "result": "一致",
+   "tunable": [],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_cutout",
+   "result": "標本外",
+   "tunable": [],
+   "why": "入出力の加工つき(adapter / call-time 束縛)"
+  },
+  {
+   "op": "tb_cylinder_sdf",
+   "result": "標本外",
+   "tunable": [],
+   "why": "入出力の加工つき(adapter / call-time 束縛)"
+  },
+  {
+   "op": "tb_deflicker",
+   "result": "一致",
+   "tunable": [
+    "alpha",
+    "max_gain"
+   ],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_dem_ecef_to_geodetic",
+   "result": "一致",
+   "tunable": [],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_derivate_funct_1d",
+   "result": "一致",
+   "tunable": [],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_drag_coefficient_sphere",
+   "result": "一致",
+   "tunable": [],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_dtof_depth",
+   "result": "一致",
+   "tunable": [
+    "bin_ps"
+   ],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_dynsys_correlation_dimension",
+   "result": "一致",
+   "tunable": [
+    "n_radii"
+   ],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_elastic_deform",
+   "result": "一致",
+   "tunable": [],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_env_lightbox",
+   "result": "一致",
+   "tunable": [
+    "base",
+    "key"
+   ],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_env_studio",
+   "result": "一致",
+   "tunable": [
+    "key",
+    "fill"
+   ],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_envelope",
+   "result": "一致",
+   "tunable": [],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_equivalent_level",
+   "result": "一致",
+   "tunable": [
+    "ref"
+   ],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_estimate_alpha",
+   "result": "一致",
+   "tunable": [],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_estimate_normals",
+   "result": "一致",
+   "tunable": [
+    "k"
+   ],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_estimate_oriented_normals",
+   "result": "一致",
+   "tunable": [
+    "k"
+   ],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_estimate_point_normals",
+   "result": "一致",
+   "tunable": [
+    "k"
+   ],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_euclidean_cluster",
+   "result": "標本外",
+   "tunable": [
+    "min_size"
+   ],
+   "why": "入出力の加工つき(adapter / call-time 束縛)"
+  },
+  {
+   "op": "tb_exponential_background",
+   "result": "一致",
+   "tunable": [
+    "alpha"
+   ],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_exponential_foreground",
+   "result": "一致",
+   "tunable": [
+    "alpha",
+    "threshold"
+   ],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_farthest_point_sampling",
+   "result": "一致",
+   "tunable": [
+    "k"
+   ],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_find_peaks",
+   "result": "一致",
+   "tunable": [],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_fit_spline_curve",
+   "result": "一致",
+   "tunable": [
+    "k"
+   ],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_fly_lgmd_eta",
+   "result": "一致",
+   "tunable": [
+    "alpha"
+   ],
+   "worst": 0.0
+  },
+  {
+   "note": "NaN の位置は橋が代替値に置き換える(NONFINITE_BY_DESIGN)。有限の位置だけ比べた",
+   "op": "tb_fly_tau_from_expansion",
+   "result": "一致",
+   "tunable": [],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_fmcw_range_profile",
+   "result": "一致",
+   "tunable": [],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_fmcw_window_apply",
+   "result": "一致",
+   "tunable": [],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_frame_difference_causal",
+   "result": "一致",
+   "tunable": [],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_gaussian_curvature",
+   "result": "一致",
+   "tunable": [
+    "k"
+   ],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_geodesic_distances",
+   "result": "一致",
+   "tunable": [
+    "k"
+   ],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_get_y_value_funct_1d",
+   "result": "一致",
+   "tunable": [],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_highpass",
+   "registry_name_collision": "highpass(image → image)",
+   "result": "一致",
+   "tunable": [
+    "order"
+   ],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_inertia_tensor",
+   "result": "一致",
+   "tunable": [],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_inside_outside",
+   "result": "一致",
+   "tunable": [],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_integrate_funct_1d",
+   "result": "一致",
+   "tunable": [],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_intrinsics_to_carla",
+   "result": "一致",
+   "tunable": [],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_intrinsics_to_fullseye",
+   "result": "一致",
+   "tunable": [],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_iqft2",
+   "result": "一致",
+   "tunable": [],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_iss_keypoints",
+   "result": "一致",
+   "tunable": [
+    "gamma21",
+    "gamma32"
+   ],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_jitter",
+   "result": "一致",
+   "tunable": [],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_keypoints_to_image2d",
+   "result": "一致",
+   "tunable": [],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_keypoints_uv_to_points",
+   "result": "一致",
+   "tunable": [],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_landmark_asymmetry",
+   "result": "一致",
+   "tunable": [],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_lf_center_view",
+   "result": "一致",
+   "tunable": [],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_lf_depth_from_focus",
+   "result": "標本外",
+   "tunable": [],
+   "why": "入出力の加工つき(adapter / call-time 束縛)"
+  },
+  {
+   "op": "tb_lf_epi",
+   "result": "一致",
+   "tunable": [],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_lf_epi_slope",
+   "result": "標本外",
+   "tunable": [],
+   "why": "入出力の加工つき(adapter / call-time 束縛)"
+  },
+  {
+   "op": "tb_lf_refocus",
+   "result": "一致",
+   "tunable": [],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_lf_subaperture",
+   "result": "一致",
+   "tunable": [],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_lf_synthetic_aperture",
+   "result": "一致",
+   "tunable": [],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_lf_to_mla",
+   "result": "一致",
+   "tunable": [],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_local_std",
+   "registry_name_collision": "local_std(image → image)",
+   "result": "一致",
+   "tunable": [
+    "window"
+   ],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_lowpass",
+   "registry_name_collision": "lowpass(image → image)",
+   "result": "一致",
+   "tunable": [
+    "order"
+   ],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_magnus_lift_coefficient",
+   "result": "一致",
+   "tunable": [],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_mat_cond",
+   "result": "一致",
+   "tunable": [],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_mat_pinv",
+   "result": "一致",
+   "tunable": [
+    "rcond"
+   ],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_mean_curvature",
+   "result": "一致",
+   "tunable": [
+    "k"
+   ],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_mirror_plane_from_pairs",
+   "result": "一致",
+   "tunable": [],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_mls_smooth",
+   "result": "一致",
+   "tunable": [
+    "order"
+   ],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_monogenic_amplitude",
+   "result": "一致",
+   "tunable": [],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_monogenic_orientation",
+   "result": "一致",
+   "tunable": [],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_monogenic_phase",
+   "result": "一致",
+   "tunable": [],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_motion_energy_image",
+   "result": "一致",
+   "tunable": [
+    "tau",
+    "threshold"
+   ],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_motion_history_image",
+   "result": "一致",
+   "tunable": [
+    "tau",
+    "threshold"
+   ],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_moving_average_window",
+   "result": "一致",
+   "tunable": [
+    "window"
+   ],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_negate_funct_1d",
+   "result": "一致",
+   "tunable": [],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_normals_to_egi",
+   "result": "標本外",
+   "tunable": [
+    "n_az",
+    "n_el"
+   ],
+   "why": "入出力の加工つき(adapter / call-time 束縛)"
+  },
+  {
+   "op": "tb_num_points_funct_1d",
+   "result": "一致",
+   "tunable": [],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_occupancy_grid",
+   "result": "一致",
+   "tunable": [],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_optical_flow_magnitude_stream",
+   "result": "一致",
+   "tunable": [],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_pc_density_equalize",
+   "result": "一致",
+   "tunable": [
+    "k"
+   ],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_pc_fill_sparse",
+   "result": "一致",
+   "tunable": [
+    "k"
+   ],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_pc_poisson_disk",
+   "result": "一致",
+   "tunable": [],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_plane_sdf",
+   "result": "標本外",
+   "tunable": [],
+   "why": "入出力の加工つき(adapter / call-time 束縛)"
+  },
+  {
+   "op": "tb_plane_segmentation",
+   "result": "標本外",
+   "tunable": [
+    "max_planes",
+    "iters"
+   ],
+   "why": "入出力の加工つき(adapter / call-time 束縛)"
+  },
+  {
+   "op": "tb_points_render",
+   "result": "一致",
+   "tunable": [
+    "radius_px",
+    "opacity"
+   ],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_points_to_voxel",
+   "result": "一致",
+   "tunable": [],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_points_zyx_to_keypoints_uv",
+   "result": "一致",
+   "tunable": [],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_project",
+   "result": "一致",
+   "tunable": [],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_project_cylindrical",
+   "result": "一致",
+   "tunable": [
+    "h_res",
+    "z_bins"
+   ],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_project_points",
+   "result": "標本外",
+   "tunable": [],
+   "why": "入出力の加工つき(adapter / call-time 束縛)"
+  },
+  {
+   "op": "tb_project_spherical",
+   "result": "一致",
+   "tunable": [
+    "h_res",
+    "v_res"
+   ],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_qft2",
+   "result": "一致",
+   "tunable": [],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_quantize",
+   "result": "一致",
+   "tunable": [
+    "bits"
+   ],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_quat_color_filter",
+   "result": "一致",
+   "tunable": [],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_quat_color_rotate",
+   "result": "一致",
+   "tunable": [],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_quat_conjugate_image",
+   "result": "一致",
+   "tunable": [],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_quat_norm",
+   "result": "一致",
+   "tunable": [],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_quat_normalize_image",
+   "result": "一致",
+   "tunable": [],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_quaternion_to_rgb",
+   "result": "一致",
+   "tunable": [],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_radius_outlier_removal",
+   "result": "標本外",
+   "tunable": [
+    "min_neighbors"
+   ],
+   "why": "入出力の加工つき(adapter / call-time 束縛)"
+  },
+  {
+   "op": "tb_random_dropout",
+   "result": "標本外",
+   "tunable": [],
+   "why": "入出力の加工つき(adapter / call-time 束縛)"
+  },
+  {
+   "op": "tb_random_rotation",
+   "result": "標本外",
+   "tunable": [],
+   "why": "入出力の加工つき(adapter / call-time 束縛)"
+  },
+  {
+   "op": "tb_random_scale",
+   "result": "標本外",
+   "tunable": [],
+   "why": "入出力の加工つき(adapter / call-time 束縛)"
+  },
+  {
+   "op": "tb_range_doppler_map",
+   "result": "一致",
+   "tunable": [],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_reflect_points",
+   "result": "一致",
+   "tunable": [],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_reflection_symmetry_score",
+   "result": "一致",
+   "tunable": [],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_region_growing",
+   "result": "標本外",
+   "tunable": [
+    "angle_thresh_deg",
+    "k"
+   ],
+   "why": "入出力の加工つき(adapter / call-time 束縛)"
+  },
+  {
+   "op": "tb_render_point_depth",
+   "result": "一致",
+   "tunable": [],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_resample",
+   "result": "標本外",
+   "tunable": [],
+   "why": "入出力の加工つき(adapter / call-time 束縛)"
+  },
+  {
+   "op": "tb_resample_uniform",
+   "result": "一致",
+   "tunable": [],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_rgb_to_quaternion",
+   "result": "一致",
+   "tunable": [],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_rms",
+   "result": "一致",
+   "tunable": [],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_running_gaussian_background",
+   "result": "一致",
+   "tunable": [
+    "alpha",
+    "k"
+   ],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_running_gaussian_foreground",
+   "result": "一致",
+   "tunable": [
+    "k",
+    "var_init"
+   ],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_sample_funct_1d",
+   "result": "一致",
+   "tunable": [
+    "step"
+   ],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_scale_y_funct_1d",
+   "result": "一致",
+   "tunable": [
+    "mult"
+   ],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_sensor_capture",
+   "result": "一致",
+   "tunable": [
+    "exposure_ms",
+    "gain_e_per_unit"
+   ],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_shape_perturb",
+   "result": "一致",
+   "tunable": [
+    "amplitude",
+    "sigma"
+   ],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_smooth_funct_1d_gauss",
+   "result": "一致",
+   "tunable": [
+    "sigma"
+   ],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_smooth_funct_1d_mean",
+   "result": "一致",
+   "tunable": [
+    "size",
+    "iterations"
+   ],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_spad_deadtime_apply",
+   "result": "一致",
+   "tunable": [
+    "dead_time_ns"
+   ],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_spad_deadtime_correct",
+   "result": "一致",
+   "tunable": [
+    "dead_time_ns"
+   ],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_spectrogram",
+   "result": "標本外",
+   "tunable": [
+    "rate",
+    "win"
+   ],
+   "why": "入出力の加工つき(adapter / call-time 束縛)"
+  },
+  {
+   "op": "tb_specular_coefficient_map",
+   "result": "一致",
+   "tunable": [
+    "max_rank_ratio",
+    "max_negative_frac"
+   ],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_specular_diffuse_split",
+   "result": "標本外",
+   "tunable": [
+    "max_rank_ratio",
+    "max_negative_frac"
+   ],
+   "why": "入出力の加工つき(adapter / call-time 束縛)"
+  },
+  {
+   "op": "tb_specular_free_transform",
+   "result": "一致",
+   "tunable": [],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_sphere_sdf",
+   "result": "標本外",
+   "tunable": [],
+   "why": "入出力の加工つき(adapter / call-time 束縛)"
+  },
+  {
+   "op": "tb_stat_correlation",
+   "result": "一致",
+   "tunable": [],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_stat_covariance",
+   "result": "一致",
+   "tunable": [],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_stat_zscore",
+   "result": "一致",
+   "tunable": [],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_statistical_outlier_removal",
+   "result": "標本外",
+   "tunable": [
+    "k",
+    "std_ratio"
+   ],
+   "why": "入出力の加工つき(adapter / call-time 束縛)"
+  },
+  {
+   "op": "tb_superquadric_residual",
+   "result": "一致",
+   "tunable": [],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_synthesize_silhouette",
+   "result": "一致",
+   "tunable": [],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_tcspc_background_subtract",
+   "result": "一致",
+   "tunable": [
+    "quantile",
+    "scale"
+   ],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_tcspc_coates_correct",
+   "result": "一致",
+   "tunable": [],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_tcspc_irf_convolve",
+   "result": "一致",
+   "tunable": [
+    "bin_ps",
+    "irf_fwhm_ps"
+   ],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_temporal_band_power",
+   "result": "標本外",
+   "tunable": [],
+   "why": "入出力の加工つき(adapter / call-time 束縛)"
+  },
+  {
+   "op": "tb_temporal_bandpass",
+   "result": "標本外",
+   "tunable": [],
+   "why": "入出力の加工つき(adapter / call-time 束縛)"
+  },
+  {
+   "op": "tb_temporal_bilateral",
+   "result": "一致",
+   "tunable": [
+    "window",
+    "sigma_t"
+   ],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_temporal_median_window",
+   "result": "一致",
+   "tunable": [
+    "window"
+   ],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_three_frame_difference",
+   "result": "一致",
+   "tunable": [
+    "threshold"
+   ],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_torus_sdf",
+   "result": "標本外",
+   "tunable": [],
+   "why": "入出力の加工つき(adapter / call-time 束縛)"
+  },
+  {
+   "op": "tb_viewport_from_equirect",
+   "result": "一致",
+   "tunable": [
+    "fov_deg"
+   ],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_voxel_grid_downsample",
+   "result": "一致",
+   "tunable": [],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_weighting_response",
+   "result": "一致",
+   "tunable": [],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_wetness",
+   "result": "一致",
+   "tunable": [
+    "wet",
+    "ior"
+   ],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_zero_crossing_rate",
+   "result": "一致",
+   "tunable": [],
+   "worst": 0.0
+  },
+  {
+   "op": "tb_zero_crossings_funct_1d",
+   "result": "一致",
+   "tunable": [],
+   "worst": 0.0
+  }
+ ],
+ "counts": {
+  "bridge_groups": 154,
+  "groups": 190,
+  "impl_groups": 36,
+  "impl_pairs": 55
+ },
+ "environment": {
+  "SimpleITK": "2.5.6",
+  "cv2": "5.0.0",
+  "kornia": "0.9.0",
+  "mahotas": "1.4.18",
+  "numpy": "2.4.6",
+  "scipy": "1.15.2",
+  "skimage": "0.26.0",
+  "torch": "2.11.0+cpu"
+ },
+ "generated_by": "tools/impl_differential.py --measure",
+ "impl_groups": {
+  "area_center": [
+   "area_center",
+   "xg_area_center"
+  ],
+  "bilateral": [
+   "bilateral",
+   "cv_bilateral",
+   "xkor_bilateral"
+  ],
+  "canny": [
+   "canny",
+   "cv_canny",
+   "sk_canny",
+   "xkor_canny"
+  ],
+  "clahe": [
+   "clahe",
+   "cv_clahe",
+   "xkor_clahe"
+  ],
+  "clip_contours": [
+   "hx_clip_contours",
+   "xg_clip_contours"
+  ],
+  "corner_harris": [
+   "cv_corner_harris",
+   "sk_corner_harris"
+  ],
+  "crop_contours": [
+   "hx_crop_contours",
+   "xg_crop_contours"
+  ],
+  "curvature_flow": [
+   "curvature_flow",
+   "xsitk_curvature_flow"
+  ],
+  "dog": [
+   "dog",
+   "sk_dog",
+   "xkor_dog"
+  ],
+  "eccentricity": [
+   "eccentricity",
+   "xg_eccentricity"
+  ],
+  "elliptic_axis": [
+   "elliptic_axis",
+   "xg_elliptic_axis"
+  ],
+  "felzenszwalb": [
+   "sg_felzenszwalb",
+   "sk_felzenszwalb"
+  ],
+  "full_domain": [
+   "hx_full_domain",
+   "it_full_domain"
+  ],
+  "gabor": [
+   "gabor",
+   "hx_gabor",
+   "sk_gabor"
+  ],
+  "gaussian": [
+   "cv_gaussian",
+   "gaussian",
+   "xkor_gaussian"
+  ],
+  "guided_filter": [
+   "dl_guided_filter",
+   "guided_filter"
+  ],
+  "height_width_ratio": [
+   "height_width_ratio",
+   "xg_height_width_ratio"
+  ],
+  "hessian": [
+   "sk_hessian",
+   "xkor_hessian"
+  ],
+  "inpaint": [
+   "xcv_inpaint",
+   "xsk_inpaint"
+  ],
+  "laplacian": [
+   "cv_laplacian",
+   "xkor_laplacian"
+  ],
+  "measure_pairs": [
+   "m1_measure_pairs",
+   "measure_pairs"
+  ],
+  "measure_pos": [
+   "m1_measure_pos",
+   "measure_pos"
+  ],
+  "median": [
+   "cv_median",
+   "median",
+   "xkor_median"
+  ],
+  "meijering": [
+   "sk_meijering",
+   "xsk_meijering"
+  ],
+  "orb_count": [
+   "xcv_orb_count",
+   "xsk_orb_count"
+  ],
+  "otsu": [
+   "cv_otsu",
+   "otsu",
+   "sk_otsu"
+  ],
+  "regress_contours": [
+   "hx_regress_contours",
+   "xg_regress_contours"
+  ],
+  "richardson_lucy": [
+   "iv_richardson_lucy",
+   "xsk_richardson_lucy"
+  ],
+  "sart_reconstruct": [
+   "sart_reconstruct",
+   "tm_sart_reconstruct"
+  ],
+  "scharr": [
+   "cv_scharr",
+   "sk_scharr"
+  ],
+  "shape_index": [
+   "shape_index",
+   "sk_shape_index"
+  ],
+  "skeleton": [
+   "sk_skeleton",
+   "skeleton"
+  ],
+  "smallest_rectangle1": [
+   "r2_smallest_rectangle1",
+   "smallest_rectangle1"
+  ],
+  "tophat": [
+   "cv_tophat",
+   "tophat"
+  ],
+  "unsharp": [
+   "unsharp",
+   "xkor_unsharp"
+  ],
+  "wiener": [
+   "xsk2_wiener",
+   "xsp_wiener"
+  ]
+ },
+ "inputs": {
+  "contour": [
+   "blobs48_contour",
+   "structured_region48_contour"
+  ],
+  "image": [
+   "fragments48",
+   "noisy48",
+   "smooth_random48",
+   "structured48",
+   "structured64"
+  ],
+  "region": [
+   "blobs48",
+   "structured_region48"
+  ]
+ },
+ "knobs": [
+  [
+   0.5,
+   0.5
+  ],
+  [
+   0.25,
+   0.75
+  ],
+  [
+   0.75,
+   0.25
+  ]
+ ],
+ "pairs": [
+  {
+   "a": "area_center",
+   "b": "xg_area_center",
+   "class": "比較不能",
+   "sorts": [
+    "region->match",
+    "contour->feature"
+   ],
+   "stem": "area_center",
+   "tiers": [
+    "registry",
+    "registry"
+   ]
+  },
+  {
+   "a": "bilateral",
+   "b": "cv_bilateral",
+   "class": "違う",
+   "default": {
+    "affine_resid": 0.0265,
+    "affine_scale": 0.995,
+    "corr": 1.0,
+    "input": "structured48",
+    "knobs": [
+     0.5,
+     0.5
+    ],
+    "scale": 1.0,
+    "score": 0.029
+   },
+   "exact_zero": false,
+   "failures": [],
+   "n_failures": 0,
+   "same_function_object": false,
+   "seconds": 0.11,
+   "sorts": [
+    "image->image",
+    "image->image"
+   ],
+   "stem": "bilateral",
+   "tiers": [
+    "registry",
+    "registry"
+   ],
+   "worst": 0.0552,
+   "worst_0_255": 0.000517,
+   "worst_at": {
+    "affine_resid": 0.0439,
+    "affine_scale": 0.946,
+    "corr": 0.998,
+    "input": "smooth_random48",
+    "knobs": [
+     0.5,
+     0.5
+    ],
+    "scale": 1.0,
+    "score": 0.0552
+   },
+   "worst_full": 0.0502
+  },
+  {
+   "a": "bilateral",
+   "b": "xkor_bilateral",
+   "class": "一致",
+   "default": {
+    "affine_resid": 2.35e-07,
+    "affine_scale": 1.0,
+    "corr": 1.0,
+    "input": "structured48",
+    "knobs": [
+     0.5,
+     0.5
+    ],
+    "scale": 1.0,
+    "score": 2.35e-07
+   },
+   "exact_zero": false,
+   "failures": [],
+   "n_failures": 0,
+   "same_function_object": false,
+   "seconds": 0.27,
+   "sorts": [
+    "image->image",
+    "image->image"
+   ],
+   "stem": "bilateral",
+   "tiers": [
+    "registry",
+    "registry"
+   ],
+   "worst": 2.65e-07,
+   "worst_0_255": 1.26,
+   "worst_at": {
+    "affine_resid": 2.83e-07,
+    "affine_scale": 1.0,
+    "corr": 1.0,
+    "input": "structured64",
+    "knobs": [
+     0.25,
+     0.75
+    ],
+    "scale": 1.0,
+    "score": 2.65e-07
+   },
+   "worst_full": 0.0707
+  },
+  {
+   "a": "cv_bilateral",
+   "b": "xkor_bilateral",
+   "class": "違う",
+   "default": {
+    "affine_resid": 0.0268,
+    "affine_scale": 1.0,
+    "corr": 1.0,
+    "input": "structured48",
+    "knobs": [
+     0.5,
+     0.5
+    ],
+    "scale": 1.0,
+    "score": 0.029
+   },
+   "exact_zero": false,
+   "failures": [],
+   "n_failures": 0,
+   "same_function_object": false,
+   "seconds": 0.03,
+   "sorts": [
+    "image->image",
+    "image->image"
+   ],
+   "stem": "bilateral",
+   "tiers": [
+    "registry",
+    "registry"
+   ],
+   "worst": 0.0552,
+   "worst_0_255": 1.26,
+   "worst_at": {
+    "affine_resid": 0.046,
+    "affine_scale": 1.05,
+    "corr": 0.998,
+    "input": "smooth_random48",
+    "knobs": [
+     0.5,
+     0.5
+    ],
+    "scale": 1.0,
+    "score": 0.0552
+   },
+   "worst_full": 0.0541
+  },
+  {
+   "a": "canny",
+   "b": "cv_canny",
+   "class": "違う",
+   "default": {
+    "agree": 0.771,
+    "fg": [
+     320,
+     100
+    ],
+    "input": "structured48",
+    "knobs": [
+     0.5,
+     0.5
+    ],
+    "scale": 1.0,
+    "score": 0.716
+   },
+   "exact_zero": false,
+   "failures": [],
+   "n_failures": 0,
+   "same_function_object": false,
+   "seconds": 0.01,
+   "sorts": [
+    "image->region",
+    "image->region"
+   ],
+   "stem": "canny",
+   "tiers": [
+    "registry",
+    "registry"
+   ],
+   "worst": 0.803,
+   "worst_0_255": 0.803,
+   "worst_at": {
+    "agree": 0.618,
+    "fg": [
+     474,
+     109
+    ],
+    "input": "structured48",
+    "knobs": [
+     0.75,
+     0.25
+    ],
+    "scale": 1.0,
+    "score": 0.803
+   },
+   "worst_full": null
+  },
+  {
+   "a": "canny",
+   "b": "sk_canny",
+   "class": "違う",
+   "default": {
+    "agree": 0.794,
+    "fg": [
+     320,
+     115
+    ],
+    "input": "structured48",
+    "knobs": [
+     0.5,
+     0.5
+    ],
+    "scale": 1.0,
+    "score": 0.653
+   },
+   "exact_zero": false,
+   "failures": [],
+   "n_failures": 0,
+   "same_function_object": false,
+   "seconds": 0.01,
+   "sorts": [
+    "image->region",
+    "image->region"
+   ],
+   "stem": "canny",
+   "tiers": [
+    "registry",
+    "registry"
+   ],
+   "worst": 0.771,
+   "worst_0_255": 0.793,
+   "worst_at": {
+    "agree": 0.638,
+    "fg": [
+     481,
+     110
+    ],
+    "input": "noisy48",
+    "knobs": [
+     0.75,
+     0.25
+    ],
+    "scale": 1.0,
+    "score": 0.771
+   },
+   "worst_full": null
+  },
+  {
+   "a": "canny",
+   "b": "xkor_canny",
+   "class": "違う",
+   "default": {
+    "agree": 0.783,
+    "fg": [
+     320,
+     108
+    ],
+    "input": "structured48",
+    "knobs": [
+     0.5,
+     0.5
+    ],
+    "scale": 1.0,
+    "score": 0.683
+   },
+   "exact_zero": false,
+   "failures": [],
+   "n_failures": 0,
+   "same_function_object": false,
+   "seconds": 0.05,
+   "sorts": [
+    "image->region",
+    "image->region"
+   ],
+   "stem": "canny",
+   "tiers": [
+    "registry",
+    "registry"
+   ],
+   "worst": 0.78,
+   "worst_0_255": 1.0,
+   "worst_at": {
+    "agree": 0.634,
+    "fg": [
+     481,
+     106
+    ],
+    "input": "noisy48",
+    "knobs": [
+     0.75,
+     0.25
+    ],
+    "scale": 1.0,
+    "score": 0.78
+   },
+   "worst_full": null
+  },
+  {
+   "a": "cv_canny",
+   "b": "sk_canny",
+   "class": "違う",
+   "default": {
+    "agree": 0.915,
+    "fg": [
+     100,
+     115
+    ],
+    "input": "structured48",
+    "knobs": [
+     0.5,
+     0.5
+    ],
+    "scale": 1.0,
+    "score": 0.576
+   },
+   "exact_zero": false,
+   "failures": [],
+   "n_failures": 0,
+   "same_function_object": false,
+   "seconds": 0.01,
+   "sorts": [
+    "image->region",
+    "image->region"
+   ],
+   "stem": "canny",
+   "tiers": [
+    "registry",
+    "registry"
+   ],
+   "worst": 0.937,
+   "worst_0_255": 0.898,
+   "worst_at": {
+    "agree": 0.812,
+    "fg": [
+     125,
+     93
+    ],
+    "input": "fragments48",
+    "knobs": [
+     0.75,
+     0.25
+    ],
+    "scale": 1.0,
+    "score": 0.937
+   },
+   "worst_full": null
+  },
+  {
+   "a": "cv_canny",
+   "b": "xkor_canny",
+   "class": "違う",
+   "default": {
+    "agree": 0.943,
+    "fg": [
+     100,
+     108
+    ],
+    "input": "structured48",
+    "knobs": [
+     0.5,
+     0.5
+    ],
+    "scale": 1.0,
+    "score": 0.436
+   },
+   "exact_zero": false,
+   "failures": [],
+   "n_failures": 0,
+   "same_function_object": false,
+   "seconds": 0.07,
+   "sorts": [
+    "image->region",
+    "image->region"
+   ],
+   "stem": "canny",
+   "tiers": [
+    "registry",
+    "registry"
+   ],
+   "worst": 0.509,
+   "worst_0_255": 1.0,
+   "worst_at": {
+    "agree": 0.914,
+    "fg": [
+     152,
+     106
+    ],
+    "input": "noisy48",
+    "knobs": [
+     0.75,
+     0.25
+    ],
+    "scale": 1.0,
+    "score": 0.509
+   },
+   "worst_full": null
+  },
+  {
+   "a": "sk_canny",
+   "b": "xkor_canny",
+   "class": "違う",
+   "default": {
+    "agree": 0.964,
+    "fg": [
+     115,
+     108
+    ],
+    "input": "structured48",
+    "knobs": [
+     0.5,
+     0.5
+    ],
+    "scale": 1.0,
+    "score": 0.285
+   },
+   "exact_zero": false,
+   "failures": [],
+   "n_failures": 0,
+   "same_function_object": false,
+   "seconds": 0.06,
+   "sorts": [
+    "image->region",
+    "image->region"
+   ],
+   "stem": "canny",
+   "tiers": [
+    "registry",
+    "registry"
+   ],
+   "worst": 0.941,
+   "worst_0_255": 1.0,
+   "worst_at": {
+    "agree": 0.812,
+    "fg": [
+     93,
+     124
+    ],
+    "input": "fragments48",
+    "knobs": [
+     0.75,
+     0.25
+    ],
+    "scale": 1.0,
+    "score": 0.941
+   },
+   "worst_full": null
+  },
+  {
+   "a": "clahe",
+   "b": "cv_clahe",
+   "class": "違う",
+   "default": {
+    "affine_resid": 0.43,
+    "affine_scale": 0.933,
+    "corr": 0.931,
+    "input": "structured48",
+    "knobs": [
+     0.5,
+     0.5
+    ],
+    "scale": 1.0,
+    "score": 0.437
+   },
+   "exact_zero": false,
+   "failures": [],
+   "n_failures": 0,
+   "same_function_object": false,
+   "seconds": 0.03,
+   "sorts": [
+    "image->image",
+    "image->image"
+   ],
+   "stem": "clahe",
+   "tiers": [
+    "registry",
+    "registry"
+   ],
+   "worst": 0.611,
+   "worst_0_255": 1.0,
+   "worst_at": {
+    "affine_resid": 0.18,
+    "affine_scale": 0.543,
+    "corr": 0.891,
+    "input": "fragments48",
+    "knobs": [
+     0.25,
+     0.75
+    ],
+    "scale": 1.0,
+    "score": 0.611
+   },
+   "worst_full": 0.877
+  },
+  {
+   "a": "clahe",
+   "b": "xkor_clahe",
+   "class": "違う",
+   "default": {
+    "affine_resid": 0.427,
+    "affine_scale": 0.924,
+    "corr": 0.932,
+    "input": "structured48",
+    "knobs": [
+     0.5,
+     0.5
+    ],
+    "scale": 1.0,
+    "score": 0.447
+   },
+   "exact_zero": false,
+   "failures": [],
+   "n_failures": 0,
+   "same_function_object": false,
+   "seconds": 0.08,
+   "sorts": [
+    "image->image",
+    "image->image"
+   ],
+   "stem": "clahe",
+   "tiers": [
+    "registry",
+    "registry"
+   ],
+   "worst": 0.612,
+   "worst_0_255": "inf",
+   "worst_at": {
+    "affine_resid": 0.179,
+    "affine_scale": 0.54,
+    "corr": 0.891,
+    "input": "fragments48",
+    "knobs": [
+     0.25,
+     0.75
+    ],
+    "scale": 1.0,
+    "score": 0.612
+   },
+   "worst_full": 0.877
+  },
+  {
+   "a": "cv_clahe",
+   "b": "xkor_clahe",
+   "class": "違う",
+   "default": {
+    "affine_resid": 0.017,
+    "affine_scale": 0.988,
+    "corr": 1.0,
+    "input": "structured48",
+    "knobs": [
+     0.5,
+     0.5
+    ],
+    "scale": 1.0,
+    "score": 0.0272
+   },
+   "exact_zero": false,
+   "failures": [],
+   "n_failures": 0,
+   "same_function_object": false,
+   "seconds": 0.05,
+   "sorts": [
+    "image->image",
+    "image->image"
+   ],
+   "stem": "clahe",
+   "tiers": [
+    "registry",
+    "registry"
+   ],
+   "worst": 0.0869,
+   "worst_0_255": 1.0,
+   "worst_at": {
+    "affine_resid": 0.0871,
+    "affine_scale": 1.0,
+    "corr": 0.991,
+    "input": "smooth_random48",
+    "knobs": [
+     0.5,
+     0.5
+    ],
+    "scale": 1.0,
+    "score": 0.0869
+   },
+   "worst_full": 0.0862
+  },
+  {
+   "a": "hx_clip_contours",
+   "b": "xg_clip_contours",
+   "class": "違う",
+   "default": null,
+   "exact_zero": false,
+   "failures": [],
+   "n_failures": 0,
+   "same_function_object": false,
+   "seconds": 0.0,
+   "sorts": [
+    "contour->contour",
+    "contour->contour"
+   ],
+   "stem": "clip_contours",
+   "tiers": [
+    "registry",
+    "registry"
+   ],
+   "worst": 0.632,
+   "worst_0_255": null,
+   "worst_at": {
+    "input": "blobs48_contour",
+    "knobs": [
+     0.25,
+     0.75
+    ],
+    "scale": 1.0,
+    "score": 0.632
+   },
+   "worst_full": null
+  },
+  {
+   "a": "cv_corner_harris",
+   "b": "sk_corner_harris",
+   "class": "違う",
+   "default": {
+    "affine_resid": 0.617,
+    "affine_scale": 0.296,
+    "corr": 0.343,
+    "input": "structured48",
+    "knobs": [
+     0.5,
+     0.5
+    ],
+    "scale": 1.0,
+    "score": 0.833
+   },
+   "exact_zero": false,
+   "failures": [],
+   "n_failures": 0,
+   "same_function_object": false,
+   "seconds": 0.01,
+   "sorts": [
+    "image->image",
+    "image->image"
+   ],
+   "stem": "corner_harris",
+   "tiers": [
+    "registry",
+    "registry"
+   ],
+   "worst": 0.993,
+   "worst_0_255": 0.993,
+   "worst_at": {
+    "affine_resid": 0.59,
+    "affine_scale": 0.0266,
+    "corr": 0.035,
+    "input": "noisy48",
+    "knobs": [
+     0.75,
+     0.25
+    ],
+    "scale": 1.0,
+    "score": 0.993
+   },
+   "worst_full": 0.966
+  },
+  {
+   "a": "hx_crop_contours",
+   "b": "xg_crop_contours",
+   "class": "違う",
+   "default": null,
+   "exact_zero": false,
+   "failures": [],
+   "n_failures": 0,
+   "same_function_object": false,
+   "seconds": 0.0,
+   "sorts": [
+    "contour->contour",
+    "contour->contour"
+   ],
+   "stem": "crop_contours",
+   "tiers": [
+    "registry",
+    "registry"
+   ],
+   "worst": 0.739,
+   "worst_0_255": null,
+   "worst_at": {
+    "input": "blobs48_contour",
+    "knobs": [
+     0.25,
+     0.75
+    ],
+    "scale": 1.0,
+    "score": 0.739
+   },
+   "worst_full": null
+  },
+  {
+   "a": "curvature_flow",
+   "b": "xsitk_curvature_flow",
+   "class": "比較不能",
+   "sorts": [
+    "mask->table",
+    "image->image"
+   ],
+   "stem": "curvature_flow",
+   "tiers": [
+    "ledger",
+    "registry"
+   ]
+  },
+  {
+   "a": "dog",
+   "b": "sk_dog",
+   "class": "違う",
+   "default": {
+    "affine_resid": 0.3,
+    "affine_scale": 0.92,
+    "corr": 0.91,
+    "input": "structured48",
+    "knobs": [
+     0.5,
+     0.5
+    ],
+    "scale": 1.0,
+    "score": 0.286
+   },
+   "exact_zero": false,
+   "failures": [],
+   "n_failures": 0,
+   "same_function_object": false,
+   "seconds": 0.01,
+   "sorts": [
+    "image->image",
+    "image->image"
+   ],
+   "stem": "dog",
+   "tiers": [
+    "registry",
+    "registry"
+   ],
+   "worst": 1.0,
+   "worst_0_255": 1.0,
+   "worst_at": {
+    "affine_resid": 0.0,
+    "affine_scale": 0.0,
+    "corr": 0.0,
+    "input": "noisy48",
+    "knobs": [
+     0.75,
+     0.25
+    ],
+    "scale": 1.0,
+    "score": 1.0
+   },
+   "worst_full": 1.0
+  },
+  {
+   "a": "dog",
+   "b": "xkor_dog",
+   "class": "違う",
+   "default": {
+    "affine_resid": 0.5,
+    "affine_scale": 0.69,
+    "corr": 0.717,
+    "input": "structured48",
+    "knobs": [
+     0.5,
+     0.5
+    ],
+    "scale": 1.0,
+    "score": 0.55
+   },
+   "exact_zero": false,
+   "failures": [],
+   "n_failures": 0,
+   "same_function_object": false,
+   "seconds": 0.05,
+   "sorts": [
+    "image->image",
+    "image->image"
+   ],
+   "stem": "dog",
+   "tiers": [
+    "registry",
+    "registry"
+   ],
+   "worst": 1.0,
+   "worst_0_255": "inf",
+   "worst_at": {
+    "affine_resid": 0.0,
+    "affine_scale": 0.0,
+    "corr": 0.0,
+    "input": "smooth_random48",
+    "knobs": [
+     0.75,
+     0.25
+    ],
+    "scale": 1.0,
+    "score": 1.0
+   },
+   "worst_full": 1.0
+  },
+  {
+   "a": "sk_dog",
+   "b": "xkor_dog",
+   "class": "違う",
+   "default": {
+    "affine_resid": 0.256,
+    "affine_scale": 0.892,
+    "corr": 0.938,
+    "input": "structured48",
+    "knobs": [
+     0.5,
+     0.5
+    ],
+    "scale": 1.0,
+    "score": 0.265
+   },
+   "exact_zero": false,
+   "failures": [],
+   "n_failures": 0,
+   "same_function_object": false,
+   "seconds": 0.04,
+   "sorts": [
+    "image->image",
+    "image->image"
+   ],
+   "stem": "dog",
+   "tiers": [
+    "registry",
+    "registry"
+   ],
+   "worst": 0.513,
+   "worst_0_255": 1.0,
+   "worst_at": {
+    "affine_resid": 0.439,
+    "affine_scale": 0.937,
+    "corr": 0.842,
+    "input": "structured64",
+    "knobs": [
+     0.75,
+     0.25
+    ],
+    "scale": 1.0,
+    "score": 0.513
+   },
+   "worst_full": 0.513
+  },
+  {
+   "a": "eccentricity",
+   "b": "xg_eccentricity",
+   "class": "比較不能",
+   "sorts": [
+    "region->match",
+    "contour->feature"
+   ],
+   "stem": "eccentricity",
+   "tiers": [
+    "registry",
+    "registry"
+   ]
+  },
+  {
+   "a": "elliptic_axis",
+   "b": "xg_elliptic_axis",
+   "class": "比較不能",
+   "sorts": [
+    "region->match",
+    "contour->feature"
+   ],
+   "stem": "elliptic_axis",
+   "tiers": [
+    "registry",
+    "registry"
+   ]
+  },
+  {
+   "a": "sg_felzenszwalb",
+   "b": "sk_felzenszwalb",
+   "class": "違う",
+   "default": {
+    "agree": 0.891,
+    "fg": [
+     324,
+     430
+    ],
+    "input": "structured48",
+    "knobs": [
+     0.5,
+     0.5
+    ],
+    "scale": 1.0,
+    "score": 0.259
+   },
+   "exact_zero": false,
+   "failures": [],
+   "n_failures": 0,
+   "same_function_object": false,
+   "seconds": 0.07,
+   "sorts": [
+    "image->region",
+    "image->region"
+   ],
+   "stem": "felzenszwalb",
+   "tiers": [
+    "registry",
+    "registry"
+   ],
+   "worst": 1.0,
+   "worst_0_255": 1.0,
+   "worst_at": {
+    "agree": 0.902,
+    "fg": [
+     0,
+     100
+    ],
+    "input": "smooth_random48",
+    "knobs": [
+     0.75,
+     0.25
+    ],
+    "scale": 1.0,
+    "score": 1.0
+   },
+   "worst_full": null
+  },
+  {
+   "a": "hx_full_domain",
+   "b": "it_full_domain",
+   "class": "比較不能",
+   "sorts": [
+    "image->region",
+    "image->image"
+   ],
+   "stem": "full_domain",
+   "tiers": [
+    "registry",
+    "registry"
+   ]
+  },
+  {
+   "a": "gabor",
+   "b": "hx_gabor",
+   "class": "違う",
+   "default": {
+    "affine_resid": 0.275,
+    "affine_scale": 1.13,
+    "corr": 0.96,
+    "input": "structured48",
+    "knobs": [
+     0.5,
+     0.5
+    ],
+    "scale": 1.0,
+    "score": 0.308
+   },
+   "exact_zero": false,
+   "failures": [],
+   "n_failures": 0,
+   "same_function_object": false,
+   "seconds": 0.03,
+   "sorts": [
+    "image->image",
+    "image->image"
+   ],
+   "stem": "gabor",
+   "tiers": [
+    "registry",
+    "registry"
+   ],
+   "worst": 0.717,
+   "worst_0_255": "inf",
+   "worst_at": {
+    "affine_resid": 0.563,
+    "affine_scale": 1.09,
+    "corr": 0.546,
+    "input": "smooth_random48",
+    "knobs": [
+     0.25,
+     0.75
+    ],
+    "scale": 1.0,
+    "score": 0.717
+   },
+   "worst_full": 0.567
+  },
+  {
+   "a": "gabor",
+   "b": "sk_gabor",
+   "class": "違う",
+   "default": {
+    "affine_resid": 0.136,
+    "affine_scale": -0.0219,
+    "corr": -0.0874,
+    "input": "structured48",
+    "knobs": [
+     0.5,
+     0.5
+    ],
+    "scale": 1.0,
+    "score": 0.994
+   },
+   "exact_zero": false,
+   "failures": [],
+   "n_failures": 0,
+   "same_function_object": false,
+   "seconds": 0.06,
+   "sorts": [
+    "image->image",
+    "image->image"
+   ],
+   "stem": "gabor",
+   "tiers": [
+    "registry",
+    "registry"
+   ],
+   "worst": 0.999,
+   "worst_0_255": 1.0,
+   "worst_at": {
+    "affine_resid": 0.00462,
+    "affine_scale": -0.000545,
+    "corr": -0.0833,
+    "input": "smooth_random48",
+    "knobs": [
+     0.25,
+     0.75
+    ],
+    "scale": 1.0,
+    "score": 0.999
+   },
+   "worst_full": 0.999
+  },
+  {
+   "a": "hx_gabor",
+   "b": "sk_gabor",
+   "class": "違う",
+   "default": {
+    "affine_resid": 0.126,
+    "affine_scale": -0.0201,
+    "corr": -0.0939,
+    "input": "structured48",
+    "knobs": [
+     0.5,
+     0.5
+    ],
+    "scale": 1.0,
+    "score": 0.997
+   },
+   "exact_zero": false,
+   "failures": [],
+   "n_failures": 0,
+   "same_function_object": false,
+   "seconds": 0.05,
+   "sorts": [
+    "image->image",
+    "image->image"
+   ],
+   "stem": "gabor",
+   "tiers": [
+    "registry",
+    "registry"
+   ],
+   "worst": 0.999,
+   "worst_0_255": 1.0,
+   "worst_at": {
+    "affine_resid": 0.002,
+    "affine_scale": -0.000156,
+    "corr": -0.0474,
+    "input": "smooth_random48",
+    "knobs": [
+     0.25,
+     0.75
+    ],
+    "scale": 1.0,
+    "score": 0.999
+   },
+   "worst_full": 1.0
+  },
+  {
+   "a": "cv_gaussian",
+   "b": "gaussian",
+   "class": "一致",
+   "default": {
+    "affine_resid": 4.83e-16,
+    "affine_scale": 1.0,
+    "corr": 1.0,
+    "input": "structured48",
+    "knobs": [
+     0.5,
+     0.5
+    ],
+    "scale": 1.0,
+    "score": 3.63e-16
+   },
+   "exact_zero": false,
+   "failures": [],
+   "n_failures": 0,
+   "same_function_object": false,
+   "seconds": 0.01,
+   "sorts": [
+    "image->image",
+    "image->image"
+   ],
+   "stem": "gaussian",
+   "tiers": [
+    "registry",
+    "registry"
+   ],
+   "worst": 7.31e-05,
+   "worst_0_255": 7.31e-05,
+   "worst_at": {
+    "affine_resid": 7.35e-05,
+    "affine_scale": 1.0,
+    "corr": 1.0,
+    "input": "fragments48",
+    "knobs": [
+     0.75,
+     0.25
+    ],
+    "scale": 1.0,
+    "score": 7.31e-05
+   },
+   "worst_full": 0.505
+  },
+  {
+   "a": "cv_gaussian",
+   "b": "xkor_gaussian",
+   "class": "一致",
+   "default": {
+    "affine_resid": 2.31e-07,
+    "affine_scale": 1.0,
+    "corr": 1.0,
+    "input": "structured48",
+    "knobs": [
+     0.5,
+     0.5
+    ],
+    "scale": 1.0,
+    "score": 2.1e-07
+   },
+   "exact_zero": false,
+   "failures": [],
+   "n_failures": 0,
+   "same_function_object": false,
+   "seconds": 0.02,
+   "sorts": [
+    "image->image",
+    "image->image"
+   ],
+   "stem": "gaussian",
+   "tiers": [
+    "registry",
+    "registry"
+   ],
+   "worst": 7.31e-05,
+   "worst_0_255": 1.72,
+   "worst_at": {
+    "affine_resid": 7.34e-05,
+    "affine_scale": 1.0,
+    "corr": 1.0,
+    "input": "fragments48",
+    "knobs": [
+     0.75,
+     0.25
+    ],
+    "scale": 1.0,
+    "score": 7.31e-05
+   },
+   "worst_full": 0.0951
+  },
+  {
+   "a": "gaussian",
+   "b": "xkor_gaussian",
+   "class": "一致",
+   "default": {
+    "affine_resid": 2.31e-07,
+    "affine_scale": 1.0,
+    "corr": 1.0,
+    "input": "structured48",
+    "knobs": [
+     0.5,
+     0.5
+    ],
+    "scale": 1.0,
+    "score": 2.1e-07
+   },
+   "exact_zero": false,
+   "failures": [],
+   "n_failures": 0,
+   "same_function_object": false,
+   "seconds": 0.03,
+   "sorts": [
+    "image->image",
+    "image->image"
+   ],
+   "stem": "gaussian",
+   "tiers": [
+    "registry",
+    "registry"
+   ],
+   "worst": 3.81e-07,
+   "worst_0_255": 1.72,
+   "worst_at": {
+    "affine_resid": 3.63e-07,
+    "affine_scale": 1.0,
+    "corr": 1.0,
+    "input": "smooth_random48",
+    "knobs": [
+     0.75,
+     0.25
+    ],
+    "scale": 1.0,
+    "score": 3.81e-07
+   },
+   "worst_full": 0.527
+  },
+  {
+   "a": "dl_guided_filter",
+   "b": "guided_filter",
+   "class": "違う",
+   "default": {
+    "affine_resid": 0.112,
+    "affine_scale": 0.896,
+    "corr": 0.996,
+    "input": "structured48",
+    "knobs": [
+     0.5,
+     0.5
+    ],
+    "scale": 1.0,
+    "score": 0.127
+   },
+   "exact_zero": false,
+   "failures": [],
+   "n_failures": 0,
+   "same_function_object": false,
+   "seconds": 0.02,
+   "sorts": [
+    "image->image",
+    "image->image"
+   ],
+   "stem": "guided_filter",
+   "tiers": [
+    "registry",
+    "registry"
+   ],
+   "worst": 0.358,
+   "worst_0_255": 1.26,
+   "worst_at": {
+    "affine_resid": 0.207,
+    "affine_scale": 0.834,
+    "corr": 0.998,
+    "input": "fragments48",
+    "knobs": [
+     0.5,
+     0.5
+    ],
+    "scale": 1.0,
+    "score": 0.358
+   },
+   "worst_full": 0.353
+  },
+  {
+   "a": "height_width_ratio",
+   "b": "xg_height_width_ratio",
+   "class": "比較不能",
+   "sorts": [
+    "region->feature",
+    "contour->feature"
+   ],
+   "stem": "height_width_ratio",
+   "tiers": [
+    "registry",
+    "registry"
+   ]
+  },
+  {
+   "a": "sk_hessian",
+   "b": "xkor_hessian",
+   "class": "違う",
+   "default": {
+    "affine_resid": 0.616,
+    "affine_scale": 0.208,
+    "corr": 0.0538,
+    "input": "structured48",
+    "knobs": [
+     0.5,
+     0.5
+    ],
+    "scale": 1.0,
+    "score": 1.0
+   },
+   "exact_zero": false,
+   "failures": [],
+   "n_failures": 0,
+   "same_function_object": false,
+   "seconds": 0.11,
+   "sorts": [
+    "image->image",
+    "image->image"
+   ],
+   "stem": "hessian",
+   "tiers": [
+    "registry",
+    "registry"
+   ],
+   "worst": 1.0,
+   "worst_0_255": 1.0,
+   "worst_at": {
+    "affine_resid": 0.854,
+    "affine_scale": 1.66,
+    "corr": 0.161,
+    "input": "fragments48",
+    "knobs": [
+     0.5,
+     0.5
+    ],
+    "scale": 1.0,
+    "score": 1.0
+   },
+   "worst_full": 1.0
+  },
+  {
+   "a": "xcv_inpaint",
+   "b": "xsk_inpaint",
+   "class": "違う",
+   "default": {
+    "affine_resid": 0.233,
+    "affine_scale": 1.02,
+    "corr": 0.992,
+    "input": "structured48",
+    "knobs": [
+     0.5,
+     0.5
+    ],
+    "scale": 1.0,
+    "score": 0.233
+   },
+   "exact_zero": false,
+   "failures": [],
+   "n_failures": 0,
+   "same_function_object": false,
+   "seconds": 0.16,
+   "sorts": [
+    "image->image",
+    "image->image"
+   ],
+   "stem": "inpaint",
+   "tiers": [
+    "registry",
+    "registry"
+   ],
+   "worst": 0.747,
+   "worst_0_255": 2.35,
+   "worst_at": {
+    "affine_resid": 0.741,
+    "affine_scale": 0.947,
+    "corr": 0.974,
+    "input": "noisy48",
+    "knobs": [
+     0.5,
+     0.5
+    ],
+    "scale": 1.0,
+    "score": 0.747
+   },
+   "worst_full": 0.747
+  },
+  {
+   "a": "cv_laplacian",
+   "b": "xkor_laplacian",
+   "class": "違う",
+   "default": {
+    "affine_resid": 0.677,
+    "affine_scale": 0.535,
+    "corr": 0.679,
+    "input": "structured48",
+    "knobs": [
+     0.5,
+     0.5
+    ],
+    "scale": 1.0,
+    "score": 0.738
+   },
+   "exact_zero": false,
+   "failures": [],
+   "n_failures": 0,
+   "same_function_object": false,
+   "seconds": 0.02,
+   "sorts": [
+    "image->image",
+    "image->image"
+   ],
+   "stem": "laplacian",
+   "tiers": [
+    "registry",
+    "registry"
+   ],
+   "worst": 0.834,
+   "worst_0_255": 1.0,
+   "worst_at": {
+    "affine_resid": 0.748,
+    "affine_scale": 0.441,
+    "corr": 0.594,
+    "input": "structured48",
+    "knobs": [
+     0.75,
+     0.25
+    ],
+    "scale": 1.0,
+    "score": 0.834
+   },
+   "worst_full": 0.834
+  },
+  {
+   "a": "m1_measure_pairs",
+   "b": "measure_pairs",
+   "class": "比較不能",
+   "sorts": [
+    "image->feature",
+    "image2d->table"
+   ],
+   "stem": "measure_pairs",
+   "tiers": [
+    "registry",
+    "ledger"
+   ]
+  },
+  {
+   "a": "m1_measure_pos",
+   "b": "measure_pos",
+   "class": "比較不能",
+   "sorts": [
+    "image->contour",
+    "image2d->table"
+   ],
+   "stem": "measure_pos",
+   "tiers": [
+    "registry",
+    "ledger"
+   ]
+  },
+  {
+   "a": "cv_median",
+   "b": "median",
+   "class": "違う",
+   "default": {
+    "affine_resid": 0.712,
+    "affine_scale": 0.996,
+    "corr": 0.986,
+    "input": "structured48",
+    "knobs": [
+     0.5,
+     0.5
+    ],
+    "scale": 1.0,
+    "score": 0.715
+   },
+   "exact_zero": false,
+   "failures": [],
+   "n_failures": 0,
+   "same_function_object": false,
+   "seconds": 0.03,
+   "sorts": [
+    "image->image",
+    "image->image"
+   ],
+   "stem": "median",
+   "tiers": [
+    "registry",
+    "registry"
+   ],
+   "worst": 0.993,
+   "worst_0_255": 1.74,
+   "worst_at": {
+    "affine_resid": 0.963,
+    "affine_scale": 0.963,
+    "corr": 0.958,
+    "input": "structured48",
+    "knobs": [
+     0.25,
+     0.75
+    ],
+    "scale": 1.0,
+    "score": 0.993
+   },
+   "worst_full": 1.04
+  },
+  {
+   "a": "cv_median",
+   "b": "xkor_median",
+   "class": "違う",
+   "default": {
+    "affine_resid": 0.712,
+    "affine_scale": 0.996,
+    "corr": 0.986,
+    "input": "structured48",
+    "knobs": [
+     0.5,
+     0.5
+    ],
+    "scale": 1.0,
+    "score": 0.715
+   },
+   "exact_zero": false,
+   "failures": [],
+   "n_failures": 0,
+   "same_function_object": false,
+   "seconds": 0.06,
+   "sorts": [
+    "image->image",
+    "image->image"
+   ],
+   "stem": "median",
+   "tiers": [
+    "registry",
+    "registry"
+   ],
+   "worst": 0.993,
+   "worst_0_255": 18.0,
+   "worst_at": {
+    "affine_resid": 0.963,
+    "affine_scale": 0.963,
+    "corr": 0.958,
+    "input": "structured48",
+    "knobs": [
+     0.25,
+     0.75
+    ],
+    "scale": 1.0,
+    "score": 0.993
+   },
+   "worst_full": 1.1
+  },
+  {
+   "a": "median",
+   "b": "xkor_median",
+   "class": "一致",
+   "default": {
+    "affine_resid": 3.05e-08,
+    "affine_scale": 1.0,
+    "corr": 1.0,
+    "input": "structured48",
+    "knobs": [
+     0.5,
+     0.5
+    ],
+    "scale": 1.0,
+    "score": 3.07e-08
+   },
+   "exact_zero": false,
+   "failures": [],
+   "n_failures": 0,
+   "same_function_object": false,
+   "seconds": 0.08,
+   "sorts": [
+    "image->image",
+    "image->image"
+   ],
+   "stem": "median",
+   "tiers": [
+    "registry",
+    "registry"
+   ],
+   "worst": 6.51e-08,
+   "worst_0_255": 1.74,
+   "worst_at": {
+    "affine_resid": 6.69e-08,
+    "affine_scale": 1.0,
+    "corr": 1.0,
+    "input": "smooth_random48",
+    "knobs": [
+     0.75,
+     0.25
+    ],
+    "scale": 1.0,
+    "score": 6.51e-08
+   },
+   "worst_full": 1.02
+  },
+  {
+   "a": "sk_meijering",
+   "b": "xsk_meijering",
+   "class": "一致",
+   "default": {
+    "affine_resid": 6.66e-16,
+    "affine_scale": 1.0,
+    "corr": 1.0,
+    "input": "structured48",
+    "knobs": [
+     0.5,
+     0.5
+    ],
+    "scale": 1.0,
+    "score": 0.0
+   },
+   "exact_zero": true,
+   "failures": [],
+   "n_failures": 0,
+   "same_function_object": false,
+   "seconds": 0.15,
+   "sorts": [
+    "image->image",
+    "image->image"
+   ],
+   "stem": "meijering",
+   "tiers": [
+    "registry",
+    "registry"
+   ],
+   "worst": 0.0,
+   "worst_0_255": 1.0,
+   "worst_at": {
+    "affine_resid": 6.66e-16,
+    "affine_scale": 1.0,
+    "corr": 1.0,
+    "input": "structured48",
+    "knobs": [
+     0.5,
+     0.5
+    ],
+    "scale": 1.0,
+    "score": 0.0
+   },
+   "worst_full": 0.0
+  },
+  {
+   "a": "xcv_orb_count",
+   "b": "xsk_orb_count",
+   "class": "違う",
+   "default": {
+    "input": "structured48",
+    "knobs": [
+     0.5,
+     0.5
+    ],
+    "scale": 1.0,
+    "score": 1.0,
+    "values": [
+     0.0,
+     3.0
+    ]
+   },
+   "exact_zero": false,
+   "failures": [
+    {
+     "error": "RuntimeError: ORB found no features. Try passing in an image containing greater intensity contrasts between adjacent pixels.",
+     "input": "structured48",
+     "knobs": [
+      0.5,
+      0.5
+     ],
+     "op": "xsk_orb_count",
+     "scale": 255.0
+    },
+    {
+     "error": "RuntimeError: ORB found no features. Try passing in an image containing greater intensity contrasts between adjacent pixels.",
+     "input": "structured48",
+     "knobs": [
+      0.25,
+      0.75
+     ],
+     "op": "xsk_orb_count",
+     "scale": 255.0
+    },
+    {
+     "error": "RuntimeError: ORB found no features. Try passing in an image containing greater intensity contrasts between adjacent pixels.",
+     "input": "structured48",
+     "knobs": [
+      0.75,
+      0.25
+     ],
+     "op": "xsk_orb_count",
+     "scale": 255.0
+    },
+    {
+     "error": "RuntimeError: ORB found no features. Try passing in an image containing greater intensity contrasts between adjacent pixels.",
+     "input": "structured64",
+     "knobs": [
+      0.5,
+      0.5
+     ],
+     "op": "xsk_orb_count",
+     "scale": 255.0
+    },
+    {
+     "error": "RuntimeError: ORB found no features. Try passing in an image containing greater intensity contrasts between adjacent pixels.",
+     "input": "structured64",
+     "knobs": [
+      0.25,
+      0.75
+     ],
+     "op": "xsk_orb_count",
+     "scale": 255.0
+    },
+    {
+     "error": "RuntimeError: ORB found no features. Try passing in an image containing greater intensity contrasts between adjacent pixels.",
+     "input": "structured64",
+     "knobs": [
+      0.75,
+      0.25
+     ],
+     "op": "xsk_orb_count",
+     "scale": 255.0
+    }
+   ],
+   "n_failures": 12,
+   "same_function_object": false,
+   "seconds": 0.11,
+   "sorts": [
+    "image->feature",
+    "image->feature"
+   ],
+   "stem": "orb_count",
+   "tiers": [
+    "registry",
+    "registry"
+   ],
+   "worst": 1.0,
+   "worst_0_255": 0.0,
+   "worst_at": {
+    "input": "structured48",
+    "knobs": [
+     0.5,
+     0.5
+    ],
+    "scale": 1.0,
+    "score": 1.0,
+    "values": [
+     0.0,
+     3.0
+    ]
+   },
+   "worst_full": null
+  },
+  {
+   "a": "cv_otsu",
+   "b": "otsu",
+   "class": "近い",
+   "default": {
+    "agree": 1.0,
+    "fg": [
+     590,
+     590
+    ],
+    "input": "structured48",
+    "knobs": [
+     0.5,
+     0.5
+    ],
+    "scale": 1.0,
+    "score": 0.0
+   },
+   "exact_zero": false,
+   "failures": [],
+   "n_failures": 0,
+   "same_function_object": false,
+   "seconds": 0.01,
+   "sorts": [
+    "image->region",
+    "image->region"
+   ],
+   "stem": "otsu",
+   "tiers": [
+    "registry",
+    "registry"
+   ],
+   "worst": 0.00703,
+   "worst_0_255": 0.00703,
+   "worst_at": {
+    "agree": 0.996,
+    "fg": [
+     565,
+     569
+    ],
+    "input": "smooth_random48",
+    "knobs": [
+     0.5,
+     0.5
+    ],
+    "scale": 1.0,
+    "score": 0.00703
+   },
+   "worst_full": null
+  },
+  {
+   "a": "cv_otsu",
+   "b": "sk_otsu",
+   "class": "近い",
+   "default": {
+    "agree": 1.0,
+    "fg": [
+     590,
+     590
+    ],
+    "input": "structured48",
+    "knobs": [
+     0.5,
+     0.5
+    ],
+    "scale": 1.0,
+    "score": 0.0
+   },
+   "exact_zero": false,
+   "failures": [],
+   "n_failures": 0,
+   "same_function_object": false,
+   "seconds": 0.01,
+   "sorts": [
+    "image->region",
+    "image->region"
+   ],
+   "stem": "otsu",
+   "tiers": [
+    "registry",
+    "registry"
+   ],
+   "worst": 0.0122,
+   "worst_0_255": 0.0122,
+   "worst_at": {
+    "agree": 0.993,
+    "fg": [
+     565,
+     572
+    ],
+    "input": "smooth_random48",
+    "knobs": [
+     0.5,
+     0.5
+    ],
+    "scale": 1.0,
+    "score": 0.0122
+   },
+   "worst_full": null
+  },
+  {
+   "a": "otsu",
+   "b": "sk_otsu",
+   "class": "近い",
+   "default": {
+    "agree": 1.0,
+    "fg": [
+     590,
+     590
+    ],
+    "input": "structured48",
+    "knobs": [
+     0.5,
+     0.5
+    ],
+    "scale": 1.0,
+    "score": 0.0
+   },
+   "exact_zero": false,
+   "failures": [],
+   "n_failures": 0,
+   "same_function_object": false,
+   "seconds": 0.01,
+   "sorts": [
+    "image->region",
+    "image->region"
+   ],
+   "stem": "otsu",
+   "tiers": [
+    "registry",
+    "registry"
+   ],
+   "worst": 0.00524,
+   "worst_0_255": 0.00524,
+   "worst_at": {
+    "agree": 0.997,
+    "fg": [
+     569,
+     572
+    ],
+    "input": "smooth_random48",
+    "knobs": [
+     0.5,
+     0.5
+    ],
+    "scale": 1.0,
+    "score": 0.00524
+   },
+   "worst_full": null
+  },
+  {
+   "a": "hx_regress_contours",
+   "b": "xg_regress_contours",
+   "class": "違う",
+   "default": null,
+   "exact_zero": false,
+   "failures": [],
+   "n_failures": 0,
+   "same_function_object": false,
+   "seconds": 0.0,
+   "sorts": [
+    "contour->feature",
+    "contour->feature"
+   ],
+   "stem": "regress_contours",
+   "tiers": [
+    "registry",
+    "registry"
+   ],
+   "worst": 0.997,
+   "worst_0_255": null,
+   "worst_at": {
+    "input": "blobs48_contour",
+    "knobs": [
+     0.5,
+     0.5
+    ],
+    "scale": 1.0,
+    "score": 0.997,
+    "values": [
+     0.0378,
+     12.8
+    ]
+   },
+   "worst_full": null
+  },
+  {
+   "a": "iv_richardson_lucy",
+   "b": "xsk_richardson_lucy",
+   "class": "違う",
+   "default": {
+    "affine_resid": 0.471,
+    "affine_scale": 0.997,
+    "corr": 0.922,
+    "input": "structured48",
+    "knobs": [
+     0.5,
+     0.5
+    ],
+    "scale": 1.0,
+    "score": 0.5
+   },
+   "exact_zero": false,
+   "failures": [],
+   "n_failures": 0,
+   "same_function_object": false,
+   "seconds": 0.07,
+   "sorts": [
+    "image->image",
+    "image->image"
+   ],
+   "stem": "richardson_lucy",
+   "tiers": [
+    "registry",
+    "registry"
+   ],
+   "worst": 0.887,
+   "worst_0_255": 1.0,
+   "worst_at": {
+    "affine_resid": 0.898,
+    "affine_scale": 0.529,
+    "corr": 0.328,
+    "input": "fragments48",
+    "knobs": [
+     0.75,
+     0.25
+    ],
+    "scale": 1.0,
+    "score": 0.887
+   },
+   "worst_full": 1.0
+  },
+  {
+   "a": "sart_reconstruct",
+   "b": "tm_sart_reconstruct",
+   "class": "比較不能",
+   "sorts": [
+    "sinogram->image2d",
+    "image->image"
+   ],
+   "stem": "sart_reconstruct",
+   "tiers": [
+    "ledger",
+    "registry"
+   ]
+  },
+  {
+   "a": "cv_scharr",
+   "b": "sk_scharr",
+   "class": "違う",
+   "default": {
+    "affine_resid": 0.18,
+    "affine_scale": 0.843,
+    "corr": 0.984,
+    "input": "structured48",
+    "knobs": [
+     0.5,
+     0.5
+    ],
+    "scale": 1.0,
+    "score": 0.233
+   },
+   "exact_zero": false,
+   "failures": [],
+   "n_failures": 0,
+   "same_function_object": false,
+   "seconds": 0.01,
+   "sorts": [
+    "image->image",
+    "image->image"
+   ],
+   "stem": "scharr",
+   "tiers": [
+    "registry",
+    "registry"
+   ],
+   "worst": 0.266,
+   "worst_0_255": 0.266,
+   "worst_at": {
+    "affine_resid": 0.256,
+    "affine_scale": 0.745,
+    "corr": 0.997,
+    "input": "fragments48",
+    "knobs": [
+     0.5,
+     0.5
+    ],
+    "scale": 1.0,
+    "score": 0.266
+   },
+   "worst_full": 0.266
+  },
+  {
+   "a": "shape_index",
+   "b": "sk_shape_index",
+   "class": "比較不能",
+   "sorts": [
+    "points->descriptor",
+    "image->image"
+   ],
+   "stem": "shape_index",
+   "tiers": [
+    "ledger",
+    "registry"
+   ]
+  },
+  {
+   "a": "sk_skeleton",
+   "b": "skeleton",
+   "class": "一致",
+   "default": null,
+   "exact_zero": true,
+   "failures": [],
+   "n_failures": 0,
+   "same_function_object": false,
+   "seconds": 0.0,
+   "sorts": [
+    "region->region",
+    "region->region"
+   ],
+   "stem": "skeleton",
+   "tiers": [
+    "registry",
+    "registry"
+   ],
+   "worst": 0.0,
+   "worst_0_255": null,
+   "worst_at": {
+    "agree": 1.0,
+    "fg": [
+     52,
+     52
+    ],
+    "input": "structured_region48",
+    "knobs": [
+     0.5,
+     0.5
+    ],
+    "scale": 1.0,
+    "score": 0.0
+   },
+   "worst_full": null
+  },
+  {
+   "a": "r2_smallest_rectangle1",
+   "b": "smallest_rectangle1",
+   "class": "一致",
+   "default": null,
+   "exact_zero": true,
+   "failures": [],
+   "n_failures": 0,
+   "same_function_object": false,
+   "seconds": 0.0,
+   "sorts": [
+    "region->region",
+    "region->region"
+   ],
+   "stem": "smallest_rectangle1",
+   "tiers": [
+    "registry",
+    "registry"
+   ],
+   "worst": 0.0,
+   "worst_0_255": null,
+   "worst_at": {
+    "agree": 1.0,
+    "fg": [
+     930,
+     930
+    ],
+    "input": "structured_region48",
+    "knobs": [
+     0.5,
+     0.5
+    ],
+    "scale": 1.0,
+    "score": 0.0
+   },
+   "worst_full": null
+  },
+  {
+   "a": "cv_tophat",
+   "b": "tophat",
+   "class": "違う",
+   "default": {
+    "affine_resid": 0.995,
+    "affine_scale": 0.161,
+    "corr": 0.175,
+    "input": "structured48",
+    "knobs": [
+     0.5,
+     0.5
+    ],
+    "scale": 1.0,
+    "score": 1.0
+   },
+   "exact_zero": false,
+   "failures": [],
+   "n_failures": 0,
+   "same_function_object": false,
+   "seconds": 0.01,
+   "sorts": [
+    "image->image",
+    "image->image"
+   ],
+   "stem": "tophat",
+   "tiers": [
+    "registry",
+    "registry"
+   ],
+   "worst": 1.0,
+   "worst_0_255": 1.0,
+   "worst_at": {
+    "affine_resid": 0.995,
+    "affine_scale": 0.161,
+    "corr": 0.175,
+    "input": "structured48",
+    "knobs": [
+     0.5,
+     0.5
+    ],
+    "scale": 1.0,
+    "score": 1.0
+   },
+   "worst_full": 1.0
+  },
+  {
+   "a": "unsharp",
+   "b": "xkor_unsharp",
+   "class": "違う",
+   "default": {
+    "affine_resid": 0.0819,
+    "affine_scale": 0.966,
+    "corr": 0.998,
+    "input": "structured48",
+    "knobs": [
+     0.5,
+     0.5
+    ],
+    "scale": 1.0,
+    "score": 0.0912
+   },
+   "exact_zero": false,
+   "failures": [],
+   "n_failures": 0,
+   "same_function_object": false,
+   "seconds": 0.04,
+   "sorts": [
+    "image->image",
+    "image->image"
+   ],
+   "stem": "unsharp",
+   "tiers": [
+    "registry",
+    "registry"
+   ],
+   "worst": 0.194,
+   "worst_0_255": 1.0,
+   "worst_at": {
+    "affine_resid": 0.165,
+    "affine_scale": 0.91,
+    "corr": 0.991,
+    "input": "noisy48",
+    "knobs": [
+     0.25,
+     0.75
+    ],
+    "scale": 1.0,
+    "score": 0.194
+   },
+   "worst_full": 0.194
+  },
+  {
+   "a": "xsk2_wiener",
+   "b": "xsp_wiener",
+   "class": "違う",
+   "default": {
+    "affine_resid": 0.35,
+    "affine_scale": 1.01,
+    "corr": 0.96,
+    "input": "structured48",
+    "knobs": [
+     0.5,
+     0.5
+    ],
+    "scale": 1.0,
+    "score": 0.347
+   },
+   "exact_zero": false,
+   "failures": [],
+   "n_failures": 0,
+   "same_function_object": false,
+   "seconds": 0.02,
+   "sorts": [
+    "image->image",
+    "image->image"
+   ],
+   "stem": "wiener",
+   "tiers": [
+    "registry",
+    "registry"
+   ],
+   "worst": 0.703,
+   "worst_0_255": 1.0,
+   "worst_at": {
+    "affine_resid": 0.276,
+    "affine_scale": 0.437,
+    "corr": 0.735,
+    "input": "fragments48",
+    "knobs": [
+     0.25,
+     0.75
+    ],
+    "scale": 1.0,
+    "score": 0.703
+   },
+   "worst_full": 0.659
+  }
+ ],
+ "platform": "win32",
+ "prefix_census": {
+  "cv": {
+   "backends": 29
+  },
+  "dc": {
+   "backends_decomp": 7
+  },
+  "deform": {
+   "backends_deform": 3
+  },
+  "dl": {
+   "backends_dl": 2
+  },
+  "f2": {
+   "backends_filters2": 10
+  },
+  "hx": {
+   "backends_halcon_ext": 81
+  },
+  "it": {
+   "backends_imgtools": 11
+  },
+  "iv": {
+   "backends_inverse": 6,
+   "ledger": 1
+  },
+  "m1": {
+   "backends_measure1d": 5
+  },
+  "macro": {
+   "backends_macro": 4
+  },
+  "ph": {
+   "backends_physics": 6
+  },
+  "r2": {
+   "backends_regions2": 11
+  },
+  "r3": {
+   "backends_regions3": 10
+  },
+  "sg": {
+   "backends_segment2": 7
+  },
+  "sk": {
+   "backends": 47
+  },
+  "sp": {
+   "backends_subpix": 6
+  },
+  "tb": {
+   "backends_typed": 161
+  },
+  "tf": {
+   "backends_transform2": 7,
+   "ledger": 5
+  },
+  "tm": {
+   "backends_tomo": 5
+  },
+  "xcv": {
+   "backends_extra": 8
+  },
+  "xcv2": {
+   "backends_cv2b": 5
+  },
+  "xcv3": {
+   "backends_r3": 8
+  },
+  "xg": {
+   "backends_xldgeom": 10
+  },
+  "xkor": {
+   "backends_kornia": 12
+  },
+  "xmh": {
+   "backends_r3": 10
+  },
+  "xpil": {
+   "backends_pil": 13
+  },
+  "xsitk": {
+   "backends_r3": 14
+  },
+  "xsk": {
+   "backends_extra": 13
+  },
+  "xsk2": {
+   "backends_ski2": 11
+  },
+  "xsk3": {
+   "backends_r3": 15
+  },
+  "xsp": {
+   "backends_scipy": 11
+  },
+  "xwt": {
+   "backends_r3": 9
+  }
+ },
+ "tol": {
+  "match": 0.005,
+  "near": 0.05
+ }
+}
