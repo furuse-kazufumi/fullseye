@@ -18,7 +18,14 @@ import optics
 import range_image
 import reprconv as R
 
-match3d = pytest.importorskip("match3d")   # sobel3d / hessian3d は torch を使う
+import match3d
+from conftest import requires_backend
+
+# ★sobel3d / hessian3d は torch を使う。`match3d` 自体は torch 無しでも import できる
+#   (torch_lazy が初回使用まで読み込まない)ので、2026-11-03 までの
+#   `pytest.importorskip("match3d")` は**何も skip せず**、torch の無い master の
+#   py3.12 / py3.14 で ImportError になっていた。要るのは torch なので、それを
+#   使うテストごとに `requires_backend("torch")` で宣言する(完全環境では skip が失敗)。
 
 
 def _grid(n=12):
@@ -26,14 +33,23 @@ def _grid(n=12):
 
 
 # --------------------------------------------------------------------------- gradient
-def test_gradient_magnitude_is_exact_on_a_linear_ramp_for_both_producers():
+# 産み手は 2 つ。numpy の gradient3d は torch 無しで必ず走らせ、sobel3d(torch)だけを宣言で分ける
+#(1 本にまとめると、torch の無い版では gradient3d 側の真値まで一緒に skip される)。
+def _ramp():
     z, y, x = _grid()
-    ramp = 2 * z + 3 * y - x
-    want = np.sqrt(4 + 9 + 1)
-    inner = (slice(2, -2),) * 3
+    return 2 * z + 3 * y - x, np.sqrt(4 + 9 + 1), (slice(2, -2),) * 3
+
+
+def test_gradient_magnitude_is_exact_on_a_linear_ramp_from_gradient3d():
+    ramp, want, inner = _ramp()
     m1 = R.gradient_magnitude(edges3d.gradient3d(ramp, sigma=0))
-    m2 = R.gradient_magnitude(match3d.sobel3d(ramp))
     assert np.allclose(m1[inner], want, atol=1e-12)
+
+
+def test_gradient_magnitude_is_exact_on_a_linear_ramp_from_sobel3d():
+    requires_backend("torch")
+    ramp, want, inner = _ramp()
+    m2 = R.gradient_magnitude(match3d.sobel3d(ramp))
     # sobel3d は利得 32 —— 割らなければ 32 倍に出る(割り忘れの退行を捕まえる)
     assert np.allclose(m2[inner], want, rtol=1e-6)
 
@@ -64,6 +80,7 @@ def test_gradient_coherence_separates_layers_from_noise():
 
 # --------------------------------------------------------------------------- hessian
 def test_hessian_determinant_equals_det_of_the_quadratic_form():
+    requires_backend("torch")        # hessian 型の産み手は hessian3d(torch)しか無い
     z, y, x = _grid()
     A = np.array([[2.0, 0.5, 0.1], [0.5, -1.0, 0.3], [0.1, 0.3, 1.5]])
     P = np.stack([z, y, x], -1)
@@ -75,6 +92,7 @@ def test_hessian_determinant_equals_det_of_the_quadratic_form():
 
 
 def test_hessian_vesselness_prefers_tubes_over_blobs_and_respects_polarity():
+    requires_backend("torch")
     z, y, x = _grid(13)
     tube = np.exp(-((y - 6) ** 2 + (x - 6) ** 2) / 4.0)
     blob = np.exp(-((z - 6) ** 2 + (y - 6) ** 2 + (x - 6) ** 2) / 4.0)

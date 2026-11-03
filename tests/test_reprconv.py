@@ -31,6 +31,7 @@ sys.path.insert(0, os.path.join(_ROOT, "tools"))
 
 import opsreprconv                                          # noqa: E402
 import reprconv as rc                                       # noqa: E402
+from conftest import _have_backend, requires_backend        # noqa: E402
 
 
 @pytest.fixture()
@@ -415,20 +416,49 @@ def _connectivity_inputs(pool):
     return out
 
 
+#: 入力の型を作る産み手が **torch を要るものしか無い**型。2026-11-04 時点で ``hessian`` だけ ——
+#: 産み手は ``match3d.hessian3d``(torch の conv3d)1 本で、numpy の産み手も種も無い。
+#: torch の無い環境(master の py3.12 / py3.14)では「本物の産み手の返り」を作れず、
+#: ``hessian_determinant`` / ``hessian_vesselness`` は**実行できない**(以前は KeyError: 'hessian')。
+#: そこで黙って合格にせず、他の op を全部確かめたうえで ``requires_backend("torch")`` で
+#: 「実行していない」と明示する(完全環境の py3.11 では skip ではなく失敗になる)。
+#: torch 無しの産み手が入ったら ``test_torch_only_sorts_have_only_torch_producers`` が落ちるので、
+#: ここから外すこと(型のつながりが環境に依存している、という欠陥の記録でもある)。
+TORCH_ONLY_INPUT_SORTS = {"hessian": {"hessian3d"}}
+
+
+def _needs_absent_torch(meta) -> bool:
+    return any(t in TORCH_ONLY_INPUT_SORTS for t in meta["in"]) and not _have_backend("torch")
+
+
 class TestDeclaredTypeMatchesActualReturn:
     """台帳の ``out`` 宣言と実際の返りが一致するか。**全 op を実際に実行する**。
 
     「実行されていないので誰も気づけなかった」を防ぐため、実行できなかった op が
     1 つでもあれば失敗させる —— 実行できないことは合格の理由にならない。
+    torch しか産み手の無い型を受ける op だけは、torch が無ければ残りを確かめてから skip
+    (``TORCH_ONLY_INPUT_SORTS``。完全環境では失敗)。
     """
+
+    def test_torch_only_sorts_have_only_torch_producers(self):
+        import fullseye
+        rows = fullseye.list_ops(include_ledger=True, include_algo=True)
+        for sort, producers in TORCH_ONLY_INPUT_SORTS.items():
+            got = {r["name"] for r in rows if r.get("out_sort") == sort}
+            assert got == producers, (
+                "%s の産み手が %s に変わった。torch 無しの産み手があるなら TORCH_ONLY_INPUT_SORTS "
+                "から外し、全 op 実行の門を torch 無しでも回すこと" % (sort, sorted(got)))
 
     def test_every_op_runs_and_returns_its_declared_type(self, rng):
         pool = _sample_inputs(rng)
         # 散在フローは (N,3)。密フロー用の op と入力を分ける(同じ型名で別物)
         scattered = rng.standard_normal((160, 3)) * 0.1
         special = _special_inputs(pool, scattered)
-        ran, problems = 0, []
+        ran, problems, not_run = 0, [], []
         for name, meta in sorted(opsreprconv.OPSREPRCONV.items()):
+            if _needs_absent_torch(meta):
+                not_run.append(name)
+                continue
             args = special.get(name) or tuple(pool[t] for t in meta["in"])
             try:
                 out = opsreprconv.call(name, *args)
@@ -441,14 +471,21 @@ class TestDeclaredTypeMatchesActualReturn:
                 problems.append(f"{name}: declares out={meta['out']} but returned "
                                 f"{type(out).__name__} shape {getattr(out, 'shape', None)}")
         assert not problems, "\n".join(problems)
-        assert ran == len(opsreprconv.OPSREPRCONV), f"only {ran} ops executed"
+        assert ran == len(opsreprconv.OPSREPRCONV) - len(not_run), f"only {ran} ops executed"
+        if not_run:
+            print("torch が無いので実行していない op %d 本: %s" % (len(not_run), ", ".join(not_run)))
+            requires_backend("torch")
 
     def test_no_op_leaks_non_finite_from_finite_input(self, rng):
         """有限入力から NaN/Inf が無言で出ないか(NONFINITE_BY_CONTRACT は空)。"""
         pool = _sample_inputs(rng)
         scattered = rng.standard_normal((160, 3)) * 0.1
         special = _special_inputs(pool, scattered)
+        not_run = []
         for name, meta in sorted(opsreprconv.OPSREPRCONV.items()):
+            if _needs_absent_torch(meta):
+                not_run.append(name)
+                continue
             out = opsreprconv.call(name, *(special.get(name)
                                            or tuple(pool[t] for t in meta["in"])))
             vals = out if isinstance(out, (dict,)) else {"": out}
@@ -456,6 +493,9 @@ class TestDeclaredTypeMatchesActualReturn:
                 a = np.asarray(list(v) if isinstance(v, tuple) else v)
                 if a.dtype.kind in "fc":
                     assert np.all(np.isfinite(a)), f"{name}{'[' + key + ']' if key else ''}"
+        if not_run:
+            print("torch が無いので実行していない op %d 本: %s" % (len(not_run), ", ".join(not_run)))
+            requires_backend("torch")
 
     def test_adapters_and_contract_sets_are_empty_by_design(self):
         assert opsreprconv.RESULT_ADAPTERS == {}
