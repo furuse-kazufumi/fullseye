@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3623,
- "n_notes": 3629,
+ "n_ops": 3627,
+ "n_notes": 3633,
  "notes": {
   "vol_dilate": [
    {
@@ -23128,6 +23128,46 @@
     "in": "labels2d × labels2d × table",
     "out": "table",
     "path": "docs/ops/emproof/wiring/seg_wiring_variation.md"
+   }
+  ],
+  "archive_create": [
+   {
+    "op": "archive_create",
+    "dim": "fileio",
+    "category": "archive",
+    "in": "any × text",
+    "out": "any",
+    "path": "docs/ops/fileio/archive/archive_create.md"
+   }
+  ],
+  "archive_extract": [
+   {
+    "op": "archive_extract",
+    "dim": "fileio",
+    "category": "archive",
+    "in": "any × text",
+    "out": "any",
+    "path": "docs/ops/fileio/archive/archive_extract.md"
+   }
+  ],
+  "archive_list": [
+   {
+    "op": "archive_list",
+    "dim": "fileio",
+    "category": "archive",
+    "in": "any",
+    "out": "table",
+    "path": "docs/ops/fileio/archive/archive_list.md"
+   }
+  ],
+  "archive_probe": [
+   {
+    "op": "archive_probe",
+    "dim": "fileio",
+    "category": "archive",
+    "in": "any",
+    "out": "text",
+    "path": "docs/ops/fileio/archive/archive_probe.md"
    }
   ],
   "e57_read": [

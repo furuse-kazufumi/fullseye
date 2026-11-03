@@ -1,8 +1,12 @@
-# FILEIO operator help — 14 ops in 4 categories
+# FILEIO operator help — 18 ops in 5 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/fileio/<category>/<op>.md` を走査。
 
 ## カテゴリ
+
+### archive (4)
+
+[archive_create](archive/archive_create.md) · [archive_extract](archive/archive_extract.md) · [archive_list](archive/archive_list.md) · [archive_probe](archive/archive_probe.md)
 
 ### e57 (2)
 
