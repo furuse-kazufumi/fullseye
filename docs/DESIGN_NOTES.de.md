@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 611 von 1576. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 611 von 1577. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `accel.py`
@@ -178,6 +178,10 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L309** _(ja)_ — ★減衰つき(Levenberg–Marquardt)。素の Gauss–Newton は軌跡が短い(曲がりが雑音に埋もれる)と ω の方向が ほぼ不定になり、1 歩で 1e7 rad/s へ飛んだ(2026-09-30、PoC ㉔ の 10〜45 コマ)。費用が下がる歩だけ受け入れる。
 - **L804** _(ja)_ — ★ dt が標本間隔を超えると模型は標本の間で区分線形になり、C_d と推力が別の値に化けるのに例外も NaN も出ない (30 fps の同じ軌跡で dt = 0.5 s にすると C_d 0.33 → 3.1、2026-10-23 の敵対的レビュー)。歩数の上限は ms で渡した t を止める。
 - **L965** _(ja)_ — ★ 残差が離散化の床にあるなら n·ln(RSS_b / RSS_t) は丸め屑の比を増幅するだけ(雑音ゼロの真値で +144、推力の推定値は 3e-14 m/s²)。
+
+## `barcode1d.py`
+
+- **L847** _(ja)_ — ★走査の向きを当て直す(2026-11-04)。構造テンソルの向きはシンボルの外形(バーの端の 勾配)に引かれて 2〜6° ずれる(実測、モジュール 2〜4.5 px)。ずれた走査線は長い シンボルの途中でバーの上下の端から抜け、先頭の数桁だけが有効な ITF として読まれた (短読み、4800 通り中 53 件が conflict)。多数の文字列を読んだ走査線の「最初のバーの 縁」の点はバーに平行な 1 本の直線に乗るので、その向きから走査の向きを決め直して読み直す。 Refine the scan direction from the leading edges of the lines that read the majority text (they lie on a line parallel to the bars) and scan again.
 
 ## `blob2d.py`
 

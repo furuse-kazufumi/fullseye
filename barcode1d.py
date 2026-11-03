@@ -816,23 +816,58 @@ def read_barcode1d(image, symbologies=None, *, angle_deg=None, n_lines=10, itf_m
     Two or more lines decoding to different strings sets ``conflict = True``; fewer than
     ``min_agree`` lines agreeing on the majority text is a no-read.
 
+    向きを与えないときは 2 回読む: 構造テンソルの向きで 1 回、多数の文字列を読んだ走査線の
+    最初のバーの縁(バーに平行な直線に乗る)から当て直した向きでもう 1 回(多数の票が減らない
+    ときだけ採る)。With ``angle_deg=None`` the scan direction is refined from the leading
+    edges of the majority lines and the symbol is read again.
+
     空の入力は ``ValueError``。
     拒否(``ValueError``): 2-D でない、非有限、未知の体系名。1 本も読めなければ
     :class:`Barcode1DError`。
     """
     op = "read_barcode1d"
     a = _image(image, op)
-    sp = barcode_scan_profiles(a, angle_deg=angle_deg, n_lines=n_lines)
-    results, votes = [], {}
-    for prof in sp["profiles"]:
-        try:
-            r = decode_barcode_profile(prof, symbologies, itf_min_length=itf_min_length)
-        except Barcode1DError:
-            results.append(None)
-            continue
-        results.append(r)
-        key = (r["symbology"], r["text"])
-        votes[key] = votes.get(key, 0) + 1
+
+    def scan(ang):
+        sp_ = barcode_scan_profiles(a, angle_deg=ang, n_lines=n_lines)
+        res, vts = [], {}
+        for prof in sp_["profiles"]:
+            try:
+                r = decode_barcode_profile(prof, symbologies, itf_min_length=itf_min_length)
+            except Barcode1DError:
+                res.append(None)
+                continue
+            res.append(r)
+            key = (r["symbology"], r["text"])
+            vts[key] = vts.get(key, 0) + 1
+        return sp_, res, vts
+
+    sp, results, votes = scan(angle_deg)
+    if angle_deg is None and votes:
+        # ★走査の向きを当て直す(2026-11-04)。構造テンソルの向きはシンボルの外形(バーの端の
+        # 勾配)に引かれて 2〜6° ずれる(実測、モジュール 2〜4.5 px)。ずれた走査線は長い
+        # シンボルの途中でバーの上下の端から抜け、先頭の数桁だけが有効な ITF として読まれた
+        # (短読み、4800 通り中 53 件が conflict)。多数の文字列を読んだ走査線の「最初のバーの
+        # 縁」の点はバーに平行な 1 本の直線に乗るので、その向きから走査の向きを決め直して読み直す。
+        # Refine the scan direction from the leading edges of the lines that read the majority
+        # text (they lie on a line parallel to the bars) and scan again.
+        maj = max(votes.items(), key=lambda kv: kv[1])[0]
+        pts = []
+        for k, r in enumerate(results):
+            if r is not None and (r["symbology"], r["text"]) == maj:
+                s0 = r["stop"] if r["reversed"] else r["start"]
+                pts.append(sp["origin"] + sp["offsets"][k] * sp["normal"]
+                           + s0 * sp["step"] * sp["direction"])
+        if len(pts) >= 3:
+            P = np.asarray(pts) - np.mean(pts, axis=0)
+            u = np.linalg.svd(P, full_matrices=False)[2][0]          # バーに沿う向き (row, col)
+            d_new = np.array([u[1], -u[0]])
+            if float(d_new @ sp["direction"]) < 0:
+                d_new = -d_new
+            ang_new = -np.rad2deg(np.arctan2(d_new[0], d_new[1]))
+            sp2, results2, votes2 = scan(float(ang_new))
+            if votes2 and max(votes2.values()) >= max(votes.values()):
+                sp, results, votes = sp2, results2, votes2
     if not votes:
         raise Barcode1DError("%s: none of the %d scan lines decoded" % (op, len(results)))
     (sym, text), n_agree = max(votes.items(), key=lambda kv: kv[1])

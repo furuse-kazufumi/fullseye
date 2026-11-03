@@ -35,6 +35,11 @@ or None per line), ``angle_deg``, ``x_dim_px``.
 Two or more lines decoding to different strings sets ``conflict = True``; fewer than
 ``min_agree`` lines agreeing on the majority text is a no-read.
 
+向きを与えないときは 2 回読む: 構造テンソルの向きで 1 回、多数の文字列を読んだ走査線の
+最初のバーの縁(バーに平行な直線に乗る)から当て直した向きでもう 1 回(多数の票が減らない
+ときだけ採る)。With ``angle_deg=None`` the scan direction is refined from the leading
+edges of the majority lines and the symbol is read again.
+
 空の入力は ``ValueError``。
 拒否(``ValueError``): 2-D でない、非有限、未知の体系名。1 本も読めなければ
 :class:`Barcode1DError`。

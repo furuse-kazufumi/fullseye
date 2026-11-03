@@ -936,7 +936,7 @@ def _fit_line_outer(E, nrm, tol=0.8):
             return None
         P = E[keep]
         c = P.mean(0)
-        _, _, vt = np.linalg.svd(P - c)
+        _, _, vt = np.linalg.svd(P - c, full_matrices=False)   # (N,2) に (N,N) の U を作らない
         d = vt[0]
         n = np.array([-d[1], d[0]])
         if n @ nrm < 0:
