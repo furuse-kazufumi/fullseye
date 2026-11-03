@@ -1121,9 +1121,12 @@ def section10_tool_gaps() -> None:
     print("=" * 78)
     for nm in ("stripe_center", "light_section", "laser_stripe", "sheet_of_light"):
         assert not hasattr(fs, nm) and not hasattr(fs.ledger, nm), nm
-    print("  (a) **列ごとの光条中心をサブピクセルで返す op が無い**。`lines_gauss`")
-    print("      は在るが Frangi リッジの二値化(輪郭画素の集合)で、HALCON の")
-    print("      同名 op が返す中心線 + 線幅は返らない(2 章でゼロ点より悪かった)。")
+    # ★2026-11-03: 穴は埋まった(lightsection 族)。名前の門は「光切断そのものを名乗る 1 語の op が無い」
+    #   ことだけを見ており、族の op は laser_line_center_* / light_section_* と名乗る。
+    assert hasattr(fs.ledger, "laser_line_center_steger") and hasattr(fs.ledger, "light_section_profile")
+    print("  (a) **埋まった(2026-11-03)**: 列ごとの光条中心は `laser_line_center_centroid` /")
+    print("      `_gauss` / `_steger`(Hessian による線の中心)、三角測量は `light_section_profile`。")
+    print("      `lines_gauss` は従来どおり Frangi リッジの二値化(中心線 + 線幅は返らない)。")
     for nm in ("shadow_map", "visibility_map", "horizon_mask"):
         assert not hasattr(fs, nm) and not hasattr(fs.ledger, nm), nm
     print("  (b) 高さ場と視線角から**遮蔽の地図**を出す口が無い。法線")

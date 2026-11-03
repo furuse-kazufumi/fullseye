@@ -5016,6 +5016,133 @@ def _b_speckle_reduction(pool, rng):
     return (), {"n_patterns": 4, "polarizations": 2, "cutoff": 0.5}
 
 
+def _ls_rig():
+    import lightsection as _ls
+    return _ls.light_section_rig(30.0, 200.0, 800.0, (96, 128))
+
+
+def _ls_profile(rng):
+    """光切断の種: 段差 + 溶接ビード型の盛り上がりの断面 (x, h) [mm]。"""
+    x = np.linspace(-6.0, 6.0, 241)
+    h = np.where(np.abs(x) < 2.0, float(rng.uniform(0.5, 2.0)), 0.0) + 0.6 * np.exp(-x * x / 2.0)
+    return np.column_stack([x, h])
+
+
+def _ls_image(rng):
+    """光条の一部(列 40〜59)を暗く(頂の 0.15 倍)した種: min_peak_rel を半分 / 倍にすると有効な列が変わる。"""
+    import lightsection as _ls
+    img = _ls.light_section_render(_ls_rig(), _ls_profile(rng), line_sigma_px=1.5,
+                                   noise=0.01, seed=int(rng.integers(0, 1 << 30)))
+    img[:, 40:60] *= 0.15
+    return img
+
+
+def _b_ls_center(pool, rng):
+    """本物の光条(プールの一様乱数には列ごとに 1 本の輝線が無い)。"""
+    return (_ls_image(rng),), {}
+
+
+def _b_light_section_rig(pool, rng):
+    return (), {"theta_deg": float(rng.uniform(10.0, 60.0)), "image_shape": (96, 128)}
+
+
+def _b_light_section_targets(pool, rng):
+    return (_ls_rig(), [0.0, float(rng.uniform(1.0, 4.0))]), {}
+
+
+def _b_light_section_render(pool, rng):
+    return (_ls_rig(), _ls_profile(rng)), {"seed": int(rng.integers(0, 1 << 30))}
+
+
+def _b_light_plane_calibrate(pool, rng):
+    import lightsection as _ls
+    rig = _ls_rig()
+    hs = [0.0, float(rng.uniform(1.0, 3.0)), float(rng.uniform(3.5, 6.0))]
+    x = np.linspace(-6.0, 6.0, 121)
+    cl = [_ls.laser_line_center_gauss(_ls.light_section_render(rig, np.column_stack([x, np.full_like(x, h)])))
+          for h in hs]
+    return (cl, _ls.light_section_targets(rig, hs), rig["K"]), {}
+
+
+def _b_light_section_profile(pool, rng):
+    import lightsection as _ls
+    return (_ls.laser_line_center_gauss(_ls_image(rng)), _ls_rig()), {}
+
+
+def _b_light_section_scan(pool, rng):
+    return ([_ls_image(rng) for _ in range(3)], _ls_rig()), {"step_mm": (0.0, 0.2, 0.0)}
+
+
+def _b_light_section_height_map(pool, rng):
+    return ([_ls_image(rng) for _ in range(3)], _ls_rig()), {}
+
+
+def _b_light_section_speckle_floor(pool, rng):
+    return (), {"n_trials": 2, "n_columns": 128, "n_rows": 64, "line_width_um": 16.0,
+                "seed": int(rng.integers(0, 1 << 30))}
+
+
+def _b_light_section_uncertainty_budget(pool, rng):
+    return (), {"noise_rel": float(rng.uniform(0.0, 0.1)), "calib_rms_um": 0.5}
+
+
+def _b_light_section_floor_sweep(pool, rng):
+    return ("sin_theta", [0.4, 0.8]), {"n_trials": 2, "n_columns": 128, "n_rows": 64,
+                                       "line_width_um": 16.0}
+
+
+def _hdr_scene(rng, h=24, w=32):
+    """HDR の種: 4 桁にわたる放射輝度の傾斜 [光子 / 時間の単位]。"""
+    xx = np.linspace(0.0, 1.0, w)[None, :] * np.ones((h, 1))
+    return 50.0 * 10.0 ** (4.0 * xx) * (1.0 + 0.1 * rng.random((h, w)))
+
+
+_HDR_T = [0.01, 0.04, 0.16, 0.64, 2.56]
+
+
+def _hdr_series(rng, gamma=1.0):
+    import hdrfusion as _hf
+    return _hf.hdr_exposure_series_simulate(_hdr_scene(rng), _HDR_T, gamma=gamma,
+                                            seed=int(rng.integers(0, 1 << 30)))
+
+
+def _b_camera_response_debevec(pool, rng):
+    return (_hdr_series(rng, 2.2), _HDR_T), {}
+
+
+def _b_camera_response_robertson(pool, rng):
+    # max_pixels を画素数(24×32 = 768)より少なく、tol を反復の途中で効く大きさに: どちらのノブも出力を動かす
+    return (_hdr_series(rng, 2.2), _HDR_T), {"max_pixels": 300, "tol": 1e-3}
+
+
+def _b_camera_response_linear(pool, rng):
+    return (), {"levels": 256, "dark_offset_dn": 4.0, "gain_dn_per_unit": 0.06}
+
+
+def _b_hdr_merge(pool, rng):
+    """飽和の近くの段を含む列(放射輝度を 5 倍): saturation_margin が除く段が実際にある。"""
+    import hdrfusion as _hf
+    imgs = _hf.hdr_exposure_series_simulate(5.0 * _hdr_scene(rng), _HDR_T, seed=int(rng.integers(0, 1 << 30)))
+    return (imgs, _HDR_T), {"response": _hf.camera_response_linear(256, 4.0, 0.06), "weight": "linear"}
+
+
+def _b_exposure_fusion_mertens(pool, rng):
+    return (_hdr_series(rng),), {}
+
+
+def _b_hdr_exposure_series_simulate(pool, rng):
+    return (_hdr_scene(rng),), {"exposures": _HDR_T, "seed": int(rng.integers(0, 1 << 30))}
+
+
+def _b_hdr_radiance_error(pool, rng):
+    s = _hdr_scene(rng)
+    return (s * (1.0 + 0.05 * rng.standard_normal(s.shape)) ** 2, s), {}
+
+
+def _b_hdr_dynamic_range(pool, rng):
+    return ([1.0, 4.0],), {"n_frames": 64, "n_levels": 24}
+
+
 def _sfp_dome(rng, h=24):
     """偏光からの形状復元の種: 凸のドーム(球冠)の解析的な法線と mask。
 
@@ -7447,6 +7574,29 @@ OP_ARG_BUILDERS = {
     "laser_line_coherent": _b_laser_line_coherent,
     "triangulation_speckle_limit": _b_triangulation_speckle_limit,
     "speckle_reduction": _b_speckle_reduction,
+    # --- 光切断(本物の光条・装置の幾何・既知の高さの的から組む) ------------- #
+    "laser_line_center_centroid": _b_ls_center,
+    "laser_line_center_gauss": _b_ls_center,
+    "laser_line_center_steger": _b_ls_center,
+    "light_section_rig": _b_light_section_rig,
+    "light_section_targets": _b_light_section_targets,
+    "light_section_render": _b_light_section_render,
+    "light_plane_calibrate": _b_light_plane_calibrate,
+    "light_section_profile": _b_light_section_profile,
+    "light_section_scan": _b_light_section_scan,
+    "light_section_height_map": _b_light_section_height_map,
+    "light_section_speckle_floor": _b_light_section_speckle_floor,
+    "light_section_uncertainty_budget": _b_light_section_uncertainty_budget,
+    "light_section_floor_sweep": _b_light_section_floor_sweep,
+    # --- HDR・露出融合(EMVA 1288 のセンサで撮った本物の露出の列から組む) ---- #
+    "camera_response_debevec": _b_camera_response_debevec,
+    "camera_response_robertson": _b_camera_response_robertson,
+    "camera_response_linear": _b_camera_response_linear,
+    "hdr_merge": _b_hdr_merge,
+    "exposure_fusion_mertens": _b_exposure_fusion_mertens,
+    "hdr_exposure_series_simulate": _b_hdr_exposure_series_simulate,
+    "hdr_radiance_error": _b_hdr_radiance_error,
+    "hdr_dynamic_range": _b_hdr_dynamic_range,
     # --- 偏光からの形状復元(凸のドームの解析的な法線から組む) --------------- #
     "sfp_dolp_model": _b_sfp_dolp_model,
     "dolp_to_zenith": _b_dolp_to_zenith,
@@ -8118,6 +8268,14 @@ OP_ARG_BUILDERS = {
 #: gaussian_beam はウエストで wavefront_radius = inf(平面波面の曲率半径)。
 #: どちらも有限の逆数(curvature_per_mm)や bool を併せて返す。
 NONFINITE_BY_CONTRACT_OPTICS = {
+    # lightsection(2026-11-03): 中心が取れない列は row / col が NaN で valid = False(docstring どおり。
+    #   0 や最大の行で埋めると「測れた」に化ける)。高さ地図の NaN = 測れない(triangulate_column と同じ約束)。
+    "laser_line_center_centroid", "laser_line_center_gauss", "laser_line_center_steger",
+    "light_section_height_map",
+    # GUM の自由度: 閉形式の成分は dof = inf(spc.gum_expanded の約束「既知の定数は numpy.inf」)。
+    "light_section_uncertainty_budget",
+    # hdrfusion: 逆応答が 0 以下の段(オフセットより下)は g = ln X が NaN(inverse は有限で負のまま運ぶ)。
+    "camera_response_linear",
     "depth_of_field",
     "gaussian_beam",
     # worst_trial preserves physical infinite planes/object distance.

@@ -1,4 +1,4 @@
-# OPTICS operator help — 483 ops in 53 categories
+# OPTICS operator help — 504 ops in 55 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/optics/<category>/<op>.md` を走査。
 
@@ -70,6 +70,10 @@
 
 [darkfield_scatter_relation](grating_interf/darkfield_scatter_relation.md) · [dpc_integrate](grating_interf/dpc_integrate.md) · [grating_step_period_estimate](grating_interf/grating_step_period_estimate.md) · [grating_stepping_simulate](grating_interf/grating_stepping_simulate.md) · [grating_three_image_retrieve](grating_interf/grating_three_image_retrieve.md) · [talbot_carpet](grating_interf/talbot_carpet.md) · [talbot_grating_design](grating_interf/talbot_grating_design.md) · [talbot_source_visibility](grating_interf/talbot_source_visibility.md)
 
+### hdr (8)
+
+[camera_response_debevec](hdr/camera_response_debevec.md) · [camera_response_linear](hdr/camera_response_linear.md) · [camera_response_robertson](hdr/camera_response_robertson.md) · [exposure_fusion_mertens](hdr/exposure_fusion_mertens.md) · [hdr_dynamic_range](hdr/hdr_dynamic_range.md) · [hdr_exposure_series_simulate](hdr/hdr_exposure_series_simulate.md) · [hdr_merge](hdr/hdr_merge.md) · [hdr_radiance_error](hdr/hdr_radiance_error.md)
+
 ### illumination (14)
 
 [coaxial_illumination](illumination/coaxial_illumination.md) · [defect_contrast](illumination/defect_contrast.md) · [illumination_design](illumination/illumination_design.md) · [illumination_field](illumination/illumination_field.md) · [illumination_train](illumination/illumination_train.md) · [illumination_uniformity](illumination/illumination_uniformity.md) · [irradiance_map](illumination/irradiance_map.md) · [light_source](illumination/light_source.md) · [lighting_sweep](illumination/lighting_sweep.md) · [solid_angle_boundaries](illumination/solid_angle_boundaries.md) · [solid_angle_brightness](illumination/solid_angle_brightness.md) · [solid_angle_light](illumination/solid_angle_light.md) · [solid_angle_render](illumination/solid_angle_render.md) · [solid_angle_sweep](illumination/solid_angle_sweep.md)
@@ -113,6 +117,10 @@
 ### lenssolve (9)
 
 [afocal_system](lenssolve/afocal_system.md) · [lens_afocal_report](lenssolve/lens_afocal_report.md) · [lens_apply_solves](lenssolve/lens_apply_solves.md) · [lens_image_surface](lenssolve/lens_image_surface.md) · [lens_petzval_radius](lenssolve/lens_petzval_radius.md) · [lens_solve_clear](lenssolve/lens_solve_clear.md) · [lens_solve_set](lenssolve/lens_solve_set.md) · [lens_solves_list](lenssolve/lens_solves_list.md) · [lens_zmx_solves_roundtrip](lenssolve/lens_zmx_solves_roundtrip.md)
+
+### light_section (13)
+
+[laser_line_center_centroid](light_section/laser_line_center_centroid.md) · [laser_line_center_gauss](light_section/laser_line_center_gauss.md) · [laser_line_center_steger](light_section/laser_line_center_steger.md) · [light_plane_calibrate](light_section/light_plane_calibrate.md) · [light_section_floor_sweep](light_section/light_section_floor_sweep.md) · [light_section_height_map](light_section/light_section_height_map.md) · [light_section_profile](light_section/light_section_profile.md) · [light_section_render](light_section/light_section_render.md) · [light_section_rig](light_section/light_section_rig.md) · [light_section_scan](light_section/light_section_scan.md) · [light_section_speckle_floor](light_section/light_section_speckle_floor.md) · [light_section_targets](light_section/light_section_targets.md) · [light_section_uncertainty_budget](light_section/light_section_uncertainty_budget.md)
 
 ### light_transport (11)
 

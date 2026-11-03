@@ -5,7 +5,7 @@ category: coherent
 in: 
 out: image2d
 gpu: なし
-examples: [poc_laser_line_speckle_floor]
+examples: [poc_laser_line_speckle_floor, poc_light_section_step_weld_floor]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.9.0  # fullseye lib version this note was generated for
@@ -65,6 +65,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [poc_laser_line_speckle_floor](../../../../examples/poc_laser_line_speckle_floor.py) — `py -3.11 examples/poc_laser_line_speckle_floor.py`
+- [poc_light_section_step_weld_floor](../../../../examples/poc_light_section_step_weld_floor.py) — `py -3.11 examples/poc_light_section_step_weld_floor.py`
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)
 

@@ -121,6 +121,8 @@ paraboloid / sphere_mirror の 4 処方(テストと例の共通出発点)。
     opsoptics.get("thin_lens")(focal_mm=50.0, object_mm=200.0)
 """
 import coherent
+import lightsection
+import hdrfusion
 import edgesfr
 import sfpolar
 import lighttransport
@@ -185,6 +187,7 @@ _MOD = {"optics": optics, "raytrace": raytrace, "lensimage": lensimage, "cavityo
         "metalfinish": metalfinish, "surfacelib": surfacelib,
         "lensopt": lensopt, "illumdesign": illumdesign, "edgesfr": edgesfr, "sensorchar": sensorchar, "sensorgeneral": sensorgeneral,
         "optscene": optscene, "coherent": coherent, "sfpolar": sfpolar,
+        "lightsection": lightsection, "hdrfusion": hdrfusion,
         "lighttransport": lighttransport, "radiosity3d": radiosity3d}
 
 # カテゴリ → [(op 名, module, [入力種別], 出力種別)]
@@ -1001,6 +1004,44 @@ _CATALOG = {
         ("form_factor_matrix", "radiosity3d", ["table"], "matrix"),
         ("radiosity_progressive_3d", "radiosity3d", ["table", "signal"], "table"),
         ("render_optscene_gi", "radiosity3d", ["table", "table", "table"], "table"),
+    ],
+    # light_section(lightsection、2026-11-03 追加): 光切断(レーザー三角測量)。土台 = 列ごとの線の中心
+    # 3 変種(重心 / ガウス / Steger)→ 光面の校正 → 三角測量 → 走査。Fullseye だけの層 = coherent の
+    # スペックル込みの光条で高さの不確かさの床をシミュと閉形式(Dorsch 1994)で出し、GUM の表で返す。
+    # ★新しい型の語は作らない。中心・装置・校正の的は kind の印つきの dict(table)で、印の無い table は
+    #   消費する op が ValueError で拒む。三角測量の出口は既存の points((N, 3))と depth(NaN = 測れない)で、
+    #   ops3d の点群・深度の op にそのまま繋がる。カメラは matrix(3x3 の K、camera.py と同じ約束)。
+    # ★2-D の橋(tb_*)は架からない: 1 入力の op の in が image2d のもの(中心 3 変種)は out が table。
+    "light_section": [
+        ("laser_line_center_centroid", "lightsection", ["image2d"], "table"),
+        ("laser_line_center_gauss", "lightsection", ["image2d"], "table"),
+        ("laser_line_center_steger", "lightsection", ["image2d"], "table"),
+        ("light_section_rig", "lightsection", [], "table"),
+        ("light_section_targets", "lightsection", ["table"], "table"),
+        ("light_section_render", "lightsection", ["table", "pairs"], "image2d"),
+        ("light_plane_calibrate", "lightsection", ["table", "table", "matrix"], "table"),
+        ("light_section_profile", "lightsection", ["table", "table"], "points"),
+        ("light_section_scan", "lightsection", ["images", "table"], "points"),
+        ("light_section_height_map", "lightsection", ["images", "table"], "depth"),
+        ("light_section_speckle_floor", "lightsection", [], "table"),
+        ("light_section_uncertainty_budget", "lightsection", [], "table"),
+        ("light_section_floor_sweep", "lightsection", [], "table"),
+    ],
+    # hdr(hdrfusion、2026-11-03 追加): 露出の列 → 応答関数(Debevec / Robertson / 線形)→ 放射輝度の合成、
+    # 露出融合(Mertens)。トーンマップは ops3d の tonemap_reinhard / tonemap_aces を使う(再実装しない)。
+    # Fullseye だけの層 = EMVA 1288 のセンサで既知の放射輝度を撮る露出の列、真値との誤差、
+    # ダイナミックレンジの実測(EMVA の定義)と閉形式。
+    # ★新しい型の語は作らない。露出の列は既存の images、応答関数は kind の印つきの table、
+    #   放射輝度と融合の結果は image2d。final_genuine2.radiometric_self_calibration(HALCON 名の簡易版)とは並存。
+    "hdr": [
+        ("camera_response_debevec", "hdrfusion", ["images"], "table"),
+        ("camera_response_robertson", "hdrfusion", ["images"], "table"),
+        ("camera_response_linear", "hdrfusion", [], "table"),
+        ("hdr_merge", "hdrfusion", ["images"], "image2d"),
+        ("exposure_fusion_mertens", "hdrfusion", ["images"], "image2d"),
+        ("hdr_exposure_series_simulate", "hdrfusion", ["image2d"], "images"),
+        ("hdr_radiance_error", "hdrfusion", ["image2d", "image2d"], "table"),
+        ("hdr_dynamic_range", "hdrfusion", [], "table"),
     ],
 }
 

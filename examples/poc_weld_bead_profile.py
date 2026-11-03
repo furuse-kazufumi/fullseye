@@ -690,33 +690,26 @@ def section9_tool_gaps() -> None:
     print("8) 道具の穴(光切断の断面を測るのに使ってみて)")
     print("=" * 78)
 
-    # (a) 光切断そのものの op が無い。3 層とも引いた。
+    # (a) 光切断そのものの op。★2026-11-03 に穴が埋まった(lightsection 族): 列ごとの中心 3 変種
+    #   (laser_line_center_centroid / _gauss / _steger)、光面の校正 light_plane_calibrate、
+    #   三角測量 light_section_profile、走査 light_section_scan / light_section_height_map。
+    #   語でなく族で固定する: 「名前か 1 行目で laser を名乗る op」は coherent(光条を描く側と床の
+    #   閉形式)と lightsection(画像から測る側)の 2 族だけ。
     for nm in ("laser_stripe", "light_section", "stripe_center", "sheet_of_light"):
         assert not hasattr(fs, nm) and not hasattr(fs.ledger, nm), nm
-    # ★2026-10-13: `op_find("laser")` は 0 件でなくなった —— coherent 族
-    #   (`laser_line_coherent` / `speckle_field` / `triangulation_speckle_limit`)が引っかかる。
-    #   だがあれは光条を**描く**側と、スペックルが決める誤差の**床**を返す閉形式で、
-    #   画像から列ごとの中心を取る op ではない。穴は残っている(語でなく族で固定する)。
-    # ★2026-10-15: op_find に docstring 全文の段(最低点 12)が加わり、引数の説明に "laser" と書いただけの
-    #   無関係な op も並ぶようになった。ここで固定したいのは「名前か 1 行目で laser を名乗る op」なので、その段は除く。
     laser_hits = [r for r in fs.op_find("laser") if r["score"] > 12]
     assert laser_hits, "op_find(\"laser\") が coherent 族すら返さない"
-    assert all(r.get("module") == "coherent" for r in laser_hits), laser_hits
-    # ★2026-09-23: `op_find("stripe")` は 0 件でなくなった —— wave 族の
-    #   `wave_fringe_period`(「縞模様の画像から周期を測り返す」)が docstring で
-    #   引っかかる。だがあれは**画像全体の 1 本の支配的な周期**を返す op で、
-    #   ここで要るのは**列ごとの輝線の中心をサブピクセルで**取る op。穴は残っている。
-    #   語で穴を固定すると、別の意味で同じ語を使う族が来た瞬間に偽陽性になる
-    #   (この repo で 3 度目: `fly_hex_lattice` / `halftone_moire_period` / これ)。
+    assert {r.get("module") for r in laser_hits} <= {"coherent", "lightsection"}, laser_hits
+    assert any(r["op"] == "laser_line_center_centroid" for r in laser_hits), laser_hits
+    assert hasattr(fs.ledger, "laser_line_center_steger") and hasattr(fs.ledger, "light_plane_calibrate")
+    # ★2026-09-23: `op_find("stripe")` は wave 族の `wave_fringe_period`(画像全体の 1 本の周期)を
+    #   docstring で拾うだけで、名前に stripe を持つ op は無い(光切断の族は laser_line_* と名乗る)。
     stripe_named = [r["op"] for r in fs.op_find("stripe") if "stripe" in r["op"].lower()]
     assert not stripe_named, stripe_named
-    print("  (a) **輝線の中心を列ごとにサブピクセルで取る op が無い**。")
-    print("      `laser_stripe` / `light_section` / `stripe_center` はファサード・")
-    print("      台帳・進化 op のどこにも無く、`op_find(\"laser\")` が拾うのは")
-    print("      coherent 族(光条をスペックル込みで描く側と、誤差の床の閉形式)だけ。")
-    print("      (`op_find(\"stripe\")` は `wave_fringe_period` を拾うが、あれは")
-    print("       画像全体の周期を 1 つ返す op で、輝線の中心ではない。)")
-    print("      光切断は産業用 3-D 計測でいちばん普及した方式なので、これは大きい。")
+    print("  (a) **埋まった(2026-11-03)**: 輝線の中心を列ごとにサブピクセルで取る op は")
+    print("      `laser_line_center_centroid` / `_gauss` / `_steger`(lightsection 族)。")
+    print("      光面の校正・三角測量・走査も同じ族にある。本 PoC の推定器は比べる相手として残す。")
+    print("      スペックルの床は `light_section_speckle_floor`(閉形式とシミュ)。")
 
     # (b) 三角測量の口はあるが「投影機のコラム番号」を前提にしている。
     assert hasattr(fs.ledger, "triangulate_column")
