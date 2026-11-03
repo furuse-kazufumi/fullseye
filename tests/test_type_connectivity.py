@@ -153,3 +153,44 @@ def test_generated_doc_is_fresh():
     r = subprocess.run([sys.executable, os.path.join(ROOT, "tools", "type_connectivity.py"), "--check"],
                        capture_output=True, text=True, cwd=ROOT)
     assert r.returncode == 0, r.stderr
+
+def test_match_seed_does_not_shift_the_other_seeds():
+    """W1 で足した ``match`` の種は、共有の乱数列を進めない(2026-11-04 の回帰)。
+
+    台帳の探針(``ledger_contracts._run``)は全型の種を 1 本の乱数列から型名の順に引く。
+    ``match`` が列を消費していた間は、名前がそれより後ろの型(mesh / sweep / video /
+    volseq / voxel …)の種がすべて変わり、W1 と無関係な 15 個のつまみの判定が動いた。
+    ここでは「``match`` を抜いた種の列」と「入れた種の列」で、他の型の値が 1 つも
+    変わらないことを、型名の順・辞書の順の両方で確かめる。
+    """
+    import pickle
+
+    import numpy as np
+
+    import chain_fuzz as cf
+
+    gens = cf.make_generators()
+    assert "match" in gens
+    rng = np.random.default_rng(20261104)
+    before = rng.bit_generator.state
+    v1 = gens["match"](rng)
+    assert rng.bit_generator.state == before, "match の種が呼び手の乱数列を進めた"
+    assert np.array_equal(v1, gens["match"](rng)), "同じ状態から違う値が出た"
+    assert v1.shape == (3,) and np.all(np.isfinite(v1))
+
+    def draws(items):
+        base = np.random.default_rng(7)
+        out = {}
+        for t, g in items:
+            v = g(base)
+            if t != "match":
+                out[t] = pickle.dumps(v)
+        return out
+
+    without = [(t, g) for t, g in gens.items() if t != "match"]
+    for with_order, without_order in ((sorted(gens.items()), sorted(without)),
+                                      (list(gens.items()), without)):
+        a, b = draws(with_order), draws(without_order)
+        assert len(a) >= 60
+        moved = sorted(t for t in a if a[t] != b[t])
+        assert moved == [], "match の種が他の型の種をずらした: %s" % moved

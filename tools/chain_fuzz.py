@@ -146,9 +146,19 @@ def _match_vector(rng):
 
     2-D 登録簿の ``area_center`` と同じ並び。値は矩形から閉形式で決まる(面積 = h*w、
     重心 = 角 + (辺 - 1) / 2)ので、取り出した成分を真値と照合できる。
+
+    ★渡された ``rng`` は**進めない**(2026-11-04)。種のプールは 1 本の乱数列から
+    型名の順(台帳の探針 ``ledger_contracts._run`` は sorted、連鎖ファズは辞書順)に
+    引くので、後から足した型が列を消費すると、それより後ろの型(mesh / sweep / video /
+    volseq / voxel …)の種が全部ずれ、W1 と無関係な既存 op の「効かないつまみ」判定が
+    10 件増え 5 件減った(PR #244 で実測)。値は ``rng`` の状態から決定的に導いた
+    子の乱数列で引く: 同じ状態なら同じ値、状態が違えば違う値、親の列は 1 つも進まない。
     """
-    h, w = (int(v) for v in rng.integers(2, 12, size=2))
-    r0, c0 = (int(v) for v in rng.integers(0, 20, size=2))
+    import hashlib
+    st = repr(rng.bit_generator.state).encode("utf-8")
+    sub = np.random.default_rng(int.from_bytes(hashlib.sha256(b"match:" + st).digest()[:8], "little"))
+    h, w = (int(v) for v in sub.integers(2, 12, size=2))
+    r0, c0 = (int(v) for v in sub.integers(0, 20, size=2))
     return np.array([float(h * w), r0 + (h - 1) / 2.0, c0 + (w - 1) / 2.0])
 
 
