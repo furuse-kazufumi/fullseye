@@ -15,7 +15,7 @@ GPU に載る op は、掃引では両側とも torch の CPU で走り「1 倍�
   判定不能。採用 = 一致 かつ 転送込み 5.0 倍以上(掃引と同じ門)。
 * GPU は ``--gpu-lock`` のロックの中だけで使う。結果は ``out/device_ops/rows.jsonl`` に追記。
 
-    C:/dev/venvs/loco/Scripts/python.exe tools/bench_device_ops.py run --names <file> --gpu-lock C:/dev/tools/gpu_in_use.lock
+    <GPU の venv の python> tools/bench_device_ops.py run --names <file> --gpu-lock <ロックファイル>
     py -3.11 tools/bench_device_ops.py report
 """
 from __future__ import annotations
