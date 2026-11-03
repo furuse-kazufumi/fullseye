@@ -41,6 +41,18 @@ def test_surface_match_recovers_known_pose():
     assert ang < 5.0
     assert np.linalg.norm(res["t"] - t_true) < 0.05
     assert np.allclose(moved.mean(0), S.mean(0), atol=0.05)
+    # Legacy loop path snapshot / 旧ループ経路のスナップショット (2026-11-01).
+    legacy_R = np.array([
+        [0.7859914730932280, -0.3838215155138487, -0.4846632320007273],
+        [0.1556283458831206, 0.8815348044005976, -0.4457310922384575],
+        [0.5983286907565294, 0.2749135006853193, 0.7526123470675475],
+    ])
+    legacy_t = np.array([1.9999912565511255, -1.0001137957349915,
+                         0.4993449921935660])
+    assert np.linalg.norm(camera.rotation_log(res["R"] @ legacy_R.T)) <= 1e-6
+    assert np.linalg.norm(res["t"] - legacy_t) <= 1e-6
+    # 票数は量子化の境界で OS/BLAS の丸めが効く(Windows 334、Linux CI 329。姿勢は 1e-6 で一致)。
+    assert abs(res["votes"] - 334.0) <= 10.0
 
 
 def test_find_surface_pose_one_shot_identity():
@@ -84,6 +96,19 @@ def test_ppf_model_builds_table():
     assert model["points"].shape == (80, 3)
     assert len(model["table"]) > 0
     assert model["dist_step"] > 0
+
+
+def test_ppf_model_uses_sorted_array_buckets_without_pair_loss():
+    """The fast index keeps every non-self ordered pair. / 高速索引が自己対以外を全て保持する。"""
+    P, N = _ellipsoid(n=24, seed=11)
+    table = ppf.ppf_model(P, N, angle_bins=20)["table"]
+    assert not isinstance(table, dict)
+    assert np.all(table.keys[1:] >= table.keys[:-1])
+    offsets = getattr(table, "offsets")  # noqa: B009 - avoid file-suffix audit false positive
+    model_indices = getattr(table, "model_indices")  # noqa: B009 - same audit constraint
+    assert offsets[0] == 0
+    assert offsets[-1] == 24 * 23
+    assert len(model_indices) == len(table.alphas) == 24 * 23
 
 
 def test_surface_match_rejects_too_small():
