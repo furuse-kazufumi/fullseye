@@ -1252,6 +1252,107 @@ def _calib_builders():
             "find_marks_and_pose": grey_plate}
 
 
+def _matchreg_builders():
+    """opsmatchreg (2026-11-03): inputs the pool cannot make, kept small for the probe's time.
+
+    * The ``table`` ops take tables with a ``kind`` marker (``features`` / ``feature_matches`` /
+      ``registration``) and refuse any other table, so the pool's generic table would only be a
+      typed refusal. Here: the real upstream outputs on a 96 px synthetic scene and its copy
+      rotated 90 degrees (an exact pixel permutation, so the matches are genuine).
+    * ``ransac_fundamental`` needs pairs that obey an epipolar geometry: projections of a
+      non-planar point cloud into two cameras (8 degree yaw), with 20 % outliers.
+    * ``register_*`` take a 64 px scene and its copy cut 2 px / 1 px off (a known translation);
+      ``register_accuracy_map`` a smooth invertible field; the Fullseye-only layer ops get
+      two conditions / two offsets so a probe call stays under a second or two.
+    * Knobs (dead-knob gate): caps are set where they bind (``max_features`` 80 of 85 points -- x2 on ``contrast_threshold`` leaves 43, x0.5 on ``edge_threshold`` 74,
+      ``n_features`` 30, ``max_iters`` 40 / 30 below the adaptive count of a noisy pair with
+      outliers, ``max_iter`` 5 / 2, ``n_iter`` = 3 past the iteration where ECC stops); ``confidence``
+      0.999 sits where x0.5 drops the adaptive count under ``max_iters``; ``eps`` is read from
+      the run itself (1.1 x the rho change at the stopping iteration, so x0.5 runs one more);
+      ``ratio`` 0.7 on a 30-degree + noise pair, where the ratio values spread across 0.35-0.7.
+    """
+    def scene(n=96, seed=3):
+        import featmatch
+        return featmatch.synthetic_scene((n, n), seed=seed)
+
+    def hard_pair():
+        import featmatch
+        a = scene()
+        H = featmatch.condition_homography(a.shape, rotate_deg=30.0, scale=0.85)
+        b, _ = featmatch.warp_homography(a, H)
+        b = np.clip(b + np.random.default_rng(37).normal(0, 0.04, b.shape), 0, 1)
+        return a, b
+
+    def feats(pool, rng):
+        import featmatch
+        a, b = hard_pair()
+        return [featmatch.features_sift(a), featmatch.features_sift(b)], {"ratio": 0.7}
+
+    def noisy_matches():
+        import featmatch
+        a, b = hard_pair()
+        return featmatch.features_match(featmatch.features_sift(a), featmatch.features_sift(b), ratio=0.95,
+                                        mutual=False)
+
+    def matches():
+        import featmatch
+        a = scene()
+        return featmatch.features_match(featmatch.features_sift(a), featmatch.features_sift(np.rot90(a).copy()))
+
+    def epipolar(pool, rng):
+        r = np.random.default_rng(31)
+        K = np.array([[300.0, 0, 120], [0, 300.0, 90], [0, 0, 1]])
+        th = np.radians(8.0)
+        R = np.array([[np.cos(th), 0, np.sin(th)], [0, 1, 0], [-np.sin(th), 0, np.cos(th)]])
+        X = np.c_[r.uniform(-2, 2, 120), r.uniform(-1.5, 1.5, 120), r.uniform(4, 9, 120)]
+        x1 = (K @ X.T).T
+        x2 = (K @ ((R @ X.T).T + [-1.0, 0.1, 0.05]).T).T
+        x1, x2 = x1[:, :2] / x1[:, 2:], x2[:, :2] / x2[:, 2:] + r.normal(0, 0.2, (120, 2))
+        bad = r.random(120) < 0.2
+        x2[bad] = r.uniform(0, 240, (int(bad.sum()), 2))
+        n = len(x1)
+        return [{"kind": "feature_matches", "pts1": x1, "pts2": x2, "idx": np.c_[np.arange(n), np.arange(n)],
+                 "distance": np.zeros(n), "ratio_value": np.zeros(n), "metric": "l2", "n1": n, "n2": n,
+                 "image_shape1": (180, 240), "image_shape2": (180, 240)}], {"max_iters": 30}
+
+    def pair(pool, rng):
+        big = scene(80, 1)
+        return [big[8:72, 8:72].copy(), big[9:73, 6:70].copy()], {}
+
+    def ecc_at_stop(pool, rng):
+        import intensityreg
+        (f, m), _ = pair(pool, rng)
+        h = intensityreg.register_ecc(f, m, motion="affine", eps=1e-12, n_iter=60)["history"]
+        d = np.abs(np.diff(h))
+        j = int(np.argmax(d < d[0] * 1e-2)) if (d < d[0] * 1e-2).any() else len(d) - 1
+        j = max(j, 2)
+        return [f, m], {"motion": "affine", "eps": float(1.1 * d[j]), "n_iter": j + 4}
+
+    def reg_result(pool, rng):
+        import intensityreg
+        (f, m), _ = pair(pool, rng)
+        return [intensityreg.register_ecc(f, m, motion="translation")], {}
+
+    def acc_map(pool, rng):
+        import intensityreg
+        f = scene(64, 2)
+        return [f, intensityreg.smooth_test_field(f.shape, amplitude=1.5, wavelength=40, seed=0)], {}
+
+    return {"features_match": feats,
+            "ransac_homography": lambda pool, rng: ([noisy_matches()], {"max_iters": 40}),
+            "ransac_fundamental": epipolar,
+            "features_sift": lambda pool, rng: ([scene()], {"max_features": 80}),
+            "features_orb": lambda pool, rng: ([scene()], {"n_features": 30}),
+            "features_accuracy_table": lambda pool, rng: ([scene(64)], {"conditions": ["identity", "blur_2"]}),
+            "register_ecc": ecc_at_stop,
+            "register_mi": lambda pool, rng: (pair(pool, rng)[0], {"levels": 1, "max_iter": 2}),
+            "register_ffd": lambda pool, rng: (pair(pool, rng)[0], {"max_iter": 5}),
+            "registration_to_flow2d": reg_result,
+            "register_accuracy_map": acc_map,
+            "register_capture_range": lambda pool, rng: (
+                [scene(64, 2)], {"offsets_px": (1, 4), "n_directions": 2})}
+
+
 def _fileio_builders():
     """Valid in-memory payloads for the format ledger (never caller paths)."""
     import fileio
@@ -1300,6 +1401,7 @@ def probe_builders():
     out.update(_batch2_builders())
     out.update(_knob_builders())
     out.update(_fileio_builders())
+    out.update(_matchreg_builders())
     return out
 
 

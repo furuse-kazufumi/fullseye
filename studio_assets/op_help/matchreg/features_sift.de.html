@@ -1,0 +1,42 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">features_sift — MATCHREG <code style="color:#22d3bf">featmatch</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.features_sift(image, n_octaves=None, n_scales=3, sigma=1.6, contrast_threshold=0.04, edge_threshold=10.0, max_features=2000, double_image=True)</code> (die Implementierung direkt: <code style="color:#22d3bf">import featmatch; featmatch.features_sift(image, n_octaves=None, n_scales=3, sigma=1.6, contrast_threshold=0.04, edge_threshold=10.0, max_features=2000, double_image=True)</code>; aus dem Register: <code style="color:#22d3bf">opsmatchreg.get(&quot;features_sift&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>SIFT-Merkmalspunkte und 128-dimensionale Deskriptoren (DoG-Extrema, Lowe 2004). → table (<code style="color:#22d3bf">kind=&quot;features&quot;</code>).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>DoG(ガウスの差)のスケール空間で 3×3×3 の極値を探し、2 次の当てはめで副画素・副スケールへ詰め、低コントラスト(<code style="color:#22d3bf">|D| * n_scales &lt; contrast_threshold</code>、画像は [0, 1] の尺度)と稜線(ヘッセ行列の固有値比が <code style="color:#22d3bf">edge_threshold</code> 超)を捨てる。向きは勾配の 36 ビンの山(最大の 0.8 倍以上の山ごとに 1 点、同じ位置に複数の向きが出る)、記述子は 4×4 のマス × 8 方向。</p>
+<p>座標の約束: <code style="color:#22d3bf">xy</code> は原画像の <b>(x, y)</b> 画素(画素の中心が整数)。<code style="color:#22d3bf">double_image=True</code> の拡大は標本点 <code style="color:#22d3bf">i/2</code> の双線形なので、拡大後の座標の半分がちょうど原画像の座標になる(OpenCV の拡大は画素中心の扱いが違い、点が約 0.25 px ずれる —— 位置を直接比べるときの注意)。</p>
+<p>実測(256×256 の <code style="color:#22d3bf">synthetic_scene</code>、<code style="color:#22d3bf">tests/test_featmatch.py</code> が固定): 90 度回転の対でホモグラフィの 4 隅誤差 &lt; 0.5 px、0.5 倍の縮小で &lt; 1.5 px、OpenCV の SIFT(5.0)と同じ対で 4 隅誤差が同じ桁。</p>
+<p>限界: 記述子の組み立てはキーポイントごとの Python ループ(2000 点で数秒)。アフィン不変ではない(強い遠近では壊れる。<code style="color:#22d3bf">features_accuracy_table</code> で条件ごとに測れる)。</p>
+<p>Args:</p>
+<p>image: 2-D の濃淡画像(値の尺度は [0, 1] を想定。コントラストのしきい値がこの尺度)。</p>
+<p>n_octaves: オクターブ数。<code style="color:#22d3bf">None</code> なら <code style="color:#22d3bf">log2(min(H, W)) - 3</code>(最低 1)。</p>
+<p>n_scales: 1 オクターブあたりの尺度の数(Lowe の s、既定 3)。</p>
+<p>sigma: 土台の σ(既定 1.6)。原画像は σ=0.5 のぼけを持つと仮定する。</p>
+<p>contrast_threshold: 低コントラストを捨てるしきい値(既定 0.04)。</p>
+<p>edge_threshold: 稜線を捨てる固有値比 r(既定 10)。</p>
+<p>max_features: 応答の強い順に残す上限。</p>
+<p>double_image: 最初に 2 倍へ拡大するか(既定 True、小さな特徴が拾える)。</p>
+<p>Returns:</p>
+<p>dict(<code style="color:#22d3bf">kind=&quot;features&quot;</code>, <code style="color:#22d3bf">detector=&quot;sift&quot;</code>)。<code style="color:#22d3bf">xy</code> (N,2) / <code style="color:#22d3bf">scale</code> (N,) [px] /</p>
+<p><code style="color:#22d3bf">angle</code> (N,) [度] / <code style="color:#22d3bf">response</code> (N,) / <code style="color:#22d3bf">octave</code> (N,) / <code style="color:#22d3bf">descriptors</code> (N,128) float32 /</p>
+<p><code style="color:#22d3bf">descriptor_kind=&quot;float&quot;</code> / <code style="color:#22d3bf">image_shape</code>。</p>
+<p>Raises:</p>
+<p>ValueError: 2-D でない / 16 px 未満 / 非有限 / 定数画像 / 引数が値域外。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidematchreg:matching_registration">Leitfaden zur Familie matching_registration</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_part_locate_features">poc_part_locate_features</a> — <code style="color:#22d3bf">py -3.11 examples/poc_part_locate_features.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">table</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opmatchreg:features_match">features_match</a> · <a style="color:#22d3bf" href="opmatchreg:ransac_homography">ransac_homography</a> · <a style="color:#22d3bf" href="opmatchreg:ransac_fundamental">ransac_fundamental</a> · <a style="color:#22d3bf" href="opmatchreg:registration_to_flow2d">registration_to_flow2d</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">featmatch</code>)</h3>
+<p><a style="color:#22d3bf" href="opmatchreg:features_orb">features_orb</a> · <a style="color:#22d3bf" href="opmatchreg:features_match">features_match</a> · <a style="color:#22d3bf" href="opmatchreg:ransac_homography">ransac_homography</a> · <a style="color:#22d3bf" href="opmatchreg:ransac_fundamental">ransac_fundamental</a> · <a style="color:#22d3bf" href="opmatchreg:features_accuracy_table">features_accuracy_table</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: featmatch.py — MATCHREG Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3623,
- "n_notes": 3629,
+ "n_ops": 3635,
+ "n_notes": 3641,
  "notes": {
   "vol_dilate": [
    {
@@ -25696,6 +25696,126 @@
     "in": "attnmap",
     "out": "attnmap",
     "path": "docs/ops/llmcore/score/attention_weights.md"
+   }
+  ],
+  "features_accuracy_table": [
+   {
+    "op": "features_accuracy_table",
+    "dim": "matchreg",
+    "category": "featmatch",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/matchreg/featmatch/features_accuracy_table.md"
+   }
+  ],
+  "features_match": [
+   {
+    "op": "features_match",
+    "dim": "matchreg",
+    "category": "featmatch",
+    "in": "table × table",
+    "out": "table",
+    "path": "docs/ops/matchreg/featmatch/features_match.md"
+   }
+  ],
+  "features_orb": [
+   {
+    "op": "features_orb",
+    "dim": "matchreg",
+    "category": "featmatch",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/matchreg/featmatch/features_orb.md"
+   }
+  ],
+  "features_sift": [
+   {
+    "op": "features_sift",
+    "dim": "matchreg",
+    "category": "featmatch",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/matchreg/featmatch/features_sift.md"
+   }
+  ],
+  "ransac_fundamental": [
+   {
+    "op": "ransac_fundamental",
+    "dim": "matchreg",
+    "category": "featmatch",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/matchreg/featmatch/ransac_fundamental.md"
+   }
+  ],
+  "ransac_homography": [
+   {
+    "op": "ransac_homography",
+    "dim": "matchreg",
+    "category": "featmatch",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/matchreg/featmatch/ransac_homography.md"
+   }
+  ],
+  "register_accuracy_map": [
+   {
+    "op": "register_accuracy_map",
+    "dim": "matchreg",
+    "category": "intensityreg",
+    "in": "image2d × flow2d",
+    "out": "table",
+    "path": "docs/ops/matchreg/intensityreg/register_accuracy_map.md"
+   }
+  ],
+  "register_capture_range": [
+   {
+    "op": "register_capture_range",
+    "dim": "matchreg",
+    "category": "intensityreg",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/matchreg/intensityreg/register_capture_range.md"
+   }
+  ],
+  "register_ecc": [
+   {
+    "op": "register_ecc",
+    "dim": "matchreg",
+    "category": "intensityreg",
+    "in": "image2d × image2d",
+    "out": "table",
+    "path": "docs/ops/matchreg/intensityreg/register_ecc.md"
+   }
+  ],
+  "register_ffd": [
+   {
+    "op": "register_ffd",
+    "dim": "matchreg",
+    "category": "intensityreg",
+    "in": "image2d × image2d",
+    "out": "table",
+    "path": "docs/ops/matchreg/intensityreg/register_ffd.md"
+   }
+  ],
+  "register_mi": [
+   {
+    "op": "register_mi",
+    "dim": "matchreg",
+    "category": "intensityreg",
+    "in": "image2d × image2d",
+    "out": "table",
+    "path": "docs/ops/matchreg/intensityreg/register_mi.md"
+   }
+  ],
+  "registration_to_flow2d": [
+   {
+    "op": "registration_to_flow2d",
+    "dim": "matchreg",
+    "category": "intensityreg",
+    "in": "table",
+    "out": "flow2d",
+    "path": "docs/ops/matchreg/intensityreg/registration_to_flow2d.md"
    }
   ],
   "cplx_argument_principle": [

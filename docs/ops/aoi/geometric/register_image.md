@@ -5,7 +5,7 @@ category: geometric
 in: image2d × image2d
 out: table
 gpu: なし
-examples: [aoi_frontend_tour]
+examples: [aoi_frontend_tour, poc_multimodal_mi_registration]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.8.1  # fullseye lib version this note was generated for
@@ -109,6 +109,7 @@ Raises:
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [aoi_frontend_tour](../../../../examples/aoi_frontend_tour.py) — `py -3.11 examples/aoi_frontend_tour.py`
+- [poc_multimodal_mi_registration](../../../../examples/poc_multimodal_mi_registration.py) — `py -3.11 examples/poc_multimodal_mi_registration.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 

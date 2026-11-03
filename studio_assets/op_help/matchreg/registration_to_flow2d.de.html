@@ -1,0 +1,30 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">registration_to_flow2d — MATCHREG <code style="color:#22d3bf">intensityreg</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">flow2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.registration_to_flow2d(result)</code> (die Implementierung direkt: <code style="color:#22d3bf">import intensityreg; intensityreg.registration_to_flow2d(result)</code>; aus dem Register: <code style="color:#22d3bf">opsmatchreg.get(&quot;registration_to_flow2d&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>Entnimmt einer Registrierungs-Ergebnistabelle das Deformationsfeld <code style="color:#22d3bf">flow2d</code> ((2,H,W) <code style="color:#22d3bf">(dy, dx)</code>). → flow2d.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>向きは <code style="color:#22d3bf">deformreg</code> と同じ(動く画像の内容の前向き変位)。<code style="color:#22d3bf">piv_flow_magnitude</code> / <code style="color:#22d3bf">piv_vorticity</code> / <code style="color:#22d3bf">flow_to_rgbimage</code> など <code style="color:#22d3bf">flow2d</code> を受ける op へ繋ぐための口。</p>
+<p>Args:</p>
+<p>result: <code style="color:#22d3bf">register_ecc</code> / <code style="color:#22d3bf">register_mi</code> / <code style="color:#22d3bf">register_ffd</code> の表。</p>
+<p>Returns:</p>
+<p><code style="color:#22d3bf">(2, H, W)</code> float64 の ndarray(写し)。</p>
+<p>Raises:</p>
+<p>ValueError: <code style="color:#22d3bf">kind=&quot;registration&quot;</code> の表でない / 場の形が違う。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidematchreg:matching_registration">Leitfaden zur Familie matching_registration</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_sheet_deformation_ffd">poc_sheet_deformation_ffd</a> — <code style="color:#22d3bf">py -3.11 examples/poc_sheet_deformation_ffd.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">flow2d</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opmatchreg:register_accuracy_map">register_accuracy_map</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">intensityreg</code>)</h3>
+<p><a style="color:#22d3bf" href="opmatchreg:register_ecc">register_ecc</a> · <a style="color:#22d3bf" href="opmatchreg:register_mi">register_mi</a> · <a style="color:#22d3bf" href="opmatchreg:register_ffd">register_ffd</a> · <a style="color:#22d3bf" href="opmatchreg:register_accuracy_map">register_accuracy_map</a> · <a style="color:#22d3bf" href="opmatchreg:register_capture_range">register_capture_range</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: intensityreg.py — MATCHREG Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

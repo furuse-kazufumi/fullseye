@@ -1,0 +1,30 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">registration_to_flow2d — MATCHREG <code style="color:#22d3bf">intensityreg</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">flow2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.registration_to_flow2d(result)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import intensityreg; intensityreg.registration_to_flow2d(result)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsmatchreg.get(&quot;registration_to_flow2d&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
+<p>정합 결과 표에서 변형장 <code style="color:#22d3bf">flow2d</code>((2,H,W)의 <code style="color:#22d3bf">(dy, dx)</code>)를 꺼낸다. → flow2d.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>向きは <code style="color:#22d3bf">deformreg</code> と同じ(動く画像の内容の前向き変位)。<code style="color:#22d3bf">piv_flow_magnitude</code> / <code style="color:#22d3bf">piv_vorticity</code> / <code style="color:#22d3bf">flow_to_rgbimage</code> など <code style="color:#22d3bf">flow2d</code> を受ける op へ繋ぐための口。</p>
+<p>Args:</p>
+<p>result: <code style="color:#22d3bf">register_ecc</code> / <code style="color:#22d3bf">register_mi</code> / <code style="color:#22d3bf">register_ffd</code> の表。</p>
+<p>Returns:</p>
+<p><code style="color:#22d3bf">(2, H, W)</code> float64 の ndarray(写し)。</p>
+<p>Raises:</p>
+<p>ValueError: <code style="color:#22d3bf">kind=&quot;registration&quot;</code> の表でない / 場の形が違う。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidematchreg:matching_registration">matching_registration 패밀리 가이드</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
+<p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
+<p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
+<p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_sheet_deformation_ffd">poc_sheet_deformation_ffd</a> — <code style="color:#22d3bf">py -3.11 examples/poc_sheet_deformation_ffd.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">flow2d</code> 를 입력으로 받는 것)</h3>
+<p><a style="color:#22d3bf" href="opmatchreg:register_accuracy_map">register_accuracy_map</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">intensityreg</code>)</h3>
+<p><a style="color:#22d3bf" href="opmatchreg:register_ecc">register_ecc</a> · <a style="color:#22d3bf" href="opmatchreg:register_mi">register_mi</a> · <a style="color:#22d3bf" href="opmatchreg:register_ffd">register_ffd</a> · <a style="color:#22d3bf" href="opmatchreg:register_accuracy_map">register_accuracy_map</a> · <a style="color:#22d3bf" href="opmatchreg:register_capture_range">register_capture_range</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: intensityreg.py — MATCHREG 연산자 레지스트리. 이 op 노트는 <code style="color:#22d3bf">tools/opdocs.py md</code> 가 자동 생성합니다(직접 편집하지 마세요).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

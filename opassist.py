@@ -53,6 +53,9 @@ _LEDGERS = (
     # 2026-10-23(実装は 2026-09-15): AOI(自動外観検査)の前段 3 op —— 照明の落ちを戻す /
     #   基準画像へ合わせる / タイルごとの量を地図にする。新語なし(image2d と table)。
     ("opsaoi", "OPSAOI"),
+    # 2026-11-03: 照合と位置合わせ(SIFT / ORB / 照合 / RANSAC / ECC / MI / B-spline FFD と、真値による
+    #   精度の表・精度の地図・収束の範囲)。新語なし(image2d / table / flow2d)。
+    ("opsmatchreg", "OPSMATCHREG"),
     # ★2026-10-23: カメラ校正(calib / caltab / fit_transform、21 op)。実装は 2026-08 から
     #   あり試験も 30 本超あったのに、台帳が無いので op ノートが 1 枚も無く、fs.ledger /
     #   OP_INDEX.json / op_find("caltab") のどこからも引けなかった(fs.<名前> は 21 中 1)。

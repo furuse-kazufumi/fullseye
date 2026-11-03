@@ -1,0 +1,36 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">features_match — MATCHREG <code style="color:#22d3bf">featmatch</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">table × table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.features_match(features1, features2, ratio=0.8, mutual=True, max_distance=None)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import featmatch; featmatch.features_match(features1, features2, ratio=0.8, mutual=True, max_distance=None)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsmatchreg.get(&quot;features_match&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
+<p>두 특징 표를 최근접 이웃 + 비율 검정(+ 상호 최근접)으로 대응시킨다. → table(<code style="color:#22d3bf">kind=&quot;feature_matches&quot;</code>).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>記述子が実数(SIFT)なら L2、2 値(ORB)なら Hamming。1 番目に近い相手が 2 番目より明らかに近い(L2 は <code style="color:#22d3bf">d1 &lt; ratio · d2</code>、2 乗距離では <code style="color:#22d3bf">ratio²</code> で比べる。Hamming は <code style="color:#22d3bf">d1 &lt; ratio · d2</code>) ときだけ残し、<code style="color:#22d3bf">mutual=True</code> なら相手の側から見ても最近傍であることを求める。</p>
+<p>実数の記述子での規則は <code style="color:#22d3bf">features.match_descriptors</code> と同じ(同じ入力で同じ組が返ることを <code style="color:#22d3bf">tests/test_featmatch.py</code> が固定している)。違いは距離行列を一括で作ること(GPU の影の経路に乗る形)と、2 値の記述子を受けること。</p>
+<p>Args:</p>
+<p>features1, features2: <code style="color:#22d3bf">features_sift</code> / <code style="color:#22d3bf">features_orb</code> の表。記述子の種類が同じであること。</p>
+<p>ratio: 比の検定のしきい値(0 &lt; ratio &lt;= 1、既定 0.8)。</p>
+<p>mutual: 相互最近傍を求めるか。</p>
+<p>max_distance: 距離の上限(L2 は距離そのもの、Hamming はビット数)。<code style="color:#22d3bf">None</code> なら無し。</p>
+<p>Returns:</p>
+<p>dict(<code style="color:#22d3bf">kind=&quot;feature_matches&quot;</code>)。<code style="color:#22d3bf">idx</code> (M,2) / <code style="color:#22d3bf">pts1</code> / <code style="color:#22d3bf">pts2</code> (M,2) の (x, y) /</p>
+<p><code style="color:#22d3bf">distance</code> (M,)(L2 は距離、Hamming はビット数)/ <code style="color:#22d3bf">ratio_value</code> (M,)(d1/d2)/ <code style="color:#22d3bf">metric</code> /</p>
+<p><code style="color:#22d3bf">n1</code> / <code style="color:#22d3bf">n2</code> / <code style="color:#22d3bf">image_shape1</code> / <code style="color:#22d3bf">image_shape2</code>。</p>
+<p>Raises:</p>
+<p>ValueError: 表の種類が違う / 記述子の種類か次元が違う / 引数が値域外。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidematchreg:matching_registration">matching_registration 패밀리 가이드</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
+<p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
+<p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
+<p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_part_locate_features">poc_part_locate_features</a> — <code style="color:#22d3bf">py -3.11 examples/poc_part_locate_features.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">table</code> 를 입력으로 받는 것)</h3>
+<p><a style="color:#22d3bf" href="opmatchreg:ransac_homography">ransac_homography</a> · <a style="color:#22d3bf" href="opmatchreg:ransac_fundamental">ransac_fundamental</a> · <a style="color:#22d3bf" href="opmatchreg:registration_to_flow2d">registration_to_flow2d</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">featmatch</code>)</h3>
+<p><a style="color:#22d3bf" href="opmatchreg:features_sift">features_sift</a> · <a style="color:#22d3bf" href="opmatchreg:features_orb">features_orb</a> · <a style="color:#22d3bf" href="opmatchreg:ransac_homography">ransac_homography</a> · <a style="color:#22d3bf" href="opmatchreg:ransac_fundamental">ransac_fundamental</a> · <a style="color:#22d3bf" href="opmatchreg:features_accuracy_table">features_accuracy_table</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: featmatch.py — MATCHREG 연산자 레지스트리. 이 op 노트는 <code style="color:#22d3bf">tools/opdocs.py md</code> 가 자동 생성합니다(직접 편집하지 마세요).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

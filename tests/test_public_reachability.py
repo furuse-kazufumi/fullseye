@@ -256,7 +256,10 @@ def test_pending_exposure_shrinks_when_fixed():
 #   12 op 本体は fs.ledger に載る)。実測 943 → 944。
 # 2026-10-31 opsfileio 台帳(メモリ内 file I/O 14 op): 台帳の内部 API 4 本で実測 944 → 948。
 #   op 自身は fs.ledger から引ける。
-_HIDDEN_FUNCTIONS_TODAY = 948
+# 2026-11-03 opsmatchreg 台帳(照合と位置合わせ 12 op): 台帳の内部 API 4 本で実測 948 → 952。12 op 自身は
+#   fs.ledger から、合成の道具 7 本(synthetic_scene / warp_homography / corner_error / condition_homography /
+#   warp_parametric / synthesize_moving / smooth_test_field)は fs.<名前> から引ける。
+_HIDDEN_FUNCTIONS_TODAY = 952
 
 
 def _hidden_total():

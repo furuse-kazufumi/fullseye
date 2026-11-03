@@ -2040,6 +2040,16 @@ EXAMPLES = [
     {"id": "poc_star_tracker", "task": "space", "data": "synthetic",
      "name": "星の点像を副画素で測り、角距離で星表へ対応付けて衛星姿勢を求める",
      "summary": "固定 seed の合成星表 196 星と PSF・光子雑音・読み出し雑音を含む 128×128 像を作り、star_detect の 18 検出(真の星 16 + ホットピクセル 2)を三角形の角距離で全星表へ照合し、偽点を捨てて kabsch で姿勢を推定する。誤対応 0・偽点棄却 2/2・姿勢角誤差 0.0046 度。太陽・月の迷光、星不足、高速回転の星の流れは未計算の限界。"},
+    # -- 2026-11-03: 照合と位置合わせ(opsmatchreg 12 op)。真値 = 合成に使った既知の変換・既知の場 ------------ #
+    {"id": "poc_part_locate_features", "task": "registration", "data": "synthetic",
+     "name": "散らかった台の上の部品を、SIFT / ORB の照合 + ホモグラフィで位置決めする(真値つき)",
+     "summary": "寸法表から描いた板金部品(穴 4・長穴・面取り・刻印)を回転 37 度・0.85 倍・わずかな遠近・照明 0.8 倍・ぼけ・雑音で背景に置き、features_sift → features_match → ransac_homography で位置決め: 4 隅誤差 0.367 px、中心 0.011 mm、回転 0.062 度。ORB でも 0.733 px。★既存の Harris + パッチ記述子(features.match_keypoints)は 37 度回転で 4 隅誤差 158 px。features_accuracy_table が部品のテンプレートで壊れる条件を表にする(最悪はぼけ σ=4 の 5.9 px)。★貼り合わせ: 重なり 80 px の帯に正しい組が 9 つだけのとき、8 自由度の射影は 4 隅誤差 9.38 px、物理に合わせた並進の模型は 0.081 px —— ransac_homography(model=\"translation\") と既存の mosaic.gen_projective_mosaic で貼った絵と真の絵の差 rms 0.0094(撮像の雑音 0.0100 以下)。"},
+    {"id": "poc_multimodal_mi_registration", "task": "registration", "data": "synthetic",
+     "name": "可視カメラと長波長赤外カメラの基板の像を、相互情報量で合わせる(放射の式で赤外像を作る)",
+     "summary": "寸法表の基板(基材・銅・パッド・IC・抵抗)を可視の反射率と赤外の放射 εT⁴ + (1-ε)T_amb⁴ の 2 通りに撮る(銅は可視で明るく赤外で暗い)。真の位置での相関係数は -0.7435。register_mi(正規化相互情報量のアフィン)は真のアフィンを 4 隅誤差 0.170 px で取り戻す。★register_ecc は相関の 2 次近似の分母が負になり拒否(黙って合ったふりをしない)、aoi.register_image(位相相関)は residual 2.12 で consistent=False。初期のずれごとの MI の成功率は 2・4 px で 1.000、8 px で 0.875、16 px で 0.625。"},
+    {"id": "poc_sheet_deformation_ffd", "task": "registration", "data": "synthetic",
+     "name": "印刷したシートの変形を B-spline FFD で推定し、真値で領域ごと・成分ごとの誤差の地図を作る",
+     "summary": "点の格子・文字・格子縞・縦棒だけのバーコード・余白の 5 領域を持つシートに、異物の膨らみ 2 か所 + 引き伸ばしの既知の場(最大 3.28 px)を掛ける。2 方向の模様の 3 領域の EPE の平均は register_ffd 0.025 px / 既存の demons 0.125 px / アフィンの ECC 1.226 px。★開口問題: バーコードでは dy の誤差 0.807 px が dx の 0.032 px の 25 倍。★余白の EPE 中央値 1.326 px は模様のある所の 67 倍。★格子の分解能: 波長 24 px の皺で格子 8 / 12 / 16 px の誤差 0.062 / 0.329 / 0.505 px。★曲げの罰だけだと余白で推定が 34.3 px まで暴れ(真の最大 1.5 px)、membrane_weight=0.1 で 3.6 px —— 模様のある所の精度との引き換えなので既定は曲げだけ。registration_to_flow2d → piv_flow_magnitude の最大 3.291 px(真値 3.279 px)。"},
 ]
 
 # Scripts under examples/ that are deliberately NOT in the gallery — each with the

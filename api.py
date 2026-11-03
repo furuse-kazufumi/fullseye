@@ -307,6 +307,12 @@ from realdata import (  # noqa: E402,F401
 from deformreg import (  # noqa: E402,F401
     warp_by_field, demons_register, field_magnitude, residual_ssd,
 )
+# 照合と位置合わせ(opsmatchreg 台帳、2026-11-03)の合成の道具。12 op 本体は fs.ledger から引ける。
+# 既知の変換・既知の変形場で対を作る側(精度の表・地図の真値の作り方そのもの)なので公開経路に載せる。
+from featmatch import (  # noqa: E402,F401
+    synthetic_scene, warp_homography, corner_error, condition_homography,
+)
+from intensityreg import warp_parametric, synthesize_moving, smooth_test_field  # noqa: E402,F401
 from pose import pose_descriptor, skeleton_nodes, principal_axis  # noqa: E402,F401
 from flow import (  # noqa: E402,F401
     optical_flow_lk, optical_flow_hs, warp_by_flow, flow_magnitude, flow_angle,
@@ -1220,6 +1226,8 @@ __all__ = [
     "spec_mnf", "spec_unmix", "spec_endmembers_ppi", "spec_continuum_removal",
     "spec_pansharpen", "spec_decorrelation_stretch", "spec_fuse",
     "deformreg", "warp_by_field", "demons_register", "field_magnitude", "residual_ssd",
+    "synthetic_scene", "warp_homography", "corner_error", "condition_homography",
+    "warp_parametric", "synthesize_moving", "smooth_test_field",
     "videops", "temporal_mean", "temporal_median", "temporal_std", "temporal_max",
     "temporal_min", "frame_difference", "background_subtraction", "temporal_gradient",
     "motion_energy", "moving_average", "spatiotemporal_gaussian", "spatiotemporal_sobel",

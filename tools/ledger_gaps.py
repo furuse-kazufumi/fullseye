@@ -271,6 +271,18 @@ KNOB_SKIP_SLOW = frozenset({
 KNOB_EXEMPT = {
     ("fit_circle_geometric", "radius_limit_factor"):
         "safety bound: changing it only accepts or rejects a line-like circle fit",
+    # opsmatchreg (2026-11-03): floors that turn a weak answer into a ValueError instead of a
+    # plausible-looking one. They never change an accepted result (tests/test_featmatch.py and
+    # tests/test_intensityreg.py exercise the refusal side).
+    ("ransac_homography", "min_inliers"):
+        "acceptance floor: too few inliers raises 'no consensus', otherwise the H is unchanged",
+    ("ransac_fundamental", "min_inliers"):
+        "acceptance floor: too few inliers raises 'no consensus', otherwise the F is unchanged",
+    ("register_ecc", "min_rho"):
+        "acceptance floor: a final correlation below it raises, otherwise the warp is unchanged",
+    ("register_mi", "min_overlap"):
+        "overlap guard: warps that leave less overlap score worst and a final overlap below it "
+        "raises; on any pair that aligns the optimum keeps more overlap than the guard",
 }
 
 

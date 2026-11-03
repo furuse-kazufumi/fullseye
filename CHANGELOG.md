@@ -7,6 +7,15 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### 追加 — 照合と位置合わせの族(特徴点・頑健推定・強度による位置合わせと、真値による精度の地図)
+
+- 新しい台帳 `opsmatchreg`(12 op / 2 カテゴリ、numpy + scipy のみ、新しい型語彙なし)。
+  - featmatch: `features_sift`(DoG + 128 次元。256 px の合成場面で点の数 139、OpenCV 5.0 は 138)/ `features_orb`(FAST-9 + 輝度重心 + 向きつき BRIEF。学習した rBRIEF の表は使わない)/ `features_match`(比の検定 + 相互最近傍、L2 と Hamming。実数の組は既存の `features.match_descriptors` と一致)/ `ransac_homography`(MSAC + 適応回数 + LO、模型 = 並進・相似・アフィン・射影)/ `ransac_fundamental`(正規化 8 点法 + Sampson)。
+  - intensityreg: `register_ecc`(並進〜射影。平滑化の縁の帯を照合から外し、同じ対のアフィンで 4 隅誤差 0.012 px、OpenCV の findTransformECC は 0.178 px)/ `register_mi`(正規化相互情報量の剛体・相似・アフィン)/ `register_ffd`(3 次 B-spline の FFD、numpy の L-BFGS)/ `registration_to_flow2d`。場の向きは `deformreg` の demons と同じ。
+  - Fullseye だけの層: `features_accuracy_table`(既知の変換・照明・ぼけ・雑音で合成した組の条件ごとの表)/ `register_accuracy_map`(既知の場で合成した組の画素ごとの誤差、模様の強さ別の内訳)/ `register_capture_range`(初期のずれごとの成功率)。
+- 合成の道具 7 本を `fs.<名前>` に: `synthetic_scene` / `warp_homography` / `corner_error` / `condition_homography` / `warp_parametric` / `synthesize_moving` / `smooth_test_field`。
+- PoC 3 本: `poc_part_locate_features`(部品の位置決め、4 隅誤差 0.367 px・回転 0.062 度)、`poc_multimodal_mi_registration`(可視と赤外、MI 0.170 px・ECC は拒否)、`poc_sheet_deformation_ffd`(シートの変形、模様のある所 0.025 px・開口問題・余白・格子の分解能)。
+
 ### 追加 — 光弾性の族(応力場 → 縞 → 偏光像 → 位相差と主軸)
 
 - 新モジュール `photoelastic`(opsoptics のカテゴリ `photoelastic`、12 op)。単位は SI、位相差は rad・nm・縞次数を並べて返し、mm を m に・nm を m に・表の ×10⁻⁷ MPa⁻¹ を Pa⁻¹ に渡す取り違えは ValueError で拒否する。

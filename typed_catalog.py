@@ -733,7 +733,7 @@ def _registry_adapters():
                  "opsimgforensics", "opsastrostack", "opsdem", "opspiv",
                  "opsprofile", "opsshapestat", "opsshape2d", "opsroughness",
                  "opsmeasure1d", "opsblob", "opsflyvision", "opsspc",
-                 "opsgraph", "opstext", "opsvx", "opsdrive", "opsresidue", "opsmultivar", "opssimcal", "opsconverge", "opscodematch", "opsaoi", "opscalib", "opsgenerative",
+                 "opsgraph", "opstext", "opsvx", "opsdrive", "opsresidue", "opsmultivar", "opssimcal", "opsconverge", "opscodematch", "opsaoi", "opsmatchreg", "opscalib", "opsgenerative",
                  "opssegmentation"):
         try:
             d.update(getattr(__import__(_mod), "RESULT_ADAPTERS", {}))
@@ -956,6 +956,14 @@ def catalog():
     for n, m in opsaoi.OPSAOI.items():
         if m["func"] is not None:
             ops.append((n, "aoi", list(m["in"]), m["out"], m["func"]))
+    # 照合と位置合わせ(opsmatchreg 台帳、2026-11-03)。**新語なし**: 特徴・照合・推定・位置合わせ・
+    # 精度は kind の印つきの table(違う kind は ValueError)、変形場は PIV 族の flow2d ((2,H,W) の (dy, dx))。
+    # 真値は合成に使った既知の変換・既知の場(推定側はそれを知らない)と、既存 op(match_descriptors の
+    # 組の一致、OpenCV の SIFT / findTransformECC と同じ対での誤差の比較)。
+    import opsmatchreg
+    for n, m in opsmatchreg.OPSMATCHREG.items():
+        if m["func"] is not None:
+            ops.append((n, "matchreg", list(m["in"]), m["out"], m["func"]))
     # カメラ校正(opscalib 台帳、実装 2026-08 / 台帳 2026-10-23)。**新語なし**: cam_par の
     # {fx, fy, cx, cy} は table に収まり、族の外に消費者がいない(camera.py の K は 3x3 matrix)。
     # 1 族の中で閉じる型に新語を与えても連鎖は 1 本も増えない。

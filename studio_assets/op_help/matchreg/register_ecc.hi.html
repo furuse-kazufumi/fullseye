@@ -1,0 +1,50 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">register_ecc — MATCHREG <code style="color:#22d3bf">intensityreg</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.register_ecc(fixed, moving, motion=&#x27;affine&#x27;, n_iter=200, eps=1e-06, warp_init=None, levels=1, smooth_sigma=1.1, nonpositive=&#x27;raise&#x27;, min_rho=0.0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import intensityreg; intensityreg.register_ecc(fixed, moving, motion=&#x27;affine&#x27;, n_iter=200, eps=1e-06, warp_init=None, levels=1, smooth_sigma=1.1, nonpositive=&#x27;raise&#x27;, min_rho=0.0)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsmatchreg.get(&quot;register_ecc&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>Enhanced correlation coefficient (ECC) को अधिकतम करने वाले parametric transform से moving को fixed पर मिलाता है। → table (<code style="color:#22d3bf">kind=&quot;registration&quot;</code>)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>Evangelidis &amp; Psarakis(2008)の前向き加法の反復: 毎回 moving と勾配を今の変換で標本化し、急降下画像 <code style="color:#22d3bf">G = ∇I · ∂W/∂p</code>(平均を引く)とゼロ平均の 2 枚から、相関係数の 2 次近似の最大へ <code style="color:#22d3bf">Δp</code> を解く。相関係数は明るさの<b>アフィン</b>な違い(利得とずれ)に不変 —— 負の利得(白黒の反転) や折り返しのある対応には効かない(分母が 0 以下になったら <code style="color:#22d3bf">ValueError</code>。それには <code style="color:#22d3bf">register_mi</code>)。</p>
+<p><code style="color:#22d3bf">motion</code>: <code style="color:#22d3bf">&quot;translation&quot;</code>(2)/ <code style="color:#22d3bf">&quot;euclidean&quot;</code>(3、回転 + 並進)/ <code style="color:#22d3bf">&quot;affine&quot;</code>(6)/ <code style="color:#22d3bf">&quot;homography&quot;</code>(8)。<code style="color:#22d3bf">levels &gt; 1</code> で粗から細のピラミッド(OpenCV の <code style="color:#22d3bf">findTransformECC</code> には無い追加。初期のずれの許容が広がる —— <code style="color:#22d3bf">register_capture_range</code> で測れる)。</p>
+<p>実測(96×96 の <code style="color:#22d3bf">featmatch.synthetic_scene</code>、3 次スプラインで合成、<code style="color:#22d3bf">tests/test_intensityreg.py</code></p>
+<p>が固定): 並進 (2.5, -1.5) px の誤差 &lt; 0.05 px、アフィンの 4 隅誤差 &lt; 0.1 px、OpenCV 5.0 の <code style="color:#22d3bf">findTransformECC</code> と変換の差 &lt; 0.05 px。</p>
+<p>Args:</p>
+<p>fixed: 基準(テンプレート)の 2-D 画像。</p>
+<p>moving: 合わせる 2-D 画像(大きさは違ってよい)。</p>
+<p>motion: <code style="color:#22d3bf">ECC_MOTIONS</code>。</p>
+<p>n_iter: 段ごとの反復の上限。</p>
+<p>eps: 相関係数の変化がこれ未満で収束。</p>
+<p>warp_init: 初期の変換(2×3 / 3×3、fixed → moving)。<code style="color:#22d3bf">None</code> なら恒等。</p>
+<p>levels: ピラミッドの段数(1 = 原寸だけ、<code style="color:#22d3bf">None</code> なら最も粗い段が 16 px 以上で最大 3 段)。</p>
+<p>smooth_sigma: 前処理のガウスの σ [px] (OpenCV の <code style="color:#22d3bf">gaussFiltSize=5</code> は σ ≈ 1.1)。0 で無し。</p>
+<p>nonpositive: 相関の 2 次近似の分母が 0 以下になったとき(初期値が遠い・撮像が違う)。<code style="color:#22d3bf">&quot;raise&quot;</code></p>
+<p>(既定、OpenCV と同じく <code style="color:#22d3bf">ValueError</code>)/ <code style="color:#22d3bf">&quot;step&quot;</code>(相関を正へ戻す λ を選んで続ける。初期のずれの</p>
+<p>許容が広がることがある —— <code style="color:#22d3bf">register_capture_range</code> で測れる)。</p>
+<p>min_rho: 収束した相関係数がこれ未満なら <code style="color:#22d3bf">ValueError</code>(<code style="color:#22d3bf">&quot;step&quot;</code> で白黒反転の組を「合った」と</p>
+<p>返さないための床)。</p>
+<p>Returns:</p>
+<p>dict(<code style="color:#22d3bf">kind=&quot;registration&quot;</code>, <code style="color:#22d3bf">method=&quot;ecc&quot;</code>)。<code style="color:#22d3bf">warp</code> (3,3) / <code style="color:#22d3bf">flow2d</code> (2,H,W) の</p>
+<p><code style="color:#22d3bf">(dy, dx)</code> / <code style="color:#22d3bf">warped</code>(fixed の格子へ戻した moving、外側は 0)/ <code style="color:#22d3bf">valid</code> / <code style="color:#22d3bf">valid_fraction</code> /</p>
+<p><code style="color:#22d3bf">metric_name=&quot;ecc_rho&quot;</code> / <code style="color:#22d3bf">metric</code>(最後の相関係数)/ <code style="color:#22d3bf">iterations</code> / <code style="color:#22d3bf">converged</code> /</p>
+<p><code style="color:#22d3bf">history</code> / <code style="color:#22d3bf">model</code> / <code style="color:#22d3bf">image_shape</code>。</p>
+<p>Raises:</p>
+<p>ValueError: 画像が不正 / <code style="color:#22d3bf">motion</code> が違う / 引数が値域外 / 初期の変換が特異 / 反復が発散 /</p>
+<p>テンプレートが画像の外へ出た / 相関が負で ECC が定義できない(<code style="color:#22d3bf">nonpositive=&quot;raise&quot;</code>)/</p>
+<p>収束した相関が <code style="color:#22d3bf">min_rho</code> 未満。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidematchreg:matching_registration">matching_registration family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_multimodal_mi_registration">poc_multimodal_mi_registration</a> — <code style="color:#22d3bf">py -3.11 examples/poc_multimodal_mi_registration.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opmatchreg:features_match">features_match</a> · <a style="color:#22d3bf" href="opmatchreg:ransac_homography">ransac_homography</a> · <a style="color:#22d3bf" href="opmatchreg:ransac_fundamental">ransac_fundamental</a> · <a style="color:#22d3bf" href="opmatchreg:registration_to_flow2d">registration_to_flow2d</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">intensityreg</code>)</h3>
+<p><a style="color:#22d3bf" href="opmatchreg:register_mi">register_mi</a> · <a style="color:#22d3bf" href="opmatchreg:register_ffd">register_ffd</a> · <a style="color:#22d3bf" href="opmatchreg:registration_to_flow2d">registration_to_flow2d</a> · <a style="color:#22d3bf" href="opmatchreg:register_accuracy_map">register_accuracy_map</a> · <a style="color:#22d3bf" href="opmatchreg:register_capture_range">register_capture_range</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: intensityreg.py — MATCHREG operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

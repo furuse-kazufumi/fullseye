@@ -1,0 +1,43 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">ransac_homography — MATCHREG <code style="color:#22d3bf">featmatch</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ransac_homography(matches, thresh=2.0, confidence=0.999, max_iters=5000, score=&#x27;msac&#x27;, local_optimization=True, min_inliers=8, seed=0, model=&#x27;projective&#x27;)</code>(要直接呼叫實作,<code style="color:#22d3bf">import featmatch; featmatch.ransac_homography(matches, thresh=2.0, confidence=0.999, max_iters=5000, score=&#x27;msac&#x27;, local_optimization=True, min_inliers=8, seed=0, model=&#x27;projective&#x27;)</code>;從台帳取用則 <code style="color:#22d3bf">opsmatchreg.get(&quot;ransac_homography&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>從匹配對穩健地估計單應矩陣(pts1 → pts2,(x, y) 的齊次座標)。→ table(<code style="color:#22d3bf">kind=&quot;homography&quot;</code>)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>4 点の最小標本を引き、前向きの転送誤差 <code style="color:#22d3bf">|H p1 - p2|</code> で採点する。既定の採点は MSAC (打ち切り二乗 <code style="color:#22d3bf">min(r², thresh²)</code> の和、Torr &amp; Zisserman 2000)で、内れ値の数だけ数える素の RANSAC(<code style="color:#22d3bf">score=&quot;ransac&quot;</code>)より閾値の近くの点の扱いが滑らか。必要な試行回数は内れ値の割合から都度見積もり(<code style="color:#22d3bf">confidence</code>)、良い仮説が出るたびに内れ値で当てはめ直す(<code style="color:#22d3bf">local_optimization</code>、LO-RANSAC)。行列の当てはめは正規化 DLT(<code style="color:#22d3bf">twoview._homography_dlt</code>、Hartley の正規化)を再利用し、退化した標本(3 点が一直線)は捨てる。</p>
+<p>★既存の <code style="color:#22d3bf">mosaic.proj_match_points_ransac</code> は (row, col) の点・正規化なしの DLT・固定回数で、これは (x, y)・正規化 DLT・適応回数・MSAC・LO。座標の順が逆なので混ぜないこと。</p>
+<p>★<b>自由度の少ない模型</b>(<code style="color:#22d3bf">model=&quot;translation&quot;</code> 1 点 / <code style="color:#22d3bf">&quot;similarity&quot;</code> 2 点 / <code style="color:#22d3bf">&quot;affine&quot;</code> 3 点)を選べる。返りはどれも 3×3。正しい組が狭い帯にしか無い(貼り合わせの重なりが細い)とき、8 自由度の射影はその帯の組には合うのに帯の外へ大きく外挿を外す(<code style="color:#22d3bf">examples/poc_part_locate_features.py</code> の 5 節: 重なり 80 px・正しい組 9 で、射影は原点の並進を 15 px 外し、相似は 0.1 px 以内)。</p>
+<p>Args:</p>
+<p>matches: <code style="color:#22d3bf">features_match</code> の表。</p>
+<p>thresh: 内れ値の転送誤差の上限 [px]。</p>
+<p>confidence: 外れ値を含まない標本を少なくとも 1 回引く確率(&lt; 1)。</p>
+<p>max_iters: 試行回数の上限。</p>
+<p>score: <code style="color:#22d3bf">&quot;msac&quot;</code> / <code style="color:#22d3bf">&quot;ransac&quot;</code>。</p>
+<p>local_optimization: 内れ値で当てはめ直すか。</p>
+<p>min_inliers: これ未満の内れ値しか集まらなければ失敗(<code style="color:#22d3bf">ValueError</code>)。</p>
+<p>seed: 標本の乱数の種(同じ種で同じ結果)。</p>
+<p>model: <code style="color:#22d3bf">&quot;projective&quot;</code>(既定、8 自由度)/ <code style="color:#22d3bf">&quot;affine&quot;</code> / <code style="color:#22d3bf">&quot;similarity&quot;</code> / <code style="color:#22d3bf">&quot;translation&quot;</code>。</p>
+<p>Returns:</p>
+<p>dict(<code style="color:#22d3bf">kind=&quot;homography&quot;</code>)。<code style="color:#22d3bf">H</code> (3,3)(<code style="color:#22d3bf">H[2,2] = 1</code>)/ <code style="color:#22d3bf">model</code> / <code style="color:#22d3bf">inliers</code> (M,) bool /</p>
+<p><code style="color:#22d3bf">n_inliers</code> / <code style="color:#22d3bf">inlier_ratio</code> / <code style="color:#22d3bf">rms_px</code>(内れ値の転送誤差の rms)/ <code style="color:#22d3bf">iterations</code> /</p>
+<p><code style="color:#22d3bf">score</code> / <code style="color:#22d3bf">thresh</code> / <code style="color:#22d3bf">image_shape1</code> / <code style="color:#22d3bf">image_shape2</code>。</p>
+<p>Raises:</p>
+<p>ValueError: 表の種類が違う / 模型の最小標本より少ない / 非有限 / 引数が値域外 / 内れ値が <code style="color:#22d3bf">min_inliers</code> 未満</p>
+<p>(「いちばんましな H」を成功として返さない)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidematchreg:matching_registration">matching_registration 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_part_locate_features">poc_part_locate_features</a> — <code style="color:#22d3bf">py -3.11 examples/poc_part_locate_features.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="opmatchreg:features_match">features_match</a> · <a style="color:#22d3bf" href="opmatchreg:ransac_fundamental">ransac_fundamental</a> · <a style="color:#22d3bf" href="opmatchreg:registration_to_flow2d">registration_to_flow2d</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">featmatch</code>)</h3>
+<p><a style="color:#22d3bf" href="opmatchreg:features_sift">features_sift</a> · <a style="color:#22d3bf" href="opmatchreg:features_orb">features_orb</a> · <a style="color:#22d3bf" href="opmatchreg:features_match">features_match</a> · <a style="color:#22d3bf" href="opmatchreg:ransac_fundamental">ransac_fundamental</a> · <a style="color:#22d3bf" href="opmatchreg:features_accuracy_table">features_accuracy_table</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: featmatch.py — MATCHREG 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

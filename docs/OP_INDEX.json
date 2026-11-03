@@ -1,8 +1,8 @@
 {
- "n_ops": 3623,
+ "n_ops": 3635,
  "tiers": {
   "color": 12,
-  "ledger": 2664,
+  "ledger": 2676,
   "nary": 17,
   "registry": 930
  },
@@ -9140,6 +9140,59 @@
    "dim": "multivar",
    "in_sorts": [
     "images"
+   ]
+  },
+  {
+   "name": "features_accuracy_table",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "featmatch",
+   "tier": "ledger",
+   "ledger": "opsmatchreg",
+   "dim": "matchreg",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
+   "name": "features_match",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "featmatch",
+   "tier": "ledger",
+   "ledger": "opsmatchreg",
+   "dim": "matchreg",
+   "in_sorts": [
+    "table",
+    "table"
+   ]
+  },
+  {
+   "name": "features_orb",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "featmatch",
+   "tier": "ledger",
+   "ledger": "opsmatchreg",
+   "dim": "matchreg",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
+   "name": "features_sift",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "featmatch",
+   "tier": "ledger",
+   "ledger": "opsmatchreg",
+   "dim": "matchreg",
+   "in_sorts": [
+    "image2d"
    ]
   },
   {
@@ -24296,6 +24349,32 @@
    ]
   },
   {
+   "name": "ransac_fundamental",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "featmatch",
+   "tier": "ledger",
+   "ledger": "opsmatchreg",
+   "dim": "matchreg",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "ransac_homography",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "featmatch",
+   "tier": "ledger",
+   "ledger": "opsmatchreg",
+   "dim": "matchreg",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
    "name": "ransac_line",
    "halcon": "",
    "in_sort": "points",
@@ -24787,6 +24866,33 @@
    ]
   },
   {
+   "name": "register_accuracy_map",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "intensityreg",
+   "tier": "ledger",
+   "ledger": "opsmatchreg",
+   "dim": "matchreg",
+   "in_sorts": [
+    "image2d",
+    "flow2d"
+   ]
+  },
+  {
+   "name": "register_capture_range",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "intensityreg",
+   "tier": "ledger",
+   "ledger": "opsmatchreg",
+   "dim": "matchreg",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
    "name": "register_cpd_rigid",
    "halcon": "",
    "in_sort": "points",
@@ -24812,6 +24918,34 @@
    "in_sorts": [
     "any",
     "any"
+   ]
+  },
+  {
+   "name": "register_ecc",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "intensityreg",
+   "tier": "ledger",
+   "ledger": "opsmatchreg",
+   "dim": "matchreg",
+   "in_sorts": [
+    "image2d",
+    "image2d"
+   ]
+  },
+  {
+   "name": "register_ffd",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "intensityreg",
+   "tier": "ledger",
+   "ledger": "opsmatchreg",
+   "dim": "matchreg",
+   "in_sorts": [
+    "image2d",
+    "image2d"
    ]
   },
   {
@@ -24852,6 +24986,20 @@
    "ledger": "opsoptics",
    "dim": "optics",
    "in_sorts": []
+  },
+  {
+   "name": "register_mi",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "intensityreg",
+   "tier": "ledger",
+   "ledger": "opsmatchreg",
+   "dim": "matchreg",
+   "in_sorts": [
+    "image2d",
+    "image2d"
+   ]
   },
   {
    "name": "register_nonrigid",
@@ -24907,6 +25055,19 @@
    "in_sorts": [
     "points",
     "points"
+   ]
+  },
+  {
+   "name": "registration_to_flow2d",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "flow2d",
+   "category": "intensityreg",
+   "tier": "ledger",
+   "ledger": "opsmatchreg",
+   "dim": "matchreg",
+   "in_sorts": [
+    "table"
    ]
   },
   {

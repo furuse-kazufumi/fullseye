@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(450 例)
+### 2-D 画像/信号/幾何(453 例)
 
 **workflow**
 - **MCPで物理量・登録見本・検証済みpipeline案を明示して使う** — 外部資産なしの合成画像で、名前つき物理量による平滑化、明示的な登録見本ハンドルによる位置決め、候補が一意なときだけ返す検証済みpipeline案を実行し、結果を自己検査する。 `py -3.11 examples/mcp_usability.py`
@@ -334,6 +334,9 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **テンプレート追跡(見失うより先に、静かにずれる)** — 既知の相似変換で動画を合成して真値を握る。ゼロ点(更新なし全域探索)の床は0.79 px(整数座標のため)。毎フレーム更新のドリフトは log-log 傾き 0.456。★**ずれたフレームほど相関ピークが高い**(ドリフト検出の AUC 0.182 = 逆相関)。そっくりな別物体が併走すると、ずれた 152 フレームが**全部**校正しきい値を通って「見つけた」と報告する —— AUC 0.993 でも運用点が使えない。ピーク値と突出度は**得意な崖が逆**(平坦な遮蔽はピーク値、紛らわしい対象は突出度)。 `py -3.11 examples/poc_template_tracking.py`
 - **変化検出と位置合わせ誤差(偽陽性はエッジの帯、しかも崖つき)** — ★★2 時期の差分は位置合わせ誤差でエッジが全部「変化」になるが、その偽陽性はずれ 0.3 px まで雑音の床で **0.5 px から崖**(PSF から予測した δ*=τσ√2π/C=0.351 px と一致)、3 px で 7175 px。★エッジ総長×ずれの比例則は 3 px で 0.78 倍だが崖を説明せず、PSF と雑音を入れた台帳予測は 0.84〜1.07 倍 ―― 漏れるのは樹冠テクスチャ(1.5 px で 482 px、勾配則で 409 px と予測できる)。★★位置合わせ 3 経路は残留 0.02〜0.13 px まで戻すが、唯一の位相相関は 3-D 用の整数精度で残留 0.72 px、その偽陽性 995 px は「ずれだけ」の掃引を同じ残留で読んだ 915 px に乗る(位置合わせ後も同じ崖)。★変化の大きさの崖は面積の重なり則 (1−δ/(s√2))² でなく画素被覆則(被覆 > τ/C)で決まり、36 点で差 0.000。伐採は完璧な位置合わせでも検出率 0.33、照明差だけの偽陽性 17198 px は放射補正で 0、histogram_match は変化そのものを消しにかかって 383 px 出す。 `py -3.11 examples/poc_change_detection_misreg.py`
 - **印刷の版ずれを刷り上がりから測る(網点は格子なので答えが 1 つに決まらない)** — オフセット/ラベル印刷の版ずれを刷り上がりから測る。CMYK 4 版に慣行のスクリーン角(C 15°/M 75°/Y 0°/K 45°、133 lpi、1200 dpi でピッチ 9.02 px)と既知の連続量のずれを仕込む。★★中心の主張は幾何: 網点は格子なので相関で出るのは d ではなく d mod Λ_θ。軸方向 |d| ≤ p/2 = 4.51 px、対角 p/√2 = 6.38 px を超えると折り返す。4 版 × 37 点 = 148 点で予測と実測が一致した点 144、差は最大 0.1096 px。残り 4 点は基本セルの境界(セル余裕 ≤ 0.165 px)のタイで、格子で簡約した残差なら全点が合う —— 推定器は間違えておらず、格子で等価な答えのどれかを返している。独立な 2 つの推定器(自作 FFT 相関 と piv_cross_correlate)が同じ折り返しをする。★★真値 9.64 px(公差 2.0 px の 4.8 倍)が、スクリーン角の違いだけで版ごとに 1.09〜3.32 px に見え、**4 版中 2 版が「合格」に見える** —— 同じ紙が同じだけずれた結果。★ゼロ点(インク重心)は折り返さない代わり**縮尺が狂う**。応答の傾きは閉形式 k = 1-β(β = 下地だけのインク量 / 実際のインク量)で予測 0.3983、実測 0.3711(差 0.0272)。★予測していなかった所見: 直線からの外れ 0.9864 px が網点ピッチ周期のさざ波で、窓の縁で網点の列が出入りするため —— テーパ窓の対照群で 0.0048 px に落ちて原因が確定した。★対照群 (a) FM(確率)スクリーンに替えるだけで誤差は全域で最大 0.0029 px、折り返しゼロ —— 崖の原因は推定器ではなく AM 網点の周期性(代償はコントラスト 0.91 倍)。★対照群 (b) レジストマークを含む窓は当たる(0.0823 px)が、紙の伸び 0.600 % と版の傾き 0.120° があると誤差は距離に比例し(0.006319 px/px)、公差を超えるのは予測 316.5 px / 実測 322.5 px から —— 紙の 44 % が公差外。★★物差しを 2 つ置くと勝者が入れ替わる: 精度 1 位は素の相関 0.0071 px だが判定一致率は 67.6 % で最下位、低域通過は判定 89.2 % でも精度が 94 倍悪い。**鈍い方で代表元を選び鋭い方で詰める二段**なら両方勝つ(0.0071 px / 94.6 %)。成立条件「粗の誤差 < セルの半径 4.511 px」も実測で確認し、**二段が壊れた 2 点はすべて粗の誤差がセルの半径を超えた点**だった。絵柄をベタに寄せると 6 点中 3 点で丸ごと 1 格子跳ぶ。★合成器そのものが罠だった: 1200 dpi / 150 lpi(p = 8.00 px の整数)だと全網点の標本位相が揃い、0.5 px ずらすたびに重心が 1.4 px 跳ねる。133 lpi にして解消 —— **整数比を避けるのが本質**でスーパーサンプリングでは直らない。★★用途外の op を当てたら自信満々で外した: fs.frame_align は inlier_ratio 1.00 / rms_px 0.645 を返しながら真値 (0.00, 1.30) に対し 80.85 px 外す(答えは網点格子のベクトルですらない)。この指摘で op 側を直し、投票の 2 番手の山 / 1 番手を vote_margin として返すようにした —— 賛成率はどちらも 1.00 だが vote_margin は網点 1.000 / 星野 0.143。★道具の穴(4 層すべて引いて確認): 印刷の語彙(halftone/screen/rosette/misregist/lpi/moire/trapping/lattice)が1 つも無い / 2 枚の画像の並進を 1 個返す口が公開層に無い / 2-D の相関マップと重み付き重心も公開層に無い。 `py -3.11 examples/poc_print_registration.py`
+- **散らかった台の上の部品を、SIFT / ORB の照合 + ホモグラフィで位置決めする(真値つき)** — 寸法表から描いた板金部品(穴 4・長穴・面取り・刻印)を回転 37 度・0.85 倍・わずかな遠近・照明 0.8 倍・ぼけ・雑音で背景に置き、features_sift → features_match → ransac_homography で位置決め: 4 隅誤差 0.367 px、中心 0.011 mm、回転 0.062 度。ORB でも 0.733 px。★既存の Harris + パッチ記述子(features.match_keypoints)は 37 度回転で 4 隅誤差 158 px。features_accuracy_table が部品のテンプレートで壊れる条件を表にする(最悪はぼけ σ=4 の 5.9 px)。★貼り合わせ: 重なり 80 px の帯に正しい組が 9 つだけのとき、8 自由度の射影は 4 隅誤差 9.38 px、物理に合わせた並進の模型は 0.081 px —— ransac_homography(model="translation") と既存の mosaic.gen_projective_mosaic で貼った絵と真の絵の差 rms 0.0094(撮像の雑音 0.0100 以下)。 `py -3.11 examples/poc_part_locate_features.py`
+- **可視カメラと長波長赤外カメラの基板の像を、相互情報量で合わせる(放射の式で赤外像を作る)** — 寸法表の基板(基材・銅・パッド・IC・抵抗)を可視の反射率と赤外の放射 εT⁴ + (1-ε)T_amb⁴ の 2 通りに撮る(銅は可視で明るく赤外で暗い)。真の位置での相関係数は -0.7435。register_mi(正規化相互情報量のアフィン)は真のアフィンを 4 隅誤差 0.170 px で取り戻す。★register_ecc は相関の 2 次近似の分母が負になり拒否(黙って合ったふりをしない)、aoi.register_image(位相相関)は residual 2.12 で consistent=False。初期のずれごとの MI の成功率は 2・4 px で 1.000、8 px で 0.875、16 px で 0.625。 `py -3.11 examples/poc_multimodal_mi_registration.py`
+- **印刷したシートの変形を B-spline FFD で推定し、真値で領域ごと・成分ごとの誤差の地図を作る** — 点の格子・文字・格子縞・縦棒だけのバーコード・余白の 5 領域を持つシートに、異物の膨らみ 2 か所 + 引き伸ばしの既知の場(最大 3.28 px)を掛ける。2 方向の模様の 3 領域の EPE の平均は register_ffd 0.025 px / 既存の demons 0.125 px / アフィンの ECC 1.226 px。★開口問題: バーコードでは dy の誤差 0.807 px が dx の 0.032 px の 25 倍。★余白の EPE 中央値 1.326 px は模様のある所の 67 倍。★格子の分解能: 波長 24 px の皺で格子 8 / 12 / 16 px の誤差 0.062 / 0.329 / 0.505 px。★曲げの罰だけだと余白で推定が 34.3 px まで暴れ(真の最大 1.5 px)、membrane_weight=0.1 で 3.6 px —— 模様のある所の精度との引き換えなので既定は曲げだけ。registration_to_flow2d → piv_flow_magnitude の最大 3.291 px(真値 3.279 px)。 `py -3.11 examples/poc_sheet_deformation_ffd.py`
 
 **decoding**
 - **2 値マトリクスコードの読取限界(何画素あれば読めるか)** — QR と同型の構造(位置検出パターン + タイミング + 25x25 格子)を自分で作り、埋めたビット行列を真値に BER を測る。読める限界は **2 px/モジュール**、ぼけ σ/m 0.50、傾き 72 度。★**局所閾値は「モジュールが 12 px 以下のときだけ****照明ムラに強い**」—— 解像度を上げると BER 0.55 まで崩れる。 `py -3.11 examples/poc_matrix_code_reading.py`
@@ -797,9 +800,9 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Operators by family(族 → カテゴリ、全 op)
 
-_計 3629 ops / 56 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
+_計 3641 ops / 57 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
 
-族の一覧: **2d** 959 · **3d** 376 · **fit** 3 · **math** 114 · **optics** 483 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 41 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 717 · **tomography** 32 · **volcolor** 11 · **reprconv** 42 · **fileio** 14 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 3 · **calib** 21 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 16 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
+族の一覧: **2d** 959 · **3d** 376 · **fit** 3 · **math** 114 · **optics** 483 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 41 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 717 · **tomography** 32 · **volcolor** 11 · **reprconv** 42 · **fileio** 14 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 3 · **matchreg** 12 · **calib** 21 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 16 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
 
 ### 2d(959 ops / 49 categories)
 
@@ -1304,7 +1307,7 @@ _計 3629 ops / 56 families。並びとノートの在り処は `docs/ops/INDEX.
 - `m1_measure_thresh` (halcon: `measure_thresh`) `image → feature` GPU: なし — 中心を通るキャリパー線上で、輝度プロファイルが指定レベルを横切った回数を数える（HALCON ``measure_thresh`` に相当: 矩形/円弧に沿って特定のグレー値を持つ点を抽出する）。 · 例: `gallery2d_contour_measure`
 
 #### 2d / misc(1)
-- `identity` (halcon: `copy_image`) `any → any` GPU: なし — 恒等写像。HALCON の ``copy_image``（Copy an image and allocate new memory for it.）に対応付けられているが、実装は新しいメモリを確保して複製する ``copy_image`` とは異なり、入力の配列をそのまま返すだけ（複製しない）。 · 例: `gallery_nary_image_algebra`, `optics_four_f_processor`, `poc_em_branch_territory`, `poc_food_cutting_measure`
+- `identity` (halcon: `copy_image`) `any → any` GPU: なし — 恒等写像。HALCON の ``copy_image``（Copy an image and allocate new memory for it.）に対応付けられているが、実装は新しいメモリを確保して複製する ``copy_image`` とは異なり、入力の配列をそのまま返すだけ（複製しない）。 · 例: `gallery_nary_image_algebra`, `optics_four_f_processor`, `poc_em_branch_territory`, `poc_food_cutting_measure`, `poc_part_locate_features`
 
 #### 2d / morphology(36)
 - `bothat` (halcon: `gray_bothat`) `image → image` GPU: あり(gray_bothat) — ブラックトップハット（クロージング − 原画像）。HALCON の ``gray_bothat``（Perform a gray value bottom hat transformation on an image.）に相当。 · 例: `example_scratch_width`, `gallery2d_morphology`, `poc_metal_grain_size`
@@ -1388,7 +1391,7 @@ _計 3629 ops / 56 families。並びとノートの在り処は `docs/ops/INDEX.
 - `gray_range_rect` (halcon: `gray_range_rect`) `image → image` GPU: あり(gray_range_rect@twin) — 矩形窓内の最大値と最小値の差(局所レンジ)を正規化して返す。テクスチャの 局所的な起伏の激しさ(コントラスト量)を可視化する。HALCON の ``gray_range_rect``（Determine the gray value range within a rectangle.） に相当。 · 例: `gallery2d_smoothing_rank`
 - `max_filter` (halcon: `gray_dilation_rect`) `image → image` GPU: あり(gray_dilation_rect) — 矩形窓内の最大値フィルタ（グレースケール膨張に相当）。HALCON の ``gray_dilation_rect``（Determine the maximum gray value within a rectangle.）に相当。 · 例: `gallery2d_smoothing_rank`
 - `mean_sp` (halcon: `mean_sp`) `image → image` GPU: なし — ロバスト平滑化フィルタ。窓内の 20 パーセンタイルと 80 パーセンタイルの平均を返す（トリム平均、trimmed mean）ことで、極端に明るい/暗い外れ値（ソルト&ペッパー雑音など）の影響を抑える。a が窓サイズを 3/5/7/9 に振る（``_k(a)``）。b は未使用。 · 例: `gallery2d_smoothing_rank`
-- `median` (halcon: `median_image`) `image → image` GPU: あり(median_image) — メディアン（中央値）フィルタ。HALCON の ``median_image``（Compute a median filter with various masks.）に相当。 · 例: `astro_stacking`, `blas_thread_budget`, `ct_reconstruction`, `gallery2d_smoothing_rank`, `genspark_external_review`, `lightfield_depth`, `photon_timeresolved`, `piv_flow_from_particles`, `poc_am_thermal_to_ct`, `poc_astro_photometry`, `poc_compound_eye`, `poc_dtof_ranging`, `poc_geodetic_height_frames`, `poc_hyperspectral_foreign_matter`, `poc_lidar_terrain_change`, `poc_nuclei_ploidy`, `poc_pv_thermal_survey`, `poc_river_surface_velocity`, `poc_tacscalib_sphere_lut`, `poc_web_roll_periodicity`, `poc_weld_bead_profile`, `quickstart`, `specular_photometric`
+- `median` (halcon: `median_image`) `image → image` GPU: あり(median_image) — メディアン（中央値）フィルタ。HALCON の ``median_image``（Compute a median filter with various masks.）に相当。 · 例: `astro_stacking`, `blas_thread_budget`, `ct_reconstruction`, `gallery2d_smoothing_rank`, `genspark_external_review`, `lightfield_depth`, `photon_timeresolved`, `piv_flow_from_particles`, `poc_am_thermal_to_ct`, `poc_astro_photometry`, `poc_compound_eye`, `poc_dtof_ranging`, `poc_geodetic_height_frames`, `poc_hyperspectral_foreign_matter`, `poc_lidar_terrain_change`, `poc_nuclei_ploidy`, `poc_pv_thermal_survey`, `poc_river_surface_velocity`, `poc_sheet_deformation_ffd`, `poc_tacscalib_sphere_lut`, `poc_web_roll_periodicity`, `poc_weld_bead_profile`, `quickstart`, `specular_photometric`
 - `median_image` (halcon: `median_image`) `image → image` GPU: あり(median_image@twin) — メディアンフィルタ(``ndimage.median_filter``、正方窓)。窓内の中央値で 置き換えるノイズ除去で、平均フィルタと違いエッジを保ったまま塩胡椒ノイズを 除去できる。HALCON の ``median_image``（Compute a median filter with various masks.）に相当(HALCON は円形・八角形等の任意マスクを選べるが、 ここでは正方形マスクに固定)。 · 例: `degenerate_inputs`, `find_ops_by_meaning`, `gallery2d_smoothing_rank`, `genspark_external_review`, `poc_prnu_camera_fingerprint`
 - `median_rect` (halcon: `median_rect`) `image → image` GPU: なし — 矩形メディアンフィルタ。``median_image`` と同じ ``scipy`` 実装だが、 高さと幅を独立に指定できる(``size=(k_a, k_b)``)。HALCON の ``median_rect`` （Compute a median filter with rectangular masks.）に相当。 · 例: `gallery2d_smoothing_rank`, `poc_tree_ring_dendro`, `poc_weld_radiograph_porosity`
 - `median_separate` (halcon: `median_separate`) `image → image` GPU: あり(median_separate) — 実装は ``median_image`` と同じ(``kind: "median"``、正方窓の 2 次元 メディアン)。HALCON の ``median_separate``（Separated median filtering with rectangle masks.）は行方向・列方向に分離した 1 次元メディアンを 2 パス 掛ける高速近似演算子だが、この代役では区別せず通常の 2 次元メディアンを 返す(結果は近い場合が多いが厳密には別アルゴリズム ―― 近似の限界)。 · 例: `gallery2d_smoothing_rank`
@@ -4778,10 +4781,28 @@ _計 3629 ops / 56 families。並びとノートの在り処は `docs/ops/INDEX.
 - `tiled_map` `image2d → table` GPU: なし — 画像をタイルに割り、タイルごとの量を小さな地図にする。→ dict。 · 例: `aoi_frontend_tour`
 
 #### aoi / geometric(1)
-- `register_image` `image2d × image2d → table` GPU: なし — 検査画像を基準画像へ合わせる平行移動を、合っていないと分かる量つきで返す。→ dict。 · 例: `aoi_frontend_tour`
+- `register_image` `image2d × image2d → table` GPU: なし — 検査画像を基準画像へ合わせる平行移動を、合っていないと分かる量つきで返す。→ dict。 · 例: `aoi_frontend_tour`, `poc_multimodal_mi_registration`
 
 #### aoi / photometric(1)
 - `flat_field_correct` `image2d × image2d → image2d` GPU: なし — 照明ムラとセンサ感度のばらつきを、暗電流つきの割り算で戻す。→ 補正済み画像。 · 例: `aoi_frontend_tour`
+
+### matchreg(12 ops / 2 categories)
+
+#### matchreg / featmatch(6)
+- `features_accuracy_table` `image2d → table` GPU: なし — 既知の変換で合成した組で、特徴点の再現率・照合精度・ホモグラフィの誤差を条件ごとに表で返す。→ table。 · 例: `poc_part_locate_features`
+- `features_match` `table × table → table` GPU: なし — 2 つの特徴の表を最近傍 + 比の検定(+ 相互最近傍)で照合する。→ table(``kind="feature_matches"``)。 · 例: `poc_part_locate_features`
+- `features_orb` `image2d → table` GPU: なし — ORB の特徴点と 256 bit の 2 値記述子(Rublee et al. 2011)。→ table(``kind="features"``)。 · 例: `poc_part_locate_features`
+- `features_sift` `image2d → table` GPU: なし — SIFT の特徴点と 128 次元の記述子(DoG の極値、Lowe 2004)。→ table(``kind="features"``)。 · 例: `poc_part_locate_features`
+- `ransac_fundamental` `table → table` GPU: なし — 照合の組から頑健に基礎行列 F(``x2ᵀ F x1 = 0``)を推定する。→ table(``kind="fundamental"``)。
+- `ransac_homography` `table → table` GPU: なし — 照合の組から頑健にホモグラフィ(pts1 → pts2、(x, y) の同次座標)を推定する。→ table(``kind="homography"``)。 · 例: `poc_part_locate_features`
+
+#### matchreg / intensityreg(6)
+- `register_accuracy_map` `image2d × flow2d → table` GPU: なし — 既知の変形場で合成した組で、推定した変形場の誤差を画素ごとに返す(精度の地図)。→ table。 · 例: `poc_sheet_deformation_ffd`
+- `register_capture_range` `image2d → table` GPU: なし — 初期のずれの大きさごとに、恒等から始めた位置合わせが真値へ戻る割合を返す(収束の範囲)。→ table。
+- `register_ecc` `image2d × image2d → table` GPU: なし — 強度相関係数(ECC)を最大にするパラメトリックな変換で moving を fixed に合わせる。→ table(``kind="registration"``)。 · 例: `poc_multimodal_mi_registration`
+- `register_ffd` `image2d × image2d → table` GPU: なし — 3 次 B-spline の自由変形(FFD)で moving を fixed へ非剛体に合わせる。→ table(``kind="registration"``)。 · 例: `poc_sheet_deformation_ffd`
+- `register_mi` `image2d × image2d → table` GPU: なし — (正規化)相互情報量を最大にする剛体 / 相似 / アフィンで moving を fixed に合わせる。→ table(``kind="registration"``)。 · 例: `poc_multimodal_mi_registration`
+- `registration_to_flow2d` `table → flow2d` GPU: なし — 位置合わせの結果の表から変形場 ``flow2d``((2,H,W) の ``(dy, dx)``)を取り出す。→ flow2d。 · 例: `poc_sheet_deformation_ffd`
 
 ### calib(21 ops / 5 categories)
 
@@ -5240,7 +5261,7 @@ _計 3629 ops / 56 families。並びとノートの在り処は `docs/ops/INDEX.
 
 #### piv / field(8)
 - `piv_divergence` `flow2d → image2d` GPU: なし — 発散 ``d(dy)/dy + d(dx)/dx``。**非圧縮なら 0** —— 独立な検算に使える。 · 例: `piv_flow_from_particles`, `poc_what_a_picture_cannot_check`
-- `piv_flow_magnitude` `flow2d → image2d` GPU: なし — ``sqrt(dy^2 + dx^2)``。向きを捨てる**一方向**の変換。 · 例: `piv_field_analysis_tour`, `poc_what_a_picture_cannot_check`
+- `piv_flow_magnitude` `flow2d → image2d` GPU: なし — ``sqrt(dy^2 + dx^2)``。向きを捨てる**一方向**の変換。 · 例: `piv_field_analysis_tour`, `poc_sheet_deformation_ffd`, `poc_what_a_picture_cannot_check`
 - `piv_q_criterion` `flow2d → image2d` GPU: なし — Q 基準 ``-tr(J^2)/2``。**回転がひずみを上回る**場所が正になる。 · 例: `piv_field_analysis_tour`
 - `piv_strain_rate` `flow2d → image2d` GPU: なし — ひずみ速度の大きさ ``sqrt(2 e_ij e_ij)``。剛体回転では 0 になる。 · 例: `piv_field_analysis_tour`
 - `piv_swirling_strength` `flow2d → image2d` GPU: なし — 渦回転強度 λ_ci —— 速度勾配テンソルの複素固有値の虚部の大きさ。 · 例: `piv_field_analysis_tour`
