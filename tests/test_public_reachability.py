@@ -295,7 +295,10 @@ def test_pending_exposure_shrinks_when_fixed():
 # 2026-11-02 opsmv 台帳(工業用ビジョンの定番 47 op): 台帳の内部 API 4 本、除算モデルの 2 本
 #   (distort_division / undistort_division、op の部品)、opassist.ledger_halcon_map。実測 948 → 955。
 # 2026-11-04 統合 GPU: 1034 + 7(opsmv)= 1041。実測も 1041。
-_HIDDEN_FUNCTIONS_TODAY = 1041
+# 2026-11-02 gpu_shadow(機械的 GPU の影の層 10 本)。CuPy は任意依存で、入口は gpu_shadow.apply / run_allowed。実測 948 → 958。
+# 2026-11-04 統合 GPU: 1041 + 11(gpu_shadow。ブランチの注記は 10 本、実測は 11 本 = GpuAutoError / ShadowImporter / Stats /
+#   allowed_ops / available / get_shadow / resident_ops / run_allowed / shadow_fn / to_cpu / to_gpu)= 1052。実測も 1052。
+_HIDDEN_FUNCTIONS_TODAY = 1052
 
 
 def _hidden_total():

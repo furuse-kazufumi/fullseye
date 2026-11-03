@@ -372,6 +372,12 @@ _IMAGE_REASON = ("画像・動画の書き手。PNG/GIF のバイトは Pillow �
 _SPIKE_REASON = ("スパイク(実験)の記録。spikes/out_gallery/ の図は当時の証跡として凍結してあり、"
                  "再描画(matplotlib / GUI)はバイトが変わる。")
 EXCLUDED = {
+    "tools/gpu_auto_sweep.py": ("機械的 GPU 化(gpu_shadow)の掃引。parity / scale の段は GPU と gpu_in_use.lock の手順が要り、結果は out/ の JSONL(追跡外)に追記するので CI では回さない。(GPU 便、2026-11-04 の統合で分類)"),
+    "tools/gpu_auto_report.py": ("gpu_auto_sweep.py report から呼ばれ、out/ の掃引の JSONL(追跡外)から docs/perf/gpu_auto_sweep_2026-11-02.{md,json} と fullseye/data/gpu_auto_allow.json を書く。入力が commit されていないので鎖では回せない(掃引のあとに手で回して commit する)。(GPU 便、2026-11-04 の統合で分類)"),
+    "tools/gpu_auto_merge_rest.py": ("partial / none の掃引(out/gpu_auto_sweep_rest、追跡外)の採用分を fullseye/data/gpu_auto_allow.json へ足す。GPU の venv で掃引のあとに手で回す。(GPU 便、2026-11-04 の統合で分類)"),
+    "tools/gpu_auto_method_compare.py": ("機械的 GPU 化の 3 方式の比較の実測器(--out の JSON)。GPU が要り数字は機械で変わる。(GPU 便、2026-11-04 の統合で分類)"),
+    "tools/gpu_auto_verify.py": ("採用 op を実寸で CPU と照合する検査。gpu の段は GPU と gpu_in_use.lock の手順が要る。(GPU 便、2026-11-04 の統合で分類)"),
+    "tools/bench_device_ops.py": ("device 引数を持つ op(torch の GPU 経路)の実測器。結果は out/device_ops(追跡外)。GPU が要り数字は機械で変わる。(GPU 便、2026-11-04 の統合で分類)"),
     "tools/bench_gpu_optics.py": ("GPU 第 4 便の実測器(raytrace の CPU 基準と lens_gpu の一括経路の時間、--out の JSON)。"
                                   "数字は機械と負荷で変わり、--batch cuda は GPU と gpu_in_use.lock の手順が要るので手で回す。"
                                   "測定の記録は docs/perf/gpu_optics_2026-11-02.md / .json(2026-11-04 の統合で分類)。"),

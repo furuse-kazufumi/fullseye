@@ -160,6 +160,8 @@ py-modules = [
   # opnames: canonical op-name aliases (phase 1 of the naming cleanup, 2026-10-07). api / opassist /
   # imgevolve / the fullseye facade import it, so it must ship.
   "opnames",
+  # gpu_shadow: 既存の numpy/scipy 実装を CuPy で走らせる影の層(CuPy は任意依存、既定の経路は import しない)。
+  "gpu_shadow",
   # pocviewer: PoC の結果を 1 枚の HTML ビューアにする公開 API(fullseye.write_viewer、MCP tool も呼ぶ)。
   # root モジュールが py-modules から落ちると wheel から黙って消える(2026-09-05 / 09-14 の事故と同じ族)。
   "pocviewer",
@@ -365,7 +367,9 @@ py-modules = [
               # 意味で op を引く検索の索引(6 言語の要約。fullseye.opsearch / fullseye-rag search、2026-10-07)
               "data/OP_SEARCH.json", "data/OP_CARDS.json", "data/OP_PROBE.json", "data/RECIPE_INDEX.json",
               "data/OP_GRAPH.json", "data/OP_FAMILIES.json", "data/OP_DEVICE.json", "data/OP_SORTS.json",
-              "data/OP_SHAPES.json", "data/OP_PATTERNS.json", "data/SYSTEM_PARAMS.json"]
+              "data/OP_SHAPES.json", "data/OP_PATTERNS.json", "data/SYSTEM_PARAMS.json",
+              # 実測で採用した機械的 GPU の許可リスト(gpu_shadow.run_allowed が読む)
+              "data/gpu_auto_allow.json"]
 # Studio runtime assets shipped inside the `studio_assets` package so an installed
 # wheel has localisation, per-operator help, and the bundled sample images (the
 # Studio degrades to English-only / no-help / no-samples without them).
