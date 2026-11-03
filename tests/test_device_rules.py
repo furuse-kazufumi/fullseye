@@ -89,8 +89,14 @@ def test_rejected_pipeline_rule_names_measured_losses():
         assert device_policy.route(stages, SMALL, rules=RULES, accelerated=accelerated) == "cuda"
 
 
+def _single_accel_ops():
+    """単独の呼び出しで選ばれる手書き GPU 経路の op(鎖の枠だけの領域の解析の族 = use="pipeline" は除く)。"""
+    import gpu_route
+    return [o for o in RULES["ops"] if getattr(gpu_route.route(o, "single"), "kind", None) == "accel"]
+
+
 def test_small_image_stays_on_cpu_and_large_goes_to_gpu(gpu_box):
-    op = min(RULES["ops"], key=lambda o: -RULES["ops"][o]["min_pixels"])
+    op = min(_single_accel_ops(), key=lambda o: -RULES["ops"][o]["min_pixels"])
     assert api.resolve_device("auto", stages=(op,), shape=SMALL) == "cpu"
     side = int(RULES["ops"][op]["min_pixels"] ** 0.5) + 1
     assert api.resolve_device("auto", stages=(op,), shape=(side, side)) == "cuda"
@@ -152,7 +158,7 @@ def test_apply_auto_routes_small_to_cpu_and_large_to_the_accel_path(gpu_box, mon
         return v
 
     monkeypatch.setattr(api, "_try_accel", fake)
-    op = max(RULES["ops"], key=lambda o: RULES["ops"][o]["min_pixels"])
+    op = max(_single_accel_ops(), key=lambda o: RULES["ops"][o]["min_pixels"])
     side = int(RULES["ops"][op]["min_pixels"] ** 0.5)
     im = np.linspace(0, 1, 16).reshape(4, 4)
     api.apply(im, op, device="auto")

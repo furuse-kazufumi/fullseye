@@ -30,9 +30,14 @@ def gpu_box(monkeypatch):
     monkeypatch.setattr(gpu_route, "_CACHE", {"shadow_usable": True})
 
 
+def _single_accel_ops():
+    """単独の呼び出しで選ばれる手書き GPU 経路の op(鎖の枠だけの領域の解析の族 = use="pipeline" は除く)。"""
+    return [o for o in RULES["ops"] if getattr(gpu_route.route(o, "single"), "kind", None) == "accel"]
+
+
 def _accel_op():
     """損益分岐の閾値が一辺 64 より大きい手書き GPU 経路の op。"""
-    return max(RULES["ops"], key=lambda o: RULES["ops"][o]["min_pixels"])
+    return max(_single_accel_ops(), key=lambda o: RULES["ops"][o]["min_pixels"])
 
 
 def _listed(list_name, in_sort="image"):
@@ -426,7 +431,7 @@ def test_real_gpu_decision_and_vram(monkeypatch):
     torch.zeros(1, device="cuda")
     free = device_policy.free_vram_mb()
     assert free is not None and free > 0
-    op = min(RULES["ops"], key=lambda o: RULES["ops"][o]["min_pixels"])     # どの大きさでも GPU の op
+    op = min(_single_accel_ops(), key=lambda o: RULES["ops"][o]["min_pixels"])     # どの大きさでも GPU の op
     image = np.random.default_rng(5).random((1024, 1024))
     dec = api.explain_device("auto", stages=(op,), shape=image.shape)
     assert dec["path"] == "accel" and dec["vram_free_mb"] is not None

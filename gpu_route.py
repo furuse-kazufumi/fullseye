@@ -8,7 +8,9 @@ GPU の台帳(手書き経路の表、許可リスト、native の実測)を読�
 経路の種類 ``kind``:
 
 * ``"accel"``  — 手書きの torch 経路(``accel.ACCEL`` / ``accel_vol.VOL_ACCEL`` / ``accel_match.MATCH_ACCEL``)。
-  parity の門(内部差 < 5e-3)を通ったものだけが表に載る。
+  parity の門(内部差 < 5e-3)を通ったものだけが表に載る。場面は ``single``。ただし実測の台帳
+  ``fullseye/data/GPU_ACCEL_USE.json``(領域の解析の族、生成 ``tools/bench_label_ops.py``)で
+  ``use="pipeline"``(単独は 5 倍に届かず、常駐で 1 倍以上)の op は ``pipeline``(隣も GPU の段のときだけ)。
 * ``"native"`` — op の関数自身が ``device=`` 引数を持つ torch 実装(``match3d`` / ``feat_*`` / ``fuse3d``)。
   **実測があり、一致し(``ok``)、CPU より速い(倍率 >= 1)ものだけ**を返す(実測の無い op は返さない =
   fail-closed)。実測は任意の台帳 ``fullseye/data/GPU_NATIVE.json``(無ければ native は 1 件も返らない)。
@@ -36,6 +38,7 @@ from dataclasses import dataclass, field
 
 _HERE = os.path.dirname(os.path.abspath(__file__))
 NATIVE_PATH = os.path.join(_HERE, "fullseye", "data", "GPU_NATIVE.json")
+ACCEL_USE_PATH = os.path.join(_HERE, "fullseye", "data", "GPU_ACCEL_USE.json")
 
 KINDS = ("accel", "native", "shadow")
 USES = ("single", "resident", "pipeline")
@@ -109,11 +112,29 @@ def _native_rows() -> dict:
     return _CACHE["native"]
 
 
+def _accel_use_rows() -> dict:
+    """``{op: row}`` 手書き経路の場面の台帳(領域の解析の族)。無ければ空 = 全部 ``single``。"""
+    if "accel_use" not in _CACHE:
+        rows: dict = {}
+        try:
+            with open(ACCEL_USE_PATH, encoding="utf-8") as f:
+                data = json.load(f)
+            rows = {k: v for k, v in (data.get("ops") or {}).items() if isinstance(v, dict)}
+        except (OSError, ValueError, AttributeError):
+            rows = {}
+        _CACHE["accel_use"] = rows
+    return _CACHE["accel_use"]
+
+
 def _load_sources(op: str) -> list:
     """*op* の経路の候補を全部(一致・速さの判定前)。台帳を差し替えるならここ。"""
     out = []
     if op in _accel_names():
-        out.append(Route(op, "accel", "single", source="accel"))
+        row = _accel_use_rows().get(op) or {}
+        use = "pipeline" if row.get("use") == "pipeline" else "single"
+        extra = {k: row[k] for k in ("ratio_single", "ratio_resident") if row.get(k) is not None}
+        out.append(Route(op, "accel", use,
+                         source="GPU_ACCEL_USE.json" if row else "accel", extra=extra))
     row = _native_rows().get(op)
     if row is not None:
         ok = bool(row.get("ok")) and row.get("status", "measured") == "measured"
@@ -233,6 +254,33 @@ def describe(op_name: str) -> dict:
             "measured_shape": shadow.measured_shape if shadow else None,
             "auto_gpu_min_pixels": auto_min,
             "routes": [r.as_dict() for r in rs]}
+
+
+def rejection(op_name: str):
+    """GPU 経路が無い理由の根拠(台帳で測って不採用になった理由)。測っていない op は ``None``。
+
+    ``accel:<理由>``(``GPU_ACCEL_USE.json`` の ``rejected``: ``mismatch`` / ``constant_output`` /
+    ``slower_than_cpu_even_resident``)/ ``native:<理由>``(``GPU_NATIVE.json``: ``mismatch`` / ``constant_output``
+    / ``slower`` / 測定の状態 ``timeout`` など)。
+    """
+    if not isinstance(op_name, str):
+        return None
+    row = _accel_use_rows().get(op_name)
+    if row and not row.get("use") and row.get("rejected"):
+        return "accel:" + str(row["rejected"])
+    n = _native_rows().get(op_name)
+    if n is not None:
+        status = n.get("status", "measured")
+        if status != "measured":
+            return "native:" + str(status)
+        if not n.get("ok"):
+            return "native:mismatch"
+        if n.get("nonconst") is False:
+            return "native:constant_output"
+        ratio = n.get("ratio")
+        if isinstance(ratio, (int, float)) and ratio < 1.0:
+            return "native:slower"
+    return None
 
 
 def clear_cache() -> None:

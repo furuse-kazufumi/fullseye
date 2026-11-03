@@ -2814,6 +2814,10 @@ def apply(image, name: str, a: float = 0.5, b: float = 0.5, coerce: bool = True,
     decision = _decide(device, (name,), getattr(image, "shape", None), 1)
     _DECISION.value = decision
     device = decision["resolved"]
+    if decision.get("reason") == "chain_only":
+        # 鎖の枠だけの経路(常駐でしか CPU に勝たない)は、明示の cuda でも単独では GPU に送らない。
+        # 送ると「cpu / chain_only」と説明しながら GPU で走る(説明と実行が食い違う)。
+        device = "cpu"
     shadow = decision.get("path") == "allow_single" and decision["device"] == "cuda"
     if template is None:
         return _apply_impl(image, name, a, b, coerce, device, policy, fast, allow_nonfinite, shadow=shadow)
@@ -3254,7 +3258,8 @@ def run_pipeline(image, stages: Iterable, a: float = 0.5, b: float = 0.5,
         _DECISION.value = decision
         if device != "cpu":
             device = decision["resolved"]
-            if decision["device"] == "cuda" and any(str(p).startswith("allow_") for p in decision["_paths"] or ()):
+            if decision["device"] == "cuda" and decision["_paths"]:
+                # 段ごとの経路(allow_* は影の区間、chain_only で cpu になった手書き経路は CPU 区間)
                 shadow_paths = list(decision["_paths"])
 
     if isinstance(image, PrecisionUnion) and device != "cpu":

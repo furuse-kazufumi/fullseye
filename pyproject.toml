@@ -147,6 +147,8 @@ py-modules = [
   "device_policy",
   # gpu_route: op の GPU 経路(accel / native / shadow)を決める唯一の関数。台帳を読むのもここだけ。
   "gpu_route",
+  # accel_label: 領域の解析(連結成分のラベル付け + 領域ごとの集計)の torch 経路。accel が import する。
+  "accel_label",
   # ★2026-10-25: numpy_twins は backends_auto / backends_filters2 / backends_regions2 が import する
   #   (scikit-image の無い環境の双子)。py-modules に無いと wheel から落ちて 3 backend ごと消える。
   "numpy_twins",
@@ -349,7 +351,10 @@ py-modules = [
               # device="auto" の実測の表(device_policy が読む。tools/gen_device_rules.py が生ログから作る)
               "data/DEVICE_RULES.json",
               # 実測で採用した機械的 GPU の許可リスト(gpu_shadow.run_allowed が読む)
-              "data/gpu_auto_allow.json"]
+              "data/gpu_auto_allow.json",
+              # gpu_route が読む実測の台帳: 手書き経路の場面(領域の解析の族、tools/gen_gpu_routes.py)と
+              # op 自身の device 引数の経路(native)。無いと前者は全部 single、後者は 1 件も選ばれない。
+              "data/GPU_ACCEL_USE.json", "data/GPU_NATIVE.json"]
 # Studio runtime assets shipped inside the `studio_assets` package so an installed
 # wheel has localisation, per-operator help, and the bundled sample images (the
 # Studio degrades to English-only / no-help / no-samples without them).

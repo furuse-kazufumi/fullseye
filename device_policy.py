@@ -187,13 +187,17 @@ def plan_paths(names, shape, *, route_of, runnable, auto: bool) -> list:
       (それ未満は測っていない = 勝つと言えない)。明示の ``cuda`` では大きさを問わない。
     * 常駐・鎖の枠(``allow_resident`` / ``allow_pipeline``)は隣も許可リストの段のときだけ。単独の
       呼び出しや孤立した段は ``chain_only`` で CPU。
+    * 鎖の枠の手書き経路(``accel`` で ``use="pipeline"``、領域の解析の族)は隣も ``accel`` の段のときだけ
+      (同じ torch の常駐区間に載る)。孤立すれば ``chain_only`` で CPU。
     """
     names = list(names)
     elements = _pixels(shape) if shape is not None else None
     context = "pipeline" if len(names) > 1 else "single"
     out = []
+    chain_slot = []
     for name in names:
         r = route_of(name, context)
+        chain_slot.append(r is not None and r.kind == "accel" and r.use in ("resident", "pipeline"))
         if r is None:
             chain = context == "single" and route_of(name, "pipeline") is not None
             out.append(("cpu", "chain_only" if chain else "not_listed"))
@@ -210,6 +214,11 @@ def plan_paths(names, shape, *, route_of, runnable, auto: bool) -> list:
         if path in ("allow_resident", "allow_pipeline"):
             left = i > 0 and first[i - 1][0].startswith("allow_")
             right = i + 1 < len(first) and first[i + 1][0].startswith("allow_")
+            if not (left or right):
+                out[i] = ("cpu", "chain_only")
+        elif path == "accel" and chain_slot[i]:
+            left = i > 0 and first[i - 1][0] == "accel"
+            right = i + 1 < len(first) and first[i + 1][0] == "accel"
             if not (left or right):
                 out[i] = ("cpu", "chain_only")
     return out

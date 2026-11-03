@@ -101,7 +101,8 @@ def plan(stages, shadow=None) -> list:
 
     *shadow* = 段ごとの経路(``api.explain_device`` の ``allow_*`` / ``accel`` / ``cpu``、段と同じ長さ)。
     手書きの GPU 経路が無く ``allow_*`` の段は ``"shadow"`` 区間(:func:`gpu_shadow.run_chain`、
-    連続する段は GPU に載せたまま)。長さが合わなければ使わない(従来どおり CPU 区間)。
+    連続する段は GPU に載せたまま)。手書きの経路があっても経路が ``cpu`` の段(鎖の枠だけの経路が
+    孤立した ``chain_only``)は CPU 区間。長さが合わなければ使わない(従来どおり)。
 
     返り値 = ``[("gpu", [(accel名,a,b),...]) | ("vol", [(vol_accel名,a,b),...]) |
     ("cpu", [Stage,...]), ...]``。連続する同種 GPU op は 1 区間にまとまり、
@@ -115,6 +116,8 @@ def plan(stages, shadow=None) -> list:
         kind = _seg_kind(st)
         if kind == "cpu" and shadow is not None and str(shadow[i]).startswith("allow_"):
             kind = "shadow"
+        elif kind == "gpu" and shadow is not None and shadow[i] == "cpu":
+            kind = "cpu"
         if kind == "gpu":
             item = (_C2A[st.op], st.a, st.b)
         elif kind == "vol":

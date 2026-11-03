@@ -336,6 +336,8 @@ EXCLUDED = {
                              "手で回し、docs/perf/op_time_ranking_<date>.json を日付つきで commit する(2026-11-02)。"),
     "tools/measure_op_families.py": ("CPU timing and peak memory are machine-dependent raw measurements; run manually, "
                                       "then commit docs/ops/families_timing.json with environment metadata."),
+    "tools/bench_label_ops.py": ("領域の解析の族の GPU 実測(CUDA と共有 GPU のロックが要り、値は機械と負荷で変わる)。生ログを "
+                                 "docs/perf/logs/label/ に commit し、採否の台帳はそのログから tools/gen_gpu_routes.py が書く。"),
     "tools/bench_gpu_crossover.py": ("GPU の実測(機械と負荷で値が変わり、共有 GPU のロックの下で手で回す)。生ログを docs/perf/logs/ に "
             "commit し、表はそのログから決定的に作る生成器(tools/gen_device_rules.py)が書く。"),
     "tools/gpu_auto_sweep.py": ("機械的 GPU 化の掃引(CuPy と GPU が要り、作業ファイルは out/)。採用の結果は "

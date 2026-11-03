@@ -816,7 +816,13 @@ def cmd_sweep_cpu_worker(ns) -> int:
 
 def cmd_sweep_gpu(ns) -> int:
     import torch
+    import gpu_route
     out = Path(ns.out)
+    # 掃引は op 単独の損益分岐を測る。鎖の枠だけの手書き経路(GPU_ACCEL_USE.json の use="pipeline")は
+    # apply が単独では GPU に送らない(chain_only)ので、ここでは場面の台帳を外して kernel を単独で測る。
+    # 外さないと CPU と CPU を比べた行が GPU の行として残る(2026-11-03、179 行を測り直した)。
+    gpu_route.clear_cache()
+    gpu_route._CACHE["accel_use"] = {}
 
     cpu_log = {(r["op"], r["side"], r["a"]): r for r in load(out.with_name("sweep_cpu.jsonl")) if r["status"] == "ok"}
     tools_dir = str(ROOT / "tools")
@@ -919,7 +925,15 @@ def cmd_before_after(ns) -> int:
                     if not lease.ok():
                         return True
                     im = pool(kind, side, 1)[0]
-                    before, _ = _sweep_times(op, im, a, "cuda", sync)
+                    # before = 規則の無かったとき: 明示の cuda で kernel を単独で走らせる。鎖の枠だけの手書き経路
+                    # (GPU_ACCEL_USE.json の use="pipeline")は今の apply が単独では GPU に送らないので、
+                    # before の間だけ場面の台帳を外す(after は今の挙動そのまま)。
+                    import gpu_route
+                    gpu_route._CACHE["accel_use"] = {}
+                    try:
+                        before, _ = _sweep_times(op, im, a, "cuda", sync)
+                    finally:
+                        gpu_route._CACHE.pop("accel_use", None)
                     after, _ = _sweep_times(op, im, a, "auto", sync)
                     if lease.ok():
                         append(out, {"kind": "op", "name": op, "side": side, "a": a, "before_s": before,

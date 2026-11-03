@@ -42,6 +42,12 @@ FAMILY_OF_KERNEL = {
     "_lowpass": "frequency", "_highpass": "frequency", "_sk_tv": "iterative", "_fill_holes_bin": "iterative",
     "_canny": "iterative", "_equalize": "iterative", "_otsu": "iterative", "_projective_warp": "geometry",
     "_projective_region": "geometry",
+    # 領域の解析(accel_label、連結成分のラベル付けは反復 + 領域ごとの集計)
+    "_remove_small": "label", "_select_shape": "label", "_select_largest": "label",
+    "_select_largest_finite": "label", "_clear_border": "label", "_sort_region": "label",
+    "_background_seg": "label", "_select_region_point": "label", "_fill_up_shape": "label",
+    "_sk_remove_holes": "label", "_count8": "label", "_cv_cc_count": "label", "_blob_count": "label",
+    "_smallest_rectangle1": "reduction", "_area_center": "reduction", "_area_frac": "reduction",
 }
 
 

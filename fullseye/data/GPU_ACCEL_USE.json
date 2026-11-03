@@ -1,0 +1,433 @@
+{
+ "gate": {
+  "knobs": [
+   [
+    0.5,
+    0.5
+   ],
+   [
+    0.1,
+    0.9
+   ],
+   [
+    0.9,
+    0.2
+   ]
+  ],
+  "parity": "region: pixel-exact; feature: rtol 1e-9",
+  "pipeline_min": 1.0,
+  "side": 2048,
+  "single_min": 5.0
+ },
+ "generated_by": "tools/bench_label_ops.py",
+ "log": "docs/perf/logs/label/label_ops.jsonl",
+ "ops": {
+  "area_center": {
+   "elems": 4194304,
+   "nonconst": true,
+   "ok": true,
+   "points": 12,
+   "ratio_resident": 53.504,
+   "ratio_single": 2.105,
+   "rejected": null,
+   "use": "pipeline",
+   "worst_fixture": "coins"
+  },
+  "area_frac": {
+   "elems": 4194304,
+   "nonconst": true,
+   "ok": true,
+   "points": 12,
+   "ratio_resident": 37.377,
+   "ratio_single": 0.47,
+   "rejected": null,
+   "use": "pipeline",
+   "worst_fixture": "scene"
+  },
+  "area_holes": {
+   "elems": 4194304,
+   "nonconst": true,
+   "ok": true,
+   "points": 12,
+   "ratio_resident": 0.902,
+   "ratio_single": 0.857,
+   "rejected": "slower_than_cpu_even_resident",
+   "use": null,
+   "worst_fixture": "blobs"
+  },
+  "blob_count": {
+   "elems": 4194304,
+   "nonconst": true,
+   "ok": true,
+   "points": 12,
+   "ratio_resident": 1.891,
+   "ratio_single": 1.034,
+   "rejected": null,
+   "use": "pipeline",
+   "worst_fixture": "blobs"
+  },
+  "circularity": {
+   "elems": 4194304,
+   "nonconst": true,
+   "ok": true,
+   "points": 12,
+   "ratio_resident": 0.791,
+   "ratio_single": 0.733,
+   "rejected": "slower_than_cpu_even_resident",
+   "use": null,
+   "worst_fixture": "spiral"
+  },
+  "classify_shape": {
+   "elems": 4194304,
+   "nonconst": true,
+   "ok": true,
+   "points": 12,
+   "ratio_resident": 0.784,
+   "ratio_single": 0.754,
+   "rejected": "slower_than_cpu_even_resident",
+   "use": null,
+   "worst_fixture": "spiral"
+  },
+  "compactness": {
+   "elems": 4194304,
+   "nonconst": true,
+   "ok": true,
+   "points": 12,
+   "ratio_resident": 0.827,
+   "ratio_single": 0.656,
+   "rejected": "slower_than_cpu_even_resident",
+   "use": null,
+   "worst_fixture": "spiral"
+  },
+  "connect_and_holes": {
+   "elems": 4194304,
+   "nonconst": true,
+   "ok": true,
+   "points": 12,
+   "ratio_resident": 2.108,
+   "ratio_single": 0.814,
+   "rejected": null,
+   "use": "pipeline",
+   "worst_fixture": "spiral"
+  },
+  "contlength": {
+   "elems": 4194304,
+   "nonconst": true,
+   "ok": true,
+   "points": 12,
+   "ratio_resident": 0.692,
+   "ratio_single": 0.792,
+   "rejected": "slower_than_cpu_even_resident",
+   "use": null,
+   "worst_fixture": "spiral"
+  },
+  "convexity": {
+   "elems": 4194304,
+   "nonconst": true,
+   "ok": true,
+   "points": 12,
+   "ratio_resident": 0.908,
+   "ratio_single": 0.861,
+   "rejected": "slower_than_cpu_even_resident",
+   "use": null,
+   "worst_fixture": "spiral"
+  },
+  "count_obj": {
+   "elems": 4194304,
+   "nonconst": true,
+   "ok": true,
+   "points": 12,
+   "ratio_resident": 1.652,
+   "ratio_single": 0.849,
+   "rejected": null,
+   "use": "pipeline",
+   "worst_fixture": "blobs"
+  },
+  "cv_cc_count": {
+   "elems": 4194304,
+   "nonconst": true,
+   "ok": true,
+   "points": 12,
+   "ratio_resident": 5.121,
+   "ratio_single": 2.567,
+   "rejected": null,
+   "use": "pipeline",
+   "worst_fixture": "blobs"
+  },
+  "diameter_region": {
+   "elems": 4194304,
+   "nonconst": true,
+   "ok": true,
+   "points": 12,
+   "ratio_resident": 0.855,
+   "ratio_single": 0.854,
+   "rejected": "slower_than_cpu_even_resident",
+   "use": null,
+   "worst_fixture": "spiral"
+  },
+  "eccentricity": {
+   "elems": 4194304,
+   "nonconst": true,
+   "ok": true,
+   "points": 12,
+   "ratio_resident": 0.724,
+   "ratio_single": 0.693,
+   "rejected": "slower_than_cpu_even_resident",
+   "use": null,
+   "worst_fixture": "spiral"
+  },
+  "elliptic_axis": {
+   "elems": 4194304,
+   "nonconst": true,
+   "ok": true,
+   "points": 12,
+   "ratio_resident": 0.73,
+   "ratio_single": 0.824,
+   "rejected": "slower_than_cpu_even_resident",
+   "use": null,
+   "worst_fixture": "spiral"
+  },
+  "fill_up_shape": {
+   "elems": 4194304,
+   "nonconst": true,
+   "ok": true,
+   "points": 12,
+   "ratio_resident": 5.447,
+   "ratio_single": 2.634,
+   "rejected": null,
+   "use": "pipeline",
+   "worst_fixture": "coins"
+  },
+  "height_width_ratio": {
+   "elems": 4194304,
+   "nonconst": true,
+   "ok": true,
+   "points": 12,
+   "ratio_resident": 0.824,
+   "ratio_single": 0.78,
+   "rejected": "slower_than_cpu_even_resident",
+   "use": null,
+   "worst_fixture": "spiral"
+  },
+  "moments_region_2nd": {
+   "elems": 4194304,
+   "nonconst": true,
+   "ok": true,
+   "points": 12,
+   "ratio_resident": 0.673,
+   "ratio_single": 0.661,
+   "rejected": "slower_than_cpu_even_resident",
+   "use": null,
+   "worst_fixture": "spiral"
+  },
+  "moments_region_2nd_invar": {
+   "elems": 4194304,
+   "nonconst": true,
+   "ok": true,
+   "points": 12,
+   "ratio_resident": 0.716,
+   "ratio_single": 0.763,
+   "rejected": "slower_than_cpu_even_resident",
+   "use": null,
+   "worst_fixture": "spiral"
+  },
+  "moments_region_2nd_rel_invar": {
+   "elems": 4194304,
+   "nonconst": true,
+   "ok": true,
+   "points": 12,
+   "ratio_resident": 0.845,
+   "ratio_single": 0.8,
+   "rejected": "slower_than_cpu_even_resident",
+   "use": null,
+   "worst_fixture": "spiral"
+  },
+  "moments_region_3rd": {
+   "elems": 4194304,
+   "nonconst": true,
+   "ok": true,
+   "points": 12,
+   "ratio_resident": 0.67,
+   "ratio_single": 0.788,
+   "rejected": "slower_than_cpu_even_resident",
+   "use": null,
+   "worst_fixture": "spiral"
+  },
+  "moments_region_3rd_invar": {
+   "elems": 4194304,
+   "nonconst": true,
+   "ok": true,
+   "points": 12,
+   "ratio_resident": 0.684,
+   "ratio_single": 0.788,
+   "rejected": "slower_than_cpu_even_resident",
+   "use": null,
+   "worst_fixture": "spiral"
+  },
+  "moments_region_central": {
+   "elems": 4194304,
+   "nonconst": true,
+   "ok": true,
+   "points": 12,
+   "ratio_resident": 0.871,
+   "ratio_single": 0.799,
+   "rejected": "slower_than_cpu_even_resident",
+   "use": null,
+   "worst_fixture": "spiral"
+  },
+  "moments_region_central_invar": {
+   "elems": 4194304,
+   "nonconst": true,
+   "ok": true,
+   "points": 12,
+   "ratio_resident": 0.84,
+   "ratio_single": 0.817,
+   "rejected": "slower_than_cpu_even_resident",
+   "use": null,
+   "worst_fixture": "blobs"
+  },
+  "orientation_region": {
+   "elems": 4194304,
+   "nonconst": true,
+   "ok": true,
+   "points": 12,
+   "ratio_resident": 0.725,
+   "ratio_single": 0.69,
+   "rejected": "slower_than_cpu_even_resident",
+   "use": null,
+   "worst_fixture": "spiral"
+  },
+  "r2_sort_region": {
+   "elems": 4194304,
+   "nonconst": true,
+   "ok": true,
+   "points": 12,
+   "ratio_resident": 10.546,
+   "ratio_single": 5.768,
+   "rejected": null,
+   "use": "single",
+   "worst_fixture": "blobs"
+  },
+  "r3_background_seg": {
+   "elems": 4194304,
+   "nonconst": true,
+   "ok": true,
+   "points": 12,
+   "ratio_resident": 12.505,
+   "ratio_single": 7.857,
+   "rejected": null,
+   "use": "single",
+   "worst_fixture": "coins"
+  },
+  "r3_select_region_point": {
+   "elems": 4194304,
+   "nonconst": true,
+   "ok": true,
+   "points": 12,
+   "ratio_resident": 15.523,
+   "ratio_single": 6.966,
+   "rejected": null,
+   "use": "single",
+   "worst_fixture": "blobs"
+  },
+  "rectangularity": {
+   "elems": 4194304,
+   "nonconst": true,
+   "ok": true,
+   "points": 12,
+   "ratio_resident": 0.913,
+   "ratio_single": 0.893,
+   "rejected": "slower_than_cpu_even_resident",
+   "use": null,
+   "worst_fixture": "spiral"
+  },
+  "remove_small": {
+   "elems": 4194304,
+   "nonconst": true,
+   "ok": true,
+   "points": 12,
+   "ratio_resident": 9.348,
+   "ratio_single": 4.764,
+   "rejected": null,
+   "use": "pipeline",
+   "worst_fixture": "blobs"
+  },
+  "roundness": {
+   "elems": 4194304,
+   "nonconst": true,
+   "ok": true,
+   "points": 12,
+   "ratio_resident": 0.751,
+   "ratio_single": 0.745,
+   "rejected": "slower_than_cpu_even_resident",
+   "use": null,
+   "worst_fixture": "spiral"
+  },
+  "select_largest": {
+   "elems": 4194304,
+   "nonconst": true,
+   "ok": true,
+   "points": 12,
+   "ratio_resident": 7.615,
+   "ratio_single": 4.22,
+   "rejected": null,
+   "use": "pipeline",
+   "worst_fixture": "blobs"
+  },
+  "select_shape": {
+   "elems": 4194304,
+   "nonconst": true,
+   "ok": true,
+   "points": 12,
+   "ratio_resident": 9.612,
+   "ratio_single": 5.184,
+   "rejected": null,
+   "use": "single",
+   "worst_fixture": "blobs"
+  },
+  "select_shape_std": {
+   "elems": 4194304,
+   "nonconst": true,
+   "ok": true,
+   "points": 12,
+   "ratio_resident": 6.946,
+   "ratio_single": 3.88,
+   "rejected": null,
+   "use": "pipeline",
+   "worst_fixture": "blobs"
+  },
+  "sk_clear_border": {
+   "elems": 4194304,
+   "nonconst": true,
+   "ok": true,
+   "points": 12,
+   "ratio_resident": 4.561,
+   "ratio_single": 2.438,
+   "rejected": null,
+   "use": "pipeline",
+   "worst_fixture": "blobs"
+  },
+  "sk_remove_holes": {
+   "elems": 4194304,
+   "nonconst": true,
+   "ok": true,
+   "points": 12,
+   "ratio_resident": 4.844,
+   "ratio_single": 3.106,
+   "rejected": null,
+   "use": "pipeline",
+   "worst_fixture": "scene"
+  },
+  "smallest_rectangle1": {
+   "elems": 4194304,
+   "nonconst": true,
+   "ok": true,
+   "points": 12,
+   "ratio_resident": 130.548,
+   "ratio_single": 3.143,
+   "rejected": null,
+   "use": "pipeline",
+   "worst_fixture": "coins"
+  }
+ }
+}

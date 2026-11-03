@@ -54,6 +54,14 @@
    "family": "separable",
    "min_pixels": 16641
   },
+  "area_center": {
+   "family": "reduction",
+   "min_pixels": 263169
+  },
+  "area_frac": {
+   "family": "reduction",
+   "min_pixels": 4198401
+  },
   "bilateral": {
    "family": "nonseparable",
    "min_pixels": 0
@@ -62,6 +70,10 @@
    "family": "point",
    "min_pixels": 263169
   },
+  "blob_count": {
+   "family": "label",
+   "min_pixels": 4198401
+  },
   "bothat": {
    "family": "morphology",
    "min_pixels": 0
@@ -69,6 +81,18 @@
   "canny": {
    "family": "iterative",
    "min_pixels": 16641
+  },
+  "connect_and_holes": {
+   "family": "label",
+   "min_pixels": 4198401
+  },
+  "count_obj": {
+   "family": "label",
+   "min_pixels": 4198401
+  },
+  "cv_cc_count": {
+   "family": "label",
+   "min_pixels": 263169
   },
   "cv_sharpen": {
    "family": "separable",
@@ -137,6 +161,10 @@
   "fill_up": {
    "family": "iterative",
    "min_pixels": 4198401
+  },
+  "fill_up_shape": {
+   "family": "label",
+   "min_pixels": 263169
   },
   "gamma": {
    "family": "point",
@@ -330,9 +358,21 @@
    "family": "geometry",
    "min_pixels": 66049
   },
+  "r2_sort_region": {
+   "family": "label",
+   "min_pixels": 66049
+  },
   "r2_union1": {
    "family": "point",
    "min_pixels": 16641
+  },
+  "r3_background_seg": {
+   "family": "label",
+   "min_pixels": 66049
+  },
+  "r3_select_region_point": {
+   "family": "label",
+   "min_pixels": 263169
   },
   "rank_image": {
    "family": "nonseparable",
@@ -354,6 +394,10 @@
    "family": "morphology",
    "min_pixels": 16641
   },
+  "remove_small": {
+   "family": "label",
+   "min_pixels": 263169
+  },
   "roberts": {
    "family": "separable",
    "min_pixels": 66049
@@ -370,6 +414,18 @@
    "family": "point",
    "min_pixels": 66049
   },
+  "select_largest": {
+   "family": "label",
+   "min_pixels": 263169
+  },
+  "select_shape": {
+   "family": "label",
+   "min_pixels": 263169
+  },
+  "select_shape_std": {
+   "family": "label",
+   "min_pixels": 263169
+  },
   "sigmoid": {
    "family": "point",
    "min_pixels": 66049
@@ -378,9 +434,21 @@
    "family": "separable",
    "min_pixels": 263169
   },
+  "sk_clear_border": {
+   "family": "label",
+   "min_pixels": 263169
+  },
+  "sk_remove_holes": {
+   "family": "label",
+   "min_pixels": 263169
+  },
   "sk_tv": {
    "family": "iterative",
    "min_pixels": 16641
+  },
+  "smallest_rectangle1": {
+   "family": "reduction",
+   "min_pixels": 263169
   },
   "sobel_amp": {
    "family": "separable",
