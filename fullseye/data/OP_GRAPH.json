@@ -197291,12 +197291,20 @@
         "module": "backend_safe",
         "callable": "_safe(anisotropic)"
       },
-      "verified_executable": false,
-      "not_executable_in_mcp": "not_verified",
+      "verified_executable": true,
       "verification": {
-        "status": "failed",
-        "reason": "TimeoutError",
-        "detail": "execution exceeded 2 seconds"
+        "source": "tools/gen_op_facets.py::_verified_registry_ops",
+        "status": "ok",
+        "checks": [
+          "executed",
+          "typed",
+          "shape",
+          "finite",
+          "temporary_cwd",
+          "filesystem_unchanged",
+          "random_state_unchanged",
+          "under_2_seconds"
+        ]
       },
       "bundle_semantics": "unknown",
       "source_ref": "S00056"
@@ -245160,12 +245168,20 @@
         "module": "backend_safe",
         "callable": "_safe(build.<locals>._canny)"
       },
-      "verified_executable": false,
-      "not_executable_in_mcp": "not_verified",
+      "verified_executable": true,
       "verification": {
-        "status": "failed",
-        "reason": "TimeoutError",
-        "detail": "execution exceeded 2 seconds"
+        "source": "tools/gen_op_facets.py::_verified_registry_ops",
+        "status": "ok",
+        "checks": [
+          "executed",
+          "typed",
+          "shape",
+          "finite",
+          "temporary_cwd",
+          "filesystem_unchanged",
+          "random_state_unchanged",
+          "under_2_seconds"
+        ]
       },
       "bundle_semantics": "unknown",
       "source_ref": "S00056"
@@ -245497,12 +245513,20 @@
         "module": "backend_safe",
         "callable": "_safe(build.<locals>._harris)"
       },
-      "verified_executable": false,
-      "not_executable_in_mcp": "not_verified",
+      "verified_executable": true,
       "verification": {
-        "status": "failed",
-        "reason": "TimeoutError",
-        "detail": "execution exceeded 2 seconds"
+        "source": "tools/gen_op_facets.py::_verified_registry_ops",
+        "status": "ok",
+        "checks": [
+          "executed",
+          "typed",
+          "shape",
+          "finite",
+          "temporary_cwd",
+          "filesystem_unchanged",
+          "random_state_unchanged",
+          "under_2_seconds"
+        ]
       },
       "bundle_semantics": "unknown",
       "source_ref": "S00056"
