@@ -1,0 +1,398 @@
+{
+ "rows": {
+  "abs_image": {
+   "inner": 2.9794413602957093e-08,
+   "full": 2.9794413602957093e-08,
+   "ref_ptp": 1.0
+  },
+  "acos_image": {
+   "inner": 6.299673734055933e-08,
+   "full": 6.299673734055933e-08,
+   "ref_ptp": 0.5
+  },
+  "asin_image": {
+   "inner": 1.2973227014878574e-07,
+   "full": 1.711645314372845e-07,
+   "ref_ptp": 1.0
+  },
+  "atan_image": {
+   "inner": 7.186570688544336e-08,
+   "full": 7.186570688544336e-08,
+   "ref_ptp": 0.5
+  },
+  "exp_image": {
+   "inner": 9.893704533414649e-08,
+   "full": 9.893704533414649e-08,
+   "ref_ptp": 1.0
+  },
+  "log_image": {
+   "inner": 1.1099808883141549e-07,
+   "full": 1.1099808883141549e-07,
+   "ref_ptp": 1.0
+  },
+  "sin_image": {
+   "inner": 2.0774012082780402e-07,
+   "full": 2.344846594670713e-07,
+   "ref_ptp": 0.9999999946572711
+  },
+  "sqrt_image": {
+   "inner": 5.048630835613466e-08,
+   "full": 5.048630835613466e-08,
+   "ref_ptp": 1.0
+  },
+  "tan_image": {
+   "inner": 3.7845145761661314e-07,
+   "full": 3.7845145761661314e-07,
+   "ref_ptp": 1.0
+  },
+  "gamma_image": {
+   "inner": 9.593451288925081e-08,
+   "full": 9.593451288925081e-08,
+   "ref_ptp": 1.0
+  },
+  "f2_lut_trans": {
+   "inner": 2.965932954790418e-08,
+   "full": 2.965932954790418e-08,
+   "ref_ptp": 1.0
+  },
+  "median_rect": {
+   "inner": 2.9794413602957093e-08,
+   "full": 2.9794413602957093e-08,
+   "ref_ptp": 0.9296451447686036
+  },
+  "mirror_image": {
+   "inner": 2.9794413602957093e-08,
+   "full": 2.9794413602957093e-08,
+   "ref_ptp": 1.0
+  },
+  "it_convert_image_type": {
+   "inner": 7.433049820093629e-08,
+   "full": 7.433049820093629e-08,
+   "ref_ptp": 1.0
+  },
+  "it_crop_domain": {
+   "inner": 2.9783323363119507e-08,
+   "full": 2.9794413602957093e-08,
+   "ref_ptp": 1.0
+  },
+  "it_crop_part": {
+   "inner": 1.2240672150332088e-06,
+   "full": 1.2961545232670346e-06,
+   "ref_ptp": 0.990730844829364
+  },
+  "it_crop_rectangle1": {
+   "inner": 6.020103855974845e-07,
+   "full": 6.020103855974845e-07,
+   "ref_ptp": 1.0
+  },
+  "gray_erosion_shape": {
+   "inner": 2.9794413602957093e-08,
+   "full": 2.9794413602957093e-08,
+   "ref_ptp": 1.0
+  },
+  "gray_dilation_shape": {
+   "inner": 2.9794413602957093e-08,
+   "full": 2.9794413602957093e-08,
+   "ref_ptp": 0.9615966643075331
+  },
+  "gray_opening_shape": {
+   "inner": 2.9794413602957093e-08,
+   "full": 2.9794413602957093e-08,
+   "ref_ptp": 1.0
+  },
+  "gray_closing_shape": {
+   "inner": 2.9794413602957093e-08,
+   "full": 2.9794413602957093e-08,
+   "ref_ptp": 0.9615966643075331
+  },
+  "texture_laws": {
+   "inner": 1.8440871226294009e-06,
+   "full": 1.916546360703343e-06,
+   "ref_ptp": 0.9999999999999946
+  },
+  "derivate_gauss": {
+   "inner": 1.0728375634816434e-06,
+   "full": 1.0728375634816434e-06,
+   "ref_ptp": 0.9994278052828879
+  },
+  "affine_trans_image": {
+   "inner": 3.7502435035197124e-07,
+   "full": 3.7502435035197124e-07,
+   "ref_ptp": 1.0
+  },
+  "affine_warp": {
+   "inner": 3.7502435035197124e-07,
+   "full": 3.7502435035197124e-07,
+   "ref_ptp": 1.0
+  },
+  "affine_trans_image_size": {
+   "inner": 3.7502435035197124e-07,
+   "full": 3.7502435035197124e-07,
+   "ref_ptp": 1.0
+  },
+  "rotate_image": {
+   "inner": 4.0148933078132387e-07,
+   "full": 4.0148933078132387e-07,
+   "ref_ptp": 1.0
+  },
+  "rotate_img": {
+   "inner": 4.0148933078132387e-07,
+   "full": 4.0148933078132387e-07,
+   "ref_ptp": 1.0
+  },
+  "zoom_image_factor": {
+   "inner": 3.9314490163366855e-07,
+   "full": 3.9314490163366855e-07,
+   "ref_ptp": 1.0
+  },
+  "rescale_img": {
+   "inner": 3.6629263011622726e-07,
+   "full": 3.6629263011622726e-07,
+   "ref_ptp": 1.0
+  },
+  "zoom_image_size": {
+   "inner": 1.2180219888247024e-07,
+   "full": 1.2440347352260517e-07,
+   "ref_ptp": 1.0
+  },
+  "rgb1_to_gray": {
+   "inner": 5.404810665687876e-08,
+   "full": 5.404810665687876e-08,
+   "ref_ptp": 0.46859256181858416
+  },
+  "rgb3_to_gray": {
+   "inner": 5.404810665687876e-08,
+   "full": 5.404810665687876e-08,
+   "ref_ptp": 0.46859256181858416
+  },
+  "linear_trans_color": {
+   "inner": 1.0385775695009869e-07,
+   "full": 1.0589392052118285e-07,
+   "ref_ptp": 0.7038349073258784
+  },
+  "principal_comp": {
+   "inner": 9.861422400891939e-08,
+   "full": 9.861422400891939e-08,
+   "ref_ptp": 0.9999999908296657
+  },
+  "add_image": {
+   "inner": 1.989039577487972e-07,
+   "full": 1.989039577487972e-07,
+   "ref_ptp": 1.0
+  },
+  "sub_image": {
+   "inner": 1.400556129960151e-07,
+   "full": 1.400556129960151e-07,
+   "ref_ptp": 1.0
+  },
+  "mult_image": {
+   "inner": 1.505911866317433e-07,
+   "full": 1.505911866317433e-07,
+   "ref_ptp": 1.0
+  },
+  "div_image": {
+   "inner": 1.4766880251926295e-07,
+   "full": 1.4766880251926295e-07,
+   "ref_ptp": 0.9989841091577231
+  },
+  "abs_diff_image": {
+   "inner": 1.4810494475270275e-07,
+   "full": 1.4810494475270275e-07,
+   "ref_ptp": 0.9999875636346482
+  },
+  "max_image": {
+   "inner": 2.980092284055047e-08,
+   "full": 2.980092284055047e-08,
+   "ref_ptp": 0.9937606636572975
+  },
+  "min_image": {
+   "inner": 2.9783323363119507e-08,
+   "full": 2.9783323363119507e-08,
+   "ref_ptp": 0.7935851352989246
+  },
+  "convol_image@9x9": {
+   "inner": 2.5423684674175107e-07,
+   "full": 2.5423684674175107e-07,
+   "ref_ptp": 0.32553744190334977
+  },
+  "convol_image@31x31": {
+   "inner": 6.581819833040292e-07,
+   "full": 6.581819833040292e-07,
+   "ref_ptp": 0.2087897244188297
+  },
+  "radon_transform": {
+   "inner": 1.4127998994220288e-08,
+   "full": 1.4127998994220288e-08,
+   "ref_ptp": 70.45394994618,
+   "nan_agree": 1.0
+  },
+  "radon_volume": {
+   "inner": 1.9019866927515385e-08,
+   "full": 1.9019866927515385e-08,
+   "ref_ptp": 70.45394994618,
+   "nan_agree": 1.0
+  },
+  "backproject_sinogram": {
+   "inner": 1.7623174127789843e-08,
+   "full": 1.7623174127789843e-08,
+   "ref_ptp": 83.86441243944296,
+   "nan_agree": 1.0
+  },
+  "filtered_backprojection": {
+   "inner": 2.642887699078908e-08,
+   "full": 2.642887699078908e-08,
+   "ref_ptp": 0.8419637982899284,
+   "nan_agree": 1.0
+  },
+  "fbp_volume": {
+   "inner": 2.642887699078908e-08,
+   "full": 2.642887699078908e-08,
+   "ref_ptp": 0.909312759522067,
+   "nan_agree": 1.0
+  },
+  "sart_reconstruct": {
+   "inner": 5.634332552666937e-08,
+   "full": 5.634332552666937e-08,
+   "ref_ptp": 0.7626465766042361,
+   "nan_agree": 1.0
+  },
+  "piv_cross_correlate": {
+   "inner": 7.344258529296399e-16,
+   "full": 7.344258529296399e-16,
+   "ref_ptp": 3.9104125112223254,
+   "nan_agree": 1.0
+  },
+  "piv_multipass": {
+   "inner": 6.4039698872830195e-16,
+   "full": 6.4039698872830195e-16,
+   "ref_ptp": 3.9203637343109072,
+   "nan_agree": 1.0
+  },
+  "piv_ensemble_correlate": {
+   "inner": 1.993423029785464e-15,
+   "full": 1.993423029785464e-15,
+   "ref_ptp": 1.3886165788260934,
+   "nan_agree": 1.0
+  },
+  "plane_sweep_depth": {
+   "inner": 1.1102230246251565e-15,
+   "full": 1.1102230246251565e-15,
+   "ref_ptp": 3.0,
+   "depth_split_rate": 0.0168125,
+   "nan_agree": 1.0
+  },
+  "joint_bilateral": {
+   "inner": 1.1324032869423168e-06,
+   "full": 1.1324032869423168e-06,
+   "ref_ptp": 0.6830684145993551,
+   "nan_agree": 1.0
+  },
+  "temporal_bilateral": {
+   "inner": 1.8717627823182822e-07,
+   "full": 1.8717627823182822e-07,
+   "ref_ptp": 0.8240193641453694,
+   "nan_agree": 1.0
+  },
+  "voxel_grid_downsample": {
+   "inner": 5.861448191462774e-16,
+   "full": 5.861448191462774e-16,
+   "ref_ptp": 1.8918783767185616,
+   "nan_agree": 1.0
+  },
+  "occupancy_grid": {
+   "inner": 0.0,
+   "full": 0.0,
+   "ref_ptp": 1.0,
+   "nan_agree": 1.0
+  },
+  "photometric_stereo": {
+   "inner": 1.823646790253994e-07,
+   "full": 1.823646790253994e-07,
+   "ref_ptp": 1.2208607196807861,
+   "nan_agree": 1.0
+  },
+  "points_to_voxel": {
+   "inner": 0.0,
+   "full": 0.0,
+   "ref_ptp": 6.0,
+   "nan_agree": 1.0
+  },
+  "scene_flow_lk": {
+   "inner": 2.11783028789141e-05,
+   "full": 2.11783028789141e-05,
+   "ref_ptp": 11.89816689491272,
+   "nan_agree": 1.0
+  }
+ },
+ "gpu": "NVIDIA GeForce RTX 5090",
+ "torch": "2.11.0+cu128",
+ "runs": [
+  {
+   "start": "2026-11-02T15:54:09",
+   "end": "2026-11-02T15:54:15",
+   "names": [
+    "abs_diff_image",
+    "abs_image",
+    "acos_image",
+    "add_image",
+    "affine_trans_image",
+    "affine_trans_image_size",
+    "affine_warp",
+    "asin_image",
+    "atan_image",
+    "backproject_sinogram",
+    "convol_image@31x31",
+    "convol_image@9x9",
+    "derivate_gauss",
+    "div_image",
+    "exp_image",
+    "f2_lut_trans",
+    "fbp_volume",
+    "filtered_backprojection",
+    "gamma_image",
+    "gray_closing_shape",
+    "gray_dilation_shape",
+    "gray_erosion_shape",
+    "gray_opening_shape",
+    "it_convert_image_type",
+    "it_crop_domain",
+    "it_crop_part",
+    "it_crop_rectangle1",
+    "joint_bilateral",
+    "linear_trans_color",
+    "log_image",
+    "max_image",
+    "median_rect",
+    "min_image",
+    "mirror_image",
+    "mult_image",
+    "occupancy_grid",
+    "photometric_stereo",
+    "piv_cross_correlate",
+    "piv_ensemble_correlate",
+    "piv_multipass",
+    "plane_sweep_depth",
+    "points_to_voxel",
+    "principal_comp",
+    "radon_transform",
+    "radon_volume",
+    "rescale_img",
+    "rgb1_to_gray",
+    "rgb3_to_gray",
+    "rotate_image",
+    "rotate_img",
+    "sart_reconstruct",
+    "scene_flow_lk",
+    "sin_image",
+    "sqrt_image",
+    "sub_image",
+    "tan_image",
+    "temporal_bilateral",
+    "texture_laws",
+    "voxel_grid_downsample",
+    "zoom_image_factor",
+    "zoom_image_size"
+   ]
+  }
+ ]
+}

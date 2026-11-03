@@ -29,6 +29,8 @@ from __future__ import annotations
 
 import numpy as np
 
+import accel_seam
+
 __all__ = ["bilateral_filter_depth", "joint_bilateral", "fill_holes"]
 
 
@@ -104,6 +106,14 @@ def _bilateral_core(
                 )
                 out[y0:y1] = tile[radius:radius + y1 - y0, radius:radius + W]
             return out
+    gpu = accel_seam.kernel("depth_bilateral.core")
+    if gpu is not None:
+        num, den = gpu(v_safe, e_safe, contrib, radius, 1.0 / (2.0 * spatial_sigma * spatial_sigma),
+                       1.0 / (2.0 * range_sigma * range_sigma))
+        out = np.array(values, dtype=float, copy=True)
+        good = contrib & (den > 0.0)
+        out[good] = num[good] / den[good]
+        return out
     # reflect パディング(scipy.ndimage 既定と同じ境界規約)。
     vp = np.pad(v_safe, radius, mode="reflect")
     ep = vp if same_guide else np.pad(e_safe, radius, mode="reflect")

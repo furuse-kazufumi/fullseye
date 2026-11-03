@@ -4,7 +4,7 @@ dim: tomography
 category: reconstruct
 in: sinogram
 out: image2d
-gpu: なし
+gpu: あり(accel_typed.call('backproject_sinogram'))
 examples: [ct_reconstruction, poc_ct_fidelity]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -15,7 +15,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 
 - **データ種**: `sinogram` → `image2d`
 - **呼び出し**: `import fullseye as fs; fs.ledger.backproject_sinogram(sinogram, angles_deg=None, size=None, span_deg=None)` (実装を直接呼ぶなら `import tomography; tomography.backproject_sinogram(sinogram, angles_deg=None, size=None, span_deg=None)`、台帳から引くなら `opstomography.get("backproject_sinogram")`)
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: あり(`accel_typed.call('backproject_sinogram')`、`device="cuda"` で高速経路)
 
 ## 使い方
 

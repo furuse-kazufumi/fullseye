@@ -2633,6 +2633,25 @@ def _try_accel(op, v, a, b, device):
         return _NOACCEL
 
 
+def _try_accel_nary(nop, inputs, a, b, device):
+    """n-ary 版の :func:`_try_accel`(第 3 便)。台帳は ``accel.NARY_ACCEL``、遮断器は単入力と共用。"""
+    try:
+        import accel
+    except ImportError:
+        return _NOACCEL
+    if nop.name not in accel.NARY_ACCEL or (nop.name in _GPU_OPEN and not _bs.is_strict()):
+        return _NOACCEL
+    try:
+        return accel.run_nary(nop.name, inputs, a, b, device)
+    except Exception as e:               # noqa: BLE001
+        e = _explain_gpu_failure(device, e)
+        if _bs.is_strict():
+            raise e
+        _GPU_OPEN.add(nop.name)
+        _bs.record(nop.name, e, nop.out_sort, source="gpu")
+        return _NOACCEL
+
+
 def _explain_gpu_failure(device, e):
     """★2026-09-20(GenSpark 第 33 報 N117): CUDA の無い環境で device="cuda" を渡すと torch の生文
     「Torch not compiled with CUDA enabled」が台帳に載り(raise 方針ではそのまま例外)、何が起きたか読めなかった。
@@ -2881,6 +2900,10 @@ def _apply_impl(image, name, a, b, coerce, device, policy, fast=None, allow_nonf
         # the n-ary functions carry no guard of their own: give them the same recorded,
         # sanitised fail-soft as every backend op (strict mode re-raises inside guard)
         def body(v0, aa, bb):
+            if device != "cpu":
+                res = _try_accel_nary(nop, inputs, aa, bb, device)
+                if res is not _NOACCEL:
+                    return res
             return nop.fn(inputs, aa, bb)
         # ★形状不一致(2026-09-19 外部レビュー #13): ラスタ同士の n-ary で形が違うと numpy の
         # 「could not be broadcast」がそのまま台帳に残り、既定の方針では**第 1 入力が

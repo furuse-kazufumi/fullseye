@@ -69,6 +69,8 @@ from __future__ import annotations
 
 import numpy as np
 
+import accel_seam
+
 __all__ = [
     "FLOW2D_SHAPE", "PEAK_MODES", "WINDOW_FUNCS", "OUTLIER_FILL",
     "NORMALIZE_MODES",
@@ -461,7 +463,11 @@ def piv_cross_correlate(a, b, window=32, overlap=0.5, peak="gauss3",
         flow[1, i, j] = dx + sc
         ratio[i, j] = pr
 
-    if pred is None:
+    gpu = accel_seam.kernel("pivops.correlate")
+    if gpu is not None:
+        flow[:], ratio[:] = gpu(A, B, rows, cols, win, pred, taper, weight, keep,
+                                subtract_mean, peak, h, w)
+    elif pred is None:
         positions = [(i, j, int(r), int(c)) for i, r in enumerate(rows)
                      for j, c in enumerate(cols)]
         # 128 windows bounds the real and complex FFT work arrays.
@@ -1286,7 +1292,10 @@ def piv_ensemble_correlate(images, window=32, overlap=0.5, peak="gauss3",
     c0 = win // 2
     flow = np.zeros((2, rows.size, cols.size))
     ratio = np.zeros((rows.size, cols.size))
-    for i, r in enumerate(rows):
+    gpu = accel_seam.kernel("pivops.ensemble")
+    if gpu is not None:
+        flow[:], ratio[:] = gpu(frames, rows, cols, win, taper, weight, keep, peak)
+    for i, r in enumerate(rows if gpu is None else ()):
         for j, c in enumerate(cols):
             spectra = []
             for frame in frames:

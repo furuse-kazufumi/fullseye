@@ -5,7 +5,7 @@ category: geometry
 in: image
 out: image
 halcon: affine_trans_image
-gpu: なし
+gpu: あり(affine_trans_image)
 examples: [gallery2d_geometry, poc_change_detection_misreg]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -17,7 +17,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 - **データ種**: `image` → `image`
 - **呼び出し**: `fullseye.apply(img, "affine_trans_image", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 - **HALCON 相当**: `affine_trans_image`(意味・パラメータは HALCON リファレンスが参考になる)
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: あり(`affine_trans_image`、`device="cuda"` で高速経路)
 
 ![affine_trans_image: input → output](../../_fig/affine_trans_image.png)
 

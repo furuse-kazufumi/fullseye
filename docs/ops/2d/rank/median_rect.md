@@ -5,7 +5,7 @@ category: rank
 in: image
 out: image
 halcon: median_rect
-gpu: なし
+gpu: あり(median_rect)
 examples: [gallery2d_smoothing_rank, poc_tree_ring_dendro, poc_weld_radiograph_porosity]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -17,7 +17,7 @@ version: 0.9.0  # fullseye lib version this note was generated for
 - **データ種**: `image` → `image`
 - **呼び出し**: `fullseye.apply(img, "median_rect", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 - **HALCON 相当**: `median_rect`(意味・パラメータは HALCON リファレンスが参考になる)
-- **GPU**: なし(CPU 参照実装のみ)
+- **GPU**: あり(`median_rect`、`device="cuda"` で高速経路)
 
 ![median_rect: input → output](../../_fig/median_rect.png)
 

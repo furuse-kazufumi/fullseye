@@ -17,6 +17,8 @@ from __future__ import annotations
 
 import numpy as np
 
+import accel_seam
+
 __all__ = [
     "statistical_outlier_removal",
     "radius_outlier_removal",
@@ -169,6 +171,9 @@ def voxel_grid_downsample(points, voxel_size: float):
     if P.shape[0] == 0:
         return P.copy()
 
+    gpu = accel_seam.kernel("pcl_filter.voxel")
+    if gpu is not None:
+        return gpu(P, float(voxel_size))
     keys = np.floor((P - P.min(axis=0)) / float(voxel_size)).astype(np.int64)
     # 辞書順の一意キー(axis=0)→ inverse で各点の代表セル番号。順序は決定論的。
     _, inv = np.unique(keys, axis=0, return_inverse=True)

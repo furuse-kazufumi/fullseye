@@ -52,6 +52,8 @@ from typing import Callable, Iterable, Optional
 
 import numpy as np
 
+import accel_seam
+
 __all__ = [
     "FrameRing", "StatefulOp",
     "TemporalMedianWindow", "MovingAverageWindow", "BackgroundSubtractionWindow",
@@ -1072,7 +1074,13 @@ def temporal_bilateral(video, window: int = 5, sigma_t: float = 2.0,
     Edge-preserving in time: averages recent frames but drops the weight of
     frames that differ (moved), so it denoises static regions without ghosting
     the motion the way :func:`moving_average_window` does."""
-    return stream_replay(video, TemporalBilateral(window, sigma_t, sigma_r))
+    op = TemporalBilateral(window, sigma_t, sigma_r)
+    gpu = accel_seam.kernel("videostream.temporal_bilateral")
+    if gpu is not None:
+        v = _to01(np.asarray(video))
+        if v.ndim == 3 and int(window) >= 1:
+            return gpu(v, int(window), op.sigma_t, op.sigma_r)
+    return stream_replay(video, op)
 
 
 def deflicker(video, alpha: float = 0.1, max_gain: float = 4.0) -> np.ndarray:

@@ -38,12 +38,22 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 def _to_batch(imgs, device):
     # float32 で直に積む(最終テンソルは float32 なので float64 中間は純粋な無駄=転送床の主因)。
     # 値は float64→float32 と float32 直変換で同一(単一丸め)なので parity は不変。
-    x = np.stack([np.asarray(i, np.float32) for i in imgs])[:, None, :, :]
+    # 色(H,W,3)は (B,3,H,W) へ(第 3 便)。灰色は従来どおり (B,1,H,W)。
+    # ★実測(第 3 便、2048² x50): np.stack + 1 枚ずつの f32 化が 1.4 s で、PCIe 片道 0.3 s より重かった
+    # (一時配列の確保と page fault)。行き先を 1 回だけ確保して流し込むと一時配列が消える。値は同じ。
+    first = np.asarray(imgs[0])
+    x = np.empty((len(imgs),) + first.shape, np.float32)
+    for k, im in enumerate(imgs):
+        if np.shape(im) != first.shape:          # 代入の broadcast で黙って通さない(np.stack と同じく拒む)
+            raise ValueError("batch images must share one shape, got %r and %r" % (first.shape, np.shape(im)))
+        x[k] = im
+    x = x[:, None, :, :] if x.ndim == 3 else np.moveaxis(x, 3, 1)
     return torch.as_tensor(x, dtype=torch.float32, device=device)
 
 
 def _from_batch(t):
-    return [a[0] for a in t.detach().cpu().numpy().astype(np.float64)]
+    x = t.detach().cpu().numpy().astype(np.float64)
+    return [a[0] if a.shape[0] == 1 else np.moveaxis(a, 0, 2) for a in x]
 
 
 def _gauss_kernel(sigma, device):
@@ -708,6 +718,385 @@ def _companding_mu_law(t, a, b, dev):
     return (torch.expm1(y * np.log1p(mu)) / mu).clamp(0, 1)
 
 
+# ── GPU 第 3 便(2026-11-02): HALCON OpenCL 48 件 + required 名簿の分類。
+#    ここの kernel は **候補**で、FILL3_ADOPTED に載った名前だけが ACCEL に入る(実寸 >= 5x +
+#    parity 内部差 < 5e-3)。不採用の kernel も計測を再現できるよう消さない。
+#    採否と数字の正本 = docs/perf/gpu_fill3_2026-11-02.md / docs/perf/logs/fill3_*.json。
+def _x01(t):
+    return t.clamp(0, 1)
+
+
+def _asin_image(t, a, b, dev):
+    return torch.asin(_x01(t)) / (np.pi / 2)
+
+
+def _acos_image(t, a, b, dev):
+    return torch.acos(_x01(t)) / np.pi
+
+
+def _atan_image(t, a, b, dev):
+    return torch.atan(_x01(t)) / (np.pi / 2)
+
+
+def _exp_image(t, a, b, dev):
+    return torch.expm1(_x01(t)) / (np.e - 1.0)
+
+
+def _log_image(t, a, b, dev):
+    return torch.log1p(_x01(t)) / np.log(2.0)
+
+
+def _sin_image(t, a, b, dev):
+    return (torch.sin(2 * np.pi * _x01(t)) + 1.0) / 2.0
+
+
+def _sqrt_image(t, a, b, dev):
+    return torch.sqrt(_x01(t))
+
+
+def _tan_image(t, a, b, dev):
+    return _signed01_b(torch.tan((_x01(t) - 0.5) * (np.pi * 0.9)))
+
+
+def _abs_image(t, a, b, dev):
+    return t.abs()
+
+
+def _gamma_image(t, a, b, dev):
+    # core "gamma_image"(backends_auto)。冪は 0.3+2.5a で、core "gamma"(0.5+1.5a)とは別物。
+    return _x01(t) ** (0.3 + 2.5 * a)
+
+
+def _lut_trans(t, a, b, dev):
+    """core f2_lut_trans: 256 段の sigmoid LUT(f64 で作って f32 へ)を 8 bit 量子化値で引く。"""
+    gain, pivot = 1.0 + 12.0 * float(a), 0.15 + 0.70 * float(b)
+    x = np.linspace(0.0, 1.0, 256)
+    raw = 1.0 / (1.0 + np.exp(-gain * (x - pivot)))
+    lo, hi = float(raw[0]), float(raw[-1])
+    lut = (raw - lo) / (hi - lo) if (hi - lo) > 1e-9 else x
+    idx = torch.round(t * 255.0).clamp(0, 255).long()
+    return torch.as_tensor(lut, dtype=torch.float32, device=dev)[idx].clamp(0, 1)
+
+
+def _median_rect(t, a, b, dev):
+    """core median_rect: size=(_k(a), _k(b)) の矩形メディアン。scipy の順位 = n//2。"""
+    k0, k1 = _k(a), _k(b)
+    p = _pad_sym(_pad_sym(t, k1 // 2, 3), k0 // 2, 2)
+    n = k0 * k1
+    u = F.unfold(p, kernel_size=(k0, k1)).view(t.shape[0], n, t.shape[2], t.shape[3])
+    return u.sort(dim=1).values[:, n // 2:n // 2 + 1]
+
+
+def _mirror_image(t, a, b, dev):
+    if a < 0.34:
+        return t.flip(2)
+    if a < 0.67:
+        return t.flip(3)
+    return t.transpose(2, 3)
+
+
+def _convert_image_type(t, a, b, dev):
+    """core it_convert_image_type: L = round(2+254a) 段に量子化。round は両者とも偶数丸め。"""
+    x = _x01(t)
+    levels = max(2, min(256, int(round(2 + float(np.clip(a, 0.0, 1.0)) * 254))))
+    return torch.round(x * (levels - 1)) / (levels - 1)
+
+
+def _crop_domain(t, a, b, dev):
+    H, W = t.shape[2], t.shape[3]
+    frac = float(np.clip(a, 0.0, 1.0))
+    wh, ww = int(round(H * frac)), int(round(W * frac))
+    out = torch.zeros_like(t)
+    if wh >= 1 and ww >= 1:
+        r0, c0 = (H - wh) // 2, (W - ww) // 2
+        out[:, :, r0:r0 + wh, c0:c0 + ww] = t[:, :, r0:r0 + wh, c0:c0 + ww]
+    return _x01(out)
+
+
+def _resize_bl(crop, H, W):
+    """backends_imgtools._resize(map_coordinates order=1、linspace(0, h-1, H))と同じ格子。"""
+    if crop.shape[2:] == (H, W):
+        return crop
+    return F.interpolate(crop, size=(H, W), mode="bilinear", align_corners=True)
+
+
+def _crop_part(t, a, b, dev):
+    H, W = t.shape[2], t.shape[3]
+    frac = float(np.clip(a, 0.05, 0.95))
+    ch, cw = max(1, int(round(H * frac))), max(1, int(round(W * frac)))
+    r0, c0 = (H - ch) // 2, (W - cw) // 2
+    return _resize_bl(t[:, :, r0:r0 + ch, c0:c0 + cw], H, W)
+
+
+def _crop_rectangle1(t, a, b, dev):
+    H, W = t.shape[2], t.shape[3]
+    m = float(np.clip(a, 0.0, 0.45))
+    r1, c1 = int(round(H * m)), int(round(W * m))
+    r2, c2 = max(r1 + 1, H - r1), max(c1 + 1, W - c1)
+    return _resize_bl(t[:, :, r1:r2, c1:c2], H, W)
+
+
+def _disk_offsets(r):
+    return [(dy, dx) for dy in range(-r, r + 1) for dx in range(-r, r + 1)
+            if dx * dx + dy * dy <= r * r]
+
+
+def _morph_disk(t, r, erode):
+    """ndimage.grey_erosion/dilation(footprint=disk(r)、mode='reflect'=symmetric)の移植。
+    円盤は点対称なので grey_dilation の footprint 反転は効かない。"""
+    H, W = t.shape[2], t.shape[3]
+    p = _pad_sym(_pad_sym(t, r, 3), r, 2)
+    out = None
+    for dy, dx in _disk_offsets(r):
+        s = p[:, :, r + dy:r + dy + H, r + dx:r + dx + W]
+        out = s if out is None else (torch.minimum(out, s) if erode else torch.maximum(out, s))
+    return out
+
+
+def _gray_erosion_shape(t, a, b, dev):
+    return _morph_disk(t, _it_n(a), True)
+
+
+def _gray_dilation_shape(t, a, b, dev):
+    return _morph_disk(t, _it_n(a), False)
+
+
+def _gray_opening_shape(t, a, b, dev):
+    r = _it_n(a)
+    return _morph_disk(_morph_disk(t, r, True), r, False)
+
+
+def _gray_closing_shape(t, a, b, dev):
+    r = _it_n(a)
+    return _morph_disk(_morph_disk(t, r, False), r, True)
+
+
+def _texture_laws(t, a, b, dev):
+    """core texture_laws(kind=variance): 大域平均を引いてから局所分散 → _norm。"""
+    k = _k(a)
+    x0 = t - t.mean(dim=(2, 3), keepdim=True)
+    m = _box_sym(x0, k, dev)
+    m2 = _box_sym(x0 * x0, k, dev)
+    return _norm_b((m2 - m * m).clamp_min(0.0))
+
+
+def _gauss_deriv_kernel(sigma, dev):
+    """scipy _gaussian_kernel1d(order=1)の相関側の重み(truncate=4)。符号は hypot で消える。"""
+    r = int(4.0 * sigma + 0.5)
+    x = np.arange(-r, r + 1, dtype=np.float64)
+    phi = np.exp(-0.5 * x * x / (sigma * sigma))
+    phi = phi / phi.sum()
+    return (torch.as_tensor(phi, dtype=torch.float32, device=dev),
+            torch.as_tensor(-x / (sigma * sigma) * phi, dtype=torch.float32, device=dev))
+
+
+def _derivate_gauss(t, a, b, dev):
+    s = 0.5 + 2.5 * a
+    g, d = _gauss_deriv_kernel(s, dev)
+    r = (g.numel() - 1) // 2
+    px = _pad_sym(t, r, 3)
+    py = _pad_sym(t, r, 2)
+    gy = F.conv2d(_pad_sym(F.conv2d(px, g.view(1, 1, 1, -1)), r, 2), d.view(1, 1, -1, 1))
+    gx = F.conv2d(_pad_sym(F.conv2d(py, g.view(1, 1, -1, 1)), r, 3), d.view(1, 1, 1, -1))
+    return _norm_b(torch.hypot(gx, gy))
+
+
+# ── 3 次 B スプライン標本化(ndimage.affine_transform order=3 の移植)。第 2 便が「grid_sample は
+#    双線形なので画素一致しない」と外した幾何ワープ族は、前置フィルタ + B3 重みを torch で書けば取れる。
+_SPLINE_POLE = float(np.sqrt(3.0) - 2.0)
+_SPLINE_R = 14                                      # |z|^14 ≈ 1e-8。FIR 打ち切りの誤差は f32 床以下
+
+
+def _spline_prefilter(t):
+    """scipy spline_filter(order=3, mode='reflect')の FIR 版。無限長の因果+反因果 IIR の
+    インパルス応答 c[n] = (-6z/(1-z^2))·z^|n| を打ち切り、symmetric パディングで畳む。"""
+    z, r = _SPLINE_POLE, _SPLINE_R
+    k = -6.0 * z / (1.0 - z * z) * z ** np.abs(np.arange(-r, r + 1, dtype=np.float64))
+    ker = torch.as_tensor(k, dtype=torch.float32, device=t.device)
+    return _sep_conv_sym(t, ker)
+
+
+def _b3_weights(f):
+    f2, f3 = f * f, f * f * f
+    return ((1 - f) ** 3 / 6.0, (3 * f3 - 6 * f2 + 4) / 6.0,
+            (-3 * f3 + 3 * f2 + 3 * f + 1) / 6.0, f3 / 6.0)
+
+
+def _sym_map(i, n):
+    """整数添字を symmetric(d c b a | a b c d)に畳む。frozen な torch.remainder で周期 2n。"""
+    m = torch.remainder(i, 2 * n)
+    return torch.where(m >= n, 2 * n - 1 - m, m)
+
+
+def _spline_sample(c, ys, xs):
+    """(B,1,H,W) の係数 c を出力格子 (ys,xs)(f64、入力座標系)で標本化。"""
+    H, W = c.shape[2], c.shape[3]
+    y0, x0 = torch.floor(ys), torch.floor(xs)
+    wy = _b3_weights((ys - y0).float())
+    wx = _b3_weights((xs - x0).float())
+    y0, x0 = y0.long(), x0.long()
+    out = 0.0
+    for i in range(4):
+        iy = _sym_map(y0 + i - 1, H)
+        for j in range(4):
+            ix = _sym_map(x0 + j - 1, W)
+            out = out + wy[i] * wx[j] * c[:, :, iy, ix]
+    return out
+
+
+def _affine_coords(H, W, M, off, dev):
+    ys, xs = torch.meshgrid(torch.arange(H, dtype=torch.float64, device=dev),
+                            torch.arange(W, dtype=torch.float64, device=dev), indexing="ij")
+    return (float(M[0][0]) * ys + float(M[0][1]) * xs + float(off[0]),
+            float(M[1][0]) * ys + float(M[1][1]) * xs + float(off[1]))
+
+
+def _affine_spline(t, M, off, dev):
+    yy, xx = _affine_coords(t.shape[2], t.shape[3], M, off, dev)
+    return _spline_sample(_spline_prefilter(t), yy, xx)
+
+
+def _affine_warp(t, a, b, dev):
+    ang = np.deg2rad(-20 + 40 * a)
+    M = np.array([[np.cos(ang), -np.sin(ang) + (b - 0.5) * 0.4], [np.sin(ang), np.cos(ang)]])
+    c = np.array(t.shape[2:], np.float64) / 2
+    return _affine_spline(t, M, c - M @ c, dev)
+
+
+def _rotate_image(t, a, b, dev):
+    """ndimage.rotate(angle=-45+90a, reshape=False, mode='reflect') の行列を逐語で組む。"""
+    th = np.deg2rad(-45 + 90 * a)
+    c, s = np.cos(th), np.sin(th)
+    M = np.array([[c, s], [-s, c]])
+    ctr = (np.array(t.shape[2:], np.float64) - 1) / 2
+    return _affine_spline(t, M, ctr - M @ ctr, dev)
+
+
+def _zoom_factor(t, a, b, dev):
+    sr, sc = 0.7 + 0.6 * a, 0.7 + 0.6 * b
+    H, W = t.shape[2], t.shape[3]
+    return _affine_spline(t, np.diag([1 / sr, 1 / sc]),
+                          (H * (1 - 1 / sr) / 2, W * (1 - 1 / sc) / 2), dev)
+
+
+def _rescale_img(t, a, b, dev):
+    """core rescale_img: b で補間次数 (0,1,3,3) を選ぶ。次数 3 以外も同じ座標で書く。"""
+    s = 0.7 + 0.6 * a
+    H, W = t.shape[2], t.shape[3]
+    order = (0, 1, 3, 3)[min(3, int(float(np.clip(b, 0.0, 1.0)) * 4))]
+    off = (H * (1 - 1 / s) / 2, W * (1 - 1 / s) / 2)
+    yy, xx = _affine_coords(H, W, np.diag([1 / s, 1 / s]), off, dev)
+    if order == 3:
+        return _spline_sample(_spline_prefilter(t), yy, xx)
+    if order == 1:
+        y0, x0 = torch.floor(yy), torch.floor(xx)
+        fy, fx = (yy - y0).float(), (xx - x0).float()
+        y0, x0 = y0.long(), x0.long()
+        y1, x1 = _sym_map(y0 + 1, H), _sym_map(x0 + 1, W)
+        y0, x0 = _sym_map(y0, H), _sym_map(x0, W)
+        return ((1 - fy) * ((1 - fx) * t[:, :, y0, x0] + fx * t[:, :, y0, x1])
+                + fy * ((1 - fx) * t[:, :, y1, x0] + fx * t[:, :, y1, x1]))
+    iy = _sym_map(torch.floor(yy + 0.5).long(), H)
+    ix = _sym_map(torch.floor(xx + 0.5).long(), W)
+    return t[:, :, iy, ix]
+
+
+def _zoom_size(t, a, b, dev):
+    """core zoom_image_size: 全体を (ht,wt) へ order=1 で標本化し、キャンバス左上へ置く。"""
+    H, W = t.shape[2], t.shape[3]
+    ht, wt = max(1, int(round(H * (0.5 + a)))), max(1, int(round(W * (0.5 + b))))
+    ys = torch.arange(ht, dtype=torch.float64, device=dev) * (H / ht)
+    xs = torch.arange(wt, dtype=torch.float64, device=dev) * (W / wt)
+    y0, x0 = torch.floor(ys), torch.floor(xs)
+    fy, fx = (ys - y0).float().view(1, 1, -1, 1), (xs - x0).float().view(1, 1, 1, -1)
+    y0, x0 = y0.long(), x0.long()
+    y1, x1 = _sym_map(y0 + 1, H), _sym_map(x0 + 1, W)
+    y0, x0 = _sym_map(y0, H), _sym_map(x0, W)
+    rows = (1 - fy) * t.index_select(2, y0) + fy * t.index_select(2, y1)
+    small = (1 - fx) * rows.index_select(3, x0) + fx * rows.index_select(3, x1)
+    out = torch.zeros_like(t)
+    hh, ww = min(H, ht), min(W, wt)
+    out[:, :, :hh, :ww] = small[:, :, :hh, :ww]
+    return out
+
+
+# 色(B,3,H,W)。灰色入力(C=1)は core の _to_color と同じく 3 チャンネルへ複製する。
+def _color_in(t):
+    return _x01(t.repeat(1, 3, 1, 1) if t.shape[1] == 1 else t[:, :3])
+
+
+def _rgb_to_gray(t, a, b, dev):
+    c = _color_in(t)
+    return c[:, 0:1] * 0.299 + c[:, 1:2] * 0.587 + c[:, 2:3] * 0.114
+
+
+def _linear_trans_color(t, a, b, dev):
+    c = _color_in(t)
+    th = np.pi * a
+    M = np.array([[0.6 + 0.4 * np.cos(th), 0.2, 0.2], [0.2, 0.6 + 0.4 * np.sin(th), 0.2],
+                  [0.2, 0.2, 0.6]], np.float64)
+    M = torch.as_tensor(M / M.sum(1, keepdims=True), dtype=torch.float32, device=dev)
+    return torch.einsum("ij,bjhw->bihw", M, c)
+
+
+def _principal_comp(t, a, b, dev):
+    """core _principal_comp。固有ベクトルの符号を core と揃えるため、共分散は device 上で f64、
+    固有分解は host の numpy(LAPACK)で解く。f32 だと縮退成分の雑音 / (ptp+1e-8) が増幅される。"""
+    c = _color_in(t).double()
+    B, _, H, W = c.shape
+    out = []
+    for i in range(B):
+        X = c[i].view(3, -1)
+        Xm = X - X.mean(dim=1, keepdim=True)
+        cov = (Xm @ Xm.T / (Xm.shape[1] - 1)).detach().cpu().numpy()
+        w, vec = np.linalg.eigh(cov)
+        vec = torch.as_tensor(vec[:, np.argsort(w)[::-1]].copy(), dtype=torch.float64, device=dev)
+        proj = vec.T @ Xm
+        lo = proj.amin(dim=1, keepdim=True)
+        ptp = proj.amax(dim=1, keepdim=True) - lo
+        out.append(((proj - lo) / (ptp + 1e-8)).view(3, H, W).float())
+    return torch.stack(out)
+
+
+# n-ary(io = [(B,1,H,W), ...])。単入力の ACCEL とは別表。mask は io[1] がそのまま核になる。
+def _nary_add(io, a, b, dev):
+    return ((_x01(io[0]) + _x01(io[1])) * (0.5 + a) + (b - 0.5)).clamp(0, 1)
+
+
+def _nary_sub(io, a, b, dev):
+    return ((_x01(io[0]) - _x01(io[1])) * (0.5 + a) + b).clamp(0, 1)
+
+
+def _nary_mult(io, a, b, dev):
+    return (_x01(io[0]) * _x01(io[1]) * (0.5 + 1.5 * a) + (b - 0.5)).clamp(0, 1)
+
+
+def _nary_div(io, a, b, dev):
+    return (_x01(io[0]) / _x01(io[1]).clamp_min(1e-3) * (0.1 + 0.9 * a)).clamp(0, 1)
+
+
+def _nary_abs_diff(io, a, b, dev):
+    return ((_x01(io[0]) - _x01(io[1])).abs() * (0.5 + 1.5 * a)).clamp(0, 1)
+
+
+def _nary_max(io, a, b, dev):
+    return torch.maximum(_x01(io[0]), _x01(io[1]))
+
+
+def _nary_min(io, a, b, dev):
+    return torch.minimum(_x01(io[0]), _x01(io[1]))
+
+
+def _nary_convol(io, a, b, dev):
+    """core _convol: 相関(F.conv2d は反転しない = 相関)。mask は 1 枚目の mask を全バッチに使う。
+    大きいマスクは ndimage.correlate が O(N·mask) なのに対し GPU は 1 回の conv2d。"""
+    x, ker = _x01(io[0]), io[1][0, 0]
+    ker = ker / (ker.abs().sum() + 1e-8)
+    r0, r1 = ker.shape[0] // 2, ker.shape[1] // 2
+    p = _pad_sym(_pad_sym(x, r1, 3), r0, 2)
+    return F.conv2d(p, ker.view(1, 1, *ker.shape))[:, :, :x.shape[2], :x.shape[3]].clamp(0, 1)
+
+
 # accel op name -> (fn, the CORE registry op NAME it reproduces, its HALCON name)
 ACCEL = {
     "gauss_filter": (_gaussian, "gaussian", "gauss_filter"),
@@ -863,6 +1252,56 @@ for _rname, _fn, _hal in _TWIN_ALIASES:
     _key = _rname if _rname not in ACCEL else _rname + "@twin"
     ACCEL[_key] = (_fn, _rname, _hal)
 del _rname, _fn, _hal, _key
+
+# ── GPU 第 3 便の候補表(core 名 -> (kernel, HALCON 名))。ACCEL に入るのは FILL3_ADOPTED だけ。
+#    採否は tools/gen_gpu_fill3_report.py が実測ログから判定し、この表と食い違うと門が落ちる。
+FILL3_KERNELS = {
+    "abs_image": (_abs_image, "abs_image"), "acos_image": (_acos_image, "acos_image"),
+    "asin_image": (_asin_image, "asin_image"), "atan_image": (_atan_image, "atan_image"),
+    "exp_image": (_exp_image, "exp_image"), "log_image": (_log_image, "log_image"),
+    "sin_image": (_sin_image, "sin_image"), "sqrt_image": (_sqrt_image, "sqrt_image"),
+    "tan_image": (_tan_image, "tan_image"), "gamma_image": (_gamma_image, "gamma_image"),
+    "f2_lut_trans": (_lut_trans, "lut_trans"), "median_rect": (_median_rect, "median_rect"),
+    "mirror_image": (_mirror_image, "mirror_image"),
+    "it_convert_image_type": (_convert_image_type, "convert_image_type"),
+    "it_crop_domain": (_crop_domain, "crop_domain"), "it_crop_part": (_crop_part, "crop_part"),
+    "it_crop_rectangle1": (_crop_rectangle1, "crop_rectangle1"),
+    "gray_erosion_shape": (_gray_erosion_shape, "gray_erosion_shape"),
+    "gray_dilation_shape": (_gray_dilation_shape, "gray_dilation_shape"),
+    "gray_opening_shape": (_gray_opening_shape, "gray_opening_shape"),
+    "gray_closing_shape": (_gray_closing_shape, "gray_closing_shape"),
+    "texture_laws": (_texture_laws, "texture_laws"), "derivate_gauss": (_derivate_gauss, "derivate_gauss"),
+    "affine_trans_image": (_affine_warp, "affine_trans_image"), "affine_warp": (_affine_warp, "affine_trans_image"),
+    "affine_trans_image_size": (_affine_warp, "affine_trans_image_size"),
+    "rotate_image": (_rotate_image, "rotate_image"), "rotate_img": (_rotate_image, "rotate_image"),
+    "zoom_image_factor": (_zoom_factor, "zoom_image_factor"), "rescale_img": (_rescale_img, "zoom_image_factor"),
+    "zoom_image_size": (_zoom_size, "zoom_image_size"),
+    "rgb1_to_gray": (_rgb_to_gray, "rgb1_to_gray"), "rgb3_to_gray": (_rgb_to_gray, "rgb3_to_gray"),
+    "linear_trans_color": (_linear_trans_color, "linear_trans_color"),
+    "principal_comp": (_principal_comp, "principal_comp"),
+}
+#: 実寸 2048² x50 で >= 5.0x かつ parity < 5e-3(docs/perf/gpu_fill3_2026-11-02.md)
+FILL3_ADOPTED = (
+    "tan_image", "f2_lut_trans", "median_rect", "it_crop_part", "it_crop_rectangle1", "texture_laws",
+    "derivate_gauss", "affine_trans_image", "affine_warp", "affine_trans_image_size",
+    "rotate_image", "rotate_img", "zoom_image_factor", "principal_comp",
+)
+ACCEL.update({(n if n not in ACCEL else n + "@twin"): (FILL3_KERNELS[n][0], n, FILL3_KERNELS[n][1])
+              for n in FILL3_ADOPTED})
+
+NARY_KERNELS = {
+    "add_image": _nary_add, "sub_image": _nary_sub, "mult_image": _nary_mult, "div_image": _nary_div,
+    "abs_diff_image": _nary_abs_diff, "max_image": _nary_max, "min_image": _nary_min, "convol_image": _nary_convol,
+}
+NARY_ADOPTED = ("convol_image",)
+#: core n-ary 名 -> kernel。``fullseye.apply([x0, x1], name, device=...)`` の GPU 経路。
+NARY_ACCEL = {n: NARY_KERNELS[n] for n in NARY_ADOPTED}
+
+
+def run_nary(name, inputs, a=0.5, b=0.4, device="cpu"):
+    """n-ary op を 1 組の入力で走らせる。第 2 入力は形が違ってよい(convol_image の核)。"""
+    io = [_to_batch([x], device) for x in inputs]
+    return _from_batch(NARY_ACCEL[name](io, a, b, device).clamp(0, 1))[0]
 
 
 def run_batch(name, imgs, a=0.5, b=0.4, device="cpu"):
